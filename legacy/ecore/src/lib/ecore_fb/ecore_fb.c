@@ -18,9 +18,6 @@ static int _ecore_fb_init_count = 0;
 static int _ecore_fb_console_w = 0;
 static int _ecore_fb_console_h = 0;
 
-static double _ecore_fb_double_click_time = 0.25;
-
-
 /**
  * @defgroup Ecore_FB_Library_Group Framebuffer Library Functions
  *
@@ -38,11 +35,11 @@ EAPI int
 ecore_fb_init(const char *name __UNUSED__)
 {
    if (++_ecore_fb_init_count != 1)
-     return _ecore_fb_init_count;
-
+      return _ecore_fb_init_count;
+   
    if (!ecore_fb_vt_init())
-     return --_ecore_fb_init_count;
-
+      return --_ecore_fb_init_count;
+   
    ECORE_FB_EVENT_KEY_DOWN          = ecore_event_type_new();
    ECORE_FB_EVENT_KEY_UP            = ecore_event_type_new();
    ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
@@ -64,7 +61,7 @@ EAPI int
 ecore_fb_shutdown(void)
 {    
    if (--_ecore_fb_init_count != 0)
-     return _ecore_fb_init_count;
+      return _ecore_fb_init_count;
 
    ecore_fb_vt_shutdown();
 

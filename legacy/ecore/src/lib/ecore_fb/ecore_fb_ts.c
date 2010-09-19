@@ -81,28 +81,28 @@ ecore_fb_ts_init(void)
 #ifdef HAVE_TSLIB
    char *tslib_tsdevice = NULL;
    if ( (tslib_tsdevice = getenv("TSLIB_TSDEVICE")) )
-    {
+     {
         printf( "ECORE_FB: TSLIB_TSDEVICE = '%s'\n", tslib_tsdevice );
         _ecore_fb_tslib_tsdev = ts_open( tslib_tsdevice, 1 ); /* 1 = nonblocking, 0 = blocking */
-
+        
         if ( !_ecore_fb_tslib_tsdev )
-        {
-            printf( "ECORE_FB: Can't ts_open (%s)\n", strerror( errno ) );
-            return 0;
-        }
-
+          {
+             printf( "ECORE_FB: Can't ts_open (%s)\n", strerror( errno ) );
+             return 0;
+          }
+        
         if ( ts_config( _ecore_fb_tslib_tsdev ) )
-        {
-            printf( "ECORE_FB: Can't ts_config (%s)\n", strerror( errno ) );
-            return 0;
-        }
+          {
+             printf( "ECORE_FB: Can't ts_config (%s)\n", strerror( errno ) );
+             return 0;
+          }
         _ecore_fb_ts_fd = ts_fd( _ecore_fb_tslib_tsdev );
         if ( _ecore_fb_ts_fd < 0 )
-        {
-            printf( "ECORE_FB: Can't open touchscreen (%s)\n", strerror( errno ) );
-            return 0;
-        }
-    }
+          {
+             printf( "ECORE_FB: Can't open touchscreen (%s)\n", strerror( errno ) );
+             return 0;
+          }
+     }
 #else
    _ecore_fb_ts_fd = open("/dev/touchscreen/0", O_RDONLY);
 #endif
@@ -127,7 +127,7 @@ EAPI void
 ecore_fb_ts_shutdown(void)
 {
    if (_ecore_fb_ts_fd_handler_handle)
-     ecore_main_fd_handler_del(_ecore_fb_ts_fd_handler_handle);
+      ecore_main_fd_handler_del(_ecore_fb_ts_fd_handler_handle);
    if (_ecore_fb_ts_fd >= 0) close(_ecore_fb_ts_fd);
    _ecore_fb_ts_fd = -1;
    _ecore_fb_ts_fd_handler_handle = NULL;
@@ -138,8 +138,8 @@ ecore_fb_ts_shutdown(void)
  *
  * Functions that calibrate the screen.
  */
-  
-  
+
+
 /**
  * Calibrates the touschreen using the given parameters.
  * @param   xscale X scaling, where 256 = 1.0
@@ -164,7 +164,6 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
      {
 	_ecore_fb_ts_cal = cal;
 	_ecore_fb_ts_apply_cal = 1;
-	
      }
 }
 
@@ -187,11 +186,10 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
    if (!_ecore_fb_ts_apply_cal)
      {
 	if (ioctl(_ecore_fb_ts_fd, TS_GET_CAL, (void *)&cal))
-	  _ecore_fb_ts_cal = cal;
-	
+           _ecore_fb_ts_cal = cal;
      }
    else
-     cal = _ecore_fb_ts_cal;
+      cal = _ecore_fb_ts_cal;
    if (xscale) *xscale = cal.xscale;
    if (xtrans) *xtrans = cal.xtrans;
    if (yscale) *yscale = cal.yscale;
@@ -212,14 +210,14 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	int x, y, pressure;
 	int num;
 	char *ptr;
-	double t;
+	double t = 0.0;
 	int did_triple = 0;
 
 #ifdef HAVE_TSLIB
 	if (_ecore_fb_ts_apply_cal)
-	  num = ts_read_raw(_ecore_fb_tslib_tsdev, &_ecore_fb_tslib_event, 1);
+           num = ts_read_raw(_ecore_fb_tslib_tsdev, &_ecore_fb_tslib_event, 1);
 	else
-	  num = ts_read(_ecore_fb_tslib_tsdev, &_ecore_fb_tslib_event, 1);
+           num = ts_read(_ecore_fb_tslib_tsdev, &_ecore_fb_tslib_event, 1);
 	if (num != 1) return 1; /* no more samples at this time */
 	x = _ecore_fb_tslib_event.x;
 	y = _ecore_fb_tslib_event.y;
@@ -235,7 +233,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	_ecore_fb_ts_event_byte_count += v;
 	if (v < num) return 1;
 	_ecore_fb_ts_event_byte_count = 0;
-       if (_ecore_fb_ts_apply_cal)
+        if (_ecore_fb_ts_apply_cal)
 	  {
 	     x = ((_ecore_fb_ts_cal.xscale * _ecore_fb_ts_event.x) >> 8) + _ecore_fb_ts_cal.xtrans;
 	     y = ((_ecore_fb_ts_cal.yscale * _ecore_fb_ts_event.y) >> 8) + _ecore_fb_ts_cal.ytrans;
@@ -271,7 +269,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	     e->y = y;
 	     e->button = 1;
 	     if ((t - last_time) <= _ecore_fb_double_click_time)
-	       e->double_click = 1;
+                e->double_click = 1;
 	     if ((t - last_last_time) <= (2 * _ecore_fb_double_click_time))
 	       {
 		  did_triple = 1;
@@ -301,7 +299,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	     last_last_time = last_time;
 	     last_time = t;
 	  }
-	retry:	     
+retry:	     
 	prev_x = x;
 	prev_y = y;
 	prev_pressure = pressure;
