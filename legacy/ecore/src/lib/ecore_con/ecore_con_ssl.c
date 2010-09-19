@@ -1183,19 +1183,19 @@ _ecore_con_ssl_server_prepare_none(Ecore_Con_Server *svr __UNUSED__, int ssl_typ
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_init_none(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_init_none(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cert_add_none(const char *cert_file)
+_ecore_con_ssl_server_cert_add_none(const char *cert_file __UNUSED__)
 {
    return EINA_TRUE;
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_shutdown_none(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_shutdown_none(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
@@ -1205,55 +1205,55 @@ _ecore_con_ssl_server_shutdown_none(Ecore_Con_Server *svr)
  * should try again later.
  */
 static Ecore_Con_State
-_ecore_con_ssl_server_try_none(Ecore_Con_Server *svr)
+_ecore_con_ssl_server_try_none(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_DISCONNECTED;
 }
 
 static int
-_ecore_con_ssl_server_read_none(Ecore_Con_Server *svr, unsigned char *buf,
-                                int size)
+_ecore_con_ssl_server_read_none(Ecore_Con_Server *svr __UNUSED__, unsigned char *buf __UNUSED__,
+                                int size __UNUSED__)
 {
    return -1;
 }
 
 static int
-_ecore_con_ssl_server_write_none(Ecore_Con_Server *svr, unsigned char *buf,
-                                 int size)
+_ecore_con_ssl_server_write_none(Ecore_Con_Server *svr __UNUSED__, unsigned char *buf __UNUSED__,
+                                 int size __UNUSED__)
 {
    return -1;
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_client_init_none(Ecore_Con_Client *cl)
+_ecore_con_ssl_client_init_none(Ecore_Con_Client *cl __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
 
 static Eina_Bool
-_ecore_con_ssl_client_cert_add_none(const char *cert_file,
-                                    const char *crl_file,
-                                    const char *key_file)
+_ecore_con_ssl_client_cert_add_none(const char *cert_file __UNUSED__,
+                                    const char *crl_file __UNUSED__,
+                                    const char *key_file __UNUSED__)
 {
    return EINA_TRUE;
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_client_shutdown_none(Ecore_Con_Client *cl)
+_ecore_con_ssl_client_shutdown_none(Ecore_Con_Client *cl __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
 
 static int
-_ecore_con_ssl_client_read_none(Ecore_Con_Client *cl, unsigned char *buf,
-                                int size)
+_ecore_con_ssl_client_read_none(Ecore_Con_Client *cl __UNUSED__, unsigned char *buf __UNUSED__,
+                                int size __UNUSED__)
 {
    return -1;
 }
 
 static int
-_ecore_con_ssl_client_write_none(Ecore_Con_Client *cl, unsigned char *buf,
-                                 int size)
+_ecore_con_ssl_client_write_none(Ecore_Con_Client *cl __UNUSED__, unsigned char *buf __UNUSED__,
+                                 int size __UNUSED__)
 {
    return -1;
 }
