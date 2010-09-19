@@ -213,8 +213,6 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
       case ELM_IMAGE_ROTATE_180_CW:
          _els_smart_icon_rotate_180(sd);
          return;
-     default:
-        return;
      }
 
    evas_object_image_size_get(sd->obj, &iw, &ih);
