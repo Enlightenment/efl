@@ -802,6 +802,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                (e->engine.data.output, obj->cur.map->surface,
                 0, 0, obj->cur.map->surface_w, obj->cur.map->surface_h);
           }
+        e->engine.func->context_clip_unset(e->engine.data.output,
+                                           e->engine.data.context);
         if ((obj->cur.map->surface) && (obj->smart.smart))
           {
              if (obj->cur.clipper)
@@ -1136,9 +1138,13 @@ evas_render_updates_internal(Evas *e,
                                                     obj->cur.cache.clip.w,
                                                     obj->cur.cache.clip.h);
                               }
-			    e->engine.func->context_clip_set(e->engine.data.output,
-							     e->engine.data.context,
-							     x, y, w, h);
+                            if (obj->cur.clipper)
+                               e->engine.func->context_clip_set(e->engine.data.output,
+                                                                e->engine.data.context,
+                                                                x, y, w, h);
+                            else
+                               e->engine.func->context_clip_unset(e->engine.data.output,
+                                                                  e->engine.data.context);
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
 			    for (j = offset; j < e->temporary_objects.count; ++j)
 			      {
