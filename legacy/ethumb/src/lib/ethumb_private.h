@@ -20,6 +20,7 @@ struct _Ethumb
    int tw, th;
    int format;
    int aspect;
+   int orientation;
    float crop_x, crop_y;
    int quality;
    int compress;

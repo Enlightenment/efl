@@ -69,6 +69,10 @@ void *alloca (size_t);
 #include "Ethumb_Plugin.h"
 #include "md5.h"
 
+#ifdef HAVE_LIBEXIF
+  #include <libexif/exif-data.h>
+#endif
+
 static int _log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
@@ -224,6 +228,7 @@ ethumb_new(void)
    /* IF CHANGED, UPDATE DOCS in (Ethumb.c, Ethumb_Client.c, python...)!!! */
    ethumb->tw = THUMB_SIZE_NORMAL;
    ethumb->th = THUMB_SIZE_NORMAL;
+   ethumb->orientation = ETHUMB_THUMB_ORIENT_ORIGINAL;
    ethumb->crop_x = 0.5;
    ethumb->crop_y = 0.5;
    ethumb->quality = 80;
@@ -345,6 +350,7 @@ ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s)
 
    e->format = ETHUMB_THUMB_FDO;
    e->aspect = ETHUMB_THUMB_KEEP_ASPECT;
+   e->orientation = ETHUMB_THUMB_ORIENT_ORIGINAL;
    _ethumb_frame_free(e->frame);
    e->frame = NULL;
    eina_stringshare_del(e->thumb_dir);
@@ -410,6 +416,31 @@ ethumb_thumb_aspect_get(const Ethumb *e)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
    return e->aspect;
+}
+
+EAPI void
+ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation o)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   EINA_SAFETY_ON_FALSE_RETURN(o == ETHUMB_THUMB_ORIENT_NONE ||
+			       o == ETHUMB_THUMB_ROTATE_90_CW ||
+			       o == ETHUMB_THUMB_ROTATE_180 ||
+			       o == ETHUMB_THUMB_ROTATE_90_CCW ||
+			       o == ETHUMB_THUMB_FLIP_HORIZONTAL ||
+			       o == ETHUMB_THUMB_FLIP_VERTICAL ||
+			       o == ETHUMB_THUMB_FLIP_TRANSPOSE ||
+			       o == ETHUMB_THUMB_FLIP_TRANSVERSE ||
+			       o == ETHUMB_THUMB_ORIENT_ORIGINAL);
+
+   DBG("ethumb=%p, orientation=%d", e, o);
+   e->orientation = o;
+}
+
+EAPI Ethumb_Thumb_Orientation
+ethumb_thumb_orientation_get(const Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+   return e->orientation;
 }
 
 EAPI void
@@ -1171,12 +1202,135 @@ ethumb_image_save(Ethumb *e)
    return EINA_TRUE;
 }
 
+static void
+_ethumb_image_orient(Ethumb *e, int orientation)
+{
+   Evas_Object *img = e->img, *tmp;
+   unsigned int *data, *data2, *to, *from, *p1, *p2, pt;
+   int x, y, w, hw, iw, ih, tw, th;
+   const char *file, *key;
+
+   evas_object_image_size_get(img, &iw, &ih);
+   data = evas_object_image_data_get(img, 1);
+
+   switch (orientation)
+     {
+      case ETHUMB_THUMB_FLIP_HORIZONTAL:
+	 for (y = 0; y < ih; y++)
+	   {
+	      p1 = data + (y * iw);
+	      p2 = data + ((y + 1) * iw) - 1;
+	      for (x = 0; x < (iw >> 1); x++)
+		{
+		   pt = *p1;
+		   *p1 = *p2;
+		   *p2 = pt;
+		   p1++;
+		   p2--;
+		}
+	   }
+	 evas_object_image_data_set(img, data);
+	 evas_object_image_data_update_add(img, 0, 0, iw, ih);
+	 return;
+      case ETHUMB_THUMB_FLIP_VERTICAL:
+	 for (y = 0; y < (ih >> 1); y++)
+	   {
+	      p1 = data + (y * iw);
+	      p2 = data + ((ih - 1 - y) * iw);
+	      for (x = 0; x < iw; x++)
+		{
+		   pt = *p1;
+		   *p1 = *p2;
+		   *p2 = pt;
+		   p1++;
+		   p2++;
+	        }
+	   }
+	 evas_object_image_data_set(img, data);
+	 evas_object_image_data_update_add(img, 0, 0, iw, ih);
+	 return;
+      case ETHUMB_THUMB_ROTATE_180:
+	 hw = iw * ih;
+	 x = (hw / 2);
+	 p1 = data;
+	 p2 = data + hw - 1;
+	 for (; --x > 0;)
+	   {
+	      pt = *p1;
+	      *p1 = *p2;
+	      *p2 = pt;
+	      p1++;
+	      p2--;
+	   }
+	 evas_object_image_data_set(img, data);
+	 evas_object_image_data_update_add(img, 0, 0, iw, ih);
+	 return;
+     }
+
+   evas_object_image_load_size_get(img, &tw, &th);
+   evas_object_image_file_get(img, &file, &key);
+   tmp = evas_object_image_add(evas_object_evas_get(img));
+   evas_object_image_load_size_set(tmp, tw, th);
+   evas_object_image_file_set(tmp, file, key);
+   data2 = evas_object_image_data_get(tmp, 0);
+
+   w = ih;
+   ih = iw;
+   iw = w;
+   hw = w * ih;
+
+   evas_object_image_size_set(img, iw, ih);
+   data = evas_object_image_data_get(img, 1);
+
+   switch (orientation)
+     {
+      case ETHUMB_THUMB_FLIP_TRANSPOSE:
+	 to = data;
+	 hw = -hw + 1;
+	 break;
+      case ETHUMB_THUMB_FLIP_TRANSVERSE:
+	 to = data + hw - 1;
+	 w = -w;
+	 hw = hw - 1;
+	 break;
+      case ETHUMB_THUMB_ROTATE_90_CW:
+	 to = data + w - 1;
+	 hw = -hw - 1;
+	 break;
+      case ETHUMB_THUMB_ROTATE_90_CCW:
+	 to = data + hw - w;
+	 w = -w;
+	 hw = hw + 1;
+	 break;
+      default:
+	 ERR("unknown orient %d", orientation);
+	 evas_object_del(tmp);
+	 evas_object_image_data_set(img, data); // give it back
+	 return;
+     }
+   from = data2;
+   for (x = iw; --x >= 0;)
+     {
+        for (y = ih; --y >= 0;)
+          {
+             *to = *from;
+             from++;
+             to += w;
+          }
+        to += hw;
+     }
+   evas_object_del(tmp);
+   evas_object_image_data_set(img, data);
+   evas_object_image_data_update_add(img, 0, 0, iw, ih);
+}
+
 static int
 _ethumb_image_load(Ethumb *e)
 {
    int error;
    Evas_Coord w, h, ww, hh, fx, fy, fw, fh;
    Evas_Object *img;
+   int orientation = ETHUMB_THUMB_ORIENT_NONE;
 
    img = e->img;
 
@@ -1199,6 +1353,54 @@ _ethumb_image_load(Ethumb *e)
 	ERR("could not load image '%s': %d", e->src_path, error);
 	return 0;
      }
+
+   if (e->orientation == ETHUMB_THUMB_ORIENT_ORIGINAL)
+      {
+#ifdef HAVE_LIBEXIF
+	 ExifData  *exif = exif_data_new_from_file(e->src_path);
+	 ExifEntry *entry = NULL;
+	 ExifByteOrder bo;
+	 int o;
+
+	 if (exif)
+	   {
+	      entry = exif_data_get_entry(exif, EXIF_TAG_ORIENTATION);
+	      if (entry)
+		{
+		   bo = exif_data_get_byte_order(exif);
+		   o = exif_get_short(entry->data, bo);
+		}
+	      exif_data_free(exif);
+	      switch (o)
+		{
+		 case 2:
+		    orientation = ETHUMB_THUMB_FLIP_HORIZONTAL;
+		    break;
+		 case 3:
+		    orientation = ETHUMB_THUMB_ROTATE_180;
+		    break;
+		 case 4:
+		    orientation = ETHUMB_THUMB_FLIP_VERTICAL;
+		    break;
+		 case 5:
+		    orientation = ETHUMB_THUMB_FLIP_TRANSPOSE;
+		    break;
+		 case 6:
+		    orientation = ETHUMB_THUMB_ROTATE_90_CW;
+		    break;
+		 case 7:
+		    orientation = ETHUMB_THUMB_FLIP_TRANSVERSE;
+		    break;
+		 case 8:
+		    orientation = ETHUMB_THUMB_ROTATE_90_CCW;
+		    break;
+		}
+	   }
+#endif
+   }
+
+   if (orientation != ETHUMB_THUMB_ORIENT_NONE)
+     _ethumb_image_orient(e, orientation);
 
    evas_object_image_size_get(img, &w, &h);
    if ((w <= 0) || (h <= 0))

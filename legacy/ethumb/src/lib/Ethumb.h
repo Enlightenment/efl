@@ -119,16 +119,32 @@ typedef enum _Ethumb_Thumb_Aspect
   ETHUMB_THUMB_CROP /**< keep aspect but crop (cut) the largest dimension */
 } Ethumb_Thumb_Aspect;
 
+typedef enum _Ethumb_Thumb_Orientation
+{
+  ETHUMB_THUMB_ORIENT_NONE,     /**< keep orientation as pixel data is */
+  ETHUMB_THUMB_ROTATE_90_CW,    /**< rotate 90° clockwise */
+  ETHUMB_THUMB_ROTATE_180,      /**< rotate 180° */
+  ETHUMB_THUMB_ROTATE_90_CCW,   /**< rotate 90° counter-clockwise */
+  ETHUMB_THUMB_FLIP_HORIZONTAL, /**< flip horizontally */
+  ETHUMB_THUMB_FLIP_VERTICAL,   /**< flip vertically */
+  ETHUMB_THUMB_FLIP_TRANSPOSE,  /**< transpose */
+  ETHUMB_THUMB_FLIP_TRANSVERSE, /**< transverse */
+  ETHUMB_THUMB_ORIENT_ORIGINAL  /**< use orientation from metadata (EXIF-only currently) */
+} Ethumb_Thumb_Orientation;
+
 EAPI void ethumb_thumb_fdo_set(Ethumb *e, Ethumb_Thumb_FDO_Size s) EINA_ARG_NONNULL(1);
 
 EAPI void ethumb_thumb_size_set(Ethumb *e, int tw, int th) EINA_ARG_NONNULL(1);
 EAPI void ethumb_thumb_size_get(const Ethumb *e, int *tw, int *th) EINA_ARG_NONNULL(1);
 
-EAPI void                ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f) EINA_ARG_NONNULL(1);
-EAPI Ethumb_Thumb_Format ethumb_thumb_format_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void                     ethumb_thumb_format_set(Ethumb *e, Ethumb_Thumb_Format f) EINA_ARG_NONNULL(1);
+EAPI Ethumb_Thumb_Format      ethumb_thumb_format_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-EAPI void                ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a) EINA_ARG_NONNULL(1);
-EAPI Ethumb_Thumb_Aspect ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI void                     ethumb_thumb_aspect_set(Ethumb *e, Ethumb_Thumb_Aspect a) EINA_ARG_NONNULL(1);
+EAPI Ethumb_Thumb_Aspect      ethumb_thumb_aspect_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+EAPI void                     ethumb_thumb_orientation_set(Ethumb *e, Ethumb_Thumb_Orientation o) EINA_ARG_NONNULL(1);
+EAPI Ethumb_Thumb_Orientation ethumb_thumb_orientation_get(const Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 EAPI void         ethumb_thumb_crop_align_set(Ethumb *e, float x, float y) EINA_ARG_NONNULL(1);
 EAPI void         ethumb_thumb_crop_align_get(const Ethumb *e, float *x, float *y) EINA_ARG_NONNULL(1);

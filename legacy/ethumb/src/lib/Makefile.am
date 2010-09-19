@@ -9,6 +9,10 @@ AM_CPPFLAGS = \
 	@EINA_CFLAGS@ @EVAS_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@ \
 	@EFL_ETHUMB_BUILD@
 
+if HAVE_LIBEXIF
+AM_CPPFLAGS += @LIBEXIF_CFLAGS@
+endif
+
 includes_HEADERS = Ethumb.h Ethumb_Plugin.h
 includesdir = $(includedir)/ethumb-@VMAJ@
 
@@ -24,6 +28,9 @@ libethumb_la_LIBADD = \
 	@EDJE_LIBS@ @ECORE_FILE_LIBS@ @ECORE_EVAS_LIBS@ @EVAS_LIBS@
 libethumb_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
 
+if HAVE_LIBEXIF
+libethumb_la_LIBADD += @LIBEXIF_LIBS@
+endif
 
 if USE_MODULE_ETHUMBD
 SUBDIRS += client

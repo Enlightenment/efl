@@ -122,7 +122,7 @@ EAPI void ethumb_client_on_server_die_callback_set(Ethumb_Client *client, Ethumb
 /**
  * @defgroup Ethumb_Client_Setup Ethumb Client Fine Tune Setup
  *
- * How to fine tune thumbnail generation, setting size, aspect,
+ * How to fine tune thumbnail generation, setting size, aspect, orientation,
  * frames, quality and so on.
  *
  * @{
@@ -135,6 +135,8 @@ EAPI void ethumb_client_format_set(Ethumb_Client *client, Ethumb_Thumb_Format f)
 EAPI Ethumb_Thumb_Format ethumb_client_format_get(const Ethumb_Client *client);
 EAPI void ethumb_client_aspect_set(Ethumb_Client *client, Ethumb_Thumb_Aspect a);
 EAPI Ethumb_Thumb_Aspect ethumb_client_aspect_get(const Ethumb_Client *client);
+EAPI void ethumb_client_orientation_set(Ethumb_Client *client, Ethumb_Thumb_Orientation o);
+EAPI Ethumb_Thumb_Orientation ethumb_client_orientation_get(const Ethumb_Client *client);
 EAPI void ethumb_client_crop_align_set(Ethumb_Client *client, float x, float y);
 EAPI void ethumb_client_crop_align_get(const Ethumb_Client *client, float *x, float *y);
 EAPI void ethumb_client_quality_set(Ethumb_Client *client, int quality);

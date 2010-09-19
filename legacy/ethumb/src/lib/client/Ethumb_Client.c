@@ -844,7 +844,7 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    DBusMessageIter iter, aiter, diter, viter, vaiter;
    Ethumb *e = client->ethumb;
    const char *entry;
-   dbus_int32_t tw, th, format, aspect, quality, compress;
+   dbus_int32_t tw, th, format, aspect, orientation, quality, compress;
    float cx, cy;
    double t;
    const char *theme_file, *group, *swallow;
@@ -898,6 +898,11 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    _open_variant_iter("aspect", "i", viter);
    aspect = ethumb_thumb_aspect_get(e);
    dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &aspect);
+   _close_variant_iter(viter);
+
+   _open_variant_iter("orientation", "i", viter);
+   orientation = ethumb_thumb_orientation_get(e);
+   dbus_message_iter_append_basic(&viter, DBUS_TYPE_INT32, &orientation);
    _close_variant_iter(viter);
 
    _open_variant_iter("crop", "(dd)", viter);
@@ -1485,6 +1490,48 @@ ethumb_client_aspect_get(const Ethumb_Client *client)
    EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
 
    return ethumb_thumb_aspect_get(client->ethumb);
+}
+
+/**
+ * Configure orientation to use for future requests.
+ *
+ * Default value is #ETHUMB_THUMB_ORIENT_ORIGINAL: metadata from the file
+ * will be used to orient pixel data.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ * @param f format identifier to use, either #ETHUMB_THUMB_ORIENT_NONE (0),
+ *        #ETHUMB_THUMB_ROTATE_90_CW (1), #ETHUMB_THUMB_ROTATE_180 (2),
+ *        #ETHUMB_THUMB_ROTATE_90_CCW (3), #ETHUMB_THUMB_FLIP_HORIZONTAL (4),
+ *        #ETHUMB_THUMB_FLIP_VERTICAL (5), #ETHUMB_THUMB_FLIP_TRANSPOSE (6),
+ *        #ETHUMB_THUMB_FLIP_TRANSVERSE (7) or #ETHUMB_THUMB_ORIENT_ORIGINAL
+ *        (8). Default is ORIGINAL.
+ */
+EAPI void
+ethumb_client_orientation_set(Ethumb_Client *client, Ethumb_Thumb_Orientation o)
+{
+   EINA_SAFETY_ON_NULL_RETURN(client);
+
+   client->ethumb_dirty = 1;
+   ethumb_thumb_orientation_set(client->ethumb, o);
+}
+
+/**
+ * Get current orientation in use for requests.
+ *
+ * @param client the client instance to use. Must @b not be @c
+ *        NULL. May be pending connected (can be called before @c
+ *        connected_cb)
+ *
+ * @return orientation in use for future requests.
+ */
+EAPI Ethumb_Thumb_Orientation
+ethumb_client_orientation_get(const Ethumb_Client *client)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(client, 0);
+
+   return ethumb_thumb_orientation_get(client->ethumb);
 }
 
 /**
