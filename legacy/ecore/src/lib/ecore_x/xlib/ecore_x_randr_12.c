@@ -732,7 +732,7 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
  * NULL CRTC will be disabled.
  * @param noutputs number of outputs in array to be used. Use
  * Ecore_X_Randr_Unset (or -1) to use currently used outputs.
- * @para mode XID of the mode to be set. If set to 0 the CRTC will be disabled.
+ * @param mode XID of the mode to be set. If set to 0 the CRTC will be disabled.
  * If set to -1 the call will fail.
  * @return EINA_TRUE if mode setting was successful. Else EINA_FALSE
  */
@@ -1048,10 +1048,10 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
 
 /**
  * @brief sets a CRTC relative to another one.
- * @crtc_r1 the CRTC to be positioned.
- * @crtc_r2 the CRTC the position should be relative to
- * @position the relation between the crtcs
- * @aligment in case CRTCs size differ, aligns CRTC1 accordingly at CRTC2's
+ * @param crtc_r1 the CRTC to be positioned.
+ * @param crtc_r2 the CRTC the position should be relative to
+ * @param position the relation between the crtcs
+ * @param alignment in case CRTCs size differ, aligns CRTC1 accordingly at CRTC2's
  * borders
  * @return EINA_TRUE if crtc could be successfully positioned. EINA_FALSE if
  * repositioning failed or if position of new crtc would be out of given screen's min/max bounds.
@@ -1426,9 +1426,9 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window root, Ecore_X_Randr_Outpu
 /**
  * @brief gets the the outputs which might be used simultenously on the same
  * CRTC.
- * @root window that this information should be queried for.
- * @output the output which's clones we concern
- * @num number of possible clones
+ * @param root window that this information should be queried for.
+ * @param output the output which's clones we concern
+ * @param num number of possible clones
  */
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_output_clones_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num)
@@ -1492,7 +1492,7 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
 /**
  * @brief gets the given output's name as reported by X
  * @param root the window which's screen will be queried
- * @len length of returned c-string.
+ * @param len length of returned c-string.
  * @return name of the output as reported by X
  */
    EAPI char *
@@ -1538,8 +1538,8 @@ ecore_x_randr_output_name_get(Ecore_X_Window root,
 /**
  * @brief gets the width and hight of a given mode
  * @param mode the mode which's size is to be looked up
- * @w width of given mode in px
- * @h height of given mode in px
+ * @param w width of given mode in px
+ * @param h height of given mode in px
  */
    EAPI void
 ecore_x_randr_mode_size_get(Ecore_X_Window root,
@@ -1582,8 +1582,8 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root,
  * Note that this information is not to be compared using ordinary string
  * comparison functions, since it includes 0-bytes.
  * @param root window this information should be queried from
- * @output the XID of the output
- * @length length of the byte-array. If NULL, request will fail.
+ * @param output the XID of the output
+ * @param length length of the byte-array. If NULL, request will fail.
  */
 EAPI unsigned char *
 ecore_x_randr_output_edid_get(Ecore_X_Window root,

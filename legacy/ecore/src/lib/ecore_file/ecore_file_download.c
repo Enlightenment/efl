@@ -291,8 +291,8 @@ _ecore_file_download_curl(const char *url, const char *dst,
 #endif
 
 /**
- * Abort the given download job and call the @p completion_cb function with a
- * @status of 1 (error)
+ * Abort the given download job and call the completion_cb function with a
+ * status of 1 (error)
  * @param  job The download job to abort
  */
 

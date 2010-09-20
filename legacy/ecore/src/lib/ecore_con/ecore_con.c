@@ -950,9 +950,9 @@ ecore_con_client_ssl_cert_add(const char *cert_file,
  * This function performs a DNS lookup on the hostname specified by @p name, then
  * calls @p done_cb with
  *
- * @params name IP address or server name to translate.
- * @params done_cb Callback to notify when done.
- * @params data User data to be given to done_cb.
+ * @param name IP address or server name to translate.
+ * @param done_cb Callback to notify when done.
+ * @param data User data to be given to done_cb.
  * @return EINA_TRUE if the request did not fail to be set up, EINA_FALSE if it failed.
  */
 EAPI Eina_Bool
