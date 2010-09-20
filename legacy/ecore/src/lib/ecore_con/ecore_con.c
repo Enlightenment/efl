@@ -822,8 +822,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
    else
      {
         if (cl->host_server)
-           cl->host_server->clients = eina_list_remove(
-                 cl->host_server->clients, cl);
+           cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
 
         _ecore_con_client_free(cl);
      }
@@ -1795,7 +1794,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                                        NULL);
                     }
 
-                  if(!cl->delete_me)
+                  if (!cl->delete_me)
                     {
                        Ecore_Con_Event_Client_Add *add;
 
@@ -1804,10 +1803,8 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                          {
 /*cl->event_count++;*/
                             add->client = cl;
-                            ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD,
-                                            add,
-                                            _ecore_con_event_client_add_free,
-                                            NULL);
+                            ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
+                                            _ecore_con_event_client_add_free, NULL);
                          }
                     }
                }
@@ -1827,9 +1824,8 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                        svr->event_count++;
                        /* be explicit here */
                        e->client = NULL;
-                            ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
-                                       _ecore_con_event_client_del_free,
-                                       NULL);
+                       ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+                                  _ecore_con_event_client_del_free, NULL);
                     }
                }
 
@@ -1857,7 +1853,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
    for (tries = 0; tries < 16; tries++)
      {
         int num;
-        int lost_client = 1;
+        Eina_Bool lost_client = EINA_TRUE;
         unsigned char buf[READBUFSIZ];
 
         errno = 0;
@@ -1866,11 +1862,11 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
           {
              if ((num = read(cl->fd, buf, READBUFSIZ)) <= 0)
                 if ((num < 0) && (errno == EAGAIN))
-                   lost_client = 0;
+                   lost_client = EINA_FALSE;
 
           }
         else if (!(num = ecore_con_ssl_client_read(cl, buf, READBUFSIZ)))
-           lost_client = 0;
+           lost_client = EINA_FALSE;
 
         if (num > 0)
           {
