@@ -536,7 +536,7 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
    else
      {
 	parent = evas_object_data_get(obj, "elm-parent");
-	if (!parent) parent = evas_object_smart_data_get(obj);
+	if (!parent) parent = evas_object_smart_parent_get(obj);
      }
 
    while (parent)
