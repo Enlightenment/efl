@@ -42,8 +42,8 @@ These routines are used for Ecore Library interaction
 @author Andre Dieb <andre.dieb\@gmail.com>
 @author Mathieu Taillefumier <mathieu.taillefumier\@free.fr>
 @author Rui Miguel Silva Seabra <rms\@1407.org>
-@author Saumsung Electronics <tbd>
-@author Samsung SAIT <tbd>
+@author Saumsung Electronics
+@author Samsung SAIT
 @author Nicolas Aguirre <aguirre.nicolas\@gmail.com>
 @author Brett Nash <nash\@nash.id.au>
 @author Mike Blumenkrantz <mike\@zentific.com>
@@ -218,7 +218,7 @@ follows the same principles as shown in this example.
 
 */
 
-/**
+/*
 @page Ecore_Config_Page The Enlightened Property Library
 
 The Enlightened Property Library (Ecore_Config) is an adbstraction
@@ -234,53 +234,6 @@ The following examples show how to use the Enlightened Property Library:
 @li @link config_basic_example.c config_basic_example.c @endlink
 @li @link config_listener_example.c config_listener_example.c @endlink
 
-*/
-
-/**
-@page Ecore_ADT_Page Ecore Abstract Data Types
-
-This page briefly describes the different abstract data types
-that are provided by the Ecore library for general usage.  You need to
-include the @link Ecore_Data.h Ecore_Data.h @endlink to use them.
-
-@section Ecore_ADT_List List
-
-A list is a simple data type where one each piece of data points to
-another piece of data.
-
-Associated modules that describe the List ADT include:
-@li @ref Ecore_Data_List_Creation_Group
-@li @ref Ecore_Data_List_Add_Item_Group
-@li @ref Ecore_Data_List_Remove_Item_Group
-@li @ref Ecore_Data_List_Traverse_Group
-@li @ref Ecore_Data_List_Node_Group
-
-Examples involving lists include:
-@li @link list_example.c list_example.c @endlink
-
-@section Ecore_ADT_DList Doubly Linked List
-
-A doubly linked list is like a linked list, only each piece of data
-can also point to the piece before it.  In other words, you can traverse
-a doubly linked list in both directions.
-
-Associated modules that describe the DList ADT include:
-@li @ref Ecore_Data_DList_Creation_Group
-@li @ref Ecore_Data_DList_Add_Item_Group
-@li @ref Ecore_Data_DList_Remove_Item_Group
-
-@section Ecore_ADT_Hash Hash
-
-A hash is an abstract data type where one value is associated with another
-value.  Instead of each element of the group being accessible using a
-number, each element is accessed using another object.
-
-Associated modules that describe the Hash ADT include:
-@li @ref Ecore_Data_Hash_ADT_Creation_Group
-@li @ref Ecore_Data_Hash_ADT_Destruction_Group
-@li @ref Ecore_Data_Hash_ADT_Data_Group
-
-@todo Finish this.
 */
 
 /**
@@ -335,7 +288,7 @@ state.
 
 */
 
-/**
+/*
 @defgroup Ecore_Config_Create_Group Ecore Config Create Functions
 
 Convenience functions that set default values, bounds, option values and
@@ -351,52 +304,42 @@ Functions that are used to load and save properties from and to files.
 // EXAMPLES
 
 /**
-@example args_example.c
+@example ecore_args_example.c
 Shows how to set and retrieve the program arguments.
 */
 
 /**
-@example con_server_example.c
+@example ecore_con_server_example.c
 Shows how to write a simple server using the Ecore_Con library.
 */
 
 /**
-@example con_client_example.c
+@example ecore_con_client_example.c
 Shows how to write a simple client, that connects to the example server.
 */
 
 /**
-@example event_handler_example.c
+@example ecore_event_handler_example.c
 Shows how to use event handlers.
 */
 
 /**
-@example timer_example.c
+@example ecore_timer_example.c
 Demonstrates use of the ecore_timer.
 */
 
-/**
-@example config_basic_example.c
+/*
+@example ecore_config_basic_example.c
 Provides an example of how to use the basic configuration functions.
 See the file Ecore_Config.h for the full list of available functions.
 */
 
-/**
-@example config_listener_example.c
+/*
+@example ecore_config_listener_example.c
 Shows how to set up a listener to listen for configuration changes.
 */
 
 /**
-@example list_example.c
-Provides a basic example of how to append to and traverse a list.
-*/
-
-/**
-@example list_destroy_example.c
-Shows how to set and use a destructor for an Ecore_List.
-*/
-
-/**
-@example x_window_example.c
+@example ecore_x_window_example.c
 Shows the basics of using the X Windows system through Ecore functions.
 */

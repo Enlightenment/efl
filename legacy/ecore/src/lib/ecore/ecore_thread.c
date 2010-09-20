@@ -967,7 +967,6 @@ ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value, 
  * @param key The name string to add the data with
  * @param value The data to add
  * @param cb The callback to free the data with
- * @param direct If true, this will not copy the key string (like eina_hash_direct_add)
  * @return The old data associated with @p key on success if modified, NULL if added
  * This adds/modifies data in the thread context, adding only if modify fails.
  * This function can only be called by a *_run thread INSIDE the thread.
@@ -1120,7 +1119,7 @@ ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina
  * @param key The name string to add the data with
  * @param value The data to add
  * @param cb The optional callback to free the data with once ecore is shut down
- * @return An @ref Ecore_Thread_Data on success, NULL on failure
+ * @return An Ecore_Thread_Data on success, NULL on failure
  * This adds data to the global thread data and returns NULL, or replaces the previous data
  * associated with @p key and returning the previous data if it existed.  To see if an error occurred,
  * one must use eina_error_get.
