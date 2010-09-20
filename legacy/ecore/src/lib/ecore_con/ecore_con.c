@@ -471,7 +471,6 @@ ecore_con_server_data_set(Ecore_Con_Server *svr, void *data)
 
 /**
  * Retrieves whether the given server is currently connected.
- * @todo Check that this function does what the documenter believes it does.
  * @param   svr The given server.
  * @return  @c 1 if the server is connected.  @c 0 otherwise.
  */
