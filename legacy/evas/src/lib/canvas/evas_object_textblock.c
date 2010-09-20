@@ -4294,6 +4294,71 @@ evas_textblock_node_format_prev_get(const Evas_Object_Textblock_Node_Format *n)
 }
 
 /**
+ * Remove a format node and it's match. i.e, removes a <tag> </tag> pair.
+ * Assumes the node is the first part of <tag> i.e, this won't work if
+ * n is a closing tag.
+ *
+ * @param obj the evas object of the textblock - not null.
+ * @param n the current format node - not null.
+ */
+EAPI void
+evas_textblock_node_format_remove_pair(Evas_Object *obj,
+      Evas_Object_Textblock_Node_Format *n)
+{
+   Evas_Object_Textblock_Node_Text *tnode;
+   Evas_Object_Textblock_Node_Format *fmt, *pnode;
+   int level;
+   TB_HEAD();
+
+   if (!n) return;
+
+   pnode = NULL;
+   fmt = n;
+   tnode = fmt->text_node;
+   level = 0;
+
+   do
+     {
+        const char *fstr = eina_strbuf_string_get(fmt->format);
+
+        if (fstr && (*fstr == '+'))
+          {
+             level++;
+          }
+        else if (fstr && (*fstr == '-'))
+          {
+             level--;
+          }
+
+        pnode = fmt;
+        fmt = _NODE_FORMAT(EINA_INLIST_GET(fmt)->next);
+     }
+   while (fmt && (level > 0));
+
+   if (n->visible)
+     {
+        size_t index = _evas_textblock_node_format_pos_get(n);
+        const char *format = eina_strbuf_string_get(n->format);
+        Evas_Textblock_Cursor cur;
+        cur.obj = obj;
+
+        eina_ustrbuf_remove(n->text_node->unicode, index, index + 1);
+        if (format && _IS_PARAGRAPH_SEPARATOR(format))
+          {
+             evas_textblock_cursor_set_at_format(&cur, n);
+             _evas_textblock_cursor_nodes_merge(&cur);
+          }
+        _evas_textblock_cursors_update_offset(&cur, n->text_node, index, -1);
+     }
+   _evas_textblock_node_format_remove(o, n, 1);
+   if (pnode && (pnode != n))
+     {
+        _evas_textblock_node_format_remove(o, pnode, 0);
+     }
+   _evas_textblock_changed(o, obj);
+}
+
+/**
  * Sets the cursor to the start of the first text node.
  *
  * @param cur the cursor to update.
