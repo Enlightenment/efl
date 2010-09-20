@@ -292,7 +292,7 @@ struct _Evas
    Eina_Array     clip_changes;
 
    Eina_List     *post_events; // free me on evas_free
-   
+
    Evas_Callbacks *callbacks;
 
    int            delete_grabs;
@@ -448,7 +448,7 @@ struct _Evas_Object
    int                         last_event;
 
    unsigned char               delete_me;
-   
+
    Evas_Object_Pointer_Mode    pointer_mode : 1;
 
    Eina_Bool                   store : 1;
@@ -460,7 +460,7 @@ struct _Evas_Object
    Eina_Bool                   changed : 1;
    Eina_Bool                   changed_move : 1;
    Eina_Bool                   is_active : 1;
-   
+
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
    Eina_Bool                   mouse_in : 1;
@@ -469,9 +469,8 @@ struct _Evas_Object
    Eina_Bool                   focused : 1;
    Eina_Bool                   in_layer : 1;
    Eina_Bool                   no_propagate : 1;
-   
+
    Eina_Bool                   precise_is_inside : 1;
-   Eina_Bool                   havemap_parent : 1;
    Eina_Bool                   is_static_clip : 1;
 };
 
@@ -542,7 +541,7 @@ struct _Evas_Object_Func
    int  (*was_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
    void (*coords_recalc) (Evas_Object *obj);
-   
+
    void (*scale_update) (Evas_Object *obj);
 
    int (*has_opaque_rect) (Evas_Object *obj);
@@ -817,7 +816,7 @@ void evas_render_object_recalc(Evas_Object *obj);
 
 Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
-       
+
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
 
