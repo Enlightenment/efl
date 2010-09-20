@@ -993,11 +993,16 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, unsigned char *buf,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 {
+   int ret = -1;
    SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->host_server->ssl_ctx)));
 
-   SSL_set_accept_state(cl->ssl);
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
-   SSL_ERROR_CHECK_GOTO_ERROR(SSL_do_handshake(cl->ssl) < 1);
+   SSL_set_accept_state(cl->ssl);
+   while ((ret = SSL_do_handshake(cl->ssl)) < 1)
+     {
+        int err = SSL_get_error(cl->ssl, ret);
+        SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
+     }
    
    return ECORE_CON_SSL_ERROR_NONE;
 
