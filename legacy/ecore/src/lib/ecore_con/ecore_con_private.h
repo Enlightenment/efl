@@ -110,6 +110,7 @@ struct _Ecore_Con_Server
    void *data;
    Ecore_Fd_Handler *fd_handler;
    Eina_List *clients;
+   unsigned int client_count;
    int write_buf_size;
    int write_buf_offset;
    unsigned char *write_buf;

@@ -822,7 +822,12 @@ ecore_con_client_del(Ecore_Con_Client *cl)
    else
      {
         if (cl->host_server)
-           cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
+          {
+             cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
+             if (!(--cl->host_server->client_count))
+               /* avoid segv from nonnull list */
+               cl->host_server->clients = NULL;
+          }
 
         _ecore_con_client_free(cl);
      }
@@ -1497,7 +1502,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
       return ECORE_CALLBACK_RENEW;
 
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients) &&
-       (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit))
+       (svr->client_count >= (unsigned int)svr->client_limit))
      return ECORE_CALLBACK_RENEW;
 
    /* a new client */
@@ -1511,7 +1516,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
      return ECORE_CALLBACK_RENEW;
      
    if ((svr->client_limit >= 0) && (svr->reject_excess_clients) &&
-       (eina_list_count(svr->clients) >= (unsigned int)svr->client_limit))
+       (svr->client_count >= (unsigned int)svr->client_limit))
      goto error;
 
    cl = calloc(1, sizeof(Ecore_Con_Client));
@@ -1533,6 +1538,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                                 _ecore_con_svr_cl_handler, cl, NULL, NULL);
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
    svr->clients = eina_list_append(svr->clients, cl);
+   svr->client_count++;
    if (!svr->path)
       cl->ip = _ecore_con_pretty_ip((struct sockaddr *)&incoming, size_in);
 
@@ -1768,6 +1774,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                   memcpy(cl->client_addr, &client_addr, client_addr_len);
                   ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
                   svr->clients = eina_list_append(svr->clients, cl);
+                  svr->client_count++;
 
                   cl->ip = _ecore_con_pretty_ip(cl->client_addr,
                                                 cl->client_addr_len);
