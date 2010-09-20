@@ -1360,7 +1360,7 @@ _ethumb_image_load(Ethumb *e)
 	 ExifData  *exif = exif_data_new_from_file(e->src_path);
 	 ExifEntry *entry = NULL;
 	 ExifByteOrder bo;
-	 int o;
+	 int o = 0;
 
 	 if (exif)
 	   {
