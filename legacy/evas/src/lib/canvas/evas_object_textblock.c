@@ -2295,44 +2295,43 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 
    if (n)
      {
+        int len;
+        int orig_off = off;
+        len = eina_ustrbuf_length_get(n->unicode);
+        if (off == 0) return;
+        else if (off < 0) off = len - start;
+
+        if (start < 0)
+          {
+             start = 0;
+          }
+        else if ((start == 0) && (off == 0) && (orig_off == -1))
+          {
+             /* Special case that means that we need to add an empty
+              * item */
+             str = EINA_UNICODE_EMPTY_STRING;
+             goto skip;
+          }
+        else if ((start >= len) || (start + off > len))
+          {
+             return;
+          }
         if ((repch) && (eina_ustrbuf_length_get(n->unicode)))
           {
-             int i, len, ind;
+             int i, ind;
              Eina_Unicode *ptr;
              Eina_Unicode urepch;
 
-             len = eina_ustrbuf_length_get(n->unicode);
-             str = alloca((len + 1) * sizeof(Eina_Unicode));
+             str = alloca((off + 1) * sizeof(Eina_Unicode));
              tbase = str;
              ind = 0;
              urepch = evas_common_encoding_utf8_get_next(repch, &ind);
-             for (i = 0, ptr = (Eina_Unicode *)tbase; i < len; ptr++, i++)
+             for (i = 0, ptr = (Eina_Unicode *)tbase; i < off; ptr++, i++)
                *ptr = urepch;
              *ptr = 0;
           }
         else
           {
-             int len;
-             int orig_off = off;
-             len = eina_ustrbuf_length_get(n->unicode);
-             if (off == 0) return;
-             else if (off < 0) off = len - start;
-
-             if (start < 0)
-               {
-                  start = 0;
-               }
-             else if ((start == 0) && (off == 0) && (orig_off == -1))
-               {
-                  /* Special case that means that we need to add an empty
-                   * item */
-                  str = EINA_UNICODE_EMPTY_STRING;
-                  goto skip;
-               }
-             else if ((start >= len) || (off > len))
-               {
-                  return;
-               }
              str = eina_ustrbuf_string_get(n->unicode);
              alloc_str = eina_unicode_strdup(str + start);
 
