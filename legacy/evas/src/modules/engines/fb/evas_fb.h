@@ -50,7 +50,7 @@ int  fb_postinit(FB_Mode *mode);
 int  fb_await_switch(int block);
 /* list all current possible video modes listed in /etc/fb.modes             */
 /* returns pointer to an aray of FB_Mode, and sets num_return to the number  */
-/* of elements int he returned array                                         */
+/* of elements in the returned array                                         */
 FB_Mode *fb_list_modes(unsigned int *num_return);
 /* sets the fb mode to the resolution width x height and the depth to depth. */
 /* and if refresh > 0 attempts to use a mode with a refresh rate (in Hz) of  */

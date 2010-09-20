@@ -264,16 +264,15 @@ _ecore_thread_pri_drop(void)
 #ifdef __linux__
    else
      {
-        tid = syscall(SYS_gettid);
         errno = 0;
-        prio = getpriority(PRIO_PROCESS, tid);
+        prio = getpriority(PRIO_PROCESS, 0);
         if (errno == 0)
           {
              prio += 5;
              if (prio > 19)
                 prio = 19;
 
-             setpriority(PRIO_PROCESS, tid, prio);
+             setpriority(PRIO_PROCESS, 0, prio);
           }
      }
 #endif
