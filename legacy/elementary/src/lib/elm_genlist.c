@@ -2879,7 +2879,7 @@ elm_genlist_item_object_get(const Elm_Genlist_Item *it)
  * Update the contents of an item
  *
  * This updates an item by calling all the item class functions again to get
- * the icons, labels and states. Use this when he original item data has
+ * the icons, labels and states. Use this when the original item data has
  * changed and the changes are desired to be reflected.
  *
  * @param it The item

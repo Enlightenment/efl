@@ -7,7 +7,7 @@
  * The pager is an object that allows flipping (with animation) between 1 or
  * more “pages” of objects, much like a stack of windows within the window.
  *
- * Objects can be pushed or popped from he stack or deleted as normal.
+ * Objects can be pushed or popped from the stack or deleted as normal.
  * Pushes and pops will animate (and a pop will delete the object once the
  * animation is finished). Any object in the pager can be promoted to the top
  * (from its current stacking position) as well. Objects are pushed to the
