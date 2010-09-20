@@ -39,7 +39,7 @@ extern int _randr_version;
 #endif
 
 /**
- * @Brief enable event selection. This enables basic interaction with
+ * @brief enable event selection. This enables basic interaction with
  * output/crtc events and requires RRandR >= 1.2.
  * @param win select this window's properties for RandRR events
  * @param on enable/disable selecting
@@ -636,7 +636,7 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root,
 }
 
 /*
- * @Brief sets the position of given CRTC within root window's screen
+ * @brief sets the position of given CRTC within root window's screen
  * @param root the window's screen to be queried
  * @param crtc the CRTC which's position within the mentioned screen is to be altered
  * @param x position on the x-axis (0 == left) of the screen. if x < 0 current value will be kept.
@@ -691,7 +691,7 @@ ecore_x_randr_crtc_pos_set(Ecore_X_Window root,
 }
 
 /**
- * @Brief Get the current set mode of a given CRTC
+ * @brief Get the current set mode of a given CRTC
  * @param root the window's screen to be queried
  * @param crtc the CRTC which's should be queried
  * @return currently set mode or - in case parameters are invalid -
@@ -725,7 +725,7 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
 }
 
 /**
- * @Brief sets a mode for a CRTC and the outputs attached to it
+ * @brief sets a mode for a CRTC and the outputs attached to it
  * @param root the window's screen to be queried
  * @param crtc the CRTC which shall be set
  * @param outputs array of outputs which have to be compatible with the mode. If
@@ -1578,7 +1578,7 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root,
 }
 
 /**
- * @Brief gets the EDID information of an attached output if available.
+ * @brief gets the EDID information of an attached output if available.
  * Note that this information is not to be compared using ordinary string
  * comparison functions, since it includes 0-bytes.
  * @param root window this information should be queried from
@@ -1734,7 +1734,7 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
 }
 
 /*
- * @Brief move given CRTCs belonging to the given root window's screen dx/dy pixels relative to their current position. The screen size will be automatically adjusted if necessary and possible.
+ * @brief move given CRTCs belonging to the given root window's screen dx/dy pixels relative to their current position. The screen size will be automatically adjusted if necessary and possible.
  * @param root window which's screen's resources are used
  * @param crtcs list of CRTCs to be moved
  * @param ncrtc number of CRTCs in array
