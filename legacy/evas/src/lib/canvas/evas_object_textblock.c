@@ -284,7 +284,6 @@ struct _Evas_Object_Textblock_Item
    int                              x, w, h;
    int                              inset, baseline;
    size_t                           source_pos;
-   unsigned char                    type;
    Evas_BiDi_Props                  bidi_props;
 };
 
