@@ -1067,6 +1067,28 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
 
+   if ((!cl->buf) && cl->delete_me && (!cl->dead) && (!cl->event_count))
+     {
+      /* this is a catch-all for cases when a client is not properly killed.
+       * the only example case I've found so far is if a client ssl handshakes
+       * and then immediately disconnects without sending any further data.
+       */
+     
+        /* we lost our client! */
+        Ecore_Con_Event_Client_Del *e;
+
+        cl->dead = EINA_TRUE;
+        e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+        if (e)
+          {
+             cl->event_count++;
+             e->client = cl;
+             ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+                             _ecore_con_event_client_del_free, NULL);
+             return;
+          }
+     }
+
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
