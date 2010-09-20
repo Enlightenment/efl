@@ -49,7 +49,9 @@
  * is associated with a paragraph.
  * There are two types of format nodes, visible and invisible:
  * Visible: formats that a cursor can point to, i.e formats that
- * occupy space, for example: newlines, tabs, items and etc.
+ * occupy space, for example: newlines, tabs, items and etc. Some visible items
+ * are made of two parts, in this case, only the opening tag is visible.
+ * A closing tag (i.e a </tag> tag) should NEVER be visible.
  * Invisible: formats that don't occupy space, for example: bold and underline.
  * Being able to access format nodes is very important for some uses. For
  * example, edje uses the "<a>" format to create links in the text (and pop
