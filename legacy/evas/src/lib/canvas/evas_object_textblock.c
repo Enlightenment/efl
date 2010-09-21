@@ -5988,10 +5988,10 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
         if (fmt)
           {
              const char *format = NULL;
-             Evas_Object_Textblock_Node_Format *itr;
+             Evas_Object_Textblock_Node_Format *last_fmt;
              /* If there's a PS it must be the last become it delimits paragraphs */
-             itr = _evas_textblock_node_format_last_at_off(fmt);
-             format = eina_strbuf_string_get(fmt->format);
+             last_fmt = _evas_textblock_node_format_last_at_off(fmt);
+             format = eina_strbuf_string_get(last_fmt->format);
              if (format && _IS_PARAGRAPH_SEPARATOR(format))
                {
                   merge_nodes = 1;
@@ -5999,7 +5999,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
              /* If a singnular, mark as invisible, so we'll delete it. */
              if (!format || ((*format != '+') && (*format != '-')))
                {
-                  fmt->visible = EINA_FALSE;
+                  last_fmt->visible = EINA_FALSE;
                }
           }
 
