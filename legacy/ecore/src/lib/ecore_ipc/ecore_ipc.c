@@ -494,17 +494,17 @@ ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
 /**
  * Retrieves whether the given IPC server is currently connected.
  * @param   svr The given IPC server.
- * @return  @c 1 if the server is connected.  @c 0 otherwise.
+ * @return  #EINA_TRUE if the server is connected.  #EINA_FALSE otherwise.
  * @ingroup Ecore_IPC_Server_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
      {
 	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
 			 "ecore_ipc_server_connected_get");
-	return 0;
+	return EINA_FALSE;
      }
    return ecore_con_server_connected_get(svr->server);
 }
