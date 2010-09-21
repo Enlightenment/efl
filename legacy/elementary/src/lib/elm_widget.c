@@ -28,6 +28,7 @@ struct _Smart_Data
    void         (*activate_func) (Evas_Object *obj);
    void         (*disable_func) (Evas_Object *obj);
    void         (*theme_func) (Evas_Object *obj);
+   Eina_Bool    (*event_func) (Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info);
    void         (*signal_func) (Evas_Object *obj, const char *emission,
 	                        const char *source);
    void         (*callback_add_func) (Evas_Object *obj, const char *emission,
@@ -156,6 +157,40 @@ _propagate_y_drag_lock(Evas_Object *obj, int dir)
 }
 
 static void
+_propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   INTERNAL_ENTRY;
+   Evas_Callback_Type type = (Evas_Callback_Type)(long) data;
+   Evas_Event_Flags *event_flags = NULL;
+
+   switch (type)
+     {
+      case EVAS_CALLBACK_KEY_DOWN:
+           {
+              Evas_Event_Key_Down *ev = event_info;
+              event_flags = &(ev->event_flags);
+              break;
+           }
+      case EVAS_CALLBACK_KEY_UP:
+           {
+              Evas_Event_Key_Up *ev = event_info;
+              event_flags = &(ev->event_flags);
+              break;
+           }
+      default:
+         break;
+     }
+
+   if (event_flags && (*event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+     return;
+
+   if (sd->event_func && sd->event_func(obj, obj, type, event_info))
+     return;
+
+   elm_widget_parent_event_propagate(obj, type, event_info);
+}
+
+static void
 _parent_focus(Evas_Object *obj)
 {
    API_ENTRY return;
@@ -248,6 +283,13 @@ elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj))
 {
    API_ENTRY return;
    sd->theme_func = func;
+}
+
+EAPI void
+elm_widget_event_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info))
+{
+   API_ENTRY return;
+   sd->event_func = func;
 }
 
 EAPI void
@@ -458,6 +500,22 @@ elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
 {
    API_ENTRY return;
    sd->can_focus = can_focus;
+   if (can_focus)
+     {
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
+                                       _propagate_event,
+                                       (void *)(long) EVAS_CALLBACK_KEY_DOWN);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP,
+                                       _propagate_event,
+                                       (void *)(long) EVAS_CALLBACK_KEY_UP);
+     }
+   else
+     {
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_KEY_DOWN,
+                                       _propagate_event);
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_KEY_UP,
+                                       _propagate_event);
+     }
 }
 
 EAPI int
@@ -563,6 +621,24 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
 	else parent = evas_object_smart_parent_get(parent);
      }
    return parent;
+}
+
+EAPI Eina_Bool
+elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info)
+{
+   API_ENTRY return EINA_FALSE;
+   Evas_Object *parent = sd->parent_obj;
+   while (parent)
+     {
+        sd = evas_object_smart_data_get(parent);
+        if ((!sd) || (!_elm_widget_is(obj)))
+          return EINA_FALSE; //Not Elm Widget
+        if (sd->event_func && sd->event_func(parent, obj, type, event_info))
+          return EINA_TRUE;
+        parent = sd->parent_obj;
+     }
+
+   return EINA_FALSE;
 }
 
 EAPI int

@@ -213,6 +213,7 @@ EAPI void             elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (
 EAPI void             elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void             elm_widget_event_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info));
 EAPI void             elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void             elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source));
 EAPI void             elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data));
@@ -239,6 +240,7 @@ EAPI Evas_Object     *elm_widget_focused_object_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
 EAPI int              elm_widget_focus_jump(Evas_Object *obj, int forward);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
