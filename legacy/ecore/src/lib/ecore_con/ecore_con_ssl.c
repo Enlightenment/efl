@@ -808,10 +808,18 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 {
+   int ret = -1;
+   
    SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
 
-   SSL_set_connect_state(svr->ssl);
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
+   SSL_set_connect_state(svr->ssl);
+
+   while ((ret = SSL_do_handshake(svr->ssl)) < 1)
+     {
+        int err = SSL_get_error(svr->ssl, ret);
+        SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
+     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 
