@@ -241,7 +241,6 @@ _ecore_thread_pri_drop(void)
 {
    struct sched_param param;
    int pol, prio, ret;
-   pid_t tid;
    pthread_t pthread_id;
 
    pthread_id = pthread_self();
