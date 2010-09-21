@@ -60,15 +60,6 @@ LRESULT CALLBACK _ecore_win32_window_procedure(HWND   window,
                                                WPARAM window_param,
                                                LPARAM data_param);
 
-static void      _ecore_win32_error_print_cb(const Eina_Log_Domain *d,
-                                             Eina_Log_Level   level,
-                                             const char      *file,
-                                             const char      *fnc,
-                                             int              line,
-                                             const char      *fmt,
-                                             void            *data,
-                                             va_list          args);
-
 
 /***** API *****/
 
@@ -84,7 +75,6 @@ ecore_win32_init()
    if (!eina_init())
      return --_ecore_win32_init_count;
 
-   eina_log_print_cb_set(_ecore_win32_error_print_cb, NULL);
    _ecore_win32_log_dom_global = eina_log_domain_register("ecore_win32", ECORE_WIN32_DEFAULT_LOG_COLOR);
    if (_ecore_win32_log_dom_global < 0)
      {
@@ -433,18 +423,4 @@ _ecore_win32_window_procedure(HWND   window,
      default:
        return DefWindowProc(window, message, window_param, data_param);
      }
-}
-
-static void
-_ecore_win32_error_print_cb(const Eina_Log_Domain *d __UNUSED__,
-                            Eina_Log_Level   level __UNUSED__,
-                            const char     *file __UNUSED__,
-                            const char     *fnc,
-                            int             line,
-                            const char     *fmt,
-                            void           *data __UNUSED__,
-                            va_list         args)
-{
-   fprintf(stderr, "[%s:%d] ", fnc, line);
-   vfprintf(stderr, fmt, args);
 }
