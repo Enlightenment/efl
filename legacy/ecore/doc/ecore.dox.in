@@ -55,7 +55,7 @@ Ecore is a library of convenience functions.
 
 The Ecore library provides the following modules:
 @li @link Ecore.h        Ecore - Main Loop and Job Functions. @endlink
-@li @link Ecore_Con.h    Ecore_Con - Connection functions. @endlink
+@li @ref Ecore_Con_Group
 @li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
 @li @link Ecore_Fb.h     Ecore_FB - Frame buffer convenience functions. @endlink
 @li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
@@ -305,16 +305,6 @@ Functions that are used to load and save properties from and to files.
 /**
 @example ecore_args_example.c
 Shows how to set and retrieve the program arguments.
-*/
-
-/**
-@example ecore_con_server_example.c
-Shows how to write a simple server using the Ecore_Con library.
-*/
-
-/**
-@example ecore_con_client_example.c
-Shows how to write a simple client that connects to the example server.
 */
 
 /**
