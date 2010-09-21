@@ -94,6 +94,16 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
         goto on_exit;
      }
 
+   if (!pool->base)
+     {
+	pool->base = malloc(pool->item_size * pool->max);
+	if (!pool->base)
+	  {
+	     eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+	     goto retry_smaller;
+	  }
+     }
+
    if (pool->served < pool->max)
      {
         mem = pool->base + (pool->served++ *pool->item_size);
@@ -101,7 +111,8 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
         goto on_exit;
      }
 
-      eina_error_set(0);
+ retry_smaller:
+   eina_error_set(0);
    mem = malloc(pool->item_size);
    if (!mem)
       eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
@@ -185,13 +196,6 @@ eina_one_big_init(const char *context,
      {
         pool->name = (const char *)(pool + 1);
         memcpy((char *)pool->name, context, length);
-     }
-
-   pool->base = malloc(pool->item_size * pool->max);
-   if (!pool->base)
-     {
-        free(pool);
-        return NULL;
      }
 
 #ifdef EFL_HAVE_THREADS
