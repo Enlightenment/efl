@@ -74,7 +74,7 @@ int ECORE_CON_EVENT_URL_PROGRESS = 0;
 #ifdef HAVE_CURL
 static Eina_Bool _ecore_con_url_fd_handler(void *data,
                                            Ecore_Fd_Handler *fd_handler);
-static int       _ecore_con_url_perform(Ecore_Con_Url *url_con);
+static Eina_Bool _ecore_con_url_perform(Ecore_Con_Url *url_con);
 static size_t    _ecore_con_url_header_cb(void *ptr, size_t size, size_t nitems,
                                           void *stream);
 static size_t    _ecore_con_url_data_cb(void *buffer,
@@ -425,22 +425,22 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
  * @param url_con Connection object through which the request will be sent.
  * @param url URL that will receive the request
  *
- * @return 1 on success, 0 on error.
+ * @return EINA_TRUE on success, EINA_FALSE on error.
  *
  * @ingroup Ecore_Con_Url_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 {
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_url_set");
-        return 0;
+        return EINA_FALSE;
      }
 
    if (url_con->active)
-      return 0;
+      return EINA_FALSE;
 
    if (url_con->url)
       free(url_con->url);
@@ -455,11 +455,11 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
    else
       curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, "");
 
-   return 1;
+   return EINA_TRUE;
 #else
-   return 0;
-   url_con = NULL;
-   url = NULL;
+   return EINA_FALSE;
+   (void)url;
+   (void)url_con;
 #endif
 }
 
@@ -718,11 +718,11 @@ ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
  * @param password Password to use in authentication
  * @param safe Whether to use "safer" methods (eg, NOT http basic auth)
  *
- * @return 1 on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
  *
  * @ingroup Ecore_Con_Url_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
                            const char *password,
                            Eina_Bool safe)
@@ -732,7 +732,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
                          "ecore_con_url_httpauth_set");
-        return 0;
+        return EINA_FALSE;
      }
 
 # if LIBCURL_VERSION_NUM >= 0x071301
@@ -746,12 +746,12 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
 
            curl_easy_setopt(url_con->curl_easy, CURLOPT_USERNAME, username);
            curl_easy_setopt(url_con->curl_easy, CURLOPT_PASSWORD, password);
-        return 1;
+        return EINA_TRUE;
      }
 
 # endif
 #endif
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
@@ -763,7 +763,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
  * @param length  Payload length
  * @param content_type Content type of the payload (e.g. text/xml)
  *
- * @return 1 on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
  *
  * @ingroup Ecore_Con_Url_Group
  *
@@ -774,7 +774,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
  * @see ecore_con_url_data_get()
  * @see ecore_con_url_response_headers_get()
  */
-EAPI int
+EAPI Eina_Bool
 ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
                    const char *content_type)
 {
@@ -786,14 +786,14 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_send");
-        return 0;
+        return EINA_FALSE;
      }
 
    if (url_con->active)
-      return 0;
+      return EINA_FALSE;
 
    if (!url_con->url)
-      return 0;
+      return EINA_FALSE;
 
    /* Free response headers from previous send() calls */
    EINA_LIST_FREE(url_con->response_headers, s) free((char *)s);
@@ -851,11 +851,9 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
 
    url_con->received = 0;
 
-   int res = _ecore_con_url_perform(url_con);
-
-   return res;
+   return _ecore_con_url_perform(url_con);
 #else
-   return 0;
+   return EINA_FALSE;
    url_con = NULL;
    data = NULL;
    length = 0;
@@ -864,11 +862,18 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
 }
 
 /**
- * Makes a FTP upload
- * @return  FIXME: To be more documented.
+ * @brief Uploads a file to an ftp site.
+ * @param url_con The Ecore_Con_Url object to send with
+ * @param filename The path to the file to send
+ * @param user The username to log in with
+ * @param pass The password to log in with
+ * @param upload_dir The directory to which the file should be uploaded
+ * @return #EINA_TRUE on success, else #EINA_FALSE.
+ * Upload @p filename to an ftp server set in @p url_con using @p user
+ * and @p pass to directory @upload_dir
  * @ingroup Ecore_Con_Url_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
                          const char *user, const char *pass,
                          const char *upload_dir)
@@ -884,14 +889,14 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
         ECORE_MAGIC_FAIL(url_con,
                          ECORE_MAGIC_CON_URL,
                          "ecore_con_url_ftp_upload");
-        return 0;
+        return EINA_FALSE;
      }
 
    if (url_con->active)
-      return 0;
+      return EINA_FALSE;
 
    if (!url_con->url)
-      return 0;
+      return EINA_FALSE;
 
    if (filename)
      {
@@ -900,7 +905,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
                     snprintf(tmp, PATH_MAX, "%s", filename);
 
         if (stat(filename, &file_info))
-           return 0;
+           return EINA_FALSE;
 
         fd = fopen(filename, "rb");
         if (upload_dir)
@@ -923,24 +928,24 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
         return _ecore_con_url_perform(url_con);
      }
    else
-      return 0;
+      return EINA_FALSE;
 
 #else
-   return 0;
-   url_con = NULL;
-   filename = NULL;
-   user = NULL;
-   pass = NULL;
-   upload_dir = NULL;
+   return EINA_FALSE;
+   (void)url_con;
+   (void)filename;
+   (void)user;
+   (void)pass;
+   (void)upload_dir;
 #endif
 }
 
 /**
  * Send a Curl httppost
- * @return 1 on success, 0 on error.
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
  * @ingroup Ecore_Con_Url_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
 {
 #ifdef HAVE_CURL
@@ -953,22 +958,22 @@ ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
                          "ecore_con_url_http_post_send");
-        return 0;
+        return EINA_FALSE;
      }
 
    url_con->post = httppost;
 
    if (url_con->active)
-      return 0;
+      return EINA_FALSE;
 
    if (!url_con->url)
-      return 0;
+      return EINA_FALSE;
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPPOST, httppost);
 
    return ecore_con_url_send(url_con, NULL, 0, NULL);
 #else
-   return 0;
+   return EINA_FALSE;
    url_con = NULL;
 #endif
 }
@@ -1227,7 +1232,7 @@ _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems, void *stream)
    return retcode;
 }
 
-static int
+static Eina_Bool
 _ecore_con_url_perform(Ecore_Con_Url *url_con)
 {
    fd_set read_set, write_set, exc_set;
@@ -1298,13 +1303,13 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
              curl_multi_remove_handle(curlm, url_con->curl_easy);
              url_con->active = EINA_FALSE;
              url_con->fd = -1;
-             return 0;
+             return EINA_FALSE;
           }
 
         ecore_timer_thaw(_curl_timeout);
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
