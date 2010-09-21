@@ -2280,7 +2280,7 @@ _layout_word_next(Eina_Unicode *str, int p)
  * @param n the text node. - Not null.
  * @param start the start position. - in range.
  * @param off the offset - start + offset in range. if offset is -1, it'll add everything to the end of the string if offset = 0 it'll return with doing nothing.
- * @param repch TBD.
+ * @param repch a replacement char to print instead of the original string, for example, * when working with passwords.
  */
 static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch)
@@ -2292,12 +2292,15 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    const Eina_Unicode *tbase;
    Evas_Object_Textblock_Item *it;
 
-   /* FIXME: explain the algorithm. */
-
+   /* prepare a working copy of the string, either filled by the repch or
+    * filled with the true values */
    if (n)
      {
         int len;
         int orig_off = off;
+
+        /* Figure out if we want to bail, work with an empty string,
+         * or continue with a slice of the passed string */
         len = eina_ustrbuf_length_get(n->unicode);
         if (off == 0) return;
         else if (off < 0) off = len - start;
@@ -2317,6 +2320,9 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
           {
              return;
           }
+
+        /* If we work with a replacement char, create a string which is the same
+         * but with replacement chars instead of regular chars. */
         if ((repch) && (eina_ustrbuf_length_get(n->unicode)))
           {
              int i, ind;
@@ -2331,6 +2337,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
                *ptr = urepch;
              *ptr = 0;
           }
+        /* Use the string, just cut the relevant parts */
         else
           {
              str = eina_ustrbuf_string_get(n->unicode);
@@ -2803,8 +2810,8 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
  *
  * @param obj the evas object - NOT NULL.
  * @param calc_only true if should only calc sizes false if should also create the layout..
- * @param w the object's w.
- * @param h the object's h.
+ * @param w the object's w, -1 means no wrapping (i.e infinite size)
+ * @param h the object's h, -1 means inifinte size.
  * @param w_ret the object's calculated w.
  * @param h_ret the object's calculated h.
  */
@@ -2973,8 +2980,11 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    if (c->paragraphs) _paragraphs_clear(obj, c->paragraphs);
 }
 
-/**
- * FIXME: doc
+/*
+ * @internal
+ * Relayout the object according to current object size.
+ *
+ * @param obj the evas object - NOT NULL.
  */
 static void
 _relayout(const Evas_Object *obj)
