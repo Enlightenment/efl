@@ -469,6 +469,29 @@ extern "C" {
     * "clicked" - the user clicked the image
     */
 
+   typedef struct _Elm_Box_Transition Elm_Box_Transition;
+   struct _Elm_Box_Transition
+   {
+      double initial_time;
+      double duration;
+      Eina_Bool animation_ended:1;
+      Eina_Bool recalculate:1;
+      Ecore_Animator *animator;
+
+      struct
+      {
+         Evas_Object_Box_Layout layout;
+         void *data;
+         void(*free_data)(void *data);
+      } start, end;
+
+      void(*transition_end_cb)(void *data);
+      void *transition_end_data;
+      void (*transition_end_free_data)(void *data);
+      Eina_List *objs;
+      Evas_Object *box;
+   };
+
    EAPI Evas_Object *elm_box_add(Evas_Object *parent);
    EAPI void         elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
    EAPI void         elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
@@ -479,6 +502,10 @@ extern "C" {
    EAPI void         elm_box_clear(Evas_Object *obj);
    EAPI void         elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_unpack_all(Evas_Object *obj);
+   EAPI void         elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
+   EAPI void         elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data);
+   EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Object_Box_Layout start_layout, void *start_layout_data, void(*start_layout_free_data)(void *data), Evas_Object_Box_Layout end_layout, void *end_layout_data, void(*end_layout_free_data)(void *data), void(*transition_end_cb)(void *data), void *transition_end_data);
+   EAPI void         elm_box_transition_free(void *data);
    /* smart callbacks called:
     */
 

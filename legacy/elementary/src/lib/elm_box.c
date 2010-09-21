@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#define SIG_CHILD_ADDED "child,added"
+#define SIG_CHILD_REMOVED "child,removed"
 /**
  * @defgroup Box Box
  *
@@ -19,12 +21,22 @@
  * NOTE: Objects should not be added to box objects using _add() calls.
  */
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Transition_Animation_Data Transition_Animation_Data;
 
 struct _Widget_Data
 {
    Evas_Object *box;
    Eina_Bool horizontal:1;
    Eina_Bool homogeneous:1;
+};
+
+struct _Transition_Animation_Data
+{
+   Evas_Object *obj;
+   struct
+   {
+      int x, y, w, h;
+   } start, end;
 };
 
 static const char *widtype = NULL;
@@ -90,6 +102,169 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    _els_box_layout(o, priv, wd->horizontal, wd->homogeneous);
 }
 
+static Eina_Bool
+_transition_animation(void *data)
+{
+   evas_object_smart_changed(data);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_transition_layout_child_added(void *data, Evas_Object *obj, void *event_info)
+{
+   Transition_Animation_Data *tad;
+   Evas_Object_Box_Option *opt = event_info;
+   Elm_Box_Transition *layout_data = data;
+   tad = calloc(1, sizeof(Transition_Animation_Data));
+   if (!tad)
+      return;
+   tad->obj = opt->obj;
+   layout_data->objs = eina_list_append(layout_data->objs, tad);
+   layout_data->recalculate = EINA_TRUE;
+}
+
+static void
+_transition_layout_child_removed(void *data, Evas_Object *obj, void *event_info)
+{
+   Eina_List *l;
+   Transition_Animation_Data *tad;
+   Elm_Box_Transition *layout_data = data;
+
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
+     {
+        if (tad->obj == event_info)
+          {
+             free(eina_list_data_get(l));
+             layout_data->objs = eina_list_remove_list(layout_data->objs, l);
+             layout_data->recalculate = EINA_TRUE;
+             break;
+          }
+     }
+}
+
+static void
+_transition_layout_obj_resize_cb (void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Elm_Box_Transition *layout_data = data;
+   layout_data->recalculate = EINA_TRUE;
+}
+
+static void
+_transition_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv,
+      Elm_Box_Transition *layout_data)
+{
+   Eina_List *l;
+   Transition_Animation_Data *tad;
+   Evas_Coord x, y, w, h;
+
+   const double curtime = ecore_loop_time_get();
+   layout_data->duration = layout_data->duration - (curtime - layout_data->initial_time);
+   layout_data->initial_time = curtime;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
+     {
+        evas_object_geometry_get(tad->obj, &tad->start.x, &tad->start.y,
+              &tad->start.w, &tad->start.h);
+        tad->start.x = tad->start.x - x;
+        tad->start.y = tad->start.y - y;
+     }
+   layout_data->end.layout(obj, priv, layout_data->end.data);
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
+     {
+        evas_object_geometry_get(tad->obj, &tad->end.x, &tad->end.y,
+              &tad->end.w, &tad->end.h);
+        tad->end.x = tad->end.x - x;
+        tad->end.y = tad->end.y - y;
+     }
+}
+
+static Eina_Bool
+_transition_layout_load_children_list(Evas_Object_Box_Data *priv,
+      Elm_Box_Transition *layout_data)
+{
+   Eina_List *l;
+   Evas_Object_Box_Option *opt;
+   Transition_Animation_Data *tad;
+
+   EINA_LIST_FREE(layout_data->objs, tad)
+      free(tad);
+
+   EINA_LIST_FOREACH(priv->children, l, opt)
+     {
+        tad = calloc(1, sizeof(Transition_Animation_Data));
+        if (!tad)
+          {
+             EINA_LIST_FREE(layout_data->objs, tad)
+                free(tad);
+             layout_data->objs = NULL;
+             return EINA_FALSE;
+          }
+        tad->obj = opt->obj;
+        layout_data->objs = eina_list_append(layout_data->objs, tad);
+
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_transition_layout_animation_start(Evas_Object *obj, Evas_Object_Box_Data *priv,
+      Elm_Box_Transition *layout_data, Eina_Bool(*transition_animation_cb)(void *data))
+{
+   layout_data->start.layout(obj, priv, layout_data->start.data);
+   layout_data->box = obj;
+   layout_data->initial_time = ecore_loop_time_get();
+
+   if (!_transition_layout_load_children_list(priv, layout_data))
+      return EINA_FALSE;
+   _transition_layout_calculate_coords(obj, priv, layout_data);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb, layout_data);
+   evas_object_smart_callback_add(obj, SIG_CHILD_ADDED, _transition_layout_child_added, layout_data);
+   evas_object_smart_callback_add(obj, SIG_CHILD_REMOVED, _transition_layout_child_removed, layout_data);
+   if (!layout_data->animator)
+      layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
+   layout_data->animation_ended = EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static void
+_transition_layout_animation_stop(Elm_Box_Transition *layout_data)
+{
+   layout_data->animation_ended = EINA_TRUE;
+   if (layout_data->animator)
+     {
+        ecore_animator_del(layout_data->animator);
+        layout_data->animator = NULL;
+     }
+
+   if (layout_data->transition_end_cb)
+      layout_data->transition_end_cb(layout_data->transition_end_data);
+}
+
+static void
+_transition_layout_animation_exec(Evas_Object *obj, Evas_Object_Box_Data *priv,
+      Elm_Box_Transition *layout_data, const double curtime)
+{
+   Eina_List *l;
+   Transition_Animation_Data *tad;
+   Evas_Coord x, y, w, h;
+   Evas_Coord cur_x, cur_y, cur_w, cur_h;
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+
+
+   double progress = (curtime - layout_data->initial_time) / layout_data->duration;
+
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
+     {
+        cur_x = x + tad->start.x + ((tad->end.x - tad->start.x) * progress);
+        cur_y = y + tad->start.y + ((tad->end.y - tad->start.y) * progress);
+        cur_w = tad->start.w + ((tad->end.w - tad->start.w) * progress);
+        cur_h = tad->start.h + ((tad->end.h - tad->start.h) * progress);
+        evas_object_move(tad->obj, cur_x, cur_y);
+        evas_object_resize(tad->obj, cur_w, cur_h);
+     }
+}
 
 /**
  * Add a new box to the parent
@@ -355,4 +530,174 @@ elm_box_unpack_all(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_box_remove_all(wd->box, 0);
+}
+
+/**
+ * Set the callback layout function (@p cb) to the @p obj elm_box class.
+ *
+ * This function will use evas_object_box_layout_set() to set @p cb as the
+ * layout callback function for this box object.
+ * All layout funtions from evas_object_box can be used as @p cb. Some examples
+ * are evas_object_box_layout_horizontal, evas_object_box_layout_vertical and
+ * evas_object_box_layout_stack. elm_box_layout_transition can also be used.
+ * If @p cb is NULL, the default layout function from elm_box will be used.
+ *
+ * @note Changing the layout function will make horizontal/homogeneous fields
+ * from Widget_Data have NO further usage as they are controlled by default
+ * layout function. So calling elm_box_horizontal_set() or
+ * elm_box_homogenous_set() won't affect layout behavior.
+ *
+ * @param obj The box object
+ * @param cb The callback function used for layout
+ * @param data Data that will be passed to layout function
+ * @param free_data Function called to free @p data
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (cb)
+     evas_object_box_layout_set(wd->box, cb, data, free_data);
+   else
+     evas_object_box_layout_set(wd->box, _layout, wd, NULL);
+}
+
+/**
+ * Layout function which display a transition animation from start layout to end layout.
+ *
+ * This function should no be called directly. It may be used by elm_box_layout_set() or
+ * as_object_box_layout_set() as a layout function.
+ * The @p data passed to this function must be a Elm_Box_Transition*, that can be created
+ * using elm_box_transition_new() and freed with elm_box_transition_free().
+ *
+ * Usage Example:
+ * @code
+ * Evas_Object *box = elm_box_add(parent);
+ * Elm_Box_Transition *t = elm_box_transition_new(...add params here...);
+ * elm_box_layout_set(box, elm_box_layout_transition, t, elm_box_transition_free);
+ * @endcode
+ *
+ * @see elm_box_transition_new
+ * @see elm_box_transition_free
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
+{
+   Elm_Box_Transition *box_data = data;
+   const double curtime = ecore_loop_time_get();
+
+   if (box_data->animation_ended)
+     {
+          box_data->end.layout(obj, priv, box_data->end.data);
+          return;
+     }
+
+   if (!box_data->animator)
+     {
+        if (!_transition_layout_animation_start(obj, priv, box_data,
+            _transition_animation))
+           return;
+     }
+   else
+     {
+        if (box_data->recalculate)
+          {
+             _transition_layout_calculate_coords(obj, priv, box_data);
+             box_data->recalculate = EINA_FALSE;
+          }
+     }
+
+   if ((curtime >= box_data->duration + box_data->initial_time))
+      _transition_layout_animation_stop(box_data);
+   else
+      _transition_layout_animation_exec(obj, priv, box_data, curtime);
+}
+
+/**
+ * Create a new Elm_Box_Transition setted with informed parameters.
+ *
+ * The returned instance may be used as data parameter to elm_box_layout_transition()
+ * and should be freed with elm_box_transition_free().
+ *
+ * @param start_layout The layout function that will be used to start the animation
+ * @param start_layout_data The data to be passed the @p start_layout function
+ * @param start_layout_free_data Function to free @p start_layout_data
+ * @param end_layout The layout function that will be used to end the animation
+ * @param end_layout_free_data The data to be passed the @p end_layout function
+ * @param end_layout_free_data Function to free @p end_layout_data
+ * @param transition_end_cb Callback function called when animation ends
+ * @param transition_end_data Data to be passed to @p transition_end_cb
+ * @return An instance of Elm_Box_Transition setted with informed parameters
+ *
+ * @see elm_box_transition_new
+ * @see elm_box_layout_transition
+ *
+ * @ingroup Box
+ */
+EAPI Elm_Box_Transition *
+elm_box_transition_new(const double duration,
+      Evas_Object_Box_Layout start_layout, void *start_layout_data,
+      void(*start_layout_free_data)(void *data),
+      Evas_Object_Box_Layout end_layout, void *end_layout_data,
+      void(*end_layout_free_data)(void *data),
+      void(*transition_end_cb)(void *data),
+      void *transition_end_data)
+{
+   Elm_Box_Transition *box_data;
+
+   if ((!start_layout) || (!end_layout))
+      return NULL;
+
+   box_data = calloc(1, sizeof(Elm_Box_Transition));
+   if (!box_data)
+      return NULL;
+
+   box_data->start.layout = start_layout;
+   box_data->start.data = start_layout_data;
+   box_data->start.free_data = start_layout_free_data;
+   box_data->end.layout = end_layout;
+   box_data->end.data = end_layout_data;
+   box_data->end.free_data = end_layout_free_data;
+   box_data->duration = duration;
+   box_data->transition_end_cb = transition_end_cb;
+   box_data->transition_end_data = transition_end_data;
+   return box_data;
+}
+
+/**
+ * Free a Elm_Box_Transition instance created with elm_box_transition_new().
+ *
+ * @param data The Elm_Box_Transition instance to be freed.
+ *
+ * @see elm_box_transition_new
+ * @see elm_box_layout_transition
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_transition_free(void *data)
+{
+   Transition_Animation_Data *tad;
+   Elm_Box_Transition *box_data = data;
+   if (box_data->start.free_data && box_data->start.data)
+      box_data->start.free_data(box_data->start.data);
+   if (box_data->end.free_data && box_data->end.data)
+      box_data->end.free_data(box_data->end.data);
+   EINA_LIST_FREE(box_data->objs, tad)
+      free(tad);
+   evas_object_event_callback_del(box_data->box, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb);
+   evas_object_smart_callback_del(box_data->box, SIG_CHILD_ADDED, _transition_layout_child_added);
+   evas_object_smart_callback_del(box_data->box, SIG_CHILD_REMOVED, _transition_layout_child_removed);
+   if (box_data->animator)
+     {
+        ecore_animator_del(box_data->animator);
+        box_data->animator = NULL;
+     }
+   free(data);
 }
