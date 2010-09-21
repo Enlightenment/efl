@@ -158,10 +158,11 @@ ecore_con_ssl_shutdown(void)
 
 /**
  * Returns if SSL support is available
- * @return  1 if SSL is available, 0 if it is not.
+ * @return 1 if SSL is available and provided by gnutls, 2 if provided by openssl,
+ * 0 if it is not available.
  * @ingroup Ecore_Con_Client_Group
  */
-int
+EAPI int
 ecore_con_ssl_available_get(void)
 {
    return _ECORE_CON_SSL_AVAILABLE;
