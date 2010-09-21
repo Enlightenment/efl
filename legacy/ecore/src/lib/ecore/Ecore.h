@@ -394,7 +394,7 @@ extern "C" {
    EAPI void              ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data);
    EAPI void             *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
-   EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+   EAPI Eina_Bool         ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
    EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data);

@@ -746,24 +746,23 @@ ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
  * @param   fd_handler The given FD handler.
  * @param   flags      The flags, @c ECORE_FD_READ, @c ECORE_FD_WRITE or
  *                     @c ECORE_FD_ERROR to query.
- * @return  @c 1 if any of the given flags are active. @c 0 otherwise.
+ * @return  #EINA_TRUE if any of the given flags are active. #EINA_FALSE otherwise.
  * @ingroup Ecore_FD_Handler_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
-   int ret;
+   int ret = EINA_FALSE;
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
 	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
 			 "ecore_main_fd_handler_active_get");
-	return 0;
+	return EINA_FALSE;
      }
-   ret = 0;
-   if ((flags & ECORE_FD_READ) && (fd_handler->read_active)) ret = 1;
-   if ((flags & ECORE_FD_WRITE) && (fd_handler->write_active)) ret = 1;
-   if ((flags & ECORE_FD_ERROR) && (fd_handler->error_active)) ret = 1;
+   if ((flags & ECORE_FD_READ) && (fd_handler->read_active)) ret = EINA_TRUE;
+   if ((flags & ECORE_FD_WRITE) && (fd_handler->write_active)) ret = EINA_TRUE;
+   if ((flags & ECORE_FD_ERROR) && (fd_handler->error_active)) ret = EINA_TRUE;
    return ret;
 }
 
