@@ -167,7 +167,7 @@ static void _dir_arch_list_cb(const char *name, const char *path, void *data)
 {
    Dir_List_Get_Cb_Data *cb_data = data;
    Eina_Module *m;
-   char *file;
+   char *file = NULL;
    size_t length;
 
    length = strlen(path) + 1 + strlen(name) + 1 +
