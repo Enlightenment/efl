@@ -1489,7 +1489,8 @@ elm_object_widget_type_get(const Evas_Object *obj)
  * @param source The signal's source.
  * @ingroup General
  */
-EAPI void elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+EAPI void 
+elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
     elm_widget_signal_emit(obj, emission, source);
 }
@@ -1509,7 +1510,8 @@ EAPI void elm_object_signal_emit(Evas_Object *obj, const char *emission, const c
  * @param data A pointer to data to pass in to the callback function.
  * @ingroup General
  */
-EAPI void elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+EAPI void 
+elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
     elm_widget_signal_callback_add(obj, emission, source, func, data);
 }
@@ -1531,7 +1533,8 @@ EAPI void elm_object_signal_callback_add(Evas_Object *obj, const char *emission,
  * @return The data pointer
  * @ingroup General
  */
-EAPI void *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+EAPI void *
+elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
     return elm_widget_signal_callback_del(obj, emission, source, func);
 }
