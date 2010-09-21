@@ -472,22 +472,22 @@ ecore_con_server_data_set(Ecore_Con_Server *svr, void *data)
 /**
  * Retrieves whether the given server is currently connected.
  * @param   svr The given server.
- * @return  @c 1 if the server is connected.  @c 0 otherwise.
+ * @return  #EINA_TRUE if the server is connected.  #EINA_FALSE otherwise.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_con_server_connected_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
         ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
                          "ecore_con_server_connected_get");
-        return 0;
+        return EINA_FALSE;
      }
 
    if (svr->connecting)
-      return 0;
+      return EINA_FALSE;
 
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
