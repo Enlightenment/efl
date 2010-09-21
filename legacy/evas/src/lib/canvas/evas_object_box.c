@@ -25,6 +25,13 @@ struct _Evas_Object_Box_Accessor
  */
 
 static const char _evas_object_box_type[] = "Evas_Object_Box";
+static const char SIG_CHILD_ADDED[] = "child,added";
+static const char SIG_CHILD_REMOVED[] = "child,removed";
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CHILD_ADDED, ""},
+   {SIG_CHILD_REMOVED, ""},
+   {NULL, NULL}
+};
 
 
 static void _sizing_eval(Evas_Object *obj);
@@ -237,6 +244,8 @@ _evas_object_box_append_default(Evas_Object *o, Evas_Object_Box_Data *priv, Evas
      return NULL;
 
    priv->children = eina_list_append(priv->children, opt);
+   priv->children_changed = EINA_TRUE;
+   evas_object_smart_callback_call(o, SIG_CHILD_ADDED, opt);
 
    return opt;
 }
@@ -251,6 +260,8 @@ _evas_object_box_prepend_default(Evas_Object *o, Evas_Object_Box_Data *priv, Eva
      return NULL;
 
    priv->children = eina_list_prepend(priv->children, opt);
+   priv->children_changed = EINA_TRUE;
+   evas_object_smart_callback_call(o, SIG_CHILD_ADDED, opt);
 
    return opt;
 }
@@ -273,6 +284,8 @@ _evas_object_box_insert_before_default(Evas_Object *o, Evas_Object_Box_Data *pri
 
 	     priv->children = eina_list_prepend_relative
 	       (priv->children, new_opt, opt);
+             priv->children_changed = EINA_TRUE;
+             evas_object_smart_callback_call(o, SIG_CHILD_ADDED, new_opt);
 	     return new_opt;
 	  }
      }
@@ -298,6 +311,8 @@ _evas_object_box_insert_after_default(Evas_Object *o, Evas_Object_Box_Data *priv
 
 	     priv->children = eina_list_append_relative
 		(priv->children, new_opt, opt);
+             priv->children_changed = EINA_TRUE;
+             evas_object_smart_callback_call(o, SIG_CHILD_ADDED, new_opt);
 	     return new_opt;
 	  }
      }
@@ -320,6 +335,8 @@ _evas_object_box_insert_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, E
 	  return NULL;
 
         priv->children = eina_list_prepend(priv->children, new_opt);
+        priv->children_changed = EINA_TRUE;
+        evas_object_smart_callback_call(o, SIG_CHILD_ADDED, new_opt);
         return new_opt;
      }
 
@@ -337,6 +354,8 @@ _evas_object_box_insert_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, E
 
 	     priv->children = eina_list_prepend_relative
 	       (priv->children, new_opt, opt);
+             priv->children_changed = EINA_TRUE;
+             evas_object_smart_callback_call(o, SIG_CHILD_ADDED, new_opt);
 	     return new_opt;
 	  }
      }
@@ -368,6 +387,8 @@ _evas_object_box_remove_default(Evas_Object *o, Evas_Object_Box_Data *priv, Evas
 	  {
 	     priv->children = eina_list_remove(priv->children, opt);
 	     api->option_free(o, priv, opt);
+             priv->children_changed = EINA_TRUE;
+             evas_object_smart_callback_call(o, SIG_CHILD_REMOVED, obj);
 
 	     return obj;
 	  }
@@ -405,6 +426,8 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
 
    priv->children = eina_list_remove_list(priv->children, node);
    api->option_free(o, priv, opt);
+   priv->children_changed = EINA_TRUE;
+   evas_object_smart_callback_call(o, SIG_CHILD_REMOVED, obj);
    return obj;
 }
 
@@ -497,6 +520,7 @@ _evas_object_box_smart_calculate(Evas_Object *o)
            priv->layouting = 1;
            priv->layout.cb(o, priv, priv->layout.data);
            priv->layouting = 0;
+           priv->children_changed = EINA_FALSE;
        }
    else
      ERR("No layout function set for %p box.", o);
@@ -509,6 +533,7 @@ _evas_object_box_smart_set_user(Evas_Object_Box_Api *api)
    api->base.del = _evas_object_box_smart_del;
    api->base.resize = _evas_object_box_smart_resize;
    api->base.calculate = _evas_object_box_smart_calculate;
+   api->base.callbacks = _signals;
 
    api->append = _evas_object_box_append_default;
    api->prepend = _evas_object_box_prepend_default;
