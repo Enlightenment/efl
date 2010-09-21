@@ -303,7 +303,7 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, 1);
 # ifdef HAVE_CURL
-   ecore_con_url_destroy(job->url_con);
+   ecore_con_url_free(job->url_con);
 # endif
    _job_list = eina_list_remove(_job_list, job);
    fclose(job->file);

@@ -158,15 +158,92 @@ ecore_con_shutdown(void)
 
    return _ecore_con_init_count;
 }
-/** @} */
+
+/**
+ * Do an asynchronous DNS lookup.
+ *
+ * This function performs a DNS lookup on the hostname specified by @p name, then
+ * calls @p done_cb with
+ *
+ * @param name IP address or server name to translate.
+ * @param done_cb Callback to notify when done.
+ * @param data User data to be given to done_cb.
+ * @return EINA_TRUE if the request did not fail to be set up, EINA_FALSE if it failed.
+ */
+EAPI Eina_Bool
+ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
+{
+   Ecore_Con_Server *svr;
+   Ecore_Con_Lookup *lk;
+   struct addrinfo hints;
+
+   if (!name || !done_cb)
+      return EINA_FALSE;
+
+   svr = calloc(1, sizeof(Ecore_Con_Server));
+   if (!svr)
+      return EINA_FALSE;
+
+   lk = malloc(sizeof (Ecore_Con_Lookup));
+   if (!lk)
+     {
+        free(svr);
+        return EINA_FALSE;
+     }
+
+   lk->done_cb = done_cb;
+   lk->data = data;
+
+   svr->name = strdup(name);
+   if (!svr->name)
+      goto on_error;
+
+   svr->type = ECORE_CON_REMOTE_TCP;
+   svr->port = 1025;
+   svr->data = lk;
+   svr->created = EINA_TRUE;
+   svr->reject_excess_clients = EINA_FALSE;
+   svr->client_limit = -1;
+   svr->clients = NULL;
+   svr->ppid = getpid();
+
+   memset(&hints, 0, sizeof(struct addrinfo));
+   hints.ai_family = AF_INET6;
+   hints.ai_socktype = SOCK_STREAM;
+   hints.ai_flags = AI_CANONNAME;
+   hints.ai_protocol = IPPROTO_TCP;
+   hints.ai_canonname = NULL;
+   hints.ai_next = NULL;
+   hints.ai_addr = NULL;
+
+   if (ecore_con_info_get(svr, _ecore_con_lookup_done, svr,
+                          &hints))
+      return EINA_TRUE;
+
+   free(svr->name);
+on_error:
+   free(lk);
+   free(svr);
+   return EINA_FALSE;
+}
+
+/**
+ * @}
+ */
 
 
 /**
  * @addtogroup Ecore_Con_Server_Group Ecore Connection Server Functions
  *
  * Functions that operate on Ecore server objects.
+ *
  * @{
  */
+
+/**
+ * @example ecore_con_server_example.c
+ * Shows how to write a simple server using the Ecore_Con library.
+*/
 
 /**
  * Creates a server to listen for connections.
@@ -193,7 +270,9 @@ ecore_con_shutdown(void)
  * @return A new Ecore_Con_Server.
  */
 EAPI Ecore_Con_Server *
-ecore_con_server_add(Ecore_Con_Type compl_type, const char *name, int port,
+ecore_con_server_add(Ecore_Con_Type compl_type,
+                     const char *name,
+                     int port,
                      const void *data)
 {
    Ecore_Con_Server *svr;
@@ -304,7 +383,9 @@ error:
  * @return A new Ecore_Con_Server.
  */
 EAPI Ecore_Con_Server *
-ecore_con_server_connect(Ecore_Con_Type compl_type, const char *name, int port,
+ecore_con_server_connect(Ecore_Con_Type compl_type,
+                         const char *name,
+                         int port,
                          const void *data)
 {
    Ecore_Con_Server *svr;
@@ -552,7 +633,9 @@ ecore_con_server_port_get(Ecore_Con_Server *svr)
  *          error.
  */
 EAPI int
-ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
+ecore_con_server_send(Ecore_Con_Server *svr,
+                      const void *data,
+                      int size)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
@@ -621,7 +704,8 @@ ecore_con_server_send(Ecore_Con_Server *svr, const void *data, int size)
  *                        lower).
  */
 EAPI void
-ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit,
+ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
+                                  int client_limit,
                                   char reject_excess_clients)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -696,6 +780,7 @@ ecore_con_server_ssl_cert_add(const char *cert)
 
    return ecore_con_ssl_server_cert_add(cert);
 }
+
 /**
  * @}
  */
@@ -704,8 +789,14 @@ ecore_con_server_ssl_cert_add(const char *cert)
  * @addtogroup Ecore_Con_Client_Group Ecore Connection Client Functions
  *
  * Functions that operate on Ecore connection client objects.
+ *
  * @{
  */
+
+/**
+ * @example ecore_con_client_example.c
+ * Shows how to write a simple client that connects to the example server.
+*/
 
 /**
  * Sends the given data to the given client.
@@ -716,7 +807,9 @@ ecore_con_server_ssl_cert_add(const char *cert)
  *          error.
  */
 EAPI int
-ecore_con_client_send(Ecore_Con_Client *cl, const void *data, int size)
+ecore_con_client_send(Ecore_Con_Client *cl,
+                      const void *data,
+                      int size)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
@@ -943,74 +1036,6 @@ ecore_con_client_ssl_cert_add(const char *cert_file,
 /**
  * @}
  */
-
-/**
- * Do an asynchronous DNS lookup.
- *
- * This function performs a DNS lookup on the hostname specified by @p name, then
- * calls @p done_cb with
- *
- * @param name IP address or server name to translate.
- * @param done_cb Callback to notify when done.
- * @param data User data to be given to done_cb.
- * @return EINA_TRUE if the request did not fail to be set up, EINA_FALSE if it failed.
- */
-EAPI Eina_Bool
-ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
-{
-   Ecore_Con_Server *svr;
-   Ecore_Con_Lookup *lk;
-   struct addrinfo hints;
-
-   if (!name || !done_cb)
-      return EINA_FALSE;
-
-   svr = calloc(1, sizeof(Ecore_Con_Server));
-   if (!svr)
-      return EINA_FALSE;
-
-   lk = malloc(sizeof (Ecore_Con_Lookup));
-   if (!lk)
-     {
-        free(svr);
-        return EINA_FALSE;
-     }
-
-   lk->done_cb = done_cb;
-   lk->data = data;
-
-   svr->name = strdup(name);
-   if (!svr->name)
-      goto on_error;
-
-   svr->type = ECORE_CON_REMOTE_TCP;
-   svr->port = 1025;
-   svr->data = lk;
-   svr->created = EINA_TRUE;
-   svr->reject_excess_clients = EINA_FALSE;
-   svr->client_limit = -1;
-   svr->clients = NULL;
-   svr->ppid = getpid();
-
-   memset(&hints, 0, sizeof(struct addrinfo));
-   hints.ai_family = AF_INET6;
-   hints.ai_socktype = SOCK_STREAM;
-   hints.ai_flags = AI_CANONNAME;
-   hints.ai_protocol = IPPROTO_TCP;
-   hints.ai_canonname = NULL;
-   hints.ai_next = NULL;
-   hints.ai_addr = NULL;
-
-   if (ecore_con_info_get(svr, _ecore_con_lookup_done, svr,
-                          &hints))
-      return EINA_TRUE;
-
-   free(svr->name);
-on_error:
-   free(lk);
-   free(svr);
-   return EINA_FALSE;
-}
 
 static void
 _ecore_con_server_free(Ecore_Con_Server *svr)

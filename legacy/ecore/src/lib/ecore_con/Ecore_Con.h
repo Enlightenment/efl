@@ -33,8 +33,7 @@
 #endif
 
 /**
- * @file Ecore_Con.h
- * @brief Sockets functions.
+ * @defgroup Ecore_Con_Group Ecore_Con - Connection functions
  *
  * The Ecore Connection Library ( @c Ecore_Con ) provides simple mechanisms
  * for communications between programs using reliable sockets.  It saves
@@ -53,7 +52,7 @@
  *
  * To connect to a server, call @c ecore_con_server_connect().  Data can
  * then be sent to the server using the @c ecore_con_server_send().
- * 
+ *
  * Functions are described in the following groupings:
  * @li @ref Ecore_Con_Lib_Group
  * @li @ref Ecore_Con_Server_Group
@@ -65,7 +64,7 @@
 
 
 /**
- * @addtogroup Ecore_Con_Events_Group Events
+ * @defgroup Ecore_Con_Events_Group Events
  * 
  * @li ECORE_CON_CLIENT_ADD: Whenever a client connection is made to an 
  * @c Ecore_Con_Server, an event of this type is emitted, allowing the 
@@ -105,81 +104,31 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** @typedef Ecore_Con_Server
- * A connection handle to a server
- */
-typedef struct _Ecore_Con_Server Ecore_Con_Server;
-/** @typedef Ecore_Con_Client
- * A connection handle to a client
- */
-typedef struct _Ecore_Con_Client Ecore_Con_Client;
-/** @typedef Ecore_Con_Url
- * A handle to an http upload/download object
- */
-typedef struct _Ecore_Con_Url Ecore_Con_Url;
-
-/**
- * @typedef Ecore_Con_Dns_Cb
- * A callback type for use with @ref ecore_con_lookup.
- */
-typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
-                                 const char *ip,
-                                 struct sockaddr *addr,
-                                 int addrlen,
-                                 void *data);
-
-/**
- * @typedef Ecore_Con_Type
- * @enum _Ecore_Con_Type
- * Types for an ecore_con client/server object.  A correct way to set this type is
- * with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if encryption is desired,
- * and LOAD_CERT if the previously loaded certificate should be used.
- * @code
- * ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT
- * @endcode
- */
-typedef enum _Ecore_Con_Type
-{
-   /** Socket in ~/.ecore */
-   ECORE_CON_LOCAL_USER = 0,
-   /** Socket in /tmp */
-   ECORE_CON_LOCAL_SYSTEM = 1,
-   /** Abstract socket */
-   ECORE_CON_LOCAL_ABSTRACT = 2,
-   /** Remote server using TCP */
-   ECORE_CON_REMOTE_TCP = 3,
-   /** Remote multicast server */
-   ECORE_CON_REMOTE_MCAST = 4,
-   /** Remote server using UDP */
-   ECORE_CON_REMOTE_UDP = 5,
-   /** Remote broadcast using UDP */
-   ECORE_CON_REMOTE_BROADCAST = 6,
-   ECORE_CON_REMOTE_NODELAY = 7,
-   /** Use SSL2: UNSUPPORTED. **/
-   ECORE_CON_USE_SSL2 = (1 << 4),
-   /** Use SSL3 */
-   ECORE_CON_USE_SSL3 = (1 << 5),
-   /** Use TLS */
-   ECORE_CON_USE_TLS = (1 << 6),
-   /** Attempt to use the previously loaded certificate */
-   ECORE_CON_LOAD_CERT = (1 << 7)
-} Ecore_Con_Type;
 #define ECORE_CON_USE_SSL ECORE_CON_USE_SSL2
 #define ECORE_CON_REMOTE_SYSTEM ECORE_CON_REMOTE_TCP
 
+
 /**
- * @typedef Ecore_Con_Url_Time
- * @enum _Ecore_Con_Url_Time
- * The type of time in the object
+ * @typedef Ecore_Con_Server
+ * A connection handle to a server
+ * @ingroup Ecore_Con_Server_Group
  */
-typedef enum _Ecore_Con_Url_Time
-{
-   ECORE_CON_URL_TIME_NONE = 0,
-   ECORE_CON_URL_TIME_IFMODSINCE,
-   ECORE_CON_URL_TIME_IFUNMODSINCE,
-   ECORE_CON_URL_TIME_LASTMOD
-} Ecore_Con_Url_Time;
+typedef struct _Ecore_Con_Server Ecore_Con_Server;
+
+/**
+ * @typedef Ecore_Con_Client
+ * A connection handle to a client
+ * @ingroup Ecore_Con_Client_Group
+ */
+typedef struct _Ecore_Con_Client Ecore_Con_Client;
+
+/**
+ * @typedef Ecore_Con_Url
+ * A handle to an http upload/download object
+ * @ingroup Ecore_Con_Url_Group
+ */
+typedef struct _Ecore_Con_Url Ecore_Con_Url;
+
 
 /**
  * @addtogroup Ecore_Con_Events_Group Events
@@ -345,15 +294,82 @@ EAPI extern int ECORE_CON_EVENT_URL_DATA;
 EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
 /** A URL object has made progress in its transfer */
 EAPI extern int ECORE_CON_EVENT_URL_PROGRESS;
+
 /**
  * @}
  */
+
+/**
+ * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
+ *
+ * @{
+ */
+
+/**
+ * @typedef Ecore_Con_Dns_Cb
+ * A callback type for use with @ref ecore_con_lookup.
+ */
+typedef void (*Ecore_Con_Dns_Cb)(const char *canonname,
+                                 const char *ip,
+                                 struct sockaddr *addr,
+                                 int addrlen,
+                                 void *data);
+
+/**
+ * @typedef Ecore_Con_Type
+ * @enum _Ecore_Con_Type
+ * Types for an ecore_con client/server object.  A correct way to set this type is
+ * with an ECORE_CON_$TYPE, optionally OR'ed with an ECORE_CON_$USE if encryption is desired,
+ * and LOAD_CERT if the previously loaded certificate should be used.
+ * @code
+ * ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT
+ * @endcode
+ */
+typedef enum _Ecore_Con_Type
+{
+   /** Socket in ~/.ecore */
+   ECORE_CON_LOCAL_USER = 0,
+   /** Socket in /tmp */
+   ECORE_CON_LOCAL_SYSTEM = 1,
+   /** Abstract socket */
+   ECORE_CON_LOCAL_ABSTRACT = 2,
+   /** Remote server using TCP */
+   ECORE_CON_REMOTE_TCP = 3,
+   /** Remote multicast server */
+   ECORE_CON_REMOTE_MCAST = 4,
+   /** Remote server using UDP */
+   ECORE_CON_REMOTE_UDP = 5,
+   /** Remote broadcast using UDP */
+   ECORE_CON_REMOTE_BROADCAST = 6,
+   ECORE_CON_REMOTE_NODELAY = 7,
+   /** Use SSL2: UNSUPPORTED. **/
+   ECORE_CON_USE_SSL2 = (1 << 4),
+   /** Use SSL3 */
+   ECORE_CON_USE_SSL3 = (1 << 5),
+   /** Use TLS */
+   ECORE_CON_USE_TLS = (1 << 6),
+   /** Attempt to use the previously loaded certificate */
+   ECORE_CON_LOAD_CERT = (1 << 7)
+} Ecore_Con_Type;
+
 EAPI int               ecore_con_init(void);
 EAPI int               ecore_con_shutdown(void);
-EAPI Eina_Bool         ecore_con_server_ssl_cert_add(const char *cert);
-EAPI Eina_Bool         ecore_con_client_ssl_cert_add(const char *cert_file,
-                                                     const char *crl_file,
-                                                     const char *key_file);
+
+EAPI int               ecore_con_ssl_available_get(void);
+
+EAPI Eina_Bool         ecore_con_lookup(const char *name,
+                                            Ecore_Con_Dns_Cb done_cb,
+                                            const void *data);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
+ *
+ * @{
+ */
 
 EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
                                             const char *name, int port,
@@ -373,13 +389,23 @@ EAPI int               ecore_con_server_port_get(Ecore_Con_Server *svr);
 EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              const void *data,
                                              int size);
-EAPI void              ecore_con_server_client_limit_set(
-   Ecore_Con_Server *svr,
-   int client_limit,
-   char
-   reject_excess_clients);
+EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
+                                                         int client_limit,
+                                                         char reject_excess_clients);
 EAPI const char *      ecore_con_server_ip_get(Ecore_Con_Server *svr);
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
+
+EAPI Eina_Bool         ecore_con_server_ssl_cert_add(const char *cert);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
+ *
+ * @{
+ */
 
 EAPI int               ecore_con_client_send(Ecore_Con_Client *cl,
                                              const void *data,
@@ -391,15 +417,40 @@ EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl,
 EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
 EAPI const char *      ecore_con_client_ip_get(Ecore_Con_Client *cl);
 EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
+EAPI Eina_Bool         ecore_con_client_ssl_cert_add(const char *cert_file,
+                                                     const char *crl_file,
+                                                     const char *key_file);
+/**
+ * @}
+ */
 
-EAPI int               ecore_con_ssl_available_get(void);
+/**
+ * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
+ *
+ * @{
+ */
+
+/**
+ * @typedef Ecore_Con_Url_Time
+ * @enum _Ecore_Con_Url_Time
+ * The type of time in the object
+ */
+typedef enum _Ecore_Con_Url_Time
+{
+   ECORE_CON_URL_TIME_NONE = 0,
+   ECORE_CON_URL_TIME_IFMODSINCE,
+   ECORE_CON_URL_TIME_IFUNMODSINCE,
+   ECORE_CON_URL_TIME_LASTMOD
+} Ecore_Con_Url_Time;
 
 EAPI int               ecore_con_url_init(void);
 EAPI int               ecore_con_url_shutdown(void);
 EAPI Ecore_Con_Url *   ecore_con_url_new(const char *url);
 EAPI Ecore_Con_Url *   ecore_con_url_custom_new(const char *url,
                                                 const char *custom_request);
-EAPI void              ecore_con_url_destroy(Ecore_Con_Url *url_con);
+EAPI void              ecore_con_url_free(Ecore_Con_Url *url_con);
+EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
+                                             const char *url);
 EAPI void              ecore_con_url_data_set(Ecore_Con_Url *url_con,
                                               void *data);
 EAPI void *            ecore_con_url_data_get(Ecore_Con_Url *url_con);
@@ -408,8 +459,6 @@ EAPI void              ecore_con_url_additional_header_add(Ecore_Con_Url *url_co
                                                            const char *value);
 EAPI void              ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con);
 EAPI const Eina_List * ecore_con_url_response_headers_get(Ecore_Con_Url *url_con);
-EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
-                                             const char *url);
 EAPI void              ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd);
 EAPI int               ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
 EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
@@ -423,10 +472,6 @@ EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con,
                                           Ecore_Con_Url_Time condition,
                                           time_t tm);
 
-EAPI Eina_Bool         ecore_con_lookup(const char *name,
-                                        Ecore_Con_Dns_Cb done_cb,
-                                        const void *data);
-
 EAPI Eina_Bool         ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
                                                 const char *filename,
                                                 const char *user,
@@ -438,6 +483,10 @@ EAPI void              ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
                                                       int use_epsv);
 EAPI Eina_Bool         ecore_con_url_http_post_send(Ecore_Con_Url *url_con,
                                                     void *curl_httppost);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }

@@ -59,14 +59,6 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
-/**
- * @defgroup Ecore_Con_Url_Group Ecore URL Connection Functions
- *
- * Utility functions that set up, use and shut down the Ecore URL
- * Connection library.
- * FIXME: write detailed description
- */
-
 int ECORE_CON_EVENT_URL_DATA = 0;
 int ECORE_CON_EVENT_URL_COMPLETE = 0;
 int ECORE_CON_EVENT_URL_PROGRESS = 0;
@@ -132,10 +124,20 @@ _url_complete_push_event(int type, void *ev)
 #endif
 
 /**
+ * @addtogroup Ecore_Con_Url_Group Ecore URL Connection Functions
+ *
+ * Utility functions that set up, use and shut down the Ecore URL
+ * Connection library.
+ *
+ * @todo write detailed description of Ecore_Con_Url
+ *
+ * @{
+ */
+
+/**
  * Initialises the Ecore_Con_Url library.
  * @return Number of times the library has been initialised without being
  *          shut down.
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI int
 ecore_con_url_init(void)
@@ -161,7 +163,7 @@ ecore_con_url_init(void)
         if (curl_global_init(CURL_GLOBAL_NOTHING))
           {
              while (_url_con_list)
-                ecore_con_url_destroy(eina_list_data_get(_url_con_list));
+                ecore_con_url_free(eina_list_data_get(_url_con_list));
              return 0;
           }
 
@@ -169,7 +171,7 @@ ecore_con_url_init(void)
         if (!curlm)
           {
              while (_url_con_list)
-                ecore_con_url_destroy(eina_list_data_get(_url_con_list));
+                ecore_con_url_free(eina_list_data_get(_url_con_list));
 
              init_count--;
              return 0;
@@ -194,7 +196,6 @@ ecore_con_url_init(void)
 /**
  * Shuts down the Ecore_Con_Url library.
  * @return  Number of calls that still uses Ecore_Con_Url
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI int
 ecore_con_url_shutdown(void)
@@ -219,7 +220,7 @@ ecore_con_url_shutdown(void)
    _curl_timeout = NULL;
 
    while (_url_con_list)
-      ecore_con_url_destroy(eina_list_data_get(_url_con_list));
+      ecore_con_url_free(eina_list_data_get(_url_con_list));
 
    if (curlm)
      {
@@ -243,7 +244,6 @@ ecore_con_url_shutdown(void)
  *
  * @return NULL on error, a new Ecore_Con_Url on success.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_custom_new()
  * @see ecore_con_url_url_set()
@@ -319,7 +319,6 @@ ecore_con_url_new(const char *url)
  *
  * @return NULL on error, a new Ecore_Con_Url on success.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_new()
  * @see ecore_con_url_url_set()
@@ -354,12 +353,12 @@ ecore_con_url_custom_new(const char *url, const char *custom_request)
 /**
  * Destroys a Ecore_Con_Url connection object.
  *
- * @ingroup Ecore_Con_Url_Group
+ * @param url_con Connection object to free.
  *
  * @see ecore_con_url_new()
  */
 EAPI void
-ecore_con_url_destroy(Ecore_Con_Url *url_con)
+ecore_con_url_free(Ecore_Con_Url *url_con)
 {
 #ifdef HAVE_CURL
    char *s;
@@ -369,7 +368,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_destroy");
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_free");
         return;
      }
 
@@ -427,7 +426,6 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
  *
  * @return EINA_TRUE on success, EINA_FALSE on error.
  *
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI Eina_Bool
 ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
@@ -472,7 +470,6 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
  * @param url_con Connection object to associate data.
  * @param data Data to be set.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_data_get()
  */
@@ -504,7 +501,6 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con, void *data)
  * @param key Header key
  * @param value Header value
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_send()
  * @see ecore_con_url_additional_headers_clear()
@@ -546,7 +542,6 @@ ecore_con_url_additional_header_add(Ecore_Con_Url *url_con, const char *key,
  *
  * @param url_con Connection object to clean additional headers.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_additional_header_add()
  * @see ecore_con_url_send()
@@ -578,11 +573,10 @@ ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
  * Retrieves data associated with a Ecore_Con_Url connection object (previously
  * set with ecore_con_url_data_set()).
  *
- * @param Connection object to retrieve data from.
+ * @param url_con Connection object to retrieve data from.
  *
  * @return Data associated with the given object.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_data_set()
  */
@@ -606,7 +600,6 @@ ecore_con_url_data_get(Ecore_Con_Url *url_con)
 /**
  * FIXME
  * Sets the @ref Ecore_Con_Url object's condition/time members.
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI void
 ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition,
@@ -639,7 +632,6 @@ ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition,
  * @param url_con Connection object to set file
  * @param fd File descriptor associated with the file
  *
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI void
 ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd)
@@ -665,7 +657,6 @@ ecore_con_url_fd_set(Ecore_Con_Url *url_con, int fd)
  *
  * @return Number of bytes received on request.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_send()
  */
@@ -697,7 +688,6 @@ ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
  *
  * @return List of response headers. This list must not be modified by the user.
  *
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI const Eina_List *
 ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
@@ -720,7 +710,6 @@ ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
  *
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI Eina_Bool
 ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
@@ -765,7 +754,6 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
  *
- * @ingroup Ecore_Con_Url_Group
  *
  * @see ecore_con_url_custom_new()
  * @see ecore_con_url_additional_headers_clear()
@@ -870,8 +858,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
  * @param upload_dir The directory to which the file should be uploaded
  * @return #EINA_TRUE on success, else #EINA_FALSE.
  * Upload @p filename to an ftp server set in @p url_con using @p user
- * and @p pass to directory @upload_dir
- * @ingroup Ecore_Con_Url_Group
+ * and @p pass to directory @p upload_dir
  */
 EAPI Eina_Bool
 ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
@@ -943,7 +930,6 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
 /**
  * Send a Curl httppost
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI Eina_Bool
 ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
@@ -981,7 +967,6 @@ ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
 /**
  * Enable or disable libcurl verbose output, useful for debug
  * @return  FIXME: To be more documented.
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI void
 ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
@@ -1013,7 +998,6 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
 /**
  * Enable or disable EPSV extension
  * @return  FIXME: To be more documented.
- * @ingroup Ecore_Con_Url_Group
  */
 EAPI void
 ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
@@ -1041,6 +1025,10 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
 
 #endif
 }
+
+/**
+ * @}
+ */
 
 #ifdef HAVE_CURL
 static int
