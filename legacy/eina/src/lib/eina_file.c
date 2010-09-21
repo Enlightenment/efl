@@ -242,7 +242,6 @@ eina_file_dir_list(const char *dir,
         if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
            continue;
 
-printf("d_name: %s\ndir: %s\n", de->d_name, dir);
         cb(de->d_name, dir, data);
         /* d_type is only available on linux and bsd (_BSD_SOURCE) */
 
