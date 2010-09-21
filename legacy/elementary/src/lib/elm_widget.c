@@ -54,6 +54,7 @@ struct _Smart_Data
    Elm_Theme     *theme;
    const char    *style;
    unsigned int   focus_order;
+   Eina_Bool      focus_order_on_calc;
    
    int            child_drag_x_locked;
    int            child_drag_y_locked;
@@ -82,6 +83,7 @@ static void _smart_calculate(Evas_Object *obj);
 static void _smart_init(void);
 
 static void _if_focused_revert(Evas_Object *obj);
+static Evas_Object *_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -194,15 +196,36 @@ static void
 _parent_focus(Evas_Object *obj)
 {
    API_ENTRY return;
+
    Evas_Object *o = elm_widget_parent_get(obj);
-   
+   sd->focus_order_on_calc = EINA_TRUE;
+
    if (sd->focused) return;
-   if (o) _parent_focus(o);
+   if (o)
+     {
+	unsigned int i = 0;
+	Evas_Object *ret;
+
+	ret = _newest_focus_order_get(o, &i);
+
+	/* we don't want to bump a common widget ancestor's
+	   focus_order *twice* while parent focusing */
+	if (!ret || !i || i != focus_order)
+	  _parent_focus(o);
+     }
+
+   if (!sd->focus_order_on_calc)
+     return; /* we don't want to override it if by means of any of the
+		callbacks below one gets to calculate our order
+		first. */
+
    focus_order++;
    sd->focus_order = focus_order;
    sd->focused = 1;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
+
+   sd->focus_order_on_calc = EINA_FALSE;
 }
 
 // exposed util funcs to elm
