@@ -52,11 +52,14 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 {
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
      return EINA_FALSE;
    _activate(obj);
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   edje_object_signal_emit(wd->btn, "elm,anim,activate", "elm");
    return EINA_TRUE;
 }
 
