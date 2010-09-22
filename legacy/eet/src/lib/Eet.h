@@ -1973,8 +1973,8 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  * This macro is an helper that set all the parameter of an
  * Eet_Data_Descriptor_Class correctly when you use Eina data type
  * with stream.
- * @param Clas The Eet_Data_Descriptor_Class you want to set.
- * @param Type The type of the structure described by this class.
+ * @param clas The Eet_Data_Descriptor_Class you want to set.
+ * @param type The type of the structure described by this class.
  * @return EINA_TRUE if the structure was correctly set (The only
  *         reason that could make it fail is if you did give wrong
  *         parameter).
@@ -2009,8 +2009,8 @@ eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  * This macro is an helper that set all the parameter of an
  * Eet_Data_Descriptor_Class correctly when you use Eina data type
  * with file.
- * @param Clas The Eet_Data_Descriptor_Class you want to set.
- * @param Type The type of the structure described by this class.
+ * @param clas The Eet_Data_Descriptor_Class you want to set.
+ * @param type The type of the structure described by this class.
  * @return EINA_TRUE if the structure was correctly set (The only
  *         reason that could make it fail is if you did give wrong
  *         parameter).
@@ -3245,7 +3245,7 @@ typedef Eina_Bool Eet_Write_Cb (const void *data, size_t size, void *user_data);
 
 /**
  * Instanciate a new connection to track.
- * @oaram eet_read_cb Function to call when one Eet_Data packet has been fully assemble.
+ * @param eet_read_cb Function to call when one Eet_Data packet has been fully assemble.
  * @param eet_write_cb Function to call when one Eet_Data packet is ready to be send over the wire.
  * @param user_data Pointer provided to both functions to be used as a context handler.
  * @return NULL on failure, or a valid Eet_Connection handler.
@@ -3281,7 +3281,7 @@ eet_connection_received(Eet_Connection *conn,
 
 /**
  * Convert a complex structure and prepare it to be send.
- * @oaram conn Connection handler to track.
+ * @param conn Connection handler to track.
  * @param edd The data descriptor to use when encoding.
  * @param data_in The pointer to the struct to encode into data.
  * @param cipher_key The key to use as cipher.
@@ -3304,7 +3304,7 @@ eet_connection_send(Eet_Connection      *conn,
 
 /**
  * Convert a Eet_Node tree and prepare it to be send.
- * @oaram conn Connection handler to track.
+ * @param conn Connection handler to track.
  * @param node The data tree to use when encoding.
  * @param cipher_key The key to use as cipher.
  * @return EINA_TRUE if the data where correctly send, EINA_FALSE if they don't.
@@ -3325,7 +3325,7 @@ eet_connection_node_send(Eet_Connection *conn,
 
 /**
  * Close a connection and lost its track.
- * @oaram conn Connection handler to close.
+ * @param conn Connection handler to close.
  * @param on_going Signal if a partial packet wasn't completed.
  * @return the user_data passed to both callback.
  *
