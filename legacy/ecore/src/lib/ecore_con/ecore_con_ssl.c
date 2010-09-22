@@ -9,6 +9,7 @@
 #elif USE_OPENSSL
 # include <openssl/ssl.h>
 # include <openssl/err.h>
+# include <openssl/dh.h>
 #endif
 
 #ifdef HAVE_WS2TCPIP_H
@@ -168,6 +169,13 @@ ecore_con_ssl_available_get(void)
    return _ECORE_CON_SSL_AVAILABLE;
 }
 
+#if 0
+EAPI Eina_Bool
+ecore_con_ssl_server_reinit()
+{
+
+}
+#endif
 
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type)
@@ -824,6 +832,13 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
         private_key->count++;
      }
 
+#if 0
+   if (svr->created)
+     {
+        SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_parameters_ex(svr->dh_params, 1024, DH_GENERATOR_5, NULL));
+        
+     }
+#endif
      return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -844,11 +859,13 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
    SSL_set_connect_state(svr->ssl);
 
-   while ((ret = SSL_do_handshake(svr->ssl)) < 1)
+   do
      {
-        int err = SSL_get_error(svr->ssl, ret);
+        int err;
+        ret = SSL_do_handshake(svr->ssl);
+        err = SSL_get_error(svr->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
-     }
+     } while (ret < 1);
 
    return ECORE_CON_SSL_ERROR_NONE;
 
@@ -1036,11 +1053,14 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
    SSL_set_accept_state(cl->ssl);
-   while ((ret = SSL_do_handshake(cl->ssl)) < 1)
+
+   do
      {
-        int err = SSL_get_error(cl->ssl, ret);
+        int err;
+        ret = SSL_do_handshake(cl->ssl);
+        err = SSL_get_error(cl->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
-     }
+     } while (ret < 1);
 
    return ECORE_CON_SSL_ERROR_NONE;
 
