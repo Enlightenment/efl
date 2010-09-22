@@ -396,6 +396,8 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
      {
         int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_DHE_RSA, 0 };
+        int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, 0 };
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
      }
 
@@ -777,6 +779,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
 {
    long options;
+   int dh = 0;
 
    if (ssl_type & ECORE_CON_USE_SSL2)
      return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
@@ -832,20 +835,27 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
         private_key->count++;
      }
 
-#if 0
    if (svr->created)
      {
+        SSL_ERROR_CHECK_GOTO_ERROR(!(svr->dh_params = DH_new()));
         SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_parameters_ex(svr->dh_params, 1024, DH_GENERATOR_5, NULL));
-        
+        SSL_ERROR_CHECK_GOTO_ERROR(!DH_check(svr->dh_params, &dh));
+        SSL_ERROR_CHECK_GOTO_ERROR((dh & DH_CHECK_P_NOT_PRIME) || (dh & DH_CHECK_P_NOT_SAFE_PRIME));
+        SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_tmp_dh(svr->ssl_ctx, svr->dh_params));
      }
-#endif
      return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   if (svr->ssl_ctx)
-     SSL_CTX_free(svr->ssl_ctx);
-
-   ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   if (dh)
+     {
+        if (dh & DH_CHECK_P_NOT_PRIME)
+          ERR("openssl error: dh_params could not generate a prime!");
+        else
+          ERR("openssl error: dh_params could not generate a safe prime!");
+     }
+   else
+     ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   _ecore_con_ssl_server_shutdown_openssl(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
@@ -934,8 +944,12 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
    if (svr->ssl_ctx)
       SSL_CTX_free(svr->ssl_ctx);
 
+   if (svr->dh_params)
+     DH_free(svr->dh_params);
+
    svr->ssl = NULL;
    svr->ssl_ctx = NULL;
+   svr->dh_params = NULL;
    svr->ssl_err = SSL_ERROR_NONE;
 
    return ECORE_CON_SSL_ERROR_NONE;
