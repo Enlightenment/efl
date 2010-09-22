@@ -59,6 +59,9 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _activate(Evas_Object *obj);
+static void _activate_hook(Evas_Object *obj);
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -190,15 +193,27 @@ _state_set_all(Widget_Data *wd)
 }
 
 static void
-_signal_radio_on(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_activate(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->group->value == wd->value) return;
    wd->group->value = wd->value;
    if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
    _state_set_all(wd);
-   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+}
+
+static void
+_activate_hook(Evas_Object *obj)
+{
+   _activate(obj);
+}
+
+static void
+_signal_radio_on(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   _activate(data);
 }
 
 /**
@@ -226,6 +241,8 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_can_focus_set(obj, 1);
+   elm_widget_activate_hook_set(obj, _activate_hook);
 
    wd->radio = edje_object_add(e);
    _elm_theme_object_set(obj, wd->radio, "radio", "base", "default");

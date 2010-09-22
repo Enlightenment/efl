@@ -42,6 +42,8 @@ struct _Elm_Hoversel_Item
 static const char *widtype = NULL;
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
+static void _activate(Evas_Object *obj);
+static void _activate_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -207,6 +209,12 @@ _activate(Evas_Object *obj)
 }
 
 static void
+_activate_hook(Evas_Object *obj)
+{
+   _activate(obj);
+}
+
+static void
 _button_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _activate(data);
@@ -247,6 +255,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_activate_hook_set(obj, _activate_hook);
 
    wd->btn = elm_button_add(parent);
    if (wd->horizontal)

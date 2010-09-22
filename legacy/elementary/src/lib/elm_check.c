@@ -39,6 +39,9 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_check_off(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_check_on(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _activate_hook(Evas_Object *obj);
+static void _activate(Evas_Object *obj);
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -156,7 +159,19 @@ _signal_check_on(void *data, Evas_Object *obj __UNUSED__, const char *emission _
 static void
 _signal_check_toggle(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+   _activate(data);
+}
+
+static void
+_activate_hook(Evas_Object *obj)
+{
+   _activate(obj);
+}
+
+static void
+_activate(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->state = !wd->state;
    if (wd->statep) *wd->statep = wd->state;
@@ -164,7 +179,7 @@ _signal_check_toggle(void *data, Evas_Object *obj __UNUSED__, const char *emissi
      edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
    else
      edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
-   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
 /**
@@ -192,6 +207,8 @@ elm_check_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_can_focus_set(obj, 1);
+   elm_widget_activate_hook_set(obj, _activate_hook);
 
    wd->chk = edje_object_add(e);
    _elm_theme_object_set(obj, wd->chk, "check", "base", "default");

@@ -32,6 +32,8 @@ static void _signal_clicked(void *data, Evas_Object *obj, const char *emission, 
 static void _signal_pressed(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_unpressed(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _activate(Evas_Object *obj);
+static void _activate_hook(Evas_Object *obj);
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_REPEATED[] = "repeated";
@@ -143,9 +145,9 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static void
-_signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+_activate(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->timer)
      {
@@ -153,8 +155,20 @@ _signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *
 	wd->timer = NULL;
      }
    wd->repeating = EINA_FALSE;
-   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
-   _signal_unpressed(data, obj, emission, source); /* safe guard when the theme does not emit the 'unpress' signal */
+   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   _signal_unpressed(obj, wd->btn, NULL, NULL); /* safe guard when the theme does not emit the 'unpress' signal */
+}
+
+static void
+_activate_hook(Evas_Object *obj)
+{
+   _activate(obj);
+}
+
+static void
+_signal_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   _activate(data);
 }
 
 static Eina_Bool
@@ -243,6 +257,7 @@ elm_button_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, 1);                 
+   elm_widget_activate_hook_set(obj, _activate_hook);
 
    wd->btn = edje_object_add(e);
    _elm_theme_object_set(obj, wd->btn, "button", "base", "default");
