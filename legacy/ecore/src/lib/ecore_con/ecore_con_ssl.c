@@ -369,8 +369,8 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
          proto = tls_proto;
          break;
 
-      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+      case ECORE_CON_USE_MIXED:
+      case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
          proto = mixed_proto;
          break;
 
@@ -378,7 +378,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
          return ECORE_CON_SSL_ERROR_NONE;
      }
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(svr->session), GNUTLS_CLIENT));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
@@ -581,8 +581,8 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
          proto = tls_proto;
          break;
 
-      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+      case ECORE_CON_USE_MIXED:
+      case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
          proto = mixed_proto;
          break;
 

@@ -348,6 +348,8 @@ typedef enum _Ecore_Con_Type
    ECORE_CON_USE_SSL3 = (1 << 5),
    /** Use TLS */
    ECORE_CON_USE_TLS = (1 << 6),
+   /** Use both TLS and SSL3 */
+   ECORE_CON_USE_MIXED = ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS,
    /** Attempt to use the previously loaded certificate */
    ECORE_CON_LOAD_CERT = (1 << 7)
 } Ecore_Con_Type;
