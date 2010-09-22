@@ -121,6 +121,8 @@ struct _Ecore_Con_Server
    gnutls_session session;
    gnutls_anon_client_credentials_t anoncred_c;
    gnutls_anon_server_credentials_t anoncred_s;
+   gnutls_psk_client_credentials_t pskcred_c;
+   gnutls_psk_server_credentials_t pskcred_s;
    gnutls_certificate_credentials_t cert;
    gnutls_dh_params_t dh_params;
 #elif USE_OPENSSL

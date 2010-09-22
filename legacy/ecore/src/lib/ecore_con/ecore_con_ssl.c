@@ -274,19 +274,53 @@ _ecore_con_ssl_shutdown_gnutls(void)
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type __UNUSED__)
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
 {
    int ret;
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(svr->dh_params, 1024));
+   if (!ssl_type)
+     return ECORE_CON_SSL_ERROR_NONE;
+
+   if ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
+     {
+        if ((server_cert) && (server_cert->cert) && (svr->created))
+          { /* load server cert */
+             svr->cert = server_cert->cert;
+             server_cert->count++;
+          }
+        else if ((client_cert) && (client_cert->cert))
+          { /* load client cert */
+             svr->cert = client_cert->cert;
+             client_cert->count++;
+          }
+     }
+   else
+     /* if LOAD_CERT is not specified, allocate here */
+     SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
+
+   if (svr->created)
+     {
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(svr->dh_params, 1024));
+
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
+        
+        gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
+        gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
+        gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
+     }
+   else
+     {
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
+     }
+     
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
    ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
-   if (svr->dh_params)
-     gnutls_dh_params_deinit(svr->dh_params);
-   svr->dh_params = NULL;
+   _ecore_con_ssl_server_shutdown_gnutls(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
@@ -344,38 +378,24 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
          return ECORE_CON_SSL_ERROR_NONE;
      }
 
-   if ((server_cert) && (server_cert->cert) &&
-       ((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
-     {
-        svr->cert = server_cert->cert;
-        server_cert->count++;
-     }
-
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&(svr->session), GNUTLS_CLIENT));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
 
-   if (svr->cert)
-      SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE,
-                             svr->cert));
-   else
-     {
-        const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
-     }
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
-   gnutls_dh_set_prime_bits(svr->session, 2048);
 
+   gnutls_dh_set_prime_bits(svr->session, 512);
    gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
 
-   while ((ret = gnutls_handshake(svr->session)) < 0)
+   do 
      {
-        SSL_ERROR_CHECK_GOTO_ERROR((ret != GNUTLS_E_AGAIN) &&
-            (ret != GNUTLS_E_INTERRUPTED));
-     }
+        ret = gnutls_handshake(svr->session);
+        SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
+     } while (ret < 0);
 
    return ECORE_CON_SSL_ERROR_NONE;
    
@@ -425,25 +445,54 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
         gnutls_deinit(svr->session);
      }
 
-   if (svr->dh_params)
+   if ((svr->type & ECORE_CON_SSL) && svr->created)
      {
-        gnutls_dh_params_deinit(svr->dh_params);
-        svr->dh_params = NULL;
-     }
+        if ((server_cert) && (--server_cert->count < 1) && (svr->cert == server_cert->cert))
+          { /* only ever free this if it is used and dead */
+             gnutls_certificate_free_credentials(server_cert->cert);
+             free(server_cert);
+             server_cert = NULL;
+          }
+        else if (svr->cert && ((!server_cert) || (svr->cert != server_cert->cert)))
+          /* otherwise just free the anon cert */
+          gnutls_certificate_free_credentials(svr->cert);
 
-   if (((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
-       (server_cert) &&
-       (server_cert->cert) && (--server_cert->count < 1))
-     {
-        gnutls_certificate_free_credentials(server_cert->cert);
-        free(server_cert);
-        server_cert = NULL;
+        if (svr->dh_params)
+          {
+             gnutls_dh_params_deinit(svr->dh_params);
+             svr->dh_params = NULL;
+          }
+        if (svr->anoncred_s)
+          gnutls_anon_free_server_credentials(svr->anoncred_s);
+        if (svr->pskcred_s)
+          gnutls_psk_free_server_credentials(svr->pskcred_s);
+
+        svr->anoncred_s = NULL;
+        svr->pskcred_s = NULL;
      }
-   else if (svr->anoncred_c)
-      gnutls_anon_free_client_credentials(svr->anoncred_c);
+   else if (svr->type & ECORE_CON_SSL)
+     {
+        if ((client_cert) && (--client_cert->count < 1) && (svr->cert == client_cert->cert))
+          { /* only ever free this if it is used and dead */
+             gnutls_certificate_free_credentials(client_cert->cert);
+             free(client_cert);
+             client_cert = NULL;
+          }
+        else if (svr->cert && ((!client_cert) || (svr->cert != client_cert->cert)))
+          /* otherwise just free the anon cert */
+          gnutls_certificate_free_credentials(svr->cert);
+
+        if (svr->anoncred_c)
+          gnutls_anon_free_client_credentials(svr->anoncred_c);
+        if (svr->pskcred_c)
+          gnutls_psk_free_client_credentials(svr->pskcred_c);
+
+        svr->anoncred_c = NULL;
+        svr->pskcred_c = NULL;
+     }
 
    svr->session = NULL;
-   svr->anoncred_c = NULL;
+   svr->cert = NULL;
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -543,47 +592,25 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
    _client_connected++;
 
-   if ((client_cert) && (client_cert->cert) &&
-       ((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
-     {
-        cl->host_server->cert = client_cert->cert;
-        client_cert->count++;
-        gnutls_certificate_set_dh_params(cl->host_server->cert, cl->host_server->dh_params);
-     }
-
-   if ((!cl->host_server->anoncred_s) && (!cl->host_server->cert))
-     {
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&(cl->host_server->anoncred_s)));
-        gnutls_anon_set_server_dh_params(cl->host_server->anoncred_s, cl->host_server->dh_params);
-     }
-
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
-   if (cl->host_server->cert)
-     {
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session,
-                               GNUTLS_CRD_CERTIFICATE,
-                               cl->host_server->cert));
-        gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
-     }
-   else
-     {
-        const int kx[] = { GNUTLS_KX_ANON_DH, 0 };
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON,
-                             cl->host_server->anoncred_s));
-     }
-
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
+   
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
 
+   gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
+
+   gnutls_dh_set_prime_bits(cl->session, 2048);
    gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
 
-   while ((ret = gnutls_handshake(cl->session)) < 0)
+   do 
      {
-        SSL_ERROR_CHECK_GOTO_ERROR((ret != GNUTLS_E_AGAIN) &&
-            (ret != GNUTLS_E_INTERRUPTED));
-     }
+        ret = gnutls_handshake(cl->session);
+        SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
+     } while (ret < 0);
 
    /* TODO: add cert verification support */
    return ECORE_CON_SSL_ERROR_NONE;
@@ -603,24 +630,15 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
         gnutls_deinit(cl->session);
      }
 
-   if (cl->host_server->anoncred_s && !--_client_connected)
-      gnutls_anon_free_server_credentials(cl->host_server->anoncred_s);
-
    if (((cl->host_server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
        (client_cert) &&
        (client_cert->cert) && (--client_cert->count < 1))
      {
-        gnutls_certificate_free_credentials(client_cert->cert);
         free(client_cert);
         client_cert = NULL;
      }
 
    cl->session = NULL;
-   if (!_client_connected)
-     {
-        cl->host_server->anoncred_s = NULL;
-        cl->host_server->cert = NULL;
-     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
