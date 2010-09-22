@@ -1826,11 +1826,11 @@ struct _Evas_Smart_Cb_Description
      Evas *evas;
   };
 
-   EAPI Evas_Object *evas_object_smart_clipped_clipper_get(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc) EINA_ARG_NONNULL(1);
-   EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get(void) EINA_CONST;
+   EAPI Evas_Object            *evas_object_smart_clipped_clipper_get   (Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void                    evas_object_smart_clipped_smart_set     (Evas_Smart_Class *sc) EINA_ARG_NONNULL(1);
+   EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get     (void) EINA_CONST;
 
-   EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy) EINA_ARG_NONNULL(1);
+   EAPI void                    evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy) EINA_ARG_NONNULL(1);
 
 /**
  * @defgroup Evas_Object_Box Box (Sequence) Smart Object.
@@ -1862,7 +1862,7 @@ struct _Evas_Smart_Cb_Description
  * @ingroup Evas_Object_Box
  */
    typedef struct _Evas_Object_Box_Option     Evas_Object_Box_Option;
-   typedef void (*Evas_Object_Box_Layout)(Evas_Object *o, Evas_Object_Box_Data *priv, void *user_data);
+   typedef void (*Evas_Object_Box_Layout) (Evas_Object *o, Evas_Object_Box_Data *priv, void *user_data);
 
 /**
  * @def EVAS_OBJECT_BOX_API_VERSION
