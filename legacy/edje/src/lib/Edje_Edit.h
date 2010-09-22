@@ -1,6 +1,10 @@
 #ifndef _EDJE_EDIT_H
 #define _EDJE_EDIT_H
 
+#ifndef EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
+#error "Do not use the Edje_Edit API unless you know what you are doing. It's meant only for writing editors and nothing else."
+#endif
+
 #include <Edje.h>
 
 #ifdef EAPI

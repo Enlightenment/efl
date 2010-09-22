@@ -30,6 +30,9 @@
 
 #include "edje_private.h"
 
+#define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
+#include "Edje_Edit.h"
+
 static const char EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED_STR[] = "Current group cannot be deleted";
 static const char EDJE_EDIT_ERROR_GROUP_REFERENCED_STR[] = "Group still in use";
 static const char EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST_STR[] = "Group does not exist";

@@ -35,7 +35,6 @@ void *alloca (size_t);
 #include <sys/time.h>
 
 #include "Edje.h"
-#include "Edje_Edit.h"
 
 #include <lua.h>
 #include <lualib.h>
