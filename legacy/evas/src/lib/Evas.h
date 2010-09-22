@@ -2091,8 +2091,8 @@ struct _Evas_Smart_Cb_Description
         int    wasted_memory; /**< current wasted memory, in bytes */
         int    saved_memory_peak; /**< peak of saved memory, in bytes */
         int    wasted_memory_peak; /**< peak of wasted memory, in bytes */
-        double saved_time_image_header_load;
-        double saved_time_image_data_load;
+        double saved_time_image_header_load; /**< time, in seconds, saved in header loads by sharing cached loads instead */
+        double saved_time_image_data_load; /**< time, in seconds, saved in data loads by sharing cached loads instead */
      };
 
 /**
