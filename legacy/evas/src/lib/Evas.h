@@ -2151,7 +2151,7 @@ struct _Evas_Smart_Cb_Description
  * Some functions that are handy but are not specific of canvas or
  * objects.
  */
-   EAPI const char *evas_load_error_str(int error);
+   EAPI const char       *evas_load_error_str               (Evas_Load_Error error);
 
 /* Evas utility routines for color space conversions */
 /* hsv color space has h in the range 0.0 to 360.0, and s,v in the range 0.0 to 1.0 */

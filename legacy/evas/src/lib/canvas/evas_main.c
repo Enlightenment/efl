@@ -1165,7 +1165,7 @@ _evas_unwalk(Evas *e)
  * @ingroup Evas_Utils
  */
 EAPI const char *
-evas_load_error_str(int error)
+evas_load_error_str(Evas_Load_Error error)
 {
    switch (error)
      {
