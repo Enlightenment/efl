@@ -3013,7 +3013,7 @@ edje_object_part_state_get(const Evas_Object *obj, const char *part, double *val
  * 2: Dragable in Y direction\n
  * 3: Dragable in X & Y directions
  */
-EAPI int
+EAPI Edje_Drag_Dir
 edje_object_part_drag_dir_get(const Evas_Object *obj, const char *part)
 {
    Edje *ed;

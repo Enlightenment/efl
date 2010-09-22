@@ -527,21 +527,21 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Object *obj, const char *part, void (*func) (void *data, Evas_Object *obj, const char *part, char **text), const void *data);
    EAPI void             edje_object_text_insert_filter_callback_del       (Evas_Object *obj, const char *part, void (*func) (void *data, Evas_Object *obj, const char *part, char **text), const void *data);
    
-   EAPI Eina_Bool    edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
-   EAPI void         edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
-   EAPI Evas_Object *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
-   EAPI const char  *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
-   EAPI int          edje_object_part_drag_dir_get   (const Evas_Object *obj, const char *part);
-   EAPI Eina_Bool    edje_object_part_drag_value_set (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI Eina_Bool    edje_object_part_drag_value_get (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   EAPI Eina_Bool    edje_object_part_drag_size_set  (Evas_Object *obj, const char *part, double dw, double dh);
-   EAPI Eina_Bool    edje_object_part_drag_size_get  (const Evas_Object *obj, const char *part, double *dw, double *dh);
-   EAPI Eina_Bool    edje_object_part_drag_step_set  (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI Eina_Bool    edje_object_part_drag_step_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   EAPI Eina_Bool    edje_object_part_drag_page_set  (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI Eina_Bool    edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   EAPI Eina_Bool    edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
-   EAPI Eina_Bool    edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
+   EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
+   EAPI Evas_Object     *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
+   EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
+   EAPI Edje_Drag_Dir    edje_object_part_drag_dir_get   (const Evas_Object *obj, const char *part);
+   EAPI Eina_Bool        edje_object_part_drag_value_set (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool        edje_object_part_drag_value_get (const Evas_Object *obj, const char *part, double *dx, double *dy);
+   EAPI Eina_Bool        edje_object_part_drag_size_set  (Evas_Object *obj, const char *part, double dw, double dh);
+   EAPI Eina_Bool        edje_object_part_drag_size_get  (const Evas_Object *obj, const char *part, double *dw, double *dh);
+   EAPI Eina_Bool        edje_object_part_drag_step_set  (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool        edje_object_part_drag_step_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
+   EAPI Eina_Bool        edje_object_part_drag_page_set  (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool        edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
+   EAPI Eina_Bool        edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
+   EAPI Eina_Bool        edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
 
    EAPI Evas_Object              *edje_object_part_external_object_get     (const Evas_Object *obj, const char *part);
    EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Object *obj, const char *part, const Edje_External_Param *param);
