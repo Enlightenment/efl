@@ -5,6 +5,8 @@
 #include "config.h"
 #endif
 
+#define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <Eina.h>
