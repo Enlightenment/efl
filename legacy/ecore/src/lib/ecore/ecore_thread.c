@@ -754,7 +754,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
  * You should use this function only in the func_heavy call.
  */
 EAPI Eina_Bool
-ecore_thread_notify(Ecore_Thread *thread, const void *data)
+ecore_thread_feedback(Ecore_Thread *thread, const void *data)
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
 
