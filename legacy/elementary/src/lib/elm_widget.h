@@ -235,6 +235,8 @@ EAPI void             elm_widget_can_focus_set(Evas_Object *obj, int can_focus);
 EAPI int              elm_widget_can_focus_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Bool ignore);
 EAPI Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
+EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
+EAPI Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
 EAPI int              elm_widget_focus_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_focused_object_get(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);

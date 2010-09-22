@@ -33,13 +33,15 @@ struct _Elm_Win
 
    struct {
       Evas_Object *bottom, *top;
-      Evas_Object *target;
+      Evas_Object *previous, *target;
 
       Ecore_Job *reconf_job;
 
       Eina_Bool enabled : 1;
       Eina_Bool changed_theme : 1;
       Eina_Bool visible : 1;
+      Eina_Bool handled : 1;
+      Eina_Bool was_handled : 1;
    } focus_highlight;
 };
 
@@ -532,29 +534,36 @@ _elm_win_focus_target_get(Evas_Object *obj)
 static void
 _elm_win_object_focus_in(void *data, Evas *e, void *event_info)
 {
-   Evas_Object *obj = event_info;
+   Evas_Object *obj = event_info, *target;
    Elm_Win *win = data;
 
    if (win->focus_highlight.target == obj)
      return;
 
-   win->focus_highlight.target = _elm_win_focus_target_get(obj);
-   _elm_win_focus_target_callbacks_add(win);
+   target = _elm_win_focus_target_get(obj);
+   win->focus_highlight.target = target;
+   if (elm_widget_highlight_in_theme_get(target))
+     win->focus_highlight.handled = EINA_TRUE;
+   else
+     _elm_win_focus_target_callbacks_add(win);
 
    _elm_win_focus_highlight_reconfigure_job_start(win);
 }
 
 static void
-_elm_win_object_focus_out(void *data, Evas *e, void *event_info)
+_elm_win_object_focus_out(void *data, Evas *e, void *event_info __UNUSED__)
 {
    Elm_Win *win = data;
-   Evas_Object *obj = event_info;
 
-   if (win->focus_highlight.target != obj)
+   if (!win->focus_highlight.target)
      return;
 
-   _elm_win_focus_target_callbacks_del(win);
+   if (!win->focus_highlight.handled)
+     _elm_win_focus_target_callbacks_del(win);
+   win->focus_highlight.was_handled = win->focus_highlight.handled;
+   win->focus_highlight.previous = win->focus_highlight.target;
    win->focus_highlight.target = NULL;
+   win->focus_highlight.handled = EINA_FALSE;
 
    _elm_win_focus_highlight_reconfigure_job_start(win);
 }
@@ -672,18 +681,36 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
 {
    Evas_Coord tx, ty, tw, th;
    Evas_Object *target = win->focus_highlight.target;
+   Evas_Object *previous = win->focus_highlight.previous;
    Evas_Object *bottom, *top, *clip;
+   Eina_Bool common_visible;
+   const char *sig = NULL;
 
    _elm_win_focus_highlight_reconfigure_job_stop(win);
 
    bottom = win->focus_highlight.bottom;
    top = win->focus_highlight.top;
 
-   if (!target || !win->focus_highlight.visible)
+   if (previous && win->focus_highlight.was_handled)
+     elm_widget_signal_emit(previous, "elm,action,focus_highlight,hide", "elm");
+
+   if (win->focus_highlight.handled)
      {
-        _elm_win_focus_highlight_visible_set(win, EINA_FALSE);
-	return;
+        common_visible = EINA_FALSE;
+        if (win->focus_highlight.visible)
+          sig = "elm,action,focus_highlight,show";
+        else
+          sig = "elm,action,focus_highlight,hide";
      }
+   else
+     common_visible = win->focus_highlight.visible;
+
+   _elm_win_focus_highlight_visible_set(win, common_visible);
+   if (sig)
+     elm_widget_signal_emit(target, sig, "elm");
+
+   if (!target || win->focus_highlight.handled)
+     goto the_end;
 
    if (win->focus_highlight.changed_theme)
      {
@@ -708,7 +735,9 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
    evas_object_raise(top);
    evas_object_clip_set(top, clip);
 
-   _elm_win_focus_highlight_visible_set(win, EINA_TRUE);
+the_end:
+   win->focus_highlight.previous = NULL;
+   win->focus_highlight.was_handled = EINA_FALSE;
 }
 
 /**

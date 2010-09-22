@@ -65,6 +65,7 @@ struct _Smart_Data
    Eina_Bool      child_can_focus : 1;
    Eina_Bool      focused : 1;
    Eina_Bool      highlight_ignore : 1;
+   Eina_Bool      highlight_in_theme : 1;
    Eina_Bool      disabled : 1;
 };
 
@@ -562,6 +563,21 @@ elm_widget_highlight_ignore_get(const Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
    return sd->highlight_ignore;
+}
+
+EAPI void
+elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight)
+{
+   API_ENTRY return;
+   sd->highlight_in_theme = !!highlight;
+   /* FIXME: if focused, it should switch from one mode to the other */
+}
+
+EAPI Eina_Bool
+elm_widget_highlight_in_theme_get(const Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->highlight_in_theme;
 }
 
 EAPI int
