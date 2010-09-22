@@ -5663,7 +5663,7 @@ _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
  * @return Returns the len of the text added.
  * @see evas_textblock_cursor_text_prepend()
  */
-EAPI size_t
+EAPI int
 evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
 {
    Evas_Object_Textblock *o;
@@ -5742,10 +5742,10 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
  * @return Returns the len of the text added.
  * @see evas_textblock_cursor_text_append()
  */
-EAPI size_t
+EAPI int
 evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text)
 {
-   size_t len;
+   int len;
    /*append is essentially prepend without advancing */
    len = evas_textblock_cursor_text_append(cur, _text);
    cur->pos += len; /*Advance */
