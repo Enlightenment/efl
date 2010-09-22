@@ -311,6 +311,23 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(en_p);
    elm_box_pack_end(bx, en_p);
 
+   /* scrolled entry with icon/end widgets*/
+   en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_single_line_set(en, 1);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "left");
+   evas_object_show(bt);
+   elm_scrolled_entry_icon_set(en, bt);
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "right");
+   evas_object_show(bt);
+   elm_scrolled_entry_end_set(en, bt);
+   elm_scrolled_entry_entry_set(en, "scrolled entry with icon and end objects");
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
    /* markup scrolled entry */
    en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

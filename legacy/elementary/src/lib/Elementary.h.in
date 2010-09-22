@@ -1674,6 +1674,10 @@ extern "C" {
    EAPI Eina_Bool    elm_scrolled_entry_context_menu_disabled_get(const Evas_Object *obj);
    EAPI void         elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
    EAPI void         elm_scrolled_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI void         elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting);
+   EAPI void         elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end);
+   EAPI void         elm_scrolled_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting);
 
    EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);

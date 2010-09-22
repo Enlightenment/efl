@@ -35,7 +35,10 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *scroller;
+   Evas_Object *box;
    Evas_Object *entry;
+   Evas_Object *icon;
+   Evas_Object *end;
    Elm_Scroller_Policy policy_h, policy_v;
    Eina_Bool single_line : 1;
 };
@@ -284,15 +287,26 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
+   wd->box = elm_box_add(parent);
+   elm_widget_resize_object_set(obj, wd->box);
+   elm_box_horizontal_set(wd->box, EINA_TRUE);
+   elm_box_homogenous_set(wd->box, EINA_FALSE);
+   evas_object_show(wd->box);
+
    wd->scroller = elm_scroller_add(parent);
-   elm_widget_resize_object_set(obj, wd->scroller);
+   evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(wd->scroller, 0, 0);
-   
+   elm_box_pack_start(wd->box, wd->scroller);
+   evas_object_show(wd->scroller);
+
    wd->entry = elm_entry_add(parent);
    evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_content_set(wd->scroller, wd->entry);
    evas_object_show(wd->entry);
+
+   wd->icon = wd->end = NULL;
 
    evas_object_smart_callback_add(wd->entry, "changed", _entry_changed, obj);
    evas_object_smart_callback_add(wd->entry, "activated", _entry_activated, obj);
@@ -317,6 +331,104 @@ elm_scrolled_entry_add(Evas_Object *parent)
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
+}
+
+/**
+ * This sets a widget to be displayed to the left of a scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param left_obj The widget to display on the left side of the scrolled entry.
+ * If it is NULL, and there is already an widget on the left-side, it will be destroyed.
+ * If it isn't NULL, and there were another widget on the left-side already, the old
+ * widget will be destroyed.
+ *
+ * @ingroup Scrolled_Entry
+ * @see elm_scrolled_entry_end_set
+ */
+EAPI void
+elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->icon) evas_object_del(wd->icon);
+   if (icon)
+     {
+        wd->icon = icon;
+        elm_box_pack_before(wd->box, wd->icon, wd->scroller);
+     }
+   _sizing_eval(obj);
+}
+
+/**
+ * Sets the visibility of the left-side widget of the scrolled entry, set by
+ * @elm_scrolled_entry_icon_set().
+ *
+ * @param obj The scrolled entry object
+ * @param setting EINA_TRUE if the object should be displayed, EINA_FALSE if not.
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->icon) return;
+   if (setting)
+     evas_object_hide(wd->icon);
+   else
+     evas_object_show(wd->icon);
+   _sizing_eval(obj);
+}
+
+/**
+ * This sets a widget to be displayed to the end of a scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param left_obj The widget to display on the right side of the scrolled entry.
+ * If it is NULL, and there is already an widget on the right-side, it will be destroyed.
+ * If it isn't NULL, and there were another widget on the right-side already, the old
+ * widget will be destroyed.
+ *
+ * @ingroup Scrolled_Entry
+ * @see elm_scrolled_entry_icon_set
+ */
+EAPI void
+elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->end) evas_object_del(wd->end);
+   if (end)
+     {
+        wd->end = end;
+        elm_box_pack_after(wd->box, wd->end, wd->scroller);
+     }
+   _sizing_eval(obj);
+}
+
+/**
+ * Sets the visibility of the end widget of the scrolled entry, set by
+ * @elm_scrolled_entry_end_set().
+ *
+ * @param obj The scrolled entry object
+ * @param setting EINA_TRUE if the object should be displayed, EINA_FALSE if not.
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->end) return;
+   if (setting)
+     evas_object_hide(wd->end);
+   else
+     evas_object_show(wd->end);
+   _sizing_eval(obj);
 }
 
 /**
