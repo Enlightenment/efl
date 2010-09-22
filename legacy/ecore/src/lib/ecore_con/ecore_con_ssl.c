@@ -306,7 +306,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
         /* TODO: implement PSK */
        // SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
-        
+
         gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
         gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
         //gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
@@ -316,7 +316,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
         //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
      }
-     
+
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -344,15 +344,15 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 #endif
       0
    };
-   const int mixed_proto[] = 
-     { 
-#ifdef GNUTLS_VERSION_MAX        
-        GNUTLS_VERSION_MAX, 
-#endif        
-        GNUTLS_TLS1_1, 
-        GNUTLS_TLS1_0, 
-        GNUTLS_SSL3, 
-        0 
+   const int mixed_proto[] =
+     {
+#ifdef GNUTLS_VERSION_MAX
+        GNUTLS_VERSION_MAX,
+#endif
+        GNUTLS_TLS1_1,
+        GNUTLS_TLS1_0,
+        GNUTLS_SSL3,
+        0
      };
 
    if (svr->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
@@ -397,14 +397,14 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    gnutls_dh_set_prime_bits(svr->session, 512);
    gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
 
-   do 
+   do
      {
         ret = gnutls_handshake(svr->session);
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
      } while (ret < 0);
 
    return ECORE_CON_SSL_ERROR_NONE;
-   
+
 error:
    ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
    _ecore_con_ssl_server_shutdown_gnutls(svr);
@@ -562,14 +562,14 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 #endif
       0
    };
-   const int mixed_proto[] = 
-     { 
-#ifdef GNUTLS_VERSION_MAX        
-        GNUTLS_VERSION_MAX, 
-#endif        
-        GNUTLS_TLS1_1, 
-        GNUTLS_TLS1_0, 
-        GNUTLS_SSL3, 
+   const int mixed_proto[] =
+     {
+#ifdef GNUTLS_VERSION_MAX
+        GNUTLS_VERSION_MAX,
+#endif
+        GNUTLS_TLS1_1,
+        GNUTLS_TLS1_0,
+        GNUTLS_SSL3,
         0 };
 
    if (cl->host_server->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
@@ -602,7 +602,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
-   
+
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
    //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
@@ -617,7 +617,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    gnutls_dh_set_prime_bits(cl->session, 2048);
    gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
 
-   do 
+   do
      {
         ret = gnutls_handshake(cl->session);
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
@@ -838,7 +838,7 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 {
    int ret = -1;
-   
+
    SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
 
    SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
@@ -1041,7 +1041,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
         int err = SSL_get_error(cl->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
      }
-   
+
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:

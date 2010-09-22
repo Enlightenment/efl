@@ -1215,7 +1215,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
        * the only example case I've found so far is if a client ssl handshakes
        * and then immediately disconnects without sending any further data.
        */
-     
+
         /* we lost our client! */
         Ecore_Con_Event_Client_Del *e;
 
@@ -1726,7 +1726,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (new_fd < 0)
      /* error! */
      return ECORE_CALLBACK_RENEW;
-     
+
    if ((svr->client_limit >= 0) && (svr->reject_excess_clients) &&
        (svr->client_count >= (unsigned int)svr->client_limit))
      goto error;
@@ -2155,7 +2155,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      _ecore_con_svr_cl_read(cl);
-     
+
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      _ecore_con_client_flush(cl);
 
@@ -2374,4 +2374,3 @@ _ecore_con_lookup_done(void *data, Ecore_Con_Info *infos)
    free(lk);
    free(svr);
 }
-

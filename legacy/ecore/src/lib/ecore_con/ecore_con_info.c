@@ -246,16 +246,16 @@ ecore_con_info_get(Ecore_Con_Server *svr,
           {
              if (result->ai_canonname)
                 canonname_len = strlen(result->ai_canonname) + 1;
-             
+
              tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen +
                 canonname_len;
-             
+
              if (!(tosend = alloca(tosend_len))) goto on_error;
              memset(tosend, 0, tosend_len);
-             
+
              container = (Ecore_Con_Info *)tosend;
              container->size = tosend_len;
-             
+
              memcpy(&container->info,
                     result,
                     sizeof(struct addrinfo));
@@ -265,7 +265,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
              memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen,
                     result->ai_canonname,
                     canonname_len);
-             
+
              if (!getnameinfo(result->ai_addr, result->ai_addrlen,
                               hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
                               NI_NUMERICHOST | NI_NUMERICSERV))
@@ -273,14 +273,14 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                   memcpy(container->ip,      hbuf, sizeof(container->ip));
                   memcpy(container->service, sbuf, sizeof(container->service));
                }
-             
+
              err = write(fd[1], tosend, tosend_len);
           }
 
 on_error:
         if (result)
            freeaddrinfo(result);
-        
+
         err = write(fd[1], "", 1);
         close(fd[1]);
 #ifdef __USE_ISOC99
@@ -289,7 +289,7 @@ on_error:
         _exit(0);
 #endif
      }
-   
+
    /* PARENT */
    cbdata->handler =
       ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ecore_con_info_exit_handler,
@@ -302,7 +302,7 @@ on_error:
         close(fd[0]);
         return 0;
      }
-   
+
    info_slaves = (CB_Data *)eina_inlist_append(EINA_INLIST_GET(
                                                                info_slaves),
                                                EINA_INLIST_GET(cbdata));
@@ -325,13 +325,13 @@ _ecore_con_info_readdata(CB_Data *cbdata)
      {
         torecv_len = container.size;
         torecv = malloc(torecv_len);
-        
+
         memcpy(torecv, &container, sizeof(Ecore_Con_Info));
-        
-        size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), 
+
+        size = read(ecore_main_fd_handler_fd_get(cbdata->fdh),
                     torecv + sizeof(Ecore_Con_Info),
                     torecv_len - sizeof(Ecore_Con_Info));
-        if ((size > 0) && 
+        if ((size > 0) &&
             ((size_t)size == torecv_len - sizeof(Ecore_Con_Info)))
           {
              recv = (Ecore_Con_Info *)torecv;
@@ -344,11 +344,11 @@ _ecore_con_info_readdata(CB_Data *cbdata)
                    (torecv + sizeof(Ecore_Con_Info) + recv->info.ai_addrlen);
              else
                 recv->info.ai_canonname = NULL;
-             
+
              recv->info.ai_next = NULL;
-             
+
              cbdata->cb_done(cbdata->data, recv);
-             
+
              free(torecv);
           }
         else
@@ -356,7 +356,7 @@ _ecore_con_info_readdata(CB_Data *cbdata)
      }
    else
       cbdata->cb_done(cbdata->data, NULL);
-   
+
    cbdata->cb_done = NULL;
 }
 

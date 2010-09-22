@@ -65,10 +65,10 @@
 
 /**
  * @defgroup Ecore_Con_Events_Group Events
- * 
- * @li ECORE_CON_CLIENT_ADD: Whenever a client connection is made to an 
- * @c Ecore_Con_Server, an event of this type is emitted, allowing the 
- * retrieval of the client's ip with @ref ecore_con_client_ip_get and 
+ *
+ * @li ECORE_CON_CLIENT_ADD: Whenever a client connection is made to an
+ * @c Ecore_Con_Server, an event of this type is emitted, allowing the
+ * retrieval of the client's ip with @ref ecore_con_client_ip_get and
  * associating data with the client using ecore_con_client_data_set.
  * @li ECORE_CON_EVENT_CLIENT_DEL: Whenever a client connection to an
  * @c Ecore_Con_Server, an event of this type is emitted.  The contents of
@@ -282,7 +282,7 @@ EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
 EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
 /** A server was created */
 EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
-/** A server connection was lost */ 
+/** A server connection was lost */
 EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
 /** A client connected to the server has sent data */
 EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
