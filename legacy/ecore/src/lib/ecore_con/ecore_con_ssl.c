@@ -802,8 +802,8 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
            SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(TLSv1_server_method())));
          break;
 
-      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
+      case ECORE_CON_USE_MIXED:
+      case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
          if (!svr->created)
            SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv23_client_method())));
          else
