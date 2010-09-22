@@ -338,9 +338,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
  *
  * @param obj The scrolled entry object
  * @param left_obj The widget to display on the left side of the scrolled entry.
- * If it is NULL, and there is already an widget on the left-side, it will be destroyed.
- * If it isn't NULL, and there were another widget on the left-side already, the old
- * widget will be destroyed.
+ * The old widget will be destroyed.
  *
  * @ingroup Scrolled_Entry
  * @see elm_scrolled_entry_end_set
@@ -350,14 +348,51 @@ elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if (!wd || !icon) return;
    if (wd->icon) evas_object_del(wd->icon);
-   if (icon)
-     {
-        wd->icon = icon;
-        elm_box_pack_before(wd->box, wd->icon, wd->scroller);
-     }
+   wd->icon = icon;
+   elm_box_pack_before(wd->box, wd->icon, wd->scroller);
    _sizing_eval(obj);
+}
+
+/**
+ * Gets the leftmost widget of the scrolled entry. This object is owned by the scrolled
+ * entry and should not be modified.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI const Evas_Object *
+elm_scrolled_entry_icon_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   return wd->icon;
+}
+
+/**
+ * Unsets the leftmost widget of the scrolled entry. Unparents and return the leftmost widget.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI Evas_Object *
+elm_scrolled_entry_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->icon)
+     {
+       ret = wd->icon;
+       elm_box_unpack(wd->box, wd->icon);
+       _sizing_eval(obj);
+     }
+   return ret;
 }
 
 /**
@@ -386,10 +421,8 @@ elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
  * This sets a widget to be displayed to the end of a scrolled entry.
  *
  * @param obj The scrolled entry object
- * @param left_obj The widget to display on the right side of the scrolled entry.
- * If it is NULL, and there is already an widget on the right-side, it will be destroyed.
- * If it isn't NULL, and there were another widget on the right-side already, the old
- * widget will be destroyed.
+ * @param end The widget to display on the right side of the scrolled entry.
+ * The old widget will be destroyed.
  *
  * @ingroup Scrolled_Entry
  * @see elm_scrolled_entry_icon_set
@@ -399,14 +432,51 @@ elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if (!wd || !end) return;
    if (wd->end) evas_object_del(wd->end);
-   if (end)
-     {
-        wd->end = end;
-        elm_box_pack_after(wd->box, wd->end, wd->scroller);
-     }
+   wd->end = end;
+   elm_box_pack_after(wd->box, wd->end, wd->scroller);
    _sizing_eval(obj);
+}
+
+/**
+ * Gets the endmost widget of the scrolled entry. This object is owned by the scrolled
+ * entry and should not be modified.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI const Evas_Object *
+elm_scrolled_entry_end_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   return wd->end;
+}
+
+/**
+ * Unsets the endmost widget of the scrolled entry. Unparents and return the endmost widget.
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI Evas_Object *
+elm_scrolled_entry_end_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->end)
+     {
+       ret = wd->end;
+       elm_box_unpack(wd->box, wd->end);
+       _sizing_eval(obj);
+     }
+   return ret;
 }
 
 /**
