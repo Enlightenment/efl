@@ -582,11 +582,19 @@ png_converter(char *target __UNUSED__, void *data, int size,
 }
 
 static int
-vcard_send(char *target __UNUSED__, void *data, int size,
-              void **data_ret __UNUSED__, int *size_ret __UNUSED__,
+vcard_send(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__,
+              void **data_ret, int *size_ret,
               Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
+   struct _elm_cnp_selection *sel;
+
    cnp_debug("vcard send called\n");
+
+   sel = selections + *(int*)data;
+
+   if (data_ret) *data_ret = strdup(sel->selbuf);
+   if (size_ret) *size_ret = strlen(sel->selbuf);
+
    return 1;
 }
 /*
