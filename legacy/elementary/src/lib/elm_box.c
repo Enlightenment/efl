@@ -30,12 +30,34 @@ struct _Widget_Data
    Eina_Bool homogeneous:1;
 };
 
+struct _Elm_Box_Transition
+{
+   double initial_time;
+   double duration;
+   Eina_Bool animation_ended:1;
+   Eina_Bool recalculate:1;
+   Ecore_Animator *animator;
+
+   struct
+   {
+      Evas_Object_Box_Layout layout;
+      void *data;
+      void(*free_data)(void *data);
+   } start, end;
+
+   void(*transition_end_cb)(void *data);
+   void *transition_end_data;
+   void (*transition_end_free_data)(void *data);
+   Eina_List *objs;
+   Evas_Object *box;
+};
+
 struct _Transition_Animation_Data
 {
    Evas_Object *obj;
    struct
    {
-      int x, y, w, h;
+      Evas_Coord x, y, w, h;
    } start, end;
 };
 
