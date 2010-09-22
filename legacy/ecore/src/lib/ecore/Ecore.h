@@ -412,18 +412,18 @@ extern "C" {
                                        Ecore_Cb,
                                        Ecore_Cb,
                                        const void *data);
-   EAPI Ecore_Thread *ecore_long_run(Ecore_Thread_Heavy_Cb,
-                                     Ecore_Thread_Notify_Cb,
-                                     Ecore_Cb,
-                                     Ecore_Cb,
-                                     const void *data,
-                                     Eina_Bool try_no_queue);
+   EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb,
+						Ecore_Thread_Notify_Cb,
+						Ecore_Cb,
+						Ecore_Cb,
+						const void *data,
+						Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_check(Ecore_Thread *thread);
-   EAPI Eina_Bool     ecore_thread_notify(Ecore_Thread *thread, const void *msg_data);
+   EAPI Eina_Bool     ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data);
    EAPI int           ecore_thread_active_get(void);
    EAPI int           ecore_thread_pending_get(void);
-   EAPI int           ecore_thread_pending_long_get(void);
+   EAPI int           ecore_thread_pending_feedback_get(void);
    EAPI int           ecore_thread_pending_total_get(void);
    EAPI int           ecore_thread_max_get(void);
    EAPI void          ecore_thread_max_set(int num);

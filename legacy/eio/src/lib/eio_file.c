@@ -68,7 +68,7 @@ _eio_file_heavy(Ecore_Thread *thread, void *data)
 	     filter = async->filter_cb((void*) async->ls.common.data, file);
 	  }
 
-	if (filter) ecore_thread_notify(thread, file);
+	if (filter) ecore_thread_feedback(thread, file);
 	else eina_stringshare_del(file);
 
 	if (ecore_thread_check(thread))
@@ -121,7 +121,7 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 	     if (!send) continue;
 
 	     memcpy(send, info, sizeof (Eina_File_Direct_Info));
-	     ecore_thread_notify(thread, send);
+	     ecore_thread_feedback(thread, send);
 	  }
 
 	if (ecore_thread_check(thread))
@@ -177,7 +177,7 @@ _eio_file_error(void *data)
  * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
  * @return A reference to the IO operation.
  *
- * eio_file_ls run eina_file_ls in a separated thread using ecore_long_run. This prevent
+ * eio_file_ls run eina_file_ls in a separated thread using ecore_thread_feedback_run. This prevent
  * any lock in your apps.
  */
 EAPI Eio_File *
@@ -223,7 +223,7 @@ eio_file_ls(const char *dir,
  * @return A reference to the IO operation.
  *
  * eio_file_direct_ls run eina_file_direct_ls in a separated thread using
- * ecore_long_run. This prevent any lock in your apps.
+ * ecore_thread_feedback_run. This prevent any lock in your apps.
  */
 EAPI Eio_File *
 eio_file_direct_ls(const char *dir,

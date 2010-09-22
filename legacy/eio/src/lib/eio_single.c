@@ -61,12 +61,12 @@ eio_long_file_set(Eio_File *common,
    common->error = 0;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
-   thread = ecore_long_run(heavy_cb,
-			   notify_cb,
-			   end_cb,
-			   cancel_cb,
-			   common,
-			   EINA_TRUE);
+   thread = ecore_thread_feedback_run(heavy_cb,
+				      notify_cb,
+				      end_cb,
+				      cancel_cb,
+				      common,
+				      EINA_TRUE);
 
    if (!thread) return EINA_FALSE;
    common->thread = thread;
