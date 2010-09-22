@@ -27,6 +27,7 @@ struct _Widget_Data
    Evas_Object *hover_parent;
    Eina_List *items;
    Eina_Bool horizontal : 1;
+   Eina_Bool expanded   : 1;
 };
 
 struct _Elm_Hoversel_Item
@@ -48,6 +49,21 @@ static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
+     return EINA_FALSE;
+   _activate(obj);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
+}
 
 static void
 _del_pre_hook(Evas_Object *obj)
@@ -145,6 +161,13 @@ _activate(Evas_Object *obj)
    char buf[4096];
 
    if (!wd) return;
+   if (wd->expanded)
+     {
+        elm_hoversel_hover_end(obj);
+        return;
+     }
+   wd->expanded = EINA_TRUE;
+
    if (elm_widget_disabled_get(obj)) return;
    wd->hover = elm_hover_add(obj);
    if (wd->horizontal)
@@ -256,8 +279,10 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_activate_hook_set(obj, _activate_hook);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->btn = elm_button_add(parent);
+   wd->expanded = EINA_FALSE;
    if (wd->horizontal)
      snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
    else
@@ -443,6 +468,7 @@ elm_hoversel_hover_end(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (!wd->hover) return;
+   wd->expanded = EINA_FALSE;
    evas_object_del(wd->hover);
    wd->hover = NULL;
    evas_object_smart_callback_call(obj, "dismissed", NULL);

@@ -62,12 +62,27 @@ static void _signal_radio_on(void *data, Evas_Object *obj, const char *emission,
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _activate(Evas_Object *obj);
 static void _activate_hook(Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_CHANGED, ""},
   {NULL, NULL}
 };
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
+     return EINA_FALSE;
+   _activate(obj);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
+}
 
 static void
 _del_hook(Evas_Object *obj)
@@ -261,6 +276,7 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, 1);
    elm_widget_activate_hook_set(obj, _activate_hook);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->radio = edje_object_add(e);
    _elm_theme_object_set(obj, wd->radio, "radio", "base", "default");
