@@ -45,7 +45,7 @@ extern "C" {
    EAPI extern Embryo_Version *embryo_version;
    
    /* potentioal error values */
-   enum
+   typedef enum _Embryo_Error
      {
 	EMBRYO_ERROR_NONE,
 	  /* reserve the first 15 error codes for exit codes of the abstract machine */
@@ -73,7 +73,7 @@ extern "C" {
 	  EMBRYO_ERROR_INIT_JIT,     /** Cannot initialize the JIT */
 	  EMBRYO_ERROR_PARAMS,       /** Parameter error */
 	  EMBRYO_ERROR_DOMAIN,       /** Domain error, expression result does not fit in range */
-     };
+     } Embryo_Error;
 
    /* possible function type values that are enumerated */
 #define EMBRYO_FUNCTION_NONE 0x7fffffff /* An invalid/non existent function */
@@ -128,11 +128,11 @@ extern "C" {
    EAPI Embryo_Cell      embryo_program_variable_find(Embryo_Program *ep, const char *name);
    EAPI int              embryo_program_variable_count_get(Embryo_Program *ep);
    EAPI Embryo_Cell      embryo_program_variable_get(Embryo_Program *ep, int num);
-   EAPI void             embryo_program_error_set(Embryo_Program *ep, int error);
-   EAPI int              embryo_program_error_get(Embryo_Program *ep);
+   EAPI void             embryo_program_error_set(Embryo_Program *ep, Embryo_Error error);
+   EAPI Embryo_Error     embryo_program_error_get(Embryo_Program *ep);
    EAPI void             embryo_program_data_set(Embryo_Program *ep, void *data);
    EAPI void            *embryo_program_data_get(Embryo_Program *ep);
-   EAPI const char      *embryo_error_string_get(int error);
+   EAPI const char      *embryo_error_string_get(Embryo_Error error);
    EAPI int              embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell);
    EAPI void             embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst);
    EAPI void             embryo_data_string_set(Embryo_Program *ep, const char *src, Embryo_Cell *str_cell);

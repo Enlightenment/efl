@@ -709,7 +709,7 @@ embryo_program_variable_get(Embryo_Program *ep, int num)
  * @ingroup Embryo_Error_Group
  */
 EAPI void
-embryo_program_error_set(Embryo_Program *ep, int error)
+embryo_program_error_set(Embryo_Program *ep, Embryo_Error error)
 {
    if (!ep) return;
    ep->error = error;
@@ -721,7 +721,7 @@ embryo_program_error_set(Embryo_Program *ep, int error)
  * @return  The current error code.
  * @ingroup Embryo_Error_Group
  */
-EAPI int
+EAPI Embryo_Error
 embryo_program_error_get(Embryo_Program *ep)
 {
    if (!ep) return EMBRYO_ERROR_NONE;
@@ -768,7 +768,7 @@ embryo_program_data_get(Embryo_Program *ep)
  * @ingroup Embryo_Error_Group
  */
 EAPI const char *
-embryo_error_string_get(int error)
+embryo_error_string_get(Embryo_Error error)
 {
    const char *messages[] =
      {
@@ -799,7 +799,8 @@ embryo_error_string_get(int error)
 	  /* EMBRYO_ERROR_INIT_JIT  */ "Cannot initialize the JIT",
 	  /* EMBRYO_ERROR_PARAMS    */ "Parameter error",
      };
-   if ((error < 0) || (error >= (int)(sizeof(messages) / sizeof(messages[0]))))
+   if (((int)error < 0) || 
+       ((int)error >= (int)(sizeof(messages) / sizeof(messages[0]))))
      return (const char *)"(unknown)";
    return messages[error];
 }
