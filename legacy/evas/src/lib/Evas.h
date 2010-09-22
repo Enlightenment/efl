@@ -2051,24 +2051,24 @@ struct _Evas_Smart_Cb_Description
  *
  * @ingroup Evas_Smart_Object_Group
  */
-   EAPI Evas_Object *evas_object_table_add(Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI Evas_Object *evas_object_table_add_to(Evas_Object *parent) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI void         evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_Mode homogeneous) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object_Table_Homogeneous_Mode evas_object_table_homogeneous_get(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI void         evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
-   EAPI void         evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
-   EAPI void         evas_object_table_align_set(Evas_Object *o, double horizontal, double vertical) EINA_ARG_NONNULL(1);
-   EAPI void         evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *vertical) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object                        *evas_object_table_add             (Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+   EAPI Evas_Object                        *evas_object_table_add_to          (Evas_Object *parent) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+   EAPI void                                evas_object_table_homogeneous_set (Evas_Object *o, Evas_Object_Table_Homogeneous_Mode homogeneous) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object_Table_Homogeneous_Mode  evas_object_table_homogeneous_get (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void                                evas_object_table_padding_set     (Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
+   EAPI void                                evas_object_table_padding_get     (const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
+   EAPI void                                evas_object_table_align_set       (Evas_Object *o, double horizontal, double vertical) EINA_ARG_NONNULL(1);
+   EAPI void                                evas_object_table_align_get       (const Evas_Object *o, double *horizontal, double *vertical) EINA_ARG_NONNULL(1);
 
-   EAPI Eina_Bool    evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan) EINA_ARG_NONNULL(1, 2);
-   EAPI Eina_Bool    evas_object_table_unpack(Evas_Object *o, Evas_Object *child) EINA_ARG_NONNULL(1, 2);
-   EAPI void         evas_object_table_clear(Evas_Object *o, Eina_Bool clear) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool                           evas_object_table_pack            (Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan) EINA_ARG_NONNULL(1, 2);
+   EAPI Eina_Bool                           evas_object_table_unpack          (Evas_Object *o, Evas_Object *child) EINA_ARG_NONNULL(1, 2);
+   EAPI void                                evas_object_table_clear           (Evas_Object *o, Eina_Bool clear) EINA_ARG_NONNULL(1);
 
-   EAPI void         evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows) EINA_ARG_NONNULL(1);
-   EAPI Eina_Iterator *evas_object_table_iterator_new(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI Eina_Accessor *evas_object_table_accessor_new(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI Eina_List     *evas_object_table_children_get(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
-   EAPI Evas_Object   *evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
+   EAPI void                                evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows) EINA_ARG_NONNULL(1);
+   EAPI Eina_Iterator                      *evas_object_table_iterator_new    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+   EAPI Eina_Accessor                      *evas_object_table_accessor_new    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+   EAPI Eina_List                          *evas_object_table_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+   EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
@@ -2076,10 +2076,10 @@ struct _Evas_Smart_Cb_Description
  * Provides client-server infrastructure to share bitmaps across
  * multiple processes, saving data and processing power.
  */
-   typedef struct _Evas_Cserve_Stats Evas_Cserve_Stats;
+   typedef struct _Evas_Cserve_Stats       Evas_Cserve_Stats;
    typedef struct _Evas_Cserve_Image_Cache Evas_Cserve_Image_Cache;
-   typedef struct _Evas_Cserve_Image Evas_Cserve_Image;
-   typedef struct _Evas_Cserve_Config Evas_Cserve_Config;
+   typedef struct _Evas_Cserve_Image       Evas_Cserve_Image;
+   typedef struct _Evas_Cserve_Config      Evas_Cserve_Config;
 
 /**
  * Statistics about server that shares cached bitmaps.
@@ -2087,10 +2087,10 @@ struct _Evas_Smart_Cb_Description
  */
    struct _Evas_Cserve_Stats
      {
-        int saved_memory; /**< current saved memory, in bytes */
-        int wasted_memory; /**< current wasted memory, in bytes */
-        int saved_memory_peak; /**< peak of saved memory, in bytes */
-        int wasted_memory_peak; /**< peak of wasted memory, in bytes */
+        int    saved_memory; /**< current saved memory, in bytes */
+        int    wasted_memory; /**< current wasted memory, in bytes */
+        int    saved_memory_peak; /**< peak of saved memory, in bytes */
+        int    wasted_memory_peak; /**< peak of wasted memory, in bytes */
         double saved_time_image_header_load;
         double saved_time_image_data_load;
      };
@@ -2102,9 +2102,9 @@ struct _Evas_Smart_Cb_Description
    struct _Evas_Cserve_Image_Cache
      {
         struct {
-           int mem_total;
-           int count;
-        } active, cached;
+           int     mem_total;
+           int     count;
+        }          active, cached;
         Eina_List *images;
      };
 
@@ -2115,20 +2115,20 @@ struct _Evas_Smart_Cb_Description
    struct _Evas_Cserve_Image
      {
         const char *file, *key;
-        int w, h;
-        time_t file_mod_time;
-        time_t file_checked_time;
-        time_t cached_time;
-        int refcount;
-        int data_refcount;
-        int memory_footprint;
-        double head_load_time;
-        double data_load_time;
-        Eina_Bool alpha : 1;
-        Eina_Bool data_loaded : 1;
-        Eina_Bool active : 1;
-        Eina_Bool dead : 1;
-        Eina_Bool useless : 1;
+        int         w, h;
+        time_t      file_mod_time;
+        time_t      file_checked_time;
+        time_t      cached_time;
+        int         refcount;
+        int         data_refcount;
+        int         memory_footprint;
+        double      head_load_time;
+        double      data_load_time;
+        Eina_Bool   alpha : 1;
+        Eina_Bool   data_loaded : 1;
+        Eina_Bool   active : 1;
+        Eina_Bool   dead : 1;
+        Eina_Bool   useless : 1;
      };
 
 /**
