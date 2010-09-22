@@ -92,6 +92,16 @@ static const struct escapes {
 };
 #define N_ESCAPES ((int)(sizeof(escapes)/sizeof(escapes[0])))
 
+struct tmpinfo {
+   int fd;
+   char *filename;
+   void *map;
+   int len;
+};
+
+
+static struct tmpinfo *elm_cnp_tempfile_create(int size);
+static int tmpinfo_free(struct tmpinfo *tmp);
 
 static Eina_Bool _elm_cnp_init(void);
 static Eina_Bool selection_clear(void *udata __UNUSED__, int type, void *event);
@@ -812,10 +822,8 @@ notify_handler_png(struct _elm_cnp_selection *sel,
                    Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
-   char *fname,*tmppath;
+   struct tmpinfo *tmp;
    struct pasteimage *pi;
-   int fd,len;
-   void *map;
 
    cnp_debug("got a png (or a jpeg)!\n");
    data = notify->data;
@@ -823,51 +831,18 @@ notify_handler_png(struct _elm_cnp_selection *sel,
    cnp_debug("Size if %d\n",data->length);
 
    /* generate tmp name */
-   tmppath = getenv("TMP");
-   if (!tmppath) tmppath = P_tmpdir;
-   if (!tmppath) tmppath = "/tmp";
-   len = snprintf(NULL,0,"%s/%sXXXXXX",tmppath, "elmcnpimage-");
-   if (len < 0) return 1;
-   len ++;
-   fname = malloc(len);
-   if (!fname) return 1;
-   len = snprintf(fname,len,"%s/%sXXXXXX",tmppath, "elmcnpimage-");
+   tmp = elm_cnp_tempfile_create(data->length);
 
-   fd = mkstemp(fname);
-   if (fd < 0)
-     {
-        free(fname);
-        return 1;
-     }
+   memcpy(tmp->map, data->data, data->length);
 
-   if (ftruncate(fd, data->length))
-     {
-        perror("ftruncate");
-        unlink(fname);
-        free(fname);
-        close(fd);
-     }
-
-   map = mmap(NULL,data->length, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-   if (map == MAP_FAILED)
-     {
-        perror("mmap");
-        unlink(fname);
-        free(fname);
-        close(fd);
-     }
-   memcpy(map, data->data, data->length);
-   munmap(map,data->length);
-   close(fd);
-
-   /* FIXME: add clean up function */
-   // on_exit: file name + pid
-   //    need pid, as forked children inheret list :-(
+   munmap(tmp->map,data->length);
 
    /* FIXME: Add to paste image data to clean up */
 
-   pi = pasteimage_alloc(fname);
+   pi = pasteimage_alloc(tmp->filename);
    pasteimage_append(pi, sel->requestwidget);
+
+   tmpinfo_free(tmp);
 
    return 0;
 }
@@ -1558,8 +1533,93 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    return true;
 }
 
+static struct tmpinfo *
+elm_cnp_tempfile_create(int size){
+   struct tmpinfo *info;
+   char *tmppath;
+   int len;
+
+   info = malloc(sizeof(struct tmpinfo));
+   if (!info) return NULL;
+
+   tmppath = getenv("TMP");
+   if (!tmppath) tmppath = P_tmpdir;
+   if (!tmppath) tmppath = "/tmp";
+   len = snprintf(NULL,0,"%s/%sXXXXXX",tmppath, "elmcnpitem-");
+   if (len < 0)
+     {
+        free(info);
+        return NULL;
+     }
+   len ++;
+   info->filename = malloc(len);
+   if (info->filename)
+     {
+        free(info);
+        return NULL;
+     }
+   len = snprintf(info->filename,len,"%s/%sXXXXXX",tmppath, "elmcnpitem-");
+
+   info->fd = mkstemp(info->filename);
+
+#ifdef __linux__
+   {
+      char *tmp;
+      /* And before someone says anything see POSIX 1003.1-2008 page 400 */
+      long pid;
+      pid = (long)getpid();
+      /* Use pid instead of /proc/self: That way if can be passed around */
+      len = snprintf(NULL,0,"/proc/%ld/fd/%d",pid, info->fd);
+      len ++;
+      tmp = malloc(len);
+      if (tmp)
+        {
+           snprintf(tmp,len, "/proc/%ld/fd/%d",pid, info->fd);
+           unlink(info->filename);
+           free(info->filename);
+           info->filename = tmp;
+        }
+   }
+#endif
+
+ printf("filename is %s\n",info->filename);
+   if (size < 1)
+     {
+        /* Set map to NULL and return */
+        info->map = NULL;
+        info->len = 0;
+        return info;
+   }
+
+   /* Map it in */
+   if (ftruncate(info->fd, size))
+     {
+        perror("ftruncate");
+        info->map = NULL;
+        info->len = 0;
+        return info;
+     }
+
+   info->map = mmap(NULL,size, PROT_READ|PROT_WRITE, MAP_SHARED, info->fd, 0);
+   if (info->map == MAP_FAILED)
+     {
+        perror("mmap");
+        info->map = NULL;
+        info->len = 0;
+     }
+
+   return info;
+}
 
 
+static int
+tmpinfo_free(struct tmpinfo *info)
+{
+   if (!info) return 0;
+   free(info->filename);
+   free(info);
+   return 0;
+}
 
 #else
 /* Stubs for windows */
