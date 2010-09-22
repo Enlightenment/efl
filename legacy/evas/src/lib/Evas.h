@@ -205,7 +205,7 @@ typedef struct _Evas_Smart_Cb_Description    Evas_Smart_Cb_Description;
  * @see evas_map_dup()
  * @ingroup Evas_Object_Group_Map
  */
-typedef struct _Evas_Map              Evas_Map;
+typedef struct _Evas_Map            Evas_Map;
 
 /**
  * @typedef Evas
@@ -214,25 +214,25 @@ typedef struct _Evas_Map              Evas_Map;
  * @see evas_free()
  * @ingroup Evas_Canvas
  */
-typedef struct _Evas Evas;
+typedef struct _Evas                Evas;
 
 /**
  * @typedef Evas_Object
  * An Evas Object handle.
  * @ingroup Evas_Object_Group
  */
-typedef struct _Evas_Object Evas_Object;
+typedef struct _Evas_Object         Evas_Object;
 
-typedef void Evas_Performance; /**< An Evas Performance handle */
-typedef struct _Evas_Modifier Evas_Modifier; /**< An Evas Modifier */
-typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
-typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
+typedef void                        Evas_Performance; /**< An Evas Performance handle */
+typedef struct _Evas_Modifier       Evas_Modifier; /**< An Evas Modifier */
+typedef struct _Evas_Lock           Evas_Lock; /**< An Evas Lock */
+typedef struct _Evas_Smart          Evas_Smart; /**< An Evas Smart Object handle */
 typedef struct _Evas_Native_Surface Evas_Native_Surface; /**< A generic datatype for engine specific native surface information */
-typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
+typedef unsigned long long          Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
-typedef int           Evas_Coord;
-typedef int           Evas_Font_Size;
-typedef int           Evas_Angle;
+typedef int                         Evas_Coord;
+typedef int                         Evas_Font_Size;
+typedef int                         Evas_Angle;
 
 struct _Evas_Coord_Rectangle /**< A rectangle in Evas_Coord */
 {
@@ -279,7 +279,6 @@ typedef enum _Evas_Aspect_Control
    EVAS_ASPECT_CONTROL_BOTH = 4
 } Evas_Aspect_Control;
 
-
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
 typedef struct _Evas_Device           Evas_Device; /**< A source device handle - where the event came from */
@@ -296,25 +295,44 @@ typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down; /**< Event structure 
 typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 typedef struct _Evas_Event_Hold       Evas_Event_Hold; /**< Event structure for #EVAS_CALLBACK_HOLD event callbacks */
 
-/* load error identifiers, see evas_load_error_str() */
-#define EVAS_LOAD_ERROR_NONE                       0 /**< No error on load */
-#define EVAS_LOAD_ERROR_GENERIC                    1 /**< A non-specific error occurred */
-#define EVAS_LOAD_ERROR_DOES_NOT_EXIST             2 /**< File (or file path) does not exist */
-#define EVAS_LOAD_ERROR_PERMISSION_DENIED          3 /**< Permission deinied to an existing file (or path) */
-#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4 /**< Allocation of resources failure prevented load */
-#define EVAS_LOAD_ERROR_CORRUPT_FILE               5 /**< File corrupt (but was detected as a known format) */
-#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT             6 /**< File is not a known format */
+typedef enum _Evas_Load_Error
+{
+   EVAS_LOAD_ERROR_NONE = 0, /**< No error on load */
+   EVAS_LOAD_ERROR_GENERIC = 1, /**< A non-specific error occurred */
+   EVAS_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< File (or file path) does not exist */
+   EVAS_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission deinied to an existing file (or path) */
+   EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Allocation of resources failure prevented load */
+   EVAS_LOAD_ERROR_CORRUPT_FILE = 5, /**< File corrupt (but was detected as a known format) */
+   EVAS_LOAD_ERROR_UNKNOWN_FORMAT = 6 /**< File is not a known format */
+} Evas_Load_Error; /**< Load error you can get from loading of files - see evas_load_error_str() too */
 
-#define EVAS_ALLOC_ERROR_NONE                      0 /**< No allocation error */
-#define EVAS_ALLOC_ERROR_FATAL                     1 /**< Allocation failed despite attempts to free up memory */
-#define EVAS_ALLOC_ERROR_RECOVERED                 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
+typedef enum _Evas_Alloc_Error
+{
+   EVAS_ALLOC_ERROR_NONE = 0, /**< No allocation error */
+   EVAS_ALLOC_ERROR_FATAL = 1, /**< Allocation failed despite attempts to free up memory */
+   EVAS_ALLOC_ERROR_RECOVERED = 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
+} Evas_Alloc_Error; /**< Possible allocation errors returned by evas_alloc_error() */
+   
+typedef enum _Evas_Fill_Spread
+{
+   EVAS_TEXTURE_REFLECT = 0, /**< image fill tiling mode - tiling reflects */
+   EVAS_TEXTURE_REPEAT = 1, /**< tiling repeats */
+   EVAS_TEXTURE_RESTRICT = 2, /**< tiling clamps - range offset ignored */
+   EVAS_TEXTURE_RESTRICT_REFLECT = 3, /**< tiling clamps and any range offset reflects */
+   EVAS_TEXTURE_RESTRICT_REPEAT = 4, /**< tiling clamps and any range offset repeats */
+   EVAS_TEXTURE_PAD = 5 /**< tiling extends with end values */
+} Evas_Fill_Spread; /**< Fill types used for evas_object_image_fill_spread_set() */
 
-#define EVAS_TEXT_INVALID -1
-#define EVAS_TEXT_SPECIAL -2
+typedef enum _Evas_Pixel_Import_Pixel_Format
+{
+   EVAS_PIXEL_FORMAT_NONE = 0, /**< No pixel format */
+   EVAS_PIXEL_FORMAT_ARGB32 = 1, /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
+   EVAS_PIXEL_FORMAT_YUV420P_601 = 2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
+} Evas_Pixel_Import_Pixel_Format; /**< Pixel format for import call. See evas_object_image_pixels_import() */
 
 struct _Evas_Pixel_Import_Source
 {
-   int format; /**< pixel format type ie ARGB32, YUV420P_601 etc. */
+   Evas_Pixel_Import_Pixel_Format format; /**< pixel format type ie ARGB32, YUV420P_601 etc. */
    int w, h; /**< width and height of source in pixels */
    void **rows; /**< an array of pointers (size depends on format) pointing to left edge of each scanline */
 };
@@ -335,19 +353,10 @@ struct _Evas_Native_Surface
 #define EVAS_LAYER_MIN -32768 /**< bottom-most layer number */
 #define EVAS_LAYER_MAX 32767  /**< top-most layer number */
 
-#define EVAS_PIXEL_FORMAT_NONE                     0 /**< No pixel format */
-#define EVAS_PIXEL_FORMAT_ARGB32                   1 /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
-#define EVAS_PIXEL_FORMAT_YUV420P_601              2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
-
-#define EVAS_COLOR_SPACE_ARGB                      0 /**< ARGB color space */
-#define EVAS_COLOR_SPACE_AHSV                      1 /**< AHSV color space */
-
-#define EVAS_TEXTURE_REFLECT            0 /**< image fill tiling mode - tiling reflects */
-#define EVAS_TEXTURE_REPEAT             1 /**< tiling repeats */
-#define EVAS_TEXTURE_RESTRICT           2 /**< tiling clamps - range offset ignored */
-#define EVAS_TEXTURE_RESTRICT_REFLECT   3 /**< tiling clamps and any range offset reflects */
-#define EVAS_TEXTURE_RESTRICT_REPEAT    4 /**< tiling clamps and any range offset repeats */
-#define EVAS_TEXTURE_PAD                5 /**< tiling extends with end values */
+#define EVAS_COLOR_SPACE_ARGB 0 /**< Not used for anything */
+#define EVAS_COLOR_SPACE_AHSV 1 /**< Not used for anything */
+#define EVAS_TEXT_INVALID -1 /**< Not used for anything */
+#define EVAS_TEXT_SPECIAL -2 /**< Not used for anything */
 
 #define EVAS_HINT_EXPAND  1.0 /**< Use with evas_object_size_hint_weight_set(), evas_object_size_hint_weight_get(), evas_object_size_hint_expand_set(), evas_object_size_hint_expand_get() */
 #define EVAS_HINT_FILL   -1.0 /**< Use with evas_object_size_hint_align_set(), evas_object_size_hint_align_get(), evas_object_size_hint_fill_set(), evas_object_size_hint_fill_get() */
@@ -628,7 +637,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI int               evas_init                         (void);
    EAPI int               evas_shutdown                     (void);
 
-   EAPI int               evas_alloc_error                  (void);
+   EAPI Evas_Alloc_Error  evas_alloc_error                  (void);
 
    EAPI int               evas_async_events_fd_get          (void) EINA_WARN_UNUSED_RESULT EINA_PURE;
    EAPI int               evas_async_events_process         (void);
@@ -745,7 +754,6 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI Eina_Bool         evas_pointer_inside_get           (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
    EAPI void              evas_sync(Evas *e) EINA_ARG_NONNULL(1);
 
-
 /**
  * @defgroup Evas_Event_Freezing_Group Event Freezing Functions
  *
@@ -811,7 +819,6 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_image_cache_reload           (Evas *e) EINA_ARG_NONNULL(1);
    EAPI void              evas_image_cache_set              (Evas *e, int size) EINA_ARG_NONNULL(1);
    EAPI int               evas_image_cache_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
 
 /**
  * @defgroup Evas_Font_Group Font Functions
@@ -893,7 +900,6 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_object_stack_below           (Evas_Object *obj, Evas_Object *below) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Object      *evas_object_above_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-
 
 /**
  * @defgroup Evas_Object_Group_Events Object Events
@@ -1222,12 +1228,12 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI double                   evas_object_image_border_scale_get       (const Evas_Object *obj);
    EAPI void                     evas_object_image_fill_set               (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
    EAPI void                     evas_object_image_fill_get               (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
-   EAPI void                     evas_object_image_fill_spread_set        (Evas_Object *obj, int tile_mode) EINA_ARG_NONNULL(1);
-   EAPI int                      evas_object_image_fill_spread_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void                     evas_object_image_fill_spread_set        (Evas_Object *obj, Evas_Fill_Spread spread) EINA_ARG_NONNULL(1);
+   EAPI Evas_Fill_Spread         evas_object_image_fill_spread_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                     evas_object_image_size_set               (Evas_Object *obj, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void                     evas_object_image_size_get               (const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
    EAPI int                      evas_object_image_stride_get             (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   EAPI int                      evas_object_image_load_error_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI Evas_Load_Error          evas_object_image_load_error_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                     evas_object_image_data_set               (Evas_Object *obj, void *data) EINA_ARG_NONNULL(1);
    EAPI void                    *evas_object_image_data_convert           (Evas_Object *obj, Evas_Colorspace to_cspace) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                    *evas_object_image_data_get               (const Evas_Object *obj, Eina_Bool for_writing) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -1312,7 +1318,6 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI void              evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_text_style_pad_get    (const Evas_Object *obj, int *l, int *r, int *t, int *b) EINA_ARG_NONNULL(1);
-
 
 /**
  * @defgroup Evas_Object_Textblock Textblock Object Functions
@@ -1793,7 +1798,6 @@ struct _Evas_Smart_Cb_Description
 
    EAPI void              evas_smart_objects_calculate      (Evas *e);
 
-
 /**
  * @defgroup Evas_Smart_Object_Clipped Clipped Smart Object
  *
@@ -2036,7 +2040,6 @@ struct _Evas_Smart_Cb_Description
    EAPI Eina_Bool   evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...) EINA_ARG_NONNULL(1, 2);
    EAPI Eina_Bool   evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args) EINA_ARG_NONNULL(1, 2);
 
-
 /**
  * @defgroup Evas_Object_Table Table Smart Object.
  *
@@ -2066,7 +2069,6 @@ struct _Evas_Smart_Cb_Description
    EAPI Eina_Accessor *evas_object_table_accessor_new(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Eina_List     *evas_object_table_children_get(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object   *evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
-
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
@@ -2148,7 +2150,6 @@ struct _Evas_Smart_Cb_Description
    EAPI Eina_Bool         evas_cserve_config_set                 (const Evas_Cserve_Config *config) EINA_WARN_UNUSED_RESULT EINA_PURE;
    EAPI void              evas_cserve_disconnect                 (void);
 
-
 /**
  * @defgroup Evas_Utils General Utilities
  *
@@ -2200,7 +2201,6 @@ struct _Evas_Smart_Cb_Description
    
    EAPI Eina_Bool            evas_object_key_grab           (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_object_key_ungrab         (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(1, 2);
-
 
 #ifdef __cplusplus
 }

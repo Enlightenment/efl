@@ -641,7 +641,7 @@ evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
  * EVAS_TEXTURE_RESTRICT, or EVAS_TEXTURE_PAD.
  */
 EAPI void
-evas_object_image_fill_spread_set(Evas_Object *obj, int spread)
+evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread)
 {
    Evas_Object_Image *o;
 
@@ -665,7 +665,7 @@ evas_object_image_fill_spread_set(Evas_Object *obj, int spread)
  * @param   obj The given evas image object.
  * @return  The current spread mode of the image object.
  */
-EAPI int
+EAPI Evas_Fill_Spread
 evas_object_image_fill_spread_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -817,7 +817,7 @@ evas_object_image_stride_get(const Evas_Object *obj)
  *         the @c EVAS_LOAD_ERROR_* values.  @c EVAS_LOAD_ERROR_NONE is
  *         returned if there was no error.
  */
-EAPI int
+EAPI Evas_Load_Error
 evas_object_image_load_error_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;

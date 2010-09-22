@@ -60,7 +60,7 @@ static int _evas_debug_abort = 0;
  *
  * @ingroup Evas_Group
  */
-EAPI int
+EAPI Evas_Alloc_Error
 evas_alloc_error(void)
 {
    return _evas_alloc_error;
