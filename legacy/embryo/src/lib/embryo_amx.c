@@ -1051,7 +1051,7 @@ embryo_program_recursion_get(Embryo_Program *ep)
  *          it is allowed to in abstract machine instruction count.
  * @ingroup Embryo_Run_Group
  */
-EAPI int
+EAPI Embryo_Status
 embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 {
    Embryo_Header    *hdr;
