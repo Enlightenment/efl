@@ -388,6 +388,7 @@ EAPI Eina_Bool         ecore_con_server_connected_get(Ecore_Con_Server *svr);
 EAPI Eina_List *       ecore_con_server_clients_get(Ecore_Con_Server *svr);
 EAPI const char *      ecore_con_server_name_get(Ecore_Con_Server *svr);
 EAPI int               ecore_con_server_port_get(Ecore_Con_Server *svr);
+EAPI double            ecore_con_server_uptime_get(Ecore_Con_Server *svr);
 EAPI int               ecore_con_server_send(Ecore_Con_Server *svr,
                                              const void *data,
                                              int size);
@@ -396,7 +397,8 @@ EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
                                                          char reject_excess_clients);
 EAPI const char *      ecore_con_server_ip_get(Ecore_Con_Server *svr);
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
-
+EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout);
+EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
 EAPI Eina_Bool         ecore_con_server_ssl_cert_add(const char *cert);
 
 /**
@@ -419,6 +421,9 @@ EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl,
 EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
 EAPI const char *      ecore_con_client_ip_get(Ecore_Con_Client *cl);
 EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
+EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
+EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
+EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
 EAPI Eina_Bool         ecore_con_client_ssl_cert_add(const char *cert_file,
                                                      const char *crl_file,
                                                      const char *key_file);

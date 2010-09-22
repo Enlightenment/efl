@@ -43,6 +43,9 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
+static Eina_Bool _ecore_con_client_timer(Ecore_Con_Client *cl);
+static void      _ecore_con_cl_timer_update(Ecore_Con_Client *cl);
+
 static void      _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *info);
 static void      _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *info);
 static void      _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *info);
@@ -471,6 +474,44 @@ error:
 }
 
 /**
+ * Set the default time after which an inactive client will be disconnected
+ * @param svr The server object
+ * @param timeout The timeout, in seconds, to disconnect after
+ * This function is used to set the idle timeout on clients.  A value of < 1
+ * disables the idle timeout.
+ */
+EAPI void
+ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_timeout_set");
+        return;
+     }
+
+   svr->client_disconnect_time = timeout;
+}
+
+/**
+ * Get the default time after which an inactive client will be disconnected
+ * @param svr The server object
+ * @return The timeout, in seconds, to disconnect after
+ * This function is used to get the idle timeout for clients.  A value of < 1
+ * means the idle timeout is disabled.
+ */
+EAPI double
+ecore_con_server_timeout_get(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_timeout_get");
+        return 0;
+     }
+
+   return svr->client_disconnect_time;
+}
+
+/**
  * Closes the connection and frees the given server.
  * @param   svr The given server.
  * @return  Data associated with the server when it was created.
@@ -653,8 +694,7 @@ ecore_con_server_send(Ecore_Con_Server *svr,
       return 0;
 
    if (svr->fd_handler)
-      ecore_main_fd_handler_active_set(
-         svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
+      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
    if (svr->write_buf)
      {
@@ -740,6 +780,24 @@ ecore_con_server_ip_get(Ecore_Con_Server *svr)
    return svr->ip;
 }
 
+
+/**
+ * @brief Check how long a server has been connected
+ * @param svr The server to check
+ * @return The total time, in seconds, that the server has been connected/running
+ * This function is used to find out how long a server has been connected/running for.
+ */
+EAPI double
+ecore_con_server_uptime_get(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_uptime_get");
+        return -1;
+     }
+
+   return ecore_time_get() - svr->start_time;
+}
 /**
  * Flushes all pending data to the given server. Will return when done.
  *
@@ -879,6 +937,47 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
 }
 
 /**
+ * Set the time after which the client will be disconnected when inactive
+ * @param cl The client object
+ * @param timeout The timeout, in seconds, to disconnect after
+ * This function is used to set the idle timeout on a client.  A value of < 1
+ * disables the idle timeout.
+ */
+EAPI void
+ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
+                         "ecore_con_client_timeout_set");
+        return;
+     }
+
+   cl->disconnect_time = timeout;
+
+   _ecore_con_cl_timer_update(cl);
+}
+
+/**
+ * Get the default time after which the client will be disconnected when inactive
+ * @param cl The client object
+ * @return The timeout, in seconds, to disconnect after
+ * This function is used to get the idle timeout for a client.  A value of < 1
+ * means the idle timeout is disabled.
+ */
+EAPI double
+ecore_con_client_timeout_get(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_timeout_get");
+        return 0;
+     }
+
+   return cl->disconnect_time;
+}
+
+/**
  * Closes the connection and frees memory allocated to the given client.
  * @param   cl The given client.
  * @return  Data associated with the client.
@@ -987,6 +1086,24 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
 }
 
 /**
+ * @brief Check how long a client has been connected
+ * @param cl The client to check
+ * @return The total time, in seconds, that the client has been connected to the server
+ * This function is used to find out how long a client has been connected for.
+ */
+EAPI double
+ecore_con_client_uptime_get(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_uptime_get");
+        return -1;
+     }
+
+   return ecore_time_get() - cl->start_time;
+}
+
+/**
  * Flushes all pending data to the given client. Will return when done.
  *
  * @param   cl            The given client.
@@ -1058,18 +1175,19 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
              break;
           }
      }
+
    if (svr->write_buf)
       free(svr->write_buf);
 
    EINA_LIST_FREE(svr->clients, cl)
-   _ecore_con_client_free(cl);
+     _ecore_con_client_free(cl);
    if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
       unlink(svr->path);
 
+   ecore_con_ssl_server_shutdown(svr);
    if (svr->fd >= 0)
       close(svr->fd);
 
-   ecore_con_ssl_server_shutdown(svr);
    if (svr->name)
       free(svr->name);
 
@@ -1106,6 +1224,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
         if (e)
           {
              cl->event_count++;
+             _ecore_con_cl_timer_update(cl);
              e->client = cl;
              ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                              _ecore_con_event_client_del_free, NULL);
@@ -1130,6 +1249,9 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      }
    if (cl->buf)
       free(cl->buf);
+
+   if (cl->host_server->type & ECORE_CON_SSL)
+     ecore_con_ssl_client_shutdown(cl);
 
    if (cl->fd >= 0)
       close(cl->fd);
@@ -1165,6 +1287,49 @@ kill_server(Ecore_Con_Server *svr)
       ecore_main_fd_handler_del(svr->fd_handler);
 
    svr->fd_handler = NULL;
+}
+
+static Eina_Bool
+_ecore_con_client_timer(Ecore_Con_Client *cl)
+{
+   ecore_con_client_del(cl);
+
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_ecore_con_cl_timer_update(Ecore_Con_Client *cl)
+{
+   if (cl->disconnect_time)
+     {
+        if (cl->disconnect_time > 0)
+          {
+             if (cl->until_deletion)
+               ecore_timer_interval_set(cl->until_deletion, cl->disconnect_time);
+             else
+               cl->until_deletion = ecore_timer_add(cl->disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, cl);
+          }
+        else if (cl->until_deletion)
+          {
+             ecore_timer_del(cl->until_deletion);
+             cl->until_deletion = NULL;
+          }
+     }
+   else
+     {
+        if (cl->host_server->client_disconnect_time > 0)
+          {
+             if (cl->until_deletion)
+               ecore_timer_interval_set(cl->until_deletion, cl->host_server->client_disconnect_time);
+             else
+               cl->until_deletion = ecore_timer_add(cl->host_server->client_disconnect_time, (Ecore_Task_Cb)_ecore_con_client_timer, cl);
+          }
+        else if (cl->until_deletion)
+          {
+             ecore_timer_del(cl->until_deletion);
+             cl->until_deletion = NULL;
+          }
+     }
 }
 
 static void
@@ -1465,6 +1630,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
         if (e)
           {
              svr->event_count++;
+             svr->start_time = ecore_time_get();
              e->server = svr;
              ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
                              _ecore_con_event_server_add_free, NULL);
@@ -1575,10 +1741,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    cl->host_server = svr;
 
    if ((svr->type & ECORE_CON_SSL) && (ecore_con_ssl_client_init(cl)))
-     {
-        ecore_con_ssl_client_shutdown(cl);
-        goto error;
-     }
+     goto error;
 
    cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
                                 _ecore_con_svr_cl_handler, cl, NULL, NULL);
@@ -1596,6 +1759,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         if (e)
           {
              cl->event_count++;
+             _ecore_con_cl_timer_update(cl);
              e->client = cl;
              ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, e,
                              _ecore_con_event_client_add_free, NULL);
@@ -1839,6 +2003,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                   if (e)
                     {
                        svr->event_count++;
+                       _ecore_con_cl_timer_update(cl);
                        e->client = cl;
                        e->data = inbuf;
                        e->size = num;
@@ -1856,6 +2021,7 @@ _ecore_con_svr_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
                          {
 /*cl->event_count++;*/
                             add->client = cl;
+                            _ecore_con_cl_timer_update(cl);
                             ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
                                             _ecore_con_event_client_add_free, NULL);
                          }
@@ -1937,6 +2103,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
              if (e)
                {
                   cl->event_count++;
+                  _ecore_con_cl_timer_update(cl);
                   e->client = cl;
                   e->data = inbuf;
                   e->size = inbuf_num;
@@ -1954,6 +2121,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
              if (e)
                {
                   cl->event_count++;
+                  _ecore_con_cl_timer_update(cl);
                   e->client = cl;
                   ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                                   _ecore_con_event_client_del_free, NULL);
@@ -2066,6 +2234,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
                 if (e)
                   {
                      cl->event_count++;
+                     _ecore_con_cl_timer_update(cl);
                      e->client = cl;
                      ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                                      _ecore_con_event_client_del_free, NULL);
@@ -2115,8 +2284,7 @@ _ecore_con_event_client_del_free(void *data __UNUSED__, void *ev)
 
    e = ev;
    e->client->event_count--;
-   if ((e->client->event_count == 0) &&
-       (e->client->delete_me))
+   if ((e->client->event_count == 0) && (e->client->delete_me))
       ecore_con_client_del(e->client);
 
       free(e);

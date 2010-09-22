@@ -89,6 +89,9 @@ struct _Ecore_Con_Client
    int event_count;
    struct sockaddr *client_addr;
    int client_addr_len;
+   double start_time;
+   Ecore_Timer *until_deletion;
+   double disconnect_time;
 #if USE_GNUTLS
    gnutls_session session;
 #elif USE_OPENSSL
@@ -130,6 +133,8 @@ struct _Ecore_Con_Server
    SSL *ssl;
    int ssl_err;
 #endif
+   double start_time;
+   double client_disconnect_time;
    char *ip;
    Eina_Bool dead : 1;
    Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
