@@ -139,9 +139,11 @@ struct _Evas_GL_Shared
 #define MAX_CUTOUT             512
 #define DEF_CUTOUT                  512
       
+// FIXME bug with pipes > 1 right now, should default to 32      
 #define MAX_PIPES              128
-#define DEF_PIPES                    32
-#define DEF_PIPES_SGX_540            32
+#define DEF_PIPES                     1
+//#define DEF_PIPES_SGX_540            32
+#define DEF_PIPES_SGX_540             1
 #define DEF_PIPES_TEGRA_2             1
       
 #define MIN_ATLAS_ALLOC         16
@@ -198,6 +200,9 @@ struct _Evas_GL_Shared
    int references;
    int w, h;
    int rot;
+   // persp map
+   int foc, z0, px, py;
+   int ax, ay;
 };
 
 #define RTYPE_RECT  1
@@ -213,7 +218,8 @@ struct _Evas_GL_Context
    int                references;
    int                w, h;
    int                rot;
-   RGBA_Draw_Context  *dc;
+   int                foc, z0, px, py;
+   RGBA_Draw_Context *dc;
    
    Evas_GL_Shared     *shared;
 

@@ -655,6 +655,11 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              return clean_them;
           }
 
+        pts[0].px = obj->cur.map->persp.px << FP;
+        pts[0].py = obj->cur.map->persp.py << FP;
+        pts[0].foc = obj->cur.map->persp.foc << FP;
+        pts[0].z0 = obj->cur.map->persp.z0 << FP;
+        
         p = obj->cur.map->points;
         p_end = p + 4;
         pt = pts;
@@ -663,6 +668,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              pt->x = (p->x + off_x) << FP;
              pt->y = (p->y + off_y) << FP;
              pt->z = (p->z)         << FP;
+             pt->x3 = p->px << FP;
+             pt->y3 = p->py << FP;
              pt->u = p->u * FP1;
              pt->v = p->v * FP1;
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);

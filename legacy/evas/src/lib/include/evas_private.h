@@ -362,21 +362,24 @@ struct _Evas_Size_Hints
 
 struct _Evas_Map_Point
 {
-   Evas_Coord x, y, z;
+   Evas_Coord x, y, z, px, py;
    double u, v;
    unsigned char r, g, b, a;
 };
 
 struct _Evas_Map
 {
-   int count; // num of points
-   Evas_Coord_Rectangle normal_geometry; // bounding box of map geom actually
-   void *surface; // surface holding map if needed
-   int surface_w, surface_h; // current surface w & h alloc
-   Evas_Coord mx, my; // mouse x, y after conversion to map space
-   Eina_Bool alpha : 1;
-   Eina_Bool smooth : 1;
-   Evas_Map_Point points[]; // actual points
+   int                   count; // num of points
+   Evas_Coord_Rectangle  normal_geometry; // bounding box of map geom actually
+   void                 *surface; // surface holding map if needed
+   int                   surface_w, surface_h; // current surface w & h alloc
+   Evas_Coord            mx, my; // mouse x, y after conversion to map space
+   struct {
+      Evas_Coord         px, py, z0, foc;
+   } persp;
+   Eina_Bool             alpha : 1;
+   Eina_Bool             smooth : 1;
+   Evas_Map_Point        points[]; // actual points
 };
 
 struct _Evas_Object

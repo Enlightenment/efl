@@ -73,6 +73,7 @@ _evas_map_new(int count)
    Evas_Map *m = calloc(1, sizeof(Evas_Map) + count * sizeof(Evas_Map_Point));
    if (!m) return NULL;
    m->count = count;
+   m->persp.foc = 0;
    m->alpha = 1;
    m->smooth = 1;
    for (i = 0; i < count; i++)
@@ -96,6 +97,7 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
    memcpy(dst->points, src->points, src->count * sizeof(Evas_Map_Point));
    dst->smooth = src->smooth;
    dst->alpha = src->alpha;
+   dst->persp = src->persp;
    return EINA_TRUE;
 }
 
@@ -107,6 +109,7 @@ _evas_map_dup(const Evas_Map *orig)
    memcpy(copy->points, orig->points, orig->count * sizeof(Evas_Map_Point));
    copy->smooth = orig->smooth;
    copy->alpha = orig->alpha;
+   copy->persp = orig->persp;
    return copy;
 }
 
@@ -648,8 +651,8 @@ evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_
    if (!m) return;
    if (idx >= m->count) return;
    p = m->points + idx;
-   p->x = x;
-   p->y = y;
+   p->x = p->px = x;
+   p->y = p->py = y;
    p->z = z;
 }
 
@@ -832,6 +835,15 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
    p[3].z = z;
    p[3].u = 0.0;
    p[3].v = h;
+
+   p[0].px = p[0].x;
+   p[0].py = p[0].y;
+   p[1].px = p[1].x;
+   p[1].py = p[1].y;
+   p[2].px = p[2].x;
+   p[2].py = p[2].y;
+   p[3].px = p[3].x;
+   p[3].py = p[3].y;
 }
 
 /**
@@ -1023,6 +1035,8 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 
         p->x = x + cx;
         p->y = y + cy;
+        p->px = p->x;
+        p->py = p->y;
      }
 }
 
@@ -1065,6 +1079,8 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
 
         p->x = x + cx;
         p->y = y + cy;
+        p->px = p->x;
+        p->py = p->y;
      }
 }
 
@@ -1134,6 +1150,8 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
         p->x = x + cx;
         p->y = y + cy;
         p->z = z + cz;
+        p->px = p->x;
+        p->py = p->y;
      }
 }
 
@@ -1237,7 +1255,7 @@ evas_map_util_3d_lighting(Evas_Map *m,
 
 /**
  * Apply a perspective transform to the map
- * 
+* 
  * This applies a given perspective (3D) to the map coordinates. X, Y and Z
  * values are used. The px and py points specify the "infinite distance" point
  * in the 3D conversion (where all lines converge to like when artists draw
@@ -1268,6 +1286,10 @@ evas_map_util_3d_perspective(Evas_Map *m,
    p = m->points;
    p_end = p + m->count;
 
+   m->persp.px = px;
+   m->persp.py = py;
+   m->persp.z0 = z0;
+   m->persp.foc = foc;
    for (; p < p_end; p++)
      {
         Evas_Coord x, y, zz;

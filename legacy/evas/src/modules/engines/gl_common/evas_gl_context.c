@@ -133,72 +133,36 @@ glerr(int err, const char *file, const char *func, int line, const char *op)
 }
 
 static void
-matrix_ident(GLfloat *m)
-{
-   memset(m, 0, 16 * sizeof(GLfloat));
-   m[0] = m[5] = m[10] = m[15] = 1.0;
-   //------------------------
-   // 1 0 0 0
-   // 0 1 0 0
-   // 0 0 1 0
-   // 0 0 0 1
-}
-
-static void
-matrix_ortho(GLfloat *m, 
-             GLfloat l, GLfloat r, 
-             GLfloat t, GLfloat b, 
+matrix_ortho(GLfloat *m,
+             GLfloat l, GLfloat r,
+             GLfloat t, GLfloat b,
              GLfloat near, GLfloat far,
-             int rot, int w, int h)
+             int rot, int vw, int vh,
+             int foc, GLfloat orth)
 {
    GLfloat rotf;
    GLfloat cosv, sinv;
    GLfloat tx, ty;
    
-//   rot = 180;
-   //------------------------
-   m[0] = 2.0 / (r - l);
-   m[1] = 0.0;
-   m[2] = 0.0;
-   m[3] = 0.0;
-
-   //------------------------
-   m[4] = 0.0;
-   m[5] = 2.0 / (t - b);
-   m[6] = 0.0;
-   m[7] = 0.0;
-   
-   //------------------------
-   m[8] = 0.0;
-   m[9] = 0.0;
-   m[10] = -(2.0 / (far - near));
-   m[11] = 0.0;
-   
-   //------------------------
-   m[12] = -((r + l) / (r - l));
-   m[13] = -((t + b) / (t - b));
-   m[14] = -((near + far) / (far - near));
-   m[15] = 1.0;
-
-   // rot
    rotf = (((rot / 90) & 0x3) * M_PI) / 2.0;
-
-   tx = 0.0;
-   ty = 0.0;
+   
+   tx = -0.5 * (1.0 - orth);
+   ty = -0.5 * (1.0 - orth);
+   
    if (rot == 90)
      {
-        tx = -(w * 1.0);
-        ty = -(h * 0.0);
+        tx += -(vw * 1.0);
+        ty += -(vh * 0.0);
      }
    if (rot == 180)
      {
-        tx = -(w * 1.0);
-        ty = -(h * 1.0);
+        tx += -(vw * 1.0);
+        ty += -(vh * 1.0);
      }
    if (rot == 270)
      {
-        tx = -(w * 0.0);
-        ty = -(h * 1.0);
+        tx += -(vw * 0.0);
+        ty += -(vh * 1.0);
      }
    
    cosv = cos(rotf);
@@ -206,14 +170,23 @@ matrix_ortho(GLfloat *m,
    
    m[0] = (2.0 / (r - l)) * ( cosv);
    m[1] = (2.0 / (r - l)) * ( sinv);
+   m[2] = 0.0;
+   m[3] = 0.0;
    
    m[4] = (2.0 / (t - b)) * (-sinv);
    m[5] = (2.0 / (t - b)) * ( cosv);
+   m[6] = 0.0;
+   m[7] = 0.0;
    
-   m[12] += (m[0] * tx) + (m[4] * ty);
-   m[13] += (m[1] * tx) + (m[5] * ty);
-   m[14] += (m[2] * tx) + (m[6] * ty);
-   m[15] += (m[3] * tx) + (m[7] * ty);
+   m[8] = 0.0;
+   m[9] = 0.0;
+   m[10] = -(2.0 / (far - near));
+   m[11] = 1.0 / (GLfloat)foc;
+   
+   m[12] = (m[0] * tx) + (m[4] * ty) - ((r + l) / (r - l));
+   m[13] = (m[1] * tx) + (m[5] * ty) - ((t + b) / (t - b));
+   m[14] = (m[2] * tx) + (m[6] * ty) - ((near + far) / (far - near));
+   m[15] = (m[3] * tx) + (m[7] * ty) + orth;
 }
 
 static int
@@ -308,8 +281,9 @@ static void
 _evas_gl_common_viewport_set(Evas_GL_Context *gc)
 {
    GLfloat proj[16];
-   int w = 1, h = 1, m = 1, rot = 1;
+   int w = 1, h = 1, m = 1, rot = 1, foc = 0;
 
+   foc = gc->foc;
    // surface in pipe 0 will be the same as all pipes
    if ((gc->pipe[0].shader.surface == gc->def_surface) ||
        (!gc->pipe[0].shader.surface))
@@ -328,23 +302,100 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
 
    if ((!gc->change.size) || 
        ((gc->shared->w == w) && (gc->shared->h == h) &&
-           (gc->shared->rot == rot)))
+           (gc->shared->rot == rot) && (gc->shared->foc == gc->foc)))
       return;
    
    gc->shared->w = w;
    gc->shared->h = h;
    gc->shared->rot = rot;
+   gc->shared->foc = foc;
+   gc->shared->z0 = gc->z0;
+   gc->shared->px = gc->px;
+   gc->shared->py = gc->py;
    gc->change.size = 0;
 
-   if ((rot == 0) || (rot == 180))
-     glViewport(0, 0, w, h);
+   if (foc == 0)
+     {
+        if ((rot == 0) || (rot == 180))
+           glViewport(0, 0, w, h);
+        else
+           glViewport(0, 0, h, w);
+        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        // std matrix
+        if (m == 1)
+           matrix_ortho(proj, 
+                        0, w, 0, h, 
+                        -1000000.0, 1000000.0,
+                        rot, w, h,
+                        1, 1.0);
+        // v flipped matrix for render-to-texture
+        else
+           matrix_ortho(proj, 
+                        0, w, h, 0, 
+                        -1000000.0, 1000000.0,
+                        rot, w, h,
+                        1, 1.0);
+     }
    else
-     glViewport(0, 0, h, w);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   
-   matrix_ident(proj);
-   if (m == 1) matrix_ortho(proj, 0, w, 0, h, -1.0, 1.0, rot, w, h);
-   else matrix_ortho(proj, 0, w, h, 0, -1.0, 1.0, rot, w, h);
+     {
+        int px, py, vx, vy, vw = 0, vh = 0, ax = 0, ay = 0, ppx = 0, ppy = 0;
+        
+        px = gc->shared->px;
+        py = gc->shared->py;
+        
+        if      ((rot == 0  ) || (rot == 90 )) ppx = px;
+        else if ((rot == 180) || (rot == 270)) ppx = w - px;
+        if      ((rot == 0  ) || (rot == 270)) ppy = py;
+        else if ((rot == 90 ) || (rot == 180)) ppy = h - py;
+        
+        vx = ((w / 2) - ppx);
+        if (vx >= 0)
+          {
+             vw = w + (2 * vx);
+             if      ((rot == 0  ) || (rot == 90 )) ax = 2 * vx;
+             else if ((rot == 180) || (rot == 270)) ax = 0;
+          }
+        else
+          {
+             vw = w - (2 * vx);
+             if      ((rot == 0  ) || (rot == 90 )) ax = 0;
+             else if ((rot == 180) || (rot == 270)) ax = ppx - px;
+             vx = 0;
+          }
+        
+        vy = ((h / 2) - ppy);
+        if (vy < 0)
+          {
+             vh = h - (2 * vy);
+             if      ((rot == 0  ))                                 ay = 0;
+             else if ((rot == 90 ) || (rot == 180) || (rot == 270)) ay = ppy - py;
+             vy = -vy;
+          }
+        else
+          {
+             vh = h + (2 * vy);
+             if      ((rot == 0  ) || (rot == 270)) ay = 2 * vy;
+             else if ((rot == 90 ) || (rot == 180)) ay = 0;
+             vy = 0;
+          }
+        
+        if ((rot == 0) || (rot == 180))
+           glViewport(-2 * vx, -2 * vy, vw, vh);
+        else
+           glViewport(-2 * vy, -2 * vx, vh, vw);
+        if (m == 1)
+           matrix_ortho(proj, 0, vw, 0, vh,
+                        -1000000.0, 1000000.0,
+                        rot, vw, vh,
+                        foc, 0.0);
+        else
+           matrix_ortho(proj, 0, vw, vh, 0,
+                        -1000000.0, 1000000.0,
+                        rot, vw, vh,
+                        foc, 0.0);
+        gc->shared->ax = ax;
+        gc->shared->ay = ay;
+     }
    
    glUseProgram(gc->shared->shader.rect.prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -1812,7 +1863,6 @@ again:
      }
 }
 
-// FIXME: we don't handle clipped maps right :(
 void
 evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
                                        Evas_GL_Texture *tex,
@@ -1830,6 +1880,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    DATA32 cmul;
    GLuint prog = gc->shared->shader.img.prog;
    int pn = 0;
+   int flat = 0;
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
@@ -1837,6 +1888,13 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
        (A_VAL(&(p[2].col)) < 0xff) || (A_VAL(&(p[3].col)) < 0xff))
      blend = 1;
    
+   if ((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z))
+      flat = 1;
+   
+   if (!flat)
+     {
+        if (p[0].foc <= 0) flat = 1;
+     }
    if (yuv)
      {
         prog = gc->shared->shader.yuv.prog;
@@ -1913,7 +1971,16 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
           }
      }
    
-//   /*xxx*/ shader_array_flush(gc);
+   if (!flat)
+     {
+        shader_array_flush(gc);
+        gc->foc = p[0].foc >> FP;
+        gc->z0 = p[0].z0 >> FP;
+        gc->px = p[0].px >> FP;
+        gc->py = p[0].py >> FP;
+        gc->change.size = 1;
+        _evas_gl_common_viewport_set(gc);
+     }
 again:
    vertex_array_size_check(gc, gc->state.top_pipe, 6);
    pn = gc->state.top_pipe;
@@ -2137,10 +2204,21 @@ again:
    for (i = 0; i < 6; i++)
      {
         DATA32 cl = MUL4_SYM(cmul, p[points[i]].col);
-        PUSH_VERTEX(pn,
-                    (p[points[i]].x >> FP), 
-                    (p[points[i]].y >> FP),
-                    0);
+        if (flat)
+          {
+             PUSH_VERTEX(pn,
+                         (p[points[i]].x >> FP), 
+                         (p[points[i]].y >> FP),
+                         0);
+          }
+        else
+          {
+             PUSH_VERTEX(pn,
+                         (p[points[i]].x3 >> FP) + gc->shared->ax, 
+                         (p[points[i]].y3 >> FP) + gc->shared->ay,
+                         (p[points[i]].z >> FP) 
+                         + (gc->shared->foc - gc->shared->z0));
+          }
         PUSH_TEXUV(pn,
                    tx[points[i]],
                    ty[points[i]]);
@@ -2159,6 +2237,16 @@ again:
                    G_VAL(&cl),
                    B_VAL(&cl),
                    A_VAL(&cl));
+     }
+   if (!flat)
+     {
+        shader_array_flush(gc);
+        gc->foc = 0;
+        gc->z0 = 0;
+        gc->px = 0;
+        gc->py = 0;
+        gc->change.size = 1;
+        _evas_gl_common_viewport_set(gc);
      }
 }
 

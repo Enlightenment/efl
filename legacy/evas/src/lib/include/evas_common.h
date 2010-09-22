@@ -766,9 +766,12 @@ struct _RGBA_Polygon_Point
 struct _RGBA_Map_Point
 {
    FPc x, y; // x, y screenspace
+   FPc x3, y3; // x, y 3d space
    FPc z; // z in world space. optional
    FPc u, v; // u, v in tex coords
    DATA32 col; // color at this point
+   // for perspective correctness - only point 0 has relevant info
+   FPc px, py, z0, foc;
 };
 
 // for fonts...
