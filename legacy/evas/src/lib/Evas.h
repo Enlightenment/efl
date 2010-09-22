@@ -1497,9 +1497,7 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
 struct _Evas_Smart_Class
 {
    const char *name; /**< the string name of the class */
-
-   int version;
-
+   int         version;
    void  (*add)         (Evas_Object *o);
    void  (*del)         (Evas_Object *o);
    void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
@@ -1513,12 +1511,10 @@ struct _Evas_Smart_Class
    void  (*member_add)  (Evas_Object *o, Evas_Object *child);
    void  (*member_del)  (Evas_Object *o, Evas_Object *child);
 
-   const Evas_Smart_Class *parent; /**< this class inherits from this parent */
+   const Evas_Smart_Class          *parent; /**< this class inherits from this parent */
    const Evas_Smart_Cb_Description *callbacks; /**< callbacks at this level, NULL terminated */
-
-   void *interfaces; /**< to be used in a future near you */
-
-   const void *data;
+   void                            *interfaces; /**< to be used in a future near you */
+   const void                      *data;
 };
 
 /**
@@ -1728,16 +1724,14 @@ struct _Evas_Smart_Cb_Description
  * @param priv_type The type of the data to allocate
  * @ingroup Evas_Smart_Group
  */
-#define EVAS_SMART_DATA_ALLOC(o, priv_type)			\
-  priv_type *priv;						\
-  priv = evas_object_smart_data_get(o);			\
-  if (!priv)							\
-    {								\
-       priv = (priv_type *)calloc(1, sizeof(priv_type));	\
-       if (!priv)						\
-	 return;						\
-       evas_object_smart_data_set(o, priv);			\
-    }
+#define EVAS_SMART_DATA_ALLOC(o, priv_type) \
+   priv_type *priv; \
+   priv = evas_object_smart_data_get(o); \
+   if (!priv) { \
+      priv = (priv_type *)calloc(1, sizeof(priv_type)); \
+      if (!priv) return; \
+      evas_object_smart_data_set(o, priv); \
+   }
 
    EAPI void                             evas_smart_free                     (Evas_Smart *s) EINA_ARG_NONNULL(1);
    EAPI Evas_Smart                      *evas_smart_class_new                (const Evas_Smart_Class *sc) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
@@ -1823,7 +1817,7 @@ struct _Evas_Smart_Cb_Description
   struct _Evas_Object_Smart_Clipped_Data
   {
      Evas_Object *clipper;
-     Evas *evas;
+     Evas        *evas;
   };
 
    EAPI Evas_Object            *evas_object_smart_clipped_clipper_get   (Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
@@ -1973,30 +1967,30 @@ struct _Evas_Smart_Cb_Description
  */
    struct _Evas_Object_Box_Data
    {
-      Evas_Object_Smart_Clipped_Data base;
-      const Evas_Object_Box_Api *api;
+      Evas_Object_Smart_Clipped_Data   base;
+      const Evas_Object_Box_Api       *api;
       struct {
-	 double h, v;
+	 double                        h, v;
       } align;
       struct {
-	 Evas_Coord h, v;
+	 Evas_Coord                    h, v;
       } pad;
-      Eina_List *children;
+      Eina_List                       *children;
       struct {
-	 Evas_Object_Box_Layout cb;
-	 void *data;
-	 void (*free_data)(void *data);
+	 Evas_Object_Box_Layout        cb;
+	 void                         *data;
+	 void                        (*free_data)(void *data);
       } layout;
-      Eina_Bool layouting : 1;
-      Eina_Bool children_changed : 1;
+      Eina_Bool                        layouting : 1;
+      Eina_Bool                        children_changed : 1;
    };
 
    struct _Evas_Object_Box_Option
    {
       Evas_Object *obj;
-      Eina_Bool max_reached:1;
-      Eina_Bool min_reached:1;
-      Evas_Coord alloc_size;
+      Eina_Bool    max_reached:1;
+      Eina_Bool    min_reached:1;
+      Evas_Coord   alloc_size;
    };
 
    EAPI void                       evas_object_box_smart_set                             (Evas_Object_Box_Api *api) EINA_ARG_NONNULL(1);
@@ -2104,7 +2098,7 @@ struct _Evas_Smart_Cb_Description
         struct {
            int     mem_total;
            int     count;
-        }          active, cached;
+        } active, cached;
         Eina_List *images;
      };
 
