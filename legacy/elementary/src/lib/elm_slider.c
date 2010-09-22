@@ -66,6 +66,7 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _units_set(Evas_Object *obj);
 static void _val_set(Evas_Object *obj);
 static void _indicator_set(Evas_Object *obj);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
@@ -88,6 +89,23 @@ _del_hook(Evas_Object *obj)
    if (wd->indicator) eina_stringshare_del(wd->units);
    if (wd->delay) ecore_timer_del(wd->delay);
    free(wd);
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+	edje_object_signal_emit(wd->slider, "elm,action,focus", "elm");
+	evas_object_focus_set(wd->slider, EINA_TRUE);
+     }
+   else
+     {
+	edje_object_signal_emit(wd->slider, "elm,action,unfocus", "elm");
+	evas_object_focus_set(wd->slider, EINA_FALSE);
+     }
 }
 
 static void
@@ -314,9 +332,11 @@ elm_slider_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "slider");
    elm_widget_type_set(obj, "slider");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->horizontal = EINA_TRUE;
    wd->val = 0.0;

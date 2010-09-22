@@ -35,6 +35,7 @@ static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _signal_toggle_off(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_toggle_on(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -62,6 +63,23 @@ _disable_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->tgl, "elm,state,disabled", "elm");
    else
      edje_object_signal_emit(wd->tgl, "elm,state,enabled", "elm");
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+	edje_object_signal_emit(wd->tgl, "elm,action,focus", "elm");
+	evas_object_focus_set(wd->tgl, EINA_TRUE);
+     }
+   else
+     {
+	edje_object_signal_emit(wd->tgl, "elm,action,unfocus", "elm");
+	evas_object_focus_set(wd->tgl, EINA_FALSE);
+     }
 }
 
 static void
@@ -172,10 +190,12 @@ elm_toggle_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "toggle");
    elm_widget_type_set(obj, "toggle");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->tgl = edje_object_add(e);
    _elm_theme_object_set(obj, wd->tgl, "toggle", "base", "default");

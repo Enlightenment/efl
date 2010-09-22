@@ -40,6 +40,7 @@ static void _hov_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hov_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 
 static void
 _del_pre_hook(Evas_Object *obj)
@@ -69,6 +70,23 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    free(wd);
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+	edje_object_signal_emit(wd->cov, "elm,action,focus", "elm");
+	evas_object_focus_set(wd->cov, EINA_TRUE);
+     }
+   else
+     {
+	edje_object_signal_emit(wd->cov, "elm,action,unfocus", "elm");
+	evas_object_focus_set(wd->cov, EINA_FALSE);
+     }
 }
 
 static void
@@ -273,10 +291,12 @@ elm_hover_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "hover");
    elm_widget_type_set(obj, "hover");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_can_focus_set(obj, 1);
 
    wd->hov = evas_object_rectangle_add(e);
    evas_object_pass_events_set(wd->hov, 1);

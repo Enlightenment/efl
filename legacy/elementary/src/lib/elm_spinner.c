@@ -51,6 +51,7 @@ static void _write_label(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 //static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool _value_set(Evas_Object *obj, double delta);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -130,9 +131,15 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (elm_widget_focus_get(obj))
-     edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
+     {
+       edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
+       evas_object_focus_set(wd->spinner, EINA_TRUE);
+     }
    else
-     edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
+     {
+       edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
+       evas_object_focus_set(wd->spinner, EINA_FALSE);
+     }
 }
 
 static Eina_Bool
@@ -529,6 +536,7 @@ elm_spinner_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "spinner");
    elm_widget_type_set(obj, "spinner");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
@@ -537,6 +545,7 @@ elm_spinner_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->val = 0.0;
    wd->val_min = 0.0;

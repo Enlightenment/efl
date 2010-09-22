@@ -82,6 +82,23 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+	edje_object_signal_emit(wd->radio, "elm,action,focus", "elm");
+	evas_object_focus_set(wd->radio, EINA_TRUE);
+     }
+   else
+     {
+	edje_object_signal_emit(wd->radio, "elm,action,unfocus", "elm");
+	evas_object_focus_set(wd->radio, EINA_FALSE);
+     }
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -237,6 +254,7 @@ elm_radio_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "radio");
    elm_widget_type_set(obj, "radio");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
