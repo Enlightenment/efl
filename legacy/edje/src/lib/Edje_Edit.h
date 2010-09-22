@@ -43,6 +43,9 @@ typedef enum _Edje_Edit_Image_Comp
  * @brief Functions to deal with edje internal object. Don't use in standard
  * situations. The use of any of the edje_edit_* functions can break your
  * theme ability, remember that the program must be separated from the interface!
+ * 
+ * This was intended ONLY for use in an actual edje editor program. Unless
+ * you are writing one of these, do NOT use this API here.
  *
  * The API can be used to query or set every part of an edje object in real time.
  * You can manage every aspect of parts, part states, programs, script and whatever
