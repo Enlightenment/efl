@@ -81,7 +81,7 @@ edje_object_file_get(const Evas_Object *obj, const char **file, const char **gro
  * EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: Unknown Collection\n
  * EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: Recursive Reference\n
  */
-EAPI int
+EAPI Edje_Load_Error
 edje_object_load_error_get(const Evas_Object *obj)
 {
    Edje *ed;
@@ -92,7 +92,7 @@ edje_object_load_error_get(const Evas_Object *obj)
 }
 
 EAPI const char *
-edje_load_error_str(int error)
+edje_load_error_str(Edje_Load_Error error)
 {
    switch (error)
      {

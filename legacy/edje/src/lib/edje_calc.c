@@ -1658,6 +1658,9 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 		     case EVAS_LOAD_ERROR_UNKNOWN_FORMAT:
 			ERR("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT");
 			break;
+                    default:
+			ERR("Error type: ???");
+                       break;
 		    }
 	       }
 	  }

@@ -58,9 +58,7 @@ extern "C" {
  * These routines are used for Edje.
  */
 
-
-/* FIXDOC: Define these? */
-enum _Edje_Message_Type
+typedef enum _Edje_Message_Type
 {
    EDJE_MESSAGE_NONE = 0,
 
@@ -79,26 +77,23 @@ enum _Edje_Message_Type
 
    EDJE_MESSAGE_STRING_INT_SET = 10,
    EDJE_MESSAGE_STRING_FLOAT_SET = 11
-};
-typedef enum _Edje_Message_Type Edje_Message_Type;
+} Edje_Message_Type;
 
-enum _Edje_Aspect_Control
+typedef enum _Edje_Aspect_Control
 {
    EDJE_ASPECT_CONTROL_NONE = 0,
    EDJE_ASPECT_CONTROL_NEITHER = 1,
    EDJE_ASPECT_CONTROL_HORIZONTAL = 2,
    EDJE_ASPECT_CONTROL_VERTICAL = 3,
    EDJE_ASPECT_CONTROL_BOTH = 4
-};
-typedef enum _Edje_Aspect_Control Edje_Aspect_Control;
+} Edje_Aspect_Control;
 
-enum _Edje_Object_Table_Homogeneous_Mode
+typedef enum _Edje_Object_Table_Homogeneous_Mode
 {
    EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
    EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
    EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
-};
-typedef enum _Edje_Object_Table_Homogeneous_Mode Edje_Object_Table_Homogeneous_Mode;
+} Edje_Object_Table_Homogeneous_Mode;
 
 typedef enum _Edje_Part_Type
 {
@@ -160,7 +155,7 @@ typedef enum _Edje_Tween_Mode
    EDJE_TWEEN_MODE_LAST       = 5
 } Edje_Tween_Mode;
 
-enum _Edje_Cursor
+typedef enum _Edje_Cursor
 {
    EDJE_CURSOR_MAIN,
    EDJE_CURSOR_SELECTION_BEGIN,
@@ -170,8 +165,7 @@ enum _Edje_Cursor
    EDJE_CURSOR_USER,
    EDJE_CURSOR_USER_EXTRA,
    // more later
-};
-typedef enum _Edje_Cursor Edje_Cursor;
+} Edje_Cursor;
 
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
@@ -243,15 +237,15 @@ struct _Edje_Message_String_Float_Set
    double val[1];
 };
 
-enum
+typedef enum _Edje_Drag_Dir
 {
    EDJE_DRAG_DIR_NONE = 0,
    EDJE_DRAG_DIR_X = 1,
    EDJE_DRAG_DIR_Y = 2,
    EDJE_DRAG_DIR_XY = 3
-};
+} Edje_Drag_Dir;
 
-enum
+typedef enum _Edje_Load_Error
 {
    EDJE_LOAD_ERROR_NONE = 0,
    EDJE_LOAD_ERROR_GENERIC = 1,
@@ -263,9 +257,9 @@ enum
    EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7,
    EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8,
    EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9
-};
+} Edje_Load_Error;
 
-enum _Edje_External_Param_Type
+typedef enum _Edje_External_Param_Type
 {
   EDJE_EXTERNAL_PARAM_TYPE_INT,
   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
@@ -273,19 +267,18 @@ enum _Edje_External_Param_Type
   EDJE_EXTERNAL_PARAM_TYPE_BOOL,
   EDJE_EXTERNAL_PARAM_TYPE_CHOICE,
   EDJE_EXTERNAL_PARAM_TYPE_MAX
-};
-typedef enum _Edje_External_Param_Type Edje_External_Param_Type;
+} Edje_External_Param_Type;
 
 EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
 
 struct _Edje_External_Param
 {
-   const char *name;
-   Edje_External_Param_Type type;
+   const char               *name;
+   Edje_External_Param_Type  type;
    // XXX these could be in a union, but eet doesn't support them (or does it?)
-   int i; /**< used by both integer and boolean */
-   double d;
-   const char *s; /**< used by both string and choice */
+   int                       i; /**< used by both integer and boolean */
+   double                    d;
+   const char               *s; /**< used by both string and choice */
 };
 typedef struct _Edje_External_Param Edje_External_Param;
 
@@ -294,28 +287,28 @@ typedef struct _Edje_External_Param Edje_External_Param;
 
 struct _Edje_External_Param_Info
 {
-   const char *name;
-   Edje_External_Param_Type type;
+   const char               *name;
+   Edje_External_Param_Type  type;
    union {
       struct {
-         int def, min, max, step;
+         int                 def, min, max, step;
       } i;
       struct {
-         double def, min, max, step;
+         double              def, min, max, step;
       } d;
       struct {
-         const char *def;
-         const char *accept_fmt;
-         const char *deny_fmt;
+         const char         *def;
+         const char         *accept_fmt;
+         const char         *deny_fmt;
       } s;
       struct {
-         int def;
-         const char *false_str;
-         const char *true_str;
+         int                 def;
+         const char         *false_str;
+         const char         *true_str;
       } b;
       struct {
-         const char *def;
-         const char **choices; /* NULL terminated array */
+         const char         *def;
+         const char        **choices; /* NULL terminated array */
       } c;
    } info;
 };
@@ -371,38 +364,37 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 struct _Edje_External_Type
 {
 #define EDJE_EXTERNAL_TYPE_ABI_VERSION (2)
-  unsigned int abi_version; /**< always use:
-			     *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
-			     *  - edje_external_type_abi_version_get() to check.
-			     */
-  const char *module;
-  const char *module_name;
+  unsigned int  abi_version; /**< always use:
+                              *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
+                              *  - edje_external_type_abi_version_get() to check.
+                              */
+  const char    *module;
+  const char    *module_name;
   Evas_Object *(*add) (void *data, Evas *evas, Evas_Object *parent, const Eina_List *params, const char *part_name); /**< creates the object to be used by Edje as the part */
-  void (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos); /**< called upon state changes, including the initial "default" 0.0 state. Parameters are the value returned by params_parse() */
-  void (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Feed a signal emitted with emission originally set as part_name:signal to this object (without the "part_name:" prefix) */
-  Eina_Bool (*param_set) (void *data, Evas_Object *obj, const Edje_External_Param *param); /**< dynamically change a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success */
-  Eina_Bool (*param_get) (void *data, const Evas_Object *obj, Edje_External_Param *param); /**< dynamically fetch a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success. (Must check parameter name and type!) */
+  void         (*state_set) (void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos); /**< called upon state changes, including the initial "default" 0.0 state. Parameters are the value returned by params_parse() */
+  void         (*signal_emit) (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Feed a signal emitted with emission originally set as part_name:signal to this object (without the "part_name:" prefix) */
+  Eina_Bool    (*param_set) (void *data, Evas_Object *obj, const Edje_External_Param *param); /**< dynamically change a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success */
+  Eina_Bool    (*param_get) (void *data, const Evas_Object *obj, Edje_External_Param *param); /**< dynamically fetch a parameter of this external, called by scripts and user code. Returns @c EINA_TRUE on success. (Must check parameter name and type!) */
   Evas_Object *(*content_get) (void *data, const Evas_Object *obj, const char *content); /**< dynamically fetch a sub object of this external, called by scripts and user code. Returns @c Evas_Object * on success. (Must check parameter name and type!) */
-  void *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params); /**< parses the list of parameters, converting into a friendly representation. Used with state_set() */
-  void (*params_free) (void *params); /**< free parameters parsed with params_parse() */
+  void        *(*params_parse) (void *data, Evas_Object *obj, const Eina_List *params); /**< parses the list of parameters, converting into a friendly representation. Used with state_set() */
+  void         (*params_free) (void *params); /**< free parameters parsed with params_parse() */
 
   /* The following callbacks aren't used by Edje itself, but by UI design
      tools instead */
-  const char *(*label_get) (void *data);
-  const char *(*description_get) (void *data);
+  const char  *(*label_get) (void *data);
+  const char  *(*description_get) (void *data);
   Evas_Object *(*icon_add) (void *data, Evas *e);
   Evas_Object *(*preview_add) (void *data, Evas *e);
-  const char *(*translate) (void *data, const char *orig); /**< called to translate parameters_info name properties for use in user interfaces that support internationalization (i18n) */
+  const char  *(*translate) (void *data, const char *orig); /**< called to translate parameters_info name properties for use in user interfaces that support internationalization (i18n) */
 
   Edje_External_Param_Info *parameters_info;
-
-  void *data;
+  void                     *data;
 };
 typedef struct _Edje_External_Type Edje_External_Type;
 
 struct _Edje_External_Type_Info
 {
-   const char *name;
+   const char               *name;
    const Edje_External_Type *info;
 };
 typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
@@ -441,7 +433,6 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI int          edje_collection_cache_get       (void);
    EAPI void         edje_collection_cache_flush     (void);
 
-
    /* edje_util.c */
    EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
@@ -462,10 +453,10 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const char *key);
 
    /* edje_load.c */
-   EAPI Eina_Bool    edje_object_file_set            (Evas_Object *obj, const char *file, const char *group);
-   EAPI void         edje_object_file_get            (const Evas_Object *obj, const char **file, const char **group);
-   EAPI int          edje_object_load_error_get      (const Evas_Object *obj);
-   EAPI const char  *edje_load_error_str             (int error);
+   EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char *file, const char *group);
+   EAPI void             edje_object_file_get        (const Evas_Object *obj, const char **file, const char **group);
+   EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
+   EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
 
    /* edje_util.c */
    EAPI Eina_Bool    edje_object_preload             (Evas_Object *obj, Eina_Bool cancel);
@@ -555,7 +546,7 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI Evas_Object              *edje_object_part_external_object_get     (const Evas_Object *obj, const char *part);
    EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Object *obj, const char *part, const Edje_External_Param *param);
    EAPI Eina_Bool                 edje_object_part_external_param_get      (const Evas_Object *obj, const char *part, Edje_External_Param *param);
-   EAPI Evas_Object 			 *edje_object_part_external_content_get    (const Evas_Object *obj, const char *part, const char *content);
+   EAPI Evas_Object              *edje_object_part_external_content_get    (const Evas_Object *obj, const char *part, const char *content);
    EAPI Edje_External_Param_Type  edje_object_part_external_param_type_get (const Evas_Object *obj, const char *part, const char *param);
 
    EAPI Eina_Bool    edje_object_part_box_append             (Evas_Object *obj, const char *part, Evas_Object *child);
