@@ -1955,6 +1955,7 @@ eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc);
  * with a stream.
  * @param eddc The Eet_Data_Descriptor_Class you want to set.
  * @param name The name of the structure described by this class.
+ * @param eddc_size The size of the Eet_Data_Descriptor_Class at the compilation time.
  * @param size The size of the structure described by this class.
  * @return EINA_TRUE if the structure was correctly set (The only
  *         reason that could make it fail is if you did give wrong
@@ -1990,6 +1991,7 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
  * Eet_Data_Descriptor_Class correctly when you use Eina data type
  * with a file.
  * @param eddc The Eet_Data_Descriptor_Class you want to set.
+ * @param eddc_size The size of the Eet_Data_Descriptor_Class at the compilation time.
  * @param name The name of the structure described by this class.
  * @param size The size of the structure described by this class.
  * @return EINA_TRUE if the structure was correctly set (The only
