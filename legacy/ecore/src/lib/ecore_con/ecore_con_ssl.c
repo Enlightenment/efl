@@ -385,6 +385,11 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
    //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
+   if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
+     {
+        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_DHE_RSA, 0 };
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
+     }
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
@@ -601,6 +606,11 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
    //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
+   if (!((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
+     {
+        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_DHE_RSA, 0 };
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
+     }
 
    gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
 
