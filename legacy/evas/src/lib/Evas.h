@@ -59,11 +59,12 @@ extern "C" {
 
 /* BiDi exposed stuff */
    /*FIXME: document */
-   typedef enum _Evas_BiDi_Direction {
-        EVAS_BIDI_DIRECTION_NATURAL,
-        EVAS_BIDI_DIRECTION_LTR,
-        EVAS_BIDI_DIRECTION_RTL
-   } Evas_BiDi_Direction;
+typedef enum _Evas_BiDi_Direction
+{
+   EVAS_BIDI_DIRECTION_NATURAL,
+   EVAS_BIDI_DIRECTION_LTR,
+   EVAS_BIDI_DIRECTION_RTL
+} Evas_BiDi_Direction;
 
 /**
  * Identifier of callbacks to be used with object or canvas.
