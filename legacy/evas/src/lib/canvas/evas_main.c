@@ -406,16 +406,16 @@ evas_engine_info_get(const Evas *e)
  * @return  1 if no error occurred, 0 otherwise
  * @ingroup Evas_Output_Method
  */
-EAPI int
+EAPI Eina_Bool
 evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
-   if (!info) return 0;
-   if (info != e->engine.info) return 0;
-   if (info->magic != e->engine.info_magic) return 0;
-   return e->engine.func->setup(e, info);
+   if (!info) return EINA_FALSE;
+   if (info != e->engine.info) return EINA_FALSE;
+   if (info->magic != e->engine.info_magic) return EINA_FALSE;
+   return (Eina_Bool)e->engine.func->setup(e, info);
 }
 
 /**
