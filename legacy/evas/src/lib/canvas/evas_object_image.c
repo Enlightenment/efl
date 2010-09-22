@@ -652,7 +652,7 @@ evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   if (spread == o->cur.spread) return;
+   if (spread == (Evas_Fill_Spread)o->cur.spread) return;
    o->cur.spread = spread;
    o->changed = 1;
    evas_object_change(obj);
@@ -677,7 +677,7 @@ evas_object_image_fill_spread_get(const Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return EVAS_TEXTURE_REPEAT;
    MAGIC_CHECK_END();
-   return o->cur.spread;
+   return (Evas_Fill_Spread)o->cur.spread;
 }
 
 /**
