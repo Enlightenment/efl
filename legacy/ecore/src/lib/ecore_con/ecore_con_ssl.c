@@ -854,7 +854,14 @@ error:
           ERR("openssl error: dh_params could not generate a safe prime!");
      }
    else
-     ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+     do
+       {
+          unsigned long err;
+
+          err = ERR_get_error();
+          if (!err) break;
+          ERR("openssl error: %s", ERR_reason_error_string(err));
+       } while (1);
    _ecore_con_ssl_server_shutdown_openssl(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
@@ -880,7 +887,14 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   do
+     {
+        unsigned long err;
+
+        err = ERR_get_error();
+        if (!err) break;
+        ERR("openssl error: %s", ERR_reason_error_string(err));
+     } while (1);
    _ecore_con_ssl_server_shutdown_openssl(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
@@ -1079,7 +1093,14 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   ERR("openssl error: %s", ERR_reason_error_string(ERR_get_error()));
+   do
+     {
+        unsigned long err;
+
+        err = ERR_get_error();
+        if (!err) break;
+        ERR("openssl error: %s", ERR_reason_error_string(err));
+     } while (1);
    _ecore_con_ssl_client_shutdown_openssl(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
