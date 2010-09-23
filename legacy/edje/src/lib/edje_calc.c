@@ -1299,7 +1299,7 @@ _edje_part_recalc_single(Edje *ed,
    FLOAT_T sc;
 
    sc = ed->scale;
-   if (sc == 0.0) sc = _edje_scale;
+   if (sc == ZERO) sc = _edje_scale;
    _edje_part_recalc_single_min_max(sc, ep, desc, &minw, &minh, &maxw, &maxh);
 
    /* relative coords of top left & bottom right */

@@ -187,7 +187,7 @@ edje_fontset_append_get(void)
 EAPI void
 edje_scale_set(double scale)
 {
-  Eina_List *l;
+   Eina_List *l;
    Evas_Object *data;
 
    if (_edje_scale == FROM_DOUBLE(scale)) return;
