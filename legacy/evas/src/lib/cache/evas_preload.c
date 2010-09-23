@@ -68,65 +68,13 @@ _evas_preload_thread_done(void *target __UNUSED__, Evas_Callback_Type type __UNU
    free(work);
 }
 
-/* Lower priority of current thread.
- *
- * It's used by worker threads so they use up "bg cpu" as it was really intended
- * to work. If current thread is running with real-time priority, we decrease
- * our priority by 5. This is done in a portable way.  Otherwise we are
- * running with SCHED_OTHER policy and there's no portable way to set the nice
- * level on current thread. In Linux, it does work and it's the only one that is
- * implemented.
- */
-static void
-_evas_preload_thread_pri_drop(void)
-{
-   struct sched_param param;
-   int pol, prio, ret;
-   pid_t tid;
-   pthread_t pthread_id;
-
-   pthread_id = pthread_self();
-   ret = pthread_getschedparam(pthread_id, &pol, &param);
-   if (ret)
-     {
-        ERR("Unable to query sched parameters");
-        return;
-     }
-
-   if (EINA_UNLIKELY(pol == SCHED_RR || pol == SCHED_FIFO))
-     {
-        prio = sched_get_priority_max(pol);
-        param.sched_priority += 5;
-        if (prio > 0 && param.sched_priority > prio)
-           param.sched_priority = prio;
-
-        pthread_setschedparam(pthread_id, pol, &param);
-     }
-#ifdef __linux__
-   else
-     {
-        tid = syscall(SYS_gettid);
-        errno = 0;
-        prio = getpriority(PRIO_PROCESS, tid);
-        if (errno == 0)
-          {
-             prio += 5;
-             if (prio > 19)
-                prio = 19;
-
-             setpriority(PRIO_PROCESS, tid, prio);
-          }
-     }
-#endif
-}
-
 static void *
 _evas_preload_thread_worker(void *data)
 {
    Evas_Preload_Pthread_Data *pth = data;
    Evas_Preload_Pthread_Worker *work;
    
-   _evas_preload_thread_pri_drop();
+   eina_sched_prio_drop();
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 on_error:
