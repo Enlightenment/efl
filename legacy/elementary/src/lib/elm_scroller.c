@@ -378,6 +378,14 @@ elm_scroller_add(Evas_Object *parent)
    return obj;
 }
 
+Evas_Object *
+_elm_scroller_edje_object_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return elm_smart_scroller_edje_object_get(wd->scr);
+}
 
 /**
  * Set the content of the scroller widget (the object to be scrolled around).

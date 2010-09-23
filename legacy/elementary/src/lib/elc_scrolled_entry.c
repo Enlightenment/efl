@@ -35,7 +35,6 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *scroller;
-   Evas_Object *box;
    Evas_Object *entry;
    Evas_Object *icon;
    Evas_Object *end;
@@ -287,17 +286,12 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
-   wd->box = elm_box_add(parent);
-   elm_widget_resize_object_set(obj, wd->box);
-   elm_box_horizontal_set(wd->box, EINA_TRUE);
-   elm_box_homogenous_set(wd->box, EINA_FALSE);
-   evas_object_show(wd->box);
-
    wd->scroller = elm_scroller_add(parent);
+   elm_scroller_custom_widget_base_theme_set(wd->scroller, "scroller", "entry");
+   elm_widget_resize_object_set(obj, wd->scroller);
    evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(wd->scroller, 0, 0);
-   elm_box_pack_start(wd->box, wd->scroller);
    evas_object_show(wd->scroller);
 
    wd->entry = elm_entry_add(parent);
@@ -348,10 +342,15 @@ elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *edje;
    if (!wd || !icon) return;
+   if (wd->icon == icon) return;
    if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
-   elm_box_pack_before(wd->box, wd->icon, wd->scroller);
+   edje = _elm_scroller_edje_object_get(wd->scroller);
+   if (!edje) return;
+   edje_object_part_swallow(edje, "elm.swallow.icon", wd->icon);
+   edje_object_signal_emit(edje, "elm,action,show,icon", "elm");
    _sizing_eval(obj);
 }
 
@@ -388,8 +387,12 @@ elm_scrolled_entry_icon_unset(Evas_Object *obj)
    if (!wd) return NULL;
    if (wd->icon)
      {
+       Evas_Object *edje = _elm_scroller_edje_object_get(wd->scroller);
+       if (!edje) return NULL;
        ret = wd->icon;
-       elm_box_unpack(wd->box, wd->icon);
+       edje_object_part_unswallow(edje, wd->icon);
+       edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
+       wd->icon = NULL;
        _sizing_eval(obj);
      }
    return ret;
@@ -432,10 +435,15 @@ elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *edje;
    if (!wd || !end) return;
+   if (wd->end == end) return;
    if (wd->end) evas_object_del(wd->end);
    wd->end = end;
-   elm_box_pack_after(wd->box, wd->end, wd->scroller);
+   edje = _elm_scroller_edje_object_get(wd->scroller);
+   if (!edje) return;
+   edje_object_part_swallow(edje, "elm.swallow.end", wd->end);
+   edje_object_signal_emit(edje, "elm,action,show,end", "elm");
    _sizing_eval(obj);
 }
 
@@ -472,8 +480,12 @@ elm_scrolled_entry_end_unset(Evas_Object *obj)
    if (!wd) return NULL;
    if (wd->end)
      {
+       Evas_Object *edje = _elm_scroller_edje_object_get(wd->scroller);
+       if (!edje) return NULL;
        ret = wd->end;
-       elm_box_unpack(wd->box, wd->end);
+       edje_object_part_unswallow(edje, wd->end);
+       edje_object_signal_emit(edje, "elm,action,hide,end", "elm");
+       wd->end = NULL;
        _sizing_eval(obj);
      }
    return ret;

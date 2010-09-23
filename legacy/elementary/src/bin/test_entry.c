@@ -293,8 +293,8 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_entry_set(en, "This is a single line");
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_single_line_set(en, 1);
    elm_scrolled_entry_select_all(en);
    evas_object_show(en);
@@ -313,15 +313,20 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 
    /* scrolled entry with icon/end widgets*/
    en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_scrolled_entry_single_line_set(en, 1);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "left");
+   bt = elm_icon_add(win);
+   elm_icon_standard_set(bt, "home");
+   evas_object_size_hint_min_set(bt, 48, 48);
+   evas_object_color_set(bt, 255, 0, 0, 128);
    evas_object_show(bt);
    elm_scrolled_entry_icon_set(en, bt);
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "right");
+   bt = elm_icon_add(win);
+   elm_icon_standard_set(bt, "delete");
+   evas_object_color_set(bt, 255, 0, 0, 128);
+   evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_show(bt);
    elm_scrolled_entry_end_set(en, bt);
    elm_scrolled_entry_entry_set(en, "scrolled entry with icon and end objects");

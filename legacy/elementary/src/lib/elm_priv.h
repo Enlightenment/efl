@@ -142,6 +142,8 @@ void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventare
 
 Eina_Bool           _elm_dangerous_call_check(const char *call);
 
+Evas_Object        *_elm_scroller_edje_object_get(Evas_Object *obj);
+
 extern char        *_elm_appname;
 extern Elm_Config  *_elm_config;
 extern const char  *_elm_data_dir;
