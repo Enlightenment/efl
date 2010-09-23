@@ -17,6 +17,13 @@
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 /* OLE IID for Drag'n Drop */
 
@@ -28,218 +35,7 @@ DEFINE_OLEGUID(IID_IDropSource,    0x00000121L, 0, 0);
 DEFINE_OLEGUID(IID_IDropTarget,    0x00000122L, 0, 0);
 DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
 
-
-/***** Global declarations *****/
-
-HINSTANCE           _ecore_win32_instance = NULL;
-double              _ecore_win32_double_click_time = 0.25;
-long                _ecore_win32_event_last_time = 0;
-Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
-int                 _ecore_win32_log_dom_global = -1;
-
-int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
-int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
-int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = 0;
-int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = 0;
-int ECORE_WIN32_EVENT_WINDOW_DAMAGE         = 0;
-int ECORE_WIN32_EVENT_WINDOW_CREATE         = 0;
-int ECORE_WIN32_EVENT_WINDOW_DESTROY        = 0;
-int ECORE_WIN32_EVENT_WINDOW_SHOW           = 0;
-int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
-int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
-int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
-int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
-
-
-/***** Private declarations *****/
-
 static int       _ecore_win32_init_count = 0;
-
-LRESULT CALLBACK _ecore_win32_window_procedure(HWND   window,
-                                               UINT   message,
-                                               WPARAM window_param,
-                                               LPARAM data_param);
-
-
-/***** API *****/
-
-
-int
-ecore_win32_init()
-{
-   WNDCLASS wc;
-
-   if (++_ecore_win32_init_count != 1)
-     return _ecore_win32_init_count;
-
-   if (!eina_init())
-     return --_ecore_win32_init_count;
-
-   _ecore_win32_log_dom_global = eina_log_domain_register("ecore_win32", ECORE_WIN32_DEFAULT_LOG_COLOR);
-   if (_ecore_win32_log_dom_global < 0)
-     {
-        EINA_LOG_ERR("Ecore_Win32: Could not register log domain");
-        goto shutdown_eina;
-     }
-
-   if (!ecore_event_init())
-     {
-        ERR("Ecore_Win32: Could not init ecore_event");
-        goto unregister_log_domain;
-     }
-
-   _ecore_win32_instance = GetModuleHandle(NULL);
-   if (!_ecore_win32_instance)
-     {
-        ERR("GetModuleHandle() failed");
-        goto shutdown_ecore_event;
-     }
-
-   memset (&wc, 0, sizeof (WNDCLASS));
-   wc.style = CS_HREDRAW | CS_VREDRAW;
-   wc.lpfnWndProc = _ecore_win32_window_procedure;
-   wc.cbClsExtra = 0;
-   wc.cbWndExtra = 0;
-   wc.hInstance = _ecore_win32_instance;
-   wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
-   wc.hCursor = LoadCursor (NULL, IDC_ARROW);
-   wc.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
-   wc.lpszMenuName =  NULL;
-   wc.lpszClassName = ECORE_WIN32_WINDOW_CLASS;
-
-   if(!RegisterClass(&wc))
-     {
-        ERR("RegisterClass() failed");
-        goto free_library;
-     }
-
-   if (!ecore_win32_dnd_init())
-     {
-        ERR("ecore_win32_dnd_init() failed");
-        goto unregister_class;
-     }
-
-   if (!ECORE_WIN32_EVENT_MOUSE_IN)
-     {
-        ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
-        ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
-        ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
-     }
-
-   return _ecore_win32_init_count;
-
- unregister_class:
-   UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
- free_library:
-   FreeLibrary(_ecore_win32_instance);
- shutdown_ecore_event:
-   ecore_event_shutdown();
- unregister_log_domain:
-   eina_log_domain_unregister(_ecore_win32_log_dom_global);
- shutdown_eina:
-   eina_shutdown();
-
-   return --_ecore_win32_init_count;
-}
-
-int
-ecore_win32_shutdown()
-{
-   if (--_ecore_win32_init_count != 0)
-     return _ecore_win32_init_count;
-
-   ecore_win32_dnd_shutdown();
-
-   if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
-     INF("UnregisterClass() failed");
-
-   if (!FreeLibrary(_ecore_win32_instance))
-     INF("FreeLibrary() failed");
-
-   _ecore_win32_instance = NULL;
-
-   ecore_event_shutdown();
-   eina_log_domain_unregister(_ecore_win32_log_dom_global);
-   _ecore_win32_log_dom_global = -1;
-   eina_shutdown();
-
-   return _ecore_win32_init_count;
-}
-
-int
-ecore_win32_screen_depth_get()
-{
-   HDC dc;
-   int depth;
-
-   INF("getting screen depth");
-
-   dc = GetDC(NULL);
-   if (!dc)
-     {
-        ERR("GetDC() failed");
-        return 0;
-     }
-
-   depth = GetDeviceCaps(dc, BITSPIXEL);
-   if (!ReleaseDC(NULL, dc))
-     {
-        ERR("ReleaseDC() failed (device context not released)");
-     }
-
-   return depth;
-}
-
-/**
- * Sets the timeout for a double and triple clicks to be flagged.
- *
- * This sets the time between clicks before the double_click flag is
- * set in a button down event. If 3 clicks occur within double this
- * time, the triple_click flag is also set.
- *
- * @param t The time in seconds
- */
-void
-ecore_win32_double_click_time_set(double t)
-{
-   if (t < 0.0) t = 0.0;
-   _ecore_win32_double_click_time = t;
-}
-
-/**
- * Retrieves the double and triple click flag timeout.
- *
- * See @ref ecore_win32_double_click_time_set for more information.
- *
- * @return The timeout for double clicks in seconds.
- */
-double
-ecore_win32_double_click_time_get(void)
-{
-   return _ecore_win32_double_click_time;
-}
-
-/**
- * Return the last event time
- */
-long
-ecore_win32_current_time_get(void)
-{
-   return _ecore_win32_event_last_time;
-}
-
-
-/***** Private functions definitions *****/
-
 
 LRESULT CALLBACK
 _ecore_win32_window_procedure(HWND   window,
@@ -424,3 +220,259 @@ _ecore_win32_window_procedure(HWND   window,
        return DefWindowProc(window, message, window_param, data_param);
      }
 }
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+
+HINSTANCE           _ecore_win32_instance = NULL;
+double              _ecore_win32_double_click_time = 0.25;
+long                _ecore_win32_event_last_time = 0;
+Ecore_Win32_Window *_ecore_win32_event_last_window = NULL;
+int                 _ecore_win32_log_dom_global = -1;
+
+int ECORE_WIN32_EVENT_MOUSE_IN              = 0;
+int ECORE_WIN32_EVENT_MOUSE_OUT             = 0;
+int ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = 0;
+int ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = 0;
+int ECORE_WIN32_EVENT_WINDOW_DAMAGE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_CREATE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_DESTROY        = 0;
+int ECORE_WIN32_EVENT_WINDOW_SHOW           = 0;
+int ECORE_WIN32_EVENT_WINDOW_HIDE           = 0;
+int ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = 0;
+int ECORE_WIN32_EVENT_WINDOW_RESIZE         = 0;
+int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Ecore_Win32_Group Ecore_Win32 library
+ *
+ * Ecore_Win32 is a library that wraps Windows graphic functions
+ * and integrate them nicely into the Ecore main loop.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the Ecore_Win32 library.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up the Windows graphic system. It returns 0 on
+ * failure, otherwise it returns the number of times it has already been
+ * called.
+ *
+ * When Ecore_Win32 is not used anymore, call ecore_win32_shutdown()
+ * to shut down the Ecore_Win32 library.
+ */
+EAPI int
+ecore_win32_init()
+{
+   WNDCLASS wc;
+
+   if (++_ecore_win32_init_count != 1)
+     return _ecore_win32_init_count;
+
+   if (!eina_init())
+     return --_ecore_win32_init_count;
+
+   _ecore_win32_log_dom_global = eina_log_domain_register("ecore_win32", ECORE_WIN32_DEFAULT_LOG_COLOR);
+   if (_ecore_win32_log_dom_global < 0)
+     {
+        EINA_LOG_ERR("Ecore_Win32: Could not register log domain");
+        goto shutdown_eina;
+     }
+
+   if (!ecore_event_init())
+     {
+        ERR("Ecore_Win32: Could not init ecore_event");
+        goto unregister_log_domain;
+     }
+
+   _ecore_win32_instance = GetModuleHandle(NULL);
+   if (!_ecore_win32_instance)
+     {
+        ERR("GetModuleHandle() failed");
+        goto shutdown_ecore_event;
+     }
+
+   memset (&wc, 0, sizeof (WNDCLASS));
+   wc.style = CS_HREDRAW | CS_VREDRAW;
+   wc.lpfnWndProc = _ecore_win32_window_procedure;
+   wc.cbClsExtra = 0;
+   wc.cbWndExtra = 0;
+   wc.hInstance = _ecore_win32_instance;
+   wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+   wc.hCursor = LoadCursor (NULL, IDC_ARROW);
+   wc.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
+   wc.lpszMenuName =  NULL;
+   wc.lpszClassName = ECORE_WIN32_WINDOW_CLASS;
+
+   if(!RegisterClass(&wc))
+     {
+        ERR("RegisterClass() failed");
+        goto free_library;
+     }
+
+   if (!ecore_win32_dnd_init())
+     {
+        ERR("ecore_win32_dnd_init() failed");
+        goto unregister_class;
+     }
+
+   if (!ECORE_WIN32_EVENT_MOUSE_IN)
+     {
+        ECORE_WIN32_EVENT_MOUSE_IN              = ecore_event_type_new();
+        ECORE_WIN32_EVENT_MOUSE_OUT             = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_FOCUS_IN       = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_FOCUS_OUT      = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DAMAGE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_CREATE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DESTROY        = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_SHOW           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_HIDE           = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_CONFIGURE      = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_RESIZE         = ecore_event_type_new();
+        ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = ecore_event_type_new();
+     }
+
+   return _ecore_win32_init_count;
+
+ unregister_class:
+   UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance);
+ free_library:
+   FreeLibrary(_ecore_win32_instance);
+ shutdown_ecore_event:
+   ecore_event_shutdown();
+ unregister_log_domain:
+   eina_log_domain_unregister(_ecore_win32_log_dom_global);
+ shutdown_eina:
+   eina_shutdown();
+
+   return --_ecore_win32_init_count;
+}
+
+/**
+ * @brief Shut down the Ecore_Win32 library.
+ *
+ * @return 0 when the library is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shuts down the Ecore_Win32 library. It returns 0 when it has
+ * been called the same number of times than ecore_win32_init(). In that case
+ * it shut down all the Windows graphic system.
+ */
+EAPI int
+ecore_win32_shutdown()
+{
+   if (--_ecore_win32_init_count != 0)
+     return _ecore_win32_init_count;
+
+   ecore_win32_dnd_shutdown();
+
+   if (!UnregisterClass(ECORE_WIN32_WINDOW_CLASS, _ecore_win32_instance))
+     INF("UnregisterClass() failed");
+
+   if (!FreeLibrary(_ecore_win32_instance))
+     INF("FreeLibrary() failed");
+
+   _ecore_win32_instance = NULL;
+
+   ecore_event_shutdown();
+   eina_log_domain_unregister(_ecore_win32_log_dom_global);
+   _ecore_win32_log_dom_global = -1;
+   eina_shutdown();
+
+   return _ecore_win32_init_count;
+}
+
+/**
+ * @brief Retrieve the depth of the screen.
+ *
+ * @return The depth of the screen.
+ *
+ * This function returns the depth of the screen. If an error occurs,
+ * it returns 0.
+ */
+EAPI int
+ecore_win32_screen_depth_get()
+{
+   HDC dc;
+   int depth;
+
+   INF("getting screen depth");
+
+   dc = GetDC(NULL);
+   if (!dc)
+     {
+        ERR("GetDC() failed");
+        return 0;
+     }
+
+   depth = GetDeviceCaps(dc, BITSPIXEL);
+   if (!ReleaseDC(NULL, dc))
+     {
+        ERR("ReleaseDC() failed (device context not released)");
+     }
+
+   return depth;
+}
+
+/**
+ * @brief Sets the timeout for a double and triple clicks to be flagged.
+ *
+ * @param t The time in seconds.
+ *
+ * This function sets the time @p t between clicks before the
+ * double_click flag is set in a button down event. If 3 clicks occur
+ * within double this time, the triple_click flag is also set.
+ */
+EAPI void
+ecore_win32_double_click_time_set(double t)
+{
+   if (t < 0.0) t = 0.0;
+   _ecore_win32_double_click_time = t;
+}
+
+/**
+ * @brief Retrieve the double and triple click flag timeout.
+ *
+ * @return The timeout for double clicks in seconds.
+ *
+ * This function returns the double clicks in seconds. If
+ * ecore_win32_double_click_time_set() has not been called, the
+ * default value is returned. See ecore_win32_double_click_time_set()
+ * for more informations.
+ */
+EAPI double
+ecore_win32_double_click_time_get(void)
+{
+   return _ecore_win32_double_click_time;
+}
+
+/**
+ * @brief Return the last event time.
+ *
+ * @return The last envent time.
+ *
+ * This function returns the last event time.
+ */
+EAPI long
+ecore_win32_current_time_get(void)
+{
+   return _ecore_win32_event_last_time;
+}
+
+/**
+ * @}
+ */

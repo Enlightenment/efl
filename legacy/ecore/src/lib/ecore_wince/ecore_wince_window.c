@@ -12,17 +12,87 @@
 #include "Ecore_WinCE.h"
 #include "ecore_wince_private.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
 
-/***** Private declarations *****/
+/**
+ * @cond LOCAL
+ */
+
 
 typedef BOOL (__stdcall *UnregisterFunc1Proc)(UINT, UINT);
 
-static int _ecore_wince_hardware_keys_register(HWND window);
+static int
+_ecore_wince_hardware_keys_register(HWND window)
+{
+   HINSTANCE           core_dll;
+   UnregisterFunc1Proc unregister_fct;
+   int                 i;
+
+   core_dll = LoadLibrary(L"coredll.dll");
+   if (!core_dll)
+     {
+        ERR("LoadLibrary() failed");
+        return 0;
+     }
+
+   unregister_fct = (UnregisterFunc1Proc)GetProcAddress(core_dll, L"UnregisterFunc1");
+   if (!unregister_fct)
+     {
+        ERR("GetProcAddress() failed");
+        FreeLibrary(core_dll);
+        return 0;
+     }
+
+   for (i = 0xc1; i <= 0xcf; i++)
+     {
+        unregister_fct(MOD_WIN, i);
+        RegisterHotKey(window, i, MOD_WIN, i);
+     }
+
+   FreeLibrary(core_dll);
+
+   return 1;
+}
+
+/**
+ * @endcond
+ */
 
 
-/***** API *****/
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
 
-Ecore_WinCE_Window *
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Ecore_WinCE_Group Ecore_WinCE library
+ *
+ * @{
+ */
+
+/**
+ * @brief Creates a new window.
+ *
+ * @param parent The parent window.
+ * @param x The x coordinate of the top-left corner of the window.
+ * @param y The y coordinate of the top-left corner of the window.
+ * @param width The width of the window.
+ * @param height The height of hte window.
+ * @return A newly allocated window.
+ *
+ * This function creates a new window which parent is @p parent. @p width and
+ * @p height are the size of the window content (the client part),
+ * without the border and title bar. @p x and @p y are the system
+ * coordinates of the top left cerner of the window (that is, of the
+ * title bar). This function returns a newly created window on
+ * success, and @c NULL on failure.
+ */
+EAPI Ecore_WinCE_Window *
 ecore_wince_window_new(Ecore_WinCE_Window *parent,
                        int                 x,
                        int                 y,
@@ -92,7 +162,15 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
    return w;
 }
 
-void
+/**
+ * @brief Free the given window.
+ *
+ * @param window The window to free.
+ *
+ * This function frees @p window. If @p window is @c NULL, this
+ * function does nothing.
+ */
+EAPI void
 ecore_wince_window_free(Ecore_WinCE_Window *window)
 {
    if (!window) return;
@@ -103,7 +181,15 @@ ecore_wince_window_free(Ecore_WinCE_Window *window)
    free(window);
 }
 
-void *
+/**
+ * @brief Return the window HANDLE associated to the given window.
+ *
+ * @param window The window to retrieve the HANDLE from.
+ *
+ * This function returns the window HANDLE associated to @p window. If
+ * @p window is @c NULL, this function returns @c NULL.
+ */
+EAPI void *
 ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window)
 {
    if (!window)
@@ -112,7 +198,18 @@ ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window)
    return ((struct _Ecore_WinCE_Window *)window)->window;
 }
 
-void
+/**
+ * @brief Move the given window to a given position.
+ *
+ * @param window The window to move.
+ * @param x The x coordinate of the destination position.
+ * @param y The y coordinate of the destination position.
+ *
+ * This function move @p window to the new position of coordinates @p x
+ * and @p y. If @p window is @c NULL, or if it is fullscreen, or on
+ * error, this function does nothing.
+ */
+EAPI void
 ecore_wince_window_move(Ecore_WinCE_Window *window,
                         int                 x,
                         int                 y)
@@ -141,7 +238,18 @@ ecore_wince_window_move(Ecore_WinCE_Window *window,
      }
 }
 
-void
+/**
+ * @brief Resize the given window to a given size.
+ *
+ * @param window The window to resize.
+ * @param width The new width.
+ * @param height The new height.
+ *
+ * This function resize @p window to the new @p width and @p height.
+ * If @p window is @c NULL, or if it is fullscreen, or on error, this
+ * function does nothing.
+ */
+EAPI void
 ecore_wince_window_resize(Ecore_WinCE_Window *window,
                           int                 width,
                           int                 height)
@@ -196,7 +304,20 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
      }
 }
 
-void
+/**
+ * @brief Move and resize the given window to a given position and size.
+ *
+ * @param window The window to move and resize.
+ * @param x The x coordinate of the destination position.
+ * @param y The x coordinate of the destination position.
+ * @param width The new width.
+ * @param height The new height.
+ *
+ * This function resize @p window to the new position of coordinates @p x
+ * and @p y and the new @p width and @p height. If @p window is @c NULL,
+ * or if it is fullscreen, or on error, this function does nothing.
+ */
+EAPI void
 ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
                                int                 x,
                                int                 y,
@@ -243,7 +364,15 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
      }
 }
 
-void
+/**
+ * @brief Show the given window.
+ *
+ * @param window The window to show.
+ *
+ * This function shows @p window. If @p window is @c NULL, or on
+ * error, this function does nothing.
+ */
+EAPI void
 ecore_wince_window_show(Ecore_WinCE_Window *window)
 {
    if (!window) return;
@@ -265,7 +394,15 @@ ecore_wince_window_show(Ecore_WinCE_Window *window)
      }
 }
 
-void
+/**
+ * @brief Hide the given window.
+ *
+ * @param window The window to show.
+ *
+ * This function hides @p window. If @p window is @c NULL, or on
+ * error, this function does nothing.
+ */
+EAPI void
 ecore_wince_window_hide(Ecore_WinCE_Window *window)
 {
    if (!window) return;
@@ -283,7 +420,17 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
      }
 }
 
-void
+/**
+ * @brief Set the title of the given window.
+ *
+ * @param window The window to set the title.
+ * @param title The new title.
+ *
+ * This function sets the title of @p window to @p title. If @p window
+ * is @c NULL, or if @p title is @c NULL or empty, or on error, this
+ * function does nothing.
+ */
+EAPI void
 ecore_wince_window_title_set(Ecore_WinCE_Window *window,
                              const char         *title)
 {
@@ -305,8 +452,30 @@ ecore_wince_window_title_set(Ecore_WinCE_Window *window,
    free(wtitle);
 }
 
-void
-ecore_wince_window_backend_set(Ecore_WinCE_Window *window, int backend)
+/**
+ * @brief Set the graphic backend used for the given window.
+ *
+ * @param window The window.
+ * @param backend The backend.
+ *
+ * This function sets the graphic backend to use with @p window to
+ * @p backend. If @p window if @c NULL, this function does nothing.
+ *
+ * The valid values for @p backend are
+ *
+ * @li 0: automatic choice of the backend.
+ * @li 1: the framebuffer (fast but could be not well suported).
+ * @li 2: GAPI (less fast but almost always supported).
+ * @li 3: DirectDraw (less fast than GAPI but almost always
+ * supported).
+ * @li 4: GDI (the slowest but always supported).
+ *
+ * The @p backend is used only in Evas and Ecore_Evas. So this
+ * function should not be called if Ecore_Evas is used.
+ */
+EAPI void
+ecore_wince_window_backend_set(Ecore_WinCE_Window *window,
+                               int                 backend)
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -319,8 +488,20 @@ ecore_wince_window_backend_set(Ecore_WinCE_Window *window, int backend)
    w->backend = backend;
 }
 
-void
-ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int))
+/**
+ * @brief Set the suspend callback used for the given window.
+ *
+ * @param window The window.
+ * @param suspend_cb The suspend callback.
+ *
+ * This function sets the suspend callback to use with @p window to
+ * @p suspend_cb. If @p window if @c NULL, this function does nothing.
+ *
+ * The @p suspend_cb is used only in Evas and Ecore_Evas. So this
+ * function should not be called if Ecore_Evas is used.
+ */
+EAPI void
+ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int))
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -333,8 +514,20 @@ ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend)(int))
    w->suspend = suspend;
 }
 
-void
-ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int))
+/**
+ * @brief Set the resume callback used for the given window.
+ *
+ * @param window The window.
+ * @param resume_cb The resume callback.
+ *
+ * This function sets the resume callback to use with @p window to
+ * @p resume_cb. If @p window if @c NULL, this function does nothing.
+ *
+ * The @p resume_cb is used only in Evas and Ecore_Evas. So this
+ * function should not be called if Ecore_Evas is used.
+ */
+EAPI void
+ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume_cb)(int))
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -347,7 +540,23 @@ ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume)(int))
    w->resume = resume;
 }
 
-void
+/**
+ * @brief Get the geometry of the given window.
+ *
+ * @param window The window to retrieve the geometry from.
+ * @param x The x coordinate of the position.
+ * @param y The x coordinate of the position.
+ * @param width The width.
+ * @param height The height.
+ *
+ * This function retrieves the position and size of @p window. @p x,
+ * @p y, @p width and @p height can be buffers that will be filled with
+ * the corresponding values. If one of them is @c NULL, nothing will
+ * be done for that parameter. If @p window is @c NULL, and if the
+ * buffers are not @c NULL, they will be filled with respectively 0,
+ * 0, the size of the screen and the height of the screen.
+ */
+EAPI void
 ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
                                 int                *x,
                                 int                *y,
@@ -405,7 +614,21 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
    if (height) *height = h;
 }
 
-void
+/**
+ * @brief Get the size of the given window.
+ *
+ * @param window The window to retrieve the size from.
+ * @param width The width.
+ * @param height The height.
+ *
+ * This function retrieves the size of @p window. @p width and
+ * @p height can be buffers that will be filled with the corresponding
+ * values. If one of them is @c NULL, nothing will be done for that
+ * parameter. If @p window is @c NULL, and if the buffers are not
+ * @c NULL, they will be filled with respectively the size of the screen
+ * and the height of the screen.
+ */
+EAPI void
 ecore_wince_window_size_get(Ecore_WinCE_Window *window,
                             int                *width,
                             int                *height)
@@ -435,9 +658,21 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
    if (height) *height = rect.bottom - rect.top;
 }
 
-void
+/**
+ * @brief Set the given window to fullscreen.
+ *
+ * @param window The window.
+ * @param on EINA_TRUE for fullscreen mode, EINA_FALSE for windowed mode.
+ *
+ * This function set @p window to fullscreen or windowed mode. If @p on
+ * is set to EINA_TRUE, the window will be fullscreen, if it is set to
+ * EINA_FALSE, it will be windowed. If @p window is @c NULL or if the
+ * state does not change (like setting to fullscreen while the window
+ * is already fullscreen), this function does nothing.
+ */
+EAPI void
 ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
-                                  int                 on)
+                                  Eina_Bool           on)
 {
    struct _Ecore_WinCE_Window *ew;
    HWND                        w;
@@ -555,38 +790,6 @@ ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
      }
 }
 
-
-/***** Private functions definitions *****/
-
-static int
-_ecore_wince_hardware_keys_register(HWND window)
-{
-   HINSTANCE           core_dll;
-   UnregisterFunc1Proc unregister_fct;
-   int                 i;
-
-   core_dll = LoadLibrary(L"coredll.dll");
-   if (!core_dll)
-     {
-        ERR("LoadLibrary() failed");
-        return 0;
-     }
-
-   unregister_fct = (UnregisterFunc1Proc)GetProcAddress(core_dll, L"UnregisterFunc1");
-   if (!unregister_fct)
-     {
-        ERR("GetProcAddress() failed");
-        FreeLibrary(core_dll);
-        return 0;
-     }
-
-   for (i = 0xc1; i <= 0xcf; i++)
-     {
-        unregister_fct(MOD_WIN, i);
-        RegisterHotKey(window, i, MOD_WIN, i);
-     }
-
-   FreeLibrary(core_dll);
-
-   return 1;
-}
+/**
+ * @}
+ */

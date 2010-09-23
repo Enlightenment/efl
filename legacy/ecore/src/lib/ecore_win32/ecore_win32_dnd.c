@@ -7,6 +7,14 @@
 #include "Ecore_Win32.h"
 #include "ecore_win32_private.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 
 static int _ecore_win32_dnd_init_count = 0;
 
@@ -18,8 +26,42 @@ static HANDLE DataToHandle(const char *data, int size)
    return ptr;
 }
 
+/**
+ * @endcond
+ */
 
-int
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+/**
+ * @addtogroup Ecore_Win32_Group Ecore_Win32 library
+ *
+ * Ecore_Win32 is a library that wraps Windows CE graphic functions
+ * and integrate them nicely into the Ecore main loop.
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the Ecore_Win32 Drag and Drop module.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function initialize the Drag and Drop module. It returns 0 on
+ * failure, otherwise it returns the number of times it has already
+ * been called.
+ *
+ * When the Drag and Drop module is not used anymore, call
+ * ecore_win32_dnd_shutdown() to shut down the module.
+ */
+EAPI int
 ecore_win32_dnd_init()
 {
    if (_ecore_win32_dnd_init_count > 0)
@@ -36,7 +78,18 @@ ecore_win32_dnd_init()
    return _ecore_win32_dnd_init_count;
 }
 
-int ecore_win32_dnd_shutdown()
+/**
+ * @brief Shut down the Ecore_Win32 Drag and Drop module.
+ *
+ * @return 0 when the module is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shuts down the Drag and Drop module. It returns 0 when it has
+ * been called the same number of times than ecore_win32_dnd_init(). In that case
+ * it shut down the module.
+ */
+EAPI int
+ecore_win32_dnd_shutdown()
 {
    _ecore_win32_dnd_init_count--;
    if (_ecore_win32_dnd_init_count > 0) return _ecore_win32_dnd_init_count;
@@ -48,17 +101,31 @@ int ecore_win32_dnd_shutdown()
    return _ecore_win32_dnd_init_count;
 }
 
-int ecore_win32_dnd_begin(const char *data,
-                          int         size)
+/**
+ * @brief Begin a DnD operation.
+ *
+ * @param data The name pf the Drag operation.
+ * @param size The size of the name.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function start a Drag operation with the name @p data. If
+ * @p data is @c NULL, EINA_FALSE is returned. if @p size is less than
+ * 0, it is set to the length (as strlen()) of @p data. On success the
+ * function returns EINA_TRUE, otherwise it returns EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_win32_dnd_begin(const char *data,
+                      int         size)
 {
    IDataObject *pDataObject = NULL;
    IDropSource *pDropSource = NULL;
    FORMATETC fmtetc = { CF_TEXT, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
    STGMEDIUM stgmed = { TYMED_HGLOBAL, { 0 }, 0 };
-   int res = 0;
+   Eina_Bool res = EINA_FALSE;
 
    if (!data)
-      return 0;
+      return EINA_FALSE;
+
    if (size < 0)
       size = strlen(data) + 1;
 
@@ -92,7 +159,7 @@ int ecore_win32_dnd_begin(const char *data,
       //else
       //   printf("DND error\n");
 
-      res = 1;
+      res = EINA_TRUE;
    }
 
    _ecore_win32_dnd_data_object_free(pDataObject);
@@ -100,24 +167,48 @@ int ecore_win32_dnd_begin(const char *data,
 
    // cleanup
    ReleaseStgMedium(&stgmed);
-   return (int)res;
+
+   return res;
 }
 
-int ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
-                                         Ecore_Win32_Dnd_DropTarget_Callback callback)
+/**
+ * @brief Register a Drop operation.
+ *
+ * @param window The destination of the Drop operation.
+ * @param callback The callback called when the Drop operation
+ * finishes.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function register a Drop operation on @p window. Once the Drop
+ * operation finishes, @p callback is called. If @p window is @c NULL,
+ * the function returns EINA_FALSE. On success, it returns EINA_TRUE,
+ * otherwise it returns EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
+                                     Ecore_Win32_Dnd_DropTarget_Callback callback)
 {
    struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
 
    if (!window)
-      return 0;
+      return EINA_FALSE;
 
    wnd->dnd_drop_target = _ecore_win32_dnd_register_drop_window(wnd->window,
                                                                 callback,
                                                                 (void *)wnd);
-   return (int)(!!wnd->dnd_drop_target);
+   return wnd->dnd_drop_target ? EINA_TRUE : EINA_FALSE;
 }
 
-void ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window)
+/**
+ * @brief Unregister a Drop operation.
+ *
+ * @param window The destination of the Drop operation.
+ *
+ * This function unregister a Drop operation on @p window. If
+ * @p window is @c NULL, the function does nothing.
+ */
+EAPI void
+ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window)
 {
    struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
 
@@ -127,3 +218,7 @@ void ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window)
    if (wnd->dnd_drop_target)
       _ecore_win32_dnd_unregister_drop_window(wnd->window, wnd->dnd_drop_target);
 }
+
+/**
+ * @}
+ */
