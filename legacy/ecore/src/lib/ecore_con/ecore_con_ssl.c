@@ -395,7 +395,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
    if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
      {
-        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_DHE_RSA, 0 };
+        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
         int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, 0 };
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
@@ -618,7 +618,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
    if (!((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
      {
-        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_DHE_RSA, 0 };
+        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
      }
 
@@ -827,7 +827,14 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
         private_key->count++;
      }
 
-   if (svr->created)
+   if ((server_cert) && (server_cert->cert) && (!svr->created) &&
+       ((ssl_type & ECORE_CON_LOAD_CERT)))
+     { /* this is a client */
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
+
+        server_cert->count++;
+     }
+   else if (!(ssl_type & ECORE_CON_LOAD_CERT) && svr->created)
      {
         DH *dh_params;
         SSL_ERROR_CHECK_GOTO_ERROR(!(dh_params = DH_new()));
@@ -837,20 +844,10 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
         SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_key(dh_params));
         SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_tmp_dh(svr->ssl_ctx, dh_params));
         DH_free(dh_params);
-        
+        SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:@STRENGTH"));
      }
-
-   if ((server_cert) && (server_cert->cert) && (!svr->created) &&
-       ((ssl_type & ECORE_CON_LOAD_CERT)))
-     { /* this is a client */
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
-
-        server_cert->count++;
-     }
-   else if (!(ssl_type & ECORE_CON_LOAD_CERT) && svr->created)
-     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:@STRENGTH"));
    else if (!(ssl_type & ECORE_CON_LOAD_CERT))
-     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:AES:!PSK:@STRENGTH"));
+     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"));
 
      return ECORE_CON_SSL_ERROR_NONE;
 
