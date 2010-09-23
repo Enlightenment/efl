@@ -131,7 +131,6 @@ struct _Ecore_Con_Server
 #elif USE_OPENSSL
    SSL_CTX *ssl_ctx;
    SSL *ssl;
-   DH *dh_params;
    int ssl_err;
 #endif
    double start_time;

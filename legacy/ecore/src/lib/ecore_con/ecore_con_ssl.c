@@ -809,19 +809,11 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
          else
            SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl_ctx = SSL_CTX_new(SSLv23_server_method())));
          options = SSL_CTX_get_options(svr->ssl_ctx);
-         SSL_CTX_set_options(svr->ssl_ctx, options | SSL_OP_NO_SSLv2);
+         SSL_CTX_set_options(svr->ssl_ctx, options | SSL_OP_NO_SSLv2 | SSL_OP_SINGLE_DH_USE);
          break;
 
       default:
          break;
-     }
-
-   if ((server_cert) && (server_cert->cert) && (!svr->created) &&
-       ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT))
-     { /* this is a client */
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
-
-        server_cert->count++;
      }
 
    if ((client_cert) && (client_cert->cert) && (private_key->key) && (svr->created) &&
@@ -837,12 +829,29 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
 
    if (svr->created)
      {
-        SSL_ERROR_CHECK_GOTO_ERROR(!(svr->dh_params = DH_new()));
-        SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_parameters_ex(svr->dh_params, 1024, DH_GENERATOR_5, NULL));
-        SSL_ERROR_CHECK_GOTO_ERROR(!DH_check(svr->dh_params, &dh));
+        DH *dh_params;
+        SSL_ERROR_CHECK_GOTO_ERROR(!(dh_params = DH_new()));
+        SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_parameters_ex(dh_params, 1024, DH_GENERATOR_5, NULL));
+        SSL_ERROR_CHECK_GOTO_ERROR(!DH_check(dh_params, &dh));
         SSL_ERROR_CHECK_GOTO_ERROR((dh & DH_CHECK_P_NOT_PRIME) || (dh & DH_CHECK_P_NOT_SAFE_PRIME));
-        SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_tmp_dh(svr->ssl_ctx, svr->dh_params));
+        SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_key(dh_params));
+        SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_tmp_dh(svr->ssl_ctx, dh_params));
+        DH_free(dh_params);
+        
      }
+
+   if ((server_cert) && (server_cert->cert) && (!svr->created) &&
+       ((ssl_type & ECORE_CON_LOAD_CERT)))
+     { /* this is a client */
+        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
+
+        server_cert->count++;
+     }
+   else if (!(ssl_type & ECORE_CON_LOAD_CERT) && svr->created)
+     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:@STRENGTH"));
+   else if (!(ssl_type & ECORE_CON_LOAD_CERT))
+     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:AES:!PSK:@STRENGTH"));
+
      return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -958,12 +967,8 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
    if (svr->ssl_ctx)
       SSL_CTX_free(svr->ssl_ctx);
 
-   if (svr->dh_params)
-     DH_free(svr->dh_params);
-
    svr->ssl = NULL;
    svr->ssl_ctx = NULL;
-   svr->dh_params = NULL;
    svr->ssl_err = SSL_ERROR_NONE;
 
    return ECORE_CON_SSL_ERROR_NONE;
