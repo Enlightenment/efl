@@ -1739,3 +1739,54 @@ elm_gengrid_items_get(const Evas_Object *obj)
    if (!wd) return NULL;
    return wd->items;
 }
+
+/**
+ * Show the given item
+ *
+ * This causes gengrid to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible.
+ *
+ * @param item The item
+ *
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_item_show(Elm_Gengrid_Item *item)
+{
+   Widget_Data *wd = elm_widget_data_get(item->wd->self);
+
+   if (!wd) return;
+   if ((!item) || (item->delete_me)) return;
+
+   elm_smart_scroller_child_region_show(item->wd->scr,
+					item->x * wd->item_width,
+					item->y * wd->item_height,
+					item->wd->item_width, item->wd->item_height);
+  
+}
+
+/**
+ * Bring in the given item
+ *
+ * This causes gengrig to jump to the given item @p item and show it (by scrolling),
+ * if it is not fully visible. This may use animation to do so and take a
+ * period of time
+ *
+ * @param item The item
+ *
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_item_bring_in(Elm_Gengrid_Item *item)
+{
+   Widget_Data *wd = elm_widget_data_get(item->wd->self);
+
+   if (!wd) return;
+   if ((!item) || (item->delete_me)) return;
+
+   elm_smart_scroller_region_bring_in(item->wd->scr,
+				      item->x * wd->item_width,
+				      item->y * wd->item_height,
+				      item->wd->item_width, item->wd->item_height);
+  
+}
