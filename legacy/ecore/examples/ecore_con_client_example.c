@@ -67,7 +67,7 @@ int main()
 */
 
 /* to use simple tcp with ssl/tls, use this line */
-   if (!ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "127.0.0.1", 5556, NULL))
+   if (!ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "127.0.0.1", 8080, NULL))
      exit(1);
 
 /* set event handler for server connect */
