@@ -60,6 +60,8 @@ The Ecore library provides the following modules:
 @li @link Ecore_Fb.h     Ecore_FB - Frame buffer convenience functions. @endlink
 @li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
 @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
+@li @ref Ecore_Win32_Group
+@li @ref Ecore_WinCE_Group
 
 @section compiling How to compile using Ecore?
 
