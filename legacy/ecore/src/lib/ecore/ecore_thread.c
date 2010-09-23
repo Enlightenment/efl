@@ -227,56 +227,6 @@ _ecore_feedback_job(Ecore_Pipe *end_pipe, pthread_t thread)
      }
 }
 
-/* Lower priority of current thread.
- *
- * It's used by worker threads so they use up "bg cpu" as it was really intended
- * to work. If current thread is running with real-time priority, we decrease
- * our priority by 5. This is done in a portable way.  Otherwise we are
- * running with SCHED_OTHER policy and there's no portable way to set the nice
- * level on current thread. In Linux, it does work and it's the only one that is
- * implemented.
- */
-static void
-_ecore_thread_pri_drop(void)
-{
-   struct sched_param param;
-   int pol, prio, ret;
-   pthread_t pthread_id;
-
-   pthread_id = pthread_self();
-   ret = pthread_getschedparam(pthread_id, &pol, &param);
-   if (ret)
-     {
-        ERR("Unable to query sched parameters");
-        return;
-     }
-
-   if (EINA_UNLIKELY(pol == SCHED_RR || pol == SCHED_FIFO))
-     {
-        prio = sched_get_priority_max(pol);
-        param.sched_priority += 5;
-        if (prio > 0 && param.sched_priority > prio)
-           param.sched_priority = prio;
-
-        pthread_setschedparam(pthread_id, pol, &param);
-     }
-#ifdef __linux__
-   else
-     {
-        errno = 0;
-        prio = getpriority(PRIO_PROCESS, 0);
-        if (errno == 0)
-          {
-             prio += 5;
-             if (prio > 19)
-                prio = 19;
-
-             setpriority(PRIO_PROCESS, 0, prio);
-          }
-     }
-#endif
-}
-
 static void *
 _ecore_direct_worker(Ecore_Pthread_Worker *work)
 {
@@ -284,7 +234,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-   _ecore_thread_pri_drop();
+   eina_sched_prio_drop();
 
    pth = malloc(sizeof (Ecore_Pthread_Data));
    if (!pth) return NULL;
@@ -332,7 +282,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
 
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-   _ecore_thread_pri_drop();
+   eina_sched_prio_drop();
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
    _ecore_thread_count++;
