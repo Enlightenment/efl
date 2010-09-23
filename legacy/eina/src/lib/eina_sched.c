@@ -20,7 +20,7 @@
 # include "config.h"
 #endif
 
-#ifdef EFL_HAVE_THREADS
+#ifdef EFL_HAVE_POSIX_THREADS
 # include <pthread.h>
 # ifdef __linux__
 #  include <sched.h>
@@ -30,6 +30,7 @@
 # endif
 #endif
 
+#include "eina_sched.h"
 #include "eina_log.h"
 
 #define RTNICENESS 5
@@ -50,7 +51,7 @@
 EAPI void
 eina_sched_prio_drop(void)
 {
-#ifdef EFL_HAVE_THREADS
+#ifdef EFL_HAVE_POSIX_THREADS
    struct sched_param param;
    int pol, prio, ret;
    pthread_t pthread_id;
@@ -88,6 +89,7 @@ eina_sched_prio_drop(void)
      }
 #endif
 #else
-   EINA_LOG_ERR("Eina does not have support for threads enabled");
+   EINA_LOG_ERR("Eina does not have support for threads enabled"
+                "or it doesn't support setting scheduler priorities");
 #endif
 }
