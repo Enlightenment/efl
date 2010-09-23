@@ -314,10 +314,15 @@ static void
 _config_apply(void)
 {
    _elm_theme_parse(NULL, _elm_config->theme);
-   if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
    ecore_animator_frametime_set(1.0 / _elm_config->fps);
+}
+
+static void
+_config_sub_apply(void)
+{
    edje_frametime_set(1.0 / _elm_config->fps);
    edje_scale_set(_elm_config->scale);
+   if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
 }
 
 static Elm_Config *
@@ -698,6 +703,7 @@ _elm_config_sub_init(void)
 	  }
 #endif
       }
+   _config_sub_apply();
 }
 
 void
