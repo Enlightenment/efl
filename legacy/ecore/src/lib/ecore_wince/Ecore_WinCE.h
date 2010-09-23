@@ -1,6 +1,7 @@
 #ifndef __ECORE_WINCE_H__
 #define __ECORE_WINCE_H__
 
+#include <Eina.h>
 
 #ifdef EAPI
 # undef EAPI

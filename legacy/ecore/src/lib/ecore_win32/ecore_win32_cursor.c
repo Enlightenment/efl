@@ -51,7 +51,7 @@
  * will be visible. @p pixels_xor is similar but will allow the cursor
  * to have a shape. Here is the truth table for the masks:
  *
- * <table>
+ * <table border=1>
  * <tr><td>AND mask</td><td>XOR mask</td><td>Display</td></tr>
  * <tr><td>0</td>       <td>0</td>       <td>Black</td></tr>
  * <tr><td>0</td>       <td>1</td>       <td>White</td></tr>

@@ -1,6 +1,7 @@
 #ifndef __ECORE_WIN32_H__
 #define __ECORE_WIN32_H__
 
+#include <Eina.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -338,8 +339,8 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_CREATE; /**< Ecore_Event for the #Ecore
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_DESTROY; /**< Ecore_Event for the #Ecore_Win32_Event_Destroy event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_HIDE; /**< Ecore_Event for the #Ecore_Win32_Event_Hide event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_SHOW; /**< Ecore_Event for the #Ecore_Win32_Event_Show event */
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_CONFIGURE; /**< Ecore_Event for the #Ecore_Win32_Event_Configure event *>
-EAPI extern int ECORE_WIN32_EVENT_WINDOW_RESIZE; /**< Ecore_Event for the #Ecore_Win32_Event_Resize event *>
+EAPI extern int ECORE_WIN32_EVENT_WINDOW_CONFIGURE; /**< Ecore_Event for the #Ecore_Win32_Event_Configure event */
+EAPI extern int ECORE_WIN32_EVENT_WINDOW_RESIZE; /**< Ecore_Event for the #Ecore_Win32_Event_Resize event */
 EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for the #Ecore_Win32_Event_Window_Delete_Request event */
 
 
