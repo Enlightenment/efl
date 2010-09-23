@@ -1375,7 +1375,7 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
      }
    else if (result == WAIT_TIMEOUT)
      {
-        ERR("time out\n");
+        /* ERR("time out\n"); */
         res = 0;
      }
    else if (result == (WAIT_OBJECT_0 + objects_nbr))
