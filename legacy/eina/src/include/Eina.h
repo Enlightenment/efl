@@ -148,6 +148,7 @@ extern "C" {
 #include "eina_benchmark.h"
 #include "eina_convert.h"
 #include "eina_cpu.h"
+#include "eina_sched.h"
 #include "eina_tiler.h"
 #include "eina_hamster.h"
 #include "eina_matrixsparse.h"

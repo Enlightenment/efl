@@ -62,6 +62,7 @@ static const Eina_Test_Case etc[] = {
    { "String", eina_test_str },
    { "Unicode String", eina_test_ustr },
    { "QuadTree", eina_test_quadtree },
+   { "Sched", eina_test_sched },
    { NULL, NULL }
 };
 

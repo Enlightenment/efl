@@ -50,5 +50,6 @@ void eina_test_str(TCase *tc);
 void eina_test_ustr(TCase *tc);
 void eina_test_quadtree(TCase *tc);
 void eina_test_fp(TCase *tc);
+void eina_test_sched(TCase *tc);
 
 #endif /* EINA_SUITE_H_ */

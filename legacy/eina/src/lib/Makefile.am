@@ -37,6 +37,7 @@ eina_binshare.c \
 eina_stringshare.c \
 eina_ustringshare.c \
 eina_cpu.c \
+eina_sched.c \
 eina_tiler.c \
 eina_hamster.c \
 eina_safety_checks.c \

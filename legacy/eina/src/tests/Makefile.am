@@ -39,6 +39,7 @@ eina_test_ustr.c	\
 eina_test_binshare.c    \
 eina_test_array.c 	\
 eina_test_error.c	\
+eina_test_sched.c       \
 eina_test_log.c 	\
 eina_test_magic.c 	\
 eina_test_inlist.c 	\
