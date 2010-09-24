@@ -216,6 +216,8 @@ ecore_con_ssl_server_reinit()
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type)
 {
+   if (!ssl_type)
+     return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_server_prepare) (svr, ssl_type);
 }
 
