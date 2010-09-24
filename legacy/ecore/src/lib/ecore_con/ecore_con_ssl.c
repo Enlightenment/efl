@@ -432,6 +432,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 #ifdef USE_GNUTLS2_10
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_client(svr->session));
 #endif
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_server_name_set(svr->session, GNUTLS_NAME_DNS, svr->name, strlen(svr->name)));
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
         //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
