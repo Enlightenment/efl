@@ -100,6 +100,13 @@ _elm_widget_is(const Evas_Object *obj)
    return type == SMART_NAME;
 }
 
+static inline Eina_Bool
+_is_focusable(Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->can_focus || sd->child_can_focus;
+}
+
 static void
 _sub_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -125,7 +132,7 @@ _sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
      }
    while (o);
    if (!o) return;
-   if (!elm_widget_can_focus_get(o)) return;
+   if (!_is_focusable(o)) return;
    elm_widget_focus_steal(o);
 }
 
@@ -407,7 +414,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
-	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 1;
+	if (_is_focusable(sobj)) sd->child_can_focus = 1;
      }
    if (_elm_widget_is(sobj))
      {
@@ -451,7 +458,7 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
    sd->subobjs = eina_list_remove(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
-	if (elm_widget_can_focus_get(sobj)) sd->child_can_focus = 0;
+	if (_is_focusable(sobj)) sd->child_can_focus = 0;
      }
    if (_elm_widget_is(sobj))
      {
@@ -542,13 +549,18 @@ elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
      }
 }
 
-EAPI int
+EAPI Eina_Bool
 elm_widget_can_focus_get(const Evas_Object *obj)
 {
-   API_ENTRY return 0;
-   if (sd->can_focus) return 1;
-   if (sd->child_can_focus) return 1;
-   return 0;
+   API_ENTRY return EINA_FALSE;
+   return sd->can_focus;
+}
+
+EAPI Eina_Bool
+elm_widget_child_can_focus_get(const Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->child_can_focus;
 }
 
 EAPI void
@@ -684,7 +696,7 @@ EAPI int
 elm_widget_focus_jump(Evas_Object *obj, int forward)
 {
    API_ENTRY return 0;
-   if (!elm_widget_can_focus_get(obj)) return 0;
+   if (!_is_focusable(obj)) return 0;
 
    /* if it has a focus func its an end-point widget like a button */
    if (sd->focus_func)
@@ -716,7 +728,7 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 	  {
 	     if (forward)
 	       {
-		  if (elm_widget_can_focus_get(sd->resize_obj))
+		  if (_is_focusable(sd->resize_obj))
 		    {
 		       if ((focus_next) &&
 			   (!elm_widget_disabled_get(sd->resize_obj)))
@@ -745,7 +757,7 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 		       Evas_Object *child;
 		       EINA_LIST_FOREACH(sd->subobjs, l, child)
 			 {
-			    if (elm_widget_can_focus_get(child))
+			    if (_is_focusable(child))
 			      {
 				 if ((focus_next) &&
 				     (!elm_widget_disabled_get(child)))
@@ -778,7 +790,7 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 
 		  EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
 		    {
-		       if (elm_widget_can_focus_get(child))
+		       if (_is_focusable(child))
 			 {
 			    if ((focus_next) &&
 				(!elm_widget_disabled_get(child)))
@@ -804,7 +816,7 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 		    }
 		  if (!l)
 		    {
-		       if (elm_widget_can_focus_get(sd->resize_obj))
+		       if (_is_focusable(sd->resize_obj))
 			 {
 			    if ((focus_next) &&
 				(!elm_widget_disabled_get(sd->resize_obj)))
@@ -883,7 +895,7 @@ elm_widget_focus_set(Evas_Object *obj, int first)
      {
 	if (first)
 	  {
-	     if ((elm_widget_can_focus_get(sd->resize_obj)) &&
+	     if ((_is_focusable(sd->resize_obj)) &&
 		 (!elm_widget_disabled_get(sd->resize_obj)))
 	       {
 		  elm_widget_focus_set(sd->resize_obj, first);
@@ -894,7 +906,7 @@ elm_widget_focus_set(Evas_Object *obj, int first)
 		  Evas_Object *child;
 		  EINA_LIST_FOREACH(sd->subobjs, l, child)
 		    {
-		       if ((elm_widget_can_focus_get(child)) &&
+		       if ((_is_focusable(child)) &&
 			   (!elm_widget_disabled_get(child)))
 			 {
 			    elm_widget_focus_set(child, first);
@@ -909,7 +921,7 @@ elm_widget_focus_set(Evas_Object *obj, int first)
 	     Evas_Object *child;
 	     EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
 	       {
-		  if ((elm_widget_can_focus_get(child)) &&
+		  if ((_is_focusable(child)) &&
 		      (!elm_widget_disabled_get(child)))
 		    {
 		       elm_widget_focus_set(child, first);
@@ -918,7 +930,7 @@ elm_widget_focus_set(Evas_Object *obj, int first)
 	       }
 	     if (!l)
 	       {
-		  if ((elm_widget_can_focus_get(sd->resize_obj)) &&
+		  if ((_is_focusable(sd->resize_obj)) &&
 		      (!elm_widget_disabled_get(sd->resize_obj)))
 		    {
 		       elm_widget_focus_set(sd->resize_obj, first);

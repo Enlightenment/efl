@@ -232,7 +232,8 @@ EAPI void             elm_widget_signal_emit(Evas_Object *obj, const char *emiss
 EAPI void             elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
 EAPI void            *elm_widget_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
 EAPI void             elm_widget_can_focus_set(Evas_Object *obj, int can_focus);
-EAPI int              elm_widget_can_focus_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_can_focus_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_child_can_focus_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_ignore_set(Evas_Object *obj, Eina_Bool ignore);
 EAPI Eina_Bool        elm_widget_highlight_ignore_get(const Evas_Object *obj);
 EAPI void             elm_widget_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
