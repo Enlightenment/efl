@@ -75,6 +75,13 @@ typedef enum _Ecore_Con_Ssl_Error
    ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED
 } Ecore_Con_Ssl_Error;
 
+typedef enum _Ecore_Con_Ssl_Handshake
+{
+   ECORE_CON_SSL_STATE_DONE = 0,
+   ECORE_CON_SSL_STATE_HANDSHAKING,
+   ECORE_CON_SSL_STATE_INIT
+} Ecore_Con_Ssl_State;
+
 struct _Ecore_Con_Client
 {
    ECORE_MAGIC;
@@ -98,6 +105,8 @@ struct _Ecore_Con_Client
    SSL *ssl;
    int ssl_err;
 #endif
+   Eina_Bool handshaking : 1;
+   Ecore_Con_Ssl_State ssl_state;
    Eina_Bool dead : 1;
    Eina_Bool delete_me : 1;
 };
@@ -139,6 +148,8 @@ struct _Ecore_Con_Server
    Eina_Bool dead : 1;
    Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
    Eina_Bool connecting : 1;
+   Eina_Bool handshaking : 1; /* EINA_TRUE if server is ssl handshaking */
+   Ecore_Con_Ssl_State ssl_state;
    Eina_Bool reject_excess_clients : 1;
    Eina_Bool delete_me : 1;
 };

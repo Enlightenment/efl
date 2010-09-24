@@ -1266,7 +1266,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 }
 
 static void
-kill_server(Ecore_Con_Server *svr)
+_ecore_con_server_kill(Ecore_Con_Server *svr)
 {
    if (!svr->delete_me)
      {
@@ -1385,7 +1385,7 @@ _ecore_con_cb_tcp_listen(void *data, Ecore_Con_Info *net_info)
 
 error:
    ecore_con_ssl_server_shutdown(svr);
-   kill_server(svr);
+   _ecore_con_server_kill(svr);
 }
 
 static void
@@ -1461,7 +1461,7 @@ _ecore_con_cb_udp_listen(void *data, Ecore_Con_Info *net_info)
 
 error:
    ecore_con_ssl_server_shutdown(svr);
-   kill_server(svr);
+   _ecore_con_server_kill(svr);
 }
 
 static void
@@ -1523,8 +1523,13 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
       svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
                                    _ecore_con_cl_handler, svr, NULL, NULL);
 
-   if ((svr->type & ECORE_CON_SSL) && (ecore_con_ssl_server_init(svr)))
-         goto error;
+   if (svr->type & ECORE_CON_SSL)
+     {
+        svr->handshaking = EINA_TRUE;
+        svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
+        if (ecore_con_ssl_server_init(svr))
+          goto error;
+     }
 
    if (!svr->fd_handler)
       goto error;
@@ -1535,7 +1540,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
 
 error:
    ecore_con_ssl_server_shutdown(svr);
-   kill_server(svr);
+   _ecore_con_server_kill(svr);
 }
 
 static void
@@ -1586,7 +1591,7 @@ _ecore_con_cb_udp_connect(void *data, Ecore_Con_Info *net_info)
 
 error:
    ecore_con_ssl_server_shutdown(svr);
-   kill_server(svr);
+   _ecore_con_server_kill(svr);
 }
 
 static Ecore_Con_State
@@ -1616,7 +1621,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    if (so_err != 0)
      {
         /* we lost our server! */
-        kill_server(svr);
+        _ecore_con_server_kill(svr);
         return ECORE_CON_DISCONNECTED;
      }
 
@@ -1658,7 +1663,7 @@ static Ecore_Con_State svr_try_connect(Ecore_Con_Server *svr)
          return svr_try_connect_plain(svr);
 
       case ECORE_CON_DISCONNECTED:
-         kill_server(svr);
+         _ecore_con_server_kill(svr);
          return ECORE_CON_DISCONNECTED;
 
       default:
@@ -1740,8 +1745,13 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    cl->fd = new_fd;
    cl->host_server = svr;
 
-   if ((svr->type & ECORE_CON_SSL) && (ecore_con_ssl_client_init(cl)))
-     goto error;
+   if (svr->type & ECORE_CON_SSL)
+     {
+        cl->handshaking = EINA_TRUE;
+        cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
+        if (ecore_con_ssl_client_init(cl))
+          goto error;
+     }
 
    cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
                                 _ecore_con_svr_cl_handler, cl, NULL, NULL);
@@ -1751,7 +1761,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    if (!svr->path)
       cl->ip = _ecore_con_pretty_ip((struct sockaddr *)&incoming, size_in);
 
-   if (!cl->delete_me)
+   if ((!cl->delete_me) && (!cl->handshaking))
      {
         Ecore_Con_Event_Client_Add *e;
 
@@ -1818,7 +1828,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
                }
 
              if (lost_server)
-                kill_server(svr);
+                _ecore_con_server_kill(svr);
 
              break;
           }
@@ -1850,6 +1860,17 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    if (svr->delete_me)
       return ECORE_CALLBACK_RENEW;
+
+   if (svr->handshaking)
+     {
+        if (ecore_con_ssl_server_init(svr))
+          {
+             ERR("ssl handshaking failed!");
+             ecore_main_fd_handler_del(svr->fd_handler);
+             close(svr->fd);
+          }
+        return ECORE_CALLBACK_RENEW;
+     }
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      _ecore_con_cl_read(svr);
@@ -1912,7 +1933,7 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
         else if ((errno == EIO) || (errno == EBADF) ||
                  (errno == EPIPE) || (errno == EINVAL) ||
                  (errno == ENOSPC) || (errno == ECONNREFUSED))
-           kill_server(svr);
+           _ecore_con_server_kill(svr);
      }
    else if (ecore_main_fd_handler_active_get(fd_handler,
                                              ECORE_FD_WRITE))
@@ -2153,6 +2174,17 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (cl->delete_me)
       return ECORE_CALLBACK_RENEW;
 
+   if (cl->handshaking)
+     {
+        if (ecore_con_ssl_client_init(cl))
+          {
+             ERR("ssl handshaking failed!");
+             ecore_main_fd_handler_del(cl->fd_handler);
+             close(cl->fd);
+          }
+        return ECORE_CALLBACK_RENEW;
+     }
+
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      _ecore_con_svr_cl_read(cl);
 
@@ -2189,7 +2221,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    if (count < 1)
      {
         /* we lost our server! */
-        kill_server(svr);
+        _ecore_con_server_kill(svr);
         return;
      }
 

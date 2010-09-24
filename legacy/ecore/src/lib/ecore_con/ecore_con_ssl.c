@@ -362,56 +362,66 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         GNUTLS_SSL3,
         0
      };
-
-   if (svr->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
-     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
-
-   switch (svr->type & ECORE_CON_SSL)
+   switch (svr->ssl_state)
      {
-      case ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         proto = ssl3_proto;
-         break;
+      case ECORE_CON_SSL_STATE_DONE:
+        return ECORE_CON_SSL_ERROR_NONE;
+      case ECORE_CON_SSL_STATE_INIT:
+        if (svr->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
+          return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
 
-      case ECORE_CON_USE_TLS:
-      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         proto = tls_proto;
-         break;
+        switch (svr->type & ECORE_CON_SSL)
+          {
+           case ECORE_CON_USE_SSL3:
+           case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+              proto = ssl3_proto;
+              break;
 
-      case ECORE_CON_USE_MIXED:
-      case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
-         proto = mixed_proto;
-         break;
+           case ECORE_CON_USE_TLS:
+           case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
+              proto = tls_proto;
+              break;
 
-      default:
-         return ECORE_CON_SSL_ERROR_NONE;
-     }
+           case ECORE_CON_USE_MIXED:
+           case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
+              proto = mixed_proto;
+              break;
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
+           default:
+              return ECORE_CON_SSL_ERROR_NONE;
+          }
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
-   //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
-   if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
-     {
-        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
-        int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, 0 };
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
-     }
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
+        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
+        if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
+          {
+             int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
+             int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, 0 };
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
+          }
 
-   gnutls_dh_set_prime_bits(svr->session, 512);
-   gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
 
-   do
-     {
+        gnutls_dh_set_prime_bits(svr->session, 512);
+        gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
+        svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+      case ECORE_CON_SSL_STATE_HANDSHAKING:
         ret = gnutls_handshake(svr->session);
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
-     } while (ret < 0);
+        if (!ret)
+          {
+             svr->handshaking = EINA_FALSE;
+             svr->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+      default:
+        break;
+     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 
@@ -581,57 +591,68 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         GNUTLS_TLS1_0,
         GNUTLS_SSL3,
         0 };
-
-   if (cl->host_server->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
-     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
-
-   switch (cl->host_server->type & ECORE_CON_SSL)
+   switch (cl->ssl_state)
      {
-      case ECORE_CON_USE_SSL3:
-      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-         proto = ssl3_proto;
-         break;
+      case ECORE_CON_SSL_STATE_DONE:
+        return ECORE_CON_SSL_ERROR_NONE;
+      case ECORE_CON_SSL_STATE_INIT:
+        if (cl->host_server->type & ECORE_CON_USE_SSL2) /* not supported because of security issues */
+          return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
 
-      case ECORE_CON_USE_TLS:
-      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-         proto = tls_proto;
-         break;
+        switch (cl->host_server->type & ECORE_CON_SSL)
+          {
+           case ECORE_CON_USE_SSL3:
+           case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+              proto = ssl3_proto;
+              break;
 
-      case ECORE_CON_USE_MIXED:
-      case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
-         proto = mixed_proto;
-         break;
+           case ECORE_CON_USE_TLS:
+           case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
+              proto = tls_proto;
+              break;
 
-      default:
-         return ECORE_CON_SSL_ERROR_NONE;
-     }
+           case ECORE_CON_USE_MIXED:
+           case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
+              proto = mixed_proto;
+              break;
 
-   _client_connected++;
+           default:
+              return ECORE_CON_SSL_ERROR_NONE;
+          }
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
+        _client_connected++;
 
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
-   //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
-   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
-   if (!((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
-     {
-        int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
-     }
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
 
-   gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
+        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
+        if (!((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
+          {
+             int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
+          }
 
-   gnutls_dh_set_prime_bits(cl->session, 2048);
-   gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
+        gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
 
-   do
-     {
+        gnutls_dh_set_prime_bits(cl->session, 2048);
+        gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
+        cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+      case ECORE_CON_SSL_STATE_HANDSHAKING:
         ret = gnutls_handshake(cl->session);
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
-     } while (ret < 0);
+
+        if (!ret)
+          {
+             cl->handshaking = EINA_FALSE;
+             cl->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+      default:
+        break;
+     }
 
    /* TODO: add cert verification support */
    return ECORE_CON_SSL_ERROR_NONE;
@@ -875,31 +896,42 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 {
-   int ret = -1;
+   int err, ret = -1;
 
-   SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
-
-   SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
-   SSL_set_connect_state(svr->ssl);
-
-   do
+   switch (svr->ssl_state)
      {
-        int err;
+      case ECORE_CON_SSL_STATE_DONE:
+        return ECORE_CON_SSL_ERROR_NONE;
+      case ECORE_CON_SSL_STATE_INIT:
+        SSL_ERROR_CHECK_GOTO_ERROR(!(svr->ssl = SSL_new(svr->ssl_ctx)));
+
+        SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(svr->ssl, svr->fd));
+        SSL_set_connect_state(svr->ssl);
+        svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+      case ECORE_CON_SSL_STATE_HANDSHAKING:        
         ret = SSL_do_handshake(svr->ssl);
         err = SSL_get_error(svr->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
-     } while (ret < 1);
+
+        if (ret == 1)
+          {
+             svr->handshaking = EINA_FALSE;
+             svr->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+      default:
+        break;
+     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
    do
      {
-        unsigned long err;
+        unsigned long sslerr;
 
-        err = ERR_get_error();
-        if (!err) break;
-        ERR("openssl error: %s", ERR_reason_error_string(err));
+        sslerr = ERR_get_error();
+        if (!sslerr) break;
+        ERR("openssl error: %s", ERR_reason_error_string(sslerr));
      } while (1);
    _ecore_con_ssl_server_shutdown_openssl(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
@@ -1078,30 +1110,40 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, unsigned char *buf,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 {
-   int ret = -1;
-   SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->host_server->ssl_ctx)));
-
-   SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
-   SSL_set_accept_state(cl->ssl);
-
-   do
+   int err, ret = -1;
+   switch (cl->ssl_state)
      {
-        int err;
+      case ECORE_CON_SSL_STATE_DONE:
+        return ECORE_CON_SSL_ERROR_NONE;
+      case ECORE_CON_SSL_STATE_INIT:
+        SSL_ERROR_CHECK_GOTO_ERROR(!(cl->ssl = SSL_new(cl->host_server->ssl_ctx)));
+
+        SSL_ERROR_CHECK_GOTO_ERROR(!SSL_set_fd(cl->ssl, cl->fd));
+        SSL_set_accept_state(cl->ssl);
+        cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+      case ECORE_CON_SSL_STATE_HANDSHAKING:
         ret = SSL_do_handshake(cl->ssl);
         err = SSL_get_error(cl->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
-     } while (ret < 1);
+        if (ret == 1)
+          {
+             cl->handshaking = EINA_FALSE;
+             cl->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+      default:
+        break;
+     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
    do
      {
-        unsigned long err;
+        unsigned long sslerr;
 
-        err = ERR_get_error();
-        if (!err) break;
-        ERR("openssl error: %s", ERR_reason_error_string(err));
+        sslerr = ERR_get_error();
+        if (!sslerr) break;
+        ERR("openssl error: %s", ERR_reason_error_string(sslerr));
      } while (1);
    _ecore_con_ssl_client_shutdown_openssl(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
