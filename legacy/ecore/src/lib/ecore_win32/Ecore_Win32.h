@@ -458,10 +458,10 @@ EAPI void ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
 EAPI void ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,
                                             Eina_Bool           on);
 
-EAPI void ecore_win32_window_shape_set(Ecore_Win32_Window *window,
-                                       unsigned short      width,
-                                       unsigned short      height,
-                                       unsigned char      *mask);
+EINA_DEPRECATED EAPI void ecore_win32_window_shape_set(Ecore_Win32_Window *window,
+                                                       unsigned short      width,
+                                                       unsigned short      height,
+                                                       unsigned char      *mask);
 
 EAPI void ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
                                         Ecore_Win32_Cursor *cursor);
