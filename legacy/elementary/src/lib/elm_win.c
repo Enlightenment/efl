@@ -107,6 +107,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
    win = elm_widget_data_get(obj);
    if (!win) return;
    /*NB: Why two different "focus signals" here ??? */
+   if (!evas_focus_get(win->evas))
+     evas_object_focus_set(win->win_obj, EINA_TRUE);
    evas_object_smart_callback_call(win->win_obj, "focus-in", NULL); // FIXME: remove me
    evas_object_smart_callback_call(win->win_obj, "focus,in", NULL);
    win->focus_highlight.visible = EINA_TRUE;
@@ -878,6 +880,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    elm_widget_type_set(win->win_obj, "win");
    ELM_SET_WIDTYPE(widtype, "win");
    elm_widget_data_set(win->win_obj, win);
+   elm_widget_can_focus_set(win->win_obj, EINA_TRUE);
+   elm_widget_highlight_ignore_set(win->win_obj, EINA_TRUE);
    evas_object_color_set(win->win_obj, 0, 0, 0, 0);
    evas_object_move(win->win_obj, 0, 0);
    evas_object_resize(win->win_obj, 1, 1);
