@@ -93,7 +93,7 @@ _get(void *data, Evas_Object *obj)
    Evas_Object *photo = elm_photo_add(obj);
    elm_photo_file_set(photo, data);
    elm_photo_fill_inside_set(photo, EINA_TRUE);
-   elm_widget_style_set(photo, "shadow");
+   elm_object_style_set(photo, "shadow");
 
    return photo;
 }

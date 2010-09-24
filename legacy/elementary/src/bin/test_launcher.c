@@ -70,7 +70,7 @@ tim_cb(void *data)
    sc = evas_object_data_get(data, "sc");
    mb = evas_object_data_get(data, "mb");
    elm_object_scroll_freeze_push(sc);
-   evas_object_data_set(data, "dragging", (void *)(1));
+   evas_object_data_set(data, "dragging", (void *)(long)(1));
    evas_object_color_set(data, 255, 255, 255, 255);
    list = (Eina_List *)evas_object_data_get
       (elm_object_top_widget_get(data), "mbs");
@@ -108,10 +108,10 @@ ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    evas_object_data_set(obj, "timer", tim);
 
    evas_object_geometry_get(data, &x, &y, &w, &h);
-   evas_object_data_set(obj, "x", (void *)(ev->canvas.x));
-   evas_object_data_set(obj, "y", (void *)(ev->canvas.y));
-   evas_object_data_set(obj, "px", (void *)(x));
-   evas_object_data_set(obj, "py", (void *)(y));
+   evas_object_data_set(obj, "x", (void *)(long)(ev->canvas.x));
+   evas_object_data_set(obj, "y", (void *)(long)(ev->canvas.y));
+   evas_object_data_set(obj, "px", (void *)(long)(x));
+   evas_object_data_set(obj, "py", (void *)(long)(y));
    
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
@@ -144,8 +144,8 @@ ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
         sc = evas_object_data_get(obj, "sc");
         mb = evas_object_data_get(data, "mb");
         elm_object_scroll_freeze_pop(sc);
-        tbx = (int)evas_object_data_get(obj, "tbx");
-        tby = (int)evas_object_data_get(obj, "tby");
+        tbx = (int)(long)evas_object_data_get(obj, "tbx");
+        tby = (int)(long)evas_object_data_get(obj, "tby");
         elm_table_pack(tb, obj, tbx, tby, 1, 1);
         list = (Eina_List *)evas_object_data_get
            (elm_object_top_widget_get(obj), "mbs");
@@ -162,10 +162,10 @@ ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
         Evas_Coord x, y, px, py;
         
-        x = (Evas_Coord)evas_object_data_get(obj, "x");
-        y = (Evas_Coord)evas_object_data_get(obj, "y");
-        px = (Evas_Coord)evas_object_data_get(obj, "px");
-        py = (Evas_Coord)evas_object_data_get(obj, "py");
+        x = (Evas_Coord)(long)evas_object_data_get(obj, "x");
+        y = (Evas_Coord)(long)evas_object_data_get(obj, "y");
+        px = (Evas_Coord)(long)evas_object_data_get(obj, "px");
+        py = (Evas_Coord)(long)evas_object_data_get(obj, "py");
         evas_object_move(obj, 
                          px + ev->cur.canvas.x - x, 
                          py + ev->cur.canvas.y - y);
@@ -289,8 +289,8 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
                   evas_object_data_set(ic, "sc", sc);
                   evas_object_data_set(ic, "bx", bx);
                   evas_object_data_set(ic, "mb", mb);
-                  evas_object_data_set(ic, "tbx", (void *)(1 + i));
-                  evas_object_data_set(ic, "tby", (void *)(1 + (j * 2)));
+                  evas_object_data_set(ic, "tbx", (void *)(long)(1 + i));
+                  evas_object_data_set(ic, "tby", (void *)(long)(1 + (j * 2)));
                   
                   n++; if (n > 23) n = 0;
                   m++; if (m > 15) m = 0;
@@ -571,14 +571,14 @@ l3_tim_cb(void *data)
    sc = evas_object_data_get(data, "sc");
    mb = evas_object_data_get(data, "mb");
    elm_object_scroll_freeze_push(sc);
-   evas_object_data_set(data, "dragging", (void *)(1));
+   evas_object_data_set(data, "dragging", (void *)(long)1);
    evas_object_color_set(data, 255, 255, 255, 255);
    list = (Eina_List *)evas_object_data_get
       (elm_object_top_widget_get(data), "mbs");
    EINA_LIST_FOREACH(list, l, mb)
       evas_object_color_set(mb, 128, 128, 128, 128);
-   slx = (int)evas_object_data_get(data, "slx");
-   sly = (int)evas_object_data_get(data, "sly");
+   slx = (int)(long)evas_object_data_get(data, "slx");
+   sly = (int)(long)evas_object_data_get(data, "sly");
    snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
    elm_layout_content_unset(ly, buf);
    edje_object_signal_emit(elm_layout_edje_get(ly2), "drag", "app");
@@ -613,10 +613,10 @@ l3_ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    ly2 = evas_object_data_get(obj, "ly2");
    evas_object_geometry_get(ly2, &x, &y, &w, &h);
-   evas_object_data_set(obj, "x", (void *)(ev->canvas.x));
-   evas_object_data_set(obj, "y", (void *)(ev->canvas.y));
-   evas_object_data_set(obj, "px", (void *)(x));
-   evas_object_data_set(obj, "py", (void *)(y));
+   evas_object_data_set(obj, "x", (void *)(long)(ev->canvas.x));
+   evas_object_data_set(obj, "y", (void *)(long)(ev->canvas.y));
+   evas_object_data_set(obj, "px", (void *)(long)(x));
+   evas_object_data_set(obj, "py", (void *)(long)(y));
    
    edje_object_signal_emit(elm_layout_edje_get(ly2), "click", "app");
    
@@ -654,8 +654,8 @@ l3_ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
         sc = evas_object_data_get(obj, "sc");
         mb = evas_object_data_get(data, "mb");
         elm_object_scroll_freeze_pop(sc);
-        slx = (int)evas_object_data_get(obj, "slx");
-        sly = (int)evas_object_data_get(obj, "sly");
+        slx = (int)(long)evas_object_data_get(obj, "slx");
+        sly = (int)(long)evas_object_data_get(obj, "sly");
         snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
         elm_layout_content_set(ly, buf, ly2);
         list = (Eina_List *)evas_object_data_get
@@ -680,10 +680,10 @@ l3_ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
         Evas_Coord x, y, px, py;
         
-        x = (Evas_Coord)evas_object_data_get(obj, "x");
-        y = (Evas_Coord)evas_object_data_get(obj, "y");
-        px = (Evas_Coord)evas_object_data_get(obj, "px");
-        py = (Evas_Coord)evas_object_data_get(obj, "py");
+        x = (Evas_Coord)(long)evas_object_data_get(obj, "x");
+        y = (Evas_Coord)(long)evas_object_data_get(obj, "y");
+        px = (Evas_Coord)(long)evas_object_data_get(obj, "px");
+        py = (Evas_Coord)(long)evas_object_data_get(obj, "py");
         evas_object_move(ly2, 
                          px + ev->cur.canvas.x - x, 
                          py + ev->cur.canvas.y - y);
@@ -812,8 +812,8 @@ test_launcher3(void *data, Evas_Object *obj, void *event_info)
                   evas_object_data_set(ic, "sc", sc);
                   evas_object_data_set(ic, "bx", bx);
                   evas_object_data_set(ic, "mb", mb);
-                  evas_object_data_set(ic, "slx", (void *)(i));
-                  evas_object_data_set(ic, "sly", (void *)(j));
+                  evas_object_data_set(ic, "slx", (void *)(long)(i));
+                  evas_object_data_set(ic, "sly", (void *)(long)(j));
                   
                   snprintf(buf, sizeof(buf), "slot.%i.%i", i, j);
                   elm_layout_content_set(ly, buf, ly2);

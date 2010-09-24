@@ -944,6 +944,7 @@ extern "C" {
    EAPI Eina_Bool    elm_photo_file_set(Evas_Object *obj, const char *file);
    EAPI void         elm_photo_size_set(Evas_Object *obj, int size);
    EAPI void         elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
+   EAPI void         elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */
@@ -954,8 +955,10 @@ extern "C" {
    EAPI void	     elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key);
    EAPI void	     elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting s);
    EAPI Elm_Thumb_Animation_Setting elm_thumb_animate_get(const Evas_Object *obj);
-   EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
    EAPI struct _Ethumb_Client *elm_thumb_ethumb_client_get(void);
+   EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
+   EAPI Eina_Bool    elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
+   EAPI Eina_Bool    elm_thumb_editable_get(Evas_Object *obj);
 
    /* smart callbacks called:
     * "clicked" - the user clicked the thumb

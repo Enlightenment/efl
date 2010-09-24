@@ -62,7 +62,7 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
 
              if(n == 2 || n == 3) {
             	 elm_photo_fill_inside_set(ph, EINA_TRUE);
-            	 elm_widget_style_set(ph, "shadow");
+            	 elm_object_style_set(ph, "shadow");
              }
              elm_table_pack(tb, ph, i, j, 1, 1);
              evas_object_show(ph);
@@ -81,9 +81,10 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(win);
 }
 
+/* Never called, elm_photo never call "drop" smart cb */
 static void
 drop_cb(void *mydata, Evas_Object *obj, void *evdata){
-   printf("Drop on obj %p: Image: %s\n",obj,evdata);
+   printf("Drop on obj %p\n", obj);
 }
 
 static void

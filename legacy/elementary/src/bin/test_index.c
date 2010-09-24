@@ -4,8 +4,8 @@ static Elm_Genlist_Item_Class itci;
 char *gli_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
-   int j = (int)data;
-   snprintf(buf, sizeof(buf), "%c%c", 
+   int j = (long)data;
+   snprintf(buf, sizeof(buf), "%c%c",
             'A' + ((j >> 4) & 0xf),
             'a' + ((j     ) & 0xf)
             );
@@ -71,8 +71,9 @@ test_index(void *data, Evas_Object *obj, void *event_info)
    for (i = 0; i < 100; i++)
      {
         it = elm_genlist_item_append(gl, &itci,
-                                     (void *)j/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, NULL/* func */,
-                                     NULL/* func data */);
+                                     (void *)(long)j/* item data */, 
+                                     NULL/* parent */, ELM_GENLIST_ITEM_NONE,
+                                     NULL/* func */, NULL/* func data */);
         if ((j & 0xf) == 0)
           {
              char buf[32];
