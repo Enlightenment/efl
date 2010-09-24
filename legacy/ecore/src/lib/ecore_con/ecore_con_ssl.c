@@ -324,9 +324,6 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
 {
    int ret;
 
-   if (!ssl_type)
-     return ECORE_CON_SSL_ERROR_NONE;
-
    if ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
      {
         if ((server_cert) && (server_cert->cert) && (svr->created))
