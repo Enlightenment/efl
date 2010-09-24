@@ -310,11 +310,11 @@ _theme_sel(void *data, Evas_Object *obj, void *event_info)
    elm_theme_free(th);
 }
 
-static void
+/*static void
 _theme_browse(void *data, Evas_Object *obj, void *event_info)
 {
    printf("not implemented\n");
-}
+}*/
 
 static void
 _status_config_sizing(Evas_Object *win, Evas_Object *holder)
@@ -749,7 +749,7 @@ status_win(void)
    evas_object_show(bx0);
 
    if (!interactive) _status_basic(win, bx0);
-//   else _status_config(win, bx0);
+   else if (0) _status_config(win, bx0);
    else _status_config_full(win, bx0);
    
    evas_object_show(win);
