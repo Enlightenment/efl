@@ -1,7 +1,7 @@
 #ifndef ELM_WIDGET_H
 #define ELM_WIDGET_H
 
-/* DO NOT USE THIUS HEADER UNLESS YOU ARE PREPARED FOR BESAKING OF YOUR
+/* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BESAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT
  * FINAL. CALL elm_widget_api_check(ELM_INTERNAL_API_VERSION) TO CHECK IT
  * AT RUNTIME
@@ -171,7 +171,7 @@
  * }
  * 
  * // you can add more - you need to see elementary's code to know how to
- * // handle all cases. rememebr this api is not stable and may change. it's
+ * // handle all cases. remember this api is not stable and may change. it's
  * // internal
  * 
  */
