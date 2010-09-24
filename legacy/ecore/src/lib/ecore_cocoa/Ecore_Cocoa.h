@@ -1,19 +1,29 @@
 #ifndef _ECORE_COCOA_H
 #define _ECORE_COCOA_H
 
+/*
+ * DO NOT USE THIS HEADER. IT IS WORK IN PROGRESS. IT IS NOT FINAL AND
+ * THE API MAY CHANGE.
+ */
+
+#ifndef ECORE_COCOA_WIP_GNSIDNQI
+# warning "You are using a work in progress API. This API is not stable"
+# warning "and is subject to change. You use this at your own risk."
+#endif
+
 #ifdef EAPI
 # undef EAPI
 #endif
 
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  define EAPI __attribute__ ((visibility("default")))
 # else
 #  define EAPI
 # endif
+#else
+# define EAPI
+#endif
 
 #ifdef __cplusplus
 extern "C" {

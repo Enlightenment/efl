@@ -1,13 +1,23 @@
 #ifndef __ECORE_WINCE_H__
 #define __ECORE_WINCE_H__
 
+/*
+ * DO NOT USE THIS HEADER. IT IS WORK IN PROGRESS. IT IS NOT FINAL AND
+ * THE API MAY CHANGE.
+ */
+
+#ifndef ECORE_WINCE_WIP_OSXCKQSD
+# warning "You are using a work in progress API. This API is not stable"
+# warning "and is subject to change. You use this at your own risk."
+#endif
+
 #include <Eina.h>
 
 #ifdef EAPI
 # undef EAPI
 #endif
 
-#ifdef _WINCE
+#ifdef _WIN32
 # ifdef EFL_ECORE_WINCE_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)

@@ -1,6 +1,16 @@
 #ifndef __ECORE_WIN32_H__
 #define __ECORE_WIN32_H__
 
+/*
+ * DO NOT USE THIS HEADER. IT IS WORK IN PROGRESS. IT IS NOT FINAL AND
+ * THE API MAY CHANGE.
+ */
+
+#ifndef ECORE_WIN32_WIP_POZEFLKSD
+# warning "You are using a work in progress API. This API is not stable"
+# warning "and is subject to change. You use this at your own risk."
+#endif
+
 #include <Eina.h>
 
 #ifdef EAPI
