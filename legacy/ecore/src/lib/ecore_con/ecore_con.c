@@ -1015,9 +1015,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
         if (cl->host_server)
           {
              cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
-             if (!(--cl->host_server->client_count))
-               /* avoid segv from nonnull list */
-               cl->host_server->clients = NULL;
+             --cl->host_server->client_count;
           }
 
         _ecore_con_client_free(cl);
@@ -1209,7 +1207,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
 
-   if ((!cl->buf) && cl->delete_me && (!cl->dead) && (!cl->event_count))
+   if ((!cl->buf) && cl->delete_me && (!cl->dead) && (cl->event_count < 1))
      {
       /* this is a catch-all for cases when a client is not properly killed.
        * the only example case I've found so far is if a client ssl handshakes
@@ -1263,6 +1261,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
       free(cl->ip);
 
       free(cl);
+   return;
 }
 
 static void
@@ -1625,7 +1624,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
         return ECORE_CON_DISCONNECTED;
      }
 
-   if (!svr->delete_me)
+   if ((!svr->delete_me) && (!svr->handshaking) && svr->connecting)
      {
         /* we got our server! */
         Ecore_Con_Event_Server_Add *e;
@@ -1866,8 +1865,32 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
         if (ecore_con_ssl_server_init(svr))
           {
              ERR("ssl handshaking failed!");
-             ecore_main_fd_handler_del(svr->fd_handler);
-             close(svr->fd);
+             Ecore_Con_Event_Server_Del *e;
+
+             e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+             if (e)
+               {
+                  svr->event_count++;
+                  e->server = svr;
+                  ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+                                  _ecore_con_event_server_del_free, NULL);
+               }
+          }
+        else if (!svr->ssl_state)
+          {
+             /* we got our server! */
+             Ecore_Con_Event_Server_Add *e;
+
+             svr->connecting = EINA_FALSE;
+             e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
+             if (e)
+               {
+                  svr->event_count++;
+                  svr->start_time = ecore_time_get();
+                  e->server = svr;
+                  ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
+                                  _ecore_con_event_server_add_free, NULL);
+               }
           }
         return ECORE_CALLBACK_RENEW;
      }
@@ -2179,10 +2202,35 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
         if (ecore_con_ssl_client_init(cl))
           {
              ERR("ssl handshaking failed!");
-             ecore_main_fd_handler_del(cl->fd_handler);
-             close(cl->fd);
+             /* we lost our client! */
+             Ecore_Con_Event_Client_Del *e;
+
+             cl->dead = EINA_TRUE;
+             e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+             if (e)
+               {
+                  cl->event_count++;
+                  _ecore_con_cl_timer_update(cl);
+                  e->client = cl;
+                  ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+                                  _ecore_con_event_client_del_free, NULL);
+               }
+
           }
-        return ECORE_CALLBACK_RENEW;
+        else if (!cl->ssl_state)
+          {
+             Ecore_Con_Event_Client_Add *add;
+
+             add = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
+             if(add)
+               {
+/*cl->event_count++;*/
+                  add->client = cl;
+                  _ecore_con_cl_timer_update(cl);
+                  ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
+                                  _ecore_con_event_client_add_free, NULL);
+               }
+          }        return ECORE_CALLBACK_RENEW;
      }
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
