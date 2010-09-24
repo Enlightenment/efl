@@ -57,7 +57,7 @@ SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
         return "Client hello";
       case GNUTLS_HANDSHAKE_SERVER_HELLO:
         return "Server hello";
-#ifdef GNUTLS_HANDSHAKE_NEW_SESSION_TICKET
+#ifdef USE_GNUTLS2_10
       case GNUTLS_HANDSHAKE_NEW_SESSION_TICKET:
         return "New session ticket";
 #endif
