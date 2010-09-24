@@ -712,6 +712,10 @@ collections {
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/scroller/entry/default";
 
+      data {
+         item: "focus_highlight" "on";
+      }
+
       script {
 	 public sbvis_v, sbvis_h, sbalways_v, sbalways_h, sbvis_timer;
 	 public timer0(val) {
@@ -741,6 +745,7 @@ collections {
 	 image: "bt_sm_base2.png" COMP;
 	 image: "bt_sm_shine.png" COMP;
 	 image: "bt_sm_hilight.png" COMP;
+         image: "sl_bt2_2.png" COMP;
 	 image: "sb_runnerh.png" COMP;
 	 image: "sb_runnerv.png" COMP;
       }
@@ -851,6 +856,28 @@ collections {
 	       }
 	       fill.smooth : 0;
 	    }
+            description { state: "enabled" 0.0;
+               inherit: "default" 0.0;
+               color: 200 155 0 255;
+            }
+         }
+         part { name: "focus_highlight";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: -1 -1;
+               rel2.offset: 0 0;
+               image {
+                  normal: "sl_bt2_2.png";
+                  border: 7 7 7 7;
+                  middle: 0;
+               }
+               fill.smooth : 0;
+               color: 200 155 0 0;
+            }
+            description { state: "enabled" 0.0;
+               inherit: "default" 0.0;
+               color: 200 155 0 255;
+            }
 	 }
 	 part { name: "elm.swallow.content";
 	    clip_to: "contentclipper";
@@ -1265,6 +1292,23 @@ collections {
 	       set_int(sbvis_timer, v);
 	    }
 	 }
+
+         program { name: "highlight_show";
+            signal: "elm,action,focus_highlight,show";
+            source: "elm";
+            action: STATE_SET "enabled" 0.0;
+            transition: ACCELERATE 0.3;
+            target: "focus_highlight";
+            target: "conf_over";
+         }
+         program { name: "highlight_hide";
+            signal: "elm,action,focus_highlight,hide";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.3;
+            target: "focus_highlight";
+            target: "conf_over";
+         }
       }
    }
 
