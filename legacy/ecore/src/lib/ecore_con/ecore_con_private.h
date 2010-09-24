@@ -100,7 +100,8 @@ struct _Ecore_Con_Client
    Ecore_Timer *until_deletion;
    double disconnect_time;
 #if USE_GNUTLS
-   gnutls_session session;
+   gnutls_datum_t session_ticket;
+   gnutls_session_t session;
 #elif USE_OPENSSL
    SSL *ssl;
    int ssl_err;
@@ -130,7 +131,7 @@ struct _Ecore_Con_Server
    int client_limit;
    pid_t ppid;
 #if USE_GNUTLS
-   gnutls_session session;
+   gnutls_session_t session;
    gnutls_anon_client_credentials_t anoncred_c;
    gnutls_anon_server_credentials_t anoncred_s;
    gnutls_psk_client_credentials_t pskcred_c;

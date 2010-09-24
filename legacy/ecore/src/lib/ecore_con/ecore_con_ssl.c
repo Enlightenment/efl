@@ -45,6 +45,40 @@ static int _client_connected = 0;
 #endif
 
 #if USE_GNUTLS
+
+static const char*
+SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
+{
+   switch (status)
+     {
+      case GNUTLS_HANDSHAKE_HELLO_REQUEST:
+        return "Hello request";
+      case GNUTLS_HANDSHAKE_CLIENT_HELLO:
+        return "Client hello";
+      case GNUTLS_HANDSHAKE_SERVER_HELLO:
+        return "Server hello";
+      case GNUTLS_HANDSHAKE_NEW_SESSION_TICKET:
+        return "New session ticket";
+      case GNUTLS_HANDSHAKE_CERTIFICATE_PKT:
+        return "Certificate packet";
+      case GNUTLS_HANDSHAKE_SERVER_KEY_EXCHANGE:
+        return "Server key exchange";
+      case GNUTLS_HANDSHAKE_CERTIFICATE_REQUEST:
+        return "Certificate request";
+      case GNUTLS_HANDSHAKE_SERVER_HELLO_DONE:
+        return "Server hello done";
+      case GNUTLS_HANDSHAKE_CERTIFICATE_VERIFY:
+        return "Certificate verify";
+      case GNUTLS_HANDSHAKE_CLIENT_KEY_EXCHANGE:
+        return "Client key exchange";
+      case GNUTLS_HANDSHAKE_FINISHED:
+        return "Finished";
+      case GNUTLS_HANDSHAKE_SUPPLEMENTAL:
+        return "Supplemental";
+     }
+   return NULL;
+}
+
 typedef struct _cert_thingy
 {
    gnutls_certificate_credentials_t cert;
@@ -393,6 +427,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_client(svr->session));
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
         //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
@@ -427,6 +462,10 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 
 error:
    ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
+     ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(svr->session)));
+   ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(svr->session)));
+   ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(svr->session)));
    _ecore_con_ssl_server_shutdown_gnutls(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
@@ -623,6 +662,8 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         _client_connected++;
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_key_generate(&cl->session_ticket));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_server(cl->session, &cl->session_ticket));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
@@ -659,6 +700,10 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 
 error:
    ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
+     ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(cl->session)));
+   ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(cl->session)));
+   ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(cl->session)));
    _ecore_con_ssl_client_shutdown_gnutls(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
@@ -670,6 +715,8 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
      {
         gnutls_bye(cl->session, GNUTLS_SHUT_RDWR);
         gnutls_deinit(cl->session);
+        gnutls_free(cl->session_ticket.data);
+        cl->session_ticket.data = NULL;
      }
 
    if (((cl->host_server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
