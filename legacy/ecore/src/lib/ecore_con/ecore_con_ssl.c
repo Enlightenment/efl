@@ -399,7 +399,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
         if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
           {
-             int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
+             int kx[] = { GNUTLS_KX_DHE_RSA, GNUTLS_KX_RSA, GNUTLS_KX_ANON_DH, 0 };
              int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, 0 };
              SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
              SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
