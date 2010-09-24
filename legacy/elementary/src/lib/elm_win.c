@@ -19,7 +19,7 @@ struct _Elm_Win
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin;
    Ecore_Event_Handler *client_message_handler;
-#endif   
+#endif
    Ecore_Job *deferred_resize_job;
    Ecore_Job *deferred_child_eval_job;
 
@@ -74,7 +74,7 @@ _elm_win_move(Ecore_Evas *ee)
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
    int x, y;
-   
+
    if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -89,7 +89,7 @@ _elm_win_resize(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
-   
+
    if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -102,7 +102,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
-   
+
    if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -120,7 +120,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
-   
+
    if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
@@ -210,7 +210,7 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
 #ifdef HAVE_ELEMENTARY_X
    if (win->client_message_handler)
      ecore_event_handler_del(win->client_message_handler);
-#endif   
+#endif
 // FIXME: Why are we flushing edje on every window destroy ??
 //   evas_image_cache_flush(win->evas);
 //   evas_font_cache_flush(win->evas);
@@ -259,7 +259,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
    Elm_Win *win;
    if (strcmp(elm_widget_type_get(obj), "win")) return;
-   
+
    win = elm_widget_data_get(obj);
    if (!win) return;
    int autodel = win->autodel;
@@ -382,7 +382,7 @@ _elm_win_eval_subobjs(Evas_Object *obj)
 {
    const Eina_List *l;
    const Evas_Object *child;
-   
+
    Elm_Win *win = elm_widget_data_get(obj);
    Evas_Coord w, h, minw = -1, minh = -1, maxw = -1, maxh = -1;
    int xx = 1, xy = 1;
@@ -819,7 +819,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
-#endif        
+#endif
 	break;
       case ELM_SOFTWARE_FB:
 	win->ee = ecore_evas_fb_new(NULL, 0, 1, 1);
@@ -837,7 +837,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
-#endif        
+#endif
 	break;
       case ELM_XRENDER_X11:
 	win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
@@ -849,7 +849,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
-#endif        
+#endif
 	break;
       case ELM_OPENGL_X11:
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
@@ -861,7 +861,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
-#endif        
+#endif
 	break;
       case ELM_SOFTWARE_WIN32:
 	win->ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
@@ -904,7 +904,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
      }
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(win);
-#endif   
+#endif
    if ((_elm_config->bgpixmap) && (!_elm_config->compositing))
      ecore_evas_avoid_damage_set(win->ee, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
 // bg pixmap done by x - has other issues like can be redrawn by x before it
@@ -961,7 +961,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
 #endif
-   
+
    _elm_win_list = eina_list_append(_elm_win_list, win->win_obj);
 
    switch (_elm_config->engine)
@@ -981,7 +981,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       default:
 	break;
      }
-   
+
    return win->win_obj;
 }
 
@@ -1272,11 +1272,11 @@ elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   
+
 #ifdef HAVE_ELEMENTARY_X
    if (win->xwin)
      {
-       ecore_evas_transparent_set(win->ee, transparent);	  
+       ecore_evas_transparent_set(win->ee, transparent);
 	_elm_win_xwin_update(win);
      }
    else
@@ -1494,7 +1494,7 @@ elm_win_layer_set(Evas_Object *obj, int layer)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   ecore_evas_layer_set(win->ee, layer); 
+   ecore_evas_layer_set(win->ee, layer);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(win);
 #endif
