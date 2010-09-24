@@ -44,10 +44,6 @@
 extern "C" {
 #endif
 
-
-typedef struct _Ecore_Win32_Window Ecore_Win32_Window;
-typedef void Ecore_Win32_Cursor;
-
 /**
  * @defgroup Ecore_Win32_Group Ecore_Win32 library
  *
@@ -125,6 +121,18 @@ typedef enum
    ECORE_WIN32_DND_EVENT_DRAG_LEAVE = 3, /**< Drag leave */
    ECORE_WIN32_DND_EVENT_DROP       = 4  /**< Drop */
 } Ecore_Win32_DnD_State;
+
+/**
+ * @typedef Ecore_Win32_Window
+ * Abstract type for a window.
+ */
+typedef struct _Ecore_Win32_Window Ecore_Win32_Window;
+
+/**
+ * @typedef Ecore_Win32_Cursor
+ * Abstract type for a cursor.
+ */
+typedef void Ecore_Win32_Cursor;
 
 
 /**

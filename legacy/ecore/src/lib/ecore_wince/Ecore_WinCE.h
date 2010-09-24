@@ -43,16 +43,16 @@
 extern "C" {
 #endif
 
-
-#ifndef _ECORE_EVAS_H
-typedef void Ecore_WinCE_Window;
-#endif
-
 /**
  * @defgroup Ecore_WinCE_Group Ecore_WinCE library
  *
  * @{
  */
+
+
+#ifndef _ECORE_EVAS_H
+typedef void Ecore_WinCE_Window;
+#endif
 
 
 /**
