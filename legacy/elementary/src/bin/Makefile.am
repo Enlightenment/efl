@@ -84,7 +84,8 @@ test_launcher.c \
 test_anim.c \
 test_calendar.c \
 test_tooltip.c \
-test_cursor.c
+test_cursor.c \
+test_focus.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =

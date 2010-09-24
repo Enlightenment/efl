@@ -405,5 +405,50 @@ collections {
          }
       }
    }
+   group { name: "twolines";
+      parts {
+         part { name: "clip";
+            type: RECT;
+            description { state: "default" 0.0;
+            }
+         }
+         part { name: "under";
+            mouse_events: 0;
+            clip_to: "clip";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 0 128 200 30;
+            }
+         }
+         part { name: "element1";
+            type: SWALLOW;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 4 4;
+               }
+               rel2 {
+                  relative: 1.0 0.5;
+                  offset: -5 -3;
+               }
+            }
+         }
+         part { name: "element2";
+            type: SWALLOW;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               rel1 {
+                  relative: 0.0 0.5;
+                  offset: 4 2;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: -5 -5;
+               }
+            }
+         }
+      }
+   }
 }
 	 

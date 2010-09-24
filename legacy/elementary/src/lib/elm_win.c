@@ -130,6 +130,48 @@ _elm_win_focus_out(Ecore_Evas *ee)
    _elm_win_focus_highlight_reconfigure_job_start(win);
 }
 
+static Eina_Bool
+_elm_win_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   Elm_Win *wd = elm_widget_data_get(obj);
+   Eina_List *items;
+   void *(*list_data_get) (const Eina_List *list);
+   Evas_Object *last_focused;
+
+   if ((!wd) || (!wd->subobjs))
+     return EINA_FALSE;
+
+   /* Focus chain */
+   /* TODO: Change this to use other chain */
+   items = wd->subobjs;
+   list_data_get = eina_list_data_get;
+
+   last_focused = elm_widget_focus_cycle_next_get(obj, items,
+                                                      list_data_get, dir,
+                                                      circular);
+
+   return !!last_focused;
+}
+
+static Eina_Bool
+_elm_win_event_cb(Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+{
+   if (type == EVAS_CALLBACK_KEY_DOWN)
+     {
+        Evas_Event_Key_Down *ev = event_info;
+        if (!strcmp(ev->keyname, "Tab"))
+          {
+             if(evas_key_modifier_is_set(ev->modifiers, "Shift"))
+               elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS, EINA_TRUE);
+             else
+               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT, EINA_TRUE);
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _deferred_ecore_evas_free(void *data)
 {
@@ -880,8 +922,10 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    elm_widget_type_set(win->win_obj, "win");
    ELM_SET_WIDTYPE(widtype, "win");
    elm_widget_data_set(win->win_obj, win);
+   elm_widget_event_hook_set(win->win_obj, _elm_win_event_cb);
    elm_widget_can_focus_set(win->win_obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(win->win_obj, EINA_TRUE);
+   elm_widget_focus_cycle_hook_set(win->win_obj, _elm_win_focus_cycle_hook);
    evas_object_color_set(win->win_obj, 0, 0, 0, 0);
    evas_object_move(win->win_obj, 0, 0);
    evas_object_resize(win->win_obj, 1, 1);

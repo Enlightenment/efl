@@ -40,6 +40,9 @@ struct _Smart_Data
 				     Evas_Object *o, const char *emission,
 				     const char *source));
    void         (*changed_func) (Evas_Object *obj);
+   Eina_Bool    (*focus_cycle_func) (Evas_Object *obj,
+                                     Elm_Focus_Direction dir,
+                                     Eina_Bool circular);
    void         (*on_focus_func) (void *data, Evas_Object *obj);
    void          *on_focus_data;
    void         (*on_change_func) (void *data, Evas_Object *obj);
@@ -367,6 +370,13 @@ elm_widget_theme(Evas_Object *obj)
 }
 
 EAPI void
+elm_widget_focus_cycle_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular))
+{
+   API_ENTRY return;
+   sd->focus_cycle_func = func;
+}
+
+EAPI void
 elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
 {
    API_ENTRY return;
@@ -690,6 +700,81 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
      }
 
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   API_ENTRY return EINA_FALSE;
+   if (!sd->focus_cycle_func) return EINA_FALSE;
+
+   return sd->focus_cycle_func(obj, dir, circular);
+}
+
+EAPI Evas_Object *
+elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   Eina_List *list = NULL;
+   Eina_List *l = NULL;
+   Evas_Object *cur;
+   Eina_List *(*list_next) (const Eina_List *list);
+   Eina_Bool child_circular;
+
+   if (!items)
+     return NULL;
+
+   /* Direction */
+   if (dir == ELM_FOCUS_PREVIOUS)
+     {
+        list = eina_list_last(items);
+        list_next = eina_list_prev;
+     }
+   else if (dir == ELM_FOCUS_NEXT)
+     {
+        list = items;
+        list_next = eina_list_next;
+     }
+   else
+     return NULL;
+
+   /* Recovery last focused sub item */
+   if (elm_widget_focus_get(obj))
+     for (l = items; l; l = eina_list_next(l))
+       {
+          cur = list_data_get(l);
+          if (elm_widget_focus_get(cur))
+            break;
+       }
+
+   /* Interate sub items */
+   child_circular = EINA_FALSE;
+   do {
+        if (!l)
+          l = list;
+
+        for (;l; l = list_next(l))
+          {
+             cur = list_data_get(l);
+             /* Try Focus cycle in subitem */
+             if (elm_widget_focus_cycle(cur, dir, child_circular))
+               break;
+             /* Try give the focus to sub item*/
+             else if (elm_widget_can_focus_get(cur) &&
+                      ((!elm_widget_focus_get(cur)) || child_circular))
+               {
+                  elm_widget_focus_steal(cur);
+                  break;
+               }
+          }
+        circular = circular && (!child_circular);
+        child_circular = !child_circular;
+   }
+   while ((!l) && circular);
+
+   if (l)
+     return cur;
+
+   return NULL;
 }
 
 EAPI int

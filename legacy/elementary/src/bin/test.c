@@ -84,6 +84,7 @@ void test_anim(void *data, Evas_Object *obj, void *event_info);
 void test_tooltip(void *data, Evas_Object *obj, void *event_info);
 void test_cursor(void *data, Evas_Object *obj, void *event_info);
 void test_cursor2(void *data, Evas_Object *obj, void *event_info);
+void test_focus(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
 {
@@ -288,6 +289,7 @@ my_win_main(char *autorun)
    ADD_TEST("Tooltip", test_tooltip);
    ADD_TEST("Cursor", test_cursor);
    ADD_TEST("Cursor 2", test_cursor2);
+   ADD_TEST("Focus", test_focus);
 #undef ADD_TEST
 
    if (autorun)

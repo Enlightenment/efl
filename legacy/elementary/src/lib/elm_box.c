@@ -85,6 +85,49 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
+static void *
+_elm_box_list_data_get(const Eina_List *list)
+{
+   Evas_Object_Box_Option *opt = eina_list_data_get(list);
+   return opt->obj;
+}
+
+static Eina_Bool
+_elm_box_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *items;
+   void *(*list_data_get) (const Eina_List *list);
+   Evas_Object *last_focused;
+
+   if ((!wd) || (!wd->box))
+     return EINA_FALSE;
+
+   /* Focus chain */
+   /* TODO: Change this to use other chain */
+   if (1)
+     {
+        Evas_Object_Box_Data *bd = evas_object_smart_data_get(wd->box);
+        items = bd->children;
+        list_data_get = _elm_box_list_data_get;
+
+        if (!items) return EINA_FALSE;
+     }
+   else
+     {
+        items = NULL;
+        list_data_get = eina_list_data_get;
+
+        if (!items) return EINA_FALSE;
+     }
+
+   last_focused = elm_widget_focus_cycle_next_get(obj, items,
+                                                  list_data_get, dir,
+                                                  circular);
+
+   return !!last_focused;
+}
+
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -312,8 +355,9 @@ elm_box_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
-   elm_widget_can_focus_set(obj, 0);
-   elm_widget_highlight_ignore_set(obj, 1);
+   elm_widget_focus_cycle_hook_set(obj, _elm_box_focus_cycle_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_highlight_ignore_set(obj, EINA_FALSE);
 
    wd->box = evas_object_box_add(e);
    /*evas_object_box_layout_set(wd->box, evas_object_box_layout_vertical,

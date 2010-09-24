@@ -52,6 +52,31 @@ _theme_hook(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
+static Eina_Bool
+_elm_panel_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if ((!wd) || (!wd->content))
+     return EINA_FALSE;
+
+   if (wd->hidden)
+     return EINA_FALSE;
+
+   /* Try Focus cycle in subitem */
+   if (elm_widget_focus_cycle(wd->content, dir, circular))
+     return EINA_TRUE;
+   /* Try give the focus to sub item*/
+   else if (elm_widget_can_focus_get(wd->content) &&
+            ((!elm_widget_focus_get(wd->content)) || circular))
+     {
+        elm_widget_focus_steal(wd->content);
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void 
 _sizing_eval(Evas_Object *obj) 
 {
@@ -147,7 +172,8 @@ elm_panel_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_can_focus_set(obj, 0);
+   elm_widget_focus_cycle_hook_set(obj, _elm_panel_focus_cycle_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->scr = elm_smart_scroller_add(evas);
    elm_smart_scroller_widget_set(wd->scr, obj);

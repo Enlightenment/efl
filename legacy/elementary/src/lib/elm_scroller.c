@@ -104,6 +104,27 @@ _theme_hook(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
+static Eina_Bool
+_elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->content))
+     return EINA_FALSE;
+
+   /* Try Focus cycle in subitem */
+   if (elm_widget_focus_cycle(wd->content, dir, circular))
+     return EINA_TRUE;
+   /* Try give the focus to sub item*/
+   else if (elm_widget_can_focus_get(wd->content) &&
+            ((!elm_widget_focus_get(wd->content)) || circular))
+     {
+        elm_widget_focus_steal(wd->content);
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 {
@@ -339,6 +360,8 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_focus_cycle_hook_set(obj, _elm_scroller_focus_cycle_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->widget_name = eina_stringshare_add("scroller");
    wd->widget_base = eina_stringshare_add("base");
