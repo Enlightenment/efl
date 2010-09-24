@@ -1,6 +1,19 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+typedef struct _Theme Theme;
+
+struct _Theme
+{
+   const char *label;
+   const char *name;
+   const char *path;
+   Eina_Bool in_search_path;
+};
+
+static Theme *tsel = NULL;
+static Eina_List *themes = NULL;
+
 static int quiet = 0;
 static int interactive = 1;
 
@@ -238,7 +251,63 @@ _cf_caches(void *data, Evas_Object *obj, void *event_info)
 static void
 _theme_use(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("not implemented\n");
+   const char *defth;
+   char *newth;
+   Theme *t = tsel;
+   
+   if (!t) return;
+   defth = elm_theme_get(NULL);
+   newth = malloc(strlen(defth) + 1 + strlen(t->name) + 1);
+   if (newth)
+     {
+        char *rest;
+
+        newth[0] = 0;
+        rest = strchr(defth, ':');
+        if (!rest)
+           strcpy(newth, t->name);
+        else
+          {
+             strcpy(newth, t->name);
+             strcat(newth, rest);
+          }
+        elm_theme_all_set(newth);
+        free(newth);
+     }
+}
+
+static void
+_theme_sel(void *data, Evas_Object *obj, void *event_info)
+{
+   Theme *t = data;
+   Evas_Object *win = elm_object_top_widget_get(obj);
+   Evas_Object *sample = evas_object_data_get(win, "sample");
+   Elm_Theme *th;
+   const char *defth;
+   char *newth;
+
+   tsel = t;
+   defth = elm_theme_get(NULL);
+   newth = malloc(strlen(defth) + 1 + strlen(t->name) + 1);
+   th = elm_theme_new();
+   if (newth)
+     {
+        char *rest;
+
+        newth[0] = 0;
+        rest = strchr(defth, ':');
+        if (!rest)
+           strcpy(newth, t->name);
+        else
+          {
+             strcpy(newth, t->name);
+             strcat(newth, rest);
+          }
+        elm_theme_set(th, newth);
+        free(newth);
+     }
+   elm_object_theme_set(sample, th);
+   elm_theme_free(th);
 }
 
 static void
@@ -336,7 +405,7 @@ _sample_theme_new(Evas_Object *win)
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(base, bg, 0, 0, 2, 4);
+   elm_table_pack(base, bg, 0, 0, 2, 5);
    evas_object_show(bg);
    
    bt = elm_button_add(win);
@@ -409,6 +478,8 @@ static void
 _status_config_themes(Evas_Object *win, Evas_Object *holder)
 {
    Evas_Object *tb, *rc, *sc, *sp, *li, *pd, *fr, *bt, *sample;
+   Eina_List *list, *l;
+   char *th, *s, *ext;
    
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, 1.0, 1.0);
@@ -437,17 +508,49 @@ _status_config_themes(Evas_Object *win, Evas_Object *holder)
    elm_frame_content_set(pd, li);
    evas_object_show(li);
    
-   // FIXME: list all themes:
-   // ~/.elementary/themes/*.edj
-   // $PREFIX/datadir/themes/*.edj
-   
-   elm_list_item_append(li, "theme 1", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "theme 2", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "theme 3", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "theme 4", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "theme 5", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "theme 6", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "theme 7", NULL, NULL,  NULL, NULL);
+   list = elm_theme_name_available_list_new();
+   EINA_LIST_FOREACH(list, l, th)
+     {
+        Theme *t;
+        
+        t = calloc(1, sizeof(Theme));
+        t->name = eina_stringshare_add(th);
+        s = elm_theme_list_item_path_get(th, &(t->in_search_path));
+        if (s)
+          {
+             t->path = eina_stringshare_add(s);
+             free(s);
+          }
+        if (t->in_search_path)
+          {
+             s = strdup(th);
+             if (s)
+               {
+                  s[0] = toupper(s[0]);
+                  t->label = eina_stringshare_add(s);
+                  free(s);
+               }
+             else
+                t->label = eina_stringshare_add(s);
+          }
+        else
+          {
+             s = strdup(ecore_file_file_get(th));
+             if (s)
+               {
+                  s[0] = toupper(s[0]);
+                  ext = strrchr(s, '.');
+                  if (ext) *ext = 0;
+                  t->label = eina_stringshare_add(s);
+                  free(s);
+               }
+             else
+                t->label = eina_stringshare_add(s);
+          }
+        themes = eina_list_append(themes, t);
+        elm_list_item_append(li, t->label, NULL, NULL,  _theme_sel, t);
+     }
+   elm_theme_name_available_list_free(list);
 
    elm_list_go(li);
    
@@ -458,6 +561,7 @@ _status_config_themes(Evas_Object *win, Evas_Object *holder)
    elm_table_pack(tb, pd, 0, 0, 1, 1);
    evas_object_show(pd);
    
+/* FIXME: not implemented yet
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _theme_browse, win);
    elm_button_label_set(bt, "Browse...");
@@ -465,7 +569,7 @@ _status_config_themes(Evas_Object *win, Evas_Object *holder)
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
    elm_frame_content_set(pd, bt);
    evas_object_show(bt);
-   
+ */ 
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
    evas_object_size_hint_weight_set(pd, 1.0, 0.0);

@@ -433,6 +433,7 @@ elm_theme_set(Elm_Theme *th, const char *theme)
 EAPI const char *
 elm_theme_get(Elm_Theme *th)
 {
+   if (!th) th = &(theme_default);
    if (!th->theme)
      {
         Eina_List *l;
@@ -456,6 +457,90 @@ elm_theme_get(Elm_Theme *th)
         th->theme = eina_stringshare_add(tmp);
      }
    return th->theme;
+}
+
+/**
+ * Return a list of theme elements to be used in a theme.
+ * 
+ * @param th Theme to get the list of theme elements from.
+ * @return The internal list of theme elements
+ * 
+ * This returns the internal list of theme elements (will only be valid as
+ * long as the theme is not modified by elm_theme_set() or theme is not
+ * freed by elm_theme_free(). This is a list of strings which must not be
+ * altered as they are also internal. If @p th is NULL, then the default
+ * theme element list is returned.
+ */
+EAPI const Eina_List *
+elm_theme_list_get(Elm_Theme *th)
+{
+   if (!th) th = &(theme_default);
+   return th->themes;
+}
+
+/**
+ * Return the full patrh for a theme element
+ * 
+ * @param f The theme element name
+ * @param in_search_path Pointer to a boolean to indicate if item is in the search path or not
+ * @return The full path to the file found.
+ * 
+ * This returns a string you should free with free() on success, NULL on
+ * failure. This will search for the given theme element, and if it is a
+ * full or relative path element or a simple searchable name. The returned
+ * path is the full path to the file, if searched, and the file exists, or it
+ * is simply the full path given in the element or a resolved path if
+ * relative to home. The @p in_search_path boolean pointed to is set to
+ * EINA_TRUE if the file was a searchable file andis in the search path,
+ * and EINA_FALSE otherwise.
+ */
+EAPI char *
+elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
+{
+   static const char *home = NULL;
+   char buf[PATH_MAX];
+   
+   if (!f)
+     {
+        if (in_search_path) *in_search_path = EINA_FALSE;
+        return NULL;
+     }
+   
+   if (!home)
+     {
+	home = getenv("HOME");
+	if (!home) home = "";
+     }
+   
+   if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
+       ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')) ||
+       (isalpha(f[0]) && f[1] == ':'))
+     {
+        if (in_search_path) *in_search_path = EINA_FALSE;
+        return strdup(f);
+     }
+   else if (((f[0] == '~') && (f[1] == '/')))
+     {
+        if (in_search_path) *in_search_path = EINA_FALSE;
+	snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
+        return strdup(buf);
+     }
+   snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
+   if (ecore_file_exists(buf))
+     {
+        if (in_search_path) *in_search_path = EINA_TRUE;
+        return strdup(buf);
+     }
+   
+   snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
+   if (ecore_file_exists(buf))
+     {
+        if (in_search_path) *in_search_path = EINA_TRUE;
+        return strdup(buf);
+     }
+   
+   if (in_search_path) *in_search_path = EINA_FALSE;
+   return NULL;
 }
 
 /**
@@ -519,6 +604,97 @@ elm_theme_all_set(const char *theme)
                                   atom, theme);
 #endif
    elm_theme_set(NULL, theme);
+}
+
+/**
+ * Return a list of theme elements in the theme search path
+ * 
+ * @return A list of strings that are the theme element names.
+ * 
+ * This lists all available theme files in the standard Elementary search path
+ * for theme elements, and returns them in alphabetical order as theme
+ * element names in a list of strings. Free this with 
+ * elm_theme_name_available_list_free() when you are done with the list.
+ */
+EAPI Eina_List *
+elm_theme_name_available_list_new(void)
+{
+   Eina_List *list = NULL;
+   Eina_List *dir, *l;
+   char buf[PATH_MAX], *file, *s, *th;
+   static const char *home = NULL;
+   
+   if (!home)
+     {
+        home = getenv("HOME");
+        if (!home) home = "";
+     }
+   
+   snprintf(buf, sizeof(buf), "%s/.elementary/themes", home);
+   dir = ecore_file_ls(buf);
+   EINA_LIST_FREE(dir, file)
+     {
+        snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s", home, file);
+        if ((!ecore_file_is_dir(buf)) && (ecore_file_size(buf) > 0))
+          {
+             s = strchr(file, '.');
+             if ((s) && (!strcasecmp(s, ".edj")))
+               {
+                  th = strdup(file);
+                  s = strchr(th, '.');
+                  *s = 0;
+                  list = eina_list_append(list, th);
+               }
+          }
+        free(file);
+     }
+
+   snprintf(buf, sizeof(buf), "%s/themes", _elm_data_dir);
+   dir = ecore_file_ls(buf);
+   EINA_LIST_FREE(dir, file)
+     {
+        snprintf(buf, sizeof(buf), "%s/themes/%s", _elm_data_dir, file);
+        if ((!ecore_file_is_dir(buf)) && (ecore_file_size(buf) > 0))
+          {
+             s = strchr(file, '.');
+             if ((s) && (!strcasecmp(s, ".edj")))
+               {
+                  int dup;
+                  
+                  th = strdup(file);
+                  s = strchr(th, '.');
+                  *s = 0;
+                  dup = 0;
+                  EINA_LIST_FOREACH(list, l, s)
+                    {
+                       if (!strcmp(s, th))
+                         {
+                            dup = 1;
+                            break;
+                         }
+                    }
+                  if (dup) free(th);
+                  else list = eina_list_append(list, th);
+               }
+          }
+        free(file);
+     }
+   list = eina_list_sort(list, 0, EINA_COMPARE_CB(strcasecmp));
+   return list;
+}
+
+/**
+ * Free the list returned by elm_theme_name_available_list_new()
+ * 
+ * This frees the list of themes returned by 
+ * elm_theme_name_available_list_new(). Once freed the list should no longer
+ * be used. a new list mys be created.
+ */
+EAPI void
+elm_theme_name_available_list_free(Eina_List *list)
+{
+   char *s;
+   EINA_LIST_FREE(list, s) free(s);
 }
 
 /**

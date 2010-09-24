@@ -339,11 +339,16 @@ extern "C" {
    EAPI void         elm_theme_extension_del(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_set(Elm_Theme *th, const char *theme);
    EAPI const char  *elm_theme_get(Elm_Theme *th);
+   EAPI const Eina_List *elm_theme_list_get(Elm_Theme *th);
+   EAPI char        *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path);
    EAPI void         elm_theme_flush(Elm_Theme *th);
    EAPI void         elm_theme_full_flush(void);
 
    EAPI void         elm_theme_all_set(const char *theme);
-
+   
+   EAPI Eina_List   *elm_theme_name_available_list_new(void);
+   EAPI void         elm_theme_name_available_list_free(Eina_List *list);
+         
    EAPI void         elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
    EAPI Elm_Theme   *elm_object_theme_get(Evas_Object *obj);
 

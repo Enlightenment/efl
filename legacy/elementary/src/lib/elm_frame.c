@@ -14,6 +14,7 @@ struct _Widget_Data
 {
    Evas_Object *frm;
    Evas_Object *content;
+   const char *label;
 };
 
 static const char *widtype = NULL;
@@ -28,6 +29,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->label) eina_stringshare_del(wd->label);
    free(wd);
 }
 
@@ -37,6 +39,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _elm_theme_object_set(obj, wd->frm, "frame", "base", elm_widget_style_get(obj));
+   edje_object_part_text_set(wd->frm, "elm.text", wd->label);
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -129,7 +132,8 @@ elm_frame_label_set(Evas_Object *obj, const char *label)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   edje_object_part_text_set(wd->frm, "elm.text", label);
+   eina_stringshare_replace(&(wd->label), label);
+   edje_object_part_text_set(wd->frm, "elm.text", wd->label);
    _sizing_eval(obj);
 }
 
@@ -147,8 +151,8 @@ elm_frame_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->frm)) return NULL;
-   return edje_object_part_text_get(wd->frm, "elm.text");
+   if (!wd) return NULL;
+   return wd->label;
 }
 
 /**
