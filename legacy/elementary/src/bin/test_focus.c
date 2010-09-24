@@ -1,5 +1,6 @@
 /* Test for Focus Chain Linear*/
 #include <Elementary.h>
+#include <elm_widget.h> /* needed for testing hacks */
 
 static void
 _on_key_down(void *data, Evas *e, Evas_Object *obj, void *einfo)
@@ -42,12 +43,13 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *mainbx = elm_box_add(win);
    elm_box_horizontal_set(mainbx, EINA_TRUE);
    elm_win_resize_object_add(win, mainbx);
-   evas_object_size_hint_weight_set(mainbx, 0.0, 0.0);
+   evas_object_size_hint_weight_set(mainbx, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    my_show(mainbx);
 
      { //First Col
         Evas_Object *bx = elm_box_add(win);
-        evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        //evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         elm_box_pack_end(mainbx, bx);
@@ -90,7 +92,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
              evas_object_size_hint_weight_set(bx2, 0.0, 0.0);
              elm_box_pack_end(bx, bx2);
 
-             for (i = 3; i; i--)
+             for (i = 2; i; i--)
                {
                   Evas_Object *bt;
                   bt = elm_button_add(win);
@@ -100,6 +102,29 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt);
                   my_show(bt);
+               }
+
+               {
+                  Evas_Object *sc = elm_scroller_add(win);
+                  evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND,
+                                                   EVAS_HINT_EXPAND);
+                  evas_object_size_hint_align_set(sc, EVAS_HINT_FILL,
+                                                  EVAS_HINT_FILL);
+                  elm_scroller_bounce_set(sc, 1, 1);
+                  elm_scroller_content_min_limit(sc, 1, 1);
+                  elm_box_pack_end(bx2, sc);
+                  my_show(sc);
+
+                    {
+                       Evas_Object *bt;
+                       bt = elm_button_add(win);
+                       elm_button_label_set(bt, "Button in Scroller");
+                       evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
+                                                       EVAS_HINT_FILL);
+                       evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+                       elm_scroller_content_set(sc, bt);
+                       my_show(bt);
+                    }
                }
 
              my_show(bx2);
@@ -112,18 +137,6 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
              evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);
              evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-             elm_box_pack_end(bx, bt);
-             my_show(bt);
-          }
-
-          {
-             Evas_Object *bt;
-             bt = elm_button_add(win);
-             elm_button_label_set(bt, "Without Highlight");
-             evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
-                                             EVAS_HINT_FILL);
-             evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-             //elm_widget_highlight_ignore_set(bt, EINA_TRUE);
              elm_box_pack_end(bx, bt);
              my_show(bt);
           }
@@ -185,11 +198,6 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                        EVAS_HINT_FILL);
                        evas_object_size_hint_weight_set(bt, 0.0, 0.0);
-                       if (i%2)
-                         {
-                            //elm_widget_highlight_ignore_set(bt, EINA_TRUE);
-                            elm_button_label_set(bt, "Without Highlight");
-                         }
                        elm_box_pack_end(bx3, bt);
                        my_show(bt);
                     }
@@ -202,8 +210,6 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
         Evas_Object *ly = elm_layout_add(win);
         snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
         elm_layout_file_set(ly, buf, "twolines");
-        evas_object_size_hint_align_set(ly, EVAS_HINT_FILL,
-                                        EVAS_HINT_FILL);
         evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         elm_box_pack_end(mainbx, ly);
@@ -278,8 +284,6 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
 
           {
              Evas_Object *bx2 = elm_box_add(win);
-             evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL,
-                                             EVAS_HINT_FILL);
              evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND,
                                               EVAS_HINT_EXPAND);
              elm_panel_content_set(panel, bx2);
