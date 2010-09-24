@@ -643,7 +643,8 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-     if ((it->selected) && (it->level == level)) return it->base.data;
+     if ((it->selected) && (it->level == level))
+       return elm_widget_item_data_get(it);
    return NULL;
 }
 
