@@ -3,7 +3,7 @@
 
 // debug rendering
 //#define REND_DGB 1
-#define STDOUT_DBG 1
+//#define STDOUT_DBG 1
 
 #ifdef REND_DGB
 static FILE *dbf = NULL;
@@ -879,14 +879,40 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              else
                {
                   if (!obj->cur.map)
-                     e->engine.func->context_clip_set(e->engine.data.output,
-                                                      ctx,
-                                                      obj->cur.cache.clip.x + off_x,
-                                                      obj->cur.cache.clip.y + off_y, 
-                                                      obj->cur.cache.clip.w,
-                                                      obj->cur.cache.clip.h);
+                    {
+                       RDI(level);
+                       RD("        clip: %i %i %ix%i [%i %i %ix%i]\n",
+                          obj->cur.cache.clip.x + off_x,
+                          obj->cur.cache.clip.y + off_y, 
+                          obj->cur.cache.clip.w,
+                          obj->cur.cache.clip.h,
+                          obj->cur.geometry.x + off_x,
+                          obj->cur.geometry.y + off_y,
+                          obj->cur.geometry.w,
+                          obj->cur.geometry.h);
+                       e->engine.func->context_clip_set(e->engine.data.output,
+                                                        ctx,
+                                                        obj->cur.cache.clip.x + off_x,
+                                                        obj->cur.cache.clip.y + off_y, 
+                                                        obj->cur.cache.clip.w,
+                                                        obj->cur.cache.clip.h);
+                    }
+                  else
+                    {
+                       RDI(level);
+                       RD("        noclip\n");
+                    }
+/*                  
                   obj->func->render(obj, e->engine.data.output, ctx,
                                     surface, off_x, off_y);
+                  obj->layer->evas->engine.func->context_color_set(e->engine.data.output,
+                                                                   ctx,
+                                                                   0, 30, 0, 30);
+                  obj->layer->evas->engine.func->rectangle_draw(e->engine.data.output,
+                                                                ctx,
+                                                                surface,
+                                                                0, 0, 9999, 9999);
+ */
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
           }
