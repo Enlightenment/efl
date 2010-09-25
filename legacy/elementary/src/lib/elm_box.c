@@ -636,7 +636,7 @@ elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data
  * Layout function which display a transition animation from start layout to end layout.
  *
  * This function should no be called directly. It may be used by elm_box_layout_set() or
- * as_object_box_layout_set() as a layout function.
+ * evas_object_box_layout_set() as a layout function.
  * The @p data passed to this function must be a Elm_Box_Transition*, that can be created
  * using elm_box_transition_new() and freed with elm_box_transition_free().
  *
