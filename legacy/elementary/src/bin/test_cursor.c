@@ -71,7 +71,7 @@ test_cursor2(void *data, Evas_Object *obj, void *event_info)
    Elm_List_Item *lit;
 
    win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Cursor2");
+   elm_win_title_set(win, "Cursor 2");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
@@ -109,6 +109,84 @@ test_cursor2(void *data, Evas_Object *obj, void *event_info)
    elm_list_item_cursor_unset(lit);
    lit = elm_list_item_append(o, "cursor xterm", NULL, NULL,  NULL, NULL);
    elm_list_item_cursor_set(lit, ELM_CURSOR_XTERM);
+   elm_list_go(o);
+   evas_object_show(o);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
+
+void
+test_cursor3(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *bx, *o;
+   Elm_List_Item *lit;
+
+   win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Cursor 3");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, ELM_CURSOR_HAND1);
+   elm_object_cursor_engine_only_set(o, EINA_FALSE);
+   elm_button_label_set(o, "hand1");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, ELM_CURSOR_HAND2);
+   elm_button_label_set(o, "hand2");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, "hand3");
+   elm_button_label_set(o, "hand3");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, "hand3");
+   elm_object_cursor_style_set(o, "transparent");
+   elm_button_label_set(o, "hand3 transparent");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, "hand3");
+   elm_object_cursor_unset(o);
+   elm_button_label_set(o, "unset");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, "hand4");
+   elm_button_label_set(o, "not existent");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   o = elm_list_add(win);
+   elm_box_pack_end(bx, o);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   lit = elm_list_item_append(o, "cursor hand2", NULL, NULL,  NULL, NULL);
+   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND2);
+   lit = elm_list_item_append(o, "cursor hand3", NULL, NULL,  NULL, NULL);
+   elm_list_item_cursor_set(lit, "hand3");
+   lit = elm_list_item_append(o, "cursor hand3 transparent", NULL, NULL,
+                              NULL, NULL);
+   elm_list_item_cursor_set(lit, "hand3");
+   elm_list_item_cursor_style_set(lit, "transparent");
    elm_list_go(o);
    evas_object_show(o);
 

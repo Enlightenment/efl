@@ -21,7 +21,7 @@ struct _Smart_Data
    Eina_List     *subobjs;
    Evas_Object   *resize_obj;
    Evas_Object   *hover_obj;
-   Eina_List     *tooltips;
+   Eina_List     *tooltips, *cursors;
    void         (*del_func) (Evas_Object *obj);
    void         (*del_pre_func) (Evas_Object *obj);
    void         (*focus_func) (Evas_Object *obj);
@@ -360,12 +360,14 @@ elm_widget_theme(Evas_Object *obj)
    const Eina_List *l;
    Evas_Object *child;
    Elm_Tooltip *tt;
+   Elm_Cursor *cur;
 
    API_ENTRY return;
    EINA_LIST_FOREACH(sd->subobjs, l, child) elm_widget_theme(child);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
+   EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
    if (sd->theme_func) sd->theme_func(obj);
 }
 
@@ -1330,6 +1332,20 @@ elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt)
 }
 
 EAPI void
+elm_widget_cursor_add(Evas_Object *obj, Elm_Cursor *cur)
+{
+   API_ENTRY return;
+   sd->cursors = eina_list_append(sd->cursors, cur);
+}
+
+EAPI void
+elm_widget_cursor_del(Evas_Object *obj, Elm_Cursor *cur)
+{
+   API_ENTRY return;
+   sd->cursors = eina_list_remove(sd->cursors, cur);
+}
+
+EAPI void
 elm_widget_drag_lock_x_set(Evas_Object *obj, Eina_Bool lock)
 {
    API_ENTRY return;
@@ -1754,7 +1770,7 @@ EAPI void
 _elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   elm_object_cursor_set(item->view, cursor);
+   elm_object_sub_cursor_set(item->view, item->widget, cursor);
 }
 
 EAPI void
@@ -1762,6 +1778,40 @@ _elm_widget_item_cursor_unset(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    elm_object_cursor_unset(item->view);
+}
+
+/**
+ * Sets a different style for this item cursor.
+ *
+ * @note before you set a style you should define a cursor with
+ *       elm_widget_item_cursor_set()
+ *
+ * @param item widget item with cursor already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @internal
+ */
+EAPI void
+_elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   elm_object_cursor_style_set(item->view, style);
+}
+
+/**
+ * Get the style for this item cursor.
+ *
+ * @param item widget item with cursor already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then NULL is returned.
+ *
+ * @internal
+ */
+EAPI const char *
+_elm_widget_item_cursor_style_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return elm_object_cursor_style_get(item->view);
 }
 
 // smart object funcs
@@ -1870,6 +1920,7 @@ _smart_del(Evas_Object *obj)
 	evas_object_del(sobj);
      }
    eina_list_free(sd->tooltips); /* should be empty anyway */
+   eina_list_free(sd->cursors); /* should be empty anyway */
    if (sd->del_func) sd->del_func(obj);
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);

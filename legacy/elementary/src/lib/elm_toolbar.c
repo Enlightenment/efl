@@ -979,6 +979,38 @@ elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
 }
 
 /**
+ * Sets a different style for this item cursor.
+ *
+ * @note before you set a style you should define a cursor with
+ *       elm_toolbar_item_cursor_set()
+ *
+ * @param item toolbar item with cursor already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
+{
+   elm_widget_item_cursor_style_set(item, style);
+}
+
+/**
+ * Get the style for this item cursor.
+ *
+ * @param item toolbar item with cursor already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then NULL is returned.
+ *
+ * @ingroup Toolbar
+ */
+EAPI const char *
+elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
+{
+   return elm_widget_item_cursor_style_get(item);
+}
+
+/**
  * Get whether the toolbar item opens a menu.
  *
  * @param item The toolbar item

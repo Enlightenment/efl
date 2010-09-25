@@ -3023,6 +3023,38 @@ elm_genlist_item_cursor_unset(Elm_Genlist_Item *item)
 }
 
 /**
+ * Sets a different style for this item cursor.
+ *
+ * @note before you set a style you should define a cursor with
+ *       elm_genlist_item_cursor_set()
+ *
+ * @param item genlist item with cursor already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_cursor_style_set(Elm_Genlist_Item *item, const char *style)
+{
+   elm_widget_item_cursor_style_set(item, style);
+}
+
+/**
+ * Get the style for this item cursor.
+ *
+ * @param item genlist item with cursor already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then NULL is returned.
+ *
+ * @ingroup Genlist
+ */
+EAPI const char *
+elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item)
+{
+   return elm_widget_item_cursor_style_get(item);
+}
+
+/**
  * This sets the horizontal stretching mode
  *
  * This sets the mode used for sizing items horizontally. Valid modes are

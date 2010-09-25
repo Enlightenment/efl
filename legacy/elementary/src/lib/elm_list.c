@@ -1637,6 +1637,38 @@ elm_list_item_cursor_unset(Elm_List_Item *item)
 }
 
 /**
+ * Sets a different style for this item cursor.
+ *
+ * @note before you set a style you should define a cursor with
+ *       elm_list_item_cursor_set()
+ *
+ * @param item list item with cursor already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style)
+{
+   elm_widget_item_cursor_style_set(item, style);
+}
+
+/**
+ * Get the style for this item cursor.
+ *
+ * @param item list item with cursor already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then NULL is returned.
+ *
+ * @ingroup List
+ */
+EAPI const char *
+elm_list_item_cursor_style_get(const Elm_List_Item *item)
+{
+   return elm_widget_item_cursor_style_get(item);
+}
+
+/**
  * Set bounce mode
  *
  * This will enable or disable the scroller bounce mode for the list. See

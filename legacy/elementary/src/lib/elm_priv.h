@@ -139,6 +139,8 @@ void                _elm_config_shutdown(void);
 
 void                 elm_tooltip_theme(Elm_Tooltip *tt);
 void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+void                 elm_cursor_theme(Elm_Cursor *cur);
+void                 elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char *cursor);
 
 Eina_Bool           _elm_dangerous_call_check(const char *call);
 

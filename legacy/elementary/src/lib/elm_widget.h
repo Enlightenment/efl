@@ -280,6 +280,8 @@ EAPI void             elm_widget_type_set(Evas_Object *obj, const char *type);
 EAPI const char      *elm_widget_type_get(const Evas_Object *obj);
 EAPI void             elm_widget_tooltip_add(Evas_Object *obj, Elm_Tooltip *tt);
 EAPI void             elm_widget_tooltip_del(Evas_Object *obj, Elm_Tooltip *tt);
+EAPI void             elm_widget_cursor_add(Evas_Object *obj, Elm_Cursor *cur);
+EAPI void             elm_widget_cursor_del(Evas_Object *obj, Elm_Cursor *cur);
 EAPI void             elm_widget_drag_lock_x_set(Evas_Object *obj, Eina_Bool lock);
 EAPI void             elm_widget_drag_lock_y_set(Evas_Object *obj, Eina_Bool lock);
 EAPI Eina_Bool        elm_widget_drag_lock_x_get(const Evas_Object *obj);
@@ -305,6 +307,8 @@ EAPI void             _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, 
 EAPI const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor);
 EAPI void             _elm_widget_item_cursor_unset(Elm_Widget_Item *item);
+EAPI void             _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style);
+EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *item);
 
 /**
  * Convenience macro to create new widget item, doing casts for you.
@@ -390,6 +394,18 @@ EAPI void             _elm_widget_item_cursor_unset(Elm_Widget_Item *item);
  */
 #define elm_widget_item_cursor_unset(item) \
   _elm_widget_item_cursor_unset((Elm_Widget_Item *)item)
+/**
+ * Convenience function to change item's cursor style.
+ * @see _elm_widget_item_cursor_style_set()
+ */
+#define elm_widget_item_cursor_style_set(item, style) \
+  _elm_widget_item_cursor_style_set((Elm_Widget_Item *)item, style)
+/**
+ * Convenience function to query item's cursor style.
+ * @see _elm_widget_item_cursor_style_get()
+ */
+#define elm_widget_item_cursor_style_get(item) \
+  _elm_widget_item_cursor_style_get((const Elm_Widget_Item *)item)
 
 /**
  * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.

@@ -1606,6 +1606,38 @@ elm_gengrid_item_cursor_unset(Elm_Gengrid_Item *item)
 }
 
 /**
+ * Sets a different style for this item cursor.
+ *
+ * @note before you set a style you should define a cursor with
+ *       elm_gengrid_item_cursor_set()
+ *
+ * @param item gengrid item with cursor already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_item_cursor_style_set(Elm_Gengrid_Item *item, const char *style)
+{
+   elm_widget_item_cursor_style_set(item, style);
+}
+
+/**
+ * Get the style for this item cursor.
+ *
+ * @param item gengrid item with cursor already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then NULL is returned.
+ *
+ * @ingroup Gengrid
+ */
+EAPI const char *
+elm_gengrid_item_cursor_style_get(const Elm_Gengrid_Item *item)
+{
+   return elm_widget_item_cursor_style_get(item);
+}
+
+/**
  * Set the always select mode.
  *
  * Cells will only call their selection func and callback when first becoming
