@@ -91,6 +91,7 @@ struct _Elm_Config
    const char  *theme;
    const char  *modules;
    double       tooltip_delay;
+   int          cursor_engine_only;
 };
 
 struct _Elm_Module

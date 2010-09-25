@@ -21,4 +21,5 @@ group "Elm_Config" struct {
   value "theme" string: "default";
   value "modules" string: "";
   value "tooltip_delay" double: 1.0;
+  value "cursor_engine_only" int: 1;
 }

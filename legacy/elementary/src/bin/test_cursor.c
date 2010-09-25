@@ -181,8 +181,21 @@ test_cursor3(void *data, Evas_Object *obj, void *event_info)
 
    o = elm_button_add(win);
    elm_object_cursor_set(o, "hand4");
-   elm_object_cursor_engine_only_set(o, EINA_FALSE);
    elm_button_label_set(o, "not existent");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   elm_cursor_engine_only_set(0);
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, "hand2");
+   elm_button_label_set(o, "hand 2 engine only config false");
+   elm_box_pack_end(bx, o);
+   evas_object_show(o);
+
+   elm_cursor_engine_only_set(1);
+   o = elm_button_add(win);
+   elm_object_cursor_set(o, "hand2");
+   elm_button_label_set(o, "hand 2 engine only config true");
    elm_box_pack_end(bx, o);
    evas_object_show(o);
 

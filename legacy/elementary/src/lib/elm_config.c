@@ -225,6 +225,7 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay", tooltip_delay, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only", cursor_engine_only, EET_T_INT);
 }
 
 static void
@@ -411,6 +412,7 @@ _config_load(void)
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
    _elm_config->tooltip_delay = 1.0;
+   _elm_config->cursor_engine_only = 1;
 }
 
 static void
@@ -603,6 +605,9 @@ _env_get(void)
         if (delay >= 0.0)
           _elm_config->tooltip_delay = delay;
      }
+
+   s = getenv("ELM_CURSOR_ENGINE_ONLY");
+   if (s) _elm_config->cursor_engine_only = atoi(s);
 }
 
 void

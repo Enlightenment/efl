@@ -303,7 +303,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 
    cur->owner = owner;
    cur->eventarea = eventarea;
-   cur->engine_only = EINA_TRUE;
+   cur->engine_only = _elm_config->cursor_engine_only;
    cur->visible = EINA_FALSE;
 
    cur->cursor_name = eina_stringshare_add(cursor);
@@ -531,4 +531,37 @@ elm_object_cursor_engine_only_get(const Evas_Object *obj)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
    return cur->engine_only;
+}
+
+/**
+ * Get the configured cursor engine only usage
+ *
+ * This gets the globally configured exclusive usage of engine cursors.
+ *
+ * @return 1 if only engine cursors should be used
+ * @ingroup Cursors
+ */
+EAPI int
+elm_cursor_engine_only_get(void)
+{
+   return _elm_config->cursor_engine_only;
+}
+
+/**
+ * Set the configured cursor engine only usage
+ *
+ * This sets the globally configured exclusive usage of engine cursors.
+ * It won't affect cursors set before changing this value.
+ *
+ * @param engine_only If 1 only engine cursors will be enabled, if 0 will
+ * look for them on theme before.
+ * @return EINA_TRUE if value is valid and setted (0 or 1)
+ * @ingroup Cursors
+ */
+EAPI Eina_Bool
+elm_cursor_engine_only_set(int engine_only)
+{
+   if ((engine_only < 0) || (engine_only > 1)) return EINA_FALSE;
+   _elm_config->cursor_engine_only = engine_only;
+   return EINA_TRUE;
 }
