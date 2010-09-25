@@ -112,20 +112,20 @@ EAPI Eina_List *ecore_file_app_list(void);
 /* Download */
 
 EAPI Eina_Bool ecore_file_download(const char *url,
-                              const char *dst, 
-                              void (*completion_cb)(void *data,
-                                                    const char *file,
-                                                    int status),
-                              int (*progress_cb)(void *data,
-                                                 const char *file,
-                                                 long int dltotal,
-                                                 long int dlnow,
-                                                 long int ultotal,
-                                                 long int ulnow),
-                              void *data, 
-                              Ecore_File_Download_Job **job_ret);
-EAPI void ecore_file_download_abort_all(void);  
-EAPI void ecore_file_download_abort(Ecore_File_Download_Job *job);
+                                   const char *dst,
+                                   void (*completion_cb)(void *data,
+                                                         const char *file,
+                                                         int status),
+                                   int (*progress_cb)(void *data,
+                                                      const char *file,
+                                                      long int dltotal,
+                                                      long int dlnow,
+                                                      long int ultotal,
+                                                      long int ulnow),
+                                   void *data,
+                                   Ecore_File_Download_Job **job_ret);
+EAPI void      ecore_file_download_abort_all(void);
+EAPI void      ecore_file_download_abort(Ecore_File_Download_Job *job);
 EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);
 
 #ifdef __cplusplus
