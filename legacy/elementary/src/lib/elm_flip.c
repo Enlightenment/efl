@@ -158,7 +158,6 @@ _flip(Evas_Object *obj)
    if (t > 1.0) t = 1.0;
 
    if (!wd) return ECORE_CALLBACK_CANCEL;
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
 
    mf = evas_map_new(4);
    evas_map_smooth_set(mf, 0);
@@ -166,9 +165,17 @@ _flip(Evas_Object *obj)
    evas_map_smooth_set(mb, 0);
 
    if (wd->front.content)
-     evas_map_util_points_populate_from_object_full(mf, wd->front.content, 0);
+     {
+        evas_object_geometry_get(wd->front.content, &x, &y, &w, &h);
+        evas_map_util_points_populate_from_geometry(mf, x, y, w, h, 0);
+     }
    if (wd->back.content)
-     evas_map_util_points_populate_from_object_full(mb, wd->back.content, 0);
+     {
+        evas_object_geometry_get(wd->back.content, &x, &y, &w, &h);
+        evas_map_util_points_populate_from_geometry(mb, x, y, w, h, 0);
+     }
+   
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
    
    cx = x + (w / 2);
    cy = y + (h / 2);
@@ -463,6 +470,8 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
      }
+   // force calc to contents are the right size before transition
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
    flip_show_hide(obj);
    _configure(obj);
 }
@@ -499,6 +508,8 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 				       _changed_size_hints, obj);
 	_sizing_eval(obj);
      }
+   // force calc to contents are the right size before transition
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
    flip_show_hide(obj);
    _configure(obj);
 }
@@ -601,5 +612,7 @@ elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode)
    wd->mode = mode;
    wd->start = ecore_loop_time_get();
    wd->len = 0.5;
+   // force calc to contents are the right size before transition
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
    _flip(obj);
 }
