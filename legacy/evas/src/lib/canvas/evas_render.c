@@ -902,9 +902,9 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                        RDI(level);
                        RD("        noclip\n");
                     }
-/*                  
                   obj->func->render(obj, e->engine.data.output, ctx,
                                     surface, off_x, off_y);
+/*                  
                   obj->layer->evas->engine.func->context_color_set(e->engine.data.output,
                                                                    ctx,
                                                                    0, 30, 0, 30);
