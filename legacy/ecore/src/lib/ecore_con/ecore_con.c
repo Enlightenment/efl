@@ -1796,17 +1796,20 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
    for (tries = 0; tries < 16; tries++)
      {
         int num;
-        int lost_server = 1;
+        Eina_Bool lost_server = EINA_TRUE;
         unsigned char buf[READBUFSIZ];
+
+        if (svr->handshaking && (!ecore_con_ssl_server_init(svr)))
+          lost_server = EINA_FALSE;
 
         if (!(svr->type & ECORE_CON_SSL))
           {
              num = read(svr->fd, buf, READBUFSIZ);
              if ((num < 0) && (errno == EAGAIN))
-               lost_server = 0;
+               lost_server = EINA_FALSE;
           }
         else if (!(num = ecore_con_ssl_server_read(svr, buf, READBUFSIZ)))
-           lost_server = 0;
+           lost_server = EINA_FALSE;
 
         if (num < 1)
           {
@@ -2121,6 +2124,9 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
         errno = 0;
 
+        if (cl->handshaking && (!ecore_con_ssl_client_init(cl)))
+          lost_client = EINA_FALSE;
+
         if (!(cl->host_server->type & ECORE_CON_SSL))
           {
              if ((num = read(cl->fd, buf, READBUFSIZ)) <= 0)
@@ -2259,19 +2265,17 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 
    num = svr->write_buf_size - svr->write_buf_offset;
 
-   if (!(svr->type & ECORE_CON_SSL))
-      count = write(
-            svr->fd, svr->write_buf + svr->write_buf_offset, num);
-   else
-      count = ecore_con_ssl_server_write(
-            svr, svr->write_buf + svr->write_buf_offset, num);
+   if (svr->handshaking && (ecore_con_ssl_server_init(svr)))
+        return _ecore_con_server_kill(svr);
 
-   if (count < 1)
-     {
+   if (!(svr->type & ECORE_CON_SSL))
+      count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
+   else
+      count = ecore_con_ssl_server_write(svr, svr->write_buf + svr->write_buf_offset, num);
+
+   if (count < 0)
         /* we lost our server! */
-        _ecore_con_server_kill(svr);
-        return;
-     }
+        return _ecore_con_server_kill(svr);
 
    svr->write_buf_offset += count;
    if (svr->write_buf_offset >= svr->write_buf_size)
@@ -2281,27 +2285,31 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
         free(svr->write_buf);
         svr->write_buf = NULL;
         if (svr->fd_handler)
-           ecore_main_fd_handler_active_set(svr->fd_handler,
-                                            ECORE_FD_READ);
+           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }
 }
 
 static void
 _ecore_con_client_flush(Ecore_Con_Client *cl)
 {
-   int count, num;
+   int num, count = 0;
 
    if (!cl->buf)
       return;
 
-   num = cl->buf_size - cl->buf_offset;
-   if (!(cl->host_server->type & ECORE_CON_SSL))
-      count = write(
-            cl->fd, cl->buf + cl->buf_offset, num);
-   else
-      count = ecore_con_ssl_client_write(cl, cl->buf + cl->buf_offset, num);
+   if (cl->handshaking && (ecore_con_ssl_client_init(cl)))
+     count = -1;        
 
-   if (count < 1)
+   if (!count)
+     {
+        num = cl->buf_size - cl->buf_offset;
+        if (!(cl->host_server->type & ECORE_CON_SSL))
+           count = write(cl->fd, cl->buf + cl->buf_offset, num);
+        else
+           count = ecore_con_ssl_client_write(cl, cl->buf + cl->buf_offset, num);
+     }
+
+   if (count < 0)
      {
         if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) ||
             (errno == EINVAL) || (errno == ENOSPC) || (errno == ECONNREFUSED))

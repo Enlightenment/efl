@@ -439,7 +439,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
           {
              int kx[] = { GNUTLS_KX_DHE_RSA, GNUTLS_KX_RSA, GNUTLS_KX_ANON_DH, 0 };
-             int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, 0 };
+             int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, GNUTLS_CIPHER_DES_CBC, 0 };
              SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
              SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
           }
@@ -579,13 +579,25 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 {
    int num;
 
+   if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
+     {
+        if (!ecore_con_ssl_server_init_gnutls(svr))
+          return 0;
+        return -1;
+     }
+     
    num = gnutls_record_recv(svr->session, buf, size);
    if (num > 0)
       return num;
 
-   if ((num == GNUTLS_E_AGAIN) ||
-       (num == GNUTLS_E_REHANDSHAKE) ||
-       (num == GNUTLS_E_INTERRUPTED))
+   if (num == GNUTLS_E_REHANDSHAKE)
+     {
+        svr->handshaking = EINA_TRUE;
+        svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+        if (!_ecore_con_ssl_server_init_gnutls(svr))
+          return 0;
+     }
+   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
       return 0;
 
    return -1;
@@ -597,13 +609,26 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 {
    int num;
 
+
+   if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
+     {
+        if (!_ecore_con_ssl_server_init_gnutls(svr))
+          return 0;
+        return -1;
+     }
+
    num = gnutls_record_send(svr->session, buf, size);
    if (num > 0)
       return num;
 
-   if ((num == GNUTLS_E_AGAIN) ||
-       (num == GNUTLS_E_REHANDSHAKE) ||
-       (num == GNUTLS_E_INTERRUPTED))
+   if (num == GNUTLS_E_REHANDSHAKE)
+     {
+        svr->handshaking = EINA_TRUE;
+        svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+        if (!_ecore_con_ssl_server_init_gnutls(svr))
+          return 0;
+     }
+   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
       return 0;
 
    return -1;
@@ -795,13 +820,25 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
 {
    int num;
 
+   if (cl->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
+     {
+        if (!_ecore_con_ssl_client_init_gnutls(cl))
+          return 0;
+        return -1;
+     }
+
    num = gnutls_record_recv(cl->session, buf, size);
    if (num > 0)
       return num;
 
-   if ((num == GNUTLS_E_AGAIN) ||
-       (num == GNUTLS_E_REHANDSHAKE) ||
-       (num == GNUTLS_E_INTERRUPTED))
+   if (num == GNUTLS_E_REHANDSHAKE)
+     {
+        cl->handshaking = EINA_TRUE;
+        cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+        if (!_ecore_con_ssl_client_init_gnutls(cl))
+          return 0;
+     }
+   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
       return 0;
 
    return -1;
@@ -813,13 +850,26 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
 {
    int num;
 
+
+   if (cl->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
+     {
+        if (!_ecore_con_ssl_client_init_gnutls(cl))
+          return 0;
+        return -1;
+     }
+
    num = gnutls_record_send(cl->session, buf, size);
    if (num > 0)
       return num;
 
-   if ((num == GNUTLS_E_AGAIN) ||
-       (num == GNUTLS_E_REHANDSHAKE) ||
-       (num == GNUTLS_E_INTERRUPTED))
+   if (num == GNUTLS_E_REHANDSHAKE)
+     {
+        cl->handshaking = EINA_TRUE;
+        cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
+        if (!_ecore_con_ssl_client_init_gnutls(cl))
+          return 0;
+     }
+   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
       return 0;
 
    return -1;
@@ -1105,15 +1155,10 @@ _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr, unsigned char *buf,
 
    if (svr->fd_handler)
      {
-        if (svr->ssl && svr->ssl_err ==
-            SSL_ERROR_WANT_READ)
-           ecore_main_fd_handler_active_set(svr->fd_handler,
-                                            ECORE_FD_READ);
-        else if (svr->ssl && svr->ssl_err ==
-                 SSL_ERROR_WANT_WRITE)
-           ecore_main_fd_handler_active_set(
-              svr->fd_handler,
-              ECORE_FD_WRITE);
+        if (svr->ssl && svr->ssl_err == SSL_ERROR_WANT_READ)
+           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+        else if (svr->ssl && svr->ssl_err == SSL_ERROR_WANT_WRITE)
+           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
      }
 
    if ((svr->ssl_err == SSL_ERROR_ZERO_RETURN) ||
