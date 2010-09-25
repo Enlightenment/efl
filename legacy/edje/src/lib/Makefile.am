@@ -20,31 +20,31 @@ includes_HEADERS = Edje.h Edje_Edit.h
 includesdir = $(includedir)/edje-@VMAJ@
 
 base_sources = \
+edje_cache.c \
 edje_calc.c \
 edje_callbacks.c \
-edje_data.c \
-edje_embryo.c \
-edje_lua.c \
-edje_lua2.c \
-edje_load.c \
-edje_main.c \
-edje_misc.c \
-edje_program.c \
-edje_smart.c \
-edje_text.c \
-edje_util.c \
-edje_var.c \
 edje_container.c \
-edje_message_queue.c \
-edje_cache.c \
-edje_match.c \
-edje_textblock_styles.c \
+edje_data.c \
 edje_edit.c \
-edje_script_only.c \
-edje_lua_script_only.c \
+edje_embryo.c \
 edje_entry.c \
 edje_external.c \
-edje_module.c
+edje_load.c \
+edje_lua.c \
+edje_lua2.c \
+edje_lua_script_only.c \
+edje_main.c \
+edje_match.c \
+edje_message_queue.c \
+edje_misc.c \
+edje_module.c \
+edje_program.c \
+edje_script_only.c \
+edje_smart.c \
+edje_text.c \
+edje_textblock_styles.c \
+edje_util.c \
+edje_var.c
 
 if EDJE_AMALGAMATION
 nodist_libedje_la_SOURCES = edje_amalgamation.c
