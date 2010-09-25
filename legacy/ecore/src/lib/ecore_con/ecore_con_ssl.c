@@ -581,7 +581,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 
    if (svr->ssl_state == ECORE_CON_SSL_STATE_HANDSHAKING)
      {
-        if (!ecore_con_ssl_server_init_gnutls(svr))
+        if (!_ecore_con_ssl_server_init_gnutls(svr))
           return 0;
         return -1;
      }
