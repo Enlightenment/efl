@@ -3,6 +3,8 @@
 
 #include <directfb.h>
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif /* ifdef EAPI */
