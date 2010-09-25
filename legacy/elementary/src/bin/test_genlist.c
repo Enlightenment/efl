@@ -667,7 +667,6 @@ char *gl3_label_get(void *data, Evas_Object *obj, const char *part)
 Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *tit = data;
-   char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
      {
         Evas_Object *lb;
@@ -678,23 +677,6 @@ Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
         elm_label_label_set(lb, "ashj ascjscjh n asjkl hcjlh ls hzshnn zjh sh zxjcjsnd h dfw sdv edev efe fwefvv vsd cvs ws wf  fvwf wd fwe f  we wef we wfe rfwewef wfv wswf wefg sdfws w wsdcfwcf wsc vdv  sdsd sdcd cv wsc sdcv wsc d sdcdcsd sdcdsc wdvd sdcsd wscxcv wssvd sd");
         evas_object_show(lb);
         return lb;
-        
-	Evas_Object *bx = elm_box_add(obj);
-	Evas_Object *ic;
-	ic = elm_icon_add(obj);
-	snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-	elm_icon_file_set(ic, buf, NULL);
-	elm_icon_scale_set(ic, 0, 0);
-	evas_object_show(ic);
-	elm_box_pack_end(bx, ic);
-	ic = elm_icon_add(obj);
-	elm_icon_file_set(ic, buf, NULL);
-	elm_icon_scale_set(ic, 0, 0);
-	evas_object_show(ic);
-	elm_box_pack_end(bx, ic);
-        elm_box_horizontal_set(bx, 1);
-	evas_object_show(bx);
-	return bx;
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {

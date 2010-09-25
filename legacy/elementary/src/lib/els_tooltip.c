@@ -614,7 +614,6 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
    return;
 
  error:
-   if (tt) _elm_tooltip_hide(tt);
    if (del_cb) del_cb((void *)data, owner, NULL);
 }
 
