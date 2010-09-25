@@ -256,7 +256,6 @@ my_bt_add(void *data, Evas_Object *obj, void *event_info)
         else
         {
             m_clas = itc_parking;
-            g_clas = itc_group_parking;
             d = &data_parking;
         }
 

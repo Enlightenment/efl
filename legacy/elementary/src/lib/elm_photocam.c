@@ -360,16 +360,12 @@ grid_load(Evas_Object *obj, Grid *g)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    int x, y;
-   Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, gw, gh, ax, ay, tx, ty;
+   Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, gw, gh, tx, ty;
    if (!wd) return;
    evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(wd->obj), &cvx, &cvy, &cvw, &cvh);
-   ax = 0;
-   ay = 0;
    gw = wd->size.w;
    gh = wd->size.h;
-   if (ow > gw) ax = (ow - gw) / 2;
-   if (oh > gh) ay = (oh - gh) / 2;
    for (y = 0; y < g->gh; y++)
      {
         for (x = 0; x < g->gw; x++)
@@ -394,8 +390,6 @@ grid_load(Evas_Object *obj, Grid *g)
                   yy = (gh * yy) / g->h;
                   hh = ((gh * (ty + hh)) / g->h) - yy;
                }
-//             xx += ax;
-//             yy += ay;
              if (ELM_RECTS_INTERSECT(xx - wd->pan_x + ox, 
                                      yy  - wd->pan_y + oy,
                                      ww, hh,

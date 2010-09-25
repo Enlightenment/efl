@@ -4,15 +4,13 @@
 static void
 _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horizontal, int homogeneous)
 {
-   Evas_Coord minw, minh, maxw, maxh, mnw, mnh;
+   Evas_Coord minw, minh, mnw, mnh;
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
 
    /* FIXME: need to calc max */
    minw = 0;
    minh = 0;
-   maxw = -1;
-   maxh = -1;
    if (homogeneous)
      {
 	EINA_LIST_FOREACH(priv->children, l, opt)

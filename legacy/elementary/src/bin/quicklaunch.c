@@ -64,9 +64,7 @@ static void
 child_handler(int x, siginfo_t *info, void *data)
 {
    int status;
-   pid_t pid;
-
-   while ((pid = waitpid(-1, &status, WNOHANG)) > 0);
+   while (waitpid(-1, &status, WNOHANG) > 0);
 }
 
 static void
@@ -88,13 +86,13 @@ static void
 handle_run(int fd, unsigned long bytes)
 {
    unsigned char *buf = NULL;
-   int i, num;
+   int i;
    char **argv = NULL;
    char *cwd;
    int argc;
 
    buf = alloca(bytes);
-   if ((num = read(fd, buf, bytes)) < 0)
+   if (read(fd, buf, bytes) < 0)
      {
 	close(fd);
 	return;

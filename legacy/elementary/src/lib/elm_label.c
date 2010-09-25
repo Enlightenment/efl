@@ -44,7 +44,6 @@ _elm_win_recalc_job(void *data)
    wd->deferred_recalc_job = NULL;
    evas_object_geometry_get(wd->lbl, NULL, NULL, &resw, &resh);
    resh = 0;
-   minminw = 0;
    edje_object_size_min_restricted_calc(wd->lbl, &minw, &minh, 0, 0);
    minminw = minw;
    if (wd->wrap_w >= resw) 
@@ -140,10 +139,7 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
         starttag = curlocater;
         endtag = curlocater + strlen(key);
         if ((!endtag) || (*endtag != '='))
-          {
-             foundflag = 0;
-             return -1;
-          }
+           return -1;
         
         firstindex = abs(oldstring - curlocater);
         firstindex += strlen(key) + 1; // strlen("key") + strlen("=")
@@ -581,14 +577,13 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *label, fontvalue[16];
+   char fontvalue[16];
    int len;
    
    if (!wd) return;
    _elm_dangerous_call_check(__FUNCTION__);
    len = strlen(wd->label);
    if (len <= 0) return;
-   label = alloca(sizeof(char) * (len + 32));
    sprintf(fontvalue, "%i", fontsize);
    
    if (_stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 0) == 0)
@@ -653,14 +648,13 @@ elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsig
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   char *label, colorstring[16];
+   char colorstring[16];
    int len;
 
    if (!wd) return;
    _elm_dangerous_call_check(__FUNCTION__);
    len = strlen(wd->label);
    if (len <= 0) return;
-   label = alloca(sizeof(char) * (len + 32));
    sprintf(colorstring, "#%02x%02x%02x%02x", r, g, b, a);
 
    if (_stringshare_key_value_replace(&wd->label, "color", colorstring, 0) == 0)

@@ -654,13 +654,10 @@ response_handler_targets(struct _elm_cnp_selection *sel,
    Ecore_X_Atom *atomlist;
    Evas_Object *top;
    int i,j;
-   int prio, selected;
 
    targets = notify->data;
    atomlist = (Ecore_X_Atom *)(targets->data.data);
 
-   prio = -1;
-   selected = -1;
    /* Start from 1: Skip targets */
    for (j = 1 ; j < CNP_N_ATOMS ; j ++)
      {

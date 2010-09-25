@@ -68,7 +68,6 @@ tim_cb(void *data)
    evas_object_data_del(data, "timer");
    tb = evas_object_data_get(data, "tb");
    sc = evas_object_data_get(data, "sc");
-   mb = evas_object_data_get(data, "mb");
    elm_object_scroll_freeze_push(sc);
    evas_object_data_set(data, "dragging", (void *)(long)(1));
    evas_object_color_set(data, 255, 255, 255, 255);
@@ -142,7 +141,6 @@ ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
         evas_object_data_del(obj, "dragging");
         tb = evas_object_data_get(obj, "tb");
         sc = evas_object_data_get(obj, "sc");
-        mb = evas_object_data_get(data, "mb");
         elm_object_scroll_freeze_pop(sc);
         tbx = (int)(long)evas_object_data_get(obj, "tbx");
         tby = (int)(long)evas_object_data_get(obj, "tby");
@@ -569,7 +567,6 @@ l3_tim_cb(void *data)
    ly = evas_object_data_get(data, "ly");
    ly2 = evas_object_data_get(data, "ly2");
    sc = evas_object_data_get(data, "sc");
-   mb = evas_object_data_get(data, "mb");
    elm_object_scroll_freeze_push(sc);
    evas_object_data_set(data, "dragging", (void *)(long)1);
    evas_object_color_set(data, 255, 255, 255, 255);
@@ -652,7 +649,6 @@ l3_ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
         evas_object_data_del(obj, "dragging");
         ly = evas_object_data_get(obj, "ly");
         sc = evas_object_data_get(obj, "sc");
-        mb = evas_object_data_get(data, "mb");
         elm_object_scroll_freeze_pop(sc);
         slx = (int)(long)evas_object_data_get(obj, "slx");
         sly = (int)(long)evas_object_data_get(obj, "sly");

@@ -408,8 +408,6 @@ _elm_win_eval_subobjs(Evas_Object *obj)
 	if (maxh == -1) maxh = h;
 	else if ((h > 0) && (h < maxh)) maxh = h;
      }
-   if ((maxw >= 0) && (maxw < minw)) maxw = minw;
-   if ((maxh >= 0) && (maxh < minh)) maxh = minh;
    if (!xx) maxw = minw;
    else maxw = 32767;
    if (!xy) maxh = minh;

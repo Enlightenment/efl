@@ -921,7 +921,6 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
 				      if (elm_widget_focus_jump(sd->resize_obj, forward))
                                          return 1;
 				      /* it returned 0 - it got to the last item and is past it */
-				      focus_next = 1;
 				   }
 			      }
 			 }

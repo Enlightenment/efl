@@ -2052,9 +2052,8 @@ static int
 _smart_scrollbar_bar_v_visibility_adjust(Smart_Data *sd)
 {
    int scroll_v_vis_change = 0;
-   Evas_Coord w, h, vw, vh;
+   Evas_Coord h, vw, vh;
 
-   w = sd->child.w;
    h = sd->child.h;
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);
    if (sd->vbar_visible)
@@ -2121,10 +2120,9 @@ static int
 _smart_scrollbar_bar_h_visibility_adjust(Smart_Data *sd)
 {
    int scroll_h_vis_change = 0;
-   Evas_Coord w, h, vw, vh;
+   Evas_Coord w, vw, vh;
 
    w = sd->child.w;
-   h = sd->child.h;
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);
    if (sd->hbar_visible)
      {

@@ -291,7 +291,6 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
    Evas_Coord x, y, w, h, bx, by, bw, bh, xx, yy;
    double cdv = 0.5;
    Evas_Coord dist;
-   Eina_Bool change = EINA_FALSE;
    char *label = NULL, *last = NULL;
    int i;
    if (!wd) return;
@@ -340,7 +339,6 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
         if (it_closest) it_closest->selected = 1;
         if (it_closest != it_last)
           {
-             change = 1;
              if (it_last)
                {
                   const char *stacking, *selectraise;

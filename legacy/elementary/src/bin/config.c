@@ -185,7 +185,6 @@ _flip_to(Evas_Object *win, const char *name)
    front_vis  = elm_flip_front_get(fl);
    if (front_vis)
      {
-        front = elm_flip_content_front_get(fl);
         back  = elm_flip_content_back_get(fl);
         elm_table_pack(holder, back, 0, 0, 1, 1);
         evas_object_hide(back);
@@ -195,7 +194,6 @@ _flip_to(Evas_Object *win, const char *name)
    else
      {
         front = elm_flip_content_front_get(fl);
-        back  = elm_flip_content_back_get(fl);
         elm_table_pack(holder, front, 0, 0, 1, 1);
         evas_object_hide(front);
 //        elm_table_unpack(holder, wid); // this should NOT be needed - but in evas_table/elm_table

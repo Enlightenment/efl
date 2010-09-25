@@ -299,7 +299,6 @@ _elm_win_recalc_job(void *data)
    wd->deferred_recalc_job = NULL;
    evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
    resh = 0;
-   minminw = 0;
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, 0, 0);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    minminw = minw;

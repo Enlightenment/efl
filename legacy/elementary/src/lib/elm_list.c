@@ -658,7 +658,6 @@ _fix_items(Evas_Object *obj)
 		  selectraise = edje_object_data_get(it->base.view, "selectraise");
 		  if ((selectraise) && (!strcmp(selectraise, "on")))
 		    evas_object_raise(it->base.view);
-		  stacking = edje_object_data_get(it->base.view, "stacking");
 	       }
 	     it->fixed = EINA_TRUE;
 	     it->is_even = it->even;
