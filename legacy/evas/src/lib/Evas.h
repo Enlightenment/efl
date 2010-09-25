@@ -38,15 +38,15 @@ extern "C" {
 #define EVAS_VERSION_MAJOR 1
 #define EVAS_VERSION_MINOR 0
 
-   typedef struct _Evas_Version
-     {
-        int major;
-        int minor;
-        int micro;
-        int revision;
-     } Evas_Version;
-   
-   EAPI extern Evas_Version *evas_version;
+typedef struct _Evas_Version
+{
+   int major;
+   int minor;
+   int micro;
+   int revision;
+} Evas_Version;
+
+EAPI extern Evas_Version *evas_version;
 
 /**
  * @file
