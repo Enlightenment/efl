@@ -380,6 +380,6 @@ void _ecore_evas_free(Ecore_Evas *ee);
 void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
 void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
 
-extern int _ecore_evas_app_comp_sync;
+extern Eina_Bool _ecore_evas_app_comp_sync;
 
 #endif

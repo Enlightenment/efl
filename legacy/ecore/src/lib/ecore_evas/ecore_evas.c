@@ -287,15 +287,15 @@ ecore_evas_shutdown(void)
    return _ecore_evas_init_count;
 }
 
-int _ecore_evas_app_comp_sync = 1;
+Eina_Bool _ecore_evas_app_comp_sync = 1;
 
 EAPI void
-ecore_evas_app_comp_sync_set(int do_sync)
+ecore_evas_app_comp_sync_set(Eina_Bool do_sync)
 {
    _ecore_evas_app_comp_sync = do_sync;
 }
 
-EAPI int
+EAPI Eina_Bool
 ecore_evas_app_comp_sync_get(void)
 {
    return _ecore_evas_app_comp_sync;
@@ -1505,17 +1505,17 @@ ecore_evas_rotation_get(const Ecore_Evas *ee)
 /**
  * Set whether an Ecore_Evas is shaped or not.
  * @param ee The Ecore_Evas to shape
- * @param shaped 1 to shape, 0 to not
+ * @param shaped EINA_TRUE to shape, EINA_FALSE to not
  *
  * This function allows one to make an Ecore_Evas shaped to the contents of the
- * evas. If @p shaped is 1, @p ee will be transparent in parts of the evas that
- * contain no objects. If @p shaped is 0, then @p ee will be rectangular, and
+ * evas. If @p shaped is EINA_TRUE, @p ee will be transparent in parts of the evas that
+ * contain no objects. If @p shaped is EINA_FALSE, then @p ee will be rectangular, and
  * and parts with no data will show random framebuffer artifacting. For
  * non-shaped Ecore_Evases, it is recommend to cover the entire evas with a
  * background object.
  */
 EAPI void
-ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
+ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1530,26 +1530,26 @@ ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
 /**
  * Query whether an Ecore_Evas is shaped or not.
  * @param ee The Ecore_Evas to query.
- * @return 1 if shaped, 0 if not.
+ * @return EINA_TRUE if shaped, EINA_FALSE if not.
  *
- * This function returns 1 if @p ee is shaped, and 0 if not.
+ * This function returns EINA_TRUE if @p ee is shaped, and EINA_FALSE if not.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_shaped_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_shaped_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->shaped ? 1:0;
+   return ee->shaped ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Set whether an Ecore_Evas has an alpha channel or not.
  * @param ee The Ecore_Evas to shape
- * @param alpha 1 to enable the alpha channel, 0 to disable it
+ * @param alpha EINA_TRUE to enable the alpha channel, EINA_FALSE to disable it
  *
  * This function allows you to make an Ecore_Evas translucent using an
  * alpha channel. See ecore_evas_shaped_set() for details. The difference
@@ -1559,7 +1559,7 @@ ecore_evas_shaped_get(const Ecore_Evas *ee)
  * it's transparent).
  */
 EAPI void
-ecore_evas_alpha_set(Ecore_Evas *ee, int alpha)
+ecore_evas_alpha_set(Ecore_Evas *ee, Eina_Bool alpha)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1574,27 +1574,27 @@ ecore_evas_alpha_set(Ecore_Evas *ee, int alpha)
 /**
  * Query whether an Ecore_Evas has an alpha channel.
  * @param ee The Ecore_Evas to query.
- * @return 1 if ee has an alpha channel, 0 if it does not.
+ * @return EINA_TRUE if ee has an alpha channel, EINA_FALSE if it does not.
  *
- * This function returns 1 if @p ee has an alpha channel, and 0 if
+ * This function returns EINA_TRUE if @p ee has an alpha channel, and EINA_FALSE if
  * it does not.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_alpha_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_alpha_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->alpha ? 1:0;
+   return ee->alpha ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Set whether an Ecore_Evas has an transparent window or not.
  * @param ee The Ecore_Evas to shape
- * @param transparent 1 to enable the transparent window, 0 to disable it
+ * @param transparent EINA_TRUE to enable the transparent window, EINA_FALSE to disable it
  *
  * This function allows you to make an Ecore_Evas translucent using an
  * alpha channel. See ecore_evas_shaped_set() for details. The difference
@@ -1604,7 +1604,7 @@ ecore_evas_alpha_get(const Ecore_Evas *ee)
  * it's transparent).
  */
 EAPI void
-ecore_evas_transparent_set(Ecore_Evas *ee, int transparent)
+ecore_evas_transparent_set(Ecore_Evas *ee, Eina_Bool transparent)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1619,21 +1619,21 @@ ecore_evas_transparent_set(Ecore_Evas *ee, int transparent)
 /**
  * Query whether an Ecore_Evas has an alpha channel.
  * @param ee The Ecore_Evas to query.
- * @return 1 if ee has an alpha channel, 0 if it does not.
+ * @return EINA_TRUE if ee has an alpha channel, EINA_FALSE if it does not.
  *
- * This function returns 1 if @p ee has an alpha channel, and 0 if
+ * This function returns EINA_TRUE if @p ee has an alpha channel, and EINA_FALSE if
  * it does not.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_transparent_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_transparent_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->transparent ? 1:0;
+   return ee->transparent ? EINA_TRUE : 0;
 }
 
 /**
@@ -2205,12 +2205,12 @@ ecore_evas_layer_get(const Ecore_Evas *ee)
 /**
  * Set the focus of an Ecore_Evas' window
  * @param ee The Ecore_Evas
- * @param on 1 for focus, 0 to defocus.
+ * @param on EINA_TRUE for focus, EINA_FALSE to defocus.
  *
- * This function focuses @p ee if @p on is 1, or defocuses @p ee if @p on is 0.
+ * This function focuses @p ee if @p on is EINA_TRUE, or defocuses @p ee if @p on is EINA_FALSE.
  */
 EAPI void
-ecore_evas_focus_set(Ecore_Evas *ee, int on)
+ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2225,31 +2225,31 @@ ecore_evas_focus_set(Ecore_Evas *ee, int on)
 /**
  * Query whether an Ecore_Evas' window is focused or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee if focused, 0 if not.
+ * @return EINA_TRUE if @p ee if focused, EINA_FALSE if not.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_focus_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_focus_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->prop.focused ? 1:0;
+   return ee->prop.focused ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Iconify or uniconify an Ecore_Evas' window
  * @param ee The Ecore_Evas
- * @param on 1 to iconify, 0 to uniconify.
+ * @param on EINA_TRUE to iconify, EINA_FALSE to uniconify.
  *
- * This function iconifies @p ee if @p on is 1, or uniconifies @p ee if @p on
- * is 0.
+ * This function iconifies @p ee if @p on is EINA_TRUE, or uniconifies @p ee if @p on
+ * is EINA_FALSE.
  */
 EAPI void
-ecore_evas_iconified_set(Ecore_Evas *ee, int on)
+ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2264,31 +2264,31 @@ ecore_evas_iconified_set(Ecore_Evas *ee, int on)
 /**
  * Query whether an Ecore_Evas' window is iconified or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee is iconified, 0 if not.
+ * @return EINA_TRUE if @p ee is iconified, EINA_FALSE if not.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_iconified_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_iconified_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->prop.iconified ? 1:0;
+   return ee->prop.iconified ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Set whether an Ecore_Evas' window is borderless or not
  * @param ee The Ecore_Evas
- * @param on 1 for borderless, 0 for bordered.
+ * @param on EINA_TRUE for borderless, EINA_FALSE for bordered.
  *
- * This function makes @p ee borderless if @p on is 1, or bordered if @p on
- * is 0.
+ * This function makes @p ee borderless if @p on is EINA_TRUE, or bordered if @p on
+ * is EINA_FALSE.
  */
 EAPI void
-ecore_evas_borderless_set(Ecore_Evas *ee, int on)
+ecore_evas_borderless_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2303,31 +2303,31 @@ ecore_evas_borderless_set(Ecore_Evas *ee, int on)
 /**
  * Query whether an Ecore_Evas' window is borderless or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee is borderless, 0 if not.
+ * @return EINA_TRUE if @p ee is borderless, EINA_FALSE if not.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_borderless_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_borderless_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->prop.borderless ? 1:0;
+   return ee->prop.borderless ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Tell the WM whether or not to ignore an Ecore_Evas' window
  * @param ee The Ecore_Evas
- * @param on 1 to ignore, 0 to not.
+ * @param on EINA_TRUE to ignore, EINA_FALSE to not.
  *
- * This function causes the window manager to ignore @p ee if @p on is 1,
- * or not ignore @p ee if @p on is 0.
+ * This function causes the window manager to ignore @p ee if @p on is EINA_TRUE,
+ * or not ignore @p ee if @p on is EINA_FALSE.
  */
 EAPI void
-ecore_evas_override_set(Ecore_Evas *ee, int on)
+ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2342,31 +2342,31 @@ ecore_evas_override_set(Ecore_Evas *ee, int on)
 /**
  * Query whether an Ecore_Evas' window is overridden or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee is overridden, 0 if not.
+ * @return EINA_TRUE if @p ee is overridden, EINA_FALSE if not.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_override_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_override_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->prop.override ? 1:0;
+   return ee->prop.override ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Maximize (or unmaximize) an Ecore_Evas' window
  * @param ee The Ecore_Evas
- * @param on 1 to maximize, 0 to unmaximize.
+ * @param on EINA_TRUE to maximize, EINA_FALSE to unmaximize.
  *
- * This function maximizes @p ee if @p on is 1, or unmaximizes @p ee
- * if @p on is 0.
+ * This function maximizes @p ee if @p on is EINA_TRUE, or unmaximizes @p ee
+ * if @p on is EINA_FALSE.
  */
 EAPI void
-ecore_evas_maximized_set(Ecore_Evas *ee, int on)
+ecore_evas_maximized_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2381,31 +2381,31 @@ ecore_evas_maximized_set(Ecore_Evas *ee, int on)
 /**
  * Query whether an Ecore_Evas' window is maximized or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee is maximized, 0 if not.
+ * @return EINA_TRUE if @p ee is maximized, EINA_FALSE if not.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_maximized_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_maximized_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->prop.maximized ? 1:0;
+   return ee->prop.maximized ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Set whether or not an Ecore_Evas' window is fullscreen
  * @param ee The Ecore_Evas
- * @param on 1 fullscreen, 0 not.
+ * @param on EINA_TRUE fullscreen, EINA_FALSE not.
  *
- * This function causes @p ee to be fullscreen if @p on is 1,
- * or not if @p on is 0.
+ * This function causes @p ee to be fullscreen if @p on is EINA_TRUE,
+ * or not if @p on is EINA_FALSE.
  */
 EAPI void
-ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
+ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2420,26 +2420,26 @@ ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 /**
  * Query whether an Ecore_Evas' window is fullscreen or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee is fullscreen, 0 if not.
+ * @return EINA_TRUE if @p ee is fullscreen, EINA_FALSE if not.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_fullscreen_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_fullscreen_get");
-	return 0;
+	return EINA_FALSE;
      }
-   return ee->prop.fullscreen ? 1:0;
+   return ee->prop.fullscreen ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
  * Set whether or not an Ecore_Evas' window should avoid damage
  *
  * @param ee The Ecore_Evas
- * @param on 1 to avoid damage, 0 to not
+ * @param The type of the damage management
  *
  * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
  * On expose events it will copy from the pixmap to the window.
@@ -2460,7 +2460,7 @@ ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on)
 /**
  * Query whether an Ecore_Evas' window avoids damage or not
  * @param ee The Ecore_Evas to set
- * @return 1 if @p ee avoids damage, 0 if not.
+ * @return The type of the damage management
  *
  */
 EAPI Ecore_Evas_Avoid_Damage_Type
@@ -2470,7 +2470,7 @@ ecore_evas_avoid_damage_get(const Ecore_Evas *ee)
      {
 	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
 			 "ecore_evas_avoid_damage_get");
-	return 0;
+	return ECORE_EVAS_AVOID_DAMAGE_NONE;
      }
    return ee->prop.avoid_damage;
 }
@@ -2482,7 +2482,7 @@ ecore_evas_avoid_damage_get(const Ecore_Evas *ee)
  *
  */
 EAPI void
-ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
+ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2501,16 +2501,16 @@ ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
  * @return The Ecore_Evas window's withdrawn state.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_withdrawn_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
                          "ecore_evas_withdrawn_get");
-        return 0;
+        return EINA_FALSE;
      } else
-     return ee->prop.withdrawn ? 1:0;
+     return ee->prop.withdrawn ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
@@ -2521,7 +2521,7 @@ ecore_evas_withdrawn_get(const Ecore_Evas *ee)
  *
  */
 EAPI void
-ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
+ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2541,16 +2541,16 @@ ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
  * @return The Ecore_Evas window's sticky state.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_sticky_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
                          "ecore_evas_sticky_get");
-        return 0;
+        return EINA_FALSE;
      } else
-     return ee->prop.sticky ? 1:0;
+     return ee->prop.sticky ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
@@ -2561,7 +2561,7 @@ ecore_evas_sticky_get(const Ecore_Evas *ee)
  *
  */
 EAPI void
-ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore)
+ecore_evas_ignore_events_set(Ecore_Evas *ee, Eina_Bool ignore)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2581,20 +2581,20 @@ ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore)
  * @return The Ecore_Evas window's ignore state.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_ignore_events_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
                          "ecore_evas_ignore_events_get");
-        return 0;
+        return EINA_FALSE;
      }
-   return ee->ignore_events ? 1 : 0;
+   return ee->ignore_events ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void
-ecore_evas_manual_render_set(Ecore_Evas *ee, int manual_render)
+ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2605,16 +2605,16 @@ ecore_evas_manual_render_set(Ecore_Evas *ee, int manual_render)
    ee->manual_render = manual_render;
 }
 
-EAPI int
+EAPI Eina_Bool
 ecore_evas_manual_render_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
                          "ecore_evas_manual_render_get");
-        return 0;
+        return EINA_FALSE;
      }
-   return ee->manual_render ? 1 : 0;
+   return ee->manual_render ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void
@@ -2631,7 +2631,7 @@ ecore_evas_manual_render(Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_comp_sync_set(Ecore_Evas *ee, int do_sync)
+ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2642,14 +2642,14 @@ ecore_evas_comp_sync_set(Ecore_Evas *ee, int do_sync)
    ee->no_comp_sync = !do_sync;
 }
 
-EAPI int
+EAPI Eina_Bool
 ecore_evas_comp_sync_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
         ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
                          "ecore_evas_comp_sync_get");
-        return 0;
+        return EINA_FALSE;
      }
    return !ee->no_comp_sync;
 }

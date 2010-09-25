@@ -3225,7 +3225,7 @@ ecore_evas_software_x11_window_get(const Ecore_Evas *ee __UNUSED__)
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 EAPI void
-ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
+ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 {
    ee->engine.x.direct_resize = on;
    if (ee->prop.avoid_damage)
@@ -3249,7 +3249,7 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 }
 #else
 EAPI void
-ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
 {
 }
 #endif
@@ -3260,13 +3260,13 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UN
  * FIXME: To be fixed.
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
-EAPI int
+EAPI Eina_Bool
 ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee)
 {
    return ee->engine.x.direct_resize;
 }
 #else
-EAPI int
+EAPI Eina_Bool
 ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
@@ -3456,13 +3456,13 @@ ecore_evas_gl_x11_window_get(const Ecore_Evas *ee __UNUSED__)
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI void
-ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
+ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 {
    ee->engine.x.direct_resize = on;
 }
 #else
 EAPI void
-ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
 {
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
@@ -3473,13 +3473,13 @@ ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__
  * FIXME: To be fixed.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
-EAPI int
+EAPI Eina_Bool
 ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee)
 {
    return ee->engine.x.direct_resize;
 }
 #else
-EAPI int
+EAPI Eina_Bool
 ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
@@ -3748,13 +3748,13 @@ ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee __UNUSED__)
  */
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
 EAPI void
-ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
+ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 {
    ee->engine.x.direct_resize = on;
 }
 #else
 EAPI void
-ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
 {
 }
 #endif /* ! BUILD_ECORE_EVAS_XRENDER_X11 && ! BUILD_ECORE_EVAS_XRENDER_XCB */
@@ -3765,13 +3765,13 @@ ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNU
  * FIXME: To be fixed.
  */
 #if defined (BUILD_ECORE_EVAS_XRENDER_X11) || defined (BUILD_ECORE_EVAS_XRENDER_XCB)
-EAPI int
+EAPI Eina_Bool
 ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee)
 {
    return ee->engine.x.direct_resize;
 }
 #else
-EAPI int
+EAPI Eina_Bool
 ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
@@ -3971,7 +3971,7 @@ ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee __UNUSED__)
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI void
-ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
+ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 {
    ee->engine.x.direct_resize = on;
    if (ee->prop.avoid_damage)
@@ -3995,7 +3995,7 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee, int on)
 }
 #else
 EAPI void
-ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on __UNUSED__)
+ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
 {
 }
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
@@ -4006,13 +4006,13 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee __UNUSED__, int on _
  * FIXME: To be fixed.
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
-EAPI int
+EAPI Eina_Bool
 ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee)
 {
    return ee->engine.x.direct_resize;
 }
 #else
-EAPI int
+EAPI Eina_Bool
 ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
@@ -4291,7 +4291,7 @@ ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee)
  * FIXME: To be fixed.
  */
 EAPI void
-ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, int on)
+ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_8_X11)
    ee->engine.x.direct_resize = on;
@@ -4325,7 +4325,7 @@ ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, int on)
  *
  * FIXME: To be fixed.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee)
 {
 #if defined (BUILD_ECORE_EVAS_SOFTWARE_8_X11)

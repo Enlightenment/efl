@@ -255,9 +255,9 @@ _ecore_evas_object_evas_check(const char *function, const Ecore_Evas *ee, const 
  * @param ee The Ecore_Evas to associate to @a obj
  * @param obj The object to associate to @a ee
  * @param flags The association flags.
- * @return 1 on success, 0 otherwise.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags)
 {
    Ecore_Evas *old_ee;
@@ -266,12 +266,12 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
       ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
-      return 0;
+      return EINA_FALSE;
    }
 
-   CHECK_PARAM_POINTER_RETURN("obj", obj, 0);
+   CHECK_PARAM_POINTER_RETURN("obj", obj, EINA_FALSE);
    if (!_ecore_evas_object_evas_check(__FUNCTION__, ee, obj))
-     return 0;
+     return EINA_FALSE;
 
    old_ee = _evas_object_associate_get(obj);;
    if (old_ee)
@@ -282,7 +282,7 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
      ecore_evas_object_dissociate(ee, old_obj);
 
    _ecore_evas_object_associate(ee, obj, flags);
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -290,9 +290,9 @@ ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_
  *
  * @param ee The Ecore_Evas to dissociate from @a obj
  * @param obj The object to dissociate from @a ee
- * @return 1 on success, 0 otherwise.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
 {
    Ecore_Evas *old_ee;
@@ -301,27 +301,27 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
       ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS, __FUNCTION__);
-      return 0;
+      return EINA_FALSE;
    }
 
-   CHECK_PARAM_POINTER_RETURN("obj", obj, 0);
+   CHECK_PARAM_POINTER_RETURN("obj", obj, EINA_FALSE);
    old_ee = _evas_object_associate_get(obj);
    if (ee != old_ee) {
       ERR("ERROR: trying to dissociate object that is not using "
 	  "this Ecore_Evas: %p != %p", ee, old_ee);
-      return 0;
+      return EINA_FALSE;
    }
 
    old_obj = _ecore_evas_associate_get(ee);
    if (old_obj != obj) {
       ERR("ERROR: trying to dissociate object that is not being "
 	  "used by this Ecore_Evas: %p != %p", old_obj, obj);
-      return 0;
+      return EINA_FALSE;
    }
 
    _ecore_evas_object_dissociate(ee, obj);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *
