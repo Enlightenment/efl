@@ -4,8 +4,9 @@
 #include <directfb.h>
 
 #ifdef EAPI
-#undef EAPI
+# undef EAPI
 #endif /* ifdef EAPI */
+
 #ifdef _MSC_VER
 # ifdef BUILDING_DLL
 #  define EAPI __declspec(dllexport)
@@ -160,21 +161,22 @@ struct _Ecore_DirectFB_Event_Lost_Focus
 };
 
 /* main functions */
-EAPI int                        ecore_directfb_init(const char *name);
-EAPI int                        ecore_directfb_shutdown(void);
-EAPI IDirectFB *                ecore_directfb_interface_get(void);
+EAPI int                    ecore_directfb_init(const char *name);
+EAPI int                    ecore_directfb_shutdown(void);
+EAPI IDirectFB *            ecore_directfb_interface_get(void);
+
 /* window operations */
-EAPI Ecore_DirectFB_Window *    ecore_directfb_window_new(int x, int y, int w, int h);
-EAPI void                       ecore_directfb_window_free(Ecore_DirectFB_Window *window);
-EAPI void                       ecore_directfb_window_move(Ecore_DirectFB_Window *window, int x, int y);
-EAPI void                       ecore_directfb_window_resize(Ecore_DirectFB_Window *window, int w, int h);
-EAPI void                       ecore_directfb_window_focus(Ecore_DirectFB_Window *window);
-EAPI void                       ecore_directfb_window_show(Ecore_DirectFB_Window *window);
-EAPI void                       ecore_directfb_window_hide(Ecore_DirectFB_Window *window);
-EAPI void                       ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *window, Eina_Bool set);
-EAPI void                       ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *window, Eina_Bool set);
-EAPI void                       ecore_directfb_window_size_get(Ecore_DirectFB_Window *window, int *w, int *h);
-EAPI void                       ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *window, Eina_Bool show);
+EAPI Ecore_DirectFB_Window *ecore_directfb_window_new(int x, int y, int w, int h);
+EAPI void                   ecore_directfb_window_free(Ecore_DirectFB_Window *window);
+EAPI void                   ecore_directfb_window_move(Ecore_DirectFB_Window *window, int x, int y);
+EAPI void                   ecore_directfb_window_resize(Ecore_DirectFB_Window *window, int w, int h);
+EAPI void                   ecore_directfb_window_focus(Ecore_DirectFB_Window *window);
+EAPI void                   ecore_directfb_window_show(Ecore_DirectFB_Window *window);
+EAPI void                   ecore_directfb_window_hide(Ecore_DirectFB_Window *window);
+EAPI void                   ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *window, Eina_Bool set);
+EAPI void                   ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *window, Eina_Bool set);
+EAPI void                   ecore_directfb_window_size_get(Ecore_DirectFB_Window *window, int *w, int *h);
+EAPI void                   ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *window, Eina_Bool show);
 
 #ifdef __cplusplus
 }
