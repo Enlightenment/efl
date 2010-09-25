@@ -561,7 +561,7 @@ ecore_directfb_window_focus(Ecore_DirectFB_Window *ecore_window)
 EAPI void
 ecore_directfb_window_hide(Ecore_DirectFB_Window *ecore_window)
 {
-   DFBCHECK(ecore_window->window->SetOpacity(ecore_window->window,0));
+   DFBCHECK(ecore_window->window->SetOpacity(ecore_window->window, 0));
 } /* ecore_directfb_window_hide */
 
 EAPI void
@@ -571,7 +571,7 @@ ecore_directfb_window_show(Ecore_DirectFB_Window *ecore_window)
 } /* ecore_directfb_window_show */
 
 EAPI void
-ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, int set)
+ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, Eina_Bool set)
 {
    DFBWindowOptions opts;
 
@@ -591,7 +591,7 @@ ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, int set)
 } /* ecore_directfb_window_shaped_set */
 
 EAPI void
-ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *ecore_window, int show)
+ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *ecore_window, Eina_Bool show)
 {
    if(!show)
      {
@@ -642,7 +642,7 @@ ecore_directfb_window_cursor_set(Ecore_DirectFB_Window *ecore_window, Ecore_Dire
 } /* ecore_directfb_window_cursor_set */
 
 EAPI void
-ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, int on)
+ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, Eina_Bool on)
 {
    // always release the surface (we are going to get a new one in both cases)
    DFBCHECK(ecore_window->surface->Release(ecore_window->surface));

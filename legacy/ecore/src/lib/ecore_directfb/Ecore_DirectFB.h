@@ -171,10 +171,10 @@ EAPI void                       ecore_directfb_window_resize(Ecore_DirectFB_Wind
 EAPI void                       ecore_directfb_window_focus(Ecore_DirectFB_Window *window);
 EAPI void                       ecore_directfb_window_show(Ecore_DirectFB_Window *window);
 EAPI void                       ecore_directfb_window_hide(Ecore_DirectFB_Window *window);
-EAPI void                       ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *window, int set);
-EAPI void                       ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *window, int set);
+EAPI void                       ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *window, Eina_Bool set);
+EAPI void                       ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *window, Eina_Bool set);
 EAPI void                       ecore_directfb_window_size_get(Ecore_DirectFB_Window *window, int *w, int *h);
-EAPI void                       ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *window, int show);
+EAPI void                       ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *window, Eina_Bool show);
 
 #ifdef __cplusplus
 }
