@@ -1814,6 +1814,44 @@ _elm_widget_item_cursor_style_get(const Elm_Widget_Item *item)
    return elm_object_cursor_style_get(item->view);
 }
 
+/**
+ * Set if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @note before you set if should look on theme you should define a cursor
+ * with elm_object_cursor_set(). By default it will only look for cursors
+ * provided by the engine.
+ *
+ * @param item widget item with cursor already set.
+ * @param engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well.
+ *
+ * @internal
+ */
+EAPI void
+_elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_only)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   elm_object_cursor_engine_only_set(item->view, engine_only);
+}
+
+/**
+ * Get the cursor engine only usage for this item cursor.
+ *
+ * @param item widget item with cursor already set.
+ * @return engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well. If
+ *         the object does not have a cursor set, then EINA_FALSE is returned.
+ *
+ * @internal
+ */
+EAPI Eina_Bool
+_elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   return elm_object_cursor_engine_only_get(item->view);
+}
+
 // smart object funcs
 static void
 _smart_reconfigure(Smart_Data *sd)

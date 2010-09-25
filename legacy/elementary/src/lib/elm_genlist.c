@@ -3055,6 +3055,42 @@ elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item)
 }
 
 /**
+ * Set if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @note before you set if should look on theme you should define a cursor
+ * with elm_object_cursor_set(). By default it will only look for cursors
+ * provided by the engine.
+ *
+ * @param item widget item with cursor already set.
+ * @param engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well.
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_cursor_engine_only_set(Elm_Genlist_Item *item, Eina_Bool engine_only)
+{
+   elm_widget_item_cursor_engine_only_set(item, engine_only);
+}
+
+/**
+ * Get the cursor engine only usage for this item cursor.
+ *
+ * @param item widget item with cursor already set.
+ * @return engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well. If
+ *         the object does not have a cursor set, then EINA_FALSE is returned.
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item)
+{
+   return elm_widget_item_cursor_engine_only_get(item);
+}
+
+/**
  * This sets the horizontal stretching mode
  *
  * This sets the mode used for sizing items horizontally. Valid modes are

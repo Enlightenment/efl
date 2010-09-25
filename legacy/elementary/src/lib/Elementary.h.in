@@ -674,6 +674,8 @@ extern "C" {
    EAPI void         elm_gengrid_item_cursor_unset(Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_cursor_style_set(Elm_Gengrid_Item *item, const char *style);
    EAPI const char  *elm_gengrid_item_cursor_style_get(const Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_cursor_engine_only_set(Elm_Gengrid_Item *item, Eina_Bool engine_only);
+   EAPI Eina_Bool    elm_gengrid_item_cursor_engine_only_get(const Elm_Gengrid_Item *item);
 
    EAPI void	     elm_gengrid_clear(Evas_Object *obj);
    EAPI void	    *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item);
@@ -1026,6 +1028,8 @@ extern "C" {
    EAPI void              elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style);
    EAPI const char       *elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine_only);
+   EAPI Eina_Bool         elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item);
 
    EAPI Eina_List        *elm_toolbar_item_get_all(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_get_first(Evas_Object *obj);
@@ -1069,6 +1073,8 @@ extern "C" {
    EAPI void         elm_object_cursor_unset(Evas_Object *obj);
    EAPI void         elm_object_cursor_style_set(Evas_Object *obj, const char *style);
    EAPI const char  *elm_object_cursor_style_get(const Evas_Object *obj);
+   EAPI void         elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
+   EAPI Eina_Bool    elm_object_cursor_engine_only_get(const Evas_Object *obj);
 
    typedef struct _Elm_Menu_Item Elm_Menu_Item; /**< Item of Elm_Menu. Sub-type of Elm_Widget_Item */
    EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);
@@ -1147,6 +1153,8 @@ extern "C" {
    EAPI void             elm_list_item_cursor_unset(Elm_List_Item *item);
    EAPI void             elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style);
    EAPI const char      *elm_list_item_cursor_style_get(const Elm_List_Item *item);
+   EAPI void             elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only);
+   EAPI Eina_Bool        elm_list_item_cursor_engine_only_get(const Elm_List_Item *item);
 
    EAPI void             elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void             elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
@@ -1293,6 +1301,8 @@ extern "C" {
    EAPI void              elm_genlist_item_cursor_unset(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_cursor_style_set(Elm_Genlist_Item *item, const char *style);
    EAPI const char       *elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_cursor_engine_only_set(Elm_Genlist_Item *item, Eina_Bool engine_only);
+   EAPI Eina_Bool         elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item);
 
 
    EAPI Evas_Object *elm_check_add(Evas_Object *parent);

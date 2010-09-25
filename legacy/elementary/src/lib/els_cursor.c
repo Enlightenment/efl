@@ -148,6 +148,7 @@ struct _Elm_Cursor
 #endif
    Eina_Bool visible:1;
    Eina_Bool use_engine:1;
+   Eina_Bool engine_only:1;
 };
 
 static void
@@ -200,17 +201,17 @@ _elm_cursor_set_hot_spots(Elm_Cursor *cur)
 }
 
 static void
-_elm_cursor_mouse_in(void *data, Evas *evas, Evas_Object *obj, void *event_info __UNUSED__)
+_elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Cursor *cur = data;
 
    if (cur->visible) return;
    evas_event_freeze(cur->evas);
    cur->visible = EINA_TRUE;
-   if (!cur->use_engine)
+   if ((!cur->engine_only) && (!cur->use_engine))
      {
         if (!cur->obj)
-           _elm_cursor_obj_add(obj, cur);
+           _elm_cursor_obj_add(cur->eventarea, cur);
         ecore_evas_object_cursor_set(cur->ee, cur->obj,
                                      ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
                                      cur->hot_y);
@@ -232,7 +233,7 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    if (!cur->visible) return;
    evas_event_freeze(cur->evas);
    cur->visible = EINA_FALSE;
-   if (!cur->use_engine)
+   if ((!cur->engine_only) || (!cur->use_engine))
      {
         ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
                                      cur->hot_x, cur->hot_y);
@@ -302,6 +303,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 
    cur->owner = owner;
    cur->eventarea = eventarea;
+   cur->engine_only = EINA_TRUE;
    cur->visible = EINA_FALSE;
 
    cur->cursor_name = eina_stringshare_add(cursor);
@@ -432,6 +434,8 @@ elm_object_cursor_unset(Evas_Object *obj)
  *
  * @param obj an object with cursor already set.
  * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup Cursors
  */
 EAPI void
 elm_object_cursor_style_set(Evas_Object *obj, const char *style)
@@ -466,6 +470,8 @@ elm_object_cursor_style_set(Evas_Object *obj, const char *style)
  * @param obj an object with cursor already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a cursor set, then NULL is returned.
+ *
+ * @ingroup Cursors
  */
 EAPI const char *
 elm_object_cursor_style_get(const Evas_Object *obj)
@@ -487,4 +493,42 @@ elm_cursor_theme(Elm_Cursor *cur)
       ERR("Could not apply the theme to the cursor style=%s", cur->style);
    else
       _elm_cursor_set_hot_spots(cur);
+}
+
+/**
+ * Set if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @note before you set if should look on theme you should define a cursor
+ * with elm_object_cursor_set(). By default it will only look for cursors
+ * provided by the engine.
+ *
+ * @param obj an object with cursor already set.
+ * @param engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well.
+ *
+ * @ingroup Cursors
+ */
+EAPI void
+elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only)
+{
+   ELM_CURSOR_GET_OR_RETURN(cur, obj);
+   cur->engine_only = engine_only;
+}
+
+/**
+ * Get the cursor engine only usage for this object cursor.
+ *
+ * @param obj an object with cursor already set.
+ * @return engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well. If
+ *         the object does not have a cursor set, then EINA_FALSE is returned.
+ *
+ * @ingroup Cursors
+ */
+EAPI Eina_Bool
+elm_object_cursor_engine_only_get(const Evas_Object *obj)
+{
+   ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
+   return cur->engine_only;
 }

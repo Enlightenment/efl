@@ -309,6 +309,8 @@ EAPI void             _elm_widget_item_cursor_set(Elm_Widget_Item *item, const c
 EAPI void             _elm_widget_item_cursor_unset(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style);
 EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *item);
+EAPI void             _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_only);
+EAPI Eina_Bool        _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item);
 
 /**
  * Convenience macro to create new widget item, doing casts for you.
@@ -406,6 +408,18 @@ EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *i
  */
 #define elm_widget_item_cursor_style_get(item) \
   _elm_widget_item_cursor_style_get((const Elm_Widget_Item *)item)
+/**
+ * Convenience function to change item's cursor engine_only.
+ * @see _elm_widget_item_cursor_engine_only_set()
+ */
+#define elm_widget_item_cursor_engine_only_set(item, engine_only) \
+  _elm_widget_item_cursor_engine_only_set((Elm_Widget_Item *)item, engine_only)
+/**
+ * Convenience function to query item's cursor engine_only.
+ * @see _elm_widget_item_cursor_engine_only_get()
+ */
+#define elm_widget_item_cursor_engine_only_get(item) \
+  _elm_widget_item_cursor_engine_only_get((const Elm_Widget_Item *)item)
 
 /**
  * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.
