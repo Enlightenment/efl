@@ -2124,8 +2124,13 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
         errno = 0;
 
-        if (cl->handshaking && (!ecore_con_ssl_client_init(cl)))
-          lost_client = EINA_FALSE;
+        if (cl->handshaking)
+          {
+             if (ecore_con_ssl_client_init(cl))
+               lost_client = EINA_FALSE;
+
+             _ecore_con_cl_timer_update(cl);
+          }
 
         if (!(cl->host_server->type & ECORE_CON_SSL))
           {
@@ -2265,8 +2270,12 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 
    num = svr->write_buf_size - svr->write_buf_offset;
 
-   if (svr->handshaking && (ecore_con_ssl_server_init(svr)))
-        return _ecore_con_server_kill(svr);
+   if (svr->handshaking)
+     {
+        if (ecore_con_ssl_server_init(svr))
+          return _ecore_con_server_kill(svr);
+        return;
+     }
 
    if (!(svr->type & ECORE_CON_SSL))
       count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
@@ -2297,8 +2306,14 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
    if (!cl->buf)
       return;
 
-   if (cl->handshaking && (ecore_con_ssl_client_init(cl)))
-     count = -1;        
+   if (cl->handshaking)
+     {
+        if (ecore_con_ssl_client_init(cl))
+          count = -1;
+
+        _ecore_con_cl_timer_update(cl);
+        return;
+     }
 
    if (!count)
      {
@@ -2346,8 +2361,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
         free(cl->buf);
         cl->buf = NULL;
         if (cl->fd_handler)
-           ecore_main_fd_handler_active_set(cl->fd_handler,
-                                            ECORE_FD_READ);
+           ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
      }
 }
 
