@@ -60,49 +60,49 @@ _ecore_file_path_from_env(const char *env)
 /**
  * Check if the given directory is in PATH
  * @param The name of the directory to search in PATH
- * @return 1 if the directory exist in PATH, 0 otherwise
+ * @return EINA_TRUE if the directory exist in PATH, EINA_FALSE otherwise
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_path_dir_exists(const char *in_dir)
 {
    Eina_List *l;
    char *dir;
 
-   if (!__ecore_file_path_bin) return 0;
+   if (!__ecore_file_path_bin) return EINA_FALSE;
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
 	if (strcmp(dir, in_dir))
-	  return 1;
+	  return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 }
 
 /**
  * Check if the given application is installed
  * @param  exe The name of the application
- * @return 1 if the exe is in PATH and is executable
+ * @return EINA_TRUE if the exe is in PATH and is executable, EINA_FALSE otherwise
  * 
  * This function check if the given name exist in PATH and is executable 
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_app_installed(const char *exe)
 {
    Eina_List *l;
    char *dir;
    char  buf[PATH_MAX];
 
-   if (!exe) return 0;
-   if (ecore_file_can_exec(exe)) return 1;
+   if (!exe) return EINA_FALSE;
+   if (ecore_file_can_exec(exe)) return EINA_TRUE;
 
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
 	snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
 	if (ecore_file_can_exec(buf))
-	  return 1;
+	  return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 }
 
 /**

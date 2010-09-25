@@ -101,7 +101,7 @@ ecore_file_download_abort_all(void)
  * @param  job_ret If the protocol in use is http or ftp, this parameter will be
  * filled with the job. Then you can use ecore_file_download_abort() to cancel it.
  * 
- * @return 1 if the download start or 0 on failure
+ * @return EINA_TRUE if the download start or EINA_FALSE on failure
  *
  * You must provide the full url, including 'http://', 'ftp://' or 'file://'.\n
  * If @p dst already exist it will not be overwritten and the function will fail.\n
@@ -109,7 +109,7 @@ ecore_file_download_abort_all(void)
  * The @p status param in the @p completion_cb() will be 0 if the download goes well or
  * 1 in case of failure.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_download(const char *url, const char *dst,
 		    void (*completion_cb)(void *data, const char *file, int status),
 		    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
@@ -121,10 +121,10 @@ ecore_file_download(const char *url, const char *dst,
    if (!ecore_file_is_dir(dir))
      {
 	free(dir);
-	return 0;
+	return EINA_FALSE;
      }
    free(dir);
-   if (ecore_file_exists(dst)) return 0;
+   if (ecore_file_exists(dst)) return EINA_FALSE;
 
    /* FIXME: Add handlers for http and ftp! */
    if (!strncmp(url, "file://", 7))
@@ -147,41 +147,41 @@ ecore_file_download(const char *url, const char *dst,
 
 	job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data);
 	if(job_ret) *job_ret = job;
-	return !!job;
+	return job ? EINA_TRUE : EINA_FALSE;
      }
 # endif
    else
      {
-	return 0;
+	return EINA_FALSE;
      }
 #else
    completion_cb = NULL;
    progress_cb = NULL;
    data = NULL;
-   return 0;
+   return EINA_FALSE;
 #endif /* BUILD_ECORE_CON */
 }
 
 /**
  * Check if the given protocol is available
  * @param  protocol The protocol to check
- * @return 1 if protocol is handled or 0 if not
+ * @return EINA_TRUE if protocol is handled, EINA_FALSE otherwise
  *
  * @p protocol can be 'http://', 'ftp://' or 'file://'.\n
  * Ecore must be compiled with CURL to handle http and ftp protocols.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_file_download_protocol_available(const char *protocol)
 {
 #ifdef BUILD_ECORE_CON
-   if (!strncmp(protocol, "file://", 7)) return 1;
+   if (!strncmp(protocol, "file://", 7)) return EINA_TRUE;
 # ifdef HAVE_CURL
-   else if (!strncmp(protocol, "http://", 7)) return 1;
-   else if (!strncmp(protocol, "ftp://", 6)) return 1;
+   else if (!strncmp(protocol, "http://", 7)) return EINA_TRUE;
+   else if (!strncmp(protocol, "ftp://", 6)) return EINA_TRUE;
 # endif
 #endif /* BUILD_ECORE_CON */
 
-   return 0;
+   return EINA_FALSE;
 }
 
 #ifdef BUILD_ECORE_CON

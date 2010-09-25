@@ -105,13 +105,13 @@ EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *ecore_f
 
 /* Path */
 
-EAPI int        ecore_file_path_dir_exists(const char *in_dir);
-EAPI int        ecore_file_app_installed(const char *exe);
+EAPI Eina_Bool  ecore_file_path_dir_exists(const char *in_dir);
+EAPI Eina_Bool  ecore_file_app_installed(const char *exe);
 EAPI Eina_List *ecore_file_app_list(void);
 
 /* Download */
 
-EAPI int  ecore_file_download(const char *url,
+EAPI Eina_Bool ecore_file_download(const char *url,
                               const char *dst, 
                               void (*completion_cb)(void *data,
                                                     const char *file,
@@ -126,7 +126,7 @@ EAPI int  ecore_file_download(const char *url,
                               Ecore_File_Download_Job **job_ret);
 EAPI void ecore_file_download_abort_all(void);  
 EAPI void ecore_file_download_abort(Ecore_File_Download_Job *job);
-EAPI int  ecore_file_download_protocol_available(const char *protocol);
+EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);
 
 #ifdef __cplusplus
 }
