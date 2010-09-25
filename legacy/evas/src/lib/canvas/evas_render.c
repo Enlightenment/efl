@@ -135,13 +135,14 @@ _evas_render_has_map(Evas_Object *obj)
 {
    return ((!((obj->func->can_map) && (obj->func->can_map(obj)))) &&
            ((obj->cur.map) && (obj->cur.usemap)));
+//   return ((obj->cur.map) && (obj->cur.usemap));
 }
 
 static Eina_Bool
 _evas_render_had_map(Evas_Object *obj)
 {
-//   return ((!obj->prev.map) && (obj->prev.usemap));
-   return ((!obj->cur.map) && (obj->prev.usemap));
+   return ((obj->prev.map) && (obj->prev.usemap));
+//   return ((!obj->cur.map) && (obj->prev.usemap));
 }
 
 static Eina_Bool
@@ -311,7 +312,9 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         if (obj->changed)
           {
              if (map != hmap)
-                *redraw_all = 1;
+               {
+                  *redraw_all = 1;
+               }
              evas_object_clip_recalc(obj);
              if ((obj->restack) &&
                  (is_active) && (!obj->clip.clipees) &&
@@ -340,8 +343,18 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 //        eina_array_push(restack_objects, obj);
         _evas_render_prev_cur_clip_cache_add(e, obj);
         if (obj->changed)
-          {   
-             if (map != hmap) *redraw_all = 1;
+          {
+             if (hmap)
+               {
+                  if (!map)
+                    {
+                       if ((obj->cur.map) && (obj->cur.usemap)) map = 1;
+                    }
+               }
+             if (map != hmap)
+               {
+                  *redraw_all = 1;
+               }
           }
      }
 
@@ -930,7 +943,8 @@ evas_render_updates_internal(Evas *e,
                                               &e->render_objects,
                                               &redraw_all);
 
-   _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects, &e->delete_objects, &e->render_objects);
+   _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
+                              &e->delete_objects, &e->render_objects);
 
    /* phase 2. force updates for restacks */
    for (i = 0; i < e->restack_objects.count; ++i)
@@ -945,24 +959,24 @@ evas_render_updates_internal(Evas *e,
    /* phase 3. add exposes */
    EINA_LIST_FREE(e->damages, r)
      {
-	e->engine.func->output_redraws_rect_add(e->engine.data.output,
-					       r->x, r->y, r->w, r->h);
-	eina_rectangle_free(r);
+        e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                r->x, r->y, r->w, r->h);
+        eina_rectangle_free(r);
      }
    /* phase 4. output & viewport changes */
    if (e->viewport.changed)
      {
-	e->engine.func->output_redraws_rect_add(e->engine.data.output,
-						0, 0,
-						e->output.w, e->output.h);
+        e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                0, 0,
+                                                e->output.w, e->output.h);
      }
    if (e->output.changed)
      {
-	e->engine.func->output_resize(e->engine.data.output,
-				      e->output.w, e->output.h);
-	e->engine.func->output_redraws_rect_add(e->engine.data.output,
-						0, 0,
-						e->output.w, e->output.h);
+        e->engine.func->output_resize(e->engine.data.output,
+                                      e->output.w, e->output.h);
+        e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                0, 0,
+                                                e->output.w, e->output.h);
      }
    if ((e->output.w != e->viewport.w) || (e->output.h != e->viewport.h))
      {
@@ -971,7 +985,7 @@ evas_render_updates_internal(Evas *e,
    if (redraw_all)
      {
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                0, 0,
+                                                0, 0, 
                                                 e->output.w, e->output.h);
      }
    /* phase 5. add obscures */
@@ -1006,12 +1020,14 @@ evas_render_updates_internal(Evas *e,
      {
 	unsigned int offset = 0;
 
-	alpha = e->engine.func->canvas_alpha_get(e->engine.data.output, e->engine.data.context);
+	alpha = e->engine.func->canvas_alpha_get(e->engine.data.output, 
+                                                 e->engine.data.context);
 
 	while ((surface =
-		e->engine.func->output_redraws_next_update_get(e->engine.data.output,
-							       &ux, &uy, &uw, &uh,
-							       &cx, &cy, &cw, &ch)))
+		e->engine.func->output_redraws_next_update_get
+                (e->engine.data.output,
+                    &ux, &uy, &uw, &uh,
+                    &cx, &cy, &cw, &ch)))
 	  {
 	     int off_x, off_y;
 
@@ -1032,41 +1048,46 @@ evas_render_updates_internal(Evas *e,
 	       {
 		  Evas_Object *obj;
 
-		  obj = (Evas_Object *) eina_array_data_get(&e->obscuring_objects, i);
+		  obj = (Evas_Object *)eina_array_data_get
+                     (&e->obscuring_objects, i);
 		  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
 		    {
 		       eina_array_push(&e->temporary_objects, obj);
-
+                       
 		       /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
-		       if (alpha)
-			 {
-			    if (evas_object_is_opaque(obj))
-			      e->engine.func->context_cutout_add(e->engine.data.output,
-								 e->engine.data.context,
-								 obj->cur.cache.clip.x + off_x,
-								 obj->cur.cache.clip.y + off_y,
-								 obj->cur.cache.clip.w,
-								 obj->cur.cache.clip.h);
+                       if (alpha)
+                         {
+                            if (evas_object_is_opaque(obj))
+                               e->engine.func->context_cutout_add
+                               (e->engine.data.output,
+                                   e->engine.data.context,
+                                   obj->cur.cache.clip.x + off_x,
+                                   obj->cur.cache.clip.y + off_y,
+                                   obj->cur.cache.clip.w,
+                                   obj->cur.cache.clip.h);
 			    else
 			      {
 				 if (obj->func->get_opaque_rect)
 				   {
 				      Evas_Coord obx, oby, obw, obh;
 
-				      obj->func->get_opaque_rect(obj, &obx, &oby, &obw, &obh);
+				      obj->func->get_opaque_rect
+                                         (obj, &obx, &oby, &obw, &obh);
 				      if ((obw > 0) && (obh > 0))
 					{
 					   obx += off_x;
 					   oby += off_y;
-					   RECTS_CLIP_TO_RECT(obx, oby, obw, obh,
-							      obj->cur.cache.clip.x + off_x,
-							      obj->cur.cache.clip.y + off_y,
-							      obj->cur.cache.clip.w,
-							      obj->cur.cache.clip.h);
-					   e->engine.func->context_cutout_add(e->engine.data.output,
-									      e->engine.data.context,
-									      obx, oby,
-									      obw, obh);
+					   RECTS_CLIP_TO_RECT
+                                              (obx, oby, obw, obh,
+                                                  obj->cur.cache.clip.x + off_x,
+                                                  obj->cur.cache.clip.y + off_y,
+                                                  obj->cur.cache.clip.w,
+                                                  obj->cur.cache.clip.h);
+					   e->engine.func->context_cutout_add
+                                              (e->engine.data.output,
+                                                  e->engine.data.context,
+                                                  obx, oby,
+                                                  obw, obh);
 					}
 				   }
 			      }
@@ -1078,9 +1099,14 @@ evas_render_updates_internal(Evas *e,
 		  e->engine.func->context_clip_set(e->engine.data.output,
 						   e->engine.data.context,
 						   ux, uy, uw, uh);
-		  e->engine.func->context_color_set(e->engine.data.output, e->engine.data.context, 0, 0, 0, 0);
-		  e->engine.func->context_multiplier_unset(e->engine.data.output, e->engine.data.context);
-		  e->engine.func->context_render_op_set(e->engine.data.output, e->engine.data.context, EVAS_RENDER_COPY);
+		  e->engine.func->context_color_set(e->engine.data.output, 
+                                                    e->engine.data.context, 
+                                                    0, 0, 0, 0);
+		  e->engine.func->context_multiplier_unset
+                     (e->engine.data.output, e->engine.data.context);
+		  e->engine.func->context_render_op_set(e->engine.data.output, 
+                                                        e->engine.data.context,
+                                                        EVAS_RENDER_COPY);
 		  e->engine.func->rectangle_draw(e->engine.data.output,
 						 e->engine.data.context,
 						 surface,

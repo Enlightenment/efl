@@ -70,7 +70,7 @@ static inline Evas_Map *
 _evas_map_new(int count)
 {
    int i;
-   Evas_Map *m = calloc(1, sizeof(Evas_Map) + count * sizeof(Evas_Map_Point));
+   Evas_Map *m = calloc(1, sizeof(Evas_Map) + (count * sizeof(Evas_Map_Point)));
    if (!m) return NULL;
    m->count = count;
    m->persp.foc = 0;
@@ -448,14 +448,16 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
    if (!obj->cur.map)
      {
         obj->cur.map = _evas_map_dup(map);
-        obj->prev.map = NULL;
         if (obj->cur.usemap)
            evas_object_mapped_clip_across_mark(obj);
      }
    else
      {
-	_evas_map_copy(obj->cur.map, map);
-        obj->prev.map = NULL;
+        Evas_Map *omap = obj->cur.map;
+        obj->cur.map = _evas_map_new(4);
+        memcpy(obj->cur.map, omap, sizeof(Evas_Map) + (4 * sizeof(Evas_Map_Point)));
+        _evas_map_copy(obj->cur.map, map);
+        free(omap);
      }
    _evas_map_calc_map_geometry(obj);
 }
