@@ -3,6 +3,7 @@
 
 #define SIG_CHILD_ADDED "child,added"
 #define SIG_CHILD_REMOVED "child,removed"
+
 /**
  * @defgroup Box Box
  *
@@ -766,4 +767,20 @@ elm_box_transition_free(void *data)
         box_data->animator = NULL;
      }
    free(data);
+}
+
+/**
+ * Retrieve the list of children packed into an elm_box
+ *
+ * @param obj The Elm_Box
+ *
+ * @ingroup Box
+ */
+EAPI const Eina_List *
+elm_box_children_get(Evas_Object *obj) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return evas_object_box_children_get(wd->box);
 }
