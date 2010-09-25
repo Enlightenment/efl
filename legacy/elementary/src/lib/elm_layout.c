@@ -340,7 +340,7 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
  * objects via edje_object_part_swallow() for example. Use 
  * elm_layout_content_set() instead so child object handling and sizing is
  * done properly. This is more intended for setting text, emitting signals,
- * hooking to singal callbacks etc.
+ * hooking to signal callbacks etc.
  *
  * @return A Evas_Object with the edje layout settings loaded
  * with function elm_layout_file_set
