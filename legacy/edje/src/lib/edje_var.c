@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include "edje_private.h"
 
 static Eina_Bool _edje_var_timer_cb(void *data);

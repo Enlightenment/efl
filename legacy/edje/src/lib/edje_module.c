@@ -1,37 +1,3 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# include <stddef.h>
-# ifdef  __cplusplus
-extern "C"
-# endif
-void *alloca (size_t);
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <libgen.h>
-
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
-#include <Eina.h>
-#include <Ecore_File.h>
-
-#include "Edje.h"
 #include "edje_private.h"
 
 Eina_Hash *_registered_modules = NULL;

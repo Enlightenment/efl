@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include "edje_private.h"
 
 static int _injob = 0;

@@ -1,6 +1,3 @@
-#include <string.h>
-#include <ctype.h>
-
 #include "edje_private.h"
 
 typedef struct _Edje_Box_Layout Edje_Box_Layout;

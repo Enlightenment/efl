@@ -1,6 +1,3 @@
-#include <string.h>
-#include <math.h>
-
 #include "edje_private.h"
 
 #define FLAG_NONE 0

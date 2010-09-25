@@ -1,30 +1,6 @@
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include <string.h>
-
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# include <stddef.h>
-# ifdef  __cplusplus
-extern "C"
-# endif
-void *alloca (size_t);
-#endif
-
 #include "edje_private.h"
 
 #ifdef HAVE_ECORE_IMF
-#include <Ecore_IMF_Evas.h>
 
 static int _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
 static Eina_Bool _edje_entry_imf_event_commit_cb(void *data, int type, void *event);

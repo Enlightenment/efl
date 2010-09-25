@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include "edje_private.h"
 
 #ifdef EDJE_PROGRAM_CACHE

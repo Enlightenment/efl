@@ -1,5 +1,3 @@
-#include <time.h>
-
 #include "edje_private.h"
 
 static Edje_Version _version = { VMAJ, VMIN, VMIC, VREV };

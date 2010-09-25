@@ -7,27 +7,6 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
-#include <string.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include <errno.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-#endif
-
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#endif
-
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
 #include "edje_private.h"
 
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT

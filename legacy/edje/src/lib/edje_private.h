@@ -5,6 +5,10 @@
 # include <config.h>
 #endif
 
+#ifndef _WIN32
+# define _GNU_SOURCE
+#endif
+
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
@@ -19,27 +23,43 @@
 void *alloca (size_t);
 #endif
 
-#ifdef HAVE_EVIL
-# include <Evil.h>
-#endif
-
-#include <Eina.h>
-#include <Evas.h>
-#include <Ecore.h>
-#ifdef HAVE_ECORE_IMF
-# include <Ecore_IMF.h>
-#endif
-#include <Eet.h>
-#include <Embryo.h>
+#include <string.h>
+#include <limits.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <sys/time.h>
-
-#include "Edje.h"
+#include <errno.h>
+#include <libgen.h>
 
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
 #include <setjmp.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
+
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#include <Eina.h>
+#include <Eet.h>
+#include <Evas.h>
+#include <Ecore.h>
+#include <Ecore_File.h>
+#ifdef HAVE_ECORE_IMF
+# include <Ecore_IMF.h>
+# include <Ecore_IMF_Evas.h>
+#endif
+#include <Embryo.h>
+
+#include "Edje.h"
 
 EAPI extern int _edje_default_log_dom ; 
 
