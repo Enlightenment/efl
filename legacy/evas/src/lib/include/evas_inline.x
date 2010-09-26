@@ -12,7 +12,8 @@ evas_object_was_visible(Evas_Object *obj)
 {
    if ((obj->prev.visible) &&
        ((obj->prev.cache.clip.visible) || (obj->smart.smart)) &&
-       (obj->prev.cache.clip.a > 0))
+       ((obj->prev.cache.clip.a > 0 && obj->prev.render_op == EVAS_RENDER_BLEND)
+       || obj->prev.render_op != EVAS_RENDER_BLEND))
      {
 	if (obj->func->was_visible)
 	  return obj->func->was_visible(obj);
@@ -62,6 +63,8 @@ evas_object_is_opaque(Evas_Object *obj)
 	  return obj->func->is_opaque(obj);
 	return 1;
      }
+   if (obj->cur.render_op == EVAS_RENDER_COPY)
+     return 1;
    return 0;
 }
 
@@ -88,7 +91,8 @@ evas_object_is_visible(Evas_Object *obj)
 {
    if ((obj->cur.visible) &&
        ((obj->cur.cache.clip.visible) || (obj->smart.smart)) &&
-       (obj->cur.cache.clip.a > 0))
+       ((obj->cur.cache.clip.a > 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
+       || obj->cur.render_op != EVAS_RENDER_BLEND))
      {
 	if (obj->func->is_visible)
 	  return obj->func->is_visible(obj);
@@ -196,7 +200,7 @@ evas_object_clip_recalc(Evas_Object *obj)
      }
 ////   cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
 ////   cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
-   if (obj->cur.color.a == 0) cvis = 0;
+   if (obj->cur.color.a == 0 && obj->cur.render_op == EVAS_RENDER_BLEND) cvis = 0;
    else cvis = obj->cur.visible;
    cr = obj->cur.color.r; cg = obj->cur.color.g;
    cb = obj->cur.color.b; ca = obj->cur.color.a;
@@ -223,7 +227,7 @@ evas_object_clip_recalc(Evas_Object *obj)
 	cb = (cb * (nb + 1)) >> 8;
 	ca = (ca * (na + 1)) >> 8;
      }
-   if ((ca == 0) || (cw <= 0) || (ch <= 0)) cvis = 0;
+   if ((ca == 0 && obj->cur.render_op == EVAS_RENDER_BLEND) || (cw <= 0) || (ch <= 0)) cvis = 0;
    obj->cur.cache.clip.x = cx;
    obj->cur.cache.clip.y = cy;
    obj->cur.cache.clip.w = cw;

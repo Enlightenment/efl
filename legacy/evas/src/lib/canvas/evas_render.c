@@ -1158,7 +1158,7 @@ evas_render_updates_internal(Evas *e,
 		      (!obj->delete_me) &&
 		      (obj->cur.cache.clip.visible) &&
 //		      (!obj->smart.smart) &&
-		      (obj->cur.color.a > 0))
+		      ((obj->cur.color.a > 0 || obj->cur.render_op != EVAS_RENDER_BLEND)))
 		    {
 		       int x, y, w, h;
 
