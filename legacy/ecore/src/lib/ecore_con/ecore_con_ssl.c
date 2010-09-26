@@ -592,6 +592,9 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 
    if (num == GNUTLS_E_REHANDSHAKE)
      {
+        WRN("Rehandshake request ignored");
+        return 0;
+
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
         if (!_ecore_con_ssl_server_init_gnutls(svr))
@@ -623,6 +626,9 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 
    if (num == GNUTLS_E_REHANDSHAKE)
      {
+         WRN("Rehandshake request ignored");
+         return 0;
+/* this is only partly functional I think? */
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
         if (!_ecore_con_ssl_server_init_gnutls(svr))
@@ -833,10 +839,14 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
 
    if (num == GNUTLS_E_REHANDSHAKE)
      {
+        WRN("Rehandshake request ignored");
+        return 0;
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
         if (!_ecore_con_ssl_client_init_gnutls(cl))
           return 0;
+       WRN("Rehandshake request ignored");
+       return 0;
      }
    else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
       return 0;
@@ -864,6 +874,8 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
 
    if (num == GNUTLS_E_REHANDSHAKE)
      {
+        WRN("Rehandshake request ignored");
+        return 0;
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
         if (!_ecore_con_ssl_client_init_gnutls(cl))
