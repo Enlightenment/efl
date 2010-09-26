@@ -139,11 +139,17 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
      {
 	ok = edje_object_file_set(o, file, buf2);
 	if (ok) return 1;
+        else
+          DBG("could not set theme group '%s' from file '%s': %s",
+              buf2, file, edje_load_error_str(edje_object_load_error_get(o)));
      }
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/default", clas, group);
    file = _elm_theme_group_file_find(th, buf2);
    if (!file) return 0;
    ok = edje_object_file_set(o, file, buf2);
+   if (!ok)
+     DBG("could not set theme group '%s' from file '%s': %s",
+         buf2, file, edje_load_error_str(edje_object_load_error_get(o)));
    return ok;
 }
 

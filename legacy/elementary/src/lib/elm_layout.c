@@ -223,6 +223,9 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
    if (!wd) return EINA_FALSE;
    Eina_Bool ret = edje_object_file_set(wd->lay, file, group);
    if (ret) _request_sizing_eval(wd);
+   else DBG("failed to set edje file '%s', group '%s': %s",
+            file, group,
+            edje_load_error_str(edje_object_load_error_get(wd->lay)));
    return ret;
 }
 
