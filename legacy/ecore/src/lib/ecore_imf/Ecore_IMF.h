@@ -275,7 +275,7 @@ struct _Ecore_IMF_Context_Class
    void (*cursor_position_set) (Ecore_IMF_Context *ctx, int cursor_pos);
    void (*use_preedit_set)     (Ecore_IMF_Context *ctx, int use_preedit);
    void (*input_mode_set)      (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
-   int  (*filter_event)        (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
+   Eina_Bool (*filter_event)   (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -311,16 +311,16 @@ EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context
 EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos);
 EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, int use_preedit);
-EAPI void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, int (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
+EAPI void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
 EAPI void                          ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
 EAPI Ecore_IMF_Input_Mode          ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx);
-EAPI int                           ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
+EAPI Eina_Bool                     ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
 
 /* plugin specific functions */
 EAPI Ecore_IMF_Context            *ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc);
 EAPI void                          ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data);
 EAPI void                         *ecore_imf_context_data_get(Ecore_IMF_Context *ctx);
-EAPI int                           ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
+EAPI Eina_Bool                     ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
 EAPI void                          ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
