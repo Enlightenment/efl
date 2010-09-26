@@ -679,14 +679,12 @@ ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
                                                unsigned int   priority)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_window_prop_card32_set(
-      win,
-      ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
-      &priority,
-      1);
+   ecore_x_window_prop_card32_set(win,
+                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
+                                  &priority, 1);
 } /* ecore_x_e_illume_quickpanel_priority_major_set */
 
-EAPI Eina_Bool
+EAPI int 
 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -695,9 +693,9 @@ ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
    if (!ecore_x_window_prop_card32_get(win,
                                        ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
                                        &val, 1))
-      return EINA_FALSE;
+      return 0;
 
-   return val ? EINA_TRUE : EINA_FALSE;
+   return val;
 } /* ecore_x_e_illume_quickpanel_priority_major_get */
 
 EAPI void
@@ -705,14 +703,12 @@ ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
                                                unsigned int   priority)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_window_prop_card32_set(
-      win,
-      ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
-      &priority,
-      1);
+   ecore_x_window_prop_card32_set(win,
+                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
+                                  &priority, 1);
 } /* ecore_x_e_illume_quickpanel_priority_minor_set */
 
-EAPI Eina_Bool
+EAPI int 
 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -721,9 +717,9 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
    if (!ecore_x_window_prop_card32_get(win,
                                        ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
                                        &val, 1))
-      return EINA_FALSE;
+      return 0;
 
-   return val ? EINA_TRUE : EINA_FALSE;
+   return val;
 } /* ecore_x_e_illume_quickpanel_priority_minor_get */
 
 EAPI void
@@ -753,15 +749,10 @@ EAPI void
 ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_client_message32_send(
-      win,
-      ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE,
-      ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
-      1,
-      0,
-      0,
-      0,
-      0);
+   ecore_x_client_message32_send(win,
+                                 ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE, 
+                                 1, 0, 0, 0, 0);
 } /* ecore_x_e_illume_quickpanel_position_update_send */
 
 EAPI void

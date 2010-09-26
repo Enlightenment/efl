@@ -2261,19 +2261,15 @@ EAPI void                                 ecore_x_e_illume_quickpanel_state_send
    Ecore_X_Illume_Quickpanel_State state);
 EAPI void                                 ecore_x_e_illume_quickpanel_state_toggle(
    Ecore_X_Window win);
-EAPI void
-                                          ecore_x_e_illume_quickpanel_priority_major_set(
+EAPI void                                 ecore_x_e_illume_quickpanel_priority_major_set(
    Ecore_X_Window win,
    unsigned int   priority);
-EAPI Eina_Bool
-                                          ecore_x_e_illume_quickpanel_priority_major_get(
+EAPI int                                  ecore_x_e_illume_quickpanel_priority_major_get(
    Ecore_X_Window win);
-EAPI void
-                                          ecore_x_e_illume_quickpanel_priority_minor_set(
+EAPI void                                 ecore_x_e_illume_quickpanel_priority_minor_set(
    Ecore_X_Window win,
    unsigned int   priority);
-EAPI Eina_Bool
-                                          ecore_x_e_illume_quickpanel_priority_minor_get(
+EAPI int                                  ecore_x_e_illume_quickpanel_priority_minor_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_illume_quickpanel_zone_set(
    Ecore_X_Window win,
