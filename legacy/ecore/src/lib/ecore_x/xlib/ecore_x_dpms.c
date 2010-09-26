@@ -4,7 +4,7 @@
 
 #include "ecore_x_private.h"
 
-static int _dpms_available;
+static Eina_Bool _dpms_available = EINA_FALSE;
 
 void
 _ecore_x_dpms_init(void)
@@ -16,12 +16,12 @@ _ecore_x_dpms_init(void)
    _dpms_minor = 0;
 
    if (DPMSGetVersion(_ecore_x_disp, &_dpms_major, &_dpms_minor))
-      _dpms_available = 1;
+      _dpms_available = EINA_TRUE;
    else
-      _dpms_available = 0;
+      _dpms_available = EINA_FALSE;
 
 #else /* ifdef ECORE_XDPMS */
-   _dpms_available = 0;
+   _dpms_available = EINA_FALSE;
 #endif /* ifdef ECORE_XDPMS */
 } /* _ecore_x_dpms_init */
 
@@ -36,7 +36,7 @@ _ecore_x_dpms_init(void)
  * @return @c 1 if the X DPMS extension is available, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_query(void)
 {
    return _dpms_available;
@@ -47,14 +47,14 @@ ecore_x_dpms_query(void)
  * @return @c 1 if the X server is capable of DPMS, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_capable_get(void)
 {
 #ifdef ECORE_XDPMS
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return DPMSCapable(_ecore_x_disp);
+   return DPMSCapable(_ecore_x_disp) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XDPMS */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XDPMS */
 } /* ecore_x_dpms_capable_get */
 
@@ -63,7 +63,7 @@ ecore_x_dpms_capable_get(void)
  * @return @c 1 if DPMS is enabled, @c 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_enabled_get(void)
 {
 #ifdef ECORE_XDPMS
@@ -72,9 +72,9 @@ ecore_x_dpms_enabled_get(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    DPMSInfo(_ecore_x_disp, &power_lvl, &state);
-   return state;
+   return state ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XDPMS */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XDPMS */
 } /* ecore_x_dpms_enabled_get */
 
@@ -122,16 +122,16 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
  * @param off     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_timeouts_set(unsigned int standby,
                           unsigned int suspend,
                           unsigned int off)
 {
 #ifdef ECORE_XDPMS
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return DPMSSetTimeouts(_ecore_x_disp, standby, suspend, off);
+   return DPMSSetTimeouts(_ecore_x_disp, standby, suspend, off) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XDPMS */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XDPMS */
 } /* ecore_x_dpms_timeouts_set */
 

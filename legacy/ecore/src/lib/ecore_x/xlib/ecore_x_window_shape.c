@@ -271,7 +271,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
 } /* ecore_x_window_shape_rectangles_get */
 
 EAPI void
-ecore_x_window_shape_events_select(Ecore_X_Window win, int on)
+ecore_x_window_shape_events_select(Ecore_X_Window win, Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (on)

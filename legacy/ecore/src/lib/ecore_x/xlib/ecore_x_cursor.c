@@ -6,7 +6,7 @@
 
 #include "ecore_x_private.h"
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_cursor_color_supported_get(void)
 {
    return _ecore_x_xcursor;

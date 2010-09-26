@@ -12,7 +12,7 @@
 #include "Ecore_X.h"
 #include <string.h>
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_test_fake_key_down(const char *key)
 {
 #ifdef ECORE_XTEST
@@ -26,21 +26,21 @@ ecore_x_test_fake_key_down(const char *key)
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-           return 0;
+           return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
-      return 0;
+      return EINA_FALSE;
 
-   return XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0);
+   return XTestFakeKeyEvent(_ecore_x_disp, keycode, 1, 0) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XTEST */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XTEST */
 } /* ecore_x_test_fake_key_down */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_test_fake_key_up(const char *key)
 {
 #ifdef ECORE_XTEST
@@ -54,21 +54,21 @@ ecore_x_test_fake_key_up(const char *key)
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-           return 0;
+           return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
-      return 0;
+      return EINA_FALSE;
 
-   return XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0);
+   return XTestFakeKeyEvent(_ecore_x_disp, keycode, 0, 0) ? EINA_TRUE : EINA_FALSE;
 #else /* ifdef ECORE_XTEST */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XTEST */
 } /* ecore_x_test_fake_key_up */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_test_fake_key_press(const char *key)
 {
 #ifdef ECORE_XTEST
@@ -83,7 +83,7 @@ ecore_x_test_fake_key_press(const char *key)
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-           return 0;
+           return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
         if (XKeycodeToKeysym(_ecore_x_disp, keycode, 0) != keysym)
@@ -129,9 +129,9 @@ ecore_x_test_fake_key_press(const char *key)
       XTestFakeKeyEvent(_ecore_x_disp,
                         XKeysymToKeycode(_ecore_x_disp, XK_Shift_L), 0, 0);
 
-   return 1;
+   return EINA_TRUE;
 #else /* ifdef ECORE_XTEST */
-   return 0;
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XTEST */
 } /* ecore_x_test_fake_key_press */
 

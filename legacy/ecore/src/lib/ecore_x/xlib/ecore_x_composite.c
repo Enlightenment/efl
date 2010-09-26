@@ -5,12 +5,12 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
-static int _composite_available;
+static Eina_Bool _composite_available = EINA_FALSE;
 
 void
 _ecore_x_composite_init(void)
 {
-   _composite_available = 0;
+   _composite_available = EINA_FALSE;
 
 #ifdef ECORE_XCOMPOSITE
    int major, minor;
@@ -23,7 +23,7 @@ _ecore_x_composite_init(void)
 #  ifdef ECORE_XFIXES
              if (XFixesQueryVersion(_ecore_x_disp, &major, &minor))
                {
-                  _composite_available = 1;
+                  _composite_available = EINA_TRUE;
                }
 #  endif
           }
@@ -32,7 +32,7 @@ _ecore_x_composite_init(void)
 #endif
 } /* _ecore_x_composite_init */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_composite_query(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

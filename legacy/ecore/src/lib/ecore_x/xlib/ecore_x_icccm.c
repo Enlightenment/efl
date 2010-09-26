@@ -125,12 +125,13 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
 
 EAPI void
 ecore_x_icccm_hints_set(Ecore_X_Window win,
-                        int accepts_focus,
+                        Eina_Bool accepts_focus,
                         Ecore_X_Window_State_Hint initial_state,
                         Ecore_X_Pixmap icon_pixmap,
                         Ecore_X_Pixmap icon_mask,
                         Ecore_X_Window icon_window,
-                        Ecore_X_Window window_group, int is_urgent)
+                        Ecore_X_Window window_group, 
+                        Eina_Bool is_urgent)
 {
    XWMHints *hints;
 
@@ -179,20 +180,21 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
    XFree(hints);
 } /* ecore_x_icccm_hints_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_icccm_hints_get(Ecore_X_Window win,
-                        int *accepts_focus,
+                        Eina_Bool *accepts_focus,
                         Ecore_X_Window_State_Hint *initial_state,
                         Ecore_X_Pixmap *icon_pixmap,
                         Ecore_X_Pixmap *icon_mask,
                         Ecore_X_Window *icon_window,
-                        Ecore_X_Window *window_group, int *is_urgent)
+                        Ecore_X_Window *window_group,
+                        Eina_Bool *is_urgent)
 {
    XWMHints *hints;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (accepts_focus)
-      *accepts_focus = 1;
+      *accepts_focus = EINA_TRUE;
 
    if (initial_state)
       *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
@@ -210,7 +212,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
       *window_group = 0;
 
    if (is_urgent)
-      *is_urgent = 0;
+      *is_urgent = EINA_FALSE;
 
    hints = XGetWMHints(_ecore_x_disp, win);
    if (hints)
@@ -218,9 +220,9 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
         if ((hints->flags & InputHint) && (accepts_focus))
           {
              if (hints->input)
-                *accepts_focus = 1;
+                *accepts_focus = EINA_TRUE;
              else
-                *accepts_focus = 0;
+                *accepts_focus = EINA_FALSE;
           }
 
         if ((hints->flags & StateHint) && (initial_state))
@@ -246,18 +248,18 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
            *window_group = hints->window_group;
 
         if ((hints->flags & XUrgencyHint) && (is_urgent))
-           *is_urgent = 1;
+           *is_urgent = EINA_TRUE;
 
         XFree(hints);
-        return 1;
+        return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_icccm_hints_get */
 
 EAPI void
 ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
-                                 int request_pos,
+                                 Eina_Bool request_pos,
                                  Ecore_X_Gravity gravity,
                                  int min_w, int min_h,
                                  int max_w, int max_h,
@@ -322,9 +324,9 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
    XSetWMNormalHints(_ecore_x_disp, win, &hint);
 } /* ecore_x_icccm_size_pos_hints_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
-                                 int *request_pos,
+                                 Eina_Bool *request_pos,
                                  Ecore_X_Gravity *gravity,
                                  int *min_w, int *min_h,
                                  int *max_w, int *max_h,
@@ -343,15 +345,15 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
-      return 0;
+      return EINA_FALSE;
 
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
         if (request_pos)
-           *request_pos = 1;
+           *request_pos = EINA_TRUE;
      }
    else if (request_pos)
-      *request_pos = 0;
+      *request_pos = EINA_FALSE;
 
    if (hint.flags & PWinGravity)
      {
@@ -439,7 +441,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    if (max_aspect)
       *max_aspect = maxa;
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_icccm_size_pos_hints_get */
 
 EAPI void
@@ -556,7 +558,8 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_icccm_protocol_set(Ecore_X_Window win,
-                           Ecore_X_WM_Protocol protocol, int on)
+                           Ecore_X_WM_Protocol protocol,
+                           Eina_Bool on)
 {
    Atom *protos = NULL;
    Atom proto;
@@ -639,26 +642,27 @@ leave:
  * @param protocol The protocol to query
  * @return 1 if the protocol is set, else 0.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
 {
    Atom proto, *protos = NULL;
-   int i, ret = 0, protos_count = 0;
+   int i, protos_count = 0;
+   Eina_Bool ret = EINA_FALSE;
 
    /* check for invalid values */
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
-      return 0;
+      return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
-      return 0;
+      return EINA_FALSE;
 
    for (i = 0; i < protos_count; i++)
       if (protos[i] == proto)
         {
-           ret = 1;
+           ret = EINA_TRUE;
            break;
         }
 

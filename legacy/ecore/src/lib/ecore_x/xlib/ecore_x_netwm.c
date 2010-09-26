@@ -128,7 +128,7 @@ ecore_x_netwm_supported_set(Ecore_X_Window root,
                                 num);
 } /* ecore_x_netwm_supported_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_supported_get(Ecore_X_Window root,
                             Ecore_X_Atom **supported,
                             int           *num)
@@ -145,12 +145,12 @@ ecore_x_netwm_supported_get(Ecore_X_Window root,
    num_ret = ecore_x_window_prop_atom_list_get(root, ECORE_X_ATOM_NET_SUPPORTED,
                                                supported);
    if (num_ret <= 0)
-      return 0;
+      return EINA_FALSE;
 
    if (num)
       *num = num_ret;
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_supported_get */
 
 /*
@@ -265,7 +265,7 @@ ecore_x_netwm_desk_current_set(Ecore_X_Window root, unsigned int desk)
 } /* ecore_x_netwm_desk_current_set */
 
 EAPI void
-ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on)
+ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, Eina_Bool on)
 {
    unsigned int val;
 
@@ -439,7 +439,7 @@ ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk)
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_DESKTOP, &desk, 1);
 } /* ecore_x_netwm_desktop_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk)
 {
    int ret;
@@ -452,7 +452,7 @@ ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk)
    if (desk)
       *desk = tmp;
 
-   return ret == 1 ? 1 : 0;
+   return ret == 1 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_desktop_get */
 
 /*
@@ -475,7 +475,7 @@ ecore_x_netwm_strut_set(Ecore_X_Window win, int left, int right,
 /*
  * _NET_WM_STRUT is deprecated
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right,
                         int *top, int *bottom)
 {
@@ -488,7 +488,7 @@ ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right,
                                         strut,
                                         4);
    if (ret != 4)
-      return 0;
+      return EINA_FALSE;
 
    if (left)
       *left = strut[0];
@@ -502,7 +502,7 @@ ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right,
    if (bottom)
       *bottom = strut[3];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_strut_get */
 
 EAPI void
@@ -541,7 +541,7 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win,
                                   12);
 } /* ecore_x_netwm_strut_partial_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
                                 int           *left,
                                 int           *right,
@@ -565,7 +565,7 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
                                         strut,
                                         12);
    if (ret != 12)
-      return 0;
+      return EINA_FALSE;
 
    if (left)
       *left = strut[0];
@@ -603,10 +603,10 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
    if (bottom_end_x)
       *bottom_end_x = strut[11];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_strut_partial_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 {
    unsigned int *data, *p;
@@ -624,15 +624,15 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    num_ret = ecore_x_window_prop_card32_list_get(win, ECORE_X_ATOM_NET_WM_ICON,
                                                  &data);
    if (num_ret <= 0)
-      return 0;
+      return EINA_FALSE;
 
    if (!data)
-      return 0;
+      return EINA_FALSE;
 
    if (num_ret < 2)
      {
         free(data);
-        return 0;
+        return EINA_FALSE;
      }
 
    /* Check how many icons there are */
@@ -645,7 +645,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
         if ((p - data) > num_ret)
           {
              free(data);
-             return 0;
+             return EINA_FALSE;
           }
 
         icons++;
@@ -660,7 +660,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    if (!icon)
      {
         free(data);
-        return 1;
+        return EINA_TRUE;
      }
 
    /* Allocate memory */
@@ -668,7 +668,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    if (!(*icon))
      {
         free(data);
-        return 0;
+        return EINA_FALSE;
      }
 
    /* Fetch the icons */
@@ -688,7 +688,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
                 free(((*icon)[--i]).data);
              free(*icon);
              free(data);
-             return 0;
+             return EINA_FALSE;
           }
 
         pd = ((*icon)[i]).data;
@@ -710,7 +710,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 
    free(data);
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_icons_get */
 
 EAPI void
@@ -733,7 +733,7 @@ ecore_x_netwm_icon_geometry_set(Ecore_X_Window win,
                                   4);
 } /* ecore_x_netwm_icon_geometry_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_icon_geometry_get(Ecore_X_Window win,
                                 int           *x,
                                 int           *y,
@@ -749,7 +749,7 @@ ecore_x_netwm_icon_geometry_get(Ecore_X_Window win,
                                         geometry,
                                         4);
    if (ret != 4)
-      return 0;
+      return EINA_FALSE;
 
    if (x)
       *x = geometry[0];
@@ -763,7 +763,7 @@ ecore_x_netwm_icon_geometry_get(Ecore_X_Window win,
    if (height)
       *height = geometry[3];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_icon_geometry_get */
 
 EAPI void
@@ -777,7 +777,7 @@ ecore_x_netwm_pid_set(Ecore_X_Window win, int pid)
                                   &tmp, 1);
 } /* ecore_x_netwm_pid_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid)
 {
    int ret;
@@ -789,7 +789,7 @@ ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid)
    if (pid)
       *pid = tmp;
 
-   return ret == 1 ? 1 : 0;
+   return ret == 1 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_pid_get */
 
 EAPI void
@@ -800,14 +800,14 @@ ecore_x_netwm_handled_icons_set(Ecore_X_Window win)
                                   NULL, 0);
 } /* ecore_x_netwm_handled_icons_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_handled_icons_get(Ecore_X_Window win)
 {
    int ret = 0;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
                                         NULL, 0);
-   return ret == 0 ? 1 : 0;
+   return ret == 0 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_handled_icons_get */
 
 EAPI void
@@ -818,7 +818,7 @@ ecore_x_netwm_user_time_set(Ecore_X_Window win, unsigned int time)
                                   &time, 1);
 } /* ecore_x_netwm_user_time_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_user_time_get(Ecore_X_Window win, unsigned int *time)
 {
    int ret;
@@ -830,7 +830,7 @@ ecore_x_netwm_user_time_get(Ecore_X_Window win, unsigned int *time)
    if (time)
       *time = tmp;
 
-   return ret == 1 ? 1 : 0;
+   return ret == 1 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_user_time_get */
 
 Ecore_X_Window_State
@@ -937,7 +937,7 @@ ecore_x_netwm_window_state_set(Ecore_X_Window        win,
    free(set);
 } /* ecore_x_netwm_window_state_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_window_state_get(Ecore_X_Window         win,
                                Ecore_X_Window_State **state,
                                unsigned int          *num)
@@ -955,7 +955,7 @@ ecore_x_netwm_window_state_get(Ecore_X_Window         win,
    num_ret = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_STATE,
                                                &atoms);
    if (num_ret <= 0)
-      return 0;
+      return EINA_FALSE;
 
    if (state)
      {
@@ -969,7 +969,7 @@ ecore_x_netwm_window_state_get(Ecore_X_Window         win,
      }
 
    free(atoms);
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_window_state_get */
 
 static Ecore_X_Window_Type
@@ -1075,7 +1075,7 @@ ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type)
 } /* ecore_x_netwm_window_type_set */
 
 /* FIXME: Maybe return 0 on some conditions? */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 {
    int num;
@@ -1093,9 +1093,9 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 
    free(atoms);
    if (num >= 1)
-      return 1;
+      return EINA_TRUE;
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_netwm_window_type_get */
 
 EAPI int
@@ -1182,11 +1182,12 @@ _ecore_x_netwm_action_atom_get(Ecore_X_Action action)
 } /* _ecore_x_netwm_action_atom_get */
 
 /* FIXME: Get complete list */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 {
-   int num, i, ret = 0;
+  int num, i;
    Ecore_X_Atom *atoms, atom;
+   Eina_Bool ret = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    num = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
@@ -1241,7 +1242,7 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window  win,
    free(set);
 } /* ecore_x_netwm_allowed_action_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_allowed_action_get(Ecore_X_Window   win,
                                  Ecore_X_Action **action,
                                  unsigned int    *num)
@@ -1261,7 +1262,7 @@ ecore_x_netwm_allowed_action_get(Ecore_X_Window   win,
          ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
          &atoms);
    if (num_ret <= 0)
-      return 0;
+      return EINA_FALSE;
 
    if (action)
      {
@@ -1275,7 +1276,7 @@ ecore_x_netwm_allowed_action_get(Ecore_X_Window   win,
      }
 
    free(atoms);
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_allowed_action_get */
 
 EAPI void
@@ -1286,7 +1287,7 @@ ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity)
                                   &opacity, 1);
 } /* ecore_x_netwm_opacity_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity)
 {
    int ret;
@@ -1298,7 +1299,7 @@ ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity)
    if (opacity)
       *opacity = tmp;
 
-   return ret == 1 ? 1 : 0;
+   return ret == 1 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_opacity_get */
 
 EAPI void
@@ -1317,7 +1318,7 @@ ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb)
                                   4);
 } /* ecore_x_netwm_frame_size_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_frame_size_get(Ecore_X_Window win,
                              int           *fl,
                              int           *fr,
@@ -1333,7 +1334,7 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win,
                                         frames,
                                         4);
    if (ret != 4)
-      return 0;
+      return EINA_FALSE;
 
    if (fl)
       *fl = frames[0];
@@ -1347,10 +1348,10 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win,
    if (fb)
       *fb = frames[3];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_netwm_frame_size_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_sync_counter_get(Ecore_X_Window        win,
                                Ecore_X_Sync_Counter *counter)
 {
@@ -1367,7 +1368,7 @@ ecore_x_netwm_sync_counter_get(Ecore_X_Window        win,
    if (counter)
       *counter = tmp;
 
-   return ret == 1 ? 1 : 0;
+   return ret == 1 ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_netwm_sync_counter_get */
 
 EAPI void
@@ -1424,7 +1425,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window       win,
                                  Ecore_X_Window       root,
                                  Ecore_X_Window_State s1,
                                  Ecore_X_Window_State s2,
-                                 int                  set)
+                                 Eina_Bool            set)
 {
    XEvent xev;
 
@@ -1888,7 +1889,7 @@ _ecore_x_netwm_startup_info_free(void *data)
 /*
  * Is screen composited?
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_screen_is_composited(int screen)
 {
    Ecore_X_Window win;
@@ -1901,11 +1902,11 @@ ecore_x_screen_is_composited(int screen)
       atom = XInternAtom(_ecore_x_disp, buf, False);
 
    if (atom == None)
-      return 0;
+      return EINA_FALSE;
 
    win = XGetSelectionOwner(_ecore_x_disp, atom);
 
-   return win != None;
+   return (win != None) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_screen_is_composited */
 
 EAPI void

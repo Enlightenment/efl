@@ -31,7 +31,7 @@ typedef struct _mwmhints
 }
 MWMHints;
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_mwm_hints_get(Ecore_X_Window          win,
                       Ecore_X_MWM_Hint_Func  *fhint,
                       Ecore_X_MWM_Hint_Decor *dhint,
@@ -40,15 +40,15 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
    unsigned char *p = NULL;
    MWMHints *mwmhints = NULL;
    int num;
-   int ret;
+   Eina_Bool ret;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ret = 0;
+   ret = EINA_FALSE;
    if (!ecore_x_window_prop_property_get(win,
                                          ECORE_X_ATOM_MOTIF_WM_HINTS,
                                          ECORE_X_ATOM_MOTIF_WM_HINTS,
                                          32, &p, &num))
-      return 0;
+      return EINA_FALSE;
 
    mwmhints = (MWMHints *)p;
    if (mwmhints)
@@ -79,7 +79,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
                      *ihint = ECORE_X_MWM_HINT_INPUT_MODELESS;
                }
 
-             ret = 1;
+             ret = EINA_TRUE;
           }
 
         free(mwmhints);
@@ -89,7 +89,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
 } /* ecore_x_mwm_hints_get */
 
 EAPI void
-ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless)
+ecore_x_mwm_borderless_set(Ecore_X_Window win, Eina_Bool borderless)
 {
    unsigned int data[5] = {0, 0, 0, 0, 0};
 

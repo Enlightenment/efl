@@ -106,9 +106,9 @@ typedef struct _Ecore_X_Selection_Converter   Ecore_X_Selection_Converter;
 struct _Ecore_X_Selection_Converter
 {
    Ecore_X_Atom                 target;
-   int                          (*convert)(char *target, void *data, int size,
-                                           void **data_ret, int *size_ret,
-                                           Ecore_X_Atom *type, int *typeseize);
+   Eina_Bool                  (*convert)(char *target, void *data, int size,
+                                         void **data_ret, int *size_ret,
+                                         Ecore_X_Atom *type, int *typeseize);
    Ecore_X_Selection_Converter *next;
 };
 
@@ -192,7 +192,7 @@ extern Time _ecore_x_event_last_time;
 extern Window _ecore_x_event_last_win;
 extern int _ecore_x_event_last_root_x;
 extern int _ecore_x_event_last_root_y;
-extern int _ecore_x_xcursor;
+extern Eina_Bool _ecore_x_xcursor;
 extern XIC _ecore_x_ic;
 
 extern Ecore_X_Atom _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
@@ -268,7 +268,7 @@ Ecore_X_Atom
 char *                    _ecore_x_selection_target_get(Ecore_X_Atom target);
 Ecore_X_Selection_Intern *
                           _ecore_x_selection_get(Ecore_X_Atom selection);
-int                       _ecore_x_selection_set(Window             w,
+Eina_Bool                 _ecore_x_selection_set(Window             w,
                                                        const void  *data,
                                                        int          len,
                                                        Ecore_X_Atom selection);

@@ -37,7 +37,7 @@ ecore_x_e_virtual_keyboard_set(Ecore_X_Window win, unsigned int is_keyboard)
                                   &is_keyboard, 1);
 } /* ecore_x_e_virtual_keyboard_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
 {
    unsigned int val;
@@ -45,9 +45,9 @@ ecore_x_e_virtual_keyboard_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
                                        &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_virtual_keyboard_get */
 
 static Ecore_X_Virtual_Keyboard_State
@@ -266,7 +266,7 @@ ecore_x_e_illume_conformant_set(Ecore_X_Window win, unsigned int is_conformant)
                                   &is_conformant, 1);
 } /* ecore_x_e_illume_conformant_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_conformant_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -274,9 +274,9 @@ ecore_x_e_illume_conformant_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
                                        &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_illume_conformant_get */
 
 EAPI void
@@ -373,16 +373,16 @@ ecore_x_e_illume_drag_set(Ecore_X_Window win, unsigned int drag)
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG, &drag, 1);
 } /* ecore_x_e_illume_drag_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_drag_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG, &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_illume_drag_get */
 
 EAPI void
@@ -393,7 +393,7 @@ ecore_x_e_illume_drag_locked_set(Ecore_X_Window win, unsigned int is_locked)
                                   &is_locked, 1);
 } /* ecore_x_e_illume_drag_locked_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -401,9 +401,9 @@ ecore_x_e_illume_drag_locked_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED,
                                        &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_illume_drag_locked_get */
 
 EAPI void
@@ -442,7 +442,7 @@ ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 } /* ecore_x_e_illume_indicator_geometry_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
                                         int           *x,
                                         int           *y,
@@ -458,7 +458,7 @@ ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
                                      ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY,
                                      geom, 4);
    if (ret != 4)
-      return 0;
+      return EINA_FALSE;
 
    if (x)
       *x = geom[0];
@@ -472,7 +472,7 @@ ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
    if (h)
       *h = geom[3];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_e_illume_indicator_geometry_get */
 
 EAPI void
@@ -493,7 +493,7 @@ ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 } /* ecore_x_e_illume_softkey_geometry_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
                                       int           *x,
                                       int           *y,
@@ -509,7 +509,7 @@ ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
                                      ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY,
                                      geom, 4);
    if (ret != 4)
-      return 0;
+      return EINA_FALSE;
 
    if (x)
       *x = geom[0];
@@ -523,7 +523,7 @@ ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
    if (h)
       *h = geom[3];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_e_illume_softkey_geometry_get */
 
 EAPI void
@@ -544,7 +544,7 @@ ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win,
                                   geom, 4);
 } /* ecore_x_e_illume_keyboard_geometry_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win,
                                        int           *x,
                                        int           *y,
@@ -560,7 +560,7 @@ ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win,
                                      ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY,
                                      geom, 4);
    if (ret != 4)
-      return 0;
+      return EINA_FALSE;
 
    if (x)
       *x = geom[0];
@@ -574,7 +574,7 @@ ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win,
    if (h)
       *h = geom[3];
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_e_illume_keyboard_geometry_get */
 
 static Ecore_X_Atom
@@ -614,7 +614,7 @@ ecore_x_e_illume_quickpanel_set(Ecore_X_Window win, unsigned int is_quickpanel)
                                   &is_quickpanel, 1);
 } /* ecore_x_e_illume_quickpanel_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -622,9 +622,9 @@ ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
                                        &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_illume_quickpanel_get */
 
 EAPI void
@@ -686,7 +686,7 @@ ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
       1);
 } /* ecore_x_e_illume_quickpanel_priority_major_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -695,9 +695,9 @@ ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
    if (!ecore_x_window_prop_card32_get(win,
                                        ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR,
                                        &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_illume_quickpanel_priority_major_get */
 
 EAPI void
@@ -712,7 +712,7 @@ ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
       1);
 } /* ecore_x_e_illume_quickpanel_priority_minor_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -721,9 +721,9 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
    if (!ecore_x_window_prop_card32_get(win,
                                        ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR,
                                        &val, 1))
-      return 0;
+      return EINA_FALSE;
 
-   return val;
+   return val ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_e_illume_quickpanel_priority_minor_get */
 
 EAPI void

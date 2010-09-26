@@ -733,7 +733,7 @@ ecore_x_window_depth_get(Ecore_X_Window win)
  * FIXME: To be fixed.
  */
 EAPI void
-ecore_x_window_cursor_show(Ecore_X_Window win, int show)
+ecore_x_window_cursor_show(Ecore_X_Window win, Eina_Bool show)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (win == 0)
@@ -1389,7 +1389,7 @@ ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
 } /* ecore_x_window_area_expose */
 
 EAPI void
-ecore_x_window_override_set(Ecore_X_Window win, int override)
+ecore_x_window_override_set(Ecore_X_Window win, Eina_Bool override)
 {
    XSetWindowAttributes att;
 
@@ -1405,8 +1405,8 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
                                   int            y,
                                   int            w,
                                   int            h,
-                                  int            override,
-                                  int            saveunder)
+                                  Eina_Bool      override,
+                                  Eina_Bool      saveunder)
 {
    Window win;
    XSetWindowAttributes attr;

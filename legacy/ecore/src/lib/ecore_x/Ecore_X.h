@@ -1140,35 +1140,35 @@ EAPI void                    ecore_x_event_mask_set(Ecore_X_Window     w,
 EAPI void                    ecore_x_event_mask_unset(Ecore_X_Window     w,
                                                       Ecore_X_Event_Mask mask);
 
-EAPI int                     ecore_x_selection_notify_send(Ecore_X_Window requestor,
+EAPI Eina_Bool               ecore_x_selection_notify_send(Ecore_X_Window requestor,
                                                            Ecore_X_Atom   selection,
                                                            Ecore_X_Atom   target,
                                                            Ecore_X_Atom   property,
                                                            Ecore_X_Time   time);
 EAPI void                    ecore_x_selection_primary_prefetch(void);
 EAPI void                    ecore_x_selection_primary_fetch(void);
-EAPI int                     ecore_x_selection_primary_set(Ecore_X_Window w,
+EAPI Eina_Bool               ecore_x_selection_primary_set(Ecore_X_Window w,
                                                            const void    *data,
                                                            int            size);
-EAPI int                     ecore_x_selection_primary_clear(void);
+EAPI Eina_Bool               ecore_x_selection_primary_clear(void);
 EAPI void                    ecore_x_selection_secondary_prefetch(void);
 EAPI void                    ecore_x_selection_secondary_fetch(void);
-EAPI int                     ecore_x_selection_secondary_set(Ecore_X_Window w,
+EAPI Eina_Bool               ecore_x_selection_secondary_set(Ecore_X_Window w,
                                                              const void    *data,
                                                              int            size);
-EAPI int                     ecore_x_selection_secondary_clear(void);
+EAPI Eina_Bool               ecore_x_selection_secondary_clear(void);
 EAPI void                    ecore_x_selection_xdnd_prefetch(void);
 EAPI void                    ecore_x_selection_xdnd_fetch(void);
-EAPI int                     ecore_x_selection_xdnd_set(Ecore_X_Window w,
+EAPI Eina_Bool               ecore_x_selection_xdnd_set(Ecore_X_Window w,
                                                         const void    *data,
                                                         int            size);
-EAPI int                     ecore_x_selection_xdnd_clear(void);
+EAPI Eina_Bool               ecore_x_selection_xdnd_clear(void);
 EAPI void                    ecore_x_selection_clipboard_prefetch(void);
 EAPI void                    ecore_x_selection_clipboard_fetch(void);
-EAPI int                     ecore_x_selection_clipboard_set(Ecore_X_Window w,
+EAPI Eina_Bool               ecore_x_selection_clipboard_set(Ecore_X_Window w,
                                                              const void    *data,
                                                              int            size);
-EAPI int                     ecore_x_selection_clipboard_clear(void);
+EAPI Eina_Bool               ecore_x_selection_clipboard_clear(void);
 EAPI void                    ecore_x_selection_primary_request(Ecore_X_Window w,
                                                                const char    *target);
 EAPI void                    ecore_x_selection_secondary_request(Ecore_X_Window w,
@@ -1177,13 +1177,13 @@ EAPI void                    ecore_x_selection_xdnd_request(Ecore_X_Window w,
                                                             const char    *target);
 EAPI void                    ecore_x_selection_clipboard_request(Ecore_X_Window w,
                                                                  const char    *target);
-EAPI int                     ecore_x_selection_convert(Ecore_X_Atom  selection,
+EAPI Eina_Bool               ecore_x_selection_convert(Ecore_X_Atom  selection,
                                                        Ecore_X_Atom  target,
                                                        void        **data_ret,
                                                        int          *len,
                                                        Ecore_X_Atom *targprop,
                                                        int          *targsize);
-EAPI void                    ecore_x_selection_converter_add(char *target, int (*func)(
+EAPI void                    ecore_x_selection_converter_add(char *target, Eina_Bool (*func)(
                                                                 char  *target,
                                                                 void  *data,
                                                                 int    size,
@@ -1191,7 +1191,7 @@ EAPI void                    ecore_x_selection_converter_add(char *target, int (
                                                                 int   *size_ret,
                                                                 Ecore_X_Atom *,
                                                                 int *));
-EAPI void      ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(
+EAPI void      ecore_x_selection_converter_atom_add(Ecore_X_Atom target, Eina_Bool (*func)(
                                                        char         *target,
                                                        void         *data,
                                                        int           size,
@@ -1208,17 +1208,17 @@ EAPI void                ecore_x_selection_parser_add(const char *target,
                                                                     int format));
 EAPI void                ecore_x_selection_parser_del(const char *target);
 
-EAPI void                ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
+EAPI void                ecore_x_dnd_aware_set(Ecore_X_Window win, Eina_Bool on);
 EAPI void                ecore_x_dnd_version_get_prefetch(Ecore_X_Window window);
 EAPI void                ecore_x_dnd_version_get_fetch(void);
 EAPI int                 ecore_x_dnd_version_get(Ecore_X_Window win);
 EAPI void                ecore_x_dnd_type_get_prefetch(Ecore_X_Window window);
 EAPI void                ecore_x_dnd_type_get_fetch(void);
-EAPI int                 ecore_x_dnd_type_isset(Ecore_X_Window win,
+EAPI Eina_Bool           ecore_x_dnd_type_isset(Ecore_X_Window win,
                                                 const char    *type);
 EAPI void                ecore_x_dnd_type_set(Ecore_X_Window win,
                                               const char    *type,
-                                              int            on);
+                                              Eina_Bool      on);
 EAPI void                ecore_x_dnd_types_set(Ecore_X_Window win,
                                                const char   **types,
                                                unsigned int   num_types);
@@ -1227,12 +1227,12 @@ EAPI void                ecore_x_dnd_actions_set(Ecore_X_Window win,
                                                  unsigned int   num_actions);
 EAPI void                ecore_x_dnd_begin_prefetch(Ecore_X_Window source);
 EAPI void                ecore_x_dnd_begin_fetch(void);
-EAPI int                 ecore_x_dnd_begin(Ecore_X_Window source,
+EAPI Eina_Bool           ecore_x_dnd_begin(Ecore_X_Window source,
                                            unsigned char *data,
                                            int            size);
-EAPI int                 ecore_x_dnd_drop(void);
-EAPI void                ecore_x_dnd_send_status(int               will_accept,
-                                                 int               suppress,
+EAPI Eina_Bool           ecore_x_dnd_drop(void);
+EAPI void                ecore_x_dnd_send_status(Eina_Bool         will_accept,
+                                                 Eina_Bool         suppress,
                                                  Ecore_X_Rectangle rectangle,
                                                  Ecore_X_Atom      action);
 EAPI void                ecore_x_dnd_send_finished(void);
@@ -1332,7 +1332,7 @@ EAPI void                ecore_x_window_border_width_set(
    int            width);
 EAPI int                 ecore_x_window_depth_get(Ecore_X_Window win);
 EAPI void                ecore_x_window_cursor_show(Ecore_X_Window win,
-                                                    int            show);
+                                                    Eina_Bool      show);
 EAPI void                ecore_x_window_defaults_set(Ecore_X_Window win);
 EAPI int                 ecore_x_window_visible_get(Ecore_X_Window win);
 EAPI Ecore_X_Window      ecore_x_window_shadow_tree_at_xy_with_skip_get(
@@ -1387,7 +1387,7 @@ EAPI void      ecore_x_window_area_expose(Ecore_X_Window win,
                                           int            w,
                                           int            h);
 EAPI void      ecore_x_window_override_set(Ecore_X_Window win,
-                                           int            override);
+                                           Eina_Bool      override);
 
 EAPI void      ecore_x_window_prop_card32_set(
    Ecore_X_Window win,
@@ -1537,7 +1537,7 @@ EAPI void                     ecore_x_window_prop_string_get_fetch(void);
 EAPI char *                   ecore_x_window_prop_string_get(
    Ecore_X_Window win,
    Ecore_X_Atom   type);
-EAPI int                      ecore_x_window_prop_protocol_isset(
+EAPI Eina_Bool                ecore_x_window_prop_protocol_isset(
    Ecore_X_Window      win,
    Ecore_X_WM_Protocol protocol);
 EAPI Ecore_X_WM_Protocol *    ecore_x_window_prop_protocol_list_get(
@@ -1596,7 +1596,7 @@ EAPI Ecore_X_Rectangle *      ecore_x_window_shape_rectangles_get(
    int           *num_ret);
 EAPI void                     ecore_x_window_shape_events_select(
    Ecore_X_Window win,
-   int            on);
+   Eina_Bool      on);
 EAPI void                     ecore_x_window_shape_input_mask_set(
    Ecore_X_Window win,
    Ecore_X_Pixmap mask);
@@ -1627,7 +1627,7 @@ EAPI Ecore_X_GC      ecore_x_gc_new(Ecore_X_Drawable      draw,
                                     const unsigned int   *value_list);
 EAPI void            ecore_x_gc_free(Ecore_X_GC gc);
 
-EAPI int             ecore_x_client_message32_send(Ecore_X_Window     win,
+EAPI Eina_Bool       ecore_x_client_message32_send(Ecore_X_Window     win,
                                                    Ecore_X_Atom       type,
                                                    Ecore_X_Event_Mask mask,
                                                    long               d0,
@@ -1635,18 +1635,18 @@ EAPI int             ecore_x_client_message32_send(Ecore_X_Window     win,
                                                    long               d2,
                                                    long               d3,
                                                    long               d4);
-EAPI int       ecore_x_client_message8_send(Ecore_X_Window win,
+EAPI Eina_Bool ecore_x_client_message8_send(Ecore_X_Window win,
                                             Ecore_X_Atom   type,
                                             const void    *data,
                                             int            len);
-EAPI int       ecore_x_mouse_move_send(Ecore_X_Window win,
+EAPI Eina_Bool ecore_x_mouse_move_send(Ecore_X_Window win,
                                        int            x,
                                        int            y);
-EAPI int       ecore_x_mouse_down_send(Ecore_X_Window win,
+EAPI Eina_Bool ecore_x_mouse_down_send(Ecore_X_Window win,
                                        int            x,
                                        int            y,
                                        int            b);
-EAPI int       ecore_x_mouse_up_send(Ecore_X_Window win,
+EAPI Eina_Bool ecore_x_mouse_up_send(Ecore_X_Window win,
                                      int            x,
                                      int            y,
                                      int            b);
@@ -1670,7 +1670,7 @@ EAPI void      ecore_x_drawable_rectangle_fill(
    int              width,
    int              height);
 
-EAPI int                            ecore_x_cursor_color_supported_get(void);
+EAPI Eina_Bool                      ecore_x_cursor_color_supported_get(void);
 EAPI Ecore_X_Cursor                 ecore_x_cursor_new(Ecore_X_Window win,
                                                        int           *pixels,
                                                        int            w,
@@ -1685,7 +1685,7 @@ EAPI int                            ecore_x_cursor_size_get(void);
 /* FIXME: these funcs need categorising */
 EAPI Ecore_X_Window *               ecore_x_window_root_list(int *num_ret);
 EAPI Ecore_X_Window                 ecore_x_window_root_first_get(void);
-EAPI int                            ecore_x_window_manage(Ecore_X_Window win);
+EAPI Eina_Bool                      ecore_x_window_manage(Ecore_X_Window win);
 EAPI void                           ecore_x_window_container_manage(
    Ecore_X_Window win);
 EAPI void                           ecore_x_window_client_manage(Ecore_X_Window win);
@@ -1723,7 +1723,7 @@ EAPI void                           ecore_x_icccm_move_resize_send(
    int            h);
 EAPI void                           ecore_x_icccm_hints_set(
    Ecore_X_Window win,
-   int            accepts_focus,
+   Eina_Bool      accepts_focus,
    Ecore_X_Window_State_Hint
    initial_state,
    Ecore_X_Pixmap
@@ -1733,17 +1733,17 @@ EAPI void                           ecore_x_icccm_hints_set(
    icon_window,
    Ecore_X_Window
    window_group,
-   int            is_urgent);
-EAPI int      ecore_x_icccm_hints_get(Ecore_X_Window             win,
-                                      int                       *accepts_focus,
+   Eina_Bool      is_urgent);
+EAPI Eina_Bool ecore_x_icccm_hints_get(Ecore_X_Window             win,
+                                      Eina_Bool                 *accepts_focus,
                                       Ecore_X_Window_State_Hint *initial_state,
                                       Ecore_X_Pixmap            *icon_pixmap,
                                       Ecore_X_Pixmap            *icon_mask,
                                       Ecore_X_Window            *icon_window,
                                       Ecore_X_Window            *window_group,
-                                      int                       *is_urgent);
+                                      Eina_Bool                 *is_urgent);
 EAPI void      ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
-                                                int request_pos,
+                                                Eina_Bool request_pos,
                                                 Ecore_X_Gravity gravity,
                                                 int min_w, int min_h,
                                                 int max_w, int max_h,
@@ -1751,8 +1751,8 @@ EAPI void      ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
                                                 int step_x, int step_y,
                                                 double min_aspect,
                                                 double max_aspect);
-EAPI int      ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
-                                               int *request_pos,
+EAPI Eina_Bool ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
+                                               Eina_Bool *request_pos,
                                                Ecore_X_Gravity *gravity,
                                                int *min_w, int *min_h,
                                                int *max_w, int *max_h,
@@ -1767,8 +1767,8 @@ EAPI void                ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
                                                           int            num);
 EAPI void                ecore_x_icccm_protocol_set(Ecore_X_Window      win,
                                                     Ecore_X_WM_Protocol protocol,
-                                                    int                 on);
-EAPI int                 ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
+                                                    Eina_Bool           on);
+EAPI Eina_Bool           ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
                                                       Ecore_X_WM_Protocol protocol);
 EAPI void                ecore_x_icccm_name_class_set(Ecore_X_Window win,
                                                       const char    *n,
@@ -1835,7 +1835,7 @@ typedef enum _Ecore_X_MWM_Hint_Input
 EAPI void      ecore_x_mwm_hints_get_prefetch(
    Ecore_X_Window window);
 EAPI void      ecore_x_mwm_hints_get_fetch(void);
-EAPI int       ecore_x_mwm_hints_get(
+EAPI Eina_Bool ecore_x_mwm_hints_get(
    Ecore_X_Window win,
    Ecore_X_MWM_Hint_Func
                  *fhint,
@@ -1845,7 +1845,7 @@ EAPI int       ecore_x_mwm_hints_get(
                  *ihint);
 EAPI void      ecore_x_mwm_borderless_set(
    Ecore_X_Window win,
-   int            borderless);
+   Eina_Bool      borderless);
 
 /* netwm */
 EAPI void      ecore_x_netwm_init(void);
@@ -1861,7 +1861,7 @@ EAPI void      ecore_x_netwm_supported_set(
 EAPI void      ecore_x_netwm_supported_get_prefetch(
    Ecore_X_Window root);
 EAPI void      ecore_x_netwm_supported_get_fetch(void);
-EAPI int       ecore_x_netwm_supported_get(
+EAPI Eina_Bool ecore_x_netwm_supported_get(
    Ecore_X_Window root,
    Ecore_X_Atom **supported,
    int           *num);
@@ -1899,7 +1899,7 @@ EAPI void      ecore_x_netwm_desk_layout_set(
    int            starting_corner);
 EAPI void      ecore_x_netwm_showing_desktop_set(
    Ecore_X_Window root,
-   int            on);
+   Eina_Bool      on);
 EAPI void      ecore_x_netwm_client_list_set(
    Ecore_X_Window  root,
    Ecore_X_Window *p_clients,
@@ -1966,7 +1966,7 @@ EAPI void      ecore_x_netwm_desktop_set(
 EAPI void      ecore_x_netwm_desktop_get_prefetch(
    Ecore_X_Window window);
 EAPI void      ecore_x_netwm_desktop_get_fetch(void);
-EAPI int       ecore_x_netwm_desktop_get(
+EAPI Eina_Bool ecore_x_netwm_desktop_get(
    Ecore_X_Window win,
    unsigned int  *desk);
 EAPI void      ecore_x_netwm_strut_set(Ecore_X_Window win,
@@ -1977,7 +1977,7 @@ EAPI void      ecore_x_netwm_strut_set(Ecore_X_Window win,
 EAPI void      ecore_x_netwm_strut_get_prefetch(
    Ecore_X_Window window);
 EAPI void      ecore_x_netwm_strut_get_fetch(void);
-EAPI int       ecore_x_netwm_strut_get(Ecore_X_Window win,
+EAPI Eina_Bool ecore_x_netwm_strut_get(Ecore_X_Window win,
                                              int     *left,
                                              int     *right,
                                              int     *top,
@@ -1999,7 +1999,7 @@ EAPI void      ecore_x_netwm_strut_partial_set(
 EAPI void      ecore_x_netwm_strut_partial_get_prefetch(
    Ecore_X_Window window);
 EAPI void      ecore_x_netwm_strut_partial_get_fetch(void);
-EAPI int       ecore_x_netwm_strut_partial_get(
+EAPI Eina_Bool ecore_x_netwm_strut_partial_get(
    Ecore_X_Window win,
    int           *left,
    int           *right,
@@ -2016,7 +2016,7 @@ EAPI int       ecore_x_netwm_strut_partial_get(
 EAPI void                                 ecore_x_netwm_icons_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_icons_get_fetch(void);
-EAPI int                                  ecore_x_netwm_icons_get(Ecore_X_Window       win,
+EAPI Eina_Bool                            ecore_x_netwm_icons_get(Ecore_X_Window       win,
                                                                         Ecore_X_Icon **icon,
                                                                         int           *num);
 EAPI void                                 ecore_x_netwm_icon_geometry_set(
@@ -2028,7 +2028,7 @@ EAPI void                                 ecore_x_netwm_icon_geometry_set(
 EAPI void                                 ecore_x_netwm_icon_geometry_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_icon_geometry_get_fetch(void);
-EAPI int                                  ecore_x_netwm_icon_geometry_get(
+EAPI Eina_Bool                            ecore_x_netwm_icon_geometry_get(
    Ecore_X_Window win,
    int           *x,
    int           *y,
@@ -2039,14 +2039,14 @@ EAPI void                                 ecore_x_netwm_pid_set(Ecore_X_Window w
 EAPI void                                 ecore_x_netwm_pid_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_pid_get_fetch(void);
-EAPI int                                  ecore_x_netwm_pid_get(Ecore_X_Window win,
+EAPI Eina_Bool                            ecore_x_netwm_pid_get(Ecore_X_Window win,
                                                                       int     *pid);
 EAPI void                                 ecore_x_netwm_handled_icons_set(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_netwm_handled_icons_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_handled_icons_get_fetch(void);
-EAPI int                                  ecore_x_netwm_handled_icons_get(
+EAPI Eina_Bool                            ecore_x_netwm_handled_icons_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_netwm_user_time_set(
    Ecore_X_Window win,
@@ -2054,7 +2054,7 @@ EAPI void                                 ecore_x_netwm_user_time_set(
 EAPI void                                 ecore_x_netwm_user_time_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_user_time_get_fetch(void);
-EAPI int                                  ecore_x_netwm_user_time_get(
+EAPI Eina_Bool                            ecore_x_netwm_user_time_get(
    Ecore_X_Window win,
    unsigned int  *time);
 EAPI void                                 ecore_x_netwm_window_state_set(
@@ -2064,7 +2064,7 @@ EAPI void                                 ecore_x_netwm_window_state_set(
 EAPI void                                 ecore_x_netwm_window_state_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_window_state_get_fetch(void);
-EAPI int                                  ecore_x_netwm_window_state_get(
+EAPI Eina_Bool                            ecore_x_netwm_window_state_get(
    Ecore_X_Window         win,
    Ecore_X_Window_State **state,
    unsigned int          *num);
@@ -2074,13 +2074,13 @@ EAPI void                                 ecore_x_netwm_window_type_set(
 EAPI void                                 ecore_x_netwm_window_type_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_window_type_get_fetch(void);
-EAPI int                                  ecore_x_netwm_window_type_get(
+EAPI Eina_Bool                            ecore_x_netwm_window_type_get(
    Ecore_X_Window       win,
    Ecore_X_Window_Type *type);
 EAPI int                                  ecore_x_netwm_window_types_get(
    Ecore_X_Window        win,
    Ecore_X_Window_Type **types);
-EAPI int                                  ecore_x_netwm_allowed_action_isset(
+EAPI Eina_Bool                            ecore_x_netwm_allowed_action_isset(
    Ecore_X_Window win,
    Ecore_X_Action action);
 EAPI void                                 ecore_x_netwm_allowed_action_set(
@@ -2091,7 +2091,7 @@ EAPI void                                 ecore_x_netwm_allowed_action_get_prefe
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_allowed_action_get_fetch(
    void);
-EAPI int                                  ecore_x_netwm_allowed_action_get(
+EAPI Eina_Bool                            ecore_x_netwm_allowed_action_get(
    Ecore_X_Window   win,
    Ecore_X_Action **action,
    unsigned int    *num);
@@ -2101,7 +2101,7 @@ EAPI void                                 ecore_x_netwm_opacity_set(
 EAPI void                                 ecore_x_netwm_opacity_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_opacity_get_fetch(void);
-EAPI int                                  ecore_x_netwm_opacity_get(
+EAPI Eina_Bool                            ecore_x_netwm_opacity_get(
    Ecore_X_Window win,
    unsigned int  *opacity);
 EAPI void                                 ecore_x_netwm_frame_size_set(
@@ -2113,7 +2113,7 @@ EAPI void                                 ecore_x_netwm_frame_size_set(
 EAPI void                                 ecore_x_netwm_frame_size_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_frame_size_get_fetch(void);
-EAPI int                                  ecore_x_netwm_frame_size_get(
+EAPI Eina_Bool                            ecore_x_netwm_frame_size_get(
    Ecore_X_Window win,
    int           *fl,
    int           *fr,
@@ -2122,7 +2122,7 @@ EAPI int                                  ecore_x_netwm_frame_size_get(
 EAPI void                                 ecore_x_netwm_sync_counter_get_prefetch(
    Ecore_X_Window window);
 EAPI void                                 ecore_x_netwm_sync_counter_get_fetch(void);
-EAPI int                                  ecore_x_netwm_sync_counter_get(
+EAPI Eina_Bool                            ecore_x_netwm_sync_counter_get(
    Ecore_X_Window        win,
    Ecore_X_Sync_Counter *counter);
 EAPI void                                 ecore_x_netwm_ping_send(Ecore_X_Window win);
@@ -2134,7 +2134,7 @@ EAPI void                                 ecore_x_netwm_state_request_send(
    Ecore_X_Window       root,
    Ecore_X_Window_State s1,
    Ecore_X_Window_State s2,
-   int                  set);
+   Eina_Bool            set);
 EAPI void                                 ecore_x_netwm_desktop_request_send(
    Ecore_X_Window win,
    Ecore_X_Window root,
@@ -2150,7 +2150,7 @@ EAPI void                                 ecore_x_e_frame_size_set(
 EAPI void                                 ecore_x_e_virtual_keyboard_set(
    Ecore_X_Window win,
    unsigned int   is_keyboard);
-EAPI int                                  ecore_x_e_virtual_keyboard_get(
+EAPI Eina_Bool                            ecore_x_e_virtual_keyboard_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_virtual_keyboard_state_set(
    Ecore_X_Window                 win,
@@ -2174,7 +2174,7 @@ EAPI void                                 ecore_x_e_illume_zone_list_set(
 EAPI void                                 ecore_x_e_illume_conformant_set(
    Ecore_X_Window win,
    unsigned int   is_conformant);
-EAPI int                                  ecore_x_e_illume_conformant_get(
+EAPI Eina_Bool                            ecore_x_e_illume_conformant_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_illume_mode_set(
    Ecore_X_Window      win,
@@ -2199,12 +2199,12 @@ EAPI void                                 ecore_x_e_illume_home_del_send(
 EAPI void                                 ecore_x_e_illume_drag_set(
    Ecore_X_Window win,
    unsigned int   drag);
-EAPI int                                  ecore_x_e_illume_drag_get(
+EAPI Eina_Bool                            ecore_x_e_illume_drag_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_illume_drag_locked_set(
    Ecore_X_Window win,
    unsigned int   is_locked);
-EAPI int                                  ecore_x_e_illume_drag_locked_get(
+EAPI Eina_Bool                            ecore_x_e_illume_drag_locked_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_illume_drag_start_send(
    Ecore_X_Window win);
@@ -2216,7 +2216,7 @@ EAPI void                                 ecore_x_e_illume_indicator_geometry_se
    int            y,
    int            w,
    int            h);
-EAPI int                                  ecore_x_e_illume_indicator_geometry_get(
+EAPI Eina_Bool                            ecore_x_e_illume_indicator_geometry_get(
    Ecore_X_Window win,
    int           *x,
    int           *y,
@@ -2228,7 +2228,7 @@ EAPI void                                 ecore_x_e_illume_softkey_geometry_set(
    int            y,
    int            w,
    int            h);
-EAPI int                                  ecore_x_e_illume_softkey_geometry_get(
+EAPI Eina_Bool                            ecore_x_e_illume_softkey_geometry_get(
    Ecore_X_Window win,
    int           *x,
    int           *y,
@@ -2240,7 +2240,7 @@ EAPI void                                 ecore_x_e_illume_keyboard_geometry_set
    int            y,
    int            w,
    int            h);
-EAPI int                                  ecore_x_e_illume_keyboard_geometry_get(
+EAPI Eina_Bool                            ecore_x_e_illume_keyboard_geometry_get(
    Ecore_X_Window win,
    int           *x,
    int           *y,
@@ -2249,7 +2249,7 @@ EAPI int                                  ecore_x_e_illume_keyboard_geometry_get
 EAPI void                                 ecore_x_e_illume_quickpanel_set(
    Ecore_X_Window win,
    unsigned int   is_quickpanel);
-EAPI int                                  ecore_x_e_illume_quickpanel_get(
+EAPI Eina_Bool                            ecore_x_e_illume_quickpanel_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_illume_quickpanel_state_set(
    Ecore_X_Window                  win,
@@ -2265,14 +2265,14 @@ EAPI void
                                           ecore_x_e_illume_quickpanel_priority_major_set(
    Ecore_X_Window win,
    unsigned int   priority);
-EAPI int
+EAPI Eina_Bool
                                           ecore_x_e_illume_quickpanel_priority_major_get(
    Ecore_X_Window win);
 EAPI void
                                           ecore_x_e_illume_quickpanel_priority_minor_set(
    Ecore_X_Window win,
    unsigned int   priority);
-EAPI int
+EAPI Eina_Bool
                                           ecore_x_e_illume_quickpanel_priority_minor_get(
    Ecore_X_Window win);
 EAPI void                                 ecore_x_e_illume_quickpanel_zone_set(
@@ -2319,9 +2319,9 @@ EAPI Ecore_X_Pixmap                       ecore_x_e_comp_pixmap_get(
 
 EAPI Ecore_X_Sync_Alarm                   ecore_x_sync_alarm_new(
    Ecore_X_Sync_Counter counter);
-EAPI int                                  ecore_x_sync_alarm_free(
+EAPI Eina_Bool                            ecore_x_sync_alarm_free(
    Ecore_X_Sync_Alarm alarm);
-EAPI int                                  ecore_x_sync_counter_query(
+EAPI Eina_Bool                            ecore_x_sync_counter_query(
    Ecore_X_Sync_Counter counter,
    unsigned int        *val);
 EAPI Ecore_X_Sync_Counter                 ecore_x_sync_counter_new(int val);
@@ -2338,14 +2338,14 @@ EAPI void                                 ecore_x_xinerama_query_screens_prefetc
    void);
 EAPI void                                 ecore_x_xinerama_query_screens_fetch(void);
 EAPI int                                  ecore_x_xinerama_screen_count_get(void);
-EAPI int                                  ecore_x_xinerama_screen_geometry_get(
+EAPI Eina_Bool                            ecore_x_xinerama_screen_geometry_get(
    int  screen,
    int *x,
    int *y,
    int *w,
    int *h);
 
-EAPI int       ecore_x_screensaver_event_available_get(
+EAPI Eina_Bool ecore_x_screensaver_event_available_get(
    void);
 EAPI void      ecore_x_screensaver_idle_time_prefetch(
    void);
@@ -2368,7 +2368,7 @@ EAPI void      ecore_x_screensaver_interval_set(
    int timeout);
 EAPI int       ecore_x_screensaver_interval_get(void);
 EAPI void      ecore_x_screensaver_event_listen_set(
-   int on);
+   Eina_Bool on);
 
 /* FIXME: these funcs need categorising */
 
@@ -2402,7 +2402,7 @@ typedef struct _Ecore_X_Window_Attributes
 EAPI void                 ecore_x_get_window_attributes_prefetch(
    Ecore_X_Window window);
 EAPI void                 ecore_x_get_window_attributes_fetch(void);
-EAPI int                  ecore_x_window_attributes_get(
+EAPI Eina_Bool            ecore_x_window_attributes_get(
    Ecore_X_Window win,
    Ecore_X_Window_Attributes *
    att_ret);
@@ -2410,23 +2410,23 @@ EAPI void                 ecore_x_window_save_set_add(Ecore_X_Window win);
 EAPI void                 ecore_x_window_save_set_del(Ecore_X_Window win);
 EAPI Ecore_X_Window *     ecore_x_window_children_get(Ecore_X_Window win, int *num);
 
-EAPI int                  ecore_x_pointer_control_set(int accel_num,
+EAPI Eina_Bool            ecore_x_pointer_control_set(int accel_num,
                                                       int accel_denom,
                                                       int threshold);
 EAPI void                 ecore_x_pointer_control_get_prefetch(void);
 EAPI void                 ecore_x_pointer_control_get_fetch(void);
-EAPI int                  ecore_x_pointer_control_get(int *accel_num,
+EAPI Eina_Bool            ecore_x_pointer_control_get(int *accel_num,
                                                       int *accel_denom,
                                                       int *threshold);
-EAPI int                  ecore_x_pointer_mapping_set(unsigned char *map, int nmap);
+EAPI Eina_Bool            ecore_x_pointer_mapping_set(unsigned char *map, int nmap);
 EAPI void                 ecore_x_pointer_mapping_get_prefetch(void);
 EAPI void                 ecore_x_pointer_mapping_get_fetch(void);
-EAPI int                  ecore_x_pointer_mapping_get(unsigned char *map, int nmap);
-EAPI int                  ecore_x_pointer_grab(Ecore_X_Window win);
-EAPI int                  ecore_x_pointer_confine_grab(Ecore_X_Window win);
+EAPI Eina_Bool            ecore_x_pointer_mapping_get(unsigned char *map, int nmap);
+EAPI Eina_Bool            ecore_x_pointer_grab(Ecore_X_Window win);
+EAPI Eina_Bool            ecore_x_pointer_confine_grab(Ecore_X_Window win);
 EAPI void                 ecore_x_pointer_ungrab(void);
-EAPI int                  ecore_x_pointer_warp(Ecore_X_Window win, int x, int y);
-EAPI int                  ecore_x_keyboard_grab(Ecore_X_Window win);
+EAPI Eina_Bool            ecore_x_pointer_warp(Ecore_X_Window win, int x, int y);
+EAPI Eina_Bool            ecore_x_keyboard_grab(Ecore_X_Window win);
 EAPI void                 ecore_x_keyboard_ungrab(void);
 EAPI void                 ecore_x_grab(void);
 EAPI void                 ecore_x_ungrab(void);
@@ -2460,30 +2460,30 @@ EAPI void                 ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int
 /* ecore_x_region.c */
 EAPI Ecore_X_XRegion *    ecore_x_xregion_new();
 EAPI void                 ecore_x_xregion_free(Ecore_X_XRegion *region);
-EAPI int                  ecore_x_xregion_set(Ecore_X_XRegion *region,
+EAPI Eina_Bool            ecore_x_xregion_set(Ecore_X_XRegion *region,
                                               Ecore_X_GC       gc);
 EAPI void                 ecore_x_xregion_translate(Ecore_X_XRegion *region,
                                                     int              x,
                                                     int              y);
-EAPI int                  ecore_x_xregion_intersect(Ecore_X_XRegion *dst,
+EAPI Eina_Bool            ecore_x_xregion_intersect(Ecore_X_XRegion *dst,
                                                     Ecore_X_XRegion *r1,
                                                     Ecore_X_XRegion *r2);
-EAPI int                  ecore_x_xregion_union(Ecore_X_XRegion *dst,
+EAPI Eina_Bool            ecore_x_xregion_union(Ecore_X_XRegion *dst,
                                                 Ecore_X_XRegion *r1,
                                                 Ecore_X_XRegion *r2);
-EAPI int                  ecore_x_xregion_union_rect(Ecore_X_XRegion   *dst,
+EAPI Eina_Bool            ecore_x_xregion_union_rect(Ecore_X_XRegion   *dst,
                                                      Ecore_X_XRegion   *src,
                                                      Ecore_X_Rectangle *rect);
-EAPI int                  ecore_x_xregion_subtract(Ecore_X_XRegion *dst,
+EAPI Eina_Bool            ecore_x_xregion_subtract(Ecore_X_XRegion *dst,
                                                    Ecore_X_XRegion *r1,
                                                    Ecore_X_XRegion *r2);
-EAPI int                  ecore_x_xregion_is_empty(Ecore_X_XRegion *region);
-EAPI int                  ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
+EAPI Eina_Bool            ecore_x_xregion_is_empty(Ecore_X_XRegion *region);
+EAPI Eina_Bool            ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
                                                    Ecore_X_XRegion *r2);
-EAPI int                  ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
+EAPI Eina_Bool            ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
                                                         int              x,
                                                         int              y);
-EAPI int                  ecore_x_xregion_rect_contain(Ecore_X_XRegion   *region,
+EAPI Eina_Bool            ecore_x_xregion_rect_contain(Ecore_X_XRegion   *region,
                                                        Ecore_X_Rectangle *rect);
 
 /* ecore_x_randr.c */
@@ -2887,7 +2887,7 @@ EAPI void                   ecore_x_region_picture_clip_set(Ecore_X_Region  regi
                                                             int             y_origin);
 
 /* XComposite Extension Support */
-EAPI int                    ecore_x_composite_query(void);
+EAPI Eina_Bool              ecore_x_composite_query(void);
 EAPI void                   ecore_x_composite_redirect_window(Ecore_X_Window                win,
                                                               Ecore_X_Composite_Update_Type type);
 EAPI void                   ecore_x_composite_redirect_subwindows(Ecore_X_Window                win,
@@ -2925,7 +2925,7 @@ struct _Ecore_X_Event_Damage
 
 typedef struct _Ecore_X_Event_Damage   Ecore_X_Event_Damage;
 
-EAPI int                 ecore_x_damage_query(void);
+EAPI Eina_Bool           ecore_x_damage_query(void);
 EAPI Ecore_X_Damage      ecore_x_damage_new(Ecore_X_Drawable            d,
                                             Ecore_X_Damage_Report_Level level);
 EAPI void                ecore_x_damage_free(Ecore_X_Damage damage);
@@ -2933,24 +2933,24 @@ EAPI void                ecore_x_damage_subtract(Ecore_X_Damage damage,
                                                  Ecore_X_Region repair,
                                                  Ecore_X_Region parts);
 
-EAPI int                 ecore_x_screen_is_composited(int screen);
+EAPI Eina_Bool           ecore_x_screen_is_composited(int screen);
 EAPI void                ecore_x_screen_is_composited_set(int            screen,
                                                           Ecore_X_Window win);
 
-EAPI int                 ecore_x_dpms_query(void);
+EAPI Eina_Bool           ecore_x_dpms_query(void);
 EAPI void                ecore_x_dpms_capable_get_prefetch(void);
 EAPI void                ecore_x_dpms_capable_get_fetch(void);
-EAPI int                 ecore_x_dpms_capable_get(void);
+EAPI Eina_Bool           ecore_x_dpms_capable_get(void);
 EAPI void                ecore_x_dpms_enable_get_prefetch(void);
 EAPI void                ecore_x_dpms_enable_get_fetch(void);
-EAPI int                 ecore_x_dpms_enabled_get(void);
+EAPI Eina_Bool           ecore_x_dpms_enabled_get(void);
 EAPI void                ecore_x_dpms_enabled_set(int enabled);
 EAPI void                ecore_x_dpms_timeouts_get_prefetch(void);
 EAPI void                ecore_x_dpms_timeouts_get_fetch(void);
 EAPI void                ecore_x_dpms_timeouts_get(unsigned int *standby,
                                                    unsigned int *suspend,
                                                    unsigned int *off);
-EAPI int                 ecore_x_dpms_timeouts_set(unsigned int standby,
+EAPI Eina_Bool           ecore_x_dpms_timeouts_set(unsigned int standby,
                                                    unsigned int suspend,
                                                    unsigned int off);
 EAPI unsigned int        ecore_x_dpms_timeout_standby_get(void);
@@ -2960,9 +2960,9 @@ EAPI void                ecore_x_dpms_timeout_standby_set(unsigned int new_timeo
 EAPI void                ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout);
 EAPI void                ecore_x_dpms_timeout_off_set(unsigned int new_timeout);
 
-EAPI int                 ecore_x_test_fake_key_down(const char *key);
-EAPI int                 ecore_x_test_fake_key_up(const char *key);
-EAPI int                 ecore_x_test_fake_key_press(const char *key);
+EAPI Eina_Bool           ecore_x_test_fake_key_down(const char *key);
+EAPI Eina_Bool           ecore_x_test_fake_key_up(const char *key);
+EAPI Eina_Bool           ecore_x_test_fake_key_press(const char *key);
 EAPI const char *        ecore_x_keysym_string_get(int keysym);
 
 typedef struct _Ecore_X_Image   Ecore_X_Image;

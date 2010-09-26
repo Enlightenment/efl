@@ -641,16 +641,17 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
    return str;
 } /* ecore_x_window_prop_string_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_window_prop_protocol_isset(Ecore_X_Window      win,
                                    Ecore_X_WM_Protocol protocol)
 {
    Atom proto, *protos = NULL;
-   int i, ret = 0, protos_count = 0;
+   int i, protos_count = 0;
+   Eina_Bool ret = EINA_FALSE;
 
    /* check for invalid values */
    if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
-      return 0;
+      return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    proto = _ecore_x_atoms_wm_protocols[protocol];
@@ -661,7 +662,7 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window      win,
    for (i = 0; i < protos_count; i++)
       if (protos[i] == proto)
         {
-           ret = 1;
+           ret = EINA_TRUE;
            break;
         }
 

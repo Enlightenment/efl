@@ -15,7 +15,7 @@ static Ecore_X_Selection_Intern selections[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 static Ecore_X_Selection_Parser *parsers = NULL;
 
-static int      _ecore_x_selection_converter_text(char         *target,
+static Eina_Bool _ecore_x_selection_converter_text(char         *target,
                                                   void         *data,
                                                   int           size,
                                                   void        **data_ret,
@@ -119,7 +119,7 @@ _ecore_x_selection_get(Ecore_X_Atom selection)
       return NULL;
 } /* _ecore_x_selection_get */
 
-int
+Eina_Bool
 _ecore_x_selection_set(Window       w,
                        const void  *data,
                        int          size,
@@ -130,7 +130,7 @@ _ecore_x_selection_set(Window       w,
 
    XSetSelectionOwner(_ecore_x_disp, selection, w, _ecore_x_event_last_time);
    if (XGetSelectionOwner(_ecore_x_disp, selection) != w)
-      return 0;
+      return EINA_FALSE;
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
       in = 0;
@@ -141,7 +141,7 @@ _ecore_x_selection_set(Window       w,
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
       in = 3;
    else
-      return 0;
+      return EINA_FALSE;
 
    if (data)
      {
@@ -160,7 +160,7 @@ _ecore_x_selection_set(Window       w,
         memset(&selections[in], 0, sizeof(Ecore_X_Selection_Data));
      }
 
-   return 1;
+   return EINA_TRUE;
 } /* _ecore_x_selection_set */
 
 /**
@@ -171,7 +171,7 @@ _ecore_x_selection_set(Window       w,
  * @return     Returns 1 if the ownership of the selection was successfully
  *             claimed, or 0 if unsuccessful.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_primary_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -184,7 +184,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_primary_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -199,7 +199,7 @@ ecore_x_selection_primary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully
  *             claimed, or 0 if unsuccessful.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_secondary_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -215,7 +215,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_secondary_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -233,7 +233,7 @@ ecore_x_selection_secondary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully
  *             claimed, or 0 if unsuccessful.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_xdnd_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -246,7 +246,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_xdnd_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -264,7 +264,7 @@ ecore_x_selection_xdnd_clear(void)
  * Get the converted data from a previous CLIPBOARD selection
  * request. The buffer must be freed when done with.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_clipboard_set(Ecore_X_Window w, const void *data, int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -280,7 +280,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w, const void *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_clipboard_clear(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -386,14 +386,14 @@ ecore_x_selection_clipboard_request(Ecore_X_Window w, const char *target)
 } /* ecore_x_selection_clipboard_request */
 
 EAPI void
-ecore_x_selection_converter_atom_add(Ecore_X_Atom                                    target,
-                                     int                                             (*func)(char *target,
-                                                                       void         *data,
-                                                                       int           size,
-                                                                       void        **data_ret,
-                                                                       int          *size_ret,
-                                                                       Ecore_X_Atom *ttype,
-                                                                       int          *tsize))
+ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
+                                     Eina_Bool  (*func)(char         *target,
+                                                        void         *data,
+                                                        int           size,
+                                                        void        **data_ret,
+                                                        int          *size_ret,
+                                                        Ecore_X_Atom *ttype,
+                                                        int          *tsize))
 {
    Ecore_X_Selection_Converter *cnv;
 
@@ -430,7 +430,7 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom                               
 
 EAPI void
 ecore_x_selection_converter_add(char                             *target,
-                                int                               (*func)(char *target,
+                                Eina_Bool                       (*func)(char *target,
                                                            void  *data,
                                                            int    size,
                                                            void **data_ret,
@@ -492,7 +492,7 @@ ecore_x_selection_converter_del(char *target)
    ecore_x_selection_converter_atom_del(x_target);
 } /* ecore_x_selection_converter_del */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_notify_send(Ecore_X_Window requestor,
                               Ecore_X_Atom   selection,
                               Ecore_X_Atom   target,
@@ -514,11 +514,11 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
    xnotify.serial = 0;
 
    xev.xselection = xnotify;
-   return ((XSendEvent(_ecore_x_disp, requestor, False, 0, &xev) > 0) ? 1 : 0);
+   return ((XSendEvent(_ecore_x_disp, requestor, False, 0, &xev) > 0) ? EINA_TRUE : EINA_FALSE);
 } /* ecore_x_selection_notify_send */
 
 /* Locate and run conversion callback for specified selection target */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_convert(Ecore_X_Atom  selection,
                           Ecore_X_Atom  target,
                           void        **data_ret,
@@ -549,12 +549,12 @@ ecore_x_selection_convert(Ecore_X_Atom  selection,
                   return r;
                }
              else
-                return 0;
+                return EINA_FALSE;
           }
      }
 
    /* ICCCM says "If the selection cannot be converted into a form based on the target (and parameters, if any), the owner should refuse the SelectionRequest as previously described." */
-   return 0;
+   return EINA_FALSE;
 
    /* Default, just return the data
       *data_ret = malloc(sel->length);
@@ -567,7 +567,7 @@ ecore_x_selection_convert(Ecore_X_Atom  selection,
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
-static int
+static Eina_Bool
 _ecore_x_selection_converter_text(char         *target,
                                   void         *data,
                                   int           size,
@@ -581,7 +581,7 @@ _ecore_x_selection_converter_text(char         *target,
    XICCEncodingStyle style;
 
    if (!data || !size)
-      return 0;
+      return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
@@ -596,9 +596,9 @@ _ecore_x_selection_converter_text(char         *target,
       style = XUTF8StringStyle;
 #endif /* ifdef X_HAVE_UTF8_STRING */
    else
-      return 0;
+      return EINA_FALSE;
    if (!(mystr = strdup(data)))
-      return 0;
+      return EINA_FALSE;
 
 #ifdef X_HAVE_UTF8_STRING
    if (Xutf8TextListToTextProperty(_ecore_x_disp, &mystr, 1, style,
@@ -610,7 +610,7 @@ _ecore_x_selection_converter_text(char         *target,
         *size_ret = bufsize;
         XFree(text_prop.value);
         free(mystr);
-        return 1;
+        return EINA_TRUE;
      }
 
 #else /* ifdef X_HAVE_UTF8_STRING */
@@ -623,14 +623,14 @@ _ecore_x_selection_converter_text(char         *target,
         *size_ret = bufsize;
         XFree(text_prop.value);
         free(mystr);
-        return 1;
+        return EINA_TRUE;
      }
 
 #endif /* ifdef X_HAVE_UTF8_STRING */
    else
      {
         free(mystr);
-        return 0;
+        return EINA_TRUE;
      }
 } /* _ecore_x_selection_converter_text */
 

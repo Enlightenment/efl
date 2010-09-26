@@ -58,7 +58,7 @@ Time _ecore_x_event_last_time = 0;
 Window _ecore_x_event_last_win = 0;
 int _ecore_x_event_last_root_x = 0;
 int _ecore_x_event_last_root_y = 0;
-int _ecore_x_xcursor = 0;
+Eina_Bool _ecore_x_xcursor = EINA_FALSE;
 XIC _ecore_x_ic = NULL; /* Input context for composed characters */
 XIM _ecore_x_im = NULL;
 
@@ -333,7 +333,7 @@ ecore_x_init(const char *name)
       goto close_display;
 
 #ifdef ECORE_XCURSOR
-   _ecore_x_xcursor = XcursorSupportsARGB(_ecore_x_disp);
+   _ecore_x_xcursor = XcursorSupportsARGB(_ecore_x_disp) ? EINA_TRUE : EINA_FALSE;
 #endif /* ifdef ECORE_XCURSOR */
    _ecore_x_event_handlers[AnyXEvent] = _ecore_x_event_handle_any_event;
    _ecore_x_event_handlers[KeyPress] = _ecore_x_event_handle_key_press;
@@ -1173,14 +1173,14 @@ _ecore_x_window_manage_error(void *data __UNUSED__)
       _ecore_x_window_manage_failed = 1;
 } /* _ecore_x_window_manage_error */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_window_manage(Ecore_X_Window win)
 {
    XWindowAttributes att;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XGetWindowAttributes(_ecore_x_disp, win, &att) != True)
-      return 0;
+      return EINA_FALSE;
 
    ecore_x_sync();
    _ecore_x_window_manage_failed = 0;
@@ -1201,10 +1201,10 @@ ecore_x_window_manage(Ecore_X_Window win)
    if (_ecore_x_window_manage_failed)
      {
         _ecore_x_window_manage_failed = 0;
-        return 0;
+        return EINA_FALSE;
      }
 
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_window_manage */
 
 EAPI void
@@ -1255,7 +1255,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
    XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
 } /* ecore_x_window_client_sniff */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_window_attributes_get(Ecore_X_Window             win,
                               Ecore_X_Window_Attributes *att_ret)
 {
@@ -1263,7 +1263,7 @@ ecore_x_window_attributes_get(Ecore_X_Window             win,
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!XGetWindowAttributes(_ecore_x_disp, win, &att))
-      return 0;
+      return EINA_FALSE;
 
    memset(att_ret, 0, sizeof(Ecore_X_Window_Attributes));
    att_ret->root = att.root;
@@ -1295,7 +1295,7 @@ ecore_x_window_attributes_get(Ecore_X_Window             win,
    att_ret->pixel_gravity = att.bit_gravity;
    att_ret->colormap = att.colormap;
    att_ret->visual = att.visual;
-   return 1;
+   return EINA_TRUE;
 } /* ecore_x_window_attributes_get */
 
 EAPI void
@@ -1342,37 +1342,37 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
    return windows;
 } /* ecore_x_window_children_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XChangePointerControl(_ecore_x_disp, 1, 1,
-                                accel_num, accel_denom, threshold);
+                                accel_num, accel_denom, threshold) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_pointer_control_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_control_get(int *accel_num, int *accel_denom, int *threshold)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XGetPointerControl(_ecore_x_disp,
-                             accel_num, accel_denom, threshold);
+                             accel_num, accel_denom, threshold) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_pointer_control_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_mapping_set(unsigned char *map, int nmap)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XSetPointerMapping(_ecore_x_disp, map, nmap);
+   return XSetPointerMapping(_ecore_x_disp, map, nmap) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_pointer_mapping_set */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_mapping_get(unsigned char *map, int nmap)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XGetPointerMapping(_ecore_x_disp, map, nmap);
+   return XGetPointerMapping(_ecore_x_disp, map, nmap) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_pointer_mapping_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_grab(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1381,12 +1381,12 @@ ecore_x_pointer_grab(Ecore_X_Window win)
                     EnterWindowMask | LeaveWindowMask | PointerMotionMask,
                     GrabModeAsync, GrabModeAsync,
                     None, None, CurrentTime) == GrabSuccess)
-      return 1;
+      return EINA_TRUE;
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_pointer_grab */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_confine_grab(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -1395,9 +1395,9 @@ ecore_x_pointer_confine_grab(Ecore_X_Window win)
                     EnterWindowMask | LeaveWindowMask | PointerMotionMask,
                     GrabModeAsync, GrabModeAsync,
                     win, None, CurrentTime) == GrabSuccess)
-      return 1;
+      return EINA_TRUE;
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_pointer_confine_grab */
 
 EAPI void
@@ -1407,23 +1407,23 @@ ecore_x_pointer_ungrab(void)
    XUngrabPointer(_ecore_x_disp, CurrentTime);
 } /* ecore_x_pointer_ungrab */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_warp(Ecore_X_Window win, int x, int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XWarpPointer(_ecore_x_disp, None, win, 0, 0, 0, 0, x, y);
+   return XWarpPointer(_ecore_x_disp, None, win, 0, 0, 0, 0, x, y) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_pointer_warp */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_keyboard_grab(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XGrabKeyboard(_ecore_x_disp, win, False,
                      GrabModeAsync, GrabModeAsync,
                      CurrentTime) == GrabSuccess)
-      return 1;
+      return EINA_TRUE;
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_keyboard_grab */
 
 EAPI void
@@ -1707,9 +1707,9 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, const char *key,
  * @param d3      The client message data item 4
  * @param d4      The client message data item 5
  *
- * @return !0 on success.
+ * @return EINA_TRUE on success EINA_FALSE otherwise.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
                               Ecore_X_Event_Mask mask,
                               long d0, long d1, long d2, long d3, long d4)
@@ -1727,7 +1727,7 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
    xev.xclient.data.l[3] = d3;
    xev.xclient.data.l[4] = d4;
 
-   return XSendEvent(_ecore_x_disp, win, False, mask, &xev);
+   return XSendEvent(_ecore_x_disp, win, False, mask, &xev) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_client_message32_send */
 
 /**
@@ -1738,9 +1738,9 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
  * @param data    Data to be sent.
  * @param len     Number of data bytes, max 20.
  *
- * @return !0 on success.
+ * @return EINA_TRUE on success EINA_FALSE otherwise.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
                              const void *data, int len)
 {
@@ -1757,10 +1757,10 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
    memcpy(xev.xclient.data.b, data, len);
    memset(xev.xclient.data.b + len, 0, 20 - len);
 
-   return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+   return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_client_message8_send */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
 {
    XEvent xev;
@@ -1783,10 +1783,10 @@ ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
    xev.xmotion.state = 0;
    xev.xmotion.is_hint = 0;
    xev.xmotion.same_screen = 1;
-   return XSendEvent(_ecore_x_disp, win, True, PointerMotionMask, &xev);
+   return XSendEvent(_ecore_x_disp, win, True, PointerMotionMask, &xev) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_mouse_move_send */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
 {
    XEvent xev;
@@ -1809,10 +1809,10 @@ ecore_x_mouse_down_send(Ecore_X_Window win, int x, int y, int b)
    xev.xbutton.state = 1 << b;
    xev.xbutton.button = b;
    xev.xbutton.same_screen = 1;
-   return XSendEvent(_ecore_x_disp, win, True, ButtonPressMask, &xev);
+   return XSendEvent(_ecore_x_disp, win, True, ButtonPressMask, &xev) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_mouse_down_send */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
 {
    XEvent xev;
@@ -1835,7 +1835,7 @@ ecore_x_mouse_up_send(Ecore_X_Window win, int x, int y, int b)
    xev.xbutton.state = 0;
    xev.xbutton.button = b;
    xev.xbutton.same_screen = 1;
-   return XSendEvent(_ecore_x_disp, win, True, ButtonReleaseMask, &xev);
+   return XSendEvent(_ecore_x_disp, win, True, ButtonReleaseMask, &xev) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_mouse_up_send */
 
 EAPI void

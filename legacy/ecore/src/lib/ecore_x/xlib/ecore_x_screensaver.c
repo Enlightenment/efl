@@ -13,7 +13,7 @@
 
 static int _screensaver_available = -1;
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_screensaver_event_available_get(void)
 {
    if (_screensaver_available >= 0)
@@ -154,7 +154,7 @@ ecore_x_screensaver_interval_get(void)
 } /* ecore_x_screensaver_interval_get */
 
 EAPI void
-ecore_x_screensaver_event_listen_set(int on __UNUSED__)
+ecore_x_screensaver_event_listen_set(Eina_Bool on)
 {
 #ifdef ECORE_XSS
    Ecore_X_Window root;

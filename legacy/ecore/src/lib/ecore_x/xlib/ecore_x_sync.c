@@ -44,14 +44,14 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
    return alarm;
 } /* ecore_x_sync_alarm_new */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XSyncDestroyAlarm(_ecore_x_disp, alarm);
 } /* ecore_x_sync_alarm_free */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 {
    XSyncValue value;
@@ -60,10 +60,10 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
    if (XSyncQueryCounter(_ecore_x_disp, counter, &value))
      {
         *val = (unsigned int)XSyncValueLow32(value);
-        return 1;
+        return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 } /* ecore_x_sync_counter_query */
 
 EAPI Ecore_X_Sync_Counter

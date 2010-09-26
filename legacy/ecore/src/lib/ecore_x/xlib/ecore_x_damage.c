@@ -5,7 +5,7 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
-static int _damage_available;
+static Eina_Bool _damage_available = EINA_FALSE;
 #ifdef ECORE_XDAMAGE
 static int _damage_major, _damage_minor;
 #endif /* ifdef ECORE_XDAMAGE */
@@ -19,16 +19,16 @@ _ecore_x_damage_init(void)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (XDamageQueryVersion(_ecore_x_disp, &_damage_major, &_damage_minor))
-      _damage_available = 1;
+      _damage_available = EINA_TRUE;
    else
-      _damage_available = 0;
+      _damage_available = EINA_FALSE;
 
 #else /* ifdef ECORE_XDAMAGE */
-   _damage_available = 0;
+   _damage_available = EINA_FALSE;
 #endif /* ifdef ECORE_XDAMAGE */
 } /* _ecore_x_damage_init */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_damage_query(void)
 {
    return _damage_available;
