@@ -202,18 +202,21 @@ evas_free(Evas *e)
    if (e->walking_list == 0) evas_render_idle_flush(e);
    
    if (e->walking_list > 0) return;
-   if (!e->callbacks) return;
-   if (e->callbacks->deletions_waiting) return;
-   
-   e->callbacks->deletions_waiting = 0;
-   evas_event_callback_list_post_free(&e->callbacks->callbacks);
-   if (!e->callbacks->callbacks)
+
+   if (e->callbacks)
      {
-        free(e->callbacks);
-	e->callbacks = NULL;
+	if (e->callbacks->deletions_waiting) return;
+
+	e->callbacks->deletions_waiting = 0;
+	evas_event_callback_list_post_free(&e->callbacks->callbacks);
+	if (!e->callbacks->callbacks)
+	  {
+	     free(e->callbacks);
+	     e->callbacks = NULL;
+	  }
+
+	_evas_post_event_callback_free(e);
      }
-   
-   _evas_post_event_callback_free(e);
    
    del = 1;
    e->walking_list++;
