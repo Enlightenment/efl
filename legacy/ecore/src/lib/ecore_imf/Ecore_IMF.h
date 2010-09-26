@@ -127,14 +127,14 @@ struct _Ecore_IMF_Event_Preedit_Changed
 struct _Ecore_IMF_Event_Commit
 {
    Ecore_IMF_Context *ctx;
-   char *str;
+   char              *str;
 };
 
 struct _Ecore_IMF_Event_Delete_Surrounding
 {
    Ecore_IMF_Context *ctx;
-   int offset;
-   int n_chars;
+   int                offset;
+   int                n_chars;
 };
 
 struct _Ecore_IMF_Event_Mouse_Down
@@ -228,36 +228,36 @@ struct _Ecore_IMF_Event_Mouse_Wheel
 
 struct _Ecore_IMF_Event_Key_Down
 {
-   const char                  *keyname;   /**< The string name of the key pressed */
-   Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
-   Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
-   const char                  *key;       /**< The logical key : (eg shift+1 == exclamation) */
-   const char                  *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
-   const char                  *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
-   unsigned int                 timestamp; /**< The timestamp when the event occurred */
+   const char                   *keyname;   /**< The string name of the key pressed */
+   Ecore_IMF_Keyboard_Modifiers  modifiers; /**< The keyboard modifiers active when the event has been emitted */
+   Ecore_IMF_Keyboard_Locks      locks;     /**< The keyboard locks active when the event has been emitted */
+   const char                   *key;       /**< The logical key : (eg shift+1 == exclamation) */
+   const char                   *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
+   const char                   *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int                  timestamp; /**< The timestamp when the event occurred */
 };
 
 struct _Ecore_IMF_Event_Key_Up
 {
-   const char                  *keyname;   /**< The string name of the key pressed */
-   Ecore_IMF_Keyboard_Modifiers modifiers; /**< The keyboard modifiers active when the event has been emitted */
-   Ecore_IMF_Keyboard_Locks     locks;     /**< The keyboard locks active when the event has been emitted */
-   const char                  *key;       /**< The logical key : (eg shift+1 == exclamation) */
-   const char                  *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
-   const char                  *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
-   unsigned int                 timestamp; /**< The timestamp when the event occurred */
+   const char                   *keyname;   /**< The string name of the key pressed */
+   Ecore_IMF_Keyboard_Modifiers  modifiers; /**< The keyboard modifiers active when the event has been emitted */
+   Ecore_IMF_Keyboard_Locks      locks;     /**< The keyboard locks active when the event has been emitted */
+   const char                   *key;       /**< The logical key : (eg shift+1 == exclamation) */
+   const char                   *string;    /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
+   const char                   *compose;   /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int                  timestamp; /**< The timestamp when the event occurred */
 };
 
 union _Ecore_IMF_Event
 {
-   Ecore_IMF_Event_Mouse_Down mouse_down;
-   Ecore_IMF_Event_Mouse_Up mouse_up;
-   Ecore_IMF_Event_Mouse_In mouse_in;
-   Ecore_IMF_Event_Mouse_Out mouse_out;
-   Ecore_IMF_Event_Mouse_Move mouse_move;
+   Ecore_IMF_Event_Mouse_Down  mouse_down;
+   Ecore_IMF_Event_Mouse_Up    mouse_up;
+   Ecore_IMF_Event_Mouse_In    mouse_in;
+   Ecore_IMF_Event_Mouse_Out   mouse_out;
+   Ecore_IMF_Event_Mouse_Move  mouse_move;
    Ecore_IMF_Event_Mouse_Wheel mouse_wheel;
-   Ecore_IMF_Event_Key_Down key_down;
-   Ecore_IMF_Event_Key_Up key_up;
+   Ecore_IMF_Event_Key_Down    key_down;
+   Ecore_IMF_Event_Key_Up      key_up;
 };
 
 struct _Ecore_IMF_Context_Class
