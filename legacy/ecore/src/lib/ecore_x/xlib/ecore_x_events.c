@@ -324,7 +324,7 @@ _ecore_key_press(int event, XKeyEvent *xevent)
    sym = 0;
    key = NULL;
    compose = NULL;
-   if (_ecore_x_ic)
+   if ((_ecore_x_ic) && (event == ECORE_EVENT_KEY_DOWN))
      {
         Status mbstatus;
 #ifdef X_HAVE_UTF8_STRING
