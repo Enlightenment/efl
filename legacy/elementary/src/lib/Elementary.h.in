@@ -487,11 +487,12 @@ extern "C" {
    EAPI void         elm_box_clear(Evas_Object *obj);
    EAPI void         elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_unpack_all(Evas_Object *obj);
+   EAPI const Eina_List *elm_box_children_get(const Evas_Object *obj);
+
    EAPI void         elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
    EAPI void         elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data);
    EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Object_Box_Layout start_layout, void *start_layout_data, void(*start_layout_free_data)(void *data), Evas_Object_Box_Layout end_layout, void *end_layout_data, void(*end_layout_free_data)(void *data), void(*transition_end_cb)(void *data), void *transition_end_data);
    EAPI void         elm_box_transition_free(void *data);
-   EAPI const Eina_List *elm_box_children_get(Evas_Object *obj);
    /* smart callbacks called:
     */
 

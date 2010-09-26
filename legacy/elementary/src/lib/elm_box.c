@@ -777,7 +777,7 @@ elm_box_transition_free(void *data)
  * @ingroup Box
  */
 EAPI const Eina_List *
-elm_box_children_get(Evas_Object *obj) 
+elm_box_children_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
