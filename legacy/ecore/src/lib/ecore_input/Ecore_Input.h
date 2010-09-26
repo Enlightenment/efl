@@ -32,14 +32,14 @@
 extern "C" {
 #endif
 
-EAPI extern int ECORE_EVENT_KEY_DOWN;
-EAPI extern int ECORE_EVENT_KEY_UP;
-EAPI extern int ECORE_EVENT_MOUSE_BUTTON_DOWN;
-EAPI extern int ECORE_EVENT_MOUSE_BUTTON_UP;
-EAPI extern int ECORE_EVENT_MOUSE_MOVE;
-EAPI extern int ECORE_EVENT_MOUSE_WHEEL;
-EAPI extern int ECORE_EVENT_MOUSE_IN;
-EAPI extern int ECORE_EVENT_MOUSE_OUT;
+   EAPI extern int ECORE_EVENT_KEY_DOWN;
+   EAPI extern int ECORE_EVENT_KEY_UP;
+   EAPI extern int ECORE_EVENT_MOUSE_BUTTON_DOWN;
+   EAPI extern int ECORE_EVENT_MOUSE_BUTTON_UP;
+   EAPI extern int ECORE_EVENT_MOUSE_MOVE;
+   EAPI extern int ECORE_EVENT_MOUSE_WHEEL;
+   EAPI extern int ECORE_EVENT_MOUSE_IN;
+   EAPI extern int ECORE_EVENT_MOUSE_OUT;
 
 #define ECORE_EVENT_MODIFIER_SHIFT	0x0001
 #define ECORE_EVENT_MODIFIER_CTRL	0x0002
@@ -52,171 +52,160 @@ EAPI extern int ECORE_EVENT_MOUSE_OUT;
 #define ECORE_EVENT_LOCK_NUM		0x0100
 #define ECORE_EVENT_LOCK_CAPS		0x0200
 
-typedef uintptr_t Ecore_Window;
-
-typedef struct _Ecore_Event_Key Ecore_Event_Key;
-struct _Ecore_Event_Key
-{
-   const char	*keyname;
-   const char	*key;
-   const char	*string;
-   const char	*compose;
-   Ecore_Window  window;
-   Ecore_Window  root_window;
-   Ecore_Window	 event_window;
-
-   unsigned int	 timestamp;
-   unsigned int  modifiers;
-
-   int           same_screen;
-};
-
-typedef struct _Ecore_Event_Mouse_Button Ecore_Event_Mouse_Button;
-struct _Ecore_Event_Mouse_Button
-{
-   Ecore_Window  window;
-   Ecore_Window  root_window;
-   Ecore_Window	 event_window;
-
-   unsigned int	 timestamp;
-   unsigned int	 modifiers;
-   unsigned int  buttons;
-   unsigned int  double_click;
-   unsigned int  triple_click;
-   int           same_screen;
-
-   int		 x;
-   int		 y;
-   struct
-   {
-      int	 x;
-      int	 y;
-   } root;
+   typedef uintptr_t                        Ecore_Window;
+   typedef struct _Ecore_Event_Key          Ecore_Event_Key;
+   typedef struct _Ecore_Event_Mouse_Button Ecore_Event_Mouse_Button;
+   typedef struct _Ecore_Event_Mouse_Wheel  Ecore_Event_Mouse_Wheel;
+   typedef struct _Ecore_Event_Mouse_Move   Ecore_Event_Mouse_Move;
+   typedef struct _Ecore_Event_Mouse_IO     Ecore_Event_Mouse_IO;
+   typedef struct _Ecore_Event_Modifiers    Ecore_Event_Modifiers;
    
-   struct
+   typedef enum _Ecore_Event_Modifier
      {
-        int        device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
-        double     radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
-        double     pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
-        double     angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
-        double     x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
-        struct
-          {
-             double  x, y;
-          } root;
-     } multi;
-};
+        ECORE_NONE,
+        ECORE_SHIFT,
+        ECORE_CTRL,
+        ECORE_ALT,
+        ECORE_WIN,
+        ECORE_SCROLL,
+        ECORE_CAPS,
+        ECORE_LAST
+     } Ecore_Event_Modifier;
 
-typedef struct _Ecore_Event_Mouse_Wheel Ecore_Event_Mouse_Wheel;
-struct _Ecore_Event_Mouse_Wheel
-{
-   Ecore_Window	 window;
-   Ecore_Window  root_window;
-   Ecore_Window	 event_window;
-
-   unsigned int	 timestamp;
-   unsigned int	 modifiers;
-
-   int           same_screen;
-   int		 direction;
-   int		 z;
-
-   int		 x;
-   int		 y;
-   struct
-   {
-      int	 x;
-      int	 y;
-   } root;
-};
-
-typedef struct _Ecore_Event_Mouse_Move Ecore_Event_Mouse_Move;
-struct _Ecore_Event_Mouse_Move
-{
-   Ecore_Window	 window;
-   Ecore_Window  root_window;
-   Ecore_Window	 event_window;
-
-   unsigned int	 timestamp;
-   unsigned int	 modifiers;
-
-   int           same_screen;
-
-   int		 x;
-   int		 y;
-   struct
-   {
-      int	 x;
-      int	 y;
-   } root;
-
-   struct
+   typedef enum _Ecore_Event_Press
      {
-        int        device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
-        double     radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
-        double     pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
-        double     angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
-        double     x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
-        struct
-          {
-             double  x, y;
-          } root;
-     } multi;
-};
+        ECORE_DOWN,
+        ECORE_UP
+     } Ecore_Event_Press;
 
-typedef struct _Ecore_Event_Mouse_IO Ecore_Event_Mouse_IO;
-struct _Ecore_Event_Mouse_IO
-{
-   Ecore_Window	 window;
-   Ecore_Window	 event_window;
+   typedef enum _Ecore_Event_IO
+     {
+        ECORE_IN,
+        ECORE_OUT
+     } Ecore_Event_IO;
 
-   unsigned int	 timestamp;
-   unsigned int  modifiers;
+   struct _Ecore_Event_Key
+     {
+        const char      *keyname;
+        const char      *key;
+        const char      *string;
+        const char      *compose;
+        Ecore_Window     window;
+        Ecore_Window     root_window;
+        Ecore_Window     event_window;
+        
+        unsigned int     timestamp;
+        unsigned int     modifiers;
+        
+        int              same_screen;
+     };
 
-   int		 x;
-   int		 y;
-};
+   struct _Ecore_Event_Mouse_Button
+     {
+        Ecore_Window     window;
+        Ecore_Window     root_window;
+        Ecore_Window     event_window;
+        
+        unsigned int     timestamp;
+        unsigned int     modifiers;
+        unsigned int     buttons;
+        unsigned int     double_click;
+        unsigned int     triple_click;
+        int              same_screen;
+        
+        int		 x;
+        int		 y;
+        struct {
+           int           x;
+           int           y;
+        } root;
+        
+        struct {
+           int           device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
+           double        radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
+           double        pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
+           double        angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
+           double        x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
+           struct {
+              double     x, y;
+           } root;
+        } multi;
+     };
+   
+   struct _Ecore_Event_Mouse_Wheel
+     {
+        Ecore_Window     window;
+        Ecore_Window     root_window;
+        Ecore_Window     event_window;
+        
+        unsigned int     timestamp;
+        unsigned int     modifiers;
+        
+        int              same_screen;
+        int              direction;
+        int              z;
+        
+        int              x;
+        int              y;
+        struct {
+           int           x;
+           int           y;
+        } root;
+     };
+   
+   struct _Ecore_Event_Mouse_Move
+     {
+        Ecore_Window     window;
+        Ecore_Window     root_window;
+        Ecore_Window     event_window;
+        
+        unsigned int     timestamp;
+        unsigned int     modifiers;
+        
+        int              same_screen;
+        
+        int              x;
+        int              y;
+        struct {
+           int           x;
+           int           y;
+        } root;
+        
+        struct {
+           int           device; /* 0 if normal mouse, 1+ for other mouse-devices (eg multi-touch - other fingers) */
+           double        radius, radius_x, radius_y; /* radius of press point - radius_x and y if its an ellipse (radius is the average of the 2) */
+           double        pressure; /* pressure - 1.0 == normal, > 1.0 == more, 0.0 == none */
+           double        angle; /* angle relative to perpendicular (0.0 == perpendicular), in degrees */
+           double        x, y; /* same as x, y root.x, root.y, but with sub-pixel precision, if available */
+           struct {
+              double     x, y;
+           } root;
+        } multi;
+     };
+   
+   struct _Ecore_Event_Mouse_IO
+     {
+        Ecore_Window     window;
+        Ecore_Window     event_window;
+        
+        unsigned int     timestamp;
+        unsigned int     modifiers;
+        
+        int              x;
+        int              y;
+     };
 
-enum _Ecore_Event_Modifier
-{
-  ECORE_NONE,
-  ECORE_SHIFT,
-  ECORE_CTRL,
-  ECORE_ALT,
-  ECORE_WIN,
-  ECORE_SCROLL,
-  ECORE_CAPS,
-  ECORE_LAST
-};
-
-enum _Ecore_Event_Press
-{
-  ECORE_DOWN,
-  ECORE_UP
-};
-
-enum _Ecore_Event_IO
-{
-  ECORE_IN,
-  ECORE_OUT
-};
-
-typedef enum _Ecore_Event_IO Ecore_Event_IO;
-typedef enum _Ecore_Event_Press Ecore_Event_Press;
-typedef enum _Ecore_Event_Modifier Ecore_Event_Modifier;
-
-typedef struct _Ecore_Event_Modifiers Ecore_Event_Modifiers;
-struct _Ecore_Event_Modifiers
-{
-   unsigned int size;
-   unsigned int array[ECORE_LAST];
-};
-
-EAPI int	 ecore_event_init(void);
-EAPI int	 ecore_event_shutdown(void);
-
-EAPI unsigned int ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
-EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
+   struct _Ecore_Event_Modifiers
+     {
+        unsigned int size;
+        unsigned int array[ECORE_LAST];
+     };
+   
+   EAPI int                  ecore_event_init(void);
+   EAPI int                  ecore_event_shutdown(void);
+   
+   EAPI unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
+   EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 
 #ifdef __cplusplus
 }
