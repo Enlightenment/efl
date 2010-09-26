@@ -201,6 +201,7 @@ case "$host_os" in
       want_signature="yes"
       want_inotify="yes"
       want_tslib="yes"
+      want_ecore_fb="yes"
       want_ecore_ipc="yes"
       want_ecore_imf="yes"
       want_ecore_x="yes"
