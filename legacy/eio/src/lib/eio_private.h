@@ -9,12 +9,17 @@
 
 #include "Eio.h"
 
+/* Huge TLB == 16M on most system */
+#define EIO_PACKET_SIZE 65536
+#define EIO_PACKET_COUNT 256
+
 typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
 typedef struct _Eio_File_Mkdir Eio_File_Mkdir;
 typedef struct _Eio_File_Unlink Eio_File_Unlink;
 typedef struct _Eio_File_Stat Eio_File_Stat;
+typedef struct _Eio_File_Copy Eio_File_Copy;
 
 struct _Eio_File
 {
@@ -72,6 +77,16 @@ struct _Eio_File_Stat
 
    struct stat buffer;
    const char *path;
+};
+
+struct _Eio_File_Copy
+{
+   Eio_File common;
+
+   Eio_Progress_Cb progress_cb;
+
+   const char *source;
+   const char *dest;
 };
 
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */

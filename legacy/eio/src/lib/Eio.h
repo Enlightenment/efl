@@ -87,9 +87,12 @@ typedef void (*Eio_Error_Cb)(int error, void *data);
 
 struct _Eio_Progress
 {
-   size_t current;
-   size_t max;
+   off_t current;
+   off_t max;
    float percent;
+
+   const char *source;
+   const char *dest;
 };
 
 EAPI int eio_init(void);

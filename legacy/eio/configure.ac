@@ -74,7 +74,6 @@ AC_HEADER_TIME
 
 ### Checks for types
 
-
 ### Checks for structures
 
 ### Checks for linker characteristics
@@ -108,6 +107,22 @@ AC_SUBST(EFL_EIO_BUILD)
 ### Checks for library functions
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(strlcpy)
+
+have_splice="no"
+AC_TRY_LINK([
+#if defined(HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
+#include <fcntl.h>],
+    [long ret = splice(0,0,1,0,400,0);],
+    have_splice=yes,
+    have_splice=no)
+AC_MSG_CHECKING([whether to use splice for file copy])
+AC_MSG_RESULT(${have_splice})
+
+if test "x${have_splice}" = "xyes"; then
+   AC_DEFINE([EFL_HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
+fi
 
 AC_OUTPUT([
 eio.pc
