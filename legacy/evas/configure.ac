@@ -151,6 +151,7 @@ case "$host_os" in
       want_evas_engine_xrender_x11="auto"
       want_evas_engine_software_8_x11="auto"
       want_evas_engine_software_16_x11="auto"
+      want_evas_engine_fb="auto"
       ;;
 esac
 
@@ -533,11 +534,11 @@ EVAS_CHECK_ENGINE([software-sdl], [${want_evas_engine_software_sdl}], [no], [Sof
 
 EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [yes], [OpenGL SDL])
 
-EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
+EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [yes], [Framebuffer])
 
 EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
 
-# disable cairo engine for the release
+# disable qtopia engine for the release
 #EVAS_CHECK_ENGINE([software-qtopia], [${want_evas_engine_software_qtopia}], [no], [Qtopia])
 
 EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [yes], [Software X11 8 bits grayscale])
