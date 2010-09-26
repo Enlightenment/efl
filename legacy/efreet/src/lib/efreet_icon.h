@@ -122,7 +122,7 @@ struct Efreet_Icon
                                         points for emblems/overlays */
 
     unsigned int ref_count;    /**< References to this icon */
-    unsigned char has_embedded_text_rectangle:1; /**< Was the embedded
+    unsigned char has_embedded_text_rectangle:1; /**< Has the embedded
                                                         rectangle set */
 };
 
