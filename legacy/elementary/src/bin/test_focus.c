@@ -257,18 +257,24 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
           }
      }
 
-     //{//Third Col
-     //   Evas_Object *fs = elm_fileselector_add(win);
-     //   elm_fileselector_is_save_set(fs, EINA_TRUE);
-     //   elm_fileselector_expandable_set(fs, EINA_TRUE);
-     //   evas_object_size_hint_align_set(fs, 200, 600);
-     //   elm_fileselector_path_set(fs, getenv("HOME"));
-     //   evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND,
-     //                                    EVAS_HINT_EXPAND);
-     //   evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     //   elm_box_pack_end(mainbx, fs);
-     //   my_show(fs);
-     //}
+     {//Third Col
+        Evas_Object *tb = elm_table_add(win);
+        evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        elm_box_pack_end(mainbx, tb);
+        my_show(tb);
+        for (j = 0; j < 3; j++)
+          for (i = 0; i < 3; i++)
+            {
+               Evas_Object *bt;
+               bt = elm_button_add(win);
+               elm_button_label_set(bt, "Button");
+               evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
+                                               EVAS_HINT_FILL);
+               evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+               elm_table_pack(tb, bt, i, j, 1, 1);
+               my_show(bt);
+            }
+     }
 
      { //Panel
         Evas_Object *panel = elm_panel_add(win);
