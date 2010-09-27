@@ -20,6 +20,7 @@ struct _Emotion_Xine_Video
    xine_event_queue_t       *queue;
    volatile double           len;
    volatile double           pos;
+   volatile double           last_pos;
    volatile double           volume;
    double                    fps;
    double                    ratio;
@@ -32,12 +33,13 @@ struct _Emotion_Xine_Video
    volatile int              video_channel;
    volatile int              fq;
    Emotion_Vis               vis;
-    int                       fd_read;
+   int                       fd_read;
    int                       fd_write;
    Ecore_Fd_Handler         *fd_handler;
    int                       fd_ev_read;
    int                       fd_ev_write;
    Ecore_Fd_Handler         *fd_ev_handler;
+   Ecore_Animator           *anim;
    unsigned char             play : 1;
    unsigned char             just_loaded : 1;
    unsigned char             video_mute : 1;

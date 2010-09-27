@@ -87,6 +87,7 @@ struct _Emotion_Gstreamer_Video
    Emotion_Vis       vis;
 
    unsigned char     play : 1;
+   unsigned char     play_started : 1;
    unsigned char     video_mute : 1;
    unsigned char     audio_mute : 1;
 };

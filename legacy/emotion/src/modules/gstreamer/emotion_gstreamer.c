@@ -441,6 +441,7 @@ em_file_open(const char   *file,
   em_audio_channel_volume_set(ev, ev->volume);
 
    _eos_timer_fct(ev);
+   _emotion_open_done(ev->obj);
 
    return 1;
 }
@@ -498,6 +499,7 @@ em_play(void   *video,
    ev = (Emotion_Gstreamer_Video *)video;
    gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
    ev->play = 1;
+   ev->play_started = 1;
 
    /* eos */
    ev->eos_timer = ecore_timer_add(0.1, _eos_timer_fct, ev);
@@ -1385,6 +1387,11 @@ _eos_timer_fct(void *data)
    GstMessage              *msg;
 
    ev = (Emotion_Gstreamer_Video *)data;
+   if (ev->play_started)
+     {
+        _emotion_playback_started(ev->obj);
+        ev->play_started = 0;
+     }
    while ((msg = gst_bus_poll(ev->eos_bus, GST_MESSAGE_ERROR | GST_MESSAGE_EOS | GST_MESSAGE_TAG, 0)))
      {
 	switch (GST_MESSAGE_TYPE(msg))

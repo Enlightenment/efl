@@ -118,6 +118,8 @@ EAPI void  _emotion_frame_new(Evas_Object *obj);
 EAPI void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
 EAPI void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
 EAPI void  _emotion_decode_stop(Evas_Object *obj);
+EAPI void  _emotion_open_done(Evas_Object *obj);
+EAPI void  _emotion_playback_started(Evas_Object *obj);
 EAPI void  _emotion_playback_finished(Evas_Object *obj);
 EAPI void  _emotion_audio_level_change(Evas_Object *obj);
 EAPI void  _emotion_channels_change(Evas_Object *obj);

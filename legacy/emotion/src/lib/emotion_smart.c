@@ -47,6 +47,7 @@ struct _Smart_Data
 
    unsigned char  play : 1;
    unsigned char  seek : 1;
+   unsigned char  seeking : 1;
 
    char *title;
    struct {
@@ -99,6 +100,7 @@ static const char SIG_POSITION_UPDATE[] = "position_update";
 static const char SIG_LENGTH_CHANGE[] = "length_change";
 static const char SIG_FRAME_RESIZE[] = "frame_resize";
 static const char SIG_DECODE_STOP[] = "decode_stop";
+static const char SIG_PLAYBACK_STARTED[] = "playback_started";
 static const char SIG_PLAYBACK_FINISHED[] = "playback_finished";
 static const char SIG_AUDIO_LEVEL_CHANGE[] = "audio_level_change";
 static const char SIG_CHANNELS_CHANGE[] = "channels_change";
@@ -107,12 +109,14 @@ static const char SIG_PROGRESS_CHANGE[] = "progress_change";
 static const char SIG_REF_CHANGE[] = "ref_change";
 static const char SIG_BUTTON_NUM_CHANGE[] = "button_num_change";
 static const char SIG_BUTTON_CHANGE[] = "button_change";
+static const char SIG_OPEN_DONE[] = "open_done";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
   {SIG_FRAME_DECODE, ""},
   {SIG_POSITION_UPDATE, ""},
   {SIG_LENGTH_CHANGE, ""},
   {SIG_FRAME_RESIZE, ""},
   {SIG_DECODE_STOP, ""},
+  {SIG_PLAYBACK_STARTED, ""},
   {SIG_PLAYBACK_FINISHED, ""},
   {SIG_AUDIO_LEVEL_CHANGE, ""},
   {SIG_CHANNELS_CHANGE, ""},
@@ -121,6 +125,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
   {SIG_REF_CHANGE, ""},
   {SIG_BUTTON_NUM_CHANGE, ""},
   {SIG_BUTTON_CHANGE, ""},
+  {SIG_OPEN_DONE, ""},
   {NULL, NULL}
 };
 
@@ -1014,6 +1019,18 @@ _emotion_decode_stop(Evas_Object *obj)
 }
 
 EAPI void
+_emotion_open_done(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, SIG_OPEN_DONE, NULL);
+}
+
+EAPI void
+_emotion_playback_started(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, SIG_PLAYBACK_STARTED, NULL);
+}
+
+EAPI void
 _emotion_playback_finished(Evas_Object *obj)
 {
    evas_object_smart_callback_call(obj, SIG_PLAYBACK_FINISHED, NULL);
@@ -1089,6 +1106,20 @@ _emotion_spu_button_set(Evas_Object *obj, int button)
    evas_object_smart_callback_call(obj, SIG_BUTTON_CHANGE, NULL);
 }
 
+EAPI void
+_emotion_seek_done(Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (sd->seeking)
+     {
+        sd->seeking = 0;
+        if (sd->seek) emotion_object_position_set(obj, sd->seek_pos);
+     }
+}
+
+
 
 /****************************/
 /* Internal object routines */
@@ -1143,8 +1174,10 @@ _pos_set_job(void *data)
    obj = data;
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    sd->job = NULL;
+   if (sd->seeking) return;
    if (sd->seek)
      {
+        sd->seeking = 1;
 	sd->module->pos_set(sd->video, sd->seek_pos);
 	sd->seek = 0;
      }

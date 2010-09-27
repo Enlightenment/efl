@@ -430,7 +430,14 @@ em_shutdown(void *ef)
    ev->delete_me = 1;
    printf("EXM del fds %p\n", ev);
    ecore_main_fd_handler_del(ev->fd_handler);
+   ev->fd_handler = NULL;
    ecore_main_fd_handler_del(ev->fd_ev_handler);
+   ev->fd_ev_handler = NULL;
+   if (ev->anim)
+     {
+        ecore_animator_del(ev->anim);
+        ev->anim = NULL;
+     }
    
    ev->closing = 1;
    _em_slave_event(ev, 3, NULL);
@@ -1219,6 +1226,16 @@ _em_module_event(void *data, int type)
 }
 
 static Eina_Bool
+_em_audio_only_poller(void *data)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = data;
+   _em_get_pos_len(ev);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 {
    int fd, len;
@@ -1243,20 +1260,55 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       break;
 		     case 2: /* open done */
 		       ev->play_ok = 1;
+                       if (ev->anim)
+                         {
+                            ecore_animator_del(ev->anim);
+                            ev->anim = NULL;
+                         }
+                       _emotion_open_done(ev->obj);
 		       break;
 		     case 3: /* shutdown done */
+                       if (ev->anim)
+                         {
+                            ecore_animator_del(ev->anim);
+                            ev->anim = NULL;
+                         }
 		       ev->play_ok = 1;
 		       break;
 		     case 4: /* play done */
 		       ev->play_ok = 1;
+                       if (ev->anim)
+                         {
+                            ecore_animator_del(ev->anim);
+                            ev->anim = NULL;
+                         }
+                       if ((!(xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO) &&
+                              xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED))) &&
+                           (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_AUDIO) &&
+                               xine_get_stream_info(ev->stream, XINE_STREAM_INFO_AUDIO_HANDLED)))
+                          ev->anim = ecore_animator_add(_em_audio_only_poller, ev);
+                       _emotion_playback_started(ev->obj);
 		       break;
 		     case 5: /* stop done */
+                       if (ev->anim)
+                         {
+                            ecore_animator_del(ev->anim);
+                            ev->anim = NULL;
+                         }
 		       ev->play_ok = 1;
 		       break;
 		     case 6: /* seek done */
 		       ev->play_ok = 1;
+                       _emotion_seek_done(ev->obj);
+                       _em_get_pos_len(ev);
+                       _emotion_video_pos_update(ev->obj, ev->pos, ev->len);
 		       break;
 		     case 7: /* eject done */
+                       if (ev->anim)
+                         {
+                            ecore_animator_del(ev->anim);
+                            ev->anim = NULL;
+                         }
 		       ev->play_ok = 1;
 		       break;
 		     case 8: /* spu mute done */
@@ -1269,8 +1321,20 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       ev->play_ok = 1;
 		       break;
 		     case 11: /* close done */
+                       if (ev->anim)
+                         {
+                            ecore_animator_del(ev->anim);
+                            ev->anim = NULL;
+                         }
 		       ev->play_ok = 1;
 		       break;
+                     case 15: /* get pos done */
+                       if (ev->last_pos != ev->pos)
+                         {
+                            ev->last_pos = ev->pos;
+                            _emotion_video_pos_update(ev->obj, ev->pos, ev->len);
+                         }
+                       break;
 		     default:
 		       break;
 		    }
@@ -1409,6 +1473,7 @@ _em_get_pos_len_th(void *par)
 		    }
 	       }
 	     ev->get_poslen = 0;
+             _em_module_event(ev, 15); /* event - getpos done */
 	     //printf("get pos %3.3f\n", ev->pos);
 	  }
 	if (ev->delete_me)
@@ -1424,7 +1489,6 @@ static void
 _em_get_pos_len(Emotion_Xine_Video *ev)
 {
    if (!ev->play_ok) return;
-   if (ev->get_poslen) return;
    ev->get_poslen = 1;
    pthread_mutex_lock(&(ev->get_pos_len_mutex));
    pthread_cond_broadcast(&(ev->get_pos_len_cond));
