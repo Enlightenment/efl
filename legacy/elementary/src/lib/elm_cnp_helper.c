@@ -71,8 +71,8 @@ struct _elm_cnp_selection {
    Evas_Object *requestwidget;
    Elm_Sel_Format requestformat;
 
-   int (*set)(Ecore_X_Window, const void *data, int size);
-   int (*clear)(void);
+   Eina_Bool (*set)(Ecore_X_Window, const void *data, int size);
+   Eina_Bool (*clear)(void);
    void (*request)(Ecore_X_Window, const char *target);
 };
 
@@ -115,15 +115,15 @@ static void
 entry_deleted(void *images, Evas *e, Evas_Object *entry, void *unused);
 
 
-typedef int (*converter_fn)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+typedef Eina_Bool (*converter_fn)(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
-static int targets_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static int text_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static int html_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static int edje_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static int uri_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static int png_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
-static int vcard_send(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool targets_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool text_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool html_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool edje_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool uri_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool png_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
+static Eina_Bool vcard_send(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 
 /* FIXME: Which way should this be: Notify or response */
 typedef int (*response_handler)(struct _elm_cnp_selection *sel,
@@ -555,7 +555,7 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event){
 
 
 
-static int
+static Eina_Bool
 targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
                   void **data_ret, int *size_ret,
                   Ecore_X_Atom *ttype, int *typesize){
@@ -563,7 +563,7 @@ targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    Ecore_X_Atom *aret;
    struct _elm_cnp_selection *sel;
 
-   if (!data_ret) return -1;
+   if (!data_ret) return EINA_FALSE;
 
    sel = selections + *(int*)data;
 
@@ -581,19 +581,19 @@ targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    if (ttype) *ttype = XA_ATOM;
    if (size_ret) *size_ret = count;
 
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 png_converter(char *target __UNUSED__, void *data, int size,
               void **data_ret __UNUSED__, int *size_ret __UNUSED__,
               Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
    cnp_debug("Png converter called\n");
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 vcard_send(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__,
               void **data_ret, int *size_ret,
               Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
@@ -607,7 +607,7 @@ vcard_send(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__,
    if (data_ret) *data_ret = strdup(sel->selbuf);
    if (size_ret) *size_ret = strlen(sel->selbuf);
 
-   return 1;
+   return EINA_TRUE;
 }
 /*
  * Callback to handle a targets response on a selection request:
@@ -868,7 +868,7 @@ notify_handler_html(struct _elm_cnp_selection *sel,
 }
 
 
-static int
+static Eina_Bool
 text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
                void **data_ret, int *size_ret,
                Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
@@ -877,7 +877,7 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 
    cnp_debug("text converter\n");
    sel = selections + *(int *)data;
-   if (!sel->active) return 1;
+   if (!sel->active) return EINA_TRUE;
 
    if (sel->format == ELM_SEL_FORMAT_MARKUP){
 	*data_ret = remove_tags(sel->selbuf, size_ret);
@@ -892,10 +892,10 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 	else *data_ret = strdup(*data_ret);
 	*size_ret = strlen(*data_ret);
    }
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 edje_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
                void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__,
                int *typesize __UNUSED__)
@@ -906,11 +906,11 @@ edje_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    if (data_ret) *data_ret = strdup(sel->selbuf);
    if (size_ret) *size_ret = strlen(sel->selbuf);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 
-static int
+static Eina_Bool
 html_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
                void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__,
                int *typesize __UNUSED__)
@@ -921,10 +921,10 @@ html_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    if (data_ret) *data_ret = strdup(sel->selbuf);
    if (size_ret) *size_ret = strlen(sel->selbuf);
 
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
               void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__,
               int *typesize __UNUSED__)
@@ -934,7 +934,7 @@ uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
     cnp_debug("Uri converter\n");
     if (data_ret) *data_ret = strdup(sel->selbuf);
     if (size_ret) *size_ret = strlen(sel->selbuf);
-    return 1;
+    return EINA_TRUE;
 }
 
 
