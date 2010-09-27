@@ -46,11 +46,12 @@ collections {
 	    description { state: "default" 0.0;
 	       color: 255 255 0 255;
 	       rel1 {
-		  relative: 0.3 0.2;
+		  relative: 0.3 0.02;
 	       }
 	       rel2 {
-		  relative: 0.6 0.3;
+		  relative: 0.6 0.12;
 	       }
+	       align: 0.5 0.5;
 	       text {
 		  font: "Sans:style=Bold";
 		  size: 14;
