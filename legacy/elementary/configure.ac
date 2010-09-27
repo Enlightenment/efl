@@ -110,6 +110,7 @@ case "$host_os" in
       have_windows="yes"
 dnl managed by evil
       AC_DEFINE(HAVE_DLADDR)
+      dlopen_libs=-ldl
       requirement_elm="evil"
       have_socket="no"
     ;;
@@ -119,6 +120,9 @@ dnl managed by evil
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ELM_WIN32_DEF="#define"
       have_windows="yes"
+dnl managed by evil
+      AC_DEFINE(HAVE_DLADDR)
+      dlopen_libs=-ldl
       requirement_elm="evil"
       have_socket="no"
       ;;
