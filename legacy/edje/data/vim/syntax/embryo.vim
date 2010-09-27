@@ -67,7 +67,7 @@ else
   syn match	embryoErrInBracket	display contained "[);{}]"
 endif
 
-syn region embryoBrace start='{' end='}' transparent keepend
+syn region embryoBrace start='{' end='}' transparent
 "integer number, or floating point number without a dot and with "f".
 syn case ignore
 syn match	embryoNumbers	display transparent "\<\d\|\.\d" contains=embryoNumber,embryoFloat,embryoOctalError,embryoOctal
