@@ -141,6 +141,8 @@ static int notify_handler_png(struct _elm_cnp_selection *sel,
       Ecore_X_Event_Selection_Notify *notify);
 static int notify_handler_uri(struct _elm_cnp_selection *sel,
       Ecore_X_Event_Selection_Notify *notify);
+static int notify_handler_html(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *notify);
 static int vcard_receive(struct _elm_cnp_selection *sed,
       Ecore_X_Event_Selection_Notify *notify);
 
@@ -217,7 +219,7 @@ static struct {
 	ELM_SEL_FORMAT_MARKUP,
 	html_converter,
 	NULL,
-	NULL,
+	notify_handler_html,
 	0
    },
    [CNP_ATOM_text_html] = {
@@ -225,7 +227,7 @@ static struct {
 	ELM_SEL_FORMAT_MARKUP,
 	html_converter,
 	NULL,
-	NULL,
+	NULL, /* No encoding: Don't try */
 	0
    },
    [CNP_ATOM_UTF8STRING] = {
@@ -840,6 +842,27 @@ notify_handler_png(struct _elm_cnp_selection *sel,
    pasteimage_append(pi, sel->requestwidget);
 
    tmpinfo_free(tmp);
+
+   return 0;
+}
+
+
+/**
+ *    Warning: Generic text/html can';t handle it sanely.
+ *    Firefox sends ucs2 (i think).
+ *       chrome sends utf8... blerg
+ */
+static int
+notify_handler_html(struct _elm_cnp_selection *sel,
+      Ecore_X_Event_Selection_Notify *notify){
+   Ecore_X_Selection_Data *data;
+
+   cnp_debug("Got some HTML: Checking encoding is useful\n");
+   data = notify->data;
+
+
+   cnp_debug("String is %s (%d bytes)\n",data->data,data->length);
+   elm_entry_entry_insert(sel->requestwidget, (char *)data->data);
 
    return 0;
 }
