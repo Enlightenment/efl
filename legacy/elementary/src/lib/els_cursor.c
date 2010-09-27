@@ -364,9 +364,6 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
                                   _elm_cursor_mouse_out, cur);
    evas_object_event_callback_add(eventarea, EVAS_CALLBACK_DEL,
                                   _elm_cursor_del, cur);
-   if (owner != eventarea)
-      evas_object_event_callback_add(owner, EVAS_CALLBACK_DEL,
-                                     _elm_cursor_del, cur);
 }
 
 /**
