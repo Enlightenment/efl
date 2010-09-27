@@ -2,6 +2,94 @@
 #include <Elementary_Cursor.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+typedef struct _Testitem
+{
+   Elm_Gengrid_Item *item;
+   const char *path;
+   int mode;
+   int onoff;
+} Testitem;
+
+static Elm_Gengrid_Item_Class gic;
+
+char *
+grd_lbl_get(void *data, Evas_Object *obj, const char *part)
+{
+   const Testitem *ti = data;
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Photo %s", ti->path);
+   return strdup(buf);
+}
+
+Evas_Object *
+grd_icon_get(void *data, Evas_Object *obj, const char *part)
+{
+   const Testitem *ti = data;
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        Evas_Object *icon = elm_bg_add(obj);
+        elm_bg_file_set(icon, ti->path, NULL);
+        evas_object_size_hint_aspect_set(icon, EVAS_ASPECT_CONTROL_VERTICAL,
+                                         1, 1);
+        evas_object_show(icon);
+        return icon;
+     }
+   return NULL;
+}
+
+static Elm_Genlist_Item_Class itct;
+
+static void
+glt_exp(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   Evas_Object *gl = elm_genlist_item_genlist_get(it);
+   int val = (int)elm_genlist_item_data_get(it);
+   Elm_Genlist_Item *it1, *it2, *it3;
+
+   val *= 10;
+   it1 = elm_genlist_item_append(gl, &itct, (void *)(val + 1), it,
+                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   it2 = elm_genlist_item_append(gl, &itct, (void *)(val + 2), it,
+                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   it3 = elm_genlist_item_append(gl, &itct, (void *)(val + 3), it,
+                                 ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+
+   elm_genlist_item_cursor_set(it1, ELM_CURSOR_HAND2);
+   elm_genlist_item_cursor_set(it2, ELM_CURSOR_HAND2);
+   elm_genlist_item_cursor_set(it3, ELM_CURSOR_HAND1);
+
+}
+
+static void
+glt_con(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   elm_genlist_item_subitems_clear(it);
+}
+
+static void
+glt_exp_req(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   elm_genlist_item_expanded_set(it, 1);
+}
+
+static void
+glt_con_req(void *data, Evas_Object *obj, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   elm_genlist_item_expanded_set(it, 0);
+}
+
+char *
+glt_label_get(void *data, Evas_Object *obj, const char *part)
+{
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item mode %i", (int)data);
+   return strdup(buf);
+}
+
 void
 test_cursor(void *data, Evas_Object *obj, void *event_info)
 {
@@ -66,9 +154,25 @@ test_cursor(void *data, Evas_Object *obj, void *event_info)
 void
 test_cursor2(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *o;
+   Evas_Object *win, *bg, *bx, *o, *grid, *gl;
+   Elm_Genlist_Item *it1, *it2, *it3;
    Elm_Toolbar_Item *tit;
    Elm_List_Item *lit;
+   char buf[PATH_MAX];
+   static Testitem ti[144];
+   int i, n;
+   const char *img[9] =
+     {
+        "panel_01.jpg",
+        "plant_01.jpg",
+        "rock_01.jpg",
+        "rock_02.jpg",
+        "sky_01.jpg",
+        "sky_02.jpg",
+        "sky_03.jpg",
+        "sky_04.jpg",
+        "wood_01.jpg",
+     };
 
    win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor 2");
@@ -111,6 +215,62 @@ test_cursor2(void *data, Evas_Object *obj, void *event_info)
    elm_list_item_cursor_set(lit, ELM_CURSOR_XTERM);
    elm_list_go(o);
    evas_object_show(o);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   itct.item_style     = "default";
+   itct.func.label_get = glt_label_get;
+
+   it1 = elm_genlist_item_append(gl, &itct, (void *) 1, NULL,
+                                 ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+   it2 = elm_genlist_item_append(gl, &itct, (void *) 2, NULL,
+                                 ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+   it3 = elm_genlist_item_append(gl, &itct, (void *) 3, NULL,
+                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+   elm_genlist_item_cursor_set(it1, ELM_CURSOR_HAND1);
+   elm_genlist_item_cursor_set(it2, ELM_CURSOR_HAND1);
+   elm_genlist_item_cursor_set(it3, ELM_CURSOR_CROSS);
+
+   evas_object_smart_callback_add(gl, "expand,request", glt_exp_req, gl);
+   evas_object_smart_callback_add(gl, "contract,request", glt_con_req, gl);
+   evas_object_smart_callback_add(gl, "expanded", glt_exp, gl);
+   evas_object_smart_callback_add(gl, "clicked", NULL, gl);
+   evas_object_smart_callback_add(gl, "contracted", glt_con, gl);
+
+   elm_box_pack_end(bx, gl);
+
+   grid = elm_gengrid_add(win);
+   elm_gengrid_item_size_set(grid, 130, 130);
+   elm_gengrid_horizontal_set(grid, EINA_FALSE);
+   elm_gengrid_multi_select_set(grid, EINA_TRUE);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   gic.item_style = "default";
+   gic.func.label_get = grd_lbl_get;
+   gic.func.icon_get = grd_icon_get;
+
+   n = 0;
+   for (i = 0; i < 3 * 3; i++)
+     {
+        snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[n]);
+        n = (n + 1) % 9;
+        ti[i].mode = i;
+        ti[i].path = eina_stringshare_add(buf);
+        ti[i].item = elm_gengrid_item_append(grid, &gic, &(ti[i]), NULL, NULL);
+        if (n % 2)
+           elm_gengrid_item_cursor_set(ti[i].item, ELM_CURSOR_HAND1);
+        else
+           elm_gengrid_item_cursor_set(ti[i].item, ELM_CURSOR_CLOCK);
+        if (!(i % 5))
+           elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
+     }
+   elm_box_pack_end(bx, grid);
+   evas_object_show(grid);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);

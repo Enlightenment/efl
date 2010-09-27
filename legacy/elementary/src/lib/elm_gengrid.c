@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
 /**
@@ -156,6 +157,16 @@ struct _Elm_Gengrid_Item
 
    Evas_Coord x, y, dx, dy;
    int relcount;
+
+   struct
+     {
+	const void *data;
+	Elm_Tooltip_Item_Content_Cb content_cb;
+	Evas_Smart_Cb del_cb;
+	const char *style;
+   } tooltip;
+
+   const char *mouse_cursor;
 
    Eina_Bool want_unrealize : 1;
    Eina_Bool realized : 1;
@@ -549,6 +560,18 @@ _item_realize(Elm_Gengrid_Item *item)
      edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
 
    evas_object_show(item->base.view);
+
+   if (item->tooltip.content_cb)
+     {
+	elm_widget_item_tooltip_content_cb_set(item,
+					       item->tooltip.content_cb,
+					       item->tooltip.data, NULL);
+	elm_widget_item_tooltip_style_set(item, item->tooltip.style);
+     }
+
+   if (item->mouse_cursor)
+     elm_widget_item_cursor_set(item, item->mouse_cursor);
+
    item->realized = EINA_TRUE;
    item->want_unrealize = EINA_FALSE;
 }
@@ -663,6 +686,7 @@ _item_create(Widget_Data *wd, const Elm_Gengrid_Item_Class *gic, const void *dat
    item->base.data = data;
    item->func.func = func;
    item->func.data = func_data;
+   item->mouse_cursor = NULL;
    return item;
 }
 
@@ -679,6 +703,8 @@ _item_del(Elm_Gengrid_Item *item)
    item->wd->items = eina_list_remove(item->wd->items, item);
    if (item->long_timer) ecore_timer_del(item->long_timer);
    elm_widget_item_del(item);
+   if (item->tooltip.del_cb)
+     item->tooltip.del_cb((void *)item->tooltip.data, item->base.widget, item);
 }
 
 static void
@@ -1481,6 +1507,23 @@ elm_gengrid_item_disabled_get(const Elm_Gengrid_Item *item)
    return item->disabled;
 }
 
+static Evas_Object *
+_elm_gengrid_item_label_create(void *data, Evas_Object *obj, void *item __UNUSED__)
+{
+   Evas_Object *label = elm_label_add(obj);
+   if (!label)
+     return NULL;
+   elm_object_style_set(label, "tooltip");
+   elm_label_label_set(label, data);
+   return label;
+}
+
+static void
+_elm_gengrid_item_label_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   eina_stringshare_del(data);
+}
+
 /**
  * Set the text to be shown in the gengrid item.
  *
@@ -1495,7 +1538,8 @@ elm_gengrid_item_disabled_get(const Elm_Gengrid_Item *item)
 EAPI void
 elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text)
 {
-   elm_widget_item_tooltip_text_set(item, text);
+   text = eina_stringshare_add(text);
+   elm_gengrid_item_tooltip_content_cb_set(item, _elm_gengrid_item_label_create, text, _elm_gengrid_item_label_del_cb);
 }
 
 /**
@@ -1521,7 +1565,29 @@ elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text)
 EAPI void
 elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
-   elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
+   EINA_SAFETY_ON_NULL_GOTO(item, error);
+
+   if ((item->tooltip.content_cb == func) && (item->tooltip.data == data))
+     return;
+
+   if (item->tooltip.del_cb)
+     item->tooltip.del_cb((void *)item->tooltip.data,
+			  item->base.widget, item);
+   item->tooltip.content_cb = func;
+   item->tooltip.data = data;
+   item->tooltip.del_cb = del_cb;
+   if (item->base.view)
+     {
+	elm_widget_item_tooltip_content_cb_set(item,
+					       item->tooltip.content_cb,
+					       item->tooltip.data, NULL);
+	elm_widget_item_tooltip_style_set(item, item->tooltip.style);
+     }
+
+   return;
+
+ error:
+   if (del_cb) del_cb((void *)data, NULL, NULL);
 }
 
 /**
@@ -1540,7 +1606,16 @@ elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item
 EAPI void
 elm_gengrid_item_tooltip_unset(Elm_Gengrid_Item *item)
 {
-   elm_widget_item_tooltip_unset(item);
+   if (item->base.view && item->tooltip.content_cb)
+       elm_widget_item_tooltip_unset(item);
+
+   if (item->tooltip.del_cb)
+     item->tooltip.del_cb((void *)item->tooltip.data, item->base.widget, item);
+   item->tooltip.del_cb = NULL;
+   item->tooltip.content_cb = NULL;
+   item->tooltip.data = NULL;
+   if (item->tooltip.style)
+     elm_gengrid_item_tooltip_style_set(item, NULL);
 }
 
 /**
@@ -1558,7 +1633,8 @@ elm_gengrid_item_tooltip_unset(Elm_Gengrid_Item *item)
 EAPI void
 elm_gengrid_item_tooltip_style_set(Elm_Gengrid_Item *item, const char *style)
 {
-   elm_widget_item_tooltip_style_set(item, style);
+   eina_stringshare_replace(&item->tooltip.style, style);
+   if (item->base.view) elm_widget_item_tooltip_style_set(item, style);
 }
 
 /**
@@ -1573,7 +1649,7 @@ elm_gengrid_item_tooltip_style_set(Elm_Gengrid_Item *item, const char *style)
 EAPI const char *
 elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item)
 {
-   return elm_widget_item_tooltip_style_get(item);
+   return item->tooltip.style;
 }
 
 /**
@@ -1588,7 +1664,8 @@ elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item)
 EAPI void
 elm_gengrid_item_cursor_set(Elm_Gengrid_Item *item, const char *cursor)
 {
-   elm_widget_item_cursor_set(item, cursor);
+   eina_stringshare_replace(&item->mouse_cursor, cursor);
+   if (item->base.view) elm_widget_item_cursor_set(item, cursor);
 }
 
 /**
@@ -1602,7 +1679,14 @@ elm_gengrid_item_cursor_set(Elm_Gengrid_Item *item, const char *cursor)
 EAPI void
 elm_gengrid_item_cursor_unset(Elm_Gengrid_Item *item)
 {
-   elm_widget_item_cursor_unset(item);
+   if (!item->mouse_cursor)
+     return;
+
+   if (item->base.view)
+     elm_widget_item_cursor_unset(item);
+
+   eina_stringshare_del(item->mouse_cursor);
+   item->mouse_cursor = NULL;
 }
 
 /**
