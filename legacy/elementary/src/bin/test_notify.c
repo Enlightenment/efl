@@ -5,6 +5,11 @@ static void
 _bt(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *notify = data;
+   int timeout = elm_notify_timeout_get(notify);
+
+   if (timeout > 0)
+       elm_notify_timer_init(notify);
+
    evas_object_show(notify);
 }
 
@@ -13,6 +18,18 @@ _bt_close(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *notify = data;
    evas_object_hide(notify);
+}
+
+static void
+_notify_timeout(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("Notify timed out!\n");
+}
+
+static void
+_notify_block(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("Notify block area clicked!!\n");
 }
 
 void
@@ -64,6 +81,8 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
    elm_notify_timeout_set(notify, 5);
+   evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
+   evas_object_smart_callback_add(notify, "block,clicked", _notify_block, NULL);
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
@@ -92,6 +111,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_LEFT);
    elm_notify_timeout_set(notify, 10);
+   evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
@@ -119,6 +139,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_CENTER);
    elm_notify_timeout_set(notify, 10);
+   evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);

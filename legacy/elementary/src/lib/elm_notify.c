@@ -37,6 +37,14 @@ static void _show(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
+static const char SIG_BLOCK_CLICKED[] = "block,clicked";
+static const char SIG_TIMEOUT[] = "timeout";
+static const Evas_Smart_Cb_Description _signals[] = {
+  {SIG_BLOCK_CLICKED, ""},
+  {SIG_TIMEOUT, ""},
+  {NULL, NULL}
+};
+
 static void
 _del_pre_hook(Evas_Object *obj)
 {
@@ -161,7 +169,7 @@ _signal_block_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(data, "block,clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_BLOCK_CLICKED, NULL);
 }
 
 static void
@@ -238,6 +246,7 @@ _timer_cb(void *data)
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->timer = NULL;
    evas_object_hide(obj);
+   evas_object_smart_callback_call(obj, SIG_TIMEOUT, NULL);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -332,6 +341,8 @@ elm_notify_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
 
    _sizing_eval(obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 
@@ -495,11 +506,15 @@ elm_notify_orient_get(const Evas_Object *obj)
 }
 
 /**
- * Set the time before the notify window is hidden. <br>
- * Set a value < 0 to disable the timer
+ * Set the time before the notify window is hidden. Set a value < 0
+ * to disable a running timer.
  *
  * @param obj The notify object
  * @param time the new timeout
+ *
+ * @note If the value is > 0 and there was a previous (unfinished)
+ * timer running, it will be <b>re-issued</b> with the new value.
+ *
  */
 EAPI void
 elm_notify_timeout_set(Evas_Object *obj, int timeout)
@@ -508,6 +523,10 @@ elm_notify_timeout_set(Evas_Object *obj, int timeout)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->timeout = timeout;
+
+   if (!wd->timer)
+       return;
+
    elm_notify_timer_init(obj);
 }
 
@@ -525,7 +544,7 @@ elm_notify_timeout_get(const Evas_Object *obj)
 }
 
 /**
- * Re-init the timer
+ * (Re) init the timer
  * @param obj The notify object
  */
 EAPI void
@@ -563,7 +582,8 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 	wd->block_events = edje_object_add(evas_object_evas_get(obj));
 	_block_events_theme_apply(obj);
         elm_widget_resize_object_set(obj, wd->block_events);
-	edje_object_signal_callback_add(wd->block_events, "elm,action,clicked", "elm", _signal_block_clicked, obj);
+	edje_object_signal_callback_add(wd->block_events, "elm,action,clicked",
+                                        "elm", _signal_block_clicked, obj);
      }
    else
      evas_object_del(wd->block_events);

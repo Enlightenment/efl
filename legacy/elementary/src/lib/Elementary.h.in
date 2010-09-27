@@ -767,6 +767,8 @@ extern "C" {
    EAPI void         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
    EAPI Eina_Bool    elm_notify_repeat_events_get(const Evas_Object *obj);
    /* smart callbacks called:
+    * "timeout" - when timeout happens on notify and it's hidden
+    * "block,clicked" - when it's hidden by a click outside of the notify's view
     */
 
    typedef enum _Elm_Hover_Axis
