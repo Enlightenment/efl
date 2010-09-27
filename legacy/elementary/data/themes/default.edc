@@ -25610,6 +25610,7 @@ collections {
 /////////////////////////////////////////////////////////////////////////////
   group {
      name: "elm/panel/base/left";
+     alias: "elm/panel/base/top";
      images
        {
           image: "bt_base1.png" COMP;
@@ -25620,8 +25621,35 @@ collections {
           image: "icon_arrow_left.png" COMP;
           image: "icon_arrow_right.png" COMP;
        }
+       data {
+          item: "focus_highlight" "on";
+       }
      parts
        {
+            part { name: "focus_highlight";
+               description { state: "default" 0.0;
+                  visible: 0;
+                  color: 255 255 255 0;
+                  rel1 {
+                     to: "btn";
+                     offset: -8 -8;
+                  }
+                  rel2 {
+                     to: "btn";
+                     offset: 7 7;
+                  }
+                  image {
+                     normal: "frame_2.png";
+                     border: 5 5 32 26;
+                     middle: 0;
+                  }
+               }
+               description { state: "enabled" 0.0;
+                  inherit: "default" 0.0;
+                  visible: 1;
+                  color: 255 255 255 255;
+               }
+            }
           part
             {
                name: "bg";
@@ -25631,14 +25659,19 @@ collections {
                  {
                     state: "default" 0.0;
                     color: 255 255 255 0;
-                    rel1.offset: 30 0;
-                    rel2.relative: 0.0 1.0;
+                    rel1.relative: 0.0 0.0;
+                    rel1.offset: 0 0;
+                    rel2.relative: 1.0 1.0;
+                    rel2.offset: -1 -1;
                  }
                description
                  {
-                    state: "visible" 0.0;
+                    state: "hidden" 0.0;
                     inherit: "default" 0.0;
-                    rel2.relative: 1.0 1.0;
+                    rel1.relative: -1.0 0.0;
+                    rel1.offset: 21 0;
+                    rel2.relative: 0.0 1.0;
+                    rel2.offset: 20 -1;
                  }
             }
           part
@@ -25649,11 +25682,9 @@ collections {
                description
                  {
                     state: "default" 0.0;
-                    rel2
-                      {
-                         offset: -20 -1;
-                         to_x: "bg";
-                      }
+                    rel1.to: "bg";
+                    rel2.to: "bg";
+                    rel2.offset: -20 -1;
                     image
                       {
                          normal: "bt_dis_base.png";
@@ -25804,13 +25835,13 @@ collections {
                     align: 0.5 0.5;
                     min: 16 16;
                     max: 16 16;
-                    image.normal: "icon_arrow_right.png";
+                    image.normal: "icon_arrow_left.png";
                  }
                description
                  {
-                    state: "visible" 0.0;
+                    state: "hidden" 0.0;
                     inherit: "default" 0.0;
-                    image.normal: "icon_arrow_left.png";
+                    image.normal: "icon_arrow_right.png";
                  }
             }
        }
@@ -25821,24 +25852,7 @@ collections {
                name: "show";
                signal: "elm,action,show";
                source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "bg";
-               target: "btn_icon";
-               transition: LINEAR 0.5;
-            }
-          program
-            {
-               name: "show2";
-               signal: "show";
                action: STATE_SET "default" 0.0;
-               target: "bg";
-               target: "btn_icon";
-               after: "show3";
-            }
-          program
-            {
-               name: "show3";
-               action: STATE_SET "visible" 0.0;
                target: "bg";
                target: "btn_icon";
                transition: LINEAR 0.5;
@@ -25848,7 +25862,7 @@ collections {
                name: "hide";
                signal: "elm,action,hide";
                source: "elm";
-               action: STATE_SET "default" 0.0;
+               action: STATE_SET "hidden" 0.0;
                target: "bg";
                target: "btn_icon";
                transition: LINEAR 0.5;
@@ -25889,15 +25903,30 @@ collections {
           program
             {
                name: "btn_unclick3";
-               signal: "mouse,up,1";
+               signal: "mouse,clicked,1";
                source: "btn_over2";
                action: SIGNAL_EMIT "elm,action,panel,toggle" "";
             }
+         program { name: "highlight_show";
+            signal: "elm,action,focus_highlight,show";
+            source: "elm";
+            action: STATE_SET "enabled" 0.0;
+            transition: ACCELERATE 0.3;
+            target: "focus_highlight";
+         }
+         program { name: "highlight_hide";
+            signal: "elm,action,focus_highlight,hide";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.3;
+            target: "focus_highlight";
+         }
        }
   }
 
   group {
      name: "elm/panel/base/right";
+     alias: "elm/panel/base/bottom";
      images
        {
           image: "bt_base1.png" COMP;
@@ -25910,6 +25939,30 @@ collections {
        }
      parts
        {
+            part { name: "focus_highlight";
+               description { state: "default" 0.0;
+                  visible: 0;
+                  color: 255 255 255 0;
+                  rel1 {
+                     to: "btn";
+                     offset: -8 -8;
+                  }
+                  rel2 {
+                     to: "btn";
+                     offset: 7 7;
+                  }
+                  image {
+                     normal: "frame_2.png";
+                     border: 5 5 32 26;
+                     middle: 0;
+                  }
+               }
+               description { state: "enabled" 0.0;
+                  inherit: "default" 0.0;
+                  visible: 1;
+                  color: 255 255 255 255;
+               }
+            }
           part
             {
                name: "bg";
@@ -25919,14 +25972,19 @@ collections {
                  {
                     state: "default" 0.0;
                     color: 255 255 255 0;
-                    rel1.relative: 1 0;
-                    rel2.offset: -31 0;
+                    rel1.relative: 0.0 0.0;
+                    rel1.offset: 0 0;
+                    rel2.relative: 1.0 1.0;
+                    rel2.offset: -1 -1;
                  }
                description
                  {
-                    state: "visible" 0.0;
+                    state: "hidden" 0.0;
                     inherit: "default" 0.0;
-                    rel1.relative: 0 0;
+                    rel1.relative: 1.0 0.0;
+                    rel1.offset: -22 0;
+                    rel2.relative: 2.0 1.0;
+                    rel2.offset: -23 -1;
                  }
             }
           part
@@ -25937,12 +25995,9 @@ collections {
                description
                  {
                     state: "default" 0.0;
-                    rel1
-                      {
-                         offset: 20 0;
-                         to_x: "bg";
-                      }
-                    rel2.offset: -1 -1;
+                    rel1.to: "bg";
+                    rel1.offset: 20 0;
+                    rel2.to: "bg";
                     image
                       {
                          normal: "bt_dis_base.png";
@@ -26096,13 +26151,13 @@ collections {
                     align: 0.5 0.5;
                     min: 16 16;
                     max: 16 16;
-                    image.normal: "icon_arrow_left.png";
+                    image.normal: "icon_arrow_right.png";
                  }
                description
                  {
-                    state: "visible" 0.0;
+                    state: "hidden" 0.0;
                     inherit: "default" 0.0;
-                    image.normal: "icon_arrow_right.png";
+                    image.normal: "icon_arrow_left.png";
                  }
             }
        }
@@ -26113,24 +26168,7 @@ collections {
                name: "show";
                signal: "elm,action,show";
                source: "elm";
-               action: STATE_SET "visible" 0.0;
-               target: "bg";
-               target: "btn_icon";
-               transition: LINEAR 0.5;
-            }
-          program
-            {
-               name: "show2";
-               signal: "show";
                action: STATE_SET "default" 0.0;
-               target: "bg";
-               target: "btn_icon";
-               after: "show3";
-            }
-          program
-            {
-               name: "show3";
-               action: STATE_SET "visible" 0.0;
                target: "bg";
                target: "btn_icon";
                transition: LINEAR 0.5;
@@ -26140,7 +26178,7 @@ collections {
                name: "hide";
                signal: "elm,action,hide";
                source: "elm";
-               action: STATE_SET "default" 0.0;
+               action: STATE_SET "hidden" 0.0;
                target: "bg";
                target: "btn_icon";
                transition: LINEAR 0.5;
@@ -26185,6 +26223,20 @@ collections {
                source: "btn_over2";
                action: SIGNAL_EMIT "elm,action,panel,toggle" "";
             }
+         program { name: "highlight_show";
+            signal: "elm,action,focus";
+            source: "elm";
+            action: STATE_SET "enabled" 0.0;
+            transition: ACCELERATE 0.3;
+            target: "focus_highlight";
+         }
+         program { name: "highlight_hide";
+            signal: "elm,action,unfocus";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            transition: DECELERATE 0.3;
+            target: "focus_highlight";
+         }
        }
   }
 

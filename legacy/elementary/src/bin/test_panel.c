@@ -215,6 +215,7 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_RIGHT);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(panel, 1, EVAS_HINT_FILL);
+   elm_panel_hidden_set(panel, EINA_TRUE);
 
    list = elm_genlist_add(win);
    evas_object_size_hint_min_set(list, 100, -1);
@@ -235,6 +236,7 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_BOTTOM);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_panel_hidden_set(panel, EINA_TRUE);
 
    toolbar = elm_toolbar_add(win);
    elm_toolbar_homogenous_set(toolbar, 0);

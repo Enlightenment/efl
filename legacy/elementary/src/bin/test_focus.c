@@ -1,6 +1,5 @@
 /* Test for Focus Chain Linear*/
 #include <Elementary.h>
-#include <elm_widget.h> /* needed for testing hacks */
 
 static void
 _on_key_down(void *data, Evas *e, Evas_Object *obj, void *einfo)
@@ -49,7 +48,6 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
 
      { //First Col
         Evas_Object *bx = elm_box_add(win);
-        //evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
         evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         elm_box_pack_end(mainbx, bx);
@@ -274,7 +272,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
 
      { //Panel
         Evas_Object *panel = elm_panel_add(win);
-        elm_panel_orient_set(panel, ELM_PANEL_ORIENT_BOTTOM);
+        elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
         evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND,
                                          EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
