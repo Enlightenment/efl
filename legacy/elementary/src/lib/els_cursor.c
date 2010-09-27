@@ -261,6 +261,47 @@ _elm_cursor_strcmp(const void *data1, const void *data2)
    return strcmp (c1->name, c2->name);
 }
 
+static void
+_elm_cursor_cur_set(Elm_Cursor *cur)
+{
+   if (cur->engine_only)
+     {
+        INF("Using only engine cursors");
+        cur->use_engine = EINA_TRUE;
+     }
+   else if (_elm_cursor_obj_add(cur->eventarea, cur))
+     {
+        _elm_cursor_set_hot_spots(cur);
+        cur->use_engine = EINA_FALSE;
+        elm_widget_cursor_add(cur->owner, cur);
+     }
+   else
+     {
+        INF("Cursor couldn't be found on theme: %s", cur->cursor_name);
+        cur->use_engine = EINA_TRUE;
+     }
+
+   if (cur->use_engine)
+     {
+#ifdef HAVE_ELEMENTARY_X
+        struct _Cursor_Id cur_search, *cur_id;
+        cur_search.name = cur->cursor_name;
+        cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
+                         sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
+
+        cur->win = elm_win_xwindow_get(cur->eventarea);
+        if (!cur_id)
+          {
+             INF("X cursor couldn't be found: %s. Using default.",
+                 cur->cursor_name);
+             cur->cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
+          }
+        else
+           cur->cursor = ecore_x_cursor_shape_get(cur_id->id);
+#endif
+     }
+}
+
 /**
  * Set the cursor to be shown when mouse is over the object
  *
@@ -313,36 +354,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
    cur->evas = evas_object_evas_get(eventarea);
    cur->ee = ecore_evas_ecore_evas_get(cur->evas);
 
-   if (_elm_cursor_obj_add(eventarea, cur))
-     {
-        _elm_cursor_set_hot_spots(cur);
-        cur->use_engine = EINA_FALSE;
-        elm_widget_cursor_add(cur->owner, cur);
-     }
-   else
-     {
-        INF("Cursor couldn't be found on theme: %s", cursor);
-        cur->use_engine = EINA_TRUE;
-     }
-
-   if (cur->use_engine)
-     {
-#ifdef HAVE_ELEMENTARY_X
-        struct _Cursor_Id cur_search, *cur_id;
-        cur_search.name = cursor;
-        cur_id = bsearch(&cursor, _cursors, _cursors_count,
-                         sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
-        if (!cur_id)
-          {
-             INF("X cursor couldn't be found: %s", cursor);
-             free(cur);
-             return;
-          }
-
-        cur->win = elm_win_xwindow_get(eventarea);
-        cur->cursor = ecore_x_cursor_shape_get(cur_id->id);
-#endif
-     }
+   _elm_cursor_cur_set(cur);
 
    evas_object_data_set(eventarea, _cursor_key, cur);
 
@@ -514,6 +526,12 @@ elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
    cur->engine_only = engine_only;
+   if (cur->obj)
+     {
+        evas_object_del(cur->obj);
+        cur->obj = NULL;
+     }
+   _elm_cursor_cur_set(cur);
 }
 
 /**
