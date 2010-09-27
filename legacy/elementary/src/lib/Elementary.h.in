@@ -761,8 +761,8 @@ extern "C" {
    EAPI void         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI void         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
    EAPI Elm_Notify_Orient	    elm_notify_orient_get(const Evas_Object *obj);
-   EAPI void         elm_notify_timeout_set(Evas_Object *obj, int timeout);
-   EAPI int          elm_notify_timeout_get(const Evas_Object *obj);
+   EAPI void         elm_notify_timeout_set(Evas_Object *obj, double timeout);
+   EAPI double       elm_notify_timeout_get(const Evas_Object *obj);
    EAPI void         elm_notify_timer_init(Evas_Object *obj);
    EAPI void         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
    EAPI Eina_Bool    elm_notify_repeat_events_get(const Evas_Object *obj);

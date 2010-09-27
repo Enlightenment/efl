@@ -21,6 +21,13 @@ _bt_close(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
+_bt_timer_close(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *notify = data;
+   elm_notify_timeout_set(notify, 2.0);
+}
+
+static void
 _notify_timeout(void *data, Evas_Object *obj, void *event_info)
 {
    printf("Notify timed out!\n");
@@ -80,7 +87,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    elm_notify_repeat_events_set(notify, EINA_FALSE);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
-   elm_notify_timeout_set(notify, 5);
+   elm_notify_timeout_set(notify, 5.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
    evas_object_smart_callback_add(notify, "block,clicked", _notify_block, NULL);
 
@@ -110,7 +117,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_LEFT);
-   elm_notify_timeout_set(notify, 10);
+   elm_notify_timeout_set(notify, 10.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
    bx = elm_box_add(win);
@@ -139,6 +146,7 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_CENTER);
    elm_notify_timeout_set(notify, 10);
+   elm_notify_timeout_set(notify, 10.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
    bx = elm_box_add(win);
@@ -282,8 +290,8 @@ test_notify(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(lb);
 
    bt = elm_button_add(win);
-   elm_button_label_set(bt, "Close");
-   evas_object_smart_callback_add(bt, "clicked", _bt_close, notify);
+   elm_button_label_set(bt, "Close in 2s");
+   evas_object_smart_callback_add(bt, "clicked", _bt_timer_close, notify);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

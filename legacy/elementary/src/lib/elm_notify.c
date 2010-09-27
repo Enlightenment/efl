@@ -20,7 +20,7 @@ struct _Widget_Data
    Eina_Bool repeat_events;
    Evas_Object *block_events;
 
-   int timeout;
+   double timeout;
    Ecore_Timer *timer;
 };
 
@@ -251,6 +251,18 @@ _timer_cb(void *data)
 }
 
 static void
+_timer_init(Evas_Object *obj, Widget_Data *wd)
+{
+   if (wd->timer)
+     {
+	ecore_timer_del(wd->timer);
+	wd->timer = NULL;
+     }
+   if (evas_object_visible_get(obj) && (wd->timeout > 0.0))
+     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
+}
+
+static void
 _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -258,13 +270,7 @@ _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    evas_object_show(wd->notify);
    if (!wd->repeat_events)
      evas_object_show(wd->block_events);
-   if (wd->timer)
-     {
-	ecore_timer_del(wd->timer);
-	wd->timer = NULL;
-     }
-   if (wd->timeout > 0)
-     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
+   _timer_init(obj, wd);
 }
 
 static void
@@ -517,29 +523,26 @@ elm_notify_orient_get(const Evas_Object *obj)
  *
  */
 EAPI void
-elm_notify_timeout_set(Evas_Object *obj, int timeout)
+elm_notify_timeout_set(Evas_Object *obj, double timeout)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->timeout = timeout;
+   _timer_init(obj, wd);
 
-   if (!wd->timer)
-       return;
-
-   elm_notify_timer_init(obj);
 }
 
 /**
  * Return the timeout value (in seconds)
  * @param obj the notify object
  */
-EAPI int
+EAPI double
 elm_notify_timeout_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return -1;
+   if (!wd) return 0.0;
    return wd->timeout;
 }
 
@@ -553,10 +556,7 @@ elm_notify_timer_init(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->timer) ecore_timer_del(wd->timer);
-   wd->timer = NULL;
-   if (wd->timeout > 0)
-     wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
+   _timer_init(obj, wd);
 }
 
 /**
