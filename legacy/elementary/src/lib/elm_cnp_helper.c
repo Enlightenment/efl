@@ -881,6 +881,9 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 
    if (sel->format == ELM_SEL_FORMAT_MARKUP){
 	*data_ret = remove_tags(sel->selbuf, size_ret);
+   } else if (sel->format == ELM_SEL_FORMAT_TEXT){
+        *data_ret = strdup(sel->selbuf);
+        *size_ret = strlen(sel->selbuf);
    } else if (sel->format == ELM_SEL_FORMAT_IMAGE){
 	cnp_debug("Image %s\n",evas_object_type_get(sel->widget));
 	cnp_debug("Elm type: %s\n",elm_object_widget_type_get(sel->widget));
