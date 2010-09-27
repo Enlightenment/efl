@@ -20,7 +20,7 @@
 #if HAVE_CLOCK_GETTIME
 static clockid_t _ecore_time_clock_id = -1;
 #endif
-double _ecore_loop_time = -1.0;
+double _ecore_time_loop_time = -1.0;
 
 /**
  * Retrieves the current system time as a floating point value in seconds.
@@ -53,7 +53,7 @@ ecore_time_get(void)
      {
         CRIT("Cannot get current time.");
         /* Try to at least return the latest value retrieved*/
-        return _ecore_loop_time;
+        return _ecore_time_loop_time;
      }
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
@@ -111,7 +111,7 @@ ecore_time_unix_get(void)
 EAPI double
 ecore_loop_time_get(void)
 {
-   return _ecore_loop_time;
+   return _ecore_time_loop_time;
 }
 
 
@@ -153,5 +153,5 @@ _ecore_time_init(void)
         "Fallback to unix time.");
 #endif
 
-   _ecore_loop_time = ecore_time_get();
+   _ecore_time_loop_time = ecore_time_get();
 }
