@@ -117,6 +117,8 @@ typedef unsigned int              Ecore_Magic;
 
 EAPI void          _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
 
+void          _ecore_time_init(void);
+
 void          _ecore_timer_shutdown(void);
 void          _ecore_timer_cleanup(void);
 void          _ecore_timer_enable_new(void);

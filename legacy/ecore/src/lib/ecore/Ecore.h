@@ -445,6 +445,7 @@ extern "C" {
 
 
    EAPI double ecore_time_get(void);
+   EAPI double ecore_time_unix_get(void);
    EAPI double ecore_loop_time_get(void);
 
    EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
