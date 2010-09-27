@@ -757,12 +757,15 @@ elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list
         for (;l; l = list_next(l))
           {
              cur = list_data_get(l);
+
              /* Try Focus cycle in subitem */
              if (elm_widget_focus_cycle(cur, dir, child_circular))
                break;
+             /* Ignore focused subitem */
+             if (elm_widget_focus_get(cur) && (!child_circular))
+               continue;
              /* Try give the focus to sub item*/
-             else if (elm_widget_can_focus_get(cur) &&
-                      ((!elm_widget_focus_get(cur)) || child_circular))
+             if (elm_widget_can_focus_get(cur))
                {
                   elm_widget_focus_steal(cur);
                   break;

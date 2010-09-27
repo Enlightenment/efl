@@ -56,6 +56,7 @@ static Eina_Bool
 _elm_panel_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *cur;
 
    if ((!wd) || (!wd->content))
      return EINA_FALSE;
@@ -63,14 +64,18 @@ _elm_panel_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool
    if (wd->hidden)
      return EINA_FALSE;
 
+   cur = wd->content;
+
    /* Try Focus cycle in subitem */
-   if (elm_widget_focus_cycle(wd->content, dir, circular))
+   if (elm_widget_focus_cycle(cur, dir, circular))
      return EINA_TRUE;
+   /* Ignore focused subitem */
+   if (elm_widget_focus_get(cur) && (!circular))
+     return EINA_FALSE;
    /* Try give the focus to sub item*/
-   else if (elm_widget_can_focus_get(wd->content) &&
-            ((!elm_widget_focus_get(wd->content)) || circular))
+   if (elm_widget_can_focus_get(cur))
      {
-        elm_widget_focus_steal(wd->content);
+        elm_widget_focus_steal(cur);
         return EINA_TRUE;
      }
 
