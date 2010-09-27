@@ -22137,6 +22137,22 @@ collections {
                source: "left_over2";
                action: SIGNAL_EMIT "elm,action,click" "";
            }
+           program {
+               name:   "left_bt_pressed_anim";
+               signal: "elm,left,anim,activate";
+               source: "elm";
+               action: STATE_SET "clicked" 0.0;
+               target: "left_bt";
+               target: "left_over3";
+               after: "left_bt_unpressed_anim";
+           }
+           program {
+               name:   "left_bt_unpressed_anim";
+               action: STATE_SET "default" 0.0;
+               transition: DECELERATE 0.5;
+               target: "left_bt";
+               target: "left_over3";
+           }
 
            program {
                name:   "right_bt_click";
@@ -22173,6 +22189,23 @@ collections {
                source: "right_over2";
                action: SIGNAL_EMIT "elm,action,click" "";
            }
+           program {
+               name:   "right_bt_pressed_anim";
+               signal: "elm,right,anim,activate";
+               source: "elm";
+               action: STATE_SET "clicked" 0.0;
+               target: "right_bt";
+               target: "right_over3";
+               after: "right_bt_unpressed_anim";
+           }
+           program {
+               name:   "right_bt_unpressed_anim";
+               action: STATE_SET "default" 0.0;
+               transition: DECELERATE 0.5;
+               target: "right_bt";
+               target: "right_over3";
+           }
+
            program { name: "disable";
                signal: "elm,state,disabled";
                source: "elm";

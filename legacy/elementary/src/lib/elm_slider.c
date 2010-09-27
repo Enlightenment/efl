@@ -67,6 +67,12 @@ static void _units_set(Evas_Object *obj);
 static void _val_set(Evas_Object *obj);
 static void _indicator_set(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _drag_up(void *data, Evas_Object *obj,
+                    const char *emission, const char *source);
+static void _drag_down(void *data, Evas_Object *obj,
+                    const char *emission, const char *source);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
@@ -79,6 +85,48 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_DRAG_STOP, ""},
   {NULL, NULL}
 };
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (!strcmp(ev->keyname, "Left")
+       || !strcmp(ev->keyname, "KP_Left"))
+     {
+        if (!wd->horizontal) return EINA_FALSE;
+        _drag_up(obj, NULL, NULL, NULL);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "Right")
+            || !strcmp(ev->keyname, "KP_Right"))
+     {
+        if (!wd->horizontal) return EINA_FALSE;
+        _drag_down(obj, NULL, NULL, NULL);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+     {
+        if (wd->horizontal) return EINA_FALSE;
+        _drag_up(obj, NULL, NULL, NULL);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+     {
+        if (wd->horizontal) return EINA_FALSE;
+        _drag_down(obj, NULL, NULL, NULL);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   else return EINA_FALSE;
+}
 
 static void
 _del_hook(Evas_Object *obj)
@@ -337,6 +385,7 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->horizontal = EINA_TRUE;
    wd->val = 0.0;

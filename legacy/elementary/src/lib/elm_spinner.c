@@ -52,6 +52,8 @@ static void _sizing_eval(Evas_Object *obj);
 //static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool _value_set(Evas_Object *obj, double delta);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -492,27 +494,48 @@ _entry_activated(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    wd->delay = ecore_timer_add(0.2, _delay_change, data);
 }
 
-static void
-_entry_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
-   Evas_Event_Key_Down *ev = event_info;
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (!strcmp(ev->keyname, "Up")) _val_inc_start(data);
-   else if (!strcmp(ev->keyname, "Down")) _val_dec_start(data);
-}
-
-static void
-_entry_event_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
-{
-   Evas_Event_Key_Down *ev = event_info;
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (!strcmp(ev->keyname, "Up")) _val_inc_stop(data);
-   else if (!strcmp(ev->keyname, "Down")) _val_dec_stop(data);
-   else if (!strcmp(ev->keyname, "Escape")) _reset_value(data);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (type == EVAS_CALLBACK_KEY_DOWN)
+     {
+        Evas_Event_Key_Down *ev = event_info;
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+        else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left")
+                 || !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+          {
+             _val_dec_start(obj);
+             edje_object_signal_emit(wd->spinner, "elm,left,anim,activate", "elm");
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right")
+                 || !strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+          {
+             _val_inc_start(obj);
+             edje_object_signal_emit(wd->spinner, "elm,right,anim,activate", "elm");
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+     }
+   else if (type == EVAS_CALLBACK_KEY_UP)
+     {
+        Evas_Event_Key_Down *ev = event_info;
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+        if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right")
+            || !strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+          _val_inc_stop(obj);
+        else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left")
+            || !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+          _val_dec_stop(obj);
+        else  return EINA_FALSE;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+     return EINA_FALSE;
 }
 
 /**
@@ -546,6 +569,7 @@ elm_spinner_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->val = 0.0;
    wd->val_min = 0.0;
@@ -579,11 +603,6 @@ elm_spinner_add(Evas_Object *parent)
                                    "*", _button_dec_stop, obj);
    edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 
                                    0.0, 0.0);
-
-   evas_object_event_callback_add(wd->spinner, EVAS_CALLBACK_KEY_DOWN, 
-                                  _entry_event_key_down, obj);
-   evas_object_event_callback_add(wd->spinner, EVAS_CALLBACK_KEY_UP, 
-                                  _entry_event_key_up, obj);
 
    wd->ent = elm_entry_add(obj);
    elm_entry_single_line_set(wd->ent, 1);

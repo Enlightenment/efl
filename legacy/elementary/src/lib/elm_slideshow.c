@@ -57,6 +57,42 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool _timer_cb(void *data);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+     {
+        elm_slideshow_previous(obj);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+     {
+        elm_slideshow_next(obj);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   if (!strcmp(ev->keyname, "Return") || !strcmp(ev->keyname, "space"))
+     {
+        if (wd->timeout)
+          elm_slideshow_timeout_set(obj, 0);
+        else
+          elm_slideshow_timeout_set(obj, 3);
+
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
 
 static void
 _del_hook(Evas_Object *obj)
@@ -265,6 +301,7 @@ elm_slideshow_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->current = NULL;
    wd->previous = NULL;
