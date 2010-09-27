@@ -78,6 +78,7 @@ _els_smart_icon_file_edje_set(Evas_Object *obj, const char *file, const char *pa
    if (sd->obj) evas_object_del(sd->obj);
    sd->obj = edje_object_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(sd->obj, obj);
+   if (sd->show) evas_object_show(sd->obj);
    if (!edje_object_file_set(sd->obj, file, part))
      return EINA_FALSE;
    _smart_reconfigure(sd);
