@@ -331,8 +331,12 @@ elm_scrolled_entry_add(Evas_Object *parent)
  * This sets a widget to be displayed to the left of a scrolled entry.
  *
  * @param obj The scrolled entry object
- * @param left_obj The widget to display on the left side of the scrolled entry.
- * The old widget will be destroyed.
+ * @param icon The widget to display on the left side of the scrolled
+ * entry.
+ *
+ * @note A previously set widget will be destroyed.
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
  *
  * @ingroup Scrolled_Entry
  * @see elm_scrolled_entry_end_set
@@ -355,10 +359,11 @@ elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- * Gets the leftmost widget of the scrolled entry. This object is owned by the scrolled
- * entry and should not be modified.
+ * Gets the leftmost widget of the scrolled entry. This object is
+ * owned by the scrolled entry and should not be modified.
  *
  * @param obj The scrolled entry object
+ * @return the left widget inside the scroller
  *
  * @ingroup Scrolled_Entry
  */
@@ -372,9 +377,14 @@ elm_scrolled_entry_icon_get(Evas_Object *obj)
 }
 
 /**
- * Unsets the leftmost widget of the scrolled entry. Unparents and return the leftmost widget.
+ * Unset the leftmost widget of the scrolled entry, unparenting and
+ * returning it.
  *
  * @param obj The scrolled entry object
+ * @return the previously set icon sub-object of this entry, on
+ * success.
+ *
+ * @see elm_scrolled_entry_icon_set()
  *
  * @ingroup Scrolled_Entry
  */
@@ -399,11 +409,12 @@ elm_scrolled_entry_icon_unset(Evas_Object *obj)
 }
 
 /**
- * Sets the visibility of the left-side widget of the scrolled entry, set by
- * @elm_scrolled_entry_icon_set().
+ * Sets the visibility of the left-side widget of the scrolled entry,
+ * set by @elm_scrolled_entry_icon_set().
  *
  * @param obj The scrolled entry object
- * @param setting EINA_TRUE if the object should be displayed, EINA_FALSE if not.
+ * @param setting EINA_TRUE if the object should be displayed,
+ * EINA_FALSE if not.
  *
  * @ingroup Scrolled_Entry
  */
@@ -424,8 +435,12 @@ elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
  * This sets a widget to be displayed to the end of a scrolled entry.
  *
  * @param obj The scrolled entry object
- * @param end The widget to display on the right side of the scrolled entry.
- * The old widget will be destroyed.
+ * @param end The widget to display on the right side of the scrolled
+ * entry.
+ *
+ * @note A previously set widget will be destroyed.
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
  *
  * @ingroup Scrolled_Entry
  * @see elm_scrolled_entry_icon_set
@@ -448,10 +463,11 @@ elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
 }
 
 /**
- * Gets the endmost widget of the scrolled entry. This object is owned by the scrolled
- * entry and should not be modified.
+ * Gets the endmost widget of the scrolled entry. This object is owned
+ * by the scrolled entry and should not be modified.
  *
  * @param obj The scrolled entry object
+ * @return the right widget inside the scroller
  *
  * @ingroup Scrolled_Entry
  */
@@ -465,9 +481,14 @@ elm_scrolled_entry_end_get(Evas_Object *obj)
 }
 
 /**
- * Unsets the endmost widget of the scrolled entry. Unparents and return the endmost widget.
+ * Unset the endmost widget of the scrolled entry, unparenting and
+ * returning it.
  *
  * @param obj The scrolled entry object
+ * @return the previously set icon sub-object of this entry, on
+ * success.
+ *
+ * @see elm_scrolled_entry_icon_set()
  *
  * @ingroup Scrolled_Entry
  */
@@ -496,7 +517,8 @@ elm_scrolled_entry_end_unset(Evas_Object *obj)
  * @elm_scrolled_entry_end_set().
  *
  * @param obj The scrolled entry object
- * @param setting EINA_TRUE if the object should be displayed, EINA_FALSE if not.
+ * @param setting EINA_TRUE if the object should be displayed,
+ * EINA_FALSE if not.
  *
  * @ingroup Scrolled_Entry
  */
