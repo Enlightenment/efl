@@ -718,7 +718,7 @@ elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list
 {
    Eina_List *list = NULL;
    Eina_List *l = NULL;
-   Evas_Object *cur;
+   Evas_Object *cur = NULL;
    Eina_List *(*list_next) (const Eina_List *list);
    Eina_Bool child_circular;
 
