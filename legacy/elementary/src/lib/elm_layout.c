@@ -12,12 +12,14 @@
 
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Subinfo Subinfo;
+typedef struct _Part_Cursor Part_Cursor;
 
 struct _Widget_Data
 {
    Evas_Object *obj;
    Evas_Object *lay;
    Eina_List *subs;
+   Eina_List *parts_cursors;
    Eina_Bool needs_size_calc:1;
 };
 
@@ -27,24 +29,37 @@ struct _Subinfo
    Evas_Object *obj;
 };
 
+struct _Part_Cursor
+{
+   Evas_Object *obj;
+   const char *part;
+   const char *cursor;
+   const char *style;
+   Eina_Bool engine_only:1;
+};
+
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Widget_Data *wd);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static void _part_cursor_free(Part_Cursor *pc);
 
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Subinfo *si;
+   Part_Cursor *pc;
+
    if (!wd) return;
    EINA_LIST_FREE(wd->subs, si)
      {
 	eina_stringshare_del(si->swallow);
 	free(si);
      }
+   EINA_LIST_FREE(wd->parts_cursors, pc) _part_cursor_free(pc);
    free(wd);
 }
 
@@ -127,6 +142,72 @@ _request_sizing_eval(Widget_Data *wd)
    if (wd->needs_size_calc) return;
    wd->needs_size_calc = 1;
    evas_object_smart_changed(wd->obj);
+}
+
+static void
+_part_cursor_free(Part_Cursor *pc)
+{
+   eina_stringshare_del(pc->part);
+   eina_stringshare_del(pc->style);
+   eina_stringshare_del(pc->cursor);
+   free(pc);
+}
+
+static void
+_part_cursor_part_apply(const Part_Cursor *pc)
+{
+   elm_object_cursor_set(pc->obj, pc->cursor);
+   elm_object_cursor_style_set(pc->obj, pc->style);
+   elm_object_cursor_engine_only_set(pc->obj, pc->engine_only);
+}
+
+static Part_Cursor *
+_parts_cursors_find(Widget_Data *wd, const char *part)
+{
+   const Eina_List *l;
+   Part_Cursor *pc;
+   EINA_LIST_FOREACH(wd->parts_cursors, l, pc)
+     {
+        if (strcmp(pc->part, part) == 0)
+          return pc;
+     }
+   return NULL;
+}
+
+static void
+_parts_cursors_apply(Widget_Data *wd)
+{
+   const char *file, *group;
+   const Eina_List *l;
+   Part_Cursor *pc;
+
+   edje_object_file_get(wd->lay, &file, &group);
+
+   EINA_LIST_FOREACH(wd->parts_cursors, l, pc)
+     {
+        Evas_Object *obj = (Evas_Object *)edje_object_part_object_get
+          (wd->lay, pc->part);
+
+        if (!obj)
+          {
+             pc->obj = NULL;
+             WRN("no part '%s' in group '%s' of file '%s'. "
+                 "Cannot set cursor '%s'",
+                 pc->part, group, file, pc->cursor);
+             continue;
+          }
+        else if (evas_object_pass_events_get(obj))
+          {
+             pc->obj = NULL;
+             WRN("part '%s' in group '%s' of file '%s' has mouse_events: 0. "
+                 "Cannot set cursor '%s'",
+                 pc->part, group, file, pc->cursor);
+             continue;
+          }
+
+        pc->obj = obj;
+        _part_cursor_part_apply(pc);
+     }
 }
 
 static void
@@ -222,7 +303,11 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    Eina_Bool ret = edje_object_file_set(wd->lay, file, group);
-   if (ret) _request_sizing_eval(wd);
+   if (ret)
+     {
+        _request_sizing_eval(wd);
+        _parts_cursors_apply(wd);
+     }
    else DBG("failed to set edje file '%s', group '%s': %s",
             file, group,
             edje_load_error_str(edje_object_load_error_get(wd->lay)));
@@ -248,7 +333,11 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    Eina_Bool ret = _elm_theme_object_set(obj, wd->lay, clas, group, style);
-   if (ret) _request_sizing_eval(wd);
+   if (ret)
+     {
+        _request_sizing_eval(wd);
+        _parts_cursors_apply(wd);
+     }
    return ret;
 }
 
@@ -375,4 +464,187 @@ elm_layout_sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(wd);
    _request_sizing_eval(wd);
+}
+
+/**
+ * Sets a specific cursor for an edje part.
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group.
+ * @param cursor cursor name to use, see Elementary_Cursor.h
+ *
+ * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
+ *         part not exists or it has "mouse_events: 0".
+ */
+EAPI Eina_Bool
+elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, EINA_FALSE);
+   Evas_Object *part_obj;
+   Part_Cursor *pc;
+
+   part_obj = (Evas_Object *)edje_object_part_object_get(wd->lay, part_name);
+   if (!part_obj)
+     {
+        const char *group, *file;
+        edje_object_file_get(wd->lay, &file, &group);
+        WRN("no part '%s' in group '%s' of file '%s'. Cannot set cursor '%s'",
+            part_name, group, file, cursor);
+        return EINA_FALSE;
+     }
+   if (evas_object_pass_events_get(part_obj))
+     {
+        const char *group, *file;
+        edje_object_file_get(wd->lay, &file, &group);
+        WRN("part '%s' in group '%s' of file '%s' has mouse_events: 0. "
+            "Cannot set cursor '%s'",
+            part_name, group, file, cursor);
+        return EINA_FALSE;
+     }
+
+   pc = _parts_cursors_find(wd, part_name);
+   if (pc) eina_stringshare_replace(&pc->cursor, cursor);
+   else
+     {
+        pc = calloc(1, sizeof(*pc));
+        pc->part = eina_stringshare_add(part_name);
+        pc->cursor = eina_stringshare_add(cursor);
+     }
+
+   pc->obj = part_obj;
+   elm_object_sub_cursor_set(part_obj, obj, pc->cursor);
+   return EINA_TRUE;
+}
+
+/**
+ * Unsets a cursor previously set with elm_layout_part_cursor_set().
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group, that had a cursor set
+ *        with elm_layout_part_cursor_set().
+ */
+EAPI void
+elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   EINA_SAFETY_ON_NULL_RETURN(part_name);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   Eina_List *l;
+   Part_Cursor *pc;
+
+   EINA_LIST_FOREACH(wd->parts_cursors, l, pc)
+     {
+        if (strcmp(part_name, pc->part) == 0)
+          {
+             if (pc->obj) elm_object_cursor_unset(pc->obj);
+             _part_cursor_free(pc);
+             wd->parts_cursors = eina_list_remove_list(wd->parts_cursors, l);
+             return;
+          }
+     }
+}
+
+/**
+ * Sets a specific cursor style for an edje part.
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
+ *         part not exists or it did not had a cursor set.
+ */
+EAPI Eina_Bool
+elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, EINA_FALSE);
+   Part_Cursor *pc = _parts_cursors_find(wd, part_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
+
+   eina_stringshare_replace(&pc->style, style);
+   elm_object_cursor_style_set(pc->obj, pc->style);
+   return EINA_TRUE;
+}
+
+/**
+ * Gets a specific cursor style for an edje part.
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group.
+ *
+ * @return the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then NULL is returned.
+ */
+EAPI const char *
+elm_layout_part_cursor_style_get(Evas_Object *obj, const char *part_name)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
+   Part_Cursor *pc = _parts_cursors_find(wd, part_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, NULL);
+   return elm_object_cursor_style_get(pc->obj);
+}
+
+/**
+ * Sets if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @note before you set if should look on theme you should define a
+ * cursor with elm_layout_part_cursor_set(). By default it will only
+ * look for cursors provided by the engine.
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group.
+ * @param engine_only if cursors should be just provided by the engine
+ *        or should also search on widget's theme as well
+ *
+ * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
+ *         part not exists or it did not had a cursor set.
+ */
+EAPI Eina_Bool
+elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, EINA_FALSE);
+   Part_Cursor *pc = _parts_cursors_find(wd, part_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
+
+   pc->engine_only = !!engine_only;
+   elm_object_cursor_engine_only_set(pc->obj, pc->engine_only);
+   return EINA_TRUE;
+}
+
+/**
+ * Gets a specific cursor engine_only for an edje part.
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group.
+ *
+ * @return whenever the cursor is just provided by engine or also from theme.
+ */
+EAPI Eina_Bool
+elm_layout_part_cursor_engine_only_get(Evas_Object *obj, const char *part_name)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, EINA_FALSE);
+   Part_Cursor *pc = _parts_cursors_find(wd, part_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
+   return elm_object_cursor_engine_only_get(pc->obj);
 }

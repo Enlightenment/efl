@@ -730,6 +730,14 @@ extern "C" {
    EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
+
+  EAPI Eina_Bool     elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
+  EAPI void          elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
+  EAPI Eina_Bool     elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
+  EAPI const char   *elm_layout_part_cursor_style_get(Evas_Object *obj, const char *part_name);
+  EAPI Eina_Bool     elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
+  EAPI Eina_Bool     elm_layout_part_cursor_engine_only_get(Evas_Object *obj, const char *part_name);
+
    /* smart callbacks called:
     */
 

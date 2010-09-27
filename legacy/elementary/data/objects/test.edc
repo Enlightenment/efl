@@ -40,6 +40,25 @@ collections {
 	       image.normal: "under.png";
 	    }
 	 }
+	 part { name: "text";
+	    type: TEXT;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       color: 255 255 0 255;
+	       rel1 {
+		  relative: 0.3 0.2;
+	       }
+	       rel2 {
+		  relative: 0.6 0.3;
+	       }
+	       text {
+		  font: "Sans:style=Bold";
+		  size: 14;
+		  min: 1 1;
+		  text: "some edje text here";
+	       }
+	    }
+	 }
 	 part { name: "element1";
 	    type: SWALLOW;
             clip_to: "clip";

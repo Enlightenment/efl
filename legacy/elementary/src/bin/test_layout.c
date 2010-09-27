@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
+#include <Elementary_Cursor.h>
 void
 test_layout(void *data, Evas_Object *obj, void *event_info)
 {
@@ -36,6 +37,8 @@ test_layout(void *data, Evas_Object *obj, void *event_info)
    elm_button_label_set(bt, "Button 3");
    elm_layout_content_set(ly, "element3", bt);
    evas_object_show(bt);
+
+   elm_layout_part_cursor_set(ly, "text", ELM_CURSOR_WATCH);
 
    evas_object_show(win);
 }
