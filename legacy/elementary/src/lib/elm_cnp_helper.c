@@ -628,7 +628,7 @@ notify_handler_targets(struct _elm_cnp_selection *sel,
 	if (!(atoms[j].formats & sel->requestformat)) continue;
 	for (i = 0 ; i < targets->data.length ; i ++)
 	  {
-	     if (atoms[j].atom == atomlist[i])
+	     if (atoms[j].atom == atomlist[i] && atoms[j].notify)
 	       {
 		  cnp_debug("Atom %s matches\n",atoms[j].name);
 		  goto done;
