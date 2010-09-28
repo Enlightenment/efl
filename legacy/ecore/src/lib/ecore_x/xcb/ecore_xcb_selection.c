@@ -7,14 +7,14 @@ static Ecore_X_Selection_Intern selections[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 static Ecore_X_Selection_Parser *parsers = NULL;
 
-static int       _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop, int *);
-static int       _ecore_x_selection_data_default_free(void *data);
+static Eina_Bool _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *tprop, int *);
+static Eina_Bool _ecore_x_selection_data_default_free(void *data);
 static void *    _ecore_x_selection_parser_files(const char *target, void *data, int size, int format);
-static int       _ecore_x_selection_data_files_free(void *data);
+static Eina_Bool _ecore_x_selection_data_files_free(void *data);
 static void *    _ecore_x_selection_parser_text(const char *target, void *data, int size, int format);
-static int       _ecore_x_selection_data_text_free(void *data);
+static Eina_Bool _ecore_x_selection_data_text_free(void *data);
 static void *    _ecore_x_selection_parser_targets(const char *target, void *data, int size, int format);
-static int       _ecore_x_selection_data_targets_free(void *data);
+static Eina_Bool _ecore_x_selection_data_targets_free(void *data);
 
 #define ECORE_X_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
 
@@ -215,7 +215,7 @@ ecore_x_selection_primary_fetch(void)
  * ecore_x_selection_primary_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_primary_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_primary_set(Ecore_X_Window window,
                               const void    *data,
                               int            size)
@@ -232,7 +232,7 @@ ecore_x_selection_primary_set(Ecore_X_Window window,
  * ecore_x_selection_primary_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_primary_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_primary_clear(void)
 {
    return _ecore_x_selection_set(XCB_NONE, NULL, 0, ECORE_X_ATOM_SELECTION_PRIMARY);
@@ -276,7 +276,7 @@ ecore_x_selection_secondary_fetch(void)
  * ecore_x_selection_secondary_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_secondary_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_secondary_set(Ecore_X_Window window,
                                 const void    *data,
                                 int            size)
@@ -293,7 +293,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window window,
  * ecore_x_selection_secondary_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_secondary_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_secondary_clear(void)
 {
    return _ecore_x_selection_set(XCB_NONE, NULL, 0, ECORE_X_ATOM_SELECTION_SECONDARY);
@@ -337,7 +337,7 @@ ecore_x_selection_xdnd_fetch(void)
  * ecore_x_selection_xdnd_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_xdnd_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_xdnd_set(Ecore_X_Window window,
                            const void    *data,
                            int            size)
@@ -354,7 +354,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window window,
  * ecore_x_selection_xdnd_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_xdnd_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_xdnd_clear(void)
 {
    return _ecore_x_selection_set(XCB_NONE, NULL, 0, ECORE_X_ATOM_SELECTION_XDND);
@@ -401,7 +401,7 @@ ecore_x_selection_clipboard_fetch(void)
  * ecore_x_selection_clipboard_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_clipboard_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_clipboard_set(Ecore_X_Window window,
                                 const void    *data,
                                 int            size)
@@ -418,7 +418,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window window,
  * ecore_x_selection_clipboard_prefetch(), which sends the GetSelectionOwner request,
  * then ecore_x_selection_clipboard_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_clipboard_clear(void)
 {
    return _ecore_x_selection_set(XCB_NONE, NULL, 0, ECORE_X_ATOM_SELECTION_CLIPBOARD);
@@ -555,13 +555,14 @@ ecore_x_selection_clipboard_request(Ecore_X_Window window, const char *target)
 
 EAPI void
 ecore_x_selection_converter_atom_add(Ecore_X_Atom                                    target,
-                                     int                                             (*func)(char *target,
-                                                                       void         *data,
-                                                                       int           size,
-                                                                       void        **data_ret,
-                                                                       int          *size_ret,
-                                                                       Ecore_X_Atom *ttype,
-                                                                       int          *tsize))
+                                     Eina_Bool                                     (*func)
+                                     (char *target,
+                                         void         *data,
+                                         int           size,
+                                         void        **data_ret,
+                                         int          *size_ret,
+                                         Ecore_X_Atom *ttype,
+                                         int          *tsize))
 {
    Ecore_X_Selection_Converter *cnv;
 
@@ -597,13 +598,14 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom                               
 
 EAPI void
 ecore_x_selection_converter_add(char                             *target,
-                                int                               (*func)(char *target,
-                                                           void  *data,
-                                                           int    size,
-                                                           void **data_ret,
-                                                           int   *size_ret,
-                                                           Ecore_X_Atom *,
-                                                           int *))
+                                Eina_Bool                       (*func)
+                                (char *target,
+                                    void  *data,
+                                    int    size,
+                                    void **data_ret,
+                                    int   *size_ret,
+                                    Ecore_X_Atom *,
+                                    int *))
 {
    Ecore_X_Atom x_target;
 
@@ -654,7 +656,7 @@ ecore_x_selection_converter_del(char *target)
    ecore_x_selection_converter_atom_del(x_target);
 } /* ecore_x_selection_converter_del */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_notify_send(Ecore_X_Window requestor,
                               Ecore_X_Atom   selection,
                               Ecore_X_Atom   target,
@@ -677,7 +679,7 @@ ecore_x_selection_notify_send(Ecore_X_Window requestor,
 } /* ecore_x_selection_notify_send */
 
 /* Locate and run conversion callback for specified selection target */
-EAPI int
+EAPI Eina_Bool
 ecore_x_selection_convert(Ecore_X_Atom  selection,
                           Ecore_X_Atom  target,
                           void        **data_ret,
@@ -720,7 +722,7 @@ ecore_x_selection_convert(Ecore_X_Atom  selection,
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
-static int
+static Eina_Bool
 _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *targprop, int *s)
 {
    /* FIXME: to do... */
@@ -875,7 +877,7 @@ _ecore_x_selection_parse(const char *target, void *data, int size, int format)
    return sel;
 } /* _ecore_x_selection_parse */
 
-static int
+static Eina_Bool
 _ecore_x_selection_data_default_free(void *data)
 {
    Ecore_X_Selection_Data *sel;
@@ -954,7 +956,7 @@ _ecore_x_selection_parser_files(const char *target, void *_data, int size, int f
    return ECORE_X_SELECTION_DATA(sel);
 } /* _ecore_x_selection_parser_files */
 
-static int
+static Eina_Bool
 _ecore_x_selection_data_files_free(void *data)
 {
    Ecore_X_Selection_Data_Files *sel;
@@ -998,7 +1000,7 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__,
    return sel;
 } /* _ecore_x_selection_parser_text */
 
-static int
+static Eina_Bool
 _ecore_x_selection_data_text_free(void *data)
 {
    Ecore_X_Selection_Data_Text *sel;
@@ -1052,7 +1054,7 @@ _ecore_x_selection_parser_targets(const char *target __UNUSED__,
    return sel;
 } /* _ecore_x_selection_parser_targets */
 
-static int
+static Eina_Bool
 _ecore_x_selection_data_targets_free(void *data)
 {
    Ecore_X_Selection_Data_Targets *sel;

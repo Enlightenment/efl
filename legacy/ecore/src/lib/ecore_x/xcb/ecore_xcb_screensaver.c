@@ -55,7 +55,7 @@ _ecore_x_screensaver_init_finalize(void)
  * 0 otherwise.
  * @ingroup Ecore_X_ScreenSaver_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_screensaver_event_available_get(void)
 {
    return 1;
@@ -390,7 +390,7 @@ ecore_x_screensaver_expose_get(void)
  * @ingroup Ecore_X_ScreenSaver_Group
  */
 EAPI void
-ecore_x_screensaver_event_listen_set(int on)
+ecore_x_screensaver_event_listen_set(Eina_Bool on)
 {
 #ifdef ECORE_XCB_SCREENSAVER
    xcb_screensaver_select_input(_ecore_xcb_conn,

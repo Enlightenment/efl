@@ -4,7 +4,7 @@
 
 extern int _ecore_xcb_xcursor;
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_cursor_color_supported_get(void)
 {
    return _ecore_xcb_xcursor;

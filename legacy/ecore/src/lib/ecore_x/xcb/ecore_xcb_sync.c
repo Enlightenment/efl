@@ -56,7 +56,7 @@ _ecore_x_sync_init_finalize(void)
  * 0 otherwise.
  * @ingroup Ecore_X_Sync_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_sync_query(void)
 {
 #ifdef ECORE_XCB_SYNC
@@ -118,7 +118,7 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
  * Delete the @p alarm. Returns 1 on success, 0 otherwise.
  * @ingroup Ecore_X_Sync_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
 #ifdef ECORE_XCB_SYNC
@@ -131,7 +131,7 @@ ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 
 /* FIXME: round trip */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val)
 {
 #ifdef ECORE_XCB_SYNC

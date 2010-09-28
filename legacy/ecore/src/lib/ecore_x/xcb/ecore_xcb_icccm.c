@@ -262,13 +262,13 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window window,
  */
 EAPI void
 ecore_x_icccm_hints_set(Ecore_X_Window            window,
-                        int                       accepts_focus,
+                        Eina_Bool                 accepts_focus,
                         Ecore_X_Window_State_Hint initial_state,
                         Ecore_X_Pixmap            icon_pixmap,
                         Ecore_X_Pixmap            icon_mask,
                         Ecore_X_Window            icon_window,
                         Ecore_X_Window            window_group,
-                        int                       is_urgent)
+                        Eina_Bool                 is_urgent)
 {
    xcb_wm_hints_t hints;
 
@@ -347,15 +347,15 @@ ecore_x_icccm_hints_get_fetch(void)
  * then ecore_x_icccm_hints_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_ICCCM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_icccm_hints_get(Ecore_X_Window window      __UNUSED__,
-                        int                       *accepts_focus,
+                        Eina_Bool                 *accepts_focus,
                         Ecore_X_Window_State_Hint *initial_state,
                         Ecore_X_Pixmap            *icon_pixmap,
                         Ecore_X_Pixmap            *icon_mask,
                         Ecore_X_Window            *icon_window,
                         Ecore_X_Window            *window_group,
-                        int                       *is_urgent)
+                        Eina_Bool                 *is_urgent)
 {
    xcb_wm_hints_t hints;
    xcb_get_property_reply_t *reply;
@@ -509,7 +509,7 @@ ecore_x_icccm_size_pos_hints_get_fetch(void)
  */
 EAPI void
 ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  window,
-                                 int             request_pos,
+                                 Eina_Bool       request_pos,
                                  Ecore_X_Gravity gravity,
                                  int             min_w,
                                  int             min_h,
@@ -603,9 +603,9 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  window,
  * then ecore_x_icccm_size_pos_hints_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_ICCCM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_icccm_size_pos_hints_get(Ecore_X_Window window __UNUSED__,
-                                 int                  *request_pos,
+                                 Eina_Bool            *request_pos,
                                  Ecore_X_Gravity      *gravity,
                                  int                  *min_w,
                                  int                  *min_h,
@@ -941,7 +941,7 @@ ecore_x_icccm_protocol_get_fetch(void)
 EAPI void
 ecore_x_icccm_protocol_set(Ecore_X_Window      window,
                            Ecore_X_WM_Protocol protocol,
-                           int                 on)
+                           Eina_Bool           on)
 {
    xcb_get_property_reply_t *reply;
    Ecore_X_Atom *protos = NULL;
@@ -1035,7 +1035,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      window,
  * then ecore_x_icccm_protocol_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_ICCCM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_icccm_protocol_isset(Ecore_X_Window window __UNUSED__,
                              Ecore_X_WM_Protocol   protocol)
 {

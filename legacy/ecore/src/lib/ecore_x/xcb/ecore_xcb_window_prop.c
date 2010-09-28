@@ -789,7 +789,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window window __UNUSED__,
 
 /* FIXME : round trips because of GetWMProtocols */
 /*         should we rewrite its code ? */
-EAPI int
+EAPI Eina_Bool
 ecore_x_window_prop_protocol_isset(Ecore_X_Window      window,
                                    Ecore_X_WM_Protocol protocol)
 {

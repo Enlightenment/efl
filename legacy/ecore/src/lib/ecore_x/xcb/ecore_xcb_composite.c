@@ -55,7 +55,7 @@ _ecore_x_composite_init_finalize(void)
  * or greater, 0 otherwise.
  * @ingroup Ecore_X_Composite_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_composite_query(void)
 {
 #ifdef ECORE_XCB_COMPOSITE

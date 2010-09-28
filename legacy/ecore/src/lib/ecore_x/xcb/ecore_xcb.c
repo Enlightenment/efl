@@ -1249,7 +1249,7 @@ _ecore_x_window_manage_error(void *data __UNUSED__)
 } /* _ecore_x_window_manage_error */
 
 /* FIXME: round trip */
-EAPI int
+EAPI Eina_Bool
 ecore_x_window_manage(Ecore_X_Window window)
 {
    xcb_get_window_attributes_cookie_t cookie_attr;
@@ -1310,7 +1310,7 @@ ecore_x_window_manage(Ecore_X_Window window)
    return 1;
 } /* ecore_x_window_manage */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_control_set(int accel_num,
                             int accel_denom,
                             int threshold)
@@ -1341,7 +1341,7 @@ ecore_x_pointer_control_get_fetch(void)
    _ecore_xcb_reply_cache(reply);
 } /* ecore_x_pointer_control_get_fetch */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_control_get(int *accel_num,
                             int *accel_denom,
                             int *threshold)
@@ -1373,7 +1373,7 @@ ecore_x_pointer_control_get(int *accel_num,
    return 1;
 } /* ecore_x_pointer_control_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_mapping_set(unsigned char *map,
                             int            nmap)
 {
@@ -1401,7 +1401,7 @@ ecore_x_pointer_mapping_get_fetch(void)
    _ecore_xcb_reply_cache(reply);
 } /* ecore_x_pointer_mapping_get_fetch */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_mapping_get(unsigned char *map,
                             int            nmap)
 {
@@ -1426,7 +1426,7 @@ ecore_x_pointer_mapping_get(unsigned char *map,
    return 1;
 } /* ecore_x_pointer_mapping_get */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_grab(Ecore_X_Window window)
 {
    xcb_grab_pointer_cookie_t cookie;
@@ -1451,7 +1451,7 @@ ecore_x_pointer_grab(Ecore_X_Window window)
    return 1;
 } /* ecore_x_pointer_grab */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_confine_grab(Ecore_X_Window window)
 {
    xcb_grab_pointer_cookie_t cookie;
@@ -1482,7 +1482,7 @@ ecore_x_pointer_ungrab(void)
    xcb_ungrab_pointer(_ecore_xcb_conn, XCB_CURRENT_TIME);
 } /* ecore_x_pointer_ungrab */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_pointer_warp(Ecore_X_Window window,
                      int            x,
                      int            y)
@@ -1492,7 +1492,7 @@ ecore_x_pointer_warp(Ecore_X_Window window,
    return 1;
 } /* ecore_x_pointer_warp */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_keyboard_grab(Ecore_X_Window window)
 {
    xcb_grab_keyboard_cookie_t cookie;
@@ -1792,7 +1792,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window window,
  *
  * @return !0 on success.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_client_message32_send(Ecore_X_Window     window,
                               Ecore_X_Atom       type,
                               Ecore_X_Event_Mask mask,
@@ -1829,7 +1829,7 @@ ecore_x_client_message32_send(Ecore_X_Window     window,
  *
  * @return !0 on success.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_client_message8_send(Ecore_X_Window window,
                              Ecore_X_Atom   type,
                              const void    *data,
@@ -1853,7 +1853,7 @@ ecore_x_client_message8_send(Ecore_X_Window window,
 } /* ecore_x_client_message8_send */
 
 /* FIXME: round trip */
-EAPI int
+EAPI Eina_Bool
 ecore_x_mouse_move_send(Ecore_X_Window window,
                         int            x,
                         int            y)
@@ -1899,7 +1899,7 @@ ecore_x_mouse_move_send(Ecore_X_Window window,
 } /* ecore_x_mouse_move_send */
 
 /* FIXME: round trip */
-EAPI int
+EAPI Eina_Bool
 ecore_x_mouse_down_send(Ecore_X_Window window,
                         int            x,
                         int            y,
@@ -1946,7 +1946,7 @@ ecore_x_mouse_down_send(Ecore_X_Window window,
 } /* ecore_x_mouse_down_send */
 
 /* FIXME: round trip */
-EAPI int
+EAPI Eina_Bool
 ecore_x_mouse_up_send(Ecore_X_Window window,
                       int            x,
                       int            y,

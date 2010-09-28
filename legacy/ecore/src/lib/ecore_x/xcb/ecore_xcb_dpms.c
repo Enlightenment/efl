@@ -54,7 +54,7 @@ _ecore_x_dpms_init_finalize(void)
  * 0 otherwise.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_query(void)
 {
 #ifdef ECORE_XCB_DPMS
@@ -105,7 +105,7 @@ ecore_x_dpms_capable_get_fetch(void)
  * then ecore_x_dpms_capable_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_capable_get(void)
 {
    int capable = 0;
@@ -205,7 +205,7 @@ ecore_x_dpms_enabled_set(int enabled)
  * @return        Returns always 1.
  * @ingroup Ecore_X_DPMS_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dpms_timeouts_set(unsigned int standby,
                           unsigned int suspend,
                           unsigned int off)

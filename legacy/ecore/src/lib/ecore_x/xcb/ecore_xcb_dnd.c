@@ -65,7 +65,7 @@ _ecore_x_dnd_shutdown(void)
 
 EAPI void
 ecore_x_dnd_aware_set(Ecore_X_Window window,
-                      int            on)
+                      Eina_Bool      on)
 {
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
@@ -180,7 +180,7 @@ ecore_x_dnd_type_get_fetch(void)
  * ecore_x_dnd_type_get_prefetch(), which sends the GetProperty request,
  * then ecore_x_dnd_type_get_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dnd_type_isset(Ecore_X_Window window,
                        const char    *type)
 {
@@ -246,7 +246,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window window,
 EAPI void
 ecore_x_dnd_type_set(Ecore_X_Window window,
                      const char    *type,
-                     int            on)
+                     Eina_Bool      on)
 {
    xcb_intern_atom_cookie_t cookie;
    xcb_intern_atom_reply_t *reply;
@@ -477,7 +477,7 @@ ecore_x_dnd_begin_fetch(void)
  * ecore_x_dnd_begin_prefetch(), which sends the GetProperty request,
  * then ecore_x_dnd_begin_fetch(), which gets the reply.
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_dnd_begin(Ecore_X_Window source,
                   unsigned char *data,
                   int            size)
@@ -507,7 +507,7 @@ ecore_x_dnd_begin(Ecore_X_Window source,
    return 1;
 } /* ecore_x_dnd_begin */
 
-EAPI int
+EAPI Eina_Bool
 ecore_x_dnd_drop(void)
 {
    uint8_t status = 0;
@@ -555,8 +555,8 @@ ecore_x_dnd_drop(void)
 } /* ecore_x_dnd_drop */
 
 EAPI void
-ecore_x_dnd_send_status(int               will_accept,
-                        int               suppress,
+ecore_x_dnd_send_status(Eina_Bool         will_accept,
+                        Eina_Bool         suppress,
                         Ecore_X_Rectangle rectangle,
                         Ecore_X_Atom      action)
 {

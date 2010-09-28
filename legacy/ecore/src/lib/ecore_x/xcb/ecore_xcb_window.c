@@ -873,7 +873,7 @@ ecore_x_window_gravity_set(Ecore_X_Window  window,
  */
 EAPI void
 ecore_x_window_override_set(Ecore_X_Window window,
-                            int            override_redirect)
+                            Eina_Bool      override_redirect)
 {
    uint32_t value_list;
 
@@ -890,7 +890,7 @@ ecore_x_window_override_set(Ecore_X_Window window,
  */
 EAPI void
 ecore_x_window_cursor_show(Ecore_X_Window window,
-                           int            show)
+                           Eina_Bool      show)
 {
    if (window == 0)
       window = ((xcb_screen_t *)_ecore_xcb_screen)->root;
@@ -1227,7 +1227,7 @@ ecore_x_get_window_attributes_fetch(void)
  * then ecore_x_get_window_attributes_fetch(), which gets the reply.
  * @ingroup Ecore_X_Window_Get_Attributes_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_window_attributes_get(Ecore_X_Window window      __UNUSED__,
                               Ecore_X_Window_Attributes *att_ret)
 {

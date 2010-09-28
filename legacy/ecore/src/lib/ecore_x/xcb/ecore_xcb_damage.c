@@ -54,7 +54,7 @@ _ecore_x_damage_init_finalize(void)
  * 0 otherwise.
  * @ingroup Ecore_X_Damage_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_damage_query(void)
 {
 #ifdef ECORE_XCB_DAMAGE

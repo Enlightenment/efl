@@ -280,7 +280,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window window __UNUSED__,
 
 EAPI void
 ecore_x_window_shape_events_select(Ecore_X_Window dest_win,
-                                   int            on)
+                                   Eina_Bool      on)
 {
 #ifdef ECORE_XCB_SHAPE
    xcb_shape_select_input(_ecore_xcb_conn, dest_win, on ? 1 : 0);

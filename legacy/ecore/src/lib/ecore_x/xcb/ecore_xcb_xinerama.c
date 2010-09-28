@@ -55,7 +55,7 @@ _ecore_x_xinerama_init_finalize(void)
  * 0 otherwise.
  * @ingroup Ecore_X_Xinerama_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_xinerama_query(void)
 {
 #ifdef ECORE_XCB_XINERAMA
@@ -144,7 +144,7 @@ ecore_x_xinerama_screen_count_get(void)
  * then ecore_x_xinerama_query_screens_fetch(), which gets the reply.
  * @ingroup Ecore_X_Xinerama_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_xinerama_screen_geometry_get(int  screen,
                                      int *x,
                                      int *y,

@@ -174,7 +174,7 @@ ecore_x_netwm_supported_get_fetch(void)
  * then ecore_x_netwm_supported_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_supported_get(Ecore_X_Window root,
                             Ecore_X_Atom **supported,
                             int           *num)
@@ -504,7 +504,7 @@ ecore_x_netwm_desk_current_set(Ecore_X_Window root,
  */
 EAPI void
 ecore_x_netwm_showing_desktop_set(Ecore_X_Window root,
-                                  int            on)
+                                  Eina_Bool      on)
 {
    uint32_t val;
 
@@ -1045,7 +1045,7 @@ ecore_x_netwm_desktop_get_fetch(void)
  * then ecore_x_netwm_desktop_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_desktop_get(Ecore_X_Window window,
                           unsigned int  *desk)
 {
@@ -1155,7 +1155,7 @@ ecore_x_netwm_strut_get_fetch(void)
  * then ecore_x_netwm_strut_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_strut_get(Ecore_X_Window window,
                         int           *left,
                         int           *right,
@@ -1301,7 +1301,7 @@ ecore_x_netwm_strut_partial_get_fetch(void)
  * then ecore_x_netwm_strut_partial_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_strut_partial_get(Ecore_X_Window window,
                                 int           *left,
                                 int           *right,
@@ -1408,7 +1408,7 @@ ecore_x_netwm_icons_get_fetch(void)
  * then ecore_x_netwm_icons_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_icons_get(Ecore_X_Window window,
                         Ecore_X_Icon **icon,
                         int           *num)
@@ -1601,7 +1601,7 @@ ecore_x_netwm_icon_geometry_get_fetch(void)
  * then ecore_x_netwm_icon_geometry_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_icon_geometry_get(Ecore_X_Window window,
                                 int           *x,
                                 int           *y,
@@ -1701,7 +1701,7 @@ ecore_x_netwm_pid_get_fetch(void)
  * then ecore_x_netwm_pid_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_pid_get(Ecore_X_Window window,
                       int           *pid)
 {
@@ -1780,7 +1780,7 @@ ecore_x_netwm_handled_icons_get_fetch(void)
  * then ecore_x_netwm_handled_icons_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_handled_icons_get(Ecore_X_Window window)
 {
    int ret = 0;
@@ -1857,7 +1857,7 @@ ecore_x_netwm_user_time_get_fetch(void)
  * then ecore_x_netwm_user_time_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_user_time_get(Ecore_X_Window window,
                             unsigned int  *time)
 {
@@ -2039,7 +2039,7 @@ ecore_x_netwm_window_state_get_fetch(void)
  * then ecore_x_netwm_window_state_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_window_state_get(Ecore_X_Window         window,
                                Ecore_X_Window_State **state,
                                unsigned int          *num)
@@ -2212,7 +2212,7 @@ ecore_x_netwm_window_type_get_fetch(void)
  * then ecore_x_netwm_window_type_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_window_type_get(Ecore_X_Window       window,
                               Ecore_X_Window_Type *type)
 {
@@ -2345,7 +2345,7 @@ ecore_x_netwm_allowed_action_get_fetch(void)
  * then ecore_x_netwm_allowed_action_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_allowed_action_isset(Ecore_X_Window window,
                                    Ecore_X_Action action)
 {
@@ -2434,7 +2434,7 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window  window,
  * then ecore_x_netwm_allowed_action_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_allowed_action_get(Ecore_X_Window   window,
                                  Ecore_X_Action **action,
                                  unsigned int    *num)
@@ -2543,7 +2543,7 @@ ecore_x_netwm_opacity_get_fetch(void)
  * then ecore_x_netwm_opacity_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_opacity_get(Ecore_X_Window window,
                           unsigned int  *opacity)
 {
@@ -2641,7 +2641,7 @@ ecore_x_netwm_frame_size_get_fetch(void)
  * then ecore_x_netwm_frame_size_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_frame_size_get(Ecore_X_Window window,
                              int           *fl,
                              int           *fr,
@@ -2715,7 +2715,7 @@ ecore_x_netwm_sync_counter_get_fetch(void)
  * then ecore_x_netwm_frame_size_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_netwm_sync_counter_get(Ecore_X_Window        window,
                                Ecore_X_Sync_Counter *counter)
 {
@@ -2815,7 +2815,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window       window,
                                  Ecore_X_Window       root,
                                  Ecore_X_Window_State s1,
                                  Ecore_X_Window_State s2,
-                                 int                  set)
+                                 Eina_Bool            set)
 {
    xcb_client_message_event_t ev;
 
@@ -3346,7 +3346,7 @@ _ecore_x_netwm_startup_info_free(void *data)
  * Return 1 if @p screen is composited, 0 otherwise.
  * @ingroup Ecore_X_NetWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_screen_is_composited(int screen)
 {
    char buf[32];

@@ -55,7 +55,7 @@ _ecore_x_randr_init_finalize(void)
  * 0 otherwise.
  * @ingroup Ecore_X_RandR_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_randr_query(void)
 {
 #ifdef ECORE_XCB_RANDR
@@ -94,7 +94,8 @@ _xcb_randr_root_to_screen(Ecore_X_Window root)
  * the client connected, to avoid race conditions.
  * @ingroup Ecore_X_RandR_Group
  */
-EAPI int
+/*
+EAPI Eina_Bool
 ecore_x_randr_events_select(Ecore_X_Window window,
                             int            on)
 {
@@ -102,10 +103,10 @@ ecore_x_randr_events_select(Ecore_X_Window window,
    xcb_randr_select_input(_ecore_xcb_conn, window,
                           on ? XCB_RANDR_SCREEN_CHANGE_NOTIFY : 0);
    return 1;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    return 0;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_events_select */
+#endif
+}*/
 
 /**
  * Sends the GetScreenInfo request.
@@ -155,6 +156,7 @@ ecore_x_randr_get_screen_info_fetch(void)
  * then ecore_x_randr_get_screen_info_fetch(), which gets the reply.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotations_get(Ecore_X_Window root __UNUSED__)
 {
@@ -166,10 +168,10 @@ ecore_x_randr_screen_rotations_get(Ecore_X_Window root __UNUSED__)
       return 0;
 
    return reply->rotations;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    return 0;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_rotations_get */
+#endif
+}*/
 
 /**
  * Get the rotation.
@@ -185,6 +187,7 @@ ecore_x_randr_screen_rotations_get(Ecore_X_Window root __UNUSED__)
  * then ecore_x_randr_get_screen_info_fetch(), which gets the reply.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI Ecore_X_Randr_Rotation
 ecore_x_randr_screen_rotation_get(Ecore_X_Window root __UNUSED__)
 {
@@ -196,10 +199,10 @@ ecore_x_randr_screen_rotation_get(Ecore_X_Window root __UNUSED__)
       return 0;
 
    return reply->rotation;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    return 0;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_rotation_get */
+#endif
+}*/
 
 /**
  * Get the frame buffer sizes.
@@ -217,6 +220,7 @@ ecore_x_randr_screen_rotation_get(Ecore_X_Window root __UNUSED__)
  * then ecore_x_randr_get_screen_info_fetch(), which gets the reply.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI Ecore_X_Screen_Size *
 ecore_x_randr_screen_sizes_get(Ecore_X_Window root __UNUSED__,
                                int                *num)
@@ -251,13 +255,13 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root __UNUSED__,
      }
 
    return ret;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    if (num)
       *num = 0;
 
    return NULL;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_sizes_get */
+#endif
+}*/
 
 /**
  * Get the current frame buffer size.
@@ -273,6 +277,7 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root __UNUSED__,
  * then ecore_x_randr_get_screen_info_fetch(), which gets the reply.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI Ecore_X_Screen_Size
 ecore_x_randr_current_screen_size_get(Ecore_X_Window root __UNUSED__)
 {
@@ -294,10 +299,10 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root __UNUSED__)
         ret.height = sizes[size_index].mheight;
      }
 
-#endif /* ECORE_XCB_RANDR */
+#endif
 
    return ret;
-} /* ecore_x_randr_current_screen_size_get */
+}*/
 
 /**
  * Get the current refresh rate.
@@ -313,6 +318,7 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root __UNUSED__)
  * then ecore_x_randr_get_screen_info_fetch(), which gets the reply.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI Ecore_X_Screen_Refresh_Rate
 ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root __UNUSED__)
 {
@@ -325,10 +331,10 @@ ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root __UNUSED__)
       return ret;
 
    ret.rate = reply->rate;
-#endif /* ECORE_XCB_RANDR */
+#endif
 
    return ret;
-} /* ecore_x_randr_current_screen_refresh_rate_get */
+}*/
 
 /**
  * Get the refresh rates.
@@ -348,6 +354,7 @@ ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root __UNUSED__)
  * then ecore_x_randr_get_screen_info_fetch(), which gets the reply.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI Ecore_X_Screen_Refresh_Rate *
 ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root __UNUSED__,
                                        int size_id         __UNUSED__,
@@ -375,7 +382,6 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root __UNUSED__,
    if (num)
       *num = n;
 
-   /* FIXME: maybe there's a missing function in xcb randr implementation */
    iter = xcb_randr_get_screen_info_rates_iterator(reply);
    tmp = ret;
    for (; iter.rem; xcb_randr_refresh_rates_next(&iter), tmp++)
@@ -384,13 +390,13 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root __UNUSED__,
      }
 
    return ret;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    if (num)
       *num = 0;
 
    return NULL;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_refresh_rates_get */
+#endif
+}*/
 
 /* FIXME: round trip. Should we remove it ? */
 
@@ -404,6 +410,7 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root __UNUSED__,
  * Note that that function is blocking.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI void
 ecore_x_randr_screen_rotation_set(Ecore_X_Window         root,
                                   Ecore_X_Randr_Rotation rot)
@@ -427,8 +434,8 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window         root,
    if (reply_config)
       free(reply_config);
 
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_rotation_set */
+#endif
+}*/
 
 /* FIXME: round trip. Should we remove it ? */
 
@@ -442,6 +449,7 @@ ecore_x_randr_screen_rotation_set(Ecore_X_Window         root,
  * Note that that function is blocking.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI int
 ecore_x_randr_screen_size_set(Ecore_X_Window      root,
                               Ecore_X_Screen_Size size)
@@ -486,10 +494,10 @@ ecore_x_randr_screen_size_set(Ecore_X_Window      root,
    free(reply_config);
 
    return 1;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    return 0;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_size_set */
+#endif
+}*/
 
 /* FIXME: round trip. Should we remove it ? */
 
@@ -505,6 +513,7 @@ ecore_x_randr_screen_size_set(Ecore_X_Window      root,
  * Note that that function is blocking.
  * @ingroup Ecore_X_RandR_Group
  */
+/*
 EAPI int
 ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window              root,
                                       Ecore_X_Screen_Size         size,
@@ -550,8 +559,8 @@ ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window              root,
    free(reply_config);
 
    return 1;
-#else /* ifdef ECORE_XCB_RANDR */
+#else
    return 0;
-#endif /* ECORE_XCB_RANDR */
-} /* ecore_x_randr_screen_refresh_rate_set */
+#endif
+}*/
 

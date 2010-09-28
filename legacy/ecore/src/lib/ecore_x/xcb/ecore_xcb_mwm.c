@@ -75,7 +75,7 @@ ecore_x_mwm_hints_get_fetch(void)
  * then ecore_x_mwm_hints_get_fetch(), which gets the reply.
  * @ingroup Ecore_X_MWM_Group
  */
-EAPI int
+EAPI Eina_Bool
 ecore_x_mwm_hints_get(Ecore_X_Window window   __UNUSED__,
                       Ecore_X_MWM_Hint_Func  *fhint,
                       Ecore_X_MWM_Hint_Decor *dhint,
@@ -134,7 +134,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window window   __UNUSED__,
  */
 EAPI void
 ecore_x_mwm_borderless_set(Ecore_X_Window window,
-                           int            borderless)
+                           Eina_Bool      borderless)
 {
    uint32_t data[5] = {0, 0, 0, 0, 0};
 
