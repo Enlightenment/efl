@@ -421,11 +421,7 @@ AC_SUBST(dlopen_libs)
 AC_SUBST(rt_libs)
 
 if test -n "$rt_libs"; then
-   _bkp_LIBS="$LIBS"
-   LIBS="$LIBS $rt_libs"
-   AC_CHECK_FUNCS(clock_gettime)
-   LIBS="$_bkp_LIBS"
-   unset _bkp_LIBS
+   AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [Have clock_gettime()])
 fi
 
 # Eina library

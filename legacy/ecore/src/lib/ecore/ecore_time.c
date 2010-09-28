@@ -17,10 +17,8 @@
 
 #include <time.h>
 
-#if HAVE_CLOCK_GETTIME
+#ifdef HAVE_CLOCK_GETTIME
 static clockid_t _ecore_time_clock_id = -1;
-#else
-static int _ecore_time_clock_id = -1;
 #endif
 double _ecore_time_loop_time = -1.0;
 
@@ -43,9 +41,7 @@ double _ecore_time_loop_time = -1.0;
 EAPI double
 ecore_time_get(void)
 {
-#if !HAVE_CLOCK_GETTIME
-   return ecore_time_unix_get();
-#else
+#ifdef HAVE_CLOCK_GETTIME
    struct timespec t;
 
    if (EINA_UNLIKELY(_ecore_time_clock_id < 0))
@@ -59,6 +55,8 @@ ecore_time_get(void)
      }
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+#else
+   return ecore_time_unix_get();
 #endif
 }
 
@@ -126,7 +124,7 @@ ecore_loop_time_get(void)
 void
 _ecore_time_init(void)
 {
-#if HAVE_CLOCK_GETTIME
+#ifdef HAVE_CLOCK_GETTIME
    struct timespec t;
 
    if (_ecore_time_clock_id != -1) return;
@@ -150,7 +148,6 @@ _ecore_time_init(void)
      }
 #else
 # warning "Your platform isn't supported yet"
-   _ecore_time_clock_id = -2;
    CRIT("Platform does not support clock_gettime. "
         "Fallback to unix time.");
 #endif
