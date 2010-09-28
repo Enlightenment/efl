@@ -512,14 +512,15 @@ elm_notify_orient_get(const Evas_Object *obj)
 }
 
 /**
- * Set the time before the notify window is hidden. Set a value < 0
- * to disable a running timer.
+ * Set the time before the notify window is hidden.
+ *
+ * Set a value < 0 to disable a running timer.
  *
  * @param obj The notify object
- * @param time the new timeout
+ * @param time The new timeout
  *
- * @note If the value is > 0 and there was a previous (unfinished)
- * timer running, it will be <b>re-issued</b> with the new value.
+ * @note If the value > 0 and the notify is visible, the timer will be started
+ * with this value, canceling any before started timer to this notify.
  *
  */
 EAPI void
@@ -547,7 +548,7 @@ elm_notify_timeout_get(const Evas_Object *obj)
 }
 
 /**
- * (Re) init the timer
+ * (Re) init the timer if notify object is visible
  * @param obj The notify object
  */
 EAPI void
