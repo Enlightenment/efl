@@ -615,7 +615,7 @@ static Eina_Bool
 _ecore_con_ssl_server_privkey_add_gnutls(Ecore_Con_Server *svr, const char *key_file)
 {
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_key_file(svr->cert, svr->cert_file, key_file,
-                                            GNUTLS_X509_FMT_PEM) < 1);
+                                            GNUTLS_X509_FMT_PEM));
 
    return EINA_TRUE;
 error:
