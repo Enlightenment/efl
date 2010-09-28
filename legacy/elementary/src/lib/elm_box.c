@@ -358,7 +358,7 @@ elm_box_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_focus_cycle_hook_set(obj, _elm_box_focus_cycle_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
-   elm_widget_highlight_ignore_set(obj, EINA_FALSE);
+   elm_widget_highlight_ignore_set(obj, EINA_TRUE);
 
    wd->box = evas_object_box_add(e);
    /*evas_object_box_layout_set(wd->box, evas_object_box_layout_vertical,
