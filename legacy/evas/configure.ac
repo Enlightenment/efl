@@ -148,10 +148,11 @@ case "$host_os" in
    *)
       want_evas_engine_software_xlib="auto"
       want_evas_engine_gl_x11="auto"
-      want_evas_engine_xrender_x11="auto"
-      want_evas_engine_software_8_x11="auto"
-      want_evas_engine_software_16_x11="auto"
       want_evas_engine_fb="auto"
+### no - not ready/usable/complete
+#      want_evas_engine_software_8_x11="auto"
+#      want_evas_engine_xrender_x11="auto"
+#      want_evas_engine_software_16_x11="auto"
       ;;
 esac
 
