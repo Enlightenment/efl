@@ -421,7 +421,6 @@ AC_SUBST(dlopen_libs)
 AC_SUBST(rt_libs)
 
 if test -n "$rt_libs"; then
-   echo "hm $LIBS hm"
    _bkp_LIBS="$LIBS"
    LIBS="$LIBS $rt_libs"
    AC_CHECK_FUNCS(clock_gettime)
