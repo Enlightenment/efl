@@ -1192,26 +1192,32 @@ extern "C" {
     * "clicked" - when the user clicks on a carousel item and becomes selected
     */
 
-   EAPI Evas_Object *elm_slider_add(Evas_Object *parent);
-   EAPI void         elm_slider_label_set(Evas_Object *obj, const char *label);
-   EAPI const char  *elm_slider_label_get(const Evas_Object *obj);
-   EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
-   EAPI Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
-   EAPI void         elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
-   EAPI Evas_Coord   elm_slider_span_size_get(const Evas_Object *obj);
-   EAPI void         elm_slider_unit_format_set(Evas_Object *obj, const char *format);
-   EAPI const char  *elm_slider_unit_format_get(const Evas_Object *obj);
-   EAPI void         elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
-   EAPI const char  *elm_slider_indicator_format_get(const Evas_Object *obj);
-   EAPI void         elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val));
-   EAPI void         elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
-   EAPI Eina_Bool    elm_slider_horizontal_get(const Evas_Object *obj);
-   EAPI void         elm_slider_min_max_set(Evas_Object *obj, double min, double max);
-   EAPI void         elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
-   EAPI void         elm_slider_value_set(Evas_Object *obj, double val);
-   EAPI double       elm_slider_value_get(const Evas_Object *obj);
-   EAPI void         elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
-   EAPI Eina_Bool    elm_slider_inverted_get(const Evas_Object *obj);
+   EAPI Evas_Object       *elm_slider_add(Evas_Object *parent);
+   EAPI void               elm_slider_label_set(Evas_Object *obj, const char *label);
+   EAPI const char        *elm_slider_label_get(const Evas_Object *obj);
+   EAPI void               elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object       *elm_slider_icon_unset(Evas_Object *obj);
+   EAPI const Evas_Object *elm_slider_icon_get(const Evas_Object *obj);
+   EAPI void               elm_slider_end_set(Evas_Object *obj, Evas_Object *end);
+   EAPI Evas_Object       *elm_slider_end_unset(Evas_Object *obj);
+   EAPI const Evas_Object *elm_slider_end_get(const Evas_Object *obj);
+   EAPI void               elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size);
+   EAPI Evas_Coord         elm_slider_span_size_get(const Evas_Object *obj);
+   EAPI void               elm_slider_unit_format_set(Evas_Object *obj, const char *format);
+   EAPI const char        *elm_slider_unit_format_get(const Evas_Object *obj);
+   EAPI void               elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator);
+   EAPI const char        *elm_slider_indicator_format_get(const Evas_Object *obj);
+   EAPI void               elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val));
+   EAPI void               elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+   EAPI Eina_Bool          elm_slider_horizontal_get(const Evas_Object *obj);
+   EAPI void               elm_slider_min_max_set(Evas_Object *obj, double min, double max);
+   EAPI void               elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max);
+   EAPI void               elm_slider_value_set(Evas_Object *obj, double val);
+   EAPI double             elm_slider_value_get(const Evas_Object *obj);
+   EAPI void               elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted);
+   EAPI Eina_Bool          elm_slider_inverted_get(const Evas_Object *obj);
+   EAPI void               elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show);
+   EAPI Eina_Bool          elm_slider_indicator_show_get(const Evas_Object *obj);
 
    typedef enum _Elm_Genlist_Item_Flags
      {

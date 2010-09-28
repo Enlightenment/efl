@@ -45,6 +45,7 @@ struct _Widget_Data
 {
    Evas_Object *slider;
    Evas_Object *icon;
+   Evas_Object *end;
    Evas_Object *spacer;
    const char *label;
    const char *units;
@@ -52,6 +53,7 @@ struct _Widget_Data
    const char *(*indicator_format_func)(double val);
    Eina_Bool horizontal : 1;
    Eina_Bool inverted : 1;
+   Eina_Bool indicator_show : 1;
    double val, val_min, val_max;
    Ecore_Timer *delay;
    Evas_Coord size;
@@ -170,6 +172,10 @@ _theme_hook(Evas_Object *obj)
         edje_object_part_swallow(wd->slider, "elm.swallow.content", wd->icon);
         edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
      }
+   if (wd->end)
+     edje_object_signal_emit(wd->slider, "elm,state,end,visible", "elm");
+   else
+     edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");
    if (wd->label)
      {
         edje_object_part_text_set(wd->slider, "elm.text", wd->label);
@@ -214,7 +220,7 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *even
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   if (obj != wd->icon) return;
+   if ((obj != wd->icon) && (obj != wd->end)) return;
    _sizing_eval(data);
 }
 
@@ -232,6 +238,16 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 	wd->icon = NULL;
 	edje_object_message_signal_process(wd->slider);
 	_sizing_eval(obj);
+     }
+   if (sub == wd->end)
+     {
+        edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");
+        evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        wd->end = NULL;
+        edje_object_message_signal_process(wd->slider);
+        _sizing_eval(obj);
      }
 }
 
@@ -388,6 +404,7 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_event_hook_set(obj, _event_hook);
 
    wd->horizontal = EINA_TRUE;
+   wd->indicator_show = EINA_TRUE;
    wd->val = 0.0;
    wd->val_min = 0.0;
    wd->val_max = 1.0;
@@ -468,12 +485,15 @@ elm_slider_label_get(const Evas_Object *obj)
 }
 
 /**
- * Set the icon object of the slider object
+ * Set the icon object (leftmost widget) of the slider object.
  *
  * Once the icon object is set, a previously set one will be deleted.
  *
  * @param obj The slider object
  * @param icon The icon object
+ *
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
  *
  * @ingroup Slider
  */
@@ -491,7 +511,7 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 	elm_widget_sub_object_add(obj, icon);
 	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, obj);
-	edje_object_part_swallow(wd->slider, "elm.swallow.content", icon);
+	edje_object_part_swallow(wd->slider, "elm.swallow.icon", icon);
 	edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
 	edje_object_message_signal_process(wd->slider);
      }
@@ -499,14 +519,46 @@ elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- * Get the icon object of the slider object
+ * Unset the leftmost widget of the slider, unparenting and
+ * returning it.
+ *
+ * @param obj The slider object
+ * @return the previously set icon sub-object of this slider, on
+ * success.
+ *
+ * @see elm_slider_icon_set()
+ *
+ * @ingroup Slider
+ */
+EAPI Evas_Object *
+elm_slider_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->icon)
+     {
+	elm_widget_sub_object_del(obj, wd->icon);
+	ret = wd->icon;
+	edje_object_part_unswallow(wd->slider, wd->icon);
+	edje_object_signal_emit(wd->slider, "elm,state,icon,hidden", "elm");
+	wd->icon = NULL;
+	_sizing_eval(obj);
+     }
+   return ret;
+}
+
+/**
+ * Get the icon object of the slider object. This object is owned by
+ * the scrolled entry and should not be modified.
  *
  * @param obj The slider object
  * @return The icon object
  *
  * @ingroup Slider
  */
-EAPI Evas_Object *
+EAPI const Evas_Object *
 elm_slider_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -540,6 +592,10 @@ elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
      evas_object_size_hint_min_set(wd->spacer, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale, 1);
    else
      evas_object_size_hint_min_set(wd->spacer, 1, (double)wd->size * elm_widget_scale_get(obj) * _elm_config->scale);
+   if (wd->indicator_show)
+       edje_object_signal_emit(wd->slider, "elm,state,val,show", "elm");
+   else
+       edje_object_signal_emit(wd->slider, "elm,state,val,hide", "elm");
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
    _sizing_eval(obj);
 }
@@ -860,5 +916,133 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(d
    if (!wd) return;
    wd->indicator_format_func = func;
    _indicator_set(obj);
+}
+
+/**
+ * Set the end object (rightmost widget) of the slider object.
+ *
+ * Once the end object is set, a previously set one will be deleted.
+ *
+ * @param obj The slider object
+ * @param end The end object
+ *
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @ingroup Slider
+ */
+EAPI void
+elm_slider_end_set(Evas_Object *obj, Evas_Object *end)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->end == end) return;
+   if (wd->end) evas_object_del(wd->end);
+   wd->end = end;
+   if (end)
+     {
+	elm_widget_sub_object_add(obj, end);
+	evas_object_event_callback_add(end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+				       _changed_size_hints, obj);
+	edje_object_part_swallow(wd->slider, "elm.swallow.end", end);
+	edje_object_signal_emit(wd->slider, "elm,state,end,visible", "elm");
+	edje_object_message_signal_process(wd->slider);
+     }
+   _sizing_eval(obj);
+}
+
+/**
+ * Unset the rightmost widget of the slider, unparenting and
+ * returning it.
+ *
+ * @param obj The slider object
+ * @return the previously set end sub-object of this slider, on
+ * success.
+ *
+ * @see elm_slider_end_set()
+ *
+ * @ingroup Slider
+ */
+EAPI Evas_Object *
+elm_slider_end_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->end)
+     {
+	elm_widget_sub_object_del(obj, wd->end);
+	ret = wd->end;
+	edje_object_part_unswallow(wd->slider, wd->end);
+	edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");
+	wd->end = NULL;
+	_sizing_eval(obj);
+     }
+   return ret;
+}
+
+/**
+ * Get the end icon object of the slider object. This object is owned
+ * by the scrolled entry and should not be modified.
+ *
+ * @param obj The slider object
+ * @return The end icon object
+ *
+ * @ingroup Slider
+ */
+EAPI const Evas_Object *
+elm_slider_end_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->end;
+}
+
+/**
+ * Set whether to the slider indicator (augmented knob) at all.
+ *
+ * @param obj The slider object
+ * @param show @c EINA_TRUE will make it show it, @c EINA_FALSE will
+ * let the knob alwayes at default size.
+ *
+ * @note It will conflict with elm_slider_indicator_format_set(), if
+ * you wanted those effects.
+ *
+ * @ingroup Slider
+ */
+EAPI void
+elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (show) {
+      wd->indicator_show = EINA_TRUE;
+      edje_object_signal_emit(wd->slider, "elm,state,val,show", "elm");
+   }
+   else {
+      wd->indicator_show = EINA_FALSE;
+      edje_object_signal_emit(wd->slider, "elm,state,val,hide", "elm");
+   }
+}
+
+/**
+ * Get the state of indicator in the slider (if it's being shown or
+ * not).
+ *
+ * @param obj The slider object
+ * @return @c EINA_TRUE if the indicator is being shown, @c EINA_FALSE
+ * otherwise.
+ *
+ *  @ingroup Slider
+ */
+EAPI Eina_Bool
+elm_slider_indicator_show_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->indicator_show;
 }
 

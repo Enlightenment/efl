@@ -46,8 +46,14 @@ test_slider(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(ic);
    evas_object_show(sl);
 
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+
    sl = elm_slider_add(win);
    elm_slider_label_set(sl, "Label 2");
+   elm_slider_end_set(sl, ic);
    elm_slider_span_size_set(sl, 80);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -62,8 +68,9 @@ test_slider(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(sl);
 
    sl = elm_slider_add(win);
+   elm_slider_indicator_show_set(sl, EINA_FALSE);
    elm_slider_label_set(sl, "Label 3");
-   elm_slider_unit_format_set(sl, "units");
+   elm_slider_unit_format_set(sl, "%3.0f units");
    elm_slider_span_size_set(sl, 40);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
