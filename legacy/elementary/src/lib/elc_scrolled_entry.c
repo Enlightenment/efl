@@ -286,7 +286,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
-   wd->scroller = elm_scroller_add(parent);
+   wd->scroller = elm_scroller_add(obj);
    elm_scroller_custom_widget_base_theme_set(wd->scroller, "scroller", "entry");
    elm_widget_resize_object_set(obj, wd->scroller);
    evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -294,7 +294,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_scroller_bounce_set(wd->scroller, 0, 0);
    evas_object_show(wd->scroller);
 
-   wd->entry = elm_entry_add(parent);
+   wd->entry = elm_entry_add(obj);
    evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_content_set(wd->scroller, wd->entry);
