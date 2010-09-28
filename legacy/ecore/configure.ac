@@ -421,11 +421,12 @@ AC_SUBST(dlopen_libs)
 AC_SUBST(rt_libs)
 
 if test -n "$rt_libs"; then
-   _bkp_LDFLAGS="$LDFLAGS"
-   LDFLAGS="$LDFLAGS $rt_libs"
+   echo "hm $LIBS hm"
+   _bkp_LIBS="$LIBS"
+   LIBS="$LIBS $rt_libs"
    AC_CHECK_FUNCS(clock_gettime)
-   LDFLAGS="$_bkp_LDFLAGS"
-   unset _bkp_LDFLAGS
+   LIBS="$_bkp_LIBS"
+   unset _bkp_LIBS
 fi
 
 # Eina library
