@@ -5,8 +5,11 @@
 /**
  * @defgroup Notify notify
  *
- * Display a window in a particular region of the application (top, bottom ...).
- * A timeout can be set to automatically close the window.
+ * Display a window in a particular region of the application (top,
+ * bottom, etc.  A timeout can be set to automatically close the
+ * window. This is so that, after an evas_object_show() on a notify
+ * object, if a timeout was set on it, it will <b>automatically</b>
+ * get hidden after that time.
  *
  */
 
@@ -512,15 +515,22 @@ elm_notify_orient_get(const Evas_Object *obj)
 }
 
 /**
- * Set the time before the notify window is hidden.
- *
- * Set a value < 0 to disable a running timer.
+ * Set the time interval after which the notify window is going to be
+ * hidden.
  *
  * @param obj The notify object
  * @param time The new timeout
  *
- * @note If the value > 0 and the notify is visible, the timer will be started
- * with this value, canceling any before started timer to this notify.
+ * As said previously, an evas_object_show() on a notify object which
+ * had a timeout set by this function will trigger a timer to
+ * automatically hide it again. So, any order one calls
+ * elm_notify_timeout_set() and evas_object_show() on the same object
+ * (at hidden state) will behave the same.
+ *
+ * @note Set a value <= 0.0 to disable a running timer.
+ *
+ * @note If the value > 0.0 and the notify is previously visible, the
+ * timer will be started with this value, canceling any running timer.
  *
  */
 EAPI void
@@ -531,7 +541,6 @@ elm_notify_timeout_set(Evas_Object *obj, double timeout)
    if (!wd) return;
    wd->timeout = timeout;
    _timer_init(obj, wd);
-
 }
 
 /**
@@ -545,19 +554,6 @@ elm_notify_timeout_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0.0;
    return wd->timeout;
-}
-
-/**
- * (Re) init the timer if notify object is visible
- * @param obj The notify object
- */
-EAPI void
-elm_notify_timer_init(Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _timer_init(obj, wd);
 }
 
 /**

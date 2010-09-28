@@ -17,7 +17,6 @@ static void
 _notify_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    evas_object_show(data);
-   elm_notify_timer_init(data);
 }
 
 static void
@@ -36,6 +35,7 @@ static void
 _mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    elm_notify_timeout_set(data, 0);
+   evas_object_show(data);
 }
 
 
@@ -145,8 +145,10 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    elm_notify_content_set(notify, bx);
    evas_object_show(bx);
 
-   evas_object_event_callback_add(bx, EVAS_CALLBACK_MOUSE_IN, _mouse_in, notify);
-   evas_object_event_callback_add(bx, EVAS_CALLBACK_MOUSE_OUT, _mouse_out, notify);
+   evas_object_event_callback_add(bx, EVAS_CALLBACK_MOUSE_IN, _mouse_in,
+                                  notify);
+   evas_object_event_callback_add(bx, EVAS_CALLBACK_MOUSE_OUT, _mouse_out,
+                                  notify);
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Previous");
@@ -200,9 +202,10 @@ test_slideshow(void *data, Evas_Object *obj, void *event_info)
    elm_object_disabled_set(bt, 1);
    evas_object_show(bt);
 
-
-   evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_UP, _notify_show, notify);
-   evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_MOVE, _notify_show, notify);
+   evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_UP,
+                                  _notify_show, notify);
+   evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _notify_show, notify);
 
    evas_object_resize(win, 500, 400);
    evas_object_show(win);

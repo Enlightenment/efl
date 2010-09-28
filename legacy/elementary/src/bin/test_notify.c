@@ -5,11 +5,6 @@ static void
 _bt(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *notify = data;
-   int timeout = elm_notify_timeout_get(notify);
-
-   if (timeout > 0)
-       elm_notify_timer_init(notify);
-
    evas_object_show(notify);
 }
 
