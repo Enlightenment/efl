@@ -49,6 +49,7 @@ _data(void *data, int type, Ecore_Con_Event_Server_Data *ev)
 }
 int main()
 {
+   Ecore_Con_Server *svr;
    eina_init();
    ecore_init();
    ecore_con_init();
@@ -58,17 +59,11 @@ int main()
    gnutls_global_set_log_function(tls_log_func);
 
 
-/* to use a PEM certificate with TLS and SSL3, uncomment the lines below */
-/*
-   if ((!ecore_con_server_ssl_cert_add("server.pem")))
-     printf("Error loading certificate!\n");
 
-   ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", 8080, NULL);
-*/
-
-/* to use simple tcp with ssl/tls, use this line */
-   if (!ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "127.0.0.1", 8080, NULL))
+   if (!(svr = ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "localhost", 8080, NULL)))
      exit(1);
+   ecore_con_ssl_server_cafile_add(svr, "/etc/ssl/certs/vsign2.pem");
+   ecore_con_ssl_server_verify(svr);
 
 /* set event handler for server connect */
    ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, (Ecore_Event_Handler_Cb)_add, NULL);

@@ -18,7 +18,7 @@ _add(void *data, int type, Ecore_Con_Event_Client_Add *ev)
 {
    printf("Client with ip %s connected!\n", ecore_con_client_ip_get(ev->client));
    ecore_con_client_send(ev->client, "hello!", 6);
-   ecore_con_client_flush(ev->client);
+//   ecore_con_client_flush(ev->client);
    ecore_con_client_timeout_set(ev->client, 5);
 
    return ECORE_CALLBACK_RENEW;
@@ -50,6 +50,7 @@ _data(void *data, int type, Ecore_Con_Event_Client_Data *ev)
 }
 int main()
 {
+   Ecore_Con_Server *svr;
    eina_init();
    ecore_init();
    ecore_con_init();
@@ -60,16 +61,14 @@ int main()
 
 
 /* to use a PEM certificate with TLS and SSL3, uncomment the lines below */
-/*
-   if ((!ecore_con_client_ssl_cert_add("server.pem", NULL, "server.pem")))
-     printf("Error loading certificate!\n");
-
-   ecore_con_server_add(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", 8080, NULL);
-*/
+   if (!(svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", 8080, NULL)))
 
 /* to use simple tcp with ssl/tls, use this line */
-   if (!ecore_con_server_add(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3, "127.0.0.1", 8080, NULL))
+//   if (!ecore_con_server_add(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3, "127.0.0.1", 8080, NULL))
      exit(1);
+
+   ecore_con_ssl_server_cert_add(svr, "server.pem");
+   ecore_con_ssl_server_privkey_add(svr, "server.pem");
 /* set event handler for client connect */
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_add, NULL);
 /* set event handler for client disconnect */
