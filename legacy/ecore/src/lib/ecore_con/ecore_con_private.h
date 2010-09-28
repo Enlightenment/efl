@@ -137,6 +137,7 @@ struct _Ecore_Con_Server
    gnutls_psk_client_credentials_t pskcred_c;
    gnutls_psk_server_credentials_t pskcred_s;
    gnutls_certificate_credentials_t cert;
+   char *cert_file;
    gnutls_dh_params_t dh_params;
 #elif USE_OPENSSL
    SSL_CTX *ssl_ctx;
@@ -148,9 +149,11 @@ struct _Ecore_Con_Server
    char *ip;
    Eina_Bool dead : 1;
    Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
-   Eina_Bool connecting : 1;
+   Eina_Bool connecting : 1; /* EINA_FALSE if just initialized or connected */
    Eina_Bool handshaking : 1; /* EINA_TRUE if server is ssl handshaking */
-   Ecore_Con_Ssl_State ssl_state;
+   Eina_Bool use_cert : 1; /* EINA_TRUE if using certificate auth */
+   Ecore_Con_Ssl_State ssl_state; /* current state of ssl handshake on the server */
+   Eina_Bool verify : 1; /* EINA_TRUE if certificates will be verified */
    Eina_Bool reject_excess_clients : 1;
    Eina_Bool delete_me : 1;
 };
@@ -231,10 +234,6 @@ int                 ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
 /* from ecore_con_ssl.c */
 Ecore_Con_Ssl_Error ecore_con_ssl_init(void);
 Ecore_Con_Ssl_Error ecore_con_ssl_shutdown(void);
-Eina_Bool           ecore_con_ssl_server_cert_add(const char *cert);
-Eina_Bool           ecore_con_ssl_client_cert_add(const char *cert_file,
-                                                  const char *crl_file,
-                                                  const char *key_file);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_init(Ecore_Con_Server *svr);
 Ecore_Con_Ssl_Error ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr);

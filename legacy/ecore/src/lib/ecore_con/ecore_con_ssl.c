@@ -45,6 +45,13 @@ static int _client_connected = 0;
 #endif
 
 #if USE_GNUTLS
+static void
+_gnutls_print_errors(int ret)
+{
+  if (ret)
+    ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+}
+
 
 static const char*
 SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
@@ -81,27 +88,20 @@ SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
    return NULL;
 }
 
-typedef struct _cert_thingy
-{
-   gnutls_certificate_credentials_t cert;
-   int count;
-} gnutls;
-static gnutls *client_cert = NULL;
-static gnutls *server_cert = NULL;
 #elif USE_OPENSSL
-typedef struct _cert_thingy
+
+static void
+_openssl_print_errors(void)
 {
-   X509 *cert;
-   int count;
-} openssl;
-typedef struct _key_thingy
-{
-   EVP_PKEY *key;
-   int count;
-} openssl_pkey;
-static openssl_pkey *private_key = NULL;
-static openssl *client_cert = NULL;
-static openssl *server_cert = NULL;
+   do
+     {
+        unsigned long err;
+
+        err = ERR_get_error();
+        if (!err) break;
+        ERR("openssl error: %s", ERR_reason_error_string(err));
+     } while (1);
+}
 #endif
 
 #define SSL_ERROR_CHECK_GOTO_ERROR(X) \
@@ -121,13 +121,10 @@ static Ecore_Con_Ssl_Error
 static Ecore_Con_Ssl_Error
                  SSL_SUFFIX(_ecore_con_ssl_shutdown) (void);
 
-static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_client_cert_add) (const char *
-                                                             cert_file,
-                                                             const char *
-                                                             crl_file,
-                                                             const char *
-                                                             key_file);
-static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (const char *cert);
+static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_server_cafile_add) (Ecore_Con_Server *svr, const char *ca_file);
+static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_server_crl_add) (Ecore_Con_Server *svr, const char *crl_file);
+static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (Ecore_Con_Server *svr, const char *cert);
+static Eina_Bool SSL_SUFFIX(_ecore_con_ssl_server_privkey_add) (Ecore_Con_Server *svr, const char *key_file);
 
 static Ecore_Con_Ssl_Error  SSL_SUFFIX(_ecore_con_ssl_server_prepare)(Ecore_Con_Server *svr, int ssl_type);
 static Ecore_Con_Ssl_Error
@@ -174,44 +171,10 @@ Ecore_Con_Ssl_Error
 ecore_con_ssl_shutdown(void)
 {
    if (!--_init_con_ssl_init_count)
-     {
-#if USE_OPENSSL || USE_GNUTLS
-        if (client_cert)
-           client_cert->count = 0;
-
-        if (server_cert)
-           server_cert->count = 0;
-#endif
-#if USE_OPENSSL && !USE_GNUTLS
-        if (private_key)
-           private_key->count = 0;
-
-#endif
-        SSL_SUFFIX(_ecore_con_ssl_shutdown) ();
-     }
+     SSL_SUFFIX(_ecore_con_ssl_shutdown) ();
 
    return _init_con_ssl_init_count;
 }
-
-/**
- * Returns if SSL support is available
- * @return 1 if SSL is available and provided by gnutls, 2 if provided by openssl,
- * 0 if it is not available.
- * @ingroup Ecore_Con_Client_Group
- */
-EAPI int
-ecore_con_ssl_available_get(void)
-{
-   return _ECORE_CON_SSL_AVAILABLE;
-}
-
-#if 0
-EAPI Eina_Bool
-ecore_con_ssl_server_reinit()
-{
-
-}
-#endif
 
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type)
@@ -225,12 +188,6 @@ Ecore_Con_Ssl_Error
 ecore_con_ssl_server_init(Ecore_Con_Server *svr)
 {
    return SSL_SUFFIX(_ecore_con_ssl_server_init) (svr);
-}
-
-Eina_Bool
-ecore_con_ssl_server_cert_add(const char *cert)
-{
-   return SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (cert);
 }
 
 Ecore_Con_Ssl_Error
@@ -263,15 +220,6 @@ ecore_con_ssl_client_init(Ecore_Con_Client *cl)
    return SSL_SUFFIX(_ecore_con_ssl_client_init) (cl);
 }
 
-Eina_Bool
-ecore_con_ssl_client_cert_add(const char *cert_file,
-                              const char *crl_file,
-                              const char *key_file)
-{
-   return SSL_SUFFIX(_ecore_con_ssl_client_cert_add) (cert_file, crl_file,
-                                                      key_file);
-}
-
 Ecore_Con_Ssl_Error
 ecore_con_ssl_client_shutdown(Ecore_Con_Client *cl)
 {
@@ -289,6 +237,140 @@ ecore_con_ssl_client_write(Ecore_Con_Client *cl, unsigned char *buf, int size)
 {
    return SSL_SUFFIX(_ecore_con_ssl_client_write) (cl, buf, size);
 }
+
+/**
+ * @addtogroup Ecore_Con_SSL_Group Ecore Connection SSL Functions
+ *
+ * Functions that operate on Ecore connection objects pertaining to SSL.
+ *
+ * @{
+ */
+
+/**
+ * Returns if SSL support is available
+ * @return 1 if SSL is available and provided by gnutls, 2 if provided by openssl,
+ * 0 if it is not available.
+ * @ingroup Ecore_Con_Client_Group
+ */
+EAPI int
+ecore_con_ssl_available_get(void)
+{
+   return _ECORE_CON_SSL_AVAILABLE;
+}
+
+/**
+ * @brief Enable certificate verification on a server object
+ *
+ * Call this function on a server object before main loop has started
+ * to enable verification of certificates against loaded certificates.
+ * @param svr The server object
+ */
+EAPI void
+ecore_con_ssl_server_verify(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_verify");
+        return;
+     }
+   svr->verify = EINA_TRUE;
+}
+ 
+/**
+ * @brief Add an ssl certificate for use in ecore_con functions.
+ *
+ * Use this function to add a SSL PEM certificate.
+ * Simply specify the cert here to use it in the server object for connecting or listening.
+ * If there is an error loading the certificate, an error will automatically be logged.
+ * @param cert The path to the certificate.
+ * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
+ */
+
+EAPI Eina_Bool
+ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
+                              const char *cert)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_cert_add");
+        return EINA_FALSE;
+     }
+
+   return SSL_SUFFIX(_ecore_con_ssl_server_cert_add)(svr, cert);
+}
+
+/**
+ * @brief Add an ssl CA file for use in ecore_con functions.
+ *
+ * Use this function to add a SSL PEM CA file.
+ * Simply specify the file here to use it in the server object for connecting or listening.
+ * If there is an error loading the CAs, an error will automatically be logged.
+ * @param ca_file The path to the CA file.
+ * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
+ */
+
+EAPI Eina_Bool
+ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr,
+                              const char *ca_file)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_cafile_add");
+        return EINA_FALSE;
+     }
+
+   return SSL_SUFFIX(_ecore_con_ssl_server_cafile_add)(svr, ca_file);
+}
+
+/**
+ * @brief Add an ssl private key for use in ecore_con functions.
+ *
+ * Use this function to add a SSL PEM private key
+ * Simply specify the key file here to use it in the server object for connecting or listening.
+ * If there is an error loading the key, an error will automatically be logged.
+ * @param key_file The path to the key file.
+ * @return EINA_FALSE if the file cannot be loaded,
+ * otherwise EINA_TRUE.
+ */
+
+EAPI Eina_Bool
+ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr,
+                              const char *key_file)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_privkey_add");
+        return EINA_FALSE;
+     }
+
+   return SSL_SUFFIX(_ecore_con_ssl_server_privkey_add)(svr, key_file);
+}
+
+/**
+ * @brief Add an ssl CRL for use in ecore_con functions.
+ *
+ * Use this function to add a SSL PEM CRL file
+ * Simply specify the CRL file here to use it in the server object for connecting or listening.
+ * If there is an error loading the CRL, an error will automatically be logged.
+ * @param crl_file The path to the CRL file.
+ * @return EINA_FALSE if the file cannot be loaded,
+ * otherwise EINA_TRUE.
+ */
+
+EAPI Eina_Bool
+ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
+                              const char *crl_file)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_crl_add");
+        return EINA_FALSE;
+     }
+
+   return SSL_SUFFIX(_ecore_con_ssl_server_crl_add)(svr, crl_file);
+}
+
+/** }@ */
 
 #if USE_GNUTLS
 
@@ -320,26 +402,11 @@ _ecore_con_ssl_shutdown_gnutls(void)
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type __UNUSED__)
 {
    int ret;
 
-   if ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT)
-     {
-        if ((server_cert) && (server_cert->cert) && (svr->created))
-          { /* load server cert */
-             svr->cert = server_cert->cert;
-             server_cert->count++;
-          }
-        else if ((client_cert) && (client_cert->cert))
-          { /* load client cert */
-             svr->cert = client_cert->cert;
-             client_cert->count++;
-          }
-     }
-   else
-     /* if LOAD_CERT is not specified, allocate here */
-     SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
 
    if (svr->created)
      {
@@ -363,7 +430,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   _gnutls_print_errors(ret);
    _ecore_con_ssl_server_shutdown_gnutls(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
@@ -375,6 +442,9 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 {
+   const gnutls_datum_t *cert_list;
+   unsigned int iter, cert_list_size;
+   gnutls_x509_crt_t cert = NULL;
    const int *proto = NULL;
    const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
    int ret = 0;
@@ -461,49 +531,108 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
       default:
         break;
      }
+   if (svr->ssl_state != ECORE_CON_SSL_STATE_DONE)
+     return ECORE_CON_SSL_ERROR_NONE;
 
+   if (!svr->verify)
+     /* not verifying certificates, so we're done! */
+     return ECORE_CON_SSL_ERROR_NONE;
+   ret = 0;
+   /* use CRL/CA lists to verify */
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_verify_peers2(svr->session, &iter));
+   if (iter & GNUTLS_CERT_INVALID)
+     ERR("The certificate is not trusted.");
+   else if (iter & GNUTLS_CERT_SIGNER_NOT_FOUND)
+     ERR ("The certificate hasn't got a known issuer.");
+   else if (iter & GNUTLS_CERT_REVOKED)
+     ERR ("The certificate has been revoked.");
+   else if (iter & GNUTLS_CERT_EXPIRED)
+     ERR ("The certificate has expired");
+   else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
+     ERR ("The certificate is not yet activated");
+
+   if (iter)
+     goto error;
+
+   if (gnutls_certificate_type_get(svr->session) != GNUTLS_CRT_X509)
+     {
+        ERR("Warning: PGP certificates are not yet supported!");
+        goto error;
+     }
+
+
+   SSL_ERROR_CHECK_GOTO_ERROR(!(cert_list = gnutls_certificate_get_peers(svr->session, &cert_list_size)));
+   SSL_ERROR_CHECK_GOTO_ERROR(!cert_list_size);
+
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER));
+
+   SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, svr->name));
+   gnutls_x509_crt_deinit(cert);
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   _gnutls_print_errors(ret);
    if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
      ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(svr->session)));
-   ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(svr->session)));
-   ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(svr->session)));
+   if (svr->ssl_state != ECORE_CON_SSL_STATE_DONE)
+     {
+       ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(svr->session)));
+       ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(svr->session)));
+     }
+   if (cert)
+     gnutls_x509_crt_deinit(cert);
    _ecore_con_ssl_server_shutdown_gnutls(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cert_add_gnutls(const char *cert_file)
+_ecore_con_ssl_server_cafile_add_gnutls(Ecore_Con_Server *svr, const char *ca_file)
 {
-   gnutls_certificate_credentials_t cert = NULL;
-
-   /* cert load */
-   if (gnutls_certificate_set_x509_trust_file(cert, cert_file,
-                                              GNUTLS_X509_FMT_PEM) < 0)
-      goto on_error;
-
-   if (!server_cert)
-     {
-        server_cert = malloc(sizeof(gnutls));
-        if (!server_cert)
-           return EINA_FALSE;
-     }
-   else if ((server_cert->cert) && ((--server_cert->count) < 1))
-      gnutls_certificate_free_credentials(server_cert->cert);
-
-   server_cert->cert = cert;
-   server_cert->count = 1;
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_trust_file(svr->cert, ca_file,
+                                              GNUTLS_X509_FMT_PEM) < 1);
 
    return EINA_TRUE;
-
-on_error:
-   if (cert)
-      gnutls_certificate_free_credentials(cert);
-
+error:
+   ERR("Could not load CA file!");
    return EINA_FALSE;
 }
+
+static Eina_Bool
+_ecore_con_ssl_server_crl_add_gnutls(Ecore_Con_Server *svr, const char *crl_file)
+{
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_crl_file(svr->cert, crl_file,
+                                            GNUTLS_X509_FMT_PEM) < 1);
+
+   return EINA_TRUE;
+error:
+   ERR("Could not load CRL file!");
+   return EINA_FALSE;
+}
+
+
+static Eina_Bool
+_ecore_con_ssl_server_privkey_add_gnutls(Ecore_Con_Server *svr, const char *key_file)
+{
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_key_file(svr->cert, svr->cert_file, key_file,
+                                            GNUTLS_X509_FMT_PEM) < 1);
+
+   return EINA_TRUE;
+error:
+   ERR("Could not load certificate/key file!");
+   return EINA_FALSE;
+}
+
+
+static Eina_Bool
+_ecore_con_ssl_server_cert_add_gnutls(Ecore_Con_Server *svr, const char *cert_file)
+{
+   if (!(svr->cert_file = strdup(cert_file)))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
@@ -514,18 +643,15 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
         gnutls_deinit(svr->session);
      }
 
+   if (svr->cert_file)
+     free(svr->cert_file);
+   svr->cert_file = NULL;
+   if (svr->cert)
+     gnutls_certificate_free_credentials(svr->cert);
+   svr->cert = NULL;
+
    if ((svr->type & ECORE_CON_SSL) && svr->created)
      {
-        if ((server_cert) && (--server_cert->count < 1) && (svr->cert == server_cert->cert))
-          { /* only ever free this if it is used and dead */
-             gnutls_certificate_free_credentials(server_cert->cert);
-             free(server_cert);
-             server_cert = NULL;
-          }
-        else if (svr->cert && ((!server_cert) || (svr->cert != server_cert->cert)))
-          /* otherwise just free the anon cert */
-          gnutls_certificate_free_credentials(svr->cert);
-
         if (svr->dh_params)
           {
              gnutls_dh_params_deinit(svr->dh_params);
@@ -541,16 +667,6 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
      }
    else if (svr->type & ECORE_CON_SSL)
      {
-        if ((client_cert) && (--client_cert->count < 1) && (svr->cert == client_cert->cert))
-          { /* only ever free this if it is used and dead */
-             gnutls_certificate_free_credentials(client_cert->cert);
-             free(client_cert);
-             client_cert = NULL;
-          }
-        else if (svr->cert && ((!client_cert) || (svr->cert != client_cert->cert)))
-          /* otherwise just free the anon cert */
-          gnutls_certificate_free_credentials(svr->cert);
-
         if (svr->anoncred_c)
           gnutls_anon_free_client_credentials(svr->anoncred_c);
         if (svr->pskcred_c)
@@ -561,7 +677,6 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
      }
 
    svr->session = NULL;
-   svr->cert = NULL;
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -736,7 +851,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+   _gnutls_print_errors(ret);
    if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
      ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(cl->session)));
    ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(cl->session)));
@@ -756,69 +871,11 @@ _ecore_con_ssl_client_shutdown_gnutls(Ecore_Con_Client *cl)
         cl->session_ticket.data = NULL;
      }
 
-   if (((cl->host_server->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
-       (client_cert) &&
-       (client_cert->cert) && (--client_cert->count < 1))
-     {
-        free(client_cert);
-        client_cert = NULL;
-     }
-
    cl->session = NULL;
 
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-static Eina_Bool
-_ecore_con_ssl_client_cert_add_gnutls(const char *cert_file,
-                                      const char *crl_file __UNUSED__,
-                                      const char *key_file)
-{
-   gnutls_certificate_credentials_t cert = NULL;
-
-   if (gnutls_certificate_allocate_credentials(&cert) < 0)
-      return EINA_FALSE;
-
-   /* cert load */
-   if (gnutls_certificate_set_x509_trust_file(cert, cert_file,
-                                              GNUTLS_X509_FMT_PEM) < 0)
-      goto on_error;
-
-   /* private key load */
-   if (gnutls_certificate_set_x509_key_file(cert, cert_file, key_file,
-                                            GNUTLS_X509_FMT_PEM) < 0)
-      goto on_error;
-
-#if 0
-   //TODO: uncomment once we implement cert checking
-   if (crl_file)
-      /* CRL file load */
-      if (gnutls_certificate_set_x509_crl_mem(cert, crl_file,
-                                              GNUTLS_X509_FMT_PEM) < 0)
-         goto on_error;
-
-}
-#endif
-   if (!client_cert)
-     {
-        client_cert = malloc(sizeof(gnutls));
-        if (!client_cert)
-           return EINA_FALSE;
-     }
-   else if ((client_cert->cert) && ((--client_cert->count) < 1))
-      gnutls_certificate_free_credentials(client_cert->cert);
-
-   client_cert->cert = cert;
-   client_cert->count = 1;
-
-   return EINA_TRUE;
-
-on_error:
-   if (cert)
-      gnutls_certificate_free_credentials(cert);
-
-   return EINA_FALSE;
-}
 
 static int
 _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
@@ -952,25 +1009,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
          break;
      }
 
-   if ((client_cert) && (client_cert->cert) && (private_key->key) && (svr->created) &&
-       ((ssl_type & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT))
-     { /* this is a server */
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, client_cert->cert) < 1);
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_PrivateKey(svr->ssl_ctx, private_key->key) < 1);
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_check_private_key(svr->ssl_ctx) < 1);
-
-        client_cert->count++;
-        private_key->count++;
-     }
-
-   if ((server_cert) && (server_cert->cert) && (!svr->created) &&
-       ((ssl_type & ECORE_CON_LOAD_CERT)))
-     { /* this is a client */
-        SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, server_cert->cert) < 1);
-
-        server_cert->count++;
-     }
-   else if (!(ssl_type & ECORE_CON_LOAD_CERT) && svr->created)
+   if ((!svr->use_cert) && svr->created)
      {
         DH *dh_params;
         SSL_ERROR_CHECK_GOTO_ERROR(!(dh_params = DH_new()));
@@ -982,7 +1021,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
         DH_free(dh_params);
         SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:@STRENGTH"));
      }
-   else if (!(ssl_type & ECORE_CON_LOAD_CERT))
+   else if (!svr->use_cert)
      SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"));
 
      return ECORE_CON_SSL_ERROR_NONE;
@@ -996,17 +1035,13 @@ error:
           ERR("openssl error: dh_params could not generate a safe prime!");
      }
    else
-     do
-       {
-          unsigned long err;
-
-          err = ERR_get_error();
-          if (!err) break;
-          ERR("openssl error: %s", ERR_reason_error_string(err));
-       } while (1);
+     _openssl_print_errors();
    _ecore_con_ssl_server_shutdown_openssl(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
+
+
+
 
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
@@ -1040,51 +1075,90 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   do
-     {
-        unsigned long sslerr;
-
-        sslerr = ERR_get_error();
-        if (!sslerr) break;
-        ERR("openssl error: %s", ERR_reason_error_string(sslerr));
-     } while (1);
+   _openssl_print_errors();
    _ecore_con_ssl_server_shutdown_openssl(svr);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cert_add_openssl(const char *cert_file)
+_ecore_con_ssl_server_cafile_add_openssl(Ecore_Con_Server *svr, const char *ca_file)
+{
+   SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_load_verify_locations(svr->ssl_ctx, ca_file, NULL));
+   return EINA_TRUE;
+
+error:
+   _openssl_print_errors();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *svr, const char *crl_file)
+{
+   FILE *fp = NULL;
+   X509_CRL *crl = NULL;
+
+   if (!(fp = fopen(crl_file, "r")))
+      goto error;
+#warning IMPLEMENT FIXME!
+   SSL_ERROR_CHECK_GOTO_ERROR(!(crl = PEM_read_X509_CRL(fp, NULL, NULL, NULL)));
+
+   fclose(fp);
+
+   return EINA_TRUE;
+
+error:
+   if (fp)
+      fclose(fp);
+   _openssl_print_errors();
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_con_ssl_server_privkey_add_openssl(Ecore_Con_Server *svr, const char *key_file)
+{
+   FILE *fp = NULL;
+   EVP_PKEY *privkey = NULL;
+
+   if (!(fp = fopen(key_file, "r")))
+      goto error;
+
+   SSL_ERROR_CHECK_GOTO_ERROR(!(privkey = PEM_read_PrivateKey(fp, NULL, NULL, NULL)));
+
+   fclose(fp);
+   SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_PrivateKey(svr->ssl_ctx, privkey) < 1);
+   SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_check_private_key(svr->ssl_ctx) < 1);
+
+   return EINA_TRUE;
+
+error:
+   if (fp)
+      fclose(fp);
+   _openssl_print_errors();
+   return EINA_FALSE;
+}
+
+
+static Eina_Bool
+_ecore_con_ssl_server_cert_add_openssl(Ecore_Con_Server *svr, const char *cert_file)
 {
    FILE *fp = NULL;
    X509 *cert = NULL;
 
    if (!(fp = fopen(cert_file, "r")))
-      goto on_error;
+      goto error;
 
-   if (!(cert = PEM_read_X509(fp, NULL, NULL, NULL)))
-      goto on_error;
+   SSL_ERROR_CHECK_GOTO_ERROR(!(cert = PEM_read_X509(fp, NULL, NULL, NULL)));
 
    fclose(fp);
 
-   if (!server_cert)
-     {
-        server_cert = malloc(sizeof(openssl));
-        if (!server_cert)
-           return EINA_FALSE;
-     }
-   else if ((server_cert->cert) && ((--server_cert->count) < 1))
-      X509_free(server_cert->cert);
-
-   server_cert->cert = cert;
-
-   server_cert->count = 1;
+   SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, cert) < 1);
 
    return EINA_TRUE;
 
-on_error:
+error:
    if (fp)
       fclose(fp);
-
+   _openssl_print_errors();
    return EINA_FALSE;
 }
 
@@ -1097,15 +1171,6 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
            SSL_shutdown(svr->ssl);
 
         SSL_free(svr->ssl);
-     }
-
-   if (((svr->type & ECORE_CON_TYPE) & ECORE_CON_LOAD_CERT) &&
-       (server_cert) && (server_cert->cert) &&
-       (--server_cert->count < 1))
-     {
-        X509_free(server_cert->cert);
-        free(server_cert);
-        server_cert = NULL;
      }
 
    if (svr->ssl_ctx)
@@ -1247,82 +1312,11 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
-   do
-     {
-        unsigned long sslerr;
-
-        sslerr = ERR_get_error();
-        if (!sslerr) break;
-        ERR("openssl error: %s", ERR_reason_error_string(sslerr));
-     } while (1);
+   _openssl_print_errors();
    _ecore_con_ssl_client_shutdown_openssl(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
-
-static Eina_Bool
-_ecore_con_ssl_client_cert_add_openssl(const char *cert_file,
-                                       const char *crl_file __UNUSED__,
-                                       const char *key_file)
-{
-   FILE *fp = NULL;
-   EVP_PKEY *privkey = NULL;
-   X509 *cert = NULL;
-
-   if (!(fp = fopen(cert_file, "r")))
-      goto on_error;
-
-   if (!(cert = PEM_read_X509(fp, NULL, NULL, NULL)))
-      goto on_error;
-
-   if (key_file)
-     {
-        fclose(fp);
-        if (!(fp = fopen(key_file, "r")))
-           goto on_error;
-     }
-
-   if (!(privkey = PEM_read_PrivateKey(fp, NULL, NULL, NULL)))
-      goto on_error;
-
-        fclose(fp);
-
-   if (!client_cert)
-     {
-        client_cert = malloc(sizeof(openssl));
-           if (!client_cert)
-           return EINA_FALSE;
-     }
-   else if ((client_cert->cert) && (--client_cert->count < 1))
-      X509_free(client_cert->cert);
-
-   if (!private_key)
-     {
-        private_key = malloc(sizeof(openssl_pkey));
-           if (!private_key) return EINA_FALSE;
-     }
-   else if ((private_key->key) && ((--private_key->count) < 1))
-      EVP_PKEY_free(private_key->key);
-
-   private_key->key = privkey;
-   client_cert->cert = cert;
-
-   private_key->count = client_cert->count = 1;
-
-   return EINA_TRUE;
-
-on_error:
-   if (fp)
-      fclose(fp);
-
-   if (cert)
-      X509_free(cert);
-
-   if (privkey)
-      EVP_PKEY_free(privkey);
-
-   return EINA_FALSE;
-}
 
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_shutdown_openssl(Ecore_Con_Client *cl)
@@ -1438,9 +1432,27 @@ _ecore_con_ssl_server_init_none(Ecore_Con_Server *svr __UNUSED__)
 }
 
 static Eina_Bool
-_ecore_con_ssl_server_cert_add_none(const char *cert_file __UNUSED__)
+_ecore_con_ssl_server_cafile_add_none(Ecore_Con_Server *svr __UNUSED__, const char *ca_file __UNUSED__)
 {
-   return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_con_ssl_server_cert_add_none(Ecore_Con_Server *svr __UNUSED__, const char *cert_file __UNUSED__)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_con_ssl_server_privkey_add_none(Ecore_Con_Server *svr __UNUSED__, const char *key_file __UNUSED__)
+{
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_ecore_con_ssl_server_crl_add_none(Ecore_Con_Server *svr __UNUSED__, const char *crl_file __UNUSED__)
+{
+   return EINA_FALSE;
 }
 
 static Ecore_Con_Ssl_Error
@@ -1477,14 +1489,6 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_none(Ecore_Con_Client *cl __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
-}
-
-static Eina_Bool
-_ecore_con_ssl_client_cert_add_none(const char *cert_file __UNUSED__,
-                                    const char *crl_file __UNUSED__,
-                                    const char *key_file __UNUSED__)
-{
-   return EINA_TRUE;
 }
 
 static Ecore_Con_Ssl_Error

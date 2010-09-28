@@ -298,6 +298,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = EINA_TRUE;
+   svr->use_cert = (compl_type & ECORE_CON_LOAD_CERT);
    svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
@@ -411,6 +412,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = EINA_FALSE;
+   svr->use_cert = (compl_type & ECORE_CON_LOAD_CERT);
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
@@ -815,29 +817,6 @@ ecore_con_server_flush(Ecore_Con_Server *svr)
    _ecore_con_server_flush(svr);
 }
 
-/**
- * Add an ssl certificate for use in ecore_con_server functions.
- *
- * Use this function to add a SSL PEM certificate.
- * Simply specify the cert here to make it available,
- * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_connect
- * call to use it.  If there is an error loading the certificate upon creating
- * the connection, an error will be automatically logged.
- * @param cert The path to the certificate.
- * @return EINA_FALSE if the file cannot be loaded,
- * otherwise EINA_TRUE.
- * @note Currently certificate verification is not implemented.
- */
-
-EAPI Eina_Bool
-ecore_con_server_ssl_cert_add(const char *cert)
-{
-
-   if (!eina_str_has_extension(cert, "pem"))
-      return EINA_FALSE;
-
-   return ecore_con_ssl_server_cert_add(cert);
-}
 
 /**
  * @}
@@ -1116,36 +1095,6 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
      }
 
    _ecore_con_client_flush(cl);
-}
-
-/**
- * @brief Add an ssl certificate for use in ecore_con_client functions.
- *
- * Use this function to add a SSL PEM certificate.
- * Simply specify the cert here to make it available,
- * then OR the @ref ECORE_CON_LOAD_CERT flag into the @ref ecore_con_server_add
- * call to use it.  If there is an error loading the certificate upon creating
- * the connection, an error will be automatically logged.
- * @param cert_file The path to the certificate.
- * @param crl_file The path to the CRL file
- * @param key_file The path to the private key file. If not specified, the private key
- * from the cert will be loaded.
- * @return EINA_FALSE if the file cannot be loaded,
- * otherwise EINA_TRUE.
- * @note Currently CRL file adding and certificate verification is not implemented,
- * so specifying it here has no effect.
- */
-
-EAPI Eina_Bool
-ecore_con_client_ssl_cert_add(const char *cert_file,
-                              const char *crl_file,
-                              const char *key_file)
-{
-
-   if (!eina_str_has_extension(cert_file, "pem"))
-      return EINA_FALSE;
-
-   return ecore_con_ssl_client_cert_add(cert_file, crl_file, key_file);
 }
 
 /**

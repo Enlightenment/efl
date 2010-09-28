@@ -350,14 +350,12 @@ typedef enum _Ecore_Con_Type
    ECORE_CON_USE_TLS = (1 << 6),
    /** Use both TLS and SSL3 */
    ECORE_CON_USE_MIXED = ECORE_CON_USE_SSL3 | ECORE_CON_USE_TLS,
-   /** Attempt to use the previously loaded certificate */
+   /** Attempt to use the loaded certificate */
    ECORE_CON_LOAD_CERT = (1 << 7)
 } Ecore_Con_Type;
 
 EAPI int               ecore_con_init(void);
 EAPI int               ecore_con_shutdown(void);
-
-EAPI int               ecore_con_ssl_available_get(void);
 
 EAPI Eina_Bool         ecore_con_lookup(const char *name,
                                             Ecore_Con_Dns_Cb done_cb,
@@ -366,6 +364,20 @@ EAPI Eina_Bool         ecore_con_lookup(const char *name,
 /**
  * @}
  */
+
+/**
+ * @defgroup Ecore_Con_SSL_Group Ecore Connection SSL Functions
+ *
+ * @{
+ */
+EAPI int               ecore_con_ssl_available_get(void);
+EAPI Eina_Bool         ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr, const char *cert);
+EAPI Eina_Bool         ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr, const char *key_file);
+EAPI Eina_Bool         ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const char *crl_file);
+EAPI Eina_Bool         ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *ca_file);
+EAPI void              ecore_con_ssl_server_verify(Ecore_Con_Server *svr);
+
+/** }@ */
 
 /**
  * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
@@ -399,7 +411,6 @@ EAPI const char *      ecore_con_server_ip_get(Ecore_Con_Server *svr);
 EAPI void              ecore_con_server_flush(Ecore_Con_Server *svr);
 EAPI void              ecore_con_server_timeout_set(Ecore_Con_Server *svr, double timeout);
 EAPI double            ecore_con_server_timeout_get(Ecore_Con_Server *svr);
-EAPI Eina_Bool         ecore_con_server_ssl_cert_add(const char *cert);
 
 /**
  * @}
@@ -424,9 +435,6 @@ EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
 EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
 EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
 EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
-EAPI Eina_Bool         ecore_con_client_ssl_cert_add(const char *cert_file,
-                                                     const char *crl_file,
-                                                     const char *key_file);
 /**
  * @}
  */
