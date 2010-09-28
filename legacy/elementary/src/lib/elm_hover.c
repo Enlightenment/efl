@@ -296,10 +296,10 @@ elm_hover_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_can_focus_set(obj, 1);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->hov = evas_object_rectangle_add(e);
-   evas_object_pass_events_set(wd->hov, 1);
+   evas_object_pass_events_set(wd->hov, EINA_TRUE);
    evas_object_color_set(wd->hov, 0, 0, 0, 0);
    elm_widget_resize_object_set(obj, wd->hov);
    evas_object_event_callback_add(wd->hov, EVAS_CALLBACK_MOVE, _hov_move, obj);
@@ -314,12 +314,12 @@ elm_hover_add(Evas_Object *parent)
                                    _signal_dismiss, obj);
 
    wd->offset = evas_object_rectangle_add(e);
-   evas_object_pass_events_set(wd->offset, 1);
+   evas_object_pass_events_set(wd->offset, EINA_TRUE);
    evas_object_color_set(wd->offset, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->offset);
 
    wd->size = evas_object_rectangle_add(e);
-   evas_object_pass_events_set(wd->size, 1);
+   evas_object_pass_events_set(wd->size, EINA_TRUE);
    evas_object_color_set(wd->size, 0, 0, 0, 0);
    elm_widget_sub_object_add(obj, wd->size);
 

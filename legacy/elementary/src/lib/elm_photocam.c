@@ -341,7 +341,7 @@ grid_create(Evas_Object *obj)
                evas_object_image_add(evas_object_evas_get(obj));
              evas_object_image_scale_hint_set
                (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
-             evas_object_pass_events_set(g->grid[tn].img, 1);
+             evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
              evas_object_smart_member_add(g->grid[tn].img, 
                                           wd->pan_smart);
              elm_widget_sub_object_add(obj, g->grid[tn].img);
@@ -972,7 +972,7 @@ elm_photocam_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
    
-   elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
+   elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_TRUE);
 
    wd->obj = obj;
 

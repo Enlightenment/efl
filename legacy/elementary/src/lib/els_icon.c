@@ -15,6 +15,7 @@ struct _Smart_Data
    unsigned char preloading : 1;
    unsigned char show : 1;
    unsigned char edit : 1;
+   unsigned char edje : 1;
 };
 
 /* local subsystem functions */
@@ -46,14 +47,37 @@ _els_smart_icon_add(Evas *evas)
    return evas_object_smart_add(evas, _e_smart);
 }
 
+static void
+_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+{
+   Smart_Data *sd = data;
+
+   sd->preloading = 0;
+   if (sd->show) 
+     evas_object_show(sd->obj);
+}
+
 Eina_Bool
 _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key)
 {
    Smart_Data *sd;
-
+   Evas_Object *pclip;
+   
    sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_FALSE;
    /* smart code here */
+   if (sd->edje)
+     {
+        pclip = evas_object_clip_get(sd->obj);
+        if (sd->obj) evas_object_del(sd->obj);
+        sd->obj = evas_object_image_add(evas_object_evas_get(obj));
+        evas_object_image_scale_hint_set(sd->obj, EVAS_IMAGE_SCALE_HINT_STATIC);
+        evas_object_smart_member_add(sd->obj, obj);
+        evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED, 
+                                       _preloaded, sd);
+        evas_object_clip_set(sd->obj, pclip);
+        sd->edje = 0;
+     }
    if (sd->size != 0)
      evas_object_image_load_size_set(sd->obj, sd->size, sd->size);
    evas_object_image_file_set(sd->obj, file, key);
@@ -71,14 +95,21 @@ Eina_Bool
 _els_smart_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
 {
    Smart_Data *sd;
+   Evas_Object *pclip;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_FALSE;
    /* smart code here */
-   if (sd->obj) evas_object_del(sd->obj);
-   sd->obj = edje_object_add(evas_object_evas_get(obj));
-   evas_object_smart_member_add(sd->obj, obj);
-   if (sd->show) evas_object_show(sd->obj);
+   if (!sd->edje)
+     {
+        pclip = evas_object_clip_get(sd->obj);
+        if (sd->obj) evas_object_del(sd->obj);
+        sd->obj = edje_object_add(evas_object_evas_get(obj));
+        evas_object_smart_member_add(sd->obj, obj);
+        if (sd->show) evas_object_show(sd->obj);
+        evas_object_clip_set(sd->obj, pclip);
+     }
+   sd->edje = 1;
    if (!edje_object_file_set(sd->obj, file, part))
      return EINA_FALSE;
    _smart_reconfigure(sd);
@@ -379,16 +410,6 @@ _smart_reconfigure(Smart_Data *sd)
 	evas_object_image_fill_set(sd->obj, 0, 0, w, h);
 	evas_object_resize(sd->obj, w, h);
      }
-}
-
-static void
-_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
-{
-   Smart_Data *sd = data;
-
-   sd->preloading = 0;
-   if (sd->show) 
-     evas_object_show(sd->obj);
 }
 
 static void

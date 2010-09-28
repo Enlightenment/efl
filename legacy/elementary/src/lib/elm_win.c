@@ -928,7 +928,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_move(win->win_obj, 0, 0);
    evas_object_resize(win->win_obj, 1, 1);
    evas_object_layer_set(win->win_obj, 50);
-   evas_object_pass_events_set(win->win_obj, 1);
+   evas_object_pass_events_set(win->win_obj, EINA_TRUE);
 
    evas_object_intercept_show_callback_add(win->win_obj,
                                            _elm_win_obj_intercept_show, win);

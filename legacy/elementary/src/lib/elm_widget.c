@@ -232,7 +232,7 @@ _parent_focus(Evas_Object *obj)
 
    focus_order++;
    sd->focus_order = focus_order;
-   sd->focused = 1;
+   sd->focused = EINA_TRUE;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
 
@@ -539,7 +539,7 @@ elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj)
 }
 
 EAPI void
-elm_widget_can_focus_set(Evas_Object *obj, int can_focus)
+elm_widget_can_focus_set(Evas_Object *obj, Eina_Bool can_focus)
 {
    API_ENTRY return;
    sd->can_focus = can_focus;
@@ -604,10 +604,10 @@ elm_widget_highlight_in_theme_get(const Evas_Object *obj)
    return sd->highlight_in_theme;
 }
 
-EAPI int
+EAPI Eina_Bool
 elm_widget_focus_get(const Evas_Object *obj)
 {
-   API_ENTRY return 0;
+   API_ENTRY return EINA_FALSE;
    return sd->focused;
 }
 
@@ -795,9 +795,9 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
           {
              focus_order++;
              sd->focus_order = focus_order;
-             sd->focused = 1;
+             sd->focused = EINA_TRUE;
           }
-	else sd->focused = 0;
+	else sd->focused = EINA_FALSE;
 	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
 	sd->focus_func(obj);
 	return sd->focused;
@@ -934,7 +934,7 @@ elm_widget_focus_jump(Evas_Object *obj, int forward)
    /* no next item can be focused */
    if (sd->focused)
      {
-	sd->focused = 0;
+	sd->focused = EINA_FALSE;
 	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
      }
    return 0;
@@ -972,7 +972,7 @@ elm_widget_focus_set(Evas_Object *obj, int first)
      {
         focus_order++;
         sd->focus_order = focus_order;
-	sd->focused = 1;
+	sd->focused = EINA_TRUE;
 	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
      }
    if (sd->focus_func)
@@ -1056,7 +1056,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
 	       }
 	  }
      }
-   sd->focused = 0;
+   sd->focused = EINA_FALSE;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
 }

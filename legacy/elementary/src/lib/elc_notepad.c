@@ -282,7 +282,7 @@ elm_notepad_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_can_focus_set(obj, 1);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->scr = elm_scroller_add(parent);
    elm_widget_resize_object_set(obj, wd->scr);

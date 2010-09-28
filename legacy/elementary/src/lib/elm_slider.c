@@ -407,7 +407,7 @@ elm_slider_add(Evas_Object *parent)
 
    wd->spacer = evas_object_rectangle_add(e);
    evas_object_color_set(wd->spacer, 0, 0, 0, 0);
-   evas_object_pass_events_set(wd->spacer, 1);
+   evas_object_pass_events_set(wd->spacer, EINA_TRUE);
    elm_widget_sub_object_add(obj, wd->spacer);
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
 

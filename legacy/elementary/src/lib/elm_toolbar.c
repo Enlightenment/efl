@@ -313,12 +313,12 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_can_focus_set(obj, 0);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", "default");
-   elm_smart_scroller_bounce_allow_set(wd->scr, 1, 0);
+   elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_FALSE);
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr,
 				 ELM_SMART_SCROLLER_POLICY_AUTO,

@@ -795,7 +795,7 @@ grid_load(Evas_Object *obj, Grid *g)
                   
 		  evas_object_smart_member_add(gi->img, wd->pan_smart);
 		  elm_widget_sub_object_add(obj, gi->img);
-		  evas_object_pass_events_set(gi->img, 1);
+		  evas_object_pass_events_set(gi->img, EINA_TRUE);
 		  evas_object_stack_below(gi->img, wd->sep_maps_markers);
                   
 		  /*gi->txt = evas_object_text_add(evas_object_evas_get(obj));
@@ -804,7 +804,7 @@ grid_load(Evas_Object *obj, Grid *g)
                    evas_object_smart_member_add(gi->txt,
                    wd->pan_smart);
                    elm_widget_sub_object_add(obj, gi->txt);
-                   evas_object_pass_events_set(gi->txt, 1);
+                   evas_object_pass_events_set(gi->txt, EINA_TRUE);
                    */
 		  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 	       }
@@ -1511,7 +1511,7 @@ _group_bubble_content_update(Marker_Group *group)
 	elm_widget_sub_object_add(group->wd->obj, group->sc);
         
 	group->bx = elm_box_add(group->bubble);
-	evas_object_size_hint_align_set(group->bx, -1, -1);
+	evas_object_size_hint_align_set(group->bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_size_hint_weight_set(group->bx, 0.5, 0.5);
 	elm_box_horizontal_set(group->bx, EINA_TRUE);
 	evas_object_show(group->bx);
@@ -1676,7 +1676,7 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   elm_smart_scroller_bounce_allow_set(wd->scr, 1, 1);
+   elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_TRUE);
 
    wd->obj = obj;
 

@@ -167,7 +167,7 @@ elm_carousel_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_can_focus_set(obj, 0);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
@@ -225,7 +225,7 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Ev
    edje_object_part_text_set(it->base.view, "elm.text", it->label);
    edje_object_size_min_calc(it->base.view, &mw, &mh);
    evas_object_size_hint_weight_set(it->base.view, 0.0, 0.0);
-   evas_object_size_hint_align_set(it->base.view, -1.0, -1.0);
+   evas_object_size_hint_align_set(it->base.view, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(it->base.view, mw, mh);
    evas_object_size_hint_max_set(it->base.view, 9999, mh);
    evas_object_box_append(wd->bx, it->base.view);
