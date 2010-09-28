@@ -248,7 +248,7 @@ struct _Widget_Data
    Evas_Object *obj, *scr, *pan_smart;
    Eina_Inlist *items, *blocks;
    Pan *pan;
-   Evas_Coord pan_x, pan_y, minw, minh;
+   Evas_Coord pan_x, pan_y, minw, minh, realminw;
    Ecore_Job *calc_job, *update_job;
    Ecore_Idler *queue_idler;
    Eina_List *queue, *selected;
@@ -425,19 +425,27 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
    minh = -1;
-   if (wd->mode != ELM_LIST_LIMIT) minw = -1;
-   else
+   if (wd->mode == ELM_LIST_LIMIT)
      {
         Evas_Coord  vmw, vmh, vw, vh;
         
-        minw = wd->minw;
+        minw = wd->realminw;
         maxw = -1;
         elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
         if ((minw > 0) && (vw < minw)) vw = minw;
         else if ((maxw > 0) && (vw > maxw)) vw = maxw;
-        minw = -1;
-        edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+        edje_object_size_min_calc
+           (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
         minw = vmw + minw;
+     }
+   else
+     {
+        Evas_Coord  vmw, vmh;
+        
+        edje_object_size_min_calc
+           (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+        minw = vmw;
+        minh = vmh;
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -1262,6 +1270,7 @@ _calc_job(void *data)
 	  if (itb->realized) _item_block_unrealize(itb);
      }
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &oh);
+   wd->realminw = minw;
    if (minw < ow) minw = ow;
    if ((minw != wd->minw) || (minh != wd->minh))
      {
@@ -1424,6 +1433,21 @@ _pan_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
+   if (sd->wd->mode == ELM_LIST_COMPRESS)
+     {
+        Item_Block *itb;
+        // this is nasty - but no choice. have to mark all as not mincalced.
+        EINA_INLIST_FOREACH(sd->wd->blocks, itb)
+          {
+             Eina_List *l;
+             Elm_Genlist_Item *it;
+             
+             EINA_LIST_FOREACH(itb->items, l, it)
+                it->mincalcd = EINA_FALSE;
+             
+             itb->changed = EINA_TRUE;
+          }
+     }
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
 }
@@ -3306,7 +3330,9 @@ elm_genlist_no_select_mode_get(const Evas_Object *obj)
  * Set compress mode
  *
  * This will enable the compress mode where items are "compressed" horizontally
- * to fit the genlist scrollable viewport width.
+ * to fit the genlist scrollable viewport width. this is special for gnelist.
+ * do not rely on elm_genlist_horizontal_mode_set() being set to 
+ * ELM_LIST_COMPRESS to work as genlist needs to handle it specially.
  *
  * @param obj The genlist object
  * @param no_select The compress mode
