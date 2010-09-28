@@ -415,15 +415,15 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type __UNUSE
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
         /* TODO: implement PSK */
-       // SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
 
         gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
         gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
-        //gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
+        gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
      }
    else
      {
-        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
      }
 
@@ -445,28 +445,13 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
    gnutls_x509_crt_t cert = NULL;
-   const int *proto = NULL;
-   const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
+#ifdef USE_GNUTLS2_10
+   const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
+#else
+   const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
+#endif
    int ret = 0;
-   const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
-   const int tls_proto[] = {
-      GNUTLS_TLS1_0,
-      GNUTLS_TLS1_1,
-#ifdef USE_GNUTLS2
-      GNUTLS_TLS1_2,
-#endif
-      0
-   };
-   const int mixed_proto[] =
-     {
-#ifdef GNUTLS_VERSION_MAX
-        GNUTLS_VERSION_MAX,
-#endif
-        GNUTLS_TLS1_1,
-        GNUTLS_TLS1_0,
-        GNUTLS_SSL3,
-        0
-     };
+
    switch (svr->ssl_state)
      {
       case ECORE_CON_SSL_STATE_DONE:
@@ -479,17 +464,16 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
           {
            case ECORE_CON_USE_SSL3:
            case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-              proto = ssl3_proto;
+              priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:!VERS-TLS1.0:!VERS-TLS1.1";
               break;
 
            case ECORE_CON_USE_TLS:
            case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-              proto = tls_proto;
+              priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:!VERS-SSL3.0";
               break;
 
            case ECORE_CON_USE_MIXED:
            case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
-              proto = mixed_proto;
               break;
 
            default:
@@ -497,25 +481,14 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
           }
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(svr->session));
 #ifdef USE_GNUTLS2_10
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_client(svr->session));
 #endif
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_server_name_set(svr->session, GNUTLS_NAME_DNS, svr->name, strlen(svr->name)));
-
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(svr->session, priority, NULL));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
-        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
-        if (!((svr->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
-          {
-             int kx[] = { GNUTLS_KX_DHE_RSA, GNUTLS_KX_RSA, GNUTLS_KX_ANON_DH, 0 };
-             int cipher[] = { GNUTLS_CIPHER_AES_256_CBC, GNUTLS_CIPHER_AES_128_CBC, GNUTLS_CIPHER_3DES_CBC, GNUTLS_CIPHER_DES_CBC, 0 };
-             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_cipher_set_priority(svr->session, cipher));
-             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(svr->session, kx));
-          }
-
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(svr->session, proto));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(svr->session, compress));
 
         gnutls_dh_set_prime_bits(svr->session, 512);
         gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
@@ -759,27 +732,13 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 {
-   const int *proto = NULL;
-   int ret;
-   const int compress[] = { GNUTLS_COMP_DEFLATE, GNUTLS_COMP_NULL, 0 };
-   const int ssl3_proto[] = { GNUTLS_SSL3, 0 };
-   const int tls_proto[] = {
-      GNUTLS_TLS1_0,
-      GNUTLS_TLS1_1,
-#ifdef USE_GNUTLS2
-      GNUTLS_TLS1_2,
+#ifdef USE_GNUTLS2_10
+   const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
+#else
+   const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
 #endif
-      0
-   };
-   const int mixed_proto[] =
-     {
-#ifdef GNUTLS_VERSION_MAX
-        GNUTLS_VERSION_MAX,
-#endif
-        GNUTLS_TLS1_1,
-        GNUTLS_TLS1_0,
-        GNUTLS_SSL3,
-        0 };
+   int ret = 0;
+
    switch (cl->ssl_state)
      {
       case ECORE_CON_SSL_STATE_DONE:
@@ -792,17 +751,12 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
           {
            case ECORE_CON_USE_SSL3:
            case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
-              proto = ssl3_proto;
+              priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:!VERS-TLS1.0:!VERS-TLS1.1";
               break;
 
            case ECORE_CON_USE_TLS:
            case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
-              proto = tls_proto;
-              break;
-
-           case ECORE_CON_USE_MIXED:
-           case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
-              proto = mixed_proto;
+              priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:!VERS-SSL3.0";
               break;
 
            default:
@@ -816,18 +770,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_key_generate(&cl->session_ticket));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_server(cl->session, &cl->session_ticket));
 #endif
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_set_default_priority(cl->session));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_protocol_set_priority(cl->session, proto));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_compression_set_priority(cl->session, compress));
-
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
-        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
-        if (!((cl->host_server->type & ECORE_CON_SSL) & ECORE_CON_LOAD_CERT))
-          {
-             int kx[] = { GNUTLS_KX_ANON_DH, GNUTLS_KX_RSA, GNUTLS_KX_DHE_RSA, 0 };
-             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_kx_set_priority(cl->session, kx));
-          }
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(cl->session, priority, NULL));
 
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
 
