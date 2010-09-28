@@ -367,7 +367,7 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_focus_cycle_hook_set(obj, _elm_scroller_focus_cycle_hook);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->widget_name = eina_stringshare_add("scroller");
    wd->widget_base = eina_stringshare_add("base");
