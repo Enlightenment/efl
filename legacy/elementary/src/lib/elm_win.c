@@ -311,6 +311,9 @@ _elm_win_xwindow_get(Elm_Win *win)
       case ELM_SOFTWARE_16_X11:
 	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
 	break;
+      case ELM_SOFTWARE_8_X11:
+	if (win->ee) win->xwin = ecore_evas_software_x11_8_window_get(win->ee);
+	break;
       case ELM_XRENDER_X11:
 	if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
 	break;
@@ -866,6 +869,18 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
 	break;
+      case ELM_SOFTWARE_8_X11:
+	win->ee = ecore_evas_software_x11_8_new(NULL, 0, 0, 0, 1, 1);
+        if (!win->ee)
+          {
+             CRITICAL("Software-8 engine create failed. Try software.");
+             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
+          }
+#ifdef HAVE_ELEMENTARY_X
+        win->client_message_handler = ecore_event_handler_add
+          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
+#endif
+	break;
       case ELM_XRENDER_X11:
 	win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
         if (!win->ee)
@@ -999,6 +1014,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 	break;
       case ELM_SOFTWARE_X11:
       case ELM_SOFTWARE_16_X11:
+      case ELM_SOFTWARE_8_X11:
       case ELM_XRENDER_X11:
       case ELM_OPENGL_X11:
       case ELM_SOFTWARE_WIN32:

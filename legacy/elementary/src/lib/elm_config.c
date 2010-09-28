@@ -468,6 +468,16 @@ _env_get(void)
             (!strcasecmp(s, "software-x11")) ||
             (!strcasecmp(s, "software_x11")))
           _elm_config->engine = ELM_SOFTWARE_X11;
+        else if ((!strcasecmp(s, "opengl")) ||
+                 (!strcasecmp(s, "gl")) ||
+                 (!strcasecmp(s, "opengl-x11")) ||
+                 (!strcasecmp(s, "opengl_x11")))
+          _elm_config->engine = ELM_OPENGL_X11;
+        else if ((!strcasecmp(s, "x11-8")) ||
+                 (!strcasecmp(s, "x18")) ||
+                 (!strcasecmp(s, "software-8-x11")) ||
+                 (!strcasecmp(s, "software_8_x11")))
+          _elm_config->engine = ELM_SOFTWARE_8_X11;
         else if ((!strcasecmp(s, "x11-16")) ||
                  (!strcasecmp(s, "x16")) ||
                  (!strcasecmp(s, "software-16-x11")) ||
@@ -493,11 +503,6 @@ _env_get(void)
                  (!strcasecmp(s, "software-16-sdl")) ||
                  (!strcasecmp(s, "software_16_sdl")))
           _elm_config->engine = ELM_SOFTWARE_16_SDL;
-        else if ((!strcasecmp(s, "opengl")) ||
-                 (!strcasecmp(s, "gl")) ||
-                 (!strcasecmp(s, "opengl-x11")) ||
-                 (!strcasecmp(s, "opengl_x11")))
-          _elm_config->engine = ELM_OPENGL_X11;
         else if ((!strcasecmp(s, "opengl-sdl")) ||
                  (!strcasecmp(s, "opengl_sdl")) ||
                  (!strcasecmp(s, "gl-sdl")) ||
