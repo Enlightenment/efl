@@ -2458,11 +2458,11 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNU
    Entry *en;
    const char *str;
 
-   if (!rp) return 0;
+   if (!rp) return EINA_FALSE;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
-      return 0;
+      return EINA_FALSE;
 
    if (text)
      {
@@ -2471,11 +2471,9 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNU
      }
 
    if (cursor_pos)
-     {
-        *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
-     }
+     *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
-   return 1;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
