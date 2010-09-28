@@ -49,6 +49,8 @@ eng_window_new(Display *disp,
    
    gw = calloc(1, sizeof(Evas_GL_X11_Window));
    if (!gw) return NULL;
+   
+   win_count++;
    gw->disp = disp;
    gw->win = win;
    gw->screen = screen;
@@ -154,22 +156,28 @@ eng_window_new(Display *disp,
    config_attrs[n++] = EGL_NONE;
 # endif
    
-   gw->egl_disp= eglGetDisplay((EGLNativeDisplayType)(gw->disp));
+   gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
         printf("Error: eglGetDisplay() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
    if (!eglInitialize(gw->egl_disp, &major_version, &minor_version))
      {
         printf("Error: eglInitialize() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
    eglBindAPI(EGL_OPENGL_ES_API);
    if (eglGetError() != EGL_SUCCESS)
      {
         printf("Error: eglBindAPI() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
    
    num_config = 0;
@@ -178,6 +186,8 @@ eng_window_new(Display *disp,
      {
         printf("Error: eglChooseConfig() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
@@ -186,6 +196,8 @@ eng_window_new(Display *disp,
      {
         printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
    if (context == EGL_NO_CONTEXT)
      context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL, 
@@ -195,6 +207,8 @@ eng_window_new(Display *disp,
      {
         printf("Error: eglCreateContext() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
    if (eglMakeCurrent(gw->egl_disp, 
                       gw->egl_surface[0], 
@@ -203,6 +217,8 @@ eng_window_new(Display *disp,
      {
         printf("Error: eglMakeCurrent() fail.\n");
         printf("Error: error # was: 0x%x\n", eglGetError());
+	eng_window_free(gw);
+        return NULL;
      }
     _evas_gl_x11_window = gw;
 
@@ -254,6 +270,11 @@ eng_window_new(Display *disp,
      gw->glxwin = glXCreateWindow(gw->disp, rgba_fbconf, gw->win, NULL);
    else
      gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
+   if (!gw->glxwin)
+     {
+	eng_window_free(gw);
+        return NULL;
+     }
    
    if (gw->alpha) gw->context = rgba_context;
    else gw->context = context;
@@ -261,6 +282,11 @@ eng_window_new(Display *disp,
    gw->context = context;
 #endif
 
+   if (!gw->context)
+     {
+	eng_window_free(gw);
+        return NULL;
+     }
    if (gw->context)
      {
         int i, j,  num;
@@ -272,6 +298,8 @@ eng_window_new(Display *disp,
                                         gw->context))
                {
                   printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+                  eng_window_free(gw);
+                  return NULL;
                }
           }
         else
@@ -279,6 +307,8 @@ eng_window_new(Display *disp,
              if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
                {
                   printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
+                  eng_window_free(gw);
+                  return NULL;
                }
           }
         
@@ -317,6 +347,8 @@ eng_window_new(Display *disp,
         if (!fbc)
           {
              printf("Error: glXGetFBConfigs() returned no fb configs\n");
+             eng_window_free(gw);
+             return NULL;
           }
         for (i = 0; i <= 32; i++)
           {
@@ -407,7 +439,6 @@ eng_window_new(Display *disp,
 #endif   
    evas_gl_common_context_use(gw->gl_context);
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
-   win_count++;
    gw->surf = 1;
    return gw;
 }
