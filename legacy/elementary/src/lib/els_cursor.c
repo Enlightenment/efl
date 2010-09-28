@@ -228,11 +228,31 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
 static void
 _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   Evas_Object *sobj_parent;
+   Elm_Cursor *pcur = NULL;
    Elm_Cursor *cur = data;
 
    if (!cur->visible) return;
    evas_event_freeze(cur->evas);
    cur->visible = EINA_FALSE;
+
+   sobj_parent = evas_object_data_get(cur->eventarea, "elm-parent");
+   while (sobj_parent != NULL)
+     {
+        pcur = evas_object_data_get((sobj_parent), _cursor_key);
+        if (pcur && pcur->visible)
+           break;
+        sobj_parent = evas_object_data_get(sobj_parent, "elm-parent");
+     }
+
+   if (pcur)
+     {
+        pcur->visible = EINA_FALSE;
+        evas_event_thaw(cur->evas);
+        _elm_cursor_mouse_in(pcur, NULL, NULL, NULL);
+        return;
+     }
+
    if ((!cur->engine_only) || (!cur->use_engine))
      {
         ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,

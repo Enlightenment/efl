@@ -94,6 +94,7 @@ void
 test_cursor(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bt, *list, *entry, *ck;
+   Elm_List_Item *lit;
 
    win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor");
@@ -133,8 +134,12 @@ test_cursor(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_cursor_set(list, ELM_CURSOR_WATCH);
-   elm_list_item_append(list, "watch over list", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(list, "watch over list", NULL, NULL,  NULL, NULL);
+   lit = elm_list_item_append(list, "watch over list | hand1", NULL, NULL, NULL,
+                        NULL);
+   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND1);
+   lit = elm_list_item_append(list, "watch over list | hand2", NULL, NULL, NULL,
+                        NULL);
+   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND2);
    elm_list_go(list);
    evas_object_show(list);
 
