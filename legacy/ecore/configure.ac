@@ -425,7 +425,7 @@ if test -n "$rt_libs"; then
    LDFLAGS="$LDFLAGS $rt_libs"
    AC_CHECK_FUNCS(clock_gettime)
    LDFLAGS="$_bkp_LDFLAGS"
-   unset "$_bkp_LDFLAGS"
+   unset _bkp_LDFLAGS
 fi
 
 # Eina library
