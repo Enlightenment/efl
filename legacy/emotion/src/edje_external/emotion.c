@@ -28,6 +28,7 @@ struct _External_Emotion_Params
    _INT(spu_channel);
    _INT(chapter);
    _DOUBLE(play_speed);
+   _DOUBLE(play_length);
    //_INT(vis);
 #undef _STR
 #undef _BOOL
@@ -177,6 +178,7 @@ _external_emotion_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
    _INT(spu_channel);
    _INT(chapter);
    _DOUBLE(play_speed);
+   if (p->play_length_exists) ERR("play_length is read-only");
    //_INT(vis);
 #undef _STR
 #undef _BOOL
@@ -245,6 +247,11 @@ _external_emotion_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
    _INT(spu_channel)
    _INT(chapter)
    _DOUBLE(play_speed)
+   else if (!strcmp(param->name, "play_length"))
+     {
+        ERR("play_length is read-only");
+        return EINA_FALSE;
+     }
    //_INT(vis);
 #undef _STR
 #undef _BOOL
@@ -311,6 +318,7 @@ _external_emotion_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
    _INT(spu_channel)
    _INT(chapter)
    _DOUBLE(play_speed)
+   _DOUBLE(play_length)
    //_INT(vis)
 #undef _STR
 #undef _BOOL
@@ -367,6 +375,7 @@ _external_emotion_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED_
 	_INT(spu_channel);
 	_INT(chapter);
 	_DOUBLE(play_speed);
+	_DOUBLE(play_length);
 	//_INT(vis);
 #undef _STR
 #undef _BOOL
@@ -399,6 +408,7 @@ _external_emotion_params_free(void *params)
    _INT(spu_channel);
    _INT(chapter);
    _DOUBLE(play_speed);
+   _DOUBLE(play_length);
    //_INT(vis);
 #undef _STR
 #undef _BOOL
@@ -454,6 +464,7 @@ static Edje_External_Param_Info _external_emotion_params[] = {
   EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT("spu_channel", 0),
   EDJE_EXTERNAL_PARAM_INFO_INT("chapter"),
   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT("play_speed", 1.0),
+  EDJE_EXTERNAL_PARAM_INFO_DOUBLE("play_length"),
   //EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("vis", ...),
   EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
