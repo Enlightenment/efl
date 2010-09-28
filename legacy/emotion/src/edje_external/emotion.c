@@ -17,7 +17,7 @@ struct _External_Emotion_Params
 #define _DOUBLE(M) double M; Eina_Bool M##_exists:1
    _STR(file);
    _BOOL(play);
-   //_DOUBLE(position);
+   _DOUBLE(position);
    _BOOL(smooth_scale);
    _DOUBLE(audio_volume);
    _BOOL(audio_mute);
@@ -165,6 +165,8 @@ _external_emotion_state_set(void *data __UNUSED__, Evas_Object *obj, const void 
    _STR(file);
    _BOOL(play);
    //_DOUBLE(position);
+   if (p->position_exists)
+     WRN("position should not be set from state description! Ignored.");
    _BOOL(smooth_scale);
    _DOUBLE(audio_volume);
    _BOOL(audio_mute);
@@ -232,7 +234,7 @@ _external_emotion_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_
    if (0) {} // so else if works...
    _STR(file)
    _BOOL(play)
-   //_DOUBLE(position)
+   _DOUBLE(position)
    _BOOL(smooth_scale)
    _DOUBLE(audio_volume)
    _BOOL(audio_mute)
@@ -298,7 +300,7 @@ _external_emotion_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
    if (0) {} // so else if works...
    _STR(file)
    _BOOL(play)
-   //_DOUBLE(position)
+   _DOUBLE(position)
    _BOOL(smooth_scale)
    _DOUBLE(audio_volume)
    _BOOL(audio_mute)
@@ -354,7 +356,7 @@ _external_emotion_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED_
 
 	_STR(file);
 	_BOOL(play);
-	//_DOUBLE(position);
+	_DOUBLE(position);
 	_BOOL(smooth_scale);
 	_DOUBLE(audio_volume);
 	_BOOL(audio_mute);
@@ -386,7 +388,7 @@ _external_emotion_params_free(void *params)
 #define _DOUBLE(M) do {} while (0)
    _STR(file);
    _BOOL(play);
-   //_DOUBLE(position);
+   _DOUBLE(position);
    _BOOL(smooth_scale);
    _DOUBLE(audio_volume);
    _BOOL(audio_mute);
@@ -441,7 +443,7 @@ static Edje_External_Param_Info _external_emotion_params[] = {
   ("engine", _external_emotion_engine_def, _external_emotion_engines),
   EDJE_EXTERNAL_PARAM_INFO_STRING("file"),
   EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT("play", EINA_FALSE),
-  //EDJE_EXTERNAL_PARAM_INFO_DOUBLE("position"),
+  EDJE_EXTERNAL_PARAM_INFO_DOUBLE("position"),
   EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT("smooth_scale", EINA_FALSE),
   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT("audio_volume", 0.9),
   EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT("audio_mute", EINA_FALSE),
