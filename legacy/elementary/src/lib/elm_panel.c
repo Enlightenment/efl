@@ -263,7 +263,6 @@ elm_panel_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_focus_cycle_hook_set(obj, _elm_panel_focus_cycle_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
 
    wd->scr = elm_smart_scroller_add(evas);
