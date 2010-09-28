@@ -19,6 +19,8 @@
 
 #if HAVE_CLOCK_GETTIME
 static clockid_t _ecore_time_clock_id = -1;
+#else
+static int _ecore_time_clock_id = -1;
 #endif
 double _ecore_time_loop_time = -1.0;
 
@@ -76,7 +78,7 @@ ecore_time_unix_get(void)
   return evil_time_get();
 #else
 # ifdef HAVE_GETTIMEOFDAY
-   struct timeval      timev;
+   struct timeval timev;
 
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
@@ -148,7 +150,7 @@ _ecore_time_init(void)
      }
 #else
 # warning "Your platform isn't supported yet"
-   _ecore_time_clock_it = -2;
+   _ecore_time_clock_id = -2;
    CRIT("Platform does not support clock_gettime. "
         "Fallback to unix time.");
 #endif
