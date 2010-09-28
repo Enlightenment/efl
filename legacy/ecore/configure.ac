@@ -404,25 +404,23 @@ case "$host_os" in
    mingw32ce* | cegcc*)
       WIN32_LIBS="-lws2"
       dlopen_libs="-ldl"
-      rt_libs="-lrt"
       ;;
    mingw*)
       WIN32_LIBS="-lws2_32"
       dlopen_libs="-ldl"
-      rt_libs="-lrt"
       ;;
    *)
-      AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
-      AC_CHECK_LIB(rt, clock_gettime, rt_libs=-lrt)
+      AC_CHECK_LIB([dl], [dlopen], [dlopen_libs=-ldl])
+      AC_SEARCH_LIBS([clock_gettime], [rt],
+         [
+          rt_libs=-lrt
+          AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [Have clock_gettime()])
+         ])
       ;;
 esac
 AC_SUBST(WIN32_LIBS)
 AC_SUBST(dlopen_libs)
 AC_SUBST(rt_libs)
-
-if test -n "$rt_libs"; then
-   AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [Have clock_gettime()])
-fi
 
 # Eina library
 
