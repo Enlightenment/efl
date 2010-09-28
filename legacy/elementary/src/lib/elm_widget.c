@@ -2097,3 +2097,35 @@ _smart_init(void)
 	_e_smart = evas_smart_class_new(&sc);
      }
 }
+
+/* happy debug functions */
+static void
+_sub_obj_tree_dump(const Evas_Object *o, int lvl)
+{
+   int i;
+
+   for (i = 0; i < lvl*3; i++)
+     putchar(' ');
+
+   if (_elm_widget_is(o))
+     {
+        Eina_List *l;
+        Smart_Data *sd = evas_object_smart_data_get(o);
+        printf("+ %s(%p)\n", sd->type, o);
+        if (sd->resize_obj)
+          _sub_obj_tree_dump(sd->resize_obj, lvl + 1);
+        EINA_LIST_FOREACH(sd->subobjs, l, o)
+          {
+             if (o != sd->resize_obj)
+               _sub_obj_tree_dump(o, lvl + 1);
+          }
+     }
+   else
+     printf("+ %s(%p)\n", evas_object_type_get(o), o);
+}
+
+EAPI void
+elm_widget_tree_dump(const Evas_Object *top)
+{
+   _sub_obj_tree_dump(top, 0);
+}

@@ -312,6 +312,9 @@ EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *i
 EAPI void             _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_only);
 EAPI Eina_Bool        _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item);
 
+/* debug function. don't use it unless you are tracking parenting issues */
+EAPI void             elm_widget_tree_dump(const Evas_Object *top);
+
 /**
  * Convenience macro to create new widget item, doing casts for you.
  * @see _elm_widget_item_new()
