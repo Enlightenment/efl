@@ -187,11 +187,11 @@ _eio_file_write(int fd, void *mem, ssize_t length)
 }
 
 static void
-_eio_file_copy_send(Ecore_Thread *thread, Eio_File_Copy *copy, off_t current, off_t max)
+_eio_file_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, off_t max)
 {
    Eio_Progress *progress;
 
-   if (copy->progress_cb == NULL)
+   if (op->progress_cb == NULL)
      return ;
 
    pthread_mutex_lock(&lock);
@@ -205,8 +205,23 @@ _eio_file_copy_send(Ecore_Thread *thread, Eio_File_Copy *copy, off_t current, of
    progress->current = current;
    progress->max = max;
    progress->percent = (float) current * 100.0 / (float) max;
+   progress->source = eina_stringshare_ref(op->source);
+   progress->dest = eina_stringshare_ref(op->dest);
 
    ecore_thread_feedback(thread, progress);
+}
+
+static void
+_eio_file_progress(Eio_Progress *progress, Eio_File_Progress *op)
+{
+   op->progress_cb((void *) op->common.data, progress);
+   eina_stringshare_del(progress->source);
+   eina_stringshare_del(progress->dest);
+
+   pthread_mutex_lock(&lock);
+   eina_trash_push(&trash, progress);
+   trash_count++;
+   pthread_mutex_unlock(&lock);
 }
 
 #ifndef MAP_HUGETLB
@@ -214,7 +229,7 @@ _eio_file_copy_send(Ecore_Thread *thread, Eio_File_Copy *copy, off_t current, of
 #endif
 
 static Eina_Bool
-_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Copy *copy, int in, int out, off_t size)
+_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, off_t size)
 {
    char *m = MAP_FAILED;
    off_t i;
@@ -242,13 +257,13 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Copy *copy, int in, int out, 
 	     if (!_eio_file_write(out, m + k, EIO_PACKET_SIZE))
 	       goto on_error;
 
-	     _eio_file_copy_send(thread, copy, i + j, size);
+	     _eio_file_send(thread, op, i + j, size);
 	  }
 
 	if (!_eio_file_write(out, m + k, c - k))
 	  goto on_error;
 
-	_eio_file_copy_send(thread, copy, i + c, size);
+	_eio_file_send(thread, op, i + c, size);
 
 	munmap(m, EIO_PACKET_SIZE * EIO_PACKET_COUNT);
 	m = MAP_FAILED;
@@ -263,7 +278,7 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Copy *copy, int in, int out, 
 
 #ifdef EFL_HAVE_SPLICE
 static int
-_eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Copy *copy, int in, int out, off_t size)
+_eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, off_t size)
 {
    int result = 0;
    off_t count;
@@ -281,7 +296,7 @@ _eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Copy *copy, int in, int out
 	count = splice(pipefd[0], NULL, out, 0, count, SPLICE_F_MORE | SPLICE_F_MOVE);
 	if (count < 0) goto on_error;
 
-	_eio_file_copy_send(thread, copy, i, size);
+	_eio_file_send(thread, op, i, size);
      }
 
    result = 1;
@@ -298,7 +313,7 @@ _eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Copy *copy, int in, int out
 static void
 _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
 {
-   Eio_File_Copy *copy;
+   Eio_File_Progress *copy;
    struct stat buf;
    int result = -1;
    int in = -1;
@@ -348,21 +363,15 @@ _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
 static void
 _eio_file_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 {
-   Eio_File_Copy *copy = data;
-   Eio_Progress *progress = msg_data;
+   Eio_File_Progress *copy = data;
 
-   copy->progress_cb((void *) copy->common.data, progress);
-
-   pthread_mutex_lock(&lock);
-   eina_trash_push(&trash, progress);
-   trash_count++;
-   pthread_mutex_unlock(&lock);
+   _eio_file_progress(msg_data, copy);
 }
 
 static void
 _eio_file_copy_end(void *data)
 {
-   Eio_File_Copy *copy = data;
+   Eio_File_Progress *copy = data;
 
    copy->common.done_cb((void*) copy->common.data);
 
@@ -374,13 +383,137 @@ _eio_file_copy_end(void *data)
 static void
 _eio_file_copy_error(void *data)
 {
-   Eio_File_Copy *copy = data;
+   Eio_File_Progress *copy = data;
 
    eio_file_error(&copy->common);
 
    eina_stringshare_del(copy->source);
    eina_stringshare_del(copy->dest);
    free(copy);
+}
+
+static void
+_eio_file_move_copy_progress(void *data, const Eio_Progress *info)
+{
+   Eio_File_Move *move = data;
+
+   move->progress.progress_cb((void*) move->progress.common.data, info);
+}
+
+static void
+_eio_file_move_unlink_done(void *data)
+{
+   Eio_File_Move *move = data;
+
+   move->progress.common.done_cb((void*) move->progress.common.data);
+
+   eina_stringshare_del(move->progress.source);
+   eina_stringshare_del(move->progress.dest);
+   free(move);
+}
+
+static void
+_eio_file_move_unlink_error(int error, void *data)
+{
+   Eio_File_Move *move = data;
+
+   move->copy = NULL;
+
+   move->progress.common.error = error;
+   eio_file_error(&move->progress.common);
+
+   eina_stringshare_del(move->progress.source);
+   eina_stringshare_del(move->progress.dest);
+   free(move);
+}
+
+static void
+_eio_file_move_copy_done(void *data)
+{
+   Eio_File_Move *move = data;
+   Eio_File *rm;
+
+   rm = eio_file_unlink(move->progress.source,
+			_eio_file_move_unlink_done,
+			_eio_file_move_unlink_error,
+			move);
+   if (rm) move->copy = rm;
+}
+
+static void
+_eio_file_move_copy_error(int error, void *data)
+{
+   Eio_File_Move *move = data;
+
+   move->progress.common.error = error;
+   eio_file_error(&move->progress.common);
+
+   eina_stringshare_del(move->progress.source);
+   eina_stringshare_del(move->progress.dest);
+   free(move);
+}
+
+static void
+_eio_file_move_heavy(Ecore_Thread *thread, void *data)
+{
+   Eio_File_Move *move = data;
+
+   if (rename(move->progress.source, move->progress.dest) < 0)
+     eio_file_thread_error(&move->progress.common);
+   else
+     _eio_file_send(thread, &move->progress, 1, 1);
+}
+
+static void
+_eio_file_move_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
+{
+   Eio_File_Move *move = data;
+
+   _eio_file_progress(msg_data, &move->progress);
+}
+
+static void
+_eio_file_move_end(void *data)
+{
+   Eio_File_Move *move = data;
+
+   move->progress.common.done_cb((void*) move->progress.common.data);
+
+   eina_stringshare_del(move->progress.source);
+   eina_stringshare_del(move->progress.dest);
+   free(move);
+}
+
+static void
+_eio_file_move_error(void *data)
+{
+   Eio_File_Move *move = data;
+
+   if (move->copy)
+     {
+	eio_file_cancel(move->copy);
+	return ;
+     }
+
+   if (move->progress.common.error == EXDEV)
+     {
+	Eio_File *eio_cp;
+
+	eio_cp = eio_file_copy(move->progress.source, move->progress.dest,
+			       move->progress.progress_cb ? _eio_file_move_copy_progress : NULL,
+			       _eio_file_move_copy_done,
+			       _eio_file_move_copy_error,
+			       move);
+
+	if (eio_cp) move->copy = eio_cp;
+	return ;
+     }
+
+   eio_file_error(&move->progress.common);
+
+   eina_stringshare_del(move->progress.source);
+   eina_stringshare_del(move->progress.dest);
+   free(move);
 }
 
 /**
@@ -508,12 +641,12 @@ eio_file_copy(const char *source,
 	      Eio_Error_Cb error_cb,
 	      const void *data)
 {
-   Eio_File_Copy *copy = NULL;
+   Eio_File_Progress *copy = NULL;
 
    if (!source || !dest || !done_cb || !error_cb)
      return NULL;
 
-   copy = malloc(sizeof (Eio_File_Copy));
+   copy = malloc(sizeof (Eio_File_Progress));
    if (!copy) return NULL;
 
    copy->progress_cb = progress_cb;
@@ -533,3 +666,36 @@ eio_file_copy(const char *source,
    return &copy->common;
 }
 
+EAPI Eio_File *
+eio_file_move(const char *source,
+	      const char *dest,
+	      Eio_Progress_Cb progress_cb,
+	      Eio_Done_Cb done_cb,
+	      Eio_Error_Cb error_cb,
+	      const void *data)
+{
+   Eio_File_Move *move = NULL;
+
+   if (!source || !dest || !done_cb || !error_cb)
+     return NULL;
+
+   move = malloc(sizeof (Eio_File_Move));
+   if (!move) return NULL;
+
+   move->progress.progress_cb = progress_cb;
+   move->progress.source = eina_stringshare_add(source);
+   move->progress.dest = eina_stringshare_add(dest);
+   move->copy = NULL;
+
+   if (!eio_long_file_set(&move->progress.common,
+			  done_cb,
+			  error_cb,
+			  data,
+			  _eio_file_move_heavy,
+			  _eio_file_move_notify,
+			  _eio_file_move_end,
+			  _eio_file_move_error))
+     return NULL;
+
+   return &move->progress.common;
+}

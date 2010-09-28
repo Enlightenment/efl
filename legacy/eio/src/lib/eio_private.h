@@ -19,7 +19,8 @@ typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
 typedef struct _Eio_File_Mkdir Eio_File_Mkdir;
 typedef struct _Eio_File_Unlink Eio_File_Unlink;
 typedef struct _Eio_File_Stat Eio_File_Stat;
-typedef struct _Eio_File_Copy Eio_File_Copy;
+typedef struct _Eio_File_Progress Eio_File_Progress;
+typedef struct _Eio_File_Move Eio_File_Move;
 
 struct _Eio_File
 {
@@ -79,7 +80,7 @@ struct _Eio_File_Stat
    const char *path;
 };
 
-struct _Eio_File_Copy
+struct _Eio_File_Progress
 {
    Eio_File common;
 
@@ -87,6 +88,13 @@ struct _Eio_File_Copy
 
    const char *source;
    const char *dest;
+};
+
+struct _Eio_File_Move
+{
+   Eio_File_Progress progress;
+
+   Eio_File *copy;
 };
 
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
