@@ -149,7 +149,7 @@ struct Efreet_Mime_Icon_Entry_Head
     EINA_INLIST; /* node of mime_icons_lru */
     Eina_Inlist *list;
     const char *mime;
-    time_t timestamp;
+    double timestamp;
 };
 
 typedef struct Efreet_Mime_Icon_Entry Efreet_Mime_Icon_Entry;
@@ -194,7 +194,7 @@ static void efreet_mime_cb_update_file(void *data,
                                         Ecore_File_Event event,
                                         const char *path);
 
-static void efreet_mime_icons_flush(time_t now);
+static void efreet_mime_icons_flush(double now);
 static void efreet_mime_icon_entry_head_free(Efreet_Mime_Icon_Entry_Head *entry);
 static void efreet_mime_icon_entry_add(const char *mime,
                                        const char *icon,
@@ -422,7 +422,7 @@ efreet_mime_type_cache_clear(void)
 EAPI void
 efreet_mime_type_cache_flush(void)
 {
-    efreet_mime_icons_flush((time_t)ecore_loop_time_get());
+    efreet_mime_icons_flush(ecore_loop_time_get());
 }
 
 
@@ -1446,10 +1446,10 @@ efreet_mime_glob_case_match(char *str, const char *glob)
 }
 
 static void
-efreet_mime_icons_flush(time_t now)
+efreet_mime_icons_flush(double now)
 {
     Eina_Inlist *l;
-    static time_t old = 0;
+    static double old = 0;
     int todo;
 
     if (now - old < EFREET_MIME_ICONS_FLUSH_TIMEOUT)
@@ -1558,7 +1558,7 @@ efreet_mime_icon_entry_add(const char *mime,
         mime_icons_lru = eina_inlist_prepend(mime_icons_lru, l);
     }
 
-    entry->timestamp = (time_t)ecore_loop_time_get();
+    entry->timestamp = ecore_loop_time_get();
     efreet_mime_icons_flush(entry->timestamp);
 }
 
@@ -1588,7 +1588,7 @@ efreet_mime_icon_entry_find(const char *mime,
             if (mime_icons_lru != l)
                 mime_icons_lru = eina_inlist_promote(mime_icons_lru, l);
 
-            entry->timestamp = (time_t)ecore_loop_time_get();
+            entry->timestamp = ecore_loop_time_get();
             return n->icon;
         }
     }
@@ -1600,7 +1600,7 @@ efreet_mime_icon_entry_find(const char *mime,
 static void
 efreet_mime_icons_debug(void)
 {
-    time_t now = (time_t)ecore_loop_time_get();
+    double now = ecore_loop_time_get();
     Efreet_Mime_Icon_Entry_Head *entry;
     EINA_INLIST_FOREACH(mime_icons_lru, entry)
     {
