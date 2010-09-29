@@ -1809,6 +1809,7 @@ static Eina_Bool
 _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server *svr;
+   Eina_Bool want_read, want_write;
 
    svr = data;
    if (svr->dead)
@@ -1817,21 +1818,17 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (svr->delete_me)
       return ECORE_CALLBACK_RENEW;
 
-   if (svr->handshaking && ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ | ECORE_FD_WRITE))
+   want_read = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ);
+   want_write = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE);
+
+   if (svr->handshaking && (want_read || want_write))
      {
-        DBG("Continuing ssl handshake");
-        if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-          DBG("Preparing to read handshake data...");
-        else
-          DBG("Preparing to write handshake data...");
+        DBG("Continuing ssl handshake: preparing to %s...", want_read ? "read" : "write");
 #ifdef PRINT_LOTS_OF_DEBUG
-        if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-          {
              char buf[32768];
              ssize_t len;
              len = recv(svr->fd, buf, sizeof(buf), MSG_DONTWAIT | MSG_PEEK);
              DBG("%zu bytes in buffer", len);
-          }
 #endif
         if (!svr->ssl_state)
           {
@@ -1865,9 +1862,9 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
           }
      }
 
-   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+   else if (want_read)
      _ecore_con_cl_read(svr);
-   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
+   else if (want_write)
      {
         if (svr->connecting && (!svr_try_connect(svr)))
            return ECORE_CALLBACK_RENEW;
