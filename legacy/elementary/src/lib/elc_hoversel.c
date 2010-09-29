@@ -49,21 +49,6 @@ static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
-                             Evas_Callback_Type type, void *event_info);
-
-static Eina_Bool
-_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
-{
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   Evas_Event_Key_Down *ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
-     return EINA_FALSE;
-   _activate(obj);
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
 
 static void
 _del_pre_hook(Evas_Object *obj)
@@ -279,7 +264,6 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_activate_hook_set(obj, _activate_hook);
-   elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->btn = elm_button_add(parent);
