@@ -107,6 +107,7 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->frm = edje_object_add(e);
    _elm_theme_object_set(obj, wd->frm, "frame", "base", "default");

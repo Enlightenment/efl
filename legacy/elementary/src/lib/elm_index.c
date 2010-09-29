@@ -514,6 +514,7 @@ elm_index_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->horizontal = EINA_FALSE;
 

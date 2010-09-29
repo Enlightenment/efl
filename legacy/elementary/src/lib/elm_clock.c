@@ -38,6 +38,7 @@ struct _Widget_Data
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 static Eina_Bool _ticker(void *data);
 static Eina_Bool _signal_clock_val_up(void *data);
 static Eina_Bool _signal_clock_val_down(void *data);
@@ -78,9 +79,15 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (elm_widget_focus_get(obj))
-     edje_object_signal_emit(wd->clk, "elm,action,focus", "elm");
+     {
+       edje_object_signal_emit(wd->clk, "elm,action,focus", "elm");
+       evas_object_focus_set(wd->clk, EINA_TRUE);
+     }
    else
-     edje_object_signal_emit(wd->clk, "elm,action,unfocus", "elm");
+     {
+       edje_object_signal_emit(wd->clk, "elm,action,unfocus", "elm");
+       evas_object_focus_set(wd->clk, EINA_FALSE);
+     }
 }
 
 static void
@@ -536,6 +543,7 @@ elm_clock_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->clk = edje_object_add(e);
    elm_widget_resize_object_set(obj, wd->clk);

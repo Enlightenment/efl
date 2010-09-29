@@ -2114,6 +2114,7 @@ elm_win_inwin_add(Evas_Object *obj)
    elm_widget_data_set(obj2, wd);
    elm_widget_del_hook_set(obj2, _del_hook);
    elm_widget_theme_hook_set(obj2, _theme_hook);
+   elm_widget_can_focus_set(obj2, EINA_FALSE);
 
    wd->frm = edje_object_add(win->evas);
    _elm_theme_object_set(obj, wd->frm, "win", "inwin", "default");

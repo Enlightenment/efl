@@ -409,6 +409,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    // TODO Do we need a bg object? a frame?
    // vbox

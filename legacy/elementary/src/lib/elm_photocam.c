@@ -139,6 +139,7 @@ struct _Pan
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _on_focus_hook(void *data, Evas_Object *obj);
 //static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _calc_job(void *data);
@@ -699,6 +700,23 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+       edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
+       evas_object_focus_set(wd->obj, EINA_TRUE);
+     }
+   else
+     {
+       edje_object_signal_emit(wd->obj, "elm,action,unfocus", "elm");
+       evas_object_focus_set(wd->obj, EINA_FALSE);
+     }
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -955,9 +973,11 @@ elm_photocam_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "photocam");
    elm_widget_type_set(obj, "photocam");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);

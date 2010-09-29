@@ -192,6 +192,7 @@ elm_anchorblock_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->entry = elm_entry_add(parent);
    elm_entry_item_provider_prepend(wd->entry, _item_provider, obj);

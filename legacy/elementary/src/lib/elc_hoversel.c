@@ -280,6 +280,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->btn = elm_button_add(parent);
    wd->expanded = EINA_FALSE;
