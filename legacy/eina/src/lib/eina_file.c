@@ -65,8 +65,6 @@ void *alloca (size_t);
 # endif
 #endif
 
-#ifndef 
-
 #include "eina_config.h"
 #include "eina_private.h"
 
