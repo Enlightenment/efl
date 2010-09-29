@@ -59,6 +59,14 @@ void *alloca (size_t);
 # define NAME_MAX MAX_PATH
 #endif
 
+#ifdef __sun
+# ifndef NAME_MAX
+#  define NAME_MAX 255
+# endif
+#endif
+
+#ifndef 
+
 #include "eina_config.h"
 #include "eina_private.h"
 
