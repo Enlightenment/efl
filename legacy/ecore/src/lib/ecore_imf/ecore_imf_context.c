@@ -263,7 +263,7 @@ ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
 	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_client_window_set");
+			 "ecore_imf_context_client_canvas_set");
 	return;
      }
    if (ctx->klass->client_canvas_set) ctx->klass->client_canvas_set(ctx, canvas);
@@ -516,7 +516,7 @@ ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx)
  * @param ctx An #Ecore_IMF_Context.
  * @param type The type of event defined by #Ecore_IMF_Event_Type.
  * @param event The event itself.
- * @return EINA_TRUE if the event was handled; otherwise .
+ * @return EINA_TRUE if the event was handled; otherwise EINA_FALSE.
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI Eina_Bool
@@ -554,7 +554,7 @@ ecore_imf_context_new(const Ecore_IMF_Context_Class *ctxc)
    Ecore_IMF_Context *ctx;
 
    if (!ctxc) return NULL;
-   ctx = malloc(sizeof(Ecore_IMF_Context));
+   ctx = calloc(1, sizeof(Ecore_IMF_Context));
    if (!ctx) return NULL;
    ECORE_MAGIC_SET(ctx, ECORE_MAGIC_CONTEXT);
    ctx->klass = ctxc;
@@ -622,7 +622,7 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
  * @param ctx An #Ecore_IMF_Context.
  * @param text Location to store a UTF-8 encoded string of text
  *             holding context around the insertion point.
- *             If the function returns Eina_True, then you must free
+ *             If the function returns EINA_TRUE, then you must free
  *             the result stored in this location with free().
  * @param cursor_pos Location to store the position in characters of
  *                   the insertion cursor within @text.
