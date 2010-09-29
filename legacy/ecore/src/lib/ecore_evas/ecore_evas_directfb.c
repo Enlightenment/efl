@@ -417,7 +417,10 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
    if (einfo)
      {
 	einfo->info.surface = ee->engine.directfb.window->surface;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
    ee->prop.fullscreen = on;
    if (resized)
@@ -538,7 +541,10 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
      {
 	einfo->info.dfb = ecore_directfb_interface_get();
 	einfo->info.surface = window->surface;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
    
    ee->engine.func->fn_render = _ecore_evas_directfb_render;

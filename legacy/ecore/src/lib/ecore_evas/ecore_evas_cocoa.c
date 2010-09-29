@@ -432,7 +432,10 @@ ecore_evas_cocoa_new(const char* name, int w, int h)
      goto free_window;
 
    einfo->info.context = [[evas_view context] retain];
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+     {
+        ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+     }
 
    ecore_evases = (Ecore_Evas *) eina_inlist_prepend(EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
 

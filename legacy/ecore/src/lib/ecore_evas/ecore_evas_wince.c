@@ -665,7 +665,10 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
      {
         einfo->info.fullscreen = !!on;
 /*         einfo->info.layered = window->shape.layered; */
-        evas_engine_info_set(ecore_evas_get(ee), (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
 }
 
@@ -805,7 +808,10 @@ ecore_evas_software_wince_new_internal(int                 backend,
         einfo->info.backend = backend;
         einfo->info.rotation = 0;
         einfo->info.fullscreen = fullscreen;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 
         ecore_wince_window_backend_set((Ecore_WinCE_Window *)ee->prop.window, backend);
         ecore_wince_window_suspend_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.suspend);

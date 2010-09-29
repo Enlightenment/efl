@@ -394,7 +394,10 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 	     ((Evas_Engine_Info_SDL *)einfo)->info.hwsurface = hwsurface;
 	     ((Evas_Engine_Info_SDL *)einfo)->info.noframe = noframe;
 	     ((Evas_Engine_Info_SDL *)einfo)->info.alpha = alpha;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
 	  }
 #endif
      }
@@ -406,7 +409,10 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 	  {
 	     ((Evas_Engine_Info_GL_SDL *)einfo)->flags.fullscreen = fullscreen;
 	     ((Evas_Engine_Info_GL_SDL *)einfo)->flags.noframe = noframe;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+               {
+                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+               }
 	  }
 #endif
      }

@@ -158,7 +158,7 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
              WRN("OpenGL X11 init engine '%s' failed - no visual, colormap or depth.", ee->driver);
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
-                  WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
                   return 0;
                }
           }
@@ -183,10 +183,10 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                         CWBorderPixel | CWBitGravity | CWEventMask |
 			CWOverrideRedirect, &attr);
 	einfo->info.drawable = win;
-        
-	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
              XDestroyWindow(einfo->info.display, win);
              return 0;
           }
@@ -3170,7 +3170,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.debug    = redraw_debug;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
              return NULL;
           }
@@ -3692,7 +3692,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 	einfo->info.drawable = ee->prop.window;
 	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
              return NULL;
           }
@@ -3915,7 +3915,7 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
 
 	if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
-             WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
              ecore_evas_free(ee);
              return NULL;
           }
@@ -4219,12 +4219,12 @@ ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
 	  }
 	einfo->info.rotation = 0;
 	einfo->info.debug    = redraw_debug;
-    if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-    {
-        WRN("evas_engine_info_set() init engine '%s' failed.", ee->driver);
-        ecore_evas_free(ee);
-        return NULL;
-    }
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
+             ecore_evas_free(ee);
+             return NULL;
+          }
      }
 
    ecore_x_icccm_hints_set(ee->prop.window,

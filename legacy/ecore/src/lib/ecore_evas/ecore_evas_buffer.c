@@ -76,7 +76,10 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 	einfo->info.alpha_threshold = 0;
 	einfo->info.func.new_update_region = NULL;
 	einfo->info.func.free_update_region = NULL;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
@@ -568,7 +571,10 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
 	einfo->info.alpha_threshold = 0;
 	einfo->info.func.new_update_region = NULL;
 	einfo->info.func.free_update_region = NULL;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
@@ -717,7 +723,10 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
 	einfo->info.alpha_threshold = 0;
 	einfo->info.func.new_update_region = NULL;
 	einfo->info.func.free_update_region = NULL;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");

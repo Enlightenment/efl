@@ -366,7 +366,10 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize __UNUSED__)
      {
 
 	einfo->info.rotation = rotation;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	if (!ee->prop.fullscreen)
 	  {
 	     int tmp;
@@ -393,7 +396,10 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize __UNUSED__)
    else
      {
 	einfo->info.rotation = rotation;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
 	ee->rotation = rotation;
      }
    if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -643,7 +649,10 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
 	einfo->info.device_number = strtol(disp_name, NULL, 10);
 	einfo->info.refresh = 0;
 	einfo->info.rotation = ee->rotation;
-	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
      }
    evas_key_modifier_add(ee->evas, "Shift");
    evas_key_modifier_add(ee->evas, "Control");
