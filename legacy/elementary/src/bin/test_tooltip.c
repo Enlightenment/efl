@@ -107,13 +107,13 @@ gltt_exp(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    Evas_Object *gl = elm_genlist_item_genlist_get(it);
-   int val = (int)elm_genlist_item_data_get(it);
+   int val = (int)(long)elm_genlist_item_data_get(it);
    Elm_Genlist_Item *it1, *it2, *it3;
 
    val *= 10;
-   it1 = elm_genlist_item_append(gl, &itct, (void *)(val + 1),it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   it2 = elm_genlist_item_append(gl, &itct, (void *)(val + 2), it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   it3 = elm_genlist_item_append(gl, &itct, (void *)(val + 3), it, ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+   it1 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 1),it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   it2 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 2), it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   it3 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 3), it, ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
 
    elm_genlist_item_tooltip_text_set(it1, "Testing A");
    elm_genlist_item_tooltip_text_set(it2, "Testing B");
@@ -144,7 +144,7 @@ char *
 gltt_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Item mode %i", (int)data);
+   snprintf(buf, sizeof(buf), "Item mode %i", (int)(long)data);
    return strdup(buf);
 }
 
