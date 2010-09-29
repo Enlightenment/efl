@@ -9,9 +9,8 @@ struct _Elm_Params_Notify {
 	Evas_Object *content; /* part name whose obj is to be set as content */
 	Eina_Bool repeat_events_exists;
 	Eina_Bool repeat_events;
-	Eina_Bool timer_init;
 	Eina_Bool timeout_exists;
-	int timeout;
+	double timeout;
 
 	const char *orient;
 };
@@ -56,13 +55,10 @@ static void external_notify_state_set(void *data __UNUSED__,
 	if (p->content) {
 		elm_notify_content_set(obj, p->content);
 	}
-	if(p->repeat_events_exists)
+	if (p->repeat_events_exists)
 		elm_notify_repeat_events_set(obj, p->repeat_events);
-	if(p->timeout_exists)
+	if (p->timeout_exists)
 		elm_notify_timeout_set(obj, p->timeout);
-	if(p->timer_init)
-		elm_notify_timer_init(obj);
-
 	if (p->orient)
 	{
 		Elm_Notify_Orient set = _orient_get(p->orient);
@@ -89,16 +85,10 @@ static Eina_Bool external_notify_param_set(void *data __UNUSED__,
 		elm_notify_repeat_events_set(obj, param->i);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "timer_init")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	{
-		elm_notify_timer_init(obj);
-		return EINA_TRUE;
-	}
 	else if (!strcmp(param->name, "timeout")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
+			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 	{
-		elm_notify_timeout_set(obj, param->i);
+		elm_notify_timeout_set(obj, param->d);
 		return EINA_TRUE;
 	}
 	else if (!strcmp(param->name, "orient")
@@ -131,9 +121,9 @@ static Eina_Bool external_notify_param_get(void *data __UNUSED__,
 		return EINA_TRUE;
 	}
 	else if (!strcmp(param->name, "timeout")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
+			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 	{
-		param->i = elm_notify_timeout_get(obj);
+		param->d = elm_notify_timeout_get(obj);
 		return EINA_TRUE;
 	}
 	else if (!strcmp(param->name, "orient")
@@ -167,12 +157,8 @@ static void * external_notify_params_parse(void *data, Evas_Object *obj,
 			mem->content = external_common_param_edje_object_get(obj, param);
 		else if (!strcmp(param->name, "timeout"))
 		{
-			mem->timeout = param->i;
+			mem->timeout = param->d;
 			mem->timeout_exists = EINA_TRUE;
-		}
-		else if (!strcmp(param->name, "timer_init") && param->i > 0)
-		{
-			mem->timer_init = EINA_TRUE;
 		}
 		else if (!strcmp(param->name, "repeat_events"))
 		{
@@ -204,8 +190,7 @@ static Edje_External_Param_Info external_notify_params[] = {
 		DEFINE_EXTERNAL_COMMON_PARAMS,
 		EDJE_EXTERNAL_PARAM_INFO_STRING("content"),
 		EDJE_EXTERNAL_PARAM_INFO_BOOL("repeat_events"),
-		EDJE_EXTERNAL_PARAM_INFO_INT("timeout"),
-		EDJE_EXTERNAL_PARAM_INFO_BOOL("timer_init"),
+		EDJE_EXTERNAL_PARAM_INFO_DOUBLE("timeout"),
 		EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
