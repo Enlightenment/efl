@@ -289,6 +289,7 @@ typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
 typedef struct _Edje_Patterns                        Edje_Patterns;
+typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
@@ -1108,6 +1109,7 @@ struct _Edje_Real_Part
    Edje_Rectangle            req; // 16
 
    Eina_List                *items; // 4 //FIXME: only if table/box
+   Edje_Part_Box_Animation  *anim; // 4 //FIXME: Used only if box
    void                     *entry_data; // 4 // FIXME: move to entry section
    Evas_Object              *cursorbg_object; // 4 // FIXME: move to entry section
    Evas_Object              *cursorfg_object; // 4 // FIXME: move to entry section
@@ -1519,6 +1521,11 @@ void              _edje_real_part_swallow_clear(Edje_Real_Part *rp);
 void              _edje_box_init(void);
 void              _edje_box_shutdown(void);
 Eina_Bool         _edje_box_layout_find(const char *name, Evas_Object_Box_Layout *cb, void **data, void (**free_data)(void *data));
+void              _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Box *chosen_desc);
+Eina_Bool         _edje_box_layout_add_child(Edje_Real_Part *rp, Evas_Object *child_obj);
+void              _edje_box_layout_remove_child(Edje_Real_Part *rp, Evas_Object *child_obj);
+Edje_Part_Box_Animation * _edje_box_layout_anim_new(Evas_Object *box);
+void              _edje_box_layout_free_data(void *data);
 
 Eina_Bool         _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj);
 Eina_Bool         _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj);

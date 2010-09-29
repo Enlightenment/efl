@@ -3678,6 +3678,12 @@ _edje_real_part_box_append(Edje_Real_Part *rp, Evas_Object *child_obj)
    opt = evas_object_box_append(rp->object, child_obj);
    if (!opt) return EINA_FALSE;
 
+   if (!_edje_box_layout_add_child(rp, child_obj))
+     {
+        evas_object_box_remove(rp->object, child_obj);
+        return EINA_FALSE;
+     }
+
    _edje_box_child_add(rp, child_obj);
 
    return EINA_TRUE;
@@ -3690,6 +3696,12 @@ _edje_real_part_box_prepend(Edje_Real_Part *rp, Evas_Object *child_obj)
 
    opt = evas_object_box_prepend(rp->object, child_obj);
    if (!opt) return EINA_FALSE;
+
+   if (!_edje_box_layout_add_child(rp, child_obj))
+     {
+        evas_object_box_remove(rp->object, child_obj);
+        return EINA_FALSE;
+     }
 
    _edje_box_child_add(rp, child_obj);
 
@@ -3704,6 +3716,12 @@ _edje_real_part_box_insert_before(Edje_Real_Part *rp, Evas_Object *child_obj, co
    opt = evas_object_box_insert_before(rp->object, child_obj, ref);
    if (!opt) return EINA_FALSE;
 
+   if (!_edje_box_layout_add_child(rp, child_obj))
+     {
+        evas_object_box_remove(rp->object, child_obj);
+        return EINA_FALSE;
+     }
+
    _edje_box_child_add(rp, child_obj);
 
    return EINA_TRUE;
@@ -3717,6 +3735,12 @@ _edje_real_part_box_insert_at(Edje_Real_Part *rp, Evas_Object *child_obj, unsign
    opt = evas_object_box_insert_at(rp->object, child_obj, pos);
    if (!opt) return EINA_FALSE;
 
+   if (!_edje_box_layout_add_child(rp, child_obj))
+     {
+        evas_object_box_remove(rp->object, child_obj);
+        return EINA_FALSE;
+     }
+
    _edje_box_child_add(rp, child_obj);
 
    return EINA_TRUE;
@@ -3727,6 +3751,7 @@ _edje_real_part_box_remove(Edje_Real_Part *rp, Evas_Object *child_obj)
 {
    if (evas_object_data_get(child_obj, "\377 edje.box_item")) return NULL;
    if (!evas_object_box_remove(rp->object, child_obj)) return NULL;
+   _edje_box_layout_remove_child(rp, child_obj);
    _edje_box_child_remove(rp, child_obj);
    return child_obj;
 }
@@ -3744,6 +3769,7 @@ _edje_real_part_box_remove_at(Edje_Real_Part *rp, unsigned int pos)
    child_obj = opt->obj;
    if (evas_object_data_get(child_obj, "\377 edje.box_item")) return NULL;
    if (!evas_object_box_remove_at(rp->object, pos)) return NULL;
+   _edje_box_layout_remove_child(rp, child_obj);
    _edje_box_child_remove(rp, child_obj);
    return child_obj;
 }
@@ -3762,6 +3788,7 @@ _edje_real_part_box_remove_all(Edje_Real_Part *rp, Eina_Bool clear)
 	  i++;
 	else
 	  {
+             _edje_box_layout_remove_child(rp, child_obj);
 	     _edje_box_child_remove(rp, child_obj);
 	     if (!evas_object_box_remove_at(rp->object, i))
 	       return EINA_FALSE;

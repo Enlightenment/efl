@@ -1420,43 +1420,6 @@ _edje_part_recalc_single(Edje *ed,
 }
 
 static void
-_edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Box *chosen_desc)
-{
-   Evas_Object_Box_Layout layout;
-   void (*free_data)(void *data);
-   void *data;
-   int min_w, min_h;
-
-   if (!_edje_box_layout_find(chosen_desc->box.layout, &layout, &data, &free_data))
-     {
-	if ((!chosen_desc->box.alt_layout) ||
-	    (!_edje_box_layout_find(chosen_desc->box.alt_layout, &layout, &data, &free_data)))
-	  {
-	     ERR("box layout '%s' (fallback '%s') not available, using horizontal.",
-		 chosen_desc->box.layout, chosen_desc->box.alt_layout);
-	     layout = evas_object_box_layout_horizontal;
-	     free_data = NULL;
-	     data = NULL;
-	  }
-     }
-
-   evas_object_box_layout_set(ep->object, layout, data, free_data);
-   evas_object_box_align_set(ep->object, TO_DOUBLE(chosen_desc->box.align.x), TO_DOUBLE(chosen_desc->box.align.y));
-   evas_object_box_padding_set(ep->object, chosen_desc->box.padding.x, chosen_desc->box.padding.y);
-
-   if (evas_object_smart_need_recalculate_get(ep->object))
-     {
-	evas_object_smart_need_recalculate_set(ep->object, 0);
-	evas_object_smart_calculate(ep->object);
-     }
-   evas_object_size_hint_min_get(ep->object, &min_w, &min_h);
-   if (chosen_desc->box.min.h && (p3->w < min_w))
-     p3->w = min_w;
-   if (chosen_desc->box.min.v && (p3->h < min_h))
-     p3->h = min_h;
-}
-
-static void
 _edje_table_recalc_apply(Edje *ed __UNUSED__,
 			 Edje_Real_Part *ep,
 			 Edje_Calc_Params *p3 __UNUSED__,

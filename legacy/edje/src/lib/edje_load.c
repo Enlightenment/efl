@@ -455,6 +455,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			break;
 		     case EDJE_PART_TYPE_BOX:
 			rp->object = evas_object_box_add(ed->evas);
+                        rp->anim = _edje_box_layout_anim_new(rp->object);
 			break;
 		     case EDJE_PART_TYPE_TABLE:
 			rp->object = evas_object_table_add(ed->evas);
@@ -971,6 +972,11 @@ _edje_file_del(Edje *ed)
 		  /* evas_box/table handles deletion of objects */
 		  rp->items = eina_list_free(rp->items);
 	       }
+             if (rp->anim)
+               {
+                  _edje_box_layout_free_data(rp->anim);
+                  rp->anim = NULL;
+               }
 	     if (rp->text.text) eina_stringshare_del(rp->text.text);
 	     if (rp->text.font) eina_stringshare_del(rp->text.font);
 	     if (rp->text.cache.in_str) eina_stringshare_del(rp->text.cache.in_str);

@@ -20,6 +20,7 @@ includes_HEADERS = Edje.h Edje_Edit.h
 includesdir = $(includedir)/edje-@VMAJ@
 
 base_sources = \
+edje_box_layout.c \
 edje_cache.c \
 edje_calc.c \
 edje_callbacks.c \
