@@ -315,6 +315,11 @@ Shows how to use event handlers.
 */
 
 /**
+@example ecore_fd_handler_example.c
+Shows how to use fd handlers.
+*/
+
+/**
 @example ecore_timer_example.c
 Demonstrates use of the ecore_timer.
 */
