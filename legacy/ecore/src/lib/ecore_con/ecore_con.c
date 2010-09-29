@@ -1475,6 +1475,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
      {
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
+        DBG("beginning ssl handshake");
         if (ecore_con_ssl_server_init(svr))
           goto error;
      }
@@ -1748,8 +1749,12 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
         Eina_Bool lost_server = EINA_TRUE;
         unsigned char buf[READBUFSIZ];
 
-        if (svr->handshaking && (!ecore_con_ssl_server_init(svr)))
-          lost_server = EINA_FALSE;
+        if (svr->handshaking)
+          {
+             DBG("Continuing ssl handshake");
+             if (!ecore_con_ssl_server_init(svr))
+               lost_server = EINA_FALSE;
+          }
 
         if (!(svr->type & ECORE_CON_SSL))
           {
@@ -1814,6 +1819,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    if (svr->handshaking)
      {
+        DBG("Continuing ssl handshake");
         if (ecore_con_ssl_server_init(svr))
           {
              ERR("ssl handshaking failed!");
@@ -2221,6 +2227,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 
    if (svr->handshaking)
      {
+        DBG("Continuing ssl handshake");
         if (ecore_con_ssl_server_init(svr))
           return _ecore_con_server_kill(svr);
         return;
