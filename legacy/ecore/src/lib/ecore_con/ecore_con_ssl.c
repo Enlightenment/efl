@@ -501,11 +501,13 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
           {
              svr->handshaking = EINA_FALSE;
              svr->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+        else
+          {
              if (gnutls_record_get_direction(svr->session))
                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
              else
                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
-             return ECORE_CON_SSL_ERROR_NONE;
           }
       default:
         break;
@@ -792,11 +794,13 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
           {
              cl->handshaking = EINA_FALSE;
              cl->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+        else
+          {
              if (gnutls_record_get_direction(cl->session))
                ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_WRITE);
              else
                ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
-             return ECORE_CON_SSL_ERROR_NONE;
           }
       default:
         break;
