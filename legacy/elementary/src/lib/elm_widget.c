@@ -532,6 +532,10 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
 	evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _sub_obj_mouse_down, sd);
 	evas_object_smart_member_del(sd->resize_obj);
+        if (_elm_widget_is(sd->resize_obj))
+          {
+             if (elm_widget_focus_get(sd->resize_obj)) _unfocus_parents(obj);
+          }
      }
    sd->resize_obj = sobj;
    if (sd->resize_obj)
