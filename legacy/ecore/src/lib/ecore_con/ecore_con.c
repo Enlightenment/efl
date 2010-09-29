@@ -2229,7 +2229,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      {
         DBG("Continuing ssl handshake");
         if (ecore_con_ssl_server_init(svr))
-          return _ecore_con_server_kill(svr);
+          _ecore_con_server_kill(svr);
         return;
      }
 
@@ -2239,8 +2239,11 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
       count = ecore_con_ssl_server_write(svr, svr->write_buf + svr->write_buf_offset, num);
 
    if (count < 0)
+     {
         /* we lost our server! */
-        return _ecore_con_server_kill(svr);
+        _ecore_con_server_kill(svr);
+        return;
+     }
 
    svr->write_buf_offset += count;
    if (svr->write_buf_offset >= svr->write_buf_size)
