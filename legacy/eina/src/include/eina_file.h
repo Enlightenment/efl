@@ -19,10 +19,7 @@
 #ifndef EINA_FILE_H_
 #define EINA_FILE_H_
 
-#if defined (__MacOSX__) || defined (__FreeBSD__) || (defined (__MACH__) && \
-   defined (__APPLE__))
-# include <sys/syslimits.h>
-#endif
+#include <limits.h>
 
 #include "eina_types.h"
 #include "eina_array.h"
