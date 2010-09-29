@@ -1267,7 +1267,9 @@ _calc_job(void *data)
    if ((chb) && (EINA_INLIST_GET(chb)->next))
      {
 	EINA_INLIST_FOREACH(EINA_INLIST_GET(chb)->next, itb)
-	  if (itb->realized) _item_block_unrealize(itb);
+          {
+             if (itb->realized) _item_block_unrealize(itb);
+          }
      }
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &oh);
    wd->realminw = minw;
@@ -1433,6 +1435,7 @@ _pan_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
+/* don't do this... use wd->compress mode  
    if (sd->wd->mode == ELM_LIST_COMPRESS)
      {
         Item_Block *itb;
@@ -1448,6 +1451,7 @@ _pan_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
              itb->changed = EINA_TRUE;
           }
      }
+ */
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
 }
@@ -1471,12 +1475,12 @@ _pan_calculate(Evas_Object *obj)
 				cvx, cvy, cvw, cvh))
 	  {
 	     if ((!itb->realized) || (itb->changed))
-               _item_block_realize(itb, in, 0);
+                _item_block_realize(itb, in, 0);
 	     _item_block_position(itb,  in);
 	  }
 	else
 	  {
-	     if (itb->realized) _item_block_unrealize(itb);
+             if (itb->realized) _item_block_unrealize(itb);
 	  }
 	in += itb->count;
      }
