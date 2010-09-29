@@ -24,15 +24,15 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
    if (ee->engine.buffer.image)
      {
-	Ecore_Evas *ee2;
+        Ecore_Evas *ee2;
 
-	ee2 = evas_object_data_get(ee->engine.buffer.image, "Ecore_Evas_Parent");
-	evas_object_del(ee->engine.buffer.image);
-	ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
+        ee2 = evas_object_data_get(ee->engine.buffer.image, "Ecore_Evas_Parent");
+        evas_object_del(ee->engine.buffer.image);
+        ee2->sub_ecore_evas = eina_list_remove(ee2->sub_ecore_evas, ee);
      }
    else
      {
-	ee->engine.buffer.free_func(ee->engine.buffer.data, 
+        ee->engine.buffer.free_func(ee->engine.buffer.data, 
                                     ee->engine.buffer.pixels);
      }
    _ecore_evas_buffer_shutdown();
@@ -54,14 +54,14 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 
    if (ee->engine.buffer.image)
      {
-	ee->engine.buffer.pixels = evas_object_image_data_get(ee->engine.buffer.image, 1);
+        ee->engine.buffer.pixels = evas_object_image_data_get(ee->engine.buffer.image, 1);
      }
    else
      {
-	if (ee->engine.buffer.pixels)
+        if (ee->engine.buffer.pixels)
           ee->engine.buffer.free_func(ee->engine.buffer.data,
                                       ee->engine.buffer.pixels);
-	ee->engine.buffer.pixels = 
+        ee->engine.buffer.pixels = 
           ee->engine.buffer.alloc_func(ee->engine.buffer.data,
                                        ee->w * ee->h * sizeof(int));
      }
@@ -69,13 +69,13 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-	einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
-	einfo->info.dest_buffer = ee->engine.buffer.pixels;
-	einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
-	einfo->info.use_color_key = 0;
-	einfo->info.alpha_threshold = 0;
-	einfo->info.func.new_update_region = NULL;
-	einfo->info.func.free_update_region = NULL;
+        einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+        einfo->info.dest_buffer = ee->engine.buffer.pixels;
+        einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
+        einfo->info.use_color_key = 0;
+        einfo->info.alpha_threshold = 0;
+        einfo->info.func.new_update_region = NULL;
+        einfo->info.func.free_update_region = NULL;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -104,31 +104,31 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
 
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-	rend |= _ecore_evas_buffer_render(ee2);
-	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+        rend |= _ecore_evas_buffer_render(ee2);
+        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
    if (ee->engine.buffer.image)
      {
-	int w, h;
+        int w, h;
 
-	evas_object_image_size_get(ee->engine.buffer.image, &w, &h);
-	if ((w != ee->w) || (h != ee->h))
-	  _ecore_evas_resize(ee, w, h);
+        evas_object_image_size_get(ee->engine.buffer.image, &w, &h);
+        if ((w != ee->w) || (h != ee->h))
+          _ecore_evas_resize(ee, w, h);
      }
    updates = evas_render_updates(ee->evas);
    if (ee->engine.buffer.image)
      {
         Eina_Rectangle *r;
 
-	EINA_LIST_FOREACH(updates, l, r)
-	  evas_object_image_data_update_add(ee->engine.buffer.image,
-					    r->x, r->y, r->w, r->h);
+        EINA_LIST_FOREACH(updates, l, r)
+          evas_object_image_data_update_add(ee->engine.buffer.image,
+                                            r->x, r->y, r->w, r->h);
      }
    if (updates)
      {
-	evas_render_updates_free(updates);
-	_ecore_evas_idle_timeout_update(ee);
+        evas_render_updates_free(updates);
+        _ecore_evas_idle_timeout_update(ee);
      }
 
    return updates ? 1 : rend;
@@ -564,13 +564,13 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-	einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
-	einfo->info.dest_buffer = ee->engine.buffer.pixels;
-	einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
-	einfo->info.use_color_key = 0;
-	einfo->info.alpha_threshold = 0;
-	einfo->info.func.new_update_region = NULL;
-	einfo->info.func.free_update_region = NULL;
+        einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+        einfo->info.dest_buffer = ee->engine.buffer.pixels;
+        einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
+        einfo->info.use_color_key = 0;
+        einfo->info.alpha_threshold = 0;
+        einfo->info.func.new_update_region = NULL;
+        einfo->info.func.free_update_region = NULL;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -666,63 +666,63 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->engine.buffer.pixels = evas_object_image_data_get(o, 1);
    evas_object_image_data_set(o, ee->engine.buffer.pixels);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MOUSE_IN,
-				  _ecore_evas_buffer_cb_mouse_in, ee);
+                                  EVAS_CALLBACK_MOUSE_IN,
+                                  _ecore_evas_buffer_cb_mouse_in, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MOUSE_OUT,
-				  _ecore_evas_buffer_cb_mouse_out, ee);
+                                  EVAS_CALLBACK_MOUSE_OUT,
+                                  _ecore_evas_buffer_cb_mouse_out, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MOUSE_DOWN,
-				  _ecore_evas_buffer_cb_mouse_down, ee);
+                                  EVAS_CALLBACK_MOUSE_DOWN,
+                                  _ecore_evas_buffer_cb_mouse_down, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MOUSE_UP,
-				  _ecore_evas_buffer_cb_mouse_up, ee);
+                                  EVAS_CALLBACK_MOUSE_UP,
+                                  _ecore_evas_buffer_cb_mouse_up, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MOUSE_MOVE,
-				  _ecore_evas_buffer_cb_mouse_move, ee);
+                                  EVAS_CALLBACK_MOUSE_MOVE,
+                                  _ecore_evas_buffer_cb_mouse_move, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MOUSE_WHEEL,
-				  _ecore_evas_buffer_cb_mouse_wheel, ee);
+                                  EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _ecore_evas_buffer_cb_mouse_wheel, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MULTI_DOWN,
-				  _ecore_evas_buffer_cb_multi_down, ee);
+                                  EVAS_CALLBACK_MULTI_DOWN,
+                                  _ecore_evas_buffer_cb_multi_down, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MULTI_UP,
-				  _ecore_evas_buffer_cb_multi_up, ee);
+                                  EVAS_CALLBACK_MULTI_UP,
+                                  _ecore_evas_buffer_cb_multi_up, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_MULTI_MOVE,
-				  _ecore_evas_buffer_cb_multi_move, ee);
+                                  EVAS_CALLBACK_MULTI_MOVE,
+                                  _ecore_evas_buffer_cb_multi_move, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_FREE,
-				  _ecore_evas_buffer_cb_free, ee);
+                                  EVAS_CALLBACK_FREE,
+                                  _ecore_evas_buffer_cb_free, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_KEY_DOWN,
-				  _ecore_evas_buffer_cb_key_down, ee);
+                                  EVAS_CALLBACK_KEY_DOWN,
+                                  _ecore_evas_buffer_cb_key_down, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_KEY_UP,
-				  _ecore_evas_buffer_cb_key_up, ee);
+                                  EVAS_CALLBACK_KEY_UP,
+                                  _ecore_evas_buffer_cb_key_up, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_FOCUS_IN,
-				  _ecore_evas_buffer_cb_focus_in, ee);
+                                  EVAS_CALLBACK_FOCUS_IN,
+                                  _ecore_evas_buffer_cb_focus_in, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_FOCUS_OUT,
-				  _ecore_evas_buffer_cb_focus_out, ee);
+                                  EVAS_CALLBACK_FOCUS_OUT,
+                                  _ecore_evas_buffer_cb_focus_out, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_SHOW,
-				  _ecore_evas_buffer_cb_show, ee);
+                                  EVAS_CALLBACK_SHOW,
+                                  _ecore_evas_buffer_cb_show, ee);
    evas_object_event_callback_add(ee->engine.buffer.image,
-				  EVAS_CALLBACK_HIDE,
-				  _ecore_evas_buffer_cb_hide, ee);
+                                  EVAS_CALLBACK_HIDE,
+                                  _ecore_evas_buffer_cb_hide, ee);
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-	einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
-	einfo->info.dest_buffer = ee->engine.buffer.pixels;
-	einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
-	einfo->info.use_color_key = 0;
-	einfo->info.alpha_threshold = 0;
-	einfo->info.func.new_update_region = NULL;
-	einfo->info.func.free_update_region = NULL;
+        einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+        einfo->info.dest_buffer = ee->engine.buffer.pixels;
+        einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
+        einfo->info.use_color_key = 0;
+        einfo->info.alpha_threshold = 0;
+        einfo->info.func.new_update_region = NULL;
+        einfo->info.func.free_update_region = NULL;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);

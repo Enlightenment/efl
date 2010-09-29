@@ -32,7 +32,7 @@ static const char               *ecore_evas_cocoa_default = "EFL Cocoa";
 
 @interface EvasView : NSView
 {
-	CGContextRef ctx;
+        CGContextRef ctx;
 }
 @end
 

@@ -29,17 +29,17 @@ _ecore_evas_directfb_render(Ecore_Evas *ee)
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
-	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-	rend |= _ecore_evas_buffer_render(ee2);
-	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+        rend |= _ecore_evas_buffer_render(ee2);
+        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
 #endif
    if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    updates = evas_render_updates(ee->evas);
    if (updates)
      {
-	evas_render_updates_free(updates);
-	_ecore_evas_idle_timeout_update(ee);
+        evas_render_updates_free(updates);
+        _ecore_evas_idle_timeout_update(ee);
      }
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 
@@ -229,10 +229,10 @@ _ecore_evas_directfb_shutdown(void)
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
-	int i;
+        int i;
 
-	for (i = 0; i < 8; i++)
-	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
+        for (i = 0; i < 8; i++)
+          ecore_event_handler_del(ecore_evas_event_handlers[i]);
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
@@ -292,13 +292,13 @@ _ecore_evas_directfb_resize(Ecore_Evas *ee, int w, int h)
    ee->h = h;
    if ((ee->rotation == 90) || (ee->rotation == 270))
      {
-	evas_output_size_set(ee->evas, ee->h, ee->w);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+        evas_output_size_set(ee->evas, ee->h, ee->w);
+        evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
      }
    else
      {
-	evas_output_size_set(ee->evas, ee->w, ee->h);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+        evas_output_size_set(ee->evas, ee->w, ee->h);
+        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
      }
 }
 
@@ -354,12 +354,12 @@ _ecore_evas_directfb_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int lay
 
    if (!obj)
      {
-	ee->prop.cursor.object = NULL;
-	ee->prop.cursor.layer = 0;
-	ee->prop.cursor.hot.x = 0;
-	ee->prop.cursor.hot.y = 0;
-	ecore_directfb_window_cursor_show(ee->engine.directfb.window, 1);
-	return;
+        ee->prop.cursor.object = NULL;
+        ee->prop.cursor.layer = 0;
+        ee->prop.cursor.hot.x = 0;
+        ee->prop.cursor.hot.y = 0;
+        ecore_directfb_window_cursor_show(ee->engine.directfb.window, 1);
+        return;
 
      }
 
@@ -399,24 +399,24 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
    ecore_directfb_window_size_get(ee->engine.directfb.window, &w, &h);
    if( (ee->w != w) || (ee->h != h))
      {
-	resized = 1;
-	ee->w = w;
-	ee->h = h;
-	if ((ee->rotation == 90) || (ee->rotation == 270))
-	  {
-	     evas_output_size_set(ee->evas, ee->h, ee->w);
-	     evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-	  }
-	else
-	  {
-	     evas_output_size_set(ee->evas, ee->w, ee->h);
-	     evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-	  }
+        resized = 1;
+        ee->w = w;
+        ee->h = h;
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, ee->h, ee->w);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+          }
+        else
+          {
+             evas_output_size_set(ee->evas, ee->w, ee->h);
+             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+          }
      }
    einfo = (Evas_Engine_Info_DirectFB *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-	einfo->info.surface = ee->engine.directfb.window->surface;
+        einfo->info.surface = ee->engine.directfb.window->surface;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
@@ -425,7 +425,7 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
    ee->prop.fullscreen = on;
    if (resized)
      {
-	if(ee->func.fn_resize) ee->func.fn_resize(ee);
+        if(ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
@@ -439,49 +439,49 @@ _ecore_evas_directfb_window_get(const Ecore_Evas *ee)
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
 static Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
 {
-   _ecore_evas_directfb_free,	/* free an ecore_evas */
-     NULL,				/* cb resize */
-     NULL,				/* cb move */
-     NULL,				/* cb show */
-     NULL,				/* cb hide */
-     NULL,				/* cb delete request */
-     NULL,				/* cb destroy */
-     NULL,				/* cb focus in */
-     NULL,				/* cb focus out */
+   _ecore_evas_directfb_free,        /* free an ecore_evas */
+     NULL,                                /* cb resize */
+     NULL,                                /* cb move */
+     NULL,                                /* cb show */
+     NULL,                                /* cb hide */
+     NULL,                                /* cb delete request */
+     NULL,                                /* cb destroy */
+     NULL,                                /* cb focus in */
+     NULL,                                /* cb focus out */
      NULL,                              /* cb sticky */
      NULL,                              /* cb unsticky */
-     NULL,				/* cb mouse in */
-     NULL,				/* cb mouse out */
-     NULL,				/* cb pre render */
-     NULL,				/* cb post render */
-     _ecore_evas_directfb_move,	        /* move */
+     NULL,                                /* cb mouse in */
+     NULL,                                /* cb mouse out */
+     NULL,                                /* cb pre render */
+     NULL,                                /* cb post render */
+     _ecore_evas_directfb_move,                /* move */
      NULL,                              /* managed move */
-     _ecore_evas_directfb_resize,	/* resize */
-     NULL,				/* move resize */
+     _ecore_evas_directfb_resize,        /* resize */
+     NULL,                                /* move resize */
      NULL,//_ecore_evas_directfb_rotation_set,/* rotation */
      _ecore_evas_directfb_shaped_set,   /* shaped */
-     _ecore_evas_directfb_show,	        /* show */
-     _ecore_evas_directfb_hide,	        /* hide */
-     NULL,				/* raise */
-     NULL,				/* lower */
-     NULL,				/* activate */
-     NULL,				/* title set */
-     NULL,				/* name class set */
-     NULL,				/* size min */
-     NULL,				/* size max */
-     NULL,				/* size base */
-     NULL,				/* size step */
+     _ecore_evas_directfb_show,                /* show */
+     _ecore_evas_directfb_hide,                /* hide */
+     NULL,                                /* raise */
+     NULL,                                /* lower */
+     NULL,                                /* activate */
+     NULL,                                /* title set */
+     NULL,                                /* name class set */
+     NULL,                                /* size min */
+     NULL,                                /* size max */
+     NULL,                                /* size base */
+     NULL,                                /* size step */
      _ecore_evas_directfb_object_cursor_set, /* set cursor to an evas object */
-     NULL,				/* layer set */
-     _ecore_evas_directfb_focus_set,	/* focus */
-     NULL,				/* iconified */
-     NULL,				/* borderless */
-     NULL,				/* override */
-     NULL,				/* maximized */
+     NULL,                                /* layer set */
+     _ecore_evas_directfb_focus_set,        /* focus */
+     NULL,                                /* iconified */
+     NULL,                                /* borderless */
+     NULL,                                /* override */
+     NULL,                                /* maximized */
      _ecore_evas_directfb_fullscreen_set,/* fullscreen */
-     NULL,				/* avoid damage */
-     NULL,				/* withdrawn */
-     NULL,				/* sticky */
+     NULL,                                /* avoid damage */
+     NULL,                                /* withdrawn */
+     NULL,                                /* sticky */
      NULL,                              /* ignore events */
      NULL,                              /* alpha */
      NULL, //transparent
@@ -539,8 +539,8 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    ee->engine.directfb.window = window;
    if (einfo)
      {
-	einfo->info.dfb = ecore_directfb_interface_get();
-	einfo->info.surface = window->surface;
+        einfo->info.dfb = ecore_directfb_interface_get();
+        einfo->info.surface = window->surface;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);

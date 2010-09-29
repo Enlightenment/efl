@@ -35,7 +35,7 @@ static Ecore_Event_Handler      *ecore_evas_event_handlers[4] = {
 static const char               *ecore_evas_sdl_default = "EFL SDL";
 static int                      _ecore_evas_fps_debug = 0;
 static Ecore_Poller             *ecore_evas_event;
-static Ecore_Evas		*ecore_evases = NULL;
+static Ecore_Evas                *ecore_evases = NULL;
 
 static Ecore_Evas *
 _ecore_evas_sdl_match(void)
@@ -110,8 +110,8 @@ _ecore_evas_render(Ecore_Evas *ee)
    updates = evas_render_updates(ee->evas);
    if (updates)
      {
-	evas_render_updates_free(updates);
-	_ecore_evas_idle_timeout_update(ee);
+        evas_render_updates_free(updates);
+        _ecore_evas_idle_timeout_update(ee);
      }
    return updates ? 1 : 0;
 }
@@ -189,15 +189,15 @@ _ecore_evas_sdl_shutdown(void)
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
-	int i;
+        int i;
 
         for (i = 0; i < sizeof (ecore_evas_event_handlers) / sizeof (Ecore_Event_Handler*); i++)
-	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
-	ecore_event_evas_shutdown();
+          ecore_event_handler_del(ecore_evas_event_handlers[i]);
+        ecore_event_evas_shutdown();
         ecore_poller_del(ecore_evas_event);
         ecore_evas_event = NULL;
 #ifndef _WIN32
-	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
+        if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
 #endif /* _WIN32 */
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
@@ -261,11 +261,11 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
 
    if (!obj)
      {
-	ee->prop.cursor.object = NULL;
-	ee->prop.cursor.layer = 0;
-	ee->prop.cursor.hot.x = 0;
-	ee->prop.cursor.hot.y = 0;
-	return;
+        ee->prop.cursor.object = NULL;
+        ee->prop.cursor.layer = 0;
+        ee->prop.cursor.hot.x = 0;
+        ee->prop.cursor.hot.y = 0;
+        return;
      }
 
    ee->prop.cursor.object = obj;
@@ -275,8 +275,8 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_move(ee->prop.cursor.object,
-		    x - ee->prop.cursor.hot.x,
-		    y - ee->prop.cursor.hot.y);
+                    x - ee->prop.cursor.hot.x,
+                    y - ee->prop.cursor.hot.y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
@@ -386,43 +386,43 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    if (rmethod == evas_render_method_lookup("software_sdl"))
      {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-	einfo = evas_engine_info_get(ee->evas);
-	if (einfo)
-	  {
-	     ((Evas_Engine_Info_SDL *)einfo)->info.rotation = 0;
-	     ((Evas_Engine_Info_SDL *)einfo)->info.fullscreen = fullscreen;
-	     ((Evas_Engine_Info_SDL *)einfo)->info.hwsurface = hwsurface;
-	     ((Evas_Engine_Info_SDL *)einfo)->info.noframe = noframe;
-	     ((Evas_Engine_Info_SDL *)einfo)->info.alpha = alpha;
+        einfo = evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             ((Evas_Engine_Info_SDL *)einfo)->info.rotation = 0;
+             ((Evas_Engine_Info_SDL *)einfo)->info.fullscreen = fullscreen;
+             ((Evas_Engine_Info_SDL *)einfo)->info.hwsurface = hwsurface;
+             ((Evas_Engine_Info_SDL *)einfo)->info.noframe = noframe;
+             ((Evas_Engine_Info_SDL *)einfo)->info.alpha = alpha;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
                }
-	  }
+          }
 #endif
      }
    else if (rmethod == evas_render_method_lookup("gl_sdl"))
      {
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-	einfo = evas_engine_info_get(ee->evas);
-	if (einfo)
-	  {
-	     ((Evas_Engine_Info_GL_SDL *)einfo)->flags.fullscreen = fullscreen;
-	     ((Evas_Engine_Info_GL_SDL *)einfo)->flags.noframe = noframe;
+        einfo = evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             ((Evas_Engine_Info_GL_SDL *)einfo)->flags.fullscreen = fullscreen;
+             ((Evas_Engine_Info_GL_SDL *)einfo)->flags.noframe = noframe;
              if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
                {
                   ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
                }
-	  }
+          }
 #endif
      }
 
    if (!ecore_sdl_init(name))
      {
-	evas_free(ee->evas);
-	if (ee->name) free(ee->name);
-	free(ee);
-	return NULL;
+        evas_free(ee->evas);
+        if (ee->name) free(ee->name);
+        free(ee);
+        return NULL;
      }
 
    _ecore_evas_sdl_init(w, h);

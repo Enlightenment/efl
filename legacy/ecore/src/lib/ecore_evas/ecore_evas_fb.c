@@ -32,23 +32,23 @@ _ecore_evas_mouse_move_process_fb(Ecore_Evas *ee, int x, int y, unsigned int tim
    ecore_fb_size_get(&fbw, &fbh);
    if (ee->prop.cursor.object)
      {
-	evas_object_show(ee->prop.cursor.object);
+        evas_object_show(ee->prop.cursor.object);
         if (ee->rotation == 0)
-	  evas_object_move(ee->prop.cursor.object,
-			   x - ee->prop.cursor.hot.x,
-			   y - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 90)
-	  evas_object_move(ee->prop.cursor.object,
-			   (fbh - ee->h) + ee->h - y - 1 - ee->prop.cursor.hot.x,
-			   x - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 180)
-	  evas_object_move(ee->prop.cursor.object,
-			   (fbw - ee->w) + ee->w - x - 1 - ee->prop.cursor.hot.x,
-			   (fbh - ee->h) + ee->h - y - 1 - ee->prop.cursor.hot.y);
-	else if (ee->rotation == 270)
-	  evas_object_move(ee->prop.cursor.object,
-			   y - ee->prop.cursor.hot.x,
-			   (fbw - ee->w) + ee->w - x - 1 - ee->prop.cursor.hot.y);
+          evas_object_move(ee->prop.cursor.object,
+                           x - ee->prop.cursor.hot.x,
+                           y - ee->prop.cursor.hot.y);
+        else if (ee->rotation == 90)
+          evas_object_move(ee->prop.cursor.object,
+                           (fbh - ee->h) + ee->h - y - 1 - ee->prop.cursor.hot.x,
+                           x - ee->prop.cursor.hot.y);
+        else if (ee->rotation == 180)
+          evas_object_move(ee->prop.cursor.object,
+                           (fbw - ee->w) + ee->w - x - 1 - ee->prop.cursor.hot.x,
+                           (fbh - ee->h) + ee->h - y - 1 - ee->prop.cursor.hot.y);
+        else if (ee->rotation == 270)
+          evas_object_move(ee->prop.cursor.object,
+                           y - ee->prop.cursor.hot.x,
+                           (fbw - ee->w) + ee->w - x - 1 - ee->prop.cursor.hot.y);
      }
    if (ee->rotation == 0)
      evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
@@ -91,11 +91,11 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
      {
         ee = fb_ee;
         
-	ee->visible = 1;
-	if ((ee->rotation == 90) || (ee->rotation == 270))
-	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
-	else
-	  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        ee->visible = 1;
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
 
    EINA_LIST_FOREACH(ecore_evas_input_devices, ll, dev)
@@ -243,60 +243,60 @@ _ecore_evas_fb_init(int w, int h)
 
    while ((input_entry = readdir(input_dir)))
      {
-	char device_path[256];
+        char device_path[256];
 
-	if (strncmp(input_entry->d_name, "event", 5) != 0)
-	  continue;
+        if (strncmp(input_entry->d_name, "event", 5) != 0)
+          continue;
 
-	snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
-	if (!(device = ecore_fb_input_device_open(device_path)))
-	  continue;
+        snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
+        if (!(device = ecore_fb_input_device_open(device_path)))
+          continue;
 
-	caps = ecore_fb_input_device_cap_get(device);
+        caps = ecore_fb_input_device_cap_get(device);
 
-	/* Mouse */
+        /* Mouse */
 #ifdef HAVE_TSLIB
-	if (caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE)
+        if (caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE)
 #else
-	if ((caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE) || (caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
+        if ((caps & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE) || (caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
 #endif
-	  {
-	     ecore_fb_input_device_axis_size_set(device, w, h);
-	     ecore_fb_input_device_listen(device,1);
-	     ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
-	     if (!mouse_handled)
-	       {
-		  ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
-		  ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
-		  ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
-		  ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
-		  mouse_handled = 1;
-	       }
-	  }
-	/* Keyboard */
-	else if ((caps & ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS) && !(caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
-	  {
-	     ecore_fb_input_device_listen(device,1);
-	     ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
-	     if (!keyboard_handled)
-	       {
-		  ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
-		  ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_UP, _ecore_evas_event_key_up, NULL);
-		  keyboard_handled = 1;
-	       }
-	  }
+          {
+             ecore_fb_input_device_axis_size_set(device, w, h);
+             ecore_fb_input_device_listen(device,1);
+             ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
+             if (!mouse_handled)
+               {
+                  ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
+                  ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
+                  ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
+                  ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
+                  mouse_handled = 1;
+               }
+          }
+        /* Keyboard */
+        else if ((caps & ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS) && !(caps & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE))
+          {
+             ecore_fb_input_device_listen(device,1);
+             ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
+             if (!keyboard_handled)
+               {
+                  ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
+                  ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_FB_EVENT_KEY_UP, _ecore_evas_event_key_up, NULL);
+                  keyboard_handled = 1;
+               }
+          }
      }
    closedir(input_dir);
    
    if (!mouse_handled)
      {
-	if (ecore_fb_ts_init())
-	  {
-	     ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
-	     ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
-	     ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
-	     mouse_handled = 1;
-	  }
+        if (ecore_fb_ts_init())
+          {
+             ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
+             ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
+             ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_FB_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
+             mouse_handled = 1;
+          }
      }
    return _ecore_evas_init_count;
 }
@@ -365,42 +365,42 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize __UNUSED__)
    if (rot_dif != 180)
      {
 
-	einfo->info.rotation = rotation;
+        einfo->info.rotation = rotation;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
           }
-	if (!ee->prop.fullscreen)
-	  {
-	     int tmp;
+        if (!ee->prop.fullscreen)
+          {
+             int tmp;
 
-	     tmp = ee->w;
-	     ee->w = ee->h;
-	     ee->h = tmp;
-	  }
-	else
-	  {
-	     if ((rotation == 0) || (rotation == 180))
-	       {
-		  evas_output_size_set(ee->evas, ee->w, ee->h);
-		  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-	       }
-	     else
-	       {
-		  evas_output_size_set(ee->evas, ee->h, ee->w);
-		  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-	       }
-	  }
-	ee->rotation = rotation;
+             tmp = ee->w;
+             ee->w = ee->h;
+             ee->h = tmp;
+          }
+        else
+          {
+             if ((rotation == 0) || (rotation == 180))
+               {
+                  evas_output_size_set(ee->evas, ee->w, ee->h);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+               }
+             else
+               {
+                  evas_output_size_set(ee->evas, ee->h, ee->w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+               }
+          }
+        ee->rotation = rotation;
      }
    else
      {
-	einfo->info.rotation = rotation;
+        einfo->info.rotation = rotation;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
           }
-	ee->rotation = rotation;
+        ee->rotation = rotation;
      }
    if ((ee->rotation == 90) || (ee->rotation == 270))
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -429,11 +429,11 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
 
    if (!obj)
      {
-	ee->prop.cursor.object = NULL;
-	ee->prop.cursor.layer = 0;
-	ee->prop.cursor.hot.x = 0;
-	ee->prop.cursor.hot.y = 0;
-	return;
+        ee->prop.cursor.object = NULL;
+        ee->prop.cursor.layer = 0;
+        ee->prop.cursor.hot.x = 0;
+        ee->prop.cursor.hot.y = 0;
+        return;
      }
 
    ee->prop.cursor.object = obj;
@@ -443,8 +443,8 @@ _ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int h
    evas_pointer_output_xy_get(ee->evas, &x, &y);
    evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
    evas_object_move(ee->prop.cursor.object,
-		    x - ee->prop.cursor.hot.x,
-		    y - ee->prop.cursor.hot.y);
+                    x - ee->prop.cursor.hot.x,
+                    y - ee->prop.cursor.hot.y);
    evas_object_pass_events_set(ee->prop.cursor.object, 1);
    if (evas_pointer_inside_get(ee->evas))
      evas_object_show(ee->prop.cursor.object);
@@ -463,33 +463,33 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
        ((!ee->prop.fullscreen) && (!on))) return;
    if (on)
      {
-	int w, h;
+        int w, h;
 
-	ee->engine.fb.real_w = ee->w;
-	ee->engine.fb.real_h = ee->h;
-	w = ee->w;
-	h = ee->h;
-	ecore_fb_size_get(&w, &h);
-	if ((w == 0) && (h == 0))
-	  {
-	     w = ee->w;
-	     h = ee->h;
-	  }
-	if ((w != ee->w) || (h != ee->h)) resized = 1;
-	ee->w = w;
-	ee->h = h;
-	evas_output_size_set(ee->evas, ee->w, ee->h);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        ee->engine.fb.real_w = ee->w;
+        ee->engine.fb.real_h = ee->h;
+        w = ee->w;
+        h = ee->h;
+        ecore_fb_size_get(&w, &h);
+        if ((w == 0) && (h == 0))
+          {
+             w = ee->w;
+             h = ee->h;
+          }
+        if ((w != ee->w) || (h != ee->h)) resized = 1;
+        ee->w = w;
+        ee->h = h;
+        evas_output_size_set(ee->evas, ee->w, ee->h);
+        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
    else
      {
-	if ((ee->engine.fb.real_w != ee->w) || (ee->engine.fb.real_h != ee->h)) resized = 1;
-	ee->w = ee->engine.fb.real_w;
-	ee->h = ee->engine.fb.real_h;
-	evas_output_size_set(ee->evas, ee->w, ee->h);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        if ((ee->engine.fb.real_w != ee->w) || (ee->engine.fb.real_h != ee->h)) resized = 1;
+        ee->w = ee->engine.fb.real_w;
+        ee->h = ee->engine.fb.real_h;
+        evas_output_size_set(ee->evas, ee->w, ee->h);
+        evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
      }
    ee->prop.fullscreen = on;
    EINA_LIST_FOREACH(ecore_evas_input_devices, l, dev)
@@ -497,7 +497,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
    /* rescale the input device area */
    if (resized)
      {
-	if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
@@ -507,14 +507,14 @@ _ecore_evas_fb_shutdown(void)
    _ecore_evas_init_count--;
    if (_ecore_evas_init_count == 0)
      {
-	int i;
+        int i;
 
-	for (i = 0; i < 6; i++)
+        for (i = 0; i < 6; i++)
           {
              if (ecore_evas_event_handlers[i])
                ecore_event_handler_del(ecore_evas_event_handlers[i]);
           }
-	ecore_fb_ts_shutdown();
+        ecore_fb_ts_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
@@ -645,10 +645,10 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-	einfo->info.virtual_terminal = 0;
-	einfo->info.device_number = strtol(disp_name, NULL, 10);
-	einfo->info.refresh = 0;
-	einfo->info.rotation = ee->rotation;
+        einfo->info.virtual_terminal = 0;
+        einfo->info.device_number = strtol(disp_name, NULL, 10);
+        einfo->info.refresh = 0;
+        einfo->info.rotation = ee->rotation;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);

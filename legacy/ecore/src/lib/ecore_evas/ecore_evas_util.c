@@ -308,14 +308,14 @@ ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
    old_ee = _evas_object_associate_get(obj);
    if (ee != old_ee) {
       ERR("ERROR: trying to dissociate object that is not using "
-	  "this Ecore_Evas: %p != %p", ee, old_ee);
+          "this Ecore_Evas: %p != %p", ee, old_ee);
       return EINA_FALSE;
    }
 
    old_obj = _ecore_evas_associate_get(ee);
    if (old_obj != obj) {
       ERR("ERROR: trying to dissociate object that is not being "
-	  "used by this Ecore_Evas: %p != %p", old_obj, obj);
+          "used by this Ecore_Evas: %p != %p", old_obj, obj);
       return EINA_FALSE;
    }
 
@@ -430,13 +430,13 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
    else
    {
       if (ee->func.fn_delete_request == _ecore_evas_delete_request)
-	ecore_evas_callback_delete_request_set(ee, NULL);
+        ecore_evas_callback_delete_request_set(ee, NULL);
       if (ee->func.fn_destroy == _ecore_evas_destroy)
-	ecore_evas_callback_destroy_set(ee, NULL);
+        ecore_evas_callback_destroy_set(ee, NULL);
       if (ee->func.fn_resize == _ecore_evas_resize)
-	ecore_evas_callback_resize_set(ee, NULL);
+        ecore_evas_callback_resize_set(ee, NULL);
       if (ee->func.fn_pre_free == _ecore_evas_pre_free)
-	ecore_evas_callback_pre_free_set(ee, NULL);
+        ecore_evas_callback_pre_free_set(ee, NULL);
 
       _ecore_evas_associate_del(ee);
    }
