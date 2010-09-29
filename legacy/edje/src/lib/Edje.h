@@ -269,6 +269,39 @@ typedef enum _Edje_External_Param_Type
   EDJE_EXTERNAL_PARAM_TYPE_MAX
 } Edje_External_Param_Type;
 
+/**
+ * @typedef Edje_External_Param_Flags flags that determines the
+ * behavior of a parameter.
+ *
+ * @var EDJE_EXTERNAL_PARAM_FLAGS_NONE property is incapable of
+ *      operations, this is used to catch bogus flags.
+ * @var EDJE_EXTERNAL_PARAM_FLAGS_GET property can be read/get
+ * @var EDJE_EXTERNAL_PARAM_FLAGS_SET property can be written/set.
+ *      This only enables edje_object_part_external_param_set() and
+ *      Embryo scripts. To enable parameter being set from state
+ *      description whenever it changes state, use
+ *      #EDJE_EXTERNAL_PARAM_FLAGS_STATE.
+ * @var EDJE_EXTERNAL_PARAM_FLAGS_STATE property can be set from state
+ *      description.
+ * @var EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR this property is only
+ *      set once when object is constructed using its value from
+ *      "default" 0.0 state description. Setting this overrides
+ *      #EDJE_EXTERNAL_PARAM_FLAGS_STATE.
+ * @var EDJE_EXTERNAL_PARAM_FLAGS_REGULAR convenience flag that sets
+ *      property as GET, SET and STATE.
+ */
+typedef enum _Edje_External_Param_Flags
+{
+  EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0,
+  EDJE_EXTERNAL_PARAM_FLAGS_GET         = (1 << 0),
+  EDJE_EXTERNAL_PARAM_FLAGS_SET         = (1 << 1),
+  EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2),
+  EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR = (1 << 3),
+  EDJE_EXTERNAL_PARAM_FLAGS_REGULAR     = (EDJE_EXTERNAL_PARAM_FLAGS_GET |
+                                           EDJE_EXTERNAL_PARAM_FLAGS_SET |
+                                           EDJE_EXTERNAL_PARAM_FLAGS_STATE)
+} Edje_External_Param_Flags;
+
 EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
 
 struct _Edje_External_Param
@@ -289,6 +322,7 @@ struct _Edje_External_Param_Info
 {
    const char               *name;
    Edje_External_Param_Type  type;
+   Edje_External_Param_Flags flags;
    union {
       struct {
          int                 def, min, max, step;
@@ -314,16 +348,27 @@ struct _Edje_External_Param_Info
 };
 typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
+#define EDJE_EXTERNAL_PARAM_INFO_INT_FULL_FLAGS(name, def, min, max, step, flags) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_INT, flags, {.i = {def, min, max, step}}}
+#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL_FLAGS(name, def, min, max, step, flags) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, flags, {.d = {def, min, max, step}}}
+#define EDJE_EXTERNAL_PARAM_INFO_STRING_FULL_FLAGS(name, def, accept, deny, flags) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_STRING, flags, {.s = {def, accept, deny}}}
+#define EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL_FLAGS(name, def, false_str, true_str, flags) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_BOOL, flags, {.b = {def, false_str, true_str}}}
+#define EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL_FLAGS(name, def, choices, flags) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, flags, {.c = {def, choices}}}
+
 #define EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, def, min, max, step) \
-  {name, EDJE_EXTERNAL_PARAM_TYPE_INT, {.i = {def, min, max, step}}}
+  EDJE_EXTERNAL_PARAM_INFO_INT_FULL_FLAGS(name, def, min, max, step, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 #define EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL(name, def, min, max, step) \
-  {name, EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, {.d = {def, min, max, step}}}
+  EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL_FLAGS(name, def, min, max, step, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 #define EDJE_EXTERNAL_PARAM_INFO_STRING_FULL(name, def, accept, deny) \
-  {name, EDJE_EXTERNAL_PARAM_TYPE_STRING, {.s = {def, accept, deny}}}
+  EDJE_EXTERNAL_PARAM_INFO_STRING_FULL_FLAGS(name, def, accept, deny, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 #define EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL(name, def, false_str, true_str) \
-  {name, EDJE_EXTERNAL_PARAM_TYPE_BOOL, {.b = {def, false_str, true_str}}}
+  EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL_FLAGS(name, def, false_str, true_str, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 #define EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL(name, def, choices) \
-  {name, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, {.c = {def, choices}}}
+  EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL_FLAGS(name, def, choices, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT(name, def) \
    EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, def, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET)
@@ -334,6 +379,15 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 #define EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT(name, def) \
    EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL(name, def, "false", "true")
 
+#define EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT_FLAGS(name, def, flags)    \
+  EDJE_EXTERNAL_PARAM_INFO_INT_FULL_FLAGS(name, def, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, flags)
+#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT_FLAGS(name, def, flags) \
+  EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FULL_FLAGS(name, def, EDJE_EXTERNAL_DOUBLE_UNSET, EDJE_EXTERNAL_DOUBLE_UNSET, EDJE_EXTERNAL_DOUBLE_UNSET, flags)
+#define EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT_FLAGS(name, def, flags) \
+  EDJE_EXTERNAL_PARAM_INFO_STRING_FULL_FLAGS(name, def, NULL, NULL, flags)
+#define EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT_FLAGS(name, def, flags)   \
+  EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL_FLAGS(name, def, "false", "true", flags)
+
 #define EDJE_EXTERNAL_PARAM_INFO_INT(name) \
    EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT(name, 0)
 #define EDJE_EXTERNAL_PARAM_INFO_DOUBLE(name) \
@@ -343,7 +397,16 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 #define EDJE_EXTERNAL_PARAM_INFO_BOOL(name) \
    EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT(name, 0)
 
-#define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, {.s = {NULL, NULL, NULL}}}
+#define EDJE_EXTERNAL_PARAM_INFO_INT_FLAGS(name, flags) \
+   EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT_FLAGS(name, 0, flags)
+#define EDJE_EXTERNAL_PARAM_INFO_DOUBLE_FLAGS(name, flags) \
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT_FLAGS(name, 0.0, flags)
+#define EDJE_EXTERNAL_PARAM_INFO_STRING_FLAGS(name, flags) \
+   EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT_FLAGS(name, NULL, flags)
+#define EDJE_EXTERNAL_PARAM_INFO_BOOL_FLAGS(name, flags) \
+   EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT_FLAGS(name, 0, flags)
+
+#define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, 0, {.s = {NULL, NULL, NULL}}}
 
 /**
  * @struct _Edje_External_Type information about an external type to be used.
@@ -363,7 +426,7 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
  */
 struct _Edje_External_Type
 {
-#define EDJE_EXTERNAL_TYPE_ABI_VERSION (2)
+#define EDJE_EXTERNAL_TYPE_ABI_VERSION (3)
   unsigned int  abi_version; /**< always use:
                               *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
                               *  - edje_external_type_abi_version_get() to check.
