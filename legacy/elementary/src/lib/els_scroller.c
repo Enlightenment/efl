@@ -1046,6 +1046,16 @@ elm_smart_scroller_paging_set(Evas_Object *obj, double pagerel_h, double pagerel
 }
 
 void
+elm_smart_scroller_paging_get(Evas_Object *obj, double *pagerel_h, double *pagerel_v, Evas_Coord *pagesize_h, Evas_Coord *pagesize_v)
+{
+   API_ENTRY return;
+   if(pagerel_h) *pagerel_h = sd->pagerel_h;
+   if(pagerel_v) *pagerel_v = sd->pagerel_v;
+   if(pagesize_h) *pagesize_h = sd->pagesize_h;
+   if(pagesize_v) *pagesize_v = sd->pagesize_v;
+}
+
+void
 elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny;
