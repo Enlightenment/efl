@@ -318,6 +318,7 @@ typedef struct _Edje_External_Param Edje_External_Param;
 #define EDJE_EXTERNAL_INT_UNSET INT_MAX
 #define EDJE_EXTERNAL_DOUBLE_UNSET DBL_MAX
 
+typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 struct _Edje_External_Param_Info
 {
    const char               *name;
@@ -343,10 +344,11 @@ struct _Edje_External_Param_Info
       struct {
          const char         *def;
          const char        **choices; /* NULL terminated array */
+         char               *(*def_get)(void *data, const Edje_External_Param_Info *info); /* return malloc() memory with the default choice, should be used if def is NULL. First parameter is Edje_External_Type::data */
+         char              **(*query)(void *data, const Edje_External_Param_Info *info); /* NULL terminated array of strings, memory is dynamically allocated and should be freed with free() for array and each element. First parameter is Edje_External_Type::data */
       } c;
    } info;
 };
-typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT_FULL_FLAGS(name, def, min, max, step, flags) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_INT, flags, {.i = {def, min, max, step}}}
@@ -357,7 +359,9 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
 #define EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL_FLAGS(name, def, false_str, true_str, flags) \
   {name, EDJE_EXTERNAL_PARAM_TYPE_BOOL, flags, {.b = {def, false_str, true_str}}}
 #define EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL_FLAGS(name, def, choices, flags) \
-  {name, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, flags, {.c = {def, choices}}}
+  {name, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, flags, {.c = {def, choices, NULL, NULL}}}
+#define EDJE_EXTERNAL_PARAM_INFO_CHOICE_DYNAMIC_FULL_FLAGS(name, def_get, query, flags) \
+  {name, EDJE_EXTERNAL_PARAM_TYPE_CHOICE, flags, {.c = {NULL, NULL, def_get, query}}}
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, def, min, max, step) \
   EDJE_EXTERNAL_PARAM_INFO_INT_FULL_FLAGS(name, def, min, max, step, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
@@ -369,6 +373,8 @@ typedef struct _Edje_External_Param_Info Edje_External_Param_Info;
   EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL_FLAGS(name, def, false_str, true_str, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 #define EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL(name, def, choices) \
   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL_FLAGS(name, def, choices, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
+#define EDJE_EXTERNAL_PARAM_INFO_CHOICE_DYNAMIC_FULL(name, def_get, query) \
+  EDJE_EXTERNAL_PARAM_INFO_CHOICE_DYNAMIC_FULL_FLAGS(name, def_get, query, EDJE_EXTERNAL_PARAM_FLAGS_REGULAR)
 
 #define EDJE_EXTERNAL_PARAM_INFO_INT_DEFAULT(name, def) \
    EDJE_EXTERNAL_PARAM_INFO_INT_FULL(name, def, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET, EDJE_EXTERNAL_INT_UNSET)
