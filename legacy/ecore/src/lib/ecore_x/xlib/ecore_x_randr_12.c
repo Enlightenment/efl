@@ -1513,9 +1513,8 @@ ecore_x_randr_output_name_get(Ecore_X_Window root,
 	/*
 	 * Actually the bewow command is correct, but due to a bug in libXrandr
 	 * it doesn't work. Therefor we stick with strlen().
-	 * Replace the line below with the following once
-	 * libXrandr >= git revision '25d793ab4ec111658e541c94eba4893a81d6a3b7'.
-	 * is shipped and standard.
+	 * Replace the line below with the following once this bug is
+	 * fixed within libXrandr.
 	 *
 	 *    *len = output_info->nameLen;
 	 *
