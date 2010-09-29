@@ -19,7 +19,7 @@ static int done = 0;
 static void
 tls_log_func (int level, const char *str)
 {
-  fprintf (stderr, "|<%d>| %s", level, str);
+  fprintf(stderr, "|<%d>| %s", level, str);
 }
 
 static const char*
@@ -68,12 +68,12 @@ tcp_connect (void)
   struct sockaddr_in sa;
 
   /* sets some fd options such as nonblock */
+  sd = socket (AF_INET, SOCK_STREAM, 0);
   fcntl(sd, F_SETFL, O_NONBLOCK);
   fcntl(sd, F_SETFD, FD_CLOEXEC);
   setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate));
 
   setsockopt(sd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
-  sd = socket (AF_INET, SOCK_STREAM, 0);
 
   memset (&sa, '\0', sizeof (sa));
   sa.sin_family = AF_INET;
@@ -83,9 +83,9 @@ tcp_connect (void)
   /* connects to server
    */
   err = connect (sd, (struct sockaddr *) &sa, sizeof (sa));
-  if (err < 0)
+  if ((err < 0) && (errno != EINPROGRESS))
     {
-      fprintf (stderr, "Connect error\n");
+      print("Connect error\n");
       exit (1);
     }
 
@@ -109,6 +109,7 @@ _process_data(gnutls_session_t client, Ecore_Fd_Handler *fd_handler)
    if (!done)
      {
         lastret = ret;
+        print("calling gnutls_handshake()");
         ret = gnutls_handshake (client);
         /* avoid printing messages infinity times */
         if (lastret != ret)
@@ -161,6 +162,7 @@ main (void)
   gnutls_priority_set_direct(client, "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0", NULL);
   gnutls_credentials_set (client, GNUTLS_CRD_ANON, c_anoncred);
   gnutls_credentials_set (client, GNUTLS_CRD_CERTIFICATE, c_certcred);
+  gnutls_server_name_set(client, GNUTLS_NAME_DNS, "www.verisign.com", strlen("www.verisign.com"));
 
 
   /* connect to the peer
