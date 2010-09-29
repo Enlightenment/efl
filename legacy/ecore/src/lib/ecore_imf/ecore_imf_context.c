@@ -172,9 +172,9 @@ ecore_imf_context_add(const char *id)
    ctx = ecore_imf_module_context_create(id);
    if (!ctx || !ctx->klass) return NULL;
    if (ctx->klass->add) ctx->klass->add(ctx);
-   /* default use_preedit is 1, so let's make sure it's
+   /* default use_preedit is EINA_TRUE, so let's make sure it's
     * set on the immodule */
-   ecore_imf_context_use_preedit_set(ctx, 1);
+   ecore_imf_context_use_preedit_set(ctx, EINA_TRUE);
    /* default input_mode is ECORE_IMF_INPUT_MODE_FULL, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_input_mode_set(ctx, ECORE_IMF_INPUT_MODE_FULL);
@@ -414,8 +414,8 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
 
 /**
  * Set whether the IM context should use the preedit string
- * to display feedback. If @use_preedit is 0 (default
- * is 1), then the IM context may use some other method to display
+ * to display feedback. If @use_preedit is EINA_FALSE (default
+ * is EINA_TRUE), then the IM context may use some other method to display
  * feedback, such as displaying it in a child of the root window.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -423,7 +423,7 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI void
-ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, int use_preedit)
+ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {

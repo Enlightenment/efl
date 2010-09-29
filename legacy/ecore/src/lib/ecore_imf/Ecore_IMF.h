@@ -273,7 +273,7 @@ struct _Ecore_IMF_Context_Class
    void (*focus_out)           (Ecore_IMF_Context *ctx);
    void (*reset)               (Ecore_IMF_Context *ctx);
    void (*cursor_position_set) (Ecore_IMF_Context *ctx, int cursor_pos);
-   void (*use_preedit_set)     (Ecore_IMF_Context *ctx, int use_preedit);
+   void (*use_preedit_set)     (Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
    void (*input_mode_set)      (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
    Eina_Bool (*filter_event)   (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
 };
@@ -310,7 +310,7 @@ EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context 
 EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos);
-EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, int use_preedit);
+EAPI void                          ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
 EAPI void                          ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina_Bool (*func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos), const void *data);
 EAPI void                          ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
 EAPI Ecore_IMF_Input_Mode          ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx);
