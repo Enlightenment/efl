@@ -1817,24 +1817,10 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (svr->delete_me)
       return ECORE_CALLBACK_RENEW;
 
-   if (svr->handshaking)
+   if (svr->handshaking && ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ | ECORE_FD_WRITE))
      {
         DBG("Continuing ssl handshake");
-        if (ecore_con_ssl_server_init(svr))
-          {
-             ERR("ssl handshaking failed!");
-             Ecore_Con_Event_Server_Del *e;
-
-             e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-             if (e)
-               {
-                  svr->event_count++;
-                  e->server = svr;
-                  ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-                                  _ecore_con_event_server_del_free, NULL);
-               }
-          }
-        else if (!svr->ssl_state)
+        if (!svr->ssl_state)
           {
              /* we got our server! */
              Ecore_Con_Event_Server_Add *e;
@@ -1850,10 +1836,23 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
                                   _ecore_con_event_server_add_free, NULL);
                }
           }
-        return ECORE_CALLBACK_RENEW;
+        else if (ecore_con_ssl_server_init(svr))
+          {
+             ERR("ssl handshaking failed!");
+             Ecore_Con_Event_Server_Del *e;
+
+             e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+             if (e)
+               {
+                  svr->event_count++;
+                  e->server = svr;
+                  ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+                                  _ecore_con_event_server_del_free, NULL);
+               }
+          }
      }
 
-   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      _ecore_con_cl_read(svr);
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      {
@@ -2163,9 +2162,23 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (cl->delete_me)
       return ECORE_CALLBACK_RENEW;
 
-   if (cl->handshaking)
+   if (cl->handshaking && ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ | ECORE_FD_WRITE))
      {
-        if (ecore_con_ssl_client_init(cl))
+        if (!cl->ssl_state)
+          {
+             Ecore_Con_Event_Client_Add *add;
+
+             add = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
+             if(add)
+               {
+/*cl->event_count++;*/
+                  add->client = cl;
+                  _ecore_con_cl_timer_update(cl);
+                  ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
+                                  _ecore_con_event_client_add_free, NULL);
+               }
+          }
+        else if (ecore_con_ssl_client_init(cl))
           {
              ERR("ssl handshaking failed!");
              /* we lost our client! */
@@ -2183,23 +2196,9 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
                }
 
           }
-        else if (!cl->ssl_state)
-          {
-             Ecore_Con_Event_Client_Add *add;
-
-             add = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
-             if(add)
-               {
-/*cl->event_count++;*/
-                  add->client = cl;
-                  _ecore_con_cl_timer_update(cl);
-                  ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
-                                  _ecore_con_event_client_add_free, NULL);
-               }
-          }        return ECORE_CALLBACK_RENEW;
      }
 
-   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      _ecore_con_svr_cl_read(cl);
 
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
