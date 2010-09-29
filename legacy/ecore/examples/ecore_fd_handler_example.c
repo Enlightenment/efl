@@ -10,7 +10,9 @@
 
 /* Ecore_Fd_Handler example
  * 2010 Mike Blumenkrantz
+ * compile with gcc $(pkgconfig --cflags --libs gnutls ecore)
  */
+
 
 #define print(...) fprintf(stderr, "line %i: ", __LINE__); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n")
 
@@ -103,12 +105,17 @@ static Eina_Bool
 _process_data(gnutls_session_t client, Ecore_Fd_Handler *fd_handler)
 {
    static int ret, lastret;
+   static unsigned int count = 0;
    
    if (!done)
      {
         lastret = ret;
-        print("calling gnutls_handshake()");
         ret = gnutls_handshake (client);
+        count++;
+        if (gnutls_record_get_direction(client))
+          ecore_main_fd_handler_active_set(fd_handler, ECORE_FD_WRITE);
+        else
+          ecore_main_fd_handler_active_set(fd_handler, ECORE_FD_READ);
         /* avoid printing messages infinity times */
         if (lastret != ret)
           {
@@ -129,7 +136,7 @@ _process_data(gnutls_session_t client, Ecore_Fd_Handler *fd_handler)
   if (ret == GNUTLS_E_SUCCESS)
     {
        done = 1;
-       print("Handshake successful!");
+       print("Handshake successful in %u handshake calls!", count);
        ecore_main_loop_quit();
     }
 
