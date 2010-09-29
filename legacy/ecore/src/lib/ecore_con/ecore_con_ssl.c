@@ -494,8 +494,8 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
       case ECORE_CON_SSL_STATE_HANDSHAKING:
-        DBG("calling gnutls_handshake()");
         ret = gnutls_handshake(svr->session);
+        DBG("calling gnutls_handshake(): returned with '%s'", gnutls_strerror_name(ret));
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
         if (!ret)
           {
@@ -505,7 +505,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
       default:
         break;
      }
-   if (svr->ssl_state != ECORE_CON_SSL_STATE_DONE)
+   if (svr->ssl_state)
      return ECORE_CON_SSL_ERROR_NONE;
 
    if (!svr->verify)
