@@ -41,16 +41,16 @@ extern "C" {
    EAPI extern int ECORE_EVENT_MOUSE_IN;
    EAPI extern int ECORE_EVENT_MOUSE_OUT;
 
-#define ECORE_EVENT_MODIFIER_SHIFT	0x0001
-#define ECORE_EVENT_MODIFIER_CTRL	0x0002
-#define ECORE_EVENT_MODIFIER_ALT	0x0004
-#define ECORE_EVENT_MODIFIER_WIN	0x0008
-#define ECORE_EVENT_MODIFIER_SCROLL	0x0010
-#define ECORE_EVENT_MODIFIER_NUM	0x0020
-#define ECORE_EVENT_MODIFIER_CAPS	0x0040
-#define ECORE_EVENT_LOCK_SCROLL		0x0080
-#define ECORE_EVENT_LOCK_NUM		0x0100
-#define ECORE_EVENT_LOCK_CAPS		0x0200
+#define ECORE_EVENT_MODIFIER_SHIFT      0x0001
+#define ECORE_EVENT_MODIFIER_CTRL       0x0002
+#define ECORE_EVENT_MODIFIER_ALT        0x0004
+#define ECORE_EVENT_MODIFIER_WIN        0x0008
+#define ECORE_EVENT_MODIFIER_SCROLL     0x0010
+#define ECORE_EVENT_MODIFIER_NUM        0x0020
+#define ECORE_EVENT_MODIFIER_CAPS       0x0040
+#define ECORE_EVENT_LOCK_SCROLL         0x0080
+#define ECORE_EVENT_LOCK_NUM            0x0100
+#define ECORE_EVENT_LOCK_CAPS           0x0200
 
    typedef uintptr_t                        Ecore_Window;
    typedef struct _Ecore_Event_Key          Ecore_Event_Key;
@@ -113,8 +113,8 @@ extern "C" {
         unsigned int     triple_click;
         int              same_screen;
         
-        int		 x;
-        int		 y;
+        int              x;
+        int              y;
         struct {
            int           x;
            int           y;

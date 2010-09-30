@@ -18,8 +18,8 @@ static int _ecore_imf_modules_exists(const char *ctx_id);
 
 typedef struct _Ecore_IMF_Selector
 {
-  const char	*toselect;
-  void		*selected;
+  const char *toselect;
+  void       *selected;
 } Ecore_IMF_Selector;
 
 static Eina_Hash *modules = NULL;
@@ -34,8 +34,8 @@ ecore_imf_module_init(void)
    homedir = eina_module_environment_path_get("HOME", "/.ecore/immodules");
    if (homedir)
      {
-	module_list = eina_module_list_get(module_list, homedir, 0, NULL, NULL);
-	free(homedir);
+        module_list = eina_module_list_get(module_list, homedir, 0, NULL, NULL);
+        free(homedir);
      }
    eina_module_list_load(module_list);
 }
@@ -45,13 +45,13 @@ ecore_imf_module_shutdown(void)
 {
    if (modules)
      {
-	eina_hash_free(modules);
-	modules = NULL;
+        eina_hash_free(modules);
+        modules = NULL;
      }
    if (module_list)
      {
-	eina_module_list_free(module_list);
-	module_list = NULL;
+        eina_module_list_free(module_list);
+        module_list = NULL;
      }
 }
 
@@ -97,14 +97,14 @@ ecore_imf_module_context_create(const char *ctx_id)
    module = eina_hash_find(modules, ctx_id);
    if (module)
      {
-	ctx = module->create();
-	if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
-	  {
-	     ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			      "ecore_imf_module_context_create");
-	     return NULL;
-	  }
-	ctx->module = module;
+        ctx = module->create();
+        if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+          {
+             ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                              "ecore_imf_module_context_create");
+             return NULL;
+          }
+        ctx->module = module;
      }
    return ctx;
 }
@@ -172,8 +172,8 @@ ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type)
 
 EAPI void
 ecore_imf_module_register(const Ecore_IMF_Context_Info *info,
-			  Ecore_IMF_Context *(*imf_module_create)(void),
-			  Ecore_IMF_Context *(*imf_module_exit)(void))
+                          Ecore_IMF_Context *(*imf_module_create)(void),
+                          Ecore_IMF_Context *(*imf_module_exit)(void))
 {
    Ecore_IMF_Module *module;
 

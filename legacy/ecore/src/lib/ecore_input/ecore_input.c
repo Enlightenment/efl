@@ -110,9 +110,9 @@ ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, i
    for (i = 0; i < sizeof (matchs) / sizeof (Ecore_Event_Modifier_Match); i++)
      if (strcmp(matchs[i].key, key) == 0)
        {
-	  if (modifiers && matchs[i].modifier < modifiers->size)
-	    modifiers->array[matchs[i].modifier] += inc;
-	  return matchs[i].modifier;
+          if (modifiers && matchs[i].modifier < modifiers->size)
+            modifiers->array[matchs[i].modifier] += inc;
+          return matchs[i].modifier;
        }
 
    return ECORE_NONE;

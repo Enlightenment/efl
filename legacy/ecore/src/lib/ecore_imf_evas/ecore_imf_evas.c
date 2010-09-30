@@ -15,7 +15,7 @@ static const char *_ecore_imf_evas_event_empty = "";
 /* Converts the Evas modifiers to Ecore_IMF keyboard modifiers */
 static void
 _ecore_imf_evas_event_modifiers_wrap(Evas_Modifier *evas_modifiers,
-				     Ecore_IMF_Keyboard_Modifiers *imf_keyboard_modifiers)
+                                     Ecore_IMF_Keyboard_Modifiers *imf_keyboard_modifiers)
 {
    if (!evas_modifiers || !imf_keyboard_modifiers)
      return;
@@ -34,7 +34,7 @@ _ecore_imf_evas_event_modifiers_wrap(Evas_Modifier *evas_modifiers,
 /* Converts the Evas locks to Ecore_IMF keyboard locks */
 static void
 _ecore_imf_evas_event_locks_wrap(Evas_Lock *evas_locks,
-				 Ecore_IMF_Keyboard_Locks *imf_keyboard_locks)
+                                 Ecore_IMF_Keyboard_Locks *imf_keyboard_locks)
 {
    if (!evas_locks || !imf_keyboard_locks)
      return;
@@ -51,7 +51,7 @@ _ecore_imf_evas_event_locks_wrap(Evas_Lock *evas_locks,
 /* Converts the Evas mouse flags to Ecore_IMF mouse flags */
 static void
 _ecore_imf_evas_event_mouse_flags_wrap(Evas_Button_Flags evas_flags,
-				       Ecore_IMF_Mouse_Flags *imf_flags)
+                                       Ecore_IMF_Mouse_Flags *imf_flags)
 {
    if (!imf_flags)
      return;
@@ -72,7 +72,7 @@ _ecore_imf_evas_event_mouse_flags_wrap(Evas_Button_Flags evas_flags,
  */
 EAPI void
 ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event,
-				   Ecore_IMF_Event_Mouse_In *imf_event)
+                                   Ecore_IMF_Event_Mouse_In *imf_event)
 {
    if (!evas_event || !imf_event)
      return;
@@ -96,7 +96,7 @@ ecore_imf_evas_event_mouse_in_wrap(Evas_Event_Mouse_In *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event,
-				    Ecore_IMF_Event_Mouse_Out *imf_event)
+                                    Ecore_IMF_Event_Mouse_Out *imf_event)
 {
    if (!evas_event || !imf_event)
      return;
@@ -120,7 +120,7 @@ ecore_imf_evas_event_mouse_out_wrap(Evas_Event_Mouse_Out *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event,
-				     Ecore_IMF_Event_Mouse_Move *imf_event)
+                                     Ecore_IMF_Event_Mouse_Move *imf_event)
 {
    if (!evas_event || !imf_event)
      return;
@@ -148,7 +148,7 @@ ecore_imf_evas_event_mouse_move_wrap(Evas_Event_Mouse_Move *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event,
-				     Ecore_IMF_Event_Mouse_Down *imf_event)
+                                     Ecore_IMF_Event_Mouse_Down *imf_event)
 {
    if (!evas_event || !imf_event)
       return;
@@ -173,7 +173,7 @@ ecore_imf_evas_event_mouse_down_wrap(Evas_Event_Mouse_Down *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event,
-				   Ecore_IMF_Event_Mouse_Up *imf_event)
+                                   Ecore_IMF_Event_Mouse_Up *imf_event)
 {
    if (!evas_event || !imf_event)
      return;
@@ -198,7 +198,7 @@ ecore_imf_evas_event_mouse_up_wrap(Evas_Event_Mouse_Up *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event,
-				      Ecore_IMF_Event_Mouse_Wheel *imf_event)
+                                      Ecore_IMF_Event_Mouse_Wheel *imf_event)
 {
    if (!evas_event || !imf_event)
      return;
@@ -224,7 +224,7 @@ ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
-				   Ecore_IMF_Event_Key_Down *imf_event)
+                                   Ecore_IMF_Event_Key_Down *imf_event)
 {
    if (!evas_event || !imf_event)
      return;
@@ -247,7 +247,7 @@ ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
  */
 EAPI void
 ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
-				 Ecore_IMF_Event_Key_Up *imf_event)
+                                 Ecore_IMF_Event_Key_Up *imf_event)
 {
    imf_event->keyname = evas_event->keyname ? evas_event->keyname : _ecore_imf_evas_event_empty;
    imf_event->key = evas_event->key ? evas_event->key : _ecore_imf_evas_event_empty;

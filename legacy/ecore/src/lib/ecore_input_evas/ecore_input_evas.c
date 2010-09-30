@@ -42,13 +42,13 @@ ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
 
    if (modifiers & ECORE_EVENT_MODIFIER_WIN)
      {
-	evas_key_modifier_on(e, "Super");
-	evas_key_modifier_on(e, "Hyper");
+        evas_key_modifier_on(e, "Super");
+        evas_key_modifier_on(e, "Hyper");
      }
    else
      {
-	evas_key_modifier_off(e, "Super");
-	evas_key_modifier_off(e, "Hyper");
+        evas_key_modifier_off(e, "Super");
+        evas_key_modifier_off(e, "Hyper");
      }
 
    if (modifiers & ECORE_EVENT_LOCK_SCROLL)
@@ -214,13 +214,13 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
    switch (io)
      {
       case ECORE_IN:
-	 evas_event_feed_mouse_in(lookup->evas, e->timestamp, NULL);
-	 break;
+         evas_event_feed_mouse_in(lookup->evas, e->timestamp, NULL);
+         break;
       case ECORE_OUT:
-	 evas_event_feed_mouse_out(lookup->evas, e->timestamp, NULL);
-	 break;
+         evas_event_feed_mouse_out(lookup->evas, e->timestamp, NULL);
+         break;
       default:
-	 break;
+         break;
      }
 
    lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
@@ -280,38 +280,38 @@ ecore_event_evas_init(void)
 
    if (!ecore_init())
      {
-	return --_ecore_event_evas_init_count;
+        return --_ecore_event_evas_init_count;
      }
 
    if (!ecore_event_init())
      {
-	goto shutdown_ecore;
+        goto shutdown_ecore;
      }
 
    ecore_event_evas_handlers[0] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-							  ecore_event_evas_key_down,
-							  NULL);
+                                                          ecore_event_evas_key_down,
+                                                          NULL);
    ecore_event_evas_handlers[1] = ecore_event_handler_add(ECORE_EVENT_KEY_UP,
-							  ecore_event_evas_key_up,
-							  NULL);
+                                                          ecore_event_evas_key_up,
+                                                          NULL);
    ecore_event_evas_handlers[2] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-							  ecore_event_evas_mouse_button_down,
-							  NULL);
+                                                          ecore_event_evas_mouse_button_down,
+                                                          NULL);
    ecore_event_evas_handlers[3] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-							  ecore_event_evas_mouse_button_up,
-							  NULL);
+                                                          ecore_event_evas_mouse_button_up,
+                                                          NULL);
    ecore_event_evas_handlers[4] = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
-							  ecore_event_evas_mouse_move,
-							  NULL);
+                                                          ecore_event_evas_mouse_move,
+                                                          NULL);
    ecore_event_evas_handlers[5] = ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL,
-							  ecore_event_evas_mouse_wheel,
-							  NULL);
+                                                          ecore_event_evas_mouse_wheel,
+                                                          NULL);
    ecore_event_evas_handlers[6] = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
-							  ecore_event_evas_mouse_in,
-							  NULL);
+                                                          ecore_event_evas_mouse_in,
+                                                          NULL);
    ecore_event_evas_handlers[7] = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
-							  ecore_event_evas_mouse_out,
-							  NULL);
+                                                          ecore_event_evas_mouse_out,
+                                                          NULL);
    
    _window_hash = eina_hash_pointer_new(free);
    
@@ -335,8 +335,8 @@ ecore_event_evas_shutdown(void)
    _window_hash = NULL;
    for (i = 0; i < sizeof(ecore_event_evas_handlers) / sizeof(Ecore_Event_Handler *); i++)
      {
-	ecore_event_handler_del(ecore_event_evas_handlers[i]);
-	ecore_event_evas_handlers[i] = NULL;
+        ecore_event_handler_del(ecore_event_evas_handlers[i]);
+        ecore_event_evas_handlers[i] = NULL;
      }
    
    ecore_event_shutdown();

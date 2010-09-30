@@ -91,8 +91,8 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
    id = getenv("ECORE_IMF_MODULE");
    if (id)
      {
-	if (strcmp(id, "none") == 0) return NULL;
-	if (ecore_imf_module_get(id)) return id;
+        if (strcmp(id, "none") == 0) return NULL;
+        if (ecore_imf_module_get(id)) return id;
      }
 
    modules = ecore_imf_module_available_get();
@@ -112,24 +112,24 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
 
    EINA_LIST_FREE(modules, module)
      {
-	if (canvas_type &&
-	    strcmp(module->info->canvas_type, canvas_type) == 0)
-	  continue;
+        if (canvas_type &&
+            strcmp(module->info->canvas_type, canvas_type) == 0)
+          continue;
 
-	const char *p = module->info->default_locales;
-	while (p)
-	  {
-	     const char *q = strchr(p, ':');
-	     int goodness = _ecore_imf_context_match_locale(locale, p, q ? (size_t)(q - p) : strlen (p));
+        const char *p = module->info->default_locales;
+        while (p)
+          {
+             const char *q = strchr(p, ':');
+             int goodness = _ecore_imf_context_match_locale(locale, p, q ? (size_t)(q - p) : strlen (p));
 
-	      if (goodness > best_goodness)
-		{
-		   id = module->info->id;
-		   best_goodness = goodness;
-		}
+              if (goodness > best_goodness)
+                {
+                   id = module->info->id;
+                   best_goodness = goodness;
+                }
 
-	      p = q ? q + 1 : NULL;
-	  }
+              p = q ? q + 1 : NULL;
+          }
      }
 
    free(locale);
@@ -194,9 +194,9 @@ ecore_imf_context_info_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_info_get");
-	return NULL;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_info_get");
+        return NULL;
      }
    return ctx->module->info;
 }
@@ -212,9 +212,9 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_del");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_del");
+        return;
      }
    if (ctx->klass->del) ctx->klass->del(ctx);
    ECORE_MAGIC_SET(ctx, ECORE_MAGIC_NONE);
@@ -237,9 +237,9 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_client_window_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_client_window_set");
+        return;
      }
    if (ctx->klass->client_window_set) ctx->klass->client_window_set(ctx, window);
 }
@@ -262,9 +262,9 @@ ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_client_canvas_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_client_canvas_set");
+        return;
      }
    if (ctx->klass->client_canvas_set) ctx->klass->client_canvas_set(ctx, canvas);
 }
@@ -280,9 +280,9 @@ ecore_imf_context_show(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_show");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_show");
+        return;
      }
    if (ctx->klass->show) ctx->klass->show(ctx);
 }
@@ -298,9 +298,9 @@ ecore_imf_context_hide(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_hide");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_hide");
+        return;
      }
    if (ctx->klass->hide) ctx->klass->hide(ctx);
 }
@@ -321,16 +321,16 @@ ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cu
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_preedit_string_get");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_preedit_string_get");
+        return;
      }
    if (ctx->klass->preedit_string_get)
      ctx->klass->preedit_string_get(ctx, str, cursor_pos);
    else
      {
-	if (str) *str = strdup("");
-	if (cursor_pos) *cursor_pos = 0;
+        if (str) *str = strdup("");
+        if (cursor_pos) *cursor_pos = 0;
      }
 }
 
@@ -346,9 +346,9 @@ ecore_imf_context_focus_in(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_focus_in");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_focus_in");
+        return;
      }
    if (ctx->klass->focus_in) ctx->klass->focus_in(ctx);
 }
@@ -365,9 +365,9 @@ ecore_imf_context_focus_out(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_focus_out");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_focus_out");
+        return;
      }
    if (ctx->klass->focus_out) ctx->klass->focus_out(ctx);
 }
@@ -385,9 +385,9 @@ ecore_imf_context_reset(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_reset");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_reset");
+        return;
      }
    if (ctx->klass->reset) ctx->klass->reset(ctx);
 }
@@ -405,9 +405,9 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_cursor_position_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_cursor_position_set");
+        return;
      }
    if (ctx->klass->cursor_position_set) ctx->klass->cursor_position_set(ctx, cursor_pos);
 }
@@ -427,9 +427,9 @@ ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_use_preedit_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_use_preedit_set");
+        return;
      }
    if (ctx->klass->use_preedit_set) ctx->klass->use_preedit_set(ctx, use_preedit);
 }
@@ -450,9 +450,9 @@ ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_retrieve_surrounding_callback_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_retrieve_surrounding_callback_set");
+        return;
      }
 
    ctx->retrieve_surrounding_func = func;
@@ -475,9 +475,9 @@ ecore_imf_context_input_mode_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode in
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_input_mode_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_mode_set");
+        return;
      }
    if (ctx->klass->input_mode_set) ctx->klass->input_mode_set(ctx, input_mode);
    ctx->input_mode = input_mode;
@@ -497,9 +497,9 @@ ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_input_mode_set");
-	return 0;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_mode_set");
+        return 0;
      }
    return ctx->input_mode;
 }
@@ -524,9 +524,9 @@ ecore_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_filter_event");
-	return EINA_FALSE;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_filter_event");
+        return EINA_FALSE;
      }
    if (ctx->klass->filter_event) return ctx->klass->filter_event(ctx, type, event);
    return EINA_FALSE;
@@ -581,9 +581,9 @@ ecore_imf_context_data_set(Ecore_IMF_Context *ctx, void *data)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_data_set");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_data_set");
+        return;
      }
    ctx->data = data;
 }
@@ -601,9 +601,9 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
 {
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_data_get");
-	return NULL;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_data_get");
+        return NULL;
      }
    return ctx->data;
 }
@@ -636,19 +636,19 @@ ecore_imf_context_surrounding_get(Ecore_IMF_Context *ctx, char **text, int *curs
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_surrounding_get");
-	return EINA_FALSE;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_surrounding_get");
+        return EINA_FALSE;
      }
 
    if (ctx->retrieve_surrounding_func)
      {
-	result = ctx->retrieve_surrounding_func(ctx->retrieve_surrounding_data, ctx, text, cursor_pos);
-	if (!result)
-	  {
-	     if (text) *text = NULL;
-	     if (cursor_pos) *cursor_pos = 0;
-	  }
+        result = ctx->retrieve_surrounding_func(ctx->retrieve_surrounding_data, ctx, text, cursor_pos);
+        if (!result)
+          {
+             if (text) *text = NULL;
+             if (cursor_pos) *cursor_pos = 0;
+          }
      }
    return result;
 }
@@ -672,15 +672,15 @@ ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_preedit_start_event_add");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_preedit_start_event_add");
+        return;
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Preedit_Start));
    ev->ctx = ctx;
    ecore_event_add(ECORE_IMF_EVENT_PREEDIT_START,
-		   ev, _ecore_imf_event_free_preedit, NULL);
+                   ev, _ecore_imf_event_free_preedit, NULL);
 }
 
 /**
@@ -696,15 +696,15 @@ ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_preedit_end_event_add");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_preedit_end_event_add");
+        return;
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Preedit_End));
    ev->ctx = ctx;
    ecore_event_add(ECORE_IMF_EVENT_PREEDIT_END,
-		   ev, _ecore_imf_event_free_preedit, NULL);
+                   ev, _ecore_imf_event_free_preedit, NULL);
 }
 
 /**
@@ -720,15 +720,15 @@ ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx)
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_preedit_changed_event_add");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_preedit_changed_event_add");
+        return;
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Preedit_Changed));
    ev->ctx = ctx;
    ecore_event_add(ECORE_IMF_EVENT_PREEDIT_CHANGED,
-		   ev, _ecore_imf_event_free_preedit, NULL);
+                   ev, _ecore_imf_event_free_preedit, NULL);
 }
 
 static void
@@ -755,16 +755,16 @@ ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str)
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_commit_event_add");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_commit_event_add");
+        return;
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Commit));
    ev->ctx = ctx;
    ev->str = str ? strdup(str) : NULL;
    ecore_event_add(ECORE_IMF_EVENT_COMMIT,
-		   ev, _ecore_imf_event_free_commit, NULL);
+                   ev, _ecore_imf_event_free_commit, NULL);
 
 }
 
@@ -789,9 +789,9 @@ ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offse
 
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
-	ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
-			 "ecore_imf_context_delete_surrounding_event_add");
-	return;
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_delete_surrounding_event_add");
+        return;
      }
 
    ev = malloc(sizeof(Ecore_IMF_Event_Delete_Surrounding));
@@ -799,5 +799,5 @@ ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offse
    ev->offset = offset;
    ev->n_chars = n_chars;
    ecore_event_add(ECORE_IMF_EVENT_DELETE_SURROUNDING,
-		   ev, _ecore_imf_event_free_delete_surrounding, NULL);
+                   ev, _ecore_imf_event_free_delete_surrounding, NULL);
 }
