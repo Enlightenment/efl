@@ -187,17 +187,27 @@ check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
+check_nameless_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Common *ed, Eet_File *ef)
+{
+   if (!ed->state.name)
+      error_and_abort(ef, "Collection %i: description with state missing on part \"%s\"\n",
+                      pc->id, ep->name);
+}
+
+static void
 check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
+   unsigned int i;
    /* FIXME: check image set and sort them. */
    if (!ep->default_desc)
      error_and_abort(ef, "Collection %i: default description missing "
 		     "for part \"%s\"\n", pc->id, ep->name);
 
+   for (i = 0; i < ep->other.desc_count; ++i)
+     check_nameless_state(pc, ep, ep->other.desc[i], ef);
+
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
-	unsigned int i;
-
 	check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->default_desc, ef);
 
 	for (i = 0; i < ep->other.desc_count; ++i)
