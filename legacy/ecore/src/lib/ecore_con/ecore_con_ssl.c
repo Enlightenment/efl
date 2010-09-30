@@ -1029,6 +1029,13 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
              svr->handshaking = EINA_FALSE;
              svr->ssl_state = ECORE_CON_SSL_STATE_DONE;
           }
+        else
+          {
+             if (err == SSL_ERROR_WANT_READ)
+                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+             else if (err == SSL_ERROR_WANT_WRITE)
+                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+          }
       default:
         break;
      }
@@ -1260,6 +1267,13 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
           {
              cl->handshaking = EINA_FALSE;
              cl->ssl_state = ECORE_CON_SSL_STATE_DONE;
+          }
+        else
+          {
+             if (err == SSL_ERROR_WANT_READ)
+                ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
+             else if (err == SSL_ERROR_WANT_WRITE)
+                ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_WRITE);
           }
       default:
         break;
