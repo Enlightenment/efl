@@ -29,6 +29,8 @@ unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b) = NULL;
 unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d) = NULL;
 #endif
 
+static int dbgflushnum = -1;
+
 static void
 sym_missing(void)
 {
@@ -817,14 +819,13 @@ void
 evas_gl_common_context_newframe(Evas_GL_Context *gc)
 {
    int i;
-   static int dbgflushnum = -1;
 
    if (dbgflushnum < 0)
      {
         dbgflushnum = 0;
-        if (getenv("DBGEVAS")) dbgflushnum = 1;
+        if (getenv("EVAS_GL_DBG")) dbgflushnum = 1;
      }
-   if (dbgflushnum) printf("prev-flushnum: %i\n", gc->flushnum);
+   if (dbgflushnum) printf("----prev-flushnum: %i -----------------------------------\n", gc->flushnum);
    
    gc->flushnum = 0;
    gc->state.current.cur_prog = 0;
@@ -832,10 +833,6 @@ evas_gl_common_context_newframe(Evas_GL_Context *gc)
    gc->state.current.cur_texu = 0;
    gc->state.current.cur_texv = 0;
    gc->state.current.render_op = 0;
-   gc->state.current.cx = 0;
-   gc->state.current.cy = 0;
-   gc->state.current.cw = 0;
-   gc->state.current.ch = 0;
    gc->state.current.smooth = 0;
    gc->state.current.blend = 0;
    gc->state.current.clip = 0;
@@ -926,6 +923,7 @@ void
 evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h, int rot)
 {
    if ((gc->w == w) && (gc->h == h) && (gc->rot == rot)) return;
+   evas_gl_common_context_flush(gc);
    gc->change.size = 1;
    gc->rot = rot;
    gc->w = w;
@@ -940,6 +938,19 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
    if (surface == gc->pipe[0].shader.surface) return;
    
    evas_gl_common_context_flush(gc);
+   
+   gc->state.current.cur_prog = -1;
+   gc->state.current.cur_tex = -1;
+   gc->state.current.cur_texu = -1;
+   gc->state.current.cur_texv = -1;
+   gc->state.current.render_op = -1;
+   gc->state.current.smooth = -1;
+   gc->state.current.blend = -1;
+   gc->state.current.clip = -1;
+   gc->state.current.cx = -1;
+   gc->state.current.cy = -1;
+   gc->state.current.cw = -1;
+   gc->state.current.ch = -1;
 
    gc->pipe[0].shader.surface = surface;
    gc->change.size = 1;
@@ -1890,7 +1901,8 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    
    if ((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z))
       flat = 1;
-   
+
+   if (!clip) cx = cy = cw = ch = 0;
    if (!flat)
      {
         if (p[0].foc <= 0) flat = 1;
@@ -2259,12 +2271,23 @@ evas_gl_common_context_flush(Evas_GL_Context *gc)
 static void
 shader_array_flush(Evas_GL_Context *gc)
 {
-   int i;
+   int i, setclip;
+   int done = 0;
+   int gw, gh;
    
+   gw = gc->w;
+   gh = gc->h;
+   if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
+         (!gc->pipe[0].shader.surface)))
+     {
+        gw = gc->pipe[0].shader.surface->w;
+        gh = gc->pipe[0].shader.surface->h;
+     }
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
         if (gc->pipe[i].array.num <= 0) break;
-
+        
+        done++;
         gc->flushnum++;
         GLERR(__FUNCTION__, __FILE__, __LINE__, "<flush err>");
         if (gc->pipe[i].shader.cur_prog != gc->state.current.cur_prog)
@@ -2395,23 +2418,25 @@ shader_array_flush(Evas_GL_Context *gc)
                }
           }
 #if 1
+        setclip = 0;
         if (gc->pipe[i].shader.clip != gc->state.current.clip)
           {
              if (gc->pipe[i].shader.clip)
                {
                   glEnable(GL_SCISSOR_TEST);
                   glScissor(gc->pipe[i].shader.cx, 
-                            gc->h - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
+                            gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
                             gc->pipe[i].shader.cw,
                             gc->pipe[i].shader.ch);
+                  setclip = 1;
                }
              else
                {
                   glDisable(GL_SCISSOR_TEST);
-//                  glScissor(0, 0, 0, 0);
+                  glScissor(0, 0, 0, 0);
                }
           }
-        if (gc->pipe[i].shader.clip)
+        if ((gc->pipe[i].shader.clip) && (!setclip))
           {
              if ((gc->pipe[i].shader.cx != gc->state.current.cx) ||
                  (gc->pipe[i].shader.cx != gc->state.current.cx) ||
@@ -2419,7 +2444,7 @@ shader_array_flush(Evas_GL_Context *gc)
                  (gc->pipe[i].shader.cx != gc->state.current.cx))
                {
                   glScissor(gc->pipe[i].shader.cx, 
-                            gc->h - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
+                            gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
                             gc->pipe[i].shader.cw,
                             gc->pipe[i].shader.ch);
                }
@@ -2490,7 +2515,20 @@ shader_array_flush(Evas_GL_Context *gc)
                   glDisableVertexAttribArray(SHAD_TEXUV3);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
-             
+             if (dbgflushnum)
+               {
+                  const char *types[6] = 
+                    {"----", "RECT", "IMAG", "FONT", "YUV-", "MAP"};
+                  printf("  DRAW %4i -> %p[%4ix%4i] @ %4ix%4i -{ tex %4i type %s }-\n",
+                         gc->pipe[i].array.num / 6, 
+                         gc->pipe[0].shader.surface,
+                         gc->pipe[0].shader.surface->w,
+                         gc->pipe[0].shader.surface->h,
+                         gw, gh,
+                         gc->pipe[i].shader.cur_tex,
+                         types[gc->pipe[i].region.type]
+                        );
+               }
              glDrawArrays(GL_TRIANGLES, 0, gc->pipe[i].array.num);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
@@ -2537,5 +2575,9 @@ shader_array_flush(Evas_GL_Context *gc)
         gc->pipe[i].region.h = 0;
         gc->pipe[i].region.type = 0;
      }
-    gc->state.top_pipe = 0;
+   gc->state.top_pipe = 0;
+   if (dbgflushnum)
+     {
+        if (done > 0) printf("DONE (pipes): %i\n", done);
+     }
 }
