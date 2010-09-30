@@ -870,7 +870,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 
    if (!result)
      {
-	ERR("%s: Error. Unknow type %i of part %s in collection %s.", progname, type, part, collection);
+	ERR("%s: Error. Unknown type %i of part %s in collection %s.", progname, type, part, collection);
 	exit(-1);
      }
 
@@ -957,7 +957,7 @@ st_externals_external(void)
 	       0, sizeof (Edje_External_Directory));
 	if (!edje_file->external_dir->entries)
 	  {
-	     ERR("%s: Error. not enought memory", progname);
+	     ERR("%s: Error. not enough memory", progname);
 	     exit(-1);
 	  }
 
@@ -1045,7 +1045,7 @@ st_images_image(void)
 	  0, sizeof (Edje_Image_Directory_Entry));
    if (!edje_file->image_dir->entries)
      {
-	ERR("%s: Error. No enought memory.", progname);
+	ERR("%s: Error. No enough memory.", progname);
 	exit(-1);
      }
 
@@ -1134,7 +1134,7 @@ ob_images_set(void)
 	  0, sizeof (Edje_Image_Directory_Set));
    if (!edje_file->image_dir->sets)
      {
-	ERR("%s: Error. Not enought memory.", progname);
+	ERR("%s: Error. Not enough memory.", progname);
 	exit(-1);
      }
    edje_file->image_dir->sets[edje_file->image_dir->sets_count - 1].id = edje_file->image_dir->sets_count - 1;
@@ -2070,7 +2070,7 @@ ob_collections_group_parts_part(void)
    pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
    if (!pc->parts)
      {
-	ERR("%s: Error. Not enought memory.", progname);
+	ERR("%s: Error. Not enough memory.", progname);
 	exit(-1);
      }
    pc->parts[pc->parts_count - 1] = ep;
@@ -2900,7 +2900,7 @@ static void ob_collections_group_parts_part_box_items_item(void)
    ep->items = realloc(ep->items, sizeof (Edje_Pack_Element*) * ep->items_count);
    if (!ep->items)
      {
-	ERR("%s: Error. Not enought memory.", progname);
+	ERR("%s: Error. Not enough memory.", progname);
 	exit(-1);
      }
 
