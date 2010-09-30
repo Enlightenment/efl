@@ -1221,15 +1221,10 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, unsigned char *buf,
 
    if (svr->fd_handler)
      {
-        if (svr->ssl && svr->ssl_err ==
-            SSL_ERROR_WANT_READ)
-           ecore_main_fd_handler_active_set(svr->fd_handler,
-                                            ECORE_FD_READ);
-        else if (svr->ssl && svr->ssl_err ==
-                 SSL_ERROR_WANT_WRITE)
-           ecore_main_fd_handler_active_set(
-              svr->fd_handler,
-              ECORE_FD_WRITE);
+        if (svr->ssl && svr->ssl_err == SSL_ERROR_WANT_READ)
+           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+        else if (svr->ssl && svr->ssl_err == SSL_ERROR_WANT_WRITE)
+           ecore_main_fd_handler_active_set( svr->fd_handler, ECORE_FD_WRITE);
      }
 
    if ((svr->ssl_err == SSL_ERROR_ZERO_RETURN) ||
@@ -1307,15 +1302,10 @@ _ecore_con_ssl_client_read_openssl(Ecore_Con_Client *cl, unsigned char *buf,
 
    if (cl->fd_handler)
      {
-        if (cl->ssl && cl->ssl_err ==
-            SSL_ERROR_WANT_READ)
-           ecore_main_fd_handler_active_set(cl->fd_handler,
-                                            ECORE_FD_READ);
-        else if (cl->ssl && cl->ssl_err ==
-                 SSL_ERROR_WANT_WRITE)
-           ecore_main_fd_handler_active_set(
-              cl->fd_handler,
-              ECORE_FD_WRITE);
+        if (cl->ssl && cl->ssl_err == SSL_ERROR_WANT_READ)
+           ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
+        else if (cl->ssl && cl->ssl_err == SSL_ERROR_WANT_WRITE)
+           ecore_main_fd_handler_active_set( cl->fd_handler, ECORE_FD_WRITE);
      }
 
    if ((cl->ssl_err == SSL_ERROR_ZERO_RETURN) ||
@@ -1340,15 +1330,10 @@ _ecore_con_ssl_client_write_openssl(Ecore_Con_Client *cl, unsigned char *buf,
 
    if (cl->fd_handler)
      {
-        if (cl->ssl && cl->ssl_err ==
-            SSL_ERROR_WANT_READ)
-           ecore_main_fd_handler_active_set(cl->fd_handler,
-                                            ECORE_FD_READ);
-        else if (cl->ssl && cl->ssl_err ==
-                 SSL_ERROR_WANT_WRITE)
-           ecore_main_fd_handler_active_set(
-              cl->fd_handler,
-              ECORE_FD_WRITE);
+        if (cl->ssl && cl->ssl_err == SSL_ERROR_WANT_READ)
+           ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
+        else if (cl->ssl && cl->ssl_err == SSL_ERROR_WANT_WRITE)
+           ecore_main_fd_handler_active_set( cl->fd_handler, ECORE_FD_WRITE);
      }
 
    if ((cl->ssl_err == SSL_ERROR_ZERO_RETURN) ||
