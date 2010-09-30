@@ -508,7 +508,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
              else
                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
-             return ECORE_CALLBACK_RENEW;
+             return ECORE_CON_SSL_ERROR_NONE;
           }
       default:
         break;
@@ -802,7 +802,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
                ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_WRITE);
              else
                ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
-             return ECORE_CALLBACK_RENEW;
+             return ECORE_CON_SSL_ERROR_NONE;
           }
       default:
         break;
