@@ -22,7 +22,7 @@ static const char *_ecore_fb_li_kbd_syms[128 * 6] =
  * Moved to static inline in order to force compiler to otimized
  * the unsued part away or force a link error if long has an unexpected
  * size.
- *						- bigeasy
+ *                                                - bigeasy
  */
 extern int long_has_neither_32_nor_64_bits(void);
 static inline int
@@ -385,7 +385,7 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
 }
 
 #ifndef EV_CNT
-# define EV_CNT	(EV_MAX+1)
+# define EV_CNT (EV_MAX+1)
 #endif
 
 /*

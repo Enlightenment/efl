@@ -126,8 +126,8 @@ _ecore_fb_vt_setup(void)
      }
    /* register signal handlers when alloc/detach of vt */
    _ecore_fb_user_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER,
-						    _ecore_fb_signal_usr_handler,
-						    NULL);
+                                                    _ecore_fb_signal_usr_handler,
+                                                    NULL);
    /* What does this do? */
    _ecore_fb_filter_handler = ecore_event_filter_add(_ecore_fb_event_filter_start, _ecore_fb_event_filter_filter, _ecore_fb_event_filter_end, NULL);
    
@@ -269,11 +269,11 @@ _ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, v
    if (!filter_data) return EINA_TRUE;
    if (type == ECORE_FB_EVENT_MOUSE_MOVE)
      {
-	if ((filter_data->last_event_type) == ECORE_FB_EVENT_MOUSE_MOVE)
-	  {
-	     filter_data->last_event_type = type;
-	     return EINA_FALSE;
-	  }
+        if ((filter_data->last_event_type) == ECORE_FB_EVENT_MOUSE_MOVE)
+          {
+             filter_data->last_event_type = type;
+             return EINA_FALSE;
+          }
      }
    filter_data->last_event_type = type;
    return EINA_TRUE;
