@@ -271,8 +271,8 @@ elm_bubble_content_unset(Evas_Object *obj)
    if (!wd) return NULL;
    if (!wd->content) return NULL;
    content = wd->content;
-   elm_widget_sub_object_del(obj, wd->content);
-   edje_object_part_unswallow(wd->bbl, wd->content);
+   elm_widget_sub_object_del(obj, content);
+   edje_object_part_unswallow(wd->bbl, content);
    wd->content = NULL;
    return content;
 }
