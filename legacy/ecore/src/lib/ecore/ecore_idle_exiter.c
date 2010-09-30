@@ -57,9 +57,9 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 {
    if (!ECORE_MAGIC_CHECK(idle_exiter, ECORE_MAGIC_IDLE_EXITER))
      {
-	ECORE_MAGIC_FAIL(idle_exiter, ECORE_MAGIC_IDLE_EXITER,
-			 "ecore_idle_exiter_del");
-	return NULL;
+        ECORE_MAGIC_FAIL(idle_exiter, ECORE_MAGIC_IDLE_EXITER,
+                         "ecore_idle_exiter_del");
+        return NULL;
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(idle_exiter->delete_me, NULL);
    idle_exiter->delete_me = 1;
@@ -73,9 +73,9 @@ _ecore_idle_exiter_shutdown(void)
    Ecore_Idle_Exiter *ie;
    while ((ie = idle_exiters))
      {
-	idle_exiters = (Ecore_Idle_Exiter *) eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(idle_exiters));
-	ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
-	free(ie);
+        idle_exiters = (Ecore_Idle_Exiter *) eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(idle_exiters));
+        ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
+        free(ie);
      }
    idle_exiters_delete_me = 0;
    idle_exiter_current = NULL;
@@ -86,57 +86,57 @@ _ecore_idle_exiter_call(void)
 {
    if (!idle_exiter_current)
      {
-	/* regular main loop, start from head */
-	idle_exiter_current = idle_exiters;
+        /* regular main loop, start from head */
+        idle_exiter_current = idle_exiters;
      }
    else
      {
-	/* recursive main loop, continue from where we were */
-	idle_exiter_current =
-	  (Ecore_Idle_Exiter *)EINA_INLIST_GET(idle_exiter_current)->next;
+        /* recursive main loop, continue from where we were */
+        idle_exiter_current =
+          (Ecore_Idle_Exiter *)EINA_INLIST_GET(idle_exiter_current)->next;
      }
 
    while (idle_exiter_current)
      {
-	Ecore_Idle_Exiter *ie = (Ecore_Idle_Exiter *)idle_exiter_current;
-	if (!ie->delete_me)
-	  {
-	     ie->references++;
-	     if (!ie->func(ie->data))
-	       {
-		  if (!ie->delete_me) ecore_idle_exiter_del(ie);
-	       }
-	     ie->references--;
-	  }
-	if (idle_exiter_current) /* may have changed in recursive main loops */
-	  idle_exiter_current =
-	    (Ecore_Idle_Exiter *)EINA_INLIST_GET(idle_exiter_current)->next;
+        Ecore_Idle_Exiter *ie = (Ecore_Idle_Exiter *)idle_exiter_current;
+        if (!ie->delete_me)
+          {
+             ie->references++;
+             if (!ie->func(ie->data))
+               {
+                  if (!ie->delete_me) ecore_idle_exiter_del(ie);
+               }
+             ie->references--;
+          }
+        if (idle_exiter_current) /* may have changed in recursive main loops */
+          idle_exiter_current =
+            (Ecore_Idle_Exiter *)EINA_INLIST_GET(idle_exiter_current)->next;
      }
    if (idle_exiters_delete_me)
      {
-	Ecore_Idle_Exiter *l;
-	int deleted_idler_exiters_in_use = 0;
+        Ecore_Idle_Exiter *l;
+        int deleted_idler_exiters_in_use = 0;
 
-	for (l = idle_exiters; l;)
-	  {
-	     Ecore_Idle_Exiter *ie = l;
+        for (l = idle_exiters; l;)
+          {
+             Ecore_Idle_Exiter *ie = l;
 
-	     l = (Ecore_Idle_Exiter *) EINA_INLIST_GET(l)->next;
-	     if (ie->delete_me)
-	       {
-		  if (ie->references)
-		    {
-		       deleted_idler_exiters_in_use++;
-		       continue;
-		    }
+             l = (Ecore_Idle_Exiter *) EINA_INLIST_GET(l)->next;
+             if (ie->delete_me)
+               {
+                  if (ie->references)
+                    {
+                       deleted_idler_exiters_in_use++;
+                       continue;
+                    }
 
-		  idle_exiters = (Ecore_Idle_Exiter *) eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(ie));
-		  ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
-		  free(ie);
-	       }
-	  }
-	if (!deleted_idler_exiters_in_use)
-	  idle_exiters_delete_me = 0;
+                  idle_exiters = (Ecore_Idle_Exiter *) eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(ie));
+                  ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
+                  free(ie);
+               }
+          }
+        if (!deleted_idler_exiters_in_use)
+          idle_exiters_delete_me = 0;
      }
 }
 

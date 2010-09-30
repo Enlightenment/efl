@@ -114,15 +114,15 @@ extern "C" {
      Ecore_Getopt_Desc_Arg_Requirement arg_req;
      union
      {
-	const char *strv;
-	unsigned char boolv;
-	short shortv;
-	int intv;
-	long longv;
-	unsigned short ushortv;
-	unsigned int uintv;
-	unsigned long ulongv;
-	double doublev;
+        const char *strv;
+        unsigned char boolv;
+        short shortv;
+        int intv;
+        long longv;
+        unsigned short ushortv;
+        unsigned int uintv;
+        unsigned long ulongv;
+        double doublev;
      } def;
   };
 
@@ -144,12 +144,12 @@ extern "C" {
      Ecore_Getopt_Action action; /**< define how to handle it */
      union
      {
-	const Ecore_Getopt_Desc_Store store;
-	const void *store_const;
-	const char *const *choices; /* NULL terminated. */
-	const Ecore_Getopt_Type append_type;
-	const Ecore_Getopt_Desc_Callback callback;
-	const void *dummy;
+        const Ecore_Getopt_Desc_Store store;
+        const void *store_const;
+        const char *const *choices; /* NULL terminated. */
+        const Ecore_Getopt_Type append_type;
+        const Ecore_Getopt_Desc_Callback callback;
+        const void *dummy;
      } action_param;
   };
 
@@ -166,12 +166,12 @@ extern "C" {
   };
 
 #define ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar, type, arg_requirement, default_value) \
-  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_STORE,	\
+  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_STORE,        \
        {.store = {type, arg_requirement, default_value}}}
 
 #define ECORE_GETOPT_STORE(shortname, longname, help, type)             \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, NULL, type,	\
-			  ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES, {})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, NULL, type,        \
+                          ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES, {})
 
 #define ECORE_GETOPT_STORE_STR(shortname, longname, help)               \
   ECORE_GETOPT_STORE(shortname, longname, help, ECORE_GETOPT_TYPE_STR)
@@ -194,8 +194,8 @@ extern "C" {
 
 
 #define ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, type) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar, type,	\
-			  ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES, {})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar, type,        \
+                          ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES, {})
 
 #define ECORE_GETOPT_STORE_METAVAR_STR(shortname, longname, help, metavar) \
   ECORE_GETOPT_STORE_METAVAR(shortname, longname, help, metavar, ECORE_GETOPT_TYPE_STR)
@@ -218,155 +218,155 @@ extern "C" {
 
 
 #define ECORE_GETOPT_STORE_DEF(shortname, longname, help, type, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, NULL, type,	\
-			  ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL,	\
-			  default_value)
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, NULL, type,               \
+                          ECORE_GETOPT_DESC_ARG_REQUIREMENT_OPTIONAL,          \
+                          default_value)
 
 #define ECORE_GETOPT_STORE_DEF_STR(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_STR,				\
-			 {.strv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                          \
+                         ECORE_GETOPT_TYPE_STR,                              \
+                         {.strv = default_value})
 #define ECORE_GETOPT_STORE_DEF_BOOL(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_BOOL,			\
-			 {.boolv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                           \
+                         ECORE_GETOPT_TYPE_BOOL,                              \
+                         {.boolv = default_value})
 #define ECORE_GETOPT_STORE_DEF_SHORT(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_SHORT,			\
-			 {.shortv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                            \
+                         ECORE_GETOPT_TYPE_SHORT,                              \
+                         {.shortv = default_value})
 #define ECORE_GETOPT_STORE_DEF_INT(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_INT,				\
-			 {.intv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                          \
+                         ECORE_GETOPT_TYPE_INT,                              \
+                         {.intv = default_value})
 #define ECORE_GETOPT_STORE_DEF_LONG(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_LONG,			\
-			 {.longv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                           \
+                         ECORE_GETOPT_TYPE_LONG,                              \
+                         {.longv = default_value})
 #define ECORE_GETOPT_STORE_DEF_USHORT(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_USHORT,			\
-			 {.ushortv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                             \
+                         ECORE_GETOPT_TYPE_USHORT,                              \
+                         {.ushortv = default_value})
 #define ECORE_GETOPT_STORE_DEF_UINT(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_UINT,			\
-			 {.uintv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                           \
+                         ECORE_GETOPT_TYPE_UINT,                              \
+                         {.uintv = default_value})
 #define ECORE_GETOPT_STORE_DEF_ULONG(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_ULONG,			\
-			 {.ulongv = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                            \
+                         ECORE_GETOPT_TYPE_ULONG,                              \
+                         {.ulongv = default_value})
 #define ECORE_GETOPT_STORE_DEF_DOUBLE(shortname, longname, help, default_value) \
-  ECORE_GETOPT_STORE_DEF(shortname, longname, help,			\
-			 ECORE_GETOPT_TYPE_DOUBLE,			\
-			 {.doublev = default_value})
+  ECORE_GETOPT_STORE_DEF(shortname, longname, help,                             \
+                         ECORE_GETOPT_TYPE_DOUBLE,                              \
+                         {.doublev = default_value})
 
 #define ECORE_GETOPT_STORE_FULL_STR(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_STR,			\
-			  arg_requirement,				\
-			  {.strv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                           \
+                          ECORE_GETOPT_TYPE_STR,                                                        \
+                          arg_requirement,                                                               \
+                          {.strv = default_value})
 #define ECORE_GETOPT_STORE_FULL_BOOL(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_BOOL,			\
-			  arg_requirement,				\
-			  {.boolv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                            \
+                          ECORE_GETOPT_TYPE_BOOL,                                                        \
+                          arg_requirement,                                                               \
+                          {.boolv = default_value})
 #define ECORE_GETOPT_STORE_FULL_SHORT(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_SHORT,			\
-			  arg_requirement,				\
-			  {.shortv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                             \
+                          ECORE_GETOPT_TYPE_SHORT,                                                        \
+                          arg_requirement,                                                                \
+                          {.shortv = default_value})
 #define ECORE_GETOPT_STORE_FULL_INT(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_INT,			\
-			  arg_requirement,				\
-			  {.intv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                           \
+                          ECORE_GETOPT_TYPE_INT,                                                        \
+                          arg_requirement,                                                              \
+                          {.intv = default_value})
 #define ECORE_GETOPT_STORE_FULL_LONG(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_LONG,			\
-			  arg_requirement,				\
-			  {.longv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                            \
+                          ECORE_GETOPT_TYPE_LONG,                                                        \
+                          arg_requirement,                                                               \
+                          {.longv = default_value})
 #define ECORE_GETOPT_STORE_FULL_USHORT(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_USHORT,			\
-			  arg_requirement,				\
-			  {.ushortv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                              \
+                          ECORE_GETOPT_TYPE_USHORT,                                                        \
+                          arg_requirement,                                                                 \
+                          {.ushortv = default_value})
 #define ECORE_GETOPT_STORE_FULL_UINT(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_UINT,			\
-			  arg_requirement,				\
-			  {.uintv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                            \
+                          ECORE_GETOPT_TYPE_UINT,                                                        \
+                          arg_requirement,                                                               \
+                          {.uintv = default_value})
 #define ECORE_GETOPT_STORE_FULL_ULONG(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_ULONG,			\
-			  arg_requirement,				\
-			  {.ulongv = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                             \
+                          ECORE_GETOPT_TYPE_ULONG,                                                        \
+                          arg_requirement,                                                                \
+                          {.ulongv = default_value})
 #define ECORE_GETOPT_STORE_FULL_DOUBLE(shortname, longname, help, metavar, arg_requirement, default_value) \
-  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,		\
-			  ECORE_GETOPT_TYPE_DOUBLE,			\
-			  arg_requirement,				\
-			  {.doublev = default_value})
+  ECORE_GETOPT_STORE_FULL(shortname, longname, help, metavar,                                              \
+                          ECORE_GETOPT_TYPE_DOUBLE,                                                        \
+                          arg_requirement,                                                                 \
+                          {.doublev = default_value})
 
-#define ECORE_GETOPT_STORE_CONST(shortname, longname, help, value)      \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_CONST,	\
+#define ECORE_GETOPT_STORE_CONST(shortname, longname, help, value)   \
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_CONST, \
        {.store_const = value}}
-#define ECORE_GETOPT_STORE_TRUE(shortname, longname, help)              \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_TRUE,	\
+#define ECORE_GETOPT_STORE_TRUE(shortname, longname, help)          \
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_TRUE, \
        {.dummy = NULL}}
-#define ECORE_GETOPT_STORE_FALSE(shortname, longname, help)             \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_FALSE,	\
+#define ECORE_GETOPT_STORE_FALSE(shortname, longname, help)          \
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_STORE_FALSE, \
        {.dummy = NULL}}
 
-#define ECORE_GETOPT_CHOICE(shortname, longname, help, choices_array)   \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_CHOICE,		\
+#define ECORE_GETOPT_CHOICE(shortname, longname, help, choices_array) \
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_CHOICE,       \
        {.choices = choices_array}}
 #define ECORE_GETOPT_CHOICE_METAVAR(shortname, longname, help, metavar, choices_array) \
-  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_CHOICE,	\
+  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_CHOICE,                     \
        {.choices = choices_array}}
 
 
-#define ECORE_GETOPT_APPEND(shortname, longname, help, sub_type)        \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_APPEND,		\
+#define ECORE_GETOPT_APPEND(shortname, longname, help, sub_type) \
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_APPEND,  \
        {.append_type = sub_type}}
 #define ECORE_GETOPT_APPEND_METAVAR(shortname, longname, help, metavar, type) \
-  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_APPEND,	\
+  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_APPEND,            \
        {.append_type = type}}
 
-#define ECORE_GETOPT_COUNT(shortname, longname, help)		        \
-  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_COUNT,		\
+#define ECORE_GETOPT_COUNT(shortname, longname, help)          \
+  {shortname, longname, help, NULL, ECORE_GETOPT_ACTION_COUNT, \
        {.dummy = NULL}}
 
 #define ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, metavar, callback_func, callback_data, argument_requirement, default_value) \
-  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_CALLBACK,	\
-       {.callback = {callback_func, callback_data,			\
-		     argument_requirement, default_value}}}
+  {shortname, longname, help, metavar, ECORE_GETOPT_ACTION_CALLBACK,                                                                      \
+       {.callback = {callback_func, callback_data,                                                                                        \
+                     argument_requirement, default_value}}}
 #define ECORE_GETOPT_CALLBACK_NOARGS(shortname, longname, help, callback_func, callback_data) \
-  ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, NULL,		\
-			     callback_func, callback_data,		\
-			     ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO,	\
-			     NULL)
+  ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, NULL,                                 \
+                             callback_func, callback_data,                                    \
+                             ECORE_GETOPT_DESC_ARG_REQUIREMENT_NO,                            \
+                             NULL)
 #define ECORE_GETOPT_CALLBACK_ARGS(shortname, longname, help, metavar, callback_func, callback_data) \
-  ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, metavar,	\
-			     callback_func, callback_data,		\
-			     ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES,	\
-			     NULL)
+  ECORE_GETOPT_CALLBACK_FULL(shortname, longname, help, metavar,                                     \
+                             callback_func, callback_data,                                           \
+                             ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES,                                  \
+                             NULL)
 
-#define ECORE_GETOPT_HELP(shortname, longname)		                \
-  {shortname, longname, "show this message.", NULL,			\
-       ECORE_GETOPT_ACTION_HELP,					\
+#define ECORE_GETOPT_HELP(shortname, longname)      \
+  {shortname, longname, "show this message.", NULL, \
+       ECORE_GETOPT_ACTION_HELP,                    \
        {.dummy = NULL}}
 
-#define ECORE_GETOPT_VERSION(shortname, longname)	                \
-  {shortname, longname, "show program version.", NULL,			\
-       ECORE_GETOPT_ACTION_VERSION,					\
+#define ECORE_GETOPT_VERSION(shortname, longname)      \
+  {shortname, longname, "show program version.", NULL, \
+       ECORE_GETOPT_ACTION_VERSION,                    \
        {.dummy = NULL}}
 
-#define ECORE_GETOPT_COPYRIGHT(shortname, longname)	                \
-  {shortname, longname, "show copyright.", NULL,			\
-       ECORE_GETOPT_ACTION_COPYRIGHT,					\
+#define ECORE_GETOPT_COPYRIGHT(shortname, longname) \
+  {shortname, longname, "show copyright.", NULL,    \
+       ECORE_GETOPT_ACTION_COPYRIGHT,               \
        {.dummy = NULL}}
 
-#define ECORE_GETOPT_LICENSE(shortname, longname)	                \
-  {shortname, longname, "show license.", NULL,				\
-       ECORE_GETOPT_ACTION_LICENSE,					\
+#define ECORE_GETOPT_LICENSE(shortname, longname) \
+  {shortname, longname, "show license.", NULL,    \
+       ECORE_GETOPT_ACTION_LICENSE,               \
        {.dummy = NULL}}
 
 #define ECORE_GETOPT_SENTINEL {0, NULL, NULL, NULL, 0, {.dummy = NULL}}

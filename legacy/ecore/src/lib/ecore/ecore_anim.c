@@ -18,7 +18,7 @@ struct _Ecore_Animator
    void          *data;
 
    Eina_Bool     delete_me : 1;
-   Eina_Bool	 suspended : 1;
+   Eina_Bool     suspended : 1;
 };
 
 
@@ -87,9 +87,9 @@ ecore_animator_del(Ecore_Animator *animator)
 {
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
      {
-	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
-			 "ecore_animator_del");
-	return NULL;
+        ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
+                         "ecore_animator_del");
+        return NULL;
      }
    if (animator->delete_me) return animator->data;
    animator->delete_me = EINA_TRUE;
@@ -111,8 +111,8 @@ ecore_animator_frametime_set(double frametime)
    animators_frametime = frametime;
    if (timer)
      {
-	ecore_timer_del(timer);
-	timer = NULL;
+        ecore_timer_del(timer);
+        timer = NULL;
      }
    if (animators)
      timer = ecore_timer_add(animators_frametime, _ecore_animator, NULL);
@@ -143,9 +143,9 @@ ecore_animator_freeze(Ecore_Animator *animator)
 {
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
      {
-	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
-			 "ecore_animator_del");
-	return;
+        ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
+                         "ecore_animator_del");
+        return;
      }
    if (animator->delete_me) return;
    animator->suspended = EINA_TRUE;
@@ -164,9 +164,9 @@ ecore_animator_thaw(Ecore_Animator *animator)
 {
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
      {
-	ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
-			 "ecore_animator_del");
-	return;
+        ECORE_MAGIC_FAIL(animator, ECORE_MAGIC_ANIMATOR,
+                         "ecore_animator_del");
+        return;
      }
    if (animator->delete_me) return;
    animator->suspended = EINA_FALSE;
@@ -177,17 +177,17 @@ _ecore_animator_shutdown(void)
 {
    if (timer)
      {
-	ecore_timer_del(timer);
-	timer = NULL;
+        ecore_timer_del(timer);
+        timer = NULL;
      }
    while (animators)
      {
-	Ecore_Animator *animator;
+        Ecore_Animator *animator;
 
-	animator = animators;
-	animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
-	ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
-	free(animator);
+        animator = animators;
+        animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animators));
+        ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
+        free(animator);
      }
 }
 
@@ -198,36 +198,36 @@ _ecore_animator(void *data __UNUSED__)
 
    EINA_INLIST_FOREACH(animators, animator)
      {
-	if (!animator->delete_me && !animator->suspended)
-	  {
-	     if (!animator->func(animator->data))
-	       {
-		  animator->delete_me = EINA_TRUE;
-		  animators_delete_me++;
-	       }
-	  }
+        if (!animator->delete_me && !animator->suspended)
+          {
+             if (!animator->func(animator->data))
+               {
+                  animator->delete_me = EINA_TRUE;
+                  animators_delete_me++;
+               }
+          }
      }
    if (animators_delete_me)
      {
-	Ecore_Animator *l;
-	for(l = animators; l;)
-	  {
-	     animator = l;
-	     l = (Ecore_Animator *) EINA_INLIST_GET(l)->next;
-	     if (animator->delete_me)
-	       {
-		  animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
-		  ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
-		  free(animator);
-		  animators_delete_me--;
-		  if (animators_delete_me == 0) break;
-	       }
-	  }
+        Ecore_Animator *l;
+        for(l = animators; l;)
+          {
+             animator = l;
+             l = (Ecore_Animator *) EINA_INLIST_GET(l)->next;
+             if (animator->delete_me)
+               {
+                  animators = (Ecore_Animator *) eina_inlist_remove(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
+                  ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
+                  free(animator);
+                  animators_delete_me--;
+                  if (animators_delete_me == 0) break;
+               }
+          }
      }
    if (!animators)
      {
-	timer = NULL;
-	return ECORE_CALLBACK_CANCEL;
+        timer = NULL;
+        return ECORE_CALLBACK_CANCEL;
      }
    return ECORE_CALLBACK_RENEW;
 }

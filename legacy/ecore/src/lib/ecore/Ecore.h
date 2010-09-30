@@ -107,23 +107,23 @@ extern "C" {
 
    enum _Ecore_Fd_Handler_Flags
      {
-	ECORE_FD_READ = 1, /**< Fd Read mask */
-	ECORE_FD_WRITE = 2, /**< Fd Write mask */
-	ECORE_FD_ERROR = 4 /**< Fd Error mask */
+        ECORE_FD_READ = 1, /**< Fd Read mask */
+        ECORE_FD_WRITE = 2, /**< Fd Write mask */
+        ECORE_FD_ERROR = 4 /**< Fd Error mask */
      };
    typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
 
    enum _Ecore_Exe_Flags /* flags for executing a child with its stdin and/or stdout piped back */
      {
-	ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
-	ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
-	ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
-	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
-	ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
-	ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
-	ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
-	ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command. */
-	ECORE_EXE_NOT_LEADER = 256 /**< Do not use setsid() to have the executed process be its own session leader */
+        ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
+        ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
+        ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
+        ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
+        ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
+        ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
+        ECORE_EXE_RESPAWN = 64, /**< FIXME: Exe is restarted if it dies */
+        ECORE_EXE_USE_SH = 128, /**< Use /bin/sh to run the command. */
+        ECORE_EXE_NOT_LEADER = 256 /**< Do not use setsid() to have the executed process be its own session leader */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
@@ -140,7 +140,7 @@ extern "C" {
 
    enum _Ecore_Poller_Type /* Poller types */
      {
-	ECORE_POLLER_CORE = 0 /**< The core poller interval */
+        ECORE_POLLER_CORE = 0 /**< The core poller interval */
      };
    typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
@@ -244,85 +244,85 @@ extern "C" {
 
    struct _Ecore_Event_Signal_User /** User signal event */
      {
-	int   number; /**< The signal number. Either 1 or 2 */
-	void *ext_data; /**< Extension data - not used */
+        int   number; /**< The signal number. Either 1 or 2 */
+        void *ext_data; /**< Extension data - not used */
 
 #ifndef _WIN32
-	siginfo_t data; /**< Signal info */
+        siginfo_t data; /**< Signal info */
 #endif
      };
 
    struct _Ecore_Event_Signal_Hup /** Hup signal event */
      {
-	void *ext_data; /**< Extension data - not used */
+        void *ext_data; /**< Extension data - not used */
 
 #ifndef _WIN32
-	siginfo_t data; /**< Signal info */
+        siginfo_t data; /**< Signal info */
 #endif
      };
 
    struct _Ecore_Event_Signal_Exit /** Exit request event */
      {
-	unsigned int   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
-	unsigned int   quit      : 1; /**< set if the exit request was a quit signal */
-	unsigned int   terminate : 1; /**< Set if the exit request was a terminate singal */
-	void          *ext_data;	/**< Extension data - not used */
+        unsigned int   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
+        unsigned int   quit      : 1; /**< set if the exit request was a quit signal */
+        unsigned int   terminate : 1; /**< Set if the exit request was a terminate singal */
+        void          *ext_data; /**< Extension data - not used */
 
 #ifndef _WIN32
-	siginfo_t data; /**< Signal info */
+        siginfo_t data; /**< Signal info */
 #endif
      };
 
    struct _Ecore_Event_Signal_Power /** Power event */
      {
-	void *ext_data;	/**< Extension data - not used */
+        void *ext_data; /**< Extension data - not used */
 
 #ifndef _WIN32
-	siginfo_t data; /**< Signal info */
+        siginfo_t data; /**< Signal info */
 #endif
      };
 
    struct _Ecore_Event_Signal_Realtime /** Realtime event */
      {
-	int num; /**< The realtime signal's number */
+        int num; /**< The realtime signal's number */
 
 #ifndef _WIN32
-	siginfo_t data; /**< Signal info */
+        siginfo_t data; /**< Signal info */
 #endif
      };
 
    struct _Ecore_Exe_Event_Add /** Process add event */
      {
-	Ecore_Exe *exe; /**< The handle to the added process */
-	void      *ext_data; /**< Extension data - not used */
+        Ecore_Exe *exe; /**< The handle to the added process */
+        void      *ext_data; /**< Extension data - not used */
      };
 
    struct _Ecore_Exe_Event_Del /** Process exit event */
      {
-	pid_t         pid; /**< The process ID of the process that exited */
-	int           exit_code; /**< The exit code of the process */
-	Ecore_Exe    *exe; /**< The handle to the exited process, or NULL if not found */
-	int           exit_signal; /** < The signal that caused the process to exit */
-	unsigned int  exited    : 1; /** < set to 1 if the process exited of its own accord */
-	unsigned int  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
-	void         *ext_data; /**< Extension data - not used */
+        pid_t         pid; /**< The process ID of the process that exited */
+        int           exit_code; /**< The exit code of the process */
+        Ecore_Exe    *exe; /**< The handle to the exited process, or NULL if not found */
+        int           exit_signal; /** < The signal that caused the process to exit */
+        unsigned int  exited    : 1; /** < set to 1 if the process exited of its own accord */
+        unsigned int  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
+        void         *ext_data; /**< Extension data - not used */
 #ifndef _WIN32
-	siginfo_t     data; /**< Signal info */
+        siginfo_t     data; /**< Signal info */
 #endif
      };
 
    struct _Ecore_Exe_Event_Data_Line /**< Lines from a child process */
       {
          char *line;
-	 int   size;
+         int   size;
       };
 
    struct _Ecore_Exe_Event_Data /** Data from a child process event */
      {
-	Ecore_Exe *exe; /**< The handle to the process */
-	void *data; /**< the raw binary data from the child process that was received */
-	int   size; /**< the size of this data in bytes */
-	Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
+        Ecore_Exe *exe; /**< The handle to the process */
+        void *data; /**< the raw binary data from the child process that was received */
+        int   size; /**< the size of this data in bytes */
+        Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
      };
 
    EAPI int  ecore_init(void);
@@ -413,11 +413,11 @@ extern "C" {
                                        Ecore_Cb,
                                        const void *data);
    EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb,
-						Ecore_Thread_Notify_Cb,
-						Ecore_Cb,
-						Ecore_Cb,
-						const void *data,
-						Eina_Bool try_no_queue);
+                                                Ecore_Thread_Notify_Cb,
+                                                Ecore_Cb,
+                                                Ecore_Cb,
+                                                const void *data,
+                                                Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_check(Ecore_Thread *thread);
    EAPI Eina_Bool     ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data);
@@ -463,8 +463,8 @@ extern "C" {
 
    EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
-   EAPI void		ecore_animator_freeze(Ecore_Animator *animator);
-   EAPI void		ecore_animator_thaw(Ecore_Animator *animator);
+   EAPI void            ecore_animator_freeze(Ecore_Animator *animator);
+   EAPI void            ecore_animator_thaw(Ecore_Animator *animator);
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
 

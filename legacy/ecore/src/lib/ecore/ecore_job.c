@@ -58,8 +58,8 @@ ecore_job_add(Ecore_Cb func, const void *data)
    job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, NULL);
    if (!job->event)
      {
-	free(job);
-	return NULL;
+        free(job);
+        return NULL;
      }
    job->func = func;
    job->data = (void *)data;
@@ -79,9 +79,9 @@ ecore_job_del(Ecore_Job *job)
    
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_JOB))
      {
-	ECORE_MAGIC_FAIL(job, ECORE_MAGIC_JOB,
-			 "ecore_job_del");
-	return NULL;
+        ECORE_MAGIC_FAIL(job, ECORE_MAGIC_JOB,
+                         "ecore_job_del");
+        return NULL;
      }
    data = job->data;
    ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);

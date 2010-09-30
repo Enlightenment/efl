@@ -38,8 +38,8 @@
 static Ecore_Version _version = { VERS_MAJ, VERS_MIN, VERS_MIC, VERS_REV };
 EAPI Ecore_Version *ecore_version = &_version;
 
-#define KEEP_MAX(Global, Local)			\
-   if (Global < (Local))			\
+#define KEEP_MAX(Global, Local)                        \
+   if (Global < (Local))                        \
      Global = Local;
 
 static Eina_Bool _ecore_memory_statistic(void *data);
@@ -95,7 +95,7 @@ ecore_init(void)
    /*
      if (strcmp(nl_langinfo(CODESET), "UTF-8"))
      {
-	WRN("Not a utf8 locale!");
+        WRN("Not a utf8 locale!");
      }
    */
 #ifdef HAVE_EVIL
@@ -122,8 +122,8 @@ ecore_init(void)
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
      {
-	_ecore_memory_pid = getpid();
-	ecore_animator_add(_ecore_memory_statistic, NULL);
+        _ecore_memory_pid = getpid();
+        ecore_animator_add(_ecore_memory_statistic, NULL);
      }
 #endif
 
@@ -177,12 +177,12 @@ ecore_shutdown(void)
 #if HAVE_MALLINFO
    if (getenv("ECORE_MEM_STAT"))
      {
-	_ecore_memory_statistic(NULL);
+        _ecore_memory_statistic(NULL);
 
-	ERR("[%i] Memory MAX total: %i, free: %i",
-	    _ecore_memory_pid,
-	    _ecore_memory_max_total,
-	    _ecore_memory_max_free);
+        ERR("[%i] Memory MAX total: %i, free: %i",
+            _ecore_memory_pid,
+            _ecore_memory_max_total,
+            _ecore_memory_max_free);
      }
 #endif
 
@@ -220,13 +220,13 @@ _ecore_magic_fail(const void *d, Ecore_Magic m, Ecore_Magic req_m, const char *f
      ERR("  Input handle has already been freed!");
    else if (m != req_m)
      ERR("  Input handle is wrong type\n"
-	 "    Expected: %08x - %s\n"
-	 "    Supplied: %08x - %s",
-	 (unsigned int)req_m, _ecore_magic_string_get(req_m),
-	 (unsigned int)m, _ecore_magic_string_get(m));
+         "    Expected: %08x - %s\n"
+         "    Supplied: %08x - %s",
+         (unsigned int)req_m, _ecore_magic_string_get(req_m),
+         (unsigned int)m, _ecore_magic_string_get(m));
      ERR("*** NAUGHTY PROGRAMMER!!!\n"
-	 "*** SPANK SPANK SPANK!!!\n"
-	 "*** Now go fix your code. Tut tut tut!");
+         "*** SPANK SPANK SPANK!!!\n"
+         "*** Now go fix your code. Tut tut tut!");
    if (getenv("ECORE_ERROR_ABORT")) abort();
 }
 
@@ -236,37 +236,37 @@ _ecore_magic_string_get(Ecore_Magic m)
    switch (m)
      {
       case ECORE_MAGIC_NONE:
-	return "None (Freed Object)";
-	break;
+        return "None (Freed Object)";
+        break;
       case ECORE_MAGIC_EXE:
-	return "Ecore_Exe (Executable)";
-	break;
+        return "Ecore_Exe (Executable)";
+        break;
       case ECORE_MAGIC_TIMER:
-	return "Ecore_Timer (Timer)";
-	break;
+        return "Ecore_Timer (Timer)";
+        break;
       case ECORE_MAGIC_IDLER:
-	return "Ecore_Idler (Idler)";
-	break;
+        return "Ecore_Idler (Idler)";
+        break;
       case ECORE_MAGIC_IDLE_ENTERER:
-	return "Ecore_Idle_Enterer (Idler Enterer)";
-	break;
+        return "Ecore_Idle_Enterer (Idler Enterer)";
+        break;
       case ECORE_MAGIC_IDLE_EXITER:
-	return "Ecore_Idle_Exiter (Idler Exiter)";
-	break;
+        return "Ecore_Idle_Exiter (Idler Exiter)";
+        break;
       case ECORE_MAGIC_FD_HANDLER:
-	return "Ecore_Fd_Handler (Fd Handler)";
-	break;
+        return "Ecore_Fd_Handler (Fd Handler)";
+        break;
       case ECORE_MAGIC_WIN32_HANDLER:
-	return "Ecore_Win32_Handler (Win32 Handler)";
-	break;
+        return "Ecore_Win32_Handler (Win32 Handler)";
+        break;
       case ECORE_MAGIC_EVENT_HANDLER:
-	return "Ecore_Event_Handler (Event Handler)";
-	break;
+        return "Ecore_Event_Handler (Event Handler)";
+        break;
       case ECORE_MAGIC_EVENT:
-	return "Ecore_Event (Event)";
-	break;
+        return "Ecore_Event (Event)";
+        break;
       default:
-	return "<UNKNOWN>";
+        return "<UNKNOWN>";
      };
 }
 
@@ -298,40 +298,40 @@ _ecore_fps_debug_init(void)
    _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
    if (_ecore_fps_debug_fd < 0)
      {
-	unlink(buf);
-	_ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
+        unlink(buf);
+        _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR, 0644);
      }
    if (_ecore_fps_debug_fd >= 0)
      {
-	unsigned int zero = 0;
-	char *buf = (char *)&zero;
-	ssize_t todo = sizeof(unsigned int);
+        unsigned int zero = 0;
+        char *buf = (char *)&zero;
+        ssize_t todo = sizeof(unsigned int);
 
-	while (todo > 0)
-	  {
-	     ssize_t r = write(_ecore_fps_debug_fd, buf, todo);
-	     if (r > 0)
-	       {
-		  todo -= r;
-		  buf += r;
-	       }
-	     else if ((r < 0) && (errno == EINTR))
-	       continue;
-	     else
-	       {
-		  ERR("could not write to file '%s' fd %d: %s",
-		      tmp, _ecore_fps_debug_fd, strerror(errno));
-		  close(_ecore_fps_debug_fd);
-		  _ecore_fps_debug_fd = -1;
-		  return;
-	       }
-	  }
-	_ecore_fps_runtime_mmap = mmap(NULL, sizeof(unsigned int),
-				       PROT_READ | PROT_WRITE,
-				       MAP_SHARED,
-				       _ecore_fps_debug_fd, 0);
-	if (_ecore_fps_runtime_mmap == MAP_FAILED)
-	  _ecore_fps_runtime_mmap = NULL;
+        while (todo > 0)
+          {
+             ssize_t r = write(_ecore_fps_debug_fd, buf, todo);
+             if (r > 0)
+               {
+                  todo -= r;
+                  buf += r;
+               }
+             else if ((r < 0) && (errno == EINTR))
+               continue;
+             else
+               {
+                  ERR("could not write to file '%s' fd %d: %s",
+                      tmp, _ecore_fps_debug_fd, strerror(errno));
+                  close(_ecore_fps_debug_fd);
+                  _ecore_fps_debug_fd = -1;
+                  return;
+               }
+          }
+        _ecore_fps_runtime_mmap = mmap(NULL, sizeof(unsigned int),
+                                       PROT_READ | PROT_WRITE,
+                                       MAP_SHARED,
+                                       _ecore_fps_debug_fd, 0);
+        if (_ecore_fps_runtime_mmap == MAP_FAILED)
+          _ecore_fps_runtime_mmap = NULL;
      }
 }
 
@@ -352,15 +352,15 @@ _ecore_fps_debug_shutdown(void)
    tmp = (char *)evil_tmpdir_get ();
 #endif /* HAVE_EVIL */
    pid = (int)getpid();
-	snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
-	unlink(buf);
-	if (_ecore_fps_runtime_mmap)
-	  {
-	     munmap(_ecore_fps_runtime_mmap, sizeof(int));
-	     _ecore_fps_runtime_mmap = NULL;
-	  }
-	close(_ecore_fps_debug_fd);
-	_ecore_fps_debug_fd = -1;
+        snprintf(buf, sizeof(buf), "%s/.ecore_fps_debug-%i", tmp, pid);
+        unlink(buf);
+        if (_ecore_fps_runtime_mmap)
+          {
+             munmap(_ecore_fps_runtime_mmap, sizeof(int));
+             _ecore_fps_runtime_mmap = NULL;
+          }
+        close(_ecore_fps_debug_fd);
+        _ecore_fps_debug_fd = -1;
      }
 }
 
@@ -370,16 +370,16 @@ _ecore_fps_debug_runtime_add(double t)
    if ((_ecore_fps_debug_fd >= 0) &&
        (_ecore_fps_runtime_mmap))
      {
-	unsigned int tm;
+        unsigned int tm;
 
-	tm = (unsigned int)(t * 1000000.0);
-	/* i know its not 100% theoretically guaranteed, but i'd say a write */
-	/* of an int could be considered atomic for all practical purposes */
-	/* oh and since this is cumulative, 1 second = 1,000,000 ticks, so */
-	/* this can run for about 4294 seconds becore looping. if you are */
-	/* doing performance testing in one run for over an hour... well */
-	/* time to restart or handle a loop condition :) */
-	*(_ecore_fps_runtime_mmap) += tm;
+        tm = (unsigned int)(t * 1000000.0);
+        /* i know its not 100% theoretically guaranteed, but i'd say a write */
+        /* of an int could be considered atomic for all practical purposes */
+        /* oh and since this is cumulative, 1 second = 1,000,000 ticks, so */
+        /* this can run for about 4294 seconds becore looping. if you are */
+        /* doing performance testing in one run for over an hour... well */
+        /* time to restart or handle a loop condition :) */
+        *(_ecore_fps_runtime_mmap) += tm;
      }
 }
 
@@ -394,11 +394,11 @@ _ecore_memory_statistic(__UNUSED__ void *data)
 
    mi = mallinfo();
 
-#define HAS_CHANGED(Global, Local)		\
-   if (Global != Local)				\
-     {						\
-	Global = Local;				\
-	changed = EINA_TRUE;			\
+#define HAS_CHANGED(Global, Local)                \
+   if (Global != Local)                                \
+     {                                                \
+        Global = Local;                                \
+        changed = EINA_TRUE;                        \
      }
 
    HAS_CHANGED(uordblks, mi.uordblks);
@@ -406,9 +406,9 @@ _ecore_memory_statistic(__UNUSED__ void *data)
 
    if (changed)
      ERR("[%i] Memory total: %i, free: %i",
-	 _ecore_memory_pid,
-	 mi.uordblks,
-	 mi.fordblks);
+         _ecore_memory_pid,
+         mi.uordblks,
+         mi.fordblks);
 
    KEEP_MAX(_ecore_memory_max_total, mi.uordblks);
    KEEP_MAX(_ecore_memory_max_free, mi.fordblks);

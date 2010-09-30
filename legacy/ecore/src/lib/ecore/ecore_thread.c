@@ -192,8 +192,8 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
 
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
-	if (!work->cancel)
-	  work->u.short_run.func_blocking((void *) work->data);
+        if (!work->cancel)
+          work->u.short_run.func_blocking((void *) work->data);
 
         ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
      }
@@ -220,8 +220,8 @@ _ecore_feedback_job(Ecore_Pipe *end_pipe, pthread_t thread)
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
         work->self = thread;
-	if (!work->cancel)
-	  work->u.feedback_run.func_heavy((Ecore_Thread *) work, (void *) work->data);
+        if (!work->cancel)
+          work->u.feedback_run.func_heavy((Ecore_Thread *) work, (void *) work->data);
 
         ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
      }
@@ -586,11 +586,11 @@ ecore_thread_check(Ecore_Thread *thread)
  * try to use one from the pool.
  */
 EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
-					     Ecore_Thread_Notify_Cb func_notify,
-					     Ecore_Cb func_end,
-					     Ecore_Cb func_cancel,
-					     const void *data,
-					     Eina_Bool try_no_queue)
+                                             Ecore_Thread_Notify_Cb func_notify,
+                                             Ecore_Cb func_end,
+                                             Ecore_Cb func_cancel,
+                                             const void *data,
+                                             Eina_Bool try_no_queue)
 {
 
 #ifdef EFL_HAVE_PTHREAD

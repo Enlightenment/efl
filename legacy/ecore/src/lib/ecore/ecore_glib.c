@@ -26,9 +26,9 @@ _ecore_glib_fds_resize(size_t size)
    
    if (!tmp)
      {
-	ERR("Could not realloc from %zu to %zu buckets.",
-	    _ecore_glib_fds_size, size);
-	return EINA_FALSE;
+        ERR("Could not realloc from %zu to %zu buckets.",
+            _ecore_glib_fds_size, size);
+        return EINA_FALSE;
      }
    
    _ecore_glib_fds = tmp;
@@ -51,7 +51,7 @@ _ecore_glib_context_query(GMainContext *ctx, int priority, int *p_timer)
         size_t size;
         
         reqfds = g_main_context_query
-	  (ctx, priority, p_timer, _ecore_glib_fds, _ecore_glib_fds_size);
+          (ctx, priority, p_timer, _ecore_glib_fds, _ecore_glib_fds_size);
         if (reqfds <= (int)_ecore_glib_fds_size) break;
 
         size = (1 + reqfds / ECORE_GLIB_FDS_STEP) * ECORE_GLIB_FDS_STEP;
@@ -62,7 +62,7 @@ _ecore_glib_context_query(GMainContext *ctx, int priority, int *p_timer)
      {
         size_t size;
 
-	size = (1 + reqfds / ECORE_GLIB_FDS_MAX_FREE) * ECORE_GLIB_FDS_MAX_FREE;
+        size = (1 + reqfds / ECORE_GLIB_FDS_MAX_FREE) * ECORE_GLIB_FDS_MAX_FREE;
         _ecore_glib_fds_resize(size);
      }
 
@@ -78,14 +78,14 @@ _ecore_glib_context_poll_from(const GPollFD *pfds, int count, fd_set *rfds, fd_s
    for (; itr < itr_end; itr++)
      {
         if (glib_fds < itr->fd)
-	  glib_fds = itr->fd;
+          glib_fds = itr->fd;
 
         if (itr->events & G_IO_IN)
-	  FD_SET(itr->fd, rfds);
+          FD_SET(itr->fd, rfds);
         if (itr->events & G_IO_OUT)
-	  FD_SET(itr->fd, wfds);
+          FD_SET(itr->fd, wfds);
         if (itr->events & (G_IO_HUP | G_IO_ERR))
-	  FD_SET(itr->fd, efds);
+          FD_SET(itr->fd, efds);
      }
 
    return glib_fds + 1;
@@ -100,20 +100,20 @@ _ecore_glib_context_poll_to(GPollFD *pfds, int count, const fd_set *rfds, const 
      {
         itr->revents = 0;
         if (FD_ISSET(itr->fd, rfds))
-	  {
-	     itr->revents |= G_IO_IN;
-	     ready--;
-	  }
+          {
+             itr->revents |= G_IO_IN;
+             ready--;
+          }
         if (FD_ISSET(itr->fd, wfds))
-	  {
-	     itr->revents |= G_IO_OUT;
-	     ready--;
-	  }
+          {
+             itr->revents |= G_IO_OUT;
+             ready--;
+          }
         if (FD_ISSET(itr->fd, efds))
-	  {
-	     itr->revents |= G_IO_ERR;
-	     ready--;
-	  }
+          {
+             itr->revents |= G_IO_ERR;
+             ready--;
+          }
      }
    return ready;
 }
@@ -172,11 +172,11 @@ _ecore_glib_select(int ecore_fds, fd_set *rfds, fd_set *wfds, fd_set *efds, stru
      g_mutex_lock(mutex);
    else
      {
-	if (!_ecore_glib_cond)
-	  _ecore_glib_cond = g_cond_new();
+        if (!_ecore_glib_cond)
+          _ecore_glib_cond = g_cond_new();
 
-	while (!g_main_context_wait(ctx, _ecore_glib_cond, mutex))
-	  g_thread_yield();
+        while (!g_main_context_wait(ctx, _ecore_glib_cond, mutex))
+          g_thread_yield();
      }
 
    ret = _ecore_glib_select__locked
@@ -206,15 +206,15 @@ _ecore_glib_shutdown(void)
    
    if (_ecore_glib_fds)
      {
-	free(_ecore_glib_fds);
-	_ecore_glib_fds = NULL;
+        free(_ecore_glib_fds);
+        _ecore_glib_fds = NULL;
      }
    _ecore_glib_fds_size = 0;
 
    if (_ecore_glib_cond)
      {
-	g_cond_free(_ecore_glib_cond);
-	_ecore_glib_cond = NULL;
+        g_cond_free(_ecore_glib_cond);
+        _ecore_glib_cond = NULL;
      }
 #endif
 }

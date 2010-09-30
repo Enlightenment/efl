@@ -57,7 +57,7 @@ extern int _ecore_log_dom ;
 # define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
-#define EVAS_FRAME_QUEUING 1	/* for test */
+#define EVAS_FRAME_QUEUING 1 /* for test */
 
 #define READBUFSIZ 65536
 
@@ -100,18 +100,18 @@ EAPI void ecore_print_warning(const char *function, const char *sparam);
 #undef CHECK_PARAM_POINTER_RETURN
 #define CHECK_PARAM_POINTER_RETURN(sparam, param, ret) \
      if (!(param)) \
-	 { \
-	    ecore_print_warning(__FUNCTION__, sparam); \
-	    return ret; \
-	 }
+         { \
+            ecore_print_warning(__FUNCTION__, sparam); \
+            return ret; \
+         }
 
 #undef CHECK_PARAM_POINTER
 #define CHECK_PARAM_POINTER(sparam, param) \
      if (!(param)) \
-	 { \
-	    ecore_print_warning(__FUNCTION__, sparam); \
-	    return; \
-	 }
+         { \
+            ecore_print_warning(__FUNCTION__, sparam); \
+            return; \
+         }
 
 typedef unsigned int              Ecore_Magic;
 
