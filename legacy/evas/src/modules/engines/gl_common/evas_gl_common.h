@@ -230,9 +230,9 @@ struct _Evas_GL_Context
          GLuint          cur_tex, cur_texu, cur_texv;
          int             render_op;
          int             cx, cy, cw, ch;
-         Eina_Bool       smooth : 1;
-         Eina_Bool       blend : 1;
-         Eina_Bool       clip : 1;
+         int             smooth;
+         int             blend;
+         int             clip;
       } current;
    } state;
    
@@ -251,9 +251,9 @@ struct _Evas_GL_Context
          GLuint          cur_tex, cur_texu, cur_texv;
          int             render_op;
          int             cx, cy, cw, ch;
-         Eina_Bool       smooth : 1;
-         Eina_Bool       blend : 1;
-         Eina_Bool       clip : 1;
+         int             smooth;
+         int             blend;
+         int             clip;
       } shader;
       struct {
          int num, alloc;
