@@ -45,8 +45,8 @@ _ecore_file_path_from_env(const char *env)
 
         if (!*p)
           {
-	     if (!ecore_file_path_dir_exists(last))
-	       path = eina_list_append(path, strdup(last));
+             if (!ecore_file_path_dir_exists(last))
+               path = eina_list_append(path, strdup(last));
              last = p + 1;
           }
      }
@@ -71,8 +71,8 @@ ecore_file_path_dir_exists(const char *in_dir)
    if (!__ecore_file_path_bin) return EINA_FALSE;
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
-	if (strcmp(dir, in_dir))
-	  return EINA_TRUE;
+        if (strcmp(dir, in_dir))
+          return EINA_TRUE;
      }
 
    return EINA_FALSE;
@@ -97,9 +97,9 @@ ecore_file_app_installed(const char *exe)
 
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
-	snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
-	if (ecore_file_can_exec(buf))
-	  return EINA_TRUE;
+        snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
+        if (ecore_file_can_exec(buf))
+          return EINA_TRUE;
      }
 
    return EINA_FALSE;
@@ -119,15 +119,15 @@ ecore_file_app_list(void)
    
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
-	files = ecore_file_ls(dir);
-	EINA_LIST_FREE(files, exe)
-	       {
-		  snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
-		  if ((ecore_file_can_exec(buf)) &&
-		      (!ecore_file_is_dir(buf)))
-	       list = eina_list_append(list, strdup(buf));
-	     free(exe);
-	  }
+        files = ecore_file_ls(dir);
+        EINA_LIST_FREE(files, exe)
+               {
+                  snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
+                  if ((ecore_file_can_exec(buf)) &&
+                      (!ecore_file_is_dir(buf)))
+               list = eina_list_append(list, strdup(buf));
+             free(exe);
+          }
      }
 
    return list;

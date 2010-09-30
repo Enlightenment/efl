@@ -65,11 +65,11 @@ ecore_file_monitor_inotify_init(void)
      return 0;
 
    _fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _ecore_file_monitor_inotify_handler,
-				    NULL, NULL, NULL);
+                                    NULL, NULL, NULL);
    if (!_fdh)
      {
-	close(fd);
-	return 0;
+        close(fd);
+        return 0;
      }
 
    return 1;
@@ -81,23 +81,23 @@ ecore_file_monitor_inotify_shutdown(void)
    int fd;
 
    while(_monitors)
-	ecore_file_monitor_inotify_del(_monitors);
+        ecore_file_monitor_inotify_del(_monitors);
 
    if (_fdh)
      {
-	fd = ecore_main_fd_handler_fd_get(_fdh);
-	ecore_main_fd_handler_del(_fdh);
-	close(fd);
+        fd = ecore_main_fd_handler_fd_get(_fdh);
+        ecore_main_fd_handler_del(_fdh);
+        close(fd);
      }
    return 1;
 }
 
 Ecore_File_Monitor *
 ecore_file_monitor_inotify_add(const char *path,
-			       void (*func) (void *data, Ecore_File_Monitor *em,
-					     Ecore_File_Event event,
-					     const char *path),
-			       void *data)
+                               void (*func) (void *data, Ecore_File_Monitor *em,
+                                             Ecore_File_Event event,
+                                             const char *path),
+                               void *data)
 {
    Ecore_File_Monitor *em;
    int len;
@@ -117,13 +117,13 @@ ecore_file_monitor_inotify_add(const char *path,
 
    if (ecore_file_exists(em->path))
      {
-	if (!_ecore_file_monitor_inotify_monitor(em, em->path))
-	  return NULL;
+        if (!_ecore_file_monitor_inotify_monitor(em, em->path))
+          return NULL;
      }
    else
      {
-	ecore_file_monitor_inotify_del(em);
-	return NULL;
+        ecore_file_monitor_inotify_del(em);
+        return NULL;
      }
 
    return em;
@@ -156,14 +156,14 @@ _ecore_file_monitor_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh
    size = read(ecore_main_fd_handler_fd_get(fdh), buffer, sizeof(buffer));
    while (i < size)
      {
-	event = (struct inotify_event *)&buffer[i];
-	event_size = sizeof(struct inotify_event) + event->len;
-	i += event_size;
+        event = (struct inotify_event *)&buffer[i];
+        event_size = sizeof(struct inotify_event) + event->len;
+        i += event_size;
 
-	em = _ecore_file_monitor_inotify_monitor_find(event->wd);
-	if (!em) continue;
+        em = _ecore_file_monitor_inotify_monitor_find(event->wd);
+        if (!em) continue;
 
-	_ecore_file_monitor_inotify_events(em, (event->len ? event->name : NULL), event->mask);
+        _ecore_file_monitor_inotify_events(em, (event->len ? event->name : NULL), event->mask);
      }
 
    return ECORE_CALLBACK_RENEW;
@@ -176,8 +176,8 @@ _ecore_file_monitor_inotify_monitor_find(int wd)
 
    EINA_INLIST_FOREACH(_monitors, l)
      {
-	if (ECORE_FILE_MONITOR_INOTIFY(l)->wd == wd)
-	  return l;
+        if (ECORE_FILE_MONITOR_INOTIFY(l)->wd == wd)
+          return l;
      }
    return NULL;
 }
@@ -200,62 +200,62 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
 
    if (mask & IN_MODIFY)
      {
-	if (!isdir)
-	  em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
+        if (!isdir)
+          em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
      }
    if (mask & IN_MOVED_FROM)
      {
-	if (isdir)
-	  em->func(em->data, em, ECORE_FILE_EVENT_DELETED_DIRECTORY, buf);
-	else
-	  em->func(em->data, em, ECORE_FILE_EVENT_DELETED_FILE, buf);
+        if (isdir)
+          em->func(em->data, em, ECORE_FILE_EVENT_DELETED_DIRECTORY, buf);
+        else
+          em->func(em->data, em, ECORE_FILE_EVENT_DELETED_FILE, buf);
      }
    if (mask & IN_MOVED_TO)
      {
-	if (isdir)
-	  em->func(em->data, em, ECORE_FILE_EVENT_CREATED_DIRECTORY, buf);
-	else
-	  em->func(em->data, em, ECORE_FILE_EVENT_CREATED_FILE, buf);
+        if (isdir)
+          em->func(em->data, em, ECORE_FILE_EVENT_CREATED_DIRECTORY, buf);
+        else
+          em->func(em->data, em, ECORE_FILE_EVENT_CREATED_FILE, buf);
      }
    if (mask & IN_DELETE)
      {
-	if (isdir)
-	  em->func(em->data, em, ECORE_FILE_EVENT_DELETED_DIRECTORY, buf);
-	else
-	  em->func(em->data, em, ECORE_FILE_EVENT_DELETED_FILE, buf);
+        if (isdir)
+          em->func(em->data, em, ECORE_FILE_EVENT_DELETED_DIRECTORY, buf);
+        else
+          em->func(em->data, em, ECORE_FILE_EVENT_DELETED_FILE, buf);
      }
    if (mask & IN_CREATE)
      {
-	if (isdir)
-	  em->func(em->data, em, ECORE_FILE_EVENT_CREATED_DIRECTORY, buf);
-	else
-	  em->func(em->data, em, ECORE_FILE_EVENT_CREATED_FILE, buf);
+        if (isdir)
+          em->func(em->data, em, ECORE_FILE_EVENT_CREATED_DIRECTORY, buf);
+        else
+          em->func(em->data, em, ECORE_FILE_EVENT_CREATED_FILE, buf);
      }
    if (mask & IN_DELETE_SELF)
      {
-	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+        em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
    if (mask & IN_MOVE_SELF)
      {
-	/* We just call delete. The dir is gone... */
-	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+        /* We just call delete. The dir is gone... */
+        em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
    if (mask & IN_UNMOUNT)
      {
-	/* We just call delete. The dir is gone... */
-	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+        /* We just call delete. The dir is gone... */
+        em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
    if (mask & IN_IGNORED)
      {
-	/* The watch is removed. If the file name still exists monitor the new one,
-	 * else delete it */
-	if (ecore_file_exists(em->path))
-	  {
-	     if (!_ecore_file_monitor_inotify_monitor(em, em->path))
-	       em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
-	  }
-	else
-	  em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+        /* The watch is removed. If the file name still exists monitor the new one,
+         * else delete it */
+        if (ecore_file_exists(em->path))
+          {
+             if (!_ecore_file_monitor_inotify_monitor(em, em->path))
+               em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+          }
+        else
+          em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
 }
 
@@ -264,17 +264,17 @@ _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
 {
    int mask;
    mask = IN_MODIFY|
-	  IN_MOVED_FROM|IN_MOVED_TO|
-	  IN_DELETE|IN_CREATE|
-	  IN_DELETE_SELF|IN_MOVE_SELF|
-	  IN_UNMOUNT;
+          IN_MOVED_FROM|IN_MOVED_TO|
+          IN_DELETE|IN_CREATE|
+          IN_DELETE_SELF|IN_MOVE_SELF|
+          IN_UNMOUNT;
    ECORE_FILE_MONITOR_INOTIFY(em)->wd = inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh),
-							  path, mask);
+                                                          path, mask);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
      {
-	ERR("inotify_add_watch error");
-	ecore_file_monitor_inotify_del(em);
-	return 0;
+        ERR("inotify_add_watch error");
+        ecore_file_monitor_inotify_del(em);
+        return 0;
      }
    return 1;
 }
@@ -312,35 +312,35 @@ _ecore_file_monitor_inotify_print(char *file, int mask)
 
    if (mask & IN_MODIFY)
      {
-	WRN("Inotify modified %s: %s", type, file);
+        WRN("Inotify modified %s: %s", type, file);
      }
    if (mask & IN_MOVED_FROM)
      {
-	WRN("Inotify moved from %s: %s", type, file);
+        WRN("Inotify moved from %s: %s", type, file);
      }
    if (mask & IN_MOVED_TO)
      {
-	WRN("Inotify moved to %s: %s", type, file);
+        WRN("Inotify moved to %s: %s", type, file);
      }
    if (mask & IN_DELETE)
      {
-	WRN("Inotify delete %s: %s", type, file);
+        WRN("Inotify delete %s: %s", type, file);
      }
    if (mask & IN_CREATE)
      {
-	WRN("Inotify create %s: %s", type, file);
+        WRN("Inotify create %s: %s", type, file);
      }
    if (mask & IN_DELETE_SELF)
      {
-	WRN("Inotify delete self %s: %s", type, file);
+        WRN("Inotify delete self %s: %s", type, file);
      }
    if (mask & IN_MOVE_SELF)
      {
-	WRN("Inotify move self %s: %s", type, file);
+        WRN("Inotify move self %s: %s", type, file);
      }
    if (mask & IN_UNMOUNT)
      {
-	WRN("Inotify unmount %s: %s", type, file);
+        WRN("Inotify unmount %s: %s", type, file);
      }
 }
 #endif

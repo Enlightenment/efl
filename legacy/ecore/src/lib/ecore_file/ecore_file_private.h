@@ -73,9 +73,9 @@ struct _Ecore_File_Monitor
 {
    EINA_INLIST;
    void (*func) (void *data,
-		 Ecore_File_Monitor *ecore_file_monitor,
-		 Ecore_File_Event event,
-		 const char *path);
+                 Ecore_File_Monitor *ecore_file_monitor,
+                 Ecore_File_Event event,
+                 const char *path);
 
    char               *path;
    void               *data;
@@ -86,11 +86,11 @@ struct _Ecore_File_Monitor
 int                 ecore_file_monitor_inotify_init(void);
 int                 ecore_file_monitor_inotify_shutdown(void);
 Ecore_File_Monitor *ecore_file_monitor_inotify_add(const char *path,
-							void (*func) (void *data,
-								      Ecore_File_Monitor *ecore_file_monitor,
-								      Ecore_File_Event event,
-								      const char *path),
-							void *data);
+                                                        void (*func) (void *data,
+                                                                      Ecore_File_Monitor *ecore_file_monitor,
+                                                                      Ecore_File_Event event,
+                                                                      const char *path),
+                                                        void *data);
 void                ecore_file_monitor_inotify_del(Ecore_File_Monitor *ecore_file_monitor);
 #endif
  
@@ -110,11 +110,11 @@ void                ecore_file_monitor_win32_del(Ecore_File_Monitor *ecore_file_
 int                 ecore_file_monitor_poll_init(void);
 int                 ecore_file_monitor_poll_shutdown(void);
 Ecore_File_Monitor *ecore_file_monitor_poll_add(const char *path,
-						void (*func) (void *data,
-							      Ecore_File_Monitor *ecore_file_monitor,
-							      Ecore_File_Event event,
-							      const char *path),
-						void *data);
+                                                void (*func) (void *data,
+                                                              Ecore_File_Monitor *ecore_file_monitor,
+                                                              Ecore_File_Event event,
+                                                              const char *path),
+                                                void *data);
 void                ecore_file_monitor_poll_del(Ecore_File_Monitor *ecore_file_monitor);
 
 #endif

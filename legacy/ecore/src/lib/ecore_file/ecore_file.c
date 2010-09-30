@@ -223,8 +223,8 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 
    if (buf[baselen - 1] != '/')
      {
-	buf[baselen] = '/';
-	baselen++;
+        buf[baselen] = '/';
+        baselen++;
      }
 #else
    dir = opendir(base);
@@ -236,36 +236,36 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
    i = 0;
    for (; *subdirs; subdirs++)
      {
-	struct stat st;
+        struct stat st;
 
 #ifndef HAVE_ATFILE_SOURCE
-	eina_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
-	if (stat(buf, &st) == 0)
+        eina_strlcpy(buf + baselen, *subdirs, sizeof(buf) - baselen);
+        if (stat(buf, &st) == 0)
 #else
-	if (fstatat(fd, *subdirs, &st, 0) == 0)
+        if (fstatat(fd, *subdirs, &st, 0) == 0)
 #endif
-	  {
-	     if (S_ISDIR(st.st_mode))
-	       {
-		  i++;
-		  continue;
-	       }
-	  }
-	else
-	  {
-	     if (errno == ENOENT)
-	       {
+          {
+             if (S_ISDIR(st.st_mode))
+               {
+                  i++;
+                  continue;
+               }
+          }
+        else
+          {
+             if (errno == ENOENT)
+               {
 #ifndef HAVE_ATFILE_SOURCE
-		  if (mkdir(buf, default_mode) == 0)
+                  if (mkdir(buf, default_mode) == 0)
 #else
-		  if (mkdirat(fd, *subdirs, default_mode) == 0)
+                  if (mkdirat(fd, *subdirs, default_mode) == 0)
 #endif
-		    {
-		       i++;
-		       continue;
-		    }
-		 }
-	    }
+                    {
+                       i++;
+                       continue;
+                    }
+                 }
+            }
      }
 
 #ifdef HAVE_ATFILE_SOURCE
@@ -333,23 +333,23 @@ ecore_file_recursive_rm(const char *dir)
    ret = stat(dir, &st);
    if ((ret == 0) && (S_ISDIR(st.st_mode)))
      {
-	ret = 1;
-	if (stat(dir, &st) == -1) return EINA_FALSE;
-	dirp = opendir(dir);
-	if (dirp)
-	  {
-	     while ((dp = readdir(dirp)))
-	       {
-		  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-		    {
-		       snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
-		       if (!ecore_file_recursive_rm(path))
-			 ret = 0;
-		    }
-	       }
-	     closedir(dirp);
-	  }
-	if (!ecore_file_rmdir(dir)) ret = 0;
+        ret = 1;
+        if (stat(dir, &st) == -1) return EINA_FALSE;
+        dirp = opendir(dir);
+        if (dirp)
+          {
+             while ((dp = readdir(dirp)))
+               {
+                  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
+                    {
+                       snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
+                       if (!ecore_file_recursive_rm(path))
+                         ret = 0;
+                    }
+               }
+             closedir(dirp);
+          }
+        if (!ecore_file_rmdir(dir)) ret = 0;
         if (ret)
             return EINA_TRUE;
         else
@@ -357,8 +357,8 @@ ecore_file_recursive_rm(const char *dir)
      }
    else
      {
-	if (ret == -1) return EINA_FALSE;
-	return ecore_file_unlink(dir);
+        if (ret == -1) return EINA_FALSE;
+        return ecore_file_unlink(dir);
      }
 }
 
@@ -393,13 +393,13 @@ ecore_file_mkpath(const char *path)
 
    for (i = 0; path[i] != '\0'; ss[i] = path[i], i++)
      {
-	if (i == sizeof(ss) - 1) return EINA_FALSE;
-	if ((path[i] == '/') && (i > 0))
-	  {
-	     ss[i] = '\0';
-	     if (!_ecore_file_mkpath_if_not_exists(ss))
-	       return EINA_FALSE;
-	  }
+        if (i == sizeof(ss) - 1) return EINA_FALSE;
+        if ((path[i] == '/') && (i > 0))
+          {
+             ss[i] = '\0';
+             if (!_ecore_file_mkpath_if_not_exists(ss))
+               return EINA_FALSE;
+          }
      }
    ss[i] = '\0';
    return _ecore_file_mkpath_if_not_exists(ss);
@@ -449,12 +449,12 @@ ecore_file_cp(const char *src, const char *dst)
    f2 = fopen(dst, "wb");
    if (!f2)
      {
-	fclose(f1);
-	return EINA_FALSE;
+        fclose(f1);
+        return EINA_FALSE;
      }
    while ((num = fread(buf, 1, sizeof(buf), f1)) > 0)
      {
-	if (fwrite(buf, 1, num, f2) != num) ret = EINA_FALSE;
+        if (fwrite(buf, 1, num, f2) != num) ret = EINA_FALSE;
      }
    fclose(f1);
    fclose(f2);
@@ -477,55 +477,55 @@ ecore_file_mv(const char *src, const char *dst)
      {
         // File cannot be moved directly because
         // it resides on a different mount point.
-	if (errno == EXDEV)
-	  {
-	     struct stat st;
+        if (errno == EXDEV)
+          {
+             struct stat st;
 
              // Make sure this is a regular file before
              // we do anything fancy.
-	     stat(src, &st);
-	     if (S_ISREG(st.st_mode))
-	       {
-		  char *dir;
+             stat(src, &st);
+             if (S_ISREG(st.st_mode))
+               {
+                  char *dir;
 
-		  dir = ecore_file_dir_get(dst);
-		  // Since we can't directly rename, try to 
-		  // copy to temp file in the dst directory
-		  // and then rename.
-		  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX", 
-			   dir, ecore_file_file_get(dst));
-		  free(dir);
-		  fd = mkstemp(buf);
-		  if (fd < 0)
-		    {
-		       perror("mkstemp");
-		       goto FAIL;
-		    }
-		  close(fd);
+                  dir = ecore_file_dir_get(dst);
+                  // Since we can't directly rename, try to 
+                  // copy to temp file in the dst directory
+                  // and then rename.
+                  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX", 
+                           dir, ecore_file_file_get(dst));
+                  free(dir);
+                  fd = mkstemp(buf);
+                  if (fd < 0)
+                    {
+                       perror("mkstemp");
+                       goto FAIL;
+                    }
+                  close(fd);
 
-		  // Copy to temp file
-		  if (!ecore_file_cp(src, buf))
-		    goto FAIL;
+                  // Copy to temp file
+                  if (!ecore_file_cp(src, buf))
+                    goto FAIL;
 
-		  // Set file permissions of temp file to match src
-		  chmod(buf, st.st_mode);
+                  // Set file permissions of temp file to match src
+                  chmod(buf, st.st_mode);
 
-		  // Try to atomically move temp file to dst
-		  if (rename(buf, dst))
-		    {
-		       // If we still cannot atomically move
-		       // do a normal copy and hope for the best.
-		       if (!ecore_file_cp(buf, dst))
-			 goto FAIL;
-		    }
+                  // Try to atomically move temp file to dst
+                  if (rename(buf, dst))
+                    {
+                       // If we still cannot atomically move
+                       // do a normal copy and hope for the best.
+                       if (!ecore_file_cp(buf, dst))
+                         goto FAIL;
+                    }
 
-		  // Delete temporary file and src
-		  ecore_file_unlink(buf);
-		  ecore_file_unlink(src);
-		  goto PASS;
-	       }
-	  }
-	goto FAIL;
+                  // Delete temporary file and src
+                  ecore_file_unlink(buf);
+                  ecore_file_unlink(src);
+                  goto PASS;
+               }
+          }
+        goto FAIL;
      }
 
 PASS:
@@ -682,11 +682,11 @@ ecore_file_ls(const char *dir)
 
    while ((dp = readdir(dirp)))
      {
-	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-	  {
-	       f = strdup(dp->d_name);
-	       list = eina_list_append(list, f);
-	  }
+        if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
+          {
+               f = strdup(dp->d_name);
+               list = eina_list_append(list, f);
+          }
      }
    closedir(dirp);
 
@@ -713,61 +713,61 @@ restart:
    exe1 = p;
    while (*p)
      {
-	if (in_quot_sing)
-	  {
-	     if (*p == '\'')
-	       in_quot_sing = 0;
-	  }
-	else if (in_quot_dbl)
-	  {
-	     if (*p == '\"')
-	       in_quot_dbl = 0;
-	  }
-	else
-	  {
-	     if (*p == '\'')
-	       in_quot_sing = 1;
-	     else if (*p == '\"')
-	       in_quot_dbl = 1;
-	     if ((isspace(*p)) && (!((p > app) && (p[-1] != '\\'))))
-	       break;
-	  }
-	p++;
+        if (in_quot_sing)
+          {
+             if (*p == '\'')
+               in_quot_sing = 0;
+          }
+        else if (in_quot_dbl)
+          {
+             if (*p == '\"')
+               in_quot_dbl = 0;
+          }
+        else
+          {
+             if (*p == '\'')
+               in_quot_sing = 1;
+             else if (*p == '\"')
+               in_quot_dbl = 1;
+             if ((isspace(*p)) && (!((p > app) && (p[-1] != '\\'))))
+               break;
+          }
+        p++;
      }
    exe2 = p;
    if (exe2 == exe1) return NULL;
    if (*exe1 == '~')
      {
-	char *homedir;
-	int len;
+        char *homedir;
+        int len;
 
-	/* Skip ~ */
-	exe1++;
+        /* Skip ~ */
+        exe1++;
 
-	homedir = getenv("HOME");
-	if (!homedir) return NULL;
-	len = strlen(homedir);
-	if (exe) free(exe);
-	exe = malloc(len + exe2 - exe1 + 2);
-	if (!exe) return NULL;
-	pp = exe;
-	if (len)
-	  {
-	     strcpy(exe, homedir);
-	     pp += len;
-	     if (*(pp - 1) != '/')
-	       {
-		  *pp = '/';
-		  pp++;
-	       }
-	  }
+        homedir = getenv("HOME");
+        if (!homedir) return NULL;
+        len = strlen(homedir);
+        if (exe) free(exe);
+        exe = malloc(len + exe2 - exe1 + 2);
+        if (!exe) return NULL;
+        pp = exe;
+        if (len)
+          {
+             strcpy(exe, homedir);
+             pp += len;
+             if (*(pp - 1) != '/')
+               {
+                  *pp = '/';
+                  pp++;
+               }
+          }
      }
    else
      {
-	if (exe) free(exe);
-	exe = malloc(exe2 - exe1 + 1);
-	if (!exe) return NULL;
-	pp = exe;
+        if (exe) free(exe);
+        exe = malloc(exe2 - exe1 + 1);
+        if (!exe) return NULL;
+        pp = exe;
      }
    p = exe1;
    restart = 0;
@@ -775,69 +775,69 @@ restart:
    in_quot_sing = 0;
    while (*p)
      {
-	if (in_quot_sing)
-	  {
-	     if (*p == '\'')
-	       in_quot_sing = 0;
-	     else
-	       {
-		  *pp = *p;
-		  pp++;
-	       }
-	  }
-	else if (in_quot_dbl)
-	  {
-	     if (*p == '\"')
-	       in_quot_dbl = 0;
-	     else
-	       {
-		  /* techcincally this is wrong. double quotes also accept
-		   * special chars:
-		   *
-		   * $, `, \
-		   */
-		  *pp = *p;
-		  pp++;
-	       }
-	  }
-	else
-	  {
-	     /* technically we should handle special chars:
-	      *
-	      * $, `, \, etc.
-	      */
-	     if ((p > exe1) && (p[-1] == '\\'))
-	       {
-		  if (*p != '\n')
-		    {
-		       *pp = *p;
-		       pp++;
-		    }
-	       }
-	     else if ((p > exe1) && (*p == '='))
-	       {
-		  restart = 1;
-		  *pp = *p;
-		  pp++;
-	       }
-	     else if (*p == '\'')
-	       in_quot_sing = 1;
-	     else if (*p == '\"')
-	       in_quot_dbl = 1;
-	     else if (isspace(*p))
-	       {
-		  if (restart)
-		    goto restart;
-		  else
-		    break;
-	       }
-	     else
-	       {
-		  *pp = *p;
-		  pp++;
-	       }
-	  }
-	p++;
+        if (in_quot_sing)
+          {
+             if (*p == '\'')
+               in_quot_sing = 0;
+             else
+               {
+                  *pp = *p;
+                  pp++;
+               }
+          }
+        else if (in_quot_dbl)
+          {
+             if (*p == '\"')
+               in_quot_dbl = 0;
+             else
+               {
+                  /* techcincally this is wrong. double quotes also accept
+                   * special chars:
+                   *
+                   * $, `, \
+                   */
+                  *pp = *p;
+                  pp++;
+               }
+          }
+        else
+          {
+             /* technically we should handle special chars:
+              *
+              * $, `, \, etc.
+              */
+             if ((p > exe1) && (p[-1] == '\\'))
+               {
+                  if (*p != '\n')
+                    {
+                       *pp = *p;
+                       pp++;
+                    }
+               }
+             else if ((p > exe1) && (*p == '='))
+               {
+                  restart = 1;
+                  *pp = *p;
+                  pp++;
+               }
+             else if (*p == '\'')
+               in_quot_sing = 1;
+             else if (*p == '\"')
+               in_quot_dbl = 1;
+             else if (isspace(*p))
+               {
+                  if (restart)
+                    goto restart;
+                  else
+                    break;
+               }
+             else
+               {
+                  *pp = *p;
+                  pp++;
+               }
+          }
+        p++;
      }
    *pp = 0;
    return exe;
@@ -860,24 +860,24 @@ ecore_file_escape_name(const char *filename)
    q = buf;
    while (*p)
      {
-	if ((q - buf) > (PATH_MAX - 6)) return NULL;
-	if (
-	    (*p == ' ') || (*p == '\t') || (*p == '\n') ||
-	    (*p == '\\') || (*p == '\'') || (*p == '\"') ||
-	    (*p == ';') || (*p == '!') || (*p == '#') ||
-	    (*p == '$') || (*p == '%') || (*p == '&') ||
-	    (*p == '*') || (*p == '(') || (*p == ')') ||
-	    (*p == '[') || (*p == ']') || (*p == '{') ||
-	    (*p == '}') || (*p == '|') || (*p == '<') ||
-	    (*p == '>') || (*p == '?')
-	    )
-	  {
-	     *q = '\\';
-	     q++;
-	  }
-	*q = *p;
-	q++;
-	p++;
+        if ((q - buf) > (PATH_MAX - 6)) return NULL;
+        if (
+            (*p == ' ') || (*p == '\t') || (*p == '\n') ||
+            (*p == '\\') || (*p == '\'') || (*p == '\"') ||
+            (*p == ';') || (*p == '!') || (*p == '#') ||
+            (*p == '$') || (*p == '%') || (*p == '&') ||
+            (*p == '*') || (*p == '(') || (*p == ')') ||
+            (*p == '[') || (*p == ']') || (*p == '{') ||
+            (*p == '}') || (*p == '|') || (*p == '<') ||
+            (*p == '>') || (*p == '?')
+            )
+          {
+             *q = '\\';
+             q++;
+          }
+        *q = *p;
+        q++;
+        p++;
      }
    *q = 0;
    return strdup(buf);
@@ -898,12 +898,12 @@ ecore_file_strip_ext(const char *path)
      file = strdup(path);
    else if (p != path)
      {
-	file = malloc(((p - path) + 1) * sizeof(char));
-	if (file)
-	  {
-	     memcpy(file, path, (p - path));
-	     file[p - path] = 0;
-	  }
+        file = malloc(((p - path) + 1) * sizeof(char));
+        if (file)
+          {
+             memcpy(file, path, (p - path));
+             file[p - path] = 0;
+          }
      }
 
    return file;
@@ -925,11 +925,11 @@ ecore_file_dir_is_empty(const char *dir)
 
    while ((dp = readdir(dirp)))
      {
-	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-	  {
-	     closedir(dirp);
-	     return 0;
-	  }
+        if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
+          {
+             closedir(dirp);
+             return 0;
+          }
      }
    
    closedir(dirp);

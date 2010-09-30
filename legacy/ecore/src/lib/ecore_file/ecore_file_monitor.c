@@ -47,21 +47,21 @@ ecore_file_monitor_shutdown(void)
    switch (monitor_type)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
-	 break;
+         break;
 #ifdef HAVE_INOTIFY
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-	 ecore_file_monitor_inotify_shutdown();
-	 break;
+         ecore_file_monitor_inotify_shutdown();
+         break;
 #endif
 #ifdef HAVE_NOTIFY_WIN32
       case ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32:
-	 ecore_file_monitor_win32_shutdown();
-	 break;
+         ecore_file_monitor_win32_shutdown();
+         break;
 #endif
 #ifdef HAVE_POLL
       case ECORE_FILE_MONITOR_TYPE_POLL:
-	 ecore_file_monitor_poll_shutdown();
-	 break;
+         ecore_file_monitor_poll_shutdown();
+         break;
 #endif
      }
 }
@@ -84,18 +84,18 @@ ecore_file_monitor_add(const char *path,
    switch (monitor_type)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
-	 return NULL;
+         return NULL;
 #ifdef HAVE_INOTIFY
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-	 return ecore_file_monitor_inotify_add(path, func, data);
+         return ecore_file_monitor_inotify_add(path, func, data);
 #endif
 #ifdef HAVE_NOTIFY_WIN32
       case ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32:
-	 return ecore_file_monitor_win32_add(path, func, data);
+         return ecore_file_monitor_win32_add(path, func, data);
 #endif
 #ifdef HAVE_POLL
       case ECORE_FILE_MONITOR_TYPE_POLL:
-	 return ecore_file_monitor_poll_add(path, func, data);
+         return ecore_file_monitor_poll_add(path, func, data);
 #endif
      }
    return NULL;
@@ -111,21 +111,21 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
    switch (monitor_type)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
-	 break;
+         break;
 #ifdef HAVE_INOTIFY
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-	 ecore_file_monitor_inotify_del(em);
-	 break;
+         ecore_file_monitor_inotify_del(em);
+         break;
 #endif
 #ifdef HAVE_NOTIFY_WIN32
       case ECORE_FILE_MONITOR_TYPE_NOTIFY_WIN32:
-	 ecore_file_monitor_win32_del(em);
-	 break;
+         ecore_file_monitor_win32_del(em);
+         break;
 #endif
 #ifdef HAVE_POLL
       case ECORE_FILE_MONITOR_TYPE_POLL:
-	 ecore_file_monitor_poll_del(em);
-	 break;
+         ecore_file_monitor_poll_del(em);
+         break;
 #endif
      }
 }
