@@ -84,8 +84,8 @@ _edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char 
    for (i = 0; i < ep->other.desc_count; ++i)
      {
 	d = ep->other.desc[i];
-
-	if (!strcmp(d->state.name, name))
+	
+	if (d->state.name && !strcmp(d->state.name, name))
 	  {
 	     double dst;
 
