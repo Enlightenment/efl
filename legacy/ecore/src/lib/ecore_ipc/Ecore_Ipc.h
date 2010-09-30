@@ -68,44 +68,44 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
 /* unpacking */
 #define ECORE_IPC_GET64(v)\
     { \
-	p->v = ECORE_IPC_SWAP2CPU64(*(long long *)(ptr)); \
-	ptr += 8; \
+        p->v = ECORE_IPC_SWAP2CPU64(*(long long *)(ptr)); \
+        ptr += 8; \
     }
 #define ECORE_IPC_GET32(v)\
     { \
-	p->v = ECORE_IPC_SWAP2CPU32(*(int *)(ptr)); \
-	ptr += 4; \
+        p->v = ECORE_IPC_SWAP2CPU32(*(int *)(ptr)); \
+        ptr += 4; \
     }
 #define ECORE_IPC_GET16(v)\
     { \
-	p->v = ECORE_IPC_SWAP2CPU16(*(short *)(ptr)); \
-	ptr += 2; \
+        p->v = ECORE_IPC_SWAP2CPU16(*(short *)(ptr)); \
+        ptr += 2; \
     }
 #define ECORE_IPC_GET8(v) \
     { \
-	p->v = ECORE_IPC_SWAP2CPU8(*(char *)(ptr)); \
-	ptr += 1; \
+        p->v = ECORE_IPC_SWAP2CPU8(*(char *)(ptr)); \
+        ptr += 1; \
     }
 /* packing */
 #define ECORE_IPC_PUT64(v)\
     { \
-	*(long long *)(ptr) = ECORE_IPC_SWAP2NET64(p->v); \
-	ptr += 8; \
+        *(long long *)(ptr) = ECORE_IPC_SWAP2NET64(p->v); \
+        ptr += 8; \
     }
 #define ECORE_IPC_PUT32(v)\
     { \
-	*(int *)(ptr) = ECORE_IPC_SWAP2NET32(p->v); \
-	ptr += 4; \
+        *(int *)(ptr) = ECORE_IPC_SWAP2NET32(p->v); \
+        ptr += 4; \
     }
 #define ECORE_IPC_PUT16(v)\
     { \
-	*(short *)(ptr) = ECORE_IPC_SWAP2NET16(p->v); \
-	ptr += 2; \
+        *(short *)(ptr) = ECORE_IPC_SWAP2NET16(p->v); \
+        ptr += 2; \
     }
 #define ECORE_IPC_PUT8(v) \
     { \
-	*(char *)(ptr) = ECORE_IPC_SWAP2NET8(p->v); \
-	ptr += 1; \
+        *(char *)(ptr) = ECORE_IPC_SWAP2NET8(p->v); \
+        ptr += 1; \
     }
 /* padding data */
 #define ECORE_IPC_PAD8()   ptr += 1
@@ -123,16 +123,16 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
 #define ECORE_IPC_CHEKS() if (*((unsigned char *)d + s - 1) != 0) return 0;
 #define ECORE_IPC_GETS(v) \
     { \
-	if (ptr < ((unsigned char *)d + s)) \
-	    { \
-		p->v = (char *)ptr; \
-		ptr += strlen(p->v) + 1; \
-	    } \
+        if (ptr < ((unsigned char *)d + s)) \
+            { \
+                p->v = (char *)ptr; \
+                ptr += strlen(p->v) + 1; \
+            } \
     } 
 #define ECORE_IPC_PUTS(v, l)\
     { \
-	strcpy((char *)ptr, p->v); \
-	ptr += l + 1; \
+        strcpy((char *)ptr, p->v); \
+        ptr += l + 1; \
     }
 
 /* handy to calculate what sized block we need to alloc */
@@ -189,7 +189,7 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
             p = malloc(sizeof(typ));
 
 #define ECORE_IPC_DEC_EINA_LIST_FOOT() \
-	    l = eina_list_append(l, p); \
+            l = eina_list_append(l, p); \
         } \
     return l
 #define ECORE_IPC_ENC_EINA_LIST_HEAD_START(typ) \

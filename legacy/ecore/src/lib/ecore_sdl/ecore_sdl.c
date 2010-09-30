@@ -34,17 +34,17 @@ static Eina_Rbtree *repeat = NULL;
 
 static Eina_Rbtree_Direction
 _ecore_sdl_pressed_key(const Ecore_SDL_Pressed *left,
-		       const Ecore_SDL_Pressed *right,
-		       __UNUSED__ void *data)
+                       const Ecore_SDL_Pressed *right,
+                       __UNUSED__ void *data)
 {
    return left->key < right->key ? EINA_RBTREE_LEFT : EINA_RBTREE_RIGHT;
 }
 
 static int
 _ecore_sdl_pressed_node(const Ecore_SDL_Pressed *node,
-			const SDLKey *key,
-			__UNUSED__ int length,
-			__UNUSED__ void *data)
+                        const SDLKey *key,
+                        __UNUSED__ int length,
+                        __UNUSED__ void *data)
 {
    return node->key - *key;
 }
@@ -139,10 +139,10 @@ _ecore_sdl_event_key(SDL_Event *event, double time)
    for (i = 0; i < sizeof(keystable) / sizeof(struct _ecore_sdl_keys_s); ++i)
      if (keystable[i].code == event->key.keysym.sym)
        {
-	  ev->keyname = keystable[i].name;
-	  ev->string = keystable[i].compose;
+          ev->keyname = keystable[i].name;
+          ev->string = keystable[i].compose;
 
-	  return ev;
+          return ev;
        }
 
    free(ev);
@@ -162,18 +162,18 @@ ecore_sdl_feed_events(void)
           {
           case SDL_MOUSEMOTION:
           {
-	     Ecore_Event_Mouse_Move *ev;
+             Ecore_Event_Mouse_Move *ev;
 
-	     ev = malloc(sizeof(Ecore_Event_Mouse_Move));
-	     if (!ev) return ;
+             ev = malloc(sizeof(Ecore_Event_Mouse_Move));
+             if (!ev) return ;
 
-	     ev->timestamp = time;
-	     ev->window = 0;
-	     ev->modifiers = 0; /* FIXME: keep modifier around. */
+             ev->timestamp = time;
+             ev->window = 0;
+             ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->x = event.motion.x;
              ev->y = event.motion.y;
-	     ev->root.x = ev->x;
-	     ev->root.y = ev->y;
+             ev->root.x = ev->x;
+             ev->root.y = ev->y;
 
              ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
              break;
@@ -186,11 +186,11 @@ ecore_sdl_feed_events(void)
                   Ecore_Event_Mouse_Wheel *ev;
 
                   ev = malloc(sizeof(Ecore_Event_Mouse_Wheel));
-		  if (!ev) return ;
+                  if (!ev) return ;
 
-		  ev->timestamp = time;
-		  ev->window = 0;
-		  ev->modifiers = 0; /* FIXME: keep modifier around. */
+                  ev->timestamp = time;
+                  ev->window = 0;
+                  ev->modifiers = 0; /* FIXME: keep modifier around. */
                   ev->direction = 0;
                   ev->z = event.button.button == SDL_BUTTON_WHEELDOWN ? -1 : 1;
 
@@ -201,11 +201,11 @@ ecore_sdl_feed_events(void)
                   Ecore_Event_Mouse_Button *ev;
 
                   ev = malloc(sizeof(Ecore_Event_Mouse_Button));
-		  if (!ev) return ;
+                  if (!ev) return ;
 
-		  ev->timestamp = time;
-		  ev->window = 0;
-		  ev->modifiers = 0; /* FIXME: keep modifier around. */
+                  ev->timestamp = time;
+                  ev->window = 0;
+                  ev->modifiers = 0; /* FIXME: keep modifier around. */
                   ev->buttons = event.button.button;
                   ev->double_click = 0;
                   ev->triple_click = 0;
@@ -219,10 +219,10 @@ ecore_sdl_feed_events(void)
              Ecore_Event_Mouse_Button *ev;
 
              ev = malloc(sizeof(Ecore_Event_Mouse_Button));
-	     if (!ev) return ;
-	     ev->timestamp = time;
-	     ev->window = 0;
-	     ev->modifiers = 0; /* FIXME: keep modifier around. */
+             if (!ev) return ;
+             ev->timestamp = time;
+             ev->window = 0;
+             ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->buttons = event.button.button;
              ev->double_click = 0;
              ev->triple_click = 0;
@@ -250,48 +250,48 @@ ecore_sdl_feed_events(void)
 
           case SDL_KEYDOWN:
           {
-	     Ecore_SDL_Pressed *entry;
+             Ecore_SDL_Pressed *entry;
              Ecore_Event_Key *ev;
 
-	     entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
-								    EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
-	     if (entry)
-	       {
-		  ev = _ecore_sdl_event_key(&event, time);
-		  if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
-	       }
+             entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
+                                                                    EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
+             if (entry)
+               {
+                  ev = _ecore_sdl_event_key(&event, time);
+                  if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+               }
 
-	     ev = _ecore_sdl_event_key(&event, time);
-	     if (ev) ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+             ev = _ecore_sdl_event_key(&event, time);
+             if (ev) ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
 
-	     if (!entry)
-	       {
-		  entry = malloc(sizeof (Ecore_SDL_Pressed));
-		  if (!entry) break;
+             if (!entry)
+               {
+                  entry = malloc(sizeof (Ecore_SDL_Pressed));
+                  if (!entry) break;
 
-		  entry->key = event.key.keysym.sym;
+                  entry->key = event.key.keysym.sym;
 
-		  repeat = eina_rbtree_inline_insert(repeat, EINA_RBTREE_GET(entry),
-						     EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
-	       }
+                  repeat = eina_rbtree_inline_insert(repeat, EINA_RBTREE_GET(entry),
+                                                     EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
+               }
              break;
           }
           case SDL_KEYUP:
           {
              Ecore_Event_Key *ev;
-	     Ecore_SDL_Pressed *entry;
+             Ecore_SDL_Pressed *entry;
 
-	     entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
-								    EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
-	     if (entry)
-	       {
-		  repeat = eina_rbtree_inline_remove(repeat, EINA_RBTREE_GET(entry),
-						     EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
-		  free(entry);
-	       }
+             entry = (Ecore_SDL_Pressed*) eina_rbtree_inline_lookup(repeat, &event.key.keysym.sym, sizeof (event.key.keysym.sym),
+                                                                    EINA_RBTREE_CMP_KEY_CB(_ecore_sdl_pressed_node), NULL);
+             if (entry)
+               {
+                  repeat = eina_rbtree_inline_remove(repeat, EINA_RBTREE_GET(entry),
+                                                     EINA_RBTREE_CMP_NODE_CB(_ecore_sdl_pressed_key), NULL);
+                  free(entry);
+               }
 
-	     ev = _ecore_sdl_event_key(&event, time);
-	     if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+             ev = _ecore_sdl_event_key(&event, time);
+             if (ev) ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
              break;
           }
           case SDL_ACTIVEEVENT:
