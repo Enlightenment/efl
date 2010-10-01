@@ -135,7 +135,7 @@ dnl managed by evil
       ELM_UNIX_DEF="#define"
       have_socket="yes"
       AC_CHECK_HEADERS([crt_externs.h])
-      AC_DEFINE([environ], [(*_NSGetEnviron())], [apple doesn't follow POSIX in this case.])
+      AC_DEFINE([environ], [(*_NSGetEnviron())], ["apple doesn't follow POSIX in this case."])
       ;;
    *)
       ELM_UNIX_DEF="#define"
