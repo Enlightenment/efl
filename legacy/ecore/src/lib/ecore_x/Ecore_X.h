@@ -2978,6 +2978,7 @@ EAPI Eina_Bool           ecore_x_image_get(Ecore_X_Image   *im,
                                            int              h);
 EAPI void      ecore_x_image_put(Ecore_X_Image   *im,
                                  Ecore_X_Drawable draw,
+                                 Ecore_X_GC       gc,
                                  int              x,
                                  int              y,
                                  int              sx,
@@ -2988,21 +2989,15 @@ EAPI void *         ecore_x_image_data_get(Ecore_X_Image *im,
                                            int           *bpl,
                                            int           *rows,
                                            int           *bpp);
+EAPI Eina_Bool      ecore_x_image_is_argb32_get(Ecore_X_Image *im);
+         
 EAPI Eina_Bool      ecore_x_image_to_argb_convert(void *src, int sbpp, 
-                                                  int sbpl, int srows, 
+                                                  int sbpl,
                                                   Ecore_X_Colormap c, 
                                                   Ecore_X_Visual v, 
                                                   int x, int y, int w, int h, 
-                                                  void *dst, int dbpp, 
-                                                  int dbpl, int drows, 
-                                                  int dx, int dy);
-EAPI Eina_Bool      ecore_x_image_from_argb_convert(void *src, int sbpp, 
-                                                  int sbpl, int srows, 
-                                                  Ecore_X_Colormap c, 
-                                                  Ecore_X_Visual v, 
-                                                  int x, int y, int w, int h, 
-                                                  void *dst, int dbpp, 
-                                                  int dbpl, int drows, 
+                                                  unsigned int *dst,
+                                                  int dbpl, 
                                                   int dx, int dy);
 
 EAPI Eina_Bool      ecore_x_input_multi_select(Ecore_X_Window win);
