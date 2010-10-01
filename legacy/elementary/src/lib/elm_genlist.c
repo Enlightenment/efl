@@ -357,8 +357,105 @@ static void _sizing_eval(Evas_Object *obj);
 static void _item_unrealize(Elm_Genlist_Item *it);
 static void _item_block_unrealize(Item_Block *itb);
 static void _calc_job(void *data);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
+
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+
+   Elm_Genlist_Item *it = NULL;
+   Evas_Coord x = 0;
+   Evas_Coord y = 0;
+   Evas_Coord step_x = 0;
+   Evas_Coord step_y = 0;
+   Evas_Coord v_w = 0;
+   Evas_Coord v_h = 0;
+   Evas_Coord page_x = 0;
+   Evas_Coord page_y = 0;
+
+   elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
+   elm_smart_scroller_step_size_get(wd->scr, &step_x, &step_y);
+   elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
+
+   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+     {
+        x -= step_x;
+     }
+   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+     {
+        x += step_x;
+     }
+   else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+     {
+        y -= step_y;
+     }
+   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+     {
+        y += step_y;
+     }
+   else if (!strcmp(ev->keyname, "Home"))
+     {
+        it = elm_genlist_first_item_get(obj);
+        elm_genlist_item_bring_in(it);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "End"))
+     {
+        it = elm_genlist_last_item_get(obj);
+        elm_genlist_item_bring_in(it);
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "Prior"))
+     {
+        if (page_y < 0)
+          y -= -(page_y * v_h) / 100;
+        else
+          y -= page_y;
+     }
+   else if (!strcmp(ev->keyname, "Next"))
+     {
+        if (page_y < 0)
+          y += -(page_y * v_h) / 100;
+        else
+          y += page_y;
+     }
+   else return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   elm_smart_scroller_child_pos_set(wd->scr, x, y);
+   return EINA_TRUE;
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+        edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->obj, EINA_TRUE);
+     }
+   else
+     {
+        edje_object_signal_emit(wd->obj, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->obj, EINA_FALSE);
+     }
+}
 
 static void
 _del_hook(Evas_Object *obj)
@@ -1565,11 +1662,13 @@ elm_genlist_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "genlist");
    elm_widget_type_set(obj, "genlist");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
