@@ -49,6 +49,10 @@ static void _theme_hook(Evas_Object *obj);
 static void _show_region_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
+
 
 static const char SIG_SCROLL[] = "scroll";
 static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
@@ -71,6 +75,96 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_EDGE_BOTTOM, ""},
   {NULL, NULL}
 };
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+
+   Evas_Coord x = 0;
+   Evas_Coord y = 0;
+   Evas_Coord step_x = 0;
+   Evas_Coord step_y = 0;
+   Evas_Coord max_x = 0;
+   Evas_Coord max_y = 0;
+   Evas_Coord v_w = 0;
+   Evas_Coord v_h = 0;
+   Evas_Coord page_x = 0;
+   Evas_Coord page_y = 0;
+
+   elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
+   elm_smart_scroller_step_size_get(wd->scr, &step_x, &step_y);
+   elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
+   elm_scroller_child_size_get(obj, &max_x, &max_y);
+
+   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+     {
+        x -= step_x;
+     }
+   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+     {
+        x += step_x;
+     }
+   else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+     {
+        y -= step_y;
+     }
+   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+     {
+        y += step_y;
+     }
+   else if (!strcmp(ev->keyname, "Home"))
+     {
+        y = 0;
+     }
+   else if (!strcmp(ev->keyname, "End"))
+     {
+        y = max_y - v_h;
+     }
+   else if (!strcmp(ev->keyname, "Prior"))
+     {
+	if (page_y < 0)
+	  y -= -(page_y * v_h) / 100;
+	else
+           y -= page_y;
+     }
+   else if (!strcmp(ev->keyname, "Next"))
+     {
+	if (page_y < 0)
+	  y += -(page_y * v_h) / 100;
+	else
+	  y += page_y;
+     }
+   else return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   elm_smart_scroller_child_pos_set(wd->scr, x, y);
+   return EINA_TRUE;
+
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+        edje_object_signal_emit(wd->scr, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->scr, EINA_TRUE);
+     }
+   else
+     {
+        edje_object_signal_emit(wd->scr, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->scr, EINA_FALSE);
+     }
+}
 
 static void
 _del_hook(Evas_Object *obj)
@@ -358,6 +452,7 @@ elm_scroller_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "scroller");
    elm_widget_type_set(obj, "scroller");
    elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
@@ -366,6 +461,7 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_focus_cycle_hook_set(obj, _elm_scroller_focus_cycle_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->widget_name = eina_stringshare_add("scroller");
    wd->widget_base = eina_stringshare_add("base");

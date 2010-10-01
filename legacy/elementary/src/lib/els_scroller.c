@@ -110,7 +110,6 @@ static Eina_Bool  _smart_momentum_animator(void *data);
 static void _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool  _smart_onhold_animator(void *data);
 static void _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _smart_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_edje_drag_v_start(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _smart_edje_drag_v_stop(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _smart_edje_drag_v(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -1932,98 +1931,6 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
-{
-   Evas_Event_Key_Down *ev;
-   Smart_Data *sd;
-   Evas_Coord x = 0, y = 0, vw = 0, vh = 0, mx = 0, my = 0;
-   int xch = 0, ych = 0;
-
-   sd = data;
-   ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-   sd->pan_func.max_get(sd->pan_obj, &mx, &my);
-   evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);
-   if (!strcmp(ev->keyname, "Left"))
-     {
-        x -= sd->step.x;
-        xch = 1;
-     }
-   else if (!strcmp(ev->keyname, "Right"))
-     {
-        x += sd->step.x;
-        xch = 1;
-     }
-   else if (!strcmp(ev->keyname, "Up"))
-     {
-        y -= sd->step.y;
-        ych = 1;
-     }
-   else if (!strcmp(ev->keyname, "Home"))
-     {
-        y = 0;
-        ych = 1;
-     }
-   else if (!strcmp(ev->keyname, "End"))
-     {
-        y = my;
-        ych = 1;
-     }
-   else if (!strcmp(ev->keyname, "Down"))
-     {
-        y += sd->step.y;
-        ych = 1;
-     }
-   else if (!strcmp(ev->keyname, "Prior"))
-     {
-	if (sd->page.y < 0)
-	  y -= -(sd->page.y * vh) / 100;
-	else
-	  y -= sd->page.y;
-        ych = 1;
-     }
-   else if (!strcmp(ev->keyname, "Next"))
-     {
-	if (sd->page.y < 0)
-	  y += -(sd->page.y * vh) / 100;
-	else
-	  y += sd->page.y;
-        ych = 1;
-     }
-   if (xch)
-     {
-        if (sd->scrollto.x.animator)
-          {
-             ecore_animator_del(sd->scrollto.x.animator);
-             sd->scrollto.x.animator = NULL;
-          }
-        if (sd->down.bounce_x_animator)
-          {
-             ecore_animator_del(sd->down.bounce_x_animator);
-             sd->down.bounce_x_animator = NULL;
-             sd->bouncemex = 0;
-          }
-     }
-   if (ych)
-     {
-        if (sd->scrollto.y.animator)
-          {
-             ecore_animator_del(sd->scrollto.y.animator);
-             sd->scrollto.y.animator = NULL;
-          }
-        if (sd->down.bounce_y_animator)
-          {
-             ecore_animator_del(sd->down.bounce_y_animator);
-             sd->down.bounce_y_animator = NULL;
-             sd->bouncemey = 0;
-          }
-     }
-
-   elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
-}
-
-static void
 _smart_scrollbar_read(Smart_Data *sd)
 {
    Evas_Coord x, y, mx = 0, my = 0, px, py;
@@ -2315,8 +2222,6 @@ _smart_add(Evas_Object *obj)
    sd->bounce_vert = 1;
 
    sd->one_dir_at_a_time = 1;
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _smart_event_key_down, sd);
 
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_propagate_events_set(o, 0);
