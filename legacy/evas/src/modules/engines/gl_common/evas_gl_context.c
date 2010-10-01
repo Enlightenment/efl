@@ -1903,9 +1903,9 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    
    if ((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z))
       flat = 1;
-//   flat = 1;
 
    if (!clip) cx = cy = cw = ch = 0;
+   
    if (!flat)
      {
         if (p[0].foc <= 0) flat = 1;
@@ -1995,8 +1995,6 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         gc->py = p[0].py >> FP;
         gc->change.size = 1;
         _evas_gl_common_viewport_set(gc);
-        cx += gc->shared->ax;
-        cy -= gc->shared->ay;
      }
 again:
    vertex_array_size_check(gc, gc->state.top_pipe, 6);
@@ -2276,9 +2274,7 @@ evas_gl_common_context_flush(Evas_GL_Context *gc)
 static void
 shader_array_flush(Evas_GL_Context *gc)
 {
-   int i, setclip;
-   int done = 0;
-   int gw, gh;
+   int i, gw, gh, setclip, cy, fbo = 0, done = 0;
    
    gw = gc->w;
    gh = gc->h;
@@ -2287,11 +2283,12 @@ shader_array_flush(Evas_GL_Context *gc)
      {
         gw = gc->pipe[0].shader.surface->w;
         gh = gc->pipe[0].shader.surface->h;
+        fbo = 1;
      }
    for (i = 0; i < gc->shared->info.tune.pipes.max; i++)
      {
         if (gc->pipe[i].array.num <= 0) break;
-        
+        setclip = 0;
         done++;
         gc->flushnum++;
         GLERR(__FUNCTION__, __FILE__, __LINE__, "<flush err>");
@@ -2422,17 +2419,16 @@ shader_array_flush(Evas_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
           }
-#if 1
-        setclip = 0;
         if (gc->pipe[i].shader.clip != gc->state.current.clip)
           {
+             
              if (gc->pipe[i].shader.clip)
                {
+                  cy = gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch;
+                  if (fbo) cy = gc->pipe[i].shader.cy;
                   glEnable(GL_SCISSOR_TEST);
-                  glScissor(gc->pipe[i].shader.cx, 
-                            gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
-                            gc->pipe[i].shader.cw,
-                            gc->pipe[i].shader.ch);
+                  glScissor(gc->pipe[i].shader.cx, cy,
+                            gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                   setclip = 1;
                }
              else
@@ -2444,17 +2440,17 @@ shader_array_flush(Evas_GL_Context *gc)
         if ((gc->pipe[i].shader.clip) && (!setclip))
           {
              if ((gc->pipe[i].shader.cx != gc->state.current.cx) ||
-                 (gc->pipe[i].shader.cx != gc->state.current.cx) ||
-                 (gc->pipe[i].shader.cx != gc->state.current.cx) ||
-                 (gc->pipe[i].shader.cx != gc->state.current.cx))
+                 (gc->pipe[i].shader.cy != gc->state.current.cy) ||
+                 (gc->pipe[i].shader.cw != gc->state.current.cw) ||
+                 (gc->pipe[i].shader.ch != gc->state.current.ch))
                {
-                  glScissor(gc->pipe[i].shader.cx, 
-                            gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch,
-                            gc->pipe[i].shader.cw,
-                            gc->pipe[i].shader.ch);
+                  cy = gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch;
+                  if (fbo) cy = gc->pipe[i].shader.cy;
+                  glScissor(gc->pipe[i].shader.cx, cy,
+                            gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                }
           }
-#endif
+
         glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, gc->pipe[i].array.vertex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, gc->pipe[i].array.color);
@@ -2524,7 +2520,8 @@ shader_array_flush(Evas_GL_Context *gc)
                {
                   const char *types[6] = 
                     {"----", "RECT", "IMAG", "FONT", "YUV-", "MAP"};
-                  printf("  DRAW %4i -> %p[%4ix%4i] @ %4ix%4i -{ tex %4i type %s }-\n",
+                  printf("  DRAW#%3i %4i -> %p[%4ix%4i] @ %4ix%4i -{ tex %4i type %s }-\n",
+                         i,
                          gc->pipe[i].array.num / 6, 
                          gc->pipe[0].shader.surface,
                          gc->pipe[0].shader.surface->w,
@@ -2548,16 +2545,16 @@ shader_array_flush(Evas_GL_Context *gc)
              gc->pipe[i].array.im = NULL;
           }
         
-        gc->state.current.cur_prog = gc->pipe[i].shader.cur_prog;
-        gc->state.current.cur_tex = gc->pipe[i].shader.cur_tex;
-        gc->state.current.blend = gc->pipe[i].shader.blend;
-        gc->state.current.smooth = gc->pipe[i].shader.smooth;
+        gc->state.current.cur_prog  = gc->pipe[i].shader.cur_prog;
+        gc->state.current.cur_tex   = gc->pipe[i].shader.cur_tex;
+        gc->state.current.blend     = gc->pipe[i].shader.blend;
+        gc->state.current.smooth    = gc->pipe[i].shader.smooth;
         gc->state.current.render_op = gc->pipe[i].shader.render_op;
-        gc->state.current.clip = gc->pipe[i].shader.clip;
-        gc->state.current.cx = gc->pipe[i].shader.cx;
-        gc->state.current.cy = gc->pipe[i].shader.cy;
-        gc->state.current.cw = gc->pipe[i].shader.cw;
-        gc->state.current.ch = gc->pipe[i].shader.ch;
+        gc->state.current.clip      = gc->pipe[i].shader.clip;
+        gc->state.current.cx        = gc->pipe[i].shader.cx;
+        gc->state.current.cy        = gc->pipe[i].shader.cy;
+        gc->state.current.cw        = gc->pipe[i].shader.cw;
+        gc->state.current.ch        = gc->pipe[i].shader.ch;
         
         if (gc->pipe[i].array.vertex) free(gc->pipe[i].array.vertex);
         if (gc->pipe[i].array.color) free(gc->pipe[i].array.color);
