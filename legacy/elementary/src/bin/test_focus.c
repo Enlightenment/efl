@@ -94,7 +94,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                {
                   Evas_Object *bt;
                   bt = elm_button_add(win);
-                  elm_button_label_set(bt, "Button");
+                  elm_button_label_set(bt, "Box");
                   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -116,7 +116,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                     {
                        Evas_Object *bt;
                        bt = elm_button_add(win);
-                       elm_button_label_set(bt, "Button in Scroller");
+                       elm_button_label_set(bt, "Scroller");
                        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                        EVAS_HINT_FILL);
                        evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -131,7 +131,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
           {
              Evas_Object *bt;
              bt = elm_button_add(win);
-             elm_button_label_set(bt, "Button");
+             elm_button_label_set(bt, "Box");
              evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);
              evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -161,7 +161,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                     {
                        Evas_Object *bt;
                        bt = elm_button_add(win);
-                       elm_button_label_set(bt, "Button");
+                       elm_button_label_set(bt, "Box");
                        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                        EVAS_HINT_FILL);
                        evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -192,7 +192,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                     {
                        Evas_Object *bt;
                        bt = elm_button_add(win);
-                       elm_button_label_set(bt, "Button");
+                       elm_button_label_set(bt, "BX Scroller");
                        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                        EVAS_HINT_FILL);
                        evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -226,7 +226,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                {
                   Evas_Object *bt;
                   bt = elm_button_add(win);
-                  elm_button_label_set(bt, "Button");
+                  elm_button_label_set(bt, "Layout");
                   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -247,7 +247,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                {
                   Evas_Object *bt;
                   bt = elm_button_add(win);
-                  elm_button_label_set(bt, "Button");
+                  elm_button_label_set(bt, "Box inside Layout");
                   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
@@ -297,7 +297,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                {
                   Evas_Object *bt;
                   bt = elm_button_add(win);
-                  elm_button_label_set(bt, "Button");
+                  elm_button_label_set(bt, "Panel");
                   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND,
