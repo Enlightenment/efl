@@ -277,8 +277,37 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   elm_frame_content_set(fr, tb);
                   my_show(tb);
-                  for (j = 0; j < 3; j++)
-                    for (i = 0; i < 3; i++)
+                  for (j = 0; j < 1; j++)
+                    for (i = 0; i < 2; i++)
+                      {
+                         Evas_Object *bt;
+                         bt = elm_button_add(win);
+                         elm_button_label_set(bt, "Table");
+                         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
+                                                         EVAS_HINT_FILL);
+                         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                         elm_table_pack(tb, bt, i, j, 1, 1);
+                         my_show(bt);
+                      }
+               }
+          }
+
+          {
+             Evas_Object *fr = elm_bubble_add(win);
+             elm_bubble_label_set(fr, "Bubble");
+             evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(fr, EVAS_HINT_FILL,
+                                             EVAS_HINT_FILL);
+             elm_box_pack_end(bx, fr);
+             evas_object_show(fr);
+
+               {
+                  Evas_Object *tb = elm_table_add(win);
+                  evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                  elm_bubble_content_set(fr, tb);
+                  my_show(tb);
+                  for (j = 0; j < 2; j++)
+                    for (i = 0; i < 1; i++)
                       {
                          Evas_Object *bt;
                          bt = elm_button_add(win);

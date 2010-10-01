@@ -43,6 +43,7 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
 
    win = elm_win_add(NULL, "pager", ELM_WIN_BASIC);
    elm_win_title_set(win, "Pager");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, 1);
    info.win = win;
 
@@ -190,6 +191,7 @@ test_pager_slide(void *data, Evas_Object *obj, void *event_info)
 
    win = elm_win_add(NULL, "pager", ELM_WIN_BASIC);
    elm_win_title_set(win, "Pager Slide");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, 1);
    info.win = win;
 

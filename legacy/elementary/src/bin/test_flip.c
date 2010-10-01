@@ -65,6 +65,7 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
    
    win = elm_win_add(NULL, "flip", ELM_WIN_BASIC);
    elm_win_title_set(win, "Flip");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);

@@ -58,19 +58,7 @@ _elm_frame_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool
    cur = wd->content;
 
    /* Try Focus cycle in subitem */
-   if (elm_widget_focus_cycle(cur, dir, circular))
-     return EINA_TRUE;
-   /* Ignore focused subitem */
-   if (elm_widget_focus_get(cur) && (!circular))
-     return EINA_FALSE;
-   /* Try give the focus to sub item*/
-   if (elm_widget_can_focus_get(cur))
-     {
-        elm_widget_focus_steal(cur);
-        return EINA_TRUE;
-     }
-
-   return EINA_FALSE;
+   return elm_widget_focus_cycle(cur, dir, circular);
 }
 
 static void
