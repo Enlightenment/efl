@@ -6978,13 +6978,19 @@ st_collections_group_programs_program_api(void)
 static void
 st_collections_group_parts_part_api(void)
 {
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
    check_min_arg_count(1);
 
-   current_program->api.name = parse_str(0);
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = pc->parts[pc->parts_count - 1];
+
+   ep->api.name = parse_str(0);
    if (is_param(1))
      {
        check_arg_count(2);
-       current_program->api.description = parse_str(1);
+       ep->api.description = parse_str(1);
      }
 }
 
