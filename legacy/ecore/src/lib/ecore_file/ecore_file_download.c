@@ -212,7 +212,7 @@ _ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__,
    _job_list = eina_list_remove(_job_list, job);
    fclose(job->file);
    free(job->dst);
-   ecore_con_url_destroy(job->url_con);
+   ecore_con_url_free(job->url_con);
    free(job);
 
    return ECORE_CALLBACK_DONE;
