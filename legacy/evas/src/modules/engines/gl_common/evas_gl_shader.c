@@ -406,7 +406,21 @@ gl_compile_link_error(GLuint target, const char *action)
 {
    int loglen = 0, chars = 0;
    char *logtxt;
+
+   /* Shader info log */
+   glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
+   if (loglen > 0)
+     {
+        logtxt = calloc(loglen, sizeof(char));
+        if (logtxt)
+          {
+             glGetShaderInfoLog(target, loglen, &chars, logtxt);
+             printf("Failed to %s: %s\n", action, logtxt);
+             free(logtxt);
+          }
+     }
    
+   /* Program info log */
    glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
    if (loglen > 0)
      {
