@@ -769,6 +769,18 @@ _edje_message_queue_process(void)
    /* to get the idle enterer to be run again */
    if (msgq)
      {
+        static int self_feed_debug = -1;
+        
+        if (self_feed_debug == -1)
+          {
+             const char *s = getenv("EDJE_SELF_FEED_DEBUG");
+             if (s) self_feed_debug = atoi(s);
+             else self_feed_debug = 0;
+          }
+        if (self_feed_debug)
+          {
+             WRN("Edje is in a self-feeding message loop (> 8 loops needed)");
+          }
 	ecore_timer_add(0.0, _edje_dummy_timer, NULL);
      }
 }
