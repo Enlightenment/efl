@@ -246,7 +246,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 	  obj->layer->evas->engine.func->image_stride_get(obj->layer->evas->engine.data.output,
 							  o->engine_data, &stride);
 	else
-	  stride = w;
+	  stride = w * 4;
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
 	o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output,
@@ -738,10 +738,10 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
         else
-           stride = w;
+           stride = w * 4;
      }
    else
-      stride = w;
+      stride = w * 4;
    o->cur.image.stride = stride;
 
 /* FIXME - in engine call above
@@ -928,7 +928,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
                 (obj->layer->evas->engine.data.output,
                     o->engine_data, &stride);
              else
-                stride = o->cur.image.w;
+                stride = o->cur.image.w * 4;
              o->cur.image.stride = stride;
          }
      }
@@ -1014,7 +1014,7 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
         else
-           stride = o->cur.image.w;
+           stride = o->cur.image.w * 4;
         o->cur.image.stride = stride;
      }
    o->pixels_checked_out++;
@@ -1133,7 +1133,7 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
         else
-           stride = o->cur.image.w;
+           stride = o->cur.image.w * 4;
         o->cur.image.stride = stride;
      }
    o->pixels_checked_out = 0;
@@ -1224,7 +1224,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
         else
-           stride = o->cur.image.w;
+           stride = o->cur.image.w * 4;
         o->cur.image.stride = stride;
      }
    evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
@@ -1966,7 +1966,7 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
         else
-           stride = o->cur.image.w;
+           stride = o->cur.image.w * 4;
         o->cur.image.stride = stride;
      }
 }
@@ -2034,7 +2034,7 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
         else
-           stride = o->cur.image.w;
+           stride = o->cur.image.w * 4;
         o->cur.image.stride = stride;
      }
 }
@@ -2253,7 +2253,7 @@ evas_object_image_load(Evas_Object *obj)
            (obj->layer->evas->engine.data.output,
                o->engine_data, &stride);
 	else
-	  stride = w;
+	  stride = w * 4;
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get
            (obj->layer->evas->engine.data.output,
                o->engine_data);
@@ -3123,12 +3123,12 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    switch (o->cur.cspace)
      {
 	case EVAS_COLORSPACE_ARGB8888:
-	  data = ((DATA32*)(data) + ((y * stride) + x));
+	  data = ((DATA32*)(data) + ((y * (stride >> 2)) + x));
 	  a = (*((DATA32*)(data)) >> 24) & 0xff;
 	  break;
 	case EVAS_COLORSPACE_RGB565_A5P:
-           data = (void*) ((DATA16*)(data) + (h * stride));
-	  data = (void*) ((DATA8*)(data) + ((y * stride) + x));
+           data = (void*) ((DATA16*)(data) + (h * (stride >> 2)));
+	  data = (void*) ((DATA8*)(data) + ((y * (stride >> 2)) + x));
 	  a = (*((DATA8*)(data))) & 0x1f;
 	  break;
 	default:
@@ -3205,7 +3205,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 	  out = evas_common_convert_argb8888_to(data,
 						o->cur.image.w,
 						o->cur.image.h,
-						o->cur.image.stride,
+						o->cur.image.stride >> 4,
 						o->cur.has_alpha,
 						to_cspace);
 	  break;
@@ -3213,7 +3213,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 	  out = evas_common_convert_rgb565_a5p_to(data,
 						  o->cur.image.w,
 						  o->cur.image.h,
-						  o->cur.image.stride,
+						  o->cur.image.stride >> 4,
 						  o->cur.has_alpha,
 						  to_cspace);
 	  break;
