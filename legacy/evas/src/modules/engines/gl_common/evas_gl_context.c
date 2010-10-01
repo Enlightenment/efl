@@ -301,15 +301,17 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
         rot = 0;
         m = -1;
      }
-
+   
    if ((!gc->change.size) || 
        ((gc->shared->w == w) && (gc->shared->h == h) &&
-           (gc->shared->rot == rot) && (gc->shared->foc == gc->foc)))
+           (gc->shared->rot == rot) && (gc->shared->foc == gc->foc) &&
+           (gc->shared->mflip == m)))
       return;
    
    gc->shared->w = w;
    gc->shared->h = h;
    gc->shared->rot = rot;
+   gc->shared->mflip = m;
    gc->shared->foc = foc;
    gc->shared->z0 = gc->z0;
    gc->shared->px = gc->px;

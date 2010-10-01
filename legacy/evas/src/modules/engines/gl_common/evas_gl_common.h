@@ -199,6 +199,7 @@ struct _Evas_GL_Shared
    int references;
    int w, h;
    int rot;
+   int mflip;
    // persp map
    int foc, z0, px, py;
    int ax, ay;
