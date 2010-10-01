@@ -18,6 +18,7 @@
 @ELM_EDBUS_DEF@ ELM_EDBUS
 @ELM_EFREET_DEF@ ELM_EFREET
 @ELM_ETHUMB_DEF@ ELM_ETHUMB
+@ELM_DEBUG_DEF@ ELM_DEBUG
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
 @ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
 
@@ -325,7 +326,7 @@ extern "C" {
    EAPI void         elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock);
    EAPI Eina_Bool    elm_object_scroll_lock_x_get(const Evas_Object *obj);
    EAPI Eina_Bool    elm_object_scroll_lock_y_get(const Evas_Object *obj);
-       
+
    EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
    EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
    EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
@@ -1794,6 +1795,11 @@ extern "C" {
     * changed - emitted when the user select a day or change the displayed
     * month.
     */
+
+   /* debug
+    * don't use it unless you are sure
+    */
+   EAPI void         elm_object_tree_dump(const Evas_Object *top);
 
 #ifdef __cplusplus
 }

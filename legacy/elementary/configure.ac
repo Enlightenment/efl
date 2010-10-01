@@ -424,6 +424,18 @@ if test "x$want_elementary_ethumb" = "xyes" -a "x$have_elementary_ethumb" = "xno
 fi
 AC_SUBST(ELM_ETHUMB_DEF)
 
+ELM_DEBUG_DEF="#undef"
+want_elementary_debug="no"
+AC_ARG_ENABLE([debug],
+   [AC_HELP_STRING([--enable-debug], [enable elementary debug support. @<:@default=disabled@:>@])],
+   [want_elementary_debug=$enableval], [])
+
+if test "x$want_elementary_debug" = "xyes"; then
+        AC_DEFINE(HAVE_ELEMENTARY_DEBUG, 1, [Elementary debug.])
+        ELM_DEBUG_DEF="#define"
+fi
+AC_SUBST(ELM_DEBUG_DEF)
+
 ELM_ALLOCA_H_DEF="#undef"
 AC_CHECK_HEADER(alloca.h, [ELM_ALLOCA_H_DEF="#define"])
 AC_SUBST(ELM_ALLOCA_H_DEF)

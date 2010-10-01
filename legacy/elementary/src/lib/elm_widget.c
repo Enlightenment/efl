@@ -2144,6 +2144,7 @@ _smart_init(void)
 }
 
 /* happy debug functions */
+#ifdef ELM_DEBUG
 static void
 _sub_obj_tree_dump(const Evas_Object *o, int lvl)
 {
@@ -2168,9 +2169,12 @@ _sub_obj_tree_dump(const Evas_Object *o, int lvl)
    else
      printf("+ %s(%p)\n", evas_object_type_get(o), o);
 }
+#endif
 
 EAPI void
 elm_widget_tree_dump(const Evas_Object *top)
 {
+#ifdef ELM_DEBUG
    _sub_obj_tree_dump(top, 0);
+#endif
 }

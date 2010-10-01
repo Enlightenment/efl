@@ -1538,3 +1538,21 @@ elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const cha
 {
     return elm_widget_signal_callback_del(obj, emission, source, func);
 }
+
+/**
+ * @defgroup Debug Debug
+ */
+
+/**
+ * Print Tree object hierarchy in stdout
+ *
+ * @param obj The root object
+ * @ingroup Debug
+ */
+EAPI void
+elm_object_tree_dump(const Evas_Object *top)
+{
+#ifdef ELM_DEBUG
+   elm_widget_tree_dump(top);
+#endif
+}
