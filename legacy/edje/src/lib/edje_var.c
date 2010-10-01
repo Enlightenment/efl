@@ -132,7 +132,6 @@ _edje_var_anim_cb(void *data __UNUSED__)
                                      ed->file->path,
                                      embryo_program_max_cycle_run_get(ed->collection->script));
                               }
-			    embryo_program_run(ed->collection->script, fn);
 			    embryo_program_data_set(ed->collection->script, pdata);
 			    embryo_program_vm_pop(ed->collection->script);
 			    _edje_recalc(ed);
