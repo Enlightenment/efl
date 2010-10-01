@@ -381,6 +381,8 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
              vy = 0;
           }
         
+        if (m == -1) ay = vy * 2;
+        
         if ((rot == 0) || (rot == 180))
            glViewport(-2 * vx, -2 * vy, vw, vh);
         else
@@ -1901,6 +1903,7 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
    
    if ((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z))
       flat = 1;
+//   flat = 1;
 
    if (!clip) cx = cy = cw = ch = 0;
    if (!flat)
@@ -1992,6 +1995,8 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
         gc->py = p[0].py >> FP;
         gc->change.size = 1;
         _evas_gl_common_viewport_set(gc);
+        cx += gc->shared->ax;
+        cy -= gc->shared->ay;
      }
 again:
    vertex_array_size_check(gc, gc->state.top_pipe, 6);
