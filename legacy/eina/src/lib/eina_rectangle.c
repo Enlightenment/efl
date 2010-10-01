@@ -34,6 +34,7 @@
 #include "eina_mempool.h"
 #include "eina_list.h"
 #include "eina_trash.h"
+#include "eina_log.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"

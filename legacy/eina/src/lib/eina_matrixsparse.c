@@ -40,6 +40,7 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
+#include "eina_log.h"
 #include "eina_magic.h"
 #include "eina_mempool.h"
 
