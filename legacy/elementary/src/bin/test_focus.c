@@ -260,22 +260,37 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
      }
 
      {//Third Col
-        Evas_Object *tb = elm_table_add(win);
-        evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        elm_box_pack_end(mainbx, tb);
-        my_show(tb);
-        for (j = 0; j < 3; j++)
-          for (i = 0; i < 3; i++)
-            {
-               Evas_Object *bt;
-               bt = elm_button_add(win);
-               elm_button_label_set(bt, "Button");
-               evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
-                                               EVAS_HINT_FILL);
-               evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-               elm_table_pack(tb, bt, i, j, 1, 1);
-               my_show(bt);
-            }
+        Evas_Object *bx = elm_box_add(win);
+        evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND,
+                                         EVAS_HINT_EXPAND);
+        elm_box_pack_end(mainbx, bx);
+        my_show(bx);
+
+          {
+             Evas_Object *fr = elm_frame_add(win);
+             elm_frame_label_set(fr, "Frame");
+             elm_box_pack_end(bx, fr);
+             evas_object_show(fr);
+
+               {
+                  Evas_Object *tb = elm_table_add(win);
+                  evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                  elm_frame_content_set(fr, tb);
+                  my_show(tb);
+                  for (j = 0; j < 3; j++)
+                    for (i = 0; i < 3; i++)
+                      {
+                         Evas_Object *bt;
+                         bt = elm_button_add(win);
+                         elm_button_label_set(bt, "Table");
+                         evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
+                                                         EVAS_HINT_FILL);
+                         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+                         elm_table_pack(tb, bt, i, j, 1, 1);
+                         my_show(bt);
+                      }
+               }
+          }
      }
 
      { //Panel

@@ -133,7 +133,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_elm_win_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+_elm_win_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular __UNUSED__)
 {
    Elm_Win *wd = elm_widget_data_get(obj);
    Eina_List *items;
@@ -142,6 +142,8 @@ _elm_win_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool c
 
    if ((!wd) || (!wd->subobjs))
      return EINA_FALSE;
+
+   circular = EINA_TRUE;
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
@@ -2055,6 +2057,21 @@ _theme_hook(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
+static Eina_Bool
+_elm_inwin_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *cur;
+
+   if ((!wd) || (!wd->content))
+     return EINA_FALSE;
+
+   cur = wd->content;
+
+   /* Try Focus cycle in subitem */
+   return elm_widget_focus_cycle(cur, dir, EINA_TRUE);
+}
+
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -2114,6 +2131,7 @@ elm_win_inwin_add(Evas_Object *obj)
    elm_widget_data_set(obj2, wd);
    elm_widget_del_hook_set(obj2, _del_hook);
    elm_widget_theme_hook_set(obj2, _theme_hook);
+   elm_widget_focus_cycle_hook_set(obj2, _elm_inwin_focus_cycle_hook);
    elm_widget_can_focus_set(obj2, EINA_FALSE);
 
    wd->frm = edje_object_add(win->evas);
