@@ -118,17 +118,15 @@ _elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_B
    /* Try Focus cycle in subitem */
    if (elm_widget_focus_cycle(cur, dir, circular))
      return EINA_TRUE;
-   /* Ignore focused subitem */
-   if (elm_widget_focus_get(cur) && (!circular))
+   /* Abort if content is focusable */
+   if (elm_widget_can_focus_get(cur) || elm_widget_child_can_focus_get(cur))
      return EINA_FALSE;
-   /* Try give the focus to sub item*/
-   if (elm_widget_can_focus_get(cur))
-     {
-        elm_widget_focus_steal(cur);
-        return EINA_TRUE;
-     }
-
-   return EINA_FALSE;
+   /* Ignore is previous focused */
+   if (elm_widget_focus_get(obj) && (!circular))
+     return EINA_FALSE;
+   /* Get Focus*/
+   elm_widget_focus_steal(obj);
+   return EINA_TRUE;
 }
 
 static void

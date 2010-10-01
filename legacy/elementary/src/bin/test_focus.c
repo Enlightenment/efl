@@ -98,6 +98,8 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+                  if (i%2)
+                    elm_object_disabled_set(bt, EINA_TRUE);
                   elm_box_pack_end(bx2, bt);
                   my_show(bt);
                }

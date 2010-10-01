@@ -749,9 +749,22 @@ EAPI Eina_Bool
 elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
 {
    API_ENTRY return EINA_FALSE;
-   if (!sd->focus_cycle_func) return EINA_FALSE;
 
-   return sd->focus_cycle_func(obj, dir, circular);
+   /* Ignore if disabled */
+   if ((!evas_object_visible_get(obj)) || elm_widget_disabled_get(obj))
+     return EINA_FALSE;
+
+   /* Try use hook */
+   if (sd->focus_cycle_func)
+     return sd->focus_cycle_func(obj, dir, circular);
+
+   /* Ignore if previous focused*/
+   if ((!elm_widget_can_focus_get(obj)) || (elm_widget_focus_get(obj) && (!circular)))
+     return EINA_FALSE;
+
+   /* Get focus*/
+   elm_widget_focus_steal(obj);
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *
@@ -802,15 +815,6 @@ elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list
              /* Try Focus cycle in subitem */
              if (elm_widget_focus_cycle(cur, dir, child_circular))
                break;
-             /* Ignore focused subitem */
-             if (elm_widget_focus_get(cur) && (!child_circular))
-               continue;
-             /* Try give the focus to sub item*/
-             if (elm_widget_can_focus_get(cur))
-               {
-                  elm_widget_focus_steal(cur);
-                  break;
-               }
           }
         circular = circular && (!child_circular);
         child_circular = !child_circular;
