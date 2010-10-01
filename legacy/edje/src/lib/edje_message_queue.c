@@ -642,7 +642,8 @@ _edje_message_process(Edje_Message *em)
 {
    Embryo_Function fn;
    void *pdata;
-
+   int ret;
+   
    /* signals are only handled one way */
    if (em->type == EDJE_MESSAGE_SIGNAL)
      {
@@ -683,7 +684,32 @@ _edje_message_process(Edje_Message *em)
    pdata = embryo_program_data_get(em->edje->collection->script);
    embryo_program_data_set(em->edje->collection->script, em->edje);
    embryo_program_max_cycle_run_set(em->edje->collection->script, 5000000);
-   embryo_program_run(em->edje->collection->script, fn);
+   ret = embryo_program_run(em->edje->collection->script, fn);
+   if (ret == EMBRYO_PROGRAM_FAIL)
+     {
+        ERR("ERROR with embryo script.\n"
+            "OBJECT NAME: %s\n"
+            "OBJECT FILE: %s\n"
+            "ENTRY POINT: %s\n"
+            "ERROR:       %s",
+            em->edje->collection->part,
+            em->edje->file->path,
+            "message",
+            embryo_error_string_get(embryo_program_error_get(em->edje->collection->script)));
+     }
+   else if (ret == EMBRYO_PROGRAM_TOOLONG)
+     {
+        ERR("ERROR with embryo script.\n"
+            "OBJECT NAME: %s\n"
+            "OBJECT FILE: %s\n"
+            "ENTRY POINT: %s\n"
+            "ERROR:       Script exceeded maximum allowed cycle count of %i",
+            em->edje->collection->part,
+            em->edje->file->path,
+            "message",
+            embryo_program_max_cycle_run_get(em->edje->collection->script));
+     }
+   
    embryo_program_data_set(em->edje->collection->script, pdata);
    embryo_program_vm_pop(em->edje->collection->script);
 }

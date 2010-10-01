@@ -619,17 +619,25 @@ _call_fn(Edje * ed, const char *fname, Embryo_Function fn)
    if (ret == EMBRYO_PROGRAM_FAIL)
      {
 	ERR("ERROR with embryo script.\n"
-	    "ENTRY POINT: %s\n"
+            "OBJECT NAME: %s\n"
+            "OBJECT FILE: %s\n"
+            "ENTRY POINT: %s\n"
 	    "ERROR:       %s",
-	       fname,
-	       embryo_error_string_get(embryo_program_error_get
-				       (ed->collection->script)));
+            ed->collection->part,
+            ed->file->path,
+            fname,
+            embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
      }
    else if (ret == EMBRYO_PROGRAM_TOOLONG)
      {
 	ERR("ERROR with embryo script.\n"
-	    "ENTRY POINT: %s\n"
+            "OBJECT NAME: %s\n"
+            "OBJECT FILE: %s\n"
+            "ENTRY POINT: %s\n"
 	    "ERROR:       Script exceeded maximum allowed cycle count of %i",
-	    fname, embryo_program_max_cycle_run_get(ed->collection->script));
+            ed->collection->part,
+            ed->file->path,
+            fname, 
+            embryo_program_max_cycle_run_get(ed->collection->script));
      }
 }

@@ -3032,17 +3032,29 @@ _edje_embryo_test_run(Edje *ed, const char *fname, const char *sig, const char *
 	if (ret == EMBRYO_PROGRAM_FAIL)
 	  {
  	     ERR("ERROR with embryo script.\n"
-	 	 "ENTRY POINT: %s\n"
+                 "OBJECT NAME: %s\n"
+                 "OBJECT FILE: %s\n"
+                 "ENTRY POINT: %s\n"
+                 "SIGNAL/SRC:  %s / %s\n"
 		 "ERROR:       %s",
-		 fname,
+                 ed->collection->part,
+                 ed->file->path,
+                 fname,
+                 sig, src,
 		 embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
 	  }
 	else if (ret == EMBRYO_PROGRAM_TOOLONG)
 	  {
 	     ERR("ERROR with embryo script.\n"
-		 "ENTRY POINT: %s\n"
+                 "OBJECT NAME: %s\n"
+                 "OBJECT FILE: %s\n"
+                 "ENTRY POINT: %s\n"
+                 "SIGNAL/SRC:  %s / %s\n"
 		 "ERROR:       Script exceeded maximum allowed cycle count of %i",
+                 ed->collection->part,
+                 ed->file->path,
 		 fname,
+                 sig, src,
 		 embryo_program_max_cycle_run_get(ed->collection->script));
 	  }
 	embryo_program_data_set(ed->collection->script, pdata);

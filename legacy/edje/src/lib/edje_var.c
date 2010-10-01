@@ -25,11 +25,32 @@ _edje_var_timer_cb(void *data)
    free(et);
      {
 	void *pdata;
+        int ret;
 
 	pdata = embryo_program_data_get(ed->collection->script);
 	embryo_program_data_set(ed->collection->script, ed);
         embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
-	embryo_program_run(ed->collection->script, fn);
+        ret = embryo_program_run(ed->collection->script, fn);
+        if (ret == EMBRYO_PROGRAM_FAIL)
+          {
+             ERR("ERROR with embryo script (timer callback).\n"
+                 "OBJECT NAME: %s\n"
+                 "OBJECT FILE: %s\n"
+                 "ERROR:       %s",
+                 ed->collection->part,
+                 ed->file->path,
+                 embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
+          }
+        else if (ret == EMBRYO_PROGRAM_TOOLONG)
+          {
+             ERR("ERROR with embryo script (timer callback).\n"
+                 "OBJECT NAME: %s\n"
+                 "OBJECT FILE: %s\n"
+                 "ERROR:       Script exceeded maximum allowed cycle count of %i",
+                 ed->collection->part,
+                 ed->file->path,
+                 embryo_program_max_cycle_run_get(ed->collection->script));
+          }
 	embryo_program_data_set(ed->collection->script, pdata);
 	embryo_program_vm_pop(ed->collection->script);
 	_edje_recalc(ed);
@@ -74,6 +95,7 @@ _edje_var_anim_cb(void *data __UNUSED__)
 		    {
 		       Embryo_Function fn;
 		       float v;
+                       int ret;
 
 		       v = (t - ea->start)  / ea->len;
 		       if (v > 1.0) v= 1.0;
@@ -89,6 +111,27 @@ _edje_var_anim_cb(void *data __UNUSED__)
 			    pdata = embryo_program_data_get(ed->collection->script);
 			    embryo_program_data_set(ed->collection->script, ed);
 			    embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
+                            ret = embryo_program_run(ed->collection->script, fn);
+                            if (ret == EMBRYO_PROGRAM_FAIL)
+                              {
+                                 ERR("ERROR with embryo script (anim callback).\n"
+                                     "OBJECT NAME: %s\n"
+                                     "OBJECT FILE: %s\n"
+                                     "ERROR:       %s",
+                                     ed->collection->part,
+                                     ed->file->path,
+                                     embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
+                              }
+                            else if (ret == EMBRYO_PROGRAM_TOOLONG)
+                              {
+                                 ERR("ERROR with embryo script (anim callback).\n"
+                                     "OBJECT NAME: %s\n"
+                                     "OBJECT FILE: %s\n"
+                                     "ERROR:       Script exceeded maximum allowed cycle count of %i",
+                                     ed->collection->part,
+                                     ed->file->path,
+                                     embryo_program_max_cycle_run_get(ed->collection->script));
+                              }
 			    embryo_program_run(ed->collection->script, fn);
 			    embryo_program_data_set(ed->collection->script, pdata);
 			    embryo_program_vm_pop(ed->collection->script);
