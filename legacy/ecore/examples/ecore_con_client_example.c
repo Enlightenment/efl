@@ -50,6 +50,9 @@ _data(void *data, int type, Ecore_Con_Event_Server_Data *ev)
 int main()
 {
    Ecore_Con_Server *svr;
+   Eina_Iterator *it;
+   const char *ca;
+
    eina_init();
    ecore_init();
    ecore_con_init();
@@ -58,11 +61,21 @@ int main()
    gnutls_global_set_log_level(9);
    gnutls_global_set_log_function(tls_log_func);
 
-
-
-   if (!(svr = ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "localhost", 8080, NULL)))
+   if (!(it = eina_file_ls("/etc/ssl/certs")))
      exit(1);
-   ecore_con_ssl_server_cafile_add(svr, "/etc/ssl/certs/vsign2.pem");
+
+   if (!(svr = ecore_con_server_connect(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "www.verisign.com", 443, NULL)))
+     exit(1);
+
+   /* add all the CAs */
+   EINA_ITERATOR_FOREACH(it, ca)
+     {
+        if (!ecore_con_ssl_server_cafile_add(svr, ca))
+          printf("Could not load CA: %s!\n", ca);
+        eina_stringshare_del(ca);   
+     }
+
+   eina_iterator_free(it);
    ecore_con_ssl_server_verify(svr);
 
 /* set event handler for server connect */
