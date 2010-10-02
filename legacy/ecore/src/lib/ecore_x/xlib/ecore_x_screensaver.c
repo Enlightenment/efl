@@ -154,7 +154,7 @@ ecore_x_screensaver_interval_get(void)
 } /* ecore_x_screensaver_interval_get */
 
 EAPI void
-ecore_x_screensaver_event_listen_set(Eina_Bool on __UNUSED__)
+ecore_x_screensaver_event_listen_set(Eina_Bool on)
 {
 #ifdef ECORE_XSS
    Ecore_X_Window root;
@@ -165,6 +165,9 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on __UNUSED__)
       XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
    else
       XScreenSaverSelectInput(_ecore_x_disp, root, 0);
+#else
+   return;
+   on = EINA_FALSE;
 #endif /* ifdef ECORE_XSS */
 } /* ecore_x_screensaver_event_listen_set */
 
