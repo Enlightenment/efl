@@ -541,6 +541,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 
    SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, svr->name));
    gnutls_x509_crt_deinit(cert);
+   DBG("SSL certificate verification succeeded!");
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -1053,6 +1054,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
    /* use CRL/CA lists to verify */
    if (SSL_get_peer_certificate(svr->ssl))
      SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
+   DBG("SSL certificate verification succeeded!");
 
    return ECORE_CON_SSL_ERROR_NONE;
 
