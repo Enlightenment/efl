@@ -523,13 +523,13 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    if (iter & GNUTLS_CERT_INVALID)
      ERR("The certificate is not trusted.");
    else if (iter & GNUTLS_CERT_SIGNER_NOT_FOUND)
-     ERR ("The certificate hasn't got a known issuer.");
+     ERR("The certificate hasn't got a known issuer.");
    else if (iter & GNUTLS_CERT_REVOKED)
-     ERR ("The certificate has been revoked.");
+     ERR("The certificate has been revoked.");
    else if (iter & GNUTLS_CERT_EXPIRED)
-     ERR ("The certificate has expired");
+     ERR("The certificate has expired");
    else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
-     ERR ("The certificate is not yet activated");
+     ERR("The certificate is not yet activated");
 
    if (iter)
      goto error;
@@ -985,6 +985,13 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
    else if (!svr->use_cert)
      SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"));
 
+   {
+      X509_STORE *xs;
+
+      xs = SSL_CTX_get_cert_store(svr->ssl_ctx);
+      X509_STORE_set_flags(xs, X509_V_FLAG_CB_ISSUER_CHECK | X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
+   }
+
      return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -1007,7 +1014,7 @@ error:
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 {
-   int err, ret = -1;
+   int ret = -1;
 
    switch (svr->ssl_state)
      {
@@ -1021,8 +1028,8 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
       case ECORE_CON_SSL_STATE_HANDSHAKING:        
         ret = SSL_do_handshake(svr->ssl);
-        err = SSL_get_error(svr->ssl, ret);
-        SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
+        svr->ssl_err = SSL_get_error(svr->ssl, ret);
+        SSL_ERROR_CHECK_GOTO_ERROR((svr->ssl_err == SSL_ERROR_SYSCALL) || (svr->ssl_err == SSL_ERROR_SSL));
 
         if (ret == 1)
           {
@@ -1031,15 +1038,23 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
           }
         else
           {
-             if (err == SSL_ERROR_WANT_READ)
+             if (svr->ssl_err == SSL_ERROR_WANT_READ)
                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
-             else if (err == SSL_ERROR_WANT_WRITE)
+             else if (svr->ssl_err == SSL_ERROR_WANT_WRITE)
                ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
              return ECORE_CON_SSL_ERROR_NONE;
           }
       default:
         break;
      }
+
+   if (!svr->verify)
+     /* not verifying certificates, so we're done! */
+     return ECORE_CON_SSL_ERROR_NONE;
+
+   /* use CRL/CA lists to verify */
+   if (SSL_get_peer_certificate(svr->ssl))
+     SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
 
    return ECORE_CON_SSL_ERROR_NONE;
 
@@ -1069,7 +1084,6 @@ _ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *svr, const char *crl_fil
    SSL_ERROR_CHECK_GOTO_ERROR(!(st = SSL_CTX_get_cert_store(svr->ssl_ctx)));
    SSL_ERROR_CHECK_GOTO_ERROR(!(lu = X509_STORE_add_lookup(st, X509_LOOKUP_file())));
    SSL_ERROR_CHECK_GOTO_ERROR(X509_load_crl_file(lu, crl_file, X509_FILETYPE_PEM) < 1);
-   SSL_ERROR_CHECK_GOTO_ERROR(!X509_STORE_set_flags(st, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL));
 
    return EINA_TRUE;
 
@@ -1245,7 +1259,7 @@ _ecore_con_ssl_server_write_openssl(Ecore_Con_Server *svr, unsigned char *buf,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 {
-   int err, ret = -1;
+   int ret = -1;
    switch (cl->ssl_state)
      {
       case ECORE_CON_SSL_STATE_DONE:
@@ -1258,8 +1272,8 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
       case ECORE_CON_SSL_STATE_HANDSHAKING:
         ret = SSL_do_handshake(cl->ssl);
-        err = SSL_get_error(cl->ssl, ret);
-        SSL_ERROR_CHECK_GOTO_ERROR((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL));
+        cl->ssl_err = SSL_get_error(cl->ssl, ret);
+        SSL_ERROR_CHECK_GOTO_ERROR((cl->ssl_err == SSL_ERROR_SYSCALL) || (cl->ssl_err == SSL_ERROR_SSL));
         if (ret == 1)
           {
              cl->handshaking = EINA_FALSE;
@@ -1267,15 +1281,23 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
           }
         else
           {
-             if (err == SSL_ERROR_WANT_READ)
+             if (cl->ssl_err == SSL_ERROR_WANT_READ)
                 ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
-             else if (err == SSL_ERROR_WANT_WRITE)
+             else if (cl->ssl_err == SSL_ERROR_WANT_WRITE)
                 ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_WRITE);
              return ECORE_CON_SSL_ERROR_NONE;
           }
       default:
         break;
      }
+
+   if (!cl->host_server->verify)
+     /* not verifying certificates, so we're done! */
+     return ECORE_CON_SSL_ERROR_NONE;
+     
+   /* use CRL/CA lists to verify */
+   if (SSL_get_peer_certificate(cl->ssl))
+     SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(cl->ssl));
 
    return ECORE_CON_SSL_ERROR_NONE;
 
