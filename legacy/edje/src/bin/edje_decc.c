@@ -290,7 +290,8 @@ output(void)
 	     void *font;
 	     int fontsize;
 	     char out[4096];
-
+             /* FIXME!!!! */
+                                         /* should be fn->entry -v */
 	     snprintf(out, sizeof(out), "edje/fonts/%s", fn->file);
 	     font = eet_read(ef, out, &fontsize);
 	     if (font)
@@ -298,6 +299,7 @@ output(void)
 		  FILE *f;
 		  char *pp;
 
+                                         /* should be fn->file -v */
 		  snprintf(out, sizeof(out), "%s/%s", outdir, fn->entry);
 		  INF("Output Font: %s", out);
 		  pp = strdup(out);
