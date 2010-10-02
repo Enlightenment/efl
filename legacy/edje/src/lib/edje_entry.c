@@ -153,9 +153,8 @@ _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 #endif
 }
 
-// need one for markup and format too - how to do it? extra type param?
-static void __UNUSED__
-_text_filter_prepend(Entry *en, const char *text)
+static void
+_text_filter_text_prepend(Entry *en, const char *text)
 {
    char *text2;
    Edje_Text_Insert_Filter_Callback *cb;
@@ -166,13 +165,59 @@ _text_filter_prepend(Entry *en, const char *text)
      {
         if (!strcmp(cb->part, en->rp->part->name))
           {
-             cb->func(cb->data, en->rp->edje->obj, cb->part, &text2);
+             cb->func(cb->data, en->rp->edje->obj, cb->part, EDJE_TEXT_FILTER_TEXT, &text2);
              if (!text2) break;
           }
      }
    if (text2)
      {
         evas_textblock_cursor_text_prepend(en->cursor, text2);
+        free(text2);
+     }
+}
+
+static void
+_text_filter_format_prepend(Entry *en, const char *text)
+{
+   char *text2;
+   Edje_Text_Insert_Filter_Callback *cb;
+   Eina_List *l;
+
+   text2 = strdup(text);
+   EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
+     {
+        if (!strcmp(cb->part, en->rp->part->name))
+          {
+             cb->func(cb->data, en->rp->edje->obj, cb->part, EDJE_TEXT_FILTER_FORMAT, &text2);
+             if (!text2) break;
+          }
+     }
+   if (text2)
+     {
+        evas_textblock_cursor_format_prepend(en->cursor, text2);
+        free(text2);
+     }
+}
+
+static void
+_text_filter_markup_prepend(Entry *en, const char *text)
+{
+   char *text2;
+   Edje_Text_Insert_Filter_Callback *cb;
+   Eina_List *l;
+
+   text2 = strdup(text);
+   EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
+     {
+        if (!strcmp(cb->part, en->rp->part->name))
+          {
+             cb->func(cb->data, en->rp->edje->obj, cb->part, EDJE_TEXT_FILTER_MARKUP, &text2);
+             if (!text2) break;
+          }
+     }
+   if (text2)
+     {
+        evas_object_textblock_text_markup_prepend(en->cursor, text2);
         free(text2);
      }
 }
@@ -1163,7 +1208,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              else
                {
                   //yy
-                  evas_textblock_cursor_format_prepend(en->cursor, "\t");
+//                  evas_textblock_cursor_format_prepend(en->cursor, "\t");
+                  _text_filter_format_prepend(en, "\t");
                   _curs_update_from_curs(en->cursor, rp->object, en);
                   _anchors_get(en->cursor, rp->object, en);
                   _edje_emit(ed, "entry,changed", rp->part->name);
@@ -1216,11 +1262,15 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              _sel_clear(en->cursor, rp->object, en);
              if (shift)
                {
-                  evas_textblock_cursor_format_prepend(en->cursor, "\n");
+                  //yy
+//                  evas_textblock_cursor_format_prepend(en->cursor, "\n");
+                  _text_filter_format_prepend(en, "\n");
                }
              else
                {
-                  evas_textblock_cursor_format_prepend(en->cursor, "ps");
+                  //yy
+//                  evas_textblock_cursor_format_prepend(en->cursor, "ps");
+                  _text_filter_format_prepend(en, "ps");
                }
              _curs_update_from_curs(en->cursor, rp->object, en);
              _anchors_get(en->cursor, rp->object, en);
@@ -1239,7 +1289,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                 _range_del(en->cursor, rp->object, en);
              _sel_clear(en->cursor, rp->object, en);
              //zz
-             evas_textblock_cursor_text_prepend(en->cursor, ev->string);
+//             evas_textblock_cursor_text_prepend(en->cursor, ev->string);
+             _text_filter_text_prepend(en, ev->string);
              _curs_update_from_curs(en->cursor, rp->object, en);
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
@@ -1879,7 +1930,8 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
       _range_del(en->cursor, rp->object, en);
    _sel_clear(en->cursor, rp->object, en);
    //xx
-   evas_object_textblock_text_markup_prepend(en->cursor, text);
+//   evas_object_textblock_text_markup_prepend(en->cursor, text);
+   _text_filter_markup_prepend(en, text);
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
@@ -2509,7 +2561,8 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
      }
 
    //yy
-   evas_textblock_cursor_text_prepend(en->cursor, ev->str);
+//   evas_textblock_cursor_text_prepend(en->cursor, ev->str);
+   _text_filter_text_prepend(en, ev->str);
 
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);
@@ -2564,7 +2617,8 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
    en->have_composition = EINA_TRUE;
 
    //xx
-   evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
+//   evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
+   _text_filter_markup_prepend(en, preedit_string);
 
    _curs_update_from_curs(en->cursor, rp->object, en);
    _anchors_get(en->cursor, rp->object, en);

@@ -983,14 +983,14 @@ struct _Edje
    FLOAT_T		 scale;
 
    struct {
-      void (*func) (void *data, Evas_Object *obj, const char *part);
-      void *data;
+      Edje_Text_Change_Cb  func;
+      void                *data;
    } text_change;
 
    struct {
-      void                (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
-      void                 *data;
-      int                   num;
+      Edje_Message_Handler_Cb  func;
+      void                    *data;
+      int                      num;
    } message;
    int                      processing_messages;
 
@@ -1025,8 +1025,8 @@ struct _Edje
    int                   lua_ref;
    
    struct {
-      Evas_Object *(*func) (void *data, Evas_Object *obj, const char *part, const char *item);
-      void *data;
+      Edje_Item_Provider_Cb  func;
+      void                  *data;
    } item_provider;
 };
 
@@ -1183,16 +1183,16 @@ struct _Edje_Signal_Callback
 {
    const char	  *signal;
    const char	  *source;
-   void (*func) (void *data, Evas_Object *o, const char *emission, const char *source);
-   void  *data;
-   unsigned char just_added : 1;
-   unsigned char delete_me : 1;
+   Edje_Signal_Cb  func;
+   void           *data;
+   unsigned char   just_added : 1;
+   unsigned char   delete_me : 1;
 };
 
 struct _Edje_Text_Insert_Filter_Callback
 {
    const char  *part;
-   void       (*func) (void *data, Evas_Object *obj, const char *part, char **text);
+   Edje_Text_Filter_Cb func;
    void        *data;
 };
 

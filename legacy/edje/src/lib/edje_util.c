@@ -1190,7 +1190,7 @@ edje_object_part_geometry_get(const Evas_Object *obj, const char *part, Evas_Coo
  * Edje object is deleted (or file is set to a new file).
  */
 EAPI void
-edje_object_item_provider_set(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *obj, const char *part, const char *item), void *data)
+edje_object_item_provider_set(Evas_Object *obj, Edje_Item_Provider_Cb func, void *data)
 {
    Edje *ed;
 
@@ -1215,7 +1215,7 @@ edje_object_item_provider_set(Evas_Object *obj, Evas_Object *(*func) (void *data
  *
  */
 EAPI void
-edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data)
+edje_object_text_change_cb_set(Evas_Object *obj, Edje_Text_Change_Cb func, void *data)
 {
    Edje *ed;
    unsigned int i;
@@ -1230,8 +1230,8 @@ edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_
 	Edje_Real_Part *rp;
 
 	rp = ed->table_parts[i];
-	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
-	  edje_object_text_change_cb_set(rp->swallowed_object, func, data);
+	if ((rp->part->type == EDJE_PART_TYPE_GROUP) && (rp->swallowed_object))
+           edje_object_text_change_cb_set(rp->swallowed_object, func, data);
      }
 }
 
@@ -2145,8 +2145,14 @@ edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *par
    return NULL;
 }
 
+/**
+ * @brief XX
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
 EAPI void
-edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, void (*func) (void *data, Evas_Object *obj, const char *part, char **text), const void *data)
+edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
    Edje *ed;
    Edje_Text_Insert_Filter_Callback *cb;
@@ -2156,31 +2162,39 @@ edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, 
    cb = calloc(1, sizeof(Edje_Text_Insert_Filter_Callback));
    cb->part = eina_stringshare_add(part);
    cb->func = func;
-   cb->data = (void*) data;
+   cb->data = (void *)data;
    ed->text_insert_filter_callbacks =
      eina_list_append(ed->text_insert_filter_callbacks, cb);
 }
 
-EAPI void
-edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, void (*func) (void *data, Evas_Object *obj, const char *part, char **text), const void *data)
+/**
+ * @brief XX
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ */
+EAPI void *
+edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func)
 {
    Edje *ed;
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
 
    ed = _edje_fetch(obj);
-   if ((!ed) || (!part)) return;
+   if ((!ed) || (!part)) return NULL;
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
-        if ((!strcmp(cb->part, part)) && (cb->func == func) && (cb->data == data))
+        if ((!strcmp(cb->part, part)) && (cb->func == func))
           {
+             void *data = cb->data;
              ed->text_insert_filter_callbacks =
-               eina_list_remove_list(ed->text_insert_filter_callbacks, l);
+                eina_list_remove_list(ed->text_insert_filter_callbacks, l);
              eina_stringshare_del(cb->part);
              free(cb);
-             return;
+             return data;
           }
      }
+   return NULL;
 }
 
 /**

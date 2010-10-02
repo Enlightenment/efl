@@ -71,7 +71,7 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
  */
 
 EAPI void
-edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
+edje_object_message_handler_set(Evas_Object *obj, Edje_Message_Handler_Cb func, void *data)
 {
    Edje *ed;
 

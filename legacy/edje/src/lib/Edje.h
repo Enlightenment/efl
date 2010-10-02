@@ -259,6 +259,13 @@ typedef enum _Edje_Load_Error
    EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9
 } Edje_Load_Error;
 
+typedef enum _Edje_Text_Filter_Type
+{
+   EDJE_TEXT_FILTER_TEXT = 0,
+   EDJE_TEXT_FILTER_FORMAT = 1,
+   EDJE_TEXT_FILTER_MARKUP = 2
+} Edje_Text_Filter_Type;
+   
 typedef enum _Edje_External_Param_Type
 {
   EDJE_EXTERNAL_PARAM_TYPE_INT,
@@ -468,9 +475,11 @@ struct _Edje_External_Type_Info
 };
 typedef struct _Edje_External_Type_Info Edje_External_Type_Info;
 
-typedef void (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source);
-typedef void (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
-typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source);
+typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
+typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
+typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
    /* edje_main.c */
    EAPI int          edje_init                       (void);
@@ -556,7 +565,7 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI const Evas_Object *edje_object_part_object_get   (const Evas_Object *obj, const char *part);
    EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    
-   EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *obj, const char *part, const char *item), void *data);
+   EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
    
    EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Text_Change_Cb func, void *data);
    
@@ -593,8 +602,8 @@ typedef void (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Mess
    EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI const char      *edje_object_part_text_cursor_content_get          (const Evas_Object *obj, const char *part, Edje_Cursor cur);
 
-   EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Object *obj, const char *part, void (*func) (void *data, Evas_Object *obj, const char *part, char **text), const void *data);
-   EAPI void             edje_object_text_insert_filter_callback_del       (Evas_Object *obj, const char *part, void (*func) (void *data, Evas_Object *obj, const char *part, char **text), const void *data);
+   EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
+   EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func);
    
    EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
    EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
