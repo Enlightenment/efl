@@ -291,14 +291,14 @@ output(void)
 	     int fontsize;
 	     char out[4096];
 
-	     snprintf(out, sizeof(out), "edje/fonts/%s", fn->entry);
+	     snprintf(out, sizeof(out), "edje/fonts/%s", fn->file);
 	     font = eet_read(ef, out, &fontsize);
 	     if (font)
 	       {
 		  FILE *f;
 		  char *pp;
 
-		  snprintf(out, sizeof(out), "%s/%s", outdir, fn->file);
+		  snprintf(out, sizeof(out), "%s/%s", outdir, fn->entry);
 		  INF("Output Font: %s", out);
 		  pp = strdup(out);
 		  p = strrchr(pp, '/');
