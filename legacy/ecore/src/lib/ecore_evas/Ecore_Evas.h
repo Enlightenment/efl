@@ -347,7 +347,6 @@ EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
        
 EAPI Ecore_Window ecore_evas_window_get(const Ecore_Evas *ee);
 
-
 EAPI Eina_Bool    ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, Ecore_Evas_Object_Associate_Flags flags);
 EAPI Eina_Bool    ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
 EAPI Evas_Object *ecore_evas_object_associate_get(const Ecore_Evas *ee);
@@ -357,7 +356,11 @@ EAPI unsigned char ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Get
 
 EAPI Eina_List   *ecore_evas_ecore_evas_list_get(void);
 
-
+/* specific calls to an x11 environment ecore_evas */
+EAPI void           ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win);
+EAPI Ecore_X_Window ecore_evas_x11_leader_get(Ecore_Evas *ee);
+EAPI void           ecore_evas_x11_leader_default_set(Ecore_Evas *ee);
+         
 #ifdef __cplusplus
 }
 #endif

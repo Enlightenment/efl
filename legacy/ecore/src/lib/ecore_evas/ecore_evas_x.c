@@ -20,6 +20,49 @@ static int _ecore_evas_init_count = 0;
 
 static Ecore_Event_Handler *ecore_evas_event_handlers[13];
 
+static int leader_ref = 0;
+static Ecore_X_Window leader_win = 0;
+
+static void
+_ecore_evas_x_group_leader_set(Ecore_Evas *ee)
+{
+   leader_ref++;
+   if (leader_ref == 1)
+     {
+        leader_win = ecore_x_window_override_new(ee->engine.x.win_root, 1234, 5678, 1, 2);
+        ecore_x_window_defaults_set(leader_win);
+        if (getenv("DESKTOP_STARTUP_ID"))
+           ecore_x_netwm_startup_id_set(leader_win,
+                                        getenv("DESKTOP_STARTUP_ID"));
+        ecore_x_icccm_client_leader_set(leader_win, leader_win);
+     }
+   ee->engine.x.leader = leader_win;
+   ecore_x_icccm_client_leader_set(ee->prop.window, leader_win);
+}
+
+static void
+_ecore_evas_x_group_leader_unset(Ecore_Evas *ee)
+{
+   ecore_x_window_prop_property_del(ee->prop.window, ECORE_X_ATOM_WM_CLIENT_LEADER);
+   if (ee->engine.x.leader == leader_win)
+     {
+        leader_ref--;
+        if (leader_ref <= 0)
+          {
+             ecore_x_window_free(leader_win);
+             leader_win = 0;
+          }
+        ee->engine.x.leader = 0;
+     }
+}
+
+static void
+_ecore_evas_x_group_leader_update(Ecore_Evas *ee)
+{
+   if (ee->engine.x.leader)
+      ecore_x_icccm_client_leader_set(ee->prop.window, ee->engine.x.leader);
+}
+
 static void
 _ecore_evas_x_protocols_set(Ecore_Evas *ee)
 {
@@ -27,7 +70,7 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
    int num = 0;
    
    if (ee->func.fn_delete_request)
-     protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
+      protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    protos[num++] = ECORE_X_ATOM_NET_WM_PING;
    ecore_x_icccm_protocol_atoms_set(ee->prop.window, protos, num);
 }
@@ -39,12 +82,12 @@ _ecore_evas_x_sync_set(Ecore_Evas *ee)
        (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
      {
         if (!ee->engine.x.sync_counter)
-          ee->engine.x.sync_counter = ecore_x_sync_counter_new(0);
+           ee->engine.x.sync_counter = ecore_x_sync_counter_new(0);
      }
    else
      {
         if (ee->engine.x.sync_counter)
-          ecore_x_sync_counter_free(ee->engine.x.sync_counter);
+           ecore_x_sync_counter_free(ee->engine.x.sync_counter);
         ee->engine.x.sync_counter = 0;
      }
    ecore_x_e_comp_sync_counter_set(ee->prop.window, ee->engine.x.sync_counter);
@@ -190,9 +233,6 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
              XDestroyWindow(einfo->info.display, win);
              return 0;
           }
-        ecore_x_window_defaults_set(win);
-        _ecore_evas_x_protocols_set(ee);
-        _ecore_evas_x_sync_set(ee);
     }
    else
      {
@@ -1220,6 +1260,7 @@ _ecore_evas_x_init(void)
 static void
 _ecore_evas_x_free(Ecore_Evas *ee)
 {
+   _ecore_evas_x_group_leader_unset(ee);
    _ecore_evas_x_sync_set(ee);
    ecore_x_window_free(ee->prop.window);
    if (ee->engine.x.pmap) ecore_x_pixmap_free(ee->engine.x.pmap);
@@ -1854,6 +1895,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                 0 /* icon_window */,
                                 0 /* window_group */,
                                 0 /* is_urgent */);
+        _ecore_evas_x_group_leader_update(ee);
+        ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
@@ -1966,6 +2009,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                 0 /* icon_window */,
                                 0 /* window_group */,
                                 0 /* is_urgent */);
+        _ecore_evas_x_group_leader_update(ee);
+        ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
@@ -2054,6 +2099,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                 0 /* icon_window */,
                                 0 /* window_group */,
                                 0 /* is_urgent */);
+        _ecore_evas_x_group_leader_update(ee);
+        ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_XRENDER_X11 || BUILD_ECORE_EVAS_XRENDER_XCB */
@@ -2135,6 +2182,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                 0 /* icon_window */,
                                 0 /* window_group */,
                                 0 /* is_urgent */);
+        _ecore_evas_x_group_leader_update(ee);
+        ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
@@ -2222,6 +2271,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                                 0 /* icon_window */,
                                 0 /* window_group */,
                                 0 /* is_urgent */);
+        _ecore_evas_x_group_leader_update(ee);
+        ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
 
@@ -3175,6 +3226,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
              return NULL;
           }
      }
+   
    ecore_x_icccm_hints_set(ee->prop.window,
                            1 /* accepts_focus */,
                            ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
@@ -3183,6 +3235,10 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* icon_window */,
                            0 /* window_group */,
                            0 /* is_urgent */);
+   _ecore_evas_x_group_leader_set(ee);
+   ecore_x_window_defaults_set(ee->prop.window);
+   _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
@@ -3406,7 +3462,11 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* icon_window */,
                            0 /* window_group */,
                            0 /* is_urgent */);
-   
+   _ecore_evas_x_group_leader_set(ee);
+   ecore_x_window_defaults_set(ee->prop.window);
+   _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_sync_set(ee);
+
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
    ecore_x_input_multi_select(ee->prop.window);
@@ -3706,7 +3766,11 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* icon_window */,
                            0 /* window_group */,
                            0 /* is_urgent */);
-   
+   _ecore_evas_x_group_leader_set(ee);
+   ecore_x_window_defaults_set(ee->prop.window);
+   _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_sync_set(ee);
+
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
    ecore_x_input_multi_select(ee->prop.window);
@@ -3929,7 +3993,11 @@ ecore_evas_software_x11_16_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* icon_window */,
                            0 /* window_group */,
                            0 /* is_urgent */);
-   
+   _ecore_evas_x_group_leader_set(ee);
+   ecore_x_window_defaults_set(ee->prop.window);
+   _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_sync_set(ee);
+
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
    ecore_x_input_multi_select(ee->prop.window);
@@ -4235,6 +4303,10 @@ ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
                            0 /* icon_window */,
                            0 /* window_group */,
                            0 /* is_urgent */);
+   _ecore_evas_x_group_leader_set(ee);
+   ecore_x_window_defaults_set(ee->prop.window);
+   _ecore_evas_x_protocols_set(ee);
+   _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
@@ -4361,3 +4433,42 @@ ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window 
    win = 0;
 #endif
 }
+
+EAPI void
+ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   _ecore_evas_x_group_leader_unset(ee);
+   ee->engine.x.leader = win;
+   _ecore_evas_x_group_leader_update(ee);
+#else
+   return;
+   ee = NULL;
+   win = 0;
+#endif   
+}
+
+EAPI Ecore_X_Window
+ecore_evas_x11_leader_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   return ee->engine.x.leader;
+#else
+   return 0;
+   ee = NULL;
+#endif   
+}
+
+EAPI void
+ecore_evas_x11_leader_default_set(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   _ecore_evas_x_group_leader_unset(ee);
+   _ecore_evas_x_group_leader_set(ee);
+#else
+   return;
+   ee = NULL;
+   win = 0;
+#endif   
+}
+

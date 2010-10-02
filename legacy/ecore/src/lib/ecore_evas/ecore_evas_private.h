@@ -201,6 +201,7 @@ struct _Ecore_Evas_Engine
       Ecore_X_GC     gc;
       Ecore_X_XRegion *damages;
       Ecore_X_Sync_Counter sync_counter;
+      Ecore_X_Window leader;
       int            sync_val; // bigger! this will screw up at 2 billion frames (414 days of continual rendering @ 60fps)
       int            screen_num;
       int            px, py, pw, ph;

@@ -651,17 +651,17 @@ static const struct ecore_evas_engine _engines[] = {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
   {"software_x11", _ecore_evas_constructor_software_x11},
 #endif
-#ifdef BUILD_ECORE_EVAS_XRENDER_X11
-  {"xrender_x11", _ecore_evas_constructor_xrender_x11},
-#endif
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
   {"opengl_x11", _ecore_evas_constructor_opengl_x11},
 #endif
-#ifdef BUILD_ECORE_EVAS_XRENDER_XCB
-  {"xrender_xcb", _ecore_evas_constructor_xrender_x11},
-#endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
   {"software_8_x11", _ecore_evas_constructor_software_8_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_XRENDER_X11
+  {"xrender_x11", _ecore_evas_constructor_xrender_x11},
+#endif
+#ifdef BUILD_ECORE_EVAS_XRENDER_XCB
+  {"xrender_xcb", _ecore_evas_constructor_xrender_x11},
 #endif
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
   {"software_16_x11", _ecore_evas_constructor_software_16_x11},
