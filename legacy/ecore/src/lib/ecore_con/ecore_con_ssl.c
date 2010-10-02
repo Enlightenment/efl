@@ -971,14 +971,9 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
    else if (!svr->use_cert)
      SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"));
 
-   {
-      X509_STORE *xs;
+   SSL_CTX_set_verify(svr->ssl_ctx, SSL_VERIFY_PEER, NULL);
 
-      xs = SSL_CTX_get_cert_store(svr->ssl_ctx);
-      X509_STORE_set_flags(xs, X509_V_FLAG_CB_ISSUER_CHECK);
-   }
-
-     return ECORE_CON_SSL_ERROR_NONE;
+   return ECORE_CON_SSL_ERROR_NONE;
 
 error:
    if (dh)
