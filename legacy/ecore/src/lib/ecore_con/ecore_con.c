@@ -1600,26 +1600,6 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
       return ECORE_CON_DISCONNECTED;
 }
 
-/* returns 1 on success, 0 on failure */
-static Ecore_Con_State svr_try_connect(Ecore_Con_Server *svr)
-{
-   if (!(svr->type & ECORE_CON_SSL))
-      return svr_try_connect_plain(svr);
-
-   switch (ecore_con_ssl_server_try(svr))
-     {
-      case ECORE_CON_CONNECTED:
-         return svr_try_connect_plain(svr);
-
-      case ECORE_CON_DISCONNECTED:
-         _ecore_con_server_kill(svr);
-         return ECORE_CON_DISCONNECTED;
-
-      default:
-         return ECORE_CON_INPROGRESS;
-     }
-}
-
 static char *
 _ecore_con_pretty_ip(struct sockaddr *client_addr, socklen_t size)
 {
@@ -1740,7 +1720,8 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
    int inbuf_num = 0;
    int tries;
 
-   if (svr->connecting && (svr_try_connect(svr) != ECORE_CON_CONNECTED))
+   /* only possible with non-ssl connections */
+   if (svr->connecting && (svr_try_connect_plain(svr) != ECORE_CON_CONNECTED))
       return;
 
    for (tries = 0; tries < 16; tries++)
@@ -1869,8 +1850,8 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    else if (want_read)
      _ecore_con_cl_read(svr);
    else if (want_write)
-     {
-        if (svr->connecting && (!svr_try_connect(svr)))
+     {  /* only possible with non-ssl connections */
+        if (svr->connecting && (!svr_try_connect_plain(svr)))
            return ECORE_CALLBACK_RENEW;
 
         _ecore_con_server_flush(svr);

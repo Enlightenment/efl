@@ -132,8 +132,6 @@ static Ecore_Con_Ssl_Error
 static Ecore_Con_Ssl_Error
                  SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (Ecore_Con_Server *
                                             svr);
-static Ecore_Con_State
-                 SSL_SUFFIX(_ecore_con_ssl_server_try) (Ecore_Con_Server * svr);
 static int
                  SSL_SUFFIX(_ecore_con_ssl_server_read) (Ecore_Con_Server * svr,
                                         unsigned char *buf, int size);
@@ -194,12 +192,6 @@ Ecore_Con_Ssl_Error
 ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr)
 {
    return SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (svr);
-}
-
-Ecore_Con_State
-ecore_con_ssl_server_try(Ecore_Con_Server *svr)
-{
-   return SSL_SUFFIX(_ecore_con_ssl_server_try) (svr);
 }
 
 int
@@ -661,12 +653,6 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-/* this is a stub function, the handshake is done in _init_gnutls */
-static Ecore_Con_State
-_ecore_con_ssl_server_try_gnutls(Ecore_Con_Server *svr __UNUSED__)
-{
-   return ECORE_CON_CONNECTED;
-}
 
 static int
 _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
@@ -1185,44 +1171,6 @@ _ecore_con_ssl_server_shutdown_openssl(Ecore_Con_Server *svr)
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
-/* Tries to connect an Ecore_Con_Server to an SSL host.
- * Returns 1 on success, -1 on fatal errors and 0 if the caller
- * should try again later.
- */
-static Ecore_Con_State
-_ecore_con_ssl_server_try_openssl(Ecore_Con_Server *svr)
-{
-   int res, flag = 0;
-
-   if ((res = SSL_connect(svr->ssl)) == 1)
-      return ECORE_CON_CONNECTED;
-
-   svr->ssl_err = SSL_get_error(svr->ssl, res);
-
-   switch (svr->ssl_err)
-     {
-      case SSL_ERROR_NONE:
-         return ECORE_CON_CONNECTED;
-
-      case SSL_ERROR_WANT_READ:
-         flag = ECORE_FD_READ;
-         break;
-
-      case SSL_ERROR_WANT_WRITE:
-         flag = ECORE_FD_WRITE;
-         break;
-
-      default:
-         return ECORE_CON_DISCONNECTED;
-     }
-
-   if (svr->fd_handler && flag)
-           ecore_main_fd_handler_active_set(svr->fd_handler,
-                                       flag);
-
-   return ECORE_CON_INPROGRESS;
-}
-
 static int
 _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr, unsigned char *buf,
                                    int size)
@@ -1480,16 +1428,6 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_shutdown_none(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
-}
-
-/* Tries to connect an Ecore_Con_Server to an SSL host.
- * Returns 1 on success, -1 on fatal errors and 0 if the caller
- * should try again later.
- */
-static Ecore_Con_State
-_ecore_con_ssl_server_try_none(Ecore_Con_Server *svr __UNUSED__)
-{
-   return ECORE_CON_DISCONNECTED;
 }
 
 static int
