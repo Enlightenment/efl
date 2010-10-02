@@ -989,7 +989,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
       X509_STORE *xs;
 
       xs = SSL_CTX_get_cert_store(svr->ssl_ctx);
-      X509_STORE_set_flags(xs, X509_V_FLAG_CB_ISSUER_CHECK | X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
+      X509_STORE_set_flags(xs, X509_V_FLAG_CB_ISSUER_CHECK);
    }
 
      return ECORE_CON_SSL_ERROR_NONE;
@@ -1048,6 +1048,23 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
         break;
      }
 
+   {
+      /* print session info into DBG */
+      SSL_SESSION *s;
+      BIO *b;
+      char log[4096];
+      
+
+      memset(log, 0, sizeof(log));
+      s = SSL_get_session(svr->ssl);
+      b = BIO_new(BIO_s_mem());
+      SSL_SESSION_print(b, s);
+      while (BIO_read(b, log, sizeof(log)) > 0)
+        DBG("%s", log);
+
+      BIO_free(b);
+   }
+
    if (!svr->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
@@ -1080,10 +1097,16 @@ _ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *svr, const char *crl_fil
 {
    X509_STORE *st;
    X509_LOOKUP *lu;
+   static Eina_Bool flag = EINA_FALSE;
 
    SSL_ERROR_CHECK_GOTO_ERROR(!(st = SSL_CTX_get_cert_store(svr->ssl_ctx)));
    SSL_ERROR_CHECK_GOTO_ERROR(!(lu = X509_STORE_add_lookup(st, X509_LOOKUP_file())));
    SSL_ERROR_CHECK_GOTO_ERROR(X509_load_crl_file(lu, crl_file, X509_FILETYPE_PEM) < 1);
+   if (!flag)
+     {
+        X509_STORE_set_flags(st, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL);
+        flag = EINA_TRUE;
+     }
 
    return EINA_TRUE;
 
@@ -1290,6 +1313,24 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
       default:
         break;
      }
+
+   {
+      /* print session info into DBG */
+      SSL_SESSION *s;
+      BIO *b;
+      char log[4096];
+      
+
+      memset(log, 0, sizeof(log));
+      s = SSL_get_session(cl->ssl);
+      b = BIO_new(BIO_s_mem());
+      SSL_SESSION_print(b, s);
+      while (BIO_read(b, log, sizeof(log)) > 0)
+        DBG("%s", log);
+
+      BIO_free(b);
+   }
+
 
    if (!cl->host_server->verify)
      /* not verifying certificates, so we're done! */
