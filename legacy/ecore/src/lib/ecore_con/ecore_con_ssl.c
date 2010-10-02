@@ -1063,21 +1063,17 @@ error:
 static Eina_Bool
 _ecore_con_ssl_server_crl_add_openssl(Ecore_Con_Server *svr, const char *crl_file)
 {
-   FILE *fp = NULL;
-   X509_CRL *crl = NULL;
+   X509_STORE *st;
+   X509_LOOKUP *lu;
 
-   if (!(fp = fopen(crl_file, "r")))
-      goto error;
-#warning IMPLEMENT FIXME!
-   SSL_ERROR_CHECK_GOTO_ERROR(!(crl = PEM_read_X509_CRL(fp, NULL, NULL, NULL)));
-
-   fclose(fp);
+   SSL_ERROR_CHECK_GOTO_ERROR(!(st = SSL_CTX_get_cert_store(svr->ssl_ctx)));
+   SSL_ERROR_CHECK_GOTO_ERROR(!(lu = X509_STORE_add_lookup(st, X509_LOOKUP_file())));
+   SSL_ERROR_CHECK_GOTO_ERROR(X509_load_crl_file(lu, crl_file, X509_FILETYPE_PEM) < 1);
+   SSL_ERROR_CHECK_GOTO_ERROR(!X509_STORE_set_flags(st, X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL));
 
    return EINA_TRUE;
 
 error:
-   if (fp)
-      fclose(fp);
    _openssl_print_errors();
    return EINA_FALSE;
 }
