@@ -667,7 +667,7 @@ extern "C" {
    EAPI void	     elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void	     elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void         elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
-   EAPI void         elm_grngrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
+   EAPI void         elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
    EAPI void	     elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
    EAPI void         elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text);
    EAPI void         elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
