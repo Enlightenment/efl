@@ -987,7 +987,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  * @defgroup Evas_Object_Group_Size_Hints Size Hints
  *
  * Objects may carry hints so another object that acts as a manager
- * (see @ref Evas_Smart_Object_Group) may know how to proper position
+ * (see @ref Evas_Smart_Object_Group) may know how to properly position
  * and resize the object. The Size Hints provide a common interface
  * that is recommended as the protocol for such information.
  *
