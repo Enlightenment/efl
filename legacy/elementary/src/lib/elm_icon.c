@@ -210,7 +210,7 @@ elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 }
 
 /**
- * Set if the object are scalable
+ * Set if the object is scalable
  *
  * @param obj The icon object
  * @param no_scale A bool to set scale (or no)
