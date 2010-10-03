@@ -64,6 +64,8 @@
  * tags defined in the style, see @ref evas_textblock_style_set
  *
  * @subsection textblock_special_formats Special Formats
+ * This section is not yet written. If you want some info about styles/formats
+ * and how to use them, expedite's textblock_basic test is a great start.
  * @todo Write @textblock_special_formats
  */
 
