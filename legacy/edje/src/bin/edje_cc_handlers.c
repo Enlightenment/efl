@@ -1847,7 +1847,7 @@ st_collections_group_alias(void)
         [width] [height]
     @effect
         The minimum size for the container defined by the composition of the
-        parts.
+        parts. It is not enforced.
     @endproperty
 */
 static void
@@ -1870,7 +1870,7 @@ st_collections_group_min(void)
         [width] [height]
     @effect
         The maximum size for the container defined by the totality of the
-        parts.
+        parts. It is not enforced.
     @endproperty
 */
 static void
