@@ -765,8 +765,8 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, unsigned int w, unsigned 
    tex->y = 0;
    tex->w = w;
    tex->h = h;
-   tex->pt->references++;
-   return tex;
+   tex->pt->references++; 
+  return tex;
 }
 
 Evas_GL_Texture *
@@ -807,7 +807,7 @@ evas_gl_common_texture_dynamic_new(Evas_GL_Context *gc, Evas_GL_Image *im)
         free(tex);
         return NULL;
      }
-   
+   tex->pt->references++;
    return tex;
 }
 
