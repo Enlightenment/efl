@@ -797,9 +797,9 @@ elm_box_children_get(const Evas_Object *obj)
 EAPI void 
 elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) 
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if (!wd) return;
    evas_object_box_padding_set(wd->box, horizontal, vertical);
 }
 
@@ -815,8 +815,8 @@ elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord ve
 EAPI void 
 elm_box_align_set(const Evas_Object *obj, double horizontal, double vertical) 
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if (!wd) return;
    evas_object_box_align_set(wd->box, horizontal, vertical);
 }
