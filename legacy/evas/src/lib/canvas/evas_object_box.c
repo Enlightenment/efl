@@ -24,10 +24,12 @@ struct _Evas_Object_Box_Accessor
  * @{
  */
 
-static const char _evas_object_box_type[] = "Evas_Object_Box";
-static const char SIG_CHILD_ADDED[] = "child,added";
-static const char SIG_CHILD_REMOVED[] = "child,removed";
-static const Evas_Smart_Cb_Description _signals[] = {
+#define _evas_object_box_type "Evas_Object_Box"
+#define SIG_CHILD_ADDED "child,added"
+#define SIG_CHILD_REMOVED "child,removed"
+
+static const Evas_Smart_Cb_Description _signals[] = 
+{
    {SIG_CHILD_ADDED, ""},
    {SIG_CHILD_REMOVED, ""},
    {NULL, NULL}
@@ -595,7 +597,8 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
 EAPI const Evas_Object_Box_Api *
 evas_object_box_smart_class_get(void)
 {
-   static Evas_Object_Box_Api _sc = EVAS_OBJECT_BOX_API_INIT_NAME_VERSION(_evas_object_box_type);
+   static Evas_Object_Box_Api _sc = 
+     EVAS_OBJECT_BOX_API_INIT_NAME_VERSION(_evas_object_box_type);
    static const Evas_Object_Box_Api *class = NULL;
 
    if (class)
@@ -617,7 +620,8 @@ evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void
 {
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(o, priv);
 
-   if ((priv->layout.cb == cb) && (priv->layout.data == data) && (priv->layout.free_data == free_data))
+   if ((priv->layout.cb == cb) && (priv->layout.data == data) && 
+       (priv->layout.free_data == free_data))
      return;
 
    if (priv->layout.data && priv->layout.free_data)
