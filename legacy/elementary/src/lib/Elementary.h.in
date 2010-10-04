@@ -401,6 +401,8 @@ extern "C" {
    EAPI void         elm_win_quickpanel_zone_set(Evas_Object *obj, int zone);
    EAPI void         elm_win_focus_highlight_enabled_set(Evas_Object *obj, Eina_Bool enabled);
    EAPI Eina_Bool    elm_win_focus_highlight_enabled_get(const Evas_Object *obj);
+   EAPI void         elm_win_focus_highlight_style_set(Evas_Object *obj, const char *style);
+   EAPI const char  *elm_win_focus_highlight_style_get(const Evas_Object *obj);
 
    /*...
     * ecore_x_icccm_hints_set -> accepts_focus (add to ecore_evas)

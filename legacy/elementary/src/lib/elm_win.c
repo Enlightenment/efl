@@ -40,6 +40,7 @@ struct _Elm_Win
          Eina_Bool handled : 1;
       } cur, prev;
 
+      const char *style;
       Ecore_Job *reconf_job;
 
       Eina_Bool enabled : 1;
@@ -228,6 +229,7 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
 //   ecore_evas_free(win->ee);
 
    _elm_win_focus_highlight_shutdown(win);
+   eina_stringshare_del(win->focus_highlight.style);
 
    free(win);
 
@@ -805,8 +807,12 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
    if (win->focus_highlight.changed_theme)
      {
         const char *str;
+        if (win->focus_highlight.style)
+          str = win->focus_highlight.style;
+        else
+          str = "default";
         _elm_theme_object_set(win->win_obj, top, "focus_highlight", "top",
-                              "default"); /* FIXME: use style */
+                              str);
         win->focus_highlight.changed_theme = EINA_FALSE;
 
         if (_elm_config->focus_highlight_animate)
@@ -2035,6 +2041,53 @@ elm_win_focus_highlight_enabled_get(const Evas_Object *obj)
 
    win = elm_widget_data_get(obj);
    return win->focus_highlight.enabled;
+}
+
+/**
+ * Set the style for the focus highlight on this window
+ *
+ * Sets the style to use for theming the highlight of focused objects on
+ * the given window. If @p style is NULL, the default will be used.
+ *
+ * @param obj The window where to set the style
+ * @param style The style to set
+ *
+ * @ingroup Win
+ */
+EAPI void
+elm_win_focus_highlight_style_set(Evas_Object *obj, const char *style)
+{
+   Elm_Win *win;
+
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   win = elm_widget_data_get(obj);
+   eina_stringshare_replace(&win->focus_highlight.style, style);
+   win->focus_highlight.changed_theme = EINA_TRUE;
+   _elm_win_focus_highlight_reconfigure_job_start(win);
+}
+
+/**
+ * Get the style set for the focus highlight object
+ *
+ * Gets the style set for this windows highilght object, or NULL if none
+ * is set.
+ *
+ * @param obj The window to retrieve the highlights style from
+ *
+ * @return The style set or NULL if none was. Default is used in that case.
+ *
+ * @ingroup Win
+ */
+EAPI const char *
+elm_win_focus_highlight_style_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   win = elm_widget_data_get(obj);
+   return win->focus_highlight.style;
 }
 
 typedef struct _Widget_Data Widget_Data;
