@@ -122,9 +122,8 @@ _elm_box_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool c
         if (!items) return EINA_FALSE;
      }
 
-   last_focused = elm_widget_focus_cycle_next_get(obj, items,
-                                                  list_data_get, dir,
-                                                  circular);
+   last_focused = 
+     elm_widget_focus_cycle_next_get(obj, items, list_data_get, dir, circular);
 
    return !!last_focused;
 }
