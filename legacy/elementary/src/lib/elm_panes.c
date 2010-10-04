@@ -69,6 +69,50 @@ _theme_hook(Evas_Object *obj)
    elm_panes_content_left_size_set(obj, size);
 }
 
+static Eina_Bool
+_elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd)
+     return EINA_FALSE;
+
+   double w, h;
+   edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
+   if ((wd->horizontal && ( h == 0.0 )) || ((!wd->horizontal) && ( w == 0.0 )))
+     return elm_widget_focus_cycle(wd->contents.right, dir, circular);
+
+   Evas_Object *chain[2];
+
+   /* Direction */
+   if (dir == ELM_FOCUS_PREVIOUS)
+     {
+        chain[0] = wd->contents.right;
+        chain[1] = wd->contents.left;
+     }
+   else if (dir == ELM_FOCUS_NEXT)
+     {
+        chain[0] = wd->contents.left;
+        chain[1] = wd->contents.right;
+     }
+   else
+     return EINA_FALSE;
+
+   unsigned int i;
+
+   for ( i = (unsigned int) elm_widget_focus_get(chain[1]); i < 2; i++ )
+     if (elm_widget_focus_cycle(chain[i], dir, EINA_FALSE))
+       return EINA_TRUE;
+
+   if (!circular)
+     return EINA_FALSE;
+
+   if (elm_widget_focus_cycle(chain[0], dir, EINA_TRUE))
+     return EINA_TRUE;
+
+   return elm_widget_focus_cycle(chain[1], dir, EINA_TRUE);
+}
+
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -162,6 +206,7 @@ elm_panes_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_focus_cycle_hook_set(obj, _elm_panes_focus_cycle_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->panes = edje_object_add(e);
