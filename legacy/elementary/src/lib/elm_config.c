@@ -226,6 +226,8 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay", tooltip_delay, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only", cursor_engine_only, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_enable", focus_highlight_enable, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_animate", focus_highlight_animate, EET_T_INT);
 }
 
 static void
@@ -413,6 +415,8 @@ _config_load(void)
    _elm_config->modules = NULL;
    _elm_config->tooltip_delay = 1.0;
    _elm_config->cursor_engine_only = 1;
+   _elm_config->focus_highlight_enable = 0;
+   _elm_config->focus_highlight_animate = 1;
 }
 
 static void
@@ -613,6 +617,12 @@ _env_get(void)
 
    s = getenv("ELM_CURSOR_ENGINE_ONLY");
    if (s) _elm_config->cursor_engine_only = atoi(s);
+
+   s = getenv("ELM_FOCUS_HIGHLIGHT_ENABLE");
+   if (s) _elm_config->focus_highlight_enable = atoi(s);
+
+   s = getenv("ELM_FOCUS_HIGHLIGHT_ANIMATE");
+   if (s) _elm_config->focus_highlight_animate = atoi(s);
 }
 
 void

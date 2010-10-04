@@ -312,6 +312,11 @@ extern "C" {
    EAPI void         elm_finger_size_set(Evas_Coord size);
    EAPI void         elm_finger_size_all_set(Evas_Coord size);
 
+   EAPI Eina_Bool    elm_focus_highlight_enable_get(void);
+   EAPI void         elm_focus_highlight_enable_set(Eina_Bool enable);
+   EAPI Eina_Bool    elm_focus_highlight_animate_get(void);
+   EAPI void         elm_focus_highlight_animate_set(Eina_Bool animate);
+
    EAPI Eina_Bool    elm_object_focus_get(Evas_Object *obj);
    EAPI void         elm_object_focus(Evas_Object *obj);
    EAPI void         elm_object_unfocus(Evas_Object *obj);

@@ -22,4 +22,6 @@ group "Elm_Config" struct {
   value "modules" string: "";
   value "tooltip_delay" double: 1.0;
   value "cursor_engine_only" int: 1;
+  value "focus_highlight_enable" int: 0;
+  value "focus_highlight_animate" int: 0;
 }

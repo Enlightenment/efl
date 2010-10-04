@@ -809,8 +809,11 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
                               "default"); /* FIXME: use style */
         win->focus_highlight.changed_theme = EINA_FALSE;
 
-        str = edje_object_data_get(win->focus_highlight.top, "animate");
-        win->focus_highlight.top_animate = (str && !strcmp(str, "on"));
+        if (_elm_config->focus_highlight_animate)
+          {
+             str = edje_object_data_get(win->focus_highlight.top, "animate");
+             win->focus_highlight.top_animate = (str && !strcmp(str, "on"));
+          }
      }
 
    if (win->focus_highlight.top_animate && previous &&
@@ -1034,6 +1037,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
       default:
 	break;
      }
+
+   if (_elm_config->focus_highlight_enable)
+     elm_win_focus_highlight_enabled_set(win->win_obj, EINA_TRUE);
 
    return win->win_obj;
 }

@@ -1170,6 +1170,58 @@ elm_finger_size_all_set(Evas_Coord size)
 }
 
 /**
+ * Get the enable status of the focus highlight
+ *
+ * This gets whether the highlight on focused objects is enabled or not
+ * @ingroup Config
+ */
+EAPI Eina_Bool
+elm_focus_highlight_enable_get(void)
+{
+   return _elm_config->focus_highlight_enable;
+}
+
+/**
+ * Set the enable status of the focus highlight
+ *
+ * Set whether to show or not the highlight on focused objects
+ * @param enable Enable highlight if EINA_TRUE, disable otherwise
+ * @ingroup Config
+ */
+EAPI void
+elm_focus_highlight_enable_set(Eina_Bool enable)
+{
+   _elm_config->focus_highlight_enable = !!enable;
+}
+
+/**
+ * Get the enable status of the highlight animation
+ *
+ * Get whether the focus highlight, if enabled, will animate its switch from
+ * one object to the next
+ * @ingroup Config
+ */
+EAPI Eina_Bool
+elm_focus_highlight_animate_get(void)
+{
+   return _elm_config->focus_highlight_animate;
+}
+
+/**
+ * Set the enable status of the highlight animation
+ *
+ * Set whether the focus highlight, if enabled, will animate its switch from
+ * one object to the next
+ * @param animate Enable animation if EINA_TRUE, disable otherwise
+ * @ingroup Config
+ */
+EAPI void
+elm_focus_highlight_animate_set(Eina_Bool animate)
+{
+   _elm_config->focus_highlight_animate = !!animate;
+}
+
+/**
  * Adjust size of an element for finger usage
  *
  * This takes width and height sizes (in pixels) as input and a size multiple

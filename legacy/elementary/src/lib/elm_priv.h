@@ -93,6 +93,8 @@ struct _Elm_Config
    const char  *modules;
    double       tooltip_delay;
    int          cursor_engine_only;
+   int          focus_highlight_enable;
+   int          focus_highlight_animate;
 };
 
 struct _Elm_Module
