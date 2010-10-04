@@ -211,7 +211,8 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
         int num;
         char *ptr;
         double t = 0.0;
-        int did_triple = 0;
+        static int did_double = 0;
+        static int did_triple = 0;
 
 #ifdef HAVE_TSLIB
         if (_ecore_fb_ts_apply_cal)
@@ -269,11 +270,23 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              e->y = y;
              e->button = 1;
              if ((t - last_time) <= _ecore_fb_double_click_time)
-                e->double_click = 1;
+               {
+                  e->double_click = 1;
+                  did_double = 1;
+               }
+             else
+               {
+                  did_double = 0;
+                  did_triple = 0;
+               }
              if ((t - last_last_time) <= (2 * _ecore_fb_double_click_time))
                {
                   did_triple = 1;
                   e->triple_click = 1;
+               }
+             else
+               {
+                  did_triple = 0;
                }
              ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
           }
@@ -287,6 +300,10 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              e->x = prev_x;
              e->y = prev_y;
              e->button = 1;
+             if (did_double)
+                e->double_click = 1;
+             if (did_triple)
+                e->triple_click = 1;
              ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
           }
         if (did_triple)

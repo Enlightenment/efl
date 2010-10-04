@@ -96,6 +96,8 @@ struct _Ecore_Fb_Event_Mouse_Button_Up /** FB Mouse Up event */
    int     button; /**< Mouse button that was released (1 - 32) */
    int     x; /**< Mouse co-ordinates when mouse button was raised */
    int     y; /**< Mouse co-ordinates when mouse button was raised */
+   int     double_click : 1; /**< Set if click was a double click */
+   int     triple_click : 1; /**< Set if click was a triple click  */
 };
    
 struct _Ecore_Fb_Event_Mouse_Move /** FB Mouse Move event */ 
