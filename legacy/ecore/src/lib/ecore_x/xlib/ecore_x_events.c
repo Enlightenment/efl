@@ -43,6 +43,7 @@ static Window _ecore_x_mouse_down_last_last_event_win = 0;
 static Time _ecore_x_mouse_down_last_time = 0;
 static Time _ecore_x_mouse_down_last_last_time = 0;
 static int _ecore_x_mouse_up_count = 0;
+static int _ecore_x_mouse_down_did_double = 0;
 static int _ecore_x_mouse_down_did_triple = 0;
 static int _ecore_x_last_event_mouse_move = 0;
 static Ecore_Event *_ecore_x_last_event_mouse_move_event = NULL;
@@ -493,28 +494,49 @@ _ecore_mouse_button(int          event,
 
    if (event_window == window)
      {
-        if (((int)(timestamp - _ecore_x_mouse_down_last_time) <=
-             (int)(1000 * _ecore_x_double_click_time)) &&
-            (window == _ecore_x_mouse_down_last_win) &&
-            (event_window == _ecore_x_mouse_down_last_event_win)
-            )
-           e->double_click = 1;
-
-        if (((int)(timestamp - _ecore_x_mouse_down_last_last_time) <=
-             (int)(2 * 1000 * _ecore_x_double_click_time)) &&
-            (window == _ecore_x_mouse_down_last_win) &&
-            (window == _ecore_x_mouse_down_last_last_win) &&
-            (event_window == _ecore_x_mouse_down_last_event_win) &&
-            (event_window == _ecore_x_mouse_down_last_last_event_win)
-            )
-          {
-             e->triple_click = 1;
-             _ecore_x_mouse_down_did_triple = 1;
+        if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
+          { 
+             if (((int)(timestamp - _ecore_x_mouse_down_last_time) <=
+                  (int)(1000 * _ecore_x_double_click_time)) &&
+                 (window == _ecore_x_mouse_down_last_win) &&
+                 (event_window == _ecore_x_mouse_down_last_event_win)
+                )
+               {
+                  e->double_click = 1;
+                  _ecore_x_mouse_down_did_double = 1;
+               }
+             else
+               {
+                  _ecore_x_mouse_down_did_double = 0;
+                  _ecore_x_mouse_down_did_triple = 0;
+               }
+             
+             if (((int)(timestamp - _ecore_x_mouse_down_last_last_time) <=
+                  (int)(2 * 1000 * _ecore_x_double_click_time)) &&
+                 (window == _ecore_x_mouse_down_last_win) &&
+                 (window == _ecore_x_mouse_down_last_last_win) &&
+                 (event_window == _ecore_x_mouse_down_last_event_win) &&
+                 (event_window == _ecore_x_mouse_down_last_last_event_win)
+                )
+               {
+                  e->triple_click = 1;
+                  _ecore_x_mouse_down_did_triple = 1;
+               }
+             else
+               {
+                  _ecore_x_mouse_down_did_triple = 0;
+               }
           }
         else
-           _ecore_x_mouse_down_did_triple = 0;
+          {
+             if (_ecore_x_mouse_down_did_double)
+                e->double_click = 1;
+             if (_ecore_x_mouse_down_did_triple)
+                e->triple_click = 1;
+          }
+              
      }
-
+   
    if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN
        && !e->double_click
        && !e->triple_click)
