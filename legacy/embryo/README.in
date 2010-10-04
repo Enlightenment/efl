@@ -31,7 +31,7 @@ interpreted programs compiled into an abstract machine bytecode that it
 understands.  This abstract (or virtual) machine is similar to a real machine
 with a CPU, but it is emulated in software.  The architecture is simple and is
 the same as the abstract machine (AMX) in the 
-<a href=http://www.compuphase.com/pawn.htm>PAWN</a> language (formerly called
+<a href=http://www.compuphase.com/pawn>PAWN</a> language (formerly called
 SMALL) as it is based on exactly the same code. Embryo has modified the code
 for the AMX extensively and has made it smaller and more portable.  It is VERY
 small.  The total size of the virtual machine code AND header files is less
@@ -62,7 +62,7 @@ issue.
 
 For more documentation please see the Language guide here:
 
-<a href=http://www.compuphase.com/pawn/pawn-lang.pdf>Pawn Language Booklet</a>
+<a href=http://www.compuphase.com/pawn>Pawn Language Booklet</a>
   
 This documents the PAWN language and is 100% relevant for Embryo and the
 syntax of files it can compile (.sma files).
