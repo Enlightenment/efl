@@ -108,6 +108,8 @@ struct _Ecore_DirectFB_Event_Button_Up
    int          x, y;
    unsigned int time;
    DFBWindowID  win;
+   int          double_click : 1;
+   int          triple_click : 1;
 };
 struct _Ecore_DirectFB_Event_Motion
 {
