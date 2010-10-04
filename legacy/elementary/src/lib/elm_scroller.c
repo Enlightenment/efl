@@ -146,7 +146,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    elm_smart_scroller_child_pos_set(wd->scr, x, y);
    return EINA_TRUE;
-
 }
 
 static void
@@ -254,7 +253,6 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 static void
 _show_region_hook(void *data, Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y, w, h;
    if (!wd) return;
@@ -266,7 +264,6 @@ _show_region_hook(void *data, Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord  vw, vh, minw, minh, maxw, maxh, w, h, vmw, vmh;
    double xw, yw;
@@ -309,7 +306,6 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 static void
 _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
 
@@ -329,7 +325,6 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 static void
 _hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -340,7 +335,6 @@ _hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -351,7 +345,6 @@ _hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -362,7 +355,6 @@ _freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
