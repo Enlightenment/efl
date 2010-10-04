@@ -4468,7 +4468,6 @@ ecore_evas_x11_leader_default_set(Ecore_Evas *ee)
 #else
    return;
    ee = NULL;
-   win = 0;
-#endif   
+#endif
 }
 
