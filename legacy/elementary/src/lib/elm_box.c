@@ -558,7 +558,7 @@ elm_box_clear(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_object_box_remove_all(wd->box, 1);
+   evas_object_box_remove_all(wd->box, EINA_TRUE);
 }
 
 /**
@@ -596,7 +596,7 @@ elm_box_unpack_all(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_object_box_remove_all(wd->box, 0);
+   evas_object_box_remove_all(wd->box, EINA_FALSE);
 }
 
 /**
@@ -783,4 +783,40 @@ elm_box_children_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return evas_object_box_children_get(wd->box);
+}
+
+/**
+ * Set the space (padding) between the box's elements.
+ *
+ * @param obj The Elm_Box
+ * @param horizontal The horizontal space between elements
+ * @param vertical The vertical space between elements
+ * 
+ * @ingroup Box
+ */
+EAPI void 
+elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   evas_object_box_padding_set(wd->box, horizontal, vertical);
+}
+
+/**
+ * Set the alignment of the whole bouding box of contents.
+ *
+ * @param obj The Elm_Box
+ * @param horizontal The horizontal alignment of elements
+ * @param vertical The vertical alignment of elements
+ * 
+ * @ingroup Box
+ */
+EAPI void 
+elm_box_align_set(const Evas_Object *obj, double horizontal, double vertical) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   evas_object_box_align_set(wd->box, horizontal, vertical);
 }

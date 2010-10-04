@@ -489,6 +489,8 @@ extern "C" {
    EAPI void         elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_unpack_all(Evas_Object *obj);
    EAPI const Eina_List *elm_box_children_get(const Evas_Object *obj);
+   EAPI void         elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
+   EAPI void         elm_box_align_set(const Evas_Object *obj, double horizontal, double vertical);
 
    EAPI void         elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
    EAPI void         elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data);
