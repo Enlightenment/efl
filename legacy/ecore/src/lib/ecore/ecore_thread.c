@@ -504,30 +504,49 @@ ecore_thread_cancel(Ecore_Thread *thread)
 #ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Worker *work = (Ecore_Pthread_Worker *)thread;
    Eina_List *l;
-   
+
    if (!work)
-      return EINA_TRUE;
-   
+     return EINA_TRUE;
+   if (work->cancel)
+     return EINA_FALSE;
+
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
-   
+
    if ((have_main_loop_thread) &&
        (pthread_equal(main_loop_thread, pthread_self())))
      {
-        EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
-          {
-             if ((void *) work == (void *) thread)
-               {
-                  _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
-                  
-                  pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
-                  
-                  if (work->func_cancel)
-                     work->func_cancel((void *) work->data);
-                  free(work);
-                  
-                  return EINA_TRUE;
-               }
-          }
+        if (!work->feedback_run)
+          EINA_LIST_FOREACH(_ecore_pending_job_threads, l, work)
+            {
+               if ((void *) work == (void *) thread)
+                 {
+                    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, l);
+
+                    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+
+                    if (work->func_cancel)
+                      work->func_cancel((void *) work->data);
+                    free(work);
+
+                    return EINA_TRUE;
+                 }
+            }
+        else
+          EINA_LIST_FOREACH(_ecore_pending_job_threads_feedback, l, work)
+            {
+               if ((void *) work == (void *) thread)
+                 {
+                    _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback, l);
+
+                    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+
+                    if (work->func_cancel)
+                      work->func_cancel((void *) work->data);
+                    free(work);
+
+                    return EINA_TRUE;
+                 }
+            }
      }
 
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
