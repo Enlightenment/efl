@@ -314,6 +314,7 @@ EAPI Eina_Bool        _elm_widget_item_cursor_engine_only_get(const Elm_Widget_I
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
+EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
 
 /**
  * Convenience macro to create new widget item, doing casts for you.

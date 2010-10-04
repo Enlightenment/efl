@@ -1608,3 +1608,20 @@ elm_object_tree_dump(const Evas_Object *top)
    elm_widget_tree_dump(top);
 #endif
 }
+
+/**
+ * Print Elm Objects tree hierarchy in file as dot(graphviz) syntax.
+ *
+ * @param obj The root object
+ * @param file The path of output file
+ * @ingroup Debug
+ */
+EAPI void
+elm_object_tree_dot_dump(const Evas_Object *top, const char *file)
+{
+#ifdef ELM_DEBUG
+   FILE *f = fopen(file, "w");
+   elm_widget_tree_dot_dump(top, f);
+   fclose(f);
+#endif
+}

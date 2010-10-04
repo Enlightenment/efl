@@ -2169,6 +2169,52 @@ _sub_obj_tree_dump(const Evas_Object *o, int lvl)
    else
      printf("+ %s(%p)\n", evas_object_type_get(o), o);
 }
+
+static void
+_sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
+{
+   if (!_elm_widget_is(obj))
+     return;
+
+   Smart_Data *sd = evas_object_smart_data_get(obj);
+
+   Eina_Bool visible = evas_object_visible_get(obj);
+   Eina_Bool disabled = elm_widget_disabled_get(obj);
+   Eina_Bool focused = elm_widget_focus_get(obj);
+
+   if (sd->parent_obj)
+     {
+        fprintf(output, "\"%p\" -- \"%p\" [ color=black", sd->parent_obj, obj);
+
+        if (focused)
+          fprintf(output, ", style=bold");
+
+        if (!visible)
+          fprintf(output, ", color=gray28");
+
+        fprintf(output, " ];\n");
+     }
+
+   fprintf(output, "\"%p\" [ label = \"{%p|%s|visible: %d|disabled: %d|focused: %d}\"",
+           obj, obj, sd->type, visible,disabled,focused);
+
+   if (focused)
+        fprintf(output, ", style=bold");
+
+   if (!visible)
+        fprintf(output, ", fontcolor=gray28");
+
+   if (disabled || (!visible))
+        fprintf(output, ", color=gray");
+
+
+   fprintf(output, " ];\n");
+
+   Eina_List *l;
+   Evas_Object *o;
+   EINA_LIST_FOREACH(sd->subobjs, l, o)
+      _sub_obj_tree_dot_dump(o, output);
+}
 #endif
 
 EAPI void
@@ -2176,5 +2222,15 @@ elm_widget_tree_dump(const Evas_Object *top)
 {
 #ifdef ELM_DEBUG
    _sub_obj_tree_dump(top, 0);
+#endif
+}
+
+EAPI void
+elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output)
+{
+#ifdef ELM_DEBUG
+   fprintf(output, "graph "" { node [shape=record];\n");
+   _sub_obj_tree_dot_dump(top, output);
+   fprintf(output, "}\n");
 #endif
 }

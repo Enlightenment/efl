@@ -1809,6 +1809,7 @@ extern "C" {
     * don't use it unless you are sure
     */
    EAPI void         elm_object_tree_dump(const Evas_Object *top);
+   EAPI void         elm_object_tree_dot_dump(const Evas_Object *top, const char *file);
 
 #ifdef __cplusplus
 }
