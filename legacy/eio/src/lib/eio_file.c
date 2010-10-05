@@ -46,15 +46,9 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
-#include <pthread.h>
-
 #include "eio_private.h"
 
 #include "Eio.h"
-
-static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-static Eina_Trash *trash = NULL;
-static int trash_count = 0;
 
 static void
 _eio_file_heavy(Ecore_Thread *thread, void *data)
@@ -127,10 +121,13 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 	  {
 	     Eina_File_Direct_Info *send;
 
-	     send = malloc(sizeof (Eina_File_Direct_Info));
+	     send = malloc(sizeof (Eina_File_Direct_Info) + sizeof (struct dirent));
 	     if (!send) continue;
 
 	     memcpy(send, info, sizeof (Eina_File_Direct_Info));
+             send->dirent = (struct dirent*)(send + 1);
+             memcpy((void*) send->dirent, info->dirent, sizeof (struct dirent));
+
 	     ecore_thread_feedback(thread, send);
 	  }
 
@@ -194,12 +191,7 @@ _eio_file_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, off_t
    if (op->progress_cb == NULL)
      return ;
 
-   pthread_mutex_lock(&lock);
-   progress = eina_trash_pop(&trash);
-   if (progress) trash_count--;
-   pthread_mutex_unlock(&lock);
-
-   if (!progress) progress = malloc(sizeof (Eio_Progress));
+   progress = eio_progress_malloc();
    if (!progress) return ;
 
    progress->current = current;
@@ -215,13 +207,8 @@ static void
 _eio_file_progress(Eio_Progress *progress, Eio_File_Progress *op)
 {
    op->progress_cb((void *) op->common.data, progress);
-   eina_stringshare_del(progress->source);
-   eina_stringshare_del(progress->dest);
 
-   pthread_mutex_lock(&lock);
-   eina_trash_push(&trash, progress);
-   trash_count++;
-   pthread_mutex_unlock(&lock);
+   eio_progress_free(progress);
 }
 
 #ifndef MAP_HUGETLB
@@ -505,8 +492,13 @@ _eio_file_move_error(void *data)
 			       _eio_file_move_copy_error,
 			       move);
 
-	if (eio_cp) move->copy = eio_cp;
-	return ;
+	if (eio_cp)
+          {
+             move->copy = eio_cp;
+
+             move->progress.common.thread = ((Eio_File_Progress*)move->copy)->common.thread;
+             return ;
+          }
      }
 
    eio_file_error(&move->progress.common);

@@ -9,6 +9,9 @@
 
 #include "Eio.h"
 
+/* Keeping 32 Eio_File_Progress alive should be enought */
+#define EIO_PROGRESS_LIMIT 32
+
 /* Huge TLB == 16M on most system */
 #define EIO_PACKET_SIZE 65536
 #define EIO_PACKET_COUNT 256
@@ -21,6 +24,8 @@ typedef struct _Eio_File_Unlink Eio_File_Unlink;
 typedef struct _Eio_File_Stat Eio_File_Stat;
 typedef struct _Eio_File_Progress Eio_File_Progress;
 typedef struct _Eio_File_Move Eio_File_Move;
+
+typedef struct _Eio_Dir_Copy Eio_Dir_Copy;
 
 struct _Eio_File
 {
@@ -97,6 +102,14 @@ struct _Eio_File_Move
    Eio_File *copy;
 };
 
+struct _Eio_Dir_Copy
+{
+   Eio_File_Progress progress;
+
+   Eina_List *files;
+   Eina_List *dirs;
+};
+
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
 Eina_Bool eio_file_set(Eio_File *common,
 		       Eio_Done_Cb done_cb,
@@ -118,5 +131,8 @@ Eina_Bool eio_long_file_set(Eio_File *common,
 
 void eio_file_error(Eio_File *common);
 void eio_file_thread_error(Eio_File *common);
+
+Eio_Progress *eio_progress_malloc(void);
+void eio_progress_free(Eio_Progress *progress);
 
 #endif
