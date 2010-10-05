@@ -6213,12 +6213,7 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
    cur2 = alloca(sizeof(Evas_Textblock_Cursor));
    cur2->obj = _cur2->obj;
    evas_textblock_cursor_copy(_cur2, cur2);
-   if (cur2->pos < eina_ustrbuf_length_get(cur2->node->unicode))
-     {
-        /* We want to also copy the pointed to char, only if it's not
-         * the terminating null. */
-        cur2->pos++;
-     }
+
    /* Parse the text between the cursors. */
    for (tnode = cur1->node ; tnode ;
          tnode = _NODE_TEXT(EINA_INLIST_GET(tnode)->next))
