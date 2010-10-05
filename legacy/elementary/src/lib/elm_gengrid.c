@@ -188,6 +188,7 @@ struct _Widget_Data
    Eina_List *items;
    Ecore_Job *calc_job;
    Eina_List *selected;
+   Elm_Gengrid_Item *last_selected_item;
    double align_x, align_y;
 
    Evas_Coord pan_x, pan_y;
@@ -216,6 +217,14 @@ static void _item_unrealize(Elm_Gengrid_Item *item);
 static void _item_select(Elm_Gengrid_Item *item);
 static void _item_unselect(Elm_Gengrid_Item *item);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _item_multi_select_up(Widget_Data *wd);
+static Eina_Bool _item_multi_select_down(Widget_Data *wd);
+static Eina_Bool _item_multi_select_left(Widget_Data *wd);
+static Eina_Bool _item_multi_select_right(Widget_Data *wd);
+static Eina_Bool _item_single_select_up(Widget_Data *wd);
+static Eina_Bool _item_single_select_down(Widget_Data *wd);
+static Eina_Bool _item_single_select_left(Widget_Data *wd);
+static Eina_Bool _item_single_select_right(Widget_Data *wd);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
@@ -248,19 +257,51 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
      {
-        x -= step_x;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+             _item_multi_select_left(wd))
+            || _item_single_select_left(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          x -= step_x;
      }
    else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
      {
-        x += step_x;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+             _item_multi_select_right(wd))
+            || _item_single_select_right(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          x += step_x;
      }
    else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
      {
-        y -= step_y;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+             _item_multi_select_up(wd))
+            || _item_single_select_up(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          y -= step_y;
      }
    else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
      {
-        y += step_y;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+             _item_multi_select_down(wd))
+            || _item_single_select_down(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          y += step_y;
      }
    else if (!strcmp(ev->keyname, "Home"))
      {
@@ -298,6 +339,192 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_item_multi_select_up(Widget_Data *wd)
+{
+   unsigned int i;
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   Elm_Gengrid_Item *prev = NULL;
+   l = eina_list_prev(l);
+   for (i = 0; i < wd->nmax && l; i++, l = eina_list_prev(l))
+     {
+        prev = eina_list_data_get(l);
+        if (elm_gengrid_item_selected_get(prev))
+          {
+             elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+             wd->last_selected_item = prev;
+             elm_gengrid_item_show(wd->last_selected_item);
+          }
+        else
+          {
+             elm_gengrid_item_selected_set(prev, EINA_TRUE);
+             elm_gengrid_item_show(prev);
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select_down(Widget_Data *wd)
+{
+   unsigned int i;
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   Elm_Gengrid_Item *next = NULL;
+   l = eina_list_next(l);
+   for (i = 0; i < wd->nmax && l; i++, l = eina_list_next(l))
+     {
+        next = eina_list_data_get(l);
+        if (elm_gengrid_item_selected_get(next))
+          {
+             elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+             wd->last_selected_item = next;
+             elm_gengrid_item_show(wd->last_selected_item);
+          }
+        else
+          {
+             elm_gengrid_item_selected_set(next, EINA_TRUE);
+             elm_gengrid_item_show(next);
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select_left(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   l = eina_list_prev(l);
+   if (!l) return EINA_TRUE;
+
+   Elm_Gengrid_Item *prev = eina_list_data_get(l);
+   if (elm_gengrid_item_selected_get(prev))
+     {
+        elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = prev;
+        elm_gengrid_item_show(wd->last_selected_item);
+     }
+   else
+     {
+        elm_gengrid_item_selected_set(prev, EINA_TRUE);
+        elm_gengrid_item_show(prev);
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select_right(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   l = eina_list_next(l);
+   if (!l) return EINA_TRUE;
+
+   Elm_Gengrid_Item *next = eina_list_data_get(l);
+   if (elm_gengrid_item_selected_get(next))
+     {
+        elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = next;
+        elm_gengrid_item_show(wd->last_selected_item);
+     }
+   else
+     {
+        elm_gengrid_item_selected_set(next, EINA_TRUE);
+        elm_gengrid_item_show(next);
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_up(Widget_Data *wd)
+{
+   unsigned int i;
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   for (i = 0; i < wd->nmax && l; i++)
+     l = eina_list_prev(l);
+   if (!l) return EINA_FALSE;
+
+   Elm_Gengrid_Item *prev = eina_list_data_get(l);
+   while(wd->selected)
+     elm_gengrid_item_selected_set(eina_list_data_get(wd->selected),
+                                   EINA_FALSE);
+
+   elm_gengrid_item_selected_set(prev, EINA_TRUE);
+   elm_gengrid_item_show(prev);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_down(Widget_Data *wd)
+{
+   unsigned int i;
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   for (i = 0; i < wd->nmax && l; i++)
+     l = eina_list_next(l);
+   if (!l) return EINA_FALSE;
+
+   Elm_Gengrid_Item *next = eina_list_data_get(l);
+   while(wd->selected)
+     elm_gengrid_item_selected_set(eina_list_data_get(wd->selected),
+                                   EINA_FALSE);
+
+   elm_gengrid_item_selected_set(next, EINA_TRUE);
+   elm_gengrid_item_show(next);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_left(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   l = eina_list_prev(l);
+   if (!l) return EINA_FALSE;
+
+   Elm_Gengrid_Item *prev = eina_list_data_get(l);
+   while(wd->selected)
+     elm_gengrid_item_selected_set(eina_list_data_get(wd->selected),
+                                   EINA_FALSE);
+
+   elm_gengrid_item_selected_set(prev, EINA_TRUE);
+   elm_gengrid_item_show(prev);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_right(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+
+   Eina_List *l = eina_list_data_find_list(wd->items, wd->last_selected_item);
+   l = eina_list_next(l);
+   if (!l) return EINA_FALSE;
+
+   Elm_Gengrid_Item *next = eina_list_data_get(l);
+   while(wd->selected)
+     elm_gengrid_item_selected_set(eina_list_data_get(wd->selected),
+                                   EINA_FALSE);
+
+   elm_gengrid_item_selected_set(next, EINA_TRUE);
+   elm_gengrid_item_show(next);
+   return EINA_TRUE;
+}
+
 static void
 _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
@@ -307,6 +534,8 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      {
         edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
         evas_object_focus_set(wd->self, EINA_TRUE);
+        if (wd->selected && !wd->last_selected_item)
+          wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
      {
@@ -824,6 +1053,7 @@ call:
    item->walking--;
    if ((item->walking == 0) && (item->delete_me))
      if (item->relcount == 0) _item_del(item);
+   item->wd->last_selected_item = item;
 }
 
 static void

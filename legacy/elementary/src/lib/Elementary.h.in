@@ -696,6 +696,7 @@ extern "C" {
    EAPI void	     elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected);
    EAPI Eina_Bool    elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item);
    EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item);
+   EAPI Elm_Gengrid_Item *elm_gengrid_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_gengrid_selected_items_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_gengrid_items_get(const Evas_Object *obj);
    EAPI Elm_Gengrid_Item *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gcc,  const void *data, Evas_Smart_Cb func, const void *func_data);
