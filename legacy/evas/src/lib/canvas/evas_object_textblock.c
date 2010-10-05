@@ -6076,7 +6076,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
    n1 = cur1->node;
    n2 = cur2->node;
-   cur2->pos++; /* Also remove the marked char */
 
    if (n1 == n2)
      {
@@ -6876,7 +6875,7 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 	       }
 	     return NULL;
 	  }
-	tr->w = cx + cw - tr->x;
+	tr->w = cx - tr->x;
      }
    else
      {
@@ -6921,7 +6920,7 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 	tr->x = lx;
 	tr->y = ly;
 	tr->h = lh;
-	tr->w = cx + cw - lx;
+	tr->w = cx - lx;
      }
    return rects;
 }
