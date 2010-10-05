@@ -114,6 +114,15 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     elm_widget_focus_steal(wd->btn);
+}
+
+static void
 _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
@@ -264,7 +273,8 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_activate_hook_set(obj, _activate_hook);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->btn = elm_button_add(parent);
    wd->expanded = EINA_FALSE;
