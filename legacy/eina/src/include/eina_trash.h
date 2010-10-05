@@ -81,7 +81,7 @@ static inline void *eina_trash_pop(Eina_Trash **trash) EINA_ARG_NONNULL(1) EINA_
  *
  * @note this macro is useful when you implement some memory pool.
  */
-#define EINA_TRASH_CLEAN(trash, data) while ((data = eina_trash_pop(trash))
+#define EINA_TRASH_CLEAN(trash, data) while ((data = eina_trash_pop(trash)))
 
 #include "eina_inline_trash.x"
 
