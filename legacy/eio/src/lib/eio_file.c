@@ -183,8 +183,8 @@ _eio_file_write(int fd, void *mem, ssize_t length)
    return EINA_TRUE;
 }
 
-static void
-_eio_file_progress(Eio_Progress *progress, Eio_File_Progress *op)
+void
+eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op)
 {
    op->progress_cb((void *) op->common.data, progress);
 
@@ -295,7 +295,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    if (in < 0)
      {
 	eio_file_thread_error(&copy->common);
-	return ;
+	return EINA_FALSE;
      }
 
    /*
@@ -353,7 +353,7 @@ _eio_file_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *dat
 {
    Eio_File_Progress *copy = data;
 
-   _eio_file_progress(msg_data, copy);
+   eio_progress_cb(msg_data, copy);
 }
 
 static void
@@ -457,7 +457,7 @@ _eio_file_move_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *dat
 {
    Eio_File_Move *move = data;
 
-   _eio_file_progress(msg_data, &move->progress);
+   eio_progress_cb(msg_data, &move->progress);
 }
 
 static void
@@ -642,7 +642,7 @@ eio_file_copy(const char *source,
    copy = malloc(sizeof (Eio_File_Progress));
    if (!copy) return NULL;
 
-   move->op = EIO_FILE_COPY;
+   copy->op = EIO_FILE_COPY;
    copy->progress_cb = progress_cb;
    copy->source = eina_stringshare_add(source);
    copy->dest = eina_stringshare_add(dest);
