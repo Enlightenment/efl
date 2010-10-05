@@ -246,7 +246,7 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_dir_copy_notify( __UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
+_eio_dir_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 {
    Eio_Dir_Copy *copy = data;
    Eio_Progress *progress = msg_data;
