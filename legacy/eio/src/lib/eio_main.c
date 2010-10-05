@@ -98,3 +98,24 @@ eio_progress_free(Eio_Progress *progress)
         pthread_mutex_unlock(&lock);
      }
 }
+
+void
+eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, off_t max)
+{
+   Eio_Progress *progress;
+
+   if (op->progress_cb == NULL)
+     return ;
+
+   progress = eio_progress_malloc();
+   if (!progress) return ;
+
+   progress->current = current;
+   progress->max = max;
+   progress->percent = (float) current * 100.0 / (float) max;
+   progress->source = eina_stringshare_ref(op->source);
+   progress->dest = eina_stringshare_ref(op->dest);
+
+   ecore_thread_feedback(thread, progress);
+}
+

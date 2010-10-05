@@ -244,16 +244,19 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out
 	     if (!_eio_file_write(out, m + k, EIO_PACKET_SIZE))
 	       goto on_error;
 
-	     _eio_file_send(thread, op, i + j, size);
+	     eio_progress_send(thread, op, i + j, size);
 	  }
 
 	if (!_eio_file_write(out, m + k, c - k))
 	  goto on_error;
 
-	_eio_file_send(thread, op, i + c, size);
+	eio_progress_send(thread, op, i + c, size);
 
 	munmap(m, EIO_PACKET_SIZE * EIO_PACKET_COUNT);
 	m = MAP_FAILED;
+
+	if (ecore_thread_check(thread))
+          goto on_error;
      }
 
    return EINA_TRUE;
@@ -283,7 +286,10 @@ _eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int o
 	count = splice(pipefd[0], NULL, out, 0, count, SPLICE_F_MORE | SPLICE_F_MOVE);
 	if (count < 0) goto on_error;
 
-	_eio_file_send(thread, op, i, size);
+	eio_progress_send(thread, op, i, size);
+
+	if (ecore_thread_check(thread))
+          goto on_error;
      }
 
    result = 1;
@@ -448,7 +454,7 @@ _eio_file_move_heavy(Ecore_Thread *thread, void *data)
    if (rename(move->progress.source, move->progress.dest) < 0)
      eio_file_thread_error(&move->progress.common);
    else
-     _eio_file_send(thread, &move->progress, 1, 1);
+     eio_progress_send(thread, &move->progress, 1, 1);
 }
 
 static void
@@ -482,7 +488,7 @@ _eio_file_move_error(void *data)
 	return ;
      }
 
-   if (move->progress.common.error == EXDEV)
+   if (move->progress.common.error == EXDEV && !ecore_thread_check(thread))
      {
 	Eio_File *eio_cp;
 

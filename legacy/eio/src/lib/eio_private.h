@@ -134,5 +134,7 @@ void eio_file_thread_error(Eio_File *common);
 
 Eio_Progress *eio_progress_malloc(void);
 void eio_progress_free(Eio_Progress *progress);
+void eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op,
+                       off_t current, off_t max);
 
 #endif
