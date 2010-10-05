@@ -84,7 +84,7 @@ _eio_file_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_file_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
+_eio_file_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
 {
    Eio_File_Char_Ls *async = data;
    const char *file = msg_data;
@@ -139,7 +139,7 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
+_eio_file_direct_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
 {
    Eio_File_Direct_Ls *async = data;
    Eina_File_Direct_Info *info = msg_data;
@@ -349,7 +349,7 @@ _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_file_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
+_eio_file_copy_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
 {
    Eio_File_Progress *copy = data;
 
@@ -453,7 +453,7 @@ _eio_file_move_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_file_move_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
+_eio_file_move_notify(__UNUSED__ Ecore_Thread *thread, void *msg_data, void *data)
 {
    Eio_File_Move *move = data;
 
