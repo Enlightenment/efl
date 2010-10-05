@@ -184,26 +184,6 @@ _eio_file_write(int fd, void *mem, ssize_t length)
 }
 
 static void
-_eio_file_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, off_t max)
-{
-   Eio_Progress *progress;
-
-   if (op->progress_cb == NULL)
-     return ;
-
-   progress = eio_progress_malloc();
-   if (!progress) return ;
-
-   progress->current = current;
-   progress->max = max;
-   progress->percent = (float) current * 100.0 / (float) max;
-   progress->source = eina_stringshare_ref(op->source);
-   progress->dest = eina_stringshare_ref(op->dest);
-
-   ecore_thread_feedback(thread, progress);
-}
-
-static void
 _eio_file_progress(Eio_Progress *progress, Eio_File_Progress *op)
 {
    op->progress_cb((void *) op->common.data, progress);
@@ -321,6 +301,10 @@ _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
 	return ;
      }
 
+   /*
+     As we need file size for progression information and both copy method
+     call fstat (better than stat as it avoid race condition).
+    */
    if (fstat(in, &buf) < 0)
      goto on_error;
 
@@ -330,12 +314,18 @@ _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
      goto on_error;
 
 #ifdef EFL_HAVE_SPLICE
+   /* fast file copy code using Linux splice API */
    result = _eio_file_copy_splice(thread, copy, in, out, buf.st_size);
    if (result == 0)
      goto on_error;
 #endif
 
+   /* classic copy method using mmap and write */
    if (result == -1 && !_eio_file_copy_mmap(thread, copy, in, out, buf.st_size))
+     goto on_error;
+
+   /* change access right to match source */
+   if (fchmod(out, buf.st_mode) != 0)
      goto on_error;
 
    close(out);
@@ -488,7 +478,7 @@ _eio_file_move_error(void *data)
 	return ;
      }
 
-   if (move->progress.common.error == EXDEV && !ecore_thread_check(thread))
+   if (move->progress.common.error == EXDEV)
      {
 	Eio_File *eio_cp;
 
@@ -628,9 +618,9 @@ eio_file_cancel(Eio_File *ls)
  * @param data Private data given to callback.
  *
  * This function will copy a file from source to dest. It will try to use splice
- * if possible, if not it will fallback to mmap/write.
+ * if possible, if not it will fallback to mmap/write. It will try to preserve
+ * access right, but not user/group identification.
  */
-
 EAPI Eio_File *
 eio_file_copy(const char *source,
 	      const char *dest,
@@ -664,6 +654,20 @@ eio_file_copy(const char *source,
    return &copy->common;
 }
 
+/**
+ * @brief Move a file asynchronously
+ * @param source Should be the name of the file to move the data from.
+ * @param dest Should be the name of the file to move the data to.
+ * @param progress_cb Callback called to know the progress of the move.
+ * @param done_cb Callback called when the move is done.
+ * @param error_cb Callback called when something goes wrong.
+ * @param data Private data given to callback.
+ *
+ * This function will copy a file from source to dest. It will try to use splice
+ * if possible, if not it will fallback to mmap/write. It will try to preserve
+ * access right, but not user/group identification.
+
+ */
 EAPI Eio_File *
 eio_file_move(const char *source,
 	      const char *dest,
