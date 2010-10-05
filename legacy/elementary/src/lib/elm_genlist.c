@@ -455,6 +455,13 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y += page_y;
      }
+   else if((!strcmp(ev->keyname, "Return") || !strcmp(ev->keyname, "space"))
+           && !wd->multi && wd->selected)
+     {
+        Elm_Genlist_Item *it = elm_genlist_selected_item_get(obj);
+        elm_genlist_item_expanded_set(it,
+                                      !elm_genlist_item_expanded_get(it));
+     }
    else return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
