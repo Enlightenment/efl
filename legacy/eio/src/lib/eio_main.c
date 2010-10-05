@@ -110,6 +110,7 @@ eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, of
    progress = eio_progress_malloc();
    if (!progress) return ;
 
+   progress->op = op->op;
    progress->current = current;
    progress->max = max;
    progress->percent = (float) current * 100.0 / (float) max;

@@ -58,16 +58,13 @@
 # endif
 #endif /* ! _WIN32 */
 
-typedef enum _Eio_File_Op_Flags
+typedef enum _Eio_File_Op
 {
-   EIO_FILE_MOD_TIME    = 1,
-   EIO_FILE_SIZE        = 2,
-   EIO_FILE_EXISTS      = 4,
-   EIO_FILE_IS_DIR      = 8,
-   EIO_FILE_CAN_READ    = 16,
-   EIO_FILE_CAN_WRITE   = 32,
-   EIO_FILE_CAN_EXECUTE = 64
-} Eio_File_Op_Flags;
+  EIO_FILE_COPY,
+  EIO_FILE_MOVE,
+  EIO_DIR_COPY,
+  EIO_DIR_MOVE
+} Eio_File_Op;
 
 typedef struct _Eio_File Eio_File;
 typedef struct _Eio_Progress Eio_Progress;
@@ -87,6 +84,8 @@ typedef void (*Eio_Error_Cb)(int error, void *data);
 
 struct _Eio_Progress
 {
+   Eio_File_Op op;
+
    off_t current;
    off_t max;
    float percent;

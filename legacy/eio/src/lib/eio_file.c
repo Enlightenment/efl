@@ -283,16 +283,13 @@ _eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int o
 }
 #endif
 
-static void
-_eio_file_copy_heavy(Ecore_Thread *thread, void *data)
+Eina_Bool
+eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 {
-   Eio_File_Progress *copy;
    struct stat buf;
    int result = -1;
    int in = -1;
    int out = -1;
-
-   copy = data;
 
    in = open(copy->source, O_RDONLY);
    if (in < 0)
@@ -331,7 +328,7 @@ _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
    close(out);
    close(in);
 
-   return ;
+   return EINA_TRUE;
 
  on_error:
    eio_file_thread_error(&copy->common);
@@ -340,7 +337,15 @@ _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
    if (out >= 0) close(out);
    if (out >= 0)
      unlink(copy->dest);
-   return ;
+   return EINA_FALSE;
+}
+
+static void
+_eio_file_copy_heavy(Ecore_Thread *thread, void *data)
+{
+   Eio_File_Progress *copy = data;
+
+   eio_file_copy_do(thread, copy);
 }
 
 static void
@@ -637,6 +642,7 @@ eio_file_copy(const char *source,
    copy = malloc(sizeof (Eio_File_Progress));
    if (!copy) return NULL;
 
+   move->op = EIO_FILE_COPY;
    copy->progress_cb = progress_cb;
    copy->source = eina_stringshare_add(source);
    copy->dest = eina_stringshare_add(dest);
@@ -684,6 +690,7 @@ eio_file_move(const char *source,
    move = malloc(sizeof (Eio_File_Move));
    if (!move) return NULL;
 
+   move->progress.op = EIO_FILE_MOVE;
    move->progress.progress_cb = progress_cb;
    move->progress.source = eina_stringshare_add(source);
    move->progress.dest = eina_stringshare_add(dest);

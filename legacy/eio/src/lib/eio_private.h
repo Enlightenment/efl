@@ -93,6 +93,8 @@ struct _Eio_File_Progress
 
    const char *source;
    const char *dest;
+
+   Eio_File_Op op;
 };
 
 struct _Eio_File_Move
@@ -136,5 +138,6 @@ Eio_Progress *eio_progress_malloc(void);
 void eio_progress_free(Eio_Progress *progress);
 void eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op,
                        off_t current, off_t max);
+Eina_Bool eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy);
 
 #endif
