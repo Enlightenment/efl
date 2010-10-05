@@ -384,8 +384,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (intl_props &&
-              EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(intl_props->props))
+        if (evas_bidi_is_rtl_char(intl_props, 0))
           {
              if (cx) *cx = 0;
              if (ch) *ch = asc + desc;
