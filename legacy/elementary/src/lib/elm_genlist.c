@@ -253,6 +253,7 @@ struct _Widget_Data
    Ecore_Idler *queue_idler;
    Eina_List *queue, *selected;
    Elm_Genlist_Item *show_item;
+   Elm_Genlist_Item *last_selected_item;
    Elm_List_Mode mode;
    Eina_Bool on_hold : 1;
    Eina_Bool multi : 1;
@@ -360,7 +361,12 @@ static void _calc_job(void *data);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
-
+static Eina_Bool _item_multi_select_up(Widget_Data *wd);
+static Eina_Bool _item_multi_select_down(Widget_Data *wd);
+static Eina_Bool _item_single_select_up(Widget_Data *wd);
+static Eina_Bool _item_single_select_down(Widget_Data *wd);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
@@ -399,11 +405,27 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
      {
-        y -= step_y;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+            _item_multi_select_up(wd))
+            || _item_single_select_up(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          y -= step_y;
      }
    else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
      {
-        y += step_y;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+            _item_multi_select_down(wd))
+            || _item_single_select_down(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          y += step_y;
      }
    else if (!strcmp(ev->keyname, "Home"))
      {
@@ -440,6 +462,84 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_item_multi_select_up(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   if (!wd->multi) return EINA_FALSE;
+
+   Elm_Genlist_Item *prev = elm_genlist_item_prev_get(wd->last_selected_item);
+   if (!prev) return EINA_TRUE;
+
+   if (elm_genlist_item_selected_get(prev))
+     {
+        elm_genlist_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = prev;
+        elm_genlist_item_show(wd->last_selected_item);
+     }
+   else
+     {
+        elm_genlist_item_selected_set(prev, EINA_TRUE);
+        elm_genlist_item_show(prev);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select_down(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   if (!wd->multi) return EINA_FALSE;
+
+   Elm_Genlist_Item *next = elm_genlist_item_next_get(wd->last_selected_item);
+   if (!next) return EINA_TRUE;
+
+   if (elm_genlist_item_selected_get(next))
+     {
+        elm_genlist_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = next;
+        elm_genlist_item_show(wd->last_selected_item);
+     }
+   else
+     {
+        elm_genlist_item_selected_set(next, EINA_TRUE);
+        elm_genlist_item_show(next);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_up(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   Elm_Genlist_Item *prev = elm_genlist_item_prev_get(wd->last_selected_item);
+   if (!prev) return EINA_FALSE;
+
+   while(wd->selected)
+     elm_genlist_item_selected_set(eina_list_data_get(wd->selected),
+                                   EINA_FALSE);
+
+   elm_genlist_item_selected_set(prev, EINA_TRUE);
+   elm_genlist_item_show(prev);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_down(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   Elm_Genlist_Item *next = elm_genlist_item_next_get(wd->last_selected_item);
+   if (!next) return EINA_FALSE;
+
+   while(wd->selected)
+     elm_genlist_item_selected_set(eina_list_data_get(wd->selected),
+                                   EINA_FALSE);
+
+   elm_genlist_item_selected_set(next, EINA_TRUE);
+   elm_genlist_item_show(next);
+   return EINA_TRUE;
+}
+
 static void
 _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
@@ -449,6 +549,8 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      {
         edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->obj, EINA_TRUE);
+        if (wd->selected && !wd->last_selected_item)
+          wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
      {
@@ -678,6 +780,7 @@ _item_select(Elm_Genlist_Item *it)
              if (it->relcount == 0) _item_del(it);
           }
      }
+   it->wd->last_selected_item = it;
 }
 
 static void
