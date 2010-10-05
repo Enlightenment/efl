@@ -1417,6 +1417,33 @@ elm_list_item_show(Elm_List_Item *it)
 }
 
 /**
+ * Bring in the given item
+ *
+ * This causes list to jump to the given item @p it and show it (by scrolling),
+ * if it is not fully visible. This may use animation to do so and take a
+ * period of time
+ *
+ * @param it The item
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_bring_in(Elm_List_Item *it)
+{
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   Evas_Coord bx, by, bw, bh;
+   Evas_Coord x, y, w, h;
+
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+   evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
+   evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
+   x -= bx;
+   y -= by;
+   if (wd->scr)
+     elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
+}
+
+/**
  * Deletes item @p it from the list.
  *
  * @param it The list item to delete
