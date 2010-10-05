@@ -5121,12 +5121,13 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
         if (!first)
           {
              last_node->offset = 0;
-             last_node->visible = EINA_FALSE;
           }
         else
           {
              first = 0;
           }
+        last_node->visible = EINA_FALSE;
+
         if (!itr || (itr && (itr->text_node != n)))
           {
              /* Remove the PS, and return since it's the end of the node */
@@ -5171,6 +5172,7 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
    if (itr)
      start -= itr->offset;
    if (offset < 0) offset = 0;
+   if (end < 0) use_end = 0;
    while (itr && (itr->text_node == n))
      {
         Evas_Object_Textblock_Node_Format *nnode;
@@ -6079,7 +6081,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 
    if (n1 == n2)
      {
-        eina_ustrbuf_remove(n1->unicode, cur1->pos, cur2->pos);
         if ((cur1->pos == 0) &&
               (cur2->pos == eina_ustrbuf_length_get(n1->unicode)))
           {
@@ -6090,6 +6091,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
              should_merge = _evas_textblock_node_text_adjust_offsets_to_start(o,
                    n1, cur1->pos, cur2->pos);
           }
+        eina_ustrbuf_remove(n1->unicode, cur1->pos, cur2->pos);
         _evas_textblock_cursors_update_offset(cur1, cur1->node, cur1->pos, - (cur2->pos - cur1->pos));
      }
    else
