@@ -14,6 +14,7 @@ struct _Widget_Data
 {
    Evas_Object *scr, *box, *self;
    Eina_List *items, *selected, *to_delete;
+   Elm_List_Item *last_selected_item;
    Elm_List_Mode mode;
    Evas_Coord minw[2], minh[2];
    Eina_Bool scr_minw : 1;
@@ -30,6 +31,7 @@ struct _Widget_Data
 struct _Elm_List_Item
 {
    Elm_Widget_Item base;
+   Widget_Data *wd;
    Eina_List *node;
    const char *label;
    Evas_Object *icon, *end;
@@ -57,6 +59,10 @@ static void _fix_items(Evas_Object *obj);
 static void _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 static void _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 static void _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static Eina_Bool _item_multi_select_up(Widget_Data *wd);
+static Eina_Bool _item_multi_select_down(Widget_Data *wd);
+static Eina_Bool _item_single_select_up(Widget_Data *wd);
+static Eina_Bool _item_single_select_down(Widget_Data *wd);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
@@ -138,23 +144,39 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
      {
-        y -= step_y;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+            _item_multi_select_up(wd))
+            || _item_single_select_up(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          y -= step_y;
      }
    else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
      {
-        y += step_y;
+        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
+            _item_multi_select_down(wd))
+            || _item_single_select_down(wd))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          y += step_y;
      }
    else if (!strcmp(ev->keyname, "Home"))
      {
         it = eina_list_data_get(wd->items);
-        elm_list_item_show(it);
+        elm_list_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
    else if (!strcmp(ev->keyname, "End"))
      {
         it = eina_list_data_get(eina_list_last(wd->items));
-        elm_list_item_show(it);
+        elm_list_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
@@ -176,6 +198,84 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    elm_smart_scroller_child_pos_set(wd->scr, x, y);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select_up(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   if (!wd->multi) return EINA_FALSE;
+
+   Elm_List_Item *prev = elm_list_item_prev(wd->last_selected_item);
+   if (!prev) return EINA_TRUE;
+
+   if (elm_list_item_selected_get(prev))
+     {
+        elm_list_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = prev;
+        elm_list_item_show(wd->last_selected_item);
+     }
+   else
+     {
+        elm_list_item_selected_set(prev, EINA_TRUE);
+        elm_list_item_show(prev);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_multi_select_down(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   if (!wd->multi) return EINA_FALSE;
+
+   Elm_List_Item *next = elm_list_item_next(wd->last_selected_item);
+   if (!next) return EINA_TRUE;
+
+   if (elm_list_item_selected_get(next))
+     {
+        elm_list_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = next;
+        elm_list_item_show(wd->last_selected_item);
+     }
+   else
+     {
+        elm_list_item_selected_set(next, EINA_TRUE);
+        elm_list_item_show(next);
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_up(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   Elm_List_Item *prev = elm_list_item_prev(wd->last_selected_item);
+   if (!prev) return EINA_FALSE;
+
+   while(wd->selected)
+     elm_list_item_selected_set(eina_list_data_get(wd->selected),
+                                EINA_FALSE);
+
+   elm_list_item_selected_set(prev, EINA_TRUE);
+   elm_list_item_show(prev);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_item_single_select_down(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   Elm_List_Item *next = elm_list_item_next(wd->last_selected_item);
+   if (!next) return EINA_FALSE;
+
+   while(wd->selected)
+     elm_list_item_selected_set(eina_list_data_get(wd->selected),
+                                EINA_FALSE);
+
+   elm_list_item_selected_set(next, EINA_TRUE);
+   elm_list_item_show(next);
    return EINA_TRUE;
 }
 
@@ -361,13 +461,16 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-        edje_object_signal_emit(wd->scr, "elm,action,focus", "elm");
-        evas_object_focus_set(wd->scr, EINA_TRUE);
+        edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->self, EINA_TRUE);
+
+        if (wd->selected && !wd->last_selected_item)
+          wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
      {
-        edje_object_signal_emit(wd->scr, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->scr, EINA_FALSE);
+        edje_object_signal_emit(wd->self, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->self, EINA_FALSE);
      }
 }
 
@@ -457,6 +560,7 @@ _item_select(Elm_List_Item *it)
    evas_object_smart_callback_call(it->base.widget, "selected", it);
 
    _elm_list_unwalk(wd);
+   it->wd->last_selected_item = it;
 }
 
 static void
@@ -623,6 +727,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
 
    if (!wd) return NULL;
    it = elm_widget_item_new(obj, Elm_List_Item);
+   it->wd = wd;
    it->label = eina_stringshare_add(label);
    it->icon = icon;
    it->end = end;
