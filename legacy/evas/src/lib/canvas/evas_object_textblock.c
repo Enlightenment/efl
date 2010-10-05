@@ -5056,13 +5056,20 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
    int first = 1;
    int update_format_node;
    size_t pos = 0;
+   int orig_end;
 
    itr = n->format_node;
    if (!itr || (itr->text_node != n)) return EINA_FALSE;
 
+   orig_end = end;
    if ((end < 0) || ((size_t) end == eina_ustrbuf_length_get(n->unicode)))
      {
         use_end = 0;
+     }
+   else if (end > 0)
+     {
+        /* We don't want the last one */
+        end--;
      }
 
    /* If we are not removing the text node, all should stay in this text
@@ -5097,7 +5104,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
      }
 
    update_format_node = ((itr == n->format_node) && (new_node != n));
-   delta = end - pos;
+   delta = orig_end - pos;
    itr->offset -= pos - start;
 
    while (itr && (itr->text_node == n))
@@ -5117,7 +5124,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
              break;
           }
 
-        delta = end - pos;
+        delta = orig_end - pos;
         if (!first)
           {
              last_node->offset = 0;
@@ -5179,7 +5186,7 @@ _evas_textblock_node_text_remove_formats_between(Evas_Object_Textblock *o,
         int tmp_offset = 0;
 
         /* start is negative when this gets relevant */
-        if ((offset + start <= 0) && use_end)
+        if ((offset + start < 0) && use_end)
           {
              break;
           }
