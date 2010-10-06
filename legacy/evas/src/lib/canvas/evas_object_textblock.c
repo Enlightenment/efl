@@ -6167,14 +6167,11 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
    if (!cur || !cur->node) return NULL;
    if (evas_textblock_cursor_format_is_visible_get(cur))
      {
-           if (evas_textblock_cursor_format_is_visible_get(cur))
-             {
-                const char *tmp;
-                tmp  = evas_textblock_node_format_text_get(
-                      _evas_textblock_node_visible_at_pos_get(
-                      evas_textblock_cursor_format_get(cur)));
-                return strdup(tmp);
-             }
+        const char *tmp;
+        tmp  = evas_textblock_node_format_text_get(
+              _evas_textblock_node_visible_at_pos_get(
+                 evas_textblock_cursor_format_get(cur)));
+        return strdup(tmp);
      }
 
    ustr = eina_ustrbuf_string_get(cur->node->unicode);
