@@ -886,8 +886,6 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                   if (an)
                     {
                        evas_textblock_cursor_at_format_set(an->end, node);
-                       /* Go before the format */
-                       evas_textblock_cursor_char_prev(an->end);
                        if (!evas_textblock_cursor_compare(an->start, an->end))
                          {
                             if (an->name) free(an->name);
