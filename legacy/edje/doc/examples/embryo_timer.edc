@@ -1,5 +1,21 @@
 collections {
    group { name: "main";
+      script {
+         public timer_cb(val) {
+            new x, y, w, h;
+            new buf[32];
+
+            /* set labels with object info */
+            get_geometry(PART:"red_rect", x, y, w, h);
+            snprintf(buf, sizeof(buf), "Timer called %d times.", val);
+            set_text(PART:"label1", buf)
+            snprintf(buf, sizeof(buf), "Object x: %d  w: %d", x, w);
+            set_text(PART:"label2", buf)
+
+            /* renew the timer */
+            timer(1 / 30, "timer_cb", val + 1);
+         }
+      }
       parts {
          part { name: "bg";
             type: RECT;
@@ -12,7 +28,7 @@ collections {
             description { state: "default" 0.0;
                color: 0 0 0 255;
                text {
-                  text: "Timer delayed...";
+                  text: "";
                   font: "Sans";
                   size: 12;
                   align: 0.0 0.7;
@@ -30,17 +46,6 @@ collections {
                }
             }
          }
-         part { name: "label3";
-            type: TEXT;
-            description { state: "default" 0.0;
-               color: 0 0 0 255;
-               text {
-                  font: "Sans";
-                  size: 12;
-                  align: 0.0 0.9;
-               }
-            }
-         }
          part { name: "red_rect";
             type: RECT;
             description { state: "default" 0.0;
@@ -51,12 +56,13 @@ collections {
             description { state: "default" 1.0;
                inherit: "default" 0.0;
                color: 0 0 255 255;
+               max: 50 30;
                align: 0.9 0.2;
             }
          }
       }
       programs {
-         /* Move the red rect back an forth in a loop */
+         /* move the red rect back an forth in a loop */
          program { name: "init";
             signal: "load";
             source: "";
@@ -71,35 +77,12 @@ collections {
             target: "red_rect";
             after: "init";
          }
-         program { name: "lua_init";
+         /* run the timer_cb for the first time */
+         program { name: "init2";
             signal: "load";
             source: "";
-            lua_script {
-               function timer_cb()
-                  /* Print Timer attributes */
-                  print("## timer_cb")
-                  print("   timer.pending:", timer.pending)
-                  print("   timer.precision:", timer.precision)
-                  print("   timer.interval:", timer.interval)
-
-                  /* Slow down the timer */
-                  timer.interval = timer.interval + 0.005
-
-                  /* Set labels with object info */
-                  ed.label1.text = "timer interval: " .. timer.interval
-                  ed.label2.text = "object x: " .. ed.red_rect.geometry[1]
-                  r, g, b, a = unpack(ed.red_rect.color)
-                  ed.label3.text = "object color: "..r.." "..g.." ".. b
-
-                  /* or return CALLBACK_CANCEL to stop the timer*/
-                  return CALLBACK_RENEW
-               end
-
-               /* Start a new timer that will call timer_cb every 0.01s */
-               timer = ed:timer(0.01, timer_cb)
-               
-               /* Delay the timer execution by 2s */
-               timer:delay(2)
+            script {
+                timer_cb(0);
             }
          }
       }

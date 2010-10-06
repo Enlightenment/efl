@@ -37,8 +37,8 @@ collections {
          program {
             signal: "mouse,down,1";
             source: "label";
-            lua_script {
-               ed.red_rect.state = { "default", 1.0}
+            script {
+               set_state(PART:"red_rect", "default", 1.0);
             }
          }
       }

@@ -23,15 +23,15 @@ collections {
          program {
             signal: "mouse,down,1";
             source: "label";
-            lua_script {
-               ed.label.text = "Clicked!"
+            script {
+               set_text(PART:"label", "Clicked!"); 
             }
          }
          program {
             signal: "mouse,up,1";
             source: "label";
-            lua_script {
-               ed.label.text = "Click me."
+            script {
+               set_text(PART:"label", "Click me."); 
             }
          }
       }
