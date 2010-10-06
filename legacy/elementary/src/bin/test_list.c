@@ -320,7 +320,11 @@ test_list3(void *data, Evas_Object *obj, void *event_info)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "world", ic, NULL,  NULL, NULL);
+   ic2 = elm_button_add(win);
+   elm_button_label_set(ic2, "Click me");
+   evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
+   elm_list_item_append(li, "world", ic, ic2,  _it_clicked, NULL);
+
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
