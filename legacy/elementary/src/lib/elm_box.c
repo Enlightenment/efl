@@ -105,18 +105,13 @@ _elm_box_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if (1)
+   if ((items = elm_widget_focus_custom_chain_get(obj)))
+     list_data_get = eina_list_data_get;
+   else
      {
         Evas_Object_Box_Data *bd = evas_object_smart_data_get(wd->box);
         items = bd->children;
         list_data_get = _elm_box_list_data_get;
-
-        if (!items) return EINA_FALSE;
-     }
-   else
-     {
-        items = NULL;
-        list_data_get = eina_list_data_get;
 
         if (!items) return EINA_FALSE;
      }

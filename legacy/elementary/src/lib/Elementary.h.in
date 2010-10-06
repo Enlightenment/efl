@@ -323,6 +323,12 @@ extern "C" {
    EAPI void         elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable);
    EAPI Eina_Bool    elm_object_focus_allow_get(const Evas_Object *obj);
 
+   EAPI void         elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs);
+   EAPI void         elm_object_focus_custom_chain_unset(Evas_Object *obj);
+   EAPI const Eina_List *elm_object_focus_custom_chain_get(const Evas_Object *obj);
+   EAPI void         elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
+   EAPI void         elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
+
    EAPI void         elm_object_scroll_hold_push(Evas_Object *obj);
    EAPI void         elm_object_scroll_hold_pop(Evas_Object *obj);
    EAPI void         elm_object_scroll_freeze_push(Evas_Object *obj);

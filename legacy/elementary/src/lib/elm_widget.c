@@ -70,10 +70,7 @@ struct _Smart_Data
    Eina_Bool      highlight_in_theme : 1;
    Eina_Bool      disabled : 1;
 
-   struct
-     {
-        Eina_List *custom_linear_chain;
-     } focus;
+   Eina_List     *focus_chain;
 };
 
 /* local subsystem functions */
@@ -749,6 +746,97 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
    return EINA_FALSE;
 }
 
+static void
+_elm_object_focus_chain_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Smart_Data *sd = data;
+
+   sd->focus_chain = eina_list_remove(sd->focus_chain, obj);
+}
+
+EAPI void
+elm_widget_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs)
+{
+   API_ENTRY return;
+   if (!sd->focus_next_func)
+     return;
+
+   elm_widget_focus_custom_chain_unset(obj);
+
+   Eina_List *l;
+   Evas_Object *o;
+
+   EINA_LIST_FOREACH(objs, l, o)
+     {
+        evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
+                                       _elm_object_focus_chain_del_cb, sd);
+     }
+
+   sd->focus_chain = objs;
+}
+
+EAPI void
+elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
+{
+   API_ENTRY return;
+   if (!sd->focus_next_func)
+     return;
+
+   evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL,
+                                       _elm_object_focus_chain_del_cb, sd);
+
+   if (!relative_child)
+     {
+        sd->focus_chain = eina_list_append(sd->focus_chain, child);
+        return;
+     }
+
+   sd->focus_chain = eina_list_append_relative(sd->focus_chain, child, relative_child);
+   return;
+}
+
+EAPI void
+elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
+{
+   API_ENTRY return;
+   if (!sd->focus_next_func)
+     return;
+
+   evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL,
+                                       _elm_object_focus_chain_del_cb, sd);
+
+   if (!relative_child)
+     {
+        sd->focus_chain = eina_list_prepend(sd->focus_chain, child);
+        return;
+     }
+
+   sd->focus_chain = eina_list_prepend_relative(sd->focus_chain, child, relative_child);
+   return;
+}
+
+EAPI const Eina_List *
+elm_widget_focus_custom_chain_get(const Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   return (const Eina_List *) sd->focus_chain;
+}
+
+EAPI void
+elm_widget_focus_custom_chain_unset(Evas_Object *obj)
+{
+   API_ENTRY return;
+   Eina_List *l, *l_next;
+   Evas_Object *o;
+
+   EINA_LIST_FOREACH_SAFE(sd->focus_chain, l, l_next, o)
+     {
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
+                                            _elm_object_focus_chain_del_cb, sd);
+        sd->focus_chain = eina_list_remove_list(sd->focus_chain, l);
+     }
+}
+
 EAPI void
 elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
@@ -832,6 +920,9 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
         Evas_Object *tmp = NULL;
         Evas_Object *cur = list_data_get(l);
 
+        if (elm_widget_parent_get(cur) != obj)
+          continue;
+
         /* Try Focus cycle in subitem */
         if (elm_widget_focus_next_get(cur, dir, &tmp))
           {
@@ -849,6 +940,9 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
      {
         Evas_Object *tmp = NULL;
         Evas_Object *cur = list_data_get(l);
+
+        if (elm_widget_parent_get(cur) != obj)
+          continue;
 
         /* Try Focus cycle in subitem */
         elm_widget_focus_next_get(cur, dir, &tmp);

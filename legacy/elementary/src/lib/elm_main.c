@@ -1592,6 +1592,90 @@ elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const cha
 }
 
 /**
+ * Set custom focus chain.
+ *
+ * This function i set one new and overwrite any previous custom focus chain
+ * with the list of objects. The previous list will be deleted and this list
+ * will be managed. After setted, don't modity it.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container object
+ * @param objs Chain of objects to pass focus
+ * @ingroup General
+ */
+EAPI void
+elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs)
+{
+   elm_widget_focus_custom_chain_set(obj, objs);
+}
+
+/**
+ * Unset custom focus chain
+ *
+ * @param obj The container object
+ * @ingroup General
+ */
+EAPI void
+elm_object_focus_custom_chain_unset(Evas_Object *obj)
+{
+   elm_widget_focus_custom_chain_unset(obj);
+}
+
+/**
+ * Get custom focus chain
+ *
+ * @param obj The container object
+ * @ingroup General
+ */
+EAPI const Eina_List *
+elm_object_focus_custom_chain_get(const Evas_Object *obj)
+{
+   return elm_widget_focus_custom_chain_get(obj);
+}
+
+/**
+ * Append object to custom focus chain.
+ *
+ * @note If relative_child equal to NULL or not in custom chain, the object
+ * will be added in end.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container object
+ * @param child The child to be added in custom chain
+ * @param relative_child The relative object to position the child
+ * @ingroup General
+ */
+EAPI void
+elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
+{
+   elm_widget_focus_custom_chain_append(obj, child, relative_child);
+}
+
+
+/**
+ * Prepend object to custom focus chain.
+ *
+ * @note If relative_child equal to NULL or not in custom chain, the object
+ * will be added in begin.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container object
+ * @param child The child to be added in custom chain
+ * @param relative_child The relative object to position the child
+ * @ingroup General
+ */
+EAPI void
+elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
+{
+   elm_widget_focus_custom_chain_prepend(obj, child, relative_child);
+}
+
+
+
+/**
  * @defgroup Debug Debug
  */
 

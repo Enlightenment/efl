@@ -234,6 +234,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt);
                   my_show(bt);
+                  elm_object_focus_custom_chain_append(bx2, bt, NULL);
                }
           }
 
@@ -255,6 +256,7 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt);
                   my_show(bt);
+                  elm_object_focus_custom_chain_prepend(bx2, bt, NULL);
                }
           }
      }

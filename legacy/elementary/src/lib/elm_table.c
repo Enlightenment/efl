@@ -53,19 +53,16 @@ _elm_table_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
 
    /* Focus chain */
    /* TODO: Change this to use other chain */
-   if (1)
+   if ((items = elm_widget_focus_custom_chain_get(obj)))
+     {
+        list_data_get = eina_list_data_get;
+        list_free = NULL;
+     }
+   else
      {
         items = evas_object_table_children_get(wd->tbl);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
-
-        if (!items) return EINA_FALSE;
-     }
-   else
-     {
-        items = NULL;
-        list_data_get = eina_list_data_get;
-        list_free = NULL;
 
         if (!items) return EINA_FALSE;
      }
