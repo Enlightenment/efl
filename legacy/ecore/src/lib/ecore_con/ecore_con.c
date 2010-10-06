@@ -1726,7 +1726,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
 
    for (tries = 0; tries < 16; tries++)
      {
-        int num;
+        int num = 0;
         Eina_Bool lost_server = EINA_TRUE;
         unsigned char buf[READBUFSIZ];
 
@@ -1741,7 +1741,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
           {
              num = read(svr->fd, buf, READBUFSIZ);
              if ((num < 0) && (errno == EAGAIN))
-               lost_server = EINA_FALSE;
+                lost_server = EINA_FALSE;
           }
         else if (!(num = ecore_con_ssl_server_read(svr, buf, READBUFSIZ)))
            lost_server = EINA_FALSE;
@@ -1875,7 +1875,7 @@ _ecore_con_cl_udp_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      {
         unsigned char buf[65536];
-        int num = 0;
+        int num;
 
         errno = 0;
         num = read(svr->fd, buf, 65536);
@@ -2067,7 +2067,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
    for (tries = 0; tries < 16; tries++)
      {
-        int num;
+        int num = 0;
         Eina_Bool lost_client = EINA_TRUE;
         unsigned char buf[READBUFSIZ];
 
