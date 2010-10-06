@@ -274,6 +274,18 @@ test_list2(void *data, Evas_Object *obj, void *event_info)
 
 /***********/
 
+static void
+_bt_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("button was clicked\n");
+}
+
+static void
+_it_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   printf("item was clicked\n");
+}
+
 void
 test_list3(void *data, Evas_Object *obj, void *event_info)
 {
@@ -296,8 +308,14 @@ test_list3(void *data, Evas_Object *obj, void *event_info)
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "Hello", ic, NULL,  NULL, NULL);
+   ic2 = elm_button_add(win);
+   elm_button_label_set(ic2, "Click me");
+   evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
+   evas_object_propagate_events_set(ic2, 0);
+   elm_list_item_append(li, "Hello", ic, ic2,  _it_clicked, NULL);
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
