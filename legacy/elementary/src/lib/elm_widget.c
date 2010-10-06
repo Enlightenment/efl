@@ -40,7 +40,7 @@ struct _Smart_Data
 				     Evas_Object *o, const char *emission,
 				     const char *source));
    void         (*changed_func) (Evas_Object *obj);
-   Eina_Bool    (*focus_next_func) (Evas_Object *obj, Elm_Focus_Direction dir,
+   Eina_Bool    (*focus_next_func) (const Evas_Object *obj, Elm_Focus_Direction dir,
                                     Evas_Object **next);
    void         (*on_focus_func) (void *data, Evas_Object *obj);
    void          *on_focus_data;
@@ -404,7 +404,7 @@ elm_widget_theme(Evas_Object *obj)
 }
 
 EAPI void
-elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next))
+elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next))
 {
    API_ENTRY return;
    sd->focus_next_func = func;
@@ -759,7 +759,7 @@ elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 }
 
 EAPI Eina_Bool
-elm_widget_focus_next_get(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    if (!next)
      return EINA_FALSE;
@@ -779,12 +779,12 @@ elm_widget_focus_next_get(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object
      return EINA_FALSE;
 
    /* Return */
-   *next = obj;
+   *next = (Evas_Object *)obj;
    return !elm_widget_focus_get(obj);
 }
 
 EAPI Eina_Bool
-elm_widget_focus_list_next_get(Evas_Object *obj, Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next)
+elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next)
 {
    Eina_List *(*list_next) (const Eina_List *list);
 
@@ -809,7 +809,7 @@ elm_widget_focus_list_next_get(Evas_Object *obj, Eina_List *items, void *(*list_
    else
      return EINA_FALSE;
 
-   Eina_List *l = items;
+   const Eina_List *l = items;
 
    /* Recovery last focused sub item */
    if (elm_widget_focus_get(obj))
@@ -822,7 +822,7 @@ elm_widget_focus_list_next_get(Evas_Object *obj, Eina_List *items, void *(*list_
             }
        }
 
-   Eina_List *start = l;
+   const Eina_List *start = l;
    Evas_Object *to_focus = NULL;
 
    /* Interate sub items */

@@ -136,10 +136,10 @@ _elm_win_focus_out(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_elm_win_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Elm_Win *wd = elm_widget_data_get(obj);
-   Eina_List *items;
+   const Eina_List *items;
    void *(*list_data_get) (const Eina_List *list);
 
    if ((!wd) || (!wd->subobjs))
@@ -2123,7 +2123,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_inwin_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_inwin_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;

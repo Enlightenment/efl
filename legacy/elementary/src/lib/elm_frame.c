@@ -47,7 +47,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_frame_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_frame_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;

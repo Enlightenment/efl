@@ -78,7 +78,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_panel_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_panel_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
@@ -93,7 +93,7 @@ _elm_panel_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Objec
       return elm_widget_focus_next_get(cur, dir, next);
 
    /* Return */
-   *next = obj;
+   *next = (Evas_Object *)obj;
    return !elm_widget_focus_get(obj);
 }
 

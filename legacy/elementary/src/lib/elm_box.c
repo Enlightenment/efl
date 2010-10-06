@@ -94,10 +94,10 @@ _elm_box_list_data_get(const Eina_List *list)
 }
 
 static Eina_Bool
-_elm_box_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_box_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *items;
+   const Eina_List *items;
    void *(*list_data_get) (const Eina_List *list);
 
    if ((!wd) || (!wd->box))
