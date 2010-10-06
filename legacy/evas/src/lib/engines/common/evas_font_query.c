@@ -440,8 +440,8 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 	     last_adv = fg->glyph->advance.x >> 16;
 	  }
 	if (kern < 0) kern = 0;
-        chr_x = ((pen_x - kern) + (fg->glyph_out->left));
-	chr_y = (pen_y + (fg->glyph_out->top));
+        chr_x = (pen_x - kern);
+	chr_y = (pen_y);
         chr_w = fg->glyph_out->bitmap.width + (kern);
 /*	if (text[chr]) */
 	  {
