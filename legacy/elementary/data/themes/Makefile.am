@@ -57,6 +57,8 @@ flip_base_shad.png \
 flip_pmb.png \
 flip_pmt.png \
 flip_shad.png \
+flip_t.png \
+flip_b.png \
 head.png \
 sb_runnerh.png \
 sb_runnerv.png \

@@ -1762,6 +1762,37 @@ extern "C" {
    EAPI void         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha);
    EAPI Eina_Bool    elm_mapbuf_alpha_get(const Evas_Object *obj);
 
+
+   typedef struct _Elm_Flippicker_Item Elm_Flippicker_Item;
+
+   EAPI Evas_Object               *elm_flippicker_add(Evas_Object *parent);
+   EAPI void                       elm_flippicker_flip_next(Evas_Object *obj);
+   EAPI void                       elm_flippicker_flip_prev(Evas_Object *obj);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
+   EAPI const Eina_List           *elm_flippicker_items_get(Evas_Object *obj);
+   EAPI const Elm_Flippicker_Item *elm_flippicker_first_item_get(Evas_Object *obj);
+   EAPI const Elm_Flippicker_Item *elm_flippicker_last_item_get(Evas_Object *obj);
+   EAPI const Elm_Flippicker_Item *elm_flippicker_selected_item_get(Evas_Object *obj);
+   EAPI void                       elm_flippicker_item_selected_set(Elm_Flippicker_Item *item);
+   EAPI void                       elm_flippicker_item_del(Elm_Flippicker_Item *item);
+   EAPI const char                *elm_flippicker_item_label_get(Elm_Flippicker_Item *item);
+   EAPI void                       elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_item_prev(Elm_Flippicker_Item *item);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_item_next(Elm_Flippicker_Item *item);
+
+   /* smart callbacks called:
+    * "selected" - when flippicker selected item is changed
+    * "overflowed" - when flippicker item is changed to first item
+    *                from last item
+    * "underflowed" - when flippicker item is changed to last item
+    *                 from first item.
+    */
+
+   /* available styles:
+    * default
+    */
+
    /* animator */
    typedef struct _Animator Elm_Animator;
 

@@ -82,6 +82,7 @@ elm_thumb.c \
 elm_config.c \
 elm_animator.c \
 elm_calendar.c \
+elm_flippicker.c \
 \
 elc_anchorblock.c \
 elc_anchorview.c \
