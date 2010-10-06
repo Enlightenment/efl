@@ -539,6 +539,12 @@ eina_log_win32_color_get(const char *domain_str)
 }
 #endif
 
+static inline unsigned int
+eina_log_pid_get(void)
+{
+   return (unsigned int)getpid();
+}
+
 static inline void
 eina_log_print_level_name_get(int level, const char **p_name)
 {
@@ -633,7 +639,8 @@ eina_log_print_prefix_NOthreads_NOcolor_file_func(FILE *fp,
                                                   int line)
 {
    DECLARE_LEVEL_NAME(level);
-   fprintf(fp, "%s:%s %s:%d %s() ", name, d->domain_str, file, line, fnc);
+   fprintf(fp, "%s<%u>:%s %s:%d %s() ", name, eina_log_pid_get(), 
+           d->domain_str, file, line, fnc);
 }
 
 static void
@@ -645,7 +652,8 @@ eina_log_print_prefix_NOthreads_NOcolor_NOfile_func(FILE *fp,
                                                     int line __UNUSED__)
 {
    DECLARE_LEVEL_NAME(level);
-   fprintf(fp, "%s:%s %s() ", name, d->domain_str, fnc);
+   fprintf(fp, "%s<%u>:%s %s() ", name, eina_log_pid_get(), d->domain_str, 
+           fnc);
 }
 
 static void
@@ -657,7 +665,8 @@ eina_log_print_prefix_NOthreads_NOcolor_file_NOfunc(FILE *fp,
                                                     int line)
 {
    DECLARE_LEVEL_NAME(level);
-   fprintf(fp, "%s:%s %s:%d ", name, d->domain_str, file, line);
+   fprintf(fp, "%s<%u>:%s %s:%d ", name, eina_log_pid_get(), d->domain_str, 
+           file, line);
 }
 
 /* No threads, color */
@@ -693,9 +702,9 @@ eina_log_print_prefix_NOthreads_color_file_func(FILE *fp,
                            FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
    fprintf(fp, " ");
 #else
-   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
+   fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s %s:%d "
            EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-           color, name, d->domain_str, file, line, fnc);
+           color, name, eina_log_pid_get(), d->domain_str, file, line, fnc);
 #endif
 }
 
@@ -728,9 +737,9 @@ eina_log_print_prefix_NOthreads_color_NOfile_func(FILE *fp,
                            FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
    fprintf(fp, " ");
 #else
-   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s "
+   fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s "
            EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-           color, name, d->domain_str, fnc);
+           color, name, eina_log_pid_get(), d->domain_str, fnc);
 #endif
 }
 
@@ -758,8 +767,8 @@ eina_log_print_prefix_NOthreads_color_file_NOfunc(FILE *fp,
                            FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
    fprintf(fp, " %s:%d ", file, line);
 #else
-   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d ",
-           color, name, d->domain_str, file, line);
+   fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s %s:%d ",
+           color, name, eina_log_pid_get(), d->domain_str, file, line);
 #endif
 }
 
@@ -779,12 +788,13 @@ eina_log_print_prefix_threads_NOcolor_file_func(FILE *fp,
    cur = SELF();
    if (IS_OTHER(cur))
      {
-        fprintf(fp, "%s:%s[T:%lu] %s:%d %s() ",
-                name, d->domain_str, (unsigned long)cur, file, line, fnc);
+        fprintf(fp, "%s<%u>:%s[T:%lu] %s:%d %s() ",
+                name, eina_log_pid_get(), d->domain_str, 
+                (unsigned long)cur, file, line, fnc);
         return;
      }
-
-        fprintf(fp, "%s:%s %s:%d %s() ", name, d->domain_str, file, line, fnc);
+   fprintf(fp, "%s<%u>:%s %s:%d %s() ", 
+           name, eina_log_pid_get(), d->domain_str, file, line, fnc);
 }
 
 static void
@@ -801,12 +811,13 @@ eina_log_print_prefix_threads_NOcolor_NOfile_func(FILE *fp,
    cur = SELF();
    if (IS_OTHER(cur))
      {
-        fprintf(fp, "%s:%s[T:%lu] %s() ",
-                name, d->domain_str, (unsigned long)cur, fnc);
+        fprintf(fp, "%s<%u>:%s[T:%lu] %s() ",
+                name, eina_log_pid_get(), d->domain_str, 
+                (unsigned long)cur, fnc);
         return;
      }
-
-        fprintf(fp, "%s:%s %s() ", name, d->domain_str, fnc);
+   fprintf(fp, "%s<%u>:%s %s() ", 
+           name, eina_log_pid_get(), d->domain_str, fnc);
 }
 
 static void
@@ -823,12 +834,14 @@ eina_log_print_prefix_threads_NOcolor_file_NOfunc(FILE *fp,
    cur = SELF();
    if (IS_OTHER(cur))
      {
-        fprintf(fp, "%s:%s[T:%lu] %s:%d ",
-                name, d->domain_str, (unsigned long)cur, file, line);
+        fprintf(fp, "%s<%u>:%s[T:%lu] %s:%d ",
+                name, eina_log_pid_get(), d->domain_str, (unsigned long)cur, 
+                file, line);
         return;
      }
-
-        fprintf(fp, "%s:%s %s:%d ", name, d->domain_str, file, line);
+   
+   fprintf(fp, "%s<%u>:%s %s:%d ", 
+           name, eina_log_pid_get(), d->domain_str, file, line);
 }
 
 /* threads, color */
@@ -883,11 +896,11 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp,
                                 FOREGROUND_BLUE);
         fprintf(fp, " ");
 # else
-        fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
+        fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s[T:"
                 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d "
                 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-                color, name, d->domain_str, (unsigned long)cur, file,
-		line, fnc);
+                color, name, eina_log_pid_get() ,d->domain_str, 
+                (unsigned long)cur, file, line, fnc);
 # endif
         return;
      }
@@ -900,9 +913,9 @@ eina_log_print_prefix_threads_color_file_func(FILE *fp,
                                                    fnc,
                                                    line);
 # else
-   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s %s:%d "
+   fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s %s:%d "
            EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-           color, name, d->domain_str, file, line, fnc);
+           color, name, eina_log_pid_get(), d->domain_str, file, line, fnc);
 # endif
 }
 
@@ -952,10 +965,11 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp,
                                 FOREGROUND_BLUE);
         fprintf(fp, " ");
 # else
-        fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
+        fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s[T:"
                 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] "
                 EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-                color, name, d->domain_str, (unsigned long)cur, fnc);
+                color, name, eina_log_pid_get(), d->domain_str, 
+                (unsigned long)cur, fnc);
 # endif
         return;
      }
@@ -968,9 +982,9 @@ eina_log_print_prefix_threads_color_NOfile_func(FILE *fp,
                                                      fnc,
                                                      line);
 # else
-   fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s "
+   fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s "
            EINA_COLOR_HIGH "%s()" EINA_COLOR_RESET " ",
-           color, name, d->domain_str, fnc);
+           color, name, eina_log_pid_get(), d->domain_str, fnc);
 # endif
 }
 
@@ -1015,9 +1029,10 @@ eina_log_print_prefix_threads_color_file_NOfunc(FILE *fp,
                                 FOREGROUND_BLUE);
         fprintf(fp, "] %s:%d ", file, line);
 # else
-        fprintf(fp, "%s%s" EINA_COLOR_RESET ":%s[T:"
+        fprintf(fp, "%s%s<%u>" EINA_COLOR_RESET ":%s[T:"
                 EINA_COLOR_ORANGE "%lu" EINA_COLOR_RESET "] %s:%d ",
-                color, name, d->domain_str, (unsigned long)cur, file, line);
+                color, name, eina_log_pid_get(), d->domain_str, 
+                (unsigned long)cur, file, line);
 # endif
         return;
      }
@@ -2361,7 +2376,8 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
      }
 
 #endif
-             fprintf(f, "%s %s:%d %s() ", d->name, file, line, fnc);
+   fprintf(f, "%s<%u> %s:%d %s() ", d->name, eina_log_pid_get(), 
+           file, line, fnc);
 #ifdef EFL_HAVE_THREADS
 end:
 #endif
