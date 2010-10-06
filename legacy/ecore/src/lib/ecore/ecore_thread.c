@@ -590,7 +590,7 @@ ecore_thread_cancel(Ecore_Thread *thread)
 
    /* Delay the destruction */
  on_exit:
-   work->cancel = EINA_TRUE;
+   ((Ecore_Pthread_Worker *)thread)->cancel = EINA_TRUE;
    return EINA_FALSE;
 #else
    return EINA_TRUE;
