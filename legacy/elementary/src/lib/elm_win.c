@@ -650,6 +650,7 @@ _elm_win_focus_highlight_init(Elm_Win *win)
 static void
 _elm_win_focus_highlight_shutdown(Elm_Win *win)
 {
+   _elm_win_focus_highlight_reconfigure_job_stop(win);
    if (win->focus_highlight.cur.target)
      {
         _elm_win_focus_target_callbacks_del(win);
