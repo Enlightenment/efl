@@ -44,9 +44,12 @@ struct _Ecore_Pthread_Worker
          Ecore_Thread_Heavy_Cb func_heavy;
          Ecore_Thread_Notify_Cb func_notify;
          Ecore_Pipe *notify;
+
+         int send;
+         int received;
       } feedback_run;
    } u;
-   
+
    Ecore_Cb func_cancel;
    Ecore_Cb func_end;
 #ifdef EFL_HAVE_PTHREAD
@@ -55,11 +58,12 @@ struct _Ecore_Pthread_Worker
    pthread_cond_t cond;
    pthread_mutex_t mutex;
 #endif
-   
+
    const void *data;
-   
+
    Eina_Bool cancel : 1;
    Eina_Bool feedback_run : 1;
+   Eina_Bool kill : 1;
 };
 
 #ifdef EFL_HAVE_PTHREAD
@@ -130,14 +134,8 @@ _ecore_thread_end(Ecore_Pthread_Data *pth)
 }
 
 static void
-_ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
+_ecore_thread_kill(Ecore_Pthread_Worker *work)
 {
-   Ecore_Pthread_Worker *work;
-
-   if (nbyte != sizeof (Ecore_Pthread_Worker *)) return ;
-
-   work = *(Ecore_Pthread_Worker **)buffer;
-
    if (work->cancel)
      {
         if (work->func_cancel)
@@ -150,12 +148,33 @@ _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
      }
 
    if (work->feedback_run)
-        ecore_pipe_del(work->u.feedback_run.notify);
+     ecore_pipe_del(work->u.feedback_run.notify);
    pthread_cond_destroy(&work->cond);
    pthread_mutex_destroy(&work->mutex);
    if (work->hash)
      eina_hash_free(work->hash);
    free(work);
+}
+
+static void
+_ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte)
+{
+   Ecore_Pthread_Worker *work;
+
+   if (nbyte != sizeof (Ecore_Pthread_Worker *)) return ;
+
+   work = *(Ecore_Pthread_Worker **)buffer;
+
+   if (work->feedback_run)
+     {
+        if (work->u.feedback_run.send != work->u.feedback_run.received)
+          {
+             work->kill = EINA_TRUE;
+             return ;
+          }
+     }
+
+   _ecore_thread_kill(work);
 }
 
 static void
@@ -167,9 +186,16 @@ _ecore_notify_handler(void *data, void *buffer, unsigned int nbyte)
    if (nbyte != sizeof (Ecore_Pthread_Worker *)) return ;
 
    user_data = *(void **)buffer;
+   work->u.feedback_run.received++;
 
    if (work->u.feedback_run.func_notify)
      work->u.feedback_run.func_notify((Ecore_Thread *) work, user_data, (void *) work->data);
+
+   /* Force reading all notify event before killing the thread */
+   if (work->kill && work->u.feedback_run.send == work->u.feedback_run.received)
+     {
+        _ecore_thread_kill(work);
+     }
 }
 
 static void
@@ -266,6 +292,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
    work->feedback_run = EINA_FALSE;
+   work->kill = EINA_FALSE;
    work->hash = NULL;
    pthread_cond_init(&work->cond, NULL);
    pthread_mutex_init(&work->mutex, NULL);
@@ -319,6 +346,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    work->func_cancel = NULL;
    work->cancel = EINA_FALSE;
    work->feedback_run = EINA_FALSE;
+   work->kill = EINA_FALSE;
    work->hash = NULL;
    pthread_cond_init(&work->cond, NULL);
    pthread_mutex_init(&work->mutex, NULL);
@@ -433,6 +461,7 @@ ecore_thread_run(Ecore_Cb func_blocking,
    work->func_cancel = func_cancel;
    work->cancel = EINA_FALSE;
    work->feedback_run = EINA_FALSE;
+   work->kill = EINA_FALSE;
    work->data = data;
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
@@ -510,6 +539,14 @@ ecore_thread_cancel(Ecore_Thread *thread)
    if (work->cancel)
      return EINA_FALSE;
 
+   if (work->feedback_run)
+     {
+        if (work->kill)
+          return EINA_TRUE;
+        if (work->u.feedback_run.send != work->u.feedback_run.received)
+          goto on_exit;
+     }
+
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
 
    if ((have_main_loop_thread) &&
@@ -552,7 +589,8 @@ ecore_thread_cancel(Ecore_Thread *thread)
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
    /* Delay the destruction */
-   ((Ecore_Pthread_Worker *)thread)->cancel = EINA_TRUE;
+ on_exit:
+   work->cancel = EINA_TRUE;
    return EINA_FALSE;
 #else
    return EINA_TRUE;
@@ -631,6 +669,9 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
    worker->data = data;
    worker->cancel = EINA_FALSE;
    worker->feedback_run = EINA_TRUE;
+   worker->kill = EINA_FALSE;
+   worker->u.feedback_run.send = 0;
+   worker->u.feedback_run.received = 0;
 
    worker->u.feedback_run.notify = ecore_pipe_add(_ecore_notify_handler, worker);
 
@@ -695,11 +736,14 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
    worker.u.feedback_run.func_heavy = func_heavy;
    worker.u.feedback_run.func_notify = func_notify;
    worker.u.feedback_run.notify = NULL;
+   worker.u.feedback_run.send = 0;
+   worker.u.feedback_run.received = 0;
    worker.func_cancel = func_cancel;
    worker.func_end = func_end;
    worker.data = data;
    worker.cancel = EINA_FALSE;
    worker.feedback_run = EINA_TRUE;
+   worker.kill = EINA_FALSE;
 
    func_heavy((Ecore_Thread *) &worker, (void *)data);
 
@@ -733,6 +777,7 @@ ecore_thread_feedback(Ecore_Thread *thread, const void *data)
 #ifdef EFL_HAVE_PTHREAD
    if (!pthread_equal(worker->self, pthread_self())) return EINA_FALSE;
 
+   worker->u.feedback_run.send++;
    ecore_pipe_write(worker->u.feedback_run.notify, &data, sizeof (void *));
 
    return EINA_TRUE;
