@@ -4362,9 +4362,10 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
           }
         _evas_textblock_cursors_update_offset(&cur, n->text_node, index, -1);
      }
-   _evas_textblock_node_format_remove(o, n, 1);
+   _evas_textblock_node_format_remove(o, n, 0);
    if (pnode && (pnode != n))
      {
+        /* pnode can never be visible! (it's the closing format) */
         _evas_textblock_node_format_remove(o, pnode, 0);
      }
    _evas_textblock_changed(o, obj);
