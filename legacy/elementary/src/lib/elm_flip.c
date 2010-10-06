@@ -59,7 +59,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_flip_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+_elm_flip_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -68,9 +68,9 @@ _elm_flip_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool 
 
    /* Try Focus cycle in subitem */
    if (wd->state)
-     return elm_widget_focus_cycle(wd->front.content, dir, circular);
+     return elm_widget_focus_cycle(wd->front.content, dir, next);
    else
-     return elm_widget_focus_cycle(wd->back.content, dir, circular);
+     return elm_widget_focus_cycle(wd->back.content, dir, next);
 
 }
 

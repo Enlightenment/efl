@@ -94,12 +94,11 @@ _elm_box_list_data_get(const Eina_List *list)
 }
 
 static Eina_Bool
-_elm_box_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+_elm_box_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *items;
    void *(*list_data_get) (const Eina_List *list);
-   Evas_Object *last_focused;
 
    if ((!wd) || (!wd->box))
      return EINA_FALSE;
@@ -122,10 +121,7 @@ _elm_box_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool c
         if (!items) return EINA_FALSE;
      }
 
-   last_focused = 
-     elm_widget_focus_cycle_next_get(obj, items, list_data_get, dir, circular);
-
-   return !!last_focused;
+   return elm_widget_focus_cycle_next_get(obj, items, list_data_get, dir, next);
 }
 
 static void

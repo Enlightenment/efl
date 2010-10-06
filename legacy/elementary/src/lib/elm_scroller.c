@@ -198,7 +198,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+_elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
@@ -209,17 +209,12 @@ _elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_B
    cur = wd->content;
 
    /* Try Focus cycle in subitem */
-   if (elm_widget_focus_cycle(cur, dir, circular))
-     return EINA_TRUE;
-   /* Abort if content is focusable */
    if (elm_widget_can_focus_get(cur) || elm_widget_child_can_focus_get(cur))
-     return EINA_FALSE;
-   /* Ignore is previous focused */
-   if (elm_widget_focus_get(obj) && (!circular))
-     return EINA_FALSE;
-   /* Get Focus*/
-   elm_widget_focus_steal(obj);
-   return EINA_TRUE;
+      return elm_widget_focus_cycle(cur, dir, next);
+
+   /* Return */
+   *next = obj;
+   return !elm_widget_focus_get(obj);
 }
 
 static void

@@ -321,37 +321,5 @@ test_focus(void *data, Evas_Object *obj, void *event_info)
                }
           }
      }
-
-     { //Panel
-        Evas_Object *panel = elm_panel_add(win);
-        elm_panel_orient_set(panel, ELM_PANEL_ORIENT_LEFT);
-        evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND,
-                                         EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(panel, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_win_resize_object_add(win, panel);
-        my_show(panel);
-        elm_panel_hidden_set(panel, EINA_TRUE);
-
-          {
-             Evas_Object *bx2 = elm_box_add(win);
-             evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND,
-                                              EVAS_HINT_EXPAND);
-             elm_panel_content_set(panel, bx2);
-             my_show(bx2);
-
-             for (i = 3; i; i--)
-               {
-                  Evas_Object *bt;
-                  bt = elm_button_add(win);
-                  elm_button_label_set(bt, "Panel");
-                  evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
-                                                  EVAS_HINT_FILL);
-                  evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND,
-                                                   EVAS_HINT_EXPAND);
-                  elm_box_pack_end(bx2, bt);
-                  my_show(bt);
-               }
-          }
-     }
 }
 

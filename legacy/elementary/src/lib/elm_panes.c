@@ -70,7 +70,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+_elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -80,7 +80,7 @@ _elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool
    double w, h;
    edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
    if ((wd->horizontal && ( h == 0.0 )) || ((!wd->horizontal) && ( w == 0.0 )))
-     return elm_widget_focus_cycle(wd->contents.right, dir, circular);
+     return elm_widget_focus_cycle(wd->contents.right, dir, next);
 
    Evas_Object *chain[2];
 
@@ -98,19 +98,30 @@ _elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool
    else
      return EINA_FALSE;
 
-   unsigned int i;
-
-   for ( i = (unsigned int) elm_widget_focus_get(chain[1]); i < 2; i++ )
-     if (elm_widget_focus_cycle(chain[i], dir, EINA_FALSE))
-       return EINA_TRUE;
-
-   if (!circular)
-     return EINA_FALSE;
-
-   if (elm_widget_focus_cycle(chain[0], dir, EINA_TRUE))
-     return EINA_TRUE;
-
-   return elm_widget_focus_cycle(chain[1], dir, EINA_TRUE);
+   if (elm_widget_focus_get(chain[1]))
+     {
+        Evas_Object *to_focus;
+        if (elm_widget_focus_cycle(chain[1], dir, next))
+          return EINA_TRUE;
+        elm_widget_focus_cycle(chain[0], dir, &to_focus);
+        if (to_focus)
+          *next = to_focus;
+        return EINA_FALSE;
+     }
+   else
+     {
+        Evas_Object *to_focus;
+        if (elm_widget_focus_cycle(chain[0], dir, next))
+          return EINA_TRUE;
+        if (elm_widget_focus_cycle(chain[1], dir, &to_focus))
+          {
+             *next = to_focus;
+             return EINA_TRUE;
+          }
+        if (!(*next))
+          *next = to_focus;
+        return EINA_FALSE;
+     }
 }
 
 static void

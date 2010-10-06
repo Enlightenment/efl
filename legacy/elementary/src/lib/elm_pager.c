@@ -66,7 +66,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_pager_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool circular)
+_elm_pager_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
@@ -77,7 +77,7 @@ _elm_pager_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Eina_Bool
    cur = wd->top->content;
 
    /* Try Focus cycle in subitem */
-   return elm_widget_focus_cycle(cur, dir, circular);
+   return elm_widget_focus_cycle(cur, dir, next);
 }
 
 static void
