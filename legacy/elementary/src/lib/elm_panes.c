@@ -70,7 +70,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_panes_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -80,7 +80,7 @@ _elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Obje
    double w, h;
    edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
    if ((wd->horizontal && ( h == 0.0 )) || ((!wd->horizontal) && ( w == 0.0 )))
-     return elm_widget_focus_cycle(wd->contents.right, dir, next);
+     return elm_widget_focus_next_get(wd->contents.right, dir, next);
 
    Evas_Object *chain[2];
 
@@ -101,9 +101,9 @@ _elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Obje
    if (elm_widget_focus_get(chain[1]))
      {
         Evas_Object *to_focus;
-        if (elm_widget_focus_cycle(chain[1], dir, next))
+        if (elm_widget_focus_next_get(chain[1], dir, next))
           return EINA_TRUE;
-        elm_widget_focus_cycle(chain[0], dir, &to_focus);
+        elm_widget_focus_next_get(chain[0], dir, &to_focus);
         if (to_focus)
           *next = to_focus;
         return EINA_FALSE;
@@ -111,9 +111,9 @@ _elm_panes_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Obje
    else
      {
         Evas_Object *to_focus;
-        if (elm_widget_focus_cycle(chain[0], dir, next))
+        if (elm_widget_focus_next_get(chain[0], dir, next))
           return EINA_TRUE;
-        if (elm_widget_focus_cycle(chain[1], dir, &to_focus))
+        if (elm_widget_focus_next_get(chain[1], dir, &to_focus))
           {
              *next = to_focus;
              return EINA_TRUE;
@@ -217,7 +217,7 @@ elm_panes_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_focus_cycle_hook_set(obj, _elm_panes_focus_cycle_hook);
+   elm_widget_focus_next_hook_set(obj, _elm_panes_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->panes = edje_object_add(e);

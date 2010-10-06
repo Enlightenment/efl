@@ -136,7 +136,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
 }
 
 static Eina_Bool
-_elm_win_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_win_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Elm_Win *wd = elm_widget_data_get(obj);
    Eina_List *items;
@@ -150,7 +150,7 @@ _elm_win_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object
    items = wd->subobjs;
    list_data_get = eina_list_data_get;
 
-   elm_widget_focus_cycle_next_get(obj, items, list_data_get, dir, next);
+   elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
 
    if (*next)
      return EINA_TRUE;
@@ -167,9 +167,9 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, v
           {
              Evas_Object *target;
              if(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS, &target);
+               elm_widget_focus_next_get(obj, ELM_FOCUS_PREVIOUS, &target);
              else
-               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT, &target);
+               elm_widget_focus_next_get(obj, ELM_FOCUS_NEXT, &target);
              if (target)
                elm_widget_focus_steal(target);
              return EINA_TRUE;
@@ -987,7 +987,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    elm_widget_event_hook_set(win->win_obj, _elm_win_event_cb);
    elm_widget_can_focus_set(win->win_obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(win->win_obj, EINA_TRUE);
-   elm_widget_focus_cycle_hook_set(win->win_obj, _elm_win_focus_cycle_hook);
+   elm_widget_focus_next_hook_set(win->win_obj, _elm_win_focus_next_hook);
    evas_object_color_set(win->win_obj, 0, 0, 0, 0);
    evas_object_move(win->win_obj, 0, 0);
    evas_object_resize(win->win_obj, 1, 1);
@@ -2126,7 +2126,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_inwin_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_inwin_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
@@ -2137,7 +2137,7 @@ _elm_inwin_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Obje
    cur = wd->content;
 
    /* Try Focus cycle in subitem */
-   elm_widget_focus_cycle(cur, dir, next);
+   elm_widget_focus_next_get(cur, dir, next);
    if (*next)
      return EINA_TRUE;
    return EINA_FALSE;
@@ -2202,7 +2202,7 @@ elm_win_inwin_add(Evas_Object *obj)
    elm_widget_data_set(obj2, wd);
    elm_widget_del_hook_set(obj2, _del_hook);
    elm_widget_theme_hook_set(obj2, _theme_hook);
-   elm_widget_focus_cycle_hook_set(obj2, _elm_inwin_focus_cycle_hook);
+   elm_widget_focus_next_hook_set(obj2, _elm_inwin_focus_next_hook);
    elm_widget_can_focus_set(obj2, EINA_FALSE);
 
    wd->frm = edje_object_add(win->evas);

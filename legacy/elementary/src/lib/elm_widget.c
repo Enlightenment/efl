@@ -40,9 +40,8 @@ struct _Smart_Data
 				     Evas_Object *o, const char *emission,
 				     const char *source));
    void         (*changed_func) (Evas_Object *obj);
-   Eina_Bool    (*focus_cycle_func) (Evas_Object *obj,
-                                     Elm_Focus_Direction dir,
-                                     Evas_Object **next);
+   Eina_Bool    (*focus_next_func) (Evas_Object *obj, Elm_Focus_Direction dir,
+                                    Evas_Object **next);
    void         (*on_focus_func) (void *data, Evas_Object *obj);
    void          *on_focus_data;
    void         (*on_change_func) (void *data, Evas_Object *obj);
@@ -405,10 +404,10 @@ elm_widget_theme(Evas_Object *obj)
 }
 
 EAPI void
-elm_widget_focus_cycle_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next))
+elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next))
 {
    API_ENTRY return;
-   sd->focus_cycle_func = func;
+   sd->focus_next_func = func;
 }
 
 EAPI void
@@ -751,7 +750,7 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
 }
 
 EAPI Eina_Bool
-elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+elm_widget_focus_next_get(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    if (!next)
      return EINA_FALSE;
@@ -764,8 +763,8 @@ elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **
      return EINA_FALSE;
 
    /* Try use hook */
-   if (sd->focus_cycle_func)
-     return sd->focus_cycle_func(obj, dir, next);
+   if (sd->focus_next_func)
+     return sd->focus_next_func(obj, dir, next);
 
    if (!elm_widget_can_focus_get(obj))
      return EINA_FALSE;
@@ -776,7 +775,7 @@ elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **
 }
 
 EAPI Eina_Bool
-elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next)
+elm_widget_focus_list_next_get(Evas_Object *obj, Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next)
 {
    Eina_List *(*list_next) (const Eina_List *list);
 
@@ -825,7 +824,7 @@ elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list
         Evas_Object *cur = list_data_get(l);
 
         /* Try Focus cycle in subitem */
-        if (elm_widget_focus_cycle(cur, dir, &tmp))
+        if (elm_widget_focus_next_get(cur, dir, &tmp))
           {
              *next = tmp;
              return EINA_TRUE;
@@ -843,7 +842,7 @@ elm_widget_focus_cycle_next_get(Evas_Object *obj, Eina_List *items, void *(*list
         Evas_Object *cur = list_data_get(l);
 
         /* Try Focus cycle in subitem */
-        elm_widget_focus_cycle(cur, dir, &tmp);
+        elm_widget_focus_next_get(cur, dir, &tmp);
         if (tmp)
           {
              *next = tmp;

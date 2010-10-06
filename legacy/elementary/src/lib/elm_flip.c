@@ -59,7 +59,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_flip_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_flip_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -68,9 +68,9 @@ _elm_flip_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Objec
 
    /* Try Focus cycle in subitem */
    if (wd->state)
-     return elm_widget_focus_cycle(wd->front.content, dir, next);
+     return elm_widget_focus_next_get(wd->front.content, dir, next);
    else
-     return elm_widget_focus_cycle(wd->back.content, dir, next);
+     return elm_widget_focus_next_get(wd->back.content, dir, next);
 
 }
 
@@ -414,7 +414,7 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_focus_cycle_hook_set(obj, _elm_flip_focus_cycle_hook);
+   elm_widget_focus_next_hook_set(obj, _elm_flip_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->clip = evas_object_rectangle_add(e);

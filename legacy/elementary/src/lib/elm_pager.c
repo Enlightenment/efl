@@ -66,7 +66,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_pager_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_pager_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
@@ -77,7 +77,7 @@ _elm_pager_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Obje
    cur = wd->top->content;
 
    /* Try Focus cycle in subitem */
-   return elm_widget_focus_cycle(cur, dir, next);
+   return elm_widget_focus_next_get(cur, dir, next);
 }
 
 static void
@@ -239,7 +239,7 @@ elm_pager_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_focus_cycle_hook_set(obj, _elm_pager_focus_cycle_hook);
+   elm_widget_focus_next_hook_set(obj, _elm_pager_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->clip = evas_object_rectangle_add(e);

@@ -198,7 +198,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_scroller_focus_next_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *cur;
@@ -210,7 +210,7 @@ _elm_scroller_focus_cycle_hook(Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
 
    /* Try Focus cycle in subitem */
    if (elm_widget_can_focus_get(cur) || elm_widget_child_can_focus_get(cur))
-      return elm_widget_focus_cycle(cur, dir, next);
+      return elm_widget_focus_next_get(cur, dir, next);
 
    /* Return */
    *next = obj;
@@ -446,7 +446,7 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
-   elm_widget_focus_cycle_hook_set(obj, _elm_scroller_focus_cycle_hook);
+   elm_widget_focus_next_hook_set(obj, _elm_scroller_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
 
