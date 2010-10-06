@@ -255,15 +255,21 @@ _eio_dir_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data
 }
 
 static void
+_eio_dir_copy_free(Eio_Dir_Copy *copy)
+{
+   eina_stringshare_del(copy->progress.source);
+   eina_stringshare_del(copy->progress.dest);
+   free(copy);
+}
+
+static void
 _eio_dir_copy_end(void *data)
 {
    Eio_Dir_Copy *copy = data;
 
    copy->progress.common.done_cb((void*) copy->progress.common.data);
 
-   eina_stringshare_del(copy->progress.source);
-   eina_stringshare_del(copy->progress.dest);
-   free(copy);
+   _eio_dir_copy_free(copy);
 }
 
 static void
@@ -273,9 +279,7 @@ _eio_dir_copy_error(void *data)
 
    eio_file_error(&copy->progress.common);
 
-   eina_stringshare_del(copy->progress.source);
-   eina_stringshare_del(copy->progress.dest);
-   free(copy);
+   _eio_dir_copy_free(copy);
 }
 
 /**

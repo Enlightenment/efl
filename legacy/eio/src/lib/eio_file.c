@@ -357,15 +357,21 @@ _eio_file_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *dat
 }
 
 static void
+_eio_file_copy_free(Eio_File_Progress *copy)
+{
+   eina_stringshare_del(copy->source);
+   eina_stringshare_del(copy->dest);
+   free(copy);
+}
+
+static void
 _eio_file_copy_end(void *data)
 {
    Eio_File_Progress *copy = data;
 
    copy->common.done_cb((void*) copy->common.data);
 
-   eina_stringshare_del(copy->source);
-   eina_stringshare_del(copy->dest);
-   free(copy);
+   _eio_file_copy_free(copy);
 }
 
 static void
@@ -375,9 +381,15 @@ _eio_file_copy_error(void *data)
 
    eio_file_error(&copy->common);
 
-   eina_stringshare_del(copy->source);
-   eina_stringshare_del(copy->dest);
-   free(copy);
+   _eio_file_copy_free(copy);
+}
+
+static void
+_eio_file_move_free(Eio_File_Move *move)
+{
+   eina_stringshare_del(move->progress.source);
+   eina_stringshare_del(move->progress.dest);
+   free(move);
 }
 
 static void
@@ -395,9 +407,7 @@ _eio_file_move_unlink_done(void *data)
 
    move->progress.common.done_cb((void*) move->progress.common.data);
 
-   eina_stringshare_del(move->progress.source);
-   eina_stringshare_del(move->progress.dest);
-   free(move);
+   _eio_file_move_free(move);
 }
 
 static void
@@ -410,9 +420,7 @@ _eio_file_move_unlink_error(int error, void *data)
    move->progress.common.error = error;
    eio_file_error(&move->progress.common);
 
-   eina_stringshare_del(move->progress.source);
-   eina_stringshare_del(move->progress.dest);
-   free(move);
+   _eio_file_move_free(move);
 }
 
 static void
@@ -436,9 +444,7 @@ _eio_file_move_copy_error(int error, void *data)
    move->progress.common.error = error;
    eio_file_error(&move->progress.common);
 
-   eina_stringshare_del(move->progress.source);
-   eina_stringshare_del(move->progress.dest);
-   free(move);
+   _eio_file_move_free(move);
 }
 
 static void
@@ -467,9 +473,7 @@ _eio_file_move_end(void *data)
 
    move->progress.common.done_cb((void*) move->progress.common.data);
 
-   eina_stringshare_del(move->progress.source);
-   eina_stringshare_del(move->progress.dest);
-   free(move);
+   _eio_file_move_free(move);
 }
 
 static void
@@ -504,9 +508,7 @@ _eio_file_move_error(void *data)
 
    eio_file_error(&move->progress.common);
 
-   eina_stringshare_del(move->progress.source);
-   eina_stringshare_del(move->progress.dest);
-   free(move);
+   _eio_file_move_free(move);
 }
 
 /**
