@@ -749,6 +749,15 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
    return EINA_FALSE;
 }
 
+EAPI void
+elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
+{
+   Evas_Object *target;
+   elm_widget_focus_next_get(obj, dir, &target);
+   if (target)
+     elm_widget_focus_steal(target);
+}
+
 EAPI Eina_Bool
 elm_widget_focus_next_get(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {

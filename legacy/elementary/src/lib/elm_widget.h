@@ -251,6 +251,7 @@ EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
+EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI Eina_Bool        elm_widget_focus_next_get(Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(Evas_Object *obj, Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
 EAPI int              elm_widget_focus_jump(Evas_Object *obj, int forward);

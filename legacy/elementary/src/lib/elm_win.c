@@ -165,13 +165,10 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, v
         Evas_Event_Key_Down *ev = event_info;
         if (!strcmp(ev->keyname, "Tab"))
           {
-             Evas_Object *target;
              if(evas_key_modifier_is_set(ev->modifiers, "Shift"))
-               elm_widget_focus_next_get(obj, ELM_FOCUS_PREVIOUS, &target);
+               elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
              else
-               elm_widget_focus_next_get(obj, ELM_FOCUS_NEXT, &target);
-             if (target)
-               elm_widget_focus_steal(target);
+               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
              return EINA_TRUE;
           }
      }
