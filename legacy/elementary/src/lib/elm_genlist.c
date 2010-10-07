@@ -3583,11 +3583,11 @@ elm_genlist_no_select_mode_get(const Evas_Object *obj)
  *
  * This will enable the compress mode where items are "compressed" horizontally
  * to fit the genlist scrollable viewport width. this is special for gnelist.
- * do not rely on elm_genlist_horizontal_mode_set() being set to 
+ * do not rely on elm_genlist_horizontal_mode_set() being set to
  * ELM_LIST_COMPRESS to work as genlist needs to handle it specially.
  *
  * @param obj The genlist object
- * @param no_select The compress mode
+ * @param compress The compress mode
  * (EINA_TRUE = on, EINA_FALSE = off)
  *
  * @ingroup Genlist
