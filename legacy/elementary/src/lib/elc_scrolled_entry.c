@@ -31,6 +31,9 @@
  */
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
+typedef struct _Elm_Entry_Item_Provider Elm_Entry_Item_Provider;
+typedef struct _Elm_Entry_Text_Filter Elm_Entry_Text_Filter;
 
 struct _Widget_Data
 {
@@ -39,7 +42,29 @@ struct _Widget_Data
    Evas_Object *icon;
    Evas_Object *end;
    Elm_Scroller_Policy policy_h, policy_v;
+   Eina_List *items;
+   Eina_List *item_providers;
+   Eina_List *text_filters;
    Eina_Bool single_line : 1;
+};
+
+struct _Elm_Entry_Context_Menu_Item
+{
+   Evas_Object *obj;
+   Evas_Smart_Cb func;
+   void *data;
+};
+
+struct _Elm_Entry_Item_Provider
+{
+   Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item);
+   void *data;
+};
+
+struct _Elm_Entry_Text_Filter
+{
+   void (*func) (void *data, Evas_Object *entry, char **text);
+   void *data;
 };
 
 static const char *widtype = NULL;
@@ -83,7 +108,19 @@ static const Evas_Smart_Cb_Description _signals[] = {
 static void
 _del_hook(Evas_Object *obj)
 {
+   Elm_Entry_Context_Menu_Item *ci;
+   Elm_Entry_Item_Provider *ip;
+   Elm_Entry_Text_Filter *tf;
+
    Widget_Data *wd = elm_widget_data_get(obj);
+
+   EINA_LIST_FREE(wd->items, ci)
+      free(ci);
+   EINA_LIST_FREE(wd->item_providers, ip)
+      free(ip);
+   EINA_LIST_FREE(wd->text_filters, tf)
+      free(tf);
+
    if (!wd) return;
    free(wd);
 }
@@ -256,6 +293,42 @@ _entry_unfocused(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    evas_object_smart_callback_call(data, SIG_UNFOCUSED, event_info);
 }
 
+static void
+_context_item_wrap_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Entry_Context_Menu_Item *ci = data;
+   ci->func(ci->data, ci->obj, event_info);
+}
+
+static Evas_Object *
+_item_provider_wrap_cb(void *data, Evas_Object *obj __UNUSED__, const char *item)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Eina_List *l;
+   Elm_Entry_Item_Provider *ip;
+
+   EINA_LIST_FOREACH(wd->item_providers, l, ip)
+     {
+        Evas_Object *o;
+        o = ip->func(ip->data, data, item);
+        if (o) return o;
+     }
+   return NULL;
+}
+
+static void
+_text_filter_wrap_cb(void *data, Evas_Object *obj __UNUSED__, char **text)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Eina_List *l;
+   Elm_Entry_Text_Filter *tf;
+
+   EINA_LIST_FOREACH(wd->text_filters, l, tf)
+     {
+        tf->func(tf->data, data, text);
+        if (!*text) break;
+     }
+}
 
 /**
  * This adds a scrolled entry to @p parent object.
@@ -302,7 +375,8 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_scroller_content_set(wd->scroller, wd->entry);
    evas_object_show(wd->entry);
 
-   wd->icon = wd->end = NULL;
+   elm_entry_text_filter_prepend(wd->entry, _text_filter_wrap_cb, obj);
+   elm_entry_item_provider_prepend(wd->entry, _item_provider_wrap_cb, obj);
 
    evas_object_smart_callback_add(wd->entry, "changed", _entry_changed, obj);
    evas_object_smart_callback_add(wd->entry, "activated", _entry_activated, obj);
@@ -1109,10 +1183,18 @@ elm_scrolled_entry_context_menu_clear(Evas_Object *obj)
 EAPI void
 elm_scrolled_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
 {
+   Elm_Entry_Context_Menu_Item *ci;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_entry_context_menu_item_add(wd->entry, label, icon_file, icon_type, func, data);
+
+   ci = malloc(sizeof(Elm_Entry_Context_Menu_Item));
+   if (!ci) return;
+   ci->func = func;
+   ci->data = (void *)data;
+   ci->obj = obj;
+   wd->items = eina_list_append(wd->items, ci);
+   elm_entry_context_menu_item_add(wd->entry, label, icon_file, icon_type, _context_item_wrap_cb, ci);
 }
 
 /**
@@ -1185,4 +1267,191 @@ elm_scrolled_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_scroller_bounce_set(wd->scroller, h_bounce, v_bounce);
+}
+
+/**
+ * This appends a custom item provider to the list for that entry
+ *
+ * This appends the given callback. The list is walked from beginning to end
+ * with each function called given the item href string in the text. If the
+ * function returns an object handle other than NULL (it should create an
+ * and object to do this), then this object is used to replace that item. If
+ * not the next provider is called until one provides an item object, or the
+ * default provider in entry does.
+ *
+ * @param obj The entry object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!func) return;
+   Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
+   if (!ip) return;
+   ip->func = func;
+   ip->data = data;
+   wd->item_providers = eina_list_append(wd->item_providers, ip);
+}
+
+/**
+ * This prepends a custom item provider to the list for that entry
+ *
+ * This prepends the given callback. See elm_scrolled_entry_item_provider_append() for
+ * more information
+ *
+ * @param obj The entry object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!func) return;
+   Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
+   if (!ip) return;
+   ip->func = func;
+   ip->data = data;
+   wd->item_providers = eina_list_prepend(wd->item_providers, ip);
+}
+
+/**
+ * This removes a custom item provider to the list for that entry
+ *
+ * This removes the given callback. See elm_scrolled_entry_item_provider_append() for
+ * more information
+ *
+ * @param obj The entry object
+ * @param func The function called to provide the item object
+ * @param data The data passed to @p func
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Elm_Entry_Item_Provider *ip;
+   if (!wd) return;
+   if (!func) return;
+   EINA_LIST_FOREACH(wd->item_providers, l, ip)
+     {
+        if ((ip->func == func) && (ip->data == data))
+          {
+             wd->item_providers = eina_list_remove_list(wd->item_providers, l);
+             free(ip);
+             return;
+          }
+     }
+}
+
+/**
+ * Append a filter function for text inserted in the entry
+ *
+ * Append the given callback to the list. This functions will be called
+ * whenever any text is inserted into the entry, with the text to be inserted
+ * as a parameter. The callback function is free to alter the text in any way
+ * it wants, but it must remember to free the given pointer and update it.
+ * If the new text is to be discarded, the function can free it and set it text
+ * parameter to NULL. This will also prevent any following filters from being
+ * called.
+ *
+ * @param obj The entry object
+ * @param func The function to use as text filter
+ * @param data User data to pass to @p func
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Widget_Data *wd;
+   Elm_Entry_Text_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   if (!func) return;
+
+   tf = ELM_NEW(Elm_Entry_Text_Filter);
+   if (!tf) return;
+   tf->func = func;
+   tf->data = data;
+   wd->text_filters = eina_list_append(wd->text_filters, tf);
+}
+
+/**
+ * Prepend a filter function for text insdrted in the entry
+ *
+ * Prepend the given callback to the list. See elm_scrolled_entry_text_filter_append()
+ * for more information
+ *
+ * @param obj The entry object
+ * @param func The function to use as text filter
+ * @param data User data to pass to @p func
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Widget_Data *wd;
+   Elm_Entry_Text_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   if (!func) return;
+
+   tf = ELM_NEW(Elm_Entry_Text_Filter);
+   if (!tf) return;
+   tf->func = func;
+   tf->data = data;
+   wd->text_filters = eina_list_prepend(wd->text_filters, tf);
+}
+
+/**
+ * Remove a filter from the list
+ *
+ * Removes the given callback from the filter list. See elm_scrolled_entry_text_filter_append()
+ * for more information.
+ *
+ * @param obj The entry object
+ * @param func The filter function to remove
+ * @param data The user data passed when adding the function
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Widget_Data *wd;
+   Eina_List *l;
+   Elm_Entry_Text_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+   if (!func) return;
+
+   EINA_LIST_FOREACH(wd->text_filters, l, tf)
+     {
+        if ((tf->func == func) && (tf->data == data))
+          {
+             wd->text_filters = eina_list_remove_list(wd->text_filters, l);
+             free(tf);
+             return;
+          }
+     }
 }

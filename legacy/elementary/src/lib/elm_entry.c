@@ -91,6 +91,7 @@ typedef struct _Mod_Api Mod_Api;
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
 typedef struct _Elm_Entry_Item_Provider Elm_Entry_Item_Provider;
+typedef struct _Elm_Entry_Text_Filter Elm_Entry_Text_Filter;
 
 struct _Widget_Data
 {
@@ -108,6 +109,7 @@ struct _Widget_Data
    Evas_Coord cx, cy, cw, ch;
    Eina_List *items;
    Eina_List *item_providers;
+   Eina_List *text_filters;
    Ecore_Job *hovdeljob;
    Mod_Api *api; // module api if supplied
    Eina_Bool changed : 1;
@@ -139,6 +141,12 @@ struct _Elm_Entry_Context_Menu_Item
 struct _Elm_Entry_Item_Provider
 {
    Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item);
+   void *data;
+};
+
+struct _Elm_Entry_Text_Filter
+{
+   void (*func) (void *data, Evas_Object *entry, char **text);
    void *data;
 };
 
@@ -231,6 +239,7 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
+   Elm_Entry_Text_Filter *tf;
 
    if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
    if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj); // module - unhook
@@ -254,6 +263,10 @@ _del_hook(Evas_Object *obj)
    EINA_LIST_FREE(wd->item_providers, ip)
      {
         free(ip);
+     }
+   EINA_LIST_FREE(wd->text_filters, tf)
+     {
+        free(tf);
      }
    free(wd);
 }
@@ -1322,6 +1335,24 @@ _get_item(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__,
    return o;
 }
 
+static void
+_text_filter(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__, Edje_Text_Filter_Type type, char **text)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Eina_List *l;
+   Elm_Entry_Text_Filter *tf;
+
+   if (type == EDJE_TEXT_FILTER_FORMAT)
+     return;
+
+   EINA_LIST_FOREACH(wd->text_filters, l, tf)
+     {
+        tf->func(tf->data, data, text);
+        if (!*text)
+           break;
+     }
+}
+
 /**
  * This adds an entry to @p parent object.
  *
@@ -1363,6 +1394,7 @@ elm_entry_add(Evas_Object *parent)
 
    wd->ent = edje_object_add(e);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
+   edje_object_text_insert_filter_callback_add(wd->ent,"elm.text", _text_filter, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN,
@@ -2221,6 +2253,105 @@ elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *dat
 }
 
 /**
+ * Append a filter function for text inserted in the entry
+ *
+ * Append the given callback to the list. This functions will be called
+ * whenever any text is inserted into the entry, with the text to be inserted
+ * as a parameter. The callback function is free to alter the text in any way
+ * it wants, but it must remember to free the given pointer and update it.
+ * If the new text is to be discarded, the function can free it and set it text
+ * parameter to NULL. This will also prevent any following filters from being
+ * called.
+ *
+ * @param obj The entry object
+ * @param func The function to use as text filter
+ * @param data User data to pass to @p func
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Widget_Data *wd;
+   Elm_Entry_Text_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   if (!func) return;
+
+   tf = ELM_NEW(Elm_Entry_Text_Filter);
+   if (!tf) return;
+   tf->func = func;
+   tf->data = data;
+   wd->text_filters = eina_list_append(wd->text_filters, tf);
+}
+
+/**
+ * Prepend a filter function for text insdrted in the entry
+ *
+ * Prepend the given callback to the list. See elm_entry_text_filter_append()
+ * for more information
+ *
+ * @param obj The entry object
+ * @param func The function to use as text filter
+ * @param data User data to pass to @p func
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Widget_Data *wd;
+   Elm_Entry_Text_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   if (!func) return;
+
+   tf = ELM_NEW(Elm_Entry_Text_Filter);
+   if (!tf) return;
+   tf->func = func;
+   tf->data = data;
+   wd->text_filters = eina_list_prepend(wd->text_filters, tf);
+}
+
+/**
+ * Remove a filter from the list
+ *
+ * Removes the given callback from the filter list. See elm_entry_text_filter_append()
+ * for more information.
+ *
+ * @param obj The entry object
+ * @param func The filter function to remove
+ * @param data The user data passed when adding the function
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Widget_Data *wd;
+   Eina_List *l;
+   Elm_Entry_Text_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+   if (!func) return;
+
+   EINA_LIST_FOREACH(wd->text_filters, l, tf)
+     {
+        if ((tf->func == func) && (tf->data == data))
+          {
+             wd->text_filters = eina_list_remove_list(wd->text_filters, l);
+             free(tf);
+             return;
+          }
+     }
+}
+
+/**
  * This converts a markup (HTML-like) string into UTF-8.
  *
  * @param s The string (in markup) to be converted
@@ -2252,6 +2383,160 @@ elm_entry_utf8_to_markup(const char *s)
    return ss;
 }
 
+/**
+ * Filter inserted text based on user defined character and byte limits
+ *
+ * Add this filter to an entry to limit the characters that it will accept
+ * based the the contents of the provided Elm_Entry_Filter_Limit_Size.
+ * The funtion works on the UTF-8 representation of the string, converting
+ * it from the set markup, thus not accounting for any format in it.
+ *
+ * The user must create an Elm_Entry_Filter_Limit_Size structure and pass
+ * it as data when setting the filter. In it it's possible to set limits
+ * by character count or bytes (any of them is disabled if 0), and both can
+ * be set at the same time. In that case, it first checks for characters,
+ * then bytes.
+ *
+ * The function will cut the inserted text in order to allow only the first
+ * number of characters that are still allowed. The cut is made in
+ * characters, even when limiting by bytes, in order to always contain
+ * valid ones and avoid half unicode characters making it in.
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
+{
+   Elm_Entry_Filter_Limit_Size *lim = data;
+   char *current;
+   int len, newlen;
+   const char *(*text_get)(const Evas_Object *);
+   const char *widget_type;
 
+   if (!lim) return;
+
+   /* hack. I don't want to copy the entire function to work with
+    * scrolled_entry */
+   widget_type = elm_widget_type_get(entry);
+   if (!strcmp(widget_type, "entry"))
+      text_get = elm_entry_entry_get;
+   else if (!strcmp(widget_type, "scrolled_entry"))
+      text_get = elm_scrolled_entry_entry_get;
+   else /* huh? */
+      return;
+
+   current = elm_entry_markup_to_utf8(text_get(entry));
+
+   if (lim->max_char_count > 0)
+     {
+        int cut;
+        len = evas_string_char_len_get(current);
+        if (len >= lim->max_char_count)
+          {
+             free(*text);
+             free(current);
+             *text = NULL;
+             return;
+          }
+        newlen = evas_string_char_len_get(*text);
+        cut = strlen(*text);
+        while ((len + newlen) > lim->max_char_count)
+          {
+             cut = evas_string_char_prev_get(*text, cut, NULL);
+             newlen--;
+          }
+        (*text)[cut] = 0;
+     }
+
+   if (lim->max_byte_count > 0)
+     {
+        len = strlen(current);
+        if (len >= lim->max_byte_count)
+          {
+             free(*text);
+             free(current);
+             *text = NULL;
+             return;
+          }
+        newlen = strlen(*text);
+        while ((len + newlen) > lim->max_byte_count)
+          {
+             int p = evas_string_char_prev_get(*text, newlen, NULL);
+             newlen -= (newlen - p);
+          }
+        if (newlen)
+           (*text)[newlen] = 0;
+        else
+          {
+             free(*text);
+             *text = NULL;
+          }
+     }
+   free(current);
+}
+
+/**
+ * Filter inserted text based on accepted or rejected sets of characters
+ *
+ * Add this filter to an entry to restrict the set of accepted characters
+ * based on the sets in the provided Elm_Entry_Filter_Accept_Set.
+ * This structure contains both accepted and rejected sets, but they are
+ * mutually exclusive. If accepted is set, it will be used, otherwise it
+ * goes on to the rejected set.
+ */
+EAPI void
+elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text)
+{
+   Elm_Entry_Filter_Accept_Set *as = data;
+   const char *set;
+   char *insert;
+   Eina_Bool goes_in;
+   int read_idx, last_read_idx = 0, read_char, copy_count;
+
+   if (!as || (!as->accepted && !as->rejected))
+      return;
+
+   if (as->accepted)
+     {
+        set = as->accepted;
+        goes_in = EINA_TRUE;
+     }
+   else
+     {
+        set = as->rejected;
+        goes_in = EINA_FALSE;
+     }
+
+   insert = *text;
+   read_idx = evas_string_char_next_get(*text, 0, &read_char);
+   copy_count = read_idx;
+   while (read_char)
+     {
+        int cmp_idx, cmp_char;
+        Eina_Bool in_set = EINA_FALSE;
+
+        cmp_idx = evas_string_char_next_get(set, 0, &cmp_char);
+        while (cmp_char)
+          {
+             if (read_char == cmp_char)
+               {
+                  in_set = EINA_TRUE;
+                  break;
+               }
+             cmp_idx = evas_string_char_next_get(set, cmp_idx, &cmp_char);
+          }
+        if (in_set == goes_in)
+          {
+             int size = read_idx - last_read_idx;
+             const char *src = (*text) + last_read_idx;
+             if (src != insert)
+                memcpy(insert, *text + last_read_idx, size);
+             insert += size;
+          }
+        last_read_idx = read_idx;
+        read_idx = evas_string_char_next_get(*text, read_idx, &read_char);
+     }
+   *insert = 0;
+}
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

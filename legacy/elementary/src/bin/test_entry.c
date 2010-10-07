@@ -229,6 +229,8 @@ void
 test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sp;
+   static Elm_Entry_Filter_Accept_Set digits_filter_data, digits_filter_data2;
+   static Elm_Entry_Filter_Limit_Size limit_filter_data, limit_filter_data2;
 
    win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry Scrolled");
@@ -299,6 +301,62 @@ test_entry_scrolled(void *data, Evas_Object *obj, void *event_info)
    elm_scrolled_entry_select_all(en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
+
+   /* Only digits entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
+   elm_scrolled_entry_entry_set(en, "01234");
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_single_line_set(en, 1);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
+   digits_filter_data.accepted = "0123456789";
+   digits_filter_data.rejected = NULL;
+   elm_scrolled_entry_text_filter_append(en, elm_entry_filter_accept_set, &digits_filter_data);
+
+   /* No digits entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
+   elm_scrolled_entry_entry_set(en, "No numbers here");
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_single_line_set(en, 1);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
+   digits_filter_data2.accepted = NULL;
+   digits_filter_data2.rejected = "0123456789";
+   elm_scrolled_entry_text_filter_append(en, elm_entry_filter_accept_set, &digits_filter_data2);
+
+   /* Size limited entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
+   elm_scrolled_entry_entry_set(en, "Just 20 chars");
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_single_line_set(en, 1);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
+   limit_filter_data.max_char_count = 20;
+   limit_filter_data.max_byte_count = 0;
+   elm_scrolled_entry_text_filter_append(en, elm_entry_filter_limit_size, &limit_filter_data);
+
+   /* Byte size limited entry */
+   en = elm_scrolled_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
+   elm_scrolled_entry_entry_set(en, "And now only 30 bytes");
+   elm_scrolled_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scrolled_entry_single_line_set(en, 1);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
+   limit_filter_data2.max_char_count = 0;
+   limit_filter_data2.max_byte_count = 30;
+   elm_scrolled_entry_text_filter_append(en, elm_entry_filter_limit_size, &limit_filter_data2);
 
    /* Single line password entry */
    en_p = elm_scrolled_entry_add(win);
