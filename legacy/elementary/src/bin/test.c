@@ -88,6 +88,7 @@ void test_cursor3(void *data, Evas_Object *obj, void *event_info);
 void test_focus(void *data, Evas_Object *obj, void *event_info);
 void test_focus2(void *data, Evas_Object *obj, void *event_info);
 void test_flippicker(void *data, Evas_Object *obj, void *event_info);
+void test_diskpicker(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
 {
@@ -296,6 +297,7 @@ my_win_main(char *autorun)
    ADD_TEST("Focus", test_focus);
    ADD_TEST("Focus 2", test_focus2);
    ADD_TEST("Flippicker", test_flippicker);
+   ADD_TEST("Diskpicker", test_diskpicker);
 #undef ADD_TEST
 
    if (autorun)
