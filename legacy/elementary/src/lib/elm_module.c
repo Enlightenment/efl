@@ -25,10 +25,6 @@
  * creation/deletion of the entry as well as replace the longpress behavior.
  */
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif

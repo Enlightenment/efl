@@ -2,10 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #include <dlfcn.h>      /* dlopen,dlclose,etc */
 
 #ifdef HAVE_CRT_EXTERNS_H
