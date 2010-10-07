@@ -94,6 +94,7 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   const char *str;
    if (!wd) return;
    _elm_theme_object_set(obj, wd->btn, "button", "base", elm_widget_style_get(obj));
    if (wd->icon)
@@ -111,6 +112,11 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->btn);
    edje_object_scale_set(wd->btn, elm_widget_scale_get(obj) * _elm_config->scale);
+   str = edje_object_data_get(wd->btn, "focus_highlight");
+   if (str && !strcmp(str, "on"))
+     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+   else
+     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 
@@ -123,6 +129,31 @@ _disable_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
    else
      edje_object_signal_emit(wd->btn, "elm,state,enabled", "elm");
+}
+
+static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_emit(wd->btn, emission, source);
+}
+
+static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_add(wd->btn, emission, source, func_cb, data);
+}
+
+static void *
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return edje_object_signal_callback_del(wd->btn, emission, source,
+	 func_cb);
 }
 
 static void
@@ -277,9 +308,12 @@ elm_button_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
-   elm_widget_can_focus_set(obj, 1);                 
+   elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->btn = edje_object_add(e);
    _elm_theme_object_set(obj, wd->btn, "button", "base", "default");
@@ -293,7 +327,7 @@ elm_button_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
-   _sizing_eval(obj);
+   _theme_hook(obj);
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
