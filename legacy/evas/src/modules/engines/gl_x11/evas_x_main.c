@@ -159,23 +159,20 @@ eng_window_new(Display *disp,
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
-        printf("Error: eglGetDisplay() fail.\n");
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglGetDisplay() fail. code=%#x", eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
    if (!eglInitialize(gw->egl_disp, &major_version, &minor_version))
      {
-        printf("Error: eglInitialize() fail.\n");
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglInitialize() fail. code=%#x", eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
    eglBindAPI(EGL_OPENGL_ES_API);
    if (eglGetError() != EGL_SUCCESS)
      {
-        printf("Error: eglBindAPI() fail.\n");
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglBindAPI() fail. code=%#x", eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
@@ -184,8 +181,7 @@ eng_window_new(Display *disp,
    if (!eglChooseConfig(gw->egl_disp, config_attrs, &gw->egl_config,
                         1, &num_config) || (num_config != 1))
      {
-        printf("Error: eglChooseConfig() fail.\n");
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglChooseConfig() fail. code=%#x", eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
@@ -194,8 +190,8 @@ eng_window_new(Display *disp,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
+            (unsigned int)gw->win, eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
@@ -205,8 +201,7 @@ eng_window_new(Display *disp,
    gw->egl_context[0] = context;
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
-        printf("Error: eglCreateContext() fail.\n");
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglCreateContext() fail. code=%#x", eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
@@ -215,8 +210,7 @@ eng_window_new(Display *disp,
                       gw->egl_surface[0],
                       gw->egl_context[0]) == EGL_FALSE)
      {
-        printf("Error: eglMakeCurrent() fail.\n");
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
@@ -346,7 +340,7 @@ eng_window_new(Display *disp,
         fbc = glXGetFBConfigs(gw->disp, screen, &num);
         if (!fbc)
           {
-             printf("Error: glXGetFBConfigs() returned no fb configs\n");
+             ERR("glXGetFBConfigs() returned no fb configs");
              eng_window_free(gw);
              return NULL;
           }
@@ -422,7 +416,7 @@ eng_window_new(Display *disp,
         XFree(fbc);
         if (!gw->depth_cfg[DefaultDepth(gw->disp, screen)].fbc)
           {
-             printf("texture from pixmap not going to work\n");
+             WRN("texture from pixmap not going to work");
           }
      }
 #endif
@@ -497,7 +491,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
                                 gw->egl_surface[0],
                                 gw->egl_context[0]) == EGL_FALSE)
                {
-                  printf("Error: eglMakeCurrent() failed!\n");
+                  ERR("eglMakeCurrent() failed!");
                }
           }
 // GLX        
@@ -507,14 +501,14 @@ eng_window_use(Evas_GL_X11_Window *gw)
              if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
                                         gw->context))
                {
-                  printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+                  ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
                }
           }
         else
           {
              if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
                {
-                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", gw->disp, (unsigned int)gw->win, (void *)gw->context);
+                  ERR("glXMakeCurrent(%p, 0x%x, %p) failed", gw->disp, (unsigned int)gw->win, (void *)gw->context);
                }
           }
 #endif
@@ -564,8 +558,8 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        printf("Error: eglCreateWindowSurface() fail for 0x%x.\n", (unsigned int)gw->win);
-        printf("Error: error # was: 0x%x\n", eglGetError());
+        ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
+            (unsigned int)gw->win, eglGetError());
         return;
      }
    if (eglMakeCurrent(gw->egl_disp, 
@@ -573,7 +567,7 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
                       gw->egl_surface[0],
                       gw->egl_context[0]) == EGL_FALSE)
      {
-        printf("Error: eglMakeCurrent() failed!\n");
+        ERR("eglMakeCurrent() failed!");
      }
 #else
 #ifdef NEWGL
@@ -584,12 +578,12 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
    if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
                               gw->context))
      {
-        printf("Error: glXMakeContextCurrent(%p, %p, %p, %p)\n", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+        ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
      }
 #else   
    if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
      {
-        printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
+        ERR("glXMakeCurrent(%p, 0x%x, %p) failed", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
      }
 #endif   
 #endif   
@@ -700,7 +694,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
                                          config_attrs, &num);
              if ((!configs) || (num < 1))
                {
-                  printf("Error: glXChooseFBConfig returned no configs\n");
+                  ERR("glXChooseFBConfig returned no configs");
                }
              for (i = 0; i < num; i++)
                {

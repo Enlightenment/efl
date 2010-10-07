@@ -55,7 +55,7 @@ eng_window_new(HWND  window,
 
    if (!GLEW_VERSION_2_0)
      {
-        fprintf(stderr, "\nERROR: OpenGL 2.0 not supported. Exiting...\n\n");
+        ERR("OpenGL 2.0 not supported. Exiting...");
         goto delete_context;
      }
 

@@ -350,18 +350,14 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	   evas_software_xlib_x_output_buffer_free(xob, 1);
 	   if (!conv_func)
 	     {
-		printf(".[ Evas Error ].\n"
-		       " {\n"
-		       "  At depth         %i:\n"
-		       "  RGB format mask: %08x, %08x, %08x\n"
-		       "  Palette mode:    %i\n"
-		       "  Not supported by compiled in converters!\n"
-		       " }\n",
-		       buf->priv.x11.xlib.depth,
-		       buf->priv.mask.r,
-		       buf->priv.mask.g,
-		       buf->priv.mask.b,
-		       buf->priv.pal ? (int)buf->priv.pal->colors : -1);
+                ERR("At depth: %i, RGB format mask: %08x %08x %08x, "
+                    "Palette mode: %i. "
+                    "Not supported by compiled in converters!",
+                    buf->priv.x11.xlib.depth,
+                    buf->priv.mask.r,
+                    buf->priv.mask.g,
+                    buf->priv.mask.b,
+                    buf->priv.pal ? (int)buf->priv.pal->colors : -1);
 	     }
 	}
       evas_software_xlib_outbuf_drawable_set(buf, draw);

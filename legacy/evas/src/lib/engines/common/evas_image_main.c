@@ -263,7 +263,7 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
    RGBA_Image   *im = (RGBA_Image *) ie;
 
    if (ie->file)
-     printf("unload: [%p] %s %s\n", ie, ie->file, ie->key);
+     DBG("unload: [%p] %s %s", ie, ie->file, ie->key);
    if ((im->cs.data) && (im->image.data))
      {
 	if (im->cs.data != im->image.data)
@@ -290,7 +290,7 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 static void
 _evas_common_rgba_image_unload(Image_Entry *im)
 {
-//   printf("unload: [%p] %s %s\n", im, im->file, im->key);
+//   DBG("unload: [%p] %s %s", im, im->file, im->key);
    evas_common_rgba_image_scalecache_dirty(im);
    evas_common_rgba_image_unload(im);
 }

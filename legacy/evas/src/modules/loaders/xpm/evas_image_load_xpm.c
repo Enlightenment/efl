@@ -655,10 +655,11 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   _evas_loader_xpm_log_dom = eina_log_domain_register("EvasLoaderXpm", EVAS_DEFAULT_LOG_COLOR);
+   _evas_loader_xpm_log_dom = eina_log_domain_register
+     ("evas-xpm", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_loader_xpm_log_dom < 0)
      {
-        EINA_LOG_ERR("Impossible to create a log domain for the LoaderXpm loader.\n");
+        EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
    em->functions = (void *)(&evas_image_load_xpm_func);

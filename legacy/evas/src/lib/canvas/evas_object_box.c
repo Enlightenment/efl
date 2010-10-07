@@ -134,12 +134,12 @@ _on_child_del(void *data, Evas *evas __UNUSED__, Evas_Object *o, void *einfo __U
 
    if ((!api) || (!api->remove))
      {
-	fputs("no api->remove\n", stderr);
+	ERR("no api->remove");
 	return;
      }
 
    if (!api->remove(box, priv, o))
-     fputs("child removal failed\n", stderr);
+     ERR("child removal failed");
    evas_object_smart_changed(box);
 }
 
@@ -166,14 +166,14 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Obj
    api = priv->api;
    if ((!api) || (!api->option_new))
      {
-	fputs("no api->option_new\n", stderr);
+	ERR("no api->option_new");
 	return NULL;
      }
 
    opt = api->option_new(o, priv, child);
    if (!opt)
      {
-	fputs("option_new failed\n", stderr);
+	ERR("option_new failed");
 	return NULL;
      }
 
@@ -201,8 +201,7 @@ _evas_object_box_option_callbacks_register(Evas_Object *o, Evas_Object_Box_Data 
 
    if ((!api) || (!api->option_free))
      {
-	fputs("WARNING: api->option_free not set (may cause memory leaks,"
-	      " segfaults)\n", stderr);
+        WRN("api->option_free not set (may cause memory leaks, segfaults)");
         return NULL;
      }
 
@@ -376,8 +375,7 @@ _evas_object_box_remove_default(Evas_Object *o, Evas_Object_Box_Data *priv, Evas
 
    if ((!api) || (!api->option_free))
      {
-	fputs("WARNING: api->option_free not set (may cause memory leaks,"
-	      " segfaults)\n", stderr);
+	ERR("api->option_free not set (may cause memory leaks, segfaults)");
 	return NULL;
      }
 
@@ -411,15 +409,14 @@ _evas_object_box_remove_at_default(Evas_Object *o, Evas_Object_Box_Data *priv, u
 
    if ((!api) || (!api->option_free))
      {
-	WRN("api->option_free not set (may cause memory leaks,"
-	      " segfaults)\n");
+	WRN("api->option_free not set (may cause memory leaks, segfaults)");
         return NULL;
      }
 
    node = eina_list_nth_list(priv->children, pos);
    if (!node)
      {
-	ERR("No item to be removed at position %d\n", pos);
+	ERR("No item to be removed at position %d", pos);
 	return NULL;
      }
 
@@ -447,7 +444,7 @@ _evas_object_box_smart_add(Evas_Object *o)
 	priv = (Evas_Object_Box_Data *)calloc(1, sizeof(*priv));
 	if (!priv)
 	  {
-	     ERR("Could not allocate object private data.\n");
+	     ERR("Could not allocate object private data.");
 	     return;
 	  }
 
@@ -483,8 +480,7 @@ _evas_object_box_smart_del(Evas_Object *o)
    api = priv->api;
    if ((!api) || (!api->option_free))
      {
-	WRN("api->option_free not set (may cause memory leaks,"
-	      " segfaults)\n");
+	WRN("api->option_free not set (may cause memory leaks, segfaults)");
         return;
      }
 

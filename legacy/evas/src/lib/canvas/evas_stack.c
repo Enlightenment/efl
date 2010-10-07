@@ -196,12 +196,12 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      {
 	if (above->smart.parent)
           {
-             ERR("BITCH! evas_object_stack_above(), %p stack above %p, but above has smart parent, obj does not\n", obj, above);
+             ERR("BITCH! evas_object_stack_above(), %p stack above %p, but above has smart parent, obj does not", obj, above);
              return;
           }
 	if (obj->layer != above->layer)
 	  {
-             ERR("BITCH! evas_object_stack_above(), %p stack above %p, not matching layers\n", obj, above);
+             ERR("BITCH! evas_object_stack_above(), %p stack above %p, not matching layers", obj, above);
 	     return;
 	  }
 	if (obj->in_layer)
@@ -288,12 +288,12 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      {
 	if (below->smart.parent)
           {
-             ERR("BITCH! evas_object_stack_below(), %p stack below %p, but below has smart parent, obj does not\n", obj, below);
+             ERR("BITCH! evas_object_stack_below(), %p stack below %p, but below has smart parent, obj does not", obj, below);
              return;
           }
 	if (obj->layer != below->layer)
 	  {
-             ERR("BITCH! evas_object_stack_below(), %p stack below %p, not matching layers\n", obj, below);
+             ERR("BITCH! evas_object_stack_below(), %p stack below %p, not matching layers", obj, below);
 	     return;
 	  }
 	if (obj->in_layer)

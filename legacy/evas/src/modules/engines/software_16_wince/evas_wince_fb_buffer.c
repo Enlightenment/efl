@@ -51,7 +51,7 @@ _evas_software_wince_gxinfo_init(HDC dc, int *width, int *height, void **buffer)
                       (char *) &gxInfo);
    if (result <= 0)
      {
-        ERR("[Engine] [WinCE FB] ExtEscape() with GETGXINFO failed\n");
+        ERR("ExtEscape() with GETGXINFO failed");
         return 0;
      }
 
@@ -79,7 +79,7 @@ evas_software_wince_fb_init(HWND window,
    dc = GetDC (window);
    if (!dc)
      {
-        ERR("[Engine] [WinCE FB] Can not get DC\n");
+        ERR("Can not get DC");
         free(priv);
         return NULL;
      }
@@ -102,9 +102,8 @@ evas_software_wince_fb_init(HWND window,
        if ((priv->width != width) ||
            (priv->height != height))
          {
-            ERR("[Engine] [WinCE FB] Size mismatch\n");
-            ERR("[Engine] [WinCE FB] asked: %dx%d\n", width, height);
-            ERR("[Engine] [WinCE FB] got  : %dx%d\n", priv->width, priv->height);
+            ERR("Size mismatch: asked: %dx%d, got: %dx%d",
+                width, height, priv->width, priv->height);
             ReleaseDC(window, dc);
             free(priv);
             return NULL;
@@ -119,8 +118,8 @@ evas_software_wince_fb_init(HWND window,
        (rfbi.wBPP != 16) ||
        (rfbi.wFormat != 1))
      {
-        ERR("[Engine] [WinCE FB] ExtEscape() with GETRAWFRAMEBUFFER failed\n");
-        ERR("[Engine] [WinCE FB] trying ExtEscape() with GETGXINFO\n");
+        ERR("ExtEscape() with GETRAWFRAMEBUFFER failed. "
+            "Trying ExtEscape() with GETGXINFO");
         if (!_evas_software_wince_gxinfo_init(dc, &priv->width, &priv->height, &priv->buffer))
           {
              ReleaseDC(window, dc);
@@ -139,9 +138,8 @@ evas_software_wince_fb_init(HWND window,
   if ((priv->width != width) ||
       (priv->height != height))
     {
-       ERR("[Engine] [WinCE FB] Size mismatch\n");
-       ERR("[Engine] [WinCE FB] asked: %dx%d\n", width, height);
-       ERR("[Engine] [WinCE FB] got  : %dx%d\n", priv->width, priv->height);
+        ERR("Size mismatch: asked: %dx%d, got: %dx%d",
+            width, height, priv->width, priv->height);
        ReleaseDC(window, dc);
        free(priv);
        return NULL;

@@ -563,7 +563,8 @@ img_free(Img *img)
         if (tmp) strshr_freeme = tmp;
         else
           {
-             printf("realloc of strshr_freeme failed for %i items\n", strshr_freeme_alloc);
+             ERR("realloc of strshr_freeme failed for %i items",
+                 strshr_freeme_alloc);
              strshr_freeme_alloc -= 32;
              strshr_freeme_count -= 3;
              return;
@@ -1527,14 +1528,15 @@ main(int argc, char **argv)
    
    unsetenv("EVAS_CSERVE");
 
-   DBG("eina init...");
    eina_init();
-   _evas_cserve_bin_log_dom = eina_log_domain_register("Evas_cserve_bin", CSERVE_BIN_DEFAULT_COLOR);
-   if(_evas_cserve_bin_log_dom < 0) {
-     DBG("Problem with eina_log : impossible to create a log domain");
-     eina_shutdown();
-     exit(1);
-   }
+   _evas_cserve_bin_log_dom = eina_log_domain_register
+     ("evas_cserve_bin", CSERVE_BIN_DEFAULT_COLOR);
+   if (_evas_cserve_bin_log_dom < 0)
+     {
+        EINA_LOG_ERR("impossible to create a log domain.");
+        eina_shutdown();
+        exit(1);
+     }
 
    DBG("evas init...");
    evas_init();

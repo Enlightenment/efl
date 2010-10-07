@@ -785,12 +785,11 @@ module_open(Evas_Module * em)
 {
    if (!em)
       return 0;
-   _evas_soft8_log_dom =
-       eina_log_domain_register("Soft8Engine", EVAS_DEFAULT_LOG_COLOR);
+   _evas_soft8_log_dom = eina_log_domain_register
+     ("evas-software_8", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_soft8_log_dom < 0)
      {
-        EINA_LOG_ERR
-            ("Impossible to create a log domain for the soft8 Engine.\n");
+        EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
    em->functions = (void *)(&func);

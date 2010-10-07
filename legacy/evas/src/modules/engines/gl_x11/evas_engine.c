@@ -221,7 +221,7 @@ _re_wincheck(Render_Engine *re)
    eng_window_resurf(re->win);
    if (!re->win->surf)
      {
-        fprintf(stderr, "ERROR: GL engine can't re-create window surface!\n");
+        ERR("GL engine can't re-create window surface!");
      }
    return 0;
 }
@@ -986,10 +986,10 @@ _native_bind_cb(void *data, void *image)
           {
              glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
              if (eglGetError() != EGL_SUCCESS)
-                printf("Error:  glEGLImageTargetTexture2DOES() fail.\n");
+               ERR("glEGLImageTargetTexture2DOES() failed.");
           }
         else
-           printf("Try glEGLImageTargetTexture2DOES on EGL with no support\n");
+          ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
      }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
@@ -1002,7 +1002,7 @@ _native_bind_cb(void *data, void *image)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    else
-      printf("Try glXBindTexImage on GLX with no support\n");
+     ERR("Try glXBindTexImage on GLX with no support");
 # endif
 #endif
 }
@@ -1026,7 +1026,7 @@ _native_unbind_cb(void *data, void *image)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
    else
-      printf("Try glXReleaseTexImage on GLX with no support\n");
+     ERR("Try glXReleaseTexImage on GLX with no support");
 # endif
 #endif
 }
@@ -1049,10 +1049,10 @@ _native_free_cb(void *data, void *image)
              glsym_eglDestroyImage(re->win->egl_disp,
                                    n->egl_surface);
              if (eglGetError() != EGL_SUCCESS)
-                printf("Error:  eglDestroyImage() fail.\n");
+               ERR("eglDestroyImage() failed.");
           }
         else
-           printf("Try eglDestroyImage on EGL with no support\n");
+          ERR("Try eglDestroyImage on EGL with no support");
      }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
@@ -1067,7 +1067,7 @@ _native_free_cb(void *data, void *image)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                }
              else
-                printf("Try glXReleaseTexImage on GLX with no support\n");
+               ERR("Try glXReleaseTexImage on GLX with no support");
           }
         if (glsym_glXDestroyPixmap)
           {
@@ -1075,7 +1075,7 @@ _native_free_cb(void *data, void *image)
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else
-           printf("Try glXDestroyPixmap on GLX with no support\n");
+           ERR("Try glXDestroyPixmap on GLX with no support");
         n->glx_pixmap = 0;
      }
 # endif
@@ -1173,7 +1173,7 @@ eng_image_native_set(void *data, void *image, void *native)
              
              if (!eglChooseConfig(re->win->egl_disp, config_attrs, 
                                   &egl_config, 1, &num_config))
-                printf("ERROR: eglChooseConfig() failed for pixmap 0x%x, num_config = %i\n", (unsigned int)pm, num_config);
+               ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i", (unsigned int)pm, num_config);
              n->pixmap = pm;
              n->visual = vis;
              if (glsym_eglCreateImage)
@@ -1183,9 +1183,9 @@ eng_image_native_set(void *data, void *image, void *native)
                                                       (void *)pm,
                                                       NULL);
              else
-                printf("Try eglCreateImage on EGL with no support\n");
+               ERR("Try eglCreateImage on EGL with no support");
              if (!n->egl_surface)
-                printf("ERROR: eglCreatePixmapSurface() for 0x%x failed\n", (unsigned int)pm);
+               ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm);
              im->native.yinvert     = 1;
              im->native.loose       = 0;
              im->native.data        = n;
@@ -1226,12 +1226,12 @@ eng_image_native_set(void *data, void *image, void *native)
              else if ((re->win->depth_cfg[depth].tex_target &
                        GLX_TEXTURE_RECTANGLE_BIT_EXT))
                {
-                  printf("rect!!! (not handled)\n");
+                  ERR("rect!!! (not handled)");
                   target = GLX_TEXTURE_RECTANGLE_EXT;
                }
              if (!target)
                {
-                  printf("broken text-from-pixmap\n");
+                  ERR("broken text-from-pixmap");
                   if (!(re->win->depth_cfg[depth].tex_target &
                         GLX_TEXTURE_2D_BIT_EXT))
                      target = GLX_TEXTURE_RECTANGLE_EXT;
@@ -1264,14 +1264,14 @@ eng_image_native_set(void *data, void *image, void *native)
                                                       n->pixmap, 
                                                       pixmap_att);
              else
-                printf("Try glXCreatePixmap on GLX with no support\n");
+               ERR("Try glXCreatePixmap on GLX with no support");
              if (n->glx_pixmap)
                {
 //                  printf("%p: new native texture for %x | %4i x %4i @ %2i = %p\n",
 //                         n, pm, w, h, depth, n->glx_pixmap);
                   if (!target)
                     {
-                       printf("no target :(\n");
+                       ERR("no target :(");
                        if (glsym_glXQueryDrawable)
                           glsym_glXQueryDrawable(re->win->disp,
                                                  n->pixmap, 
@@ -1294,11 +1294,11 @@ eng_image_native_set(void *data, void *image, void *native)
                     {
                        im->native.target = GL_TEXTURE_2D;
                        im->native.mipmap = 0;
-                       printf("still unknown target\n");
+                       ERR("still unknown target");
                     }
                }
              else
-                printf("ERROR: GLX Pixmap create fail\n");
+               ERR("GLX Pixmap create fail");
              im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
              im->native.loose       = re->win->detected.loose_binding;
              im->native.data        = n;
@@ -1777,13 +1777,15 @@ module_open(Evas_Module *em)
      }
 
    if (!em) return 0;
+   if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
    if (_evas_engine_GL_X11_log_dom < 0)
-     _evas_engine_GL_X11_log_dom = eina_log_domain_register("EvasEngineGLX11", EVAS_DEFAULT_LOG_COLOR);
+     _evas_engine_GL_X11_log_dom = eina_log_domain_register
+       ("evas-gl_x11", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_GL_X11_log_dom < 0)
      {
-        EINA_LOG_ERR("Impossible to create a log domain for GL X11 engine.\n");
+        EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
    /* store it for later use */
@@ -1865,6 +1867,7 @@ module_close(Evas_Module *em __UNUSED__)
 	 xrdb_user.last_mtime = 0;
 	 xrdb_user.db = NULL;
       }
+    evas_gl_common_module_close();
 }
 
 static Evas_Module_Api evas_modapi =

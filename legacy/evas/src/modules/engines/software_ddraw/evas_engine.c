@@ -325,11 +325,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_log_dom_module = eina_log_domain_register("Software_DDraw", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_log_dom_module < 0)
+   _evas_log_dom_module = eina_log_domain_register
+     ("evas-software_ddraw", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_log_dom_module < 0)
      {
-       EINA_LOG_ERR("Can not create a module log domain.");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;

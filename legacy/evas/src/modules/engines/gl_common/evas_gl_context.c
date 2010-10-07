@@ -3,6 +3,7 @@
 #define GLPIPES 1
 
 static int sym_done = 0;
+int _evas_engine_GL_common_log_dom = -1;
 
 typedef void    (*glsym_func_void) ();
 
@@ -34,7 +35,7 @@ static int dbgflushnum = -1;
 static void
 sym_missing(void)
 {
-   printf("EVAS ERROR - GL symbols missing!\n");
+   ERR("GL symbols missing!");
 }
 
 static void
@@ -114,24 +115,30 @@ static Evas_GL_Shared *shared = NULL;
 void
 glerr(int err, const char *file, const char *func, int line, const char *op)
 {
-   fprintf(stderr, "GLERR: %s:%i %s(), %s: ", file, line, func, op);
+   const char *errmsg;
+   char buf[32];
+
    switch (err)
      {
      case GL_INVALID_ENUM:
-        fprintf(stderr, "GL_INVALID_ENUM\n");
+        errmsg = "GL_INVALID_ENUM";
         break;
      case GL_INVALID_VALUE:
-        fprintf(stderr, "GL_INVALID_VALUE\n");
+        errmsg = "GL_INVALID_VALUE";
         break;
      case GL_INVALID_OPERATION:
-        fprintf(stderr, "GL_INVALID_OPERATION\n");
+        errmsg = "GL_INVALID_OPERATION";
         break;
      case GL_OUT_OF_MEMORY:
-        fprintf(stderr, "GL_OUT_OF_MEMORY\n");
+        errmsg = "GL_OUT_OF_MEMORY";
         break;
      default:
-        fprintf(stderr, "0x%x\n", err);
+        snprintf(buf, sizeof(buf), "%#x", err);
+        errmsg = buf;
      }
+
+   eina_log_print(_evas_engine_GL_common_log_dom, EINA_LOG_LEVEL_ERR,
+                  file, func, line, "%s: %s", op, errmsg);
 }
 
 static void
@@ -2214,7 +2221,7 @@ again:
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
         // FIXME: handle yinvert
-        fprintf(stderr, "EVAS GL ENGINE ERROR: not handling inverted y case for map4\n");
+        ERR("not handling inverted y case for map4");
      }
    
    cmul = ARGB_JOIN(a, r, g, b);
@@ -2584,4 +2591,26 @@ shader_array_flush(Evas_GL_Context *gc)
      {
         if (done > 0) printf("DONE (pipes): %i\n", done);
      }
+}
+
+Eina_Bool
+evas_gl_common_module_open(void)
+{
+   if (_evas_engine_GL_common_log_dom < 0)
+     _evas_engine_GL_common_log_dom = eina_log_domain_register
+       ("evas-gl_common", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_GL_common_log_dom < 0)
+     {
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+void
+evas_gl_common_module_close(void)
+{
+   if (_evas_engine_GL_common_log_dom < 0) return;
+   eina_log_domain_unregister(_evas_engine_GL_common_log_dom);
+   _evas_engine_GL_common_log_dom = -1;
 }

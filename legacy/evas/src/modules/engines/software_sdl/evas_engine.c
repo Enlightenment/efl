@@ -861,11 +861,12 @@ static int module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_engine_soft_sdl_log_dom = eina_log_domain_register("EvasSoftSdl",EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_soft_sdl_log_dom < 0) 
+   _evas_engine_soft_sdl_log_dom = eina_log_domain_register
+     ("evas-software_sdl", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_soft_sdl_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the SoftSdl engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;
@@ -1187,14 +1188,14 @@ _sdl_image_debug(const char* context, Engine_Image_Entry* eie)
    DBG("*** %s image (%p) ***", context, eim);
    if (eim)
      {
-        DBG ("* W: %i\n* H: %i\n* R: %i", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
+        DBG("W: %i, H: %i, R: %i", eim->cache_entry.w, eim->cache_entry.h, eim->cache_entry.references);
         if (eim->cache_entry.src)
-          DBG ("* Pixels: %p\n* SDL Surface: %p",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
+          DBG("Pixels: %p, SDL Surface: %p",((RGBA_Image*) eim->cache_entry.src)->image.data, eim->surface);
         if (eim->surface)
-          DBG ("* Surface->pixels: %p", eim->surface->pixels);
-	DBG ("* Key: %s", eim->cache_entry.cache_key);
-        DBG ("* Reference: %i", eim->cache_entry.references);
+          DBG("Surface->pixels: %p", eim->surface->pixels);
+	DBG("Key: %s", eim->cache_entry.cache_key);
+        DBG("Reference: %i", eim->cache_entry.references);
      }
-   DBG ("*** ***");
+   DBG("*** ***");
 }
 #endif

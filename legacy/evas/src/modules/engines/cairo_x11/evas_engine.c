@@ -1353,11 +1353,12 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   _evas_engine_cairo_X11_log_dom = eina_log_domain_register("EvasCairoX11Engine", EINA_COLOR_BLUE);
-   if(_evas_engine_cairo_X11_log_dom < 0)
+   _evas_engine_cairo_X11_log_dom = eina_log_domain_register
+     ("evas-cairo_x11", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_cairo_X11_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log doamin for the cairo (X11) engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    em->functions = (void *)(&eng_func);
    return 1;

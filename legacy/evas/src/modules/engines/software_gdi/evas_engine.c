@@ -332,11 +332,12 @@ module_open(Evas_Module *em)
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
 
-   _evas_engine_soft_gdi_log_dom = eina_log_domain_register("EvasSoftGDI",EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_soft_gdi_log_dom < 0)
+   _evas_engine_soft_gdi_log_dom = eina_log_domain_register
+     ("evas-software_gdi", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_soft_gdi_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the Soft_GDI engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;

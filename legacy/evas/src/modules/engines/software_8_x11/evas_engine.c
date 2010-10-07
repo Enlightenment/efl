@@ -646,12 +646,11 @@ module_open(Evas_Module * em)
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_8"))
       return 0;
-   _evas_engine_soft8_x11_log_dom =
-       eina_log_domain_register("EvasSoft8X11", EVAS_DEFAULT_LOG_COLOR);
+   _evas_engine_soft8_x11_log_dom = eina_log_domain_register
+     ("evas-software_8_x11", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_soft8_x11_log_dom < 0)
      {
-        EINA_LOG_ERR
-            ("Impossible to create a log domain for the Soft8_X11 engine.\n");
+        EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
 

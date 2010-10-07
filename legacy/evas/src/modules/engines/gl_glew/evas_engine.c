@@ -788,13 +788,15 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_engine_GL_glew_log_dom = eina_log_domain_register("EvasGLGlew", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_GL_glew_log_dom < 0) 
+   _evas_engine_GL_glew_log_dom = eina_log_domain_register
+     ("evas-gl_glew", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_GL_glew_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for GL (Glew) engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;
@@ -864,6 +866,7 @@ static void
 module_close(Evas_Module *em)
 {
   eina_log_domain_unregister(_evas_engine_GL_glew_log_dom);
+  evas_gl_common_module_close();
 }
 
 static Evas_Module_Api evas_modapi =

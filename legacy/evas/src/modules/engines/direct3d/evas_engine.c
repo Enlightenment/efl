@@ -422,11 +422,12 @@ module_open(Evas_Module *em)
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
     /* Initialize the log domain */
-   _evas_engine_direct3d_log_dom = eina_log_domain_register("EvasDirect3D", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_direct3d_log_dom < 0)
+   _evas_engine_direct3d_log_dom = eina_log_domain_register
+     ("evas-direct3d", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_direct3d_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the Direct3D engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;

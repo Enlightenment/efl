@@ -456,7 +456,7 @@ _evas_gl_common_image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
         if (!im->tex) return;
         break;
       default:
-        printf("unhandled img format\n");
+         ERR("unhandled img format colorspace=%d", im->cs.space);
 	break;
     }
 }

@@ -94,7 +94,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
      }
    if (!FT_IS_SCALABLE(fi->src->ft.face))
      {
-        printf("NOT SCALABLE!\n");
+        WRN("NOT SCALABLE!");
      }
    val = (int)fi->src->ft.face->size->metrics.ascender;
    return val >> 6;

@@ -249,7 +249,7 @@ evas_smart_cb_descriptions_resize(Evas_Smart_Cb_Description_Array *a, unsigned i
      }
    else
      {
-	fprintf(stderr, "ERROR: realloc failed!\n");
+	ERR("realloc failed!");
 	return 0;
      }
 }

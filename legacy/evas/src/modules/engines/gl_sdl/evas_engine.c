@@ -855,13 +855,15 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   if (!evas_gl_common_module_open()) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
    if (_evas_engine_GL_SDL_log_dom < 0)
-     _evas_engine_GL_SDL_log_dom = eina_log_domain_register("EvasEngineGLSDL", EVAS_DEFAULT_LOG_COLOR);
+     _evas_engine_GL_SDL_log_dom = eina_log_domain_register
+       ("evas-gl_sdl", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_engine_GL_SDL_log_dom < 0)
      {
-        EINA_LOG_ERR("Impossible to create a log domain for GL SDL engine.\n");
+        EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
    /* store it for later use */
@@ -931,6 +933,7 @@ static void
 module_close(Evas_Module *em)
 {
     eina_log_domain_unregister(_evas_engine_GL_SDL_log_dom);
+    evas_gl_common_module_close();
 }
 
 static Evas_Module_Api evas_modapi =
@@ -994,16 +997,12 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe)
 
    if (!surface)
      {
-        CRIT("SDL_SetVideoMode [ %i x %i x 32 ] failed.", w, h);
-	CRIT("SDL: %s\n", SDL_GetError());
+        CRIT("SDL_SetVideoMode [ %i x %i x 32 ] failed. %s", w, h, SDL_GetError());
 	SDL_Quit();
         exit(-1);
      }
 
-   fprintf(stderr, "Screen Depth : %d\n", SDL_GetVideoSurface()->format->BitsPerPixel);
-   fprintf(stderr, "Vendor       : %s\n", glGetString(GL_VENDOR));
-   fprintf(stderr, "Renderer     : %s\n", glGetString(GL_RENDERER));
-   fprintf(stderr, "Version      : %s\n", glGetString(GL_VERSION));
+   INF("Screen Depth: %d, Vendor: '%s', Renderer: '%s', Version: '%s'", SDL_GetVideoSurface()->format->BitsPerPixel, glGetString(GL_VENDOR), glGetString(GL_RENDERER), glGetString(GL_VERSION));
 
    re->gl_context = evas_gl_common_context_new();
    if (!re->gl_context)

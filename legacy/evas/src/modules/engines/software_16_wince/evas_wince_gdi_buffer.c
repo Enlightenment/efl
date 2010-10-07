@@ -37,7 +37,7 @@ evas_software_wince_gdi_init(HWND window,
    priv->dc = GetDC(window);
    if (!priv->dc)
      {
-        ERR("[Engine] [WinCE GDI] Can not get DC\n");
+        ERR("Can not get DC");
         free(priv);
         return NULL;
      }
@@ -56,7 +56,7 @@ evas_software_wince_gdi_init(HWND window,
    priv->bitmap_info = (BITMAPINFO_16bpp *)malloc(sizeof(BITMAPINFO_16bpp));
    if (!priv->bitmap_info)
      {
-        ERR("[Engine] [WinCE GDI] Can not allocate bitmap info\n");
+        ERR("Can not allocate bitmap info");
         ReleaseDC(window, priv->dc);
         free(priv);
         return NULL;

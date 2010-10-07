@@ -30,11 +30,12 @@ evas_init(void)
    if (!eina_init())
      goto shutdown_evil;
 
-   _evas_log_dom_global = eina_log_domain_register("evas_main",EVAS_DEFAULT_LOG_COLOR);
+   _evas_log_dom_global = eina_log_domain_register
+     ("evas_main", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_log_dom_global < 0)
      {
-	EINA_LOG_ERR("Evas could not create a default log domain\n");
-	goto shutdown_eina;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        goto shutdown_eina;
      }
 
    evas_module_init();

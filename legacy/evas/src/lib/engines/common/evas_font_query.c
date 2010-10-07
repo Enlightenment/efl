@@ -199,10 +199,10 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
    LKU(fi->ft_mutex);
    if (!fg) return 0;
 /*
-   INF("fg->glyph_out->left = %i\n"
-	  "fi->src->ft.face->glyph->bitmap_left = %i\n"
-	  "fi->src->ft.face->glyph->metrics.horiBearingX = %i\n"
-	  "fi->src->ft.face->glyph->metrics.horiBearingY = %i\n"
+   INF("fg->glyph_out->left = %i, "
+	  "fi->src->ft.face->glyph->bitmap_left = %i, "
+	  "fi->src->ft.face->glyph->metrics.horiBearingX = %i, "
+	  "fi->src->ft.face->glyph->metrics.horiBearingY = %i, "
 	  "fi->src->ft.face->glyph->metrics.horiAdvance = %i"
 	  ,
 	  (int)fg->glyph_out->left,

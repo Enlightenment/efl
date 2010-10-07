@@ -906,11 +906,12 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
-   _evas_soft_gen_log_dom = eina_log_domain_register("EvasSoftGeneric", EVAS_DEFAULT_LOG_COLOR);
+   _evas_soft_gen_log_dom = eina_log_domain_register
+     ("evas-software_generic", EVAS_DEFAULT_LOG_COLOR);
    if(_evas_soft_gen_log_dom<0)
      {
-       EINA_LOG_ERR("Evas SoftGen : Impossible to create a log domain for the software generic engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    em->functions = (void *)(&func);
    cpunum = eina_cpu_count();

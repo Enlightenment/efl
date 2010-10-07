@@ -146,7 +146,7 @@ evas_software_wince_gapi_init(HWND window,
    // verify pixel format
    if(!(prop.ffFormat & kfDirect565) || (prop.cBPP != 16))
      {
-        ERR("[Engine] [WinCE GAPI] display format mismatch\n");
+        ERR("display format mismatch");
         goto close_display;
      }
 
@@ -154,7 +154,7 @@ evas_software_wince_gapi_init(HWND window,
    if ((GetSystemMetrics(SM_CXSCREEN) != (int)prop.cxWidth) ||
        (GetSystemMetrics(SM_CYSCREEN) != (int)prop.cyHeight))
      {
-        ERR("[Engine] [WinCE GAPI] display size mismatch\n");
+        ERR("display size mismatch");
         goto close_display;
      }
 
@@ -221,7 +221,7 @@ v |         |
         dc = GetDC (window);
         if (!dc)
           {
-             ERR("[Engine] [WinCE GAPI] Can not get device\n");
+             ERR("Can not get device");
              goto close_display;
           }
 
@@ -230,7 +230,7 @@ v |         |
                            (char *) &gxInfo);
         if (result <= 0)
           {
-             ERR("[Engine] [WinCE GAPI] ExtEscape failed\n");
+             ERR("ExtEscape failed");
              ReleaseDC(window, dc);
              goto close_display;
           }
@@ -249,9 +249,8 @@ v |         |
    if ((priv->width != width) ||
        (priv->height != height))
      {
-        ERR("[Engine] [WinCE GAPI] Size mismatch\n");
-        ERR("[Engine] [WinCE GAPI] asked: %dx%d\n", width, height);
-        ERR("[Engine] [WinCE GAPI] got  : %dx%d\n", priv->width, priv->height);
+        ERR("Size mismatch: asked: %dx%d, got: %dx%d",
+            width, height, priv->width, priv->height);
         goto close_display;
      }
 

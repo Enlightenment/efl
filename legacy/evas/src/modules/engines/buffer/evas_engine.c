@@ -347,14 +347,15 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   
-   _evas_engine_buffer_log_dom = eina_log_domain_register("EvasBufferEngine", EINA_COLOR_BLUE);
-   if(_evas_engine_buffer_log_dom < 0)
+
+   _evas_engine_buffer_log_dom = eina_log_domain_register
+     ("evas-buffer", EINA_COLOR_BLUE);
+   if (_evas_engine_buffer_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for Eina.buffer.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
-   
+
    /* store it for later use */
    func = pfunc;
    /* now to override methods */

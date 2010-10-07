@@ -1217,11 +1217,12 @@ module_open(Evas_Module *em)
 
    if (!_evas_module_engine_inherit(&func, "software_generic")) return 0;
 
-   _evas_engine_quartz_log_dom = eina_log_domain_register("EvasQuartz", EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_quartz_log_dom < 0)
+   _evas_engine_quartz_log_dom = eina_log_domain_register
+     ("evas-quartz", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_quartz_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the Quartz engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
 
    #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)

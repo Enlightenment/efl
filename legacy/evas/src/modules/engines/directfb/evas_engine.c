@@ -355,7 +355,7 @@ _dfb_surface_set_blit_params(DirectFB_Engine_Image_Entry *d, DirectFB_Engine_Ima
      goto error;
 
 #ifdef DFB_DEBUG_FLAGS
-   DBG("sfunc=%s, dfunc=%s, color=%d %d %d %d\n\tblit=%s\n\tdraw=%s",
+   DBG("sfunc=%s, dfunc=%s, color=%d %d %d %d, blit=%s, draw=%s",
 	  _dfb_blend_func_str(src_func), _dfb_blend_func_str(dst_func),
 	  r, g, b, a,
 	  _dfb_blit_flags_str(blit_flags), _dfb_draw_flags_str(draw_flags));
@@ -632,15 +632,11 @@ evas_cache_image_dfb_debug(const char *context, Engine_Image_Entry* eie)
    DBG("*** %s image (%p) ***", context, eim);
    if (eim)
      {
-       DBG("* W: %d\n"
-		"* H: %d\n"
-		"* R: %d\n"
-		"* Key: %s\n"
-		"* DFB Surface: %p",
-		eie->w, eie->h, eie->references, eie->cache_key, eim->surface);
+       DBG("W: %d, H: %d, R: %d, Key: %s, DFB Surface: %p",
+           eie->w, eie->h, eie->references, eie->cache_key, eim->surface);
 
         if (eie->src)
-          DBG("* Pixels: %p", ((RGBA_Image*) eie->src)->image.data);
+          DBG("Pixels: %p", ((RGBA_Image*) eie->src)->image.data);
      }
    DBG("*** ***");
 }
@@ -1670,11 +1666,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&parent_func, "software_generic")) return 0;
-   _evas_engine_directfb_log_dom = eina_log_domain_register("EvasEngineDirectFB",EVAS_DEFAULT_LOG_COLOR);
-   if(_evas_engine_directfb_log_dom < 0)
+   _evas_engine_directfb_log_dom = eina_log_domain_register
+     ("evas-directfb", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_engine_directfb_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the DirectFb engine.\n");
-       return 0;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = parent_func;

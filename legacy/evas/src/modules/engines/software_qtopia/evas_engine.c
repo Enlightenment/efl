@@ -273,11 +273,12 @@ module_open(Evas_Module *em)
    if (!em) return 0;
    /* get whatever engine module we inherit from */
    if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
-   _evas_engine_soft_qtopia_log_dom = eina_log_domain_register("EvasSoftQtopia",EVAS_DEFAULT_LOG_COLOR);
+   _evas_engine_soft_qtopia_log_dom = eina_log_domain_register
+     ("evas-software_qtopia", EVAS_DEFAULT_LOG_COLOR);
    if(_evas_engine_soft_qtopia_log_dom < 0)
      {
-       EINA_LOG_ERR("Impossible to create a log domain for the qtopia engine.\n");
-       return NULL;
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return 0;
      }
    /* store it for later use */
    func = pfunc;

@@ -510,4 +510,7 @@ unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, 
 # define GLERR(fn, fl, ln, op)
 #endif
 
+Eina_Bool evas_gl_common_module_open(void);
+void      evas_gl_common_module_close(void);
+
 #endif

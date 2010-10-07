@@ -32,7 +32,7 @@ static int _evas_common_load_soft8_image_data_from_file(Image_Entry * ie);
 static void
 _evas_common_soft8_image_debug(const char* context, Image_Entry *eim)
 {
-   DBG("[8] %p = [%s] {%s,%s} %i [%i|%i]\n", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h);
+   DBG("[8] %p = [%s] {%s,%s} %i [%i|%i]", eim, context, eim->file, eim->key, eim->references, eim->w, eim->h);
 }
 */
 
