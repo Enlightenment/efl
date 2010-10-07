@@ -38,6 +38,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_ISC_POSIX
+AC_GNU_SOURCE
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 AM_CONFIG_HEADER([config.h])
@@ -78,11 +79,6 @@ case "$host_os" in
 esac
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
-
-# weird debian etch bug where pthread_barrier doesn't work without adding
-# this.
-CFLAGS="${CFLAGS=} -D_GNU_SOURCE"
-AC_SUBST(CFLAGS)
 
 want_fontconfig="auto"
 want_fribidi="auto"

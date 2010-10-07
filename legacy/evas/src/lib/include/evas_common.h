@@ -113,10 +113,6 @@ extern EAPI int _evas_log_dom_global;
 # define __ARM_ARCH__ 73
 #endif
 
-#ifndef _GNU_SOURCE
-# define _GNU_SOURCE
-#endif
-
 #ifndef BUILD_PTHREAD
 # undef BUILD_PIPE_RENDER
 #endif

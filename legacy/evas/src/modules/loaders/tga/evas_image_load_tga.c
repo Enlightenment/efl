@@ -2,10 +2,6 @@
 # include <config.h>
 #endif
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-
 #include <stdio.h>
 #include <sys/types.h>
 #include <fcntl.h>
