@@ -238,7 +238,8 @@ ecore_wince_init()
      return --_ecore_wince_init_count;
 
    eina_log_print_cb_set(_ecore_wince_error_print_cb, NULL);
-   _ecore_wince_log_dom_global = eina_log_domain_register("ecore_wince", ECORE_WINCE_DEFAULT_LOG_COLOR);
+   _ecore_wince_log_dom_global = eina_log_domain_register
+     ("ecore_wince", ECORE_WINCE_DEFAULT_LOG_COLOR);
    if (_ecore_wince_log_dom_global < 0)
      {
         EINA_LOG_ERR("Ecore_WinCE: Could not register log domain");

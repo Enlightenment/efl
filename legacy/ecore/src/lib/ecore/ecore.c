@@ -104,11 +104,12 @@ ecore_init(void)
 #endif
    if (!eina_init())
      goto shutdown_evil;
-   _ecore_log_dom = eina_log_domain_register("Ecore",ECORE_DEFAULT_LOG_COLOR);
-   if (_ecore_log_dom < 0) {
-     EINA_LOG_ERR("Ecore was unable to create a log domain.");
-     goto shutdown_log_dom;
-   }
+   _ecore_log_dom = eina_log_domain_register("ecore", ECORE_DEFAULT_LOG_COLOR);
+   if (_ecore_log_dom < 0)
+     {
+        EINA_LOG_ERR("Ecore was unable to create a log domain.");
+        goto shutdown_log_dom;
+     }
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
    _ecore_main_loop_init();

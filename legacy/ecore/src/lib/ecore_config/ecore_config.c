@@ -1670,7 +1670,8 @@ ecore_config_init(const char *name)
 {
    char                *path;
    Ecore_Config_Prop   *list;
-   _ecore_config_log_dom = eina_log_domain_register("EcoreConfig", ECORE_CONFIG_DEFAULT_LOG_COLOR);
+   _ecore_config_log_dom = eina_log_domain_register
+     ("ecore_config", ECORE_CONFIG_DEFAULT_LOG_COLOR);
    if(_ecore_config_log_dom < 0) 
      {
        EINA_LOG_ERR("Impossible to create a log domain for the Ecore config module.");

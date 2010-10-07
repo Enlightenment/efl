@@ -286,7 +286,8 @@ ecore_win32_init()
    if (!eina_init())
      return --_ecore_win32_init_count;
 
-   _ecore_win32_log_dom_global = eina_log_domain_register("ecore_win32", ECORE_WIN32_DEFAULT_LOG_COLOR);
+   _ecore_win32_log_dom_global = eina_log_domain_register
+     ("ecore_win32", ECORE_WIN32_DEFAULT_LOG_COLOR);
    if (_ecore_win32_log_dom_global < 0)
      {
         EINA_LOG_ERR("Ecore_Win32: Could not register log domain");

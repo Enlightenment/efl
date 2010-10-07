@@ -196,7 +196,8 @@ ecore_x_init(const char *name)
    if (!eina_init())
       return --_ecore_xcb_init_count;
 
-   _ecore_x11xcb_log_dom = eina_log_domain_register("EcoreXCB", ECORE_XLIB_XCB_DEFAULT_LOG_COLOR);
+   _ecore_x11xcb_log_dom = eina_log_domain_register
+     ("ecore_x", ECORE_XLIB_XCB_DEFAULT_LOG_COLOR);
    if (_ecore_x11xcb_log_dom < 0)
      {
         EINA_LOG_ERR("Impossible to create a log domain the Ecore XCB module.");

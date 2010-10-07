@@ -211,8 +211,9 @@ ecore_evas_init(void)
    if (!ecore_init())
      goto shutdown_evas;
 
-   _ecore_evas_log_dom = eina_log_domain_register("Ecore_Evas", ECORE_EVAS_DEFAULT_LOG_COLOR);
-   if(_ecore_evas_log_dom < 0) 
+   _ecore_evas_log_dom = eina_log_domain_register
+     ("ecore_evas", ECORE_EVAS_DEFAULT_LOG_COLOR);
+   if(_ecore_evas_log_dom < 0)
      {
         EINA_LOG_ERR("Impossible to create a log domain for Ecore_Evas.");
         goto shutdown_ecore;

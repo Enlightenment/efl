@@ -67,7 +67,8 @@ ecore_sdl_init(const char *name __UNUSED__)
 {
    if(++_ecore_sdl_init_count != 1)
      return _ecore_sdl_init_count;
-   _ecore_sdl_log_dom = eina_log_domain_register("EcoreSdl", ECORE_SDL_DEFAULT_LOG_COLOR);
+   _ecore_sdl_log_dom = eina_log_domain_register
+     ("ecore_sdl", ECORE_SDL_DEFAULT_LOG_COLOR);
    if(_ecore_sdl_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain for the Ecore SDL module.");

@@ -683,7 +683,8 @@ ecore_directfb_init(const char *name __UNUSED__)
    if (++_ecore_directfb_init_count != 1)
       return _ecore_directfb_init_count;
 
-   _ecore_directfb_log_dom = eina_log_domain_register("EcoreDirectFB", ECORE_DIRECTFB_DEFAULT_LOG_COLOR);
+   _ecore_directfb_log_dom = eina_log_domain_register
+     ("ecore_directfb", ECORE_DIRECTFB_DEFAULT_LOG_COLOR);
    if(_ecore_directfb_log_dom < 0)
      {
         EINA_LOG_ERR("Impossible to create a log domain for the Ecore directFB module.");
