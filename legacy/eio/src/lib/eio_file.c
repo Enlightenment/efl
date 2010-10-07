@@ -20,7 +20,6 @@
  */
 
 #define _FILE_OFFSET_BITS 64
-#define _GNU_SOURCE
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
