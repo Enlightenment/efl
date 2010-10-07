@@ -476,7 +476,7 @@ static void
 _ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigusr1_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -492,7 +492,7 @@ static void
 _ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigusr2_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -508,7 +508,7 @@ static void
 _ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sighup_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -524,7 +524,7 @@ static void
 _ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigquit_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -540,7 +540,7 @@ static void
 _ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigint_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -556,7 +556,7 @@ static void
 _ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigterm_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -573,7 +573,7 @@ static void
 _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigpwr_count;
    if (n < MAXSIGQ)
      {
         if (si)
@@ -591,7 +591,7 @@ static void
 _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
 {
    volatile sig_atomic_t n;
-   n = sigchld_count;
+   n = sigrt_count[sig - SIGRTMIN];
    if (n < MAXSIGQ)
      {
         if (si)
