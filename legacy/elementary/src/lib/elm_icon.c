@@ -115,11 +115,11 @@ elm_icon_add(Evas_Object *parent)
    obj = elm_widget_add(e);
    ELM_SET_WIDTYPE(widtype, "icon");
    elm_widget_type_set(obj, "icon");
+   elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->img = _els_smart_icon_add(e);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
