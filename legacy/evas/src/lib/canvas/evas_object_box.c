@@ -1072,10 +1072,11 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
 
         off_y = padding_t;
         new_w = child_w;
-        if (new_w > top_w) top_w = new_w;
 
         _layout_set_offset_and_expand_dimension_space_max_bounded
 	  (child_w, &new_w, w, max_w, &off_x, align_x, padding_l, padding_r);
+
+        if (new_w > top_w) top_w = new_w;
 
 	if (new_w != child_w)
 	  evas_object_resize(opt->obj, new_w, child_h);
