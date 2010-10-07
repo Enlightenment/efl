@@ -2,6 +2,8 @@
 #include "emotion_private.h"
 #include "emotion_xine.h"
 
+int _emotion_xine_log_domain = -1;
+
 /* module api */
 static unsigned char  em_init                    (Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt);
 static int            em_shutdown                (void *ef);
@@ -112,11 +114,11 @@ _em_slave(void *par)
 				 xine_config_update_entry(ev->decoder, &cf);
 			      }
 			 }
-		       printf("OPEN VIDEO PLUGIN...\n");
+		       DBG("OPEN VIDEO PLUGIN...");
 		       if (!ev->opt_no_video)
 			 ev->video = xine_open_video_driver(ev->decoder, "emotion",
 							    XINE_VISUAL_TYPE_NONE, ev);
-		       printf("RESULT: xine_open_video_driver() = %p\n", ev->video);
+		       DBG("RESULT: xine_open_video_driver() = %p", ev->video);
 		       // Let xine autodetect the best audio output driver
 		       if (!ev->opt_no_audio)
 			 ev->audio = xine_open_audio_driver(ev->decoder, NULL, ev);
@@ -136,31 +138,31 @@ _em_slave(void *par)
 		case 3: /* shutdown */
 		    {
 		       _em_module_event(ev, 3);
-		       printf("EX shutdown stop\n");
+		       DBG("shutdown stop");
 		       xine_stop(ev->stream);
 		       //   pthread_mutex_lock(&(ev->get_pos_len_mutex));
 		       if (!ev->get_pos_thread_deleted)
 			 {
-			    printf("closing get_pos thread, %p\n", ev);
+			    DBG("closing get_pos thread, %p", ev);
 			    pthread_mutex_lock(&(ev->get_pos_len_mutex));
 			    pthread_cond_broadcast(&(ev->get_pos_len_cond));
 			    pthread_mutex_unlock(&(ev->get_pos_len_mutex));
 			    while (ev->get_poslen);
 			 }
-		       printf("EX dispose %p\n", ev);
+		       DBG("dispose %p", ev);
 		       xine_dispose(ev->stream);
-		       printf("EX dispose evq %p\n", ev);
+		       DBG("dispose evq %p", ev);
 		       xine_event_dispose_queue(ev->queue);
-		       printf("EX close video drv %p\n", ev);
+		       DBG("close video drv %p", ev);
 		       if (ev->video) xine_close_video_driver(ev->decoder, ev->video);
-		       printf("EX wait for vo to go\n");
+		       DBG("wait for vo to go");
 		       while (ev->have_vo);
-		       printf("EX vo gone\n");
-		       printf("EX close audio drv %p\n", ev);
+		       DBG("vo gone");
+		       DBG("close audio drv %p", ev);
 		       if (ev->audio) xine_close_audio_driver(ev->decoder, ev->audio);
-		       printf("EX xine exit %p\n", ev);
+		       DBG("xine exit %p", ev);
 		       xine_exit(ev->decoder);
-		       printf("EX DONE %p\n", ev);
+		       DBG("DONE %p", ev);
 		       close(ev->fd_write);
 		       close(ev->fd_read);
 		       close(ev->fd_ev_write);
@@ -183,7 +185,7 @@ _em_slave(void *par)
 		       char *file;
 		       
 		       file = eev->xine_event;
-		       printf("OPN STREAM %s\n", file);
+		       DBG("OPEN STREAM %s", file);
 		       if (xine_open(ev->stream, file))
 			 {
 			    if (xine_get_pos_length(ev->stream, &pos_stream, &pos_time, &length_time))
@@ -222,13 +224,13 @@ _em_slave(void *par)
 		  break;
 		case 11: /* file close */
 		    {
-		       printf("EX done %p\n", ev);
+		       DBG("done %p", ev);
 		       em_frame_done(ev); 
-		       printf("EX stop %p\n", ev);
+		       DBG("stop %p", ev);
 		       xine_stop(ev->stream);
-		       printf("EX close %p\n", ev);
+		       DBG("close %p", ev);
 		       xine_close(ev->stream);
-		       printf("EX close done %p\n", ev);
+		       DBG("close done %p", ev);
 		       _em_module_event(ev, 11);
 		    }
 		  break;
@@ -428,7 +430,7 @@ em_shutdown(void *ef)
    ev = (Emotion_Xine_Video *)ef;
    ev->closing = 1;
    ev->delete_me = 1;
-   printf("EXM del fds %p\n", ev);
+   DBG("del fds %p", ev);
    ecore_main_fd_handler_del(ev->fd_handler);
    ev->fd_handler = NULL;
    ecore_main_fd_handler_del(ev->fd_ev_handler);
@@ -441,7 +443,7 @@ em_shutdown(void *ef)
    
    ev->closing = 1;
    _em_slave_event(ev, 3, NULL);
-   printf("EXM done %p\n", ev);
+   DBG("done %p", ev);
    return 1;
 }
 
@@ -1367,7 +1369,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       break;
 		     case XINE_EVENT_UI_MESSAGE:
 			 {
-			    printf("EV: UI Message [FIXME: break this out to emotion api]\n");
+			    WRN("UI Message [FIXME: break this out to emotion api]");
 			    // e->type = error type(XINE_MSG_NO_ERROR, XINE_MSG_GENERAL_WARNING, XINE_MSG_UNKNOWN_HOST etc.)
 			    // e->messages is a list of messages DOUBLE null terminated
 			 }
@@ -1375,7 +1377,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		     case XINE_EVENT_AUDIO_LEVEL:
 			 {
 			    _emotion_audio_level_change(ev->obj);
-			    printf("EV: Audio Level [FIXME: break this out to emotion api]\n");
+			    WRN("Audio Level [FIXME: break this out to emotion api]");
 			    // e->left (0->100) 
 			    // e->right
 			    // e->mute
@@ -1386,7 +1388,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 			    xine_progress_data_t *e;
 			    
 			    e = (xine_progress_data_t *)eev->xine_event;
-			    printf("PROGRESS: %i\n", e->percent);
+			    DBG("PROGRESS: %i", e->percent);
 			    _emotion_progress_set(ev->obj, (char *)e->description, (double)e->percent / 100.0);
 			 }
 		       break;
@@ -1422,13 +1424,13 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 			    xine_dropped_frames_t *e;
 			    
 			    e = (xine_dropped_frames_t *)eev->xine_event;
-			    printf("EV: Dropped Frames (skipped %i) (discarded %i) [FIXME: break this out to the emotion api]\n", e->skipped_frames, e->discarded_frames);
+			    WRN("Dropped Frames (skipped %i) (discarded %i) [FIXME: break this out to the emotion api]", e->skipped_frames, e->discarded_frames);
 			    // e->skipped_frames = % frames skipped * 10
 			    // e->discarded_frames = % frames skipped * 10
 			 }
 		       break;
 		     default:
-		       // printf("EV: unknown event type %i\n", eev->type);
+		       // DBG("unknown event type %i", eev->type);
 		       break;
 		    }
 	       }
@@ -1474,7 +1476,7 @@ _em_get_pos_len_th(void *par)
 	       }
 	     ev->get_poslen = 0;
              _em_module_event(ev, 15); /* event - getpos done */
-	     //printf("get pos %3.3f\n", ev->pos);
+	     //DBG("get pos %3.3f", ev->pos);
 	  }
 	if (ev->delete_me)
 	  {
@@ -1563,6 +1565,19 @@ module_open(Evas_Object *obj, const Emotion_Video_Module **module, void **video,
    if (!module)
       return EINA_FALSE;
 
+   if (_emotion_xine_log_domain < 0)
+     {
+        eina_threads_init();
+        eina_log_threads_enable();
+        _emotion_xine_log_domain = eina_log_domain_register
+          ("emotion-xine", EINA_COLOR_LIGHTCYAN);
+        if (_emotion_xine_log_domain < 0)
+          {
+             EINA_LOG_CRIT("Could not register log domain 'emotion-xine'");
+             return EINA_FALSE;
+          }
+     }
+
    if (!em_module.init(obj, video, opt))
       return EINA_FALSE;
 
@@ -1637,48 +1652,46 @@ em_debug(Emotion_Xine_Video *ev)
    spu_channel = xine_get_param(ev->stream, XINE_PARAM_SPU_CHANNEL);
    video_ratio = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_RATIO);
    audio_mode = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_AUDIO_MODE);
-   printf("has_chapters = %i\n", has_chapters);
-   printf("max_spu = %i\n", max_spu);
-   printf("max_audio = %i\n", max_audio);
-   printf("video_channels = %i\n", video_channels);
-   printf("video_streams = %i\n", video_streams);
-   printf("video_seekable = %i\n", video_seekable);
-   printf("title = %s\n", title);
-   printf("comment = %s\n", comment);
-   printf("artist = %s\n", artist);
-   printf("genre = %s\n", genre);
-   printf("album = %s\n", album);
-   printf("year = %s\n", year);
-   printf("cdindex_discid = %s\n", cdindex_discid);
-   printf("video_channel = %i\n", video_channel);
-   printf("audio_channel = %i\n", audio_channel);
-   printf("spu_channels = %i\n", spu_channel);
-   printf("video_ratio = %i\n", video_ratio);
-   printf("audio_mode = %i\n", audio_mode);
+   DBG("has_chapters = %i", has_chapters);
+   DBG("max_spu = %i", max_spu);
+   DBG("max_audio = %i", max_audio);
+   DBG("video_channels = %i", video_channels);
+   DBG("video_streams = %i", video_streams);
+   DBG("video_seekable = %i", video_seekable);
+   DBG("title = %s", title);
+   DBG("comment = %s", comment);
+   DBG("artist = %s", artist);
+   DBG("genre = %s", genre);
+   DBG("album = %s", album);
+   DBG("year = %s", year);
+   DBG("cdindex_discid = %s", cdindex_discid);
+   DBG("video_channel = %i", video_channel);
+   DBG("audio_channel = %i", audio_channel);
+   DBG("spu_channels = %i", spu_channel);
+   DBG("video_ratio = %i", video_ratio);
+   DBG("audio_mode = %i", audio_mode);
      {
 	int i;
 	
 	for (i = 0; i <= max_audio; i++)
 	  {
 	     char lang[XINE_LANG_MAX + 1];
-	     
+             char buf[128] = "NONE";
+
 	     lang[0] = 0;
-	     printf("  AUDIO %i = ", i);
 	     if (xine_get_audio_lang(ev->stream, i, lang))
-	       printf("%s\n", lang);
-	     else
-	       printf("NONE\n");
+	       eina_strlcpy(buf, lang, sizeof(buf));
+	     DBG("  AUDIO %i = %s", i, buf);
 	  }
 	for (i = 0; i <= max_spu; i++)
 	  {
 	     char lang[XINE_LANG_MAX + 1];
-	     
+             char buf[128] = "NONE";
+
 	     lang[0] = 0;
-	     printf("  SPU %i = ", i);
 	     if (xine_get_spu_lang(ev->stream, i, lang))
-	       printf("%s\n", lang);
-	     else
-	       printf("NONE\n");
+               eina_strlcpy(buf, lang, sizeof(buf));
+	     DBG("  SPU %i = %s", i, buf);
 	  }
      }
 }

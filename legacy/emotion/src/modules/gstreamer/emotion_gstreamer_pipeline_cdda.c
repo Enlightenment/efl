@@ -21,7 +21,7 @@ emotion_pipeline_cdda_build(void *video, const char * device, unsigned int track
    cdiocddasrc = gst_element_factory_make("cdiocddasrc", "src");
    if (!cdiocddasrc)
      {
-	g_print("cdiocddasrc element missing. Install it.\n");
+	ERR("cdiocddasrc gstreamer element missing. Install it.");
 	goto failure_cdiocddasrc;
      }
 

@@ -115,7 +115,7 @@ _emotion_class_init(xine_t *xine, void *visual __UNUSED__)
 {
    Emotion_Class *cl;
    
-//   printf("emotion: _emotion_class_init()\n");
+//   DBG("");
    cl = (Emotion_Class *) malloc(sizeof(Emotion_Class));
    if (!cl) return NULL;
    cl->driver_class.open_plugin     = _emotion_open;
@@ -158,7 +158,7 @@ _emotion_open(video_driver_class_t *driver_class, const void *visual)
    
    cl = (Emotion_Class *)driver_class;
    /* visual here is the data ptr passed to xine_open_video_driver() */
-//   printf("emotion: _emotion_open()\n");
+//   DBG("");
    dv = (Emotion_Driver *)malloc(sizeof(Emotion_Driver));
    if (!dv) return NULL;
    
@@ -180,7 +180,7 @@ _emotion_open(video_driver_class_t *driver_class, const void *visual)
    dv->vo_driver.redraw_needed        = _emotion_redraw;
    dv->ev                             = (Emotion_Xine_Video *)visual;
    dv->ev->have_vo = 1;
-   printf("emotion: _emotion_open = %p\n", &dv->vo_driver);
+   DBG("vo_driver = %p", &dv->vo_driver);
    return &dv->vo_driver;
 }    
 
@@ -191,7 +191,7 @@ _emotion_dispose(vo_driver_t *vo_driver)
    
    dv = (Emotion_Driver *)vo_driver;
    dv->ev->have_vo = 0;
-   printf("emotion: _emotion_dispose(%p)\n", dv);
+   DBG("vo_driver = %p", dv);
    free(dv);
 }
 
@@ -199,7 +199,7 @@ _emotion_dispose(vo_driver_t *vo_driver)
 static int
 _emotion_redraw(vo_driver_t *vo_driver __UNUSED__)
 {
-//   printf("emotion: _emotion_redraw()\n");
+//   DBG("");
    return 0;
 }
 
@@ -207,7 +207,7 @@ _emotion_redraw(vo_driver_t *vo_driver __UNUSED__)
 static uint32_t
 _emotion_capabilities_get(vo_driver_t *vo_driver __UNUSED__)
 {
-//   printf("emotion: _emotion_capabilities_get()\n");
+//   DBG("");
    return VO_CAP_YV12 | VO_CAP_YUY2;
 }
 
@@ -215,7 +215,7 @@ _emotion_capabilities_get(vo_driver_t *vo_driver __UNUSED__)
 static int
 _emotion_gui_data_exchange(vo_driver_t *vo_driver __UNUSED__, int data_type, void *data __UNUSED__)
 {
-//   printf("emotion: _emotion_gui_data_exchange()\n");
+//   DBG("");
    switch (data_type)
      {
       case XINE_GUI_SEND_COMPLETION_EVENT:
@@ -243,13 +243,13 @@ _emotion_property_set(vo_driver_t *vo_driver, int property, int value)
    Emotion_Driver *dv;
    
    dv = (Emotion_Driver *)vo_driver;
-//   printf("emotion: _emotion_property_set()\n");
+//   DBG("");
    switch (property)
      {
       case VO_PROP_ASPECT_RATIO:
 	if (value >= XINE_VO_ASPECT_NUM_RATIOS)
 	  value = XINE_VO_ASPECT_AUTO;
-//	printf("DRIVER RATIO SET %i!\n", value);
+//	DBG("DRIVER RATIO SET %i!", value);
 	dv->ratio = value;
 	break;
       default:
@@ -264,7 +264,7 @@ _emotion_property_get(vo_driver_t *vo_driver, int property)
    Emotion_Driver *dv;
    
    dv = (Emotion_Driver *)vo_driver;
-//   printf("emotion: _emotion_property_get()\n");
+//   DBG("");
    switch (property)
      {
       case VO_PROP_ASPECT_RATIO:
@@ -279,7 +279,7 @@ _emotion_property_get(vo_driver_t *vo_driver, int property)
 static void
 _emotion_property_min_max_get(vo_driver_t *vo_driver __UNUSED__, int property __UNUSED__, int *min, int *max)
 {
-//   printf("emotion: _emotion_property_min_max_get()\n");
+//   DBG("");
    *min = 0;
    *max = 0;
 }
@@ -290,7 +290,7 @@ _emotion_frame_alloc(vo_driver_t *vo_driver __UNUSED__)
 {
    Emotion_Frame *fr;
    
-//   printf("emotion: _emotion_frame_alloc()\n");
+//   DBG("");
    fr = (Emotion_Frame *)calloc(1, sizeof(Emotion_Frame));
    if (!fr) return NULL;
    
@@ -313,7 +313,7 @@ _emotion_frame_dispose(vo_frame_t *vo_frame)
    Emotion_Frame *fr;
    
    fr = (Emotion_Frame *)vo_frame;
-//   printf("emotion: _emotion_frame_dispose()\n");
+//   DBG("");
    _emotion_frame_data_free(fr);  
    free(fr);
 }
@@ -330,7 +330,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
    if ((fr->width != width) ||  (fr->height != height) || 
        (fr->format != format) || (!fr->vo_frame.base[0]))
      {
-//	printf("emotion: _emotion_frame_format_update()\n");
+//   DBG("");
 	_emotion_frame_data_free(fr);
 	
 	fr->width  = width;
@@ -417,8 +417,7 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
    
    dv = (Emotion_Driver *)vo_driver;
    fr = (Emotion_Frame *)vo_frame;
-//   printf("emotion: _emotion_frame_display()\n");
-//   printf("EX VO: fq %i %p\n", dv->ev->fq, dv->ev);
+//   DBG("fq %i %p", dv->ev->fq, dv->ev);
 // if my frame queue is too deep ( > 4 frames) simply block and wait for them
 // to drain
 //   while (dv->ev->fq > 4) usleep(1);
@@ -436,9 +435,9 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 	fr->frame.timestamp = (double)fr->vo_frame.vpts / 90000.0;
 	fr->frame.done_func = _emotion_frame_data_unlock;
 	fr->frame.done_data = fr;
-//	printf("FRAME FOR %p\n", dv->ev);
+//	DBG("FRAME FOR %p", dv->ev);
 	write(dv->ev->fd_write, &buf, sizeof(void *));
-//	printf("-- FRAME DEC %p == %i\n", fr->frame.obj, ret);
+//	DBG("-- FRAME DEC %p == %i", fr->frame.obj, ret);
 	fr->in_use = 1;
 	dv->ev->fq++;
      }
@@ -449,7 +448,7 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 static void
 _emotion_frame_field(vo_frame_t *vo_frame __UNUSED__, int which_field __UNUSED__)
 {
-//   printf("emotion: _emotion_frame_field()\n");
+//   DBG("");
 }
 
 /***************************************************************************/
@@ -476,7 +475,7 @@ _emotion_frame_data_free(Emotion_Frame *fr)
 static void
 _emotion_frame_data_unlock(Emotion_Frame *fr)
 {
-//   printf("emotion: _emotion_frame_data_unlock()\n");
+//   DBG("");
    if (fr->in_use)
      {
 	fr->vo_frame.free(&fr->vo_frame);
@@ -488,13 +487,13 @@ _emotion_frame_data_unlock(Emotion_Frame *fr)
 static void
 _emotion_overlay_begin(vo_driver_t *vo_driver __UNUSED__, vo_frame_t *vo_frame __UNUSED__, int changed __UNUSED__)
 {
-//   printf("emotion: _emotion_overlay_begin()\n");
+//   DBG("");
 }
 
 static void
 _emotion_overlay_end(vo_driver_t *vo_driver __UNUSED__, vo_frame_t *vo_frame __UNUSED__)
 {
-//   printf("emotion: _emotion_overlay_end()\n");
+//   DBG("");
 }
 
 static void
@@ -503,7 +502,7 @@ _emotion_overlay_blend(vo_driver_t *vo_driver __UNUSED__, vo_frame_t *vo_frame, 
    Emotion_Frame *fr;
    
    fr = (Emotion_Frame *)vo_frame;
-//   printf("emotion: _emotion_overlay_blend()\n");
+//   DBG("");
    _emotion_overlay_blend_yuv(fr->vo_frame.base, vo_overlay,
 			      fr->width, fr->height, 
 			      fr->vo_frame.pitches);

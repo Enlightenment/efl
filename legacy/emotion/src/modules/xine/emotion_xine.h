@@ -87,4 +87,11 @@ struct _Emotion_Xine_Event
    int   mtype;
 };
 
+extern int _emotion_xine_log_domain;
+#define DBG(...) EINA_LOG_DOM_DBG(_emotion_xine_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_emotion_xine_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_emotion_xine_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_emotion_xine_log_domain, __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_emotion_xine_log_domain, __VA_ARGS__)
+
 #endif

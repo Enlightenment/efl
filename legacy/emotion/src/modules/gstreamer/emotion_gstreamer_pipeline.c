@@ -14,14 +14,14 @@ emotion_pipeline_pause(GstElement *pipeline)
    res = gst_element_set_state((pipeline), GST_STATE_PAUSED);
    if (res == GST_STATE_CHANGE_FAILURE)
      {
-	g_print("Emotion-Gstreamer ERROR: could not pause\n");
+	ERR("could not pause");
 	return 0;
      }
 
    res = gst_element_get_state((pipeline), NULL, NULL, GST_CLOCK_TIME_NONE);
    if (res != GST_STATE_CHANGE_SUCCESS)
      {
-	g_print("Emotion-Gstreamer ERROR: could not complete pause\n");
+	ERR("could not complete pause");
 	return 0;
      }
 
@@ -487,7 +487,7 @@ emotion_streams_sinks_get(Emotion_Gstreamer_Video *ev, GstElement *decoder)
 
 	caps = gst_pad_get_caps(pad);
 	str = gst_caps_to_string(caps);
-	g_print("caps !! %s\n", str);
+	DBG("caps %s", str);
 
 	/* video stream */
 	if (g_str_has_prefix(str, "video/"))

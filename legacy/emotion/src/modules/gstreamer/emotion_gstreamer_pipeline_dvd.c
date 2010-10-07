@@ -9,7 +9,7 @@ static void dvd_pad_added_cb    (GstElement *dvddemuxer,
 static void dvd_no_more_pads_cb (GstElement *dvddemuxer,
                                  gpointer    user_data);
 
-static int no_more_pads = 0;
+static volatile int no_more_pads = 0;
 
 
 int
@@ -47,7 +47,7 @@ emotion_pipeline_dvd_build(void *video, const char *device)
 
    while (no_more_pads == 0)
      {
-	g_print("toto\n");
+	DBG("toto");
      }
    no_more_pads = 0;
 
@@ -70,7 +70,7 @@ emotion_pipeline_dvd_build(void *video, const char *device)
 
 	     caps = gst_pad_get_caps(pad);
 	     str = gst_caps_to_string(caps);
-	     g_print("caps !! %s\n", str);
+	     DBG("caps %s", str);
 	     /* video stream */
 	     if (g_str_has_prefix(str, "video/mpeg"))
 	       {
@@ -83,7 +83,7 @@ emotion_pipeline_dvd_build(void *video, const char *device)
 		  sink_pad = gst_element_get_pad(gst_bin_get_by_name(GST_BIN(ev->pipeline), "mpeg2dec"), "src");
 		  sink_caps = gst_pad_get_caps(sink_pad);
 		  str = gst_caps_to_string(sink_caps);
-		  g_print(" ** caps v !! %s\n", str);
+		  DBG("caps video %s", str);
 
 		  emotion_video_sink_fill(vsink, sink_pad, sink_caps);
 

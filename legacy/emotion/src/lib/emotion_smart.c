@@ -25,6 +25,12 @@
       if (strcmp(_e_smart_str, type)) return ret; \
    }
 
+#define DBG(...) EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_log_domain, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
+
 #define E_OBJ_NAME "emotion_object"
 
 typedef struct _Smart_Data Smart_Data;
@@ -88,6 +94,7 @@ static void _smart_clip_unset(Evas_Object * obj);
 static Evas_Smart  *smart = NULL;
 static Eina_Hash *_backends = NULL;
 static Eina_Array *_modules = NULL;
+static int _log_domain = -1;
 
 static const char *_backend_priority[] = {
   "xine",
@@ -160,7 +167,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
    if (!_backends)
      {
-	fprintf(stderr, "No backend loaded\n");
+        ERR("No backend loaded");
 	return NULL;
      }
 
@@ -175,7 +182,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	if (index != 0 && index < (sizeof (_backend_priority) / sizeof (char*)))
 	  goto retry;
 
-	fprintf(stderr, "No backend loaded\n");
+	ERR("No backend loaded");
 	return EINA_FALSE;
      }
 
@@ -191,7 +198,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    if (index != 0 && index < (sizeof (_backend_priority) / sizeof (char*)))
      goto retry;
 
-   fprintf (stderr, "Unable to load module %s\n", name);
+   ERR("Unable to load module: %s", name);
 
    return NULL;
 }
@@ -298,6 +305,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
+   DBG("file=%s", file);
    if (!sd->module) return;
 
    if ((file) && (sd->file) && (!strcmp(file, sd->file))) return;
@@ -344,6 +352,7 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("play=%hhu, was=%hhu", play, sd->play);
    if (play == sd->play) return;
    if (!sd->module) return;
    if (!sd->video) return;
@@ -369,6 +378,7 @@ emotion_object_position_set(Evas_Object *obj, double sec)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("sec=%f", sec);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->seek_pos = sec;
@@ -513,6 +523,7 @@ emotion_object_audio_volume_set(Evas_Object *obj, double vol)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("vol=%f", vol);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->audio_channel_volume_set(sd->video, vol);
@@ -535,6 +546,7 @@ emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("mute=%hhu", mute);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->audio_channel_mute_set(sd->video, mute);
@@ -579,6 +591,7 @@ emotion_object_audio_channel_set(Evas_Object *obj, int channel)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("channel=%d", channel);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->audio_channel_set(sd->video, channel);
@@ -601,6 +614,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("mute=%hhu", mute);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->video_channel_mute_set(sd->video, mute);
@@ -645,6 +659,7 @@ emotion_object_video_channel_set(Evas_Object *obj, int channel)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("channel=%d", channel);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->video_channel_set(sd->video, channel);
@@ -667,6 +682,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("mute=%hhu", mute);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->spu_channel_mute_set(sd->video, mute);
@@ -711,6 +727,7 @@ emotion_object_spu_channel_set(Evas_Object *obj, int channel)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("channel=%d", channel);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->spu_channel_set(sd->video, channel);
@@ -744,6 +761,7 @@ emotion_object_chapter_set(Evas_Object *obj, int chapter)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("chapter=%d", chapter);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->chapter_set(sd->video, chapter);
@@ -777,6 +795,7 @@ emotion_object_play_speed_set(Evas_Object *obj, double speed)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("speed=%f", speed);
    if (!sd->module) return;
    if (!sd->video) return;
    sd->module->speed_set(sd->video, speed);
@@ -910,6 +929,7 @@ emotion_object_vis_set(Evas_Object *obj, Emotion_Vis visualization)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   DBG("visualization=%d", visualization);
    if (!sd->module) return;
    if (!sd->video) return;
    if (!sd->module->vis_set) return;
@@ -1315,6 +1335,14 @@ _smart_init(void)
      {
 	eina_init();
 
+        _log_domain = eina_log_domain_register("emotion", EINA_COLOR_LIGHTCYAN);
+        if (_log_domain < 0)
+          {
+             EINA_LOG_CRIT("Could not register log domain 'emotion'");
+             eina_shutdown();
+             return;
+          }
+
 	_backends = eina_hash_string_small_new(free);
 
 	_modules = eina_module_list_get(NULL, PACKAGE_LIB_DIR "/emotion/", 0, NULL, NULL);
@@ -1333,8 +1361,8 @@ _smart_init(void)
 
 	if (!_modules)
 	  {
-	     fprintf(stderr, "No module found !\n");
-	     return ;
+	     ERR("No module found!");
+	     return;
 	  }
 
 	eina_module_list_load(_modules);

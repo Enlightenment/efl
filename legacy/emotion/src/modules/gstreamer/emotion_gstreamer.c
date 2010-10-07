@@ -8,6 +8,8 @@
 #include "emotion_gstreamer_pipeline.h"
 #include "Emotion.h"
 
+int _emotion_gstreamer_log_domain = -1;
+
 /* Callbacks to get the eos */
 static Eina_Bool  _eos_timer_fct   (void *data);
 static void _em_buffer_read(void *data, void *buffer, unsigned int nbyte);
@@ -345,10 +347,10 @@ em_file_open(const char   *file,
 	     device = NULL;
 	     sscanf(file, "cdda://%d", &track);
 	  }
-	fprintf(stderr, "[Emotion] [gst] build CD Audio pipeline\n");
+	DBG("Build CD Audio pipeline");
 	if (!(emotion_pipeline_cdda_build(ev, device, track)))
 	  {
-	     fprintf(stderr, "[Emotion] [gst] error while building CD Audio pipeline\n");
+	     ERR("Could not build CD Audio pipeline");
 	     gst_object_unref(ev->pipeline);
 	     return 0;
 	  }
@@ -357,10 +359,10 @@ em_file_open(const char   *file,
    else if (strstr(file, "dvd://"))
      {
 
-	fprintf(stderr, "[Emotion] [gst] build DVD pipeline\n");
+	DBG("Build DVD pipeline");
 	if (!(emotion_pipeline_dvd_build(ev, NULL)))
 	  {
-	     fprintf(stderr, "[Emotion] [gst] error while building DVD pipeline\n");
+             ERR("Could not build DVD pipeline");
 	     gst_object_unref(ev->pipeline);
 	     return 0;
 	  }
@@ -368,10 +370,10 @@ em_file_open(const char   *file,
    /* http */
    else if (strstr(file, "http://"))
      {
-	fprintf(stderr, "[Emotion] [gst] build URI pipeline\n");
+	DBG("Build URI pipeline");
 	if (!(emotion_pipeline_uri_build(ev, file)))
 	  {
-	     fprintf(stderr, "[Emotion] [gst] error while building URI pipeline\n");
+	     ERR("Could not build URI pipeline");
 	     gst_object_unref(ev->pipeline);
 	     return 0;
 	  }
@@ -379,10 +381,10 @@ em_file_open(const char   *file,
    /* v4l */
    else if (strstr(file, "v4l://"))
      {
-	fprintf(stderr, "[Emotion] [gst] build V4L pipeline\n");
+	DBG("Build V4L pipeline");
 	if (!(emotion_pipeline_v4l_build(ev, file)))
 	  {
-	     fprintf(stderr, "[Emotion] [gst] error while building V4L pipeline\n");
+	     ERR("Could not build V4L pipeline");
 	     gst_object_unref(ev->pipeline);
 	     return 0;
 	  }
@@ -396,10 +398,10 @@ em_file_open(const char   *file,
 		   ? file + strlen("file://")
 		   : file;
 
-	fprintf(stderr, "[Emotion] [gst] build file pipeline\n");
+	DBG("Build file pipeline");
 	if (!(emotion_pipeline_file_build(ev, filename)))
 	  {
-	     fprintf(stderr, "[Emotion] [gst] error while building File pipeline\n");
+	     ERR("Could not build File pipeline");
 	     gst_object_unref(ev->pipeline);
 	     return 0;
 	  }
@@ -415,22 +417,19 @@ em_file_open(const char   *file,
 	vsink = (Emotion_Video_Sink *)eina_list_data_get(ev->video_sinks);
 	if (vsink)
 	  {
-	     fprintf(stderr, "video : \n");
-	     fprintf(stderr, "  size   : %dx%d\n", vsink->width, vsink->height);
-	     fprintf(stderr, "  fps    : %d/%d\n", vsink->fps_num, vsink->fps_den);
-	     fprintf(stderr, "  fourcc : %" GST_FOURCC_FORMAT "\n", GST_FOURCC_ARGS(vsink->fourcc));
-	     fprintf(stderr, "  length : %" GST_TIME_FORMAT "\n\n",
-		     GST_TIME_ARGS((guint64)(vsink->length_time * GST_SECOND)));
+             DBG("video size=%dx%d, fps=%d/%d, "
+                 "fourcc=%"GST_FOURCC_FORMAT", length=%"GST_TIME_FORMAT,
+                 vsink->width, vsink->height, vsink->fps_num, vsink->fps_den,
+                 GST_FOURCC_ARGS(vsink->fourcc),
+                 GST_TIME_ARGS((guint64)(vsink->length_time * GST_SECOND)));
 	  }
 
 	asink = (Emotion_Audio_Sink *)eina_list_data_get(ev->audio_sinks);
 	if (asink)
 	  {
-	     fprintf(stderr, "audio : \n");
-	     fprintf(stderr, "  chan   : %d\n", asink->channels);
-	     fprintf(stderr, "  rate   : %d\n", asink->samplerate);
-	     fprintf(stderr, "  length : %" GST_TIME_FORMAT "\n\n",
-		     GST_TIME_ARGS((guint64)(asink->length_time * GST_SECOND)));
+             DBG("audio channels=%d, rate=%d, length=%"GST_TIME_FORMAT,
+                 asink->channels, asink->samplerate,
+                 GST_TIME_ARGS((guint64)(asink->length_time * GST_SECOND)));
 	  }
      }
 
@@ -598,7 +597,7 @@ em_len_get(void *video)
 
    if (fmt != GST_FORMAT_TIME)
      {
-	fprintf(stderr, "requrested duration in time, but got %s instead.",
+	DBG("requrested duration in time, but got %s instead.",
 		gst_format_get_name(fmt));
 	goto fallback;
      }
@@ -681,8 +680,8 @@ em_pos_get(void *video)
 
    if (fmt != GST_FORMAT_TIME)
      {
-	fprintf(stderr, "requrested position in time, but got %s instead.",
-		gst_format_get_name(fmt));
+        ERR("requrested position in time, but got %s instead.",
+            gst_format_get_name(fmt));
 	return ev->position;
      }
 
@@ -1199,6 +1198,19 @@ module_open(Evas_Object           *obj,
    if (!module)
      return EINA_FALSE;
 
+   if (_emotion_gstreamer_log_domain < 0)
+     {
+        eina_threads_init();
+        eina_log_threads_enable();
+        _emotion_gstreamer_log_domain = eina_log_domain_register
+          ("emotion-gstreamer", EINA_COLOR_LIGHTCYAN);
+        if (_emotion_gstreamer_log_domain < 0)
+          {
+             EINA_LOG_CRIT("Could not register log domain 'emotion-gstreamer'");
+             return EINA_FALSE;
+          }
+     }
+
    if (!em_module.init(obj, video, opt))
      return EINA_FALSE;
 
@@ -1404,7 +1416,7 @@ _eos_timer_fct(void *data)
 		   gst_message_parse_error(msg, &err, &debug);
 		   g_free(debug);
 
-		   g_print("Error: %s\n", err->message);
+		   ERR("Error: %s", err->message);
 		   g_error_free(err);
 
 		   break;
