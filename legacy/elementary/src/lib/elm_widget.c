@@ -2165,28 +2165,33 @@ _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 static void
 _smart_show(Evas_Object *obj)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY;
-   list = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(list, l, o)
-    {
-        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-        evas_object_show(o);
-    }
+   if ((list = evas_object_smart_members_get(obj)))
+     {
+        EINA_LIST_FREE(list, o)
+          {
+             if (evas_object_data_get(o, "_elm_leaveme")) continue;
+             evas_object_show(o);
+          }
+     }
 }
 
 static void
 _smart_hide(Evas_Object *obj)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY;
    list = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(list, l, o)
+   if ((list = evas_object_smart_members_get(obj)))
      {
-        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-        evas_object_hide(o);
+        EINA_LIST_FREE(list, o)
+          {
+             if (evas_object_data_get(o, "_elm_leaveme")) continue;
+             evas_object_hide(o);
+          }
      }
    _if_focused_revert(obj);
 }
@@ -2197,11 +2202,13 @@ _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
    Eina_List *list, *l;
    Evas_Object *o;
    INTERNAL_ENTRY;
-   list = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(list, l, o)
+   if ((list = evas_object_smart_members_get(obj)))
      {
-        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-        evas_object_color_set(o, r, g, b, a);
+        EINA_LIST_FREE(list, o)
+          {
+             if (evas_object_data_get(o, "_elm_leaveme")) continue;
+             evas_object_color_set(o, r, g, b, a);
+          }
      }
 }
 
@@ -2211,11 +2218,13 @@ _smart_clip_set(Evas_Object *obj, Evas_Object *clip)
    Eina_List *list, *l;
    Evas_Object *o;
    INTERNAL_ENTRY;
-   list = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(list, l, o)
+   if ((list = evas_object_smart_members_get(obj)))
      {
-        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-        evas_object_clip_set(o, clip);
+        EINA_LIST_FREE(list, o)
+          {
+             if (evas_object_data_get(o, "_elm_leaveme")) continue;
+             evas_object_clip_set(o, clip);
+          }
      }
 }
 
@@ -2227,11 +2236,13 @@ _smart_clip_unset(Evas_Object *obj)
    INTERNAL_ENTRY;
 //   evas_object_clip_unset(sd->resize_obj);
 //   return;
-   list = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(list, l, o)
+   if ((list = evas_object_smart_members_get(obj)))
      {
-        if (evas_object_data_get(o, "_elm_leaveme")) continue;
-        evas_object_clip_unset(o);
+        EINA_LIST_FREE(list, o)
+          {
+             if (evas_object_data_get(o, "_elm_leaveme")) continue;
+             evas_object_clip_unset(o);
+          }
      }
 }
 
