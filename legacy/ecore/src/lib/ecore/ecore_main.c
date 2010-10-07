@@ -24,7 +24,7 @@
 #include <fcntl.h>
 
 #ifndef _MSC_VER
-#include <sys/time.h>
+# include <sys/time.h>
 # include <unistd.h>
 #else
 # include <float.h>
@@ -54,7 +54,7 @@
 #endif
 
 #ifdef USE_G_MAIN_LOOP
-#include <glib.h>
+# include <glib.h>
 #endif
 
 struct _Ecore_Fd_Handler
@@ -74,6 +74,9 @@ struct _Ecore_Fd_Handler
    Eina_Bool                write_active : 1;
    Eina_Bool                error_active : 1;
    Eina_Bool                delete_me : 1;
+#if defined(USE_G_MAIN_LOOP) && !defined(HAVE_EPOLL)
+   GPollFD                  gfd;
+#endif
 };
 
 #ifdef _WIN32
@@ -130,19 +133,20 @@ static double            t2 = 0.0;
 
 #ifdef HAVE_EPOLL
 static int epoll_fd = -1;
+static GPollFD ecore_epoll_fd;
 #endif
 
 #ifdef USE_G_MAIN_LOOP
-static GSource *ecore_epoll_source;
-static GPollFD ecore_epoll_fd;
-static guint ecore_epoll_id;
+static GSource *ecore_glib_source;
+static guint ecore_glib_source_id;
 static GMainLoop* ecore_main_loop;
 static gboolean ecore_idling;
 static gboolean ecore_fds_ready;
 #endif
 
 #ifdef HAVE_EPOLL
-static inline int _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
+static inline int
+_ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
 {
    int events = 0;
    if (fdh->flags & ECORE_FD_READ)  events |= EPOLLIN;
@@ -151,16 +155,30 @@ static inline int _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
    return events;
 }
 #else
-static inline int _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh __UNUSED__)
+static inline int
+_ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh __UNUSED__)
 {
    return 0;
 }
 #endif
 
-#ifdef HAVE_EPOLL
-static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
+#ifdef USE_G_MAIN_LOOP
+static inline int
+_gfd_events_from_fdh(Ecore_Fd_Handler *fdh)
+{
+   int events = 0;
+   if (fdh->flags & ECORE_FD_READ)  events |= G_IO_IN;
+   if (fdh->flags & ECORE_FD_WRITE) events |= G_IO_OUT;
+   if (fdh->flags & ECORE_FD_ERROR) events |= G_IO_ERR;
+   return events;
+}
+#endif
+
+static inline int
+_ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
+#ifdef HAVE_EPOLL
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -168,18 +186,26 @@ static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh)
    ev.data.ptr = fdh;
    INF("adding poll on %d %08x", fdh->fd, ev.events);
    r = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fdh->fd, &ev);
+#elif USE_G_MAIN_LOOP
+   fdh->gfd.fd = fdh->fd;
+   fdh->gfd.events = _gfd_events_from_fdh(fdh);
+   fdh->gfd.revents = 0;
+   INF("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
+   g_source_add_poll(ecore_glib_source, &fdh->gfd);
+#else
+   if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
+     {
+        ECORE_MAGIC_FAIL(fdh, ECORE_MAGIC_FD_HANDLER,
+                         "_ecore_main_fdh_poll_add");
+     }
+#endif
    return r;
 }
-#else
-static inline int _ecore_main_fdh_epoll_add(Ecore_Fd_Handler *fdh __UNUSED__)
-{
-   return 0;
-}
-#endif
 
-#ifdef HAVE_EPOLL
-static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
+static inline void
+_ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 {
+#ifdef HAVE_EPOLL
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -190,17 +216,26 @@ static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh)
      {
         ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
      }
-}
+#elif USE_G_MAIN_LOOP
+   fdh->gfd.fd = fdh->fd;
+   fdh->gfd.events = _gfd_events_from_fdh(fdh);
+   fdh->gfd.revents = 0;
+   INF("adding gpoll on %d %08x", fdh->fd, fdh->gfd.events);
+   g_source_add_poll(ecore_glib_source, &fdh->gfd);
 #else
-static inline void _ecore_main_fdh_epoll_del(Ecore_Fd_Handler *fdh __UNUSED__)
-{
-}
+   if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
+     {
+        ECORE_MAGIC_FAIL(fdh, ECORE_MAGIC_FD_HANDLER,
+                         "_ecore_main_fdh_poll_del");
+     }
 #endif
+}
 
-#ifdef HAVE_EPOLL
-static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
+static inline int
+_ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
+#ifdef HAVE_EPOLL
    struct epoll_event ev;
 
    memset(&ev, 0, sizeof (ev));
@@ -208,17 +243,23 @@ static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh)
    ev.data.ptr = fdh;
    INF("modifing epoll on %d to %08x", fdh->fd, ev.events);
    r = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fdh->fd, &ev);
+#elif USE_G_MAIN_LOOP
+   fdh->gfd.fd = fdh->fd;
+   fdh->gfd.events = _gfd_events_from_fdh(fdh);
+   fdh->gfd.revents = 0;
+   INF("modifing gpoll on %d to %08x", fdh->fd, fdh->gfd.events);
+#else
+   if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
+     {
+        ECORE_MAGIC_FAIL(fdh, ECORE_MAGIC_FD_HANDLER,
+                         "_ecore_main_fdh_poll_modify");
+     }
+#endif
    return r;
 }
-#else
-static inline int _ecore_main_fdh_epoll_modify(Ecore_Fd_Handler *fdh __UNUSED__)
-{
-   return 0;
-}
-#endif
 
 #ifdef HAVE_EPOLL
-static inline int _ecore_main_fdh_epoll_mark_active(void)
+static inline int _ecore_main_fdh_poll_mark_active(void)
 {
    struct epoll_event ev[32];
    int i, ret;
@@ -240,7 +281,7 @@ static inline int _ecore_main_fdh_epoll_mark_active(void)
         if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
           {
              ECORE_MAGIC_FAIL(fdh, ECORE_MAGIC_FD_HANDLER,
-                              "_ecore_main_fdh_epoll_mark_active");
+                              "_ecore_main_fdh_poll_mark_active");
              continue;
           }
         if (fdh->delete_me)
@@ -248,12 +289,9 @@ static inline int _ecore_main_fdh_epoll_mark_active(void)
              ERR("deleted fd in epoll");
              continue;
           }
-        if (ev->events & EPOLLIN)
-          fdh->read_active = 1;
-        if (ev->events & EPOLLOUT)
-          fdh->write_active = 1;
-        if (ev->events & EPOLLERR)
-          fdh->error_active = 1;
+        if (ev->events & EPOLLIN) fdh->read_active = 1;
+        if (ev->events & EPOLLOUT) fdh->write_active = 1;
+        if (ev->events & EPOLLERR) fdh->error_active = 1;
      }
 
    return ret;
@@ -261,6 +299,28 @@ static inline int _ecore_main_fdh_epoll_mark_active(void)
 #endif
 
 #ifdef USE_G_MAIN_LOOP
+
+static inline int _ecore_main_fdh_poll_mark_active(void)
+{
+   Ecore_Fd_Handler *fdh;
+   int ret = 0;
+
+   /* call the prepare callback for all handlers */
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
+     {
+        if (fdh->delete_me)
+           continue;
+        
+        if (fdh->gfd.revents & G_IO_IN) fdh->read_active = 1;
+        if (fdh->gfd.revents & G_IO_OUT) fdh->write_active = 1;
+        if (fdh->gfd.revents & G_IO_ERR) fdh->error_active = 1;
+        if (fdh->gfd.revents & (G_IO_IN|G_IO_OUT|G_IO_ERR)) ret++;
+     }
+
+   INF("found %d active fds", ret);
+
+   return ret;
+}
 
 /* like we are about to enter main_loop_select in  _ecore_main_select */
 static gboolean
@@ -315,7 +375,7 @@ _ecore_main_gsource_check(GSource *source)
    INF("enter");
    in_main_loop++;
 
-   ecore_fds_ready = (_ecore_main_fdh_epoll_mark_active() > 0);
+   ecore_fds_ready = (_ecore_main_fdh_poll_mark_active() > 0);
    _ecore_main_fd_handlers_cleanup();
 
    _ecore_time_loop_time = ecore_time_get();
@@ -418,17 +478,19 @@ _ecore_main_loop_init(void)
 #endif
 
 #ifdef USE_G_MAIN_LOOP
-   ecore_epoll_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
-   if (!ecore_epoll_source)
+   ecore_glib_source = g_source_new(&ecore_gsource_funcs, sizeof (GSource));
+   if (!ecore_glib_source)
       CRIT("Failed to create glib source for epoll!");
    else
      {
+#ifdef HAVE_EPOLL
         ecore_epoll_fd.fd = epoll_fd;
         ecore_epoll_fd.events = G_IO_IN;
         ecore_epoll_fd.revents = 0;
-        g_source_add_poll(ecore_epoll_source, &ecore_epoll_fd);
-        ecore_epoll_id = g_source_attach(ecore_epoll_source, NULL);
-        if (ecore_epoll_id <= 0)
+        g_source_add_poll(ecore_glib_source, &ecore_epoll_fd);
+#endif
+        ecore_glib_source_id = g_source_attach(ecore_glib_source, NULL);
+        if (ecore_glib_source_id <= 0)
            CRIT("Failed to attach glib source to default context");
      }
 #endif
@@ -439,10 +501,10 @@ void
 _ecore_main_loop_shutdown(void)
 {
 #ifdef USE_G_MAIN_LOOP
-   if (ecore_epoll_source)
+   if (ecore_glib_source)
      {
-        g_source_destroy(ecore_epoll_source);
-        ecore_epoll_source = NULL;
+        g_source_destroy(ecore_glib_source);
+        ecore_glib_source = NULL;
      }
 #endif
 
@@ -605,15 +667,15 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    Ecore_Fd_Handler *fdh;
 
    if ((fd < 0) || (flags == 0) || (!func)) return NULL;
-
+   
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
    if (!fdh) return NULL;
    ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
    fdh->fd = fd;
    fdh->flags = flags;
-   if (0 > _ecore_main_fdh_epoll_add(fdh))
+   if (_ecore_main_fdh_poll_add(fdh) < 0)
      {
-        ERR("Failed to add epoll fd %d (errno = %d)!", fd, errno);
+        ERR("Failed to add poll on fd %d (errno = %d)!", fd, errno);
         free(fdh);
         return NULL;
      }
@@ -626,8 +688,8 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    fdh->buf_func = buf_func;
    fdh->buf_data = (void *)buf_data;
    fd_handlers = (Ecore_Fd_Handler *)
-     eina_inlist_append(EINA_INLIST_GET(fd_handlers),
-                        EINA_INLIST_GET(fdh));
+      eina_inlist_append(EINA_INLIST_GET(fd_handlers),
+                         EINA_INLIST_GET(fdh));
    return fdh;
 }
 
@@ -647,8 +709,8 @@ ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data)
    wh->func = func;
    wh->data = (void *)data;
    win32_handlers = (Ecore_Win32_Handler *)
-     eina_inlist_append(EINA_INLIST_GET(win32_handlers),
-                        EINA_INLIST_GET(wh));
+      eina_inlist_append(EINA_INLIST_GET(win32_handlers),
+                         EINA_INLIST_GET(wh));
    return wh;
 }
 #else
@@ -683,7 +745,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
      }
    fd_handler->delete_me = 1;
    fd_handlers_delete_me = 1;
-   _ecore_main_fdh_epoll_del(fd_handler);
+   _ecore_main_fdh_poll_del(fd_handler);
    return fd_handler->data;
 }
 
@@ -719,7 +781,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_F
         return;
      }
    fd_handler->prep_func = func;
-   fd_handler->prep_data = (void *) data;
+   fd_handler->prep_data = (void *)data;
 }
 
 /**
@@ -782,9 +844,9 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
         return;
      }
    fd_handler->flags = flags;
-   if (0 > _ecore_main_fdh_epoll_modify(fd_handler))
+   if (_ecore_main_fdh_poll_modify(fd_handler) < 0)
      {
-       ERR("Failed to mod epoll fd %d!", fd_handler->fd);
+        ERR("Failed to mod epoll fd %d!", fd_handler->fd);
      }
 }
 
@@ -927,7 +989,7 @@ _ecore_main_select(double timeout)
    if (ret > 0)
      {
 #ifdef HAVE_EPOLL
-        _ecore_main_fdh_epoll_mark_active();
+        _ecore_main_fdh_poll_mark_active();
 #else /* HAVE_EPOLL */
         Ecore_Fd_Handler *fdh;
 
@@ -995,11 +1057,11 @@ _ecore_main_fd_handlers_bads_rem(void)
     }
    if (found == 0)
      {
-#ifdef HAVE_GLIB
+# ifdef HAVE_GLIB
         ERR("No bad fd found. Maybe a foreign fd from glib?");
-#else        
+# else        
         ERR("No bad fd found. EEEK!");
-#endif        
+# endif        
      }
    _ecore_main_fd_handlers_cleanup();
 }
@@ -1203,7 +1265,7 @@ _ecore_main_loop_iterate_internal(int once_only)
      {
         t2 = ecore_time_get();
         if ((t1 > 0.0) && (t2 > 0.0))
-          _ecore_fps_debug_runtime_add(t2 - t1);
+           _ecore_fps_debug_runtime_add(t2 - t1);
      }
    start_loop:
    /* any timers re-added as a result of these are allowed to go */
@@ -1393,14 +1455,14 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
         WSANETWORKEVENTS network_event;
 
         WSAEnumNetworkEvents(sockets[result], objects[result], &network_event);
-
+        
         if (network_event.lNetworkEvents & FD_READ)
-          FD_SET(sockets[result], readfds);
+           FD_SET(sockets[result], readfds);
         if (network_event.lNetworkEvents & FD_WRITE)
-          FD_SET(sockets[result], writefds);
+           FD_SET(sockets[result], writefds);
         if (network_event.lNetworkEvents & FD_OOB)
-          FD_SET(sockets[result], exceptfds);
-
+           FD_SET(sockets[result], exceptfds);
+        
         res = 1;
      }
    else if ((result >= (WAIT_OBJECT_0 + events_nbr)) && 
@@ -1420,7 +1482,7 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
         while (win32_handler_current)
           {
              wh = win32_handler_current;
-
+             
              if (objects[result - WAIT_OBJECT_0] == wh->h)
                {
                   if (!wh->delete_me)
