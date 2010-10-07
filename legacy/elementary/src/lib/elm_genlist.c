@@ -310,8 +310,6 @@ struct _Elm_Genlist_Item
    Evas_Coord dx, dy;
 
    Elm_Genlist_Item *rel;
-   int relcount;
-   int walking;
 
    struct
      {
@@ -323,6 +321,10 @@ struct _Elm_Genlist_Item
 
    const char *mouse_cursor;
 
+   int relcount;
+   int walking;
+   int expanded_depth;
+   
    Eina_Bool before : 1;
 
    Eina_Bool want_unrealize : 1;
@@ -1081,6 +1083,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    evas_object_color_set(it->spacer, 0, 0, 0, 0);
    elm_widget_sub_object_add(it->base.widget, it->spacer);
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent) depth += 1;
+   it->expanded_depth = depth;
    treesize = edje_object_data_get(it->base.view, "treesize");
    if (treesize) tsize = atoi(treesize);
    evas_object_size_hint_min_set(it->spacer,
@@ -1832,6 +1835,7 @@ _item_new(Widget_Data *wd, const Elm_Genlist_Item_Class *itc,
    it->func.func = func;
    it->func.data = func_data;
    it->mouse_cursor = NULL;
+   it->expanded_depth = 0;
    return it;
 }
 
@@ -2740,6 +2744,21 @@ elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
 {
    if (!it) return EINA_FALSE;
    return it->expanded;
+}
+
+/**
+ * Get the depth of expanded item
+ *
+ * @param it The genlist item object
+ * @return The depth of expanded item
+ *
+ * @ingroup Genlist
+ */
+EAPI int
+elm_genlist_item_expanded_depth_get(Elm_Genlist_Item *it)
+{
+   if (!it) return 0;
+   return it->expanded_depth;
 }
 
 /**

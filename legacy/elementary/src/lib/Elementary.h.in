@@ -1314,6 +1314,7 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_item_selected_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Eina_Bool expanded);
    EAPI Eina_Bool         elm_genlist_item_expanded_get(const Elm_Genlist_Item *item);
+   EAPI int               elm_genlist_item_expanded_depth_get(Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Eina_Bool disabled);
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_display_only_set(Elm_Genlist_Item *it, Eina_Bool display_only);
