@@ -49,7 +49,8 @@ static Eina_List  *efreet_dirs_get(const char *key,
 int
 efreet_base_init(void)
 {
-    _efreet_base_log_dom = eina_log_domain_register("Efreet_base", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_base_log_dom = eina_log_domain_register
+      ("efreet_base", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_base_log_dom < 0)
     {
         ERROR("Efreet: Could not create a log domain for efreet_base.\n");

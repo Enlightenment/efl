@@ -154,10 +154,11 @@ efreet_desktop_init(void)
 {
     char buf[PATH_MAX];
 
-    _efreet_desktop_log_dom = eina_log_domain_register("Efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_desktop_log_dom = eina_log_domain_register
+      ("efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_desktop_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for Efreet_desktop");
+        ERROR("Efreet: Could not create a log domain for efreet_desktop");
         return 0;
     }
     if (!ecore_file_init())

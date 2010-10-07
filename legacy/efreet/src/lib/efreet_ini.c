@@ -36,7 +36,8 @@ efreet_ini_value_save(const Eina_Hash *hash, const void *key, void *data, void *
 int
 efreet_ini_init(void)
 {
-    _efreet_ini_log_dom = eina_log_domain_register("Efreet_init", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_ini_log_dom = eina_log_domain_register
+      ("efreet_init", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_ini_log_dom < 0)
     {
         ERROR("Efreet: Could not create a log domain for efreet_init");

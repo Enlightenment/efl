@@ -36,11 +36,10 @@ efreet_init(void)
         return --_efreet_init_count;
     if (!eet_init())
         goto shutdown_eina;
-    _efreet_log_domain_global = eina_log_domain_register("Efreet", EFREET_DEFAULT_LOG_COLOR);
-    if (_efreet_log_domain_global < 0) 
+    _efreet_log_domain_global = eina_log_domain_register("efreet", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_log_domain_global < 0)
     {
-        printf("Efreet could create a general log domain.\n");
-
+       EINA_LOG_ERR("Efreet could create a general log domain.");
         goto shutdown_eet;
     }
 

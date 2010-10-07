@@ -55,11 +55,12 @@ efreet_xml_init(void)
 {
     _efreet_xml_init_count++;
     if (_efreet_xml_init_count > 1) return _efreet_xml_init_count;
-    _efreet_xml_log_dom = eina_log_domain_register("Efreet_xml", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_xml_log_dom = eina_log_domain_register
+      ("efreet_xml", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_xml_log_dom < 0)
     {
         _efreet_xml_init_count--;
-        ERROR("Efreet: Could not create a log domain for Efreet_xml.");
+        ERROR("Efreet: Could not create a log domain for efreet_xml.");
         return _efreet_xml_init_count;
     }
     return _efreet_xml_init_count;

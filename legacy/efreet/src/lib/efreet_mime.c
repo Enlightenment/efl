@@ -224,11 +224,12 @@ efreet_mime_init(void)
     if (!efreet_init())
         goto shutdown_ecore_file;
 
-    _efreet_mime_log_dom = eina_log_domain_register("Efreet_mime", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_mime_log_dom = eina_log_domain_register
+      ("efreet_mime", EFREET_DEFAULT_LOG_COLOR);
 
     if (_efreet_mime_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for Efreet_mime.");
+        ERROR("Efreet: Could not create a log domain for efreet_mime.");
         goto shutdown_efreet;
     }
 

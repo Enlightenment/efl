@@ -461,10 +461,11 @@ efreet_menu_init(void)
         {NULL, NULL}
     };
 
-    _efreet_menu_log_dom = eina_log_domain_register("Efreet_menu", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_menu_log_dom = eina_log_domain_register
+      ("efreet_menu", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_menu_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for Efreet_menu");
+        ERROR("Efreet: Could not create a log domain for efreet_menu");
         return 0;
     }
     if (!efreet_xml_init())
