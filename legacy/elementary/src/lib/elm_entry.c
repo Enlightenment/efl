@@ -268,6 +268,9 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
+   if (elm_widget_disabled_get(obj))
+      edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
+   edje_object_message_signal_process(wd->ent);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }

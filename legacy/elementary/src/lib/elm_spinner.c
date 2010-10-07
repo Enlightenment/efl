@@ -39,9 +39,10 @@ struct _Widget_Data
    Eina_Bool editable : 1;
 };
 
-struct _Elm_Spinner_Special_Value {
-     double value;
-     const char *label;
+struct _Elm_Spinner_Special_Value
+{
+   double value;
+   const char *label;
 };
 
 static const char *widtype = NULL;
@@ -65,11 +66,13 @@ _del_hook(Evas_Object *obj)
    if (wd->delay) ecore_timer_del(wd->delay);
    if (wd->spin) ecore_timer_del(wd->spin);
    if (wd->special_values)
-       EINA_LIST_FREE(wd->special_values, sv)
-       {
-           eina_stringshare_del(sv->label);
-           free(sv);
-       }
+     {
+        EINA_LIST_FREE(wd->special_values, sv)
+          {
+             eina_stringshare_del(sv->label);
+             free(sv);
+          }
+     }
    free(wd);
 }
 
@@ -79,9 +82,9 @@ _disable_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (elm_widget_disabled_get(obj))
-     edje_object_signal_emit(wd->spinner, "elm,state,disabled", "elm");
+      edje_object_signal_emit(wd->spinner, "elm,state,disabled", "elm");
    else
-     edje_object_signal_emit(wd->spinner, "elm,state,enabled", "elm");
+      edje_object_signal_emit(wd->spinner, "elm,state,enabled", "elm");
 }
 
 static void
@@ -98,7 +101,7 @@ _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_callback_add(wd->spinner, emission,
-	 source, func_cb, data);
+                                   source, func_cb, data);
 }
 
 static void *
@@ -107,7 +110,7 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return edje_object_signal_callback_del(wd->spinner, emission, source,
-	 func_cb);
+                                          func_cb);
 }
 
 static void
@@ -118,12 +121,14 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->spinner, "spinner", "base", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
    _write_label(obj);
+   if (elm_widget_focus_get(obj))
+      edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
+   else
+      edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
+   if (elm_widget_disabled_get(obj))
+      edje_object_signal_emit(wd->spinner, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->spinner);
    edje_object_scale_set(wd->spinner, elm_widget_scale_get(obj) * _elm_config->scale);
-   if (elm_widget_focus_get(obj))
-     edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
-   else
-     edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
    _sizing_eval(obj);
 }
 
@@ -207,11 +212,13 @@ _write_label(Evas_Object *obj)
    char buf[1024];
    if (!wd) return;
    EINA_LIST_FOREACH(wd->special_values, l, sv)
-      if (sv->value == wd->val)
-	{
-	   snprintf(buf, sizeof(buf), "%s", sv->label);
-	   goto apply;
-	}
+     {
+        if (sv->value == wd->val)
+          {
+             snprintf(buf, sizeof(buf), "%s", sv->label);
+             goto apply;
+          }
+     }
    if (wd->label)
      snprintf(buf, sizeof(buf), wd->label, wd->val);
    else

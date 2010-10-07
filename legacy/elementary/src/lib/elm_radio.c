@@ -133,6 +133,11 @@ _theme_hook(Evas_Object *obj)
    else
      edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
    edje_object_part_text_set(wd->radio, "elm.text", wd->label);
+   if (elm_widget_disabled_get(obj))
+     {
+        edje_object_signal_emit(wd->radio, "elm,state,disabled", "elm");
+        if (wd->state) _state_set(obj, 0);
+     }
    edje_object_message_signal_process(wd->radio);
    edje_object_scale_set(wd->radio, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);

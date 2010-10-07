@@ -95,6 +95,8 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    elm_object_style_set(wd->entry, elm_widget_style_get(obj));
    elm_object_style_set(wd->scroller, elm_widget_style_get(obj));
+   elm_object_disabled_set(wd->entry, elm_widget_disabled_get(obj));
+   elm_object_disabled_set(wd->scroller, elm_widget_disabled_get(obj));
 }
 
 static void

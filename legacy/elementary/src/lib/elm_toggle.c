@@ -122,6 +122,8 @@ _theme_hook(Evas_Object *obj)
    edje_object_part_text_set(wd->tgl, "elm.text", wd->label);
    edje_object_part_text_set(wd->tgl, "elm.ontext", wd->ontext);
    edje_object_part_text_set(wd->tgl, "elm.offtext", wd->offtext);
+   if (elm_widget_disabled_get(obj))
+     edje_object_signal_emit(wd->tgl, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->tgl);
    edje_object_scale_set(wd->tgl, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);

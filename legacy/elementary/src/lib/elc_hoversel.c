@@ -84,10 +84,11 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    elm_hoversel_hover_end(obj);
    if (wd->horizontal)
-     snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
+      snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
    else
-     snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
+      snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
    elm_object_style_set(wd->btn, buf);
+   elm_object_disabled_set(wd->btn, elm_widget_disabled_get(obj));
 }
 
 static void
@@ -95,10 +96,7 @@ _disable_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (elm_widget_disabled_get(obj))
-     elm_widget_disabled_set(wd->btn, 1);
-   else
-     elm_widget_disabled_set(wd->btn, 0);
+   elm_object_disabled_set(wd->btn, elm_widget_disabled_get(obj));
 }
 
 static void

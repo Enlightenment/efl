@@ -99,18 +99,20 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    _elm_theme_object_set(obj, wd->chk, "check", "base", elm_widget_style_get(obj));
    if (wd->icon)
-     edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,icon,visible", "elm");
    else
-     edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,icon,hidden", "elm");
    if (wd->state)
-     edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,check,on", "elm");
    else
-     edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,check,off", "elm");
    if (wd->label)
-     edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
    else
-     edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
    edje_object_part_text_set(wd->chk, "elm.text", wd->label);
+   if (elm_widget_disabled_get(obj))
+      edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->chk);
    edje_object_scale_set(wd->chk, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
@@ -122,9 +124,9 @@ _disable_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (elm_widget_disabled_get(obj))
-     edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
    else
-     edje_object_signal_emit(wd->chk, "elm,state,enabled", "elm");
+      edje_object_signal_emit(wd->chk, "elm,state,enabled", "elm");
 }
 
 static void
