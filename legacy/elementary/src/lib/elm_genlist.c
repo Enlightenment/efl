@@ -248,7 +248,7 @@ struct _Widget_Data
    Evas_Object *obj, *scr, *pan_smart;
    Eina_Inlist *items, *blocks;
    Pan *pan;
-   Evas_Coord pan_x, pan_y, minw, minh, realminw;
+   Evas_Coord pan_x, pan_y, w, h, minw, minh, realminw;
    Ecore_Job *calc_job, *update_job;
    Ecore_Idler *queue_idler;
    Eina_List *queue, *selected;
@@ -263,6 +263,7 @@ struct _Widget_Data
    Eina_Bool no_select : 1;
    Eina_Bool bring_in : 1;
    Eina_Bool compress : 1;
+   Eina_Bool height_for_width : 1;
    Eina_Bool homogeneous : 1;
    Eina_Bool clear_me : 1;
    int walking;
@@ -1188,7 +1189,9 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 	if (!it->mincalcd)
 	  {
 	     Evas_Coord mw = -1, mh = -1;
-             
+
+             if (it->wd->height_for_width) mw = it->wd->w;
+
              if (!it->display_only)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
 	     edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
@@ -1414,10 +1417,19 @@ _calc_job(void *data)
 {
    Widget_Data *wd = data;
    Item_Block *itb;
-   Evas_Coord minw = -1, minh = 0, y = 0, ow, oh;
+   Evas_Coord minw = -1, minh = 0, y = 0, ow;
    Item_Block *chb = NULL;
    int in = 0, minw_change = 0;
+   Eina_Bool changed = EINA_FALSE;
    if (!wd) return;
+
+   evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &wd->h);
+   if (wd->w != ow)
+     {
+        wd->w = ow;
+        if (wd->height_for_width) changed = EINA_TRUE;
+     }
+
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
 	int showme = 0;
@@ -1429,8 +1441,16 @@ _calc_job(void *data)
 	  {
 	     if (itb->realized) _item_block_unrealize(itb);
 	  }
-	if (itb->changed)
+	if ((itb->changed) || (changed))
 	  {
+             if (changed)
+               {
+                  Eina_List *l;
+                  Elm_Genlist_Item *it;
+                  EINA_LIST_FOREACH(itb->items, l, it)
+                    if (it->mincalcd) it->mincalcd = EINA_FALSE;
+                  itb->changed = EINA_TRUE;
+               }
 	     if (itb->realized) _item_block_unrealize(itb);
 	     showme = _item_block_recalc(itb, in, 0, 1);
 	     chb = itb;
@@ -1481,9 +1501,8 @@ _calc_job(void *data)
              if (itb->realized) _item_block_unrealize(itb);
           }
      }
-   evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &oh);
    wd->realminw = minw;
-   if (minw < ow) minw = ow;
+   if (minw < wd->w) minw = wd->w;
    if ((minw != wd->minw) || (minh != wd->minh))
      {
 	wd->minw = minw;
@@ -3598,6 +3617,59 @@ elm_genlist_compress_mode_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->compress;
+}
+
+/**
+ * Set height-for-width mode
+ *
+ * With height-for-width mode the item width will be fixed (restricted
+ * to a minimum of) to the list width when calculating its size in
+ * order to allow the height to be calculated based on it. This allow,
+ * for instance, text block to wrap lines if the Edje part is
+ * configured with "text.min: 0 1".
+ *
+ * @note This mode will make list resize slower as it will have to
+ *       recalculate every item height again whenever the list width
+ *       changes!
+ *
+ * @note When height-for-width mode is enabled, it also enables
+ *       compress mode (see elm_genlist_compress_mode_set()) and
+ *       disables homogeneous (see elm_genlist_homogeneous_set()).
+ *
+ * @param obj The genlist object
+ * @param setting The height-for-width mode (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->height_for_width = !!height_for_width;
+   if (wd->height_for_width)
+     {
+        elm_genlist_homogeneous_set(obj, EINA_FALSE);
+        elm_genlist_compress_mode_set(obj, EINA_TRUE);
+     }
+}
+
+/**
+ * Get the height-for-width mode
+ *
+ * @param obj The genlist object
+ * @return The height-for-width mode (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool
+elm_genlist_height_for_width_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->height_for_width;
 }
 
 /**
