@@ -144,10 +144,12 @@ _edje_box_layout_anim_new(Evas_Object *box)
 }
 
 void
-_edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Box *chosen_desc)
+_edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params *p3 __UNUSED__, Edje_Part_Description_Box *chosen_desc)
 {
    Evas_Object_Box_Data *priv;
+#if 0
    int min_w, min_h;
+#endif
    if ((ep->param2) && (ep->description_pos != ZERO))
      {
         Edje_Part_Description_Box *param2_desc = (Edje_Part_Description_Box *)ep->param2->description;
@@ -171,9 +173,10 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
           }
         evas_object_smart_changed(ep->object);
      }
-   else {
-      ep->anim->end.layout = NULL;
-   }
+   else
+     {
+        ep->anim->end.layout = NULL;
+     }
 
    if (ep->description_pos < 0.01 || !ep->anim->start.layout)
      {
@@ -192,11 +195,13 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
 	evas_object_smart_need_recalculate_set(ep->object, 0);
 	evas_object_smart_calculate(ep->object);
      }
+#if 0 /* Why the hell do we affect part size after resize ??? */
    evas_object_size_hint_min_get(ep->object, &min_w, &min_h);
    if (chosen_desc->box.min.h && (p3->w < min_w))
      p3->w = min_w;
    if (chosen_desc->box.min.v && (p3->h < min_h))
      p3->h = min_h;
+#endif
 }
 
 Eina_Bool
@@ -225,6 +230,7 @@ _edje_box_layout_remove_child(Edje_Real_Part *rp, Evas_Object *child_obj)
              free(eina_list_data_get(l));
              rp->anim->objs = eina_list_remove_list(rp->anim->objs, l);
              rp->anim->recalculate = EINA_TRUE;
+             break;
           }
      }
    rp->anim->recalculate = EINA_TRUE;
