@@ -33,7 +33,6 @@
 #  include <sys/param.h>
 #  include <sys/sysctl.h>
 # elif defined (__linux__) || defined(__GLIBC__)
-#  define _GNU_SOURCE
 #  include <sched.h>
 # endif
 # ifdef EFL_HAVE_POSIX_THREADS

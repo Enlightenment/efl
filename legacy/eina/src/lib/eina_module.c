@@ -20,10 +20,6 @@
 # include "config.h"
 #endif
 
-#ifdef HAVE_DLADDR
-# define _GNU_SOURCE
-#endif
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__

@@ -33,8 +33,6 @@
 # include "config.h"
 #endif
 
-#define _GNU_SOURCE
-
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
