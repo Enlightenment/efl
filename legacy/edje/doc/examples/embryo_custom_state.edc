@@ -1,0 +1,134 @@
+collections {
+   group { name: "main";
+      script {
+         /* define 3 global vars to hold the rotation values */
+         public rotx;
+         public roty;
+         public rotz;
+      }
+      parts {
+         part { name: "bg";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "title";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "Click labels to rotate";
+                  font: "Sans";
+                  size: 12;
+                  align: 0.5 0.0;
+               }
+            }
+         }
+         part { name: "X";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "Rot X (0)";
+                  font: "Sans";
+                  size: 12;
+                  align: 0.1 0.5;
+               }
+            }
+         }
+         part { name: "Y";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "Rot Y (0)";
+                  font: "Sans";
+                  size: 12;
+                  align: 0.5 0.9;
+               }
+            }
+         }
+         part { name: "Z";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "Rot Z (0)";
+                  font: "Sans";
+                  size: 12;
+                  align: 0.9 0.5;
+               }
+            }
+         }
+         part { name: "rect";
+            type: RECT;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               color: 255 0 0 150;
+               max: 150 150;
+               align: 0.5 0.5;
+               map {
+                  on: 1;
+                  perspective_on: 1;
+                  smooth: 1;
+                  alpha: 1;
+               }
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "mouse,down,1";
+            source: "X";
+            script {
+               /* define local vars */
+               new buf[32];
+               new Float:x;
+
+               /* get global var (and increment) */
+               x = get_int(rotx) + 10;
+               /* set global var */
+               set_int(rotx, round(x));
+               /* crete a new custom state (inherit from default 0.0) */
+               custom_state(PART:"rect", "default", 0.0);
+               /* change the rotation in the custom state */
+               set_state_val(PART:"rect", STATE_MAP_ROT_X, x);
+               /* apply the custom state */
+               set_state(PART:"rect", "custom", 0.0);
+               /* update the label to show the current value */
+               snprintf(buf, sizeof(buf), "Rot X (%d)", round(x));
+               set_text(PART:"X", buf);
+            }
+         }
+         program {
+            signal: "mouse,down,1";
+            source: "Y";
+            script {
+               new buf[32];
+               new Float:y = get_int(roty) + 10;
+               set_int(roty, round(y));
+               custom_state(PART:"rect", "default", 0.0);
+               set_state_val(PART:"rect", STATE_MAP_ROT_Y, y);
+               set_state(PART:"rect", "custom", 0.0);
+               snprintf(buf, sizeof(buf), "Rot Y (%d)", round(y));
+               set_text(PART:"Y", buf);
+            }
+         }
+         program {
+            signal: "mouse,down,1";
+            source: "Z";
+            script {
+               new buf[32];
+               new Float:z = get_int(rotz) + 10;
+               set_int(rotz, round(z));
+               custom_state(PART:"rect", "default", 0.0);
+               set_state_val(PART:"rect", STATE_MAP_ROT_Z, z);
+               set_state(PART:"rect", "custom", 0.0);
+               snprintf(buf, sizeof(buf), "Rot Z (%d)", round(z));
+               set_text(PART:"Z", buf);
+            }
+         }
+      }
+   }
+}
