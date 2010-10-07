@@ -99,9 +99,12 @@ _edje_box_layout(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
    Edje_Part_Box_Animation *anim = data;
    if (anim->progress < 0.01)
      {
-        evas_object_box_padding_set(obj, anim->start.padding.x, anim->start.padding.y);
-        evas_object_box_align_set(obj, TO_DOUBLE(anim->start.align.x), TO_DOUBLE(anim->start.align.y));
-        anim->start.layout(obj, priv, anim->start.data);
+        if (anim->start.layout)
+          {
+             evas_object_box_padding_set(obj, anim->start.padding.x, anim->start.padding.y);
+             evas_object_box_align_set(obj, TO_DOUBLE(anim->start.align.x), TO_DOUBLE(anim->start.align.y));
+             anim->start.layout(obj, priv, anim->start.data);
+          }
         return;
      }
 
