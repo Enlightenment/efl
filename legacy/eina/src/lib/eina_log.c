@@ -266,6 +266,7 @@
 #include <stdlib.h>
 #include <fnmatch.h>
 #include <assert.h>
+#include <errno.h>
 
 #ifndef _MSC_VER
 # include <unistd.h>
@@ -340,6 +341,7 @@ static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 #ifdef EFL_HAVE_THREADS
 
 static Eina_Bool _threads_enabled = EINA_FALSE;
+static Eina_Bool _threads_inited = EINA_FALSE;
 
 # ifdef EFL_HAVE_POSIX_THREADS
 
@@ -364,6 +366,18 @@ static pthread_t _main_thread;
 #  ifdef EFL_HAVE_POSIX_THREADS_SPINLOCK
 
 static pthread_spinlock_t _log_lock;
+
+static Eina_Bool _eina_log_spinlock_init(void)
+{
+   if (pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE) == 0)
+     return EINA_TRUE;
+
+   fprintf(stderr,
+           "ERROR: pthread_spin_init(%p, PTHREAD_PROCESS_PRIVATE): %s\n",
+           &_log_lock, strerror(errno));
+   return EINA_FALSE;
+}
+
 #   define LOG_LOCK()                                                  \
    if (_threads_enabled)                                               \
          do {                                                          \
@@ -383,7 +397,7 @@ static pthread_spinlock_t _log_lock;
                        "---LOG LOG_UNLOCKED! [%s, %lu]\n",             \
                        __FUNCTION__, (unsigned long)pthread_self()); } \
          } while (0)
-#   define INIT() pthread_spin_init(&_log_lock, PTHREAD_PROCESS_PRIVATE)
+#   define INIT() _eina_log_spinlock_init()
 #   define SHUTDOWN() pthread_spin_destroy(&_log_lock)
 
 #  else /* ! EFL_HAVE_POSIX_THREADS_SPINLOCK */
@@ -1686,9 +1700,10 @@ eina_log_shutdown(void)
 void
 eina_log_threads_init(void)
 {
+   if (_threads_inited) return;
    _main_thread = SELF();
-   if (INIT())
-      _threads_enabled = EINA_TRUE;
+   if (!INIT()) return;
+   _threads_inited = EINA_TRUE;
 }
 
 /**
@@ -1703,9 +1718,11 @@ eina_log_threads_init(void)
 void
 eina_log_threads_shutdown(void)
 {
+   if (!_threads_inited) return;
    CHECK_MAIN();
    SHUTDOWN();
    _threads_enabled = EINA_FALSE;
+   _threads_inited = EINA_FALSE;
 }
 
 #endif
@@ -1836,7 +1853,9 @@ EAPI void
 eina_log_threads_enable(void)
 {
 #ifdef EFL_HAVE_THREADS
-   _threads_enabled = 1;
+   if (_threads_enabled) return;
+   if (!_threads_inited) eina_log_threads_init();
+   _threads_enabled = EINA_TRUE;
    eina_log_print_prefix_update();
 #endif
 }
