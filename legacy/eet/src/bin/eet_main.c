@@ -333,7 +333,7 @@ main(int argc, char ** argv)
    if (!eet_init())
       return -1;
 
-   _eet_main_log_dom = eina_log_domain_register("Eet_Main",EINA_COLOR_CYAN);
+   _eet_main_log_dom = eina_log_domain_register("eet_main", EINA_COLOR_CYAN);
    if(_eet_main_log_dom < -1)
      {
         EINA_LOG_ERR("Impossible to create a log domain for eet_main.\n");

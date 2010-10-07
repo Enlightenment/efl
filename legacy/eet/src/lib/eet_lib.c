@@ -715,7 +715,7 @@ eet_init(void)
         return --eet_init_count;
      }
 
-   _eet_log_dom_global = eina_log_domain_register("Eet", EET_DEFAULT_LOG_COLOR);
+   _eet_log_dom_global = eina_log_domain_register("eet", EET_DEFAULT_LOG_COLOR);
    if (_eet_log_dom_global < 0)
      {
         EINA_LOG_ERR("Eet Can not create a general log domain.");
