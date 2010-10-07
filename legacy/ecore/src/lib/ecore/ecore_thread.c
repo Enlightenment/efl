@@ -9,9 +9,6 @@
 #ifdef EFL_HAVE_PTHREAD
 # include <pthread.h>
 # ifdef __linux__
-#  ifndef _GNU_SOURCE
-#   define _GNU_SOURCE 1
-#  endif
 #  include <sched.h>
 #  include <sys/time.h>
 #  include <sys/resource.h>
