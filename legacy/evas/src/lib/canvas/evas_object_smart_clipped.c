@@ -20,14 +20,14 @@
 EAPI void
 evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 {
-   Eina_List *lst, *itr;
+   const Eina_Inlist *lst;
    Evas_Object *child;
 
    if ((dx == 0) && (dy == 0))
      return;
 
-   lst = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(lst, itr, child)
+   lst = evas_object_smart_members_get_direct(obj);
+   EINA_INLIST_FOREACH(lst, child)
      {
 	Evas_Coord orig_x, orig_y;
 
@@ -39,8 +39,6 @@ evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_C
         orig_y = child->cur.geometry.y;
 	evas_object_move(child, orig_x + dx, orig_y + dy);
      }
-
-   eina_list_free(lst);
 }
 
 /**
@@ -89,9 +87,6 @@ evas_object_smart_clipped_smart_add(Evas_Object *obj)
 static void
 evas_object_smart_clipped_smart_del(Evas_Object *obj)
 {
-   Eina_List *lst, *itr;
-   Evas_Object *data;
-
    CSO_DATA_GET_OR_RETURN(obj, cso);
 
    if (cso->clipper)
@@ -101,10 +96,7 @@ evas_object_smart_clipped_smart_del(Evas_Object *obj)
 	evas_object_del(clipper);
      }
 
-   lst = evas_object_smart_members_get(obj);
-   EINA_LIST_FOREACH(lst, itr, data)
-     evas_object_del(data);
-   eina_list_free(lst);
+   _evas_object_smart_members_all_del(obj);
 
    free(cso);
    evas_object_smart_data_set(obj, NULL);

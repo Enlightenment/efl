@@ -739,6 +739,7 @@ void evas_object_smart_member_lower(Evas_Object *member);
 void evas_object_smart_member_stack_above(Evas_Object *member, Evas_Object *other);
 void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other);
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
+void _evas_object_smart_members_all_del(Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
 void *evas_mem_calloc(int size);
 void _evas_post_event_callback_call(Evas *e);
@@ -820,6 +821,7 @@ void evas_render_object_recalc(Evas_Object *obj);
 Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
 
+         
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
 

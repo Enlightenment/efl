@@ -362,6 +362,14 @@ evas_object_smart_members_get_direct(const Evas_Object *obj)
    return o->contained;
 }
 
+void
+_evas_object_smart_members_all_del(Evas_Object *obj)
+{
+   Evas_Object_Smart *o = (Evas_Object_Smart *)(obj->object_data);
+   while (o->contained)
+      evas_object_del((Evas_Object *)(o->contained));
+}
+
 /**
  * Instantiates a new smart object described by @p s.
  *
