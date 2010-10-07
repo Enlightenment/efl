@@ -993,6 +993,12 @@ static Elm_Genlist_Item_Class itc4;
 static void
 gl4_sel(void *data, Evas_Object *obj, void *event_info)
 {
+   Elm_Genlist_Item *it = (Elm_Genlist_Item *)event_info;
+   int depth = 0;
+
+   depth = elm_genlist_item_expanded_depth_get(it);
+   printf("expanded depth for selected item is %d\n", depth);
+
 }
 static void
 gl4_exp(void *data, Evas_Object *obj, void *event_info)
