@@ -2199,7 +2199,7 @@ _smart_hide(Evas_Object *obj)
 static void
 _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY;
    if ((list = evas_object_smart_members_get(obj)))
@@ -2215,7 +2215,7 @@ _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 static void
 _smart_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY;
    if ((list = evas_object_smart_members_get(obj)))
@@ -2231,7 +2231,7 @@ _smart_clip_set(Evas_Object *obj, Evas_Object *clip)
 static void
 _smart_clip_unset(Evas_Object *obj)
 {
-   Eina_List *list, *l;
+   Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY;
 //   evas_object_clip_unset(sd->resize_obj);
