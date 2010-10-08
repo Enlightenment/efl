@@ -1338,6 +1338,22 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    sd->rh = h;
    if (sd->on_show_region_func)
       sd->on_show_region_func(sd->on_show_region_data, obj);
+   else
+     {
+        Evas_Object *parent_obj;
+        do
+          {
+             parent_obj = sd->parent_obj;
+             sd = evas_object_smart_data_get(parent_obj);
+             if ((!parent_obj) || (!sd) || (!_elm_widget_is(parent_obj))) break;
+             if (sd->on_show_region_func)
+               {
+                  sd->on_show_region_func(sd->on_show_region_data, obj);
+                  break;
+               }
+          }
+        while (parent_obj);
+     }
 }
 
 EAPI void
