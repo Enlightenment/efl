@@ -1107,7 +1107,7 @@ mark_up(const char *start, int inlen, int *lenp){
   int l,i;
   const char *p;
   char *q,*ret;
-  char *endp = NULL;
+  const char *endp = NULL;
 
   if (!start) return NULL;
   if (inlen >= 0)
