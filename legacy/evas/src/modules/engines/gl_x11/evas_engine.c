@@ -1405,6 +1405,8 @@ eng_image_size_set(void *data, void *image, int w, int h)
      {
         evas_gl_common_texture_free(im->tex);
         im->tex = NULL;
+        im->w = w;
+        im->h = h;
         im->tex = evas_gl_common_texture_dynamic_new(im->gc, im);
         return image;
      }
