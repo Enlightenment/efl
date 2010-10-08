@@ -965,8 +965,14 @@ ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
 }
 
 /**
- * Enable or disable libcurl verbose output, useful for debug
- * @return  FIXME: To be more documented.
+ * Toggle libcurl's verbose output.
+ *
+ * If @p verbose is @c EINA_TRUE, libcurl will output a lot of verbose
+ * information about its operations, which is useful for
+ * debugging. The verbose information will be sent to stderr.
+ *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ * @param verbose Whether or not to enable libcurl's verbose output.
  */
 EAPI void
 ecore_con_url_verbose_set(Ecore_Con_Url *url_con, Eina_Bool verbose)
