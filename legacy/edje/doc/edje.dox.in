@@ -455,3 +455,31 @@ Unlike Ebits, Edje separates the layout and behavior logic.
 @todo Bytecode language for extending programs... but what/how?
 
 */
+
+
+/**
+
+@example embryo_custom_state.edc
+This example show how to create a custom state from embryo. Clicking on the
+3 labels will rotate the object in the given direction.
+
+@example embryo_run_program.edc
+This example show how to run an edje program from embryo code.
+
+@example embryo_set_state.edc
+This example show how to change the state of a part from embryo code.
+
+@example embryo_set_text.edc
+This example show how to set the text in TEXT part from embryo code.
+
+@example embryo_timer.edc
+This example show the usage of timers in embryo.
+
+@example external_elm_button.edc
+This example create some elementary buttons and do some actions on user click.
+
+@example lua_script.edc
+This example show the usage of lua scripting to create and animate some
+objects in the canvas.
+
+*/
