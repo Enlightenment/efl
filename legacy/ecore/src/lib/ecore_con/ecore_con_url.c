@@ -969,7 +969,7 @@ ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
  * @return  FIXME: To be more documented.
  */
 EAPI void
-ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
+ecore_con_url_verbose_set(Ecore_Con_Url *url_con, Eina_Bool verbose)
 {
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
@@ -985,13 +985,7 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, int verbose)
    if (!url_con->url)
       return;
 
-   if (verbose ==
-       EINA_TRUE)
-      curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE,
-                       1);
-   else
-      curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, 0);
-
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, (int)verbose);
 #endif
 }
 
