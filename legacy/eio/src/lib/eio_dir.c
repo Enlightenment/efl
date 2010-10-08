@@ -302,13 +302,15 @@ eio_dir_copy(const char *source,
              Eio_Error_Cb error_cb,
              const void *data)
 {
-   Eio_Dir_Copy *copy = NULL;
+   Eio_Dir_Copy *copy;
 
-   if (!source || !dest || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(source, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dest, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   copy = malloc(sizeof (Eio_Dir_Copy));
-   if (!copy) return NULL;
+   copy = malloc(sizeof(Eio_Dir_Copy));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(copy, NULL);
 
    copy->progress.op = EIO_DIR_COPY;
    copy->progress.progress_cb = progress_cb;

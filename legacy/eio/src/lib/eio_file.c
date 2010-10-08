@@ -530,13 +530,15 @@ eio_file_ls(const char *dir,
 	    Eio_Error_Cb error_cb,
 	    const void *data)
 {
-   Eio_File_Char_Ls *async = NULL;
+   Eio_File_Char_Ls *async;
 
-   if (!dir || !main_cb || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
    async = malloc(sizeof (Eio_File_Char_Ls));
-   if (!async) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
    async->main_cb = main_cb;
@@ -575,13 +577,15 @@ eio_file_direct_ls(const char *dir,
 		   Eio_Error_Cb error_cb,
 		   const void *data)
 {
-   Eio_File_Direct_Ls *async = NULL;
+   Eio_File_Direct_Ls *async;
 
-   if (!dir || !main_cb || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = malloc(sizeof (Eio_File_Direct_Ls));
-   if (!async) return NULL;
+   async = malloc(sizeof(Eio_File_Direct_Ls));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
    async->main_cb = main_cb;
@@ -611,6 +615,7 @@ eio_file_direct_ls(const char *dir,
 EAPI Eina_Bool
 eio_file_cancel(Eio_File *ls)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
    return ecore_thread_cancel(ls->thread);
 }
 
@@ -635,13 +640,15 @@ eio_file_copy(const char *source,
 	      Eio_Error_Cb error_cb,
 	      const void *data)
 {
-   Eio_File_Progress *copy = NULL;
+   Eio_File_Progress *copy;
 
-   if (!source || !dest || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(source, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dest, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   copy = malloc(sizeof (Eio_File_Progress));
-   if (!copy) return NULL;
+   copy = malloc(sizeof(Eio_File_Progress));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(copy, NULL);
 
    copy->op = EIO_FILE_COPY;
    copy->progress_cb = progress_cb;
@@ -683,13 +690,15 @@ eio_file_move(const char *source,
 	      Eio_Error_Cb error_cb,
 	      const void *data)
 {
-   Eio_File_Move *move = NULL;
+   Eio_File_Move *move;
 
-   if (!source || !dest || !done_cb || !error_cb)
-     return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(source, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dest, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   move = malloc(sizeof (Eio_File_Move));
-   if (!move) return NULL;
+   move = malloc(sizeof(Eio_File_Move));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(move, NULL);
 
    move->progress.op = EIO_FILE_MOVE;
    move->progress.progress_cb = progress_cb;
