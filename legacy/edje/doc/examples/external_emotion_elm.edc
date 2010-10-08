@@ -1,0 +1,239 @@
+/*
+ Super-concise video player example using Edje/Emotion/Elementary.
+
+ This is all in Edje by means of type:EXTERNAL, you don't need any C
+ code other than emotion and edje installed with edje_external
+ support enabled.
+
+ Compile: edje_cc     external-emotion-elm.edc
+ Run....: edje_player external-emotion-elm.edj
+
+ */
+collections {
+   group { name: "main";
+      min: 350 200; /* set a min window size */
+
+      externals { /* declare the modules you want to load */
+         external: "emotion"; /* video player engine */
+         external: "elm"; /* toolkit/widgets */
+      }
+
+      parts {
+         part { name: "bg"; /* dark gray rectangle as background */
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 64 64 64 255;
+            }
+         }
+
+         part { name: "video"; /* video object */
+            type: EXTERNAL;
+            source: "emotion";
+            description { state: "default" 0.0;
+               params {
+                  /* explicitly select the emotion engine
+                   * ['xine', 'gstreamer' or 'vlc']
+                   * or comment the line to autoselect the engine */
+                  // choice: "engine" "gstreamer";
+               }
+            }
+         }
+
+         part { name: "title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            description { state: "default" 0.0;
+               color: 255 255 255 0;
+               color3: 0 0 0 0;
+               align: 0.5 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 10 2;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -11 10;
+               }
+               text {
+                  font: "Sans:style=Bold";
+                  align: 0.5 0.0;
+                  size: 10;
+                  min: 0 1;
+                  text: "";
+               }
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+               color3: 0 0 0 255;
+            }
+         }
+
+         part { name: "controls-clipper"; /* clipper to control visibility */
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 32;
+            }
+            description { state: "visible" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+
+         part { name: "controls-bg"; /* controls background as
+                                        semi-transparent black at bottom edge */
+            type: RECT;
+            clip_to: "controls-clipper";
+            description { state: "default" 0.0;
+               color: 0 0 0 128;
+               rel1 {
+                  relative: 0.0 1.0;
+                  offset: 0 -40;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: -1 -1;
+               }
+            }
+         }
+
+         part { name: "play"; /* play button at bottom-left (relative
+                                to controls-bg) */
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "controls-clipper";
+            description { state: "default" 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 0 0;
+                  to: "controls-bg";
+               }
+               rel2 {
+                  relative: 0.0 1.0;
+                  offset: 50 -1;
+                  to: "controls-bg";
+               }
+               params.string: "icon" "apps";
+            }
+         }
+
+         part { name: "open"; /* open file button next to play button */
+            type: EXTERNAL;
+            source: "elm/fileselector_button";
+            clip_to: "controls-clipper";
+            description { state: "default" 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 52 0;
+                  to: "controls-bg";
+               }
+               rel2 {
+                  relative: 0.0 1.0;
+                  offset: 102 -1;
+                  to: "controls-bg";
+               }
+               params.string: "icon" "folder";
+            }
+         }
+
+         part { name: "time"; /* time/progress */
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "controls-clipper";
+            description { state: "default" 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: 104 0;
+                  to: "controls-bg";
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: -1 -1;
+                  to: "controls-bg";
+               }
+            }
+         }
+
+         part { name: "controls-eventarea"; /* event area so we catch mouse in
+                                               and out, repeat events so
+                                               buttons get them */
+            type: RECT;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 255 255 255 0; /* fully transparent as we don't
+                                        need any visual feedback */
+               rel1.to: "controls-bg";
+               rel2.to: "controls-bg";
+            }
+         }
+
+         programs {
+            /* animated 0.2 linear fade in/out if mouse is over controls */
+            program { signal: "mouse,in";
+               source: "controls-eventarea";
+               action: STATE_SET "visible" 0.0;
+               transition: LINEAR 0.2;
+               target: "controls-clipper";
+               target: "title";
+            }
+            program { signal: "mouse,out";
+               source: "controls-eventarea";
+               action: STATE_SET "default" 0.0;
+               transition: LINEAR 0.2;
+               target: "controls-clipper";
+               target: "title";
+            }
+
+            /* toggle video playing state when play is clicked */
+            program { name: "toggle-play-video";
+               signal: "clicked";
+               source: "play";
+               script {
+                  new v = external_param_get_bool(PART:"video", "play");
+                  external_param_set_bool(PART:"video", "play", !v);
+               }
+            }
+
+            /* whenever file is chosen, set and play it */
+            program { signal: "file,chosen";
+               source: "open";
+               action: PARAM_COPY "open" "path" "video" "file";
+               after: "play-video";
+               after: "set-title";
+            }
+            program { name: "play-video";
+               action: PARAM_SET "video" "play" "1";
+            }
+            program { name: "set-title";
+               action: PARAM_COPY "open" "path" "title" "text";
+            }
+
+            /* if position changes, set slider (time) */
+            program { signal: "position_update";
+               source: "video";
+               script {
+                  new Float:p, Float:len;
+
+                  p = external_param_get_float(PART:"video", "position");
+                  len = external_param_get_float(PART:"video", "play_length");
+                  if (len > 0.0)
+                     external_param_set_float(PART:"time", "value", p / len);
+               }
+            }
+
+            /* if slider (time) changes, set the position (seek) */
+            program { signal: "changed";
+               source: "time";
+               script {
+                  new Float:v, Float:len;
+
+                  v = external_param_get_float(PART:"time", "value");
+                  len = external_param_get_float(PART:"video", "play_length");
+                  if (len > 0.0)
+                     external_param_set_float(PART:"video", "position", v * len);
+               }
+            }
+         }
+      }
+   }
+}

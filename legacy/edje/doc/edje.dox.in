@@ -478,8 +478,12 @@ This example show the usage of timers in embryo.
 @example external_elm_button.edc
 This example create some elementary buttons and do some actions on user click.
 
+@example external_emotion_elm.edc
+Super-concise video player example using Edje/Emotion/Elementary.
+
 @example lua_script.edc
 This example show the usage of lua scripting to create and animate some
 objects in the canvas.
+
 
 */
