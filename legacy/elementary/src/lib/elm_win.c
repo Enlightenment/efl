@@ -173,6 +173,7 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, v
                elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
              else
                elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
      }

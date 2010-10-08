@@ -204,7 +204,7 @@ _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    INTERNAL_ENTRY;
    Evas_Callback_Type type = (Evas_Callback_Type)(long) data;
    Evas_Event_Flags *event_flags = NULL;
-   
+
    switch (type)
      {
      case EVAS_CALLBACK_KEY_DOWN:
@@ -222,14 +222,14 @@ _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
      default:
         break;
      }
-   
-   if (event_flags && (*event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+
+   if (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))
       return;
-   
+
    if (sd->event_func && sd->event_func(obj, obj, type, event_info))
       return;
-   
-   elm_widget_parent_event_propagate(obj, type, event_info);
+
+   elm_widget_parent_event_propagate(obj, type, event_info, event_flags);
 }
 
 static void
@@ -736,11 +736,13 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info)
+elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags)
 {
    API_ENTRY return EINA_FALSE;
    Evas_Object *parent = sd->parent_obj;
-   while (parent)
+
+   while (parent &&
+          (!(event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))))
      {
         sd = evas_object_smart_data_get(parent);
         if ((!sd) || (!_elm_widget_is(obj)))
