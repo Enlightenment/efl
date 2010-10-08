@@ -55,7 +55,8 @@ edje_init(void)
 	return --_edje_init_count;
      }
 
-   _edje_default_log_dom = eina_log_domain_register("Edje", EDJE_DEFAULT_LOG_COLOR);
+   _edje_default_log_dom = eina_log_domain_register
+     ("edje", EDJE_DEFAULT_LOG_COLOR);
    if (_edje_default_log_dom < 0)
      {
 	EINA_LOG_ERR("Edje Can not create a general log domain.");

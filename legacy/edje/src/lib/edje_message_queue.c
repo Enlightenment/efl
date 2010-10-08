@@ -687,11 +687,11 @@ _edje_message_process(Edje_Message *em)
    ret = embryo_program_run(em->edje->collection->script, fn);
    if (ret == EMBRYO_PROGRAM_FAIL)
      {
-        ERR("ERROR with embryo script.\n"
-            "OBJECT NAME: %s\n"
-            "OBJECT FILE: %s\n"
-            "ENTRY POINT: %s\n"
-            "ERROR:       %s",
+        ERR("ERROR with embryo script. "
+            "OBJECT NAME: '%s', "
+            "OBJECT FILE: '%s', "
+            "ENTRY POINT: '%s', "
+            "ERROR: '%s'",
             em->edje->collection->part,
             em->edje->file->path,
             "message",
@@ -699,11 +699,11 @@ _edje_message_process(Edje_Message *em)
      }
    else if (ret == EMBRYO_PROGRAM_TOOLONG)
      {
-        ERR("ERROR with embryo script.\n"
-            "OBJECT NAME: %s\n"
-            "OBJECT FILE: %s\n"
-            "ENTRY POINT: %s\n"
-            "ERROR:       Script exceeded maximum allowed cycle count of %i",
+        ERR("ERROR with embryo script. "
+            "OBJECT NAME: '%s', "
+            "OBJECT FILE: '%s', "
+            "ENTRY POINT: '%s', "
+            "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
             em->edje->collection->part,
             em->edje->file->path,
             "message",

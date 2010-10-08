@@ -37,19 +37,18 @@ _edje_collection_string_free(void *data)
 	edf = (Edje_File*) _edje_file_get();
 
 	if (!edf->warning)
-	  ERR("EDJE ERROR:\n"
-	      "\n"
-	      "Naughty Programmer - spank spank!\n"
-	      "\n"
-	      "This program as probably called edje_shutdown() with active Edje objects\n"
-	      "still around.\n This can cause problems as both Evas and Edje retain\n"
-	      "references to the objects. you should shut down all canvases and objects\n"
-	      "before calling edje_shutdown().\n"
-	      "The following errors are the edje object files and parts that are still\n"
-	      "hanging around, with their reference counts");
+	  CRITICAL("This program as probably called edje_shutdown() with "
+                   "active Edje objects still around. "
+                   "This can cause problems as both Evas and Edje retain "
+                   "references to the objects. "
+                   "You should shut down all canvases and objects "
+                   "before calling edje_shutdown(). "
+                   "The following errors are the edje object files and "
+                   "parts that are still hanging around, with their reference "
+                   "counts");
 
 	edf->warning = 1;
-	ERR("EEK: EDJE FILE: \"%s\" ref(%i) PART: \"%s\" ref(%i) ",
+	ERR("file: '%s', references: %i, part: '%s', references: %i",
 	    edf->path, edf->references,
 	    ce->ref->part, ce->ref->references);
 

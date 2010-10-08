@@ -33,20 +33,20 @@ _edje_var_timer_cb(void *data)
         ret = embryo_program_run(ed->collection->script, fn);
         if (ret == EMBRYO_PROGRAM_FAIL)
           {
-             ERR("ERROR with embryo script (timer callback).\n"
-                 "OBJECT NAME: %s\n"
-                 "OBJECT FILE: %s\n"
-                 "ERROR:       %s",
+             ERR("ERROR with embryo script (timer callback). "
+                 "OBJECT NAME: '%s', "
+                 "OBJECT FILE: '%s', "
+                 "ERROR: '%s'",
                  ed->collection->part,
                  ed->file->path,
                  embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
           }
         else if (ret == EMBRYO_PROGRAM_TOOLONG)
           {
-             ERR("ERROR with embryo script (timer callback).\n"
-                 "OBJECT NAME: %s\n"
-                 "OBJECT FILE: %s\n"
-                 "ERROR:       Script exceeded maximum allowed cycle count of %i",
+             ERR("ERROR with embryo script (timer callback). "
+                 "OBJECT NAME: '%s', "
+                 "OBJECT FILE: '%s', "
+                 "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
                  ed->collection->part,
                  ed->file->path,
                  embryo_program_max_cycle_run_get(ed->collection->script));
@@ -114,20 +114,20 @@ _edje_var_anim_cb(void *data __UNUSED__)
                             ret = embryo_program_run(ed->collection->script, fn);
                             if (ret == EMBRYO_PROGRAM_FAIL)
                               {
-                                 ERR("ERROR with embryo script (anim callback).\n"
-                                     "OBJECT NAME: %s\n"
-                                     "OBJECT FILE: %s\n"
-                                     "ERROR:       %s",
+                                 ERR("ERROR with embryo script (anim callback). "
+                                     "OBJECT NAME: '%s', "
+                                     "OBJECT FILE: '%s', "
+                                     "ERROR: '%s'",
                                      ed->collection->part,
                                      ed->file->path,
                                      embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
                               }
                             else if (ret == EMBRYO_PROGRAM_TOOLONG)
                               {
-                                 ERR("ERROR with embryo script (anim callback).\n"
-                                     "OBJECT NAME: %s\n"
-                                     "OBJECT FILE: %s\n"
-                                     "ERROR:       Script exceeded maximum allowed cycle count of %i",
+                                 ERR("ERROR with embryo script (anim callback). "
+                                     "OBJECT NAME: '%s', "
+                                     "OBJECT FILE: '%s', "
+                                     "ERROR: 'Script exceeded maximum allowed cycle count of %i'",
                                      ed->collection->part,
                                      ed->file->path,
                                      embryo_program_max_cycle_run_get(ed->collection->script));

@@ -461,7 +461,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			rp->object = evas_object_table_add(ed->evas);
 			break;
 		     case EDJE_PART_TYPE_GRADIENT:
-			ERR("SPANK ! SPANK ! SPANK !\nYOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !!\n THEY ARE NOW REMOVED !",
+			ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
 			    ep->name, group, file);
 		     default:
 			ERR("wrong part type %i!", ep->type);

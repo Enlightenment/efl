@@ -61,8 +61,9 @@ main(int argc, char **argv)
    if (!eina_init())
      return -1;
 
-   _edje_cc_log_dom = eina_log_domain_register("EDJE_CC", EDJE_DEFAULT_LOG_COLOR);
-   if(_edje_cc_log_dom<0)
+   _edje_cc_log_dom = eina_log_domain_register
+     ("edje_cc", EDJE_CC_DEFAULT_LOG_COLOR);
+   if (_edje_cc_log_dom < 0)
      {
        EINA_LOG_ERR("Enable to create a log domain.");
        exit(-1);

@@ -2929,11 +2929,13 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	  }
 	if ((ed->w > 4000) || (ed->h > 4000))
 	  {
-	     ERR("file %s, group %s has a non-fixed part. add fixed: 1 1; ???",
-		    ed->path, ed->group);
-	     if (pep)
-	       ERR("  Problem part is: %s", pep->part->name);
-	     ERR("  Will recalc min size not allowing broken parts to affect the result.");
+             if (pep)
+               ERR("file %s, group %s has a non-fixed part '%s'. Adding 'fixed: 1 1;' to source EDC may help. Continuing discarding faulty part.",
+                   ed->path, ed->group, pep->part->name);
+             else
+               ERR("file %s, group %s overflowed 4000x4000 with minimum size of %dx%d. Continuing discarding faulty parts.",
+                   ed->path, ed->group, ed->w, ed->h);
+
 	     if (reset_maxwh)
 	       {
 		  reset_maxwh = 0;

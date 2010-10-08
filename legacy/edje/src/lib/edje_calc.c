@@ -1675,8 +1675,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  faxes = "X";
 	else if ((flags & FLAG_Y))
 	  faxes = "Y";
-	ERR("Circular dependency when calculating part \"%s\"\n"
-	    "Already calculating %s [%02x] axes\n"
+	ERR("Circular dependency when calculating part \"%s\". "
+	    "Already calculating %s [%02x] axes. "
 	    "Need to calculate %s [%02x] axes",
 	    ep->part->name,
 	    axes, ep->calculating,

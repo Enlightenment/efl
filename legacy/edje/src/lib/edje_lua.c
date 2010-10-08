@@ -120,7 +120,7 @@ jmp_buf _edje_lua_panic_jmp;
 static int
 _edje_lua_custom_panic(__UNUSED__ lua_State *L)
 {
-   printf("PANIC\n");
+   CRITICAL("PANIC");
    longjmp(_edje_lua_panic_jmp, 1);
    return 1; /* longjmp() never returns, but this keep gcc happy */
 }
@@ -5049,7 +5049,7 @@ _edje_lua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    /* ANSI requires that realloc(NULL, size) == malloc(size) */
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Edje Lua cannot re-allocate %zu bytes\n", nsize);
+   ERR("Edje Lua cannot re-allocate %zu bytes", nsize);
    return ptr2;
 }
 

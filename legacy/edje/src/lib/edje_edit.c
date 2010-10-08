@@ -4202,7 +4202,7 @@ edje_edit_font_add(Evas_Object *obj, const char* path, const char* alias)
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
-   INF("ADD FONT: %s\n", path);
+   INF("ADD FONT: %s", path);
 
    if (!path) return EINA_FALSE;
    if (stat(path, &st) || !S_ISREG(st.st_mode)) return EINA_FALSE;
@@ -4268,7 +4268,7 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
 
    GET_ED_OR_RETURN(EINA_FALSE);
 
-   INF("DEL FONT: %s\n", alias);
+   INF("DEL FONT: %s", alias);
 
    if (!alias) return EINA_FALSE;
    if (!ed->file) return EINA_FALSE;
@@ -6887,14 +6887,12 @@ edje_edit_print_internal_status(Evas_Object *obj)
    _edje_generate_source(obj);
    return;
 
-   INF("\n****** CHECKIN' INTERNAL STRUCTS STATUS *********");
+   INF("****** CHECKIN' INTERNAL STRUCTS STATUS *********");
 
-   INF("*** Edje\n");
-   INF("    path: '%s'", ed->path);
-   INF("    group: '%s'", ed->group);
-   INF("    parent: '%s'", ed->parent);
+   INF("path: '%s', group: '%s', parent: '%s'",
+       ed->path, ed->group, ed->parent);
 
-   INF("*** Parts [table:%d list:%d]", ed->table_parts_size,
+   INF("Parts [table:%d list:%d]", ed->table_parts_size,
        ed->collection->parts_count);
    for (i = 0; i < ed->collection->parts_count; ++i)
      {
@@ -6904,14 +6902,14 @@ edje_edit_print_internal_status(Evas_Object *obj)
 	p = ed->collection->parts[i];
 
 	rp = ed->table_parts[p->id % ed->table_parts_size];
-	printf("    [%d]%s ", p->id, p->name);
+	printf("part[%d]: '%s' ", p->id, p->name);
 	if (p == rp->part)
-	  printf(" OK!\n");
+	  printf("OK!\n");
 	else
-	  WRN(" WRONG (table[%id]->name = '%s')", p->id, rp->part->name);
+	  printf("WRONG (table[%d]->name = '%s')\n", p->id, rp->part->name);
      }
 
-   INF("*** Programs [table:%d list:%d,%d,%d,%d,%d]", ed->table_programs_size,
+   INF("Programs [table:%d list:%d,%d,%d,%d,%d]", ed->table_programs_size,
        ed->collection->programs.fnmatch_count,
        ed->collection->programs.strcmp_count,
        ed->collection->programs.strncmp_count,
@@ -6920,10 +6918,8 @@ edje_edit_print_internal_status(Evas_Object *obj)
    for(j = 0; j < ed->table_programs_size; ++j)
      {
 	epr = ed->table_programs[i % ed->table_programs_size];
-	printf("     [%d]%s\n", epr->id, epr->name);
+	printf("program[%d]: '%s'\n", epr->id, epr->name);
      }
 
-   printf("\n");
-
-   INF("******************  END  ************************\n");
+   INF("******************  END  ************************");
 }

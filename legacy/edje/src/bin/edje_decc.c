@@ -61,10 +61,11 @@ main(int argc, char **argv)
    setlocale(LC_NUMERIC, "C");
    if (!eina_init())
      exit(-1);
-   _edje_cc_log_dom = eina_log_domain_register("edje_decc", EDJE_CC_DEFAULT_LOG_COLOR);
-   if(_edje_cc_log_dom < 0)
+   _edje_cc_log_dom = eina_log_domain_register
+     ("edje_decc", EDJE_CC_DEFAULT_LOG_COLOR);
+   if (_edje_cc_log_dom < 0)
      {
-       EINA_LOG_ERR("Edje_decc: Impossible to create a log domain for edje_decc");
+       EINA_LOG_ERR("Impossible to create a log domain.");
        eina_shutdown();
        exit(-1);
      }
