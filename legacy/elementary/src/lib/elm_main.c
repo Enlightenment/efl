@@ -1273,8 +1273,13 @@ elm_object_focus_get(Evas_Object *obj)
 EAPI void
 elm_object_focus(Evas_Object *obj)
 {
-   if (!elm_object_focus_allow_get(obj)) return;
-   elm_widget_focus_steal(obj);
+   if (elm_widget_focus_get(obj))
+     return;
+
+   if (!elm_widget_can_focus_get(obj))
+     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+   else
+     elm_widget_focus_steal(obj);
 }
 
 /**
