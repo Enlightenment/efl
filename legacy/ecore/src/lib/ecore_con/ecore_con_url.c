@@ -1003,7 +1003,7 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, Eina_Bool verbose)
  * @return  FIXME: To be more documented.
  */
 EAPI void
-ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
+ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, Eina_Bool use_epsv)
 {
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
@@ -1019,13 +1019,7 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, int use_epsv)
    if (!url_con->url)
       return;
 
-   if (use_epsv ==
-       EINA_TRUE)
-      curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV,
-                       1);
-   else
-      curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, 0);
-
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, (int)use_epsv);
 #endif
 }
 
