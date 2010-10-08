@@ -108,7 +108,7 @@ static Eina_Bool selection_clear(void *udata __UNUSED__, int type, void *event);
 //static Eina_Bool selection_request(void *udata __UNUSED__, int type, void *event);
 static Eina_Bool selection_notify(void *udata __UNUSED__, int type, void *event);
 static char *remove_tags(const char *p, int *len);
-static char *mark_up(const char *start, int *lenp);
+static char *mark_up(const char *start, int inlen, int *lenp);
 
 static Evas_Object *image_provider(void *images, Evas_Object *entry, const char *item);
 static void
@@ -696,7 +696,7 @@ notify_handler_text(struct _elm_cnp_selection *sel,
 
    data = notify->data;
    cnp_debug("Notify handler text %d %d %p\n",data->format,data->length,data->data);
-   str = mark_up((char*)data->data, NULL);
+   str = mark_up((char*)data->data, data->length, NULL);
    cnp_debug("String is %s (from %s)\n",str,data->data);
    elm_entry_entry_insert(sel->requestwidget, str);
    free(str);
@@ -1103,14 +1103,17 @@ remove_tags(const char *p, int *len){
 
 /* Mark up */
 static char *
-mark_up(const char *start, int *lenp){
+mark_up(const char *start, int inlen, int *lenp){
   int l,i;
   const char *p;
   char *q,*ret;
+  char *endp = NULL;
 
   if (!start) return NULL;
+  if (inlen >= 0)
+     endp = start + inlen;
   /* First pass: Count characters */
-  for (l = 0, p = start ; *p ; p ++)
+  for (l = 0, p = start ; (!endp || (p < endp)) && *p ; p ++)
     {
     for (i = 0 ; i < N_ESCAPES ; i ++)
       {
