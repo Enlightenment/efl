@@ -244,6 +244,13 @@ _finished_thumb_cb(void *data, Ethumb_Client *c __UNUSED__, int id, const char *
 static void
 _thumb_apply(Widget_Data *wd)
 {
+   if (wd->thumb.id > 0)
+     {
+        ethumb_client_generate_cancel
+          (_elm_ethumb_client, wd->thumb.id, NULL, NULL, NULL);
+        wd->thumb.id = -1;
+     }
+
    ethumb_client_file_set(_elm_ethumb_client, wd->file, wd->key);
    if (ethumb_client_thumb_exists(_elm_ethumb_client))
      {
