@@ -458,6 +458,34 @@ elm_thumb_add(Evas_Object *parent)
 }
 
 /**
+ * Reload thumbnail if it was generated before.
+ *
+ * This is useful if the ethumb client configuration changed, like its
+ * size, aspect or any other property one set in the handle returned
+ * by elm_thumb_ethumb_client_get().
+ *
+ * @param obj The thumb object to reload
+ *
+ * @see elm_thumb_file_set()
+ *
+ * @ingroup Thumb
+ */
+EAPI void
+elm_thumb_reload(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   eina_stringshare_replace(&(wd->thumb.file), NULL);
+   eina_stringshare_replace(&(wd->thumb.key), NULL);
+
+#ifdef HAVE_ELEMENTARY_ETHUMB
+   if (evas_object_visible_get(obj))
+     _thumb_show(wd);
+#endif
+}
+
+/**
  * Set the file that will be used as thumbnail.
  *
  * The file can be an image or a video (in that case, acceptable extensions are:
@@ -469,6 +497,7 @@ elm_thumb_add(Evas_Object *parent)
  * @param key The key used in case of an EET file.
  *
  * @see elm_thumb_file_get()
+ * @see elm_thumb_reload()
  * @see elm_thumb_animate()
  *
  * @ingroup Thumb
