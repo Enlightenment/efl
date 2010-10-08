@@ -452,31 +452,38 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    double scale, pscale = elm_widget_scale_get(sobj);
    Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
 
-   sd->subobjs = eina_list_append(sd->subobjs, sobj);
-   if (!sd->child_can_focus)
-     {
-	if (_is_focusable(sobj)) sd->child_can_focus = 1;
-     }
    if (_elm_widget_is(sobj))
      {
-	Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-	if (sd2)
-	  {
-	     if (sd2->parent_obj)
-                elm_widget_sub_object_del(sd2->parent_obj, sobj);
-	     sd2->parent_obj = obj;
-	  }
+        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        if (sd2)
+          {
+             if (sd2->parent_obj == obj)
+               return;
+             elm_widget_sub_object_del(sd2->parent_obj, sobj);
+             sd2->parent_obj = obj;
+             if (!sd->child_can_focus && _is_focusable(sobj))
+               sd->child_can_focus = EINA_TRUE;
+          }
      }
+   else
+     {
+        void * data = evas_object_data_get(sobj, "elm-parent");
+        if (data)
+          {
+             if (data == obj)
+               return;
+             evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, _sub_obj_del);
+          }
+     }
+
+   sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
    evas_object_smart_callback_call(obj, "sub-object-add", sobj);
    scale = elm_widget_scale_get(sobj);
    th = elm_widget_theme_get(sobj);
    if ((scale != pscale) || (th != pth)) elm_widget_theme(sobj);
-   if (_elm_widget_is(sobj))
-     {
-        if (elm_widget_focus_get(sobj)) _focus_parents(obj);
-     }
+   if (elm_widget_focus_get(sobj)) _focus_parents(obj);
 }
 
 EAPI void
