@@ -2361,8 +2361,9 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
         fprintf(output, " ];\n");
      }
 
-   fprintf(output, "\"%p\" [ label = \"{%p|%s|visible: %d|disabled: %d|focused: %d}\"",
-           obj, obj, sd->type, visible,disabled,focused);
+   fprintf(output, "\"%p\" [ label = \"{%p|%s|%s|visible: %d|"
+           "disabled: %d|focused: %d}\"", obj, obj, sd->type,
+           evas_object_name_get(obj), visible,disabled,focused);
 
    if (focused)
         fprintf(output, ", style=bold");
