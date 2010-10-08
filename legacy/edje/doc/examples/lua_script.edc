@@ -1,0 +1,146 @@
+collections {
+   group { name: "example";
+      lua_script_only: 1;
+      lua_script {
+         --// stick object private/local vars here
+         local D;
+         local count = 0;
+         local fndata = 99;
+ 
+         local function mycb3 (v)
+            print("lua::callback transition " .. D.val .. " v: " .. v);
+            d = {};
+            edje.size(d);
+            print("lua::objsize= " .. d.w .. " , " .. d.h);
+            sz = {w=v * 80, h=v * 40};
+            D.rect:geom(((d.w / 2) * math.sin(v * 2 * math.pi)) + ((d.w - sz.w) / 2),
+                        ((d.h / 2) * math.cos(v * 2 * math.pi)) + ((d.h - sz.h) / 2),
+                        sz.w, sz.h);
+            D.rect:color(255, 128, v * 255, 255);
+            D.rect:move(d);
+            print("lua::pos= " .. d.x .. " , " .. d.y);
+ 
+            r = D.rect:above();
+            if (r ~= nil) then
+               print("lua::rcol");
+               r:color(20, v * 255, 60, 255);
+            else
+               print("lua::r none!!!!!!!!!!!!!!1");
+            end
+            d = edje.size();
+            D.clip:geom(10, 10, d.w - 20, d.h - 20);
+            c = D.clip:clipees();
+            for i=1,table.getn(c),1 do
+               d = c[i]:geom();
+               print("lua::" .. i .. " geom = " .. d.x .. "," .. d.y .. " " .. d.w .. "x" .. d.h);
+            end
+            return true;  --// repeat the timer
+         end
+ 
+         local function mycb2 ()
+            print("lua::callback animator " .. count);
+            print("lua:: seconds: " .. edje.seconds());
+            print("lua:: looptime: " .. edje.looptime());
+            local date = edje.date();
+            print("lua:: date: " ..
+                  date.year .. "|" ..
+                  date.month .. "|" ..
+                  date.day .. "|" ..
+                  date.yearday .. "|" ..
+                  date.weekday .. "|" ..
+                  date.hour .. "|" ..
+                  date.min .. "|" ..
+                  date.sec
+                 );
+            return true;  --// repeat the timer
+         end
+ 
+         local function mycb ()
+            print("lua::callback " .. count .. " fndata = " .. fndata);
+            count = count + 1; --// keep count of calls - object data
+            fndata = fndata + 3; --// play with object vars to see if they persist
+            D.tim = edje.timer(0.25, mycb); --// inside cb add new timer
+            D.ani = edje.animator(mycb2);
+            return false; --// cease repeating the timer
+         end
+ 
+         --// init object here
+         D = {}; --// data is empty table to start
+         D.val = math.random(); --// start with some random value so
+         fndata = fndata + D.val; --// func data start point
+         print("lua::init ... " .. D.val);
+         edje.echo("lua::echo('hello world')");
+
+         --// actually add the timer to call mycb in 1.23 sec
+         D.tim = edje.timer(1.23, mycb);
+         D.tra = edje.transition(5.0, mycb3);
+ 
+         if (edje.spanky) then edje.spanky(); end
+
+         --// send some random edje message
+         edje.messagesend(7, "none"      );
+         edje.messagesend(7, "sig",      "signal", "source");
+         edje.messagesend(7, "str",      "hello world");
+         edje.messagesend(7, "int",      987);
+         edje.messagesend(7, "float",    987.321);
+         edje.messagesend(7, "strset",   {"hello", "there", "world"});
+         edje.messagesend(7, "intset",   {1, 2, 3});
+         edje.messagesend(7, "floatset", {1.1, 2.2, 3.3});
+         edje.messagesend(7, "strint",   "hello world", 7);
+         edje.messagesend(7, "strfloat", "hello world", 7.654);
+         edje.messagesend(7, "strintset","hello world", {1, 2, 3});
+                  
+         D.rect = edje.rect();
+         D.rect:geom  (5, 10, 50, 30);
+         D.rect:color (255, 128, 60, 255);
+         D.rect:show  ();
+                  
+         D.rect2 = edje.rect();
+         D.rect2:geom  (50, 50, 50, 50);
+         D.rect2:color (20, 30, 60, 120);
+         D.rect2:show  ();
+
+         D.clip = edje.rect();
+         D.clip:geom  (10, 10, 150, 150);
+         D.clip:color (200, 200, 50, 200);
+         D.clip:show  ();
+ 
+         D.rect2:clip(D.clip);
+         D.rect:clip(D.clip);
+
+         --// example of deleting something
+         --// D.tim:del();
+ 
+         --// shutdown func - generally empty or not there. everything gcd for you
+         function shutdown ()
+            print("lua::shutdown ... " .. D.val);
+         end
+         function show ()
+            print("lua::show ... " .. D.val);
+         end
+         function hide ()
+            print("lua::hide ... " .. D.val);
+         end
+         function move (x, y)
+            print("lua::move ... " .. D.val);
+            print("  x=" .. x .. " x=" .. y);
+         end
+         function resize (w, h)
+            print("lua::resize ... " .. D.val);
+            print("  w=" .. w .. " h=" .. h);
+         end
+         function message (id, type, v1, v2)
+            print("lua::message ... " .. D.val);
+            print("  id=" .. id .. " type=" .. type);
+            --// handle youre message type here. chekc id + type then use v1
+            --// and/or v2 (or neither) appropriately. they are the same as
+            --// the 2nd and 3rd param passed to edje.messagesend() (if any
+            --// are passed at all)
+         end
+         function signal (sig, src)
+            print("lua::signal ... " .. D.val);
+            print("  sig=" .. sig .. " src=" .. src);
+         end
+      }
+   }
+}
