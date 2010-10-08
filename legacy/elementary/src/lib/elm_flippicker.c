@@ -321,7 +321,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd;
-   const char *tmp;
+   const char *tmp = NULL;
    Evas_Coord minw = -1, minh = -1, w, h;
 
    wd = elm_widget_data_get(obj);
