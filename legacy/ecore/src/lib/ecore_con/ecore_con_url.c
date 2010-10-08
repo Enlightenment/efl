@@ -986,6 +986,9 @@ ecore_con_url_verbose_set(Ecore_Con_Url *url_con, Eina_Bool verbose)
       return;
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_VERBOSE, (int)verbose);
+#else
+   (void)url_con;
+   (void)verbose;
 #endif
 }
 
