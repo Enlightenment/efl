@@ -1,0 +1,270 @@
+collections {
+   /* those 2 groups are used as custom icons for the buttons */
+   group { name: "icon_green";
+      parts {
+         part { name: "icon_green";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 0 255 0 255;
+               aspect: 1 1;
+               aspect_preference: VERTICAL;
+            }
+         }
+      }
+   }
+   group { name: "icon_red";
+      parts {
+         part { name: "icon_red";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 0 0 255;
+               aspect: 1 1;
+               aspect_preference: VERTICAL;
+            }
+         }
+      }
+   }
+
+   group { name: "main";
+      /* set a min window size */
+      min: 250 250;
+      
+      /* tell edje that we are going to use elementary external parts */
+      externals {
+         external: "elm";
+      }
+      
+      /* define global variables */
+      script {
+         public counter, toggle1, toggle2, toggle3, toggle4;
+      }
+      
+      parts {
+         part { name: "bg";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+
+         part { name: "title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               color3: 70 70 70 70;
+               text {
+                  text: "Elementary buttons";
+                  font: "Sans";
+                  size: 16;
+                  align: 0.5 0.0;
+               }
+            }
+         }
+
+         /* bottom label used for reporting */
+         part { name: "label";
+            type: TEXT;
+            description { state: "default" 0.0;
+               color: 0 0 0 255;
+               text {
+                  text: "try every buttons";
+                  font: "Sans";
+                  size: 12;
+                  align: 0.5 1.0;
+               }
+            }
+         }
+
+         /* EXTERNAL elementary button with a label */
+         part { name: "bt1";
+            type: EXTERNAL;
+            source: "elm/button";
+            description { state: "default" 0;
+               rel1 {
+                  offset: 5 35;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -6 60;
+               }
+               params {
+                  string: "label" "Label only";
+               }
+            }
+         }
+
+         /* EXTERNAL elementary button with label + standard icon */
+         part { name: "bt2";
+            type: EXTERNAL;
+            source: "elm/button";
+            description { state: "default" 0;
+               rel1 {
+                  to: "bt1";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "bt1";
+                  relative: 1.0 2.0;
+                  offset: -1 5;
+               }
+               params {
+                  string: "label" "Label + standard icon";
+                  string: "icon" "home";
+               }
+            }
+         }
+
+         /* EXTERNAL elementary button with a label and a custom icon */
+         part { name: "bt3";
+            type: EXTERNAL;
+            source: "elm/button";
+            description { state: "default" 0;
+               rel1 {
+                  to: "bt2";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "bt2";
+                  relative: 1.0 2.0;
+                  offset: -1 5;
+               }
+               params {
+                  string: "label" "Label + custom icon";
+                  string: "icon" "icon_green";
+               }
+            }
+         }
+
+         /* EXTERNAL elementary button with just a standard icon */
+         part { name: "bt4";
+            type: EXTERNAL;
+            source: "elm/button";
+            description { state: "default" 0;
+               rel1 {
+                  to: "bt3";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "bt3";
+                  relative: 0.5 2.0;
+                  offset: -6 5;
+               }
+               params {
+                  string: "icon" "folder";
+               }
+            }
+         }
+
+         /* EXTERNAL elementary button with just a custom icon */
+         part { name: "bt5";
+            type: EXTERNAL;
+            source: "elm/button";
+            description { state: "default" 0;
+               rel1 {
+                  to: "bt3";
+                  relative: 0.5 1.0;
+                  offset: 5 5;
+               }
+               rel2 {
+                  to: "bt3";
+                  relative: 1.0 2.0;
+                  offset: 0 5;
+               }
+               params {
+                  string: "icon" "icon_green";
+               }
+            }
+         }
+      }
+
+      programs {
+         /* bt1 clicked, change it's label and count the clicks */
+         program { name: "bt1_click";
+            signal: "clicked";
+            source: "bt1";
+            script {
+               new buf[32];
+               /* increment the global counter*/
+               set_int(counter, get_int(counter) + 1);
+               /* set the button label */
+               snprintf(buf, sizeof(buf), "Clicked %d times", get_int(counter));
+               external_param_set_str(PART:"bt1", "label", buf);
+               /* set the bottom label */
+               set_text(PART:"label", "button 1 clicked: set label");
+            }
+         }
+
+         /* bt2 clicked, toggle it's standard icon */
+         program { name: "bt2_click";
+            signal: "clicked";
+            source: "bt2";
+            script {
+               if (get_int(toggle1) == 0) {
+                  external_param_set_str(PART:"bt2", "icon", "home");
+                  set_int(toggle1, 1);
+               }
+               else {
+                  external_param_set_str(PART:"bt2", "icon", "folder");
+                  set_int(toggle1, 0);
+               }
+               set_text(PART:"label", "button 2 clicked: toggle icon");
+            }
+         }
+
+         /* bt3 clicked, toggle it's custom icon */
+         program { name: "bt3_click";
+            signal: "clicked";
+            source: "bt3";
+            script {
+               if (get_int(toggle2) == 0) {
+                  external_param_set_str(PART:"bt3", "icon", "icon_red");
+                  set_int(toggle2, 1);
+               }
+               else {
+                  external_param_set_str(PART:"bt3", "icon", "icon_green");
+                  set_int(toggle2, 0);
+               }
+               set_text(PART:"label", "button 3 clicked: toggle icon");
+            }
+         }
+
+         /* bt4 clicked, toggle it's icon */
+         program { name: "bt4_click";
+            signal: "clicked";
+            source: "bt4";
+            script {
+               if (get_int(toggle3) == 0) {
+                  external_param_set_str(PART:"bt4", "icon", "home");
+                  set_int(toggle3, 1);
+               }
+               else {
+                  external_param_set_str(PART:"bt4", "icon", "folder");
+                  set_int(toggle3, 0);
+               }
+               set_text(PART:"label", "button 4 clicked: toggle icon");
+            }
+         }
+
+         /* bt5 clicked, toggle it's icon */
+         program { name: "bt5_click";
+            signal: "clicked";
+            source: "bt5";
+            script {
+               if (get_int(toggle4) == 0) {
+                  external_param_set_str(PART:"bt5", "icon", "icon_red");
+                  set_int(toggle4, 1);
+               }
+               else {
+                  external_param_set_str(PART:"bt5", "icon", "icon_green");
+                  set_int(toggle4, 0);
+               }
+               set_text(PART:"label", "button 5 clicked: toggle icon");
+            }
+         }
+      }
+   }
+}
