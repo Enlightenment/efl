@@ -1627,6 +1627,28 @@ elm_gengrid_item_object_get(const Elm_Gengrid_Item *item)
 }
 
 /**
+ * Update the contents of an item
+ *
+ * This updates an item by calling all the item class functions again to get
+ * the icons, labels and states. Use this when the original item data has
+ * changed and the changes are desired to be reflected.
+ *
+ * @param it The item
+ *
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_item_update(Elm_Gengrid_Item *item)
+{
+   if (!item) return;
+   if (!item->realized) return;
+   if (item->want_unrealize) return;
+   _item_unrealize(item);
+   _item_realize(item);
+   _item_place(item, item->x, item->y);
+}
+
+/**
  * Returns the data associated to a item
  *
  * This returns the data value passed on the elm_gengrid_item_append() and

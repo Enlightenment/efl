@@ -673,6 +673,9 @@ extern "C" {
    EAPI void         elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y);
    EAPI void         elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
    EAPI void	     elm_gengrid_item_del(Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_update(Elm_Gengrid_Item *item);
+
+
    EAPI void	     elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI Eina_Bool    elm_gengrid_always_select_mode_get(const Evas_Object *obj);
    EAPI void	     elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
