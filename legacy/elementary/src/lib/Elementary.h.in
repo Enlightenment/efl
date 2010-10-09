@@ -1014,7 +1014,11 @@ extern "C" {
    EAPI Eina_Bool    elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
    EAPI Eina_Bool    elm_thumb_editable_get(Evas_Object *obj);
 
-   /* smart callbacks called:
+   /* available styles:
+    * default
+    * noframe
+    *
+    * smart callbacks called:
     * "clicked" - the user clicked the thumb
     * "clicked,double" - the user double clicked the thumb
     * "press" - the user pressed the thumb
