@@ -251,6 +251,8 @@ _thumb_apply(Widget_Data *wd)
         wd->thumb.id = -1;
      }
 
+   if (!wd->file) return;
+
    ethumb_client_file_set(_elm_ethumb_client, wd->file, wd->key);
    if (ethumb_client_thumb_exists(_elm_ethumb_client))
      {
