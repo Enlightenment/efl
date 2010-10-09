@@ -949,31 +949,39 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
    cvw = vw + 2 * PRELOAD * item->wd->item_width;
    cvh = vh + 2 * PRELOAD * item->wd->item_height;
 
-   tch = ((vh/item->wd->item_height)*item->wd->item_height);
-   alignh = (vh - tch)*item->wd->align_y;
+   tch = (vh  * item->wd->item_height) / item->wd->item_height;
+   alignh = (vh - tch) * item->wd->align_y;
 
-   tcw = ((vw/item->wd->item_width)*item->wd->item_width);
-   alignw = (vw - tcw)*item->wd->align_x;
+   tcw = (vw * item->wd->item_width) / item->wd->item_width;
+   alignw = (vw - tcw) * item->wd->align_x;
 
    if ((item->wd->horizontal) && (item->wd->minw < vw))
      {
-        int columns;
+        int columns, items_visible;
 
-        columns = eina_list_count(item->wd->items)/(vh/item->wd->item_height);
-        if (eina_list_count(item->wd->items) % (vh/item->wd->item_height))
+        items_visible = vh / item->wd->item_height;
+        if (items_visible < 1)
+          items_visible = 1;
+
+        columns = eina_list_count(item->wd->items) / items_visible;
+        if (eina_list_count(item->wd->items) % items_visible)
 	  columns++;
 
         tcw = item->wd->item_width * columns;
-	alignw = (vw - tcw)*item->wd->align_x;
+	alignw = (vw - tcw) * item->wd->align_x;
      }
    else if ((item->wd->horizontal) && (item->wd->minw > vw))
      alignw = 0;
    if ((!item->wd->horizontal) && (item->wd->minh < vh))
      {
-        int rows;
+        int rows, items_visible;
 
-        rows = eina_list_count(item->wd->items)/(vw/item->wd->item_width);
-        if (eina_list_count(item->wd->items) % (vw/item->wd->item_width))
+        items_visible = vw / item->wd->item_width;
+        if (items_visible < 1)
+          items_visible = 1;
+
+        rows = eina_list_count(item->wd->items)/ items_visible;
+        if (eina_list_count(item->wd->items) % items_visible)
 	  rows++;
 
         tch = item->wd->item_height * rows;
@@ -1083,19 +1091,19 @@ _calc_job(void *data)
    else if (wd->item_width)
      nmax = cvw / wd->item_width;
 
-   if (nmax)
+   if (nmax < 1)
+     nmax = 1;
+
+   count = eina_list_count(wd->items);
+   if (wd->horizontal)
      {
-	count = eina_list_count(wd->items);
-	if (wd->horizontal)
-	  {
-	     minw = ceil(count  / (float)nmax) * wd->item_width;
-	     minh = nmax * wd->item_height;
-	  }
-	else
-	  {
-	     minw = nmax * wd->item_width;
-	     minh = ceil(count / (float)nmax) * wd->item_height;
-	  }
+        minw = ceil(count  / (float)nmax) * wd->item_width;
+        minh = nmax * wd->item_height;
+     }
+   else
+     {
+        minw = nmax * wd->item_width;
+        minh = ceil(count / (float)nmax) * wd->item_height;
      }
 
    if ((minw != wd->minw) || (minh != wd->minh))
