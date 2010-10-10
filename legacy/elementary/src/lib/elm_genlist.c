@@ -525,9 +525,8 @@ _item_single_select_up(Widget_Data *wd)
    Elm_Genlist_Item *prev = elm_genlist_item_prev_get(wd->last_selected_item);
    if (!prev) return EINA_FALSE;
 
-   while(wd->selected)
-     elm_genlist_item_selected_set(eina_list_data_get(wd->selected),
-                                   EINA_FALSE);
+   while (wd->selected)
+     elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
 
    elm_genlist_item_selected_set(prev, EINA_TRUE);
    elm_genlist_item_show(prev);
@@ -541,9 +540,8 @@ _item_single_select_down(Widget_Data *wd)
    Elm_Genlist_Item *next = elm_genlist_item_next_get(wd->last_selected_item);
    if (!next) return EINA_FALSE;
 
-   while(wd->selected)
-     elm_genlist_item_selected_set(eina_list_data_get(wd->selected),
-                                   EINA_FALSE);
+   while (wd->selected)
+     elm_genlist_item_selected_set(wd->selected, EINA_FALSE);
 
    elm_genlist_item_selected_set(next, EINA_TRUE);
    elm_genlist_item_show(next);

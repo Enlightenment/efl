@@ -672,9 +672,6 @@ extern "C" {
    EAPI void	     elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y);
    EAPI void         elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
-   EAPI void	     elm_gengrid_item_del(Elm_Gengrid_Item *item);
-   EAPI void         elm_gengrid_item_update(Elm_Gengrid_Item *item);
-
 
    EAPI void	     elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI Eina_Bool    elm_gengrid_always_select_mode_get(const Evas_Object *obj);
@@ -687,6 +684,25 @@ extern "C" {
    EAPI void         elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
    EAPI void         elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
    EAPI void	     elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
+
+   EAPI Elm_Gengrid_Item *elm_gengrid_first_item_get(const Evas_Object *obj);
+   EAPI Elm_Gengrid_Item *elm_gengrid_last_item_get(const Evas_Object *obj);
+
+
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_next_get(const Elm_Gengrid_Item *item);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_prev_get(const Elm_Gengrid_Item *item);
+   EAPI Evas_Object      *elm_gengrid_item_gengrid_get(const Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_del(Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_update(Elm_Gengrid_Item *item);
+   EAPI void        *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_data_set(Elm_Gengrid_Item *item, const void *data);
+   EAPI void         elm_gengrid_item_pos_get(const Elm_Gengrid_Item *item, unsigned int *x, unsigned int *y);
+   EAPI void         elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected);
+   EAPI Eina_Bool    elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item);
+   EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_show(Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_bring_in(Elm_Gengrid_Item *item);
+
    EAPI void         elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text);
    EAPI void         elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
    EAPI void         elm_gengrid_item_tooltip_unset(Elm_Gengrid_Item *item);
@@ -700,20 +716,13 @@ extern "C" {
    EAPI Eina_Bool    elm_gengrid_item_cursor_engine_only_get(const Elm_Gengrid_Item *item);
 
    EAPI void	     elm_gengrid_clear(Evas_Object *obj);
-   EAPI void	    *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item);
-   EAPI void	     elm_gengrid_item_pos_get(const Elm_Gengrid_Item *item, unsigned int *x, unsigned int *y);
-   EAPI void	     elm_gengrid_item_selected_set(Elm_Gengrid_Item *item, Eina_Bool selected);
-   EAPI Eina_Bool    elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item);
-   EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item);
    EAPI Elm_Gengrid_Item *elm_gengrid_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_gengrid_selected_items_get(const Evas_Object *obj);
-   EAPI const Eina_List *elm_gengrid_items_get(const Evas_Object *obj);
+
    EAPI Elm_Gengrid_Item *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,  const void *data, Evas_Smart_Cb func, const void *func_data);
    EAPI Elm_Gengrid_Item *elm_gengrid_item_prepend(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data);
-   EAPI Elm_Gengrid_Item *elm_gengrid_item_insert_before(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, const Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data);
-   EAPI Elm_Gengrid_Item *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, const Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data);
-   EAPI void         elm_gengrid_item_show(Elm_Gengrid_Item *item);
-   EAPI void         elm_gengrid_item_bring_in(Elm_Gengrid_Item *item);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_insert_before(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data);
    /* smart callbacks called:
     *
     * selected - User has selected a item.
