@@ -1331,6 +1331,7 @@ elm_gengrid_add(Evas_Object *parent)
    wd->self = obj;
    wd->align_x = 0.5;
    wd->align_y = 0.5;
+   wd->no_select = EINA_FALSE;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -1489,7 +1490,6 @@ elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,
    if (!item) return NULL;
 
    wd->items = eina_list_append(wd->items, item);
-   wd->no_select = EINA_FALSE;
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
