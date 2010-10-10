@@ -1472,14 +1472,17 @@ elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y)
  * @param func_data Data passed to @p func above.
  * @return A handle to the item added or NULL if not possible.
  *
+ * @see elm_gengrid_item_prepend()
+ * @see elm_gengrid_item_insert_before()
+ * @see elm_gengrid_item_insert_after()
  * @see elm_gengrid_item_del()
  *
  * @ingroup Gengrid
  */
 EAPI Elm_Gengrid_Item *
 elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,
-			   const void *data, Evas_Smart_Cb func,
-			   const void *func_data)
+                        const void *data, Evas_Smart_Cb func,
+                        const void *func_data)
 {
    Elm_Gengrid_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1488,8 +1491,130 @@ elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,
 
    item = _item_create(wd, gic, data, func, func_data);
    if (!item) return NULL;
-
    wd->items = eina_list_append(wd->items, item);
+
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
+
+   return item;
+}
+
+/**
+  * Add item at start of the Gengrid.
+  *
+  * This adds an item to the beginning of the grid.
+  *
+  * @param obj The Gengrid object.
+  * @param gic The item class for the item.
+  * @param data The item data.
+  * @param func Convenience function called when item is selected.
+  * @param func_data Data passed to @p func above.
+  * @return A handle to the item added or NULL if not possible.
+  *
+  * @see elm_gengrid_item_append()
+  * @see elm_gengrid_item_insert_before()
+  * @see elm_gengrid_item_insert_after()
+  * @see elm_gengrid_item_del()
+  *
+  * @ingroup Gengrid
+  */
+EAPI Elm_Gengrid_Item *
+elm_gengrid_item_prepend(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,
+                         const void *data, Evas_Smart_Cb func,
+                         const void *func_data)
+{
+   Elm_Gengrid_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   item = _item_create(wd, gic, data, func, func_data);
+   if (!item) return NULL;
+   wd->items = eina_list_prepend(wd->items, item);
+
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
+
+   return item;
+}
+
+/**
+  * Insert and item before another in the Gengrid.
+  *
+  * This inserts an item before another in the grid.
+  *
+  * @param obj The Gengrid object.
+  * @param gic The item class for the item.
+  * @param data The item data.
+  * @param relative The item to which insert before.
+  * @param func Convenience function called when item is selected.
+  * @param func_data Data passed to @p func above.
+  * @return A handle to the item added or NULL if not possible.
+  *
+  * @see elm_gengrid_item_append()
+  * @see elm_gengrid_item_prepend()
+  * @see elm_gengrid_item_insert_after()
+  * @see elm_gengrid_item_del()
+  *
+  * @ingroup Gengrid
+ */
+EAPI Elm_Gengrid_Item *
+elm_gengrid_item_insert_before(Evas_Object *obj,
+                               const Elm_Gengrid_Item_Class *gic,
+                               const void *data,
+                               const Elm_Gengrid_Item *relative,
+                               Evas_Smart_Cb func, const void *func_data)
+{
+   Elm_Gengrid_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   item = _item_create(wd, gic, data, func, func_data);
+   if (!item) return NULL;
+   wd->items = eina_list_prepend_relative(wd->items, item, relative);
+
+   if (wd->calc_job) ecore_job_del(wd->calc_job);
+   wd->calc_job = ecore_job_add(_calc_job, wd);
+
+   return item;
+}
+
+/**
+  * Insert and item after another in the Gengrid.
+  *
+  * This inserts an item after another in the grid.
+  *
+  * @param obj The Gengrid object.
+  * @param gic The item class for the item.
+  * @param data The item data.
+  * @param relative The item to which insert after.
+  * @param func Convenience function called when item is selected.
+  * @param func_data Data passed to @p func above.
+  * @return A handle to the item added or NULL if not possible.
+  *
+  * @see elm_gengrid_item_append()
+  * @see elm_gengrid_item_prepend()
+  * @see elm_gengrid_item_insert_before()
+  * @see elm_gengrid_item_del()
+  *
+  * @ingroup Gengrid
+ */
+EAPI Elm_Gengrid_Item *
+elm_gengrid_item_insert_after(Evas_Object *obj,
+                              const Elm_Gengrid_Item_Class *gic,
+                              const void *data,
+                              const Elm_Gengrid_Item *relative,
+                              Evas_Smart_Cb func, const void *func_data)
+{
+   Elm_Gengrid_Item *item;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   item = _item_create(wd, gic, data, func, func_data);
+   if (!item) return NULL;
+   wd->items = eina_list_append_relative(wd->items, item, relative);
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);

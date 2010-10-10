@@ -708,7 +708,10 @@ extern "C" {
    EAPI Elm_Gengrid_Item *elm_gengrid_selected_item_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_gengrid_selected_items_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_gengrid_items_get(const Evas_Object *obj);
-   EAPI Elm_Gengrid_Item *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gcc,  const void *data, Evas_Smart_Cb func, const void *func_data);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_append(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic,  const void *data, Evas_Smart_Cb func, const void *func_data);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_prepend(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Evas_Smart_Cb func, const void *func_data);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_insert_before(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, const Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data);
+   EAPI Elm_Gengrid_Item *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, const Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data);
    EAPI void         elm_gengrid_item_show(Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_bring_in(Elm_Gengrid_Item *item);
    /* smart callbacks called:

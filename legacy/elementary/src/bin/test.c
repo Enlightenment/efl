@@ -45,6 +45,7 @@ void test_genlist5(void *data, Evas_Object *obj, void *event_info);
 void test_genlist6(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
+void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_pager(void *data, Evas_Object *obj, void *event_info);
 void test_pager_slide(void *data, Evas_Object *obj, void *event_info);
 void test_win_state(void *data, Evas_Object *obj, void *event_info);
@@ -252,6 +253,7 @@ my_win_main(char *autorun)
    ADD_TEST("Genlist 5", test_genlist5);
    ADD_TEST("Genlist Tree", test_genlist6);
    ADD_TEST("GenGrid", test_gengrid);
+   ADD_TEST("GenGrid 2", test_gengrid2);
    ADD_TEST("Checks", test_check);
    ADD_TEST("Radios", test_radio);
    ADD_TEST("Pager", test_pager);
