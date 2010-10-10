@@ -136,9 +136,25 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
   {NULL, NULL}
 };
 
+static void
+_emotion_image_data_zero(Evas_Object *img)
+{
+   void *data;
+   
+   data = evas_object_image_data_get(img, 1);
+   if (data)
+     {
+        int w, h, sz;
+        
+        evas_object_image_size_get(img, &w, &h);
+        sz = w * h * 4;
+        memset(data, 0, sz);
+     }
+   evas_object_image_data_set(img, data);
+}
 
 EAPI Eina_Bool
- _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close)
+_emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close)
 {
    Eina_Emotion_Plugins *plugin;
 
@@ -316,11 +332,12 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	free(sd->file);
 	sd->file = strdup(file);
 	sd->module->file_close(sd->video);
-	evas_object_image_size_set(sd->obj, 0, 0);
+	evas_object_image_size_set(sd->obj, 1, 1);
 	if (!sd->module->file_open(sd->file, obj, sd->video))
 	  return;
 	sd->module->size_get(sd->video, &w, &h);
 	evas_object_image_size_set(sd->obj, w, h);
+        _emotion_image_data_zero(sd->obj);
 	sd->ratio = sd->module->ratio_get(sd->video);
 	sd->pos = 0.0;
 	if (sd->play) sd->module->play(sd->video, 0.0);
@@ -330,7 +347,8 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
         if (sd->video && sd->module)
 	  {
 	     sd->module->file_close(sd->video);
-	     evas_object_image_size_set(sd->obj, 0, 0);
+	     evas_object_image_size_set(sd->obj, 1, 1);
+             _emotion_image_data_zero(sd->obj);
 	  }
         free(sd->file);
         sd->file = NULL;
@@ -1015,6 +1033,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 	if (h > 0) sd->ratio  = (double)w / (double)h;
 	else sd->ratio = 1.0;
 	evas_object_image_size_set(sd->obj, w, h);
+        _emotion_image_data_zero(sd->obj);
 	changed = 1;
      }
    if (ratio != sd->ratio)
@@ -1222,6 +1241,7 @@ _pixels_get(void *data, Evas_Object *obj)
 	evas_object_image_colorspace_set(obj, EVAS_COLORSPACE_YCBCR422P601_PL);
         evas_object_image_alpha_set(obj, 0);
 	evas_object_image_size_set(obj, w, h);
+        _emotion_image_data_zero(sd->obj);
 	iw = w;
 	ih = h;
      }
@@ -1271,6 +1291,7 @@ _pixels_get(void *data, Evas_Object *obj)
    if ((w != iw) || (h != ih))
      {
 	evas_object_image_size_set(obj, w, h);
+        _emotion_image_data_zero(sd->obj);
 	iw = w;
 	ih = h;
      }
