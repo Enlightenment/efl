@@ -83,6 +83,7 @@ native       cancel_anim(id);
  * run_program(PROGRAM:"program_name");
  */
 native       emit             (sig[], src[]);
+native       get_part_id      (part[]);
 native       set_state        (part_id, state[], Float:state_val);
 native       get_state        (part_id, dst[], maxlen, &Float:val);
 native       set_tween_state  (part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val);
