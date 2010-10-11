@@ -407,9 +407,9 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
    _url_con_list = eina_list_remove(_url_con_list, url_con);
    curl_slist_free_all(url_con->headers);
    EINA_LIST_FREE(url_con->additional_headers, s)
-   free(s);
+     free(s);
    EINA_LIST_FREE(url_con->response_headers, s)
-   free(s);
+     free(s);
    free(url_con->url);
    free(url_con);
 #else
@@ -560,7 +560,7 @@ ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
      }
 
    EINA_LIST_FREE(url_con->additional_headers, s)
-   free(s);
+     free(s);
 #else
    return;
    url_con = NULL;
@@ -784,7 +784,8 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
       return EINA_FALSE;
 
    /* Free response headers from previous send() calls */
-   EINA_LIST_FREE(url_con->response_headers, s) free((char *)s);
+   EINA_LIST_FREE(url_con->response_headers, s)
+     free((char *)s);
    url_con->response_headers = NULL;
 
    curl_slist_free_all(url_con->headers);
@@ -833,7 +834,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
 
    /* Additional headers */
    EINA_LIST_FOREACH(url_con->additional_headers, l, s)
-   url_con->headers = curl_slist_append(url_con->headers, s);
+     url_con->headers = curl_slist_append(url_con->headers, s);
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPHEADER, url_con->headers);
 
@@ -889,18 +890,18 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
      {
         char tmp[PATH_MAX];
 
-                    snprintf(tmp, PATH_MAX, "%s", filename);
+        snprintf(tmp, PATH_MAX, "%s", filename);
 
         if (stat(filename, &file_info))
            return EINA_FALSE;
 
         fd = fopen(filename, "rb");
         if (upload_dir)
-                    snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url,
-                    upload_dir, basename(tmp));
+          snprintf(url, sizeof(url), "ftp://%s/%s/%s", url_con->url,
+                   upload_dir, basename(tmp));
         else
-                    snprintf(url, sizeof(url), "ftp://%s/%s",    url_con->url,
-                    basename(tmp));
+          snprintf(url, sizeof(url), "ftp://%s/%s",    url_con->url,
+                   basename(tmp));
 
         snprintf(userpwd, sizeof(userpwd), "%s:%s", user, pass);
         curl_easy_setopt(url_con->curl_easy, CURLOPT_INFILESIZE_LARGE,
