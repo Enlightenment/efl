@@ -919,46 +919,56 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
    cvw = vw + 2 * PRELOAD * item->wd->item_width;
    cvh = vh + 2 * PRELOAD * item->wd->item_height;
 
-   tch = (vh  * item->wd->item_height) / item->wd->item_height;
-   alignh = (vh - tch) * item->wd->align_y;
+   alignh = 0;
+   alignw = 0;
 
-   tcw = (vw * item->wd->item_width) / item->wd->item_width;
-   alignw = (vw - tcw) * item->wd->align_x;
-
-   if ((item->wd->horizontal) && (item->wd->minw < vw))
+   if (item->wd->horizontal)
      {
-        int columns, items_visible;
+        int columns, items_visible, items_row;
 
         items_visible = vh / item->wd->item_height;
         if (items_visible < 1)
-          items_visible = 1;
+           items_visible = 1;
 
         columns = item->wd->count / items_visible;
         if (item->wd->count % items_visible)
-	  columns++;
+           columns++;
 
-        tcw = item->wd->item_width * columns;
-	alignw = (vw - tcw) * item->wd->align_x;
+        if (item->wd->minw < vw)
+          {
+             tcw = item->wd->item_width * columns;
+             alignw = (vw - tcw) * item->wd->align_x;
+          }
+        items_row = items_visible;
+        if (items_row > item->wd->count)
+           items_row = item->wd->count;
+        tch = items_row * item->wd->item_height;
+        alignh = (vh - tch) * item->wd->align_y;
      }
-   else if ((item->wd->horizontal) && (item->wd->minw > vw))
-     alignw = 0;
-   if ((!item->wd->horizontal) && (item->wd->minh < vh))
+   else
      {
-        int rows, items_visible;
+        int rows, items_visible, items_col;
 
         items_visible = vw / item->wd->item_width;
         if (items_visible < 1)
-          items_visible = 1;
+           items_visible = 1;
 
         rows = item->wd->count / items_visible;
         if (item->wd->count % items_visible)
-	  rows++;
+           rows++;
 
-        tch = item->wd->item_height * rows;
-        alignh = (vh - tch)*item->wd->align_y;
+        if (item->wd->minh < vh)
+          {
+             tch = item->wd->item_height * rows;
+             alignh = (vh - tch) * item->wd->align_y;
+          }
+        items_col = items_visible;
+        if (items_col > item->wd->count)
+           items_col = item->wd->count;
+        tcw = items_col * item->wd->item_width;
+        alignw = (vw - tcw) * item->wd->align_x;
      }
-   else if ((!item->wd->horizontal) && (item->wd->minh > vh))
-     alignh = 0;
+
    x = cx * item->wd->item_width - item->wd->pan_x + ox + alignw;
    y = cy * item->wd->item_height - item->wd->pan_y + oy + alignh;
 

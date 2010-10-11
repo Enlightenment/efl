@@ -253,6 +253,14 @@ _append_bt_clicked(void *data, Evas_Object *obj, void *event_info)
    ti->item = elm_gengrid_item_append(grid, &gic, ti, grid_sel, NULL);
 }
 
+static void
+_size_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *grid = data;
+   int size = elm_spinner_value_get(obj);
+   elm_gengrid_item_size_set(grid, size, size);
+}
+
 void
 test_gengrid2(void *data, Evas_Object *obj, void *event_info)
 {
@@ -309,6 +317,15 @@ test_gengrid2(void *data, Evas_Object *obj, void *event_info)
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Insert after");
    evas_object_smart_callback_add(bt, "clicked", _after_bt_clicked, grid);
+   elm_box_pack_end(hbx, bt);
+   evas_object_show(bt);
+
+   bt = elm_spinner_add(win);
+   elm_spinner_min_max_set(bt, 10, 1024);
+   elm_spinner_value_set(bt, 150);
+   elm_spinner_label_format_set(bt, "Item size: %.0f");
+   evas_object_smart_callback_add(bt, "changed", _size_changed, grid);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
