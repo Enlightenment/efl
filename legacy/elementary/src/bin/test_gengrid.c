@@ -196,6 +196,8 @@ _before_bt_clicked(void *data, Evas_Object *obj, void *event_info)
    char buf[PATH_MAX];
 
    sel = elm_gengrid_selected_item_get(grid);
+   if (!sel)
+       return;
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[rand() % 9]);
    ti = malloc(sizeof(*ti));
    ti->mode = 0;
@@ -213,6 +215,8 @@ _after_bt_clicked(void *data, Evas_Object *obj, void *event_info)
    char buf[PATH_MAX];
 
    sel = elm_gengrid_selected_item_get(grid);
+   if (!sel)
+       return;
    snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR, img[rand() % 9]);
    ti = malloc(sizeof(*ti));
    ti->mode = 0;
