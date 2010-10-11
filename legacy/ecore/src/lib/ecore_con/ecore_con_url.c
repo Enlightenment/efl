@@ -85,9 +85,9 @@ static Eina_Bool _ecore_con_url_idler_handler(void *data);
 
 static Ecore_Idler *_fd_idler_handler = NULL;
 static Eina_List *_url_con_list = NULL;
-static CURLM *curlm = NULL;
+static CURLM *_curlm = NULL;
 static fd_set _current_fd_set;
-static int init_count = 0;
+static int _init_count = 0;
 static Ecore_Timer *_curl_timeout = NULL;
 
 typedef struct _Ecore_Con_Url_Event Ecore_Con_Url_Event;
@@ -143,10 +143,10 @@ EAPI int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
-   init_count++;
+   _init_count++;
 
-   if (init_count > 1)
-      return init_count;
+   if (_init_count > 1)
+      return _init_count;
 
    if (!ECORE_CON_EVENT_URL_DATA)
      {
@@ -155,7 +155,7 @@ ecore_con_url_init(void)
         ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
      }
 
-   if (!curlm)
+   if (!_curlm)
      {
         long ms;
 
@@ -167,17 +167,17 @@ ecore_con_url_init(void)
              return 0;
           }
 
-        curlm = curl_multi_init();
-        if (!curlm)
+        _curlm = curl_multi_init();
+        if (!_curlm)
           {
              while (_url_con_list)
                 ecore_con_url_free(eina_list_data_get(_url_con_list));
 
-             init_count--;
+             _init_count--;
              return 0;
           }
 
-        curl_multi_timeout(curlm, &ms);
+        curl_multi_timeout(_curlm, &ms);
         if (ms <= 0)
            ms = 1000;
 
@@ -201,13 +201,13 @@ EAPI int
 ecore_con_url_shutdown(void)
 {
 #ifdef HAVE_CURL
-   if (!init_count)
+   if (!_init_count)
       return 0;
 
-   init_count--;
+   _init_count--;
 
-   if (init_count != 0)
-      return init_count;
+   if (_init_count != 0)
+      return _init_count;
 
    if (_fd_idler_handler)
       ecore_idler_del(_fd_idler_handler);
@@ -222,10 +222,10 @@ ecore_con_url_shutdown(void)
    while (_url_con_list)
       ecore_con_url_free(eina_list_data_get(_url_con_list));
 
-   if (curlm)
+   if (_curlm)
      {
-        curl_multi_cleanup(curlm);
-        curlm = NULL;
+        curl_multi_cleanup(_curlm);
+        _curlm = NULL;
      }
 
    curl_global_cleanup();
@@ -254,7 +254,7 @@ ecore_con_url_new(const char *url)
 #ifdef HAVE_CURL
    Ecore_Con_Url *url_con;
 
-   if (!init_count)
+   if (!_init_count)
       return NULL;
 
    url_con = calloc(1, sizeof(Ecore_Con_Url));
@@ -398,7 +398,7 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
           {
              url_con->active = EINA_FALSE;
 
-             curl_multi_remove_handle(curlm, url_con->curl_easy);
+             curl_multi_remove_handle(_curlm, url_con->curl_easy);
           }
 
         curl_easy_cleanup(url_con->curl_easy);
@@ -1228,9 +1228,9 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
    _url_con_list = eina_list_append(_url_con_list, url_con);
 
    url_con->active = EINA_TRUE;
-   curl_multi_add_handle(curlm, url_con->curl_easy);
+   curl_multi_add_handle(_curlm, url_con->curl_easy);
    /* This one can't be stopped, or the download never start. */
-   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM) ;
+   while (curl_multi_perform(_curlm, &still_running) == CURLM_CALL_MULTI_PERFORM) ;
 
    completed_immediately = _ecore_con_url_process_completed_jobs(url_con);
 
@@ -1247,7 +1247,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
         FD_ZERO(&exc_set);
 
         /* Stupid curl, why can't I get the fd to the current added job? */
-        curl_multi_fdset(curlm, &read_set, &write_set, &exc_set, &fd_max);
+        curl_multi_fdset(_curlm, &read_set, &write_set, &exc_set, &fd_max);
         for (fd = 0; fd <= fd_max; fd++)
           {
              if (!FD_ISSET(fd, &_current_fd_set))
@@ -1266,7 +1266,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
                     {
                        long ms = 0;
 
-                       curl_multi_timeout(curlm, &ms);
+                       curl_multi_timeout(_curlm, &ms);
                        if (ms == 0)
                           ms = 1000;
 
@@ -1285,7 +1285,7 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
           {
              /* Failed to set up an fd_handler */
              ecore_timer_freeze(_curl_timeout);
-             curl_multi_remove_handle(curlm, url_con->curl_easy);
+             curl_multi_remove_handle(_curlm, url_con->curl_easy);
              url_con->active = EINA_FALSE;
              url_con->fd = -1;
              return EINA_FALSE;
@@ -1304,7 +1304,7 @@ _ecore_con_url_idler_handler(void *data)
    int done = 1, still_running;
 
    start = ecore_time_get();
-   while (curl_multi_perform(curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
+   while (curl_multi_perform(_curlm, &still_running) == CURLM_CALL_MULTI_PERFORM)
       /* make this not more than a frametime to keep interactivity high */
       if ((ecore_time_get() - start) > ecore_animator_frametime_get())
         {
@@ -1353,7 +1353,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
    int job_matched = 0;
 
    /* Loop jobs and check if any are done */
-   while ((curlmsg = curl_multi_info_read(curlm, &n_remaining)))
+   while ((curlmsg = curl_multi_info_read(_curlm, &n_remaining)))
      {
         if (curlmsg->msg != CURLMSG_DONE)
            continue;
@@ -1399,7 +1399,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
                      _url_complete_push_event(ECORE_CON_EVENT_URL_COMPLETE, e);
                   }
 
-                curl_multi_remove_handle(curlm, url_con->curl_easy);
+                curl_multi_remove_handle(_curlm, url_con->curl_easy);
                 break;
              }
         }
