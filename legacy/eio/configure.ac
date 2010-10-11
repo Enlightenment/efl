@@ -35,6 +35,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_GNU_SOURCE
 
 AC_LIBTOOL_WIN32_DLL
+define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
 AC_PROG_LIBTOOL
 
@@ -55,17 +56,16 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
-AC_LIBTOOL_WIN32_DLL
-define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
-AC_PROG_LIBTOOL
-
 dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
 AC_PROG_CC
 
 PKG_CHECK_MODULES([EIO], [eina ecore])
+
+# doxygen program for documentation building
+
+EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for header files
 AC_HEADER_ASSERT
@@ -127,6 +127,7 @@ fi
 AC_OUTPUT([
 eio.pc
 Makefile
+doc/Makefile
 src/Makefile
 src/lib/Makefile
 ])
@@ -136,4 +137,18 @@ echo
 echo "------------------------------------------------------------------------"
 echo "$PACKAGE_NAME $PACKAGE_VERSION"
 echo "------------------------------------------------------------------------"
+echo
+echo
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  Documentation........: ${build_doc}"
+echo
+echo "Compilation............: make (or gmake)"
+echo "  CPPFLAGS.............: $CPPFLAGS"
+echo "  CFLAGS...............: $CFLAGS"
+echo "  LDFLAGS..............: $LDFLAGS"
+echo
+echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
+echo "  prefix...............: $prefix"
 echo

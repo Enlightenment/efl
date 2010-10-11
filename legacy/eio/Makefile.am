@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = src doc
 
 MAINTAINERCLEANFILES = \
 ABOUT-NLS \
@@ -46,10 +46,20 @@ m4/stdint_h.m4 \
 m4/uintmax_t.m4 \
 m4/ulonglong.m4
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN \
-	     autogen.sh \
-	     eio.pc.in
+EXTRA_DIST = \
+AUTHORS \
+COPYING \
+COPYING-PLAIN \
+autogen.sh \
+eio.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eio.pc
 
+.PHONY: doc coverage benchmark
+
+# Documentation
+
+doc:
+	@echo "entering doc/"
+	make -C doc doc
