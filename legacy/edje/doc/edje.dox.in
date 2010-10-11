@@ -463,6 +463,9 @@ Unlike Ebits, Edje separates the layout and behavior logic.
 This example show how to create a custom state from embryo. Clicking on the
 3 labels will rotate the object in the given direction.
 
+@example embryo_pong.edc
+Super-simple Pong implementation in pure embryo.
+
 @example embryo_run_program.edc
 This example show how to run an edje program from embryo code.
 
@@ -474,6 +477,9 @@ This example show how to set the text in TEXT part from embryo code.
 
 @example embryo_timer.edc
 This example show the usage of timers in embryo.
+
+@example external_elm_anchorblock.edc
+This example use an elementary anchorblock and a button to animate the text.
 
 @example external_elm_button.edc
 This example create some elementary buttons and do some actions on user click.
