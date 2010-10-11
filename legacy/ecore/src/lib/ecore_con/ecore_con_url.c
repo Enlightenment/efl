@@ -935,11 +935,6 @@ EAPI Eina_Bool
 ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
 {
 #ifdef HAVE_CURL
-   if (url_con->post)
-      curl_formfree(url_con->post);
-
-   url_con->post = NULL;
-
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
@@ -947,13 +942,10 @@ ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
         return EINA_FALSE;
      }
 
+   if ((url_con->active) || (!url_con->url))
+      return EINA_FALSE;
+
    url_con->post = httppost;
-
-   if (url_con->active)
-      return EINA_FALSE;
-
-   if (!url_con->url)
-      return EINA_FALSE;
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPPOST, httppost);
 
