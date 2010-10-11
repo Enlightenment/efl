@@ -433,7 +433,10 @@ _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
    int err;
 
    if (edje_object_file_set(edje, file, group))
-     return EINA_TRUE;
+     {
+        evas_object_focus_set(edje, EINA_TRUE);
+        return EINA_TRUE;
+     }
 
    err = edje_object_load_error_get(edje);
    errmsg = edje_load_error_str(err);
