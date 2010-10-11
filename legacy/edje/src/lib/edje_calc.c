@@ -845,15 +845,21 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 
 	     if (fnt)
 	       {
-                  int len = strlen(fnt->entry) + sizeof("edje/fonts/") + 1;
-                  font = alloca(len);
-                  sprintf((char *)font, "edje/fonts/%s", fnt->entry);
+                  char *font2;
+                  
+                  int len = strlen(font) + sizeof("edje/fonts/") + 1;
+                  font2 = alloca(len);
+                  sprintf(font2, "edje/fonts/%s", font);
+                  font = font2;
 		  inlined_font = 1;
 	       }
 	  }
 	if (ep->part->scale)
 	  evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+	if (inlined_font)
+          {
+             evas_object_text_font_source_set(ep->object, ed->path);
+          }
 	else evas_object_text_font_source_set(ep->object, NULL);
 
 	if ((_edje_fontset_append) && (font))
