@@ -512,9 +512,9 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                return ECORE_CALLBACK_RENEW;
              else
                {
-                  ERR("An unhandled error (ret: %zd errno: %d)"
+                  ERR("An unhandled error (ret: %zd errno: %d [%s])"
                       "occurred while reading from the pipe the length",
-                      ret, errno);
+                      ret, errno, strerror(errno));
                   return ECORE_CALLBACK_RENEW;
                }
 #else
