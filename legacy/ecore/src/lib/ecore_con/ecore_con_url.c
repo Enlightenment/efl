@@ -81,7 +81,7 @@ static size_t    _ecore_con_url_read_cb(void *ptr, size_t size, size_t nitems,
 static void      _ecore_con_event_url_free(void *data __UNUSED__, void *ev);
 static int       _ecore_con_url_process_completed_jobs(
    Ecore_Con_Url *url_con_to_match);
-static Eina_Bool _ecore_con_url_idler_handler(void *data __UNUSED__);
+static Eina_Bool _ecore_con_url_idler_handler(void *data);
 
 static Ecore_Idler *_fd_idler_handler = NULL;
 static Eina_List *_url_con_list = NULL;
