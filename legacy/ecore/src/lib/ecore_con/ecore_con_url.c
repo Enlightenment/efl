@@ -915,9 +915,8 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
 
         return _ecore_con_url_perform(url_con);
      }
-   else
-      return EINA_FALSE;
 
+   return EINA_FALSE;
 #else
    return EINA_FALSE;
    (void)url_con;
