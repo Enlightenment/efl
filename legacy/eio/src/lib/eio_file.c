@@ -120,7 +120,7 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 	  {
 	     Eina_File_Direct_Info *send;
 
-	     send = malloc(sizeof (Eina_File_Direct_Info) + sizeof (struct dirent));
+	     send = eio_direct_info_malloc();
 	     if (!send) continue;
 
 	     memcpy(send, info, sizeof (Eina_File_Direct_Info));
@@ -145,7 +145,7 @@ _eio_file_direct_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *d
 
    async->main_cb((void*) async->ls.common.data, info);
 
-   free(info);
+   eio_direct_info_free(info);
 }
 
 static void

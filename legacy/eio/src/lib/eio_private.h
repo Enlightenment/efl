@@ -134,8 +134,12 @@ Eina_Bool eio_long_file_set(Eio_File *common,
 void eio_file_error(Eio_File *common);
 void eio_file_thread_error(Eio_File *common);
 
+Eina_File_Direct_Info *eio_direct_info_malloc(void);
+void eio_direct_info_free(Eina_File_Direct_Info *data);
+
 Eio_Progress *eio_progress_malloc(void);
 void eio_progress_free(Eio_Progress *progress);
+
 void eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op,
                        off_t current, off_t max);
 void eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op);
