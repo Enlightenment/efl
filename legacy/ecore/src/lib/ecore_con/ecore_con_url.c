@@ -1021,6 +1021,8 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con, Eina_Bool use_epsv)
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_FTP_USE_EPSV, (int)use_epsv);
 #endif
+   (void)url_con;
+   (void)use_epsv;
 }
 
 /**
