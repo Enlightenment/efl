@@ -541,7 +541,7 @@ _item_single_select_down(Widget_Data *wd)
    if (!next) return EINA_FALSE;
 
    while (wd->selected)
-     elm_genlist_item_selected_set(wd->selected, EINA_FALSE);
+     elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
 
    elm_genlist_item_selected_set(next, EINA_TRUE);
    elm_genlist_item_show(next);

@@ -1671,8 +1671,6 @@ elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting)
 EAPI void
 elm_gengrid_clear(Evas_Object *obj)
 {
-   Eina_List *l, *l_next;
-   Elm_Gengrid_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1697,12 +1695,12 @@ elm_gengrid_clear(Evas_Object *obj)
         Elm_Gengrid_Item *it = ELM_GENGRID_ITEM_FROM_INLIST(wd->items);
 
         wd->items = eina_inlist_remove(wd->items, wd->items);
-        elm_widget_item_pre_notify_del(item);
-        if (item->realized) _item_unrealize(item);
-        if (item->gic->func.del)
-          item->gic->func.del((void *)item->base.data, wd->self);
-        if (item->long_timer) ecore_timer_del(item->long_timer);
-        elm_widget_item_del(item);
+        elm_widget_item_pre_notify_del(it);
+        if (it->realized) _item_unrealize(it);
+        if (it->gic->func.del)
+          it->gic->func.del((void *)it->base.data, wd->self);
+        if (it->long_timer) ecore_timer_del(it->long_timer);
+        elm_widget_item_del(it);
      }
 
    if (wd->selected)
