@@ -1556,6 +1556,7 @@ elm_gengrid_item_insert_before(Evas_Object *obj,
 {
    Elm_Gengrid_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(relative, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -1599,6 +1600,7 @@ elm_gengrid_item_insert_after(Evas_Object *obj,
 {
    Elm_Gengrid_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(relative, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 

@@ -2184,6 +2184,7 @@ elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *i
 			       Evas_Smart_Cb func, const void *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(before, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
    if (!wd) return NULL;
@@ -2226,6 +2227,7 @@ elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *it
 			      Evas_Smart_Cb func, const void *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(after, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func, func_data);
    if (!wd) return NULL;
