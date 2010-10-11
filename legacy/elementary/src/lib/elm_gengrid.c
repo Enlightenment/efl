@@ -1019,7 +1019,7 @@ _item_del(Elm_Gengrid_Item *item)
    if (item->long_timer) ecore_timer_del(item->long_timer);
    if (item->tooltip.del_cb)
      item->tooltip.del_cb((void *)item->tooltip.data, item->base.widget, item);
-   item->wd->walking == item->walking;
+   item->wd->walking -= item->walking;
    item->wd->count--;
    elm_widget_item_del(item);
 }
