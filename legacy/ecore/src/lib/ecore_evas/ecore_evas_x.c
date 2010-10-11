@@ -78,8 +78,9 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
 static void
 _ecore_evas_x_sync_set(Ecore_Evas *ee)
 {
-   if ((ecore_x_e_comp_sync_supported_get(ee->engine.x.win_root)) &&
-       (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
+   if (((ee->should_be_visible) || (ee->visible)) &&
+       ((ecore_x_e_comp_sync_supported_get(ee->engine.x.win_root)) &&
+           (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync)))
      {
         if (!ee->engine.x.sync_counter)
            ee->engine.x.sync_counter = ecore_x_sync_counter_new(0);
@@ -2323,6 +2324,7 @@ _ecore_evas_x_show(Ecore_Evas *ee)
    ee->should_be_visible = 1;
    if (ee->prop.avoid_damage)
      _ecore_evas_x_render(ee);
+   _ecore_evas_x_sync_set(ee);
    ecore_x_window_show(ee->prop.window);
    if (ee->prop.fullscreen)
      ecore_x_window_focus(ee->prop.window);
@@ -2333,6 +2335,7 @@ _ecore_evas_x_hide(Ecore_Evas *ee)
 {
    ecore_x_window_hide(ee->prop.window);
    ee->should_be_visible = 0;
+   _ecore_evas_x_sync_set(ee);
 }
 
 static void
