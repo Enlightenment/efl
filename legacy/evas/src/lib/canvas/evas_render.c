@@ -796,14 +796,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                      obj->cur.geometry.y + off_y2,
                                      obj->cur.geometry.w,
                                      obj->cur.geometry.h);
-                  if (!obj->cur.map)
-                    {
-                       RECTS_CLIP_TO_RECT(x, y, w, h,
-                                          obj->cur.cache.clip.x + off_x2,
-                                          obj->cur.cache.clip.y + off_y2,
-                                          obj->cur.cache.clip.w,
-                                          obj->cur.cache.clip.h);
-                    }
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
                   obj->func->render(obj, e->engine.data.output, ctx,
@@ -824,25 +816,49 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
         e->engine.func->context_clip_unset(e->engine.data.output,
                                            e->engine.data.context);
-        if ((obj->cur.map->surface) && (obj->smart.smart))
+        if (obj->cur.map->surface) 
           {
-             if (obj->cur.clipper)
+             if (obj->smart.smart)
                {
-                  int x, y, w, h;
-                  Evas_Object *tobj;
-                  
-                  obj->cur.cache.clip.dirty = 1;
-                  tobj = obj->cur.map_parent;
-                  obj->cur.map_parent = obj->cur.clipper->cur.map_parent;
-                  evas_object_clip_recalc(obj);
-                  obj->cur.map_parent = tobj;
-                  x = obj->cur.cache.clip.x;
-                  y = obj->cur.cache.clip.y;
-                  w = obj->cur.cache.clip.w;
-                  h = obj->cur.cache.clip.h;
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   e->engine.data.context,
-                                                   x + off_x, y + off_y, w, h);
+                  if (obj->cur.clipper)
+                    {
+                       int x, y, w, h;
+                       Evas_Object *tobj;
+                       
+                       obj->cur.cache.clip.dirty = 1;
+                       tobj = obj->cur.map_parent;
+                       obj->cur.map_parent = obj->cur.clipper->cur.map_parent;
+                       evas_object_clip_recalc(obj);
+                       obj->cur.map_parent = tobj;
+                       x = obj->cur.cache.clip.x;
+                       y = obj->cur.cache.clip.y;
+                       w = obj->cur.cache.clip.w;
+                       h = obj->cur.cache.clip.h;
+                       e->engine.func->context_clip_set(e->engine.data.output,
+                                                        e->engine.data.context,
+                                                        x + off_x, y + off_y, w, h);
+                    }
+               }
+             else
+               {
+                  if (obj->cur.clipper)
+                    {
+                       int x, y, w, h;
+                       
+                       evas_object_clip_recalc(obj);
+                       x = obj->cur.cache.clip.x;
+                       y = obj->cur.cache.clip.y;
+                       w = obj->cur.cache.clip.w;
+                       h = obj->cur.cache.clip.h;
+                       RECTS_CLIP_TO_RECT(x, y, w, h,
+                              obj->cur.clipper->cur.cache.clip.x + off_x,
+                              obj->cur.clipper->cur.cache.clip.y + off_y,
+                              obj->cur.clipper->cur.cache.clip.w,
+                              obj->cur.clipper->cur.cache.clip.h);
+                       e->engine.func->context_clip_set(e->engine.data.output,
+                                                        e->engine.data.context,
+                                                        x + off_x, y + off_y, w, h);
+                    }
                }
           }
         if (obj->cur.cache.clip.visible)
