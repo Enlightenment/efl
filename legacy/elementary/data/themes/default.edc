@@ -27368,8 +27368,8 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                min: 120 30;
-               rel1.relative: 0.0 (2/306);
-               rel2.relative: 1.0 (78/306);
+               rel1.relative: 0.0 0.00653594771;
+               rel2.relative: 1.0 0.254901961;
             }
          }
          part { name: "elm.colorbar_1";
@@ -27377,8 +27377,8 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                min: 120 30;
-               rel1.relative: 0.0 (78/306);
-               rel2.relative: 1.0 (154/306);
+               rel1.relative: 0.0 0.254901961;
+               rel2.relative: 1.0 0.503267974;
             }
          }
          part { name: "elm.colorbar_2";
@@ -27386,8 +27386,8 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                min: 120 30;
-               rel1.relative: 0.0 (154/306);
-               rel2.relative: 1.0 (230/306);
+               rel1.relative: 0.0 0.503267974;
+               rel2.relative: 1.0 0.751633987;
             }
          }
          part { name: "elm.colorbar_3";
@@ -27395,8 +27395,8 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                min: 120 30;
-               rel1.relative: 0.0 (230/306);
-               rel2.relative: 1.0 (306/306);
+               rel1.relative: 0.0 0.751633987;
+               rel2.relative: 1.0 1.0;
             }
          }
       }
@@ -27413,10 +27413,10 @@ collections {
                max: 24 24;
                fixed: 1 0;
                rel1 {
-                  relative: 0 (33/99);
+                  relative: 0.0 0.33;
                }
                rel2 {
-                  relative: 0 (66/99);
+                  relative: 0.0 0.66;
                }
                align: 0.0 0.5;
             }
@@ -27431,10 +27431,10 @@ collections {
                max: 24 24;
                fixed: 1 0;
                rel1 {
-                  relative: 1 (33/99);
+                  relative: 1.0 0.33;
                }
                rel2 {
-                  relative: 1 (66/99);
+                  relative: 1.0 0.66;
                }
                align: 1.0 0.5;
             }
@@ -27446,12 +27446,12 @@ collections {
                max: 99999 22;
                min: 60 22;
                rel1 {
-                  relative: 0 (33/99);
+                  relative: 0.0 0.33;
                   to_x: "elm.arrow_bg";
                   offset: 11 0;
                }
                rel2 {
-                  relative: 1 (66/99);
+                  relative: 1.0 0.66;
                   to_x: "elm.arrow_bg";
                   offset: -11 0;
                }
@@ -27470,12 +27470,12 @@ collections {
             mouse_events: 1;
             description { state: "default" 0.0;
                rel1 {
-                  relative: 1.0 (17/99);
+                  relative: 1.0 0.17;
                   offset: -8 0;
                   to_x: "elm.l_button";
                }
                rel2 {
-                  relative: 0.0 (83/99);
+                  relative: 0.0 0.83;
                   offset: 7 0;
                   to_x: "elm.r_button";
                }
@@ -27489,11 +27489,11 @@ collections {
                min: 25 10;
                fixed: 1 1;
                rel1 {
-                  relative: 0 (17/99);
+                  relative: 0.0 0.17;
                   to_x: "elm.arrow_bg";
                }
                rel2 {
-                  relative: 0 (87/99);
+                  relative: 0.0 0.87;
                   to_x: "elm.arrow_bg";
                }
             }
@@ -27602,7 +27602,7 @@ collections {
             type: IMAGE;
             mouse_events: 1;
             description { state: "default" 0.0;
-               rel2.offset: 0 -30;
+               rel2.offset: 0.0 -30.0;
                image.normal: "icon_arrow_down.png";
             }
          }
