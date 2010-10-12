@@ -45,13 +45,12 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_custom_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int iw = 0, ih = 0;
    Evas_Coord x = 0, y = 0, w = 0, h = 0, ow = 0, oh = 0;
-   Widget_Data *wd;
+   Widget_Data *wd = data;
 
-   wd = elm_widget_data_get(obj);
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
 
