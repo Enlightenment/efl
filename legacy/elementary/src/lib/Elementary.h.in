@@ -1092,6 +1092,7 @@ extern "C" {
    EAPI void              elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func);
    EAPI void              elm_toolbar_item_select(Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_item_unselect(Elm_Toolbar_Item *item);
    EAPI Eina_Bool         elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
