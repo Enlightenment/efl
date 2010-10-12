@@ -27,9 +27,10 @@ struct _Widget_Data
    Eina_Bool inwin_mode:1;
 };
 
-static const char DEFAULT_WINDOW_TITLE[] = "Select a file";
+#define DEFAULT_WINDOW_TITLE "Select a file"
 
 static const char *widtype = NULL;
+
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -46,9 +47,9 @@ static void _activate_hook(Evas_Object *obj);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
-static const char SIG_CLICKED[] = "clicked";
-static const char SIG_UNPRESSED[] = "unpressed";
-static const char SIG_FILE_CHOSEN[] = "file,chosen";
+#define SIG_CLICKED "clicked"
+#define SIG_UNPRESSED "unpressed"
+#define SIG_FILE_CHOSEN "file,chosen"
 static const Evas_Smart_Cb_Description _signals[] = 
 {
    {SIG_CLICKED, ""},
@@ -204,7 +205,7 @@ _activate_hook(Evas_Object *obj)
 }
 
 static void
-_signal_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+_signal_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    _activate(data);
 }
@@ -413,6 +414,7 @@ elm_fileselector_button_label_set(Evas_Object *obj, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    eina_stringshare_replace(&wd->btn_label, label);
    if (label)
@@ -429,6 +431,7 @@ elm_fileselector_button_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return NULL;
    return wd->btn_label;
 }
@@ -448,6 +451,7 @@ elm_fileselector_button_selected_set(Evas_Object *obj, const char *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    eina_stringshare_replace(&wd->fsd.path, path);
 }
@@ -467,6 +471,7 @@ elm_fileselector_button_selected_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return NULL;
    return wd->fsd.path;
 }
@@ -487,6 +492,7 @@ elm_fileselector_button_window_title_set(Evas_Object *obj, const char *title)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    eina_stringshare_replace(&wd->window_title, title);
 }
@@ -503,6 +509,7 @@ elm_fileselector_button_window_title_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return NULL;
    return wd->window_title;
 }
@@ -524,6 +531,7 @@ elm_fileselector_button_window_size_set(Evas_Object *obj, Evas_Coord width, Evas
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->w = width;
    wd->h = height;
@@ -543,6 +551,7 @@ elm_fileselector_button_window_size_get(const Evas_Object *obj, Evas_Coord *widt
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (width) *width = wd->w;
    if (height) *height = wd->h;
@@ -563,6 +572,7 @@ elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    eina_stringshare_replace(&wd->fsd.path, path);
 }
@@ -599,6 +609,7 @@ elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->fsd.expandable = value;
 }
@@ -616,6 +627,7 @@ elm_fileselector_button_expandable_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return EINA_FALSE;
    return wd->fsd.expandable;
 }
@@ -634,6 +646,7 @@ elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->fsd.folder_only = value;
 }
@@ -651,6 +664,7 @@ elm_fileselector_button_folder_only_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return EINA_FALSE;
    return wd->fsd.folder_only;
 }
@@ -669,6 +683,7 @@ elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->fsd.is_save = value;
 }
@@ -686,6 +701,7 @@ elm_fileselector_button_is_save_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return EINA_FALSE;
    return wd->fsd.is_save;
 }
@@ -705,6 +721,7 @@ elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    wd->inwin_mode = value;
 }
@@ -722,6 +739,7 @@ elm_fileselector_button_inwin_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return EINA_FALSE;
    return wd->inwin_mode;
 }
@@ -741,6 +759,7 @@ elm_fileselector_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->icon == icon) return;
    if (wd->icon) evas_object_del(wd->icon);
@@ -770,6 +789,7 @@ elm_fileselector_button_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return NULL;
    return wd->icon;
 }
