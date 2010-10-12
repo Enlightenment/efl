@@ -62,7 +62,7 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
    evas_object_image_size_get(obj, &iw, &ih);
 
    if ((iw < 1) || (ih < 1)) return;
-   if (wd->option == ELM_BG_SCALE) 
+   if (wd->option == ELM_BG_OPTION_SCALE) 
      {
         w = ow;
         h = (ih * w) / iw;
@@ -74,7 +74,7 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
         x = (ow - w) / 2;
         y = (oh - h) / 2;
      }
-   else if (wd->option == ELM_BG_TILE) 
+   else if (wd->option == ELM_BG_OPTION_TILE) 
      {
         x = y = 0;
         w = iw;
@@ -113,7 +113,7 @@ elm_bg_add(Evas_Object *parent)
    _elm_theme_object_set(obj, wd->base, "bg", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
-   wd->option = ELM_BG_SCALE;
+   wd->option = ELM_BG_OPTION_SCALE;
    return obj;
 }
 

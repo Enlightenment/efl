@@ -448,8 +448,8 @@ extern "C" {
     */
   typedef enum _Elm_Bg_Option
     {
-      ELM_BG_SCALE,
-      ELM_BG_TILE
+      ELM_BG_OPTION_SCALE,
+      ELM_BG_OPTION_TILE
     } Elm_Bg_Option;
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
