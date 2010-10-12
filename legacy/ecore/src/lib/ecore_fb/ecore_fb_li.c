@@ -492,7 +492,7 @@ error_open:
 EAPI void
 ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
 {
-   if (!fd) return;
+   if (!dev || dev->fd < 0) return;
    /* close the fd */
    close(dev->fd);
    /* remove the element from the list */
