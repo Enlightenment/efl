@@ -2485,7 +2485,7 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
  * goes on to the rejected set.
  */
 EAPI void
-elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text)
+elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **text)
 {
    Elm_Entry_Filter_Accept_Set *as = data;
    const char *set;
