@@ -16,12 +16,13 @@
  * theme.
  */
 
-static const char _cursor_key[] = "_elm_cursor";
+#define _cursor_key "_elm_cursor"
 
-struct _Cursor_Id {
-     const char *name;
+struct _Cursor_Id 
+{
+   const char *name;
 #ifdef HAVE_ELEMENTARY_X
-     int id;
+   int id;
 #endif
 };
 
@@ -155,8 +156,8 @@ static void
 _elm_cursor_obj_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Cursor *cur = data;
-   if (cur)
-      cur->obj = NULL;
+
+   if (cur) cur->obj = NULL;
 }
 
 static Eina_Bool
@@ -167,7 +168,7 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
    cur->obj = edje_object_add(cur->evas);
 
    if (!cur->obj)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
                               cur->style ? cur->style : "default"))
@@ -179,7 +180,6 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
 
    evas_object_event_callback_add(cur->obj, EVAS_CALLBACK_DEL,
                                   _elm_cursor_obj_del, cur);
-
 
    edje_object_size_min_get(cur->obj, &x, &y);
    evas_object_resize(cur->obj, x, y);
@@ -211,7 +211,7 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
    if ((!cur->engine_only) && (!cur->use_engine))
      {
         if (!cur->obj)
-           _elm_cursor_obj_add(cur->eventarea, cur);
+          _elm_cursor_obj_add(cur->eventarea, cur);
         ecore_evas_object_cursor_set(cur->ee, cur->obj,
                                      ELM_OBJECT_LAYER_CURSOR, cur->hot_x,
                                      cur->hot_y);
@@ -240,8 +240,7 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    while (sobj_parent != NULL)
      {
         pcur = evas_object_data_get((sobj_parent), _cursor_key);
-        if (pcur && pcur->visible)
-           break;
+        if ((pcur) && (pcur->visible)) break;
         sobj_parent = evas_object_data_get(sobj_parent, "elm-parent");
      }
 
@@ -268,7 +267,7 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_elm_cursor_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_cursor_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_object_cursor_unset(obj);
 }
@@ -305,6 +304,7 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
      {
 #ifdef HAVE_ELEMENTARY_X
         struct _Cursor_Id cur_search, *cur_id;
+
         cur_search.name = cur->cursor_name;
         cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
                          sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
@@ -355,7 +355,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 
    cur = evas_object_data_get(eventarea, _cursor_key);
    if (cur)
-      elm_object_cursor_unset(eventarea);
+     elm_object_cursor_unset(eventarea);
 
    if (!cursor) return;
 
@@ -369,7 +369,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 
    cur->cursor_name = eina_stringshare_add(cursor);
    if (!cur->cursor_name)
-      ERR("Could not store cursor name %s", cursor);
+     ERR("Could not store cursor name %s", cursor);
 
    cur->evas = evas_object_evas_get(eventarea);
    cur->ee = ecore_evas_ecore_evas_get(cur->evas);
@@ -429,19 +429,19 @@ elm_object_cursor_unset(Evas_Object *obj)
    eina_stringshare_del(cur->style);
 
    if (cur->owner)
-      elm_widget_cursor_del(cur->owner, cur);
+     elm_widget_cursor_del(cur->owner, cur);
 
    if (cur->obj)
-      evas_object_del(cur->obj);
+     evas_object_del(cur->obj);
 
    if (cur->visible)
      {
         if (!cur->use_engine)
-           ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
-                                        cur->hot_x, cur->hot_y);
+          ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
+                                       cur->hot_x, cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
         else
-           ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
+          ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
 #endif
      }
 
@@ -472,24 +472,24 @@ elm_object_cursor_style_set(Evas_Object *obj, const char *style)
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
 
    if (!eina_stringshare_replace(&cur->style, style))
-      ERR("Could not set current style=%s", style);
+     ERR("Could not set current style=%s", style);
 
    if (cur->use_engine) return;
 
    if (!cur->obj)
      {
         if (!_elm_cursor_obj_add(obj, cur))
-           ERR("Could not create cursor object");
+          ERR("Could not create cursor object");
         else
-           _elm_cursor_set_hot_spots(cur);
+          _elm_cursor_set_hot_spots(cur);
      }
    else
      {
         if (!_elm_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
                                    style))
-           ERR("Could not apply the theme to the cursor style=%s", style);
+          ERR("Could not apply the theme to the cursor style=%s", style);
         else
-           _elm_cursor_set_hot_spots(cur);
+          _elm_cursor_set_hot_spots(cur);
      }
 }
 
@@ -519,9 +519,9 @@ elm_cursor_theme(Elm_Cursor *cur)
    if ((!cur) || (!cur->obj)) return;
    if (!_elm_theme_object_set(cur->eventarea, cur->obj, "cursor",
                               cur->cursor_name, cur->style))
-      ERR("Could not apply the theme to the cursor style=%s", cur->style);
+     ERR("Could not apply the theme to the cursor style=%s", cur->style);
    else
-      _elm_cursor_set_hot_spots(cur);
+     _elm_cursor_set_hot_spots(cur);
 }
 
 /**
