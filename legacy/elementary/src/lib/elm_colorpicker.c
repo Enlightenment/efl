@@ -1,6 +1,5 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include <Ecore.h>
 
 /**
  * @addtogroup Colorpicker Colorpicker
@@ -48,13 +47,14 @@ struct _Widget_Data
 };
 
 typedef enum
-  {
-    BUTTON_RELEASED,
-    L_BUTTON_PRESSED,
-    R_BUTTON_PRESSED
-  } Button_State;
+{
+   BUTTON_RELEASED,
+   L_BUTTON_PRESSED,
+   R_BUTTON_PRESSED
+} Button_State;
 
 static const char *widtype = NULL;
+
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -75,20 +75,21 @@ static void _right_button_up_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _add_colorbar(Evas_Object *obj);
 static void _set_color(Evas_Object *obj, int r, int g, int b, int a);
 
-static const char SIG_CHANGED[] = "changed";
-static const Evas_Smart_Cb_Description _signals[] = {
-       {SIG_CHANGED, ""},
-       {NULL, NULL}
+#define SIG_CHANGED "changed"
+
+static const Evas_Smart_Cb_Description _signals[] = 
+{
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
 };
 
 static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int i;
+   int i = 0;
 
-   if (!wd)
-     return;
+   if (!wd) return;
 
    if (wd->lp_timer)
      ecore_timer_del(wd->lp_timer);
@@ -96,9 +97,7 @@ _del_hook(Evas_Object *obj)
      ecore_timer_del(wd->mv_timer);
 
    for (i = 0; i < 4; i++)
-     {
-        free(wd->cp[i]);
-     }
+     free(wd->cp[i]);
 
    free(wd);
 }
@@ -107,10 +106,9 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int i;
+   int i = 0;
 
-   if (!wd || !wd->base)
-     return;
+   if ((!wd) || (!wd->base)) return;
 
    _elm_theme_object_set(obj, wd->base, "colorpicker", "bg",
 			 elm_widget_style_get(obj));
@@ -145,6 +143,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
+
    if (!wd) return;
    elm_coords_finger_size_adjust(4, &minw, 4, &minh);
    edje_object_size_min_restricted_calc(wd->base, &minw, &minh, minw, minh);
@@ -214,7 +213,7 @@ _hsl_to_rgb(void *data)
    Widget_Data *wd = data;
    double r = 0, g = 0, b = 0;
    double _h, _s, _l;
-   int i;
+   int i = 0;
    double sv, vsf, f, p, q, t, v;
 
    _h = wd->h;
@@ -487,8 +486,7 @@ _mv_timer(void *data)
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
-   if (!cp || !wd)
-     return 0;
+   if ((!cp) || (!wd)) return 0;
 
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
    if (cp->button_state == L_BUTTON_PRESSED)
@@ -649,7 +647,7 @@ _add_colorbar(Evas_Object *obj)
    char colorbar_s[128];
    Widget_Data *wd;
    Evas *e;
-   int i;
+   int i = 0;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
