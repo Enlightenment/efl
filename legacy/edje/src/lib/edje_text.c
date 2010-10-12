@@ -117,8 +117,10 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 {
    Evas_Coord tw = 0, th = 0, p;
    int l, r;
+   int i;
    char *buf;
-   int c1 = -1, c2 = -1, loop = 0, extra;
+   int uc1 = -1, uc2 = -1, c1 = -1, c2 = -1;
+   int loop = 0, extra;
    size_t orig_len;
    FLOAT_T sc;
 
@@ -142,23 +144,23 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
      {
 	if (params->type.text.elipsis != 0.0)
           /* should be the last in text! not the rightmost */
-          c1 = evas_object_text_last_up_to_pos(ep->object,
+          uc1 = evas_object_text_last_up_to_pos(ep->object,
                 -p + l, th / 2);
 	if (params->type.text.elipsis != 1.0)
           /* should be the last in text! not the rightmost */
-          c2 = evas_object_text_last_up_to_pos(ep->object,
+          uc2 = evas_object_text_last_up_to_pos(ep->object,
                 -p + sw - r, th / 2);
-	if ((c1 < 0) && (c2 < 0))
+	if ((uc1 < 0) && (uc2 < 0))
 	  {
-	     c1 = 0;
-	     c2 = 0;
+	     uc1 = 0;
+	     uc2 = 0;
 	  }
      }
 
-   if (!(((c1 >= 0) || (c2 >= 0)) && (tw > sw)))
+   if (!(((uc1 >= 0) || (uc2 >= 0)) && (tw > sw)))
      return text;
 
-   if ((c1 == 0) && (c2 == 0))
+   if ((uc1 == 0) && (uc2 == 0))
      return text;
 
    orig_len = strlen(text);
@@ -171,6 +173,25 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 
    if (!(buf = malloc(orig_len + extra)))
      return text;
+
+   /* Convert uc1, uc2 -> c1, c2 */
+   i = 0;
+   if (uc1 > 0)
+     {
+        c1 = 0;
+        for ( ; i < uc1 ; i++)
+          {
+             c1 = evas_string_char_next_get(text, c1, NULL);
+          }
+     }
+   if (uc2 > 0)
+     {
+        c2 = c1;
+        for ( ; i < uc2 ; i++)
+          {
+             c2 = evas_string_char_next_get(text, c2, NULL);
+          }
+     }
 
    while (((c1 >= 0) || (c2 >= 0)) && (tw > sw))
      {
