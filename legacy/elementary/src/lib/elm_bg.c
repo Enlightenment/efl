@@ -70,8 +70,8 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
    else if (wd->option == ELM_BG_TILE) 
      {
         x = y = 0;
-        w = ow;
-        h = oh;
+        w = iw;
+        h = ih;
      }
    evas_object_image_fill_set(obj, x, y, w, h);
 }
