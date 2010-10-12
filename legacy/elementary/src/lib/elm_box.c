@@ -166,21 +166,21 @@ _transition_animation(void *data)
 }
 
 static void
-_transition_layout_child_added(void *data, Evas_Object *obj, void *event_info)
+_transition_layout_child_added(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Transition_Animation_Data *tad;
    Evas_Object_Box_Option *opt = event_info;
    Elm_Box_Transition *layout_data = data;
+
    tad = calloc(1, sizeof(Transition_Animation_Data));
-   if (!tad)
-      return;
+   if (!tad) return;
    tad->obj = opt->obj;
    layout_data->objs = eina_list_append(layout_data->objs, tad);
    layout_data->recalculate = EINA_TRUE;
 }
 
 static void
-_transition_layout_child_removed(void *data, Evas_Object *obj, void *event_info)
+_transition_layout_child_removed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Eina_List *l;
    Transition_Animation_Data *tad;
@@ -199,7 +199,7 @@ _transition_layout_child_removed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_transition_layout_obj_resize_cb (void *data, Evas *e, Evas_Object *obj, void *event_info)
+_transition_layout_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Box_Transition *layout_data = data;
    layout_data->recalculate = EINA_TRUE;
@@ -207,21 +207,22 @@ _transition_layout_obj_resize_cb (void *data, Evas *e, Evas_Object *obj, void *e
 
 static void
 _transition_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv,
-      Elm_Box_Transition *layout_data)
+                                    Elm_Box_Transition *layout_data)
 {
    Eina_List *l;
    Transition_Animation_Data *tad;
    Evas_Coord x, y, w, h;
-
    const double curtime = ecore_loop_time_get();
-   layout_data->duration = layout_data->duration - (curtime - layout_data->initial_time);
+
+   layout_data->duration = 
+     layout_data->duration - (curtime - layout_data->initial_time);
    layout_data->initial_time = curtime;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->start.x, &tad->start.y,
-              &tad->start.w, &tad->start.h);
+                                 &tad->start.w, &tad->start.h);
         tad->start.x = tad->start.x - x;
         tad->start.y = tad->start.y - y;
      }
@@ -229,7 +230,7 @@ _transition_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv
    EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->end.x, &tad->end.y,
-              &tad->end.w, &tad->end.h);
+                                 &tad->end.w, &tad->end.h);
         tad->end.x = tad->end.x - x;
         tad->end.y = tad->end.y - y;
      }
@@ -237,14 +238,14 @@ _transition_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv
 
 static Eina_Bool
 _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
-      Elm_Box_Transition *layout_data)
+                                      Elm_Box_Transition *layout_data)
 {
    Eina_List *l;
    Evas_Object_Box_Option *opt;
    Transition_Animation_Data *tad;
 
    EINA_LIST_FREE(layout_data->objs, tad)
-      free(tad);
+     free(tad);
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
@@ -252,20 +253,19 @@ _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
         if (!tad)
           {
              EINA_LIST_FREE(layout_data->objs, tad)
-                free(tad);
+               free(tad);
              layout_data->objs = NULL;
              return EINA_FALSE;
           }
         tad->obj = opt->obj;
         layout_data->objs = eina_list_append(layout_data->objs, tad);
-
      }
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _transition_layout_animation_start(Evas_Object *obj, Evas_Object_Box_Data *priv,
-      Elm_Box_Transition *layout_data, Eina_Bool(*transition_animation_cb)(void *data))
+                                   Elm_Box_Transition *layout_data, Eina_Bool(*transition_animation_cb)(void *data))
 {
    layout_data->start.layout(obj, priv, layout_data->start.data);
    layout_data->box = obj;
@@ -275,9 +275,12 @@ _transition_layout_animation_start(Evas_Object *obj, Evas_Object_Box_Data *priv,
       return EINA_FALSE;
    _transition_layout_calculate_coords(obj, priv, layout_data);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb, layout_data);
-   evas_object_smart_callback_add(obj, SIG_CHILD_ADDED, _transition_layout_child_added, layout_data);
-   evas_object_smart_callback_add(obj, SIG_CHILD_REMOVED, _transition_layout_child_removed, layout_data);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, 
+                                  _transition_layout_obj_resize_cb, layout_data);
+   evas_object_smart_callback_add(obj, SIG_CHILD_ADDED, 
+                                  _transition_layout_child_added, layout_data);
+   evas_object_smart_callback_add(obj, SIG_CHILD_REMOVED, 
+                                  _transition_layout_child_removed, layout_data);
    if (!layout_data->animator)
       layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
    layout_data->animation_ended = EINA_FALSE;
@@ -299,17 +302,17 @@ _transition_layout_animation_stop(Elm_Box_Transition *layout_data)
 }
 
 static void
-_transition_layout_animation_exec(Evas_Object *obj, Evas_Object_Box_Data *priv,
-      Elm_Box_Transition *layout_data, const double curtime)
+_transition_layout_animation_exec(Evas_Object *obj, Evas_Object_Box_Data *priv __UNUSED__,
+                                  Elm_Box_Transition *layout_data, const double curtime)
 {
    Eina_List *l;
    Transition_Animation_Data *tad;
    Evas_Coord x, y, w, h;
    Evas_Coord cur_x, cur_y, cur_w, cur_h;
+   double progress = 0.0;
+
+   progress = (curtime - layout_data->initial_time) / layout_data->duration;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-
-
-   double progress = (curtime - layout_data->initial_time) / layout_data->duration;
 
    EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
