@@ -125,6 +125,8 @@
   } while(0);
 
 #ifdef EFL_HAVE_THREADS
+extern Eina_Bool _threads_activated;
+
 void eina_share_common_threads_init(void);
 void eina_share_common_threads_shutdown(void);
 void eina_log_threads_init(void);
