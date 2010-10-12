@@ -52,35 +52,68 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   int iw = 0, ih = 0;
-   Evas_Coord x = 0, y = 0, w = 0, h = 0, ow = 0, oh = 0;
    Widget_Data *wd = data;
+   Evas_Coord bx = 0, by = 0, bw = 0, bh = 0;
+   Evas_Coord iw = 0, ih = 0;
+   Evas_Coord fx = 0, fy = 0, fw = 0, fh = 0;
+   Evas_Coord nx = 0, ny = 0, nw = 0, nh = 0;
+   const char *p;
 
-   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   evas_object_image_size_get(obj, &iw, &ih);
+   if ((!wd->img) || (!wd->file)) return;
+   if (((p = strrchr(wd->file, '.'))) && (!strcasecmp(p, ".edj"))) return;
 
+   /* grab image size */
+   evas_object_image_size_get(wd->img, &iw, &ih);
    if ((iw < 1) || (ih < 1)) return;
-   if (wd->option == ELM_BG_OPTION_SCALE) 
+
+   /* grab base object dimensions */
+   evas_object_geometry_get(wd->base, &bx, &by, &bw, &bh);
+
+   /* set some defaults */
+   nx = bx;
+   ny = by;
+   nw = bw;
+   nh = bh;
+
+   switch (wd->option) 
      {
-        w = ow;
-        h = (ih * w) / iw;
-        if (h < oh)
+      case ELM_BG_OPTION_CENTER:
+        fx = fy = 0;
+        fw = nw = iw;
+        fh = nh = ih;
+        nx = ((bw - fw) / 2);
+        ny = ((bh - fh) / 2);
+        break;
+      case ELM_BG_OPTION_SCALE:
+        fw = bw;
+        fh = ((ih * fw) / iw);
+        if (fh < bh)
           {
-             h = oh;
-             w = (iw * h) / ih;
+             fh = bh;
+             fw = ((iw * fh) / ih);
           }
-        x = (ow - w) / 2;
-        y = (oh - h) / 2;
+        fx = ((bw - fw) / 2);
+        fy = ((bh - fh) / 2);
+        break;
+      case ELM_BG_OPTION_TILE:
+        fx = fy = 0;
+        fw = iw;
+        fh = ih;
+        break;
+      case ELM_BG_OPTION_STRETCH:
+      default:
+        fx = nx = 0;
+        fy = ny = 0;
+        fw = bw;
+        fh = bh;
+        break;
      }
-   else if (wd->option == ELM_BG_OPTION_TILE) 
-     {
-        x = y = 0;
-        w = iw;
-        h = ih;
-     }
-   evas_object_image_fill_set(obj, x, y, w, h);
+
+   evas_object_image_fill_set(wd->img, fx, fy, fw, fh);
+   evas_object_move(wd->img, nx, ny);
+   evas_object_resize(wd->img, nw, nh);
 }
 
 /**
@@ -112,6 +145,9 @@ elm_bg_add(Evas_Object *parent)
    wd->base = edje_object_add(e);
    _elm_theme_object_set(obj, wd->base, "bg", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
+
+   evas_object_event_callback_add(wd->base, EVAS_CALLBACK_RESIZE, 
+                                  _custom_resize, wd);
 
    wd->option = ELM_BG_OPTION_SCALE;
    return obj;
@@ -153,14 +189,12 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    else
      {
 	wd->img = evas_object_image_add(evas_object_evas_get(wd->base));
-	evas_object_event_callback_add(wd->img, EVAS_CALLBACK_RESIZE, 
-                                       _custom_resize, wd);
 	evas_object_image_file_set(wd->img, file, group);
      }
-   elm_widget_sub_object_add(obj, wd->img);
    evas_object_repeat_events_set(wd->img, EINA_TRUE);
    edje_object_part_swallow(wd->base, "elm.swallow.background", wd->img);
-   evas_object_show(wd->img);
+   elm_widget_sub_object_add(obj, wd->img);
+   _custom_resize(wd, NULL, NULL, NULL);
 }
 
 /**
@@ -182,6 +216,7 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 
    wd = elm_widget_data_get(obj);
    wd->option = option;
+   _custom_resize(wd, NULL, NULL, NULL);
 }
 
 /**
@@ -206,11 +241,11 @@ elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
    if (!wd->rect)
      {
         wd->rect = evas_object_rectangle_add(evas_object_evas_get(wd->base));
-        elm_widget_sub_object_add(obj, wd->rect);
         edje_object_part_swallow(wd->base, "elm.swallow.rectangle", wd->rect);
+        elm_widget_sub_object_add(obj, wd->rect);
+        _custom_resize(wd, NULL, NULL, NULL);
      }
    evas_object_color_set(wd->rect, r, g, b, 255);
-   evas_object_show(wd->rect);
 }
 
 /**
@@ -235,8 +270,14 @@ elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
 	evas_object_del(wd->overlay);
 	wd->overlay = NULL;
      }
-   if (!overlay) return;
+   if (!overlay) 
+     {
+        _custom_resize(wd, NULL, NULL, NULL);
+        return;
+     }
    wd->overlay = overlay;
-   elm_widget_sub_object_add(obj, wd->overlay);
    edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
+   elm_widget_sub_object_add(obj, wd->overlay);
+
+   _custom_resize(wd, NULL, NULL, NULL);
 }

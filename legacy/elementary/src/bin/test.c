@@ -4,6 +4,7 @@
 /* all tests prototypes */
 void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
+void test_bg_options(void *data, Evas_Object *obj, void *event_info);
 void test_icon(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert2(void *data, Evas_Object *obj, void *event_info);
@@ -214,6 +215,7 @@ my_win_main(char *autorun)
 #define ADD_TEST(name_, cb_) elm_test_add(&tests, name_, cb_)
    ADD_TEST("Bg Plain", test_bg_plain);
    ADD_TEST("Bg Image", test_bg_image);
+   ADD_TEST("Bg Options", test_bg_options);
    ADD_TEST("Icon Transparent", test_icon);
    ADD_TEST("Box Vert", test_box_vert);
    ADD_TEST("Box Vert 2", test_box_vert2);
