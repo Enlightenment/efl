@@ -231,14 +231,6 @@ ecore_con_ssl_client_write(Ecore_Con_Client *cl, unsigned char *buf, int size)
 }
 
 /**
- * @addtogroup Ecore_Con_SSL_Group Ecore Connection SSL Functions
- *
- * Functions that operate on Ecore connection objects pertaining to SSL.
- *
- * @{
- */
-
-/**
  * Returns if SSL support is available
  * @return 1 if SSL is available and provided by gnutls, 2 if provided by openssl,
  * 0 if it is not available.
@@ -249,6 +241,14 @@ ecore_con_ssl_available_get(void)
 {
    return _ECORE_CON_SSL_AVAILABLE;
 }
+
+/**
+ * @addtogroup Ecore_Con_SSL_Group Ecore Connection SSL Functions
+ *
+ * Functions that operate on Ecore connection objects pertaining to SSL.
+ *
+ * @{
+ */
 
 /**
  * @brief Enable certificate verification on a server object
@@ -362,7 +362,9 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
    return SSL_SUFFIX(_ecore_con_ssl_server_crl_add)(svr, crl_file);
 }
 
-/** }@ */
+/**
+ * @}
+ */
 
 #if USE_GNUTLS
 

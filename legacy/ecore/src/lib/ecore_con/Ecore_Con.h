@@ -135,39 +135,56 @@ typedef struct _Ecore_Con_Url Ecore_Con_Url;
  * @{
  */
 
-/** @typedef Ecore_Con_Event_Client_Add
+/**
+ * @typedef Ecore_Con_Event_Client_Add
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Client_Add Ecore_Con_Event_Client_Add;
-/** @typedef Ecore_Con_Event_Client_Del
+
+/**
+ * @typedef Ecore_Con_Event_Client_Del
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Client_Del Ecore_Con_Event_Client_Del;
-/** @typedef Ecore_Con_Event_Server_Add
+
+/**
+ * @typedef Ecore_Con_Event_Server_Add
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Server_Add Ecore_Con_Event_Server_Add;
-/** @typedef Ecore_Con_Event_Server_Del
+
+/**
+ * @typedef Ecore_Con_Event_Server_Del
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Server_Del Ecore_Con_Event_Server_Del;
-/** @typedef Ecore_Con_Event_Client_Data
+
+/**
+ * @typedef Ecore_Con_Event_Client_Data
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Client_Data Ecore_Con_Event_Client_Data;
-/** @typedef Ecore_Con_Event_Server_Data
+
+/**
+ * @typedef Ecore_Con_Event_Server_Data
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Server_Data Ecore_Con_Event_Server_Data;
-/** @typedef Ecore_Con_Event_Url_Data
+
+/**
+ * @typedef Ecore_Con_Event_Url_Data
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Url_Data Ecore_Con_Event_Url_Data;
-/** @typedef Ecore_Con_Event_Url_Complete
+
+/**
+ * @typedef Ecore_Con_Event_Url_Complete
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
-/** @typedef Ecore_Con_Event_Url_Progress
+
+/**
+ * @typedef Ecore_Con_Event_Url_Progress
  * Used as the @p data param for the corresponding event
  */
 typedef struct _Ecore_Con_Event_Url_Progress Ecore_Con_Event_Url_Progress;
@@ -214,12 +231,9 @@ struct _Ecore_Con_Event_Server_Del
  */
 struct _Ecore_Con_Event_Client_Data
 {
- /** the client that connected */
-   Ecore_Con_Client *client;
-   /** the data that the client sent */
-   void *data;
-   /** the length of the data sent */
-   int size;
+   Ecore_Con_Client *client; /**< the client that connected */
+   void *data;               /**< the data that the client sent */
+   int size;                 /**< the length of the data sent */
 };
 
 /**
@@ -228,12 +242,9 @@ struct _Ecore_Con_Event_Client_Data
  */
 struct _Ecore_Con_Event_Server_Data
 {
- /** the server that was connected to */
-   Ecore_Con_Server *server;
-   /** the data that the server sent */
-   void *data;
-   /** the length of the data sent */
-   int size;
+   Ecore_Con_Server *server; /**< the server that was connected to */
+   void *data;               /**< the data that the server sent */
+   int size;                 /**< the length of the data sent */
 };
 
 /**
@@ -377,7 +388,9 @@ EAPI Eina_Bool         ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const
 EAPI Eina_Bool         ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *ca_file);
 EAPI void              ecore_con_ssl_server_verify(Ecore_Con_Server *svr);
 
-/** }@ */
+/**
+ * @}
+ */
 
 /**
  * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
@@ -435,6 +448,7 @@ EAPI void              ecore_con_client_flush(Ecore_Con_Client *cl);
 EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
 EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
 EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
+
 /**
  * @}
  */
