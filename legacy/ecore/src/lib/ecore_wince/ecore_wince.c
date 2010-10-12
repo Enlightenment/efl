@@ -313,7 +313,7 @@ ecore_wince_init()
  *
  * This function shuts down the Ecore_WinCE library. It returns 0 when it has
  * been called the same number of times than ecore_wince_init(). In that case
- * it shut down all the Windows CE graphic system.
+ * it shuts down all the Windows CE graphic system.
  */
 EAPI int
 ecore_wince_shutdown()

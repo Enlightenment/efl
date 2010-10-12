@@ -371,7 +371,7 @@ ecore_win32_init()
  *
  * This function shuts down the Ecore_Win32 library. It returns 0 when it has
  * been called the same number of times than ecore_win32_init(). In that case
- * it shut down all the Windows graphic system.
+ * it shuts down all the Windows graphic system.
  */
 EAPI int
 ecore_win32_shutdown()
