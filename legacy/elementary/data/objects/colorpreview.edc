@@ -1,0 +1,22 @@
+images {
+   image: "grid_bg.png" COMP;
+}
+
+collections {
+   group { name: "main";
+      parts {
+         part { name: "Grid";
+            type: IMAGE;
+            description { state: "default" 0;
+               image.normal: "grid_bg.png";
+            }
+         }
+         part { name: "ColorPreview";
+            type: SWALLOW;
+            mouse_events: 0;
+            description { state: "default" 0;
+            }
+         }
+      }
+   }
+}

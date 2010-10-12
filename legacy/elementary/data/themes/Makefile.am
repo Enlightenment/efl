@@ -200,7 +200,10 @@ tooltip-corner-bottom-right-tip.png \
 tooltip-edge-left-tip.png \
 tooltip-edge-bottom-tip.png \
 tooltip-edge-right-tip.png \
-tooltip-corner-top-right-tip.png
+tooltip-corner-top-right-tip.png \
+color_picker_brightness.png \
+color_picker_color.png \
+color_picker_opacity.png
 
 
 default.edj: Makefile $(EXTRA_DIST)

@@ -88,7 +88,8 @@ test_cursor.c \
 test_focus.c \
 test_focus2.c \
 test_flippicker.c \
-test_diskpicker.c
+test_diskpicker.c \
+test_colorpicker.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =

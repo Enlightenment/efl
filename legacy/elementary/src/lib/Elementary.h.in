@@ -1940,6 +1940,14 @@ extern "C" {
     * "selected" - when item is selected (scroller stops)
     */
 
+   /* colorpicker */
+   EAPI Evas_Object *elm_colorpicker_add(Evas_Object *parent);
+   EAPI void elm_colorpicker_color_set(Evas_Object *obj, int r, int g , int b, int a);
+   EAPI void elm_colorpicker_color_get(Evas_Object *obj, int *r, int *g , int *b, int *a);
+   /* smart callbacks called:
+    * "clicked" - when bar or button is clicked
+    */
+
    /* debug
     * don't use it unless you are sure
     */
