@@ -326,7 +326,7 @@ EAPI void
 evas_object_text_text_set(Evas_Object *obj, const char *_text)
 {
    Evas_Object_Text *o;
-   int is, was;
+   int is, was, len;
    Eina_Unicode *text;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -337,7 +337,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    return;
    MAGIC_CHECK_END();
 
-   text = evas_common_encoding_utf8_to_unicode(_text, NULL);
+   text = evas_common_encoding_utf8_to_unicode(_text, &len);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
    if ((o->cur.text) && (text) && (!eina_unicode_strcmp(o->cur.text, text)))
@@ -353,6 +353,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->cur.intl_props.props);
    o->cur.intl_props.props = evas_bidi_paragraph_props_get(text);
+   evas_bidi_shape_string(text, &o->cur.intl_props, len);
 #endif
    if (o->cur.text) eina_ustringshare_del(o->cur.text);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
