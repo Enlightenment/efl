@@ -24,7 +24,7 @@
  * Note that the caller is responsible for freeing the Eina_List
  * when finished with it. There is no need to finish the list strings.
  *
- * @return Return an EIna_List of strings;
+ * @return Return an Eina_List of strings;
  *         on failure it returns NULL.
  * @ingroup Ecore_IMF_Context_Group
  */
@@ -253,8 +253,8 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
  * also be used for purposes internal to the Input Method Context.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param canas The client canvas. This may be NULL to indicate
- *              that the previous client canvas no longer exists.
+ * @param canvas The client canvas. This may be NULL to indicate
+ *               that the previous client canvas no longer exists.
  * @ingroup Ecore_IMF_Context_Group
  */
 EAPI void
@@ -305,7 +305,7 @@ ecore_imf_context_hide(Ecore_IMF_Context *ctx)
    if (ctx->klass->hide) ctx->klass->hide(ctx);
 }
 
-/*
+/**
  * Retrieve the current preedit string and cursor position
  * for the Input Method Context.
  *
