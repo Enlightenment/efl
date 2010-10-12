@@ -219,10 +219,21 @@ ecore_fb_vt_shutdown(void)
 }
 
 /**
- * To be documented.
+ * @addtogroup Ecore_FB_Group Ecore_FB - Frame buffer convenience functions.
  *
- * FIXME: To be fixed.
- * @todo Documentation: Find out what this does.
+ * @{
+ */
+
+/**
+ * @brief Set a callback called when a virtual terminal is gained.
+ *
+ * @param func The callback called when vt is gained.
+ * @param data The data to pass to the callback.
+ *
+ * This function sets the callback @p func which will be called when a
+ * virtual terminal is gained (for example you press Ctrl-Alt-F1 to go
+ * to vt1 and your app was using vt1). @p data will be pass to @p func if
+ * the callback is called.
  */
 EAPI void
 ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
@@ -232,10 +243,15 @@ ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
 }
 
 /**
- * To be documented.
+ * @brief Set a callback called when a virtual terminal is lost.
  *
- * FIXME: To be fixed.
- * @todo Documentation: Find out what this does.
+ * @param func The callback called when vt is lost.
+ * @param data The data to pass to the callback.
+ *
+ * This function sets the callback @p func which will be called when a
+ * virtual terminal is lost (someone wants the tv from you and you
+ * want to give up that vt). @p data will be pass to @p func if the
+ * callback is called.
  */
 EAPI void
 ecore_fb_callback_lose_set(void (*func) (void *data), void *data)
@@ -244,6 +260,11 @@ ecore_fb_callback_lose_set(void (*func) (void *data), void *data)
    _ecore_fb_func_fb_lost_data = data;
 
 }
+
+/**
+ * @}
+ */
+
 typedef struct _Ecore_Fb_Filter_Data Ecore_Fb_Filter_Data;
 
 struct _Ecore_Fb_Filter_Data

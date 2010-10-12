@@ -19,17 +19,23 @@ static int _ecore_fb_console_w = 0;
 static int _ecore_fb_console_h = 0;
 
 /**
- * @defgroup Ecore_FB_Library_Group Framebuffer Library Functions
+ * @addtogroup Ecore_FB_Group Ecore_FB - Frame buffer convenience functions.
  *
- * Functions used to set up and shut down the Ecore_Framebuffer functions.
+ * @{
  */
 
 /**
- * Sets up the Ecore_Fb library.
- * @param   name device target name
- * @return  @c 0 on failure.  Otherwise, the number of times the library has
- *          been initialised without being shut down.
- * @ingroup Ecore_FB_Library_Group
+ * @brief Initialize the Ecore_Fb library.
+ *
+ * @param name Device target name.
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up all the Ecore_Fb library. It returns 0 on
+ * failure, otherwise it returns the number of times it has already
+ * been called.
+ *
+ * When Ecore_Fb is not used anymore, call ecore_fb_shutdown() to shut down
+ * the Ecore_Fb library.
  */
 EAPI int
 ecore_fb_init(const char *name __UNUSED__)
@@ -52,10 +58,13 @@ ecore_fb_init(const char *name __UNUSED__)
 }
 
 /**
- * Shuts down the Ecore_Fb library. 
- * @return  @c The number of times the system has been initialised without
- *             being shut down.
- * @ingroup Ecore_FB_Library_Group
+ * @brief Shut down the Ecore_Fb library.
+ *
+ * @return 0 when the library is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shuts down the Ecore_Fb library. It returns 0 when it has
+ * been called the same number of times than ecore_fb_init().
  */
 EAPI int
 ecore_fb_shutdown(void)
@@ -70,9 +79,16 @@ ecore_fb_shutdown(void)
 
 
 /**
- * Retrieves the width and height of the current frame buffer in pixels.
+ * @brief Retrieve the width and height of the current frame buffer in
+ * pixels.
+ *
  * @param w Pointer to an integer in which to store the width.
  * @param h Pointer to an interge in which to store the height.
+ *
+ * This function retrieves the size of the current frame buffer in
+ * pixels. @p w and @p h can be buffers that will be filled with the
+ * corresponding values. If one of them is @c NULL, nothing will be
+ * done for that parameter.
  */
 EAPI void
 ecore_fb_size_get(int *w, int *h)
@@ -105,3 +121,7 @@ _ecore_fb_size_get(int *w, int *h)
    if (w) *w = fb_var.xres;
    if (h) *h = fb_var.yres;
 }
+
+/**
+ * @}
+ */

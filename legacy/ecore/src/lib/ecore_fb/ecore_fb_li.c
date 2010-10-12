@@ -35,11 +35,11 @@ test_bit(int bit, unsigned long *array)
    else long_has_neither_32_nor_64_bits();
 }
 
-static void 
+static void
 _ecore_fb_li_event_free_key_down(void *data __UNUSED__, void *ev)
 {
    Ecore_Fb_Event_Key_Up *e;
-   
+
    e = ev;
    free(e->keyname);
    if (e->keysymbol) free(e->keysymbol);
@@ -47,11 +47,11 @@ _ecore_fb_li_event_free_key_down(void *data __UNUSED__, void *ev)
    free(e);
 }
 
-static void 
+static void
 _ecore_fb_li_event_free_key_up(void *data __UNUSED__, void *ev)
 {
    Ecore_Fb_Event_Key_Up *e;
-   
+
    e = ev;
    free(e->keyname);
    if (e->keysymbol) free(e->keysymbol);
@@ -63,7 +63,7 @@ static void
 _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *iev)
 {
    if (!dev->listen) return;
-   
+
    /* check for basic keyboard keys */
    if ((iev->code >= KEY_ESC) && (iev->code <= KEY_COMPOSE))
      {
@@ -72,12 +72,12 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
           {
              int offset = 0;
              Ecore_Fb_Event_Key_Down *ev;
-             
+
              ev = calloc(1, sizeof(Ecore_Fb_Event_Key_Down));
              if (dev->keyboard.shift) offset = 1;
              else if (dev->keyboard.lock) offset = 2;
              ev->keyname = strdup(_ecore_fb_li_kbd_syms[iev->code * 6]);
-             
+
              ev->keysymbol = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + offset]);
              ev->key_compose = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset]);
              ev->dev = dev;
@@ -108,12 +108,12 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
           {
              int offset = 0;
              Ecore_Fb_Event_Key_Up *ev;
-             
+
              ev = calloc(1, sizeof(Ecore_Fb_Event_Key_Up));
              if (dev->keyboard.shift) offset = 1;
              else if (dev->keyboard.lock) offset = 2;
              ev->keyname = strdup(_ecore_fb_li_kbd_syms[iev->code * 6]);
-             
+
              ev->keysymbol = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + offset]);
              ev->key_compose = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset]);
              ev->dev = dev;
@@ -142,19 +142,19 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
    else if ((iev->code >= BTN_MOUSE) && (iev->code < BTN_JOYSTICK))
      {
         int button;
-        
+
         button = ((iev->code & 0x00F) + 1);
         if (iev->value)
           {
              Ecore_Fb_Event_Mouse_Button_Down *ev;
              double current;
-             
+
              ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
              ev->dev = dev;
              ev->button = button;
              ev->x = dev->mouse.x;
              ev->y = dev->mouse.y;
-             
+
              current = ecore_time_get();
              if ((current - dev->mouse.prev) <= dev->mouse.threshold)
                 ev->double_click = 1;
@@ -177,7 +177,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         else
           {
              Ecore_Fb_Event_Mouse_Button_Up *ev;
-             
+
              ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Button_Up));
              ev->dev = dev;
              ev->button = button;
@@ -219,7 +219,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              ev->x = dev->mouse.x;
              ev->y = dev->mouse.y;
              ev->dev = dev;
-             
+
              ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE,ev,NULL,NULL);
              break;
           }
@@ -228,7 +228,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
           {
              Ecore_Fb_Event_Mouse_Wheel *ev;
              ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Wheel));
-             
+
              ev->x = dev->mouse.x;
              ev->y = dev->mouse.y;
              if (iev->code == REL_HWHEEL) ev->direction = 1;
@@ -247,7 +247,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
 {
    static int prev_pressure = 0;
    int pressure;
-   
+
    if (!dev->listen) return;
    switch (iev->code)
      {
@@ -255,7 +255,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
         if (dev->mouse.w != 0)
           {
              int tmp;
-             
+
              tmp = (int)((double)(iev->value - dev->mouse.min_w) / dev->mouse.rel_w);
              if (tmp < 0) dev->mouse.x = 0;
              else if (tmp > dev->mouse.w) dev->mouse.x = dev->mouse.w;
@@ -263,12 +263,12 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
              dev->mouse.event = ECORE_FB_EVENT_MOUSE_MOVE;
           }
         break;
-        
+
      case ABS_Y:
         if(dev->mouse.h != 0)
           {
              int tmp;
-             
+
              tmp = (int)((double)(iev->value - dev->mouse.min_h) / dev->mouse.rel_h);
              if (tmp < 0) dev->mouse.y = 0;
              else if (tmp > dev->mouse.h) dev->mouse.y = dev->mouse.h;
@@ -276,7 +276,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
              dev->mouse.event = ECORE_FB_EVENT_MOUSE_MOVE;
           }
         break;
-        
+
      case ABS_PRESSURE:
         pressure = iev->value;
         if ((pressure) && (!prev_pressure))
@@ -298,7 +298,7 @@ static void
 _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *iev __UNUSED__)
 {
    if (!dev->listen) return;
-   
+
    if (dev->mouse.event == ECORE_FB_EVENT_MOUSE_MOVE)
      {
         Ecore_Fb_Event_Mouse_Move *ev;
@@ -335,7 +335,7 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh __UNUSED__)
    struct input_event ev[64];
    int len;
    int i;
-   
+
    dev = (Ecore_Fb_Input_Device*)data;
    /* read up to 64 events at once */
    len = read(dev->fd, &ev, sizeof(ev));
@@ -363,13 +363,23 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh __UNUSED__)
    return EINA_TRUE;
 }
 
-/** 
- * @brief Sets the listen mode for an input device 
- * @param dev The device to set the mode of
- * @param listen The mode of listening (EINA_FALSE for off, EINA_TRUE for on)
- * This enables or disables listening on an input device.
+/**
+ * @addtogroup Ecore_FB_Group Ecore_FB - Frame buffer convenience functions.
+ *
+ * @{
  */
-EAPI void 
+
+/**
+ * @brief Set the listen mode for an input device .
+ *
+ * @param dev The device to set the mode of.
+ * @param listen EINA_FALSE to disable listening mode, EINA_TRUE to enable it.
+ *
+ * This function enables or disables listening on the input device @p
+ * dev. If @p listen is #EINA_FALSE, listening mode is disabled, if it
+ * is #EINA_TRUE, it is enabled.
+ */
+EAPI void
 ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
 {
    if (!dev) return;
@@ -379,7 +389,7 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
         /* if the device already had a handler */
         if (!dev->handler)
            dev->handler = ecore_main_fd_handler_add(dev->fd, ECORE_FD_READ, _ecore_fb_li_device_fd_callback, dev, NULL, NULL);
-        
+
      }
    dev->listen = listen;
 }
@@ -388,11 +398,14 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
 # define EV_CNT (EV_MAX+1)
 #endif
 
-/*
- * @brief Opens an input device
- * @param dev The device to open
- * @return The @ref Ecore_Fb_Input_Device object that has been opened
- * This opens an input device and returns the object for it, or returns NULL on failure.
+/**
+ * @brief Open an input device.
+ *
+ * @param dev The device to open.
+ * @return The @ref Ecore_Fb_Input_Device object that has been opened.
+ *
+ * This function opens the input device named @p dev and returns the
+ * object for it, or returns @c NULL on failure. 
  */
 EAPI Ecore_Fb_Input_Device *
 ecore_fb_input_device_open(const char *dev)
@@ -401,11 +414,11 @@ ecore_fb_input_device_open(const char *dev)
    unsigned long event_type_bitmask[EV_CNT / 32 + 1];
    int event_type;
    int fd;
-   
+
    if (!dev) return NULL;
    device = calloc(1, sizeof(Ecore_Fb_Input_Device));
    if (!device) return NULL;
-   
+
    if ((fd = open(dev, O_RDONLY, O_NONBLOCK)) < 0)
      {
         fprintf(stderr, "[ecore_fb_li:device_open] %s %s", dev, strerror(errno));
@@ -428,7 +441,7 @@ ecore_fb_input_device_open(const char *dev)
    device->info.dev = strdup(dev);
    /* common */
    device->mouse.threshold = CLICK_THRESHOLD_DEFAULT;
-   
+
    /* set info */
    for (event_type = 0; event_type < EV_MAX; event_type++)
      {
@@ -460,7 +473,7 @@ ecore_fb_input_device_open(const char *dev)
      }
    _ecore_fb_li_devices = eina_list_append(_ecore_fb_li_devices, device);
    return device;
-   
+
 error_caps:
    close(fd);
 error_open:
@@ -468,9 +481,18 @@ error_open:
    return NULL;
 }
 
+/**
+ * @brief Close the given device.
+ *
+ * @param dev The device to close
+ *
+ * This function closes the device @p dev. If @p dev is @c NULL, this
+ * function does nothing.
+ */
 EAPI void
 ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
 {
+   if (!fd) return;
    /* close the fd */
    close(dev->fd);
    /* remove the element from the list */
@@ -479,37 +501,43 @@ ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev)
 }
 
 
-/*
- * If the device is a relative input device, 
- * we must set a width and height for it. If its
- * absolute set the ioctl correctly, if not, unsupported
- * device
+/**
+ * @brief Set the axis size of the given device.
+ *
+ * @param dev The device to set the axis size to.
+ * @param w The width of the axis.
+ * @param h The height of the axis.
+ *
+ * This function sets set the width @p w and height @p h of the axis
+ * of device @p dev. If @p dev is a relative input device, a width and
+ * height must set for it. If its absolute set the ioctl correctly, if
+ * not, unsupported device.
  */
 EAPI void
 ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
 {
    if (!dev) return;
    if ((w < 0) || (h < 0)) return;
-   /* FIXME 
-    * this code is for a touchscreen device, 
+   /* FIXME
+    * this code is for a touchscreen device,
     * make it configurable (ABSOLUTE | RELATIVE)
     */
    if (dev->info.cap & ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE)
      {
         /* FIXME looks like some kernels dont include this struct */
         struct input_absinfo abs_features;
-        
+
         ioctl(dev->fd, EVIOCGABS(ABS_X), &abs_features);
         dev->mouse.min_w = abs_features.minimum;
         dev->mouse.rel_w = (double)(abs_features.maximum - abs_features.minimum)/(double)(w);
-        
+
         ioctl(dev->fd, EVIOCGABS(ABS_Y), &abs_features);
         dev->mouse.min_h = abs_features.minimum;
         dev->mouse.rel_h = (double)(abs_features.maximum - abs_features.minimum)/(double)(h);
      }
    else if (!(dev->info.cap & ECORE_FB_INPUT_DEVICE_CAP_RELATIVE))
       return;
-   
+
    /* update the local values */
    if (dev->mouse.x > w - 1) dev->mouse.x = w -1;
    if (dev->mouse.y > h - 1) dev->mouse.y = h -1;
@@ -517,7 +545,15 @@ ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
    dev->mouse.h = h;
 }
 
-
+/**
+ * @brief Retrieve the name of the given device.
+ *
+ * @param dev The device to get the name from.
+ * @return The name of the device.
+ *
+ * This function returns the name of the device @p dev. If @p dev is
+ * @c NULL, this function returns @c NULL.
+ */
 EAPI const char *
 ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev)
 {
@@ -525,6 +561,15 @@ ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev)
    return dev->info.name;
 }
 
+/**
+ * @brief Retrieve the capability of the given device.
+ *
+ * @param dev The device to get the name from.
+ * @return The capability of the device.
+ *
+ * This function returns the capability of the device @p dev. If @p dev is
+ * @c NULL, this function returns #ECORE_FB_INPUT_DEVICE_CAP_NONE.
+ */
 EAPI Ecore_Fb_Input_Device_Cap
 ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev)
 {
@@ -532,6 +577,16 @@ ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev)
    return dev->info.cap;
 }
 
+/**
+ * @brief Set the threshold of mouse clicks of the given device.
+ *
+ * @param dev The device to set the threshodl mouse click to.
+ * @param threshold The threshold value.
+ *
+ * This function sets the threshold of mouse clicks of the device
+ * @p dev to @p threshold. If @p dev is @c NULL, this function does
+ * nothing.
+ */
 EAPI void
 ecore_fb_input_device_threshold_click_set(Ecore_Fb_Input_Device *dev, double threshold)
 {
@@ -540,9 +595,22 @@ ecore_fb_input_device_threshold_click_set(Ecore_Fb_Input_Device *dev, double thr
    dev->mouse.threshold = threshold;
 }
 
+/**
+ * @brief Get the threshold of mouse clicks of the given device.
+ *
+ * @param dev The device to set the threshodl mouse click from.
+ * @return The threshold value.
+ *
+ * This function returns the threshold of mouse clicks of the device
+ * @p dev. If @p dev is @c NULL, this function returns 0.0.
+ */
 EAPI double
 ecore_fb_input_device_threshold_click_get(Ecore_Fb_Input_Device *dev)
 {
    if (!dev) return 0;
    return dev->mouse.threshold;
 }
+
+/**
+ * @}
+ */

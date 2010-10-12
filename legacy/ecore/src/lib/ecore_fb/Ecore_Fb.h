@@ -17,11 +17,6 @@
 # define EAPI
 #endif
 
-/**
- * @file
- * @brief Ecore frame buffer system functions.
- */
-
 /* FIXME:
  * maybe a new module?
  * - code to get battery info
@@ -38,9 +33,24 @@
 extern "C" {
 #endif
 
-typedef struct _Ecore_Fb_Input_Device Ecore_Fb_Input_Device; /* an input device handler */
+/**
+ * @defgroup Ecore_FB_Group Ecore_FB - Frame buffer convenience functions.
+ *
+ * Functions used to set up and shut down the Ecore_Framebuffer functions.
+ *
+ * @{
+ */
 
-/* device capabilities */
+/**
+ * @typedef Ecore_Fb_Input_Device
+ * Input device handler.
+ */
+typedef struct _Ecore_Fb_Input_Device Ecore_Fb_Input_Device;
+
+/**
+ * @enum _Ecore_Fb_Input_Device_Cap
+ * Device capabilities.
+ */
 enum _Ecore_Fb_Input_Device_Cap
 {
    ECORE_FB_INPUT_DEVICE_CAP_NONE            = 0x00000000,
@@ -48,6 +58,11 @@ enum _Ecore_Fb_Input_Device_Cap
    ECORE_FB_INPUT_DEVICE_CAP_ABSOLUTE        = 0x00000002,
    ECORE_FB_INPUT_DEVICE_CAP_KEYS_OR_BUTTONS = 0x00000004
 };
+
+/**
+ * @typedef Ecore_Fb_Input_Device_Cap
+ * Device capabilities.
+ */
 typedef enum   _Ecore_Fb_Input_Device_Cap Ecore_Fb_Input_Device_Cap;
 
 EAPI extern int ECORE_FB_EVENT_KEY_DOWN; /**< FB Key Down event */
@@ -64,23 +79,35 @@ typedef struct _Ecore_Fb_Event_Mouse_Button_Up   Ecore_Fb_Event_Mouse_Button_Up;
 typedef struct _Ecore_Fb_Event_Mouse_Move        Ecore_Fb_Event_Mouse_Move; /**< FB Mouse Move event */
 typedef struct _Ecore_Fb_Event_Mouse_Wheel       Ecore_Fb_Event_Mouse_Wheel; /**< FB Mouse Wheel event */
 
-struct _Ecore_Fb_Event_Key_Down /** FB Key Down event */
+/**
+ * @struct _Ecore_Fb_Event_Key_Down
+ * Framebuffer Key Down event.
+ */
+struct _Ecore_Fb_Event_Key_Down
 {
    Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
    char   *keyname; /**< The name of the key that was pressed */
    char   *keysymbol; /**< The logical symbol of the key that was pressed */
    char   *key_compose; /**< The UTF-8 string conversion if any */
 };
-   
-struct _Ecore_Fb_Event_Key_Up /** FB Key Up event */
+
+/**
+ * @struct _Ecore_Fb_Event_Key_Up
+ * Framebuffer Key Up event.
+ */
+struct _Ecore_Fb_Event_Key_Up
 {
    Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
    char   *keyname; /**< The name of the key that was released */
    char   *keysymbol; /**< The logical symbol of the key that was pressed */
    char   *key_compose; /**< The UTF-8 string conversion if any */
 };
-   
-struct _Ecore_Fb_Event_Mouse_Button_Down /** FB Mouse Down event */
+
+/**
+ * @struct _Ecore_Fb_Event_Mouse_Button_Down
+ * Framebuffer Mouse Down event.
+ */
+struct _Ecore_Fb_Event_Mouse_Button_Down
 {
    Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
    int     button; /**< Mouse button that was pressed (1 - 32) */
@@ -89,8 +116,12 @@ struct _Ecore_Fb_Event_Mouse_Button_Down /** FB Mouse Down event */
    int     double_click : 1; /**< Set if click was a double click */
    int     triple_click : 1; /**< Set if click was a triple click  */
 };
-   
-struct _Ecore_Fb_Event_Mouse_Button_Up /** FB Mouse Up event */
+
+/**
+ * @struct _Ecore_Fb_Event_Mouse_Button_Up
+ * Framebuffer Mouse Up event.
+ */
+struct _Ecore_Fb_Event_Mouse_Button_Up
 {
    Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
    int     button; /**< Mouse button that was released (1 - 32) */
@@ -99,15 +130,23 @@ struct _Ecore_Fb_Event_Mouse_Button_Up /** FB Mouse Up event */
    int     double_click : 1; /**< Set if click was a double click */
    int     triple_click : 1; /**< Set if click was a triple click  */
 };
-   
-struct _Ecore_Fb_Event_Mouse_Move /** FB Mouse Move event */ 
+
+/**
+ * @struct _Ecore_Fb_Event_Mouse_Move
+ * Framebuffer Mouse Move event.
+ */
+struct _Ecore_Fb_Event_Mouse_Move
 {
    Ecore_Fb_Input_Device *dev; /**< The device associated with the event */
    int     x; /**< Mouse co-ordinates where the mouse cursor moved to */
    int     y; /**< Mouse co-ordinates where the mouse cursor moved to */
 };
-   
-struct _Ecore_Fb_Event_Mouse_Wheel /** FB Mouse Wheel event */
+
+/**
+ * @struct _Ecore_Fb_Event_Mouse_Wheel
+ * Framebuffer Mouse Wheel event.
+ */
+struct _Ecore_Fb_Event_Mouse_Wheel
 {
    Ecore_Fb_Input_Device *dev;
    int x,y;
@@ -130,13 +169,18 @@ EAPI void                      ecore_fb_input_threshold_click_set(Ecore_Fb_Input
 EAPI double                    ecore_fb_input_threshold_click_get(Ecore_Fb_Input_Device *dev);
 
 /* ecore_fb.c */
+
 EAPI int                       ecore_fb_init(const char *name);
 EAPI int                       ecore_fb_shutdown(void);
-EAPI void                      ecore_fb_size_get(int *w, int *h);   
+EAPI void                      ecore_fb_size_get(int *w, int *h);
 
 EAPI void                      ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
 EAPI void                      ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
-   
+
+/**
+ * @}
+ */
+
 #ifdef __cplusplus
 }
 #endif
