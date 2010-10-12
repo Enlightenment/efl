@@ -1346,14 +1346,38 @@ _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it)
    evas_object_resize(obj, w, h);
 }
 
+static const char *
+_edje_find_alias(Eina_Hash *aliased, char *src, int *length)
+{
+   const char *alias;
+   char *search;
+
+   *length = strlen(src);
+   if (*length == 0) return NULL;
+
+   alias = eina_hash_find(aliased, src);
+   if (alias) return alias;
+
+   search = strrchr(src, EDJE_PART_PATH_SEPARATOR);
+   if (search == NULL) return NULL;
+
+   *search = '\0';
+   alias = _edje_find_alias(aliased, src, length);
+   *search = EDJE_PART_PATH_SEPARATOR;
+
+   return alias;
+}
+
 static void
 _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source)
 {
    Evas_Object	*parent;
    Edje		*ed;
+   Edje         *ed_parent;
    char		 new_src[4096]; /* XXX is this max reasonable? */
    size_t	 length_parent = 0;
    size_t	 length_source;
+   const char   *alias = NULL;
 
    parent = data;
    ed = _edje_fetch(obj);
@@ -1370,5 +1394,36 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
    new_src[length_parent] = EDJE_PART_PATH_SEPARATOR;
    memcpy(new_src + length_parent + 1, source, length_source + 1);
 
-   edje_object_signal_emit(parent, signal, new_src);
+   /* Handle alias renaming */
+   ed_parent = _edje_fetch(parent);
+   if (ed_parent && ed_parent->collection && ed_parent->collection->aliased)
+     {
+        int length;
+
+        alias = _edje_find_alias(ed_parent->collection->aliased, new_src, &length);
+
+        if (alias)
+          {
+             int origin;
+
+             /* Add back the end of the source */
+             origin = strlen(new_src);
+             length ++; /* Remove the trailing ':' from the count */
+             if (origin > length)
+               {
+                  char *tmp;
+                  int alias_length;
+
+                  alias_length = strlen(alias);
+                  tmp = alloca(alias_length + origin - length + 2);
+                  memcpy(tmp, alias, alias_length);
+                  tmp[alias_length] = EDJE_PART_PATH_SEPARATOR;
+                  memcpy(tmp + alias_length + 1, new_src + length, origin - length + 1);
+
+                  alias = tmp;
+               }
+          }
+     }
+
+   edje_object_signal_emit(parent, signal, alias ? alias : new_src);
 }

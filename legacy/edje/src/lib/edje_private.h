@@ -172,7 +172,7 @@ struct _Edje_Smart_Api
 /* increment this when you add new feature to edje file format without
  * breaking backward compatibility.
  */
-#define EDJE_FILE_MINOR 0
+#define EDJE_FILE_MINOR 1
 
 /* FIXME:
  *
@@ -628,6 +628,7 @@ struct _Edje_Part_Collection
    int        id; /* the collection id */
 
    Eina_Hash *alias; /* aliasing part */
+   Eina_Hash *aliased; /* invert match of alias */
 
    struct {
       Edje_Size min, max;

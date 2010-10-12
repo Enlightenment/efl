@@ -2015,13 +2015,21 @@ static void
 st_collections_group_parts_alias(void)
 {
    Edje_Part_Collection *pc;
+   const char *alias;
+   const char *aliased;
 
    check_arg_count(2);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
 
+   alias = parse_str(0);
+   aliased = parse_str(1);
+
    if (!pc->alias) pc->alias = eina_hash_string_small_new(NULL);
-   eina_hash_add(pc->alias, parse_str(0), parse_str(1));
+   eina_hash_add(pc->alias, alias, aliased);
+
+   if (!pc->aliased) pc->aliased = eina_hash_string_small_new(NULL);
+   eina_hash_add(pc->aliased, aliased, alias);
 }
 
 
