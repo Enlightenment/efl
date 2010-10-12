@@ -58,6 +58,21 @@
 # endif
 #endif /* ! _WIN32 */
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @defgroup Eio_Group Asynchronous Inout/Output library
+ *
+ * @brief A brief description
+ *
+ * A long description
+ *
+ * @{
+ */
+
 typedef enum _Eio_File_Op
 {
   EIO_FILE_COPY,
@@ -162,5 +177,14 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
 			      const void *data);
 
 EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
+
+/**
+ * @}
+ */
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

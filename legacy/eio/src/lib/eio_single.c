@@ -210,7 +210,12 @@ _eio_file_stat_error(void *data)
    _eio_stat_free(s);
 }
 
-/* ---- */
+
+/**
+ * @addtogroup Eio_Group Asynchronous Inout/Output library
+ *
+ * @{
+ */
 
 /**
  * @brief Stat a file/directory.
@@ -326,4 +331,6 @@ eio_file_mkdir(const char *path,
    return &r->common;
 }
 
-
+/**
+ * @}
+ */

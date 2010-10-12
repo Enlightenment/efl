@@ -44,6 +44,13 @@ struct _Eio_Alloc_Pool
 static Eio_Alloc_Pool progress = { 0, NULL, PTHREAD_MUTEX_INITIALIZER };
 static Eio_Alloc_Pool direct_info = { 0, NULL, PTHREAD_MUTEX_INITIALIZER };
 
+
+/**
+ * @addtogroup Eio_Group Asynchronous Inout/Output library
+ *
+ * @{
+ */
+
 EAPI int
 eio_init(void)
 {
@@ -162,3 +169,6 @@ eio_direct_info_free(Eina_File_Direct_Info *data)
    _eio_pool_free(&direct_info, data);
 }
 
+/**
+ * @}
+ */

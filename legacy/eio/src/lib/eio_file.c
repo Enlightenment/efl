@@ -510,6 +510,13 @@ _eio_file_move_error(void *data)
    _eio_file_move_free(move);
 }
 
+
+/**
+ * @addtogroup Eio_Group Asynchronous Inout/Output library
+ *
+ * @{
+ */
+
 /**
  * @brief List content of a directory without locking your app.
  * @param dir The directory to list.
@@ -718,3 +725,7 @@ eio_file_move(const char *source,
 
    return &move->progress.common;
 }
+
+/**
+ * @}
+ */

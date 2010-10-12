@@ -281,6 +281,13 @@ _eio_dir_copy_error(void *data)
    _eio_dir_copy_free(copy);
 }
 
+
+/**
+ * @addtogroup Eio_Group Asynchronous Inout/Output library
+ *
+ * @{
+ */
+
 /**
  * @brief Copy a directory and it's content asynchronously
  * @param source Should be the name of the directory to copy the data from.
@@ -331,3 +338,6 @@ eio_dir_copy(const char *source,
    return &copy->progress.common;
 }
 
+/**
+ * @}
+ */
