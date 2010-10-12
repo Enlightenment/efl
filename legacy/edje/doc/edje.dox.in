@@ -484,6 +484,9 @@ This example use an elementary anchorblock and a button to animate the text.
 @example external_elm_button.edc
 This example create some elementary buttons and do some actions on user click.
 
+@example external_elm_check.edc
+This example show EXTERNAL checkbox in action.
+
 @example external_emotion_elm.edc
 Super-concise video player example using Edje/Emotion/Elementary.
 

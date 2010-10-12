@@ -1,0 +1,211 @@
+collections {
+   /* this groups is used as custom icon */
+   group { name: "icon_green";
+      parts {
+         part { name: "icon_green";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 0 255 0 255;
+               aspect: 1 1;
+               aspect_preference: VERTICAL;
+            }
+         }
+      }
+   }
+
+   group { name: "main";
+      /* set a min window size */
+      min: 200 300;
+      
+      /* tell edje that we are going to use elementary external parts */
+      externals {
+         external: "elm";
+      }
+
+      parts {
+         part { name: "bg";
+            type: RECT;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+
+         part { name: "title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            description { state: "default" 0.0;
+               color: 255 255 255 255;
+               color3: 70 70 70 70;
+               text {
+                  text: "Elementary Checks";
+                  font: "Sans";
+                  size: 16;
+                  align: 0.5 0.0;
+               }
+            }
+         }
+
+         /* EXTERNAL elementary check with a label */
+         part { name: "check1";
+            type: EXTERNAL;
+            source: "elm/check";
+            description { state: "default" 0;
+               rel1 {
+                  offset: 5 35;
+               }
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -6 60;
+               }
+               params {
+                  string: "label" "Label only";
+               }
+            }
+         }
+
+         /* EXTERNAL elementary check with label + standard icon */
+         part { name: "check2";
+            type: EXTERNAL;
+            source: "elm/check";
+            description { state: "default" 0;
+               rel1 {
+                  to: "check1";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "check1";
+                  relative: 1.0 2.0;
+                  offset: -1 5;
+               }
+               params {
+                  string: "label" "Label + standard icon";
+                  string: "icon" "home";
+               }
+            }
+         }
+
+         /* EXTERNAL elementary check with a label and a custom icon */
+         part { name: "check3";
+            type: EXTERNAL;
+            source: "elm/check";
+            description { state: "default" 0;
+               rel1 {
+                  to: "check2";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "check2";
+                  relative: 1.0 2.0;
+                  offset: -1 5;
+               }
+               params {
+                  string: "label" "Label + custom icon";
+                  string: "icon" "icon_green";
+               }
+            }
+         }
+         
+         /* EXTERNAL elementary check with just a custom icon */
+         part { name: "check4";
+            type: EXTERNAL;
+            source: "elm/check";
+            description { state: "default" 0;
+               rel1 {
+                  to: "check3";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "check3";
+                  relative: 1.0 2.0;
+                  offset: -1 5;
+               }
+               params {
+                  string: "icon" "home";
+               }
+            }
+         }
+         
+         /* EXTERNAL elementary check with just a custom icon */
+         part { name: "check5";
+            type: EXTERNAL;
+            source: "elm/check";
+            description { state: "default" 0;
+               rel1 {
+                  to: "check4";
+                  relative: 0.0 1.0;
+                  offset: 0 5;
+               }
+               rel2 {
+                  to: "check4";
+                  relative: 1.0 2.0;
+                  offset: -1 5;
+               }
+               params {
+                  string: "icon" "icon_green";
+               }
+            }
+         }
+      }
+
+      programs {
+         /* on edje load start the programs loop */
+         program {
+            signal: "load";
+            after: "loop1";
+         }
+
+         /* wait 0.2, toggle the state of check1, trigger next prog */
+         program { name: "loop1";
+            in: 0.2 0.0;
+            script {
+               external_param_set_bool(PART:"check1", "state",
+                        !external_param_get_bool(PART:"check1", "state"));
+            }
+            after: "loop2";
+         }
+
+         /* wait 0.2, toggle the state of check2, trigger next prog */
+         program { name: "loop2";
+            in: 0.2 0.0;
+            script {
+               external_param_set_bool(PART:"check2", "state",
+                        !external_param_get_bool(PART:"check2", "state"));
+            }
+            after: "loop3";
+         }
+
+         /* wait 0.2, toggle the state of check3, trigger next prog */
+         program { name: "loop3";
+            in: 0.2 0.0;
+            script {
+               external_param_set_bool(PART:"check3", "state",
+                        !external_param_get_bool(PART:"check3", "state"));
+            }
+            after: "loop4";
+         }
+
+         /* wait 0.2, toggle the state of check4, trigger next prog */
+         program { name: "loop4";
+            in: 0.2 0.0;
+            script {
+               external_param_set_bool(PART:"check4", "state",
+                        !external_param_get_bool(PART:"check4", "state"));
+            }
+            after: "loop5";
+         }
+         
+         /* wait 0.2, toggle the state of check5, restart from the first prog */
+         program { name: "loop5";
+            in: 0.2 0.0;
+            script {
+               external_param_set_bool(PART:"check5", "state",
+                        !external_param_get_bool(PART:"check5", "state"));
+            }
+            after: "loop1";
+         }
+      }
+   }
+}
