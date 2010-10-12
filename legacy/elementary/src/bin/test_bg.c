@@ -86,7 +86,6 @@ test_bg_image(void *data, Evas_Object *obj, void *event_info)
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
-   elm_bg_option_set(bg, ELM_BG_OPTION_CENTER);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
    elm_bg_file_set(bg, buf, NULL);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
