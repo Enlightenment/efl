@@ -48,19 +48,20 @@ struct _Widget_Data
    Eina_Bool is_video : 1;
    Eina_Bool was_video : 1;
    Eina_Bool edit : 1;
-
 };
 
 static const char *widtype = NULL;
 
-static const char SIG_CLICKED[] = "clicked";
-static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
-static const char SIG_GENERATE_ERROR[] = "generate,error";
-static const char SIG_GENERATE_START[] = "generate,start";
-static const char SIG_GENERATE_STOP[] = "generate,stop";
-static const char SIG_LOAD_ERROR[] = "load,error";
-static const char SIG_PRESS[]= "press";
-static const Evas_Smart_Cb_Description _signals[] = {
+#define SIG_CLICKED "clicked"
+#define SIG_CLICKED_DOUBLE "clicked,double"
+#define SIG_GENERATE_ERROR "generate,error"
+#define SIG_GENERATE_START "generate,start"
+#define SIG_GENERATE_STOP "generate,stop"
+#define SIG_LOAD_ERROR "load,error"
+#define SIG_PRESS "press"
+
+static const Evas_Smart_Cb_Description _signals[] = 
+{
   {SIG_CLICKED, ""},
   {SIG_CLICKED_DOUBLE, ""},
   {SIG_GENERATE_ERROR, ""},
@@ -71,12 +72,12 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {NULL, NULL}
 };
 
-static const char EDJE_SIGNAL_GENERATE_START[] = "elm,thumb,generate,start";
-static const char EDJE_SIGNAL_GENERATE_STOP[] = "elm,thumb,generate,stop";
-static const char EDJE_SIGNAL_GENERATE_ERROR[] = "elm,thumb,generate,error";
-static const char EDJE_SIGNAL_LOAD_ERROR[] = "elm,thumb,load,error";
-static const char EDJE_SIGNAL_PULSE_START[] = "elm,state,pulse,start";
-static const char EDJE_SIGNAL_PULSE_STOP[] = "elm,state,pulse,stop";
+#define EDJE_SIGNAL_GENERATE_START "elm,thumb,generate,start"
+#define EDJE_SIGNAL_GENERATE_STOP "elm,thumb,generate,stop"
+#define EDJE_SIGNAL_GENERATE_ERROR "elm,thumb,generate,error"
+#define EDJE_SIGNAL_LOAD_ERROR "elm,thumb,load,error"
+#define EDJE_SIGNAL_PULSE_START "elm,state,pulse,start"
+#define EDJE_SIGNAL_PULSE_STOP "elm,state,pulse,stop"
 
 struct _Ethumb_Client *_elm_ethumb_client = NULL;
 Eina_Bool _elm_ethumb_connected = EINA_FALSE;
@@ -104,7 +105,8 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   _elm_theme_object_set(obj, wd->frame, "thumb", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->frame, "thumb", "base", 
+                         elm_widget_style_get(obj));
 }
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -113,6 +115,7 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 {
    Widget_Data *wd = data;
    Evas_Event_Mouse_Down *ev = event_info;
+
    if (ev->button != 1)
      return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -128,9 +131,9 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 static void
 _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-
    Widget_Data *wd = data;
    Evas_Event_Mouse_Up *ev = event_info;
+
    if (ev->button != 1)
      return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
@@ -257,6 +260,7 @@ _thumb_apply(Widget_Data *wd)
    if (ethumb_client_thumb_exists(_elm_ethumb_client))
      {
 	const char *thumb_path, *thumb_key;
+
 	wd->thumb.id = -1;
 	ethumb_client_thumb_path_get(_elm_ethumb_client, &thumb_path,
 				     &thumb_key);
@@ -266,17 +270,14 @@ _thumb_apply(Widget_Data *wd)
    else if ((wd->thumb.id = ethumb_client_generate
 	     (_elm_ethumb_client, _finished_thumb_cb, wd, NULL)) != -1)
      {
-	edje_object_signal_emit(wd->frame, EDJE_SIGNAL_PULSE_START,
-				"elm");
-	edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_START,
-				"elm");
+	edje_object_signal_emit(wd->frame, EDJE_SIGNAL_PULSE_START, "elm");
+	edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_START, "elm");
 	evas_object_smart_callback_call(wd->self, SIG_GENERATE_START, NULL);
      }
    else
      {
 	wd->thumb.id = -1;
-	edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_ERROR,
-				"elm");
+	edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_ERROR, "elm");
 	evas_object_smart_callback_call(wd->self, SIG_GENERATE_ERROR, NULL);
      }
 }
@@ -378,10 +379,10 @@ _elm_unneed_ethumb(void)
 }
 
 static Eina_Bool
-_elm_thumb_dropcb(void *data, Evas_Object *o, Elm_Drop_Data *drop)
+_elm_thumb_dropcb(void *data __UNUSED__, Evas_Object *o, Elm_Drop_Data *drop)
 {
-   if (!o || !drop || !drop->data) return EINA_FALSE;
-   elm_thumb_file_set(o,drop->data,NULL);
+   if ((!o) || (!drop) || (!drop->data)) return EINA_FALSE;
+   elm_thumb_file_set(o, drop->data, NULL);
    return EINA_TRUE;
 }
 
@@ -525,8 +526,10 @@ elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key)
      {
 	int prefix_size;
 	const char **ext, *ptr;
-	static const char *extensions[] = { ".avi", ".mp4", ".ogv", ".mov",
-					    ".mpg", ".wmv", NULL };
+	static const char *extensions[] = 
+          {
+             ".avi", ".mp4", ".ogv", ".mov", ".mpg", ".wmv", NULL
+          };
 
 	prefix_size = eina_stringshare_strlen(wd->file) - 4;
 	if (prefix_size >= 0)
@@ -569,6 +572,7 @@ elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (file)
      *file = wd->file;
    if (key)
@@ -595,6 +599,7 @@ elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (file)
      *file = wd->thumb.file;
    if (key)
@@ -715,7 +720,6 @@ elm_thumb_ethumb_client_connected(void)
    return _elm_ethumb_connected;
 }
 
-
 EAPI Eina_Bool
 elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit)
 {
@@ -741,6 +745,7 @@ elm_thumb_editable_get(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return EINA_FALSE;
    return wd->edit;
 }
