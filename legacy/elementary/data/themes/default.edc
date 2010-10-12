@@ -6,6 +6,8 @@
 // public-domain. This means you can take, use, re-license and otherwise
 // have zero restrictions on using this file as a base for your theme.
 
+externals.external: "elm";
+
 collections {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -28563,6 +28565,158 @@ collections {
             action: STATE_SET "right_side" 0.0;
             target: "elm.text";
             target: "elm.swallow.icon";
+         }
+      }
+   }
+
+
+////////////////////////////////////////////////////////////////////////
+// Standard layouts to be used                                        //
+////////////////////////////////////////////////////////////////////////
+   /* application with toolbar and main content area */
+   group { name: "elm/layout/application/toolbar-content";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area with a back button and title area */
+   group { name: "elm/layout/application/toolbar-content-back";
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "back";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+
+         part { name: "back";
+            type: EXTERNAL;
+            source: "elm/button";
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+               rel2 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: 50 32;
+               }
+               params.string: "label" "Back";
+            }
+         }
+         programs {
+            program {
+               signal: "clicked";
+               source: "back";
+               action: SIGNAL_EMIT "elm,action,back" "";
+            }
+         }
+
+         part { name: "elm.text.title";
+            type: TEXT;
+            effect: SOFT_SHADOW;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  to_x: "back";
+                  relative: 1.0 1.0;
+                  offset: 2 1;
+               }
+               rel2 { to_y: "back";
+                  relative: 1.0 1.0;
+                  offset: -1 -1;
+               }
+               text {
+                  font: "Sans:style=Bold";
+                  size: 12;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area as a vertical box */
+   group { name: "elm/layout/application/toolbar-vbox";
+      parts {
+         part { name: "elm.box.content";
+            type: BOX;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+               box.layout: "vertical";
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
+         }
+      }
+   }
+
+   /* application with toolbar and main content area as a table */
+   group { name: "elm/layout/application/toolbar-table";
+      parts {
+         part { name: "elm.table.content";
+            type: TABLE;
+            description { state: "default" 0.0;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 0.0 1.0;
+                  offset: -1 1;
+               }
+            }
+         }
+
+         part { name: "elm.external.toolbar";
+            type: EXTERNAL;
+            source: "elm/toolbar";
+            description { state: "default" 0.0;
+               rel2 {
+                  relative: 1.0 0.0;
+                  offset: -1 47;
+               }
+            }
          }
       }
    }
