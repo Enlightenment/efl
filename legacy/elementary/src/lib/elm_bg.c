@@ -12,12 +12,13 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object *img, *custom_img;
+   Evas_Object *base, *rect, *img, *overlay;
    const char  *file, *group;
    Elm_Bg_Option option;
 };
 
 static const char *widtype = NULL;
+
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info);
@@ -35,13 +36,19 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord w, h;
 
-   _elm_theme_object_set(obj, wd->img, "bg", "base", elm_widget_style_get(obj));
-   if (wd->custom_img)
-      edje_object_part_swallow(wd->img, "elm.swallow.background", wd->custom_img);
+   _elm_theme_object_set(obj, wd->base, "bg", "base", 
+                         elm_widget_style_get(obj));
+
+   if (wd->rect)
+     edje_object_part_swallow(wd->base, "elm.swallow.rectangle", wd->rect);
+   if (wd->img)
+     edje_object_part_swallow(wd->base, "elm.swallow.background", wd->img);
+   if (wd->overlay)
+     edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
+
 // FIXME: if i don't do this, bg doesnt calc correctly. why?   
-   evas_object_geometry_get(wd->img, NULL, NULL, &w, &h);
-   evas_object_resize(wd->img, 0, 0);
-   evas_object_resize(wd->img, w, h);
+   evas_object_geometry_get(wd->base, NULL, NULL, &w, &h);
+   evas_object_resize(wd->base, w, h);
 }
 
 static void
@@ -102,9 +109,9 @@ elm_bg_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   wd->img = edje_object_add(e);
-   _elm_theme_object_set(obj, wd->img, "bg", "base", "default");
-   elm_widget_resize_object_set(obj, wd->img);
+   wd->base = edje_object_add(e);
+   _elm_theme_object_set(obj, wd->base, "bg", "base", "default");
+   elm_widget_resize_object_set(obj, wd->base);
 
    wd->option = ELM_BG_SCALE;
    return obj;
@@ -119,7 +126,7 @@ elm_bg_add(Evas_Object *parent)
  *
  * This sets the image file used in the background object. The image (or edje)
  * will be stretched (retaining aspect if its an image file) to completely fill
- * the bg object. This may mean some parts arte not visible.
+ * the bg object. This may mean some parts are not visible.
  *
  * @ingroup Bg
  */
@@ -130,32 +137,43 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *p;
 
-   if (wd->custom_img)
+   if (wd->img)
      {
-	evas_object_del(wd->custom_img);
-	wd->custom_img = NULL;
+	evas_object_del(wd->img);
+	wd->img = NULL;
      }
    if (!file) return;
    eina_stringshare_replace(&wd->file, file);
    eina_stringshare_replace(&wd->group, group);
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      {
-	wd->custom_img = edje_object_add(evas_object_evas_get(wd->img));
-	edje_object_file_set(wd->custom_img, file, group);
+	wd->img = edje_object_add(evas_object_evas_get(wd->base));
+	edje_object_file_set(wd->img, file, group);
      }
    else
      {
-	wd->custom_img = evas_object_image_add(evas_object_evas_get(wd->img));
-	evas_object_event_callback_add(wd->custom_img, EVAS_CALLBACK_RESIZE, 
+	wd->img = evas_object_image_add(evas_object_evas_get(wd->base));
+	evas_object_event_callback_add(wd->img, EVAS_CALLBACK_RESIZE, 
                                        _custom_resize, wd);
-	evas_object_image_file_set(wd->custom_img, file, group);
+	evas_object_image_file_set(wd->img, file, group);
      }
-   elm_widget_sub_object_add(obj, wd->custom_img);
-   evas_object_repeat_events_set(wd->custom_img, 1);
-   edje_object_part_swallow(wd->img, "elm.swallow.background", wd->custom_img);
-   evas_object_show(wd->custom_img);
+   elm_widget_sub_object_add(obj, wd->img);
+   evas_object_repeat_events_set(wd->img, EINA_TRUE);
+   edje_object_part_swallow(wd->base, "elm.swallow.background", wd->img);
+   evas_object_show(wd->img);
 }
 
+/**
+ * Set the option used for the background image
+ *
+ * @param obj The bg object
+ * @param option The desired background option (TILE, SCALE)
+ *
+ * This sets the option used for manipulating the display of the background 
+ * image. The image can be tiled or scaled.
+ *
+ * @ingroup Bg
+ */
 EAPI void 
 elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option) 
 {
@@ -164,4 +182,61 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 
    wd = elm_widget_data_get(obj);
    wd->option = option;
+}
+
+/**
+ * Set the option used for the background color
+ *
+ * @param obj The bg object
+ * @param r
+ * @param g
+ * @param b
+ *
+ * This sets the color used for the background rectangle.
+ *
+ * @ingroup Bg
+ */
+EAPI void 
+elm_bg_color_set(Evas_Object *obj, int r, int g, int b) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd->rect)
+     {
+        wd->rect = evas_object_rectangle_add(evas_object_evas_get(wd->base));
+        elm_widget_sub_object_add(obj, wd->rect);
+        edje_object_part_swallow(wd->base, "elm.swallow.rectangle", wd->rect);
+     }
+   evas_object_color_set(wd->rect, r, g, b, 255);
+   evas_object_show(wd->rect);
+}
+
+/**
+ * Set the overlay object used for the background object.
+ *
+ * @param obj The bg object
+ * @param overlay The overlay object
+ *
+ * This provides a way for elm_bg to have an 'overlay' (such as animated fog)
+ * 
+ * @ingroup Bg
+ */
+EAPI void 
+elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (wd->overlay)
+     {
+	evas_object_del(wd->overlay);
+	wd->overlay = NULL;
+     }
+   if (!overlay) return;
+   wd->overlay = overlay;
+   elm_widget_sub_object_add(obj, wd->overlay);
+   edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
 }

@@ -455,6 +455,8 @@ extern "C" {
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
    EAPI void         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI void         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
+   EAPI void         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
+   EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay);
 
    /* smart callbacks called:
     */
