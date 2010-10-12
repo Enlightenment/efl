@@ -14,6 +14,7 @@ struct _Widget_Data
 {
    Evas_Object *img, *custom_img;
    const char  *file, *group;
+   Elm_Bg_Option option;
 };
 
 static const char *widtype = NULL;
@@ -33,6 +34,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord w, h;
+
    _elm_theme_object_set(obj, wd->img, "bg", "base", elm_widget_style_get(obj));
    if (wd->custom_img)
       edje_object_part_swallow(wd->img, "elm.swallow.background", wd->custom_img);
@@ -46,21 +48,32 @@ static void
 _custom_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int iw = 0, ih = 0;
-   Evas_Coord x, y, w, h, ow = 0, oh = 0;
+   Evas_Coord x = 0, y = 0, w = 0, h = 0, ow = 0, oh = 0;
+   Widget_Data *wd;
 
+   wd = elm_widget_data_get(obj);
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    evas_object_image_size_get(obj, &iw, &ih);
 
    if ((iw < 1) || (ih < 1)) return;
-   w = ow;
-   h = (ih * w) / iw;
-   if (h < oh)
+   if (wd->option == ELM_BG_SCALE) 
      {
-	h = oh;
-	w = (iw * h) / ih;
+        w = ow;
+        h = (ih * w) / iw;
+        if (h < oh)
+          {
+             h = oh;
+             w = (iw * h) / ih;
+          }
+        x = (ow - w) / 2;
+        y = (oh - h) / 2;
      }
-   x = (ow - w) / 2;
-   y = (oh - h) / 2;
+   else if (wd->option == ELM_BG_TILE) 
+     {
+        x = y = 0;
+        w = ow;
+        h = oh;
+     }
    evas_object_image_fill_set(obj, x, y, w, h);
 }
 
@@ -93,6 +106,8 @@ elm_bg_add(Evas_Object *parent)
    wd->img = edje_object_add(e);
    _elm_theme_object_set(obj, wd->img, "bg", "base", "default");
    elm_widget_resize_object_set(obj, wd->img);
+
+   wd->option = ELM_BG_SCALE;
    return obj;
 }
 
@@ -140,4 +155,14 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    evas_object_repeat_events_set(wd->custom_img, 1);
    edje_object_part_swallow(wd->img, "elm.swallow.background", wd->custom_img);
    evas_object_show(wd->custom_img);
+}
+
+EAPI void 
+elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option) 
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   wd->option = option;
 }

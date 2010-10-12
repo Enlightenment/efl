@@ -446,9 +446,16 @@ extern "C" {
     * "focus,out" - window lost focus
     * "moved" - window that holds the canvas was moved
     */
+  typedef enum _Elm_Bg_Option
+    {
+      ELM_BG_SCALE,
+      ELM_BG_TILE
+    } Elm_Bg_Option;
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
    EAPI void         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
+
    /* smart callbacks called:
     */
 
