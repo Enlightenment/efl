@@ -162,7 +162,7 @@ _elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
 }
 
 static Eina_Bool
-_elm_win_event_cb(Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info)
+_elm_win_event_cb(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
@@ -587,7 +587,7 @@ _elm_win_focus_target_get(Evas_Object *obj)
 }
 
 static void
-_elm_win_object_focus_in(void *data, Evas *e, void *event_info)
+_elm_win_object_focus_in(void *data, Evas *e __UNUSED__, void *event_info)
 {
    Evas_Object *obj = event_info, *target;
    Elm_Win *win = data;
@@ -606,7 +606,7 @@ _elm_win_object_focus_in(void *data, Evas *e, void *event_info)
 }
 
 static void
-_elm_win_object_focus_out(void *data, Evas *e, void *event_info __UNUSED__)
+_elm_win_object_focus_out(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Win *win = data;
 
@@ -760,7 +760,7 @@ _elm_win_focus_highlight_anim_setup(Elm_Win *win, Evas_Object *obj)
 }
 
 static void
-_elm_win_focus_highlight_anim_end(void *data, Evas_Object *obj, const char *emission, const char *source)
+_elm_win_focus_highlight_anim_end(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Win *win = data;
    _elm_win_focus_highlight_simple_setup(win, obj);
