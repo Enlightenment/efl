@@ -15,6 +15,10 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#ifndef MAX
+# define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
