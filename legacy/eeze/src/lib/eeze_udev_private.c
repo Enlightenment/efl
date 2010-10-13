@@ -16,7 +16,7 @@ _new_device(const char *syspath)
 
    sbuf = eina_strbuf_new();
 
-   if (!strncmp(syspath, "/sys/", 5))
+   if (strncmp(syspath, "/sys/", 5))
      eina_strbuf_append(sbuf, "/sys/");
 
    eina_strbuf_append(sbuf, syspath);
