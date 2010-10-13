@@ -6598,7 +6598,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
                    pos,
                    &x, &y, &w, &h);
           }
-	x += ln->x + it->x - it->inset;
+	x += ln->x + it->x;
 	if (x < ln->x)
 	  {
 	     x = ln->x;
@@ -7251,9 +7251,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline; \
              if (clip) \
                { \
-                  if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset + it->w) < (cx - 20)) \
+                  if ((obj->cur.geometry.x + x + ln->x + it->x + it->w) < (cx - 20)) \
                   continue; \
-                  if ((obj->cur.geometry.x + x + ln->x + it->x - it->inset) > (cx + cw + 20)) \
+                  if ((obj->cur.geometry.x + x + ln->x + it->x) > (cx + cw + 20)) \
                   break; \
                }
 
@@ -7274,7 +7274,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          (obj->cur.cache.clip.a * it->format->color.col.a * (amul)) / 65025);
 # define DRAW_TEXT(ox, oy) \
    if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
-         obj->cur.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+         obj->cur.geometry.x + ln->x + it->x + x + (ox), \
          obj->cur.geometry.y + ln->y + yoff + y + (oy), \
          it->w, it->h, it->w, it->h, it->text, &it->bidi_props);
 # if 0
