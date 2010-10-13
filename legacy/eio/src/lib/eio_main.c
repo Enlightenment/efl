@@ -16,16 +16,7 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <pthread.h>
-#include <dirent.h>
-
 #include "eio_private.h"
-
 #include "Eio.h"
 
 static int _eio_count = 0;

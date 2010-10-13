@@ -16,36 +16,7 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
-
-#define _FILE_OFFSET_BITS 64
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdio.h>
-#include <string.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-# include <libgen.h>
-#endif
-
-#ifdef HAVE_FEATURES_H
-# include <features.h>
-#endif
-#include <ctype.h>
-#include <errno.h>
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-
 #include "eio_private.h"
-
 #include "Eio.h"
 
 static int

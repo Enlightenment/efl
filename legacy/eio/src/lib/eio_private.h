@@ -1,11 +1,40 @@
 #ifndef EIO_PRIVATE_H_
 #define EIO_PRIVATE_H_
 
-#include <Ecore.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
+
+#ifdef HAVE_FEATURES_H
+# include <features.h>
+#endif
+
+#ifndef _FILE_OFFSET_BITS
+# define _FILE_OFFSET_BITS 64
+#endif
+
+#include <stdio.h>
+#include <string.h>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+# include <libgen.h>
+#endif
+
+#include <ctype.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <dirent.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <pthread.h>
+
+#include <Ecore.h>
 
 #include "Eio.h"
 
