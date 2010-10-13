@@ -414,34 +414,3 @@ eeze_udev_watch_del(Eeze_Udev_Watch * watch)
    return ret;
 }
 
-/**
- * Associate data with a watch
- * @p watch The watch to associate with
- * @p data The data to associate
- * This function is used to associate a data pointer with a watch
- * object for later retrieval.
- */
-EAPI void
-eeze_udev_watch_data_set(Eeze_Udev_Watch *watch, void *data)
-{
-   if ((!watch) || (!watch->mon) || (!watch->handler))
-     return;
-
-   watch->data = data;
-}
-
-/**
- * Retrieve associated data from a watch
- * @p watch The watch the data is associated
- * @return The data associated
- * This function is used to retrieve the data pointer which has been
- * previously associated with a watch.
- */
-EAPI void *
-eeze_udev_watch_data_get(Eeze_Udev_Watch *watch)
-{
-   if ((!watch) || (!watch->mon) || (!watch->handler))
-     return NULL;
-
-   return watch->data;
-}
