@@ -35,7 +35,7 @@ struct _Ecore_Pthread_Worker
 {
    union {
       struct {
-         Ecore_Cb func_blocking;
+         Ecore_Thread_Heavy_Cb func_blocking;
       } short_run;
       struct {
          Ecore_Thread_Heavy_Cb func_heavy;
@@ -218,7 +218,7 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
         if (!work->cancel)
-          work->u.short_run.func_blocking((void *) work->data);
+          work->u.short_run.func_blocking((Ecore_Thread*) work, (void *) work->data);
 
         ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
      }
@@ -434,7 +434,7 @@ _ecore_thread_shutdown(void)
  * host CPU can handle.
  */
 EAPI Ecore_Thread *
-ecore_thread_run(Ecore_Cb func_blocking,
+ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
                  Ecore_Cb func_end,
                  Ecore_Cb func_cancel,
                  const void *data)
@@ -508,7 +508,7 @@ ecore_thread_run(Ecore_Cb func_blocking,
      If no thread and as we don't want to break app that rely on this
      facility, we will lock the interface until we are done.
     */
-   func_blocking((void *)data);
+   func_blocking((Ecore_Thread *) work, (void *)data);
    func_end((void *)data);
 
    return NULL;
@@ -525,7 +525,9 @@ ecore_thread_run(Ecore_Cb func_blocking,
  * will return EINA_FALSE, if the destruction is delayed or EINA_TRUE if it is
  * cancelled after this call.
  *
- * You should use this function only in the main loop.
+ * This function work in the main loop and in the thread, but you should not pass
+ * the Ecore_Thread variable from main loop to the worker thread in any structure.
+ * You should always use the one passed to the Ecore_Thread_Heavy_Cb.
  *
  * func_end, func_cancel will destroy the handler, so don't use it after.
  * And if ecore_thread_cancel return EINA_TRUE, you should not use Ecore_Thread also.

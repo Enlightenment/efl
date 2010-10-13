@@ -408,14 +408,14 @@ extern "C" {
 
 
 
-   EAPI Ecore_Thread *ecore_thread_run(Ecore_Cb,
-                                       Ecore_Cb,
-                                       Ecore_Cb,
+   EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
+                                       Ecore_Cb func_end,
+                                       Ecore_Cb func_cancel,
                                        const void *data);
-   EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb,
-                                                Ecore_Thread_Notify_Cb,
-                                                Ecore_Cb,
-                                                Ecore_Cb,
+   EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
+                                                Ecore_Thread_Notify_Cb func_notify,
+                                                Ecore_Cb func_end,
+                                                Ecore_Cb func_cancel,
                                                 const void *data,
                                                 Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
