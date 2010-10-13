@@ -49,6 +49,7 @@ eio_long_file_set(Eio_File *common,
    common->error_cb = error_cb;
    common->data = data;
    common->error = 0;
+   common->thread = NULL;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
    common->thread = ecore_thread_feedback_run(heavy_cb,
@@ -73,6 +74,7 @@ eio_file_set(Eio_File *common,
    common->error_cb = error_cb;
    common->data = data;
    common->error = 0;
+   common->thread = NULL;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
    common->thread = ecore_thread_run(job_cb, end_cb, cancel_cb, common);
