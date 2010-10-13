@@ -1,7 +1,7 @@
 #ifndef EEZE_PRIVATE_H
 #define EEZE_PRIVATE_H
-#ifndef eeze_COLOR_DEFAULT
-#define eeze_COLOR_DEFAULT EINA_COLOR_CYAN
+#ifndef EEZE_COLOR_DEFAULT
+#define EEZE_COLOR_DEFAULT EINA_COLOR_CYAN
 #endif
 extern int _eeze_log_dom;
 #ifdef ERR

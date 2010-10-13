@@ -46,7 +46,7 @@ eeze_init(void)
      return --_eeze_init_count;
 
    _eeze_log_dom = eina_log_domain_register
-                       ("eeze_udev", eeze_COLOR_DEFAULT);
+                       ("eeze_udev", EEZE_COLOR_DEFAULT);
 
    if (_eeze_log_dom < 0)
      {

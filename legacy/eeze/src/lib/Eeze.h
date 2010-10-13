@@ -1,7 +1,7 @@
 #ifndef EEZE_UDEV_H
 #define EEZE_UDEV_H
 
-#include <Ecore.h>
+#include <Eina.h>
 
 #define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE 1
 #include <libudev.h>
