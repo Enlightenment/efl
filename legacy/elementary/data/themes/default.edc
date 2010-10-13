@@ -28590,6 +28590,8 @@ collections {
             type: EXTERNAL;
             source: "elm/toolbar";
             description { state: "default" 0.0;
+               align: 0.5 0.0;
+               fixed: 0 1;
                rel2 {
                   relative: 1.0 0.0;
                   offset: -1 47;
@@ -28616,6 +28618,8 @@ collections {
             type: EXTERNAL;
             source: "elm/toolbar";
             description { state: "default" 0.0;
+               fixed: 0 1;
+               align: 0.5 0.0;
                rel2 {
                   relative: 1.0 0.0;
                   offset: -1 47;
@@ -28627,9 +28631,11 @@ collections {
             type: EXTERNAL;
             source: "elm/button";
             description { state: "default" 0.0;
+               align: 0.0 0.0;
+               fixed: 1 1;
                rel1 { to_y: "elm.external.toolbar";
                   relative: 0.0 1.0;
-                  offset: -1 1;
+                  offset: 0 1;
                }
                rel2 { to_y: "elm.external.toolbar";
                   relative: 0.0 1.0;
@@ -28646,9 +28652,26 @@ collections {
             }
          }
 
+         part { name: "elm.swallow.end";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               fixed: 1 1;
+               rel1 { to_y: "elm.external.toolbar";
+                  relative: 1.0 1.0;
+                  offset: -2 1;
+               }
+               rel2 { to_y: "elm.external.toolbar";
+                  relative: 1.0 1.0;
+                  offset: -1 32;
+               }
+            }
+         }
+
          part { name: "elm.text.title";
             type: TEXT;
             effect: SOFT_SHADOW;
+            scale: 1;
             description { state: "default" 0.0;
                rel1 { to_y: "elm.external.toolbar";
                   to_x: "back";
@@ -28656,8 +28679,9 @@ collections {
                   offset: 2 1;
                }
                rel2 { to_y: "back";
-                  relative: 1.0 1.0;
-                  offset: -1 -1;
+                  to_x: "elm.swallow.end";
+                  relative: 0.0 1.0;
+                  offset: -3 -1;
                }
                text {
                   font: "Sans:style=Bold";
@@ -28686,6 +28710,8 @@ collections {
             type: EXTERNAL;
             source: "elm/toolbar";
             description { state: "default" 0.0;
+               align: 0.5 0.0;
+               fixed: 0 1;
                rel2 {
                   relative: 1.0 0.0;
                   offset: -1 47;
@@ -28712,6 +28738,8 @@ collections {
             type: EXTERNAL;
             source: "elm/toolbar";
             description { state: "default" 0.0;
+               align: 0.5 0.0;
+               fixed: 0 1;
                rel2 {
                   relative: 1.0 0.0;
                   offset: -1 47;
