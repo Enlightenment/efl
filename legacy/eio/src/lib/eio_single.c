@@ -45,24 +45,19 @@ eio_long_file_set(Eio_File *common,
 		  Ecore_Cb end_cb,
 		  Ecore_Cb cancel_cb)
 {
-   Ecore_Thread *thread;
-
    common->done_cb = done_cb;
    common->error_cb = error_cb;
    common->data = data;
    common->error = 0;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
-   thread = ecore_thread_feedback_run(heavy_cb,
-				      notify_cb,
-				      end_cb,
-				      cancel_cb,
-				      common,
-				      EINA_TRUE);
-
-   if (!thread) return EINA_FALSE;
-   common->thread = thread;
-   return EINA_TRUE;
+   common->thread = ecore_thread_feedback_run(heavy_cb,
+                                              notify_cb,
+                                              end_cb,
+                                              cancel_cb,
+                                              common,
+                                              EINA_TRUE);
+   return !!common->thread;
 }
 
 Eina_Bool
@@ -74,22 +69,14 @@ eio_file_set(Eio_File *common,
 	     Ecore_Cb end_cb,
 	     Ecore_Cb cancel_cb)
 {
-   Ecore_Thread *thread;
-
    common->done_cb = done_cb;
    common->error_cb = error_cb;
    common->data = data;
    common->error = 0;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
-   thread = ecore_thread_run(job_cb,
-			     end_cb,
-			     cancel_cb,
-			     common);
-
-   if (!thread) return EINA_FALSE;
-   common->thread = thread;
-   return EINA_TRUE;
+   common->thread = ecore_thread_run(job_cb, end_cb, cancel_cb, common);
+   return !!common->thread;
 }
 
 /* --- */
