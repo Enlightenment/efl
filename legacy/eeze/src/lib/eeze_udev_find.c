@@ -232,11 +232,11 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype, const char *name)
           break;
         case EEZE_UDEV_TYPE_POWER_AC:
           udev_enumerate_add_match_subsystem(en, "power_supply");
-          udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Mains");
+          udev_enumerate_add_match_sysattr(en, "type", "Mains");
           break;
         case EEZE_UDEV_TYPE_POWER_BAT:
           udev_enumerate_add_match_subsystem(en, "power_supply");
-          udev_enumerate_add_match_property(en, "POWER_SUPPLY_TYPE", "Battery");
+          udev_enumerate_add_match_sysattr(en, "type", "Battery");
           break;
         case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
           udev_enumerate_add_match_subsystem(en, "hwmon");
