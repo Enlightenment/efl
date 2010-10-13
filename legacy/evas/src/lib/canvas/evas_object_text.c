@@ -608,7 +608,6 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    Evas_Object_Text *o;
    int l = 0, r = 0, t = 0, b = 0;
    int ret, x = 0, y = 0, w = 0, h = 0;
-   int inset;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
@@ -619,13 +618,11 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    MAGIC_CHECK_END();
    if (!o->engine_data) return EINA_FALSE;
    if (!o->cur.text) return EINA_FALSE;
-   inset =
-     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
    ret = ENFN->font_char_coords_get(ENDT, o->engine_data, o->cur.text, &o->cur.intl_props,
 				    pos, &x, &y, &w, &h);
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    y += o->max_ascent - t;
-   x -= inset + l;
+   x -= l;
    if (x < 0)
      {
 	w += x;
@@ -661,7 +658,6 @@ EAPI int
 evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Text *o;
-   int inset;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return -1;
@@ -672,12 +668,10 @@ evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord
    MAGIC_CHECK_END();
    if (!o->engine_data) return -1;
    if (!o->cur.text) return -1;
-   inset =
-     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
    return ENFN->font_last_up_to_pos(ENDT,
 				       o->engine_data,
 				       o->cur.text, &o->cur.intl_props,
-				       x + inset,
+				       x,
 				       y - o->max_ascent);	
 }
 
@@ -693,7 +687,6 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    Evas_Object_Text *o;
    int l = 0, r = 0, t = 0, b = 0;
    int ret, rx = 0, ry = 0, rw = 0, rh = 0;
-   int inset;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return -1;
@@ -704,18 +697,16 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    MAGIC_CHECK_END();
    if (!o->engine_data) return -1;
    if (!o->cur.text) return -1;
-   inset =
-     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text);
    ret = ENFN->font_char_at_coords_get(ENDT,
 				       o->engine_data,
 				       o->cur.text, &o->cur.intl_props,
-				       x + inset,
+				       x,
 				       y - o->max_ascent,
 				       &rx, &ry,
 				       &rw, &rh);
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    ry += o->max_ascent - t;
-   rx -= inset + l;
+   rx -= l;
    if (rx < 0)
      {
 	rw += rx;
@@ -1616,8 +1607,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     context, \
 		     surface, \
 		     o->engine_data, \
-		     obj->cur.cache.geometry.x + x + sl + ox - \
-		     ENFN->font_inset_get(ENDT, o->engine_data, o->cur.text), \
+		     obj->cur.cache.geometry.x + x + sl + ox, \
 		     obj->cur.cache.geometry.y + y + st + oy + \
 		     (int) \
 		     (((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h) - 0.5), \
