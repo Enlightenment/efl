@@ -50,7 +50,6 @@ eio_init(void)
    if (_eio_count > 1) return _eio_count;
 
    eina_init();
-   eina_threads_init();
    ecore_init();
 
    return _eio_count;
@@ -76,7 +75,6 @@ eio_shutdown(void)
    direct_info.count = 0;
 
    ecore_shutdown();
-   eina_threads_shutdown();
    eina_shutdown();
    return _eio_count;
 }
