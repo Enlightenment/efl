@@ -25,6 +25,10 @@
 
 #ifdef EFL_HAVE_POSIX_THREADS
 #include <pthread.h>
+
+# ifdef EFL_DEBUG_THREADS
+#  include <assert.h>
+# endif
 #endif
 
 #ifdef EFL_HAVE_WIN32_THREADS
@@ -52,10 +56,6 @@ static int _eina_mempool_log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_eina_mempool_log_dom, __VA_ARGS__)
 #endif
 
-#ifdef EFL_DEBUG_THREADS
-#include <assert.h>
-#endif
-
 typedef struct _Chained_Mempool Chained_Mempool;
 struct _Chained_Mempool
 {
@@ -67,10 +67,10 @@ struct _Chained_Mempool
    int group_size;
    int usage;
 #ifdef EFL_HAVE_THREADS
-#ifdef EFL_DEBUG_THREADS
-   pthread_t self;
-#endif
 # ifdef EFL_HAVE_POSIX_THREADS
+#  ifdef EFL_DEBUG_THREADS
+   pthread_t self;
+#  endif
    pthread_mutex_t mutex;
 # else
    HANDLE mutex;
@@ -308,12 +308,12 @@ eina_chained_mempool_init(const char *context,
    mp->item_alloc = eina_mempool_alignof(item_size);
    mp->group_size = mp->item_alloc * mp->pool_size;
    mp->alloc_size = mp->group_size + eina_mempool_alignof(sizeof(Chained_Pool));
-#ifdef EFL_DEBUG_THREADS
-   mp->self = pthread_self();
-#endif
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
+#  ifdef EFL_DEBUG_THREADS
+   mp->self = pthread_self();
+#  endif
    pthread_mutex_init(&mp->mutex, NULL);
 # else
    mp->mutex = CreateMutex(NULL, FALSE, NULL);
@@ -346,10 +346,10 @@ eina_chained_mempool_shutdown(void *data)
      }
 
 #ifdef EFL_HAVE_THREADS
-#ifdef EFL_DEBUG_THREADS
-   assert(mp->self == pthread_self());
-#endif
 # ifdef EFL_HAVE_POSIX_THREADS
+#  ifdef EFL_DEBUG_THREADS
+   assert(mp->self == pthread_self());
+#  endif
    pthread_mutex_destroy(&mp->mutex);
 # else
    CloseHandle(mp->mutex);
