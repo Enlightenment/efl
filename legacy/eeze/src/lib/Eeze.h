@@ -216,6 +216,8 @@ typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Ud
 
    EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, Eeze_Udev_Watch_Cb cb, void *user_data);
    EAPI void            *eeze_udev_watch_del(Eeze_Udev_Watch *watch);
+   EAPI void             eeze_udev_watch_data_set(Eeze_Udev_Watch *watch, void *data);
+   EAPI void            *eeze_udev_watch_data_get(Eeze_Udev_Watch *watch);
 
 #ifdef __cplusplus
 }
