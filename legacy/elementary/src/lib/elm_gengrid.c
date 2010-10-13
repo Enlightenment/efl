@@ -892,11 +892,11 @@ _item_unrealize(Elm_Gengrid_Item *item)
    elm_widget_stringlist_free(item->icons);
    item->icons = NULL;
    elm_widget_stringlist_free(item->states);
+   item->states = NULL;
 
    EINA_LIST_FREE(item->icon_objs, icon)
      evas_object_del(icon);
 
-   item->states = NULL;
    item->realized = EINA_FALSE;
    item->want_unrealize = EINA_FALSE;
 }
