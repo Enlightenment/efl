@@ -352,10 +352,16 @@ ecore_pipe_read_close(Ecore_Pipe *p)
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
         return;
      }
-   ecore_main_fd_handler_del(p->fd_handler);
-   p->fd_handler = NULL;
-   pipe_close(p->fd_read);
-   p->fd_read = PIPE_FD_INVALID;
+   if (p->fd_handler)
+     {
+        ecore_main_fd_handler_del(p->fd_handler);
+        p->fd_handler = NULL;
+     }
+   if (p->fd_read != PIPE_FD_INVALID)
+     {
+        pipe_close(p->fd_read);
+        p->fd_read = PIPE_FD_INVALID;
+     }
 }
 
 /**
@@ -372,8 +378,11 @@ ecore_pipe_write_close(Ecore_Pipe *p)
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_write_close");
         return;
      }
-   pipe_close(p->fd_write);
-   p->fd_write = PIPE_FD_INVALID;
+   if (p->fd_write != PIPE_FD_INVALID)
+     {
+        pipe_close(p->fd_write);
+        p->fd_write = PIPE_FD_INVALID;
+     }
 }
 
 /**
@@ -398,6 +407,8 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
         return EINA_FALSE;
      }
 
+   if (p->delete_me) return EINA_FALSE;
+   
    if (p->fd_write == PIPE_FD_INVALID) return EINA_FALSE;
 
    /* First write the len into the pipe */
