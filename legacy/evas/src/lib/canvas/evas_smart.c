@@ -307,7 +307,7 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 	  }
      }
 
-   evas_smart_cb_descriptions_resize(a, a->size - (j - i));
+   evas_smart_cb_descriptions_resize(a, i + 1);
 }
 
 static void
