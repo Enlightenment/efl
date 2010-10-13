@@ -52,6 +52,10 @@ static int _eina_mempool_log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_eina_mempool_log_dom, __VA_ARGS__)
 #endif
 
+#ifdef EFL_DEBUG_THREADS
+#include <assert.h>
+#endif
+
 typedef struct _Chained_Mempool Chained_Mempool;
 struct _Chained_Mempool
 {
@@ -63,6 +67,9 @@ struct _Chained_Mempool
    int group_size;
    int usage;
 #ifdef EFL_HAVE_THREADS
+#ifdef EFL_DEBUG_THREADS
+   pthread_t self;
+#endif
 # ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_t mutex;
 # else
@@ -127,6 +134,10 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
         WaitForSingleObject(pool->mutex, INFINITE);
 # endif
      }
+#ifdef EFL_DEBUG_THREADS
+   else
+     assert(pool->self == pthread_self());
+#endif
 #endif
 
    // look 4 pool from 2nd bucket on
@@ -214,12 +225,16 @@ eina_chained_mempool_free(void *data, void *ptr)
         WaitForSingleObject(pool->mutex, INFINITE);
 # endif
      }
+#ifdef EFL_DEBUG_THREADS
+   else
+     assert(pool->self == pthread_self());
+#endif
 #endif
 
    EINA_INLIST_FOREACH(pool->first, p)
    {
       // Could the pointer be inside that pool
-      if (ptr < p->limit)
+      if ((unsigned char*) ptr < p->limit)
         {
            // pool mem base
            pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
@@ -293,6 +308,9 @@ eina_chained_mempool_init(const char *context,
    mp->item_alloc = eina_mempool_alignof(item_size);
    mp->group_size = mp->item_alloc * mp->pool_size;
    mp->alloc_size = mp->group_size + eina_mempool_alignof(sizeof(Chained_Pool));
+#ifdef EFL_DEBUG_THREADS
+   mp->self = pthread_self();
+#endif
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
@@ -328,6 +346,9 @@ eina_chained_mempool_shutdown(void *data)
      }
 
 #ifdef EFL_HAVE_THREADS
+#ifdef EFL_DEBUG_THREADS
+   assert(mp->self == pthread_self());
+#endif
 # ifdef EFL_HAVE_POSIX_THREADS
    pthread_mutex_destroy(&mp->mutex);
 # else
