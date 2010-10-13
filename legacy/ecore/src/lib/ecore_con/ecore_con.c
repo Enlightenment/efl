@@ -298,7 +298,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = EINA_TRUE;
-   svr->use_cert = (compl_type & ECORE_CON_LOAD_CERT);
+   if (compl_type & ECORE_CON_LOAD_CERT)
+     svr->use_cert = EINA_TRUE;
    svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
@@ -1674,6 +1675,11 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    cl->fd = new_fd;
    cl->host_server = svr;
 
+   cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
+                                _ecore_con_svr_cl_handler, cl, NULL, NULL);
+   ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
+
+
    if (svr->type & ECORE_CON_SSL)
      {
         cl->handshaking = EINA_TRUE;
@@ -1682,9 +1688,6 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           goto error;
      }
 
-   cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
-                                _ecore_con_svr_cl_handler, cl, NULL, NULL);
-   ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
    svr->clients = eina_list_append(svr->clients, cl);
    svr->client_count++;
    if (!svr->path)
@@ -1709,6 +1712,8 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
 error:
    close(new_fd);
+   if (cl->fd_handler)
+     ecore_main_fd_handler_del(cl->fd_handler);
    return ECORE_CALLBACK_RENEW;
 }
 
