@@ -31,7 +31,7 @@ _eio_file_heavy(Ecore_Thread *thread, void *data)
    ls = eina_file_ls(async->ls.directory);
    if (!ls)
      {
-	eio_file_thread_error(&async->ls.common);
+	eio_file_thread_error(&async->ls.common, thread);
 	return ;
      }
 
@@ -75,7 +75,7 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
    ls = eina_file_direct_ls(async->ls.directory);
    if (!ls)
      {
-	eio_file_thread_error(&async->ls.common);
+	eio_file_thread_error(&async->ls.common, thread);
 	return ;
      }
 
@@ -265,7 +265,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    in = open(copy->source, O_RDONLY);
    if (in < 0)
      {
-	eio_file_thread_error(&copy->common);
+	eio_file_thread_error(&copy->common, thread);
 	return EINA_FALSE;
      }
 
@@ -302,7 +302,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    return EINA_TRUE;
 
  on_error:
-   eio_file_thread_error(&copy->common);
+   eio_file_thread_error(&copy->common, thread);
 
    if (in >= 0) close(in);
    if (out >= 0) close(out);
@@ -424,7 +424,7 @@ _eio_file_move_heavy(Ecore_Thread *thread, void *data)
    Eio_File_Move *move = data;
 
    if (rename(move->progress.source, move->progress.dest) < 0)
-     eio_file_thread_error(&move->progress.common);
+     eio_file_thread_error(&move->progress.common, thread);
    else
      eio_progress_send(thread, &move->progress, 1, 1);
 }

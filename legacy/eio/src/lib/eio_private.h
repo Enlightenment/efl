@@ -146,7 +146,7 @@ Eina_Bool eio_file_set(Eio_File *common,
 		       Eio_Done_Cb done_cb,
 		       Eio_Error_Cb error_cb,
 		       const void *data,
-		       Ecore_Cb job_cb,
+		       Ecore_Thread_Heavy_Cb job_cb,
 		       Ecore_Cb end_cb,
 		       Ecore_Cb cancel_cb);
 
@@ -161,7 +161,7 @@ Eina_Bool eio_long_file_set(Eio_File *common,
 			    Ecore_Cb cancel_cb);
 
 void eio_file_error(Eio_File *common);
-void eio_file_thread_error(Eio_File *common);
+void eio_file_thread_error(Eio_File *common, Ecore_Thread *thread);
 
 Eina_File_Direct_Info *eio_direct_info_malloc(void);
 void eio_direct_info_free(Eina_File_Direct_Info *data);

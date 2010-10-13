@@ -29,10 +29,10 @@ eio_file_error(Eio_File *common)
 }
 
 void
-eio_file_thread_error(Eio_File *common)
+eio_file_thread_error(Eio_File *common, Ecore_Thread *thread)
 {
    common->error = errno;
-   ecore_thread_cancel(common->thread);
+   ecore_thread_cancel(thread);
 }
 
 Eina_Bool
@@ -71,7 +71,7 @@ eio_file_set(Eio_File *common,
 	     Eio_Done_Cb done_cb,
 	     Eio_Error_Cb error_cb,
 	     const void *data,
-	     Ecore_Cb job_cb,
+	     Ecore_Thread_Heavy_Cb job_cb,
 	     Ecore_Cb end_cb,
 	     Ecore_Cb cancel_cb)
 {
@@ -95,12 +95,12 @@ eio_file_set(Eio_File *common,
 /* --- */
 
 static void
-_eio_file_mkdir(void *data)
+_eio_file_mkdir(Ecore_Thread *thread, void *data)
 {
    Eio_File_Mkdir *m = data;
 
    if (mkdir(m->path, m->mode) != 0)
-     eio_file_thread_error(&m->common);
+     eio_file_thread_error(&m->common, thread);
 }
 
 static void
@@ -131,12 +131,12 @@ _eio_file_mkdir_error(void *data)
 }
 
 static void
-_eio_file_unlink(void *data)
+_eio_file_unlink(Ecore_Thread *thread, void *data)
 {
    Eio_File_Unlink *l = data;
 
    if (unlink(l->path) != 0)
-     eio_file_thread_error(&l->common);
+     eio_file_thread_error(&l->common, thread);
 }
 
 static void
@@ -167,12 +167,12 @@ _eio_file_unlink_error(void *data)
 }
 
 static void
-_eio_file_stat(void *data)
+_eio_file_stat(Ecore_Thread *thread, void *data)
 {
    Eio_File_Stat *s = data;
 
    if (stat(s->path, &s->buffer) != 0)
-     eio_file_thread_error(&s->common);
+     eio_file_thread_error(&s->common, thread);
 }
 
 static void

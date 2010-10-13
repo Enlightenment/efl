@@ -38,7 +38,7 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
    it = eina_file_direct_ls(target);
    if (!it)
      {
-        eio_file_thread_error(&copy->progress.common);
+        eio_file_thread_error(&copy->progress.common, thread);
         return EINA_FALSE;
      }
 
@@ -50,7 +50,7 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
            case DT_UNKNOWN:
               if (stat(info->path, &buffer) != 0)
                 {
-                   eio_file_thread_error(&copy->progress.common);
+                   eio_file_thread_error(&copy->progress.common, thread);
                    goto on_error;
                 }
 
@@ -135,10 +135,16 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
    if (stat(copy->progress.dest, &buffer) != 0)
      {
         if (stat(copy->progress.source, &buffer) != 0)
-          goto on_error;
+          {
+             eio_file_thread_error(&copy->progress.common, thread);
+             goto on_error;
+          }
 
         if (mkdir(copy->progress.dest, buffer.st_mode) != 0)
-          goto on_error;
+          {
+             eio_file_thread_error(&copy->progress.common, thread);
+             goto on_error;
+          }
      }
 
    /* create all directory */
@@ -153,11 +159,17 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
         /* FIXME: in some case we already did a stat call, so would be nice to reuse previous result here */
         /* FIXME: apply mode later so that readonly could be copied and property will be set correctly */
         if (stat(dir, &buffer) != 0)
-          goto on_error;
+          {
+             eio_file_thread_error(&copy->progress.common, thread);
+             goto on_error;
+          }
 
         /* create the directory */
         if (mkdir(target, buffer.st_mode) != 0)
-          goto on_error;
+          {
+             eio_file_thread_error(&copy->progress.common, thread);
+             goto on_error;
+          }
 
         step++;
         eio_progress_send(thread, &copy->progress, step, count);
