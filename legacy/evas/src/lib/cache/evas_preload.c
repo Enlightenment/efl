@@ -29,6 +29,8 @@ typedef void (*_evas_preload_pthread_func)(void *data);
 
 struct _Evas_Preload_Pthread_Worker
 {
+   EINA_INLIST;
+
    _evas_preload_pthread_func func_heavy;
    _evas_preload_pthread_func func_end;
    _evas_preload_pthread_func func_cancel;
@@ -42,7 +44,7 @@ struct _Evas_Preload_Pthread_Data
 };
 
 static int _threads_count = 0;
-static Eina_List *_workers = NULL;
+static Evas_Preload_Pthread_Worker *_workers = NULL;
 
 static LK(_mutex) = PTHREAD_MUTEX_INITIALIZER;
 
@@ -87,10 +89,11 @@ on_error:
 	     break;
 	  }
 
-	work = eina_list_data_get(_workers);
-	_workers = eina_list_remove_list(_workers, _workers);
+	work = _workers;
+	_workers = (Evas_Preload_Pthread_Worker*) eina_inlist_remove(EINA_INLIST_GET(_workers),
+                                                                     EINA_INLIST_GET(_workers));
 	LKU(_mutex);
-        
+
 	if (work->func_heavy) work->func_heavy(work->data);
 	evas_async_events_put(pth, 0, work, _evas_preload_thread_done);
      }
@@ -136,9 +139,13 @@ _evas_preload_thread_shutdown(void)
    /* Force processing of async events. */
    evas_async_events_process();
    LKL(_mutex);
-   EINA_LIST_FREE(_workers, work)
+   while (_workers)
      {
-	if (work->func_cancel) work->func_cancel(work->data);
+        work = _workers;
+        _workers = eina_inlist_remove(EINA_INLIST_GET(_workers),
+                                      EINA_INLIST_GET(_workers));
+
+        if (work->func_cancel) work->func_cancel(work->data);
 	free(work);
      }
    LKU(_mutex);
@@ -169,7 +176,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
    work->data = (void *)data;
 
    LKL(_mutex);
-   _workers = eina_list_append(_workers, work);
+   _workers = eina_inlist_append(EINA_INLIST_GET(_workers), EINA_INLIST_GET(work));
    if (_threads_count == _threads_max)
      {
 	LKU(_mutex);
@@ -216,15 +223,15 @@ evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
 {
 #ifdef BUILD_ASYNC_PRELOAD
    Evas_Preload_Pthread_Worker *work;
-   Eina_List *l;
 
    if (!thread) return EINA_TRUE;
    LKL(_mutex);
-   EINA_LIST_FOREACH(_workers, l, work)
+   EINA_INLIST_FOREACH(_workers, work)
      {
         if (work == (Evas_Preload_Pthread_Worker *)thread)
           {
-             _workers = eina_list_remove_list(_workers, l);
+             _workers = eina_inlist_remove(EINA_INLIST_GET(_workers),
+                                           EINA_INLIST_GET(work));
              LKU(_mutex);
              if (work->func_cancel) work->func_cancel(work->data);
              free(work);
