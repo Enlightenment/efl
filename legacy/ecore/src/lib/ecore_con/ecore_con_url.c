@@ -960,7 +960,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
         fd = fopen(filename, "rb");
         if (!fd)
           {
-             ERR("Could not open \"%s\" for FTP upload");
+             ERR("Could not open \"%s\" for FTP upload", filename);
              return EINA_FALSE;
           }
         curl_easy_setopt(url_con->curl_easy, CURLOPT_READDATA, fd);
