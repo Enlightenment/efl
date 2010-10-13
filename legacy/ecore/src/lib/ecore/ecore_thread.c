@@ -124,6 +124,8 @@ _ecore_thread_end(Ecore_Pthread_Data *pth)
    if (pthread_join(pth->thread, (void **) &p) != 0)
      return ;
 
+   eina_threads_shutdown();
+
    _ecore_active_job_threads = eina_list_remove(_ecore_active_job_threads, pth);
 
    ecore_event_add(ECORE_THREAD_PIPE_DEL, pth->p, _ecore_thread_pipe_free, NULL);
@@ -479,8 +481,12 @@ ecore_thread_run(Ecore_Cb func_blocking,
    pth->p = ecore_pipe_add(_ecore_thread_handler, NULL);
    if (!pth->p) goto on_error;
 
+   eina_threads_init();
+
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
       return (Ecore_Thread *) work;
+
+   eina_threads_shutdown();
 
  on_error:
    if (pth)
@@ -562,6 +568,8 @@ ecore_thread_cancel(Ecore_Thread *thread)
                       work->func_cancel((void *) work->data);
                     free(work);
 
+                    eina_threads_shutdown();
+
                     return EINA_TRUE;
                  }
             }
@@ -577,6 +585,8 @@ ecore_thread_cancel(Ecore_Thread *thread)
                     if (work->func_cancel)
                       work->func_cancel((void *) work->data);
                     free(work);
+
+                    eina_threads_shutdown();
 
                     return EINA_TRUE;
                  }
@@ -698,8 +708,12 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
    pth->p = ecore_pipe_add(_ecore_thread_handler, NULL);
    if (!pth->p) goto on_error;
 
+   eina_threads_init();
+
    if (pthread_create(&pth->thread, NULL, (void *) _ecore_thread_worker, pth) == 0)
       return (Ecore_Thread *) worker;
+
+   eina_threads_shutdown();
 
  on_error:
    if (pth)
