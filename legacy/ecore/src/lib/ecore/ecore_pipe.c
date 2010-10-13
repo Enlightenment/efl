@@ -57,8 +57,10 @@ struct _Ecore_Pipe
    const void       *data;
    Ecore_Pipe_Cb     handler;
    unsigned int      len;
+   int               handling;
    size_t            already_read;
    void             *passed_data;
+   Eina_Bool         delete_me : 1;
 };
 
 
@@ -326,6 +328,8 @@ ecore_pipe_del(Ecore_Pipe *p)
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_del");
         return NULL;
      }
+   p->delete_me = EINA_TRUE;
+   if (p->handling > 0) return (void *)p->data;
    if (p->fd_handler) ecore_main_fd_handler_del(p->fd_handler);
    if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
    if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
@@ -468,17 +472,28 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 }
 
 /* Private function */
+static void
+_ecore_pipe_unhandle(Ecore_Pipe *p)
+{
+   p->handling--;
+   if (p->delete_me)
+     {
+        ecore_pipe_del(p);
+     }
+}
 
 static Eina_Bool
 _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Pipe  *p;
    double       start_time;
+   int          i;
 
    p = (Ecore_Pipe *)data;
    start_time = ecore_time_get();
-
-   do
+   
+   p->handling++;
+   for (i = 0; i < 16; i++)
      {
         ssize_t       ret;
 
@@ -505,6 +520,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
+                  _ecore_pipe_unhandle(p);
                   return ECORE_CALLBACK_CANCEL;
                }
 #ifndef _WIN32
@@ -515,6 +531,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   ERR("An unhandled error (ret: %zd errno: %d [%s])"
                       "occurred while reading from the pipe the length",
                       ret, errno, strerror(errno));
+                  _ecore_pipe_unhandle(p);
                   return ECORE_CALLBACK_RENEW;
                }
 #else
@@ -526,6 +543,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                        pipe_close(p->fd_read);
                        p->fd_read = PIPE_FD_INVALID;
                        p->fd_handler = NULL;
+                       _ecore_pipe_unhandle(p);
                        return ECORE_CALLBACK_CANCEL;
                     }
                }
@@ -553,6 +571,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         else if (ret >= 0)
           {
              p->already_read += ret;
+             _ecore_pipe_unhandle(p);
              return ECORE_CALLBACK_RENEW;
           }
         else if (ret == 0)
@@ -561,6 +580,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              pipe_close(p->fd_read);
              p->fd_read = PIPE_FD_INVALID;
              p->fd_handler = NULL;
+             _ecore_pipe_unhandle(p);
              return ECORE_CALLBACK_CANCEL;
           }
 #ifndef _WIN32
@@ -571,6 +591,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              ERR("An unhandled error (ret: %zd errno: %d)"
                  "occurred while reading from the pipe the data",
                  ret, errno);
+             _ecore_pipe_unhandle(p);
              return ECORE_CALLBACK_RENEW;
           }
 #else
@@ -582,6 +603,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
+                  _ecore_pipe_unhandle(p);
                   return ECORE_CALLBACK_CANCEL;
                }
              else
@@ -589,7 +611,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           }
 #endif
      }
-   while (ecore_time_get() - start_time < ecore_animator_frametime_get());
    
+   _ecore_pipe_unhandle(p);
    return ECORE_CALLBACK_RENEW;
 }
