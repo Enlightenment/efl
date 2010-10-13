@@ -218,28 +218,31 @@ eina_chained_mempool_free(void *data, void *ptr)
 
    EINA_INLIST_FOREACH(pool->first, p)
    {
-      // pool mem base
-      pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
-      // is it in pool mem?
-      if ((ptr >= pmem) &&
-          ((unsigned char *)ptr < (((unsigned char *)pmem) + psize)))
+      // Could the pointer be inside that pool
+      if (ptr < p->limit)
         {
-           // freed node points to prev free node
-           eina_trash_push(&p->base, ptr);
-           // next free node is now the one we freed
-           p->usage--;
-           pool->usage--;
-           if (p->usage == 0)
+           // pool mem base
+           pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
+           // is it in pool mem?
+           if (ptr >= pmem)
              {
-                // free bucket
-                pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
-                _eina_chained_mp_pool_free(p);
-             }
-           else
-              // move to front
-              pool->first = eina_inlist_promote(pool->first, EINA_INLIST_GET(p));
+                // freed node points to prev free node
+                eina_trash_push(&p->base, ptr);
+                // next free node is now the one we freed
+                p->usage--;
+                pool->usage--;
+                if (p->usage == 0)
+                  {
+                     // free bucket
+                     pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
+                     _eina_chained_mp_pool_free(p);
+                  }
+                else
+                  // move to front
+                  pool->first = eina_inlist_promote(pool->first, EINA_INLIST_GET(p));
 
-           break;
+                break;
+             }
         }
    }
 
