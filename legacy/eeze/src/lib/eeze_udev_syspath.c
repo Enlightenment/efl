@@ -32,22 +32,15 @@ eeze_udev_syspath_get_parent(const char *syspath)
 {
    _udev_device *device, *parent;
    const char *ret;
-   Eina_Strbuf *sbuf;
 
    if (!syspath)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return NULL;
    parent = udev_device_get_parent(device);
    ret = eina_stringshare_add(udev_device_get_property_value(parent, "DEVPATH"));
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return ret;
 }
 
@@ -64,19 +57,13 @@ eeze_udev_syspath_get_parents(const char *syspath)
 {
    _udev_device *child, *parent, *device;
    const char *path;
-   Eina_Strbuf *sbuf;
    Eina_List *devlist = NULL;
 
    if (!syspath)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return NULL;
 
    if (!(parent = udev_device_get_parent(device)))
      return NULL;
@@ -106,25 +93,18 @@ eeze_udev_syspath_get_devpath(const char *syspath)
 {
    _udev_device *device;
    const char *name = NULL;
-   Eina_Strbuf *sbuf;
 
    if (!syspath)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return NULL;
 
    if (!(name = udev_device_get_property_value(device, "DEVNAME")))
      return NULL;
 
    name = eina_stringshare_add(name);
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return name;
 }
 
@@ -144,22 +124,14 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
 {
    _udev_device *device;
    const char *subsystem;
-   Eina_Strbuf *sbuf;
 
    if (!syspath)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-   subsystem =
-     eina_stringshare_add(udev_device_get_property_value(device, "SUBSYSTEM"));
+   if (!(device = _new_device(syspath)))
+     return NULL;
+   subsystem = eina_stringshare_add(udev_device_get_property_value(device, "SUBSYSTEM"));
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return subsystem;
 }
 
@@ -177,24 +149,16 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
 {
    _udev_device *device;
    const char *value = NULL, *test;
-   Eina_Strbuf *sbuf;
 
    if (!syspath || !property)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-
+   if (!(device = _new_device(syspath)))
+     return NULL;
    if ((test = udev_device_get_property_value(device, property)))
      value = eina_stringshare_add(test);
 
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return value;
 }
 
@@ -212,24 +176,17 @@ eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr)
 {
    _udev_device *device;
    const char *value = NULL, *test;
-   Eina_Strbuf *sbuf;
 
    if (!syspath || !sysattr)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return NULL;
 
    if ((test = udev_device_get_sysattr_value(device, sysattr)))
      value = eina_stringshare_add(test);
 
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return value;
 }
 
@@ -246,19 +203,13 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 {
    _udev_device *device;
    Eina_Bool mouse = 0;
-   Eina_Strbuf *sbuf;
    const char *test = NULL;
 
    if (!syspath)
-     return 0;
+     return EINA_FALSE;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
    mouse = _walk_parents_test_attr(device, "bInterfaceProtocol", "02");
 
@@ -278,7 +229,6 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 
 #endif
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return mouse;
 }
 
@@ -295,19 +245,13 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 {
    _udev_device *device;
    Eina_Bool kbd = 0;
-   Eina_Strbuf *sbuf;
    const char *test = NULL;
 
    if (!syspath)
      return 0;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
    kbd = _walk_parents_test_attr(device, "bInterfaceProtocol", "01");
 
@@ -327,7 +271,6 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 
 #endif
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return kbd;
 }
 
@@ -344,18 +287,12 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
 {
    _udev_device *device;
    Eina_Bool touchpad = 0;
-   Eina_Strbuf *sbuf;
 
    if (!syspath)
      return 0;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
    touchpad = _walk_parents_test_attr(device, "resolution", NULL);
 #else
@@ -367,7 +304,6 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
 
 #endif
    udev_device_unref(device);
-   eina_strbuf_free(sbuf);
    return touchpad;
 }
 

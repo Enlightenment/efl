@@ -33,44 +33,27 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
                              const char *value)
 {
    _udev_device *device, *child, *parent;
-   Eina_Strbuf *sbuf;
+   Eina_Bool ret = EINA_FALSE;
    const char *test = NULL;
 
    if (!udev)
      return 0;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
 
    for (parent = device; parent;
        child = parent, parent = udev_device_get_parent(child))
      {
-        if ((test = udev_device_get_sysattr_value(parent, sysattr)))
+        if (!(test = udev_device_get_sysattr_value(parent, sysattr)))
+          continue;
+        if ((value && (!strcmp(test, value))) || (!value))
           {
-             if (value)
-               {
-                  if (!strcmp(test, value))
-                    {
-                      eina_strbuf_free(sbuf);
-                      udev_device_unref(device);
-                      return 1;
-                    }
-               }
-             else
-               {
-                  eina_strbuf_free(sbuf);
-                  udev_device_unref(device);
-                  return 1;
-               }
+             ret = EINA_TRUE;
+             break;
           }
      }
 
-   eina_strbuf_free(sbuf);
    udev_device_unref(device);
    return 0;
 }
@@ -90,33 +73,25 @@ EAPI const char *
 eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr)
 {
    _udev_device *device, *child, *parent;
-   Eina_Strbuf *sbuf;
    const char *test = NULL;
 
    if (!syspath)
      return NULL;
 
-   sbuf = eina_strbuf_new();
-
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, eina_strbuf_string_get(sbuf));
-
+   if (!(device = _new_device(syspath)))
+     return NULL;
+     
    for (parent = device; parent;
        child = parent, parent = udev_device_get_parent(child))
      {
         if ((test = udev_device_get_sysattr_value(parent, sysattr)))
           {
-             eina_strbuf_free(sbuf);
              test = eina_stringshare_add(test);
              udev_device_unref(device);
              return test;
           }
      }
 
-   eina_strbuf_free(sbuf);
    udev_device_unref(device);
    return NULL;
 }

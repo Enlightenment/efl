@@ -32,7 +32,6 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
    _udev_list_entry *devs, *cur;
    _udev_enumerate *en;
    Eina_List *l, *ret = NULL;
-   Eina_Strbuf *sbuf;
    const char *vendor, *model, *revision, *devname, *dev;
 
    if (!syspath)
@@ -43,13 +42,9 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
    if (!en)
      return NULL;
 
-   sbuf = eina_strbuf_new();
+   if (!(device = _new_device(syspath)))
+     return NULL;
 
-   if (!strstr(syspath, "/sys/"))
-     eina_strbuf_append(sbuf, "/sys/");
-
-   eina_strbuf_append(sbuf, syspath);
-   device = udev_device_new_from_syspath(udev, syspath);
    vendor = udev_device_get_property_value(device, "ID_VENDOR_ID");
 
    if (vendor)
@@ -88,7 +83,6 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
         udev_device_unref(device);
      }
    udev_enumerate_unref(en);
-   eina_strbuf_free(sbuf);
    return ret;
 }
 
@@ -124,7 +118,8 @@ eeze_udev_find_unlisted_similar(Eina_List * list)
         if (!en)
          return NULL;
 
-        device = udev_device_new_from_syspath(udev, dev);
+        device = _new_device(dev);
+        if (!device) continue;
 
         if ((vendor = udev_device_get_property_value(device, "ID_VENDOR_ID")))
           udev_enumerate_add_match_property(en, "ID_VENDOR_ID", vendor);
