@@ -46,6 +46,7 @@ struct _Elm_Win
       Eina_Bool enabled : 1;
       Eina_Bool changed_theme : 1;
       Eina_Bool top_animate : 1;
+      Eina_Bool geometry_changed : 1;
    } focus_highlight;
 };
 
@@ -512,6 +513,7 @@ _elm_win_focus_target_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 {
    Elm_Win *win = data;
 
+   win->focus_highlight.geometry_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(win);
 }
 
@@ -520,6 +522,7 @@ _elm_win_focus_target_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 {
    Elm_Win *win = data;
 
+   win->focus_highlight.geometry_changed = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(win);
 }
 
@@ -781,7 +784,8 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
    visible_changed = (win->focus_highlight.cur.visible !=
                       win->focus_highlight.prev.visible);
 
-   if ((target == previous) && !visible_changed)
+   if ((target == previous) && !visible_changed &&
+       !win->focus_highlight.geometry_changed)
      return;
 
    if (previous && win->focus_highlight.prev.handled)
@@ -833,6 +837,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
    evas_object_raise(top);
 
 the_end:
+   win->focus_highlight.geometry_changed = EINA_FALSE;
    win->focus_highlight.prev = win->focus_highlight.cur;
 }
 
