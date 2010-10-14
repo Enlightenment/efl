@@ -26,6 +26,7 @@ struct _Elm_Toolbar_Item
 {
    Elm_Widget_Item base;
    const char *label;
+   const char *icon_str;
    Evas_Object *icon;
    Evas_Object *o_menu;
    Evas_Smart_Cb func;
@@ -51,6 +52,25 @@ static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+
+static Eina_Bool
+_item_icon_set(Evas_Object *icon_obj, const char *type, const char *icon)
+{
+   const char *prefix;
+   char icon_str[512];
+
+   if (!type || !*type) goto end;
+   if (snprintf(icon_str, sizeof icon_str, "%s%s", type, icon) > 0
+       && elm_icon_standard_set(icon_obj, icon_str))
+     return EINA_TRUE;
+
+end:
+   if (elm_icon_standard_set(icon_obj, icon))
+     return EINA_TRUE;
+
+   WRN("couldn't find icon definition for '%s'", icon);
+   return EINA_FALSE;
+}
 
 static void
 _item_show(Elm_Toolbar_Item *it)
@@ -339,9 +359,16 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
                          elm_menu_item_separator_add(menu, NULL);
                        else
                          {
-                            Elm_Menu_Item *item = elm_menu_item_add(menu, NULL, NULL,
-                                                                    it->label, it->func,
-                                                                    it->base.data);
+                            Elm_Menu_Item *item;
+                            Evas_Object *icon = elm_icon_add(menu);
+                            if (icon && !_item_icon_set(icon, "menu/", it->icon_str))
+                              {
+                                 evas_object_del(icon);
+                                 icon = NULL;
+                              }
+
+                            item = elm_menu_item_add(menu, NULL, icon, it->label,
+                                                     it->func, it->base.data);
                             elm_menu_item_disabled_set(item, it->disabled);
                          }
                        evas_object_hide(it->base.view);
@@ -495,7 +522,7 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
  * Add an item to the toolbar.
  *
  * @param obj The toolbar object
- * @param icon The icon object of the item
+ * @param icon The icon string
  * @param label The label of the item
  * @param func The function to call when the item is clicked
  * @param data The data to associate with the item
@@ -505,13 +532,16 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
  * @ingroup Toolbar
  */
 EAPI Elm_Toolbar_Item *
-elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
+elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *icon_obj;
    Evas_Coord mw, mh;
    Elm_Toolbar_Item *it;
 
+   icon_obj = elm_icon_add(obj);
+   if (!icon_obj) return NULL;
    if (!wd) return NULL;
    it = elm_widget_item_new(obj, Elm_Toolbar_Item);
    if (!it) return NULL;
@@ -519,11 +549,23 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Eva
    it->label = eina_stringshare_add(label);
    it->prio.visible = 1;
    it->prio.priority = 0;
-   it->icon = icon;
+   elm_icon_standard_set(icon_obj, icon);
    it->func = func;
    it->separator = EINA_FALSE;
    it->base.data = data;
    it->base.view = edje_object_add(evas_object_evas_get(obj));
+   if (_item_icon_set(icon_obj, "toolbar/", icon))
+     {
+       it->icon = icon_obj;
+       it->icon_str = eina_stringshare_add(icon);
+     }
+   else
+     {
+       it->icon = NULL;
+       it->icon_str = NULL;
+       evas_object_del(icon_obj);
+     }
+
    _elm_theme_object_set
      (obj, it->base.view, "toolbar", "item", elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base.view, "elm,action,click", "elm",
@@ -677,6 +719,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
    elm_widget_item_pre_notify_del(it);
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
+   eina_stringshare_del(it->icon_str);
    if (it->icon) evas_object_del(it->icon);
    elm_widget_item_del(it);
    _theme_hook(obj2);
@@ -800,13 +843,9 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 
    if (shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
-        Evas_Object *icon;
-
         elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, ELM_SMART_SCROLLER_POLICY_OFF);
 
-        icon = elm_icon_add(obj);
-        elm_icon_standard_set(icon, "arrow_down");
-        wd->more_item = elm_toolbar_item_add(obj, icon, "More", NULL, NULL);
+        wd->more_item = elm_toolbar_item_add(obj, "more_menu", "More", NULL, NULL);
         elm_toolbar_item_priority_set(wd->more_item, INT_MAX);
      }
    else

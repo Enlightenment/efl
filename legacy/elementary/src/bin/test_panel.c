@@ -178,10 +178,7 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(toolbar);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(toolbar, ic, "Hello", _tstatus, panel);
+   elm_toolbar_item_add(toolbar, "home", "Hello", _tstatus, panel);
 
    elm_panel_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);
@@ -245,10 +242,7 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(toolbar);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(toolbar, ic, "Hello", _bstatus, panel);
+   elm_toolbar_item_add(toolbar, "home", "Hello", _bstatus, panel);
 
    elm_panel_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);

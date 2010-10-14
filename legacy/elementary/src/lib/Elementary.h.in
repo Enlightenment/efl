@@ -1125,7 +1125,7 @@ extern "C" {
    EAPI Evas_Object      *elm_toolbar_add(Evas_Object *parent);
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
    EAPI Evas_Object      *elm_toolbar_item_icon_get(Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_label_get(const Elm_Toolbar_Item *item);
    EAPI Eina_Bool         elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item);

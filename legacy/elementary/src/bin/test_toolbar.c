@@ -72,41 +72,23 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    ph3 = elm_photo_add(win);
    ph4 = elm_photo_add(win);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   item = elm_toolbar_item_add(tb, ic, "Hello", tb_1, ph1);
+   item = elm_toolbar_item_add(tb, "arrow_left", "Hello", tb_1, ph1);
    elm_toolbar_item_disabled_set(item, EINA_TRUE);
    elm_toolbar_item_priority_set(item, 100);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   item = elm_toolbar_item_add(tb, ic, "World", tb_2, ph1);
+   item = elm_toolbar_item_add(tb, "arrow_right", "World", tb_2, ph1);
    elm_toolbar_item_priority_set(item, -100);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   item = elm_toolbar_item_add(tb, ic, "H", tb_3, ph4);
+   item = elm_toolbar_item_add(tb, "home", "H", tb_3, ph4);
    elm_toolbar_item_priority_set(item, 150);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   item = elm_toolbar_item_add(tb, ic, "Comes", tb_4, ph4);
+   item = elm_toolbar_item_add(tb, "chat", "Comes", tb_4, ph4);
    elm_toolbar_item_priority_set(item, 0);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   item = elm_toolbar_item_add(tb, ic, "Elementary", tb_5, ph4);
+   item = elm_toolbar_item_add(tb, "clock", "Elementary", tb_5, ph4);
    elm_toolbar_item_priority_set(item, -200);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   item = elm_toolbar_item_add(tb, ic, "Menu", NULL, NULL);
+   item = elm_toolbar_item_add(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(item, 1);
    elm_toolbar_item_priority_set(item, 999999);
    elm_toolbar_menu_parent_set(tb, win);

@@ -8730,59 +8730,118 @@ collections {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/icon/home/default"; min: 32 32;
+   group { name: "elm/icon/home/default"; alias: "elm/icon/toolbar/home/default"; min: 32 32;
       images.image: "icon_home.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_home.png"; } } } }
-   group { name: "elm/icon/close/default"; min: 32 32;
+   group { name: "elm/icon/close/default"; alias: "elm/icon/toolbar/close/default"; min: 32 32;
       images.image: "icon_close.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_close.png"; } } } }
-   group { name: "elm/icon/apps/default"; min: 32 32;
+   group { name: "elm/icon/apps/default"; alias: "elm/icon/toolbar/apps/default"; min: 32 32;
       images.image: "icon_apps.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_apps.png"; } } } }
-   group { name: "elm/icon/arrow_up/default"; min: 32 32;
+   group { name: "elm/icon/arrow_up/default"; alias: "elm/icon/toolbar/arrow_up/default"; min: 32 32;
       images.image: "icon_arrow_up.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_up.png"; } } } }
-   group { name: "elm/icon/arrow_down/default"; min: 32 32;
+   group { name: "elm/icon/arrow_down/default";
+           alias: "elm/icon/toolbar/arrow_down/default";
+           alias: "elm/icon/toolbar/more_menu/default"; min: 32 32;
       images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_down.png"; } } } }
-   group { name: "elm/icon/arrow_left/default"; min: 32 32;
+   group { name: "elm/icon/arrow_left/default"; alias: "elm/icon/toolbar/arrow_left/default"; min: 32 32;
       images.image: "icon_arrow_left.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_left.png"; } } } }
-   group { name: "elm/icon/arrow_right/default"; min: 32 32;
+   group { name: "elm/icon/arrow_right/default"; alias: "elm/icon/toolbar/arrow_right/default"; min: 32 32;
       images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_arrow_right.png"; } } } }
-   group { name: "elm/icon/chat/default"; min: 32 32;
+   group { name: "elm/icon/chat/default"; alias: "elm/icon/toolbar/chat/default"; min: 32 32;
       images.image: "icon_chat.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_chat.png"; } } } }
-   group { name: "elm/icon/clock/default"; min: 32 32;
+   group { name: "elm/icon/clock/default"; alias: "elm/icon/toolbar/clock/default"; min: 32 32;
       images.image: "icon_clock.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_clock.png"; } } } }
-   group { name: "elm/icon/delete/default"; min: 32 32;
+   group { name: "elm/icon/delete/default"; alias: "elm/icon/toolbar/delete/default"; min: 32 32;
       images.image: "icon_delete.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_delete.png"; } } } }
-   group { name: "elm/icon/edit/default"; min: 32 32;
+   group { name: "elm/icon/edit/default"; alias: "elm/icon/toolbar/edit/default"; min: 32 32;
       images.image: "icon_edit.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_edit.png"; } } } }
-   group { name: "elm/icon/refresh/default"; min: 32 32;
+   group { name: "elm/icon/refresh/default"; alias: "elm/icon/toolbar/refresh/default"; min: 32 32;
       images.image: "icon_refresh.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_refresh.png"; } } } }
-   group { name: "elm/icon/folder/default"; min: 32 32;
+   group { name: "elm/icon/folder/default"; alias: "elm/icon/toolbar/folder/default"; min: 32 32;
       images.image: "icon_folder.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_folder.png"; } } } }
-   group { name: "elm/icon/file/default"; min: 32 32;
+   group { name: "elm/icon/file/default"; alias: "elm/icon/toolbar/file/default"; min: 32 32;
+      images.image: "icon_file.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_file.png"; } } } }
+///////////////////////////////////////////////////////////////////////////////
+   group { name: "elm/icon/menu/home/default"; min: 24 24; max: 24 24;
+      images.image: "icon_home.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_home.png"; } } } }
+   group { name: "elm/icon/menu/close/default"; min: 24 24; max: 24 24;
+      images.image: "icon_close.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_close.png"; } } } }
+   group { name: "elm/icon/menu/apps/default"; min: 24 24; max: 24 24;
+      images.image: "icon_apps.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_apps.png"; } } } }
+   group { name: "elm/icon/menu/arrow_up/default"; min: 24 24; max: 24 24;
+      images.image: "icon_arrow_up.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_arrow_up.png"; } } } }
+   group { name: "elm/icon/menu/arrow_down/default"; min: 24 24; max: 24 24;
+      images.image: "icon_arrow_down.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_arrow_down.png"; } } } }
+   group { name: "elm/icon/menu/arrow_left/default"; min: 24 24; max: 24 24;
+      images.image: "icon_arrow_left.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_arrow_left.png"; } } } }
+   group { name: "elm/icon/menu/arrow_right/default"; min: 24 24; max: 24 24;
+      images.image: "icon_arrow_right.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_arrow_right.png"; } } } }
+   group { name: "elm/icon/menu/chat/default"; min: 24 24; max: 24 24;
+      images.image: "icon_chat.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_chat.png"; } } } }
+   group { name: "elm/icon/menu/clock/default"; min: 24 24; max: 24 24;
+      images.image: "icon_clock.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_clock.png"; } } } }
+   group { name: "elm/icon/menu/delete/default"; min: 24 24; max: 24 24;
+      images.image: "icon_delete.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_delete.png"; } } } }
+   group { name: "elm/icon/menu/edit/default"; min: 24 24; max: 24 24;
+      images.image: "icon_edit.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_edit.png"; } } } }
+   group { name: "elm/icon/menu/refresh/default"; min: 24 24; max: 24 24;
+      images.image: "icon_refresh.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_refresh.png"; } } } }
+   group { name: "elm/icon/menu/folder/default"; min: 24 24; max: 24 24;
+      images.image: "icon_folder.png" COMP; parts { part { name: "base";
+	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
+	    image.normal: "icon_folder.png"; } } } }
+   group { name: "elm/icon/menu/file/default"; min: 24 24; max: 24 24;
       images.image: "icon_file.png" COMP; parts { part { name: "base";
 	 description { state: "default" 0.0; aspect: 1.0 1.0; aspect_preference: BOTH;
 	    image.normal: "icon_file.png"; } } } }
