@@ -92,6 +92,7 @@ static pthread_mutex_t _ecore_thread_global_hash_mutex = PTHREAD_MUTEX_INITIALIZ
 static pthread_cond_t _ecore_thread_global_hash_cond = PTHREAD_COND_INITIALIZER;
 static pthread_t main_loop_thread;
 static Eina_Bool have_main_loop_thread = 0;
+
 static void
 _ecore_thread_data_free(void *data)
 {
@@ -107,6 +108,7 @@ _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
    Ecore_Pipe *p = event;
 
    ecore_pipe_del(p);
+   eina_threads_shutdown();
 }
 
 static Eina_Bool
@@ -123,8 +125,6 @@ _ecore_thread_end(Ecore_Pthread_Data *pth)
 
    if (pthread_join(pth->thread, (void **) &p) != 0)
      return ;
-
-   eina_threads_shutdown();
 
    _ecore_active_job_threads = eina_list_remove(_ecore_active_job_threads, pth);
 
@@ -213,7 +213,8 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
           }
 
         work = eina_list_data_get(_ecore_pending_job_threads);
-        _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads, _ecore_pending_job_threads);
+        _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads,
+                                                           _ecore_pending_job_threads);
 
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
@@ -240,7 +241,8 @@ _ecore_feedback_job(Ecore_Pipe *end_pipe, pthread_t thread)
           }
 
         work = eina_list_data_get(_ecore_pending_job_threads_feedback);
-        _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback, _ecore_pending_job_threads_feedback);
+        _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback,
+                                                                    _ecore_pending_job_threads_feedback);
 
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
@@ -314,7 +316,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    _ecore_thread_count++;
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
- on_error:
+ restart:
    if (_ecore_pending_job_threads) _ecore_short_job(pth->p);
    if (_ecore_pending_job_threads_feedback) _ecore_feedback_job(pth->p, pth->thread);
 
@@ -324,16 +326,30 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    if (_ecore_pending_job_threads)
      {
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
-        goto on_error;
+        goto restart;
      }
    if (_ecore_pending_job_threads_feedback)
      {
         pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
-        goto on_error;
+        goto restart;
      }
+   pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
+   /* Sleep a little to prevent premature death */
+   usleep(200);
+
+   pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
+   if (_ecore_pending_job_threads)
+     {
+        pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+        goto restart;
+     }
+   if (_ecore_pending_job_threads_feedback)
+     {
+        pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+        goto restart;
+     }
    _ecore_thread_count--;
-
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
    work = malloc(sizeof (Ecore_Pthread_Worker));
@@ -383,6 +399,13 @@ _ecore_thread_shutdown(void)
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
 
    EINA_LIST_FREE(_ecore_pending_job_threads, work)
+     {
+        if (work->func_cancel)
+          work->func_cancel((void *)work->data);
+        free(work);
+     }
+
+   EINA_LIST_FREE(_ecore_pending_job_threads_feedback, work)
      {
         if (work->func_cancel)
           work->func_cancel((void *)work->data);
@@ -492,11 +515,16 @@ ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
    if (pth)
      {
         if (pth->p) ecore_pipe_del(pth->p);
+        pth->p = NULL;
         free(pth);
      }
 
    if (_ecore_thread_count == 0)
      {
+        pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
+        _ecore_pending_job_threads = eina_list_remove(_ecore_pending_job_threads, work);
+        pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+
         if (work->func_cancel)
           work->func_cancel((void *) work->data);
         free(work);
@@ -570,8 +598,6 @@ ecore_thread_cancel(Ecore_Thread *thread)
                       work->func_cancel((void *) work->data);
                     free(work);
 
-                    eina_threads_shutdown();
-
                     return EINA_TRUE;
                  }
             }
@@ -587,8 +613,6 @@ ecore_thread_cancel(Ecore_Thread *thread)
                     if (work->func_cancel)
                       work->func_cancel((void *) work->data);
                     free(work);
-
-                    eina_threads_shutdown();
 
                     return EINA_TRUE;
                  }
@@ -726,6 +750,11 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
 
    if (_ecore_thread_count == 0)
      {
+        pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
+        _ecore_pending_job_threads_feedback = eina_list_remove(_ecore_pending_job_threads_feedback,
+                                                               worker);
+        pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
+
         if (func_cancel) func_cancel((void *) data);
 
         if (worker)
