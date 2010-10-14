@@ -796,6 +796,17 @@ extern "C" {
    EAPI Eina_Bool    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
    EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
+
+   EAPI void         elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI void         elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI void         elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
+   EAPI void         elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
+   EAPI Evas_Object *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child);
+   EAPI void         elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear);
+   EAPI void         elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
+   EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj);
+   EAPI void         elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
+
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
 

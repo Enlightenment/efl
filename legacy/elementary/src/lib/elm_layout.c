@@ -25,8 +25,25 @@ struct _Widget_Data
 
 struct _Subinfo
 {
-   const char *swallow;
+   const char *part;
    Evas_Object *obj;
+   enum {
+     SWALLOW,
+     BOX_APPEND,
+     BOX_PREPEND,
+     BOX_INSERT_BEFORE,
+     BOX_INSERT_AT,
+     TABLE_PACK
+   } type;
+   union {
+      union {
+         const Evas_Object *reference;
+         unsigned int pos;
+      } box;
+      struct {
+         unsigned short col, row, colspan, rowspan;
+      } table;
+   } p;
 };
 
 struct _Part_Cursor
@@ -56,7 +73,7 @@ _del_hook(Evas_Object *obj)
    if (!wd) return;
    EINA_LIST_FREE(wd->subs, si)
      {
-	eina_stringshare_del(si->swallow);
+	eina_stringshare_del(si->part);
 	free(si);
      }
    EINA_LIST_FREE(wd->parts_cursors, pc) _part_cursor_free(pc);
@@ -223,7 +240,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
                                             _changed_size_hints,
                                             wd);
 	     wd->subs = eina_list_remove_list(wd->subs, l);
-	     eina_stringshare_del(si->swallow);
+	     eina_stringshare_del(si->part);
 	     free(si);
 	     break;
 	  }
@@ -354,7 +371,7 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
    if (!wd) return;
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	if (!strcmp(swallow, si->swallow))
+	if ((si->type == SWALLOW) && (!strcmp(swallow, si->part)))
 	  {
 	     if (content == si->obj) return;
 	     evas_object_del(si->obj);
@@ -367,9 +384,11 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 	evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				       _changed_size_hints, wd);
-	edje_object_part_swallow(wd->lay, swallow, content);
+	if (!edje_object_part_swallow(wd->lay, swallow, content))
+          WRN("could not swallow %p into part '%s'", content, swallow);
 	si = ELM_NEW(Subinfo);
-	si->swallow = eina_stringshare_add(swallow);
+        si->type = SWALLOW;
+	si->part = eina_stringshare_add(swallow);
 	si->obj = content;
 	wd->subs = eina_list_append(wd->subs, si);
      }
@@ -397,7 +416,7 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
-	if (!strcmp(swallow, si->swallow))
+	if ((si->type == SWALLOW) && (!strcmp(swallow, si->part)))
 	  {
 	     Evas_Object *content;
 	     if (!si->obj) return NULL;
@@ -409,6 +428,394 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
      }
    return NULL;
 }
+
+/**
+ * Append child to layout box part.
+ *
+ * Once the object is appended, its lifetime will be bound to the
+ * layout, whenever the layout dies the child will be deleted
+ * automatically. One should use elm_layout_box_remove() to make this
+ * layout forget about the object.
+ *
+ * @param obj the layout object
+ * @param part the box part to append.
+ * @param child the child object to append to box.
+ */
+EAPI void
+elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   if (!wd) return;
+
+   if (!edje_object_part_box_append(wd->lay, part, child))
+     WRN("child %p could not be appended to box part '%s'", child, part);
+   elm_widget_sub_object_add(obj, child);
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, wd);
+
+   si = ELM_NEW(Subinfo);
+   si->type = BOX_APPEND;
+   si->part = eina_stringshare_add(part);
+   si->obj = child;
+   wd->subs = eina_list_append(wd->subs, si);
+   _request_sizing_eval(wd);
+}
+
+/**
+ * Prepend child to layout box part.
+ *
+ * Once the object is prepended, its lifetime will be bound to the
+ * layout, whenever the layout dies the child will be deleted
+ * automatically. One should use elm_layout_box_remove() to make this
+ * layout forget about the object.
+ *
+ * @param obj the layout object
+ * @param part the box part to prepend.
+ * @param child the child object to prepend to box.
+ */
+EAPI void
+elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   if (!wd) return;
+
+   if (!edje_object_part_box_prepend(wd->lay, part, child))
+     WRN("child %p could not be prepended to box part '%s'", child, part);
+   elm_widget_sub_object_add(obj, child);
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, wd);
+
+   si = ELM_NEW(Subinfo);
+   si->type = BOX_PREPEND;
+   si->part = eina_stringshare_add(part);
+   si->obj = child;
+   wd->subs = eina_list_prepend(wd->subs, si);
+   _request_sizing_eval(wd);
+}
+
+static void
+_box_reference_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Subinfo *si = data;
+   si->p.box.reference = NULL;
+}
+
+/**
+ * Insert child to layout box part before a reference object.
+ *
+ * Once the object is inserted, its lifetime will be bound to the
+ * layout, whenever the layout dies the child will be deleted
+ * automatically. One should use elm_layout_box_remove() to make this
+ * layout forget about the object.
+ *
+ * @param obj the layout object
+ * @param part the box part to insert.
+ * @param child the child object to insert into box.
+ * @param reference another reference object to insert before in box.
+ */
+EAPI void
+elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   if (!wd) return;
+
+   if (!edje_object_part_box_insert_before(wd->lay, part, child, reference))
+     WRN("child %p could not be inserted before %p inf box part '%s'",
+         child, reference, part);
+
+   elm_widget_sub_object_add(obj, child);
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, wd);
+   evas_object_event_callback_add
+     ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, si);
+
+   si = ELM_NEW(Subinfo);
+   si->type = BOX_INSERT_BEFORE;
+   si->part = eina_stringshare_add(part);
+   si->obj = child;
+   si->p.box.reference = reference;
+   wd->subs = eina_list_append(wd->subs, si);
+   _request_sizing_eval(wd);
+}
+
+/**
+ * Insert child to layout box part at a given position.
+ *
+ * Once the object is inserted, its lifetime will be bound to the
+ * layout, whenever the layout dies the child will be deleted
+ * automatically. One should use elm_layout_box_remove() to make this
+ * layout forget about the object.
+ *
+ * @param obj the layout object
+ * @param part the box part to insert.
+ * @param child the child object to insert into box.
+ * @param pos the numeric position >=0 to insert the child.
+ */
+EAPI void
+elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   if (!wd) return;
+
+   if (!edje_object_part_box_insert_at(wd->lay, part, child, pos))
+     WRN("child %p could not be inserted at %u to box part '%s'",
+         child, pos, part);
+
+   elm_widget_sub_object_add(obj, child);
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, wd);
+
+   si = ELM_NEW(Subinfo);
+   si->type = BOX_INSERT_AT;
+   si->part = eina_stringshare_add(part);
+   si->obj = child;
+   si->p.box.pos = pos;
+   wd->subs = eina_list_append(wd->subs, si);
+   _request_sizing_eval(wd);
+}
+
+static Evas_Object *
+_sub_box_remove(Widget_Data *wd, Subinfo *si)
+{
+   Evas_Object *child;
+
+   if (si->type == BOX_INSERT_BEFORE)
+     evas_object_event_callback_del_full
+       ((Evas_Object *)si->p.box.reference,
+        EVAS_CALLBACK_DEL, _box_reference_del, si);
+
+   child = si->obj; /* si will die in _sub_del due elm_widget_sub_object_del() */
+   edje_object_part_box_remove(wd->lay, si->part, child);
+   elm_widget_sub_object_del(wd->obj, child);
+   return child;
+}
+
+static Evas_Object *
+_sub_table_remove(Widget_Data *wd, Subinfo *si)
+{
+   Evas_Object *child;
+
+   child = si->obj; /* si will die in _sub_del due elm_widget_sub_object_del() */
+   edje_object_part_table_unpack(wd->lay, si->part, child);
+   elm_widget_sub_object_del(wd->obj, child);
+   return child;
+}
+
+static Eina_Bool
+_sub_box_is(const Subinfo *si)
+{
+   switch (si->type)
+     {
+      case BOX_APPEND:
+      case BOX_PREPEND:
+      case BOX_INSERT_BEFORE:
+      case BOX_INSERT_AT:
+         return EINA_TRUE;
+      default:
+         return EINA_FALSE;
+     }
+}
+
+/**
+ * Remove a child of the given part box.
+ *
+ * The object will be removed from the box part and its lifetime will
+ * not be handled by the layout anymore. This is equivalent to
+ * elm_layout_content_unset() for box.
+ *
+ * @param obj The layout object
+ * @param part The box part name to remove child.
+ * @param child The object to remove from box.
+ * @return The object that was being used, or NULL if not found.
+ *
+ * @ingroup Layout
+ */
+EAPI Evas_Object *
+elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Eina_List *l;
+   Subinfo *si;
+
+   if (!wd) return NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, NULL);
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if (!_sub_box_is(si)) continue;
+        if ((si->obj == child) && (!strcmp(si->part, part)))
+          return _sub_box_remove(wd, si);
+     }
+   return NULL;
+}
+
+/**
+ * Remove all child of the given part box.
+ *
+ * The objects will be removed from the box part and their lifetime will
+ * not be handled by the layout anymore. This is equivalent to
+ * elm_layout_content_unset() for all box children.
+ *
+ * @param obj The layout object
+ * @param part The box part name to remove child.
+ * @param clear If EINA_TRUE, then all objects will be deleted as
+ *        well, otherwise they will just be removed and will be
+ *        dangling on the canvas.
+ *
+ * @ingroup Layout
+ */
+EAPI void
+elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   Eina_List *lst;
+
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(part);
+
+   lst = eina_list_clone(wd->subs);
+   EINA_LIST_FREE(lst, si)
+     {
+        if (!_sub_box_is(si)) continue;
+        if (!strcmp(si->part, part))
+          {
+             Evas_Object *child = _sub_box_remove(wd, si);
+             if ((clear) && (child)) evas_object_del(child);
+          }
+     }
+   /* eventually something may not be added with layout, del them as well */
+   edje_object_part_box_remove_all(wd->lay, part, clear);
+}
+
+/**
+ * Insert child to layout table part.
+ *
+ * Once the object is inserted, its lifetime will be bound to the
+ * layout, whenever the layout dies the child will be deleted
+ * automatically. One should use elm_layout_box_remove() to make this
+ * layout forget about the object.
+ *
+ * @param obj the layout object
+ * @param part the box part to pack child.
+ * @param child the child object to pack into table.
+ * @param reference another reference object to insert before in box.
+ */
+EAPI void
+elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   if (!wd) return;
+
+   if (!edje_object_part_table_pack
+       (wd->lay, part, child, col, row, colspan, rowspan))
+     WRN("child %p could not be packed into box part '%s' col=%uh, row=%hu, "
+         "colspan=%hu, rowspan=%hu", child, part, col, row, colspan, rowspan);
+
+   elm_widget_sub_object_add(obj, child);
+   evas_object_event_callback_add
+     (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, wd);
+
+   si = ELM_NEW(Subinfo);
+   si->type = TABLE_PACK;
+   si->part = eina_stringshare_add(part);
+   si->obj = child;
+   si->p.table.col = col;
+   si->p.table.row = row;
+   si->p.table.colspan = colspan;
+   si->p.table.rowspan = rowspan;
+   wd->subs = eina_list_append(wd->subs, si);
+   _request_sizing_eval(wd);
+}
+
+/**
+ * Unpack (remove) a child of the given part table.
+ *
+ * The object will be unpacked from the table part and its lifetime
+ * will not be handled by the layout anymore. This is equivalent to
+ * elm_layout_content_unset() for table.
+ *
+ * @param obj The layout object
+ * @param part The table part name to remove child.
+ * @param child The object to remove from table.
+ * @return The object that was being used, or NULL if not found.
+ *
+ * @ingroup Layout
+ */
+EAPI Evas_Object *
+elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Eina_List *l;
+   Subinfo *si;
+
+   if (!wd) return NULL;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child, NULL);
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if (si->type != TABLE_PACK) continue;
+        if ((si->obj == child) && (!strcmp(si->part, part)))
+          return _sub_table_remove(wd, si);
+     }
+   return NULL;
+}
+
+/**
+ * Remove all child of the given part table.
+ *
+ * The objects will be removed from the table part and their lifetime will
+ * not be handled by the layout anymore. This is equivalent to
+ * elm_layout_content_unset() for all table children.
+ *
+ * @param obj The layout object
+ * @param part The table part name to remove child.
+ * @param clear If EINA_TRUE, then all objects will be deleted as
+ *        well, otherwise they will just be removed and will be
+ *        dangling on the canvas.
+ *
+ * @ingroup Layout
+ */
+EAPI void
+elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   Eina_List *lst;
+
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(part);
+
+   lst = eina_list_clone(wd->subs);
+   EINA_LIST_FREE(lst, si)
+     {
+        if (si->type != TABLE_PACK) continue;
+        if (!strcmp(si->part, part))
+          {
+             Evas_Object *child = _sub_table_remove(wd, si);
+             if ((clear) && (child)) evas_object_del(child);
+          }
+     }
+   /* eventually something may not be added with layout, del them as well */
+   edje_object_part_table_clear(wd->lay, part, clear);
+}
+
 
 /**
  * Get the edje layout
