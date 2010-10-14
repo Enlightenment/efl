@@ -203,7 +203,7 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
 void
 test_flip2(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *tb, *ic, *li;
+   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *tb, *li;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "flip2", ELM_WIN_BASIC);
@@ -236,25 +236,10 @@ test_flip2(void *data, Evas_Object *obj, void *event_info)
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Hello", NULL, NULL);
-   
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "Out", NULL, NULL);
-   
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "There", NULL, NULL);
-   
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_toolbar_item_add(tb, ic, "World", NULL, NULL);
+   elm_toolbar_item_add(tb, "arrow_left", "Hello", NULL, NULL);
+   elm_toolbar_item_add(tb, "arrow_right", "Out", NULL, NULL);
+   elm_toolbar_item_add(tb, "home", "There", NULL, NULL);
+   elm_toolbar_item_add(tb, "refresh", "World", NULL, NULL);
    
    elm_box_pack_end(o, tb);
    evas_object_show(tb);

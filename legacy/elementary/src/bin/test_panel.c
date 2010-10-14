@@ -173,7 +173,7 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
 
    toolbar = elm_toolbar_add(win);
    elm_toolbar_homogenous_set(toolbar, 0);
-   elm_toolbar_scrollable_set(toolbar, 0);
+   elm_toolbar_mode_shrink_set(toolbar, ELM_TOOLBAR_SHRINK_NONE);
    evas_object_size_hint_weight_set(toolbar, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(toolbar);
@@ -240,7 +240,7 @@ test_panel(void *data, Evas_Object *obj, void *event_info)
 
    toolbar = elm_toolbar_add(win);
    elm_toolbar_homogenous_set(toolbar, 0);
-   elm_toolbar_scrollable_set(toolbar, 0);
+   elm_toolbar_mode_shrink_set(toolbar, ELM_TOOLBAR_SHRINK_NONE);
    evas_object_size_hint_weight_set(toolbar, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(toolbar);

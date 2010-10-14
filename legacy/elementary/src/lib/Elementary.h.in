@@ -243,6 +243,13 @@ extern "C" {
         ELM_CLOCK_ALL	       = (1 << 6) - 1
      } Elm_Clock_Digedit;
 
+   typedef enum _Elm_Toolbar_Shrink_Mode
+     {
+        ELM_TOOLBAR_SHRINK_NONE,   /**< hide excess items */
+        ELM_TOOLBAR_SHRINK_SCROLL, /**< allow accessing excess items through a scroller */
+        ELM_TOOLBAR_SHRINK_MENU    /**< inserts a button to pop up a menu with excess items */
+     } Elm_Toolbar_Shrink_Mode;
+
   /**
    * Called back when a widget's tooltip is activated and needs content.
    * @param data user-data given to elm_object_tooltip_content_cb_set()

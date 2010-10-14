@@ -13,12 +13,13 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *scr, *bx;
-   Eina_List *items;
-   int icon_size;
-   Eina_Bool scrollable : 1;
    Evas_Object *menu_parent;
-   Eina_Bool homogeneous : 1;
+   Eina_List *items;
+   Elm_Toolbar_Item *more_item;
+   Elm_Toolbar_Shrink_Mode shrink_mode;
+   int icon_size;
    double align;
+   Eina_Bool homogeneous : 1;
 };
 
 struct _Elm_Toolbar_Item
@@ -26,12 +27,16 @@ struct _Elm_Toolbar_Item
    Elm_Widget_Item base;
    const char *label;
    Evas_Object *icon;
+   Evas_Object *o_menu;
    Evas_Smart_Cb func;
+   struct {
+      int priority;
+      Eina_Bool visible : 1;
+   } prio;
    Eina_Bool selected : 1;
    Eina_Bool disabled : 1;
    Eina_Bool separator : 1;
    Eina_Bool menu : 1;
-   Evas_Object *o_menu;
 };
 
 static const char *widtype = NULL;
@@ -238,13 +243,49 @@ _sizing_eval(Evas_Object *obj)
    if (w > minw) minw = w;
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
-   if (wd->scrollable)
-     minw = w - vw;
-   else
-     minw = minw + (w - vw);
+   switch (wd->shrink_mode)
+     {
+       case ELM_TOOLBAR_SHRINK_MENU: /* fallthrough */
+       case ELM_TOOLBAR_SHRINK_SCROLL: minw = w - vw; break;
+       case ELM_TOOLBAR_SHRINK_NONE: minw = minw + (w - vw); break;
+     }
    minh = minh + (h - vh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
+_item_menu_create(Widget_Data *wd, Elm_Toolbar_Item *item)
+{
+   item->o_menu = elm_menu_add(item->base.view);
+   if (wd->menu_parent)
+     elm_menu_parent_set(item->o_menu, wd->menu_parent);
+   evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE,
+                                  _menu_hide, item);
+   evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_DEL,
+                                  _menu_del, item);
+}
+
+static void
+_item_menu_destroy(Elm_Toolbar_Item *item)
+{
+   if (item->o_menu)
+     {
+        evas_object_del(item->o_menu);
+        item->o_menu = NULL;
+     }
+}
+
+static int
+_toolbar_item_prio_compare_cb(const void *i1, const void *i2)
+{
+   const Elm_Toolbar_Item *eti1 = i1;
+   const Elm_Toolbar_Item *eti2 = i2;
+
+   if (!eti2) return 1;
+   if (!eti1) return -1;
+
+   return eti2->prio.priority - eti1->prio.priority;
 }
 
 static void
@@ -263,13 +304,83 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
      {
 	if (w != vw) evas_object_resize(wd->bx, vw, h);
      }
-   EINA_LIST_FOREACH(wd->items, l, it)
+
+   if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
-	if (it->selected)
-	  {
-	     _item_show(it);
-	     break;
-	  }
+        Evas_Coord iw = 0;
+        Eina_List *sorted = eina_list_sort(eina_list_clone(wd->items), 0,
+                                           _toolbar_item_prio_compare_cb);
+        EINA_LIST_FREE(sorted, it)
+          {
+             Evas_Coord ciw;
+
+             evas_object_geometry_get(it->base.view, NULL, NULL, &ciw, NULL);
+             iw += ciw;
+             it->prio.visible = (iw <= vw);
+          }
+
+        /* All items are removed from the box object, since removing individual items won't trigger
+           a resize. Items are be readded below. */
+        evas_object_box_remove_all(wd->bx, EINA_FALSE);
+        if (iw > vw)
+          {
+             Evas_Object *menu;
+
+             _item_menu_destroy(wd->more_item);
+             _item_menu_create(wd, wd->more_item);
+             menu = elm_toolbar_item_menu_get(wd->more_item);
+
+             EINA_LIST_FOREACH(wd->items, l, it)
+               {
+                 if (wd->more_item == it) continue;
+                 if (!it->prio.visible)
+                    {
+                       if (it->separator)
+                         elm_menu_item_separator_add(menu, NULL);
+                       else
+                         {
+                            Elm_Menu_Item *item = elm_menu_item_add(menu, NULL, NULL,
+                                                                    it->label, it->func,
+                                                                    it->base.data);
+                            elm_menu_item_disabled_set(item, it->disabled);
+                         }
+                       evas_object_hide(it->base.view);
+                    }
+                 else
+                    {
+                       evas_object_box_append(wd->bx, it->base.view);
+                       evas_object_show(it->base.view);
+                    }
+               }
+
+             evas_object_box_append(wd->bx, wd->more_item->base.view);
+             evas_object_show(wd->more_item->base.view);
+          }
+        else
+          {
+             /* All items are visible, show them all (except for the "More" button, of course). */
+             EINA_LIST_FOREACH(wd->items, l, it)
+               {
+                  if (it == wd->more_item)
+                    evas_object_hide(it->base.view);
+                  else
+                    {
+                       evas_object_show(it->base.view);
+                       evas_object_box_append(wd->bx, it->base.view);
+                    }
+               }
+          }
+     }
+   else
+     {
+        EINA_LIST_FOREACH(wd->items, l, it)
+          {
+             if (it->selected)
+               {
+                  _item_show(it);
+                  break;
+               }
+          }
      }
 }
 
@@ -315,6 +426,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
+   wd->more_item = NULL;
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", "default");
@@ -325,7 +437,7 @@ elm_toolbar_add(Evas_Object *parent)
 				 ELM_SMART_SCROLLER_POLICY_OFF);
 
    wd->icon_size = 32;
-   wd->scrollable = EINA_TRUE;
+   wd->shrink_mode = ELM_TOOLBAR_SHRINK_SCROLL;
    wd->homogeneous = EINA_TRUE;
    wd->align = 0.5;
 
@@ -405,6 +517,8 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Eva
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    it->label = eina_stringshare_add(label);
+   it->prio.visible = 1;
+   it->prio.priority = 0;
    it->icon = icon;
    it->func = func;
    it->separator = EINA_FALSE;
@@ -438,6 +552,41 @@ elm_toolbar_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Eva
    evas_object_show(it->base.view);
    _sizing_eval(obj);
    return it;
+}
+
+/**
+ * Sets the priority of a toolbar item. This is used only when the toolbar expand mode
+ * is set to ELM_TOOLBAR_SHRINK_MENU: when space is at a premium, items with low priority
+ * will be removed from the toolbar and added to a dynamically-created menu, while items
+ * with higher priority will remain on the toolbar, with the same order they were added.
+ *
+ * @param item The toolbar item.
+ * @param priority The item priority. The default is zero.
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
+{
+    if (!item) return;
+    if (item->prio.priority == priority) return;
+    item->prio.priority = priority;
+    _resize(item->base.widget, NULL, NULL, NULL);
+}
+
+/**
+ * Gets the priority of a toolbar item.
+ *
+ * @param item The toolbar item.
+ * @return The item priority, or 0 if an error occurred.
+ *
+ * @ingroup Toolbar
+ */
+EAPI int
+elm_toolbar_item_priority_get(Elm_Toolbar_Item *item)
+{
+    if (!item) return 0;
+    return item->prio.priority;
 }
 
 /**
@@ -624,41 +773,63 @@ elm_toolbar_item_separator_get(Elm_Toolbar_Item *item)
 }
 
 /**
- * Set the scrollable state of toolbar @p obj.
+ * Set the expand state of toolbar @p obj.
  *
  * @param obj The toolbar object
- * @param scrollable If true, the toolbar will be scrollable
+ * @param shrink_mode The toolbar won't scroll if ELM_TOOLBAR_SHRINK_NONE,
+ * will scroll if ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to 
+ * pop up excess elements with ELM_TOOLBAR_SHRINK_MENU.
  *
  * @ingroup Toolbar
  */
 EAPI void
-elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable)
+elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   wd->scrollable = scrollable;
-   elm_smart_scroller_bounce_allow_set(wd->scr, wd->scrollable, 0);
+   wd->shrink_mode = shrink_mode;
+   elm_smart_scroller_bounce_allow_set(wd->scr, shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL, 0);
+
+   if (wd->more_item)
+     {
+        elm_toolbar_item_del(wd->more_item);
+        wd->more_item = NULL;
+     }
+
+   if (shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
+     {
+        Evas_Object *icon;
+
+        elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, ELM_SMART_SCROLLER_POLICY_OFF);
+
+        icon = elm_icon_add(obj);
+        elm_icon_standard_set(icon, "arrow_down");
+        wd->more_item = elm_toolbar_item_add(obj, icon, "More", NULL, NULL);
+        elm_toolbar_item_priority_set(wd->more_item, INT_MAX);
+     }
+   else
+     elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_AUTO, ELM_SMART_SCROLLER_POLICY_OFF);
    _sizing_eval(obj);
 }
 
 /**
- * Get the scrollable state of toolbar @p obj.
+ * Get the expand mode of toolbar @p obj.
  *
  * @param obj The toolbar object
- * @return If true, the toolbar is scrollable
+ * @return See elm_toolbar_mode_shrink_set.
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool
-elm_toolbar_scrollable_get(Evas_Object *obj)
+EAPI Elm_Toolbar_Shrink_Mode
+elm_toolbar_mode_shrink_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_TOOLBAR_SHRINK_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return EINA_FALSE;
-   return wd->scrollable;
+   if (!wd) return ELM_TOOLBAR_SHRINK_NONE;
+   return wd->shrink_mode;
 }
 
 /**
@@ -838,20 +1009,8 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
    if ((!wd) || (!item)) return;
    if (item->menu == menu) return;
    item->menu = menu;
-   if (menu)
-     {
-	item->o_menu = elm_menu_add(item->base.view);
-	if (wd->menu_parent)
-	  elm_menu_parent_set(item->o_menu, wd->menu_parent);
-	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_HIDE,
-                                       _menu_hide, item);
-	evas_object_event_callback_add(item->o_menu, EVAS_CALLBACK_DEL,
-				       _menu_del, item);
-     }
-   else if (item->o_menu)
-     {
-	evas_object_del(item->o_menu);
-     }
+   if (menu) _item_menu_create(wd, item);
+   else _item_menu_destroy(item);
 }
 
 /**
