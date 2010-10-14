@@ -2058,9 +2058,8 @@ elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
-   if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
+   if (!wd || !wd->scr) return;
+   elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
    *policy_h = (Elm_Scroller_Policy) s_policy_h;
    *policy_v = (Elm_Scroller_Policy) s_policy_v;
 }
