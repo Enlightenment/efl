@@ -246,10 +246,6 @@ eina_chained_mempool_free(void *data, void *ptr)
 #endif
 #endif
 
-#ifndef NVALGRIND
-   VALGRIND_MEMPOOL_FREE(pool, ptr);
-#endif
-
    EINA_INLIST_FOREACH(pool->first, p)
    {
       // Could the pointer be inside that pool
@@ -279,6 +275,10 @@ eina_chained_mempool_free(void *data, void *ptr)
              }
         }
    }
+
+#ifndef NVALGRIND
+   VALGRIND_MEMPOOL_FREE(pool, ptr);
+#endif
 
 #ifdef EFL_HAVE_THREADS
    if (_threads_activated)
