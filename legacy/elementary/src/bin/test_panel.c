@@ -141,8 +141,7 @@ _dir_has_subs(const char *path)
 void
 test_panel(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *panel, *bx, *vbx, *toolbar, *ic;
-   char buf[PATH_MAX];
+   Evas_Object *win, *bg, *panel, *bx, *vbx, *toolbar;
    Evas_Object *list;
 
    win = elm_win_add(NULL, "panel", ELM_WIN_BASIC);

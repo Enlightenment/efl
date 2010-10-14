@@ -56,7 +56,6 @@ static void _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
 static Eina_Bool
 _item_icon_set(Evas_Object *icon_obj, const char *type, const char *icon)
 {
-   const char *prefix;
    char icon_str[512];
 
    if (!type || !*type) goto end;

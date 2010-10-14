@@ -181,7 +181,6 @@ elm_fileselector_entry_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e = evas_object_evas_get(parent);
    Widget_Data *wd;
-   Eina_List *l;
 
    wd = ELM_NEW(Widget_Data);
 
