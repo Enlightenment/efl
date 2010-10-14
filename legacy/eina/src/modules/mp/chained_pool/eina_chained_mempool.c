@@ -192,8 +192,13 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
           p->last = NULL;
      }
    else
-     // Request a free pointer
-     mem = eina_trash_pop(&p->base);
+     {
+#ifndef NVALGRIND
+        VALGRIND_MAKE_MEM_DEFINED(p->base, pool->item_alloc);
+#endif
+        // Request a free pointer
+        mem = eina_trash_pop(&p->base);
+     }
 
    // move to end - it just filled up
    if (!p->base && !p->last)
