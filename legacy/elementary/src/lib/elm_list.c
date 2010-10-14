@@ -1815,6 +1815,7 @@ elm_list_item_next(const Elm_List_Item *it)
 EAPI void
 elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_text_set(item, text);
 }
 
@@ -1841,6 +1842,7 @@ elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text)
 EAPI void
 elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
@@ -1860,6 +1862,7 @@ elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Conte
 EAPI void
 elm_list_item_tooltip_unset(Elm_List_Item *item)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_unset(item);
 }
 
@@ -1878,6 +1881,7 @@ elm_list_item_tooltip_unset(Elm_List_Item *item)
 EAPI void
 elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_style_set(item, style);
 }
 
@@ -1893,6 +1897,7 @@ elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style)
 EAPI const char *
 elm_list_item_tooltip_style_get(const Elm_List_Item *item)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, NULL);
    return elm_widget_item_tooltip_style_get(item);
 }
 
@@ -1908,6 +1913,7 @@ elm_list_item_tooltip_style_get(const Elm_List_Item *item)
 EAPI void
 elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_set(item, cursor);
 }
 
@@ -1922,6 +1928,7 @@ elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor)
 EAPI void
 elm_list_item_cursor_unset(Elm_List_Item *item)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_unset(item);
 }
 
@@ -1939,6 +1946,7 @@ elm_list_item_cursor_unset(Elm_List_Item *item)
 EAPI void
 elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_style_set(item, style);
 }
 
@@ -1954,6 +1962,7 @@ elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style)
 EAPI const char *
 elm_list_item_cursor_style_get(const Elm_List_Item *item)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, NULL);
    return elm_widget_item_cursor_style_get(item);
 }
 
@@ -1974,6 +1983,7 @@ elm_list_item_cursor_style_get(const Elm_List_Item *item)
 EAPI void
 elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
@@ -1990,6 +2000,7 @@ elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only)
 EAPI Eina_Bool
 elm_list_item_cursor_engine_only_get(const Elm_List_Item *item)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(item);
 }
 
