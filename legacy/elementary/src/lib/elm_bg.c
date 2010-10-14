@@ -255,29 +255,74 @@ elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
  * @param overlay The overlay object
  *
  * This provides a way for elm_bg to have an 'overlay' (such as animated fog)
- * 
+ * Once the over object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_bg_overlay_unset() function.
+ *
  * @ingroup Bg
  */
-EAPI void 
+EAPI void
 elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (wd->overlay)
      {
 	evas_object_del(wd->overlay);
 	wd->overlay = NULL;
      }
-   if (!overlay) 
+   if (overlay)
      {
-        _custom_resize(wd, NULL, NULL, NULL);
-        return;
+        wd->overlay = overlay;
+        edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
+        elm_widget_sub_object_add(obj, wd->overlay);
      }
-   wd->overlay = overlay;
-   edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
-   elm_widget_sub_object_add(obj, wd->overlay);
 
    _custom_resize(wd, NULL, NULL, NULL);
+}
+
+/**
+ * Set the overlay object used for the background object.
+ *
+ * @param obj The bg object
+ * @return The content that is being used
+ *
+ * Return the content object which is set for this widget
+ *
+ * @ingroup Bg
+ */
+EAPI Evas_Object *
+elm_bg_overlay_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->overlay;
+}
+
+/**
+ * Get the overlay object used for the background object.
+ *
+ * @param obj The bg object
+ * @return The content that was being used
+ *
+ * Unparent and return the overlay object which was set for this widget
+ *
+ * @ingroup Bg
+ */
+EAPI Evas_Object *
+elm_bg_overlay_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *overlay;
+   if (!wd) return NULL;
+   if (!wd->overlay) return NULL;
+   overlay = wd->overlay;
+   elm_widget_sub_object_del(obj, wd->overlay);
+   edje_object_part_unswallow(wd->base, wd->overlay);
+   wd->overlay = NULL;
+   _custom_resize(wd, NULL, NULL, NULL);
+   return overlay;
 }

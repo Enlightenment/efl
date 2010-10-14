@@ -317,6 +317,26 @@ elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 }
 
 /**
+ * Get the Hover parent
+ *
+ * Gets the hover parent object. Should probably be the window that the hoversel
+ * is in.  See Hover objects for more information.
+ *
+ * @param obj The hoversel object
+ * @return The used parent
+ *
+ * @ingroup Hoversel
+ */
+EAPI Evas_Object *
+elm_hoversel_hover_parent_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->hover_parent;
+}
+
+/**
  * Set the hoversel button label
  *
  * This sets the label of the button that is always visible (before it is
@@ -394,6 +414,9 @@ elm_hoversel_horizontal_get(const Evas_Object *obj)
  *
  * Sets the icon of the button that is always visible (before it is clicked
  * and expanded). Also see elm_button_icon_set().
+ * Once the icon object is set, a previously set one will be deleted
+ * If you want to keep that old content object, use the
+ * elm_hoversel_icon_unset() function.
  *
  * @param obj The hoversel object
  * @param icon The icon object
@@ -427,6 +450,26 @@ elm_hoversel_icon_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->btn)) return NULL;
    return elm_button_icon_get(wd->btn);
+}
+
+/**
+ * Get the icon of the hoversel button
+ *
+ * Unparent and return the icon of the button that is always visible
+ * (before it is clicked and expanded). Also see elm_button_icon_unset().
+ *
+ * @param obj The hoversel object
+ * @return The icon object that was being used
+ *
+ * @ingroup Hoversel
+ */
+EAPI Evas_Object *
+elm_hoversel_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->btn)) return NULL;
+   return elm_button_icon_unset(wd->btn);
 }
 
 /**

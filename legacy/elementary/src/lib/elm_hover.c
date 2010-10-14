@@ -413,11 +413,11 @@ elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
  *
  * @param obj The hover object
  * @return The target object of the hover.
- * 
+ *
  * @ingroup Hover
  */
 EAPI Evas_Object *
-elm_hover_target_get(Evas_Object *obj)
+elm_hover_target_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -435,7 +435,7 @@ elm_hover_target_get(Evas_Object *obj)
  * @ingroup Hover
  */
 EAPI Evas_Object *
-elm_hover_parent_get(Evas_Object *obj)
+elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -492,6 +492,39 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 	wd->subs = eina_list_append(wd->subs, si);
      }
    _sizing_eval(obj);
+}
+
+/**
+ * Get the content of the hover object
+ *
+ * Return the content object which is set for this widget
+ *
+ * @param obj The hover object
+ * @param swallow The direction that the object will display in. Multiple
+ * objects can have the same swallow location. Objects placed in the same
+ * swallow will be placed starting at the middle of the hover and ending
+ * farther from the middle.
+ * Accepted values are "left" "right" "top" "bottom" "middle"
+ * @return The content that is being used
+ *
+ * @ingroup Hover
+ */
+EAPI Evas_Object *
+elm_hover_content_get(const Evas_Object *obj, const char *swallow)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   const Eina_List *l;
+   char buf[1024];
+   if (!wd) return NULL;
+   snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", swallow);
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if (!strcmp(buf, si->swallow))
+          return si->obj;
+     }
+   return NULL;
 }
 
 /**

@@ -488,6 +488,8 @@ elm_slider_label_get(const Evas_Object *obj)
  * Set the icon object (leftmost widget) of the slider object.
  *
  * Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_slider_icon_unset() function.
  *
  * @param obj The slider object
  * @param icon The icon object
@@ -922,6 +924,8 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(d
  * Set the end object (rightmost widget) of the slider object.
  *
  * Once the end object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_button_end_unset() function.
  *
  * @param obj The slider object
  * @param end The end object

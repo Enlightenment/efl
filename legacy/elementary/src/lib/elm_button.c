@@ -372,9 +372,11 @@ elm_button_label_get(const Evas_Object *obj)
  * Set the icon used for the button
  *
  * Once the icon object is set, a previously set one will be deleted
+ * If you want to keep that old content object, use the
+ * elm_button_icon_unset() function.
  *
  * @param obj The button object
- * @param icon The image for the button
+ * @param icon The icon object for the button
  *
  * @ingroup Button
  */
@@ -402,8 +404,10 @@ elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 /**
  * Get the icon used for the button
  *
+ * Return the icon object which is set for this widget.
+ *
  * @param obj The button object
- * @return The image for the button
+ * @return The icon object that is being used
  *
  * @ingroup Button
  */
@@ -414,6 +418,30 @@ elm_button_icon_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
+}
+
+/**
+ * Unset the icon used for the button
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @param obj The button object
+ * @return The icon object that was being used
+ *
+ * @ingroup Button
+ */
+EAPI Evas_Object *
+elm_button_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->icon) return NULL;
+   Evas_Object *icon = wd->icon;
+   elm_widget_sub_object_del(obj, wd->icon);
+   edje_object_part_unswallow(wd->btn, wd->icon);
+   wd->icon = NULL;
+   return icon;
 }
 
 /**

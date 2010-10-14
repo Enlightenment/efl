@@ -354,6 +354,8 @@ elm_radio_label_get(const Evas_Object *obj)
  * Set the icon object of the radio object
  *
  * Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_radio_icon_unset() function.
  *
  * @param obj The radio object
  * @param icon The icon object
@@ -396,6 +398,30 @@ elm_radio_icon_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
+}
+
+/**
+ * Unset the icon used for the radio object
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @param obj The radio object
+ * @return The icon object that was being used
+ *
+ * @ingroup Radio
+ */
+EAPI Evas_Object *
+elm_radio_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->icon) return NULL;
+   Evas_Object *icon = wd->icon;
+   elm_widget_sub_object_del(obj, wd->icon);
+   edje_object_part_unswallow(wd->radio, wd->icon);
+   wd->icon = NULL;
+   return icon;
 }
 
 /**

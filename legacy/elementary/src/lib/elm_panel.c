@@ -370,6 +370,25 @@ elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
+ * Get the content of the panel.
+ *
+ * Return the content object which is set for this widget.
+ *
+ * @param obj The panel object
+ * @return The content that is being used
+ *
+ * @ingroup Panel
+ */
+EAPI Evas_Object *
+elm_panel_content_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->content;
+}
+
+/**
  * Unset the content of the panel.
  *
  * Unparent and return the content object which was set for this widget.

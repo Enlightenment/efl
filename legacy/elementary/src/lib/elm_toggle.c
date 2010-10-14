@@ -268,7 +268,7 @@ elm_toggle_label_set(Evas_Object *obj, const char *label)
 /**
  * Gets the label of the toggle
  *
- * @param obj The toggle object
+ * @param obj  toggleeee object
  * @return The label of the toggle
  *
  * @ingroup Toggle
@@ -283,12 +283,14 @@ elm_toggle_label_get(const Evas_Object *obj)
 }
 
 /**
- * Sets the icon to be displayed with the toggle.
+ * Set the icon used for the toggle
  *
- * Once the icon object is set, a previously set one will be deleted.
+ * Once the icon object is set, a previously set one will be deleted
+ * If you want to keep that old content object, use the
+ * elm_toggle_icon_unset() function.
  *
  * @param obj The toggle object
- * @param icon The icon object to be displayed
+ * @param icon The icon object for the button
  *
  * @ingroup Toggle
  */
@@ -314,10 +316,12 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- * Gets the icon of the toggle
+ * Get the icon used for the toggle
+ *
+ * Return the icon object which is set for this widget.
  *
  * @param obj The toggle object
- * @return The icon object
+ * @return The icon object that is being used
  *
  * @ingroup Toggle
  */
@@ -328,6 +332,30 @@ elm_toggle_icon_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
+}
+
+/**
+ * Unset the icon used for the toggle
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @param obj The toggle object
+ * @return The icon object that was being used
+ *
+ * @ingroup Toggle
+ */
+EAPI Evas_Object *
+elm_toggle_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->icon) return NULL;
+   Evas_Object *icon = wd->icon;
+   elm_widget_sub_object_del(obj, wd->icon);
+   edje_object_part_unswallow(wd->tgl, wd->icon);
+   wd->icon = NULL;
+   return icon;
 }
 
 /**

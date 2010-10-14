@@ -457,10 +457,14 @@ elm_flip_add(Evas_Object *parent)
 }
 
 /**
- * Set the flip front content
+ * Set the front content of the flip widget.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_flip_content_front_unset() function.
  *
  * @param obj The flip object
- * @param content The content to be used in this flip object
+ * @param content The new front content object
  *
  * @ingroup Flip
  */
@@ -471,12 +475,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->front.content == content) return;
-   if ((wd->front.content != content) && (wd->front.content))
-     {
-        evas_object_clip_set(wd->front.content, NULL);
-        elm_widget_sub_object_del(obj, wd->front.content);
-        evas_object_smart_member_del(wd->front.content);
-     }
+   if (wd->front.content) evas_object_del(wd->back.content);
    wd->front.content = content;
    if (content)
      {
@@ -495,10 +494,14 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
- * Set the flip back content
+ * Set the back content of the flip widget.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_flip_content_back_unset() function.
  *
  * @param obj The flip object
- * @param content The content to be used in this flip object
+ * @param content The new back content object
  *
  * @ingroup Flip
  */
@@ -509,12 +512,7 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->back.content == content) return;
-   if ((wd->back.content != content) && (wd->back.content))
-     {
-        evas_object_clip_set(wd->back.content, NULL);
-        elm_widget_sub_object_del(obj, wd->back.content);
-        evas_object_smart_member_del(wd->back.content);
-     }
+   if (wd->back.content) evas_object_del(wd->back.content);
    wd->back.content = content;
    if (content)
      {
@@ -533,10 +531,12 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
- * Get the flip front content
+ * Get the front content used for the flip
+ *
+ * Return the front content object which is set for this widget.
  *
  * @param obj The flip object
- * @return The content to be used in this flip object front
+ * @return The front content object that is being used
  *
  * @ingroup Flip
  */
@@ -548,11 +548,14 @@ elm_flip_content_front_get(const Evas_Object *obj)
    return wd->front.content;
 }
 
+
 /**
- * Get the flip back content
+ * Get the back content used for the flip
+ *
+ * Return the back content object which is set for this widget.
  *
  * @param obj The flip object
- * @return The content to be used in this flip object back
+ * @return The back content object that is being used
  *
  * @ingroup Flip
  */
@@ -562,6 +565,56 @@ elm_flip_content_back_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->back.content;
+}
+
+/**
+ * Unset the front content used for the flip
+ *
+ * Unparent and return the front content object which was set for this widget.
+ *
+ * @param obj The flip object
+ * @return The front content object that was being used
+ *
+ * @ingroup Flip
+ */
+EAPI Evas_Object *
+elm_flip_content_front_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->front.content) return NULL;
+   Evas_Object *content = wd->front.content;
+   evas_object_clip_set(content, NULL);
+   elm_widget_sub_object_del(obj, content);
+   evas_object_smart_member_del(content);
+   wd->front.content = NULL;
+   return content;
+}
+
+/**
+ * Unset the back content used for the flip
+ *
+ * Unparent and return the back content object which was set for this widget.
+ *
+ * @param obj The flip object
+ * @return The back content object that was being used
+ *
+ * @ingroup Flip
+ */
+EAPI Evas_Object *
+elm_flip_content_back_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->back.content) return NULL;
+   Evas_Object *content = wd->back.content;
+   evas_object_clip_set(content, NULL);
+   elm_widget_sub_object_del(obj, content);
+   evas_object_smart_member_del(content);
+   wd->back.content = NULL;
+   return content;
 }
 
 /**

@@ -244,12 +244,24 @@ elm_panes_add(Evas_Object *parent)
    return obj;
 }
 
+
+/**
+ * Set the left content of the panes widget.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_panes_content_left_unset() function.
+ *
+ * @param obj The panes object
+ * @param content The new left content object
+ *
+ * @ingroup Panes
+ */
 EAPI void
 elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   // FIXME: should we delete or orphan?
    if (wd->contents.left)
      {
 	evas_object_del(wd->contents.left);
@@ -263,12 +275,23 @@ elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
+/**
+ * Set the right content of the panes widget.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_panes_content_right_unset() function.
+ *
+ * @param obj The panes object
+ * @param content The new right content object
+ *
+ * @ingroup Panes
+ */
 EAPI void
 elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   // FIXME: should we delete or orphan?
    if (wd->contents.right)
      {
 	evas_object_del(wd->contents.right);
@@ -282,6 +305,16 @@ elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
+/**
+ * Get the left content used for the panes
+ *
+ * Return the left content object which is set for this widget.
+ *
+ * @param obj The panes object
+ * @return The left content object that is being used
+ *
+ * @ingroup Panes
+ */
 EAPI Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
@@ -290,12 +323,70 @@ elm_panes_content_left_get(const Evas_Object *obj)
    return wd->contents.left;
 }
 
+/**
+ * Get the right content used for the panes
+ *
+ * Return the right content object which is set for this widget.
+ *
+ * @param obj The panes object
+ * @return The right content object that is being used
+ *
+ * @ingroup Panes
+ */
 EAPI Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    return wd->contents.right;
+}
+
+/**
+ * Unset the left content used for the panes
+ *
+ * Unparent and return the left content object which was set for this widget.
+ *
+ * @param obj The panes object
+ * @return The left content object that was being used
+ *
+ * @ingroup Panes
+ */
+EAPI Evas_Object *
+elm_panes_content_left_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->contents.left) return NULL;
+   Evas_Object *content = wd->contents.left;
+   elm_widget_sub_object_del(obj, content);
+   edje_object_part_unswallow(wd->panes, content);
+   wd->contents.left = NULL;
+   return content;
+}
+
+/**
+ * Unset the right content used for the panes
+ *
+ * Unparent and return the right content object which was set for this widget.
+ *
+ * @param obj The panes object
+ * @return The right content object that was being used
+ *
+ * @ingroup Panes
+ */
+EAPI Evas_Object *
+elm_panes_content_right_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->contents.right) return NULL;
+   Evas_Object *content = wd->contents.right;
+   elm_widget_sub_object_del(obj, content);
+   edje_object_part_unswallow(wd->panes, content);
+   wd->contents.right = NULL;
+   return content;
 }
 
 EAPI double 

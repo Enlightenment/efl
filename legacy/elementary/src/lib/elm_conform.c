@@ -299,6 +299,25 @@ elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
 }
 
 /**
+ * Get the content of the conformant widget
+ *
+ * Return the content object which is set for this widget;
+ *
+ * @param obj The conformant object
+ * @return The content that is being used
+ *
+ * @ingroup Conformant
+ */
+EAPI Evas_Object *
+elm_conformant_content_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->content;
+}
+
+/**
  * Unset the content of the conformant widget
  *
  * Unparent and return the content object which was set for this widget;

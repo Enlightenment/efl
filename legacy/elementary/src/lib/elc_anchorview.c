@@ -283,6 +283,26 @@ elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 }
 
 /**
+  * Get the parent of the hover popup
+  *
+  * This gets the parent of the hover that anchorview will created. See hover
+  * objects for more information on this.
+  *
+  * @param obj The anchorview object
+  * @return The parent used by hover
+  *
+  * @ingroup Anchorview
+  */
+EAPI Evas_Object *
+elm_anchorview_hover_parent_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->hover_parent;
+}
+
+/**
   * Set the style that the hover should use
   *
   * This sets the style for the hover that anchorview will create. See hover

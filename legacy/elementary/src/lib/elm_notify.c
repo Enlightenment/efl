@@ -430,12 +430,15 @@ elm_notify_content_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if ((!wd) || (!wd->content)) return NULL;
+   if (!wd) return NULL;
    return wd->content;
 }
 
 /**
  * Set the notify parent
+ *
+ * Once the parent object is set, a previously set one will be desconected
+ * and replaced.
  *
  * @param obj The notify object
  * @param content The new parent
@@ -482,6 +485,23 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
 	_sizing_eval(obj);
      }
    _calc(obj);
+}
+
+/**
+ * Get the notify parent
+ *
+ * @param obj The notify object
+ * @return The parent
+ *
+ * @ingroup Notify
+ */
+EAPI Evas_Object *
+elm_notify_parent_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->parent;
 }
 
 /**

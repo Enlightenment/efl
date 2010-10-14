@@ -480,6 +480,23 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 }
 
 /**
+ * Get the parent
+ *
+ * @param obj The menu object.
+ * @return The parent.
+ *
+ * @ingroup Menu
+ */
+EAPI Evas_Object *
+elm_menu_parent_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->parent;
+}
+
+/**
  * Move the menu to a new position
  *
  * @param obj The menu object.
