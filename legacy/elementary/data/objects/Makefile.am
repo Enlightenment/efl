@@ -11,6 +11,7 @@ files_DATA = test.edj multip.edj colorpreview.edj
 EXTRA_DIST = \
 test.edc \
 multip.edc \
+colorpreview.edc \
 grid_bg.png \
 over.png \
 under.png \

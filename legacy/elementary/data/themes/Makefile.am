@@ -11,6 +11,7 @@ EXTRA_DIST = \
 default.edc \
 arrow_down.png \
 arrow_up.png \
+bar_shine.png \
 bt_base1.png \
 bt_base2.png \
 bt_bases.png \
@@ -201,6 +202,8 @@ tooltip-edge-left-tip.png \
 tooltip-edge-bottom-tip.png \
 tooltip-edge-right-tip.png \
 tooltip-corner-top-right-tip.png \
+color_picker_alpha.png \
+color_picker_alpha_bg.png \
 color_picker_brightness.png \
 color_picker_color.png \
 color_picker_opacity.png
