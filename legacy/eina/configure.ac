@@ -121,6 +121,32 @@ if test "x${have_magic_debug}" = "xyes" ; then
 fi
 AC_SUBST(EINA_CONFIGURE_MAGIC_DEBUG)
 
+# Valgrind
+want_valgrind="no"
+
+AC_MSG_CHECKING(whether to enable build with valgrind)
+AC_ARG_ENABLE(valgrind,
+  AC_HELP_STRING([--enable-valgrind], [enable valgrind fixes to stop false reports]),
+  [want_valgrind=$enableval]
+)
+AC_MSG_RESULT($want_valgrind)
+
+if test x$want_valgrind = "xyes"; then
+    PKG_CHECK_MODULES(VALGRIND, valgrind >= 2.4.0,
+        [
+         requirement_eina="valgrind ${requirement_eina}"
+        ],
+        [
+         AC_DEFINE(NVALGRIND, 1, [Valgrind support disabled])
+         if test "x$want_valgrind" = "xyes"; then
+            AC_MSG_ERROR([Valgrind >= 2.4.0 is required)])
+         fi
+        ]
+    )
+else
+    AC_DEFINE(NVALGRIND, 1, [Valgrind support disabled])
+fi
+
 # Safety checks (avoid crashes on wrong api usage)
 AC_ARG_ENABLE(safety-checks,
    [AC_HELP_STRING([--disable-safety-checks], [disable safety checks for NULL pointers and like. @<:@default=enabled@:>@])],

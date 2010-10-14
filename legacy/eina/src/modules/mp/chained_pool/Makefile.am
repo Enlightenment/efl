@@ -7,7 +7,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
 @EINA_CPPFLAGS@ \
-@EFL_EINA_BUILD@
+@EFL_EINA_BUILD@ \
+@VALGRIND_CFLAGS@
 
 if EINA_BUILD_CHAINED_POOL
 if !EINA_STATIC_BUILD_CHAINED_POOL

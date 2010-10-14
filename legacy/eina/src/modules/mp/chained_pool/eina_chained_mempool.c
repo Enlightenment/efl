@@ -45,6 +45,10 @@
 
 #include "eina_private.h"
 
+#ifndef NVALGRIND
+# include <valgrind/memcheck.h>
+#endif
+
 #ifdef DEBUG
 #include "eina_log.h"
 
@@ -94,6 +98,7 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
 {
    Chained_Pool *p;
    unsigned char *ptr;
+   unsigned int alignof;
 
    eina_error_set(0);
    p = malloc(pool->alloc_size);
@@ -103,12 +108,18 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
         return NULL;
      }
 
-   ptr = (unsigned char *)p + eina_mempool_alignof(sizeof(Chained_Pool));
+   alignof = eina_mempool_alignof(sizeof(Chained_Pool));
+   ptr = (unsigned char *)p + alignof;
    p->usage = 0;
    p->base = NULL;
 
    p->last = ptr;
    p->limit = ptr + pool->item_alloc * pool->pool_size;
+
+#ifndef NVALGRIND
+   VALGRIND_MAKE_MEM_NOACCESS(ptr, pool->alloc_size - alignof);
+#endif
+
    return p;
 }
 
@@ -202,6 +213,10 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
      }
 #endif
 
+#ifndef NVALGRIND
+   VALGRIND_MEMPOOL_ALLOC(pool, mem, pool->item_alloc);
+#endif
+
    return mem;
 }
 
@@ -229,6 +244,10 @@ eina_chained_mempool_free(void *data, void *ptr)
    else
      assert(pthread_equal(pool->self, pthread_self()));
 #endif
+#endif
+
+#ifndef NVALGRIND
+   VALGRIND_MEMPOOL_FREE(pool, ptr);
 #endif
 
    EINA_INLIST_FOREACH(pool->first, p)
@@ -309,6 +328,10 @@ eina_chained_mempool_init(const char *context,
    mp->group_size = mp->item_alloc * mp->pool_size;
    mp->alloc_size = mp->group_size + eina_mempool_alignof(sizeof(Chained_Pool));
 
+#ifndef NVALGRIND
+   VALGRIND_CREATE_MEMPOOL(mp, 0, 1);
+#endif
+
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
 #  ifdef EFL_DEBUG_THREADS
@@ -344,6 +367,10 @@ eina_chained_mempool_shutdown(void *data)
         mp->first = eina_inlist_remove(mp->first, mp->first);
         _eina_chained_mp_pool_free(p);
      }
+
+#ifndef NVALGRIND
+   VALGRIND_DESTROY_MEMPOOL(mp);
+#endif
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
