@@ -645,6 +645,21 @@ elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
 }
 
 /**
+ * Get the icon name associated with @p item.
+ *
+ * @param item The toolbar item
+ * @return The icon name
+ *
+ * @ingroup Toolbar
+ */
+EAPI const char *
+elm_toolbar_item_icon_name_get(Elm_Toolbar_Item *item)
+{
+   if (!item) return NULL;
+   return item->icon_str;
+}
+
+/**
  * Get the label associated with @p item.
  *
  * @param item The toolbar item
