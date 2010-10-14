@@ -3122,18 +3122,18 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
    switch (o->cur.cspace)
      {
-	case EVAS_COLORSPACE_ARGB8888:
-	  data = ((DATA32*)(data) + ((y * (stride >> 2)) + x));
-	  a = (*((DATA32*)(data)) >> 24) & 0xff;
-	  break;
-	case EVAS_COLORSPACE_RGB565_A5P:
-           data = (void*) ((DATA16*)(data) + (h * (stride >> 2)));
-	  data = (void*) ((DATA8*)(data) + ((y * (stride >> 2)) + x));
-	  a = (*((DATA8*)(data))) & 0x1f;
-	  break;
-	default:
-	  return 1;
-	  break;
+     case EVAS_COLORSPACE_ARGB8888:
+        data = ((DATA32*)(data) + ((y * (stride >> 2)) + x));
+        a = (*((DATA32*)(data)) >> 24) & 0xff;
+        break;
+     case EVAS_COLORSPACE_RGB565_A5P:
+        data = (void*) ((DATA16*)(data) + (h * (stride >> 1)));
+        data = (void*) ((DATA8*)(data) + ((y * (stride >> 1)) + x));
+        a = (*((DATA8*)(data))) & 0x1f;
+        break;
+     default:
+        return 1;
+        break;
      }
 
    return (a != 0);
@@ -3205,7 +3205,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 	  out = evas_common_convert_argb8888_to(data,
 						o->cur.image.w,
 						o->cur.image.h,
-						o->cur.image.stride >> 4,
+						o->cur.image.stride >> 2,
 						o->cur.has_alpha,
 						to_cspace);
 	  break;
@@ -3213,7 +3213,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 	  out = evas_common_convert_rgb565_a5p_to(data,
 						  o->cur.image.w,
 						  o->cur.image.h,
-						  o->cur.image.stride >> 4,
+						  o->cur.image.stride >> 1,
 						  o->cur.has_alpha,
 						  to_cspace);
 	  break;
