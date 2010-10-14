@@ -1126,6 +1126,8 @@ extern "C" {
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI void              elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority);
+   EAPI int               elm_toolbar_item_priority_get(Elm_Toolbar_Item *item);
    EAPI Evas_Object      *elm_toolbar_item_icon_get(Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_label_get(const Elm_Toolbar_Item *item);
    EAPI Eina_Bool         elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item);
@@ -1133,11 +1135,21 @@ extern "C" {
    EAPI void              elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func);
    EAPI void              elm_toolbar_item_select(Elm_Toolbar_Item *item);
-   EAPI void              elm_toolbar_item_unselect(Elm_Toolbar_Item *item);
    EAPI Eina_Bool         elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
    EAPI Eina_Bool         elm_toolbar_item_separator_get(Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
+   EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_mode_shrink_get(Evas_Object *obj);
+   EAPI void              elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
+   EAPI Eina_Bool         elm_toolbar_homogenous_get(Evas_Object *obj);
+   EAPI void              elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI Evas_Object      *elm_toolbar_menu_parent_get(const Evas_Object *obj);
+   EAPI void              elm_toolbar_item_unselect_all(Evas_Object *obj);
+   EAPI void              elm_toolbar_item_unselect(Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_align_set(Evas_Object *obj, double align);
+   EAPI double            elm_toolbar_align_get(const Evas_Object *obj);
+   EAPI void              elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
 
    EAPI void              elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text);
    EAPI void              elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
