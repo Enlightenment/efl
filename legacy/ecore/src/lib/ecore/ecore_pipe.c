@@ -524,6 +524,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   /* XXX What should we do here? */
                   ERR("Only read %zd bytes from the pipe, although"
                       " we need to read %zd bytes.", ret, sizeof(p->len));
+                  _ecore_pipe_unhandle(p);
+                  return ECORE_CALLBACK_CANCEL;
                }
              else if (ret == 0)
                {
@@ -536,7 +538,10 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                }
 #ifndef _WIN32
              else if ((ret == PIPE_FD_ERROR) && ((errno == EINTR) || (errno == EAGAIN)))
-               return ECORE_CALLBACK_RENEW;
+               {
+                  _ecore_pipe_unhandle(p);
+                  return ECORE_CALLBACK_RENEW;
+               }
              else
                {
                   ERR("An unhandled error (ret: %zd errno: %d [%s])"
@@ -596,7 +601,9 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           }
 #ifndef _WIN32
         else if (ret == PIPE_FD_ERROR && (errno == EINTR || errno == EAGAIN))
-          return ECORE_CALLBACK_RENEW;
+          {
+             return ECORE_CALLBACK_RENEW;
+          }
         else
           {
              ERR("An unhandled error (ret: %zd errno: %d)"
