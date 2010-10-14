@@ -1888,7 +1888,7 @@ _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_
 {
    Elm_Widget_Item_Tooltip *wit;
 
-   ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, error);
+   ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, error_noitem);
 
    if (!func)
      {
@@ -1909,6 +1909,9 @@ _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_
 
    return;
 
+ error_noitem:
+   if (del_cb) del_cb((void *)data, NULL, item);
+   return;
  error:
    if (del_cb) del_cb((void *)data, item->widget, item);
 }

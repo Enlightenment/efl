@@ -718,7 +718,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 	wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
 
 	if (item->base.view && item->itc->func.del)
-		item->itc->func.del((void*)item->base.data, wd->previous->base.view);
+		item->itc->func.del((void*)item->base.data, item->base.view);
 	if (item->base.view)
 		evas_object_del(item->base.view);
 	free(item);

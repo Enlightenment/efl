@@ -799,7 +799,7 @@ vcard_receive(struct _elm_cnp_selection *sel,
              ecore_x_dnd_send_finished();
              return 0;
         }
-        dropable = l->data;
+        dropable = eina_list_data_get(l);
         ddata.x = savedtypes.x;
         ddata.y = savedtypes.y;
         ddata.format = ELM_SEL_FORMAT_VCARD;
@@ -1165,6 +1165,9 @@ _dnd_enter(void *data, int etype, void *ev)
    savedtypes.ntypes = enter->num_types;
    if (savedtypes.types) free(savedtypes.types);
    savedtypes.types = malloc(sizeof(char *) * enter->num_types);
+   if (!savedtypes.types)
+        return EINA_FALSE;
+
    for (i = 0 ; i < enter->num_types ; i ++)
      {
         savedtypes.types[i] = eina_stringshare_add(enter->types[i]);
