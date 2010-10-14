@@ -940,12 +940,12 @@ elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
  * @ingroup Toolbar
  */
 EAPI Evas_Object *
-elm_toolbar_menu_parent_get(Evas_Object *obj)
+elm_toolbar_menu_parent_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
 
+   if (!wd) return NULL;
    return wd->menu_parent;
 }
 
