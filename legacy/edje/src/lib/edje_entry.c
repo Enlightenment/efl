@@ -4,7 +4,7 @@
 
 static Eina_Bool _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
 static Eina_Bool _edje_entry_imf_event_commit_cb(void *data, int type, void *event);
-static Eina_Bool _edje_entry_imf_event_changed_cb(void *data, int type, void *event);
+static Eina_Bool _edje_entry_imf_event_preedit_changed_cb(void *data, int type, void *event);
 static Eina_Bool _edje_entry_imf_event_delete_surrounding_cb(void *data, int type, void *event);
 #endif
 
@@ -1784,9 +1784,9 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 
         ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context, 
                                                             _edje_entry_imf_retrieve_surrounding_cb, rp);
-        en->imf_ee_handler_commit = ecore_event_handler_add(ECORE_IMF_EVENT_COMMIT, _edje_entry_imf_event_commit_cb, rp->edje);     
+        en->imf_ee_handler_commit = ecore_event_handler_add(ECORE_IMF_EVENT_COMMIT, _edje_entry_imf_event_commit_cb, rp->edje);
         en->imf_ee_handler_delete = ecore_event_handler_add(ECORE_IMF_EVENT_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb, rp);
-        en->imf_ee_handler_changed = ecore_event_handler_add(ECORE_IMF_EVENT_PREEDIT_CHANGED, _edje_entry_imf_event_changed_cb, rp->edje);
+        en->imf_ee_handler_changed = ecore_event_handler_add(ECORE_IMF_EVENT_PREEDIT_CHANGED, _edje_entry_imf_event_preedit_changed_cb, rp->edje);
         ecore_imf_context_input_mode_set(en->imf_context, 
                                          rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD ? 
                                          ECORE_IMF_INPUT_MODE_INVISIBLE : ECORE_IMF_INPUT_MODE_FULL);
@@ -2490,7 +2490,7 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 }
 
 #ifdef HAVE_ECORE_IMF
-static Eina_Bool 
+static Eina_Bool
 _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, char **text, int *cursor_pos)
 {
    Edje_Real_Part *rp = data;
@@ -2543,7 +2543,6 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
      {
         for (i = 0; i < en->comp_len; i++)
            _backspace(en->cursor, rp->object, en);
-        _sel_clear(en->cursor, rp->object, en);
         en->have_composition = EINA_FALSE;
      }
 
@@ -2560,7 +2559,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
 }
 
 static Eina_Bool
-_edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
+_edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *event)
 {
    Edje* ed = data;
    Edje_Real_Part *rp = ed->focused_part;
@@ -2611,6 +2610,8 @@ _edje_entry_imf_event_changed_cb(void *data, int type __UNUSED__, void *event)
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_emit(ed, "cursor,changed", rp->part->name);
+
+   free(preedit_string);
 
    return ECORE_CALLBACK_DONE;
 }
