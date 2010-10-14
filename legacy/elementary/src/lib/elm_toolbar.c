@@ -60,7 +60,7 @@ _item_icon_set(Evas_Object *icon_obj, const char *type, const char *icon)
    char icon_str[512];
 
    if (!type || !*type) goto end;
-   if (snprintf(icon_str, sizeof icon_str, "%s%s", type, icon) > 0
+   if (snprintf(icon_str, sizeof(icon_str), "%s%s", type, icon) > 0
        && elm_icon_standard_set(icon_obj, icon_str))
      return EINA_TRUE;
 
@@ -549,7 +549,6 @@ elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas
    it->label = eina_stringshare_add(label);
    it->prio.visible = 1;
    it->prio.priority = 0;
-   elm_icon_standard_set(icon_obj, icon);
    it->func = func;
    it->separator = EINA_FALSE;
    it->base.data = data;
