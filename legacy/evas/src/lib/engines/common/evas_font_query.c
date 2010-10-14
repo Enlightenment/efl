@@ -136,7 +136,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	LKU(fi->ft_mutex);
-	if (!fg) continue;
+	if (!fg || !fg->glyph) continue;
 
 	if (kern < 0) kern = 0;
 
