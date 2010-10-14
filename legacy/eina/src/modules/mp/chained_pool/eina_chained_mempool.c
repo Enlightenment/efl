@@ -136,7 +136,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
      }
 #ifdef EFL_DEBUG_THREADS
    else
-     assert(pool->self == pthread_self());
+     assert(pthread_equal(pool->self, pthread_self()));
 #endif
 #endif
 
@@ -227,7 +227,7 @@ eina_chained_mempool_free(void *data, void *ptr)
      }
 #ifdef EFL_DEBUG_THREADS
    else
-     assert(pool->self == pthread_self());
+     assert(pthread_equal(pool->self, pthread_self()));
 #endif
 #endif
 
@@ -348,7 +348,7 @@ eina_chained_mempool_shutdown(void *data)
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
 #  ifdef EFL_DEBUG_THREADS
-   assert(mp->self == pthread_self());
+   assert(pthread_equal(mp->self, pthread_self()));
 #  endif
    pthread_mutex_destroy(&mp->mutex);
 # else
