@@ -529,17 +529,18 @@ elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *ch
      WRN("child %p could not be inserted before %p inf box part '%s'",
          child, reference, part);
 
+   si = ELM_NEW(Subinfo);
+   si->type = BOX_INSERT_BEFORE;
+   si->part = eina_stringshare_add(part);
+   si->obj = child;
+   si->p.box.reference = reference;
+
    elm_widget_sub_object_add(obj, child);
    evas_object_event_callback_add
      (child, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, wd);
    evas_object_event_callback_add
      ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, si);
 
-   si = ELM_NEW(Subinfo);
-   si->type = BOX_INSERT_BEFORE;
-   si->part = eina_stringshare_add(part);
-   si->obj = child;
-   si->p.box.reference = reference;
    wd->subs = eina_list_append(wd->subs, si);
    _request_sizing_eval(wd);
 }
