@@ -123,7 +123,7 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   menu_item = elm_menu_item_add(menu, NULL, ic, "Elementary", tb_5, ph4);
+   elm_menu_item_add(menu, NULL, ic, "Elementary", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);

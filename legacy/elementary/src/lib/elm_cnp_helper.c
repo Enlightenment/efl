@@ -1584,7 +1584,7 @@ elm_cnp_tempfile_create(int size){
         free(info);
         return NULL;
      }
-   len = snprintf(info->filename,len,"%s/%sXXXXXX",tmppath, "elmcnpitem-");
+   snprintf(info->filename,len,"%s/%sXXXXXX",tmppath, "elmcnpitem-");
 
    info->fd = mkstemp(info->filename);
 

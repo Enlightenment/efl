@@ -63,7 +63,6 @@ void
 test_floating(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *win, *bg, *gl;
-   Elm_Genlist_Item *gli;
    int i;
    Ecore_Animator *ani;
 
@@ -91,12 +90,12 @@ test_floating(void *data, Evas_Object *obj, void *event_info)
 
    for (i = 0; i < 20; i++)
      {
-        gli = elm_genlist_item_append(gl, &itc1,
-                                      (void *)(long)i/* item data */,
-                                      NULL/* parent */,
-                                      ELM_GENLIST_ITEM_NONE,
-                                      gl_sel/* func */,
-                                      (void *)(long)(i * 10)/* func data */);
+        elm_genlist_item_append(gl, &itc1,
+                                (void *)(long)i/* item data */,
+                                NULL/* parent */,
+                                ELM_GENLIST_ITEM_NONE,
+                                gl_sel/* func */,
+                                (void *)(long)(i * 10)/* func data */);
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);

@@ -16,7 +16,7 @@ static void
 _populate_4(Elm_Menu_Item *item)
 {
    Evas_Object *ic;
-   Elm_Menu_Item *item2, *item3;
+   Elm_Menu_Item *item2;
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -27,34 +27,34 @@ _populate_4(Elm_Menu_Item *item)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
 
-   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
+   elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
    
    elm_menu_item_separator_add(menu, item);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item3 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item3, 1);
+   item2 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
+   elm_menu_item_disabled_set(item2, 1);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item3 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item3, 1);
+   item2 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
+   elm_menu_item_disabled_set(item2, 1);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item3 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item3, 1);
+   item2 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
+   elm_menu_item_disabled_set(item2, 1);
 }
 
 static void 
 _populate_3(Elm_Menu_Item *item)
 {
    Evas_Object *ic;
-   Elm_Menu_Item *item2, *item3;
+   Elm_Menu_Item *item2;
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -65,15 +65,15 @@ _populate_3(Elm_Menu_Item *item)
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
 
-   item2 = elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
+   elm_menu_item_add(menu, item, ic, "menu 3", NULL, NULL);
    
    elm_menu_item_separator_add(menu,item);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   item3 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item3, 1);
+   item2 = elm_menu_item_add(menu, item, ic, "Disabled item", NULL, NULL);
+   elm_menu_item_disabled_set(item2, 1);
 }
 
 static void 
@@ -153,7 +153,7 @@ test_menu(void *data, Evas_Object *obj, void *event_info)
    evas_object_show(rect);
 
    menu = elm_menu_add(win);
-   item = elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
+   elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);

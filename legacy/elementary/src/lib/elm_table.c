@@ -71,7 +71,7 @@ _elm_table_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
                                                    dir, next);
 
    if (list_free)
-     items = list_free((Eina_List *)items);
+     list_free((Eina_List *)items);
 
    return ret;
 }

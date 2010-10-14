@@ -431,21 +431,20 @@ test_map(void *data, Evas_Object *obj, void *event_info)
         evas_object_event_callback_add(map, EVAS_CALLBACK_MOVE, 
                                        _map_move_resize_cb, map);
 
-        Elm_Map_Marker *marker = 
-          elm_map_marker_add(map, 2.352, 48.857, itc1, itc_group1, &data1);
-        marker = elm_map_marker_add(map, 2.355, 48.857, itc1, itc_group1, &data3);
-        marker = elm_map_marker_add(map, 3, 48.857, itc2, itc_group1, &data2);
-        marker = elm_map_marker_add(map, 2.352, 49, itc2, itc_group1, &data1);
+        elm_map_marker_add(map, 2.352, 48.857, itc1, itc_group1, &data1);
+        elm_map_marker_add(map, 2.355, 48.857, itc1, itc_group1, &data3);
+        elm_map_marker_add(map, 3, 48.857, itc2, itc_group1, &data2);
+        elm_map_marker_add(map, 2.352, 49, itc2, itc_group1, &data1);
 
-        marker = elm_map_marker_add(map, 7.31451, 48.857127, itc1, itc_group1, &data10);
-        marker = elm_map_marker_add(map, 7.314704, 48.857119, itc1, itc_group1, &data4);
-        marker = elm_map_marker_add(map, 7.314704, 48.857119, itc2, itc_group1, &data5);
-        marker = elm_map_marker_add(map, 7.31432, 48.856785, itc2, itc_group1, &data6);
-        marker = elm_map_marker_add(map, 7.3148, 48.85725, itc1, itc_group2, &data7);
-        marker = elm_map_marker_add(map, 7.316445, 48.8572210000694, itc1, itc_group1, &data8);
-        marker = elm_map_marker_add(map, 7.316527000125, 48.85609, itc2, itc_group2, &data9);
-        marker = elm_map_marker_add(map, 7.3165409990833, 48.856078, itc2, itc_group1, &data11);
-        marker = elm_map_marker_add(map, 7.319812, 48.856561, itc2, itc_group2, &data10);
+        elm_map_marker_add(map, 7.31451, 48.857127, itc1, itc_group1, &data10);
+        elm_map_marker_add(map, 7.314704, 48.857119, itc1, itc_group1, &data4);
+        elm_map_marker_add(map, 7.314704, 48.857119, itc2, itc_group1, &data5);
+        elm_map_marker_add(map, 7.31432, 48.856785, itc2, itc_group1, &data6);
+        elm_map_marker_add(map, 7.3148, 48.85725, itc1, itc_group2, &data7);
+        elm_map_marker_add(map, 7.316445, 48.8572210000694, itc1, itc_group1, &data8);
+        elm_map_marker_add(map, 7.316527000125, 48.85609, itc2, itc_group2, &data9);
+        elm_map_marker_add(map, 7.3165409990833, 48.856078, itc2, itc_group1, &data11);
+        elm_map_marker_add(map, 7.319812, 48.856561, itc2, itc_group2, &data10);
 
         nb_elts = 13;
 

@@ -2491,7 +2491,7 @@ elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **te
    const char *set;
    char *insert;
    Eina_Bool goes_in;
-   int read_idx, last_read_idx = 0, read_char, copy_count;
+   int read_idx, last_read_idx = 0, read_char;
 
    if (!as || (!as->accepted && !as->rejected))
       return;
@@ -2509,7 +2509,6 @@ elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **te
 
    insert = *text;
    read_idx = evas_string_char_next_get(*text, 0, &read_char);
-   copy_count = read_idx;
    while (read_char)
      {
         int cmp_idx, cmp_char;

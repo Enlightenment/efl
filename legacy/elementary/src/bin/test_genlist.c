@@ -180,7 +180,6 @@ static void
 my_gl_add(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *gl = data;
-   Elm_Genlist_Item *gli;
    static int i = 0;
 
    itc1.item_style     = "default";
@@ -189,12 +188,12 @@ my_gl_add(void *data, Evas_Object *obj, void *event_info)
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
-   gli = elm_genlist_item_append(gl, &itc1,
-				 (void *)(long)i/* item data */,
-				 NULL/* parent */,
-				 ELM_GENLIST_ITEM_NONE,
-				 gl_sel/* func */,
-				 (void *)(long)(i * 10)/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+                           (void *)(long)i/* item data */,
+                           NULL/* parent */,
+                           ELM_GENLIST_ITEM_NONE,
+                           gl_sel/* func */,
+                           (void *)(long)(i * 10)/* func data */);
    i++;
 }
 
@@ -202,7 +201,6 @@ static void
 my_gl_insert_before(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *gl = data;
-   Elm_Genlist_Item *gli;
    static int i = 0;
    Elm_Genlist_Item *gli_selected;
 
@@ -219,12 +217,12 @@ my_gl_insert_before(void *data, Evas_Object *obj, void *event_info)
        return ;
    }
 
-   gli = elm_genlist_item_insert_before(gl, &itc1,
-				 (void *)(long)i/* item data */,
-				 gli_selected /* item before */,
-				 ELM_GENLIST_ITEM_NONE,
-				 gl_sel/* func */,
-				 (void *)(long)(i * 10)/* func data */);
+   elm_genlist_item_insert_before(gl, &itc1,
+                                  (void *)(long)i/* item data */,
+                                  gli_selected /* item before */,
+                                  ELM_GENLIST_ITEM_NONE,
+                                  gl_sel/* func */,
+                                  (void *)(long)(i * 10)/* func data */);
    i++;
 }
 
@@ -232,7 +230,6 @@ static void
 my_gl_insert_after(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *gl = data;
-   Elm_Genlist_Item *gli;
    static int i = 0;
    Elm_Genlist_Item *gli_selected;
 
@@ -249,10 +246,10 @@ my_gl_insert_after(void *data, Evas_Object *obj, void *event_info)
        return ;
    }
 
-   gli = elm_genlist_item_insert_after(gl, &itc1,
-				 (void *)(long)i/* item data */,
-				 gli_selected /* item after */,
-				 ELM_GENLIST_ITEM_NONE,
+   elm_genlist_item_insert_after(gl, &itc1,
+                                 (void *)(long)i/* item data */,
+                                 gli_selected /* item after */,
+                                 ELM_GENLIST_ITEM_NONE,
 				 gl_sel/* func */,
 				 (void *)(long)(i * 10)/* func data */);
    i++;

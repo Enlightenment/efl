@@ -2210,13 +2210,10 @@ _smart_hide(Evas_Object *obj)
    Evas_Object *o;
    INTERNAL_ENTRY;
    list = evas_object_smart_members_get(obj);
-   if ((list = evas_object_smart_members_get(obj)))
+   EINA_LIST_FREE(list, o)
      {
-        EINA_LIST_FREE(list, o)
-          {
-             if (evas_object_data_get(o, "_elm_leaveme")) continue;
-             evas_object_hide(o);
-          }
+        if (evas_object_data_get(o, "_elm_leaveme")) continue;
+        evas_object_hide(o);
      }
    _if_focused_revert(obj);
 }
