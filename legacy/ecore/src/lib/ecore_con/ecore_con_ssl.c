@@ -185,12 +185,16 @@ ecore_con_ssl_server_prepare(Ecore_Con_Server *svr, int ssl_type)
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_init(Ecore_Con_Server *svr)
 {
+   if (!(svr->type & ECORE_CON_SSL))
+     return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_server_init) (svr);
 }
 
 Ecore_Con_Ssl_Error
 ecore_con_ssl_server_shutdown(Ecore_Con_Server *svr)
 {
+   if (!(svr->type & ECORE_CON_SSL))
+     return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_server_shutdown) (svr);
 }
 
@@ -209,12 +213,16 @@ ecore_con_ssl_server_write(Ecore_Con_Server *svr, unsigned char *buf, int size)
 Ecore_Con_Ssl_Error
 ecore_con_ssl_client_init(Ecore_Con_Client *cl)
 {
+   if (!(cl->host_server->type & ECORE_CON_SSL))
+     return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_init) (cl);
 }
 
 Ecore_Con_Ssl_Error
 ecore_con_ssl_client_shutdown(Ecore_Con_Client *cl)
 {
+   if (!(cl->host_server->type & ECORE_CON_SSL))
+     return ECORE_CON_SSL_ERROR_NONE;
    return SSL_SUFFIX(_ecore_con_ssl_client_shutdown) (cl);
 }
 
