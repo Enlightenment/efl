@@ -1579,7 +1579,7 @@ elm_cnp_tempfile_create(int size){
      }
    len ++;
    info->filename = malloc(len);
-   if (info->filename)
+   if (!info->filename)
      {
         free(info);
         return NULL;
