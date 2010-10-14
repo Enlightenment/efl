@@ -28569,6 +28569,33 @@ collections {
       }
    }
 
+   group { name: "elm/fileselector_entry/base/default";
+      parts {
+         part { name: "elm.swallow.entry";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               align: 0.0 0.0;
+               min: 50 10;
+               rel2 { to_x: "elm.swallow.button";
+                  relative: 0.0 1.0;
+                  offset: -1 -1;
+               }
+            }
+         }
+         part { name: "elm.swallow.button";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               align: 1.0 0.0;
+               min: 10 10;
+               fixed: 1 1;
+               rel1 {
+                  relative: 1.0 0.0;
+                  offset: -21 0;
+               }
+            }
+         }
+      }
+   }
 
 ////////////////////////////////////////////////////////////////////////
 // Standard layouts to be used                                        //

@@ -11,6 +11,7 @@ void test_box_vert2(void *data, Evas_Object *obj, void *event_info);
 void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
+void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
 void test_toggle(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
 void test_clock2(void *data, Evas_Object *obj, void *event_info);
@@ -223,6 +224,7 @@ my_win_main(char *autorun)
    ADD_TEST("Box Horiz", test_box_horiz);
    ADD_TEST("Buttons", test_button);
    ADD_TEST("File Selector Button", test_fileselector_button);
+   ADD_TEST("File Selector Entry", test_fileselector_entry);
    ADD_TEST("Toggles", test_toggle);
    ADD_TEST("Table", test_table);
    ADD_TEST("Clock", test_clock);

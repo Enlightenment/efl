@@ -554,6 +554,29 @@ extern "C" {
    EAPI void         elm_fileselector_button_selected_set(Evas_Object *obj, const char *path);
    EAPI const char  *elm_fileselector_button_selected_get(const Evas_Object *obj);
 
+   EAPI Evas_Object *elm_fileselector_entry_add(Evas_Object *parent);
+   EAPI void         elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label);
+   EAPI const char  *elm_fileselector_entry_button_label_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon);
+   EAPI Evas_Object *elm_fileselector_entry_button_icon_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_window_title_set(Evas_Object *obj, const char *title);
+   EAPI const char  *elm_fileselector_entry_window_title_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height);
+   EAPI void         elm_fileselector_entry_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height);
+   EAPI void         elm_fileselector_entry_path_set(Evas_Object *obj, const char *path);
+   EAPI const char  *elm_fileselector_entry_path_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value);
+   EAPI Eina_Bool    elm_fileselector_entry_expandable_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value);
+   EAPI Eina_Bool    elm_fileselector_entry_folder_only_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value);
+   EAPI Eina_Bool    elm_fileselector_entry_is_save_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_inwin_mode_set(Evas_Object *obj, Eina_Bool value);
+   EAPI Eina_Bool    elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj);
+   EAPI void         elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
+   EAPI const char  *elm_fileselector_entry_selected_get(const Evas_Object *obj);
+
+
    /* available styles:
     * default
     * anchor

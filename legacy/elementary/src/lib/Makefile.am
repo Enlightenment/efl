@@ -90,6 +90,7 @@ elc_anchorblock.c \
 elc_anchorview.c \
 elc_fileselector.c \
 elc_fileselector_button.c \
+elc_fileselector_entry.c \
 elc_hoversel.c \
 elc_notepad.c \
 elc_scrolled_entry.c \

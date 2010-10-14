@@ -36,6 +36,7 @@ test_icon.c \
 test_box.c \
 test_button.c \
 test_fileselector_button.c \
+test_fileselector_entry.c \
 test_toggle.c \
 test_table.c \
 test_gengrid.c \
