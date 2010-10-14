@@ -487,6 +487,9 @@ This example create some elementary buttons and do some actions on user click.
 @example external_elm_check.edc
 This example show EXTERNAL checkbox in action.
 
+@example external_elm_panes.edc
+This example show EXTERNAL elementary panes in action.
+
 @example external_emotion_elm.edc
 Super-concise video player example using Edje/Emotion/Elementary.
 
