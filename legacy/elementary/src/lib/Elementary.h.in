@@ -250,6 +250,14 @@ extern "C" {
         ELM_TOOLBAR_SHRINK_MENU    /**< inserts a button to pop up a menu with excess items */
      } Elm_Toolbar_Shrink_Mode;
 
+   typedef enum _Elm_Icon_Lookup_Order
+     {
+        ELM_ICON_LOOKUP_FDO_THEME, /**< icon look up order: freedesktop, theme */
+        ELM_ICON_LOOKUP_THEME_FDO, /**< icon look up order: theme, freedesktop */
+        ELM_ICON_LOOKUP_FDO,       /**< icon look up order: freedesktop */
+        ELM_ICON_LOOKUP_THEME      /**< icon look up order: theme */
+     } Elm_Icon_Lookup_Order;
+
   /**
    * Called back when a widget's tooltip is activated and needs content.
    * @param data user-data given to elm_object_tooltip_content_cb_set()
@@ -365,10 +373,10 @@ extern "C" {
    EAPI void         elm_theme_full_flush(void);
 
    EAPI void         elm_theme_all_set(const char *theme);
-   
+
    EAPI Eina_List   *elm_theme_name_available_list_new(void);
    EAPI void         elm_theme_name_available_list_free(Eina_List *list);
-         
+
    EAPI void         elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
    EAPI Elm_Theme   *elm_object_theme_get(Evas_Object *obj);
 
@@ -471,14 +479,17 @@ extern "C" {
    /* smart callbacks called:
     */
 
-   EAPI Evas_Object *elm_icon_add(Evas_Object *parent);
-   EAPI Eina_Bool    elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
-   EAPI Eina_Bool    elm_icon_standard_set(Evas_Object *obj, const char *name);
-   EAPI void         elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
-   EAPI void         elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
-   EAPI void         elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
-   EAPI void         elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
-   EAPI void         elm_icon_prescale_set(Evas_Object *obj, int size);
+   EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
+   EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI Eina_Bool             elm_icon_standard_set(Evas_Object *obj, const char *name);
+   EAPI Eina_Bool             elm_icon_freedesktop_set(Evas_Object *obj, const char *name, int size);
+   EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+   EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+   EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+   EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
+   EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
+   EAPI void                  elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
+   EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */
@@ -1070,7 +1081,7 @@ extern "C" {
    EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
    /* smart callbacks called:
     */
-    
+
    EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
    EAPI Eina_Bool    elm_photo_file_set(Evas_Object *obj, const char *file);
    EAPI void         elm_photo_size_set(Evas_Object *obj, int size);
@@ -1929,12 +1940,12 @@ extern "C" {
    /* animator */
    typedef struct _Animator Elm_Animator;
 
-   typedef enum {ELM_ANIMATOR_CURVE_LINEAR, ELM_ANIMATOR_CURVE_IN_OUT, ELM_ANIMATOR_CURVE_IN, ELM_ANIMATOR_CURVE_OUT} Elm_Animator_Curve_Style; 
+   typedef enum {ELM_ANIMATOR_CURVE_LINEAR, ELM_ANIMATOR_CURVE_IN_OUT, ELM_ANIMATOR_CURVE_IN, ELM_ANIMATOR_CURVE_OUT} Elm_Animator_Curve_Style;
 
    EAPI Elm_Animator* elm_animator_add(Evas_Object *parent);
    EAPI void          elm_animator_del(Elm_Animator *animator);
    EAPI void          elm_animator_duration_set(Elm_Animator *animator, double duration);
-   EAPI void          elm_animator_operation_callback_set(Elm_Animator *animator, void (*func)(void *data, Elm_Animator *animator, double frame), void *data); 
+   EAPI void          elm_animator_operation_callback_set(Elm_Animator *animator, void (*func)(void *data, Elm_Animator *animator, double frame), void *data);
    EAPI void          elm_animator_completion_callback_set(Elm_Animator *animator, void (*func)(void *data), void *data);
    EAPI void          elm_animator_stop(Elm_Animator *animator);
    EAPI void          elm_animator_repeat_set(Elm_Animator *animator, unsigned int repeat_cnt);

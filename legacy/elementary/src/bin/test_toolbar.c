@@ -72,17 +72,17 @@ test_toolbar(void *data, Evas_Object *obj, void *event_info)
    ph3 = elm_photo_add(win);
    ph4 = elm_photo_add(win);
 
-   item = elm_toolbar_item_add(tb, "arrow_left", "Hello", tb_1, ph1);
+   item = elm_toolbar_item_add(tb, "document-print", "Hello", tb_1, ph1);
    elm_toolbar_item_disabled_set(item, EINA_TRUE);
    elm_toolbar_item_priority_set(item, 100);
 
-   item = elm_toolbar_item_add(tb, "arrow_right", "World", tb_2, ph1);
+   item = elm_toolbar_item_add(tb, "folder-new", "World", tb_2, ph1);
    elm_toolbar_item_priority_set(item, -100);
 
-   item = elm_toolbar_item_add(tb, "home", "H", tb_3, ph4);
+   item = elm_toolbar_item_add(tb, "object-rotate-right", "H", tb_3, ph4);
    elm_toolbar_item_priority_set(item, 150);
 
-   item = elm_toolbar_item_add(tb, "chat", "Comes", tb_4, ph4);
+   item = elm_toolbar_item_add(tb, "mail-send", "Comes", tb_4, ph4);
    elm_toolbar_item_priority_set(item, 0);
 
    item = elm_toolbar_item_add(tb, "clock", "Elementary", tb_5, ph4);
