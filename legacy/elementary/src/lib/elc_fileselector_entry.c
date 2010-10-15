@@ -110,21 +110,45 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-static void
-_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+static Eina_Bool
+_elm_fileselector_entry_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (elm_widget_focus_get(obj))
+
+   if (!wd)
+     return EINA_FALSE;
+
+   Evas_Object *chain[2];
+
+   /* Direction */
+   if (dir == ELM_FOCUS_PREVIOUS)
      {
-        edje_object_signal_emit(wd->edje, "elm,action,focus", "elm");
-        evas_object_focus_set(wd->edje, EINA_TRUE);
+        chain[0] = wd->button;
+        chain[1] = wd->entry;
+     }
+   else if (dir == ELM_FOCUS_NEXT)
+     {
+        chain[0] = wd->entry;
+        chain[1] = wd->button;
      }
    else
+     return EINA_FALSE;
+
+   unsigned char i = elm_widget_focus_get(chain[1]);
+
+   if (elm_widget_focus_next_get(chain[i], dir, next))
+     return TRUE;
+
+   i = !i;
+
+   Evas_Object *to_focus;
+   if (elm_widget_focus_next_get(chain[i], dir, &to_focus))
      {
-        edje_object_signal_emit(wd->edje, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->edje, EINA_FALSE);
+        *next = to_focus;
+        return !!i;
      }
+
+   return EINA_FALSE;
 }
 
 static void
@@ -195,11 +219,11 @@ elm_fileselector_entry_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "fileselector_entry");
    elm_widget_type_set(obj, "fileselector_entry");
    elm_widget_sub_object_add(parent, obj);
-   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_focus_next_hook_set(obj, _elm_fileselector_entry_focus_next_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->edje = edje_object_add(e);
