@@ -413,6 +413,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type __UNUSE
    if (svr->created)
      {
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
+        INF("Generating DH params");
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(svr->dh_params, 1024));
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
@@ -970,6 +971,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
    if ((!svr->use_cert) && svr->created)
      {
         DH *dh_params;
+        INF("Generating DH params");
         SSL_ERROR_CHECK_GOTO_ERROR(!(dh_params = DH_new()));
         SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_parameters_ex(dh_params, 1024, DH_GENERATOR_5, NULL));
         SSL_ERROR_CHECK_GOTO_ERROR(!DH_check(dh_params, &dh));
