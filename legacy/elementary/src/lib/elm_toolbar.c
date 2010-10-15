@@ -728,10 +728,13 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 EAPI void
 elm_toolbar_item_del(Elm_Toolbar_Item *it)
 {
-   Widget_Data *wd = elm_widget_data_get(it->base.widget);
-   Evas_Object *obj2 = it->base.widget;
+   Widget_Data *wd;
+   Evas_Object *obj2;
 
-   if ((!wd) || (!it)) return;
+   if ((!it) || (!it->base.widget)) return;
+   wd = elm_widget_data_get(it->base.widget);
+   if (!wd) return;
+   obj2 = it->base.widget;
    elm_widget_item_pre_notify_del(it);
    wd->items = eina_list_remove(wd->items, it);
    eina_stringshare_del(it->label);
