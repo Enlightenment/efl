@@ -23,8 +23,9 @@ struct _Widget_Data
    Eina_Bool scr_minh : 1;
    int walking;
    int movements;
-   struct {
-     Evas_Coord x, y;
+   struct
+   {
+      Evas_Coord x, y;
    } history[SWIPE_MOVES];
    Eina_Bool swipe : 1;
    Eina_Bool fix_pending : 1;
