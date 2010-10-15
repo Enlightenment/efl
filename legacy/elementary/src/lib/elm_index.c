@@ -128,7 +128,6 @@ _theme_hook(Evas_Object *obj)
              wd->event[1] = evas_object_rectangle_add(evas_object_evas_get(wd->base));
              evas_object_color_set(wd->event[1], 0, 0, 0, 0);
              evas_object_size_hint_min_set(wd->event[1], minw, minh);
-             minw = minh = 0;
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
              elm_widget_sub_object_add(obj, wd->event[1]);
           }
@@ -440,7 +439,7 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
-   Evas_Coord minw = 0, minh = 0, x, y, dx, dy, adx, ady;
+   Evas_Coord minw = 0, minh = 0, x, y, dx, adx;
    char buf[1024];
    if (!wd) return;
    if (!wd->down) return;
@@ -451,14 +450,8 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    dx = x - wd->dx;
    adx = dx;
    if (adx < 0) adx = -dx;
-   dy = y - wd->dy;
-   ady = dy;
-   if (ady < 0) ady = -dy;
    edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer", x, y);
-   if (wd->horizontal)
-     {
-     }
-   else
+   if (!wd->horizontal)
      {
         if (adx > minw)
           {

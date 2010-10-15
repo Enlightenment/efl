@@ -924,10 +924,7 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
         list_next = eina_list_prev;
      }
    else if (dir == ELM_FOCUS_NEXT)
-     {
-        items= items;
-        list_next = eina_list_next;
-     }
+     list_next = eina_list_next;
    else
      return EINA_FALSE;
 
@@ -938,10 +935,7 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
      for (; l; l = list_next(l))
        {
           Evas_Object *cur = list_data_get(l);
-          if (elm_widget_focus_get(cur))
-            {
-               break;
-            }
+          if (elm_widget_focus_get(cur)) break;
        }
 
    const Eina_List *start = l;
@@ -949,7 +943,7 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
 
    /* Interate sub items */
    /* Go to end of list */
-   for (;l; l = list_next(l))
+   for (; l; l = list_next(l))
      {
         Evas_Object *tmp = NULL;
         Evas_Object *cur = list_data_get(l);

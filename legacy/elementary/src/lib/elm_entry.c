@@ -843,7 +843,7 @@ _mkup_to_text(const char *mkup)
 		    }
 		  esc_start = esc_end = NULL;
 	       }
-	     else if (*p == 0)
+	     else if (*p == 0 && s)
 	       {
 		  ts = malloc(p - s + 1);
 		  if (ts)
@@ -858,7 +858,7 @@ _mkup_to_text(const char *mkup)
 	  }
 	if (*p == '<')
 	  {
-	     if (!esc_start)
+	     if (s && !esc_start)
 	       {
 		  tag_start = p;
 		  tag_end = NULL;
@@ -883,7 +883,7 @@ _mkup_to_text(const char *mkup)
 	  }
 	else if (*p == '&')
 	  {
-	     if (!tag_start)
+	     if (s && !tag_start)
 	       {
 		  esc_start = p;
 		  esc_end = NULL;

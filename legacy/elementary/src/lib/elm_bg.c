@@ -80,7 +80,6 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    switch (wd->option) 
      {
       case ELM_BG_OPTION_CENTER:
-        fx = fy = 0;
         fw = nw = iw;
         fh = nh = ih;
         nx = ((bw - fw) / 2);
@@ -98,14 +97,11 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         fy = ((bh - fh) / 2);
         break;
       case ELM_BG_OPTION_TILE:
-        fx = fy = 0;
         fw = iw;
         fh = ih;
         break;
       case ELM_BG_OPTION_STRETCH:
       default:
-        fx = nx = 0;
-        fy = ny = 0;
         fw = bw;
         fh = bh;
         break;
