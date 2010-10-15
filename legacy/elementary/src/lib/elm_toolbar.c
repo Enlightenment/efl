@@ -538,11 +538,15 @@ elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas
    Evas_Coord mw, mh;
    Elm_Toolbar_Item *it;
 
+   if (!wd) return NULL;
    icon_obj = elm_icon_add(obj);
    if (!icon_obj) return NULL;
-   if (!wd) return NULL;
    it = elm_widget_item_new(obj, Elm_Toolbar_Item);
-   if (!it) return NULL;
+   if (!it) 
+     {
+        evas_object_del(icon_obj);
+        return NULL;
+     }
    wd->items = eina_list_append(wd->items, it);
    it->label = eina_stringshare_add(label);
    it->prio.visible = 1;
@@ -563,8 +567,8 @@ elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas
        evas_object_del(icon_obj);
      }
 
-   _elm_theme_object_set
-     (obj, it->base.view, "toolbar", "item", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, it->base.view, "toolbar", "item", 
+                         elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base.view, "elm,action,click", "elm",
 				   _select, it);
    elm_widget_sub_object_add(obj, it->base.view);
