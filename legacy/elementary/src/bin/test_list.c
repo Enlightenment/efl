@@ -555,7 +555,7 @@ test_list5_swipe(void *data, Evas_Object *obj, void *event_info)
     Evas_Object *button;
     struct list5_data_cb *info = elm_list_item_data_get(event_info);
 
-    if (!elm_list_item_end_get(event_info)) return;
+    if (elm_list_item_end_get(event_info)) return;
 
     button = elm_button_add(info->win);
     elm_button_label_set(button, "delete");
