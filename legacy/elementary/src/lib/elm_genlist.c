@@ -382,6 +382,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (elm_widget_display_only_get(obj)) return EINA_FALSE;
 
    Elm_Genlist_Item *it = NULL;
    Evas_Coord x = 0;
@@ -910,7 +911,7 @@ _long_press(void *data)
    Elm_Genlist_Item *it = data;
 
    it->long_timer = NULL;
-   if ((it->disabled) || (it->dragging)) return ECORE_CALLBACK_CANCEL;
+   if ((it->disabled) || (it->dragging) || (it->display_only)) return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->base.widget, "longpressed", it);
    return ECORE_CALLBACK_CANCEL;
@@ -989,7 +990,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
                _item_block_unrealize(it->block);
           }
      }
-   if ((it->disabled) || (dragged)) return;
+   if ((it->disabled) || (dragged) || (it->display_only)) return;
    if (it->wd->multi)
      {
 	if (!it->selected)
