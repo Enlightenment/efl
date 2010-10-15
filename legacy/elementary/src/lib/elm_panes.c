@@ -98,30 +98,21 @@ _elm_panes_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
    else
      return EINA_FALSE;
 
-   if (elm_widget_focus_get(chain[1]))
+   unsigned char i = elm_widget_focus_get(chain[1]);
+
+   if (elm_widget_focus_next_get(chain[i], dir, next))
+     return TRUE;
+
+   i = !i;
+
+   Evas_Object *to_focus;
+   if (elm_widget_focus_next_get(chain[i], dir, &to_focus))
      {
-        Evas_Object *to_focus;
-        if (elm_widget_focus_next_get(chain[1], dir, next))
-          return EINA_TRUE;
-        elm_widget_focus_next_get(chain[0], dir, &to_focus);
-        if (to_focus)
-          *next = to_focus;
-        return EINA_FALSE;
+        *next = to_focus;
+        return !!i;
      }
-   else
-     {
-        Evas_Object *to_focus;
-        if (elm_widget_focus_next_get(chain[0], dir, next))
-          return EINA_TRUE;
-        if (elm_widget_focus_next_get(chain[1], dir, &to_focus))
-          {
-             *next = to_focus;
-             return EINA_TRUE;
-          }
-        if (!(*next))
-          *next = to_focus;
-        return EINA_FALSE;
-     }
+
+   return EINA_FALSE;
 }
 
 static void
