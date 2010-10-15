@@ -420,7 +420,6 @@ elm_pager_content_top_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Item *it;
    if (!wd) return NULL;
    if (!wd->top) return NULL;
    return wd->top->content;
