@@ -1198,7 +1198,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->buf)
       free(cl->buf);
 
-   if (cl->host_server->type & ECORE_CON_SSL > 0)
+   if (cl->host_server->type & ECORE_CON_SSL)
      ecore_con_ssl_client_shutdown(cl);
 
    if (cl->fd >= 0)
@@ -1472,7 +1472,7 @@ _ecore_con_cb_tcp_connect(void *data, Ecore_Con_Info *net_info)
       svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
                                    _ecore_con_cl_handler, svr, NULL, NULL);
 
-   if (svr->type & ECORE_CON_SSL > 0)
+   if (svr->type & ECORE_CON_SSL)
      {
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
@@ -1680,7 +1680,7 @@ _ecore_con_svr_tcp_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 
 
-   if (svr->type & ECORE_CON_SSL > 0)
+   if (svr->type & ECORE_CON_SSL)
      {
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
