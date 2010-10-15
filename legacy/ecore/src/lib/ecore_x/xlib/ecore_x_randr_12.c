@@ -386,7 +386,7 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
    int i;
 
    if (_ecore_x_randr_root_validate(root) &&
-       (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
+       (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
      {
         for (i = 0; i < res->nmode; i++)
           {
@@ -404,15 +404,14 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
                   ret->vSyncStart = res->modes[i].vSyncStart;
                   ret->vSyncEnd = res->modes[i].vSyncEnd;
                   ret->vTotal = res->modes[i].vTotal;
-                  if (!(ret->name =
-                           strndup(res->modes[i].name, res->modes[i].nameLength)))
+                  ret->name = NULL;
+                  ret->nameLength = 0;
+                  if (res->modes[i].nameLength > 0) 
                     {
-                       ret->name = NULL;
-                       ret->nameLength = 0;
+                       ret->nameLength = res->modes[i].nameLength;
+                       ret->name = strndup(res->modes[i].name, 
+                                           res->modes[i].nameLength);
                     }
-                  else
-                     ret->nameLength = res->modes[i].nameLength;
-
                   ret->modeFlags = res->modes[i].modeFlags;
                   break;
                }
@@ -437,12 +436,12 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
    if (!mode_info)
-      return;
+     return;
 
    if (mode_info->name)
-      free(mode_info->name);
+     free(mode_info->name);
 
-      free(mode_info);
+   free(mode_info);
    mode_info = NULL;
 #endif
 }
