@@ -450,7 +450,7 @@ elm_menu_add(Evas_Object *parent)
  *
  * @param obj The menu object.
  * @param parent The new parent.
- * 
+ *
  * @ingroup Menu
  */
 EAPI void
@@ -502,7 +502,7 @@ elm_menu_parent_get(const Evas_Object *obj)
  * @param obj The menu object.
  * @param x The new position.
  * @param y The new position.
- * 
+ *
  * @ingroup Menu
  */
 EAPI void
@@ -518,9 +518,9 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
 /**
  * Get the Evas_Object of an Elm_Menu_Item
- * 
+ *
  * @param it The menu item object.
- * 
+ *
  * @ingroup Menu
  */
 EAPI Evas_Object *
@@ -538,7 +538,7 @@ elm_menu_object_get(const Elm_Menu_Item *it)
  * @param func Function called when the user select the item.
  * @param data Data sent by the callback.
  * @return Returns the new item.
- * 
+ *
  * @ingroup Menu
  */
 EAPI Elm_Menu_Item *
@@ -666,10 +666,10 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 
 /**
  * Get the disabled state of @p item.
- * 
+ *
  * @param it The menu item object.
  * @return The enabled/disabled state of the item
- * 
+ *
  * @ingroup Menu
  */
 EAPI Eina_Bool
@@ -696,6 +696,10 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
+   /* don't add a separator as the first item */
+   if (!wd->items) return NULL;
+   /* don't allow adding more than one separator in a row */
+   if (parent && parent->separator) return NULL;
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
    if (!subitem) return NULL;
    subitem->base.widget = obj;
@@ -727,10 +731,10 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 
 /**
  * Get the icon of a menu item
- * 
+ *
  * @param it The menu item object.
  * @return The icon object of @p item or NULL
- * 
+ *
  * @ingroup Menu
  */
 EAPI Evas_Object *
