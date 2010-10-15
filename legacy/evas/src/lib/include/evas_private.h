@@ -445,6 +445,10 @@ struct _Evas_Object
    int                         mouse_grabbed;
 
    int                         last_event;
+   
+   struct {
+      int                      in_move, in_resize;
+   } doing;
 
    unsigned char               delete_me;
 
