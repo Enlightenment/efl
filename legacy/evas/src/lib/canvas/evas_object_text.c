@@ -1316,9 +1316,21 @@ evas_font_available_list_free(Evas *e, Eina_List *available)
 }
 
 /**
- * To be documented.
+ * Gets the next character in the string
  *
- * FIXME: To be fixed.
+ * Given the UTF-8 string in @p str, and starting byte position in @p pos,
+ * this function will place in @p decoded the decoded code point at @p pos
+ * and return the byte index for the next character in the string.
+ *
+ * The only boundary check done is that @p pos must be >= 0. Other than that,
+ * no checks are performed, so passing an index value that's not within the
+ * length of the string will result in undefined behavior.
+ *
+ * @param str The UTF-8 string
+ * @param pos The byte index where to start
+ * @param decoded Address where to store the decoded code point. Optional.
+ *
+ * @return The byte index of the next character
  *
  * @ingroup Evas_Utils
  */
@@ -1336,9 +1348,21 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
 }
 
 /**
- * To be documented.
+ * Gets the previous character in the string
  *
- * FIXME: To be fixed.
+ * Given the UTF-8 string in @p str, and starting byte position in @p pos,
+ * this function will place in @p decoded the decoded code point at @p pos
+ * and return the byte index for the previous character in the string.
+ *
+ * The only boundary check done is that @p pos must be >= 1. Other than that,
+ * no checks are performed, so passing an index value that's not within the
+ * length of the string will result in undefined behavior.
+ *
+ * @param str The UTF-8 string
+ * @param pos The byte index where to start
+ * @param decoded Address where to store the decoded code point. Optional.
+ *
+ * @return The byte index of the previous character
  *
  * @ingroup Evas_Utils
  */
