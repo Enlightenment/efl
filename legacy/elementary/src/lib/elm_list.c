@@ -1,6 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#define SWIPE_MOVES 12
+
 /**
  * @defgroup List List
  *
@@ -20,6 +22,11 @@ struct _Widget_Data
    Eina_Bool scr_minw : 1;
    Eina_Bool scr_minh : 1;
    int walking;
+   int movements;
+   struct {
+     Evas_Coord x, y;
+   } history[SWIPE_MOVES];
+   Eina_Bool swipe : 1;
    Eina_Bool fix_pending : 1;
    Eina_Bool on_hold : 1;
    Eina_Bool multi : 1;
@@ -37,6 +44,7 @@ struct _Elm_List_Item
    Evas_Object *icon, *end;
    Evas_Smart_Cb func;
    Ecore_Timer *long_timer;
+   Ecore_Timer *swipe_timer;
    Eina_Bool deleted : 1;
    Eina_Bool even : 1;
    Eina_Bool is_even : 1;
@@ -102,6 +110,7 @@ _elm_list_item_free(Elm_List_Item *it)
 
    eina_stringshare_del(it->label);
 
+   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->icon) evas_object_del(it->icon);
    if (it->end) evas_object_del(it->end);
@@ -593,6 +602,19 @@ _item_unselect(Elm_List_Item *it)
    _elm_list_unwalk(wd);
 }
 
+static Eina_Bool
+_swipe_cancel(void *data)
+{
+   Elm_List_Item *it = data;
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ECORE_CALLBACK_CANCEL);
+   wd->swipe = EINA_FALSE;
+   wd->movements = 0;
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -615,6 +637,16 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
              if (!wd->wasselected)
                _item_unselect(it);
 	  }
+        if (wd->movements == SWIPE_MOVES) wd->swipe = EINA_TRUE;
+        else
+          {
+             wd->history[wd->movements].x = ev->cur.canvas.x;
+             wd->history[wd->movements].y = ev->cur.canvas.y;
+             if (abs((wd->history[wd->movements].x - wd->history[0].x)) > 40)
+                wd->swipe = EINA_TRUE;
+             else
+                wd->movements++;
+          }
      }
 }
 
@@ -630,6 +662,26 @@ _long_press(void *data)
    wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->base.widget, "longpressed", it);
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_swipe(Elm_List_Item *it)
+{
+   int i, sum = 0;
+   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+   if (!wd) return;
+   wd->swipe = EINA_FALSE;
+   for (i = 0; i < wd->movements; i++)
+     {
+        sum += wd->history[i].x;
+        if (abs(wd->history[0].y - wd->history[i].y) > 10) return;
+     }
+
+   sum /= wd->movements;
+   if (abs(sum - wd->history[0].x) <= 10) return;
+   evas_object_smart_callback_call(it->base.widget, "swipe", it);
 }
 
 static void
@@ -649,9 +701,13 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    wd->longpressed = EINA_FALSE;
    if (it->long_timer) ecore_timer_del(it->long_timer);
    it->long_timer = ecore_timer_add(1.0, _long_press, it);
+   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
+   it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->base.widget, "clicked", it);
+   wd->swipe = EINA_FALSE;
+   wd->movements = 0;
 }
 
 static void
@@ -672,8 +728,14 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
         ecore_timer_del(it->long_timer);
         it->long_timer = NULL;
      }
+   if (it->swipe_timer)
+     {
+        ecore_timer_del(it->swipe_timer);
+        it->swipe_timer = NULL;
+     }
    if (wd->on_hold)
      {
+        if (wd->swipe) _swipe(data);
 	wd->on_hold = EINA_FALSE;
 	return;
      }

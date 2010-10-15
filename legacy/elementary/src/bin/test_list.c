@@ -387,4 +387,215 @@ test_list3(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 }
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+struct Pginfo {
+    Evas_Object *pager, *win;
+};
+
+static void
+test_list4_back_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    struct Pginfo *info = data;
+    if (!info) return;
+
+    elm_pager_content_pop(info->pager);
+}
+
+static void
+test_list4_swipe(void *data, Evas_Object *obj, void *event_info)
+{
+    Evas_Object *box, *entry, *button;
+    const char *item_label = NULL;
+    struct Pginfo *info = data;
+    char *item_data;
+    if (!event_info || !data) return;
+
+    item_data = elm_list_item_data_get(event_info);
+
+    box = elm_box_add(info->win);
+    elm_box_horizontal_set(box, 0);
+    elm_box_homogenous_set(box, 0);
+    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(box);
+
+    entry = elm_scrolled_entry_add(info->win);
+    elm_scrolled_entry_editable_set(entry, EINA_FALSE);
+    elm_scrolled_entry_entry_set(entry, item_data);
+    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+    evas_object_show(entry);
+
+    button = elm_button_add(info->win);
+    elm_button_label_set(button, "back");
+    evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0);
+    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
+    evas_object_smart_callback_add(button, "clicked", test_list4_back_cb, info);
+    evas_object_show(button);
+
+    elm_box_pack_start(box, entry);
+    elm_box_pack_end(box, button);
+
+    elm_pager_content_push(info->pager, box);
+}
+
+void
+test_list4(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *li, *ic, *ic2, *pager;
+   static struct Pginfo info = {NULL, NULL};
+   char buf[PATH_MAX];
+
+   win = elm_win_add(NULL, "list-4", ELM_WIN_BASIC);
+   elm_win_title_set(win, "List 4");
+   elm_win_autodel_set(win, 1);
+   info.win = win;
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   pager = elm_pager_add(win);
+   elm_win_resize_object_add(win, pager);
+   evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(pager);
+   info.pager = pager;
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_list_horizontal_mode_set(li, ELM_LIST_COMPRESS);
+   evas_object_smart_callback_add(li, "swipe", test_list4_swipe, &info);
+   elm_pager_content_push(pager, li);
+
+   static char pf_data[] = "Pink Floyd were formed in 1965, and originally consisted of university" \
+       "students Roger Waters, Nick Mason, Richard Wright, and Syd Barrett. The group were a popular"\
+       "fixture on London's underground music scene, and under Barrett's leadership released two "\
+       "charting singles, \"Arnold Layne\" and \"See Emily Play\", and a successful debut album, "\
+       "ThePiper at the Gates of Dawn. In 1968, guitarist and singer David Gilmour joined the "\
+       "line-up. Barrett was soon removed, due to his increasingly erratic behaviour. Following "\
+       "Barrett's departure, bass player and singer Roger Waters became the band's lyricist and "\
+       "conceptual leader, with Gilmour assuming lead guitar and much of the vocals. With this "\
+       "line-up, Floyd went on to achieve worldwide critical and commercial success with the "\
+       "conceptalbums The Dark Side of the Moon, Wish You Were Here, Animals, and The Wall.";
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/mystrale.jpg", PACKAGE_DATA_DIR);
+   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_list_item_append(li, "Pink Floyd", ic, NULL,  NULL, &pf_data);
+
+   static char ds_data[] = "Dire Straits were a British rock band, formed by Mark Knopfler "\
+       "(lead vocals and lead guitar), his younger brother David Knopfler (rhythm guitar and "\
+       "backing vocals), John Illsley (bass guitar and backing vocals), and Pick Withers (drums "\
+       "and percussion), and managed by Ed Bicknell, active between 1977 and 1995. Although the "\
+       "band was formed in an era when punk rock was at the forefront, Dire Straits played a more "
+       "bluesy style, albeit with a stripped-down sound that appealed to audiences weary of the "\
+       "overproduced stadium rock of the 1970s.[citation needed] In their early days, Mark and "\
+       "David requested that pub owners turn down their sound so that patrons could converse "\
+       "while the band played, an indication of their unassuming demeanor. Despite this oddly "\
+       "self-effacing approach to rock and roll, Dire Straits soon became hugely successful, with "\
+       "their first album going multi-platinum globally.";
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/mystrale_2.jpg", PACKAGE_DATA_DIR);
+   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_list_item_append(li, "Dire Straits", ic, NULL,  NULL, &ds_data);
+
+   static char uh_data[] = "Uriah Heep are an English hard rock band. The band released several "\
+       "commercially successful albums in the 1970s such as Uriah Heep Live (1973), but their "\
+       "audience declined by the 1980s, to the point where they became essentially a cult band in "\
+       "the United States and United Kingdom. Uriah Heep maintain a significant following in "\
+       "Germany, the Netherlands, Scandinavia, the Balkans, Japan and Russia, where they still "\
+       "perform at stadium-sized venues.";
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/icon_17.png", PACKAGE_DATA_DIR);
+   elm_icon_scale_set(ic, 1, 1);
+   elm_icon_file_set(ic, buf, NULL);
+   elm_list_item_append(li, "Uriah Heep", ic, NULL,  NULL, &uh_data);
+
+   static char r_data[] = "Rush is a Canadian rock band formed in August 1968, in the Willowdale "\
+       "neighbourhood of Toronto, Ontario. The band is composed of bassist, keyboardist, and lead "\
+       "vocalist Geddy Lee, guitarist Alex Lifeson, and drummer and lyricist Neil Peart. The band "\
+       "and its membership went through a number of re-configurations between 1968 and 1974, "\
+       "achieving their current form when Peart replaced original drummer John Rutsey in July 1974, "\
+       "two weeks before the group's first United States tour.";
+   ic = elm_icon_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/icon_21.png", PACKAGE_DATA_DIR);
+   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_file_set(ic, buf, NULL);
+   ic2 = elm_icon_add(win);
+   elm_icon_standard_set(ic2, "clock");
+   elm_icon_scale_set(ic2, 0, 0);
+   elm_list_item_append(li, "Rush", ic, ic2,  NULL, &r_data);
+
+   elm_list_go(li);
+
+   evas_object_show(li);
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+struct list5_data_cb {
+  Evas_Object *win, *list;
+};
+
+static void
+test_list5_item_del(void *data, Evas_Object *obj, void *event_info)
+{
+   elm_list_item_del(data);
+}
+
+static void
+test_list5_swipe(void *data, Evas_Object *obj, void *event_info)
+{
+    Evas_Object *button;
+    struct list5_data_cb *info = elm_list_item_data_get(event_info);
+
+    if ((button = elm_list_item_end_get(event_info))) return;
+
+    button = elm_button_add(info->win);
+    elm_button_label_set(button, "delete");
+    evas_object_propagate_events_set(button, 0);
+    evas_object_smart_callback_add(button, "clicked", test_list5_item_del,
+                                   event_info);
+    elm_list_item_end_set(event_info, button);
+}
+
+void
+test_list5(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *li, *ic, *ic2;
+   static struct list5_data_cb info;
+   char buf[PATH_MAX];
+
+   win = elm_win_add(NULL, "list-5", ELM_WIN_BASIC);
+   elm_win_title_set(win, "List 5");
+   elm_win_autodel_set(win, 1);
+   info.win = win;
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_list_horizontal_mode_set(li, ELM_LIST_COMPRESS);
+   evas_object_smart_callback_add(li, "swipe", test_list5_swipe, NULL);
+   elm_win_resize_object_add(win, li);
+   evas_object_show(li);
+   info.list = li;
+
+   elm_list_item_append(li, "Network", NULL, NULL,  NULL, &info);
+   elm_list_item_append(li, "Audio", NULL, NULL,  NULL, &info);
+
+   elm_list_go(li);
+   evas_object_resize(win, 320, 300);
+   evas_object_show(win);
+}
+
 #endif
