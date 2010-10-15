@@ -382,7 +382,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-//   if (elm_widget_display_only_get(obj)) return EINA_FALSE;
 
    Elm_Genlist_Item *it = NULL;
    Evas_Coord x = 0;
