@@ -1156,4 +1156,113 @@ test_genlist6(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+/*************/
+
+struct genlist7_data
+{
+  Evas_Object *win, *pager;
+};
+
+static void
+test_genlist7_back_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    struct genlist7_data *info = data;
+    if (!info) return;
+
+    elm_pager_content_pop(info->pager);
+}
+
+static void
+test_genlist7_swipe(void *data, Evas_Object *obj, void *event_info)
+{
+   struct genlist7_data *info = data;
+   Evas_Object *box, *entry, *button;
+   char item_data[] = "Just a simple test";
+
+   if (!event_info || !data) return;
+
+   box = elm_box_add(info->win);
+   elm_box_homogenous_set(box, 0);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(box);
+
+   entry = elm_scrolled_entry_add(info->win);
+   elm_scrolled_entry_editable_set(entry, EINA_FALSE);
+   elm_scrolled_entry_entry_set(entry, item_data);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(entry);
+
+   button = elm_button_add(info->win);
+   elm_button_label_set(button, "back");
+   evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
+   evas_object_smart_callback_add(button, "clicked", test_genlist7_back_cb,
+                                  info);
+   evas_object_show(button);
+
+   elm_box_pack_start(box, entry);
+   elm_box_pack_end(box, button);
+
+   elm_pager_content_push(info->pager, box);
+}
+
+void
+test_genlist7(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *win, *bg, *gl, *bx, *bx2, *bt, *pager;
+   static struct genlist7_data info;
+   static Testitem tit[3];
+
+   win = elm_win_add(NULL, "genlist-3", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist 3");
+   elm_win_autodel_set(win, 1);
+   info.win = win;
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   pager = elm_pager_add(win);
+   elm_win_resize_object_add(win, pager);
+   evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(pager);
+   info.pager = pager;
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(gl, "swipe", test_genlist7_swipe, &info);
+   evas_object_show(gl);
+   elm_pager_content_push(pager, gl);
+
+   itc2.item_style     = "default";
+   itc2.func.label_get = gl2_label_get;
+   itc2.func.icon_get  = gl2_icon_get;
+   itc2.func.state_get = gl2_state_get;
+   itc2.func.del       = gl2_del;
+
+   tit[0].mode = 0;
+   tit[0].item = elm_genlist_item_append(gl, &itc2,
+					 &(tit[0])/* item data */, NULL/* parent */,
+                                         ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
+   tit[1].mode = 1;
+   tit[1].item = elm_genlist_item_append(gl, &itc2,
+					 &(tit[1])/* item data */, NULL/* parent */,
+                                         ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+					 NULL/* func data */);
+   tit[2].mode = 2;
+   tit[2].item = elm_genlist_item_append(gl, &itc2,
+        				 &(tit[2])/* item data */, NULL/* parent */,
+                                         ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+        				 NULL/* func data */);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
 #endif

@@ -2,10 +2,12 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
+#define SWIPE_MOVES 12
+
 /**
  * @defgroup Genlist Genlist
  *
- * The aim was to have  more expansive list that the simple list in
+ * The Aim was to have  more expansive list that the simple list in
  * Elementary that could have more flexible items and allow many more entries
  * while still being fast and low on memory usage. At the same time it was
  * also made to be able to do tree structures. But the price to pay is more
@@ -266,6 +268,11 @@ struct _Widget_Data
    Eina_Bool height_for_width : 1;
    Eina_Bool homogeneous : 1;
    Eina_Bool clear_me : 1;
+   Eina_Bool swipe : 1;
+   struct {
+     Evas_Coord x, y;
+   } history[SWIPE_MOVES];
+   int movements;
    int walking;
    int item_width;
    int item_height;
@@ -308,6 +315,7 @@ struct _Elm_Genlist_Item
    Evas_Object *spacer;
    Eina_List *labels, *icons, *states, *icon_objs;
    Ecore_Timer *long_timer;
+   Ecore_Timer *swipe_timer;
    Evas_Coord dx, dy;
 
    Elm_Genlist_Item *rel;
@@ -753,6 +761,7 @@ _item_del(Elm_Genlist_Item *it)
    if (it->parent)
      it->parent->items = eina_list_remove(it->parent->items, it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
+   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
 
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, it->base.widget, it);
@@ -832,6 +841,16 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
      }
    if ((it->dragging) && (it->down))
      {
+        if (it->wd->movements == SWIPE_MOVES) it->wd->swipe = EINA_TRUE;
+        else
+          {
+             it->wd->history[it->wd->movements].x = ev->cur.canvas.x;
+             it->wd->history[it->wd->movements].y = ev->cur.canvas.y;
+             if (abs((it->wd->history[it->wd->movements].x - it->wd->history[0].x)) > 40)
+               it->wd->swipe = EINA_TRUE;
+             else
+               it->wd->movements++;
+          }
         if (it->long_timer)
           {
              ecore_timer_del(it->long_timer);
@@ -917,6 +936,35 @@ _long_press(void *data)
 }
 
 static void
+_swipe(Elm_Genlist_Item *it)
+{
+   int i, sum = 0;
+
+   if (!it) return;
+   it->wd->swipe = EINA_FALSE;
+   for (i = 0; i < it->wd->movements; i++)
+     {
+        sum += it->wd->history[i].x;
+        if (abs(it->wd->history[0].y - it->wd->history[i].y) > 10) return;
+     }
+
+   sum /= it->wd->movements;
+   if (abs(sum - it->wd->history[0].x) <= 10) return;
+   evas_object_smart_callback_call(it->base.widget, "swipe", it);
+}
+
+static Eina_Bool
+_swipe_cancel(void *data)
+{
+   Elm_Genlist_Item *it = data;
+
+   if (!it) return ECORE_CALLBACK_CANCEL;
+   it->wd->swipe = EINA_FALSE;
+   it->wd->movements = 0;
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
 _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Elm_Genlist_Item *it = data;
@@ -938,10 +986,14 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      evas_object_smart_callback_call(it->base.widget, "clicked", it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
+   if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
+   it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
    if (it->realized)
      it->long_timer = ecore_timer_add(it->wd->longpress_timeout, _long_press, it);
    else
      it->long_timer = NULL;
+   it->wd->swipe = EINA_FALSE;
+   it->wd->movements = 0;
 }
 
 static void
@@ -966,8 +1018,14 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
         evas_object_smart_callback_call(it->base.widget, "drag,stop", it);
         dragged = 1;
      }
+   if (it->swipe_timer)
+     {
+        ecore_timer_del(it->swipe_timer);
+        it->swipe_timer = NULL;
+     }
    if (it->wd->on_hold)
      {
+        if (it->wd->swipe) _swipe(data);
         it->wd->longpressed = EINA_FALSE;
 	it->wd->on_hold = EINA_FALSE;
 	return;
