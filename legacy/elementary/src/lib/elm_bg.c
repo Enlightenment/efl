@@ -56,7 +56,7 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 {
    Widget_Data *wd = data;
    Evas_Coord bx = 0, by = 0, bw = 0, bh = 0;
-   Evas_Coord iw = 0, ih = 0;
+   Evas_Coord iw = 0, ih = 0, mw = -1, mh = -1;
    Evas_Coord fx = 0, fy = 0, fw = 0, fh = 0;
    Evas_Coord nx = 0, ny = 0, nw = 0, nh = 0;
    const char *p;
@@ -84,6 +84,8 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         fh = nh = ih;
         nx = ((bw - fw) / 2);
         ny = ((bh - fh) / 2);
+        mw = iw;
+        mh = ih;
         break;
       case ELM_BG_OPTION_SCALE:
         fw = bw;
@@ -107,9 +109,12 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         break;
      }
 
-   evas_object_image_fill_set(wd->img, fx, fy, fw, fh);
    evas_object_move(wd->img, nx, ny);
    evas_object_resize(wd->img, nw, nh);
+   evas_object_image_fill_set(wd->img, fx, fy, fw, fh);
+
+   evas_object_size_hint_min_set(wd->img, mw, mh);
+   evas_object_size_hint_max_set(wd->img, mw, mh);
 }
 
 /**
