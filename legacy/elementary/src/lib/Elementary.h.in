@@ -1197,8 +1197,6 @@ extern "C" {
    EAPI Elm_Toolbar_Item *elm_toolbar_item_select_first(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_select_last(Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_find_by_label(Evas_Object *obj, const char *label);
-   EAPI void              elm_toolbar_scrollable_set(Evas_Object *obj, Eina_Bool scrollable);
-   EAPI Eina_Bool         elm_toolbar_scrollable_get(Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */
