@@ -314,7 +314,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    if (!en)
      return NULL;
 
-   udev_enumerate_add_match_property(en, "DEVPATH", devpath);
+   udev_enumerate_add_match_property(en, "DEVNAME", devpath);
    udev_enumerate_scan_devices(en);
    devs = udev_enumerate_get_list_entry(en);
    udev_list_entry_foreach(cur, devs)
