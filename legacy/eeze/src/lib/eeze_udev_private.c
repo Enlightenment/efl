@@ -8,6 +8,10 @@
 
 extern _udev *udev;
 
+/*
+ * helper function to set up a new device from a syspath
+ * which may or may not include /sys at the beginning
+ */
 _udev_device *
 _new_device(const char *syspath)
 {
@@ -54,7 +58,7 @@ _walk_parents_test_attr(_udev_device * device, const char *sysattr,
    const char *test;
 
    if (udev_device_get_sysattr_value(device, sysattr))
-     return 1;
+     return EINA_TRUE;
 
    parent = udev_device_get_parent(child);
 
@@ -64,13 +68,13 @@ _walk_parents_test_attr(_udev_device * device, const char *sysattr,
           continue;
 
         if (!value)
-          return 1;
+          return EINA_TRUE;
         else
           if (!strcmp(test, value))
-            return 1;
+            return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_TRUE;
 }
 
 const char *
@@ -115,7 +119,7 @@ _get_unlisted_parents(Eina_List * list, _udev_device * device)
 
    for (; parent; child = parent, parent = udev_device_get_parent(child))
      {
-        found = 0;
+        found = EINA_FALSE;
 
         if (!(vendor2 = udev_device_get_property_value(child, "ID_VENDOR_ID")))
           vendor2 = udev_device_get_property_value(child, "ID_VENDOR");
@@ -136,7 +140,7 @@ _get_unlisted_parents(Eina_List * list, _udev_device * device)
           {
              if (!strcmp(test, devname))
                {
-                  found = 1;
+                  found = EINA_TRUE;
                   break;
                }
           }

@@ -189,8 +189,8 @@ eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr)
 EAPI Eina_Bool
 eeze_udev_syspath_is_mouse(const char *syspath)
 {
-   _udev_device *device;
-   Eina_Bool mouse = 0;
+   _udev_device *device = NULL;
+   Eina_Bool mouse = EINA_FALSE;
    const char *test = NULL;
 
    if (!syspath)
@@ -206,14 +206,14 @@ eeze_udev_syspath_is_mouse(const char *syspath)
         test = udev_device_get_property_value(device, "ID_CLASS");
 
         if ((test) && (!strcmp(test, "mouse")))
-          mouse = 1;
+          mouse = EINA_TRUE;
      }
 
 #else
    test = udev_device_get_property_value(device, "ID_INPUT_MOUSE");
 
-   if (test)
-     mouse = atoi(test);
+   if (test && (test[0] == '1'))
+     mouse = EINA_TRUE;
 
 #endif
    udev_device_unref(device);
@@ -229,12 +229,12 @@ eeze_udev_syspath_is_mouse(const char *syspath)
 EAPI Eina_Bool
 eeze_udev_syspath_is_kbd(const char *syspath)
 {
-   _udev_device *device;
-   Eina_Bool kbd = 0;
+   _udev_device *device = NULL;
+   Eina_Bool kbd = EINA_FALSE;
    const char *test = NULL;
 
    if (!syspath)
-     return 0;
+     return EINA_FALSE;
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
@@ -246,14 +246,14 @@ eeze_udev_syspath_is_kbd(const char *syspath)
         test = udev_device_get_property_value(device, "ID_CLASS");
 
         if ((test) && (!strcmp(test, "kbd")))
-          kbd = 1;
+          kbd = EINA_TRUE;
      }
 
 #else
    test = udev_device_get_property_value(device, "ID_INPUT_KEYBOARD");
 
-   if (test)
-     kbd = atoi(test);
+   if (test && (test[0] == '1'))
+     kbd = EINA_TRUE;
 
 #endif
    udev_device_unref(device);
@@ -269,11 +269,11 @@ eeze_udev_syspath_is_kbd(const char *syspath)
 EAPI Eina_Bool
 eeze_udev_syspath_is_touchpad(const char *syspath)
 {
-   _udev_device *device;
-   Eina_Bool touchpad = 0;
+   _udev_device *device = NULL;
+   Eina_Bool touchpad = EINA_FALSE;
 
    if (!syspath)
-     return 0;
+     return EINA_FALSE;
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
@@ -283,8 +283,8 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
    const char *test;
    test = udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD");
 
-   if (test)
-     touchpad = atoi(test);
+   if (test && (test[0] == '1'))
+     touchpad = EINA_TRUE;
 
 #endif
    udev_device_unref(device);

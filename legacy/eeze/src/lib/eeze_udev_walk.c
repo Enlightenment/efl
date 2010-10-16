@@ -37,7 +37,7 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
    const char *test = NULL;
 
    if (!udev)
-     return 0;
+     return EINA_FALSE;
 
    if (!(device = _new_device(syspath)))
      return EINA_FALSE;
@@ -55,7 +55,7 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
      }
 
    udev_device_unref(device);
-   return 0;
+   return EINA_FALSE;
 }
 
 /**

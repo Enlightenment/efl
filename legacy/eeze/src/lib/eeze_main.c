@@ -56,8 +56,8 @@ eeze_init(void)
 
    if (!((udev) = udev_new()))
      {
-      EINA_LOG_ERR("Could not initialize udev library!");
-      goto fail;
+        EINA_LOG_ERR("Could not initialize udev library!");
+        goto fail;
      }
 
    return _eeze_init_count;

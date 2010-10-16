@@ -52,7 +52,7 @@ static Eina_Bool
 _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
 {
    struct _store_data *store = data;
-   _udev_device *device, *parent, *tmpdev;
+   _udev_device *device = NULL, *parent, *tmpdev;
    const char *ret, *test;
    Eeze_Udev_Watch_Cb func = store->func;
    void *sdata = store->data;
@@ -206,17 +206,17 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
           /* if device is not the one which has the temp input, we must go up the chain */
           if (!udev_device_get_sysattr_value(device, "temp1_input"))
             {
-              for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
-                if (udev_device_get_sysattr_value(parent, "temp1_input"))
-                  {
-                    tmpdev = device;
+               for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
+                 if (udev_device_get_sysattr_value(parent, "temp1_input"))
+                   {
+                      tmpdev = device;
 
-                    if (!(device = _copy_device(parent)))
-                      goto error;
+                      if (!(device = _copy_device(parent)))
+                        goto error;
 
-                    udev_device_unref(tmpdev);
-                    break;
-                  }
+                      udev_device_unref(tmpdev);
+                      break;
+                   }
             }
 
           break;
@@ -230,53 +230,54 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
 
    if (store->event)
      {
-      if (!strcmp(test, "add"))
-        {
-          if ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD)
-            goto error;
-
-          event |= EEZE_UDEV_EVENT_ADD;
-        }
-      else
-        if (!strcmp(test, "remove"))
+        if (!strcmp(test, "add"))
           {
-            if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
-                EEZE_UDEV_EVENT_REMOVE)
-              goto error;
+             if ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD)
+               goto error;
 
-            event |= EEZE_UDEV_EVENT_REMOVE;
+             event |= EEZE_UDEV_EVENT_ADD;
           }
         else
-          if (!strcmp(test, "change"))
+          if (!strcmp(test, "remove"))
             {
-              if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
-                  EEZE_UDEV_EVENT_CHANGE)
-                goto error;
+               if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
+                   EEZE_UDEV_EVENT_REMOVE)
+                 goto error;
 
-              event |= EEZE_UDEV_EVENT_CHANGE;
+               event |= EEZE_UDEV_EVENT_REMOVE;
             }
           else
-            if (!strcmp(test, "online"))
+            if (!strcmp(test, "change"))
               {
-                if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
-                    EEZE_UDEV_EVENT_ONLINE)
-                  goto error;
+                 if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
+                     EEZE_UDEV_EVENT_CHANGE)
+                   goto error;
 
-                event |= EEZE_UDEV_EVENT_ONLINE;
+                 event |= EEZE_UDEV_EVENT_CHANGE;
               }
             else
-              {
-                if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
-                    EEZE_UDEV_EVENT_OFFLINE)
-                  goto error;
+              if (!strcmp(test, "online"))
+                {
+                   if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
+                       EEZE_UDEV_EVENT_ONLINE)
+                     goto error;
 
-                event |= EEZE_UDEV_EVENT_OFFLINE;
-              }
+                   event |= EEZE_UDEV_EVENT_ONLINE;
+                }
+              else
+                {
+                   if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
+                       EEZE_UDEV_EVENT_OFFLINE)
+                     goto error;
+
+                   event |= EEZE_UDEV_EVENT_OFFLINE;
+                }
      }
 
   (*func)(eina_stringshare_add(ret), event, sdata, watch);
 error:
-   udev_device_unref(device);
+   if (device)
+     udev_device_unref(device);
    return EINA_TRUE;
 }
 /**
@@ -300,8 +301,8 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
    _udev_monitor *mon = NULL;
    int fd;
    Ecore_Fd_Handler *handler;
-   Eeze_Udev_Watch *watch;
-   struct _store_data *store;
+   Eeze_Udev_Watch *watch = NULL;
+   struct _store_data *store = NULL;
 
    if (!(store = calloc(sizeof(struct _store_data), 1)))
      return NULL;
@@ -375,9 +376,13 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
    watch->handler = handler;
    return watch;
 error:
-   free(store);
-   free(watch);
-   udev_monitor_unref(mon);
+   if (store)
+     free(store);
+   if (watch)
+     free(watch);
+   if (mon)
+     udev_monitor_unref(mon);
+   ERR("Could not create watch!");
    return NULL;
 }
 
