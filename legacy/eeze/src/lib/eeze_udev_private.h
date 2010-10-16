@@ -2,8 +2,8 @@
 #define EEZE_UDEV_PRIVATE_H
 #include "Eeze.h"
 
-#ifndef EEZE_COLOR_DEFAULT
-#define EEZE_COLOR_DEFAULT EINA_COLOR_CYAN
+#ifndef EEZE_UDEV_COLOR_DEFAULT
+#define EEZE_UDEV_COLOR_DEFAULT EINA_COLOR_CYAN
 #endif
 extern int _eeze_udev_log_dom;
 #ifdef ERR
