@@ -14,7 +14,7 @@
 
 _udev *udev;
 
-int _eeze_log_dom = -1;
+int _eeze_udev_log_dom = -1;
 int _eeze_init_count = 0;
 
 
@@ -45,10 +45,10 @@ eeze_init(void)
    if (!eina_init())
      return --_eeze_init_count;
 
-   _eeze_log_dom = eina_log_domain_register
+   _eeze_udev_log_dom = eina_log_domain_register
                        ("eeze_udev", EEZE_COLOR_DEFAULT);
 
-   if (_eeze_log_dom < 0)
+   if (_eeze_udev_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register 'eeze_udev' log domain.");
         goto fail;
@@ -62,8 +62,8 @@ eeze_init(void)
 
    return _eeze_init_count;
 fail:
-   eina_log_domain_unregister(_eeze_log_dom);
-   _eeze_log_dom = -1;
+   eina_log_domain_unregister(_eeze_udev_log_dom);
+   _eeze_udev_log_dom = -1;
    eina_shutdown();
    return _eeze_init_count;
 }
@@ -84,8 +84,8 @@ eeze_shutdown(void)
      return _eeze_init_count;
 
    udev_unref(udev);
-   eina_log_domain_unregister(_eeze_log_dom);
-   _eeze_log_dom = -1;
+   eina_log_domain_unregister(_eeze_udev_log_dom);
+   _eeze_udev_log_dom = -1;
    eina_shutdown();
    return _eeze_init_count;
 }
