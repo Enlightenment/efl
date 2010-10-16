@@ -359,35 +359,7 @@ ecore_exe_run_priority_get(void)
 EAPI Ecore_Exe *
 ecore_exe_run(const char *exe_cmd, const void *data)
 {
-/* I'm just being paranoid again, leaving in the original code in case there is a problem. */
-#if 0
-   Ecore_Exe *exe;
-   pid_t pid;
-
-   if (!exe_cmd)
-      return NULL;
-   pid = fork();
-   if (pid)
-     {
-        exe = calloc(1, sizeof(Ecore_Exe));
-        if (!exe)
-          {
-             kill(pid, SIGKILL);
-             return NULL;
-          }
-        ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
-        exe->pid = pid;
-        exe->data = (void *)data;
-        exe->cmd = strdup(exe_cmd);
-        exes = _ecore_list2_append(exes, exe);
-        return exe;
-     }
-   _ecore_exe_exec_it(exe_cmd, 0);
-   exit(127);
-   return NULL;
-#else
    return ecore_exe_pipe_run(exe_cmd, 0, data);
-#endif
 }
 
 /**

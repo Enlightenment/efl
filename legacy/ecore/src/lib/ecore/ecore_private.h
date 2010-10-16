@@ -178,13 +178,6 @@ void          _ecore_animator_shutdown(void);
 
 void          _ecore_poller_shutdown(void);
 
-EAPI void         *_ecore_list2_append           (void *in_list, void *in_item);
-EAPI void         *_ecore_list2_prepend          (void *in_list, void *in_item);
-EAPI void         *_ecore_list2_append_relative  (void *in_list, void *in_item, void *in_relative);
-EAPI void         *_ecore_list2_prepend_relative (void *in_list, void *in_item, void *in_relative);
-EAPI void         *_ecore_list2_remove           (void *in_list, void *in_item);
-EAPI void         *_ecore_list2_find             (void *in_list, void *in_item);
-
 void          _ecore_fps_debug_init(void);
 void          _ecore_fps_debug_shutdown(void);
 void          _ecore_fps_debug_runtime_add(double t);
