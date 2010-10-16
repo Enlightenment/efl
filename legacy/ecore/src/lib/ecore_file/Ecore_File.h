@@ -60,6 +60,8 @@ typedef enum
 
 /* File operations */
 
+typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path);
+
 EAPI int            ecore_file_init         (void);
 EAPI int            ecore_file_shutdown     (void);
 EAPI long long      ecore_file_mod_time     (const char *file);
@@ -95,10 +97,7 @@ EAPI int            ecore_file_dir_is_empty (const char *dir);
 /* Monitoring */
 
 EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
-                                                void (*func) (void *data,
-                                                              Ecore_File_Monitor *em,
-                                                              Ecore_File_Event event,
-                                                              const char *path),
+                                                Ecore_File_Monitor_Cb func,
                                                 void *data);
 EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_monitor);
 EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *ecore_file_monitor);
