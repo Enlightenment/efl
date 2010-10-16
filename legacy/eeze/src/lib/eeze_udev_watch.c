@@ -30,7 +30,7 @@ struct _store_data
 };
 
 /**
- * @defgroup watch Watch
+ * @addtogroup watch Watch
  *
  * @brief These are functions which monitor udev for events.
  *
@@ -38,8 +38,10 @@ struct _store_data
  * and some data, and then udev watches those device types for events of the type you specified.  Your callback is called with a
  * syspath of the triggering device and the event that happened to the device, along with the data you associated with the watch and
  * the watch object itself in case you want to stop the watch easily in a callback.
- * 
+ *
  * @ingroup udev
+ * 
+ * @{
  */
 
 /* private function to further filter watch results based on Eeze_Udev_Type
@@ -280,10 +282,9 @@ error:
 /**
  * Add a watch for a device type
  *
- * @param type The @ref Eeze_Udev_Type to watch
- * @param event The events to watch; an OR list of @ref event (ie (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE)), or 0 for all events
- * @param func The function to call when the watch receives data;
- * must take (const char *device, int event_type, void *data, Eeze_Udev_Watch *watch)
+ * @param type The #Eeze_Udev_Type to watch
+ * @param event The events to watch; an OR list of #Eeze_Udev_Event (ie (#EEZE_UDEV_EVENT_ADD | #EEZE_UDEV_EVENT_REMOVE)), or 0 for all events
+ * @param cb The function to call when the watch receives data of type #Eeze_Udev_Watch_Cb
  * @param user_data Data to pass to the callback function
  *
  * @return A watch struct for the watch type specified, or NULL on failure
@@ -291,8 +292,6 @@ error:
  * Eeze watches will monitor udev for changes of type(s) @p event to devices of type @p type.  When these changes occur, the stringshared
  * syspath of the device will be sent to function @p func, along with the bitmask of the event type which can be detected through
  * binary &.
- *
- * @ingroup watch
  */
 EAPI Eeze_Udev_Watch *
 eeze_udev_watch_add(Eeze_Udev_Type type, int event,
@@ -389,8 +388,6 @@ error:
  * @return The data originally associated with the watch, or NULL
  *
  * Deletes a watch, closing file descriptors and freeing related udev memory.
- *
- * @ingroup watch
  */
 EAPI void *
 eeze_udev_watch_del(Eeze_Udev_Watch * watch)
@@ -414,3 +411,4 @@ eeze_udev_watch_del(Eeze_Udev_Watch * watch)
    return ret;
 }
 
+/** @} */

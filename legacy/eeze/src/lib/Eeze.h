@@ -109,7 +109,7 @@ extern "C" {
  * @brief Flags for watch events
  *
  * These events are used to specify the events to watch in a
- * @ref Eeze_Udev_Watch.  They can be OR'ed together.
+ * #Eeze_Udev_Watch.  They can be ORed together.
  *@{
  */
 typedef enum
@@ -186,7 +186,7 @@ typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
 /**
  * @addtogroup watch
- * @brief Callback type for use with @ref Eeze_Udev_Watch
+ * @brief Callback type for use with #Eeze_Udev_Watch
  */
 typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Udev_Watch *);
 

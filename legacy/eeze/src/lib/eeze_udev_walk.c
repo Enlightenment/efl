@@ -9,11 +9,13 @@
 extern _udev *udev;
 
 /**
- * @defgroup walks Walks
+ * @addtogroup walks Walks
  *
  * These are functions which walk up the device chain.
  * 
  * @ingroup udev
+ *
+ * @{
  */
 
 /**
@@ -25,8 +27,6 @@ extern _udev *udev;
  * @param value OPTIONAL: The value that @p sysattr should have, or NULL
  *
  * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
- * 
- * @ingroup walks
  */
 EAPI Eina_Bool
 eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
@@ -66,8 +66,6 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
  * @param sysattr The attribute to find
  *
  * @return The stringshared value of @p sysattr if found, or NULL
- * 
- * @ingroup walks
  */
 EAPI const char *
 eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr)
@@ -95,3 +93,5 @@ eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr)
    udev_device_unref(device);
    return NULL;
 }
+
+/** @} */
