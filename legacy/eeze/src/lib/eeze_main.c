@@ -41,7 +41,7 @@ eeze_init(void)
    if (++_eeze_init_count != 1)
      return _eeze_init_count;
 
-   if (!eina_init())
+   if (!eina_init() || !ecore_init())
      return --_eeze_init_count;
 
    _eeze_udev_log_dom = eina_log_domain_register
@@ -85,6 +85,7 @@ eeze_shutdown(void)
    udev_unref(udev);
    eina_log_domain_unregister(_eeze_udev_log_dom);
    _eeze_udev_log_dom = -1;
+   ecore_shutdown();
    eina_shutdown();
    return _eeze_init_count;
 }
