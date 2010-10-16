@@ -303,8 +303,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
 {
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
-   _udev_device *device;
-   const char *name, *ret = NULL;
+   const char *ret = NULL;
 
    if (!devpath)
      return NULL;
@@ -319,10 +318,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    devs = udev_enumerate_get_list_entry(en);
    udev_list_entry_foreach(cur, devs)
      {
-        name = udev_list_entry_get_name(cur);
-        device = udev_device_new_from_syspath(udev, name);
-        ret = eina_stringshare_add(udev_device_get_sysname(device));
-        udev_device_unref(device);
+        ret = eina_stringshare_add(udev_list_entry_get_name(cur));
         break;      /*just in case there's more than one somehow */
      }
    udev_enumerate_unref(en);
