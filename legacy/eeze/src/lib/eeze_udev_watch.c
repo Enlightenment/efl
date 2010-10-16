@@ -2,9 +2,8 @@
 #include "config.h"
 #endif
 
-#include <Eeze.h>
 #include <Ecore.h>
-#include "eeze_private.h"
+#include <Eeze.h>
 #include "eeze_udev_private.h"
 
 extern _udev *udev;

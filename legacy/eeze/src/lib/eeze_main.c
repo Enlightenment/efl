@@ -3,7 +3,6 @@
 #endif
 
 #include <Eeze.h>
-#include "eeze_private.h"
 #include "eeze_udev_private.h"
 
 /**

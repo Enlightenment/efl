@@ -2,6 +2,28 @@
 #define EEZE_UDEV_PRIVATE_H
 #include "Eeze.h"
 
+#ifndef EEZE_COLOR_DEFAULT
+#define EEZE_COLOR_DEFAULT EINA_COLOR_CYAN
+#endif
+extern int _eeze_udev_log_dom;
+#ifdef ERR
+#undef ERR
+#endif
+#ifdef INF
+#undef INF
+#endif
+#ifdef WARN
+#undef WARN
+#endif
+#ifdef DBG
+#undef DBG
+#endif
+
+#define DBG(...)   EINA_LOG_DOM_DBG(_eeze_udev_log_dom, __VA_ARGS__)
+#define INFO(...)    EINA_LOG_DOM_INFO(_eeze_udev_log_dom, __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(_eeze_udev_log_dom, __VA_ARGS__)
+#define ERR(...)   EINA_LOG_DOM_ERR(_eeze_udev_log_dom, __VA_ARGS__)
+
 /* typedefs because I'm lazy */
 typedef struct udev _udev;
 typedef struct udev_list_entry _udev_list_entry;
