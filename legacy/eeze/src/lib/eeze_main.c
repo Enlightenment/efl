@@ -2,6 +2,7 @@
 #include "config.h"
 #endif
 
+#include <Ecore.h>
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
