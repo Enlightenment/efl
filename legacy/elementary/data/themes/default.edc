@@ -23834,8 +23834,7 @@ collections {
          image: "ilist_item_shadow.png" COMP;
       }
       parts {
-         part {
-            name: "event";
+         part { name: "event";
             type: RECT;
             repeat_events: 1;
             description {
@@ -23843,11 +23842,9 @@ collections {
                color: 0 0 0 0;
             }
          }
-         part {
-            name: "base_sh";
+         part { name: "base_sh";
             mouse_events: 0;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                align: 0.0 0.0;
                min: 0 10;
                fixed: 1 1;
@@ -23867,11 +23864,9 @@ collections {
                fill.smooth: 0;
             }
          }
-         part {
-            name: "base";
+         part { name: "base";
             mouse_events: 0;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                image {
                   normal: "ilist_1.png";
                   border: 2 2 2 2;
@@ -23946,32 +23941,31 @@ collections {
                }
             }
          }
-	 part { name: "elm.swallow.end";
-	    clip_to: "disclip";
-	    type: SWALLOW;
-	    description { state: "default" 0.0;
-	       fixed: 1 0;
-	       align: 1.0 0.0;
-	       aspect: 1.0 1.0;
-	       aspect_preference: HORIZONTAL;
-	       rel1 {
-		  relative: 1.0 0.0;
-		  offset: -5 -5;
-	       }
-	       rel2 {
-		  relative: 1.0 1.0;
-		  offset: 5 5;
-	       }
-	    }
-	 }
+         part { name: "elm.swallow.end";
+            clip_to: "disclip";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               align: 1.0 0.0;
+               aspect: 1.0 1.0;
+               aspect_preference: HORIZONTAL;
+               rel1 {
+                  relative: 1.0 0.0;
+                  offset: -5 -5;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: 5 5;
+               }
+            }
+         }
          part { name: "elm.text";
             clip_to: "disclip";
             type: TEXT;
             effect: SOFT_SHADOW;
             mouse_events: 0;
             scale: 1;
-            description {
-               state: "default" 0.0;
+            description { state: "default" 0.0;
                rel1 {
                   relative: 0.0  1.0;
                   offset: 0 0;
@@ -24052,8 +24046,7 @@ collections {
          // signal: elm,state,%s,passive
          //   a "check" item named %s went passive
          // default is passive
-         program {
-            name:    "go_active";
+         program { name:    "go_active";
             signal:  "elm,state,selected";
             source:  "elm";
             action:  STATE_SET "selected" 0.0;
@@ -24062,8 +24055,7 @@ collections {
             target:  "fg2";
             target:  "elm.text";
          }
-         program {
-            name:    "go_passive";
+         program { name:    "go_passive";
             signal:  "elm,state,unselected";
             source:  "elm";
             action:  STATE_SET "default" 0.0;
@@ -24073,15 +24065,13 @@ collections {
             target:  "elm.text";
             transition: LINEAR 0.1;
          }
-         program {
-            name:    "go_disabled";
+         program { name:    "go_disabled";
             signal:  "elm,state,disabled";
             source:  "elm";
             action:  STATE_SET "disabled" 0.0;
             target:  "disclip";
          }
-         program {
-            name:    "go_enabled";
+         program { name:    "go_enabled";
             signal:  "elm,state,enabled";
             source:  "elm";
             action:  STATE_SET "default" 0.0;
@@ -24119,20 +24109,16 @@ collections {
            image: "ilist_item_shadow.png" COMP;
        }
        parts {
-           part {
-               name: "event";
+           part { name: "event";
                type: RECT;
                repeat_events: 1;
-               description {
-                   state: "default" 0.0;
+               description { state: "default" 0.0;
                    color: 0 0 0 0;
                }
            }
-           part {
-               name: "base_sh";
+           part { name: "base_sh";
                mouse_events: 0;
-               description {
-                   state: "default" 0.0;
+               description { state: "default" 0.0;
                    align: 0.0 0.0;
                    min: 0 10;
                    fixed: 1 1;
@@ -24152,11 +24138,9 @@ collections {
                    fill.smooth: 0;
                }
            }
-           part {
-               name: "base";
+           part { name: "base";
                mouse_events: 0;
-               description {
-                   state: "default" 0.0;
+               description { state: "default" 0.0;
                    min: 16 28;
                    image {
                        normal: "ilist_1.png";
@@ -24340,8 +24324,7 @@ collections {
            // signal: elm,state,%s,passive
            //   a "check" item named %s went passive
            // default is passive
-           program {
-               name:    "go_active";
+           program { name:    "go_active";
                signal:  "elm,state,selected";
                source:  "elm";
                action:  STATE_SET "selected" 0.0;
@@ -24350,8 +24333,7 @@ collections {
                target:  "fg2";
                target:  "elm.text";
            }
-           program {
-               name:    "go_passive";
+           program { name:    "go_passive";
                signal:  "elm,state,unselected";
                source:  "elm";
                action:  STATE_SET "default" 0.0;
@@ -24361,15 +24343,13 @@ collections {
                target:  "elm.text";
                transition: LINEAR 0.1;
            }
-           program {
-               name:    "go_disabled";
+           program { name:    "go_disabled";
                signal:  "elm,state,disabled";
                source:  "elm";
                action:  STATE_SET "disabled" 0.0;
                target:  "disclip";
            }
-           program {
-               name:    "go_enabled";
+           program { name:    "go_enabled";
                signal:  "elm,state,enabled";
                source:  "elm";
                action:  STATE_SET "default" 0.0;
