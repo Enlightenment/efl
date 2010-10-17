@@ -90,9 +90,9 @@ eeze_shutdown(void)
      return _eeze_init_count;
 
    udev_unref(udev);
+   ecore_shutdown();
    eina_log_domain_unregister(_eeze_udev_log_dom);
    _eeze_udev_log_dom = -1;
-   ecore_shutdown();
    eina_shutdown();
    return _eeze_init_count;
 }
