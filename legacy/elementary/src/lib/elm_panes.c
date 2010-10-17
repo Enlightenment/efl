@@ -101,7 +101,7 @@ _elm_panes_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
    unsigned char i = elm_widget_focus_get(chain[1]);
 
    if (elm_widget_focus_next_get(chain[i], dir, next))
-     return TRUE;
+     return EINA_TRUE;
 
    i = !i;
 
