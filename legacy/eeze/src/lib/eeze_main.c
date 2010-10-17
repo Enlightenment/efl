@@ -42,8 +42,8 @@ eeze_init(void)
    if (++_eeze_init_count != 1)
      return _eeze_init_count;
 
-   if (!eina_init() || !ecore_init())
-     return --_eeze_init_count;
+   if (!eina_init())
+     return 0;
 
    _eeze_udev_log_dom = eina_log_domain_register
                        ("eeze_udev", EEZE_UDEV_COLOR_DEFAULT);
@@ -51,21 +51,27 @@ eeze_init(void)
    if (_eeze_udev_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register 'eeze_udev' log domain.");
-        goto fail;
+        goto eina_fail;
      }
+
+   if (!ecore_init())
+     goto fail;
 
    if (!((udev) = udev_new()))
      {
         EINA_LOG_ERR("Could not initialize udev library!");
-        goto fail;
+        goto ecore_fail;
      }
 
    return _eeze_init_count;
+ecore_fail:
+   ecore_shutdown();
 fail:
    eina_log_domain_unregister(_eeze_udev_log_dom);
    _eeze_udev_log_dom = -1;
+eina_fail:
    eina_shutdown();
-   return _eeze_init_count;
+   return 0;
 }
 
 /**
