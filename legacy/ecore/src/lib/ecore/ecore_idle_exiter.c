@@ -24,11 +24,22 @@ static Ecore_Idle_Exiter *idle_exiter_current = NULL;
 static int                idle_exiters_delete_me = 0;
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Idle_Group Ecore Idle functions
+ *
+ * @{
+ */
+
+/**
  * Add an idle exiter handler.
  * @param func The function to call when exiting an idle state.
  * @param data The data to be passed to the @p func call
  * @return A handle to the idle exiter callback on success.  NULL otherwise.
- * @ingroup Idle_Group
  */
 EAPI Ecore_Idle_Exiter *
 ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data)
@@ -50,7 +61,6 @@ ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data)
  * @param idle_exiter The idle exiter to delete
  * @return The data pointer that was being being passed to the handler if
  *         successful.  NULL otherwise.
- * @ingroup Idle_Group
  */
 EAPI void *
 ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
@@ -66,6 +76,14 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
    idle_exiters_delete_me = 1;
    return idle_exiter->data;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 void
 _ecore_idle_exiter_shutdown(void)

@@ -23,6 +23,18 @@ static clockid_t _ecore_time_clock_id = -1;
 double _ecore_time_loop_time = -1.0;
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Time_Group Ecore Time functions
+ *
+ * @{
+ */
+
+/**
  * Retrieves the current system time as a floating point value in seconds.
  *
  * This uses a monotonic clock and thus never goes back in time while
@@ -36,7 +48,6 @@ double _ecore_time_loop_time = -1.0;
  *         when the machine was booted, unix time, etc), all it is
  *         defined is that it never goes backwards (unless you got big critical
  *         messages when the application started).
- * @ingroup Ecore_Time_Group
  */
 EAPI double
 ecore_time_get(void)
@@ -67,7 +78,6 @@ ecore_time_get(void)
  * @see ecore_loop_time_get().
  *
  * @return  The number of seconds since 12.00AM 1st January 1970.
- * @ingroup Ecore_Time_Group
  */
 EAPI double
 ecore_time_unix_get(void)
@@ -106,13 +116,20 @@ ecore_time_unix_get(void)
  *         when the machine was booted, unix time, etc), all it is
  *         defined is that it never goes backwards (unless you got big critical
  *         messages when the application started).
- * @ingroup Ecore_Time_Group
  */
 EAPI double
 ecore_loop_time_get(void)
 {
    return _ecore_time_loop_time;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 
 /**********************   Internal methods   ********************************/

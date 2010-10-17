@@ -430,9 +430,18 @@ _ecore_thread_shutdown(void)
    del_handler = NULL;
 #endif
 }
+
 /**
- * @addtogroup Ecore_Thread Ecore Thread Functions
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Thread_Group Ecore Thread functions
+ *
  * These functions allow for ecore-managed threads which integrate with ecore's main loop.
+ *
  * @{
  */
 
@@ -1326,6 +1335,10 @@ ecore_thread_global_data_wait(const char *key, double seconds)
    return NULL;
 #endif
 }
+
+/**
+ * @}
+ */
 
 /**
  * @}

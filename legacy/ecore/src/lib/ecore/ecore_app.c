@@ -21,6 +21,18 @@ static int app_argc = 0;
 static char **app_argv = NULL;
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Application_Group Ecore Application functions
+ *
+ * @{
+ */
+
+/**
  * Set up the programs command-line arguments.
  * @param argc The same as passed as argc to the programs main() function
  * @param argv The same as passed as argv to the programs main() function
@@ -75,3 +87,11 @@ ecore_app_restart(void)
    args[i] = NULL;
    execvp(app_argv[0], args);
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

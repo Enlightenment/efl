@@ -220,6 +220,18 @@ _ecore_glib_shutdown(void)
 }
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Main_Loop_Group Ecore Main Loop functions
+ *
+ * @}
+ */
+
+/**
  * Request ecore to integrate GLib's main loop.
  *
  * This will add a small overhead during every main loop interaction
@@ -284,3 +296,11 @@ ecore_main_loop_glib_always_integrate_disable(void)
 {
    _ecore_glib_always_integrate = 0;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

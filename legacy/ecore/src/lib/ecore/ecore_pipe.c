@@ -67,7 +67,13 @@ struct _Ecore_Pipe
 static Eina_Bool _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
 
 /**
- * @defgroup Ecore_Pipe_Group Pipe wrapper
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Pipe_Group Pipe wrapper
  *
  * These functions wrap the pipe / write / read functions to
  * easily integrate a loop that is in its own thread to the ecore
@@ -277,7 +283,6 @@ static Eina_Bool _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler);
  * @param data    Data to pass to @p handler when it is called.
  * @return        A newly created Ecore_Pipe object if successful.
  *                @c NULL otherwise.
- * @ingroup Ecore_Pipe_Group
  */
 EAPI Ecore_Pipe *
 ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data)
@@ -316,7 +321,6 @@ ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data)
  *
  * @param p The Ecore_Pipe object to be freed.
  * @return The pointer to the private data
- * @ingroup Ecore_Pipe_Group
  */
 EAPI void *
 ecore_pipe_del(Ecore_Pipe *p)
@@ -342,7 +346,6 @@ ecore_pipe_del(Ecore_Pipe *p)
  * Close the read end of an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object.
- * @ingroup Ecore_Pipe_Group
  */
 EAPI void
 ecore_pipe_read_close(Ecore_Pipe *p)
@@ -368,7 +371,6 @@ ecore_pipe_read_close(Ecore_Pipe *p)
  * Close the write end of an Ecore_Pipe object created with ecore_pipe_add().
  *
  * @param p The Ecore_Pipe object.
- * @ingroup Ecore_Pipe_Group
  */
 EAPI void
 ecore_pipe_write_close(Ecore_Pipe *p)
@@ -392,7 +394,6 @@ ecore_pipe_write_close(Ecore_Pipe *p)
  * @param buffer The data to write into the pipe.
  * @param nbytes The size of the @p buffer in bytes
  * @return       Returns EINA_TRUE on a successful write, EINA_FALSE on an error
- * @ingroup Ecore_Pipe_Group
  */
 EAPI Eina_Bool
 ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
@@ -481,6 +482,14 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
 
    return EINA_FALSE;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 /* Private function */
 static void

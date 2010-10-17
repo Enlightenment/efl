@@ -37,10 +37,20 @@ static double       last_check = 0.0;
 static double       precision = 10.0 / 1000000.0;
 
 /**
- * @defgroup Ecore_Time_Group Ecore Time Functions
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Time_Group Ecore Time functions
  *
  * Functions that deal with time.  These functions include those that simply
  * retrieve it in a given format, and those that create events based on it.
+ *
+ * The timer allows callbacks to be called at specific intervals.
+ *
+ * @{
  */
 
 /**
@@ -96,7 +106,6 @@ ecore_timer_precision_set(double value)
  *               rescheduled for the next interval @p in.
  * @param   data Data to pass to @p func when it is called.
  * @return  A timer object on success.  @c NULL on failure.
- * @ingroup Ecore_Time_Group
  *
  * This function adds a timer and returns its handle on success and NULL on
  * failure. The function @p func will be called every @p in seconds. The
@@ -131,7 +140,6 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
  *               rescheduled for the next interval @p in.
  * @param   data Data to pass to @p func when it is called.
  * @return  A timer object on success.  @c NULL on failure.
- * @ingroup Ecore_Time_Group
  *
  * This is the same as ecore_timer_add(), but "now" is the time from
  * ecore_loop_time_get() not ecore_time_get() as ecore_timer_add() uses. See
@@ -158,7 +166,6 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data)
  * @param   timer The timer to delete.
  * @return  The data pointer set for the timer when @ref ecore_timer_add was
  *          called.  @c NULL is returned if the function is unsuccessful.
- * @ingroup Ecore_Time_Group
  *
  * Note: @p timer must be a valid handle. If the timer function has already
  * returned 0, the handle is no longer valid (and does not need to be delete).
@@ -198,7 +205,6 @@ ecore_timer_del(Ecore_Timer *timer)
  *
  * @param   timer The timer to change.
  * @param   in    The interval in seconds.
- * @ingroup Ecore_Time_Group
  */
 EAPI void
 ecore_timer_interval_set(Ecore_Timer *timer, double in)
@@ -217,7 +223,6 @@ ecore_timer_interval_set(Ecore_Timer *timer, double in)
  *
  * @param   timer The timer to retrieve the interval from
  * @return  The interval on success. -1 on failure.
- * @ingroup Ecore_Time_Group
  */
 EAPI double
 ecore_timer_interval_get(Ecore_Timer *timer)
@@ -238,7 +243,6 @@ ecore_timer_interval_get(Ecore_Timer *timer)
  *
  * @param   timer The timer to change.
  * @param   add   The dalay to add to the next iteration.
- * @ingroup Ecore_Time_Group
  */
 EAPI void
 ecore_timer_delay(Ecore_Timer *timer, double add)
@@ -337,6 +341,14 @@ ecore_timer_thaw(Ecore_Timer *timer)
 
    _ecore_timer_set(timer, timer->pending + now, timer->in, timer->func, timer->data);
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 void
 _ecore_timer_shutdown(void)

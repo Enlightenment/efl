@@ -54,7 +54,7 @@ These routines are used for Ecore Library interaction
 Ecore is a library of convenience functions.
 
 The Ecore library provides the following modules:
-@li @link Ecore.h        Ecore - Main Loop and Job Functions. @endlink
+@li @ref Ecore_Group
 @li @ref Ecore_Con_Group
 @li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
 @li @ref Ecore_FB_Group
@@ -243,63 +243,6 @@ The following examples show how to use the Enlightened Property Library:
 The Ecore library includes a wrapper for handling the X window system.
 This page briefly explains what the X window system is and various terms
 that are used.
-*/
-
-// GROUP DEFINITIONS
-
-/**
-@defgroup Ecore_Timer_Group Ecore Timer
-
-The timer allows callbacks to be called at specific intervals.
- */
-
-/**
-@defgroup Ecore_Job_Group Ecore Jobs
-
-You can queue jobs that are to be done by the main loop when the current
-event is dealt with.
-*/
-
-/**
-@defgroup Idle_Group Idle Handlers
-
-Callbacks that are called when the program enters or exits an idle state.
-
-The ecore main loop enters an idle state when it is waiting for timers
-to time out, data to come in on a file descriptor or any other event
-to occur.  You can set callbacks to be called when the main loop
-enters an idle state, during an idle state or just after the program
-wakes up.
-
-Enterer callbacks are good for updating your program's state, if it
-has a state engine.  Once all of the enterer handlers are called, the
-program will enter a "sleeping" state.
-
-Idler callbacks are called when the main loop has called all enterer
-handlers.  They are useful for interfaces that require polling and
-timers would be too slow to use.
-
-If no idler callbacks are specified, then the process literally goes
-to sleep.  Otherwise, the idler callbacks are called continuously
-while the loop is "idle", using as much CPU as is available to the
-process.
-
-Exiter callbacks are called when the main loop wakes up from an idle
-state.
-
-*/
-
-/*
-@defgroup Ecore_Config_Create_Group Ecore Config Create Functions
-
-Convenience functions that set default values, bounds, option values and
-descriptions in one call.
-*/
-
-/**
-@defgroup Ecore_Config_File_Group Ecore Config File Functions
-
-Functions that are used to load and save properties from and to files.
 */
 
 // EXAMPLES

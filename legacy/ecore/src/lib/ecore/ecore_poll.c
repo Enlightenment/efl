@@ -191,12 +191,20 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
 }
 
 /**
- * @defgroup Ecore_Poll_Group Ecore Poll Functions
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Poller_Group Ecore Poll functions
  *
  * These functions are for the need to poll information, but provide a shared
  * abstracted API to pool such polling to minimise wakeup and ensure all the
  * polling happens in as few spots as possible areound a core poll interval.
  * For now only 1 core poller type is supprted: ECORE_POLLER_CORE
+ *
+ * @{
  */
 
 
@@ -204,7 +212,6 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
  * Sets the time between ticks (in seconds) for the given ticker clock.
  * @param   type The ticker type to adjust
  * @param   poll_time The time (in seconds) between ticks of the clock
- * @ingroup Ecore_Poller_Group
  *
  * This will adjust the time between ticks of the given ticker type defined
  * by @p type to the time period defined by @p poll_time.
@@ -220,7 +227,6 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__, double poll_ti
  * Gets the time between ticks (in seconds) for the given ticker clock.
  * @param   type The ticker type to query
  * @return  The time in seconds between ticks of the ticker clock
- * @ingroup Ecore_Poller_Group
  *
  * This will get the time between ticks of the specifider ticker clock.
  */
@@ -238,7 +244,6 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
  *               rescheduled for the next tick interval.
  * @param   data Data to pass to @p func when it is called.
  * @return  A poller object on success.  @c NULL on failure.
- * @ingroup Ecore_Poller_Group
  *
  * This function adds a poller callback that is to be called regularly
  * along with all other poller callbacks so the pollers are synchronized with
@@ -320,7 +325,6 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__, int interval, Ecore_Task_Cb 
  *
  * This allows the changing of a poller's polling interval.  It is useful when you want to alter
  * a poll rate without deleting and re-creating a poller.
- * @ingroup Ecore_Poller_Group
  */
 EAPI Eina_Bool
 ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
@@ -364,7 +368,6 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval)
  * @return Returns the interval, in ticks, that @p poller polls at
  *
  * This returns a poller's polling interval, or 0 on error.
- * @ingroup Ecore_Poller_Group
  */
 EAPI int
 ecore_poller_poller_interval_get(Ecore_Poller *poller)
@@ -392,7 +395,6 @@ ecore_poller_poller_interval_get(Ecore_Poller *poller)
  * @param   poller The poller to delete.
  * @return  The data pointer set for the timer when @ref ecore_poller_add was
  *          called.  @c NULL is returned if the function is unsuccessful.
- * @ingroup Ecore_Poller_Group
  *
  * Note: @p poller must be a valid handle. If the poller function has already
  * returned 0, the handle is no longer valid (and does not need to be delete).
@@ -424,6 +426,14 @@ ecore_poller_del(Ecore_Poller *poller)
    _ecore_poller_next_tick_eval();
    return data;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 void
 _ecore_poller_shutdown(void)

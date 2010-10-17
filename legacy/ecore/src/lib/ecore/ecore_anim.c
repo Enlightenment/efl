@@ -30,11 +30,22 @@ static Ecore_Animator *animators = NULL;
 static double          animators_frametime = 1.0 / 30.0;
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Animator_Group Ecore Animator functions
+ *
+ * @{
+ */
+
+/**
  * Add a animator to tick off at every animaton tick during main loop execution.
  * @param func The function to call when it ticks off
  * @param data The data to pass to the function
  * @return A handle to the new animator
- * @ingroup Ecore_Animator_Group
  *
  * This function adds a animator and returns its handle on success and NULL on
  * failure. The function @p func will be called every N seconds where N is the
@@ -74,7 +85,6 @@ ecore_animator_add(Ecore_Task_Cb func, const void *data)
  * Delete the specified animator from the animator list.
  * @param animator The animator to delete
  * @return The data pointer set for the animator
- * @ingroup Ecore_Animator_Group
  *
  * Delete the specified @p aqnimator from the set of animators that are executed
  * during main loop execution. This function returns the data parameter that
@@ -133,7 +143,6 @@ ecore_animator_frametime_get(void)
 /**
  * Suspend the specified animator.
  * @param animator The animator to delete
- * @ingroup Ecore_Animator_Group
  *
  * The specified @p animator will be temporarly removed from the set of animators
  * that are executed during main loop execution.
@@ -154,7 +163,6 @@ ecore_animator_freeze(Ecore_Animator *animator)
 /**
  * Restore execution of the specified animator.
  * @param animator The animator to delete
- * @ingroup Ecore_Animator_Group
  *
  * The specified @p animator will be put back in the set of animators
  * that are executed during main loop execution.
@@ -231,3 +239,11 @@ _ecore_animator(void *data __UNUSED__)
      }
    return ECORE_CALLBACK_RENEW;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */

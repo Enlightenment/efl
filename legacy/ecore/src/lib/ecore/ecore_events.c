@@ -71,6 +71,18 @@ static void *_ecore_event_del(Ecore_Event *event);
 
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Event_Group Ecore Event functions
+ *
+ * @{
+ */
+
+/**
  * Add an event handler.
  * @param type The type of the event this handler will get called for
  * @param func The function to call when the event is found in the queue
@@ -332,6 +344,14 @@ ecore_event_current_event_get(void)
 {
    return ecore_raw_event_event;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 void
 _ecore_event_shutdown(void)

@@ -24,11 +24,45 @@ static Ecore_Idler *idler_current = NULL;
 static int          idlers_delete_me = 0;
 
 /**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Idle_Group Ecore Idle functions
+ *
+Callbacks that are called when the program enters or exits an idle state.
+
+The ecore main loop enters an idle state when it is waiting for timers
+to time out, data to come in on a file descriptor or any other event
+to occur.  You can set callbacks to be called when the main loop
+enters an idle state, during an idle state or just after the program
+wakes up.
+
+Enterer callbacks are good for updating your program's state, if it
+has a state engine.  Once all of the enterer handlers are called, the
+program will enter a "sleeping" state.
+
+Idler callbacks are called when the main loop has called all enterer
+handlers.  They are useful for interfaces that require polling and
+timers would be too slow to use.
+
+If no idler callbacks are specified, then the process literally goes
+to sleep.  Otherwise, the idler callbacks are called continuously
+while the loop is "idle", using as much CPU as is available to the
+process.
+
+Exiter callbacks are called when the main loop wakes up from an idle
+state.
+ * @{
+ */
+
+/**
  * Add an idler handler.
  * @param  func The function to call when idling.
  * @param  data The data to be passed to this @p func call.
  * @return A idler handle if successfully added.  NULL otherwise.
- * @ingroup Idle_Group
  *
  * Add an idler handle to the event loop, returning a handle on success and
  * NULL otherwise.  The function @p func will be called repeatedly while
@@ -58,7 +92,6 @@ ecore_idler_add(Ecore_Task_Cb func, const void *data)
  * @param  idler The handle of the idler callback to delete
  * @return The data pointer passed to the idler callback on success.  NULL
  *         otherwise.
- * @ingroup Idle_Group
  */
 EAPI void *
 ecore_idler_del(Ecore_Idler *idler)
@@ -74,6 +107,14 @@ ecore_idler_del(Ecore_Idler *idler)
    idlers_delete_me = 1;
    return idler->data;
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 void
 _ecore_idler_shutdown(void)

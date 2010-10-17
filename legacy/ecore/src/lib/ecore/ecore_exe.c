@@ -299,10 +299,19 @@ _ecore_exe_check_errno(int result, const char *file, int line)
    return result;
 }
 
+
 /**
- * @defgroup Ecore_Exe_Basic_Group Process Spawning Functions
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
  *
- * Functions that deal with spawned processes.
+ * @{
+ */
+
+/**
+ * @addtogroup Ecore_Exe_Group Process Spawning Functions
+ *
+ * Functions that deal with and send signals to spawned processes.
+ *
+ * @{
  */
 
 static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
@@ -322,7 +331,6 @@ static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
  *
  * @param   pri value a Ecore_Exe_Win32_Priority value on Windows, -20
  * to 19 or ECORE_EXE_PRIORITY_INHERIT on other OS.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
 ecore_exe_run_priority_set(int pri)
@@ -338,7 +346,6 @@ ecore_exe_run_priority_set(int pri)
  * by this call.
  *
  * @return the value set by ecore_exe_run_priority_set()
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI int
 ecore_exe_run_priority_get(void)
@@ -354,7 +361,6 @@ ecore_exe_run_priority_get(void)
  * @param   exe_cmd The command to run with @c /bin/sh.
  * @param   data    Data to attach to the returned process handle.
  * @return  A process handle to the spawned process.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe *
 ecore_exe_run(const char *exe_cmd, const void *data)
@@ -386,7 +392,6 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * @param   flags   The flag parameters for how to deal with inter-process I/O
  * @param   data    Data to attach to the returned process handle.
  * @return  A process handle to the spawned process.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe *
 ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
@@ -702,7 +707,6 @@ ecore_exe_callback_pre_free_set(Ecore_Exe *exe, Ecore_Exe_Cb func)
  * @param data The data to send
  * @param size The size of the data to send, in bytes
  * @return EINA_TRUE if successful, EINA_FALSE on failure.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Eina_Bool
 ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
@@ -746,7 +750,6 @@ ecore_exe_send(Ecore_Exe * exe, const void *data, int size)
  * The stdin of the given child process will close when the write buffer is empty.
  *
  * @param exe  The child process
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
 ecore_exe_close_stdin(Ecore_Exe *exe)
@@ -768,7 +771,6 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
  * @param   end_bytes limit of bytes at end of output to buffer.
  * @param   start_lines limit of lines at start of output to buffer.
  * @param   end_lines limit of lines at end of output to buffer.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
 ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines)
@@ -829,7 +831,6 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
  *
  * @param   exe The given process handle.
  * @param   flags   Is this a ECORE_EXE_PIPE_READ or ECORE_EXE_PIPE_ERROR?
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Event_Data *
 ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
@@ -960,7 +961,6 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
  *
  * @param   exe The given process handle.
  * @param   tag The string tag to set on the process handle.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
 ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
@@ -987,7 +987,6 @@ ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
  * @return The string attached to @p exe. It is a handle to existing
  *         internal string and should not be modified, use
  *         ecore_exe_tag_set() to change it. It might be @c NULL.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI const char *
 ecore_exe_tag_get(const Ecore_Exe *exe)
@@ -1009,7 +1008,6 @@ ecore_exe_tag_get(const Ecore_Exe *exe)
  * @param   exe The given process handle.
  * @return  The data attached to the handle when @ref ecore_exe_run was
  *          called.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void *
 ecore_exe_free(Ecore_Exe *exe)
@@ -1074,7 +1072,6 @@ ecore_exe_free(Ecore_Exe *exe)
  * Frees the given event data.
  *
  * @param   e The given event data.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void
 ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
@@ -1089,7 +1086,6 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
  * Retrieves the process ID of the given spawned process.
  * @param   exe Handle to the given spawned process.
  * @return  The process ID on success.  @c -1 otherwise.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI pid_t
 ecore_exe_pid_get(const Ecore_Exe *exe)
@@ -1108,7 +1104,6 @@ ecore_exe_pid_get(const Ecore_Exe *exe)
  * @return The command on success.  NULL otherwise. This string is the
  *         pointer to the internal value and must not be modified in
  *         any way.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI const char *
 ecore_exe_cmd_get(const Ecore_Exe *exe)
@@ -1126,7 +1121,6 @@ ecore_exe_cmd_get(const Ecore_Exe *exe)
  * @param   exe The given process handle.
  * @return The data pointer attached to @p exe Given to
  *         ecore_exe_run() or ecore_exe_pipe_run()
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI void *
 ecore_exe_data_get(const Ecore_Exe *exe)
@@ -1143,7 +1137,6 @@ ecore_exe_data_get(const Ecore_Exe *exe)
  * Retrieves the flags attached to the given process handle.
  * @param   exe The given process handle.
  * @return  The flags attached to @p exe.
- * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Flags
 ecore_exe_flags_get(const Ecore_Exe *exe)
@@ -1157,15 +1150,8 @@ ecore_exe_flags_get(const Ecore_Exe *exe)
 }
 
 /**
- * @defgroup Ecore_Exe_Signal_Group Spawned Process Signal Functions
- *
- * Functions that send signals to spawned processes.
- */
-
-/**
  * Pauses the given process by sending it a @c SIGSTOP signal.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_pause(Ecore_Exe *exe)
@@ -1181,7 +1167,6 @@ ecore_exe_pause(Ecore_Exe *exe)
 /**
  * Continues the given paused process by sending it a @c SIGCONT signal.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_continue(Ecore_Exe *exe)
@@ -1197,7 +1182,6 @@ ecore_exe_continue(Ecore_Exe *exe)
 /**
  * Sends the given spawned process a interrupt (@c SIGINT) signal.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_interrupt(Ecore_Exe *exe)
@@ -1214,7 +1198,6 @@ ecore_exe_interrupt(Ecore_Exe *exe)
 /**
  * Sends the given spawned process a quit (@c SIGQUIT) signal.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_quit(Ecore_Exe *exe)
@@ -1231,7 +1214,6 @@ ecore_exe_quit(Ecore_Exe *exe)
 /**
  * Sends the given spawned process a terminate (@c SIGTERM) signal.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_terminate(Ecore_Exe *exe)
@@ -1249,7 +1231,6 @@ ecore_exe_terminate(Ecore_Exe *exe)
 /**
  * Kills the given spawned process by sending it a @c SIGKILL signal.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_kill(Ecore_Exe *exe)
@@ -1281,7 +1262,6 @@ ecore_exe_kill(Ecore_Exe *exe)
  * @param   exe Process handle to the given process.
  * @param   num The number user signal to send.  Must be either 1 or 2, or
  *              the signal will be ignored.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_signal(Ecore_Exe *exe, int num)
@@ -1300,7 +1280,6 @@ ecore_exe_signal(Ecore_Exe *exe, int num)
 /**
  * Sends a @c SIGHUP signal to the given spawned process.
  * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
  */
 EAPI void
 ecore_exe_hup(Ecore_Exe *exe)
@@ -1312,6 +1291,14 @@ ecore_exe_hup(Ecore_Exe *exe)
      }
    kill(exe->pid, SIGHUP);
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 static Ecore_Exe *
 _ecore_exe_is_it_alive(pid_t pid)

@@ -62,6 +62,12 @@ int _ecore_fps_debug = 0;
 #endif
 
 /**
+ * @addtogroup Ecore_Init_Group Ecore initialisation and shutdown functions.
+ *
+ * @{
+ */
+
+/**
  * Set up connections, signal handlers, sockets etc.
  * @return 1 or greater on success, 0 otherwise
  *
@@ -196,6 +202,10 @@ ecore_shutdown(void)
 
    return _ecore_init_count;
 }
+
+/**
+ * @}
+ */
 
 EAPI void
 ecore_print_warning(const char *function, const char *sparam)
@@ -416,4 +426,5 @@ _ecore_memory_statistic(__UNUSED__ void *data)
 
    return ECORE_CALLBACK_RENEW;
 }
+
 #endif

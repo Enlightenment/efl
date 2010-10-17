@@ -517,9 +517,14 @@ _ecore_main_loop_shutdown(void)
 #endif
 }
 
+/**
+ * @addtogroup Ecore_Group Ecore - Main Loop and Job Functions.
+ *
+ * @{
+ */
 
 /**
- * @defgroup Ecore_Main_Loop_Group Main Loop Functions
+ * @addtogroup Ecore_Main_Loop_Group Ecore Main Loop functions
  *
  * These functions control the Ecore event handling loop.  This loop is
  * designed to work on embedded systems all the way to large and
@@ -536,12 +541,13 @@ _ecore_main_loop_shutdown(void)
  *
  * For examples of setting up and using a main loop, see
  * @ref event_handler_example.c and @ref timer_example.c.
+ *
+ * @{
  */
 
 /**
  * Runs a single iteration of the main loop to process everything on the
  * queue.
- * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void
 ecore_main_loop_iterate(void)
@@ -558,7 +564,6 @@ ecore_main_loop_iterate(void)
  *
  * This function will not return until @ref ecore_main_loop_quit is called.
  *
- * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void
 ecore_main_loop_begin(void)
@@ -577,7 +582,6 @@ ecore_main_loop_begin(void)
 /**
  * Quits the main loop once all the events currently on the queue have
  * been processed.
- * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void
 ecore_main_loop_quit(void)
@@ -602,7 +606,6 @@ ecore_main_loop_quit(void)
  *
  * @warning you don't know how to use, don't even try to use it.
  *
- * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void
 ecore_main_loop_select_func_set(Ecore_Select_Function func)
@@ -614,7 +617,6 @@ ecore_main_loop_select_func_set(Ecore_Select_Function func)
  * Gets the select function set by ecore_select_func_set(),
  * or the native select function if none was set.
  *
- * @ingroup Ecore_Main_Loop_Group
  */
 EAPI void *
 ecore_main_loop_select_func_get(void)
@@ -849,6 +851,14 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
         ERR("Failed to mod epoll fd %d!", fd_handler->fd);
      }
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 
 void
 _ecore_main_shutdown(void)

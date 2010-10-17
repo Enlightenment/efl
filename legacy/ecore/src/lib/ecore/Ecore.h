@@ -33,28 +33,6 @@
 # endif
 #endif /* ! _WIN32 */
 
-/**
- * @file Ecore.h
- * @brief The file that provides the program utility, main loop and timer
- *        functions.
- *
- * This header provides the Ecore event handling loop.  For more
- * details, see @ref Ecore_Main_Loop_Group.
- *
- * For the main loop to be of any use, you need to be able to add events
- * and event handlers.  Events for file descriptor events are covered in
- * @ref Ecore_FD_Handler_Group.
- *
- * Time functions are covered in @ref Ecore_Time_Group.
- *
- * There is also provision for callbacks for when the loop enters or
- * exits an idle state. See @ref Idle_Group for more information.
- *
- * Functions are also provided for spawning child processes using fork.
- * See @ref Ecore_Exe_Basic_Group and @ref Ecore_Exe_Signal_Group for
- * more details.
- */
-
 #ifdef _WIN32
 # include <winsock2.h>
 #elif (defined (__FreeBSD__) && (__FreeBSD_version >= 420001)) || defined (__OpenBSD__)
@@ -70,6 +48,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+  /**
+   * @defgroup Ecore_Group Ecore - Main Loop and Job Functions.
+   * @brief The file that provides the program utility, main loop and timer
+   *        functions.
+   *
+   * This header provides the Ecore event handling loop.  For more
+   * details, see @ref Ecore_Main_Loop_Group.
+   *
+   * For the main loop to be of any use, you need to be able to add events
+   * and event handlers.  Events for file descriptor events are covered in
+   * @ref Ecore_FD_Handler_Group.
+   *
+   * Time functions are covered in @ref Ecore_Time_Group.
+   *
+   * There is also provision for callbacks for when the loop enters or
+   * exits an idle state. See @ref Idle_Group for more information.
+   *
+   * Functions are also provided for spawning child processes using fork.
+   * See @ref Ecore_Exe_Group for more details.
+   *
+   * @{
+   */
 
 #define ECORE_VERSION_MAJOR 1
 #define ECORE_VERSION_MINOR 0
@@ -210,7 +211,7 @@ extern "C" {
    typedef void (*Ecore_Thread_Heavy_Cb) (Ecore_Thread *thread, void *data);
    /**
     * @typedef Ecore_Thread_Notify_Cb Ecore_Thread_Notify_Cb
-    * A callback used by the main loop to receive data sent by an @ref Ecore_Thread.
+    * A callback used by the main loop to receive data sent by an @ref Ecore_Thread_Group.
     */
    typedef void (*Ecore_Thread_Notify_Cb) (Ecore_Thread *thread, void *msg_data, void *data);
    /**
@@ -325,12 +326,36 @@ extern "C" {
         Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
      };
 
+  /**
+   * @defgroup Ecore_Init_Group Ecore initialisation and shutdown functions.
+   */
+
    EAPI int  ecore_init(void);
    EAPI int  ecore_shutdown(void);
+
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Application_Group Ecore Application functions
+   *
+   * @{
+   */
 
    EAPI void ecore_app_args_set(int argc, const char **argv);
    EAPI void ecore_app_args_get(int *argc, char ***argv);
    EAPI void ecore_app_restart(void);
+
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Event_Group Ecore Event functions
+   *
+   * @{
+   */
 
    EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data);
    EAPI void                *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
@@ -342,6 +367,15 @@ extern "C" {
    EAPI int                  ecore_event_current_type_get(void);
    EAPI void                *ecore_event_current_event_get(void);
 
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Exe_Group Process Spawning Functions
+   *
+   * @{
+   */
 
    EAPI void        ecore_exe_run_priority_set(int pri);
    EAPI int         ecore_exe_run_priority_get(void);
@@ -369,6 +403,16 @@ extern "C" {
    EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
    EAPI void        ecore_exe_hup(Ecore_Exe *exe);
 
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Idle_Group Ecore Idle functions
+   *
+   * @{
+   */
+
    EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
    EAPI void        *ecore_idler_del(Ecore_Idler *idler);
 
@@ -378,6 +422,16 @@ extern "C" {
 
    EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data);
    EAPI void              *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
+
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Main Loop_Group Ecore Main Loop functions
+   *
+   * @{
+   */
 
    EAPI void              ecore_main_loop_iterate(void);
 
@@ -400,13 +454,31 @@ extern "C" {
    EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data);
    EAPI void                *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Pipe_Group Pipe wrapper
+   *
+   * @{
+   */
+
    EAPI Ecore_Pipe  *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
    EAPI void        *ecore_pipe_del(Ecore_Pipe *p);
    EAPI Eina_Bool    ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
    EAPI void         ecore_pipe_write_close(Ecore_Pipe *p);
    EAPI void         ecore_pipe_read_close(Ecore_Pipe *p);
 
+  /**
+   * @}
+   */
 
+  /**
+   * @defgroup Ecore_Thread_Group Ecore Thread functions
+   *
+   * @{
+   */
 
    EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
                                        Ecore_Cb func_end,
@@ -429,20 +501,26 @@ extern "C" {
    EAPI void          ecore_thread_max_set(int num);
    EAPI void          ecore_thread_max_reset(void);
    EAPI int           ecore_thread_available_get(void);
-
    EAPI Eina_Bool     ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
    EAPI void         *ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
-   EAPI void   *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
+   EAPI void         *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
    EAPI Eina_Bool     ecore_thread_local_data_del(Ecore_Thread *thread, const char *key);
 
    EAPI Eina_Bool     ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
    EAPI void         *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
-   EAPI void   *ecore_thread_global_data_find(const char *key);
+   EAPI void         *ecore_thread_global_data_find(const char *key);
    EAPI Eina_Bool     ecore_thread_global_data_del(const char *key);
-   EAPI void   *ecore_thread_global_data_wait(const char *key, double seconds);
+   EAPI void         *ecore_thread_global_data_wait(const char *key, double seconds);
 
+  /**
+   * @}
+   */
 
-
+  /**
+   * @defgroup Ecore_Time_Group Ecore Time functions
+   *
+   * @{
+   */
 
    EAPI double ecore_time_get(void);
    EAPI double ecore_time_unix_get(void);
@@ -457,9 +535,18 @@ extern "C" {
    EAPI void         ecore_timer_thaw(Ecore_Timer *timer);
    EAPI void         ecore_timer_delay(Ecore_Timer *timer, double add);
    EAPI double       ecore_timer_pending_get(Ecore_Timer *timer);
-
    EAPI double       ecore_timer_precision_get(void);
    EAPI void         ecore_timer_precision_set(double precision);
+
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Animator_Group Ecore Animator functions
+   *
+   * @{
+   */
 
    EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
@@ -468,6 +555,16 @@ extern "C" {
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
 
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Poller_Group Ecore Poll functions
+   *
+   * @{
+   */
+
    EAPI void          ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
    EAPI double        ecore_poller_poll_interval_get(Ecore_Poller_Type type);
    EAPI Eina_Bool     ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval);
@@ -475,8 +572,26 @@ extern "C" {
    EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_Task_Cb func, const void *data);
    EAPI void         *ecore_poller_del(Ecore_Poller *poller);
 
+  /**
+   * @}
+   */
+
+  /**
+   * @defgroup Ecore_Job_Group Ecore Job functions
+   *
+   * @{
+   */
+
    EAPI Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
    EAPI void      *ecore_job_del(Ecore_Job *job);
+
+  /**
+   * @}
+   */
+
+  /**
+   * @}
+   */
 
 #ifdef __cplusplus
 }
