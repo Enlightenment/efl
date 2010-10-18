@@ -500,7 +500,8 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
      {
 #ifdef HAVE_ELEMENTARY_X
         wd->selection_asked = EINA_TRUE;
-	elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data);
+	elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data,
+                          NULL, NULL);
 #endif
      }
 }
@@ -1049,7 +1050,8 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
 	if ((top) && (elm_win_xwindow_get(top)))
 	  {
              wd->selection_asked = EINA_TRUE;
-             elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data);
+             elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data,
+                               NULL, NULL);
 	  }
 #endif
      }

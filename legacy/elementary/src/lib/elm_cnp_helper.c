@@ -399,7 +399,7 @@ elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
 
 Eina_Bool
 elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
-			Evas_Object *widget)
+			Evas_Object *widget, Elm_Drop_Cb datacb, void *udata)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
