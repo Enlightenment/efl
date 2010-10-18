@@ -1160,7 +1160,7 @@ _dnd_enter(void *data, int etype, void *ev)
    int i;
 
    /* Skip it */
-   if (enter->num_types == 0 || enter->types == NULL) return true;
+   if (!enter || !enter->num_types || !enter->types) return EINA_TRUE;
 
    cnp_debug("Types\n");
    savedtypes.ntypes = enter->num_types;
@@ -1186,7 +1186,7 @@ _dnd_enter(void *data, int etype, void *ev)
 
    /* FIXME: Find an object and make it current */
 
-   return true;
+   return EINA_TRUE;
 }
 
 static Eina_Bool

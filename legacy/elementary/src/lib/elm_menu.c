@@ -93,12 +93,12 @@ _del_hook(Evas_Object *obj)
 static void
 _theme_hook(Evas_Object *obj)
 {
-   Eina_List *l, *_l, *ll = NULL;
+   Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Menu_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    ll = eina_list_append(ll, wd->items);
-   EINA_LIST_FOREACH(ll, ll, l)
+   EINA_LIST_FOREACH(ll, _ll, l)
      {
 	EINA_LIST_FOREACH(l, _l, item)
 	  {
@@ -456,7 +456,7 @@ elm_menu_add(Evas_Object *parent)
 EAPI void
 elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
-   Eina_List *l, *_l, *ll = NULL;
+   Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Menu_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -465,7 +465,7 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
    wd->parent = parent;
 
    ll = eina_list_append(ll, wd->items);
-   EINA_LIST_FOREACH(ll, ll, l)
+   EINA_LIST_FOREACH(ll, _ll, l)
      {
 	EINA_LIST_FOREACH(l, _l, item)
 	  {
