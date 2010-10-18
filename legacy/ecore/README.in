@@ -35,7 +35,7 @@ Recommended:
   evas (1.0.0 or better)
 
 Optional:
-  XCB
+  XCB (highly experimental - don't use it unless you are fixing it)
   SDL
   DirectFB
 
