@@ -71,6 +71,9 @@ struct _elm_cnp_selection {
    Evas_Object *requestwidget;
    Elm_Sel_Format requestformat;
 
+   Elm_Drop_Cb datacb;
+   void *udata;
+
    Eina_Bool (*set)(Ecore_X_Window, const void *data, int size);
    Eina_Bool (*clear)(void);
    void (*request)(Ecore_X_Window, const char *target);
@@ -216,7 +219,7 @@ static struct {
    },
    [CNP_ATOM_text_html_utf8] = {
 	"text/html;charset=utf-8",
-	ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	html_converter,
 	NULL,
 	notify_handler_html,
@@ -224,10 +227,10 @@ static struct {
    },
    [CNP_ATOM_text_html] = {
 	"text/html",
-	ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_HTML,
 	html_converter,
 	NULL,
-	NULL, /* No encoding: Don't try */
+	notify_handler_html, /* No encoding: Webkit only */
 	0
    },
    [CNP_ATOM_UTF8STRING] = {
@@ -749,7 +752,8 @@ vcard_receive(struct _elm_cnp_selection *sel,
    data = notify->data;
    cnp_debug("vcard receive\n");
 
-   if (sel == selections + ELM_SEL_XDND){
+   if (sel == selections + ELM_SEL_XDND)
+     {
         Elm_Selection_Data ddata;
         cnp_debug("drag & drop\n");
         /* FIXME: this needs to be generic: Used for all receives */
@@ -770,7 +774,18 @@ vcard_receive(struct _elm_cnp_selection *sel,
         ddata.len = data->length;
         dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
         ecore_x_dnd_send_finished();
-   } else {
+     }
+   else if (sel->datacb)
+     {
+        Elm_Selection_Data ddata;
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_IMAGE;
+        ddata.data = data->data;
+        ddata.len = data->length;
+        sel->datacb(sel->udata, sel->widget, &ddata);
+     }
+   else
+     {
         cnp_debug("Paste request\n");
    }
 
@@ -791,6 +806,18 @@ notify_handler_png(struct _elm_cnp_selection *sel,
    data = notify->data;
 
    cnp_debug("Size if %d\n",data->length);
+
+   if (sel->datacb)
+     {
+       Elm_Selection_Data ddata;
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_IMAGE;
+        ddata.data = data->data;
+        ddata.len = data->length;
+        sel->datacb(sel->udata, sel->widget, &ddata);
+        return 0;
+     }
+
 
    /* generate tmp name */
    tmp = elm_cnp_tempfile_create(data->length);
@@ -822,6 +849,17 @@ notify_handler_html(struct _elm_cnp_selection *sel,
 
    cnp_debug("Got some HTML: Checking encoding is useful\n");
    data = notify->data;
+
+   if (sel->datacb)
+     {
+        Elm_Selection_Data ddata;
+        ddata.x = ddata.y = 0;
+        ddata.format = ELM_SEL_FORMAT_HTML;
+        ddata.data = data->data;
+        ddata.len = data->length;
+        sel->datacb(sel->udata, sel->widget, &ddata);
+        return 0;
+     }
 
 
    cnp_debug("String is %s (%d bytes)\n",data->data,data->length);
