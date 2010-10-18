@@ -48,8 +48,10 @@ static int _client_connected = 0;
 static void
 _gnutls_print_errors(int ret)
 {
+#ifdef USE_GNUTLS2_6
   if (ret)
     ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
+#endif
 }
 
 
@@ -498,7 +500,9 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
       case ECORE_CON_SSL_STATE_HANDSHAKING:
         ret = gnutls_handshake(svr->session);
+#ifdef USE_GNUTLS2_6
         DBG("calling gnutls_handshake(): returned with '%s'", gnutls_strerror_name(ret));
+#endif
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
         if (!ret)
           {
