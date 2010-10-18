@@ -490,7 +490,6 @@ EAPI void
 elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 {
    Evas_Object *sobj_parent;
-   Smart_Data *sd2 = evas_object_smart_data_get(sobj);
    API_ENTRY return;
    if (!sobj) return;
 
