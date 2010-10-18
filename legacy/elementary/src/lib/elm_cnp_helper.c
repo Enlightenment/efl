@@ -454,7 +454,7 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event){
      {
 	if (selections[i].ecore_sel == ev->selection) break;
      }
-cnp_debug("selection %d clear\n",i);
+   cnp_debug("selection %d clear\n",i);
    /* Not me... Don't care */
    if (i == ELM_SEL_MAX) return ECORE_CALLBACK_PASS_ON;
 
@@ -465,45 +465,6 @@ cnp_debug("selection %d clear\n",i);
 
    return ECORE_CALLBACK_PASS_ON;
 }
-
-#if 0
-/**
- * Response to a selection request
- */
-static Eina_Bool
-selection_request(void *udata __UNUSED__, int type, void *event){
-   Ecore_X_Event_Selection_Request *ev = event;
-   struct _elm_cnp_selection *sel;
-   int i;
-printf("selection request callback: %d\n",ev->selection);
-printf("selection request callback: %d\n",ev->target);
-
-   if (ev->selection == clipboard_atom){
-	 sel = selections + ELM_SEL_CLIPBOARD;
-   } else if (ev->selection == XA_PRIMARY){
-	 sel = selections + ELM_SEL_PRIMARY;
-   } else if (ev->selection ==  XA_SECONDARY){
-	 sel = selections + ELM_SEL_SECONDARY;
-   } else {
-	 return ECORE_CALLBACK_PASS_ON;
-   }
-   return ECORE_CALLBACK_PASS_ON;
-
-   for (i = 0 ; i < CNP_N_ATOMS ; i ++)
-     {
-	if (ev->target == atoms[i].atom)
-	  {
-	     if (atoms[i].response){
-		  atoms[i].response(sel, ev);
-	     } else {
-		  printf("Ignored: No handler!\n");
-	     }
-	  }
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-#endif
 
 
 /*
