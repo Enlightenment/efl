@@ -7234,7 +7234,6 @@ collections {
       }
    }
 
-
    group { name: "elm/entry/base-nowrap/default";
       parts {
          part { name: "elm.text";
@@ -7577,7 +7576,7 @@ collections {
       }
    }
 
-  group { name: "elm/entry/base-password/default";
+   group { name: "elm/entry/base-password/default";
       parts {
          part { name: "elm.text";
             type: TEXTBLOCK;
