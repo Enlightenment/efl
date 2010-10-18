@@ -156,7 +156,9 @@ development and debugging purposes.
 
 this enable the software xcb rendering engine. It allows the same
 features than the software xlib engine. It require the XCB and XCBImage
-libraries. For the test programs, XCBICCCM is also needed.
+libraries. For the test programs, XCBICCCM is also needed. It is not
+recommended to use this as it's experimental and will create problems
+with both ecore_evas and enlightenment itself.
 
 
 --enable-fb[=static]
@@ -201,7 +203,9 @@ and be unmaintained.
 
 --enable-xrender-xcb[=static]
 
-this is the same as xrender-x11 but uses/exposes an xcb api.
+this is the same as xrender-x11 but uses/exposes an xcb api. It is not
+recommended to use this as it's experimental and will create problems
+with both ecore_evas and enlightenment itself.
 
 
 --enable-gl-x11[=static]
