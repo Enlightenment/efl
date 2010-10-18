@@ -415,6 +415,8 @@ elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
    sel->requestformat = format;
    sel->requestwidget = widget;
    sel->request(elm_win_xwindow_get(top), ECORE_X_SELECTION_TARGET_TARGETS);
+   sel->datacb = datacb;
+   sel->udata = udata;
 
    return EINA_TRUE;
 #else
