@@ -529,10 +529,12 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
      ERR("The certificate hasn't got a known issuer.");
    else if (iter & GNUTLS_CERT_REVOKED)
      ERR("The certificate has been revoked.");
+#ifdef USE_GNUTLS2_10
    else if (iter & GNUTLS_CERT_EXPIRED)
      ERR("The certificate has expired");
    else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
      ERR("The certificate is not yet activated");
+#endif
 
    if (iter)
      goto error;
