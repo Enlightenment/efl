@@ -402,11 +402,6 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
         url_con->fd_handler = NULL;
      }
 
-   if (url_con->post)
-      curl_formfree(url_con->post);
-
-   url_con->post = NULL;
-
    if (url_con->curl_easy)
      {
         // FIXME: For an unknown reason, progress continue to arrive after destruction

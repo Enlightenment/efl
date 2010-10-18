@@ -164,7 +164,6 @@ struct _Ecore_Con_Url
    ECORE_MAGIC;
    CURL *curl_easy;
    struct curl_slist *headers;
-   struct curl_httppost *post;
    Eina_List *additional_headers;
    Eina_List *response_headers;
    char *url;
