@@ -70,6 +70,7 @@
  * cancel_anim(id)
  * emit(sig[], src[])
  * set_state(part_id, state[], Float:state_val)
+ * get_state(part_id, dst[], maxlen, &Float:val)
  * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
  * run_program(program_id)
  * Direction:get_drag_dir(part_id)
