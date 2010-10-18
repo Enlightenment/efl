@@ -494,7 +494,6 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
    API_ENTRY return;
    if (!sobj) return;
 
-
    sobj_parent = evas_object_data_del(sobj, "elm-parent");
    if (sobj_parent != obj)
      {
@@ -509,18 +508,27 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
 	  }
 	if (abort_on_warn == 1) abort();
      }
-   if (sd2->resize_obj == sobj) sd2->resize_obj = NULL;
-   else sd->subobjs = eina_list_remove(sd->subobjs, sobj);
    if (!sd->child_can_focus)
      {
 	if (_is_focusable(sobj)) sd->child_can_focus = 0;
      }
    if (_elm_widget_is(sobj))
      {
-	Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-	if (sd2) sd2->parent_obj = NULL;
+        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        if (sd2)
+          {
+             sd2->parent_obj = NULL;
+             if (sd2->resize_obj == sobj)
+               sd2->resize_obj = NULL;
+             else
+               sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+          }
+        else
+          sd->subobjs = eina_list_remove(sd->subobjs, sobj);
         if (elm_widget_focus_get(sobj)) _unfocus_parents(obj);
      }
+   else
+     sd->subobjs = eina_list_remove(sd->subobjs, sobj);
    evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, 
                                        _sub_obj_del, sd);
    evas_object_smart_callback_call(obj, "sub-object-del", sobj);
