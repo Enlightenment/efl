@@ -97,7 +97,7 @@ eng_output_resize(void *data, int w, int h)
 	  }
      }
 
-   evas_gl_common_context_resize(re->gl_context, w, h, 0);
+   evas_gl_common_context_resize(re->gl_context, w, h, re->gl_context->rot);
 }
 
 static void
@@ -114,7 +114,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_gl_common_context_resize(re->gl_context, re->w, re->h, 0);
+   evas_gl_common_context_resize(re->gl_context, re->w, re->h, re->gl_context->rot);
    /* smple bounding box */
    if (!re->draw.redraw)
      {
@@ -1011,7 +1011,7 @@ _sdl_output_setup		(int w, int h, int fullscreen, int noframe)
 	return NULL;
      }
    evas_gl_common_context_use(re->gl_context);
-   evas_gl_common_context_resize(re->gl_context, w, h, 0);
+   evas_gl_common_context_resize(re->gl_context, w, h, re->gl_context->rot);
 
    /* End GL Initialization */
    re->w = w;
