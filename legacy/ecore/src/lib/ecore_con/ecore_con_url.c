@@ -980,35 +980,6 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con, const char *filename,
 }
 
 /**
- * Send a Curl httppost
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
- */
-EAPI Eina_Bool
-ecore_con_url_http_post_send(Ecore_Con_Url *url_con, void *httppost)
-{
-#ifdef HAVE_CURL
-   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
-     {
-        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
-                         "ecore_con_url_http_post_send");
-        return EINA_FALSE;
-     }
-
-   if ((url_con->active) || (!url_con->url))
-      return EINA_FALSE;
-
-   url_con->post = httppost;
-
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_HTTPPOST, httppost);
-
-   return ecore_con_url_send(url_con, NULL, 0, NULL);
-#else
-   return EINA_FALSE;
-   url_con = NULL;
-#endif
-}
-
-/**
  * Toggle libcurl's verbose output.
  *
  * If @p verbose is @c EINA_TRUE, libcurl will output a lot of verbose

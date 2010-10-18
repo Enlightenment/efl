@@ -510,8 +510,6 @@ EAPI void              ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
                                                  Eina_Bool verbose);
 EAPI void              ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
                                                       Eina_Bool use_epsv);
-EAPI Eina_Bool         ecore_con_url_http_post_send(Ecore_Con_Url *url_con,
-                                                    void *curl_httppost);
 
 /**
  * @}
