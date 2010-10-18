@@ -462,14 +462,27 @@ EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double
 /**
  * @typedef Ecore_Con_Url_Time
  * @enum _Ecore_Con_Url_Time
- * The type of time in the object
+ * The type of condition to use when making an HTTP request dependent on time,
+ * so that headers such as "If-Modified-Since" are used.
  */
 typedef enum _Ecore_Con_Url_Time
 {
+   /**
+    * Do not place time restrictions on the HTTP requests.
+    */
    ECORE_CON_URL_TIME_NONE = 0,
+   /**
+    * Add the "If-Modified-Since" HTTP header, so that the request is performed
+    * by the server only if the target has been modified since the time value
+    * passed to it in the request.
+    */
    ECORE_CON_URL_TIME_IFMODSINCE,
-   ECORE_CON_URL_TIME_IFUNMODSINCE,
-   ECORE_CON_URL_TIME_LASTMOD
+   /**
+    * Add the "If-Unmodified-Since" HTTP header, so that the request is
+    * performed by the server only if the target has NOT been modified since
+    * the time value passed to it in the request.
+    */
+   ECORE_CON_URL_TIME_IFUNMODSINCE
 } Ecore_Con_Url_Time;
 
 EAPI int               ecore_con_url_init(void);
@@ -498,8 +511,8 @@ EAPI Eina_Bool         ecore_con_url_send(Ecore_Con_Url *url_con,
                                           const void *data, size_t length,
                                           const char *content_type);
 EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con,
-                                          Ecore_Con_Url_Time condition,
-                                          time_t tm);
+                                          Ecore_Con_Url_Time time_condition,
+                                          double timestamp);
 
 EAPI Eina_Bool         ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
                                                 const char *filename,

@@ -168,8 +168,8 @@ struct _Ecore_Con_Url
    Eina_List *response_headers;
    char *url;
 
-   Ecore_Con_Url_Time condition;
-   time_t time;
+   Ecore_Con_Url_Time time_condition;
+   double timestamp;
    void *data;
 
    Ecore_Fd_Handler *fd_handler;

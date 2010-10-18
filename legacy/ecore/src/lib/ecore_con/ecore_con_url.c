@@ -615,12 +615,18 @@ ecore_con_url_data_get(Ecore_Con_Url *url_con)
 }
 
 /**
- * FIXME
- * Sets the @ref Ecore_Con_Url object's condition/time members.
+ * Sets whether HTTP requests should be conditional, dependent on
+ * modification time.
+ *
+ * @param url_con   Ecore_Con_Url to act upon.
+ * @param condition Condition to use for HTTP requests.
+ * @param timestamp Time since 1 Jan 1970 to use in the condition.
+ *
+ * @sa ecore_con_url_send()
  */
 EAPI void
 ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition,
-                   time_t tm)
+                   double timestamp)
 {
 #ifdef HAVE_CURL
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
@@ -629,13 +635,13 @@ ecore_con_url_time(Ecore_Con_Url *url_con, Ecore_Con_Url_Time condition,
         return;
      }
 
-   url_con->condition = condition;
-   url_con->time = tm;
+   url_con->time_condition = condition;
+   url_con->timestamp = timestamp;
 #else
    return;
-   url_con = NULL;
-   condition = 0;
-   tm = 0;
+   (void)url_con;
+   (void)condition;
+   (void)timestamp;
 #endif
 }
 
@@ -793,6 +799,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
  * @see ecore_con_url_data_set()
  * @see ecore_con_url_data_get()
  * @see ecore_con_url_response_headers_get()
+ * @see ecore_con_url_time()
  */
 EAPI Eina_Bool
 ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
@@ -838,7 +845,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
         url_con->headers = curl_slist_append(url_con->headers, tmp);
      }
 
-   switch (url_con->condition)
+   switch (url_con->time_condition)
      {
       case ECORE_CON_URL_TIME_NONE:
          curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
@@ -848,19 +855,15 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
       case ECORE_CON_URL_TIME_IFMODSINCE:
          curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
                           CURL_TIMECOND_IFMODSINCE);
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE,
+                          (long)url_con->timestamp);
          break;
 
       case ECORE_CON_URL_TIME_IFUNMODSINCE:
          curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
                           CURL_TIMECOND_IFUNMODSINCE);
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
-         break;
-
-      case ECORE_CON_URL_TIME_LASTMOD:
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMECONDITION,
-                          CURL_TIMECOND_LASTMOD);
-         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE, url_con->time);
+         curl_easy_setopt(url_con->curl_easy, CURLOPT_TIMEVALUE,
+                          (long)url_con->timestamp);
          break;
      }
 
