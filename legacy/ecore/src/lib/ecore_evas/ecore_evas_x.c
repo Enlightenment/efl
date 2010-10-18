@@ -10,7 +10,16 @@
 #ifdef BUILD_ECORE_EVAS_X11
 # include <Ecore_X.h>
 # include <Ecore_X_Atoms.h>
+#else
+# undef BUILD_ECORE_EVAS_OPENGL_X11
+# undef BUILD_ECORE_EVAS_SOFTWARE_X11
+# undef BUILD_ECORE_EVAS_XRENDER_X11
 #endif
+
+#ifndef HAVE_ECORE_X_XCB
+# undef BUILD_ECORE_EVAS_XRENDER_XCB
+# undef BUILD_ECORE_EVAS_SOFTWARE_XCB
+#endif 
 
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
