@@ -744,7 +744,7 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
    Ecore_X_Event_Mouse_In *e;
 
    e = event;
-   ee = ecore_event_window_match(e->win);
+   ee = ecore_event_window_match(e->event_win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 /*    { */
@@ -795,7 +795,7 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    Ecore_X_Event_Mouse_Out *e;
 
    e = event;
-   ee = ecore_event_window_match(e->win);
+   ee = ecore_event_window_match(e->event_win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
@@ -954,7 +954,7 @@ _ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, v
    Ecore_X_Event_Window_Destroy *e;
 
    e = event;
-   ee = ecore_event_window_match(e->win);
+   ee = ecore_event_window_match(e->event_win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
@@ -970,7 +970,7 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
    Ecore_X_Event_Window_Configure *e;
 
    e = event;
-   ee = ecore_event_window_match(e->win);
+   ee = ecore_event_window_match(e->event_win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->engine.x.direct_resize) return ECORE_CALLBACK_PASS_ON;
@@ -1049,7 +1049,7 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
    static int first_map_bug = -1;
    
    e = event;
-   ee = ecore_event_window_match(e->win);
+   ee = ecore_event_window_match(e->event_win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (first_map_bug < 0)
@@ -1076,7 +1076,7 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    Ecore_X_Event_Window_Hide *e;
 
    e = event;
-   ee = ecore_event_window_match(e->win);
+   ee = ecore_event_window_match(e->event_win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (!ee->visible) return ECORE_CALLBACK_DONE;
