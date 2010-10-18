@@ -379,7 +379,7 @@ _elm_unneed_ethumb(void)
 }
 
 static Eina_Bool
-_elm_thumb_dropcb(void *data __UNUSED__, Evas_Object *o, Elm_Drop_Data *drop)
+_elm_thumb_dropcb(void *data __UNUSED__, Evas_Object *o, Elm_Selection_Data *drop)
 {
    if ((!o) || (!drop) || (!drop->data)) return EINA_FALSE;
    elm_thumb_file_set(o, drop->data, NULL);

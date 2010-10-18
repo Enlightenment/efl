@@ -484,9 +484,9 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * And yes, elm_widget, should probably be elm_experimental...
  * Complaints about this code should go to /dev/null, or failing that nash.
  */
-typedef struct _Elm_Drop_Data Elm_Drop_Data;
+typedef struct _Elm_Selection_Data Elm_Selection_Data;
 
-typedef Eina_Bool (*Elm_Drop_Cb) (void *d, Evas_Object *o, Elm_Drop_Data *data);
+typedef Eina_Bool (*Elm_Drop_Cb) (void *d, Evas_Object *o, Elm_Selection_Data *data);
 
 typedef enum _Elm_Sel_Type
 {
@@ -510,7 +510,7 @@ typedef enum _Elm_Sel_Format
    ELM_SEL_FORMAT_VCARD =  0x08,
 } Elm_Sel_Format;
 
-struct _Elm_Drop_Data
+struct _Elm_Selection_Data
 {
    int                   x, y;
    Elm_Sel_Format        format;

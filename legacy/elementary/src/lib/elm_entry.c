@@ -152,7 +152,7 @@ struct _Elm_Entry_Text_Filter
 
 static const char *widtype = NULL;
 
-static Eina_Bool _drag_drop_cb(void *data, Evas_Object *obj, Elm_Drop_Data *);
+static Eina_Bool _drag_drop_cb(void *data, Evas_Object *obj, Elm_Selection_Data *);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -1290,7 +1290,7 @@ _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event _
 
 
 static Eina_Bool
-_drag_drop_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Drop_Data *drop)
+_drag_drop_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Selection_Data *drop)
 {
    Widget_Data *wd;
    Eina_Bool rv;
@@ -1298,7 +1298,7 @@ _drag_drop_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Drop_Data *drop)
    wd = elm_widget_data_get(obj);
 
    if (!wd) return EINA_FALSE;
-printf("Inserting at (%d,%d) %s\n",drop->x,drop->y,(char*)drop->data);
+   printf("Inserting at (%d,%d) %s\n",drop->x,drop->y,(char*)drop->data);
 
    edje_object_part_text_cursor_copy(wd->ent, "elm.text",
                                      EDJE_CURSOR_MAIN,/*->*/EDJE_CURSOR_USER);

@@ -748,7 +748,7 @@ vcard_receive(struct _elm_cnp_selection *sel,
    cnp_debug("vcard receive\n");
 
    if (sel == selections + ELM_SEL_XDND){
-        Elm_Drop_Data ddata;
+        Elm_Selection_Data ddata;
         cnp_debug("drag & drop\n");
         /* FIXME: this needs to be generic: Used for all receives */
         EINA_LIST_FOREACH(drops, l, dropable)
@@ -1157,7 +1157,7 @@ _dnd_drop(void *data, int etype, void *ev)
    Eina_List *l;
    Ecore_Evas *ee;
    Ecore_X_Window xwin;
-   Elm_Drop_Data ddata;
+   Elm_Selection_Data ddata;
    int x,y,w,h;
 
    int i,j;
