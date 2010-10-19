@@ -477,7 +477,7 @@ _elm_win_client_message(void *data, int type __UNUSED__, void *event)
    if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
    if (e->message_type == ECORE_X_ATOM_E_COMP_FLUSH)
      {
-        if (e->data.l[0] == win->xwin)
+        if ((unsigned)e->data.l[0] == win->xwin)
           {
              Evas *evas = evas_object_evas_get(win->win_obj);
              if (evas)
@@ -491,7 +491,7 @@ _elm_win_client_message(void *data, int type __UNUSED__, void *event)
      }
    else if (e->message_type == ECORE_X_ATOM_E_COMP_DUMP)
      {
-        if (e->data.l[0] == win->xwin)
+        if ((unsigned)e->data.l[0] == win->xwin)
           {
              Evas *evas = evas_object_evas_get(win->win_obj);
              if (evas)

@@ -551,9 +551,10 @@ targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 }
 
 static Eina_Bool
-png_converter(char *target __UNUSED__, void *data, int size,
-              void **data_ret __UNUSED__, int *size_ret __UNUSED__,
-              Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+png_converter(char *target __UNUSED__, void *data __UNUSED__,
+              int size __UNUSED__, void **data_ret __UNUSED__,
+              int *size_ret __UNUSED__, Ecore_X_Atom *ttype __UNUSED__,
+              int *typesize __UNUSED__)
 {
    cnp_debug("Png converter called\n");
    return EINA_TRUE;
@@ -1154,7 +1155,7 @@ mark_up(const char *start, int inlen, int *lenp){
 
 
 static Eina_Bool
-_dnd_enter(void *data, int etype, void *ev)
+_dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Enter *enter = ev;
    int i;
@@ -1190,7 +1191,7 @@ _dnd_enter(void *data, int etype, void *ev)
 }
 
 static Eina_Bool
-_dnd_drop(void *data, int etype, void *ev)
+_dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Drop *drop;
    struct dropable *dropable;
@@ -1325,7 +1326,7 @@ found:
    return true;
 }
 static Eina_Bool
-_dnd_position(void *data, int etype, void *ev)
+_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Position *pos;
    Ecore_X_Rectangle rect;
@@ -1350,7 +1351,7 @@ _dnd_position(void *data, int etype, void *ev)
  * appropriately.
  */
 static Eina_Bool
-_dnd_status(void *data, int etype, void *ev)
+_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Status *status = ev;
 
@@ -1474,7 +1475,7 @@ elm_drop_target_del(Evas_Object *obj)
 
 
 static void
-_drag_mouse_up(void *un, Evas *e, Evas_Object *obj, void *data)
+_drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data __UNUSED__)
 {
    evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _drag_mouse_up);
    ecore_x_dnd_drop();

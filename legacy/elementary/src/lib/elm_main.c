@@ -1691,6 +1691,9 @@ elm_object_tree_dump(const Evas_Object *top)
 {
 #ifdef ELM_DEBUG
    elm_widget_tree_dump(top);
+#else
+   return;
+   (void)top;
 #endif
 }
 
@@ -1708,5 +1711,9 @@ elm_object_tree_dot_dump(const Evas_Object *top, const char *file)
    FILE *f = fopen(file, "w");
    elm_widget_tree_dot_dump(top, f);
    fclose(f);
+#else
+   return;
+   (void)top;
+   (void)file;
 #endif
 }

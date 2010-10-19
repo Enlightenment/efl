@@ -2523,6 +2523,9 @@ elm_widget_tree_dump(const Evas_Object *top)
 {
 #ifdef ELM_DEBUG
    _sub_obj_tree_dump(top, 0);
+#else
+   return;
+   (void)top;
 #endif
 }
 
@@ -2533,5 +2536,9 @@ elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output)
    fprintf(output, "graph "" { node [shape=record];\n");
    _sub_obj_tree_dot_dump(top, output);
    fprintf(output, "}\n");
+#else
+   return;
+   (void)top;
+   (void)output;
 #endif
 }
