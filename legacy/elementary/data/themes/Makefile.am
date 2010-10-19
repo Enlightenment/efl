@@ -206,8 +206,11 @@ color_picker_alpha.png \
 color_picker_alpha_bg.png \
 color_picker_brightness.png \
 color_picker_color.png \
-color_picker_opacity.png
-
+color_picker_opacity.png \
+icon_arrow_down_left.png \
+icon_arrow_down_right.png \
+icon_arrow_up_left.png \
+icon_arrow_up_right.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
