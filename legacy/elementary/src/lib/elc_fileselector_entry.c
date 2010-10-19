@@ -318,7 +318,7 @@ elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_fileselector_button_selected_set(wd->button, path);
+   elm_fileselector_button_path_set(wd->button, path);
 }
 
 /**
@@ -337,7 +337,7 @@ elm_fileselector_entry_selected_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return elm_fileselector_button_selected_get(wd->button);
+   return elm_fileselector_button_path_get(wd->button);
 }
 
 /**

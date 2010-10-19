@@ -5,9 +5,14 @@ static void
 _file_chosen(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *entry = data;
-   char *file = event_info;
-   elm_entry_entry_set(entry, file);
-   printf("File chosen: %s\n", file);
+   const char *file = event_info;
+   if (file)
+     {
+        elm_entry_entry_set(entry, file);
+        printf("File chosen: %s\n", file);
+     }
+   else
+     printf("File selection canceled.\n");
 }
 
 static void
