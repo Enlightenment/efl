@@ -718,7 +718,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
    if (!wd)
      return;
 
-   if (!strncmp(swallow, "smart", sizeof("smart")))
+   if (!strcmp(swallow, "smart"))
      {
         if (wd->smt_sub != content)
           {
@@ -748,7 +748,7 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
 
    ELM_HOVER_PARTS_FOREACH
      {
-	if (!strncmp(swallow, wd->subs[i].swallow, 1024))
+	if (!strcmp(swallow, wd->subs[i].swallow))
 	  {
 	     if (content == wd->subs[i].obj)
                return;
