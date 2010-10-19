@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -38,7 +41,7 @@ static int _log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 
 static void
-post_fork(void *data)
+post_fork(void *data __UNUSED__)
 {
    sigaction(SIGINT, &old_sigint, NULL);
    sigaction(SIGTERM, &old_sigterm, NULL);
@@ -61,14 +64,14 @@ post_fork(void *data)
 }
 
 static void
-child_handler(int x, siginfo_t *info, void *data)
+child_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    int status;
    while (waitpid(-1, &status, WNOHANG) > 0);
 }
 
 static void
-crash_handler(int x, siginfo_t *info, void *data)
+crash_handler(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    double t;
 

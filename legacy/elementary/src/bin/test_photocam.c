@@ -1,115 +1,118 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Evas_Object *rect;
 
 static void
-my_ph_clicked(void *data, Evas_Object *obj, void *event_info)
+my_ph_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("clicked\n");
 }
 
 static void
-my_ph_press(void *data, Evas_Object *obj, void *event_info)
+my_ph_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("press\n");
 }
 
 static void
-my_ph_longpressed(void *data, Evas_Object *obj, void *event_info)
+my_ph_longpressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("longpressed\n");
 }
 
 static void
-my_ph_clicked_double(void *data, Evas_Object *obj, void *event_info)
+my_ph_clicked_double(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("clicked,double\n");
 }
 
 static void
-my_ph_load(void *data, Evas_Object *obj, void *event_info)
+my_ph_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("load\n");
 }
 
 static void
-my_ph_loaded(void *data, Evas_Object *obj, void *event_info)
+my_ph_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("loaded\n");
 }
 
 static void
-my_ph_load_details(void *data, Evas_Object *obj, void *event_info)
+my_ph_load_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("load,details\n");
 }
 
 static void
-my_ph_loaded_details(void *data, Evas_Object *obj, void *event_info)
+my_ph_loaded_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("loaded,details\n");
 }
 
 static void
-my_ph_zoom_start(void *data, Evas_Object *obj, void *event_info)
+my_ph_zoom_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("zoom,start\n");
 }
 
 static void
-my_ph_zoom_stop(void *data, Evas_Object *obj, void *event_info)
+my_ph_zoom_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("zoom,stop\n");
 }
 
 static void
-my_ph_zoom_change(void *data, Evas_Object *obj, void *event_info)
+my_ph_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("zoom,change\n");
 }
 
 static void
-my_ph_anim_start(void *data, Evas_Object *obj, void *event_info)
+my_ph_anim_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("anim,start\n");
 }
 
 static void
-my_ph_anim_stop(void *data, Evas_Object *obj, void *event_info)
+my_ph_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("anim,stop\n");
 }
 
 static void
-my_ph_drag_start(void *data, Evas_Object *obj, void *event_info)
+my_ph_drag_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("drag,start\n");
 }
 
 static void
-my_ph_drag_stop(void *data, Evas_Object *obj, void *event_info)
+my_ph_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    printf("drag_stop\n");
 }
 
 static void
-my_ph_scroll(void *data, Evas_Object *obj, void *event_info)
+my_ph_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    int x, y, w, h;
@@ -118,7 +121,7 @@ my_ph_scroll(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-sel_done(void *data, Evas_Object *obj, void *event_info)
+sel_done(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ph, *iw;
 
@@ -129,7 +132,7 @@ sel_done(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_open(void *data, Evas_Object *obj, void *event_info)
+my_bt_open(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ph, *win;
    Evas_Object *iw, *fs;
@@ -151,20 +154,20 @@ my_bt_open(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_show_reg(void *data, Evas_Object *obj, void *event_info)
+my_bt_show_reg(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photocam_image_region_show(data, 30, 50, 500, 300);
 }
 
 static void
-my_bt_bring_reg(void *data, Evas_Object *obj, void *event_info)
+my_bt_bring_reg(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
 {
    elm_photocam_image_region_bring_in(data, 800, 300, 500, 300);
 }
 
 static void
-my_bt_zoom_in(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
    
@@ -175,7 +178,7 @@ my_bt_zoom_in(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
    
@@ -186,25 +189,25 @@ my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_pause(void *data, Evas_Object *obj, void *event_info)
+my_bt_pause(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photocam_paused_set(data, !elm_photocam_paused_get(data));
 }
 
 static void
-my_bt_zoom_fit(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_fit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
 }
 
 static void
-my_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL);
 }
 
 static void
-_photocam_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_photocam_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *photocam = data;
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
@@ -234,7 +237,7 @@ _photocam_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 }
 
    static void
-_photocam_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_photocam_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int x,y,w,h;
 
@@ -244,7 +247,7 @@ _photocam_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 }
 
 void
-test_photocam(void *data, Evas_Object *obj, void *event_info)
+test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *ph, *tb2, *bt;
    // these were just testing - use the "select photo" browser to select one

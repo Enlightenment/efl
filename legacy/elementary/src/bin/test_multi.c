@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 #define IND_NUM 20
@@ -6,7 +9,7 @@
 static Evas_Object *indicator[IND_NUM];
 
 static void
-_mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
+_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
 //   Evas_Object *win = data;
@@ -19,7 +22,7 @@ _mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void
-_mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
+_mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
 //   Evas_Object *win = data;
@@ -29,7 +32,7 @@ _mouse_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void
-_mouse_move(void *data, Evas *e, Evas_Object *o, void *event_info)
+_mouse_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
 //   Evas_Object *win = data;
@@ -42,7 +45,7 @@ _mouse_move(void *data, Evas *e, Evas_Object *o, void *event_info)
 
 
 static void
-_multi_down(void *data, Evas *e, Evas_Object *o, void *event_info)
+_multi_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Evas_Event_Multi_Down *ev = event_info;
 //   Evas_Object *win = data;
@@ -54,7 +57,7 @@ _multi_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void
-_multi_up(void *data, Evas *e, Evas_Object *o, void *event_info)
+_multi_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Evas_Event_Multi_Up *ev = event_info;
 //   Evas_Object *win = data;
@@ -64,7 +67,7 @@ _multi_up(void *data, Evas *e, Evas_Object *o, void *event_info)
 }
 
 static void
-_multi_move(void *data, Evas *e, Evas_Object *o, void *event_info)
+_multi_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Evas_Event_Multi_Move *ev = event_info;
 //   Evas_Object *win = data;
@@ -78,7 +81,7 @@ _multi_move(void *data, Evas *e, Evas_Object *o, void *event_info)
 
 
 void
-test_multi(void *data, Evas_Object *obj, void *event_info)
+test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *r;
    int i;

@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_fileselector_done(void *data, Evas_Object *obj, void *event_info)
+my_fileselector_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    /* event_info conatin the full path of the selected file
     * or NULL if none is selected or cancel is pressed */
@@ -14,7 +17,7 @@ my_fileselector_done(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_fileselector_selected(void *data, Evas_Object *obj, void *event_info)
+my_fileselector_selected(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    /* event_info conatin the full path of the selected file */
    const char *selected = event_info;
@@ -25,7 +28,7 @@ my_fileselector_selected(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_is_save_clicked(void *data, Evas_Object *obj, void *event_info)
+_is_save_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    printf("Toggle Is save\n");
@@ -36,14 +39,14 @@ _is_save_clicked(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_sel_get_clicked(void *data, Evas_Object *obj, void *event_info)
+_sel_get_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    printf("Get Selected: %s\n", elm_fileselector_selected_get(fs));
 }
 
 void
-test_fileselector(void *data, Evas_Object *obj, void *event_info)
+test_fileselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *fs, *bg, *vbox, *hbox, *bt;
 

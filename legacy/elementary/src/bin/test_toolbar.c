@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-tb_1(void *data, Evas_Object *obj, void *event_info)
+tb_1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", PACKAGE_DATA_DIR);
@@ -9,7 +12,7 @@ tb_1(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-tb_2(void *data, Evas_Object *obj, void *event_info)
+tb_2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", PACKAGE_DATA_DIR);
@@ -17,7 +20,7 @@ tb_2(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-tb_3(void *data, Evas_Object *obj, void *event_info)
+tb_3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/wood_01.jpg", PACKAGE_DATA_DIR);
@@ -25,7 +28,7 @@ tb_3(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-tb_4(void *data, Evas_Object *obj, void *event_info)
+tb_4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", PACKAGE_DATA_DIR);
@@ -33,13 +36,13 @@ tb_4(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-tb_5(void *data, Evas_Object *obj, void *event_info)
+tb_5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photo_file_set(data, NULL);
 }
 
 void
-test_toolbar(void *data, Evas_Object *obj, void *event_info)
+test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *tb, *ic, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;

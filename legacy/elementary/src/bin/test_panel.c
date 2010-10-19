@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Elm_Genlist_Item_Class itc;
@@ -13,7 +16,7 @@ static void _fill_list(Evas_Object *obj);
 static Eina_Bool _dir_has_subs(const char *path);
 
 static void
-_tstatus(void *data, Evas_Object *obj, void *event_info)
+_tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    char *status;
 
@@ -25,7 +28,7 @@ _tstatus(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_bstatus(void *data, Evas_Object *obj, void *event_info)
+_bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    char *status;
 
@@ -37,7 +40,7 @@ _bstatus(void *data, Evas_Object *obj, void *event_info)
 }
 
 static char *
-_label_get(void *data, Evas_Object *obj, const char *source) 
+_label_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__) 
 {
    return strdup(ecore_file_file_get(data));
 }
@@ -62,13 +65,13 @@ _icon_get(void *data, Evas_Object *obj, const char *source)
 }
 
 static Eina_Bool 
-_state_get(void *data, Evas_Object *obj, const char *source) 
+_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__) 
 {
    return EINA_FALSE;
 }
 
 static void 
-_item_del(void *data, Evas_Object *obj) 
+_item_del(void *data, Evas_Object *obj __UNUSED__) 
 {
    eina_stringshare_del(data);
 }
@@ -139,7 +142,7 @@ _dir_has_subs(const char *path)
 }
 
 void
-test_panel(void *data, Evas_Object *obj, void *event_info)
+test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *panel, *bx, *vbx, *toolbar;
    Evas_Object *list;

@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static Elm_Genlist_Item_Class itci;
-char *gli_label_get(void *data, Evas_Object *obj, const char *part)
+char *gli_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    int j = (long)data;
@@ -13,7 +16,7 @@ char *gli_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 void
-index_changed2(void *data, Evas_Object *obj, void *event_info)
+index_changed2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on a change but delayed in case multiple changes happen in a
    // short timespan
@@ -21,21 +24,21 @@ index_changed2(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-index_changed(void *data, Evas_Object *obj, void *event_info)
+index_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    // this is calld on every change, no matter how often
    // elm_genlist_item_bring_in(event_info);
 }
 
 void
-index_selected(void *data, Evas_Object *obj, void *event_info)
+index_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on final select
    elm_genlist_item_top_bring_in(event_info);
 }
 
 void
-test_index(void *data, Evas_Object *obj, void *event_info)
+test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *gl, *id;
    Elm_Genlist_Item *it;
@@ -100,7 +103,7 @@ typedef struct _Test_Index2_Elements
 } Test_Index2_Elements;
 
 void
-test_index2_del(void *data, Evas_Object *obj, void *event_info)
+test_index2_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    /* FIXME it won't be called if elm_test main window is closed */
    free(data);
@@ -133,7 +136,7 @@ test_index2_icmp(const void *data1, const void *data2)
 }
 
 void
-test_index2_it_add(void *data, Evas_Object *obj, void *event_info)
+test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Test_Index2_Elements *gui = data;
    Elm_List_Item *it;
@@ -152,7 +155,7 @@ test_index2_it_add(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_index2_it_del(void *data, Evas_Object *obj, void *event_info)
+test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Test_Index2_Elements *gui = data;
    const char *label, *label_next;
@@ -184,13 +187,13 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_index2_id_changed(void *data, Evas_Object *obj, void *event_info)
+test_index2_id_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    elm_list_item_show(event_info);
 }
 
 void
-test_index2(void *data, Evas_Object *obj, void *event_info)
+test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *bt;
    Test_Index2_Elements *gui;

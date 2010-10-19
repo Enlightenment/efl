@@ -1,8 +1,11 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 void 
-test_conformant(void *data, Evas_Object *obj, void *event) 
+test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__) 
 {
    Evas_Object *win, *bg, *conform, *btn, *bx, *en;
 

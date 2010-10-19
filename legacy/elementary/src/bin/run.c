@@ -76,7 +76,7 @@ main(int argc, char **argv)
 	       {
 		  if ((*p == ':') || (*p == 0))
 		    {
-		       int len;
+		       unsigned int len;
 
 		       len = p - pp;
 		       if (len < (sizeof(buf) - exelen - 3))

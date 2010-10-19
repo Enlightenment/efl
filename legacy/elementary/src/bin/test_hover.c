@@ -1,7 +1,8 @@
 #include <Elementary.h>
+#include <elementary_config.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_hover_bt(void *data, Evas_Object *obj, void *event_info)
+my_hover_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *hv = data;
 
@@ -9,7 +10,7 @@ my_hover_bt(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_hover(void *data, Evas_Object *obj, void *event_info)
+test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];
@@ -90,7 +91,7 @@ test_hover(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_hover2(void *data, Evas_Object *obj, void *event_info)
+test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bt, *hv, *ic;
    char buf[PATH_MAX];

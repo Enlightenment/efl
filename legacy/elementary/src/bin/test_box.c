@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 void
-test_box_vert(void *data, Evas_Object *obj, void *event_info)
+test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ic;
    char buf[PATH_MAX];
@@ -48,7 +51,7 @@ test_box_vert(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_del_cb(void *data, Evas_Object *obj, void *event_info)
+_del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_box_unpack(data, obj);
    evas_object_move(obj, 0, 0);
@@ -57,7 +60,7 @@ _del_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_box_vert2(void *data, Evas_Object *obj, void *event_info)
+test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bt;
 
@@ -119,7 +122,7 @@ test_box_vert2(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_box_horiz(void *data, Evas_Object *obj, void *event_info)
+test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ic;
    char buf[PATH_MAX];

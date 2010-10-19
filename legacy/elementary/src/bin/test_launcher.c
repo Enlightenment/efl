@@ -1,8 +1,11 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-mode_cb(void *data, Evas_Object *obj, void *event_info)
+mode_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;
@@ -19,14 +22,14 @@ mode_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-full_cb(void *data, Evas_Object *obj, void *event_info)
+full_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    elm_win_fullscreen_set(win, !elm_win_fullscreen_get(win));
 }
 
 static void
-alpha_cb(void *data, Evas_Object *obj, void *event_info)
+alpha_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;
@@ -40,7 +43,7 @@ alpha_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-smooth_cb(void *data, Evas_Object *obj, void *event_info)
+smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;
@@ -54,7 +57,7 @@ smooth_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-close_cb(void *data, Evas_Object *obj, void *event_info)
+close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_del(data);
 }
@@ -80,7 +83,7 @@ tim_cb(void *data)
 }
 
 static void
-ic_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ic_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Timer *tim;
    
@@ -93,7 +96,7 @@ ic_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ic_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Ecore_Timer *tim;
@@ -119,7 +122,7 @@ ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ic_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Ecore_Timer *tim;
@@ -153,7 +156,7 @@ ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ic_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    if (evas_object_data_get(obj, "dragging"))
@@ -184,7 +187,7 @@ ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 void
-test_launcher(void *data, Evas_Object *obj, void *event_info)
+test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *lb, *tb2, *mb, *ck, *bx, *bx2;
    int i, j, k, n, m;
@@ -374,7 +377,7 @@ test_launcher(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_launcher2(void *data, Evas_Object *obj, void *event_info)
+test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *sc, *bt, *tb2, *mb, *ck, *bx, *ly;
    int k;
@@ -498,7 +501,7 @@ test_launcher2(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_mode_cb(void *data, Evas_Object *obj, void *event_info)
+l3_mode_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;
@@ -515,14 +518,14 @@ l3_mode_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_full_cb(void *data, Evas_Object *obj, void *event_info)
+l3_full_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    elm_win_fullscreen_set(win, !elm_win_fullscreen_get(win));
 }
 
 static void
-l3_alpha_cb(void *data, Evas_Object *obj, void *event_info)
+l3_alpha_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;
@@ -536,7 +539,7 @@ l3_alpha_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_smooth_cb(void *data, Evas_Object *obj, void *event_info)
+l3_smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;
@@ -550,7 +553,7 @@ l3_smooth_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_close_cb(void *data, Evas_Object *obj, void *event_info)
+l3_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_del(data);
 }
@@ -583,7 +586,7 @@ l3_tim_cb(void *data)
 }
 
 static void
-l3_ic_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+l3_ic_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Timer *tim;
    
@@ -596,7 +599,7 @@ l3_ic_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+l3_ic_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Ecore_Timer *tim;
@@ -624,7 +627,7 @@ l3_ic_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+l3_ic_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Ecore_Timer *tim;
@@ -665,7 +668,7 @@ l3_ic_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-l3_ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+l3_ic_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Object *ly2;
@@ -700,7 +703,7 @@ l3_ic_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 void
-test_launcher3(void *data, Evas_Object *obj, void *event_info)
+test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *sc, *tb, *pad, *bt, *ic, *tb2, *mb, *ck, *bx, *bx2, *ly, *ly2;
    int i, j, k, n, m;

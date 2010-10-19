@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static const char *names[] =
@@ -9,7 +12,7 @@ static const char *names[] =
 };
 
 static void
-_del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Ecore_Animator *ani = evas_object_data_get(win, "animator");
@@ -25,7 +28,7 @@ anim(void *data)
    Evas_Coord x, y, w, h, vw, vh;
    double t, xx, yy, zz, r, fac;
    double lx, ly;
-   int i;
+   unsigned int i;
    
    evas_output_viewport_get(evas_object_evas_get(win), 0, 0, &vw, &vh);
    r = 48;
@@ -61,12 +64,12 @@ anim(void *data)
 }
 
 void
-test_anim(void *data, Evas_Object *obj, void *event_info)
+test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bub, *sh;
    Ecore_Animator *ani;
    char buf[PATH_MAX];
-   int i;
+   unsigned int i;
    
    win = elm_win_add(NULL, "animation", ELM_WIN_BASIC);
    elm_win_title_set(win, "Animation");

@@ -1,15 +1,18 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_disk_sel(void *data, Evas_Object * obj, void *event_info)
+_disk_sel(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
    Elm_Diskpicker_Item *it = event_info;
    printf("Equinox: %s\n", elm_diskpicker_item_label_get(it));
 }
 
 static void
-_disk_next(void *data, Evas_Object * obj, void *event_info)
+_disk_next(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
    Elm_Diskpicker_Item *next, *prev, *it = event_info;
    prev = elm_diskpicker_item_prev(it);
@@ -19,7 +22,7 @@ _disk_next(void *data, Evas_Object * obj, void *event_info)
 }
 
 static void
-_print_disk_info_cb(void *data, Evas_Object *obj, void *event_info)
+_print_disk_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Diskpicker_Item *it = event_info;
    printf("Selected label: %s\n", elm_diskpicker_item_label_get(it));
@@ -53,7 +56,7 @@ _disk_create(Evas_Object *win, Eina_Bool round)
 }
 
 void
-test_diskpicker(void *data, Evas_Object *obj, void *event_info)
+test_diskpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *disk, *ic;
    char buf[PATH_MAX];

@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 typedef struct _Theme Theme;
@@ -22,14 +25,14 @@ static const char *finger_size_set = NULL;
 static const char *scale_set = NULL;
 
 static void
-my_win_del(void *data, Evas_Object *obj, void *event_info)
+my_win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    /* called when my_win_main is requested to be deleted */
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
 }
 
 static void
-sc_round(void *data, Evas_Object *obj, void *event_info)
+sc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -39,7 +42,7 @@ sc_round(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-sc_change(void *data, Evas_Object *obj, void *event_info)
+sc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -49,7 +52,7 @@ sc_change(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-fs_round(void *data, Evas_Object *obj, void *event_info)
+fs_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -59,7 +62,7 @@ fs_round(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-fs_change(void *data, Evas_Object *obj, void *event_info)
+fs_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -205,49 +208,49 @@ _flip_to(Evas_Object *win, const char *name)
 }
 
 static void
-_cf_sizing(void *data, Evas_Object *obj, void *event_info)
+_cf_sizing(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "sizing");
 }
 
 static void
-_cf_themes(void *data, Evas_Object *obj, void *event_info)
+_cf_themes(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "themes");
 }
 
 static void
-_cf_fonts(void *data, Evas_Object *obj, void *event_info)
+_cf_fonts(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "fonts");
 }
 
 static void
-_cf_profiles(void *data, Evas_Object *obj, void *event_info)
+_cf_profiles(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "profiles");
 }
 
 static void
-_cf_scrolling(void *data, Evas_Object *obj, void *event_info)
+_cf_scrolling(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "scrolling");
 }
 
 static void
-_cf_rendering(void *data, Evas_Object *obj, void *event_info)
+_cf_rendering(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "rendering");
 }
 
 static void
-_cf_caches(void *data, Evas_Object *obj, void *event_info)
+_cf_caches(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _flip_to(data, "caches");
 }
 
 static void
-_theme_use(void *data, Evas_Object *obj, void *event_info)
+_theme_use(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    const char *defth;
    char *newth;
@@ -275,7 +278,7 @@ _theme_use(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_theme_sel(void *data, Evas_Object *obj, void *event_info)
+_theme_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Theme *t = data;
    Evas_Object *win = elm_object_top_widget_get(obj);
@@ -754,7 +757,7 @@ status_win(void)
 }
 
 static Eina_Bool
-_exit_timer(void *data)
+_exit_timer(void *data __UNUSED__)
 {
    elm_exit();
    return ECORE_CALLBACK_CANCEL;

@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include <elementary_config.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
@@ -14,25 +15,25 @@ static char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
 static char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
 
 static void
-_notify_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_notify_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_show(data);
 }
 
 static void
-_next(void *data, Evas_Object *obj, void *event_info)
+_next(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_slideshow_next(data);
 }
 
 static void
-_previous(void *data, Evas_Object *obj, void *event_info)
+_previous(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_slideshow_previous(data);
 }
 
 static void
-_mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_notify_timeout_set(data, 0);
    evas_object_show(data);
@@ -40,27 +41,27 @@ _mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 
 static void
-_mouse_out(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_notify_timeout_set(data, 3);
 }
 
 static void
-_hv_select(void *data, Evas_Object *obj, void *event_info)
+_hv_select(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_slideshow_transition_set(slideshow, data);
    elm_hoversel_label_set(obj, data);
 }
 
 static void
-_layout_select(void *data, Evas_Object *obj, void *event_info)
+_layout_select(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_slideshow_layout_set(slideshow, data);
    elm_hoversel_label_set(obj, data);
 }
 
 static void
-_start(void *data, Evas_Object *obj, void *event_info)
+_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
 
@@ -69,7 +70,7 @@ _start(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_stop(void *data, Evas_Object *obj, void *event_info)
+_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_slideshow_timeout_set(slideshow, 0);
    elm_object_disabled_set(bt_start, 0);
@@ -77,7 +78,7 @@ _stop(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_spin(void *data, Evas_Object *obj, void *event_info)
+_spin(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    if (elm_slideshow_timeout_get(slideshow) > 0)
      elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
@@ -101,7 +102,7 @@ _get(void *data, Evas_Object *obj)
 
 
 void
-test_slideshow(void *data, Evas_Object *obj, void *event_info)
+test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
    const Eina_List *l;

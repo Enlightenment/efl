@@ -1,9 +1,12 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 /* A simple test, just displaying calendar in it's default state */
 void
-test_calendar(void *data, Evas_Object *obj, void *event_info)
+test_calendar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *cal;
 
@@ -54,7 +57,7 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
 }
 
 static void
-_print_cal_info_cb(void *data, Evas_Object *obj, void *event_info)
+_print_cal_info_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    _print_cal_info(obj, data);
 }
@@ -70,7 +73,7 @@ _format_month_year(struct tm *stime)
 /* A test intended to cover all the calendar api and much use cases as
    possible */
 void
-test_calendar2(void *data, Evas_Object *obj, void *event_info)
+test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bxh, *cal, *cal2, *cal3, *en;
    Elm_Calendar_Mark *mark;

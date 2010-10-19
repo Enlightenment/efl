@@ -1,8 +1,11 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-_file_chosen(void *data, Evas_Object *obj, void *event_info)
+_file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *entry = data;
    char *file = event_info;
@@ -11,7 +14,7 @@ _file_chosen(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_inwin_mode_toggle(void *data, Evas_Object *obj, void *event_info)
+_inwin_mode_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_fileselector_entry_inwin_mode_get(fs_en);
@@ -20,7 +23,7 @@ _inwin_mode_toggle(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_folder_only_toggle(void *data, Evas_Object *obj, void *event_info)
+_folder_only_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Evas_Object *ic = elm_fileselector_entry_button_icon_get(fs_en);
@@ -40,7 +43,7 @@ _folder_only_toggle(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_expandable_toggle(void *data, Evas_Object *obj, void *event_info)
+_expandable_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_fileselector_entry_expandable_get(fs_en);
@@ -49,7 +52,7 @@ _expandable_toggle(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_disabled_toggle(void *data, Evas_Object *obj, void *event_info)
+_disabled_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_object_disabled_get(fs_en);
@@ -58,7 +61,7 @@ _disabled_toggle(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_fileselector_entry(void *data, Evas_Object *obj, void *event_info)
+test_fileselector_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_en, *en, *lb;
 

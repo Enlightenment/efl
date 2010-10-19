@@ -15,7 +15,7 @@ typedef struct _Testitem
 static Elm_Gengrid_Item_Class gic;
 
 char *
-grdt_lbl_get(void *data, Evas_Object *obj, const char *part)
+grdt_lbl_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    const Testitem *ti = data;
    char buf[256];
@@ -39,7 +39,7 @@ grdt_icon_get(void *data, Evas_Object *obj, const char *part)
 }
 
 void
-test_gengrid_tooltip(void *data, Evas_Object *obj, void *event_info)
+test_gengrid_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *grid;
    static Testitem ti[144];
@@ -103,7 +103,7 @@ test_gengrid_tooltip(void *data, Evas_Object *obj, void *event_info)
 static Elm_Genlist_Item_Class itct;
 
 static void
-gltt_exp(void *data, Evas_Object *obj, void *event_info)
+gltt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    Evas_Object *gl = elm_genlist_item_genlist_get(it);
@@ -120,28 +120,28 @@ gltt_exp(void *data, Evas_Object *obj, void *event_info)
    elm_genlist_item_tooltip_text_set(it3, "Testing C");
 }
 static void
-gltt_con(void *data, Evas_Object *obj, void *event_info)
+gltt_con(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_subitems_clear(it);
 }
 
 static void
-gltt_exp_req(void *data, Evas_Object *obj, void *event_info)
+gltt_exp_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 1);
 }
 
 static void
-gltt_con_req(void *data, Evas_Object *obj, void *event_info)
+gltt_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 0);
 }
 
 char *
-gltt_label_get(void *data, Evas_Object *obj, const char *part)
+gltt_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", (int)(long)data);

@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-_bt_repeated(void *data, Evas_Object *obj, void *event_info)
+_bt_repeated(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
 	static int count;
 	char buf[16];
@@ -13,7 +16,7 @@ _bt_repeated(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_button(void *data, Evas_Object *obj, void *event_info)
+test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ic, *bt;
    char buf[PATH_MAX];

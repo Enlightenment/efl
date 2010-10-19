@@ -1,13 +1,16 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_show_it(void *data, Evas_Object *obj, void *event_info)
+my_show_it(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_list_item_show(data);
 }
 
 void
-test_list(void *data, Evas_Object *obj, void *event_info)
+test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
@@ -148,13 +151,13 @@ test_list(void *data, Evas_Object *obj, void *event_info)
 /***********/
 
 static void
-my_li2_clear(void *data, Evas_Object *obj, void *event_info)
+my_li2_clear(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_list_clear(data);
 }
 
 static void
-my_li2_sel(void *data, Evas_Object *obj, void *event_info)
+my_li2_sel(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_List_Item *it = elm_list_selected_item_get(obj);
    elm_list_item_selected_set(it, 0);
@@ -162,7 +165,7 @@ my_li2_sel(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_list2(void *data, Evas_Object *obj, void *event_info)
+test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
@@ -275,19 +278,19 @@ test_list2(void *data, Evas_Object *obj, void *event_info)
 /***********/
 
 static void
-_bt_clicked(void *data, Evas_Object *obj, void *event_info)
+_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("button was clicked\n");
 }
 
 static void
-_it_clicked(void *data, Evas_Object *obj, void *event_info)
+_it_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("item was clicked\n");
 }
 
 void
-test_list3(void *data, Evas_Object *obj, void *event_info)
+test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
@@ -395,7 +398,7 @@ struct Pginfo {
 };
 
 static void
-test_list4_back_cb(void *data, Evas_Object *obj, void *event_info)
+test_list4_back_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     struct Pginfo *info = data;
     if (!info) return;
@@ -404,7 +407,7 @@ test_list4_back_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-test_list4_swipe(void *data, Evas_Object *obj, void *event_info)
+test_list4_swipe(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
     Evas_Object *box, *entry, *button;
     struct Pginfo *info = data;
@@ -441,7 +444,7 @@ test_list4_swipe(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_list4(void *data, Evas_Object *obj, void *event_info)
+test_list4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *pager;
    static struct Pginfo info = {NULL, NULL};
@@ -543,13 +546,13 @@ struct list5_data_cb {
 };
 
 static void
-test_list5_item_del(void *data, Evas_Object *obj, void *event_info)
+test_list5_item_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_list_item_del(data);
 }
 
 static void
-test_list5_swipe(void *data, Evas_Object *obj, void *event_info)
+test_list5_swipe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
     Evas_Object *button;
     struct list5_data_cb *info = elm_list_item_data_get(event_info);
@@ -565,7 +568,7 @@ test_list5_swipe(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_list5(void *data, Evas_Object *obj, void *event_info)
+test_list5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li;
    static struct list5_data_cb info;

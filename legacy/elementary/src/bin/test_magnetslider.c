@@ -1,14 +1,17 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static void _pos_selected_cb(void *data, Evas_Object *obj, void *event_info)
+static void _pos_selected_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("Selection: %s\n", (char *)event_info);
    printf("Label selected: %s\n", elm_magnetslider_selected_label_get(obj));
 }
 
 static void
-_position_change_magnetic_cb(void *data, Evas_Object * obj, void *event_info)
+_position_change_magnetic_cb(void *data __UNUSED__, Evas_Object * obj, void *event_info)
 {
    if (!strcmp((char *)event_info, "left"))
      elm_magnetslider_magnet_pos_set(obj, ELM_MAGNETSLIDER_LEFT);
@@ -17,7 +20,7 @@ _position_change_magnetic_cb(void *data, Evas_Object * obj, void *event_info)
 }
 
 void
-test_magnetslider(void *data, Evas_Object * obj, void *event_info)
+test_magnetslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ms;
 

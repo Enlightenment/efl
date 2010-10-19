@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 typedef struct Marker_Data
@@ -28,112 +31,112 @@ Marker_Data data11= {PACKAGE_DATA_DIR"/images/wood_01.jpg"};
 Marker_Data data_parking= {PACKAGE_DATA_DIR"/images/parking.png"};
 
 static void
-my_map_clicked(void *data, Evas_Object *obj, void *event_info)
+my_map_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("clicked\n");
 }
 
 static void
-my_map_press(void *data, Evas_Object *obj, void *event_info)
+my_map_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("press\n");
 }
 
 static void
-my_map_longpressed(void *data, Evas_Object *obj, void *event_info)
+my_map_longpressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("longpressed\n");
 }
 
 static void
-my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
+my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("clicked,double\n");
 }
 
 static void
-my_map_load(void *data, Evas_Object *obj, void *event_info)
+my_map_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("load\n");
 }
 
 static void
-my_map_loaded(void *data, Evas_Object *obj, void *event_info)
+my_map_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("loaded\n");
 }
 
 static void
-my_map_load_details(void *data, Evas_Object *obj, void *event_info)
+my_map_load_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("load,details\n");
 }
 
 static void
-my_map_loaded_details(void *data, Evas_Object *obj, void *event_info)
+my_map_loaded_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("loaded,details\n");
 }
 
 static void
-my_map_zoom_start(void *data, Evas_Object *obj, void *event_info)
+my_map_zoom_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("zoom,start\n");
 }
 
 static void
-my_map_zoom_stop(void *data, Evas_Object *obj, void *event_info)
+my_map_zoom_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("zoom,stop\n");
 }
 
 static void
-my_map_zoom_change(void *data, Evas_Object *obj, void *event_info)
+my_map_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("zoom,change\n");
 }
 
 static void
-my_map_anim_start(void *data, Evas_Object *obj, void *event_info)
+my_map_anim_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("anim,start\n");
 }
 
 static void
-my_map_anim_stop(void *data, Evas_Object *obj, void *event_info)
+my_map_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("anim,stop\n");
 }
 
 static void
-my_map_drag_start(void *data, Evas_Object *obj, void *event_info)
+my_map_drag_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("drag,start\n");
 }
 
 static void
-my_map_drag_stop(void *data, Evas_Object *obj, void *event_info)
+my_map_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    printf("drag_stop\n");
 }
 
 static void
-my_map_scroll(void *data, Evas_Object *obj, void *event_info)
+my_map_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    //Evas_Object *win = data;
    double lon, lat;
@@ -142,7 +145,7 @@ my_map_scroll(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_show_reg(void *data, Evas_Object *obj, void *event_info)
+my_bt_show_reg(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Eina_Bool b = elm_map_paused_get(data);
    elm_map_paused_set(data, EINA_TRUE);
@@ -153,13 +156,13 @@ my_bt_show_reg(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_bring_reg(void *data, Evas_Object *obj, void *event_info)
+my_bt_bring_reg(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_geo_region_bring_in(data, 2.352, 48.857);
 }
 
 static void
-my_bt_zoom_in(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
 
@@ -170,7 +173,7 @@ my_bt_zoom_in(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
 
@@ -181,55 +184,55 @@ my_bt_zoom_out(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_pause(void *data, Evas_Object *obj, void *event_info)
+my_bt_pause(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_paused_set(data, !elm_map_paused_get(data));
 }
 
 static void
-my_bt_markers_pause(void *data, Evas_Object *obj, void *event_info)
+my_bt_markers_pause(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_paused_markers_set(data, !elm_map_paused_markers_get(data));
 }
 
 static void
-my_bt_zoom_fit(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_fit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FIT);
 }
 
 static void
-my_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
+my_bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FILL);
 }
 
 static void
-my_bt_source_mapnik(void *data, Evas_Object *obj, void *event_info)
+my_bt_source_mapnik(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_source_set(data, ELM_MAP_SOURCE_MAPNIK);
 }
 
 static void
-my_bt_source_osmarender(void *data, Evas_Object *obj, void *event_info)
+my_bt_source_osmarender(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_source_set(data, ELM_MAP_SOURCE_OSMARENDER);
 }
 
 static void
-my_bt_source_cyclemap(void *data, Evas_Object *obj, void *event_info)
+my_bt_source_cyclemap(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_source_set(data, ELM_MAP_SOURCE_CYCLEMAP);
 }
 
 static void
-my_bt_source_maplint(void *data, Evas_Object *obj, void *event_info)
+my_bt_source_maplint(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_map_source_set(data, ELM_MAP_SOURCE_MAPLINT);
 }
 
 static void
-my_bt_add(void *data, Evas_Object *obj, void *event_info)
+my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     int i;
     Elm_Map_Group_Class *g_clas;
@@ -272,7 +275,7 @@ my_bt_add(void *data, Evas_Object *obj, void *event_info)
 }
 
 static Evas_Object *
-_marker_get(Evas_Object *obj, Elm_Map_Marker *marker, void *data)
+_marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
 {
     Marker_Data *d = data;
 
@@ -309,7 +312,7 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker, void *data)
 }
 
 static Evas_Object *
-_icon_get(Evas_Object *obj, Elm_Map_Marker *marker, void *data)
+_icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
 {
     Marker_Data *d = data;
 
@@ -333,7 +336,7 @@ _group_icon_get(Evas_Object *obj, void *data)
 }
 
 static void
-_map_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_map_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *map = data;
    Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
@@ -353,7 +356,7 @@ _map_mouse_wheel_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void 
-_map_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_map_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int x,y,w,h;
 
@@ -363,7 +366,7 @@ _map_move_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 void
-test_map(void *data, Evas_Object *obj, void *event_info)
+test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *map, *tb2, *bt, *bx;
 

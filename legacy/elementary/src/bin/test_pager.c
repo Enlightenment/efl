@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Pginfo Pginfo;
 
@@ -8,35 +11,35 @@ struct _Pginfo
 };
 
 static void
-my_pager_1(void *data, Evas_Object *obj, void *event_info)
+my_pager_1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Pginfo *info = data;
    elm_pager_content_promote(info->pager, info->pg2);
 }
 
 static void
-my_pager_2(void *data, Evas_Object *obj, void *event_info)
+my_pager_2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Pginfo *info = data;
    elm_pager_content_promote(info->pager, info->pg3);
 }
 
 static void
-my_pager_3(void *data, Evas_Object *obj, void *event_info)
+my_pager_3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Pginfo *info = data;
    elm_pager_content_promote(info->pager, info->pg1);
 }
 
 static void
-my_pager_pop(void *data, Evas_Object *obj, void *event_info)
+my_pager_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Pginfo *info = data;
    elm_pager_content_pop(info->pager);
 }
 
 void
-test_pager(void *data, Evas_Object *obj, void *event_info)
+test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *pg, *bx, *lb, *bt;
    static Pginfo info;
@@ -152,7 +155,7 @@ test_pager(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_pager_push(void *data, Evas_Object *obj, void *event_info)
+my_pager_push(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Pginfo *info = data;
    Evas_Object *bx, *bt, *lb;
@@ -184,7 +187,7 @@ my_pager_push(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_pager_slide(void *data, Evas_Object *obj, void *event_info)
+test_pager_slide(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *pg, *bx, *lb, *bt;
    static Pginfo info;

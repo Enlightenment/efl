@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 void
-test_clock(void *data, Evas_Object *obj, void *event_info)
+test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ck;
    unsigned int digedit;
@@ -67,7 +70,7 @@ test_clock(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_edit_bt_clicked(void *data, Evas_Object *obj, void *event_info)
+_edit_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ck = data;
 
@@ -81,7 +84,7 @@ _edit_bt_clicked(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info)
+_hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ck = data;
 
@@ -95,7 +98,7 @@ _hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_clock2(void *data, Evas_Object *obj, void *event_info)
+test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *hbx, *ck, *bt;
 

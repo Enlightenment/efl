@@ -1,7 +1,10 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_anchorblock_bt(void *data, Evas_Object *obj, void *event_info)
+my_anchorblock_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *av = data;
    elm_anchorblock_hover_end(av);
@@ -68,31 +71,31 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_anchorblock_edge_left(void *data, Evas_Object *obj, void *event_info)
+my_anchorblock_edge_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("left\n");
 }
 
 static void
-my_anchorblock_edge_right(void *data, Evas_Object *obj, void *event_info)
+my_anchorblock_edge_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("right\n");
 }
 
 static void
-my_anchorblock_edge_top(void *data, Evas_Object *obj, void *event_info)
+my_anchorblock_edge_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("top\n");
 }
 
 static void
-my_anchorblock_edge_bottom(void *data, Evas_Object *obj, void *event_info)
+my_anchorblock_edge_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("bottom\n");
 }
 
 static void
-my_anchorblock_scroll(void *data, Evas_Object *obj, void *event_info)
+my_anchorblock_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord x, y, w, h, vw, vh;
 
@@ -102,7 +105,7 @@ my_anchorblock_scroll(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_anchorblock(void *data, Evas_Object *obj, void *event_info)
+test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *av, *sc, *bx, *bb, *ic;
    char buf[PATH_MAX];

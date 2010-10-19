@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Testitem
 {
@@ -9,14 +12,14 @@ typedef struct _Testitem
 
 
 static Elm_Genlist_Item_Class itc1;
-static char *glf_label_get(void *data, Evas_Object *obj, const char *part)
+static char *glf_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
    return strdup(buf);
 }
 
-static Evas_Object *glf_icon_get(void *data, Evas_Object *obj, const char *part)
+static Evas_Object *glf_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
@@ -25,11 +28,11 @@ static Evas_Object *glf_icon_get(void *data, Evas_Object *obj, const char *part)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
-static Eina_Bool glf_state_get(void *data, Evas_Object *obj, const char *part)
+static Eina_Bool glf_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return EINA_FALSE;
 }
-static void glf_del(void *data, Evas_Object *obj)
+static void glf_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
 }
 
@@ -52,7 +55,7 @@ anim(void *data)
 }
 
 static void
-_del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Animator *ani = data;
    
@@ -60,7 +63,7 @@ _del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 void
-test_floating(void *data, Evas_Object *obj, void *event_info)
+test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *gl;
    int i;

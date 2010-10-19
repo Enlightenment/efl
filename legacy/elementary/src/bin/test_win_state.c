@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Testitem
 {
@@ -9,7 +12,7 @@ typedef struct _Testitem
 static int rotate_with_resize = 0;
 
 static void
-my_bt_38_alpha_on(void *data, Evas_Object *obj, void *event_info)
+my_bt_38_alpha_on(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
@@ -18,7 +21,7 @@ my_bt_38_alpha_on(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_38_alpha_off(void *data, Evas_Object *obj, void *event_info)
+my_bt_38_alpha_off(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
@@ -27,14 +30,14 @@ my_bt_38_alpha_off(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_ck_38_resize(void *data, Evas_Object *obj, void *event_info)
+my_ck_38_resize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
 //   Evas_Object *win = data;
    rotate_with_resize = elm_check_state_get(obj);
 }
 
 static void
-my_bt_38_rot_0(void *data, Evas_Object *obj, void *event_info)
+my_bt_38_rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -44,7 +47,7 @@ my_bt_38_rot_0(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_38_rot_90(void *data, Evas_Object *obj, void *event_info)
+my_bt_38_rot_90(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -54,7 +57,7 @@ my_bt_38_rot_90(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_38_rot_180(void *data, Evas_Object *obj, void *event_info)
+my_bt_38_rot_180(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -64,7 +67,7 @@ my_bt_38_rot_180(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_bt_38_rot_270(void *data, Evas_Object *obj, void *event_info)
+my_bt_38_rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    if (rotate_with_resize)
@@ -74,7 +77,7 @@ my_bt_38_rot_270(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_win_move(void *data, Evas_Object *obj, void *event_info)
+my_win_move(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord x, y;
    elm_win_screen_position_get(obj, &x, &y);
@@ -82,7 +85,7 @@ my_win_move(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_win_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_win_resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord w, h;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -90,25 +93,25 @@ _win_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-_win_foc_in(void *data, Evas *e, void *event_info)
+_win_foc_in(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    printf("FOC IN\n");
 }
 
 static void
-_win_foc_out(void *data, Evas *e, void *event_info)
+_win_foc_out(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    printf("FOC OUT\n");
 }
 
 static void
-_close_win(void *data, Evas_Object *obj, void *event_info)
+_close_win(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_del(data);
 }
 
 void
-test_win_state(void *data, Evas_Object *obj, void *event_info)
+test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
 
@@ -232,7 +235,7 @@ test_win_state(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_win_state2(void *data, Evas_Object *obj, void *event_info)
+test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
    char buf[PATH_MAX];

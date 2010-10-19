@@ -1,25 +1,28 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_notepad_bt_1(void *data, Evas_Object *obj, void *event_info)
+my_notepad_bt_1(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *np = data;
 }
 
 static void
-my_notepad_bt_2(void *data, Evas_Object *obj, void *event_info)
+my_notepad_bt_2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *np = data;
 }
 
 static void
-my_notepad_bt_3(void *data, Evas_Object *obj, void *event_info)
+my_notepad_bt_3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
 //   Evas_Object *np = data;
 }
 
 void
-test_notepad(void *data, Evas_Object *obj, void *event_info)
+test_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bx2, *bt, *ic, *np;
 

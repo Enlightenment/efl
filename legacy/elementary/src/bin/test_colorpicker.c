@@ -1,8 +1,11 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_colorpicker_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+_colorpicker_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *re = data;
    int r, g, b, a;
@@ -19,7 +22,7 @@ _colorpicker_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_colorpicker(void *data, Evas_Object *obj, void *event_info)
+test_colorpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *cp, *fr, *ly, *re;
    char buf[PATH_MAX];

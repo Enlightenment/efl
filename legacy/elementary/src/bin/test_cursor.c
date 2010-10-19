@@ -1,5 +1,8 @@
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 typedef struct _Testitem
@@ -13,7 +16,7 @@ typedef struct _Testitem
 static Elm_Gengrid_Item_Class gic;
 
 char *
-grd_lbl_get(void *data, Evas_Object *obj, const char *part)
+grd_lbl_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    const Testitem *ti = data;
    char buf[256];
@@ -40,7 +43,7 @@ grd_icon_get(void *data, Evas_Object *obj, const char *part)
 static Elm_Genlist_Item_Class itct;
 
 static void
-glt_exp(void *data, Evas_Object *obj, void *event_info)
+glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    Evas_Object *gl = elm_genlist_item_genlist_get(it);
@@ -62,28 +65,28 @@ glt_exp(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-glt_con(void *data, Evas_Object *obj, void *event_info)
+glt_con(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_subitems_clear(it);
 }
 
 static void
-glt_exp_req(void *data, Evas_Object *obj, void *event_info)
+glt_exp_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 1);
 }
 
 static void
-glt_con_req(void *data, Evas_Object *obj, void *event_info)
+glt_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 0);
 }
 
 char *
-glt_label_get(void *data, Evas_Object *obj, const char *part)
+glt_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", (int)(long)data);
@@ -91,7 +94,7 @@ glt_label_get(void *data, Evas_Object *obj, const char *part)
 }
 
 void
-test_cursor(void *data, Evas_Object *obj, void *event_info)
+test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bt, *list, *entry, *ck;
    Elm_List_Item *lit;
@@ -157,7 +160,7 @@ test_cursor(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_cursor2(void *data, Evas_Object *obj, void *event_info)
+test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *o, *grid, *gl;
    Elm_Genlist_Item *it1, *it2, *it3;
@@ -282,7 +285,7 @@ test_cursor2(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_cursor3(void *data, Evas_Object *obj, void *event_info)
+test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *o;
    Elm_List_Item *lit;

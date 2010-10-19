@@ -1,64 +1,67 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 void
-my_fl_1(void *data, Evas_Object *obj, void *event_info)
+my_fl_1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_ROTATE_Y_CENTER_AXIS);
 }
 
 void
-my_fl_2(void *data, Evas_Object *obj, void *event_info)
+my_fl_2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_ROTATE_X_CENTER_AXIS);
 }
 
 void
-my_fl_3(void *data, Evas_Object *obj, void *event_info)
+my_fl_3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_ROTATE_XZ_CENTER_AXIS);
 }
 
 void
-my_fl_4(void *data, Evas_Object *obj, void *event_info)
+my_fl_4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_ROTATE_YZ_CENTER_AXIS);
 }
 
 void
-my_fl_5(void *data, Evas_Object *obj, void *event_info)
+my_fl_5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_CUBE_LEFT);
 }
 
 void
-my_fl_6(void *data, Evas_Object *obj, void *event_info)
+my_fl_6(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_CUBE_RIGHT);
 }
 
 void
-my_fl_7(void *data, Evas_Object *obj, void *event_info)
+my_fl_7(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_CUBE_UP);
 }
 
 void
-my_fl_8(void *data, Evas_Object *obj, void *event_info)
+my_fl_8(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fl = data;
    elm_flip_go(fl, ELM_FLIP_CUBE_DOWN);
 }
 
 void
-test_flip(void *data, Evas_Object *obj, void *event_info)
+test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *ly;
    char buf[PATH_MAX];
@@ -201,7 +204,7 @@ test_flip(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_flip2(void *data, Evas_Object *obj, void *event_info)
+test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *tb, *li;
    char buf[PATH_MAX];
@@ -343,7 +346,7 @@ test_flip2(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-test_flip3(void *data, Evas_Object *obj, void *event_info)
+test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bx2, *fl, *fl_f, *fl_b, *o, *bt, *fr;
    char buf[PATH_MAX];

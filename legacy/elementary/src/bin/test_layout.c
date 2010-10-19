@@ -1,8 +1,11 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 #include <Elementary_Cursor.h>
 void
-test_layout(void *data, Evas_Object *obj, void *event_info)
+test_layout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *ly, *bt;
    char buf[PATH_MAX];

@@ -1,8 +1,11 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_focus_in(void *data, Evas *e, void *event_info)
+_focus_in(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
 {
    const char *type = evas_object_type_get(event_info);
    if (type && strcmp(type, "elm_widget") == 0)
@@ -11,7 +14,7 @@ _focus_in(void *data, Evas *e, void *event_info)
 }
 
 static void
-_focus_out(void *data, Evas *e, void *event_info)
+_focus_out(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
 {
    const char *type = evas_object_type_get(event_info);
    if (type && strcmp(type, "elm_widget") == 0)
@@ -20,7 +23,7 @@ _focus_out(void *data, Evas *e, void *event_info)
 }
 
 static void
-_focus_obj(void *data, Evas_Object *o, void *event_info)
+_focus_obj(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *newfocus = data;
    const char *type = evas_object_type_get(newfocus);
@@ -31,7 +34,7 @@ _focus_obj(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_focus_layout_part(void *data, Evas_Object *o, void *event_info)
+_focus_layout_part(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ed = elm_layout_edje_get(data);
 
@@ -43,7 +46,7 @@ _focus_layout_part(void *data, Evas_Object *o, void *event_info)
 
 
 void
-test_focus2(void *data, Evas_Object *obj, void *event_info)
+test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *ly, *bt, *en, *bt1;
 

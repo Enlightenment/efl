@@ -1,11 +1,14 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Evas_Object *win, *bg, *menu, *rect, *ic;;
 static char buf[PATH_MAX];
 
 static void
-_show(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info; 
    elm_menu_move(data, ev->canvas.x, ev->canvas.y);
@@ -134,7 +137,7 @@ _populate_1(Elm_Menu_Item *item)
 }
 
 void
-test_menu(void *data, Evas_Object *obj, void *event_info)
+test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Menu_Item *item;
 

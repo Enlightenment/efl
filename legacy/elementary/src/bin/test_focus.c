@@ -1,8 +1,11 @@
 /* Test for Focus Chain Linear*/
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 
 static void
-_on_key_down(void *data, Evas *e, Evas_Object *obj, void *einfo)
+_on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *einfo __UNUSED__)
 {
    //Evas_Event_Key_Down *event = einfo;
    //printf("%s %p Key %s Parent %p\n", evas_object_type_get(obj),
@@ -18,7 +21,7 @@ my_show(Evas_Object *obj)
 }
 
 void
-test_focus(void *data, Evas_Object *obj, void *event_info)
+test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win;
    unsigned int i, j;

@@ -1,31 +1,34 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 void
-my_bt_go_300_300(void *data, Evas_Object *obj, void *event_info)
+my_bt_go_300_300(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 300, 300, 318, 318);
 }
 
 void
-my_bt_go_900_300(void *data, Evas_Object *obj, void *event_info)
+my_bt_go_900_300(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 900, 300, 318, 318);
 }
 
 void
-my_bt_go_300_900(void *data, Evas_Object *obj, void *event_info)
+my_bt_go_300_900(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 300, 900, 318, 318);
 }
 
 void
-my_bt_go_900_900(void *data, Evas_Object *obj, void *event_info)
+my_bt_go_900_900(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_scroller_region_bring_in((Evas_Object *)data, 900, 900, 318, 318);
 }
 
 void
-test_scroller(void *data, Evas_Object *obj, void *event_info)
+test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg2, *tb, *tb2, *bg, *sc, *bt;
    int i, j, n;
@@ -128,13 +131,13 @@ test_scroller(void *data, Evas_Object *obj, void *event_info)
 }
 
 void
-click_through(void *data, Evas_Object *obj, void *event_info)
+click_through(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("click went through on %p\n", obj);
 }
 
 void
-test_scroller2(void *data, Evas_Object *obj, void *event_info)
+test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bt, *bx, *bx2, *bg, *sc, *tb, *tb2, *rc;
    int i, j;

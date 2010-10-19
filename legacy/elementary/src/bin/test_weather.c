@@ -1,5 +1,7 @@
 #include <Elementary.h>
-#include "../../elementary_config.h"
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 #ifdef HAVE_ELEMENTARY_EWEATHER
@@ -51,7 +53,7 @@ _hover_select_cb(void *data, Evas_Object *obj, void *event_info)
 #endif
 
 void
-test_weather(void *data, Evas_Object *obj, void *event_info)
+test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg;
 #ifdef HAVE_ELEMENTARY_EWEATHER

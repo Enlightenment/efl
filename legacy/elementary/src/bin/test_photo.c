@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void drop_cb(void *mydata, Evas_Object *obj, void *evdata);
@@ -6,7 +9,7 @@ static void drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata);
 static void drag_start_cb(void *mydata, Evas_Object *obj, void *evdata);
 
 void
-test_photo(void *data, Evas_Object *obj, void *event_info)
+test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *sc, *tb, *ph;
    int i, j, n;
@@ -83,17 +86,17 @@ test_photo(void *data, Evas_Object *obj, void *event_info)
 
 /* Never called, elm_photo never call "drop" smart cb */
 static void
-drop_cb(void *mydata, Evas_Object *obj, void *evdata){
+drop_cb(void *mydata __UNUSED__, Evas_Object *obj, void *evdata __UNUSED__){
    printf("Drop on obj %p\n", obj);
 }
 
 static void
-drag_start_cb(void *mydata, Evas_Object *obj, void *evdata){
+drag_start_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__){
    
 }
 
 static void
-drag_stop_cb(void *mydata, Evas_Object *obj, void *evdata){
+drag_stop_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__){
 
 }
 

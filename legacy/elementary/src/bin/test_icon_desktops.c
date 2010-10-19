@@ -1,15 +1,19 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static Elm_Genlist_Item_Class it_desk;
 
 static char *
-desk_gl_label_get(void *data, Evas_Object *obj, const char *part)
+desk_gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
 #ifdef ELM_EFREET   
    Efreet_Desktop *d = (Efreet_Desktop *)data;
    return strdup(d->name);
 #else
    return NULL;
+   (void)data;
 #endif   
 }
 static Evas_Object *
@@ -50,27 +54,33 @@ desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
    return ic;
 #else
    return NULL;
+   (void)data;
+   (void)obj;
+   (void)part;
 #endif   
 }
 static void
-desk_gl_del(void *data, Evas_Object *obj)
+desk_gl_del(void *data, Evas_Object *obj __UNUSED__)
 {
 #ifdef ELM_EFREET   
    Efreet_Desktop *d = (Efreet_Desktop *)data;
    efreet_desktop_free(d);
+#else
+   return;
+   (void)data;
 #endif   
 }
 
 #ifdef ELM_EFREET
 static void
-desktop_sel(void *data, Evas_Object *obj, void *event_info)
+desktop_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("sel\n");
 }
 #endif
 
 void
-test_icon_desktops(void *data, Evas_Object *obj, void *event_info)
+test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *gl;
 #ifdef ELM_EFREET

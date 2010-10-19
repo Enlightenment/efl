@@ -1,16 +1,18 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
-
 void
-_change_cb(void *data, Evas_Object *obj, void *event_info)
+_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
     double val = elm_slider_value_get(obj);
     elm_slider_value_set(data, val);
 }
 
 void
-test_slider(void *data, Evas_Object *obj, void *event_info)
+test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *sl, *ic, *sl1;
    char buf[PATH_MAX];

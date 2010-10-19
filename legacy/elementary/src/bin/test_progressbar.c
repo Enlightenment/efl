@@ -1,4 +1,7 @@
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct Progressbar
 {
@@ -16,7 +19,7 @@ typedef struct Progressbar
 static Progressbar _test_progressbar;
 
 static Eina_Bool
-_my_progressbar_value_set (void *data)
+_my_progressbar_value_set (void *data __UNUSED__)
 {
    double progress;
 
@@ -33,7 +36,7 @@ _my_progressbar_value_set (void *data)
 }
 
 static void
-my_progressbar_test_start(void *data, Evas_Object *obj, void *event_info)
+my_progressbar_test_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_TRUE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_TRUE);
@@ -46,7 +49,7 @@ my_progressbar_test_start(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_progressbar_test_stop(void *data, Evas_Object *obj, void *event_info)
+my_progressbar_test_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_progressbar_pulse(_test_progressbar.pb2, EINA_FALSE);
    elm_progressbar_pulse(_test_progressbar.pb5, EINA_FALSE);
@@ -59,14 +62,14 @@ my_progressbar_test_stop(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-my_progressbar_destroy(void *data, Evas_Object *obj, void *event_info)
+my_progressbar_destroy(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    my_progressbar_test_stop(NULL, NULL, NULL);
    evas_object_del(obj);
 }
 
 void
-test_progressbar(void *data, Evas_Object *obj, void *event_info)
+test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
    char buf[PATH_MAX];
