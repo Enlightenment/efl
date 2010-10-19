@@ -395,7 +395,7 @@ _check_string(void *data)
         if (x + w <= ox || x >= ox + ow)
           continue;
 
-        len = strlen(it->label);
+        len = eina_stringshare_strlen(it->label);
 
         if (x <= ox + 5)
              edje_object_signal_emit(it->base.view, "elm,state,left_side",
