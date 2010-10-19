@@ -2,13 +2,13 @@
 
 
 static void
-external_notepad_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_notepad_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const void *from_params __UNUSED__, const void *to_params __UNUSED__, float pos __UNUSED__)
 {
    /* TODO: to be expanded */
 }
 
 static Eina_Bool
-external_notepad_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
+external_notepad_param_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Edje_External_Param *param)
 {
    /* TODO: to be expanded */
 
@@ -19,7 +19,7 @@ external_notepad_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 }
 
 static Eina_Bool
-external_notepad_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_notepad_param_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, Edje_External_Param *param)
 {
    /* TODO: to be expanded */
 
@@ -30,7 +30,7 @@ external_notepad_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 }
 
 static void *
-external_notepad_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+external_notepad_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params __UNUSED__)
 {
    /* TODO: to be expanded */
 
@@ -38,14 +38,14 @@ external_notepad_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 static Evas_Object *external_notepad_content_get(void *data __UNUSED__,
-		const Evas_Object *obj, const char *content)
+		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
 	ERR("so content");
 	return NULL;
 }
 
 static void
-external_notepad_params_free(void *params)
+external_notepad_params_free(void *params __UNUSED__)
 {
 }
 

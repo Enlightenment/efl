@@ -674,6 +674,7 @@ elm_quicklaunch_prepare(int argc __UNUSED__, char **argv)
    return EINA_TRUE;
 #else
    return EINA_FALSE;
+   (void)argv;
 #endif
 }
 
@@ -766,6 +767,11 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
    return EINA_TRUE;
 #else
    return EINA_FALSE;
+   (void)argc;
+   (void)argv;
+   (void)cwd;
+   (void)postfork_func;
+   (void)postfork_data;
 #endif
 }
 

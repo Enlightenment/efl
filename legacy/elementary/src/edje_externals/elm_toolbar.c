@@ -76,7 +76,7 @@ external_toolbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 }
 
 static void *
-external_toolbar_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
+external_toolbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
 {
    Elm_Params_Toolbar *mem;
    Edje_External_Param *param;
@@ -104,7 +104,7 @@ external_toolbar_params_parse(void *data, Evas_Object *obj, const Eina_List *par
 }
 
 static Evas_Object *external_toolbar_content_get(void *data __UNUSED__,
-		const Evas_Object *obj, const char *content)
+		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
 	ERR("so content");
 	return NULL;

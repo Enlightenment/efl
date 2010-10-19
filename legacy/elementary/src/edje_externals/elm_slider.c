@@ -297,7 +297,7 @@ external_slider_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static Evas_Object *external_slider_content_get(void *data __UNUSED__,
-		const Evas_Object *obj, const char *content)
+		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
 	ERR("so content");
 	return NULL;
