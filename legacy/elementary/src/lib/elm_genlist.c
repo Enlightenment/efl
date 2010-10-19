@@ -2341,6 +2341,7 @@ elm_genlist_clear(Evas_Object *obj)
         if (it->itc->func.del)
            it->itc->func.del((void *)it->base.data, it->base.widget);
         if (it->long_timer) ecore_timer_del(it->long_timer);
+        if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
         elm_widget_item_del(it);
      }
    while (wd->blocks)
