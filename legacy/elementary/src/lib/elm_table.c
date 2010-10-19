@@ -104,14 +104,6 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 static void
 _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   /* We do not add this callback, consequently we do not need to delete it
-   
-   Widget_Data *wd = elm_widget_data_get(obj);
-   evas_Object *sub = event_info;
-
-   evas_object_event_callback_del_full
-     (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
-     */
    _sizing_eval(obj);
 }
 
