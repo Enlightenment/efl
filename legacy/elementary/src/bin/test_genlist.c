@@ -1212,7 +1212,7 @@ test_genlist7_swipe(void *data, Evas_Object *obj, void *event_info)
 void
 test_genlist7(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *gl, *bx, *bx2, *bt, *pager;
+   Evas_Object *win, *bg, *gl, *pager;
    static struct genlist7_data info;
    static Testitem tit[3];
 

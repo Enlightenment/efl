@@ -407,7 +407,6 @@ static void
 test_list4_swipe(void *data, Evas_Object *obj, void *event_info)
 {
     Evas_Object *box, *entry, *button;
-    const char *item_label = NULL;
     struct Pginfo *info = data;
     char *item_data;
     if (!event_info || !data) return;
@@ -568,9 +567,8 @@ test_list5_swipe(void *data, Evas_Object *obj, void *event_info)
 void
 test_list5(void *data, Evas_Object *obj, void *event_info)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2;
+   Evas_Object *win, *bg, *li;
    static struct list5_data_cb info;
-   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "list-5", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 5");
