@@ -18,6 +18,7 @@ struct _Widget_Data
    Eina_List *items, *selected, *to_delete;
    Elm_List_Item *last_selected_item;
    Elm_List_Mode mode;
+   Elm_List_Mode h_mode;
    Evas_Coord minw[2], minh[2];
    Eina_Bool scr_minw : 1;
    Eina_Bool scr_minh : 1;
@@ -75,18 +76,16 @@ static Eina_Bool _item_single_select_down(Widget_Data *wd);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
-#define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)                  \
-   if (!it)                                                          \
-    {                                                                \
-       fprintf(stderr, "ERROR: %s:%d:%s() "#it" is NULL.\n",         \
-           __FILE__, __LINE__, __FUNCTION__);                        \
-       return __VA_ARGS__;                                           \
-    }                                                                \
-  else if (it->deleted)                                              \
-    {                                                                \
-       fprintf(stderr, "ERROR: %s:%d:%s() "#it" has been DELETED.\n",\
-           __FILE__, __LINE__, __FUNCTION__);                        \
-       return __VA_ARGS__;                                           \
+#define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)			\
+  if (!it)								\
+    {									\
+       ERR("ERROR: "#it" is NULL.\n");                                  \
+       return __VA_ARGS__;						\
+    }								 	\
+  else if (it->deleted)                                                 \
+    {									\
+       ERR("ERROR: "#it" has been DELETED.\n");                         \
+       return __VA_ARGS__;						\
     }
 
 static inline void
@@ -144,6 +143,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
 
+   /* TODO: fix logic for horizontal mode */
    if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
      {
         x -= step_x;
@@ -312,8 +312,8 @@ _elm_list_walk(Widget_Data *wd)
 {
    if (wd->walking < 0)
      {
-        fprintf(stderr, "ERROR: walking was negative. fixed!\n");
-        wd->walking = 0;
+	ERR("ERROR: walking was negative. fixed!\n");
+	wd->walking = 0;
      }
    wd->walking++;
 }
@@ -324,8 +324,8 @@ _elm_list_unwalk(Widget_Data *wd)
    wd->walking--;
    if (wd->walking < 0)
      {
-        fprintf(stderr, "ERROR: walking became negative. fixed!\n");
-        wd->walking = 0;
+	ERR("ERROR: walking became negative. fixed!\n");
+	wd->walking = 0;
      }
 
    if (wd->walking)
@@ -351,12 +351,13 @@ _del_hook(Evas_Object *obj)
 
    if (!wd) return;
    if (wd->walking != 0)
-     fprintf(stderr, "ERROR: list deleted while walking.\n");
+     ERR("ERROR: list deleted while walking.\n");
 
    _elm_list_walk(wd);
    EINA_LIST_FOREACH(wd->items, n, it) elm_widget_item_pre_notify_del(it);
    _elm_list_unwalk(wd);
-   if (wd->to_delete) fprintf(stderr, "ERROR: leaking nodes!\n");
+   if (wd->to_delete)
+     ERR("ERROR: leaking nodes!\n");
 
    EINA_LIST_FREE(wd->items, it) _elm_list_item_free(it);
    eina_list_free(wd->selected);
@@ -405,6 +406,13 @@ _sizing_eval(Evas_Object *obj)
                              &vmw, &vmh);
    if (wd->scr_minw) w = vmw + minw;
    if (wd->scr_minh) h = vmh + minh;
+
+   evas_object_size_hint_max_get(obj, &maxw, &maxh);
+   if (maxw > 0 && w > maxw)
+     w = maxw;
+   if (maxh > 0 && h > maxh)
+     h = maxh;
+
    evas_object_size_hint_min_set(obj, w, h);
 }
 
@@ -821,6 +829,39 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
 }
 
 static void
+_elm_list_mode_set_internal(Widget_Data *wd)
+{
+   if (!wd->scr)
+     return;
+
+   if (wd->mode == ELM_LIST_LIMIT)
+     {
+        if (!wd->h_mode)
+          {
+             wd->scr_minw = EINA_TRUE;
+             wd->scr_minh = EINA_FALSE;
+          }
+        else
+          {
+             wd->scr_minw = EINA_FALSE;
+             wd->scr_minh = EINA_TRUE;
+          }
+     }
+   else if (wd->mode == ELM_LIST_EXPAND)
+     {
+        wd->scr_minw = EINA_TRUE;
+        wd->scr_minh = EINA_TRUE;
+     }
+   else
+     {
+        wd->scr_minw = EINA_FALSE;
+        wd->scr_minh = EINA_FALSE;
+     }
+
+   _sizing_eval(wd->self);
+}
+
+static void
 _fix_items(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -830,6 +871,10 @@ _fix_items(Evas_Object *obj)
    Evas_Coord mw, mh;
    int i, redo = 0;
    const char *style = elm_widget_style_get(obj);
+   const char *it_plain = wd->h_mode ? "h_item" : "item";
+   const char *it_odd = wd->h_mode ? "h_item_odd" : "item_odd";
+   const char *it_compress = wd->h_mode ? "h_item_compress" : "item_compress";
+   const char *it_compress_odd = wd->h_mode ? "h_item_compress_odd" : "item_compress_odd";
 
    if (!wd) return;
    if (wd->walking)
@@ -856,6 +901,7 @@ _fix_items(Evas_Object *obj)
              if (mh > minh[1]) minh[1] = mh;
           }
      }
+
    if ((minw[0] != wd->minw[0]) || (minw[1] != wd->minw[1]) ||
        (minw[0] != wd->minh[0]) || (minh[1] != wd->minh[1]))
      {
@@ -868,115 +914,113 @@ _fix_items(Evas_Object *obj)
    i = 0;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        if (it->deleted) continue;
-        it->even = i & 0x1;
-        if ((it->even != it->is_even) || (!it->fixed) || (redo))
-          {
-             const char *stacking;
+	if (it->deleted)
+          continue;
 
-             if (it->is_separator)
-                _elm_theme_object_set(obj, it->base.view, "list", "separator", style);
-             else if (wd->mode == ELM_LIST_COMPRESS)
-               {
-                  if (it->even)
-                     _elm_theme_object_set(obj, it->base.view, "list", "item_compress", style);
-                  else
-                     _elm_theme_object_set(obj, it->base.view, "list", "item_compress_odd", style);
-               }
-             else
-               {
-                  if (it->even)
-                     _elm_theme_object_set(obj, it->base.view, "list", "item", style);
-                  else
-                     _elm_theme_object_set(obj, it->base.view, "list", "item_odd", style);
-               }
-             stacking = edje_object_data_get(it->base.view, "stacking");
-             if (stacking)
-               {
-                  if (!strcmp(stacking, "below"))
-                     evas_object_lower(it->base.view);
-                  else if (!strcmp(stacking, "above"))
-                     evas_object_raise(it->base.view);
-               }
-             edje_object_part_text_set(it->base.view, "elm.text", it->label);
-             if ((!it->icon) && (minh[0] > 0))
-               {
-                  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base.view));
-                  evas_object_color_set(it->icon, 0, 0, 0, 0);
-                  it->dummy_icon = EINA_TRUE;
-               }
-             if ((!it->end) && (minh[1] > 0))
-               {
-                  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base.view));
-                  evas_object_color_set(it->end, 0, 0, 0, 0);
-                  it->dummy_end = EINA_TRUE;
-               }
-             if (it->icon)
-               {
-                  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
-                  evas_object_size_hint_max_set(it->icon, 99999, 99999);
-                  edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
-               }
-             if (it->end)
-               {
-                  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
-                  evas_object_size_hint_max_set(it->end, 99999, 99999);
-                  edje_object_part_swallow(it->base.view, "elm.swallow.end", it->end);
-               }
-             if (!it->fixed)
-               {
-                  // this may call up user and it may modify the list item
-                  // but we're safe as we're flagged as walking.
-                  // just don't process further
-                  edje_object_message_signal_process(it->base.view);
-                  if (it->deleted)
-                     continue;
-                  mw = mh = -1;
-                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-                  edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
-                  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-                  evas_object_size_hint_min_set(it->base.view, mw, mh);
-                  evas_object_show(it->base.view);
-               }
-             if ((it->selected) || (it->hilighted))
-               {
-                  const char *selectraise;
+	it->even = i & 0x1;
+	if ((it->even != it->is_even) || (!it->fixed) || (redo))
+	  {
+	     const char *stacking;
 
-                  // this may call up user and it may modify the list item
-                  // but we're safe as we're flagged as walking.
-                  // just don't process further
-                  edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
-                  if (it->deleted)
-                     continue;
+             /* FIXME: separators' themes seem to be b0rked */
+	     if (it->is_separator)
+	       _elm_theme_object_set(obj, it->base.view, "separator",
+                                     wd->h_mode ? "horizontal" : "vertical",
+                                     style);
+	     else if (wd->mode == ELM_LIST_COMPRESS)
+	       {
+		  if (it->even)
+		    _elm_theme_object_set(obj, it->base.view, "list",
+                                          it_compress, style);
+		  else
+		    _elm_theme_object_set(obj, it->base.view, "list",
+                                          it_compress_odd, style);
+	       }
+	     else
+	       {
+		  if (it->even)
+		    _elm_theme_object_set(obj, it->base.view, "list", it_plain,
+                                          style);
+		  else
+		    _elm_theme_object_set(obj, it->base.view, "list", it_odd,
+                                          style);
+	       }
+	     stacking = edje_object_data_get(it->base.view, "stacking");
+	     if (stacking)
+	       {
+		  if (!strcmp(stacking, "below"))
+		    evas_object_lower(it->base.view);
+		  else if (!strcmp(stacking, "above"))
+		    evas_object_raise(it->base.view);
+	       }
+	     edje_object_part_text_set(it->base.view, "elm.text", it->label);
 
-                  selectraise = edje_object_data_get(it->base.view, "selectraise");
-                  if ((selectraise) && (!strcmp(selectraise, "on")))
-                     evas_object_raise(it->base.view);
-               }
-             it->fixed = EINA_TRUE;
-             it->is_even = it->even;
-          }
-        i++;
+	     if ((!it->icon) && (minh[0] > 0))
+	       {
+		  it->icon = evas_object_rectangle_add(evas_object_evas_get(it->base.view));
+		  evas_object_color_set(it->icon, 0, 0, 0, 0);
+		  it->dummy_icon = EINA_TRUE;
+	       }
+	     if ((!it->end) && (minh[1] > 0))
+	       {
+		  it->end = evas_object_rectangle_add(evas_object_evas_get(it->base.view));
+		  evas_object_color_set(it->end, 0, 0, 0, 0);
+		  it->dummy_end = EINA_TRUE;
+	       }
+	     if (it->icon)
+	       {
+		  evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
+		  evas_object_size_hint_max_set(it->icon, 99999, 99999);
+		  edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+	       }
+	     if (it->end)
+	       {
+		  evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
+		  evas_object_size_hint_max_set(it->end, 99999, 99999);
+		  edje_object_part_swallow(it->base.view, "elm.swallow.end", it->end);
+	       }
+	     if (!it->fixed)
+	       {
+		  // this may call up user and it may modify the list item
+		  // but we're safe as we're flagged as walking.
+		  // just don't process further
+		  edje_object_message_signal_process(it->base.view);
+		  if (it->deleted)
+		    continue;
+		  mw = mh = -1;
+		  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+		  edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
+		  elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+		  evas_object_size_hint_min_set(it->base.view, mw, mh);
+		  evas_object_show(it->base.view);
+	       }
+	     if ((it->selected) || (it->hilighted))
+	       {
+		  const char *selectraise;
+
+		  // this may call up user and it may modify the list item
+		  // but we're safe as we're flagged as walking.
+		  // just don't process further
+		  edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+		  if (it->deleted)
+		    continue;
+
+		  selectraise = edje_object_data_get(it->base.view, "selectraise");
+		  if ((selectraise) && (!strcmp(selectraise, "on")))
+		    evas_object_raise(it->base.view);
+	       }
+	     it->fixed = EINA_TRUE;
+	     it->is_even = it->even;
+	  }
+	i++;
      }
 
    _elm_list_unwalk(wd);
 
    mw = 0; mh = 0;
    evas_object_size_hint_min_get(wd->box, &mw, &mh);
-   if (wd->scr)
-     {
-        if (wd->mode == ELM_LIST_LIMIT)
-          {
-             wd->scr_minw = 1;
-             wd->scr_minh = 0;
-          }
-        else
-          {
-             wd->scr_minw = 0;
-             wd->scr_minh = 0;
-          }
-     }
-   _sizing_eval(obj);
+
+   _elm_list_mode_set_internal(wd);
 }
 
 static void
@@ -1349,52 +1393,139 @@ elm_list_multi_select_get(const Evas_Object *obj)
 }
 
 /**
- * Enables/disables horizontal mode of the list
+ * Set which mode to use for the list with.
  *
  * @param obj The list object
- * @param mode If true, horizontale mode is enabled
+ * @param mode One of @c ELM_LIST_COMPRESS, @c ELM_LIST_SCROLL or @c
+ *             ELM_LIST_LIMIT.
+ *
+ * @note Default value is @c ELM_LIST_SCROLL. At this mode, the list
+ * object won't set any of its size hints to inform how a possible
+ * container should resize it. Then, if it's not created as a "resize
+ * object", it might end with zero dimensions. The list will respect
+ * the container's geometry and, if any of its items won't fit into
+ * its transverse axis, one will be able to scroll it in that
+ * direction. @c ELM_LIST_COMPRESS is the same as the previous, except
+ * that it <b>won't</b> let one scroll in the transverse axis, on
+ * those cases (large items will get cropped). @c ELM_LIST_LIMIT will
+ * actually set a minimun size hint on the list object, so that
+ * containers may respect it (and resize itself to fit the child
+ * properly). More specifically, a minimum size hint will be set for
+ * its transverse axis, so that the <b>largest</b> item in that
+ * direction fits well. @c ELM_LIST_EXPAND, besides setting a minimum
+ * size on the transverse axis, just like the previous mode, will set
+ * a minimum size on the longitudinal axis too, trying to reserve
+ * space to all its children to be visible at a time. The last two
+ * modes can always have effects bounded by setting the list object's
+ * maximum size hints, though.
  *
  * @ingroup List
  */
 EAPI void
-elm_list_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode)
+elm_list_mode_set(Evas_Object *obj, Elm_List_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->mode == mode) return;
+
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return;
+   if (wd->mode == mode)
+     return;
    wd->mode = mode;
-   if (wd->scr)
-     {
-        if (wd->mode == ELM_LIST_LIMIT)
-          {
-             wd->scr_minw = 1;
-             wd->scr_minh = 0;
-          }
-        else
-          {
-             wd->scr_minw = 0;
-             wd->scr_minh = 0;
-          }
-        _sizing_eval(obj);
-     }
+
+   _elm_list_mode_set_internal(wd);
 }
 
 /**
- * Gets the state of horizontal mode of the list
+ * Get the mode the list is at.
  *
  * @param obj The list object
- * @return If true, horizontale mode is enabled
+ * @return mode One of @c ELM_LIST_COMPRESS, @c ELM_LIST_SCROLL or @c
+ *         ELM_LIST_LIMIT (@c ELM_LIST_LAST on errors).
+ *
+ * @note see elm_list_mode_set() for more information.
  *
  * @ingroup List
  */
 EAPI Elm_List_Mode
-elm_list_horizontal_mode_get(const Evas_Object *obj)
+elm_list_mode_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_SCROLL;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_LAST;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_LIST_SCROLL;
+   if (!wd) return ELM_LIST_LAST;
    return wd->mode;
+}
+
+/**
+ * Enables/disables horizontal mode of the list.
+ *
+ * @param obj The list object
+ * @param mode If true, horizontale mode is enabled
+ *
+ * @note Bounce options for the list will be reset to default values
+ * with this funcion. Re-call elm_list_bounce_set() once more after
+ * this one, if you had custom values.
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return;
+
+   if (wd->h_mode == horizontal)
+     return;
+
+   wd->h_mode = horizontal;
+   elm_box_horizontal_set(wd->box, horizontal);
+
+   if (horizontal)
+     {
+        evas_object_size_hint_weight_set(wd->box, 0.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(wd->box, 0.0, EVAS_HINT_FILL);
+        elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_FALSE);
+     }
+   else
+     {
+        evas_object_size_hint_weight_set(wd->box, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(wd->box, EVAS_HINT_FILL, 0.0);
+        elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_TRUE);
+     }
+
+   _elm_list_mode_set_internal(wd);
+}
+
+/**
+ * Retrieve whether horizontal mode is enabled for a list.
+ *
+ * @param obj The list object
+ * @return @c EINA_TRUE, if horizontal mode is enabled and @c
+ *            EINA_FALSE, otherwise.
+ *
+ * @note see elm_list_horizontal_set() for more information.
+ *
+ * @ingroup List
+ */
+EAPI Eina_Bool
+elm_list_horizontal_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return EINA_FALSE;
+
+   return wd->h_mode;
 }
 
 /**
