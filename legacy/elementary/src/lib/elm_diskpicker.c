@@ -388,12 +388,14 @@ _check_string(void *data)
 
    EINA_LIST_FOREACH(list, l, it)
      {
-        int len = strlen(it->label);
         Evas_Coord x, w;
+        int len;
         evas_object_geometry_get(it->base.view, &x, NULL, &w, NULL);
         /* item not visible */
         if (x + w <= ox || x >= ox + ow)
           continue;
+
+        len = strlen(it->label);
 
         if (x <= ox + 5)
              edje_object_signal_emit(it->base.view, "elm,state,left_side",
