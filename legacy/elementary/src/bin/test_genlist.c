@@ -1216,8 +1216,8 @@ test_genlist7(void *data, Evas_Object *obj, void *event_info)
    static struct genlist7_data info;
    static Testitem tit[3];
 
-   win = elm_win_add(NULL, "genlist-3", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Genlist 3");
+   win = elm_win_add(NULL, "genlist-7", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist 7");
    elm_win_autodel_set(win, 1);
    info.win = win;
 
