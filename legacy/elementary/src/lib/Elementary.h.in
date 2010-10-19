@@ -1307,6 +1307,8 @@ extern "C" {
    EAPI const char      *elm_list_item_cursor_style_get(const Elm_List_Item *item);
    EAPI void             elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only);
    EAPI Eina_Bool        elm_list_item_cursor_engine_only_get(const Elm_List_Item *item);
+   EAPI void             elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled);
+   EAPI Eina_Bool        elm_list_item_disabled_get(const Elm_List_Item *it);
 
    EAPI void             elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void             elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);

@@ -48,6 +48,7 @@ struct _Elm_List_Item
    Ecore_Timer *long_timer;
    Ecore_Timer *swipe_timer;
    Eina_Bool deleted : 1;
+   Eina_Bool disabled : 1;
    Eina_Bool even : 1;
    Eina_Bool is_even : 1;
    Eina_Bool is_separator : 1;
@@ -665,11 +666,20 @@ _long_press(void *data)
    Elm_List_Item *it = data;
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
 
-   if (!wd) return ECORE_CALLBACK_CANCEL;
+   if (!wd)
+     goto end;
+
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ECORE_CALLBACK_CANCEL);
+
    it->long_timer = NULL;
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, 0);
+
+   if (it->disabled)
+     goto end;
+
    wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(it->base.widget, "longpressed", it);
+
+ end:
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -754,6 +764,9 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
         wd->wasselected = 0;
         return;
      }
+
+   if (it->disabled)
+     return;
 
    _elm_list_walk(wd); // watch out "return" before unwalk!
 
@@ -1009,6 +1022,10 @@ _fix_items(Evas_Object *obj)
 		  if ((selectraise) && (!strcmp(selectraise, "on")))
 		    evas_object_raise(it->base.view);
 	       }
+             if (it->disabled)
+               edje_object_signal_emit(it->base.view, "elm,state,disabled",
+                                       "elm");
+
 	     it->fixed = EINA_TRUE;
 	     it->is_even = it->even;
 	  }
@@ -2256,4 +2273,51 @@ elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy
    elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
    *policy_h = (Elm_Scroller_Policy) s_policy_h;
    *policy_v = (Elm_Scroller_Policy) s_policy_v;
+}
+
+/**
+ * Sets the disabled/enabled state of a list item.
+ *
+ * A disabled item cannot be selected or unselected. It will also
+ * change its appearance (generally greyed out). This sets the
+ * disabled state (@c EINA_TRUE for disabled, @c EINA_FALSE for
+ * enabled).
+ *
+ * @param it The item
+ * @param disabled The disabled state
+ *
+ * @ingroup List
+ */
+EAPI void
+elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+
+   if (it->disabled == disabled)
+     return;
+
+   it->disabled = !!disabled;
+
+   if (it->disabled)
+     edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+   else
+     edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
+}
+
+/**
+ * Get the disabled/enabled state of a list item
+ *
+ * @param it The item
+ * @return The disabled state
+ *
+ * See elm_list_item_disabled_set().
+ *
+ * @ingroup List
+ */
+EAPI Eina_Bool
+elm_list_item_disabled_get(const Elm_List_Item *it)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
+
+   return it->disabled;
 }
