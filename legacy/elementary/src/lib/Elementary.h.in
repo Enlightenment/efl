@@ -895,6 +895,8 @@ extern "C" {
     */
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the hover to dismiss
+    * "smart,changed" - a content object placed under the "smart"
+    *                   policy was replaced to a new slot direction.
     */
 
    typedef struct _Elm_Entry_Anchor_Info Elm_Entry_Anchor_Info;

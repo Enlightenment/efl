@@ -5817,6 +5817,8 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+   /* TODO: replicate diagonal swallow slots to the other hover styles */
    group { name: "elm/hover/base/default";
       images {
 	 image: "shad_circ.png" COMP;
@@ -5881,16 +5883,16 @@ collections {
 	       rel2.offset: -1 -1;
 	    }
 	 }
-	 part { name: "elm.swallow.slot.right";
+	 part { name: "elm.swallow.slot.top-left";
             type: SWALLOW;
 	    description { state: "default" 0.0;
-	       align: 0.0 0.5;
+	       align: 1.0 1.0;
 	       rel1.to: "elm.swallow.slot.middle";
-	       rel1.relative: 1.0 0.0;
+	       rel1.relative: 0.0 0.0;
 	       rel1.offset: 0 0;
 	       rel2.to: "elm.swallow.slot.middle";
-	       rel2.relative: 1.0 1.0;
-	       rel2.offset: 0 -1;
+	       rel2.relative: 0.0 0.0;
+	       rel2.offset: -1 -1;
 	    }
 	 }
 	 part { name: "elm.swallow.slot.top";
@@ -5905,6 +5907,42 @@ collections {
 	       rel2.offset: -1 -1;
 	    }
 	 }
+	 part { name: "elm.swallow.slot.top-right";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 1.0;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 1.0 0.0;
+	       rel1.offset: 0 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 1.0 0.0;
+	       rel2.offset: -1 -1;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.right";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 0.5;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 1.0 0.0;
+	       rel1.offset: 0 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: 0 -1;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.bottom-right";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 0.0 0.0;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 1.0 1.0;
+	       rel1.offset: 0 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 1.0 1.0;
+	       rel2.offset: -1 -1;
+	    }
+	 }
 	 part { name: "elm.swallow.slot.bottom";
             type: SWALLOW;
 	    description { state: "default" 0.0;
@@ -5914,6 +5952,18 @@ collections {
 	       rel1.offset: 0 0;
 	       rel2.to: "elm.swallow.slot.middle";
 	       rel2.relative: 1.0 1.0;
+	       rel2.offset: -1 0;
+	    }
+	 }
+	 part { name: "elm.swallow.slot.bottom-left";
+            type: SWALLOW;
+	    description { state: "default" 0.0;
+	       align: 1.0 0.0;
+	       rel1.to: "elm.swallow.slot.middle";
+	       rel1.relative: 0.0 1.0;
+	       rel1.offset: 0 0;
+	       rel2.to: "elm.swallow.slot.middle";
+	       rel2.relative: 0.0 1.0;
 	       rel2.offset: -1 0;
 	    }
 	 }
