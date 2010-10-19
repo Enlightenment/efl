@@ -56,18 +56,17 @@ AC_SUBST(VMAJ)
 ### Needed information
 EDJE_VERSION="1.0.0"
 
+want_vlc="no"
 case "$host_os" in
    mingw* | cegcc*)
       MODULE_EDJE="$host_os-$host_cpu"
       want_xine="no"
       want_gstreamer="yes"
-      want_vlc="no"
       ;;
    *)
       MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
       want_xine="yes"
       want_gstreamer="yes"
-      want_vlc="yes"
       ;;
 esac
 
