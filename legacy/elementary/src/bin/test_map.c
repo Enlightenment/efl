@@ -33,112 +33,96 @@ Marker_Data data_parking= {PACKAGE_DATA_DIR"/images/parking.png"};
 static void
 my_map_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("clicked\n");
 }
 
 static void
 my_map_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("press\n");
 }
 
 static void
 my_map_longpressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("longpressed\n");
 }
 
 static void
 my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("clicked,double\n");
 }
 
 static void
 my_map_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("load\n");
 }
 
 static void
 my_map_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("loaded\n");
 }
 
 static void
 my_map_load_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("load,details\n");
 }
 
 static void
 my_map_loaded_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("loaded,details\n");
 }
 
 static void
 my_map_zoom_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("zoom,start\n");
 }
 
 static void
 my_map_zoom_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("zoom,stop\n");
 }
 
 static void
 my_map_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("zoom,change\n");
 }
 
 static void
 my_map_anim_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("anim,start\n");
 }
 
 static void
 my_map_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("anim,stop\n");
 }
 
 static void
 my_map_drag_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("drag,start\n");
 }
 
 static void
 my_map_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    printf("drag_stop\n");
 }
 
 static void
 my_map_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   //Evas_Object *win = data;
    double lon, lat;
    elm_map_geo_region_get(obj, &lon, &lat);
    printf("scroll longitude : %f latitude : %f\n", lon, lat);

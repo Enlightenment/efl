@@ -9,112 +9,96 @@ static Evas_Object *rect;
 static void
 my_ph_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("clicked\n");
 }
 
 static void
 my_ph_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("press\n");
 }
 
 static void
 my_ph_longpressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("longpressed\n");
 }
 
 static void
 my_ph_clicked_double(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("clicked,double\n");
 }
 
 static void
 my_ph_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("load\n");
 }
 
 static void
 my_ph_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("loaded\n");
 }
 
 static void
 my_ph_load_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("load,details\n");
 }
 
 static void
 my_ph_loaded_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("loaded,details\n");
 }
 
 static void
 my_ph_zoom_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("zoom,start\n");
 }
 
 static void
 my_ph_zoom_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("zoom,stop\n");
 }
 
 static void
 my_ph_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("zoom,change\n");
 }
 
 static void
 my_ph_anim_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("anim,start\n");
 }
 
 static void
 my_ph_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("anim,stop\n");
 }
 
 static void
 my_ph_drag_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("drag,start\n");
 }
 
 static void
 my_ph_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    printf("drag_stop\n");
 }
 
 static void
 my_ph_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-//   Evas_Object *win = data;
    int x, y, w, h;
    elm_photocam_region_get(obj, &x, &y, &w, &h);
    printf("scroll %i %i %ix%i\n", x, y, w, h);
@@ -136,18 +120,18 @@ my_bt_open(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ph, *win;
    Evas_Object *iw, *fs;
-   
+
    ph = data;
    win = evas_object_data_get(ph, "window");
    iw = elm_win_inwin_add(win);
-   
+
    fs = elm_fileselector_add(win);
    elm_fileselector_expandable_set(fs, EINA_TRUE);
    elm_fileselector_path_set(fs, getenv("HOME"));
    evas_object_smart_callback_add(fs, "done", sel_done, ph);
 
    evas_object_data_set(ph, "inwin", iw);
-   
+
    elm_win_inwin_content_set(iw, fs);
    evas_object_show(fs);
    elm_win_inwin_activate(iw);
@@ -170,7 +154,7 @@ static void
 my_bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
-   
+
    zoom = elm_photocam_zoom_get(data);
    zoom -= 0.5;
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
@@ -181,7 +165,7 @@ static void
 my_bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
-   
+
    zoom = elm_photocam_zoom_get(data);
    zoom += 0.5;
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
@@ -236,7 +220,7 @@ _photocam_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if (zoom >= 1) elm_photocam_zoom_set(photocam, zoom);
 }
 
-   static void
+static void
 _photocam_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int x,y,w,h;
@@ -273,7 +257,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ph);
    evas_object_data_set(ph, "window", win);
- 
+
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_repeat_events_set(rect,1);
@@ -300,15 +284,15 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(ph, "scroll,drag,start", my_ph_drag_start, win);
    evas_object_smart_callback_add(ph, "scroll,drag,stop", my_ph_drag_stop, win);
    evas_object_smart_callback_add(ph, "scroll", my_ph_scroll, win);
-   
+
    elm_photocam_file_set(ph, img[1]);
-   
+
    evas_object_show(ph);
-   
+
    tb2 = elm_table_add(win);
    evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, tb2);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Z -");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_out, ph);
@@ -316,7 +300,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.1, 0.1);
    elm_table_pack(tb2, bt, 0, 0, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Select Photo");
    evas_object_smart_callback_add(bt, "clicked", my_bt_open, ph);
@@ -324,7 +308,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.5, 0.1);
    elm_table_pack(tb2, bt, 1, 0, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Z +");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_in, ph);
@@ -333,7 +317,6 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_table_pack(tb2, bt, 2, 0, 1, 1);
    evas_object_show(bt);
 
-
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Show 30,50 500x300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_show_reg, ph);
@@ -341,7 +324,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.1, 0.5);
    elm_table_pack(tb2, bt, 0, 1, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Bring 800,300 500x300");
    evas_object_smart_callback_add(bt, "clicked", my_bt_bring_reg, ph);
@@ -349,8 +332,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 2, 1, 1, 1);
    evas_object_show(bt);
-   
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Pause On/Off");
    evas_object_smart_callback_add(bt, "clicked", my_bt_pause, ph);
@@ -358,7 +340,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
    elm_table_pack(tb2, bt, 0, 2, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Fit");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fit, ph);
@@ -366,7 +348,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.5, 0.9);
    elm_table_pack(tb2, bt, 1, 2, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Fill");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fill, ph);
@@ -374,9 +356,9 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
    elm_table_pack(tb2, bt, 2, 2, 1, 1);
    evas_object_show(bt);
-   
+
    evas_object_show(tb2);
-   
+
    evas_object_resize(win, 800, 800);
    evas_object_show(win);
 }
