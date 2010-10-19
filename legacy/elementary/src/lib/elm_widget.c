@@ -268,6 +268,14 @@ _parent_focus(Evas_Object *obj)
    sd->focus_order_on_calc = EINA_FALSE;
 }
 
+static void
+_elm_object_focus_chain_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Smart_Data *sd = data;
+
+   sd->focus_chain = eina_list_remove(sd->focus_chain, obj);
+}
+
 // exposed util funcs to elm
 void
 _elm_widget_type_clear(void)
@@ -281,7 +289,11 @@ _elm_widget_type_clear(void)
      }
 }
 
-// exposed api for making widgets
+/**
+ * @defgroup Widget Widget
+ *
+ * Exposed api for making widgets
+ */
 EAPI void
 elm_widget_type_register(const char **ptr)
 {
@@ -400,6 +412,14 @@ elm_widget_theme(Evas_Object *obj)
    if (sd->theme_func) sd->theme_func(obj);
 }
 
+/**
+ * Set hook to get next object in object focus chain.
+ *
+ * @param obj The widget object.
+ * @param func The hook to be used with this widget.
+ *
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next))
 {
@@ -787,14 +807,19 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
    return EINA_FALSE;
 }
 
-static void
-_elm_object_focus_chain_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Smart_Data *sd = data;
-
-   sd->focus_chain = eina_list_remove(sd->focus_chain, obj);
-}
-
+/**
+ * Set custom focus chain.
+ *
+ * This function i set one new and overwrite any previous custom focus chain
+ * with the list of objects. The previous list will be deleted and this list
+ * will be managed. After setted, don't modity it.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container widget
+ * @param objs Chain of objects to pass focus
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs)
 {
@@ -816,6 +841,53 @@ elm_widget_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs)
    sd->focus_chain = objs;
 }
 
+/**
+ * Get custom focus chain
+ *
+ * @param obj The container widget
+ * @ingroup Widget
+ */
+EAPI const Eina_List *
+elm_widget_focus_custom_chain_get(const Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   return (const Eina_List *) sd->focus_chain;
+}
+
+/**
+ * Unset custom focus chain
+ *
+ * @param obj The container widget
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_custom_chain_unset(Evas_Object *obj)
+{
+   API_ENTRY return;
+   Eina_List *l, *l_next;
+   Evas_Object *o;
+
+   EINA_LIST_FOREACH_SAFE(sd->focus_chain, l, l_next, o)
+     {
+        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
+                                            _elm_object_focus_chain_del_cb, sd);
+        sd->focus_chain = eina_list_remove_list(sd->focus_chain, l);
+     }
+}
+
+/**
+ * Append object to custom focus chain.
+ *
+ * @note If relative_child equal to NULL or not in custom chain, the object
+ * will be added in end.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container widget
+ * @param child The child to be added in custom chain
+ * @param relative_child The relative object to position the child
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
 {
@@ -836,6 +908,19 @@ elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_
    return;
 }
 
+/**
+ * Prepend object to custom focus chain.
+ *
+ * @note If relative_child equal to NULL or not in custom chain, the object
+ * will be added in begin.
+ *
+ * @note On focus cycle, only will be evaluated children of this container.
+ *
+ * @param obj The container widget
+ * @param child The child to be added in custom chain
+ * @param relative_child The relative object to position the child
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
 {
@@ -856,28 +941,18 @@ elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas
    return;
 }
 
-EAPI const Eina_List *
-elm_widget_focus_custom_chain_get(const Evas_Object *obj)
-{
-   API_ENTRY return NULL;
-   return (const Eina_List *) sd->focus_chain;
-}
-
-EAPI void
-elm_widget_focus_custom_chain_unset(Evas_Object *obj)
-{
-   API_ENTRY return;
-   Eina_List *l, *l_next;
-   Evas_Object *o;
-
-   EINA_LIST_FOREACH_SAFE(sd->focus_chain, l, l_next, o)
-     {
-        evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
-                                            _elm_object_focus_chain_del_cb, sd);
-        sd->focus_chain = eina_list_remove_list(sd->focus_chain, l);
-     }
-}
-
+/**
+ * Give focus to next object in object tree.
+ *
+ * Give focus to next object in focus chain of one object sub-tree.
+ * If the last object of chain already have focus, the focus will go to the
+ * first object of chain.
+ *
+ * @param obj The widget root of sub-tree
+ * @param dir Direction to cycle the focus
+ *
+ * @ingroup Widget
+ */
 EAPI void
 elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
@@ -887,6 +962,21 @@ elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
      elm_widget_focus_steal(target);
 }
 
+/**
+ * Get next object in focus chain of object tree.
+ *
+ * Get next object in focus chain of one object sub-tree.
+ * Return the next object by reference. If don't have any candidate to receive
+ * focus before chain end, the first candidate will be returned.
+ *
+ * @param obj The widget root of sub-tree
+ * @param dir Direction os focus chain
+ * @param next The next object in focus chain
+ * @return EINA_TRUE if don't need focus chain restart/loop back
+ *         to use 'next' obj.
+ *
+ * @ingroup Widget
+ */
 EAPI Eina_Bool
 elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
@@ -912,6 +1002,24 @@ elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
    return !elm_widget_focus_get(obj);
 }
 
+
+/**
+ * Get next object in focus chain of object tree in list.
+ *
+ * Get next object in focus chain of one object sub-tree ordered by one list.
+ * Return the next object by reference. If don't have any candidate to receive
+ * focus before list end, the first candidate will be returned.
+ *
+ * @param obj The widget root of sub-tree
+ * @param dir Direction os focus chain
+ * @param items list with ordered objects
+ * @param list_data_get function to get the object from one item of list
+ * @param next The next object in focus chain
+ * @return EINA_TRUE if don't need focus chain restart/loop back
+ *         to use 'next' obj.
+ *
+ * @ingroup Widget
+ */
 EAPI Eina_Bool
 elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next)
 {
