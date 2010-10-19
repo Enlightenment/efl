@@ -369,7 +369,7 @@ _check_letter(const char *str, int length)
 static Eina_Bool
 _check_string(void *data)
 {
-   int mid, steps, length, diff, len;
+   int mid, steps, length, diff;
    Elm_Diskpicker_Item *it;
    Eina_List *list, *l;
    Evas_Coord ox, ow;
@@ -388,6 +388,7 @@ _check_string(void *data)
 
    EINA_LIST_FOREACH(list, l, it)
      {
+        int len = strlen(it->label);
         Evas_Coord x, w;
         evas_object_geometry_get(it->base.view, &x, NULL, &w, NULL);
         /* item not visible */
@@ -402,7 +403,7 @@ _check_string(void *data)
                                      "elm");
         else
           {
-             if ((wd->len_threshold) && (strlen(it->label) > wd->len_threshold))
+             if ((wd->len_threshold) && (len > wd->len_threshold))
                edje_object_signal_emit(it->base.view, "elm,state,center_small",
                                        "elm");
              else
@@ -410,7 +411,6 @@ _check_string(void *data)
                                        "elm");
           }
 
-        len = strlen(it->label);
         if (len <= wd->len_side)
           continue;
 

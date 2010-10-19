@@ -136,13 +136,14 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
    curlocater = strstr(oldstring, key);
    if (curlocater)
      {
+        int key_len = strlen(key);
         starttag = curlocater;
-        endtag = curlocater + strlen(key);
+        endtag = curlocater + key_len;
         if ((!endtag) || (*endtag != '='))
            return -1;
         
         firstindex = abs(oldstring - curlocater);
-        firstindex += strlen(key) + 1; // strlen("key") + strlen("=")
+        firstindex += key_len + 1; // strlen("key") + strlen("=")
         *value = (char *)oldstring + firstindex;
         
         while (oldstring != starttag)
@@ -205,6 +206,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
      insertflag = 1;
    else
      {
+        int key_len = strlen(key);
         do 
           {
              starttag = strchr(srcstring, '<');
@@ -218,7 +220,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
                break;
           } while (strlen(srcstring) > 1);
         
-        if (starttag && endtag && tagtxtlen > strlen(key))
+        if (starttag && endtag && tagtxtlen > key_len)
           {
              repbuf = eina_strbuf_new();
              diffbuf = eina_strbuf_new();
@@ -227,7 +229,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
              curlocater = strstr(srcstring, key);
              if (curlocater)
                {
-                  replocater = curlocater + strlen(key) + 1;
+                  replocater = curlocater + key_len + 1;
                   while ((*replocater != '=') && (replocater))
                     replocater++;
                   if (replocater)
@@ -306,7 +308,7 @@ _is_width_over(Evas_Object *obj)
    Evas_Coord vx, vy, vw, vh;
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *ellipsis_string = "...";
-   size_t ellen = strlen(ellipsis_string)+1;
+   Evas_Coord ellen = strlen(ellipsis_string)+1;
    
    if (!wd) return 0;
 

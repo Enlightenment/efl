@@ -624,11 +624,8 @@ elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting setting)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (setting < ELM_THUMB_ANIMATION_START ||
-       setting >= ELM_THUMB_ANIMATION_LAST)
-     {
+   if (setting >= ELM_THUMB_ANIMATION_LAST)
         return;
-     }
 
    wd->anim_setting = setting;
    if (setting == ELM_THUMB_ANIMATION_LOOP)
