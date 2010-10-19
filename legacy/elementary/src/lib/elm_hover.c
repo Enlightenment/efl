@@ -141,6 +141,42 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return;
+
+   edje_object_signal_emit(wd->cov, emission, source);
+}
+
+static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return;
+
+   edje_object_signal_callback_add(wd->hov, emission, source, func_cb, data);
+}
+
+static void *
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return NULL;
+
+   return edje_object_signal_callback_del(wd->hov, emission, source, func_cb);
+}
+
+static void
 _elm_hover_left_space_calc(Widget_Data *wd, Evas_Coord *spc_l, Evas_Coord *spc_t, Evas_Coord *spc_r, Evas_Coord *spc_b)
 {
    Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
@@ -445,6 +481,9 @@ elm_hover_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->hov = evas_object_rectangle_add(e);
    evas_object_pass_events_set(wd->hov, EINA_TRUE);
