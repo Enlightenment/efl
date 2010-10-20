@@ -699,7 +699,10 @@ init_video_object(char *module_filename, char *filename)
    if (!emotion_object_init(o, module_filename))
      return;
    emotion_object_vis_set(o, vis);
-   emotion_object_file_set(o, filename);
+   if (!emotion_object_file_set(o, filename))
+     {
+       return;
+     }
    emotion_object_play_set(o, 1);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, 320, 240);

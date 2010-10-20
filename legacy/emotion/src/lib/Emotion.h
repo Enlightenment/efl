@@ -119,7 +119,7 @@ extern "C" {
 EAPI Evas_Object *emotion_object_add                   (Evas *evas);
 EAPI void         emotion_object_module_option_set     (Evas_Object *obj, const char *opt, const char *val);
 EAPI Eina_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
-EAPI void         emotion_object_file_set              (Evas_Object *obj, const char *filename);
+EAPI Eina_Bool    emotion_object_file_set              (Evas_Object *obj, const char *filename);
 EAPI const char  *emotion_object_file_get              (const Evas_Object *obj);
 EAPI void         emotion_object_play_set              (Evas_Object *obj, Eina_Bool play);
 EAPI Eina_Bool    emotion_object_play_get              (const Evas_Object *obj);

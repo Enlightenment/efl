@@ -314,7 +314,7 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    return EINA_TRUE;
 }
 
-EAPI void
+EAPI Eina_Bool
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
    Smart_Data *sd;
@@ -322,9 +322,9 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
    DBG("file=%s", file);
-   if (!sd->module) return;
+   if (!sd->module) return EINA_FALSE;
 
-   if ((file) && (sd->file) && (!strcmp(file, sd->file))) return;
+   if ((file) && (sd->file) && (!strcmp(file, sd->file))) return EINA_FALSE;
    if ((file) && (file[0] != 0))
      {
         int w, h;
@@ -334,7 +334,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	sd->module->file_close(sd->video);
 	evas_object_image_size_set(sd->obj, 1, 1);
 	if (!sd->module->file_open(sd->file, obj, sd->video))
-	  return;
+	  return EINA_FALSE;
 	sd->module->size_get(sd->video, &w, &h);
 	evas_object_image_size_set(sd->obj, w, h);
         _emotion_image_data_zero(sd->obj);
@@ -353,6 +353,8 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
         free(sd->file);
         sd->file = NULL;
      }
+
+   return EINA_TRUE;
 }
 
 EAPI const char *
