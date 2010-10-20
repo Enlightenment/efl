@@ -523,9 +523,13 @@ evas_module_shutdown(void)
      eina_module_free(en);
 
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_ENGINE]);
+   evas_modules[EVAS_MODULE_TYPE_ENGINE] = NULL;
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER]);
+   evas_modules[EVAS_MODULE_TYPE_IMAGE_LOADER] = NULL;
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER]);
+   evas_modules[EVAS_MODULE_TYPE_IMAGE_SAVER] = NULL;
    eina_hash_free(evas_modules[EVAS_MODULE_TYPE_OBJECT]);
+   evas_modules[EVAS_MODULE_TYPE_OBJECT] = NULL;
 
    EINA_LIST_FREE(evas_module_paths, path)
      free(path);
