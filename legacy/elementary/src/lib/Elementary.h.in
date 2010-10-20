@@ -1278,7 +1278,7 @@ extern "C" {
    EAPI void             elm_list_mode_set(Evas_Object *obj, Elm_List_Mode mode);
    EAPI Elm_List_Mode    elm_list_mode_get(const Evas_Object *obj);
    EAPI void             elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
-   EAPI Eina_Bool        elm_list_horizontal_get(Evas_Object *obj);
+   EAPI Eina_Bool        elm_list_horizontal_get(const Evas_Object *obj);
    EAPI void             elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
    EAPI Eina_Bool	 elm_list_always_select_mode_get(const Evas_Object *obj);
    EAPI const Eina_List *elm_list_items_get(const Evas_Object *obj);

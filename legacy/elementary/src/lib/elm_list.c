@@ -1532,7 +1532,7 @@ elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
  * @ingroup List
  */
 EAPI Eina_Bool
-elm_list_horizontal_get(Evas_Object *obj)
+elm_list_horizontal_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 
