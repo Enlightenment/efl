@@ -533,7 +533,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
 {
    _elm_sub_init_count++;
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
-#ifndef SEMI_BROKEN_QUICKLANCH  
+#ifdef SEMI_BROKEN_QUICKLANCH
    ecore_app_args_set(argc, (const char **)argv);
    evas_init();
    edje_init();
@@ -559,7 +559,7 @@ elm_quicklaunch_sub_shutdown(void)
 {
    _elm_sub_init_count--;
    if (_elm_sub_init_count > 0) return _elm_sub_init_count;
-#ifndef SEMI_BROKEN_QUICKLANCH  
+#ifdef SEMI_BROKEN_QUICKLANCH
    _elm_win_shutdown();
    _elm_module_shutdown();
    ecore_imf_shutdown();
@@ -630,7 +630,7 @@ elm_quicklaunch_shutdown(void)
 EAPI void
 elm_quicklaunch_seed(void)
 {
-#ifndef SEMI_BROKEN_QUICKLANCH  
+#ifdef SEMI_BROKEN_QUICKLANCH
    Evas_Object *win, *bg, *bt;
 
    win = elm_win_add(NULL, "seed", ELM_WIN_BASIC);
