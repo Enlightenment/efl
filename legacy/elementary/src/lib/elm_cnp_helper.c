@@ -883,7 +883,8 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
 
    if (sel->format == ELM_SEL_FORMAT_MARKUP){
 	*data_ret = remove_tags(sel->selbuf, size_ret);
-   } else if (sel->format == ELM_SEL_FORMAT_TEXT){
+   } else if (sel->format == ELM_SEL_FORMAT_TEXT ||
+              sel->format == ELM_SEL_FORMAT_HTML){
         *data_ret = strdup(sel->selbuf);
         *size_ret = strlen(sel->selbuf);
    } else if (sel->format == ELM_SEL_FORMAT_IMAGE){
