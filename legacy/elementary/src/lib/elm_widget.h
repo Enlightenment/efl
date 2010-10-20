@@ -189,12 +189,6 @@ typedef struct _Elm_Tooltip Elm_Tooltip;
 typedef struct _Elm_Cursor Elm_Cursor;
 typedef struct _Elm_Widget_Item Elm_Widget_Item; /**< base structure for all widget items that are not Elm_Widget themselves */
 
-typedef enum _Elm_Focus_Direction
-{
-   ELM_FOCUS_PREVIOUS,
-   ELM_FOCUS_NEXT
-} Elm_Focus_Direction;
-
 struct _Elm_Widget_Item
 {
    /* ef1 ~~ efl, el3 ~~ elm */
@@ -257,6 +251,7 @@ EAPI const Eina_List *elm_widget_focus_custom_chain_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 EAPI void             elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+EAPI void             elm_widget_focus_direction_go(Evas_Object *obj, int x, int y);
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
 EAPI int              elm_widget_focus_jump(Evas_Object *obj, int forward);

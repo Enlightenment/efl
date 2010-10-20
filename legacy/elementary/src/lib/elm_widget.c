@@ -956,10 +956,28 @@ elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas
 EAPI void
 elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
-   Evas_Object *target;
+   Evas_Object *target = NULL;
    elm_widget_focus_next_get(obj, dir, &target);
    if (target)
      elm_widget_focus_steal(target);
+}
+
+/**
+ * Give focus to near object in one direction.
+ *
+ * Give focus to near object in direction of one object.
+ * If none focusable object in given direction, the focus will not change.
+ *
+ * @param obj The reference widget
+ * @param x Horizontal component of direction to focus
+ * @param y Vertical component of direction to focus
+ *
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_direction_go(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__)
+{
+   return; /* TODO */
 }
 
 /**

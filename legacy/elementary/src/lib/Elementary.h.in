@@ -258,6 +258,12 @@ extern "C" {
         ELM_ICON_LOOKUP_THEME      /**< icon look up order: theme */
      } Elm_Icon_Lookup_Order;
 
+   typedef enum _Elm_Focus_Direction
+     {
+        ELM_FOCUS_PREVIOUS,
+        ELM_FOCUS_NEXT
+     } Elm_Focus_Direction;
+
   /**
    * Called back when a widget's tooltip is activated and needs content.
    * @param data user-data given to elm_object_tooltip_content_cb_set()
@@ -343,6 +349,8 @@ extern "C" {
    EAPI const Eina_List *elm_object_focus_custom_chain_get(const Evas_Object *obj);
    EAPI void         elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
    EAPI void         elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
+   EAPI void         elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+   EAPI void         elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
 
    EAPI void         elm_object_scroll_hold_push(Evas_Object *obj);
    EAPI void         elm_object_scroll_hold_pop(Evas_Object *obj);

@@ -1419,6 +1419,42 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas
 }
 
 /**
+ * Give focus to next object in object tree.
+ *
+ * Give focus to next object in focus chain of one object sub-tree.
+ * If the last object of chain already have focus, the focus will go to the
+ * first object of chain.
+ *
+ * @param obj The object root of sub-tree
+ * @param dir Direction to cycle the focus
+ *
+ * @ingroup Focus
+ */
+EAPI void
+elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
+{
+   elm_widget_focus_cycle(obj, dir);
+}
+
+/**
+ * Give focus to near object in one direction.
+ *
+ * Give focus to near object in direction of one object.
+ * If none focusable object in given direction, the focus will not change.
+ *
+ * @param obj The reference object
+ * @param x Horizontal component of direction to focus
+ * @param y Vertical component of direction to focus
+ *
+ * @ingroup Widget
+ */
+EAPI void
+elm_object_focus_direction_go(Evas_Object *obj, int x, int y)
+{
+   elm_widget_focus_direction_go(obj, x, y);
+}
+
+/**
  * @defgroup Scrollhints Scrollhints
  *
  * Objects when inside a scroller can scroll, but this may not always be
