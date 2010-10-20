@@ -237,10 +237,19 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
    memset(&ev, 0, sizeof (ev));
    INF("removing poll on %d", fdh->fd);
    /* could get an EBADF if somebody closed the FD before removing it */
-   if ((epoll_ctl(efd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0) &&
-       (errno != EBADF))
+   if ((epoll_ctl(efd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0))
      {
-        ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
+        if (errno == EBADF)
+          {
+             WRN("fd %d was closed, can't remove from epoll - reinit!", 
+                 fdh->fd);
+             _ecore_main_loop_shutdown();
+             _ecore_main_loop_init();
+          }
+        else
+          {
+             ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
+          }
      }
 #elif USE_G_MAIN_LOOP
    fdh->gfd.fd = fdh->fd;
