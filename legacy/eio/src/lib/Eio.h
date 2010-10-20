@@ -75,15 +75,14 @@ extern "C" {
 
 typedef enum _Eio_File_Op
 {
-  EIO_FILE_COPY,
-  EIO_FILE_MOVE,
-  EIO_DIR_COPY,
-  EIO_DIR_MOVE
+  EIO_FILE_COPY, /**< IO operation is about a specific file copy */
+  EIO_FILE_MOVE, /**< IO operation is about a specific file move */
+  EIO_DIR_COPY, /**< IO operation is about a specific directory copy */
+  EIO_DIR_MOVE /**< IO operation is about a specific directory move */
 } Eio_File_Op;
 
-typedef struct _Eio_File Eio_File;
-typedef struct _Eio_Progress Eio_Progress;
-typedef struct _Eio_Stat Eio_Stat;
+typedef struct _Eio_File Eio_File; /**< Generic asynchronous IO reference */
+typedef struct _Eio_Progress Eio_Progress; /**< Progress information on a specific operation */
 
 typedef Eina_Bool (*Eio_Filter_Cb)(void *data, const char *file);
 typedef void (*Eio_Main_Cb)(void *data, const char *file);
@@ -99,14 +98,14 @@ typedef void (*Eio_Error_Cb)(int error, void *data);
 
 struct _Eio_Progress
 {
-   Eio_File_Op op;
+   Eio_File_Op op; /**< IO type */
 
-   off_t current;
-   off_t max;
-   float percent;
+   off_t current; /**< Current step in the IO operation */
+   off_t max; /**< Number of step to do to complete this IO */
+   float percent; /**< Percent done of the IO operation */
 
-   const char *source;
-   const char *dest;
+   const char *source; /**< source of the IO operation */
+   const char *dest; /**< target of the IO operation */
 };
 
 EAPI int eio_init(void);

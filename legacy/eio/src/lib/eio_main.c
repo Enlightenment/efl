@@ -42,6 +42,10 @@ static Eio_Alloc_Pool direct_info = { 0, NULL, PTHREAD_MUTEX_INITIALIZER };
  * @{
  */
 
+/**
+ * @brief Initialize eio and all it's required submodule.
+ * @return the current number of eio users.
+ */
 EAPI int
 eio_init(void)
 {
@@ -55,6 +59,10 @@ eio_init(void)
    return _eio_count;
 }
 
+/**
+ * @brief Shutdown eio and all it's submodule if possible.
+ * @return the number of pending users of eio.
+ */
 EAPI int
 eio_shutdown(void)
 {
