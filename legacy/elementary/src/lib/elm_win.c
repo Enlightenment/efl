@@ -841,6 +841,25 @@ the_end:
    win->focus_highlight.prev = win->focus_highlight.cur;
 }
 
+#ifdef ELM_DEBUG
+static void
+_debug_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+      return;
+
+
+   if (strcmp(ev->keyname, "F12") ||
+       (!evas_key_modifier_is_set(ev->modifiers, "Control")))
+     return;
+
+   printf("Tree graph generated.\n");
+   elm_object_tree_dot_dump(obj, "./dump.dot");
+}
+#endif
+
 /**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
@@ -1055,6 +1074,13 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    if (_elm_config->focus_highlight_enable)
      elm_win_focus_highlight_enabled_set(win->win_obj, EINA_TRUE);
 
+#ifdef ELM_DEBUG
+   Evas_Modifier_Mask mask = evas_key_modifier_mask_get(win->evas, "Control");
+   evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_KEY_DOWN,
+                                  _debug_key_down, win);
+   Eina_Bool ret = evas_object_key_grab(win->win_obj, "F12", mask, 0, EINA_TRUE);
+   printf("Key F12 exclusive for dot tree generation. (%d)\n", ret);
+#endif
    return win->win_obj;
 }
 
