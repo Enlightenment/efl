@@ -28,6 +28,292 @@ emotion_pipeline_pause(GstElement *pipeline)
    return 1;
 }
 
+Eina_Bool
+_emotion_pipeline_build(Emotion_Gstreamer_Video *ev, const char *file)
+{
+  GstElement *sink;
+  int i;
+
+   ev->pipeline = gst_element_factory_make("playbin2", "pipeline");
+   if (!ev->pipeline)
+     {
+       ERR("could not create playbin2 element");
+       return EINA_FALSE;
+     }
+
+   ev->eos_bus = gst_pipeline_get_bus(GST_PIPELINE(ev->pipeline));
+   if (!ev->eos_bus)
+     {
+       ERR("could not create BUS");
+       goto unref_pipeline;
+     }
+
+   sink = gst_element_factory_make("fakesink", "videosink");
+   if (!sink)
+     {
+       ERR("could not create video sink");
+       goto unref_pipeline;
+     }
+   g_object_set(G_OBJECT(sink), "sync", TRUE, NULL);
+   g_object_set(G_OBJECT(sink), "signal-handoffs", TRUE, NULL);
+   g_signal_connect(G_OBJECT(sink),
+                    "handoff",
+                    G_CALLBACK(cb_handoff), ev);
+   g_object_set(G_OBJECT(ev->pipeline), "video-sink", sink, NULL);
+
+   sink = gst_element_factory_make("autoaudiosink", "audiosink");
+   if (!sink)
+     {
+       ERR("could not create audio sink");
+       goto unref_pipeline;
+     }
+   g_object_set(G_OBJECT(ev->pipeline), "audio-sink", sink, NULL);
+
+   if ((*file == '/') || (*file == '~'))
+     {
+       char *uri;
+
+       uri = g_filename_to_uri(file, NULL, NULL);
+       if (uri)
+         {
+           DBG("Setting file %s\n", uri);
+           g_object_set(G_OBJECT(ev->pipeline), "uri", uri, NULL);
+           free(uri);
+         }
+       else
+         {
+           ERR("could not create new uri from %s", file);
+           goto unref_pipeline;
+         }
+     }
+   else
+     {
+       DBG("Setting file %s\n", file);
+       g_object_set(G_OBJECT(ev->pipeline), "uri", file, NULL);
+     }
+
+   if (!emotion_pipeline_pause(ev->pipeline))
+     goto unref_pipeline;
+
+   g_object_get(G_OBJECT(ev->pipeline),
+                 "n-audio", &ev->audio_stream_nbr,
+                 "n-video", &ev->video_stream_nbr,
+                 NULL);
+
+   if ((ev->video_stream_nbr == 0) && (ev->audio_stream_nbr == 0))
+     {
+       ERR("No audio nor video stream found");
+       goto unref_pipeline;
+     }
+
+   /* Video streams */
+
+   for (i = 0; i < ev->video_stream_nbr; i++)
+     {
+       GstPad       *pad;
+       GstCaps      *caps;
+       GstStructure *structure;
+       GstQuery     *query;
+       const GValue *val;
+       gchar        *str;
+       Eina_Bool     build_stream = EINA_FALSE;
+
+       gdouble length_time;
+       gint width;
+       gint height;
+       gint fps_num;
+       gint fps_den;
+       guint32 fourcc;
+
+       g_signal_emit_by_name(ev->pipeline, "get-video-pad", i, &pad);
+       if (!pad)
+         continue;
+
+       caps = gst_pad_get_negotiated_caps(pad);
+       if (!caps)
+         goto unref_pad_v;
+       structure = gst_caps_get_structure(caps, 0);
+       str = gst_caps_to_string(caps);
+
+       if (!gst_structure_get_int(structure, "width", &width))
+         goto unref_caps_v;
+       if (!gst_structure_get_int(structure, "height", &height))
+         goto unref_caps_v;
+       if (!gst_structure_get_fraction(structure, "framerate", &fps_num, &fps_den))
+         goto unref_caps_v;
+
+       if (g_str_has_prefix(str, "video/x-raw-yuv"))
+         {
+           val = gst_structure_get_value(structure, "format");
+           fourcc = gst_value_get_fourcc(val);
+         }
+       else if (g_str_has_prefix(str, "video/x-raw-rgb"))
+         fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
+       else
+         goto unref_caps_v;
+
+       query = gst_query_new_duration(GST_FORMAT_TIME);
+       if (gst_pad_peer_query(pad, query))
+         {
+           gint64 t;
+
+           gst_query_parse_duration(query, NULL, &t);
+           length_time = (double)t / (double)GST_SECOND;
+         }
+       else
+         goto unref_query_v;
+
+       build_stream = EINA_TRUE;
+
+     unref_query_v:
+       gst_query_unref(query);
+     unref_caps_v:
+       gst_caps_unref(caps);
+     unref_pad_v:
+       gst_object_unref(pad);
+
+       if (build_stream)
+         {
+           Emotion_Video_Stream *vstream;
+
+           vstream = emotion_video_stream_new(ev);
+           if (!vstream) continue;
+
+           vstream->length_time = length_time;
+           vstream->width = width;
+           vstream->height = height;
+           vstream->fps_num = fps_num;
+           vstream->fps_den = fps_den;
+           vstream->fourcc = fourcc;
+         }
+     }
+
+   /* Audio streams */
+
+   for (i = 0; i < ev->audio_stream_nbr; i++)
+     {
+       GstPad       *pad;
+       GstCaps      *caps;
+       GstStructure *structure;
+       GstQuery     *query;
+       Eina_Bool     build_stream = EINA_FALSE;
+
+       gdouble length_time;
+       gint channels;
+       gint samplerate;
+
+       g_signal_emit_by_name(ev->pipeline, "get-audio-pad", i, &pad);
+       if (!pad)
+         continue;
+
+       caps = gst_pad_get_negotiated_caps(pad);
+       if (!caps)
+         goto unref_pad_a;
+       structure = gst_caps_get_structure(caps, 0);
+
+       if (!gst_structure_get_int(structure, "channels", &channels))
+         goto unref_caps_a;
+       if (!gst_structure_get_int(structure, "rate", &samplerate))
+         goto unref_caps_a;
+
+       query = gst_query_new_duration(GST_FORMAT_TIME);
+       if (gst_pad_peer_query(pad, query))
+         {
+           gint64 t;
+
+           gst_query_parse_duration(query, NULL, &t);
+           length_time = (double)t / (double)GST_SECOND;
+         }
+       else
+         goto unref_query_a;
+
+       build_stream = EINA_TRUE;
+
+     unref_query_a:
+       gst_query_unref(query);
+     unref_caps_a:
+       gst_caps_unref(caps);
+     unref_pad_a:
+       gst_object_unref(pad);
+
+       if (build_stream)
+         {
+           Emotion_Audio_Stream *astream;
+
+           astream = (Emotion_Audio_Stream *)calloc(1, sizeof(Emotion_Audio_Stream));
+           if (!astream) continue;
+           ev->audio_streams = eina_list_append(ev->audio_streams, astream);
+           if (eina_error_get())
+             {
+               free(astream);
+               continue;
+             }
+
+           astream->length_time = length_time;
+           astream->channels = channels;
+           astream->samplerate = samplerate;
+         }
+     }
+
+   /* Visualization sink */
+
+   if (ev->video_stream_nbr == 0)
+     {
+       GstElement *vis = NULL;
+       Emotion_Video_Stream *vstream;
+       Emotion_Audio_Stream *astream;
+       gint flags;
+       const char *vis_name;
+
+       if (!(vis_name = emotion_visualization_element_name_get(ev->vis)))
+         {
+           printf ("pb vis name %d\n", ev->vis);
+           goto finalize;
+         }
+
+       astream = (Emotion_Audio_Stream *)eina_list_data_get(ev->audio_streams);
+
+       vis = gst_element_factory_make(vis_name, "vissink");
+       vstream = emotion_video_stream_new(ev);
+       if (!vstream)
+         goto finalize;
+       else
+         DBG("could not create visualization stream");
+
+       vstream->length_time = astream->length_time;
+       vstream->width = 320;
+       vstream->height = 200;
+       vstream->fps_num = 25;
+       vstream->fps_den = 1;
+       vstream->fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
+
+       g_object_set(G_OBJECT(ev->pipeline), "vis-plugin", vis, NULL);
+       g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL);
+       flags |= 0x00000008;
+       g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL);
+     }
+
+ finalize:
+
+   ev->video_stream_nbr = eina_list_count(ev->video_streams);
+   ev->audio_stream_nbr = eina_list_count(ev->audio_streams);
+
+   if (ev->video_stream_nbr == 1)
+     {
+       Emotion_Video_Stream *vstream;
+
+       vstream = (Emotion_Video_Stream *)eina_list_data_get(ev->video_streams);
+       ev->ratio = (double)vstream->width / (double)vstream->height;
+     }
+
+   return EINA_TRUE;
+
+ unref_pipeline:
+   gst_object_unref(ev->pipeline);
+
+   return EINA_FALSE;
+}
+
 /* Send the video frame to the evas object */
 void
 cb_handoff(GstElement *fakesrc __UNUSED__,
@@ -54,9 +340,9 @@ cb_handoff(GstElement *fakesrc __UNUSED__,
      }
    else
      {
-	Emotion_Audio_Sink *asink;
-	asink = (Emotion_Audio_Sink *)eina_list_nth(ev->audio_sinks, ev->audio_sink_nbr);
-	_emotion_video_pos_update(ev->obj, ev->position, asink->length_time);
+	Emotion_Audio_Stream *astream;
+	astream = (Emotion_Audio_Stream *)eina_list_nth(ev->audio_streams, ev->audio_stream_nbr - 1);
+	_emotion_video_pos_update(ev->obj, ev->position, astream->length_time);
      }
 
    query = gst_query_new_position(GST_FORMAT_TIME);
@@ -70,134 +356,32 @@ cb_handoff(GstElement *fakesrc __UNUSED__,
    gst_query_unref(query);
 }
 
-void
-file_new_decoded_pad_cb(GstElement *decodebin __UNUSED__,
-                        GstPad     *new_pad,
-                        gboolean    last __UNUSED__,
-                        gpointer    user_data)
+Emotion_Video_Stream *
+emotion_video_stream_new(Emotion_Gstreamer_Video *ev)
 {
-   Emotion_Gstreamer_Video *ev;
-   GstCaps *caps;
-   gchar   *str;
-   unsigned int index;
-
-   ev = (Emotion_Gstreamer_Video *)user_data;
-   caps = gst_pad_get_caps(new_pad);
-   str = gst_caps_to_string(caps);
-   /* video stream */
-   if (g_str_has_prefix(str, "video/"))
-     {
-	Emotion_Video_Sink *vsink;
-	GstElement         *queue;
-	GstPad             *videopad;
-
-	vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
-	if (!vsink) return;
-	ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
-	if (eina_error_get())
-	  {
-	     free(vsink);
-	     return;
-	  }
-
-	queue = gst_element_factory_make("queue", NULL);
-	vsink->sink = gst_element_factory_make("fakesink", "videosink");
-	gst_bin_add_many(GST_BIN(ev->pipeline), queue, vsink->sink, NULL);
-	gst_element_link(queue, vsink->sink);
-	videopad = gst_element_get_pad(queue, "sink");
-	gst_pad_link(new_pad, videopad);
-	gst_object_unref(videopad);
-	if (eina_list_count(ev->video_sinks) == 1)
-	  {
-	     ev->ratio = (double)vsink->width / (double)vsink->height;
-	  }
-	gst_element_set_state(queue, GST_STATE_PAUSED);
-	gst_element_set_state(vsink->sink, GST_STATE_PAUSED);
-     }
-   /* audio stream */
-   else if (g_str_has_prefix(str, "audio/"))
-     {
-	Emotion_Audio_Sink *asink;
-	GstPad             *audiopad;
-
-	asink = (Emotion_Audio_Sink *)calloc(1, sizeof(Emotion_Audio_Sink));
-	if (!asink) return;
-	ev->audio_sinks = eina_list_append(ev->audio_sinks, asink);
-	if (eina_error_get())
-	  {
-	     free(asink);
-	     return;
-	  }
-
-	index = eina_list_count(ev->audio_sinks);
-	asink->sink = emotion_audio_sink_create(ev, index);
-	gst_bin_add(GST_BIN(ev->pipeline), asink->sink);
-	audiopad = gst_element_get_pad(asink->sink, "sink");
-	gst_pad_link(new_pad, audiopad);
-	gst_element_set_state(asink->sink, GST_STATE_PAUSED);
-     }
-
-   free(str);
-}
-
-Emotion_Video_Sink *
-emotion_video_sink_new(Emotion_Gstreamer_Video *ev)
-{
-   Emotion_Video_Sink *vsink;
+   Emotion_Video_Stream *vstream;
 
    if (!ev) return NULL;
 
-   vsink = (Emotion_Video_Sink *)calloc(1, sizeof(Emotion_Video_Sink));
-   if (!vsink) return NULL;
+   vstream = (Emotion_Video_Stream *)calloc(1, sizeof(Emotion_Video_Stream));
+   if (!vstream) return NULL;
 
-   ev->video_sinks = eina_list_append(ev->video_sinks, vsink);
+   ev->video_streams = eina_list_append(ev->video_streams, vstream);
    if (eina_error_get())
      {
-	free(vsink);
+	free(vstream);
 	return NULL;
      }
-   return vsink;
+   return vstream;
 }
 
 void
-emotion_video_sink_free(Emotion_Gstreamer_Video *ev, Emotion_Video_Sink *vsink)
+emotion_video_stream_free(Emotion_Gstreamer_Video *ev, Emotion_Video_Stream *vstream)
 {
-   if (!ev || !vsink) return;
+   if (!ev || !vstream) return;
 
-   ev->video_sinks = eina_list_remove(ev->video_sinks, vsink);
-	free(vsink);
-}
-
-Emotion_Video_Sink *
-emotion_visualization_sink_create(Emotion_Gstreamer_Video *ev, Emotion_Audio_Sink *asink)
-{
-   Emotion_Video_Sink *vsink;
-
-   if (!ev) return NULL;
-
-   vsink = emotion_video_sink_new(ev);
-   if (!vsink) return NULL;
-
-   vsink->sink = gst_bin_get_by_name(GST_BIN(asink->sink), "vissink1");
-   if (!vsink->sink)
-     {
-	emotion_video_sink_free(ev, vsink);
-	return NULL;
-     }
-   vsink->width = 320;
-   vsink->height = 200;
-   ev->ratio = (double)vsink->width / (double)vsink->height;
-   vsink->fps_num = 25;
-   vsink->fps_den = 1;
-   vsink->fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
-   vsink->length_time = asink->length_time;
-
-   g_object_set(G_OBJECT(vsink->sink), "sync", TRUE, NULL);
-   g_object_set(G_OBJECT(vsink->sink), "signal-handoffs", TRUE, NULL);
-   g_signal_connect(G_OBJECT(vsink->sink),
-		    "handoff",
-		    G_CALLBACK(cb_handoff), ev);
-   return vsink;
+   ev->video_streams = eina_list_remove(ev->video_streams, vstream);
+	free(vstream);
 }
 
 int
@@ -294,328 +478,4 @@ emotion_visualization_element_name_get(Emotion_Vis visualisation)
       default:
 	 return "goom";
      }
-}
-
-static GstElement *
-emotion_visualization_bin_create(Emotion_Gstreamer_Video *ev, int index)
-{
-   const char *vis_name;
-   char buf[64];
-   GstElement *vis, *visbin, *queue, *conv, *cspace, *sink;
-   GstPad *vispad;
-   GstCaps *caps;
-
-   if (ev->vis == EMOTION_VIS_NONE)
-     return NULL;
-
-   vis_name = emotion_visualization_element_name_get(ev->vis);
-   if (!vis_name)
-     return NULL;
-
-   g_snprintf(buf, sizeof(buf), "vis%d", index);
-   vis = gst_element_factory_make(vis_name, buf);
-   if (!vis)
-     return NULL;
-
-   g_snprintf(buf, sizeof(buf), "visbin%d", index);
-   visbin = gst_bin_new(buf);
-
-   queue = gst_element_factory_make("queue", NULL);
-   conv = gst_element_factory_make("audioconvert", NULL);
-   cspace = gst_element_factory_make("ffmpegcolorspace", NULL);
-   g_snprintf(buf, sizeof(buf), "vissink%d", index);
-   sink = gst_element_factory_make("fakesink", buf);
-
-   if ((!visbin) || (!queue) || (!conv) || (!cspace) || (!sink))
-     goto error;
-
-   gst_bin_add_many(GST_BIN(visbin), queue, conv, vis, cspace, sink, NULL);
-   gst_element_link_many(queue, conv, vis, cspace, NULL);
-   caps = gst_caps_new_simple("video/x-raw-rgb",
-			      "bpp", G_TYPE_INT, 32,
-			      "width", G_TYPE_INT, 320,
-			      "height", G_TYPE_INT, 200,
-			      NULL);
-   gst_element_link_filtered(cspace, sink, caps);
-
-   vispad = gst_element_get_pad(queue, "sink");
-   gst_element_add_pad(visbin, gst_ghost_pad_new("sink", vispad));
-   gst_object_unref(vispad);
-
-   return visbin;
-
- error:
-   if (vis)
-     gst_object_unref(vis);
-   if (visbin)
-     gst_object_unref(visbin);
-   if (queue)
-     gst_object_unref(queue);
-   if (conv)
-     gst_object_unref(conv);
-   if (cspace)
-     gst_object_unref(cspace);
-   if (sink)
-     gst_object_unref(sink);
-
-   return NULL;
-}
-
-static GstElement *
-emotion_audio_bin_create(Emotion_Gstreamer_Video *ev, int index)
-{
-   GstElement *audiobin, *queue, *conv, *resample, *volume, *sink;
-   GstPad *audiopad;
-   double vol;
-
-   audiobin = gst_bin_new(NULL);
-   queue = gst_element_factory_make("queue", NULL);
-   conv = gst_element_factory_make("audioconvert", NULL);
-   resample = gst_element_factory_make("audioresample", NULL);
-   volume = gst_element_factory_make("volume", "volume");
-
-   if (index == 1)
-     sink = gst_element_factory_make("autoaudiosink", NULL);
-   else
-     /* XXX hack: use a proper mixer element here */
-     sink = gst_element_factory_make("fakesink", NULL);
-
-   if ((!audiobin) || (!queue) || (!conv) || (!resample) || (!volume) || (!sink))
-     goto error;
-
-   g_object_get(volume, "volume", &vol, NULL);
-   ev->volume = vol;
-
-   gst_bin_add_many(GST_BIN(audiobin),
-		    queue, conv, resample, volume, sink, NULL);
-   gst_element_link_many(queue, conv, resample, volume, sink, NULL);
-
-   audiopad = gst_element_get_pad(queue, "sink");
-   gst_element_add_pad(audiobin, gst_ghost_pad_new("sink", audiopad));
-   gst_object_unref(audiopad);
-
-   return audiobin;
-
- error:
-   if (audiobin)
-     gst_object_unref(audiobin);
-   if (queue)
-     gst_object_unref(queue);
-   if (conv)
-     gst_object_unref(conv);
-   if (resample)
-     gst_object_unref(resample);
-   if (volume)
-     gst_object_unref(volume);
-   if (sink)
-     gst_object_unref(sink);
-
-   return NULL;
-}
-
-
-GstElement *
-emotion_audio_sink_create(Emotion_Gstreamer_Video *ev, int index)
-{
-   gchar       buf[128];
-   GstElement *bin;
-   GstElement *audiobin;
-   GstElement *visbin = NULL;
-   GstElement *tee;
-   GstPad     *teepad;
-   GstPad     *binpad;
-
-   audiobin = emotion_audio_bin_create(ev, index);
-   if (!audiobin)
-     return NULL;
-
-   bin = gst_bin_new(NULL);
-   if (!bin)
-     {
-	gst_object_unref(audiobin);
-	return NULL;
-     }
-
-   g_snprintf(buf, 128, "tee%d", index);
-   tee = gst_element_factory_make("tee", buf);
-
-   visbin = emotion_visualization_bin_create(ev, index);
-
-   gst_bin_add_many(GST_BIN(bin), tee, audiobin, visbin, NULL);
-
-   binpad = gst_element_get_pad(audiobin, "sink");
-   teepad = gst_element_get_request_pad(tee, "src%d");
-   gst_pad_link(teepad, binpad);
-   gst_object_unref(teepad);
-   gst_object_unref(binpad);
-
-   if (visbin)
-     {
-	binpad = gst_element_get_pad(visbin, "sink");
-	teepad = gst_element_get_request_pad(tee, "src%d");
-	gst_pad_link(teepad, binpad);
-	gst_object_unref(teepad);
-	gst_object_unref(binpad);
-     }
-
-   teepad = gst_element_get_pad(tee, "sink");
-   gst_element_add_pad(bin, gst_ghost_pad_new("sink", teepad));
-   gst_object_unref(teepad);
-
-   return bin;
-}
-
-void
-emotion_streams_sinks_get(Emotion_Gstreamer_Video *ev, GstElement *decoder)
-{
-   GstIterator *it;
-   Eina_List   *alist;
-   Eina_List   *vlist;
-   gpointer     data;
-
-   alist = ev->audio_sinks;
-   vlist = ev->video_sinks;
-
-   it = gst_element_iterate_src_pads(decoder);
-   while (gst_iterator_next(it, &data) == GST_ITERATOR_OK)
-     {
-	GstPad  *pad;
-	GstCaps *caps;
-	gchar   *str;
-
-	pad = GST_PAD(data);
-
-	caps = gst_pad_get_caps(pad);
-	str = gst_caps_to_string(caps);
-	DBG("caps %s", str);
-
-	/* video stream */
-	if (g_str_has_prefix(str, "video/"))
-	  {
-	     Emotion_Video_Sink *vsink;
-
-	     vsink = (Emotion_Video_Sink *)eina_list_data_get(vlist);
-	     vlist = eina_list_next(vlist);
-
-	     emotion_video_sink_fill(vsink, pad, caps);
-	     ev->ratio = (double)vsink->width / (double)vsink->height;
-
-	  }
-	/* audio stream */
-	else if (g_str_has_prefix(str, "audio/"))
-	  {
-	     Emotion_Audio_Sink *asink;
-	     unsigned int index;
-
-	     asink = (Emotion_Audio_Sink *)eina_list_data_get(alist);
-	     alist = eina_list_next(alist);
-
-	     emotion_audio_sink_fill(asink, pad, caps);
-
-	     for (index = 0; asink != eina_list_nth(ev->audio_sinks, index) ; index++)
-	       ;
-
-	     if (eina_list_count(ev->video_sinks) == 0)
-	       {
-		  if (index == 1)
-		    {
-		       Emotion_Video_Sink *vsink;
-
-		       vsink = emotion_visualization_sink_create(ev, asink);
-		       if (!vsink) goto finalize;
-		    }
-	       }
-	     else
-	       {
-		  gchar       buf[128];
-		  GstElement *visbin;
-
-		  g_snprintf(buf, 128, "visbin%d", index);
-		  visbin = gst_bin_get_by_name(GST_BIN(ev->pipeline), buf);
-		  if (visbin)
-		    {
-		       GstPad *srcpad;
-		       GstPad *sinkpad;
-
-		       sinkpad = gst_element_get_pad(visbin, "sink");
-		       srcpad = gst_pad_get_peer(sinkpad);
-		       gst_pad_unlink(srcpad, sinkpad);
-
-		       gst_object_unref(srcpad);
-		       gst_object_unref(sinkpad);
-		    }
-	       }
-	  }
-finalize:
-	gst_caps_unref(caps);
-	g_free(str);
-	gst_object_unref(pad);
-     }
-   gst_iterator_free(it);
-}
-
-void
-emotion_video_sink_fill(Emotion_Video_Sink *vsink, GstPad *pad, GstCaps *caps)
-{
-   GstStructure *structure;
-   GstQuery     *query;
-   const GValue *val;
-   gchar        *str;
-
-   structure = gst_caps_get_structure(caps, 0);
-   str = gst_caps_to_string(caps);
-
-   gst_structure_get_int(structure, "width", &vsink->width);
-   gst_structure_get_int(structure, "height", &vsink->height);
-
-   vsink->fps_num = 1;
-   vsink->fps_den = 1;
-   val = gst_structure_get_value(structure, "framerate");
-   if (val)
-     {
-	vsink->fps_num = gst_value_get_fraction_numerator(val);
-	vsink->fps_den = gst_value_get_fraction_denominator(val);
-     }
-   if (g_str_has_prefix(str, "video/x-raw-yuv"))
-     {
-	val = gst_structure_get_value(structure, "format");
-	vsink->fourcc = gst_value_get_fourcc(val);
-     }
-   else if (g_str_has_prefix(str, "video/x-raw-rgb"))
-     vsink->fourcc = GST_MAKE_FOURCC('A', 'R', 'G', 'B');
-   else
-     vsink->fourcc = 0;
-
-   query = gst_query_new_duration(GST_FORMAT_TIME);
-   if (gst_pad_query(pad, query))
-     {
-	gint64 time;
-
-	gst_query_parse_duration(query, NULL, &time);
-	vsink->length_time = (double)time / (double)GST_SECOND;
-     }
-   g_free(str);
-   gst_query_unref(query);
-}
-
-void
-emotion_audio_sink_fill(Emotion_Audio_Sink *asink, GstPad *pad, GstCaps *caps)
-{
-   GstStructure *structure;
-   GstQuery     *query;
-
-   structure = gst_caps_get_structure(caps, 0);
-
-   gst_structure_get_int(structure, "channels", &asink->channels);
-   gst_structure_get_int(structure, "rate", &asink->samplerate);
-
-   query = gst_query_new_duration(GST_FORMAT_TIME);
-   if (gst_pad_query(pad, query))
-     {
-	gint64 time;
-
-	gst_query_parse_duration(query, NULL, &time);
-	asink->length_time = (double)time / (double)GST_SECOND;
-     }
-   gst_query_unref(query);
 }

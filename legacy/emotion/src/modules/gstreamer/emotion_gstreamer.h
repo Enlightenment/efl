@@ -12,11 +12,10 @@
 #include "emotion_private.h"
 
 
-typedef struct _Emotion_Video_Sink Emotion_Video_Sink;
+typedef struct _Emotion_Video_Stream Emotion_Video_Stream;
 
-struct _Emotion_Video_Sink
+struct _Emotion_Video_Stream
 {
-   GstElement *sink;
    gdouble     length_time;
    gint        width;
    gint        height;
@@ -25,11 +24,10 @@ struct _Emotion_Video_Sink
    guint32     fourcc;
 };
 
-typedef struct _Emotion_Audio_Sink Emotion_Audio_Sink;
+typedef struct _Emotion_Audio_Stream Emotion_Audio_Stream;
 
-struct _Emotion_Audio_Sink
+struct _Emotion_Audio_Stream
 {
-   GstElement *sink;
    gdouble     length_time;
    gint        channels;
    gint        samplerate;
@@ -61,12 +59,12 @@ struct _Emotion_Gstreamer_Video
    GstBus           *eos_bus;
    Ecore_Timer      *eos_timer;
 
-   /* Sinks */
-   Eina_List        *video_sinks;
-   Eina_List        *audio_sinks;
+   /* Strams */
+   Eina_List        *video_streams;
+   Eina_List        *audio_streams;
 
-   int               video_sink_nbr;
-   int               audio_sink_nbr;
+   int               video_stream_nbr;
+   int               audio_stream_nbr;
 
    /* Evas object */
    Evas_Object      *obj;
@@ -86,10 +84,10 @@ struct _Emotion_Gstreamer_Video
 
    Emotion_Vis       vis;
 
-   unsigned char     play : 1;
+   unsigned char     play         : 1;
    unsigned char     play_started : 1;
-   unsigned char     video_mute : 1;
-   unsigned char     audio_mute : 1;
+   unsigned char     video_mute   : 1;
+   unsigned char     audio_mute   : 1;
 };
 
 extern int _emotion_gstreamer_log_domain;
