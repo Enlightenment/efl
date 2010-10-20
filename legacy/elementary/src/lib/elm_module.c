@@ -45,9 +45,9 @@ void
 _elm_module_shutdown(void)
 {
    // FIXME: unload all modules
-   eina_hash_free(modules);
+   if (modules) eina_hash_free(modules);
    modules = NULL;
-   eina_hash_free(modules_as);
+   if (modules_as) eina_hash_free(modules_as);
    modules_as = NULL;
 }
 
