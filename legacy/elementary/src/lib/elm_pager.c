@@ -212,6 +212,7 @@ _signal_hide_finished(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    evas_object_smart_callback_call(obj2, "hide,finished", it->content);
    edje_object_message_signal_process(it->base);
    if (it->popme) evas_object_del(it->content);
+   evas_object_hide(it->content);
    _sizing_eval(obj2);
 }
 
