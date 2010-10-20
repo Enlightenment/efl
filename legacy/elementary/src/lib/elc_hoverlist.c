@@ -1,9 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/* TODO: steal focus when shown? */
-/* TODO: event hooks, then */
-
 /**
  * @addtogroup Hoverlist
  *
@@ -312,6 +309,7 @@ elm_hoverlist_add(Evas_Object* parent)
    evas_object_resize(wd->target, elm_finger_size_get(),
                       elm_finger_size_get());
    evas_object_show(wd->target);
+   evas_object_layer_set(wd->target, EVAS_LAYER_MIN);
 
    wd->hover = elm_hover_add(obj);
 
