@@ -16,20 +16,19 @@ struct _Elm_Menu_Item
 {
    Elm_Widget_Item base;
    Elm_Menu_Item *parent;
-
-   Eina_Bool separator;
-   Eina_Bool disabled;
-
-   //if classic item or submenu
    Evas_Object *icon;
+   const char *icon_str;
    const char *label;
-
    Evas_Smart_Cb func;
 
-   //if submenu
-   Eina_Bool open;
-   Evas_Object *hv, *bx, *location;
-   Eina_List *items;
+   struct {
+      Evas_Object *hv, *bx, *location;
+      Eina_List *items;
+      Eina_Bool open : 1;
+   } submenu;
+
+   Eina_Bool separator : 1;
+   Eina_Bool disabled : 1;
 };
 
 struct _Widget_Data
@@ -45,7 +44,6 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _submenu_sizing_eval(Elm_Menu_Item *parent);
 static void _item_sizing_eval(Elm_Menu_Item *item);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _submenu_hide(Elm_Menu_Item *item);
 static void _submenu_open(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -58,12 +56,13 @@ _del_item(Elm_Menu_Item *item)
 
    elm_widget_item_pre_notify_del(item);
 
-   EINA_LIST_FREE(item->items, child)
+   EINA_LIST_FREE(item->submenu.items, child)
      _del_item(child);
 
    if (item->label) eina_stringshare_del(item->label);
-   if (item->hv) evas_object_del(item->hv);
-   if (item->location) evas_object_del(item->location);
+   if (item->submenu.hv) evas_object_del(item->submenu.hv);
+   if (item->submenu.location) evas_object_del(item->submenu.location);
+   if (item->icon_str) eina_stringshare_del(item->icon_str);
    elm_widget_item_del(item);
 }
 
@@ -102,24 +101,24 @@ _theme_hook(Evas_Object *obj)
      {
 	EINA_LIST_FOREACH(l, _l, item)
 	  {
-	     ll = eina_list_append(ll, item->items);
+	     ll = eina_list_append(ll, item->submenu.items);
 	     if (item->separator)
 	       _elm_theme_object_set(obj, item->base.view, "menu", "separator",
                                      elm_widget_style_get(obj));
-	     else if (item->bx)
+	     else if (item->submenu.bx)
 	       {
 		  _elm_theme_object_set
                     (obj, item->base.view, "menu", "item_with_submenu",
                      elm_widget_style_get(obj));
 		  elm_menu_item_label_set(item, item->label);
-		  elm_menu_item_icon_set(item, item->icon);
+		  elm_menu_item_icon_set(item, item->icon_str);
 	       }
 	     else
 	       {
 		  _elm_theme_object_set(obj, item->base.view, "menu", "item",
                                         elm_widget_style_get(obj));
 		  elm_menu_item_label_set(item, item->label);
-		  elm_menu_item_icon_set(item, item->icon);
+		  elm_menu_item_icon_set(item, item->icon_str);
 	       }
 	     if (item->disabled)
 	       edje_object_signal_emit
@@ -165,7 +164,7 @@ _sizing_eval(Evas_Object *obj)
 
    EINA_LIST_FOREACH(wd->items,l,item)
      {
-	if (item->open) _submenu_sizing_eval(item);
+	if (item->submenu.open) _submenu_sizing_eval(item);
      }
 }
 
@@ -177,10 +176,10 @@ _submenu_sizing_eval(Elm_Menu_Item *parent)
    Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bx, by, bw, bh, px, py, pw, ph;
    Widget_Data *wd = elm_widget_data_get(parent->base.widget);
    if (!wd) return;
-   EINA_LIST_FOREACH(parent->items,l,item) _item_sizing_eval(item);
-   evas_object_geometry_get(parent->location, &x_p, &y_p, &w_p, &h_p);
+   EINA_LIST_FOREACH(parent->submenu.items, l, item) _item_sizing_eval(item);
+   evas_object_geometry_get(parent->submenu.location, &x_p, &y_p, &w_p, &h_p);
    evas_object_geometry_get(parent->base.view, &x2, &y2, &w2, &h2);
-   evas_object_geometry_get(parent->bx, &bx, &by, &bw, &bh);
+   evas_object_geometry_get(parent->submenu.bx, &bx, &by, &bw, &bh);
    evas_object_geometry_get(wd->parent, &px, &py, &pw, &ph);
 
    x_p = x2+w2;
@@ -194,15 +193,15 @@ _submenu_sizing_eval(Elm_Menu_Item *parent)
    if (y_p < py)
      y_p += y_p - y_p;
 
-   evas_object_move(parent->location, x_p, y_p);
-   evas_object_resize(parent->location, bw, h_p);
-   evas_object_size_hint_min_set(parent->location, bw, h_p);
-   evas_object_size_hint_max_set(parent->location, bw, h_p);
-   elm_hover_target_set(parent->hv, parent->location);
+   evas_object_move(parent->submenu.location, x_p, y_p);
+   evas_object_resize(parent->submenu.location, bw, h_p);
+   evas_object_size_hint_min_set(parent->submenu.location, bw, h_p);
+   evas_object_size_hint_max_set(parent->submenu.location, bw, h_p);
+   elm_hover_target_set(parent->submenu.hv, parent->submenu.location);
 
-   EINA_LIST_FOREACH(parent->items,l,item)
+   EINA_LIST_FOREACH(parent->submenu.items, l, item)
      {
-	if (item->open)
+	if (item->submenu.open)
 	  _submenu_sizing_eval(item);
      }
 }
@@ -221,12 +220,6 @@ _item_sizing_eval(Elm_Menu_Item *item)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   _sizing_eval(data);
-}
-
-static void
 _menu_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _sizing_eval(data);
@@ -242,7 +235,7 @@ static void
 _item_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Menu_Item *item = data;
-   if (item->open) _submenu_sizing_eval(item);
+   if (item->submenu.open) _submenu_sizing_eval(item);
 }
 
 static void
@@ -264,7 +257,7 @@ _menu_hide(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    EINA_LIST_FOREACH(wd->items, l, item2)
      {
-	if (item2->open) _submenu_hide(item2);
+	if (item2->submenu.open) _submenu_hide(item2);
      }
 }
 
@@ -273,11 +266,11 @@ _submenu_hide(Elm_Menu_Item *item)
 {
    Eina_List *l;
    Elm_Menu_Item *item2;
-   evas_object_hide(item->hv);
-   item->open = EINA_FALSE;
-   EINA_LIST_FOREACH(item->items, l, item2)
+   evas_object_hide(item->submenu.hv);
+   item->submenu.open = EINA_FALSE;
+   EINA_LIST_FOREACH(item->submenu.items, l, item2)
      {
-	if (item2->open) _submenu_hide(item2);
+	if (item2->submenu.open) _submenu_hide(item2);
      }
 }
 
@@ -285,9 +278,9 @@ static void
 _menu_item_select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Menu_Item *it = data;
-   if (it->items)
+   if (it->submenu.items)
      {
-	if (!it->open) _submenu_open(it, NULL, NULL, NULL);
+	if (!it->submenu.open) _submenu_open(it, NULL, NULL, NULL);
 	else _submenu_hide(it);
      }
    else
@@ -304,9 +297,9 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
    Elm_Menu_Item *item = data;
    if (item->parent)
      {
-	EINA_LIST_FOREACH(item->parent->items, l, item2)
+	EINA_LIST_FOREACH(item->parent->submenu.items, l, item2)
 	  {
-	     if ((item2->open) && (item2 != item)) _submenu_hide(item2);
+	     if ((item2->submenu.open) && (item2 != item)) _submenu_hide(item2);
 	  }
      }
    else
@@ -314,7 +307,7 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
 	EINA_LIST_FOREACH(wd->items, l, item2)
 	  {
-	     if ((item2->open) && (item2 != item)) _submenu_hide(item2);
+	     if ((item2->submenu.open) && (item2 != item)) _submenu_hide(item2);
 	  }
      }
 }
@@ -323,8 +316,8 @@ static void
 _submenu_open(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Menu_Item *it = data;
-   it->open = EINA_TRUE;
-   evas_object_show(it->hv);
+   it->submenu.open = EINA_TRUE;
+   evas_object_show(it->submenu.hv);
    _sizing_eval(it->base.widget);
 }
 
@@ -371,27 +364,27 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
 {
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
-   item->location = elm_icon_add(wd->bx);
-   item->hv = elm_hover_add(wd->bx);
-   elm_hover_target_set(item->hv, item->location);
-   elm_hover_parent_set(item->hv, wd->parent);
-   elm_object_style_set(item->hv, "submenu");
+   item->submenu.location = elm_icon_add(wd->bx);
+   item->submenu.hv = elm_hover_add(wd->bx);
+   elm_hover_target_set(item->submenu.hv, item->submenu.location);
+   elm_hover_parent_set(item->submenu.hv, wd->parent);
+   elm_object_style_set(item->submenu.hv, "submenu");
 
-   item->bx = elm_box_add(wd->bx);
-   evas_object_size_hint_weight_set(item->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(item->bx);
-   elm_hover_content_set(item->hv, elm_hover_best_content_location_get(item->hv, ELM_HOVER_AXIS_VERTICAL), item->bx);
+   item->submenu.bx = elm_box_add(wd->bx);
+   evas_object_size_hint_weight_set(item->submenu.bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(item->submenu.bx);
+   elm_hover_content_set(item->submenu.hv, elm_hover_best_content_location_get(item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
 
    _elm_theme_object_set(item->base.widget, item->base.view, "menu", "item_with_submenu",  elm_widget_style_get(item->base.widget));
    elm_menu_item_label_set(item, item->label);
-   elm_menu_item_icon_set(item, item->icon);
+   elm_menu_item_icon_set(item, item->icon_str);
 
    edje_object_signal_callback_add(item->base.view, "elm,action,open", "",
                                    _submenu_open, item);
    evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_MOVE, _item_move_resize, item);
    evas_object_event_callback_add(item->base.view, EVAS_CALLBACK_RESIZE, _item_move_resize, item);
 
-   evas_object_event_callback_add(item->bx, EVAS_CALLBACK_RESIZE, _menu_resize, item->base.widget);
+   evas_object_event_callback_add(item->submenu.bx, EVAS_CALLBACK_RESIZE, _menu_resize, item->base.widget);
 }
 
 /**
@@ -469,10 +462,10 @@ elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
      {
 	EINA_LIST_FOREACH(l, _l, item)
 	  {
-	     if (item->hv)
+	     if (item->submenu.hv)
 	       {
-		  elm_hover_parent_set(item->hv, parent);
-		  ll = eina_list_append(ll, item->items);
+		  elm_hover_parent_set(item->submenu.hv, parent);
+		  ll = eina_list_append(ll, item->submenu.items);
 	       }
 	  }
      }
@@ -542,28 +535,39 @@ elm_menu_object_get(const Elm_Menu_Item *it)
  * @ingroup Menu
  */
 EAPI Elm_Menu_Item *
-elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
+elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    Elm_Menu_Item *subitem;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *icon_obj;
 
    if (!wd) return NULL;
+   icon_obj = elm_icon_add(obj);
+   if (!icon_obj) return NULL;
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
-   if (!subitem) return NULL;
+   if (!subitem)
+     {
+        evas_object_del(icon_obj);
+        return NULL;
+     }
    subitem->base.data = data;
    subitem->func = func;
    subitem->parent = parent;
+   subitem->icon = icon_obj;
 
    _item_obj_create(subitem);
    elm_menu_item_label_set(subitem, label);
+
+   elm_widget_sub_object_add(subitem->base.widget, subitem->icon);
+   edje_object_part_swallow(subitem->base.view, "elm.swallow.content", subitem->icon);
    elm_menu_item_icon_set(subitem, icon);
 
    if (parent)
      {
-	if (!parent->bx) _item_submenu_obj_create(parent);
-	elm_box_pack_end(parent->bx, subitem->base.view);
-	parent->items = eina_list_append(parent->items, subitem);
+	if (!parent->submenu.bx) _item_submenu_obj_create(parent);
+	elm_box_pack_end(parent->submenu.bx, subitem->base.view);
+	parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
      }
    else
      {
@@ -624,20 +628,21 @@ elm_menu_item_label_get(Elm_Menu_Item *item)
  * @ingroup Menu
  */
 EAPI void
-elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon)
+elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
 {
-   if(item->icon == icon) return;
-   if (item->icon) evas_object_del(item->icon);
-   item->icon = icon;
-   if (icon)
+   char icon_tmp[512];
+   if (!item) return;
+   if (!icon || !*icon) return;
+   if (item->icon_str && !strcmp(item->icon_str, icon)) return;
+   if (snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0 &&
+       elm_icon_standard_set(item->icon, icon_tmp))
      {
-	elm_widget_sub_object_add(item->base.widget, icon);
-	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				        _changed_size_hints, item->base.widget);
-	edje_object_part_swallow(item->base.view, "elm.swallow.content", icon);
+        eina_stringshare_replace(&item->icon_str, icon);
 	edje_object_signal_emit(item->base.view, "elm,state,icon,visible", "elm");
-	edje_object_message_signal_process(item->base.view);
      }
+   else
+     edje_object_signal_emit(item->base.view, "elm,state,icon,hidden", "elm");
+   edje_object_message_signal_process(item->base.view);
    _sizing_eval(item->base.widget);
 }
 
@@ -657,7 +662,7 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
    if (disabled)
      {
         edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");
-        if (item->open) _submenu_hide(item);
+        if (item->submenu.open) _submenu_hide(item);
      }
    else
      edje_object_signal_emit(item->base.view, "elm,state,enabled", "elm");
@@ -712,36 +717,42 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
      }
    else
      {
-	if (!parent->bx) _item_submenu_obj_create(parent);
-	elm_box_pack_end(parent->bx, subitem->base.view);
-	parent->items = eina_list_append(parent->items, subitem);
+	if (!parent->submenu.bx) _item_submenu_obj_create(parent);
+	elm_box_pack_end(parent->submenu.bx, subitem->base.view);
+	parent->submenu.items = eina_list_append(parent->submenu.items, subitem);
      }
    _sizing_eval(obj);
    return subitem;
 }
 
-
 /**
- * Deletes an item from the menu.
+ * Get the icon object from a menu item
  *
- * @param item The item to delete
+ * @param it The menu item object
+ * @return The icon object or NULL if there's no icon
  *
  * @ingroup Menu
  */
+EAPI const Evas_Object *
+elm_menu_item_object_icon_get(Elm_Menu_Item *item)
+{
+   if (!item) return NULL;
+   return (const Evas_Object *)item->icon;
+}
 
 /**
- * Get the icon of a menu item
+ * Get the string representation from the icon of a menu item
  *
  * @param it The menu item object.
- * @return The icon object of @p item or NULL
+ * @return The string representation of @p item's icon or NULL
  *
  * @ingroup Menu
  */
-EAPI Evas_Object *
+EAPI const char *
 elm_menu_item_icon_get(Elm_Menu_Item *item)
 {
    if (!item) return NULL;
-   return item->icon;
+   return item->icon_str;
 }
 
 /**
@@ -759,6 +770,13 @@ elm_menu_item_is_separator(Elm_Menu_Item *item)
    return item->separator;
 }
 
+/**
+ * Deletes an item from the menu.
+ *
+ * @param item The item to delete.
+ *
+ * @ingroup Menu
+ */
 EAPI void
 elm_menu_item_del(Elm_Menu_Item *item)
 {
@@ -767,14 +785,14 @@ elm_menu_item_del(Elm_Menu_Item *item)
    if (!item) return;
    elm_widget_item_pre_notify_del(item);
 
-   EINA_LIST_FREE(item->items, _item) elm_menu_item_del(_item);
+   EINA_LIST_FREE(item->submenu.items, _item) elm_menu_item_del(_item);
    if (item->label) eina_stringshare_del(item->label);
    if (item->icon) evas_object_del(item->icon);
-   if (item->hv) evas_object_del(item->hv);
-   if (item->location) evas_object_del(item->location);
+   if (item->submenu.hv) evas_object_del(item->submenu.hv);
+   if (item->submenu.location) evas_object_del(item->submenu.location);
 
    if (item->parent)
-     item->parent->items = eina_list_remove(item->parent->items, item);
+     item->parent->submenu.items = eina_list_remove(item->parent->submenu.items, item);
    else
      {
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
@@ -838,5 +856,5 @@ EAPI const Eina_List *
 elm_menu_item_subitems_get(Elm_Menu_Item *item)
 {
    if (!item) return NULL;
-   return item->items;
+   return item->submenu.items;
 }

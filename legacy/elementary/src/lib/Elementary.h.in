@@ -1233,25 +1233,26 @@ extern "C" {
    EAPI Eina_Bool    elm_cursor_engine_only_set(int engine_only);
 
    typedef struct _Elm_Menu_Item Elm_Menu_Item; /**< Item of Elm_Menu. Sub-type of Elm_Widget_Item */
-   EAPI Evas_Object     *elm_menu_add(Evas_Object *parent);
-   EAPI void		 elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
-   EAPI Evas_Object     *elm_menu_parent_get(const Evas_Object *obj);
-   EAPI void		 elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-   EAPI Evas_Object     *elm_menu_object_get(const Elm_Menu_Item *it);
-   EAPI Elm_Menu_Item   *elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data);
-   EAPI void		 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label);
-   EAPI const char      *elm_menu_item_label_get(Elm_Menu_Item *item);
-   EAPI void		 elm_menu_item_icon_set(Elm_Menu_Item *item, Evas_Object *icon);
-   EAPI Evas_Object     *elm_menu_item_icon_get(Elm_Menu_Item *item);
-   EAPI void		 elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled);
-   EAPI Eina_Bool        elm_menu_item_disabled_get(Elm_Menu_Item *item);
-   EAPI Elm_Menu_Item   *elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent);
-   EAPI Eina_Bool        elm_menu_item_is_separator(Elm_Menu_Item *item);
-   EAPI void		 elm_menu_item_del(Elm_Menu_Item *item);
-   EAPI void		 elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func);
-   EAPI void		*elm_menu_item_data_get(const Elm_Menu_Item *it);
-   EAPI void		 elm_menu_item_data_set(Elm_Menu_Item *item, const void *data);
-   EAPI const Eina_List *elm_menu_item_subitems_get(Elm_Menu_Item *item);
+   EAPI Evas_Object       *elm_menu_add(Evas_Object *parent);
+   EAPI void               elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI Evas_Object       *elm_menu_parent_get(const Evas_Object *obj);
+   EAPI void               elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+   EAPI Evas_Object       *elm_menu_object_get(const Elm_Menu_Item *it);
+   EAPI Elm_Menu_Item     *elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI void               elm_menu_item_label_set(Elm_Menu_Item *item, const char *label);
+   EAPI const char        *elm_menu_item_label_get(Elm_Menu_Item *item);
+   EAPI void               elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon);
+   EAPI const char        *elm_menu_item_icon_get(Elm_Menu_Item *item);
+   EAPI const Evas_Object *elm_menu_item_object_icon_get(Elm_Menu_Item *item);
+   EAPI void               elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled);
+   EAPI Eina_Bool          elm_menu_item_disabled_get(Elm_Menu_Item *item);
+   EAPI Elm_Menu_Item     *elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent);
+   EAPI Eina_Bool          elm_menu_item_is_separator(Elm_Menu_Item *item);
+   EAPI void               elm_menu_item_del(Elm_Menu_Item *item);
+   EAPI void               elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func);
+   EAPI void              *elm_menu_item_data_get(const Elm_Menu_Item *it);
+   EAPI void               elm_menu_item_data_set(Elm_Menu_Item *item, const void *data);
+   EAPI const Eina_List   *elm_menu_item_subitems_get(Elm_Menu_Item *item);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
     */

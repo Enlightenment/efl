@@ -358,14 +358,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
                        else
                          {
                             Elm_Menu_Item *item;
-                            Evas_Object *icon = elm_icon_add(menu);
-                            if (icon && !_item_icon_set(icon, "menu/", it->icon_str))
-                              {
-                                 evas_object_del(icon);
-                                 icon = NULL;
-                              }
-
-                            item = elm_menu_item_add(menu, NULL, icon, it->label,
+                            item = elm_menu_item_add(menu, NULL, it->icon_str, it->label,
                                                      it->func, it->base.data);
                             elm_menu_item_disabled_set(item, it->disabled);
                          }

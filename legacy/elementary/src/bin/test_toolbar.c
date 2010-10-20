@@ -44,7 +44,7 @@ tb_5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ic, *ph, *menu;
+   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
    Elm_Menu_Item *menu_item;
@@ -93,29 +93,14 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    item = elm_toolbar_item_add(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(item, 1);
-   elm_toolbar_item_priority_set(item, 999999);
+   elm_toolbar_item_priority_set(item, -999999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(item);
  
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_menu_item_add(menu, NULL, ic, "Here", tb_3, ph4);
-
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   menu_item = elm_menu_item_add(menu, NULL, ic, "Comes", tb_4, ph4);
-
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_menu_item_add(menu, menu_item, ic, "hey ho", tb_4, ph4);
-
-   ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-   elm_icon_file_set(ic, buf, NULL);
-   elm_menu_item_add(menu, NULL, ic, "Elementary", tb_5, ph4);
+   elm_menu_item_add(menu, NULL, "edit-cut", "Here", tb_3, ph4);
+   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Comes", tb_4, ph4);
+   elm_menu_item_add(menu, menu_item, "edit-paste", "Hey ho", tb_4, ph4);
+   elm_menu_item_add(menu, NULL, "edit-delete", "Elementary", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
