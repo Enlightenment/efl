@@ -881,20 +881,25 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    sel = selections + *(int *)data;
    if (!sel->active) return EINA_TRUE;
 
-   if (sel->format == ELM_SEL_FORMAT_MARKUP){
+   if (sel->format == ELM_SEL_FORMAT_MARKUP)
+     {
 	*data_ret = remove_tags(sel->selbuf, size_ret);
-   } else if (sel->format == ELM_SEL_FORMAT_TEXT ||
-              sel->format == ELM_SEL_FORMAT_HTML){
+     }
+   else if (sel->format == ELM_SEL_FORMAT_TEXT ||
+            sel->format == ELM_SEL_FORMAT_HTML)
+     {
         *data_ret = strdup(sel->selbuf);
         *size_ret = strlen(sel->selbuf);
-   } else if (sel->format == ELM_SEL_FORMAT_IMAGE){
+     }
+   else if (sel->format == ELM_SEL_FORMAT_IMAGE)
+     {
 	cnp_debug("Image %s\n",evas_object_type_get(sel->widget));
 	cnp_debug("Elm type: %s\n",elm_object_widget_type_get(sel->widget));
 	evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget), (const char **)data_ret, NULL);
 	if (!*data_ret) *data_ret = strdup("No file");
 	else *data_ret = strdup(*data_ret);
 	*size_ret = strlen(*data_ret);
-   }
+     }
    return EINA_TRUE;
 }
 
