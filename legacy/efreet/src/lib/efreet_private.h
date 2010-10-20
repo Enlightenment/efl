@@ -65,11 +65,10 @@ void *alloca (size_t);
  * If x is a valid pointer destroy x and set to NULL
  */
 #define IF_FREE_LIST(list, free_cb) do { \
-    while (list) \
-    { \
-        free_cb(eina_list_data_get(list)); \
-        list = eina_list_remove_list(list, list); \
-    } \
+    void *_data; \
+    EINA_LIST_FREE(list, _data) \
+        free_cb(_data); \
+    list = NULL; \
 } while (0)
 
 /**
