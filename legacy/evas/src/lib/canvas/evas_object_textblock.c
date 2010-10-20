@@ -6432,8 +6432,8 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
  * @param cur the cursor.
  * @param cx the x of the cursor
  * @param cy the y of the cursor
- * @param cw the w of the cursor
- * @param ch the h of the cursor
+ * @param cw the width of the cursor
+ * @param ch the height of the cursor
  * @param dir the direction of the cursor, can be NULL.
  * @param ctype the type of the cursor.
  * @return line number of the char on success, -1 on error.
@@ -6521,8 +6521,8 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
  * @param cur the position of the char.
  * @param cx the x of the char.
  * @param cy the y of the char.
- * @param cw the w of the char.
- * @param ch the h of the char.
+ * @param cw the width of the char.
+ * @param ch the height of the char.
  * @return line number of the char on success, -1 on error.
  */
 EAPI int
@@ -6649,8 +6649,8 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
  * @param cur the position of the line.
  * @param cx the x of the line.
  * @param cy the y of the line.
- * @param cw the w of the line.
- * @param ch the h of the line.
+ * @param cw the width of the line.
+ * @param ch the height of the line.
  * @return line number of the line on success, -1 on error.
  */
 EAPI int
@@ -7044,7 +7044,7 @@ evas_object_textblock_clear(Evas_Object *obj)
 }
 
 /**
- * Get the formatted width. This calculates the actual size after restricting
+ * Get the formatted width and height. This calculates the actual size after restricting
  * the textblock to the current size of the object.
  * The main difference between this and @ref evas_object_textblock_size_native_get
  * is that the "native" function does not wrapping into account
@@ -7059,8 +7059,8 @@ evas_object_textblock_clear(Evas_Object *obj)
  *
  *
  * @param obj the evas object.
- * @param w[out] the w of the object.
- * @param h[out] the h of the object
+ * @param w[out] the width of the object.
+ * @param h[out] the height of the object
  * @return Returns no value.
  * @see evas_object_textblock_size_native_get
  */
@@ -7074,7 +7074,7 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
 }
 
 /**
- * Get the native idth. This calculates the actual size without taking account
+ * Get the native width and height. This calculates the actual size without taking account
  * the current size of the object.
  * The main difference between this and @ref evas_object_textblock_size_formatted_get
  * is that the "native" function does not take wrapping into account
