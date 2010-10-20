@@ -496,6 +496,7 @@ _eio_file_move_error(void *data)
  * @param main_cb Callback called from the main loop for each accepted file.
  * @param done_cb Callback called from the main loop when the content of the directory has been listed.
  * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @param data Data passed to callback and not modified at all by eio_file_ls.
  * @return A reference to the IO operation.
  *
  * eio_file_ls run eina_file_ls in a separated thread using ecore_thread_feedback_run. This prevent
@@ -543,6 +544,7 @@ eio_file_ls(const char *dir,
  * @param main_cb Callback called from the main loop for each accepted file.
  * @param done_cb Callback called from the main loop when the content of the directory has been listed.
  * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @param data Data passed to callback and not modified at all by eio_file_direct_ls.
  * @return A reference to the IO operation.
  *
  * eio_file_direct_ls run eina_file_direct_ls in a separated thread using

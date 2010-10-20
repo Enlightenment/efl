@@ -211,8 +211,10 @@ _eio_file_stat_error(void *data)
 
 /**
  * @brief Stat a file/directory.
+ * @param path The path to stat.
  * @param done_cb Callback called from the main loop when stat was successfully called..
  * @param error_cb Callback called from the main loop when stat failed or has been canceled.
+ * @param data Private data given to callback.
  * @return A reference to the IO operation.
  *
  * eio_file_direct_stat basically call stat in another thread. This prevent any lock in your apps.
@@ -248,9 +250,10 @@ eio_file_direct_stat(const char *path,
 
 /**
  * @brief Unlink a file/directory.
- * @param mode The permission to set, follow (mode & ~umask & 0777).
+ * @param path The path to unlink.
  * @param done_cb Callback called from the main loop when the directory has been created.
  * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
+ * @param data Private data given to callback.
  * @return A reference to the IO operation.
  *
  * eio_file_unlink basically call unlink in another thread. This prevent any lock in your apps.
@@ -289,6 +292,7 @@ eio_file_unlink(const char *path,
  * @param mode The permission to set, follow (mode & ~umask & 0777).
  * @param done_cb Callback called from the main loop when the directory has been created.
  * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
+ * @param data Private data given to callback.
  * @return A reference to the IO operation.
  *
  * eio_file_mkdir basically call mkdir in another thread. This prevent any lock in your apps.
