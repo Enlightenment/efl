@@ -324,9 +324,8 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
 
    return ret;
 }
-#endif
 
-#ifdef USE_G_MAIN_LOOP
+#elif USE_G_MAIN_LOOP
 
 static inline int _ecore_main_fdh_poll_mark_active(void)
 {
@@ -349,6 +348,10 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
 
    return ret;
 }
+
+#endif
+
+#ifdef USE_G_MAIN_LOOP
 
 /* like we are about to enter main_loop_select in  _ecore_main_select */
 static gboolean
