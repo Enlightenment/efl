@@ -126,7 +126,7 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 const void *key,
                                                 void *value,
                                                 void *fdata);
-static int efreet_desktop_environment_check(Efreet_Ini *ini);
+static int efreet_desktop_environment_check(Efreet_Desktop *desktop);
 
 static int efreet_desktop_write_cache_dirs_file(void);
 
@@ -541,8 +541,6 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     }
     else
     {
-        char *str;
-
         IF_FREE(desktop->orig_path);
 
         IF_FREE(desktop->version);
@@ -557,13 +555,11 @@ efreet_desktop_free(Efreet_Desktop *desktop)
         IF_FREE(desktop->path);
         IF_FREE(desktop->startup_wm_class);
 
-        IF_FREE_LIST(desktop->only_show_in, free);
-        IF_FREE_LIST(desktop->not_show_in, free);
+        IF_FREE_LIST(desktop->only_show_in, eina_stringshare_del);
+        IF_FREE_LIST(desktop->not_show_in, eina_stringshare_del);
 
-        EINA_LIST_FREE(desktop->categories, str)
-            eina_stringshare_del(str);
-        EINA_LIST_FREE(desktop->mime_types, str)
-            eina_stringshare_del(str);
+        IF_FREE_LIST(desktop->categories, eina_stringshare_del);
+        IF_FREE_LIST(desktop->mime_types, eina_stringshare_del);
 
         IF_FREE_HASH(desktop->x);
 
@@ -957,8 +953,8 @@ efreet_desktop_read(Efreet_Desktop *desktop)
             error = 1;
     }
 
-    if (!error && !efreet_desktop_environment_check(ini)) error = 1;
     if (!error && !efreet_desktop_generic_fields_parse(desktop, ini)) error = 1;
+    if (!error && !efreet_desktop_environment_check(desktop)) error = 1;
     if (!error)
         eina_hash_foreach(ini->section, efreet_desktop_x_fields_parse, desktop);
 
@@ -1130,6 +1126,7 @@ static int
 efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 {
     const char *val;
+    const char *not_show_in = NULL, *only_show_in = NULL;
 
     val = efreet_ini_localestring_get(ini, "Name");
     if (val) desktop->name = strdup(val);
@@ -1150,6 +1147,13 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
     desktop->no_display = efreet_ini_boolean_get(ini, "NoDisplay");
     desktop->hidden = efreet_ini_boolean_get(ini, "Hidden");
+
+    only_show_in = efreet_ini_string_get(ini, "OnlyShowIn");
+    not_show_in = efreet_ini_string_get(ini, "NotShowIn");
+    if (only_show_in && not_show_in)
+        WRN("Both OnlyShowIn and NotShowIn in %s, preferring OnlyShowIn", desktop->orig_path);
+    if (only_show_in) desktop->only_show_in = efreet_desktop_string_list_parse(only_show_in);
+    else if (not_show_in) desktop->not_show_in = efreet_desktop_string_list_parse(not_show_in);
 
     return 1;
 }
@@ -1250,7 +1254,7 @@ efreet_desktop_x_fields_save(const Eina_Hash *hash __UNUSED__, const void *key, 
  * based on the values of the OnlyShowIn and NotShowIn fields
  */
 static int
-efreet_desktop_environment_check(Efreet_Ini *ini)
+efreet_desktop_environment_check(Efreet_Desktop *desktop)
 {
     Eina_List *list;
     int found = 0;
@@ -1259,28 +1263,34 @@ efreet_desktop_environment_check(Efreet_Ini *ini)
     if (!desktop_environment)
         return 1;
 
-    list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "OnlyShowIn"));
-    if (list)
+    if (desktop->only_show_in)
     {
-        EINA_LIST_FREE(list, val)
+        EINA_LIST_FOREACH(desktop->only_show_in, list, val)
         {
             if (!strcmp(val, desktop_environment))
+            {
                 found = 1;
-            eina_stringshare_del(val);
+                break;
+            }
         }
-
         return found;
     }
 
-    list = efreet_desktop_string_list_parse(efreet_ini_string_get(ini, "NotShowIn"));
-    EINA_LIST_FREE(list, val)
+
+    if (desktop->not_show_in)
     {
-        if (!strcmp(val, desktop_environment))
-            found = 1;
-        eina_stringshare_del(val);
+        EINA_LIST_FOREACH(desktop->not_show_in, list, val)
+        {
+            if (!strcmp(val, desktop_environment))
+            {
+                found = 1;
+                break;
+            }
+        }
+        return !found;
     }
 
-    return !found;
+    return 1;
 }
 
 /*
