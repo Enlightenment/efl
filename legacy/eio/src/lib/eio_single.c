@@ -21,78 +21,13 @@
 #include "eio_private.h"
 #include "Eio.h"
 
-void
-eio_file_error(Eio_File *common)
-{
-   if (common->error_cb)
-     common->error_cb(common->error, (void*) common->data);
-}
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
 
-void
-eio_file_thread_error(Eio_File *common, Ecore_Thread *thread)
-{
-   common->error = errno;
-   ecore_thread_cancel(thread);
-}
-
-Eina_Bool
-eio_long_file_set(Eio_File *common,
-		  Eio_Done_Cb done_cb,
-		  Eio_Error_Cb error_cb,
-		  const void *data,
-		  Ecore_Thread_Heavy_Cb heavy_cb,
-		  Ecore_Thread_Notify_Cb notify_cb,
-		  Ecore_Cb end_cb,
-		  Ecore_Cb cancel_cb)
-{
-   Ecore_Thread *thread;
-
-   common->done_cb = done_cb;
-   common->error_cb = error_cb;
-   common->data = data;
-   common->error = 0;
-   common->thread = NULL;
-
-   /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
-      This means that common would be destroyed if thread == NULL.
-    */
-   thread = ecore_thread_feedback_run(heavy_cb,
-                                      notify_cb,
-                                      end_cb,
-                                      cancel_cb,
-                                      common,
-                                      EINA_TRUE);
-   if (thread) common->thread = thread;
-   return !!thread;
-}
-
-Eina_Bool
-eio_file_set(Eio_File *common,
-	     Eio_Done_Cb done_cb,
-	     Eio_Error_Cb error_cb,
-	     const void *data,
-	     Ecore_Thread_Heavy_Cb job_cb,
-	     Ecore_Cb end_cb,
-	     Ecore_Cb cancel_cb)
-{
-   Ecore_Thread *thread;
-
-   common->done_cb = done_cb;
-   common->error_cb = error_cb;
-   common->data = data;
-   common->error = 0;
-   common->thread = NULL;
-
-   /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
-      This means that common would be destroyed if thread == NULL.
-   */
-   thread = ecore_thread_run(job_cb, end_cb, cancel_cb, common);
-
-   if (thread) common->thread = thread;
-   return !!thread;
-}
-
-/* --- */
+/**
+ * @cond LOCAL
+ */
 
 static void
 _eio_file_mkdir(Ecore_Thread *thread, void *data)
@@ -296,6 +231,98 @@ _eio_file_chown_error(void *data)
    eio_file_error(&ch->common);
    _eio_chown_free(ch);
 }
+
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+void
+eio_file_error(Eio_File *common)
+{
+   if (common->error_cb)
+     common->error_cb(common->error, (void*) common->data);
+}
+
+void
+eio_file_thread_error(Eio_File *common, Ecore_Thread *thread)
+{
+   common->error = errno;
+   ecore_thread_cancel(thread);
+}
+
+Eina_Bool
+eio_long_file_set(Eio_File *common,
+		  Eio_Done_Cb done_cb,
+		  Eio_Error_Cb error_cb,
+		  const void *data,
+		  Ecore_Thread_Heavy_Cb heavy_cb,
+		  Ecore_Thread_Notify_Cb notify_cb,
+		  Ecore_Cb end_cb,
+		  Ecore_Cb cancel_cb)
+{
+   Ecore_Thread *thread;
+
+   common->done_cb = done_cb;
+   common->error_cb = error_cb;
+   common->data = data;
+   common->error = 0;
+   common->thread = NULL;
+
+   /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
+      This means that common would be destroyed if thread == NULL.
+    */
+   thread = ecore_thread_feedback_run(heavy_cb,
+                                      notify_cb,
+                                      end_cb,
+                                      cancel_cb,
+                                      common,
+                                      EINA_TRUE);
+   if (thread) common->thread = thread;
+   return !!thread;
+}
+
+Eina_Bool
+eio_file_set(Eio_File *common,
+	     Eio_Done_Cb done_cb,
+	     Eio_Error_Cb error_cb,
+	     const void *data,
+	     Ecore_Thread_Heavy_Cb job_cb,
+	     Ecore_Cb end_cb,
+	     Ecore_Cb cancel_cb)
+{
+   Ecore_Thread *thread;
+
+   common->done_cb = done_cb;
+   common->error_cb = error_cb;
+   common->data = data;
+   common->error = 0;
+   common->thread = NULL;
+
+   /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
+      This means that common would be destroyed if thread == NULL.
+   */
+   thread = ecore_thread_run(job_cb, end_cb, cancel_cb, common);
+
+   if (thread) common->thread = thread;
+   return !!thread;
+}
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 
 /**
  * @addtogroup Eio_Group Asynchronous Inout/Output library

@@ -73,7 +73,17 @@ extern "C" {
  * @{
  */
 
-typedef enum _Eio_File_Op
+/**
+ * @typedef Eio_File_Op
+ * Input/Output operations on files.
+ */
+typedef enum _Eio_File_Op Eio_File_Op;
+
+/**
+ * @enum _Eio_File_Op
+ * Input/Output operations on files.
+ */
+enum _Eio_File_Op
 {
   EIO_FILE_COPY, /**< IO operation is about a specific file copy */
   EIO_FILE_MOVE, /**< IO operation is about a specific file move */
@@ -82,10 +92,19 @@ typedef enum _Eio_File_Op
   EIO_UNLINK, /**< IO operation is about a destroying a path (source will point to base path to be destroyed and dest to path destroyed by this IO */
   EIO_FILE_GETPWNAM, /**< IO operation is trying to get uid from user name */
   EIO_FILE_GETGRNAM /**< IO operation is trying to get gid from user name */
-} Eio_File_Op;
+};
 
-typedef struct _Eio_File Eio_File; /**< Generic asynchronous IO reference */
-typedef struct _Eio_Progress Eio_Progress; /**< Progress information on a specific operation */
+/**
+ * @typedef Eio_File
+ *Generic asynchronous IO reference.
+ */
+typedef struct _Eio_File Eio_File;
+
+/**
+ * @typedef Eio_Progress
+ * Progress information on a specific operation.
+ */
+typedef struct _Eio_Progress Eio_Progress;
 
 typedef Eina_Bool (*Eio_Filter_Cb)(void *data, const char *file);
 typedef void (*Eio_Main_Cb)(void *data, const char *file);

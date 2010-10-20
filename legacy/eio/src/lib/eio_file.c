@@ -21,6 +21,14 @@
 #include "eio_private.h"
 #include "Eio.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 static void
 _eio_file_heavy(Ecore_Thread *thread, void *data)
 {
@@ -154,14 +162,6 @@ _eio_file_write(int fd, void *mem, ssize_t length)
    return EINA_TRUE;
 }
 
-void
-eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op)
-{
-   op->progress_cb((void *) op->common.data, progress);
-
-   eio_progress_free(progress);
-}
-
 #ifndef MAP_HUGETLB
 # define MAP_HUGETLB 0
 #endif
@@ -253,63 +253,6 @@ _eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int o
    return result;
 }
 #endif
-
-Eina_Bool
-eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
-{
-   struct stat buf;
-   int result = -1;
-   int in = -1;
-   int out = -1;
-
-   in = open(copy->source, O_RDONLY);
-   if (in < 0)
-     {
-	eio_file_thread_error(&copy->common, thread);
-	return EINA_FALSE;
-     }
-
-   /*
-     As we need file size for progression information and both copy method
-     call fstat (better than stat as it avoid race condition).
-    */
-   if (fstat(in, &buf) < 0)
-     goto on_error;
-
-   /* open write */
-   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC, buf.st_mode);
-   if (out < 0)
-     goto on_error;
-
-#ifdef EFL_HAVE_SPLICE
-   /* fast file copy code using Linux splice API */
-   result = _eio_file_copy_splice(thread, copy, in, out, buf.st_size);
-   if (result == 0)
-     goto on_error;
-#endif
-
-   /* classic copy method using mmap and write */
-   if (result == -1 && !_eio_file_copy_mmap(thread, copy, in, out, buf.st_size))
-     goto on_error;
-
-   /* change access right to match source */
-   if (fchmod(out, buf.st_mode) != 0)
-     goto on_error;
-
-   close(out);
-   close(in);
-
-   return EINA_TRUE;
-
- on_error:
-   eio_file_thread_error(&copy->common, thread);
-
-   if (in >= 0) close(in);
-   if (out >= 0) close(out);
-   if (out >= 0)
-     unlink(copy->dest);
-   return EINA_FALSE;
-}
 
 static void
 _eio_file_copy_heavy(Ecore_Thread *thread, void *data)
@@ -482,6 +425,92 @@ _eio_file_move_error(void *data)
    _eio_file_move_free(move);
 }
 
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+void
+eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op)
+{
+   op->progress_cb((void *) op->common.data, progress);
+
+   eio_progress_free(progress);
+}
+
+Eina_Bool
+eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
+{
+   struct stat buf;
+   int result = -1;
+   int in = -1;
+   int out = -1;
+
+   in = open(copy->source, O_RDONLY);
+   if (in < 0)
+     {
+	eio_file_thread_error(&copy->common, thread);
+	return EINA_FALSE;
+     }
+
+   /*
+     As we need file size for progression information and both copy method
+     call fstat (better than stat as it avoid race condition).
+    */
+   if (fstat(in, &buf) < 0)
+     goto on_error;
+
+   /* open write */
+   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC, buf.st_mode);
+   if (out < 0)
+     goto on_error;
+
+#ifdef EFL_HAVE_SPLICE
+   /* fast file copy code using Linux splice API */
+   result = _eio_file_copy_splice(thread, copy, in, out, buf.st_size);
+   if (result == 0)
+     goto on_error;
+#endif
+
+   /* classic copy method using mmap and write */
+   if (result == -1 && !_eio_file_copy_mmap(thread, copy, in, out, buf.st_size))
+     goto on_error;
+
+   /* change access right to match source */
+   if (fchmod(out, buf.st_mode) != 0)
+     goto on_error;
+
+   close(out);
+   close(in);
+
+   return EINA_TRUE;
+
+ on_error:
+   eio_file_thread_error(&copy->common, thread);
+
+   if (in >= 0) close(in);
+   if (out >= 0) close(out);
+   if (out >= 0)
+     unlink(copy->dest);
+   return EINA_FALSE;
+}
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
 
 /**
  * @addtogroup Eio_Group Asynchronous Inout/Output library
