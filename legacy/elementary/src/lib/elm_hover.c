@@ -797,11 +797,11 @@ elm_hover_content_get(const Evas_Object *obj, const char *swallow)
    if (!wd)
      return NULL;
 
-   if (!strncmp(swallow, "smart", sizeof("smart")))
+   if (!strcmp(swallow, "smart"))
      return wd->smt_sub;
 
    ELM_HOVER_PARTS_FOREACH
-     if (!strncmp(swallow, wd->subs[i].swallow, 1024))
+     if (!strcmp(swallow, wd->subs[i].swallow))
        return wd->subs[i].obj;
 
    return NULL;
@@ -847,7 +847,7 @@ elm_hover_content_unset(Evas_Object *obj, const char *swallow)
    if (!wd)
      return NULL;
 
-   if (!strncmp(swallow, "smart", sizeof("smart")))
+   if (!strcmp(swallow, "smart"))
      {
         Evas_Object *content;
 
@@ -861,7 +861,7 @@ elm_hover_content_unset(Evas_Object *obj, const char *swallow)
 
    ELM_HOVER_PARTS_FOREACH
      {
-	if (!strncmp(swallow, wd->subs[i].swallow, 1024))
+	if (!strcmp(swallow, wd->subs[i].swallow))
 	  {
 	     Evas_Object *content;
 
