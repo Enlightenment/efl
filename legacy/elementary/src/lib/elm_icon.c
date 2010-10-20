@@ -218,7 +218,8 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
         for (itr = themes; !path && *itr; itr++)
           path = efreet_icon_path_find(*itr, name, size);
      }
-   if ((wd->freedesktop.use = !!path))
+   wd->freedesktop.use = !!path;
+   if (wd->freedesktop.use)
      {
         wd->freedesktop.requested_size = size;
         elm_icon_file_set(obj, path, NULL);
@@ -227,6 +228,14 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
      }
 #endif
    return EINA_FALSE;
+}
+
+static inline int
+_icon_size_min_get(Evas_Object *icon)
+{
+   int size;
+   _els_smart_icon_size_get(icon, &size, NULL);
+   return (size < 32) ? 32 : size;
 }
 
 /**
@@ -245,7 +254,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    char *tmp;
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret;
 
    if ((!wd) || (!name)) return EINA_FALSE;
 
@@ -253,21 +262,18 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
    switch (wd->lookup_order)
    {
    case ELM_ICON_LOOKUP_FDO:
-      ret = _icon_freedesktop_set(wd, obj, name, 48) ||
-            _icon_freedesktop_set(wd, obj, name, 32);
+      ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
       break;
    case ELM_ICON_LOOKUP_THEME:
       ret = _icon_standard_set(wd, obj, name);
       break;
    case ELM_ICON_LOOKUP_THEME_FDO:
       ret = _icon_standard_set(wd, obj, name) ||
-            _icon_freedesktop_set(wd, obj, name, 48) ||
-            _icon_freedesktop_set(wd, obj, name, 32);
+            _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
       break;
    case ELM_ICON_LOOKUP_FDO_THEME:
    default:
-      ret = _icon_freedesktop_set(wd, obj, name, 48) ||
-            _icon_freedesktop_set(wd, obj, name, 32) ||
+      ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img)) ||
             _icon_standard_set(wd, obj, name);
       break;
    }

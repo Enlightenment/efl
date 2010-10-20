@@ -490,7 +490,6 @@ extern "C" {
    EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
    EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI Eina_Bool             elm_icon_standard_set(Evas_Object *obj, const char *name);
-   EAPI Eina_Bool             elm_icon_freedesktop_set(Evas_Object *obj, const char *name, int size);
    EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
    EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
    EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
