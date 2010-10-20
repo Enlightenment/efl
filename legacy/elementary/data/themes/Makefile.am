@@ -106,8 +106,11 @@ icon_refresh.png \
 icon_folder.png \
 icon_file.png \
 ilist_1.png \
+ilist_1_h.png \
 ilist_2.png \
+ilist_2_h.png \
 ilist_item_shadow.png \
+ilist_item_shadow_h.png \
 sl_bg.png \
 sl_bg_over.png \
 sl_bt_0.png \
