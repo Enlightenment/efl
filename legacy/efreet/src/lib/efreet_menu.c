@@ -2725,9 +2725,7 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
     /* nothing to do if we're checking the other option */
     if (only_unallocated != internal->only_unallocated) return;
 
-    while (internal->applications)
-        internal->applications = eina_list_remove_list(internal->applications,
-                                                       internal->applications);
+    internal->applications = eina_list_free(internal->applications);
 
     if (!internal->filters) return;
 
