@@ -361,6 +361,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
                             item = elm_menu_item_add(menu, NULL, it->icon_str, it->label,
                                                      it->func, it->base.data);
                             elm_menu_item_disabled_set(item, it->disabled);
+                            if (it->o_menu) elm_menu_clone(it->o_menu, menu, item);
                          }
                        evas_object_hide(it->base.view);
                     }

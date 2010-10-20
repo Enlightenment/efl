@@ -522,6 +522,36 @@ elm_menu_object_get(const Elm_Menu_Item *it)
    return it->base.view;
 }
 
+static void
+_item_clone(Evas_Object *obj, Elm_Menu_Item *parent, Elm_Menu_Item *item)
+{
+   Elm_Menu_Item *new_item, *subitem;
+   Eina_List *iter;
+
+   if (item->separator)
+      new_item = elm_menu_item_separator_add(obj, parent);
+   else
+      new_item = elm_menu_item_add(obj, parent, item->icon_str, item->label, item->func, item->base.data);
+   elm_menu_item_disabled_set(new_item, item->disabled);
+
+   EINA_LIST_FOREACH(item->submenu.items, iter, subitem)
+      _item_clone(obj, new_item, subitem);
+}
+
+void
+elm_menu_clone(Evas_Object *from_menu, Evas_Object *to_menu, Elm_Menu_Item *parent)
+{
+   ELM_CHECK_WIDTYPE(from_menu, widtype);
+   ELM_CHECK_WIDTYPE(to_menu, widtype);
+   Widget_Data *from_wd = elm_widget_data_get(from_menu);
+   Eina_List *iter;
+   Elm_Menu_Item *item;
+
+   if (!from_wd) return;
+   EINA_LIST_FOREACH(from_wd->items, iter, item)
+      _item_clone(to_menu, parent, item);
+}
+
 /**
  * Add an item at the end
  *

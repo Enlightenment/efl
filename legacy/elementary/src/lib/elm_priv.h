@@ -146,6 +146,8 @@ void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventare
 void                 elm_cursor_theme(Elm_Cursor *cur);
 void                 elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char *cursor);
 
+void                 elm_menu_clone(Evas_Object *from_menu, Evas_Object *to_menu, Elm_Menu_Item *parent);
+
 Eina_Bool           _elm_dangerous_call_check(const char *call);
 
 Evas_Object        *_elm_scroller_edje_object_get(Evas_Object *obj);
