@@ -79,7 +79,9 @@ typedef enum _Eio_File_Op
   EIO_FILE_MOVE, /**< IO operation is about a specific file move */
   EIO_DIR_COPY, /**< IO operation is about a specific directory copy */
   EIO_DIR_MOVE, /**< IO operation is about a specific directory move */
-  EIO_UNLINK /**< IO operation is about a destroying a path (source will point to base path to be destroyed and dest to path destroyed by this IO */
+  EIO_UNLINK, /**< IO operation is about a destroying a path (source will point to base path to be destroyed and dest to path destroyed by this IO */
+  EIO_FILE_GETPWNAM, /**< IO operation is trying to get uid from user name */
+  EIO_FILE_GETGRNAM /**< IO operation is trying to get gid from user name */
 } Eio_File_Op;
 
 typedef struct _Eio_File Eio_File; /**< Generic asynchronous IO reference */
@@ -130,6 +132,19 @@ EAPI Eio_File *eio_file_direct_stat(const char *path,
 				    Eio_Stat_Cb done_cb,
 				    Eio_Error_Cb error_cb,
 				    const void *data);
+
+EAPI Eio_File *eio_file_chmod(const char *path,
+                              mode_t mode,
+                              Eio_Done_Cb done_cb,
+                              Eio_Error_Cb error_cb,
+                              const void *data);
+
+EAPI Eio_File *eio_file_chown(const char *path,
+                              const char *user,
+                              const char *group,
+                              Eio_Done_Cb done_cb,
+                              Eio_Error_Cb error_cb,
+                              const void *data);
 
 EAPI Eio_File *eio_file_unlink(const char *path,
 			       Eio_Done_Cb done_cb,

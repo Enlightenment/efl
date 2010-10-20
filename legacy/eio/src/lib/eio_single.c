@@ -202,6 +202,100 @@ _eio_file_stat_error(void *data)
    _eio_stat_free(s);
 }
 
+static void
+_eio_file_chmod(Ecore_Thread *thread, void *data)
+{
+   Eio_File_Chmod *ch = data;
+
+   if (chmod(ch->path, ch->mode) != 0)
+     eio_file_thread_error(&ch->common, thread);
+}
+
+static void
+_eio_file_chown(Ecore_Thread *thread, void *data)
+{
+   Eio_File_Chown *own = data;
+   char *tmp;
+   uid_t owner = -1;
+   gid_t group = -1;
+
+   own->common.error = 0;
+
+   if (own->user)
+     {
+        owner = strtol(own->user, &tmp, 10);
+
+        if (*tmp != '\0')
+          {
+             struct passwd *pw = NULL;
+
+             own->common.error = EIO_FILE_GETPWNAM;
+
+             pw = getpwnam(own->user);
+             if (!pw) goto on_error;
+
+             owner = pw->pw_uid;
+          }
+     }
+
+   if (own->group)
+     {
+        group = strtol(own->group, &tmp, 10);
+
+        if (*tmp != '\0')
+          {
+             struct group *grp = NULL;
+
+             own->common.error = EIO_FILE_GETGRNAM;
+
+             grp = getgrnam(own->group);
+             if (!grp) goto on_error;
+
+             group = grp->gr_gid;
+          }
+     }
+
+   if (owner == (uid_t) -1 && group == (gid_t) -1)
+     goto on_error;
+
+   if (chown(own->path, owner, group) != 0)
+     eio_file_thread_error(&own->common, thread);
+
+   return ;
+
+ on_error:
+   ecore_thread_cancel(thread);
+   return ;
+}
+
+static void
+_eio_chown_free(Eio_File_Chown *ch)
+{
+   if (ch->user) eina_stringshare_del(ch->user);
+   if (ch->group) eina_stringshare_del(ch->group);
+   eina_stringshare_del(ch->path);
+   free(ch);
+}
+
+static void
+_eio_file_chown_done(void *data)
+{
+   Eio_File_Chown *ch = data;
+
+   if (ch->common.done_cb)
+     ch->common.done_cb((void*) ch->common.data);
+
+   _eio_chown_free(ch);
+}
+
+static void
+_eio_file_chown_error(void *data)
+{
+   Eio_File_Chown *ch = data;
+
+   eio_file_error(&ch->common);
+   _eio_chown_free(ch);
+}
 
 /**
  * @addtogroup Eio_Group Asynchronous Inout/Output library
@@ -326,6 +420,92 @@ eio_file_mkdir(const char *path,
 
    return &r->common;
 }
+
+/**
+ * @brief Change right of a path.
+ * @param path The directory path to change access right.
+ * @param mode The permission to set, follow (mode & ~umask & 0777).
+ * @param done_cb Callback called from the main loop when the directory has been created.
+ * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
+ * @param data Private data given to callback.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_chmod basically call chmod in another thread. This prevent any lock in your apps.
+ */
+EAPI Eio_File *
+eio_file_chmod(const char *path,
+	       mode_t mode,
+	       Eio_Done_Cb done_cb,
+	       Eio_Error_Cb error_cb,
+	       const void *data)
+{
+   Eio_File_Mkdir *r = NULL;
+
+   if (!path || !done_cb || !error_cb)
+     return NULL;
+
+   r = malloc(sizeof (Eio_File_Mkdir));
+   if (!r) return NULL;
+
+   r->path = eina_stringshare_add(path);
+   r->mode = mode;
+
+   if (!eio_file_set(&r->common,
+		     done_cb,
+		     error_cb,
+		      data,
+		     _eio_file_chmod,
+		     _eio_file_mkdir_done,
+		     _eio_file_mkdir_error))
+     return NULL;
+
+   return &r->common;
+}
+
+/**
+ * @brief Change owner of a path.
+ * @param path The directory path to change owner.
+ * @param user The new user to set (could be NULL).
+ * @param group The new group to set (could be NULL).
+ * @param done_cb Callback called from the main loop when the directory has been created.
+ * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
+ * @param data Private data given to callback.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_chown determine the uid/gid that correspond to both user and group string and then call chown. This prevent any lock in your apps by calling
+ * this function from another thread. The string could be the name of the user or the name of the group or directly their numerical value.
+ */
+EAPI Eio_File *eio_file_chown(const char *path,
+                              const char *user,
+                              const char *group,
+                              Eio_Done_Cb done_cb,
+                              Eio_Error_Cb error_cb,
+                              const void *data)
+{
+   Eio_File_Chown *c = NULL;
+
+   if (!path || !done_cb || !error_cb)
+     return NULL;
+
+   c = malloc(sizeof (Eio_File_Chown));
+   if (!c) return NULL;
+
+   c->path = eina_stringshare_add(path);
+   c->user = eina_stringshare_add(user);
+   c->group = eina_stringshare_add(group);
+
+   if (!eio_file_set(&c->common,
+		     done_cb,
+		     error_cb,
+		      data,
+		     _eio_file_chown,
+		     _eio_file_chown_done,
+		     _eio_file_chown_error))
+     return NULL;
+
+   return &c->common;
+}
+
 
 /**
  * @}

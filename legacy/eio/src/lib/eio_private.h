@@ -33,6 +33,8 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <Ecore.h>
 
@@ -49,10 +51,12 @@ typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
 typedef struct _Eio_File_Mkdir Eio_File_Mkdir;
+typedef struct _Eio_File_Mkdir Eio_File_Chmod;
 typedef struct _Eio_File_Unlink Eio_File_Unlink;
 typedef struct _Eio_File_Stat Eio_File_Stat;
 typedef struct _Eio_File_Progress Eio_File_Progress;
 typedef struct _Eio_File_Move Eio_File_Move;
+typedef struct _Eio_File_Chown Eio_File_Chown;
 
 typedef struct _Eio_Dir_Copy Eio_Dir_Copy;
 
@@ -139,6 +143,15 @@ struct _Eio_Dir_Copy
 
    Eina_List *files;
    Eina_List *dirs;
+};
+
+struct _Eio_File_Chown
+{
+   Eio_File common;
+
+   const char *path;
+   const char *user;
+   const char *group;
 };
 
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
