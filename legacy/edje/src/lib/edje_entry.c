@@ -35,8 +35,8 @@ struct _Entry
    Eina_Bool had_sel : 1;
 
 #ifdef HAVE_ECORE_IMF   
-   int	comp_len;
-   Eina_Bool have_composition : 1;
+   int preedit_len;
+   Eina_Bool have_preedit : 1;
    Ecore_IMF_Context *imf_context;
 
    Ecore_Event_Handler *imf_ee_handler_commit;
@@ -95,6 +95,9 @@ _edje_entry_focus_out_cb(void *data, Evas_Object *o __UNUSED__, const char *emis
    ecore_imf_context_reset(en->imf_context);
    ecore_imf_context_cursor_position_set(en->imf_context, evas_textblock_cursor_pos_get(en->cursor));
    ecore_imf_context_focus_out(en->imf_context);
+
+   en->preedit_len = 0;
+   en->have_preedit = EINA_FALSE;
 }
 #endif
 
@@ -143,13 +146,14 @@ _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
          (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
 
-   if (en->imf_context)
-     {
-        ecore_imf_context_reset(en->imf_context);
-        ecore_imf_context_cursor_position_set(en->imf_context,
-              evas_textblock_cursor_pos_get(en->cursor));
-        ecore_imf_context_focus_out(en->imf_context);
-     }
+   if (!en->imf_context) return;
+
+   ecore_imf_context_reset(en->imf_context);
+   ecore_imf_context_cursor_position_set(en->imf_context, evas_textblock_cursor_pos_get(en->cursor));
+   ecore_imf_context_focus_out(en->imf_context);
+
+   en->preedit_len = 0;
+   en->have_preedit = EINA_FALSE;
 #endif
 }
 
@@ -774,7 +778,7 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                   
                   if (!evas_textblock_cursor_format_item_geometry_get
                       (an->start, &cx, &cy, &cw, &ch))
-		    continue;
+                     continue;
                   evas_object_move(sel->obj, x + cx, y + cy);
                   evas_object_resize(sel->obj, cw, ch);
                }
@@ -802,7 +806,7 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                   range = eina_list_remove_list(range, range);
                   free(r);
                }
-	  }
+          }
      }
 }
 
@@ -2479,6 +2483,7 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
    static char *s = NULL;
    Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
 
+   if (!c) return NULL;
    if (s)
      {
         free(s);
@@ -2539,11 +2544,11 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
         _sel_clear(en->cursor, rp->object, en);
      }
 
-   if (en->have_composition)
+   if (en->have_preedit)
      {
-        for (i = 0; i < en->comp_len; i++)
+        for (i = 0; i < en->preedit_len; i++)
            _backspace(en->cursor, rp->object, en);
-        en->have_composition = EINA_FALSE;
+        en->have_preedit = EINA_FALSE;
      }
 
    //yy
@@ -2564,9 +2569,9 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    Edje* ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
-   int length;
+   int length = 0;
    Ecore_IMF_Event_Commit *ev = event;
-   int i;
+   int i = 0;
    char *preedit_string;
 
    if (!rp) return ECORE_CALLBACK_PASS_ON;
@@ -2592,15 +2597,15 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
         _sel_clear(en->cursor, rp->object, en);
      }
 
-   if (en->have_composition)
+   if (en->have_preedit)
      {
-        // delete the composing characters
-        for (i = 0;i < en->comp_len; i++)
+        // delete the preedit characters
+        for (i = 0;i < en->preedit_len; i++)
            _backspace(en->cursor, rp->object, en);
      }
 
-   en->comp_len = length;
-   en->have_composition = EINA_TRUE;
+   en->preedit_len = length;
+   en->have_preedit = EINA_TRUE;
 
    //xx
 //   evas_object_textblock_text_markup_prepend(en->cursor, preedit_string);
