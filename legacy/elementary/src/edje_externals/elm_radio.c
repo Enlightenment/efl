@@ -144,7 +144,7 @@ external_radio_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 static Evas_Object *external_radio_content_get(void *data __UNUSED__,
 		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("so content");
+	ERR("No content.");
 	return NULL;
 }
 

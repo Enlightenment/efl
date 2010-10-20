@@ -179,7 +179,7 @@ external_toggle_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 static Evas_Object *external_toggle_content_get(void *data __UNUSED__,
 		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("so content");
+	ERR("No content.");
 	return NULL;
 }
 

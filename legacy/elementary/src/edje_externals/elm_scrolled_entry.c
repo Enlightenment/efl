@@ -156,7 +156,7 @@ external_scrolled_entry_params_parse(void *data __UNUSED__, Evas_Object *obj __U
 static Evas_Object *external_scrolled_entry_content_get(void *data __UNUSED__,
 		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("so content");
+	ERR("No content.");
 	return NULL;
 }
 
