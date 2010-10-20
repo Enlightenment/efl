@@ -114,11 +114,11 @@ _icon_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
    if (!wd->mouse_down) return;
    edje_object_part_drag_value_get(wd->ms, "elm.swallow.icon", &pos, NULL);
    if (pos == 0.0)
-     evas_object_smart_callback_call(as, SIG_CHANGED, "left");
+     evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"left");
    else if (pos == 1.0)
-     evas_object_smart_callback_call(as, SIG_CHANGED, "right");
+     evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"right");
    else if (pos >= 0.45 && pos <= 0.55)
-     evas_object_smart_callback_call(as, SIG_CHANGED, "center");
+     evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"center");
 }
 
 static void

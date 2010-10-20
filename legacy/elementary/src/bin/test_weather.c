@@ -15,7 +15,7 @@ static int current = 0;
 static Eina_Module *module[2];
 
 static void
-_first_city_cb(void *data, Evas_Object *o, void *event_info)
+_first_city_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    if (!current) return;
    current = 0;
@@ -23,17 +23,17 @@ _first_city_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_second_city_cb(void *data, Evas_Object *o, void *event_info)
+_second_city_cb(void *dat __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    if (current) return;
    current = 1;
    elm_flip_go(fl, ELM_FLIP_ROTATE_XZ_CENTER_AXIS);
 }
 
-static void _apply_cb(void *data, Evas_Object *o, void *event_info)
+static void _apply_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    EWeather *eweather = eweather_object_eweather_get(weather[current]);
-   
+
    if (module[current])
      eweather_plugin_set(eweather, module[current]);
    eweather_code_set(eweather, elm_entry_entry_get(en));
@@ -41,11 +41,11 @@ static void _apply_cb(void *data, Evas_Object *o, void *event_info)
 }
 
 static void
-_hover_select_cb(void *data, Evas_Object *obj, void *event_info)
+_hover_select_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    EWeather *eweather = eweather_object_eweather_get(weather[0]);
    module[0] = eweather_plugin_search(eweather, elm_hoversel_item_label_get(event_info));
-   
+
    eweather = eweather_object_eweather_get(weather[1]);
    module[1] = eweather_plugin_search(eweather, elm_hoversel_item_label_get(event_info));
    printf("%p %p\n", module[0], module[1]);
@@ -62,7 +62,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    Eina_Array_Iterator it;
    Eina_Array *array;
    Eina_Module *m;
-   int i;
+   unsigned int i;
 #endif
 
    win = elm_win_add(NULL, "weather", ELM_WIN_BASIC);
@@ -141,10 +141,10 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(hv);
 
    array = eweather_plugins_list_get(eweather);
-   
+
    EINA_ARRAY_ITER_NEXT(array, i, m, it)
      elm_hoversel_item_add(hv, eweather_plugin_name_get(eweather, i), NULL, ELM_ICON_NONE, _hover_select_cb, NULL);
-   
+
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, 0);
    elm_entry_single_line_set(en, EINA_TRUE);

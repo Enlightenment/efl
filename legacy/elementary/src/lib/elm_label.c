@@ -28,9 +28,9 @@ static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static int _get_value_in_key_string(const char *oldstring, char *key, char **value);
-static int _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int deleteflag);
-static int _stringshare_key_value_replace(const char **srcstring, char *key, const char *value, int deleteflag);
+static int _get_value_in_key_string(const char *oldstring, const char *key, char **value);
+static int _strbuf_key_value_replace(Eina_Strbuf *srcbuf, const char *key, const char *value, int deleteflag);
+static int _stringshare_key_value_replace(const char **srcstring, const char *key, const char *value, int deleteflag);
 static int _is_width_over(Evas_Object *obj);
 static void _ellipsis_label_to_width(Evas_Object *obj);
 
@@ -128,7 +128,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 static int
-_get_value_in_key_string(const char *oldstring, char *key, char **value)
+_get_value_in_key_string(const char *oldstring, const char *key, char **value)
 {
    char *curlocater, *starttag, *endtag;
    int firstindex = 0, foundflag = -1;
@@ -191,7 +191,7 @@ _get_value_in_key_string(const char *oldstring, char *key, char **value)
 
 
 static int
-_strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int deleteflag)
+_strbuf_key_value_replace(Eina_Strbuf *srcbuf, const char *key, const char *value, int deleteflag)
 {
    const char *srcstring = NULL;
    Eina_Strbuf *repbuf = NULL, *diffbuf = NULL;
@@ -287,7 +287,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, char *key, const char *value, int
 }
 
 static int
-_stringshare_key_value_replace(const char **srcstring, char *key, const char *value, int deleteflag)
+_stringshare_key_value_replace(const char **srcstring, const char *key, const char *value, int deleteflag)
 {
    Eina_Strbuf *sharebuf = NULL;   
    

@@ -550,7 +550,10 @@ elm_quicklaunch_sub_init(int argc, char **argv)
    ecore_evas_init(); // FIXME: check errors
    ecore_imf_init();
    _elm_module_init();
-#endif   
+#else
+   (void) argc;
+   (void) argv;
+#endif
    return _elm_sub_init_count;
 }
 

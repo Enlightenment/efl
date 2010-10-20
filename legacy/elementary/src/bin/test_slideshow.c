@@ -4,15 +4,15 @@
 
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
-static char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
-static char *img2 = PACKAGE_DATA_DIR"/images/plant_01.jpg";
-static char *img3 = PACKAGE_DATA_DIR"/images/rock_01.jpg";
-static char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
-static char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
-static char *img6 = PACKAGE_DATA_DIR"/images/sky_04.jpg";
-static char *img7 = PACKAGE_DATA_DIR"/images/wood_01.jpg";
-static char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
-static char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
+static const char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
+static const char *img2 = PACKAGE_DATA_DIR"/images/plant_01.jpg";
+static const char *img3 = PACKAGE_DATA_DIR"/images/rock_01.jpg";
+static const char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
+static const char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
+static const char *img6 = PACKAGE_DATA_DIR"/images/sky_04.jpg";
+static const char *img7 = PACKAGE_DATA_DIR"/images/wood_01.jpg";
+static const char *img8 = PACKAGE_DATA_DIR"/images/mystrale.jpg";
+static const char *img9 = PACKAGE_DATA_DIR"/images/mystrale_2.jpg";
 
 static void
 _notify_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)

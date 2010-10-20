@@ -1567,7 +1567,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 static struct tmpinfo *
 elm_cnp_tempfile_create(int size){
    struct tmpinfo *info;
-   char *tmppath;
+   const char *tmppath;
    int len;
 
    info = malloc(sizeof(struct tmpinfo));

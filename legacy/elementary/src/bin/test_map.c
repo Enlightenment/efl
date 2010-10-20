@@ -391,7 +391,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 
         //
         itc_group1 = elm_map_group_class_new(map);
-        elm_map_group_class_data_set(itc_group1, PACKAGE_DATA_DIR"/images/plant_01.jpg");
+        elm_map_group_class_data_set(itc_group1, (void *)PACKAGE_DATA_DIR"/images/plant_01.jpg");
 
         itc_group2 = elm_map_group_class_new(map);
         elm_map_group_class_style_set(itc_group2, "radio2");
@@ -399,7 +399,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 
         itc_group_parking = elm_map_group_class_new(map);
         elm_map_group_class_icon_cb_set(itc_group_parking, _group_icon_get);
-        elm_map_group_class_data_set(itc_group_parking,  PACKAGE_DATA_DIR"/images/parking.png");
+        elm_map_group_class_data_set(itc_group_parking, (void *)PACKAGE_DATA_DIR"/images/parking.png");
         elm_map_group_class_style_set(itc_group_parking, "empty");
         elm_map_group_class_zoom_displayed_set(itc_group_parking, 5);
         //

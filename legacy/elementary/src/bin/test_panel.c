@@ -18,11 +18,12 @@ static Eina_Bool _dir_has_subs(const char *path);
 static void
 _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   char *status;
+   const char *status;
 
    if (elm_panel_hidden_get((Evas_Object*)data))
      status = "hidden";
-   else status = "shown";
+   else
+     status = "shown";
    printf("The top panel is currently %s\n", status);
    elm_toolbar_item_unselect_all(obj);
 }
@@ -30,11 +31,12 @@ _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   char *status;
+   const char *status;
 
    if (elm_panel_hidden_get((Evas_Object*)data))
      status = "hidden";
-   else status = "shown";
+   else
+     status = "shown";
    printf("The bottom panel is currently %s\n", status);
    elm_toolbar_item_unselect_all(obj);
 }
