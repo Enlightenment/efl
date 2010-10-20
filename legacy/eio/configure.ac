@@ -128,6 +128,7 @@ AC_OUTPUT([
 eio.pc
 Makefile
 doc/Makefile
+doc/eio.dox
 src/Makefile
 src/lib/Makefile
 ])
