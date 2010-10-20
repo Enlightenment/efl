@@ -426,7 +426,7 @@ eina_magic_string_static_set(Eina_Magic magic, const char *magic_name)
  * a handle that is of wrong type.
  * @li Otherwise, a message warns you about ab-using that function...
  *
- * If the environment variable EINA_ERROR_ABORT is set, abort() is
+ * If the environment variable EINA_LOG_ABORT is set, abort() is
  * called and the program stops. It is useful for debugging programs
  * with gdb.
  */
