@@ -912,6 +912,7 @@ m4_ifdef([AC_PROG_OBJC], [
 ])
 AC_SUBST(cocoa_ldflags)
 
+want_epoll=yes
 AC_ARG_ENABLE(epoll,
   AC_HELP_STRING([--enable-epoll], [enable or disable epoll support]),
   [want_epoll=$enableval])

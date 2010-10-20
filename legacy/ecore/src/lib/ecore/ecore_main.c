@@ -133,10 +133,13 @@ static double            t2 = 0.0;
 
 #ifdef HAVE_EPOLL
 static int epoll_fd = -1;
-static GPollFD ecore_epoll_fd;
+static pid_t epoll_pid;
 #endif
 
 #ifdef USE_G_MAIN_LOOP
+#ifdef HAVE_EPOLL
+static GPollFD ecore_epoll_fd;
+#endif
 static GSource *ecore_glib_source;
 static guint ecore_glib_source_id;
 static GMainLoop* ecore_main_loop;
@@ -145,6 +148,33 @@ static gboolean ecore_fds_ready;
 #endif
 
 #ifdef HAVE_EPOLL
+static inline int
+_ecore_get_epoll_fd(void)
+{
+   if (epoll_pid && epoll_pid != getpid())
+     {
+        /* forked! */
+        _ecore_main_loop_shutdown();
+     }
+   if (epoll_pid == 0 && epoll_fd < 0)
+     {
+        _ecore_main_loop_init();
+     }
+   return epoll_fd;
+}
+
+static inline int
+_ecore_epoll_add(int efd, int fd, int events, void *ptr)
+{
+   struct epoll_event ev;
+
+   memset(&ev, 0, sizeof (ev));
+   ev.events = events;
+   ev.data.ptr = ptr;
+   INF("adding poll on %d %08x", fd, events);
+   return epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
+}
+
 static inline int
 _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
 {
@@ -179,13 +209,8 @@ _ecore_main_fdh_poll_add(Ecore_Fd_Handler *fdh)
 {
    int r = 0;
 #ifdef HAVE_EPOLL
-   struct epoll_event ev;
-
-   memset(&ev, 0, sizeof (ev));
-   ev.events = _ecore_poll_events_from_fdh(fdh);
-   ev.data.ptr = fdh;
-   INF("adding poll on %d %08x", fdh->fd, ev.events);
-   r = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fdh->fd, &ev);
+   r = _ecore_epoll_add(_ecore_get_epoll_fd(), fdh->fd,
+                        _ecore_poll_events_from_fdh(fdh), fdh);
 #elif USE_G_MAIN_LOOP
    fdh->gfd.fd = fdh->fd;
    fdh->gfd.events = _gfd_events_from_fdh(fdh);
@@ -207,11 +232,12 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
 {
 #ifdef HAVE_EPOLL
    struct epoll_event ev;
+   int efd = _ecore_get_epoll_fd();
 
    memset(&ev, 0, sizeof (ev));
    INF("removing poll on %d", fdh->fd);
    /* could get an EBADF if somebody closed the FD before removing it */
-   if ((epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0) &&
+   if ((epoll_ctl(efd, EPOLL_CTL_DEL, fdh->fd, &ev) < 0) &&
        (errno != EBADF))
      {
         ERR("Failed to delete epoll fd %d! (errno=%d)", fdh->fd, errno);
@@ -237,12 +263,13 @@ _ecore_main_fdh_poll_modify(Ecore_Fd_Handler *fdh)
    int r = 0;
 #ifdef HAVE_EPOLL
    struct epoll_event ev;
+   int efd = _ecore_get_epoll_fd();
 
    memset(&ev, 0, sizeof (ev));
    ev.events = _ecore_poll_events_from_fdh(fdh);
    ev.data.ptr = fdh;
    INF("modifing epoll on %d to %08x", fdh->fd, ev.events);
-   r = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fdh->fd, &ev);
+   r = epoll_ctl(efd, EPOLL_CTL_MOD, fdh->fd, &ev);
 #elif USE_G_MAIN_LOOP
    fdh->gfd.fd = fdh->fd;
    fdh->gfd.events = _gfd_events_from_fdh(fdh);
@@ -263,9 +290,10 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
 {
    struct epoll_event ev[32];
    int i, ret;
+   int efd = _ecore_get_epoll_fd();
 
    memset(&ev, 0, sizeof (ev));
-   ret = epoll_wait(epoll_fd, ev, sizeof(ev) / sizeof(struct epoll_event), 0);
+   ret = epoll_wait(efd, ev, sizeof(ev) / sizeof(struct epoll_event), 0);
    if (ret < 0)
      {
         if (errno == EINTR) return -1;
@@ -475,6 +503,19 @@ _ecore_main_loop_init(void)
    epoll_fd = epoll_create(1);
    if (epoll_fd < 0)
       CRIT("Failed to create epoll fd!");
+   epoll_pid = getpid();
+
+   /* add polls on all our file descriptors */
+   Ecore_Fd_Handler *fdh;
+   EINA_INLIST_FOREACH(fd_handlers, fdh)
+     {
+        if (fdh->delete_me)
+           continue;
+        _ecore_epoll_add(epoll_fd, fdh->fd,
+                         _ecore_poll_events_from_fdh(fdh), fdh);
+        _ecore_main_fdh_poll_add(fdh);
+     }
+
 #endif
 
 #ifdef USE_G_MAIN_LOOP
@@ -514,6 +555,8 @@ _ecore_main_loop_shutdown(void)
         close(epoll_fd);
         epoll_fd = -1;
      }
+
+    epoll_pid = 0;
 #endif
 }
 
@@ -980,8 +1023,8 @@ _ecore_main_select(double timeout)
      }
 #else /* HAVE_EPOLL */
    /* polling on the epoll fd will wake when an fd in the epoll set is active */
-   FD_SET(epoll_fd, &rfds);
-   max_fd = epoll_fd;
+   max_fd = _ecore_get_epoll_fd();
+   FD_SET(max_fd, &rfds);
 #endif /* HAVE_EPOLL */
 
    if (_ecore_signal_count_get()) return -1;
