@@ -289,15 +289,15 @@ extern "C" {
 
 /**************************************************************************/
    /* General calls */
-   EAPI void         elm_init(int argc, char **argv);
-   EAPI void         elm_shutdown(void);
+   EAPI int          elm_init(int argc, char **argv);
+   EAPI int          elm_shutdown(void);
    EAPI void         elm_run(void);
    EAPI void         elm_exit(void);
 
-   EAPI void         elm_quicklaunch_init(int argc, char **argv);
-   EAPI void         elm_quicklaunch_sub_init(int argc, char **argv);
-   EAPI void         elm_quicklaunch_sub_shutdown(void);
-   EAPI void         elm_quicklaunch_shutdown(void);
+   EAPI int          elm_quicklaunch_init(int argc, char **argv);
+   EAPI int          elm_quicklaunch_sub_init(int argc, char **argv);
+   EAPI int          elm_quicklaunch_sub_shutdown(void);
+   EAPI int          elm_quicklaunch_shutdown(void);
    EAPI void         elm_quicklaunch_seed(void);
    EAPI Eina_Bool    elm_quicklaunch_prepare(int argc, char **argv);
    EAPI Eina_Bool    elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (void *data), void *postfork_data);

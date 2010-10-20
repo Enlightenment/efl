@@ -281,7 +281,7 @@ main(int argc, char **argv)
 		  handle_run(fd, bytes);
 	       }
 	  }
-	elm_quicklaunch_sub_shutdown();
+	while (elm_quicklaunch_sub_shutdown() > 0);
      }
    elm_quicklaunch_shutdown();
 

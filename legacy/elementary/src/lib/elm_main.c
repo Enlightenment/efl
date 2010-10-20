@@ -15,6 +15,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#define SEMI_BROKEN_QUICKLANCH 1
+
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
 
@@ -294,6 +296,8 @@ int _elm_log_dom = -1;
 EAPI int ELM_EVENT_POLICY_CHANGED = 0;
 
 static int _elm_init_count = 0;
+static int _elm_sub_init_count = 0;
+static int _elm_ql_init_count = 0;
 static int _elm_policies[ELM_POLICY_LAST];
 static Ecore_Event_Handler *_elm_exit_handler = NULL;
 
@@ -317,36 +321,42 @@ _elm_rescale(void)
 
 /**
  * Inititalise Elementary
- *
+ * 
+ * @return The init counter value.
+ * 
  * This call is exported only for use by the ELM_MAIN() macro. There is no
  * need to use this if you use this macro (which is highly advisable).
  * @ingroup General
  */
-EAPI void
+EAPI int
 elm_init(int argc, char **argv)
 {
    _elm_init_count++;
-   if (_elm_init_count != 1) return;
+   if (_elm_init_count > 1) return _elm_init_count;
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
+   return _elm_init_count;
 }
 
 /**
  * Shut down Elementary
  *
+ * @return The init counter value.
+ * 
  * This should be called at the end of your application just before it ceases
  * to do any more processing. This will clean up any permanent resources your
  * application may have allocated via Elementary that would otherwise persist
  * on an exit without this call.
  * @ingroup General
  */
-EAPI void
+EAPI int
 elm_shutdown(void)
 {
    _elm_init_count--;
-   if (_elm_init_count != 0) return;
+   if (_elm_init_count > 0) return _elm_init_count;
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
+   return _elm_init_count;
 }
 
 #ifdef ELM_EDBUS
@@ -415,11 +425,13 @@ _elm_unneed_efreet(void)
 #endif
 }
 
-EAPI void
+EAPI int
 elm_quicklaunch_init(int argc, char **argv)
 {
    char buf[PATH_MAX], *s;
    
+   _elm_ql_init_count++;
+   if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    eina_init();
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
    if (!_elm_log_dom)
@@ -513,24 +525,54 @@ elm_quicklaunch_init(int argc, char **argv)
      _elm_lib_dir = eina_stringshare_add("/");
 
    _elm_config_init();
+   return _elm_ql_init_count;
 }
 
-EAPI void
+EAPI int
 elm_quicklaunch_sub_init(int argc, char **argv)
 {
+   _elm_sub_init_count++;
+   if (_elm_sub_init_count > 1) return _elm_sub_init_count;
+#ifndef SEMI_BROKEN_QUICKLANCH  
    ecore_app_args_set(argc, (const char **)argv);
    evas_init();
    edje_init();
+   _elm_config_sub_init();
+   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+       (_elm_config->engine == ELM_XRENDER_X11) ||
+       (_elm_config->engine == ELM_OPENGL_X11))
+     {
+#ifdef HAVE_ELEMENTARY_X
+	ecore_x_init(NULL);
+#endif
+     }
    ecore_evas_init(); // FIXME: check errors
    ecore_imf_init();
    _elm_module_init();
-   _elm_config_sub_init();
+#endif   
+   return _elm_sub_init_count;
 }
 
-EAPI void
+EAPI int
 elm_quicklaunch_sub_shutdown(void)
 {
+   _elm_sub_init_count--;
+   if (_elm_sub_init_count > 0) return _elm_sub_init_count;
+#ifndef SEMI_BROKEN_QUICKLANCH  
    _elm_win_shutdown();
+   _elm_module_shutdown();
+   ecore_imf_shutdown();
+   ecore_evas_shutdown();
+   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+       (_elm_config->engine == ELM_XRENDER_X11) ||
+       (_elm_config->engine == ELM_OPENGL_X11))
+     {
+#ifdef HAVE_ELEMENTARY_X
+	ecore_x_disconnect();
+#endif
+     }
    if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
        (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
        (_elm_config->engine == ELM_XRENDER_X11) ||
@@ -540,22 +582,18 @@ elm_quicklaunch_sub_shutdown(void)
        (_elm_config->engine == ELM_OPENGL_SDL) ||
        (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
        (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
-     {
-#ifdef HAVE_ELEMENTARY_X
-	ecore_x_disconnect();
-#endif
-	evas_cserve_disconnect();
-     }
-   _elm_module_shutdown();
-   ecore_imf_shutdown();
-   ecore_evas_shutdown();
+      evas_cserve_disconnect();
    edje_shutdown();
    evas_shutdown();
+#endif   
+   return _elm_sub_init_count;
 }
 
-EAPI void
+EAPI int
 elm_quicklaunch_shutdown(void)
 {
+   _elm_ql_init_count--;
+   if (_elm_ql_init_count > 0) return _elm_ql_init_count;
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
    eina_stringshare_del(_elm_lib_dir);
@@ -586,11 +624,13 @@ elm_quicklaunch_shutdown(void)
    _elm_widget_type_clear();
    
    eina_shutdown();
+   return _elm_ql_init_count;
 }
 
 EAPI void
 elm_quicklaunch_seed(void)
 {
+#ifndef SEMI_BROKEN_QUICKLANCH  
    Evas_Object *win, *bg, *bt;
 
    win = elm_win_add(NULL, "seed", ELM_WIN_BASIC);
@@ -613,6 +653,7 @@ elm_quicklaunch_seed(void)
 #endif
       }
    ecore_main_loop_iterate();
+#endif   
 }
 
 static void *qr_handle = NULL;
@@ -744,7 +785,26 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
 	return EINA_FALSE;
      }
    if (postfork_func) postfork_func(postfork_data);
-
+   
+#ifdef SEMI_BROKEN_QUICKLANCH
+   ecore_app_args_set(argc, (const char **)argv);
+   evas_init();
+   edje_init();
+   _elm_config_sub_init();
+   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
+       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
+       (_elm_config->engine == ELM_XRENDER_X11) ||
+       (_elm_config->engine == ELM_OPENGL_X11))
+     {
+#ifdef HAVE_ELEMENTARY_X
+	ecore_x_init(NULL);
+#endif
+     }
+   ecore_evas_init(); // FIXME: check errors
+   ecore_imf_init();
+   _elm_module_init();
+#endif
+   
    setsid();
    if (chdir(cwd) != 0)
      perror("could not chdir");
