@@ -460,6 +460,83 @@ _eio_dir_move_heavy(Ecore_Thread *thread, void *data)
    return;
 }
 
+static void
+_eio_dir_rmrf_heavy(Ecore_Thread *thread, void *data)
+{
+   Eio_Dir_Copy *rmrf = data;
+   const char *file = NULL;
+   const char *dir = NULL;
+
+   off_t count;
+   off_t step;
+
+   /* list all the content that should be moved */
+   if (!_eio_dir_recursiv_ls(thread, rmrf, rmrf->progress.source))
+     return ;
+
+   /* init counter */
+   step = 0;
+   count = eina_list_count(rmrf->files) + eina_list_count(rmrf->dirs) + 1;
+
+   EINA_LIST_FREE(rmrf->files, file)
+     {
+        if (unlink(file) != 0)
+          {
+             eio_file_thread_error(&rmrf->progress.common, thread);
+             goto on_error;
+          }
+
+        eina_stringshare_replace(&rmrf->progress.dest, file);
+
+        step++;
+        eio_progress_send(thread, &rmrf->progress, step, count);
+
+        if (ecore_thread_check(thread))
+          goto on_error;
+
+        eina_stringshare_del(file);
+     }
+   file = NULL;
+
+   EINA_LIST_FREE(rmrf->dirs, dir)
+     {
+        if (rmdir(dir) != 0)
+          {
+             eio_file_thread_error(&rmrf->progress.common, thread);
+             goto on_error;
+          }
+
+        eina_stringshare_replace(&rmrf->progress.dest, dir);
+
+        step++;
+        eio_progress_send(thread, &rmrf->progress, step, count);
+
+        if (ecore_thread_check(thread))
+          goto on_error;
+
+        eina_stringshare_del(dir);
+     }
+   dir = NULL;
+
+   if (rmdir(rmrf->progress.source) != 0)
+     goto on_error;
+   step++;
+
+ on_error:
+   if (dir) eina_stringshare_del(dir);
+   if (file) eina_stringshare_del(file);
+
+   EINA_LIST_FREE(rmrf->dirs, dir)
+     eina_stringshare_del(dir);
+   EINA_LIST_FREE(rmrf->files, file)
+     eina_stringshare_del(file);
+
+   if (!ecore_thread_check(thread))
+     eio_progress_send(thread, &rmrf->progress, count, count);
+
+   return;
+}
+
 /**
  * @addtogroup Eio_Group Asynchronous Inout/Output library
  *
@@ -502,6 +579,7 @@ eio_dir_copy(const char *source,
    copy->progress.source = eina_stringshare_add(source);
    copy->progress.dest = eina_stringshare_add(dest);
    copy->files = NULL;
+   copy->dirs = NULL;
 
    if (!eio_long_file_set(&copy->progress.common,
                           done_cb,
@@ -553,6 +631,7 @@ eio_dir_move(const char *source,
    move->progress.source = eina_stringshare_add(source);
    move->progress.dest = eina_stringshare_add(dest);
    move->files = NULL;
+   move->dirs = NULL;
 
    if (!eio_long_file_set(&move->progress.common,
                           done_cb,
@@ -565,6 +644,55 @@ eio_dir_move(const char *source,
      return NULL;
 
    return &move->progress.common;
+}
+
+/**
+ * @brief Remove a directory and it's content asynchronously
+ * @param path Should be the name of the directory to destroy.
+ * @param progress_cb Callback called to know the progress of the copy.
+ * @param done_cb Callback called when the copy is done.
+ * @param error_cb Callback called when something goes wrong.
+ * @param data Private data given to callback.
+ *
+ * This function will move a directory and all it's content from source to dest.
+ * It will try first to rename the directory, if not it will try to use splice
+ * if possible, if not it will fallback to mmap/write.
+ * It will try to preserve access right, but not user/group identity.
+ */
+EAPI Eio_File *
+eio_dir_unlink(const char *path,
+               Eio_Progress_Cb progress_cb,
+               Eio_Done_Cb done_cb,
+               Eio_Error_Cb error_cb,
+               const void *data)
+{
+   Eio_Dir_Copy *rmrf;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+
+   rmrf = malloc(sizeof(Eio_Dir_Copy));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(rmrf, NULL);
+
+   rmrf->progress.op = EIO_UNLINK;
+   rmrf->progress.progress_cb = progress_cb;
+   rmrf->progress.source = eina_stringshare_add(path);
+   rmrf->progress.dest = NULL;
+   rmrf->files = NULL;
+   rmrf->dirs = NULL;
+
+   if (!eio_long_file_set(&rmrf->progress.common,
+                          done_cb,
+                          error_cb,
+                          data,
+                          _eio_dir_rmrf_heavy,
+                          _eio_dir_copy_notify,
+                          _eio_dir_copy_end,
+                          _eio_dir_copy_error))
+     return NULL;
+
+   return &rmrf->progress.common;
 }
 
 /**

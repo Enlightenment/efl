@@ -78,7 +78,8 @@ typedef enum _Eio_File_Op
   EIO_FILE_COPY, /**< IO operation is about a specific file copy */
   EIO_FILE_MOVE, /**< IO operation is about a specific file move */
   EIO_DIR_COPY, /**< IO operation is about a specific directory copy */
-  EIO_DIR_MOVE /**< IO operation is about a specific directory move */
+  EIO_DIR_MOVE, /**< IO operation is about a specific directory move */
+  EIO_UNLINK /**< IO operation is about a destroying a path (source will point to base path to be destroyed and dest to path destroyed by this IO */
 } Eio_File_Op;
 
 typedef struct _Eio_File Eio_File; /**< Generic asynchronous IO reference */
