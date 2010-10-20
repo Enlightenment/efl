@@ -734,7 +734,10 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
    /* don't add a separator as the first item */
    if (!wd->items) return NULL;
    /* don't allow adding more than one separator in a row */
-   if (parent && parent->separator) return NULL;
+   if (parent) subitem = eina_list_last(parent->submenu.items)->data;
+   else subitem = eina_list_last(wd->items)->data;
+   if (subitem->separator) return NULL;
+
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
    if (!subitem) return NULL;
    subitem->base.widget = obj;
