@@ -205,8 +205,8 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "config_version", config_version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "engine", engine, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_threshhold", thumbscroll_threshhold, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_momentum_threshhold", thumbscroll_momentum_threshhold, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_threshold", thumbscroll_threshold, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_momentum_threshold", thumbscroll_momentum_threshold, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_friction", thumbscroll_friction, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_bounce_friction", thumbscroll_bounce_friction, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "page_scroll_friction", page_scroll_friction, EET_T_DOUBLE);
@@ -398,8 +398,8 @@ _config_load(void)
    _elm_config->config_version = ELM_CONFIG_VERSION;
    _elm_config->engine = ELM_SOFTWARE_X11;
    _elm_config->thumbscroll_enable = EINA_TRUE;
-   _elm_config->thumbscroll_threshhold = 24;
-   _elm_config->thumbscroll_momentum_threshhold = 100.0;
+   _elm_config->thumbscroll_threshold = 24;
+   _elm_config->thumbscroll_momentum_threshold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->thumbscroll_bounce_friction = 0.5;
    _elm_config->page_scroll_friction = 0.5;
@@ -533,10 +533,10 @@ _env_get(void)
    s = getenv("ELM_THUMBSCROLL_ENABLE");
    if (s) _elm_config->thumbscroll_enable = !!atoi(s);
    s = getenv("ELM_THUMBSCROLL_THRESHOLD");
-   if (s) _elm_config->thumbscroll_threshhold = atoi(s);
+   if (s) _elm_config->thumbscroll_threshold = atoi(s);
    // FIXME: floatformat locale issues here 1.0 vs 1,0 - should just be 1.0
    s = getenv("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
-   if (s) _elm_config->thumbscroll_momentum_threshhold = atof(s);
+   if (s) _elm_config->thumbscroll_momentum_threshold = atof(s);
    s = getenv("ELM_THUMBSCROLL_FRICTION");
    if (s) _elm_config->thumbscroll_friction = atof(s);
    s = getenv("ELM_PAGE_SCROLL_FRICTION");

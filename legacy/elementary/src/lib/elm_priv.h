@@ -72,8 +72,8 @@ struct _Elm_Config
    int          config_version;
    int          engine;
    Eina_Bool    thumbscroll_enable;
-   int          thumbscroll_threshhold;
-   double       thumbscroll_momentum_threshhold;
+   int          thumbscroll_threshold;
+   double       thumbscroll_momentum_threshold;
    double       thumbscroll_friction;
    double       thumbscroll_bounce_friction;
    double       page_scroll_friction;

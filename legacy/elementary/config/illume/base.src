@@ -2,8 +2,8 @@ group "Elm_Config" struct {
   value "config_version" int: 65537;
   value "engine" int: 0;
   value "thumbscroll_enable" uchar: 1;
-  value "thumbscroll_threshhold" int: 24;
-  value "thumbscroll_momentum_threshhold" double: 100.0;
+  value "thumbscroll_threshold" int: 24;
+  value "thumbscroll_momentum_threshold" double: 100.0;
   value "thumbscroll_friction" double: 1.0;
   value "thumbscroll_bounce_friction" double: 0.5;
   value "thumbscroll_bounce_enable" uchar: 1;
