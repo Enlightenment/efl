@@ -992,7 +992,8 @@ elm_photocam_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
    
-   elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_TRUE);
+   if (_elm_config->thumbscroll_bounce_enable)
+      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_TRUE);
 
    wd->obj = obj;
 

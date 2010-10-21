@@ -1863,7 +1863,8 @@ elm_genlist_add(Evas_Object *parent)
    elm_smart_scroller_object_theme_set(obj, wd->scr, "genlist", "base", elm_widget_style_get(obj));
    elm_widget_resize_object_set(obj, wd->scr);
 
-   elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_TRUE);
+   if (_elm_config->thumbscroll_bounce_enable)
+      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_TRUE);
 
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;

@@ -1124,7 +1124,8 @@ elm_list_add(Evas_Object *parent)
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
 
-   elm_smart_scroller_bounce_allow_set(wd->scr, 0, 1);
+   if (_elm_config->thumbscroll_bounce_enable)
+      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_TRUE);
 
    wd->box = elm_box_add(parent);
    elm_box_homogenous_set(wd->box, 1);
@@ -1508,13 +1509,15 @@ elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
      {
         evas_object_size_hint_weight_set(wd->box, 0.0, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(wd->box, 0.0, EVAS_HINT_FILL);
-        elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_FALSE);
+        if (_elm_config->thumbscroll_bounce_enable)
+           elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_FALSE);
      }
    else
      {
         evas_object_size_hint_weight_set(wd->box, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(wd->box, EVAS_HINT_FILL, 0.0);
-        elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_TRUE);
+        if (_elm_config->thumbscroll_bounce_enable)
+           elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_TRUE);
      }
 
    _elm_list_mode_set_internal(wd);

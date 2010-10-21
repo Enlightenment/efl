@@ -258,7 +258,8 @@ elm_panel_add(Evas_Object *parent)
    wd->scr = elm_smart_scroller_add(evas);
    elm_smart_scroller_widget_set(wd->scr, obj);
    _theme_hook(obj);
-   elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_FALSE);
+   if (_elm_config->thumbscroll_bounce_enable)
+      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_FALSE);
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, 
                                  ELM_SMART_SCROLLER_POLICY_OFF);
