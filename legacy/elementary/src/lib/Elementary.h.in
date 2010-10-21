@@ -294,6 +294,7 @@ extern "C" {
    EAPI void         elm_run(void);
    EAPI void         elm_exit(void);
 
+   EAPI void         elm_quicklaunch_mode_set(Eina_Bool ql_on);
    EAPI int          elm_quicklaunch_init(int argc, char **argv);
    EAPI int          elm_quicklaunch_sub_init(int argc, char **argv);
    EAPI int          elm_quicklaunch_sub_shutdown(void);
