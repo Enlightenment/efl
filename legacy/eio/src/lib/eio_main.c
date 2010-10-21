@@ -146,7 +146,7 @@ eio_direct_info_free(Eina_File_Direct_Info *data)
  *============================================================================*/
 
 /**
- * @addtogroup Eio_Group Asynchronous Inout/Output library
+ * @addtogroup Eio_Group Eio Reference API
  *
  * @{
  */

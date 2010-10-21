@@ -64,7 +64,7 @@ extern "C" {
 #endif
 
 /**
- * @defgroup Eio_Group Asynchronous Inout/Output library
+ * @defgroup Eio_Group Eio Reference API
  *
  * @brief A brief description
  *

@@ -325,7 +325,7 @@ eio_file_set(Eio_File *common,
  *============================================================================*/
 
 /**
- * @addtogroup Eio_Group Asynchronous Inout/Output library
+ * @addtogroup Eio_Group Eio Reference API
  *
  * @{
  */

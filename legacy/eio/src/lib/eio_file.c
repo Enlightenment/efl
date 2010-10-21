@@ -513,7 +513,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
  *============================================================================*/
 
 /**
- * @addtogroup Eio_Group Asynchronous Inout/Output library
+ * @addtogroup Eio_Group Eio Reference API
  *
  * @{
  */
