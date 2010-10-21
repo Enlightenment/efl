@@ -120,11 +120,11 @@ struct _Elm_Module
 void                _elm_win_shutdown(void);
 void                _elm_win_rescale(void);
 
-int                 _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
-int                 _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style);
-int                 _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style);
-int                 _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style);
-int                 _elm_theme_parse(Elm_Theme *th, const char *theme);
+Eina_Bool           _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
+Eina_Bool           _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style);
+Eina_Bool           _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style);
+Eina_Bool           _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style);
+Eina_Bool           _elm_theme_parse(Elm_Theme *th, const char *theme);
 void                _elm_theme_shutdown(void);
 
 void                _elm_module_init(void);

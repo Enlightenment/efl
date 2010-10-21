@@ -109,7 +109,7 @@ _elm_theme_group_file_find(Elm_Theme *th, const char *group)
    return NULL;
 }
 
-int
+Eina_Bool
 _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
@@ -117,7 +117,7 @@ _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, con
    return _elm_theme_set(th, o, clas, group, style);
 }
 
-int
+Eina_Bool
 _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
@@ -125,12 +125,12 @@ _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *grou
    return _elm_theme_icon_set(th, o, group, style);
 }
 
-int
+Eina_Bool
 _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    const char *file;
    char buf2[1024];
-   int ok;
+   Eina_Bool ok;
 
    if (!th) th = &(theme_default);
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, group, style);
@@ -138,14 +138,14 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    if (file)
      {
 	ok = edje_object_file_set(o, file, buf2);
-	if (ok) return 1;
+	if (ok) return EINA_TRUE;
         else
           DBG("could not set theme group '%s' from file '%s': %s",
               buf2, file, edje_load_error_str(edje_object_load_error_get(o)));
      }
    snprintf(buf2, sizeof(buf2), "elm/%s/%s/default", clas, group);
    file = _elm_theme_group_file_find(th, buf2);
-   if (!file) return 0;
+   if (!file) return EINA_FALSE;
    ok = edje_object_file_set(o, file, buf2);
    if (!ok)
      DBG("could not set theme group '%s' from file '%s': %s",
@@ -153,7 +153,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    return ok;
 }
 
-int
+Eina_Bool
 _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style)
 {
    const char *file;
@@ -167,17 +167,17 @@ _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char
      {
 	_els_smart_icon_file_edje_set(o, file, buf2);
 	_els_smart_icon_size_get(o, &w, &h);
-	if (w > 0) return 1;
+	if (w > 0) return EINA_TRUE;
      }
    snprintf(buf2, sizeof(buf2), "elm/icon/%s/default", group);
    file = _elm_theme_group_file_find(th, buf2);
-   if (!file) return 0;
+   if (!file) return EINA_FALSE;
    _els_smart_icon_file_edje_set(o, file, buf2);
    _els_smart_icon_size_get(o, &w, &h);
    return (w > 0);
 }
 
-int
+Eina_Bool
 _elm_theme_parse(Elm_Theme *th, const char *theme)
 {
    Eina_List *names = NULL;
@@ -198,7 +198,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
                        if (n)
                          {
                             const char *nn;
-                            
+
                             strncpy(n, p, pe - p);
                             n[pe - p] = 0;
                             nn = eina_stringshare_add(n);
@@ -226,7 +226,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
    EINA_LIST_FREE(th->themes, p) eina_stringshare_del(p);
 
    th->themes = names;
-   return 1;
+   return EINA_TRUE;
 }
 
 void
@@ -275,6 +275,7 @@ elm_theme_new(void)
 EAPI void
 elm_theme_free(Elm_Theme *th)
 {
+   if (!th) return;
    th->ref--;
    if (th->ref < 1)
      {
