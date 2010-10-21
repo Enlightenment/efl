@@ -6,8 +6,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-extern _udev *udev;
-
 /* opaque */
 struct Eeze_Udev_Watch
 {

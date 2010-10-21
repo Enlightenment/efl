@@ -5,8 +5,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-extern _udev *udev;
-
 /**
  * @addtogroup find Find
  *
@@ -67,8 +65,9 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
         devname = udev_list_entry_get_name(cur);
        /* verify unlisted device */
 
-        EINA_LIST_FOREACH(ret, l, dev) if (!strcmp(dev, devname))
-          continue;
+        EINA_LIST_FOREACH(ret, l, dev)
+          if (!strcmp(dev, devname))
+            continue;
 
         ret = eina_list_prepend(ret, eina_stringshare_add(devname));
         device = udev_device_new_from_syspath(udev, devname);
@@ -210,6 +209,8 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype, const char *name)
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
           udev_enumerate_add_nomatch_sysattr(en, "capability", "52");
+          /* parent node */
+          udev_enumerate_add_nomatch_sysattr(en, "capability", "50");
           break;
         case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
           udev_enumerate_add_match_subsystem(en, "block");
@@ -274,22 +275,18 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype, const char *name)
                    goto out;
               }
           }
-        else
-          if (etype == EEZE_UDEV_TYPE_DRIVE_INTERNAL)
+        else if (etype == EEZE_UDEV_TYPE_DRIVE_INTERNAL)
             {
                if (udev_device_get_property_value(device, "ID_USB_DRIVER"))
                  goto out;
             }
-         else
-           if (etype == EEZE_UDEV_TYPE_DRIVE_REMOVABLE)
+         else if (etype == EEZE_UDEV_TYPE_DRIVE_REMOVABLE)
              {
-                if (!
-                    (test = udev_device_get_property_value(device, "ID_USB_DRIVER")))
+                if (!(test = udev_device_get_property_value(device, "ID_USB_DRIVER")))
                   goto out;
              }
 
-        if (name)
-         if (!strstr(devname, name))
+        if (name && (!strstr(devname, name)))
            goto out;
 
         ret = eina_list_append(ret, eina_stringshare_add(devname));

@@ -5,8 +5,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-extern _udev *udev;
-
 /*
  * helper function to set up a new device from a syspath
  * which may or may not include /sys at the beginning

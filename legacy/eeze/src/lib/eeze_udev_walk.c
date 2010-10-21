@@ -5,8 +5,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-extern _udev *udev;
-
 /**
  * @addtogroup walks Walks
  *
