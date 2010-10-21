@@ -141,10 +141,17 @@ _eval_top(Evas_Object *obj)
 	wd->top = ittop;
 	o = wd->top->base;
 	evas_object_show(o);
-	if (wd->oldtop && wd->oldtop->popme)
-	    edje_object_signal_emit(o, "elm,action,show", "elm");
-	else
-	    edje_object_signal_emit(o, "elm,action,push", "elm");
+        if (wd->oldtop)
+          {
+             if (elm_object_focus_get(wd->oldtop->content))
+               elm_object_focus(wd->top->content);
+             if (wd->oldtop->popme)
+               edje_object_signal_emit(o, "elm,action,show", "elm");
+             else
+               edje_object_signal_emit(o, "elm,action,push", "elm");
+          }
+        else
+          edje_object_signal_emit(o, "elm,action,push", "elm");
 	onshow = edje_object_data_get(o, "onshow");
 	if (onshow)
 	  {

@@ -1030,7 +1030,7 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
      return EINA_FALSE;
    *next = NULL;
 
-   if ((!_elm_widget_is(obj)) || elm_widget_child_can_focus_get(obj))
+   if (!_elm_widget_is(obj))
      return EINA_FALSE;
 
    if (!items)
