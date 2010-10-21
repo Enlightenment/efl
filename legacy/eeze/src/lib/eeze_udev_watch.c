@@ -131,7 +131,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
             cap = atoi(test);
 
           if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
-              (strcmp("filesystem", test)) || (cap == 52))
+              (strcmp("filesystem", test)) || (cap == 52) || (cap == 50))
             goto error;
 
           break;
