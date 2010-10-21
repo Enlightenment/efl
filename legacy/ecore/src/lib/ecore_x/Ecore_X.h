@@ -2454,7 +2454,7 @@ EAPI void                 ecore_x_pointer_xy_get_fetch(void);
 EAPI void                 ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y);
 
 /* ecore_x_region.c */
-EAPI Ecore_X_XRegion *    ecore_x_xregion_new();
+EAPI Ecore_X_XRegion *    ecore_x_xregion_new(void);
 EAPI void                 ecore_x_xregion_free(Ecore_X_XRegion *region);
 EAPI Eina_Bool            ecore_x_xregion_set(Ecore_X_XRegion *region,
                                               Ecore_X_GC       gc);
