@@ -236,6 +236,8 @@ elm_fileselector_entry_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->button);
    evas_object_event_callback_add
      (wd->button, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+   elm_fileselector_button_expandable_set(wd->button,
+                                          _elm_config->fileselector_expand_enable);
 
 #define SIG_FWD(name)                                                   \
    evas_object_smart_callback_add(wd->button, SIG_##name, _##name##_fwd, obj)

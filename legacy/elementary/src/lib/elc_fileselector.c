@@ -402,7 +402,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    // Elementary Widget
    wd = ELM_NEW(Widget_Data);
-   wd->expand = EINA_FALSE;
+   wd->expand = _elm_config->fileselector_expand_enable;
    obj = elm_widget_add(evas_object_evas_get(parent));
    ELM_SET_WIDTYPE(widtype, "fileselector");
    elm_widget_type_set(obj, "fileselector");

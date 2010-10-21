@@ -91,7 +91,6 @@ test_fileselector_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
    fs_en = elm_fileselector_entry_add(win);
    elm_fileselector_entry_button_label_set(fs_en, "Select a file");
    elm_fileselector_entry_button_icon_set(fs_en, ic);
-   elm_fileselector_entry_inwin_mode_set(fs_en, EINA_TRUE);
    evas_object_size_hint_weight_set(fs_en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(fs_en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

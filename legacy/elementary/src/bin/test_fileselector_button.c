@@ -86,7 +86,6 @@ test_fileselector_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, voi
    fs_bt = elm_fileselector_button_add(win);
    elm_fileselector_button_label_set(fs_bt, "Select a file");
    elm_fileselector_button_icon_set(fs_bt, ic);
-   elm_fileselector_button_inwin_mode_set(fs_bt, EINA_TRUE);
 
    elm_box_pack_end(vbox, fs_bt);
    evas_object_show(fs_bt);

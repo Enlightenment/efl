@@ -235,6 +235,8 @@ elm_fileselector_button_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    wd->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    wd->fsd.path = eina_stringshare_add(getenv("HOME"));
+   wd->fsd.expandable = _elm_config->fileselector_expand_enable;
+   wd->inwin_mode = _elm_config->inwin_dialogs_enable;
    wd->w = 400;
    wd->h = 400;
 
