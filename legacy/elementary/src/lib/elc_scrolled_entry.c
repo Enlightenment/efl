@@ -366,8 +366,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->scroller);
    evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   if (_elm_config->thumbscroll_bounce_enable)
-      elm_scroller_bounce_set(wd->scroller, EINA_FALSE, EINA_FALSE);
+   elm_scroller_bounce_set(wd->scroller, EINA_FALSE, EINA_FALSE);
    evas_object_show(wd->scroller);
 
    wd->entry = elm_entry_add(obj);

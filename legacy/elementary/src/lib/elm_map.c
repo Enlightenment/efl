@@ -1521,8 +1521,9 @@ _group_bubble_content_update(Marker_Group *group)
 	group->sc = elm_scroller_add(group->bubble);
 	elm_scroller_content_min_limit(group->sc, EINA_FALSE, EINA_TRUE);
 	elm_scroller_policy_set(group->sc, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
-        if (_elm_config->thumbscroll_bounce_enable)
-           elm_scroller_bounce_set(group->sc, EINA_TRUE, EINA_FALSE);
+        elm_scroller_bounce_set(group->sc,
+                                _elm_config->thumbscroll_bounce_enable,
+                                EINA_FALSE);
 	edje_object_part_swallow(group->bubble, "elm.swallow.content", group->sc);
 	evas_object_show(group->sc);
 	evas_object_smart_member_add(group->sc,
@@ -1664,6 +1665,7 @@ elm_map_add(Evas_Object *parent)
    Evas_Coord minw, minh;
    Evas_Object *obj;
    static Evas_Smart *smart = NULL;
+   Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
    if (!ecore_file_download_protocol_available("http://"))
      {
@@ -1697,8 +1699,7 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   if (_elm_config->thumbscroll_bounce_enable)
-      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_TRUE);
+   elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
 
    wd->obj = obj;
 

@@ -449,8 +449,9 @@ elm_toolbar_add(Evas_Object *parent)
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", "default");
-   if (_elm_config->thumbscroll_bounce_enable)
-      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_FALSE);
+   elm_smart_scroller_bounce_allow_set(wd->scr,
+                                       _elm_config->thumbscroll_bounce_enable,
+                                       EINA_FALSE);
    elm_widget_resize_object_set(obj, wd->scr);
    elm_smart_scroller_policy_set(wd->scr,
 				 ELM_SMART_SCROLLER_POLICY_AUTO,
@@ -844,14 +845,13 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool bounce;
 
    if (!wd) return;
    wd->shrink_mode = shrink_mode;
-   if (_elm_config->thumbscroll_bounce_enable)
-     {
-        Eina_Bool bounce = shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL;
-        elm_smart_scroller_bounce_allow_set(wd->scr, bounce, EINA_FALSE);
-     }
+   bounce = _elm_config->thumbscroll_bounce_enable &&
+      (shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL);
+   elm_smart_scroller_bounce_allow_set(wd->scr, bounce, EINA_FALSE);
 
    if (wd->more_item)
      {

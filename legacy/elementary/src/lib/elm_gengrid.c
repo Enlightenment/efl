@@ -1290,6 +1290,7 @@ elm_gengrid_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
    static Evas_Smart *smart = NULL;
+   Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
@@ -1315,8 +1316,7 @@ elm_gengrid_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
-   if (_elm_config->thumbscroll_bounce_enable)
-      elm_smart_scroller_bounce_allow_set(wd->scr, EINA_TRUE, EINA_TRUE);
+   elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
 
    wd->self = obj;
    wd->align_x = 0.5;
