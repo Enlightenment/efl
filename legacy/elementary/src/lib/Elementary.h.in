@@ -484,6 +484,8 @@ extern "C" {
    EAPI void         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
    EAPI void         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
    EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay);
+   EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
+   EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj);
 
    /* smart callbacks called:
     */
@@ -523,6 +525,7 @@ extern "C" {
    EAPI void         elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
    EAPI void         elm_image_prescale_set(Evas_Object *obj, int size);
    EAPI void         elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient);
+   EAPI void         elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
    /* smart callbacks called:
     * "clicked" - the user clicked the image
     */
@@ -690,6 +693,7 @@ extern "C" {
    EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label);
    EAPI const char  *elm_frame_label_get(const Evas_Object *obj);
    EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj);
    /* available styles:
     * default
@@ -765,6 +769,8 @@ extern "C" {
    EAPI const Evas_Object *elm_gengrid_item_object_get(const Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_show(Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_bring_in(Elm_Gengrid_Item *item);
+   EAPI void         elm_gengrid_item_disabled_set(Elm_Gengrid_Item *item, Eina_Bool disabled);
+   EAPI Eina_Bool    elm_gengrid_item_disabled_get(const Elm_Gengrid_Item *item);
 
    EAPI void         elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text);
    EAPI void         elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
@@ -1932,11 +1938,13 @@ extern "C" {
 
    EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj);
 
 
    EAPI Evas_Object *elm_mapbuf_add(Evas_Object *parent);
    EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content);
+   EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj);
    EAPI void         elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled);
    EAPI Eina_Bool    elm_mapbuf_enabled_get(const Evas_Object *obj);
@@ -1963,6 +1971,9 @@ extern "C" {
    EAPI void                       elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_prev(Elm_Flippicker_Item *item);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_next(Elm_Flippicker_Item *item);
+   EAPI void                       elm_flippicker_interval_set(Evas_Object *obj, double interval);
+   EAPI double                     elm_flippicker_interval_get(const Evas_Object *obj);
+
 
    /* smart callbacks called:
     * "selected" - when flippicker selected item is changed
@@ -2059,12 +2070,14 @@ extern "C" {
    EAPI void                  elm_diskpicker_item_selected_set(Elm_Diskpicker_Item *it);
    EAPI Elm_Diskpicker_Item  *elm_diskpicker_item_prev(const Elm_Diskpicker_Item *it);
    EAPI Elm_Diskpicker_Item  *elm_diskpicker_item_next(const Elm_Diskpicker_Item *it);
+   EAPI void                  elm_diskpicker_item_tooltip_text_set(Elm_Diskpicker_Item *item, const char *text);
    EAPI void                  elm_diskpicker_item_tooltip_content_cb_set(Elm_Diskpicker_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
    EAPI void                  elm_diskpicker_item_tooltip_unset(Elm_Diskpicker_Item *item);
    EAPI void                  elm_diskpicker_item_tooltip_style_set(Elm_Diskpicker_Item *item, const char *style);
    EAPI const char*           elm_diskpicker_item_tooltip_style_get(const Elm_Diskpicker_Item *item);
    EAPI void                  elm_diskpicker_item_cursor_set(Elm_Diskpicker_Item *item, const char *cursor);
    EAPI void                  elm_diskpicker_item_cursor_unset(Elm_Diskpicker_Item *item);
+   EAPI void                  elm_diskpicker_item_cursor_style_set(Elm_Diskpicker_Item *item, const char *style);
    EAPI const char*           elm_diskpicker_item_cursor_style_get(const Elm_Diskpicker_Item *item);
    EAPI void                  elm_diskpicker_item_cursor_engine_only_set(Elm_Diskpicker_Item *item, Eina_Bool engine_only);
    EAPI Eina_Bool             elm_diskpicker_item_cursor_engine_only_get(const Elm_Diskpicker_Item *item);
