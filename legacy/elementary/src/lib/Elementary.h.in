@@ -731,8 +731,8 @@ extern "C" {
      };
 
    EAPI Evas_Object *elm_gengrid_add(Evas_Object *parent);
-   EAPI void	     elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-   EAPI void	     elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void         elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   EAPI void         elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y);
    EAPI void         elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
 
@@ -1485,8 +1485,8 @@ extern "C" {
    EAPI void              elm_genlist_item_bring_in(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_top_show(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_top_bring_in(Elm_Genlist_Item *item);
-   EAPI void		  elm_genlist_item_middle_show(Elm_Genlist_Item *it);
-   EAPI void		  elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it);
+   EAPI void              elm_genlist_item_middle_show(Elm_Genlist_Item *it);
+   EAPI void              elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_del(Elm_Genlist_Item *item);
    EAPI void             *elm_genlist_item_data_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data);
@@ -1631,21 +1631,21 @@ extern "C" {
     */
 
    EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
-   EAPI void	     elm_spinner_label_format_set(Evas_Object *obj, const char *fmt);
+   EAPI void         elm_spinner_label_format_set(Evas_Object *obj, const char *fmt);
    EAPI const char  *elm_spinner_label_format_get(const Evas_Object *obj);
    EAPI void         elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
    EAPI void         elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max);
-   EAPI void	     elm_spinner_step_set(Evas_Object *obj, double step);
-   EAPI double	     elm_spinner_step_get(const Evas_Object *obj);
-   EAPI void	     elm_spinner_value_set(Evas_Object *obj, double val);
-   EAPI double	     elm_spinner_value_get(const Evas_Object *obj);
+   EAPI void         elm_spinner_step_set(Evas_Object *obj, double step);
+   EAPI double       elm_spinner_step_get(const Evas_Object *obj);
+   EAPI void         elm_spinner_value_set(Evas_Object *obj, double val);
+   EAPI double       elm_spinner_value_get(const Evas_Object *obj);
    EAPI void         elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap);
    EAPI Eina_Bool    elm_spinner_wrap_get(const Evas_Object *obj);
-   EAPI void	     elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable);
+   EAPI void         elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable);
    EAPI Eina_Bool    elm_spinner_editable_get(const Evas_Object *obj);
-   EAPI void	     elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label);
-   EAPI void	     elm_spinner_interval_set(Evas_Object *obj, double interval);
-   EAPI double	     elm_spinner_interval_get(const Evas_Object *obj);
+   EAPI void         elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label);
+   EAPI void         elm_spinner_interval_set(Evas_Object *obj, double interval);
+   EAPI double       elm_spinner_interval_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "changed" - when the spinner value changes
     * "delay,changed" - when the spinner value changed, but a small time after a change (use this if you only want to respond to a change once the spinner is held still for a short while).
@@ -1759,31 +1759,31 @@ extern "C" {
    EAPI double       elm_map_zoom_get(const Evas_Object *obj);
    EAPI void         elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
    EAPI Elm_Map_Zoom_Mode elm_map_zoom_mode_get(const Evas_Object *obj);
-   EAPI void	     elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat);
+   EAPI void         elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat);
    EAPI void         elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat);
    EAPI void         elm_map_geo_region_show(Evas_Object *obj, double lon, double lat);
    EAPI void         elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
    EAPI Eina_Bool    elm_map_paused_get(const Evas_Object *obj);
-   EAPI void	     elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused);
+   EAPI void         elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused);
    EAPI Eina_Bool    elm_map_paused_markers_get(const Evas_Object *obj);
-   EAPI void	     elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat);
+   EAPI void	       elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat);
    EAPI void         elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y);
    EAPI Elm_Map_Marker *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data);
-   EAPI void	     elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
-   EAPI void	     elm_map_marker_remove(Elm_Map_Marker *marker);
-   EAPI void	     elm_map_marker_bring_in(Elm_Map_Marker *marker);
-   EAPI void	     elm_map_marker_show(Elm_Map_Marker *marker);
-   EAPI void	     elm_map_markers_list_show(Eina_List *markers);
+   EAPI void         elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
+   EAPI void         elm_map_marker_remove(Elm_Map_Marker *marker);
+   EAPI void         elm_map_marker_bring_in(Elm_Map_Marker *marker);
+   EAPI void         elm_map_marker_show(Elm_Map_Marker *marker);
+   EAPI void         elm_map_markers_list_show(Eina_List *markers);
    EAPI Evas_Object *elm_map_marker_object_get(Elm_Map_Marker *marker);
-   EAPI void	     elm_map_marker_update(Elm_Map_Marker *marker);
-   EAPI void	     elm_map_bubbles_close(Evas_Object *obj);
+   EAPI void         elm_map_marker_update(Elm_Map_Marker *marker);
+   EAPI void         elm_map_bubbles_close(Evas_Object *obj);
 
    EAPI Elm_Map_Group_Class * elm_map_group_class_new(Evas_Object *obj);
    EAPI void         elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style);
    EAPI void         elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get);
-   EAPI void	     elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
+   EAPI void         elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
    EAPI void         elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom);
-   EAPI void	     elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom);
+   EAPI void         elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom);
    EAPI void         elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide);
 
    EAPI Elm_Map_Marker_Class * elm_map_marker_class_new(Evas_Object *obj);
@@ -1797,8 +1797,8 @@ extern "C" {
    EAPI void         elm_map_source_custom_api_set(Elm_Map_Sources source, const char *label,
 				int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb);
    EAPI int          elm_map_source_zoom_min_get(Elm_Map_Sources source);
-   EAPI int	     elm_map_source_zoom_max_get(Elm_Map_Sources source);
-   EAPI const char * elm_map_source_name_get(Elm_Map_Sources source);
+   EAPI int          elm_map_source_zoom_max_get(Elm_Map_Sources source);
+   EAPI const char  *elm_map_source_name_get(Elm_Map_Sources source);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image
@@ -1979,7 +1979,13 @@ extern "C" {
    /* animator */
    typedef struct _Animator Elm_Animator;
 
-   typedef enum {ELM_ANIMATOR_CURVE_LINEAR, ELM_ANIMATOR_CURVE_IN_OUT, ELM_ANIMATOR_CURVE_IN, ELM_ANIMATOR_CURVE_OUT} Elm_Animator_Curve_Style;
+   typedef enum 
+     {
+        ELM_ANIMATOR_CURVE_LINEAR,
+        ELM_ANIMATOR_CURVE_IN_OUT,
+        ELM_ANIMATOR_CURVE_IN,
+        ELM_ANIMATOR_CURVE_OUT
+     } Elm_Animator_Curve_Style;
 
    EAPI Elm_Animator* elm_animator_add(Evas_Object *parent);
    EAPI void          elm_animator_del(Elm_Animator *animator);
@@ -1996,7 +2002,14 @@ extern "C" {
    EAPI unsigned int  elm_animator_repeat_get(Elm_Animator *animator);
 
    /* calendar */
-   typedef enum {ELM_CALENDAR_UNIQUE, ELM_CALENDAR_DAILY, ELM_CALENDAR_WEEKLY, ELM_CALENDAR_MONTHLY, ELM_CALENDAR_ANNUALLY} Elm_Calendar_Mark_Repeat;
+   typedef enum 
+     {
+        ELM_CALENDAR_UNIQUE, 
+        ELM_CALENDAR_DAILY,
+        ELM_CALENDAR_WEEKLY,
+        ELM_CALENDAR_MONTHLY, 
+        ELM_CALENDAR_ANNUALLY
+     } Elm_Calendar_Mark_Repeat;
    typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;
 
    EAPI Evas_Object *elm_calendar_add(Evas_Object *parent);
