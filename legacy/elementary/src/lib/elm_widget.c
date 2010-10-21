@@ -731,26 +731,9 @@ elm_widget_focused_object_get(const Evas_Object *obj)
 EAPI Evas_Object *
 elm_widget_top_get(const Evas_Object *obj)
 {
-#if 1 // strict way  
    API_ENTRY return NULL;
    if (sd->parent_obj) return elm_widget_top_get(sd->parent_obj);
    return (Evas_Object *)obj;
-#else // loose way
-   Smart_Data *sd = evas_object_smart_data_get(obj);
-   Evas_Object *par;
-   
-   if (!obj) return NULL;
-   if ((sd) && _elm_widget_is(obj))
-     {
-        if ((sd->type) && (!strcmp(sd->type, "win"))) 
-           return (Evas_Object *)obj;
-        if (sd->parent_obj)
-           return elm_widget_top_get(sd->parent_obj);
-     }
-   par = evas_object_smart_parent_get(obj);
-   if (!par) return (Evas_Object *)obj;
-   return elm_widget_top_get(par);
-#endif   
 }
 
 EAPI Eina_Bool
@@ -1046,6 +1029,9 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
    if (!next)
      return EINA_FALSE;
    *next = NULL;
+
+   if ((!_elm_widget_is(obj)) || elm_widget_child_can_focus_get(obj))
+     return EINA_FALSE;
 
    if (!items)
      return EINA_FALSE;
@@ -1651,7 +1637,7 @@ elm_widget_style_set(Evas_Object *obj, const char *style)
 EAPI const char *
 elm_widget_style_get(const Evas_Object *obj)
 {
-   API_ENTRY return "";
+   API_ENTRY return NULL;
    if (sd->style) return sd->style;
    return "default";
 }
@@ -1666,7 +1652,7 @@ elm_widget_type_set(Evas_Object *obj, const char *type)
 EAPI const char *
 elm_widget_type_get(const Evas_Object *obj)
 {
-   API_ENTRY return "";
+   API_ENTRY return NULL;
    if (sd->type) return sd->type;
    return "";
 }
@@ -1747,9 +1733,10 @@ elm_widget_drag_child_locked_y_get(const Evas_Object *obj)
    return sd->child_drag_y_locked;
 }
 
-EAPI int
+EAPI Eina_Bool
 elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
+   API_ENTRY return EINA_FALSE;
    return _elm_theme_object_set(obj, edj, wname, welement, wstyle);
 }
 
@@ -1777,6 +1764,14 @@ elm_widget_type_check(const Evas_Object *obj, const char *type)
    return EINA_FALSE;
 }
 
+/**
+ * Split string in words
+ *
+ * @param str Source string
+ * @return List of const words
+ *
+ * @see elm_widget_stringlist_free()
+ */
 EAPI Eina_List *
 elm_widget_stringlist_get(const char *str)
 {
@@ -1991,7 +1986,7 @@ _elm_widget_item_tooltip_label_del_cb(void *data, Evas_Object *obj __UNUSED__, v
 EAPI void
 _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text)
 {
-   EINA_SAFETY_ON_NULL_RETURN(item);
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    EINA_SAFETY_ON_NULL_RETURN(text);
 
    text = eina_stringshare_add(text);

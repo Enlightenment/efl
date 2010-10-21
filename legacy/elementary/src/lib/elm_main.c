@@ -524,7 +524,7 @@ elm_quicklaunch_init(int argc, char **argv)
 #endif
    if (!_elm_data_dir)
      _elm_data_dir = eina_stringshare_add(PACKAGE_DATA_DIR);
-  if (!_elm_data_dir)
+   if (!_elm_data_dir)
      _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir)
      _elm_lib_dir = eina_stringshare_add(PACKAGE_LIB_DIR);
@@ -1350,7 +1350,7 @@ elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coor
  * @ingroup Focus
  */
 EAPI Eina_Bool
-elm_object_focus_get(Evas_Object *obj)
+elm_object_focus_get(const Evas_Object *obj)
 {
    return elm_widget_focus_get(obj);
 }
@@ -1369,10 +1369,7 @@ elm_object_focus(Evas_Object *obj)
    if (elm_widget_focus_get(obj))
      return;
 
-   if (!elm_widget_can_focus_get(obj))
-     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-   else
-     elm_widget_focus_steal(obj);
+   elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
 }
 
 /**
