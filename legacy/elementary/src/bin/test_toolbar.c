@@ -154,7 +154,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu, *bt;
+   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
    Elm_Menu_Item *menu_item;
@@ -264,7 +264,7 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu, *bt;
+   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
    Elm_Menu_Item *menu_item;
