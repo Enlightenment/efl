@@ -71,6 +71,24 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
+AC_CHECK_HEADERS([grp.h])
+EFL_CHECK_THREADS(
+   [
+    if test "x${_efl_have_posix_threads}" = "xyes" ; then
+       have_threads="POSIX"
+    else
+       if test "x${_efl_have_win32_threads}" = "xyes" ; then
+          have_threads="Win32"
+       else
+          have_threads="no"
+       fi
+    fi
+   ],
+   [have_threads="no"])
+
+if test "x${have_threads}" = "xno" ; then
+   AC_MSG_ERROR([Threads not supported. Be sure to have pthread on non Windows OS])
+fi
 
 ### Checks for types
 
@@ -105,8 +123,7 @@ esac
 AC_SUBST(EFL_EIO_BUILD)
 
 ### Checks for library functions
-AC_FUNC_ALLOCA
-AC_CHECK_FUNCS(strlcpy)
+AC_CHECK_FUNCS([fchmod])
 
 have_splice="no"
 AC_TRY_LINK([
@@ -142,6 +159,8 @@ echo
 echo
 echo
 echo "Configuration Options Summary:"
+echo
+echo "  Thread Support.......: ${have_threads}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo

@@ -28,9 +28,19 @@
 #include <dirent.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <pthread.h>
 #include <pwd.h>
-#include <grp.h>
+
+#ifdef HAVE_GRP_H
+# include <grp.h>
+#endif
+
+#ifdef EFL_HAVE_POSIX_THREADS
+# include <pthread.h>
+#endif
+
+#ifdef EFL_HAVE_WIN32_THREADS
+# include <windows.h>
+#endif
 
 #include <Ecore.h>
 
