@@ -344,7 +344,7 @@ _color_with_lightness(void *data)
 static void
 _draw_rects(void *data, double x)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double one_six = (double)1 / (double)6;
 
@@ -435,7 +435,7 @@ _draw_rects(void *data, double x)
 static void
 _arrow_cb(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    double x, y;
 
    edje_object_part_drag_value_get(obj, "elm.arrow", &x, &y);
@@ -446,7 +446,7 @@ _arrow_cb(void *data, Evas_Object *obj, const char *emission __UNUSED__, const c
 static void
 _colorbar_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
    double arrow_x, arrow_y;
@@ -469,7 +469,7 @@ _colorbar_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 static void
 _arrow_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *)data;
+   Colorpicker_Data *cp = data;
    Evas_Coord arrow_w, arrow_h;
 
    evas_object_geometry_get(cp->touch_area, NULL, NULL, NULL, &arrow_h);
@@ -482,7 +482,7 @@ _arrow_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 static Eina_Bool
 _mv_timer(void *data)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *)data;
+   Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
@@ -523,7 +523,7 @@ _mv_timer(void *data)
 static Eina_Bool
 _long_press_timer(void *data)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
 
    if (wd->lp_timer)
@@ -540,7 +540,7 @@ _long_press_timer(void *data)
 static void
 _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
@@ -600,7 +600,7 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 static void
 _left_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
 
    if (wd->lp_timer)
@@ -621,7 +621,7 @@ _left_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 static void
 _right_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = (Colorpicker_Data *) data;
+   Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
 
    if (wd->lp_timer)
