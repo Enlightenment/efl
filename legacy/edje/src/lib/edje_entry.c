@@ -2628,6 +2628,8 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    Ecore_IMF_Event_Delete_Surrounding *ev = event;
+   Evas_Textblock_Cursor *del_start, *del_end;
+   int cursor_pos;
 
    if (!rp) return ECORE_CALLBACK_PASS_ON;
    en = rp->entry_data;
@@ -2636,6 +2638,19 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
       return ECORE_CALLBACK_PASS_ON;
 
    if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
+
+   cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
+
+   del_start = evas_object_textblock_cursor_new(en->rp->object);
+   evas_textblock_cursor_pos_set(del_start, cursor_pos + ev->offset);
+
+   del_end = evas_object_textblock_cursor_new(en->rp->object);
+   evas_textblock_cursor_pos_set(del_end, cursor_pos + ev->offset + ev->n_chars);
+
+   evas_textblock_cursor_range_delete(del_start, del_end);
+
+   evas_textblock_cursor_free(del_start);
+   evas_textblock_cursor_free(del_end);
 
    return ECORE_CALLBACK_DONE;
 }
