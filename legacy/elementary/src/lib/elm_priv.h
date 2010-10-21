@@ -71,7 +71,7 @@ struct _Elm_Config
 {
    int          config_version;
    int          engine;
-   int          thumbscroll_enable;
+   Eina_Bool    thumbscroll_enable;
    int          thumbscroll_threshhold;
    double       thumbscroll_momentum_threshhold;
    double       thumbscroll_friction;
@@ -79,7 +79,7 @@ struct _Elm_Config
    double       page_scroll_friction;
    double       bring_in_scroll_friction;
    double       zoom_friction;
-   int          thumbscroll_bounce_enable;
+   Eina_Bool    thumbscroll_bounce_enable;
    double       scale;
    int          bgpixmap;
    int          compositing;
@@ -92,9 +92,13 @@ struct _Elm_Config
    const char  *theme;
    const char  *modules;
    double       tooltip_delay;
-   int          cursor_engine_only;
-   int          focus_highlight_enable;
-   int          focus_highlight_animate;
+   Eina_Bool    cursor_engine_only;
+   Eina_Bool    focus_highlight_enable;
+   Eina_Bool    focus_highlight_animate;
+   int          toolbar_shrink_mode;
+   Eina_Bool    fileselector_expand_enable;
+   Eina_Bool    inwin_dialogs_enable;
+   int          icon_size;
 };
 
 struct _Elm_Module

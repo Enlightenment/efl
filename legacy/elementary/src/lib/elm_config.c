@@ -204,7 +204,7 @@ _desc_init(void)
      }
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "config_version", config_version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "engine", engine, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_threshhold", thumbscroll_threshhold, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_momentum_threshhold", thumbscroll_momentum_threshhold, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_friction", thumbscroll_friction, EET_T_DOUBLE);
@@ -212,7 +212,7 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "page_scroll_friction", page_scroll_friction, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "bring_in_scroll_friction", bring_in_scroll_friction, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "zoom_friction", zoom_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_bounce_enable", thumbscroll_bounce_enable, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_bounce_enable", thumbscroll_bounce_enable, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "scale", scale, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "bgpixmap", bgpixmap, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "compositing", compositing, EET_T_INT);
@@ -225,9 +225,13 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "theme", theme, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay", tooltip_delay, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only", cursor_engine_only, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_enable", focus_highlight_enable, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_animate", focus_highlight_animate, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only", cursor_engine_only, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_enable", focus_highlight_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_animate", focus_highlight_animate, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "toolbar_shrink_mode", toolbar_shrink_mode, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "fileselector_expand_enable", fileselector_expand_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "inwin_dialogs_enable", inwin_dialogs_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "icon_size", icon_size, EET_T_INT);
 }
 
 static void
@@ -393,7 +397,7 @@ _config_load(void)
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->config_version = ELM_CONFIG_VERSION;
    _elm_config->engine = ELM_SOFTWARE_X11;
-   _elm_config->thumbscroll_enable = 1;
+   _elm_config->thumbscroll_enable = EINA_TRUE;
    _elm_config->thumbscroll_threshhold = 24;
    _elm_config->thumbscroll_momentum_threshhold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
@@ -401,7 +405,7 @@ _config_load(void)
    _elm_config->page_scroll_friction = 0.5;
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
-   _elm_config->thumbscroll_bounce_enable = 1;
+   _elm_config->thumbscroll_bounce_enable = EINA_TRUE;
    _elm_config->scale = 1.0;
    _elm_config->bgpixmap = 0;
    _elm_config->font_hinting = 2;
@@ -414,9 +418,13 @@ _config_load(void)
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
    _elm_config->tooltip_delay = 1.0;
-   _elm_config->cursor_engine_only = 1;
-   _elm_config->focus_highlight_enable = 0;
-   _elm_config->focus_highlight_animate = 1;
+   _elm_config->cursor_engine_only = EINA_TRUE;
+   _elm_config->focus_highlight_enable = EINA_FALSE;
+   _elm_config->focus_highlight_animate = EINA_TRUE;
+   _elm_config->toolbar_shrink_mode = 2;
+   _elm_config->fileselector_expand_enable = EINA_FALSE;
+   _elm_config->inwin_dialogs_enable = EINA_FALSE;
+   _elm_config->icon_size = 32;
 }
 
 static void
@@ -523,7 +531,7 @@ _env_get(void)
      }
 
    s = getenv("ELM_THUMBSCROLL_ENABLE");
-   if (s) _elm_config->thumbscroll_enable = atoi(s);
+   if (s) _elm_config->thumbscroll_enable = !!atoi(s);
    s = getenv("ELM_THUMBSCROLL_THRESHOLD");
    if (s) _elm_config->thumbscroll_threshhold = atoi(s);
    // FIXME: floatformat locale issues here 1.0 vs 1,0 - should just be 1.0
@@ -616,13 +624,25 @@ _env_get(void)
      }
 
    s = getenv("ELM_CURSOR_ENGINE_ONLY");
-   if (s) _elm_config->cursor_engine_only = atoi(s);
+   if (s) _elm_config->cursor_engine_only = !!atoi(s);
 
    s = getenv("ELM_FOCUS_HIGHLIGHT_ENABLE");
-   if (s) _elm_config->focus_highlight_enable = atoi(s);
+   if (s) _elm_config->focus_highlight_enable = !!atoi(s);
 
    s = getenv("ELM_FOCUS_HIGHLIGHT_ANIMATE");
-   if (s) _elm_config->focus_highlight_animate = atoi(s);
+   if (s) _elm_config->focus_highlight_animate = !!atoi(s);
+
+   s = getenv("ELM_TOOLBAR_SHRINK_MODE");
+   if (s) _elm_config->toolbar_shrink_mode = atoi(s);
+
+   s = getenv("ELM_FILESELECTOR_EXPAND_ENABLE");
+   if (s) _elm_config->fileselector_expand_enable = !!atoi(s);
+
+   s = getenv("ELM_INWIN_DIALOGS_ENABLE");
+   if (s) _elm_config->inwin_dialogs_enable = !!atoi(s);
+
+   s = getenv("ELM_ICON_SIZE");
+   if (s) _elm_config->icon_size = atoi(s);
 }
 
 void

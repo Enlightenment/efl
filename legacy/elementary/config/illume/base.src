@@ -1,15 +1,15 @@
 group "Elm_Config" struct {
   value "config_version" int: 65537;
   value "engine" int: 0;
-  value "thumbscroll_enable" int: 1;
+  value "thumbscroll_enable" uchar: 1;
   value "thumbscroll_threshhold" int: 24;
   value "thumbscroll_momentum_threshhold" double: 100.0;
   value "thumbscroll_friction" double: 1.0;
   value "thumbscroll_bounce_friction" double: 0.5;
+  value "thumbscroll_bounce_enable" uchar: 1;
   value "page_scroll_friction" double: 0.5;
   value "bring_in_scroll_friction" double: 0.5;
   value "zoom_friction" double: 0.5;
-  value "thumbscroll_bounce_enable" int: 1;
   value "scale" double: 1.0;
   value "bgpixmap" int: 0;
   value "compositing" int: 1;
@@ -21,7 +21,11 @@ group "Elm_Config" struct {
   value "theme" string: "default";
   value "modules" string: "";
   value "tooltip_delay" double: 1.0;
-  value "cursor_engine_only" int: 1;
-  value "focus_highlight_enable" int: 0;
-  value "focus_highlight_animate" int: 0;
+  value "cursor_engine_only" uchar: 1;
+  value "focus_highlight_enable" uchar: 0;
+  value "focus_highlight_animate" uchar: 0;
+  value "toolbar_shrink_mode" int: 2;
+  value "fileselector_expand_enable" uchar: 0;
+  value "inwin_dialogs_enable" uchar: 1;
+  value "icon_size" int: 32;
 }
