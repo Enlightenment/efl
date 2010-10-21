@@ -4,6 +4,7 @@
 
 typedef struct _Elm_Params_Photocam
 {
+   Elm_Params base;
    const char *file;
    double zoom;
    const char *zoom_mode;
@@ -195,6 +196,7 @@ external_photocam_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_photocam_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("file"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("zoom"),
    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("zoom mode", "manual", choices),

@@ -2,6 +2,7 @@
 
 typedef struct _Elm_Params_Toolbar
 {
+   Elm_Params base;
    int icon_size;
    Eina_Bool icon_size_exists:1;
    double align;
@@ -118,6 +119,7 @@ external_toolbar_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_toolbar_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_INT("icon_size"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("align"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL

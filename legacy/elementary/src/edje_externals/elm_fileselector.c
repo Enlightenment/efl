@@ -4,6 +4,7 @@
 
 typedef struct _Elm_Params_Fileselector
 {
+   Elm_Params base;
    Eina_Bool is_save:1;
    Eina_Bool is_save_set:1;
    Eina_Bool folder_only:1;
@@ -171,6 +172,7 @@ external_fileselector_params_free(void *params)
 
 static Edje_External_Param_Info external_fileselector_params[] =
   {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
     EDJE_EXTERNAL_PARAM_INFO_BOOL("save"),
     EDJE_EXTERNAL_PARAM_INFO_BOOL("folder only"),
     EDJE_EXTERNAL_PARAM_INFO_BOOL("show buttons"),

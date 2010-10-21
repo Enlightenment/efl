@@ -5,6 +5,7 @@
 typedef struct _Elm_Params_Toggle
 {
    Elm_Params base;
+   const char *label;
    Evas_Object *icon;
    const char *on, *off;
    Eina_Bool state:1;
@@ -20,8 +21,8 @@ external_toggle_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    else if (from_params) p = from_params;
    else return;
 
-   if (p->base.label)
-     elm_toggle_label_set(obj, p->base.label);
+   if (p->label)
+     elm_toggle_label_set(obj, p->label);
    if (p->icon)
      elm_toggle_icon_set(obj, p->icon);
 
@@ -155,7 +156,7 @@ external_toggle_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    Edje_External_Param *param;
    const Eina_List *l;
 
-   mem = external_common_params_parse(Elm_Params_Toggle, data, obj, params);
+   mem = calloc(1, sizeof(Elm_Params_Toggle));
    if (!mem)
      return NULL;
 
@@ -192,11 +193,14 @@ external_toggle_params_free(void *params)
      eina_stringshare_del(mem->on);
    if (mem->off)
      eina_stringshare_del(mem->off);
-   external_common_params_free(params);
+   if (mem->label)
+      eina_stringshare_del(mem->label);
+   free(params);
 }
 
 static Edje_External_Param_Info external_toggle_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label on", "ON"),
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label off", "OFF"),

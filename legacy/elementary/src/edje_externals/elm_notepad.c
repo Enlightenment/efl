@@ -50,6 +50,7 @@ external_notepad_params_free(void *params __UNUSED__)
 }
 
 static Edje_External_Param_Info external_notepad_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 

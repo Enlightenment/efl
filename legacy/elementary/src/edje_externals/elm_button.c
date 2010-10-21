@@ -3,6 +3,7 @@
 typedef struct _Elm_Params_Button
 {
    Elm_Params base;
+   const char *label;
    Evas_Object *icon;
 } Elm_Params_Button;
 
@@ -15,8 +16,8 @@ external_button_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    else if (from_params) p = from_params;
    else return;
 
-   if (p->base.label)
-     elm_button_label_set(obj, p->base.label);
+   if (p->label)
+     elm_button_label_set(obj, p->label);
    if (p->icon)
      elm_button_icon_set(obj, p->icon);
 }
@@ -76,12 +77,23 @@ static void *
 external_button_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Button *mem;
+   Edje_External_Param *param;
+   const Eina_List *l;
 
-   mem = external_common_params_parse(Elm_Params_Button, data, obj, params);
+   mem = calloc(1, sizeof(Elm_Params_Button));
    if (!mem)
      return NULL;
 
    external_common_icon_param_parse(&mem->icon, obj, params);
+
+   EINA_LIST_FOREACH(params, l, param)
+     {
+        if (!strcmp(param->name, "label"))
+          {
+             mem->label = eina_stringshare_add(param->s);
+             break;
+          }
+     }
 
    return mem;
 }
@@ -96,11 +108,15 @@ static Evas_Object *external_button_content_get(void *data __UNUSED__,
 static void
 external_button_params_free(void *params)
 {
-   external_common_params_free(params);
+   Elm_Params_Button *mem = params;
+   if (mem->label)
+      eina_stringshare_del(mem->label);
+   free(params);
 }
 
 static Edje_External_Param_Info external_button_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };

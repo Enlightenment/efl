@@ -2,6 +2,7 @@
 
 typedef struct _Elm_Params_Entry
 {
+   Elm_Params base;
    const char *text;
    Eina_Bool text_set:1;
    Eina_Bool editable:1;
@@ -171,6 +172,7 @@ external_scrolled_entry_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_scrolled_entry_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("text", "some text"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("editable"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("single line"),

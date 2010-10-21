@@ -3,6 +3,7 @@
 typedef struct _Elm_Params_Progressbar
 {
    Elm_Params base;
+   const char *label;
    Evas_Object *icon;
    const char *unit;
    double value;
@@ -24,8 +25,8 @@ external_progressbar_state_set(void *data __UNUSED__, Evas_Object *obj, const vo
    else if (from_params) p = from_params;
    else return;
 
-   if (p->base.label)
-     elm_progressbar_label_set(obj, p->base.label);
+   if (p->label)
+     elm_progressbar_label_set(obj, p->label);
    if (p->icon)
      elm_progressbar_icon_set(obj, p->icon);
    if (p->span_exists)
@@ -178,7 +179,7 @@ external_progressbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUS
    Edje_External_Param *param;
    const Eina_List *l;
 
-   mem = external_common_params_parse(Elm_Params_Progressbar, data, obj, params);
+   mem = calloc(1, sizeof(Elm_Params_Progressbar));
    if (!mem)
      return NULL;
 
@@ -208,6 +209,8 @@ external_progressbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUS
 	  }
 	else if (!strcmp(param->name, "unit format"))
 	  mem->unit = eina_stringshare_add(param->s);
+	else if (!strcmp(param->name, "label"))
+	  mem->label = eina_stringshare_add(param->s);
      }
 
    return mem;
@@ -227,11 +230,14 @@ external_progressbar_params_free(void *params)
 
    if (mem->unit)
      eina_stringshare_del(mem->unit);
-   external_common_params_free(params);
+   if (mem->label)
+      eina_stringshare_del(mem->label);
+   free(params);
 }
 
 static Edje_External_Param_Info external_progressbar_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("value"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("horizontal"),

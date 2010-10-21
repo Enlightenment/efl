@@ -4,6 +4,7 @@
 
 typedef struct _Elm_Params_Thumb
 {
+   Elm_Params base;
    const char *animate;
 } Elm_Params_Thumb;
 
@@ -123,6 +124,7 @@ external_thumb_params_free(void *params)
 
 static Edje_External_Param_Info external_thumb_params[] =
   {
+    DEFINE_EXTERNAL_COMMON_PARAMS,
     EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("animate", "loop", choices),
     EDJE_EXTERNAL_PARAM_INFO_SENTINEL
   };

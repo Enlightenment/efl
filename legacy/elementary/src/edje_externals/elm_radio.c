@@ -3,6 +3,7 @@
 typedef struct _Elm_Params_Radio
 {
    Elm_Params base;
+   const char *label;
    Evas_Object *icon;
    const char* group_name;
    int value;
@@ -18,8 +19,8 @@ external_radio_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    else if (from_params) p = from_params;
    else return;
 
-   if (p->base.label)
-     elm_radio_label_set(obj, p->base.label);
+   if (p->label)
+     elm_radio_label_set(obj, p->label);
    if (p->icon)
      elm_radio_icon_set(obj, p->icon);
    if (p->value_exists)
@@ -121,7 +122,7 @@ external_radio_params_parse(void *data, Evas_Object *obj, const Eina_List *param
    Edje_External_Param *param;
    const Eina_List *l;
 
-   mem = external_common_params_parse(Elm_Params_Radio, data, obj, params);
+   mem = calloc(1, sizeof(Elm_Params_Radio));
    if (!mem)
      return NULL;
 
@@ -136,6 +137,8 @@ external_radio_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 	     mem->value = param->i;
 	     mem->value_exists = EINA_TRUE;
 	  }
+	else if (!strcmp(param->name, "label"))
+	  mem->label = eina_stringshare_add(param->s);
      }
 
    return mem;
@@ -155,11 +158,14 @@ external_radio_params_free(void *params)
 
    if (mem->group_name)
      eina_stringshare_del(mem->group_name);
-   external_common_params_free(params);
+   if (mem->label)
+      eina_stringshare_del(mem->label);
+   free(params);
 }
 
 static Edje_External_Param_Info external_radio_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("group"),
    EDJE_EXTERNAL_PARAM_INFO_INT("value"),

@@ -69,6 +69,34 @@ _external_signal_proxy_cb(void *data, Evas_Object *obj __UNUSED__, void *event_i
    edje_object_signal_emit(ctxt->edje, ctxt->emission, ctxt->source);
 }
 
+Eina_Bool
+external_common_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+{
+   if (!strcmp(param->name, "style"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_object_style_get(obj);
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+Eina_Bool
+external_common_param_set(void *data __UNUSED__, Evas_Object *obj, Edje_External_Param *param)
+{
+   if (!strcmp(param->name, "style"))
+     {
+         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+           {
+              elm_object_style_set(obj, param->s);
+              return EINA_TRUE;
+           }
+     }
+   return EINA_FALSE;
+}
+
 void
 external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_name)
 {
@@ -107,26 +135,34 @@ external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_nam
      }
 }
 
-void *
-external_common_params_parse_internal(size_t params_size, void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
+void
+external_common_params_parse(void *mem, void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
 {
    Elm_Params *p;
    const Eina_List *l;
    Edje_External_Param *param;
 
-   if (params_size < sizeof(Elm_Params))
-     return NULL;
-
-   p = calloc(1, params_size);
-   if (!p)
-     return NULL;
-
+   p = mem;
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "label"))
-	  p->label = param->s;
+        if (!strcmp(param->name, "style"))
+          {
+             p->style = eina_stringshare_add(param->s);
+             break;
+          }
      }
-   return p;
+}
+
+void
+external_common_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+{
+   const Elm_Params *p;
+   if (to_params) p = to_params;
+   else if (from_params) p = from_params;
+   else return;
+
+   if (p->style)
+      elm_object_style_set(obj, p->style);
 }
 
 Evas_Object *
@@ -191,8 +227,9 @@ void
 external_common_params_free(void *params)
 {
    Elm_Params *p = params;
-   free(p);
-};
+   if (p->style)
+     eina_stringshare_del(p->style);
+}
 
 #define DEFINE_TYPE(type_name) \
   extern const Edje_External_Type external_##type_name##_type;

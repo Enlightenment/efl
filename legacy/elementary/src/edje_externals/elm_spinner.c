@@ -2,6 +2,7 @@
 
 typedef struct _Elm_Params_Spinner
 {
+   Elm_Params base;
    const char *label_format;
    double min, max, step, value;
    Eina_Bool min_exists:1;
@@ -229,6 +230,7 @@ external_spinner_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_spinner_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label format", "%1.2f"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("min"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE_DEFAULT("max", 100.0),

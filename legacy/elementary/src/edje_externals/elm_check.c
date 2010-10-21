@@ -3,6 +3,7 @@
 typedef struct _Elm_Params_Check
 {
    Elm_Params base;
+   const char *label;
    Evas_Object *icon;
    Eina_Bool state:1;
    Eina_Bool state_exists:1;
@@ -17,8 +18,8 @@ external_check_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    else if (from_params) p = from_params;
    else return;
 
-   if (p->base.label)
-     elm_check_label_set(obj, p->base.label);
+   if (p->label)
+     elm_check_label_set(obj, p->label);
    if (p->icon)
      elm_check_icon_set(obj, p->icon);
    if (p->state_exists)
@@ -97,18 +98,23 @@ external_check_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 {
    Elm_Params_Check *mem;
    Edje_External_Param *param;
+   const Eina_List *l;
 
-   mem = external_common_params_parse(Elm_Params_Check, data, obj, params);
+   mem = calloc(1, sizeof(Elm_Params_Check));
    if (!mem)
      return NULL;
 
    external_common_icon_param_parse(&mem->icon, obj, params);
 
-   param = edje_external_param_find(params, "state");
-   if (param)
+   EINA_LIST_FOREACH(params, l, param)
      {
-	mem->state = !!param->i;
-	mem->state_exists = EINA_TRUE;
+        if (!strcmp(param->name, "state"))
+          {
+             mem->state = !!param->i;
+             mem->state_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "label"))
+           mem->label = eina_stringshare_add(param->s);
      }
 
    return mem;
@@ -124,11 +130,15 @@ static Evas_Object *external_check_content_get(void *data __UNUSED__,
 static void
 external_check_params_free(void *params)
 {
-   external_common_params_free(params);
+   Elm_Params_Check *mem = params;
+   if (mem->label)
+      eina_stringshare_del(mem->label);
+   free(params);
 }
 
 static Edje_External_Param_Info external_check_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_STRING("icon"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL_FULL("state", 0, "unchecked", "checked"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL

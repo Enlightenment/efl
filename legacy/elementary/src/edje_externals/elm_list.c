@@ -4,6 +4,7 @@
 
 typedef struct _Elm_Params_List
 {
+   Elm_Params base;
    const char *policy_h;
    const char *policy_v;
    const char *mode;
@@ -287,6 +288,7 @@ external_list_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_list_params[] = {
+  DEFINE_EXTERNAL_COMMON_PARAMS,
   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("list mode", "scroll",
                                        list_mode_choices),
   EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("horizontal scroll", "auto",

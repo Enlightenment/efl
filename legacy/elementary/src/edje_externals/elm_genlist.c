@@ -4,6 +4,7 @@
 
 typedef struct _Elm_Params_Genlist
 {
+   Elm_Params base;
    const char *horizontal_mode;
    Eina_Bool multi:1;
    Eina_Bool multi_exists:1;
@@ -316,6 +317,7 @@ external_genlist_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_genlist_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("horizontal mode", "scroll", list_horizontal_mode_choices),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("multi select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("always select"),

@@ -2,6 +2,7 @@
 
 typedef struct _Elm_Params_Slideshow
 {
+   Elm_Params base;
    int timeout;
    const char *transition;
    const char *layout;
@@ -169,6 +170,7 @@ external_slideshow_params_free(void *params __UNUSED__)
 }
 
 static Edje_External_Param_Info external_slideshow_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_INT("timeout"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("loop"),
    EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("transition", "fade", transitions),

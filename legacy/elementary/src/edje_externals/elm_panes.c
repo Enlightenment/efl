@@ -115,7 +115,7 @@ static void * external_panes_params_parse(void *data, Evas_Object *obj,
 	Edje_External_Param *param;
 	const Eina_List *l;
 
-	mem = external_common_params_parse(Elm_Params_Panes, data, obj, params);
+        mem = calloc(1, sizeof(Elm_Params_Panes));
 	if (!mem)
 		return NULL;
 
@@ -155,7 +155,7 @@ static Evas_Object *external_panes_content_get(void *data __UNUSED__,
 
 
 static void external_panes_params_free(void *params) {
-	external_common_params_free(params);
+	free(params);
 }
 
 static Edje_External_Param_Info external_panes_params[] = {

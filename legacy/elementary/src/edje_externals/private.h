@@ -5,7 +5,7 @@
 #include "elm_priv.h"
 
 typedef struct {
-    const char *label;
+    const char *style;
 } Elm_Params;
 
 void external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
@@ -16,15 +16,47 @@ void *external_common_params_parse_internal(size_t params_size, void *data, Evas
 Evas_Object *external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *param);
 Evas_Object *external_common_param_edje_object_get(Evas_Object *obj, const Edje_External_Param *p);
 void external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Eina_List *params);
-#define external_common_params_parse(type, data, obj, params)   \
-    external_common_params_parse_internal(sizeof(type), data, obj, params)
-
 
 #define DEFINE_EXTERNAL_TYPE(type_name, name)           \
+static Eina_Bool                                        \
+_external_##type_name##_param_set(void *data, Evas_Object *obj, const Edje_External_Param *param) \
+{                                                       \
+   if (external_common_param_set(data, obj, param))     \
+      return EINA_TRUE;                                 \
+   return external_##type_name##_param_set(data, obj, param); \
+}                                                       \
+static Eina_Bool                                        \
+_external_##type_name##_param_get(void *data, const Evas_Object *obj, Edje_External_Param *param) \
+{                                                       \
+   if (external_common_param_get(data, obj, param))     \
+      return EINA_TRUE;                                 \
+   return external_##type_name##_param_get(data, obj, param); \
+}                                                       \
 static const char *                                     \
 external_##type_name##_label_get(void *data __UNUSED__) \
 {                                                       \
     return name;                                        \
+}                                                       \
+                                                        \
+static void                                             \
+_external_##type_name##_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__) \
+{                                                       \
+   external_common_state_set(data, obj, from_params, to_params, pos); \
+   external_##type_name##_state_set(data, obj, from_params, to_params, pos); \
+}                                                       \
+                                                        \
+static void *                                           \
+_external_##type_name##_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params) \
+{                                                       \
+   void *mem = external_##type_name##_params_parse(data, obj, params); \
+   external_common_params_parse(mem, data, obj, params); \
+   return mem;                                          \
+}                                                       \
+static void                                             \
+_external_##type_name##_params_free(void *params)       \
+{                                                       \
+   external_common_params_free(params);                 \
+   external_##type_name##_params_free(params);          \
 }                                                       \
                                                         \
 const Edje_External_Type external_##type_name##_type = {\
@@ -32,12 +64,12 @@ const Edje_External_Type external_##type_name##_type = {\
     .module = "elm",                                    \
     .module_name = "Elementary",                        \
     .add = external_##type_name##_add,                  \
-    .state_set = external_##type_name##_state_set,      \
+    .state_set = _external_##type_name##_state_set,     \
     .signal_emit = external_signal,                     \
-    .param_set = external_##type_name##_param_set,      \
-    .param_get = external_##type_name##_param_get,      \
-    .params_parse = external_##type_name##_params_parse,\
-    .params_free = external_##type_name##_params_free,  \
+    .param_set = _external_##type_name##_param_set,     \
+    .param_get = _external_##type_name##_param_get,     \
+    .params_parse = _external_##type_name##_params_parse,\
+    .params_free = _external_##type_name##_params_free, \
     .label_get = external_##type_name##_label_get,      \
     .content_get = external_##type_name##_content_get,  \
     .description_get = NULL,                            \

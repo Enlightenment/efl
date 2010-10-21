@@ -2,6 +2,7 @@
 
 typedef struct _Elm_Params_Anchorview
 {
+   Elm_Params base;
    const char *text;
 } Elm_Params_Anchorview;
 
@@ -94,6 +95,7 @@ external_anchorview_params_free(void *params)
 }
 
 static Edje_External_Param_Info external_anchorview_params[] = {
+   DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("text", "some text"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };

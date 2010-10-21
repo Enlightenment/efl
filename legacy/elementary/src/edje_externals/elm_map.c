@@ -4,6 +4,7 @@
 
 typedef struct _Elm_Params_Map
 {
+   Elm_Params base;
    const char *map_source;
    const char *zoom_mode;
    double zoom;
@@ -193,6 +194,7 @@ external_map_params_free(void *params)
 
 static Edje_External_Param_Info external_map_params[] =
   {
+    DEFINE_EXTERNAL_COMMON_PARAMS,
     EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("map source", "Mapnik",
 					 source_choices),
     EDJE_EXTERNAL_PARAM_INFO_CHOICE_FULL("zoom mode", "manual", zoom_choices),
