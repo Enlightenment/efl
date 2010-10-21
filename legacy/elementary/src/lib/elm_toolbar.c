@@ -457,7 +457,6 @@ elm_toolbar_add(Evas_Object *parent)
 				 ELM_SMART_SCROLLER_POLICY_OFF);
 
    wd->icon_size = _elm_config->icon_size;
-   wd->shrink_mode = ELM_TOOLBAR_SHRINK_SCROLL;
    wd->homogeneous = EINA_TRUE;
    wd->align = 0.5;
 
@@ -468,6 +467,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_smart_scroller_child_set(wd->scr, wd->bx);
    evas_object_show(wd->bx);
 
+   elm_toolbar_mode_shrink_set(obj, _elm_config->toolbar_shrink_mode);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE, _resize, obj);
 
    _sizing_eval(obj);
