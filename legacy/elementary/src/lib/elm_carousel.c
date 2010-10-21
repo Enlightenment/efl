@@ -177,7 +177,7 @@ elm_carousel_add(Evas_Object *parent)
 				 ELM_SMART_SCROLLER_POLICY_AUTO,
 				 ELM_SMART_SCROLLER_POLICY_OFF);
 
-   wd->icon_size = 32;
+   wd->icon_size = _elm_config->icon_size;
 
    wd->bx = evas_object_box_add(e);
    evas_object_box_layout_set(wd->bx,
