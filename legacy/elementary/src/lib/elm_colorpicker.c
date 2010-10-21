@@ -154,7 +154,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _rgb_to_hsl(void *data)
 {
-   Widget_Data *wd = (Widget_Data *) data;
+   Widget_Data *wd = data;
    double r, g, b;
    double v, m, vm;
    double r2, g2, b2;
@@ -210,7 +210,7 @@ _rgb_to_hsl(void *data)
 static void
 _hsl_to_rgb(void *data)
 {
-   Widget_Data *wd = (Widget_Data *)data;
+   Widget_Data *wd = data;
    double r = 0, g = 0, b = 0;
    double _h, _s, _l;
    int i = 0;
@@ -295,7 +295,7 @@ _hsl_to_rgb(void *data)
 static void
 _color_with_saturation(void *data)
 {
-   Widget_Data *wd = (Widget_Data *) data;
+   Widget_Data *wd = data;
 
    if (wd->er > 127)
      wd->sr = (int)((double)127 + ((double)wd->er - (double)127) * wd->s);
