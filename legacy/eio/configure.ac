@@ -59,9 +59,21 @@ AC_SUBST(VMAJ)
 dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
+# Check whether pkg-config supports Requires.private
+if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
+   pkgconfig_requires_private="Requires.private"
+else
+   pkgconfig_requires_private="Requires"
+fi
+AC_SUBST(pkgconfig_requires_private)
+
 AC_PROG_CC
 
-PKG_CHECK_MODULES([EIO], [eina ecore])
+requirements_eio="eina >= 1.0.0 ecore >= 1.0.0"
+
+PKG_CHECK_MODULES([EIO], [eina >= 1.0.0 ecore >= 1.0.0])
+
+AC_SUBST(requirements_eio)
 
 # doxygen program for documentation building
 
