@@ -433,7 +433,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * Cast and ensure the given pointer is an Elm_Widget_Item or return NULL.
  */
 #define ELM_WIDGET_ITEM(item) \
-   ((item && EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) ? \
+   (((item) && (EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC))) ? \
        ((Elm_Widget_Item *)(item)) : NULL)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...) \

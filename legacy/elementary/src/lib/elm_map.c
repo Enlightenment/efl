@@ -323,7 +323,7 @@ rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_C
    gw = wd->size.w;
    gh = wd->size.h;
 
-   if (ww == gw && hh == gh) return;
+   if ((ww == gw) && (hh == gh)) return;
 
    if (ow > gw) ax = (ow - gw) / 2;
    if (oh > gh) ay = (oh - gh) / 2;
@@ -374,8 +374,8 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
      }
    wd->marker_zoom = wd->zoom;
 
-   if (wd->paused_markers
-       && (wd->size.nw != wd->size.w || wd->size.nh != wd->size.h) )
+   if ((wd->paused_markers)
+       && ((wd->size.nw != wd->size.w) || (wd->size.nh != wd->size.h)) )
      return;
 
    g_xx = wd->pan_x / wd->tsize;
@@ -391,7 +391,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
    EINA_LIST_FREE(wd->cells_displayed, cell)
      {
 	eina_matrixsparse_cell_position_get(cell, (unsigned long *)&y, (unsigned long *)&x);
-	if (y < g_yy || y > g_yy + g_hh || x < g_xx || x > g_xx + g_ww)
+	if ((y < g_yy) || (y > g_yy + g_hh) || (x < g_xx) || (x > g_xx + g_ww))
 	  {
 	     EINA_LIST_FOREACH(eina_matrixsparse_cell_data_get(cell), l, group)
 	       {
@@ -442,9 +442,9 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 		       hh = (((long long)gh * (ty + hh)) / g->h) - yy;
 		    }
 
-		  if (!group->clas->hide
-                      && xx-px+ax+ox >= ox && xx-px+ax+ox<= ox+ow
-                      && yy-py+ay+oy >= oy && yy-py+ay+oy<= oy+oh)
+		  if ((!group->clas->hide)
+                      && (xx-px+ax+ox >= ox) && (xx-px+ax+ox<= ox+ow)
+                      && (yy-py+ay+oy >= oy) && (yy-py+ay+oy<= oy+oh))
 		    {
 		       if (!group->obj) _group_object_create(group);
 
@@ -462,7 +462,7 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
 		       evas_object_move(group->obj,
                                         xx - px + ax + ox - ww/2,
                                         yy - py + ay + oy - hh/2);
-		       if (!wd->paused_markers || group->update_resize)
+		       if ((!wd->paused_markers) || (group->update_resize))
 			 {
 			    group->update_resize = EINA_FALSE;
 			    evas_object_resize(group->obj, ww, hh);
@@ -625,7 +625,7 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
    gi->job = NULL;
 
    DBG("DOWNLOAD done %s", gi->file);
-   if (gi->want && !status) _tile_update(gi);
+   if ((gi->want) && (!status)) _tile_update(gi);
 
    if (status)
      {
@@ -810,7 +810,7 @@ grid_load(Evas_Object *obj, Grid *g)
 		  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
 	       }
              
-	     if (!gi->have && !gi->download)
+	     if ((!gi->have) && (!gi->download))
 	       {
 		  char buf[PATH_MAX], buf2[PATH_MAX];
 		  char *source;
@@ -827,7 +827,7 @@ grid_load(Evas_Object *obj, Grid *g)
                   
 		  eina_stringshare_replace(&gi->file, buf2);
 
-		  if (ecore_file_exists(buf2) || g == eina_list_data_get(wd->grids))
+		  if ((ecore_file_exists(buf2)) || (g == eina_list_data_get(wd->grids)))
 		    {
 		       gi->download = EINA_TRUE;
 		       wd->preload_num++;
@@ -1382,7 +1382,7 @@ _group_object_create(Marker_Group *group)
    Evas_Object *icon = NULL;
 
    if (group->obj) return;
-   if (!group->clas->priv.objs_notused || eina_list_count(group->markers) == 1)
+   if ((!group->clas->priv.objs_notused) || (eina_list_count(group->markers) == 1))
      {
 	//set icon and style
 	if (eina_list_count(group->markers) == 1)
@@ -1545,7 +1545,7 @@ _group_bubble_content_update(Marker_Group *group)
    EINA_LIST_FOREACH(group->markers, l, marker)
      {
 	if (i >= group->wd->markers_max_num) break;
-	if (!marker->content && marker->clas->func.get)
+	if ((!marker->content) && (marker->clas->func.get))
 	  marker->content = marker->clas->func.get(group->wd->obj, marker, marker->data);
 	else if (marker->content)
 	  elm_box_unpack(group->bx, marker->content);
@@ -1567,7 +1567,7 @@ _group_bubble_content_free(Marker_Group *group)
    if (!group->sc) return;
    EINA_LIST_FOREACH(group->markers, l, marker)
      {
-	if (marker->content && marker->clas->func.del)
+	if ((marker->content) && (marker->clas->func.del))
 	  marker->clas->func.del(group->wd->obj, marker, marker->data, marker->content);
 	else if (marker->content)
 	  evas_object_del(marker->content);
@@ -1597,7 +1597,7 @@ _group_bubble_place(Marker_Group *group)
    Evas_Coord xx, yy, ww, hh;
    const char *s;
 
-   if (!group->bubble || !group->obj) return;
+   if ((!group->bubble) || (!group->obj)) return;
 
    evas_object_geometry_get(group->obj, &x, &y, &w, NULL);
    edje_object_size_min_calc(group->bubble, NULL, &hh);
@@ -2519,14 +2519,14 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 	     if (marker->groups[i]->h > marker->groups[i]->clas->priv.edje_max_h)
 	       marker->groups[i]->h = marker->groups[i]->clas->priv.edje_max_h;
 	  }
-	if (marker->groups[i]->obj && eina_list_count(marker->groups[i]->markers) == 1)
+	if ((marker->groups[i]->obj) && (eina_list_count(marker->groups[i]->markers) == 1))
 	  {
 	     _group_object_free(marker->groups[i]);
 	     _group_object_create(marker->groups[i]);
 	  }
      }
 
-   if (marker->content && marker->clas->func.del)
+   if ((marker->content) && (marker->clas->func.del))
      marker->clas->func.del(marker->wd->obj, marker, marker->data, marker->content);
    else if (marker->content)
      evas_object_del(marker->content);
@@ -2597,16 +2597,16 @@ elm_map_markers_list_show(Eina_List *markers)
      {
 	wd = marker->wd;
 
-	if (!m_min_lon || marker->longitude < m_min_lon->longitude)
+	if ((!m_min_lon) || (marker->longitude < m_min_lon->longitude))
 	  m_min_lon = marker;
         
-	if (!m_max_lon || marker->longitude > m_max_lon->longitude)
+	if ((!m_max_lon) || (marker->longitude > m_max_lon->longitude))
 	  m_max_lon = marker;
         
-	if (!m_min_lat || marker->latitude > m_min_lat->latitude)
+	if ((!m_min_lat) || (marker->latitude > m_min_lat->latitude))
 	  m_min_lat = marker;
         
-	if (!m_max_lat || marker->latitude < m_max_lat->latitude)
+	if ((!m_max_lat) || (marker->latitude < m_max_lat->latitude))
 	  m_max_lat = marker;
      }
    
@@ -2619,10 +2619,10 @@ elm_map_markers_list_show(Eina_List *markers)
 	Evas_Coord size = pow(2.0, zoom)*wd->tsize;
 	elm_map_utils_convert_geo_into_coord(lon, lat, size, &xc, &yc);
         
-	if (m_min_lon->x[zoom] - wd->marker_max_w >= xc-rw/2
-            && m_min_lat->y[zoom] - wd->marker_max_h >= yc-rh/2
-            && m_max_lon->x[zoom] + wd->marker_max_w <= xc+rw/2
-            && m_max_lat->y[zoom] + wd->marker_max_h <= yc+rh/2)
+	if ((m_min_lon->x[zoom] - wd->marker_max_w >= xc-rw/2)
+            && (m_min_lat->y[zoom] - wd->marker_max_h >= yc-rh/2)
+            && (m_max_lon->x[zoom] + wd->marker_max_w <= xc+rw/2)
+            && (m_max_lat->y[zoom] + wd->marker_max_h <= yc+rh/2))
 	  break;
      }
 
@@ -2998,7 +2998,7 @@ elm_map_source_get(const Evas_Object *obj)
 EAPI void
 elm_map_source_custom_api_set(Elm_Map_Sources source, const char *name, int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb)
 {
-   if (!name || !url_cb) return;
+   if ((!name) || (!url_cb)) return;
    map_sources_tab[source].name = name;
    map_sources_tab[source].zoom_min = zoom_min;
    map_sources_tab[source].zoom_max = zoom_max;

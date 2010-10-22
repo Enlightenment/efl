@@ -40,8 +40,8 @@ static void external_panes_state_set(void *data __UNUSED__,
 static Eina_Bool external_panes_param_set(void *data __UNUSED__,
 		Evas_Object *obj, const Edje_External_Param *param)
 {
-	if (!strcmp(param->name, "content left")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if ((!strcmp(param->name, "content left"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
 	{
 		Evas_Object *content = external_common_param_edje_object_get(obj, param);
 		if ((strcmp(param->s, "")) && (!content))
@@ -49,8 +49,8 @@ static Eina_Bool external_panes_param_set(void *data __UNUSED__,
 		elm_panes_content_left_set(obj, content);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "content right")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	else if ((!strcmp(param->name, "content right"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
 	{
 		Evas_Object *content = external_common_param_edje_object_get(obj, param);
 		if ((strcmp(param->s, "")) && (!content))
@@ -58,14 +58,14 @@ static Eina_Bool external_panes_param_set(void *data __UNUSED__,
 		elm_panes_content_right_set(obj, content);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "horizontal")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	else if ((!strcmp(param->name, "horizontal"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL))
 	{
 		elm_panes_horizontal_set(obj, param->i);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "left size")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+	else if ((!strcmp(param->name, "left size"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE))
 	{
 		elm_panes_content_left_size_set(obj, param->d);
 		return EINA_TRUE;
@@ -90,14 +90,14 @@ static Eina_Bool external_panes_param_get(void *data __UNUSED__,
 		/* not easy to get content name back from live object */
 		return EINA_FALSE;
 	}
-	else if (!strcmp(param->name, "horizontal")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	else if ((!strcmp(param->name, "horizontal"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL))
 	{
 		param->i = elm_panes_horizontal_get(obj);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "left size")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+	else if ((!strcmp(param->name, "left size"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE))
 	{
 		param->d = elm_panes_content_left_size_get(obj);
 		return EINA_TRUE;

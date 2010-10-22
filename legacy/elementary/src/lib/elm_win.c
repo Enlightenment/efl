@@ -802,11 +802,11 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
    visible_changed = (win->focus_highlight.cur.visible !=
                       win->focus_highlight.prev.visible);
 
-   if ((target == previous) && !visible_changed &&
-       !win->focus_highlight.geometry_changed)
+   if ((target == previous) && (!visible_changed) &&
+       (!win->focus_highlight.geometry_changed))
      return;
 
-   if (previous && win->focus_highlight.prev.handled)
+   if ((previous) && (win->focus_highlight.prev.handled))
      elm_widget_signal_emit(previous, "elm,action,focus_highlight,hide", "elm");
 
    if (!target)
@@ -826,7 +826,7 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
    if (sig)
      elm_widget_signal_emit(target, sig, "elm");
 
-   if (!target || !common_visible || win->focus_highlight.cur.handled)
+   if ((!target) || (!common_visible) || (win->focus_highlight.cur.handled))
      goto the_end;
 
    if (win->focus_highlight.changed_theme)
@@ -843,12 +843,12 @@ _elm_win_focus_highlight_reconfigure(Elm_Win *win)
         if (_elm_config->focus_highlight_animate)
           {
              str = edje_object_data_get(win->focus_highlight.top, "animate");
-             win->focus_highlight.top_animate = (str && !strcmp(str, "on"));
+             win->focus_highlight.top_animate = ((str) && (!strcmp(str, "on")));
           }
      }
 
-   if (win->focus_highlight.top_animate && previous &&
-       !win->focus_highlight.prev.handled)
+   if ((win->focus_highlight.top_animate) && (previous) &&
+       (!win->focus_highlight.prev.handled))
      _elm_win_focus_highlight_anim_setup(win, top);
    else
      _elm_win_focus_highlight_simple_setup(win, top);
@@ -869,7 +869,7 @@ _debug_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, voi
       return;
 
 
-   if (strcmp(ev->keyname, "F12") ||
+   if ((strcmp(ev->keyname, "F12")) ||
        (!evas_key_modifier_is_set(ev->modifiers, "Control")))
      return;
 

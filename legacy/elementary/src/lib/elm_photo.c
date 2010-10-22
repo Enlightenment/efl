@@ -180,7 +180,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
-   if (wd && wd->longtimer)
+   if ((wd) && (wd->longtimer))
      {
         ecore_timer_del(wd->longtimer);
         wd->longtimer = NULL;

@@ -97,30 +97,30 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (!strcmp(ev->keyname, "Left")
-       || !strcmp(ev->keyname, "KP_Left"))
+   if ((!strcmp(ev->keyname, "Left"))
+       || (!strcmp(ev->keyname, "KP_Left")))
      {
         if (!wd->horizontal) return EINA_FALSE;
         _drag_up(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "Right")
-            || !strcmp(ev->keyname, "KP_Right"))
+   else if ((!strcmp(ev->keyname, "Right"))
+            || (!strcmp(ev->keyname, "KP_Right")))
      {
         if (!wd->horizontal) return EINA_FALSE;
         _drag_down(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+   else if ((!strcmp(ev->keyname, "Up")) || (!strcmp(ev->keyname, "KP_Up")))
      {
         if (wd->horizontal) return EINA_FALSE;
         _drag_up(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
         if (wd->horizontal) return EINA_FALSE;
         _drag_down(obj, NULL, NULL, NULL);

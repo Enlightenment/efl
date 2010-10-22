@@ -89,7 +89,7 @@ _theme_hook(Evas_Object *obj)
    if (wd->pulse_state)
       edje_object_signal_emit(wd->progressbar, "elm,state,pulse,start", "elm");
    
-   if (wd->units && !wd->pulse)
+   if ((wd->units) && (!wd->pulse))
       edje_object_signal_emit(wd->progressbar, "elm,state,units,visible", "elm");
    
    if (wd->horizontal)
@@ -279,7 +279,7 @@ elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    state = !!state;
-   if (!wd->pulse && wd->pulse_state == state) return;
+   if ((!wd->pulse) && (wd->pulse_state == state)) return;
    wd->pulse_state = state;
    if (wd->pulse_state)
      edje_object_signal_emit(wd->progressbar, "elm,state,pulse,start", "elm");

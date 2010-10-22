@@ -539,7 +539,7 @@ test_list4_swipe(void *data, Evas_Object *obj __UNUSED__, void *event_info)
     Evas_Object *box, *entry, *button;
     struct Pginfo *info = data;
     char *item_data;
-    if (!event_info || !data) return;
+    if ((!event_info) || (!data)) return;
 
     item_data = elm_list_item_data_get(event_info);
 

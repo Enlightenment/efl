@@ -145,19 +145,19 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
 
    /* TODO: fix logic for horizontal mode */
-   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
         x -= step_x;
      }
-   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
         x += step_x;
      }
-   else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-            _item_multi_select_up(wd))
-            || _item_single_select_up(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+            (_item_multi_select_up(wd)))
+            || (_item_single_select_up(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -165,11 +165,11 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y -= step_y;
      }
-   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-            _item_multi_select_down(wd))
-            || _item_single_select_down(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+            (_item_multi_select_down(wd)))
+            || (_item_single_select_down(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -409,9 +409,9 @@ _sizing_eval(Evas_Object *obj)
    if (wd->scr_minh) h = vmh + minh;
 
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
-   if (maxw > 0 && w > maxw)
+   if ((maxw > 0) && (w > maxw))
      w = maxw;
-   if (maxh > 0 && h > maxh)
+   if ((maxh > 0) && (h > maxh))
      h = maxh;
 
    evas_object_size_hint_min_set(obj, w, h);
@@ -459,7 +459,7 @@ _theme_hook(Evas_Object *obj)
 //        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
         edj = elm_smart_scroller_edje_object_get(wd->scr);
         str = edje_object_data_get(edj, "focus_highlight");
-        if (str && !strcmp(str, "on"))
+        if ((str) && (!strcmp(str, "on")))
           elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
         else
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
@@ -483,7 +483,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
         edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
         evas_object_focus_set(wd->self, EINA_TRUE);
 
-        if (wd->selected && !wd->last_selected_item)
+        if ((wd->selected) && (!wd->last_selected_item))
           wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
@@ -1858,7 +1858,7 @@ elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    if (it->icon == icon) return;
-   if (it->dummy_icon && !icon) return;
+   if ((it->dummy_icon) && (!icon)) return;
    if (it->dummy_icon)
      {
         evas_object_del(it->icon);
@@ -1913,7 +1913,7 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    if (it->end == end) return;
-   if (it->dummy_end && !end) return;
+   if ((it->dummy_end) && (!end)) return;
    if (it->dummy_end)
      {
         evas_object_del(it->end);
@@ -2271,7 +2271,7 @@ elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
    *policy_h = (Elm_Scroller_Policy) s_policy_h;
    *policy_v = (Elm_Scroller_Policy) s_policy_v;

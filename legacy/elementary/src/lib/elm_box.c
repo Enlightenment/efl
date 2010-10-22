@@ -745,9 +745,9 @@ elm_box_transition_free(void *data)
 {
    Transition_Animation_Data *tad;
    Elm_Box_Transition *box_data = data;
-   if (box_data->start.free_data && box_data->start.data)
+   if ((box_data->start.free_data) && (box_data->start.data))
       box_data->start.free_data(box_data->start.data);
-   if (box_data->end.free_data && box_data->end.data)
+   if ((box_data->end.free_data) && (box_data->end.data))
       box_data->end.free_data(box_data->end.data);
    EINA_LIST_FREE(box_data->objs, tad)
       free(tad);

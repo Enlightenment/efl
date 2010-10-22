@@ -70,8 +70,8 @@ static void external_notify_state_set(void *data __UNUSED__,
 static Eina_Bool external_notify_param_set(void *data __UNUSED__,
 		Evas_Object *obj, const Edje_External_Param *param)
 {
-	if (!strcmp(param->name, "content")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+	if ((!strcmp(param->name, "content"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING))
 	{
 		Evas_Object *content = external_common_param_edje_object_get(obj, param);
 		if ((strcmp(param->s, "")) && (!content))
@@ -79,20 +79,20 @@ static Eina_Bool external_notify_param_set(void *data __UNUSED__,
 		elm_notify_content_set(obj, content);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "repeat_events")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	else if ((!strcmp(param->name, "repeat_events"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL))
 	{
 		elm_notify_repeat_events_set(obj, param->i);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "timeout")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+	else if ((!strcmp(param->name, "timeout"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE))
 	{
 		elm_notify_timeout_set(obj, param->d);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "orient")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
+	else if ((!strcmp(param->name, "orient"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE))
 	{
 		Elm_Notify_Orient set = _orient_get(param->s);
 		if (set == ELM_NOTIFY_ORIENT_LAST) return EINA_FALSE;
@@ -114,20 +114,20 @@ static Eina_Bool external_notify_param_get(void *data __UNUSED__,
 		/* not easy to get content name back from live object */
 		return EINA_FALSE;
 	}
-	else if (!strcmp(param->name, "repeat_events")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+	else if ((!strcmp(param->name, "repeat_events"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL))
 	{
 		param->i = elm_notify_repeat_events_get(obj);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "timeout")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+	else if ((!strcmp(param->name, "timeout"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE))
 	{
 		param->d = elm_notify_timeout_get(obj);
 		return EINA_TRUE;
 	}
-	else if (!strcmp(param->name, "orient")
-			&& param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
+	else if ((!strcmp(param->name, "orient"))
+			&& (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE))
 	{
 		Elm_Notify_Orient set = elm_notify_orient_get(obj);
 		if (set == ELM_NOTIFY_ORIENT_LAST) return EINA_FALSE;

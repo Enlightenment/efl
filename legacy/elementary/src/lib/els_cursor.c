@@ -237,7 +237,7 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    cur->visible = EINA_FALSE;
 
    sobj_parent = evas_object_data_get(cur->eventarea, "elm-parent");
-   while (sobj_parent != NULL)
+   while (sobj_parent)
      {
         pcur = evas_object_data_get((sobj_parent), _cursor_key);
         if ((pcur) && (pcur->visible)) break;

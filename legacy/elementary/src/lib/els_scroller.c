@@ -1276,12 +1276,12 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    sd = data;
    ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
-   if (evas_key_modifier_is_set(ev->modifiers, "Control") ||
-       evas_key_modifier_is_set(ev->modifiers, "Alt") ||
-       evas_key_modifier_is_set(ev->modifiers, "Shift") ||
-       evas_key_modifier_is_set(ev->modifiers, "Meta") ||
-       evas_key_modifier_is_set(ev->modifiers, "Hyper") ||
-       evas_key_modifier_is_set(ev->modifiers, "Super"))
+   if ((evas_key_modifier_is_set(ev->modifiers, "Control")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Alt")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Shift")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Meta")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Hyper")) ||
+       (evas_key_modifier_is_set(ev->modifiers, "Super")))
      return;
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||

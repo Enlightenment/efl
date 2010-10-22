@@ -662,10 +662,10 @@ elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
 {
    char icon_tmp[512];
    if (!item) return;
-   if (!icon || !*icon) return;
-   if (item->icon_str && !strcmp(item->icon_str, icon)) return;
-   if (snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0 &&
-       elm_icon_standard_set(item->icon, icon_tmp))
+   if ((!icon) || (!*icon)) return;
+   if ((item->icon_str) && (!strcmp(item->icon_str, icon))) return;
+   if ((snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0) &&
+       (elm_icon_standard_set(item->icon, icon_tmp)))
      {
         eina_stringshare_replace(&item->icon_str, icon);
 	edje_object_signal_emit(item->base.view, "elm,state,icon,visible", "elm");

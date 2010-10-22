@@ -56,7 +56,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
+   if ((strcmp(ev->keyname, "Return")) && (strcmp(ev->keyname, "space")))
      return EINA_FALSE;
    _activate(obj);
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -113,7 +113,7 @@ _theme_hook(Evas_Object *obj)
    edje_object_message_signal_process(wd->btn);
    edje_object_scale_set(wd->btn, elm_widget_scale_get(obj) * _elm_config->scale);
    str = edje_object_data_get(wd->btn, "focus_highlight");
-   if (str && !strcmp(str, "on"))
+   if ((str) && (!strcmp(str, "on")))
      elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
    else
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
@@ -259,7 +259,7 @@ _signal_pressed(void *data, Evas_Object *obj __UNUSED__, const char *emission __
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   if (wd->autorepeat && !wd->repeating)
+   if ((wd->autorepeat) && (!wd->repeating))
      {
 	if (wd->ar_threshold <= 0.0)
 	  _autorepeat_initial_send(data); /* call immediately */
@@ -507,5 +507,5 @@ elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
    if (wd->ar_interval == t) return;
 
    wd->ar_interval = t;
-   if (wd->repeating && wd->timer) ecore_timer_interval_set(wd->timer, t);
+   if ((wd->repeating) && (wd->timer)) ecore_timer_interval_set(wd->timer, t);
 }

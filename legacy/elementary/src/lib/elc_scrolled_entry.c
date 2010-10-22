@@ -431,7 +431,7 @@ elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
-   if (!wd || !icon) return;
+   if ((!wd) || (!icon)) return;
    if (wd->icon == icon) return;
    if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
@@ -507,7 +507,7 @@ elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->icon) return;
+   if ((!wd) || (!wd->icon)) return;
    if (setting)
      evas_object_hide(wd->icon);
    else
@@ -535,7 +535,7 @@ elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
-   if (!wd || !end) return;
+   if ((!wd) || (!end)) return;
    if (wd->end == end) return;
    if (wd->end) evas_object_del(wd->end);
    wd->end = end;
@@ -611,7 +611,7 @@ elm_scrolled_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->end) return;
+   if ((!wd) || (!wd->end)) return;
    if (setting)
      evas_object_hide(wd->end);
    else

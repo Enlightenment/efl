@@ -334,7 +334,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord resw, resh;
    if (!wd) return;
-   if (wd->linewrap || wd->char_linewrap)
+   if ((wd->linewrap) || (wd->char_linewrap))
      {
 	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
 	if ((resw == wd->lastw) && (!wd->changed)) return;
@@ -445,7 +445,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   if (wd->linewrap || wd->char_linewrap)
+   if ((wd->linewrap) || (wd->char_linewrap))
      {
         _sizing_eval(data);
      }
@@ -851,7 +851,7 @@ _mkup_to_text(const char *mkup)
 		    }
 		  esc_start = esc_end = NULL;
 	       }
-	     else if (*p == 0 && s)
+	     else if ((*p == 0) && (s))
 	       {
 		  ts = malloc(p - s + 1);
 		  if (ts)
@@ -866,7 +866,7 @@ _mkup_to_text(const char *mkup)
 	  }
 	if (*p == '<')
 	  {
-	     if (s && !esc_start)
+	     if ((s) && (!esc_start))
 	       {
 		  tag_start = p;
 		  tag_end = NULL;
@@ -891,7 +891,7 @@ _mkup_to_text(const char *mkup)
 	  }
 	else if (*p == '&')
 	  {
-	     if (s && !tag_start)
+	     if ((s) && (!tag_start))
 	       {
 		  esc_start = p;
 		  esc_end = NULL;
@@ -1229,7 +1229,7 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Notify *ev = event;
    if (!wd) return ECORE_CALLBACK_PASS_ON;
-   if (!wd->selection_asked && !wd->drag_selection_asked)
+   if ((!wd->selection_asked) && (!wd->drag_selection_asked))
       return ECORE_CALLBACK_PASS_ON;
 
    if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
@@ -2503,7 +2503,7 @@ elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **te
    Eina_Bool goes_in;
    int read_idx, last_read_idx = 0, read_char;
 
-   if (!as || (!as->accepted && !as->rejected))
+   if ((!as) || ((!as->accepted) && (!as->rejected)))
       return;
 
    if (as->accepted)

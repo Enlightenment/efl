@@ -262,11 +262,11 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
 
-   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-             _item_multi_select_left(wd))
-            || _item_single_select_left(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+             (_item_multi_select_left(wd)))
+            || (_item_single_select_left(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -274,11 +274,11 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           x -= step_x;
      }
-   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-             _item_multi_select_right(wd))
-            || _item_single_select_right(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+             (_item_multi_select_right(wd)))
+            || (_item_single_select_right(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -286,11 +286,11 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           x += step_x;
      }
-   else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-             _item_multi_select_up(wd))
-            || _item_single_select_up(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+             (_item_multi_select_up(wd)))
+            || (_item_single_select_up(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -298,11 +298,11 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y -= step_y;
      }
-   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-             _item_multi_select_down(wd))
-            || _item_single_select_down(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+             (_item_multi_select_down(wd)))
+            || (_item_single_select_down(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -397,7 +397,7 @@ _item_multi_select_up(Widget_Data *wd)
 
    if (!wd->selected) return EINA_FALSE;
 
-   for (i = 0; r && i < wd->nmax; i++)
+   for (i = 0; (r) && (i < wd->nmax); i++)
      r &= _item_multi_select_left(wd);
 
    return r;
@@ -411,7 +411,7 @@ _item_multi_select_down(Widget_Data *wd)
 
    if (!wd->selected) return EINA_FALSE;
 
-   for (i = 0; r && i < wd->nmax; i++)
+   for (i = 0; (r) && (i < wd->nmax); i++)
      r &= _item_multi_select_right(wd);
 
    return r;
@@ -504,7 +504,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      {
         edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
         evas_object_focus_set(wd->self, EINA_TRUE);
-        if (wd->selected && !wd->last_selected_item)
+        if ((wd->selected) && (!wd->last_selected_item))
           wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
@@ -715,7 +715,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
      {
 	if (item->want_unrealize) _item_unrealize(item);
      }
-   if ((item->disabled) || dragged) return;
+   if ((item->disabled) || (dragged)) return;
    if (item->wd->multi)
      {
 	if (!item->selected)
@@ -2115,7 +2115,7 @@ elm_gengrid_item_tooltip_content_cb_set(Elm_Gengrid_Item *item, Elm_Tooltip_Item
 EAPI void
 elm_gengrid_item_tooltip_unset(Elm_Gengrid_Item *item)
 {
-   if (item->base.view && item->tooltip.content_cb)
+   if ((item->base.view) && (item->tooltip.content_cb))
        elm_widget_item_tooltip_unset(item);
 
    if (item->tooltip.del_cb)

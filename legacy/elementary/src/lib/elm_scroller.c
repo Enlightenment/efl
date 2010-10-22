@@ -103,19 +103,19 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
    elm_scroller_child_size_get(obj, &max_x, &max_y);
 
-   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
         x -= step_x;
      }
-   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
         x += step_x;
      }
-   else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
         y -= step_y;
      }
-   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
         y += step_y;
      }
@@ -189,7 +189,7 @@ _theme_hook(Evas_Object *obj)
 //        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
         edj = elm_smart_scroller_edje_object_get(wd->scr);
         str = edje_object_data_get(edj, "focus_highlight");
-        if (str && !strcmp(str, "on"))
+        if ((str) && (!strcmp(str, "on")))
           elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
         else
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
@@ -209,7 +209,7 @@ _elm_scroller_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, E
    cur = wd->content;
 
    /* Try Focus cycle in subitem */
-   if (elm_widget_can_focus_get(cur) || elm_widget_child_can_focus_get(cur))
+   if ((elm_widget_can_focus_get(cur)) || (elm_widget_child_can_focus_get(cur)))
       return elm_widget_focus_next_get(cur, dir, next);
 
    /* Return */
@@ -648,7 +648,7 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
@@ -678,7 +678,7 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
 	  ELM_SMART_SCROLLER_POLICY_ON,
 	  ELM_SMART_SCROLLER_POLICY_OFF
      };
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    if ((policy_h >= 3) || (policy_v >= 3)) return;
    elm_smart_scroller_policy_set(wd->scr, map[policy_h], map[policy_v]);
 }
@@ -689,7 +689,7 @@ elm_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, E
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
    *policy_h = (Elm_Scroller_Policy) s_policy_h;
    *policy_v = (Elm_Scroller_Policy) s_policy_v;
@@ -715,7 +715,7 @@ elm_scroller_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Ev
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
    if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
 }
@@ -761,7 +761,7 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
 }
 
@@ -848,6 +848,6 @@ elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->scr) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
 }

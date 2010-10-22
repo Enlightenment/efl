@@ -362,7 +362,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
 
 #define FDIF(a, b) (fabs((a) - (b)) > 0.0001)
-   if (FDIF(rel_x, tt->rel_pos.x) || FDIF(rel_y, tt->rel_pos.y))
+   if ((FDIF(rel_x, tt->rel_pos.x)) || (FDIF(rel_y, tt->rel_pos.y)))
      {
         Edje_Message_Float_Set *msg;
 

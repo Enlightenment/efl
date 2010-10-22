@@ -73,7 +73,7 @@ _sizing_eval(Evas_Object *obj)
 
    _els_smart_icon_size_get(wd->img, &w, &h);
 #ifdef ELM_EFREET
-   if (wd->freedesktop.use && !((w - wd->freedesktop.requested_size) % 16))
+   if ((wd->freedesktop.use) && (!((w - wd->freedesktop.requested_size) % 16)))
      {
         /* This icon has been set to a freedesktop icon, and the requested
            appears to have a different size than the requested size, so try to
@@ -215,7 +215,7 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
         static const char *themes[] = {
            "default", "highcolor", "hicolor", "gnome", "Human", "oxygen", NULL
         };
-        for (itr = themes; !path && *itr; itr++)
+        for (itr = themes; (!path) && (*itr); itr++)
           path = efreet_icon_path_find(*itr, name, size);
      }
    wd->freedesktop.use = !!path;

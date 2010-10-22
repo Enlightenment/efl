@@ -107,7 +107,7 @@ _maxdays_get(struct tm *time)
    month = time->tm_mon;
    year = time->tm_year + 1900;
 
-   return _days_in_month[(!(year % 4) && (!(year % 400) || (year % 100)))]
+   return _days_in_month[((!(year % 4)) && ((!(year % 400)) || (year % 100)))]
        [month];
 }
 
@@ -224,7 +224,7 @@ _populate(Evas_Object *obj)
 	     wd->selected_it = i;
 	  }
 
-	if (day && (day <= maxdays))
+	if ((day) && (day <= maxdays))
 	  snprintf(day_s, sizeof(day_s), "%d", day++);
 	else
 	     day_s[0] = 0;

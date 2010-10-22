@@ -58,7 +58,7 @@ _theme_hook(Evas_Object *obj)
         //   edje_object_scale_set(wd->scr, scale);
         edj = elm_smart_scroller_edje_object_get(wd->scr);
         str = edje_object_data_get(edj, "focus_highlight");
-        if (str && !strcmp(str, "on"))
+        if ((str) && (!strcmp(str, "on")))
           elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
         else
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
@@ -213,7 +213,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
 
-   if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
+   if ((strcmp(ev->keyname, "Return")) && (strcmp(ev->keyname, "space")))
      return EINA_FALSE;
 
    _toggle_panel(obj, NULL, "elm,action,panel,toggle", "*");

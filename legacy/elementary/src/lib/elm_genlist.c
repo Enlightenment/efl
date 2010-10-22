@@ -406,19 +406,19 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
 
-   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
         x -= step_x;
      }
-   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
         x += step_x;
      }
-   else if (!strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-            _item_multi_select_up(wd))
-            || _item_single_select_up(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+            (_item_multi_select_up(wd)))
+            || (_item_single_select_up(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -426,11 +426,11 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y -= step_y;
      }
-   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
-        if ((evas_key_modifier_is_set(ev->modifiers, "Shift") &&
-            _item_multi_select_down(wd))
-            || _item_single_select_down(wd))
+        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+            (_item_multi_select_down(wd)))
+            || (_item_single_select_down(wd)))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -466,8 +466,8 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y += page_y;
      }
-   else if((!strcmp(ev->keyname, "Return") || !strcmp(ev->keyname, "space"))
-           && !wd->multi && wd->selected)
+   else if(((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "space")))
+           && (!wd->multi) && (wd->selected))
      {
         Elm_Genlist_Item *it = elm_genlist_selected_item_get(obj);
         elm_genlist_item_expanded_set(it,
@@ -565,7 +565,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
      {
         edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->obj, EINA_TRUE);
-        if (wd->selected && !wd->last_selected_item)
+        if ((wd->selected) && (!wd->last_selected_item))
           wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
@@ -1174,7 +1174,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
            edje_object_signal_emit(it->base.view, "elm,state,expanded", "elm");
      }
 
-   if (calc && it->wd->homogeneous && it->wd->item_width)
+   if ((calc) && (it->wd->homogeneous) && (it->wd->item_width))
      {
         /* homogenous genlist shortcut */
         if (!it->mincalcd)
@@ -1257,7 +1257,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
              it->h = it->minh = mh;
              it->mincalcd = EINA_TRUE;
 
-             if (in == 0 && it->wd->homogeneous)
+             if ((in == 0) && (it->wd->homogeneous))
                {
                   it->wd->item_width = mw;
                   it->wd->item_height = mh;
@@ -1524,7 +1524,7 @@ _calc_job(void *data)
         itb->h = itb->minh;
         y += itb->h;
         in += itb->count;
-        if (showme && wd->show_item)
+        if ((showme) && (wd->show_item))
           {
              wd->show_item->showme = 0;
              if (wd->bring_in)
@@ -3363,7 +3363,7 @@ elm_genlist_item_tooltip_content_cb_set(Elm_Genlist_Item *item, Elm_Tooltip_Item
 EAPI void
 elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item)
 {
-   if (item->base.view && item->tooltip.content_cb)
+   if ((item->base.view) && (item->tooltip.content_cb))
      elm_widget_item_tooltip_unset(item);
 
    if (item->tooltip.del_cb)

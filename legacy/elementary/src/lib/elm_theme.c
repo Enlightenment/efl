@@ -62,7 +62,7 @@ _elm_theme_theme_element_try(Elm_Theme *th, const char *home, const char *f, con
 
    if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
        ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')) ||
-       (isalpha(f[0]) && f[1] == ':'))
+       ((isalpha(f[0])) && (f[1] == ':')))
      return _elm_theme_find_try(th, f, group);
    else if (((f[0] == '~') && (f[1] == '/')))
      {
@@ -521,7 +521,7 @@ elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
    
    if ((f[0] == '/') || ((f[0] == '.') && (f[1] == '/')) ||
        ((f[0] == '.') && (f[1] == '.') && (f[2] == '/')) ||
-       (isalpha(f[0]) && f[1] == ':'))
+       ((isalpha(f[0])) && (f[1] == ':')))
      {
         if (in_search_path) *in_search_path = EINA_FALSE;
         return strdup(f);

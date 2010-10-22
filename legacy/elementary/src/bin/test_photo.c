@@ -63,7 +63,7 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              evas_object_smart_callback_add(ph, "drag,stop",
                                             drag_stop_cb, NULL);
 
-             if(n == 2 || n == 3) {
+             if((n == 2) || (n == 3)) {
             	 elm_photo_fill_inside_set(ph, EINA_TRUE);
             	 elm_object_style_set(ph, "shadow");
              }

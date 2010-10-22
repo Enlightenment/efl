@@ -336,7 +336,7 @@ _map_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
      zoom++;
 
    elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_MANUAL);
-   if (zoom >= 0 && zoom <= 18) elm_map_zoom_set(map, zoom);
+   if ((zoom >= 0) && (zoom <= 18)) elm_map_zoom_set(map, zoom);
 }
 
 static void 

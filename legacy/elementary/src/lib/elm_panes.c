@@ -79,7 +79,7 @@ _elm_panes_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
 
    double w, h;
    edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
-   if ((wd->horizontal && ( h == 0.0 )) || ((!wd->horizontal) && ( w == 0.0 )))
+   if (((wd->horizontal) && ( h == 0.0 )) || ((!wd->horizontal) && ( w == 0.0 )))
      return elm_widget_focus_next_get(wd->contents.right, dir, next);
 
    Evas_Object *chain[2];

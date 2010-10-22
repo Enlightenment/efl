@@ -1183,7 +1183,7 @@ test_genlist7_swipe(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    Evas_Object *box, *entry, *button;
    char item_data[] = "Just a simple test";
 
-   if (!event_info || !data) return;
+   if ((!event_info) || (!data)) return;
 
    box = elm_box_add(info->win);
    elm_box_homogenous_set(box, 0);

@@ -363,7 +363,7 @@ _time_update(Evas_Object *obj)
 	     _elm_theme_object_set(obj, wd->digit[i], "clock", "flipdigit", style);
 	     edje_object_scale_set(wd->digit[i], elm_widget_scale_get(obj) * 
                                    _elm_config->scale);
-	     if (wd->edit && (wd->digedit & (1 << i)))
+	     if ((wd->edit) && (wd->digedit & (1 << i)))
 	       edje_object_signal_emit(wd->digit[i], "elm,state,edit,on", "elm");
 	     edje_object_signal_callback_add(wd->digit[i], "elm,action,up,start",
 					     "", _signal_clock_val_up_start, obj);
@@ -636,7 +636,7 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
    wd->edit = edit;
    if (!edit)
      _timediff_set(wd);
-   if (edit && (wd->digedit == ELM_CLOCK_NONE))
+   if ((edit) && (wd->digedit == ELM_CLOCK_NONE))
      elm_clock_digit_edit_set(obj, ELM_CLOCK_ALL);
    else
      _time_update(obj);

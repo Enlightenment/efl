@@ -261,7 +261,7 @@ _timer_init(Evas_Object *obj, Widget_Data *wd)
 	ecore_timer_del(wd->timer);
 	wd->timer = NULL;
      }
-   if (evas_object_visible_get(obj) && (wd->timeout > 0.0))
+   if ((evas_object_visible_get(obj)) && (wd->timeout > 0.0))
      wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 }
 

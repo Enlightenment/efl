@@ -78,7 +78,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    Evas_Event_Key_Down *ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (strcmp(ev->keyname, "Return") && strcmp(ev->keyname, "space"))
+   if ((strcmp(ev->keyname, "Return")) && (strcmp(ev->keyname, "space")))
      return EINA_FALSE;
    _activate(obj);
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -227,7 +227,7 @@ _state_set_all(Widget_Data *wd)
           }
 	else _state_set(child, 0);
      }
-   if (disabled && selected) _state_set(selected, 1);
+   if ((disabled) && (selected)) _state_set(selected, 1);
 }
 
 static void

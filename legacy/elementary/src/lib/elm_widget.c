@@ -110,7 +110,7 @@ static inline Eina_Bool
 _is_focusable(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
-   return sd->can_focus || sd->child_can_focus;
+   return sd->can_focus || (sd->child_can_focus);
 }
 
 static void
@@ -225,10 +225,10 @@ _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
         break;
      }
 
-   if (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))
+   if ((event_flags) && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))
       return;
 
-   if (sd->event_func && sd->event_func(obj, obj, type, event_info))
+   if ((sd->event_func) && (sd->event_func(obj, obj, type, event_info)))
       return;
 
    elm_widget_parent_event_propagate(obj, type, event_info, event_flags);
@@ -252,7 +252,7 @@ _parent_focus(Evas_Object *obj)
 
 	/* we don't want to bump a common widget ancestor's
 	   focus_order *twice* while parent focusing */
-	if (!ret || !i || i != focus_order)
+	if (!ret || (!i) || (i != focus_order))
 	  _parent_focus(o);
      }
 
@@ -560,7 +560,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
                return;
              elm_widget_sub_object_del(sd2->parent_obj, sobj);
              sd2->parent_obj = obj;
-             if (!sd->child_can_focus && _is_focusable(sobj))
+             if (!sd->child_can_focus && (_is_focusable(sobj)))
                sd->child_can_focus = EINA_TRUE;
           }
      }
@@ -861,7 +861,7 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
         sd = evas_object_smart_data_get(parent);
         if ((!sd) || (!_elm_widget_is(obj)))
           return EINA_FALSE; //Not Elm Widget
-        if (sd->event_func && sd->event_func(parent, obj, type, event_info))
+        if (sd->event_func && (sd->event_func(parent, obj, type, event_info)))
           return EINA_TRUE;
         parent = sd->parent_obj;
      }
@@ -1067,7 +1067,7 @@ elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
    API_ENTRY return EINA_FALSE;
 
    /* Ignore if disabled */
-   if ((!evas_object_visible_get(obj)) || elm_widget_disabled_get(obj))
+   if ((!evas_object_visible_get(obj)) || (elm_widget_disabled_get(obj)))
      return EINA_FALSE;
 
    /* Try use hook */
@@ -1155,7 +1155,7 @@ elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, v
              *next = tmp;
              return EINA_TRUE;
           }
-        else if (tmp && (!to_focus))
+        else if ((tmp) && (!to_focus))
           to_focus = tmp;
      }
 
@@ -2633,7 +2633,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
    if (!visible)
         fprintf(output, ", fontcolor=gray28");
 
-   if (disabled || (!visible))
+   if ((disabled) || (!visible))
         fprintf(output, ", color=gray");
 
 

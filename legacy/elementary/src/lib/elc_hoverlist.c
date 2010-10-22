@@ -473,7 +473,7 @@ elm_hoverlist_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
-   if (!wd || !parent)
+   if ((!wd) || (!parent))
      return;
 
    elm_hover_parent_set(wd->hover, parent);
@@ -536,7 +536,7 @@ elm_hoverlist_clear(Evas_Object* obj)
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
-   if (!wd || !wd->items)
+   if ((!wd) || (!wd->items))
      return;
 
    EINA_LIST_FREE(wd->items, item)

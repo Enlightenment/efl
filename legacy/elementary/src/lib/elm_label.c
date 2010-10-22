@@ -114,7 +114,7 @@ _sizing_eval(Evas_Object *obj)
         maxh = minh;
         evas_object_size_hint_max_set(obj, maxw, maxh);
         
-        if (wd->ellipsis && _is_width_over(obj) == 1) 
+        if ((wd->ellipsis) && (_is_width_over(obj) == 1)) 
           _ellipsis_label_to_width(obj);
      }
 }
@@ -220,7 +220,7 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, const char *key, const char *valu
                break;
           } while (strlen(srcstring) > 1);
         
-        if (starttag && endtag && tagtxtlen > key_len)
+        if ((starttag) && (endtag) && (tagtxtlen > key_len))
           {
              repbuf = eina_strbuf_new();
              diffbuf = eina_strbuf_new();
@@ -316,9 +316,9 @@ _is_width_over(Evas_Object *obj)
 
    evas_object_geometry_get (obj, &vx,&vy,&vw,&vh);
 
-   if (x >= 0 && y >= 0) return 0;
+   if ((x >= 0) && (y >= 0)) return 0;
 
-   if (ellen < wd->wrap_w && w > wd->wrap_w) return 1;
+   if ((ellen < wd->wrap_w) && (w > wd->wrap_w)) return 1;
 
    return 0;
 }
@@ -344,7 +344,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
    deffont = edje_object_data_get(wd->lbl, "default_font_size");
    if (deffont) cur_fontsize = atoi(deffont);
    else cur_fontsize = 1;
-   if (minfontsize == maxfontsize || cur_fontsize == 1) return; // theme is not ready for ellipsis
+   if ((minfontsize == maxfontsize) || (cur_fontsize == 1)) return; // theme is not ready for ellipsis
    if (eina_stringshare_strlen(wd->label) <= 0) return;
 
    if (_get_value_in_key_string(wd->label, "font_size", &kvalue) == 0)

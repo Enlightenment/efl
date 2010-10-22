@@ -315,18 +315,18 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         return EINA_TRUE;
    }
 
-   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left") ||
-       !strcmp(ev->keyname, "Up")  || !strcmp(ev->keyname, "KP_Up"))
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")) ||
+       (!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
         l = wd->selected_item->node->prev;
-        if (!l && wd->round)
+        if ((!l) && (wd->round))
           l = eina_list_last(wd->items);
      }
-   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right") ||
-            !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")) ||
+            (!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
         l = wd->selected_item->node->next;
-        if (!l && wd->round)
+        if ((!l) && (wd->round))
           l = wd->items;
      }
    else if (!strcmp(ev->keyname, "Home"))
@@ -356,12 +356,12 @@ _check_letter(const char *str, int length)
 
    if (code == '\0')
      return length;		// null string
-   else if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122))
+   else if (((code >= 65) && (code <= 90)) || ((code >= 97) && (code <= 122)))
      return length;		// alphabet
-   else if (48 <= code && code < 58)
+   else if ((48 <= code) && (code < 58))
      return length;		// number
-   else if ((33 <= code && code < 47) || (58 <= code && code < 64)
-            || (91 <= code && code < 96) || (123 <= code && code < 126))
+   else if (((33 <= code) && (code < 47)) || ((58 <= code) && (code < 64))
+            || ((91 <= code) && (code < 96)) || ((123 <= code) && (code < 126)))
      return length;		// special letter
    return length - 1;
 }
@@ -392,7 +392,7 @@ _check_string(void *data)
         int len;
         evas_object_geometry_get(it->base.view, &x, NULL, &w, NULL);
         /* item not visible */
-        if (x + w <= ox || x >= ox + ow)
+        if ((x + w <= ox) || (x >= ox + ow))
           continue;
 
         len = eina_stringshare_strlen(it->label);
@@ -748,7 +748,7 @@ elm_diskpicker_round_set(Evas_Object * obj, Eina_Bool round)
         evas_object_hide(wd->left_blank);
         elm_box_unpack(wd->main_box, wd->right_blank);
         evas_object_hide(wd->right_blank);
-        if (wd->items == NULL)
+        if (!wd->items)
           return;
 
         _round_items_add(wd);
@@ -854,7 +854,7 @@ elm_diskpicker_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *
    ELM_CHECK_WIDTYPE(obj, widtype);
    Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->scroller) return;
+   if ((!wd) || (!wd->scroller)) return;
    elm_smart_scroller_policy_get(wd->scroller, &s_policy_h, &s_policy_v);
    *policy_h = (Elm_Scroller_Policy) s_policy_h;
    *policy_v = (Elm_Scroller_Policy) s_policy_v;

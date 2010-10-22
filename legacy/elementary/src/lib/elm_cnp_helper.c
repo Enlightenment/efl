@@ -358,7 +358,7 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
 
    if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
-   if (!selbuf && format != ELM_SEL_FORMAT_IMAGE)
+   if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
      return elm_selection_clear(selection, widget);
 
    sel = selections + selection;
@@ -388,7 +388,7 @@ elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
    sel = selections + selection;
 
    /* No longer this selection: Consider it gone! */
-   if (!sel->active || sel->widget != widget) return EINA_TRUE;
+   if ((!sel->active) || (sel->widget != widget)) return EINA_TRUE;
 
    sel->active = 0;
    sel->widget = NULL;
@@ -597,7 +597,7 @@ notify_handler_targets(struct _elm_cnp_selection *sel,
 	if (!(atoms[j].formats & sel->requestformat)) continue;
 	for (i = 0 ; i < targets->data.length ; i ++)
 	  {
-	     if (atoms[j].atom == atomlist[i] && atoms[j].notify)
+	     if ((atoms[j].atom == atomlist[i]) && (atoms[j].notify))
 	       {
 		  cnp_debug("Atom %s matches\n",atoms[j].name);
 		  goto done;
@@ -633,7 +633,7 @@ response_handler_targets(struct _elm_cnp_selection *sel,
 	if (!(atoms[j].formats & sel->requestformat)) continue;
 	for (i = 0 ; i < targets->data.length ; i ++)
 	  {
-	     if (atoms[j].atom == atomlist[i] && atoms[j].response){
+	     if ((atoms[j].atom == atomlist[i]) && (atoms[j].response)){
 		  /* Found a match: Use it */
 		  goto found;
 	     }
@@ -714,7 +714,7 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
    else
       p += strlen("file://");
 
-   if (!strstr(p,".png") && !strstr(p,".jpg"))
+   if ((!strstr(p,".png")) && (!strstr(p,".jpg")))
      {
         cnp_debug("No png, ignoring\n");
         if (savedtypes.textreq) savedtypes.textreq = 0;
@@ -885,8 +885,8 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
      {
 	*data_ret = remove_tags(sel->selbuf, size_ret);
      }
-   else if (sel->format == ELM_SEL_FORMAT_TEXT ||
-            sel->format == ELM_SEL_FORMAT_HTML)
+   else if ((sel->format == ELM_SEL_FORMAT_TEXT) ||
+            (sel->format == ELM_SEL_FORMAT_HTML))
      {
         *data_ret = strdup(sel->selbuf);
         *size_ret = strlen(sel->selbuf);
@@ -1024,7 +1024,7 @@ pasteimage_provider_set(Evas_Object *entry)
    if (!entry) return false;
    type = elm_widget_type_get(entry);
    printf("type is %s\n",type);
-   if (!type || strcmp(type,"entry") != 0) return false;
+   if ((!type) || (strcmp(type,"entry") != 0)) return false;
 
    v = evas_object_data_get(entry, PROVIDER_SET);
    if (!v)
@@ -1082,13 +1082,13 @@ remove_tags(const char *p, int *len){
 
    while (*p)
      {
-	if (*p != '<' && *p != '&'){
+	if ((*p != '<') && (*p != '&')){
 	     *q ++ = *p ++;
 	} else if (*p == '<') {
-	     if (p[1] == 'b' && p[2] == 'r' &&
-			(p[3] == ' ' || p[3] == '/' || p[3] == '>'))
+	     if ((p[1] == 'b') && (p[2] == 'r') &&
+			((p[3] == ' ') || (p[3] == '/') || (p[3] == '>')))
 		*q++ = '\n';
-	     while (*p && *p != '>') p ++;
+	     while ((*p) && (*p != '>')) p ++;
 	     p ++;
 	} else if (*p == '&') {
 	     p ++;
@@ -1121,7 +1121,7 @@ mark_up(const char *start, int inlen, int *lenp){
   if (inlen >= 0)
      endp = start + inlen;
   /* First pass: Count characters */
-  for (l = 0, p = start ; (!endp || (p < endp)) && *p ; p ++)
+  for (l = 0, p = start ; ((!endp) || (p < endp)) && (*p) ; p ++)
     {
     for (i = 0 ; i < N_ESCAPES ; i ++)
       {
@@ -1167,7 +1167,7 @@ _dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    int i;
 
    /* Skip it */
-   if (!enter || !enter->num_types || !enter->types) return EINA_TRUE;
+   if ((!enter) || (!enter->num_types) || (!enter->types)) return EINA_TRUE;
 
    cnp_debug("Types\n");
    savedtypes.ntypes = enter->num_types;
@@ -1225,7 +1225,7 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
            break;
      }
    /* didn't find a window */
-   if (l == NULL)
+   if (!l)
       return true;
 
 
@@ -1243,8 +1243,8 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
      {
         dropable = l->data;
         evas_object_geometry_get(dropable->obj, &x, &y, &w, &h);
-        if (savedtypes.x >= x && savedtypes.y >= y &&
-            savedtypes.x < x + w && savedtypes.y < y + h)
+        if ((savedtypes.x >= x) && (savedtypes.y >= y) &&
+            (savedtypes.x < x + w) && (savedtypes.y < y + h))
            break; /* found! */
      }
 
@@ -1390,7 +1390,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
    /* Is this the first? */
-   first = (drops == NULL) ? 1 : 0;
+   first = (!drops) ? 1 : 0;
 
    drop = calloc(1,sizeof(struct dropable));
    if (!drop) return false;
@@ -1459,7 +1459,7 @@ elm_drop_target_del(Evas_Object *obj)
                                   (Evas_Object_Event_Cb)elm_drop_target_del);
    free(drop);
    /* If still drops there: All fine.. continue */
-   if (drops != NULL) return true;
+   if (drops) return true;
 
    cnp_debug("Disabling DND\n");
    xwin = (Ecore_X_Window)ecore_evas_window_get(ecore_evas_ecore_evas_get(

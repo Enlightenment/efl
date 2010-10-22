@@ -1417,7 +1417,7 @@ elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable)
 EAPI Eina_Bool
 elm_object_focus_allow_get(const Evas_Object *obj)
 {
-   return elm_widget_can_focus_get(obj) || elm_widget_child_can_focus_get(obj);
+   return (elm_widget_can_focus_get(obj)) || (elm_widget_child_can_focus_get(obj));
 }
 
 /**

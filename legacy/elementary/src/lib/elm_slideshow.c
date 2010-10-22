@@ -69,19 +69,19 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
         elm_slideshow_previous(obj);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+   if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
         elm_slideshow_next(obj);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   if (!strcmp(ev->keyname, "Return") || !strcmp(ev->keyname, "space"))
+   if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "space")))
      {
         if (wd->timeout)
           elm_slideshow_timeout_set(obj, 0);
@@ -152,7 +152,7 @@ static Elm_Slideshow_Item* _item_prev_get(Elm_Slideshow_Item* item)
 {
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
 	Elm_Slideshow_Item* prev = eina_list_data_get(eina_list_prev(item->l));
-	if(!prev && wd->loop)
+	if((!prev) && (wd->loop))
 		prev = eina_list_data_get(eina_list_last(item->l));
 	return prev;
 }
@@ -160,7 +160,7 @@ static Elm_Slideshow_Item* _item_next_get(Elm_Slideshow_Item* item)
 {
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
 	Elm_Slideshow_Item* next = eina_list_data_get(eina_list_next(item->l));
-	if(!next && wd->loop)
+	if((!next) && (wd->loop))
 		next = eina_list_data_get(wd->items);
 	return next;
 }
@@ -251,7 +251,7 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
 
 
 	item = wd->current;
-	if (!item || !item->base.view) return;
+	if ((!item) || (!item->base.view)) return;
 
 	_item_realize(item);
 	edje_object_part_unswallow(NULL, item->base.view);
@@ -418,7 +418,7 @@ elm_slideshow_next(Evas_Object *obj)
    if (wd->current)
 	   next = _item_next_get(wd->current);
 
-   if (!next || next == wd->current) return;
+   if ((!next) || (next == wd->current)) return;
    
 
    _end(obj, obj, NULL, NULL);
@@ -459,7 +459,7 @@ elm_slideshow_previous(Evas_Object *obj)
    if (wd->current)
      prev = _item_prev_get(wd->current);
 
-   if (!prev ||  prev == wd->current) return;
+   if ((!prev) ||  (prev == wd->current)) return;
 
    _end(obj, obj, NULL, NULL);
 
@@ -717,7 +717,7 @@ elm_slideshow_item_del(Elm_Slideshow_Item *item)
 	wd->items = eina_list_remove_list(wd->items, item->l);
 	wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
 
-	if (item->base.view && item->itc->func.del)
+	if ((item->base.view) && (item->itc->func.del))
 		item->itc->func.del((void*)item->base.data, item->base.view);
 	if (item->base.view)
 		evas_object_del(item->base.view);

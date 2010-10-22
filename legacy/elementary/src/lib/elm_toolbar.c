@@ -58,10 +58,10 @@ _item_icon_set(Evas_Object *icon_obj, const char *type, const char *icon)
 {
    char icon_str[512];
 
-   if (!type || !*type) goto end;
-   if (!icon || !*icon) return EINA_FALSE;
-   if (snprintf(icon_str, sizeof(icon_str), "%s%s", type, icon) > 0
-       && elm_icon_standard_set(icon_obj, icon_str))
+   if ((!type) || (!*type)) goto end;
+   if ((!icon) || (!*icon)) return EINA_FALSE;
+   if ((snprintf(icon_str, sizeof(icon_str), "%s%s", type, icon) > 0)
+       && (elm_icon_standard_set(icon_obj, icon_str)))
      return EINA_TRUE;
 end:
    if (elm_icon_standard_set(icon_obj, icon))
@@ -849,7 +849,7 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 
    if (!wd) return;
    wd->shrink_mode = shrink_mode;
-   bounce = _elm_config->thumbscroll_bounce_enable &&
+   bounce = (_elm_config->thumbscroll_bounce_enable) &&
       (shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL);
    elm_smart_scroller_bounce_allow_set(wd->scr, bounce, EINA_FALSE);
 

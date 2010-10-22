@@ -277,9 +277,9 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (elm_widget_disabled_get(obj))
      return EINA_FALSE;
 
-   if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      is_up = EINA_FALSE;
-   else if (strcmp(ev->keyname, "Up") && strcmp(ev->keyname, "KP_Up"))
+   else if ((strcmp(ev->keyname, "Up")) && (strcmp(ev->keyname, "KP_Up")))
      return EINA_FALSE;
 
    if (wd->spin) ecore_timer_del(wd->spin);
@@ -941,7 +941,7 @@ elm_flippicker_item_label_get(Elm_Flippicker_Item *item)
    Eina_List *l;
 
    wd = elm_widget_data_get(item->base.widget);
-   if (!wd || !wd->items)
+   if ((!wd) || (!wd->items))
      return NULL;
 
    EINA_LIST_FOREACH(wd->items, l, _item)
@@ -967,11 +967,11 @@ elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label)
    Widget_Data *wd;
    Eina_List *l;
 
-   if (!item || !label)
+   if ((!item) || (!label))
      return;
 
    wd = elm_widget_data_get(item->base.widget);
-   if (!wd || !wd->items)
+   if ((!wd) || (!wd->items))
      return;
 
    l = eina_list_data_find_list(wd->items, item);
@@ -1012,7 +1012,7 @@ elm_flippicker_item_prev(Elm_Flippicker_Item *item)
    Eina_List *l;
 
    wd = elm_widget_data_get(item->base.widget);
-   if (!wd || !wd->items)
+   if ((!wd) || (!wd->items))
      return NULL;
 
    EINA_LIST_FOREACH(wd->items, l, _item)
@@ -1045,7 +1045,7 @@ elm_flippicker_item_next(Elm_Flippicker_Item *item)
    Eina_List *l;
 
    wd = elm_widget_data_get(item->base.widget);
-   if (!wd || !wd->items)
+   if ((!wd) || (!wd->items))
      return NULL;
 
    EINA_LIST_FOREACH(wd->items, l, _item)

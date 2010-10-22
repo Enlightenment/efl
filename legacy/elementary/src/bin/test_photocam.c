@@ -201,7 +201,7 @@ _photocam_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
    zoom = elm_photocam_zoom_get(photocam);
-   if (ev->z>0 && zoom == 1) return;
+   if ((ev->z>0) && (zoom == 1)) return;
 
    if (ev->z > 0)
      zoom /= 2;
