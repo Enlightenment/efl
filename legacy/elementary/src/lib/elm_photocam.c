@@ -244,7 +244,7 @@ grid_clear(Evas_Object *obj, Grid *g)
              if (g->grid[tn].want)
                {
                   wd->preload_num--;
-                  if (wd->preload_num == 0)
+                  if (!wd->preload_num)
                     {
                        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                                "elm,state,busy,stop", "elm");
@@ -270,7 +270,7 @@ _tile_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void 
         evas_object_show(git->img);
         git->have = 1;
         git->wd->preload_num--;
-        if (git->wd->preload_num == 0)
+        if (!git->wd->preload_num)
           {
              edje_object_signal_emit(elm_smart_scroller_edje_object_get(git->wd->scr),
                                      "elm,state,busy,stop", "elm");
@@ -420,7 +420,7 @@ grid_load(Evas_Object *obj, Grid *g)
              else if ((g->grid[tn].want) && (!visible))
                {
                   wd->preload_num--;
-                  if (wd->preload_num == 0)
+                  if (!wd->preload_num)
                     {
                        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                                "elm,state,busy,stop", "elm");
@@ -472,11 +472,11 @@ _smooth_update(Evas_Object *obj)
                   int tn;
                   
                   tn = (y * g->gw) + x;
-                  evas_object_image_smooth_scale_set(g->grid[tn].img, (wd->nosmooth == 0));
+                  evas_object_image_smooth_scale_set(g->grid[tn].img, (!wd->nosmooth));
                }
           }
      }
-   evas_object_image_smooth_scale_set(wd->img, (wd->nosmooth == 0));
+   evas_object_image_smooth_scale_set(wd->img, (!wd->nosmooth));
 }
 
 static void
@@ -502,7 +502,7 @@ _scr_timeout(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->nosmooth--;
-   if (wd->nosmooth == 0) _smooth_update(data);
+   if (!wd->nosmooth) _smooth_update(data);
    wd->scr_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
@@ -540,7 +540,7 @@ _main_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void 
    wd->calc_job = ecore_job_add(_calc_job, wd);
    evas_object_smart_callback_call(data, "loaded", NULL);
    wd->preload_num--;
-   if (wd->preload_num == 0)
+   if (!wd->preload_num)
      {
         edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                 "elm,state,busy,stop", "elm");
@@ -613,7 +613,7 @@ _zoom_anim(void *data)
    if (!go)
      {
         wd->nosmooth--;
-        if (wd->nosmooth == 0) _smooth_update(data);
+        if (!wd->nosmooth) _smooth_update(data);
         wd->zoom_animator = NULL;
         evas_object_smart_callback_call(obj, "zoom,stop", NULL);
      }
@@ -1564,7 +1564,7 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
    if (wd->zoom_animator)
      {
         wd->nosmooth--;
-        if (wd->nosmooth == 0) _smooth_update(obj);
+        if (!wd->nosmooth) _smooth_update(obj);
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
         zoom_do(obj, 1.0);

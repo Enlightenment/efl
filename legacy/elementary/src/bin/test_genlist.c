@@ -521,7 +521,7 @@ Evas_Object *gl2_icon_get(void *data, Evas_Object *obj, const char *part)
    Evas_Object *ic = elm_icon_add(obj);
    if (!strcmp(part, "elm.swallow.icon"))
      {
-	if ((tit->mode & 0x3) == 0)
+	if (!(tit->mode & 0x3))
 	  snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
 	else if ((tit->mode & 0x3) == 1)
 	  snprintf(buf, sizeof(buf), "%s/images/logo.png", PACKAGE_DATA_DIR);
@@ -533,7 +533,7 @@ Evas_Object *gl2_icon_get(void *data, Evas_Object *obj, const char *part)
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
-	if ((tit->mode & 0x3) == 0)
+	if (!(tit->mode & 0x3))
 	  snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", PACKAGE_DATA_DIR);
 	else if ((tit->mode & 0x3) == 1)
 	  snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", PACKAGE_DATA_DIR);

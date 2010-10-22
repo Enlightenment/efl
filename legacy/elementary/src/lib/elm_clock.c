@@ -432,7 +432,7 @@ _time_update(Evas_Object *obj)
 		  if (hrs > 12) hrs -= 12;
 		  ampm = 1;
 	       }
-	     else if (hrs == 0) hrs = 12;
+	     else if (!hrs) hrs = 12;
 	  }
 	d1 = hrs / 10;
 	d2 = hrs % 10;

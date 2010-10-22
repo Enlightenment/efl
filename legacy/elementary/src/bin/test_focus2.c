@@ -8,7 +8,7 @@ static void
 _focus_in(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
 {
    const char *type = evas_object_type_get(event_info);
-   if ((type) && (strcmp(type, "elm_widget") == 0))
+   if ((type) && (!strcmp(type, "elm_widget")))
      type = elm_object_widget_type_get(event_info);
    printf("Evas_Object focus in: %p %s\n", event_info, type);
 }
@@ -17,7 +17,7 @@ static void
 _focus_out(void *data __UNUSED__, Evas *e __UNUSED__, void *event_info)
 {
    const char *type = evas_object_type_get(event_info);
-   if ((type) && (strcmp(type, "elm_widget") == 0))
+   if ((type) && (!strcmp(type, "elm_widget")))
      type = elm_object_widget_type_get(event_info);
    printf("Evas_Object focus out: %p %s\n", event_info, type);
 }
@@ -27,7 +27,7 @@ _focus_obj(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *newfocus = data;
    const char *type = evas_object_type_get(newfocus);
-   if ((type) && (strcmp(type, "elm_widget") == 0))
+   if ((type) && (!strcmp(type, "elm_widget")))
      type = elm_object_widget_type_get(newfocus);
    printf("elm_object_focus(%p) %s\n", newfocus, type);
    elm_object_focus(newfocus);

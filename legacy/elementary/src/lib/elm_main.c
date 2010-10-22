@@ -367,7 +367,7 @@ EAPI void
 elm_need_e_dbus(void)
 {
 #ifdef ELM_EDBUS
-   if (_elm_need_e_dbus ++ != 0) return;
+   if (_elm_need_e_dbus++) return;
    e_dbus_init();
    e_hal_init();
 #endif
@@ -377,7 +377,7 @@ static void
 _elm_unneed_e_dbus(void)
 {
 #ifdef ELM_EDBUS
-   if (-- _elm_need_e_dbus != 0) return;
+   if (--_elm_need_e_dbus) return;
 
    _elm_need_e_dbus = 0;
    e_hal_shutdown();
@@ -392,7 +392,7 @@ EAPI void
 elm_need_efreet(void)
 {
 #ifdef ELM_EFREET
-   if (_elm_need_efreet ++ != 0) return;
+   if (_elm_need_efreet++) return;
    efreet_init();
    efreet_mime_init();
    efreet_trash_init();
@@ -417,7 +417,7 @@ static void
 _elm_unneed_efreet(void)
 {
 #ifdef ELM_EFREET
-   if (-- _elm_need_efreet != 0) return;
+   if (--_elm_need_efreet) return;
 
    _elm_need_efreet = 0;
    efreet_trash_shutdown();
@@ -452,7 +452,7 @@ elm_quicklaunch_init(int argc, char **argv)
    ecore_app_args_set(argc, (const char **)argv);
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
-   if (ELM_EVENT_POLICY_CHANGED == 0)
+   if (!ELM_EVENT_POLICY_CHANGED)
      ELM_EVENT_POLICY_CHANGED = ecore_event_type_new();
 
    ecore_file_init();
@@ -709,7 +709,7 @@ elm_quicklaunch_prepare(int argc __UNUSED__, char **argv)
 	strcat(p, "../lib/");
 	strcat(p, exename);
 	strcat(p, ".so");
-	if (access(exe2, R_OK | X_OK) == 0)
+	if (!access(exe2, R_OK | X_OK))
 	  {
 	     free(exe);
 	     exe = exe2;
@@ -908,7 +908,7 @@ elm_quicklaunch_exe_path_get(const char *exe)
 	pp = p;
 	for (;;)
 	  {
-	     if ((*p == ':') || (*p == 0))
+	     if ((*p == ':') || (!*p))
 	       {
 		  int len;
 
@@ -916,13 +916,13 @@ elm_quicklaunch_exe_path_get(const char *exe)
 		  strncpy(buf2, pp, len);
 		  buf2[len] = 0;
 		  pathlist = eina_list_append(pathlist, eina_stringshare_add(buf2));
-		  if (*p == 0) break;
+		  if (!*p) break;
 		  p++;
 		  pp = p;
 	       }
 	     else
 	       {
-		  if (*p == 0) break;
+		  if (!*p) break;
 		  p++;
 	       }
 	  }
@@ -930,7 +930,7 @@ elm_quicklaunch_exe_path_get(const char *exe)
    EINA_LIST_FOREACH(pathlist, l, pathitr)
      {
 	snprintf(buf, sizeof(buf), "%s/%s", pathitr, exe);
-	if (access(buf, R_OK | X_OK) == 0) return strdup(buf);
+	if (!access(buf, R_OK | X_OK)) return strdup(buf);
      }
    return NULL;
 }

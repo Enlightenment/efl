@@ -1645,7 +1645,7 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_hold--;
    if (sd->scroll_hold < 0) sd->scroll_hold = 0;
-   if (sd->scroll_hold == 0)
+   if (!sd->scroll_hold)
       evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
 }
@@ -1674,7 +1674,7 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_freeze--;
    if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
-   if (sd->scroll_freeze == 0)
+   if (!sd->scroll_freeze)
       evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
    if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
 }
@@ -1863,10 +1863,10 @@ elm_widget_type_check(const Evas_Object *obj, const char *type)
    provided = elm_widget_type_get(obj);
    if (EINA_LIKELY(provided == type)) return EINA_TRUE;
    if (type) expected = type;
-   if ((!provided) || (provided[0] == 0))
+   if ((!provided) || (!provided[0]))
      {
         provided = evas_object_type_get(obj);
-        if ((!provided) || (provided[0] == 0))
+        if ((!provided) || (!provided[0]))
            provided = "(unknown)";
      }
    ERR("Passing Object: %p, of type: '%s' when expecting type: '%s'", obj, provided, expected);
@@ -1895,7 +1895,7 @@ elm_widget_stringlist_get(const char *str)
    if (!str) return NULL;
    for (b = s = str; 1; s++)
      {
-	if ((*s == ' ') || (*s == 0))
+	if ((*s == ' ') || (!*s))
 	  {
 	     char *t = malloc(s - b + 1);
 	     if (t)
@@ -1907,7 +1907,7 @@ elm_widget_stringlist_get(const char *str)
 	       }
 	     b = s + 1;
 	  }
-	if (*s == 0) break;
+	if (!*s) break;
      }
    return list;
 }

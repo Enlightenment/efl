@@ -505,7 +505,7 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event){
 
    for (i = 0 ; i < CNP_N_ATOMS ; i ++)
      {
-	if (strcmp(ev->target, atoms[i].name) == 0)
+	if (!strcmp(ev->target, atoms[i].name))
 	  {
 	     if (atoms[i].notify){
 		  cnp_debug("Found something: %s\n", atoms[i].name);
@@ -706,7 +706,7 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
         return 0;
       }
    cnp_debug("Got %s\n",p);
-   if (strncmp(p,"file://",7) != 0)
+   if (strncmp(p, "file://", 7))
      {
         /* Try and continue if it looks sane */
         if (*p != '/') return 0;
@@ -962,7 +962,7 @@ image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
    EINA_LIST_FOREACH(pastedimages, l, pi)
      {
 	cnp_debug("is it %s?\n",pi->tag);
-	if (strcmp(pi->tag,item) == 0){
+	if (!strcmp(pi->tag, item)){
 	     /* Found it */
 	     Evas_Object *o;
 	     o = evas_object_image_filled_add(evas_object_evas_get(entry));
@@ -1024,7 +1024,7 @@ pasteimage_provider_set(Evas_Object *entry)
    if (!entry) return false;
    type = elm_widget_type_get(entry);
    printf("type is %s\n",type);
-   if ((!type) || (strcmp(type,"entry") != 0)) return false;
+   if ((!type) || (strcmp(type, "entry"))) return false;
 
    v = evas_object_data_get(entry, PROVIDER_SET);
    if (!v)
@@ -1260,7 +1260,7 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
      {
 	for (j = 0 ; j < savedtypes.ntypes ; j ++)
           {
-             if (strcmp(savedtypes.types[j], atoms[i].name) == 0)
+             if (!strcmp(savedtypes.types[j], atoms[i].name))
                {
                   goto found;
                }

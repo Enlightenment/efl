@@ -74,7 +74,7 @@ main(int argc, char **argv)
 	     exe = NULL;
 	     for (;;)
 	       {
-		  if ((*p == ':') || (*p == 0))
+		  if ((*p == ':') || (!*p))
 		    {
 		       unsigned int len;
 
@@ -84,19 +84,19 @@ main(int argc, char **argv)
 			    strncpy(buf, pp, len);
 			    strcpy(buf + len, "/");
 			    strcpy(buf + len + 1, argv[0]);
-			    if (access(buf, R_OK | X_OK) == 0)
+			    if (!access(buf, R_OK | X_OK))
 			      {
 				 exe = buf;
 				 break;
 			      }
-			    if (*p == 0) break;
+			    if (!*p) break;
 			    p++;
 			    pp = p;
 			 }
 		    }
 		  else
 		    {
-		       if (*p == 0) break;
+		       if (!*p) break;
 		       p++;
 		    }
 	       }
@@ -104,7 +104,7 @@ main(int argc, char **argv)
      }
    if (exe)
      {
-	if (lstat(exe, &st) == 0)
+	if (!lstat(exe, &st))
 	  {
 	     if (S_ISLNK(st.st_mode))
 	       {

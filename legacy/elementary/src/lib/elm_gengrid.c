@@ -1044,12 +1044,12 @@ call:
      evas_object_smart_callback_call(item->wd->self, "selected", item);
    item->walking--;
    item->wd->walking--;
-   if ((item->wd->clear_me) && (item->wd->walking == 0))
+   if ((item->wd->clear_me) && (!item->wd->walking))
      elm_gengrid_clear(item->base.widget);
    else
      {
-        if ((item->walking == 0) && (item->delete_me))
-          if (item->relcount == 0) _item_del(item);
+        if ((!item->walking) && (item->delete_me))
+          if (!item->relcount) _item_del(item);
      }
    item->wd->last_selected_item = item;
 }

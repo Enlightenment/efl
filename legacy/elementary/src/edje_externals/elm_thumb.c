@@ -19,7 +19,7 @@ _anim_setting_get(const char *anim_str)
 
    for (i = 0; i < sizeof(choices); i++)
      {
-	if (strcmp(anim_str, choices[i]) == 0)
+	if (!strcmp(anim_str, choices[i]))
 	  return i;
      }
    return ELM_THUMB_ANIMATION_LAST;

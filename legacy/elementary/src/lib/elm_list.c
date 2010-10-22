@@ -351,7 +351,7 @@ _del_hook(Evas_Object *obj)
    Eina_List *n;
 
    if (!wd) return;
-   if (wd->walking != 0)
+   if (wd->walking)
      ERR("ERROR: list deleted while walking.\n");
 
    _elm_list_walk(wd);

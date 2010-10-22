@@ -419,8 +419,8 @@ _smart_scrollto_y(Smart_Data *sd, double t_in, Evas_Coord pos_y)
 static Eina_Bool
 _smart_do_page(Smart_Data *sd)
 {
-   if ((sd->pagerel_h == 0.0) && (sd->pagesize_h == 0) &&
-       (sd->pagerel_v == 0.0) && (sd->pagesize_v == 0))
+   if ((sd->pagerel_h == 0.0) && (!sd->pagesize_h) &&
+       (sd->pagerel_v == 0.0) && (!sd->pagesize_v))
      return EINA_FALSE;
    return EINA_TRUE;
 }
@@ -797,14 +797,14 @@ elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
    if ((x != px)/* && (!sd->bouncemex)*/)
      {
-        if (x == 0)
+        if (!x)
           evas_object_smart_callback_call(obj, "edge,left", NULL);
         if (x == mx)
           evas_object_smart_callback_call(obj, "edge,right", NULL);
      }
    if ((y != py)/* && (!sd->bouncemey)*/)
      {
-        if (y == 0)
+        if (!y)
           evas_object_smart_callback_call(obj, "edge,top", NULL);
         if (y == my)
           evas_object_smart_callback_call(obj, "edge,bottom", NULL);
@@ -1311,7 +1311,7 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         sd->down.bounce_y_animator = NULL;
         sd->bouncemey = 0;
      }
-   if (ev->direction == 0)
+   if (!ev->direction)
      y += ev->z * sd->step.y;
    else if (ev->direction == 1)
      x += ev->z * sd->step.x;
@@ -1961,7 +1961,7 @@ _smart_scrollbar_reset(Smart_Data *sd)
      }
    sd->pan_func.get(sd->pan_obj, &px, &py);
    sd->pan_func.set(sd->pan_obj, 0, 0);
-   if ((px != 0) || (py != 0))
+   if ((px) || (py))
      edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
 }
 
@@ -2178,7 +2178,7 @@ _smart_scrollbar_size_adjust(Smart_Data *sd)
 	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
 	sd->pan_func.get(sd->pan_obj, &px, &py);
 	sd->pan_func.set(sd->pan_obj, 0, 0);
-	if ((px != 0) || (py != 0))
+	if ((px) || (py))
 	  edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
      }
    _smart_scrollbar_bar_visibility_adjust(sd);

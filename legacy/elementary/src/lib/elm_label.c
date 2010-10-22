@@ -174,7 +174,7 @@ _get_value_in_key_string(const char *oldstring, const char *key, char **value)
              if (!endtag) break;
           }
         
-        if ((foundflag != 0) && (*starttag == '<') && (*endtag == '>'))
+        if ((foundflag) && (*starttag == '<') && (*endtag == '>'))
           foundflag = 1;
         else 
           foundflag = 0;
@@ -347,7 +347,7 @@ _ellipsis_label_to_width(Evas_Object *obj)
    if ((minfontsize == maxfontsize) || (cur_fontsize == 1)) return; // theme is not ready for ellipsis
    if (eina_stringshare_strlen(wd->label) <= 0) return;
 
-   if (_get_value_in_key_string(wd->label, "font_size", &kvalue) == 0)
+   if (!_get_value_in_key_string(wd->label, "font_size", &kvalue))
      {
         if (kvalue) cur_fontsize = atoi((char *)kvalue);
      }
@@ -588,10 +588,10 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
    if (len <= 0) return;
    sprintf(fontvalue, "%i", fontsize);
    
-   if (_stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 0) == 0)
+   if (!_stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 0))
      edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    
-   if (fontsize == 0) // remove fontsize tag
+   if (!fontsize) // remove fontsize tag
      _stringshare_key_value_replace(&wd->label, "font_size", fontvalue, 1);
    
    wd->changed = 1;
@@ -623,7 +623,7 @@ elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
    len = strlen(wd->label);
    if (len <= 0) return;
 
-   if (_stringshare_key_value_replace(&wd->label, "align", alignmode, 0) == 0)
+   if (!_stringshare_key_value_replace(&wd->label, "align", alignmode, 0))
      edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
 
    wd->changed = 1;
@@ -659,7 +659,7 @@ elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsig
    if (len <= 0) return;
    sprintf(colorstring, "#%02x%02x%02x%02x", r, g, b, a);
 
-   if (_stringshare_key_value_replace(&wd->label, "color", colorstring, 0) == 0)
+   if (!_stringshare_key_value_replace(&wd->label, "color", colorstring, 0))
      {
         edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
         wd->changed = 1;

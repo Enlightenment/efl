@@ -122,7 +122,7 @@ _del_hook(Evas_Object *obj)
    if (!wd)
      return;
 
-   if (wd->walking != 0)
+   if (wd->walking)
      ERR("flippicker deleted while walking.\n");
 
    EINA_LIST_FREE(wd->items, item)

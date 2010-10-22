@@ -101,7 +101,7 @@ _animator_animate_cb(void *data)
    //Reverse?
    if (animator->auto_reverse)
      {
-	if ((animator->cur_repeat_cnt % 2) == 0)
+	if (!(animator->cur_repeat_cnt % 2))
 	  frame = 1 - frame;
      }
 
@@ -113,7 +113,7 @@ _animator_animate_cb(void *data)
      return ECORE_CALLBACK_RENEW;
 
    //Repeat and reverse and time done! 
-   if (animator->cur_repeat_cnt == 0)
+   if (!animator->cur_repeat_cnt)
      {
 	animator->on_animating = EINA_FALSE;
 	_delete_animator(animator);

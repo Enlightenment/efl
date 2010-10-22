@@ -190,7 +190,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
         pe = p;
         for (;;)
           {
-             if ((*pe == ':') || (*pe == 0))
+             if ((*pe == ':') || (!*pe))
                { // p -> pe == 'name:'
                   if (pe > p)
                     {
@@ -206,7 +206,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
                             free(n);
                          }
                     }
-                  if (*pe == 0) break;
+                  if (!*pe) break;
                   p = pe + 1;
                   pe = p;
                }

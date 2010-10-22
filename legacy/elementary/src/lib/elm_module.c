@@ -60,7 +60,7 @@ _elm_module_parse(const char *s)
    pe = p;
    for (;;)
      {
-        if ((*pe == ':') || (*pe == 0))
+        if ((*pe == ':') || (!*pe))
           { // p -> pe == 'name:'
              if (pe > p)
                {
@@ -81,7 +81,7 @@ _elm_module_parse(const char *s)
                        free(n);
                     }
                }
-             if (*pe == 0) break;
+             if (!*pe) break;
              p = pe + 1;
              pe = p;
           }

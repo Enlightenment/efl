@@ -214,7 +214,7 @@ _hsl_to_rgb(void *data)
 	v = (_l <= 0.5) ? (_l * (1.0 + _s)) : (_l + _s - (_l * _s));
 	p = _l + _l - v;
 
-	if (v != 0) sv = (v - p) / v;
+	if (v) sv = (v - p) / v;
 	else sv = 0;
 
 	i = (int)_h;
@@ -502,7 +502,7 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 			   "left_button");
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
 
-   if (cp->colorpicker_num == 0) x -= 1.0 / HUE_STEP;
+   if (!cp->colorpicker_num) x -= 1.0 / HUE_STEP;
    else if (cp->colorpicker_num == 1) x -= 1.0 / SAT_STEP;
    else if (cp->colorpicker_num == 2) x -= 1.0 / LIG_STEP;
    else if (cp->colorpicker_num == 3) x -= 1.0 / ALP_STEP;
@@ -528,7 +528,7 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 			   "right_button");
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
 
-   if (cp->colorpicker_num == 0) x += 1.0 / HUE_STEP;
+   if (!cp->colorpicker_num) x += 1.0 / HUE_STEP;
    else if (cp->colorpicker_num == 1) x += 1.0 / SAT_STEP;
    else if (cp->colorpicker_num == 2) x += 1.0 / LIG_STEP;
    else if (cp->colorpicker_num == 3) x += 1.0 / ALP_STEP;

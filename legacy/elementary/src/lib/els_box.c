@@ -86,7 +86,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
 	     if (wy > 0.0) expand++;
 	  }
      }
-   if (expand == 0)
+   if (!expand)
      {
 	evas_object_size_hint_align_get(o, &ax, &ay);
 	if (horizontal)

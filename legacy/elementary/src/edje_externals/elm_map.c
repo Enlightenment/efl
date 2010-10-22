@@ -27,7 +27,7 @@ _zoom_mode_get(const char *map_src)
 	  ELM_MAP_ZOOM_MODE_LAST + 1);
 
    for (i = 0; i < sizeof(zoom_choices); i++)
-     if (strcmp(map_src, zoom_choices[i]) == 0) return i;
+     if (!strcmp(map_src, zoom_choices[i])) return i;
 
    return ELM_MAP_ZOOM_MODE_LAST;
 }
@@ -41,7 +41,7 @@ _map_source_get(const char *map_src)
 	  ELM_MAP_SOURCE_LAST);
 
    for (i = 0; i < sizeof(source_choices); i++)
-     if (strcmp(map_src, source_choices[i]) == 0) return i;
+     if (!strcmp(map_src, source_choices[i])) return i;
 
    return ELM_MAP_SOURCE_LAST;
 }

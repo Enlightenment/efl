@@ -564,7 +564,7 @@ grid_clear(Evas_Object *obj, Grid *g)
 	  {
 	     gi->want = EINA_FALSE;
 	     wd->preload_num--;
-	     if (wd->preload_num == 0)
+	     if (!wd->preload_num)
 	       {
 		  edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
 			"elm,state,busy,stop", "elm");
@@ -607,7 +607,7 @@ _tile_update(Grid_Item *gi)
 
    gi->have = EINA_TRUE;
    gi->wd->preload_num--;
-   if (gi->wd->preload_num == 0)
+   if (!gi->wd->preload_num)
      {
 	edje_object_signal_emit(elm_smart_scroller_edje_object_get(gi->wd->scr),
                                 "elm,state,busy,stop", "elm");
@@ -718,7 +718,7 @@ grid_load(Evas_Object *obj, Grid *g)
 	     if (gi->want)
 	       {
 		  wd->preload_num--;
-		  if (wd->preload_num == 0)
+		  if (!wd->preload_num)
 		    {
 		       edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                                "elm,state,busy,stop", "elm");
@@ -888,7 +888,7 @@ _smooth_update(Evas_Object *obj)
 	EINA_ITERATOR_FOREACH(it, cell)
 	  {
 	     Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
-	     evas_object_image_smooth_scale_set(gi->img, (wd->nosmooth == 0));
+	     evas_object_image_smooth_scale_set(gi->img, (!wd->nosmooth));
 	  }
 	eina_iterator_free(it);
      }
@@ -918,7 +918,7 @@ _scr_timeout(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->nosmooth--;
-   if (wd->nosmooth == 0) _smooth_update(data);
+   if (!wd->nosmooth) _smooth_update(data);
    wd->scr_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1005,7 +1005,7 @@ _zoom_anim(void *data)
    if (!go)
      {
 	wd->nosmooth--;
-	if (wd->nosmooth == 0) _smooth_update(data);
+	if (!wd->nosmooth) _smooth_update(data);
 	wd->zoom_animator = NULL;
 	evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
@@ -2064,7 +2064,7 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
    if (wd->zoom_animator)
      {
 	wd->nosmooth--;
-	if (wd->nosmooth == 0) _smooth_update(obj);
+	if (!wd->nosmooth) _smooth_update(obj);
 	ecore_animator_del(wd->zoom_animator);
 	wd->zoom_animator = NULL;
 	zoom_do(obj, 1.0);
@@ -2492,7 +2492,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    for (i = 0; i <= ZOOM_MAX; i++)
      {
 	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
-	if (eina_list_count(marker->groups[i]->markers) == 0)
+	if (!eina_list_count(marker->groups[i]->markers))
 	  {
              groups = eina_matrixsparse_cell_data_get(marker->groups[i]->cell);
              groups = eina_list_remove(groups, marker->groups[i]);

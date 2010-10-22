@@ -77,7 +77,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                                      (void *)(long)j/* item data */, 
                                      NULL/* parent */, ELM_GENLIST_ITEM_NONE,
                                      NULL/* func */, NULL/* func data */);
-        if ((j & 0xf) == 0)
+        if (!(j & 0xf))
           {
              char buf[32];
              

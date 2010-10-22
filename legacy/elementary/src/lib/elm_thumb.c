@@ -369,7 +369,7 @@ void
 _elm_unneed_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (-- _elm_need_ethumb != 0) return;
+   if (--_elm_need_ethumb) return;
 
    ethumb_client_disconnect(_elm_ethumb_client);
    _elm_ethumb_client = NULL;
@@ -396,7 +396,7 @@ EAPI void
 elm_need_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (_elm_need_ethumb ++ != 0) return;
+   if (_elm_need_ethumb++) return;
    ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
    ethumb_client_init();
    _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);

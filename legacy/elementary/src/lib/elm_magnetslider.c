@@ -238,7 +238,7 @@ _icon_animation(void *data)
                                    "elm.swallow.icon", new_position, 0.5);
    if (flag_finish_animation)
      {
-        if ((wd->final_position == 0) &&
+        if ((!wd->final_position) &&
             (wd->enabled_position & ELM_MAGNETSLIDER_LEFT))
           evas_object_smart_callback_call(data, SIG_SELECTED,
                                           (void *)wd->text_left);

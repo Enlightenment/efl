@@ -788,13 +788,13 @@ _item_select(Elm_Genlist_Item *it)
      evas_object_smart_callback_call(it->base.widget, "selected", it);
    it->walking--;
    it->wd->walking--;
-   if ((it->wd->clear_me) && (it->wd->walking == 0))
+   if ((it->wd->clear_me) && (!it->wd->walking))
       elm_genlist_clear(it->base.widget);
    else
      {
-        if ((it->walking == 0) && (it->delete_me))
+        if ((!it->walking) && (it->delete_me))
           {
-             if (it->relcount == 0) _item_del(it);
+             if (!it->relcount) _item_del(it);
           }
      }
    it->wd->last_selected_item = it;
@@ -1257,7 +1257,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
              it->h = it->minh = mh;
              it->mincalcd = EINA_TRUE;
 
-             if ((in == 0) && (it->wd->homogeneous))
+             if ((!in) && (it->wd->homogeneous))
                {
                   it->wd->item_width = mw;
                   it->wd->item_height = mh;
@@ -2027,7 +2027,7 @@ newblock:
    if (it->rel)
      {
         it->rel->relcount--;
-        if ((it->rel->delete_me) && (it->rel->relcount == 0))
+        if ((it->rel->delete_me) && (!it->rel->relcount))
            _item_del(it->rel);
         it->rel = NULL;
      }

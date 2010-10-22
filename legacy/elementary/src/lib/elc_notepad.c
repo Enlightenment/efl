@@ -156,7 +156,7 @@ _save_markup_utf8(const char *file, const char *text)
 {
    FILE *f;
    
-   if ((!text) || (text[0] == 0))
+   if ((!text) || (!text[0]))
      {
 	ecore_file_unlink(file);
 	return;

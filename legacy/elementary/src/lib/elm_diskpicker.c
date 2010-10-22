@@ -1018,7 +1018,7 @@ elm_diskpicker_item_del(Elm_Diskpicker_Item * it)
 
    if (wd->round)
      {
-        if (wd->item_count == 0)
+        if (!wd->item_count)
           {
              evas_object_hide(wd->first->base.view);
              evas_object_hide(wd->second->base.view);

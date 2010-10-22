@@ -332,7 +332,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   dist = x;
                }
           }
-        if ((i == 0) && (wd->level == 0))
+        if ((!i) && (!wd->level))
           edje_object_part_drag_value_set(wd->base, "elm.dragable.index.1", 
                                           cdv, cdv);
         if (it_closest) it_closest->selected = 1;
@@ -455,7 +455,7 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
      {
         if (adx > minw)
           {
-             if (wd->level == 0)
+             if (!wd->level)
                { 
                   wd->level = 1;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", wd->level);

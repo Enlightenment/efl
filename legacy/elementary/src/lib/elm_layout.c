@@ -175,7 +175,7 @@ _parts_cursors_find(Widget_Data *wd, const char *part)
    Part_Cursor *pc;
    EINA_LIST_FOREACH(wd->parts_cursors, l, pc)
      {
-        if (strcmp(pc->part, part) == 0)
+        if (!strcmp(pc->part, part))
           return pc;
      }
    return NULL;
@@ -936,7 +936,7 @@ elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name)
 
    EINA_LIST_FOREACH(wd->parts_cursors, l, pc)
      {
-        if (strcmp(part_name, pc->part) == 0)
+        if (!strcmp(part_name, pc->part))
           {
              if (pc->obj) elm_object_cursor_unset(pc->obj);
              _part_cursor_free(pc);

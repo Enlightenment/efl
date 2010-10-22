@@ -1060,7 +1060,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_font_cache_set(win->evas, (_elm_config->font_cache * 1024));
    EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
      evas_font_path_append(win->evas, fontpath);
-   if (_elm_config->font_hinting == 0)
+   if (!_elm_config->font_hinting)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_NONE);
    else if (_elm_config->font_hinting == 1)
      evas_font_hinting_set(win->evas, EVAS_FONT_HINTING_AUTO);

@@ -573,7 +573,7 @@ _env_get(void)
 	pp = p;
 	for (;;)
 	  {
-	     if ((*p == ':') || (*p == 0))
+	     if ((*p == ':') || (!*p))
 	       {
 		  int len;
 
@@ -583,13 +583,13 @@ _env_get(void)
 		  _elm_config->font_dirs = 
                     eina_list_append(_elm_config->font_dirs, 
                                      eina_stringshare_add(buf2));
-		  if (*p == 0) break;
+		  if (!*p) break;
 		  p++;
 		  pp = p;
 	       }
 	     else
 	       {
-		  if (*p == 0) break;
+		  if (!*p) break;
 		  p++;
 	       }
 	  }
