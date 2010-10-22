@@ -59,6 +59,11 @@ AC_SUBST(VMAJ)
 dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
+AC_PROG_CC
+
+# pkg-config
+PKG_PROG_PKG_CONFIG
+
 # Check whether pkg-config supports Requires.private
 if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
    pkgconfig_requires_private="Requires.private"
@@ -67,17 +72,17 @@ else
 fi
 AC_SUBST(pkgconfig_requires_private)
 
-AC_PROG_CC
-
-requirements_eio="eina >= 1.0.0 ecore >= 1.0.0"
-
-PKG_CHECK_MODULES([EIO], [eina >= 1.0.0 ecore >= 1.0.0])
-
 AC_SUBST(requirements_eio)
 
 # doxygen program for documentation building
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+### Checks for libraries
+
+requirements_eio="eina >= 1.0.0 ecore >= 1.0.0"
+
+PKG_CHECK_MODULES([EIO], [${requirements_eio}])
 
 ### Checks for header files
 AC_HEADER_ASSERT
@@ -135,21 +140,23 @@ esac
 AC_SUBST(EFL_EIO_BUILD)
 
 ### Checks for library functions
-AC_CHECK_FUNCS([fchmod])
+AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
 
 have_splice="no"
-AC_TRY_LINK([
+AC_TRY_LINK(
+   [
 #if defined(HAVE_UNISTD_H)
-#include <unistd.h>
+# include <unistd.h>
 #endif
-#include <fcntl.h>],
-    [long ret = splice(0,0,1,0,400,0);],
-    have_splice=yes,
-    have_splice=no)
+#include <fcntl.h>
+   ],
+   [long ret = splice(0,0,1,0,400,0);],
+   [have_splice="yes"],
+   [have_splice="no"])
 AC_MSG_CHECKING([whether to use splice for file copy])
-AC_MSG_RESULT(${have_splice})
+AC_MSG_RESULT([${have_splice}])
 
-if test "x${have_splice}" = "xyes"; then
+if test "x${have_splice}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
 fi
 
