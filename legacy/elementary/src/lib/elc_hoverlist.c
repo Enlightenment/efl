@@ -71,9 +71,7 @@ static Elm_Hoverlist_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    Elm_Hoverlist_Item *it;
-   Widget_Data *wd;
 
-   wd = elm_widget_data_get(obj);
    it = elm_widget_item_new(obj, Elm_Hoverlist_Item);
    if (!it)
      return NULL;
