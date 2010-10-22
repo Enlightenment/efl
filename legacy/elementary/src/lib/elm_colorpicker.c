@@ -476,11 +476,7 @@ _mv_timer(void *data)
      }
    else
      {
-	if (wd->mv_timer)
-	  {
-	     ecore_timer_del(wd->mv_timer);
-	     wd->mv_timer = NULL;
-	  }
+        wd->mv_timer = NULL;
 	return EINA_FALSE;
      }
 }
@@ -497,6 +493,7 @@ _long_press_timer(void *data)
 	wd->lp_timer = NULL;
      }
 
+   if (wd->mv_timer) ecore_timer_del(wd->mv_timer);
    wd->mv_timer = ecore_timer_add(0.01, _mv_timer, cp);
 
    return EINA_FALSE;
