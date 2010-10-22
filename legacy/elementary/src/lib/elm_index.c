@@ -376,6 +376,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   if (!label) label = strdup(last);
                   else
                     {
+                       /* FIXME: realloc return NULL if the request fails */
                        label = realloc(label, strlen(label) + strlen(last) + 1);
                        strcat(label, last);
                     }
