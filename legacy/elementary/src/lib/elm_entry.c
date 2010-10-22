@@ -69,7 +69,7 @@
  * 
  * Signals that you can add callbacks for are:
  * - "changed" - The text within the entry was changed
- * - "activated" - The entry has received focus and the cursor
+ * - "activated" - The entry has had editing finished and changes are to be committed (generally when enter key is pressed)
  * - "press" - The entry has been clicked
  * - "longpressed" - The entry has been clicked for a couple seconds
  * - "clicked" - The entry has been clicked
