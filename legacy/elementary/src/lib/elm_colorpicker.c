@@ -453,13 +453,13 @@ _mv_timer(void *data)
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
-   if ((!cp) || (!wd)) return 0;
+   if (!wd) return EINA_FALSE;
 
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
    if (cp->button_state == L_BUTTON_PRESSED)
      {
 	x -= 1.0 / BASE_STEP;
-	if (x < 0) x = 0;
+	if (x < 0.0) x = 0.0;
 	edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
 	_draw_rects(data, x);
 	evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
@@ -468,17 +468,14 @@ _mv_timer(void *data)
    else if (cp->button_state == R_BUTTON_PRESSED)
      {
 	x += 1.0 / BASE_STEP;
-	if (x > 1) x = 1;
+	if (x > 1.0) x = 1.0;
 	edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
 	_draw_rects(data, x);
 	evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
 	return EINA_TRUE;
      }
-   else
-     {
-        wd->mv_timer = NULL;
-	return EINA_FALSE;
-     }
+   wd->mv_timer = NULL;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -487,15 +484,10 @@ _long_press_timer(void *data)
    Colorpicker_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    
-   if (wd->lp_timer)
-     {
-	ecore_timer_del(wd->lp_timer);
-	wd->lp_timer = NULL;
-     }
-
    if (wd->mv_timer) ecore_timer_del(wd->mv_timer);
    wd->mv_timer = ecore_timer_add(0.01, _mv_timer, cp);
 
+   wd->lp_timer = NULL;
    return EINA_FALSE;
 }
 
@@ -515,12 +507,13 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    else if (cp->colorpicker_num == 2) x -= 1.0 / LIG_STEP;
    else if (cp->colorpicker_num == 3) x -= 1.0 / ALP_STEP;
 
-   if (x < 0) x = 0;
+   if (x < 0.0) x = 0.0;
 
    edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
    _draw_rects(data, x);
    evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
    cp->button_state = L_BUTTON_PRESSED;
+   if (wd->lp_timer) ecore_timer_del(wd->lp_timer);
    wd->lp_timer = ecore_timer_add(1.0, _long_press_timer, cp);
 }
 
@@ -540,7 +533,7 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    else if (cp->colorpicker_num == 2) x += 1.0 / LIG_STEP;
    else if (cp->colorpicker_num == 3) x += 1.0 / ALP_STEP;
 
-   if (x > 1) x = 1;
+   if (x > 1.0) x = 1.0;
 
    edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
    _draw_rects(data, x);
