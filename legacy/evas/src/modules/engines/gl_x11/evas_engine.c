@@ -565,6 +565,7 @@ static void
 eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    Render_Engine *re;
+   static int safe_native = -1;
 #ifdef FRAMECOUNT
    static double pt = 0.0;
    double ta, tb;
@@ -576,6 +577,12 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    re->win->draw.redraw = 0;
    re->win->draw.drew = 1;
    evas_gl_common_context_flush(re->win->gl_context);
+   if (safe_native == -1)
+     {
+        const char *s = getenv("EVAS_GL_SAFE_NATIVE");
+        safe_native = 0;
+        if (s) safe_native = atoi(s);
+     }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
@@ -584,7 +591,8 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    ta = t0 - pt;
    pt = t0;
 #endif
-   eglWaitNative(EGL_CORE_NATIVE_ENGINE); // previous rendering should be done and swapped
+   // previous rendering should be done and swapped
+   if (!safe_native) eglWaitNative(EGL_CORE_NATIVE_ENGINE);
 #ifdef FRAMECOUNT
    double t1 = get_time();
    tb = t1 - t0;
@@ -595,7 +603,8 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
 //        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
 //     }
 #else
-   glXWaitX();
+   // previous rendering should be done and swapped
+   if (!safe_native) glXWaitX();
 #endif
 //x//   printf("frame -> push\n");
 }
