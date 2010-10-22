@@ -487,7 +487,7 @@ elm_slideshow_previous(Evas_Object *obj)
  *
  * @ingroup Slideshow
  */
-const Eina_List *
+EAPI const Eina_List *
 elm_slideshow_transitions_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -504,7 +504,7 @@ elm_slideshow_transitions_get(const Evas_Object *obj)
  *
  * @ingroup Slideshow
  */
-const Eina_List *
+EAPI const Eina_List *
 elm_slideshow_layouts_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
