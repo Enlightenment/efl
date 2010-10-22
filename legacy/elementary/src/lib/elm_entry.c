@@ -402,6 +402,13 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
+_on_focus_region_hook(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", x, y, w, h);
+}
+
+static void
 _hoversel_position(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1382,6 +1389,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_on_focus_region_hook_set(obj, _on_focus_region_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_object_cursor_set(obj, ELM_CURSOR_XTERM);

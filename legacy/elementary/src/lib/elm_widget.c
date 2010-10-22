@@ -48,6 +48,8 @@ struct _Smart_Data
    void          *on_change_data;
    void         (*on_show_region_func) (void *data, Evas_Object *obj);
    void          *on_show_region_data;
+   void         (*focus_region_func) (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   void         (*on_focus_region_func) (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    void          *data;
    Evas_Coord     rx, ry, rw, rh;
    int            scroll_hold;
@@ -265,6 +267,8 @@ _parent_focus(Evas_Object *obj)
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
    if (sd->focus_func) sd->focus_func(obj);
 
+   _elm_widget_focus_region_show(obj);
+
    sd->focus_order_on_calc = EINA_FALSE;
 }
 
@@ -286,6 +290,41 @@ _elm_widget_type_clear(void)
      {
         eina_stringshare_del(*ptr);
         *ptr = NULL;
+     }
+}
+
+void
+_elm_widget_focus_region_show(const Evas_Object *obj)
+{
+   Evas_Coord x, y, w, h, ox, oy;
+   Smart_Data *sd2;
+   Evas_Object *o;
+
+   API_ENTRY return;
+
+   o = elm_widget_parent_get(obj);
+   if (!o) return;
+
+   elm_widget_focus_region_get(obj, &x, &y, &w, &h);
+   evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+   while (o)
+     {
+        Evas_Coord px, py;
+        sd2 = evas_object_smart_data_get(o);
+        if (sd2->focus_region_func)
+          {
+             sd2->focus_region_func(o, x, y, w, h);
+             elm_widget_focus_region_get(o, &x, &y, &w, &h);
+          }
+        else
+          {
+             evas_object_geometry_get(o, &px, &py, NULL, NULL);
+             x += ox - px;
+             y += oy - py;
+             ox = px;
+             oy = py;
+          }
+        o = elm_widget_parent_get(o);
      }
 }
 
@@ -449,6 +488,46 @@ elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, E
    API_ENTRY return;
    sd->on_show_region_func = func;
    sd->on_show_region_data = data;
+}
+
+/**
+ * Set the hook to use to show the focused region.
+ *
+ * Whenever a new widget gets focused or it's needed to show the focused
+ * area of the current one, this hook will be called on objects that may
+ * want to move their children into their visible area.
+ * The area given in the hook function is relative to the @p obj widget.
+ *
+ * @param obj The widget object
+ * @param func The function to call to show the specified area.
+ *
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h))
+{
+   API_ENTRY return;
+   sd->focus_region_func = func;
+}
+
+/**
+ * Set the hook to retrieve the focused region of a widget.
+ *
+ * This hook will be called by elm_widget_focus_region_get() whenever
+ * it's needed to get the focused area of a widget. The area must be relative
+ * to the widget itself and if no hook is set, it will default to the entire
+ * object.
+ *
+ * @param obj The widget object
+ * @param func The function used to retrieve the focus region.
+ *
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_on_focus_region_hook_set(Evas_Object *obj, void (*func) (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h))
+{
+   API_ENTRY return;
+   sd->on_focus_region_func = func;
 }
 
 EAPI void
@@ -1511,6 +1590,42 @@ elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
    if (y) *y = sd->ry;
    if (w) *w = sd->rw;
    if (h) *h = sd->rh;
+}
+
+/**
+ * Get the focus region of the given widget.
+ *
+ * The focus region is the area of a widget that should brought into the
+ * visible area when the widget is focused. Mostly used to show the part of
+ * an entry where the cursor is, for example. The area returned is relative
+ * to the object @p obj.
+ * If the @p obj doesn't have the proper on_focus_region_hook set, this
+ * function will return the full size of the object.
+ *
+ * @param obj The widget object
+ * @param x Where to store the x coordinate of the area
+ * @param y Where to store the y coordinate of the area
+ * @param w Where to store the width of the area
+ * @param h Where to store the height of the area
+ *
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_focus_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Smart_Data *sd;
+
+   if (!obj) return;
+
+   sd = evas_object_smart_data_get(obj);
+   if (!sd || !_elm_widget_is(obj) || !sd->on_focus_region_func)
+     {
+        evas_object_geometry_get(obj, NULL, NULL, w, h);
+        if (x) *x = 0;
+        if (y) *y = 0;
+        return;
+     }
+   sd->on_focus_region_func(obj, x, y, w, h);
 }
 
 EAPI void

@@ -257,6 +257,14 @@ _show_region_hook(void *data, Evas_Object *obj)
 }
 
 static void
+_focus_region_hook(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->scr)
+     elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -449,6 +457,7 @@ elm_scroller_add(Evas_Object *parent)
    elm_widget_focus_next_hook_set(obj, _elm_scroller_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_focus_region_hook_set(obj, _focus_region_hook);
 
    wd->widget_name = eina_stringshare_add("scroller");
    wd->widget_base = eina_stringshare_add("base");

@@ -197,6 +197,13 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
+_on_focus_region_hook(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   elm_widget_focus_region_get(wd->entry, x, y, w, h);
+}
+
+static void
 _entry_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    _sizing_eval(data);
@@ -357,6 +364,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_on_focus_region_hook_set(obj, _on_focus_region_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
