@@ -471,9 +471,10 @@ ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
                  Ecore_Cb func_cancel,
                  const void *data)
 {
-#ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Worker *work;
+#ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Data *pth = NULL;
+#endif
 
    if (!func_blocking) return NULL;
 
@@ -485,15 +486,17 @@ ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
      }
 
    work->u.short_run.func_blocking = func_blocking;
-   work->hash = NULL;
-   pthread_cond_init(&work->cond, NULL);
-   pthread_mutex_init(&work->mutex, NULL);
    work->func_end = func_end;
    work->func_cancel = func_cancel;
    work->cancel = EINA_FALSE;
    work->feedback_run = EINA_FALSE;
    work->kill = EINA_FALSE;
    work->data = data;
+
+#ifdef EFL_HAVE_PTHREAD
+   work->hash = NULL;
+   pthread_cond_init(&work->cond, NULL);
+   pthread_mutex_init(&work->mutex, NULL);
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
