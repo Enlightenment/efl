@@ -141,7 +141,7 @@ static Eina_Bool external_notify_param_get(void *data __UNUSED__,
 	return EINA_FALSE;
 }
 
-static void * external_notify_params_parse(void *data, Evas_Object *obj,
+static void * external_notify_params_parse(void *data __UNUSED__, Evas_Object *obj,
 		const Eina_List *params) {
 	Elm_Params_Notify *mem;
 	Edje_External_Param *param;

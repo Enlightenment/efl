@@ -84,7 +84,7 @@ external_common_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
 }
 
 Eina_Bool
-external_common_param_set(void *data __UNUSED__, Evas_Object *obj, Edje_External_Param *param)
+external_common_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_External_Param *param)
 {
    if (!strcmp(param->name, "style"))
      {

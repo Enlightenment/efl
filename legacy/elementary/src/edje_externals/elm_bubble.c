@@ -108,7 +108,7 @@ external_bubble_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
 }
 
 static void *
-external_bubble_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
+external_bubble_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Bubble *mem;
    Edje_External_Param *param;

@@ -94,7 +94,7 @@ external_hoversel_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
 }
 
 static void *
-external_hoversel_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
+external_hoversel_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Hoversel *mem;
    Edje_External_Param *param;

@@ -16,6 +16,10 @@ void *external_common_params_parse_internal(size_t params_size, void *data, Evas
 Evas_Object *external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *param);
 Evas_Object *external_common_param_edje_object_get(Evas_Object *obj, const Edje_External_Param *p);
 void external_common_icon_param_parse(Evas_Object **icon, Evas_Object *obj, const Eina_List *params);
+Eina_Bool external_common_param_get(void *data, const Evas_Object *obj, Edje_External_Param *param);
+Eina_Bool external_common_param_set(void *data, Evas_Object *obj, const Edje_External_Param *param);
+void external_common_state_set(void *data, Evas_Object *obj, const void *from_params, const void *to_params, float pos);
+void external_common_params_parse(void *mem, void *data, Evas_Object *obj, const Eina_List *params);
 
 #define DEFINE_EXTERNAL_TYPE(type_name, name)           \
 static Eina_Bool                                        \

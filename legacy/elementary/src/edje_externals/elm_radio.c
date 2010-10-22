@@ -116,7 +116,7 @@ external_radio_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 }
 
 static void *
-external_radio_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
+external_radio_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina_List *params)
 {
    Elm_Params_Radio *mem;
    Edje_External_Param *param;
