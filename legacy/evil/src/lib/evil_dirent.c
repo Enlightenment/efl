@@ -137,6 +137,11 @@ DIR *opendir(char const *name)
 #endif
    dir->dirent.d_mode = (int)dir->data.dwFileAttributes;
 
+   if (dir->data.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY)
+     dir->dirent.d_type = DT_DIR;
+   else
+     dir->dirent.d_type = DT_UNKNOWN;
+
    return dir;
 }
 

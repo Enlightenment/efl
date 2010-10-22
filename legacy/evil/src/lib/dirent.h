@@ -22,13 +22,16 @@
 # include <wchar.h>
 #endif
 
+#define DT_UNKNOWN 0
+#define DT_DIR     4
 
 typedef struct DIR DIR;
 
 struct dirent
 {
-   char    d_name[260 + 1];
-   int     d_mode;
+   char          d_name[260 + 1];
+   int           d_mode;
+   unsigned char d_type;
 };
 
 

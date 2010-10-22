@@ -18,7 +18,7 @@ evil_time.h \
 evil_unistd.h \
 evil_util.h
 
-nobase_include_HEADERS = pwd.h sys/mman.h fnmatch.h
+nobase_include_HEADERS = pwd.h sys/mman.h fnmatch.h dirent.h
 
 if EVIL_HAVE_WINCE
 
