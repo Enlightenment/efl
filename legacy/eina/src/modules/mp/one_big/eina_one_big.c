@@ -181,7 +181,8 @@ eina_one_big_free(void *data, void *ptr)
      }
    else
      {
-        Eina_Inlist *il = (Eina_Inlist *)(((unsigned char *)ptr) - sizeof(Eina_Inlist));
+        Eina_Inlist *il;
+        il = (Eina_Inlist *)(((unsigned char *)ptr) - sizeof(Eina_Inlist));
         pool->over_list = eina_inlist_remove(pool->over_list, il);
         free(il);
         pool->over--;
@@ -252,11 +253,16 @@ eina_one_big_init(const char *context,
 static void
 eina_one_big_shutdown(void *data)
 {
-   One_Big *pool;
+   One_Big *pool = data;
 
-   pool = data;
-
-   if (!pool) return ;
+   if (!pool) return;
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
+   pthread_mutex_lock(&pool->mutex);
+# else
+   WaitForSingleObject(pool->mutex, INFINITE);
+# endif
+#endif
 
    if (pool->empty)
      {
@@ -302,6 +308,16 @@ eina_one_big_shutdown(void *data)
 #endif
 
    free(pool->base);
+   
+#ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
+   pthread_mutex_unlock(&pool->mutex);
+   pthread_mutex_destroy(&pool->mutex);
+# else
+   ReleaseMutex(pool->mutex);
+   // FIXME: how to do a mutex destroy in winland?
+# endif
+#endif
    free(pool);
 }
 
