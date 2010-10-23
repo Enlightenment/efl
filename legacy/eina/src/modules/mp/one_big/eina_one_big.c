@@ -102,9 +102,11 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
         WaitForSingleObject(pool->mutex, INFINITE);
 # endif
      }
-# ifdef EFL_DEBUG_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
+#  ifdef EFL_DEBUG_THREADS
    else
      assert(pthread_equal(pool->self, pthread_self()));
+#  endif
 # endif
 #endif
 
@@ -187,9 +189,11 @@ eina_one_big_free(void *data, void *ptr)
         WaitForSingleObject(pool->mutex, INFINITE);
 # endif
      }
-# ifdef EFL_DEBUG_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
+#  ifdef EFL_DEBUG_THREADS
    else
      assert(pthread_equal(pool->self, pthread_self()));
+#  endif
 # endif
 #endif
 
@@ -303,9 +307,11 @@ eina_one_big_shutdown(void *data)
         WaitForSingleObject(pool->mutex, INFINITE);
 # endif
      }
-# ifdef EFL_DEBUG_THREADS
+# ifdef EFL_HAVE_POSIX_THREADS
+#  ifdef EFL_DEBUG_THREADS
    else
      assert(pthread_equal(pool->self, pthread_self()));
+#  endif
 # endif
 #endif
 
