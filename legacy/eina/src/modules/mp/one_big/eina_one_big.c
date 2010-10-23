@@ -316,7 +316,7 @@ eina_one_big_shutdown(void *data)
    pthread_mutex_destroy(&pool->mutex);
 # else
    ReleaseMutex(pool->mutex);
-   // FIXME: how to do a mutex destroy in winland?
+   CloseHandle(pool->mutex);
 # endif
 #endif
    free(pool);
