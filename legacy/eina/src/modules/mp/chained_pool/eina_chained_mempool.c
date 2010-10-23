@@ -52,12 +52,12 @@
 #ifdef DEBUG
 #include "eina_log.h"
 
-static int _eina_mempool_log_dom = -1;
+static int _eina_chained_mp_log_dom = -1;
 
 #ifdef INF
 #undef INF
 #endif
-#define INF(...) EINA_LOG_DOM_INFO(_eina_mempool_log_dom, __VA_ARGS__)
+#define INF(...) EINA_LOG_DOM_INFO(_eina_chained_mp_log_dom, __VA_ARGS__)
 #endif
 
 typedef struct _Chained_Mempool Chained_Mempool;
@@ -405,9 +405,9 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
 Eina_Bool chained_init(void)
 {
 #ifdef DEBUG
-   _eina_mempool_log_dom = eina_log_domain_register("eina_mempool",
-                                                    EINA_LOG_COLOR_DEFAULT);
-   if (_eina_mempool_log_dom < 0)
+   _eina_chained_mp_log_dom = eina_log_domain_register("eina_mempool",
+                                                       EINA_LOG_COLOR_DEFAULT);
+   if (_eina_chained_mp_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register log domain: eina_mempool");
         return EINA_FALSE;
@@ -421,8 +421,8 @@ void chained_shutdown(void)
 {
    eina_mempool_unregister(&_eina_chained_mp_backend);
 #ifdef DEBUG
-   eina_log_domain_unregister(_eina_mempool_log_dom);
-   _eina_mempool_log_dom = -1;
+   eina_log_domain_unregister(_eina_chained_mp_log_dom);
+   _eina_chained_mp_log_dom = -1;
 #endif
 }
 

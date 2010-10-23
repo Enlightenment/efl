@@ -54,9 +54,9 @@
 #ifdef WRN
 #undef WRN
 #endif
-#define WRN(...) EINA_LOG_DOM_WARN(_eina_mempool_log_dom, __VA_ARGS__)
+#define WRN(...) EINA_LOG_DOM_WARN(_eina_one_big_mp_log_dom, __VA_ARGS__)
 
-static int _eina_mempool_log_dom = -1;
+static int _eina_one_big_mp_log_dom = -1;
 
 typedef struct _One_Big One_Big;
 struct _One_Big
@@ -374,9 +374,9 @@ static Eina_Mempool_Backend _eina_one_big_mp_backend = {
 Eina_Bool one_big_init(void)
 {
 #ifdef DEBUG
-   _eina_mempool_log_dom = eina_log_domain_register("eina_one_big_mempool",
-                                                    EINA_LOG_COLOR_DEFAULT);
-   if (_eina_mempool_log_dom < 0)
+   _eina_one_big_mp_log_dom = eina_log_domain_register("eina_one_big_mempool",
+                                                       EINA_LOG_COLOR_DEFAULT);
+   if (_eina_one_big_mp_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register log domain: eina_one_big_mempool");
         return EINA_FALSE;
@@ -390,8 +390,8 @@ void one_big_shutdown(void)
 {
    eina_mempool_unregister(&_eina_one_big_mp_backend);
 #ifdef DEBUG
-   eina_log_domain_unregister(_eina_mempool_log_dom);
-   _eina_mempool_log_dom = -1;
+   eina_log_domain_unregister(_eina_one_big_mp_log_dom);
+   _eina_one_big_mp_log_dom = -1;
 #endif
 }
 
