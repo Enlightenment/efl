@@ -88,6 +88,23 @@ enum _Ecore_File_Event
  */
 typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path);
 
+/**
+ * @typedef Ecore_File_Download_Completion_Cb
+ * Callback type used when a download is finished.
+ */
+typedef void (*Ecore_File_Download_Completion_Cb)(void *data, const char *file, int status);
+
+/**
+ * @typedef Ecore_File_Download_Progress_Cb
+ * Callback type used when a download is finished.
+ */
+typedef int (*Ecore_File_Download_Progress_Cb)(void *data,
+                                               const char *file,
+                                               long int dltotal,
+                                               long int dlnow,
+                                               long int ultotal,
+                                               long int ulnow);
+
 /* File operations */
 
 EAPI int            ecore_file_init         (void);
@@ -140,15 +157,8 @@ EAPI Eina_List *ecore_file_app_list(void);
 
 EAPI Eina_Bool ecore_file_download(const char *url,
                                    const char *dst,
-                                   void (*completion_cb)(void *data,
-                                                         const char *file,
-                                                         int status),
-                                   int (*progress_cb)(void *data,
-                                                      const char *file,
-                                                      long int dltotal,
-                                                      long int dlnow,
-                                                      long int ultotal,
-                                                      long int ulnow),
+                                   Ecore_File_Download_Completion_Cb completion_cb,
+                                   Ecore_File_Download_Progress_Cb progress_cb,
                                    void *data,
                                    Ecore_File_Download_Job **job_ret);
 EAPI void      ecore_file_download_abort_all(void);

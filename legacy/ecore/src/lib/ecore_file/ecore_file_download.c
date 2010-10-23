@@ -24,17 +24,14 @@ struct _Ecore_File_Download_Job
 
    char                 *dst;
 
-   void (*completion_cb)(void *data, const char *file, int status);
-
-   int  (*progress_cb)  (void *data, const char *file,
-                         long int dltotal, long int dlnow,
-                         long int ultotal, long int ulnow);
+   Ecore_File_Download_Completion_Cb completion_cb;
+   Ecore_File_Download_Progress_Cb progress_cb;
 };
 
 #ifdef HAVE_CURL
 Ecore_File_Download_Job *_ecore_file_download_curl(const char *url, const char *dst,
-                                                   void (*completion_cb)(void *data, const char *file, int status),
-                                                   int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
+                                                   Ecore_File_Download_Completion_Cb completion_cb,
+                                                   Ecore_File_Download_Progress_Cb progress_cb,
                                                    void *data);
 
 static Eina_Bool _ecore_file_download_url_complete_cb(void *data, int type, void *event);
@@ -117,8 +114,8 @@ ecore_file_download_shutdown(void)
 EAPI Eina_Bool
 ecore_file_download(const char *url,
                     const char *dst,
-                    void (*completion_cb)(void *data, const char *file, int status),
-                    int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
+                    Ecore_File_Download_Completion_Cb completion_cb,
+                    Ecore_File_Download_Progress_Cb progress_cb,
                     void *data,
                     Ecore_File_Download_Job **job_ret)
 {
@@ -257,11 +254,8 @@ _ecore_file_download_url_progress_cb(void *data __UNUSED__, int type __UNUSED__,
 
 Ecore_File_Download_Job *
 _ecore_file_download_curl(const char *url, const char *dst,
-                          void (*completion_cb)(void *data, const char *file,
-                                                int status),
-                          int (*progress_cb)(void *data, const char *file,
-                                             long int dltotal, long int dlnow,
-                                             long int ultotal, long int ulnow),
+                          Ecore_File_Download_Completion_Cb completion_cb,
+                          Ecore_File_Download_Progress_Cb progress_cb,
                           void *data)
 {
    Ecore_File_Download_Job *job;
