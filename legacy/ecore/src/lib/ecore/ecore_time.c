@@ -67,7 +67,11 @@ ecore_time_get(void)
 
    return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
 #else
+# ifdef HAVE_EVIL
+   return evil_time_get();
+# else
    return ecore_time_unix_get();
+# endif
 #endif
 }
 
@@ -82,17 +86,13 @@ ecore_time_get(void)
 EAPI double
 ecore_time_unix_get(void)
 {
-#ifdef HAVE_EVIL
-  return evil_time_get();
-#else
-# ifdef HAVE_GETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
    struct timeval timev;
 
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-# else
-#  error "Your platform isn't supported yet"
-# endif
+#else
+# error "Your platform isn't supported yet"
 #endif
 }
 
@@ -164,9 +164,11 @@ _ecore_time_init(void)
              "Fallback to unix time.");
      }
 #else
-# warning "Your platform isn't supported yet"
+# ifndef HAVE_EVIL
+#  warning "Your platform isn't supported yet"
    CRIT("Platform does not support clock_gettime. "
         "Fallback to unix time.");
+# endif
 #endif
 
    _ecore_time_loop_time = ecore_time_get();
