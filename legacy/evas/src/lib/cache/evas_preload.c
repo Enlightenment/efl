@@ -90,8 +90,9 @@ on_error:
 	  }
 
 	work = _workers;
-	_workers = (Evas_Preload_Pthread_Worker*) eina_inlist_remove(EINA_INLIST_GET(_workers),
-                                                                     EINA_INLIST_GET(_workers));
+        _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers),
+                                                                EINA_INLIST_GET(_workers)),
+                                             Evas_Preload_Pthread_Worker);
 	LKU(_mutex);
 
 	if (work->func_heavy) work->func_heavy(work->data);
@@ -142,9 +143,9 @@ _evas_preload_thread_shutdown(void)
    while (_workers)
      {
         work = _workers;
-        _workers = eina_inlist_remove(EINA_INLIST_GET(_workers),
-                                      EINA_INLIST_GET(_workers));
-
+        _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers),
+                                                                EINA_INLIST_GET(_workers)),
+                                             Evas_Preload_Pthread_Worker);
         if (work->func_cancel) work->func_cancel(work->data);
 	free(work);
      }
@@ -176,7 +177,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
    work->data = (void *)data;
 
    LKL(_mutex);
-   _workers = eina_inlist_append(EINA_INLIST_GET(_workers), EINA_INLIST_GET(work));
+   _workers = (Evas_Preload_Pthread_Worker *)eina_inlist_append(EINA_INLIST_GET(_workers), EINA_INLIST_GET(work));
    if (_threads_count == _threads_max)
      {
 	LKU(_mutex);
@@ -230,8 +231,9 @@ evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
      {
         if (work == (Evas_Preload_Pthread_Worker *)thread)
           {
-             _workers = eina_inlist_remove(EINA_INLIST_GET(_workers),
-                                           EINA_INLIST_GET(work));
+             _workers = EINA_INLIST_CONTAINER_GET(eina_inlist_remove(EINA_INLIST_GET(_workers),
+                                                                     EINA_INLIST_GET(work)),
+                                                  Evas_Preload_Pthread_Worker);
              LKU(_mutex);
              if (work->func_cancel) work->func_cancel(work->data);
              free(work);
