@@ -57,7 +57,6 @@ Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
      							\
      data = eina_mempool_malloc(_emp_##Type, size);	\
      memset(data, 0, size);				\
-							\
      return data;					\
   }							\
 							\

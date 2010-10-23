@@ -1181,6 +1181,10 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 
 	free(ep->other.desc);
 	free(ep->items);
+// technically need this - but we ASSUME we use "one_big" so everything gets
+// freed in one go lower down when we del the mempool... but what if pool goes
+// "over"?
+        eina_mempool_free(ce->mp.part, ep);
      }
    free(ec->parts);
    ec->parts = NULL;
