@@ -58,15 +58,30 @@ _ecore_file_path_from_env(const char *env)
 }
 
 /**
- * Check if the given directory is in PATH
- * @param The name of the directory to search in PATH
- * @return EINA_TRUE if the directory exist in PATH, EINA_FALSE otherwise
+ * @addtogroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ *
+ * @{
+ */
+
+/**
+ * @brief Check if the given directory is in PATH.
+ *
+ * @param The name of the directory to search in PATH.
+ * @return EINA_TRUE if the directory exist in PATH, EINA_FALSE otherwise.
+ *
+ * This function checks if @p in_dir is in the environment variable
+ * PATH. If @p in_dir is @c NULL, or if PATH is empty, or @p in_dir is
+ * not in PATH, the function returns EINA_FALSE, otherwise it returns
+ * EINA_TRUE.
  */
 EAPI Eina_Bool
 ecore_file_path_dir_exists(const char *in_dir)
 {
    Eina_List *l;
    char *dir;
+
+   if (!in_dir)
+     return EINA_FALSE;
 
    if (!__ecore_file_path_bin) return EINA_FALSE;
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
@@ -79,11 +94,16 @@ ecore_file_path_dir_exists(const char *in_dir)
 }
 
 /**
- * Check if the given application is installed
+ * @brief Check if the given application is installed.
+ *
  * @param  exe The name of the application
- * @return EINA_TRUE if the exe is in PATH and is executable, EINA_FALSE otherwise
+ * @return EINA_TRUE if the exe is in PATH and is executable,
+ * EINA_FALSE otherwise.
+ *
  * 
- * This function check if the given name exist in PATH and is executable 
+ * This function checks if @p exe exists in PATH and is executable. If
+ * @p exe is @c NULL or is not executable, the function returns
+ * EINA_FALSE, otherwise it returns EINA_TRUE.
  */
 EAPI Eina_Bool
 ecore_file_app_installed(const char *exe)
@@ -106,8 +126,15 @@ ecore_file_app_installed(const char *exe)
 }
 
 /**
- * Get a list of all the applications installed on the system
- * @return An Eina_List containing all the executable files in the system
+ * @brief Get a list of all the applications installed on the system.
+ *
+ * @return An Eina_List containing all the executable files in the
+ * system.
+ *
+ * This function returns a list of allocated strings of all the
+ * executable files. If no files are found, the function returns
+ * @c NULL. When not needed anymore, the element of the list must be
+ * freed.
  */
 EAPI Eina_List *
 ecore_file_app_list(void)
@@ -132,3 +159,7 @@ ecore_file_app_list(void)
 
    return list;
 }
+
+/**
+ * @}
+ */

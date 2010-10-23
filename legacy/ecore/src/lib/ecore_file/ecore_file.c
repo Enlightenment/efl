@@ -26,11 +26,25 @@ int _ecore_file_log_dom = -1;
 static int _ecore_file_init_count = 0;
 
 /* externally accessible functions */
+
 /**
- * Initialize Ecore_File and the services it will use. Call this function
- * once before you use any of the ecore file functions.
- * @return Number of times ecore_file_init() was called successfully or 0 if
- * this call failed.
+ * @addtogroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ *
+ * @{
+ */
+
+/**
+ * @brief Initialize the Ecore_File library.
+ *
+ * @return 1 or greater on success, 0 on error.
+ *
+ * This function sets up Ecore_File and the services it will use
+ * (monitoring, downloading, PATH related feature). It returns 0 on
+ * failure, otherwise it returns the number of times it has already
+ * been called.
+ *
+ * When Ecore_File is not used anymore, call ecore_file_shutdown()
+ * to shut down the Ecore_File library.
  */
 EAPI int
 ecore_file_init()
@@ -71,8 +85,14 @@ ecore_file_init()
 }
 
 /**
- * Shutdown the Ecore_File
- * @return returns the number of libraries that still uses Ecore_File
+ * @brief Shut down the Ecore_File library.
+ *
+ * @return 0 when the library is completely shut down, 1 or
+ * greater otherwise.
+ *
+ * This function shuts down the Ecore_File library. It returns 0 when it has
+ * been called the same number of times than ecore_file_init(). In that case
+ * it shuts down all the services it uses.
  */
 EAPI int
 ecore_file_shutdown()
@@ -89,10 +109,14 @@ ecore_file_shutdown()
 }
 
 /**
- * Get the time of the last modification to the give file
- * @param file The name of the file
- * @return Return the time of the last data modification, if an error should
- *         occur it will return 0
+ * @brief Get the time of the last modification to the given file.
+ *
+ * @param file The name of the file.
+ * @return Return the time of the last data modification, or 0 on
+ * failure.
+ *
+ * This function returns the time of the last modification of
+ * @p file. On failure, it returns 0.
  */
 EAPI long long
 ecore_file_mod_time(const char *file)
@@ -104,9 +128,13 @@ ecore_file_mod_time(const char *file)
 }
 
 /**
- * Get the size of the given file
- * @param  file The name of the file
- * @return The size of the file in byte
+ * @brief Get the size of the given file.
+ *
+ * @param file The name of the file.
+ * @return Return the size of the file in bytes, or 0 on failure.
+ *
+ * This function returns the size of @p file in bytes. On failure, it
+ * returns 0.
  */
 EAPI long long
 ecore_file_size(const char *file)
@@ -118,9 +146,13 @@ ecore_file_size(const char *file)
 }
 
 /**
- * Check if file exists
- * @param  file The name of the file
- * @return EINA_TRUE if file exists on local filesystem, EINA_FALSE otherwise
+ * @brief Check if the given file exists.
+ *
+ * @param file The name of the file.
+ * @return Return EINA_TRUE if the file exists, EINA_FALSE otherwise.
+ *
+ * This function returns EINA_TRUE if @p file exists on local filesystem,
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_exists(const char *file)
@@ -133,9 +165,14 @@ ecore_file_exists(const char *file)
 }
 
 /**
- * Check if file is a directory
- * @param  file The name of the file
- * @return EINA_TRUE if file exist and is a directory, EINA_FALSE otherwise
+ * @brief Check if the given file is a directory.
+ *
+ * @param file The name of the file.
+ * @return Return EINA_TRUE if the file exists and is a directory,
+ * EINA_FALSE otherwise.
+ *
+ * This function returns EINA_TRUE if @p file exists exists and is a
+ * directory on local filesystem, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_is_dir(const char *file)
@@ -150,11 +187,14 @@ ecore_file_is_dir(const char *file)
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 
 /**
- * Create a new directory
- * @param  dir The name of the directory to create
- * @return EINA_TRUE on successful creation, EINA_FALSE on failure
+ * @brief Create a new directory.
  *
- * The directory is created with the mode: S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
+ * @param  dir The name of the directory to create
+ * @return EINA_TRUE on successful creation, EINA_FALSE otherwise.
+ *
+ * This function creates the directory @p dir with the mode S_IRUSR |
+ * S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH. On
+ * success, it returns EINA_TRUE, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_mkdir(const char *dir)
@@ -164,12 +204,17 @@ ecore_file_mkdir(const char *dir)
 }
 
 /**
- * Create complete directory in a batch.
+ * @brief Create complete directory in a batch.
  *
- * @param dirs list of directories, null terminated.
- * @return number of successful directories created, -1 if dirs is NULL.
+ * @param dirs The list of directories, null terminated.
+ * @return The number of successful directories created, -1 if dirs is
+ * @c NULL.
  *
- * @see ecore_file_mkdir() and ecore_file_mkpaths()
+ * This function creates all the directories that are in the null
+ * terminated array @p dirs. The function loops over the directories
+ * and call ecore_file_mkdir(). This function returns -1 if @p dirs is
+ * @c NULL, otherwise if returns the number of suceesfully created
+ * directories.
  */
 EAPI int
 ecore_file_mkdirs(const char **dirs)
@@ -185,19 +230,22 @@ ecore_file_mkdirs(const char **dirs)
 }
 
 /**
- * Create complete list of sub-directories in a batch (optimized).
+ * @brief Create complete list of sub-directories in a batch (optimized).
  *
- * @param base the base directory to act on, will be created if does
- *     not exists.
- * @param subdirs list of directories, null terminated. These are
- *     created similarly to ecore_file_mkdir(), so same mode and whole
- *     path to that point must exists. So if creating base/a/b/c,
- *     provide subdirs with "a", "a/b" and "a/b/c" in that order!
+ * @param base The base directory to act on.
+ * @param subdirs The list of directories, null terminated.
+ * @return number of successful directories created, -1 on failure.
  *
- * @return number of successful directories created, -1 if subdirs or
- *     base is NULL or invalid.
- *
- * @see ecore_file_mkdir() and ecore_file_mkpaths()
+ * This function creates all the directories that are in the null
+ * terminated array @p dirs in the @p base directory. If @p base does
+ * not exist, it will be created. The function loops over the directories
+ * and call ecore_file_mkdir(). The whole path of the directories must
+ * exist. So if base/a/b/c wants to be created, @p subdirs must
+ * contain "a", "a/b" and "a/b/c", in that order. This function
+ * returns -1 if @p dirs or @p base are @c NULL, or if @p base is
+ * empty ("\0"). It returns 0 is @p base is not a directory or
+ * invalid, or if it can't be created. Otherwise if returns the number
+ * of suceesfully created directories. 
  */
 EAPI int
 ecore_file_mksubdirs(const char *base, const char **subdirs)
@@ -277,9 +325,13 @@ ecore_file_mksubdirs(const char *base, const char **subdirs)
 }
 
 /**
- * Delete the given dir
- * @param  dir The name of the directory to delete
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Delete the given directory.
+ *
+ * @param  dir The name of the directory to delete.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function deletes @p dir. It returns EINA_TRUE on success,
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_rmdir(const char *dir)
@@ -289,9 +341,13 @@ ecore_file_rmdir(const char *dir)
 }
 
 /**
- * Delete the given file
- * @param  file The name of the file to delete
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Delete the given file.
+ *
+ * @param  file The name of the file to delete.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function deletes @p file. It returns EINA_TRUE on success,
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_unlink(const char *file)
@@ -301,9 +357,13 @@ ecore_file_unlink(const char *file)
 }
 
 /**
- * Remove the given file or directory
- * @param  file The name of the file or directory to delete
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Remove the given file or directory.
+ *
+ * @param  file The name of the file or directory to delete.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function removes @p file. It returns EINA_TRUE on success,
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_remove(const char *file)
@@ -313,11 +373,14 @@ ecore_file_remove(const char *file)
 }
 
 /**
- * Delete a directory and all its contents
- * @param  dir The name of the directory to delete
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Delete the given directory and all its contents.
  *
- * If dir is a link only the link is removed
+ * @param  dir The name of the directory to delete.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function delete @p dir and all its contents. If @p dir is a
+ * link only the link is removed. It returns EINA_TRUE on success,
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_recursive_rm(const char *dir)
@@ -377,11 +440,15 @@ _ecore_file_mkpath_if_not_exists(const char *path)
 }
 
 /**
- * Create a complete path
- * @param  path The path to create
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Create a complete path.
  *
- * @see ecore_file_mkpaths() and ecore_file_mkdir()
+ * @param  path The path to create
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function create @p path and all the subdirectories it
+ * contains. The separator is '/' so, on Windows, '\' must be replaced
+ * by '/'. If @p path exists, this function returns EINA_TRUE
+ * immediatly. It returns EINA_TRUE on success, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_mkpath(const char *path)
@@ -407,12 +474,17 @@ ecore_file_mkpath(const char *path)
 }
 
 /**
- * Create complete paths in a batch.
+ * @brief Create complete paths in a batch.
  *
  * @param paths list of paths, null terminated.
  * @return number of successful paths created, -1 if paths is NULL.
  *
- * @see ecore_file_mkpath() and ecore_file_mkdirs()
+ * This function creates all the directories that are in the null
+ * terminated array @p paths. The function loops over the directories
+ * and call ecore_file_mkpath(), hence on Windows, '\' must be
+ * replaced by '/' before calling that function. This function
+ * returns -1 if @p paths is @c NULL. Otherwise if returns the number
+ * of suceesfully created directories. 
  */
 EAPI int
 ecore_file_mkpaths(const char **paths)
@@ -428,10 +500,16 @@ ecore_file_mkpaths(const char **paths)
 }
 
 /**
- * Copy a file
- * @param  src The name of the source file
- * @param  dst The name of the destination file
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Copy the given file to the given destination.
+ *
+ * @param  src The name of the source file.
+ * @param  dst The name of the destination file.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function copies @p src to @p dst. If the absolute path name of
+ * @p src and @p dst can not be computed, or if they are equal, or if
+ * the copy fails, the function returns EINA_FALSE, otherwise it
+ * returns EINA_TRUE.
  */
 EAPI Eina_Bool
 ecore_file_cp(const char *src, const char *dst)
@@ -463,10 +541,14 @@ ecore_file_cp(const char *src, const char *dst)
 }
 
 /**
- * Move a file
- * @param  src The name of the source file
- * @param  dst The name of the destination file
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Move the given file to the given destination.
+ *
+ * @param  src The name of the source file.
+ * @param  dst The name of the destination file.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function moves @p src to @p dst. It returns EINA_TRUE on
+ * success, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_mv(const char *src, const char *dst)
@@ -537,10 +619,15 @@ FAIL:
 }
 
 /**
- * Create a symbolic link
- * @param  src The name of the file to link
- * @param  dest The name of link
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @brief Create a symbolic link.
+ *
+ * @param  src The name of the file to link.
+ * @param  dest The name of link.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * This function create the symbolic link @p dest of @p src. This
+ * function does not work on Windows. It returns EINA_TRUE on success,
+ * EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_symlink(const char *src, const char *dest)
@@ -551,10 +638,16 @@ ecore_file_symlink(const char *src, const char *dest)
 }
 
 /**
- * Get the canonicalized absolute pathname
- * @param  file The file path
- * @return The canonicalized absolute pathname; on failure it will return
- *         an empty string
+ * @brief Get the canonicalized absolute path name.
+ *
+ * @param  file The file path.
+ * @return The canonicalized absolute pathname or an empty string on
+ * failure.
+ *
+ * This function returns the absolute path name of @p file as a newly
+ * allocated string. If @p file is @c NULL, or on error, this function
+ * returns an empty string. Otherwise, it returns the absolute path
+ * name. When not needed anymore, the returned value must be freed.
  */
 EAPI char *
 ecore_file_realpath(const char *file)
@@ -572,9 +665,13 @@ ecore_file_realpath(const char *file)
 }
 
 /**
- * Get the filename from a give path
- * @param  path The complete path
- * @return Only the file name
+ * Get the filename from a given path.
+ *
+ * @param  path The complete path.
+ * @return The file name.
+ *
+ * This function returns the file name of @p path. If @p path is
+ * @c NULL, the functions returns @c NULL.
  */
 EAPI const char *
 ecore_file_file_get(const char *path)
@@ -588,9 +685,15 @@ ecore_file_file_get(const char *path)
 }
 
 /**
- * Get the directory where file reside
- * @param  file The name of the file
- * @return The directory name
+ * @brief Get the directory where the given file resides.
+ *
+ * @param  file The name of the file.
+ * @return The directory name.
+ *
+ * This function returns the directory where @p file resides as anewly
+ * allocated string. If @p file is @c NULL or on error, this function
+ * returns @c NULL. When not needed anymore, the returned value must
+ * be freed.
  */
 EAPI char *
 ecore_file_dir_get(const char *file)
@@ -606,9 +709,13 @@ ecore_file_dir_get(const char *file)
 }
 
 /**
- * Check if file can be read
- * @param  file The name of the file
- * @return EINA_TRUE if the file is readable, EINA_FALSE otherwise
+ * @brief Check if the given file can be read.
+ *
+ * @param  file The name of the file.
+ * @return EINA_TRUE if the file is readable, EINA_FALSE otherwise.
+ *
+ * This function returns EINA_TRUE if @p file can be read, EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool
 ecore_file_can_read(const char *file)
@@ -619,9 +726,13 @@ ecore_file_can_read(const char *file)
 }
 
 /**
- * Check if file can be written
- * @param  file The name of the file
- * @return EINA_TRUE if the file is writable, EINA_FALSE otherwise
+ * @brief Check if the given file can be written.
+ *
+ * @param  file The name of the file.
+ * @return EINA_TRUE if the file is writable, EINA_FALSE otherwise.
+ *
+ * This function returns EINA_TRUE if @p file can be written, EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool
 ecore_file_can_write(const char *file)
@@ -632,9 +743,13 @@ ecore_file_can_write(const char *file)
 }
 
 /**
- * Check if file can be executed
- * @param  file The name of the file
- * @return EINA_TRUE if the file can be executed, EINA_FALSE otherwise
+ * @bbrief Check if the given file can be executed.
+ *
+ * @param  file The name of the file.
+ * @return EINA_TRUE if the file can be executed, EINA_FALSE otherwise.
+ *
+ * This function returns EINA_TRUE if @p file can be executed, EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool
 ecore_file_can_exec(const char *file)
@@ -645,9 +760,15 @@ ecore_file_can_exec(const char *file)
 }
 
 /**
- * Get the path pointed by link
- * @param  link The name of the link
- * @return The path pointed by link or NULL
+ * @brief Get the path pointed by the given link.
+ *
+ * @param  link The name of the link.
+ * @return The path pointed by link or NULL.
+ *
+ * This function returns the path pointed by @p link as a newly
+ * allocated string. This function does not work on Windows. On
+ * failure, the function returns @c NULL. When not needed anymore, the
+ * returned value must be freed.
  */
 EAPI char *
 ecore_file_readlink(const char *link)
@@ -661,14 +782,21 @@ ecore_file_readlink(const char *link)
 }
 
 /**
- * Get the list of the files and directories in a given directory. The list
- * will be sorted with strcoll as compare function. That means that you may
- * want to set the current locale for the category LC_COLLATE with setlocale().
- * For more information see the manual pages of strcoll and setlocale.
- * The list will not contain the directory entries for '.' and '..'.
+ * @brief Get the list of the files and directories in the given
+ * directory.
+ *
  * @param  dir The name of the directory to list
  * @return Return an Eina_List containing all the files in the directory;
  *         on failure it returns NULL.
+ *
+ * This function returns a list of allocated strings of all the files
+ * and directories contained in @p dir. The list will be sorted with
+ * strcoll as compare function. That means that you may want to set
+ * the current locale for the category LC_COLLATE with
+ * setlocale(). For more information see the manual pages of strcoll
+ * and setlocale. The list will not contain the directory entries for
+ * '.' and '..'. On failure, @c NULL is returned. When not needed
+ * anymore, the list elements must be freed.
  */
 EAPI Eina_List *
 ecore_file_ls(const char *dir)
@@ -697,7 +825,14 @@ ecore_file_ls(const char *dir)
 }
 
 /**
- * FIXME: To be documented.
+ * @brief Return the executable from the given command.
+ *
+ * @param app The application command, with parameters.
+ *
+ * This function returns the executable from @p app as a newly
+ * allocated string. Arguments are removed and escae characters are
+ * handled. If @p app is @c NULL, or on failure, the function returns
+ * @c NULL. When not needed anymore, the returned value must be freed.
  */
 EAPI char *
 ecore_file_app_exe_get(const char *app)
@@ -792,7 +927,7 @@ restart:
                in_quot_dbl = 0;
              else
                {
-                  /* techcincally this is wrong. double quotes also accept
+                  /* technically this is wrong. double quotes also accept
                    * special chars:
                    *
                    * $, `, \
@@ -845,10 +980,16 @@ restart:
 }
 
 /**
- * Add the escape sequence ('\\') to the given filename
- * @param  filename The file name
- * @return The file name with special characters escaped; if the length of the
- *         resulting string is longer than PATH_MAX it will return NULL
+ * @brief Add the escape sequence ('\\') to the given file name.
+ *
+ * @param  filename The file name.
+ * @return The file name with special characters escaped.
+ *
+ * This function adds the escape sequence ('\\') to the given file
+ * name and returns the result as a newly allocated string. If the
+ * length of the returned string is longer than PATH_MAX, or on
+ * failure, @c NULL is returned. When not needed anymore, the returned
+ * value must be freed.
  */
 EAPI char *
 ecore_file_escape_name(const char *filename)
@@ -885,14 +1026,24 @@ ecore_file_escape_name(const char *filename)
 }
 
 /**
- * Remove the extension from a given path
- * @param  path The name of the file
- * @return A newly allocated string with the extension stripped out or NULL on errors
+ * @bried Remove the extension from the given file name.
+ *
+ * @param  path The name of the file.
+ * @return A newly allocated string with the extension stripped out or
+ * NULL on errors.
+ *
+ * This function removes the extension from @p path and returns the
+ * result as a newly allocated string. If @p path is @c NULL, or on
+ * failure, the function returns @c NULL. When not needed anymore, the
+ * returned value must be freed.
  */
 EAPI char *
 ecore_file_strip_ext(const char *path)
 {
    char *p, *file = NULL;
+
+   if (!path)
+     return NULL;
 
    p = strrchr(path, '.');
    if (!p)
@@ -911,9 +1062,15 @@ ecore_file_strip_ext(const char *path)
 }
 
 /**
- * Check if the given directory is empty. The '.' and '..' files will be ignored.
- * @param  dir The name of the directory to check
- * @return 1 if directory is empty, 0 if it has at least one file or -1 in case of errors
+ * @brief Check if the given directory is empty.
+ *
+ * @param  dir The name of the directory to check.
+ * @return 1 if directory is empty, 0 if it has at least one file or
+ * -1 in case of errors.
+ *
+ * This functions checks if @p dir is empty. The '.' and '..' files
+ * will be ignored. If @p dir is empty, 1 is returned, if it contains
+ * at least 1 file, 0 is returned. On failure, -1 is returned.
  */
 EAPI int
 ecore_file_dir_is_empty(const char *dir)
@@ -936,3 +1093,7 @@ ecore_file_dir_is_empty(const char *dir)
    closedir(dirp);
    return 1;
 }
+
+/**
+ * @}
+ */

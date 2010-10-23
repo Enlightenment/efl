@@ -80,40 +80,47 @@ ecore_file_download_shutdown(void)
 #endif /* BUILD_ECORE_CON */
 }
 
-EAPI void
-ecore_file_download_abort_all(void)
-{
-#ifdef BUILD_ECORE_CON
-   Ecore_File_Download_Job *job;
-
-   EINA_LIST_FREE(_job_list, job)
-             ecore_file_download_abort(job);
-#endif /* BUILD_ECORE_CON */
-}
+/**
+ * @addtogroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ *
+ * @{
+ */
 
 /**
- * Download @p url to the given @p dst
- * @param  url The complete url to download
- * @param  dst The local file to save the downloaded to
- * @param  completion_cb A callback called on download complete
- * @param  progress_cb A callback called during the download operation
- * @param  data User data passed to both callbacks
- * @param  job_ret If the protocol in use is http or ftp, this parameter will be
- * filled with the job. Then you can use ecore_file_download_abort() to cancel it.
- * 
+ * @brief Download the given url to the given destination.
+ *
+ * @param  url The complete url to download.
+ * @param  dst The local file to save the downloaded to.
+ * @param  completion_cb A callback called on download complete.
+ * @param  progress_cb A callback called during the download operation.
+ * @param  data User data passed to both callbacks.
+ * @param  job_ret Job used to abort the download.
  * @return EINA_TRUE if the download start or EINA_FALSE on failure
  *
- * You must provide the full url, including 'http://', 'ftp://' or 'file://'.\n
- * If @p dst already exist it will not be overwritten and the function will fail.\n
- * Ecore must be compiled with CURL to download using http and ftp protocols.\n
- * The @p status param in the @p completion_cb() will be 0 if the download goes well or
- * 1 in case of failure.
+ * This function starts the download of the URL @p url and saves it to
+ * @p dst. @p url must provide the protocol, including 'http://',
+ * 'ftp://' or 'file://'. Ecore_File must be compiled with CURL to
+ * download using http and ftp protocols. If @p dst is ill-formed, or
+ * if it already exists, the function returns EINA_FALSE. When the
+ * download is complete, the callback @p completion_cb is called and
+ * @p data is passed to it. The @p status parameter of @p completion_cb 
+ * will be filled with the status of the download (200, 404,...). The
+ * @p progress_cb is called during the download operation, each time a
+ * packet i received or when CURL wants. It can be used to display the
+ * percentage of the downloaded file. The only operations that can be
+ * aborted are those with protocol 'http' or 'ftp'. In that case @p job_ret
+ * can be filled. It can be used with ecore_file_download_abort() or
+ * ecore_file_download_abort_all() to respectively abort one or all
+ * download operations. This function returns EINA_TRUE if the
+ * download starts, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
-ecore_file_download(const char *url, const char *dst,
+ecore_file_download(const char *url,
+                    const char *dst,
                     void (*completion_cb)(void *data, const char *file, int status),
                     int (*progress_cb)(void *data, const char *file, long int dltotal, long int dlnow, long int ultotal, long int ulnow),
-                    void *data, Ecore_File_Download_Job **job_ret)
+                    void *data,
+                    Ecore_File_Download_Job **job_ret)
 {
 #ifdef BUILD_ECORE_CON
    char *dir = ecore_file_dir_get(dst);
@@ -163,12 +170,15 @@ ecore_file_download(const char *url, const char *dst,
 }
 
 /**
- * Check if the given protocol is available
- * @param  protocol The protocol to check
- * @return EINA_TRUE if protocol is handled, EINA_FALSE otherwise
+ * @brief Check if the given protocol is available.
  *
- * @p protocol can be 'http://', 'ftp://' or 'file://'.\n
- * Ecore must be compiled with CURL to handle http and ftp protocols.
+ * @param  protocol The protocol to check.
+ * @return EINA_TRUE if protocol is handled, EINA_FALSE otherwise.
+ *
+ * This function returns EINA_TRUE if @p protocol is supported,
+ * EINA_FALSE otherwise. @p protocol can be 'http://', 'ftp://' or
+ * 'file://'. Ecore_FILE must be compiled with CURL to handle http and
+ * ftp protocols.
  */
 EAPI Eina_Bool
 ecore_file_download_protocol_available(const char *protocol)
@@ -292,14 +302,23 @@ _ecore_file_download_curl(const char *url, const char *dst,
 #endif
 
 /**
- * Abort the given download job and call the completion_cb function with a
- * status of 1 (error)
- * @param  job The download job to abort
+ * @brief Abort the given download job and call the completion_cb
+ * callbck with a status of 1 (error).
+ *
+ * @param job The download job to abort.
+ *
+ * This function aborts a download operation started by
+ * ecore_file_download(). @p job is the #Ecore_File_Download_Job
+ * structure filled by ecore_file_download(). If it is @c NULL, this
+ * function does nothing. To abort all the currently downloading
+ * operations, call ecore_file_download_abort_all().
  */
-
 EAPI void
 ecore_file_download_abort(Ecore_File_Download_Job *job)
 {
+   if (!job)
+     return;
+
 #ifdef BUILD_ECORE_CON
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, 1);
@@ -312,3 +331,26 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
    free(job);
 #endif /* BUILD_ECORE_CON */
 }
+
+/**
+ * @brief Abort all downloads.
+ *
+ * This function aborts all the downloads that have been started by
+ * ecore_file_download(). It loops over the started downloads and call
+ * ecore_file_download_abort() for each of them. To abort only one
+ * specific download operation, call ecore_file_download_abort().
+ */
+EAPI void
+ecore_file_download_abort_all(void)
+{
+#ifdef BUILD_ECORE_CON
+   Ecore_File_Download_Job *job;
+
+   EINA_LIST_FREE(_job_list, job)
+             ecore_file_download_abort(job);
+#endif /* BUILD_ECORE_CON */
+}
+
+/**
+ * @}
+ */

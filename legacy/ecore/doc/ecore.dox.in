@@ -55,6 +55,7 @@ Ecore is a library of convenience functions.
 
 The Ecore library provides the following modules:
 @li @ref Ecore_Group
+@li @ref Ecore_File_Group
 @li @ref Ecore_Con_Group
 @li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
 @li @ref Ecore_FB_Group

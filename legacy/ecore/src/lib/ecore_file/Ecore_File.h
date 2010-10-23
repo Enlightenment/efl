@@ -43,24 +43,52 @@
 extern "C" {
 #endif
 
+/**
+ * @defgroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ *
+ * @{
+ */
+
+/**
+ * @typedef Ecore_File_Monitor
+ * Abstract type used when monitoring a directory.
+ */
 typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
-typedef struct _Ecore_File_Monitor_Event Ecore_File_Monitor_Event;
+
+/**
+ * @typedef Ecore_File_Download_Job
+ * Abstract type used when aborting a download.
+ */
 typedef struct _Ecore_File_Download_Job  Ecore_File_Download_Job;
 
-typedef enum
+/**
+ * @typedef Ecore_File_Event
+ * The event type returned when a file or directory is monitored.
+ */
+typedef enum _Ecore_File_Event Ecore_File_Event;
+
+/**
+ * @enum _Ecore_File_Event
+ * The event type returned when a directory is monitored.
+ */
+enum _Ecore_File_Event
 {
-   ECORE_FILE_EVENT_NONE,
-   ECORE_FILE_EVENT_CREATED_FILE,
-   ECORE_FILE_EVENT_CREATED_DIRECTORY,
-   ECORE_FILE_EVENT_DELETED_FILE,
-   ECORE_FILE_EVENT_DELETED_DIRECTORY,
-   ECORE_FILE_EVENT_DELETED_SELF,
-   ECORE_FILE_EVENT_MODIFIED
-} Ecore_File_Event;
+   ECORE_FILE_EVENT_NONE,              /**< No event. */
+   ECORE_FILE_EVENT_CREATED_FILE,      /**< Created file event. */
+   ECORE_FILE_EVENT_CREATED_DIRECTORY, /**< Created directory event. */
+   ECORE_FILE_EVENT_DELETED_FILE,      /**< Deleted file event. */
+   ECORE_FILE_EVENT_DELETED_DIRECTORY, /**< Deleted directory event. */
+   ECORE_FILE_EVENT_DELETED_SELF,      /**< Deleted monitored directory event. */
+   ECORE_FILE_EVENT_MODIFIED           /**< Modified file or directory event. */
+};
+
+/**
+ * @typedef Ecore_File_Monitor_Cb
+ * Callback type used when a monitored directory has changes.
+ */
+typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path);
 
 /* File operations */
-
-typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_File_Event event, const char *path);
 
 EAPI int            ecore_file_init         (void);
 EAPI int            ecore_file_shutdown     (void);
@@ -126,6 +154,10 @@ EAPI Eina_Bool ecore_file_download(const char *url,
 EAPI void      ecore_file_download_abort_all(void);
 EAPI void      ecore_file_download_abort(Ecore_File_Download_Job *job);
 EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }

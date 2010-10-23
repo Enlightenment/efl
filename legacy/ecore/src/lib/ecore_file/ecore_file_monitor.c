@@ -67,20 +67,36 @@ ecore_file_monitor_shutdown(void)
 }
 
 /**
- * Monitor a path using inotify or polling
- * @param  path The path to monitor
- * @param  func The function to call on changes
- * @param  data The data passed to func
- * @return An Ecore_File_Monitor pointer or NULL on failure
+ * @addtogroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ *
+ * @{
+ */
+
+/**
+ * @brief Monitor the given path using inotify, Windows notification, or polling.
+ *
+ * @param  path The path to monitor.
+ * @param  func The function to call on changes.
+ * @param  data The data passed to func.
+ * @return An Ecore_File_Monitor pointer or NULL on failure.
+ *
+ * This function monitors @p path. If @p path is @c NULL, or is an
+ * empty string, or none of the notify methods (Inotify, Windows
+ * notification or polling) is available, or if @p path is not a file,
+ * the function returns @c NULL. Otherwise, it returns a newly
+ * allocated Ecore_File_Monitor object and the monitoring begins. When
+ * one of the #Ecore_File_Event event is notified, @p func is called
+ * and @p data is passed to @p func. Call ecore_file_monitor_del() to
+ * stop the monitoring.
  */
 EAPI Ecore_File_Monitor *
-ecore_file_monitor_add(const char *path,
-                       void      (*func) (void               *data,
-                                          Ecore_File_Monitor *em,
-                                          Ecore_File_Event    event,
-                                          const char         *path),
-                       void       *data)
+ecore_file_monitor_add(const char           *path,
+                       Ecore_File_Monitor_Cb func,
+                       void                 *data)
 {
+   if (!path || !*path)
+     return NULL;
+
    switch (monitor_type)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
@@ -102,12 +118,22 @@ ecore_file_monitor_add(const char *path,
 }
 
 /**
- * Stop monitoring a path
- * @param  em The Ecore_File_Monitor to stop
+ * @brief Stop the monitoring of the given path.
+ *
+ * @param em The Ecore_File_Monitor to stop.
+ *
+ * This function stops the the monitoring of the path that has been
+ * monitored by ecore_file_monitor_add(). @p em must be the value
+ * returned by ecore_file_monitor_add(). If @p em is @c NULL, or none
+ * of the notify methods (Inotify, Windows notification or polling) is
+ * availablethis function does nothing.
  */
 EAPI void
 ecore_file_monitor_del(Ecore_File_Monitor *em)
 {
+   if (!em)
+     return;
+
    switch (monitor_type)
      {
       case ECORE_FILE_MONITOR_TYPE_NONE:
@@ -131,12 +157,24 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
 }
 
 /**
- * Get the monitored path
- * @param  em The Ecore_File_Monitor to query
- * @return The path that is monitored by @p em
+ * @brief Get the monitored path.
+ *
+ * @param  em The Ecore_File_Monitor to query.
+ * @return The path that is monitored by @p em.
+ *
+ * This function returns the monitored path that has been
+ * monitored by ecore_file_monitor_add(). @p em must be the value
+ * returned by ecore_file_monitor_add(). If @p em is @c NULL, the
+ * function returns @c NULL.
  */
 EAPI const char *
 ecore_file_monitor_path_get(Ecore_File_Monitor *em)
 {
+   if (!em)
+     return NULL;
    return em->path;
 }
+
+/**
+ * @}
+ */
