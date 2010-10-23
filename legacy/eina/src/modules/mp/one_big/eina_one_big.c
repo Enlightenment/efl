@@ -315,12 +315,6 @@ eina_one_big_shutdown(void *data)
 # endif
 #endif
 
-   if (pool->empty)
-     {
-        void *mem = eina_trash_pop(&pool->empty);
-        if (mem == pool->base) pool->base = NULL;
-        free(mem);
-     }
    if (pool->over > 0)
      {
 // FIXME: should we warn here? one_big mempool exceeded its alloc and now
