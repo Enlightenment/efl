@@ -19,7 +19,6 @@
 #ifndef EINA_MAGIC_H_
 #define EINA_MAGIC_H_
 
-
 #include "eina_config.h"
 #include "eina_types.h"
 
@@ -42,9 +41,9 @@ typedef unsigned int Eina_Magic;
  * An abstract type for a magic number.
  */
 EAPI const char *eina_magic_string_get(Eina_Magic magic) EINA_PURE EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Bool   eina_magic_string_set(Eina_Magic magic,
+EAPI Eina_Bool   eina_magic_string_set(Eina_Magic  magic,
                                        const char *magic_name) EINA_ARG_NONNULL(2);
-EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
+EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic  magic,
                                               const char *magic_name) EINA_ARG_NONNULL(2);
 
 /**
@@ -55,7 +54,7 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
  * If the magic feature of Eina is disabled, #EINA_MAGIC_NONE is just
  * @c 0.
  */
-#define EINA_MAGIC_NONE            0x1234fedc
+#define EINA_MAGIC_NONE 0x1234fedc
 
 #ifdef EINA_MAGIC_DEBUG
 
@@ -76,7 +75,7 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
  *
  * If the magic feature of Eina is disabled, #EINA_MAGIC does nothing.
  */
-#define EINA_MAGIC      Eina_Magic __magic;
+#define EINA_MAGIC Eina_Magic __magic;
 
 /**
  * @def EINA_MAGIC_SET(d, m)
@@ -87,7 +86,7 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
  * If the magic feature of Eina is disabled, #EINA_MAGIC_CHECK is just
  * the value @c 0.
  */
-#define EINA_MAGIC_SET(d, m)       (d)->__magic = (m)
+#define EINA_MAGIC_SET(d, m)   (d)->__magic = (m)
 
 /**
  * @def EINA_MAGIC_CHECK(d, m)
@@ -99,7 +98,7 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
  * If the magic feature of Eina is disabled, #EINA_MAGIC_CHECK is just
  * the value @c 1.
  */
-#define EINA_MAGIC_CHECK(d, m)     ((d) && ((d)->__magic == (m)))
+#define EINA_MAGIC_CHECK(d, m) ((d) && ((d)->__magic == (m)))
 
 /**
  * @def EINA_MAGIC_FAIL(d, m)
@@ -111,13 +110,13 @@ EAPI Eina_Bool   eina_magic_string_static_set(Eina_Magic magic,
  * If the magic feature of Eina is disabled, #EINA_MAGIC_FAIL does
  * nothing.
  */
-#define EINA_MAGIC_FAIL(d, m)			\
-  eina_magic_fail((void *)(d),			\
-		  (d) ? (d)->__magic : 0,	\
-		  (m),				\
-		  __FILE__,			\
-		  __FUNCTION__,			\
-		  __LINE__);
+#define EINA_MAGIC_FAIL(d, m)             \
+  eina_magic_fail((void *)(d),            \
+                  (d) ? (d)->__magic : 0, \
+                  (m),                    \
+                  __FILE__,               \
+                  __FUNCTION__,           \
+                  __LINE__);
 
 EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
                           const char *file, const char *fnc,
@@ -130,9 +129,9 @@ EAPI void eina_magic_fail(void *d, Eina_Magic m, Eina_Magic req_m,
  */
 
 #define EINA_MAGIC
-#define EINA_MAGIC_SET(d, m)       ((void)0)
-#define EINA_MAGIC_CHECK(d, m)     (1)
-#define EINA_MAGIC_FAIL(d, m)      ((void)0)
+#define EINA_MAGIC_SET(d, m)                          ((void)0)
+#define EINA_MAGIC_CHECK(d, m)                        (1)
+#define EINA_MAGIC_FAIL(d, m)                         ((void)0)
 
 #define eina_magic_fail(d, m, req_m, file, fnx, line) ((void)0)
 

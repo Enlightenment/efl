@@ -67,12 +67,12 @@
  * @{
  */
 
-EAPI const char *       eina_stringshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
-EAPI const char *       eina_stringshare_add(const char *str) EINA_WARN_UNUSED_RESULT;
-EAPI const char *       eina_stringshare_printf(const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(1, 2);
-EAPI const char *       eina_stringshare_vprintf(const char *fmt, va_list args) EINA_WARN_UNUSED_RESULT;
-EAPI const char *       eina_stringshare_nprintf(unsigned int len, const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(2, 3);
-EAPI const char *       eina_stringshare_ref(const char *str);
+EAPI const char        *eina_stringshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
+EAPI const char        *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_RESULT;
+EAPI const char        *eina_stringshare_printf(const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(1, 2);
+EAPI const char        *eina_stringshare_vprintf(const char *fmt, va_list args) EINA_WARN_UNUSED_RESULT;
+EAPI const char        *eina_stringshare_nprintf(unsigned int len, const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(2, 3);
+EAPI const char        *eina_stringshare_ref(const char *str);
 EAPI void               eina_stringshare_del(const char *str);
 EAPI int                eina_stringshare_strlen(const char *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 EAPI void               eina_stringshare_dump(void);

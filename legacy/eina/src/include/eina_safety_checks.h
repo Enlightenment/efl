@@ -64,7 +64,6 @@
  * @{
  */
 
-
 #include "eina_config.h"
 #include "eina_error.h"
 
@@ -78,112 +77,112 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 
 #include "eina_log.h"
 
-#define EINA_SAFETY_ON_NULL_RETURN(exp)                                 \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY((exp) == NULL))                                \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
-	    return;                                                     \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_NULL_RETURN(exp)                                   \
+  do                                                                      \
+    {                                                                     \
+       if (EINA_UNLIKELY((exp) == NULL))                                  \
+         {                                                                \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
+            return;                                                       \
+         }                                                                \
+    }                                                                     \
   while (0)
 
-#define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val)                        \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY((exp) == NULL))                                \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
-	    return (val);                                               \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val)                          \
+  do                                                                      \
+    {                                                                     \
+       if (EINA_UNLIKELY((exp) == NULL))                                  \
+         {                                                                \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
+            return (val);                                                 \
+         }                                                                \
+    }                                                                     \
   while (0)
 
-#define EINA_SAFETY_ON_NULL_GOTO(exp, label)                            \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY((exp) == NULL))                                \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
-	    goto label;                                                 \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_NULL_GOTO(exp, label)                              \
+  do                                                                      \
+    {                                                                     \
+       if (EINA_UNLIKELY((exp) == NULL))                                  \
+         {                                                                \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " == NULL"); \
+            goto label;                                                   \
+         }                                                                \
+    }                                                                     \
   while (0)
 
-#define EINA_SAFETY_ON_TRUE_RETURN(exp)                                 \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY(exp))                                          \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
-	    return;                                                     \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_TRUE_RETURN(exp)                                   \
+  do                                                                      \
+    {                                                                     \
+       if (EINA_UNLIKELY(exp))                                            \
+         {                                                                \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
+            return;                                                       \
+         }                                                                \
+    }                                                                     \
   while (0)
 
-#define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val)                        \
-  do                                                                    \
-    {									\
-       if (EINA_UNLIKELY(exp))						\
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
-	    return val;                                                 \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val)                          \
+  do                                                                      \
+    {                                                                     \
+       if (EINA_UNLIKELY(exp))                                            \
+         {                                                                \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
+            return val;                                                   \
+         }                                                                \
+    }                                                                     \
   while (0)
 
-#define EINA_SAFETY_ON_TRUE_GOTO(exp, label)                            \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY(exp))                                          \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
-	    goto label;                                                 \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_TRUE_GOTO(exp, label)                              \
+  do                                                                      \
+    {                                                                     \
+       if (EINA_UNLIKELY(exp))                                            \
+         {                                                                \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                     \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " is true"); \
+            goto label;                                                   \
+         }                                                                \
+    }                                                                     \
   while (0)
 
-#define EINA_SAFETY_ON_FALSE_RETURN(exp)                                \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY(!(exp)))                                       \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
-	    return;                                                     \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_FALSE_RETURN(exp)                                   \
+  do                                                                       \
+    {                                                                      \
+       if (EINA_UNLIKELY(!(exp)))                                          \
+         {                                                                 \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                      \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
+            return;                                                        \
+         }                                                                 \
+    }                                                                      \
   while (0)
 
-#define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val)                       \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY(!(exp)))                                       \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
-	    return val;                                                 \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val)                          \
+  do                                                                       \
+    {                                                                      \
+       if (EINA_UNLIKELY(!(exp)))                                          \
+         {                                                                 \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                      \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
+            return val;                                                    \
+         }                                                                 \
+    }                                                                      \
   while (0)
 
-#define EINA_SAFETY_ON_FALSE_GOTO(exp, label)                           \
-  do                                                                    \
-    {                                                                   \
-       if (EINA_UNLIKELY(!(exp)))                                       \
-	 {                                                              \
-	    eina_error_set(EINA_ERROR_SAFETY_FAILED);                   \
-	    EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
-	    goto label;                                                 \
-	 }                                                              \
-    }                                                                   \
+#define EINA_SAFETY_ON_FALSE_GOTO(exp, label)                              \
+  do                                                                       \
+    {                                                                      \
+       if (EINA_UNLIKELY(!(exp)))                                          \
+         {                                                                 \
+            eina_error_set(EINA_ERROR_SAFETY_FAILED);                      \
+            EINA_LOG_ERR("%s", "safety check failed: " # exp " is false"); \
+            goto label;                                                    \
+         }                                                                 \
+    }                                                                      \
   while (0)
 
 #ifdef EINA_ARG_NONNULL
@@ -192,34 +191,33 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 #define EINA_ARG_NONNULL(idx, ...)
 #endif
 
-
 #else /* no safety checks */
 
-#define EINA_SAFETY_ON_NULL_RETURN(exp)		\
+#define EINA_SAFETY_ON_NULL_RETURN(exp) \
   do { (void)(!(exp)); } while (0)
 
-#define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val)		\
+#define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val) \
   do { if (0 && !(exp)) { (void)val; } } while (0)
 
-#define EINA_SAFETY_ON_NULL_GOTO(exp, label)			\
+#define EINA_SAFETY_ON_NULL_GOTO(exp, label) \
   do { if (0 && (exp) == NULL) { goto label; } } while (0)
 
-#define EINA_SAFETY_ON_TRUE_RETURN(exp)		\
+#define EINA_SAFETY_ON_TRUE_RETURN(exp) \
   do { (void)(exp); } while (0)
 
-#define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val)	\
+#define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val) \
   do { if (0 && (exp)) { (void)val; } } while (0)
 
-#define EINA_SAFETY_ON_TRUE_GOTO(exp, label)		\
+#define EINA_SAFETY_ON_TRUE_GOTO(exp, label) \
   do { if (0 && (exp)) { goto label; } } while (0)
 
-#define EINA_SAFETY_ON_FALSE_RETURN(exp)	\
+#define EINA_SAFETY_ON_FALSE_RETURN(exp) \
   do { (void)(!(exp)); } while (0)
 
-#define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val)	\
+#define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val) \
   do { if (0 && !(exp)) { (void)val; } } while (0)
 
-#define EINA_SAFETY_ON_FALSE_GOTO(exp, label)		\
+#define EINA_SAFETY_ON_FALSE_GOTO(exp, label) \
   do { if (0 && !(exp)) { goto label; } } while (0)
 
 #endif /* safety checks macros */

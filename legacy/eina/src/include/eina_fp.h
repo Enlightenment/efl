@@ -24,8 +24,8 @@
 
 #ifdef _MSC_VER
 typedef unsigned __int64 uint64_t;
-typedef signed __int64 int64_t;
-typedef signed int int32_t;
+typedef signed __int64   int64_t;
+typedef signed int       int32_t;
 #else
 # include <stdint.h>
 #endif
@@ -48,7 +48,7 @@ static inline Eina_F32p32  eina_f32p32_sub(Eina_F32p32 a,
 static inline Eina_F32p32  eina_f32p32_mul(Eina_F32p32 a,
                                            Eina_F32p32 b);
 static inline Eina_F32p32  eina_f32p32_scale(Eina_F32p32 a,
-                                             int b);
+                                             int         b);
 static inline Eina_F32p32  eina_f32p32_div(Eina_F32p32 a,
                                            Eina_F32p32 b);
 static inline Eina_F32p32  eina_f32p32_sqrt(Eina_F32p32 a);
@@ -72,7 +72,7 @@ static inline Eina_F16p16  eina_f16p16_sub(Eina_F16p16 a,
 static inline Eina_F16p16  eina_f16p16_mul(Eina_F16p16 a,
                                            Eina_F16p16 b);
 static inline Eina_F16p16  eina_f16p16_scale(Eina_F16p16 a,
-                                             int b);
+                                             int         b);
 static inline Eina_F16p16  eina_f16p16_div(Eina_F16p16 a,
                                            Eina_F16p16 b);
 static inline Eina_F16p16  eina_f16p16_sqrt(Eina_F16p16 a);
@@ -90,7 +90,7 @@ static inline Eina_F8p24   eina_f8p24_sub(Eina_F8p24 a,
 static inline Eina_F8p24   eina_f8p24_mul(Eina_F8p24 a,
                                           Eina_F8p24 b);
 static inline Eina_F8p24   eina_f8p24_scale(Eina_F8p24 a,
-                                            int b);
+                                            int        b);
 static inline Eina_F8p24   eina_f8p24_div(Eina_F8p24 a,
                                           Eina_F8p24 b);
 static inline Eina_F8p24   eina_f8p24_sqrt(Eina_F8p24 a);

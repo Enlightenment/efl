@@ -96,7 +96,6 @@
 # undef EINA_LIKELY
 #endif
 
-
 #ifdef __GNUC__
 # if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
 #  define EINA_WARN_UNUSED_RESULT __attribute__ ((warn_unused_result))
@@ -118,20 +117,20 @@
 
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
 #  define EINA_MALLOC __attribute__ ((malloc))
-#  define EINA_PURE __attribute__ ((pure))
+#  define EINA_PURE   __attribute__ ((pure))
 # else
 #  define EINA_MALLOC
 #  define EINA_PURE
 # endif
 
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#  define EINA_PRINTF(fmt, arg)  __attribute__((format (printf, fmt, arg)))
+#  define EINA_PRINTF(fmt, arg) __attribute__((format (printf, fmt, arg)))
 #  define EINA_SCANF(fmt, arg)  __attribute__((format (scanf, fmt, arg)))
-#  define EINA_FORMAT(fmt) __attribute__((format_arg(fmt)))
-#  define EINA_CONST __attribute__((const))
+#  define EINA_FORMAT(fmt)      __attribute__((format_arg(fmt)))
+#  define EINA_CONST        __attribute__((const))
 #  define EINA_NOINSTRUMENT __attribute__((no_instrument_function))
-#  define EINA_UNLIKELY(exp) __builtin_expect((exp), 0)
-#  define EINA_LIKELY(exp) __builtin_expect((exp), 1)
+#  define EINA_UNLIKELY(exp)    __builtin_expect((exp), 0)
+#  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 # else
 #  define EINA_PRINTF(fmt, arg)
 #  define EINA_SCANF(fmt, arg)
@@ -139,7 +138,7 @@
 #  define EINA_CONST
 #  define EINA_NOINSTRUMENT
 #  define EINA_UNLIKELY(exp) exp
-#  define EINA_LIKELY(exp) exp
+#  define EINA_LIKELY(exp)   exp
 # endif
 
 #elif defined(_WIN32)
@@ -158,7 +157,7 @@
 # define EINA_CONST
 # define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
-# define EINA_LIKELY(exp) exp
+# define EINA_LIKELY(exp)   exp
 
 #elif defined(__SUNPRO_C)
 # define EINA_WARN_UNUSED_RESULT
@@ -166,7 +165,7 @@
 # define EINA_DEPRECATED
 # if __SUNPRO_C >= 0x590
 #  define EINA_MALLOC __attribute__ ((malloc))
-#  define EINA_PURE __attribute__ ((pure))
+#  define EINA_PURE   __attribute__ ((pure))
 # else
 #  define EINA_MALLOC
 #  define EINA_PURE
@@ -181,7 +180,7 @@
 # endif
 # define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
-# define EINA_LIKELY(exp) exp
+# define EINA_LIKELY(exp)   exp
 
 #else /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
@@ -210,9 +209,8 @@
 # define EINA_CONST
 # define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
-# define EINA_LIKELY(exp) exp
+# define EINA_LIKELY(exp)   exp
 #endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
-
 
 /**
  * @typedef Eina_Bool
@@ -234,7 +232,7 @@ typedef unsigned char Eina_Bool;
  * @def EINA_TRUE
  * boolean value TRUE (numerical value 1)
  */
-#define EINA_TRUE ((Eina_Bool)1)
+#define EINA_TRUE  ((Eina_Bool)1)
 
 EAPI extern const unsigned int eina_prime_table[];
 

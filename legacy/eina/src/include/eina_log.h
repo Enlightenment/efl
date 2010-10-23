@@ -108,7 +108,6 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
 
 #endif /* EINA_LOG_DOMAIN_DEFAULT */
 
-
 /**
  * @def EINA_LOG(DOM, LEVEL, fmt, ...)
  * Logs a message on the specified domain, level and format.
@@ -124,21 +123,21 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  *       header files.
  */
 #ifdef EINA_LOG_LEVEL_MAXIMUM
-#define EINA_LOG(DOM, LEVEL, fmt, ...)                                  \
-  do {                                                                  \
-     if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM) {				\
-	eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__,	\
-		       fmt, ## __VA_ARGS__); }				\
-  } while (0)
+#define EINA_LOG(DOM, LEVEL, fmt, ...)                                   \
+  do {                                                                   \
+       if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM) {                            \
+            eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__, \
+                           fmt, ## __VA_ARGS__); }                       \
+    } while (0)
 #else
-#define EINA_LOG(DOM, LEVEL, fmt, ...)		\
-  eina_log_print(DOM,				\
-		 LEVEL,				\
-		 __FILE__,			\
-		 __FUNCTION__,			\
-		 __LINE__,			\
-		 fmt,				\
-		 ## __VA_ARGS__)
+#define EINA_LOG(DOM, LEVEL, fmt, ...) \
+  eina_log_print(DOM,                  \
+                 LEVEL,                \
+                 __FILE__,             \
+                 __FUNCTION__,         \
+                 __LINE__,             \
+                 fmt,                  \
+                 ## __VA_ARGS__)
 #endif
 
 /**
@@ -146,46 +145,46 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * Logs a message with level CRITICAL on the specified domain and format.
  */
 #define EINA_LOG_DOM_CRIT(DOM, fmt, ...) \
-   EINA_LOG(DOM, EINA_LOG_LEVEL_CRITICAL, fmt, ## __VA_ARGS__)
+  EINA_LOG(DOM, EINA_LOG_LEVEL_CRITICAL, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_ERR(DOM, fmt, ...)
  * Logs a message with level ERROR on the specified domain and format.
  */
 #define EINA_LOG_DOM_ERR(DOM, fmt, ...) \
-   EINA_LOG(DOM, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
+  EINA_LOG(DOM, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_INFO(DOM, fmt, ...)
  * Logs a message with level INFO on the specified domain and format.
  */
 #define EINA_LOG_DOM_INFO(DOM, fmt, ...) \
-   EINA_LOG(DOM, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
+  EINA_LOG(DOM, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_DBG(DOM, fmt, ...)
  * Logs a message with level DEBUG on the specified domain and format.
  */
 #define EINA_LOG_DOM_DBG(DOM, fmt, ...) \
-   EINA_LOG(DOM, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
+  EINA_LOG(DOM, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DOM_WARN(DOM, fmt, ...)
  * Logs a message with level WARN on the specified domain and format.
  */
 #define EINA_LOG_DOM_WARN(DOM, fmt, ...) \
-   EINA_LOG(DOM, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
+  EINA_LOG(DOM, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_CRIT(fmt, ...)
  * Logs a message with level CRITICAL on the default domain with the specified
  * format.
  */
-#define EINA_LOG_CRIT(fmt, ...)	     \
-   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, \
-            EINA_LOG_LEVEL_CRITICAL, \
-            fmt,		     \
-            ## __VA_ARGS__)
+#define EINA_LOG_CRIT(fmt, ...)     \
+  EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, \
+           EINA_LOG_LEVEL_CRITICAL, \
+           fmt,                     \
+           ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_ERR(fmt, ...)
@@ -193,7 +192,7 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * format.
  */
 #define EINA_LOG_ERR(fmt, ...) \
-   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
+  EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_ERR, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_INFO(fmt, ...)
@@ -201,7 +200,7 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * format.
  */
 #define EINA_LOG_INFO(fmt, ...) \
-   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
+  EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_INFO, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_WARN(fmt, ...)
@@ -209,7 +208,7 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * format.
  */
 #define EINA_LOG_WARN(fmt, ...) \
-   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
+  EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_WARN, fmt, ## __VA_ARGS__)
 
 /**
  * @def EINA_LOG_DBG(fmt, ...)
@@ -217,7 +216,7 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  * format.
  */
 #define EINA_LOG_DBG(fmt, ...) \
-   EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
+  EINA_LOG(EINA_LOG_DOMAIN_DEFAULT, EINA_LOG_LEVEL_DBG, fmt, ## __VA_ARGS__)
 
 /**
  * @typedef Eina_Log_Domain
@@ -231,13 +230,13 @@ typedef struct _Eina_Log_Domain Eina_Log_Domain;
  */
 struct _Eina_Log_Domain
 {
-   int level; /**< Max level to log */
+   int         level; /**< Max level to log */
    const char *domain_str; /**< Formatted string with color to print */
    const char *name; /**< Domain name */
-   size_t namelen; /**< strlen(name) */
+   size_t      namelen; /**< strlen(name) */
 
    /* Private */
-   Eina_Bool deleted : 1; /**< Flags deletion of domain, a free slot */
+   Eina_Bool   deleted : 1; /**< Flags deletion of domain, a free slot */
 };
 
 EAPI void eina_log_threads_enable(void);
@@ -269,110 +268,83 @@ typedef void (*Eina_Log_Print_Cb)(const Eina_Log_Domain *d,
 /*
  * Customization
  */
-EAPI void
-eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
+EAPI void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNULL(1);
 
-EAPI void
-eina_log_level_set(int level);
-EAPI int
-eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void eina_log_level_set(int level);
+EAPI int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 
 static inline Eina_Bool
-eina_log_level_check(int level);
+                        eina_log_level_check(int level);
 
-EAPI Eina_Bool
-eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UNUSED_RESULT;
 
-EAPI void
-eina_log_color_disable_set(Eina_Bool disabled);
-EAPI Eina_Bool
-eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT;
-EAPI void
-eina_log_file_disable_set(Eina_Bool disabled);
-EAPI Eina_Bool
-eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
-EAPI void
-eina_log_function_disable_set(Eina_Bool disabled);
-EAPI Eina_Bool
-eina_log_function_disable_get(void) EINA_WARN_UNUSED_RESULT;
-EAPI void
-eina_log_abort_on_critical_set(Eina_Bool abort_on_critical);
-EAPI Eina_Bool
-eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RESULT;
-EAPI void
-eina_log_abort_on_critical_level_set(int critical_level);
-EAPI int
-eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void               eina_log_color_disable_set(Eina_Bool disabled);
+EAPI Eina_Bool          eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void               eina_log_file_disable_set(Eina_Bool disabled);
+EAPI Eina_Bool          eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void               eina_log_function_disable_set(Eina_Bool disabled);
+EAPI Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void               eina_log_abort_on_critical_set(Eina_Bool abort_on_critical);
+EAPI Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RESULT;
+EAPI void               eina_log_abort_on_critical_level_set(int critical_level);
+EAPI int                eina_log_abort_on_critical_level_get(void) EINA_WARN_UNUSED_RESULT;
 
-EAPI void
-eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
-EAPI int
-eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-EAPI int
-eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
-static inline Eina_Bool
-eina_log_domain_level_check(int domain, int level);
-
+EAPI void               eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
+EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
+static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
 
 /*
  * Logging domains
  */
-EAPI int
-eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
-EAPI void
-eina_log_domain_unregister(int domain);
+EAPI int  eina_log_domain_register(const char *name, const char *color) EINA_ARG_NONNULL(1);
+EAPI void eina_log_domain_unregister(int domain);
 
 /*
  * Logging functions.
  */
-EAPI void
-eina_log_print(int domain,
-               Eina_Log_Level level,
-               const char *file,
-               const char *function,
-               int line,
-               const char *fmt,
-               ...) EINA_ARG_NONNULL(3, 4, 6) EINA_PRINTF(6, 7) EINA_NOINSTRUMENT;
-EAPI void
-eina_log_vprint(int domain,
-                Eina_Log_Level level,
-                const char *file,
-                const char *fnc,
-                int line,
-                const char *fmt,
-                va_list args) EINA_ARG_NONNULL(3, 4, 6) EINA_NOINSTRUMENT;
-
+EAPI void eina_log_print(int            domain,
+                         Eina_Log_Level level,
+                         const char    *file,
+                         const char    *function,
+                         int            line,
+                         const char    *fmt,
+                         ...) EINA_ARG_NONNULL(3, 4, 6) EINA_PRINTF(6, 7) EINA_NOINSTRUMENT;
+EAPI void eina_log_vprint(int            domain,
+                          Eina_Log_Level level,
+                          const char    *file,
+                          const char    *fnc,
+                          int            line,
+                          const char    *fmt,
+                          va_list        args) EINA_ARG_NONNULL(3, 4, 6) EINA_NOINSTRUMENT;
 
 /*
  * Logging methods (change how logging is done).
  */
-EAPI void
-eina_log_print_cb_stdout(const Eina_Log_Domain *d,
-                         Eina_Log_Level level,
-                         const char *file,
-                         const char *fnc,
-                         int line,
-                         const char *fmt,
-                         void *data,
-                         va_list args);
-EAPI void
-eina_log_print_cb_stderr(const Eina_Log_Domain *d,
-                         Eina_Log_Level level,
-                         const char *file,
-                         const char *fnc,
-                         int line,
-                         const char *fmt,
-                         void *data,
-                         va_list args);
-EAPI void
-eina_log_print_cb_file(const Eina_Log_Domain *d,
-                       Eina_Log_Level level,
-                       const char *file,
-                       const char *fnc,
-                       int line,
-                       const char *fmt,
-                       void *data,
-                       va_list args);
+EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
+                                   Eina_Log_Level         level,
+                                   const char            *file,
+                                   const char            *fnc,
+                                   int                    line,
+                                   const char            *fmt,
+                                   void                  *data,
+                                   va_list                args);
+EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
+                                   Eina_Log_Level         level,
+                                   const char            *file,
+                                   const char            *fnc,
+                                   int                    line,
+                                   const char            *fmt,
+                                   void                  *data,
+                                   va_list                args);
+EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
+                                 Eina_Log_Level         level,
+                                 const char            *file,
+                                 const char            *fnc,
+                                 int                    line,
+                                 const char            *fmt,
+                                 void                  *data,
+                                 va_list                args);
 
 #include "eina_inline_log.x"
 
