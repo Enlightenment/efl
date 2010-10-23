@@ -267,6 +267,7 @@ eina_one_big_shutdown(void *data)
    if (pool->empty)
      {
         void *mem = eina_trash_pop(&pool->empty);
+        if (mem == pool->base) pool->base = NULL;
         free(mem);
      }
    if (pool->over > 0)
@@ -307,7 +308,7 @@ eina_one_big_shutdown(void *data)
    VALGRIND_DESTROY_MEMPOOL(pool);
 #endif
 
-   free(pool->base);
+   if (pool->base) free(pool->base);
    
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
