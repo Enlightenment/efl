@@ -35,6 +35,8 @@
 
 #include "eina_mempool.h"
 #include "eina_trash.h"
+#include "eina_inlist.h"
+#include "eina_log.h"
 
 #ifndef NVALGRIND
 # include <valgrind/memcheck.h>
@@ -42,15 +44,19 @@
 
 #ifdef DEBUG
 #include "eina_private.h"
-#include "eina_log.h"
-
-static int _eina_mempool_log_dom = -1;
+#endif
 
 #ifdef INF
 #undef INF
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_eina_mempool_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
 #endif
+#define WRN(...) EINA_LOG_DOM_WARN(_eina_mempool_log_dom, __VA_ARGS__)
+
+static int _eina_mempool_log_dom = -1;
 
 typedef struct _One_Big One_Big;
 struct _One_Big
@@ -67,6 +73,7 @@ struct _One_Big
    unsigned char *base;
 
    Eina_Trash *empty;
+   Eina_Inlist *over_list;
 
 #ifdef EFL_HAVE_THREADS
 # ifdef EFL_HAVE_POSIX_THREADS
@@ -123,11 +130,17 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
 
  retry_smaller:
    eina_error_set(0);
-   mem = malloc(pool->item_size);
+   mem = malloc(sizeof(Eina_Inlist) + pool->item_size);
    if (!mem)
       eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
    else
-      pool->over++;
+     {
+        pool->over++;
+        memset(mem, 0, sizeof(Eina_Inlist));
+        pool->over_list = eina_inlist_append(pool->over_list, 
+                                             (Eina_Inlist *)mem);
+        mem = ((unsigned char *)mem) + sizeof(Eina_Inlist);
+     }
 #ifndef NVALGRIND
    VALGRIND_MAKE_MEM_NOACCESS(mem, pool->item_size);
 #endif
@@ -168,7 +181,9 @@ eina_one_big_free(void *data, void *ptr)
      }
    else
      {
-        free(ptr);
+        Eina_Inlist *il = (Eina_Inlist *)(((unsigned char *)ptr) - sizeof(Eina_Inlist));
+        pool->over_list = eina_inlist_remove(pool->over_list, il);
+        free(il);
         pool->over--;
      }
 
@@ -243,6 +258,33 @@ eina_one_big_shutdown(void *data)
 
    if (!pool) return ;
 
+   if (pool->empty)
+     {
+        void *mem = eina_trash_pop(&pool->empty);
+        free(mem);
+     }
+   if (pool->over > 0)
+     {
+// FIXME: should we warn here? one_big mempool exceeded its alloc and now
+// mempool is cleaning up the mess created. be quiet for now as we were before
+// but edje seems to be a big offender at the moment! bad cedric! :)
+//        WRN(
+//            "Pool [%s] over by %i. cleaning up for you", 
+//            pool->name, pool->over);
+        while (pool->over_list)
+          {
+             Eina_Inlist *il = pool->over_list;
+             pool->over_list = eina_inlist_remove(pool->over_list, il);
+             free(il);
+             pool->over--;
+          }
+     }
+   if (pool->over > 0)
+     {
+        WRN(
+            "Pool [%s] still over by %i\n", 
+            pool->name, pool->over);
+     }
 #ifdef DEBUG
    if (pool->usage > 0)
       INF(
