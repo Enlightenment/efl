@@ -5,10 +5,38 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#include <Ecore_Getopt.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
 
 #include "Emotion.h"
+
+static const Ecore_Getopt options = {
+   "emotion_test",
+   "%prog [options]",
+   "1.0.0",
+   "(C) 2010 Enlightenment",
+   "BSD\nThis is a 3 clause bsd bla bla",
+   "a simple test program for emotion using enlightenment foundation libraries.\n"
+   "Here is the text of the licence",
+   1,
+   {
+      ECORE_GETOPT_STORE_STR('e', "engine", "ecore-evas engine to use"),
+      ECORE_GETOPT_CALLBACK_NOARGS('E', "list-engines", "list ecore-evas engines",
+                                   ecore_getopt_callback_ecore_evas_list_engines, NULL),
+      ECORE_GETOPT_CALLBACK_ARGS('g', "geometry", "geometry to use in x:y:w:h form.", "X:Y:W:H",
+                                 ecore_getopt_callback_geometry_parse, NULL),
+      ECORE_GETOPT_STORE_STR('b', "backend", "backend to use"),
+      ECORE_GETOPT_STORE_STR('f', "filename", "file to playback"),
+      ECORE_GETOPT_STORE_INT('v', "vis", "visualization type"),
+      ECORE_GETOPT_COUNT('v', "verbose", "be more verbose"),
+      ECORE_GETOPT_VERSION('V', "version"),
+      ECORE_GETOPT_COPYRIGHT('R', "copyright"),
+      ECORE_GETOPT_LICENSE('L', "license"),
+      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
+};
 
 typedef struct _Frame_Data Frame_Data;
 
@@ -20,8 +48,6 @@ struct _Frame_Data
    Evas_Coord x, y;
 };
 
-static int  main_start(int argc, char **argv);
-static void main_stop(void);
 static void main_resize(Ecore_Evas *ee);
 static Eina_Bool  main_signal_exit(void *data, int ev_type, void *ev);
 static void main_delete_request(Ecore_Evas *ee);
@@ -40,106 +66,6 @@ static int          starth     = 600;
 
 static Eina_List   *video_objs = NULL;
 static Emotion_Vis  vis        = EMOTION_VIS_NONE;
-
-static int
-main_start(int argc, char **argv)
-{
-   int mode = 0;
-
-   eina_init();
-
-   start_time = ecore_time_get();
-   if (!ecore_init()) return -1;
-   ecore_app_args_set(argc, (const char **)argv);
-   ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
-
-   edje_init();
-   edje_frametime_set(1.0 / 30.0);
-
-   if (!ecore_evas_init()) return -1;
-     {
-        int i;
-
-        for (i = 1; i < argc; i++)
-          {
-	     if (((!strcmp(argv[i], "-g")) ||
-		  (!strcmp(argv[i], "-geometry")) ||
-		  (!strcmp(argv[i], "--geometry"))) && (i < (argc - 1)))
-	       {
-		  int n, w, h;
-		  char buf[16], buf2[16];
-
-		  n = sscanf(argv[i +1], "%10[^x]x%10s", buf, buf2);
-		  if (n == 2)
-		    {
-		       w = atoi(buf);
-		       h = atoi(buf2);
-		       startw = w;
-		       starth = h;
-		    }
-		  i++;
-	       }
-             else if (!strcmp(argv[i], "-gl"))
-               {
-		  mode = 1;
-               }
-             else if (!strcmp(argv[i], "-fb"))
-               {
-		  mode = 2;
-               }
-             else if (!strcmp(argv[i], "-xr"))
-               {
-		  mode = 3;
-               }
-	     else if (!strcmp(argv[i], "-auto"))
-	       {
-		  mode = 4;
-	       }
-	     else if ((!strcmp(argv[i], "-vis")) && (i < (argc - 1)))
-	       {
-		  vis = atoi(argv[i + 1]);
-		  i++;
-	       }
-          }
-     }
-   if (mode == 4)
-     ecore_evas = ecore_evas_new(NULL, 0, 0, startw, starth, NULL);
-   if (mode == 0)
-     ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
-   if (mode == 1)
-     ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
-   if (mode == 2)
-     ecore_evas = ecore_evas_fb_new(NULL, 0, startw, starth);
-   if (mode == 3)
-     ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
-
-
-   if (!ecore_evas) return -1;
-   ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
-   ecore_evas_callback_resize_set(ecore_evas, main_resize);
-   ecore_evas_title_set(ecore_evas, "Evas Media Test Program");
-   ecore_evas_name_class_set(ecore_evas, "evas_media_test", "main");
-   ecore_evas_show(ecore_evas);
-   evas = ecore_evas_get(ecore_evas);
-   evas_image_cache_set(evas, 8 * 1024 * 1024);
-   evas_font_cache_set(evas, 1 * 1024 * 1024);
-   evas_font_path_append(evas, PACKAGE_DATA_DIR"/data/fonts");
-
-   return 1;
-}
-
-static void
-main_stop(void)
-{
-   main_signal_exit(NULL, 0, NULL);
-
-   ecore_evas_free(ecore_evas);
-
-   ecore_evas_shutdown();
-   edje_shutdown();
-   ecore_shutdown();
-   eina_shutdown();
-}
 
 static void
 main_resize(Ecore_Evas *ee)
@@ -796,68 +722,113 @@ check_positions(void *data)
 int
 main(int argc, char **argv)
 {
-   char *module_filename;
-   int i;
+   int args;
+   Eina_Rectangle     geometry = {0, 0, startw, starth};
+   char              *engine = NULL;
+   char              *backend = "xine";
+   char              *filename = NULL;
+   int                verbose = 0;
+   int                visual = EMOTION_VIS_NONE;
+   unsigned char      help = 0;
+   unsigned char      engines_listed = 0;
+   Ecore_Getopt_Value values[] = {
+      ECORE_GETOPT_VALUE_STR(engine),
+      ECORE_GETOPT_VALUE_BOOL(engines_listed),
+      ECORE_GETOPT_VALUE_PTR_CAST(geometry),
+      ECORE_GETOPT_VALUE_STR(backend),
+      ECORE_GETOPT_VALUE_STR(filename),
+      ECORE_GETOPT_VALUE_INT(visual),
+      ECORE_GETOPT_VALUE_INT(verbose),
+      ECORE_GETOPT_VALUE_NONE,
+      ECORE_GETOPT_VALUE_NONE,
+      ECORE_GETOPT_VALUE_NONE,
+      ECORE_GETOPT_VALUE_BOOL(help),
+      ECORE_GETOPT_VALUE_NONE
+    };
 
-   if (main_start(argc, argv) < 1) return -1;
+
+   if (!ecore_evas_init())
+     return -1;
+   if (!edje_init())
+     goto shutdown_ecore_evas;
+
+   start_time = ecore_time_get();
+   ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
+   edje_frametime_set(1.0 / 30.0);
+
+   ecore_app_args_set(argc, (const char **)argv);
+   args = ecore_getopt_parse(&options, values, argc, argv);
+   if (args < 0)
+     goto shutdown_edje;
+
+   if (help)
+     goto shutdown_edje;
+   if (engines_listed)
+     goto shutdown_edje;
+   if (!engine)
+     {
+       printf ("select engine\n");
+       goto shutdown_edje;
+     }
+   if (!filename)
+     {
+       printf ("select engine\n");
+       goto shutdown_edje;
+     }
+   if (!backend)
+     {
+       backend = "xine";
+       printf ("selected backend: %s\n", backend);
+       goto shutdown_edje;
+     }
+   if ((geometry.w == 0) || (geometry.h == 0))
+     {
+       printf("size nulle\n");
+       goto shutdown_edje;
+     }
+
+   printf ("backend: %s\n", backend);
+   printf ("filename: %s\n", filename);
+   printf ("vis: %d\n", vis);
+   printf ("engine: %s\n", engine);
+   printf ("geometry: %d %d %dx%d\n", geometry.x, geometry.y, geometry.w, geometry.h);
+
+   ecore_evas = ecore_evas_new(engine,
+                               geometry.x, geometry.y, geometry.w, geometry.h,
+                               NULL);
+   if (!ecore_evas)
+     goto shutdown_edje;
+
+   ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
+   ecore_evas_callback_resize_set(ecore_evas, main_resize);
+   ecore_evas_title_set(ecore_evas, "Evas Media Test Program");
+   ecore_evas_name_class_set(ecore_evas, "evas_media_test", "main");
+   ecore_evas_show(ecore_evas);
+   evas = ecore_evas_get(ecore_evas);
+   evas_image_cache_set(evas, 8 * 1024 * 1024);
+   evas_font_cache_set(evas, 1 * 1024 * 1024);
+   evas_font_path_append(evas, PACKAGE_DATA_DIR"/data/fonts");
+
    bg_setup();
 
-   module_filename = "xine";
-
-   for (i = 1; i < argc; i++)
-     {
-	if (((!strcmp(argv[i], "-g")) ||
-	    (!strcmp(argv[i], "-geometry")) ||
-	    (!strcmp(argv[i], "--geometry"))) && (i < (argc - 1)))
-	     i++;
-	else if (((!strcmp(argv[i], "-h")) ||
-	    (!strcmp(argv[i], "-help")) ||
-	    (!strcmp(argv[i], "--help"))))
-	  {
-	     printf("Usage:\n");
-	     printf("  %s [-gl] [-g WxH] [-vis NUMBER] [-xine] [-gstreamer] [-vlc] filename\n", argv[0]);
-	     exit(-1);
-	  }
-	else if (!strcmp(argv[i], "-gl"))
-	  {
-	  }
-	else if (!strcmp(argv[i], "-fb"))
-	  {
-	  }
-	else if (!strcmp(argv[i], "-xr"))
-	  {
-	  }
-	else if (!strcmp(argv[i], "-auto"))
-	  {
-	     module_filename = NULL;
-	  }
-	else if (!strcmp(argv[i], "-xine"))
-	  {
-             module_filename = "xine";
-	  }
-	else if (!strcmp(argv[i], "-gstreamer"))
-	  {
-             module_filename = "gstreamer";
-	  }
-	else if (!strcmp(argv[i], "-vlc"))
-	  {
-             module_filename = "vlc";
-	  }
-	else if ((!strcmp(argv[i], "-vis")) && (i < (argc - 1)))
-	  {
-	     i++;
-	  }
-        else
-	  {
-             printf ("module : %s\n", module_filename);
-	     init_video_object(module_filename, argv[i]);
-	  }
-     }
+   init_video_object(backend, filename);
 
    ecore_idle_enterer_add(enter_idle, NULL);
    ecore_animator_add(check_positions, NULL);
 
    ecore_main_loop_begin();
-   main_stop();
+
+   main_signal_exit(NULL, 0, NULL);
+   ecore_evas_free(ecore_evas);
+   ecore_evas_shutdown();
+   edje_shutdown();
+
    return 0;
+
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
+   ecore_evas_shutdown();
+
+   return -1;
 }
