@@ -3613,7 +3613,10 @@ eet_data_get_array(Eet_Free_Context     *context,
              if (dst)
                {
                   memcpy(dst, data_ret, subsize);
-		  if (edd) edd->func.mem_free(data_ret);
+		  if ((ede) && (ede->subtype))
+                     ede->subtype->func.mem_free(data_ret);
+                  else if (edd)
+                     edd->func.mem_free(data_ret);
 		  else free(data_ret);
 		  _eet_freelist_del(context, data_ret);
                }
