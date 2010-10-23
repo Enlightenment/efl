@@ -122,19 +122,21 @@ fi
 AC_SUBST(EINA_CONFIGURE_MAGIC_DEBUG)
 
 # Valgrind
-want_valgrind="no"
+want_valgrind="auto"
+have_valgrind="no"
 
 AC_MSG_CHECKING(whether to enable build with valgrind)
 AC_ARG_ENABLE(valgrind,
-  AC_HELP_STRING([--enable-valgrind], [enable valgrind fixes to stop false reports]),
+  AC_HELP_STRING([--enable-valgrind], [improve valgrind support by hinting it of our memory usages, having it to report proper mempool leaks.]),
   [want_valgrind=$enableval]
 )
 AC_MSG_RESULT($want_valgrind)
 
-if test x$want_valgrind = "xyes"; then
+if test "x${want_valgrind}" = "xyes" -o "x${want_valgrind}" = "xauto"; then
     PKG_CHECK_MODULES(VALGRIND, valgrind >= 2.4.0,
         [
          requirement_eina="valgrind ${requirement_eina}"
+         have_valgrind="yes"
         ],
         [
          AC_DEFINE(NVALGRIND, 1, [Valgrind support disabled])
@@ -615,6 +617,7 @@ echo "  Magic debug..........: ${have_magic_debug}"
 echo "  Safety checks........: ${have_safety_checks}"
 echo "  Maximum log level....: ${with_max_log_level}"
 echo "  Report string usage..: ${have_stringshare_usage}"
+echo "  Valgrind support.....: ${have_valgrind}"
 echo "  Default mempool......: ${have_default_mempool}"
 echo "  Thread Support.......: ${have_threads}"
 if test "${have_threads}" = "POSIX" ; then
