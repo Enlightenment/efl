@@ -614,16 +614,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                                              {
                                                 if (dx + w > (ext_x + ext_w))
                                                   in_w += (dx + w) - (ext_x + ext_w);
-                                                /* FIXME: Hack around the bug
-                                                 * with clipping not taking
-                                                 * textblock's size into
-                                                 * account */
-                                                if (dx < x)
-                                                  {
-                                                     in_w += x - dx;
-                                                     in_x = x - dx;
-                                                     dx = x;
-                                                  }
                                                 if (dx < ext_x)
                                                   {
                                                      in_w += ext_x - dx;
