@@ -32,9 +32,6 @@ GSTPLUG_REQS=0.10.1
 GST_MAJORMINOR=0.10
 
 requirement=""
-have_gst_ffmpeg="no"
-have_gst_cdiocddasrc="no"
-
 PKG_CHECK_MODULES([GSTREAMER],
    [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 0.9.9],
    [
@@ -42,21 +39,6 @@ PKG_CHECK_MODULES([GSTREAMER],
     requirement="gstreamer-$GST_MAJORMINOR gstreamer-plugins-base-$GST_MAJORMINOR"
    ],
    [have_dep="no"])
-
-if test "x${have_dep}" = "xyes" ; then
-
-   AM_GST_ELEMENT_CHECK([ffmpeg], [have_gst_ffmpeg="yes"], [have_gst_ffmpeg="no"])
-
-   AM_GST_ELEMENT_CHECK([cdiocddasrc], [have_gst_cdiocddasrc="yes"], [have_gst_cdiocddasrc="no"])
-
-   if test "x${have_gst_ffmpeg}" = "xno" ; then
-      AC_MSG_WARN([You should install gst-ffmpeg to decode most of the video and uadio file formats])
-   fi
-
-   if test "x${have_gst_cdiocddasrc}" = "xno" ; then
-      AC_MSG_WARN([You should install gst-cdiocddasrc to decode CD Audio])
-   fi
-fi
 
 if test "x$1" = "xstatic" ; then
    requirement_emotion="${requirement} ${requirement_emotion}"

@@ -38,12 +38,7 @@ endif
 if EMOTION_STATIC_BUILD_GSTREAMER
 libemotion_la_SOURCES += \
 $(top_srcdir)/src/modules/gstreamer/emotion_gstreamer.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline_cdda.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline_dvd.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline_file.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline_uri.c \
-$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline_v4l.c
+$(top_srcdir)/src/modules/gstreamer/emotion_gstreamer_pipeline.c
 endif
 
 if EMOTION_STATIC_BUILD_VLC

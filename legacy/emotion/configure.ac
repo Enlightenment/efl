@@ -230,8 +230,6 @@ echo "  Modules:"
 echo "    Xine...............: ${enable_xine}"
 echo "    Vlc................: ${enable_vlc}"
 echo "    Gstreamer..........: ${enable_gstreamer}"
-echo "    Gstreamer FFmpeg...: ${have_gst_ffmpeg}"
-echo "    Gstreamer CDDA.....: ${have_gst_cdiocddasrc}"
 echo
 echo "  Build emotion_test...: $have_emotion_test"
 echo "  edje_cc..............: ${edje_cc}"
