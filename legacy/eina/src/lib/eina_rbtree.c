@@ -222,11 +222,6 @@ on_error2:
    return NULL;
 }
 
-/*
- * Thanks to Julienne Walker public domain tutorial.
- * http://eternallyconfuzzled.com/tuts/datastructures/jsw_tut_rbtree.aspx
- */
-
 static void
 _eina_rbtree_node_init(Eina_Rbtree *node)
 {
@@ -281,9 +276,28 @@ _eina_rbtree_inline_double_rotation(Eina_Rbtree *node,
  *
  * @brief These functions provide Red-Black trees management.
  *
+ * For a brief description look at http://en.wikipedia.org/wiki/Red-black_tree .
+ * This code is largely inspired from a tutorial written by Julienne Walker at :
+ * http://eternallyconfuzzled.com/tuts/datastructures/jsw_tut_rbtree.aspx . The
+ * main difference is that this set of function never allocate any data, making
+ * them particularly useful for memory management.
+ *
  * @{
  */
 
+/**
+ * @brief Insert a new node inside an existing red black tree.
+ *
+ * @param root The root of an exisiting valid red black tree.
+ * @param node The new node to insert.
+ * @param cmp The callback that is able to compare two nodes.
+ * @param data Private data to help the compare function.
+ * @return The new root of the red black tree.
+ *
+ * This function insert a new node in a valid red black tree. NULL is
+ * an empty valid red black tree. The resulting new tree is a valid red
+ * black tree. This function doesn't allocate any data.
+ */
 EAPI Eina_Rbtree *
 eina_rbtree_inline_insert(Eina_Rbtree *root,
                           Eina_Rbtree *node,
@@ -374,6 +388,19 @@ end_add:
    return root;
 }
 
+/**
+ * @brief Remove a node from an existing red black tree.
+ *
+ * @param root The root of a valid red black tree.
+ * @param node The node to remove from the tree.
+ * @param cmp The callback that is able to compare two nodes.
+ * @param data Private data to help the compare function.
+ * @return The new root of the red black tree.
+ *
+ * This function remove a new node in a valid red black tree that should
+ * contain the node that you are removing. This function will return NULL
+ * when the red black tree got empty. This function doesn't free any data.
+ */
 EAPI Eina_Rbtree *
 eina_rbtree_inline_remove(Eina_Rbtree *root,
                           Eina_Rbtree *node,
@@ -574,6 +601,14 @@ eina_rbtree_iterator_postfix(const Eina_Rbtree *root)
    return _eina_rbtree_iterator_build(root, EINA_RBTREE_ITERATOR_POSTFIX_MASK);
 }
 
+/**
+ * @brief Delete all nodes from a valid red black tree.
+ *
+ * @param root The root of a valid red black tree.
+ * @param func The callback that will free each node.
+ * @param data Private data to help the compare function.
+ *
+ */
 EAPI void
 eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data)
 {
