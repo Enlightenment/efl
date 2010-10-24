@@ -603,6 +603,8 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    elm_smart_scroller_object_theme_set(obj, wd->scr, "genlist", "base", elm_widget_style_get(obj));
 //   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+   wd->item_width = wd->item_height = 0;
+   wd->minw = wd->minh = wd->realminw = 0;
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
         Eina_List *l;
