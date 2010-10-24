@@ -484,18 +484,18 @@ void              evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon 
 
 void              evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2);
 
-void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
-void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
-void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
-void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
+extern void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
+extern void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
+extern void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
+extern void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
-unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
-void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
-void          *(*secsym_eglMapImageSEC)               (void *a, void *b);
-unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
-unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
+extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
+extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
+extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
+extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b);
+extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
+extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
 #endif
 
 #define GL_ERRORS 1
