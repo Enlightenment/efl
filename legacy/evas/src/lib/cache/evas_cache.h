@@ -58,7 +58,7 @@ struct _Evas_Cache_Image
    void                         *data;
 
    int                           usage;
-   unsigned                      limit;
+   unsigned int                  limit;
    int                           references;
 #ifdef EVAS_FRAME_QUEUING
    LK(lock);
