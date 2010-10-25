@@ -168,4 +168,113 @@ test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    evas_object_show(win);
 }
+
+typedef struct
+{
+   Eina_List *transitions;
+   Evas_Object *box;
+   Evas_Object_Box_Layout last_layout;
+} Transitions_Data;
+
+static void
+_test_box_transition_change(void *data)
+{
+   Transitions_Data *tdata = data;
+   Elm_Box_Transition *layout_data;
+   Evas_Object_Box_Layout next_layout;
+
+   if (!data) return;
+   next_layout = eina_list_data_get(tdata->transitions);
+   layout_data = elm_box_transition_new(2.0, tdata->last_layout,
+         NULL, NULL, next_layout, NULL, NULL,
+         _test_box_transition_change, tdata);
+   elm_box_layout_set(tdata->box, elm_box_layout_transition, layout_data, elm_box_transition_free);
+   tdata->last_layout = next_layout;
+
+   tdata->transitions = eina_list_demote_list(tdata->transitions, tdata->transitions);
+}
+
+static void
+_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Transitions_Data *tdata = data;
+   elm_box_layout_set(tdata->box, evas_object_box_layout_horizontal, NULL, NULL);
+   free(data);
+}
+
+void
+test_box_transition(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *bx, *bt;
+   Transitions_Data *tdata;
+
+   win = elm_win_add(NULL, "box-transition", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Box Transition");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_weight_set(bx, 1.0, 1.0);
+
+   evas_object_show(bx);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 1");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_smart_callback_add(bt, "clicked", _del_cb, bx);
+   elm_box_pack_end(bx, bt);
+   evas_object_resize(bt, 100, 100);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 2");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_smart_callback_add(bt, "clicked", _del_cb, bx);
+   elm_box_pack_end(bx, bt);
+   evas_object_resize(bt, 100, 100);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Button 3");
+   evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+   evas_object_size_hint_align_set(bt, -1.0, -1.0);
+   evas_object_smart_callback_add(bt, "clicked", _del_cb, bx);
+   elm_box_pack_end(bx, bt);
+   evas_object_resize(bt, 100, 100);
+   evas_object_show(bt);
+
+   tdata = calloc(1, sizeof(Transitions_Data));
+   tdata->box = bx;
+   tdata->last_layout = evas_object_box_layout_horizontal;
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_vertical);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_horizontal);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_stack);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_homogeneous_vertical);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_homogeneous_horizontal);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_flow_vertical);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_flow_horizontal);
+   tdata->transitions = eina_list_append(tdata->transitions,
+         evas_object_box_layout_stack);
+
+   evas_object_resize(win, 300, 300);
+   evas_object_resize(bx, 300, 300);
+   evas_object_smart_callback_add(win, "delete,request", _win_del, tdata);
+   evas_object_show(win);
+   elm_box_layout_set(bx, evas_object_box_layout_horizontal, NULL, NULL);
+   _test_box_transition_change(tdata);
+}
 #endif
