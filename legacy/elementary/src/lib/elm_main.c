@@ -1198,6 +1198,103 @@ elm_scale_all_set(double scale)
 #endif   
 }
 
+
+/**
+ * @defgroup Profile Elementary Profile
+ *
+ * Profiles are pre-set options that affect the whole look-and-feel of
+ * Elementary-based applications. There are, for example, profiles
+ * aimed at desktop computer applications and others aimed at mobile,
+ * touchscreen-based ones. You probably don't want to use the
+ * functions in this group unlees you're writing an elementary
+ * configuration manager.
+ */
+
+/**
+ * Get Elementary's profile in use.
+ *
+ * This gets the global profile that is applied to all Elementary
+ * applications.
+ *
+ * @return The profile's name
+ * @ingroup Profile
+ */
+EAPI const char *
+elm_profile_current_get(void)
+{
+   return _elm_config_current_profile_get();
+}
+
+/**
+ * Get an Elementary's profile directory path in the filesystem.
+ *
+ * @param profile The profile's name
+ * @return The profile's directory path.
+ * @ingroup Profile
+ *
+ * @note You must free() the return value after usage.
+ */
+EAPI char *
+elm_profile_dir_get(const char *profile)
+{
+   return _elm_config_profile_dir_get(profile);
+}
+
+/**
+ * Get Elementary's list of available profiles.
+ *
+ * @return The profiles list.
+ * @ingroup Profile
+ *
+ * @note You must free() the strings which came as list data after
+ *       usage of the return value. Consider using the @c EINA_LIST_FREE()
+ *       macro.
+ */
+EAPI Eina_List *
+elm_profile_list_get(void)
+{
+   return _elm_config_profiles_list();
+}
+
+/**
+ * Set Elementary's profile.
+ *
+ * This sets the global profile that is applied to Elementary
+ * applications. Just the instance the call comes from will be
+ * affected.
+ *
+ * @param profile The profile's name
+ * @ingroup Scaling
+ *
+ */
+EAPI void
+elm_profile_set(const char *profile)
+{
+   _elm_config_profile_set(profile);
+}
+
+/**
+ * Set Elementary's profile.
+ *
+ * This sets the global profile that is applied to all Elementary
+ * applications. All running Elementary windows will be affected.
+ *
+ * @param profile The profile's name
+ * @ingroup Scaling
+ *
+ */
+EAPI void
+elm_profile_all_set(const char *profile)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_PROFILE");
+   ecore_x_window_prop_string_set(ecore_x_window_root_first_get(),
+                                  atom, profile);
+#endif
+}
+
 /**
  * @defgroup Fingers Fingers
  *

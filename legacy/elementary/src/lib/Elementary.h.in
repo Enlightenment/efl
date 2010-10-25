@@ -330,6 +330,13 @@ extern "C" {
    EAPI double       elm_scale_get(void);
    EAPI void         elm_scale_set(double scale);
    EAPI void         elm_scale_all_set(double scale);
+
+   EAPI const char  *elm_profile_current_get(void);
+   EAPI char        *elm_profile_dir_get(const char *profile);
+   EAPI Eina_List   *elm_profile_list_get(void);
+   EAPI void         elm_profile_set(const char *profile);
+   EAPI void         elm_profile_all_set(const char *profile);
+
    EAPI Evas_Coord   elm_finger_size_get(void);
    EAPI void         elm_finger_size_set(Evas_Coord size);
    EAPI void         elm_finger_size_all_set(Evas_Coord size);

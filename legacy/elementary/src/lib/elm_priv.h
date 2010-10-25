@@ -145,6 +145,10 @@ void                _elm_rescale(void);
 void                _elm_config_init(void);
 void                _elm_config_sub_init(void);
 void                _elm_config_shutdown(void);
+const char         *_elm_config_current_profile_get(void);
+char               *_elm_config_profile_dir_get(const char *prof);
+Eina_List          *_elm_config_profiles_list(void);
+void                _elm_config_profile_set(const char *profile);
 
 void                 elm_tooltip_theme(Elm_Tooltip *tt);
 void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);

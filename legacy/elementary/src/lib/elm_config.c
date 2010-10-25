@@ -15,7 +15,7 @@ static Eet_Data_Descriptor *_config_edd = NULL;
 
 static void _desc_init(void);
 static void _desc_shutdown(void);
-static void _profile_get(void);
+static void _profile_fetch_from_conf(void);
 static void _config_free(void);
 static void _config_apply(void);
 static Elm_Config * _config_user_load(void);
@@ -283,8 +283,125 @@ _desc_shutdown(void)
    _config_edd = NULL;
 }
 
+static int _cb_sort_files(char *f1, char *f2)
+{
+   return strcmp(f1, f2);
+}
+
+const char *
+_elm_config_current_profile_get(void)
+{
+  return _elm_profile;
+}
+
+char *
+_elm_config_profile_dir_get(const char *prof)
+{
+   char buf[PATH_MAX];
+   const char *home = NULL;
+
+   home = getenv("HOME");
+   if (!home)
+     home = "/";
+
+   snprintf(buf, sizeof(buf), "%s/.elementary/config/%s", home, prof);
+
+   if (ecore_file_is_dir(buf))
+     return strdup(buf);
+
+   snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
+
+   if (ecore_file_is_dir(buf))
+     return strdup(buf);
+
+   return NULL;
+}
+
+Eina_List *
+_elm_config_profiles_list(void)
+{
+   const char *home = NULL;
+   Eina_List *flist = NULL;
+   char buf[PATH_MAX], *p;
+   Eina_List *files;
+   size_t len;
+
+   home = getenv("HOME");
+   if (!home)
+     home = "/";
+
+   len = eina_str_join_len(buf, sizeof(buf), '/', home, strlen(home),
+                           ".elementary/config",
+                           sizeof(".elementary/config") - 1);
+
+   files = ecore_file_ls(buf);
+
+   buf[len] = '/';
+   len++;
+
+   p = buf + len;
+   len = sizeof(buf) - len;
+   if (files)
+     {
+	char *file;
+
+	files = eina_list_sort(files, 0, (Eina_Compare_Cb)_cb_sort_files);
+	EINA_LIST_FREE(files, file)
+	  {
+	     if (eina_strlcpy(p, file, len) >= len)
+	       {
+		  free(file);
+		  continue;
+	       }
+	     if (ecore_file_is_dir(buf))
+	       flist = eina_list_append(flist, file);
+	     else
+	       free(file);
+	  }
+     }
+
+   len = eina_str_join_len(buf, sizeof(buf), '/', _elm_data_dir,
+                           strlen(_elm_data_dir), "config",
+                           sizeof("config") - 1);
+
+   files = ecore_file_ls(buf);
+
+   buf[len] = '/';
+   len++;
+
+   p = buf + len;
+   len = sizeof(buf) - len;
+   if (files)
+     {
+	char *file;
+	files = eina_list_sort(files, 0, (Eina_Compare_Cb)_cb_sort_files);
+	EINA_LIST_FREE(files, file)
+	  {
+	     if (eina_strlcpy(p, file, len) >= len)
+	       {
+		  free(file);
+		  continue;
+	       }
+	     if (ecore_file_is_dir(buf))
+	       {
+		  const Eina_List *l;
+		  const char *tmp;
+		  EINA_LIST_FOREACH(flist, l, tmp)
+		    if (!strcmp(file, tmp)) break;
+
+		  if (!l)
+                    flist = eina_list_append(flist, file);
+		  else free(file);
+	       }
+	     else
+	       free(file);
+	  }
+     }
+   return flist;
+}
+
 static void
-_profile_get(void)
+_profile_fetch_from_conf(void)
 {
    Eet_File *ef = NULL;
    const char *home = NULL;
@@ -691,7 +808,7 @@ void
 _elm_config_init(void)
 {
    _desc_init();
-   _profile_get();
+   _profile_fetch_from_conf();
    _config_load();
    _env_get();
    _config_apply();
@@ -786,6 +903,30 @@ _elm_config_sub_init(void)
 #endif
      }
    _config_sub_apply();
+}
+
+/* TODO: dump old profile's entries to disk? keep default values, for
+   reset action? */
+void
+_elm_config_profile_set(const char *profile)
+{
+  Eina_Bool changed = EINA_FALSE;
+
+  if (_elm_profile)
+    {
+      if (strcmp(_elm_profile, profile))
+        changed = 1;
+      free(_elm_profile);
+    }
+  _elm_profile = strdup(profile);
+
+  if (changed)
+    {
+      _config_free();
+      _config_load();
+      _config_apply();
+      _elm_rescale();
+    }
 }
 
 void
