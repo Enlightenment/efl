@@ -1283,6 +1283,17 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
     }
 
     efreet_icon_theme_dir_scan("/usr/share/pixmaps", theme_name);
+
+    /* if we were given a theme name we want to make sure that that given
+     * theme is valid before finishing, unless it's a fake theme */
+    if (theme_name)
+    {
+        Efreet_Icon_Theme *theme;
+
+        theme = eina_hash_find(efreet_icon_themes, theme_name);
+        if (theme && !theme->valid && !theme->fake)
+            eina_hash_del(efreet_icon_themes, theme_name, theme);
+    }
 }
 
 /**
@@ -1351,17 +1362,6 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
     }
 error:
     closedir(dirs);
-
-    /* if we were given a theme name we want to make sure that that given
-     * theme is valid before finishing, unless it's a fake theme */
-    if (theme_name)
-    {
-        Efreet_Icon_Theme *theme;
-
-        theme = eina_hash_find(efreet_icon_themes, theme_name);
-        if (theme && !theme->valid && !theme->fake)
-            eina_hash_del(efreet_icon_themes, theme_name, theme);
-    }
 }
 
 /**
