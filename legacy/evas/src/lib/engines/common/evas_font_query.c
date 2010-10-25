@@ -107,7 +107,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
-	if ((use_kerning) && (prev_index) && (index) &&
+	if ((use_kerning) && (prev_index) && (index) && (fg) &&
 	     (pface == fi->src->ft.face))
 	   {
 #ifdef BIDI_SUPPORT
@@ -271,7 +271,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
-	if ((use_kerning) && (prev_index) && (index) &&
+	if ((use_kerning) && (prev_index) && (index) && (fg) &&
 	     (pface == fi->src->ft.face))
 	   {
 #ifdef BIDI_SUPPORT
@@ -685,8 +685,8 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
         /* grrr - this means font face sharing is kinda... not an option if */
         /* you want performance */
-        if ((use_kerning) && (prev_index) && (index) &&
-              (pface == fi->src->ft.face))
+	if ((use_kerning) && (prev_index) && (index) && (fg) &&
+            (pface == fi->src->ft.face))
           {
 #ifdef BIDI_SUPPORT
              /* if it's rtl, the kerning matching should be reversed, i.e prev
