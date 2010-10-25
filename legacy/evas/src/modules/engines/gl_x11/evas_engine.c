@@ -27,6 +27,7 @@ struct _Render_Engine
    } xr; // xres - dpi
    
    int w, h;
+   int vsync;
 };
 
 static int initted = 0;
@@ -418,6 +419,7 @@ eng_setup(Evas *e, void *in)
      e->engine.func->context_new(e->engine.data.output);
    eng_window_use(re->win);
    
+   re->vsync = 0;
    if (re->win->alpha)
      {
         glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -561,11 +563,12 @@ get_time(void)
 }
 #endif
 
+static int safe_native = -1;
+
 static void
 eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    Render_Engine *re;
-   static int safe_native = -1;
 #ifdef FRAMECOUNT
    static double pt = 0.0;
    double ta, tb;
@@ -634,12 +637,14 @@ eng_output_flush(void *data)
 #ifdef FRAMECOUNT
    double t0 = get_time();
 #endif
-   if (re->info->vsync)
-      eglSwapInterval(re->win->egl_disp, 1);
-   else
-      eglSwapInterval(re->win->egl_disp, 0);
+   if (!re->vsync)
+     {
+        if (re->info->vsync) eglSwapInterval(re->win->egl_disp, 1);
+        else eglSwapInterval(re->win->egl_disp, 0);
+        re->vsync = 1;
+     }
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
-   eglWaitGL();
+   if (!safe_native) eglWaitGL();
 #ifdef FRAMECOUNT
    double t1 = get_time();
    printf("%1.5f\n", t1 - t0);
@@ -665,16 +670,19 @@ eng_output_flush(void *data)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
+/*   
    if ((1)
 //       (re->win->draw.x1 == 0) && 
 //       (re->win->draw.y1 == 0) &&
 //       (re->win->draw.x2 == (re->win->w - 1)) &&
 //       (re->win->draw.y2 == (re->win->h - 1))
        )
+ */
      {
         glXSwapBuffers(re->win->disp, re->win->win);
-        glXWaitGL();
+        if (!safe_native) glXWaitGL();
      }
+/*   
    else
      {
 // FIXME: this doesn't work.. why oh why?        
@@ -699,6 +707,7 @@ eng_output_flush(void *data)
         glDrawBuffer(GL_BACK);
         glFlush();
      }
+ */
    if (re->info->callback.post_swap)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
