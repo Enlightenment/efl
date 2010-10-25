@@ -1232,7 +1232,7 @@ elm_profile_current_get(void)
  * @return The profile's directory path.
  * @ingroup Profile
  *
- * @note You must free() the return value after usage.
+ * @note You must free it with elm_profile_dir_free().
  */
 EAPI char *
 elm_profile_dir_get(const char *profile)
@@ -1241,19 +1241,48 @@ elm_profile_dir_get(const char *profile)
 }
 
 /**
+ * Free an Elementary's profile directory path, as returned by
+ * elm_profile_dir_get().
+ *
+ * @param p_dir The profile's path
+ * @ingroup Profile
+ *
+ */
+EAPI void
+elm_profile_dir_free(const char *p_dir)
+{
+   free((void *)p_dir);
+}
+
+/**
  * Get Elementary's list of available profiles.
  *
  * @return The profiles list.
  * @ingroup Profile
  *
- * @note You must free() the strings which came as list data after
- *       usage of the return value. Consider using the @c EINA_LIST_FREE()
- *       macro.
+ * @note One must free this list, after usage, with the function
+ *       elm_profile_list_free().
  */
 EAPI Eina_List *
 elm_profile_list_get(void)
 {
    return _elm_config_profiles_list();
+}
+
+/**
+ * Free Elementary's list of available profiles.
+ *
+ * @param The profiles list, as returned by elm_profile_list_get().
+ * @ingroup Profile
+ *
+ */
+EAPI void
+elm_profile_list_free(Eina_List *l)
+{
+  const char *dir;
+
+  EINA_LIST_FREE(l, dir)
+    eina_stringshare_del(dir);
 }
 
 /**

@@ -283,7 +283,8 @@ _desc_shutdown(void)
    _config_edd = NULL;
 }
 
-static int _cb_sort_files(char *f1, char *f2)
+static int
+_sort_files_cb(const void *f1, const void *f2)
 {
    return strcmp(f1, f2);
 }
@@ -320,10 +321,13 @@ _elm_config_profile_dir_get(const char *prof)
 Eina_List *
 _elm_config_profiles_list(void)
 {
+   const Eina_File_Direct_Info *info;
    const char *home = NULL;
    Eina_List *flist = NULL;
-   char buf[PATH_MAX], *p;
-   Eina_List *files;
+   Eina_Iterator *file_it;
+   struct stat buffer;
+   char buf[PATH_MAX];
+   const char *dir;
    size_t len;
 
    home = getenv("HOME");
@@ -334,70 +338,110 @@ _elm_config_profiles_list(void)
                            ".elementary/config",
                            sizeof(".elementary/config") - 1);
 
-   files = ecore_file_ls(buf);
+   file_it = eina_file_direct_ls(buf);
+   if (!file_it)
+     goto sys;
 
    buf[len] = '/';
    len++;
 
-   p = buf + len;
    len = sizeof(buf) - len;
-   if (files)
-     {
-	char *file;
 
-	files = eina_list_sort(files, 0, (Eina_Compare_Cb)_cb_sort_files);
-	EINA_LIST_FREE(files, file)
-	  {
-	     if (eina_strlcpy(p, file, len) >= len)
-	       {
-		  free(file);
-		  continue;
-	       }
-	     if (ecore_file_is_dir(buf))
-	       flist = eina_list_append(flist, file);
-	     else
-	       free(file);
-	  }
+   EINA_ITERATOR_FOREACH(file_it, info)
+     {
+       if (info->name_length >= len)
+         continue;
+
+       switch (info->dirent->d_type)
+         {
+         case DT_UNKNOWN:
+           if (stat(info->path, &buffer) != 0)
+             goto it_free;
+
+           if (S_ISDIR(buffer.st_mode))
+             flist =
+               eina_list_sorted_insert(flist, _sort_files_cb,
+                                       eina_stringshare_add(info->path +
+                                                            info->name_start));
+           break;
+
+         case DT_DIR:
+           flist =
+             eina_list_sorted_insert(flist, _sort_files_cb,
+                                     eina_stringshare_add(info->path +
+                                                          info->name_start));
+           break;
+
+         default:
+           continue;
+         }
      }
 
+   eina_iterator_free(file_it);
+
+ sys:
    len = eina_str_join_len(buf, sizeof(buf), '/', _elm_data_dir,
                            strlen(_elm_data_dir), "config",
                            sizeof("config") - 1);
 
-   files = ecore_file_ls(buf);
+   file_it = eina_file_direct_ls(buf);
+   if (!file_it)
+     goto list_free;
 
    buf[len] = '/';
    len++;
 
-   p = buf + len;
-   len = sizeof(buf) - len;
-   if (files)
-     {
-	char *file;
-	files = eina_list_sort(files, 0, (Eina_Compare_Cb)_cb_sort_files);
-	EINA_LIST_FREE(files, file)
-	  {
-	     if (eina_strlcpy(p, file, len) >= len)
-	       {
-		  free(file);
-		  continue;
-	       }
-	     if (ecore_file_is_dir(buf))
-	       {
-		  const Eina_List *l;
-		  const char *tmp;
-		  EINA_LIST_FOREACH(flist, l, tmp)
-		    if (!strcmp(file, tmp)) break;
+#define S_ISDIR_CASE_DO                                                     \
+     {                                                                      \
+       const Eina_List *l;                                                  \
+       const char *tmp;                                                     \
+       EINA_LIST_FOREACH(flist, l, tmp)                                     \
+         if (!strcmp(info->path + info->name_start, tmp))                   \
+           break;                                                           \
+                                                                            \
+       if (!l)                                                              \
+         flist =                                                            \
+           eina_list_sorted_insert(flist, _sort_files_cb,                   \
+                                   eina_stringshare_add(info->path +        \
+                                                        info->name_start)); \
+     }                                                                      \
 
-		  if (!l)
-                    flist = eina_list_append(flist, file);
-		  else free(file);
-	       }
-	     else
-	       free(file);
-	  }
+   len = sizeof(buf) - len;
+   EINA_ITERATOR_FOREACH(file_it, info)
+     {
+       if (info->name_length >= len)
+         continue;
+
+       switch (info->dirent->d_type)
+         {
+         case DT_UNKNOWN:
+           if (stat(info->path, &buffer) != 0)
+             goto it_free;
+
+           if (S_ISDIR(buffer.st_mode))
+             S_ISDIR_CASE_DO
+           break;
+
+         case DT_DIR:
+           S_ISDIR_CASE_DO
+           break;
+
+         default:
+           continue;
+         }
      }
    return flist;
+
+#undef S_ISDIR_CASE_DO
+
+ it_free:
+   eina_iterator_free(file_it);
+
+ list_free:
+   EINA_LIST_FREE(flist, dir)
+     eina_stringshare_del(dir);
+
+   return NULL;
 }
 
 static void

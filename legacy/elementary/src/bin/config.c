@@ -736,6 +736,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
    const char *cur_profile = NULL;
    const char *profile;
    void *sel_it = NULL;
+   Eina_List *l;
 
    if (!p_names)
      return;
@@ -745,7 +746,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 
    cur_profile = elm_profile_current_get();
 
-   EINA_LIST_FREE(p_names, profile)
+   EINA_LIST_FOREACH(p_names, l, profile)
      {
         Efreet_Desktop *desk = NULL;
         char buf[PATH_MAX], *pdir;
@@ -790,7 +791,6 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 
         if (pdir)
           free(pdir);
-        free((void *)profile);
 
         if (desk)
           efreet_desktop_free(desk);
@@ -909,6 +909,8 @@ _status_config_profiles(Evas_Object *win, Evas_Object *holder)
    edje_freeze();
 
    _profiles_list_fill(li, profs);
+
+   elm_profile_list_free(profs);
 
    edje_thaw();
    evas_event_thaw(evas);
