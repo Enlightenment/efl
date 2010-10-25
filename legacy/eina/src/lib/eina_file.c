@@ -108,10 +108,10 @@ _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
    return EINA_TRUE;
 }
 
-static char *
+static DIR *
 _eina_file_ls_iterator_container(Eina_File_Iterator *it)
 {
-   return it->dir;
+   return it->dirp;
 }
 
 static void
@@ -166,10 +166,10 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    return EINA_TRUE;
 }
 
-static char *
+static DIR *
 _eina_file_direct_ls_iterator_container(Eina_File_Direct_Iterator *it)
 {
-   return it->dir;
+   return it->dirp;
 }
 
 static void
@@ -412,6 +412,8 @@ eina_file_split(char *path)
  *
  * The iterator will walk over '.' and '..' without returning them.
  *
+ * The iterator container is the DIR* corresponding to the current walk.
+ *
  * @param  dir The name of the directory to list
  * @return Return an Eina_Iterator that will walk over the files and
  *         directory in the pointed directory. On failure it will
@@ -472,6 +474,8 @@ eina_file_ls(const char *dir)
  * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
  *
  * The iterator will walk over '.' and '..' without returning them.
+ *
+ * The iterator container is the DIR* corresponding to the current walk.
  *
  * @param  dir The name of the directory to list
 
