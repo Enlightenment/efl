@@ -408,6 +408,9 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
    size_t       i;
    size_t       j;
 
+   /* when not enought memory, they could be NULL */
+   if (!signal_finals || !source_finals) return EINA_TRUE;
+
    for (i = 0; i < signal_states->size; ++i)
      {
         if (signal_states->states[i].pos >= signal_finals[signal_states->states[i].idx])
@@ -540,10 +543,13 @@ edje_match_collection_dir_exec(const Edje_Patterns      *ppat,
    Edje_States  *result;
    Eina_Bool     r = EINA_FALSE;
 
+   /* under high memory presure, it could be NULL */
+   if (!ppat) return EINA_FALSE;
+
    _edje_match_patterns_exec_init_states(ppat->states, ppat->patterns_size, ppat->max_length);
 
    result = _edje_match_fn(ppat, string, ppat->states);
-   
+
    if (result)
       r = _edje_match_collection_dir_exec_finals(ppat->finals, result);
 
@@ -562,6 +568,9 @@ edje_match_programs_exec(const Edje_Patterns    *ppat_signal,
    Edje_States  *signal_result;
    Edje_States  *source_result;
    Eina_Bool     r = EINA_FALSE;
+
+   /* under high memory presure, they could be NULL */
+   if (!ppat_source || !ppat_signal) return EINA_FALSE;
 
    _edje_match_patterns_exec_init_states(ppat_signal->states,
                                          ppat_signal->patterns_size,
@@ -596,6 +605,9 @@ edje_match_callback_exec(Edje_Patterns          *ppat_signal,
    Edje_States  *source_result;
    int           r = 0;
 
+   /* under high memory presure, they could be NULL */
+   if (!ppat_source || !ppat_signal) return 0;
+
    ppat_signal->ref++;
    ppat_source->ref++;
    _edje_match_patterns_exec_init_states(ppat_signal->states,
@@ -629,6 +641,8 @@ edje_match_callback_exec(Edje_Patterns          *ppat_signal,
 void
 edje_match_patterns_free(Edje_Patterns *ppat)
 {
+   if (!ppat) return ;
+
    ppat->delete_me = 1;
    ppat->ref--;
    if (ppat->ref > 0) return;
