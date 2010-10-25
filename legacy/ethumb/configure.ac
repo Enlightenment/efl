@@ -78,6 +78,7 @@ PKG_CHECK_MODULES(ECORE, [ecore >= 1.0.0])
 PKG_CHECK_MODULES(ECORE_EVAS, [ecore-evas >= 1.0.0])
 PKG_CHECK_MODULES(ECORE_FILE, [ecore-file >= 1.0.0 ])
 PKG_CHECK_MODULES(EDJE, [edje >= 1.0.0])
+EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
 requirement_ethumb="eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 ecore-file >= 1.0.0 edje >= 1.0.0"
 requirement_ethumb_client="ethumb edbus >= 1.0.0"

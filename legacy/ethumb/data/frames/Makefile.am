@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = edje_cc
+EDJE_CC = @edje_cc@
 EDJE_FLAGS = -v \
 	-id $(top_srcdir)/data/frames/images
 
