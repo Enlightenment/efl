@@ -582,6 +582,15 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
         const char *s = getenv("EVAS_GL_SAFE_NATIVE");
         safe_native = 0;
         if (s) safe_native = atoi(s);
+        else
+          {
+             s = (const char *)glGetString(GL_RENDERER);
+             if (s)
+               {
+                  if (strstr(s, "PowerVR SGX 540"))
+                     safe_native = 1;
+               }
+          }
      }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // this is needed to make sure all previous rendering is flushed to
