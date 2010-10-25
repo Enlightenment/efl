@@ -65,13 +65,7 @@ typedef struct _Ecore_File_Download_Job  Ecore_File_Download_Job;
  * @typedef Ecore_File_Event
  * The event type returned when a file or directory is monitored.
  */
-typedef enum _Ecore_File_Event Ecore_File_Event;
-
-/**
- * @enum _Ecore_File_Event
- * The event type returned when a directory is monitored.
- */
-enum _Ecore_File_Event
+typedef enum _Ecore_File_Event
 {
    ECORE_FILE_EVENT_NONE,              /**< No event. */
    ECORE_FILE_EVENT_CREATED_FILE,      /**< Created file event. */
@@ -80,7 +74,7 @@ enum _Ecore_File_Event
    ECORE_FILE_EVENT_DELETED_DIRECTORY, /**< Deleted directory event. */
    ECORE_FILE_EVENT_DELETED_SELF,      /**< Deleted monitored directory event. */
    ECORE_FILE_EVENT_MODIFIED           /**< Modified file or directory event. */
-};
+} Ecore_File_Event;
 
 /**
  * @typedef Ecore_File_Monitor_Cb
