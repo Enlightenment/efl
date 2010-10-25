@@ -88,7 +88,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
    for (chr = 0, char_index = 0; *text; text++, char_index ++)
      {
 	FT_UInt index;
-	RGBA_Font_Glyph *fg;
+	RGBA_Font_Glyph *fg = NULL;
 	int chr_x, chr_y, advw;
         int gl, kern;
 
@@ -117,7 +117,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
                * involved.*/
               if (intl_props && 
                   evas_bidi_is_rtl_char(intl_props, char_index) &&
-                  fg->glyph->advance.x >> 16 > 0)
+                  ((fg->glyph->advance.x >> 16) > 0))
                 {
                    if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
                       pen_x += kern;
@@ -666,7 +666,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
    for (char_index = 0; *text; text++, char_index++)
      {
 	FT_UInt index;
-	RGBA_Font_Glyph *fg;
+	RGBA_Font_Glyph *fg = NULL;
 	int chr_x, chr_y, chr_w;
         int gl, kern;
 
@@ -695,7 +695,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
               * involved.*/
              if (intl_props &&
                    evas_bidi_is_rtl_char(intl_props, char_index) &&
-                   fg->glyph->advance.x >> 16 > 0)
+                   ((fg->glyph->advance.x >> 16) > 0))
                {
                   if (evas_common_font_query_kerning(fi, index, prev_index,
                            &kern))
