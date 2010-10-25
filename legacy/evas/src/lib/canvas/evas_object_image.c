@@ -1834,7 +1834,7 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
    MAGIC_CHECK_END();
 
 #ifdef EVAS_FRAME_QUEUING
-   if (o->cur.cspace != cspace)
+   if ((Evas_Colorspace)o->cur.cspace != cspace)
      {
         if (o->engine_data)
           evas_common_pipe_op_image_flush(o->engine_data);

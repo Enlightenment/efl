@@ -9,7 +9,7 @@ typedef struct _Thinfo
    pthread_t              thread_id;
    pthread_barrier_t     *barrier;
    RGBA_Pipe_Thread_Info *info;
-#ifdef EVAS_FRAME_QUEUING
+# ifdef EVAS_FRAME_QUEUING
    void		         *fq_info;
 #endif
 } Thinfo;
@@ -69,14 +69,19 @@ typedef struct _Evas_Frameq_Thread_Info Evas_Frameq_Thread_Info;
 EAPI Evas_Surface *evas_common_frameq_new_surface(void *surface, int x, int y, int w, int h);
 EAPI void evas_common_frameq_add_surface(Evas_Surface *surface);
 EAPI void evas_common_frameq_set_frame_data(void *data, 
-     void (*fn_output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h),
-     void (*fn_output_flush)  (void *data),
-     void (*fn_output_set_priv)(void *data, void *cur, void *prev));
+                                            void (*fn_output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h),
+                                            void (*fn_output_flush)  (void *data),
+                                            void (*fn_output_set_priv)(void *data, void *cur, void *prev));
 EAPI void evas_common_frameq_prepare_frame(void);
 EAPI void evas_common_frameq_ready_frame(void);
 EAPI void evas_common_frameq_init(void);
+EAPI void evas_common_frameq_destroy(void);
 EAPI void evas_common_frameq_flush(void);
 EAPI void evas_common_frameq_flush_ready(void);
+EAPI int evas_common_frameq_get_frameq_sz(void);
+EAPI int evas_common_frameq_enabled(void);
+EAPI void evas_common_frameq_begin(void);
+EAPI void evas_common_frameq_finish(void);
 #endif
 
 /* image rendering pipelines... new optional system - non-immediate and
@@ -90,6 +95,7 @@ EAPI void evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGB
 EAPI void evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props);
 EAPI void evas_common_pipe_image_load(RGBA_Image *im);
 EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int smooth, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+EAPI void evas_common_pipe_map4_begin(RGBA_Image *root);
 EAPI void evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
 				     RGBA_Draw_Context *dc, RGBA_Map_Point *p,
 				     int smooth, int level);

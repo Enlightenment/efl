@@ -31,16 +31,14 @@ evas_common_surface_dealloc(Evas_Surface *surface)
 {
    Evas_Surface *d_surface;
 
-   while(surface)
+   while (surface)
      {
         d_surface = surface;
         surface = (Evas_Surface *)eina_inlist_remove(EINA_INLIST_GET(surface), EINA_INLIST_GET(d_surface));
         LKL(d_surface->im->cache_entry.ref_fq_del);
         d_surface->im->cache_entry.ref_fq[1]++;
         LKU(d_surface->im->cache_entry.ref_fq_del);
-
         free(d_surface);
-
      }
 }
 
@@ -51,7 +49,7 @@ evas_common_surface_add(Evas_Frame *frame, Evas_Surface *surface)
 }
 
 static Evas_Frame * 
-evas_common_frame_alloc()
+evas_common_frame_alloc(void)
 {
    Evas_Frame *frame;
 
@@ -73,16 +71,16 @@ evas_common_frame_add(Evas_FrameQ *frameq, Evas_Frame *frame)
    Evas_Frame *temp_frame;
    
    LKL(frameq->mutex);
-   while(eina_inlist_count(EINA_INLIST_GET(frameq->frames)) >= frameq->frameq_sz)
+   while ((int)eina_inlist_count(EINA_INLIST_GET(frameq->frames)) >= frameq->frameq_sz)
      {
         /* wait a worker thread finish previous frame */
         pthread_cond_wait(&(frameq->cond_done), &(frameq->mutex));
-   }
+     }
    frameq->frames = (Evas_Frame *) eina_inlist_append(EINA_INLIST_GET(frameq->frames), EINA_INLIST_GET(frame));
 
    // this frame need not to be scheduled for flushing time
    EINA_INLIST_FOREACH(EINA_INLIST_GET(frameq->frames), temp_frame)
-    {
+     {
        if (!temp_frame->ready)
          {
             break;
@@ -97,7 +95,7 @@ evas_common_frame_add(Evas_FrameQ *frameq, Evas_Frame *frame)
 }
 
 EAPI Evas_Surface *
-evas_common_frameq_new_surface (void *surface, int x, int y, int w, int h)
+evas_common_frameq_new_surface(void *surface, int x, int y, int w, int h)
 {
    return evas_common_surface_alloc(surface, x, y, w, h);
 }
@@ -110,9 +108,9 @@ evas_common_frameq_add_surface(Evas_Surface *surface)
 
 EAPI void 
 evas_common_frameq_set_frame_data(void *data, 
-     void (*fn_output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h),
-     void (*fn_output_flush)  (void *data),
-     void (*fn_output_set_priv)(void *data, void *cur, void *prev))
+                                  void (*fn_output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h),
+                                  void (*fn_output_flush)  (void *data),
+                                  void (*fn_output_set_priv)(void *data, void *cur, void *prev))
 {
    if (gframeq.cur_frame) 
      {
@@ -124,7 +122,7 @@ evas_common_frameq_set_frame_data(void *data,
 }
 
 EAPI void
-evas_common_frameq_prepare_frame()
+evas_common_frameq_prepare_frame(void)
 {
    if (!gframeq.cur_frame )
      {
@@ -133,7 +131,7 @@ evas_common_frameq_prepare_frame()
 }
 
 EAPI void
-evas_common_frameq_ready_frame()
+evas_common_frameq_ready_frame(void)
 {
    if (gframeq.cur_frame)
      {
@@ -144,7 +142,7 @@ evas_common_frameq_ready_frame()
 
 
 EAPI void
-evas_common_frameq_init()
+evas_common_frameq_init(void)
 {
    gframeq.frames = NULL;
    pthread_cond_init(&(gframeq.cond_new), NULL);
@@ -156,7 +154,7 @@ evas_common_frameq_init()
 }
 
 EAPI void
-evas_common_frameq_destroy()
+evas_common_frameq_destroy(void)
 {
 #if 0 // let them destroyed indirectly with program exit
    LKL(gframeq.mutex);
@@ -172,7 +170,7 @@ evas_common_frameq_destroy()
 }
 
 EAPI void
-evas_common_frameq_flush()
+evas_common_frameq_flush(void)
 {
    if (! evas_common_frameq_enabled())
       return;
@@ -188,19 +186,19 @@ evas_common_frameq_flush()
 
 
 EAPI void
-evas_common_frameq_flush_ready ()
+evas_common_frameq_flush_ready(void)
 {
    return;
 }
 
 EAPI int
-evas_common_frameq_get_frameq_sz()
+evas_common_frameq_get_frameq_sz(void)
 {
    return gframeq.frameq_sz;
 }
 
 EAPI int
-evas_common_frameq_enabled()
+evas_common_frameq_enabled(void)
 {
    return gframeq.initialised;
 }
@@ -528,13 +526,14 @@ _IQ_insert(long long ready_time, long long last_interval)
 }
 
 static long long 
-_IQ_delete()
+_IQ_delete(void)
 {
    struct iq_node oldest;
+  
    if (_IQ_empty()) return 0;
    oldest = _IQ[_IQ_head];
-   _IQ_head = ++_IQ_head % INTERVAL_QSIZE;
-   if (--_IQ_length == 0)
+   _IQ_head = (_IQ_head + 1) % INTERVAL_QSIZE;
+   if ((--_IQ_length) == 0)
      {
         _IQ_init();
      }
@@ -548,7 +547,7 @@ _IQ_delete()
 }
 
 static long long 
-get_max_interval()
+get_max_interval(void)
 {
    int i;
    long long max = LLONG_MIN;
@@ -576,11 +575,10 @@ tv_to_long_long(struct timeval *tv)
 }
 
 static long long
-evas_common_frameq_schedule_flush_time( 
-                     int frameq_sz, int thread_no, 
-                     long long last_ready_time, long long current_ready_time,
-                     long long last_flush_time, int ready_frames_num,
-                     int dont_schedule)
+evas_common_frameq_schedule_flush_time(int frameq_sz, int thread_no, 
+                                       long long last_ready_time, long long current_ready_time,
+                                       long long last_flush_time, int ready_frames_num,
+                                       int dont_schedule)
 {
    // to get each time and to do others
    long long current_time = 0LL;
@@ -706,10 +704,8 @@ evas_common_frameq_thread_post(void *data)
    Evas_FrameQ *frameq;
    Evas_Frame *frame;
    Evas_Surface *surface;
-   RGBA_Pipe *p;
    Thinfo *thinfo;
    Evas_Frameq_Thread_Info *fq_info;
-   RGBA_Pipe_Thread_Info p_info;
    Eina_List   *pending_writes = NULL;
    Eina_List   *prev_pending_writes = NULL;
 
@@ -856,7 +852,7 @@ evas_common_pipe_begin(RGBA_Image *im)
 
 #ifdef EVAS_FRAME_QUEUING
 EAPI void
-evas_common_frameq_begin()
+evas_common_frameq_begin(void)
 {
 #ifdef BUILD_PTHREAD
    int i;
@@ -866,7 +862,7 @@ evas_common_frameq_begin()
 
    if (!gframeq.initialised)
      {
-        int cpunum, set_cpu_affinity;
+        int cpunum, set_cpu_affinity = 0;
 
         cpunum = eina_cpu_count();
         gframeq.thread_num = cpunum;
@@ -926,7 +922,7 @@ evas_common_frameq_begin()
 }
 
 EAPI void
-evas_common_frameq_finish()
+evas_common_frameq_finish(void)
 {
    int i;
    
@@ -957,23 +953,20 @@ evas_common_frameq_finish()
 EAPI void
 evas_common_pipe_flush(RGBA_Image *im)
 {
-
-   RGBA_Pipe *p;
-   int i;
-
    if (!im->cache_entry.pipe) return;
-
 #ifndef EVAS_FRAME_QUEUING
-
 #ifdef BUILD_PTHREAD
    if (thread_num > 1)
      {
-	     /* sync worker threads */
+        /* sync worker threads */
         pthread_barrier_wait(&(thbarrier[1]));
      }
    else
 #endif
      {
+       RGBA_Pipe *p;
+       int i;
+
         /* process pipe - 1 thead */
         for (p = im->cache_entry.pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
           {
@@ -1047,8 +1040,7 @@ evas_common_pipe_rectangle_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_
 }
 
 EAPI void
-evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-            int x, int y, int w, int h)
+evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    RGBA_Pipe_Op *op;
 
@@ -1092,7 +1084,7 @@ evas_common_pipe_line_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 
 EAPI void
 evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-            int x0, int y0, int x1, int y1)
+                           int x0, int y0, int x1, int y1)
 {
    RGBA_Pipe_Op *op;
 
@@ -1148,7 +1140,7 @@ evas_common_pipe_poly_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 
 EAPI void
 evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-               RGBA_Polygon_Point *points, int x, int y)
+                           RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Pipe_Op *op;
    RGBA_Polygon_Point *pts = NULL, *p, *pp;
@@ -1238,7 +1230,7 @@ evas_common_pipe_text_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 
 EAPI void
 evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-               RGBA_Font *fn, int x, int y, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+                           RGBA_Font *fn, int x, int y, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
 {
    RGBA_Pipe_Op *op;
 

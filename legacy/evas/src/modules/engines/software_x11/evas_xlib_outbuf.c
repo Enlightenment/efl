@@ -1089,9 +1089,8 @@ evas_software_xlib_outbuf_alpha_get(Outbuf *buf)
 
 #ifdef EVAS_FRAME_QUEUING
 void
-evas_software_xlib_outbuf_set_priv(Outbuf *buf, void *cur, void *prev)
+evas_software_xlib_outbuf_set_priv(Outbuf *buf, void *cur, void *prev __UNUSED__)
 {
    buf->priv.pending_writes = (Eina_List *)cur;
 }
-
 #endif
