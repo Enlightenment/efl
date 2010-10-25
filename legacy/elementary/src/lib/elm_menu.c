@@ -641,7 +641,7 @@ elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
  * @ingroup Menu
  */
 EAPI const char *
-elm_menu_item_label_get(Elm_Menu_Item *item)
+elm_menu_item_label_get(const Elm_Menu_Item *item)
 {
    if (!item) return NULL;
    return item->label;
@@ -708,7 +708,7 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
  * @ingroup Menu
  */
 EAPI Eina_Bool
-elm_menu_item_disabled_get(Elm_Menu_Item *item)
+elm_menu_item_disabled_get(const Elm_Menu_Item *item)
 {
    if (!item) return EINA_FALSE;
    return item->disabled;
@@ -767,7 +767,7 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
  * @ingroup Menu
  */
 EAPI const Evas_Object *
-elm_menu_item_object_icon_get(Elm_Menu_Item *item)
+elm_menu_item_object_icon_get(const Elm_Menu_Item *item)
 {
    if (!item) return NULL;
    return (const Evas_Object *)item->icon;
@@ -782,7 +782,7 @@ elm_menu_item_object_icon_get(Elm_Menu_Item *item)
  * @ingroup Menu
  */
 EAPI const char *
-elm_menu_item_icon_get(Elm_Menu_Item *item)
+elm_menu_item_icon_get(const Elm_Menu_Item *item)
 {
    if (!item) return NULL;
    return item->icon_str;
@@ -886,7 +886,7 @@ elm_menu_item_data_set(Elm_Menu_Item *item, const void *data)
  * @ingroup Menu
  */
 EAPI const Eina_List *
-elm_menu_item_subitems_get(Elm_Menu_Item *item)
+elm_menu_item_subitems_get(const Elm_Menu_Item *item)
 {
    if (!item) return NULL;
    return item->submenu.items;

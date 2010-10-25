@@ -473,7 +473,7 @@ elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
  * @ingroup Scrolled_Entry
  */
 EAPI const Evas_Object *
-elm_scrolled_entry_icon_get(Evas_Object *obj)
+elm_scrolled_entry_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -577,7 +577,7 @@ elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
  * @ingroup Scrolled_Entry
  */
 EAPI const Evas_Object *
-elm_scrolled_entry_end_get(Evas_Object *obj)
+elm_scrolled_entry_end_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

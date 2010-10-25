@@ -144,7 +144,7 @@ _animator_parent_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
  * @ingroup Animator 
  */
 EAPI Eina_Bool
-elm_animator_auto_reverse_get(Elm_Animator *animator)
+elm_animator_auto_reverse_get(const Elm_Animator *animator)
 {
    if (!animator) return EINA_FALSE;
    return animator->auto_reverse;
@@ -159,7 +159,7 @@ elm_animator_auto_reverse_get(Elm_Animator *animator)
  * @ingroup Animator 
  */
 EAPI unsigned int
-elm_animator_repeat_get(Elm_Animator *animator)
+elm_animator_repeat_get(const Elm_Animator *animator)
 {
    if (!animator) return EINA_FALSE;
    return animator->repeat_cnt;
@@ -296,7 +296,7 @@ elm_animator_add(Evas_Object *parent)
  * @ingroup Animator
  */
 EAPI Eina_Bool
-elm_animator_operating_get(Elm_Animator *animator)
+elm_animator_operating_get(const Elm_Animator *animator)
 {
    if (!animator) return EINA_FALSE;
    return animator->on_animating;

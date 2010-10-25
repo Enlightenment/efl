@@ -2660,7 +2660,7 @@ elm_map_max_marker_per_group_set(Evas_Object *obj, int max)
  * @ingroup Map
  */
 EAPI Evas_Object *
-elm_map_marker_object_get(Elm_Map_Marker *marker)
+elm_map_marker_object_get(const Elm_Map_Marker *marker)
 {
    if (!marker) return NULL;
    return marker->content;

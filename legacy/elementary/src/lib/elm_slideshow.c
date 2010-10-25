@@ -767,7 +767,7 @@ elm_slideshow_item_current_get(const Evas_Object *obj)
  * @ingroup Slideshow
  */
 EAPI Evas_Object *
-elm_slideshow_item_object_get(Elm_Slideshow_Item * item)
+elm_slideshow_item_object_get(const Elm_Slideshow_Item * item)
 {
    if (!item) return NULL;
    return item->base.view;
@@ -782,7 +782,7 @@ elm_slideshow_item_object_get(Elm_Slideshow_Item * item)
  * @ingroup Slideshow
  */
 EAPI void *
-elm_slideshow_item_data_get(Elm_Slideshow_Item * item)
+elm_slideshow_item_data_get(const Elm_Slideshow_Item * item)
 {
    return elm_widget_item_data_get(item);
 }

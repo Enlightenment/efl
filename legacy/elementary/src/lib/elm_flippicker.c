@@ -758,7 +758,7 @@ elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(vo
  * @ingroup Flippicker
  */
 EAPI const Eina_List *
-elm_flippicker_items_get(Evas_Object *obj)
+elm_flippicker_items_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -778,7 +778,7 @@ elm_flippicker_items_get(Evas_Object *obj)
  * @ingroup Flippicker
  */
 EAPI const Elm_Flippicker_Item *
-elm_flippicker_first_item_get(Evas_Object *obj)
+elm_flippicker_first_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -810,7 +810,7 @@ elm_flippicker_first_item_get(Evas_Object *obj)
  * @ingroup Flippicker
  */
 EAPI const Elm_Flippicker_Item *
-elm_flippicker_last_item_get(Evas_Object *obj)
+elm_flippicker_last_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -842,7 +842,7 @@ elm_flippicker_last_item_get(Evas_Object *obj)
  * @ingroup Flippicker
  */
 EAPI const Elm_Flippicker_Item *
-elm_flippicker_selected_item_get(Evas_Object *obj)
+elm_flippicker_selected_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -932,7 +932,7 @@ elm_flippicker_item_del(Elm_Flippicker_Item *item)
  * @ingroup Flippicker
  */
 EAPI const char *
-elm_flippicker_item_label_get(Elm_Flippicker_Item *item)
+elm_flippicker_item_label_get(const Elm_Flippicker_Item *item)
 {
    ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, NULL);
 

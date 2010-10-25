@@ -819,7 +819,7 @@ elm_colorpicker_color_set(Evas_Object *obj, int r, int g, int b, int a)
  * @ingroup Colorpicker
  */
 EAPI void
-elm_colorpicker_color_get(Evas_Object *obj, int *r, int *g, int *b, int*a)
+elm_colorpicker_color_get(const Evas_Object *obj, int *r, int *g, int *b, int*a)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    ELM_CHECK_WIDTYPE(obj, widtype);

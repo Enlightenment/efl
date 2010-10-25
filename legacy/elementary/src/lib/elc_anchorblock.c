@@ -300,7 +300,7 @@ elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
  * @ingroup Anchorblock
  */
 EAPI Evas_Object *
-elm_anchorblock_hover_parent_get(Evas_Object *obj)
+elm_anchorblock_hover_parent_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

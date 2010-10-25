@@ -320,7 +320,7 @@ elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
  * @ingroup Icon
  */
 EAPI Elm_Icon_Lookup_Order
-elm_icon_order_lookup_get(Evas_Object *obj)
+elm_icon_order_lookup_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_ICON_LOOKUP_FDO_THEME;
    Widget_Data *wd = elm_widget_data_get(obj);

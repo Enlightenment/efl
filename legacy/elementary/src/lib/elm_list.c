@@ -1705,7 +1705,7 @@ elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
  * @ingroup List
  */
 EAPI Eina_Bool
-elm_list_item_selected_get(Elm_List_Item *it)
+elm_list_item_selected_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
    return it->selected;

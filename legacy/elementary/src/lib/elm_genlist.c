@@ -2836,7 +2836,7 @@ elm_genlist_item_expanded_get(const Elm_Genlist_Item *it)
  * @ingroup Genlist
  */
 EAPI int
-elm_genlist_item_expanded_depth_get(Elm_Genlist_Item *it)
+elm_genlist_item_expanded_depth_get(const Elm_Genlist_Item *it)
 {
    if (!it) return 0;
    return it->expanded_depth;

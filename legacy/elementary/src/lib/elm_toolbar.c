@@ -622,7 +622,7 @@ elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
  * @ingroup Toolbar
  */
 EAPI int
-elm_toolbar_item_priority_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 {
     if (!item) return 0;
     return item->prio.priority;
@@ -637,7 +637,7 @@ elm_toolbar_item_priority_get(Elm_Toolbar_Item *item)
  * @ingroup Toolbar
  */
 EAPI Evas_Object *
-elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 {
    if (!item) return NULL;
    return item->icon;
@@ -652,7 +652,7 @@ elm_toolbar_item_icon_get(Elm_Toolbar_Item *item)
  * @ingroup Toolbar
  */
 EAPI const char *
-elm_toolbar_item_icon_name_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item)
 {
    if (!item) return NULL;
    return item->icon_str;
@@ -777,7 +777,7 @@ elm_toolbar_item_select(Elm_Toolbar_Item *item)
  * @ingroup Toolbar
  */
 EAPI Eina_Bool
-elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
 {
    if (!item) return EINA_FALSE;
    return item->disabled;
@@ -824,7 +824,7 @@ elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
  * @ingroup Toolbar
  */
 EAPI Eina_Bool
-elm_toolbar_item_separator_get(Elm_Toolbar_Item *item)
+elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item)
 {
    if (!item) return EINA_FALSE;
    return item->separator;
@@ -880,7 +880,7 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
  * @ingroup Toolbar
  */
 EAPI Elm_Toolbar_Shrink_Mode
-elm_toolbar_mode_shrink_get(Evas_Object *obj)
+elm_toolbar_mode_shrink_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_TOOLBAR_SHRINK_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -917,7 +917,7 @@ elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
  * @ingroup Toolbar
  */
 EAPI Eina_Bool
-elm_toolbar_homogenous_get(Evas_Object *obj)
+elm_toolbar_homogenous_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);

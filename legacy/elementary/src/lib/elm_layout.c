@@ -982,7 +982,7 @@ elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const 
  *         object does not have a cursor set, then NULL is returned.
  */
 EAPI const char *
-elm_layout_part_cursor_style_get(Evas_Object *obj, const char *part_name)
+elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
@@ -1035,7 +1035,7 @@ elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, 
  * @return whenever the cursor is just provided by engine or also from theme.
  */
 EAPI Eina_Bool
-elm_layout_part_cursor_engine_only_get(Evas_Object *obj, const char *part_name)
+elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, EINA_FALSE);

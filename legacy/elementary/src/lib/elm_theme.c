@@ -447,7 +447,7 @@ elm_theme_get(Elm_Theme *th)
         const char *f;
         char *tmp;
         int len;
-        
+
         len = 0;
         EINA_LIST_FOREACH(th->themes, l, f)
           {
@@ -479,7 +479,7 @@ elm_theme_get(Elm_Theme *th)
  * theme element list is returned.
  */
 EAPI const Eina_List *
-elm_theme_list_get(Elm_Theme *th)
+elm_theme_list_get(const Elm_Theme *th)
 {
    if (!th) th = &(theme_default);
    return th->themes;
@@ -741,7 +741,7 @@ elm_object_theme_set(Evas_Object *obj, Elm_Theme *th)
  * @ingroup Theme
  */
 EAPI Elm_Theme *
-elm_object_theme_get(Evas_Object *obj)
+elm_object_theme_get(const Evas_Object *obj)
 {
    return elm_widget_theme_get(obj);
 }

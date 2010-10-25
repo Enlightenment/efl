@@ -383,7 +383,7 @@ extern "C" {
    EAPI void         elm_theme_extension_del(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_set(Elm_Theme *th, const char *theme);
    EAPI const char  *elm_theme_get(Elm_Theme *th);
-   EAPI const Eina_List *elm_theme_list_get(Elm_Theme *th);
+   EAPI const Eina_List *elm_theme_list_get(const Elm_Theme *th);
    EAPI char        *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path);
    EAPI void         elm_theme_flush(Elm_Theme *th);
    EAPI void         elm_theme_full_flush(void);
@@ -394,7 +394,7 @@ extern "C" {
    EAPI void         elm_theme_name_available_list_free(Eina_List *list);
 
    EAPI void         elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
-   EAPI Elm_Theme   *elm_object_theme_get(Evas_Object *obj);
+   EAPI Elm_Theme   *elm_object_theme_get(const Evas_Object *obj);
 
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
@@ -506,7 +506,7 @@ extern "C" {
    EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
    EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
    EAPI void                  elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
-   EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(Evas_Object *obj);
+   EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
     */
@@ -855,9 +855,9 @@ extern "C" {
   EAPI Eina_Bool     elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
   EAPI void          elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
   EAPI Eina_Bool     elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
-  EAPI const char   *elm_layout_part_cursor_style_get(Evas_Object *obj, const char *part_name);
+  EAPI const char   *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
   EAPI Eina_Bool     elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
-  EAPI Eina_Bool     elm_layout_part_cursor_engine_only_get(Evas_Object *obj, const char *part_name);
+  EAPI Eina_Bool     elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
 
    /* smart callbacks called:
     */
@@ -1077,7 +1077,7 @@ extern "C" {
    EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text);
    EAPI const char  *elm_anchorblock_text_get(const Evas_Object *obj);
    EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
-   EAPI Evas_Object *elm_anchorblock_hover_parent_get(Evas_Object *obj);
+   EAPI Evas_Object *elm_anchorblock_hover_parent_get(const Evas_Object *obj);
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
    EAPI void         elm_anchorblock_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data);
@@ -1122,7 +1122,7 @@ extern "C" {
    EAPI struct _Ethumb_Client *elm_thumb_ethumb_client_get(void);
    EAPI Eina_Bool    elm_thumb_ethumb_client_connected(void);
    EAPI Eina_Bool    elm_thumb_editable_set(Evas_Object *obj, Eina_Bool edit);
-   EAPI Eina_Bool    elm_thumb_editable_get(Evas_Object *obj);
+   EAPI Eina_Bool    elm_thumb_editable_get(const Evas_Object *obj);
 
    /* available styles:
     * default
@@ -1150,16 +1150,16 @@ extern "C" {
    EAPI Evas_Object *elm_hoversel_icon_unset(Evas_Object *obj);
    EAPI void         elm_hoversel_hover_begin(Evas_Object *obj);
    EAPI void         elm_hoversel_hover_end(Evas_Object *obj);
-   EAPI Eina_Bool    elm_hoversel_expanded_get(Evas_Object *obj);
+   EAPI Eina_Bool    elm_hoversel_expanded_get(const Evas_Object *obj);
    EAPI void         elm_hoversel_clear(Evas_Object *obj);
    EAPI const Eina_List * elm_hoversel_items_get(const Evas_Object *obj);
    EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
    EAPI void         elm_hoversel_item_del(Elm_Hoversel_Item *item);
    EAPI void         elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func);
-   EAPI void        *elm_hoversel_item_data_get(Elm_Hoversel_Item *it);
-   EAPI const char  *elm_hoversel_item_label_get(Elm_Hoversel_Item *it);
+   EAPI void        *elm_hoversel_item_data_get(const Elm_Hoversel_Item *it);
+   EAPI const char  *elm_hoversel_item_label_get(const Elm_Hoversel_Item *it);
    EAPI void         elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
-   EAPI void         elm_hoversel_item_icon_get(Elm_Hoversel_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
+   EAPI void         elm_hoversel_item_icon_get(const Elm_Hoversel_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
    /* smart callbacks called:
     * "clicked" - the user clicked the hoversel button and popped up the sel
     * "selected" - an item in the hoversel list is selected
@@ -1172,23 +1172,23 @@ extern "C" {
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
    EAPI void              elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority);
-   EAPI int               elm_toolbar_item_priority_get(Elm_Toolbar_Item *item);
-   EAPI const char       *elm_toolbar_item_icon_name_get(Elm_Toolbar_Item *item);
-   EAPI Evas_Object      *elm_toolbar_item_icon_get(Elm_Toolbar_Item *item);
+   EAPI int               elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item);
+   EAPI const char       *elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item);
+   EAPI Evas_Object      *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_label_get(const Elm_Toolbar_Item *item);
    EAPI Eina_Bool         elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label);
    EAPI void              elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func);
    EAPI void              elm_toolbar_item_select(Elm_Toolbar_Item *item);
-   EAPI Eina_Bool         elm_toolbar_item_disabled_get(Elm_Toolbar_Item *item);
+   EAPI Eina_Bool         elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
-   EAPI Eina_Bool         elm_toolbar_item_separator_get(Elm_Toolbar_Item *item);
+   EAPI Eina_Bool         elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
-   EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_mode_shrink_get(Evas_Object *obj);
+   EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_mode_shrink_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
-   EAPI Eina_Bool         elm_toolbar_homogenous_get(Evas_Object *obj);
+   EAPI Eina_Bool         elm_toolbar_homogenous_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI Evas_Object      *elm_toolbar_menu_parent_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_item_unselect_all(Evas_Object *obj);
@@ -1254,19 +1254,19 @@ extern "C" {
    EAPI Evas_Object       *elm_menu_object_get(const Elm_Menu_Item *it);
    EAPI Elm_Menu_Item     *elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
    EAPI void               elm_menu_item_label_set(Elm_Menu_Item *item, const char *label);
-   EAPI const char        *elm_menu_item_label_get(Elm_Menu_Item *item);
+   EAPI const char        *elm_menu_item_label_get(const Elm_Menu_Item *item);
    EAPI void               elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon);
-   EAPI const char        *elm_menu_item_icon_get(Elm_Menu_Item *item);
-   EAPI const Evas_Object *elm_menu_item_object_icon_get(Elm_Menu_Item *item);
+   EAPI const char        *elm_menu_item_icon_get(const Elm_Menu_Item *item);
+   EAPI const Evas_Object *elm_menu_item_object_icon_get(const Elm_Menu_Item *item);
    EAPI void               elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled);
-   EAPI Eina_Bool          elm_menu_item_disabled_get(Elm_Menu_Item *item);
+   EAPI Eina_Bool          elm_menu_item_disabled_get(const Elm_Menu_Item *item);
    EAPI Elm_Menu_Item     *elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent);
    EAPI Eina_Bool          elm_menu_item_is_separator(Elm_Menu_Item *item);
    EAPI void               elm_menu_item_del(Elm_Menu_Item *item);
    EAPI void               elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func);
    EAPI void              *elm_menu_item_data_get(const Elm_Menu_Item *it);
    EAPI void               elm_menu_item_data_set(Elm_Menu_Item *item, const void *data);
-   EAPI const Eina_List   *elm_menu_item_subitems_get(Elm_Menu_Item *item);
+   EAPI const Eina_List   *elm_menu_item_subitems_get(const Elm_Menu_Item *item);
    /* smart callbacks called:
     * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
     */
@@ -1304,7 +1304,7 @@ extern "C" {
    EAPI Eina_Bool        elm_list_item_separator_get(const Elm_List_Item *it);
 
    EAPI void             elm_list_item_selected_set(Elm_List_Item *item, Eina_Bool selected);
-   EAPI Eina_Bool        elm_list_item_selected_get(Elm_List_Item *item);
+   EAPI Eina_Bool        elm_list_item_selected_get(const Elm_List_Item *item);
    EAPI void             elm_list_item_show(Elm_List_Item *item);
    EAPI void             elm_list_item_bring_in(Elm_List_Item *item);
    EAPI void             elm_list_item_del(Elm_List_Item *item);
@@ -1489,7 +1489,7 @@ extern "C" {
    EAPI Eina_Bool         elm_genlist_item_selected_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_expanded_set(Elm_Genlist_Item *item, Eina_Bool expanded);
    EAPI Eina_Bool         elm_genlist_item_expanded_get(const Elm_Genlist_Item *item);
-   EAPI int               elm_genlist_item_expanded_depth_get(Elm_Genlist_Item *it);
+   EAPI int               elm_genlist_item_expanded_depth_get(const Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_disabled_set(Elm_Genlist_Item *item, Eina_Bool disabled);
    EAPI Eina_Bool         elm_genlist_item_disabled_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_display_only_set(Elm_Genlist_Item *it, Eina_Bool display_only);
@@ -1583,9 +1583,9 @@ extern "C" {
    EAPI void                elm_slideshow_clear(Evas_Object *obj);
    EAPI const Eina_List    *elm_slideshow_items_get(const Evas_Object *obj);
    EAPI void                elm_slideshow_item_del(Elm_Slideshow_Item *item);
-   EAPI void               *elm_slideshow_item_data_get(Elm_Slideshow_Item *item);
+   EAPI void               *elm_slideshow_item_data_get(const Elm_Slideshow_Item *item);
    EAPI Elm_Slideshow_Item *elm_slideshow_item_current_get(const Evas_Object *obj);
-   EAPI Evas_Object*        elm_slideshow_item_object_get(Elm_Slideshow_Item* item);
+   EAPI Evas_Object*        elm_slideshow_item_object_get(const Elm_Slideshow_Item* item);
    EAPI const char         *elm_slideshow_layout_get(const Evas_Object *obj);
    EAPI void                elm_slideshow_layout_set(Evas_Object *obj, const char *layout);
    EAPI const Eina_List    *elm_slideshow_layouts_get(const Evas_Object *obj);
@@ -1787,7 +1787,7 @@ extern "C" {
    EAPI void         elm_map_marker_bring_in(Elm_Map_Marker *marker);
    EAPI void         elm_map_marker_show(Elm_Map_Marker *marker);
    EAPI void         elm_map_markers_list_show(Eina_List *markers);
-   EAPI Evas_Object *elm_map_marker_object_get(Elm_Map_Marker *marker);
+   EAPI Evas_Object *elm_map_marker_object_get(const Elm_Map_Marker *marker);
    EAPI void         elm_map_marker_update(Elm_Map_Marker *marker);
    EAPI void         elm_map_bubbles_close(Evas_Object *obj);
 
@@ -1838,12 +1838,12 @@ extern "C" {
      } Elm_Panel_Orient;
    EAPI Evas_Object          *elm_panel_add(Evas_Object *parent);
    EAPI void                  elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
-   EAPI Elm_Panel_Orient      elm_panel_orient_get(Evas_Object *obj);
+   EAPI Elm_Panel_Orient      elm_panel_orient_get(const Evas_Object *obj);
    EAPI void                  elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
    EAPI Evas_Object          *elm_panel_content_get(const Evas_Object *obj);
    EAPI Evas_Object          *elm_panel_content_unset(Evas_Object *obj);
    EAPI void                  elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
-   EAPI Eina_Bool             elm_panel_hidden_get(Evas_Object *obj);
+   EAPI Eina_Bool             elm_panel_hidden_get(const Evas_Object *obj);
    EAPI void                  elm_panel_toggle(Evas_Object *obj);
 
 
@@ -1929,11 +1929,11 @@ extern "C" {
    EAPI void         elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
    EAPI void         elm_scrolled_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void         elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
-   EAPI const Evas_Object *elm_scrolled_entry_icon_get(Evas_Object *obj);
+   EAPI const Evas_Object *elm_scrolled_entry_icon_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_scrolled_entry_icon_unset(Evas_Object *obj);
    EAPI void         elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting);
    EAPI void         elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end);
-   EAPI const Evas_Object *elm_scrolled_entry_end_get(Evas_Object *obj);
+   EAPI const Evas_Object *elm_scrolled_entry_end_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_scrolled_entry_end_unset(Evas_Object *obj);
    EAPI void         elm_scrolled_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting);
    EAPI void         elm_scrolled_entry_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *entry, const char *item), void *data);
@@ -1968,13 +1968,13 @@ extern "C" {
    EAPI void                       elm_flippicker_flip_prev(Evas_Object *obj);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
-   EAPI const Eina_List           *elm_flippicker_items_get(Evas_Object *obj);
-   EAPI const Elm_Flippicker_Item *elm_flippicker_first_item_get(Evas_Object *obj);
-   EAPI const Elm_Flippicker_Item *elm_flippicker_last_item_get(Evas_Object *obj);
-   EAPI const Elm_Flippicker_Item *elm_flippicker_selected_item_get(Evas_Object *obj);
+   EAPI const Eina_List           *elm_flippicker_items_get(const Evas_Object *obj);
+   EAPI const Elm_Flippicker_Item *elm_flippicker_first_item_get(const Evas_Object *obj);
+   EAPI const Elm_Flippicker_Item *elm_flippicker_last_item_get(const Evas_Object *obj);
+   EAPI const Elm_Flippicker_Item *elm_flippicker_selected_item_get(const Evas_Object *obj);
    EAPI void                       elm_flippicker_item_selected_set(Elm_Flippicker_Item *item);
    EAPI void                       elm_flippicker_item_del(Elm_Flippicker_Item *item);
-   EAPI const char                *elm_flippicker_item_label_get(Elm_Flippicker_Item *item);
+   EAPI const char                *elm_flippicker_item_label_get(const Elm_Flippicker_Item *item);
    EAPI void                       elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_prev(Elm_Flippicker_Item *item);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_next(Elm_Flippicker_Item *item);
@@ -2015,9 +2015,9 @@ extern "C" {
    EAPI void          elm_animator_animate(Elm_Animator *animator);
    EAPI void          elm_animator_curve_style_set(Elm_Animator *animator, Elm_Animator_Curve_Style cs);
    EAPI void          elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse);
-   EAPI Eina_Bool     elm_animator_auto_reverse_get(Elm_Animator *animator);
-   EAPI Eina_Bool     elm_animator_operating_get(Elm_Animator *animator);
-   EAPI unsigned int  elm_animator_repeat_get(Elm_Animator *animator);
+   EAPI Eina_Bool     elm_animator_auto_reverse_get(const Elm_Animator *animator);
+   EAPI Eina_Bool     elm_animator_operating_get(const Elm_Animator *animator);
+   EAPI unsigned int  elm_animator_repeat_get(const Elm_Animator *animator);
 
    /* calendar */
    typedef enum 
@@ -2095,7 +2095,7 @@ extern "C" {
    /* colorpicker */
    EAPI Evas_Object *elm_colorpicker_add(Evas_Object *parent);
    EAPI void elm_colorpicker_color_set(Evas_Object *obj, int r, int g , int b, int a);
-   EAPI void elm_colorpicker_color_get(Evas_Object *obj, int *r, int *g , int *b, int *a);
+   EAPI void elm_colorpicker_color_get(const Evas_Object *obj, int *r, int *g , int *b, int *a);
    /* smart callbacks called:
     * "changed" - when the color value changes
     */

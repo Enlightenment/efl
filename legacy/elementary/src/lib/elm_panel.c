@@ -331,7 +331,7 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
  * @ingroup Panel
  */
 EAPI Elm_Panel_Orient
-elm_panel_orient_get(Evas_Object *obj)
+elm_panel_orient_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_PANEL_ORIENT_LEFT;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -439,7 +439,7 @@ elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden)
  * @ingroup Panel
  */
 EAPI Eina_Bool
-elm_panel_hidden_get(Evas_Object *obj)
+elm_panel_hidden_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
