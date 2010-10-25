@@ -786,12 +786,12 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
  *
  * @param url_con Connection object to perform a request on, previously created
  *                with ecore_con_url_new() or ecore_con_url_custom_new().
- * @param data Payload (data sent on the request)
- * @param length  Payload length
+ * @param data    Payload (data sent on the request)
+ * @param length  Payload length. If @c -1, rely on automatic length
+ *                calculation via @c strlen() on @p data.
  * @param content_type Content type of the payload (e.g. text/xml)
  *
  * @return #EINA_TRUE on success, #EINA_FALSE on error.
- *
  *
  * @see ecore_con_url_custom_new()
  * @see ecore_con_url_additional_headers_clear()
@@ -802,7 +802,7 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con, const char *username,
  * @see ecore_con_url_time()
  */
 EAPI Eina_Bool
-ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
+ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, long length,
                    const char *content_type)
 {
 #ifdef HAVE_CURL
@@ -832,17 +832,14 @@ ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, size_t length,
 
    if (data)
      {
-        curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDS,    data);
-        curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, length);
-
-        if (content_type && (strlen(content_type) < 200))
+        if ((content_type) && (strlen(content_type) < 200))
           {
-             sprintf(tmp, "Content-type: %s", content_type);
+             snprintf(tmp, sizeof(tmp), "Content-Type: %s", content_type);
              url_con->headers = curl_slist_append(url_con->headers, tmp);
           }
 
-        sprintf(tmp, "Content-length: %zu", length);
-        url_con->headers = curl_slist_append(url_con->headers, tmp);
+        curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDS,    data);
+        curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, length);
      }
 
    switch (url_con->time_condition)

@@ -508,7 +508,7 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
                                                   const char *password,
                                                   Eina_Bool safe);
 EAPI Eina_Bool         ecore_con_url_send(Ecore_Con_Url *url_con,
-                                          const void *data, size_t length,
+                                          const void *data, long length,
                                           const char *content_type);
 EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con,
                                           Ecore_Con_Url_Time time_condition,
