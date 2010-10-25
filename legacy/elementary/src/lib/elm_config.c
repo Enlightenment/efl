@@ -31,13 +31,13 @@ static Ecore_X_Window _root_1st = 0;
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
-{
-     "ENLIGHTENMENT_SCALE",
-     "ENLIGHTENMENT_FINGER_SIZE",
-     "ENLIGHTENMENT_THEME",
-     "ENLIGHTENMENT_PROFILE",
-     "ENLIGHTENMENT_CONFIG"
-};
+  {
+    "ENLIGHTENMENT_SCALE",
+    "ENLIGHTENMENT_FINGER_SIZE",
+    "ENLIGHTENMENT_THEME",
+    "ENLIGHTENMENT_PROFILE",
+    "ENLIGHTENMENT_CONFIG"
+  };
 #define ATOM_E_SCALE 0
 #define ATOM_E_FINGER_SIZE 1
 #define ATOM_E_THEME 2
@@ -60,12 +60,12 @@ _prop_config_get(void)
    atom = ecore_x_atom_get(buf);
    _atom_config = atom;
    if (!ecore_x_window_prop_property_get(_root_1st,
-                                         atom, _atom[ATOM_E_CONFIG], 
+                                         atom, _atom[ATOM_E_CONFIG],
                                          8, &data, &size))
      {
-        if (!ecore_x_window_prop_property_get(_root_1st, 
-                                              _atom[ATOM_E_CONFIG], 
-                                              _atom[ATOM_E_CONFIG], 
+        if (!ecore_x_window_prop_property_get(_root_1st,
+                                              _atom[ATOM_E_CONFIG],
+                                              _atom[ATOM_E_CONFIG],
                                               8, &data, &size))
           return EINA_FALSE;
         else
@@ -105,60 +105,60 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 
    if (event->win == _root_1st)
      {
-	if (event->atom == _atom[ATOM_E_SCALE])
-	  {
-	     unsigned int val = 1000;
+        if (event->atom == _atom[ATOM_E_SCALE])
+          {
+             unsigned int val = 1000;
 
-	     if (ecore_x_window_prop_card32_get(event->win,
-						event->atom,
-						&val, 1) > 0)
-	       {
-		  double pscale;
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  double pscale;
 
-		  pscale = _elm_config->scale;
-		  if (val > 0) _elm_config->scale = (double)val / 1000.0;
-		  if (pscale != _elm_config->scale) _elm_rescale();
-	       }
-	  }
-	else if (event->atom == _atom[ATOM_E_FINGER_SIZE])
-	  {
-	     unsigned int val = 1000;
+                  pscale = _elm_config->scale;
+                  if (val > 0) _elm_config->scale = (double)val / 1000.0;
+                  if (pscale != _elm_config->scale) _elm_rescale();
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_FINGER_SIZE])
+          {
+             unsigned int val = 1000;
 
-	     if (ecore_x_window_prop_card32_get(event->win,
-						event->atom,
-						&val, 1) > 0)
-	       {
-		  int pfinger_size;
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  int pfinger_size;
 
-		  pfinger_size = _elm_config->finger_size;
-		  _elm_config->finger_size = val;
-		  if (pfinger_size != _elm_config->finger_size) _elm_rescale();
-	       }
-	  }
-	else if (event->atom == _atom[ATOM_E_THEME])
-	  {
-             char *val = NULL;
-             
-             val = ecore_x_window_prop_string_get(event->win,
-                                                  event->atom);
-	     eina_stringshare_replace(&_elm_config->theme, val);
-	     if (val)
-	       {
-		  _elm_theme_parse(NULL, val);
-		  free(val);
-		  _elm_rescale();
-	       }
-	  }
-	else if (event->atom == _atom[ATOM_E_PROFILE])
+                  pfinger_size = _elm_config->finger_size;
+                  _elm_config->finger_size = val;
+                  if (pfinger_size != _elm_config->finger_size) _elm_rescale();
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THEME])
           {
              char *val = NULL;
-             
+
              val = ecore_x_window_prop_string_get(event->win,
                                                   event->atom);
-	     if (val)
-	       {
+             eina_stringshare_replace(&_elm_config->theme, val);
+             if (val)
+               {
+                  _elm_theme_parse(NULL, val);
+                  free(val);
+                  _elm_rescale();
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_PROFILE])
+          {
+             char *val = NULL;
+
+             val = ecore_x_window_prop_string_get(event->win,
+                                                  event->atom);
+             if (val)
+               {
                   int changed = 0;
-                  
+
                   if (_elm_profile)
                     {
                        if (strcmp(_elm_profile, val)) changed = 1;
@@ -175,9 +175,9 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                             _elm_rescale();
                          }
                     }
-	       }
+               }
           }
-	else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
+        else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
                  (event->atom == _atom[ATOM_E_CONFIG]))
           {
              _prop_config_get();
@@ -191,47 +191,88 @@ static void
 _desc_init(void)
 {
    Eet_Data_Descriptor_Class eddc;
-   
+
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Config);
    eddc.func.str_direct_alloc = NULL;
    eddc.func.str_direct_free = NULL;
-   
+
    _config_edd = eet_data_descriptor_file_new(&eddc);
    if (!_config_edd)
      {
         printf("EEEK! eet_data_descriptor_file_new() failed\n");
         return;
      }
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "config_version", config_version, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "engine", engine, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable", thumbscroll_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_threshold", thumbscroll_threshold, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_momentum_threshold", thumbscroll_momentum_threshold, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_friction", thumbscroll_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_bounce_friction", thumbscroll_bounce_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "page_scroll_friction", page_scroll_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "bring_in_scroll_friction", bring_in_scroll_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "zoom_friction", zoom_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_bounce_enable", thumbscroll_bounce_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "scale", scale, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "bgpixmap", bgpixmap, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "compositing", compositing, EET_T_INT);
-   // EET_DATA_DESCRIPTOR_ADD_LIST(_config_edd, Elm_Config, "font_dirs", font_dirs, sub_edd);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "font_hinting", font_hinting, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "image_cache", image_cache, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "font_cache", font_cache, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "finger_size", finger_size, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "fps", fps, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "theme", theme, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules, EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay", tooltip_delay, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only", cursor_engine_only, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_enable", focus_highlight_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "focus_highlight_animate", focus_highlight_animate, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "toolbar_shrink_mode", toolbar_shrink_mode, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "fileselector_expand_enable", fileselector_expand_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "inwin_dialogs_enable", inwin_dialogs_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "icon_size", icon_size, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "config_version",
+                                 config_version, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "engine", engine,
+                                 EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable",
+                                 thumbscroll_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "thumbscroll_threshold", thumbscroll_threshold,
+                                 EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "thumbscroll_momentum_threshold",
+                                 thumbscroll_momentum_threshold, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "thumbscroll_friction", thumbscroll_friction,
+                                 EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "thumbscroll_bounce_friction",
+                                 thumbscroll_bounce_friction, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "page_scroll_friction", page_scroll_friction,
+                                 EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "bring_in_scroll_friction",
+                                 bring_in_scroll_friction, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "zoom_friction",
+                                 zoom_friction, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "thumbscroll_bounce_enable",
+                                 thumbscroll_bounce_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "scale", scale,
+                                 EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "bgpixmap", bgpixmap,
+                                 EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "compositing",
+                                 compositing, EET_T_INT);
+   /* EET_DATA_DESCRIPTOR_ADD_LIST(_config_edd, Elm_Config, "font_dirs",
+      font_dirs, sub_edd); */
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "font_hinting",
+                                 font_hinting, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "image_cache",
+                                 image_cache, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "font_cache",
+                                 font_cache, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "finger_size",
+                                 finger_size, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "fps", fps,
+                                 EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "theme", theme,
+                                 EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules,
+                                 EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay",
+                                 tooltip_delay, EET_T_DOUBLE);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only",
+                                 cursor_engine_only, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "focus_highlight_enable",
+                                 focus_highlight_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "focus_highlight_animate",
+                                 focus_highlight_animate, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "toolbar_shrink_mode",
+                                 toolbar_shrink_mode, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "fileselector_expand_enable",
+                                 fileselector_expand_enable, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
+                                 "inwin_dialogs_enable", inwin_dialogs_enable,
+                                 EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "icon_size",
+                                 icon_size, EET_T_INT);
 }
 
 static void
@@ -251,7 +292,7 @@ _profile_get(void)
    int len = 0;
 
    _elm_profile = strdup("default");
-   
+
    // if env var - use profile without question
    s = getenv("ELM_PROFILE");
    if (s)
@@ -260,10 +301,10 @@ _profile_get(void)
         _elm_profile = strdup(s);
         return;
      }
-   
+
    home = getenv("HOME");
    if (!home) home = "/";
-   
+
    // usser profile
    snprintf(buf, sizeof(buf), "%s/.elementary/config/profile.cfg", home);
    ef = eet_open(buf, EET_FILE_MODE_READ);
@@ -282,7 +323,7 @@ _profile_get(void)
         if (!p) ef = NULL;
      }
    if (ef) return;
-   
+
    // system profile
    snprintf(buf, sizeof(buf), "%s/config/profile.cfg", _elm_data_dir);
    ef = eet_open(buf, EET_FILE_MODE_READ);
@@ -305,7 +346,7 @@ static void
 _config_free(void)
 {
    const char *fontdir;
-   
+
    if (!_elm_config) return;
    EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
      {
@@ -452,9 +493,9 @@ _config_update(void)
 
    /* nothing here, just an example */
    /*
-   IFCFG(0x0002);
-   COPYVAL(some_value);
-   IFCFGEND;
+     IFCFG(0x0002);
+     COPYVAL(some_value);
+     IFCFGEND;
    */
 
 #undef COPYSTR
@@ -471,7 +512,7 @@ static void
 _env_get(void)
 {
    char *s;
-   
+
    s = getenv("ELM_ENGINE");
    if (s)
      {
@@ -552,47 +593,47 @@ _env_get(void)
    s = getenv("ELM_FONT_HINTING");
    if (s)
      {
-	if      (!strcasecmp(s, "none"))     _elm_config->font_hinting = 0;
-	else if (!strcasecmp(s, "auto"))     _elm_config->font_hinting = 1;
-	else if (!strcasecmp(s, "bytecode")) _elm_config->font_hinting = 2;
+        if      (!strcasecmp(s, "none"))     _elm_config->font_hinting = 0;
+        else if (!strcasecmp(s, "auto"))     _elm_config->font_hinting = 1;
+        else if (!strcasecmp(s, "bytecode")) _elm_config->font_hinting = 2;
      }
 
    s = getenv("ELM_FONT_PATH");
    if (s)
      {
-	const char *p, *pp;
-	char *buf2;
+        const char *p, *pp;
+        char *buf2;
 
         EINA_LIST_FREE(_elm_config->font_dirs, p)
           {
              eina_stringshare_del(p);
           }
-        
-	buf2 = alloca(strlen(s) + 1);
-	p = s;
-	pp = p;
-	for (;;)
-	  {
-	     if ((*p == ':') || (!*p))
-	       {
-		  int len;
 
-		  len = p - pp;
-		  strncpy(buf2, pp, len);
-		  buf2[len] = 0;
-		  _elm_config->font_dirs = 
-                    eina_list_append(_elm_config->font_dirs, 
+        buf2 = alloca(strlen(s) + 1);
+        p = s;
+        pp = p;
+        for (;;)
+          {
+             if ((*p == ':') || (*p == 0))
+               {
+                  int len;
+
+                  len = p - pp;
+                  strncpy(buf2, pp, len);
+                  buf2[len] = 0;
+                  _elm_config->font_dirs =
+                    eina_list_append(_elm_config->font_dirs,
                                      eina_stringshare_add(buf2));
-		  if (!*p) break;
-		  p++;
-		  pp = p;
-	       }
-	     else
-	       {
-		  if (!*p) break;
-		  p++;
-	       }
-	  }
+                  if (*p == 0) break;
+                  p++;
+                  pp = p;
+               }
+             else
+               {
+                  if (*p == 0) break;
+                  p++;
+               }
+          }
      }
 
    s = getenv("ELM_IMAGE_CACHE");
@@ -603,8 +644,9 @@ _env_get(void)
 
    s = getenv("ELM_SCALE");
    if (s) _elm_config->scale = atof(s);
-   
-   _elm_config->finger_size = (double)_elm_config->finger_size * _elm_config->scale;
+
+   _elm_config->finger_size =
+     (double)_elm_config->finger_size * _elm_config->scale;
    s = getenv("ELM_FINGER_SIZE");
    if (s) _elm_config->finger_size = atoi(s);
 
@@ -664,74 +706,74 @@ _elm_config_sub_init(void)
        (_elm_config->engine == ELM_OPENGL_X11))
      {
 #ifdef HAVE_ELEMENTARY_X
-	unsigned int val = 1000;
+        unsigned int val = 1000;
 
-	if (!ecore_x_init(NULL))
-	  {
-	     ERR("Cannot connect to X11 display. check $DISPLAY variable");
-	     exit(1);
-	  }
+        if (!ecore_x_init(NULL))
+          {
+             ERR("Cannot connect to X11 display. check $DISPLAY variable");
+             exit(1);
+          }
         _root_1st = ecore_x_window_root_first_get();
-        
-	if (!ecore_x_screen_is_composited(0))
-	  _elm_config->compositing = 0;
+
+        if (!ecore_x_screen_is_composited(0))
+          _elm_config->compositing = 0;
 
         ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
-	ecore_x_event_mask_set(_root_1st,
-			       ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
-	_prop_change_handler = ecore_event_handler_add
-	  (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
-	if (!getenv("ELM_SCALE"))
-	  {
-	     if (ecore_x_window_prop_card32_get(_root_1st,
-						_atom[ATOM_E_SCALE],
-						&val, 1) > 0)
-	       {
-		  if (val > 0)
-		    {
-		       _elm_config->scale = (double)val / 1000.0;
-		       // FIXME: hack until e export finger size too
-		       if (getenv("ELM_FINGER_SIZE"))
-			 _elm_config->finger_size = 40.0 * _elm_config->scale;
+        ecore_x_event_mask_set(_root_1st,
+                               ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
+        _prop_change_handler = ecore_event_handler_add
+          (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
+        if (!getenv("ELM_SCALE"))
+          {
+             if (ecore_x_window_prop_card32_get(_root_1st,
+                                                _atom[ATOM_E_SCALE],
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                    {
+                       _elm_config->scale = (double)val / 1000.0;
+                       // FIXME: hack until e export finger size too
+                       if (getenv("ELM_FINGER_SIZE"))
+                         _elm_config->finger_size = 40.0 * _elm_config->scale;
                        edje_scale_set(_elm_config->scale);
-		    }
-	       }
-	  }
-	if (!getenv("ELM_FINGER_SIZE"))
-	  {
-	     if (ecore_x_window_prop_card32_get(_root_1st,
-						_atom[ATOM_E_FINGER_SIZE],
-						&val, 1) > 0)
-	       {
-		  if (val > 0)
-		    {
-		       _elm_config->finger_size = val;
-		    }
-	       }
-	  }
-	if (!getenv("ELM_THEME"))
-	  {
+                    }
+               }
+          }
+        if (!getenv("ELM_FINGER_SIZE"))
+          {
+             if (ecore_x_window_prop_card32_get(_root_1st,
+                                                _atom[ATOM_E_FINGER_SIZE],
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                    {
+                       _elm_config->finger_size = val;
+                    }
+               }
+          }
+        if (!getenv("ELM_THEME"))
+          {
              char *s;
-             
+
              s = ecore_x_window_prop_string_get(_root_1st,
-						_atom[ATOM_E_THEME]);
+                                                _atom[ATOM_E_THEME]);
              if (s)
-	       {
-		  eina_stringshare_replace(&_elm_config->theme, s);
+               {
+                  eina_stringshare_replace(&_elm_config->theme, s);
                   _elm_theme_parse(NULL, s);
                   free(s);
-	       }
-	  }
-	if (!getenv("ELM_PROFILE"))
-	  {
+               }
+          }
+        if (!getenv("ELM_PROFILE"))
+          {
              char *s;
-             
+
              s = ecore_x_window_prop_string_get(_root_1st,
-						_atom[ATOM_E_PROFILE]);
+                                                _atom[ATOM_E_PROFILE]);
              if (s)
-	       {
+               {
                   int changed = 0;
-                  
+
                   if (_elm_profile)
                     {
                        if (strcmp(_elm_profile, s)) changed = 1;
@@ -739,10 +781,10 @@ _elm_config_sub_init(void)
                     }
                   _elm_profile = s;
                   if (changed) _prop_config_get();
-	       }
-	  }
+               }
+          }
 #endif
-      }
+     }
    _config_sub_apply();
 }
 
@@ -760,8 +802,8 @@ _elm_config_shutdown(void)
        (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
      {
 #ifdef HAVE_ELEMENTARY_X
-	ecore_event_handler_del(_prop_change_handler);
-	_prop_change_handler = NULL;
+        ecore_event_handler_del(_prop_change_handler);
+        _prop_change_handler = NULL;
 #endif
      }
    _config_free();
