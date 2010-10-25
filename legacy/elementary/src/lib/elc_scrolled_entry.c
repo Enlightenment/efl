@@ -139,15 +139,27 @@ _theme_hook(Evas_Object *obj)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw, minh;
-   if (!wd) return;
+   Widget_Data *wd;
+   Evas_Coord minw, minh, maxw, maxh, tmpw, tmph;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return;
+   evas_object_size_hint_max_get(obj, &maxw, &maxh);
+   evas_object_size_hint_min_get(obj, &tmpw, &tmph);
+
    evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
+
+   if (tmpw > minw)
+     minw = tmpw;
+   if (tmph > minh)
+     minh = tmph;
+
    evas_object_size_hint_min_set(obj, minw, minh);
    if (wd->single_line)
-     evas_object_size_hint_max_set(obj, -1, minh);
+     evas_object_size_hint_max_set(obj, maxw, minh);
    else
-     evas_object_size_hint_max_set(obj, -1, -1);
+     evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
 static void
@@ -201,6 +213,12 @@ _on_focus_region_hook(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    elm_widget_focus_region_get(wd->entry, x, y, w, h);
+}
+
+static void
+_changed_size_hints(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   _sizing_eval(obj);
 }
 
 static void
@@ -402,6 +420,9 @@ elm_scrolled_entry_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->entry, "longpressed", _entry_longpressed, obj);
    evas_object_smart_callback_add(wd->entry, "focused", _entry_focused, obj);
    evas_object_smart_callback_add(wd->entry, "unfocused", _entry_unfocused, obj);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints, NULL);
 
    _sizing_eval(obj);
 
