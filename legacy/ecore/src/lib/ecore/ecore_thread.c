@@ -481,7 +481,8 @@ ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
    work = malloc(sizeof (Ecore_Pthread_Worker));
    if (!work)
      {
-        func_cancel((void *) data);
+        if (func_cancel)
+          func_cancel((void *) data);
         return NULL;
      }
 
@@ -801,7 +802,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
 
    func_heavy((Ecore_Thread *) &worker, (void *)data);
 
-   if (worker.cancel) func_cancel((void *)data);
+   if (worker.func_cancel) func_cancel((void *)data);
    else func_end((void *)data);
 
    return NULL;
