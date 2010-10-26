@@ -235,7 +235,7 @@ static struct {
    },
    [CNP_ATOM_UTF8STRING] = {
 	"UTF8_STRING",
-	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	text_converter,
 	NULL,
 	notify_handler_text,
@@ -243,7 +243,7 @@ static struct {
    },
    [CNP_ATOM_STRING] = {
 	"STRING",
-	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	text_converter,
 	NULL,
 	notify_handler_text,
@@ -251,7 +251,7 @@ static struct {
    },
    [CNP_ATOM_TEXT] = {
 	"TEXT",
-	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	text_converter,
 	NULL,
 	NULL,
@@ -259,7 +259,7 @@ static struct {
    },
    [CNP_ATOM_text_plain_utf8] = {
 	"text/plain;charset=ut-8",
-	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	text_converter,
 	NULL,
 	NULL,
@@ -267,7 +267,7 @@ static struct {
    },
    [CNP_ATOM_text_plain] = {
 	"text/plain",
-	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP,
+	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	text_converter,
 	NULL,
 	NULL,
@@ -881,12 +881,12 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__,
    sel = selections + *(int *)data;
    if (!sel->active) return EINA_TRUE;
 
-   if (sel->format == ELM_SEL_FORMAT_MARKUP)
+   if (sel->format == ELM_SEL_FORMAT_MARKUP ||
+       sel->format == ELM_SEL_FORMAT_HTML)
      {
 	*data_ret = remove_tags(sel->selbuf, size_ret);
      }
-   else if ((sel->format == ELM_SEL_FORMAT_TEXT) ||
-            (sel->format == ELM_SEL_FORMAT_HTML))
+   else if (sel->format == ELM_SEL_FORMAT_TEXT)
      {
         *data_ret = strdup(sel->selbuf);
         *size_ret = strlen(sel->selbuf);
