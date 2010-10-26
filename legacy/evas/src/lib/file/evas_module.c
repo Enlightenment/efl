@@ -124,6 +124,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, jpeg);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, gif);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, edb);
+EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tga);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, edb);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
