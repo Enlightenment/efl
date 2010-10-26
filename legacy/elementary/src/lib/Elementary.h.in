@@ -245,7 +245,8 @@ extern "C" {
 
    typedef enum _Elm_Toolbar_Shrink_Mode
      {
-        ELM_TOOLBAR_SHRINK_NONE,   /**< hide excess items */
+        ELM_TOOLBAR_SHRINK_NONE,   /**< set toolbar minimun size to fit all the items */
+        ELM_TOOLBAR_SHRINK_HIDE,   /**< hide excess items */
         ELM_TOOLBAR_SHRINK_SCROLL, /**< allow accessing excess items through a scroller */
         ELM_TOOLBAR_SHRINK_MENU    /**< inserts a button to pop up a menu with excess items */
      } Elm_Toolbar_Shrink_Mode;

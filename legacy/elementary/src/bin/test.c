@@ -35,6 +35,7 @@ void test_anchorblock(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar2(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar3(void *data, Evas_Object *obj, void *event_info);
+void test_toolbar4(void *data, Evas_Object *obj, void *event_info);
 void test_hoversel(void *data, Evas_Object *obj, void *event_info);
 void test_list(void *data, Evas_Object *obj, void *event_info);
 void test_list_horizontal(void *data, Evas_Object *obj, void *event_info);
@@ -257,6 +258,7 @@ my_win_main(char *autorun)
    ADD_TEST("Toolbar", test_toolbar);
    ADD_TEST("Toolbar 2", test_toolbar2);
    ADD_TEST("Toolbar 3", test_toolbar3);
+   ADD_TEST("Toolbar 4", test_toolbar4);
    ADD_TEST("Hoversel", test_hoversel);
    ADD_TEST("List", test_list);
    ADD_TEST("List - Horizontal", test_list_horizontal);

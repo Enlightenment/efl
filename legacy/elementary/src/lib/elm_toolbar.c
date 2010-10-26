@@ -283,6 +283,7 @@ _sizing_eval(Evas_Object *obj)
    switch (wd->shrink_mode)
      {
        case ELM_TOOLBAR_SHRINK_MENU: /* fallthrough */
+       case ELM_TOOLBAR_SHRINK_HIDE: /* fallthrough */
        case ELM_TOOLBAR_SHRINK_SCROLL: minw = w - vw; break;
        case ELM_TOOLBAR_SHRINK_NONE: minw = minw + (w - vw); break;
      }
@@ -326,6 +327,28 @@ _toolbar_item_prio_compare_cb(const void *i1, const void *i2)
 }
 
 static void
+_fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw)
+{
+   Elm_Toolbar_Item *it;
+   Eina_List *sorted = NULL;
+
+   EINA_INLIST_FOREACH(wd->items, it)
+     {
+        sorted = eina_list_sorted_insert(sorted,
+                                         _toolbar_item_prio_compare_cb, it);
+     }
+
+   EINA_LIST_FREE(sorted, it)
+     {
+        Evas_Coord ciw;
+
+        evas_object_geometry_get(it->base.view, NULL, NULL, &ciw, NULL);
+        *iw += ciw;
+        it->prio.visible = (*iw <= vw);
+     }
+}
+
+static void
 _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -344,25 +367,10 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
         Evas_Coord iw = 0;
-        Eina_List *sorted = NULL;
+        _fix_items_visibility(wd, &iw, vw);
 
-        EINA_INLIST_FOREACH(wd->items, it)
-          {
-             sorted = eina_list_sorted_insert(sorted,
-                                    _toolbar_item_prio_compare_cb, it);
-          }
-
-        EINA_LIST_FREE(sorted, it)
-          {
-             Evas_Coord ciw;
-
-             evas_object_geometry_get(it->base.view, NULL, NULL, &ciw, NULL);
-             iw += ciw;
-             it->prio.visible = (iw <= vw);
-          }
-
-        /* All items are removed from the box object, since removing individual items won't trigger
-           a resize. Items are be readded below. */
+        /* All items are removed from the box object, since removing individual
+         * items won't trigger a resize. Items are be readded below. */
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
         if (iw > vw)
           {
@@ -401,7 +409,8 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
           }
         else
           {
-             /* All items are visible, show them all (except for the "More" button, of course). */
+             /* All items are visible, show them all (except for the "More"
+              * button, of course). */
              EINA_INLIST_FOREACH(wd->items, it)
                {
                   if (it == wd->more_item)
@@ -411,6 +420,34 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
                        evas_object_show(it->base.view);
                        evas_object_box_append(wd->bx, it->base.view);
                     }
+               }
+          }
+     }
+   else if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
+     {
+        Evas_Coord iw = 0;
+        _fix_items_visibility(wd, &iw, vw);
+        evas_object_box_remove_all(wd->bx, EINA_FALSE);
+        if (iw > vw)
+          {
+             EINA_INLIST_FOREACH(wd->items, it)
+               {
+                 if (!it->prio.visible)
+                   evas_object_hide(it->base.view);
+                 else
+                   {
+                      evas_object_box_append(wd->bx, it->base.view);
+                      evas_object_show(it->base.view);
+                   }
+               }
+          }
+        else
+          {
+             /* All items are visible, show them all */
+             EINA_INLIST_FOREACH(wd->items, it)
+               {
+                  evas_object_show(it->base.view);
+                  evas_object_box_append(wd->bx, it->base.view);
                }
           }
      }
@@ -816,10 +853,12 @@ elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item)
 }
 
 /**
- * Sets the priority of a toolbar item. This is used only when the toolbar expand mode
- * is set to ELM_TOOLBAR_SHRINK_MENU: when space is at a premium, items with low priority
- * will be removed from the toolbar and added to a dynamically-created menu, while items
- * with higher priority will remain on the toolbar, with the same order they were added.
+ * Sets the priority of a toolbar item. This is used only when the toolbar
+ * shrink mode is set to ELM_TOOLBAR_SHRINK_MENU or ELM_TOOLBAR_SHRINK_HIDE:
+ * when space is at a premium, items with low priority will be removed from
+ * the toolbar and added to a dynamically-created menu, while items with
+ * higher priority will remain on the toolbar, with the same order they were
+ * added.
  *
  * @param item The toolbar item.
  * @param priority The item priority. The default is zero.
@@ -1085,11 +1124,13 @@ elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item)
 }
 
 /**
- * Set the expand state of toolbar @p obj.
+ * Set the shrink state of toolbar @p obj.
  *
  * @param obj The toolbar object
  * @param shrink_mode The toolbar won't scroll if ELM_TOOLBAR_SHRINK_NONE,
- * will scroll if ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to 
+ * but will enforce a minimun size so all the items will fit, won't scroll
+ * and won't show the items that don't fit if ELM_TOOLBAR_SHRINK_HIDE,
+ * will scroll if ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
  * pop up excess elements with ELM_TOOLBAR_SHRINK_MENU.
  *
  * @ingroup Toolbar
@@ -1121,8 +1162,12 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
                                                 NULL, NULL);
         elm_toolbar_item_priority_set(wd->more_item, INT_MAX);
      }
+   else if (shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
+     elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF,
+                                   ELM_SMART_SCROLLER_POLICY_OFF);
    else
-     elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_AUTO, ELM_SMART_SCROLLER_POLICY_OFF);
+     elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_AUTO,
+                                   ELM_SMART_SCROLLER_POLICY_OFF);
    _sizing_eval(obj);
 }
 
