@@ -1576,3 +1576,39 @@ elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label)
 
    return NULL;
 }
+
+/**
+ * Set the data item from the toolbar item
+ *
+ * This set the data value passed on the elm_toolbar_item_append() and
+ * related item addition calls.
+ *
+ * @param item The item
+ * @param data The new data pointer to set
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_data_set(Elm_Toolbar_Item *item, const void *data)
+{
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   elm_widget_item_data_set(item, data);
+}
+
+/**
+ * Get the data item from the toolbar item
+ *
+ * This returns the data value passed on the elm_toolbar_item_append() and
+ * related item addition calls.
+ *
+ * @param item The item
+ * @return The data pointer provided when created
+ *
+ * @ingroup Toolbar
+ */
+EAPI void *
+elm_toolbar_item_data_get(const Elm_Toolbar_Item *item)
+{
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   return elm_widget_item_data_get(item);
+}
