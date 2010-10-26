@@ -1171,17 +1171,27 @@ extern "C" {
    EAPI Evas_Object      *elm_toolbar_add(Evas_Object *parent);
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Toolbar_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Elm_Toolbar_Item *elm_toolbar_first_item_get(const Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_last_item_get(const Evas_Object *obj);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_next_get(const Elm_Toolbar_Item *item);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item);
+   EAPI Evas_Object      *elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority);
    EAPI int               elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item);
    EAPI Evas_Object      *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_label_get(const Elm_Toolbar_Item *item);
-   EAPI Eina_Bool         elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label);
+   EAPI Elm_Toolbar_Item *elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label);
+   EAPI Eina_Bool         elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected);
+   EAPI Elm_Toolbar_Item *elm_toolbar_selected_item_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_item_del(Elm_Toolbar_Item *item);
-   EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func);
-   EAPI void              elm_toolbar_item_select(Elm_Toolbar_Item *item);
+   EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func);
    EAPI Eina_Bool         elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled);
    EAPI void              elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator);
@@ -1192,8 +1202,6 @@ extern "C" {
    EAPI Eina_Bool         elm_toolbar_homogenous_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI Evas_Object      *elm_toolbar_menu_parent_get(const Evas_Object *obj);
-   EAPI void              elm_toolbar_item_unselect_all(Evas_Object *obj);
-   EAPI void              elm_toolbar_item_unselect(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_align_set(Evas_Object *obj, double align);
    EAPI double            elm_toolbar_align_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
@@ -1210,15 +1218,6 @@ extern "C" {
    EAPI const char       *elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine_only);
    EAPI Eina_Bool         elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item);
-
-   EAPI Eina_List        *elm_toolbar_item_get_all(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_get_first(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_get_last(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_get_next(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_select_next(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_select_first(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_select_last(Evas_Object *obj);
-   EAPI Elm_Toolbar_Item *elm_toolbar_item_find_by_label(Evas_Object *obj, const char *label);
    /* smart callbacks called:
     * "clicked" - when the user clicks on a toolbar item and becomes selected
     */

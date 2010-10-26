@@ -200,12 +200,12 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_toolbar_homogenous_set(o, 0);
    evas_object_size_hint_weight_set(o, 0.0, 0.0);
    evas_object_size_hint_align_set(o, EVAS_HINT_FILL, 0.0);
-   tit = elm_toolbar_item_add(o, NULL, "Bogosity", NULL, NULL);
+   tit = elm_toolbar_item_append(o, NULL, "Bogosity", NULL, NULL);
    elm_toolbar_item_cursor_set(tit, ELM_CURSOR_BOGOSITY);
-   tit = elm_toolbar_item_add(o, NULL, "Unset", NULL, NULL);
+   tit = elm_toolbar_item_append(o, NULL, "Unset", NULL, NULL);
    elm_toolbar_item_cursor_set(tit, ELM_CURSOR_BOGOSITY);
    elm_toolbar_item_cursor_unset(tit);
-   tit = elm_toolbar_item_add(o, NULL, "Xterm", NULL, NULL);
+   tit = elm_toolbar_item_append(o, NULL, "Xterm", NULL, NULL);
    elm_toolbar_item_cursor_set(tit, ELM_CURSOR_XTERM);
    elm_box_pack_end(bx, o);
    evas_object_show(o);

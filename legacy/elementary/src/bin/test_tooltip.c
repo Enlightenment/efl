@@ -288,10 +288,10 @@ test_tooltip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   ti = elm_toolbar_item_add(tb, NULL, "Open", NULL, NULL);
+   ti = elm_toolbar_item_append(tb, NULL, "Open", NULL, NULL);
    elm_toolbar_item_tooltip_text_set(ti, "Opens a file");
 
-   ti = elm_toolbar_item_add(tb, NULL, "Icon", NULL, NULL);
+   ti = elm_toolbar_item_append(tb, NULL, "Icon", NULL, NULL);
    elm_toolbar_item_tooltip_content_cb_set
      (ti, _tt_item_icon, (void *)456L, _tt_item_icon_del);
    elm_toolbar_item_tooltip_style_set(ti, "transparent");

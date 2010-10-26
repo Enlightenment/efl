@@ -18,6 +18,7 @@ static Eina_Bool _dir_has_subs(const char *path);
 static void
 _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
+   Elm_Toolbar_Item *sel;
    const char *status;
 
    if (elm_panel_hidden_get((Evas_Object*)data))
@@ -25,12 +26,14 @@ _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    else
      status = "shown";
    printf("The top panel is currently %s\n", status);
-   elm_toolbar_item_unselect_all(obj);
+   sel = elm_toolbar_selected_item_get(obj);
+   elm_toolbar_item_selected_set(sel, EINA_FALSE);
 }
 
 static void
 _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
+   Elm_Toolbar_Item *sel;
    const char *status;
 
    if (elm_panel_hidden_get((Evas_Object*)data))
@@ -38,7 +41,8 @@ _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    else
      status = "shown";
    printf("The bottom panel is currently %s\n", status);
-   elm_toolbar_item_unselect_all(obj);
+   sel = elm_toolbar_selected_item_get(obj);
+   elm_toolbar_item_selected_set(sel, EINA_FALSE);
 }
 
 static char *
@@ -182,7 +186,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(toolbar);
 
-   elm_toolbar_item_add(toolbar, "home", "Hello", _tstatus, panel);
+   elm_toolbar_item_append(toolbar, "home", "Hello", _tstatus, panel);
 
    elm_panel_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);
@@ -246,7 +250,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(toolbar, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(toolbar);
 
-   elm_toolbar_item_add(toolbar, "home", "Hello", _bstatus, panel);
+   elm_toolbar_item_append(toolbar, "home", "Hello", _bstatus, panel);
 
    elm_panel_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);

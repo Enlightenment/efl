@@ -239,10 +239,10 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
-   elm_toolbar_item_add(tb, "arrow_left", "Hello", NULL, NULL);
-   elm_toolbar_item_add(tb, "arrow_right", "Out", NULL, NULL);
-   elm_toolbar_item_add(tb, "home", "There", NULL, NULL);
-   elm_toolbar_item_add(tb, "refresh", "World", NULL, NULL);
+   elm_toolbar_item_append(tb, "arrow_left", "Hello", NULL, NULL);
+   elm_toolbar_item_append(tb, "arrow_right", "Out", NULL, NULL);
+   elm_toolbar_item_append(tb, "home", "There", NULL, NULL);
+   elm_toolbar_item_append(tb, "refresh", "World", NULL, NULL);
    
    elm_box_pack_end(o, tb);
    evas_object_show(tb);

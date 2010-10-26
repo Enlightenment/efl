@@ -14,8 +14,8 @@ struct _Widget_Data
 {
    Evas_Object *scr, *bx;
    Evas_Object *menu_parent;
-   Eina_List *items;
-   Elm_Toolbar_Item *more_item;
+   Eina_Inlist *items;
+   Elm_Toolbar_Item *more_item, *selected_item;
    Elm_Toolbar_Shrink_Mode shrink_mode;
    int icon_size;
    double align;
@@ -25,6 +25,7 @@ struct _Widget_Data
 struct _Elm_Toolbar_Item
 {
    Elm_Widget_Item base;
+   EINA_INLIST;
    const char *label;
    const char *icon_str;
    Evas_Object *icon;
@@ -40,9 +41,17 @@ struct _Elm_Toolbar_Item
    Eina_Bool menu : 1;
 };
 
+#define ELM_TOOLBAR_ITEM_FROM_INLIST(item)      \
+  ((item) ? EINA_INLIST_CONTAINER_GET(item, Elm_Toolbar_Item) : NULL)
+
+#define ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, ...)                       \
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+   ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
+
 static const char *widtype = NULL;
 static void _item_show(Elm_Toolbar_Item *it);
 static void _item_select(Elm_Toolbar_Item *it);
+static void _item_unselect(Elm_Toolbar_Item *it);
 static void _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled);
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
@@ -83,26 +92,32 @@ _item_show(Elm_Toolbar_Item *it)
 }
 
 static void
+_item_unselect(Elm_Toolbar_Item *item)
+{
+   Widget_Data *wd;
+   if ((!item) || (!item->selected)) return;
+   wd = elm_widget_data_get(item->base.widget);
+   if (!wd) return;
+   item->selected = EINA_FALSE;
+   wd->selected_item = NULL;
+   edje_object_signal_emit(item->base.view, "elm,state,unselected", "elm");
+}
+
+static void
 _item_select(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item *it2;
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Object *obj2;
-   const Eina_List *l;
 
    if (!wd) return;
    if ((it->selected) || (it->disabled) || (it->separator)) return;
-   EINA_LIST_FOREACH(wd->items, l, it2)
-     {
-	if (it2->selected)
-	  {
-	     it2->selected = EINA_FALSE;
-	     edje_object_signal_emit
-               (it2->base.view, "elm,state,unselected", "elm");
-	     break;
-	  }
-     }
+
+   it2 = elm_toolbar_selected_item_get(it->base.widget);
+   _item_unselect(it2);
+
    it->selected = EINA_TRUE;
+   wd->selected_item = it;
    edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
    _item_show(it);
    obj2 = it->base.widget;
@@ -123,8 +138,10 @@ _item_select(Elm_Toolbar_Item *it)
 static void
 _menu_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   Elm_Toolbar_Item *selected;
    Elm_Toolbar_Item *it = data;
-   elm_toolbar_item_unselect_all(it->base.widget);
+   selected = elm_toolbar_selected_item_get(it->base.widget);
+   _item_unselect(selected);
 }
 
 static void
@@ -165,16 +182,19 @@ static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Toolbar_Item *it;
+   Elm_Toolbar_Item *it, *next;
 
    if (!wd) return;
-   EINA_LIST_FREE(wd->items, it)
+   it = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
+   while(it)
      {
+        next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
         elm_widget_item_pre_notify_del(it);
 	eina_stringshare_del(it->label);
 	if (it->icon) evas_object_del(it->icon);
 	if ((!wd->menu_parent) && (it->o_menu)) evas_object_del(it->o_menu);
         elm_widget_item_del(it);
+        it = next;
      }
 }
 
@@ -191,7 +211,6 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   const Eina_List *l;
    Elm_Toolbar_Item *it;
    const char *style = elm_widget_style_get(obj);
    double scale = 0;
@@ -200,7 +219,7 @@ _theme_hook(Evas_Object *obj)
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", elm_widget_style_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
 //   edje_object_scale_set(wd->scr, scale);
-   EINA_LIST_FOREACH(wd->items, l, it)
+   EINA_INLIST_FOREACH(wd->items, it)
      {
         Evas_Object *view = it->base.view;
         Evas_Coord mw, mh;
@@ -311,7 +330,6 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
-   const Eina_List *l;
    Elm_Toolbar_Item *it;
 
    if (!wd) return;
@@ -326,8 +344,14 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
         Evas_Coord iw = 0;
-        Eina_List *sorted = eina_list_sort(eina_list_clone(wd->items), 0,
-                                           _toolbar_item_prio_compare_cb);
+        Eina_List *sorted = NULL;
+
+        EINA_INLIST_FOREACH(wd->items, it)
+          {
+             sorted = eina_list_sorted_insert(sorted,
+                                    _toolbar_item_prio_compare_cb, it);
+          }
+
         EINA_LIST_FREE(sorted, it)
           {
              Evas_Coord ciw;
@@ -348,7 +372,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
              _item_menu_create(wd, wd->more_item);
              menu = elm_toolbar_item_menu_get(wd->more_item);
 
-             EINA_LIST_FOREACH(wd->items, l, it)
+             EINA_INLIST_FOREACH(wd->items, it)
                {
                  if (wd->more_item == it) continue;
                  if (!it->prio.visible)
@@ -378,7 +402,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
         else
           {
              /* All items are visible, show them all (except for the "More" button, of course). */
-             EINA_LIST_FOREACH(wd->items, l, it)
+             EINA_INLIST_FOREACH(wd->items, it)
                {
                   if (it == wd->more_item)
                     evas_object_hide(it->base.view);
@@ -392,7 +416,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
      }
    else
      {
-        EINA_LIST_FOREACH(wd->items, l, it)
+        EINA_INLIST_FOREACH(wd->items, it)
           {
              if (it->selected)
                {
@@ -415,6 +439,68 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    Widget_Data *wd = data;
    if (!wd) return;
    _els_box_layout(o, priv, 1, wd->homogeneous);
+}
+
+static Elm_Toolbar_Item *
+_item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *icon_obj;
+   Evas_Coord mw, mh;
+   Elm_Toolbar_Item *it;
+
+   icon_obj = elm_icon_add(obj);
+   if (!icon_obj) return NULL;
+   it = elm_widget_item_new(obj, Elm_Toolbar_Item);
+   if (!it)
+     {
+        evas_object_del(icon_obj);
+        return NULL;
+     }
+   it->label = eina_stringshare_add(label);
+   it->prio.visible = 1;
+   it->prio.priority = 0;
+   it->func = func;
+   it->separator = EINA_FALSE;
+   it->base.data = data;
+   it->base.view = edje_object_add(evas_object_evas_get(obj));
+   if (_item_icon_set(icon_obj, "toolbar/", icon))
+     {
+        it->icon = icon_obj;
+        it->icon_str = eina_stringshare_add(icon);
+     }
+   else
+     {
+        it->icon = NULL;
+        it->icon_str = NULL;
+        evas_object_del(icon_obj);
+     }
+
+   _elm_theme_object_set(obj, it->base.view, "toolbar", "item",
+                         elm_widget_style_get(obj));
+   edje_object_signal_callback_add(it->base.view, "elm,action,click", "elm",
+                                   _select, it);
+   elm_widget_sub_object_add(obj, it->base.view);
+   if (it->icon)
+     {
+        int ms = 0;
+
+        ms = ((double)wd->icon_size * _elm_config->scale);
+        evas_object_size_hint_min_set(it->icon, ms, ms);
+        evas_object_size_hint_max_set(it->icon, ms, ms);
+        edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
+        evas_object_show(it->icon);
+        elm_widget_sub_object_add(obj, it->icon);
+     }
+   edje_object_part_text_set(it->base.view, "elm.text", it->label);
+   mw = mh = -1;
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   evas_object_size_hint_weight_set(it->base.view, -1.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(it->base.view, 0.5, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(it->base.view, mw, mh);
+   return it;
 }
 
 /**
@@ -446,6 +532,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->more_item = NULL;
+   wd->selected_item = NULL;
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", "default");
@@ -513,84 +600,219 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
 }
 
 /**
- * Add an item to the toolbar.
+ * Append item to the toolbar
  *
  * @param obj The toolbar object
  * @param icon The icon string
  * @param label The label of the item
  * @param func The function to call when the item is clicked
  * @param data The data to associate with the item
- *
  * @return The toolbar item, or NULL upon failure
  *
  * @ingroup Toolbar
  */
 EAPI Elm_Toolbar_Item *
-elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
+elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *icon_obj;
-   Evas_Coord mw, mh;
-   Elm_Toolbar_Item *it;
-
    if (!wd) return NULL;
-   icon_obj = elm_icon_add(obj);
-   if (!icon_obj) return NULL;
-   it = elm_widget_item_new(obj, Elm_Toolbar_Item);
-   if (!it) 
-     {
-        evas_object_del(icon_obj);
-        return NULL;
-     }
-   wd->items = eina_list_append(wd->items, it);
-   it->label = eina_stringshare_add(label);
-   it->prio.visible = 1;
-   it->prio.priority = 0;
-   it->func = func;
-   it->separator = EINA_FALSE;
-   it->base.data = data;
-   it->base.view = edje_object_add(evas_object_evas_get(obj));
-   if (_item_icon_set(icon_obj, "toolbar/", icon))
-     {
-       it->icon = icon_obj;
-       it->icon_str = eina_stringshare_add(icon);
-     }
-   else
-     {
-       it->icon = NULL;
-       it->icon_str = NULL;
-       evas_object_del(icon_obj);
-     }
 
-   _elm_theme_object_set(obj, it->base.view, "toolbar", "item", 
-                         elm_widget_style_get(obj));
-   edje_object_signal_callback_add(it->base.view, "elm,action,click", "elm",
-				   _select, it);
-   elm_widget_sub_object_add(obj, it->base.view);
-   if (it->icon)
-     {
-        int ms = 0;
+   Elm_Toolbar_Item *it = _item_new(obj, icon, label, func, data);
+   if (!it) return NULL;
 
-        ms = ((double)wd->icon_size * _elm_config->scale);
-	evas_object_size_hint_min_set(it->icon, ms, ms);
-	evas_object_size_hint_max_set(it->icon, ms, ms);
-	edje_object_part_swallow(it->base.view, "elm.swallow.icon", it->icon);
-	evas_object_show(it->icon);
-	elm_widget_sub_object_add(obj, it->icon);
-     }
-   edje_object_part_text_set(it->base.view, "elm.text", it->label);
-   mw = mh = -1;
-   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   edje_object_size_min_restricted_calc(it->base.view, &mw, &mh, mw, mh);
-   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   evas_object_size_hint_weight_set(it->base.view, -1.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(it->base.view, 0.5, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(it->base.view, mw, mh);
+   wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(it));
    evas_object_box_append(wd->bx, it->base.view);
    evas_object_show(it->base.view);
    _sizing_eval(obj);
+
    return it;
+}
+
+/**
+ * Prepend item to the toolbar
+ *
+ * @param obj The toolbar object
+ * @param icon The icon string
+ * @param label The label of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item
+ * @return The toolbar item, or NULL upon failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   Elm_Toolbar_Item *it = _item_new(obj, icon, label, func, data);
+   if (!it) return NULL;
+
+   wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
+   evas_object_box_prepend(wd->bx, it->base.view);
+   evas_object_show(it->base.view);
+   _sizing_eval(obj);
+
+   return it;
+}
+
+/**
+ * Insert item before another in the toolbar
+ *
+ * @param obj The toolbar object
+ * @param before The item to insert before
+ * @param icon The icon string
+ * @param label The label of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item
+ * @return The toolbar item, or NULL upon failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(before, NULL);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   Elm_Toolbar_Item *it = _item_new(obj, icon, label, func, data);
+   if (!it) return NULL;
+
+   wd->items = eina_inlist_prepend_relative(wd->items, EINA_INLIST_GET(it),
+                                            EINA_INLIST_GET(before));
+   evas_object_box_insert_before(wd->bx, it->base.view, before->base.view);
+   evas_object_show(it->base.view);
+   _sizing_eval(obj);
+
+   return it;
+}
+
+/**
+ * Insert item after another in the toolbar
+ *
+ * @param obj The toolbar object
+ * @param after The item to insert after
+ * @param icon The icon string
+ * @param label The label of the item
+ * @param func The function to call when the item is clicked
+ * @param data The data to associate with the item
+ * @return The toolbar item, or NULL upon failure
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Toolbar_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(after, NULL);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   Elm_Toolbar_Item *it = _item_new(obj, icon, label, func, data);
+   if (!it) return NULL;
+
+   wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                            EINA_INLIST_GET(after));
+   evas_object_box_insert_after(wd->bx, it->base.view, after->base.view);
+   evas_object_show(it->base.view);
+   _sizing_eval(obj);
+
+   return it;
+}
+
+/**
+ * Get the first item in the toolbar
+ *
+ * @param obj The toolbar object
+ * @return The first item, or NULL if none
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_first_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->items) return NULL;
+   Elm_Toolbar_Item *it = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
+   return it;
+}
+
+/**
+ * Get the last item in the toolbar
+ *
+ * @return The last item, or NULL if none
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_last_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->items) return NULL;
+   Elm_Toolbar_Item *it = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items->last);
+   return it;
+}
+
+/**
+ * Get the next item in the toolbar
+ *
+ * This returns the item after the item @p it.
+ *
+ * @param it The item
+ * @return The item after @p it, or NULL if none
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_next_get(const Elm_Toolbar_Item *item)
+{
+   Elm_Toolbar_Item *next;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
+   return next;
+}
+
+/**
+ * Get the previous item in the toolbar
+ *
+ * This returns the item before the item @p it.
+ *
+ * @param it The item
+ * @return The item before @p it, or NULL if none
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item)
+{
+   Elm_Toolbar_Item *prev;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   prev = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->prev);
+   return prev;
+}
+
+/**
+ * Get the toolbar object from an item
+ *
+ * This returns the toolbar object itself that an item belongs to.
+ *
+ * @param it The item
+ * @return The toolbar object
+ *
+ * @ingroup Toolbar
+ */
+EAPI Evas_Object *
+elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item)
+{
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   return item->base.widget;
 }
 
 /**
@@ -607,7 +829,7 @@ elm_toolbar_item_add(Evas_Object *obj, const char *icon, const char *label, Evas
 EAPI void
 elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
 {
-    if (!item) return;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
     if (item->prio.priority == priority) return;
     item->prio.priority = priority;
     _resize(item->base.widget, NULL, NULL, NULL);
@@ -624,8 +846,8 @@ elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
 EAPI int
 elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 {
-    if (!item) return 0;
-    return item->prio.priority;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, 0);
+   return item->prio.priority;
 }
 
 /**
@@ -639,7 +861,7 @@ elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 EAPI Evas_Object *
 elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 {
-   if (!item) return NULL;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
    return item->icon;
 }
 
@@ -654,7 +876,7 @@ elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 EAPI const char *
 elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item)
 {
-   if (!item) return NULL;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
    return item->icon_str;
 }
 
@@ -669,23 +891,8 @@ elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item)
 EAPI const char *
 elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
 {
-   if (!item) return NULL;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
    return item->label;
-}
-
-/**
- * Get the selected state of @p item.
- *
- * @param item The toolbar item
- * @return If true, the item is selected
- *
- * @ingroup Toolbar
- */
-EAPI Eina_Bool
-elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
-{
-   if (!item) return EINA_FALSE;
-   return item->selected;
 }
 
 /**
@@ -701,7 +908,7 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
    Evas_Coord mw = -1, mh = -1;
 
-   if (!item) return;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    eina_stringshare_replace(&item->label, label);
    edje_object_part_text_set(item->base.view, "elm.text", item->label);
 
@@ -713,6 +920,66 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
    evas_object_size_hint_min_set(item->base.view, mw, mh);
 }
 
+/**
+ * Get the selected state of @p item.
+ *
+ * @param item The toolbar item
+ * @return If true, the item is selected
+ *
+ * @ingroup Toolbar
+ */
+EAPI Eina_Bool
+elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
+{
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   return item->selected;
+}
+
+/**
+ * Set the selected state of an item
+ *
+ * This sets the selected state (1 selected, 0 not selected) of the given
+ * item @p it. If a new item is selected the previosly selected will be
+ * unselected.
+ *
+ * @param it The item
+ * @param selected The selected state
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected)
+{
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   Widget_Data *wd = elm_widget_data_get(item->base.widget);
+   if (!wd) return;
+
+   if (item->selected == selected) return;
+
+   if (selected)
+     _item_select(item);
+   else
+     _item_unselect(item);
+}
+
+/**
+ * Get the selectd item in the toolbar
+ *
+ * If no item is selected, NULL is returned.
+ *
+ * @param obj The toolbar object
+ * @return The selected item, or NULL if none.
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Toolbar_Item *
+elm_toolbar_selected_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->selected_item;
+}
 
 /**
  * Delete a toolbar item.
@@ -722,21 +989,21 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
  * @ingroup Toolbar
  */
 EAPI void
-elm_toolbar_item_del(Elm_Toolbar_Item *it)
+elm_toolbar_item_del(Elm_Toolbar_Item *item)
 {
    Widget_Data *wd;
    Evas_Object *obj2;
 
-   if ((!it) || (!it->base.widget)) return;
-   wd = elm_widget_data_get(it->base.widget);
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
-   obj2 = it->base.widget;
-   elm_widget_item_pre_notify_del(it);
-   wd->items = eina_list_remove(wd->items, it);
-   eina_stringshare_del(it->label);
-   eina_stringshare_del(it->icon_str);
-   if (it->icon) evas_object_del(it->icon);
-   elm_widget_item_del(it);
+   obj2 = item->base.widget;
+   elm_widget_item_pre_notify_del(item);
+   wd->items = eina_inlist_remove(wd->items, EINA_INLIST_GET(item));
+   eina_stringshare_del(item->label);
+   eina_stringshare_del(item->icon_str);
+   if (item->icon) evas_object_del(item->icon);
+   elm_widget_item_del(item);
    _theme_hook(obj2);
 }
 
@@ -749,23 +1016,10 @@ elm_toolbar_item_del(Elm_Toolbar_Item *it)
  * @ingroup Toolbar
  */
 EAPI void
-elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *it, Evas_Smart_Cb func)
+elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func)
 {
-   elm_widget_item_del_cb_set(it, func);
-}
-
-/**
- * Select the toolbar item @p item.
- *
- * @param item The toolbar item
- *
- * @ingroup Toolbar
- */
-EAPI void
-elm_toolbar_item_select(Elm_Toolbar_Item *item)
-{
-   if (!item) return;
-   _item_select(item);
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   elm_widget_item_del_cb_set(item, func);
 }
 
 /**
@@ -779,7 +1033,7 @@ elm_toolbar_item_select(Elm_Toolbar_Item *item)
 EAPI Eina_Bool
 elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
 {
-   if (!item) return EINA_FALSE;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->disabled;
 }
 
@@ -794,7 +1048,7 @@ elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 {
-   if (!item) return;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    _item_disable(item, disabled);
 }
 
@@ -809,7 +1063,7 @@ elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 EAPI void
 elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 {
-   if (!item) return;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    if (item->separator == separator) return;
    item->separator = separator;
    _theme_hook(item->base.view);
@@ -826,7 +1080,7 @@ elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 EAPI Eina_Bool
 elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item)
 {
-   if (!item) return EINA_FALSE;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->separator;
 }
 
@@ -863,7 +1117,8 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
      {
         elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, ELM_SMART_SCROLLER_POLICY_OFF);
 
-        wd->more_item = elm_toolbar_item_add(obj, "more_menu", "More", NULL, NULL);
+        wd->more_item = elm_toolbar_item_append(obj, "more_menu", "More",
+                                                NULL, NULL);
         elm_toolbar_item_priority_set(wd->more_item, INT_MAX);
      }
    else
@@ -937,14 +1192,13 @@ elm_toolbar_homogenous_get(const Evas_Object *obj)
 EAPI void
 elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
-   Eina_List *l;
    Elm_Toolbar_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!parent)) return;
    wd->menu_parent = parent;
-   EINA_LIST_FOREACH(wd->items, l, it)
+   EINA_INLIST_FOREACH(wd->items, it)
      {
         if (it->o_menu)
           elm_menu_parent_set(it->o_menu, wd->menu_parent);
@@ -967,49 +1221,6 @@ elm_toolbar_menu_parent_get(const Evas_Object *obj)
 
    if (!wd) return NULL;
    return wd->menu_parent;
-}
-
-/**
- * Unselect all of the items in the toolbar.
- *
- * @param obj The toolbar object
- *
- * @ingroup Toolbar
- */
-EAPI void
-elm_toolbar_item_unselect_all(Evas_Object *obj)
-{
-   Eina_List *l;
-   Elm_Toolbar_Item *it;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->items, l, it)
-     {
-        if (it->selected)
-          {
-             it->selected = EINA_FALSE;
-             edje_object_signal_emit
-               (it->base.view, "elm,state,unselected", "elm");
-             break;
-          }
-     }
-}
-
-/**
- * Unselect the specified toolbar item.
- *
- * @param item The toolbar item
- *
- * @ingroup Toolbar
- */
-EAPI void
-elm_toolbar_item_unselect(Elm_Toolbar_Item *item)
-{
-   if ((!item) || (!item->selected)) return;
-   item->selected = EINA_FALSE;
-   edje_object_signal_emit(item->base.view, "elm,state,unselected", "elm");
 }
 
 /**
@@ -1061,9 +1272,10 @@ elm_toolbar_align_get(const Evas_Object *obj)
 EAPI void
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
+   if (!wd) return;
 
-   if ((!wd) || (!item)) return;
    if (item->menu == menu) return;
    item->menu = menu;
    if (menu) _item_menu_create(wd, item);
@@ -1084,6 +1296,7 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 EAPI void
 elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_text_set(item, text);
 }
 
@@ -1110,6 +1323,7 @@ elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text)
 EAPI void
 elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
@@ -1129,6 +1343,7 @@ elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item
 EAPI void
 elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_unset(item);
 }
 
@@ -1147,6 +1362,7 @@ elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_style_set(item, style);
 }
 
@@ -1162,6 +1378,7 @@ elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style)
 EAPI const char *
 elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_tooltip_style_get(item);
 }
 
@@ -1177,6 +1394,7 @@ elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_set(item, cursor);
 }
 
@@ -1191,6 +1409,7 @@ elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
 EAPI void
 elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_unset(item);
 }
 
@@ -1208,6 +1427,7 @@ elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_style_set(item, style);
 }
 
@@ -1223,6 +1443,7 @@ elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
 EAPI const char *
 elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_cursor_style_get(item);
 }
 
@@ -1243,6 +1464,7 @@ elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine_only)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
@@ -1259,6 +1481,7 @@ elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine
 EAPI Eina_Bool
 elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
 {
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(item);
 }
 
@@ -1273,198 +1496,13 @@ elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
 EAPI Evas_Object *
 elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 {
-   if (!item) return NULL;
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return NULL;
+   /* FIXME: It's not ok. This function needs to be reviewed. And should
+    * receive a const item */
    elm_toolbar_item_menu_set(item, 1);
    return item->o_menu;
-}
-
-/**
- * Return a list of all toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return An Eina_List* of the toolbar items in @p obj
- *
- * @ingroup Toolbar
- */
-EAPI Eina_List *
-elm_toolbar_item_get_all(Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-
-   return wd->items;
-}
-
-/**
- * Return the first toolbar item in the list of toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return The first toolbar item, or NULL on failure
- *
- * @ingroup Toolbar
- */
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_get_first(Evas_Object *obj)
-{
-   Elm_Toolbar_Item *it;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!(it = eina_list_data_get(wd->items))) return NULL;
-
-   return it;
-}
-
-/**
- * Return the last toolbar item in the list of toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return The last toolbar item, or NULL on failure
- *
- * @ingroup Toolbar
- */
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_get_last(Evas_Object *obj)
-{
-   Eina_List *last;
-   Elm_Toolbar_Item *it;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!(last = eina_list_last(wd->items))) return NULL;
-   it = eina_list_data_get(last);
-
-   return it;
-}
-
-/**
- * Return the next toolbar item (relative to the currently selected
- * toolbar item) in the list of toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return The next toolbar item, or NULL on failure
- *
- * @ingroup Toolbar
- */
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_get_next(Evas_Object *obj)
-{
-   Eina_List *l, *l2;
-   Elm_Toolbar_Item *it, *next;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH_SAFE(wd->items, l, l2, it)
-     {
-        if (it->selected)
-          {
-	     if (!(next = eina_list_data_get(l2))) return NULL;
-	     return next;
-          }
-     }
-   return NULL;
-}
-
-/**
- * Selects the next non-disabled, non-separator toolbar item in the list
- * of toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return The newly selected toolbar item, or NULL on failure
- *
- * @ingroup Toolbar
- */
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_select_next(Evas_Object *obj)
-{
-   Eina_List *l, *l2;
-   Elm_Toolbar_Item *it, *next;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->items, l, it)
-     {
-        if (it->selected)
-          {
-             EINA_LIST_FOREACH(l, l2, next)
-               if ((!next->disabled) && (next->separator))
-                 {
-                    _item_select(next);
-                    return next;
-                 }
-          }
-     }
-  return NULL;
-}
-
-/**
- * Selects the first non-disabled, non-separator toolbar item in the list
- * of toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return The newly selected toolbar item, or NULL on failure
- *
- * @ingroup Toolbar
- */
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_select_first(Evas_Object *obj)
-{
-   Eina_List *l;
-   Elm_Toolbar_Item *it;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->items, l, it)
-     {
-        if ((!it->disabled) && (!it->separator))
-          {
-             _item_select(it);
-             return it;
-          }
-     }
-
-   return NULL;
-}
-
-/**
- * Selects the last non-disabled, non-separator toolbar item in the list
- * of toolbar items.
- *
- * @param obj The toolbar object
- *
- * @return The newly selected toolbar item, or NULL on failure
- *
- * @ingroup Toolbar
- */
-EAPI Elm_Toolbar_Item *
-elm_toolbar_item_select_last(Evas_Object *obj)
-{
-   Eina_List *l;
-   Elm_Toolbar_Item *it;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   EINA_LIST_REVERSE_FOREACH(wd->items, l, it)
-     {
-        if ((!it->disabled) && (!it->separator))
-          {
-             _item_select(it);
-             return it;
-          }
-     }
- 
-   return NULL;
 }
 
 /**
@@ -1479,15 +1517,14 @@ elm_toolbar_item_select_last(Evas_Object *obj)
  * @ingroup Toolbar
  */
 EAPI Elm_Toolbar_Item *
-elm_toolbar_item_find_by_label(Evas_Object *obj, const char *label)
+elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label)
 {
-   Eina_List *l;
    Elm_Toolbar_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   
+
    if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->items, l, it)
+   EINA_INLIST_FOREACH(wd->items, it)
      {
         if (!strcmp(it->label, label)) return it;
      }
