@@ -802,7 +802,7 @@ elm_toolbar_last_item_get(const Evas_Object *obj)
  *
  * This returns the item after the item @p it.
  *
- * @param it The item
+ * @param item The item
  * @return The item after @p it, or NULL if none
  *
  * @ingroup Toolbar
@@ -821,7 +821,7 @@ elm_toolbar_item_next_get(const Elm_Toolbar_Item *item)
  *
  * This returns the item before the item @p it.
  *
- * @param it The item
+ * @param item The item
  * @return The item before @p it, or NULL if none
  *
  * @ingroup Toolbar
@@ -840,7 +840,7 @@ elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item)
  *
  * This returns the toolbar object itself that an item belongs to.
  *
- * @param it The item
+ * @param item The item
  * @return The toolbar object
  *
  * @ingroup Toolbar
@@ -981,7 +981,7 @@ elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
  * item @p it. If a new item is selected the previosly selected will be
  * unselected.
  *
- * @param it The item
+ * @param item The item
  * @param selected The selected state
  *
  * @ingroup Genlist
@@ -1023,7 +1023,7 @@ elm_toolbar_selected_item_get(const Evas_Object *obj)
 /**
  * Delete a toolbar item.
  *
- * @param it The toolbar item
+ * @param item The toolbar item
  *
  * @ingroup Toolbar
  */
@@ -1049,7 +1049,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *item)
 /**
  * Set the function called when a toolbar item is freed.
  *
- * @param it The item to set the callback on
+ * @param item The item to set the callback on
  * @param func The function called
  *
  * @ingroup Toolbar
@@ -1172,7 +1172,7 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 }
 
 /**
- * Get the expand mode of toolbar @p obj.
+ * Get the shrink mode of toolbar @p obj.
  *
  * @param obj The toolbar object
  * @return See elm_toolbar_mode_shrink_set.
