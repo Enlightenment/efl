@@ -766,7 +766,7 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, unsigned int w, unsigned 
    tex->w = w;
    tex->h = h;
    tex->pt->references++; 
-  return tex;
+   return tex;
 }
 
 Evas_GL_Texture *
