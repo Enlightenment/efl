@@ -231,6 +231,9 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_EDB
   EVAS_EINA_STATIC_MODULE_USE(image_loader, edb),
 #endif
+#ifdef EVAS_STATIC_BUILD_TGA
+  EVAS_EINA_STATIC_MODULE_USE(image_loader, tga),
+#endif
 #ifdef EVAS_STATIC_BUILD_EDB
   EVAS_EINA_STATIC_MODULE_USE(image_saver, edb),
 #endif
