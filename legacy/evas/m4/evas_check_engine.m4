@@ -75,9 +75,9 @@ evas_engine_[]$1[]_libs=""
 AC_PATH_X
 AC_PATH_XTRA
 
-AC_CHECK_HEADERS([X11/X.h X11/extensions/Xrender.h],
+AC_CHECK_HEADERS([X11/Xlib.h X11/extensions/Xrender.h],
    [have_dep="yes"],
-   [have_dep="no"])
+   [have_dep="no"; break;])
 
 if test "x${have_dep}" = "xyes" ; then
    AC_CHECK_LIB([X11], [XCreateImage], [have_dep="yes"], [have_dep="no"])
@@ -408,7 +408,7 @@ AC_CHECK_HEADERS([d3d9.h d3dx9.h],
     have_dep="yes"
     evas_engine_[]$1[]_libs="-ld3d9 -ld3dx9 -lgdi32"
    ],
-   [have_dep="no"]
+   [have_dep="no"; break]
 )
 
 AC_SUBST([evas_engine_$1_cflags])
@@ -436,7 +436,7 @@ AC_REQUIRE([EVAS_MAYBE_GET_OBJCPP])
 AS_IF([test "x${rw_cv_prog_objc_works}" = "xyes"],
 [
    AC_LANG_PUSH([Objective C]) 
-   AC_CHECK_HEADERS([/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h],
+   AC_CHECK_HEADER([/System/Library/Frameworks/Cocoa.framework/Headers/Cocoa.h],
       [
        have_dep="yes"
        evas_engine_[]$1[]_libs="-framework Cocoa"
@@ -477,7 +477,7 @@ AC_CHECK_HEADERS([GL/gl.h GL/glew.h],
     have_dep="yes"
     evas_engine_[]$1[]_libs="-lglew32 -lopengl32 -lgdi32"
    ],
-   [have_dep="no"]
+   [have_dep="no"; break;]
 )
 
 AC_SUBST([evas_engine_$1_cflags])
