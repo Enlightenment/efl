@@ -1619,6 +1619,7 @@ echo "  SVG.....................: $have_evas_image_loader_svg"
 echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
 echo "  BMP.....................: $have_evas_image_loader_bmp"
+echo "  TGA.....................: $have_evas_image_loader_tga"
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_evas_font_loader_eet"
