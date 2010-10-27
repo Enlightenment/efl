@@ -153,6 +153,15 @@ ecore_file_download(const char *url,
         if(job_ret) *job_ret = job;
         return job ? EINA_TRUE : EINA_FALSE;
      }
+# else
+   else if ((!strncmp(url, "http://", 7)) ||
+            (!strncmp(url, "ftp://", 6)))
+     {
+        (void)completion_cb;
+        (void)progress_cb;
+        (void)data;
+        (void)job_ret;
+     }
 # endif
    else
      {
