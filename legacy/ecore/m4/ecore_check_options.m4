@@ -175,12 +175,6 @@ if test "x${_ecore_want_gnutls}" = "xyes" -o "x${_ecore_want_gnutls}" = "xauto" 
    PKG_CHECK_MODULES([TLS2], [gnutls >= 2.10.2],
       [AC_DEFINE(USE_GNUTLS2, 1, [Use GnuTLS 2 or higher])],
       [dummy="no"])
-   PKG_CHECK_MODULES([TLSTICKET], [gnutls >= 2.10.2],
-      [AC_DEFINE(USE_GNUTLS2_10, 1, [Use GnuTLS 2.10])],
-      [dummy="no"])
-   PKG_CHECK_MODULES([TLSSTRERROR], [gnutls >= 2.10.2],
-      [AC_DEFINE(USE_GNUTLS2_6, 1, [Use GnuTLS 2.6])],
-      [dummy="no"])
    if test "x$_ecore_have_gnutls" = "xyes";then
      AC_PATH_GENERIC([libgcrypt], [], [_ecore_have_gnutls="yes"], [_ecore_have_gnutls="no"])
         if test "x${_ecore_have_gnutls}" = "xyes" ; then

@@ -48,10 +48,8 @@ static int _client_connected = 0;
 static void
 _gnutls_print_errors(int ret)
 {
-#ifdef USE_GNUTLS2_6
   if (ret)
     ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
-#endif
 }
 
 
@@ -66,10 +64,8 @@ SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
         return "Client hello";
       case GNUTLS_HANDSHAKE_SERVER_HELLO:
         return "Server hello";
-#ifdef USE_GNUTLS2_10
       case GNUTLS_HANDSHAKE_NEW_SESSION_TICKET:
         return "New session ticket";
-#endif
       case GNUTLS_HANDSHAKE_CERTIFICATE_PKT:
         return "Certificate packet";
       case GNUTLS_HANDSHAKE_SERVER_KEY_EXCHANGE:
@@ -450,11 +446,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    const gnutls_datum_t *cert_list;
    unsigned int iter, cert_list_size;
    gnutls_x509_crt_t cert = NULL;
-#ifdef USE_GNUTLS2_10
    const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
-#else
-   const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
-#endif
    int ret = 0;
 
    switch (svr->ssl_state)
@@ -486,9 +478,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
           }
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
-#ifdef USE_GNUTLS2_10
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_client(svr->session));
-#endif
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_server_name_set(svr->session, GNUTLS_NAME_DNS, svr->name, strlen(svr->name)));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(svr->session, priority, NULL));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
@@ -500,9 +490,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
       case ECORE_CON_SSL_STATE_HANDSHAKING:
         ret = gnutls_handshake(svr->session);
-#ifdef USE_GNUTLS2_6
         DBG("calling gnutls_handshake(): returned with '%s'", gnutls_strerror_name(ret));
-#endif
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
         if (!ret)
           {
@@ -533,12 +521,10 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
      ERR("The certificate hasn't got a known issuer.");
    else if (iter & GNUTLS_CERT_REVOKED)
      ERR("The certificate has been revoked.");
-#ifdef USE_GNUTLS2_10
    else if (iter & GNUTLS_CERT_EXPIRED)
      ERR("The certificate has expired");
    else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
      ERR("The certificate is not yet activated");
-#endif
 
    if (iter)
      goto error;
@@ -745,11 +731,7 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 {
-#ifdef USE_GNUTLS2_10
    const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
-#else
-   const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
-#endif
    int ret = 0;
 
    switch (cl->ssl_state)
