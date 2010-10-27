@@ -872,6 +872,7 @@ extern "C" {
    EAPI Eina_Bool    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
    EAPI Eina_Bool    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
    EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+   EAPI const Evas_Object *elm_layout_content_get(const Evas_Object *obj, const char *swallow);
    EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
    EAPI void         elm_layout_text_set(Evas_Object *obj, const char *part, const char *text);
    EAPI const char  *elm_layout_text_get(const Evas_Object *obj, const char *part);
@@ -895,6 +896,66 @@ extern "C" {
   EAPI const char   *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
   EAPI Eina_Bool     elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
   EAPI Eina_Bool     elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
+
+/**
+ * @def elm_layout_icon_set
+ * Convienience macro to set the icon object in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ */
+#define elm_layout_icon_set(_ly, _obj) \
+  elm_layout_content_set((_ly), "elm.swallow.icon", (_obj))
+
+/**
+ * @def elm_layout_icon_get
+ * Convienience macro to get the icon object from a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ */
+#define elm_layout_icon_get(_ly, _obj) \
+  elm_layout_content_get((_ly), "elm.swallow.icon", (_obj))
+
+/**
+ * @def elm_layout_end_set
+ * Convienience macro to set the end object in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ */
+#define elm_layout_end_set(_ly, _obj) \
+  elm_layout_content_set((_ly), "elm.swallow.end", (_obj))
+
+/**
+ * @def elm_layout_end_get
+ * Convienience macro to get the end object in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ */
+#define elm_layout_end_get(_ly, _obj) \
+  elm_layout_content_get((_ly), "elm.swallow.end", (_obj))
+
+/**
+ * @def elm_layout_label_set
+ * Convienience macro to set the label in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ */
+#define elm_layout_label_set(_ly, _txt) \
+  elm_layout_text_set((_ly), "elm.text", (_txt))
+
+/**
+ * @def elm_layout_label_get
+ * Convienience macro to get the label in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ */
+#define elm_layout_label_get(_ly, _txt) \
+  elm_layout_text_get((_ly), "elm.text", (_txt))
 
    /* smart callbacks called:
     */

@@ -417,6 +417,32 @@ elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conte
 }
 
 /**
+ * Get the swallowed object in the given part
+ *
+ * @param obj The layout object
+ * @param swallow The SWALLOW part to get its content
+ *
+ * @return The swallowed object or NULL if none or an error occurred
+ *
+ * @ingroup Layout
+ */
+EAPI const Evas_Object *
+elm_layout_content_get(const Evas_Object *obj, const char *swallow)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Eina_List *l;
+   Subinfo *si;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if ((si->type == SWALLOW) && !strcmp(swallow, si->part))
+          return si->obj;
+     }
+   return NULL;
+}
+
+/**
  * Unset the layout content
  *
  * Unparent and return the content object which was set for this widget
