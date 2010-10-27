@@ -378,6 +378,7 @@ static Eina_Bool _item_single_select_up(Widget_Data *wd);
 static Eina_Bool _item_single_select_down(Widget_Data *wd);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
+static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
@@ -473,10 +474,26 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         elm_genlist_item_expanded_set(it,
                                       !elm_genlist_item_expanded_get(it));
      }
+   else if (!strcmp(ev->keyname, "Escape"))
+     {
+       if (!_deselect_all_items(wd)) return EINA_FALSE;
+       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+       return EINA_TRUE;
+     }
    else return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    elm_smart_scroller_child_pos_set(wd->scr, x, y);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_deselect_all_items(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   while(wd->selected)
+     elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
+
    return EINA_TRUE;
 }
 
@@ -533,8 +550,7 @@ _item_single_select_up(Widget_Data *wd)
    Elm_Genlist_Item *prev = elm_genlist_item_prev_get(wd->last_selected_item);
    if (!prev) return EINA_FALSE;
 
-   while (wd->selected)
-     elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
+   _deselect_all_items(wd);
 
    elm_genlist_item_selected_set(prev, EINA_TRUE);
    elm_genlist_item_show(prev);
@@ -548,8 +564,7 @@ _item_single_select_down(Widget_Data *wd)
    Elm_Genlist_Item *next = elm_genlist_item_next_get(wd->last_selected_item);
    if (!next) return EINA_FALSE;
 
-   while (wd->selected)
-     elm_genlist_item_selected_set(wd->selected->data, EINA_FALSE);
+   _deselect_all_items(wd);
 
    elm_genlist_item_selected_set(next, EINA_TRUE);
    elm_genlist_item_show(next);

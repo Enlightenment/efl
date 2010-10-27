@@ -76,6 +76,7 @@ static Eina_Bool _item_single_select_up(Widget_Data *wd);
 static Eina_Bool _item_single_select_down(Widget_Data *wd);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
+static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
 #define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)			\
   if (!it)								\
@@ -205,10 +206,26 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y += page_y;
      }
+   else if (!strcmp(ev->keyname, "Escape"))
+     {
+       if (!_deselect_all_items(wd)) return EINA_FALSE;
+       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+       return EINA_TRUE;
+     }
    else return EINA_FALSE;
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    elm_smart_scroller_child_pos_set(wd->scr, x, y);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_deselect_all_items(Widget_Data *wd)
+{
+   if (!wd->selected) return EINA_FALSE;
+   while(wd->selected)
+     elm_list_item_selected_set(wd->selected->data, EINA_FALSE);
+
    return EINA_TRUE;
 }
 
@@ -265,9 +282,7 @@ _item_single_select_up(Widget_Data *wd)
    Elm_List_Item *prev = elm_list_item_prev(wd->last_selected_item);
    if (!prev) return EINA_FALSE;
 
-   while(wd->selected)
-     elm_list_item_selected_set(eina_list_data_get(wd->selected),
-                                EINA_FALSE);
+   _deselect_all_items(wd);
 
    elm_list_item_selected_set(prev, EINA_TRUE);
    elm_list_item_show(prev);
@@ -281,9 +296,7 @@ _item_single_select_down(Widget_Data *wd)
    Elm_List_Item *next = elm_list_item_next(wd->last_selected_item);
    if (!next) return EINA_FALSE;
 
-   while(wd->selected)
-     elm_list_item_selected_set(eina_list_data_get(wd->selected),
-                                EINA_FALSE);
+   _deselect_all_items(wd);
 
    elm_list_item_selected_set(next, EINA_TRUE);
    elm_list_item_show(next);
