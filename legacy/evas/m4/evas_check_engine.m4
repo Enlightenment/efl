@@ -125,7 +125,7 @@ evas_engine_[]$1[]_libs=""
 AC_PATH_X
 AC_PATH_XTRA
 
-AC_CHECK_HEADER([stdio.h],
+AC_CHECK_HEADER([GL/gl.h],
    [have_dep="yes"],
    [have_dep="no"],
    [
@@ -181,7 +181,7 @@ else
       x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
       x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext -lXrender"
    fi
-   AC_CHECK_HEADER([stdio.h],
+   AC_CHECK_HEADER([GLES2/gl2.h],
       [have_egl="yes"],
       [have_egl="no"],
       [
@@ -553,7 +553,7 @@ if test "x$have_gl_pt" = "xyes" ; then
    gl_pt_lib=" -lpthread"
 fi
 
-AC_CHECK_HEADER([stdio.h],
+AC_CHECK_HEADER([GL/gl.h],
    [have_dep="yes"],
    [have_dep="no"],
    [
@@ -570,7 +570,7 @@ if test "x${have_dep}" = "xyes" ; then
    evas_engine_[]$1[]_libs="${SDL_LIBS} -lGL -lm $gl_pt_lib"
    evas_engine_gl_common_libs="-lGL -lm $gl_pt_lib"
 else
-   AC_CHECK_HEADER([stdio.h],
+   AC_CHECK_HEADER([SDL/SDL_opengles.h],
       [have_egl="yes"],
       [have_egl="no"],
       [
