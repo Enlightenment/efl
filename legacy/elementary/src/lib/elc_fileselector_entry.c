@@ -597,7 +597,7 @@ elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj)
 }
 
 /**
- * Set the icon used for the entry
+ * Set the icon used for the entry button
  *
  * Once the icon object is set, a previously set one will be deleted.
  *
@@ -616,7 +616,7 @@ elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 }
 
 /**
- * Get the icon used for the entry
+ * Get the icon used for the entry button
  *
  * @param obj The entry object
  * @return The image for the entry
@@ -630,4 +630,23 @@ elm_fileselector_entry_button_icon_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return elm_fileselector_button_icon_get(wd->button);
+}
+
+/**
+ * Unset the icon used for the entry button
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @param obj The entry object
+ * @return The icon object that was being used
+ *
+ * @ingroup File_Selector_Entry
+ */
+EAPI Evas_Object *
+elm_fileselector_entry_button_icon_unset(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return elm_fileselector_button_icon_unset(wd->button);
 }
