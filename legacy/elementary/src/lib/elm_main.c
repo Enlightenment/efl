@@ -432,6 +432,12 @@ elm_quicklaunch_mode_set(Eina_Bool ql_on)
    quicklaunch_on = ql_on;
 }
 
+EAPI Eina_Bool
+elm_quicklaunch_mode_get(void)
+{
+   return quicklaunch_on;
+}
+
 EAPI int
 elm_quicklaunch_init(int argc, char **argv)
 {
@@ -1220,7 +1226,7 @@ elm_scale_all_set(double scale)
  * @ingroup Profile
  */
 EAPI const char *
-elm_profile_current_get(void)
+elm_profile_get(void)
 {
    return _elm_config_current_profile_get();
 }

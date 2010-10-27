@@ -1179,6 +1179,24 @@ elm_win_title_set(Evas_Object *obj, const char *title)
 }
 
 /**
+ * Get the title of the window
+ *
+ * @param obj The window object
+ * @return The title
+ *
+ * @ingroup Win
+ */
+EAPI const char *
+elm_win_title_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   win = elm_widget_data_get(obj);
+   if (!win) return NULL;
+   return ecore_evas_title_get(win->ee);
+}
+
+/**
  * Set the window's autodel state.
  *
  * @param obj The window object
@@ -1194,6 +1212,24 @@ elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel)
    win = elm_widget_data_get(obj);
    if (!win) return;
    win->autodel = autodel;
+}
+
+/**
+ * Get the window's autodel state.
+ *
+ * @param obj The window object
+ * @return If the window will automatically delete itself when closed
+ *
+ * @ingroup Win
+ */
+EAPI Eina_Bool
+elm_win_autodel_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return win->autodel;
 }
 
 /**
@@ -1791,6 +1827,40 @@ elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
 }
 
 /**
+ * Gets the keyboard mode of the window.
+ *
+ * @param obj The window object
+ * @return The mode; one of:
+ * ELM_WIN_KEYBOARD_UNKNOWN
+ * ELM_WIN_KEYBOARD_OFF
+ * ELM_WIN_KEYBOARD_ON
+ * ELM_WIN_KEYBOARD_ALPHA
+ * ELM_WIN_KEYBOARD_NUMERIC
+ * ELM_WIN_KEYBOARD_PIN
+ * ELM_WIN_KEYBOARD_PHONE_NUMBER
+ * ELM_WIN_KEYBOARD_HEX
+ * ELM_WIN_KEYBOARD_TERMINAL
+ * ELM_WIN_KEYBOARD_PASSWORD
+ * ELM_WIN_KEYBOARD_IP
+ * ELM_WIN_KEYBOARD_HOST
+ * ELM_WIN_KEYBOARD_FILE
+ * ELM_WIN_KEYBOARD_URL
+ * ELM_WIN_KEYBOARD_KEYPAD
+ * ELM_WIN_KEYBOARD_J2ME
+ *
+ * @ingroup Win
+ */
+EAPI Elm_Win_Keyboard_Mode
+elm_win_keyboard_mode_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_WIN_KEYBOARD_UNKNOWN;
+   win = elm_widget_data_get(obj);
+   if (!win) return ELM_WIN_KEYBOARD_UNKNOWN;
+   return win->kbdmode;
+}
+
+/**
  * Sets whether the window is a keyboard.
  *
  * @param obj The window object
@@ -1810,6 +1880,29 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
    if (win->xwin)
      ecore_x_e_virtual_keyboard_set(win->xwin, is_keyboard);
 #endif
+}
+
+/**
+ * Gets whether the window is a keyboard.
+ *
+ * @param obj The window object
+ * @return If the window is a virtual keyboard
+ *
+ * @ingroup Win
+ */
+EAPI Eina_Bool
+elm_win_keyboard_win_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
+   if (win->xwin)
+     return ecore_x_e_virtual_keyboard_get(win->xwin);
+#endif
+   return EINA_FALSE;
 }
 
 /**
@@ -2045,6 +2138,29 @@ elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
    if (win->xwin)
      ecore_x_e_illume_quickpanel_zone_set(win->xwin, zone);
 #endif
+}
+
+/**
+ * Get which zone this quickpanel should appear in
+ *
+ * @param obj The window object
+ * @return The requested zone for this quickpanel
+ *
+ * @ingroup Win
+ */
+EAPI int
+elm_win_quickpanel_zone_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   win = elm_widget_data_get(obj);
+   if (!win) return 0;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
+   if (win->xwin)
+     return ecore_x_e_illume_quickpanel_zone_get(win->xwin);
+#endif
+   return 0;
 }
 
 /**

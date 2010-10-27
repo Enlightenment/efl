@@ -296,6 +296,7 @@ extern "C" {
    EAPI void         elm_exit(void);
 
    EAPI void         elm_quicklaunch_mode_set(Eina_Bool ql_on);
+   EAPI Eina_Bool    elm_quicklaunch_mode_get(void);
    EAPI int          elm_quicklaunch_init(int argc, char **argv);
    EAPI int          elm_quicklaunch_sub_init(int argc, char **argv);
    EAPI int          elm_quicklaunch_sub_shutdown(void);
@@ -332,7 +333,7 @@ extern "C" {
    EAPI void         elm_scale_set(double scale);
    EAPI void         elm_scale_all_set(double scale);
 
-   EAPI const char  *elm_profile_current_get(void);
+   EAPI const char  *elm_profile_get(void);
    EAPI char        *elm_profile_dir_get(const char *profile);
    EAPI Eina_List   *elm_profile_list_get(void);
    EAPI void         elm_profile_list_free(Eina_List *l);
@@ -402,7 +403,9 @@ extern "C" {
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_win_resize_object_del(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_win_title_set(Evas_Object *obj, const char *title);
+   EAPI const char  *elm_win_title_get(const Evas_Object *obj);
    EAPI void         elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
+   EAPI Eina_Bool    elm_win_autodel_get(const Evas_Object *obj);
    EAPI void         elm_win_activate(Evas_Object *obj);
    EAPI void         elm_win_lower(Evas_Object *obj);
    EAPI void         elm_win_raise(Evas_Object *obj);
@@ -438,6 +441,7 @@ extern "C" {
    EAPI void         elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority);
    EAPI int          elm_win_quickpanel_priority_minor_get(const Evas_Object *obj);
    EAPI void         elm_win_quickpanel_zone_set(Evas_Object *obj, int zone);
+   EAPI int          elm_win_quickpanel_zone_get(const Evas_Object *obj);
    EAPI void         elm_win_focus_highlight_enabled_set(Evas_Object *obj, Eina_Bool enabled);
    EAPI Eina_Bool    elm_win_focus_highlight_enabled_get(const Evas_Object *obj);
    EAPI void         elm_win_focus_highlight_style_set(Evas_Object *obj, const char *style);
@@ -457,7 +461,9 @@ extern "C" {
     *
     */
    EAPI void         elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode);
+   EAPI Elm_Win_Keyboard_Mode elm_win_keyboard_mode_get(const Evas_Object *obj);
    EAPI void         elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard);
+   EAPI Eina_Bool    elm_win_keyboard_win_get(const Evas_Object *obj);
 
    EAPI void         elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y);
 
@@ -482,6 +488,7 @@ extern "C" {
     */
   typedef enum _Elm_Bg_Option
     {
+      ELM_BG_OPTION_INVALID = -1,
       ELM_BG_OPTION_CENTER,
       ELM_BG_OPTION_SCALE,
       ELM_BG_OPTION_STRETCH,
@@ -490,8 +497,11 @@ extern "C" {
 
    EAPI Evas_Object *elm_bg_add(Evas_Object *parent);
    EAPI void         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group);
    EAPI void         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
+   EAPI Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj);
    EAPI void         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
+   EAPI void         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
    EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay);
    EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj);
@@ -501,12 +511,19 @@ extern "C" {
 
    EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
    EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group);
    EAPI Eina_Bool             elm_icon_standard_set(Evas_Object *obj, const char *name);
+   EAPI const char           *elm_icon_standard_get(const Evas_Object *obj);
    EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+   EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
    EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+   EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
    EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+   EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
    EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
+   EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_Object *obj);
    EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
+   EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
    EAPI void                  elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
    EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj);
    /* smart callbacks called:
@@ -527,14 +544,22 @@ extern "C" {
 
    EAPI Evas_Object *elm_image_add(Evas_Object *parent);
    EAPI Eina_Bool    elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
+   EAPI void         elm_image_file_get(const Evas_Object *obj, const char **file, const char **group);
    EAPI void         elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+   EAPI Eina_Bool    elm_image_smooth_get(const Evas_Object *obj);
    EAPI void         elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
    EAPI void         elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+   EAPI Eina_Bool    elm_image_no_scale_get(const Evas_Object *obj);
    EAPI void         elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+   EAPI void         elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
    EAPI void         elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
+   EAPI Eina_Bool    elm_image_fill_outside_get(const Evas_Object *obj);
    EAPI void         elm_image_prescale_set(Evas_Object *obj, int size);
+   EAPI int          elm_image_prescale_get(const Evas_Object *obj);
    EAPI void         elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient);
+   EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj);
    EAPI void         elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
+   EAPI Eina_Bool    elm_image_editable_get(const Evas_Object *obj);
    /* smart callbacks called:
     * "clicked" - the user clicked the image
     */
@@ -543,7 +568,9 @@ extern "C" {
 
    EAPI Evas_Object *elm_box_add(Evas_Object *parent);
    EAPI void         elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+   EAPI Eina_Bool    elm_box_horizontal_get(const Evas_Object *obj);
    EAPI void         elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous);
+   EAPI Eina_Bool    elm_box_homogenous_get(const Evas_Object *obj);
    EAPI void         elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before);
@@ -552,8 +579,10 @@ extern "C" {
    EAPI void         elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
    EAPI void         elm_box_unpack_all(Evas_Object *obj);
    EAPI const Eina_List *elm_box_children_get(const Evas_Object *obj);
-   EAPI void         elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
-   EAPI void         elm_box_align_set(const Evas_Object *obj, double horizontal, double vertical);
+   EAPI void         elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
+   EAPI void         elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical);
+   EAPI void         elm_box_align_set(Evas_Object *obj, double horizontal, double vertical);
+   EAPI void         elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
 
    EAPI void         elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
    EAPI void         elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data);

@@ -408,6 +408,23 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 }
 
 /**
+ * Get the horizontal orientation
+ *
+ * @param obj The box object
+ * @return If is horizontal
+ *
+ * @ingroup Box
+ */
+EAPI Eina_Bool
+elm_box_horizontal_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
+}
+
+/**
  * Set homogenous layout
  *
  * If enabled, homogenous layout makes all items the same size. This size is
@@ -444,6 +461,23 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 	  evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
 				     NULL, NULL);
      }*/
+}
+
+/**
+ * Get homogenous layout
+ *
+ * @param obj The box object
+ * @return If is homogenous
+ *
+ * @ingroup Box
+ */
+EAPI Eina_Bool
+elm_box_homogenous_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->homogeneous;
 }
 
 /**
@@ -787,13 +821,31 @@ elm_box_children_get(const Evas_Object *obj)
  * 
  * @ingroup Box
  */
-EAPI void 
-elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) 
+EAPI void
+elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_box_padding_set(wd->box, horizontal, vertical);
+}
+
+/**
+ * Get the space (padding) between the box's elements.
+ *
+ * @param obj The Elm_Box
+ * @param horizontal The horizontal space between elements
+ * @param vertical The vertical space between elements
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_box_padding_get(wd->box, horizontal, vertical);
 }
 
 /**
@@ -805,11 +857,29 @@ elm_box_padding_set(const Evas_Object *obj, Evas_Coord horizontal, Evas_Coord ve
  * 
  * @ingroup Box
  */
-EAPI void 
-elm_box_align_set(const Evas_Object *obj, double horizontal, double vertical) 
+EAPI void
+elm_box_align_set(Evas_Object *obj, double horizontal, double vertical)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_box_align_set(wd->box, horizontal, vertical);
+}
+
+/**
+ * Get the alignment of the whole bouding box of contents.
+ *
+ * @param obj The Elm_Box
+ * @param horizontal The horizontal alignment of elements
+ * @param vertical The vertical alignment of elements
+ *
+ * @ingroup Box
+ */
+EAPI void
+elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_box_align_get(wd->box, horizontal, vertical);
 }

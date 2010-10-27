@@ -199,6 +199,25 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 }
 
 /**
+ * Get the file (image or edje) used for the background
+ *
+ * @param obj The bg object
+ * @param file The file path
+ * @param group Optional key (group in Edje) within the file
+ *
+ * @ingroup Bg
+ */
+EAPI void
+elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!file) return;
+   if (file) *file = wd->file;
+   if (group) *group = wd->group;
+}
+
+/**
  * Set the option used for the background image
  *
  * @param obj The bg object
@@ -218,6 +237,24 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
    wd = elm_widget_data_get(obj);
    wd->option = option;
    _custom_resize(wd, NULL, NULL, NULL);
+}
+
+/**
+ * Get the option used for the background image
+ *
+ * @param obj The bg object
+ * @return The desired background option (TILE, SCALE)
+ *
+ * @ingroup Bg
+ */
+EAPI Elm_Bg_Option
+elm_bg_option_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_BG_OPTION_INVALID;
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   return wd->option;
 }
 
 /**
@@ -247,6 +284,26 @@ elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
         _custom_resize(wd, NULL, NULL, NULL);
      }
    evas_object_color_set(wd->rect, r, g, b, 255);
+}
+
+/**
+ * Get the option used for the background color
+ *
+ * @param obj The bg object
+ * @param r
+ * @param g
+ * @param b
+ *
+ * @ingroup Bg
+ */
+EAPI void
+elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   evas_object_color_get(wd->rect, r, g, b, NULL);
 }
 
 /**

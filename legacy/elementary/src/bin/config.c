@@ -258,7 +258,7 @@ _profile_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
    li = data;
    selection = elm_list_item_data_get(elm_list_selected_item_get(li));
 
-   if (!strcmp(elm_profile_current_get(), selection))
+   if (!strcmp(elm_profile_get(), selection))
      return;
 
    elm_profile_all_set(selection);
@@ -695,7 +695,7 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    if (!sel_profile)
        return;
 
-   cur_profile = elm_profile_current_get();
+   cur_profile = elm_profile_get();
    cur_selected = !strcmp(cur_profile, sel_profile);
 
    elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
@@ -744,7 +744,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
    elm_list_clear(l_widget);
    efreet_init();
 
-   cur_profile = elm_profile_current_get();
+   cur_profile = elm_profile_get();
 
    EINA_LIST_FOREACH(p_names, l, profile)
      {

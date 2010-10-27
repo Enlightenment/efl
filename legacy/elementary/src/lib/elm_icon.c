@@ -188,6 +188,24 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
+/**
+ * Get the file that will be used as icon
+ *
+ * @param obj The icon object
+ * @param file The path to file that will be used as icon
+ * @param group The group that the icon belongs in edje file
+ *
+ * @ingroup Icon
+ */
+EAPI void
+elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _els_smart_icon_file_get(wd->img, file, group);
+}
+
 static Eina_Bool
 _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
 {
@@ -296,6 +314,23 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
 }
 
 /**
+ * Get the theme, as standard, for a icon
+ *
+ * @param obj The icon object
+ * @return The theme name
+ *
+ * @ingroup Icon
+ */
+EAPI const char *
+elm_icon_standard_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->stdicon;
+}
+
+/**
  * Sets icon lookup order, used by elm_icon_standard_set().
  *
  * @param obj The icon object
@@ -349,6 +384,24 @@ elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 }
 
 /**
+ * Get the smooth effect for a icon
+ *
+ * @param obj The icon object
+ * @return If setted smooth effect
+ *
+ * @ingroup Icon
+ */
+EAPI Eina_Bool
+elm_icon_smooth_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return EINA_FALSE;
+   return wd->smooth;
+}
+
+/**
  * Set if the object is scalable
  *
  * @param obj The icon object
@@ -366,6 +419,23 @@ elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
    if (!wd) return;
    wd->no_scale = no_scale;
    _sizing_eval(obj);
+}
+
+/**
+ * Get if the object isn't scalable
+ *
+ * @param obj The icon object
+ * @return If isn't scalable
+ *
+ * @ingroup Icon
+ */
+EAPI Eina_Bool
+elm_icon_no_scale_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->no_scale;
 }
 
 /**
@@ -390,6 +460,25 @@ elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
 }
 
 /**
+ * Get if the object is (up/down) scalable
+ *
+ * @param obj The icon object
+ * @param scale_up A bool to set if the object is scalable up
+ * @param scale_down A bool to set if the object is scalable down
+ *
+ * @ingroup Icon
+ */
+EAPI void
+elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (scale_up) *scale_up = wd->scale_up;
+   if (scale_down) *scale_down = wd->scale_down;
+}
+
+/**
  * Set if the object is filled outside
  *
  * @param obj The icon object
@@ -409,6 +498,23 @@ elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
    _sizing_eval(obj);
 }
 
+/**
+ * Get if the object is filled outside
+ *
+ * @param obj The icon object
+ * @return If the object is filled outside
+ *
+ * @ingroup Icon
+ */
+EAPI Eina_Bool
+elm_icon_fill_outside_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return EINA_FALSE;
+   return wd->fill_outside;
+}
 
 /**
  * Set the prescale size for the icon
@@ -428,4 +534,20 @@ elm_icon_prescale_set(Evas_Object *obj, int size)
    _els_smart_icon_scale_size_set(wd->img, size);
 }
 
+/**
+ * Get the prescale size for the icon
+ *
+ * @param obj The icon object
+ * @return The prescale size
+ *
+ * @ingroup Icon
+ */
+EAPI int
+elm_icon_prescale_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return 0;
+   return _els_smart_icon_scale_size_get(wd->img);
+}
