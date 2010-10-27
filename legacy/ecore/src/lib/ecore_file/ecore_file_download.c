@@ -161,6 +161,7 @@ ecore_file_download(const char *url,
         (void)progress_cb;
         (void)data;
         (void)job_ret;
+        return EINA_FALSE;
      }
 # endif
    else
