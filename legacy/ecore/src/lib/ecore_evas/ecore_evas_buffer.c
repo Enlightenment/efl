@@ -42,6 +42,7 @@ static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    Evas_Engine_Info_Buffer *einfo;
+   int stride = 0;
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -55,6 +56,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    if (ee->engine.buffer.image)
      {
         ee->engine.buffer.pixels = evas_object_image_data_get(ee->engine.buffer.image, 1);
+        stride = evas_object_image_stride_get(ee->engine.buffer.image);
      }
    else
      {
@@ -64,6 +66,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
         ee->engine.buffer.pixels = 
           ee->engine.buffer.alloc_func(ee->engine.buffer.data,
                                        ee->w * ee->h * sizeof(int));
+        stride = ee->w * sizeof(int);
      }
 
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
@@ -71,7 +74,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
      {
         einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
         einfo->info.dest_buffer = ee->engine.buffer.pixels;
-        einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
+        einfo->info.dest_buffer_row_bytes = stride;
         einfo->info.use_color_key = 0;
         einfo->info.alpha_threshold = 0;
         einfo->info.func.new_update_region = NULL;
@@ -718,7 +721,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
      {
         einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
         einfo->info.dest_buffer = ee->engine.buffer.pixels;
-        einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
+        einfo->info.dest_buffer_row_bytes = evas_object_image_stride_get(o);
         einfo->info.use_color_key = 0;
         einfo->info.alpha_threshold = 0;
         einfo->info.func.new_update_region = NULL;
