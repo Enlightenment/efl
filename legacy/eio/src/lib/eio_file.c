@@ -18,6 +18,90 @@
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * @page tutorial_file_ls eio_file_ls() tutorial
+ *
+ * To use eio_file_ls(), you just need to define four callbacks:
+ *
+ * @li The filter callback, which allow or not a file to be seen
+ * by the main loop handler. This callback run in a separated thread.
+ * @li The main callback, which receive in the main loop all the file
+ * that are allowed by the filter. If you are updating a user interface
+ * it make sense to delay the insertion a little, so you get a chance
+ * to update the canvas for a bunch of file instead of one by one.
+ * @li The end callback, which is called in the main loop when the
+ * content of the directory has been correctly scanned and all the
+ * file notified to the main loop.
+ * @li The error callback, which is called if an error occured or
+ * if the listing was cancelled during it's run. You can then retrieve
+ * the error type as an errno error.
+ *
+ * Here is a simple example:
+ *
+ * @code
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * static Eina_Bool
+ * _test_filter_cb(void *data, const char *file)
+ * {
+ *    fprintf(stderr, "ACCEPTING: %s\n", file);
+ *    return EINA_TRUE;
+ * }
+ *
+ * static void
+ * _test_main_cb(void *data, const char *file)
+ * {
+ *    fprintf(stderr, "PROCESS: %s\n", file);
+ * }
+ *
+ * static void
+ * _test_done_cb(void *data)
+ * {
+ *    printf("ls done\n");
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * static void
+ * _test_error_cb(int error, void *data)
+ * {
+ *    fprintf(stderr, "error: [%s]\n", strerror(error));
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * int
+ * main(int argc, char **argv)
+ * {
+ *    Eio_File *cp;
+ *
+ *    if (argc != 2)
+ *      {
+ * 	fprintf(stderr, "eio_ls directory\n");
+ * 	return -1;
+ *      }
+ *
+ *    ecore_init();
+ *    eio_init();
+ *
+ *    cp = eio_file_ls(argv[1],
+ *                     _test_filter_cb,
+ *                     _test_main_cb,
+ *                     _test_done_cb,
+ *                     _test_error_cb,
+ *                     NULL);
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    eio_shutdown();
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ *
+ * @endcode
+ */
+
 #include "eio_private.h"
 #include "Eio.h"
 
