@@ -82,6 +82,7 @@ elm_mapbuf.c \
 elm_thumb.c \
 elm_config.c \
 elm_animator.c \
+elm_transit.c \
 elm_calendar.c \
 elm_flippicker.c \
 elm_diskpicker.c \

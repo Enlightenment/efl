@@ -35,6 +35,7 @@ test_bg.c \
 test_icon.c \
 test_box.c \
 test_button.c \
+test_transit.c \
 test_fileselector_button.c \
 test_fileselector_entry.c \
 test_toggle.c \
