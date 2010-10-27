@@ -599,8 +599,11 @@ extern "C" {
    EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj);
    EAPI void         elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on);
+   EAPI Eina_Bool    elm_button_autorepeat_get(const Evas_Object *obj);
    EAPI void         elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t);
+   EAPI double       elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj);
    EAPI void         elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t);
+   EAPI double       elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj);
 
    EAPI Evas_Object *elm_fileselector_button_add(Evas_Object *parent);
    EAPI void         elm_fileselector_button_label_set(Evas_Object *obj, const char *label);

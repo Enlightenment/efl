@@ -468,6 +468,23 @@ elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on)
 }
 
 /**
+ * Get if autorepeat event is on
+ *
+ * @param obj The button object
+ * @return If autorepeat is on
+ *
+ * @ingroup Button
+ */
+EAPI Eina_Bool
+elm_button_autorepeat_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->autorepeat;
+}
+
+/**
  * Set the initial timeout before the autorepeat event is generated
  *
  * @param obj The button object
@@ -491,6 +508,23 @@ elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
 }
 
 /**
+ * Get the initial timeout before the autorepeat event is generated
+ *
+ * @param obj The button object
+ * @return Timeout
+ *
+ * @ingroup Button
+ */
+EAPI double
+elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0.0;
+   return wd->ar_threshold;
+}
+
+/**
  * Set the interval between each generated autorepeat event
  *
  * @param obj The button object
@@ -498,7 +532,7 @@ elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t)
  *
  * @ingroup Button
  */
-EAPI void         
+EAPI void
 elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -508,4 +542,21 @@ elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t)
 
    wd->ar_interval = t;
    if ((wd->repeating) && (wd->timer)) ecore_timer_interval_set(wd->timer, t);
+}
+
+/**
+ * Get the interval between each generated autorepeat event
+ *
+ * @param obj The button object
+ * @return Interval
+ *
+ * @ingroup Button
+ */
+EAPI double
+elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0.0;
+   return wd->ar_interval;
 }
