@@ -335,6 +335,7 @@ extern "C" {
 
    EAPI const char  *elm_profile_get(void);
    EAPI char        *elm_profile_dir_get(const char *profile);
+   EAPI void         elm_profile_dir_free(const char *p_dir);
    EAPI Eina_List   *elm_profile_list_get(void);
    EAPI void         elm_profile_list_free(Eina_List *l);
    EAPI void         elm_profile_set(const char *profile);
