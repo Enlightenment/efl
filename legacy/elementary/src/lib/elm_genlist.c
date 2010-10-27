@@ -3858,7 +3858,7 @@ elm_genlist_block_count_get(const Evas_Object *obj)
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_longpress_timeout_set(const Evas_Object *obj, double timeout)
+elm_genlist_longpress_timeout_set(Evas_Object *obj, double timeout)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
