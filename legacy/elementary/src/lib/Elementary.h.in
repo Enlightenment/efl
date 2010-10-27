@@ -489,7 +489,6 @@ extern "C" {
     */
   typedef enum _Elm_Bg_Option
     {
-      ELM_BG_OPTION_INVALID = -1,
       ELM_BG_OPTION_CENTER,
       ELM_BG_OPTION_SCALE,
       ELM_BG_OPTION_STRETCH,

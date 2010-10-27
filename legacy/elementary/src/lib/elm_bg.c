@@ -250,7 +250,7 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 EAPI Elm_Bg_Option
 elm_bg_option_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_BG_OPTION_INVALID;
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
