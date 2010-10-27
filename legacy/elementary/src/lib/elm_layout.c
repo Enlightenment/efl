@@ -33,7 +33,8 @@ struct _Subinfo
      BOX_PREPEND,
      BOX_INSERT_BEFORE,
      BOX_INSERT_AT,
-     TABLE_PACK
+     TABLE_PACK,
+     TEXT
    } type;
    union {
       union {
@@ -43,6 +44,9 @@ struct _Subinfo
       struct {
          unsigned short col, row, colspan, rowspan;
       } table;
+      struct {
+         const char *text;
+      } text;
    } p;
 };
 
@@ -74,6 +78,8 @@ _del_hook(Evas_Object *obj)
    EINA_LIST_FREE(wd->subs, si)
      {
 	eina_stringshare_del(si->part);
+        if (si->type == TEXT)
+          eina_stringshare_del(si->p.text.text);
 	free(si);
      }
    EINA_LIST_FREE(wd->parts_cursors, pc) _part_cursor_free(pc);
@@ -253,6 +259,19 @@ _signal_size_eval(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    _request_sizing_eval(data);
 }
 
+static void
+_parts_text_fix(Widget_Data *wd)
+{
+   const Eina_List *l;
+   Subinfo *si;
+
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if (si->type == TEXT)
+          edje_object_part_text_set(wd->lay, si->part, si->p.text.text);
+     }
+}
+
 /**
  * Add a new layout to the parent
  *
@@ -312,6 +331,7 @@ elm_layout_file_set(Evas_Object *obj, const char *file, const char *group)
    Eina_Bool ret = edje_object_file_set(wd->lay, file, group);
    if (ret)
      {
+        _parts_text_fix(wd);
         _request_sizing_eval(wd);
         _parts_cursors_apply(wd);
      }
@@ -342,6 +362,7 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
    Eina_Bool ret = _elm_theme_object_set(obj, wd->lay, clas, group, style);
    if (ret)
      {
+        _parts_text_fix(wd);
         _request_sizing_eval(wd);
         _parts_cursors_apply(wd);
      }
@@ -427,6 +448,74 @@ elm_layout_content_unset(Evas_Object *obj, const char *swallow)
 	  }
      }
    return NULL;
+}
+
+/**
+ * Set the text of the given part
+ *
+ * @param obj The layout object
+ * @param part The TEXT part where to set the text
+ * @param text The text to set
+ *
+ * @ingroup Layout
+ */
+EAPI void
+elm_layout_text_set(Evas_Object *obj, const char *part, const char *text)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si = NULL;
+   Eina_List *l;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if ((si->type == TEXT) && (!strcmp(part, si->part)))
+          {
+             if (!text)
+               {
+                  eina_stringshare_del(si->part);
+                  eina_stringshare_del(si->p.text.text);
+                  free(si);
+                  edje_object_part_text_set(wd->lay, part, NULL);
+                  wd->subs = eina_list_remove_list(wd->subs, l);
+                  return;
+               }
+             else
+               break;
+          }
+        si = NULL;
+     }
+
+   if (!si)
+     {
+        si = ELM_NEW(Subinfo);
+        if (!si) return;
+        si->type = TEXT;
+        si->part = eina_stringshare_add(part);
+        wd->subs = eina_list_append(wd->subs, si);
+     }
+
+   eina_stringshare_replace(&si->p.text.text, text);
+   edje_object_part_text_set(wd->lay, part, text);
+   _request_sizing_eval(wd);
+}
+
+/**
+ * Get the text set in the given part
+ *
+ * @param obj The layout object
+ * @param part The TEXT part to retrieve the text off
+ *
+ * @return The text set in @p part
+ *
+ * @ingroup Layout
+ */
+EAPI const char *
+elm_layout_text_get(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return edje_object_part_text_get(wd->lay, part);
 }
 
 /**
