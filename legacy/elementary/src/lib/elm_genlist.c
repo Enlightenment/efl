@@ -389,6 +389,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
+   if (!wd->items) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
 
@@ -546,8 +547,15 @@ _item_multi_select_down(Widget_Data *wd)
 static Eina_Bool
 _item_single_select_up(Widget_Data *wd)
 {
-   if (!wd->selected) return EINA_FALSE;
-   Elm_Genlist_Item *prev = elm_genlist_item_prev_get(wd->last_selected_item);
+   Elm_Genlist_Item *prev;
+   if (!wd->selected)
+     {
+        prev = ELM_GENLIST_ITEM_FROM_INLIST(wd->items->last);
+        while ((prev) && (prev->delete_me))
+          prev = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
+     }
+   else prev = elm_genlist_item_prev_get(wd->last_selected_item);
+
    if (!prev) return EINA_FALSE;
 
    _deselect_all_items(wd);
@@ -560,8 +568,15 @@ _item_single_select_up(Widget_Data *wd)
 static Eina_Bool
 _item_single_select_down(Widget_Data *wd)
 {
-   if (!wd->selected) return EINA_FALSE;
-   Elm_Genlist_Item *next = elm_genlist_item_next_get(wd->last_selected_item);
+   Elm_Genlist_Item *next;
+   if (!wd->selected)
+     {
+        next = ELM_GENLIST_ITEM_FROM_INLIST(wd->items);
+        while ((next) && (next->delete_me))
+          next = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
+     }
+   else next = elm_genlist_item_next_get(wd->last_selected_item);
+
    if (!next) return EINA_FALSE;
 
    _deselect_all_items(wd);

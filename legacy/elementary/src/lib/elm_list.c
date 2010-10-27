@@ -127,6 +127,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    Evas_Event_Key_Down *ev = event_info;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
+   if (!wd->items) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
 
@@ -278,8 +279,11 @@ _item_multi_select_down(Widget_Data *wd)
 static Eina_Bool
 _item_single_select_up(Widget_Data *wd)
 {
-   if (!wd->selected) return EINA_FALSE;
-   Elm_List_Item *prev = elm_list_item_prev(wd->last_selected_item);
+   Elm_List_Item *prev;
+
+   if (!wd->selected) prev = eina_list_data_get(eina_list_last(wd->items));
+   else prev = elm_list_item_prev(wd->last_selected_item);
+
    if (!prev) return EINA_FALSE;
 
    _deselect_all_items(wd);
@@ -292,8 +296,11 @@ _item_single_select_up(Widget_Data *wd)
 static Eina_Bool
 _item_single_select_down(Widget_Data *wd)
 {
-   if (!wd->selected) return EINA_FALSE;
-   Elm_List_Item *next = elm_list_item_next(wd->last_selected_item);
+   Elm_List_Item *next;
+
+   if (!wd->selected) next = eina_list_data_get(wd->items);
+   else next = elm_list_item_next(wd->last_selected_item);
+
    if (!next) return EINA_FALSE;
 
    _deselect_all_items(wd);
