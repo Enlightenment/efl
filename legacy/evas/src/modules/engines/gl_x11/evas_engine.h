@@ -13,7 +13,7 @@
 #   include <X11/Xatom.h>
 #   include <X11/Xutil.h>
 #   include <X11/extensions/Xrender.h>
-# include <X11/Xresource.h> // xres - dpi
+#   include <X11/Xresource.h> // xres - dpi
 #  elif defined(GLES_VARIETY_SGX)
 #   define SUPPORT_X11 1
 #   include <EGL/egl.h>
