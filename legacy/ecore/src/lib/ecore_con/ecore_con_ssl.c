@@ -402,9 +402,26 @@ _ecore_con_ssl_shutdown_gnutls(void)
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type __UNUSED__)
+_ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
 {
    int ret;
+
+   if (ssl_type & ECORE_CON_USE_SSL2)
+     return ECORE_CON_SSL_ERROR_SSL2_NOT_SUPPORTED;
+
+   switch (ssl_type)
+     {
+      case ECORE_CON_USE_SSL3:
+      case ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT:
+      case ECORE_CON_USE_TLS:
+      case ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT:
+      case ECORE_CON_USE_MIXED:
+      case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
+         break;
+
+      default:
+         return ECORE_CON_SSL_ERROR_INIT_FAILED;
+     }
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
 
@@ -953,7 +970,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
          break;
 
       default:
-         break;
+         return ECORE_CON_SSL_ERROR_INIT_FAILED;
      }
 
    if ((!svr->use_cert) && svr->created)
