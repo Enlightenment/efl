@@ -420,7 +420,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
          break;
 
       default:
-         return ECORE_CON_SSL_ERROR_INIT_FAILED;
+         return ECORE_CON_SSL_ERROR_NONE;
      }
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
@@ -970,7 +970,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
          break;
 
       default:
-         return ECORE_CON_SSL_ERROR_INIT_FAILED;
+         return ECORE_CON_SSL_ERROR_NONE;
      }
 
    if ((!svr->use_cert) && svr->created)
