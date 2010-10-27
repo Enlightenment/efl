@@ -611,6 +611,23 @@ ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 #endif
 }
 
+EAPI Evas *
+ecore_evas_object_evas_get(Evas_Object *obj)
+{
+   Ecore_Evas *ee;
+
+   ee = evas_object_data_get(obj, "Ecore_Evas");
+   if (!ee) return NULL;
+
+   return ecore_evas_get(ee);
+}
+
+EAPI Ecore_Evas *
+ecore_evas_object_ecore_evas_get(Evas_Object *obj)
+{
+   return evas_object_data_get(obj, "Ecore_Evas");
+}
+
 EAPI Evas_Object *
 ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {

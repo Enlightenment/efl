@@ -189,6 +189,8 @@ EAPI Ecore_Evas     *ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc
 EAPI const void     *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
 
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
+EAPI Ecore_Evas     *ecore_evas_object_ecore_evas_get(Evas_Object *obj);
+EAPI Evas           *ecore_evas_object_evas_get(Evas_Object *obj);
 
 EAPI Ecore_Evas     *ecore_evas_software_gdi_new(Ecore_Win32_Window *parent,
                                                  int                 x,
