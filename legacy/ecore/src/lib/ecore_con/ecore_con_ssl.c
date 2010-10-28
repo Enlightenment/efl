@@ -431,16 +431,16 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
         /* TODO: implement PSK */
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
+      //  SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
 
         gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
         gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
-        gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
+        //gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
         INF("DH params successfully generated and applied!");
      }
    else if (!svr->use_cert)
      {
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
+        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
      }
 
@@ -495,8 +495,9 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         INF("Applying priority string: %s", priority);
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(svr->session, priority, NULL));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
+       // SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
+        if (!svr->use_cert)
+          SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
 
         gnutls_dh_set_prime_bits(svr->session, 512);
         gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
@@ -648,8 +649,8 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
           }
         if (svr->anoncred_s)
           gnutls_anon_free_server_credentials(svr->anoncred_s);
-        if (svr->pskcred_s)
-          gnutls_psk_free_server_credentials(svr->pskcred_s);
+      //  if (svr->pskcred_s)
+       //   gnutls_psk_free_server_credentials(svr->pskcred_s);
 
         svr->anoncred_s = NULL;
         svr->pskcred_s = NULL;
@@ -658,8 +659,8 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
      {
         if (svr->anoncred_c)
           gnutls_anon_free_client_credentials(svr->anoncred_c);
-        if (svr->pskcred_c)
-          gnutls_psk_free_client_credentials(svr->pskcred_c);
+       // if (svr->pskcred_c)
+         // gnutls_psk_free_client_credentials(svr->pskcred_c);
 
         svr->anoncred_c = NULL;
         svr->pskcred_c = NULL;
@@ -785,6 +786,10 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_server(cl->session, &cl->session_ticket));
         INF("Applying priority string: %s", priority);
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(cl->session, priority, NULL));
+        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_CERTIFICATE, cl->host_server->cert));
+      //  SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_PSK, cl->host_server->pskcred_s));
+        if (!cl->host_server->use_cert)
+          SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(cl->session, GNUTLS_CRD_ANON, cl->host_server->anoncred_s));
 
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
 
