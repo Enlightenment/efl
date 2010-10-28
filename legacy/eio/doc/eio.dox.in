@@ -33,7 +33,8 @@
  *
  * The Eio library is a library that implements an API for asynchronous
  * input/output operation. Most operation are done in a separated thread
- * to prevent lock. See @ref Eio_Group.
+ * to prevent lock. See @ref Eio_Group. Some helper to work on data
+ * received in Eio callback are also provided see @ref Eio_Helper.
  *
  * This library is cross-platform and can be compiled and used on
  * Linux, BSD, Opensolaris and Windows (XP and CE).
