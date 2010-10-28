@@ -22,20 +22,6 @@
 #define CODESET "INVALID"
 #endif /* ifndef CODESET */
 
-#if 0
-static void      _ecore_x_event_free_window_prop_name_class_change(void *data,
-                                                                   void *ev);
-static void      _ecore_x_event_free_window_prop_title_change(void *data, void *ev);
-static void      _ecore_x_event_free_window_prop_visible_title_change(void *data,
-                                                                      void *ev);
-static void      _ecore_x_event_free_window_prop_icon_name_change(void *data,
-                                                                  void *ev);
-static void      _ecore_x_event_free_window_prop_visible_icon_name_change(void *data,
-                                                                          void *ev);
-static void      _ecore_x_event_free_window_prop_client_machine_change(void *data,
-                                                                       void *ev);
-#endif /* if 0 */
-
 static Window _ecore_x_mouse_down_last_win = 0;
 static Window _ecore_x_mouse_down_last_last_win = 0;
 static Window _ecore_x_mouse_down_last_event_win = 0;
@@ -94,84 +80,6 @@ ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
    s_attr.event_mask = attr.your_event_mask & ~mask;
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
 } /* ecore_x_event_mask_unset */
-
-#if 0
-static void
-_ecore_x_event_free_window_prop_name_class_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Name_Class_Change *e;
-
-   e = ev;
-   if (e->name)
-      free(e->name);
-
-   if (e->clas)
-      free(e->clas);
-
-   free(e);
-} /* _ecore_x_event_free_window_prop_name_class_change */
-
-static void
-_ecore_x_event_free_window_prop_title_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Title_Change *e;
-
-   e = ev;
-   if (e->title)
-      free(e->title);
-
-   free(e);
-} /* _ecore_x_event_free_window_prop_title_change */
-
-static void
-_ecore_x_event_free_window_prop_visible_title_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Visible_Title_Change *e;
-
-   e = ev;
-   if (e->title)
-      free(e->title);
-
-   free(e);
-} /* _ecore_x_event_free_window_prop_visible_title_change */
-
-static void
-_ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Icon_Name_Change *e;
-
-   e = ev;
-   if (e->name)
-      free(e->name);
-
-   free(e);
-} /* _ecore_x_event_free_window_prop_icon_name_change */
-
-static void
-_ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
-
-   e = ev;
-   if (e->name)
-      free(e->name);
-
-   free(e);
-} /* _ecore_x_event_free_window_prop_visible_icon_name_change */
-
-static void
-_ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Client_Machine_Change *e;
-
-   e = ev;
-   if (e->name)
-      free(e->name);
-
-   free(e);
-} /* _ecore_x_event_free_window_prop_client_machine_change */
-
-#endif /* if 0 */
 
 static void
 _ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
@@ -1376,132 +1284,6 @@ void
 _ecore_x_event_handle_property_notify(XEvent *xevent)
 {
    _ecore_x_last_event_mouse_move = 0;
-#if 0 /* for now i disabled this. nice idea though this is - it leaves a lot
-       * to be desired for efficiency that is better left to the app layer
-       */
-   if (xevent->xproperty.atom == ECORE_X_ATOM_WM_CLASS)
-     {
-        Ecore_X_Event_Window_Prop_Name_Class_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Name_Class_Change));
-        if (!e)
-           return;
-
-        ecore_x_window_prop_name_class_get(xevent->xproperty.window,
-                                           &(e->name), &(e->clas));
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, e,
-                        _ecore_x_event_free_window_prop_name_class_change, NULL);
-     }
-   else if ((xevent->xproperty.atom == ECORE_X_ATOM_WM_NAME) ||
-            (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_NAME))
-     {
-        Ecore_X_Event_Window_Prop_Title_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Title_Change));
-        if (!e)
-           return;
-
-        e->title = ecore_x_window_prop_title_get(xevent->xproperty.window);
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE, e,
-                        _ecore_x_event_free_window_prop_title_change, NULL);
-     }
-   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_VISIBLE_NAME)
-     {
-        Ecore_X_Event_Window_Prop_Visible_Title_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Visible_Title_Change));
-        if (!e)
-           return;
-
-        e->title = ecore_x_window_prop_visible_title_get(
-              xevent->xproperty.window);
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE,
-                        e,
-                        _ecore_x_event_free_window_prop_visible_title_change,
-                        NULL);
-     }
-   else if ((xevent->xproperty.atom == ECORE_X_ATOM_WM_ICON_NAME) ||
-            (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_ICON_NAME))
-     {
-        Ecore_X_Event_Window_Prop_Icon_Name_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Icon_Name_Change));
-        if (!e)
-           return;
-
-        e->name = ecore_x_window_prop_icon_name_get(xevent->xproperty.window);
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, e,
-                        _ecore_x_event_free_window_prop_icon_name_change, NULL);
-     }
-   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME)
-     {
-        Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change));
-        if (!e)
-           return;
-
-        e->name = ecore_x_window_prop_visible_icon_name_get(
-              xevent->xproperty.window);
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(
-           ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE,
-           e,
-           _ecore_x_event_free_window_prop_visible_icon_name_change,
-           NULL);
-     }
-   else if (xevent->xproperty.atom == ECORE_X_ATOM_WM_CLIENT_MACHINE)
-     {
-        Ecore_X_Event_Window_Prop_Client_Machine_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Client_Machine_Change));
-        if (!e)
-           return;
-
-        e->name = ecore_x_window_prop_client_machine_get(
-              xevent->xproperty.window);
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE,
-                        e,
-                        _ecore_x_event_free_window_prop_client_machine_change,
-                        NULL);
-     }
-   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_PID)
-     {
-        Ecore_X_Event_Window_Prop_Pid_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Pid_Change));
-        if (!e)
-           return;
-
-        e->pid = ecore_x_window_prop_pid_get(xevent->xproperty.window);
-        e->time = xevent->xproperty.time;
-        _ecore_x_event_last_time = e->time;
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, NULL, NULL);
-     }
-   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_DESKTOP)
-     {
-        Ecore_X_Event_Window_Prop_Desktop_Change *e;
-
-        e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Desktop_Change));
-        if (!e)
-           return;
-
-        e->desktop = ecore_x_window_prop_desktop_get(xevent->xproperty.window);
-        ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, NULL, NULL);
-     }
-   else
-#endif /* if 0 */
    {
       Ecore_X_Event_Window_Property *e;
 
@@ -1691,9 +1473,9 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
    e->cmap = xevent->xcolormap.colormap;
    e->time = _ecore_x_event_last_time;
    if (xevent->xcolormap.state == ColormapInstalled)
-      e->installed = 1;
+      e->installed = EINA_TRUE;
    else
-      e->installed = 0;
+      e->installed = EINA_FALSE;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_COLORMAP, e, NULL, NULL);
 } /* _ecore_x_event_handle_colormap_notify */
@@ -1941,7 +1723,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
      {
         Ecore_X_Event_Xdnd_Finished *e;
         Ecore_X_DND_Source *source;
-        int completed = 1;
+        Eina_Bool completed = EINA_TRUE;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
         source = _ecore_x_dnd_source_get();
@@ -1959,7 +1741,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
           }
         else if (source->version >= 5)
           {
-             completed = 0;
+             completed = EINA_FALSE;
              source->state = ECORE_X_DND_SOURCE_CONVERTING;
 
              /* FIXME: Probably need to add a timer to switch back to idle
@@ -2153,8 +1935,28 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 void
 _ecore_x_event_handle_mapping_notify(XEvent *xevent)
 {
+   Ecore_X_Event_Mapping_Change *e;
+  
    _ecore_x_last_event_mouse_move = 0;
    XRefreshKeyboardMapping((XMappingEvent *)xevent);
+   e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change));
+   if (!e) return;
+   switch (xevent->xmapping.request)
+      {
+      case MappingModifier:
+         e->type = ECORE_X_MAPPING_MODIFIER;
+         break;
+      case MappingKeyboard:
+         e->type = ECORE_X_MAPPING_KEYBOARD;
+         break;
+      case MappingPointer:
+      default:
+         e->type = ECORE_X_MAPPING_MOUSE;
+         break;
+      }
+   e->keycode = xevent->xmapping.first_keycode;
+   e->num = xevent->xmapping.count;
+   ecore_event_add(ECORE_X_EVENT_MAPPING_CHANGE, e, NULL, NULL);
 } /* _ecore_x_event_handle_mapping_notify */
 
 void
@@ -2208,9 +2010,9 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
 
    e->win = screensaver_event->window;
    if (screensaver_event->state == ScreenSaverOn)
-      e->on = 1;
+      e->on = EINA_TRUE;
    else
-      e->on = 0;
+      e->on = EINA_TRUE;
 
    e->time = screensaver_event->time;
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
@@ -2343,7 +2145,10 @@ _ecore_x_event_handle_randr_notify_output_property(const XRRNotifyEvent *xevent)
    e->output = randr_event->output;
    e->property = randr_event->property;
    e->time = randr_event->timestamp;
-   e->state = randr_event->state;
+   if (randr_event->state == PropertyNewValue)
+      e->state = ECORE_X_RANDR_PROPERTY_CHANGE_ADD;
+   else
+      e->state = ECORE_X_RANDR_PROPERTY_CHANGE_DEL;
    ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, e, NULL, NULL);
 } /* _ecore_x_event_handle_randr_notify_output_property */
 
