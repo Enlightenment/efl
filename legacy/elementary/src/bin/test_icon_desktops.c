@@ -108,16 +108,18 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_show(gl);
 
 #ifdef ELM_EFREET
-   elm_need_efreet();
-   desktops = efreet_util_desktop_name_glob_list("*");
-   if (desktops)
+   if (elm_need_efreet())
      {
-        Efreet_Desktop *d;
-
-        EINA_LIST_FREE(desktops, d)
-	  elm_genlist_item_append(gl, &it_desk, d,
-				  NULL, ELM_GENLIST_ITEM_NONE,
-				  desktop_sel, NULL);
+       desktops = efreet_util_desktop_name_glob_list("*");
+       if (desktops)
+         {
+           Efreet_Desktop *d;
+          
+           EINA_LIST_FREE(desktops, d)
+             elm_genlist_item_append(gl, &it_desk, d,
+                                    NULL, ELM_GENLIST_ITEM_NONE,
+                                    desktop_sel, NULL);
+         }
      }
 #endif
 

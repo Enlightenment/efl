@@ -684,13 +684,15 @@ static void
 _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    const char *cur_profile = NULL;
-   Efreet_Desktop *desk = NULL;
    char *pdir, buf[PATH_MAX];
    const char *sel_profile;
    Eina_Bool cur_selected;
    const char *prof_name;
    Evas_Object *en;
-
+#ifdef ELM_EFREET  
+   Efreet_Desktop *desk = NULL;
+#endif
+  
    sel_profile = data;
    if (!sel_profile)
        return;
@@ -708,12 +710,12 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    /*                                                  other than curr *\/ */
 
    pdir = elm_profile_dir_get(sel_profile);
+#ifdef ELM_EFREET  
    snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
    desk = efreet_desktop_new(buf);
-
-   if ((desk) && (desk->name))
-     prof_name = desk->name;
+   if ((desk) && (desk->name)) prof_name = desk->name;
    else
+#endif    
      prof_name = cur_profile;
 
    snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br>",
@@ -721,13 +723,15 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    elm_label_label_set(evas_object_data_get(obj, "prof_name_lbl"), buf);
 
    en = evas_object_data_get(obj, "prof_desc_entry");
-   if (desk)
-     elm_scrolled_entry_entry_set(en, desk->comment);
+#ifdef ELM_EFREET  
+   if (desk) elm_scrolled_entry_entry_set(en, desk->comment);
    else
+#endif
      elm_scrolled_entry_entry_set(en, "Unknown");
 
-   if (desk)
-       efreet_desktop_free(desk);
+#ifdef ELM_EFREET  
+   if (desk) efreet_desktop_free(desk);
+#endif  
 }
 
 static void
@@ -742,41 +746,40 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
      return;
 
    elm_list_clear(l_widget);
-   efreet_init();
 
    cur_profile = elm_profile_get();
 
    EINA_LIST_FOREACH(p_names, l, profile)
      {
-        Efreet_Desktop *desk = NULL;
         char buf[PATH_MAX], *pdir;
         const char *label, *ext;
         Evas_Object *ic;
         Elm_List_Item *it;
-
+#ifdef ELM_EFREET
+       Efreet_Desktop *desk = NULL;
+#endif
+       
         pdir = elm_profile_dir_get(profile);
-        snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
-
-        desk = efreet_desktop_new(buf);
         label = profile;
-
-        if ((desk) && (desk->name))
-          label = desk->name;
-
+       
+#ifdef ELM_EFREET
+        snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
+        desk = efreet_desktop_new(buf);
+        if ((desk) && (desk->name)) label = desk->name;
+#endif
+       
         buf[0] = 0;
-        if (pdir)
-          snprintf(buf, sizeof(buf), "%s/icon.edj", pdir);
+        if (pdir) snprintf(buf, sizeof(buf), "%s/icon.edj", pdir);
+#ifdef ELM_EFREET
         if ((desk) && (desk->icon) && (pdir))
           snprintf(buf, sizeof(buf), "%s/%s", pdir, desk->icon);
+#endif       
         ic = elm_icon_add(l_widget);
-
         ext = strrchr(buf, '.');
         if (ext)
           {
-             if (!strcmp(ext, ".edj"))
-               elm_icon_file_set(ic, buf, "icon");
-             else
-               elm_icon_file_set(ic, buf, NULL);
+             if (!strcmp(ext, ".edj")) elm_icon_file_set(ic, buf, "icon");
+             else elm_icon_file_set(ic, buf, NULL);
           }
 
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL,
@@ -792,14 +795,12 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
         if (pdir)
           free(pdir);
 
-        if (desk)
-          efreet_desktop_free(desk);
+#ifdef ELM_EFREET
+       if (desk) efreet_desktop_free(desk);
+#endif       
      }
 
-   efreet_shutdown();
-
-   if (sel_it)
-     elm_list_item_selected_set(sel_it, EINA_TRUE);
+   if (sel_it) elm_list_item_selected_set(sel_it, EINA_TRUE);
    elm_list_go(l_widget);
 }
 
@@ -1072,6 +1073,9 @@ elm_main(int argc, char **argv)
    /* put here any init code specific to this app like parsing args, etc. */
    if (!quiet)
      {
+#ifdef ELM_EFREET
+        elm_need_efreet();
+#endif       
         status_win(); /* create main window */
         if (!interactive)
           ecore_timer_add(2.0, _exit_timer, NULL);

@@ -392,14 +392,17 @@ _elm_thumb_dropcb(void *data __UNUSED__, Evas_Object *o, Elm_Selection_Data *dro
  *
  * @ingroup Thumb
  */
-EAPI void
+EAPI Eina_Bool
 elm_need_ethumb(void)
 {
 #ifdef ELM_ETHUMB
-   if (_elm_need_ethumb++) return;
+   if (_elm_need_ethumb++) return EINA_TRUE;
    ELM_ECORE_EVENT_ETHUMB_CONNECT = ecore_event_type_new();
    ethumb_client_init();
    _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
 #endif
 }
 

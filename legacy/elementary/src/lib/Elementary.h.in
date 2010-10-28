@@ -308,9 +308,9 @@ extern "C" {
    EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
 
-   EAPI void         elm_need_efreet(void);
-   EAPI void         elm_need_e_dbus(void);
-   EAPI void	     elm_need_ethumb(void);
+   EAPI Eina_Bool    elm_need_efreet(void);
+   EAPI Eina_Bool    elm_need_e_dbus(void);
+   EAPI Eina_Bool    elm_need_ethumb(void);
 
    EAPI Eina_Bool    elm_policy_set(unsigned int policy, int value);
    EAPI int          elm_policy_get(unsigned int policy);

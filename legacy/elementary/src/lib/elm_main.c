@@ -363,13 +363,16 @@ elm_shutdown(void)
 #ifdef ELM_EDBUS
 static int _elm_need_e_dbus = 0;
 #endif
-EAPI void
+EAPI Eina_Bool
 elm_need_e_dbus(void)
 {
 #ifdef ELM_EDBUS
-   if (_elm_need_e_dbus++) return;
+   if (_elm_need_e_dbus++) return EINA_TRUE;
    e_dbus_init();
    e_hal_init();
+   return EINA_TRUE;
+#else  
+   return EINA_FALSE;
 #endif
 }
 
@@ -388,11 +391,11 @@ _elm_unneed_e_dbus(void)
 #ifdef ELM_EFREET
 static int _elm_need_efreet = 0;
 #endif
-EAPI void
+EAPI Eina_Bool
 elm_need_efreet(void)
 {
 #ifdef ELM_EFREET
-   if (_elm_need_efreet++) return;
+   if (_elm_need_efreet++) return EINA_TRUE;
    efreet_init();
    efreet_mime_init();
    efreet_trash_init();
@@ -410,6 +413,9 @@ elm_need_efreet(void)
           }
      }
    */
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
 #endif
 }
 
