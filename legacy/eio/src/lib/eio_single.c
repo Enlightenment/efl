@@ -533,6 +533,85 @@ EAPI Eio_File *eio_file_chown(const char *path,
    return &c->common;
 }
 
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eio_Helper
+ *
+ * @{
+ */
+
+/**
+ * @brief Return last acces time to a file
+ * @param stat The stat buffer as given by eio_file_stat callback.
+ * @return last access time.
+ *
+ * This function return the st_atime field, last acces time, as double like all EFL time call.
+ */
+EAPI double
+eio_file_atime(const struct stat *stat)
+{
+   if (!stat) return 0.0;
+   return (double) stat->st_atime;
+}
+
+/**
+ * @brief Return last modification time of a file
+ * @param stat The stat buffer as given by eio_file_stat callback.
+ * @return last modification time.
+ *
+ * This function return the st_mtime field, last modification time, as double like all EFL time call.
+ */
+EAPI double
+eio_file_mtime(const struct stat *stat)
+{
+   if (!stat) return 0.0;
+   return (double) stat->st_mtime;
+}
+
+/**
+ * @brief Return file length.
+ * @param stat The stat buffer as given by eio_file_stat callback.
+ * @return the length of a file.
+ *
+ * This function is just an accessor to st_size and return the file length.
+ */
+EAPI long long
+eio_file_size(const struct stat *stat)
+{
+   if (!stat) return 0;
+   return stat->st_size;
+}
+
+/**
+ * @brief Return if path is a directory.
+ * @param stat The stat buffer as given by eio_file_stat callback.
+ * @return EINA_TRUE if the path is a directory.
+ *
+ * This function tell you if the stated path is a directory or not.
+ */
+EAPI Eina_Bool
+eio_file_is_dir(const struct stat *stat)
+{
+   if (!stat) return EINA_FALSE;
+   return (S_ISDIR(stat->st_mode)) ? EINA_TRUE : EINA_FALSE;
+}
+
+/**
+ * @brief Return if path is a length.
+ * @param stat The stat buffer as given by eio_file_stat callback.
+ * @return EINA_TRUE if the path is a length.
+ *
+ * This function tell you if the stated path is a length or not.
+ */
+EAPI Eina_Bool
+eio_file_is_lnk(const struct stat *stat)
+{
+   if (!stat) return EINA_FALSE;
+   return (S_ISLNK(stat->st_mode)) ? EINA_TRUE : EINA_FALSE;
+}
 
 /**
  * @}

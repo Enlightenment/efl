@@ -66,9 +66,11 @@ extern "C" {
 /**
  * @defgroup Eio_Group Eio Reference API
  *
- * @brief A brief description
+ * @brief This are the core asynchronous input/output operation
  *
- * A long description
+ * All the function in this group do perform input/output operation
+ * in a separated thread and use the infrastructure provided by
+ * Ecore_Thread and Eina to work.
  *
  * @{
  */
@@ -96,7 +98,7 @@ enum _Eio_File_Op
 
 /**
  * @typedef Eio_File
- *Generic asynchronous IO reference.
+ * Generic asynchronous IO reference.
  */
 typedef struct _Eio_File Eio_File;
 
@@ -211,6 +213,27 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
 			      const void *data);
 
 EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eio_Helper Eio Reference helper API
+ *
+ * @brief This are helper provided around core Eio API.
+ *
+ * This set of functions do provide helper to work around data
+ * provided by Eio without the need to look at system header.
+ *
+ * @{
+ */
+
+EAPI double eio_file_atime(const struct stat *stat);
+EAPI double eio_file_mtime(const struct stat *stat);
+EAPI long long eio_file_size(const struct stat *stat);
+EAPI Eina_Bool eio_file_is_dir(const struct stat *stat);
+EAPI Eina_Bool eio_file_is_lnk(const struct stat *stat);
 
 /**
  * @}
