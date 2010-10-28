@@ -282,7 +282,10 @@ eina_chained_mempool_free(void *data, void *ptr)
    }
 
 #ifndef NVALGRIND
-   VALGRIND_MEMPOOL_FREE(pool, ptr);
+   if (ptr)
+     {
+        VALGRIND_MEMPOOL_FREE(pool, ptr);
+     }
 #endif
 
 #ifdef EFL_HAVE_THREADS
