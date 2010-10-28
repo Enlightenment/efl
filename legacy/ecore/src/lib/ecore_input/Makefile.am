@@ -7,8 +7,6 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@
 
-if BUILD_ECORE_INPUT
-
 lib_LTLIBRARIES = libecore_input.la
 includes_HEADERS = Ecore_Input.h
 includesdir = $(includedir)/ecore-@VMAJ@
@@ -22,7 +20,5 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVIL_LIBS@
 
 libecore_input_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_input_private.h

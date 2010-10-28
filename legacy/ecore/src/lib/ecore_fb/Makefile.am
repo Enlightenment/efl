@@ -6,7 +6,6 @@ AM_CPPFLAGS = \
 @TSLIB_CFLAGS@ \
 @EINA_CFLAGS@
 
-if BUILD_ECORE_FB
 
 lib_LTLIBRARIES = libecore_fb.la
 includes_HEADERS = Ecore_Fb.h
@@ -27,8 +26,6 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EINA_LIBS@
 
 libecore_fb_la_LDFLAGS = -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = \
 ecore_fb_private.h \

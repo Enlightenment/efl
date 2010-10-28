@@ -10,8 +10,6 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@
 
-if BUILD_ECORE_INPUT_EVAS
-
 lib_LTLIBRARIES = libecore_input_evas.la
 includes_HEADERS = Ecore_Input_Evas.h
 includesdir = $(includedir)/ecore-@VMAJ@
@@ -27,7 +25,5 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EVIL_LIBS@
 
 libecore_input_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_input_evas_private.h

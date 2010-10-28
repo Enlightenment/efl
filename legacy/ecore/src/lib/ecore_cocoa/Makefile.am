@@ -8,8 +8,6 @@ AM_CPPFLAGS = \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
-if BUILD_ECORE_COCOA
-
 lib_LTLIBRARIES = libecore_cocoa.la
 includes_HEADERS = \
 Ecore_Cocoa.h \
@@ -27,7 +25,5 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EINA_LIBS@
 
 libecore_cocoa_la_LDFLAGS = @cocoa_ldflags@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_cocoa_private.h

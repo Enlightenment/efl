@@ -12,8 +12,6 @@ AM_CPPFLAGS = \
 @CARES_CFLAGS@ \
 @WIN32_CPPFLAGS@
 
-if BUILD_ECORE_CON
-
 lib_LTLIBRARIES = libecore_con.la
 includes_HEADERS = Ecore_Con.h
 includesdir = $(includedir)/ecore-@VMAJ@
@@ -36,7 +34,5 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @TLS_LIBS@ @CARES_LIBS@ @WIN32_LIBS@
 
 libecore_con_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_con_private.h

@@ -9,8 +9,6 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 @SSL_CFLAGS@ @EINA_CFLAGS@
 
-if BUILD_ECORE_IPC
-
 lib_LTLIBRARIES = libecore_ipc.la
 includes_HEADERS = Ecore_Ipc.h
 includesdir = $(includedir)/ecore-@VMAJ@
@@ -25,7 +23,5 @@ $(top_builddir)/src/lib/ecore_con/libecore_con.la \
 @EINA_LIBS@
 
 libecore_ipc_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_ipc_private.h

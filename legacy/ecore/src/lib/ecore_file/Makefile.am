@@ -16,8 +16,6 @@ if BUILD_ECORE_CON
 lib_ecore_con_la = $(top_builddir)/src/lib/ecore_con/libecore_con.la
 endif
 
-if BUILD_ECORE_FILE
-
 lib_LTLIBRARIES = libecore_file.la
 includes_HEADERS = Ecore_File.h
 includesdir = $(includedir)/ecore-@VMAJ@
@@ -38,8 +36,6 @@ $(lib_ecore_con_la) \
 @EINA_LIBS@
 
 libecore_file_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_file_private.h
 

@@ -82,8 +82,6 @@ $(ECORE_WINCE_INC) \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-if BUILD_ECORE_EVAS
-
 lib_LTLIBRARIES = libecore_evas.la
 includes_HEADERS = Ecore_Evas.h
 includesdir = $(includedir)/ecore-@VMAJ@
@@ -117,8 +115,6 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVIL_LIBS@
 
 libecore_evas_la_LDFLAGS = @cocoa_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = \
 ecore_evas_private.h

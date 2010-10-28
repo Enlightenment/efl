@@ -16,8 +16,6 @@ AM_CPPFLAGS = \
 
 CLEANFILES = $(DB)
 
-if BUILD_ECORE_CONFIG
-
 #DB = system.db
 #$(DB): Makefile
 #	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /e/theme/name str "winter"
@@ -55,8 +53,6 @@ ecore_config_ipc_main.c \
 ecore_config_ipc_ecore.c
 
 libecore_config_la_LIBADD += $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
-
-endif
 
 endif
 

@@ -12,9 +12,6 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-
-if BUILD_ECORE_WINCE
-
 lib_LTLIBRARIES = libecore_wince.la
 
 includes_HEADERS = Ecore_WinCE.h
@@ -34,7 +31,5 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVIL_LIBS@
 
 libecore_wince_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = ecore_wince_private.h

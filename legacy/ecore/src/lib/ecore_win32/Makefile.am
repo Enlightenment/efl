@@ -9,9 +9,6 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @WIN32_CPPFLAGS@
 
-
-if BUILD_ECORE_WIN32
-
 lib_LTLIBRARIES = libecore_win32.la
 
 includes_HEADERS = Ecore_Win32.h
@@ -36,8 +33,6 @@ $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EINA_LIBS@
 
 libecore_win32_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-
-endif
 
 EXTRA_DIST = \
 ecore_win32_private.h \

@@ -1,7 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-if BUILD_ECORE_X
-
 SUBDIRS = xlib xcb
 
 if BUILD_ECORE_X_XCB
@@ -28,7 +26,5 @@ Ecore_X.h \
 Ecore_X_Atoms.h \
 Ecore_X_Cursor.h
 includesdir = $(includedir)/ecore-@VMAJ@
-
-endif
 
 EXTRA_DIST = ecore_x_atoms_decl.h

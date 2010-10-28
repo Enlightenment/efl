@@ -1,6 +1,5 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-if BUILD_ECORE_IMF
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
@@ -25,6 +24,5 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVIL_LIBS@
 
 libecore_imf_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
-endif
 
 EXTRA_DIST = ecore_imf_private.h
