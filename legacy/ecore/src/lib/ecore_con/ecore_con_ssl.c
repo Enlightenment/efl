@@ -438,6 +438,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
         gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
         gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
         gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
+        INF("DH params successfully generated and applied!");
      }
    else
      {
