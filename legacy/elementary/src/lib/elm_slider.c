@@ -1020,6 +1020,7 @@ elm_slider_end_get(const Evas_Object *obj)
 EAPI void
 elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (show) {
       wd->indicator_show = EINA_TRUE;

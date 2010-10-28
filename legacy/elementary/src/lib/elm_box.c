@@ -651,6 +651,7 @@ elm_box_unpack_all(Evas_Object *obj)
 EAPI void
 elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data))
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -683,6 +684,7 @@ elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data
 EAPI void
 elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Elm_Box_Transition *box_data = data;
    const double curtime = ecore_loop_time_get();
 

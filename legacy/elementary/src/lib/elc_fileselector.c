@@ -724,6 +724,7 @@ elm_fileselector_expandable_get(const Evas_Object *obj)
 EAPI void
 elm_fileselector_path_set(Evas_Object *obj, const char *path)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    _populate(obj, path, NULL);
 }
 

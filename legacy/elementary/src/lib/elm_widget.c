@@ -1019,6 +1019,8 @@ EAPI void
 elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 {
    Evas_Object *target = NULL;
+   if (!_elm_widget_is(obj))
+     return;
    elm_widget_focus_next_get(obj, dir, &target);
    if (target)
      elm_widget_focus_steal(target);
@@ -1938,6 +1940,9 @@ elm_widget_stringlist_free(Eina_List *list)
 EAPI Elm_Widget_Item *
 _elm_widget_item_new(Evas_Object *widget, size_t alloc_size)
 {
+   if (!_elm_widget_is(widget))
+     return NULL;
+
    Elm_Widget_Item *item;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(alloc_size < sizeof(Elm_Widget_Item), NULL);
@@ -2661,6 +2666,8 @@ EAPI void
 elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output)
 {
 #ifdef ELM_DEBUG
+   if (!_elm_widget_is(top))
+     return;
    fprintf(output, "graph "" { node [shape=record];\n");
    _sub_obj_tree_dot_dump(top, output);
    fprintf(output, "}\n");

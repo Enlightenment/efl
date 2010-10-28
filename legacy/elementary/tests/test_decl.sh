@@ -4,21 +4,58 @@ ret=0
 check(){
     i=$1
     shift
-    sed -n "/^$i(/{g;1!p;};h" $@ >eapi.decl
-    lines=$(wc -l eapi.decl|cut -f1 -d' ')
-    if [ $lines == 0 ]; then
+    grep -h -B1 -10 -e "^$i(" $@ >eapi.decl
+    if [ $? != 0 ]; then
         echo -e "\e[31;1mNOT IMPLEMENTED\e[m\t $i"
         ret=1
-    elif [ $lines != 1 ]; then
-        echo -e "\e[31;1mMULTI IMPLEMENTED\e[m\t $i"
+        return
+    fi
+    grep -qe "^--$" eapi.decl
+    if [ $? == 0 ]; then
+        echo -e "\e[31;1mMULTI IMPLEMENT\e[m\t $i"
         ret=1
-    else
-        cat eapi.decl | grep -qe '^EAPI'
+        return
+    fi
+
+    head -1 eapi.decl | grep -qe '^EAPI'
+    if [ $? != 0 ];then
+        echo -e "\e[31;1mMISSING EAPI\e[m\t $i"
+        ret=1
+    fi
+
+    func=$(echo $i | grep -oe 'elm_\w\+')
+
+    sed '2q;d' eapi.decl | grep -qe "elm_widget\w\+(\(const \)\?Evas_Object \*"
+    if [ $? == 0 ];then
+        tail -n9 eapi.decl | grep -q "\(API_ENTRY\|_elm_widget_is\)"
         if [ $? != 0 ];then
-            echo -e "\e[31;1mMISSING EAPI\e[m\t $i"
+            echo -e "\e[31;1mMISSING CHECKER\e[m\t $i"
+            ret=1
+        fi
+        return
+    fi
+
+    sed '2q;d' eapi.decl | grep -qe "elm_object_\w\+("
+    if [ $? == 0 ];then
+        rm eapi.decl
+        return
+    fi
+
+    sed '2q;d' eapi.decl | grep -qe "elm_\w\+_add("
+    if [ $? == 0 ];then
+        rm eapi.decl
+        return
+    fi
+
+    sed '2q;d' eapi.decl | grep -qe "elm_\w\+(\(const \)\?Evas_Object \*"
+    if [ $? == 0 ];then
+        tail -n9 eapi.decl | grep -q "ELM_CHECK_WIDTYPE"
+        if [ $? != 0 ];then
+            echo -e "\e[31;1mMISSING CHECKER\e[m\t $i"
             ret=1
         fi
     fi
+
     rm eapi.decl
 }
 
@@ -40,5 +77,6 @@ for i in $(cat eapi.list); do
     check $i src/lib/elm_widget.c
 done
 
+rm -f eapi.decl
 rm eapi.list
 exit $ret
