@@ -38,6 +38,7 @@ void *alloca (size_t);
 #endif
 
 #include <string.h>
+#include <stddef.h>
 #include <dirent.h>
 
 #ifndef _WIN32
@@ -87,11 +88,14 @@ _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
    char *name;
    size_t length;
 
+   dp = alloca(offsetof(struct dirent, d_name) + pathconf(it->dir, _PC_NAME_MAX) + 1);
+
    do
      {
-        dp = readdir(it->dirp);
-        if (!dp)
-           return EINA_FALSE;
+        if (readdir_r(it->dirp, dp, &dp))
+          return EINA_FALSE;
+        if (dp == NULL)
+          return EINA_FALSE;
      }
    while ((dp->d_name[0] == '.') &&
           ((dp->d_name[1] == '\0') ||
@@ -142,9 +146,12 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    struct dirent *dp;
    size_t length;
 
+   dp = alloca(offsetof(struct dirent, d_name) + pathconf(it->dir, _PC_NAME_MAX) + 1);
+
    do
      {
-        dp = readdir(it->dirp);
+        if (readdir_r(it->dirp, dp, &dp))
+           return EINA_FALSE;
         if (!dp)
            return EINA_FALSE;
 
@@ -239,7 +246,9 @@ eina_file_dir_list(const char *dir,
    if (!d)
       return EINA_FALSE;
 
-   while ((de = readdir(d)))
+   de = alloca(offsetof(struct dirent, d_name) + pathconf(dir, _PC_NAME_MAX) + 1);
+
+   while ((!readdir_r(d, de, &de) && de))
      {
         if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
            continue;
@@ -400,7 +409,7 @@ eina_file_split(char *path)
  *
  * Iterators are cheap to be created and allow interruption at any
  * iteration. At each iteration, only the next directory entry is read
- * from the filesystem with readdir().
+ * from the filesystem with readdir_r().
  *
  * The iterator will handle the user a stringshared value with the
  * full path. One must call eina_stringshare_del() on it after usage
@@ -468,7 +477,7 @@ eina_file_ls(const char *dir)
  *
  * Iterators are cheap to be created and allow interruption at any
  * iteration. At each iteration, only the next directory entry is read
- * from the filesystem with readdir().
+ * from the filesystem with readdir_r().
  *
  * The iterator returns the direct pointer to couple of useful information in
  * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
