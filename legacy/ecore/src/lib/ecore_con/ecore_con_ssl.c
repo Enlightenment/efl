@@ -984,6 +984,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
         SSL_ERROR_CHECK_GOTO_ERROR(!DH_generate_key(dh_params));
         SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_tmp_dh(svr->ssl_ctx, dh_params));
         DH_free(dh_params);
+        INF("DH params successfully generated and applied!");
         SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:@STRENGTH"));
      }
    else if (!svr->use_cert)
