@@ -989,8 +989,6 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr, int ssl_type)
    else if (!svr->use_cert)
      SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"));
 
-   SSL_CTX_set_verify(svr->ssl_ctx, SSL_VERIFY_PEER, NULL);
-
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
@@ -1068,6 +1066,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
 
+   SSL_set_verify(svr->ssl, SSL_VERIFY_PEER, NULL);
    /* use CRL/CA lists to verify */
    if (SSL_get_peer_certificate(svr->ssl))
      SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
@@ -1297,7 +1296,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
    if (!cl->host_server->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
-     
+   SSL_set_verify(cl->ssl, SSL_VERIFY_PEER, NULL);
    /* use CRL/CA lists to verify */
    if (SSL_get_peer_certificate(cl->ssl))
      SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(cl->ssl));
