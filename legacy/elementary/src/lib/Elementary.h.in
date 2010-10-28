@@ -887,6 +887,10 @@ extern "C" {
    EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj);
    EAPI void         elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
 
+   EAPI void         elm_layout_signal_emit(Evas_Object *obj, const char *signal, const char *source);
+   EAPI void         elm_layout_signal_callback_add(Evas_Object *obj, const char *signal, const char *source, Edje_Signal_Cb func, void *data);
+   EAPI void        *elm_layout_signal_callback_del(Evas_Object *obj, const char *signal, const char *source, Edje_Signal_Cb func);
+
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
 
@@ -905,7 +909,15 @@ extern "C" {
  * @ingroup Layout
  */
 #define elm_layout_icon_set(_ly, _obj) \
-  elm_layout_content_set((_ly), "elm.swallow.icon", (_obj))
+  do {                                                             \
+       const char *sig;                                            \
+       elm_layout_content_set((_ly), "elm.swallow.icon", (_obj));  \
+       if ((_obj))                                                 \
+          sig = "elm,state,icon,visible";                          \
+       else                                                        \
+          sig = "elm,state,icon,hidden";                           \
+       elm_layout_signal_emit((_ly), sig, "elm");                  \
+  } while(0)
 
 /**
  * @def elm_layout_icon_get
@@ -925,7 +937,15 @@ extern "C" {
  * @ingroup Layout
  */
 #define elm_layout_end_set(_ly, _obj) \
-  elm_layout_content_set((_ly), "elm.swallow.end", (_obj))
+  do {                                                             \
+       const char *sig;                                            \
+       elm_layout_content_set((_ly), "elm.swallow.end", (_obj));  \
+       if ((_obj))                                                 \
+          sig = "elm,state,end,visible";                          \
+       else                                                        \
+          sig = "elm,state,end,hidden";                           \
+       elm_layout_signal_emit((_ly), sig, "elm");                  \
+  } while(0)
 
 /**
  * @def elm_layout_end_get

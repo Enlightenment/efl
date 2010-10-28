@@ -932,6 +932,70 @@ elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear)
    edje_object_part_table_clear(wd->lay, part, clear);
 }
 
+/**
+ * Send a signal to the Edje object of the layout
+ *
+ * Just a wrapper function around edje_object_signal_emit() so users don't
+ * need to fetch the edje from the layout every time.
+ *
+ * @param obj The layout object
+ * @param signal The signal to emit
+ * @param source The signal source
+ *
+ * @ingroup Layout
+ */
+EAPI void
+elm_layout_signal_emit(Evas_Object *obj, const char *signal, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   edje_object_signal_emit(wd->lay, signal, source);
+}
+
+/**
+ * Add a callback for signals emitted from Edje
+ *
+ * Wrapper function so users don't have to retrieve the edje object
+ * every time.
+ *
+ * @param obj The layout object
+ * @param signal Signal to listen for
+ * @param source Source to listen for
+ * @param func The function to call on signal emissions
+ * @param data User data
+ *
+ * @ingroup Layout
+ */
+EAPI void
+elm_layout_signal_callback_add(Evas_Object *obj, const char *signal, const char *source, Edje_Signal_Cb func, void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   edje_object_signal_callback_add(wd->lay, signal, source, func, data);
+}
+
+/**
+ * Delete a callback for signals.
+ *
+ * Wrapper function so users don't have to retrieve the edje object
+ * every time.
+ *
+ * @param obj The layout object
+ * @param signal Signal it was listening to
+ * @param source Source it was listening to
+ * @param func The function set as callback
+ *
+ * @return The user data given on @f elm_layout_signal_callback_add
+ *
+ * @ingroup Layout
+ */
+EAPI void *
+elm_layout_signal_callback_del(Evas_Object *obj, const char *signal, const char *source, Edje_Signal_Cb func)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   return edje_object_signal_callback_del(wd->lay, signal, source, func);
+}
 
 /**
  * Get the edje layout
