@@ -295,21 +295,74 @@ _elm_config_current_profile_get(void)
   return _elm_profile;
 }
 
-char *
-_elm_config_profile_dir_get(const char *prof)
+static size_t
+_elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
 {
-   char buf[PATH_MAX];
-   const char *home = NULL;
+   size_t data_dir_len, off;
+   va_list ap;
+
+   data_dir_len = eina_str_join_len(dst, size, '/', _elm_data_dir,
+                                    strlen(_elm_data_dir), "config",
+                                    sizeof("config") - 1);
+
+   off = data_dir_len + 1;
+   if (off >= size)
+     goto end;
+
+   va_start(ap, fmt);
+   dst[data_dir_len] = '/';
+
+   off = off + vsnprintf(dst + off, size - off, fmt, ap);
+   va_end(ap);
+
+ end:
+   return off;
+}
+
+static size_t
+_elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
+{
+   const char *home;
+   size_t user_dir_len, off;
+   va_list ap;
 
    home = getenv("HOME");
    if (!home)
      home = "/";
 
-   snprintf(buf, sizeof(buf), "%s/.elementary/config/%s", home, prof);
+   user_dir_len = eina_str_join_len(dst, size, '/', home, strlen(home),
+                                    ".elementary", sizeof(".elementary") - 1);
+
+   off = user_dir_len + 1;
+   if (off >= size)
+     goto end;
+
+   va_start(ap, fmt);
+   dst[user_dir_len] = '/';
+
+   off = off + vsnprintf(dst + off, size - off, fmt, ap);
+   va_end(ap);
+
+ end:
+   return off;
+}
+
+const char *
+_elm_config_profile_dir_get(const char *prof, Eina_Bool is_user)
+{
+   char buf[PATH_MAX];
+
+   if (!is_user)
+     goto not_user;
+
+   _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
 
    if (ecore_file_is_dir(buf))
      return strdup(buf);
 
+   return NULL;
+
+ not_user:
    snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
 
    if (ecore_file_is_dir(buf))
@@ -322,7 +375,6 @@ Eina_List *
 _elm_config_profiles_list(void)
 {
    const Eina_File_Direct_Info *info;
-   const char *home = NULL;
    Eina_List *flist = NULL;
    Eina_Iterator *file_it;
    struct stat buffer;
@@ -330,13 +382,7 @@ _elm_config_profiles_list(void)
    const char *dir;
    size_t len;
 
-   home = getenv("HOME");
-   if (!home)
-     home = "/";
-
-   len = eina_str_join_len(buf, sizeof(buf), '/', home, strlen(home),
-                           ".elementary/config",
-                           sizeof(".elementary/config") - 1);
+   len = _elm_user_dir_snprintf(buf, sizeof(buf), "config");
 
    file_it = eina_file_direct_ls(buf);
    if (!file_it)
@@ -466,8 +512,8 @@ _profile_fetch_from_conf(void)
    home = getenv("HOME");
    if (!home) home = "/";
 
-   // usser profile
-   snprintf(buf, sizeof(buf), "%s/.elementary/config/profile.cfg", home);
+   // user profile
+   _elm_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
@@ -486,7 +532,7 @@ _profile_fetch_from_conf(void)
    if (ef) return;
 
    // system profile
-   snprintf(buf, sizeof(buf), "%s/config/profile.cfg", _elm_data_dir);
+   _elm_data_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
@@ -540,13 +586,10 @@ _config_user_load(void)
    Elm_Config *cfg = NULL;
    Eet_File *ef;
    char buf[PATH_MAX];
-   const char *home;
 
-   home = getenv("HOME");
-   if (!home) home = "";
+   _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s/base.cfg",
+                          _elm_profile);
 
-   snprintf(buf, sizeof(buf), "%s/.elementary/config/%s/base.cfg", home,
-            _elm_profile);
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
@@ -563,8 +606,9 @@ _config_system_load(void)
    Eet_File *ef;
    char buf[PATH_MAX];
 
-   snprintf(buf, sizeof(buf), "%s/config/%s/base.cfg", _elm_data_dir,
-            _elm_profile);
+   _elm_data_dir_snprintf(buf, sizeof(buf), "config/%s/base.cfg",
+                          _elm_profile);
+
    ef = eet_open(buf, EET_FILE_MODE_READ);
    if (ef)
      {
@@ -627,6 +671,182 @@ _config_load(void)
    _elm_config->fileselector_expand_enable = EINA_FALSE;
    _elm_config->inwin_dialogs_enable = EINA_FALSE;
    _elm_config->icon_size = 32;
+}
+
+static const char *
+_elm_config_eet_close_error_get(Eet_File *ef, char *file)
+{
+   Eet_Error err;
+   char *erstr = NULL;
+
+   err = eet_close(ef);
+   switch (err)
+     {
+      case EET_ERROR_WRITE_ERROR:
+	erstr = "An error occurred while saving Elementary's "
+		"settings to disk. The error could not be "
+		"deterimined. The file where the error occurred was: "
+		"%s. This file has been deleted to avoid corrupt data.";
+	break;
+      case EET_ERROR_WRITE_ERROR_FILE_TOO_BIG:
+	erstr = "Elementary's settings files are too big "
+		"for the file system they are being saved to. "
+		"This error is very strange as the files should "
+		"be extremely small. Please check the settings "
+		"for your home directory. "
+		"The file where the error occurred was: %s ."
+		"This file has been deleted to avoid corrupt data.";
+	break;
+      case EET_ERROR_WRITE_ERROR_IO_ERROR:
+	erstr = "An output error occurred when writing the settings "
+		"files for Elementary. Your disk is having troubles "
+		"and possibly needs replacement. "
+		"The file where the error occurred was: %s ."
+		"This file has been deleted to avoid corrupt data.";
+	break;
+      case EET_ERROR_WRITE_ERROR_OUT_OF_SPACE:
+	erstr = "Elementary cannot write its settings file "
+		"because it ran out of space to write the file. "
+		"You have either run out of disk space or have "
+		"gone over your quota limit. "
+		"The file where the error occurred was: %s ."
+		"This file has been deleted to avoid corrupt data.";
+	break;
+      case EET_ERROR_WRITE_ERROR_FILE_CLOSED:
+	erstr = "Elementary unexpectedly had the settings file "
+		"it was writing closed on it. This is very unusual. "
+		"The file where the error occurred was: %s "
+		"This file has been deleted to avoid corrupt data.";
+	break;
+      default:
+	break;
+     }
+   if (erstr)
+     {
+	/* delete any partially-written file */
+	ecore_file_unlink(file);
+        return strdup(erstr);
+     }
+
+   return NULL;
+}
+
+static Eina_Bool
+_elm_config_profile_save(void)
+{
+   char buf[4096], buf2[4096];
+   int ok = 0, ret;
+   const char *err;
+   Eet_File *ef;
+   size_t len;
+
+   len = _elm_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+   if (len + 1 >= sizeof(buf))
+     return EINA_FALSE;
+
+   len = _elm_user_dir_snprintf(buf2,  sizeof(buf2), "config/profile.cfg.tmp");
+   if (len + 1 >= sizeof(buf2))
+     return EINA_FALSE;
+
+   ef = eet_open(buf2, EET_FILE_MODE_WRITE);
+   if (!ef)
+     return EINA_FALSE;
+
+   ok = eet_write(ef, "config", _elm_profile, strlen(_elm_profile), 0);
+   if (!ok)
+     goto err;
+
+   err = _elm_config_eet_close_error_get(ef, buf2);
+   if (err)
+     {
+       ERR("%s", err);
+       free((void *)err);
+       goto err;
+     }
+
+   ret = ecore_file_mv(buf2, buf);
+   if (!ret)
+     {
+       ERR("Error saving Elementary's configuration file");
+       goto err;
+     }
+
+   ecore_file_unlink(buf2);
+   return EINA_TRUE;
+
+ err:
+   ecore_file_unlink(buf2);
+   return EINA_FALSE;
+}
+
+Eina_Bool
+_elm_config_save(void)
+{
+   char buf[4096], buf2[4096];
+   int ok = 0, ret;
+   const char *err;
+   Eet_File *ef;
+   size_t len;
+
+   if (!_elm_config_profile_save())
+     return EINA_FALSE;
+
+   len = _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s", _elm_profile);
+   if (len + 1 >= sizeof(buf))
+     return EINA_FALSE;
+
+   ok = ecore_file_mkpath(buf);
+   if (!ok)
+     {
+       ERR("Problem acessing Elementary's user configuration directory: %s",
+           buf);
+       return EINA_FALSE;
+     }
+
+   buf[len] = '/';
+   len++;
+
+   if (len + sizeof("base.cfg") >= sizeof(buf) - len)
+     return EINA_FALSE;
+
+   memcpy(buf + len, "base.cfg", sizeof("base.cfg"));
+   len += sizeof("base.cfg") - 1;
+
+   if (len + sizeof(".tmp") >= sizeof(buf))
+     return EINA_FALSE;
+
+   memcpy(buf2, buf, len);
+   memcpy(buf2 + len, ".tmp", sizeof(".tmp"));
+
+   ef = eet_open(buf2, EET_FILE_MODE_WRITE);
+   if (!ef)
+     return EINA_FALSE;
+
+   ok = eet_data_write(ef, _config_edd, "config", _elm_config, 1);
+   if (!ok)
+     goto err;
+
+   err = _elm_config_eet_close_error_get(ef, buf2);
+   if (err)
+     {
+       ERR("%s", err);
+       free((void *)err);
+       goto err;
+     }
+
+   ret = ecore_file_mv(buf2, buf);
+   if (!ret)
+     {
+       ERR("Error saving Elementary's configuration file");
+       goto err;
+     }
+
+   ecore_file_unlink(buf2);
+   return EINA_TRUE;
+
+ err:
+   ecore_file_unlink(buf2);
+   return EINA_FALSE;
 }
 
 static void
@@ -949,8 +1169,15 @@ _elm_config_sub_init(void)
    _config_sub_apply();
 }
 
-/* TODO: dump old profile's entries to disk? keep default values, for
-   reset action? */
+void
+_elm_config_reload(void)
+{
+  _config_free();
+  _config_load();
+  _config_apply();
+  _elm_rescale();
+}
+
 void
 _elm_config_profile_set(const char *profile)
 {
@@ -962,6 +1189,7 @@ _elm_config_profile_set(const char *profile)
         changed = 1;
       free(_elm_profile);
     }
+
   _elm_profile = strdup(profile);
 
   if (changed)

@@ -27,6 +27,7 @@ static const char *scale_set = NULL;
 static void
 my_win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   elm_config_save();
    /* called when my_win_main is requested to be deleted */
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
 }
@@ -249,6 +250,66 @@ _cf_caches(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    _flip_to(data, "caches");
 }
 
+const char *
+_elm_theme_current_get(const char *theme_search_order)
+{
+   const char *ret;
+   const char *p;
+
+   if (!theme_search_order)
+     return NULL;
+
+   for (p = theme_search_order; ; p++)
+     {
+       if ((*p == ':') || (!*p))
+         {
+           if (p > theme_search_order)
+             {
+               char *n = malloc(p - theme_search_order + 1);
+               if (!n)
+                 return NULL;
+
+               strncpy(n, theme_search_order, p - theme_search_order);
+               n[p - theme_search_order] = 0;
+               ret = eina_stringshare_add(n);
+               free(n);
+               break;
+             }
+         }
+     }
+
+   return ret;
+}
+
+static void
+_profile_change_do(Evas_Object *win, const char *profile)
+{
+   const char *curr_theme;
+   Elm_Theme *th;
+   double scale;
+   int fs;
+
+   elm_profile_all_set(profile);
+
+   scale = elm_scale_get();
+   fs = elm_finger_size_get();
+
+   /* gotta update root windows' atoms */
+   elm_scale_all_set(scale);
+   elm_slider_value_set(evas_object_data_get(win, "scale_slider"), scale);
+   elm_finger_size_all_set(fs);
+   elm_slider_value_set(evas_object_data_get(win, "fs_slider"), fs);
+
+   curr_theme = _elm_theme_current_get(elm_theme_get(NULL));
+   elm_theme_all_set(curr_theme);
+
+   th = elm_theme_new();
+   elm_theme_set(th, curr_theme);
+   elm_object_theme_set(evas_object_data_get(win, "theme_preview"), th);
+   elm_theme_free(th);
+   eina_stringshare_del(curr_theme);
+}
+
 static void
 _profile_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -258,10 +319,46 @@ _profile_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
    li = data;
    selection = elm_list_item_data_get(elm_list_selected_item_get(li));
 
-   if (!strcmp(elm_profile_get(), selection))
+   if (!strcmp(elm_profile_current_get(), selection))
      return;
 
-   elm_profile_all_set(selection);
+   elm_config_save(); /* dump config into old profile's data dir */
+   elm_profile_set(selection); /* just here to update info for getters below */
+
+   _profile_change_do(elm_object_top_widget_get(li), selection);
+   elm_config_save(); /* make sure new profile has its data dir */
+}
+
+static void
+_btn_todo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("To be done!\n");
+}
+
+static void
+_profile_reset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   const char *selection, *curr;
+   const char *pdir;
+   Evas_Object *li;
+
+   li = data;
+   selection = elm_list_item_data_get(elm_list_selected_item_get(li));
+   curr = elm_profile_current_get();
+
+   pdir = elm_profile_dir_get(selection, EINA_TRUE);
+   if (!pdir)
+     return;
+
+   elm_config_save(); /* dump config into old profile's data dir */
+
+   ecore_file_recursive_rm(pdir);
+   free((void *)pdir);
+
+   elm_config_reload();
+
+   _profile_change_do(elm_object_top_widget_get(li), curr);
+   elm_config_save(); /* make sure new profile has its data dir */
 }
 
 static void
@@ -297,7 +394,7 @@ _theme_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Theme *t = data;
    Evas_Object *win = elm_object_top_widget_get(obj);
-   Evas_Object *sample = evas_object_data_get(win, "sample");
+   Evas_Object *sample = evas_object_data_get(win, "theme_preview");
    Elm_Theme *th;
    const char *defth;
    char *newth;
@@ -356,6 +453,7 @@ _status_config_sizing(Evas_Object *win, Evas_Object *holder)
    evas_object_show(lb);
 
    sl = elm_slider_add(win);
+   evas_object_data_set(win, "scale_slider", sl);
    evas_object_size_hint_weight_set(sl, 1.0, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
@@ -391,6 +489,7 @@ _status_config_sizing(Evas_Object *win, Evas_Object *holder)
    evas_object_show(lb);
 
    sl = elm_slider_add(win);
+   evas_object_data_set(win, "fs_slider", sl);
    evas_object_size_hint_weight_set(sl, 1.0, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
@@ -610,7 +709,7 @@ _status_config_themes(Evas_Object *win, Evas_Object *holder)
    sample = _sample_theme_new(win);
    elm_scroller_content_set(sc, sample);
    evas_object_show(sample);
-   evas_object_data_set(win, "sample", sample);
+   evas_object_data_set(win, "theme_preview", sample);
 
    /////////////////////////////////////////////
    sp = elm_separator_add(win);
@@ -684,10 +783,10 @@ static void
 _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    const char *cur_profile = NULL;
-   char *pdir, buf[PATH_MAX];
-   const char *sel_profile;
+   const char *sel_profile, *pdir;
    Eina_Bool cur_selected;
    const char *prof_name;
+   char buf[PATH_MAX];
    Evas_Object *en;
 #ifdef ELM_EFREET  
    Efreet_Desktop *desk = NULL;
@@ -695,21 +794,12 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
   
    sel_profile = data;
    if (!sel_profile)
-       return;
+     return;
 
-   cur_profile = elm_profile_get();
+   cur_profile = elm_profile_current_get();
    cur_selected = !strcmp(cur_profile, sel_profile);
 
-   elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
-                           cur_selected);
-
-   /* TODO */
-   /* e_config_dialog_changed_set(cfdata->cfd, !v); /\* just a flag to say */
-   /*                                                  user selected */
-   /*                                                  other profile */
-   /*                                                  other than curr *\/ */
-
-   pdir = elm_profile_dir_get(sel_profile);
+   pdir = elm_profile_dir_get(sel_profile, EINA_FALSE);
 #ifdef ELM_EFREET  
    snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
    desk = efreet_desktop_new(buf);
@@ -717,6 +807,16 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    else
 #endif    
      prof_name = cur_profile;
+
+   if (!pdir)
+       elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
+                               cur_selected);
+   else
+     {
+       elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
+                               EINA_TRUE);
+       elm_profile_dir_free(pdir);
+     }
 
    snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br>",
             prof_name);
@@ -747,19 +847,19 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 
    elm_list_clear(l_widget);
 
-   cur_profile = elm_profile_get();
+   cur_profile = elm_profile_current_get();
 
    EINA_LIST_FOREACH(p_names, l, profile)
      {
-        char buf[PATH_MAX], *pdir;
-        const char *label, *ext;
-        Evas_Object *ic;
-        Elm_List_Item *it;
 #ifdef ELM_EFREET
        Efreet_Desktop *desk = NULL;
 #endif
-       
-        pdir = elm_profile_dir_get(profile);
+        const char *label, *ext, *pdir;
+        char buf[PATH_MAX];
+        Elm_List_Item *it;
+        Evas_Object *ic;
+
+        pdir = elm_profile_dir_get(profile, EINA_FALSE);
         label = profile;
        
 #ifdef ELM_EFREET
@@ -792,8 +892,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
         if (cur_profile && !strcmp(profile, cur_profile))
           sel_it = it;
 
-        if (pdir)
-          free(pdir);
+        elm_profile_dir_free(pdir);
 
 #ifdef ELM_EFREET
        if (desk) efreet_desktop_free(desk);
@@ -879,15 +978,15 @@ _status_config_profiles(Evas_Object *win, Evas_Object *holder)
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _profile_use, li);
-   elm_button_label_set(bt, "Use profile");
+   elm_button_label_set(bt, "Use");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   evas_object_smart_callback_add(bt, "clicked", NULL, NULL); /* TODO */
-   elm_button_label_set(bt, "Delete profile");
+   evas_object_smart_callback_add(bt, "clicked", _btn_todo, NULL); /* TODO */
+   elm_button_label_set(bt, "Delete");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
@@ -896,7 +995,17 @@ _status_config_profiles(Evas_Object *win, Evas_Object *holder)
    evas_object_data_set(li, "prof_del_btn", bt);
 
    bt = elm_button_add(win);
-   evas_object_smart_callback_add(bt, "clicked", NULL, NULL); /* TODO */
+   evas_object_smart_callback_add(bt, "clicked", _profile_reset, li);
+   elm_button_label_set(bt, "Reset");
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(btn_bx, bt);
+   evas_object_show(bt);
+
+   evas_object_data_set(li, "prof_reset_btn", bt);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _btn_todo, NULL); /* TODO */
    elm_button_label_set(bt, "Add new");
    evas_object_size_hint_weight_set(bt, 0.0, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);

@@ -333,8 +333,11 @@ extern "C" {
    EAPI void         elm_scale_set(double scale);
    EAPI void         elm_scale_all_set(double scale);
 
-   EAPI const char  *elm_profile_get(void);
-   EAPI char        *elm_profile_dir_get(const char *profile);
+   EAPI Eina_Bool    elm_config_save(void);
+   EAPI void         elm_config_reload(void);
+
+   EAPI const char  *elm_profile_current_get(void);
+   EAPI const char  *elm_profile_dir_get(const char *profile, Eina_Bool is_user);
    EAPI void         elm_profile_dir_free(const char *p_dir);
    EAPI Eina_List   *elm_profile_list_get(void);
    EAPI void         elm_profile_list_free(Eina_List *l);

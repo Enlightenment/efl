@@ -1210,6 +1210,53 @@ elm_scale_all_set(double scale)
 #endif   
 }
 
+/**
+ * @defgroup Config Elementary Config
+ *
+ * Elementary configuration is formed by a set options bounded to a
+ * given @ref Profile profile, like @ref Theme theme, @ref Fingers
+ * "finger size", etc. These are functions with which one syncronizes
+ * changes made to those values to the configuration storing files, de
+ * facto. You most probably don't want to use the functions in this
+ * group unlees you're writing an elementary configuration manager.
+ */
+
+/**
+ * Save back Elementary's configuration, so that it will persist on
+ * future sessions.
+ *
+ * @return @c EINA_TRUE, when sucessful. @c EINA_FALSE, otherwise.
+ * @ingroup Config
+ *
+ * This function will take effect -- thus, do I/O -- immediately. Use
+ * it when you want to apply all configuration changes at once. The
+ * current configuration set will get saved onto the current profile
+ * configuration file.
+ *
+ */
+EAPI Eina_Bool
+elm_config_save(void)
+{
+   return _elm_config_save();
+}
+
+/**
+ * Reload Elementary's configuration, bounded to current selected
+ * profile.
+ *
+ * @return @c EINA_TRUE, when sucessful. @c EINA_FALSE, otherwise.
+ * @ingroup Config
+ *
+ * Useful when you want to force reloading of configuration values for
+ * a profile. If one removes user custom configuration directories,
+ * for example, it will force a reload with system values insted.
+ *
+ */
+EAPI void
+elm_config_reload(void)
+{
+   _elm_config_reload();
+}
 
 /**
  * @defgroup Profile Elementary Profile
@@ -1217,7 +1264,7 @@ elm_scale_all_set(double scale)
  * Profiles are pre-set options that affect the whole look-and-feel of
  * Elementary-based applications. There are, for example, profiles
  * aimed at desktop computer applications and others aimed at mobile,
- * touchscreen-based ones. You probably don't want to use the
+ * touchscreen-based ones. You most probably don't want to use the
  * functions in this group unlees you're writing an elementary
  * configuration manager.
  */
@@ -1232,24 +1279,28 @@ elm_scale_all_set(double scale)
  * @ingroup Profile
  */
 EAPI const char *
-elm_profile_get(void)
+elm_profile_current_get(void)
 {
    return _elm_config_current_profile_get();
 }
 
 /**
- * Get an Elementary's profile directory path in the filesystem.
+ * Get an Elementary's profile directory path in the filesystem. One
+ * may want to fetch a system profile's dir or an user one (fetched
+ * inside $HOME).
  *
  * @param profile The profile's name
+ * @param is_user Whether to lookup for an user profile (@c EINA_TRUE)
+ *                or a system one (@c EINA_FALSE)
  * @return The profile's directory path.
  * @ingroup Profile
  *
  * @note You must free it with elm_profile_dir_free().
  */
-EAPI char *
-elm_profile_dir_get(const char *profile)
+EAPI const char *
+elm_profile_dir_get(const char *profile, Eina_Bool is_user)
 {
-   return _elm_config_profile_dir_get(profile);
+   return _elm_config_profile_dir_get(profile, is_user);
 }
 
 /**
@@ -1291,17 +1342,17 @@ elm_profile_list_get(void)
 EAPI void
 elm_profile_list_free(Eina_List *l)
 {
-  const char *dir;
+   const char *dir;
 
-  EINA_LIST_FREE(l, dir)
-    eina_stringshare_del(dir);
+   EINA_LIST_FREE(l, dir)
+     eina_stringshare_del(dir);
 }
 
 /**
  * Set Elementary's profile.
  *
  * This sets the global profile that is applied to Elementary
- * applications. Just the instance the call comes from will be
+ * applications. Just the process the call comes from will be
  * affected.
  *
  * @param profile The profile's name
@@ -1311,6 +1362,8 @@ elm_profile_list_free(Eina_List *l)
 EAPI void
 elm_profile_set(const char *profile)
 {
+   if (!profile)
+     return;
    _elm_config_profile_set(profile);
 }
 
@@ -1330,7 +1383,8 @@ elm_profile_all_set(const char *profile)
 #ifdef HAVE_ELEMENTARY_X
    static Ecore_X_Atom atom = 0;
 
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_PROFILE");
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_PROFILE");
    ecore_x_window_prop_string_set(ecore_x_window_root_first_get(),
                                   atom, profile);
 #endif
