@@ -538,7 +538,7 @@ EAPI Eio_File *eio_file_chown(const char *path,
  */
 
 /**
- * @defgroup Eio_Helper
+ * @addtogroup Eio_Helper
  *
  * @{
  */
