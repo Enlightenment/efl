@@ -1800,7 +1800,7 @@ extern "C" {
 	ELM_PHOTOCAM_ZOOM_MODE_LAST
      } Elm_Photocam_Zoom_Mode;
    EAPI Evas_Object *elm_photocam_add(Evas_Object *parent);
-   EAPI int          elm_photocam_file_set(Evas_Object *obj, const char *file);
+   EAPI Evas_Load_Error elm_photocam_file_set(Evas_Object *obj, const char *file);
    EAPI const char * elm_photocam_file_get(const Evas_Object *obj);
    EAPI void         elm_photocam_zoom_set(Evas_Object *obj, double zoom);
    EAPI double       elm_photocam_zoom_get(const Evas_Object *obj);

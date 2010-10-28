@@ -1072,10 +1072,10 @@ elm_photocam_add(Evas_Object *parent)
  *
  * @ingroup Photocam
  */
-EAPI int
+EAPI Evas_Load_Error
 elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) EVAS_LOAD_ERROR_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
    int w, h;
    if (!wd) return EVAS_LOAD_ERROR_GENERIC;
