@@ -23,7 +23,7 @@ ecore_file_path_shutdown(void)
    char *dir;
 
    EINA_LIST_FREE(__ecore_file_path_bin, dir)
-     free(dir);
+     eina_stringshare_del(dir);
 }
 
 Eina_List *
@@ -36,7 +36,7 @@ _ecore_file_path_from_env(const char *env)
    if (!env_path)
      return path;
 
-   env_path = strdup(env_path);
+   env_path = strdupa(env_path);
    last = env_path;
    for (p = env_path; *p; p++)
      {
@@ -46,14 +46,13 @@ _ecore_file_path_from_env(const char *env)
         if (!*p)
           {
              if (!ecore_file_path_dir_exists(last))
-               path = eina_list_append(path, strdup(last));
+               path = eina_list_append(path, eina_stringshare_add(last));
              last = p + 1;
           }
      }
    if (p > last)
-     path = eina_list_append(path, strdup(last));
+     path = eina_list_append(path, eina_stringshare_add(last));
 
-   free(env_path);
    return path;
 }
 
