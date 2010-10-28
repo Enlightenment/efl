@@ -382,10 +382,8 @@ static Ecore_Con_Ssl_Error
 _ecore_con_ssl_init_gnutls(void)
 {
 #ifdef EFL_HAVE_PTHREAD
-   if (gcry_control (GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
-      WRN(
-         "YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
-
+   if (gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread))
+      WRN("YOU ARE USING PTHREADS, BUT I CANNOT INITIALIZE THREADSAFE GCRYPT OPERATIONS!");
 #endif
    if (gnutls_global_init())
       return ECORE_CON_SSL_ERROR_INIT_FAILED;
@@ -425,7 +423,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
 
-   if (svr->created)
+   if ((!svr->use_cert) && svr->created)
      {
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
         INF("Generating DH params");
@@ -440,7 +438,7 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr, int ssl_type)
         gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
         INF("DH params successfully generated and applied!");
      }
-   else
+   else if (!svr->use_cert)
      {
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
@@ -454,10 +452,6 @@ error:
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
 
-/* Tries to connect an Ecore_Con_Server to an SSL host.
- * Returns 1 on success, -1 on fatal errors and 0 if the caller
- * should try again later.
- */
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 {
@@ -498,6 +492,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&svr->session, GNUTLS_CLIENT));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_client(svr->session));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_server_name_set(svr->session, GNUTLS_NAME_DNS, svr->name, strlen(svr->name)));
+        INF("Applying priority string: %s", priority);
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(svr->session, priority, NULL));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_CERTIFICATE, svr->cert));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_PSK, svr->pskcred_c));
@@ -749,6 +744,9 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
 static Ecore_Con_Ssl_Error
 _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
 {
+   const gnutls_datum_t *cert_list;
+   unsigned int iter, cert_list_size;
+   gnutls_x509_crt_t cert = NULL;
    const char *priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:+VERS-TLS1.2:+VERS-TLS1.1:+VERS-TLS1.0:+VERS-SSL3.0";
    int ret = 0;
 
@@ -785,6 +783,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_key_generate(&cl->session_ticket));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_server(cl->session, &cl->session_ticket));
+        INF("Applying priority string: %s", priority);
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(cl->session, priority, NULL));
 
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
@@ -814,15 +813,55 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         break;
      }
 
-   /* TODO: add cert verification support */
+   if (!cl->host_server->verify)
+     /* not verifying certificates, so we're done! */
+     return ECORE_CON_SSL_ERROR_NONE;
+   ret = 0;
+   /* use CRL/CA lists to verify */
+   SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_verify_peers2(cl->session, &iter));
+   if (iter & GNUTLS_CERT_INVALID)
+     ERR("The certificate is not trusted.");
+   else if (iter & GNUTLS_CERT_SIGNER_NOT_FOUND)
+     ERR("The certificate hasn't got a known issuer.");
+   else if (iter & GNUTLS_CERT_REVOKED)
+     ERR("The certificate has been revoked.");
+   else if (iter & GNUTLS_CERT_EXPIRED)
+     ERR("The certificate has expired");
+   else if (iter & GNUTLS_CERT_NOT_ACTIVATED)
+     ERR("The certificate is not yet activated");
+
+   if (iter)
+     goto error;
+
+   if (gnutls_certificate_type_get(cl->session) != GNUTLS_CRT_X509)
+     {
+        ERR("Warning: PGP certificates are not yet supported!");
+        goto error;
+     }
+
+
+   SSL_ERROR_CHECK_GOTO_ERROR(!(cert_list = gnutls_certificate_get_peers(cl->session, &cert_list_size)));
+   SSL_ERROR_CHECK_GOTO_ERROR(!cert_list_size);
+
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
+   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER));
+
+   SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, cl->host_server->name));
+   gnutls_x509_crt_deinit(cert);
+   DBG("SSL certificate verification succeeded!");
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
    _gnutls_print_errors(ret);
    if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
      ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(cl->session)));
-   ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(cl->session)));
-   ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(cl->session)));
+   if (cl->ssl_state != ECORE_CON_SSL_STATE_DONE)
+     {
+       ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(cl->session)));
+       ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(cl->session)));
+     }
+   if (cert)
+     gnutls_x509_crt_deinit(cert);
    _ecore_con_ssl_client_shutdown_gnutls(cl);
    return ECORE_CON_SSL_ERROR_SERVER_INIT_FAILED;
 }
