@@ -43,6 +43,46 @@ static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const void *
        eina_stringshare_del(Var);  \
        Var = NULL;                 \
     }
+//#define CACHEDUMP 1
+
+#ifdef CACHEDUMP
+static void
+_dump_img(Image_Entry *im, const char *type)
+{
+  printf("%s: %4i: %4ikb, %4ix%4i alloc[%4ix%4i] [%s] [%s]\n",
+         type,
+         im->references,
+         (im->allocated.w * im->allocated.h * 4) / 1024,
+         im->w, im->h, im->allocated.w, im->allocated.h,
+         im->file, im->key);
+}
+
+static Eina_Bool
+_dump_cache_active(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata __UNUSED__)
+{
+  Image_Entry *im = data;
+ 
+  _dump_img(im, "ACTIVE");
+   return EINA_TRUE;
+}
+
+static void
+_dump_cache(Evas_Cache_Image *cache)
+{
+  Image_Entry *im;
+  
+  printf("--CACHE DUMP----------------------------------------------------\n");
+  printf("%cache: %ikb / %ikb\n",
+         cache->usage / 1024,
+         cache->limit / 1024);
+  printf("................................................................\n");
+  EINA_INLIST_FOREACH(cache->lru_nodata, im)
+    _dump_img(im, "NODATA");
+  EINA_INLIST_FOREACH(cache->lru, im)
+    _dump_img(im, "DATA  ");
+  eina_hash_foreach(cache->activ, _dump_cache_active, NULL);
+}
+#endif
 
 static void _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie);
 
@@ -1450,6 +1490,9 @@ evas_cache_image_flush(Evas_Cache_Image *cache)
    assert(cache);
    assert(cache->usage >= 0);
 
+#ifdef CACHEDUMP
+  _dump_cache(cache);
+#endif  
    if (cache->limit == (unsigned int)-1) return -1;
 
    while ((cache->lru) && (cache->limit < (unsigned int)cache->usage))
