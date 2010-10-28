@@ -887,10 +887,6 @@ extern "C" {
    EAPI Evas_Object *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj);
    EAPI void         elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
 
-   EAPI void         elm_layout_signal_emit(Evas_Object *obj, const char *signal, const char *source);
-   EAPI void         elm_layout_signal_callback_add(Evas_Object *obj, const char *signal, const char *source, Edje_Signal_Cb func, void *data);
-   EAPI void        *elm_layout_signal_callback_del(Evas_Object *obj, const char *signal, const char *source, Edje_Signal_Cb func);
-
    EAPI Evas_Object *elm_layout_edje_get(const Evas_Object *obj);
    EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
 
@@ -916,7 +912,7 @@ extern "C" {
           sig = "elm,state,icon,visible";                          \
        else                                                        \
           sig = "elm,state,icon,hidden";                           \
-       elm_layout_signal_emit((_ly), sig, "elm");                  \
+       elm_object_signal_emit((_ly), sig, "elm");                  \
   } while(0)
 
 /**
@@ -944,7 +940,7 @@ extern "C" {
           sig = "elm,state,end,visible";                          \
        else                                                        \
           sig = "elm,state,end,hidden";                           \
-       elm_layout_signal_emit((_ly), sig, "elm");                  \
+       elm_object_signal_emit((_ly), sig, "elm");                  \
   } while(0)
 
 /**
