@@ -2191,7 +2191,6 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
              add = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
              if(add)
                {
-/*cl->event_count++;*/
                   add->client = cl;
                   _ecore_con_cl_timer_update(cl);
                   ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, add,
