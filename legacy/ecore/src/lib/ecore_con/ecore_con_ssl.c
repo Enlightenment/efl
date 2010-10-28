@@ -772,6 +772,10 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
               priority = "NONE:%VERIFY_ALLOW_X509_V1_CA_CRT:+RSA:+DHE-RSA:+DHE-DSS:+ANON-DH:+COMP-DEFLATE:+COMP-NULL:+CTYPE-X509:+SHA1:+SHA256:+SHA384:+SHA512:+AES-256-CBC:+AES-128-CBC:+3DES-CBC:!VERS-SSL3.0";
               break;
 
+           case ECORE_CON_USE_MIXED:
+           case ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT:
+              break;
+
            default:
               return ECORE_CON_SSL_ERROR_NONE;
           }
@@ -779,10 +783,8 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         _client_connected++;
 
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_init(&cl->session, GNUTLS_SERVER));
-#ifdef USE_GNUTLS_2_10
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_key_generate(&cl->session_ticket));
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_session_ticket_enable_server(cl->session, &cl->session_ticket));
-#endif
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_priority_set_direct(cl->session, priority, NULL));
 
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
