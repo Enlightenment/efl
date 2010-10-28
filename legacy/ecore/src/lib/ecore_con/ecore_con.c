@@ -1822,6 +1822,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
         if (ecore_con_ssl_server_init(svr))
           {
              ERR("ssl handshaking failed!");
+             svr->handshaking = EINA_FALSE;
              Ecore_Con_Event_Server_Del *e;
 
              e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
@@ -2167,6 +2168,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
         if (ecore_con_ssl_client_init(cl))
           {
              ERR("ssl handshaking failed!");
+             cl->handshaking = EINA_FALSE;
              /* we lost our client! */
              Ecore_Con_Event_Client_Del *e;
 
