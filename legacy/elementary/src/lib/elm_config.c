@@ -677,7 +677,7 @@ static const char *
 _elm_config_eet_close_error_get(Eet_File *ef, char *file)
 {
    Eet_Error err;
-   char *erstr = NULL;
+   const char *erstr = NULL;
 
    err = eet_close(ef);
    switch (err)
