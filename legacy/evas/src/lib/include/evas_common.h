@@ -773,8 +773,9 @@ struct _RGBA_Map_Point
 // for fonts...
 /////
 typedef struct _Fash_Item_Index_Map Fash_Item_Index_Map;
-typedef struct _Fash_Int_Map Fash_Int_Map;
-typedef struct _Fash_Int Fash_Int;
+typedef struct _Fash_Int_Map        Fash_Int_Map;
+typedef struct _Fash_Int_Map2       Fash_Int_Map2;
+typedef struct _Fash_Int            Fash_Int;
 struct _Fash_Item_Index_Map
 {
    RGBA_Font_Int *fint;
@@ -784,85 +785,83 @@ struct _Fash_Int_Map
 {
   Fash_Item_Index_Map item[256];
 };
-struct _Fash_Int
+struct _Fash_Int_Map2
 {
    Fash_Int_Map *bucket[256];
+};
+struct _Fash_Int
+{
+   Fash_Int_Map2 *bucket[256];
    void (*freeme) (Fash_Int *fash);
 };
 
 /////
-typedef struct _Fash_Glyph_Map Fash_Glyph_Map;
-typedef struct _Fash_Glyph Fash_Glyph;
+typedef struct _Fash_Glyph_Map  Fash_Glyph_Map;
+typedef struct _Fash_Glyph_Map2 Fash_Glyph_Map2;
+typedef struct _Fash_Glyph      Fash_Glyph;
 struct _Fash_Glyph_Map
 {
    RGBA_Font_Glyph *item[256];
 };
-struct _Fash_Glyph
+struct _Fash_Glyph_Map2
 {
    Fash_Glyph_Map *bucket[256];
+};
+struct _Fash_Glyph
+{
+   Fash_Glyph_Map2 *bucket[256];
    void (*freeme) (Fash_Glyph *fash);
 };
 /////
 
 struct _RGBA_Font
 {
-   Eina_List *fonts;
-   Font_Hint_Flags hinting;
-   int references;
-   Fash_Int *fash;
-   unsigned char sizeok : 1;
-   LK(lock);
+   Eina_List       *fonts;
+   Fash_Int        *fash;
+   Font_Hint_Flags  hinting;
+   int              references;
 #ifdef EVAS_FRAME_QUEUING
+   int              ref_fq[2]; //ref_fq[0] is for addition, ref_fq[1] is for deletion
+   pthread_cond_t   cond_fq_del;
    LK(ref_fq_add);
    LK(ref_fq_del);
-   pthread_cond_t cond_fq_del;
-   int ref_fq[2];		//ref_fq[0] is for addition, ref_fq[1] is for deletion
 #endif
+   LK(lock);
+   unsigned char    sizeok : 1;
 };
 
 struct _RGBA_Font_Int
 {
+   EINA_INLIST;
    RGBA_Font_Source *src;
-
+   Eina_Hash        *kerning;
+   Fash_Glyph       *fash;
    unsigned int      size;
    int               real_size;
    int               max_h;
-
+   int               references;
+   int               usage;
    struct {
       FT_Size       size;
    } ft;
-
-//   Eina_Hash       *glyphs;
-
    LK(ft_mutex);
-
-   Eina_Hash       *kerning;
-//   Eina_Hash       *indexes;
-
-   int              usage;
-   Font_Hint_Flags hinting;
-
-   int              references;
-
-   Fash_Glyph *fash;
-   unsigned char sizeok : 1;
+   Font_Hint_Flags  hinting;
+   unsigned char    sizeok : 1;
+   unsigned char    inuse : 1;
 };
 
 struct _RGBA_Font_Source
 {
    const char       *name;
    const char       *file;
-
    void             *data;
-   int               data_size;
    unsigned int      current_size;
-
+   int               data_size;
+   int               references;
    struct {
-      int           orig_upem;
-      FT_Face       face;
+      int            orig_upem;
+      FT_Face        face;
    } ft;
-
-   int              references;
 };
 
 struct _RGBA_Font_Glyph

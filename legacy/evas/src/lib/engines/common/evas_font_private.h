@@ -20,4 +20,13 @@ extern LK(lock_bidi); // for fribidi API calls
 #  define BIDIUNLOCK() 
 # endif
 
+void evas_common_font_source_unload(RGBA_Font_Source *fs);
+void evas_common_font_source_reload(RGBA_Font_Source *fs);
+
+void evas_common_font_int_promote(RGBA_Font_Int *fi);
+void evas_common_font_int_use_increase(int size);
+void evas_common_font_int_use_trim(void);
+void evas_common_font_int_unload(RGBA_Font_Int *fi);
+void evas_common_font_int_reload(RGBA_Font_Int *fi);
+
 #endif /* !_EVAS_FONT_PRIVATE_H */

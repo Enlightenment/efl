@@ -75,11 +75,20 @@ evas_common_font_draw_finish(void)
 #endif
 
 static void
-_fash_int_free(Fash_Int *fash)
+_fash_int2_free(Fash_Int_Map2 *fash)
 {
    int i;
 
    for (i = 0; i < 256; i++) if (fash->bucket[i]) free(fash->bucket[i]);
+   free(fash);
+}
+
+static void
+_fash_int_free(Fash_Int *fash)
+{
+   int i;
+
+   for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_int2_free(fash->bucket[i]);
    free(fash);
 }
 
@@ -94,27 +103,41 @@ _fash_int_new(void)
 static Fash_Item_Index_Map *
 _fash_int_find(Fash_Int *fash, int item)
 {
-   int maj, min;
+   int grp, maj, min;
 
-   item &= 0xffff; // fixme: to do > 65k
+   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
-   if (!fash->bucket[maj]) return NULL;
-   return &(fash->bucket[maj]->item[min]);
+   if (!fash->bucket[grp]) return NULL;
+   if (!fash->bucket[grp]->bucket[maj]) return NULL;
+   return &(fash->bucket[grp]->bucket[maj]->item[min]);
 }
 
 static void
 _fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int index)
 {
-   int maj, min;
+   int grp, maj, min;
 
-   item &= 0xffff; // fixme: to do > 65k
+   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
-   if (!fash->bucket[maj])
-     fash->bucket[maj] = calloc(1, sizeof(Fash_Int_Map));
-   fash->bucket[maj]->item[min].fint = fint;
-   fash->bucket[maj]->item[min].index = index;
+   if (!fash->bucket[grp])
+     fash->bucket[grp] = calloc(1, sizeof(Fash_Int_Map2));
+   if (!fash->bucket[grp]->bucket[maj])
+     fash->bucket[grp]->bucket[maj] = calloc(1, sizeof(Fash_Int_Map));
+   fash->bucket[grp]->bucket[maj]->item[min].fint = fint;
+   fash->bucket[grp]->bucket[maj]->item[min].index = index;
+}
+
+static void
+_fash_gl2_free(Fash_Glyph_Map2 *fash)
+{
+   int i;
+
+   for (i = 0; i < 256; i++) if (fash->bucket[i]) free(fash->bucket[i]);
+   free(fash);
 }
 
 static void
@@ -122,7 +145,7 @@ _fash_gl_free(Fash_Glyph *fash)
 {
    int i;
 
-   for (i = 0; i < 256; i++) if (fash->bucket[i]) free(fash->bucket[i]);
+   for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_gl2_free(fash->bucket[i]);
    free(fash);
 }
 
@@ -137,26 +160,31 @@ _fash_gl_new(void)
 static RGBA_Font_Glyph *
 _fash_gl_find(Fash_Glyph *fash, int item)
 {
-   int maj, min;
+   int grp, maj, min;
 
-   item &= 0xffff; // fixme: to do > 65k
+   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
-   if (!fash->bucket[maj]) return NULL;
-   return fash->bucket[maj]->item[min];
+   if (!fash->bucket[grp]) return NULL;
+   if (!fash->bucket[grp]->bucket[maj]) return NULL;
+   return fash->bucket[grp]->bucket[maj]->item[min];
 }
 
 static void
 _fash_gl_add(Fash_Glyph *fash, int item, RGBA_Font_Glyph *glyph)
 {
-   int maj, min;
+   int grp, maj, min;
 
-   item &= 0xffff; // fixme: to do > 65k
+   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
-   if (!fash->bucket[maj])
-     fash->bucket[maj] = calloc(1, sizeof(Fash_Int_Map));
-   fash->bucket[maj]->item[min] = glyph;
+   if (!fash->bucket[grp])
+     fash->bucket[grp] = calloc(1, sizeof(Fash_Glyph_Map2));
+   if (!fash->bucket[grp]->bucket[maj])
+     fash->bucket[grp]->bucket[maj] = calloc(1, sizeof(Fash_Glyph_Map));
+   fash->bucket[grp]->bucket[maj]->item[min] = glyph;
 }
 
 EAPI RGBA_Font_Glyph *
@@ -165,9 +193,11 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    RGBA_Font_Glyph *fg;
    FT_UInt hindex;
    FT_Error error;
+   int size;
    const FT_Int32 hintflags[3] =
      { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
 
+   evas_common_font_int_promote(fi);
    if (fi->fash)
      {
         fg = _fash_gl_find(fi->fash, index);
@@ -180,6 +210,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 //   fg = eina_hash_find(fi->glyphs, &hindex);
 //   if (fg) return fg;
 
+   evas_common_font_int_reload(fi);
    FTLOCK();
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
    error = FT_Load_Glyph(fi->src->ft.face, index,
@@ -227,6 +258,10 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    if (!fi->fash) fi->fash = _fash_gl_new();
    if (fi->fash) _fash_gl_add(fi->fash, index, fg);
+   size = sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) +
+    (fg->glyph_out->bitmap.width * fg->glyph_out->bitmap.rows) + 200;
+   fi->usage += size;
+   if (fi->inuse) evas_common_font_int_use_increase(size);
 
 //   eina_hash_direct_add(fi->glyphs, &fg->index, fg);
    return fg;
@@ -261,6 +296,7 @@ _evas_common_get_char_index(RGBA_Font_Int* fi, int gl)
 //	return FT_Get_Char_Index(fi->src->ft.face, gl);
 //     }
 
+   evas_common_font_int_reload(fi);
    FTLOCK();
    result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
    FTUNLOCK();
@@ -323,8 +359,9 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 #endif
         if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
 	  {
-	     if (evas_common_font_source_load_complete(fi->src))
-	       return 0;
+             evas_common_font_int_reload(fi);
+//	     if (evas_common_font_source_load_complete(fi->src))
+//	       return 0;
 #if 0 /* FIXME: disable this. this can eat a LOT of memory and in my tests with expedite at any rate shows no visible improvements */
 /*             
 	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
@@ -362,7 +399,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 	     if (index != 0)
 	       {
 		  if (!fi->ft.size)
-		    evas_common_font_int_load_complete(fi);
+                     evas_common_font_int_load_complete(fi);
                   if (!fn->fash) fn->fash = _fash_int_new();
                   if (fn->fash) _fash_int_add(fn->fash, gl, fi, index);
 		  *fi_ret = fi;
@@ -697,6 +734,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #ifdef BIDI_SUPPORT
    if (visual_text) free(visual_text);
 #endif
+  evas_common_font_int_use_trim();
 }
 
 EAPI void
@@ -746,6 +784,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 #ifdef EVAS_FRAME_QUEUING
    LKL(fn->lock);
 #endif
+   evas_common_font_int_reload(fi);
 //   evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);

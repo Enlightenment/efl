@@ -27,6 +27,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
     * values to kern by - given same font, same size and same
     * prev_index and index. auto/bytecode or none hinting doesn't
     * matter */
+   evas_common_font_int_reload(fi);
    FTLOCK();
    if (FT_Get_Kerning(fi->src->ft.face,
 		      key[0], key[1],
@@ -83,6 +84,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
    pen_x = 0;
    pen_y = 0;
 //   evas_common_font_size_use(fn);
+   evas_common_font_int_reload(fi);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
    for (chr = 0, char_index = 0; *text; text++, char_index ++)
@@ -167,6 +169,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
      }
    if (w) *w = end_x - start_x;
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
+  evas_common_font_int_use_trim();
 }
 
 /* text x inset */
@@ -188,6 +191,7 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
 //   evas_common_font_size_use(fn);
    index = evas_common_font_glyph_search(fn, &fi, gl);
    LKL(fi->ft_mutex);
+   evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
 	FTLOCK();
@@ -212,6 +216,7 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
 	  (int)fi->src->ft.face->glyph->metrics.horiAdvance >> 6
 	  );
  */
+  evas_common_font_int_use_trim();
    return fg->glyph_out->left;
 }
 
@@ -239,6 +244,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
    pen_x = 0;
    pen_y = 0;
 //   evas_common_font_size_use(fn);
+   evas_common_font_int_reload(fi);
    FTLOCK();
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    FTUNLOCK();
@@ -308,6 +314,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
 #ifndef BIDI_SUPPORT
    intl_props = NULL;
 #endif
+  evas_common_font_int_use_trim();
 }
 
 /* x y w h for char at char pos for null it returns the position right after
@@ -358,6 +365,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 
    pen_x = 0;
    pen_y = 0;
+   evas_common_font_int_reload(fi);
 //   evas_common_font_size_use(fn);
    if (fi->src->current_size != fi->size)
      {
@@ -477,6 +485,7 @@ end:
    if (visual_text) free(visual_text);
 #endif
 
+  evas_common_font_int_use_trim();
    return ret_val;
 }
 
@@ -525,6 +534,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 
    pen_x = 0;
    pen_y = 0;
+   evas_common_font_int_reload(fi);
 //   evas_common_font_size_use(fn);
    if (fi->src->current_size != fi->size)
      {
@@ -629,6 +639,7 @@ end:
    intl_props = NULL;
 #endif
 
+  evas_common_font_int_use_trim();
    return ret_val;
 }
 
@@ -657,6 +668,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
 
    pen_x = 0;
    pen_y = 0;
+   evas_common_font_int_reload(fi);
 //   evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
@@ -745,5 +757,6 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
      }
 end:
 
+  evas_common_font_int_use_trim();
    return ret;
 }

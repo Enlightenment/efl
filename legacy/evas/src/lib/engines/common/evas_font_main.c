@@ -85,6 +85,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
      }
 #endif
    fi = fn->fonts->data;
+   evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
 	FTLOCK();
@@ -114,6 +115,7 @@ evas_common_font_descent_get(RGBA_Font *fn)
 
 //   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
 	FTLOCK();
@@ -139,7 +141,8 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
 
 //   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
-   if (fi->src->current_size != fi->size)
+   evas_common_font_int_reload(fi); 
+  if (fi->src->current_size != fi->size)
      {
 	FTLOCK();
         FT_Activate_Size(fi->ft.size);
@@ -163,6 +166,7 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
 
 //   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
 	FTLOCK();
@@ -186,6 +190,7 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
 
 //   evas_common_font_size_use(fn);
    fi = fn->fonts->data;
+   evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
 	FTLOCK();
