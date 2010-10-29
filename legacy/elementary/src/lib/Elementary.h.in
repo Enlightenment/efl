@@ -1284,6 +1284,7 @@ extern "C" {
     */
 
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item; /**< Item of Elm_Toolbar. Sub-type of Elm_Widget_Item */
+   typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State; /** State of a Elm_Toolbar_Item */
    EAPI Evas_Object      *elm_toolbar_add(Evas_Object *parent);
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
@@ -1325,6 +1326,12 @@ extern "C" {
    EAPI double            elm_toolbar_align_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
    EAPI Evas_Object      *elm_toolbar_item_menu_get(Elm_Toolbar_Item *item);
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Eina_Bool         elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state);
+   EAPI void              elm_toolbar_item_state_unset(Elm_Toolbar_Item *it);
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(Elm_Toolbar_Item *it);
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Toolbar_Item *it);
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Toolbar_Item *it);
 
    EAPI void              elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text);
    EAPI void              elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
