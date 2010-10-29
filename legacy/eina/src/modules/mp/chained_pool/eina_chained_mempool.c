@@ -231,9 +231,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    Chained_Mempool *pool = data;
    Chained_Pool *p;
    void *pmem;
-   int psize;
 
-   psize = pool->group_size;
    // look 4 pool
 
 #ifdef EFL_HAVE_THREADS
