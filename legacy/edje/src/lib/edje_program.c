@@ -150,6 +150,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
  * pointer that was passed to this call will be returned.
  *
  * @see edje_object_signal_callback_add().
+ * @see edje_object_signal_callback_del_full().
  *
  */
 EAPI void *
@@ -166,6 +167,68 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
    EINA_LIST_FOREACH(ed->callbacks, l, escb)
      {
 	if ((escb->func == func) &&
+	    ((!escb->signal && !emission[0]) ||
+             (escb->signal && !strcmp(escb->signal, emission))) &&
+	    ((!escb->source && !source[0]) ||
+             (escb->source && !strcmp(escb->source, source))))
+	  {
+	     void *data;
+
+	     data = escb->data;
+	     if (ed->walking_callbacks)
+	       {
+		  escb->delete_me = 1;
+		  ed->delete_callbacks = 1;
+	       }
+	     else
+	       {
+		  _edje_callbacks_patterns_clean(ed);
+
+		  ed->callbacks = eina_list_remove_list(ed->callbacks, l);
+		  if (escb->signal) eina_stringshare_del(escb->signal);
+		  if (escb->source) eina_stringshare_del(escb->source);
+		  free(escb);
+	       }
+	     return data;
+	  }
+     }
+   return NULL;
+}
+
+/**
+ * @brief Remove a signal-triggered callback from an object.
+ *
+ * @param obj A valid Evas_Object handle.
+ * @param emission The emission string.
+ * @param source The source string.
+ * @param func The callback function.
+ * @param data The user data passed to the callback.
+ * @return The data pointer
+ *
+ * This function removes a callback, previously attached to the
+ * emittion of a signal, from the object @a obj. The parameters @a
+ * emission, @a sourcei, @a func and @a data must match exactly those
+ * passed to a previous call to edje_object_signal_callback_add(). The data
+ * pointer that was passed to this call will be returned.
+ *
+ * @see edje_object_signal_callback_add().
+ * @see edje_object_signal_callback_del().
+ *
+ */
+EAPI void *
+edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
+{
+   Edje *ed;
+   Eina_List *l;
+   Edje_Signal_Callback *escb;
+
+   if ((!emission) || (!source) || (!func)) return NULL;
+   ed = _edje_fetch(obj);
+   if (!ed) return NULL;
+   if (ed->delete_me) return NULL;
+   EINA_LIST_FOREACH(ed->callbacks, l, escb)
+     {
+	if ((escb->func == func) && (escb->data == data) &&
 	    ((!escb->signal && !emission[0]) ||
              (escb->signal && !strcmp(escb->signal, emission))) &&
 	    ((!escb->source && !source[0]) ||

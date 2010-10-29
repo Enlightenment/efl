@@ -542,6 +542,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    /* edje_program.c */
    EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
    EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
+   EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
    EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
    EAPI void         edje_object_play_set            (Evas_Object *obj, Eina_Bool play);
    EAPI Eina_Bool    edje_object_play_get            (const Evas_Object *obj);
