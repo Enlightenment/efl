@@ -1308,6 +1308,7 @@ extern "C" {
    EAPI Eina_Bool         elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected);
    EAPI Elm_Toolbar_Item *elm_toolbar_selected_item_get(const Evas_Object *obj);
+   EAPI void              elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon);
    EAPI void              elm_toolbar_item_del(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func);
    EAPI Eina_Bool         elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item);

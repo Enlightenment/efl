@@ -934,6 +934,30 @@ elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
    return item->label;
 }
 
+static void
+_elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
+{
+   Evas_Coord mw = -1, mh = -1;
+   edje_object_part_text_set(item->base.view, "elm.text", item->label);
+
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   edje_object_size_min_restricted_calc(item->base.view, &mw, &mh, mw, mh);
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   evas_object_size_hint_weight_set(item->base.view, -1.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(item->base.view, 0.5, EVAS_HINT_FILL);
+   evas_object_size_hint_min_set(item->base.view, mw, mh);
+}
+
+static void
+_elm_toolbar_item_label_set_cb (void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Elm_Toolbar_Item *item = data;
+   _elm_toolbar_item_label_update(item);
+   edje_object_signal_callback_del(obj, emission, source,
+                                   _elm_toolbar_item_label_set_cb);
+   edje_object_signal_emit (item->base.view, "elm,state,label,reset", "elm");
+}
+
 /**
  * Set the label associated with @p item.
  *
@@ -945,12 +969,35 @@ elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
-   Evas_Coord mw = -1, mh = -1;
+   const char *s;
 
    ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
-   eina_stringshare_replace(&item->label, label);
-   edje_object_part_text_set(item->base.view, "elm.text", item->label);
+   if ((label) && (item->label) && (!strcmp(label, item->label))) return;
 
+   eina_stringshare_replace(&item->label, label);
+   s = edje_object_data_get(item->base.view, "transition_animation_on");
+   if ((s) && (atoi(s)))
+     {
+        edje_object_part_text_set(item->base.view, "elm.text_new", item->label);
+        edje_object_signal_emit (item->base.view, "elm,state,label_set", "elm");
+        edje_object_signal_callback_add(item->base.view,
+                                        "elm,state,label_set,done", "elm",
+                                        _elm_toolbar_item_label_set_cb, item);
+     }
+   else
+      _elm_toolbar_item_label_update(item);
+}
+
+static void
+_elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
+{
+   Evas_Coord mw = -1, mh = -1;
+   Evas_Object *old_icon = edje_object_part_swallow_get(item->base.view,
+                                                        "elm.swallow.icon");
+
+   elm_widget_sub_object_del(item->base.view, old_icon);
+   evas_object_del(old_icon);
+   edje_object_part_swallow(item->base.view, "elm.swallow.icon", item->icon);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(item->base.view, &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
@@ -1018,6 +1065,72 @@ elm_toolbar_selected_item_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->selected_item;
+}
+
+static void
+_elm_toolbar_item_icon_set_cb (void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   Elm_Toolbar_Item *item = data;
+   edje_object_part_unswallow(item->base.view, item->icon);
+   _elm_toolbar_item_icon_update(item);
+   edje_object_signal_callback_del(obj, emission, source,
+                                   _elm_toolbar_item_icon_set_cb);
+   edje_object_signal_emit (item->base.view, "elm,state,icon,reset", "elm");
+}
+
+/**
+ * Set the icon associated with @p item.
+ *
+ * @param obj The parent of this item
+ * @param item The toolbar item
+ * @param icon The icon of @p item
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon)
+{
+   const char *s;
+   Evas_Object *icon_obj;
+   Widget_Data *wd;
+   Evas_Object *obj = item->base.widget;
+
+   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((icon) && (item->icon_str) && (!strcmp(icon, item->icon_str))) return;
+
+   icon_obj = elm_icon_add(obj);
+   if (!icon_obj) return;
+   if (_item_icon_set(icon_obj, "toolbar/", icon))
+     {
+        int ms = 0;
+        item->icon = icon_obj;
+        eina_stringshare_replace(&item->icon_str, icon);
+        ms = ((double)wd->icon_size * _elm_config->scale);
+        evas_object_size_hint_min_set(item->icon, ms, ms);
+        evas_object_size_hint_max_set(item->icon, ms, ms);
+        evas_object_show(item->icon);
+        elm_widget_sub_object_add(obj, item->icon);
+     }
+   else
+     {
+        item->icon = NULL;
+        item->icon_str = NULL;
+        evas_object_del(icon_obj);
+     }
+   s = edje_object_data_get(item->base.view, "transition_animation_on");
+   if ((s) && (atoi(s)))
+     {
+        edje_object_part_swallow(item->base.view, "elm.swallow.icon_new",
+                                 item->icon);
+        edje_object_signal_emit (item->base.view, "elm,state,icon_set", "elm");
+        edje_object_signal_callback_add(item->base.view,
+                                        "elm,state,icon_set,done", "elm",
+                                        _elm_toolbar_item_icon_set_cb, item);
+     }
+   else
+      _elm_toolbar_item_icon_update(item);
 }
 
 /**
