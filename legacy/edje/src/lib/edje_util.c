@@ -2146,10 +2146,28 @@ edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *par
 }
 
 /**
- * @brief XX
+ * Add a filter function for newly inserted text.
+ *
+ * Whenever text is inserted (not the same as set) into the given @p part,
+ * the list of filter functions will be called to decide if and how the new
+ * text will be accepted.
+ * There are three types of filters, EDJE_TEXT_FILTER_TEXT,
+ * EDJE_TEXT_FILTER_FORMAT and EDJE_TEXT_FILTER_MARKUP.
+ * The text parameter in the @p func filter can be modified by the user and
+ * it's up to him to free the one passed if he's to change the pointer. If
+ * doing so, the newly set text should be malloc'ed, as once all the filters
+ * are called Edje will free it.
+ * If the text is to be rejected, freeing it and setting the pointer to NULL
+ * will make Edje break out of the filter cycle and reject the inserted
+ * text.
+ *
+ * @see edje_object_text_insert_filter_callback_del
+ * @see edje_object_text_insert_filter_callback_del_full
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param func The callback function that will act as filter
+ * @param data User provided data to pass to the filter function
  */
 EAPI void
 edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
@@ -2168,10 +2186,19 @@ edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, 
 }
 
 /**
- * @brief XX
+ * Delete a function from the filter list.
+ *
+ * Delete the given @p func filter from the list in @p part. Returns
+ * the user data pointer given when added.
+ *
+ * @see edje_object_text_insert_filter_callback_add
+ * @see edje_object_text_insert_filter_callback_del_full
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param func The function callback to remove
+ *
+ * @return The user data pointer if succesful, or NULL otherwise
  */
 EAPI void *
 edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func)
@@ -2185,6 +2212,48 @@ edje_object_text_insert_filter_callback_del(Evas_Object *obj, const char *part, 
    EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
      {
         if ((!strcmp(cb->part, part)) && (cb->func == func))
+          {
+             void *data = cb->data;
+             ed->text_insert_filter_callbacks =
+                eina_list_remove_list(ed->text_insert_filter_callbacks, l);
+             eina_stringshare_del(cb->part);
+             free(cb);
+             return data;
+          }
+     }
+   return NULL;
+}
+
+/**
+ * Delete a function and matching user data from the filter list.
+ *
+ * Delete the given @p func filter and @p data user data from the list
+ * in @p part.
+ * Returns the user data pointer given when added.
+ *
+ * @see edje_object_text_insert_filter_callback_add
+ * @see edje_object_text_insert_filter_callback_del
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param func The function callback to remove
+ * @param data The data passed to the callback function
+ *
+ * @return The same data pointer if succesful, or NULL otherwise
+ */
+EAPI void *
+edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
+{
+   Edje *ed;
+   Edje_Text_Insert_Filter_Callback *cb;
+   Eina_List *l;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
+     {
+        if ((!strcmp(cb->part, part)) && (cb->func == func) &&
+            (cb->data == data))
           {
              void *data = cb->data;
              ed->text_insert_filter_callbacks =
