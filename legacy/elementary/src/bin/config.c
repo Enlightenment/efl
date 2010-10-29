@@ -788,10 +788,10 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    const char *prof_name;
    char buf[PATH_MAX];
    Evas_Object *en;
-#ifdef ELM_EFREET  
+#ifdef ELM_EFREET
    Efreet_Desktop *desk = NULL;
 #endif
-  
+
    sel_profile = data;
    if (!sel_profile)
      return;
@@ -800,12 +800,12 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    cur_selected = !strcmp(cur_profile, sel_profile);
 
    pdir = elm_profile_dir_get(sel_profile, EINA_FALSE);
-#ifdef ELM_EFREET  
+#ifdef ELM_EFREET
    snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
    desk = efreet_desktop_new(buf);
    if ((desk) && (desk->name)) prof_name = desk->name;
    else
-#endif    
+#endif
      prof_name = cur_profile;
 
    if (!pdir)
@@ -823,15 +823,15 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    elm_label_label_set(evas_object_data_get(obj, "prof_name_lbl"), buf);
 
    en = evas_object_data_get(obj, "prof_desc_entry");
-#ifdef ELM_EFREET  
+#ifdef ELM_EFREET
    if (desk) elm_scrolled_entry_entry_set(en, desk->comment);
    else
 #endif
      elm_scrolled_entry_entry_set(en, "Unknown");
 
-#ifdef ELM_EFREET  
+#ifdef ELM_EFREET
    if (desk) efreet_desktop_free(desk);
-#endif  
+#endif
 }
 
 static void
@@ -861,19 +861,19 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 
         pdir = elm_profile_dir_get(profile, EINA_FALSE);
         label = profile;
-       
+
 #ifdef ELM_EFREET
         snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
         desk = efreet_desktop_new(buf);
         if ((desk) && (desk->name)) label = desk->name;
 #endif
-       
+
         buf[0] = 0;
         if (pdir) snprintf(buf, sizeof(buf), "%s/icon.edj", pdir);
 #ifdef ELM_EFREET
         if ((desk) && (desk->icon) && (pdir))
           snprintf(buf, sizeof(buf), "%s/%s", pdir, desk->icon);
-#endif       
+#endif
         ic = elm_icon_add(l_widget);
         ext = strrchr(buf, '.');
         if (ext)
@@ -896,7 +896,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 
 #ifdef ELM_EFREET
        if (desk) efreet_desktop_free(desk);
-#endif       
+#endif
      }
 
    if (sel_it) elm_list_item_selected_set(sel_it, EINA_TRUE);
@@ -1184,7 +1184,7 @@ elm_main(int argc, char **argv)
      {
 #ifdef ELM_EFREET
         elm_need_efreet();
-#endif       
+#endif
         status_win(); /* create main window */
         if (!interactive)
           ecore_timer_add(2.0, _exit_timer, NULL);
