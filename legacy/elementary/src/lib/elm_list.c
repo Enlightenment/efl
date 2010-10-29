@@ -441,24 +441,25 @@ static void
 _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_object_signal_emit(wd->scr, emission, source);
+   edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
+                           emission, source);
 }
 
 static void
 _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_object_signal_callback_add(wd->scr, emission, source, func_cb, data);
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+                                   emission, source, func_cb, data);
 }
 
-static void *
-_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+static void
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return elm_object_signal_callback_del(wd->scr, emission, source, func_cb);
+   edje_object_signal_callback_del_full(
+                              elm_smart_scroller_edje_object_get(wd->scr),
+                              emission, source, func_cb, data);
 }
 
 static void
