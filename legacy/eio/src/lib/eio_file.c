@@ -64,7 +64,7 @@
  * }
  *
  * static void
- * _test_error_cb(int error, void *data)
+ * _test_error_cb(void *data, int error)
  * {
  *    fprintf(stderr, "error: [%s]\n", strerror(error));
  *    ecore_main_loop_quit();
@@ -409,7 +409,7 @@ _eio_file_move_unlink_done(void *data)
 }
 
 static void
-_eio_file_move_unlink_error(int error, void *data)
+_eio_file_move_unlink_error(void *data, int error)
 {
    Eio_File_Move *move = data;
 
@@ -435,7 +435,7 @@ _eio_file_move_copy_done(void *data)
 }
 
 static void
-_eio_file_move_copy_error(int error, void *data)
+_eio_file_move_copy_error(void *data, int error)
 {
    Eio_File_Move *move = data;
 
