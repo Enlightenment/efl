@@ -657,7 +657,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
 {
    DBG("str=%p (%.*s), slen=%u", str, slen, str ? str : "", slen);
 
-   if (slen <= 0)
+   if ((!str) || (slen <= 0))
       return "";
    else if (slen == 1)
       return (const char *)_eina_stringshare_single + ((*str) << 1);
