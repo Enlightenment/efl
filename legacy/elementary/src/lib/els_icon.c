@@ -405,6 +405,15 @@ _els_smart_icon_edit_get(const Evas_Object *obj)
    return sd->edit;
 }
 
+Evas_Object *
+_els_smart_icon_edje_get(Evas_Object *obj)
+{
+   Smart_Data *sd = evas_object_smart_data_get(obj);
+   if (!sd) return NULL;
+   if (!sd->edje) return NULL;
+   return sd->obj;
+}
+
 /* local subsystem globals */
 static void
 _smart_reconfigure(Smart_Data *sd)

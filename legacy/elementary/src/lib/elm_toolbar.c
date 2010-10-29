@@ -119,6 +119,7 @@ _item_select(Elm_Toolbar_Item *it)
    it->selected = EINA_TRUE;
    wd->selected_item = it;
    edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+   elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
    _item_show(it);
    obj2 = it->base.widget;
    if(it->menu)
@@ -173,9 +174,15 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
    if (it->disabled == disabled) return;
    it->disabled = disabled;
    if (it->disabled)
-     edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+     {
+        edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+        elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
+     }
    else
-     edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
+     {
+        edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
+        elm_widget_signal_emit(it->icon, "elm,state,enabled", "elm");
+     }
 }
 
 static void
@@ -228,9 +235,15 @@ _theme_hook(Evas_Object *obj)
         if (!it->separator)
           {
              if (it->selected)
-               edje_object_signal_emit(view, "elm,state,selected", "elm");
+               {
+                  edje_object_signal_emit(view, "elm,state,selected", "elm");
+                  elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
+               }
              if (it->disabled)
-               edje_object_signal_emit(view, "elm,state,disabled", "elm");
+               {
+                  edje_object_signal_emit(view, "elm,state,disabled", "elm");
+                  elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
+               }
              _elm_theme_object_set(obj, view, "toolbar", "item", style);
              if (it->icon)
                {
@@ -471,6 +484,22 @@ _select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__
 }
 
 static void
+_mouse_in(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Toolbar_Item *it = data;
+   edje_object_signal_emit(it->base.view, "elm,state,highlighted", "elm");
+   elm_widget_signal_emit(it->icon, "elm,state,highlighted", "elm");
+}
+
+static void
+_mouse_out(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Toolbar_Item *it = data;
+   edje_object_signal_emit(it->base.view, "elm,state,unhighlighted", "elm");
+   elm_widget_signal_emit(it->icon, "elm,state,unhighlighted", "elm");
+}
+
+static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Widget_Data *wd = data;
@@ -517,6 +546,10 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
                          elm_widget_style_get(obj));
    edje_object_signal_callback_add(it->base.view, "elm,action,click", "elm",
                                    _select, it);
+   edje_object_signal_callback_add(it->base.view, "elm,mouse,in", "elm",
+				   _mouse_in, it);
+   edje_object_signal_callback_add(it->base.view, "elm,mouse,out", "elm",
+				   _mouse_out, it);
    elm_widget_sub_object_add(obj, it->base.view);
    if (it->icon)
      {

@@ -10377,6 +10377,16 @@ collections {
                source:  "event";
                action:  SIGNAL_EMIT "elm,action,click" "elm";
            }
+           program { name: "mouse,in";
+              signal:  "mouse,in";
+              source:  "event";
+              action:  SIGNAL_EMIT "elm,mouse,in" "elm";
+           }
+           program { name: "mouse,out";
+              signal:  "mouse,out";
+              source:  "event";
+              action:  SIGNAL_EMIT "elm,mouse,out" "elm";
+           }
            program { name: "disable";
                signal: "elm,state,disabled";
                source: "elm";

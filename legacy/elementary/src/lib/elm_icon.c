@@ -64,6 +64,40 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   Evas_Object *icon_edje;
+   icon_edje = _els_smart_icon_edje_get(wd->img);
+   if (!icon_edje) return;
+   edje_object_signal_emit(icon_edje, emission, source);
+}
+
+static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   Evas_Object *icon_edje;
+   icon_edje = _els_smart_icon_edje_get(wd->img);
+   if (!icon_edje) return;
+   edje_object_signal_callback_add(icon_edje, emission, source, func_cb, data);
+}
+
+static void *
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   Evas_Object *icon_edje;
+   icon_edje = _els_smart_icon_edje_get(wd->img);
+   if (!icon_edje) return NULL;
+   return edje_object_signal_callback_del(icon_edje, emission, source,
+	 func_cb);
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -142,6 +176,9 @@ elm_icon_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->lookup_order = ELM_ICON_LOOKUP_FDO_THEME;
    wd->img = _els_smart_icon_add(e);
