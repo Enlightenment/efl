@@ -229,15 +229,17 @@ EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
  * @{
  */
 
-EAPI double eio_file_atime(const struct stat *stat);
-EAPI double eio_file_mtime(const struct stat *stat);
-EAPI long long eio_file_size(const struct stat *stat);
-EAPI Eina_Bool eio_file_is_dir(const struct stat *stat);
-EAPI Eina_Bool eio_file_is_lnk(const struct stat *stat);
+static inline double eio_file_atime(const struct stat *stat);
+static inline double eio_file_mtime(const struct stat *stat);
+static inline long long eio_file_size(const struct stat *stat);
+static inline Eina_Bool eio_file_is_dir(const struct stat *stat);
+static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
 
 /**
  * @}
  */
+
+#include "eio_inline_helper.x"
 
 #ifdef __cplusplus
 }

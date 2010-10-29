@@ -6,7 +6,7 @@ AM_CFLAGS = @EIO_CFLAGS@
 
 lib_LTLIBRARIES = libeio.la
 
-includes_HEADERS = Eio.h
+includes_HEADERS = Eio.h eio_inline_helper.x
 includesdir = $(includedir)/eio-@VMAJ@
 
 libeio_la_SOURCES = \
