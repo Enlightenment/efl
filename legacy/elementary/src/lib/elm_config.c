@@ -301,9 +301,7 @@ _elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
    size_t data_dir_len, off;
    va_list ap;
 
-   data_dir_len = eina_str_join_len(dst, size, '/', _elm_data_dir,
-                                    strlen(_elm_data_dir), "config",
-                                    sizeof("config") - 1);
+   data_dir_len = eina_strlcpy(dst, _elm_data_dir, size);
 
    off = data_dir_len + 1;
    if (off >= size)
@@ -493,9 +491,8 @@ _elm_config_profiles_list(void)
 static void
 _profile_fetch_from_conf(void)
 {
-   Eet_File *ef = NULL;
-   const char *home = NULL;
    char buf[PATH_MAX], *p, *s;
+   Eet_File *ef = NULL;
    int len = 0;
 
    _elm_profile = strdup("default");
@@ -508,9 +505,6 @@ _profile_fetch_from_conf(void)
         _elm_profile = strdup(s);
         return;
      }
-
-   home = getenv("HOME");
-   if (!home) home = "/";
 
    // user profile
    _elm_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -788,9 +782,6 @@ _elm_config_save(void)
    Eet_File *ef;
    size_t len;
 
-   if (!_elm_config_profile_save())
-     return EINA_FALSE;
-
    len = _elm_user_dir_snprintf(buf, sizeof(buf), "config/%s", _elm_profile);
    if (len + 1 >= sizeof(buf))
      return EINA_FALSE;
@@ -802,6 +793,9 @@ _elm_config_save(void)
            buf);
        return EINA_FALSE;
      }
+
+   if (!_elm_config_profile_save())
+     return EINA_FALSE;
 
    buf[len] = '/';
    len++;
