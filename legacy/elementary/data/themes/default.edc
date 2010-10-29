@@ -10174,8 +10174,6 @@ collections {
                description { state: "default" 0.0;
                    align: 0.5 0.5;
                    fixed: 0 0;
-                   //aspect: 1.0 1.0;
-                   //aspect_preference: VERTICAL;
                    rel1 {
                        relative: 0.0 0.0;
                        offset: 2 2;
