@@ -553,6 +553,21 @@ l3_smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
+l3_hidden_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   Evas_Object *mb;
+   Eina_List *mbs, *l;
+   
+   mbs = evas_object_data_get(win, "mbs");
+   EINA_LIST_FOREACH(mbs, l, mb)
+     {
+        if (evas_object_visible_get(mb)) evas_object_hide(mb);
+        else evas_object_show(mb);
+     }
+}
+
+static void
 l3_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_del(data);
@@ -882,12 +897,21 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_table_pack(tb2, ck, 3, 0, 1, 1);
    evas_object_show(ck);
    
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Hid");
+   elm_check_state_set(ck, 0);
+   evas_object_smart_callback_add(ck, "changed", l3_hidden_cb, win);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ck, 0.5, 0.99);
+   elm_table_pack(tb2, ck, 4, 0, 1, 1);
+   evas_object_show(ck);
+   
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", l3_close_cb, win);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
-   elm_table_pack(tb2, bt, 4, 0, 1, 1);
+   elm_table_pack(tb2, bt, 5, 0, 1, 1);
    evas_object_show(bt);
    
    evas_object_show(tb2);

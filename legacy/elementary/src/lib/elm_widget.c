@@ -2582,8 +2582,6 @@ _smart_clip_unset(Evas_Object *obj)
    Eina_List *list;
    Evas_Object *o;
    INTERNAL_ENTRY;
-//   evas_object_clip_unset(sd->resize_obj);
-//   return;
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
