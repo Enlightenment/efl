@@ -396,28 +396,12 @@ _elm_config_profiles_list(void)
        if (info->name_length >= len)
          continue;
 
-       switch (info->dirent->d_type)
+       if (info->type == EINA_FILE_DIR)
          {
-         case DT_UNKNOWN:
-           if (stat(info->path, &buffer) != 0)
-             goto it_free;
-
-           if (S_ISDIR(buffer.st_mode))
-             flist =
-               eina_list_sorted_insert(flist, _sort_files_cb,
-                                       eina_stringshare_add(info->path +
-                                                            info->name_start));
-           break;
-
-         case DT_DIR:
            flist =
              eina_list_sorted_insert(flist, _sort_files_cb,
                                      eina_stringshare_add(info->path +
                                                           info->name_start));
-           break;
-
-         default:
-           continue;
          }
      }
 
