@@ -133,9 +133,9 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
 
    EINA_ITERATOR_FOREACH(it, info)
      {
-        switch (info->dirent->d_type)
+        switch (info->type)
           {
-           case DT_UNKNOWN:
+           case EINA_FILE_UNKNOWN:
               if (stat(info->path, &buffer) != 0)
                 {
                    eio_file_thread_error(&copy->progress.common, thread);
@@ -147,7 +147,7 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
               else
                 copy->files = eina_list_append(copy->files, eina_stringshare_add(info->path));
               break;
-           case DT_DIR:
+           case EINA_FILE_DIR:
               dirs = eina_list_append(dirs, eina_stringshare_add(info->path));
               break;
            default:
