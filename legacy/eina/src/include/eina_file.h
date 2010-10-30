@@ -51,6 +51,22 @@ typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
 typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *data);
 
 /**
+ * @typedef Eina_File_Type
+ * file type in Eina_File_Direct_Info.
+ */
+typedef enum {
+  EINA_FILE_UNKNOWN,
+  EINA_FILE_FIFO,
+  EINA_FILE_CHR,
+  EINA_FILE_DIR,
+  EINA_FILE_BLK,
+  EINA_FILE_REG,
+  EINA_FILE_LNK,
+  EINA_FILE_SOCK,
+  EINA_FILE_WHT
+} Eina_File_Type;
+
+/**
  * @struct _Eina_File_Direct_Info
  * A structure to store informations of a path.
  */
@@ -60,7 +76,8 @@ struct _Eina_File_Direct_Info
    size_t               name_length; /**< size of the filename/basename component */
    size_t               name_start; /**< where the filename/basename component starts */
    char                 path[PATH_MAX]; /**< the path */
-   const struct dirent *dirent; /**< the dirent structure of the path */
+   const struct dirent *dirent; /**< the dirent structure of the path - don't use this if you want compatibility */
+   Eina_File_Type       type; /**< file type */
 };
 
 /**

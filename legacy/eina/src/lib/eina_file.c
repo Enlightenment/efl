@@ -101,7 +101,11 @@ _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
           ((dp->d_name[1] == '\0') ||
            ((dp->d_name[1] == '.') && (dp->d_name[2] == '\0'))));
 
+#ifdef _DIRENT_HAVE_D_NAMLEN       
+   length = dp->d_namlen;
+#else
    length = strlen(dp->d_name);
+#endif       
    name = alloca(length + 2 + it->length);
 
    memcpy(name,                  it->dir,    it->length);
@@ -145,7 +149,10 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 {
    struct dirent *dp;
    size_t length;
-
+#ifndef _DIRENT_HAVE_D_TYPE
+   struct stat st;
+#endif
+  
    dp = alloca(offsetof(struct dirent, d_name) + pathconf(it->dir, _PC_NAME_MAX) + 1);
 
    do
@@ -155,7 +162,11 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
         if (!dp)
            return EINA_FALSE;
 
+#ifdef _DIRENT_HAVE_D_NAMLEN       
+        length = dp->d_namlen;
+#else
         length = strlen(dp->d_name);
+#endif       
         if (it->info.name_start + length + 1 >= PATH_MAX)
            continue;
      }
@@ -168,7 +179,61 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    it->info.path_length = it->info.name_start + length;
    it->info.path[it->info.path_length] = '\0';
    it->info.dirent = dp;
-
+#ifdef _DIRENT_HAVE_D_TYPE
+   switch (dp->d_type)
+     {
+     case DT_FIFO:
+       it->info.type = EINA_FILE_FIFO;
+       break;
+     case DT_CHR:
+       it->info.type = EINA_FILE_CHR;
+       break;
+     case DT_DIR:
+       it->info.type = EINA_FILE_DIR;
+       break;
+     case DT_BLK:
+       it->info.type = EINA_FILE_BLK;
+       break;
+     case DT_REG:
+       it->info.type = EINA_FILE_REG;
+       break;
+     case DT_LNK:
+       it->info.type = EINA_FILE_LNK;
+       break;
+     case DT_SOCK:
+       it->info.type = EINA_FILE_SOCK;
+       break;
+     case DT_WHT:
+       it->info.type = EINA_FILE_WHT;
+       break;
+     default:
+       it->info.type = EINA_FILE_UNKNOWN;
+       break;
+     }
+#else
+   if (stat(it->info.path, &st))
+     it->info.type = EINA_FILE_UNKNOWN;
+   else
+     {
+       if (S_ISREG(st.st_mode))
+         it->info.type = EINA_FILE_REG;
+       else if (S_ISDIR(st.st_mode))
+         it->info.type = EINA_FILE_DIR;
+       else if (S_ISCHR(st.st_mode))
+         it->info.type = EINA_FILE_CHR;
+       else if (S_ISBLK(st.st_mode))
+         it->info.type = EINA_FILE_BLK;
+       else if (S_ISFIFO(st.st_mode))
+         it->info.type = EINA_FILE_FIFO;
+       else if (S_ISLNK(st.st_mode))
+         it->info.type = EINA_FILE_LNK;
+       else if (S_ISSOCK(st.st_mode))
+         it->info.type = EINA_FILE_SOCK;
+       else
+         it->info.type = EINA_FILE_UNKNOWN;
+     }
+#endif
+  
    *data = &it->info;
    return EINA_TRUE;
 }
@@ -235,9 +300,13 @@ eina_file_dir_list(const char *dir,
                    void *data)
 {
 #ifndef _WIN32
+   int dlength;
    struct dirent *de;
    DIR *d;
-
+#ifndef _DIRENT_HAVE_D_TYPE
+   struct stat st;
+#endif
+  
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb,  EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(dir[0] == '\0', EINA_FALSE);
@@ -246,8 +315,9 @@ eina_file_dir_list(const char *dir,
    if (!d)
       return EINA_FALSE;
 
+   dlength = strlen(dir);
    de = alloca(offsetof(struct dirent, d_name) + pathconf(dir, _PC_NAME_MAX) + 1);
-
+  
    while ((!readdir_r(d, de, &de) && de))
      {
         if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
@@ -259,30 +329,26 @@ eina_file_dir_list(const char *dir,
         if (recursive == EINA_TRUE)
           {
              char *path;
-
-             path = alloca(strlen(dir) + strlen(de->d_name) + 2);
+             int length;
+            
+#ifdef _DIRENT_HAVE_D_NAMLEN       
+             length = de->d_namlen;
+#else
+             length = strlen(de->d_name);
+#endif       
+             path = alloca(dlength + length + 2);
              strcpy(path, dir);
              strcat(path, "/");
              strcat(path, de->d_name);
-#ifndef sun
-             if (de->d_type == DT_UNKNOWN)
-               {
-#endif
-             struct stat st;
-
+#ifdef _DIRENT_HAVE_D_TYPE
+             if (de->d_type != DT_DIR)
+                continue;
+#else
              if (stat(path, &st))
                 continue;
-
              if (!S_ISDIR(st.st_mode))
                 continue;
-
-#ifndef sun
-          }
-        else if (de->d_type != DT_DIR)
-           continue;
-
 #endif
-
              eina_file_dir_list(path, recursive, cb, data);
           }
      }
