@@ -440,17 +440,9 @@ _elm_config_profiles_list(void)
        if (info->name_length >= len)
          continue;
 
-       switch (info->dirent->d_type)
+       switch (info->type)
          {
-         case DT_UNKNOWN:
-           if (stat(info->path, &buffer) != 0)
-             goto it_free;
-
-           if (S_ISDIR(buffer.st_mode))
-             S_ISDIR_CASE_DO
-           break;
-
-         case DT_DIR:
+         case EINA_FILE_DIR:
            S_ISDIR_CASE_DO
            break;
 
