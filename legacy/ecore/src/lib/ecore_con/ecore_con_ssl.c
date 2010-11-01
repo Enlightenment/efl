@@ -709,7 +709,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
         if (!_ecore_con_ssl_server_init_gnutls(svr))
           return 0;
      }
-   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
+   else if (!gnutls_error_is_fatal(num))
       return 0;
 
    return -1;
@@ -744,7 +744,7 @@ _ecore_con_ssl_server_write_gnutls(Ecore_Con_Server *svr, unsigned char *buf,
         if (!_ecore_con_ssl_server_init_gnutls(svr))
           return 0;
      }
-   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
+   else if (!gnutls_error_is_fatal(num))
       return 0;
 
    return -1;
@@ -925,7 +925,7 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
        WRN("Rehandshake request ignored");
        return 0;
      }
-   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
+   else if (!gnutls_error_is_fatal(num))
       return 0;
 
    return -1;
@@ -958,7 +958,7 @@ _ecore_con_ssl_client_write_gnutls(Ecore_Con_Client *cl, unsigned char *buf,
         if (!_ecore_con_ssl_client_init_gnutls(cl))
           return 0;
      }
-   else if ((num == GNUTLS_E_AGAIN) || (num == GNUTLS_E_INTERRUPTED))
+   else if (!gnutls_error_is_fatal(num))
       return 0;
 
    return -1;
