@@ -24,11 +24,6 @@ static void _custom_op(void *data, Elm_Transit *transit, double progress)
    Custom_Effect *custom_effect = data;
    const Eina_List *objs = elm_transit_objects_get(transit);
 
-   w = custom_effect->from.w + (Evas_Coord) ((float)custom_effect->to.w * \
-                                             (float)progress);
-   h = custom_effect->from.h + (Evas_Coord) ((float)custom_effect->to.h * \
-                                             (float)progress);
-
    if (progress < 0.5)
      {
         h = custom_effect->from.h + \
