@@ -23,6 +23,8 @@ static Elm_Config * _config_system_load(void);
 static void _config_load(void);
 static void _config_update(void);
 static void _env_get(void);
+static size_t _elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...) EINA_PRINTF(3 ,4);
+static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...) EINA_PRINTF(3 ,4);
 
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
