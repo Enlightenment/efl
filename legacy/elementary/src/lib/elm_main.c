@@ -564,10 +564,12 @@ elm_quicklaunch_sub_init(int argc, char **argv)
         evas_init();
         edje_init();
         _elm_config_sub_init();
-        if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-            (_elm_config->engine == ELM_XRENDER_X11) ||
-            (_elm_config->engine == ELM_OPENGL_X11))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+        if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+            ENGINE_COMPARE(ELM_XRENDER_X11) ||
+            ENGINE_COMPARE(ELM_OPENGL_X11))
+#undef ENGINE_COMPARE
           {
 #ifdef HAVE_ELEMENTARY_X
              ecore_x_init(NULL);
@@ -597,24 +599,28 @@ elm_quicklaunch_sub_shutdown(void)
         _elm_module_shutdown();
         ecore_imf_shutdown();
         ecore_evas_shutdown();
-        if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-            (_elm_config->engine == ELM_XRENDER_X11) ||
-            (_elm_config->engine == ELM_OPENGL_X11))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+        if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+            ENGINE_COMPARE(ELM_XRENDER_X11) ||
+            ENGINE_COMPARE(ELM_OPENGL_X11))
+#undef ENGINE_COMPARE
           {
 #ifdef HAVE_ELEMENTARY_X
              ecore_x_disconnect();
 #endif
           }
-        if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-            (_elm_config->engine == ELM_XRENDER_X11) ||
-            (_elm_config->engine == ELM_OPENGL_X11) ||
-            (_elm_config->engine == ELM_SOFTWARE_SDL) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_SDL) ||
-            (_elm_config->engine == ELM_OPENGL_SDL) ||
-            (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+        if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+            ENGINE_COMPARE(ELM_XRENDER_X11) ||
+            ENGINE_COMPARE(ELM_OPENGL_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_SDL) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_SDL) ||
+            ENGINE_COMPARE(ELM_OPENGL_SDL) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_WIN32) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
+#undef ENGINE_COMPARE
            evas_cserve_disconnect();
         edje_shutdown();
         evas_shutdown();
@@ -678,10 +684,12 @@ elm_quicklaunch_seed(void)
         ecore_main_loop_iterate();
         evas_object_del(win);
         ecore_main_loop_iterate();
-        if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-            (_elm_config->engine == ELM_XRENDER_X11) ||
-            (_elm_config->engine == ELM_OPENGL_X11))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+        if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+            ENGINE_COMPARE(ELM_XRENDER_X11) ||
+            ENGINE_COMPARE(ELM_OPENGL_X11))
+#undef ENGINE_COMPARE
           {
 # ifdef HAVE_ELEMENTARY_X
              ecore_x_sync();
@@ -829,10 +837,12 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
         evas_init();
         edje_init();
         _elm_config_sub_init();
-        if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-            (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-            (_elm_config->engine == ELM_XRENDER_X11) ||
-            (_elm_config->engine == ELM_OPENGL_X11))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+        if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+            ENGINE_COMPARE(ELM_XRENDER_X11) ||
+            ENGINE_COMPARE(ELM_OPENGL_X11))
+#undef ENGINE_COMPARE
           {
 # ifdef HAVE_ELEMENTARY_X
              ecore_x_init(NULL);

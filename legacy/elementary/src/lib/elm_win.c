@@ -323,36 +323,41 @@ static void
 _elm_win_xwindow_get(Elm_Win *win)
 {
    win->xwin = 0;
-   switch (_elm_config->engine)
+
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
-      case ELM_SOFTWARE_X11:
-	if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
-	break;
-      case ELM_SOFTWARE_FB:
-      case ELM_SOFTWARE_DIRECTFB:
-      case ELM_SOFTWARE_16_WINCE:
-      case ELM_SOFTWARE_SDL:
-      case ELM_SOFTWARE_16_SDL:
-      case ELM_OPENGL_SDL:
-	break;
-      case ELM_SOFTWARE_16_X11:
-	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
-	break;
-      case ELM_SOFTWARE_8_X11:
-	if (win->ee) win->xwin = ecore_evas_software_x11_8_window_get(win->ee);
-	break;
-      case ELM_XRENDER_X11:
-	if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
-	break;
-      case ELM_OPENGL_X11:
-	if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
-	break;
-      case ELM_SOFTWARE_WIN32:
-	if (win->ee) win->xwin = (long)ecore_evas_win32_window_get(win->ee);
-	break;
-      default:
-	break;
+       if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
      }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_SDL) ||
+            ENGINE_COMPARE(ELM_SOFTWARE_16_SDL) ||
+            ENGINE_COMPARE(ELM_OPENGL_SDL))
+     {
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
+     {
+	if (win->ee) win->xwin = ecore_evas_software_x11_16_window_get(win->ee);
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
+     {
+	if (win->ee) win->xwin = ecore_evas_software_x11_8_window_get(win->ee);
+     }
+   else if (ENGINE_COMPARE(ELM_XRENDER_X11))
+     {
+	if (win->ee) win->xwin = ecore_evas_xrender_x11_window_get(win->ee);
+     }
+   else if (ENGINE_COMPARE(ELM_OPENGL_X11))
+     {
+	if (win->ee) win->xwin = ecore_evas_gl_x11_window_get(win->ee);
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
+     {
+	if (win->ee) win->xwin = (long)ecore_evas_win32_window_get(win->ee);
+     }
+#undef ENGINE_COMPARE
 }
 #endif
 
@@ -906,22 +911,26 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    const char *fontpath;
 
    win = ELM_NEW(Elm_Win);
-   switch (_elm_config->engine)
+
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
-      case ELM_SOFTWARE_X11:
 	win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
-	break;
-      case ELM_SOFTWARE_FB:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
+     {
 	win->ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-	break;
-      case ELM_SOFTWARE_DIRECTFB:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_DIRECTFB))
+     {
         win->ee = ecore_evas_directfb_new(NULL, 1, 0, 0, 1, 1);
-	break;
-      case ELM_SOFTWARE_16_X11:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
+     {
 	win->ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);
         if (!win->ee)
           {
@@ -932,8 +941,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
-	break;
-      case ELM_SOFTWARE_8_X11:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
+     {
 	win->ee = ecore_evas_software_x11_8_new(NULL, 0, 0, 0, 1, 1);
         if (!win->ee)
           {
@@ -944,8 +954,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
-	break;
-      case ELM_XRENDER_X11:
+     }
+   else if (ENGINE_COMPARE(ELM_XRENDER_X11))
+     {
 	win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
         if (!win->ee)
           {
@@ -956,8 +967,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
-	break;
-      case ELM_OPENGL_X11:
+     }
+   else if (ENGINE_COMPARE(ELM_OPENGL_X11))
+     {
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
         if (!win->ee)
           {
@@ -968,40 +980,43 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
 #endif
-	break;
-      case ELM_SOFTWARE_WIN32:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
+     {
 	win->ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
-	break;
-      case ELM_SOFTWARE_16_WINCE:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
+     {
 	win->ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
-	break;
-      case ELM_SOFTWARE_SDL:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_SDL))
+     {
 	win->ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
         if (!win->ee)
           {
              CRITICAL("Software SDL engine create failed. Try software.");
              win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
           }
-	break;
-      case ELM_SOFTWARE_16_SDL:
+     }
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_16_SDL))
+     {
 	win->ee = ecore_evas_sdl16_new(NULL, 0, 0, 0, 0, 0, 1);
         if (!win->ee)
           {
              CRITICAL("Sofware-16-SDL engine create failed. Try software.");
              win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
           }
-	break;
-      case ELM_OPENGL_SDL:
+     }
+   else if (ENGINE_COMPARE(ELM_OPENGL_SDL))
+     {
 	win->ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
         if (!win->ee)
           {
              CRITICAL("OpenGL SDL engine create failed. Try software.");
              win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
           }
-	break;
-      default:
-	break;
      }
+
    if (!win->ee)
      {
 	ERR("Cannot create window.");
@@ -1073,24 +1088,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    _elm_win_list = eina_list_append(_elm_win_list, win->win_obj);
 
-   switch (_elm_config->engine)
+   if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
      {
-      case ELM_SOFTWARE_16_WINCE:
-      case ELM_SOFTWARE_FB:
 	ecore_evas_fullscreen_set(win->ee, 1);
-	break;
-      case ELM_SOFTWARE_X11:
-      case ELM_SOFTWARE_16_X11:
-      case ELM_SOFTWARE_8_X11:
-      case ELM_XRENDER_X11:
-      case ELM_OPENGL_X11:
-      case ELM_SOFTWARE_WIN32:
-      case ELM_SOFTWARE_SDL:
-      case ELM_SOFTWARE_16_SDL:
-      case ELM_OPENGL_SDL:
-      default:
-	break;
      }
+#undef ENGINE_COMPARE
 
    if (_elm_config->focus_highlight_enable)
      elm_win_focus_highlight_enabled_set(win->win_obj, EINA_TRUE);
@@ -1513,19 +1515,22 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win) return;
-   switch (_elm_config->engine)
+
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
-     case ELM_SOFTWARE_16_WINCE:
-     case ELM_SOFTWARE_FB:
 	// these engines... can ONLY be fullscreen
-	break;
-     default:
+	return;
+     }
+   else
+     {
 	ecore_evas_fullscreen_set(win->ee, fullscreen);
 #ifdef HAVE_ELEMENTARY_X
 	_elm_win_xwin_update(win);
 #endif
-	break;
      }
+#undef ENGINE_COMPARE
 }
 
 /**
@@ -1543,18 +1548,19 @@ elm_win_fullscreen_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
-   switch (_elm_config->engine)
+
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
-     case ELM_SOFTWARE_16_WINCE:
-     case ELM_SOFTWARE_FB:
 	// these engines... can ONLY be fullscreen
 	return EINA_TRUE;
-	break;
-     default:
-	return ecore_evas_fullscreen_get(win->ee);
-	break;
      }
-   return EINA_FALSE;
+   else
+     {
+	return ecore_evas_fullscreen_get(win->ee);
+     }
+#undef ENGINE_COMPARE
 }
 
 /**

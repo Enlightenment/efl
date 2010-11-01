@@ -13,6 +13,22 @@ Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 
+const char *_elm_engines[] = {
+   "software_x11",
+   "fb",
+   "directfb",
+   "software_16_x11",
+   "software_8_x11",
+   "xrender_x11",
+   "opengl_x11",
+   "software_gdi",
+   "software_16_wince_gdi",
+   "sdl",
+   "software_16_sdl",
+   "opengl_sdl",
+   NULL
+};
+
 static void _desc_init(void);
 static void _desc_shutdown(void);
 static void _profile_fetch_from_conf(void);
@@ -207,7 +223,7 @@ _desc_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "config_version",
                                  config_version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "engine", engine,
-                                 EET_T_INT);
+                                 EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable",
                                  thumbscroll_enable, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
@@ -529,6 +545,7 @@ _config_free(void)
      {
         eina_stringshare_del(fontdir);
      }
+   if (_elm_config->engine) eina_stringshare_del(_elm_config->engine);
    if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
    if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
    free(_elm_config);
@@ -612,7 +629,7 @@ _config_load(void)
     * without the config, but do we want that? */
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->config_version = ELM_CONFIG_VERSION;
-   _elm_config->engine = ELM_SOFTWARE_X11;
+   _elm_config->engine = eina_stringshare_add("software_x11");
    _elm_config->thumbscroll_enable = EINA_TRUE;
    _elm_config->thumbscroll_threshold = 24;
    _elm_config->thumbscroll_momentum_threshold = 100.0;
@@ -871,55 +888,55 @@ _env_get(void)
             (!strcasecmp(s, "x")) ||
             (!strcasecmp(s, "software-x11")) ||
             (!strcasecmp(s, "software_x11")))
-          _elm_config->engine = ELM_SOFTWARE_X11;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_X11);
         else if ((!strcasecmp(s, "opengl")) ||
                  (!strcasecmp(s, "gl")) ||
                  (!strcasecmp(s, "opengl-x11")) ||
                  (!strcasecmp(s, "opengl_x11")))
-          _elm_config->engine = ELM_OPENGL_X11;
+          eina_stringshare_replace(&_elm_config->engine, ELM_OPENGL_X11);
         else if ((!strcasecmp(s, "x11-8")) ||
                  (!strcasecmp(s, "x18")) ||
                  (!strcasecmp(s, "software-8-x11")) ||
                  (!strcasecmp(s, "software_8_x11")))
-          _elm_config->engine = ELM_SOFTWARE_8_X11;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_8_X11);
         else if ((!strcasecmp(s, "x11-16")) ||
                  (!strcasecmp(s, "x16")) ||
                  (!strcasecmp(s, "software-16-x11")) ||
                  (!strcasecmp(s, "software_16_x11")))
-          _elm_config->engine = ELM_SOFTWARE_16_X11;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_X11);
         else if ((!strcasecmp(s, "xrender")) ||
                  (!strcasecmp(s, "xr")) ||
                  (!strcasecmp(s, "xrender-x11")) ||
                  (!strcasecmp(s, "xrender_x11")))
-          _elm_config->engine = ELM_XRENDER_X11;
+          eina_stringshare_replace(&_elm_config->engine, ELM_XRENDER_X11);
         else if ((!strcasecmp(s, "fb")) ||
                  (!strcasecmp(s, "software-fb")) ||
                  (!strcasecmp(s, "software_fb")))
-          _elm_config->engine = ELM_SOFTWARE_FB;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_FB);
         else if ((!strcasecmp(s, "directfb")) ||
                  (!strcasecmp(s, "dfb")))
-          _elm_config->engine = ELM_SOFTWARE_DIRECTFB;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_DIRECTFB);
         else if ((!strcasecmp(s, "sdl")) ||
                  (!strcasecmp(s, "software-sdl")) ||
                  (!strcasecmp(s, "software_sdl")))
-          _elm_config->engine = ELM_SOFTWARE_SDL;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_SDL);
         else if ((!strcasecmp(s, "sdl-16")) ||
                  (!strcasecmp(s, "software-16-sdl")) ||
                  (!strcasecmp(s, "software_16_sdl")))
-          _elm_config->engine = ELM_SOFTWARE_16_SDL;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_SDL);
         else if ((!strcasecmp(s, "opengl-sdl")) ||
                  (!strcasecmp(s, "opengl_sdl")) ||
                  (!strcasecmp(s, "gl-sdl")) ||
                  (!strcasecmp(s, "gl_sdl")))
-          _elm_config->engine = ELM_OPENGL_SDL;
+          eina_stringshare_replace(&_elm_config->engine, ELM_OPENGL_SDL);
         else if ((!strcasecmp(s, "gdi")) ||
                  (!strcasecmp(s, "software-gdi")) ||
                  (!strcasecmp(s, "software_gdi")))
-          _elm_config->engine = ELM_SOFTWARE_WIN32;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_WIN32);
         else if ((!strcasecmp(s, "wince-gdi")) ||
                  (!strcasecmp(s, "software-16-wince-gdi")) ||
                  (!strcasecmp(s, "software_16_wince_gdi")))
-          _elm_config->engine = ELM_SOFTWARE_16_WINCE;
+          eina_stringshare_replace(&_elm_config->engine, ELM_SOFTWARE_16_WINCE);
      }
 
    s = getenv("ELM_THUMBSCROLL_ENABLE");
@@ -1051,10 +1068,12 @@ _elm_config_init(void)
 void
 _elm_config_sub_init(void)
 {
-   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-       (_elm_config->engine == ELM_XRENDER_X11) ||
-       (_elm_config->engine == ELM_OPENGL_X11))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+  if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+      ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+      ENGINE_COMPARE(ELM_XRENDER_X11) ||
+      ENGINE_COMPARE(ELM_OPENGL_X11))
+#undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
         unsigned int val = 1000;
@@ -1174,15 +1193,12 @@ _elm_config_profile_set(const char *profile)
 void
 _elm_config_shutdown(void)
 {
-   if ((_elm_config->engine == ELM_SOFTWARE_X11) ||
-       (_elm_config->engine == ELM_SOFTWARE_16_X11) ||
-       (_elm_config->engine == ELM_XRENDER_X11) ||
-       (_elm_config->engine == ELM_OPENGL_X11) ||
-       (_elm_config->engine == ELM_SOFTWARE_SDL) ||
-       (_elm_config->engine == ELM_SOFTWARE_16_SDL) ||
-       (_elm_config->engine == ELM_OPENGL_SDL) ||
-       (_elm_config->engine == ELM_SOFTWARE_WIN32) ||
-       (_elm_config->engine == ELM_SOFTWARE_16_WINCE))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+  if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+      ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+      ENGINE_COMPARE(ELM_XRENDER_X11) ||
+      ENGINE_COMPARE(ELM_OPENGL_X11))
+#undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
         ecore_event_handler_del(_prop_change_handler);

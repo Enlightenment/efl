@@ -39,24 +39,6 @@ struct _Elm_Theme
    int         ref;
 };
 
-typedef enum _Elm_Engine
-{
-   ELM_SOFTWARE_X11,
-   ELM_SOFTWARE_FB,
-   ELM_SOFTWARE_DIRECTFB,
-   ELM_SOFTWARE_16_X11,
-   ELM_SOFTWARE_8_X11,
-   ELM_XRENDER_X11,
-   ELM_OPENGL_X11,
-   ELM_SOFTWARE_WIN32,
-   ELM_SOFTWARE_16_WINCE,
-   ELM_SOFTWARE_SDL,
-   ELM_SOFTWARE_16_SDL,
-   ELM_OPENGL_SDL
-} Elm_Engine;
-
-
-
 /* increment this whenever we change config enough that you need new
  * defaults for elm to work.
  */
@@ -67,10 +49,26 @@ typedef enum _Elm_Engine
 #define ELM_CONFIG_FILE_GENERATION 0x0001
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | ELM_CONFIG_FILE_GENERATION)
 
+/* note: always remember to sync it with elm_config.c */
+extern const char *_elm_engines[];
+
+#define ELM_SOFTWARE_X11 (_elm_engines[0])
+#define ELM_SOFTWARE_FB (_elm_engines[1])
+#define ELM_SOFTWARE_DIRECTFB (_elm_engines[2])
+#define ELM_SOFTWARE_16_X11 (_elm_engines[3])
+#define ELM_SOFTWARE_8_X11 (_elm_engines[4])
+#define ELM_XRENDER_X11 (_elm_engines[5])
+#define ELM_OPENGL_X11 (_elm_engines[6])
+#define ELM_SOFTWARE_WIN32 (_elm_engines[7])
+#define ELM_SOFTWARE_16_WINCE (_elm_engines[8])
+#define ELM_SOFTWARE_SDL (_elm_engines[9])
+#define ELM_SOFTWARE_16_SDL (_elm_engines[10])
+#define ELM_OPENGL_SDL (_elm_engines[11])
+
 struct _Elm_Config
 {
    int          config_version;
-   int          engine;
+   const char  *engine;
    Eina_Bool    thumbscroll_enable;
    int          thumbscroll_threshold;
    double       thumbscroll_momentum_threshold;
