@@ -2103,7 +2103,8 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
              if (!(tmp = realloc(inbuf, inbuf_num + num)))
                {
                   /* FIXME: this should probably do something, but what? */
-                  free(inbuf);
+                  if (inbuf)
+                    free(inbuf);
                   break;
                }
              inbuf = tmp;
