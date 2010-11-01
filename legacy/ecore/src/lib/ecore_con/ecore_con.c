@@ -2101,8 +2101,11 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
           {
              unsigned char *tmp;
              if (!(tmp = realloc(inbuf, inbuf_num + num)))
-               /* FIXME: this should probably do something */
-               break;
+               {
+                  /* FIXME: this should probably do something, but what? */
+                  free(inbuf);
+                  break;
+               }
              inbuf = tmp;
              memcpy(inbuf + inbuf_num, buf, num);
              inbuf_num += num;
