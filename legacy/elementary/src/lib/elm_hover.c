@@ -32,8 +32,7 @@ static const char *_directions[] = {
   "bottom-right",
   "bottom",
   "bottom-left",
-  "middle",
-  NULL
+  "middle"
 };
 
 #define _HOV_LEFT (_directions[0])
