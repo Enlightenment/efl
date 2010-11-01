@@ -344,6 +344,9 @@ extern "C" {
    EAPI void         elm_profile_set(const char *profile);
    EAPI void         elm_profile_all_set(const char *profile);
 
+   EAPI const char  *elm_engine_current_get(void);
+   EAPI void         elm_engine_set(const char *engine);
+
    EAPI Evas_Coord   elm_finger_size_get(void);
    EAPI void         elm_finger_size_set(Evas_Coord size);
    EAPI void         elm_finger_size_all_set(Evas_Coord size);

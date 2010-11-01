@@ -1168,6 +1168,15 @@ _elm_config_reload(void)
 }
 
 void
+_elm_config_engine_set(const char *engine)
+{
+  if (_elm_config->engine && strcmp(_elm_config->engine, engine))
+    eina_stringshare_del(_elm_config->engine);
+
+  _elm_config->engine = eina_stringshare_add(engine);
+}
+
+void
 _elm_config_profile_set(const char *profile)
 {
   Eina_Bool changed = EINA_FALSE;

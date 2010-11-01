@@ -1401,6 +1401,44 @@ elm_profile_all_set(const char *profile)
 }
 
 /**
+ * Get Elementary's rendering engine in use.
+ *
+ * This gets the global rendering engine that is applied to all
+ * Elementary applications.
+ *
+ * @return The rendering engine's name
+ * @ingroup Engine
+ *
+ * @note there's no need to free the returned string, here.
+ */
+EAPI const char *
+elm_engine_current_get(void)
+{
+   return _elm_config->engine;
+}
+
+/**
+ * Set Elementary's rendering engine for use.
+ *
+ * This gets sets global rendering engine that is applied to all
+ * Elementary applications. Note that it will take effect only to
+ * subsequent Elementary window creations.
+ *
+ * @param The rendering engine's name
+ * @ingroup Engine
+ *
+ * @note there's no need to free the returned string, here.
+ */
+EAPI void
+elm_engine_set(const char *engine)
+{
+   if (!engine)
+     return;
+
+   _elm_config_engine_set(engine);
+}
+
+/**
  * @defgroup Fingers Fingers
  *
  * Elementary is designed to be finger-friendly for touchscreens, and so in

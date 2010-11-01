@@ -284,7 +284,9 @@ _elm_theme_current_get(const char *theme_search_order)
 static void
 _profile_change_do(Evas_Object *win, const char *profile)
 {
-   const char *curr_theme;
+   const char *curr_theme, *curr_engine;
+   const Eina_List *l_items, *l;
+   Elm_List_Item *it;
    Elm_Theme *th;
    double scale;
    int fs;
@@ -308,6 +310,33 @@ _profile_change_do(Evas_Object *win, const char *profile)
    elm_object_theme_set(evas_object_data_get(win, "theme_preview"), th);
    elm_theme_free(th);
    eina_stringshare_del(curr_theme);
+
+   curr_engine = elm_engine_current_get();
+   l_items = elm_list_items_get(evas_object_data_get(win, "engines_list"));
+   EINA_LIST_FOREACH(l_items, l, it)
+     {
+       if (!strcmp(elm_list_item_data_get(it), curr_engine))
+         {
+           elm_list_item_selected_set(it, EINA_TRUE);
+           break;
+         }
+     }
+}
+
+static void
+_engine_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *li;
+   const char *selection;
+
+   li = data;
+   selection = elm_list_item_data_get(elm_list_selected_item_get(li));
+
+   if (!strcmp(elm_engine_current_get(), selection))
+     return;
+
+   elm_engine_set(selection);
+   elm_config_save(); /* make sure new engine has its data dir */
 }
 
 static void
@@ -774,9 +803,15 @@ _status_config_fonts(Evas_Object *win, Evas_Object *holder)
 }
 
 static void
+_engines_list_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   free(data);
+}
+
+static void
 _profiles_list_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-    free(data);
+   free(data);
 }
 
 static void
@@ -1035,10 +1070,145 @@ _status_config_scrolling(Evas_Object *win, Evas_Object *holder)
    _unimplemented(win, holder, "scrolling");
 }
 
+static char *
+_engine_name_prettify(const char *engine)
+{
+  char *ret, *ptr;
+
+  ret = strdup(engine);
+  ret[0] -= 0x20;
+
+  while ((ptr = strpbrk(ret, "_")))
+    {
+      *ptr = ' ';
+    }
+
+  return ret;
+}
+
+/* FIXME! ideally, we would trim elm_config.c's _elm_engines list at
+   build time, making a getter for is as in ecore-evas. */
+static Eina_Bool
+_elm_engine_supported(const char *engine)
+{
+  const char *engines[] = {
+   "software_x11",
+   "fb",
+   "directfb",
+   "software_16_x11",
+   "software_8_x11",
+   "xrender_x11",
+   "opengl_x11",
+   "software_gdi",
+   "software_16_wince_gdi",
+   "sdl",
+   "software_16_sdl",
+   "opengl_sdl",
+   NULL
+  };
+
+  unsigned int i;
+
+  for (i = 0; engines[i]; i++)
+    {
+#define ENGINE_COMPARE(name) (!strcmp(engines[i], name))
+      if (ENGINE_COMPARE(engine))
+        return EINA_TRUE;
+#undef ENGINE_COMPARE
+    }
+
+  return EINA_FALSE;
+}
+
+static void
+_engines_list_fill(Evas_Object *l_widget, Eina_List *e_names)
+{
+   const char *engine, *cur_engine;
+   void *sel_it = NULL;
+   Eina_List *l;
+
+   if (!e_names)
+     return;
+
+   cur_engine = elm_engine_current_get();
+
+   EINA_LIST_FOREACH(e_names, l, engine)
+     {
+        const char *label;
+        Elm_List_Item *it;
+
+        if (!_elm_engine_supported(engine))
+          continue;
+
+        label = _engine_name_prettify(engine);
+
+        it = elm_list_item_append(l_widget, label, NULL, NULL, NULL,
+                                  strdup(engine));
+        elm_list_item_del_cb_set(it, _engines_list_item_del_cb);
+        free((void *)label);
+
+        if (!strcmp(cur_engine, engine))
+          sel_it = it;
+     }
+
+   if (sel_it) elm_list_item_selected_set(sel_it, EINA_TRUE);
+   elm_list_go(l_widget);
+}
+
 static void
 _status_config_rendering(Evas_Object *win, Evas_Object *holder)
 {
-   _unimplemented(win, holder, "rendering");
+   Evas_Object *li, *bx, *fr, *sp, *pd, *bt;
+   Eina_List *engines;
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Available Engines");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   li = elm_list_add(win);
+   elm_frame_content_set(fr, li);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   engines = ecore_evas_engines_get();
+   _engines_list_fill(li, engines);
+   ecore_evas_engines_free(engines);
+
+   evas_object_show(li);
+   evas_object_data_set(win, "engines_list", li);
+
+   /////////////////////////////////////////////
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   elm_object_style_set(pd, "pad_medium");
+   evas_object_size_hint_weight_set(pd, 0.0, 0.0);
+   evas_object_size_hint_align_set(pd, 0.5, 0.5);
+   elm_box_pack_end(bx, pd);
+   evas_object_show(pd);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _engine_use, li);
+   elm_button_label_set(bt, "Use Engine");
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_frame_content_set(pd, bt);
+   evas_object_show(bt);
+
+   evas_object_data_set(win, "rendering", bx);
+   elm_table_pack(holder, bx, 0, 0, 1, 1);
 }
 
 static void
