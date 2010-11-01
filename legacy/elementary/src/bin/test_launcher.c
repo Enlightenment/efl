@@ -553,7 +553,7 @@ l3_smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-l3_hidden_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+l3_hidden_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win = data;
    Evas_Object *mb;

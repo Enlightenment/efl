@@ -375,7 +375,6 @@ _elm_config_profiles_list(void)
    const Eina_File_Direct_Info *info;
    Eina_List *flist = NULL;
    Eina_Iterator *file_it;
-   struct stat buffer;
    char buf[PATH_MAX];
    const char *dir;
    size_t len;
@@ -454,7 +453,6 @@ _elm_config_profiles_list(void)
 
 #undef S_ISDIR_CASE_DO
 
- it_free:
    eina_iterator_free(file_it);
 
  list_free:
