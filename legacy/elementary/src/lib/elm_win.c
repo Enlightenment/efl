@@ -912,6 +912,13 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    win = ELM_NEW(Elm_Win);
 
+#define FALLBACK_TRY(engine)                                            \
+   if (!win->ee)                                                        \
+     do {                                                               \
+       CRITICAL(engine " engine creation failed. Trying software X11."); \
+       win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);      \
+     } while (0)
+
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
@@ -924,19 +931,17 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    else if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
      {
 	win->ee = ecore_evas_fb_new(NULL, 0, 1, 1);
+        FALLBACK_TRY("Sofware FB");
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_DIRECTFB))
      {
         win->ee = ecore_evas_directfb_new(NULL, 1, 0, 0, 1, 1);
+        FALLBACK_TRY("Sofware DirectFB");
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
      {
 	win->ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);
-        if (!win->ee)
-          {
-             CRITICAL("Software-16 engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("Sofware-16");
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
@@ -945,11 +950,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
      {
 	win->ee = ecore_evas_software_x11_8_new(NULL, 0, 0, 0, 1, 1);
-        if (!win->ee)
-          {
-             CRITICAL("Software-8 engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("Sofware-8");
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
@@ -958,11 +959,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    else if (ENGINE_COMPARE(ELM_XRENDER_X11))
      {
 	win->ee = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, 1, 1);
-        if (!win->ee)
-          {
-             CRITICAL("XRender engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("XRender");
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
@@ -971,11 +968,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    else if (ENGINE_COMPARE(ELM_OPENGL_X11))
      {
 	win->ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 1, 1);
-        if (!win->ee)
-          {
-             CRITICAL("OpenGL engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("OpenGL");
 #ifdef HAVE_ELEMENTARY_X
         win->client_message_handler = ecore_event_handler_add
           (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, win);
@@ -984,38 +977,29 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
      {
 	win->ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
+        FALLBACK_TRY("Sofware Win32");
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
 	win->ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
+        FALLBACK_TRY("Sofware-16-WinCE");
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_SDL))
      {
 	win->ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
-        if (!win->ee)
-          {
-             CRITICAL("Software SDL engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("Sofware SDL");
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_SDL))
      {
 	win->ee = ecore_evas_sdl16_new(NULL, 0, 0, 0, 0, 0, 1);
-        if (!win->ee)
-          {
-             CRITICAL("Sofware-16-SDL engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("Sofware-16-SDL");
      }
    else if (ENGINE_COMPARE(ELM_OPENGL_SDL))
      {
 	win->ee = ecore_evas_gl_sdl_new(NULL, 1, 1, 0, 0);
-        if (!win->ee)
-          {
-             CRITICAL("OpenGL SDL engine create failed. Try software.");
-             win->ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-          }
+        FALLBACK_TRY("OpenGL SDL");
      }
+#undef FALLBACK_TRY
 
    if (!win->ee)
      {
