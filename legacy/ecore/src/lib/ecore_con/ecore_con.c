@@ -2099,7 +2099,11 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
         if (num > 0)
           {
-             inbuf = realloc(inbuf, inbuf_num + num);
+             unsigned char *tmp;
+             if (!(tmp = realloc(inbuf, inbuf_num + num)))
+               /* FIXME: this should probably do something */
+               break;
+             inbuf = tmp;
              memcpy(inbuf + inbuf_num, buf, num);
              inbuf_num += num;
              continue;
