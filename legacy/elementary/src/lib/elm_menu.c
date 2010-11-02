@@ -277,16 +277,16 @@ _submenu_hide(Elm_Menu_Item *item)
 static void
 _menu_item_select(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Elm_Menu_Item *it = data;
-   if (it->submenu.items)
+   Elm_Menu_Item *item = data;
+   if (item->submenu.items)
      {
-	if (!it->submenu.open) _submenu_open(it, NULL, NULL, NULL);
-	else _submenu_hide(it);
+	if (!item->submenu.open) _submenu_open(item, NULL, NULL, NULL);
+	else _submenu_hide(item);
      }
    else
-     _menu_hide(it->base.widget, NULL, NULL);
+     _menu_hide(item->base.widget, NULL, NULL);
 
-   if (it->func) it->func((void *)(it->base.data), it->base.widget, it);
+   if (item->func) item->func((void *)(item->base.data), item->base.widget, item);
 }
 
 static void
@@ -315,10 +315,10 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 static void
 _submenu_open(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Elm_Menu_Item *it = data;
-   it->submenu.open = EINA_TRUE;
-   evas_object_show(it->submenu.hv);
-   _sizing_eval(it->base.widget);
+   Elm_Menu_Item *item = data;
+   item->submenu.open = EINA_TRUE;
+   evas_object_show(item->submenu.hv);
+   _sizing_eval(item->base.widget);
 }
 
 static void
@@ -512,14 +512,15 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 /**
  * Get the Evas_Object of an Elm_Menu_Item
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  *
  * @ingroup Menu
  */
 EAPI Evas_Object *
-elm_menu_object_get(const Elm_Menu_Item *it)
+elm_menu_object_get(const Elm_Menu_Item *item)
 {
-   return it->base.view;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   return item->base.view;
 }
 
 static void
@@ -612,7 +613,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, con
 /**
  * Set the label of a menu item
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  * @param label The label to set for @p item
  *
  * @ingroup Menu
@@ -620,6 +621,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, con
 EAPI void
 elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    eina_stringshare_replace(&item->label, label);
 
    if (label)
@@ -635,7 +637,7 @@ elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 /**
  * Get the label of a menu item
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  * @return The label of @p item
  *
  * @ingroup Menu
@@ -643,7 +645,7 @@ elm_menu_item_label_set(Elm_Menu_Item *item, const char *label)
 EAPI const char *
 elm_menu_item_label_get(const Elm_Menu_Item *item)
 {
-   if (!item) return NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->label;
 }
 
@@ -652,7 +654,7 @@ elm_menu_item_label_get(const Elm_Menu_Item *item)
  *
  * Once the icon object is set, a previously set one will be deleted.
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  * @param icon The icon object to set for @p item
  *
  * @ingroup Menu
@@ -661,7 +663,7 @@ EAPI void
 elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
 {
    char icon_tmp[512];
-   if (!item) return;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if ((!icon) || (!*icon)) return;
    if ((item->icon_str) && (!strcmp(item->icon_str, icon))) return;
    if ((snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0) &&
@@ -679,7 +681,7 @@ elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
 /**
  * Set the disabled state of @p item.
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  * @param disabled The enabled/disabled state of the item
  *
  * @ingroup Menu
@@ -687,6 +689,7 @@ elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
 EAPI void
 elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if (disabled == item->disabled) return;
    item->disabled = disabled;
    if (disabled)
@@ -702,7 +705,7 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 /**
  * Get the disabled state of @p item.
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  * @return The enabled/disabled state of the item
  *
  * @ingroup Menu
@@ -710,6 +713,7 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 EAPI Eina_Bool
 elm_menu_item_disabled_get(const Elm_Menu_Item *item)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
    if (!item) return EINA_FALSE;
    return item->disabled;
 }
@@ -729,6 +733,7 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 {
    Elm_Menu_Item *subitem;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(parent, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    /* don't add a separator as the first item */
@@ -761,7 +766,7 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 /**
  * Get the icon object from a menu item
  *
- * @param it The menu item object
+ * @param item The menu item object
  * @return The icon object or NULL if there's no icon
  *
  * @ingroup Menu
@@ -769,14 +774,14 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 EAPI const Evas_Object *
 elm_menu_item_object_icon_get(const Elm_Menu_Item *item)
 {
-   if (!item) return NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return (const Evas_Object *)item->icon;
 }
 
 /**
  * Get the string representation from the icon of a menu item
  *
- * @param it The menu item object.
+ * @param item The menu item object.
  * @return The string representation of @p item's icon or NULL
  *
  * @ingroup Menu
@@ -784,7 +789,7 @@ elm_menu_item_object_icon_get(const Elm_Menu_Item *item)
 EAPI const char *
 elm_menu_item_icon_get(const Elm_Menu_Item *item)
 {
-   if (!item) return NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->icon_str;
 }
 
@@ -799,7 +804,7 @@ elm_menu_item_icon_get(const Elm_Menu_Item *item)
 EAPI Eina_Bool
 elm_menu_item_is_separator(Elm_Menu_Item *item)
 {
-   if (!item) return EINA_FALSE;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->separator;
 }
 
@@ -813,9 +818,9 @@ elm_menu_item_is_separator(Elm_Menu_Item *item)
 EAPI void
 elm_menu_item_del(Elm_Menu_Item *item)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    Elm_Menu_Item *_item;
 
-   if (!item) return;
    elm_widget_item_pre_notify_del(item);
 
    EINA_LIST_FREE(item->submenu.items, _item) elm_menu_item_del(_item);
@@ -838,33 +843,35 @@ elm_menu_item_del(Elm_Menu_Item *item)
 /**
  * Set the function called when a menu item is freed.
  *
- * @param it The item to set the callback on
+ * @param item The item to set the callback on
  * @param func The function called
  *
  * @ingroup Menu
  */
 EAPI void
-elm_menu_item_del_cb_set(Elm_Menu_Item *it, Evas_Smart_Cb func)
+elm_menu_item_del_cb_set(Elm_Menu_Item *item, Evas_Smart_Cb func)
 {
-   elm_widget_item_del_cb_set(it, func);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   elm_widget_item_del_cb_set(item, func);
 }
 
 /**
- * Returns the data associated with menu item @p it.
+ * Returns the data associated with menu item @p item.
  *
- * @param it The item
- * @return The data associated with @p it
+ * @param item The item
+ * @return The data associated with @p item
  *
  * @ingroup Menu
  */
 EAPI void *
-elm_menu_item_data_get(const Elm_Menu_Item *it)
+elm_menu_item_data_get(const Elm_Menu_Item *item)
 {
-   return elm_widget_item_data_get(it);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   return elm_widget_item_data_get(item);
 }
 
 /**
- * Sets the data to be associated with menu item @p it.
+ * Sets the data to be associated with menu item @p item.
  *
  * @param item The item
  * @param data The data to be associated with @p item
@@ -874,13 +881,14 @@ elm_menu_item_data_get(const Elm_Menu_Item *it)
 EAPI void
 elm_menu_item_data_set(Elm_Menu_Item *item, const void *data)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_data_set(item, data);
 }
 
 /**
  * Returns a list of @p item's subitems.
  *
- * @param it The item
+ * @param item The item
  * @return An Eina_List* of @p item's subitems
  *
  * @ingroup Menu
@@ -888,6 +896,6 @@ elm_menu_item_data_set(Elm_Menu_Item *item, const void *data)
 EAPI const Eina_List *
 elm_menu_item_subitems_get(const Elm_Menu_Item *item)
 {
-   if (!item) return NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->submenu.items;
 }
