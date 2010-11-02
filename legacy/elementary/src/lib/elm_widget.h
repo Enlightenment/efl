@@ -471,6 +471,14 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
    if (!elm_widget_type_check((obj), (widtype))) return
 
+#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)                \
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+   ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
+
+#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_GOTO(it, label)                \
+   ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label);         \
+   if (!elm_widget_type_check((it->base.widget), (widtype))) goto label;
+
 
 /**
  * The drag and drop API.
