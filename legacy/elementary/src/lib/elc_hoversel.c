@@ -53,18 +53,18 @@ static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _del_pre_hook(Evas_Object *obj)
 {
-   Elm_Hoversel_Item *it;
+   Elm_Hoversel_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_hoversel_hover_end(obj);
    elm_hoversel_hover_parent_set(obj, NULL);
-   EINA_LIST_FREE(wd->items, it)
+   EINA_LIST_FREE(wd->items, item)
      {
-        elm_widget_item_pre_notify_del(it);
-	eina_stringshare_del(it->label);
-	eina_stringshare_del(it->icon_file);
-	eina_stringshare_del(it->icon_group);
-        elm_widget_item_del(it);
+        elm_widget_item_pre_notify_del(item);
+	eina_stringshare_del(item->label);
+	eina_stringshare_del(item->icon_file);
+	eina_stringshare_del(item->icon_group);
+        elm_widget_item_del(item);
      }
 }
 
@@ -135,12 +135,12 @@ _hover_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 static void
 _item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Hoversel_Item *it = data;
-   Evas_Object *obj2 = it->base.widget;
+   Elm_Hoversel_Item *item = data;
+   Evas_Object *obj2 = item->base.widget;
 
    elm_hoversel_hover_end(obj2);
-   if (it->func) it->func((void *)it->base.data, obj2, it);
-   evas_object_smart_callback_call(obj2, "selected", it);
+   if (item->func) item->func((void *)item->base.data, obj2, item);
+   evas_object_smart_callback_call(obj2, "selected", item);
 }
 
 static void
@@ -149,7 +149,7 @@ _activate(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *bt, *bx, *ic;
    const Eina_List *l;
-   const Elm_Hoversel_Item *it;
+   const Elm_Hoversel_Item *item;
    char buf[4096];
 
    if (!wd) return;
@@ -182,26 +182,26 @@ _activate(Evas_Object *obj)
    else
      snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s",
               elm_widget_style_get(obj));
-   EINA_LIST_FOREACH(wd->items, l, it)
+   EINA_LIST_FOREACH(wd->items, l, item)
      {
 	bt = elm_button_add(wd->hover);
 	elm_object_style_set(bt, buf);
-	elm_button_label_set(bt, it->label);
-	if (it->icon_file)
+	elm_button_label_set(bt, item->label);
+	if (item->icon_file)
 	  {
 	     ic = elm_icon_add(obj);
 	     elm_icon_scale_set(ic, 0, 1);
-	     if (it->icon_type == ELM_ICON_FILE)
-	       elm_icon_file_set(ic, it->icon_file, it->icon_group);
-	     else if (it->icon_type == ELM_ICON_STANDARD)
-	       elm_icon_standard_set(ic, it->icon_file);
+	     if (item->icon_type == ELM_ICON_FILE)
+	       elm_icon_file_set(ic, item->icon_file, item->icon_group);
+	     else if (item->icon_type == ELM_ICON_STANDARD)
+	       elm_icon_standard_set(ic, item->icon_file);
 	     elm_button_icon_set(bt, ic);
 	     evas_object_show(ic);
 	  }
 	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
 	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", _item_clicked, it);
+	evas_object_smart_callback_add(bt, "clicked", _item_clicked, item);
 	evas_object_show(bt);
      }
 
@@ -536,12 +536,12 @@ elm_hoversel_expanded_get(const Evas_Object *obj)
 EAPI void
 elm_hoversel_clear(Evas_Object *obj)
 {
-   Elm_Hoversel_Item *it;
+   Elm_Hoversel_Item *item;
    Eina_List *l, *ll;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   EINA_LIST_FOREACH_SAFE(wd->items, l, ll, it) elm_hoversel_item_del(it);
+   EINA_LIST_FOREACH_SAFE(wd->items, l, ll, item) elm_hoversel_item_del(item);
 }
 
 /**
@@ -585,15 +585,15 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Elm_Hoversel_Item *it = elm_widget_item_new(obj, Elm_Hoversel_Item);
-   if (!it) return NULL;
-   wd->items = eina_list_append(wd->items, it);
-   it->label = eina_stringshare_add(label);
-   it->icon_file = eina_stringshare_add(icon_file);
-   it->icon_type = icon_type;
-   it->func = func;
-   it->base.data = data;
-   return it;
+   Elm_Hoversel_Item *item = elm_widget_item_new(obj, Elm_Hoversel_Item);
+   if (!item) return NULL;
+   wd->items = eina_list_append(wd->items, item);
+   item->label = eina_stringshare_add(label);
+   item->icon_file = eina_stringshare_add(icon_file);
+   item->icon_type = icon_type;
+   item->func = func;
+   item->base.data = data;
+   return item;
 }
 
 /**
@@ -603,23 +603,23 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
  * hoversel is active; use elm_hoversel_expanded_get()
  * to check first).
  *
- * @param it The item to delete
+ * @param item The item to delete
  *
  * @ingroup Hoversel
  */
 EAPI void
-elm_hoversel_item_del(Elm_Hoversel_Item *it)
+elm_hoversel_item_del(Elm_Hoversel_Item *item)
 {
-   if (!it) return;
-   Widget_Data *wd = elm_widget_data_get(it->base.widget);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
-   elm_hoversel_hover_end(it->base.widget);
-   wd->items = eina_list_remove(wd->items, it);
-   elm_widget_item_pre_notify_del(it);
-   eina_stringshare_del(it->label);
-   eina_stringshare_del(it->icon_file);
-   eina_stringshare_del(it->icon_group);
-   elm_widget_item_del(it);
+   elm_hoversel_hover_end(item->base.widget);
+   wd->items = eina_list_remove(wd->items, item);
+   elm_widget_item_pre_notify_del(item);
+   eina_stringshare_del(item->label);
+   eina_stringshare_del(item->icon_file);
+   eina_stringshare_del(item->icon_group);
+   elm_widget_item_del(item);
 }
 
 /**
@@ -630,52 +630,54 @@ elm_hoversel_item_del(Elm_Hoversel_Item *it)
  * Evas_Object *the_item_object
  * Elm_Hoversel_Item *the_object_struct
  *
- * @param it The item to set the callback on
+ * @param item The item to set the callback on
  * @param func The function called
  *
  * @ingroup Hoversel
  */
 EAPI void
-elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func)
+elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *item, Evas_Smart_Cb func)
 {
-   elm_widget_item_del_cb_set(it, func);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   elm_widget_item_del_cb_set(item, func);
 }
 
 /**
  * This returns the data pointer supplied with elm_hoversel_item_add() that
  * will be passed to associated function callbacks.
  *
- * @param it The item to get the data from
+ * @param item The item to get the data from
  * @return The data pointer set with elm_hoversel_item_add()
  *
  * @ingroup Hoversel
  */
 EAPI void *
-elm_hoversel_item_data_get(const Elm_Hoversel_Item *it)
+elm_hoversel_item_data_get(const Elm_Hoversel_Item *item)
 {
-   return elm_widget_item_data_get(it);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   return elm_widget_item_data_get(item);
 }
 
 /**
  * This returns the label text of the given hoversel item.
  *
- * @param it The item to get the label
+ * @param item The item to get the label
  * @return The label text of the hoversel item
  *
  * @ingroup Hoversel
  */
 EAPI const char *
-elm_hoversel_item_label_get(const Elm_Hoversel_Item *it)
+elm_hoversel_item_label_get(const Elm_Hoversel_Item *item)
 {
-   if (!it) return NULL;
-   return it->label;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   return item->label;
 }
 
 /**
  * This sets the icon for the given hoversel item. The icon can be loaded from
  * the standard set, from an image file, or from an edje file.
  *
- * @param it The item to set the icon
+ * @param item The item to set the icon
  * @param icon_file An image file path on disk to use for the icon or standard
  * icon name
  * @param icon_group The edje group to use if @p icon_file is an edje file. Set this
@@ -685,18 +687,18 @@ elm_hoversel_item_label_get(const Elm_Hoversel_Item *it)
  * @ingroup Hoversel
  */
 EAPI void
-elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
+elm_hoversel_item_icon_set(Elm_Hoversel_Item *item, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
 {
-   if (!it) return;
-   eina_stringshare_replace(&it->icon_file, icon_file);
-   eina_stringshare_replace(&it->icon_group, icon_group);
-   it->icon_type = icon_type;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   eina_stringshare_replace(&item->icon_file, icon_file);
+   eina_stringshare_replace(&item->icon_group, icon_group);
+   item->icon_type = icon_type;
 }
 
 /**
  * Get the icon object of the hoversel item
  *
- * @param it The item to get the icon from
+ * @param item The item to get the icon from
  * @param icon_file The image file path on disk used for the icon or standard
  * icon name
  * @param icon_group The edje group used if @p icon_file is an edje file. NULL
@@ -706,11 +708,11 @@ elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const c
  * @ingroup Hoversel
  */
 EAPI void
-elm_hoversel_item_icon_get(const Elm_Hoversel_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type)
+elm_hoversel_item_icon_get(const Elm_Hoversel_Item *item, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type)
 {
-   if (!it) return;
-   if (icon_file) *icon_file = it->icon_file;
-   if (icon_group) *icon_group = it->icon_group;
-   if (icon_type) *icon_type = it->icon_type;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   if (icon_file) *icon_file = item->icon_file;
+   if (icon_group) *icon_group = item->icon_group;
+   if (icon_type) *icon_type = item->icon_type;
 }
 
