@@ -373,9 +373,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
    char buf[1024];
    Elm_Slideshow_Item *next = NULL;
    Widget_Data *wd;
-   if (!item)
-     return;
-   ELM_CHECK_WIDTYPE(item->base.widget, widtype);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    wd = elm_widget_data_get(item->base.widget);
    if (!wd)
      return;
@@ -699,7 +697,7 @@ elm_slideshow_clear(Evas_Object *obj)
 EAPI void
 elm_slideshow_item_del(Elm_Slideshow_Item *item)
 {
-	if (!item) return;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
 	if (!wd) return;
 	if (wd->previous == item) wd->previous = NULL;
@@ -769,7 +767,7 @@ elm_slideshow_item_current_get(const Evas_Object *obj)
 EAPI Evas_Object *
 elm_slideshow_item_object_get(const Elm_Slideshow_Item * item)
 {
-   if (!item) return NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->base.view;
 }
 
@@ -784,5 +782,6 @@ elm_slideshow_item_object_get(const Elm_Slideshow_Item * item)
 EAPI void *
 elm_slideshow_item_data_get(const Elm_Slideshow_Item * item)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_data_get(item);
 }
