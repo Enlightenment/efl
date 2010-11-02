@@ -79,12 +79,8 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
 #define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)			\
-  if (!it)								\
-    {									\
-       ERR("ERROR: "#it" is NULL.\n");                                  \
-       return __VA_ARGS__;						\
-    }								 	\
-  else if (it->deleted)                                                 \
+  ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, __VA_ARGS__);             \
+  if (it->deleted)                                                      \
     {									\
        ERR("ERROR: "#it" has been DELETED.\n");                         \
        return __VA_ARGS__;						\
@@ -1742,11 +1738,11 @@ elm_list_item_selected_get(const Elm_List_Item *it)
 EAPI void
 elm_list_item_show(Elm_List_Item *it)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Coord bx, by, bw, bh;
    Evas_Coord x, y, w, h;
 
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
    x -= bx;
@@ -1769,11 +1765,11 @@ elm_list_item_show(Elm_List_Item *it)
 EAPI void
 elm_list_item_bring_in(Elm_List_Item *it)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Coord bx, by, bw, bh;
    Evas_Coord x, y, w, h;
 
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(it->base.view, &x, &y, &w, &h);
    x -= bx;
@@ -1792,9 +1788,9 @@ elm_list_item_bring_in(Elm_List_Item *it)
 EAPI void
 elm_list_item_del(Elm_List_Item *it)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
 
    if (it->selected) _item_unselect(it);
 
