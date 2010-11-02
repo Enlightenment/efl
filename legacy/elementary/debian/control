@@ -15,7 +15,8 @@ Description: Elementary - a basic widget set that is easy to use based on EFL fo
 
 Package: libelm-svn-01
 Architecture: any
-Depends: ${shlibs:Depends}, libelm-bin
+Depends: ${shlibs:Depends}
+Recommends: libelm-bin
 Description: Elementary - a basic widget set that is easy to use based on EFL for mobile
  This package contains a widget toolkit.
 
