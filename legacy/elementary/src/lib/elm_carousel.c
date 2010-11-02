@@ -237,6 +237,7 @@ elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Ev
 EAPI void
 elm_carousel_item_del(Elm_Carousel_Item *it)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    Evas_Object *obj2 = it->base.widget;
    if (!wd) return;
@@ -259,6 +260,7 @@ elm_carousel_item_del(Elm_Carousel_Item *it)
 EAPI void
 elm_carousel_item_del_cb_set(Elm_Carousel_Item *it, Evas_Smart_Cb func)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
@@ -273,11 +275,13 @@ elm_carousel_item_del_cb_set(Elm_Carousel_Item *it, Evas_Smart_Cb func)
 EAPI void *
 elm_carousel_item_data_get(const Elm_Carousel_Item *it)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
 EAPI void
-elm_carousel_item_select(Elm_Carousel_Item *item)
+elm_carousel_item_select(Elm_Carousel_Item *it)
 {
-   _item_select(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   _item_select(it);
 }
