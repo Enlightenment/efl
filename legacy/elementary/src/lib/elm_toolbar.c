@@ -46,10 +46,6 @@ struct _Elm_Toolbar_Item
 #define ELM_TOOLBAR_ITEM_FROM_INLIST(item)      \
   ((item) ? EINA_INLIST_CONTAINER_GET(item, Elm_Toolbar_Item) : NULL)
 
-#define ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, ...)                       \
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-   ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
-
 struct _Elm_Toolbar_Item_State
 {
    const char *label;
@@ -746,7 +742,7 @@ elm_toolbar_item_state_next(Elm_Toolbar_Item *item)
    Widget_Data *wd;
    Evas_Object *obj;
    Eina_List *next_state;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
 
    obj = item->base.widget;
    wd = elm_widget_data_get(obj);
@@ -772,7 +768,7 @@ elm_toolbar_item_state_prev(Elm_Toolbar_Item *item)
    Widget_Data *wd;
    Evas_Object *obj;
    Eina_List *prev_state;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
 
    obj = item->base.widget;
    wd = elm_widget_data_get(obj);
@@ -796,6 +792,7 @@ elm_toolbar_item_state_prev(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_state_unset(Elm_Toolbar_Item *it)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    elm_toolbar_item_state_set(it, NULL);
 }
 
@@ -818,7 +815,7 @@ elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state)
    Eina_List *next_state;
    Elm_Toolbar_Item_State *it_state;
    Evas_Object *obj;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
 
    obj = it->base.widget;
    wd = elm_widget_data_get(obj);
@@ -856,7 +853,7 @@ elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state)
 EAPI Elm_Toolbar_Item_State *
 elm_toolbar_item_state_get(Elm_Toolbar_Item *it)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    if ((!it->states) || (!it->current_state)) return NULL;
    if (it->current_state == it->states) return NULL;
 
@@ -895,7 +892,7 @@ elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char 
    Elm_Toolbar_Item_State *it_state;
    Evas_Object *icon_obj;
    Evas_Object *obj;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    obj = item->base.widget;
 
    if (!item->states)
@@ -940,7 +937,7 @@ elm_toolbar_item_state_del(Elm_Toolbar_Item *item, Elm_Toolbar_Item_State *state
 {
    Eina_List *del_state;
    Elm_Toolbar_Item_State *it_state;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
 
    if (!state) return EINA_FALSE;
    if (!item->states) return EINA_FALSE;
@@ -1017,7 +1014,7 @@ EAPI Elm_Toolbar_Item *
 elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(before, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(before, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -1050,7 +1047,7 @@ EAPI Elm_Toolbar_Item *
 elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Toolbar_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(after, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(after, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -1115,7 +1112,7 @@ EAPI Elm_Toolbar_Item *
 elm_toolbar_item_next_get(const Elm_Toolbar_Item *item)
 {
    Elm_Toolbar_Item *next;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
    return next;
 }
@@ -1134,7 +1131,7 @@ EAPI Elm_Toolbar_Item *
 elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item)
 {
    Elm_Toolbar_Item *prev;
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    prev = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->prev);
    return prev;
 }
@@ -1152,7 +1149,7 @@ elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item)
 EAPI Evas_Object *
 elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->base.widget;
 }
 
@@ -1172,7 +1169,7 @@ elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
     if (item->prio.priority == priority) return;
     item->prio.priority = priority;
     _resize(item->base.widget, NULL, NULL, NULL);
@@ -1189,7 +1186,7 @@ elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority)
 EAPI int
 elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, 0);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, 0);
    return item->prio.priority;
 }
 
@@ -1204,7 +1201,7 @@ elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 EAPI Evas_Object *
 elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->icon;
 }
 
@@ -1219,7 +1216,7 @@ elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 EAPI const char *
 elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->icon_str;
 }
 
@@ -1234,7 +1231,7 @@ elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item)
 EAPI const char *
 elm_toolbar_item_label_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->label;
 }
 
@@ -1275,7 +1272,7 @@ elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
    const char *s;
 
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if ((label) && (item->label) && (!strcmp(label, item->label))) return;
 
    eina_stringshare_replace(&item->label, label);
@@ -1327,7 +1324,7 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
 EAPI Eina_Bool
 elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->selected;
 }
 
@@ -1346,7 +1343,7 @@ elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
 
@@ -1448,7 +1445,7 @@ elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon)
    Widget_Data *wd;
    Evas_Object *obj = item->base.widget;
 
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    wd = elm_widget_data_get(obj);
    if (!wd) return;
    if ((icon) && (item->icon_str) && (!strcmp(icon, item->icon_str))) return;
@@ -1478,7 +1475,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *item)
    Evas_Object *obj2;
    Elm_Toolbar_Item_State *it_state;
 
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
    obj2 = item->base.widget;
@@ -1511,7 +1508,7 @@ elm_toolbar_item_del(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_del_cb_set(item, func);
 }
 
@@ -1526,7 +1523,7 @@ elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func)
 EAPI Eina_Bool
 elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->disabled;
 }
 
@@ -1541,7 +1538,7 @@ elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    _item_disable(item, disabled);
 }
 
@@ -1556,7 +1553,7 @@ elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 EAPI void
 elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if (item->separator == separator) return;
    item->separator = separator;
    _theme_hook(item->base.view);
@@ -1573,7 +1570,7 @@ elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator)
 EAPI Eina_Bool
 elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
    return item->separator;
 }
 
@@ -1771,7 +1768,7 @@ elm_toolbar_align_get(const Evas_Object *obj)
 EAPI void
 elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
 
@@ -1795,7 +1792,7 @@ elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu)
 EAPI void
 elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_text_set(item, text);
 }
 
@@ -1822,7 +1819,7 @@ elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text)
 EAPI void
 elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
@@ -1842,7 +1839,7 @@ elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item
 EAPI void
 elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_unset(item);
 }
 
@@ -1861,7 +1858,7 @@ elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_style_set(item, style);
 }
 
@@ -1877,7 +1874,7 @@ elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style)
 EAPI const char *
 elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_tooltip_style_get(item);
 }
 
@@ -1893,7 +1890,7 @@ elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_set(item, cursor);
 }
 
@@ -1908,7 +1905,7 @@ elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
 EAPI void
 elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_unset(item);
 }
 
@@ -1926,7 +1923,7 @@ elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_style_set(item, style);
 }
 
@@ -1942,7 +1939,7 @@ elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style)
 EAPI const char *
 elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_cursor_style_get(item);
 }
 
@@ -1963,7 +1960,7 @@ elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item)
 EAPI void
 elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine_only)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
@@ -1980,7 +1977,7 @@ elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine
 EAPI Eina_Bool
 elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(item);
 }
 
@@ -1995,7 +1992,7 @@ elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item)
 EAPI Evas_Object *
 elm_toolbar_item_menu_get(Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return NULL;
    /* FIXME: It's not ok. This function needs to be reviewed. And should
@@ -2045,7 +2042,7 @@ elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label)
 EAPI void
 elm_toolbar_item_data_set(Elm_Toolbar_Item *item, const void *data)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    elm_widget_item_data_set(item, data);
 }
 
@@ -2063,6 +2060,6 @@ elm_toolbar_item_data_set(Elm_Toolbar_Item *item, const void *data)
 EAPI void *
 elm_toolbar_item_data_get(const Elm_Toolbar_Item *item)
 {
-   ELM_TOOLBAR_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_data_get(item);
 }
