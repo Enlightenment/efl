@@ -240,7 +240,14 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 
    if (it->info.type == EINA_FILE_UNKNOWN)
      {
+#ifdef HAVE_FSTATAT
+        int fd;
+
+        fd = dirfd(it->dirp);
+        if (fstatat(fd, it->info.path + it->info.name_start, &st, 0))
+#else
         if (stat(it->info.path, &st))
+#endif
           it->info.type = EINA_FILE_UNKNOWN;
         else
           {

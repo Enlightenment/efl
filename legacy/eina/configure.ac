@@ -522,6 +522,14 @@ if test "x${have_iconv}" = "xyes" ; then
    AC_DEFINE([HAVE_ICONV], [1], [Set to 1 if iconv library is installed])
 fi
 
+#check for dirfd API presence
+have_dirfd="no"
+AC_CHECK_FUNCS([dirfd], [have_dirfd="yes"], [])
+if test "x${dirfd}" = "xyes"; then
+   AC_DEFINE(HAVE_DIRFD)
+fi
+AC_CHECK_FUNCS([openat], [AC_DEFINE(HAVE_OPENAT)], [])
+AC_CHECK_FUNCS([statat], [AC_DEFINE(HAVE_STATAT)], [])
 
 ### Modules
 
@@ -626,6 +634,7 @@ echo "    debug usage........: ${have_debug_threads}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
+echo "  File dirfd...........: ${have_dirfd}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
