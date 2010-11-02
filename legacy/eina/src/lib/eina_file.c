@@ -149,10 +149,7 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 {
    struct dirent *dp;
    size_t length;
-#ifndef _DIRENT_HAVE_D_TYPE
-   struct stat st;
-#endif
-  
+
    dp = alloca(offsetof(struct dirent, d_name) + pathconf(it->dir, _PC_NAME_MAX) + 1);
 
    do
@@ -211,29 +208,9 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
        break;
      }
 #else
-   if (stat(it->info.path, &st))
-     it->info.type = EINA_FILE_UNKNOWN;
-   else
-     {
-       if (S_ISREG(st.st_mode))
-         it->info.type = EINA_FILE_REG;
-       else if (S_ISDIR(st.st_mode))
-         it->info.type = EINA_FILE_DIR;
-       else if (S_ISCHR(st.st_mode))
-         it->info.type = EINA_FILE_CHR;
-       else if (S_ISBLK(st.st_mode))
-         it->info.type = EINA_FILE_BLK;
-       else if (S_ISFIFO(st.st_mode))
-         it->info.type = EINA_FILE_FIFO;
-       else if (S_ISLNK(st.st_mode))
-         it->info.type = EINA_FILE_LNK;
-       else if (S_ISSOCK(st.st_mode))
-         it->info.type = EINA_FILE_SOCK;
-       else
-         it->info.type = EINA_FILE_UNKNOWN;
-     }
+   it->info.type = EINA_FILE_UNKNOWN;
 #endif
-  
+
    *data = &it->info;
    return EINA_TRUE;
 }
@@ -251,6 +228,42 @@ _eina_file_direct_ls_iterator_free(Eina_File_Direct_Iterator *it)
 
    EINA_MAGIC_SET(&it->iterator, 0);
    free(it);
+}
+
+static Eina_Bool
+_eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
+{
+   struct stat st;
+
+   if (!_eina_file_direct_ls_iterator_next(it, data))
+     return EINA_FALSE;
+
+   if (it->info.type == EINA_FILE_UNKNOWN)
+     {
+        if (stat(it->info.path, &st))
+          it->info.type = EINA_FILE_UNKNOWN;
+        else
+          {
+             if (S_ISREG(st.st_mode))
+               it->info.type = EINA_FILE_REG;
+             else if (S_ISDIR(st.st_mode))
+               it->info.type = EINA_FILE_DIR;
+             else if (S_ISCHR(st.st_mode))
+               it->info.type = EINA_FILE_CHR;
+             else if (S_ISBLK(st.st_mode))
+               it->info.type = EINA_FILE_BLK;
+             else if (S_ISFIFO(st.st_mode))
+               it->info.type = EINA_FILE_FIFO;
+             else if (S_ISLNK(st.st_mode))
+               it->info.type = EINA_FILE_LNK;
+             else if (S_ISSOCK(st.st_mode))
+               it->info.type = EINA_FILE_SOCK;
+             else
+               it->info.type = EINA_FILE_UNKNOWN;
+          }
+     }
+
+   return EINA_TRUE;
 }
 
 /*============================================================================*
@@ -560,7 +573,8 @@ eina_file_ls(const char *dir)
  *         pointers that could be used but not modified. The lifetime
  *         of the returned pointer is until the next iteration and
  *         while the iterator is live, deleting the iterator
- *         invalidates the pointer.
+ *         invalidates the pointer. It will not call stat() when filesystem
+ *         doesn't provide information to fill type from readdir_r().
  *
  * @see eina_file_ls()
  */
@@ -607,6 +621,83 @@ eina_file_direct_ls(const char *dir)
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_direct_ls_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+         _eina_file_direct_ls_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
+
+   return &it->iterator;
+}
+
+/**
+ * Get an iterator to list the content of a directory, with direct information.
+ *
+ * Iterators are cheap to be created and allow interruption at any
+ * iteration. At each iteration, only the next directory entry is read
+ * from the filesystem with readdir_r().
+ *
+ * The iterator returns the direct pointer to couple of useful information in
+ * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
+ *
+ * The iterator will walk over '.' and '..' without returning them.
+ *
+ * The iterator container is the DIR* corresponding to the current walk.
+ *
+ * @param  dir The name of the directory to list
+
+ * @return Return an Eina_Iterator that will walk over the files and
+ *         directory in the pointed directory. On failure it will
+ *         return NULL. The iterator emits #Eina_File_Direct_Info
+ *         pointers that could be used but not modified. The lifetime
+ *         of the returned pointer is until the next iteration and
+ *         while the iterator is live, deleting the iterator
+ *         invalidates the pointer. It will call stat() when filesystem
+ *         doesn't provide information to fill type from readdir_r().
+ *
+ * @see eina_file_direct_ls()
+ */
+EAPI Eina_Iterator *
+eina_file_stat_ls(const char *dir)
+{
+   Eina_File_Direct_Iterator *it;
+   size_t length;
+
+   if (!dir)
+      return NULL;
+
+   length = strlen(dir);
+   if (length < 1)
+      return NULL;
+
+   if (length + NAME_MAX + 2 >= PATH_MAX)
+      return NULL;
+
+   it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
+   if (!it)
+      return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->dirp = opendir(dir);
+   if (!it->dirp)
+     {
+        free(it);
+        return NULL;
+     }
+
+   memcpy(it->dir,       dir, length + 1);
+   it->length = length;
+
+   memcpy(it->info.path, dir, length);
+   if (dir[length - 1] == '/')
+      it->info.name_start = length;
+   else
+     {
+        it->info.path[length] = '/';
+        it->info.name_start = length + 1;
+     }
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_stat_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
          _eina_file_direct_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
