@@ -158,13 +158,10 @@ _eio_file_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
 }
 
 static void
-_eio_file_direct_heavy(Ecore_Thread *thread, void *data)
+_eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_Iterator *ls)
 {
-   Eio_File_Direct_Ls *async = data;
-   Eina_Iterator *ls;
    const Eina_File_Direct_Info *info;
 
-   ls = eina_file_direct_ls(async->ls.directory);
    if (!ls)
      {
 	eio_file_thread_error(&async->ls.common, thread);
@@ -197,6 +194,28 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
      }
 
    eina_iterator_free(ls);
+}
+
+static void
+_eio_file_direct_heavy(Ecore_Thread *thread, void *data)
+{
+   Eio_File_Direct_Ls *async = data;
+   Eina_Iterator *ls;
+
+   ls = eina_file_direct_ls(async->ls.directory);
+
+   _eio_file_eina_ls_heavy(thread, async, ls);
+}
+
+static void
+_eio_file_stat_heavy(Ecore_Thread *thread, void *data)
+{
+   Eio_File_Direct_Ls *async = data;
+   Eina_Iterator *ls;
+
+   ls = eina_file_stat_ls(async->ls.directory);
+
+   _eio_file_eina_ls_heavy(thread, async, ls);
 }
 
 static void
@@ -693,6 +712,54 @@ eio_file_direct_ls(const char *dir,
 			  error_cb,
 			  data,
 			  _eio_file_direct_heavy,
+			  _eio_file_direct_notify,
+			  _eio_file_end,
+			  _eio_file_error))
+     return NULL;
+
+   return &async->ls.common;
+}
+
+/**
+ * @brief List content of a directory without locking your app.
+ * @param dir The directory to list.
+ * @param filter_cb Callback called from another thread.
+ * @param main_cb Callback called from the main loop for each accepted file.
+ * @param done_cb Callback called from the main loop when the content of the directory has been listed.
+ * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @param data Data passed to callback and not modified at all by eio_file_direct_ls.
+ * @return A reference to the IO operation.
+ *
+ * eio_file_stat_ls() run eina_file_stat_ls() in a separated thread using
+ * ecore_thread_feedback_run. This prevent any lock in your apps.
+ */
+EAPI Eio_File *
+eio_file_stat_ls(const char *dir,
+                 Eio_Filter_Direct_Cb filter_cb,
+                 Eio_Main_Direct_Cb main_cb,
+                 Eio_Done_Cb done_cb,
+                 Eio_Error_Cb error_cb,
+                 const void *data)
+{
+   Eio_File_Direct_Ls *async;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+
+   async = malloc(sizeof(Eio_File_Direct_Ls));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+
+   async->filter_cb = filter_cb;
+   async->main_cb = main_cb;
+   async->ls.directory = eina_stringshare_add(dir);
+
+   if (!eio_long_file_set(&async->ls.common,
+			  done_cb,
+			  error_cb,
+			  data,
+			  _eio_file_stat_heavy,
 			  _eio_file_direct_notify,
 			  _eio_file_end,
 			  _eio_file_error))
