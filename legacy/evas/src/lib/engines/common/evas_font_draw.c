@@ -105,7 +105,7 @@ _fash_int_find(Fash_Int *fash, int item)
 {
    int grp, maj, min;
 
-   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
@@ -119,7 +119,7 @@ _fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int index)
 {
    int grp, maj, min;
 
-   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
@@ -162,7 +162,7 @@ _fash_gl_find(Fash_Glyph *fash, int item)
 {
    int grp, maj, min;
 
-   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;
@@ -176,7 +176,7 @@ _fash_gl_add(Fash_Glyph *fash, int item, RGBA_Font_Glyph *glyph)
 {
    int grp, maj, min;
 
-   item &= 0xffffff; // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
    maj = (item >> 8) & 0xff;
    min = item & 0xff;

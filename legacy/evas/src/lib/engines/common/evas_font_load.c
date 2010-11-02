@@ -299,7 +299,8 @@ evas_common_font_int_memory_load(const char *name, int size, const void *data, i
    fi = calloc(1, sizeof(RGBA_Font_Int));
    if (!fi) return NULL;
    fi->src = evas_common_font_source_find(name);
-   if (!fi->src) fi->src = evas_common_font_source_memory_load(name, data, data_size);
+   if (!fi->src)
+    fi->src = evas_common_font_source_memory_load(name, data, data_size);
    if (!fi->src)
      {
 	free(fi);
@@ -331,7 +332,9 @@ evas_common_font_int_load(const char *name, int size)
      }
    fi->size = size;
    _evas_common_font_int_cache_init(fi);
-   return evas_common_font_int_load_init(fi);
+   fi = evas_common_font_int_load_init(fi);
+//   evas_common_font_int_load_complete(fi);
+   return fi;
 }
 
 EAPI RGBA_Font_Int *
@@ -803,8 +806,9 @@ evas_common_font_int_unload(RGBA_Font_Int *fi)
 void
 evas_common_font_int_reload(RGBA_Font_Int *fi)
 {
-  return;
   if (fi->src->ft.face) return;
+  evas_common_font_source_load_complete(fi->src);
+  return;
   evas_common_font_source_reload(fi->src);
   evas_common_font_int_load_complete(fi);
 }
