@@ -905,6 +905,7 @@ elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 EAPI void *
 elm_index_item_data_get(const Elm_Index_Item *it)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
@@ -921,6 +922,7 @@ elm_index_item_data_get(const Elm_Index_Item *it)
 EAPI void
 elm_index_item_data_set(Elm_Index_Item *it, const void *data)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    elm_widget_item_data_set(it, data);
 }
 
@@ -935,6 +937,7 @@ elm_index_item_data_set(Elm_Index_Item *it, const void *data)
 EAPI void
 elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
@@ -949,7 +952,7 @@ elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func)
 EAPI const char *
 elm_index_item_letter_get(const Elm_Index_Item *it)
 {
-   if (!it) return NULL;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    return it->letter;
 }
 
