@@ -74,8 +74,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 #define ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(it, ...)               \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__);	\
-  ELM_CHECK_WIDTYPE(item->base.widget, widtype) __VA_ARGS__;		\
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, __VA_ARGS__);            \
   if (it->deleted)							\
     {									\
        ERR(""#it" has been DELETED.\n");				\
