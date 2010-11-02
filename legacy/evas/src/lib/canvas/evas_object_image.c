@@ -697,7 +697,7 @@ EAPI void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
 {
    Evas_Object_Image *o;
-   int stride;
+   int stride = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -2243,7 +2243,7 @@ evas_object_image_load(Evas_Object *obj)
    if (o->engine_data)
      {
 	int w, h;
-	int stride;
+	int stride = 0;
 
 	obj->layer->evas->engine.func->image_size_get
            (obj->layer->evas->engine.data.output,
