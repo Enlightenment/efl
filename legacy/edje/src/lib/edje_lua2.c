@@ -246,7 +246,7 @@ static const luaL_Reg _elua_libs[] =
 //     {LUA_LOADLIBNAME, luaopen_package}, // disable this lib - don't want
      {LUA_TABLIBNAME, luaopen_table},
 //     {LUA_IOLIBNAME, luaopen_io}, // disable this lib - don't want
-     {LUA_OSLIBNAME, luaopen_os}, // FIXME: audit os lib - maybe not provide or only provide specific calls
+//     {LUA_OSLIBNAME, luaopen_os}, // FIXME: audit os lib - maybe not provide or only provide specific calls
      {LUA_STRLIBNAME, luaopen_string},
      {LUA_MATHLIBNAME, luaopen_math},
 //     {LUA_DBLIBNAME, luaopen_debug}, // disable this lib - don't want
