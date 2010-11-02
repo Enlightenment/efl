@@ -113,4 +113,4 @@ external_##type_name##_icon_add(void *data __UNUSED__, Evas *e) {   \
 }
 
 #define DEFINE_EXTERNAL_COMMON_PARAMS           \
-    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("label", "label goes here")
+    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("style", "default")
