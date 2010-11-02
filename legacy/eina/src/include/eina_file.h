@@ -76,7 +76,6 @@ struct _Eina_File_Direct_Info
    size_t               name_length; /**< size of the filename/basename component */
    size_t               name_start; /**< where the filename/basename component starts */
    char                 path[PATH_MAX]; /**< the path */
-   const struct dirent *dirent; /**< the dirent structure of the path - don't use this if you want compatibility */
    Eina_File_Type       type; /**< file type */
 };
 

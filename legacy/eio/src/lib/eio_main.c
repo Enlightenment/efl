@@ -145,7 +145,7 @@ eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, of
 Eina_File_Direct_Info *
 eio_direct_info_malloc(void)
 {
-   return _eio_pool_malloc(&direct_info, sizeof (Eina_File_Direct_Info) + sizeof (struct dirent));
+   return _eio_pool_malloc(&direct_info, sizeof (Eina_File_Direct_Info));
 }
 
 void

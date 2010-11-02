@@ -101,11 +101,11 @@ _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
           ((dp->d_name[1] == '\0') ||
            ((dp->d_name[1] == '.') && (dp->d_name[2] == '\0'))));
 
-#ifdef _DIRENT_HAVE_D_NAMLEN       
+#ifdef _DIRENT_HAVE_D_NAMLEN
    length = dp->d_namlen;
 #else
    length = strlen(dp->d_name);
-#endif       
+#endif
    name = alloca(length + 2 + it->length);
 
    memcpy(name,                  it->dir,    it->length);
@@ -162,11 +162,11 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
         if (!dp)
            return EINA_FALSE;
 
-#ifdef _DIRENT_HAVE_D_NAMLEN       
+#ifdef _DIRENT_HAVE_D_NAMLEN
         length = dp->d_namlen;
 #else
         length = strlen(dp->d_name);
-#endif       
+#endif
         if (it->info.name_start + length + 1 >= PATH_MAX)
            continue;
      }
@@ -178,7 +178,7 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    it->info.name_length = length;
    it->info.path_length = it->info.name_start + length;
    it->info.path[it->info.path_length] = '\0';
-   it->info.dirent = dp;
+
 #ifdef _DIRENT_HAVE_D_TYPE
    switch (dp->d_type)
      {

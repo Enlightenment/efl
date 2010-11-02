@@ -188,8 +188,6 @@ _eio_file_direct_heavy(Ecore_Thread *thread, void *data)
 	     if (!send) continue;
 
 	     memcpy(send, info, sizeof (Eina_File_Direct_Info));
-             send->dirent = (struct dirent*)(send + 1);
-             memcpy((void*) send->dirent, info->dirent, sizeof (struct dirent));
 
 	     ecore_thread_feedback(thread, send);
 	  }
