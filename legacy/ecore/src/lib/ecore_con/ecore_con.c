@@ -1747,34 +1747,41 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
 
    if (!(svr->type & ECORE_CON_SSL))
      {
+        errno = 0;
         num = read(svr->fd, buf, sizeof(buf));
         if ((num < 0) && (errno == EAGAIN))
           lost_server = EINA_FALSE;
      }
-   else if (!(num = ecore_con_ssl_server_read(svr, buf, sizeof(buf))))
-     lost_server = EINA_FALSE;
-
-   if (num < 1)
-     return;
-
-   if (!svr->delete_me)
+   else
      {
-        Ecore_Con_Event_Server_Data *e;
-
-        e = malloc(sizeof(Ecore_Con_Event_Server_Data));
-        EINA_SAFETY_ON_NULL_RETURN(e);
-
-        svr->event_count++;
-        e->server = svr;
-        e->data = malloc(num);
-        memcpy(e->data, buf, num);
-        e->size = num;
-        ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
-                        _ecore_con_event_server_data_free, NULL);
+       num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
+         if (num >= 0)
+           lost_server = EINA_FALSE;
      }
 
    if (lost_server)
      _ecore_con_server_kill(svr);
+
+   if ((!num) || svr->delete_me)
+     return;
+
+
+   {
+      Ecore_Con_Event_Server_Data *e;
+
+      e = malloc(sizeof(Ecore_Con_Event_Server_Data));
+      EINA_SAFETY_ON_NULL_RETURN(e);
+
+      svr->event_count++;
+      e->server = svr;
+      e->data = malloc(num);
+      memcpy(e->data, buf, num);
+      e->size = num;
+      ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
+                      _ecore_con_event_server_data_free, NULL);
+   }
+
+
 }
 
 static Eina_Bool
@@ -2052,10 +2059,38 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
         if (errno == EAGAIN)
           lost_client = EINA_FALSE;
      }
-   else if (!(num = ecore_con_ssl_client_read(cl, buf, sizeof(buf))))
-     lost_client = EINA_FALSE;
+   else
+     {
+        num = ecore_con_ssl_client_read(cl, buf, sizeof(buf));
+        if (num >= 0)
+          lost_client = EINA_FALSE;
+     }
 
-   if (num && (!cl->delete_me))
+   if (lost_client)
+     {
+        if (!cl->delete_me)
+          {
+             /* we lost our client! */
+              Ecore_Con_Event_Client_Del *e;
+
+              e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+              EINA_SAFETY_ON_NULL_RETURN(e);
+
+              cl->event_count++;
+              _ecore_con_cl_timer_update(cl);
+              e->client = cl;
+              ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+                              _ecore_con_event_client_del_free, NULL);
+          }
+        cl->dead = EINA_TRUE;
+        if (cl->fd_handler)
+          ecore_main_fd_handler_del(cl->fd_handler);
+
+        cl->fd_handler = NULL;
+        return;
+     }
+
+   if ((num > 0) && (!cl->delete_me))
      {
         Ecore_Con_Event_Client_Data *e;
 
@@ -2078,29 +2113,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
                         _ecore_con_event_client_data_free, NULL);
      }
 
-   if (lost_client && (!cl->delete_me))
-     {
-        /* we lost our client! */
-         Ecore_Con_Event_Client_Del *e;
 
-         e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
-         EINA_SAFETY_ON_NULL_RETURN(e);
-
-         cl->event_count++;
-         _ecore_con_cl_timer_update(cl);
-         e->client = cl;
-         ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
-                         _ecore_con_event_client_del_free, NULL);
-     }
-
-   if (lost_client)
-     {
-        cl->dead = EINA_TRUE;
-        if (cl->fd_handler)
-          ecore_main_fd_handler_del(cl->fd_handler);
-
-        cl->fd_handler = NULL;
-     }
 }
 
 static Eina_Bool
