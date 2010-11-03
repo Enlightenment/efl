@@ -30,6 +30,8 @@
  * unrealized - This is called when the real evas object for this item is
  * deleted. event_info is the Gengrid item that was created.
  *
+ * changed - This is called when the grid has changed.
+ *
  * drag,start,up - Called when the item in the Gengrid has been dragged (not
  * scrolled) up.
  *
@@ -1264,6 +1266,7 @@ _pan_calculate(Evas_Object *obj)
 	     if (!cx) cy++;
 	  }
      }
+   evas_object_smart_callback_call(sd->wd->self, "changed", NULL);
 }
 
 static void
