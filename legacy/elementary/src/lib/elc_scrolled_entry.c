@@ -140,20 +140,13 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd;
-   Evas_Coord minw, minh, maxw, maxh, tmpw, tmph;
+   Evas_Coord minw, minh, maxw, maxh;
 
    wd = elm_widget_data_get(obj);
    if (!wd)
      return;
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
-   evas_object_size_hint_min_get(obj, &tmpw, &tmph);
-
    evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
-
-   if (tmpw > minw)
-     minw = tmpw;
-   if (tmph > minh)
-     minh = tmph;
 
    evas_object_size_hint_min_set(obj, minw, minh);
    if (wd->single_line)
