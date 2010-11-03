@@ -149,6 +149,7 @@ struct _Eio_Dir_Copy
 
    Eina_List *files;
    Eina_List *dirs;
+   Eina_List *links;
 };
 
 struct _Eio_File_Chown

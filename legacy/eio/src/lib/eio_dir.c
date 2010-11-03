@@ -124,7 +124,7 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
    const char *dir;
    struct stat buffer;
 
-   it = eina_file_direct_ls(target);
+   it = eina_file_stat_ls(target);
    if (!it)
      {
         eio_file_thread_error(&copy->progress.common, thread);
@@ -136,19 +136,16 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
         switch (info->type)
           {
            case EINA_FILE_UNKNOWN:
-              if (stat(info->path, &buffer) != 0)
-                {
-                   eio_file_thread_error(&copy->progress.common, thread);
-                   goto on_error;
-                }
+              eio_file_thread_error(&copy->progress.common, thread);
+              goto on_error;
+           case EINA_FILE_DIR:
+              if (lstat(info->path, &buffer) != 0)
+                goto on_error;
 
               if (S_ISDIR(buffer.st_mode))
                 dirs = eina_list_append(dirs, eina_stringshare_add(info->path));
-              else
-                copy->files = eina_list_append(copy->files, eina_stringshare_add(info->path));
-              break;
-           case EINA_FILE_DIR:
-              dirs = eina_list_append(dirs, eina_stringshare_add(info->path));
+              else /* It's a link we should not forget about it */
+                copy->links = eina_list_append(copy->links, eina_stringshare_add(info->path));
               break;
            default:
               copy->files = eina_list_append(copy->files, eina_stringshare_add(info->path));
@@ -192,12 +189,15 @@ _eio_dir_init(Ecore_Thread *thread,
 
    /* notify main thread of the amount of work todo */
    *step = 0;
-   *count = eina_list_count(order->files) + eina_list_count(order->dirs) * 2;
+   *count = eina_list_count(order->files)
+     + eina_list_count(order->dirs) * 2
+     + eina_list_count(order->links);
    eio_progress_send(thread, &order->progress, *step, *count);
 
    /* sort the content, so we create the directory in the right order */
    order->dirs = eina_list_sort(order->dirs, -1, eio_strcmp);
    order->files = eina_list_sort(order->files, -1, eio_strcmp);
+   order->links = eina_list_sort(order->links, -1, eio_strcmp);
 
    /* prepare stuff */
    *length_source = eina_stringshare_strlen(order->progress.source);
@@ -273,6 +273,67 @@ _eio_dir_mkdir(Ecore_Thread *thread, Eio_Dir_Copy *order,
 }
 
 static Eina_Bool
+_eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
+              off_t *step, off_t count,
+              int length_source, int length_dest)
+{
+   const char *link;
+   Eina_List *l;
+   char oldpath[PATH_MAX];
+   char target[PATH_MAX];
+   char buffer[PATH_MAX];
+   char *newpath;
+
+   /* Build once the base of the link target */
+   memcpy(buffer, order->progress.dest, length_dest);
+   buffer[length_dest] = '/';
+
+   /* recreate all links */
+   EINA_LIST_FOREACH(order->links, l, link)
+     {
+        ssize_t length;
+
+        /* build oldpath link */
+        _eio_dir_target(order, oldpath, link, length_source, length_dest);
+
+        /* read link target */
+        length = readlink(link, target, PATH_MAX);
+        if (length < 0)
+          goto on_error;
+
+        if (strncmp(target, order->progress.source, length_source) == 0)
+          {
+             /* The link is inside the zone to copy, so rename it */
+             memcpy(buffer + length_dest + 1, target + length_source, length - length_source + 1);
+             newpath = target;
+          }
+        else
+          {
+             /* The link is outside the zone to copy */
+             newpath = target;
+          }
+
+        /* create the link */
+        if (symlink(oldpath, newpath) != 0)
+          goto on_error;
+
+        /* inform main thread */
+        (*step)++;
+        eio_progress_send(thread, &order->progress, *step, count);
+
+        /* check for cancel request */
+        if (ecore_thread_check(thread))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+
+ on_error:
+   eio_file_thread_error(&order->progress.common, thread);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
                off_t *step, off_t count,
                int length_source, int length_dest,
@@ -332,7 +393,8 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
 {
    Eio_Dir_Copy *copy = data;
    const char *file = NULL;
-   const char *dir = NULL;
+   const char *dir;
+   const char *link;
 
    Eio_File_Progress file_copy;
    char target[PATH_MAX];
@@ -386,6 +448,10 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
    file_copy.dest = NULL;
    file = NULL;
 
+   /* recreate link */
+   if (!_eio_dir_link(thread, copy, &step, count, length_source, length_dest))
+     goto on_error;
+
    /* set directory right back */
    if (!_eio_dir_chmod(thread, copy, &step, count, length_source, length_dest, EINA_FALSE))
      goto on_error;
@@ -399,6 +465,8 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
      eina_stringshare_del(file);
    EINA_LIST_FREE(copy->dirs, dir)
      eina_stringshare_del(dir);
+   EINA_LIST_FREE(copy->links, link)
+     eina_stringshare_del(link);
 
    if (!ecore_thread_check(thread))
      eio_progress_send(thread, &copy->progress, count, count);
@@ -525,6 +593,10 @@ _eio_dir_move_heavy(Ecore_Thread *thread, void *data)
      }
    file_move.dest = NULL;
    file = NULL;
+
+   /* recreate link */
+   if (!_eio_dir_link(thread, move, &step, count, length_source, length_dest))
+     goto on_error;
 
    /* set directory right back */
    if (!_eio_dir_chmod(thread, move, &step, count, length_source, length_dest, EINA_TRUE))
