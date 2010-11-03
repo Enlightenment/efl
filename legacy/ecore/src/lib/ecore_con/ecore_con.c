@@ -687,14 +687,11 @@ ecore_con_server_send(Ecore_Con_Server *svr,
         return 0;
      }
 
-   if (svr->dead)
-      return 0;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(svr->dead, 0);
 
-   if (!data)
-      return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-   if (size < 1)
-      return 0;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(size < 1, 0);
 
    if (svr->fd_handler)
       ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
@@ -704,19 +701,16 @@ ecore_con_server_send(Ecore_Con_Server *svr,
         unsigned char *newbuf;
 
         newbuf = realloc(svr->write_buf, svr->write_buf_size + size);
-        if (newbuf)
-           svr->write_buf = newbuf;
-        else
-           return 0;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(newbuf, 0);
 
+        svr->write_buf = newbuf;
         memcpy(svr->write_buf + svr->write_buf_size, data, size);
         svr->write_buf_size += size;
      }
    else
      {
         svr->write_buf = malloc(size);
-        if (!svr->write_buf)
-           return 0;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(svr->write_buf, 0);
 
         svr->write_buf_size = size;
         memcpy(svr->write_buf, data, size);
@@ -855,18 +849,14 @@ ecore_con_client_send(Ecore_Con_Client *cl,
         return 0;
      }
 
-   if (cl->dead)
-      return 0;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cl->dead, 0);
 
-   if (!data)
-      return 0;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
-   if (size < 1)
-      return 0;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(size < 1, 0);
 
    if (cl->fd_handler)
-      ecore_main_fd_handler_active_set(
-         cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
+      ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
    if(cl->host_server && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
       sendto(cl->host_server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
@@ -876,10 +866,9 @@ ecore_con_client_send(Ecore_Con_Client *cl,
         unsigned char *newbuf;
 
         newbuf = realloc(cl->buf, cl->buf_size + size);
-        if (newbuf)
-           cl->buf = newbuf;
-        else
-           return 0;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(newbuf, 0);
+
+        cl->buf = newbuf;
 
         memcpy(cl->buf + cl->buf_size, data, size);
         cl->buf_size += size;
@@ -887,8 +876,7 @@ ecore_con_client_send(Ecore_Con_Client *cl,
    else
      {
         cl->buf = malloc(size);
-        if (!cl->buf)
-           return 0;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
 
         cl->buf_size = size;
         memcpy(cl->buf, data, size);
@@ -1810,7 +1798,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
    if (svr->handshaking && (want_read || want_write))
      {
         DBG("Continuing ssl handshake: preparing to %s...", want_read ? "read" : "write");
-#ifdef PRINT_LOTS_OF_DEBUG
+#ifdef ISCOMFITOR
            if (want_read)
              {
                 char buf[32768];
