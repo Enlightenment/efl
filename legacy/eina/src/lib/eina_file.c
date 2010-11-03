@@ -81,6 +81,45 @@ struct _Eina_File_Iterator
    char dir[1];
 };
 
+/*
+ * This complex piece of code is needed due to possible race condition.
+ * The code and description of the issue can be found at :
+ * http://womble.decadent.org.uk/readdir_r-advisory.html
+ */
+static size_t
+_eina_dirent_buffer_size(DIR * dirp)
+{
+   long name_max;
+   size_t name_end;
+
+#if defined(HAVE_FPATHCONF) && defined(HAVE_DIRFD) && defined(_PC_NAME_MAX)
+   name_max = fpathconf(dirfd(dirp), _PC_NAME_MAX);
+
+   if (name_max == -1)
+     {
+# if defined(NAME_MAX)
+        name_max = (NAME_MAX > 255) ? NAME_MAX : 255;
+# else
+        return PATH_MAX;
+# endif
+     }
+#else
+# if defined(NAME_MAX)
+   name_max = (NAME_MAX > 255) ? NAME_MAX : 255;
+# else
+#  ifdef _PC_NAME_MAX
+#   warning "buffer size for readdir_r cannot be determined safely, best effort, but racy"
+   name_max = pathconf(dirp, _PC_NAME_MAX);
+#  else
+#   error "buffer size for readdir_r cannot be determined safely"
+# endif
+# endif
+#endif
+   name_end = (size_t) offsetof(struct dirent, d_name) + name_max + 1;
+
+   return (name_end > sizeof (struct dirent) ? name_end : sizeof (struct dirent));
+}
+
 static Eina_Bool
 _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
 {
@@ -88,7 +127,7 @@ _eina_file_ls_iterator_next(Eina_File_Iterator *it, void **data)
    char *name;
    size_t length;
 
-   dp = alloca(offsetof(struct dirent, d_name) + pathconf(it->dir, _PC_NAME_MAX) + 1);
+   dp = alloca(_eina_dirent_buffer_size(it->dirp));
 
    do
      {
@@ -150,7 +189,7 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    struct dirent *dp;
    size_t length;
 
-   dp = alloca(offsetof(struct dirent, d_name) + pathconf(it->dir, _PC_NAME_MAX) + 1);
+   dp = alloca(_eina_dirent_buffer_size(it->dir));
 
    do
      {
@@ -336,8 +375,8 @@ eina_file_dir_list(const char *dir,
       return EINA_FALSE;
 
    dlength = strlen(dir);
-   de = alloca(offsetof(struct dirent, d_name) + pathconf(dir, _PC_NAME_MAX) + 1);
-  
+   de = alloca(_eina_dirent_buffer_size(dir));
+
    while ((!readdir_r(d, de, &de) && de))
      {
         if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))

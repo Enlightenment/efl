@@ -530,6 +530,7 @@ if test "x${dirfd}" = "xyes"; then
 fi
 AC_CHECK_FUNCS([openat], [AC_DEFINE(HAVE_OPENAT)], [])
 AC_CHECK_FUNCS([statat], [AC_DEFINE(HAVE_STATAT)], [])
+AC_CHECK_FUNCS([fpathconf], [AC_DEFINE(HAVE_FPATHCONF)], [])
 
 ### Modules
 
