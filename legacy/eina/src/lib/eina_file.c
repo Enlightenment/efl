@@ -87,7 +87,7 @@ struct _Eina_File_Iterator
  * http://womble.decadent.org.uk/readdir_r-advisory.html
  */
 static size_t
-_eina_dirent_buffer_size(DIR * dirp)
+_eina_dirent_buffer_size(DIR *dirp)
 {
    long name_max;
    size_t name_end;
@@ -100,7 +100,7 @@ _eina_dirent_buffer_size(DIR * dirp)
 # if defined(NAME_MAX)
         name_max = (NAME_MAX > 255) ? NAME_MAX : 255;
 # else
-        return PATH_MAX;
+        name_max = PATH_MAX;
 # endif
      }
 #else
@@ -189,7 +189,7 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    struct dirent *dp;
    size_t length;
 
-   dp = alloca(_eina_dirent_buffer_size(it->dir));
+   dp = alloca(_eina_dirent_buffer_size(it->dirp));
 
    do
      {
@@ -375,7 +375,7 @@ eina_file_dir_list(const char *dir,
       return EINA_FALSE;
 
    dlength = strlen(dir);
-   de = alloca(_eina_dirent_buffer_size(dir));
+   de = alloca(_eina_dirent_buffer_size(d));
 
    while ((!readdir_r(d, de, &de) && de))
      {
