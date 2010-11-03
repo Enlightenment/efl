@@ -31,14 +31,12 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
-
-#define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) +                                                                                                                               \
-                                  (size_t)(((struct sockaddr_un *)NULL)-> \
-                                           sun_path))
-#define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 +                                                                                     \
+#define LENGTH_OF_SOCKADDR_UN(s)                (strlen((s)->sun_path) +                 \
+                                                 (size_t)(((struct sockaddr_un *)NULL)-> \
+                                                          sun_path))
+#define LENGTH_OF_ABSTRACT_SOCKADDR_UN(s, path) (strlen(path) + 1 +            \
                                                  (size_t)(((struct sockaddr_un \
                                                             *)NULL)->sun_path))
-
 
 static int _ecore_con_local_init_count = 0;
 
@@ -46,7 +44,7 @@ int
 ecore_con_local_init(void)
 {
    if (++_ecore_con_local_init_count != 1)
-      return _ecore_con_local_init_count;
+     return _ecore_con_local_init_count;
 
    return _ecore_con_local_init_count;
 }
@@ -55,17 +53,18 @@ int
 ecore_con_local_shutdown(void)
 {
    if (--_ecore_con_local_init_count != 0)
-      return _ecore_con_local_init_count;
+     return _ecore_con_local_init_count;
 
    return _ecore_con_local_init_count;
 }
 
 int
-ecore_con_local_connect(Ecore_Con_Server *svr,
-                        Eina_Bool (*cb_done)(void *data,
-                                             Ecore_Fd_Handler *fd_handler),
-                        void *data __UNUSED__,
-                        void (*cb_free)(void *data, void *ev))
+ecore_con_local_connect(Ecore_Con_Server                                                   *svr,
+                        Eina_Bool                                                           (*cb_done)(void *data,
+                                                                          Ecore_Fd_Handler *fd_handler),
+                        void *data                                                          __UNUSED__,
+                        void                                                                (*cb_free)(void *data,
+                                                                          void             *ev))
 {
    char buf[4096];
    struct sockaddr_un socket_unix;
@@ -77,10 +76,10 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
      {
         homedir = getenv("HOME");
         if (!homedir)
-           homedir = getenv("TMP");
+          homedir = getenv("TMP");
 
         if (!homedir)
-           homedir = "/tmp";
+          homedir = "/tmp";
 
         snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, svr->name,
                  svr->port);
@@ -90,39 +89,39 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
         if (svr->port < 0)
           {
              if (svr->name[0] == '/')
-                strncpy(buf, svr->name, sizeof(buf));
+               strncpy(buf, svr->name, sizeof(buf));
              else
-                snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s", svr->name);
+               snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s", svr->name);
           }
         else
           {
              if (svr->name[0] ==
                  '/')
-                snprintf(buf, sizeof(buf), "%s|%i", svr->name,
-                         svr->port);
+               snprintf(buf, sizeof(buf), "%s|%i", svr->name,
+                        svr->port);
              else
-                snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i",
-                         svr->name,
-                         svr->port);
+               snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i",
+                        svr->name,
+                        svr->port);
           }
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
-      strncpy(buf, svr->name,
-              sizeof(buf));
+     strncpy(buf, svr->name,
+             sizeof(buf));
 
    svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (svr->fd < 0)
-      return 0;
+     return 0;
 
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-      return 0;
+     return 0;
 
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-      return 0;
+     return 0;
 
    if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate,
                   sizeof(curstate)) < 0)
-      return 0;
+     return 0;
 
    socket_unix.sun_family = AF_UNIX;
 
@@ -148,34 +147,34 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    if (connect(svr->fd, (struct sockaddr *)&socket_unix,
                socket_unix_len) < 0)
-      return 0;
+     return 0;
 
    svr->path = strdup(buf);
    if (!svr->path)
-      return 0;
+     return 0;
 
    if (svr->type & ECORE_CON_SSL)
-      ecore_con_ssl_server_init(svr);
+     ecore_con_ssl_server_init(svr);
 
    svr->fd_handler =
-      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                                cb_done, svr, NULL, NULL);
+     ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+                               cb_done, svr, NULL, NULL);
    if (!svr->fd_handler)
-      return 0;
+     return 0;
 
    if (!svr->delete_me)
      {
         /* we got our server! */
-        Ecore_Con_Event_Server_Add *e;
+         Ecore_Con_Event_Server_Add *e;
 
-        e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
-        if (e)
-          {
-             svr->event_count++;
-             e->server = svr;
-             ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
-                             cb_free, NULL);
-          }
+         e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
+         if (e)
+           {
+              svr->event_count++;
+              e->server = svr;
+              ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
+                              cb_free, NULL);
+           }
      }
 
    return 1;
@@ -183,13 +182,13 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
 int
 ecore_con_local_listen(
-   Ecore_Con_Server *svr,
-   Eina_Bool (*
-              cb_listen)(void *data,
-                         Ecore_Fd_Handler *
-                         fd_handler),
-   void *data
-   __UNUSED__)
+  Ecore_Con_Server *svr,
+  Eina_Bool         (*
+                     cb_listen)(void *data,
+                                Ecore_Fd_Handler *
+                                fd_handler),
+  void *data
+  __UNUSED__)
 {
    char buf[4096];
    struct sockaddr_un socket_unix;
@@ -206,21 +205,21 @@ ecore_con_local_listen(
      {
         homedir = getenv("HOME");
         if (!homedir)
-           homedir = getenv("TMP");
+          homedir = getenv("TMP");
 
         if (!homedir)
-           homedir = "/tmp";
+          homedir = "/tmp";
 
         mask = S_IRUSR | S_IWUSR | S_IXUSR;
         snprintf(buf, sizeof(buf), "%s/.ecore", homedir);
         if (stat(buf, &st) < 0)
-           mkdir(buf, mask);
+          mkdir(buf, mask);
 
         snprintf(buf, sizeof(buf), "%s/.ecore/%s", homedir, svr->name);
         if (stat(buf, &st) < 0)
-           mkdir(buf, mask);
+          mkdir(buf, mask);
 
-                snprintf(buf,
+        snprintf(buf,
                  sizeof(buf),
                  "%s/.ecore/%s/%i",
                  homedir,
@@ -234,45 +233,45 @@ ecore_con_local_listen(
         if (svr->name[0] == '/')
           {
              if (svr->port >= 0)
-                snprintf(buf,
-                         sizeof(buf),
-                         "%s|%i",
-                         svr->name,
-                         svr->port);
+               snprintf(buf,
+                        sizeof(buf),
+                        "%s|%i",
+                        svr->name,
+                        svr->port);
              else
-                snprintf(buf,
-                         sizeof(buf),
-                         "%s",
-                         svr->name);
+               snprintf(buf,
+                        sizeof(buf),
+                        "%s",
+                        svr->name);
           }
         else
-                snprintf(buf,
-                    sizeof(buf),
-                    "/tmp/.ecore_service|%s|%i",
-                    svr->name,
-                    svr->port);
+          snprintf(buf,
+                   sizeof(buf),
+                   "/tmp/.ecore_service|%s|%i",
+                   svr->name,
+                   svr->port);
      }
    else if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
-      strncpy(buf, svr->name,
-              sizeof(buf));
+     strncpy(buf, svr->name,
+             sizeof(buf));
 
    pmode = umask(mask);
 start:
    svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
    if (svr->fd < 0)
-      goto error_umask;
+     goto error_umask;
 
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-      goto error_umask;
+     goto error_umask;
 
    if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-      goto error_umask;
+     goto error_umask;
 
    lin.l_onoff = 1;
    lin.l_linger = 0;
    if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin,
                   sizeof(struct linger)) < 0)
-      goto error_umask;
+     goto error_umask;
 
    socket_unix.sun_family = AF_UNIX;
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_LOCAL_ABSTRACT)
@@ -303,24 +302,24 @@ start:
             (connect(svr->fd, (struct sockaddr *)&socket_unix,
                      socket_unix_len) < 0) &&
             (unlink(buf) >= 0))
-           goto start;
+          goto start;
         else
-           goto error_umask;
+          goto error_umask;
      }
 
    if (listen(svr->fd, 4096) < 0)
-      goto error_umask;
+     goto error_umask;
 
    svr->path = strdup(buf);
    if (!svr->path)
-      goto error_umask;
+     goto error_umask;
 
    svr->fd_handler =
-      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
-                                cb_listen, svr, NULL, NULL);
+     ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
+                               cb_listen, svr, NULL, NULL);
    umask(pmode);
    if (!svr->fd_handler)
-      goto error;
+     goto error;
 
    return 1;
 
@@ -329,3 +328,4 @@ error_umask:
 error:
    return 0;
 }
+
