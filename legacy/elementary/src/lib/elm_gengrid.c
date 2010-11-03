@@ -27,6 +27,9 @@
  * from elm_gengrid_item_object_get() in a way where it may point to
  * freed objects.
  *
+ * unrealized - This is called when the real evas object for this item is
+ * deleted. event_info is the Gengrid item that was created.
+ *
  * drag,start,up - Called when the item in the Gengrid has been dragged (not
  * scrolled) up.
  *
@@ -1022,11 +1025,10 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
    x = cx * item->wd->item_width - item->wd->pan_x + ox + alignw;
    y = cy * item->wd->item_height - item->wd->pan_y + oy + alignh;
 
+   Eina_Bool was_realized = item->realized;
    if (ELM_RECTS_INTERSECT(x, y, item->wd->item_width, item->wd->item_height,
 			   cvx, cvy, cvw, cvh))
      {
-	Eina_Bool was_realized = item->realized;
-
 	_item_realize(item);
 	if (!was_realized)
 	  evas_object_smart_callback_call(item->wd->self, "realized", item);
@@ -1035,7 +1037,11 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 			   item->wd->item_height);
      }
    else
-     _item_unrealize(item);
+     {
+        _item_unrealize(item);
+	if (was_realized)
+	  evas_object_smart_callback_call(item->wd->self, "unrealized", item);
+     }
 }
 
 static Elm_Gengrid_Item *
