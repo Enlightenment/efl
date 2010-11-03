@@ -99,6 +99,7 @@ void test_flip2(void *data, Evas_Object *obj, void *event_info);
 void test_flip3(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
+void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_multi(void *data, Evas_Object *obj, void *event_info);
 void test_floating(void *data, Evas_Object *obj, void *event_info);
 void test_launcher(void *data, Evas_Object *obj, void *event_info);
@@ -330,6 +331,7 @@ my_win_main(char *autorun)
    ADD_TEST("Flip 3", test_flip3);
    ADD_TEST("Label", test_label);
    ADD_TEST("Conformant", test_conformant);
+   ADD_TEST("Conformant 2", test_conformant2);
    ADD_TEST("Multi Touch", test_multi);
    ADD_TEST("Floating Objects", test_floating);
    ADD_TEST("Launcher", test_launcher);
