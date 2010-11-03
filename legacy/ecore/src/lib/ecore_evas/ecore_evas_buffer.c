@@ -644,7 +644,9 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    if (!ee) return NULL;
 
    o = evas_object_image_add(ee_target->evas);
-
+   evas_object_image_content_hint_set(o, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+   evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
+  
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    _ecore_evas_buffer_init();
