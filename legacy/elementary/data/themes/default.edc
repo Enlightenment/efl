@@ -1593,7 +1593,7 @@ collections {
 	       inherit: "default" 0.0;
                fixed: 1 0;
 	       visible: 1;
-//	       aspect: 1.0 1.0;
+	       aspect: 1.0 1.0;
 //	       aspect_preference: VERTICAL;
 	       rel2.offset: 4 -5;
 	    }
