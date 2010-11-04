@@ -126,6 +126,23 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_sizing_eval(Evas_Object *obj)
+{
+   Widget_Data *wd;
+   Evas_Coord minw, minh;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd)
+     return;
+   evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   if (wd->single_line)
+     evas_object_size_hint_max_set(obj, -1, minh);
+   else
+     evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -134,25 +151,7 @@ _theme_hook(Evas_Object *obj)
    elm_object_style_set(wd->scroller, elm_widget_style_get(obj));
    elm_object_disabled_set(wd->entry, elm_widget_disabled_get(obj));
    elm_object_disabled_set(wd->scroller, elm_widget_disabled_get(obj));
-}
-
-static void
-_sizing_eval(Evas_Object *obj)
-{
-   Widget_Data *wd;
-   Evas_Coord minw, minh, maxw, maxh;
-
-   wd = elm_widget_data_get(obj);
-   if (!wd)
-     return;
-   evas_object_size_hint_max_get(obj, &maxw, &maxh);
-   evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
-
-   evas_object_size_hint_min_set(obj, minw, minh);
-   if (wd->single_line)
-     evas_object_size_hint_max_set(obj, maxw, minh);
-   else
-     evas_object_size_hint_max_set(obj, maxw, maxh);
+   _sizing_eval(obj);
 }
 
 static void
