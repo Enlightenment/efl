@@ -37,7 +37,7 @@ void test_entry_scrolled(void *data, Evas_Object *obj, void *event_info);
 void test_entry3(void *data, Evas_Object *obj, void *event_info);
 void test_entry4(void *data, Evas_Object *obj, void *event_info);
 void test_entry5(void *data, Evas_Object *obj, void *event_info);
-void test_notepad(void *data, Evas_Object *obj, void *event_info);
+void test_entry_notepad(void *data, Evas_Object *obj, void *event_info);
 void test_anchorview(void *data, Evas_Object *obj, void *event_info);
 void test_anchorblock(void *data, Evas_Object *obj, void *event_info);
 void test_toolbar(void *data, Evas_Object *obj, void *event_info);
@@ -270,7 +270,7 @@ my_win_main(char *autorun)
    ADD_TEST("Entry 3", test_entry3);
    ADD_TEST("Entry 4", test_entry4);
    ADD_TEST("Entry 5", test_entry5);
-   ADD_TEST("Notepad", test_notepad);
+   ADD_TEST("Entry Notepad", test_entry_notepad);
    ADD_TEST("Anchorview", test_anchorview);
    ADD_TEST("Anchorblock", test_anchorblock);
    ADD_TEST("Toolbar", test_toolbar);

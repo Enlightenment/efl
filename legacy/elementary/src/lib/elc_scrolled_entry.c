@@ -1475,3 +1475,92 @@ elm_scrolled_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data
           }
      }
 }
+
+/**
+ * This sets the file (and implicitly loads it) for the text to display and
+ * then edit. All changes are written back to the file after a short delay if
+ * the entry object is set to autosave.
+ *
+ * @param obj The scrolled entry object
+ * @param file The path to the file to load and save
+ * @param format The file format
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_file_set(wd->entry, file, format);
+}
+
+/**
+ * Gets the file to load and save and the file format
+ *
+ * @param obj The scrolled entry object
+ * @param file The path to the file to load and save
+ * @param format The file format
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_file_get(wd->entry, file, format);
+}
+
+/**
+ * This function writes any changes made to the file set with
+ * elm_scrolled_entry_file_set()
+ *
+ * @param obj The scrolled entry object
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_file_save(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_file_save(wd->entry);
+}
+
+/**
+ * This sets the entry object to 'autosave' the loaded text file or not.
+ *
+ * @param obj The scrolled entry object
+ * @param autosave Autosave the loaded file or not
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_autosave_set(wd->entry, autosave);
+}
+
+/**
+ * This gets the entry object's 'autosave' status.
+ *
+ * @param obj The scrolled entry object
+ * @return Autosave the loaded file or not
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI Eina_Bool
+elm_scrolled_entry_autosave_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return elm_entry_autosave_get(wd->entry);
+}

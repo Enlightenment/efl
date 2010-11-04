@@ -95,7 +95,6 @@ elc_fileselector_button.c \
 elc_fileselector_entry.c \
 elc_hoversel.c \
 elc_hoverlist.c \
-elc_notepad.c \
 elc_scrolled_entry.c \
 \
 els_tooltip.c \

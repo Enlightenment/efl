@@ -45,7 +45,6 @@ test_clock.c \
 test_layout.c \
 test_hover.c \
 test_entry.c \
-test_notepad.c \
 test_anchorview.c \
 test_anchorblock.c \
 test_toolbar.c \

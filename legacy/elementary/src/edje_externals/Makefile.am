@@ -41,7 +41,6 @@ elm_genlist.c \
 elm_hoversel.c \
 elm_list.c \
 elm_map.c \
-elm_notepad.c \
 elm_photocam.c \
 elm_progressbar.c \
 elm_radio.c \

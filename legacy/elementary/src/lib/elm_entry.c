@@ -11,15 +11,15 @@
  * input.  Entry widgets are capable of expanding past the
  * boundaries of the window, thus resizing the window to its
  * own length.
- * 
+ *
  * You can also insert "items" in the entry with:
- * 
+ *
  * \<item size=16x16 vsize=full href=emoticon/haha\>\</item\>
- * 
+ *
  * for example. sizing can be set bu size=WxH, relsize=WxH or absize=WxH with
  * vsize=ascent or vsize=full. the href=NAME sets the item name. Entry
  * supports a list of emoticon names by default. These are:
- * 
+ *
  * - emoticon/angry
  * - emoticon/angry-shout
  * - emoticon/crazy-laugh
@@ -64,9 +64,14 @@
  * These are built-in currently, but you can add your own item provieer that
  * can create inlined objects in the text and fill the space allocated to the
  * item with a custom object of your own.
- * 
+ *
  * See the entry test for some more examples of use of this.
- * 
+ *
+ * Entries have functions to load a text file, display it,
+ * allowing editing of it and saving of changes back to the file loaded.
+ * Changes are written back to the original file after a short delay.
+ * The file to load and save to is specified by elm_entry_file_set().
+ *
  * Signals that you can add callbacks for are:
  * - "changed" - The text within the entry was changed
  * - "activated" - The entry has had editing finished and changes are to be committed (generally when enter key is pressed)
@@ -101,9 +106,12 @@ struct _Widget_Data
    Ecore_Event_Handler *sel_notify_handler;
    Ecore_Event_Handler *sel_clear_handler;
    Ecore_Timer *longpress_timer;
+   Ecore_Timer *delay_write;
    /* Only for clipboard */
    const char *cut_sel;
    const char *text;
+   const char *file;
+   Elm_Text_Format format;
    Evas_Coord lastw;
    Evas_Coord downx, downy;
    Evas_Coord cx, cy, cw, ch;
@@ -125,6 +133,8 @@ struct _Widget_Data
    Eina_Bool disabled : 1;
    Eina_Bool context_menu : 1;
    Eina_Bool drag_selection_asked : 1;
+   Eina_Bool can_write : 1;
+   Eina_Bool autosave : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -233,6 +243,164 @@ _module(Evas_Object *obj __UNUSED__)
    return m->api;
 }
 
+static char *
+_buf_append(char *buf, const char *str, int *len, int *alloc)
+{
+   int len2 = strlen(str);
+   if ((*len + len2) >= *alloc)
+     {
+        char *buf2 = realloc(buf, *alloc + len2 + 512);
+        if (!buf2) return NULL;
+        buf = buf2;
+        *alloc += (512 + len2);
+     }
+   strcpy(buf + *len, str);
+   *len += len2;
+   return buf;
+}
+
+static char *
+_load_file(const char *file)
+{
+   FILE *f;
+   size_t size;
+   int alloc = 0, len = 0;
+   char *text = NULL, buf[PATH_MAX];
+
+   f = fopen(file, "rb");
+   if (!f) return NULL;
+   while ((size = fread(buf, 1, sizeof(buf), f)))
+     {
+        buf[size] = 0;
+        text = _buf_append(text, buf, &len, &alloc);
+     }
+   fclose(f);
+   return text;
+}
+
+static char *
+_load_plain(const char *file)
+{
+   char *text;
+
+   text = _load_file(file);
+   if (text)
+     {
+        char *text2;
+
+        text2 = elm_entry_utf8_to_markup(text);
+        free(text);
+        return text2;
+     }
+   return NULL;
+}
+
+static void
+_load(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   char *text;
+   if (!wd) return;
+   if (!wd->file)
+     {
+        elm_entry_entry_set(obj, "");
+        return;
+     }
+   switch (wd->format)
+     {
+      case ELM_TEXT_FORMAT_PLAIN_UTF8:
+         text = _load_plain(wd->file);
+         break;
+      case ELM_TEXT_FORMAT_MARKUP_UTF8:
+         text = _load_file(wd->file);
+         break;
+      default:
+         text = NULL;
+         break;
+     }
+   if (text)
+     {
+        elm_entry_entry_set(obj, text);
+        free(text);
+     }
+   else
+     elm_entry_entry_set(obj, "");
+}
+
+static void
+_save_markup_utf8(const char *file, const char *text)
+{
+   FILE *f;
+
+   if ((!text) || (!text[0]))
+     {
+        ecore_file_unlink(file);
+        return;
+     }
+   f = fopen(file, "wb");
+   if (!f)
+     {
+        // FIXME: report a write error
+        return;
+     }
+   fputs(text, f); // FIXME: catch error
+   fclose(f);
+}
+
+static void
+_save_plain_utf8(const char *file, const char *text)
+{
+   char *text2;
+
+   text2 = elm_entry_markup_to_utf8(text);
+   if (!text2)
+     return;
+   _save_markup_utf8(file, text2);
+   free(text2);
+}
+
+static void
+_save(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!wd->file) return;
+   switch (wd->format)
+     {
+      case ELM_TEXT_FORMAT_PLAIN_UTF8:
+	_save_plain_utf8(wd->file, elm_entry_entry_get(obj));
+	break;
+      case ELM_TEXT_FORMAT_MARKUP_UTF8:
+	_save_markup_utf8(wd->file, elm_entry_entry_get(obj));
+	break;
+      default:
+	break;
+     }
+}
+
+static Eina_Bool
+_delay_write(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   _save(data);
+   wd->delay_write = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->delay_write)
+     {
+        ecore_timer_del(wd->delay_write);
+        wd->delay_write = NULL;
+        if (wd->autosave) _save(obj);
+     }
+}
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -240,6 +408,8 @@ _del_hook(Evas_Object *obj)
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
    Elm_Entry_Text_Filter *tf;
+
+   if (wd->file) eina_stringshare_del(wd->file);
 
    if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
    if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj); // module - unhook
@@ -967,6 +1137,13 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
+   if (wd->delay_write)
+     {
+	ecore_timer_del(wd->delay_write);
+	wd->delay_write = NULL;
+     }
+   if ((!wd->autosave) || (!wd->file)) return;
+   wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
 }
 
 static void
@@ -1386,6 +1563,7 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
@@ -1401,6 +1579,7 @@ elm_entry_add(Evas_Object *parent)
    wd->editable     = EINA_TRUE;
    wd->disabled     = EINA_FALSE;
    wd->context_menu = EINA_TRUE;
+   wd->autosave     = EINA_TRUE;
 
    wd->ent = edje_object_add(e);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
@@ -2548,4 +2727,106 @@ elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **te
    *insert = 0;
 }
 
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
+/**
+ * This sets the file (and implicitly loads it) for the text to display and
+ * then edit. All changes are written back to the file after a short delay if
+ * the entry object is set to autosave.
+ *
+ * @param obj The entry object
+ * @param file The path to the file to load and save
+ * @param format The file format
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->delay_write)
+     {
+	ecore_timer_del(wd->delay_write);
+	wd->delay_write = NULL;
+     }
+   if (wd->autosave) _save(obj);
+   eina_stringshare_replace(&wd->file, file);
+   wd->format = format;
+   _load(obj);
+}
+
+/**
+ * Gets the file to load and save and the file format
+ *
+ * @param obj The entry object
+ * @param file The path to the file to load and save
+ * @param format The file format
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (file) *file = wd->file;
+   if (format) *format = wd->format;
+}
+
+/**
+ * This function writes any changes made to the file set with
+ * elm_entry_file_set()
+ *
+ * @param obj The entry object
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_file_save(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->delay_write)
+     {
+	ecore_timer_del(wd->delay_write);
+	wd->delay_write = NULL;
+     }
+   _save(obj);
+   wd->delay_write = ecore_timer_add(2.0, _delay_write, obj);
+}
+
+/**
+ * This sets the entry object to 'autosave' the loaded text file or not.
+ *
+ * @param obj The entry object
+ * @param autosave Autosave the loaded file or not
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->autosave = !!autosave;
+}
+
+/**
+ * This gets the entry object's 'autosave' status.
+ *
+ * @param obj The entry object
+ * @return Autosave the loaded file or not
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool
+elm_entry_autosave_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->autosave;
+}

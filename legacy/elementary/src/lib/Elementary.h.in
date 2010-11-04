@@ -265,6 +265,12 @@ extern "C" {
         ELM_FOCUS_NEXT
      } Elm_Focus_Direction;
 
+   typedef enum _Elm_Text_Format
+     {
+	ELM_TEXT_FORMAT_PLAIN_UTF8,
+	ELM_TEXT_FORMAT_MARKUP_UTF8
+     } Elm_Text_Format;
+
   /**
    * Called back when a widget's tooltip is activated and needs content.
    * @param data user-data given to elm_object_tooltip_content_cb_set()
@@ -1099,6 +1105,11 @@ extern "C" {
    EAPI void         elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data);
    EAPI char        *elm_entry_markup_to_utf8(const char *s);
    EAPI char        *elm_entry_utf8_to_markup(const char *s);
+   EAPI void         elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
+   EAPI void         elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
+   EAPI void         elm_entry_file_save(Evas_Object *obj);
+   EAPI void         elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave);
+   EAPI Eina_Bool    elm_entry_autosave_get(Evas_Object *obj);
    /* pre-made filters for entries */
    typedef struct _Elm_Entry_Filter_Limit_Size Elm_Entry_Filter_Limit_Size;
    struct _Elm_Entry_Filter_Limit_Size
@@ -1135,19 +1146,6 @@ extern "C" {
 
    /* composite widgets - these basically put together basic widgets above
     * in convenient packages that do more than basic stuff */
-   typedef enum _Elm_Text_Format
-     {
-	ELM_TEXT_FORMAT_PLAIN_UTF8,
-	ELM_TEXT_FORMAT_MARKUP_UTF8
-     } Elm_Text_Format;
-   EAPI Evas_Object *elm_notepad_add(Evas_Object *parent);
-   EAPI void         elm_notepad_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
-   EAPI void         elm_notepad_file_save(Evas_Object *obj, const char *file, Elm_Text_Format format);
-   EAPI void         elm_notepad_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-   EAPI void         elm_notepad_autosave_set(Evas_Object *obj, Eina_Bool autosave);
-
-   /* smart callbacks called:
-    */
 
    typedef struct _Elm_Entry_Anchorview_Info Elm_Entry_Anchorview_Info;
    struct _Elm_Entry_Anchorview_Info
@@ -2073,6 +2071,11 @@ extern "C" {
    EAPI void         elm_scrolled_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data);
    EAPI void         elm_scrolled_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data);
    EAPI void         elm_scrolled_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data);
+   EAPI void         elm_scrolled_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
+   EAPI void         elm_scrolled_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
+   EAPI void         elm_scrolled_entry_file_save(Evas_Object *obj);
+   EAPI void         elm_scrolled_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave);
+   EAPI Eina_Bool    elm_scrolled_entry_autosave_get(Evas_Object *obj);
 
    EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
