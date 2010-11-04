@@ -131,6 +131,7 @@ START_TEST(eina_test_tiler_all)
 {
    Eina_Tiler *tl;
    Eina_Iterator *it;
+   Eina_Rectangle *rp;
    Eina_Rectangle r;
    int i = 0;
 
@@ -152,12 +153,12 @@ START_TEST(eina_test_tiler_all)
    it = eina_tiler_iterator_new(tl);
    fail_if(!it);
 
-   EINA_ITERATOR_FOREACH(it, r)
+   EINA_ITERATOR_FOREACH(it, rp)
    {
-      fail_if(r.w <= 0);
-      fail_if(r.h <= 0);
-      fail_if(r.x < 0 || r.x + r.w > 640);
-      fail_if(r.y < 0 || r.y + r.h > 480);
+      fail_if(rp->w <= 0);
+      fail_if(rp->h <= 0);
+      fail_if(rp->x < 0 || rp->x + rp->w > 640);
+      fail_if(rp->y < 0 || rp->y + rp->h > 480);
       ++i;
    }
 

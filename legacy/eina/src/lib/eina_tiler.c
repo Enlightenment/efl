@@ -96,6 +96,7 @@ typedef struct _Eina_Iterator_Tiler
    Eina_Iterator iterator;
    const Eina_Tiler *tiler;
    list_node_t *curr;
+   Eina_Rectangle r;
    EINA_MAGIC
 } Eina_Iterator_Tiler;
 
@@ -1064,7 +1065,6 @@ static inline void _splitter_clear(Eina_Tiler *t)
 
 static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
 {
-   Eina_Rectangle *rect = (Eina_Rectangle *)data;
    list_node_t *n;
 
    for (n = it->curr; n; n = n->next)
@@ -1073,18 +1073,19 @@ static Eina_Bool _iterator_next(Eina_Iterator_Tiler *it, void **data)
 
         cur = ((rect_node_t *)n)->rect;
 
-        rect->x = cur.left << 1;
-        rect->y = cur.top << 1;
-        rect->w = cur.width << 1;
-        rect->h = cur.height << 1;
+        it->r.x = cur.left << 1;
+        it->r.y = cur.top << 1;
+        it->r.w = cur.width << 1;
+        it->r.h = cur.height << 1;
 
-        if (eina_rectangle_intersection(rect, &it->tiler->area) == EINA_FALSE)
+        if (eina_rectangle_intersection(&it->r, &it->tiler->area) == EINA_FALSE)
            continue;
 
-        if ((rect->w <= 0) || (rect->h <= 0))
+        if ((it->r.w <= 0) || (it->r.h <= 0))
            continue;
 
         it->curr = n->next;
+        *(Eina_Rectangle **)data = &it->r;
         return EINA_TRUE;
      }
    return EINA_FALSE;
