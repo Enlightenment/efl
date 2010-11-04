@@ -1775,6 +1775,12 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
       svr->event_count++;
       e->server = svr;
       e->data = malloc(num);
+      if (!e->data)
+        {
+           ERR("alloc!");
+           free(e);
+           return;
+        }
       memcpy(e->data, buf, num);
       e->size = num;
       ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
