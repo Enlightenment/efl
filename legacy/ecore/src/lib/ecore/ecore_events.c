@@ -170,6 +170,45 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
    return event_handler->data;
 }
 
+/**
+ * @brief Get the data associated with an #Ecore_Event_Handler
+ * @param eh The event handler
+ * @return The data
+ * This function returns the data previously associated with @p eh.
+ */
+EAPI void *
+ecore_event_handler_data_get(Ecore_Event_Handler *eh)
+{
+   if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
+     {
+        ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_get");
+        return NULL;
+     }
+   return eh->data;
+}
+
+/**
+ * @brief Set the data associated with an #Ecore_Event_Handler
+ * @param eh The event handler
+ * @param data The data to associate
+ * @return The previous data
+ * This function sets @p data to @p eh and returns the old data pointer
+ * which was previously associated with @p eh.
+ */
+EAPI void *
+ecore_event_handler_data_set(Ecore_Event_Handler *eh, void *data)
+{
+   void *old;
+   if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
+     {
+        ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_get");
+        return NULL;
+     }
+   old = eh->data;
+   eh->data = data;
+   return old;
+}
+
 static void
 _ecore_event_generic_free (void *data __UNUSED__, void *event)
 {
