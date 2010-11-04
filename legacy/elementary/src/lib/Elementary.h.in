@@ -1843,6 +1843,8 @@ extern "C" {
    EAPI void         elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
    EAPI Eina_Bool    elm_photocam_paused_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_photocam_internal_image_get(const Evas_Object *obj);
+   EAPI void         elm_photocam_bounce_set(Evas_Object *obj,  Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_photocam_bounce_get(const Evas_Object *obj,  Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
    /* smart callbacks called:
     * "clicked" - when image clicked

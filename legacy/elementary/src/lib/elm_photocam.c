@@ -1644,3 +1644,39 @@ elm_photocam_internal_image_get(const Evas_Object *obj)
    if (!wd) return NULL;
    return wd->img;
 }
+
+/**
+ * Set the photocam scrolling bouncing.
+ *
+ * @param obj The photocam object
+ * @param h_bounce bouncing for horizontal
+ * @param v_bounce bouncing for vertical
+ * @ingroup Photocam
+ */
+EAPI void
+elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+}
+
+
+/**
+ * Get the photocam scrolling bouncing.
+ *
+ * @param obj The photocam object
+ * @param h_bounce bouncing for horizontal
+ * @param v_bounce bouncing for vertical
+ * @ingroup Photocam
+ */
+EAPI void
+elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
+}
+
