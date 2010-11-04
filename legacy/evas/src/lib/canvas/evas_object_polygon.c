@@ -131,15 +131,15 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
    if (!o->points)
      {
-	o->offset.x = obj->cur.geometry.x - obj->prev.geometry.x;
-	o->offset.y = obj->cur.geometry.y - obj->prev.geometry.y;
+	o->offset.x = obj->cur.geometry.x;
+	o->offset.y = obj->cur.geometry.y;
      }
    else
      {
 	/* Update all points and take offset into account. */
 	Eina_List *over;
 
-	EINA_LIST_FOREACH(o->points, over, p)
+        EINA_LIST_FOREACH(o->points, over, p)
 	  {
 	     p->x += o->offset.x;
 	     p->y += o->offset.y;
@@ -160,13 +160,13 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
    else
      {
-	if (x < obj->cur.geometry.x) min_x = x;
+	if (p->x < obj->cur.geometry.x) min_x = p->x;
 	else min_x = obj->cur.geometry.x;
-	if (x > (obj->cur.geometry.x + obj->cur.geometry.w - 2)) max_x = x;
+	if (p->x > (obj->cur.geometry.x + obj->cur.geometry.w - 2)) max_x = p->x;
 	else max_x = obj->cur.geometry.x + obj->cur.geometry.w - 2;
-	if (y < obj->cur.geometry.y) min_y = y;
+	if (p->y < obj->cur.geometry.y) min_y = p->y;
 	else min_y = obj->cur.geometry.y;
-	if (y > (obj->cur.geometry.y + obj->cur.geometry.h - 2)) max_y = y;
+	if (p->y > (obj->cur.geometry.y + obj->cur.geometry.h - 2)) max_y = p->y;
 	else max_y = obj->cur.geometry.y + obj->cur.geometry.h - 2;
 	obj->cur.geometry.x = min_x;
 	obj->cur.geometry.y = min_y;
@@ -430,8 +430,16 @@ evas_object_polygon_render_pre(Evas_Object *obj)
    if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
        (obj->cur.geometry.y != obj->prev.geometry.y))
      {
-	o->offset.x += obj->cur.geometry.x - obj->prev.geometry.x;
-	o->offset.y += obj->cur.geometry.y - obj->prev.geometry.y;
+        if (!o->changed)
+          {
+             o->offset.x += obj->cur.geometry.x - obj->prev.geometry.x;
+             o->offset.y += obj->cur.geometry.y - obj->prev.geometry.y;
+          }
+        else
+          {
+             o->offset.x += obj->cur.geometry.x - o->geometry.x;
+             o->offset.y += obj->cur.geometry.y - o->geometry.y;
+          }
      }
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 }
