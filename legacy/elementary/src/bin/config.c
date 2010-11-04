@@ -941,8 +941,8 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 static void
 _status_config_profiles(Evas_Object *win, Evas_Object *holder)
 {
-   Evas_Object *li, *bx, *fr_bx, *btn_bx, *fr, *lb, *en, *sp, *pd, *bt;
-   char buf[PATH_MAX];
+   Evas_Object *li, *bx, *fr_bx1, *fr_bx2, *btn_bx, *fr, *lb, *en, *sp, *pd,
+      *bt;
    Eina_List *profs;
    Evas *evas;
 
@@ -950,15 +950,22 @@ _status_config_profiles(Evas_Object *win, Evas_Object *holder)
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   fr_bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(fr_bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(fr_bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   fr_bx1 = elm_box_add(win);
+   evas_object_size_hint_weight_set(fr_bx1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr_bx1, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_homogenous_set(fr_bx1, EINA_TRUE);
+   evas_object_show(fr_bx1);
+
+   fr_bx2 = elm_box_add(win);
+   evas_object_size_hint_weight_set(fr_bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr_bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(fr_bx2);
 
    fr = elm_frame_add(win);
    elm_frame_label_set(fr, "Available Profiles");
    evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_content_set(fr, fr_bx);
+   elm_frame_content_set(fr, fr_bx1);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
@@ -969,26 +976,26 @@ _status_config_profiles(Evas_Object *win, Evas_Object *holder)
    profs = elm_profile_list_get();
 
    evas_object_show(li);
-   elm_box_pack_end(fr_bx, li);
+   elm_box_pack_end(fr_bx2, li);
 
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
 
-   elm_label_label_set(lb, buf);
    evas_object_show(lb);
 
    en = elm_scrolled_entry_add(win);
-   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   evas_object_size_hint_min_set(en, 0, 60);
+   elm_scrolled_entry_editable_set(en, EINA_FALSE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(en);
 
    evas_object_data_set(li, "prof_name_lbl", lb);
    evas_object_data_set(li, "prof_desc_entry", en);
 
-   elm_box_pack_end(fr_bx, lb);
-   elm_box_pack_end(fr_bx, en);
+   elm_box_pack_end(fr_bx2, lb);
+   elm_box_pack_end(fr_bx1, fr_bx2);
+   elm_box_pack_end(fr_bx1, en);
 
    /////////////////////////////////////////////
    sp = elm_separator_add(win);
