@@ -271,8 +271,11 @@ _load_file(const char *file)
    if (!f) return NULL;
    while ((size = fread(buf, 1, sizeof(buf), f)))
      {
+        char *tmp_text;
         buf[size] = 0;
-        text = _buf_append(text, buf, &len, &alloc);
+        tmp_text = _buf_append(text, buf, &len, &alloc);
+        if (!tmp_text) break;
+        text = tmp_text;
      }
    fclose(f);
    return text;
