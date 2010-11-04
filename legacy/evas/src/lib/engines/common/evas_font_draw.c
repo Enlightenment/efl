@@ -326,7 +326,13 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
                   *fi_ret = fm->fint;
                   return fm->index;
                }
+#if 0
+             /* Returning here because of a previous miss when searching the
+              * glyph causes a bug when glyph caching was before all the
+              * fonts were loaded, I have no idea how to fix it cleanly,
+              * not at the moment anyway. -- TAsn */
              else if (fm->index == -1) return 0;
+#endif
           }
      }
 
