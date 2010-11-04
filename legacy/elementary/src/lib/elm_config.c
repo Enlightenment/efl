@@ -42,6 +42,11 @@ static void _env_get(void);
 static size_t _elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...) EINA_PRINTF(3 ,4);
 static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...) EINA_PRINTF(3 ,4);
 
+#define ELM_CONFIG_VAL(edd, type, member, dtype) \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(edd, type, #member, member, dtype)
+#define ELM_CONFIG_LIST(edd, type, member, eddtype) \
+  EET_DATA_DESCRIPTOR_ADD_LIST(edd, type, #member, member, eddtype)
+
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_X_Window _root_1st = 0;
@@ -220,77 +225,49 @@ _desc_init(void)
         printf("EEEK! eet_data_descriptor_file_new() failed\n");
         return;
      }
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "config_version",
-                                 config_version, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "engine", engine,
-                                 EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "thumbscroll_enable",
-                                 thumbscroll_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "thumbscroll_threshold", thumbscroll_threshold,
-                                 EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "thumbscroll_momentum_threshold",
-                                 thumbscroll_momentum_threshold, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "thumbscroll_friction", thumbscroll_friction,
-                                 EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "thumbscroll_bounce_friction",
-                                 thumbscroll_bounce_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "page_scroll_friction", page_scroll_friction,
-                                 EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "bring_in_scroll_friction",
-                                 bring_in_scroll_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "zoom_friction",
-                                 zoom_friction, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "thumbscroll_bounce_enable",
-                                 thumbscroll_bounce_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "scale", scale,
-                                 EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "bgpixmap", bgpixmap,
-                                 EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "compositing",
-                                 compositing, EET_T_INT);
-   /* EET_DATA_DESCRIPTOR_ADD_LIST(_config_edd, Elm_Config, "font_dirs",
-      font_dirs, sub_edd); */
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "font_hinting",
-                                 font_hinting, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "image_cache",
-                                 image_cache, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "font_cache",
-                                 font_cache, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "finger_size",
-                                 finger_size, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "fps", fps,
-                                 EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "theme", theme,
-                                 EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "modules", modules,
-                                 EET_T_STRING);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "tooltip_delay",
-                                 tooltip_delay, EET_T_DOUBLE);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "cursor_engine_only",
-                                 cursor_engine_only, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "focus_highlight_enable",
-                                 focus_highlight_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "focus_highlight_animate",
-                                 focus_highlight_animate, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "toolbar_shrink_mode",
-                                 toolbar_shrink_mode, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "fileselector_expand_enable",
-                                 fileselector_expand_enable, EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config,
-                                 "inwin_dialogs_enable", inwin_dialogs_enable,
-                                 EET_T_UCHAR);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_config_edd, Elm_Config, "icon_size",
-                                 icon_size, EET_T_INT);
+
+#define T Elm_Config
+#define D _config_edd
+#define T_INT EET_T_INT
+#define T_DOUBLE EET_T_DOUBLE
+#define T_STRING EET_T_STRING
+#define T_UCHAR EET_T_UCHAR
+   ELM_CONFIG_VAL(D, T, config_version, T_INT);
+   ELM_CONFIG_VAL(D, T, engine, T_STRING);
+   ELM_CONFIG_VAL(D, T, thumbscroll_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, thumbscroll_threshold, T_INT);
+   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_threshold, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_bounce_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, page_scroll_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, bring_in_scroll_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_bounce_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, scale, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, bgpixmap, T_INT);
+   ELM_CONFIG_VAL(D, T, compositing, T_INT);
+   /* EET_DATA_DESCRIPTOR_ADD_LIST(D, T, "font_dirs", font_dirs, sub_edd); */
+   ELM_CONFIG_VAL(D, T, font_hinting, T_INT);
+   ELM_CONFIG_VAL(D, T, image_cache, T_INT);
+   ELM_CONFIG_VAL(D, T, font_cache, T_INT);
+   ELM_CONFIG_VAL(D, T, finger_size, T_INT);
+   ELM_CONFIG_VAL(D, T, fps, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, theme, T_STRING);
+   ELM_CONFIG_VAL(D, T, modules, T_STRING);
+   ELM_CONFIG_VAL(D, T, tooltip_delay, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, cursor_engine_only, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, focus_highlight_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, focus_highlight_animate, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, toolbar_shrink_mode, T_INT);
+   ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, inwin_dialogs_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, icon_size, T_INT);
+#undef T
+#undef D
+#undef T_INT
+#undef T_DOUBLE
+#undef T_STRING
+#undef T_UCHAR
 }
 
 static void
