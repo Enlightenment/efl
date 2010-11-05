@@ -130,7 +130,7 @@ _item_select(Elm_Toolbar_Item *it)
    elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
    _item_show(it);
    obj2 = it->base.widget;
-   if(it->menu)
+   if (it->menu)
      {
         evas_object_show(it->o_menu);
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_RESIZE,
