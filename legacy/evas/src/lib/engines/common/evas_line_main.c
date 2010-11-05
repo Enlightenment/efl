@@ -580,7 +580,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
    clw = dc->clip.w;
    clh = dc->clip.h;
 
-   data = dst->image.data;
+   data = evas_cache_image_pixels(&dst->cache_entry);
    dstw = dst->cache_entry.w;
 
    data += (dstw * cly) + clx;
@@ -607,7 +607,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	      }
 	    if (!p1_in)
 	      {
-		if ((py < -1) && (dely < 0)) return;
+		if ((py <= -1) && (dely < 0)) return;
 		if ((py > by) && (dely > 0)) return;
 	      }
 	    if ((px) < clw)
@@ -642,7 +642,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	  }
 	if (!p1_in)
 	  {
-	    if ((px < -1) && (delx < 0)) return;
+	    if ((px <= -1) && (delx < 0)) return;
 	    if ((px > rx) && (delx > 0)) return;
 	  }
 	if ((py) < clh)
