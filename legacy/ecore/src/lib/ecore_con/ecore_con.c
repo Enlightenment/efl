@@ -1774,14 +1774,18 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
 
       svr->event_count++;
       e->server = svr;
-      e->data = malloc(num);
-      if (!e->data)
+      e->data = NULL;
+      if (num > 0)
         {
-           ERR("alloc!");
-           free(e);
-           return;
+           e->data = malloc(num);
+           if (!e->data)
+             {
+                ERR("alloc!");
+                free(e);
+                return;
+             }
+           memcpy(e->data, buf, num);
         }
-      memcpy(e->data, buf, num);
       e->size = num;
       ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
                       _ecore_con_event_server_data_free, NULL);
@@ -2106,14 +2110,18 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
         cl->event_count++;
         _ecore_con_cl_timer_update(cl);
         e->client = cl;
-        e->data = malloc(num);
-        if (!e->data)
+        e->data = NULL;
+        if (num > 0)
           {
-             free(e);
-             ERR("alloc!");
-             return;
+             e->data = malloc(num);
+             if (!e->data)
+               {
+                  ERR("alloc!");
+                  free(e);
+                  return;
+               }
+             memcpy(e->data, buf, num);
           }
-        memcpy(e->data, buf, num);
         e->size = num;
         ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
                         _ecore_con_event_client_data_free, NULL);
