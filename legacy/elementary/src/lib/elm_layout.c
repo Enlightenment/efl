@@ -581,6 +581,8 @@ elm_layout_text_get(const Evas_Object *obj, const char *part)
  * @param obj the layout object
  * @param part the box part to append.
  * @param child the child object to append to box.
+ *
+ * @ingroup Layout
  */
 EAPI void
 elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
@@ -615,6 +617,8 @@ elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
  * @param obj the layout object
  * @param part the box part to prepend.
  * @param child the child object to prepend to box.
+ *
+ * @ingroup Layout
  */
 EAPI void
 elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child)
@@ -657,6 +661,8 @@ _box_reference_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
  * @param part the box part to insert.
  * @param child the child object to insert into box.
  * @param reference another reference object to insert before in box.
+ *
+ * @ingroup Layout
  */
 EAPI void
 elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference)
@@ -698,6 +704,8 @@ elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *ch
  * @param part the box part to insert.
  * @param child the child object to insert into box.
  * @param pos the numeric position >=0 to insert the child.
+ *
+ * @ingroup Layout
  */
 EAPI void
 elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos)
@@ -853,6 +861,8 @@ elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear)
  * @param part the box part to pack child.
  * @param child the child object to pack into table.
  * @param reference another reference object to insert before in box.
+ *
+ * @ingroup Layout
  */
 EAPI void
 elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
@@ -1013,6 +1023,8 @@ elm_layout_sizing_eval(Evas_Object *obj)
  *
  * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
  *         part not exists or it has "mouse_events: 0".
+ *
+ * @ingroup Layout
  */
 EAPI Eina_Bool
 elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor)
@@ -1085,6 +1097,8 @@ elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name)
  * @param obj The layout object.
  * @param part_name a part from loaded edje group, that had a cursor set
  *        with elm_layout_part_cursor_set().
+ *
+ * @ingroup Layout
  */
 EAPI void
 elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name)
@@ -1117,6 +1131,8 @@ elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name)
  *
  * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
  *         part not exists or it did not had a cursor set.
+ *
+ * @ingroup Layout
  */
 EAPI Eina_Bool
 elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style)
@@ -1142,6 +1158,8 @@ elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const 
  *
  * @return the theme style in use, defaults to "default". If the
  *         object does not have a cursor set, then NULL is returned.
+ *
+ * @ingroup Layout
  */
 EAPI const char *
 elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name)
@@ -1171,6 +1189,8 @@ elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name)
  *
  * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
  *         part not exists or it did not had a cursor set.
+ *
+ * @ingroup Layout
  */
 EAPI Eina_Bool
 elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only)
@@ -1195,6 +1215,8 @@ elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, 
  * @param part_name a part from loaded edje group.
  *
  * @return whenever the cursor is just provided by engine or also from theme.
+ *
+ * @ingroup Layout
  */
 EAPI Eina_Bool
 elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name)
