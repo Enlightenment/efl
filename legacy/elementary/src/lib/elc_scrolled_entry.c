@@ -1289,6 +1289,24 @@ elm_scrolled_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_
 }
 
 /**
+ * Get the bounce mode
+ *
+ * @param obj The Scrolled_Entry object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_scroller_bounce_get(wd->scroller, h_bounce, v_bounce);
+}
+
+/**
  * This appends a custom item provider to the list for that entry
  *
  * This appends the given callback. The list is walked from beginning to end

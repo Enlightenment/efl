@@ -694,6 +694,7 @@ extern "C" {
    EAPI void         elm_scroller_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_scroller_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void         elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
    EAPI void         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
    EAPI void         elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
@@ -1171,6 +1172,7 @@ extern "C" {
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
    EAPI void         elm_anchorview_hover_end(Evas_Object *obj);
    EAPI void         elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void         elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data);
    EAPI void         elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data);
    EAPI void         elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorview, const char *item), void *data);
@@ -1464,6 +1466,7 @@ extern "C" {
    EAPI Eina_Bool        elm_list_item_disabled_get(const Elm_List_Item *it);
 
    EAPI void             elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void             elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void             elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
    EAPI void             elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
    /* smart callbacks called:
@@ -2059,6 +2062,7 @@ extern "C" {
    EAPI Eina_Bool    elm_scrolled_entry_context_menu_disabled_get(const Evas_Object *obj);
    EAPI void         elm_scrolled_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
    EAPI void         elm_scrolled_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void         elm_scrolled_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void         elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
    EAPI const Evas_Object *elm_scrolled_entry_icon_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_scrolled_entry_icon_unset(Evas_Object *obj);
@@ -2197,6 +2201,7 @@ extern "C" {
    EAPI int                   elm_diskpicker_side_label_lenght_get(const Evas_Object *obj);
    EAPI void                  elm_diskpicker_side_label_lenght_set(Evas_Object *obj, int len);
    EAPI void                  elm_diskpicker_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void                  elm_diskpicker_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
    EAPI void                  elm_diskpicker_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
    EAPI void                  elm_diskpicker_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
    EAPI void                  elm_diskpicker_clear(Evas_Object *obj);

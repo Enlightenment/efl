@@ -365,6 +365,24 @@ elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_boun
 }
 
 /**
+ * Get the bounce mode
+ *
+ * @param obj The Anchorview object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Anchorview
+ */
+EAPI void
+elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_scroller_bounce_get(wd->scroller, h_bounce, v_bounce);
+}
+
+/**
  * This appends a custom item provider to the list for that anchorview
  *
  * This appends the given callback. The list is walked from beginning to end

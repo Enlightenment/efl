@@ -765,6 +765,24 @@ elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce
 }
 
 /**
+ * Get the bounce mode
+ *
+ * @param obj The Scroller object
+ * @param h_bounce Allow bounce horizontally
+ * @param v_bounce Allow bounce vertically
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
+}
+
+/**
  * Set scroll page size relative to viewport size.
  *
  * The scroller is capable of limiting scrolling by the user to "pages". That
