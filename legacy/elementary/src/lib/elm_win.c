@@ -481,13 +481,21 @@ _elm_win_shutdown(void)
 }
 
 void
-_elm_win_rescale(void)
+_elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme)
 {
    const Eina_List *l;
    Evas_Object *obj;
 
-   EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     elm_widget_theme(obj);
+   if (!use_theme)
+     {
+        EINA_LIST_FOREACH(_elm_win_list, l, obj)
+          elm_widget_theme(obj);
+     }
+   else
+     {
+        EINA_LIST_FOREACH(_elm_win_list, l, obj)
+          elm_widget_theme_specific(obj, th, EINA_FALSE);
+     }
 }
 
 #ifdef HAVE_ELEMENTARY_X

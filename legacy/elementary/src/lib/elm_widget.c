@@ -464,6 +464,39 @@ elm_widget_theme(Evas_Object *obj)
    if (sd->theme_func) sd->theme_func(obj);
 }
 
+EAPI void
+elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   Elm_Tooltip *tt;
+   Elm_Cursor *cur;
+   Elm_Theme *th2;
+
+   API_ENTRY return;
+   if (!force)
+     {
+        th2 = sd->theme;
+        while (th2)
+          {
+             if (th2 == th)
+               {
+                 force = EINA_TRUE;
+                 break;
+               }
+            th2 = th->ref_theme;
+          }
+     }
+   if (!force) return;
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     elm_widget_theme_specific(child, th, force);
+   if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
+   if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
+   EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
+   EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
+   if (sd->theme_func) sd->theme_func(obj);
+}
+
 /**
  * Set hook to get next object in object focus chain.
  *

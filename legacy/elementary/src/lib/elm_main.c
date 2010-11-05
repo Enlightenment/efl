@@ -313,7 +313,7 @@ void
 _elm_rescale(void)
 {
    edje_scale_set(_elm_config->scale);
-   _elm_win_rescale();
+   _elm_win_rescale(NULL, EINA_FALSE);
 }
 
 /**

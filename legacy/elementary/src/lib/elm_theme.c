@@ -9,8 +9,7 @@
 
 static Elm_Theme theme_default =
 {
-   NULL, NULL, NULL, NULL,
-     NULL, 1
+   NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1
 };
 
 static Eina_List *themes = NULL;
@@ -35,6 +34,13 @@ _elm_theme_clear(Elm_Theme *th)
         eina_stringshare_del(th->theme);
         th->theme = NULL;
      }
+  if (th->ref_theme)
+    {
+      th->ref_theme->referrers = 
+        eina_list_remove(th->ref_theme->referrers, th);
+      elm_theme_free(th->ref_theme);
+      th->ref_theme = NULL;
+    }
 }
 
 static const char *
@@ -106,6 +112,7 @@ _elm_theme_group_file_find(Elm_Theme *th, const char *group)
 	file = _elm_theme_theme_element_try(th, home, f, group);
 	if (file) return file;
      }
+   if (th->ref_theme) return _elm_theme_group_file_find(th->ref_theme, group);
    return NULL;
 }
 
@@ -283,6 +290,109 @@ elm_theme_free(Elm_Theme *th)
         themes = eina_list_remove(themes, th);
         free(th);
      }
+}
+
+/**
+ * Copy the theme fom the source to the destination theme
+ * 
+ * @param th The source theme to copy from
+ * @param thdst The destination theme to copy data to
+ * 
+ * This makes a one-time static copy of all the theme config, extensions
+ * and overlays from @p th to @p thdst. If @p th references a theme, then
+ * @p thdst is also set to reference it, with all the theme settings,
+ * overlays and extensions that @p th had.
+ */
+EAPI void
+elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst)
+{
+   const Eina_List *l;
+   const char *f;
+   
+   if (!th) th = &(theme_default);
+   if (!thdst) thdst = &(theme_default);
+   _elm_theme_clear(thdst);
+   if (th->ref_theme)
+     {
+       thdst->ref_theme = th->ref_theme;
+       thdst->ref_theme->referrers = 
+         eina_list_append(thdst->ref_theme->referrers, thdst);
+       thdst->ref_theme->ref++;
+     }
+   EINA_LIST_FOREACH(th->overlay, l, f)
+     {
+       const char *s = eina_stringshare_add(f);
+       if (s) thdst->overlay = eina_list_append(thdst->overlay, s);
+     }
+   EINA_LIST_FOREACH(th->themes, l, f)
+     {
+       const char *s = eina_stringshare_add(f);
+       if (s) thdst->themes = eina_list_append(thdst->themes, s);
+     }
+   EINA_LIST_FOREACH(th->extension, l, f)
+     {
+       const char *s = eina_stringshare_add(f);
+       if (s) thdst->extension = eina_list_append(thdst->extension, s);
+     }
+   if (th->theme) thdst->theme = eina_stringshare_add(th->theme);
+   elm_theme_flush(thdst);
+}
+
+/**
+ * Tell the source theme to reference the ref theme
+ * 
+ * @param th The theme that will do the referencing
+ * @param thref The theme that is the reference source
+ * 
+ * This clears @p th to be empty and then sets it to refer to @p thref
+ * so @p th acts as an override to @p thdst, but where its overrides
+ * don't apply, it will fall through to @pthref for configuration.
+ */
+EAPI void
+elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
+{
+   if (!th) th = &(theme_default);
+   if (!thref) thref = &(theme_default);
+   if (th->ref_theme == thref) return;
+   _elm_theme_clear(th);
+   if (thref)
+     {
+       thref->referrers = eina_list_append(thref->referrers, th);
+       thref->ref++;
+     }
+   th->ref_theme = thref;
+   elm_theme_flush(th);
+}
+
+/**
+ * Return the theme referred to
+ * 
+ * @param th The theme to get the reference from
+ * @return The referenced theme handle
+ * 
+ * This gets the theme set as the reference theme by elm_theme_ref_set().
+ * If no theme is set as a reference, NULL is returned.
+ */
+EAPI Elm_Theme *
+elm_theme_ref_get(Elm_Theme *th)
+{
+   if (!th) th = &(theme_default);
+   return th->ref_theme;
+}
+
+/**
+ * Return the default theme
+ * 
+ * @return The default theme handle
+ * 
+ * This returns the internal default theme setup handle that all widgets
+ * use implicitly unless a specific theme is set. This is also often use
+ * as a shorthand of NULL.
+ */
+EAPI Elm_Theme *
+elm_theme_default_get(void)
+{
+   return &theme_default;
 }
 
 /**
@@ -568,7 +678,14 @@ elm_theme_flush(Elm_Theme *th)
    if (!th) th = &(theme_default);
    if (th->cache) eina_hash_free(th->cache);
    th->cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
-   _elm_win_rescale();
+   _elm_win_rescale(th, EINA_TRUE);
+   if (th->referrers)
+     {
+        Eina_List *l;
+        Elm_Theme *th2;
+
+        EINA_LIST_FOREACH(th->referrers, l, th2) elm_theme_flush(th2);
+     }
 }
 
 /**

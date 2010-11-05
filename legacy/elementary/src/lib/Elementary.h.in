@@ -393,6 +393,10 @@ extern "C" {
 
    EAPI Elm_Theme   *elm_theme_new(void);
    EAPI void         elm_theme_free(Elm_Theme *th);
+   EAPI void         elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst);
+   EAPI void         elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
+   EAPI Elm_Theme   *elm_theme_ref_get(Elm_Theme *th);
+   EAPI Elm_Theme   *elm_theme_default_get(void);
    EAPI void         elm_theme_overlay_add(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_overlay_del(Elm_Theme *th, const char *item);
    EAPI void         elm_theme_extension_add(Elm_Theme *th, const char *item);

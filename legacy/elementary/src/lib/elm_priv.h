@@ -35,6 +35,8 @@ struct _Elm_Theme
    Eina_List  *themes;
    Eina_List  *extension;
    Eina_Hash  *cache;
+   Elm_Theme  *ref_theme;
+   Eina_List  *referrers;
    const char *theme;
    int         ref;
 };
@@ -52,18 +54,18 @@ struct _Elm_Theme
 /* note: always remember to sync it with elm_config.c */
 extern const char *_elm_engines[];
 
-#define ELM_SOFTWARE_X11 (_elm_engines[0])
-#define ELM_SOFTWARE_FB (_elm_engines[1])
+#define ELM_SOFTWARE_X11      (_elm_engines[0])
+#define ELM_SOFTWARE_FB       (_elm_engines[1])
 #define ELM_SOFTWARE_DIRECTFB (_elm_engines[2])
-#define ELM_SOFTWARE_16_X11 (_elm_engines[3])
-#define ELM_SOFTWARE_8_X11 (_elm_engines[4])
-#define ELM_XRENDER_X11 (_elm_engines[5])
-#define ELM_OPENGL_X11 (_elm_engines[6])
-#define ELM_SOFTWARE_WIN32 (_elm_engines[7])
+#define ELM_SOFTWARE_16_X11   (_elm_engines[3])
+#define ELM_SOFTWARE_8_X11    (_elm_engines[4])
+#define ELM_XRENDER_X11       (_elm_engines[5])
+#define ELM_OPENGL_X11        (_elm_engines[6])
+#define ELM_SOFTWARE_WIN32    (_elm_engines[7])
 #define ELM_SOFTWARE_16_WINCE (_elm_engines[8])
-#define ELM_SOFTWARE_SDL (_elm_engines[9])
-#define ELM_SOFTWARE_16_SDL (_elm_engines[10])
-#define ELM_OPENGL_SDL (_elm_engines[11])
+#define ELM_SOFTWARE_SDL      (_elm_engines[9])
+#define ELM_SOFTWARE_16_SDL   (_elm_engines[10])
+#define ELM_OPENGL_SDL        (_elm_engines[11])
 
 struct _Elm_Config
 {
@@ -116,7 +118,7 @@ struct _Elm_Module
 };
 
 void                _elm_win_shutdown(void);
-void                _elm_win_rescale(void);
+void                _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
 
 Eina_Bool           _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
 Eina_Bool           _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style);
