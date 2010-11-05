@@ -1749,7 +1749,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
      {
         errno = 0;
         num = read(svr->fd, buf, sizeof(buf));
-        if ((num < 0) && (errno == EAGAIN))
+        if ((num >= 0) || (errno == EAGAIN))
           lost_server = EINA_FALSE;
      }
    else
@@ -2066,7 +2066,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
      {
         errno = 0;
         num = read(cl->fd, buf, sizeof(buf));
-        if (errno == EAGAIN)
+        if ((num >= 0) || (errno == EAGAIN))
           lost_client = EINA_FALSE;
      }
    else
