@@ -244,7 +244,7 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", elm_widget_style_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
-//   edje_object_scale_set(wd->scr, scale);
+   edje_object_scale_set(wd->scr, scale);
    EINA_INLIST_FOREACH(wd->items, it)
      {
         Evas_Object *view = it->base.view;
@@ -253,6 +253,7 @@ _theme_hook(Evas_Object *obj)
 	edje_object_scale_set(view, scale);
         if (!it->separator)
           {
+             _elm_theme_object_set(obj, view, "toolbar", "item", style);
              if (it->selected)
                {
                   edje_object_signal_emit(view, "elm,state,selected", "elm");
@@ -263,12 +264,11 @@ _theme_hook(Evas_Object *obj)
                   edje_object_signal_emit(view, "elm,state,disabled", "elm");
                   elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
                }
-             _elm_theme_object_set(obj, view, "toolbar", "item", style);
              if (it->icon)
                {
                   int ms = 0;
 
-                  ms = ((double)wd->icon_size * _elm_config->scale);
+                  ms = ((double)wd->icon_size * scale);
 		  evas_object_size_hint_min_set(it->icon, ms, ms);
 		  evas_object_size_hint_max_set(it->icon, ms, ms);
                   edje_object_part_swallow(view, "elm.swallow.icon",
