@@ -30,7 +30,8 @@
  * unrealized - This is called when the real evas object for this item is
  * deleted. event_info is the Gengrid item that was created.
  *
- * changed - This is called when the grid has changed.
+ * changed - Called when an item is added, removed, resized or moved and when
+ * gengrid is resized or horizontal property changes.
  *
  * drag,start,up - Called when the item in the Gengrid has been dragged (not
  * scrolled) up.

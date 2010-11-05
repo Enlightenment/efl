@@ -859,7 +859,8 @@ extern "C" {
     * clicked - User has double-clicked a item.
     * realized - An evas object for a item was built.
     * unrealized - An evas object for a item was deleted.
-    * changed - Gengrid has changed.
+    * changed - An item has been added, removed, resized or moved,
+    * or gengrid has been resized or horizontal property has been changed.
     * scroll - the content has been scrolled (moved).
     * "scroll,drag,start" - dragging the contents around has started.
     * "scroll,drat,stop" - dragging the contents around has stopped.
