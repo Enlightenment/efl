@@ -398,8 +398,11 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
-        Evas_Coord iw = 0;
+        Evas_Coord iw = 0, more_w;
         _fix_items_visibility(wd, &iw, vw);
+        evas_object_geometry_get(wd->more_item->base.view, NULL, NULL, &more_w, NULL);
+        if (iw - more_w <= vw)
+             iw -= more_w;
 
         /* All items are removed from the box object, since removing individual
          * items won't trigger a resize. Items are be readded below. */
