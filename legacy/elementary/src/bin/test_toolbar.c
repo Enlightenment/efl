@@ -541,7 +541,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_toolbar_item_disabled_set(item, EINA_TRUE);
    elm_toolbar_item_priority_set(item, 100);
 
-   item = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);
+   item = elm_toolbar_item_append(tb, PACKAGE_DATA_DIR"/images/icon_04.png", "World", tb_2, ph1);
    elm_toolbar_item_priority_set(item, -100);
 
    item = elm_toolbar_item_append(tb, "object-rotate-right", "H", tb_3a, ph4);

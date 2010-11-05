@@ -43,6 +43,22 @@ static void _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name);
 static Eina_Bool _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int size);
 
+//FIXME: move this code to ecore
+#ifdef _WIN32
+static Eina_Bool
+_path_is_absolute(const char *path)
+{
+   //TODO: Check if this works with all absolute paths in windows
+   return ((isalpha (*path)) && (*(path + 1) == ':') && ((*(path + 2) == '\\') || (*(path + 2) == '/')));
+}
+#else
+static Eina_Bool
+_path_is_absolute(const char *path)
+{
+   return  (*path == '/');
+}
+#endif
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -257,6 +273,19 @@ _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
 }
 
 static Eina_Bool
+_icon_file_set(Widget_Data *wd, Evas_Object *obj, const char *path)
+{
+   if (elm_icon_file_set(obj, path, NULL))
+     {
+#ifdef ELM_EFREET
+        wd->freedesktop.use = EINA_FALSE;
+#endif
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int size)
 {
 #ifdef ELM_EFREET
@@ -294,7 +323,9 @@ _icon_size_min_get(Evas_Object *icon)
 }
 
 /**
- * Set the theme, as standard, for a icon
+ * Set the theme, as standard, for a icon.
+ * If theme was not found and it is the absolute path of an image file, this
+ * image will be used.
  *
  * @param obj The icon object
  * @param name The theme name
@@ -339,6 +370,9 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
         _sizing_eval(obj);
         return EINA_TRUE;
      }
+
+   if (_path_is_absolute(name))
+      return _icon_file_set(wd, obj, name);
 
    /* if that fails, see if icon name is in the format size/name. if so,
       try locating a fallback without the size specification */
