@@ -53,7 +53,6 @@ static void
 tb_4a(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_toolbar_item_state_set(event_info, elm_toolbar_item_state_prev(event_info));
-   elm_toolbar_item_selected_set(event_info, EINA_FALSE);
 }
 
 static void
@@ -531,6 +530,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
+   elm_toolbar_no_select_mode_set(tb, EINA_TRUE);
 
    ph1 = elm_photo_add(win);
    ph2 = elm_photo_add(win);

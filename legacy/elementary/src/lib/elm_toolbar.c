@@ -20,6 +20,7 @@ struct _Widget_Data
    int icon_size;
    double align;
    Eina_Bool homogeneous : 1;
+   Eina_Bool no_select : 1;
 };
 
 struct _Elm_Toolbar_Item
@@ -121,14 +122,17 @@ _item_select(Elm_Toolbar_Item *it)
    if (!wd) return;
    if ((it->selected) || (it->disabled) || (it->separator)) return;
 
-   it2 = elm_toolbar_selected_item_get(it->base.widget);
-   _item_unselect(it2);
+   if (!wd->no_select)
+     {
+        it2 = elm_toolbar_selected_item_get(it->base.widget);
+        _item_unselect(it2);
 
-   it->selected = EINA_TRUE;
-   wd->selected_item = it;
-   edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
-   elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
-   _item_show(it);
+        it->selected = EINA_TRUE;
+        wd->selected_item = it;
+        edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+        elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
+        _item_show(it);
+     }
    obj2 = it->base.widget;
    if (it->menu)
      {
@@ -2080,4 +2084,42 @@ elm_toolbar_item_data_get(const Elm_Toolbar_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_data_get(item);
+}
+
+/**
+ * Set no select mode.
+ *
+ * This will turn off the ability to select items entirely and they will
+ * neither appear selected nor emit selected signals. The clicked
+ * callback function will still be called.
+ *
+ * @param obj The Toolbar object
+ * @param no_select The no select mode (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->no_select = no_select;
+}
+
+/**
+ * Gets no select mode.
+ *
+ * @param obj The Toolbar object
+ * @return The no select mode (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Toolbar
+ */
+EAPI Eina_Bool
+elm_toolbar_no_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->no_select;
 }
