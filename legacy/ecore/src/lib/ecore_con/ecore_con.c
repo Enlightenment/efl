@@ -2170,6 +2170,7 @@ _ecore_con_svr_cl_handler(void             *data,
              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
 
              e->client = cl;
+             cl->event_count++;
              _ecore_con_cl_timer_update(cl);
              ecore_event_add(ECORE_CON_EVENT_CLIENT_ADD, e,
                              _ecore_con_event_client_add_free, NULL);
@@ -2311,7 +2312,7 @@ _ecore_con_event_client_add_free(void *data __UNUSED__,
 
    e = ev;
    e->client->event_count--;
-   if ((e->client->event_count == 0) &&
+   if ((e->client->event_count <= 0) &&
        (e->client->delete_me))
      ecore_con_client_del(e->client);
 
@@ -2326,7 +2327,7 @@ _ecore_con_event_client_del_free(void *data __UNUSED__,
 
    e = ev;
    e->client->event_count--;
-   if ((e->client->event_count == 0) && (e->client->delete_me))
+   if ((e->client->event_count <= 0) && (e->client->delete_me))
      ecore_con_client_del(e->client);
 
    free(e);
@@ -2343,7 +2344,7 @@ _ecore_con_event_client_data_free(void *data __UNUSED__,
    if (e->data)
      free(e->data);
 
-   if (((e->client->event_count == 0) && (e->client->delete_me)) ||
+   if (((e->client->event_count <= 0) && (e->client->delete_me)) ||
        ((e->client->host_server &&
          ((e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
           (e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
@@ -2360,7 +2361,7 @@ _ecore_con_event_server_add_free(void *data __UNUSED__,
 
    e = ev;
    e->server->event_count--;
-   if ((e->server->event_count == 0) &&
+   if ((e->server->event_count <= 0) &&
        (e->server->delete_me))
      _ecore_con_server_free(e->server);
 
@@ -2375,7 +2376,7 @@ _ecore_con_event_server_del_free(void *data __UNUSED__,
 
    e = ev;
    e->server->event_count--;
-   if ((e->server->event_count == 0) &&
+   if ((e->server->event_count <= 0) &&
        (e->server->delete_me))
      _ecore_con_server_free(e->server);
 
@@ -2393,7 +2394,7 @@ _ecore_con_event_server_data_free(void *data __UNUSED__,
    if (e->data)
      free(e->data);
 
-   if ((e->server->event_count == 0) &&
+   if ((e->server->event_count <= 0) &&
        (e->server->delete_me))
      _ecore_con_server_free(e->server);
 
