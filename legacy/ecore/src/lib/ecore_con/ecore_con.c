@@ -1176,6 +1176,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
            Ecore_Con_Event_Client_Del *e;
 
            cl->dead = EINA_TRUE;
+           INF("Lost client %s", cl->ip);
            e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
            EINA_SAFETY_ON_NULL_RETURN(e);
 
@@ -2092,6 +2093,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
               ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                               _ecore_con_event_client_del_free, NULL);
           }
+        INF("Lost client %s", cl->ip);
         cl->dead = EINA_TRUE;
         if (cl->fd_handler)
           ecore_main_fd_handler_del(cl->fd_handler);
@@ -2153,6 +2155,7 @@ _ecore_con_svr_cl_handler(void             *data,
              Ecore_Con_Event_Client_Del *e;
 
              cl->dead = EINA_TRUE;
+             INF("Lost client %s", cl->ip);
              e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
 
@@ -2250,7 +2253,6 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
           count = -1;
 
         _ecore_con_cl_timer_update(cl);
-        return;
      }
 
    if (!count)
@@ -2281,6 +2283,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
                                 _ecore_con_event_client_del_free, NULL);
 
                 cl->dead = EINA_TRUE;
+                INF("Lost client %s", cl->ip);
                 if (cl->fd_handler)
                   ecore_main_fd_handler_del(cl->fd_handler);
 
