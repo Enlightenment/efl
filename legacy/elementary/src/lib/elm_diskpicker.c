@@ -1365,6 +1365,21 @@ elm_diskpicker_item_cursor_set(Elm_Diskpicker_Item *item, const char *cursor)
 }
 
 /**
+ * Get the cursor to be shown when mouse is over the diskpicker item
+ *
+ * @param item diskpicker item with cursor already set.
+ * @return the cursor name.
+ *
+ * @ingroup Diskpicker
+ */
+EAPI const char *
+elm_diskpicker_item_cursor_get(const Elm_Diskpicker_Item *item)
+{
+   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item, NULL);
+   return elm_widget_item_cursor_get(item);
+}
+
+/**
  * Unset the cursor to be shown when mouse is over the diskpicker item
  *
  * @param item Target item

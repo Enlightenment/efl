@@ -410,6 +410,21 @@ elm_object_cursor_set(Evas_Object *obj, const char *cursor)
 }
 
 /**
+ * Get the cursor to be shown when mouse is over the object
+ *
+ * @param obj an object with cursor already set.
+ * @return the cursor name.
+ *
+ * @ingroup Cursors
+ */
+EAPI const char *
+elm_object_cursor_get(const Evas_Object *obj)
+{
+   ELM_CURSOR_GET_OR_RETURN(cur, obj, NULL);
+   return cur->cursor_name;
+}
+
+/**
  * Unset cursor for object
  *
  * Unset cursor for object, and set the cursor to default if the mouse

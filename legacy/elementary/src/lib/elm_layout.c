@@ -1058,6 +1058,28 @@ elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *
 }
 
 /**
+ * Get the cursor to be shown when mouse is over an edje part
+ *
+ * @param obj The layout object.
+ * @param part_name a part from loaded edje group.
+ * @return the cursor name.
+ *
+ * @ingroup Layout
+ */
+EAPI const char *
+elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(part_name, NULL);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
+   Part_Cursor *pc = _parts_cursors_find(wd, part_name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, NULL);
+   return elm_object_cursor_get(pc->obj);
+}
+
+/**
  * Unsets a cursor previously set with elm_layout_part_cursor_set().
  *
  * @param obj The layout object.

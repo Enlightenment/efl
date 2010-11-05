@@ -310,6 +310,7 @@ EAPI void             _elm_widget_item_tooltip_unset(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style);
 EAPI const char      *_elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor);
+EAPI const char      *_elm_widget_item_cursor_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_cursor_unset(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style);
 EAPI const char      *_elm_widget_item_cursor_style_get(const Elm_Widget_Item *item);
@@ -398,6 +399,12 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_cursor_set(item, cursor) \
   _elm_widget_item_cursor_set((Elm_Widget_Item *)item, cursor)
+/**
+ * Convenience function to get widget item cursor.
+ * @see _elm_widget_item_cursor_get()
+ */
+#define elm_widget_item_cursor_get(item) \
+  _elm_widget_item_cursor_get((const Elm_Widget_Item *)item)
 /**
  * Convenience function to unset widget item cursor.
  * @see _elm_widget_item_cursor_unset()

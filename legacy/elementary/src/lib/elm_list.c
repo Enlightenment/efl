@@ -2148,6 +2148,21 @@ elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor)
 }
 
 /**
+ * Get the cursor to be shown when mouse is over the list item
+ *
+ * @param item list item with cursor already set.
+ * @return the cursor name.
+ *
+ * @ingroup List
+ */
+EAPI const char *
+elm_list_item_cursor_get(const Elm_List_Item *item)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, NULL);
+   return elm_widget_item_cursor_get(item);
+}
+
+/**
  * Unset the cursor to be shown when mouse is over the list item
  *
  * @param item Target item

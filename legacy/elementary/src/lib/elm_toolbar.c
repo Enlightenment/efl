@@ -1895,6 +1895,21 @@ elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor)
 }
 
 /**
+ * Get the cursor to be shown when mouse is over the toolbar item
+ *
+ * @param item toolbar item with cursor already set.
+ * @return the cursor name.
+ *
+ * @ingroup Toolbar
+ */
+EAPI const char *
+elm_toolbar_item_cursor_get(const Elm_Toolbar_Item *item)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
+   return elm_widget_item_cursor_get(item);
+}
+
+/**
  * Unset the cursor to be shown when mouse is over the toolbar item
  *
  * @param item Target item

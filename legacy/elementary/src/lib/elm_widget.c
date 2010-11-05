@@ -2294,6 +2294,13 @@ _elm_widget_item_cursor_set(Elm_Widget_Item *item, const char *cursor)
    elm_object_sub_cursor_set(item->view, item->widget, cursor);
 }
 
+EAPI const char *
+_elm_widget_item_cursor_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return elm_object_cursor_get(item->view);
+}
+
 EAPI void
 _elm_widget_item_cursor_unset(Elm_Widget_Item *item)
 {

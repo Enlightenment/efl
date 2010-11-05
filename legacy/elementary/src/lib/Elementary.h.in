@@ -833,6 +833,7 @@ extern "C" {
    EAPI void         elm_gengrid_item_tooltip_style_set(Elm_Gengrid_Item *item, const char *style);
    EAPI const char  *elm_gengrid_item_tooltip_style_get(const Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_cursor_set(Elm_Gengrid_Item *item, const char *cursor);
+   EAPI const char  *elm_gengrid_item_cursor_get(const Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_cursor_unset(Elm_Gengrid_Item *item);
    EAPI void         elm_gengrid_item_cursor_style_set(Elm_Gengrid_Item *item, const char *style);
    EAPI const char  *elm_gengrid_item_cursor_style_get(const Elm_Gengrid_Item *item);
@@ -906,6 +907,7 @@ extern "C" {
    EAPI void         elm_layout_sizing_eval(Evas_Object *obj);
 
   EAPI Eina_Bool     elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
+  EAPI const char   *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name);
   EAPI void          elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
   EAPI Eina_Bool     elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
   EAPI const char   *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
@@ -1344,6 +1346,7 @@ extern "C" {
    EAPI void              elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style);
    EAPI const char       *elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor);
+   EAPI const char       *elm_toolbar_item_cursor_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style);
    EAPI const char       *elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item);
@@ -1369,6 +1372,7 @@ extern "C" {
    EAPI const char  *elm_object_tooltip_style_get(const Evas_Object *obj);
 
    EAPI void         elm_object_cursor_set(Evas_Object *obj, const char *cursor);
+   EAPI const char  *elm_object_cursor_get(const Evas_Object *obj);
    EAPI void         elm_object_cursor_unset(Evas_Object *obj);
    EAPI void         elm_object_cursor_style_set(Evas_Object *obj, const char *style);
    EAPI const char  *elm_object_cursor_style_get(const Evas_Object *obj);
@@ -1457,6 +1461,7 @@ extern "C" {
    EAPI void             elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style);
    EAPI const char      *elm_list_item_tooltip_style_get(const Elm_List_Item *item);
    EAPI void             elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor);
+   EAPI const char      *elm_list_item_cursor_get(const Elm_List_Item *item);
    EAPI void             elm_list_item_cursor_unset(Elm_List_Item *item);
    EAPI void             elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style);
    EAPI const char      *elm_list_item_cursor_style_get(const Elm_List_Item *item);
@@ -1644,6 +1649,7 @@ extern "C" {
    EAPI void              elm_genlist_item_tooltip_style_set(Elm_Genlist_Item *item, const char *style);
    EAPI const char       *elm_genlist_item_tooltip_style_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_cursor_set(Elm_Genlist_Item *item, const char *cursor);
+   EAPI const char       *elm_genlist_item_cursor_get(const Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_cursor_unset(Elm_Genlist_Item *item);
    EAPI void              elm_genlist_item_cursor_style_set(Elm_Genlist_Item *item, const char *style);
    EAPI const char       *elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item);
@@ -2224,6 +2230,7 @@ extern "C" {
    EAPI void                  elm_diskpicker_item_tooltip_style_set(Elm_Diskpicker_Item *item, const char *style);
    EAPI const char*           elm_diskpicker_item_tooltip_style_get(const Elm_Diskpicker_Item *item);
    EAPI void                  elm_diskpicker_item_cursor_set(Elm_Diskpicker_Item *item, const char *cursor);
+   EAPI const char*           elm_diskpicker_item_cursor_get(const Elm_Diskpicker_Item *item);
    EAPI void                  elm_diskpicker_item_cursor_unset(Elm_Diskpicker_Item *item);
    EAPI void                  elm_diskpicker_item_cursor_style_set(Elm_Diskpicker_Item *item, const char *style);
    EAPI const char*           elm_diskpicker_item_cursor_style_get(const Elm_Diskpicker_Item *item);
