@@ -80,6 +80,7 @@ struct _Elm_Config
    double       bring_in_scroll_friction;
    double       zoom_friction;
    Eina_Bool    thumbscroll_bounce_enable;
+   double       thumbscroll_border_friction;
    double       scale;
    int          bgpixmap;
    int          compositing;

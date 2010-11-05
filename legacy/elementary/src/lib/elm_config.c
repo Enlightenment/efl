@@ -239,6 +239,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, thumbscroll_momentum_threshold, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_border_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, page_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bring_in_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
@@ -612,6 +613,7 @@ _config_load(void)
    _elm_config->thumbscroll_momentum_threshold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->thumbscroll_bounce_friction = 0.5;
+   _elm_config->thumbscroll_border_friction = 0.5;
    _elm_config->page_scroll_friction = 0.5;
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
@@ -931,6 +933,8 @@ _env_get(void)
    if (s) _elm_config->bring_in_scroll_friction = atof(s);
    s = getenv("ELM_ZOOM_FRICTION");
    if (s) _elm_config->zoom_friction = atof(s);
+   s = getenv("ELM_THUMBSCROLL_BORDER_FRICTION");
+   if (s) _elm_config->thumbscroll_border_friction = atof(s);
 
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
