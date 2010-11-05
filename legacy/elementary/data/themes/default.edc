@@ -10437,6 +10437,16 @@ collections {
                    }
                }
            }
+           program { name: "label_set,animation,forward";
+              signal: "elm,state,label_set,forward";
+              source: "elm";
+              after: "label_set,animation";
+           }
+           program { name: "label_set,animation,backward";
+              signal: "elm,state,label_set,backward";
+              source: "elm";
+              after: "label_set,animation";
+           }
            program { name: "label_set,animation";
               signal: "elm,state,label_set";
               source: "elm";
@@ -10455,6 +10465,16 @@ collections {
               action: STATE_SET "default" 0.0;
               target: "elm.text.clipper";
               target: "elm.text_new.clipper";
+           }
+           program { name: "icon_set,animation,forward";
+              signal: "elm,state,icon_set,forward";
+              source: "elm";
+              after: "icon_set,animation";
+           }
+           program { name: "icon_set,animation,backward";
+              signal: "elm,state,icon_set,backward";
+              source: "elm";
+              after: "icon_set,animation";
            }
            program { name: "icon_set,animation";
               signal: "elm,state,icon_set";
