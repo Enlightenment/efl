@@ -1153,6 +1153,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    int depth, tsize = 20;
 
    if ((it->realized) || (it->delete_me)) return;
+  printf("realize %p->%p\n", it->block, it);
    it->base.view = edje_object_add(evas_object_evas_get(it->base.widget));
    edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.widget) * 
                          _elm_config->scale);
@@ -1363,12 +1364,14 @@ _item_block_recalc(Item_Block *itb, int in, int qadd, int norender)
                   if (!it->mincalcd) changed = 1;
                   if (changed)
                     {
+                      printf("--r1\n");
                        _item_realize(it, in, 1);
                        _item_unrealize(it);
                     }
                }
              else
                {
+                 printf("--r2\n");
                   _item_realize(it, in, 1);
                   _item_unrealize(it);
                }
@@ -1377,6 +1380,7 @@ _item_block_recalc(Item_Block *itb, int in, int qadd, int norender)
           {
              Eina_Bool was_realized = it->realized;
 
+            printf("--r3\n");
              _item_realize(it, in, 0);
              if (!was_realized)
                 evas_object_smart_callback_call(it->base.widget, "realized", it);
@@ -1410,6 +1414,7 @@ _item_block_realize(Item_Block *itb, int in, int full)
           {
              Eina_Bool was_realized = it->realized;
 
+            printf("--r4\n");
              _item_realize(it, in, 0);
              if (!was_realized)
                 evas_object_smart_callback_call(it->base.widget, "realized", it);
@@ -1463,9 +1468,9 @@ _item_block_position(Item_Block *itb, int in)
         it->x = 0;
         it->y = y;
         it->w = itb->w;
-        vis = (ELM_RECTS_INTERSECT(itb->x - it->wd->pan_x + ox,
-                                   itb->y - it->wd->pan_y + oy,
-                                   itb->w, itb->h,
+        vis = (ELM_RECTS_INTERSECT(itb->x + it->x - it->wd->pan_x + ox,
+                                   itb->y + it->y - it->wd->pan_y + oy,
+                                   it->w, it->h,
                                    cvx, cvy, cvw, cvh));
         if ((itb->realized) && (!it->realized))
           {
