@@ -46,7 +46,7 @@ EAPI char *strerror (int errnum);
  * @brief Return the position of the first (least significant) bit set in a word
  *
  * @param i Word to take the first bit.
- * @retur The position of the first bit set, or 0 if no bits are set.
+ * @return The position of the first bit set, or 0 if no bits are set.
  *
  * This function returns the position of the first (least significant)
  * bit set in @p i. The least significant bit is position 1 and the

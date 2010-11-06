@@ -36,15 +36,13 @@
  *
  * @section evil_sec Evil API Documentation
  *
- * Take a look at the evil documentation of the @ref Dlfcn.
- *
- * Take a look at the demoniac documentation of the @ref Mman.
- *
  * Take a look at the satanic documentation of the @ref Evil.
+ *
+ * Take a look at the demoniac documentation of the @ref Dlfcn.
  */
 
 /**
- * @file evil.h
+ * @file Evil.h
  * @brief The file that provides miscellaneous functions ported from Unix.
  * @defgroup Evil Miscellaneous functions ported from Unix.
  *

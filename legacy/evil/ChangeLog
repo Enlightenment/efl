@@ -1,3 +1,9 @@
+2010-11-06  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/evil_string.h:
+	Fix doxygen documentation
+
 2010-10-29  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
