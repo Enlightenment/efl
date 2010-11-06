@@ -1882,7 +1882,8 @@ static Eina_Bool
 _ecore_con_cl_udp_handler(void             *data,
                           Ecore_Fd_Handler *fd_handler)
 {
-
+   Ecore_Con_Event_Server_Data *e;
+   unsigned char *inbuf;
    unsigned char buf[READBUFSIZ];
    int num;
    Ecore_Con_Server *svr;
@@ -1910,9 +1911,6 @@ _ecore_con_cl_udp_handler(void             *data,
 
    if ((num < 1) || (svr->delete_me))
      return ECORE_CALLBACK_RENEW;
-
-   Ecore_Con_Event_Server_Data *e;
-   unsigned char *inbuf;
 
    inbuf = malloc(num);
    if(!inbuf)
