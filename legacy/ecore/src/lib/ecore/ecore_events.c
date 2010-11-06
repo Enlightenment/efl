@@ -201,7 +201,7 @@ ecore_event_handler_data_set(Ecore_Event_Handler *eh, void *data)
    void *old;
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
-        ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_get");
+        ECORE_MAGIC_FAIL(eh, ECORE_MAGIC_EVENT_HANDLER, "ecore_event_handler_data_set");
         return NULL;
      }
    old = eh->data;
