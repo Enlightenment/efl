@@ -131,7 +131,7 @@ ecore_con_init(void)
 
    _ecore_con_log_dom = eina_log_domain_register
        ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
-   if(_ecore_con_log_dom < 0)
+   if (_ecore_con_log_dom < 0)
      {
         EINA_LOG_ERR("Impossible to create a log domain for Ecore Con.");
         ecore_shutdown();
@@ -876,7 +876,7 @@ ecore_con_client_send(Ecore_Con_Client *cl,
    if (cl->fd_handler)
      ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
 
-   if(cl->host_server && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
+   if (cl->host_server && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP))
      sendto(cl->host_server->fd, data, size, 0, (struct sockaddr *)cl->client_addr,
             cl->client_addr_len);
    else if (cl->buf)
@@ -1315,7 +1315,7 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    svr = data;
 
-   if(!net_info)
+   if (!net_info)
      goto error;
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
@@ -1382,7 +1382,7 @@ _ecore_con_cb_udp_listen(void           *data,
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
-   if(svr->fd < 0)
+   if (svr->fd < 0)
      goto error;
 
    if (type == ECORE_CON_REMOTE_MCAST)
@@ -1913,7 +1913,7 @@ _ecore_con_cl_udp_handler(void             *data,
      return ECORE_CALLBACK_RENEW;
 
    inbuf = malloc(num);
-   if(!inbuf)
+   if (!inbuf)
      return ECORE_CALLBACK_RENEW;
 
    memcpy(inbuf, buf, num);
@@ -2000,7 +2000,7 @@ _ecore_con_svr_udp_handler(void             *data,
 
    cl->host_server = svr;
    cl->client_addr = calloc(1, client_addr_len);
-   if(!cl->client_addr)
+   if (!cl->client_addr)
      {
         free(cl);
         return ECORE_CALLBACK_RENEW;
@@ -2038,7 +2038,7 @@ _ecore_con_svr_udp_handler(void             *data,
       _ecore_con_cl_timer_update(cl);
       e->client = cl;
       e->data = malloc(num);
-      if(!e->data)
+      if (!e->data)
         {
            free(cl->client_addr);
            free(cl);
