@@ -366,6 +366,7 @@ static void
 module_close(Evas_Module *em)
 {
   eina_log_domain_unregister(_evas_engine_soft_gdi_log_dom);
+  _evas_engine_soft_gdi_log_dom = -1;
 }
 
 static Evas_Module_Api evas_modapi =
