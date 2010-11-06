@@ -276,6 +276,15 @@ _ecore_magic_string_get(Ecore_Magic m)
       case ECORE_MAGIC_EVENT:
         return "Ecore_Event (Event)";
         break;
+      case ECORE_MAGIC_CON_SERVER:
+        return "Ecore_Con_Server (Connection Server)";
+        break;
+      case ECORE_MAGIC_CON_CLIENT:
+        return "Ecore_Con_Client (Connection Client)";
+        break;
+      case ECORE_MAGIC_CON_URL:
+        return "Ecore_Con_Url (Connection Url)";
+        break;
       default:
         return "<UNKNOWN>";
      };
