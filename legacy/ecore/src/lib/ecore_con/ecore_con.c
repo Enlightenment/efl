@@ -923,6 +923,24 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
 }
 
 /**
+ * Returns whether the client is still connected
+ * @param   cl The given client.
+ * @return  #EINA_TRUE if connected, else EINA_FALSE
+ */
+EAPI Eina_Bool
+ecore_con_client_connected_get(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT,
+                         "ecore_con_client_connected_get");
+        return EINA_FALSE;
+     }
+
+   return !cl->dead;
+}
+
+/**
  * Set the time after which the client will be disconnected when inactive
  * @param cl The client object
  * @param timeout The timeout, in seconds, to disconnect after
