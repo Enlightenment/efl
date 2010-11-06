@@ -145,6 +145,11 @@ ecore_con_init(void)
    ECORE_CON_EVENT_CLIENT_DATA = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_DATA = ecore_event_type_new();
 
+
+   eina_magic_string_set(ECORE_MAGIC_CON_SERVER, "Ecore_Con_Server");
+   eina_magic_string_set(ECORE_MAGIC_CON_CLIENT, "Ecore_Con_Server");
+   eina_magic_string_set(ECORE_MAGIC_CON_URL, "Ecore_Con_Url");
+
    /* TODO Remember return value, if it fails, use gethostbyname() */
    ecore_con_ssl_init();
    ecore_con_info_init();
@@ -1183,6 +1188,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
 
+   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    if ((!cl->buf) && cl->delete_me && (!cl->dead) && (cl->event_count < 1))
      {
         /* this is a catch-all for cases when a client is not properly killed.
@@ -1206,7 +1212,6 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
            return;
      }
 
-   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
      {
