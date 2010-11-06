@@ -345,18 +345,22 @@ AC_C_INLINE
 AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
 
+have_win32="no"
 EINA_CPPFLAGS=""
 EINA_CFLAGS=""
 case "$host_os" in
    mingw32ce*)
       EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
       EINA_CFLAGS="${EVIL_CFLAGS}"
+      have_win32="yes"
       ;;
    mingw*)
       EINA_CPPFLAGS="-D_WIN32_WINNT=0x0501"
       EINA_CFLAGS="${EVIL_CFLAGS}"
+      have_win32="yes"
       ;;
 esac
+AM_CONDITIONAL([EINA_HAVE_WIN32], [test "x$have_win32" = "xyes"])
 
 m4_ifdef([v_mic],
    [

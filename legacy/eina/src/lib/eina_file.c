@@ -1,5 +1,6 @@
 /* EINA - EFL data type library
  * Copyright (C) 2007-2008 Jorge Luis Zapata Muga, Vincent Torri
+ * Copyright (C) 2010 Cedric Bail
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,21 +41,11 @@ void *alloca (size_t);
 #include <string.h>
 #include <stddef.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#ifndef _WIN32
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <unistd.h>
-#else
-# include <Evil.h>
-#endif /* _WIN2 */
-
-#ifndef _WIN32
-# define PATH_DELIM '/'
-#else
-# define PATH_DELIM '\\'
-# define NAME_MAX MAX_PATH
-#endif
+#define PATH_DELIM '/'
 
 #ifdef __sun
 # ifndef NAME_MAX
@@ -325,12 +316,12 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
  */
 
 /*============================================================================*
-*                                 Global                                     *
-*============================================================================*/
+ *                                 Global                                     *
+ *============================================================================*/
 
 /*============================================================================*
-*                                   API                                      *
-*============================================================================*/
+ *                                   API                                      *
+ *============================================================================*/
 
 /**
  * @addtogroup Eina_File_Group File
@@ -370,13 +361,12 @@ eina_file_dir_list(const char *dir,
                    Eina_File_Dir_List_Cb cb,
                    void *data)
 {
-#ifndef _WIN32
    int dlength;
    struct dirent *de;
    DIR *d;
-# ifndef _DIRENT_HAVE_D_TYPE
+#ifndef _DIRENT_HAVE_D_TYPE
    struct stat st;
-# endif
+#endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb,  EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
@@ -402,97 +392,29 @@ eina_file_dir_list(const char *dir,
              char *path;
              int length;
 
-# ifdef _DIRENT_HAVE_D_NAMLEN
+#ifdef _DIRENT_HAVE_D_NAMLEN
              length = de->d_namlen;
-# else
+#else
              length = strlen(de->d_name);
-# endif
+#endif
              path = alloca(dlength + length + 2);
              strcpy(path, dir);
              strcat(path, "/");
              strcat(path, de->d_name);
-# ifdef _DIRENT_HAVE_D_TYPE
+#ifdef _DIRENT_HAVE_D_TYPE
              if (de->d_type != DT_DIR)
                 continue;
-# else
+#else
              if (stat(path, &st))
                 continue;
              if (!S_ISDIR(st.st_mode))
                 continue;
-# endif
+#endif
              eina_file_dir_list(path, recursive, cb, data);
           }
      }
 
    closedir(d);
-#else
-   WIN32_FIND_DATA file;
-   HANDLE hSearch;
-   char *new_dir;
-   TCHAR *tdir;
-   size_t length_dir;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cb,  EINA_FALSE);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(dir[0] == '\0', EINA_FALSE);
-
-   length_dir = strlen(dir);
-   new_dir = (char *)alloca(length_dir + 5);
-   if (!new_dir)
-      return EINA_FALSE;
-
-   memcpy(new_dir,              dir,    length_dir);
-   memcpy(new_dir + length_dir, "/*.*", 5);
-
-# ifdef UNICODE
-   tdir = evil_char_to_wchar(new_dir);
-# else
-   tdir = new_dir;
-# endif /* ! UNICODE */
-   hSearch = FindFirstFile(tdir, &file);
-# ifdef UNICODE
-   free(tdir);
-# endif /* UNICODE */
-
-   if (hSearch == INVALID_HANDLE_VALUE)
-      return EINA_FALSE;
-
-   do
-     {
-        char *filename;
-
-# ifdef UNICODE
-        filename = evil_wchar_to_char(file.cFileName);
-# else
-        filename = file.cFileName;
-# endif /* ! UNICODE */
-        if (!strcmp(filename, ".") || !strcmp(filename, ".."))
-           continue;
-
-        cb(filename, dir, data);
-
-        if (recursive == EINA_TRUE)
-          {
-             char *path;
-
-             path = alloca(strlen(dir) + strlen(filename) + 2);
-             strcpy(path, dir);
-             strcat(path, "/");
-             strcat(path, filename);
-
-             if (!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-                continue;
-
-             eina_file_dir_list(path, recursive, cb, data);
-          }
-
-# ifdef UNICODE
-        free(filename);
-# endif /* UNICODE */
-
-     } while (FindNextFile(hSearch, &file));
-   FindClose(hSearch);
-#endif /* _WIN32 */
 
    return EINA_TRUE;
 }

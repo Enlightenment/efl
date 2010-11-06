@@ -15,7 +15,6 @@ eina_log.c \
 eina_hash.c \
 eina_lalloc.c \
 eina_inlist.c \
-eina_file.c \
 eina_mempool.c \
 eina_list.c \
 eina_matrixsparse.c \
@@ -47,6 +46,12 @@ eina_strbuf_common.c \
 eina_ustrbuf.c \
 eina_unicode.c \
 eina_quadtree.c
+
+if EINA_HAVE_WIN32
+base_sources += eina_file_win32.c
+else
+base_sources += eina_file.c
+endif
 
 EXTRA_DIST = \
        eina_share_common.h \
