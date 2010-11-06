@@ -10,42 +10,42 @@ AM_CPPFLAGS = \
 @EFL_EINA_BUILD@
 
 base_sources = \
-eina_error.c \
-eina_log.c \
-eina_hash.c \
-eina_lalloc.c \
-eina_inlist.c \
-eina_mempool.c \
-eina_list.c \
-eina_matrixsparse.c \
-eina_module.c \
-eina_value.c \
+eina_accessor.c \
 eina_array.c \
+eina_benchmark.c \
+eina_binshare.c \
+eina_convert.c \
+eina_counter.c \
+eina_cpu.c \
+eina_error.c \
+eina_fp.c \
+eina_hamster.c \
+eina_hash.c \
+eina_inlist.c \
+eina_iterator.c \
+eina_lalloc.c \
+eina_list.c \
+eina_log.c \
 eina_magic.c \
 eina_main.c \
-eina_counter.c \
-eina_iterator.c \
-eina_accessor.c \
-eina_convert.c \
-eina_fp.c \
+eina_matrixsparse.c \
+eina_mempool.c \
+eina_module.c \
+eina_quadtree.c \
 eina_rbtree.c \
-eina_benchmark.c \
 eina_rectangle.c \
-eina_share_common.c \
-eina_binshare.c \
-eina_stringshare.c \
-eina_ustringshare.c \
-eina_cpu.c \
-eina_sched.c \
-eina_tiler.c \
-eina_hamster.c \
 eina_safety_checks.c \
+eina_sched.c \
+eina_share_common.c \
 eina_str.c \
 eina_strbuf.c \
 eina_strbuf_common.c \
-eina_ustrbuf.c \
+eina_stringshare.c \
+eina_tiler.c \
 eina_unicode.c \
-eina_quadtree.c
+eina_ustrbuf.c \
+eina_ustringshare.c \
+eina_value.c
 
 if EINA_HAVE_WIN32
 base_sources += eina_file_win32.c
@@ -54,10 +54,10 @@ base_sources += eina_file.c
 endif
 
 EXTRA_DIST = \
-       eina_share_common.h \
-       eina_private.h \
-       eina_strbuf_common.h \
-       eina_strbuf_template_c.x
+eina_share_common.h \
+eina_private.h \
+eina_strbuf_common.h \
+eina_strbuf_template_c.x
 
 
 
