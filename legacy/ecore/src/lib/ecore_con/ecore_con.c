@@ -1749,6 +1749,7 @@ error:
 static void
 _ecore_con_cl_read(Ecore_Con_Server *svr)
 {
+   DBG("svr=%p", svr);
    int num = 0;
    Eina_Bool lost_server = EINA_TRUE;
    unsigned char buf[READBUFSIZ];
@@ -1768,13 +1769,13 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
      {
         errno = 0;
         num = read(svr->fd, buf, sizeof(buf));
-        if ((num >= 0) || (errno == EAGAIN))
+        if ((num > 0) || (errno == EAGAIN))
           lost_server = EINA_FALSE;
      }
    else
      {
        num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
-         if (num >= 0)
+         if (num > 0)
            lost_server = EINA_FALSE;
      }
 
@@ -2057,6 +2058,7 @@ _ecore_con_svr_udp_handler(void             *data,
 static void
 _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 {
+   DBG("cl=%p", cl);
    int num = 0;
    Eina_Bool lost_client = EINA_TRUE;
    unsigned char buf[READBUFSIZ];
@@ -2076,13 +2078,13 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
      {
         errno = 0;
         num = read(cl->fd, buf, sizeof(buf));
-        if ((num >= 0) || (errno == EAGAIN))
+        if ((num > 0) || (errno == EAGAIN))
           lost_client = EINA_FALSE;
      }
    else
      {
         num = ecore_con_ssl_client_read(cl, buf, sizeof(buf));
-        if (num >= 0)
+        if (num > 0)
           lost_client = EINA_FALSE;
      }
 
