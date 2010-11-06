@@ -264,7 +264,16 @@ efreet_dirs_get(const char *key, const char *fallback)
         p = strchr(s, EFREET_PATH_SEP);
     }
     if (!eina_list_search_unsorted(dirs, EINA_COMPARE_CB(strcmp), s))
-        dirs = eina_list_append(dirs, (void *)eina_stringshare_add(s));
+    {
+        // resolve path properly/fully to remove path//path2 to
+        // path/path2, path/./path2 to path/path2 etc.
+        char *ts = ecore_file_realpath(s);
+        if (ts)
+        {
+            dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
+            free(ts);
+        }
+    }
 
     return dirs;
 }
