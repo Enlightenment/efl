@@ -192,10 +192,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lib\evil_errno.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\lib\evil_fcntl.c"
 				>
 			</File>
@@ -212,11 +208,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lib\evil_link_xp.cpp"
+				RelativePath="..\..\src\lib\evil_libgen.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lib\evil_libgen.c"
+				RelativePath="..\..\src\lib\evil_link_xp.cpp"
 				>
 			</File>
 			<File
