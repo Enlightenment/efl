@@ -53,6 +53,10 @@
  * not use the object pointer from elm_genlist_item_object_get() in a way
  * where it may point to freed objects.
  *
+ * unrealized - This is called just before an item is unrealized. After
+ * this call icon objects provideed will be deleted and the item object
+ * itself delete or be put into a floating cache.
+ *
  * drag,start,up - This is called when the item in the list has been dragged
  * (not scrolled) up.
  *
@@ -1489,6 +1493,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    it->want_unrealize = EINA_FALSE;
 
    if (itc) _item_cache_free(itc);
+   evas_object_smart_callback_call(it->base.widget, "realized", it);
 }
 
 static void
@@ -1497,6 +1502,7 @@ _item_unrealize(Elm_Genlist_Item *it)
    Evas_Object *icon;
 
    if (!it->realized) return;
+   evas_object_smart_callback_call(it->base.widget, "unrealized", it);
    if (it->long_timer)
      {
         ecore_timer_del(it->long_timer);
@@ -1549,13 +1555,7 @@ _item_block_recalc(Item_Block *itb, int in, int qadd, int norender)
                }
           }
         else
-          {
-             Eina_Bool was_realized = it->realized;
-
-             _item_realize(it, in, 0);
-             if (!was_realized)
-                evas_object_smart_callback_call(it->base.widget, "realized", it);
-          }
+          _item_realize(it, in, 0);
         minh += it->minh;
         if (minw < it->minw) minw = it->minw;
         in++;
@@ -1581,14 +1581,7 @@ _item_block_realize(Item_Block *itb, int in, int full)
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->delete_me) continue;
-        if (full)
-          {
-             Eina_Bool was_realized = it->realized;
-
-             _item_realize(it, in, 0);
-             if (!was_realized)
-                evas_object_smart_callback_call(it->base.widget, "realized", it);
-          }
+        if (full) _item_realize(it, in, 0);
         in++;
      }
    itb->realized = EINA_TRUE;
@@ -1644,15 +1637,7 @@ _item_block_position(Item_Block *itb, int in)
                                    cvx, cvy, cvw, cvh));
         if ((itb->realized) && (!it->realized))
           {
-             if (vis)
-               {
-                  Eina_Bool was_realized = it->realized;
-
-                  _item_realize(it, in, 0);
-                  if (!was_realized)
-                    evas_object_smart_callback_call(it->base.widget, 
-                                                    "realized", it);
-               }
+             if (vis) _item_realize(it, in, 0);
           }
         if (it->realized)
           {
@@ -1666,8 +1651,7 @@ _item_block_position(Item_Block *itb, int in)
                }
              else
                {
-                  if (!it->dragging)
-                     _item_unrealize(it);
+                  if (!it->dragging) _item_unrealize(it);
                }
           }
         y += it->h;
@@ -1813,8 +1797,6 @@ _update_job(void *data)
                     {
                        _item_unrealize(it);
                        _item_realize(it, num, 0);
-                       evas_object_smart_callback_call(it->base.widget, 
-                                                       "realized", it);
                     }
                   else
                     {
