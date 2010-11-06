@@ -3420,6 +3420,30 @@ elm_genlist_item_data_get(const Elm_Genlist_Item *it)
 }
 
 /**
+ * Tells genlist to "orphan" icons fetchs by the item class
+ *
+ * This instructs genlist to release references to icons in the item, meaning
+ * that they will no longer be managed by genlist and are floating "orphans"
+ * that can be re-used elsewhere if the user wants to.
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_icons_orphan(Elm_Genlist_Item *it)
+{
+   Evas_Object *icon;
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   EINA_LIST_FREE(it->icon_objs, icon)
+     {
+        elm_widget_sub_object_del(it->base.widget, icon);
+        evas_object_smart_member_del(icon);
+        evas_object_hide(icon);
+     }
+}
+
+/**
  * Get the real evas object of the genlist item
  *
  * This returns the actual evas object used for the specified genlist item.
