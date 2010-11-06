@@ -43,9 +43,6 @@ static HANDLE DataToHandle(const char *data, int size)
 /**
  * @addtogroup Ecore_Win32_Group Ecore_Win32 library
  *
- * Ecore_Win32 is a library that wraps Windows CE graphic functions
- * and integrate them nicely into the Ecore main loop.
- *
  * @{
  */
 
