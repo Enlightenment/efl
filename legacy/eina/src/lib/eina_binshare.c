@@ -33,9 +33,22 @@
 #include "eina_private.h"
 #include "eina_binshare.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 /* The actual share */
 static Eina_Share *binshare_share;
 static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
+
+/**
+ * @endcond
+ */
+
 
 /*============================================================================*
 *                                 Global                                     *
@@ -79,9 +92,11 @@ eina_binshare_shutdown(void)
    return ret;
 }
 
+
 /*============================================================================*
-*                                   API                                      *
-*============================================================================*/
+ *                                   API                                      *
+ *============================================================================*/
+
 /**
  * @addtogroup Eina_Binshare_Group Binary Share
  *
@@ -172,6 +187,7 @@ eina_binshare_ref(const void *obj)
  *
  * @param obj the shared object to know the length. It is safe to
  *        give NULL, in that case -1 is returned.
+ * @return The length of the shared object.
  *
  * This function is a cheap way to known the length of a shared
  * object. Note that if the given pointer is not shared, bad

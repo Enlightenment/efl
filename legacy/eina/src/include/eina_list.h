@@ -52,6 +52,11 @@
  */
 typedef struct _Eina_List            Eina_List;
 
+/**
+ * @typedef Eina_List_Accounting
+ * Cache used to store the last element of a list and the number of
+ * elements, for fast access.
+ */
 typedef struct _Eina_List_Accounting Eina_List_Accounting;
 
 /**
@@ -68,10 +73,16 @@ struct _Eina_List
    EINA_MAGIC
 };
 
+/**
+ * @struct _Eina_List_Accounting
+ * Cache used to store the last element of a list and the number of
+ * elements, for fast access. It is for private used and must not be
+ * touched.
+ */
 struct _Eina_List_Accounting
 {
-   Eina_List   *last;
-   unsigned int count;
+   Eina_List   *last; /**< Pointer to the last element of the list - don't touch */
+   unsigned int count; /**< Number of elements of the list - don't touch */
    EINA_MAGIC
 };
 

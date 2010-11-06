@@ -536,6 +536,7 @@ eina_benchmark_free(Eina_Benchmark *bench)
  * @param count_start The start data to be passed to @p bench_cb.
  * @param count_end The end data to be passed to @p bench_cb.
  * @param count_step The step data to be passed to @p bench_cb.
+ * @return #EINA_FALSE on failure, #EINA_TRUE otherwise.
  *
  * This function adds the test named @p name to @p benchmark. @p
  * bench_cb is the function called when the test is executed. That
@@ -546,7 +547,8 @@ eina_benchmark_free(Eina_Benchmark *bench)
  *
  * If @p bench is @c NULL, this function returns imediatly. If the
  * allocation of the memory of the test to add fails, the error is set
- * to #EINA_ERROR_OUT_OF_MEMORY.
+ * to #EINA_ERROR_OUT_OF_MEMORY. This function returns #EINA_FALSE
+ * on failure, #EINA_TRUE otherwise.
  */
 EAPI Eina_Bool
 eina_benchmark_register(Eina_Benchmark *bench,

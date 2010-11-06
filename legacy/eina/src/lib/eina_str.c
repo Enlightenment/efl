@@ -472,12 +472,18 @@ eina_str_join_len(char *dst,
 }
 
 /**
- * @brief Use iconv to convert a text string from one encoding to another
+ * @brief Use Iconv to convert a text string from one encoding to another.
  *
- * @param enc_from encoding to convert from
- * @param enc_to   encoding to convert to
- * @param text     text to convert
+ * @param enc_from Encoding to convert from.
+ * @param enc_to Encoding to convert to.
+ * @param text The text to convert.
+ * @return The converted text.
  *
+ * This function converts @p text, encoded in @p enc_from. On success,
+ * the converted text is returned and is encoded in @p enc_to. On
+ * failure, @c NULL is returned. Iconv is used to convert @p text. If
+ * Iconv is not available, @c NULL is returned. When not used anymore,
+ * the returned value must be freed.
  */
 #ifdef HAVE_ICONV
 EAPI char *
@@ -569,9 +575,12 @@ eina_str_convert(const char *enc_from __UNUSED__,
 /**
  * @brief Put a \ before and Space( ), \ or ' in a string.
  *
- * @param str the string to escape
+ * @param str The string to escape.
+ * @return The escaped string.
  *
- * A newly allocated string is returned.
+ * This function returns a newly allocated escaped string on success,
+ * @c NULL on failure. When not used anymore, the returned value must
+ * be freed.
  */
 EAPI char *
 eina_str_escape(const char *str)
@@ -600,9 +609,11 @@ eina_str_escape(const char *str)
 /**
  * @brief Lowercase all the characters in range [A-Z] in the given string.
  *
- * @param str the string to lowercase
+ * @param str The string to lowercase.
  *
- * This modifies the original string, changing all characters in [A-Z] to lowercase.
+ * This function modifies the original string, changing all characters
+ * in [A-Z] to lowercase. If @p str is @c NULL or is an empty string,
+ * this function does nothing.
  */
 EAPI void
 eina_str_tolower(char **str)
@@ -618,9 +629,11 @@ eina_str_tolower(char **str)
 /**
  * @brief Uppercase all the characters in range [a-z] in the given string.
  *
- * @param str the string to uppercase
+ * @param str The string to uppercase.
  *
- * This modifies the original string, changing all characters in [a-z] to uppercase.
+ * This function modifies the original string, changing all characters
+ * in [a-z] to uppercase. If @p str is @c NULL or is an empty string,
+ * this function does nothing.
  */
 EAPI void
 eina_str_toupper(char **str)

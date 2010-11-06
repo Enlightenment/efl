@@ -38,36 +38,76 @@
 
 /**
  * @typedef Eina_Iterator
- * Type for iterators.
+ * Abstract type for iterators.
  */
 typedef struct _Eina_Iterator Eina_Iterator;
 
+/**
+ * @typedef Eina_Iterator_Next_Callback
+ * Type for a callback that returns the next element in a container.
+ */
 typedef Eina_Bool           (*Eina_Iterator_Next_Callback)(Eina_Iterator *it, void **data);
-typedef void *              (*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
+
+/**
+ * @typedef Eina_Iterator_Get_Container_Callback
+ * Type for a callback that returns the container.
+ */
+typedef void               *(*Eina_Iterator_Get_Container_Callback)(Eina_Iterator *it);
+
+/**
+ * @typedef Eina_Iterator_Free_Callback
+ * Type for a callback that frees the container.
+ */
 typedef void                (*Eina_Iterator_Free_Callback)(Eina_Iterator *it);
+
+/**
+ * @typedef Eina_Iterator_Lock_Callback
+ * Type for a callback that lock the container.
+ */
 typedef Eina_Bool           (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
 
+/**
+ * @struct _Eina_Iterator
+ * structure of an iterator
+ */
 struct _Eina_Iterator
 {
 #define EINA_ITERATOR_VERSION 1
-   int                                                version;
+   int                                  version; /**< Version of the Iterator API. */
 
-   Eina_Iterator_Next_Callback next                   EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
-   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-   Eina_Iterator_Free_Callback free                   EINA_ARG_NONNULL(1);
+   Eina_Iterator_Next_Callback          next          EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT; /**< Callback called when a next element is requested. */
+   Eina_Iterator_Get_Container_Callback get_container EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is requested. */
+   Eina_Iterator_Free_Callback          free          EINA_ARG_NONNULL(1); /**< Callback called when the container is freed. */
 
-   Eina_Iterator_Lock_Callback lock                   EINA_WARN_UNUSED_RESULT;
-   Eina_Iterator_Lock_Callback unlock                 EINA_WARN_UNUSED_RESULT;
+   Eina_Iterator_Lock_Callback          lock          EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is locked. */
+   Eina_Iterator_Lock_Callback          unlock        EINA_WARN_UNUSED_RESULT; /**< Callback called when the container is unlocked. */
 
 #define EINA_MAGIC_ITERATOR 0x98761233
    EINA_MAGIC
 };
 
+/**
+ * @def FUNC_ITERATOR_NEXT(Function)
+ * Helper macro to cast @p Function to a Eina_Iterator_Next_Callback.
+ */
 #define FUNC_ITERATOR_NEXT(Function)          ((Eina_Iterator_Next_Callback)Function)
-#define FUNC_ITERATOR_GET_CONTAINER(Function) ((                                       \
-                                                 Eina_Iterator_Get_Container_Callback) \
-                                               Function)
+
+/**
+ * @def FUNC_ITERATOR_GET_CONTAINER(Function)
+ * Helper macro to cast @p Function to a Eina_Iterator_Get_Container_Callback.
+ */
+#define FUNC_ITERATOR_GET_CONTAINER(Function) ((Eina_Iterator_Get_Container_Callback)Function)
+
+/**
+ * @def FUNC_ITERATOR_FREE(Function)
+ * Helper macro to cast @p Function to a Eina_Iterator_Free_Callback.
+ */
 #define FUNC_ITERATOR_FREE(Function)          ((Eina_Iterator_Free_Callback)Function)
+
+/**
+ * @def FUNC_ITERATOR_LOCK(Function)
+ * Helper macro to cast @p Function to a Eina_Iterator_Lock_Callback.
+ */
 #define FUNC_ITERATOR_LOCK(Function)          ((Eina_Iterator_Lock_Callback)Function)
 
 EAPI void      eina_iterator_free(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
