@@ -374,6 +374,11 @@ efreet_desktop_new(const char *file)
         {
             desktop->ref = 1;
             desktop->eet = 1;
+            if (!efreet_desktop_environment_check(desktop))
+            {
+                efreet_desktop_free(desktop);
+                return NULL;
+            }
             return desktop;
         }
     }
@@ -1261,7 +1266,10 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
     char *val;
 
     if (!desktop_environment)
+    {
+        //if (desktop->only_show_in) return 0;
         return 1;
+    }
 
     if (desktop->only_show_in)
     {
