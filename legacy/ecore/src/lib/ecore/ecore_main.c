@@ -326,9 +326,9 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
              ERR("deleted fd in epoll");
              continue;
           }
-        if (ev->events & EPOLLIN) fdh->read_active = 1;
-        if (ev->events & EPOLLOUT) fdh->write_active = 1;
-        if (ev->events & EPOLLERR) fdh->error_active = 1;
+        if (ev[i].events & EPOLLIN) fdh->read_active = 1;
+        if (ev[i].events & EPOLLOUT) fdh->write_active = 1;
+        if (ev[i].events & EPOLLERR) fdh->error_active = 1;
      }
 
    return ret;
