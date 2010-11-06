@@ -244,6 +244,7 @@
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Item_Block Item_Block;
 typedef struct _Pan Pan;
+typedef struct _Item_Cache Item_Cache;
 
 struct _Widget_Data
 {
@@ -256,6 +257,7 @@ struct _Widget_Data
    Eina_List *queue, *selected;
    Elm_Genlist_Item *show_item;
    Elm_Genlist_Item *last_selected_item;
+   Eina_Inlist *item_cache;
    Elm_List_Mode mode;
    Eina_Bool on_hold : 1;
    Eina_Bool multi : 1;
@@ -272,6 +274,8 @@ struct _Widget_Data
    struct {
      Evas_Coord x, y;
    } history[SWIPE_MOVES];
+   int item_cache_count;
+   int item_cache_max;
    int movements;
    int walking;
    int item_width;
@@ -306,11 +310,10 @@ struct _Elm_Genlist_Item
    const Elm_Genlist_Item_Class *itc;
    Elm_Genlist_Item *parent;
    Elm_Genlist_Item_Flags flags;
-   struct 
-     {
-        Evas_Smart_Cb func;
-        const void *data;
-     } func;
+   struct {
+     Evas_Smart_Cb func;
+     const void *data;
+   } func;
 
    Evas_Object *spacer;
    Eina_List *labels, *icons, *states, *icon_objs;
@@ -320,19 +323,19 @@ struct _Elm_Genlist_Item
 
    Elm_Genlist_Item *rel;
 
-   struct
-     {
-        const void *data;
-        Elm_Tooltip_Item_Content_Cb content_cb;
-        Evas_Smart_Cb del_cb;
-        const char *style;
-     } tooltip;
+   struct {
+     const void *data;
+     Elm_Tooltip_Item_Content_Cb content_cb;
+     Evas_Smart_Cb del_cb;
+     const char *style;
+   } tooltip;
 
    const char *mouse_cursor;
 
    int relcount;
    int walking;
    int expanded_depth;
+   int order_num_in;
    
    Eina_Bool before : 1;
 
@@ -352,6 +355,22 @@ struct _Elm_Genlist_Item
    Eina_Bool updateme : 1;
 };
 
+struct _Item_Cache
+{
+  EINA_INLIST;
+
+  Evas_Object *base_view, *spacer;
+  
+  const char *item_style; // it->itc->item_style
+  Eina_Bool tree : 1; // it->flags & ELM_GENLIST_ITEM_SUBITEMS
+  Eina_Bool compress : 1; // it->wd->compress
+  Eina_Bool odd : 1; // in & 0x1
+  
+  Eina_Bool selected : 1; // it->selected
+  Eina_Bool disabled : 1; // it->disabled
+  Eina_Bool expanded : 1; // it->expanded
+};
+
 #define ELM_GENLIST_ITEM_FROM_INLIST(item)      \
   ((item) ? EINA_INLIST_CONTAINER_GET(item, Elm_Genlist_Item) : NULL)
 
@@ -362,6 +381,7 @@ struct _Pan
 };
 
 static const char *widtype = NULL;
+static void _item_cache_zero(Widget_Data *wd);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 //static void _show_region_hook(void *data, Evas_Object *obj);
@@ -610,6 +630,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _item_cache_zero(wd);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->update_job) ecore_job_del(wd->update_job);
    free(wd);
@@ -631,6 +652,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Item_Block *itb;
    if (!wd) return;
+   _item_cache_zero(wd);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "genlist", "base", elm_widget_style_get(obj));
 //   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    wd->item_width = wd->item_height = 0;
@@ -1143,6 +1165,112 @@ _signal_contract(void *data, Evas_Object *obj __UNUSED__, const char *emission _
      evas_object_smart_callback_call(it->base.widget, "contract,request", it);
 }
 
+
+static void
+_item_cache_clean(Widget_Data *wd)
+{
+  while ((wd->item_cache) && (wd->item_cache_count > wd->item_cache_max))
+    {
+      Item_Cache *itc;
+      
+      itc = EINA_INLIST_CONTAINER_GET(wd->item_cache->last, Item_Cache);
+      wd->item_cache = eina_inlist_remove(wd->item_cache,
+                                          wd->item_cache->last);
+      wd->item_cache_count--;
+      if (itc->spacer) evas_object_del(itc->spacer);
+      if (itc->base_view) evas_object_del(itc->base_view);
+      if (itc->item_style) eina_stringshare_del(itc->item_style);
+      free(itc);
+    }
+}
+
+static void
+_item_cache_zero(Widget_Data *wd)
+{
+  int pmax = wd->item_cache_max;
+  wd->item_cache_max = 0;
+  _item_cache_clean(wd);
+  wd->item_cache_max = pmax;
+}
+
+static void
+_item_cache_add(Elm_Genlist_Item *it)
+{
+  Item_Cache *itc;
+
+  if (it->wd->item_cache_max <= 0)
+    {
+      evas_object_del(it->base.view);
+      it->base.view = NULL;
+      evas_object_del(it->spacer);
+      it->spacer = NULL;
+      return;
+    }
+  
+  it->wd->item_cache_count++;
+  itc = calloc(1, sizeof(Item_Cache));
+  it->wd->item_cache = eina_inlist_prepend(it->wd->item_cache, EINA_INLIST_GET(itc));
+  itc->spacer = it->spacer;
+  it->spacer = NULL;
+  itc->base_view = it->base.view;
+  it->base.view = NULL;
+  evas_object_hide(itc->base_view);
+  evas_object_move(itc->base_view, -9999, -9999);
+  itc->item_style = eina_stringshare_add(it->itc->item_style);
+  if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) itc->tree = 1;
+  itc->compress = (it->wd->compress);
+  itc->odd = (it->order_num_in & 0x1);
+  itc->selected = it->selected;
+  itc->disabled = it->disabled;
+  itc->expanded = it->expanded;
+  edje_object_signal_callback_del(it->base.view, "elm,action,expand,toggle",
+                                  "elm", _signal_expand_toggle);
+  edje_object_signal_callback_del(it->base.view, "elm,action,expand", "elm",
+                                  _signal_expand);
+  edje_object_signal_callback_del(it->base.view, "elm,action,contract",
+                                  "elm", _signal_contract);
+  evas_object_event_callback_del(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
+                                 _mouse_down);
+  evas_object_event_callback_del(it->base.view, EVAS_CALLBACK_MOUSE_UP,
+                                 _mouse_up);
+  evas_object_event_callback_del(it->base.view, EVAS_CALLBACK_MOUSE_MOVE,
+                                 _mouse_move);
+  _item_cache_clean(it->wd);
+}
+
+static Item_Cache *
+_item_cache_find(Elm_Genlist_Item *it)
+{
+  Item_Cache *itc;
+  Eina_Bool tree = 0, odd;
+  
+  if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) tree = 1;
+  odd = (it->order_num_in & 0x1);
+  EINA_INLIST_FOREACH(it->wd->item_cache, itc)
+    {
+      if ((itc->tree == tree) && 
+          (itc->odd == odd) && 
+          (itc->compress == it->wd->compress) &&
+         (!strcmp(it->itc->item_style, itc->item_style)))
+        {
+          it->wd->item_cache = eina_inlist_remove(it->wd->item_cache,
+                                                  EINA_INLIST_GET(itc));
+          it->wd->item_cache_count--;
+          return itc;
+        }
+    }
+  return NULL;
+}
+
+static void
+_item_cache_free(Item_Cache *itc)
+{
+  if (itc->spacer) evas_object_del(itc->spacer);
+  if (itc->base_view) evas_object_del(itc->base_view);
+  if (itc->item_style) eina_stringshare_del(itc->item_style);
+  free(itc);
+}
+
 static void
 _item_realize(Elm_Genlist_Item *it, int in, int calc)
 {
@@ -1151,26 +1279,40 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    const char *treesize;
    char buf[1024];
    int depth, tsize = 20;
-
+   Item_Cache *itc;
+  
    if ((it->realized) || (it->delete_me)) return;
-   it->base.view = edje_object_add(evas_object_evas_get(it->base.widget));
-   edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.widget) * 
-                         _elm_config->scale);
-   evas_object_smart_member_add(it->base.view, it->wd->pan_smart);
-   elm_widget_sub_object_add(it->base.widget, it->base.view);
+   it->order_num_in = in;
 
-   if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) strncpy(buf, "tree", sizeof(buf));
-   else strncpy(buf, "item", sizeof(buf));
-   if (it->wd->compress) strncat(buf, "_compress", sizeof(buf) - strlen(buf));
-
-   if (in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
-   strncat(buf, "/", sizeof(buf) - strlen(buf));
-   strncat(buf, it->itc->item_style, sizeof(buf) - strlen(buf));
-   
-   _elm_theme_object_set(it->base.widget, it->base.view, "genlist", buf, elm_widget_style_get(it->base.widget));
-   it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->base.widget));
-   evas_object_color_set(it->spacer, 0, 0, 0, 0);
-   elm_widget_sub_object_add(it->base.widget, it->spacer);
+   itc = _item_cache_find(it);
+   if (itc)
+     {
+        it->base.view = itc->base_view;
+        itc->base_view = NULL;
+        it->spacer = itc->spacer;
+        itc->spacer = NULL;
+     }
+   else
+     {
+       it->base.view = edje_object_add(evas_object_evas_get(it->base.widget));
+       edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.widget) * 
+                             _elm_config->scale);
+       evas_object_smart_member_add(it->base.view, it->wd->pan_smart);
+       elm_widget_sub_object_add(it->base.widget, it->base.view);
+       
+       if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) strncpy(buf, "tree", sizeof(buf));
+       else strncpy(buf, "item", sizeof(buf));
+       if (it->wd->compress) strncat(buf, "_compress", sizeof(buf) - strlen(buf));
+       
+       if (in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
+       strncat(buf, "/", sizeof(buf) - strlen(buf));
+       strncat(buf, it->itc->item_style, sizeof(buf) - strlen(buf));
+       
+       _elm_theme_object_set(it->base.widget, it->base.view, "genlist", buf, elm_widget_style_get(it->base.widget));
+       it->spacer = evas_object_rectangle_add(evas_object_evas_get(it->base.widget));
+       evas_object_color_set(it->spacer, 0, 0, 0, 0);
+       elm_widget_sub_object_add(it->base.widget, it->spacer);
+     }
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent) depth += 1;
    it->expanded_depth = depth;
    treesize = edje_object_data_get(it->base.view, "treesize");
@@ -1198,12 +1340,39 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
                                        _mouse_up, it);
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_MOVE,
                                        _mouse_move, it);
-        if (it->selected)
-           edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
-        if (it->disabled)
-           edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
-        if (it->expanded)
-           edje_object_signal_emit(it->base.view, "elm,state,expanded", "elm");
+        if (itc)
+          {
+             if (it->selected != itc->selected)
+               {
+                 if (it->selected)
+                   edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+                 else
+                   edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
+               }
+             if (it->disabled != itc->disabled)
+               {
+                 if (it->disabled)
+                   edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+                 else
+                   edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
+               }
+             if (it->expanded != itc->expanded)
+               {
+                 if (it->expanded)
+                   edje_object_signal_emit(it->base.view, "elm,state,expanded", "elm");
+                 else
+                   edje_object_signal_emit(it->base.view, "elm,state,contracted", "elm");
+               }
+          }
+        else
+          {
+            if (it->selected)
+              edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
+            if (it->disabled)
+              edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
+            if (it->expanded)
+              edje_object_signal_emit(it->base.view, "elm,state,expanded", "elm");
+          }
      }
 
    if ((calc) && (it->wd->homogeneous) && (it->wd->item_width))
@@ -1234,6 +1403,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
                        edje_object_part_text_set(it->base.view, l->data, s);
                        free(s);
                     }
+                  else if (itc)
+                    edje_object_part_text_set(it->base.view, l->data, "");
                }
           }
         if (it->itc->func.icon_get)
@@ -1270,6 +1441,11 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
                   if (on)
                     {
                        snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
+                       edje_object_signal_emit(it->base.view, buf, "elm");
+                    }
+                  else if (itc)
+                    {
+                       snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
                        edje_object_signal_emit(it->base.view, buf, "elm");
                     }
                }
@@ -1311,6 +1487,8 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
 
    it->realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
+
+   if (itc) _item_cache_free(itc);
 }
 
 static void
@@ -1324,10 +1502,7 @@ _item_unrealize(Elm_Genlist_Item *it)
         ecore_timer_del(it->long_timer);
         it->long_timer = NULL;
      }
-   evas_object_del(it->base.view);
-   it->base.view = NULL;
-   evas_object_del(it->spacer);
-   it->spacer = NULL;
+   _item_cache_add(it);
    elm_widget_stringlist_free(it->labels);
    it->labels = NULL;
    elm_widget_stringlist_free(it->icons);
@@ -1901,6 +2076,7 @@ elm_genlist_add(Evas_Object *parent)
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;
    wd->max_items_per_block = 32;
+   wd->item_cache_max = wd->max_items_per_block * 2;
    wd->longpress_timeout = 1.0;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
@@ -2128,6 +2304,11 @@ _item_idler(void *data)
 {
    Widget_Data *wd = data;
 
+  //xxx
+  //static double q_start = 0.0;
+  //if (q_start == 0.0) q_start = ecore_time_get();
+  //xxx
+  
    if (_queue_proecess(wd, 1) > 0)
      {
         if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -2135,6 +2316,9 @@ _item_idler(void *data)
      }
    if (!wd->queue)
      {
+       //xxx
+       //printf("PROCESS TIME: %3.3f\n", ecore_time_get() - q_start);
+       //xxx
         wd->queue_idler = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
@@ -3890,6 +4074,8 @@ elm_genlist_block_count_set(Evas_Object *obj, int n)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->max_items_per_block = n;
+   wd->item_cache_max = wd->max_items_per_block * 2;
+   _item_cache_clean(wd);
 }
 
 /**
