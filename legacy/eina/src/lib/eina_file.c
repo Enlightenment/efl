@@ -70,6 +70,14 @@ void *alloca (size_t);
 #include "eina_file.h"
 #include "eina_stringshare.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
 struct _Eina_File_Iterator
 {
@@ -112,7 +120,7 @@ _eina_dirent_buffer_size(DIR *dirp)
    name_max = pathconf(dirp, _PC_NAME_MAX);
 #  else
 #   error "buffer size for readdir_r cannot be determined safely"
-# endif
+#  endif
 # endif
 #endif
    name_end = (size_t) offsetof(struct dirent, d_name) + name_max + 1;
@@ -312,6 +320,10 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    return EINA_TRUE;
 }
 
+/**
+ * @endcond
+ */
+
 /*============================================================================*
 *                                 Global                                     *
 *============================================================================*/
@@ -362,10 +374,10 @@ eina_file_dir_list(const char *dir,
    int dlength;
    struct dirent *de;
    DIR *d;
-#ifndef _DIRENT_HAVE_D_TYPE
+# ifndef _DIRENT_HAVE_D_TYPE
    struct stat st;
-#endif
-  
+# endif
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb,  EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(dir[0] == '\0', EINA_FALSE);
@@ -389,25 +401,25 @@ eina_file_dir_list(const char *dir,
           {
              char *path;
              int length;
-            
-#ifdef _DIRENT_HAVE_D_NAMLEN       
+
+# ifdef _DIRENT_HAVE_D_NAMLEN
              length = de->d_namlen;
-#else
+# else
              length = strlen(de->d_name);
-#endif       
+# endif
              path = alloca(dlength + length + 2);
              strcpy(path, dir);
              strcat(path, "/");
              strcat(path, de->d_name);
-#ifdef _DIRENT_HAVE_D_TYPE
+# ifdef _DIRENT_HAVE_D_TYPE
              if (de->d_type != DT_DIR)
                 continue;
-#else
+# else
              if (stat(path, &st))
                 continue;
              if (!S_ISDIR(st.st_mode))
                 continue;
-#endif
+# endif
              eina_file_dir_list(path, recursive, cb, data);
           }
      }
@@ -432,15 +444,15 @@ eina_file_dir_list(const char *dir,
    memcpy(new_dir,              dir,    length_dir);
    memcpy(new_dir + length_dir, "/*.*", 5);
 
-#ifdef UNICODE
+# ifdef UNICODE
    tdir = evil_char_to_wchar(new_dir);
-#else
+# else
    tdir = new_dir;
-#endif /* ! UNICODE */
+# endif /* ! UNICODE */
    hSearch = FindFirstFile(tdir, &file);
-#ifdef UNICODE
+# ifdef UNICODE
    free(tdir);
-#endif /* UNICODE */
+# endif /* UNICODE */
 
    if (hSearch == INVALID_HANDLE_VALUE)
       return EINA_FALSE;
@@ -449,11 +461,11 @@ eina_file_dir_list(const char *dir,
      {
         char *filename;
 
-#ifdef UNICODE
+# ifdef UNICODE
         filename = evil_wchar_to_char(file.cFileName);
-#else
+# else
         filename = file.cFileName;
-#endif /* ! UNICODE */
+# endif /* ! UNICODE */
         if (!strcmp(filename, ".") || !strcmp(filename, ".."))
            continue;
 
@@ -474,9 +486,9 @@ eina_file_dir_list(const char *dir,
              eina_file_dir_list(path, recursive, cb, data);
           }
 
-#ifdef UNICODE
+# ifdef UNICODE
         free(filename);
-#endif /* UNICODE */
+# endif /* UNICODE */
 
      } while (FindNextFile(hSearch, &file));
    FindClose(hSearch);
