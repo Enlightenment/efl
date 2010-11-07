@@ -534,6 +534,11 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
 
       case ECORE_CON_SSL_STATE_HANDSHAKING:
+        if (!svr->session)
+          {
+             DBG("Server was previously lost, going to error condition");
+             goto error;
+          }
         ret = gnutls_handshake(svr->session);
         DBG("calling gnutls_handshake(): returned with '%s'", gnutls_strerror_name(ret));
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
@@ -596,7 +601,7 @@ error:
    _gnutls_print_errors(ret);
    if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
      ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(svr->session)));
-   if (svr->ssl_state != ECORE_CON_SSL_STATE_DONE)
+   if (svr->session && (svr->ssl_state != ECORE_CON_SSL_STATE_DONE))
      {
         ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(svr->session)));
         ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(svr->session)));
@@ -830,6 +835,11 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
 
       case ECORE_CON_SSL_STATE_HANDSHAKING:
+        if (!cl->session)
+          {
+             DBG("Client was previously lost, going to error condition");
+             goto error;
+          }
         DBG("calling gnutls_handshake()");
         ret = gnutls_handshake(cl->session);
         SSL_ERROR_CHECK_GOTO_ERROR(gnutls_error_is_fatal(ret));
@@ -893,7 +903,7 @@ error:
    _gnutls_print_errors(ret);
    if ((ret == GNUTLS_E_WARNING_ALERT_RECEIVED) || (ret == GNUTLS_E_FATAL_ALERT_RECEIVED))
      ERR("Also received alert: %s", gnutls_alert_get_name(gnutls_alert_get(cl->session)));
-   if (cl->ssl_state != ECORE_CON_SSL_STATE_DONE)
+   if (cl->session && (cl->ssl_state != ECORE_CON_SSL_STATE_DONE))
      {
         ERR("last out: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_out(cl->session)));
         ERR("last in: %s", SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_get_last_in(cl->session)));
@@ -1105,6 +1115,11 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
 
       case ECORE_CON_SSL_STATE_HANDSHAKING:
+        if (!svr->ssl)
+          {
+             DBG("Server was previously lost, going to error condition");
+             goto error;
+          }
         ret = SSL_do_handshake(svr->ssl);
         svr->ssl_err = SSL_get_error(svr->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((svr->ssl_err == SSL_ERROR_SYSCALL) || (svr->ssl_err == SSL_ERROR_SSL));
@@ -1343,6 +1358,11 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
 
       case ECORE_CON_SSL_STATE_HANDSHAKING:
+         if (!cl->ssl)
+          {
+             DBG("Client was previously lost, going to error condition");
+             goto error;
+          }
         ret = SSL_do_handshake(cl->ssl);
         cl->ssl_err = SSL_get_error(cl->ssl, ret);
         SSL_ERROR_CHECK_GOTO_ERROR((cl->ssl_err == SSL_ERROR_SYSCALL) || (cl->ssl_err == SSL_ERROR_SSL));
