@@ -35,6 +35,8 @@ DEFINE_OLEGUID(IID_IDropSource,    0x00000121L, 0, 0);
 DEFINE_OLEGUID(IID_IDropTarget,    0x00000122L, 0, 0);
 DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
 
+#define IDI_ICON 101
+
 static int       _ecore_win32_init_count = 0;
 
 LRESULT CALLBACK
@@ -260,6 +262,35 @@ int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
  * Ecore_Win32 is a library that wraps Windows graphic functions
  * and integrate them nicely into the Ecore main loop.
  *
+ * @section Ecore_Win32_Sec_Init Initialisation / Shutdown
+ *
+ * To fill...
+ *
+ * @section Ecore_Win32_Sec_Icons How to set icons to an application
+ *
+ * It is possible to also sets the icon of the application easily:
+ *
+ * @li Create an icon with your favorite image creator. The Gimp is a
+ * good choice. Create several images of size 16, 32 and 48. You can
+ * also create images of size 24, 64, 128 and 256. Paste all of them
+ * in the image of size 16 as a layer. Save the image of size 16 with
+ * the name my_icon.ico. Put it where the source code of the
+ * application is located.
+ * @li Create my_icon_rc.rc file with your code editor and add in it:
+ * @code
+ * 101 ICON DISCARDABLE "my_icon.ico"
+ * @endcode
+ * @li With Visual Studio, put that file in the 'Resource file' part
+ * of the project.
+ * @li With MinGW, you have to compile it with windres:
+ * @code
+ * windres my_icon_rc.rc my_icon_rc.o
+ * @endcode
+ * and add my_icon_rc.o to the object files of the application.
+ *
+ * @note The value 101 must not be changed, it's the ID used
+ * internally by Ecore_Win32 to get the icons.
+ *
  * @{
  */
 
@@ -278,7 +309,9 @@ int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST = 0;
 EAPI int
 ecore_win32_init()
 {
-   WNDCLASS wc;
+   WNDCLASSEX wc;
+   HICON      icon;
+   HICON      icon_sm;
 
    if (++_ecore_win32_init_count != 1)
      return _ecore_win32_init_count;
@@ -307,19 +340,38 @@ ecore_win32_init()
         goto shutdown_ecore_event;
      }
 
-   memset (&wc, 0, sizeof (WNDCLASS));
+   icon = LoadImage(_ecore_win32_instance,
+                    MAKEINTRESOURCE(IDI_ICON),
+                    IMAGE_ICON,
+                    GetSystemMetrics(SM_CXICON),
+                    GetSystemMetrics(SM_CYICON),
+                    LR_DEFAULTCOLOR);
+   icon_sm = LoadImage(_ecore_win32_instance,
+                       MAKEINTRESOURCE(IDI_ICON),
+                       IMAGE_ICON,
+                       GetSystemMetrics(SM_CXSMICON),
+                       GetSystemMetrics(SM_CYSMICON),
+                       LR_DEFAULTCOLOR);
+   if (!icon)
+     icon = LoadIcon (NULL, IDI_APPLICATION);
+   if (!icon_sm)
+     icon_sm = LoadIcon (NULL, IDI_APPLICATION);
+
+   memset (&wc, 0, sizeof (WNDCLASSEX));
+   wc.cbSize = sizeof (WNDCLASSEX);
    wc.style = CS_HREDRAW | CS_VREDRAW;
    wc.lpfnWndProc = _ecore_win32_window_procedure;
    wc.cbClsExtra = 0;
    wc.cbWndExtra = 0;
    wc.hInstance = _ecore_win32_instance;
-   wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);
+   wc.hIcon = icon;
    wc.hCursor = LoadCursor (NULL, IDC_ARROW);
    wc.hbrBackground = (HBRUSH)(1 + COLOR_BTNFACE);
    wc.lpszMenuName =  NULL;
    wc.lpszClassName = ECORE_WIN32_WINDOW_CLASS;
+   wc.hIconSm = icon_sm;
 
-   if(!RegisterClass(&wc))
+   if(!RegisterClassEx(&wc))
      {
         ERR("RegisterClass() failed");
         goto free_library;
