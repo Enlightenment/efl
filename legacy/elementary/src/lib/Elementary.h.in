@@ -2257,8 +2257,8 @@ extern "C" {
     */
 
    /* Hoverlist */
-  typedef struct _Elm_Hoverlist_Item Elm_Hoverlist_Item;
-
+   typedef struct _Elm_Hoverlist_Item Elm_Hoverlist_Item;
+  
    EAPI Evas_Object        *elm_hoverlist_add(Evas_Object* parent);
    EAPI void                elm_hoverlist_hover_end(Evas_Object *obj);
    EAPI Evas_Object        *elm_hoverlist_item_icon_get(const Elm_Hoverlist_Item *item);
