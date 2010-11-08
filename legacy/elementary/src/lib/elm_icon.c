@@ -196,7 +196,7 @@ elm_icon_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
-   wd->lookup_order = ELM_ICON_LOOKUP_FDO_THEME;
+   wd->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
    wd->img = _els_smart_icon_add(e);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
 				  _mouse_up, obj);
@@ -428,9 +428,9 @@ elm_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
 EAPI Elm_Icon_Lookup_Order
 elm_icon_order_lookup_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_ICON_LOOKUP_FDO_THEME;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_ICON_LOOKUP_THEME_FDO;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_ICON_LOOKUP_FDO_THEME;
+   if (!wd) return ELM_ICON_LOOKUP_THEME_FDO;
    return wd->lookup_order;
 }
 
