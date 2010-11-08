@@ -16,23 +16,23 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 
 
 #define IN_RANGE(x, y, w, h) \
-  ( ((unsigned)(x) < (unsigned)(w)) && ((unsigned)(y) < (unsigned)(h)) )
+  ( x > 0 && y > 0 &&((unsigned)(x) < (unsigned)(w)) && ((unsigned)(y) < (unsigned)(h)) )
 
-#define IN_RECT(x, y, rx, ry, rw, rh)          \
-( ((unsigned)((x) - (rx)) < (unsigned)(rw)) && \
-  ((unsigned)((y) - (ry)) < (unsigned)(rh)) )
+#define IN_RECT(x, y, rx, ry, rw, rh)                   \
+  ( ((unsigned)((x) - (rx)) < (unsigned)(rw)) &&        \
+    ((unsigned)((y) - (ry)) < (unsigned)(rh)) )
 
-#define EXCHANGE_POINTS(x0, y0, x1, y1) \
-{ \
-	int _tmp = y0; \
-  \
-	y0 = y1;   \
-	y1 = _tmp; \
-  \
-	_tmp = x0; \
-	x0 = x1;   \
-	x1 = _tmp; \
-}
+#define EXCHANGE_POINTS(x0, y0, x1, y1)         \
+  {                                             \
+     int _tmp = y0;                             \
+                                                \
+     y0 = y1;                                   \
+     y1 = _tmp;                                 \
+                                                \
+     _tmp = x0;                                 \
+     x0 = x1;                                   \
+     x1 = _tmp;                                 \
+  }
 
 
 EAPI void
@@ -502,6 +502,10 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
 		if ((py < 0) && (dely < 0)) return;
 		if ((py > by) && (dely > 0)) return;
 	      }
+            if (!p0_in)
+              {
+                 if (py < 0) goto next_x;
+              }
 #ifdef EVAS_SLI
 	     if (((py) % dc->sli.h) == dc->sli.y)
 #endif
@@ -509,6 +513,7 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
 		  if (IN_RANGE(px, py, clw, clh))
 		    pfunc(0, 255, color, p);
 	       }
+          next_x:
 	    yy += dyy;
 	    px++;
 	    p++;
@@ -535,6 +540,10 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
 	    if ((px < 0) && (delx < 0)) return;
 	    if ((px > rx) && (delx > 0)) return;
 	  }
+        if (!p0_in)
+          {
+             if (px < 0) goto next_y;
+          }
 #ifdef EVAS_SLI
 	if (((py) % dc->sli.h) == dc->sli.y)
 #endif
@@ -542,6 +551,7 @@ _evas_draw_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x1, 
 	     if (IN_RANGE(px, py, clw, clh))
 	       pfunc(0, 255, color, p);
 	  }
+     next_y:
 	xx += dxx;
 	py++;
 	p += dstw;
@@ -607,10 +617,14 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	      }
 	    if (!p1_in)
 	      {
-		if ((py <= -1) && (dely < 0)) return;
+		if ((py < 0) && (dely < 0)) return;
 		if ((py > by) && (dely > 0)) return;
 	      }
-	    if ((px) < clw)
+            if (!p0_in)
+              {
+                 if (py < 0) goto next_x;
+              }
+	    if (px < clw)
 	      {
 		aa = ((yy - (y << 16)) >> 8);
 		if ((py) < clh)
@@ -618,6 +632,8 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 		if ((py + 1) < clh)
 		   pfunc(0, aa, color, p + dstw);
 	      }
+
+          next_x:
 	    yy += dyy;
 	    px++;
 	    p++;
@@ -642,10 +658,14 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	  }
 	if (!p1_in)
 	  {
-	    if ((px <= -1) && (delx < 0)) return;
+	    if ((px < 0) && (delx < 0)) return;
 	    if ((px > rx) && (delx > 0)) return;
 	  }
-	if ((py) < clh)
+        if (!p0_in)
+          {
+             if (px < 0) goto next_y;
+          }
+	if (py < clh)
 	  {
 	    aa = ((xx - (x << 16)) >> 8);
 	    if ((px) < clw)
@@ -653,6 +673,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 	    if ((px + 1) < clw)
 		pfunc(0, aa, color, p + 1);
 	  }
+     next_y:
 	xx += dxx;
 	py++;
 	p += dstw;
