@@ -90,6 +90,16 @@ end:
    return EINA_FALSE;
 }
 
+static int
+_elm_toolbar_icon_size_get(Widget_Data *wd)
+{
+   const char *icon_size = edje_object_data_get(
+      elm_smart_scroller_edje_object_get(wd->scr), "icon_size");
+   if (icon_size)
+      return atoi(icon_size);
+   return _elm_config->icon_size;
+}
+
 static void
 _item_show(Elm_Toolbar_Item *it)
 {
@@ -251,6 +261,7 @@ _theme_hook(Evas_Object *obj)
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", elm_widget_style_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_scale_set(wd->scr, scale);
+   wd->icon_size = _elm_toolbar_icon_size_get(wd);
    EINA_INLIST_FOREACH(wd->items, it)
      {
         Evas_Object *view = it->base.view;
@@ -643,7 +654,10 @@ elm_toolbar_add(Evas_Object *parent)
 				 ELM_SMART_SCROLLER_POLICY_AUTO,
 				 ELM_SMART_SCROLLER_POLICY_OFF);
 
-   wd->icon_size = _elm_config->icon_size;
+
+   wd->icon_size = _elm_toolbar_icon_size_get(wd);
+
+
    wd->homogeneous = EINA_TRUE;
    wd->align = 0.5;
 
