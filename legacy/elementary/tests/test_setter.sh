@@ -2,7 +2,7 @@
 ret=0
 
 check(){
-    func=$(echo $1 | grep -oe 'elm_\w\+')
+    func=$(echo $1 | grep -oe '_\?elm_\w\+')
     base=${func%_set}
     echo $1 | grep -qe "_set(const \+[^\(char \+\*\)]"
     if [ $? == 0 ];then
