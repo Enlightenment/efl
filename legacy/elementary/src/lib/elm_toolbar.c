@@ -1282,7 +1282,6 @@ _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
 {
    const char *s;
 
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if ((label) && (item->label) && (!strcmp(label, item->label))) return;
 
    eina_stringshare_replace(&item->label, label);
@@ -1310,6 +1309,7 @@ _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
 EAPI void
 elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label)
 {
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    _item_label_set(item, label, "elm,state,label_set");
 }
 
