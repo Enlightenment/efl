@@ -74,6 +74,9 @@
  *
  * drag - This is called when the item in the list is being dragged.
  *
+ * longpressed - This is called when the item is pressed for a certain amount
+ * of time. By default it's 1 second.
+ *
  * Genlist has a fairly large API, mostly because it's relatively complex,
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview o the theory behind genlist.
