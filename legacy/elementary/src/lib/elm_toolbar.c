@@ -17,6 +17,7 @@ struct _Widget_Data
    Eina_Inlist *items;
    Elm_Toolbar_Item *more_item, *selected_item;
    Elm_Toolbar_Shrink_Mode shrink_mode;
+   Elm_Icon_Lookup_Order lookup_order;
    int icon_size;
    double align;
    Eina_Bool homogeneous : 1;
@@ -543,6 +544,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    Elm_Toolbar_Item *it;
 
    icon_obj = elm_icon_add(obj);
+   elm_icon_order_lookup_set(icon_obj, wd->lookup_order);
    if (!icon_obj) return NULL;
    it = elm_widget_item_new(obj, Elm_Toolbar_Item);
    if (!it)
@@ -654,6 +656,7 @@ elm_toolbar_add(Evas_Object *parent)
 
    elm_toolbar_mode_shrink_set(obj, _elm_config->toolbar_shrink_mode);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE, _resize, obj);
+   elm_toolbar_icon_order_lookup_set(obj, ELM_ICON_LOOKUP_THEME_FDO);
 
    _sizing_eval(obj);
    return obj;
@@ -852,6 +855,10 @@ elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state)
         _elm_toolbar_item_icon_obj_set(obj, it, it_state->icon, it_state->icon_str,
                                        wd->icon_size, "elm,state,icon_set,backward");
      }
+   if (it->disabled)
+        elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
+   else
+        elm_widget_signal_emit(it->icon, "elm,state,enabled", "elm");
 
    it->current_state = next_state;
    return EINA_TRUE;
@@ -909,8 +916,11 @@ elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char 
    Elm_Toolbar_Item_State *it_state;
    Evas_Object *icon_obj;
    Evas_Object *obj;
+   Widget_Data *wd;
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    obj = item->base.widget;
+   wd = elm_widget_data_get(item->base.widget);
+   if (!wd) return NULL;
 
    if (!item->states)
      {
@@ -921,6 +931,7 @@ elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char 
      }
 
    icon_obj = elm_icon_add(obj);
+   elm_icon_order_lookup_set(icon_obj, wd->lookup_order);
    if (!icon_obj) goto error_state_add;
 
    if (!_item_icon_set(icon_obj, "toolbar/", icon))
@@ -2140,4 +2151,44 @@ elm_toolbar_no_select_mode_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->no_select;
+}
+
+/**
+ * Sets icon lookup order, for icons used in this toolbar.
+ * Icons added before calling this function will not be affected.
+ * The default lookup order is ELM_ICON_LOOKUP_THEME_FDO.
+ *
+ * @param obj The toolbar object
+ * @param order The icon lookup order
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Elm_Toolbar_Item *it;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   wd->lookup_order = order;
+   EINA_INLIST_FOREACH(wd->items, it)
+      elm_icon_order_lookup_set(it->icon, order);
+}
+
+/**
+ * Gets the icon lookup order.
+ *
+ * @param obj The Toolbar object
+ * @return The icon lookup order
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Icon_Lookup_Order
+elm_toolbar_icon_order_lookup_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_ICON_LOOKUP_THEME_FDO;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_ICON_LOOKUP_THEME_FDO;
+   return wd->lookup_order;
 }

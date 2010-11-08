@@ -1300,6 +1300,8 @@ extern "C" {
    EAPI Evas_Object      *elm_toolbar_add(Evas_Object *parent);
    EAPI void              elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
    EAPI int               elm_toolbar_icon_size_get(const Evas_Object *obj);
+   EAPI void              elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
+   EAPI Elm_Icon_Lookup_Order elm_toolbar_icon_order_lookup_get(const Evas_Object *obj);
    EAPI void              elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
    EAPI Eina_Bool         elm_toolbar_no_select_mode_get(const Evas_Object *obj);
    EAPI Elm_Toolbar_Item *elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
