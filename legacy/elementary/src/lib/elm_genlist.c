@@ -1289,6 +1289,7 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    it->order_num_in = in;
 
    itc = _item_cache_find(it);
+   printf("REALIZE item %p, itc = %p\n", it, itc);
    if (itc)
      {
         it->base.view = itc->base_view;
@@ -1797,6 +1798,7 @@ _update_job(void *data)
                     {
                        _item_unrealize(it);
                        _item_realize(it, num, 0);
+                       position = 1;
                     }
                   else
                     {
