@@ -6070,7 +6070,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *n1, *n2, *n;
-   Eina_Bool should_merge = EINA_FALSE;
+   Eina_Bool should_merge = EINA_FALSE, reset_cursor = EINA_FALSE;
 
    if (!cur1 || !cur1->node) return;
    if (!cur2 || !cur2->node) return;
@@ -6086,6 +6086,12 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
    n1 = cur1->node;
    n2 = cur2->node;
+   if ((evas_textblock_cursor_compare(o->cursor, cur1) >= 0) &&
+         (evas_textblock_cursor_compare(cur2, o->cursor) >= 0))
+     {
+        reset_cursor = EINA_TRUE;
+     }
+
 
    if (n1 == n2)
      {
@@ -6147,7 +6153,9 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 #endif
 
    evas_textblock_cursor_copy(cur1, cur2);
-   evas_textblock_cursor_copy(cur1, o->cursor);
+   if (reset_cursor)
+     evas_textblock_cursor_copy(cur1, o->cursor);
+
    _evas_textblock_changed(o, cur1->obj);
 }
 
