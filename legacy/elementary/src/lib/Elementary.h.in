@@ -1341,6 +1341,7 @@ extern "C" {
    EAPI void              elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu);
    EAPI Evas_Object      *elm_toolbar_item_menu_get(Elm_Toolbar_Item *item);
    EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
+   EAPI Eina_Bool         elm_toolbar_item_state_del(Elm_Toolbar_Item *item, Elm_Toolbar_Item_State *state);
    EAPI Eina_Bool         elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state);
    EAPI void              elm_toolbar_item_state_unset(Elm_Toolbar_Item *it);
    EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Toolbar_Item *it);
