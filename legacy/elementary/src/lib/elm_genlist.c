@@ -1289,7 +1289,6 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
    it->order_num_in = in;
 
    itc = _item_cache_find(it);
-   printf("REALIZE item %p, itc = %p\n", it, itc);
    if (itc)
      {
         it->base.view = itc->base_view;
