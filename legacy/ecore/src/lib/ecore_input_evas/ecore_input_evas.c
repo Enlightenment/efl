@@ -132,7 +132,7 @@ _ecore_event_evas_key(Ecore_Event_Key *e, Ecore_Event_Press press)
 {
    Ecore_Input_Window *lookup;
 
-   lookup = _ecore_event_window_match(e->window);
+   lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_RENEW;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    if (press == ECORE_DOWN)
@@ -148,7 +148,7 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
    Ecore_Input_Window *lookup;
    Evas_Button_Flags flags = EVAS_BUTTON_NONE;
 
-   lookup = _ecore_event_window_match(e->window);
+   lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_RENEW;
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
@@ -177,7 +177,7 @@ ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *ev
    Ecore_Input_Window *lookup;
 
    e = event;
-   lookup = _ecore_event_window_match(e->window);
+   lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_RENEW;
    if (e->multi.device == 0)
      {
@@ -208,7 +208,7 @@ _ecore_event_evas_mouse_io(Ecore_Event_Mouse_IO *e, Ecore_Event_IO io)
 {
    Ecore_Input_Window *lookup;
 
-   lookup = _ecore_event_window_match(e->window);
+   lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_RENEW;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    switch (io)
@@ -246,7 +246,7 @@ ecore_event_evas_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *e
    Ecore_Input_Window *lookup;
 
    e = event;
-   lookup = _ecore_event_window_match(e->window);
+   lookup = _ecore_event_window_match(e->event_window);
    if (!lookup) return ECORE_CALLBACK_RENEW;
    ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
    evas_event_feed_mouse_wheel(lookup->evas, e->direction, e->z, e->timestamp, NULL);
