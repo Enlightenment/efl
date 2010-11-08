@@ -268,10 +268,10 @@ eet_open(const char   *file,
          Eet_File_Mode mode);
 
 /**
- * Open an eet file directly from a memory location. The data are not copied,
- * so you must keep them around as long as the eet file is open. Their is
- * currently no cache for this kind of Eet_File, so it's reopen every time
- * you do use eet_memopen_read.
+ * Open an eet file directly from a memory location. The data is not copied,
+ * so you must keep it around as long as the eet file is open. There is
+ * currently no cache for this kind of Eet_File, so it's reopened every time
+ * you use eet_memopen_read.
  *
  * @since 1.1.0
  * @ingroup Eet_File_Group
