@@ -869,7 +869,7 @@ elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state)
  * @ingroup Toolbar
  */
 EAPI Elm_Toolbar_Item_State *
-elm_toolbar_item_state_get(Elm_Toolbar_Item *it)
+elm_toolbar_item_state_get(const Elm_Toolbar_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    if ((!it->states) || (!it->current_state)) return NULL;

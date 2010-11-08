@@ -2826,7 +2826,7 @@ elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave)
  * @ingroup Entry
  */
 EAPI Eina_Bool
-elm_entry_autosave_get(Evas_Object *obj)
+elm_entry_autosave_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);

@@ -1117,7 +1117,7 @@ extern "C" {
    EAPI void         elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
    EAPI void         elm_entry_file_save(Evas_Object *obj);
    EAPI void         elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave);
-   EAPI Eina_Bool    elm_entry_autosave_get(Evas_Object *obj);
+   EAPI Eina_Bool    elm_entry_autosave_get(const Evas_Object *obj);
    /* pre-made filters for entries */
    typedef struct _Elm_Entry_Filter_Limit_Size Elm_Entry_Filter_Limit_Size;
    struct _Elm_Entry_Filter_Limit_Size
@@ -1343,7 +1343,7 @@ extern "C" {
    EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
    EAPI Eina_Bool         elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state);
    EAPI void              elm_toolbar_item_state_unset(Elm_Toolbar_Item *it);
-   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(Elm_Toolbar_Item *it);
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Toolbar_Item *it);
    EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Toolbar_Item *it);
    EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Toolbar_Item *it);
 
@@ -2095,7 +2095,7 @@ extern "C" {
    EAPI void         elm_scrolled_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
    EAPI void         elm_scrolled_entry_file_save(Evas_Object *obj);
    EAPI void         elm_scrolled_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave);
-   EAPI Eina_Bool    elm_scrolled_entry_autosave_get(Evas_Object *obj);
+   EAPI Eina_Bool    elm_scrolled_entry_autosave_get(const Evas_Object *obj);
 
    EAPI Evas_Object *elm_conformant_add(Evas_Object *parent);
    EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content);
