@@ -719,16 +719,20 @@ efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
                              const char *icon_name)
 {
     Eina_List *l;
-    char *icon;
+    char *icon = NULL;
     const char *path;
+    const char *tmp;
+
+    tmp = eina_stringshare_add(icon_name);
 
     EINA_LIST_FOREACH(theme->paths, l, path)
     {
-        icon = efreet_icon_lookup_directory_helper(dir, path, icon_name);
-        if (icon) return icon;
+        icon = efreet_icon_lookup_directory_helper(dir, path, tmp);
+        if (icon) break;
     }
 
-    return NULL;
+    eina_stringshare_del(tmp);
+    return icon;
 }
 
 /**
@@ -928,14 +932,22 @@ efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
     Eina_List *l;
     char *icon = NULL;
     char file_path[PATH_MAX];
-    const char *ext, *path_strs[] = { path, "/", dir->name, "/", icon_name, NULL };
+    const char *ext;
     size_t len;
 
-    len = efreet_array_cat(file_path, sizeof(file_path), path_strs);
+    /* build "$(path)/$(dir->name)/$(icon_name) */
+    len = eina_stringshare_strlen(path);
+    memcpy(file_path, path, len);
+    file_path[len++] = '/';
+    memcpy(file_path + len, dir->name, eina_stringshare_strlen(dir->name));
+    len += eina_stringshare_strlen(dir->name);
+    file_path[len++] = '/';
+    memcpy(file_path + len, icon_name, eina_stringshare_strlen(icon_name));
+    len += eina_stringshare_strlen(icon_name);
 
     EINA_LIST_FOREACH(efreet_icon_extensions, l, ext)
     {
-        eina_strlcpy(file_path + len, ext, sizeof(file_path) - len);
+        memcpy(file_path + len, ext, eina_stringshare_strlen(ext) + 1);
 
         if (ecore_file_exists(file_path))
         {
