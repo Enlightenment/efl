@@ -673,7 +673,6 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (icon_size > 48) return;
    if (wd->icon_size == icon_size) return;
    wd->icon_size = icon_size;
    _theme_hook(obj);
