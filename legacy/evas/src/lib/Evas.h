@@ -136,7 +136,8 @@ typedef enum _Evas_Button_Flags
 typedef enum _Evas_Event_Flags
 {
    EVAS_EVENT_FLAG_NONE = 0, /**< No fancy flags set */
-   EVAS_EVENT_FLAG_ON_HOLD = (1 << 0) /**< This event is being delivered but should be put "on hold" until the on hold flag is unset. the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
+   EVAS_EVENT_FLAG_ON_HOLD = (1 << 0), /**< This event is being delivered but should be put "on hold" until the on hold flag is unset. the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
+   EVAS_EVENT_FLAG_ON_SCROLL = (1 << 1) /**< This event flag indicates the event occurs while scrolling; for exameple, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
 } Evas_Event_Flags; /**< Flags for Events */
 
 /**
