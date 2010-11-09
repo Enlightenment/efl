@@ -14,6 +14,15 @@ _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 void
+_first_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Flippicker_Item *it;
+   Evas_Object *fp = data;
+   it = elm_flippicker_first_item_get(fp);
+   elm_flippicker_item_selected_set(it);
+}
+
+void
 _underflow_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("underflow!\n");
@@ -30,7 +39,7 @@ test_flippicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 {
    char buf[8];
    unsigned int i;
-   Evas_Object *win, *bg, *bx, *fp;
+   Evas_Object *win, *bg, *bx, *fp, *bt;
    static const char *lbl[] = {
      "Elementary",
      "Evas",
@@ -77,6 +86,12 @@ test_flippicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
      }
    elm_box_pack_end(bx, fp);
    evas_object_show(fp);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Select 1990");
+   evas_object_smart_callback_add(bt, "clicked", _first_cb, fp);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
 
    evas_object_show(win);
 }
