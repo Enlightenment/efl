@@ -50,7 +50,6 @@ test_anchorblock.c \
 test_toolbar.c \
 test_hoversel.c \
 test_list.c \
-test_carousel.c \
 test_inwin.c \
 test_scaling.c \
 test_slider.c \

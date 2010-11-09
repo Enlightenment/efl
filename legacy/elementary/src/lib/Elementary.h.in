@@ -1508,19 +1508,6 @@ extern "C" {
     * "longpressed" - an item in the hoversel list is long-pressed
     */
 
-   // FIXME: incomplete - carousel. don't use this until this comment is removed
-   typedef struct _Elm_Carousel_Item Elm_Carousel_Item; /**< Item of Elm_Carousel. Sub-type of Elm_Widget_Item */
-   EAPI Evas_Object       *elm_carousel_add(Evas_Object *parent);
-   EAPI Elm_Carousel_Item *elm_carousel_item_add(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data);
-   EAPI void               elm_carousel_item_del(Elm_Carousel_Item *item);
-
-   EAPI void               elm_carousel_item_select(Elm_Carousel_Item *item);
-   EAPI void               elm_carousel_item_del_cb_set(Elm_Carousel_Item *it, Evas_Smart_Cb func);
-   EAPI void              *elm_carousel_item_data_get(const Elm_Carousel_Item *it);
-   /* smart callbacks called:
-    * "clicked" - when the user clicks on a carousel item and becomes selected
-    */
-
    /* slider */
    EAPI Evas_Object       *elm_slider_add(Evas_Object *parent);
    EAPI void               elm_slider_label_set(Evas_Object *obj, const char *label);

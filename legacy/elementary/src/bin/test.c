@@ -52,7 +52,6 @@ void test_list2(void *data, Evas_Object *obj, void *event_info);
 void test_list3(void *data, Evas_Object *obj, void *event_info);
 void test_list4(void *data, Evas_Object *obj, void *event_info);
 void test_list5(void *data, Evas_Object *obj, void *event_info);
-void test_carousel(void *data, Evas_Object *obj, void *event_info);
 void test_inwin(void *data, Evas_Object *obj, void *event_info);
 void test_inwin2(void *data, Evas_Object *obj, void *event_info);
 void test_scaling(void *data, Evas_Object *obj, void *event_info);
@@ -285,7 +284,6 @@ my_win_main(char *autorun)
    ADD_TEST("List 3", test_list3);
    ADD_TEST("List 4", test_list4);
    ADD_TEST("List 5", test_list5);
-   ADD_TEST("Carousel", test_carousel);
    ADD_TEST("Inwin", test_inwin);
    ADD_TEST("Inwin 2", test_inwin2);
    ADD_TEST("Scaling", test_scaling);
