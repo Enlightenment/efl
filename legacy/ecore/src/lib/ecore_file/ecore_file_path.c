@@ -30,14 +30,14 @@ Eina_List *
 _ecore_file_path_from_env(const char *env)
 {
    Eina_List *path = NULL;
-   char *env_path, *p, *last;
+   char *env_tmp, *env_path, *p, *last;
 
-   env_path = getenv(env);
-   if (!env_path)
+   env_tmp = getenv(env);
+   if (!env_tmp)
      return path;
 
-   env_path = alloca(strlen(env_path) + 1);
-   strcpy(env_path, env);
+   env_path = alloca(strlen(env_tmp) + 1);
+   strcpy(env_path, env_tmp);
    last = env_path;
    for (p = env_path; *p; p++)
      {
