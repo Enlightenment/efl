@@ -1386,7 +1386,7 @@ elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item)
  * @param item The item
  * @param selected The selected state
  *
- * @ingroup Genlist
+ * @ingroup Toolbar
  */
 EAPI void
 elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected)
