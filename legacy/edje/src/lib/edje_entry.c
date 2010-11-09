@@ -120,11 +120,10 @@ _edje_focus_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
          (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
 
-   if (en->imf_context)
-     {
-        ecore_imf_context_reset(en->imf_context);
-        ecore_imf_context_focus_in(en->imf_context);
-     }
+   if (!en->imf_context) return;
+
+   ecore_imf_context_reset(en->imf_context);
+   ecore_imf_context_focus_in(en->imf_context);
 #endif
 }
 
@@ -1303,6 +1302,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    if ((evas_textblock_cursor_compare(tc, en->cursor)) && (!cursor_changed))
       _edje_emit(ed, "cursor,changed", rp->part->name);
+   evas_textblock_cursor_free(tc);
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1313,7 +1313,6 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
 #endif
 
-   evas_textblock_cursor_free(tc);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -1365,6 +1364,19 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         return;
      }
    if (ev->button != 1) return;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        Ecore_IMF_Event_Mouse_Down ecore_ev;
+        ecore_imf_evas_event_mouse_down_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_DOWN,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+           return;
+     }
+#endif
+   
    en->select_mod_start = EINA_FALSE;
    en->select_mod_end = EINA_FALSE;
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
@@ -1469,6 +1481,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
    if (evas_textblock_cursor_compare(tc, en->cursor))
       _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+   evas_textblock_cursor_free(tc);
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1479,7 +1492,6 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
 #endif
 
-   evas_textblock_cursor_free(tc);
    _edje_entry_real_part_configure(rp);
 }
 
@@ -1498,6 +1510,19 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
       return;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        Ecore_IMF_Event_Mouse_Up ecore_ev;
+        ecore_imf_evas_event_mouse_up_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_UP,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+           return;
+     }
+#endif
+
    tc = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_copy(en->cursor, tc);
    evas_object_geometry_get(rp->object, &x, &y, &w, &h);
@@ -1582,6 +1607,19 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
       return;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        Ecore_IMF_Event_Mouse_Move ecore_ev;
+        ecore_imf_evas_event_mouse_move_wrap(ev, &ecore_ev);
+        if (ecore_imf_context_filter_event(en->imf_context,
+                                           ECORE_IMF_EVENT_MOUSE_MOVE,
+                                           (Ecore_IMF_Event *)&ecore_ev))
+           return;
+     }
+#endif
+   
    if (en->selecting)
      {
         tc = evas_object_textblock_cursor_new(rp->object);
@@ -1648,9 +1686,10 @@ _evas_focus_in_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
 
-   if (evas_focus_get(e) == ed->obj) {
+   if (evas_focus_get(e) == ed->obj) 
+     {
         _edje_focus_in_cb(data, NULL, NULL, NULL);
-   }
+     }
 }
 
 static void
@@ -1658,9 +1697,10 @@ _evas_focus_out_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
 
-   if (evas_focus_get(e) == ed->obj) {
+   if (evas_focus_get(e) == ed->obj) 
+     {
         _edje_focus_out_cb(data, NULL, NULL, NULL);
-   }
+     }
 }
 
 /***************************************************************/
@@ -1719,7 +1759,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_event_callback_add(rp->object, EVAS_CALLBACK_MOUSE_MOVE, _edje_part_mouse_move_cb, rp);
 
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
-      en->select_allow = 1;
+      en->select_allow = EINA_TRUE;
 
    if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
      {
@@ -1727,7 +1767,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
 
         txt = (Edje_Part_Description_Text *) rp->chosen_description;
 
-        en->select_allow = 0;
+        en->select_allow = EINA_FALSE;
         if (txt && edje_string_get(&txt->text.repch))
            evas_object_textblock_replace_char_set(rp->object, edje_string_get(&txt->text.repch));
         else
@@ -1787,9 +1827,9 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
         ecore_imf_context_client_canvas_set(en->imf_context, rp->edje->evas);
 
         ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context, 
-                                                            _edje_entry_imf_retrieve_surrounding_cb, rp);
+                                                            _edje_entry_imf_retrieve_surrounding_cb, rp->edje);
         en->imf_ee_handler_commit = ecore_event_handler_add(ECORE_IMF_EVENT_COMMIT, _edje_entry_imf_event_commit_cb, rp->edje);
-        en->imf_ee_handler_delete = ecore_event_handler_add(ECORE_IMF_EVENT_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb, rp);
+        en->imf_ee_handler_delete = ecore_event_handler_add(ECORE_IMF_EVENT_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb, rp->edje);
         en->imf_ee_handler_changed = ecore_event_handler_add(ECORE_IMF_EVENT_PREEDIT_CHANGED, _edje_entry_imf_event_preedit_changed_cb, rp->edje);
         ecore_imf_context_input_mode_set(en->imf_context, 
                                          rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD ? 
@@ -2498,7 +2538,8 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 static Eina_Bool
 _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, char **text, int *cursor_pos)
 {
-   Edje_Real_Part *rp = data;
+   Edje* ed = data;
+   Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    const char *str;
 
@@ -2570,7 +2611,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
    int length = 0;
-   Ecore_IMF_Event_Commit *ev = event;
+   Ecore_IMF_Event_Preedit_Changed *ev = event;
    int i = 0;
    char *preedit_string;
 
@@ -2637,6 +2678,7 @@ _edje_entry_imf_event_delete_surrounding_cb(void *data, int type __UNUSED__, voi
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
       return ECORE_CALLBACK_PASS_ON;
 
+   if (!en->imf_context) return ECORE_CALLBACK_PASS_ON;
    if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
 
    cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
