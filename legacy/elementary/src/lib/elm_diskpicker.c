@@ -1119,7 +1119,7 @@ elm_diskpicker_item_label_set(Elm_Diskpicker_Item * it, const char *label)
  * @ingroup Diskpicker
  */
 EAPI Elm_Diskpicker_Item *
-elm_diskpicker_item_selected_get(const Evas_Object *obj)
+elm_diskpicker_selected_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1128,23 +1128,55 @@ elm_diskpicker_item_selected_get(const Evas_Object *obj)
 }
 
 /**
- * Set the selected item
+ * Set the selected state of an item
  *
- * @param it The item of diskpicker
+ * This sets the selected state (EINA_TRUE selected, EINA_FALSE not selected)
+ * of the given item @p it.
+ * If a new item is selected the previosly selected will be unselected.
+ * If the item @p it is unselected, the first item will be selected.
+ *
+ * @param it The diskpicker item
+ * @param selected The selected state
  *
  * @ingroup Diskpicker
  */
 EAPI void
-elm_diskpicker_item_selected_set(Elm_Diskpicker_Item * it)
+elm_diskpicker_item_selected_set(Elm_Diskpicker_Item *it, Eina_Bool selected)
 {
    ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
    wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
 
-   wd->selected_item = it;
+   if ((wd->selected_item == it) && (selected))
+     return;
+
+   if ((wd->selected_item == it) && (!selected))
+     wd->selected_item = eina_list_data_get(wd->items);
+   else
+     wd->selected_item = it;
+
    if (!wd->idler)
      ecore_idler_add(_move_scroller, it->base.widget);
+}
+
+/*
+ * Get the selected state of @p item.
+ *
+ * @param it The diskpicker item
+ * @return If true, the item is selected
+ *
+ * @ingroup Diskpicker
+ */
+EAPI Eina_Bool
+elm_diskpicker_item_selected_get(const Elm_Diskpicker_Item *it)
+{
+   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(it->base.widget);
+   if (!wd) return EINA_FALSE;
+   return (wd->selected_item == it);
 }
 
 /**
@@ -1225,7 +1257,7 @@ elm_diskpicker_item_icon_set(Elm_Diskpicker_Item *it, Evas_Object *icon)
  * @ingroup Diskpicker
  */
 EAPI Elm_Diskpicker_Item *
-elm_diskpicker_item_prev(const Elm_Diskpicker_Item *it)
+elm_diskpicker_item_prev_get(const Elm_Diskpicker_Item *it)
 {
    ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
    if (it->node->prev) return it->node->prev->data;
@@ -1241,11 +1273,53 @@ elm_diskpicker_item_prev(const Elm_Diskpicker_Item *it)
  * @ingroup Diskpicker
  */
 EAPI Elm_Diskpicker_Item *
-elm_diskpicker_item_next(const Elm_Diskpicker_Item *it)
+elm_diskpicker_item_next_get(const Elm_Diskpicker_Item *it)
 {
    ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
    if (it->node->next) return it->node->next->data;
    else return NULL;
+}
+
+/**
+ * Get the first item in the diskpicker
+ *
+ * @param obj The diskpicker object
+ * @return The first item, or NULL if none
+ *
+ * @ingroup Diskpicker
+ */
+EAPI Elm_Diskpicker_Item *
+elm_diskpicker_first_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd || !wd->items)
+     return NULL;
+
+   return eina_list_data_get(wd->items);
+}
+
+/**
+ * Get the last item in the diskpicker
+ *
+ * @param obj The diskpicker object
+ * @return The last item, or NULL if none
+ *
+ * @ingroup Diskpicker
+ */
+EAPI Elm_Diskpicker_Item *
+elm_diskpicker_last_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   Widget_Data *wd;
+   wd = elm_widget_data_get(obj);
+   if (!wd || !wd->items)
+     return NULL;
+
+   return eina_list_data_get(eina_list_last(wd->items));
 }
 
 /**

@@ -15,8 +15,8 @@ static void
 _disk_next(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
    Elm_Diskpicker_Item *next, *prev, *it = event_info;
-   prev = elm_diskpicker_item_prev(it);
-   next = elm_diskpicker_item_next(it);
+   prev = elm_diskpicker_item_prev_get(it);
+   next = elm_diskpicker_item_next_get(it);
    printf("Prev: %s, Next: %s\n", elm_diskpicker_item_label_get(prev),
           elm_diskpicker_item_label_get(next));
 }
@@ -49,7 +49,7 @@ _disk_create(Evas_Object *win, Eina_Bool round)
    elm_diskpicker_item_append(di, "November", NULL, NULL, NULL);
    elm_diskpicker_item_append(di, "December", NULL, NULL, NULL);
 
-   elm_diskpicker_item_selected_set(it);
+   elm_diskpicker_item_selected_set(it, EINA_TRUE);
    elm_diskpicker_round_set(di, round);
 
    return di;
@@ -59,6 +59,7 @@ void
 test_diskpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *disk, *ic;
+   Elm_Diskpicker_Item *it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "diskpicker", ELM_WIN_BASIC);
@@ -83,6 +84,8 @@ test_diskpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
+   it = elm_diskpicker_selected_item_get(disk);
+   elm_diskpicker_item_selected_set(it, EINA_FALSE);
 
    disk = _disk_create(win, EINA_FALSE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -90,6 +93,9 @@ test_diskpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
+   it = elm_diskpicker_first_item_get(disk);
+   it = elm_diskpicker_item_next_get(it);
+   elm_diskpicker_item_selected_set(it, EINA_TRUE);
 
    disk = _disk_create(win, EINA_FALSE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
