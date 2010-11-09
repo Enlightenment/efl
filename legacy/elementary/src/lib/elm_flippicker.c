@@ -389,9 +389,20 @@ _changed(Widget_Data *wd)
 }
 
 static void
-_flip_up(Widget_Data *wd)
+_send_msg(Widget_Data *wd, int flipside, char *label)
 {
    Edje_Message_String msg;
+
+   msg.str = label;
+   edje_object_message_send(wd->base, EDJE_MESSAGE_STRING, flipside, &msg);
+   edje_object_message_signal_process(wd->base);
+
+   _changed(wd);
+}
+
+static void
+_flip_up(Widget_Data *wd)
+{
    Elm_Flippicker_Item *item;
 
    if (!wd->current)
@@ -409,12 +420,7 @@ _flip_up(Widget_Data *wd)
    if (!item)
      return;
 
-   msg.str = (char *)item->label;
-   edje_object_message_send(wd->base, EDJE_MESSAGE_STRING, MSG_FLIP_UP, &msg);
-   edje_object_message_signal_process(wd->base);
-
-   _changed(wd);
-   return;
+   _send_msg(wd, MSG_FLIP_UP, (char *)item->label);
 }
 
 static Eina_Bool
@@ -461,7 +467,6 @@ _signal_val_up_start(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 static void
 _flip_down(Widget_Data *wd)
 {
-   Edje_Message_String msg;
    Elm_Flippicker_Item *item;
 
    if (!wd->current)
@@ -478,13 +483,7 @@ _flip_down(Widget_Data *wd)
    if (!item)
      return;
 
-   msg.str = (char *)item->label;
-
-   edje_object_message_send(wd->base, EDJE_MESSAGE_STRING, MSG_FLIP_DOWN, &msg);
-   edje_object_message_signal_process(wd->base);
-
-   _changed(wd);
-   return;
+   _send_msg(wd, MSG_FLIP_DOWN, (char *)item->label);
 }
 
 static Eina_Bool
@@ -864,7 +863,8 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item)
 {
    ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item);
 
-   Elm_Flippicker_Item *_item;
+   Elm_Flippicker_Item *_item, *cur;
+   int flipside = MSG_FLIP_UP;
    Widget_Data *wd;
    Eina_List *l;
 
@@ -872,14 +872,21 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item)
    if (!wd)
      return;
 
+   cur = DATA_GET(wd->current);
+   if (cur == item)
+     return;
+
    _flippicker_walk(wd);
 
    EINA_LIST_FOREACH(wd->items, l, _item)
      {
+	if (_item == cur)
+          flipside = MSG_FLIP_DOWN;
+
 	if (_item == item)
 	  {
 	     wd->current = l;
-	     _update_view(item->base.widget);
+             _send_msg(wd, flipside, (char *)item->label);
 	     break;
 	  }
      }
