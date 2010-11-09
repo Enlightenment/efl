@@ -1,9 +1,15 @@
 #!/bin/bash
 ret=0
 
+BLACKLIST="tests/test_setter_blacklist.txt"
+
 check(){
     func=$(echo $1 | grep -oe '_\?elm_\w\+')
     base=${func%_set}
+    cat $BLACKLIST | grep -q $func
+    if [ $? == 0 ];then
+	return
+    fi
     echo $1 | grep -qe "_set(const \+[^\(char \+\*\)]"
     if [ $? == 0 ];then
         echo -e "\e[31;1mCONST\e[m\t $func"
