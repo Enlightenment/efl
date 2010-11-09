@@ -732,6 +732,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
+   if (wd->on_hold) return;
    wd->wasselected = it->selected;
    _item_hilight(it);
    wd->longpressed = EINA_FALSE;
@@ -784,7 +785,8 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
 
    if (it->disabled)
      return;
-
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+  
    _elm_list_walk(wd); // watch out "return" before unwalk!
 
    if (wd->multi)
