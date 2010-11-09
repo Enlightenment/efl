@@ -7,9 +7,11 @@
  *
  * Support normalized frame value for animation.  
 */
+#define MAGIC_OBJ_ANIMATOR 0x40777770
 
-struct _Animator
+struct _Elm_Animator
 {
+   int magic;
    Evas_Object *parent;
    Ecore_Animator *animator;
    double begin_time;
@@ -34,7 +36,7 @@ static unsigned int _animator_compute_reverse_repeat_count(unsigned int cnt);
 static unsigned int _animator_compute_no_reverse_repeat_count(unsigned int cnt);
 static Eina_Bool _animator_animate_cb(void *data);
 static void _delete_animator(Elm_Animator *animator);
-static void _animator_parent_del(void *data, Evas *evas, Evas_Object *obj, void *event);
+static void _animator_parent_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__);
 
 static unsigned int
 _animator_compute_reverse_repeat_count(unsigned int cnt)
@@ -57,60 +59,50 @@ _animator_curve_linear(double frame)
 static double
 _animator_curve_in_out(double frame)
 {
-   if (frame < 0.5)
-     return _animator_curve_out(frame * 2) * 0.5;
-   else
-     return (_animator_curve_in(frame * 2 - 1) * 0.5) + 0.5;
+   if (frame < 0.5) return _animator_curve_in(frame * 2) * 0.5;
+   else return (_animator_curve_out(frame * 2 - 1) * 0.5) + 0.5;
 }
 
 static double
 _animator_curve_in(double frame)
 {
-   return sqrt(1 - pow(frame - 1, 2));
+   return 1 - sqrt(1 - pow(frame, 2));
 }
 
 static double
 _animator_curve_out(double frame)
 {
-   return 1 - sqrt(1 - pow(frame, 2));
+   return sqrt(1 - pow(frame - 1, 2));
 }
 
 static void
 _delete_animator(Elm_Animator *animator)
 {
-   if (animator->animator)
-     {
-	ecore_animator_del(animator->animator);
-	animator->animator = NULL;
-     }
+   if (!animator->animator) return;
+   ecore_animator_del(animator->animator);
+   animator->animator = NULL;
 }
 
 static Eina_Bool
 _animator_animate_cb(void *data)
 {
+   double elapsed_time, frame;
    Elm_Animator *animator = (Elm_Animator *) data;
 
    animator->cur_time = ecore_loop_time_get();
-   double elapsed_time = animator->cur_time - animator->begin_time;
-
-   if (elapsed_time > animator->duration)
-     elapsed_time = animator->duration;
-
-   double frame = animator->curve_op(elapsed_time / animator->duration);
-
+   elapsed_time = animator->cur_time - animator->begin_time;
+   if (elapsed_time > animator->duration) elapsed_time = animator->duration;
+   frame = animator->curve_op(elapsed_time / animator->duration);
    //Reverse?
    if (animator->auto_reverse)
      {
-	if (!(animator->cur_repeat_cnt % 2))
-	  frame = 1 - frame;
+	if (!(animator->cur_repeat_cnt % 2)) frame = 1 - frame;
      }
 
    if (animator->duration > 0)
-     animator->animator_op(animator->animator_arg, animator, frame);
-
+      animator->animator_op(animator->animator_arg, animator, frame);
    //Not end. Keep going.
-   if (elapsed_time < animator->duration)
-     return ECORE_CALLBACK_RENEW;
+   if (elapsed_time < animator->duration) return ECORE_CALLBACK_RENEW;
 
    //Repeat and reverse and time done! 
    if (!animator->cur_repeat_cnt)
@@ -118,19 +110,20 @@ _animator_animate_cb(void *data)
 	animator->on_animating = EINA_FALSE;
 	_delete_animator(animator);
 	if (animator->completion_op)
-	  animator->completion_op(animator->completion_arg);
+	   animator->completion_op(animator->completion_arg);
 	return ECORE_CALLBACK_CANCEL;
      }
 
    //Repeat Case
-   --animator->cur_repeat_cnt;
+   animator->cur_repeat_cnt--;
    animator->begin_time = ecore_loop_time_get();
 
    return ECORE_CALLBACK_RENEW;
 }
 
-static void 
-_animator_parent_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
+static void
+_animator_parent_del(void *data, Evas *evas __UNUSED__,
+		     Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
    elm_animator_del(data);
 }
@@ -138,7 +131,7 @@ _animator_parent_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
 /**
  * Get the value of reverse mode. 
  *
- * @param animator Animator object
+ * @param[in] animator Animator object
  * @return EINA_TRUE is reverse mode 
  *
  * @ingroup Animator 
@@ -146,14 +139,14 @@ _animator_parent_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
 EAPI Eina_Bool
 elm_animator_auto_reverse_get(const Elm_Animator *animator)
 {
-   if (!animator) return EINA_FALSE;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return EINA_FALSE;
    return animator->auto_reverse;
 }
 
 /**
  * Get the value of repeat count.
  *
- * @param animator Animator object
+ * @param[in] animator Animator object
  * @return Repeat count
  *
  * @ingroup Animator 
@@ -161,63 +154,60 @@ elm_animator_auto_reverse_get(const Elm_Animator *animator)
 EAPI unsigned int
 elm_animator_repeat_get(const Elm_Animator *animator)
 {
-   if (!animator) return EINA_FALSE;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return 0;
    return animator->repeat_cnt;
 }
 
 /**
  * Set auto reverse function.  
  *
- * @param animator Animator object
- * @param reverse Reverse or not
+ * @param[in] animator Animator object
+ * @param[in] reverse Reverse or not
  * 
  * @ingroup Animator 
  */
 EAPI void
 elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    if (animator->auto_reverse == reverse) return;
    animator->auto_reverse = reverse;
-   if (reverse) 
-     {
-	animator->repeat_cnt =
-	  _animator_compute_reverse_repeat_count(animator->repeat_cnt);
-     }
-   else 
-     {
-	animator->repeat_cnt =
-	  _animator_compute_no_reverse_repeat_count(animator->repeat_cnt);
-     }
+   if (reverse)
+      animator->repeat_cnt =
+	 _animator_compute_reverse_repeat_count(animator->repeat_cnt);
+   else
+      animator->repeat_cnt =
+	 _animator_compute_no_reverse_repeat_count(animator->repeat_cnt);
 }
 
 /**
  * Set the animation acceleration style. 
  *
- * @param animator Animator object
- * @param cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR 
+ * @param[in] animator Animator object
+ * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR 
  *
  * @ingroup Animator
  */
 EAPI void
-elm_animator_curve_style_set(Elm_Animator *animator, Elm_Animator_Curve_Style cs)
+elm_animator_curve_style_set(Elm_Animator *animator,
+			     Elm_Animator_Curve_Style cs)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    switch (cs)
      {
-      case ELM_ANIMATOR_CURVE_LINEAR:
+     case ELM_ANIMATOR_CURVE_LINEAR:
 	animator->curve_op = _animator_curve_linear;
 	break;
-      case ELM_ANIMATOR_CURVE_IN_OUT:
+     case ELM_ANIMATOR_CURVE_IN_OUT:
 	animator->curve_op = _animator_curve_in_out;
 	break;
-      case ELM_ANIMATOR_CURVE_IN:
+     case ELM_ANIMATOR_CURVE_IN:
 	animator->curve_op = _animator_curve_in;
 	break;
-      case ELM_ANIMATOR_CURVE_OUT:
+     case ELM_ANIMATOR_CURVE_OUT:
 	animator->curve_op = _animator_curve_out;
 	break;
-      default:
+     default:
 	animator->curve_op = _animator_curve_linear;
 	break;
      }
@@ -226,15 +216,15 @@ elm_animator_curve_style_set(Elm_Animator *animator, Elm_Animator_Curve_Style cs
 /**
  * Set the operation duration.  
  *
- * @param animator Animator object
- * @param duration Duration in second 
+ * @param[in] animator Animator object
+ * @param[in] duration Duration in second 
  *
  * @ingroup Animator
  */
 EAPI void
 elm_animator_duration_set(Elm_Animator *animator, double duration)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    if (animator->on_animating) return;
    animator->duration = duration;
 }
@@ -243,19 +233,18 @@ elm_animator_duration_set(Elm_Animator *animator, double duration)
  * Set the callback function for animator operation.  
  * The range of callback function frame data is to 0 ~ 1
  * User can refer this frame value for one's animation frame data. 
- * @param animator Animator object
- * @param op Callback function pointer 
- * @param data Callback function user argument 
+ * @param[in] animator Animator object
+ * @param[in] func Callback function pointer 
+ * @param[in] data Callback function user argument 
  *
  * @ingroup Animator
  */
 EAPI void
 elm_animator_operation_callback_set(Elm_Animator *animator,
-				    void (*func) (void *data,
-						  Elm_Animator *animator,
-						  double frame), void *data)
+                                    Elm_Animator_Operation_Cb func,
+                                    void *data)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    if (animator->on_animating) return;
    animator->animator_op = func;
    animator->animator_arg = data;
@@ -264,7 +253,7 @@ elm_animator_operation_callback_set(Elm_Animator *animator,
 /**
  * Add new animator. 
  *
- * @param parent Parent object
+ * @param[in] parent Parent object
  * @return animator object 
  *
  * @ingroup Animator
@@ -272,17 +261,15 @@ elm_animator_operation_callback_set(Elm_Animator *animator,
 EAPI Elm_Animator *
 elm_animator_add(Evas_Object *parent)
 {
-   Elm_Animator *animator = calloc(1, sizeof(Elm_Animator));
-
+   Elm_Animator *animator = ELM_NEW(Elm_Animator);
    if (!animator) return NULL;
+   animator->parent = parent;
+   animator->magic = MAGIC_OBJ_ANIMATOR;
    elm_animator_auto_reverse_set(animator, EINA_FALSE);
    elm_animator_curve_style_set(animator, ELM_ANIMATOR_CURVE_LINEAR);
-
    if (parent)
-     evas_object_event_callback_add(parent, EVAS_CALLBACK_DEL,
-				    _animator_parent_del, animator);
-
-   animator->parent = parent;
+      evas_object_event_callback_add(parent, EVAS_CALLBACK_DEL,
+				     _animator_parent_del, animator);
 
    return animator;
 }
@@ -290,7 +277,7 @@ elm_animator_add(Evas_Object *parent)
 /**
  * Get the status for the animator operation.
  *
- * @param animator Animator object 
+ * @param[in] animator Animator object 
  * @return EINA_TRUE is animator is operating. 
  *
  * @ingroup Animator
@@ -298,59 +285,91 @@ elm_animator_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_animator_operating_get(const Elm_Animator *animator)
 {
-   if (!animator) return EINA_FALSE;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return EINA_FALSE;
    return animator->on_animating;
 }
 
 /**
  * Delete animator. 
  *
- * @param animator Animator object 
+ * @param[in] animator Animator object 
  *
  * @ingroup Animator
  */
 EAPI void
 elm_animator_del(Elm_Animator *animator)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    _delete_animator(animator);
+   if (animator->parent)
+      evas_object_event_callback_del(animator->parent, EVAS_CALLBACK_DEL,
+				     _animator_parent_del);
 
-   if(animator->parent) 
-     evas_object_event_callback_del(animator->parent, EVAS_CALLBACK_DEL, 
-				    _animator_parent_del);
+   memset(animator, 0x0, sizeof(Elm_Animator));
    free(animator);
 }
 
 /**
  * Set the callback function for the animator end.  
  *
- * @param  animator Animator object 
- * @param  op Callback function pointer
- * @param  data Callback function user argument 
+ * @param[in]  animator Animator object 
+ * @param[in]  func   Callback function pointer
+ * @param[in]  data Callback function user argument 
  *
  * @ingroup Animator
  */
 EAPI void
-elm_animator_completion_callback_set(Elm_Animator *animator, 
-				     void (*func) (void *data), void *data)
+elm_animator_completion_callback_set(Elm_Animator *animator,
+				     Elm_Animator_Completion_Cb func,
+                                     void *data)
 {
-   if (!animator) return;
+   if (!animator || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    if (animator->on_animating) return;
    animator->completion_op = func;
    animator->completion_arg = data;
 }
 
 /**
+ * Pause the animator.
+ *
+ * @param[in]  animator Animator object
+ *
+ * @ingroup Animator
+ */
+EAPI void
+elm_animator_pause(Elm_Animator *animator)
+{
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
+   if (!animator->on_animating) return;
+   ecore_animator_freeze(animator->animator);
+}
+
+/**
+ * Resume the animator.
+ *
+ * @param[in]  animator Animator object
+ *
+ * @ingroup Animator
+ */
+EAPI void
+elm_animator_resume(Elm_Animator *animator)
+{
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
+   if (!animator->on_animating) return;
+   ecore_animator_thaw(animator->animator);
+}
+
+/**
  * Stop animator.
  *
- * @param animator Animator object 
+ * @param[in] animator Animator object 
  *
  * @ingroup Animator
  */
 EAPI void
 elm_animator_stop(Elm_Animator *animator)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    animator->on_animating = EINA_FALSE;
    _delete_animator(animator);
 }
@@ -358,41 +377,35 @@ elm_animator_stop(Elm_Animator *animator)
 /**
  * Set the animator repeat count.
  *
- * @param  animator Animator object
- * @param  repeat_cnt Repeat count
+ * @param[in]  animator Animator object
+ * @param[in]  repeat_cnt Repeat count
  *
  * @ingroup Animator
  */
 EAPI void
 elm_animator_repeat_set(Elm_Animator *animator, unsigned int repeat_cnt)
 {
-   if (!animator) return;
-   if (!animator->auto_reverse)
-      animator->repeat_cnt = repeat_cnt;
-   else 
-     {
-	animator->repeat_cnt = 
-	  _animator_compute_reverse_repeat_count(repeat_cnt);
-     }
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
+   if (!animator->auto_reverse) animator->repeat_cnt = repeat_cnt;
+   else
+      animator->repeat_cnt = _animator_compute_reverse_repeat_count(repeat_cnt);
 }
 
 /**
  * Animate now.
  *
- * @param animator Animator object
+ * @param[in] animator Animator object
  *
  * @ingroup Animator
  */
 EAPI void
 elm_animator_animate(Elm_Animator *animator)
 {
-   if (!animator) return;
+   if ((!animator) || (animator->magic != MAGIC_OBJ_ANIMATOR)) return;
    if (!animator->animator_op) return;
    animator->begin_time = ecore_loop_time_get();
-   animator->on_animating = EINA_TRUE;
    animator->cur_repeat_cnt = animator->repeat_cnt;
-   if (!animator->animator) 
-     animator->animator = ecore_animator_add(_animator_animate_cb, animator);
    if (!animator->animator)
-     animator->on_animating = EINA_FALSE;
+      animator->animator = ecore_animator_add(_animator_animate_cb, animator);
+   if (animator->animator) animator->on_animating = EINA_TRUE;
 }
