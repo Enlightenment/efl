@@ -747,16 +747,20 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	     Edje_Running_Program *runp;
 	     Edje_Pending_Program *pp;
 
-	     EINA_LIST_FOREACH(ed->actions, ll, runp)
-	       {
+             for (ll = ed->actions; ll; )
+               {
+                  runp = ll->data;
+                  ll = ll->next;
 		  if (pt->id == runp->program->id)
 		    {
 		       _edje_program_end(ed, runp);
 //		       goto done;
 		    }
 	       }
-	     EINA_LIST_FOREACH(ed->pending_actions, ll, pp)
-	       {
+             for (ll = ed->pending_actions; ll; )
+              {
+                  pp = ll->data;
+                  ll = ll->next;
 		  if (pt->id == pp->program->id)
 		    {
 		       ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
