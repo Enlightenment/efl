@@ -852,14 +852,20 @@ elm_flippicker_selected_item_get(const Evas_Object *obj)
 }
 
 /**
- * Set the selected state of a flippicker item.
+ * Set the selected state of an item
+ *
+ * This sets the selected state (EINA_TRUE selected, EINA_FALSE not selected)
+ * of the given item @p item.
+ * If a new item is selected the previosly selected will be unselected.
+ * If the item @p item is unselected, the first item will be selected.
  *
  * @param item The item
+ * @param selected The selected state
  *
  * @ingroup Flippicker
  */
 EAPI void
-elm_flippicker_item_selected_set(Elm_Flippicker_Item *item)
+elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected)
 {
    ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item);
 
@@ -873,10 +879,25 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item)
      return;
 
    cur = DATA_GET(wd->current);
-   if (cur == item)
+   if ((selected) && (cur == item))
      return;
 
    _flippicker_walk(wd);
+
+   if ((!selected) && (cur == item))
+     {
+        EINA_LIST_FOREACH(wd->items, l, _item)
+          {
+             if (!_item->deleted)
+               {
+                  wd->current = l;
+                  _send_msg(wd, MSG_FLIP_UP, (char *)_item->label);
+                  break;
+               }
+          }
+        _flippicker_unwalk(wd);
+        return;
+     }
 
    EINA_LIST_FOREACH(wd->items, l, _item)
      {
@@ -892,8 +913,25 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item)
      }
 
    _flippicker_unwalk(wd);
+}
 
-   return;
+/*
+ * Get the selected state of @p item.
+ *
+ * @param item The flippicker item
+ * @return If true, the item is selected
+ *
+ * @ingroup Flippicker
+ */
+EAPI Eina_Bool
+elm_flippicker_item_selected_get(const Elm_Flippicker_Item *item)
+{
+   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(item->base.widget);
+   if (!wd) return EINA_FALSE;
+   return (eina_list_data_get(wd->current) == item);
 }
 
 /**
@@ -1009,7 +1047,7 @@ elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label)
  * @ingroup Flippicker
  */
 EAPI Elm_Flippicker_Item *
-elm_flippicker_item_prev(Elm_Flippicker_Item *item)
+elm_flippicker_item_prev_get(Elm_Flippicker_Item *item)
 {
    ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, NULL);
 
@@ -1042,7 +1080,7 @@ elm_flippicker_item_prev(Elm_Flippicker_Item *item)
  * @ingroup Flippicker
  */
 EAPI Elm_Flippicker_Item *
-elm_flippicker_item_next(Elm_Flippicker_Item *item)
+elm_flippicker_item_next_get(Elm_Flippicker_Item *item)
 {
    ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, NULL);
 

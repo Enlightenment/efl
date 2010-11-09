@@ -2139,12 +2139,13 @@ extern "C" {
    EAPI Elm_Flippicker_Item       *elm_flippicker_first_item_get(const Evas_Object *obj);
    EAPI Elm_Flippicker_Item       *elm_flippicker_last_item_get(const Evas_Object *obj);
    EAPI Elm_Flippicker_Item       *elm_flippicker_selected_item_get(const Evas_Object *obj);
-   EAPI void                       elm_flippicker_item_selected_set(Elm_Flippicker_Item *item);
+   EAPI void                       elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected);
+   EAPI Eina_Bool                  elm_flippicker_item_selected_get(const Elm_Flippicker_Item *item);
    EAPI void                       elm_flippicker_item_del(Elm_Flippicker_Item *item);
    EAPI const char                *elm_flippicker_item_label_get(const Elm_Flippicker_Item *item);
    EAPI void                       elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_item_prev(Elm_Flippicker_Item *item);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_item_next(Elm_Flippicker_Item *item);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_item_prev_get(Elm_Flippicker_Item *item);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_item_next_get(Elm_Flippicker_Item *item);
    EAPI void                       elm_flippicker_interval_set(Evas_Object *obj, double interval);
    EAPI double                     elm_flippicker_interval_get(const Evas_Object *obj);
    /* smart callbacks called:

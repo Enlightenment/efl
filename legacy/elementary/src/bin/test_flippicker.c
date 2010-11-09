@@ -14,14 +14,23 @@ _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 void
+_unsel_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Flippicker_Item *it;
+   Evas_Object *fp = data;
+   it = elm_flippicker_selected_item_get(fp);
+   elm_flippicker_item_selected_set(it, EINA_FALSE);
+}
+
+void
 _third_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Flippicker_Item *it;
    Evas_Object *fp = data;
    it = elm_flippicker_first_item_get(fp);
-   it = elm_flippicker_item_next(it);
-   it = elm_flippicker_item_next(it);
-   elm_flippicker_item_selected_set(it);
+   it = elm_flippicker_item_next_get(it);
+   it = elm_flippicker_item_next_get(it);
+   elm_flippicker_item_selected_set(it, EINA_TRUE);
 }
 
 void
@@ -92,6 +101,12 @@ test_flippicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Select 1992");
    evas_object_smart_callback_add(bt, "clicked", _third_cb, fp);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Unselect year");
+   evas_object_smart_callback_add(bt, "clicked", _unsel_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
