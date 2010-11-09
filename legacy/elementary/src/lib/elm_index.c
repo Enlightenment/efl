@@ -93,6 +93,7 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 static void
 _theme_hook(Evas_Object *obj)
 {
+   Evas_Coord minw = 0, minh = 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _index_box_clear(obj, wd->bx[0], 0);
@@ -102,6 +103,8 @@ _theme_hook(Evas_Object *obj)
    else
      _elm_theme_object_set(obj, wd->base, "index", "base/vertical", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->base, "elm.swallow.event.0", wd->event[0]);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   evas_object_size_hint_min_set(wd->event[0], minw, minh);
    edje_object_part_swallow(wd->base, "elm.swallow.index.0", wd->bx[0]);
    if (edje_object_part_exists(wd->base, "elm.swallow.index.1"))
      {
@@ -123,15 +126,12 @@ _theme_hook(Evas_Object *obj)
      {
         if (!wd->event[1])
           {
-             Evas_Coord minw = 0, minh = 0;
-
              wd->event[1] = evas_object_rectangle_add(evas_object_evas_get(wd->base));
              evas_object_color_set(wd->event[1], 0, 0, 0, 0);
-             evas_object_size_hint_min_set(wd->event[1], minw, minh);
-             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
              elm_widget_sub_object_add(obj, wd->event[1]);
           }
         edje_object_part_swallow(wd->base, "elm.swallow.event.1", wd->event[1]);
+        evas_object_size_hint_min_set(wd->event[1], minw, minh);
      }
    else if (wd->event[1])
      {
@@ -153,9 +153,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    if (!wd) return;
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc(wd->base, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_calc(wd->base, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
