@@ -1236,18 +1236,29 @@ _item_cache_add(Elm_Genlist_Item *it)
   itc->selected = it->selected;
   itc->disabled = it->disabled;
   itc->expanded = it->expanded;
-  edje_object_signal_callback_del(it->base.view, "elm,action,expand,toggle",
-                                  "elm", _signal_expand_toggle);
-  edje_object_signal_callback_del(it->base.view, "elm,action,expand", "elm",
-                                  _signal_expand);
-  edje_object_signal_callback_del(it->base.view, "elm,action,contract",
-                                  "elm", _signal_contract);
-  evas_object_event_callback_del(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
-                                 _mouse_down);
-  evas_object_event_callback_del(it->base.view, EVAS_CALLBACK_MOUSE_UP,
-                                 _mouse_up);
-  evas_object_event_callback_del(it->base.view, EVAS_CALLBACK_MOUSE_MOVE,
-                                 _mouse_move);
+  if (it->long_timer)
+    {
+      ecore_timer_del(it->long_timer);
+      it->long_timer = NULL;
+    }
+  if (it->swipe_timer)
+    {
+      ecore_timer_del(it->swipe_timer);
+      it->swipe_timer = NULL;
+    }
+  // FIXME: other callbacks? GGG
+  edje_object_signal_callback_del_full(itc->base_view, "elm,action,expand,toggle",
+                                  "elm", _signal_expand_toggle, it);
+  edje_object_signal_callback_del_full(itc->base_view, "elm,action,expand", "elm",
+                                  _signal_expand, it);
+  edje_object_signal_callback_del_full(itc->base_view, "elm,action,contract",
+                                  "elm", _signal_contract, it);
+  evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MOUSE_DOWN,
+                                 _mouse_down, it);
+  evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MOUSE_UP,
+                                 _mouse_up, it);
+  evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MOUSE_MOVE,
+                                 _mouse_move, it);
   _item_cache_clean(it->wd);
 }
 
