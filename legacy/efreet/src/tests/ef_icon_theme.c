@@ -480,7 +480,8 @@ ef_cb_efreet_icon_match(void)
     double start = ecore_time_get();
     for (i = 0; system_icons[i]; i++)
     {
-        char *path, *s;
+        const char *path;
+        char *p, *s;
 
         path = efreet_icon_path_find(THEME, system_icons[i], SIZE);
 
@@ -500,9 +501,10 @@ ef_cb_efreet_icon_match(void)
             printf("Found icon not in hash: %s\n", system_icons[i]);
         }
 
-        s = strrchr(path, '.');
+        p = strdup(path);
+        s = strrchr(p, '.');
         if (s) *s = '\0';
-        s = strrchr(path, '/');
+        s = strrchr(p, '/');
         if (s) s++;
 
         if (s && strcmp(s, system_icons[i]))
@@ -510,7 +512,7 @@ ef_cb_efreet_icon_match(void)
             printf("Name mismatch name (%s) vs ef (%s)\n", system_icons[i], s);
             ret = 0;
         }
-        free(path);
+        free(p);
     }
     printf("Time: %f\n", (ecore_time_get() - start));
     eina_hash_free(icon_hash);
@@ -518,15 +520,17 @@ ef_cb_efreet_icon_match(void)
     start = ecore_time_get();
     for (i = 0; system_icons[i]; i++)
     {
-        char *path, *s;
+        const char *path;
+        char *p, *s;
 
         path = efreet_icon_path_find(THEME, system_icons[i], SIZE);
 
         if (!path) continue;
+        p = strdup(path);
 
-        s = strrchr(path, '.');
+        s = strrchr(p, '.');
         if (s) *s = '\0';
-        s = strrchr(path, '/');
+        s = strrchr(p, '/');
         if (s) s++;
 
         if (s && strcmp(s, system_icons[i]))
@@ -534,7 +538,7 @@ ef_cb_efreet_icon_match(void)
             printf("Name mismatch name (%s) vs ef (%s)\n", system_icons[i], s);
             ret = 0;
         }
-        free(path);
+        free(p);
     }
     printf("Time: %f\n", (ecore_time_get() - start));
 

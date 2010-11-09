@@ -330,10 +330,10 @@ efreet_mime_type_get(const char *file)
  * @return Returns mime type icon path as a string
  * @brief Retreive the mime type icon for a file
  */
-EAPI char *
+EAPI const char *
 efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size)
 {
-    char *icon = NULL;
+    const char *icon = NULL;
     char *data;
     Eina_List *icons  = NULL;
     const char *env = NULL;

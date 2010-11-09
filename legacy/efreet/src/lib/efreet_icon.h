@@ -150,10 +150,10 @@ EAPI Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 EAPI Efreet_Icon       *efreet_icon_find(const char *theme_name,
                                             const char *icon,
                                             unsigned int size);
-EAPI char              *efreet_icon_list_find(const char *theme_name,
+EAPI const char        *efreet_icon_list_find(const char *theme_name,
                                                 Eina_List *icons,
                                                 unsigned int size);
-EAPI char              *efreet_icon_path_find(const char *theme_name,
+EAPI const char        *efreet_icon_path_find(const char *theme_name,
                                                 const char *icon,
                                                 unsigned int size);
 EAPI void               efreet_icon_free(Efreet_Icon *icon);

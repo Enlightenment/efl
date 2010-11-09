@@ -35,23 +35,23 @@ static char *efreet_icon_remove_extension(const char *icon);
 static Efreet_Icon_Theme *efreet_icon_find_theme_check(const char *theme_name);
 
 
-static char *efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
+static const char *efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
                                        const char *icon,
                                        unsigned int size);
-static char *efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
+static const char *efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
                                             Eina_List *icons,
                                             unsigned int size);
-static char *efreet_icon_find_helper(Efreet_Icon_Theme *theme,
+static const char *efreet_icon_find_helper(Efreet_Icon_Theme *theme,
                                      const char *icon, unsigned int size);
-static char *efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
+static const char *efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
                                           Eina_List *icons, unsigned int size);
-static char *efreet_icon_lookup_icon(Efreet_Icon_Theme *theme,
+static const char *efreet_icon_lookup_icon(Efreet_Icon_Theme *theme,
                                      const char *icon_name, unsigned int size);
-static char *efreet_icon_fallback_icon(const char *icon_name);
-static char *efreet_icon_fallback_dir_scan(const char *dir,
-                                           const char *icon_name);
+static const char *efreet_icon_fallback_icon(const char *icon_name);
+static const char *efreet_icon_fallback_dir_scan(const char *dir,
+                                                 const char *icon_name);
 
-static char *efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
+static const char *efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
                                           Efreet_Icon_Theme_Directory *dir,
                                           const char *icon_name);
 static double efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
@@ -62,7 +62,7 @@ static int efreet_icon_directory_size_match(Efreet_Icon_Theme_Directory *dir,
 static Efreet_Icon *efreet_icon_new(const char *path);
 static void efreet_icon_populate(Efreet_Icon *icon, const char *file);
 
-static char *efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
+static const char *efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
                                     const char *path, const char *icon_name);
 
 static Efreet_Icon_Theme *efreet_icon_theme_new(void);
@@ -85,7 +85,7 @@ static int efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme,
                                                         const char *dir);
 
 static void efreet_icon_cache_free(Efreet_Icon_Cache *value);
-static char *efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int size);
+static const char *efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int size);
 static void efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int size, const char *value);
 
 /**
@@ -348,10 +348,10 @@ efreet_icon_find_theme_check(const char *theme_name)
  * @return Returns the path to the given icon or NULL if none found
  * @brief Retrives the path to the given icon.
  */
-EAPI char *
+EAPI const char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
-    char *value = NULL;
+    const char *value = NULL;
     Efreet_Icon_Theme *theme;
 
     theme = efreet_icon_find_theme_check(theme_name);
@@ -392,13 +392,13 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
  * @note This function will search the given theme for all icons before falling
  * back. This is useful when searching for mimetype icons.
  */
-EAPI char *
+EAPI const char *
 efreet_icon_list_find(const char *theme_name, Eina_List *icons,
                                                             unsigned int size)
 {
     Eina_List *l;
     const char *icon = NULL;
-    char *value = NULL;
+    const char *value = NULL;
     char *data;
     Efreet_Icon_Theme *theme;
 
@@ -454,7 +454,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
 EAPI Efreet_Icon *
 efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
 {
-    char *path;
+    const char *path;
 
     path = efreet_icon_path_find(theme_name, icon, size);
     if (path)
@@ -462,7 +462,6 @@ efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
         Efreet_Icon *ic;
 
         ic = efreet_icon_new(path);
-        free(path);
         return ic;
     }
 
@@ -478,13 +477,13 @@ efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
  * icon found
  * @brief Scans inheriting themes for the given icon
  */
-static char *
+static const char *
 efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
                           const char *icon, unsigned int size)
 {
     Eina_List *l;
-    char *parent = NULL;
-    char *value = NULL;
+    const char *parent = NULL;
+    const char *value = NULL;
 
     if (theme->inherits)
     {
@@ -522,11 +521,11 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
  * icon found
  * @brief Scans the theme and any inheriting themes for the given icon
  */
-static char *
+static const char *
 efreet_icon_find_helper(Efreet_Icon_Theme *theme,
                         const char *icon, unsigned int size)
 {
-    char *value;
+    const char *value;
     static int recurse = 0;
 
     efreet_icon_theme_cache_check(theme);
@@ -559,13 +558,13 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
  * icon found
  * @brief Scans inheriting themes for the given icons
  */
-static char *
+static const char *
 efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
                                Eina_List *icons, unsigned int size)
 {
     Eina_List *l;
-    char *parent = NULL;
-    char *value = NULL;
+    const char *parent = NULL;
+    const char *value = NULL;
 
     if (theme->inherits)
     {
@@ -607,12 +606,12 @@ efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
  * icon found
  * @brief Scans the theme and any inheriting themes for the given icons
  */
-static char *
+static const char *
 efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
                              Eina_List *icons, unsigned int size)
 {
     Eina_List *l;
-    char *value = NULL;
+    const char *value = NULL;
     const char *icon = NULL;
     static int recurse = 0;
 
@@ -649,12 +648,12 @@ efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
  * none found
  * @brief Looks for the @a icon in the @a theme for the @a size given.
  */
-static char *
+static const char *
 efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
                                                     unsigned int size)
 {
     Eina_List *l;
-    char *icon = NULL, *tmp = NULL;
+    const char *icon = NULL, *tmp = NULL;
     Efreet_Icon_Theme_Directory *dir;
     double minimal_distance = INT_MAX;
     unsigned int ret_size = 0;
@@ -692,7 +691,6 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
                                            icon_name);
         if (tmp)
         {
-            FREE(icon);
             icon = tmp;
             minimal_distance = distance;
             ret_size = size;
@@ -713,13 +711,13 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
  * none found
  * @brief Tries to find the file closest matching the given icon
  */
-static char *
+static const char *
 efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
                              Efreet_Icon_Theme_Directory *dir,
                              const char *icon_name)
 {
     Eina_List *l;
-    char *icon = NULL;
+    const char *icon = NULL;
     const char *path;
     const char *tmp;
 
@@ -797,10 +795,10 @@ efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
  * @return Returns the Efreet_Icon for the given name or NULL if none found
  * @brief Looks for the un-themed icon in the base directories
  */
-static char *
+static const char *
 efreet_icon_fallback_icon(const char *icon_name)
 {
-    char *icon;
+    const char *icon;
 
     if (!icon_name) return NULL;
     icon = efreet_icon_cache_check(NULL, icon_name, 0);
@@ -830,7 +828,7 @@ efreet_icon_fallback_icon(const char *icon_name)
         EINA_LIST_FOREACH(xdg_dirs, l, dir)
         {
             snprintf(path, sizeof(path), "%s/icons", dir);
-            icon = efreet_icon_fallback_dir_scan(path, icon_name);
+            efreet_icon_fallback_dir_scan(path, icon_name);
             if (icon)
             {
                 efreet_icon_cache_add(NULL, icon_name, 0, icon);
@@ -875,11 +873,11 @@ efreet_icon_fallback_icon(const char *icon_name)
  * @brief Scans the given @a dir for the given @a icon_name returning the
  * Efreet_icon if found, NULL otherwise.
  */
-static char *
+static const char *
 efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
 {
     Eina_List *l;
-    char *icon = NULL;
+    const char *icon = NULL;
     char path[PATH_MAX], *ext;
     const char *icon_path[] = { dir, "/", icon_name, NULL };
     size_t size;
@@ -893,7 +891,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
 
         if (ecore_file_exists(path))
         {
-            icon = strdup(path);
+            icon = eina_stringshare_add(path);
             if (icon) break;
         }
         *(path + size) = '\0';
@@ -904,7 +902,7 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
     {
         if ((ecore_file_exists(path))  && (!ecore_file_is_dir(path)))
         {
-            icon = strdup(path);
+            icon = eina_stringshare_add(path);
 #ifdef STRICT_SPEC
             if (icon)
                 WRN("[Efreet]: Found an icon that already has an extension: %s", path);
@@ -925,12 +923,12 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
  * @brief Caches the icons in the given theme directory path at the given
  * size
  */
-static char *
+static const char *
 efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
                                     const char *path, const char *icon_name)
 {
     Eina_List *l;
-    char *icon = NULL;
+    const char *icon = NULL;
     char file_path[PATH_MAX];
     const char *ext;
     size_t len;
@@ -951,7 +949,7 @@ efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directory *dir,
 
         if (ecore_file_exists(file_path))
         {
-            icon = strdup(file_path);
+            icon = eina_stringshare_add(file_path);
             break;
         }
     }
@@ -1603,7 +1601,7 @@ efreet_icon_cache_free(Efreet_Icon_Cache *value)
     free(value);
 }
 
-static char *
+static const char *
 efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int size)
 {
     Efreet_Icon_Cache *cache;
@@ -1621,7 +1619,7 @@ efreet_icon_cache_check(Efreet_Icon_Theme *theme, const char *icon, unsigned int
         if (!cache->path)
             return NON_EXISTING;
         else if (!stat(cache->path, &st) && st.st_mtime == cache->lasttime)
-            return strdup(cache->path);
+            return cache->path;
         eina_hash_del_by_key(efreet_icon_cache, key);
     }
     return NULL;
@@ -1643,7 +1641,7 @@ efreet_icon_cache_add(Efreet_Icon_Theme *theme, const char *icon, unsigned int s
 
     if ((value) && !stat(value, &st))
     {
-        cache->path = eina_stringshare_add(value);
+        cache->path = value;
         cache->lasttime = st.st_mtime;
     }
     else
