@@ -22,7 +22,7 @@ desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
    // FIXME: elm_icon should grok this
 #ifdef ELM_EFREET   
    Efreet_Desktop *d = (Efreet_Desktop *)data;
-   char *path;
+   const char *path;
    Evas_Object *ic;
    ic = elm_icon_add(obj);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -48,7 +48,6 @@ desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
    if (path)
      {
         elm_icon_file_set(ic, path, NULL);
-        free(path);
         return ic;
      }
    return ic;

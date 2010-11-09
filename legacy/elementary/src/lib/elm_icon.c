@@ -289,7 +289,7 @@ static Eina_Bool
 _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int size)
 {
 #ifdef ELM_EFREET
-   char *path;
+   const char *path;
 
    elm_need_efreet();
    path = efreet_icon_path_find(getenv("E_ICON_THEME"), name, size);
@@ -300,14 +300,16 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
            "default", "highcolor", "hicolor", "gnome", "Human", "oxygen", NULL
         };
         for (itr = themes; (!path) && (*itr); itr++)
-          path = efreet_icon_path_find(*itr, name, size);
+          {
+             path = efreet_icon_path_find(*itr, name, size);
+             if (path) break;
+          }
      }
    wd->freedesktop.use = !!path;
    if (wd->freedesktop.use)
      {
         wd->freedesktop.requested_size = size;
         elm_icon_file_set(obj, path, NULL);
-        free(path);
         return EINA_TRUE;
      }
 #endif
