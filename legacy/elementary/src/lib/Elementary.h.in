@@ -2136,9 +2136,9 @@ extern "C" {
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
    EAPI Elm_Flippicker_Item       *elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
    EAPI const Eina_List           *elm_flippicker_items_get(const Evas_Object *obj);
-   EAPI const Elm_Flippicker_Item *elm_flippicker_first_item_get(const Evas_Object *obj);
-   EAPI const Elm_Flippicker_Item *elm_flippicker_last_item_get(const Evas_Object *obj);
-   EAPI const Elm_Flippicker_Item *elm_flippicker_selected_item_get(const Evas_Object *obj);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_first_item_get(const Evas_Object *obj);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_last_item_get(const Evas_Object *obj);
+   EAPI Elm_Flippicker_Item       *elm_flippicker_selected_item_get(const Evas_Object *obj);
    EAPI void                       elm_flippicker_item_selected_set(Elm_Flippicker_Item *item);
    EAPI void                       elm_flippicker_item_del(Elm_Flippicker_Item *item);
    EAPI const char                *elm_flippicker_item_label_get(const Elm_Flippicker_Item *item);
