@@ -78,6 +78,7 @@ struct _Elm_Transit
    {
       int count;
       int current;
+      Eina_Bool reverse;
    } repeat;
 };
 
@@ -93,18 +94,6 @@ typedef struct _Elm_Effect Elm_Effect;
 
 static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__,
                               Evas_Object *obj, void *event_info __UNUSED__);
-
-static unsigned int
-_animator_compute_no_reverse_repeat_count(unsigned int cnt)
-{
-   return cnt / 2;
-}
-
-static unsigned int
-_animator_compute_reverse_repeat_count(unsigned int cnt)
-{
-   return ((cnt + 1) * 2) - 1;
-}
 
 static void
 _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
@@ -124,27 +113,15 @@ static void
 _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *transit = data;
+   Eina_Bool *state;
 
-   _elm_transit_object_remove(transit, obj);
+   state = evas_object_data_del(obj, _transit_key);
+   free(state);
+
+   transit->objs = eina_list_remove(transit->objs, obj);
 
    if (!transit->objs)
      elm_transit_del(transit);
-}
-
-static double
-_tween_progress_calc(Elm_Transit *transit, double progress)
-{
-  switch (transit->tween_mode)
-    {
-     case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
-        return 1.0 - sin((ELM_PI / 2.0) + (progress * ELM_PI / 2.0));
-     case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
-        return sin(progress * ELM_PI / 2.0);
-     case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
-        return (1.0 - cos(progress * ELM_PI)) / 2.0;
-     default:
-        return progress;
-    }
 }
 
 static void
@@ -233,15 +210,25 @@ _animator_animate_cb(void *data)
    if (elapsed_time > transit->time.duration)
      elapsed_time = transit->time.duration;
 
-   double progress = _tween_progress_calc(transit,
-                                        elapsed_time / transit->time.duration);
+   double progress = elapsed_time / transit->time.duration;
+   switch (transit->tween_mode)
+     {
+      case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
+         progress = 1.0 - sin((ELM_PI / 2.0) + (progress * ELM_PI / 2.0));
+         break;
+      case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
+         progress = sin(progress * ELM_PI / 2.0);
+         break;
+      case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
+         progress = (1.0 - cos(progress * ELM_PI)) / 2.0;
+         break;
+      default:
+         break;
+    }
 
    /* Reverse? */
-   if (transit->auto_reverse)
-     {
-	if ((transit->repeat.current % 2))
-	  progress = 1 - progress;
-     }
+   if (transit->repeat.reverse)
+     progress = 1 - progress;
 
    if (transit->time.duration > 0)
      _transit_animate_op(transit, progress);
@@ -251,14 +238,21 @@ _animator_animate_cb(void *data)
      return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
-   if (transit->repeat.current == transit->repeat.count)
+   if ((transit->repeat.current == transit->repeat.count)
+      && (!transit->auto_reverse || transit->repeat.reverse))
      {
         elm_transit_del(transit);
 	return ECORE_CALLBACK_CANCEL;
      }
 
    /* Repeat Case */
-   transit->repeat.current++;
+   if (!transit->auto_reverse || transit->repeat.reverse)
+     {
+        transit->repeat.current++;
+        transit->repeat.reverse = EINA_FALSE;
+     }
+   else transit->repeat.reverse = EINA_TRUE;
+
    transit->time.begin = ecore_loop_time_get();
 
    return ECORE_CALLBACK_RENEW;
@@ -597,18 +591,7 @@ elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
-   if (transit->auto_reverse == reverse) return;
    transit->auto_reverse = reverse;
-   if (reverse)
-     {
-	transit->repeat.count =
-	  _animator_compute_reverse_repeat_count(transit->repeat.count);
-     }
-   else
-     {
-	transit->repeat.count =
-	  _animator_compute_no_reverse_repeat_count(transit->repeat.count);
-     }
 }
 
 /**
@@ -652,14 +635,6 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 
    transit->repeat.count = repeat;
    transit->repeat.current = 0;
-
-   if (!transit->auto_reverse || repeat < 0)
-     transit->repeat.count = repeat;
-   else
-     {
-	transit->repeat.count =
-	  _animator_compute_reverse_repeat_count(repeat);
-     }
 }
 
 /**
@@ -678,9 +653,7 @@ elm_transit_repeat_times_get(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
 
-   if (!transit->auto_reverse || transit->repeat.count < 0)
-     return transit->repeat.count;
-   return _animator_compute_no_reverse_repeat_count(transit->repeat.count);
+   return transit->repeat.count;
 }
 
 /**
@@ -1154,7 +1127,7 @@ elm_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
         front = eina_list_nth(transit->objs, i);
         back = eina_list_nth(transit->objs, i+1);
 
-        if (degree < 90 && degree > -90)
+        if ((degree < 90) && (degree > -90))
           {
              obj = front;
              evas_object_hide(back);
