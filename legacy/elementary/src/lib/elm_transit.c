@@ -49,6 +49,7 @@ struct _Elm_Transit
    int cur_repeat_cnt;
    Elm_Transit_Tween_Mode tween_mode;
    Eina_Bool auto_reverse:1;
+   Eina_Bool deleted:1;
 };
 
 struct _Elm_Effect
@@ -118,20 +119,12 @@ _tween_progress_calc(Elm_Transit *transit, double progress)
 }
 
 static void
-_elm_transit_effect_del(Elm_Transit *transit, Elm_Effect *effect)
+_elm_transit_effect_del(Elm_Transit *transit, Elm_Effect *effect, Eina_List *elist)
 {
    if (effect->user_data_free)
-     {
-        effect->user_data_free(effect->user_data, transit);
-        effect->user_data = NULL;
-     }
-   if (transit->walking)
-     {
-        effect->deleted = EINA_TRUE;
-        return;
-     }
+     effect->user_data_free(effect->user_data, transit);
 
-   transit->effect_list = eina_list_remove(transit->effect_list, effect);
+   transit->effect_list = eina_list_remove_list(transit->effect_list, elist);
    free(effect);
 }
 
@@ -145,8 +138,31 @@ _remove_dead_effects(Elm_Transit *transit)
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
      {
         if (effect->deleted)
-          _elm_transit_effect_del(transit, effect);
+          _elm_transit_effect_del(transit, effect, elist);
      }
+}
+
+static void
+_elm_transit_del(Elm_Transit *transit)
+{
+   Eina_List *elist, *elist_next;
+   Elm_Effect *effect;
+
+   if (transit->completion_op)
+     transit->completion_op(transit->completion_arg, transit);
+
+   if (transit->block)
+     elm_transit_event_block_set(transit, EINA_FALSE);
+
+   ecore_animator_del(transit->animator);
+
+   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
+     _elm_transit_effect_del(transit, effect, elist);
+
+   while (transit->objs)
+     _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
+
+   free(transit);
 }
 
 static void
@@ -159,13 +175,17 @@ _transit_animate_op(Elm_Transit *transit, double progress)
    transit->walking++;
    EINA_LIST_FOREACH(transit->effect_list, elist, effect)
      {
+        if (transit->deleted) break;
+
         if (!effect->deleted)
           effect->animation_op(effect->user_data, transit, progress);
      }
    transit->walking--;
 
-   if (!transit->walking)
-     _remove_dead_effects(transit);
+   if (transit->walking) return;
+
+   if (transit->deleted) _elm_transit_del(transit);
+   else _remove_dead_effects(transit);
 }
 
 static Eina_Bool
@@ -259,25 +279,9 @@ elm_transit_add(double duration)
 EAPI void
 elm_transit_del(Elm_Transit *transit)
 {
-   Eina_List *elist, *elist_next;
-   Elm_Effect *effect;
    if (!transit) return;
-
-   if (transit->block)
-     elm_transit_event_block_set(transit, EINA_FALSE);
-
-   ecore_animator_del(transit->animator);
-
-   if (transit->completion_op)
-     transit->completion_op(transit->completion_arg, transit);
-
-   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist,elist_next, effect)
-     _elm_transit_effect_del(transit, effect);
-
-   while (transit->objs)
-     _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
-
-   free(transit);
+   if (transit->walking) transit->deleted = EINA_TRUE;
+   else _elm_transit_del(transit);
 }
 
 /**
@@ -357,7 +361,8 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
      {
         if ((effect->animation_op == cb) && (effect->user_data == data))
           {
-             _elm_transit_effect_del(transit, effect);
+             if (transit->walking) effect->deleted = EINA_TRUE;
+             else _elm_transit_effect_del(transit, effect, elist);
              return;
           }
      }
