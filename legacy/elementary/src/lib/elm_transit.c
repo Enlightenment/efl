@@ -1715,11 +1715,19 @@ elm_transit_effect_wipe_context_free(void *data, Elm_Transit *transit)
 {
    Eina_List *elist;
    Evas_Object *obj;
+   Elm_Fx_Wipe *wipe = data;
+   Eina_Bool reverse = elm_transit_auto_reverse_get(transit);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-     evas_object_map_enable_set(obj, EINA_FALSE);
+     {
+        if ((wipe->type == ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW && !reverse)
+             || (wipe->type == ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE && reverse))
+            evas_object_show(obj);
+        else evas_object_hide(obj);
+        evas_object_map_enable_set(obj, EINA_FALSE);
+     }
 
-   free(data);
+   free(wipe);
 }
 
 /**
@@ -2172,6 +2180,8 @@ _blend_nodes_build(Elm_Transit *transit)
 
          blend_node->before = eina_list_nth(transit->objs, i);
          blend_node->after = eina_list_nth(transit->objs, i+1);
+         evas_object_show(blend_node->before);
+         evas_object_show(blend_node->after);
 
          evas_object_color_get(blend_node->before, &blend_node->from.r,
                                &blend_node->from.g, &blend_node->from.b,
@@ -2219,6 +2229,12 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
         evas_object_color_set(blend_node->after, blend_node->to.r,
                               blend_node->to.g, blend_node->to.b,
                               blend_node->to.a);
+
+        if (elm_transit_auto_reverse_get(transit))
+          evas_object_hide(blend_node->after);
+        else
+          evas_object_hide(blend_node->before);
+
         blend->nodes = eina_list_remove_list(blend->nodes, elist);
         free(blend_node);
      }
@@ -2262,7 +2278,6 @@ elm_transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
 
    EINA_LIST_FOREACH(blend->nodes, elist, blend_node)
      {
-        evas_object_show(blend_node->after);
         evas_object_color_set(blend_node->before,
                               (int)(blend_node->from.r * (1 - progress)),
                               (int)(blend_node->from.g * (1 - progress)),

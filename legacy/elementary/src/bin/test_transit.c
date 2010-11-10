@@ -106,6 +106,7 @@ _transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
+   elm_transit_auto_reverse_set(trans, EINA_TRUE);
 
    effect_context = \
         elm_transit_effect_wipe_context_new(ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
@@ -344,7 +345,6 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "Back Button - Flip Effect");
-   evas_object_show(bt2);
    evas_object_move(bt2, 50, 100);
    evas_object_resize(bt2, 200, 50);
 
@@ -455,7 +455,6 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "After Button - Fade Effect");
-   evas_object_show(bt2);
    evas_object_move(bt2, 50, 100);
    evas_object_resize(bt2, 200, 50);
 
