@@ -131,6 +131,8 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    /* Transit Creation */
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, bt);
+   elm_transit_auto_reverse_set(trans, EINA_TRUE);
+   elm_transit_repeat_times_set(trans, 2);
 
    /* Translation Effect */
    effect_context = elm_transit_effect_translation_context_new(0.0, 0.0,
@@ -462,6 +464,8 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    /* Adding Transit */
    trans = elm_transit_add(5.0);
+   elm_transit_auto_reverse_set(trans, EINA_TRUE);
+   elm_transit_repeat_times_set(trans, -1);
    effect_context = _custom_context_new(100, 100, 250, 250);
    elm_transit_object_add(trans, bt);
    elm_transit_effect_add(trans,

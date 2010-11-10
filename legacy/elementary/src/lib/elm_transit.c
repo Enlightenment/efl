@@ -27,8 +27,8 @@ struct _Elm_Transit
    double begin_time;
    double cur_time;
    double duration;
-   unsigned int repeat_cnt;
-   unsigned int cur_repeat_cnt;
+   int repeat_cnt;
+   int cur_repeat_cnt;
    double (*curve_op) (double progress);
    Eina_Bool auto_reverse:1;
 };
@@ -374,7 +374,7 @@ _animator_animate_cb(void *data)
    /* Reverse? */
    if (transit->auto_reverse)
      {
-	if (!(transit->cur_repeat_cnt % 2))
+	if ((transit->cur_repeat_cnt % 2))
 	  progress = 1 - progress;
      }
 
@@ -386,14 +386,14 @@ _animator_animate_cb(void *data)
      return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
-   if (!transit->cur_repeat_cnt)
+   if (transit->cur_repeat_cnt == transit->repeat_cnt)
      {
         elm_transit_del(transit);
 	return ECORE_CALLBACK_CANCEL;
      }
 
    /* Repeat Case */
-   transit->cur_repeat_cnt--;
+   transit->cur_repeat_cnt++;
    transit->begin_time = ecore_loop_time_get();
 
    return ECORE_CALLBACK_RENEW;
@@ -501,6 +501,12 @@ elm_transit_objects_get(const Elm_Transit *transit)
 /**
  * Set reverse effect automatically.
  *
+ * If auto reverse is setted, after running the effects with the progress
+ * parameter from 0 to 1, it will call the effecs again with the progress
+ * from 1 to 0. The transit will last fot a time iqual to (2 * duration * repeat),
+ * where the duration was setted with the function elm_transit_add and
+ * the repeat with the function elm_transit_repeat_times_set().
+ *
  * @param transit Transit
  * @param reverse EINA_TRUE is reverse.
  *
@@ -539,7 +545,12 @@ _animator_compute_reverse_repeat_count(unsigned int cnt)
 /**
  * Set the transit repeat count. Effect will be repeated by repeat count.
  *
- * If the @p repeat is
+ * This function define the number of repetition the transit will run after
+ * the first one, that is, if @p repeat is 1, the transit will run 2 times.
+ * If the @p repeat is a negative number, it will repeat infinite times.
+ *
+ * @note If this function is called during the transit execution, the transit
+ * will run @p repeat times, ignoring the times it already performed.
  *
  * @param transit Transit
  * @param repeat Repeat count
@@ -547,11 +558,15 @@ _animator_compute_reverse_repeat_count(unsigned int cnt)
  * @ingroup Transit
  */
 EAPI void
-elm_transit_repeat_times_set(Elm_Transit *transit, unsigned int repeat)
+elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 {
    if (!transit) return;
-   if (!transit->auto_reverse)
-      transit->repeat_cnt = repeat;
+
+   transit->repeat_cnt = repeat;
+   transit->cur_repeat_cnt = 0;
+
+   if (!transit->auto_reverse || repeat < 0)
+     transit->repeat_cnt = repeat;
    else
      {
 	transit->repeat_cnt =
