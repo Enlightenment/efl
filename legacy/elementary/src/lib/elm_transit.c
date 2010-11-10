@@ -776,8 +776,8 @@ elm_transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress
 
    Elm_Fx_Resizing *resizing = data;
 
-   w = resizing->from.w + (Evas_Coord) ((float)resizing->to.w * (float)progress);
-   h = resizing->from.h + (Evas_Coord) ((float)resizing->to.h * (float)progress);
+   w = resizing->from.w + (resizing->to.w * progress);
+   h = resizing->from.h + (resizing->to.h * progress);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      evas_object_resize(obj, w, h);
@@ -1406,15 +1406,18 @@ EAPI void
 elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __UNUSED__)
 {
    Elm_Fx_ResizableFlip *resizable_flip = data;
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
    Elm_Fx_ResizableFlip_Node *resizable_flip_node;
 
-   EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
+   EINA_LIST_FOREACH_SAFE(resizable_flip->nodes,
+                          elist, elist_next, resizable_flip_node)
      {
         evas_object_map_enable_set(resizable_flip_node->front, EINA_FALSE);
         evas_object_map_enable_set(resizable_flip_node->back, EINA_FALSE);
+        resizable_flip->nodes = eina_list_remove_list(resizable_flip->nodes,
+                                                      elist);
+        free(resizable_flip_node);
      }
-   eina_list_free(resizable_flip->nodes);
    free(resizable_flip);
 }
 
@@ -2206,9 +2209,9 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
 {
    Elm_Fx_Blend *blend = data;
    Elm_Fx_Blend_Node *blend_node;
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
 
-   EINA_LIST_FOREACH(blend->nodes, elist, blend_node)
+   EINA_LIST_FOREACH_SAFE(blend->nodes, elist, elist_next, blend_node)
      {
         evas_object_color_set(blend_node->before,
                               blend_node->from.r, blend_node->from.g,
@@ -2216,8 +2219,9 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
         evas_object_color_set(blend_node->after, blend_node->to.r,
                               blend_node->to.g, blend_node->to.b,
                               blend_node->to.a);
+        blend->nodes = eina_list_remove_list(blend->nodes, elist);
+        free(blend_node);
      }
-   eina_list_free(blend->nodes);
    free(data);
 }
 
