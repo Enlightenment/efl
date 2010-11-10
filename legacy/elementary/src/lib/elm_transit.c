@@ -58,11 +58,11 @@ static unsigned int _animator_compute_reverse_repeat_count(unsigned int cnt);
 static void
 _remove_dead_effects(Elm_Transit *transit)
 {
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
 
    Elm_Effect *effect;
 
-   EINA_LIST_FOREACH(transit->effect_list, elist, effect)
+   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
      {
         if (effect->deleted)
           _elm_transit_effect_del(transit, effect);
@@ -142,10 +142,10 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
 EAPI void
 elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data)
 {
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
    Elm_Effect *effect;
 
-   EINA_LIST_FOREACH(transit->effect_list, elist, effect)
+   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
      {
         if ((effect->animation_op == cb) && (effect->user_data == data))
           {
@@ -253,7 +253,7 @@ elm_transit_del_cb_set(Elm_Transit *transit, void (*op) (void *data, Elm_Transit
 EAPI void
 elm_transit_del(Elm_Transit *transit)
 {
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
    Elm_Effect *effect;
    if (!transit) return;
 
@@ -265,7 +265,7 @@ elm_transit_del(Elm_Transit *transit)
    if (transit->completion_op)
      transit->completion_op(transit->completion_arg, transit);
 
-   EINA_LIST_FOREACH(transit->effect_list, elist, effect)
+   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist,elist_next, effect)
      _elm_transit_effect_del(transit, effect);
 
    while (transit->objs)
@@ -2025,12 +2025,12 @@ elm_transit_effect_image_animation_context_free(void *data, Elm_Transit *transit
    Elm_Fx_Image_Animation *image_animation = data;
 
    const char *image;
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
 
-   EINA_LIST_FOREACH(image_animation->images, elist, image)
+   EINA_LIST_FOREACH_SAFE(image_animation->images, elist, elist_next, image)
      {
-        image_animation->images = eina_list_remove(image_animation->images,
-                                                   image);
+        image_animation->images = \
+                       eina_list_remove_list(image_animation->images, elist);
         eina_stringshare_del(image);
      }
 
