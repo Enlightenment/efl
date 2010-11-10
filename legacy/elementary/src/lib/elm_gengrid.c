@@ -1036,9 +1036,10 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
 
    if (item->wd->horizontal)
      {
-        int columns, items_visible, items_row;
+        int columns, items_visible = 0, items_row;
 
-        items_visible = vh / item->wd->item_height;
+        if (item->wd->item_height > 0)
+           items_visible = vh / item->wd->item_height;
         if (items_visible < 1)
            items_visible = 1;
 
@@ -1059,9 +1060,10 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
      }
    else
      {
-        int rows, items_visible, items_col;
+        int rows, items_visible = 0, items_col;
 
-        items_visible = vw / item->wd->item_width;
+        if (item->wd->item_width > 0)
+           items_visible = vw / item->wd->item_width;
         if (items_visible < 1)
            items_visible = 1;
 
@@ -1191,9 +1193,9 @@ _calc_job(void *data)
    int count;
 
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &cvw, &cvh);
-   if ((wd->horizontal) && (wd->item_height))
+   if ((wd->horizontal) && (wd->item_height > 0))
      nmax = cvh / wd->item_height;
-   else if (wd->item_width)
+   else if (wd->item_width > 0)
      nmax = cvw / wd->item_width;
 
    if (nmax < 1)
