@@ -479,6 +479,10 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 
    if (!obj) return;
 
+   Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+
+   if ((!obj_data) || (obj_data->transit != transit)) return;
+
    _elm_transit_object_remove(transit, obj);
 
    if (!transit->objs)
