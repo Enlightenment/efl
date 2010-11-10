@@ -165,8 +165,8 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_transit_object_add(trans, bt);
 
    /* Wipe Effect */
-   effect_context = elm_transit_effect_wipe_context_new(ELM_FX_WIPE_TYPE_HIDE,
-                                                        ELM_FX_WIPE_DIR_RIGHT);
+   effect_context = elm_transit_effect_wipe_context_new(ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
+                                                        ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
    elm_transit_effect_add(trans,
                           elm_transit_effect_wipe_op, effect_context,
                           elm_transit_effect_wipe_context_free);
@@ -246,7 +246,7 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, bt);
    elm_transit_object_add(trans, bt2);
-   effect_context = elm_transit_effect_flip_context_new(ELM_FX_FLIP_AXIS_X,
+   effect_context = elm_transit_effect_flip_context_new(ELM_TRANSIT_EFFECT_FLIP_AXIS_X,
                                                         EINA_TRUE);
    elm_transit_effect_add(trans,
                           elm_transit_effect_flip_op, effect_context,
@@ -425,7 +425,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    /* Adding Transit */
    effect_context = \
-         elm_transit_effect_resizable_flip_context_new(ELM_FX_FLIP_AXIS_X,
+         elm_transit_effect_resizable_flip_context_new(ELM_TRANSIT_EFFECT_FLIP_AXIS_X,
                                                        EINA_TRUE);
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, bt2);
@@ -465,6 +465,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    /* Adding Transit */
    trans = elm_transit_add(5.0);
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
+   elm_transit_tween_mode_set(trans, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
    elm_transit_repeat_times_set(trans, -1);
    effect_context = _custom_context_new(100, 100, 250, 250);
    elm_transit_object_add(trans, bt);

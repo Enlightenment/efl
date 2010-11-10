@@ -29,7 +29,7 @@ struct _Elm_Transit
    double duration;
    int repeat_cnt;
    int cur_repeat_cnt;
-   double (*curve_op) (double progress);
+   Elm_Transit_Tween_Mode tween_mode;
    Eina_Bool auto_reverse:1;
 };
 
@@ -48,10 +48,6 @@ static void _elm_transit_effect_del(Elm_Transit *transit, Elm_Effect *effect);
 static void _remove_dead_effects(Elm_Transit *transit);
 static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
-static double _animator_curve_linear(double progress);
-static double _animator_curve_in_out(double progress);
-static double _animator_curve_in(double progress);
-static double _animator_curve_out(double progress);
 static Eina_Bool _animator_animate_cb(void *data);
 static unsigned int _animator_compute_no_reverse_repeat_count(unsigned int cnt);
 static unsigned int _animator_compute_reverse_repeat_count(unsigned int cnt);
@@ -121,7 +117,7 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
    EINA_LIST_FOREACH(transit->effect_list, elist, effect)
      if ((effect->animation_op == cb) && (effect->user_data == data)) return;
 
-   effect = calloc(1, sizeof(Elm_Effect));
+   effect = ELM_NEW(Elm_Effect);
    if (!effect) return;
 
    effect->user_data_free = data_free_cb;
@@ -276,62 +272,34 @@ elm_transit_del(Elm_Transit *transit)
 }
 
 static double
-_animator_curve_linear(double progress)
+_tween_progress_calc(Elm_Transit *transit, double progress)
 {
-   return progress;
-}
-
-static double
-_animator_curve_in_out(double progress)
-{
-   if (progress < 0.5)
-     return _animator_curve_out(progress * 2) * 0.5;
-   else
-     return (_animator_curve_in(progress * 2 - 1) * 0.5) + 0.5;
-}
-
-static double
-_animator_curve_in(double progress)
-{
-   return sqrt(1 - pow(progress - 1, 2));
-}
-
-static double
-_animator_curve_out(double progress)
-{
-   return 1 - sqrt(1 - pow(progress, 2));
+  switch (transit->tween_mode)
+    {
+     case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
+        return 1.0 - sin((ELM_PI / 2.0) + (progress * ELM_PI / 2.0));
+     case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
+        return sin(progress * ELM_PI / 2.0);
+     case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
+        return (1.0 - cos(progress * ELM_PI)) / 2.0;
+     default:
+        return progress;
+    }
 }
 
 /**
  * Set the transit animation acceleration style.
  *
  * @param transit	Transit
- * @param cs Curve style(Please refer elm_animator_curve_style_set)
+ * @param tween_mode The tween type
  *
  * @ingroup Transit
  */
 EAPI void
-elm_transit_curve_style_set(Elm_Transit *transit, Elm_Transit_Curve_Style cs)
+elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode)
 {
    if (!transit) return;
-   switch (cs)
-     {
-      case ELM_TRANSIT_CURVE_LINEAR:
-         transit->curve_op = _animator_curve_linear;
-         break;
-      case ELM_TRANSIT_CURVE_IN_OUT:
-         transit->curve_op = _animator_curve_in_out;
-         break;
-      case ELM_TRANSIT_CURVE_IN:
-         transit->curve_op = _animator_curve_in;
-         break;
-      case ELM_TRANSIT_CURVE_OUT:
-         transit->curve_op = _animator_curve_out;
-         break;
-      default:
-         transit->curve_op = _animator_curve_linear;
-         break;
-     }
+   transit->tween_mode = tween_mode;
 }
 
 /**
@@ -345,11 +313,11 @@ elm_transit_curve_style_set(Elm_Transit *transit, Elm_Transit_Curve_Style cs)
 EAPI Elm_Transit *
 elm_transit_add(double duration)
 {
-   Elm_Transit *transit = calloc(1, sizeof(Elm_Transit));
+   Elm_Transit *transit = ELM_NEW(Elm_Transit);
 
    if (!transit) return NULL;
 
-   elm_transit_curve_style_set(transit, ELM_TRANSIT_CURVE_LINEAR);
+   elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
 
    transit->duration = duration;
 
@@ -369,7 +337,8 @@ _animator_animate_cb(void *data)
    if (elapsed_time > transit->duration)
      elapsed_time = transit->duration;
 
-   double progress = transit->curve_op(elapsed_time / transit->duration);
+   double progress = _tween_progress_calc(transit,
+                                             elapsed_time / transit->duration);
 
    /* Reverse? */
    if (transit->auto_reverse)
@@ -423,7 +392,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 
    transit->objs = eina_list_append(transit->objs, obj);
 
-   state = calloc(1, sizeof(Eina_Bool));
+   state = ELM_NEW(Eina_Bool);
    *state = evas_object_pass_events_get(obj);
 
    evas_object_data_set(obj, _transit_key, state);
@@ -649,7 +618,7 @@ elm_transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Ev
 {
    Elm_Fx_Resizing *resizing;
 
-   resizing = calloc(1, sizeof(Elm_Fx_Resizing));
+   resizing = ELM_NEW(Elm_Fx_Resizing);
    if (!resizing) return NULL;
 
    resizing->from.w = from_w;
@@ -737,7 +706,7 @@ elm_transit_effect_translation_context_new(Evas_Coord from_x, Evas_Coord from_y,
 {
    Elm_Fx_Translation *translation;
 
-   translation = calloc(1, sizeof(Elm_Fx_Translation));
+   translation = ELM_NEW(Elm_Fx_Translation);
 
    if (!translation) return NULL;
 
@@ -831,7 +800,7 @@ elm_transit_effect_zoom_context_new(float from_rate, float to_rate)
 {
    Elm_Fx_Zoom *zoom;
 
-   zoom = calloc(1, sizeof(Elm_Fx_Zoom));
+   zoom = ELM_NEW(Elm_Fx_Zoom);
    if (!zoom) return NULL;
 
    zoom->from = (10000 - (from_rate * 10000)) * (1 / from_rate);
@@ -945,7 +914,7 @@ elm_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
 
         Evas_Coord half_h = (h / 2);
 
-        if (flip->axis == ELM_FX_FLIP_AXIS_Y)
+        if (flip->axis == ELM_TRANSIT_EFFECT_FLIP_AXIS_Y)
           {
              if ((degree >= 90) || (degree <= -90))
                {
@@ -993,7 +962,7 @@ elm_transit_effect_flip_context_new(Elm_Fx_Flip_Axis axis, Eina_Bool cw)
 {
    Elm_Fx_Flip *flip;
 
-   flip = calloc(1, sizeof(Elm_Fx_Flip));
+   flip = ELM_NEW(Elm_Fx_Flip);
    if (!flip) return NULL;
 
    flip->cw = cw;
@@ -1182,7 +1151,7 @@ elm_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__
         half_w = (Evas_Coord) (w / 2);
         half_h = (Evas_Coord) (h / 2);
 
-        if (resizable_flip->axis == ELM_FX_FLIP_AXIS_Y)
+        if (resizable_flip->axis == ELM_TRANSIT_EFFECT_FLIP_AXIS_Y)
           {
              _set_image_uv_by_axis_y(map, resizable_flip_node, degree);
              evas_map_util_3d_rotate(map, 0, degree,
@@ -1217,7 +1186,7 @@ _resizable_flip_nodes_build(Elm_Transit *transit)
    count = eina_list_count(transit->objs);
    for (i = 0; i < count-1; i+=2)
       {
-         resizable_flip_node = calloc(1, sizeof(Elm_Fx_ResizableFlip_Node));
+         resizable_flip_node = ELM_NEW(Elm_Fx_ResizableFlip_Node);
          if (!resizable_flip_node)
            {
               eina_list_free(data_list);
@@ -1264,7 +1233,7 @@ elm_transit_effect_resizable_flip_context_new(Elm_Fx_Flip_Axis axis, Eina_Bool c
 {
    Elm_Fx_ResizableFlip *resizable_flip;
 
-   resizable_flip = calloc(1, sizeof(Elm_Fx_ResizableFlip));
+   resizable_flip = ELM_NEW(Elm_Fx_ResizableFlip);
    if (!resizable_flip) return NULL;
 
    resizable_flip->cw = cw;
@@ -1317,7 +1286,7 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir, float x, float y, float w
 
    switch (dir)
      {
-      case ELM_FX_WIPE_DIR_LEFT:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_LEFT:
          w2 = w - (w * progress);
          h2 = (y + h);
          evas_map_point_image_uv_set(map, 0, 0, 0);
@@ -1329,7 +1298,7 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir, float x, float y, float w
          evas_map_point_coord_set(map, 2, x + w2, h2, 0);
          evas_map_point_coord_set(map, 3, x, h2, 0);
          break;
-      case ELM_FX_WIPE_DIR_RIGHT:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT:
          w2 = (w * progress);
          h2 = (y + h);
          evas_map_point_image_uv_set(map, 0, w2, 0);
@@ -1341,7 +1310,7 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir, float x, float y, float w
          evas_map_point_coord_set(map, 2, x + w, h2, 0);
          evas_map_point_coord_set(map, 3, x + w2, h2, 0);
          break;
-      case ELM_FX_WIPE_DIR_UP:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_UP:
          w2 = (x + w);
          h2 = h - (h * progress);
          evas_map_point_image_uv_set(map, 0, 0, 0);
@@ -1353,7 +1322,7 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir, float x, float y, float w
          evas_map_point_coord_set(map, 2, w2, h2, 0);
          evas_map_point_coord_set(map, 3, x, h2, 0);
          break;
-      case ELM_FX_WIPE_DIR_DOWN:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_DOWN:
          w2 = (x + w);
          h2 = (h * progress);
          evas_map_point_image_uv_set(map, 0, 0, h2);
@@ -1379,7 +1348,7 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
 
    switch (dir)
      {
-      case ELM_FX_WIPE_DIR_LEFT:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_LEFT:
          w2 = (w - (w * progress));
          h2 = (y + h);
          evas_map_point_image_uv_set(map, 0, w2, 0);
@@ -1391,7 +1360,7 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
          evas_map_point_coord_set(map, 2, w, h2, 0);
          evas_map_point_coord_set(map, 3, x + w2, h2, 0);
          break;
-      case ELM_FX_WIPE_DIR_RIGHT:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT:
          w2 = (w * progress);
          h2 = (y + h);
          evas_map_point_image_uv_set(map, 0, 0, 0);
@@ -1403,7 +1372,7 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
          evas_map_point_coord_set(map, 2, x + w2, h2, 0);
          evas_map_point_coord_set(map, 3, x, h2, 0);
          break;
-      case ELM_FX_WIPE_DIR_UP:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_UP:
          w2 = (x + w);
          h2 = (h - (h * progress));
          evas_map_point_image_uv_set(map, 0, 0, h2);
@@ -1415,7 +1384,7 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
          evas_map_point_coord_set(map, 2, w2, y + h, 0);
          evas_map_point_coord_set(map, 3, x, y + h, 0);
          break;
-      case ELM_FX_WIPE_DIR_DOWN:
+      case ELM_TRANSIT_EFFECT_WIPE_DIR_DOWN:
          w2 = (x + w);
          h2 = (h * progress);
          evas_map_point_image_uv_set(map, 0, 0, 0);
@@ -1467,7 +1436,7 @@ elm_transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress)
      {
         evas_object_geometry_get(obj, &_x, &_y, &_w, &_h);
 
-        if (wipe->type == ELM_FX_WIPE_TYPE_SHOW)
+        if (wipe->type == ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW)
            _elm_fx_wipe_show(map, wipe->dir, _x, _y, _w, _h, (float)progress);
 
         else
@@ -1495,7 +1464,7 @@ elm_transit_effect_wipe_context_new(Elm_Fx_Wipe_Type type, Elm_Fx_Wipe_Dir dir)
 {
    Elm_Fx_Wipe *wipe;
 
-   wipe = calloc(1, sizeof(Elm_Fx_Wipe));
+   wipe = ELM_NEW(Elm_Fx_Wipe);
    if (!wipe) return NULL;
 
    wipe->type = type;
@@ -1589,7 +1558,7 @@ elm_transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, u
 {
    Elm_Fx_Color *color;
 
-   color = calloc(1, sizeof(Elm_Fx_Color));
+   color = ELM_NEW(Elm_Fx_Color);
    if (!color) return NULL;
 
    color->from.r = from_r;
@@ -1740,7 +1709,7 @@ _fade_nodes_build(Elm_Transit *transit)
    count = eina_list_count(transit->objs);
    for (i = 0; i < count-1; i+=2)
       {
-         fade = calloc(1, sizeof(Elm_Fx_Fade_Node));
+         fade = ELM_NEW(Elm_Fx_Fade_Node);
          if (!fade)
            {
               eina_list_free(data_list);
@@ -1776,10 +1745,10 @@ _fade_nodes_build(Elm_Transit *transit)
  * @ingroup Transit
  */
 EAPI void *
-elm_transit_effect_fade_context_new()
+elm_transit_effect_fade_context_new(void)
 {
    Elm_Fx_Fade *fade;
-   fade = calloc(1, sizeof(Elm_Fx_Fade));
+   fade = ELM_NEW(Elm_Fx_Fade);
    if (!fade) return NULL;
    return fade;
 }
@@ -1886,7 +1855,7 @@ _blend_nodes_build(Elm_Transit *transit)
    count = eina_list_count(transit->objs);
    for (i = 0; i < count-1; i+=2)
      {
-         blend_node = calloc(1, sizeof(Elm_Fx_Blend_Node));
+         blend_node = ELM_NEW(Elm_Fx_Blend_Node);
          if (!blend_node)
            {
               eina_list_free(data_list);
@@ -1918,11 +1887,11 @@ _blend_nodes_build(Elm_Transit *transit)
  * @ingroup Transit
  */
 EAPI void *
-elm_transit_effect_blend_context_new()
+elm_transit_effect_blend_context_new(void)
 {
    Elm_Fx_Blend *blend;
 
-   blend = calloc(1, sizeof(Elm_Fx_Blend));
+   blend = ELM_NEW(Elm_Fx_Blend);
    if (!blend) return NULL;
 
    return blend;
@@ -2027,7 +1996,7 @@ elm_transit_effect_rotation_context_new(float from_degree, float to_degree, Eina
 {
    Elm_Fx_Rotation *rotation;
 
-   rotation = calloc(1, sizeof(Elm_Fx_Rotation));
+   rotation = ELM_NEW(Elm_Fx_Rotation);
    if (!rotation) return NULL;
 
    rotation->from = from_degree;
@@ -2136,7 +2105,7 @@ elm_transit_effect_image_animation_context_new(Eina_List *images)
 {
    Elm_Fx_Image_Animation *image_animation;
 
-   image_animation = calloc(1, sizeof(Elm_Fx_Image_Animation));
+   image_animation = ELM_NEW(Elm_Fx_Image_Animation);
 
    if (!image_animation) return NULL;
 
