@@ -29820,9 +29820,9 @@ collections {
 #undef CH
 
 ////////////////////////////////////////////////////////////////////////////////
-// colorpicker
+// colorselector
 ////////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/colorpicker/bg/default";
+   group { name: "elm/colorselector/bg/default";
       parts {
          part { name: "elm.colorbar_0";
             type: SWALLOW;
@@ -29863,7 +29863,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/base/default";
+   group { name: "elm/colorselector/base/default";
       parts {
          part { name: "elm.l_button";
             type: SWALLOW;
@@ -29967,7 +29967,7 @@ collections {
       }
    }
 
-   group{ name: "elm/colorpicker/image/colorbar_0";
+   group{ name: "elm/colorselector/image/colorbar_0";
       images {
          image: "color_picker_color.png" COMP;
       }
@@ -29983,7 +29983,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/image/colorbar_1";
+   group { name: "elm/colorselector/image/colorbar_1";
       images {
          image: "color_picker_opacity.png" COMP;
       }
@@ -29999,7 +29999,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/image/colorbar_2";
+   group { name: "elm/colorselector/image/colorbar_2";
       images {
          image: "color_picker_brightness.png" COMP;
       }
@@ -30015,7 +30015,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/image/colorbar_3";
+   group { name: "elm/colorselector/image/colorbar_3";
       images {
          image: "color_picker_alpha.png" COMP;
       }
@@ -30031,7 +30031,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/bg_image/colorbar_3";
+   group { name: "elm/colorselector/bg_image/colorbar_3";
       images {
          image: "color_picker_alpha_bg.png" COMP;
       }
@@ -30047,7 +30047,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/image/updown";
+   group { name: "elm/colorselector/image/updown";
       images {
          image: "icon_arrow_down.png" COMP;
       }
@@ -30070,7 +30070,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/button/left";
+   group { name: "elm/colorselector/button/left";
       images {
          image: "bt_base1.png" COMP;
          image: "bt_shine.png" COMP;
@@ -30170,7 +30170,7 @@ collections {
       }
    }
 
-   group { name: "elm/colorpicker/button/right";
+   group { name: "elm/colorselector/button/right";
       images {
          image: "bt_base1.png" COMP;
          image: "bt_shine.png" COMP;

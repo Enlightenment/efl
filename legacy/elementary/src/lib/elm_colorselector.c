@@ -2,10 +2,10 @@
 #include "elm_priv.h"
 
 /**
- * @addtogroup Colorpicker Colorpicker
+ * @addtogroup Colorselector Colorselector
  *
- * By using colorpicker, you can select a color.
- * Colorpicker made a color using HSV/HSB mode.
+ * By using colorselector, you can select a color.
+ * Colorselector made a color using HSV/HSB mode.
  */
 
 #define BASE_STEP 360.0
@@ -14,9 +14,9 @@
 #define LIG_STEP 256.0
 #define ALP_STEP 256.0
 
-typedef struct _Colorpicker_Data Colorpicker_Data;
+typedef struct _Colorselector_Data Colorselector_Data;
 
-struct _Colorpicker_Data
+struct _Colorselector_Data
 {
    Evas_Object *parent;
    Evas_Object *colorbar;
@@ -26,7 +26,7 @@ struct _Colorpicker_Data
    Evas_Object *bg_rect;
    Evas_Object *arrow;
    Evas_Object *touch_area;
-   int colorpicker_num;
+   int colorselector_num;
    int button_state;
 };
 
@@ -35,7 +35,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *base;
-   Colorpicker_Data *cp[4];
+   Colorselector_Data *cp[4];
    Evas_Coord _x, _y, _w, _h;
    int r, g, b, a;
    int er, eg, eb;
@@ -104,7 +104,7 @@ _theme_hook(Evas_Object *obj)
 
    if ((!wd) || (!wd->base)) return;
 
-   _elm_theme_object_set(obj, wd->base, "colorpicker", "bg",
+   _elm_theme_object_set(obj, wd->base, "colorselector", "bg",
 			 elm_widget_style_get(obj));
 
    for (i = 0; i < 4; i++)
@@ -313,11 +313,11 @@ _color_with_lightness(void *data)
 static void
 _draw_rects(void *data, double x)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double one_six = 1.0 / 6.0;
 
-   switch (cp->colorpicker_num)
+   switch (cp->colorselector_num)
      {
      case 0:
         wd->h = 360.0 * x;
@@ -404,7 +404,7 @@ _draw_rects(void *data, double x)
 static void
 _arrow_cb(void *data, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    double x, y;
 
    edje_object_part_drag_value_get(obj, "elm.arrow", &x, &y);
@@ -415,7 +415,7 @@ _arrow_cb(void *data, Evas_Object *obj, const char *emission __UNUSED__, const c
 static void
 _colorbar_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
    double arrow_x = 0, arrow_y;
@@ -436,7 +436,7 @@ _colorbar_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 static void
 _arrow_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Evas_Coord arrow_w, arrow_h;
 
    evas_object_geometry_get(cp->touch_area, NULL, NULL, NULL, &arrow_h);
@@ -449,7 +449,7 @@ _arrow_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 static Eina_Bool
 _mv_timer(void *data)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
@@ -481,7 +481,7 @@ _mv_timer(void *data)
 static Eina_Bool
 _long_press_timer(void *data)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    
    if (wd->mv_timer) ecore_timer_del(wd->mv_timer);
@@ -494,7 +494,7 @@ _long_press_timer(void *data)
 static void
 _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
@@ -502,10 +502,10 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 			   "left_button");
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
 
-   if (!cp->colorpicker_num) x -= 1.0 / HUE_STEP;
-   else if (cp->colorpicker_num == 1) x -= 1.0 / SAT_STEP;
-   else if (cp->colorpicker_num == 2) x -= 1.0 / LIG_STEP;
-   else if (cp->colorpicker_num == 3) x -= 1.0 / ALP_STEP;
+   if (!cp->colorselector_num) x -= 1.0 / HUE_STEP;
+   else if (cp->colorselector_num == 1) x -= 1.0 / SAT_STEP;
+   else if (cp->colorselector_num == 2) x -= 1.0 / LIG_STEP;
+   else if (cp->colorselector_num == 3) x -= 1.0 / ALP_STEP;
 
    if (x < 0.0) x = 0.0;
 
@@ -520,7 +520,7 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 static void
 _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
@@ -528,10 +528,10 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 			   "right_button");
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
 
-   if (!cp->colorpicker_num) x += 1.0 / HUE_STEP;
-   else if (cp->colorpicker_num == 1) x += 1.0 / SAT_STEP;
-   else if (cp->colorpicker_num == 2) x += 1.0 / LIG_STEP;
-   else if (cp->colorpicker_num == 3) x += 1.0 / ALP_STEP;
+   if (!cp->colorselector_num) x += 1.0 / HUE_STEP;
+   else if (cp->colorselector_num == 1) x += 1.0 / SAT_STEP;
+   else if (cp->colorselector_num == 2) x += 1.0 / LIG_STEP;
+   else if (cp->colorselector_num == 3) x += 1.0 / ALP_STEP;
 
    if (x > 1.0) x = 1.0;
 
@@ -545,7 +545,7 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 static void
 _left_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
 
    if (wd->lp_timer)
@@ -566,7 +566,7 @@ _left_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 static void
 _right_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Colorpicker_Data *cp = data;
+   Colorselector_Data *cp = data;
    Widget_Data *wd = elm_widget_data_get(cp->parent);
 
    if (wd->lp_timer)
@@ -601,14 +601,14 @@ _add_colorbar(Evas_Object *obj)
 
    for (i = 0; i < 4; i++)
      {
-	wd->cp[i] = ELM_NEW(Colorpicker_Data);
+	wd->cp[i] = ELM_NEW(Colorselector_Data);
 
 	wd->cp[i]->parent = obj;
-	wd->cp[i]->colorpicker_num = i;
+	wd->cp[i]->colorselector_num = i;
 
 	/* load colorbar area */
 	wd->cp[i]->colorbar = edje_object_add(e);
-	_elm_theme_object_set(obj, wd->cp[i]->colorbar, "colorpicker", "base",
+	_elm_theme_object_set(obj, wd->cp[i]->colorbar, "colorselector", "base",
 			      "default");
 	snprintf(colorbar_name, sizeof(colorbar_name), "colorbar_%d", i);
 	snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d", i);
@@ -620,7 +620,7 @@ _add_colorbar(Evas_Object *obj)
 
 	/* load colorbar image */
 	wd->cp[i]->bar = edje_object_add(e);
-	_elm_theme_object_set(obj, wd->cp[i]->bar, "colorpicker", "image",
+	_elm_theme_object_set(obj, wd->cp[i]->bar, "colorselector", "image",
 			      colorbar_name);
 	evas_object_show(wd->cp[i]->bar);
 	edje_object_part_swallow(wd->cp[i]->colorbar, "elm.bar",
@@ -657,7 +657,7 @@ _add_colorbar(Evas_Object *obj)
 	if (i == 3)
           {
              wd->cp[i]->bg_rect = edje_object_add(e);
-             _elm_theme_object_set(obj, wd->cp[i]->bg_rect, "colorpicker",
+             _elm_theme_object_set(obj, wd->cp[i]->bg_rect, "colorselector",
                                    "bg_image", colorbar_name);
              evas_object_show(wd->cp[i]->bg_rect);
              edje_object_part_swallow(wd->cp[i]->colorbar, "elm.bar_bg",
@@ -667,7 +667,7 @@ _add_colorbar(Evas_Object *obj)
           }
 	/* load arrow image, pointing the colorbar */
 	wd->cp[i]->arrow = edje_object_add(e);
-	_elm_theme_object_set(obj, wd->cp[i]->arrow, "colorpicker", "image",
+	_elm_theme_object_set(obj, wd->cp[i]->arrow, "colorselector", "image",
 			      "updown");
 	evas_object_show(wd->cp[i]->arrow);
 	edje_object_part_swallow(wd->cp[i]->colorbar, "elm.arrow",
@@ -682,7 +682,7 @@ _add_colorbar(Evas_Object *obj)
 
 	/* load left button */
 	wd->cp[i]->lbt = edje_object_add(e);
-	_elm_theme_object_set(obj, wd->cp[i]->lbt, "colorpicker", "button",
+	_elm_theme_object_set(obj, wd->cp[i]->lbt, "colorselector", "button",
 			      "left");
 	evas_object_event_callback_add(wd->cp[i]->lbt, EVAS_CALLBACK_MOUSE_DOWN,
 				       _left_button_down_cb, wd->cp[i]);
@@ -695,7 +695,7 @@ _add_colorbar(Evas_Object *obj)
 
 	/* load right button */
 	wd->cp[i]->rbt = edje_object_add(e);
-	_elm_theme_object_set(obj, wd->cp[i]->rbt, "colorpicker", "button",
+	_elm_theme_object_set(obj, wd->cp[i]->rbt, "colorselector", "button",
 			      "right");
 	evas_object_event_callback_add(wd->cp[i]->rbt, EVAS_CALLBACK_MOUSE_DOWN,
 				       _right_button_down_cb, wd->cp[i]);
@@ -744,15 +744,15 @@ _set_color(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 /**
- * Add a new colorpicker to the parent
+ * Add a new colorselector to the parent
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Colorpicker
+ * @ingroup Colorselector
  */
 EAPI Evas_Object *
-elm_colorpicker_add(Evas_Object *parent)
+elm_colorselector_add(Evas_Object *parent)
 {
    Evas_Object *obj = NULL;
    Widget_Data *wd = NULL;
@@ -761,8 +761,8 @@ elm_colorpicker_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
-   ELM_SET_WIDTYPE(widtype, "colorpicker");
-   elm_widget_type_set(obj, "colorpicker");
+   ELM_SET_WIDTYPE(widtype, "colorselector");
+   elm_widget_type_set(obj, "colorselector");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
@@ -770,7 +770,7 @@ elm_colorpicker_add(Evas_Object *parent)
 
    /* load background edj */
    wd->base = edje_object_add(e);
-   _elm_theme_object_set(obj, wd->base, "colorpicker", "bg", "default");
+   _elm_theme_object_set(obj, wd->base, "colorselector", "bg", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
    wd->er = 255;
@@ -790,36 +790,36 @@ elm_colorpicker_add(Evas_Object *parent)
 }
 
 /**
- * Set a color for the colorpicker
+ * Set a color for the colorselector
  *
- * @param obj	Colorpicker object
+ * @param obj	Colorselector object
  * @param r	r-value of color
  * @param g	g-value of color
  * @param b	b-value of color
  * @param a	a-value of color
  *
- * @ingroup Colorpicker
+ * @ingroup Colorselector
  */
 EAPI void
-elm_colorpicker_color_set(Evas_Object *obj, int r, int g, int b, int a)
+elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    _set_color(obj, r, g, b, a);
 }
 
 /**
- * Get a color from the colorpicker
+ * Get a color from the colorselector
  *
- * @param obj	Colorpicker object
+ * @param obj	Colorselector object
  * @param r	integer pointer for r-value of color
  * @param g	integer pointer for g-value of color
  * @param b	integer pointer for b-value of color
  * @param a	integer pointer for a-value of color
  *
- * @ingroup Colorpicker
+ * @ingroup Colorselector
  */
 EAPI void
-elm_colorpicker_color_get(const Evas_Object *obj, int *r, int *g, int *b, int*a)
+elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int*a)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    ELM_CHECK_WIDTYPE(obj, widtype);

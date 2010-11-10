@@ -85,7 +85,7 @@ elm_transit.c \
 elm_calendar.c \
 elm_flippicker.c \
 elm_diskpicker.c \
-elm_colorpicker.c \
+elm_colorselector.c \
 \
 elc_anchorblock.c \
 elc_anchorview.c \

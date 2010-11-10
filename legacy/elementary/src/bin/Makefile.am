@@ -90,7 +90,7 @@ test_focus.c \
 test_focus2.c \
 test_flippicker.c \
 test_diskpicker.c \
-test_colorpicker.c \
+test_colorselector.c \
 test_hoverlist.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@

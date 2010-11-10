@@ -5,12 +5,12 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static void
-_colorpicker_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_colorselector_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *re = data;
    int r, g, b, a;
 
-   elm_colorpicker_color_get(obj, &r, &g, &b, &a);
+   elm_colorselector_color_get(obj, &r, &g, &b, &a);
    printf("Current Color [r=%d g=%d b=%d a=%d]\n",r, g, b, a);
 
    /* Fix Alpha pre multiplication by edje */
@@ -22,14 +22,14 @@ _colorpicker_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED_
 }
 
 void
-test_colorpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *cp, *fr, *ly, *re;
    char buf[PATH_MAX];
    int r, g, b, a;
 
-   win = elm_win_add(NULL, "colorpicker", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Colorpicker");
+   win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Color Selector");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
@@ -65,25 +65,25 @@ test_colorpicker(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, 1.0, 0.5);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_label_set(fr, "Color Picker");
+   elm_frame_label_set(fr, "Color Selector");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
-   cp = elm_colorpicker_add(win);
+   cp = elm_colorselector_add(win);
 
    a = 180;
    r = 255;
    g = 160;
    b = 132;
 
-   elm_colorpicker_color_set(cp, r, g, b, a);
+   elm_colorselector_color_set(cp, r, g, b, a);
    evas_object_size_hint_weight_set(cp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(cp, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_frame_content_set(fr, cp);
    evas_object_show(cp);
-   evas_object_smart_callback_add(cp, "changed", _colorpicker_clicked_cb, re);
+   evas_object_smart_callback_add(cp, "changed", _colorselector_clicked_cb, re);
 
-   elm_colorpicker_color_get(cp, &r, &g, &b, &a);
+   elm_colorselector_color_get(cp, &r, &g, &b, &a);
    /* Fix Alpha pre multiplication by edje */
    r = (r * a) / 255;
    g = (g * a) / 255;

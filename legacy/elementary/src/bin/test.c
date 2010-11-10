@@ -114,7 +114,7 @@ void test_focus(void *data, Evas_Object *obj, void *event_info);
 void test_focus2(void *data, Evas_Object *obj, void *event_info);
 void test_flippicker(void *data, Evas_Object *obj, void *event_info);
 void test_diskpicker(void *data, Evas_Object *obj, void *event_info);
-void test_colorpicker(void *data, Evas_Object *obj, void *event_info);
+void test_colorselector(void *data, Evas_Object *obj, void *event_info);
 void test_hoverlist(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
@@ -347,7 +347,7 @@ my_win_main(char *autorun)
    ADD_TEST("Focus 2", test_focus2);
    ADD_TEST("Flippicker", test_flippicker);
    ADD_TEST("Diskpicker", test_diskpicker);
-   ADD_TEST("Colorpicker", test_colorpicker);
+   ADD_TEST("Color Selector", test_colorselector);
    ADD_TEST("Hoverlist", test_hoverlist);
 #undef ADD_TEST
 
