@@ -112,7 +112,7 @@ void test_cursor2(void *data, Evas_Object *obj, void *event_info);
 void test_cursor3(void *data, Evas_Object *obj, void *event_info);
 void test_focus(void *data, Evas_Object *obj, void *event_info);
 void test_focus2(void *data, Evas_Object *obj, void *event_info);
-void test_flippicker(void *data, Evas_Object *obj, void *event_info);
+void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
 void test_hoverlist(void *data, Evas_Object *obj, void *event_info);
@@ -345,7 +345,7 @@ my_win_main(char *autorun)
    ADD_TEST("Cursor 3", test_cursor3);
    ADD_TEST("Focus", test_focus);
    ADD_TEST("Focus 2", test_focus2);
-   ADD_TEST("Flippicker", test_flippicker);
+   ADD_TEST("Flip Selector", test_flipselector);
    ADD_TEST("Disk Selector", test_diskselector);
    ADD_TEST("Color Selector", test_colorselector);
    ADD_TEST("Hoverlist", test_hoverlist);

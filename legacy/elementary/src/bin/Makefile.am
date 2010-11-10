@@ -88,7 +88,7 @@ test_tooltip.c \
 test_cursor.c \
 test_focus.c \
 test_focus2.c \
-test_flippicker.c \
+test_flipselector.c \
 test_diskselector.c \
 test_colorselector.c \
 test_hoverlist.c

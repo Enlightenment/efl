@@ -30353,7 +30353,7 @@ collections {
 #define FLIP_PICKER_MAX_LEN (50)
 #define FLIP_PICKER_MAX_LEN_STR "50"
 
-   group { name: "elm/flippicker/base/default";
+   group { name: "elm/flipselector/base/default";
       images {
          image: "flip_base.png" COMP;
          image: "flip_base_shad.png" COMP;

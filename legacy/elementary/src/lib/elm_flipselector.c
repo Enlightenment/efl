@@ -2,9 +2,9 @@
 #include "elm_priv.h"
 
 /**
- * @addtogroup Flippicker Flippicker
+ * @addtogroup Flipselector Flipselector
  *
- * A flip picker is a widget to show a set of label items, one at a
+ * A flip selector is a widget to show a set of label items, one at a
  * time, with an animation when one changes the current selection
  * (like the flip of calendar sheets, in the default theme).
  */
@@ -32,7 +32,7 @@
 
 #define DATA_GET eina_list_data_get
 
-struct _Elm_Flippicker_Item {
+struct _Elm_Flipselector_Item {
    Elm_Widget_Item base;
    const char *label;
    Evas_Smart_Cb func;
@@ -73,7 +73,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {NULL, NULL}
 };
 
-#define ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(it, ...)               \
+#define ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(it, ...)               \
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, __VA_ARGS__);            \
   if (it->deleted)							\
     {									\
@@ -81,14 +81,14 @@ static const Evas_Smart_Cb_Description _signals[] = {
        return __VA_ARGS__;						\
     }									\
 
-static Elm_Flippicker_Item *
+static Elm_Flipselector_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Smart_Cb func, const void *data)
 {
    unsigned int len;
-   Elm_Flippicker_Item *it;
+   Elm_Flipselector_Item *it;
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   it = elm_widget_item_new(obj, Elm_Flippicker_Item);
+   it = elm_widget_item_new(obj, Elm_Flipselector_Item);
    if (!it)
      return NULL;
 
@@ -106,7 +106,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Smart_Cb func, const void *d
 }
 
 static inline void
-_item_free(Elm_Flippicker_Item *it)
+_item_free(Elm_Flipselector_Item *it)
 {
    eina_stringshare_del(it->label);
    elm_widget_item_del(it);
@@ -115,14 +115,14 @@ _item_free(Elm_Flippicker_Item *it)
 static void
 _del_hook(Evas_Object *obj)
 {
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd)
      return;
 
    if (wd->walking)
-     ERR("flippicker deleted while walking.\n");
+     ERR("flipselector deleted while walking.\n");
 
    EINA_LIST_FREE(wd->items, item)
      _item_free(item);
@@ -141,7 +141,7 @@ _theme_hook(Evas_Object *obj)
    if (!wd)
      return;
 
-   _elm_theme_object_set(obj, wd->base, "flippicker", "base",
+   _elm_theme_object_set(obj, wd->base, "flipselector", "base",
 			 elm_widget_style_get(obj));
    edje_object_scale_set(wd->base,
 			 elm_widget_scale_get(obj) * _elm_config->scale);
@@ -163,7 +163,7 @@ _theme_hook(Evas_Object *obj)
 static void
 _sentinel_eval(Widget_Data *wd)
 {
-   Elm_Flippicker_Item *it;
+   Elm_Flipselector_Item *it;
    Eina_List *l;
 
    if (!wd->items)
@@ -176,17 +176,17 @@ _sentinel_eval(Widget_Data *wd)
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-	if (strlen(elm_flippicker_item_label_get(it)) >
-	    strlen(elm_flippicker_item_label_get(DATA_GET(wd->sentinel))))
+	if (strlen(elm_flipselector_item_label_get(it)) >
+	    strlen(elm_flipselector_item_label_get(DATA_GET(wd->sentinel))))
 	  wd->sentinel = l;
      }
 }
 
 /* TODO: create a flag to avoid looping here all times */
 static void
-_flippicker_process_deletions(Widget_Data *wd)
+_flipselector_process_deletions(Widget_Data *wd)
 {
-   Elm_Flippicker_Item *it;
+   Elm_Flipselector_Item *it;
    Eina_List *l;
    Eina_Bool skip = EINA_TRUE;
    Eina_Bool sentinel_eval = EINA_FALSE;
@@ -229,7 +229,7 @@ _flippicker_process_deletions(Widget_Data *wd)
 }
 
 static inline void
-_flippicker_walk(Widget_Data *wd)
+_flipselector_walk(Widget_Data *wd)
 {
    if (wd->walking < 0)
      {
@@ -240,7 +240,7 @@ _flippicker_walk(Widget_Data *wd)
 }
 
 static inline void
-_flippicker_unwalk(Widget_Data *wd)
+_flipselector_unwalk(Widget_Data *wd)
 {
    wd->walking--;
    if (wd->walking < 0)
@@ -252,7 +252,7 @@ _flippicker_unwalk(Widget_Data *wd)
    if (wd->walking)
      return;
 
-   _flippicker_process_deletions(wd);
+   _flipselector_process_deletions(wd);
 }
 
 static Eina_Bool
@@ -285,12 +285,12 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    /* TODO: if direction setting via API is not coming in, replace
       these calls by flip_{next,prev} */
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
    if (is_up)
      _flip_up(wd);
    else
      _flip_down(wd);
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
@@ -332,7 +332,7 @@ _sizing_eval(Evas_Object *obj)
    if (wd->sentinel)
      {
 	const char *label = \
-	  elm_flippicker_item_label_get(DATA_GET(wd->sentinel));
+	  elm_flipselector_item_label_get(DATA_GET(wd->sentinel));
 
 	tmp = edje_object_part_text_get(wd->base, "top");
 	edje_object_part_text_set(wd->base, "top", label);
@@ -356,7 +356,7 @@ _update_view(Evas_Object *obj)
 {
    Widget_Data *wd;
    const char *label;
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
 
    wd = elm_widget_data_get(obj);
    if (!wd)
@@ -376,7 +376,7 @@ _update_view(Evas_Object *obj)
 static void
 _changed(Widget_Data *wd)
 {
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
 
    item = DATA_GET(wd->current);
    if (!item)
@@ -403,7 +403,7 @@ _send_msg(Widget_Data *wd, int flipside, char *label)
 static void
 _flip_up(Widget_Data *wd)
 {
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
 
    if (!wd->current)
      return;
@@ -431,7 +431,7 @@ _signal_val_up(void *data)
    if (!wd)
      goto val_up_exit_on_error;
 
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
 
    if (wd->interval > FLIP_MIN_INTERVAL)
      wd->interval = wd->interval / 1.05;
@@ -440,7 +440,7 @@ _signal_val_up(void *data)
 
    _flip_up(wd);
 
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 
    return ECORE_CALLBACK_RENEW;
 
@@ -467,7 +467,7 @@ _signal_val_up_start(void *data, Evas_Object *obj __UNUSED__, const char *emissi
 static void
 _flip_down(Widget_Data *wd)
 {
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
 
    if (!wd->current)
      return;
@@ -494,7 +494,7 @@ _signal_val_down(void *data)
    if (!wd)
      goto val_down_exit_on_error;
 
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
 
    if (wd->interval > FLIP_MIN_INTERVAL)
      wd->interval = wd->interval / 1.05;
@@ -502,7 +502,7 @@ _signal_val_down(void *data)
 
    _flip_down(wd);
 
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 
    return ECORE_CALLBACK_RENEW;
 
@@ -554,15 +554,15 @@ _callbacks_set(Evas_Object *obj)
 }
 
 /**
- * Add a new flippicker to the parent.
+ * Add a new flipselector to the parent.
  *
  * @param parent The parent object
  * @return The new object or NULL, if it cannot be created
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI Evas_Object *
-elm_flippicker_add(Evas_Object *parent)
+elm_flipselector_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Evas *e;
@@ -572,8 +572,8 @@ elm_flippicker_add(Evas_Object *parent)
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
    wd->self = obj;
-   ELM_SET_WIDTYPE(widtype, "flippicker");
-   elm_widget_type_set(obj, "flippicker");
+   ELM_SET_WIDTYPE(widtype, "flipselector");
+   elm_widget_type_set(obj, "flipselector");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
 
@@ -599,14 +599,14 @@ elm_flippicker_add(Evas_Object *parent)
 }
 
 /**
- * Select next item of a flippicker.
+ * Select next item of a flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI void
-elm_flippicker_flip_next(Evas_Object *obj)
+elm_flipselector_flip_next(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -616,20 +616,20 @@ elm_flippicker_flip_next(Evas_Object *obj)
 
    if (wd->spin) ecore_timer_del(wd->spin);
 
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
    _flip_down(wd);
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 }
 
 /**
- * Select previous item of a flippicker.
+ * Select previous item of a flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI void
-elm_flippicker_flip_prev(Evas_Object *obj)
+elm_flipselector_flip_prev(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -639,15 +639,15 @@ elm_flippicker_flip_prev(Evas_Object *obj)
 
    if (wd->spin) ecore_timer_del(wd->spin);
 
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
    _flip_up(wd);
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 }
 
 /**
- * Append item to a flippicker.
+ * Append item to a flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @param label The label of new item
  * @param func Convenience function called when item selected
  * @param data Data passed to @p func above
@@ -657,14 +657,14 @@ elm_flippicker_flip_prev(Evas_Object *obj)
  * the widget's theme. Strings larger than that value are going to be
  * truncated.
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
@@ -682,8 +682,8 @@ elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(voi
    }
 
    if (!wd->sentinel ||
-       (strlen(elm_flippicker_item_label_get(item)) >
-	strlen(elm_flippicker_item_label_get(DATA_GET(wd->sentinel)))))
+       (strlen(elm_flipselector_item_label_get(item)) >
+	strlen(elm_flipselector_item_label_get(DATA_GET(wd->sentinel)))))
      {
 	wd->sentinel = eina_list_last(wd->items);
 	_sizing_eval(obj);
@@ -696,9 +696,9 @@ elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(voi
 }
 
 /**
- * Prepend item to a flippicker.
+ * Prepend item to a flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @param label The label of new item
  * @param func Convenience function called when item selected
  * @param data Data passed to @p func above
@@ -708,14 +708,14 @@ elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(voi
  * the widget's theme. Strings larger than that value are going to be
  * truncated.
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
-   Elm_Flippicker_Item *item;
+   Elm_Flipselector_Item *item;
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
@@ -733,8 +733,8 @@ elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(vo
    }
 
    if (!wd->sentinel ||
-       (strlen(elm_flippicker_item_label_get(item)) >
-	strlen(elm_flippicker_item_label_get(DATA_GET(wd->sentinel)))))
+       (strlen(elm_flipselector_item_label_get(item)) >
+	strlen(elm_flipselector_item_label_get(DATA_GET(wd->sentinel)))))
      {
 	wd->sentinel = wd->items;
 	_sizing_eval(obj);
@@ -748,15 +748,15 @@ elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(vo
 
 /* TODO: account for deleted items?  */
 /**
- * Get a list of items in the flippicker.
+ * Get a list of items in the flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @return The list of items, or NULL on errors.
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI const Eina_List *
-elm_flippicker_items_get(const Evas_Object *obj)
+elm_flipselector_items_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -768,19 +768,19 @@ elm_flippicker_items_get(const Evas_Object *obj)
 }
 
 /**
- * Get the first item in the flippicker
+ * Get the first item in the flipselector
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @return The first item, or NULL if none
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_first_item_get(const Evas_Object *obj)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_first_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
-   Elm_Flippicker_Item *it;
+   Elm_Flipselector_Item *it;
    Widget_Data *wd;
    Eina_List *l;
 
@@ -800,19 +800,19 @@ elm_flippicker_first_item_get(const Evas_Object *obj)
 }
 
 /**
- * Get the last item in the flippicker
+ * Get the last item in the flipselector
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @return The last item, or NULL if none
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_last_item_get(const Evas_Object *obj)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_last_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
-   Elm_Flippicker_Item *it;
+   Elm_Flipselector_Item *it;
    Widget_Data *wd;
    Eina_List *l;
 
@@ -832,15 +832,15 @@ elm_flippicker_last_item_get(const Evas_Object *obj)
 }
 
 /**
- * Get the selected item in a flippicker.
+ * Get the selected item in a flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @return The selected item, or NULL if none
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_selected_item_get(const Evas_Object *obj)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_selected_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -862,14 +862,14 @@ elm_flippicker_selected_item_get(const Evas_Object *obj)
  * @param item The item
  * @param selected The selected state
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI void
-elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected)
+elm_flipselector_item_selected_set(Elm_Flipselector_Item *item, Eina_Bool selected)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item);
 
-   Elm_Flippicker_Item *_item, *cur;
+   Elm_Flipselector_Item *_item, *cur;
    int flipside = MSG_FLIP_UP;
    Widget_Data *wd;
    Eina_List *l;
@@ -882,7 +882,7 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected)
    if ((selected) && (cur == item))
      return;
 
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
 
    if ((!selected) && (cur == item))
      {
@@ -895,7 +895,7 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected)
                   break;
                }
           }
-        _flippicker_unwalk(wd);
+        _flipselector_unwalk(wd);
         return;
      }
 
@@ -912,21 +912,21 @@ elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected)
 	  }
      }
 
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 }
 
 /*
  * Get the selected state of @p item.
  *
- * @param item The flippicker item
+ * @param item The flipselector item
  * @return If true, the item is selected
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI Eina_Bool
-elm_flippicker_item_selected_get(const Elm_Flippicker_Item *item)
+elm_flipselector_item_selected_get(const Elm_Flipselector_Item *item)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
    Widget_Data *wd;
 
    wd = elm_widget_data_get(item->base.widget);
@@ -935,16 +935,16 @@ elm_flippicker_item_selected_get(const Elm_Flippicker_Item *item)
 }
 
 /**
- * Delete a given item from a flippicker.
+ * Delete a given item from a flipselector.
  *
  * @param item The item
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI void
-elm_flippicker_item_del(Elm_Flippicker_Item *item)
+elm_flipselector_item_del(Elm_Flipselector_Item *item)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item);
 
    Widget_Data *wd;
 
@@ -958,29 +958,29 @@ elm_flippicker_item_del(Elm_Flippicker_Item *item)
 	return;
      }
 
-   _flippicker_walk(wd);
+   _flipselector_walk(wd);
 
    wd->items = eina_list_remove(wd->items, item);
    _item_free(item);
    _sentinel_eval(wd);
 
-   _flippicker_unwalk(wd);
+   _flipselector_unwalk(wd);
 }
 
 /**
- * Get the label of a given flippicker item.
+ * Get the label of a given flipselector item.
  *
  * @param item The item
  * @return The label of a given item, or NULL if none
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI const char *
-elm_flippicker_item_label_get(const Elm_Flippicker_Item *item)
+elm_flipselector_item_label_get(const Elm_Flipselector_Item *item)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, NULL);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item, NULL);
 
-   Elm_Flippicker_Item *_item;
+   Elm_Flipselector_Item *_item;
    Widget_Data *wd;
    Eina_List *l;
 
@@ -996,17 +996,17 @@ elm_flippicker_item_label_get(const Elm_Flippicker_Item *item)
 }
 
 /**
- * Set the label of a given flippicker item.
+ * Set the label of a given flipselector item.
  *
  * @param item The item
  * @param label The text label string in UTF-8
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI void
-elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label)
+elm_flipselector_item_label_set(Elm_Flipselector_Item *item, const char *label)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item);
 
    Widget_Data *wd;
    Eina_List *l;
@@ -1026,7 +1026,7 @@ elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label)
    item->label = eina_stringshare_add_length(label, wd->max_len);
 
    if (strlen(label) >
-       strlen(elm_flippicker_item_label_get(DATA_GET(wd->sentinel))))
+       strlen(elm_flipselector_item_label_get(DATA_GET(wd->sentinel))))
      wd->sentinel = l;
 
    if (wd->current == l)
@@ -1039,19 +1039,19 @@ elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label)
 }
 
 /**
- * Gets the item before @p item in a flippicker.
+ * Gets the item before @p item in a flipselector.
  *
  * @param item The item
  * @return The item before the item @p item
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_item_prev_get(Elm_Flippicker_Item *item)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_item_prev_get(Elm_Flipselector_Item *item)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, NULL);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item, NULL);
 
-   Elm_Flippicker_Item *_item;
+   Elm_Flipselector_Item *_item;
    Widget_Data *wd;
    Eina_List *l;
 
@@ -1072,19 +1072,19 @@ elm_flippicker_item_prev_get(Elm_Flippicker_Item *item)
 }
 
 /**
- * Gets the item after @p item in a flippicker.
+ * Gets the item after @p item in a flipselector.
  *
  * @param item The item
  * @return The item after the item @p item
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
-EAPI Elm_Flippicker_Item *
-elm_flippicker_item_next_get(Elm_Flippicker_Item *item)
+EAPI Elm_Flipselector_Item *
+elm_flipselector_item_next_get(Elm_Flipselector_Item *item)
 {
-   ELM_FLIPPICKER_ITEM_CHECK_DELETED_RETURN(item, NULL);
+   ELM_FLIPSELECTOR_ITEM_CHECK_DELETED_RETURN(item, NULL);
 
-   Elm_Flippicker_Item *_item;
+   Elm_Flipselector_Item *_item;
    Widget_Data *wd;
    Eina_List *l;
 
@@ -1105,9 +1105,9 @@ elm_flippicker_item_next_get(Elm_Flippicker_Item *item)
 }
 
 /**
- * Set the flipping interval for the flippicker.
+ * Set the flipping interval for the flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @param interval The interval value in seconds
  *
  * The interval value is decreased while the user flips the widget up
@@ -1115,10 +1115,10 @@ elm_flippicker_item_next_get(Elm_Flippicker_Item *item)
  * interval / 1.05, so it speeds up a bit. Default value is 0.85
  * seconds.
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI void
-elm_flippicker_interval_set(Evas_Object *obj, double interval)
+elm_flipselector_interval_set(Evas_Object *obj, double interval)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -1130,9 +1130,9 @@ elm_flippicker_interval_set(Evas_Object *obj, double interval)
 }
 
 /**
- * Get the flipping interval of the flippicker.
+ * Get the flipping interval of the flipselector.
  *
- * @param obj The flippicker object
+ * @param obj The flipselector object
  * @return The value of the first interval in seconds
  *
  * The interval value is decreased while the user flips the widget up
@@ -1140,10 +1140,10 @@ elm_flippicker_interval_set(Evas_Object *obj, double interval)
  * interval / 1.05, so it speeds up a bit. Default value is 0.85
  * seconds.
  *
- * @ingroup Flippicker
+ * @ingroup Flipselector
  */
 EAPI double
-elm_flippicker_interval_get(const Evas_Object *obj)
+elm_flipselector_interval_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
 

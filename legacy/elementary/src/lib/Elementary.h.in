@@ -2133,32 +2133,32 @@ extern "C" {
    EAPI void         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha);
    EAPI Eina_Bool    elm_mapbuf_alpha_get(const Evas_Object *obj);
 
-   /* flippicker */
-   typedef struct _Elm_Flippicker_Item Elm_Flippicker_Item;
+   /* flipselector */
+   typedef struct _Elm_Flipselector_Item Elm_Flipselector_Item;
 
-   EAPI Evas_Object               *elm_flippicker_add(Evas_Object *parent);
-   EAPI void                       elm_flippicker_flip_next(Evas_Object *obj);
-   EAPI void                       elm_flippicker_flip_prev(Evas_Object *obj);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
-   EAPI const Eina_List           *elm_flippicker_items_get(const Evas_Object *obj);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_first_item_get(const Evas_Object *obj);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_last_item_get(const Evas_Object *obj);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_selected_item_get(const Evas_Object *obj);
-   EAPI void                       elm_flippicker_item_selected_set(Elm_Flippicker_Item *item, Eina_Bool selected);
-   EAPI Eina_Bool                  elm_flippicker_item_selected_get(const Elm_Flippicker_Item *item);
-   EAPI void                       elm_flippicker_item_del(Elm_Flippicker_Item *item);
-   EAPI const char                *elm_flippicker_item_label_get(const Elm_Flippicker_Item *item);
-   EAPI void                       elm_flippicker_item_label_set(Elm_Flippicker_Item *item, const char *label);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_item_prev_get(Elm_Flippicker_Item *item);
-   EAPI Elm_Flippicker_Item       *elm_flippicker_item_next_get(Elm_Flippicker_Item *item);
-   EAPI void                       elm_flippicker_interval_set(Evas_Object *obj, double interval);
-   EAPI double                     elm_flippicker_interval_get(const Evas_Object *obj);
+   EAPI Evas_Object               *elm_flipselector_add(Evas_Object *parent);
+   EAPI void                       elm_flipselector_flip_next(Evas_Object *obj);
+   EAPI void                       elm_flipselector_flip_prev(Evas_Object *obj);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_item_append(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_item_prepend(Evas_Object *obj, const char *label, void (*func)(void *data, Evas_Object *obj, void *event_info), void *data);
+   EAPI const Eina_List           *elm_flipselector_items_get(const Evas_Object *obj);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_first_item_get(const Evas_Object *obj);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_last_item_get(const Evas_Object *obj);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_selected_item_get(const Evas_Object *obj);
+   EAPI void                       elm_flipselector_item_selected_set(Elm_Flipselector_Item *item, Eina_Bool selected);
+   EAPI Eina_Bool                  elm_flipselector_item_selected_get(const Elm_Flipselector_Item *item);
+   EAPI void                       elm_flipselector_item_del(Elm_Flipselector_Item *item);
+   EAPI const char                *elm_flipselector_item_label_get(const Elm_Flipselector_Item *item);
+   EAPI void                       elm_flipselector_item_label_set(Elm_Flipselector_Item *item, const char *label);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_item_prev_get(Elm_Flipselector_Item *item);
+   EAPI Elm_Flipselector_Item       *elm_flipselector_item_next_get(Elm_Flipselector_Item *item);
+   EAPI void                       elm_flipselector_interval_set(Evas_Object *obj, double interval);
+   EAPI double                     elm_flipselector_interval_get(const Evas_Object *obj);
    /* smart callbacks called:
-    * "selected" - when flippicker selected item is changed
-    * "overflowed" - when flippicker item is changed to first item
+    * "selected" - when flipselector selected item is changed
+    * "overflowed" - when flipselector item is changed to first item
     *                from last item
-    * "underflowed" - when flippicker item is changed to last item
+    * "underflowed" - when flipselector item is changed to last item
     *                 from first item.
     */
    /* available styles:

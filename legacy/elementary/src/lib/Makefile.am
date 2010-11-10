@@ -83,7 +83,7 @@ elm_config.c \
 elm_animator.c \
 elm_transit.c \
 elm_calendar.c \
-elm_flippicker.c \
+elm_flipselector.c \
 elm_diskselector.c \
 elm_colorselector.c \
 \
