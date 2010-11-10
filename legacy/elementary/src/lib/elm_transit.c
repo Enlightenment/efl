@@ -90,38 +90,41 @@ struct _Elm_Effect
    Eina_Bool deleted:1;
 };
 
-typedef struct _Elm_Effect Elm_Effect;
-
-static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__,
-                              Evas_Object *obj, void *event_info __UNUSED__);
-
-static void
-_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+struct _Elm_Obj_Data
 {
-   Eina_Bool *state;
+   Eina_Bool state;
+   Elm_Transit *transit;
+};
 
-   state = evas_object_data_del(obj, _transit_key);
-   free(state);
-
-   transit->objs = eina_list_remove(transit->objs, obj);
-
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                                  _elm_transit_object_remove_cb);
-}
+typedef struct _Elm_Effect Elm_Effect;
+typedef struct _Elm_Obj_Data Elm_Obj_Data;
 
 static void
 _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *transit = data;
-   Eina_Bool *state;
 
-   state = evas_object_data_del(obj, _transit_key);
-   free(state);
+   Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
+   evas_object_pass_events_set(obj, obj_data->state);
+   free(obj_data);
 
    transit->objs = eina_list_remove(transit->objs, obj);
 
    if (!transit->objs)
      elm_transit_del(transit);
+}
+
+static void
+_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+{
+   Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
+   evas_object_pass_events_set(obj, obj_data->state);
+   free(obj_data);
+
+   transit->objs = eina_list_remove(transit->objs, obj);
+
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                                  _elm_transit_object_remove_cb);
 }
 
 static void
@@ -160,9 +163,6 @@ _elm_transit_del(Elm_Transit *transit)
 
    if (transit->del_data.func)
      transit->del_data.func(transit->del_data.arg, transit);
-
-   if (transit->block)
-     elm_transit_event_block_set(transit, EINA_FALSE);
 
    ecore_animator_del(transit->animator);
 
@@ -421,6 +421,9 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
  * @note After the first addition of an object in @p transit, if its
  * object list become empty again, the @p transit will be killed by
  * elm_transit_del(transit) function.
+ * @note If the @p obj belongs to another transit, the @p obj will be
+ * removed from it and it will only belong to the @p transit. If the old
+ * transit stays without objects, it will die.
  *
  * @param transit The transit object.
  * @param obj Object to be animated.
@@ -433,16 +436,22 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
    if (!obj) return;
-   if (eina_list_data_find(transit->objs, obj)) return;
 
-   Eina_Bool *state;
+   Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+
+   if (obj_data)
+     {
+        if (obj_data->transit == transit) return;
+        elm_transit_object_remove(obj_data->transit, obj);
+     }
+
+   obj_data = ELM_NEW(Elm_Obj_Data);
+   obj_data->state = evas_object_pass_events_get(obj);
+   obj_data->transit = transit;
+   evas_object_data_set(obj, _transit_key, obj_data);
 
    transit->objs = eina_list_append(transit->objs, obj);
 
-   state = ELM_NEW(Eina_Bool);
-   *state = evas_object_pass_events_get(obj);
-
-   evas_object_data_set(obj, _transit_key, state);
 
    if (transit->block)
      evas_object_pass_events_set(obj, EINA_TRUE);
@@ -519,8 +528,8 @@ elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
           {
-             Eina_Bool *state = evas_object_data_get(obj, _transit_key);
-             evas_object_pass_events_set(obj, *state);
+             Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+             evas_object_pass_events_set(obj, obj_data->state);
           }
      }
    else
