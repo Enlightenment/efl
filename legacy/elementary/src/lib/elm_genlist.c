@@ -77,6 +77,18 @@
  * longpressed - This is called when the item is pressed for a certain amount
  * of time. By default it's 1 second.
  *
+ * scroll,edge,top - This is called when the genlist is scrolled until the top
+ * edge.
+ *
+ * scroll,edge,bottom - This is called when the genlist is scrolled until the
+ * bottom edge.
+ *
+ * scroll,edge,left - This is called when the genlist is scrolled until the
+ * left edge.
+ *
+ * scroll,edge,right - This is called when the genlist is scrolled until the
+ * right edge.
+ *
  * Genlist has a fairly large API, mostly because it's relatively complex,
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview o the theory behind genlist.
