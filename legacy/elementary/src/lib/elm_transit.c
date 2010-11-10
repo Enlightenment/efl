@@ -43,14 +43,79 @@ struct _Elm_Effect
 
 typedef struct _Elm_Effect Elm_Effect;
 
-static void _transit_animate_op(Elm_Transit *transit, double progress);
-static void _elm_transit_effect_del(Elm_Transit *transit, Elm_Effect *effect);
-static void _remove_dead_effects(Elm_Transit *transit);
-static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
-static Eina_Bool _animator_animate_cb(void *data);
-static unsigned int _animator_compute_no_reverse_repeat_count(unsigned int cnt);
-static unsigned int _animator_compute_reverse_repeat_count(unsigned int cnt);
+static void _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__,
+                              Evas_Object *obj, void *event_info __UNUSED__);
+
+static unsigned int
+_animator_compute_no_reverse_repeat_count(unsigned int cnt)
+{
+   return cnt / 2;
+}
+
+static unsigned int
+_animator_compute_reverse_repeat_count(unsigned int cnt)
+{
+   return ((cnt + 1) * 2) - 1;
+}
+
+static void
+_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+{
+   Eina_Bool *state;
+
+   state = evas_object_data_del(obj, _transit_key);
+   free(state);
+
+   transit->objs = eina_list_remove(transit->objs, obj);
+
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                                  _elm_transit_object_remove_cb);
+}
+
+static void
+_elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Transit *transit = data;
+
+   _elm_transit_object_remove(transit, obj);
+
+   if (!transit->objs)
+     elm_transit_del(transit);
+}
+
+static double
+_tween_progress_calc(Elm_Transit *transit, double progress)
+{
+  switch (transit->tween_mode)
+    {
+     case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
+        return 1.0 - sin((ELM_PI / 2.0) + (progress * ELM_PI / 2.0));
+     case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
+        return sin(progress * ELM_PI / 2.0);
+     case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
+        return (1.0 - cos(progress * ELM_PI)) / 2.0;
+     default:
+        return progress;
+    }
+}
+
+static void
+_elm_transit_effect_del(Elm_Transit *transit, Elm_Effect *effect)
+{
+   if (effect->user_data_free)
+     {
+        effect->user_data_free(effect->user_data, transit);
+        effect->user_data = NULL;
+     }
+   if (transit->walking)
+     {
+        effect->deleted = EINA_TRUE;
+        return;
+     }
+
+   transit->effect_list = eina_list_remove(transit->effect_list, effect);
+   free(effect);
+}
 
 static void
 _remove_dead_effects(Elm_Transit *transit)
@@ -83,6 +148,105 @@ _transit_animate_op(Elm_Transit *transit, double progress)
 
    if (!transit->walking)
      _remove_dead_effects(transit);
+}
+
+static Eina_Bool
+_animator_animate_cb(void *data)
+{
+   Elm_Transit *transit = data;
+
+   transit->cur_time = ecore_loop_time_get();
+   double elapsed_time = transit->cur_time - transit->begin_time;
+
+   if (elapsed_time > transit->duration)
+     elapsed_time = transit->duration;
+
+   double progress = _tween_progress_calc(transit,
+                                             elapsed_time / transit->duration);
+
+   /* Reverse? */
+   if (transit->auto_reverse)
+     {
+	if ((transit->cur_repeat_cnt % 2))
+	  progress = 1 - progress;
+     }
+
+   if (transit->duration > 0)
+     _transit_animate_op(transit, progress);
+
+   /* Not end. Keep going. */
+   if (elapsed_time < transit->duration)
+     return ECORE_CALLBACK_RENEW;
+
+   /* Repeat and reverse and time done! */
+   if (transit->cur_repeat_cnt == transit->repeat_cnt)
+     {
+        elm_transit_del(transit);
+	return ECORE_CALLBACK_CANCEL;
+     }
+
+   /* Repeat Case */
+   transit->cur_repeat_cnt++;
+   transit->begin_time = ecore_loop_time_get();
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+/**
+ * Add new transit.
+ *
+ * @param duration Duration of the transit
+ * @return transit
+ *
+ * @ingroup Transit
+ */
+EAPI Elm_Transit *
+elm_transit_add(double duration)
+{
+   Elm_Transit *transit = ELM_NEW(Elm_Transit);
+
+   if (!transit) return NULL;
+
+   elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
+
+   transit->duration = duration;
+
+   transit->begin_time = ecore_loop_time_get();
+   transit->animator = ecore_animator_add(_animator_animate_cb, transit);
+   return transit;
+}
+
+/**
+ * Delete transit.
+ *
+ * Stops the animation and delete the @p transit object
+ *
+ * @param transit	Transit to be deleted
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_del(Elm_Transit *transit)
+{
+   Eina_List *elist, *elist_next;
+   Elm_Effect *effect;
+   if (!transit) return;
+
+   if (transit->block)
+     elm_transit_event_block_set(transit, EINA_FALSE);
+
+   ecore_animator_del(transit->animator);
+
+   if (transit->completion_op)
+     transit->completion_op(transit->completion_arg, transit);
+
+   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist,elist_next, effect)
+     _elm_transit_effect_del(transit, effect);
+
+   while (transit->objs)
+     _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
+
+   free(transit);
 }
 
 /**
@@ -152,22 +316,78 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
      }
 }
 
-static void
-_elm_transit_effect_del(Elm_Transit *transit, Elm_Effect *effect)
+/**
+ * Add new object to apply the effects
+ *
+ * @note After the first addition of an object in @p transit, if its
+ * object list become empty again, the @p transit will be killed by
+ * elm_transit_del(transit, obj) function.
+ *
+ * @param transit Transit object
+ * @param obj Object
+ * @return transit
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 {
-   if (effect->user_data_free)
-     {
-        effect->user_data_free(effect->user_data, transit);
-        effect->user_data = NULL;
-     }
-   if (transit->walking)
-     {
-        effect->deleted = EINA_TRUE;
-        return;
-     }
+   if (!transit) return;
+   if (!obj) return;
+   if (eina_list_data_find(transit->objs, obj)) return;
 
-   transit->effect_list = eina_list_remove(transit->effect_list, effect);
-   free(effect);
+   Eina_Bool *state;
+
+   transit->objs = eina_list_append(transit->objs, obj);
+
+   state = ELM_NEW(Eina_Bool);
+   *state = evas_object_pass_events_get(obj);
+
+   evas_object_data_set(obj, _transit_key, state);
+
+   if (transit->block)
+     evas_object_pass_events_set(obj, EINA_TRUE);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                  _elm_transit_object_remove_cb, transit);
+}
+
+/**
+ * Removes an added object from the transit
+ *
+ * @note If the list become empty, this function will call
+ * elm_transit_del(transit, obj), that is, it will kill the @p transit.
+ *
+ * @param transit Transit object
+ * @param obj Object
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
+{
+   if (!transit) return;
+   if (!obj) return;
+
+   _elm_transit_object_remove(transit, obj);
+
+   if (!transit->objs)
+     elm_transit_del(transit);
+}
+
+/**
+ * Get the objects of the transit
+ *
+ * @param transit Transit object
+ * @return a Eina_List with the objects from the transit
+ *
+ * @ingroup Transit
+ */
+EAPI const Eina_List *
+elm_transit_objects_get(const Elm_Transit *transit)
+{
+   if (!transit) return NULL;
+   return transit->objs;
 }
 
 /**
@@ -239,235 +459,6 @@ elm_transit_del_cb_set(Elm_Transit *transit, void (*op) (void *data, Elm_Transit
 }
 
 /**
- * Delete transit.
- *
- * Stops the animation and delete the @p transit object
- *
- * @param transit	Transit to be deleted
- *
- * @ingroup Transit
- */
-EAPI void
-elm_transit_del(Elm_Transit *transit)
-{
-   Eina_List *elist, *elist_next;
-   Elm_Effect *effect;
-   if (!transit) return;
-
-   if (transit->block)
-     elm_transit_event_block_set(transit, EINA_FALSE);
-
-   ecore_animator_del(transit->animator);
-
-   if (transit->completion_op)
-     transit->completion_op(transit->completion_arg, transit);
-
-   EINA_LIST_FOREACH_SAFE(transit->effect_list, elist,elist_next, effect)
-     _elm_transit_effect_del(transit, effect);
-
-   while (transit->objs)
-     _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
-
-   free(transit);
-}
-
-static double
-_tween_progress_calc(Elm_Transit *transit, double progress)
-{
-  switch (transit->tween_mode)
-    {
-     case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
-        return 1.0 - sin((ELM_PI / 2.0) + (progress * ELM_PI / 2.0));
-     case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
-        return sin(progress * ELM_PI / 2.0);
-     case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
-        return (1.0 - cos(progress * ELM_PI)) / 2.0;
-     default:
-        return progress;
-    }
-}
-
-/**
- * Set the transit animation acceleration style.
- *
- * @param transit	Transit
- * @param tween_mode The tween type
- *
- * @ingroup Transit
- */
-EAPI void
-elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode)
-{
-   if (!transit) return;
-   transit->tween_mode = tween_mode;
-}
-
-/**
- * Add new transit.
- *
- * @param duration Duration of the transit
- * @return transit
- *
- * @ingroup Transit
- */
-EAPI Elm_Transit *
-elm_transit_add(double duration)
-{
-   Elm_Transit *transit = ELM_NEW(Elm_Transit);
-
-   if (!transit) return NULL;
-
-   elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
-
-   transit->duration = duration;
-
-   transit->begin_time = ecore_loop_time_get();
-   transit->animator = ecore_animator_add(_animator_animate_cb, transit);
-   return transit;
-}
-
-static Eina_Bool
-_animator_animate_cb(void *data)
-{
-   Elm_Transit *transit = data;
-
-   transit->cur_time = ecore_loop_time_get();
-   double elapsed_time = transit->cur_time - transit->begin_time;
-
-   if (elapsed_time > transit->duration)
-     elapsed_time = transit->duration;
-
-   double progress = _tween_progress_calc(transit,
-                                             elapsed_time / transit->duration);
-
-   /* Reverse? */
-   if (transit->auto_reverse)
-     {
-	if ((transit->cur_repeat_cnt % 2))
-	  progress = 1 - progress;
-     }
-
-   if (transit->duration > 0)
-     _transit_animate_op(transit, progress);
-
-   /* Not end. Keep going. */
-   if (elapsed_time < transit->duration)
-     return ECORE_CALLBACK_RENEW;
-
-   /* Repeat and reverse and time done! */
-   if (transit->cur_repeat_cnt == transit->repeat_cnt)
-     {
-        elm_transit_del(transit);
-	return ECORE_CALLBACK_CANCEL;
-     }
-
-   /* Repeat Case */
-   transit->cur_repeat_cnt++;
-   transit->begin_time = ecore_loop_time_get();
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-/**
- * Add new object to apply the effects
- *
- * @note After the first addition of an object in @p transit, if its
- * object list become empty again, the @p transit will be killed by
- * elm_transit_del(transit, obj) function.
- *
- * @param transit Transit object
- * @param obj Object
- * @return transit
- *
- * @ingroup Transit
- */
-EAPI void
-elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
-{
-   if (!transit) return;
-   if (!obj) return;
-   if (eina_list_data_find(transit->objs, obj)) return;
-
-   Eina_Bool *state;
-
-   transit->objs = eina_list_append(transit->objs, obj);
-
-   state = ELM_NEW(Eina_Bool);
-   *state = evas_object_pass_events_get(obj);
-
-   evas_object_data_set(obj, _transit_key, state);
-
-   if (transit->block)
-     evas_object_pass_events_set(obj, EINA_TRUE);
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                  _elm_transit_object_remove_cb, transit);
-}
-
-static void
-_elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
-{
-   Eina_Bool *state;
-
-   state = evas_object_data_del(obj, _transit_key);
-   free(state);
-
-   transit->objs = eina_list_remove(transit->objs, obj);
-
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                                  _elm_transit_object_remove_cb);
-}
-
-static void
-_elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Elm_Transit *transit = data;
-
-   _elm_transit_object_remove(transit, obj);
-
-   if (!transit->objs)
-     elm_transit_del(transit);
-}
-
-/**
- * Removes an added object from the transit
- *
- * @note If the list become empty, this function will call
- * elm_transit_del(transit, obj), that is, it will kill the @p transit.
- *
- * @param transit Transit object
- * @param obj Object
- *
- * @ingroup Transit
- */
-EAPI void
-elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
-{
-   if (!transit) return;
-   if (!obj) return;
-
-   _elm_transit_object_remove(transit, obj);
-
-   if (!transit->objs)
-     elm_transit_del(transit);
-}
-
-/**
- * Get the objects of the transit
- *
- * @param transit Transit object
- * @return a Eina_List with the objects from the transit
- *
- * @ingroup Transit
- */
-EAPI const Eina_List *
-elm_transit_objects_get(const Elm_Transit *transit)
-{
-   if (!transit) return NULL;
-   return transit->objs;
-}
-
-/**
  * Set reverse effect automatically.
  *
  * If auto reverse is setted, after running the effects with the progress
@@ -497,18 +488,6 @@ elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
 	transit->repeat_cnt =
 	  _animator_compute_no_reverse_repeat_count(transit->repeat_cnt);
      }
-}
-
-static unsigned int
-_animator_compute_no_reverse_repeat_count(unsigned int cnt)
-{
-   return cnt / 2;
-}
-
-static unsigned int
-_animator_compute_reverse_repeat_count(unsigned int cnt)
-{
-   return ((cnt + 1) * 2) - 1;
 }
 
 /**
@@ -541,6 +520,21 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 	transit->repeat_cnt =
 	  _animator_compute_reverse_repeat_count(repeat);
      }
+}
+
+/**
+ * Set the transit animation acceleration style.
+ *
+ * @param transit	Transit
+ * @param tween_mode The tween type
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode)
+{
+   if (!transit) return;
+   transit->tween_mode = tween_mode;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
