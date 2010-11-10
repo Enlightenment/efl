@@ -12,6 +12,9 @@
  * Once effects are inserted into transit, transit will manage those effects.
  * (ex) deleting).
 */
+
+static const char _transit_key[] = "_elm_transit";
+
 struct _Elm_Transit
 {
    Eina_List *effect_list;
@@ -20,7 +23,6 @@ struct _Elm_Transit
    void *completion_arg;
    int walking;
    Eina_List *objs;
-   Eina_List *objs_state;
    Ecore_Animator *animator;
    double begin_time;
    double cur_time;
@@ -52,7 +54,6 @@ static double _animator_curve_out(double progress);
 static Eina_Bool _animator_animate_cb(void *data);
 static unsigned int _animator_compute_no_reverse_repeat_count(unsigned int cnt);
 static unsigned int _animator_compute_reverse_repeat_count(unsigned int cnt);
-static int _eina_list_obj_pos_get(Eina_List *list, void *obj);
 
 static void
 _remove_dead_effects(Elm_Transit *transit)
@@ -66,32 +67,6 @@ _remove_dead_effects(Elm_Transit *transit)
         if (effect->deleted)
           _elm_transit_effect_del(transit, effect);
      }
-}
-
-/* Get the position of the object in the list
- * -1 is returned if the object was not found.
- *
- * @param list Eina_list object
- * @param obj Object
- *
- * @return The position of obj in the list, or -1 if obj not in the list
- *
- * @ingroup Transit
- */
-static int
-_eina_list_obj_pos_get(Eina_List *list, void *obj)
-{
-   Eina_List *elist;
-   void *eobj;
-   int n = -1, count = -1;
-
-   EINA_LIST_FOREACH(list, elist, eobj)
-     {
-        count++;
-        if (eobj == obj) n = count;
-     }
-
-    return n;
 }
 
 static void
@@ -216,7 +191,6 @@ elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
 
    Evas_Object *obj;
    Eina_List *elist;
-   int count = 0;
 
    transit->block = disabled;
 
@@ -224,15 +198,14 @@ elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
           {
-             Eina_Bool *state = eina_list_nth(transit->objs_state, count);
-             elm_object_disabled_set(obj, *state);
-             count++;
+             Eina_Bool *state = evas_object_data_get(obj, _transit_key);
+             evas_object_pass_events_set(obj, *state);
           }
      }
    else
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
-          elm_object_disabled_set(obj, EINA_TRUE);
+          evas_object_pass_events_set(obj, EINA_TRUE);
      }
 }
 
@@ -295,8 +268,6 @@ elm_transit_del(Elm_Transit *transit)
 
    EINA_LIST_FOREACH(transit->effect_list, elist, effect)
      _elm_transit_effect_del(transit, effect);
-
-   eina_list_free(transit->objs_state);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      transit->objs = eina_list_remove(transit->objs, obj);
@@ -449,11 +420,12 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    transit->objs = eina_list_append(transit->objs, obj);
 
    state = calloc(1, sizeof(Eina_Bool));
-   *state = elm_object_disabled_get(obj);
-   transit->objs_state = eina_list_append(transit->objs_state, state);
+   *state = evas_object_pass_events_get(obj);
+
+   evas_object_data_set(obj, _transit_key, state);
 
    if (transit->block)
-     elm_object_disabled_set(obj, EINA_TRUE);
+     evas_object_pass_events_set(obj, EINA_TRUE);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _elm_transit_object_remove, transit);
 }
@@ -466,14 +438,10 @@ _elm_transit_object_remove(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
    if (!transit) return;
    if (!obj) return;
 
-   int n = _eina_list_obj_pos_get(transit->objs, obj);
-   if (n == -1) return;
+   state = evas_object_data_del(obj, _transit_key);
+   free(state);
 
    transit->objs = eina_list_remove(transit->objs, obj);
-
-   state = eina_list_nth(transit->objs_state, n);
-   transit->objs_state = eina_list_remove(transit->objs_state, state);
-   free(state);
 
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                                   _elm_transit_object_remove);
