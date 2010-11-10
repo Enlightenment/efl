@@ -486,6 +486,25 @@ elm_radio_state_value_set(Evas_Object *obj, int value)
 }
 
 /**
+ * Get the integer value that this radio object represents
+ *
+ * This gets the value of the radio.
+ *
+ * @param obj The radio object
+ * @return The value used if this radio object is selected
+ *
+ * @ingroup Radio
+ */
+EAPI int
+elm_radio_state_value_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->value;
+}
+
+/**
  * Set the value of the radio.
  *
  * This sets the value of the radio group and will also set the value if

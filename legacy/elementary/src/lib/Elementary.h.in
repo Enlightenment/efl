@@ -1694,6 +1694,7 @@ extern "C" {
    EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj);
    EAPI void         elm_radio_group_add(Evas_Object *obj, Evas_Object *group);
    EAPI void         elm_radio_state_value_set(Evas_Object *obj, int value);
+   EAPI int          elm_radio_state_value_get(const Evas_Object *obj);
    EAPI void         elm_radio_value_set(Evas_Object *obj, int value);
    EAPI int          elm_radio_value_get(const Evas_Object *obj);
    EAPI void         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep);

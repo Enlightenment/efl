@@ -15,3 +15,4 @@ elm_widget_on_change_hook_set
 elm_widget_on_show_region_hook_set
 elm_widget_focus_region_hook_set
 elm_widget_on_focus_region_hook_set
+elm_radio_value_pointer_set
