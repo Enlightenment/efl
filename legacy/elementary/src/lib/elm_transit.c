@@ -10,8 +10,26 @@
  * translation, rotation, etc. For using Effects, Create transit and insert
  * effects which are interesting.
  * Once effects are inserted into transit, transit will manage those effects.
- * (ex) deleting).
-*/
+ * (ex deleting).
+ *
+ * Example:
+ * @code
+ * Elm_Transit *trans = elm_transit_add(5.0);
+ * elm_transit_object_add(trans, obj);
+ * void *effect_context = elm_transit_effect_translation_context_new(0.0, 0.0,
+ *                                                               280.0, 280.0);
+ * elm_transit_effect_add(transit,
+ *                        elm_transit_effect_translation_op, effect_context,
+ *                        elm_transit_effect_translation_context_free);
+ * elm_transit_auto_reverse_set(transit, EINA_TRUE);
+ * elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
+ * elm_transit_repeat_times_set(transit, -1);
+ * @endcode
+ *
+ * @warning We strongly recomend to use elm_transit just when edje can not do
+ * the trick. Edje has more advantage than Elm_Transit, it has more flexibility and
+ * animations can be manipulated inside the object's theme.
+ */
 
 static const char _transit_key[] = "_elm_transit";
 
@@ -195,8 +213,14 @@ _animator_animate_cb(void *data)
 /**
  * Add new transit.
  *
- * @param duration Duration of the transit
- * @return transit
+ * @note Is not necessary to delete the transit object, it will be deleted at
+ * the end of its operation.
+ * @note The transit will start playing when the program enter in the main loop, is not
+ * necessary to give a start to the transit.
+ *
+ * @param duration The duration of the transit in seconds. When transit starts
+ * to run, it will last a @p duration time.
+ * @return The transit object.
  *
  * @ingroup Transit
  */
@@ -217,13 +241,20 @@ elm_transit_add(double duration)
 }
 
 /**
- * Delete transit.
+ * Stops the animation and delete the @p transit object.
  *
- * Stops the animation and delete the @p transit object
+ * Call this function if you wants to stop the animation before the duration
+ * time. Make sure the @p transit object is still alive with
+ * elm_transit_del_cb_set() function.
+ * All added effects will be deleted, calling its repective data_free_cb
+ * functions. The function setted by elm_tansit_del_cb_set() will be called.
  *
- * @param transit	Transit to be deleted
+ * @see elm_transit_del_cb_set()
+ *
+ * @param transit The transit object to be deleted.
  *
  * @ingroup Transit
+ * @warning Just call this function if you are sure the transit is alive.
  */
 EAPI void
 elm_transit_del(Elm_Transit *transit)
@@ -250,25 +281,34 @@ elm_transit_del(Elm_Transit *transit)
 }
 
 /**
- * Add a new effect to the transit
+ * Add a new effect to the transit.
  *
- * The @p cb function is called when the animation begins, it is the function
- * that actually performs the animation. It is called with the @p data, @p
- * transit and the time progression of the animation (it is a number between 0
- * and 1). The @p data_free_cb is the function that will be called at the end
- * of the animation, it must free the @p data and finalize the animation.
+ * @note The cb function and the data are the key to the effect. If you try to
+ * add an already added effect, nothing is done.
+ * @note If the transit is null, nothing is done.
  *
- * The cb function and the data are the key to the effect. If you try to add an
- * already added effect, nothing is done.
- * If the transit is null, nothing is done.
+ * Exemple:
+ * @code
+ * Elm_Transit *transit = elm_transit_add(5.0);
+ * elm_transit_effect_add(transit,
+ *                        elm_transit_effect_blend_op,
+ *                        elm_transit_effect_blend_context_new(),
+ *                        elm_transit_effect_blend_context_free);
+ * @endcode
  *
- * @param transit Transit object
- * @param cb The operation function
- * @param data The context data of the effect
- * @param data_free_cb The function to free the context data
+ * @param transit The transit object.
+ * @param cb The operation function. It is called when the animation begins,
+ * it is the function that actually performs the animation. It is called with
+ * the @p data, @p transit and the time progression of the animation (a double
+ * value between 0.0 and 1.0).
+ * @param data The context data of the effect.
+ * @param data_free_cb The function to free the context data, it will be called
+ * at the end of the effect, it must finalize the animation and free the
+ * @p data.
  *
  * @ingroup Transit
- * @warning The transit free the context data at the and of the transition.
+ * @warning The transit free the context data at the and of the transition with
+ * the data_free_cb function, do not use the context data in another transit.
  */
 EAPI void
 elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data, void (*data_free_cb)(void *data, Elm_Transit *transit))
@@ -292,11 +332,18 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
 }
 
 /**
- * Delete an added effect
+ * Delete an added effect.
  *
- * @param transit Transit object
- * @param cb The operation function
- * @param data The context data of the effect
+ * This function will remove the effect from the @p transit, calling the
+ * data_free_cb to free the @p data.
+ *
+ * @see elm_transit_effect_add()
+ *
+ * @note If the effect is not found, nothing is done.
+ *
+ * @param transit The transit object.
+ * @param cb The operation function.
+ * @param data The context data of the effect.
  *
  * @ingroup Transit
  */
@@ -317,15 +364,14 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
 }
 
 /**
- * Add new object to apply the effects
+ * Add new object to apply the effects.
  *
  * @note After the first addition of an object in @p transit, if its
  * object list become empty again, the @p transit will be killed by
- * elm_transit_del(transit, obj) function.
+ * elm_transit_del(transit) function.
  *
- * @param transit Transit object
- * @param obj Object
- * @return transit
+ * @param transit The transit object.
+ * @param obj Object to be animated.
  *
  * @ingroup Transit
  */
@@ -353,13 +399,14 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 }
 
 /**
- * Removes an added object from the transit
+ * Removes an added object from the transit.
  *
+ * @note If the @p obj is not in the @transit, nothing is done.
  * @note If the list become empty, this function will call
- * elm_transit_del(transit, obj), that is, it will kill the @p transit.
+ * elm_transit_del(transit), that is, it will kill the @p transit.
  *
- * @param transit Transit object
- * @param obj Object
+ * @param transit The transit object.
+ * @param obj Object to be removed from @p transit.
  *
  * @ingroup Transit
  */
@@ -376,10 +423,10 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 }
 
 /**
- * Get the objects of the transit
+ * Get the objects of the transit.
  *
- * @param transit Transit object
- * @return a Eina_List with the objects from the transit
+ * @param transit The transit object.
+ * @return a Eina_List with the objects from the transit.
  *
  * @ingroup Transit
  */
@@ -393,10 +440,11 @@ elm_transit_objects_get(const Elm_Transit *transit)
 /**
  * Set the event blocked when transit is operating.
  *
- * If @p disabled is EINA_TRUE, the objects of the transit will be disabled.
+ * If @p disabled is EINA_TRUE, the objects of the transit will not receives
+ * events from mouse and keyboard during the animation.
  *
- * @param transit Transit object
- * @param disabled Disable or enable
+ * @param transit The transit object.
+ * @param disabled Disable or enable.
  *
  * @ingroup Transit
  */
@@ -429,8 +477,10 @@ elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
 /**
  * Get the value of event blocked status.
  *
- * @param transit Transit
- * @return EINA_TRUE, when event block is disabled
+ * @see elm_transit_event_block_set()
+ *
+ * @param transit The Transit object
+ * @return EINA_TRUE, when event block is enabled.
  *
  * @ingroup Transit
  */
@@ -442,11 +492,15 @@ elm_transit_event_block_get(const Elm_Transit *transit)
 }
 
 /**
- * Set the user-callback function when the transit operation is done.
+ * Set the user-callback function when the transit is deleted.
  *
- * @param transit	Transit
- * @param op Callback function pointer
- * @param data Callback funtion user data
+ * @note Using this function twice will overwrite the first function setted.
+ * @note the @p transit object will be deleted after call @p op function.
+ *
+ * @param transit The transit object.
+ * @param op Callback function pointer. This function will be called before
+ * the deletion of the transit.
+ * @param data Callback funtion user data. It is the @p op parameter.
  *
  * @ingroup Transit
  */
@@ -463,12 +517,12 @@ elm_transit_del_cb_set(Elm_Transit *transit, void (*op) (void *data, Elm_Transit
  *
  * If auto reverse is setted, after running the effects with the progress
  * parameter from 0 to 1, it will call the effecs again with the progress
- * from 1 to 0. The transit will last fot a time iqual to (2 * duration * repeat),
+ * from 1 to 0. The transit will last for a time iqual to (2 * duration * repeat),
  * where the duration was setted with the function elm_transit_add and
  * the repeat with the function elm_transit_repeat_times_set().
  *
- * @param transit Transit
- * @param reverse EINA_TRUE is reverse.
+ * @param transit The transit object.
+ * @param reverse EINA_TRUE means the auto_reverse is on.
  *
  * @ingroup Transit
  */
@@ -491,14 +545,15 @@ elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
 }
 
 /**
- * Get if the auto reverse is on
+ * Get if the auto reverse is on.
  *
  * @see elm_transit_auto_reverse_set()
  *
- * @param transit Transit
- * @return EINA_TRUE means auto reverse is on
+ * @param transit The transit object.
+ * @return EINA_TRUE means auto reverse is on.
  *
  * @ingroup Transit
+ * @warning @p transit must not be NULL.
  */
 EAPI Eina_Bool
 elm_transit_auto_reverse_get(Elm_Transit *transit)
@@ -509,14 +564,14 @@ elm_transit_auto_reverse_get(Elm_Transit *transit)
 /**
  * Set the transit repeat count. Effect will be repeated by repeat count.
  *
- * This function define the number of repetition the transit will run after
+ * This function sets the number of repetition the transit will run after
  * the first one, that is, if @p repeat is 1, the transit will run 2 times.
  * If the @p repeat is a negative number, it will repeat infinite times.
  *
  * @note If this function is called during the transit execution, the transit
  * will run @p repeat times, ignoring the times it already performed.
  *
- * @param transit Transit
+ * @param transit The transit object
  * @param repeat Repeat count
  *
  * @ingroup Transit
@@ -543,10 +598,11 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
  *
  * @see elm_transit_repeat_times_set()
  *
- * @param transit Transit
- * @return The repeat count
+ * @param transit The Transit object.
+ * @return The repeat count.
  *
  * @ingroup Transit
+ * @warning @p transit must not be NULL.
  */
 EAPI int
 elm_transit_repeat_times_get(Elm_Transit *transit)
@@ -557,10 +613,16 @@ elm_transit_repeat_times_get(Elm_Transit *transit)
 }
 
 /**
- * Set the transit animation acceleration style.
+ * Set the transit animation acceleration type.
  *
- * @param transit	Transit
- * @param tween_mode The tween type
+ * This function sets the tween mode of the transit that can be:
+ * ELM_TRANSIT_TWEEN_MODE_LINEAR - The default mode.
+ * ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL - Starts in accelerate mode and ends decelerating.
+ * ELM_TRANSIT_TWEEN_MODE_DECELERATE - The animation will be slowed over time.
+ * ELM_TRANSIT_TWEEN_MODE_ACCELERATE - The animation will accelerate over time.
+ *
+ * @param transit The transit object.
+ * @param tween_mode The tween type.
  *
  * @ingroup Transit
  */
@@ -576,8 +638,8 @@ elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mo
  *
  * @note @p transit can not be NULL
  *
- * @param transit	Transit
- * @return The tween type
+ * @param transit The transit object.
+ * @return The tween type.
  *
  * @ingroup Transit
  */
@@ -603,10 +665,18 @@ struct _Elm_Fx_Resizing
 /**
  * The Free function to Resizing Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Risizing effect, which consists of functions:
+ * - elm_transit_effect_resizing_context_new()
+ * - elm_transit_effect_resizing_op()
+ * - elm_transit_effect_resizing_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Resizing context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -617,13 +687,21 @@ elm_transit_effect_resizing_context_free(void *data, Elm_Transit *transit __UNUS
 }
 
 /**
- * Operation function to the Resizing Effect
+ * Operation function to the Resizing Effect.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Risizing effect, which consists of functions:
+ * - elm_transit_effect_resizing_context_new()
+ * - elm_transit_effect_resizing_op()
+ * - elm_transit_effect_resizing_context_free()
  *
  * @see elm_transit_effect_add()
  *
  * @param data The Resizing context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -645,15 +723,20 @@ elm_transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress
 }
 
 /**
- * Get a new context data of Resizing Effect
+ * Get a new context data of Resizing Effect.
+ *
+ * This function belongs to the Risizing effect, which consists of functions:
+ * - elm_transit_effect_resizing_context_new()
+ * - elm_transit_effect_resizing_op()
+ * - elm_transit_effect_resizing_context_free()
  *
  * @see elm_transit_effect_add()
  *
- * @param from_w Object width size when effect begins
- * @param from_h Object height size when effect begins
- * @param to_w Object width size when effect ends
- * @param to_h Object height size when effect ends
- * @return Resizing effect context data
+ * @param from_w Object width size when effect begins.
+ * @param from_h Object height size when effect begins.
+ * @param to_w Object width size when effect ends.
+ * @param to_h Object height size when effect ends.
+ * @return Resizing effect context data.
  *
  * @ingroup Transit
  */
@@ -689,10 +772,18 @@ struct _Elm_Fx_Translation
 /**
  * The Free function to Translation Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Translation effect, which consists of functions:
+ * - elm_transit_effect_translation_context_new()
+ * - elm_transit_effect_translation_op()
+ * - elm_transit_effect_translation_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Translation context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -703,13 +794,21 @@ elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit __U
 }
 
 /**
- * Operation function to the Translation Effect
+ * Operation function to the Translation Effect.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Translation effect, which consists of functions:
+ * - elm_transit_effect_translation_context_new()
+ * - elm_transit_effect_translation_op()
+ * - elm_transit_effect_translation_context_free()
  *
  * @see elm_transit_effect_add()
  *
  * @param data The Translation context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -735,13 +834,18 @@ elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progr
 /**
  * Get a new context data of Translation Effect
  *
+ * This function belongs to the Translation effect, which consists of functions:
+ * - elm_transit_effect_translation_context_new()
+ * - elm_transit_effect_translation_op()
+ * - elm_transit_effect_translation_context_free()
+ *
  * @see elm_transit_effect_add()
  *
- * @param from_x Position X when effect begins
- * @param from_y Position Y when effect begins
- * @param to_x Position X when effect ends
- * @param to_y Position Y when effect ends
- * @return Translation effect context data
+ * @param from_x Position X when effect begins.
+ * @param from_y Position Y when effect begins.
+ * @param to_x Position X when effect ends.
+ * @param to_y Position Y when effect ends.
+ * @return Translation effect context data.
  *
  * @ingroup Transit
  */
@@ -775,10 +879,18 @@ struct _Elm_Fx_Zoom
 /**
  * The Free function to Zoom Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Zoom effect, which consists of functions:
+ * - elm_transit_effect_zoom_context_new()
+ * - elm_transit_effect_zoom_op()
+ * - elm_transit_effect_zoom_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Zoom context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -791,11 +903,19 @@ elm_transit_effect_zoom_context_free(void *data, Elm_Transit *transit __UNUSED__
 /**
  * Operation function to the Zoom Effect
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Zoom effect, which consists of functions:
+ * - elm_transit_effect_zoom_context_new()
+ * - elm_transit_effect_zoom_op()
+ * - elm_transit_effect_zoom_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Zoom context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -833,9 +953,14 @@ elm_transit_effect_zoom_op(void *data, Elm_Transit *transit , double progress)
  *
  * @see elm_transit_effect_add()
  *
- * @param from_rate Scale rate when effect begins (1 is current rate)
- * @param to_rate Scale rate when effect ends
- * @return Zoom effect context data
+ * This function belongs to the Zoom effect, which consists of functions:
+ * - elm_transit_effect_zoom_context_new()
+ * - elm_transit_effect_zoom_op()
+ * - elm_transit_effect_zoom_context_free()
+ *
+ * @param from_rate Scale rate when effect begins (1 is current rate).
+ * @param to_rate Scale rate when effect ends.
+ * @return Zoom effect context data.
  *
  * @ingroup Transit
  */
@@ -868,10 +993,18 @@ struct _Elm_Fx_Flip
 /**
  * The Free function to Flip Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Flip effect, which consists of functions:
+ * - elm_transit_effect_flip_context_new()
+ * - elm_transit_effect_flip_op()
+ * - elm_transit_effect_flip_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Flip context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -894,17 +1027,25 @@ elm_transit_effect_flip_context_free(void *data, Elm_Transit *transit)
 }
 
 /**
- * Operation function to the Flip Effect
+ * Operation function to the Flip Effect.
  *
  * This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "front" object and the second will be the "back" object.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Flip effect, which consists of functions:
+ * - elm_transit_effect_flip_context_new()
+ * - elm_transit_effect_flip_op()
+ * - elm_transit_effect_flip_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Flip context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -993,11 +1134,16 @@ elm_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
 /**
  * Get a new context data of Flip Effect
  *
+ * This function belongs to the Flip effect, which consists of functions:
+ * - elm_transit_effect_flip_context_new()
+ * - elm_transit_effect_flip_op()
+ * - elm_transit_effect_flip_context_free()
+ *
  * @see elm_transit_effect_add()
  *
- * @param axis Flipping Axis(X or Y)
- * @param cw Flipping Direction. EINA_TRUE is clock-wise
- * @return Flip effect context data
+ * @param axis Flipping Axis(X or Y).
+ * @param cw Flipping Direction. EINA_TRUE is clock-wise.
+ * @return Flip effect context data.
  *
  * @ingroup Transit
  */
@@ -1048,10 +1194,19 @@ struct _Elm_Fx_Resizable_Flip
 /**
  * The Free function to Resizable Flip Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Resizable Flip effect, which consists of
+ * functions:
+ * - elm_transit_effect_resizable_flip_context_new()
+ * - elm_transit_effect_resizable_flip_op()
+ * - elm_transit_effect_resizing_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Resizable Flip context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -1128,11 +1283,20 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Fx_ResizableFlip_Node *flip, float de
  * in the transit list of objects. The first object in the pair will be the
  * "front" object and the second will be the "back" object.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Resizable Flip effect, which consists of
+ * functions:
+ * - elm_transit_effect_resizable_flip_context_new()
+ * - elm_transit_effect_resizable_flip_op()
+ * - elm_transit_effect_resizing_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Resizable Flip context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -1262,13 +1426,19 @@ _resizable_flip_nodes_build(Elm_Transit *transit)
 }
 
 /**
- * Get a new context data of Resizable Flip Effect
+ * Get a new context data of Resizable Flip Effect.
+ *
+ * This function belongs to the Resizable Flip effect, which consists of
+ * functions:
+ * - elm_transit_effect_resizable_flip_context_new()
+ * - elm_transit_effect_resizable_flip_op()
+ * - elm_transit_effect_resizing_context_free()
  *
  * @see elm_transit_effect_add()
  *
- * @param axis Flipping Axis.(X or Y)
- * @param cw Flipping Direction. EINA_TRUE is clock-wise
- * @return Resizable Flip effect context data
+ * @param axis Flipping Axis.(X or Y).
+ * @param cw Flipping Direction. EINA_TRUE is clock-wise.
+ * @return Resizable Flip effect context data.
  *
  * @ingroup Transit
  */
@@ -1304,10 +1474,19 @@ struct _Elm_Fx_Wipe
 /**
  * The Free function to Wipe Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Wipe effect, which consists of
+ * functions:
+ * - elm_transit_effect_wipe_context_new()
+ * - elm_transit_effect_wipe_op()
+ * - elm_transit_effect_wipe_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Wipe context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -1448,13 +1627,22 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
 }
 
 /**
- * Operation function to the Wipe Effect
+ * Operation function to the Wipe Effect.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Wipe effect, which consists of
+ * functions:
+ * - elm_transit_effect_wipe_context_new()
+ * - elm_transit_effect_wipe_op()
+ * - elm_transit_effect_wipe_context_free()
  *
  * @see elm_transit_effect_add()
  *
  * @param data The Wipe context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transt Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -1493,13 +1681,19 @@ elm_transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress)
 }
 
 /**
- * Get a new context data of Wipe Flip Effect
+ * Get a new context data of Wipe Flip Effect.
+ *
+ * This function belongs to the Wipe effect, which consists of
+ * functions:
+ * - elm_transit_effect_wipe_context_new()
+ * - elm_transit_effect_wipe_op()
+ * - elm_transit_effect_wipe_context_free()
  *
  * @see elm_transit_effect_add()
  *
- * @param type Wipe type. Hide or show
- * @param dir Wipe Direction
- * @return Wipe effect context data
+ * @param type Wipe type. Hide or show.
+ * @param dir Wipe Direction.
+ * @return Wipe effect context data.
  *
  * @ingroup Transit
  */
@@ -1537,10 +1731,19 @@ struct _Elm_Fx_Color
 /**
  * The Free function to Color Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Color effect, which consists of
+ * functions:
+ * - elm_transit_effect_color_context_new()
+ * - elm_transit_effect_color_op()
+ * - elm_transit_effect_color_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Color context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -1551,13 +1754,22 @@ elm_transit_effect_color_context_free(void *data, Elm_Transit *transit __UNUSED_
 }
 
 /**
- * Operation function to the Color Effect
+ * Operation function to the Color Effect.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Color effect, which consists of
+ * functions:
+ * - elm_transit_effect_color_context_new()
+ * - elm_transit_effect_color_op()
+ * - elm_transit_effect_color_context_free()
  *
  * @see elm_transit_effect_add()
  *
  * @param data The Color context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -1581,19 +1793,25 @@ elm_transit_effect_color_op(void *data, Elm_Transit *transit, double progress)
 }
 
 /**
- * Get a new context data of Color Effect
+ * Get a new context data of Color Effect.
  *
  * @see elm_transit_effect_add()
  *
- * @param  from_r        RGB R when effect begins
- * @param  from_g        RGB G when effect begins
- * @param  from_b        RGB B when effect begins
- * @param  from_a        RGB A when effect begins
- * @param  to_r          RGB R when effect ends
- * @param  to_g          RGB G when effect ends
- * @param  to_b          RGB B when effect ends
- * @param  to_a          RGB A when effect ends
- * @return               Color effect context data
+ * This function belongs to the Color effect, which consists of
+ * functions:
+ * - elm_transit_effect_color_context_new()
+ * - elm_transit_effect_color_op()
+ * - elm_transit_effect_color_context_free()
+ *
+ * @param  from_r        RGB R when effect begins.
+ * @param  from_g        RGB G when effect begins.
+ * @param  from_b        RGB B when effect begins.
+ * @param  from_a        RGB A when effect begins.
+ * @param  to_r          RGB R when effect ends.
+ * @param  to_g          RGB G when effect ends.
+ * @param  to_b          RGB B when effect ends.
+ * @param  to_a          RGB A when effect ends.
+ * @return               Color effect context data.
  *
  * @ingroup Transit
  */
@@ -1642,10 +1860,19 @@ struct _Elm_Fx_Fade
 /**
  * The Free function to Fade Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Fade effect, which consists of
+ * functions:
+ * - elm_transit_effect_fade_context_new()
+ * - elm_transit_effect_fade_op()
+ * - elm_transit_effect_fade_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Fade context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -1679,11 +1906,20 @@ elm_transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__
  * in the transit list of objects. The first object in the pair will be the
  * "before" object and the second will be the "after" object.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Fade effect, which consists of
+ * functions:
+ * - elm_transit_effect_fade_context_new()
+ * - elm_transit_effect_fade_op()
+ * - elm_transit_effect_fade_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Fade context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -1780,11 +2016,17 @@ _fade_nodes_build(Elm_Transit *transit)
 }
 
 /**
- * Get a new context data of Fade Effect
+ * Get a new context data of Fade Effect.
+ *
+ * This function belongs to the Fade effect, which consists of
+ * functions:
+ * - elm_transit_effect_fade_context_new()
+ * - elm_transit_effect_fade_op()
+ * - elm_transit_effect_fade_context_free()
  *
  * @see elm_transit_effect_add()
  *
- * @return Fade effect context data
+ * @return Fade effect context data.
  *
  * @ingroup Transit
  */
@@ -1819,10 +2061,19 @@ struct _Elm_Fx_Blend
 /**
  * The Free function to Blend Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Blend effect, which consists of
+ * functions:
+ * - elm_transit_effect_blend_context_new()
+ * - elm_transit_effect_blend_op()
+ * - elm_transit_effect_blend_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Blend context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -1847,17 +2098,26 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
 }
 
 /**
- * Operation function to the Blend Effect
+ * Operation function to the Blend Effect.
  *
  * This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "before" object and the second will be the "after" object.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Blend effect, which consists of
+ * functions:
+ * - elm_transit_effect_blend_context_new()
+ * - elm_transit_effect_blend_op()
+ * - elm_transit_effect_blend_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Blend context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -1922,11 +2182,17 @@ _blend_nodes_build(Elm_Transit *transit)
 }
 
 /**
- * Get a new context data of Blend Effect
+ * Get a new context data of Blend Effect.
  *
  * @see elm_transit_effect_add()
  *
- * @return Blend effect context data
+ * This function belongs to the Blend effect, which consists of
+ * functions:
+ * - elm_transit_effect_blend_context_new()
+ * - elm_transit_effect_blend_op()
+ * - elm_transit_effect_blend_context_free()
+ *
+ * @return Blend effect context data.
  *
  * @ingroup Transit
  */
@@ -1955,10 +2221,19 @@ struct _Elm_Fx_Rotation
 /**
  * The Free function to Rotation Effect context data.
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Rotation effect, which consists of
+ * functions:
+ * - elm_transit_effect_rotation_context_new()
+ * - elm_transit_effect_rotation_op()
+ * - elm_transit_effect_rotation_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Rotation context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -1971,11 +2246,20 @@ elm_transit_effect_rotation_context_free(void *data, Elm_Transit *transit __UNUS
 /**
  * Operation function to the Rotation Effect
  *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Rotation effect, which consists of
+ * functions:
+ * - elm_transit_effect_rotation_context_new()
+ * - elm_transit_effect_rotation_op()
+ * - elm_transit_effect_rotation_context_free()
+ *
  * @see elm_transit_effect_add()
  *
  * @param data The Rotation context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -2024,14 +2308,20 @@ elm_transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress
 }
 
 /**
- * Get a new context data of Rotation Effect
+ * Get a new context data of Rotation Effect.
+ *
+ * This function belongs to the Rotation effect, which consists of
+ * functions:
+ * - elm_transit_effect_rotation_context_new()
+ * - elm_transit_effect_rotation_op()
+ * - elm_transit_effect_rotation_context_free()
  *
  * @see elm_transit_effect_add()
  *
- * @param from_degree Degree when effect begins
- * @param to_degree Degree when effect is ends
- * @param cw Rotation direction. EINA_TRUE is clock wise
- * @return Rotation effect context data
+ * @param from_degree Degree when effect begins.
+ * @param to_degree Degree when effect is ends.
+ * @param cw Rotation direction. EINA_TRUE is clock wise.
+ * @return Rotation effect context data.
  *
  * @ingroup Transit
  */
@@ -2061,12 +2351,21 @@ struct _Elm_Fx_Image_Animation
 };
 
 /**
- * The Free function to Imagem Animation Effect context data.
+ * The Free function to Image Animation Effect context data.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Image Animation effect, which consists of
+ * functions:
+ * - elm_transit_effect_image_animation_context_new()
+ * - elm_transit_effect_image_animation_op()
+ * - elm_transit_effect_image_animation_context_free()
  *
  * @see elm_transit_effect_add()
  *
  * @param data The Imagem Animation context data.
- * @param transt Transit object
+ * @param transit Transit object.
  *
  * @ingroup Transit
  */
@@ -2089,15 +2388,24 @@ elm_transit_effect_image_animation_context_free(void *data, Elm_Transit *transit
 }
 
 /**
- * Operation function to the Imagem Animation Effect
+ * Operation function to the Imagem Animation Effect.
  *
- * This effect changes the image from an icon object in the @p transit
+ * This effect changes the image from an icon object in the @p transit.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Image Animation effect, which consists of
+ * functions:
+ * - elm_transit_effect_image_animation_context_new()
+ * - elm_transit_effect_image_animation_op()
+ * - elm_transit_effect_image_animation_context_free()
  *
  * @see elm_transit_effect_add()
  *
  * @param data The Imagem Animation context data.
- * @param transt Transit object
- * @param progress The time progression, it is a number between 0 and 1
+ * @param transit Transit object.
+ * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
  */
@@ -2132,15 +2440,42 @@ elm_transit_effect_image_animation_op(void *data, Elm_Transit *transit, double p
 }
 
 /**
- * Get a new context data of Imagem Animation Effect
+ * Get a new context data of Imagem Animation Effect.
  *
- * The @p images parameter is a list of const char* images. This list and
- * its contents will be deleted at the end of the animation.
+ * The @p images parameter is a list images paths. This list and
+ * its contents will be deleted at the end of the effect by
+ * elm_transit_effect_image_animation_context_free() function.
+ *
+ * Example:
+ * @code
+ * char buf[PATH_MAX];
+ * Eina_List *images = NULL;
+ * Elm_Transit *transi = elm_transit_add(4.0);
+ *
+ * snprintf(buf, sizeof(buf), "%s/images/icon_11.png", PACKAGE_DATA_DIR);
+ * images = eina_list_append(images, eina_stringshare_add(buf));
+ *
+ * snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+ * images = eina_list_append(images, eina_stringshare_add(buf));
+ *
+ * elm_transit_effect_add(transit,
+ *                      elm_transit_effect_image_animation_op,
+ *                      elm_transit_effect_image_animation_context_new(images),
+ *                      elm_transit_effect_image_animation_context_free);
+ * @endcode
+ *
+ * This function belongs to the Image Animation effect, which consists of
+ * functions:
+ * - elm_transit_effect_image_animation_context_new()
+ * - elm_transit_effect_image_animation_op()
+ * - elm_transit_effect_image_animation_context_free()
  *
  * @see elm_transit_effect_add()
  *
- * @param images Array of image file path
- * @return ImageAnimation effect context data
+ * @param images Eina_List of images file paths. This list and
+ * its contents will be deleted at the end of the effect by
+ * elm_transit_effect_image_animation_context_free() function.
+ * @return Image Animation effect context data.
  *
  * @ingroup Transit
  */
