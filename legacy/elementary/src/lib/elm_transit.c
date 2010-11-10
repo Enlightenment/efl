@@ -821,14 +821,48 @@ elm_transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Ev
 //Translation FX
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Fx_Translation Elm_Fx_Translation;
+typedef struct _Elm_Fx_Translation_Node Elm_Fx_Translation_Node;
+
+struct _Elm_Fx_Translation_Node
+{
+   Evas_Object *obj;
+   Evas_Coord x, y;
+};
 
 struct _Elm_Fx_Translation
 {
-   struct _point
+   struct _position_variation
      {
-        Evas_Coord x, y;
+        Evas_Coord dx, dy;
      } from, to;
+   Eina_List *nodes;
 };
+
+static Eina_List *
+_translation_nodes_build(Elm_Transit *transit)
+{
+   Elm_Fx_Translation_Node *translation_node;
+   const Eina_List *elist;
+   Evas_Object *obj;
+   Eina_List *data_list = NULL;
+   const Eina_List *objs = elm_transit_objects_get(transit);
+
+   EINA_LIST_FOREACH(objs, elist, obj)
+     {
+        translation_node = ELM_NEW(Elm_Fx_Translation_Node);
+        if (!translation_node)
+          {
+             eina_list_free(data_list);
+             return NULL;
+          }
+        translation_node->obj = obj;
+        evas_object_geometry_get(obj, &(translation_node->x),
+                                 &(translation_node->y), NULL, NULL);
+        data_list = eina_list_append(data_list, translation_node);
+     }
+
+   return data_list;
+}
 
 /**
  * The Free function to Translation Effect context data.
@@ -851,7 +885,9 @@ struct _Elm_Fx_Translation
 EAPI void
 elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit __UNUSED__)
 {
-   free(data);
+   Elm_Fx_Translation *translation = data;
+   eina_list_free(translation->nodes);
+   free(translation);
 }
 
 /**
@@ -859,6 +895,10 @@ elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit __U
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note When this function begins to be called, it gets the current objects in
+ * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
+ * will not cause any changes in the set of objects that this effect is being
+ * applied if these functions are called after the @p transit starts to run.
  *
  * This function belongs to the Translation effect, which consists of functions:
  * - elm_transit_effect_translation_context_new()
@@ -874,22 +914,25 @@ elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit __U
  * @ingroup Transit
  */
 EAPI void
-elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progress)
+elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progress __UNUSED__)
 {
    if (!data) return;
    Evas_Coord x, y;
-   Evas_Object *obj;
+   Elm_Fx_Translation *translation = data;
+   Elm_Fx_Translation_Node *translation_node;
    Eina_List *elist;
 
-   Elm_Fx_Translation *translation = data;
+   if (!translation->nodes)
+     translation->nodes = _translation_nodes_build(transit);
 
-   x = translation->from.x +
-      (Evas_Coord) ((float)translation->to.x * (float)progress);
-   y = translation->from.y +
-      (Evas_Coord) ((float)translation->to.y * (float)progress);
-
-   EINA_LIST_FOREACH(transit->objs, elist, obj)
-     evas_object_move(obj, x, y);
+   EINA_LIST_FOREACH(translation->nodes, elist, translation_node)
+     {
+        x = translation_node->x + translation->from.dx \
+            + (translation->to.dx * progress);
+        y = translation_node->y + translation->from.dy \
+            + (translation->to.dy * progress);
+        evas_object_move(translation_node->obj, x, y);
+     }
 }
 
 /**
@@ -902,16 +945,16 @@ elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progr
  *
  * @see elm_transit_effect_add()
  *
- * @param from_x Position X when effect begins.
- * @param from_y Position Y when effect begins.
- * @param to_x Position X when effect ends.
- * @param to_y Position Y when effect ends.
+ * @param from_dx X Position variation when effect begins.
+ * @param from_dy Y Position variation when effect begins.
+ * @param to_dx X Position variation when effect ends.
+ * @param to_dy Y Position variation when effect ends.
  * @return Translation effect context data.
  *
  * @ingroup Transit
  */
 EAPI void *
-elm_transit_effect_translation_context_new(Evas_Coord from_x, Evas_Coord from_y, Evas_Coord to_x, Evas_Coord to_y)
+elm_transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy)
 {
    Elm_Fx_Translation *translation;
 
@@ -919,10 +962,10 @@ elm_transit_effect_translation_context_new(Evas_Coord from_x, Evas_Coord from_y,
 
    if (!translation) return NULL;
 
-   translation->from.x = from_x;
-   translation->from.y = from_y;
-   translation->to.x = to_x - from_x;
-   translation->to.y = to_y - from_y;
+   translation->from.dx = from_dx;
+   translation->from.dy = from_dy;
+   translation->to.dx = to_dx - from_dx;
+   translation->to.dy = to_dy - from_dy;
 
    return translation;
 }

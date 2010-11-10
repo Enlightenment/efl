@@ -2361,7 +2361,7 @@ extern "C" {
    EAPI void            elm_transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress);
    EAPI void            elm_transit_effect_resizing_context_free(void *data, Elm_Transit *transit);
 
-   EAPI void           *elm_transit_effect_translation_context_new(Evas_Coord from_x, Evas_Coord from_y, Evas_Coord to_x, Evas_Coord to_y);
+   EAPI void           *elm_transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy);
    EAPI void            elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progress);
    EAPI void            elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit);
 
