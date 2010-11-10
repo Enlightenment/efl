@@ -42,6 +42,7 @@ struct _Elm_Transit
    Eina_Bool auto_reverse:1;
    Eina_Bool block:1;
    Eina_Bool deleted:1;
+   unsigned int effects_pending_del;
    int walking;
    struct
    {
@@ -147,7 +148,11 @@ _remove_dead_effects(Elm_Transit *transit)
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
      {
         if (effect->deleted)
-          _elm_transit_effect_del(transit, effect, elist);
+          {
+             _elm_transit_effect_del(transit, effect, elist);
+             transit->effects_pending_del--;
+             if (!transit->effects_pending_del) return;
+          }
      }
 }
 
@@ -194,7 +199,7 @@ _transit_animate_op(Elm_Transit *transit, double progress)
    if (transit->walking) return;
 
    if (transit->deleted) _elm_transit_del(transit);
-   else _remove_dead_effects(transit);
+   else if (transit->effects_pending_del) _remove_dead_effects(transit);
 }
 
 static Eina_Bool
@@ -299,6 +304,9 @@ elm_transit_del(Elm_Transit *transit)
  * @note The cb function and the data are the key to the effect. If you try to
  * add an already added effect, nothing is done.
  * @note If the transit is null, nothing is done.
+ * @note After the first addition of an effect in @p transit, if its
+ * effect list become empty again, the @p transit will be killed by
+ * elm_transit_del(transit) function.
  *
  * Exemple:
  * @code
@@ -353,6 +361,8 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
  * @see elm_transit_effect_add()
  *
  * @note If the effect is not found, nothing is done.
+ * @note If the effect list become empty, this function will call
+ * elm_transit_del(transit), that is, it will kill the @p transit.
  *
  * @param transit The transit object.
  * @param cb The operation function.
@@ -370,8 +380,16 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
      {
         if ((effect->animation_op == cb) && (effect->user_data == data))
           {
-             if (transit->walking) effect->deleted = EINA_TRUE;
-             else _elm_transit_effect_del(transit, effect, elist);
+             if (transit->walking)
+               {
+                  effect->deleted = EINA_TRUE;
+                  transit->effects_pending_del++;
+               }
+             else
+               {
+                  _elm_transit_effect_del(transit, effect, elist);
+                  if (!transit->effect_list) elm_transit_del(transit);
+               }
              return;
           }
      }
