@@ -27,6 +27,13 @@ static const char *img[9] =
 static Elm_Gengrid_Item_Class gic;
 
 static void
+_horizontal_grid(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *grid = data;
+   elm_gengrid_horizontal_set(grid, elm_check_state_get(obj));
+}
+
+static void
 grid_drag_up(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    printf("Drag up: %p\n", event_info);
@@ -267,7 +274,7 @@ _size_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *grid, *bx, *hbx, *bt;
+   Evas_Object *win, *bg, *grid, *bx, *hbx, *bt, *ck;
 
    win = elm_win_add(NULL, "grid2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Grid2");
@@ -331,6 +338,12 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
+
+   ck = elm_check_add(win);
+   elm_check_label_set(ck, "Horizontal Mode");
+   evas_object_smart_callback_add(ck, "changed", _horizontal_grid, grid);
+   elm_box_pack_end(hbx, ck);
+   evas_object_show(ck);
 
    gic.item_style = "default";
    gic.func.label_get = grid_label_get;
