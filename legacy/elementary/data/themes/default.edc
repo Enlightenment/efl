@@ -30843,9 +30843,9 @@ collections {
    }
 
 ////////////////////////////////////////////////////////////////////////////////
-// diskpicker
+// diskselector
 ////////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/diskpicker/base/default";
+   group { name: "elm/diskselector/base/default";
       images {
          image: "bar_shine.png" COMP;
       }
@@ -30912,7 +30912,7 @@ collections {
       }
    }
 
-   group { name: "elm/diskpicker/item/default";
+   group { name: "elm/diskselector/item/default";
 
       data {
          item: "len_threshold" "14";

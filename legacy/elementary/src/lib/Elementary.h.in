@@ -2236,47 +2236,47 @@ extern "C" {
     * month.
     */
 
-   /* diskpicker */
-   typedef struct _Elm_Diskpicker_Item Elm_Diskpicker_Item;
+   /* diskselector */
+   typedef struct _Elm_Diskselector_Item Elm_Diskselector_Item;
 
-   EAPI Evas_Object          *elm_diskpicker_add(Evas_Object *parent);
-   EAPI Eina_Bool             elm_diskpicker_round_get(const Evas_Object *obj);
-   EAPI void                  elm_diskpicker_round_set(Evas_Object *obj, Eina_Bool round);
-   EAPI int                   elm_diskpicker_side_label_lenght_get(const Evas_Object *obj);
-   EAPI void                  elm_diskpicker_side_label_lenght_set(Evas_Object *obj, int len);
-   EAPI void                  elm_diskpicker_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-   EAPI void                  elm_diskpicker_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-   EAPI void                  elm_diskpicker_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
-   EAPI void                  elm_diskpicker_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
-   EAPI void                  elm_diskpicker_clear(Evas_Object *obj);
-   EAPI const Eina_List      *elm_diskpicker_items_get(const Evas_Object *obj);
-   EAPI Elm_Diskpicker_Item  *elm_diskpicker_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
-   EAPI void	              elm_diskpicker_item_del(Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_del_cb_set(Elm_Diskpicker_Item *item, Evas_Smart_Cb func);
-   EAPI void                 *elm_diskpicker_item_data_get(const Elm_Diskpicker_Item *item);
-   EAPI Evas_Object          *elm_diskpicker_item_icon_get(const Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_icon_set(Elm_Diskpicker_Item *item, Evas_Object *icon);
-   EAPI const char           *elm_diskpicker_item_label_get(const Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_label_set(Elm_Diskpicker_Item *item, const char *label);
-   EAPI Elm_Diskpicker_Item  *elm_diskpicker_selected_item_get(const Evas_Object *obj);
-   EAPI void                  elm_diskpicker_item_selected_set(Elm_Diskpicker_Item *item, Eina_Bool selected);
-   EAPI Eina_Bool             elm_diskpicker_item_selected_get(const Elm_Diskpicker_Item *item);
-   EAPI Elm_Diskpicker_Item  *elm_diskpicker_first_item_get(const Evas_Object *obj);
-   EAPI Elm_Diskpicker_Item  *elm_diskpicker_last_item_get(const Evas_Object *obj);
-   EAPI Elm_Diskpicker_Item  *elm_diskpicker_item_prev_get(const Elm_Diskpicker_Item *item);
-   EAPI Elm_Diskpicker_Item  *elm_diskpicker_item_next_get(const Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_tooltip_text_set(Elm_Diskpicker_Item *item, const char *text);
-   EAPI void                  elm_diskpicker_item_tooltip_content_cb_set(Elm_Diskpicker_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
-   EAPI void                  elm_diskpicker_item_tooltip_unset(Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_tooltip_style_set(Elm_Diskpicker_Item *item, const char *style);
-   EAPI const char*           elm_diskpicker_item_tooltip_style_get(const Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_cursor_set(Elm_Diskpicker_Item *item, const char *cursor);
-   EAPI const char*           elm_diskpicker_item_cursor_get(const Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_cursor_unset(Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_cursor_style_set(Elm_Diskpicker_Item *item, const char *style);
-   EAPI const char*           elm_diskpicker_item_cursor_style_get(const Elm_Diskpicker_Item *item);
-   EAPI void                  elm_diskpicker_item_cursor_engine_only_set(Elm_Diskpicker_Item *item, Eina_Bool engine_only);
-   EAPI Eina_Bool             elm_diskpicker_item_cursor_engine_only_get(const Elm_Diskpicker_Item *item);
+   EAPI Evas_Object          *elm_diskselector_add(Evas_Object *parent);
+   EAPI Eina_Bool             elm_diskselector_round_get(const Evas_Object *obj);
+   EAPI void                  elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round);
+   EAPI int                   elm_diskselector_side_label_lenght_get(const Evas_Object *obj);
+   EAPI void                  elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len);
+   EAPI void                  elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+   EAPI void                  elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+   EAPI void                  elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+   EAPI void                  elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+   EAPI void                  elm_diskselector_clear(Evas_Object *obj);
+   EAPI const Eina_List      *elm_diskselector_items_get(const Evas_Object *obj);
+   EAPI Elm_Diskselector_Item  *elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
+   EAPI void	              elm_diskselector_item_del(Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_del_cb_set(Elm_Diskselector_Item *item, Evas_Smart_Cb func);
+   EAPI void                 *elm_diskselector_item_data_get(const Elm_Diskselector_Item *item);
+   EAPI Evas_Object          *elm_diskselector_item_icon_get(const Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_icon_set(Elm_Diskselector_Item *item, Evas_Object *icon);
+   EAPI const char           *elm_diskselector_item_label_get(const Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_label_set(Elm_Diskselector_Item *item, const char *label);
+   EAPI Elm_Diskselector_Item  *elm_diskselector_selected_item_get(const Evas_Object *obj);
+   EAPI void                  elm_diskselector_item_selected_set(Elm_Diskselector_Item *item, Eina_Bool selected);
+   EAPI Eina_Bool             elm_diskselector_item_selected_get(const Elm_Diskselector_Item *item);
+   EAPI Elm_Diskselector_Item  *elm_diskselector_first_item_get(const Evas_Object *obj);
+   EAPI Elm_Diskselector_Item  *elm_diskselector_last_item_get(const Evas_Object *obj);
+   EAPI Elm_Diskselector_Item  *elm_diskselector_item_prev_get(const Elm_Diskselector_Item *item);
+   EAPI Elm_Diskselector_Item  *elm_diskselector_item_next_get(const Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_tooltip_text_set(Elm_Diskselector_Item *item, const char *text);
+   EAPI void                  elm_diskselector_item_tooltip_content_cb_set(Elm_Diskselector_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+   EAPI void                  elm_diskselector_item_tooltip_unset(Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_tooltip_style_set(Elm_Diskselector_Item *item, const char *style);
+   EAPI const char*           elm_diskselector_item_tooltip_style_get(const Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_cursor_set(Elm_Diskselector_Item *item, const char *cursor);
+   EAPI const char*           elm_diskselector_item_cursor_get(const Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_cursor_unset(Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_cursor_style_set(Elm_Diskselector_Item *item, const char *style);
+   EAPI const char*           elm_diskselector_item_cursor_style_get(const Elm_Diskselector_Item *item);
+   EAPI void                  elm_diskselector_item_cursor_engine_only_set(Elm_Diskselector_Item *item, Eina_Bool engine_only);
+   EAPI Eina_Bool             elm_diskselector_item_cursor_engine_only_get(const Elm_Diskselector_Item *item);
    /* smart callbacks called:
     * "selected" - when item is selected (scroller stops)
     */

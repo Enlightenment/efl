@@ -1,7 +1,7 @@
 /**
- * @defgroup Diskpicker
+ * @defgroup Diskselector
  *
- * A diskpicker is a kind of list widget. It scrolls horizontally,
+ * A diskselector is a kind of list widget. It scrolls horizontally,
  * and can contain label and icon objects. Three items are displayed
  * with the selected on the middle.
  *
@@ -28,11 +28,11 @@ struct _Widget_Data
    Evas_Object *main_box;
    Evas_Object *left_blank;
    Evas_Object *right_blank;
-   Elm_Diskpicker_Item *selected_item;
-   Elm_Diskpicker_Item *first;
-   Elm_Diskpicker_Item *second;
-   Elm_Diskpicker_Item *s_last;
-   Elm_Diskpicker_Item *last;
+   Elm_Diskselector_Item *selected_item;
+   Elm_Diskselector_Item *first;
+   Elm_Diskselector_Item *second;
+   Elm_Diskselector_Item *s_last;
+   Elm_Diskselector_Item *last;
    Eina_List *items;
    Eina_List *r_items;
    int item_count, len_threshold, len_side;
@@ -42,7 +42,7 @@ struct _Widget_Data
    Eina_Bool round:1;
 };
 
-struct _Elm_Diskpicker_Item
+struct _Elm_Diskselector_Item
 {
    Elm_Widget_Item base;
    Eina_List *node;
@@ -53,7 +53,7 @@ struct _Elm_Diskpicker_Item
 
 static const char *widtype = NULL;
 
-#define ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, ...)                    \
+#define ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                    \
    ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
    ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
 
@@ -75,7 +75,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 static void
-_diskpicker_object_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_diskselector_object_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd;
    Evas_Coord w, h, minw = -1, minh = -1;
@@ -102,13 +102,13 @@ _diskpicker_object_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
      wd->idler = ecore_idler_add(_move_scroller, data);
 }
 
-static Elm_Diskpicker_Item *
+static Elm_Diskselector_Item *
 _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    const char *style = elm_widget_style_get(obj);
 
-   it = elm_widget_item_new(obj, Elm_Diskpicker_Item);
+   it = elm_widget_item_new(obj, Elm_Diskselector_Item);
    if (!it) return NULL;
 
    it->label = eina_stringshare_add(label);
@@ -116,7 +116,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
    it->func = func;
    it->base.data = data;
    it->base.view = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, it->base.view, "diskpicker", "item", style);
+   _elm_theme_object_set(obj, it->base.view, "diskselector", "item", style);
    evas_object_size_hint_weight_set(it->base.view, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(it->base.view, EVAS_HINT_FILL,
@@ -137,7 +137,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
 }
 
 static void
-_item_del(Elm_Diskpicker_Item *item)
+_item_del(Elm_Diskselector_Item *item)
 {
    if (!item) return;
    eina_stringshare_del(item->label);
@@ -166,7 +166,7 @@ _del_hook(Evas_Object * obj)
 static void
 _del_pre_hook(Evas_Object * obj)
 {
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -208,25 +208,25 @@ _sizing_eval(Evas_Object * obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _diskpicker_object_resize(obj, NULL, obj, NULL);
+   _diskselector_object_resize(obj, NULL, obj, NULL);
 }
 
 static void
 _theme_hook(Evas_Object * obj)
 {
    Eina_List *l;
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
    if (wd->scroller)
-     elm_smart_scroller_object_theme_set(obj, wd->scroller, "diskpicker",
+     elm_smart_scroller_object_theme_set(obj, wd->scroller, "diskselector",
                                          "base", elm_widget_style_get(obj));
    if (wd->round)
      {
         EINA_LIST_FOREACH(wd->r_items, l, it)
           {
-             _elm_theme_object_set(obj, it->base.view, "diskpicker", "item",
+             _elm_theme_object_set(obj, it->base.view, "diskselector", "item",
                                    elm_widget_style_get(obj));
           }
      }
@@ -234,7 +234,7 @@ _theme_hook(Evas_Object * obj)
      {
         EINA_LIST_FOREACH(wd->items, l, it)
           {
-             _elm_theme_object_set(obj, it->base.view, "diskpicker", "item",
+             _elm_theme_object_set(obj, it->base.view, "diskselector", "item",
                                    elm_widget_style_get(obj));
           }
      }
@@ -247,7 +247,7 @@ _sub_del(void *data __UNUSED__, Evas_Object * obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    const Eina_List *l;
 
    if (!wd) return;
@@ -269,7 +269,7 @@ _sub_del(void *data __UNUSED__, Evas_Object * obj, void *event_info)
 }
 
 static void
-_select_item(Elm_Diskpicker_Item *it)
+_select_item(Elm_Diskselector_Item *it)
 {
    if (!it) return;
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
@@ -307,7 +307,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
 
-   Elm_Diskpicker_Item *it = NULL;
+   Elm_Diskselector_Item *it = NULL;
    Eina_List *l;
 
    if (!wd->selected_item) {
@@ -370,7 +370,7 @@ static Eina_Bool
 _check_string(void *data)
 {
    int mid, steps, length, diff;
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    Eina_List *list, *l;
    Evas_Coord ox, ow;
    char buf[1024];
@@ -463,7 +463,7 @@ _scroller_move_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 static void
 _scroller_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    Widget_Data *wd = data;
    Evas_Coord x, w, ow;
    Eina_List *l, *list;
@@ -496,7 +496,7 @@ _move_scroller(void *data)
    Evas_Object *obj = data;
    Widget_Data *wd;
    Eina_List *l;
-   Elm_Diskpicker_Item *dit;
+   Elm_Diskselector_Item *dit;
    Evas_Coord y, w, h;
    int i;
 
@@ -517,7 +517,7 @@ _move_scroller(void *data)
    if (!dit)
      {
         wd->selected_item =
-           (Elm_Diskpicker_Item *) eina_list_nth(wd->items, 0);
+           (Elm_Diskselector_Item *) eina_list_nth(wd->items, 0);
         return EINA_FALSE;
      }
 
@@ -536,7 +536,7 @@ _move_scroller(void *data)
 }
 
 static void
-_round_item_del(Widget_Data *wd, Elm_Diskpicker_Item *it)
+_round_item_del(Widget_Data *wd, Elm_Diskselector_Item *it)
 {
    if (!it) return;
    elm_box_unpack(wd->main_box, it->base.view);
@@ -562,8 +562,8 @@ _round_items_del(Widget_Data *wd)
 static void
 _round_items_add(Widget_Data *wd)
 {
-   Elm_Diskpicker_Item *dit;
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *dit;
+   Elm_Diskselector_Item *it;
 
    dit = it = eina_list_nth(wd->items, 0);
    if (!dit) return;
@@ -611,23 +611,23 @@ _round_items_add(Widget_Data *wd)
 }
 
 /**
- * Add a new diskpicker object
+ * Add a new diskselector object
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI Evas_Object *
-elm_diskpicker_add(Evas_Object *parent)
+elm_diskselector_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Widget_Data *wd;
 
    wd = ELM_NEW(Widget_Data);
    wd->self = obj = elm_widget_add(evas_object_evas_get(parent));
-   ELM_SET_WIDTYPE(widtype, "diskpicker");
-   elm_widget_type_set(obj, "diskpicker");
+   ELM_SET_WIDTYPE(widtype, "diskselector");
+   elm_widget_type_set(obj, "diskselector");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
@@ -653,10 +653,10 @@ elm_diskpicker_add(Evas_Object *parent)
                                   wd);
    evas_object_smart_callback_add(wd->scroller, "animate,stop",
                                   _scroller_stop_cb, wd);
-   _elm_theme_object_set(obj, wd->scroller, "diskpicker", "base",
+   _elm_theme_object_set(obj, wd->scroller, "diskselector", "base",
                          "default");
    evas_object_event_callback_add(wd->scroller, EVAS_CALLBACK_RESIZE,
-                                  _diskpicker_object_resize, obj);
+                                  _diskselector_object_resize, obj);
 
    wd->main_box = elm_box_add(parent);
    elm_box_horizontal_set(wd->main_box, EINA_TRUE);
@@ -665,14 +665,14 @@ elm_diskpicker_add(Evas_Object *parent)
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->main_box, EVAS_HINT_FILL,
                                    EVAS_HINT_FILL);
-   _elm_theme_object_set(obj, wd->main_box, "diskpicker", "base",
+   _elm_theme_object_set(obj, wd->main_box, "diskselector", "base",
                          "default");
    elm_widget_sub_object_add(obj, wd->main_box);
 
    elm_smart_scroller_child_set(wd->scroller, wd->main_box);
 
    wd->left_blank = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, wd->left_blank, "diskpicker", "item",
+   _elm_theme_object_set(obj, wd->left_blank, "diskselector", "item",
                          "default");
    evas_object_size_hint_weight_set(wd->left_blank, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
@@ -682,7 +682,7 @@ elm_diskpicker_add(Evas_Object *parent)
    evas_object_show(wd->left_blank);
 
    wd->right_blank = edje_object_add(evas_object_evas_get(obj));
-   _elm_theme_object_set(obj, wd->right_blank, "diskpicker", "item",
+   _elm_theme_object_set(obj, wd->right_blank, "diskselector", "item",
                          "default");
    evas_object_size_hint_weight_set(wd->right_blank, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
@@ -705,13 +705,13 @@ elm_diskpicker_add(Evas_Object *parent)
  * If round mode is activated the items list will work like a circle list,
  * so when the user reaches the last item, the first one will popup.
  *
- * @param obj The diskpicker object
- * @return if or not set round mode or false if not a valid diskpicker
+ * @param obj The diskselector object
+ * @return if or not set round mode or false if not a valid diskselector
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI Eina_Bool
-elm_diskpicker_round_get(const Evas_Object *obj)
+elm_diskselector_round_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -725,13 +725,13 @@ elm_diskpicker_round_get(const Evas_Object *obj)
  * If round mode is activated the items list will work like a circle list,
  * so when the user reaches the last item, the first one will popup.
  *
- * @param it The item of diskpicker
+ * @param it The item of diskselector
  * @param if or not set round mode
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_round_set(Evas_Object * obj, Eina_Bool round)
+elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -776,14 +776,14 @@ elm_diskpicker_round_set(Evas_Object * obj, Eina_Bool round)
 /**
  * Get the side labels max lenght
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @return The max lenght defined for side labels, or 0 if not a valid
- * diskpicker
+ * diskselector
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI int
-elm_diskpicker_side_label_lenght_get(const Evas_Object *obj)
+elm_diskselector_side_label_lenght_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -794,13 +794,13 @@ elm_diskpicker_side_label_lenght_get(const Evas_Object *obj)
 /**
  * Set the side labels max lenght
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @param len The max lenght defined for side labels
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_side_label_lenght_set(Evas_Object *obj, int len)
+elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -811,18 +811,18 @@ elm_diskpicker_side_label_lenght_set(Evas_Object *obj, int len)
 /**
  * Set bounce mode
  *
- * This will enable or disable the scroller bounce mode for the diskpicker.
+ * This will enable or disable the scroller bounce mode for the diskselector.
  * See elm_scroller_bounce_set() for details. Horizontal bounce is enabled by
  * default.
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @param h_bounce Allow bounce horizontally
  * @param v_bounce Allow bounce vertically
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -834,14 +834,14 @@ elm_diskpicker_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_boun
 /**
  * Get the bounce mode
  *
- * @param obj The Diskpicker object
+ * @param obj The Diskselector object
  * @param h_bounce Allow bounce horizontally
  * @param v_bounce Allow bounce vertically
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -859,15 +859,15 @@ elm_diskpicker_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool
  * This applies respectively for the horizontal and vertical scrollbars.
  * The both are disabled by default.
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @param policy_h Horizontal scrollbar policy
  * @param policy_v Vertical scrollbar policy
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 
 EAPI void
-elm_diskpicker_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
@@ -889,14 +889,14 @@ elm_diskpicker_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *
  * This applies respectively for the horizontal and vertical scrollbars.
  * The both are disabled by default.
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @param policy_h Horizontal scrollbar policy
  * @param policy_v Vertical scrollbar policy
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
+elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -907,18 +907,18 @@ elm_diskpicker_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_
 }
 
 /**
- * Clears a diskpicker of all items.
+ * Clears a diskselector of all items.
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_clear(Evas_Object *obj)
+elm_diskselector_clear(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
 
    if (!wd) return;
    if (!wd->items) return;
@@ -930,15 +930,15 @@ elm_diskpicker_clear(Evas_Object *obj)
 }
 
 /**
- * Returns a list of all the diskpicker items.
+ * Returns a list of all the diskselector items.
  *
- * @param obj The diskpicker object
- * @return An Eina_List* of the diskpicker items, or NULL on failure
+ * @param obj The diskselector object
+ * @return An Eina_List* of the diskselector items, or NULL on failure
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI const Eina_List *
-elm_diskpicker_items_get(const Evas_Object *obj)
+elm_diskselector_items_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -947,22 +947,22 @@ elm_diskpicker_items_get(const Evas_Object *obj)
 }
 
 /**
- * Appends an item to the diskpicker object.
+ * Appends an item to the diskselector object.
  *
- * @param obj The diskpicker object
- * @param label The label of the diskpicker item
+ * @param obj The diskselector object
+ * @param label The label of the diskselector item
  * @param icon The icon object to use for the left side of the item
  * @param func The function to call when the item is selected
  * @param data The data to associate with the item for related callbacks
  *
  * @return The created item or NULL upon failure
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
-EAPI Elm_Diskpicker_Item *
-elm_diskpicker_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
+EAPI Elm_Diskselector_Item *
+elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
-   Elm_Diskpicker_Item *it;
+   Elm_Diskselector_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
@@ -1003,15 +1003,15 @@ elm_diskpicker_item_append(Evas_Object *obj, const char *label, Evas_Object *ico
 /**
  * Delete the item
  *
- * @param it The item of diskpicker
+ * @param it The item of diskselector
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_del(Elm_Diskpicker_Item * it)
+elm_diskselector_item_del(Elm_Diskselector_Item * it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it);
-   Elm_Diskpicker_Item *dit;
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
+   Elm_Diskselector_Item *dit;
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
 
@@ -1024,7 +1024,7 @@ elm_diskpicker_item_del(Elm_Diskpicker_Item * it)
 
    if (wd->selected_item == it)
      {
-        dit = (Elm_Diskpicker_Item *) eina_list_nth(wd->items, 0);
+        dit = (Elm_Diskselector_Item *) eina_list_nth(wd->items, 0);
         if (dit != it)
           wd->selected_item = dit;
         else
@@ -1082,30 +1082,30 @@ elm_diskpicker_item_del(Elm_Diskpicker_Item * it)
 /**
  * Get the label of item
  *
- * @param it The item of diskpicker
+ * @param it The item of diskselector
  * @return The label of item
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI const char *
-elm_diskpicker_item_label_get(const Elm_Diskpicker_Item * it)
+elm_diskselector_item_label_get(const Elm_Diskselector_Item * it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    return it->label;
 }
 
 /**
  * Set the label of item
  *
- * @param it The item of diskpicker
+ * @param it The item of diskselector
  * @param label The label of item
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_label_set(Elm_Diskpicker_Item * it, const char *label)
+elm_diskselector_item_label_set(Elm_Diskselector_Item * it, const char *label)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    eina_stringshare_replace(&it->label, label);
    edje_object_part_text_set(it->base.view, "elm.text", it->label);
 }
@@ -1113,13 +1113,13 @@ elm_diskpicker_item_label_set(Elm_Diskpicker_Item * it, const char *label)
 /**
  * Get the selected item
  *
- * @param obj The diskpicker object
- * @return The selected diskpicker item
+ * @param obj The diskselector object
+ * @return The selected diskselector item
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
-EAPI Elm_Diskpicker_Item *
-elm_diskpicker_selected_item_get(const Evas_Object *obj)
+EAPI Elm_Diskselector_Item *
+elm_diskselector_selected_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1135,15 +1135,15 @@ elm_diskpicker_selected_item_get(const Evas_Object *obj)
  * If a new item is selected the previosly selected will be unselected.
  * If the item @p it is unselected, the first item will be selected.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @param selected The selected state
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_selected_set(Elm_Diskpicker_Item *it, Eina_Bool selected)
+elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
    wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
@@ -1163,15 +1163,15 @@ elm_diskpicker_item_selected_set(Elm_Diskpicker_Item *it, Eina_Bool selected)
 /*
  * Get the selected state of @p item.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @return If true, the item is selected
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI Eina_Bool
-elm_diskpicker_item_selected_get(const Elm_Diskpicker_Item *it)
+elm_diskselector_item_selected_get(const Elm_Diskselector_Item *it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
 
    wd = elm_widget_data_get(it->base.widget);
@@ -1180,47 +1180,47 @@ elm_diskpicker_item_selected_get(const Elm_Diskpicker_Item *it)
 }
 
 /**
- * Set the function called when a diskpicker item is freed.
+ * Set the function called when a diskselector item is freed.
  *
  * @param it The item to set the callback on
  * @param func The function called
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_del_cb_set(Elm_Diskpicker_Item *it, Evas_Smart_Cb func)
+elm_diskselector_item_del_cb_set(Elm_Diskselector_Item *it, Evas_Smart_Cb func)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
 /**
  * Returns the data associated with the item.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @return The data associated with @p it
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void *
-elm_diskpicker_item_data_get(const Elm_Diskpicker_Item *it)
+elm_diskselector_item_data_get(const Elm_Diskselector_Item *it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
 /**
  * Returns the icon associated with the item.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @return The icon associated with @p it
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI Evas_Object *
-elm_diskpicker_item_icon_get(const Elm_Diskpicker_Item *it)
+elm_diskselector_item_icon_get(const Elm_Diskselector_Item *it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    return it->icon;
 }
 
@@ -1229,17 +1229,17 @@ elm_diskpicker_item_icon_get(const Elm_Diskpicker_Item *it)
  *
  * Once the icon object is set, a previously set one will be deleted.
  * You probably don't want, then, to have the <b>same</b> icon object set
- * for more than one item of the diskpicker.
+ * for more than one item of the diskselector.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @param icon The icon object to associate with @p it
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_icon_set(Elm_Diskpicker_Item *it, Evas_Object *icon)
+elm_diskselector_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
    if (it->icon == icon) return;
    if (it->icon)
      evas_object_del(it->icon);
@@ -1251,15 +1251,15 @@ elm_diskpicker_item_icon_set(Elm_Diskpicker_Item *it, Evas_Object *icon)
 /**
  * Gets the item before @p it in the list.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @return The item before @p it, or NULL on failure
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
-EAPI Elm_Diskpicker_Item *
-elm_diskpicker_item_prev_get(const Elm_Diskpicker_Item *it)
+EAPI Elm_Diskselector_Item *
+elm_diskselector_item_prev_get(const Elm_Diskselector_Item *it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    if (it->node->prev) return it->node->prev->data;
    else return NULL;
 }
@@ -1267,29 +1267,29 @@ elm_diskpicker_item_prev_get(const Elm_Diskpicker_Item *it)
 /**
  * Gets the item after @p it in the list.
  *
- * @param it The diskpicker item
+ * @param it The diskselector item
  * @return The item after @p it, or NULL on failure
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
-EAPI Elm_Diskpicker_Item *
-elm_diskpicker_item_next_get(const Elm_Diskpicker_Item *it)
+EAPI Elm_Diskselector_Item *
+elm_diskselector_item_next_get(const Elm_Diskselector_Item *it)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
    if (it->node->next) return it->node->next->data;
    else return NULL;
 }
 
 /**
- * Get the first item in the diskpicker
+ * Get the first item in the diskselector
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @return The first item, or NULL if none
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
-EAPI Elm_Diskpicker_Item *
-elm_diskpicker_first_item_get(const Evas_Object *obj)
+EAPI Elm_Diskselector_Item *
+elm_diskselector_first_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
@@ -1302,15 +1302,15 @@ elm_diskpicker_first_item_get(const Evas_Object *obj)
 }
 
 /**
- * Get the last item in the diskpicker
+ * Get the last item in the diskselector
  *
- * @param obj The diskpicker object
+ * @param obj The diskselector object
  * @return The last item, or NULL if none
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
-EAPI Elm_Diskpicker_Item *
-elm_diskpicker_last_item_get(const Evas_Object *obj)
+EAPI Elm_Diskselector_Item *
+elm_diskselector_last_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -1323,7 +1323,7 @@ elm_diskpicker_last_item_get(const Evas_Object *obj)
 }
 
 /**
- * Set the text to be shown in the diskpicker item.
+ * Set the text to be shown in the diskselector item.
  *
  * @param item Target item
  * @param text The text to set in the content
@@ -1331,12 +1331,12 @@ elm_diskpicker_last_item_get(const Evas_Object *obj)
  * Setup the text as tooltip to object. The item can have only one tooltip,
  * so any previous tooltip data is removed.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_tooltip_text_set(Elm_Diskpicker_Item *item, const char *text)
+elm_diskselector_item_tooltip_text_set(Elm_Diskselector_Item *item, const char *text)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_text_set(item, text);
 }
 
@@ -1349,41 +1349,41 @@ elm_diskpicker_item_tooltip_text_set(Elm_Diskpicker_Item *item, const char *text
  * return a valid Evas_Object. This object is then managed fully by
  * tooltip system and is deleted when the tooltip is gone.
  *
- * @param item the diskpicker item being attached a tooltip.
+ * @param item the diskselector item being attached a tooltip.
  * @param func the function used to create the tooltip contents.
  * @param data what to provide to @a func as callback data/context.
  * @param del_cb called when data is not needed anymore, either when
  *        another callback replaces @func, the tooltip is unset with
- *        elm_diskpicker_item_tooltip_unset() or the owner @a item
+ *        elm_diskselector_item_tooltip_unset() or the owner @a item
  *        dies. This callback receives as the first parameter the
  *        given @a data, and @c event_info is the item.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_tooltip_content_cb_set(Elm_Diskpicker_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+elm_diskselector_item_tooltip_content_cb_set(Elm_Diskselector_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
 /**
  * Unset tooltip from item
  *
- * @param item diskpicker item to remove previously set tooltip.
+ * @param item diskselector item to remove previously set tooltip.
  *
  * Remove tooltip from item. The callback provided as del_cb to
- * elm_diskpicker_item_tooltip_content_cb_set() will be called to notify
+ * elm_diskselector_item_tooltip_content_cb_set() will be called to notify
  * it is not used anymore.
  *
- * @see elm_diskpicker_item_tooltip_content_cb_set()
+ * @see elm_diskselector_item_tooltip_content_cb_set()
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_tooltip_unset(Elm_Diskpicker_Item *item)
+elm_diskselector_item_tooltip_unset(Elm_Diskselector_Item *item)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_unset(item);
 }
 
@@ -1391,80 +1391,80 @@ elm_diskpicker_item_tooltip_unset(Elm_Diskpicker_Item *item)
  * Sets a different style for this item tooltip.
  *
  * @note before you set a style you should define a tooltip with
- *       elm_diskpicker_item_tooltip_content_cb_set() or
- *       elm_diskpicker_item_tooltip_text_set()
+ *       elm_diskselector_item_tooltip_content_cb_set() or
+ *       elm_diskselector_item_tooltip_text_set()
  *
- * @param item diskpicker item with tooltip already set.
+ * @param item diskselector item with tooltip already set.
  * @param style the theme style to use (default, transparent, ...)
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_tooltip_style_set(Elm_Diskpicker_Item *item, const char *style)
+elm_diskselector_item_tooltip_style_set(Elm_Diskselector_Item *item, const char *style)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_tooltip_style_set(item, style);
 }
 
 /**
  * Get the style for this item tooltip.
  *
- * @param item diskpicker item with tooltip already set.
+ * @param item diskselector item with tooltip already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a tooltip set, then NULL is returned.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI const char *
-elm_diskpicker_item_tooltip_style_get(const Elm_Diskpicker_Item *item)
+elm_diskselector_item_tooltip_style_get(const Elm_Diskselector_Item *item)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_tooltip_style_get(item);
 }
 
 /**
- * Set the cursor to be shown when mouse is over the diskpicker item
+ * Set the cursor to be shown when mouse is over the diskselector item
  *
  * @param item Target item
  * @param cursor the cursor name to be used.
  *
  * @see elm_object_cursor_set()
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_cursor_set(Elm_Diskpicker_Item *item, const char *cursor)
+elm_diskselector_item_cursor_set(Elm_Diskselector_Item *item, const char *cursor)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_set(item, cursor);
 }
 
 /**
- * Get the cursor to be shown when mouse is over the diskpicker item
+ * Get the cursor to be shown when mouse is over the diskselector item
  *
- * @param item diskpicker item with cursor already set.
+ * @param item diskselector item with cursor already set.
  * @return the cursor name.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI const char *
-elm_diskpicker_item_cursor_get(const Elm_Diskpicker_Item *item)
+elm_diskselector_item_cursor_get(const Elm_Diskselector_Item *item)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_cursor_get(item);
 }
 
 /**
- * Unset the cursor to be shown when mouse is over the diskpicker item
+ * Unset the cursor to be shown when mouse is over the diskselector item
  *
  * @param item Target item
  *
  * @see elm_object_cursor_unset()
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_cursor_unset(Elm_Diskpicker_Item *item)
+elm_diskselector_item_cursor_unset(Elm_Diskselector_Item *item)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_unset(item);
 }
 
@@ -1472,33 +1472,33 @@ elm_diskpicker_item_cursor_unset(Elm_Diskpicker_Item *item)
  * Sets a different style for this item cursor.
  *
  * @note before you set a style you should define a cursor with
- *       elm_diskpicker_item_cursor_set()
+ *       elm_diskselector_item_cursor_set()
  *
- * @param item diskpicker item with cursor already set.
+ * @param item diskselector item with cursor already set.
  * @param style the theme style to use (default, transparent, ...)
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_cursor_style_set(Elm_Diskpicker_Item *item, const char *style)
+elm_diskselector_item_cursor_style_set(Elm_Diskselector_Item *item, const char *style)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_style_set(item, style);
 }
 
 /**
  * Get the style for this item cursor.
  *
- * @param item diskpicker item with cursor already set.
+ * @param item diskselector item with cursor already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a cursor set, then NULL is returned.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI const char *
-elm_diskpicker_item_cursor_style_get(const Elm_Diskpicker_Item *item)
+elm_diskselector_item_cursor_style_get(const Elm_Diskselector_Item *item)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item, NULL);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_cursor_style_get(item);
 }
 
@@ -1514,12 +1514,12 @@ elm_diskpicker_item_cursor_style_get(const Elm_Diskpicker_Item *item)
  * @param engine_only boolean to define it cursors should be looked only
  * between the provided by the engine or searched on widget's theme as well.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI void
-elm_diskpicker_item_cursor_engine_only_set(Elm_Diskpicker_Item *item, Eina_Bool engine_only)
+elm_diskselector_item_cursor_engine_only_set(Elm_Diskselector_Item *item, Eina_Bool engine_only)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
@@ -1531,11 +1531,11 @@ elm_diskpicker_item_cursor_engine_only_set(Elm_Diskpicker_Item *item, Eina_Bool 
  * between the provided by the engine or searched on widget's theme as well. If
  *         the object does not have a cursor set, then EINA_FALSE is returned.
  *
- * @ingroup Diskpicker
+ * @ingroup Diskselector
  */
 EAPI Eina_Bool
-elm_diskpicker_item_cursor_engine_only_get(const Elm_Diskpicker_Item *item)
+elm_diskselector_item_cursor_engine_only_get(const Elm_Diskselector_Item *item)
 {
-   ELM_DISKPICKER_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(item);
 }

@@ -89,7 +89,7 @@ test_cursor.c \
 test_focus.c \
 test_focus2.c \
 test_flippicker.c \
-test_diskpicker.c \
+test_diskselector.c \
 test_colorselector.c \
 test_hoverlist.c
 
