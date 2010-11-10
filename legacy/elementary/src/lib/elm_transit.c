@@ -838,8 +838,26 @@ struct _Elm_Fx_Translation
    Eina_List *nodes;
 };
 
+static void
+_translation_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Fx_Translation *translation = data;
+   Eina_List *elist;
+   Elm_Fx_Translation_Node *translation_node;
+
+   EINA_LIST_FOREACH(translation->nodes, elist, translation_node)
+     {
+        if (translation_node->obj != obj)
+          continue;
+
+        translation->nodes = eina_list_remove_list(translation->nodes, elist);
+        free(translation_node);
+        break;
+     }
+}
+
 static Eina_List *
-_translation_nodes_build(Elm_Transit *transit)
+_translation_nodes_build(Elm_Transit *transit, Elm_Fx_Translation *translation)
 {
    Elm_Fx_Translation_Node *translation_node;
    const Eina_List *elist;
@@ -859,6 +877,8 @@ _translation_nodes_build(Elm_Transit *transit)
         evas_object_geometry_get(obj, &(translation_node->x),
                                  &(translation_node->y), NULL, NULL);
         data_list = eina_list_append(data_list, translation_node);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                 _translation_object_del_cb, translation);
      }
 
    return data_list;
@@ -886,7 +906,17 @@ EAPI void
 elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit __UNUSED__)
 {
    Elm_Fx_Translation *translation = data;
-   eina_list_free(translation->nodes);
+   Eina_List *elist, *elist_next;
+   Elm_Fx_Translation_Node *translation_node;
+
+   EINA_LIST_FOREACH_SAFE(translation->nodes,
+                          elist, elist_next, translation_node)
+     {
+        evas_object_event_callback_del(translation_node->obj,
+                             EVAS_CALLBACK_DEL, _translation_object_del_cb);
+        translation->nodes = eina_list_remove_list(translation->nodes, elist);
+        free(translation_node);
+     }
    free(translation);
 }
 
@@ -923,7 +953,7 @@ elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progr
    Eina_List *elist;
 
    if (!translation->nodes)
-     translation->nodes = _translation_nodes_build(transit);
+     translation->nodes = _translation_nodes_build(transit, translation);
 
    EINA_LIST_FOREACH(translation->nodes, elist, translation_node)
      {
@@ -1288,8 +1318,32 @@ struct _Elm_Fx_Resizable_Flip
    Elm_Fx_Flip_Axis axis;
 };
 
+static void
+_resizable_flip_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Fx_ResizableFlip *resizable_flip = data;
+   Eina_List *elist;
+   Elm_Fx_ResizableFlip_Node *resizable_flip_node;
+
+   EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
+     {
+        if (resizable_flip_node->front == obj)
+          evas_object_event_callback_del(resizable_flip_node->back,
+                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+        else if (resizable_flip_node->back == obj)
+          evas_object_event_callback_del(resizable_flip_node->front,
+                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+        else continue;
+
+        resizable_flip->nodes = eina_list_remove_list(resizable_flip->nodes,
+                                                      elist);
+        free(resizable_flip_node);
+        break;
+     }
+}
+
 static Eina_List *
-_resizable_flip_nodes_build(Elm_Transit *transit)
+_resizable_flip_nodes_build(Elm_Transit *transit, Elm_Fx_ResizableFlip *resizable_flip)
 {
    Elm_Fx_ResizableFlip_Node *resizable_flip_node;
    Eina_List *data_list = NULL;
@@ -1328,6 +1382,11 @@ _resizable_flip_nodes_build(Elm_Transit *transit)
          resizable_flip_node->to_size.y = back_h - front_h;
 
          data_list = eina_list_append(data_list, resizable_flip_node);
+
+         evas_object_event_callback_add(resizable_flip_node->back,
+             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb, resizable_flip);
+         evas_object_event_callback_add(resizable_flip_node->front,
+             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb, resizable_flip);
       }
 
    return data_list;
@@ -1414,8 +1473,14 @@ elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit 
      {
         evas_object_map_enable_set(resizable_flip_node->front, EINA_FALSE);
         evas_object_map_enable_set(resizable_flip_node->back, EINA_FALSE);
+
         resizable_flip->nodes = eina_list_remove_list(resizable_flip->nodes,
                                                       elist);
+
+        evas_object_event_callback_del(resizable_flip_node->back,
+                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+        evas_object_event_callback_del(resizable_flip_node->front,
+                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
         free(resizable_flip_node);
      }
    free(resizable_flip);
@@ -1469,7 +1534,8 @@ elm_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__
       degree = (float)(progress * -180);
 
    if (!resizable_flip->nodes)
-     resizable_flip->nodes = _resizable_flip_nodes_build(transit);
+     resizable_flip->nodes = _resizable_flip_nodes_build(transit,
+                                                         resizable_flip);
 
    EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
      {
@@ -1960,8 +2026,31 @@ struct _Elm_Fx_Fade
    Eina_List *nodes;
 };
 
+static void
+_fade_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Fx_Fade *fade = data;
+   Eina_List *elist;
+   Elm_Fx_Fade_Node *fade_node;
+
+   EINA_LIST_FOREACH(fade->nodes, elist, fade_node)
+     {
+        if (fade_node->before == obj)
+          evas_object_event_callback_del(fade_node->after,
+                             EVAS_CALLBACK_DEL, _fade_object_del_cb);
+        else if (fade_node->after == obj)
+          evas_object_event_callback_del(fade_node->before,
+                             EVAS_CALLBACK_DEL, _fade_object_del_cb);
+        else continue;
+
+        fade->nodes = eina_list_remove_list(fade->nodes, elist);
+        free(fade_node);
+        break;
+     }
+}
+
 static Eina_List *
-_fade_nodes_build(Elm_Transit *transit)
+_fade_nodes_build(Elm_Transit *transit, Elm_Fx_Fade *fade_data)
 {
    Elm_Fx_Fade_Node *fade;
    Eina_List *data_list = NULL;
@@ -1992,6 +2081,11 @@ _fade_nodes_build(Elm_Transit *transit)
          fade->after_alpha = (255 - fade->after_color.a);
 
          data_list = eina_list_append(data_list, fade);
+
+         evas_object_event_callback_add(fade->before,
+             EVAS_CALLBACK_DEL, _fade_object_del_cb, fade_data);
+         evas_object_event_callback_add(fade->after,
+             EVAS_CALLBACK_DEL, _fade_object_del_cb, fade_data);
       }
 
    return data_list;
@@ -2021,9 +2115,9 @@ elm_transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__
 {
    Elm_Fx_Fade *fade = data;
    Elm_Fx_Fade_Node *fade_node;
-   Eina_List *elist;
+   Eina_List *elist, *elist_next;
 
-   EINA_LIST_FOREACH(fade->nodes, elist, fade_node)
+   EINA_LIST_FOREACH_SAFE(fade->nodes, elist, elist_next, fade_node)
      {
         evas_object_color_set(fade_node->before, fade_node->before_color.r,
                               fade_node->before_color.g,
@@ -2033,9 +2127,15 @@ elm_transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__
                               fade_node->after_color.g,
                               fade_node->after_color.b,
                               fade_node->after_color.a);
+
+        fade->nodes = eina_list_remove_list(fade->nodes, elist);
+        evas_object_event_callback_del(fade_node->before,
+                             EVAS_CALLBACK_DEL, _fade_object_del_cb);
+        evas_object_event_callback_del(fade_node->after,
+                             EVAS_CALLBACK_DEL, _fade_object_del_cb);
+        free(fade_node);
      }
 
-   eina_list_free(fade->nodes);
    free(fade);
 }
 
@@ -2075,7 +2175,7 @@ elm_transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double p
    float _progress;
 
    if (!fade->nodes)
-     fade->nodes = _fade_nodes_build(transit);
+     fade->nodes = _fade_nodes_build(transit, fade);
 
    EINA_LIST_FOREACH(fade->nodes, elist, fade_node)
      {
@@ -2160,8 +2260,31 @@ struct _Elm_Fx_Blend
    Eina_List *nodes;
 };
 
+static void
+_blend_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Fx_Blend *blend = data;
+   Eina_List *elist;
+   Elm_Fx_Blend_Node *blend_node;
+
+   EINA_LIST_FOREACH(blend->nodes, elist, blend_node)
+     {
+        if (blend_node->after == obj)
+          evas_object_event_callback_del(blend_node->before,
+                             EVAS_CALLBACK_DEL, _blend_object_del_cb);
+        else if (blend_node->before == obj)
+          evas_object_event_callback_del(blend_node->after,
+                             EVAS_CALLBACK_DEL, _blend_object_del_cb);
+        else continue;
+
+        blend->nodes = eina_list_remove_list(blend->nodes, elist);
+        free(blend_node);
+        break;
+     }
+}
+
 static Eina_List *
-_blend_nodes_build(Elm_Transit *transit)
+_blend_nodes_build(Elm_Transit *transit, Elm_Fx_Blend *blend)
 {
    Elm_Fx_Blend_Node *blend_node;
    Eina_List *data_list = NULL;
@@ -2191,6 +2314,11 @@ _blend_nodes_build(Elm_Transit *transit)
                                &blend_node->to.a);
 
          data_list = eina_list_append(data_list, blend_node);
+
+         evas_object_event_callback_add(blend_node->before,
+             EVAS_CALLBACK_DEL, _blend_object_del_cb, blend);
+         evas_object_event_callback_add(blend_node->after,
+             EVAS_CALLBACK_DEL, _blend_object_del_cb, blend);
      }
    return data_list;
 }
@@ -2236,6 +2364,11 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
           evas_object_hide(blend_node->before);
 
         blend->nodes = eina_list_remove_list(blend->nodes, elist);
+
+        evas_object_event_callback_del(blend_node->before,
+                             EVAS_CALLBACK_DEL, _blend_object_del_cb);
+        evas_object_event_callback_del(blend_node->after,
+                             EVAS_CALLBACK_DEL, _blend_object_del_cb);
         free(blend_node);
      }
    free(data);
@@ -2274,7 +2407,7 @@ elm_transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
    Eina_List *elist;
 
    if (!blend->nodes)
-     blend->nodes = _blend_nodes_build(transit);
+     blend->nodes = _blend_nodes_build(transit, blend);
 
    EINA_LIST_FOREACH(blend->nodes, elist, blend_node)
      {
