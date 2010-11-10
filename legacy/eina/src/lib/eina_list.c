@@ -1445,10 +1445,10 @@ eina_list_clone(const Eina_List *list)
  *    const char *txt = NULL;
  *    const char *txt2 = NULL;
  *
- *    if(!d1) return(1);
- *    if(!d2) return(-1);
+ *    if(!txt) return(1);
+ *    if(!txt2) return(-1);
  *
- *    return(strcmp((const char*)d1, (const char*)d2));
+ *    return(strcmp(txt, txt2));
  * }
  * extern Eina_List *list;
  *
