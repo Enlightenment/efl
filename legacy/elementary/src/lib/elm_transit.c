@@ -35,21 +35,30 @@ static const char _transit_key[] = "_elm_transit";
 
 struct _Elm_Transit
 {
-   Eina_List *effect_list;
-   Eina_Bool block:1;
-   void (*completion_op) (void *data, Elm_Transit *transit);
-   void *completion_arg;
-   int walking;
-   Eina_List *objs;
    Ecore_Animator *animator;
-   double begin_time;
-   double cur_time;
-   double duration;
-   int repeat_cnt;
-   int cur_repeat_cnt;
+   Eina_List *effect_list;
+   Eina_List *objs;
    Elm_Transit_Tween_Mode tween_mode;
    Eina_Bool auto_reverse:1;
+   Eina_Bool block:1;
    Eina_Bool deleted:1;
+   int walking;
+   struct
+   {
+      void (*func) (void *data, Elm_Transit *transit);
+      void *arg;
+   } del_data;
+   struct
+   {
+      double duration;
+      double begin;
+      double current;
+   } time;
+   struct
+   {
+      int count;
+      int current;
+   } repeat;
 };
 
 struct _Elm_Effect
@@ -148,8 +157,8 @@ _elm_transit_del(Elm_Transit *transit)
    Eina_List *elist, *elist_next;
    Elm_Effect *effect;
 
-   if (transit->completion_op)
-     transit->completion_op(transit->completion_arg, transit);
+   if (transit->del_data.func)
+     transit->del_data.func(transit->del_data.arg, transit);
 
    if (transit->block)
      elm_transit_event_block_set(transit, EINA_FALSE);
@@ -193,39 +202,39 @@ _animator_animate_cb(void *data)
 {
    Elm_Transit *transit = data;
 
-   transit->cur_time = ecore_loop_time_get();
-   double elapsed_time = transit->cur_time - transit->begin_time;
+   transit->time.current = ecore_loop_time_get();
+   double elapsed_time = transit->time.current - transit->time.begin;
 
-   if (elapsed_time > transit->duration)
-     elapsed_time = transit->duration;
+   if (elapsed_time > transit->time.duration)
+     elapsed_time = transit->time.duration;
 
    double progress = _tween_progress_calc(transit,
-                                             elapsed_time / transit->duration);
+                                        elapsed_time / transit->time.duration);
 
    /* Reverse? */
    if (transit->auto_reverse)
      {
-	if ((transit->cur_repeat_cnt % 2))
+	if ((transit->repeat.current % 2))
 	  progress = 1 - progress;
      }
 
-   if (transit->duration > 0)
+   if (transit->time.duration > 0)
      _transit_animate_op(transit, progress);
 
    /* Not end. Keep going. */
-   if (elapsed_time < transit->duration)
+   if (elapsed_time < transit->time.duration)
      return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
-   if (transit->cur_repeat_cnt == transit->repeat_cnt)
+   if (transit->repeat.current == transit->repeat.count)
      {
         elm_transit_del(transit);
 	return ECORE_CALLBACK_CANCEL;
      }
 
    /* Repeat Case */
-   transit->cur_repeat_cnt++;
-   transit->begin_time = ecore_loop_time_get();
+   transit->repeat.current++;
+   transit->time.begin = ecore_loop_time_get();
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -253,9 +262,9 @@ elm_transit_add(double duration)
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
 
-   transit->duration = duration;
+   transit->time.duration = duration;
 
-   transit->begin_time = ecore_loop_time_get();
+   transit->time.begin = ecore_loop_time_get();
    transit->animator = ecore_animator_add(_animator_animate_cb, transit);
    return transit;
 }
@@ -500,21 +509,21 @@ elm_transit_event_block_get(const Elm_Transit *transit)
  * Set the user-callback function when the transit is deleted.
  *
  * @note Using this function twice will overwrite the first function setted.
- * @note the @p transit object will be deleted after call @p op function.
+ * @note the @p transit object will be deleted after call @p cb function.
  *
  * @param transit The transit object.
- * @param op Callback function pointer. This function will be called before
+ * @param cb Callback function pointer. This function will be called before
  * the deletion of the transit.
  * @param data Callback funtion user data. It is the @p op parameter.
  *
  * @ingroup Transit
  */
 EAPI void
-elm_transit_del_cb_set(Elm_Transit *transit, void (*op) (void *data, Elm_Transit *transit), void *data)
+elm_transit_del_cb_set(Elm_Transit *transit, void (*cb) (void *data, Elm_Transit *transit), void *data)
 {
    if (!transit) return;
-   transit->completion_op = op;
-   transit->completion_arg = data;
+   transit->del_data.func = cb;
+   transit->del_data.arg = data;
 }
 
 /**
@@ -539,13 +548,13 @@ elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
    transit->auto_reverse = reverse;
    if (reverse)
      {
-	transit->repeat_cnt =
-	  _animator_compute_reverse_repeat_count(transit->repeat_cnt);
+	transit->repeat.count =
+	  _animator_compute_reverse_repeat_count(transit->repeat.count);
      }
    else
      {
-	transit->repeat_cnt =
-	  _animator_compute_no_reverse_repeat_count(transit->repeat_cnt);
+	transit->repeat.count =
+	  _animator_compute_no_reverse_repeat_count(transit->repeat.count);
      }
 }
 
@@ -586,14 +595,14 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 {
    if (!transit) return;
 
-   transit->repeat_cnt = repeat;
-   transit->cur_repeat_cnt = 0;
+   transit->repeat.count = repeat;
+   transit->repeat.current = 0;
 
    if (!transit->auto_reverse || repeat < 0)
-     transit->repeat_cnt = repeat;
+     transit->repeat.count = repeat;
    else
      {
-	transit->repeat_cnt =
+	transit->repeat.count =
 	  _animator_compute_reverse_repeat_count(repeat);
      }
 }
@@ -612,9 +621,9 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 EAPI int
 elm_transit_repeat_times_get(Elm_Transit *transit)
 {
-   if (!transit->auto_reverse || transit->repeat_cnt < 0)
-     return transit->repeat_cnt;
-   return _animator_compute_no_reverse_repeat_count(transit->repeat_cnt);
+   if (!transit->auto_reverse || transit->repeat.count < 0)
+     return transit->repeat.count;
+   return _animator_compute_no_reverse_repeat_count(transit->repeat.count);
 }
 
 /**
@@ -1171,13 +1180,6 @@ elm_transit_effect_flip_context_new(Elm_Fx_Flip_Axis axis, Eina_Bool cw)
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Fx_Resizable_Flip Elm_Fx_ResizableFlip;
 typedef struct _Elm_Fx_Resizable_Flip_Node Elm_Fx_ResizableFlip_Node;
-static void _set_image_uv_by_axis_y(Evas_Map *map,
-                                    Elm_Fx_ResizableFlip_Node *flip,
-                                    float degree);
-static void _set_image_uv_by_axis_x(Evas_Map *map,
-                                    Elm_Fx_ResizableFlip_Node *flip,
-                                    float degree);
-static Eina_List *_resizable_flip_nodes_build(Elm_Transit *transit);
 
 struct _Elm_Fx_Resizable_Flip_Node
 {
@@ -1196,39 +1198,49 @@ struct _Elm_Fx_Resizable_Flip
    Elm_Fx_Flip_Axis axis;
 };
 
-/**
- * The Free function to Resizable Flip Effect context data.
- *
- * @note You not need to call this function, just pass as parameter to
- * elm_transit_effect_add() function.
- *
- * This function belongs to the Resizable Flip effect, which consists of
- * functions:
- * - elm_transit_effect_resizable_flip_context_new()
- * - elm_transit_effect_resizable_flip_op()
- * - elm_transit_effect_resizing_context_free()
- *
- * @see elm_transit_effect_add()
- *
- * @param data The Resizable Flip context data.
- * @param transit Transit object.
- *
- * @ingroup Transit
- */
-EAPI void
-elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __UNUSED__)
+static Eina_List *
+_resizable_flip_nodes_build(Elm_Transit *transit)
 {
-   Elm_Fx_ResizableFlip *resizable_flip = data;
-   Eina_List *elist;
    Elm_Fx_ResizableFlip_Node *resizable_flip_node;
+   Eina_List *data_list = NULL;
 
-   EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
-     {
-        evas_object_map_enable_set(resizable_flip_node->front, EINA_FALSE);
-        evas_object_map_enable_set(resizable_flip_node->back, EINA_FALSE);
-     }
-   eina_list_free(resizable_flip->nodes);
-   free(resizable_flip);
+   Evas_Coord front_x, front_y, front_w, front_h;
+   Evas_Coord back_x, back_y, back_w, back_h;
+
+   int i, count;
+
+   count = eina_list_count(transit->objs);
+   for (i = 0; i < count-1; i+=2)
+      {
+         resizable_flip_node = ELM_NEW(Elm_Fx_ResizableFlip_Node);
+         if (!resizable_flip_node)
+           {
+              eina_list_free(data_list);
+              return NULL;
+           }
+
+         resizable_flip_node->front = eina_list_nth(transit->objs, i);
+         resizable_flip_node->back = eina_list_nth(transit->objs, i+1);
+
+         evas_object_geometry_get(resizable_flip_node->front,
+                                  &front_x, &front_y, &front_w, &front_h);
+         evas_object_geometry_get(resizable_flip_node->back,
+                                  &back_x, &back_y, &back_w, &back_h);
+
+         resizable_flip_node->from_pos.x = front_x;
+         resizable_flip_node->from_pos.y = front_y;
+         resizable_flip_node->to_pos.x = back_x - front_x;
+         resizable_flip_node->to_pos.y = back_y - front_y;
+
+         resizable_flip_node->from_size.x = front_w;
+         resizable_flip_node->from_size.y = front_h;
+         resizable_flip_node->to_size.x = back_w - front_w;
+         resizable_flip_node->to_size.y = back_h - front_h;
+
+         data_list = eina_list_append(data_list, resizable_flip_node);
+      }
+
+   return data_list;
 }
 
 static void
@@ -1279,6 +1291,41 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Fx_ResizableFlip_Node *flip, float de
                                     flip->from_size.y);
         evas_map_point_image_uv_set(map, 3, 0, flip->to_size.y);
      }
+}
+
+/**
+ * The Free function to Resizable Flip Effect context data.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Resizable Flip effect, which consists of
+ * functions:
+ * - elm_transit_effect_resizable_flip_context_new()
+ * - elm_transit_effect_resizable_flip_op()
+ * - elm_transit_effect_resizing_context_free()
+ *
+ * @see elm_transit_effect_add()
+ *
+ * @param data The Resizable Flip context data.
+ * @param transit Transit object.
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __UNUSED__)
+{
+   Elm_Fx_ResizableFlip *resizable_flip = data;
+   Eina_List *elist;
+   Elm_Fx_ResizableFlip_Node *resizable_flip_node;
+
+   EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
+     {
+        evas_object_map_enable_set(resizable_flip_node->front, EINA_FALSE);
+        evas_object_map_enable_set(resizable_flip_node->back, EINA_FALSE);
+     }
+   eina_list_free(resizable_flip->nodes);
+   free(resizable_flip);
 }
 
 /**
@@ -1385,51 +1432,6 @@ elm_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__
    evas_map_free(map);
 }
 
-static Eina_List *
-_resizable_flip_nodes_build(Elm_Transit *transit)
-{
-   Elm_Fx_ResizableFlip_Node *resizable_flip_node;
-   Eina_List *data_list = NULL;
-
-   Evas_Coord front_x, front_y, front_w, front_h;
-   Evas_Coord back_x, back_y, back_w, back_h;
-
-   int i, count;
-
-   count = eina_list_count(transit->objs);
-   for (i = 0; i < count-1; i+=2)
-      {
-         resizable_flip_node = ELM_NEW(Elm_Fx_ResizableFlip_Node);
-         if (!resizable_flip_node)
-           {
-              eina_list_free(data_list);
-              return NULL;
-           }
-
-         resizable_flip_node->front = eina_list_nth(transit->objs, i);
-         resizable_flip_node->back = eina_list_nth(transit->objs, i+1);
-
-         evas_object_geometry_get(resizable_flip_node->front,
-                                  &front_x, &front_y, &front_w, &front_h);
-         evas_object_geometry_get(resizable_flip_node->back,
-                                  &back_x, &back_y, &back_w, &back_h);
-
-         resizable_flip_node->from_pos.x = front_x;
-         resizable_flip_node->from_pos.y = front_y;
-         resizable_flip_node->to_pos.x = back_x - front_x;
-         resizable_flip_node->to_pos.y = back_y - front_y;
-
-         resizable_flip_node->from_size.x = front_w;
-         resizable_flip_node->from_size.y = front_h;
-         resizable_flip_node->to_size.x = back_w - front_w;
-         resizable_flip_node->to_size.y = back_h - front_h;
-
-         data_list = eina_list_append(data_list, resizable_flip_node);
-      }
-
-   return data_list;
-}
-
 /**
  * Get a new context data of Resizable Flip Effect.
  *
@@ -1465,47 +1467,12 @@ elm_transit_effect_resizable_flip_context_new(Elm_Fx_Flip_Axis axis, Eina_Bool c
 //Wipe FX
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Fx_Wipe Elm_Fx_Wipe;
-static void _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir,
-                              float x, float y, float w, float h, float progress);
-static void _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir,
-                              float x, float y, float w, float h, float progress);
 
 struct _Elm_Fx_Wipe
 {
    Elm_Fx_Wipe_Type type;
    Elm_Fx_Wipe_Dir dir;
 };
-
-/**
- * The Free function to Wipe Effect context data.
- *
- * @note You not need to call this function, just pass as parameter to
- * elm_transit_effect_add() function.
- *
- * This function belongs to the Wipe effect, which consists of
- * functions:
- * - elm_transit_effect_wipe_context_new()
- * - elm_transit_effect_wipe_op()
- * - elm_transit_effect_wipe_context_free()
- *
- * @see elm_transit_effect_add()
- *
- * @param data The Wipe context data.
- * @param transit Transit object.
- *
- * @ingroup Transit
- */
-EAPI void
-elm_transit_effect_wipe_context_free(void *data, Elm_Transit *transit)
-{
-   Eina_List *elist;
-   Evas_Object *obj;
-
-   EINA_LIST_FOREACH(transit->objs, elist, obj)
-     evas_object_map_enable_set(obj, EINA_FALSE);
-
-   free(data);
-}
 
 static void
 _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir, float x, float y, float w, float h, float progress)
@@ -1629,6 +1596,37 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
      }
 
    evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, 10000);
+}
+
+/**
+ * The Free function to Wipe Effect context data.
+ *
+ * @note You not need to call this function, just pass as parameter to
+ * elm_transit_effect_add() function.
+ *
+ * This function belongs to the Wipe effect, which consists of
+ * functions:
+ * - elm_transit_effect_wipe_context_new()
+ * - elm_transit_effect_wipe_op()
+ * - elm_transit_effect_wipe_context_free()
+ *
+ * @see elm_transit_effect_add()
+ *
+ * @param data The Wipe context data.
+ * @param transit Transit object.
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_effect_wipe_context_free(void *data, Elm_Transit *transit)
+{
+   Eina_List *elist;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(transit->objs, elist, obj)
+     evas_object_map_enable_set(obj, EINA_FALSE);
+
+   free(data);
 }
 
 /**
@@ -1845,7 +1843,6 @@ elm_transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, u
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Fx_Fade Elm_Fx_Fade;
 typedef struct _Elm_Fx_Fade_Node Elm_Fx_Fade_Node;
-static Eina_List *_fade_nodes_build(Elm_Transit *transit);
 
 struct _Elm_Fx_Fade_Node
 {
@@ -1861,6 +1858,43 @@ struct _Elm_Fx_Fade
 {
    Eina_List *nodes;
 };
+
+static Eina_List *
+_fade_nodes_build(Elm_Transit *transit)
+{
+   Elm_Fx_Fade_Node *fade;
+   Eina_List *data_list = NULL;
+
+   int i; int count;
+
+   count = eina_list_count(transit->objs);
+   for (i = 0; i < count-1; i+=2)
+      {
+         fade = ELM_NEW(Elm_Fx_Fade_Node);
+         if (!fade)
+           {
+              eina_list_free(data_list);
+              return NULL;
+           }
+
+         fade->before = eina_list_nth(transit->objs, i);
+         fade->after = eina_list_nth(transit->objs, i+1);
+
+         evas_object_color_get(fade->before,
+                               &fade->before_color.r, &fade->before_color.g,
+                               &fade->before_color.b, &fade->before_color.a);
+         evas_object_color_get(fade->after,
+                               &fade->after_color.r, &fade->after_color.g,
+                               &fade->after_color.b, &fade->after_color.a);
+
+         fade->before_alpha = (255 - fade->before_color.a);
+         fade->after_alpha = (255 - fade->after_color.a);
+
+         data_list = eina_list_append(data_list, fade);
+      }
+
+   return data_list;
+}
 
 /**
  * The Free function to Fade Effect context data.
@@ -1983,43 +2017,6 @@ elm_transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double p
      }
 }
 
-static Eina_List *
-_fade_nodes_build(Elm_Transit *transit)
-{
-   Elm_Fx_Fade_Node *fade;
-   Eina_List *data_list = NULL;
-
-   int i; int count;
-
-   count = eina_list_count(transit->objs);
-   for (i = 0; i < count-1; i+=2)
-      {
-         fade = ELM_NEW(Elm_Fx_Fade_Node);
-         if (!fade)
-           {
-              eina_list_free(data_list);
-              return NULL;
-           }
-
-         fade->before = eina_list_nth(transit->objs, i);
-         fade->after = eina_list_nth(transit->objs, i+1);
-
-         evas_object_color_get(fade->before,
-                               &fade->before_color.r, &fade->before_color.g,
-                               &fade->before_color.b, &fade->before_color.a);
-         evas_object_color_get(fade->after,
-                               &fade->after_color.r, &fade->after_color.g,
-                               &fade->after_color.b, &fade->after_color.a);
-
-         fade->before_alpha = (255 - fade->before_color.a);
-         fade->after_alpha = (255 - fade->after_color.a);
-
-         data_list = eina_list_append(data_list, fade);
-      }
-
-   return data_list;
-}
-
 /**
  * Get a new context data of Fade Effect.
  *
@@ -2049,7 +2046,6 @@ elm_transit_effect_fade_context_new(void)
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Fx_Blend Elm_Fx_Blend;
 typedef struct _Elm_Fx_Blend_Node Elm_Fx_Blend_Node;
-static Eina_List * _blend_nodes_build(Elm_Transit *transit);
 
 struct _Elm_Fx_Blend_Node
 {
@@ -2062,6 +2058,39 @@ struct _Elm_Fx_Blend
 {
    Eina_List *nodes;
 };
+
+static Eina_List *
+_blend_nodes_build(Elm_Transit *transit)
+{
+   Elm_Fx_Blend_Node *blend_node;
+   Eina_List *data_list = NULL;
+
+   int i, count;
+
+   count = eina_list_count(transit->objs);
+   for (i = 0; i < count-1; i+=2)
+     {
+         blend_node = ELM_NEW(Elm_Fx_Blend_Node);
+         if (!blend_node)
+           {
+              eina_list_free(data_list);
+              return NULL;
+           }
+
+         blend_node->before = eina_list_nth(transit->objs, i);
+         blend_node->after = eina_list_nth(transit->objs, i+1);
+
+         evas_object_color_get(blend_node->before, &blend_node->from.r,
+                               &blend_node->from.g, &blend_node->from.b,
+                               &blend_node->from.a);
+         evas_object_color_get(blend_node->after, &blend_node->to.r,
+                               &blend_node->to.g, &blend_node->to.b,
+                               &blend_node->to.a);
+
+         data_list = eina_list_append(data_list, blend_node);
+     }
+   return data_list;
+}
 
 /**
  * The Free function to Blend Effect context data.
@@ -2151,39 +2180,6 @@ elm_transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
                               (int)(blend_node->to.b * progress),
                               (int)(blend_node->to.a * progress));
      }
-}
-
-static Eina_List *
-_blend_nodes_build(Elm_Transit *transit)
-{
-   Elm_Fx_Blend_Node *blend_node;
-   Eina_List *data_list = NULL;
-
-   int i, count;
-
-   count = eina_list_count(transit->objs);
-   for (i = 0; i < count-1; i+=2)
-     {
-         blend_node = ELM_NEW(Elm_Fx_Blend_Node);
-         if (!blend_node)
-           {
-              eina_list_free(data_list);
-              return NULL;
-           }
-
-         blend_node->before = eina_list_nth(transit->objs, i);
-         blend_node->after = eina_list_nth(transit->objs, i+1);
-
-         evas_object_color_get(blend_node->before, &blend_node->from.r,
-                               &blend_node->from.g, &blend_node->from.b,
-                               &blend_node->from.a);
-         evas_object_color_get(blend_node->after, &blend_node->to.r,
-                               &blend_node->to.g, &blend_node->to.b,
-                               &blend_node->to.a);
-
-         data_list = eina_list_append(data_list, blend_node);
-     }
-   return data_list;
 }
 
 /**

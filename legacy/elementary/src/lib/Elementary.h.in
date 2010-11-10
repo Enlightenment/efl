@@ -2349,7 +2349,7 @@ extern "C" {
    EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit);
    EAPI void                   elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled);
    EAPI Eina_Bool              elm_transit_event_block_get(const Elm_Transit *transit);
-   EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, void (*op)(void *data, Elm_Transit* transit), void *data);
+   EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit* transit), void *data);
    EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse);
    EAPI Eina_Bool              elm_transit_auto_reverse_get(Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, int repeat);
