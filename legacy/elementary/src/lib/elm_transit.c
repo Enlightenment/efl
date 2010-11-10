@@ -22,9 +22,9 @@
  * @defgroup Transit Transit
  * @ingroup Elementary
  *
- * Transit is designed to set the various effects for the Evas_Object such like
- * translation, rotation, etc. For using Effects, Create transit and insert
- * effects which are interesting.
+ * Transit (see Warning below) is designed to set the various effects for the
+ * Evas_Object such like translation, rotation, etc. For using Effects, Create
+ * transit and insert effects which are interesting.
  * Once effects are inserted into transit, transit will manage those effects.
  * (ex deleting).
  *
@@ -44,7 +44,7 @@
  *
  * @warning We strongly recomend to use elm_transit just when edje can not do
  * the trick. Edje has more advantage than Elm_Transit, it has more flexibility and
- * animations can be manipulated inside the object's theme.
+ * animations can be manipulated inside the theme.
  */
 
 static const char _transit_key[] = "_elm_transit";
@@ -424,11 +424,18 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
  * @note If the @p obj belongs to another transit, the @p obj will be
  * removed from it and it will only belong to the @p transit. If the old
  * transit stays without objects, it will die.
+ * @note When you add an object into the @p transit, its state from
+ * evas_object_pass_events_get(obj) is saved, and it is applied when the
+ * transit ends, if you change this state whith evas_object_pass_events_set()
+ * after add the object, this state will change again when @p transit stops to
+ * run.
  *
  * @param transit The transit object.
  * @param obj Object to be animated.
  *
  * @ingroup Transit
+ * @warning See the documentation of the effect if is safe add or remove
+ * an object after @p transit begins to run.
  */
 EAPI void
 elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
@@ -463,7 +470,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 /**
  * Removes an added object from the transit.
  *
- * @note If the @p obj is not in the @transit, nothing is done.
+ * @note If the @p obj is not in the @p transit, nothing is done.
  * @note If the list become empty, this function will call
  * elm_transit_del(transit), that is, it will kill the @p transit.
  *
@@ -471,6 +478,8 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
  * @param obj Object to be removed from @p transit.
  *
  * @ingroup Transit
+ * @warning See the documentation of the effect if is safe add or remove
+ * an object after @p transit begins to run.
  */
 EAPI void
 elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
@@ -510,6 +519,11 @@ elm_transit_objects_get(const Elm_Transit *transit)
  *
  * If @p disabled is EINA_TRUE, the objects of the transit will not receives
  * events from mouse and keyboard during the animation.
+ * @note When you add an object with elm_transit_object_add(), its state from
+ * evas_object_pass_events_get(obj) is saved, and it is applied when the
+ * transit ends, if you change this state with evas_object_pass_events_set()
+ * after add the object, this state will change again when @p transit stops to
+ * run.
  *
  * @param transit The transit object.
  * @param disabled Disable or enable.
@@ -752,6 +766,10 @@ elm_transit_effect_resizing_context_free(void *data, Elm_Transit *transit __UNUS
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Risizing effect, which consists of functions:
  * - elm_transit_effect_resizing_context_new()
@@ -942,6 +960,10 @@ elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit __U
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
  */
 EAPI void
 elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progress __UNUSED__)
@@ -1039,6 +1061,10 @@ elm_transit_effect_zoom_context_free(void *data, Elm_Transit *transit __UNUSED__
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Zoom effect, which consists of functions:
  * - elm_transit_effect_zoom_context_new()
@@ -1052,6 +1078,12 @@ elm_transit_effect_zoom_context_free(void *data, Elm_Transit *transit __UNUSED__
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_zoom_op(void *data, Elm_Transit *transit , double progress)
@@ -1169,6 +1201,10 @@ elm_transit_effect_flip_context_free(void *data, Elm_Transit *transit)
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Flip effect, which consists of functions:
  * - elm_transit_effect_flip_context_new()
@@ -1182,6 +1218,12 @@ elm_transit_effect_flip_context_free(void *data, Elm_Transit *transit)
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
@@ -1460,6 +1502,12 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Fx_ResizableFlip_Node *flip, float de
  * @param transit Transit object.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __UNUSED__)
@@ -1495,6 +1543,10 @@ elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit 
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note When this function begins to be called, it gets the current objects in
+ * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
+ * will not cause any changes in the set of objects that this effect is being
+ * applied if these functions are called after the @p transit starts to run.
  *
  * This function belongs to the Resizable Flip effect, which consists of
  * functions:
@@ -1509,6 +1561,10 @@ elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit 
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
  */
 EAPI void
 elm_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, double progress)
@@ -1762,6 +1818,10 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Fx_Wipe_Dir dir, float x, float y, float w,
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Wipe effect, which consists of
  * functions:
@@ -1811,10 +1871,16 @@ elm_transit_effect_wipe_context_free(void *data, Elm_Transit *transit)
  * @see elm_transit_effect_add()
  *
  * @param data The Wipe context data.
- * @param transt Transit object.
+ * @param transit Transit object.
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress)
@@ -1928,6 +1994,10 @@ elm_transit_effect_color_context_free(void *data, Elm_Transit *transit __UNUSED_
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Color effect, which consists of
  * functions:
@@ -2148,6 +2218,10 @@ elm_transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note When this function begins to be called, it gets the current objects in
+ * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
+ * will not cause any changes in the set of objects that this effect is being
+ * applied if these functions are called after the @p transit starts to run.
  *
  * This function belongs to the Fade effect, which consists of
  * functions:
@@ -2162,6 +2236,12 @@ elm_transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the color information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double progress)
@@ -2383,6 +2463,10 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note When this function begins to be called, it gets the current objects in
+ * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
+ * will not cause any changes in the set of objects that this effect is being
+ * applied if these functions are called after the @p transit starts to run.
  *
  * This function belongs to the Blend effect, which consists of
  * functions:
@@ -2397,6 +2481,12 @@ elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED_
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the color information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
@@ -2491,6 +2581,10 @@ elm_transit_effect_rotation_context_free(void *data, Elm_Transit *transit __UNUS
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Rotation effect, which consists of
  * functions:
@@ -2505,6 +2599,12 @@ elm_transit_effect_rotation_context_free(void *data, Elm_Transit *transit __UNUS
  * @param progress The time progression, it is a double value between 0.0 and 1.0.
  *
  * @ingroup Transit
+ * @warning Is higher recommended just create a transit with this effect when
+ * the window that the objects of the transit belongs has already been created.
+ * This is because this effect needs the geometry information about the objects,
+ * and if the window was not created yet, it can get a wrong information.
+ * @warning Is not recommended remove or add an object after the transit begins
+ * to run, because the order of the objects will be affected.
  */
 EAPI void
 elm_transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress)
@@ -2637,6 +2737,10 @@ elm_transit_effect_image_animation_context_free(void *data, Elm_Transit *transit
  *
  * @note You not need to call this function, just pass as parameter to
  * elm_transit_effect_add() function.
+ * @note This effect will be applied to the objects that are in the transit,
+ * If you change the set of objects in the transit with  elm_transit_object_add()
+ * or elm_transit_object_remove(), the set of objects affected by this effect
+ * will be changed too.
  *
  * This function belongs to the Image Animation effect, which consists of
  * functions:
