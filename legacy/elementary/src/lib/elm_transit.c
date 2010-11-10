@@ -491,6 +491,22 @@ elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
 }
 
 /**
+ * Get if the auto reverse is on
+ *
+ * @see elm_transit_auto_reverse_set()
+ *
+ * @param transit Transit
+ * @return EINA_TRUE means auto reverse is on
+ *
+ * @ingroup Transit
+ */
+EAPI Eina_Bool
+elm_transit_auto_reverse_get(Elm_Transit *transit)
+{
+   return transit->auto_reverse;
+}
+
+/**
  * Set the transit repeat count. Effect will be repeated by repeat count.
  *
  * This function define the number of repetition the transit will run after
@@ -523,6 +539,24 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 }
 
 /**
+ * Get the transit repeat count.
+ *
+ * @see elm_transit_repeat_times_set()
+ *
+ * @param transit Transit
+ * @return The repeat count
+ *
+ * @ingroup Transit
+ */
+EAPI int
+elm_transit_repeat_times_get(Elm_Transit *transit)
+{
+   if (!transit->auto_reverse || transit->repeat_cnt < 0)
+     return transit->repeat_cnt;
+   return _animator_compute_no_reverse_repeat_count(transit->repeat_cnt);
+}
+
+/**
  * Set the transit animation acceleration style.
  *
  * @param transit	Transit
@@ -535,6 +569,22 @@ elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mo
 {
    if (!transit) return;
    transit->tween_mode = tween_mode;
+}
+
+/**
+ * Get the transit animation acceleration type.
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit	Transit
+ * @return The tween type
+ *
+ * @ingroup Transit
+ */
+EAPI Elm_Transit_Tween_Mode
+elm_transit_tween_mode_get(Elm_Transit *transit)
+{
+   return transit->tween_mode;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
