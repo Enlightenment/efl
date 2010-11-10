@@ -1342,6 +1342,7 @@ _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
      }
    else
       _elm_toolbar_item_label_update(item);
+   _resize(item->base.widget, NULL, NULL, NULL);
 }
 
 /**
@@ -1497,6 +1498,7 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Ob
      }
    else
       _elm_toolbar_item_icon_update(item);
+   _resize(obj, NULL, NULL, NULL);
 }
 
 /**
@@ -1598,6 +1600,7 @@ elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    _item_disable(item, disabled);
+   _resize(item->base.widget, NULL, NULL, NULL);
 }
 
 /**
