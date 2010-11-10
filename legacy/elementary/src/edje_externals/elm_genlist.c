@@ -22,7 +22,7 @@ typedef struct _Elm_Params_Genlist
    Eina_Bool v_bounce_exists:1;
 } Elm_Params_Genlist;
 
-static const char* list_horizontal_mode_choices[] = {"compress", "scroll", "limit", NULL};
+static const char* list_horizontal_mode_choices[] = {"compress", "scroll", "limit", "expand", NULL};
 
 static Elm_List_Mode
 _list_horizontal_mode_setting_get(const char *horizontal_mode_str)
