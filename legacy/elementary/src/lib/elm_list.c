@@ -149,17 +149,36 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    /* TODO: fix logic for horizontal mode */
    if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
-        x -= step_x;
+        if ((wd->h_mode) &&
+            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+              (_item_multi_select_up(wd)))
+             || (_item_single_select_up(wd))))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          x -= step_x;
      }
    else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
      {
-        x += step_x;
+        if ((wd->h_mode) &&
+            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+              (_item_multi_select_down(wd)))
+             || (_item_single_select_down(wd))))
+          {
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+             return EINA_TRUE;
+          }
+        else
+          x += step_x;
      }
    else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
      {
-        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-            (_item_multi_select_up(wd)))
-            || (_item_single_select_up(wd)))
+        if ((!wd->h_mode) &&
+            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+              (_item_multi_select_up(wd)))
+             || (_item_single_select_up(wd))))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -169,9 +188,10 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
-        if (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
-            (_item_multi_select_down(wd)))
-            || (_item_single_select_down(wd)))
+        if ((!wd->h_mode) &&
+            (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
+              (_item_multi_select_down(wd)))
+             || (_item_single_select_down(wd))))
           {
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
@@ -195,17 +215,37 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    else if (!strcmp(ev->keyname, "Prior"))
      {
-        if (page_y < 0)
-          y -= -(page_y * v_h) / 100;
+        if (wd->h_mode)
+          {
+             if (page_x < 0)
+               x -= -(page_x * v_w) / 100;
+             else
+               x -= page_x;
+          }
         else
-          y -= page_y;
+          {
+             if (page_y < 0)
+               y -= -(page_y * v_h) / 100;
+             else
+               y -= page_y;
+          }
      }
    else if (!strcmp(ev->keyname, "Next"))
      {
-        if (page_y < 0)
-          y += -(page_y * v_h) / 100;
+        if (wd->h_mode)
+          {
+             if (page_x < 0)
+               x += -(page_x * v_w) / 100;
+             else
+               x += page_x;
+          }
         else
-          y += page_y;
+          {
+             if (page_y < 0)
+               y += -(page_y * v_h) / 100;
+             else
+               y += page_y;
+          }
      }
    else if (!strcmp(ev->keyname, "Escape"))
      {
