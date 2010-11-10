@@ -418,6 +418,13 @@ _fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw)
 }
 
 static void
+_elm_toolbar_item_menu_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Toolbar_Item *it = data;
+   if (it->func) it->func((void *)(it->base.data), it->base.widget, it);
+}
+
+static void
 _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -462,7 +469,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
                          {
                             Elm_Menu_Item *item;
                             item = elm_menu_item_add(menu, NULL, it->icon_str, it->label,
-                                                     it->func, it->base.data);
+                                                     _elm_toolbar_item_menu_cb, it);
                             elm_menu_item_disabled_set(item, it->disabled);
                             if (it->o_menu) elm_menu_clone(it->o_menu, menu, item);
                          }
