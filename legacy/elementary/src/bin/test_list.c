@@ -9,6 +9,30 @@ my_show_it(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_list_item_show(data);
 }
 
+static void
+scroll_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Top edge!\n");
+}
+
+static void
+scroll_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Bottom edge!\n");
+}
+
+static void
+scroll_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Left edge!\n");
+}
+
+static void
+scroll_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Right edge!\n");
+}
+
 void
 test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -147,6 +171,11 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
+
+   evas_object_smart_callback_add(li, "scroll,edge,top", scroll_top, NULL);
+   evas_object_smart_callback_add(li, "scroll,edge,bottom", scroll_bottom, NULL);
+   evas_object_smart_callback_add(li, "scroll,edge,left", scroll_left, NULL);
+   evas_object_smart_callback_add(li, "scroll,edge,right", scroll_right, NULL);
 }
 
 void

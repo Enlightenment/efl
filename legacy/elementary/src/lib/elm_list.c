@@ -70,6 +70,10 @@ static void _fix_items(Evas_Object *obj);
 static void _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 static void _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 static void _mouse_move(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static void _scroll_edge_left(void *data, Evas_Object *scr, void *event_info);
+static void _scroll_edge_right(void *data, Evas_Object *scr, void *event_info);
+static void _scroll_edge_top(void *data, Evas_Object *scr, void *event_info);
+static void _scroll_edge_bottom(void *data, Evas_Object *scr, void *event_info);
 static Eina_Bool _item_multi_select_up(Widget_Data *wd);
 static Eina_Bool _item_multi_select_down(Widget_Data *wd);
 static Eina_Bool _item_single_select_up(Widget_Data *wd);
@@ -677,6 +681,34 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
      }
 }
 
+static void
+_scroll_edge_left(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,left", NULL);
+}
+
+static void
+_scroll_edge_right(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,right", NULL);
+}
+
+static void
+_scroll_edge_top(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,top", NULL);
+}
+
+static void
+_scroll_edge_bottom(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,bottom", NULL);
+}
+
 static Eina_Bool
 _long_press(void *data)
 {
@@ -1159,6 +1191,11 @@ elm_list_add(Evas_Object *parent)
    evas_object_show(wd->box);
 
    wd->mode = ELM_LIST_SCROLL;
+
+   evas_object_smart_callback_add(wd->scr, "edge,left", _scroll_edge_left, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,right", _scroll_edge_right, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,top", _scroll_edge_top, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,bottom", _scroll_edge_bottom, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);

@@ -2022,6 +2022,34 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__
    elm_smart_scroller_freeze_set(wd->scr, 0);
 }
 
+static void
+_scroll_edge_left(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,left", NULL);
+}
+
+static void
+_scroll_edge_right(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,right", NULL);
+}
+
+static void
+_scroll_edge_top(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,top", NULL);
+}
+
+static void
+_scroll_edge_bottom(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   evas_object_smart_callback_call(obj, "scroll,edge,bottom", NULL);
+}
+
 /**
  * Add a new Genlist object
  *
@@ -2075,6 +2103,11 @@ elm_genlist_add(Evas_Object *parent)
 
    elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE,
                                        _elm_config->thumbscroll_bounce_enable);
+
+   evas_object_smart_callback_add(wd->scr, "edge,left", _scroll_edge_left, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,right", _scroll_edge_right, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,top", _scroll_edge_top, obj);
+   evas_object_smart_callback_add(wd->scr, "edge,bottom", _scroll_edge_bottom, obj);
 
    wd->obj = obj;
    wd->mode = ELM_LIST_SCROLL;

@@ -877,6 +877,30 @@ item_drag_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 }
 
 static void
+scroll_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Top edge!\n");
+}
+
+static void
+scroll_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Bottom edge!\n");
+}
+
+static void
+scroll_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Left edge!\n");
+}
+
+static void
+scroll_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Right edge!\n");
+}
+
+static void
 item_drag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("drag\n");
@@ -945,6 +969,10 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(gl, "drag,start,down", item_drag_down, NULL);
    evas_object_smart_callback_add(gl, "drag,start,left", item_drag_left, NULL);
    evas_object_smart_callback_add(gl, "drag,start,right", item_drag_right, NULL);
+   evas_object_smart_callback_add(gl, "scroll,edge,top", scroll_top, NULL);
+   evas_object_smart_callback_add(gl, "scroll,edge,bottom", scroll_bottom, NULL);
+   evas_object_smart_callback_add(gl, "scroll,edge,left", scroll_left, NULL);
+   evas_object_smart_callback_add(gl, "scroll,edge,right", scroll_right, NULL);
    evas_object_smart_callback_add(gl, "drag", item_drag, NULL);
    evas_object_smart_callback_add(gl, "drag,stop", item_drag_stop, NULL);
    evas_object_smart_callback_add(gl, "longpressed", item_longpress, NULL);

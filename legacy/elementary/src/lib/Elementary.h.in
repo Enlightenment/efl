@@ -1506,6 +1506,10 @@ extern "C" {
     * "selected" - when the user selected an item
     * "unselected" - when the user selected an item
     * "longpressed" - an item in the hoversel list is long-pressed
+    * "scroll,edge,top" - the list is scrolled until the top edge
+    * "scroll,edge,bottom" - the list is scrolled until the bottom edge
+    * "scroll,edge,left" - the list is scrolled until the left edge
+    * "scroll,edge,right" - the list is scrolled until the right edge
     */
 
    /* slider */
