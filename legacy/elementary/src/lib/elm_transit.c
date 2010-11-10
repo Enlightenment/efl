@@ -255,7 +255,6 @@ elm_transit_del(Elm_Transit *transit)
 {
    Eina_List *elist;
    Elm_Effect *effect;
-   Evas_Object *obj;
    if (!transit) return;
 
    if (transit->block)
@@ -269,8 +268,8 @@ elm_transit_del(Elm_Transit *transit)
    EINA_LIST_FOREACH(transit->effect_list, elist, effect)
      _elm_transit_effect_del(transit, effect);
 
-   EINA_LIST_FOREACH(transit->objs, elist, obj)
-     transit->objs = eina_list_remove(transit->objs, obj);
+   while (transit->objs)
+     elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
 
    free(transit);
 }
