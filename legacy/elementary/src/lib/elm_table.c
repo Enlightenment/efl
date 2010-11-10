@@ -165,10 +165,28 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 }
 
 /**
+ * Get the current table homogeneous mode.
+ *
+ * @param obj The table object
+ * @return a boolean to set (or no) layout homogenous in the table
+ * (1 = homogenous,  0 = no homogenous)
+ *
+ * @ingroup Table
+ */
+EAPI Eina_Bool
+elm_table_homogeneous_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return evas_object_table_homogeneous_get(wd->tbl);
+}
+
+/**
  * Set padding between cells.
  *
  * @param obj The layout object.
- * @param horizontal set the horizontal padding. 
+ * @param horizontal set the horizontal padding.
  * @param vertical set the vertical padding.
  *
  * @ingroup Table
@@ -180,6 +198,24 @@ elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertic
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_table_padding_set(wd->tbl, horizontal, vertical);
+}
+
+/**
+ * Get padding between cells.
+ *
+ * @param obj The layout object.
+ * @param horizontal set the horizontal padding.
+ * @param vertical set the vertical padding.
+ *
+ * @ingroup Table
+ */
+EAPI void
+elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_table_padding_get(wd->tbl, horizontal, vertical);
 }
 
 /**
