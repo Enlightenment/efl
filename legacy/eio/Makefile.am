@@ -49,7 +49,6 @@ m4/ulonglong.m4
 EXTRA_DIST = \
 AUTHORS \
 COPYING \
-COPYING-PLAIN \
 autogen.sh \
 eio.pc.in
 
