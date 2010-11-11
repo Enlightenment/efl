@@ -678,13 +678,15 @@ elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data
  *
  * @see elm_box_transition_new
  * @see elm_box_transition_free
+ * @see elm_box_layout_set
  *
  * @ingroup Box
+ * @warning Do not call this function directly because the @p obj is not the Widget Box
+ * from elm_box_add(), it is the internal Evas_Object of the Widget Box.
  */
 EAPI void
 elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
    Elm_Box_Transition *box_data = data;
    const double curtime = ecore_loop_time_get();
 
