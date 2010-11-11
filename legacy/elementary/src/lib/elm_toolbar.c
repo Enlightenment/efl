@@ -22,6 +22,7 @@ struct _Widget_Data
    double align;
    Eina_Bool homogeneous : 1;
    Eina_Bool no_select : 1;
+   Ecore_Job *resize_job;
 };
 
 struct _Elm_Toolbar_Item
@@ -327,7 +328,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1;
+   Evas_Coord minw = -1, minh = -1, minw_bx;
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord w, h;
 
@@ -342,6 +343,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(wd->scr, w, h);
 
    evas_object_size_hint_min_get(wd->bx, &minw, &minh);
+   minw_bx = minw;
    if (w > minw) minw = w;
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
@@ -350,7 +352,7 @@ _sizing_eval(Evas_Object *obj)
        case ELM_TOOLBAR_SHRINK_MENU: /* fallthrough */
        case ELM_TOOLBAR_SHRINK_HIDE: /* fallthrough */
        case ELM_TOOLBAR_SHRINK_SCROLL: minw = w - vw; break;
-       case ELM_TOOLBAR_SHRINK_NONE: minw = minw + (w - vw); break;
+       case ELM_TOOLBAR_SHRINK_NONE: minw = minw_bx + (w - vw); break;
      }
    minh = minh + (h - vh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -425,24 +427,22 @@ _elm_toolbar_item_menu_cb(void *data, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_resize_job(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
    Elm_Toolbar_Item *it;
 
    if (!wd) return;
+   wd->resize_job = NULL;
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
    evas_object_geometry_get(wd->bx, NULL, NULL, &w, &h);
-   if (vw >= mw)
-     {
-	if (w != vw) evas_object_resize(wd->bx, vw, h);
-     }
-
    if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
         Evas_Coord iw = 0, more_w;
+
+        evas_object_resize(wd->bx, vw, h);
         _fix_items_visibility(wd, &iw, vw);
         evas_object_geometry_get(wd->more_item->base.view, NULL, NULL, &more_w, NULL);
         if (iw - more_w <= vw)
@@ -500,6 +500,8 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    else if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
      {
         Evas_Coord iw = 0;
+
+        evas_object_resize(wd->bx, vw, h);
         _fix_items_visibility(wd, &iw, vw);
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
         if (iw > vw)
@@ -527,6 +529,7 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
      }
    else
      {
+        if ((vw >= mw) && (w != vw)) evas_object_resize(wd->bx, vw, h);
         EINA_INLIST_FOREACH(wd->items, it)
           {
              if (it->selected)
@@ -536,6 +539,21 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
                }
           }
      }
+}
+
+static void
+_resize_item(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _sizing_eval(data);
+   _resize(data, NULL, NULL, NULL);
+}
+
+static void
+_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd->resize_job)
+      wd->resize_job = ecore_job_add(_resize_job, data);
 }
 
 static void
@@ -632,6 +650,8 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    evas_object_size_hint_weight_set(it->base.view, -1.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(it->base.view, 0.5, EVAS_HINT_FILL);
    evas_object_size_hint_min_set(it->base.view, mw, mh);
+   evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_RESIZE,
+                                  _resize_item, obj);
    return it;
 }
 
@@ -692,6 +712,7 @@ elm_toolbar_add(Evas_Object *parent)
 
    elm_toolbar_mode_shrink_set(obj, _elm_config->toolbar_shrink_mode);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE, _resize, obj);
+   evas_object_event_callback_add(wd->bx, EVAS_CALLBACK_RESIZE, _resize, obj);
    elm_toolbar_icon_order_lookup_set(obj, ELM_ICON_LOOKUP_THEME_FDO);
 
    _sizing_eval(obj);
