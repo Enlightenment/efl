@@ -116,6 +116,7 @@ void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
 void test_hoverlist(void *data, Evas_Object *obj, void *event_info);
+void test_bubble(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
 {
@@ -349,6 +350,7 @@ my_win_main(char *autorun)
    ADD_TEST("Disk Selector", test_diskselector);
    ADD_TEST("Color Selector", test_colorselector);
    ADD_TEST("Hoverlist", test_hoverlist);
+   ADD_TEST("Bubble", test_bubble);
 #undef ADD_TEST
 
    if (autorun)

@@ -91,7 +91,8 @@ test_focus2.c \
 test_flipselector.c \
 test_diskselector.c \
 test_colorselector.c \
-test_hoverlist.c
+test_hoverlist.c \
+test_bubble.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
 elementary_test_LDFLAGS =
