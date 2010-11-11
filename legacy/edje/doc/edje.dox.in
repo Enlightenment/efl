@@ -497,5 +497,8 @@ Super-concise video player example using Edje/Emotion/Elementary.
 This example show the usage of lua scripting to create and animate some
 objects in the canvas.
 
+@example toggle_using_filter.edc
+This example show how to toggle the state of a part using the 'filter'
+param in edje programs
 
 */
