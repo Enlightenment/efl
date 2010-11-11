@@ -1232,6 +1232,7 @@ extern "C" {
    EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj);
    EAPI Evas_Object *elm_bubble_icon_unset(Evas_Object *obj);
    EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
+   EAPI const char*  elm_bubble_corner_get(const Evas_Object *obj);
    /* smart callbacks called:
     */
 
