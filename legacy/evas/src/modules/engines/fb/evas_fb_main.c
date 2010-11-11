@@ -454,12 +454,20 @@ fb_init(int vt __UNUSED__, int device)
 #if 0
    if (vt != 0) fb_setvt(vt);
 #endif
-   sprintf(dev, "/dev/fb/%i", device);
-   fb = open(dev, O_RDWR);
-   if ( fb == -1 )
+
+   if ( getenv("EVAS_FB_DEV") )
      {
-        sprintf(dev, "/dev/fb%i", device);
+        fb = open(getenv("EVAS_FB_DEV"), O_RDWR);
+     }
+   else
+     {
+        sprintf(dev, "/dev/fb/%i", device);
         fb = open(dev, O_RDWR);
+        if ( fb == -1 )
+          {
+             sprintf(dev, "/dev/fb%i", device);
+             fb = open(dev, O_RDWR);
+          }
      }
    if (fb == -1)
      {
