@@ -6,6 +6,10 @@
  *
  * The Bubble is an widget used to show a text in a frame as speech is
  * represented in comics.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * clicked - This is called when a user has clicked the bubble.
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -23,6 +27,13 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+
+#define SIG_CLICKED "clicked"
+static const Evas_Smart_Cb_Description _signals[] =
+{
+  {SIG_CLICKED, ""},
+  {NULL, NULL}
+};
 
 static void
 _del_hook(Evas_Object *obj)
@@ -110,6 +121,15 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    _sizing_eval(obj);
 }
 
+static void
+_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Evas_Event_Mouse_Up *ev = event_info;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+     return;
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
+}
+
 /**
  * Add a new bubble to the parent
  *
@@ -146,7 +166,10 @@ elm_bubble_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->bbl);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_event_callback_add(wd->bbl, EVAS_CALLBACK_MOUSE_UP,
+                                  _mouse_up, obj);
 
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    _sizing_eval(obj);
    return obj;
 }

@@ -1234,6 +1234,7 @@ extern "C" {
    EAPI void         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
    EAPI const char*  elm_bubble_corner_get(const Evas_Object *obj);
    /* smart callbacks called:
+    * "clicked" - the user clicked the bubble
     */
 
    /* photo */

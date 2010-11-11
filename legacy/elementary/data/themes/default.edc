@@ -8894,6 +8894,13 @@ collections {
       image: "bubble_shine3.png" COMP;
     }
     parts {
+      part { name: "event";
+         type: RECT;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elm.swallow.icon";
         type: SWALLOW;
         description { state: "default" 0.0;
@@ -9042,6 +9049,13 @@ collections {
       image: "bubble_shine4.png" COMP;
     }
     parts {
+      part { name: "event";
+         type: RECT;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elm.swallow.icon";
         type: SWALLOW;
         description { state: "default" 0.0;
@@ -9190,6 +9204,13 @@ collections {
       image: "bubble_shine.png" COMP;
     }
     parts {
+      part { name: "event";
+         type: RECT;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elm.swallow.icon";
         type: SWALLOW;
         description { state: "default" 0.0;
@@ -9338,6 +9359,13 @@ collections {
       image: "bubble_shine.png" COMP;
     }
     parts {
+      part { name: "event";
+         type: RECT;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elm.swallow.icon";
         type: SWALLOW;
         description { state: "default" 0.0;

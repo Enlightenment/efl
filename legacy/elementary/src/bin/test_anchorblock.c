@@ -3,6 +3,13 @@
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static void
+_print_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("bubble clicked\n");
+}
+
 static void
 my_anchorblock_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -143,6 +150,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_bubble_label_set(bb, "Message 3");
    elm_bubble_info_set(bb, "10:32 4/11/2008");
    elm_bubble_icon_set(bb, ic);
+   evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -169,6 +177,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_bubble_label_set(bb, "Message 2");
    elm_bubble_info_set(bb, "7:16 27/10/2008");
    elm_bubble_icon_set(bb, ic);
+   evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -205,6 +214,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_bubble_label_set(bb, "Message 1");
    elm_bubble_info_set(bb, "20:47 18/6/2008");
    elm_bubble_icon_set(bb, ic);
+   evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);

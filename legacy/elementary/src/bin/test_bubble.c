@@ -3,6 +3,13 @@
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static void
+_print_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("bubble clicked\n");
+}
+
 void
 test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -34,6 +41,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_bubble_info_set(bb, "Corner: bottom_right");
    elm_bubble_icon_set(bb, ic);
    elm_bubble_corner_set(bb, "bottom_right");
+   evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -56,6 +64,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_bubble_label_set(bb, "Message 2");
    elm_bubble_info_set(bb, "10:32 4/11/2008");
    elm_bubble_icon_set(bb, ic);
+   evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
