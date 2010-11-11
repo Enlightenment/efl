@@ -326,13 +326,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
                   *fi_ret = fm->fint;
                   return fm->index;
                }
-#if 0
-             /* Returning here because of a previous miss when searching the
-              * glyph causes a bug when glyph caching was before all the
-              * fonts were loaded, I have no idea how to fix it cleanly,
-              * not at the moment anyway. -- TAsn */
              else if (fm->index == -1) return 0;
-#endif
           }
      }
 
@@ -366,40 +360,8 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
         if (!fi->src->ft.face) /* Charmap not loaded, FI/FS blank */
 	  {
              evas_common_font_int_reload(fi);
-//	     if (evas_common_font_source_load_complete(fi->src))
-//	       return 0;
-#if 0 /* FIXME: disable this. this can eat a LOT of memory and in my tests with expedite at any rate shows no visible improvements */
-/*             
-	     index = FT_Get_Char_Index(fi->src->ft.face, gl);
-	     if (index == 0)
-	       {
-		  // Load Hash
-		  FT_ULong charcode;
-		  FT_UInt gindex;
-
-		  fi->src->charmap = evas_array_hash_new();
-		  charcode = FT_Get_First_Char(fi->src->ft.face, &gindex);
-		  while (gindex != 0)
-		    {
-		       evas_array_hash_add(fi->src->charmap, charcode, gindex);
-		       charcode = FT_Get_Next_Char(fi->src->ft.face, charcode, &gindex);
-		    }
-
-		  // Free face
-		  FT_Done_Face(fi->src->ft.face);
-		  fi->src->ft.face = NULL;
-	       }
-	     else
-	       {
-		  evas_common_font_int_load_complete(fi);
-
-		  *fi_ret = fi;
-		  return index;
-	       }
- */
-#endif
 	  }
-	else /* Charmap not loaded, FS loaded */
+        if (fi->src->ft.face)
 	  {
 	     index = _evas_common_get_char_index(fi, gl);
 	     if (index != 0)
