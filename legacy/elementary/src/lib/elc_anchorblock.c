@@ -329,6 +329,26 @@ elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style)
 }
 
 /**
+ * Get the style that the hover should use
+ *
+ * This gets the style for the hover that anchorblock will create. See hover
+ * objects for more information
+ *
+ * @param obj The anchorblock object
+ * @return The style defined
+ *
+ * @ingroup Anchorblock
+ */
+EAPI const char *
+elm_anchorblock_hover_style_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->hover_style;
+}
+
+/**
  * Stop the hover popup in the anchorblock
  *
  * This will stop the hover popup in the anchorblock if it is currently active.

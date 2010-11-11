@@ -323,6 +323,26 @@ elm_anchorview_hover_style_set(Evas_Object *obj, const char *style)
 }
 
 /**
+ * Get the style that the hover should use
+ *
+ * This gets the style for the hover that anchorview will create. See hover
+ * objects for more information
+ *
+ * @param obj The anchorview object
+ * @return The style defined
+ *
+ * @ingroup Anchorview
+ */
+EAPI const char *
+elm_anchorview_hover_style_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->hover_style;
+}
+
+/**
   * Stop the hover popup in the anchorview
   *
   * This will stop the hover popup in the anchorview if it is currently active.

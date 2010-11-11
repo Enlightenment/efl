@@ -1178,6 +1178,7 @@ extern "C" {
    EAPI void         elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI Evas_Object *elm_anchorview_hover_parent_get(const Evas_Object *obj);
    EAPI void         elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
+   EAPI const char  *elm_anchorview_hover_style_get(const Evas_Object *obj);
    EAPI void         elm_anchorview_hover_end(Evas_Object *obj);
    EAPI void         elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
    EAPI void         elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
@@ -1210,6 +1211,7 @@ extern "C" {
    EAPI void         elm_anchorblock_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
    EAPI Evas_Object *elm_anchorblock_hover_parent_get(const Evas_Object *obj);
    EAPI void         elm_anchorblock_hover_style_set(Evas_Object *obj, const char *style);
+   EAPI const char  *elm_anchorblock_hover_style_get(const Evas_Object *obj);
    EAPI void         elm_anchorblock_hover_end(Evas_Object *obj);
    EAPI void         elm_anchorblock_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data);
    EAPI void         elm_anchorblock_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *data, Evas_Object *anchorblock, const char *item), void *data);
