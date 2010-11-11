@@ -558,7 +558,6 @@ ecore_con_server_del(Ecore_Con_Server *svr)
      return NULL;
 
    data = svr->data;
-   svr->data = NULL;
    svr->delete_me = EINA_TRUE;
    if (svr->event_count > 0)
      {
@@ -1009,8 +1008,6 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      free(cl->client_addr);
 
    data = cl->data;
-
-   cl->data = NULL;
    cl->delete_me = EINA_TRUE;
    if (cl->event_count > 0)
      {
@@ -1139,6 +1136,23 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    Ecore_Con_Client *cl;
    double t_start, t;
 
+   if ((!svr->write_buf) && svr->delete_me && (!svr->dead) && (svr->event_count < 1))
+     {
+        /* this is a catch-all for cases when a server is not properly killed. */
+
+        Ecore_Con_Event_Server_Del *e;
+
+        svr->dead = EINA_TRUE;
+        INF("Lost server %s", svr->ip);
+        e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+        EINA_SAFETY_ON_NULL_RETURN(e);
+
+        svr->event_count++;
+        e->server = svr;
+        ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+                        _ecore_con_event_server_del_free, NULL);
+        return;
+     }
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((svr->write_buf) && (!svr->dead))
@@ -1180,6 +1194,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      ecore_main_fd_handler_del(svr->fd_handler);
 
    servers = eina_list_remove(servers, svr);
+   svr->data = NULL;
    free(svr);
 }
 
@@ -1188,13 +1203,9 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
 
-   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    if ((!cl->buf) && cl->delete_me && (!cl->dead) && (cl->event_count < 1))
      {
-        /* this is a catch-all for cases when a client is not properly killed.
-         * the only example case I've found so far is if a client ssl handshakes
-         * and then immediately disconnects without sending any further data.
-         */
+        /* this is a catch-all for cases when a client is not properly killed. */
 
           /* we lost our client! */
            Ecore_Con_Event_Client_Del *e;
@@ -1212,6 +1223,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
            return;
      }
 
+   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
      {
@@ -1240,7 +1252,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 
    if (cl->ip)
      free(cl->ip);
-
+   cl->data = NULL;
    free(cl);
    return;
 }
