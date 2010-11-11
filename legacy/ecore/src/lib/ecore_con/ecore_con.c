@@ -165,11 +165,14 @@ ecore_con_init(void)
 EAPI int
 ecore_con_shutdown(void)
 {
+   Eina_List *l, *l2;
+   Ecore_Con_Server *svr;
+   
    if (--_ecore_con_init_count != 0)
      return _ecore_con_init_count;
 
-   while (servers)
-     _ecore_con_server_free(eina_list_data_get(servers));
+   EINA_LIST_FOREACH_SAFE(servers, l, l2, svr)
+     _ecore_con_server_free(svr);
 
    ecore_con_info_shutdown();
    ecore_con_ssl_shutdown();
@@ -1143,7 +1146,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         Ecore_Con_Event_Server_Del *e;
 
         svr->dead = EINA_TRUE;
-        INF("Lost server %s", svr->ip);
         e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
         EINA_SAFETY_ON_NULL_RETURN(e);
 
@@ -1214,7 +1216,6 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
            Ecore_Con_Event_Client_Del *e;
 
            cl->dead = EINA_TRUE;
-           INF("Lost client %s", cl->ip);
            e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
            EINA_SAFETY_ON_NULL_RETURN(e);
 
