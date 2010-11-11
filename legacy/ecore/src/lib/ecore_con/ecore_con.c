@@ -1153,6 +1153,9 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
                         _ecore_con_event_server_del_free, NULL);
         return;
      }
+
+   if (svr->event_count > 0)
+     return;
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((svr->write_buf) && (!svr->dead))
@@ -1223,6 +1226,8 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
            return;
      }
 
+   if (cl->event_count > 0)
+     return;
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
