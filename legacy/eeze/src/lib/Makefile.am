@@ -17,4 +17,4 @@ eeze_udev_private.c
 libeeze_la_LIBADD = @ECORE_LIBS@ @LIBUDEV_LIBS@
 libeeze_la_LDFLAGS = -no-undefined -version-info @version_info@ @release_info@
 
-EXTRA_DIST = eeze_udev_private.h eeze_private.h
+EXTRA_DIST = eeze_udev_private.h
