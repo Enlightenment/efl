@@ -1555,8 +1555,7 @@ eet_open(const char   *file,
              goto open_error;
           }
 
-        if ((mode == EET_FILE_MODE_READ) &&
-            (file_stat.st_size < ((int)sizeof(int) * 3)))
+        if (file_stat.st_size < ((int)sizeof(int) * 3))
           {
              fclose(fp);
              fp = NULL;
