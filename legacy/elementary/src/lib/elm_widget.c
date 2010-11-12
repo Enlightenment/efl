@@ -102,8 +102,8 @@ static void _smart_clip_unset(Evas_Object *obj);
 static void _smart_calculate(Evas_Object *obj);
 static void _smart_init(void);
 
-static void _if_focused_revert(Evas_Object *obj);
-static Evas_Object *_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order);
+static void _if_focused_revert(Evas_Object *obj, Eina_Bool can_focus_only);
+static Evas_Object *_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -261,7 +261,7 @@ _parent_focus(Evas_Object *obj)
 	unsigned int i = 0;
 	Evas_Object *ret;
 
-	ret = _newest_focus_order_get(o, &i);
+	ret = _newest_focus_order_get(o, &i, EINA_TRUE);
 
 	/* we don't want to bump a common widget ancestor's
 	   focus_order *twice* while parent focusing */
@@ -2445,7 +2445,7 @@ _smart_add(Evas_Object *obj)
 }
 
 static Evas_Object *
-_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order)
+_newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order, Eina_Bool can_focus_only)
 {
    const Eina_List *l;
    Evas_Object *child, *ret, *best;
@@ -2460,31 +2460,33 @@ _newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order)
      }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
-        ret = _newest_focus_order_get(child, newest_focus_order);
+        ret = _newest_focus_order_get(child, newest_focus_order, can_focus_only);
         if (!ret) continue;
         best = ret;
      }
+   if ((can_focus_only) && (!elm_widget_can_focus_get(best))) return NULL;
    return best;
 }
 
 static void
-_if_focused_revert(Evas_Object *obj)
+_if_focused_revert(Evas_Object *obj, Eina_Bool can_focus_only)
 {
    Evas_Object *top;
    Evas_Object *newest = NULL;
    unsigned int newest_focus_order = 0;
    
    INTERNAL_ENTRY;
-   
+
    if (!sd->focused) return;
    if (!sd->parent_obj) return;
 
    top = elm_widget_top_get(sd->parent_obj);
    if (top)
      {
-        newest = _newest_focus_order_get(top, &newest_focus_order);
+        newest = _newest_focus_order_get(top, &newest_focus_order, can_focus_only);
         if (newest)
           {
+             Smart_Data *sd2 = evas_object_smart_data_get(newest);
              elm_object_unfocus(newest);
              elm_object_focus(newest);
           }
@@ -2498,6 +2500,7 @@ _smart_del(Evas_Object *obj)
    Edje_Signal_Data *esd;
 
    INTERNAL_ENTRY;
+  
    if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
      {
@@ -2533,7 +2536,7 @@ _smart_del(Evas_Object *obj)
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);
    if (sd->theme) elm_theme_free(sd->theme);
-   _if_focused_revert(obj);
+   _if_focused_revert(obj, EINA_TRUE);
    free(sd);
 }
 
@@ -2583,7 +2586,7 @@ _smart_hide(Evas_Object *obj)
         if (evas_object_data_get(o, "_elm_leaveme")) continue;
         evas_object_hide(o);
      }
-   _if_focused_revert(obj);
+   _if_focused_revert(obj, EINA_TRUE);
 }
 
 static void
@@ -2672,6 +2675,7 @@ _smart_init(void)
      }
 }
 
+#define ELM_DEBUG 1
 /* happy debug functions */
 #ifdef ELM_DEBUG
 static void
@@ -2710,6 +2714,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
    Eina_Bool visible = evas_object_visible_get(obj);
    Eina_Bool disabled = elm_widget_disabled_get(obj);
    Eina_Bool focused = elm_widget_focus_get(obj);
+   Eina_Bool can_focus = elm_widget_can_focus_get(obj);
 
    if (sd->parent_obj)
      {
@@ -2725,8 +2730,8 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
      }
 
    fprintf(output, "\"%p\" [ label = \"{%p|%s|%s|visible: %d|"
-           "disabled: %d|focused: %d}\"", obj, obj, sd->type,
-           evas_object_name_get(obj), visible,disabled,focused);
+           "disabled: %d|focused: %d/%d}\"", obj, obj, sd->type,
+           evas_object_name_get(obj), visible,disabled,focused,can_focus);
 
    if (focused)
         fprintf(output, ", style=bold");
