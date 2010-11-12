@@ -60,8 +60,12 @@ _theme_hook(Evas_Object *obj)
    Item *it;
    if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
-     edje_object_scale_set(it->base, elm_widget_scale_get(obj) * 
-                           _elm_config->scale);
+     {
+        _elm_theme_object_set(obj, it->base,  "pager", "base",
+                              elm_widget_style_get(obj));
+        edje_object_scale_set(it->base, elm_widget_scale_get(obj) *
+                              _elm_config->scale);
+     }
    _sizing_eval(obj);
 }
 
