@@ -30,7 +30,7 @@
  */
 
 static void
-_eio_file_mkdir(Ecore_Thread *thread, void *data)
+_eio_file_mkdir(void *data, Ecore_Thread *thread)
 {
    Eio_File_Mkdir *m = data;
 
@@ -46,7 +46,7 @@ _eio_mkdir_free(Eio_File_Mkdir *m)
 }
 
 static void
-_eio_file_mkdir_done(void *data)
+_eio_file_mkdir_done(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Mkdir *m = data;
 
@@ -57,7 +57,7 @@ _eio_file_mkdir_done(void *data)
 }
 
 static void
-_eio_file_mkdir_error(void *data)
+_eio_file_mkdir_error(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Mkdir *m = data;
 
@@ -66,7 +66,7 @@ _eio_file_mkdir_error(void *data)
 }
 
 static void
-_eio_file_unlink(Ecore_Thread *thread, void *data)
+_eio_file_unlink(void *data, Ecore_Thread *thread)
 {
    Eio_File_Unlink *l = data;
 
@@ -82,7 +82,7 @@ _eio_unlink_free(Eio_File_Unlink *l)
 }
 
 static void
-_eio_file_unlink_done(void *data)
+_eio_file_unlink_done(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Unlink *l = data;
 
@@ -93,7 +93,7 @@ _eio_file_unlink_done(void *data)
 }
 
 static void
-_eio_file_unlink_error(void *data)
+_eio_file_unlink_error(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Unlink *l = data;
 
@@ -102,7 +102,7 @@ _eio_file_unlink_error(void *data)
 }
 
 static void
-_eio_file_stat(Ecore_Thread *thread, void *data)
+_eio_file_stat(void *data, Ecore_Thread *thread)
 {
    Eio_File_Stat *s = data;
 
@@ -118,7 +118,7 @@ _eio_stat_free(Eio_File_Stat *s)
 }
 
 static void
-_eio_file_stat_done(void *data)
+_eio_file_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Stat *s = data;
 
@@ -129,7 +129,7 @@ _eio_file_stat_done(void *data)
 }
 
 static void
-_eio_file_stat_error(void *data)
+_eio_file_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Stat *s = data;
 
@@ -138,7 +138,7 @@ _eio_file_stat_error(void *data)
 }
 
 static void
-_eio_file_chmod(Ecore_Thread *thread, void *data)
+_eio_file_chmod(void *data, Ecore_Thread *thread)
 {
    Eio_File_Chmod *ch = data;
 
@@ -147,7 +147,7 @@ _eio_file_chmod(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_file_chown(Ecore_Thread *thread, void *data)
+_eio_file_chown(void *data, Ecore_Thread *thread)
 {
    Eio_File_Chown *own = data;
    char *tmp;
@@ -213,7 +213,7 @@ _eio_chown_free(Eio_File_Chown *ch)
 }
 
 static void
-_eio_file_chown_done(void *data)
+_eio_file_chown_done(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Chown *ch = data;
 
@@ -224,7 +224,7 @@ _eio_file_chown_done(void *data)
 }
 
 static void
-_eio_file_chown_error(void *data)
+_eio_file_chown_error(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Chown *ch = data;
 
@@ -263,10 +263,10 @@ eio_long_file_set(Eio_File *common,
 		  Eio_Done_Cb done_cb,
 		  Eio_Error_Cb error_cb,
 		  const void *data,
-		  Ecore_Thread_Heavy_Cb heavy_cb,
+		  Ecore_Thread_Cb heavy_cb,
 		  Ecore_Thread_Notify_Cb notify_cb,
-		  Ecore_Cb end_cb,
-		  Ecore_Cb cancel_cb)
+		  Ecore_Thread_Cb end_cb,
+		  Ecore_Thread_Cb cancel_cb)
 {
    Ecore_Thread *thread;
 
@@ -276,7 +276,7 @@ eio_long_file_set(Eio_File *common,
    common->error = 0;
    common->thread = NULL;
 
-   /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
+   /* Be aware that ecore_thread_feedback_run could call cancel_cb if something goes wrong.
       This means that common would be destroyed if thread == NULL.
     */
    thread = ecore_thread_feedback_run(heavy_cb,
@@ -294,9 +294,9 @@ eio_file_set(Eio_File *common,
 	     Eio_Done_Cb done_cb,
 	     Eio_Error_Cb error_cb,
 	     const void *data,
-	     Ecore_Thread_Heavy_Cb job_cb,
-	     Ecore_Cb end_cb,
-	     Ecore_Cb cancel_cb)
+	     Ecore_Thread_Cb job_cb,
+	     Ecore_Thread_Cb end_cb,
+	     Ecore_Thread_Cb cancel_cb)
 {
    Ecore_Thread *thread;
 

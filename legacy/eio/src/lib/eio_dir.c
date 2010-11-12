@@ -389,7 +389,7 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
 }
 
 static void
-_eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
+_eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
 {
    Eio_Dir_Copy *copy = data;
    const char *file = NULL;
@@ -475,7 +475,7 @@ _eio_dir_copy_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_dir_copy_notify(Ecore_Thread *thread __UNUSED__, void *msg_data, void *data)
+_eio_dir_copy_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
    Eio_Dir_Copy *copy = data;
    Eio_Progress *progress = msg_data;
@@ -492,7 +492,7 @@ _eio_dir_copy_free(Eio_Dir_Copy *copy)
 }
 
 static void
-_eio_dir_copy_end(void *data)
+_eio_dir_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_Dir_Copy *copy = data;
 
@@ -502,7 +502,7 @@ _eio_dir_copy_end(void *data)
 }
 
 static void
-_eio_dir_copy_error(void *data)
+_eio_dir_copy_error(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_Dir_Copy *copy = data;
 
@@ -512,7 +512,7 @@ _eio_dir_copy_error(void *data)
 }
 
 static void
-_eio_dir_move_heavy(Ecore_Thread *thread, void *data)
+_eio_dir_move_heavy(void *data, Ecore_Thread *thread)
 {
    Eio_Dir_Copy *move = data;
    const char *file = NULL;
@@ -622,7 +622,7 @@ _eio_dir_move_heavy(Ecore_Thread *thread, void *data)
 }
 
 static void
-_eio_dir_rmrf_heavy(Ecore_Thread *thread, void *data)
+_eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
 {
    Eio_Dir_Copy *rmrf = data;
    const char *file = NULL;

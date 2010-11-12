@@ -166,19 +166,19 @@ Eina_Bool eio_file_set(Eio_File *common,
 		       Eio_Done_Cb done_cb,
 		       Eio_Error_Cb error_cb,
 		       const void *data,
-		       Ecore_Thread_Heavy_Cb job_cb,
-		       Ecore_Cb end_cb,
-		       Ecore_Cb cancel_cb);
+		       Ecore_Thread_Cb job_cb,
+		       Ecore_Thread_Cb end_cb,
+		       Ecore_Thread_Cb cancel_cb);
 
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
 Eina_Bool eio_long_file_set(Eio_File *common,
 			    Eio_Done_Cb done_cb,
 			    Eio_Error_Cb error_cb,
 			    const void *data,
-			    Ecore_Thread_Heavy_Cb heavy_cb,
+			    Ecore_Thread_Cb heavy_cb,
 			    Ecore_Thread_Notify_Cb notify_cb,
-			    Ecore_Cb end_cb,
-			    Ecore_Cb cancel_cb);
+			    Ecore_Thread_Cb end_cb,
+			    Ecore_Thread_Cb cancel_cb);
 
 void eio_file_error(Eio_File *common);
 void eio_file_thread_error(Eio_File *common, Ecore_Thread *thread);

@@ -205,15 +205,15 @@ extern "C" {
     */
    typedef Eina_Bool (*Ecore_Event_Handler_Cb) (void *data, int type, void *event);
    /**
-    * @typedef Ecore_Thread_Heavy_Cb Ecore_Thread_Heavy_Cb
-    * A callback used to run cpu intensive or blocking I/O operations.
+    * @typedef Ecore_Thread_Cb Ecore_Thread_Cb
+    * A callback used by Ecore_Thread helper.
     */
-   typedef void (*Ecore_Thread_Heavy_Cb) (Ecore_Thread *thread, void *data);
+  typedef void (*Ecore_Thread_Cb) (void *data, Ecore_Thread *thread);
    /**
     * @typedef Ecore_Thread_Notify_Cb Ecore_Thread_Notify_Cb
     * A callback used by the main loop to receive data sent by an @ref Ecore_Thread_Group.
     */
-   typedef void (*Ecore_Thread_Notify_Cb) (Ecore_Thread *thread, void *msg_data, void *data);
+  typedef void (*Ecore_Thread_Notify_Cb) (void *data, Ecore_Thread *thread, void *msg_data);
    /**
     * @typedef Ecore_Task_Cb Ecore_Task_Cb
     * A callback run for a task (timer, idler, poller, animater, etc)
@@ -482,14 +482,14 @@ extern "C" {
    * @{
    */
 
-   EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Heavy_Cb func_blocking,
-                                       Ecore_Cb func_end,
-                                       Ecore_Cb func_cancel,
+   EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking,
+                                       Ecore_Thread_Cb func_end,
+                                       Ecore_Thread_Cb func_cancel,
                                        const void *data);
-   EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Heavy_Cb func_heavy,
+   EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
                                                 Ecore_Thread_Notify_Cb func_notify,
-                                                Ecore_Cb func_end,
-                                                Ecore_Cb func_cancel,
+                                                Ecore_Thread_Cb func_end,
+                                                Ecore_Thread_Cb func_cancel,
                                                 const void *data,
                                                 Eina_Bool try_no_queue);
    EAPI Eina_Bool     ecore_thread_cancel(Ecore_Thread *thread);
