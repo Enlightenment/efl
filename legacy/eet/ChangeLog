@@ -440,3 +440,7 @@
 2010-09-02  Cedric BAIL
 
 	* Fix bug of ever growing dictionnary and improve strcmp comparison.
+
+2010-11-12  Cedric BAIL
+
+	* Don't try to read broken file when open in READ_WRITE mode.
