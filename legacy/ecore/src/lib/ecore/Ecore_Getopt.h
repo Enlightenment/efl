@@ -161,7 +161,7 @@ extern "C" {
      const char *copyright; /**< if exists, --copyright will work */
      const char *license; /**< if exists, --license will work */
      const char *description; /**< long description, possible multiline */
-     unsigned char strict : 1; /**< fail on errors */
+     Eina_Bool strict : 1; /**< fail on errors */
      const Ecore_Getopt_Desc descs[]; /* NULL terminated. */
   };
 
