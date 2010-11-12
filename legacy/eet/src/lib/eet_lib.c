@@ -1552,6 +1552,9 @@ eet_open(const char   *file,
           {
              fclose(fp);
              fp = NULL;
+
+             memset(&file_stat, 0, sizeof(file_stat));
+
              goto open_error;
           }
 
@@ -1559,6 +1562,9 @@ eet_open(const char   *file,
           {
              fclose(fp);
              fp = NULL;
+
+             memset(&file_stat, 0, sizeof(file_stat));
+
              goto open_error;
           }
 
