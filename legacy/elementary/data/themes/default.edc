@@ -23672,6 +23672,132 @@ collections {
        }
    }
 
+   group { name: "elm/pager/base/flip";
+      data.item: "onshow" "raise";
+      images {
+         image: "frame_1.png" COMP;
+         image: "frame_2.png" COMP;
+         image: "dia_grad.png" COMP;
+      }
+      parts {
+         part { name: "elm.swallow.content";
+            type: SWALLOW;
+            description { state: "default" 0.0;
+               map {
+                  on: 1;
+                  smooth: 1;
+                  backface_cull: 1;
+                  perspective_on: 1;
+               }
+               perspective {
+                  zplane: 0;
+                  focal: 1000;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               map.rotation.y: 90.0;
+            }
+            description { state: "before_hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+               map.rotation.y: -90.0;
+            }
+         }
+      }
+      programs {
+         program { name: "push_start";
+            signal: "elm,action,push";
+            source: "elm";
+            after: "push1";
+         }
+         program { name: "push1";
+            action:  STATE_SET "hidden" 0.0;
+            target: "elm.swallow.content";
+            after: "push2";
+         }
+         program { name: "push2";
+            action:  STATE_SET "default" 0.0;
+            in: 0.5 0.0;
+            transition: LINEAR 0.5;
+            target: "elm.swallow.content";
+            after: "push3";
+         }
+         program { name: "push3";
+            action: SIGNAL_EMIT "elm,action,show,finished" "";
+         }
+
+         program { name: "show_start";
+            signal: "elm,action,show";
+            source: "elm";
+            after: "show1";
+         }
+         program { name: "show1";
+            action:  STATE_SET "before_hidden" 0.0;
+            target: "elm.swallow.content";
+            after: "show2";
+         }
+         program { name: "show2";
+            action:  STATE_SET "default" 0.0;
+            in: 0.5 0.0;
+            transition: LINEAR 0.5;
+            target: "elm.swallow.content";
+            after: "show3";
+         }
+         program { name: "show3";
+            action: SIGNAL_EMIT "elm,action,show,finished" "";
+         }
+
+         program { name: "pop_start";
+            signal: "elm,action,pop";
+            source: "elm";
+            after: "pop1";
+         }
+         program { name: "pop1";
+            action:  STATE_SET "default" 0.0;
+            target: "elm.swallow.content";
+            after: "pop2";
+         }
+         program { name: "pop2";
+            action:  STATE_SET "hidden" 0.0;
+            transition: LINEAR 0.5;
+            target: "elm.swallow.content";
+            after: "pop3";
+         }
+         program { name: "pop3";
+            action: SIGNAL_EMIT "elm,action,hide,finished" "";
+         }
+
+         program { name: "hide_start";
+            signal: "elm,action,hide";
+            source: "elm";
+            after: "hide1";
+         }
+         program { name: "hide1";
+            action:  STATE_SET "default" 0.0;
+            target: "elm.swallow.content";
+            after: "hide2";
+         }
+         program { name: "hide2";
+            action:  STATE_SET "before_hidden" 0.0;
+            transition: LINEAR 0.5;
+            target: "elm.swallow.content";
+            after: "hide3";
+         }
+         program { name: "hide3";
+            action: SIGNAL_EMIT "elm,action,hide,finished" "";
+         }
+
+         program { name: "reset";
+            signal: "elm,action,reset";
+            source: "elm";
+            action:  STATE_SET "default" 0.0;
+            target: "elm.swallow.content";
+         }
+      }
+   }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////

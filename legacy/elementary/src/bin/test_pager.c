@@ -48,7 +48,8 @@ static const struct style_tuple styles[] = {
        { "Slide Invisible", "slide_invisible"},
        { "Fade", "fade"},
        { "Fade Translucide", "fade_translucide"},
-       { "Fade Invisible", "fade_invisible"}
+       { "Fade Invisible", "fade_invisible"},
+       { "Flip", "flip"},
 };
 
 static void
