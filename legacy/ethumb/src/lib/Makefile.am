@@ -26,7 +26,7 @@ libethumb_la_SOURCES = \
 	md5.c
 libethumb_la_LIBADD = \
 	@EDJE_LIBS@ @ECORE_FILE_LIBS@ @ECORE_EVAS_LIBS@ @EVAS_LIBS@
-libethumb_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@
+libethumb_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 if HAVE_LIBEXIF
 libethumb_la_LIBADD += @LIBEXIF_LIBS@
