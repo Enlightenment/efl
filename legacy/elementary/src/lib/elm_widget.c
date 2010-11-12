@@ -2675,7 +2675,6 @@ _smart_init(void)
      }
 }
 
-#define ELM_DEBUG 1
 /* happy debug functions */
 #ifdef ELM_DEBUG
 static void
