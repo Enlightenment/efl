@@ -44,27 +44,27 @@
  * #include <Eio.h>
  *
  * static Eina_Bool
- * _test_filter_cb(void *data, const char *file)
+ * _test_filter_cb(void *data, Eio_File *handler, const char *file)
  * {
  *    fprintf(stderr, "ACCEPTING: %s\n", file);
  *    return EINA_TRUE;
  * }
  *
  * static void
- * _test_main_cb(void *data, const char *file)
+ * _test_main_cb(void *data, Eio_File *handler, const char *file)
  * {
  *    fprintf(stderr, "PROCESS: %s\n", file);
  * }
  *
  * static void
- * _test_done_cb(void *data)
+ * _test_done_cb(void *data, Eio_File *handler)
  * {
  *    printf("ls done\n");
  *    ecore_main_loop_quit();
  * }
  *
  * static void
- * _test_error_cb(void *data, int error)
+ * _test_error_cb(void *data, Eio_File *handler, int error)
  * {
  *    fprintf(stderr, "error: [%s]\n", strerror(error));
  *    ecore_main_loop_quit();
@@ -133,7 +133,7 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 
 	if (async->filter_cb)
 	  {
-	     filter = async->filter_cb((void*) async->ls.common.data, file);
+	     filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, file);
 	  }
 
 	if (filter) ecore_thread_feedback(thread, file);
@@ -152,7 +152,7 @@ _eio_file_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
    Eio_File_Char_Ls *async = data;
    const char *file = msg_data;
 
-   async->main_cb((void*) async->ls.common.data, file);
+   async->main_cb((void*) async->ls.common.data, &async->ls.common, file);
 
    eina_stringshare_del(file);
 }
@@ -174,7 +174,7 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 
 	if (async->filter_cb)
 	  {
-	     filter = async->filter_cb((void*) async->ls.common.data, info);
+	     filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, info);
 	  }
 
 	if (filter)
@@ -224,7 +224,7 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_d
    Eio_File_Direct_Ls *async = data;
    Eina_File_Direct_Info *info = msg_data;
 
-   async->main_cb((void*) async->ls.common.data, info);
+   async->main_cb((void*) async->ls.common.data, &async->ls.common, info);
 
    eio_direct_info_free(info);
 }
@@ -234,7 +234,7 @@ _eio_file_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Ls *async = data;
 
-   async->common.done_cb((void*) async->common.data);
+   async->common.done_cb((void*) async->common.data, &async->common);
 
    eina_stringshare_del(async->directory);
    free(async);
@@ -384,7 +384,7 @@ _eio_file_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Progress *copy = data;
 
-   copy->common.done_cb((void*) copy->common.data);
+   copy->common.done_cb((void*) copy->common.data, &copy->common);
 
    _eio_file_copy_free(copy);
 }
@@ -408,25 +408,25 @@ _eio_file_move_free(Eio_File_Move *move)
 }
 
 static void
-_eio_file_move_copy_progress(void *data, const Eio_Progress *info)
+_eio_file_move_copy_progress(void *data, Eio_File *handler __UNUSED__, const Eio_Progress *info)
 {
    Eio_File_Move *move = data;
 
-   move->progress.progress_cb((void*) move->progress.common.data, info);
+   move->progress.progress_cb((void*) move->progress.common.data, &move->progress.common, info);
 }
 
 static void
-_eio_file_move_unlink_done(void *data)
+_eio_file_move_unlink_done(void *data, Eio_File *handler __UNUSED__)
 {
    Eio_File_Move *move = data;
 
-   move->progress.common.done_cb((void*) move->progress.common.data);
+   move->progress.common.done_cb((void*) move->progress.common.data, &move->progress.common);
 
    _eio_file_move_free(move);
 }
 
 static void
-_eio_file_move_unlink_error(void *data, int error)
+_eio_file_move_unlink_error(void *data, Eio_File *handler __UNUSED__, int error)
 {
    Eio_File_Move *move = data;
 
@@ -439,7 +439,7 @@ _eio_file_move_unlink_error(void *data, int error)
 }
 
 static void
-_eio_file_move_copy_done(void *data)
+_eio_file_move_copy_done(void *data, Eio_File *handler __UNUSED__)
 {
    Eio_File_Move *move = data;
    Eio_File *rm;
@@ -452,7 +452,7 @@ _eio_file_move_copy_done(void *data)
 }
 
 static void
-_eio_file_move_copy_error(void *data, int error)
+_eio_file_move_copy_error(void *data, Eio_File *handler __UNUSED__, int error)
 {
    Eio_File_Move *move = data;
 
@@ -486,7 +486,7 @@ _eio_file_move_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Move *move = data;
 
-   move->progress.common.done_cb((void*) move->progress.common.data);
+   move->progress.common.done_cb((void*) move->progress.common.data, &move->progress.common);
 
    _eio_file_move_free(move);
 }
@@ -542,7 +542,7 @@ _eio_file_move_error(void *data, Ecore_Thread *thread __UNUSED__)
 void
 eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op)
 {
-   op->progress_cb((void *) op->common.data, progress);
+   op->progress_cb((void *) op->common.data, &op->common, progress);
 
    eio_progress_free(progress);
 }

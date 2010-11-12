@@ -40,7 +40,7 @@
  * #include <Eio.h>
  *
  * static void
- * _test_notify_cb(void *data, const Eio_Progress *info)
+ * _test_notify_cb(void *data, Eio_File *handler, const Eio_Progress *info)
  * {
  *    switch (info->op)
  *       {
@@ -54,14 +54,14 @@
  * }
  *
  * static void
- * _test_done_cb(void *data)
+ * _test_done_cb(void *data, Eio_File *handler)
  * {
  *    printf("copy done\n");
  *    ecore_main_loop_quit();
  * }
  *
  * static void
- * _test_error_cb(int error, void *data)
+ * _test_error_cb(int error, Eio_File *handler, void *data)
  * {
  *    fprintf(stderr, "error: [%s]\n", strerror(error));
  *     ecore_main_loop_quit();
@@ -496,7 +496,7 @@ _eio_dir_copy_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_Dir_Copy *copy = data;
 
-   copy->progress.common.done_cb((void*) copy->progress.common.data);
+   copy->progress.common.done_cb((void*) copy->progress.common.data, &copy->progress.common);
 
    _eio_dir_copy_free(copy);
 }
