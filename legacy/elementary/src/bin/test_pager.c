@@ -38,6 +38,26 @@ my_pager_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
    elm_pager_content_pop(info->pager);
 }
 
+struct style_tuple {
+     const char *label;
+     const char *name;
+};
+static const struct style_tuple styles[] = {
+       { "Default", "default"},
+       { "Slide", "slide"},
+       { "Slide Invisible", "slide_invisible"},
+       { "Fade", "fade"},
+       { "Fade Translucide", "fade_translucide"},
+       { "Fade Invisible", "fade_invisible"}
+};
+
+static void
+_style(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *pg = data;
+   elm_object_style_set(pg, styles[elm_radio_value_get(obj)].name);
+}
+
 void
 test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -78,9 +98,27 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 		       "the stack).<br>"
 		       "<br>"
 		       "The theme may define the animation how<br>"
-		       "show and hide of pages.");
+		       "show and hide of pages. Select one theme style:");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
+
+
+   unsigned int i = 0;
+   Evas_Object *rdg = NULL, *rd;
+   for (i = 0; i < (sizeof(styles) / sizeof(struct style_tuple)); i++)
+     {
+        rd = elm_radio_add(win);
+        elm_radio_label_set(rd, styles[i].label);
+        elm_radio_state_value_set(rd, i);
+        if (rdg)
+          elm_radio_group_add(rd, rdg);
+        else
+          rdg = rd;
+        evas_object_smart_callback_add(rd, "changed", _style, pg);
+        elm_box_pack_end(bx, rd);
+        evas_object_show(rd);
+     }
+   elm_radio_value_set(rd, 0);
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Flip to 2");
