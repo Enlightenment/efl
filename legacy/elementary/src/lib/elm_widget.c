@@ -536,6 +536,8 @@ elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, E
    sd->on_show_region_data = data;
 }
 
+// kill these documented calls! dont want them documented! elm_widget is
+// internal (or for those willing to risk using the nstable elm_widget.h api)
 /**
  * Set the hook to use to show the focused region.
  *
