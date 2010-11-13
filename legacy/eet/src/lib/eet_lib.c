@@ -2287,7 +2287,6 @@ eet_write_cipher(Eet_File   *ef,
 
              data2 = data_ciphered;
              data_size = data_ciphered_sz;
-             size = (data_size > size) ? data_size : size;
           }
         else
           {

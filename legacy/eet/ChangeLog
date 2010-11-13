@@ -444,3 +444,7 @@
 2010-11-12  Cedric BAIL
 
 	* Don't try to read broken file when open in READ_WRITE mode.
+
+2010-11-14  Cedric BAIL
+
+	* Fix bug with cypher and compression used together.
