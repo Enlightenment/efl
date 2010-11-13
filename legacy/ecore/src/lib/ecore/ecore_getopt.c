@@ -584,7 +584,7 @@ _ecore_getopt_help_desc(FILE *fp, const Ecore_Getopt_Desc *desc)
    fputc('\n', fp);
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_desc_is_sentinel(const Ecore_Getopt_Desc *desc)
 {
    return (desc->shortname == '\0') && (!desc->longname);
@@ -797,8 +797,8 @@ _ecore_getopt_desc_print_error(const Ecore_Getopt_Desc *desc, const char *fmt, .
    va_end(ap);
 }
 
-static unsigned char
-_ecore_getopt_parse_bool(const char *str, unsigned char *v)
+static Eina_Bool
+_ecore_getopt_parse_bool(const char *str, Eina_Bool *v)
 {
    if ((strcmp(str, "0") == 0) ||
        (strcasecmp(str, "f") == 0) ||
@@ -807,8 +807,8 @@ _ecore_getopt_parse_bool(const char *str, unsigned char *v)
        (strcasecmp(str, "off") == 0)
        )
      {
-        *v = 0;
-        return 1;
+        *v = EINA_FALSE;
+        return EINA_TRUE;
      }
    else if ((strcmp(str, "1") == 0) ||
             (strcasecmp(str, "t") == 0) ||
@@ -817,14 +817,14 @@ _ecore_getopt_parse_bool(const char *str, unsigned char *v)
             (strcasecmp(str, "on") == 0)
             )
      {
-        *v = 1;
-        return 1;
+        *v = EINA_TRUE;
+        return EINA_TRUE;
      }
 
-   return 0;
+   return EINA_FALSE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_long(const char *str, long int *v)
 {
    char *endptr = NULL;
@@ -832,7 +832,7 @@ _ecore_getopt_parse_long(const char *str, long int *v)
    return endptr > str;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_double(const char *str, double *v)
 {
    char *endptr = NULL;
@@ -840,18 +840,18 @@ _ecore_getopt_parse_double(const char *str, double *v)
    return endptr > str;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *value, const char *arg_val)
 {
    const Ecore_Getopt_Desc_Store *store = &desc->action_param.store;
    long int v;
    double d;
-   unsigned char b;
+   Eina_Bool b;
 
    if (!value->ptrp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    switch (store->arg_req)
@@ -869,49 +869,49 @@ _ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Get
      {
       case ECORE_GETOPT_TYPE_STR:
          *value->strp = (char *)arg_val;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_BOOL:
          if (_ecore_getopt_parse_bool(arg_val, &b))
            {
               *value->boolp = b;
-              return 1;
+              return EINA_TRUE;
            }
          else
            {
               _ecore_getopt_desc_print_error
                 (desc, _("unknown boolean value %s.\n"), arg_val);
-              return 0;
+              return EINA_FALSE;
            }
       case ECORE_GETOPT_TYPE_SHORT:
          if (!_ecore_getopt_parse_long(arg_val, &v))
            goto error;
          *value->shortp = v;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_INT:
          if (!_ecore_getopt_parse_long(arg_val, &v))
            goto error;
          *value->intp = v;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_LONG:
          if (!_ecore_getopt_parse_long(arg_val, &v))
            goto error;
          *value->longp = v;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_USHORT:
          if (!_ecore_getopt_parse_long(arg_val, &v))
            goto error;
          *value->ushortp = v;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_UINT:
          if (!_ecore_getopt_parse_long(arg_val, &v))
            goto error;
          *value->uintp = v;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_ULONG:
          if (!_ecore_getopt_parse_long(arg_val, &v))
            goto error;
          *value->ulongp = v;
-         return 1;
+         return EINA_TRUE;
       case ECORE_GETOPT_TYPE_DOUBLE:
          if (!_ecore_getopt_parse_double(arg_val, &d))
            goto error;
@@ -919,12 +919,12 @@ _ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Get
          break;
      }
 
-   return 1;
+   return EINA_TRUE;
 
  error:
    _ecore_getopt_desc_print_error
      (desc, _("invalid number format %s\n"), arg_val);
-   return 0;
+   return EINA_FALSE;
 
  use_optional:
    switch (store->type)
@@ -958,47 +958,47 @@ _ecore_getopt_parse_store(const Ecore_Getopt *parser __UNUSED__, const Ecore_Get
          break;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_store_const(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->ptrp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    *val->ptrp = (void *)desc->action_param.store_const;
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_store_true(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->boolp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
-   *val->boolp = 1;
-   return 1;
+   *val->boolp = EINA_TRUE;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_store_false(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->boolp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
-   *val->boolp = 0;
-   return 1;
+   *val->boolp = EINA_FALSE;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
 {
    const char * const *pchoice;
@@ -1006,7 +1006,7 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
    if (!val->strp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    pchoice = desc->action_param.choices;
@@ -1014,7 +1014,7 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
      if (strcmp(*pchoice, arg_val) == 0)
        {
           *val->strp = (char *)*pchoice;
-          return 1;
+          return EINA_TRUE;
        }
 
    _ecore_getopt_desc_print_error
@@ -1029,28 +1029,28 @@ _ecore_getopt_parse_choice(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
      }
 
    fputs(".\n", stderr);
-   return 0;
+   return EINA_FALSE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
 {
    void *data;
    long int v;
    double d;
-   unsigned char b;
+   Eina_Bool b;
 
    if (!arg_val)
      {
         _ecore_getopt_desc_print_error
           (desc, _("missing parameter to append.\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    if (!val->listp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    switch (desc->action_param.append_type)
@@ -1062,15 +1062,14 @@ _ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
         {
            if (_ecore_getopt_parse_bool(arg_val, &b))
              {
-                data = malloc(sizeof(unsigned char));
+                data = malloc(sizeof(Eina_Bool));
                 if (data)
-                  *(unsigned char *)data = b;
+                  *(Eina_Bool *)data = b;
              }
            else
              {
-                _ecore_getopt_desc_print_error
-                  (desc, _("unknown boolean value %s.\n"), arg_val);
-                return 0;
+                _ecore_getopt_desc_print_error(desc, _("unknown boolean value %s.\n"), arg_val);
+                return EINA_FALSE;
              }
         }
         break;
@@ -1140,33 +1139,33 @@ _ecore_getopt_parse_append(const Ecore_Getopt *parser __UNUSED__, const Ecore_Ge
       default:
         {
            _ecore_getopt_desc_print_error(desc, _("could not parse value.\n"));
-           return 0;
+           return EINA_FALSE;
         }
      }
 
    *val->listp = eina_list_append(*val->listp, data);
-   return 1;
+   return EINA_TRUE;
 
  error:
    _ecore_getopt_desc_print_error
      (desc, _("invalid number format %s\n"), arg_val);
-   return 0;
+   return EINA_FALSE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_count(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (!val->intp)
      {
         _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    (*val->intp)++;
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_callback(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val)
 {
    const Ecore_Getopt_Desc_Callback *cb = &desc->action_param.callback;
@@ -1189,78 +1188,77 @@ _ecore_getopt_parse_callback(const Ecore_Getopt *parser, const Ecore_Getopt_Desc
         if ((!arg_val) || (arg_val[0] == '\0'))
           {
              _ecore_getopt_desc_print_error(desc, _("missing parameter.\n"));
-             return 0;
+             return EINA_FALSE;
           }
 
         if (!val->ptrp)
           {
-             _ecore_getopt_desc_print_error
-               (desc, _("value has no pointer set.\n"));
-             return 0;
+             _ecore_getopt_desc_print_error(desc, _("value has no pointer set.\n"));
+             return EINA_FALSE;
           }
      }
 
    if (!cb->func)
      {
         _ecore_getopt_desc_print_error(desc, _("missing callback function!\n"));
-        return 0;
+        return EINA_FALSE;
      }
 
    return cb->func(parser, desc, arg_val, (void *)cb->data, val);
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_help(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc __UNUSED__, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
-     (*val->boolp) = 1;
+     (*val->boolp) = EINA_TRUE;
    ecore_getopt_help(stdout, parser);
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_version(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
-     (*val->boolp) = 1;
+     (*val->boolp) = EINA_TRUE;
    if (!parser->version)
      {
         _ecore_getopt_desc_print_error(desc, _("no version was defined.\n"));
-        return 0;
+        return EINA_FALSE;
      }
    _ecore_getopt_version(stdout, parser);
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_copyright(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
-     (*val->boolp) = 1;
+     (*val->boolp) = EINA_TRUE;
    if (!parser->copyright)
      {
         _ecore_getopt_desc_print_error(desc, _("no copyright was defined.\n"));
-        return 0;
+        return EINA_FALSE;
      }
    _ecore_getopt_copyright(stdout, parser);
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_license(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *val, const char *arg_val __UNUSED__)
 {
    if (val->boolp)
-     (*val->boolp) = 1;
+     (*val->boolp) = EINA_TRUE;
    if (!parser->license)
      {
         _ecore_getopt_desc_print_error(desc, _("no license was defined.\n"));
-        return 0;
+        return EINA_FALSE;
      }
    _ecore_getopt_license(stdout, parser);
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_desc_handle(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, Ecore_Getopt_Value *value, const char *arg_val)
 {
    switch (desc->action)
@@ -1290,11 +1288,11 @@ _ecore_getopt_desc_handle(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *d
       case ECORE_GETOPT_ACTION_LICENSE:
          return _ecore_getopt_parse_license(parser, desc, value, arg_val);
       default:
-         return 0;
+         return EINA_FALSE;
      }
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc __UNUSED__, char **argv, int *idx, int *nonargs, const char *arg)
 {
    const Ecore_Getopt_Desc *desc;
@@ -1302,17 +1300,17 @@ _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *val
    const char *arg_val;
    int desc_idx;
    Ecore_Getopt_Value *value;
-   unsigned char ret;
+   Eina_Bool ret;
 
    desc = _ecore_getopt_parse_find_long(parser, arg);
    if (!desc)
      {
         fprintf(stderr, _("ERROR: unknown option --%s, ignored.\n"), arg);
         if (parser->strict)
-          return 0;
+          return EINA_FALSE;
 
         (*idx)++;
-        return 1;
+        return EINA_TRUE;
      }
 
    (*idx)++;
@@ -1342,8 +1340,8 @@ _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *val
              fprintf
                (stderr, _("ERROR: option --%s requires an argument!\n"), arg);
              if (parser->strict)
-               return 0;
-             return 1;
+               return EINA_FALSE;
+             return EINA_TRUE;
           }
      }
    else
@@ -1353,12 +1351,12 @@ _ecore_getopt_parse_arg_long(const Ecore_Getopt *parser, Ecore_Getopt_Value *val
    value = values + desc_idx;
    ret = _ecore_getopt_desc_handle(parser, desc, value, arg_val);
    if ((!ret) && parser->strict)
-     return 0;
+     return EINA_FALSE;
 
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc __UNUSED__, char **argv, int *idx, int *nonargs, const char *arg)
 {
    int run = 1;
@@ -1370,7 +1368,7 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *va
         const char *arg_val;
         int desc_idx;
         Ecore_Getopt_Value *value;
-        unsigned char ret;
+        Eina_Bool ret;
 
         desc = _ecore_getopt_parse_find_short(parser, arg[0]);
         if (!desc)
@@ -1378,7 +1376,7 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *va
              fprintf
                (stderr, _("ERROR: unknown option -%c, ignored.\n"), arg[0]);
              if (parser->strict)
-               return 0;
+               return EINA_FALSE;
 
              arg++;
              continue;
@@ -1417,8 +1415,8 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *va
                     (stderr, _("ERROR: option -%c requires an argument!\n"),
                      opt);
                   if (parser->strict)
-                    return 0;
-                  return 1;
+                    return EINA_FALSE;
+                  return EINA_TRUE;
                }
           }
         else
@@ -1428,16 +1426,16 @@ _ecore_getopt_parse_arg_short(const Ecore_Getopt *parser, Ecore_Getopt_Value *va
         value = values + desc_idx;
         ret = _ecore_getopt_desc_handle(parser, desc, value, arg_val);
         if ((!ret) && parser->strict)
-          return 0;
+          return EINA_FALSE;
      }
 
    if (run)
      (*idx)++;
 
-   return 1;
+   return EINA_TRUE;
 }
 
-static unsigned char
+static Eina_Bool
 _ecore_getopt_parse_arg(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv, int *idx, int *nonargs)
 {
    char *arg = argv[*idx];
@@ -1455,15 +1453,13 @@ _ecore_getopt_parse_arg(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, 
 
         *dst = arg;
         (*nonargs)--;
-        return 1;
+        return EINA_TRUE;
      }
 
    if (arg[1] == '-')
-     return _ecore_getopt_parse_arg_long
-       (parser, values, argc, argv, idx, nonargs, arg + 2);
+     return _ecore_getopt_parse_arg_long(parser, values, argc, argv, idx, nonargs, arg + 2);
    else
-     return _ecore_getopt_parse_arg_short
-       (parser, values, argc, argv, idx, nonargs, arg + 1);
+     return _ecore_getopt_parse_arg_short(parser, values, argc, argv, idx, nonargs, arg + 1);
 }
 
 static const Ecore_Getopt_Desc *
@@ -1505,9 +1501,9 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt *parser, const Ecore_Geto
 /**
  * Check parser for duplicate entries, print them out.
  *
- * @return 1 if there are duplicates, 0 otherwise.
+ * @return EINA_TRUE if there are duplicates, EINA_FALSE otherwise.
  */
-unsigned char
+Eina_Bool
 ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
@@ -1519,14 +1515,13 @@ ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
            other = _ecore_getopt_parse_find_short_other(parser, desc);
            if (other)
              {
-                _ecore_getopt_desc_print_error
-                  (desc, "short name -%c already exists.", desc->shortname);
+                _ecore_getopt_desc_print_error(desc, "short name -%c already exists.", desc->shortname);
 
                 if (other->longname)
                   fprintf(stderr, " Other is --%s.\n", other->longname);
                 else
                   fputc('\n', stderr);
-                return 1;
+                return EINA_TRUE;
              }
          }
 
@@ -1536,18 +1531,17 @@ ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
            other = _ecore_getopt_parse_find_long_other(parser, desc);
            if (other)
              {
-                _ecore_getopt_desc_print_error
-                  (desc, "long name --%s already exists.", desc->longname);
+                _ecore_getopt_desc_print_error(desc, "long name --%s already exists.", desc->longname);
 
                 if (other->shortname)
                   fprintf(stderr, " Other is -%c.\n", other->shortname);
                 else
                   fputc('\n', stderr);
-                return 1;
+                return EINA_TRUE;
              }
          }
      }
-   return 0;
+   return EINA_FALSE;
 }
 
 static const Ecore_Getopt_Desc *
@@ -1695,7 +1689,7 @@ ecore_getopt_list_free(Eina_List *list)
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
-unsigned char
+Eina_Bool
 ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
 {
    Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
@@ -1703,10 +1697,10 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, cons
    if (sscanf(str, "%d:%d:%d:%d", &v->x, &v->y, &v->w, &v->h) != 4)
      {
         fprintf(stderr, _("ERROR: incorrect geometry value '%s'\n"), str);
-        return 0;
+        return EINA_FALSE;
      }
 
-   return 1;
+   return EINA_TRUE;
 }
 
 /**
@@ -1718,7 +1712,7 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser __UNUSED__, cons
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
-unsigned char
+Eina_Bool
 ecore_getopt_callback_size_parse(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str, void *data __UNUSED__, Ecore_Getopt_Value *storage)
 {
    Eina_Rectangle *v = (Eina_Rectangle *)storage->ptrp;
@@ -1726,10 +1720,10 @@ ecore_getopt_callback_size_parse(const Ecore_Getopt *parser __UNUSED__, const Ec
    if (sscanf(str, "%dx%d", &v->w, &v->h) != 2)
      {
         fprintf(stderr, _("ERROR: incorrect size value '%s'\n"), str);
-        return 0;
+        return EINA_FALSE;
      }
    v->x = 0;
    v->y = 0;
 
-   return 1;
+   return EINA_TRUE;
 }

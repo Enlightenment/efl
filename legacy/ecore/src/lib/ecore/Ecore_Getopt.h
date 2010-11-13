@@ -115,7 +115,7 @@ extern "C" {
      union
      {
         const char *strv;
-        unsigned char boolv;
+        Eina_Bool boolv : 1;
         short shortv;
         int intv;
         long longv;
@@ -128,7 +128,7 @@ extern "C" {
 
   struct _Ecore_Getopt_Desc_Callback
   {
-     unsigned char (*func)(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
+     Eina_Bool (*func)(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
      const void *data;
      Ecore_Getopt_Desc_Arg_Requirement arg_req;
      const char *def;
@@ -387,14 +387,14 @@ extern "C" {
 
   EAPI void ecore_getopt_help(FILE *fp, const Ecore_Getopt *info);
 
-  EAPI unsigned char ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
+  EAPI Eina_Bool ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser);
   EAPI int ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv);
 
   EAPI Eina_List *ecore_getopt_list_free(Eina_List *list);
 
   /* helper functions to be used with ECORE_GETOPT_CALLBACK_*() */
-  EAPI unsigned char ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
-  EAPI unsigned char ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
+  EAPI Eina_Bool ecore_getopt_callback_geometry_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
+  EAPI Eina_Bool ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, const Ecore_Getopt_Desc *desc, const char *str, void *data, Ecore_Getopt_Value *storage);
 
 
 #ifdef __cplusplus
