@@ -115,7 +115,7 @@ extern "C" {
      union
      {
         const char *strv;
-        Eina_Bool boolv : 1;
+        Eina_Bool boolv;
         short shortv;
         int intv;
         long longv;
