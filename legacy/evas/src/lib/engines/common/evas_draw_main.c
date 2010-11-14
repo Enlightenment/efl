@@ -155,6 +155,7 @@ evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
 EAPI void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
+//   if (dc->cutout.rects > 512) return;
    if (dc->clip.use)
      {
 #if 1 // this is a bit faster
@@ -493,6 +494,7 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
 
    if (!dc->clip.use) return NULL;
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0)) return NULL;
+  
 
    res = evas_common_draw_context_cutouts_new();
    evas_common_draw_context_cutouts_add(res, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);

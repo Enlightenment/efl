@@ -39,7 +39,7 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 
    if (rects->max < (rects->active + 1))
      {
-	rects->max += 32;
+	rects->max += 128;
 	rects->rects = (Cutout_Rect *)realloc(rects->rects, sizeof(Cutout_Rect) * rects->max);
      }
 
