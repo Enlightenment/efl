@@ -336,7 +336,10 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    pthread_mutex_unlock(&_ecore_pending_job_threads_mutex);
 
    /* Sleep a little to prevent premature death */
-   usleep(200);
+// any code with something like this in it to "avoid some race condition"
+// especially with just 200micro-seconds is asking for trouble. disable
+// this.  
+//   usleep(200);
 
    pthread_mutex_lock(&_ecore_pending_job_threads_mutex);
    if (_ecore_pending_job_threads)
