@@ -25,6 +25,11 @@ efreet_menu.c \
 efreet_utils.c \
 efreet_uri.c
 
+if ICON_CACHE
+EFREETSOURCES += \
+efreet_cache.c
+endif
+
 includes_HEADERS = $(EFREETHEADERS) Efreet_Mime.h Efreet_Trash.h
 includesdir = $(includedir)/efreet-@VMAJ@
 

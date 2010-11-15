@@ -134,8 +134,42 @@ extern int _efreet_log_dom_global;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 
+#if ICON_CACHE
+typedef struct Efreet_Cache_Icon Efreet_Cache_Icon;
+struct Efreet_Cache_Icon
+{
+#if 0
+    const char *name;
+#endif
+    const char *theme;
+#if 0
+    int         context; /* the type of icon */
+#endif
+    Eina_List  *icons;
+    unsigned char free:1;
+};
+
+typedef struct Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
+struct Efreet_Cache_Icon_Element
+{
+    int        type;  /* size type of icon */
+    Eina_List *paths; /* possible paths for icon */
+    struct
+    {
+        unsigned short normal;        /* The size for this icon */
+        unsigned short min;           /* The minimum size for this icon */
+        unsigned short max;           /* The maximum size for this icon */
+    } size;
+};
+#endif
+
 int efreet_base_init(void);
 void efreet_base_shutdown(void);
+
+#if ICON_CACHE
+int efreet_cache_init(void);
+void efreet_cavoidche_shutdown(void);
+#endif
 
 int efreet_icon_init(void);
 void efreet_icon_shutdown(void);
@@ -171,6 +205,13 @@ void efreet_util_desktop_cache_reload(void);
 EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);
 EAPI const char *efreet_desktop_cache_dirs(void);
+
+#if ICON_CACHE
+EAPI const char *efreet_icon_cache_file(const char *theme);
+
+EAPI Eet_Data_Descriptor *efreet_icon_edd_init(void);
+EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
+#endif
 
 #define NON_EXISTING (void *)-1
 
