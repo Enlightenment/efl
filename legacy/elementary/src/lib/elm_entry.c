@@ -1826,8 +1826,13 @@ elm_entry_selection_get(const Evas_Object *obj)
 }
 
 /**
- * This inserts text in @p entry at the beginning of the entry
- * object.
+ * This inserts text in @p entry where the current cursor position.
+ * 
+ * This inserts text at the cursor position is as if it was typed 
+ * by the user (note this also allows markup which a user
+ * can't just "type" as it would be converted to escaped text, so this
+ * call can be used to insert things like emoticon items or bold push/pop
+ * tags, other font and color change tags etc.)
  *
  * @param obj The entry object
  * @param entry The text to insert
