@@ -166,7 +166,6 @@ size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 const char *efreet_desktop_environment_get(void);
 
 EAPI Eet_Data_Descriptor *efreet_desktop_edd_init(void);
-EAPI void efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd);
 
 void efreet_util_desktop_cache_reload(void);
 EAPI const char *efreet_desktop_util_cache_file(void);

@@ -399,7 +399,6 @@ main(int argc, char **argv)
         unlink(file);
     }
 
-    efreet_desktop_edd_shutdown(edd);
     efreet_shutdown();
     ecore_shutdown();
     eet_shutdown();
@@ -409,7 +408,6 @@ main(int argc, char **argv)
 error:
     if (dirsfd >= 0) close(dirsfd);
     IF_FREE(dir);
-    efreet_desktop_edd_shutdown(edd);
 edd_error:
     efreet_shutdown();
 efreet_error:

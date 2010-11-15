@@ -128,6 +128,7 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 void *fdata);
 static int efreet_desktop_environment_check(Efreet_Desktop *desktop);
 
+static void efreet_desktop_edd_shutdown(void);
 static int efreet_desktop_write_cache_dirs_file(void);
 
 static void efreet_desktop_cache_update_cb(void *data, Ecore_File_Monitor *em,
@@ -163,8 +164,7 @@ efreet_desktop_init(void)
     }
     if (!ecore_file_init())
         goto ecore_error;
-    desktop_edd = efreet_desktop_edd_init();
-    if (!desktop_edd)
+    if (!efreet_desktop_edd_init())
         goto edd_error;
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
@@ -239,7 +239,7 @@ efreet_desktop_shutdown(void)
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
     if (change_monitors) eina_hash_free(change_monitors);
     if (cache) eet_close(cache);
-    efreet_desktop_edd_shutdown(desktop_edd);
+    efreet_desktop_edd_shutdown();
     ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_RELEASE(cache_file);
@@ -1307,44 +1307,44 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
 EAPI Eet_Data_Descriptor *
 efreet_desktop_edd_init(void)
 {
-    Eet_Data_Descriptor *edd;
+    if (!desktop_edd)
+    {
+        Eet_Data_Descriptor_Class eddc;
 
-    Eet_Data_Descriptor_Class eddc;
-    if (!eet_eina_file_data_descriptor_class_set(&eddc, sizeof (eddc), "cache", sizeof(Efreet_Desktop))) return NULL;
-    edd = eet_data_descriptor_file_new(&eddc);
-    if (!edd) return NULL;
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "type", type, EET_T_INT);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "version", version, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "orig_path", orig_path, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "load_time", load_time, EET_T_LONG_LONG);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "name", name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "generic_name", generic_name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "comment", comment, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "icon", icon, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "try_exec", try_exec, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "exec", exec, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "path", path, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "startup_wm_class", startup_wm_class, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "url", url, EET_T_STRING);
-    eet_data_descriptor_element_add(edd, "only_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, only_show_in), 0, NULL, NULL);
-    eet_data_descriptor_element_add(edd, "not_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, not_show_in), 0, NULL, NULL);
-    eet_data_descriptor_element_add(edd, "categories", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, categories), 0, NULL, NULL);
-    eet_data_descriptor_element_add(edd, "mime_types", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, mime_types), 0, NULL, NULL);
-    eet_data_descriptor_element_add(edd, "x", EET_T_STRING, EET_G_HASH, offsetof(Efreet_Desktop, x), 0, NULL, NULL);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "no_display", no_display, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "hidden", hidden, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "terminal", terminal, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Efreet_Desktop, "startup_notify", startup_notify, EET_T_UCHAR);
-    return edd;
+        EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Desktop);
+        desktop_edd = eet_data_descriptor_file_new(&eddc);
+        if (!desktop_edd) return NULL;
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "type", type, EET_T_INT);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "version", version, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "orig_path", orig_path, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "load_time", load_time, EET_T_LONG_LONG);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "name", name, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "generic_name", generic_name, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "comment", comment, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "icon", icon, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "try_exec", try_exec, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "exec", exec, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "path", path, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "startup_wm_class", startup_wm_class, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "url", url, EET_T_STRING);
+        eet_data_descriptor_element_add(desktop_edd, "only_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, only_show_in), 0, NULL, NULL);
+        eet_data_descriptor_element_add(desktop_edd, "not_show_in", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, not_show_in), 0, NULL, NULL);
+        eet_data_descriptor_element_add(desktop_edd, "categories", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, categories), 0, NULL, NULL);
+        eet_data_descriptor_element_add(desktop_edd, "mime_types", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Desktop, mime_types), 0, NULL, NULL);
+        eet_data_descriptor_element_add(desktop_edd, "x", EET_T_STRING, EET_G_HASH, offsetof(Efreet_Desktop, x), 0, NULL, NULL);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "no_display", no_display, EET_T_UCHAR);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "hidden", hidden, EET_T_UCHAR);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "terminal", terminal, EET_T_UCHAR);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(desktop_edd, Efreet_Desktop, "startup_notify", startup_notify, EET_T_UCHAR);
+    }
+    return desktop_edd;
 }
 
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI void
-efreet_desktop_edd_shutdown(Eet_Data_Descriptor *edd)
+static void
+efreet_desktop_edd_shutdown(void)
 {
-    eet_data_descriptor_free(edd);
+    if (desktop_edd) eet_data_descriptor_free(desktop_edd);
+    desktop_edd = NULL;
 }
 
 static int
