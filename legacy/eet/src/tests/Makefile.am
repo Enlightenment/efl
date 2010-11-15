@@ -14,4 +14,4 @@ eet_suite_LDADD = $(top_builddir)/src/lib/libeet.la @EINA_LIBS@ @CHECK_LIBS@
 
 endif
 
-EXTRA_DIST = eet_suite.h
+EXTRA_DIST = eet_suite.h cert.pem key_enc_none.pem key_enc.pem key.pem
