@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include "eina_suite.h"
+#include "eina_private.h"
 #include "Eina.h"
 
 #define TEST0 "te\0st/0"
