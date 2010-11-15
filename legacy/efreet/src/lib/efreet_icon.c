@@ -1280,17 +1280,13 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
         efreet_icon_theme_dir_scan(path, theme_name);
     }
 
+#ifndef STRICT_SPEC
     EINA_LIST_FOREACH(xdg_dirs, l, dir)
     {
         snprintf(path, sizeof(path), "%s/pixmaps", dir);
         efreet_icon_theme_dir_scan(path, theme_name);
     }
-
-    EINA_LIST_FOREACH(xdg_dirs, l, dir)
-    {
-        snprintf(path, sizeof(path), "%s/pixmaps", dir);
-        efreet_icon_theme_dir_scan(path, theme_name);
-    }
+#endif
 
     efreet_icon_theme_dir_scan("/usr/share/pixmaps", theme_name);
 
