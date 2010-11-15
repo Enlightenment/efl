@@ -16,6 +16,8 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+/* TODO: Scan efreet_extra_icon_dirs for themes */
+
 static char *efreet_icon_deprecated_user_dir = NULL;
 static char *efreet_icon_user_dir = NULL;
 static Eina_Hash *efreet_icon_themes = NULL;
