@@ -25,7 +25,7 @@ static Eet_File *util_ef = NULL;
 static Eina_Hash *file_ids = NULL;
 static Eina_Hash *paths = NULL;
 
-int verbose = 0;
+static int verbose = 0;
 
 static int
 strcmplen(const void *data1, const void *data2)
