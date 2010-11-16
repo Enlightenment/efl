@@ -134,7 +134,7 @@ extern int _efreet_log_dom_global;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 
-#if ICON_CACHE
+#ifdef ICON_CACHE
 typedef struct Efreet_Cache_Icon Efreet_Cache_Icon;
 struct Efreet_Cache_Icon
 {
@@ -167,7 +167,7 @@ struct Efreet_Cache_Icon_Element
 int efreet_base_init(void);
 void efreet_base_shutdown(void);
 
-#if ICON_CACHE
+#ifdef ICON_CACHE
 int efreet_cache_init(void);
 void efreet_cavoidche_shutdown(void);
 #endif
@@ -207,7 +207,7 @@ EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);
 EAPI const char *efreet_desktop_cache_dirs(void);
 
-#if ICON_CACHE
+#ifdef ICON_CACHE
 EAPI const char *efreet_icon_cache_file(const char *theme);
 
 EAPI Eet_Data_Descriptor *efreet_icon_edd_init(void);
