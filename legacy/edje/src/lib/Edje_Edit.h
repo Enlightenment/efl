@@ -324,7 +324,7 @@ EAPI Eina_Bool edje_edit_data_del(Evas_Object *obj, const char *itemname);
  *
  * @return Value of the given entry, or NULL if not found.
  */
-EAPI const char * edje_edit_data_value_get(Evas_Object *obj, char *itemname);
+EAPI const char * edje_edit_data_value_get(Evas_Object *obj, const char *itemname);
 
 /** Set the data associated with the given itemname.
  *
@@ -383,7 +383,7 @@ EAPI Eina_Bool edje_edit_group_data_del(Evas_Object *obj, const char *itemname);
  *
  * @return Value of the data entry or NULL if not found.
  */
-EAPI const char * edje_edit_group_data_value_get(Evas_Object *obj, char *itemname);
+EAPI const char * edje_edit_group_data_value_get(Evas_Object *obj, const char *itemname);
 
 /** Set the data associated with the given itemname.
  *

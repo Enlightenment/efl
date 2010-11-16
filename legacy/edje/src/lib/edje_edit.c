@@ -1287,7 +1287,7 @@ edje_edit_data_del(Evas_Object *obj, const char *itemname)
 }
 
 EAPI const char *
-edje_edit_group_data_value_get(Evas_Object * obj, char *key)
+edje_edit_group_data_value_get(Evas_Object * obj, const char *key)
 {
    Edje_String *value;
 
@@ -1306,7 +1306,7 @@ edje_edit_group_data_value_get(Evas_Object * obj, char *key)
 }
 
 EAPI const char *
-edje_edit_data_value_get(Evas_Object * obj, char *itemname)
+edje_edit_data_value_get(Evas_Object * obj, const char *itemname)
 {
    Edje_String *value;
 
