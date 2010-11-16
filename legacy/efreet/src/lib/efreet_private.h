@@ -146,6 +146,7 @@ struct Efreet_Cache_Icon
     int         context; /* the type of icon */
 #endif
     Eina_List  *icons;
+    unsigned char fallback;
     unsigned char free:1;
 };
 
@@ -210,6 +211,7 @@ EAPI const char *efreet_desktop_cache_dirs(void);
 EAPI const char *efreet_icon_cache_file(const char *theme);
 
 EAPI Eet_Data_Descriptor *efreet_icon_edd_init(void);
+EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd_init(void);
 EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
 #endif
 

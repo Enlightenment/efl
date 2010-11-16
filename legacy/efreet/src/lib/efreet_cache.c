@@ -10,13 +10,23 @@
  */
 static Eet_Data_Descriptor *cache_icon_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_element_edd = NULL;
+static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
 
 static void efreet_icon_edd_shutdown(void);
 
 int
 efreet_cache_init(void)
 {
-    if (!efreet_icon_edd_init()) return 0;
+    if (!efreet_icon_edd_init())
+    {
+        efreet_icon_edd_shutdown();
+        return 0;
+    }
+    if (!efreet_icon_fallback_edd_init())
+    {
+        efreet_icon_edd_shutdown();
+        return 0;
+    }
     return 1;
 }
 
@@ -84,6 +94,35 @@ error:
     return NULL;
 }
 
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI Eet_Data_Descriptor *
+efreet_icon_fallback_edd_init(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (!cache_icon_fallback_edd)
+    {
+        EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icon);
+        cache_icon_fallback_edd = eet_data_descriptor_file_new(&eddc);
+        if (!cache_icon_fallback_edd)
+            goto error;
+
+#if 0
+        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "name", name, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "theme", theme, EET_T_STRING);
+        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "context", context, EET_T_INT);
+#endif
+        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "fallback", fallback, EET_T_UCHAR);
+        eet_data_descriptor_element_add(cache_icon_fallback_edd, "icons", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Icon, icons), 0, NULL, NULL);
+    }
+    return cache_icon_fallback_edd;
+error:
+    efreet_icon_edd_shutdown();
+    return NULL;
+}
+
 static void
 efreet_icon_edd_shutdown(void)
 {
@@ -91,6 +130,8 @@ efreet_icon_edd_shutdown(void)
     cache_icon_edd = NULL;
     if (cache_icon_element_edd) eet_data_descriptor_free(cache_icon_element_edd);
     cache_icon_element_edd = NULL;
+    if (cache_icon_fallback_edd) eet_data_descriptor_free(cache_icon_fallback_edd);
+    cache_icon_fallback_edd = NULL;
 }
 
 /*
@@ -99,7 +140,8 @@ efreet_icon_edd_shutdown(void)
 EAPI void
 efreet_cache_icon_free(Efreet_Cache_Icon *icon)
 {
-    Efreet_Cache_Icon_Element *elem;
+    void *data;
+
     if (icon->free)
     {
 #if 0
@@ -108,16 +150,29 @@ efreet_cache_icon_free(Efreet_Cache_Icon *icon)
         eina_stringshare_del(icon->theme);
     }
 
-    EINA_LIST_FREE(icon->icons, elem)
+    EINA_LIST_FREE(icon->icons, data)
     {
         const char *path;
 
-        if (icon->free)
-            EINA_LIST_FREE(elem->paths, path)
-                eina_stringshare_del(path);
+        if (icon->fallback)
+        {
+            if (icon->free)
+                eina_stringshare_del(data);
+        }
         else
-            eina_list_free(elem->paths);
-        free(elem);
+        {
+            Efreet_Cache_Icon_Element *elem;
+
+            elem = data;
+            if (icon->free)
+            {
+                EINA_LIST_FREE(elem->paths, path)
+                    eina_stringshare_del(path);
+            }
+            else
+                eina_list_free(elem->paths);
+            free(elem);
+        }
     }
     free(icon);
 }

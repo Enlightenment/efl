@@ -19,10 +19,101 @@
 #include "efreet_private.h"
 
 static Eet_Data_Descriptor *edd = NULL;
+static Eet_Data_Descriptor *fallback_edd = NULL;
 
 static Eina_List *extensions;
 
-int verbose = 0;
+static int verbose = 0;
+
+static int
+cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *changed)
+{
+    Eina_Iterator *it;
+    char buf[PATH_MAX];
+    const char *ext, *file;
+
+    if (eina_hash_find(dirs, dir)) return 1;
+    eina_hash_add(dirs, dir, (void *)-1);
+
+    it = eina_file_ls(dir);
+    if (!it) return 1;
+    EINA_ITERATOR_FOREACH(it, file)
+    {
+        Eina_List *l;
+        Efreet_Cache_Icon *icon;
+        char *name, *tmp;
+
+        ext = strrchr(file, '.');
+        if (!ext) continue;
+        ext = eina_stringshare_add(ext);
+        if (!eina_list_data_find(extensions, ext))
+        {
+            eina_stringshare_del(ext);
+            continue;
+        }
+        /* icon with known extension */
+        name = strdup(ecore_file_file_get(file));
+        tmp = strrchr(name, '.');
+        if (tmp) *tmp = '\0';
+        icon = eet_data_read(ef, fallback_edd, name);
+        if (!icon)
+        {
+            icon = NEW(Efreet_Cache_Icon, 1);
+            icon->free = 1;
+            icon->fallback = 1;
+#if 0
+            icon->name = eina_stringshare_add(name);
+#endif
+            icon->theme = NULL;
+#if 0
+            icon->context = dir->context;
+#endif
+        }
+
+        icon->icons = eina_list_append(icon->icons, eina_stringshare_ref(file));
+        if (!eet_data_write(ef, fallback_edd, name, icon, 1))
+        {
+            free(name);
+            break;
+        }
+        efreet_cache_icon_free(icon);
+        free(name);
+    }
+    eina_iterator_free(it);
+    return 1;
+}
+
+static int
+cache_fallback_scan(Eet_File *ef, int *changed)
+{
+    Eina_List *xdg_dirs, *l;
+    const char *dir;
+    char path[PATH_MAX];
+    Eina_Hash *dirs;
+
+    dirs = eina_hash_string_superfast_new(NULL);
+    cache_fallback_scan_dir(ef, dirs, efreet_icon_deprecated_user_dir_get(), changed);
+    cache_fallback_scan_dir(ef, dirs, efreet_icon_user_dir_get(), changed);
+
+    xdg_dirs = efreet_data_dirs_get();
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(path, sizeof(path), "%s/icons", dir);
+        cache_fallback_scan_dir(ef, dirs, path, changed);
+    }
+
+#ifndef STRICT_SPEC
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(path, sizeof(path), "%s/pixmaps", dir);
+        cache_fallback_scan_dir(ef, dirs, path, changed);
+    }
+#endif
+
+    cache_fallback_scan_dir(ef, dirs, "/usr/share/pixmaps", changed);
+    eina_hash_free(dirs);
+    return 1;
+}
 
 static int
 cache_scan_path_dir(Efreet_Icon_Theme *theme, const char *path, Efreet_Icon_Theme_Directory *dir, Eet_File *ef, int *changed)
@@ -132,7 +223,6 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eet_File *ef, int *chang
     if (!theme) return 1;
     if (eina_hash_find(themes, theme->name.internal)) return 1;
     eina_hash_direct_add(themes, theme->name.internal, theme);
-    /* TODO: flush icons after each theme */
     /* TODO: Maybe always read entry from eet, so when can check changed */
 
     /* scan theme */
@@ -148,7 +238,7 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eet_File *ef, int *chang
             if (!cache_scan(theme, themes, ef, changed)) return 0;
         }
     }
-    else
+    else if (strcmp(theme->name.internal, "hicolor"))
     {
         theme = efreet_icon_theme_find("hicolor");
         if (!cache_scan(theme, themes, ef, changed)) return 0;
@@ -163,7 +253,10 @@ main(int argc, char **argv)
      * - Add file monitor on files, so that we catch changes on files
      *   during whilst this program runs.
      * - Maybe linger for a while to reduce number of cache re-creates.
+     * - pass extra dirs to binary, and read them
+     * - make sure programs with different extra dirs all work together
      */
+    Eet_File *ef;
     char file[PATH_MAX];
     Eina_List *l = NULL;
     Efreet_Icon_Theme *theme;
@@ -226,6 +319,8 @@ main(int argc, char **argv)
     if (!efreet_init()) goto efreet_error;
     edd = efreet_icon_edd_init();
     if (!edd) goto edd_error;
+    fallback_edd = efreet_icon_fallback_edd_init();
+    if (!edd) goto edd_error;
 
     if (argc > 1)
     {
@@ -239,10 +334,9 @@ main(int argc, char **argv)
         l = efreet_icon_theme_list_get();
     EINA_LIST_FREE(l, theme)
     {
-        Eet_File *ef;
         Eina_Hash *themes;
-        changed = 0;
 
+        changed = 0;
         /* create cache */
         /* TODO: Copy old cache to temp file, so we can check whether something has changed */
         snprintf(file, sizeof(file), "%s.XXXXXX", efreet_icon_cache_file(theme->name.internal));
@@ -294,6 +388,54 @@ main(int argc, char **argv)
         }
 
         eet_clearcache();
+    }
+
+    /* fallback */
+    changed = 0;
+    /* TODO: Copy old cache to temp file, so we can check whether something has changed */
+    snprintf(file, sizeof(file), "%s.XXXXXX", efreet_icon_cache_file("_fallback"));
+    tmpfd = mkstemp(file);
+    if (tmpfd < 0) goto error;
+    close(tmpfd);
+    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
+    if (!ef) goto error;
+
+    if (!cache_fallback_scan(ef, &changed))
+    {
+        eet_close(ef);
+        goto error;
+    }
+
+    changed = 1;
+    /* check if old and new caches contain the same number of entries */
+#if 0
+    if (!changed)
+    {
+        Eet_File *old;
+
+        old = eet_open(efreet_icon_cache_file(), EET_FILE_MODE_READ);
+        if (!old || eet_num_entries(old) != eet_num_entries(ef)) changed = 1;
+        if (old) eet_close(old);
+
+    }
+#endif
+
+    /* cleanup */
+    eet_close(ef);
+
+    /* unlink old cache files */
+    if (changed)
+    {
+        if (unlink(efreet_icon_cache_file("_fallback")) < 0)
+        {
+            if (errno != ENOENT) goto error;
+        }
+        /* rename tmp files to real files */
+        if (rename(file, efreet_icon_cache_file("_fallback")) < 0) goto error;
+    }
+    else
+    {
+        unlink(file);
     }
 
     eina_list_free(extensions);
