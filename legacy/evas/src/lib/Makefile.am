@@ -43,6 +43,14 @@ EVAS_STATIC_MODULE += \
 	../modules/engines/gl_x11/libevas_engine_gl_x11.la
 EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_x11_libs@
 endif
+if EVAS_STATIC_BUILD_GL_SDL
+SUBDIRS += \
+	../modules/engines/gl_common \
+	../modules/engines/gl_sdl
+EVAS_STATIC_MODULE += \
+	../modules/engines/gl_sdl/libevas_engine_gl_sdl.la
+EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_sdl_libs@
+endif
 if EVAS_STATIC_BUILD_QUARTZ
 SUBDIRS += ../modules/engines/quartz/
 EVAS_STATIC_MODULE += ../modules/engines/quartz/libevas_engine_quartz.la

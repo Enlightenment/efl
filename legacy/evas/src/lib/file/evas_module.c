@@ -99,6 +99,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, directfb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_glew);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_sdl);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, quartz);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_16);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_16_ddraw);
@@ -155,6 +156,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_GL_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, gl_x11),
+#endif
+#ifdef EVAS_STATIC_BUILD_GL_SDL
+  EVAS_EINA_STATIC_MODULE_USE(engine, gl_sdl),
 #endif
 #ifdef EVAS_STATIC_BUILD_QUARTZ
   EVAS_EINA_STATIC_MODULE_USE(engine, quartz),
@@ -278,8 +282,8 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
    Evas_Module *em;
 
    if ((unsigned int)type > 3) return EINA_FALSE;
-   if (module->version != EVAS_MODULE_API_VERSION) return EINA_FALSE;
    if (!module) return EINA_FALSE;
+   if (module->version != EVAS_MODULE_API_VERSION) return EINA_FALSE;
 
    em = eina_hash_find(evas_modules[type], module->name);
    if (em) return EINA_FALSE;

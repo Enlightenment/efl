@@ -576,11 +576,6 @@ else
       [
 #include <SDL/SDL_opengles.h>
 #include <EGL/egl.h>
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/Xrender.h>
-#include <X11/Xresource.h>
       ])
    if test "x${have_egl}" = "xyes" ; then
       AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL -lm $gl_pt_lib)
