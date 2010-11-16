@@ -93,7 +93,7 @@ extern int _efreet_log_dom_global;
 #endif
 #define EFREET_DEFAULT_LOG_COLOR "\033[36m"
 
-#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global; /*default log domain for each module. It can redefined inside each module */
+#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global /*default log domain for each module. It can redefined inside each module */
 #ifdef ERROR
 #undef ERROR
 #endif
@@ -116,7 +116,7 @@ extern int _efreet_log_dom_global;
  * four macros are defined ERR, WRN, DGB, INF. 
  * EFREET_MODULE_LOG_DOM should be defined individually for each module
  */
-#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global; /*default log domain for each module. It can redefined inside each module */
+#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global /*default log domain for each module. It can redefined inside each module */
 #ifdef ERR
 #undef ERR
 #endif
@@ -213,6 +213,7 @@ EAPI const char *efreet_icon_cache_file(const char *theme);
 EAPI Eet_Data_Descriptor *efreet_icon_edd_init(void);
 EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd_init(void);
 EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
+Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
 #endif
 
 #define NON_EXISTING (void *)-1

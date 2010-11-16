@@ -12,6 +12,9 @@ static Eet_Data_Descriptor *cache_icon_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_element_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
 
+static Eet_File *cache = NULL;
+static const char *cache_name;
+
 static void efreet_icon_edd_shutdown(void);
 
 int
@@ -142,6 +145,8 @@ efreet_cache_icon_free(Efreet_Cache_Icon *icon)
 {
     void *data;
 
+    if (!icon) return;
+
     if (icon->free)
     {
 #if 0
@@ -175,4 +180,31 @@ efreet_cache_icon_free(Efreet_Cache_Icon *icon)
         }
     }
     free(icon);
+}
+
+Efreet_Cache_Icon *
+efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
+{
+    if (cache)
+    {
+        if (!strcmp(cache_name, theme->name.internal))
+        {
+            eet_close(cache);
+            eina_stringshare_del(cache_name);
+            cache = NULL;
+            cache_name = NULL;
+        }
+    }
+    if (!cache)
+    {
+        const char *path;
+
+        path = efreet_icon_cache_file(theme->name.internal);
+        cache = eet_open(path, EET_FILE_MODE_READ);
+        if (cache)
+            cache_name = eina_stringshare_add(theme->name.internal);
+    }
+    if (cache)
+        return eet_data_read(cache, cache_icon_edd, icon);
+    return NULL;
 }
