@@ -253,7 +253,7 @@ efreet_dirs_get(const char *key, const char *fallback)
             // resolve path properly/fully to remove path//path2 to
             // path/path2, path/./path2 to path/path2 etc.
             char *ts = ecore_file_realpath(s);
-            if (ts)
+            if (ts && ts[0])
             {
                 dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
                 free(ts);
@@ -268,7 +268,7 @@ efreet_dirs_get(const char *key, const char *fallback)
         // resolve path properly/fully to remove path//path2 to
         // path/path2, path/./path2 to path/path2 etc.
         char *ts = ecore_file_realpath(s);
-        if (ts)
+        if (ts && ts[0])
         {
             dirs = eina_list_append(dirs, (void *)eina_stringshare_add(ts));
             free(ts);
