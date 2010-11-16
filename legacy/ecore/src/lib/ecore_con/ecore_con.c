@@ -90,6 +90,10 @@ static void _ecore_con_event_server_data_free(void *data,
 static void _ecore_con_lookup_done(void           *data,
                                    Ecore_Con_Info *infos);
 
+static const char *
+_ecore_con_pretty_ip(struct sockaddr *client_addr,
+                     socklen_t        size);
+
 EAPI int ECORE_CON_EVENT_CLIENT_ADD = 0;
 EAPI int ECORE_CON_EVENT_CLIENT_DEL = 0;
 EAPI int ECORE_CON_EVENT_SERVER_ADD = 0;
@@ -379,7 +383,7 @@ error:
      free(svr->write_buf);
 
    if (svr->ip)
-     free(svr->ip);
+     eina_stringshare_del(svr->ip);
 
 #endif
    ecore_con_ssl_server_shutdown(svr);
@@ -1005,9 +1009,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
         return NULL;
      }
 
-   if (cl->client_addr && cl->host_server &&
-       (((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP) ||
-        ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST)))
+   if (cl->client_addr)
      free(cl->client_addr);
 
    data = cl->data;
@@ -1090,6 +1092,8 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
         ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_ip_get");
         return NULL;
      }
+   if (!cl->ip)
+     cl->ip = _ecore_con_pretty_ip(cl->client_addr, cl->client_addr_len);
 
    return cl->ip;
 }
@@ -1193,7 +1197,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      free(svr->path);
 
    if (svr->ip)
-     free(svr->ip);
+     eina_stringshare_del(svr->ip);
 
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
@@ -1257,7 +1261,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      ecore_main_fd_handler_del(cl->fd_handler);
 
    if (cl->ip)
-     free(cl->ip);
+     eina_stringshare_del(cl->ip);
    cl->data = NULL;
    free(cl);
    return;
@@ -1454,7 +1458,7 @@ _ecore_con_cb_udp_listen(void           *data,
    if (!svr->fd_handler)
      goto error;
 
-   svr->ip = strdup(net_info->ip);
+   svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
@@ -1535,7 +1539,7 @@ _ecore_con_cb_tcp_connect(void           *data,
    if (!svr->fd_handler)
      goto error;
 
-   svr->ip = strdup(net_info->ip);
+   svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
@@ -1587,7 +1591,7 @@ _ecore_con_cb_udp_connect(void           *data,
    if (!svr->fd_handler)
      goto error;
 
-   svr->ip = strdup(net_info->ip);
+   svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
@@ -1652,7 +1656,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
      return ECORE_CON_DISCONNECTED;
 }
 
-static char *
+static const char *
 _ecore_con_pretty_ip(struct sockaddr *client_addr,
                      socklen_t        size)
 {
@@ -1671,17 +1675,15 @@ _ecore_con_pretty_ip(struct sockaddr *client_addr,
                       sa6->sin6_addr.s6_addr[13],
                       sa6->sin6_addr.s6_addr[14],
                       sa6->sin6_addr.s6_addr[15]);
-             return strdup(ipbuf);
+             return eina_stringshare_add(ipbuf);
           }
      }
 
-   if (getnameinfo(client_addr, size,
-                   ipbuf, sizeof (ipbuf), NULL, 0,
-                   NI_NUMERICHOST))
-     return strdup("0.0.0.0");
+   if (getnameinfo(client_addr, size, ipbuf, sizeof (ipbuf), NULL, 0, NI_NUMERICHOST))
+     return eina_stringshare_add("0.0.0.0");
 
    ipbuf[sizeof (ipbuf) - 1] = 0;
-   return strdup(ipbuf);
+   return eina_stringshare_add(ipbuf);
 }
 
 static Eina_Bool
@@ -1690,9 +1692,9 @@ _ecore_con_svr_tcp_handler(void                        *data,
 {
    Ecore_Con_Server *svr;
    Ecore_Con_Client *cl = NULL;
+   unsigned char client_addr[256];
+   unsigned int client_addr_len = sizeof(client_addr);
    int new_fd;
-   unsigned char incoming[256];
-   size_t size_in;
 
    svr = data;
    if (svr->dead)
@@ -1706,11 +1708,8 @@ _ecore_con_svr_tcp_handler(void                        *data,
      return ECORE_CALLBACK_RENEW;
 
    /* a new client */
-
-   size_in = sizeof(incoming);
-
-   memset(&incoming, 0, size_in);
-   new_fd = accept(svr->fd, (struct sockaddr *)&incoming, (socklen_t *)&size_in);
+   memset(&client_addr, 0, client_addr_len);
+   new_fd = accept(svr->fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
    if (new_fd < 0)
      /* error! */
      return ECORE_CALLBACK_RENEW;
@@ -1740,11 +1739,15 @@ _ecore_con_svr_tcp_handler(void                        *data,
           goto error;
      }
 
+   cl->client_addr = malloc(client_addr_len);
+   if (!cl->client_addr)
+     goto error;
+   cl->client_addr_len = client_addr_len;
+   memcpy(cl->client_addr, &client_addr, client_addr_len);
+   
    svr->clients = eina_list_append(svr->clients, cl);
    svr->client_count++;
-   if (!svr->path)
-     cl->ip = _ecore_con_pretty_ip((struct sockaddr *)&incoming, size_in);
-
+   
    if ((!cl->delete_me) && (!cl->handshaking))
      {
         Ecore_Con_Event_Client_Add *e;
@@ -2023,7 +2026,7 @@ _ecore_con_svr_udp_handler(void             *data,
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, ECORE_CALLBACK_RENEW);
 
    cl->host_server = svr;
-   cl->client_addr = calloc(1, client_addr_len);
+   cl->client_addr = malloc(client_addr_len);
    if (!cl->client_addr)
      {
         free(cl);
@@ -2035,9 +2038,6 @@ _ecore_con_svr_udp_handler(void             *data,
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
    svr->clients = eina_list_append(svr->clients, cl);
    svr->client_count++;
-
-   cl->ip = _ecore_con_pretty_ip(cl->client_addr,
-                                 cl->client_addr_len);
 
    { /* indent to keep it all nicely separated */
       Ecore_Con_Event_Client_Add *add;
@@ -2127,7 +2127,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
               ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                               _ecore_con_event_client_del_free, NULL);
           }
-        INF("Lost client %s", cl->ip);
+        INF("Lost client %s", (cl->ip) ? cl->ip : "");
         cl->dead = EINA_TRUE;
         if (cl->fd_handler)
           ecore_main_fd_handler_del(cl->fd_handler);
@@ -2185,7 +2185,7 @@ _ecore_con_svr_cl_handler(void             *data,
              Ecore_Con_Event_Client_Del *e;
 
              cl->dead = EINA_TRUE;
-             INF("Lost client %s", cl->ip);
+             INF("Lost client %s", (cl->ip) ? cl->ip : "");
              e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
 
@@ -2313,7 +2313,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
                                 _ecore_con_event_client_del_free, NULL);
 
                 cl->dead = EINA_TRUE;
-                INF("Lost client %s", cl->ip);
+                INF("Lost client %s", (cl->ip) ? cl->ip : "");
                 if (cl->fd_handler)
                   ecore_main_fd_handler_del(cl->fd_handler);
 

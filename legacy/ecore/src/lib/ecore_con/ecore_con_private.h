@@ -92,7 +92,7 @@ struct _Ecore_Con_Client
    int buf_size;
    int buf_offset;
    unsigned char *buf;
-   char *ip;
+   const char *ip;
    int event_count;
    struct sockaddr *client_addr;
    int client_addr_len;
@@ -146,7 +146,7 @@ struct _Ecore_Con_Server
 #endif
    double start_time;
    double client_disconnect_time;
-   char *ip;
+   const char *ip;
    Eina_Bool dead : 1;
    Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
    Eina_Bool connecting : 1; /* EINA_FALSE if just initialized or connected */
