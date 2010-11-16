@@ -175,6 +175,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
    re = (Render_Engine *)data;
    evas_gl_common_context_flush(re->gl_context);
+   evas_gl_common_context_newframe(re->win->gl_context);
    /* get the upate rect surface - return engine data as dummy */
    if (!re->draw.redraw)
      {
