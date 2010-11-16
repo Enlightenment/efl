@@ -129,8 +129,6 @@ extern Eina_Bool _threads_activated;
 
 void eina_share_common_threads_init(void);
 void eina_share_common_threads_shutdown(void);
-Eina_Bool eina_binshare_init(void);
-Eina_Bool eina_binshare_shutdown(void);
 void eina_log_threads_init(void);
 void eina_log_threads_shutdown(void);
 #endif

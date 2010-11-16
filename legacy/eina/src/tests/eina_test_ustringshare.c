@@ -50,7 +50,7 @@ START_TEST(eina_ustringshare_simple)
 
    t0 = eina_ustringshare_ref(t0);
    fail_if(t0 == NULL);
-   fail_if((int)strlen((const char*)TEST0) != eina_stringshare_strlen((const char*)t0));
+   fail_if((int)strlen((char*)TEST0) != eina_stringshare_strlen((const char*)t0));
 
    eina_ustringshare_del(t0);
    eina_ustringshare_del(t0);
