@@ -142,6 +142,7 @@ struct Efreet_Icon_Point
 };
 
 EAPI const char        *efreet_icon_user_dir_get(void);
+EAPI const char        *efreet_icon_deprecated_user_dir_get(void);
 EAPI void               efreet_icon_extension_add(const char *ext);
 
 EAPI Eina_List        **efreet_icon_extra_list_get(void);

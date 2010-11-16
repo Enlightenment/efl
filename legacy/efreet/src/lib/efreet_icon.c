@@ -145,7 +145,7 @@ efreet_icon_shutdown(void)
  * @return Returns the user icon directory
  * @brief Returns the user icon directory
  */
-static const char *
+EAPI const char *
 efreet_icon_deprecated_user_dir_get(void)
 {
     const char *user;
