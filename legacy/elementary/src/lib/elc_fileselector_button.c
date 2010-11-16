@@ -262,6 +262,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->btn);
 
    _theme_hook(obj);
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 

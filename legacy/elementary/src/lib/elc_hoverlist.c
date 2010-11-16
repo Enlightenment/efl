@@ -331,6 +331,7 @@ elm_hoverlist_add(Evas_Object* parent)
    elm_widget_sub_object_add(obj, wd->list);
    elm_widget_sub_object_add(obj, wd->hover);
    elm_widget_sub_object_add(obj, wd->target);
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
 
