@@ -123,7 +123,7 @@ _animator_animate_cb(void *data)
    //Not end. Keep going.
    if (elapsed_time < animator->duration) return ECORE_CALLBACK_RENEW;
 
-   //Repeat and reverse and time done! 
+   //Repeat and reverse and time done!
    if (!animator->cur_repeat_cnt)
      {
 	animator->on_animating = EINA_FALSE;
@@ -148,12 +148,12 @@ _animator_parent_del(void *data, Evas *evas __UNUSED__,
 }
 
 /**
- * Get the value of reverse mode. 
+ * Get the value of reverse mode.
  *
  * @param[in] animator Animator object
- * @return EINA_TRUE is reverse mode 
+ * @return EINA_TRUE is reverse mode
  *
- * @ingroup Animator 
+ * @ingroup Animator
  */
 EAPI Eina_Bool
 elm_animator_auto_reverse_get(const Elm_Animator *animator)
@@ -168,7 +168,7 @@ elm_animator_auto_reverse_get(const Elm_Animator *animator)
  * @param[in] animator Animator object
  * @return Repeat count
  *
- * @ingroup Animator 
+ * @ingroup Animator
  */
 EAPI unsigned int
 elm_animator_repeat_get(const Elm_Animator *animator)
@@ -178,12 +178,12 @@ elm_animator_repeat_get(const Elm_Animator *animator)
 }
 
 /**
- * Set auto reverse function.  
+ * Set auto reverse function.
  *
  * @param[in] animator Animator object
  * @param[in] reverse Reverse or not
- * 
- * @ingroup Animator 
+ *
+ * @ingroup Animator
  */
 EAPI void
 elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse)
@@ -200,10 +200,10 @@ elm_animator_auto_reverse_set(Elm_Animator *animator, Eina_Bool reverse)
 }
 
 /**
- * Set the animation acceleration style. 
+ * Set the animation acceleration style.
  *
  * @param[in] animator Animator object
- * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR 
+ * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR
  *
  * @ingroup Animator
  */
@@ -233,10 +233,10 @@ elm_animator_curve_style_set(Elm_Animator *animator,
 }
 
 /**
- * Set the operation duration.  
+ * Set the operation duration.
  *
  * @param[in] animator Animator object
- * @param[in] duration Duration in second 
+ * @param[in] duration Duration in second
  *
  * @ingroup Animator
  */
@@ -249,12 +249,12 @@ elm_animator_duration_set(Elm_Animator *animator, double duration)
 }
 
 /**
- * Set the callback function for animator operation.  
+ * Set the callback function for animator operation.
  * The range of callback function frame data is to 0 ~ 1
- * User can refer this frame value for one's animation frame data. 
+ * User can refer this frame value for one's animation frame data.
  * @param[in] animator Animator object
- * @param[in] func Callback function pointer 
- * @param[in] data Callback function user argument 
+ * @param[in] func Callback function pointer
+ * @param[in] data Callback function user argument
  *
  * @ingroup Animator
  */
@@ -270,10 +270,10 @@ elm_animator_operation_callback_set(Elm_Animator *animator,
 }
 
 /**
- * Add new animator. 
+ * Add new animator.
  *
  * @param[in] parent Parent object
- * @return animator object 
+ * @return animator object
  *
  * @ingroup Animator
  */
@@ -295,8 +295,8 @@ elm_animator_add(Evas_Object *parent)
 /**
  * Get the status for the animator operation.
  *
- * @param[in] animator Animator object 
- * @return EINA_TRUE is animator is operating. 
+ * @param[in] animator Animator object
+ * @return EINA_TRUE is animator is operating.
  *
  * @ingroup Animator
  */
@@ -308,9 +308,9 @@ elm_animator_operating_get(const Elm_Animator *animator)
 }
 
 /**
- * Delete animator. 
+ * Delete animator.
  *
- * @param[in] animator Animator object 
+ * @param[in] animator Animator object
  *
  * @ingroup Animator
  */
@@ -328,11 +328,11 @@ elm_animator_del(Elm_Animator *animator)
 }
 
 /**
- * Set the callback function for the animator end.  
+ * Set the callback function for the animator end.
  *
- * @param[in]  animator Animator object 
- * @param[in]  func   Callback function pointer
- * @param[in]  data Callback function user argument 
+ * @param[in]  animator Animator object
+ * @param[in]  func   Callback function pointe
+ * @param[in]  data Callback function user argument
  *
  * @ingroup Animator
  */
@@ -380,7 +380,7 @@ elm_animator_resume(Elm_Animator *animator)
 /**
  * Stop animator.
  *
- * @param[in] animator Animator object 
+ * @param[in] animator Animator object
  *
  * @ingroup Animator
  */
