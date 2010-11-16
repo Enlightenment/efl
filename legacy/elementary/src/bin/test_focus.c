@@ -3,6 +3,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#ifndef ELM_LIB_QUICKLAUNCH
 
 static void
 _on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *einfo __UNUSED__)
@@ -327,4 +328,4 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
           }
      }
 }
-
+#endif
