@@ -703,13 +703,13 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 
   /* Last chance to have a window */
+#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
+  {"opengl_sdl", _ecore_evas_constructor_opengl_sdl},
+#endif
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
   {"sdl", _ecore_evas_constructor_sdl},
   {"software_16_sdl", _ecore_evas_constructor_sdl16},
-#endif
-
-#ifdef BUILD_ECORE_EVAS_OPENGL_SDL
-  {"opengl_sdl", _ecore_evas_constructor_opengl_sdl},
 #endif
 
   /* independent */
