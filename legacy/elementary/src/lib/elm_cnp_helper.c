@@ -20,7 +20,7 @@
 
 # define ARRAYINIT(foo)  [foo]=
 
-#define DEBUGON	1
+#define DEBUGON	0
 
 #if DEBUGON
 #define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
