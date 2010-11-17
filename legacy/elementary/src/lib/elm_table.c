@@ -165,7 +165,7 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
 }
 
 /**
- * Get the current table homogeneous mode.
+ * Get the current table homogenous mode.
  *
  * @param obj The table object
  * @return a boolean to set (or no) layout homogenous in the table
@@ -174,7 +174,7 @@ elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
  * @ingroup Table
  */
 EAPI Eina_Bool
-elm_table_homogeneous_get(const Evas_Object *obj)
+elm_table_homogenous_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
