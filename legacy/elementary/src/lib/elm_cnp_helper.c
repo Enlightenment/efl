@@ -23,7 +23,7 @@
 #define DEBUGON	1
 
 #if DEBUGON
-#define cnp_debug(x...) printf(__FILE__": " x)
+#define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
 #else
 #define cnp_debug(x...)
 #endif
