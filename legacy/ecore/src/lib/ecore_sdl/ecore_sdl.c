@@ -133,6 +133,7 @@ _ecore_sdl_event_key(SDL_Event *event, double time)
 
    ev->timestamp = time;
    ev->window = 0;
+   ev->event_window = 0;
    ev->modifiers = _ecore_sdl_event_modifiers(SDL_GetModState());
    ev->key = NULL;
    ev->compose = NULL;
@@ -170,6 +171,7 @@ ecore_sdl_feed_events(void)
 
              ev->timestamp = time;
              ev->window = 0;
+             ev->event_window = 0;
              ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->x = event.motion.x;
              ev->y = event.motion.y;
@@ -191,6 +193,7 @@ ecore_sdl_feed_events(void)
 
                   ev->timestamp = time;
                   ev->window = 0;
+                  ev->event_window = 0;
                   ev->modifiers = 0; /* FIXME: keep modifier around. */
                   ev->direction = 0;
                   ev->z = event.button.button == SDL_BUTTON_WHEELDOWN ? -1 : 1;
@@ -206,6 +209,7 @@ ecore_sdl_feed_events(void)
 
                   ev->timestamp = time;
                   ev->window = 0;
+                  ev->event_window = 0;
                   ev->modifiers = 0; /* FIXME: keep modifier around. */
                   ev->buttons = event.button.button;
                   ev->double_click = 0;
@@ -223,6 +227,7 @@ ecore_sdl_feed_events(void)
              if (!ev) return ;
              ev->timestamp = time;
              ev->window = 0;
+             ev->event_window = 0;
              ev->modifiers = 0; /* FIXME: keep modifier around. */
              ev->buttons = event.button.button;
              ev->double_click = 0;
