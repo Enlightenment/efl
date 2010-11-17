@@ -940,8 +940,8 @@ extern "C" {
  *
  * @ingroup Layout
  */
-#define elm_layout_icon_get(_ly, _obj) \
-  elm_layout_content_get((_ly), "elm.swallow.icon", (_obj))
+#define elm_layout_icon_get(_ly) \
+  elm_layout_content_get((_ly), "elm.swallow.icon")
 
 /**
  * @def elm_layout_end_set
@@ -968,8 +968,8 @@ extern "C" {
  *
  * @ingroup Layout
  */
-#define elm_layout_end_get(_ly, _obj) \
-  elm_layout_content_get((_ly), "elm.swallow.end", (_obj))
+#define elm_layout_end_get(_ly) \
+  elm_layout_content_get((_ly), "elm.swallow.end")
 
 /**
  * @def elm_layout_label_set
