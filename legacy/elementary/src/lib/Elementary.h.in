@@ -1665,6 +1665,7 @@ extern "C" {
    EAPI void              elm_genlist_item_icons_orphan(Elm_Genlist_Item *it);
    EAPI const Evas_Object *elm_genlist_item_object_get(const Elm_Genlist_Item *it);
    EAPI void              elm_genlist_item_update(Elm_Genlist_Item *item);
+   EAPI void              elm_genlist_item_item_class_update(Elm_Genlist_Item *it, const Elm_Genlist_Item_Class *itc);
    EAPI void              elm_genlist_item_tooltip_text_set(Elm_Genlist_Item *item, const char *text);
    EAPI void              elm_genlist_item_tooltip_content_cb_set(Elm_Genlist_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
    EAPI void              elm_genlist_item_tooltip_unset(Elm_Genlist_Item *item);

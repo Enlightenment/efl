@@ -1195,6 +1195,15 @@ struct genlist7_data
   Evas_Object *win, *pager;
 };
 
+static Elm_Genlist_Item_Class itc7;
+static void
+gl_sel7(void *data, Evas_Object *obj, void *event_info)
+{
+   if (!event_info) return;
+   elm_genlist_item_item_class_update(event_info, &itc7);
+   printf("sel item data [%p] on genlist obj [%p], item pointer [%p], new item style [%s] \n", data, obj, event_info, itc7.item_style);
+}
+
 static void
 test_genlist7_back_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -1277,20 +1286,26 @@ test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    itc2.func.state_get = gl2_state_get;
    itc2.func.del       = gl2_del;
 
+   itc7.item_style     = "double_label";
+   itc7.func.label_get = gl5_label_get;
+   itc7.func.icon_get  = gl5_icon_get;
+   itc7.func.state_get = gl5_state_get;
+   itc7.func.del       = gl5_del;
+
    tit[0].mode = 0;
    tit[0].item = elm_genlist_item_append(gl, &itc2,
 					 &(tit[0])/* item data */, NULL/* parent */,
-                                         ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                         ELM_GENLIST_ITEM_NONE, gl_sel7/* func */,
 					 NULL/* func data */);
    tit[1].mode = 1;
    tit[1].item = elm_genlist_item_append(gl, &itc2,
 					 &(tit[1])/* item data */, NULL/* parent */,
-                                         ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                         ELM_GENLIST_ITEM_NONE, gl_sel7/* func */,
 					 NULL/* func data */);
    tit[2].mode = 2;
    tit[2].item = elm_genlist_item_append(gl, &itc2,
         				 &(tit[2])/* item data */, NULL/* parent */,
-                                         ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
+                                         ELM_GENLIST_ITEM_NONE, gl_sel7/* func */,
         				 NULL/* func data */);
 
    evas_object_resize(win, 320, 320);
