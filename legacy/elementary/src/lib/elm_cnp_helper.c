@@ -511,7 +511,7 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event){
 		  cnp_debug("Found something: %s\n", atoms[i].name);
 		  atoms[i].notify(sel, ev);
 	     } else {
-		  printf("Ignored: No handler!\n");
+		  cnp_debug("Ignored: No handler!\n");
 	     }
 	  }
      }
@@ -685,7 +685,7 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
    char *p;
 
    data = notify->data;
-   printf("data->format is %d %p %p\n",data->format,notify,data);
+   cnp_debug("data->format is %d %p %p\n",data->format,notify,data);
    if (data->content == ECORE_X_SELECTION_CONTENT_FILES)
      {
         cnp_debug("got a files list\n");
@@ -1023,7 +1023,7 @@ pasteimage_provider_set(Evas_Object *entry)
    const char *type;
    if (!entry) return false;
    type = elm_widget_type_get(entry);
-   printf("type is %s\n",type);
+   cnp_debug("type is %s\n",type);
    if ((!type) || (strcmp(type, "entry"))) return false;
 
    v = evas_object_data_get(entry, PROVIDER_SET);
@@ -1271,7 +1271,7 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    return true;
 
 found:
-   printf("Found a target we'd like: %s\n",atoms[i].name);
+   cnp_debug("Found a target we'd like: %s\n",atoms[i].name);
        cnp_debug("0x%x\n",xwin);
 
    if (i == CNP_ATOM_text_urilist)
@@ -1366,11 +1366,11 @@ _dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    /* Only thing we care about: will accept */
    if (status->will_accept)
      {
-         printf("Will accept\n");
+         cnp_debug("Will accept\n");
      }
    else
      { /* Won't accept */
-         printf("Won't accept accept\n");
+         cnp_debug("Won't accept accept\n");
      }
    return true;
 }
@@ -1425,7 +1425,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
          evas_object_evas_get(obj)));
    ecore_x_dnd_aware_set(xwin, true);
 
-   printf("Adding drop target calls\n");
+   cnp_debug("Adding drop target calls\n");
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
                                            _dnd_enter, NULL);
    handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION,
@@ -1619,7 +1619,7 @@ elm_cnp_tempfile_create(int size){
    }
 #endif
 
- printf("filename is %s\n",info->filename);
+ cnp_debug("filename is %s\n",info->filename);
    if (size < 1)
      {
         /* Set map to NULL and return */
