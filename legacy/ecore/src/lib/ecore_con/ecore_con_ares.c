@@ -402,7 +402,7 @@ _ecore_con_info_cares_clean(void)
 }
 
 static Eina_Bool
-_ecore_con_info_cares_timeout_cb(void *data)
+_ecore_con_info_cares_timeout_cb(void *data __UNUSED__)
 {
    ares_process(info_channel, &info_readers, &info_writers);
    _ecore_con_info_cares_clean();
@@ -411,8 +411,8 @@ _ecore_con_info_cares_timeout_cb(void *data)
 }
 
 static Eina_Bool
-_ecore_con_info_cares_fd_cb(void             *data,
-                            Ecore_Fd_Handler *fd_handler)
+_ecore_con_info_cares_fd_cb(void             *data  __UNUSED__,
+                            Ecore_Fd_Handler *fd_handler  __UNUSED__)
 {
    ares_process(info_channel, &info_readers, &info_writers);
    _ecore_con_info_cares_clean();
@@ -423,12 +423,11 @@ _ecore_con_info_cares_fd_cb(void             *data,
 static void
 _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                              int              status,
-                             int              timeouts,
+                             int              timeouts  __UNUSED__,
                              struct hostent  *hostent)
 {
    struct sockaddr *addr;
    int addrlen;
-   int length = 0;
 
    /* Found something ? */
    switch (status)
@@ -575,7 +574,7 @@ on_error:
 static void
 _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
                               int              status,
-                              int              timeouts,
+                              int              timeouts __UNUSED__,
                               char            *node,
                               char            *service)
 {
