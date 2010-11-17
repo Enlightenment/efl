@@ -289,10 +289,14 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 {
    Evas_Object *win, *bg, *bx, *o;
    Elm_List_Item *lit;
+   char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor 3");
    elm_win_autodel_set(win, 1);
+
+   snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", PACKAGE_DATA_DIR);
+   elm_theme_extension_add(NULL, buf);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
