@@ -1607,28 +1607,30 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    int so_err = 0;
    unsigned int size = sizeof(int);
 
+   errno = 0;
    res = getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, (void *)&so_err, &size);
 #ifdef _WIN32
    if (res == SOCKET_ERROR)
-     so_err = -1;
+     so_err = WSAGetLastError();
 
-   if (so_err == WSAEINPROGRESS && !svr->dead)
+   if ((so_err == WSAEINPROGRESS) && !svr->dead)
      return ECORE_CON_INPROGRESS;
 
 #else
    if (res < 0)
-     so_err = -1;
+     so_err = errno;
 
-   if (so_err == EINPROGRESS && !svr->dead)
+   if ((so_err == EINPROGRESS) && !svr->dead)
      return ECORE_CON_INPROGRESS;
 
 #endif
 
-   if (so_err != 0)
+   if (so_err)
      {
         /* we lost our server! */
-         _ecore_con_server_kill(svr);
-         return ECORE_CON_DISCONNECTED;
+        ERR("Connection lost: %s", strerror(so_err));
+        _ecore_con_server_kill(svr);
+        return ECORE_CON_DISCONNECTED;
      }
 
    if ((!svr->delete_me) && (!svr->handshaking) && svr->connecting)
