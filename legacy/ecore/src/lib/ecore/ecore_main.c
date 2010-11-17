@@ -809,9 +809,9 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
    fd_handler->delete_me = 1;
    fd_handlers_delete_me = 1;
    _ecore_main_fdh_poll_del(fd_handler);
-   if (fd_handler->prep_func)
+   if (fd_handler->prep_func && fd_handlers_with_prep)
      fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
-   if (fd_handler->buf_func)
+   if (fd_handler->buf_func && fd_handlers_with_buffer)
      fd_handlers_with_buffer = eina_list_remove(fd_handlers_with_buffer, fd_handler);
    return fd_handler->data;
 }
@@ -856,9 +856,9 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_F
      }
    fd_handler->prep_func = func;
    fd_handler->prep_data = (void *)data;
-   if (fd_handlers_with_prep)
-     fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
-   fd_handlers_with_prep = eina_list_append(fd_handlers_with_prep, fd_handler);
+   if (fd_handlers_with_prep && (!eina_list_data_find(fd_handlers_with_prep, fd_handler)))
+     /* FIXME: THIS WILL NOT SCALE WITH LOTS OF PREP FUNCTIONS!!! */
+     fd_handlers_with_prep = eina_list_append(fd_handlers_with_prep, fd_handler);
 }
 
 /**
@@ -1182,9 +1182,9 @@ _ecore_main_fd_handlers_cleanup(void)
                   deleted_in_use++;
                   continue;
                }
-             if (fdh->buf_func)
+             if (fdh->buf_func && fd_handlers_with_buffer)
                fd_handlers_with_buffer = eina_list_remove(fd_handlers_with_buffer, fdh);
-             if (fdh->prep_func)
+             if (fdh->prep_func && fd_handlers_with_prep)
                fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fdh);
              fd_handlers = (Ecore_Fd_Handler *)
                 eina_inlist_remove(EINA_INLIST_GET(fd_handlers),
