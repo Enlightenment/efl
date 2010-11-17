@@ -12,8 +12,11 @@ snippet image
 	image: "${1:.png}" COMP;
 
 snippet group
-	group { name: ${1};
+	group { name: "${1}";
 		${2}
+		parts {
+			${3}
+		}
 	}
 
 snippet part
@@ -73,9 +76,9 @@ snippet IMAGE
 	}
 
 snippet desc
-	description { state: "${1}";
+	description { state: "${1}" ${2:0.0};
 		inherit: "default" 0.0;
-		${2}
+		${3}
 	}
 
 snippet programs
