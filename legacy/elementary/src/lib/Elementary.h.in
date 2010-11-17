@@ -988,8 +988,8 @@ extern "C" {
  *
  * @ingroup Layout
  */
-#define elm_layout_label_get(_ly, _txt) \
-  elm_layout_text_get((_ly), "elm.text", (_txt))
+#define elm_layout_label_get(_ly) \
+  elm_layout_text_get((_ly), "elm.text")
 
    /* smart callbacks called:
     */
