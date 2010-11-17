@@ -116,6 +116,7 @@ static int               do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static Ecore_Fd_Handler *fd_handler_current = NULL;
 static int               fd_handlers_delete_me = 0;
+static Eina_List        *fd_handlers_with_prep = NULL;
 #ifdef _WIN32
 static Ecore_Win32_Handler *win32_handlers = NULL;
 static Ecore_Win32_Handler *win32_handler_current = NULL;
@@ -803,6 +804,8 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
    fd_handler->delete_me = 1;
    fd_handlers_delete_me = 1;
    _ecore_main_fdh_poll_del(fd_handler);
+   if (fd_handler->prep_func)
+     fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
    return fd_handler->data;
 }
 
@@ -828,6 +831,13 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler __UNUSED__)
 }
 #endif
 
+/**
+ * @brief Set the prepare callback with data for a given #Ecore_Fd_Handler
+ * @param fd_handler The fd handler
+ * @param func The prep function
+ * @param data The data to pass to the prep function
+ * This function will be called prior to the the fd handler's callback function.
+ */
 EAPI void
 ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data)
 {
@@ -839,6 +849,9 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_F
      }
    fd_handler->prep_func = func;
    fd_handler->prep_data = (void *)data;
+   if (fd_handlers_with_prep)
+     fd_handlers_with_prep = eina_list_remove(fd_handlers_with_prep, fd_handler);
+   fd_handlers_with_prep = eina_list_append(fd_handlers_with_prep, fd_handler);
 }
 
 /**
@@ -935,6 +948,8 @@ _ecore_main_shutdown(void)
         ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
         free(fdh);
      }
+   eina_list_free(fd_handlers_with_prep);
+   fd_handlers_with_prep = NULL;
    fd_handlers_delete_me = 0;
    fd_handler_current = NULL;
 
@@ -958,16 +973,19 @@ static void
 _ecore_main_prepare_handlers(void)
 {
    Ecore_Fd_Handler *fdh;
+   Eina_List *l, *l2;
 
-   /* call the prepare callback for all handlers */
-   EINA_INLIST_FOREACH(fd_handlers, fdh)
+   /* call the prepare callback for all handlers with prep functions */
+   EINA_LIST_FOREACH_SAFE(fd_handlers_with_prep, l, l2, fdh)
      {
         if (!fdh->delete_me && fdh->prep_func)
           {
              fdh->references++;
-             fdh->prep_func (fdh->prep_data, fdh);
+             fdh->prep_func(fdh->prep_data, fdh);
              fdh->references--;
           }
+        else
+          fd_handlers_with_prep = eina_list_remove_list(fd_handlers_with_prep, l);
      }
 }
 
@@ -1008,7 +1026,8 @@ _ecore_main_select(double timeout)
    FD_ZERO(&exfds);
 
    /* call the prepare callback for all handlers */
-   _ecore_main_prepare_handlers();
+   if (fd_handlers_with_prep)
+     _ecore_main_prepare_handlers();
 #ifndef HAVE_EPOLL
    Ecore_Fd_Handler *fdh;
 
