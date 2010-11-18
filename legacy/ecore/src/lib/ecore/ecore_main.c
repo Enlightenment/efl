@@ -807,6 +807,10 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
                          "ecore_main_fd_handler_del");
         return NULL;
      }
+   if (fd_handler->delete_me)
+     /* FIXME: should this return NULL instead? */
+     return fd_handler->data;
+     
    fd_handler->delete_me = 1;
    _ecore_main_fdh_poll_del(fd_handler);
    fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
@@ -1138,8 +1142,11 @@ _ecore_main_fd_handlers_bads_rem(void)
                   if (!fdh->func(fdh->data, fdh))
                     {
                        ERR("Fd function err returned 0, remove it");
-                       fdh->delete_me = 1;
-                       fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
+                       if (!fdh->delete_me)
+                         {
+                            fdh->delete_me = 1;
+                            fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
+                         }
                        found++;
                     }
                   fdh->references--;
@@ -1147,8 +1154,12 @@ _ecore_main_fd_handlers_bads_rem(void)
              else
                {
                   ERR("Problematic fd found at %d! setting it for delete", fdh->fd);
-                  fdh->delete_me = 1;
-                  fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
+                  if (!fdh->delete_me)
+                    {
+                       fdh->delete_me = 1;
+                       fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
+                    }
+
                   found++;
                }
           }
@@ -1249,8 +1260,12 @@ _ecore_main_fd_handlers_call(void)
                   fdh->references++;
                   if (!fdh->func(fdh->data, fdh))
                     {
-                       fdh->delete_me = 1;
-                       fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
+                       if (!fdh->delete_me)
+                         {
+                            fdh->delete_me = 1;
+                            fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
+                         }
+
                     }
                   fdh->references--;
 
