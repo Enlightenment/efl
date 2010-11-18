@@ -1802,15 +1802,21 @@ eet_read_cipher(Eet_File   *ef,
         unsigned int data_deciphered_sz = 0;
         /* if we already have the data in ram... copy that */
 
+        if (efn->ciphered && efn->size > size)
+          {
+             size = efn->size;
+             data = realloc(data, efn->size);
+          }
+
         if (efn->data)
-           memcpy(data, efn->data, efn->size);
+           memcpy(data, efn->data, size);
         else
-        if (!read_data_from_disk(ef, efn, data, size))
-           goto on_error;
+          if (!read_data_from_disk(ef, efn, data, size))
+            goto on_error;
 
         if (efn->ciphered && cipher_key)
           {
-             if (eet_decipher(data, size, cipher_key, strlen(cipher_key),
+             if (eet_decipher(data, efn->size, cipher_key, strlen(cipher_key),
                               &data_deciphered, &data_deciphered_sz))
                {
                   if (data_deciphered)
