@@ -440,21 +440,21 @@ _theme_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _status_config_sizing(Evas_Object *win, Evas_Object *pager)
 {
-   Evas_Object *lb, *pd, *bx2, *sl, *sp;
+   Evas_Object *lb, *pd, *bx, *sl, *sp;
 
-   bx2 = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx2, 1.0, 0.0);
-   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, 0.5);
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
 
    pd = elm_frame_add(win);
-   evas_object_size_hint_weight_set(pd, 1.0, 0.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
    elm_object_style_set(pd, "pad_medium");
-   elm_box_pack_end(bx2, pd);
+   elm_box_pack_end(bx, pd);
    evas_object_show(pd);
 
    lb = elm_label_add(win);
-   evas_object_size_hint_weight_set(lb, 1.0, 0.0);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
    elm_label_label_set(lb,"<hilight>Scale</>");
    elm_frame_content_set(pd, lb);
@@ -462,14 +462,14 @@ _status_config_sizing(Evas_Object *win, Evas_Object *pager)
 
    sl = elm_slider_add(win);
    evas_object_data_set(win, "scale_slider", sl);
-   evas_object_size_hint_weight_set(sl, 1.0, 0.0);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_indicator_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0.25, 5.0);
    elm_slider_value_set(sl, elm_scale_get());
-   elm_box_pack_end(bx2, sl);
+   elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
    evas_object_smart_callback_add(sl, "changed", sc_round, NULL);
@@ -477,20 +477,20 @@ _status_config_sizing(Evas_Object *win, Evas_Object *pager)
 
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, 1);
-   evas_object_size_hint_weight_set(sp, 1.0, 0.0);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
-   elm_box_pack_end(bx2, sp);
+   elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
    pd = elm_frame_add(win);
-   evas_object_size_hint_weight_set(pd, 1.0, 0.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
    elm_object_style_set(pd, "pad_medium");
-   elm_box_pack_end(bx2, pd);
+   elm_box_pack_end(bx, pd);
    evas_object_show(pd);
 
    lb = elm_label_add(win);
-   evas_object_size_hint_weight_set(lb, 1.0, 0.0);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
    elm_label_label_set(lb, "<hilight>Finger Size</><br>");
    elm_frame_content_set(pd, lb);
@@ -498,22 +498,22 @@ _status_config_sizing(Evas_Object *win, Evas_Object *pager)
 
    sl = elm_slider_add(win);
    evas_object_data_set(win, "fs_slider", sl);
-   evas_object_size_hint_weight_set(sl, 1.0, 0.0);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
    elm_slider_unit_format_set(sl, "%1.0f");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 5, 200);
    elm_slider_value_set(sl, elm_finger_size_get());
-   elm_box_pack_end(bx2, sl);
+   elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
    evas_object_smart_callback_add(sl, "changed", fs_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", fs_change, NULL);
 
-   evas_object_data_set(win, "sizing", bx2);
+   evas_object_data_set(win, "sizing", bx);
 
-   elm_pager_content_push(pager, bx2);
+   elm_pager_content_push(pager, bx);
 }
 
 static Evas_Object *
@@ -591,7 +591,7 @@ _sample_theme_new(Evas_Object *win)
    elm_list_go(li);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_min_set(rc, 120, 120);
+   evas_object_size_hint_min_set(rc, 160, 120);
    elm_table_pack(base, rc, 0, 4, 2, 1);
 
    return base;
@@ -609,11 +609,11 @@ _status_config_themes(Evas_Object *win, Evas_Object *pager)
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_min_set(rc, 240, 120);
+   evas_object_size_hint_min_set(rc, 320, 120);
    elm_table_pack(tb, rc, 0, 0, 1, 1);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_min_set(rc, 240, 240);
+   evas_object_size_hint_min_set(rc, 320, 240);
    elm_table_pack(tb, rc, 0, 1, 1, 1);
 
    /////////////////////////////////////////////
@@ -1279,6 +1279,7 @@ status_win(void)
    else if (0) _status_config(win, bx0);
    else _status_config_full(win, bx0);
 
+   evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
 

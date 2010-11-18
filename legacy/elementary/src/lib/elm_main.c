@@ -1330,7 +1330,8 @@ elm_profile_dir_free(const char *p_dir)
 /**
  * Get Elementary's list of available profiles.
  *
- * @return The profiles list.
+ * @return The profiles list. List node data are the profile name
+ *         strings.
  * @ingroup Profile
  *
  * @note One must free this list, after usage, with the function
