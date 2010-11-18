@@ -19,7 +19,7 @@ group "Elm_Config" struct {
   value "font_cache" int: 512;
   value "finger_size" int: 5;
   value "fps" double: 60.0;
-  value "theme" string: "default";
+  value "theme" string: "default-desktop";
   value "modules" string: "";
   value "tooltip_delay" double: 1.0;
   value "cursor_engine_only" int: 1;

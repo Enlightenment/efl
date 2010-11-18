@@ -5,10 +5,11 @@ EDJE_CC = @edje_cc@
 EDJE_FLAGS = -v -id $(top_srcdir)/data/themes -fd $(top_srcdir)/data/themes
 
 filesdir = $(datadir)/elementary/themes
-files_DATA = default.edj
+files_DATA = default.edj default-desktop.edj
 
 EXTRA_DIST = \
 default.edc \
+default-desktop.edc \
 arrow_down.png \
 arrow_up.png \
 bar_shine.png \
@@ -220,6 +221,11 @@ default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/default.edc \
 	$(top_builddir)/data/themes/default.edj
+
+default-desktop.edj: Makefile $(EXTRA_DIST)
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/default-desktop.edc \
+	$(top_builddir)/data/themes/default-desktop.edj
 
 clean-local:
 	rm -f *.edj
