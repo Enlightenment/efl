@@ -29,17 +29,88 @@ typedef struct _Elm_Store_Item                 Elm_Store_Item;
 typedef struct _Elm_Store_Item_Filesystem      Elm_Store_Item_Filesystem;
 typedef struct _Elm_Store_Item_Info            Elm_Store_Item_Info;
 typedef struct _Elm_Store_Item_Info_Filesystem Elm_Store_Item_Info_Filesystem;
+typedef struct _Elm_Store_Item_Mapping         Elm_Store_Item_Mapping;
+typedef struct _Elm_Store_Item_Mapping_Empty   Elm_Store_Item_Mapping_Empty;
+typedef struct _Elm_Store_Item_Mapping_Icon    Elm_Store_Item_Mapping_Icon;
+typedef struct _Elm_Store_Item_Mapping_Custom  Elm_Store_Item_Mapping_Custom;
 
 typedef Eina_Bool (*Elm_Store_Item_List_Cb) (void *data, Elm_Store_Item_Info *info);
 typedef void      (*Elm_Store_Item_Fetch_Cb) (void *data, Elm_Store_Item *sti);
 typedef void      (*Elm_Store_Item_Unfetch_Cb) (void *data, Elm_Store_Item *sti);
+typedef void     *(*Elm_Store_Item_Mapping_Cb) (void *data, Elm_Store_Item *sti, const char *part);
+
+typedef enum
+{
+  ELM_STORE_ITEM_MAPPING_NONE = 0,
+  
+  ELM_STORE_ITEM_MAPPING_LABEL, // const char * -> label
+  ELM_STORE_ITEM_MAPPING_STATE, // Eina_Bool -> state
+  ELM_STORE_ITEM_MAPPING_ICON, // char * -> icon path
+  ELM_STORE_ITEM_MAPPING_PHOTO, // char * -> photo path
+  ELM_STORE_ITEM_MAPPING_CUSTOM, // item->custom(it->data, it, part) -> void * (-> any)
+  // can add more here as needed by common apps
+  ELM_STORE_ITEM_MAPPING_LAST
+} Elm_Store_Item_Mapping_Type;
+
+struct _Elm_Store_Item_Mapping_Icon
+{
+  int                   w, h;
+  Elm_Icon_Lookup_Order lookup_order;
+  Eina_Bool             standard_name : 1;
+  Eina_Bool             no_scale : 1;
+  Eina_Bool             smooth : 1;
+  Eina_Bool             scale_up : 1;
+  Eina_Bool             scale_down : 1;
+  Eina_Bool             preload : 1;
+};
+
+struct _Elm_Store_Item_Mapping_Empty
+{
+  Eina_Bool             dummy;
+};
+
+struct _Elm_Store_Item_Mapping_Custom
+{
+  Elm_Store_Item_Mapping_Cb func;
+};
+
+struct _Elm_Store_Item_Mapping
+{
+  Elm_Store_Item_Mapping_Type     type;
+  const char                     *part;
+  int                             offset;
+  union {
+    Elm_Store_Item_Mapping_Empty  empty;
+    Elm_Store_Item_Mapping_Icon   icon;
+    Elm_Store_Item_Mapping_Custom custom;
+    // add more types here
+  } details;
+};
+
+struct _Elm_Store_Item_Info
+{
+  Elm_Genlist_Item_Class       *item_class;
+  const Elm_Store_Item_Mapping *mapping;
+  void                         *data;
+  char                         *sort_id;
+};
+
+struct _Elm_Store_Item_Info_Filesystem
+{
+  Elm_Store_Item_Info  base;
+  char                *path;
+};
+
+#define ELM_STORE_ITEM_MAPPING_END { ELM_STORE_ITEM_MAPPING_NONE, NULL, 0, { .empty = { EINA_TRUE } } }
+#define ELM_STORE_ITEM_MAPPING_OFFSET(st, it) offsetof(st, it)
+
+EAPI void                    elm_store_free(Elm_Store *st);
 
 EAPI Elm_Store              *elm_store_filesystem_new(void);
 EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir);
 EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st);
 EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti);
 
-EAPI void                    elm_store_free(Elm_Store *st);
 EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj);
 
 EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
@@ -58,15 +129,15 @@ EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti)
 EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);
 
 // private
-#if 1
+#if 0
 #define DBG(f, args...) printf(f, ##args)
 #else
 #define DBG(f, args...)
 #endif
 
-#define ELM_STORE_MAGIC 0x3f89ea56
+#define ELM_STORE_MAGIC            0x3f89ea56
 #define ELM_STORE_FILESYSTEM_MAGIC 0x3f89ea57
-#define ELM_STORE_ITEM_MAGIC 0x5afe8c1d
+#define ELM_STORE_ITEM_MAGIC       0x5afe8c1d
 
 struct _Elm_Store
 {
@@ -116,13 +187,6 @@ struct _Elm_Store_Item
   Eina_Bool         fetched : 1;
 };
 
-struct _Elm_Store_Item_Info
-{
-  Elm_Genlist_Item_Class *item_class;
-  void                   *data;
-  char                   *sort_id;
-};
-
 struct _Elm_Store_Filesystem
 {
   Elm_Store base;
@@ -135,13 +199,6 @@ struct _Elm_Store_Item_Filesystem
   Elm_Store_Item base;
   const char *path;
 };
-
-struct _Elm_Store_Item_Info_Filesystem
-{
-  Elm_Store_Item_Info base;
-  char *path;
-};
-
 
 static Elm_Genlist_Item_Class _store_item_class;
 
@@ -749,7 +806,7 @@ elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 EAPI void *
 elm_store_item_data_get(Elm_Store_Item *sti)
 {
-  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
   void *d;
   LKL(sti->lock);
   d = sti->data;
@@ -760,7 +817,7 @@ elm_store_item_data_get(Elm_Store_Item *sti)
 EAPI const Elm_Store *
 elm_store_item_store_get(const Elm_Store_Item *sti)
 {
-  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
   // dont need lock
   return sti->store;
 }
@@ -768,7 +825,7 @@ elm_store_item_store_get(const Elm_Store_Item *sti)
 EAPI const Elm_Genlist_Item *
 elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
 {
-  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
   // dont need lock
   return sti->item;
 }
@@ -778,11 +835,11 @@ elm_store_item_filesystem_path_get(const Elm_Store_Item *item)
 {
   Elm_Store_Item_Filesystem *sti = (Elm_Store_Item_Filesystem *)item;
   Elm_Store_Filesystem *st;
-  if (!EINA_MAGIC_CHECK(item, ELM_STORE_ITEM_MAGIC)) return;
-  if (!EINA_MAGIC_CHECK(item->store, ELM_STORE_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(item, ELM_STORE_ITEM_MAGIC)) return NULL;
+  if (!EINA_MAGIC_CHECK(item->store, ELM_STORE_MAGIC)) return NULL;
   /* ensure we're dealing with filesystem item */
   st = (Elm_Store_Filesystem *)item->store;
-  if (!EINA_MAGIC_CHECK(st, ELM_STORE_FILESYSTEM_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_FILESYSTEM_MAGIC)) return NULL;
   // dont need lock
   return sti->path;
 }
@@ -831,6 +888,46 @@ _st_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 // store callbacks to handle loading/parsing/freeing of store items from src
 static Elm_Genlist_Item_Class itc1;
 
+static const Elm_Store_Item_Mapping it1_mapping[] =
+{
+  {
+    ELM_STORE_ITEM_MAPPING_LABEL,
+      "elm.title.1", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, from),
+      { .empty = {
+        EINA_TRUE
+      } } },
+  {
+    ELM_STORE_ITEM_MAPPING_LABEL,
+      "elm.title.2", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, from),
+      { .empty = {
+        EINA_TRUE
+      } } },
+  {
+    ELM_STORE_ITEM_MAPPING_LABEL,
+      "elm.text", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, from),
+      { .empty = {
+        EINA_TRUE
+      } } },
+  {
+    ELM_STORE_ITEM_MAPPING_ICON,
+      "elm.swallow.icon", 0,
+      { .icon = {
+        48, 48, 
+        ELM_ICON_LOOKUP_THEME_FDO,
+        EINA_TRUE, EINA_FALSE,
+        EINA_TRUE,
+        EINA_FALSE, EINA_FALSE,
+        EINA_TRUE
+      } } },
+  {
+    ELM_STORE_ITEM_MAPPING_CUSTOM,
+      "elm.swallow.end", 0,
+      { .custom = {
+        NULL
+      } } },
+  ELM_STORE_ITEM_MAPPING_END
+};
+
 
 ////// **** WARNING ***********************************************************
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *
@@ -861,6 +958,7 @@ _st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *item_info)
   // provided by the app, store will fill everything else in, so it also
   // has to be writable
   info->base.item_class = &itc1; // based on item info - return the item class wanted (only style field used - rest reset to internal funcs store sets up to get label/icon etc)
+  info->base.mapping = it1_mapping;
   info->base.data = NULL; // if we can already parse and load all of item here and want to - set this
   return EINA_TRUE; // return true to include this, false not to
 }
