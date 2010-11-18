@@ -2,7 +2,7 @@
 #include "elm_priv.h"
 
 /**
- * @addtogroup Hoverlist
+ * @defgroup Hoverlist
  *
  * A hoverlist is a widget that, when show, pops up a list of items.
  * It automatically chooses an area inside its parent object's view
