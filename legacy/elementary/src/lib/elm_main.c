@@ -1402,6 +1402,13 @@ elm_profile_all_set(const char *profile)
 }
 
 /**
+ * @defgroup Engine Elementary Engine
+ *
+ * These are functions setting and querying which rendering engine
+ * Elementary will use for drawing its windows' pixels.
+ */
+
+/**
  * Get Elementary's rendering engine in use.
  *
  * This gets the global rendering engine that is applied to all

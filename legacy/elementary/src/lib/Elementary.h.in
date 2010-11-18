@@ -634,6 +634,17 @@ extern "C" {
    EAPI double       elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj);
    EAPI void         elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t);
    EAPI double       elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj);
+   /* available styles:
+    * default
+    * anchor
+    * hoversel_vertical
+    * hoversel_vertical_entry
+    */
+   /* smart callbacks called:
+    * "clicked" - the user clicked the button
+    * "repeated" - the user pressed the button without releasing it
+    * "unpressed" - when the button is unpressed (released)
+    */
 
    /* fileselector */
    EAPI Evas_Object *elm_fileselector_button_add(Evas_Object *parent);
@@ -656,6 +667,16 @@ extern "C" {
    EAPI Eina_Bool    elm_fileselector_button_is_save_get(const Evas_Object *obj);
    EAPI void         elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value);
    EAPI Eina_Bool    elm_fileselector_button_inwin_mode_get(const Evas_Object *obj);
+   /* available styles:
+    * default
+    * anchor
+    * hoversel_vertical
+    * hoversel_vertical_entry
+    */
+   /* smart callbacks called:
+    * "file,chosen" - the user has selected a path, whose string pointer comes
+                      as event info
+    */
 
    EAPI Evas_Object *elm_fileselector_entry_add(Evas_Object *parent);
    EAPI void         elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label);
@@ -679,17 +700,6 @@ extern "C" {
    EAPI Eina_Bool    elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj);
    EAPI void         elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
    EAPI const char  *elm_fileselector_entry_selected_get(const Evas_Object *obj);
-   /* available styles:
-    * default
-    * anchor
-    * hoversel_vertical
-    * hoversel_vertical_entry
-    */
-   /* smart callbacks called:
-    * "clicked" - the user clicked the button
-    * "repeated" - the user pressed the button without releasing it
-    * "unpressed" - when the button is unpressed (released)
-    */
 
    /* scroller policy */
    typedef enum _Elm_Scroller_Policy
