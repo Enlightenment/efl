@@ -995,9 +995,25 @@ void
 elm_smart_scroller_object_theme_set(Evas_Object *parent, Evas_Object *obj, const char *clas, const char *group, const char *style)
 {
    API_ENTRY return;
+   Evas_Coord mw, mh;
    _elm_theme_object_set(parent, sd->edje_obj, clas, group, style);
    if (sd->pan_obj)
      edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
+   mw = mh = -1;
+   elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   if (edje_object_part_exists(sd->edje_obj, "elm.scrollbar.base"))
+     {
+        Evas_Object *base;
+        base = edje_object_part_swallow_get(sd->edje_obj, "elm.scrollbar.base");
+        if (!base)
+          {
+             base = evas_object_rectangle_add(evas_object_evas_get(sd->edje_obj));
+             evas_object_color_set(base, 0, 0, 0, 0);
+             edje_object_part_swallow(sd->edje_obj, "elm.scrollbar.base", base);
+          }
+        if (!_elm_config->thumbscroll_enable)
+           evas_object_size_hint_min_set(base, mw, mh);
+     }
    sd->vbar_visible = !sd->vbar_visible;
    sd->hbar_visible = !sd->hbar_visible;
    _smart_scrollbar_bar_visibility_adjust(sd);
@@ -2291,7 +2307,7 @@ _smart_add(Evas_Object *obj)
    evas_object_propagate_events_set(o, 0);
    sd->edje_obj = o;
    // FIXME: null parent obj ... :(
-   _elm_theme_object_set(NULL, o, "scroller", "base", "default");
+   elm_smart_scroller_object_theme_set(NULL, obj, "scroller", "base", "default");
    edje_object_signal_callback_add(o, "drag", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag,start", "elm.dragable.vbar", _smart_edje_drag_v_start, sd);
    edje_object_signal_callback_add(o, "drag,stop", "elm.dragable.vbar", _smart_edje_drag_v_stop, sd);
