@@ -24,6 +24,7 @@
 
 // public api
 typedef struct _Elm_Store                      Elm_Store;
+typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
 typedef struct _Elm_Store_Item                 Elm_Store_Item;
 typedef struct _Elm_Store_Item_Filesystem      Elm_Store_Item_Filesystem;
 typedef struct _Elm_Store_Item_Info            Elm_Store_Item_Info;
@@ -33,11 +34,14 @@ typedef Eina_Bool (*Elm_Store_Item_List_Cb) (void *data, Elm_Store_Item_Info *in
 typedef void      (*Elm_Store_Item_Fetch_Cb) (void *data, Elm_Store_Item *sti);
 typedef void      (*Elm_Store_Item_Unfetch_Cb) (void *data, Elm_Store_Item *sti);
 
-EAPI Elm_Store              *elm_store_new(void);
+EAPI Elm_Store              *elm_store_filesystem_new(void);
+EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir);
+EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st);
+EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti);
+
 EAPI void                    elm_store_free(Elm_Store *st);
 EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj);
-EAPI void                    elm_store_source_filesystem_set(Elm_Store *st, const char *dir);
-EAPI const char             *elm_store_source_filesystem_get(const Elm_Store *st);
+
 EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
 EAPI int                     elm_store_cache_get(const Elm_Store *st);
 EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data);
@@ -49,7 +53,6 @@ EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *
 EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti);
 EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti);
 EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);
-EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti);
 
 // private
 #if 0
@@ -59,16 +62,19 @@ EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_
 #endif
 
 #define ELM_STORE_MAGIC 0x3f89ea56
+#define ELM_STORE_FILESYSTEM_MAGIC 0x3f89ea57
 #define ELM_STORE_ITEM_MAGIC 0x5afe8c1d
 
 struct _Elm_Store
 {
   EINA_MAGIC;
+  void         (*free)(Elm_Store *store);
+  struct {
+     void        (*free)(Elm_Store_Item *item);
+     const char *(*label_get)(Elm_Store_Item *item);
+  } item;
   Evas_Object   *genlist;
   Ecore_Thread  *list_th;
-  struct {
-    const char  *dir;
-  } filesystem;
   Eina_Inlist   *items;
   Eina_List     *realized;
   int            realized_count;
@@ -90,11 +96,6 @@ struct _Elm_Store
   Eina_Bool sorted : 1;
 };
 
-struct _Elm_Store_Item_Filesystem
-{
-  const char *path;
-};
-
 struct _Elm_Store_Item
 {
   EINA_INLIST;
@@ -104,10 +105,6 @@ struct _Elm_Store_Item
   Ecore_Thread     *fetch_th;
   Ecore_Job        *eval_job;
   void *data;
-  union {
-    Elm_Store_Item_Filesystem filesystem;
-    // add more types supported here
-  } type;
   LK(lock);
   Eina_Bool         live : 1;
   Eina_Bool         was_live : 1;
@@ -115,21 +112,32 @@ struct _Elm_Store_Item
   Eina_Bool         fetched : 1;
 };
 
-struct _Elm_Store_Item_Info_Filesystem
-{
-  char *path;
-};
-
 struct _Elm_Store_Item_Info
 {
   Elm_Genlist_Item_Class *item_class;
   void                   *data;
   char                   *sort_id;
-  union {
-    Elm_Store_Item_Info_Filesystem filesystem;
-    // add more types supported here
-  } type;
 };
+
+struct _Elm_Store_Filesystem
+{
+  Elm_Store base;
+  EINA_MAGIC;
+  const char *dir;
+};
+
+struct _Elm_Store_Item_Filesystem
+{
+  Elm_Store_Item base;
+  const char *path;
+};
+
+struct _Elm_Store_Item_Info_Filesystem
+{
+  Elm_Store_Item_Info base;
+  char *path;
+};
+
 
 static Elm_Genlist_Item_Class _store_item_class;
 
@@ -194,11 +202,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           ecore_thread_cancel(sti->fetch_th);
           sti->fetch_th = NULL;
         }
-      if (sti->type.filesystem.path)
-        {
-          eina_stringshare_del(sti->type.filesystem.path);
-          sti->type.filesystem.path = NULL;
-        }
+      if (sti->store->item.free) sti->store->item.free(sti);
       if (sti->data)
         {
           if (st->cb.unfetch.func)
@@ -343,7 +347,8 @@ _store_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part 
   const char *s = "";
   // FIXME: use item mapping for partname -> data pointer offset for string
   LKL(sti->lock);
-  if (sti->data) s = sti->type.filesystem.path;
+  if ((sti->data) && (sti->store->item.label_get))
+      s = sti->store->item.label_get(sti);
   LKU(sti->lock);
   return strdup(s);
 }
@@ -386,35 +391,36 @@ _store_filesystem_sort_cb(void *d1, void *d2)
 static void
 _store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
 {
-  Elm_Store *st = data;
+  Elm_Store_Filesystem *st = data;
   Eina_Iterator *it;
   const Eina_File_Direct_Info *finf;
   Eina_List *sorted = NULL;
-  Elm_Store_Item_Info *info;
+  Elm_Store_Item_Info_Filesystem *info;
 
   // FIXME: need a way to abstract the open, list, feed items from list
   // and maybe get initial sortable key vals etc.
-  it = eina_file_stat_ls(st->filesystem.dir);
+  it = eina_file_stat_ls(st->dir);
   if (!it) return;
   EINA_ITERATOR_FOREACH(it, finf)
     {
       Eina_Bool ok;
+      size_t pathsz = finf->path_length + 1;
 
-      info = calloc(1, sizeof(Elm_Store_Item_Info) + finf->path_length + 1);
+      info = calloc(1, sizeof(Elm_Store_Item_Info_Filesystem) + pathsz);
       if (!info) continue;
-      info->type.filesystem.path = ((char *)info) + sizeof(Elm_Store_Item_Info);
-      memcpy(info->type.filesystem.path, finf->path, finf->path_length + 1);
+      info->path = ((char *)info) + sizeof(Elm_Store_Item_Info_Filesystem);
+      memcpy(info->path, finf->path, pathsz);
       ok = EINA_TRUE;
-      if (st->cb.list.func)
-        ok = st->cb.list.func(st->cb.list.data, info);
+      if (st->base.cb.list.func)
+        ok = st->base.cb.list.func(st->base.cb.list.data, &info->base);
       if (ok)
         {
-          if (!st->sorted) ecore_thread_feedback(th, info);
+          if (!st->base.sorted) ecore_thread_feedback(th, info);
           else sorted = eina_list_append(sorted, info);
         }
       else
         {
-          if (info->sort_id) free(info->sort_id);
+          if (info->base.sort_id) free(info->base.sort_id);
           free(info);
         }
       if (ecore_thread_check(th)) break;
@@ -452,19 +458,19 @@ static void
 _store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg)
 {
   Elm_Store *st = data;
-  Elm_Store_Item *sti;
+  Elm_Store_Item_Filesystem *sti;
   Elm_Genlist_Item_Class *itc;
-  Elm_Store_Item_Info *info = msg;
+  Elm_Store_Item_Info_Filesystem *info = msg;
   
-  sti = calloc(1, sizeof(Elm_Store_Item));
+  sti = calloc(1, sizeof(Elm_Store_Item_Filesystem));
   if (!sti) goto done;
-  LKI(sti->lock);
-  EINA_MAGIC_SET(sti, ELM_STORE_ITEM_MAGIC);
-  sti->store = st;
-  sti->type.filesystem.path = eina_stringshare_add(info->type.filesystem.path);
-  sti->data = info->data;
+  LKI(sti->base.lock);
+  EINA_MAGIC_SET(&(sti->base), ELM_STORE_ITEM_MAGIC);
+  sti->base.store = st;
+  sti->base.data = info->base.data;
+  sti->path = eina_stringshare_add(info->path);
   
-  itc = info->item_class;
+  itc = info->base.item_class;
   if (!itc) itc = &_store_item_class;
   else
     {
@@ -475,28 +481,28 @@ _store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg
     }
 
   // FIXME: handle being a parent (tree)
-  sti->item = elm_genlist_item_append(st->genlist, itc,
-                                      sti/* item data */,
-                                      NULL/* parent */,
-                                      ELM_GENLIST_ITEM_NONE,
-                                      NULL/* func */,
-                                      NULL/* func data */);
+  sti->base.item = elm_genlist_item_append(st->genlist, itc,
+                                           sti/* item data */,
+                                           NULL/* parent */,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           NULL/* func */,
+                                           NULL/* func data */);
   st->items = eina_inlist_append(st->items, (Eina_Inlist *)sti);
 done:
-  if (info->sort_id) free(info->sort_id);
+  if (info->base.sort_id) free(info->base.sort_id);
   free(info);
 }
 
 // public api calls
 EAPI Elm_Store *
-elm_store_new(void)
+_elm_store_new(size_t size)
 {
-  Elm_Store *st;
-  
-  st = calloc(1, sizeof(Elm_Store));
+  Elm_Store *st = calloc(1, size);
+  EINA_SAFETY_ON_NULL_RETURN_VAL(st, NULL);
 
   // TODO: BEGIN - move to elm_store_init()
   eina_magic_string_set(ELM_STORE_MAGIC, "Elm_Store");
+  eina_magic_string_set(ELM_STORE_FILESYSTEM_MAGIC, "Elm_Store_Filesystem");
   eina_magic_string_set(ELM_STORE_ITEM_MAGIC, "Elm_Store_Item");
   // setup default item class (always the same) if list cb doesnt provide one
   _store_item_class.item_style = "default";
@@ -510,22 +516,55 @@ elm_store_new(void)
   st->cache_max = 128;
   return st;
 }
+#define elm_store_new(type) (type*)_elm_store_new(sizeof(type))
+
+static void
+_elm_store_filesystem_free(Elm_Store *store)
+{
+  Elm_Store_Filesystem *st = (Elm_Store_Filesystem *)store;
+  eina_stringshare_del(st->dir);
+}
+
+static void
+_elm_store_filesystem_item_free(Elm_Store_Item *item)
+{
+   Elm_Store_Item_Filesystem *sti = (Elm_Store_Item_Filesystem *)item;
+   eina_stringshare_del(sti->path);
+}
+
+static const char *
+_elm_store_filesystem_item_label_get(Elm_Store_Item *item)
+{
+   Elm_Store_Item_Filesystem *sti = (Elm_Store_Item_Filesystem *)item;
+   return sti->path;
+}
+
+EAPI Elm_Store *
+elm_store_filesystem_new(void)
+{
+  Elm_Store_Filesystem *st = elm_store_new(Elm_Store_Filesystem);
+  EINA_SAFETY_ON_NULL_RETURN_VAL(st, NULL);
+
+  EINA_MAGIC_SET(st, ELM_STORE_FILESYSTEM_MAGIC);
+  st->base.free = _elm_store_filesystem_free;
+  st->base.item.free = _elm_store_filesystem_item_free;
+  st->base.item.label_get = _elm_store_filesystem_item_label_get;
+
+  return &st->base;
+}
 
 EAPI void
 elm_store_free(Elm_Store *st)
 {
+  void (*item_free)(Elm_Store_Item *);
   if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
-  if (st->filesystem.dir)
-    {
-      eina_stringshare_del(st->filesystem.dir);
-      st->filesystem.dir = NULL;
-    }
   if (st->list_th)
     {
       ecore_thread_cancel(st->list_th);
       st->list_th = NULL;
     }
   eina_list_free(st->realized);
+  item_free = st->item.free;
   while (st->items)
     {
       Elm_Store_Item *sti = (Elm_Store_Item *)st->items;
@@ -540,11 +579,7 @@ elm_store_free(Elm_Store *st)
           ecore_thread_cancel(sti->fetch_th);
           sti->fetch_th = NULL;
         }
-      if (sti->type.filesystem.path)
-        {
-          eina_stringshare_del(sti->type.filesystem.path);
-          sti->type.filesystem.path = NULL;
-        }
+      if (item_free) item_free(sti);
       if (sti->data)
         {
           if (st->cb.unfetch.func)
@@ -562,6 +597,7 @@ elm_store_free(Elm_Store *st)
       elm_genlist_clear(st->genlist);
       st->genlist = NULL;
     }
+  if (st->free) st->free(st);
   free(st);
 }
 
@@ -586,27 +622,31 @@ elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj)
 }
 
 EAPI void
-elm_store_source_filesystem_set(Elm_Store *st, const char *dir)
+elm_store_filesystem_directory_set(Elm_Store *store, const char *dir)
 {
-  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
-  if (st->list_th)
+   Elm_Store_Filesystem *st = (Elm_Store_Filesystem *)store;
+  if (!EINA_MAGIC_CHECK(store, ELM_STORE_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_FILESYSTEM_MAGIC)) return;
+  if (store->list_th)
     {
-      ecore_thread_cancel(st->list_th);
-      st->list_th = NULL;
+      ecore_thread_cancel(store->list_th);
+      store->list_th = NULL;
     }
-  if (!eina_stringshare_replace(&st->filesystem.dir, dir)) return;
-  st->list_th = ecore_thread_feedback_run(_store_filesystem_list_do,
-                                          _store_filesystem_list_update,
-                                          _store_filesystem_list_end,
-                                          _store_filesystem_list_cancel,
-                                          st, EINA_TRUE);
+  if (!eina_stringshare_replace(&st->dir, dir)) return;
+  store->list_th = ecore_thread_feedback_run(_store_filesystem_list_do,
+                                             _store_filesystem_list_update,
+                                             _store_filesystem_list_end,
+                                             _store_filesystem_list_cancel,
+                                             st, EINA_TRUE);
 }
 
 EAPI const char *
-elm_store_source_filesystem_get(const Elm_Store *st)
+elm_store_filesystem_directory_get(const Elm_Store *store)
 {
-  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return NULL;
-  return st->filesystem.dir;
+  const Elm_Store_Filesystem *st = (const Elm_Store_Filesystem *)store;
+  if (!EINA_MAGIC_CHECK(store, ELM_STORE_MAGIC)) return NULL;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_FILESYSTEM_MAGIC)) return NULL;
+  return st->dir;
 }
 
 EAPI void
@@ -700,11 +740,17 @@ elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
 }
 
 EAPI const char *
-elm_store_item_filesystem_path_get(const Elm_Store_Item *sti)
+elm_store_item_filesystem_path_get(const Elm_Store_Item *item)
 {
-  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
+  Elm_Store_Item_Filesystem *sti = (Elm_Store_Item_Filesystem *)item;
+  Elm_Store_Filesystem *st;
+  if (!EINA_MAGIC_CHECK(item, ELM_STORE_ITEM_MAGIC)) return;
+  if (!EINA_MAGIC_CHECK(item->store, ELM_STORE_MAGIC)) return;
+  /* ensure we're dealing with filesystem item */
+  st = (Elm_Store_Filesystem *)item->store;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_FILESYSTEM_MAGIC)) return;
   // dont need lock
-  return sti->type.filesystem.path;
+  return sti->path;
 }
 
 
@@ -756,17 +802,18 @@ static Elm_Genlist_Item_Class itc1;
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *
 //     ************************************************************************
 static Eina_Bool
-_st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *info)
+_st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *item_info)
 {
+  Elm_Store_Item_Info_Filesystem *info = (Elm_Store_Item_Info_Filesystem *)item_info;
   int id;
   char sort_id[7];
 
   // create a sort id based on the filename itself assuming it is a numeric
   // value like the id number in mh mail folders which is what this test
   // uses as a data source
-  char *file = strrchr(info->type.filesystem.path, '/');
+  char *file = strrchr(info->path, '/');
   if (file) file++;
-  else file = info->type.filesystem.path;
+  else file = info->path;
   id = atoi(file);
   sort_id[0] = ((id >> 30) & 0x3f) + 32;
   sort_id[1] = ((id >> 24) & 0x3f) + 32;
@@ -775,12 +822,12 @@ _st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *info)
   sort_id[4] = ((id >>  6) & 0x3f) + 32;
   sort_id[5] = ((id >>  0) & 0x3f) + 32;
   sort_id[6] = 0;
-  info->sort_id = strdup(sort_id);
+  info->base.sort_id = strdup(sort_id);
   // choose the item genlist item class to use (only item style should be
   // provided by the app, store will fill everything else in, so it also
   // has to be writable
-  info->item_class = &itc1; // based on item info - return the item class wanted (only style field used - rest reset to internal funcs store sets up to get label/icon etc)
-  info->data = NULL; // if we can already parse and load all of item here and want to - set this
+  info->base.item_class = &itc1; // based on item info - return the item class wanted (only style field used - rest reset to internal funcs store sets up to get label/icon etc)
+  info->base.data = NULL; // if we can already parse and load all of item here and want to - set this
   return EINA_TRUE; // return true to include this, false not to
 }
 //     ************************************************************************
@@ -928,13 +975,14 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
   itc1.item_style     = "default"; // set up 1 item style to use
   
-  st = elm_store_new();
+  st = elm_store_filesystem_new();
   elm_store_list_func_set(st, _st_store_list, NULL);
   elm_store_fetch_func_set(st, _st_store_fetch, NULL);
   elm_store_unfetch_func_set(st, _st_store_unfetch, NULL);
   elm_store_sorted_set(st, EINA_TRUE);
   elm_store_target_genlist_set(st, gl);
-  elm_store_source_filesystem_set(st, "/home/raster/tst");
+  //  elm_store_filesystem_directory_set(st, "/home/raster/tst");
+  elm_store_filesystem_directory_set(st, "/tmp/tst");
   
   evas_object_resize(win, 480, 800);
   evas_object_show(win);
