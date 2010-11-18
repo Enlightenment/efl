@@ -60,10 +60,10 @@ EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_
 
 #define ELM_STORE_MAGIC 0x3f89ea56
 #define ELM_STORE_ITEM_MAGIC 0x5afe8c1d
-#define ELM_STORE_CHECK(st) if ((!st) || (st->magic != ELM_STORE_MAGIC))
+
 struct _Elm_Store
 {
-  int            magic;
+  EINA_MAGIC;
   Evas_Object   *genlist;
   Ecore_Thread  *list_th;
   struct {
@@ -98,7 +98,7 @@ struct _Elm_Store_Item_Filesystem
 struct _Elm_Store_Item
 {
   EINA_INLIST;
-  int               magic;
+  EINA_MAGIC;
   Elm_Store        *store;
   Elm_Genlist_Item *item;
   Ecore_Thread     *fetch_th;
@@ -391,7 +391,7 @@ _store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
   const Eina_File_Direct_Info *finf;
   Eina_List *sorted = NULL;
   Elm_Store_Item_Info *info;
-  
+
   // FIXME: need a way to abstract the open, list, feed items from list
   // and maybe get initial sortable key vals etc.
   it = eina_file_stat_ls(st->filesystem.dir);
@@ -399,11 +399,11 @@ _store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
   EINA_ITERATOR_FOREACH(it, finf)
     {
       Eina_Bool ok;
-      
-      info = calloc(1, sizeof(Elm_Store_Item_Info) + strlen(finf->path) + 1);
+
+      info = calloc(1, sizeof(Elm_Store_Item_Info) + finf->path_length + 1);
       if (!info) continue;
       info->type.filesystem.path = ((char *)info) + sizeof(Elm_Store_Item_Info);
-      strcpy(info->type.filesystem.path, finf->path);
+      memcpy(info->type.filesystem.path, finf->path, finf->path_length + 1);
       ok = EINA_TRUE;
       if (st->cb.list.func)
         ok = st->cb.list.func(st->cb.list.data, info);
@@ -422,7 +422,7 @@ _store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
   eina_iterator_free(it);
   if (sorted)
     {
-      sorted = eina_list_sort(sorted, eina_list_count(sorted),
+      sorted = eina_list_sort(sorted, 0,
                               EINA_COMPARE_CB(_store_filesystem_sort_cb));
       EINA_LIST_FREE(sorted, info)
         {
@@ -459,7 +459,7 @@ _store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg
   sti = calloc(1, sizeof(Elm_Store_Item));
   if (!sti) goto done;
   LKI(sti->lock);
-  sti->magic = ELM_STORE_ITEM_MAGIC;
+  EINA_MAGIC_SET(sti, ELM_STORE_ITEM_MAGIC);
   sti->store = st;
   sti->type.filesystem.path = eina_stringshare_add(info->type.filesystem.path);
   sti->data = info->data;
@@ -495,14 +495,18 @@ elm_store_new(void)
   
   st = calloc(1, sizeof(Elm_Store));
 
+  // TODO: BEGIN - move to elm_store_init()
+  eina_magic_string_set(ELM_STORE_MAGIC, "Elm_Store");
+  eina_magic_string_set(ELM_STORE_ITEM_MAGIC, "Elm_Store_Item");
   // setup default item class (always the same) if list cb doesnt provide one
   _store_item_class.item_style = "default";
   _store_item_class.func.label_get = _store_item_label_get;
   _store_item_class.func.icon_get  = _store_item_icon_get;
   _store_item_class.func.state_get = NULL; // FIXME: support state gets later
   _store_item_class.func.del       = _store_item_del;
-  
-  st->magic = ELM_STORE_MAGIC;
+  // TODO: END - move to elm_store_init()
+
+  EINA_MAGIC_SET(st, ELM_STORE_MAGIC);
   st->cache_max = 128;
   return st;
 }
@@ -510,7 +514,7 @@ elm_store_new(void)
 EAPI void
 elm_store_free(Elm_Store *st)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   if (st->filesystem.dir)
     {
       eina_stringshare_del(st->filesystem.dir);
@@ -564,7 +568,7 @@ elm_store_free(Elm_Store *st)
 EAPI void
 elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   if (st->genlist == obj) return;
   if (st->genlist)
     {
@@ -584,7 +588,7 @@ elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj)
 EAPI void
 elm_store_source_filesystem_set(Elm_Store *st, const char *dir)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   if (st->list_th)
     {
       ecore_thread_cancel(st->list_th);
@@ -601,14 +605,14 @@ elm_store_source_filesystem_set(Elm_Store *st, const char *dir)
 EAPI const char *
 elm_store_source_filesystem_get(const Elm_Store *st)
 {
-  ELM_STORE_CHECK(st) return NULL;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return NULL;
   return st->filesystem.dir;
 }
 
 EAPI void
 elm_store_cache_set(Elm_Store *st, int max)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   if (max < 0) max = 0;
   st->cache_max = max;
   _store_cache_trim(st);
@@ -617,14 +621,14 @@ elm_store_cache_set(Elm_Store *st, int max)
 EAPI int
 elm_store_cache_get(const Elm_Store *st)
 {
-  ELM_STORE_CHECK(st) return 0;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return 0;
   return st->cache_max;
 }
 
 EAPI void
 elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   st->cb.list.func = func;
   st->cb.list.data = (void *)data;
 }
@@ -632,7 +636,7 @@ elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *
 EAPI void
 elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   st->cb.fetch.func = func;
   st->cb.fetch.data = (void *)data;
 }
@@ -640,7 +644,7 @@ elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void
 EAPI void
 elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   st->cb.unfetch.func = func;
   st->cb.unfetch.data = (void *)data;
 }
@@ -648,20 +652,21 @@ elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const 
 EAPI void
 elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted)
 {
-  ELM_STORE_CHECK(st) return;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   st->sorted = sorted;
 }
 
 EAPI Eina_Bool
 elm_store_sorted_get(const Elm_Store *st)
 {
-  ELM_STORE_CHECK(st) return EINA_FALSE;
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return EINA_FALSE;
   return st->sorted;
 }
 
 EAPI void
 elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 {
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
   LKL(sti->lock);
   sti->data = data;
   LKU(sti->lock);
@@ -670,6 +675,7 @@ elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 EAPI void *
 elm_store_item_data_get(Elm_Store_Item *sti)
 {
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
   void *d;
   LKL(sti->lock);
   d = sti->data;
@@ -680,6 +686,7 @@ elm_store_item_data_get(Elm_Store_Item *sti)
 EAPI const Elm_Store *
 elm_store_item_store_get(const Elm_Store_Item *sti)
 {
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
   // dont need lock
   return sti->store;
 }
@@ -687,6 +694,7 @@ elm_store_item_store_get(const Elm_Store_Item *sti)
 EAPI const Elm_Genlist_Item *
 elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
 {
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
   // dont need lock
   return sti->item;
 }
@@ -694,6 +702,7 @@ elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
 EAPI const char *
 elm_store_item_filesystem_path_get(const Elm_Store_Item *sti)
 {
+  if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
   // dont need lock
   return sti->type.filesystem.path;
 }
