@@ -46,6 +46,9 @@ EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
 EAPI int                     elm_store_cache_get(const Elm_Store *st);
 EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data);
 EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data);
+EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread);
+EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st);
+
 EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data);
 EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted);
 EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st);
@@ -55,7 +58,7 @@ EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti)
 EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);
 
 // private
-#if 0
+#if 1
 #define DBG(f, args...) printf(f, ##args)
 #else
 #define DBG(f, args...)
@@ -94,6 +97,7 @@ struct _Elm_Store
     } unfetch;
   } cb;
   Eina_Bool sorted : 1;
+  Eina_Bool fetch_thread : 1;
 };
 
 struct _Elm_Store_Item
@@ -157,14 +161,17 @@ _store_cache_trim(Elm_Store *st)
       LKL(sti->lock);
       if (!sti->fetched)
         {
-          DBG(".. do cancel [%i] [%i] %p for: %s\n", 
-              sti->live,
-              sti->fetched,
-              sti->fetch_th,
-              elm_store_item_filesystem_path_get(sti));
           LKU(sti->lock);
-          ecore_thread_cancel(sti->fetch_th);
-          sti->fetch_th = NULL;
+          if (sti->fetch_th)
+            {
+              DBG(".. do cancel [%i] [%i] %p for: %s\n",
+                  sti->live,
+                  sti->fetched,
+                  sti->fetch_th,
+                  elm_store_item_filesystem_path_get(sti));
+              ecore_thread_cancel(sti->fetch_th);
+              sti->fetch_th = NULL;
+            }
           LKL(sti->lock);
         }
       sti->fetched = EINA_FALSE;
@@ -218,6 +225,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 ////// **** WARNING ***********************************************************
 ////   * This function runs inside a thread outside efl mainloop. Be careful! *
 //     ************************************************************************
+/* TODO: refactor lock part into core? this does not depend on filesystm part */
 static void
 _store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
 {
@@ -241,7 +249,7 @@ _store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
 //     ************************************************************************
 ////   * End of separate thread function.                                     *
 ////// ************************************************************************
-
+/* TODO: refactor lock part into core? this does not depend on filesystm part */
 static void
 _store_filesystem_fetch_end(void *data, Ecore_Thread *th)
 {
@@ -256,6 +264,7 @@ _store_filesystem_fetch_end(void *data, Ecore_Thread *th)
   if (th == sti->fetch_th) sti->fetch_th = NULL;
 }
 
+/* TODO: refactor lock part into core? this does not depend on filesystm part */
 static void
 _store_filesystem_fetch_cancel(void *data, Ecore_Thread *th)
 {
@@ -285,7 +294,7 @@ _store_item_eval(void *data)
         sti->store->realized = eina_list_remove(sti->store->realized, sti);
       sti->store->realized = eina_list_append(sti->store->realized, sti);
       sti->realized = EINA_TRUE;
-      if (!sti->fetch_th)
+      if ((sti->store->fetch_thread) && (!sti->fetch_th))
         {
           sti->fetch_th = ecore_thread_run(_store_filesystem_fetch_do,
                                            _store_filesystem_fetch_end,
@@ -296,6 +305,16 @@ _store_item_eval(void *data)
               sti->fetched,
               sti->fetch_th,
               elm_store_item_filesystem_path_get(sti));
+        }
+      else if ((!sti->store->fetch_thread))
+        {
+           DBG(".. do fetch in same thread [%i] [%i] = %p for: %s\n",
+              sti->live,
+              sti->fetched,
+              sti->fetch_th,
+              elm_store_item_filesystem_path_get(sti));
+           _store_filesystem_fetch_do(sti, NULL);
+           _store_filesystem_fetch_end(sti, NULL);
         }
     }
   else
@@ -514,6 +533,7 @@ _elm_store_new(size_t size)
 
   EINA_MAGIC_SET(st, ELM_STORE_MAGIC);
   st->cache_max = 128;
+  st->fetch_thread = EINA_TRUE;
   return st;
 }
 #define elm_store_new(type) (type*)_elm_store_new(sizeof(type))
@@ -679,6 +699,20 @@ elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void
   if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
   st->cb.fetch.func = func;
   st->cb.fetch.data = (void *)data;
+}
+
+EAPI void
+elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread)
+{
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return;
+  st->fetch_thread = !!use_thread;
+}
+
+EAPI Eina_Bool
+elm_store_fetch_thread_get(const Elm_Store *st)
+{
+  if (!EINA_MAGIC_CHECK(st, ELM_STORE_MAGIC)) return EINA_FALSE;
+  return st->fetch_thread;
 }
 
 EAPI void
@@ -978,11 +1012,11 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
   st = elm_store_filesystem_new();
   elm_store_list_func_set(st, _st_store_list, NULL);
   elm_store_fetch_func_set(st, _st_store_fetch, NULL);
+  //elm_store_fetch_thread_set(st, EINA_FALSE);
   elm_store_unfetch_func_set(st, _st_store_unfetch, NULL);
   elm_store_sorted_set(st, EINA_TRUE);
   elm_store_target_genlist_set(st, gl);
-  //  elm_store_filesystem_directory_set(st, "/home/raster/tst");
-  elm_store_filesystem_directory_set(st, "/tmp/tst");
+  elm_store_filesystem_directory_set(st, "/home/raster/tst");
   
   evas_object_resize(win, 480, 800);
   evas_object_show(win);
