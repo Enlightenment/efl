@@ -42,7 +42,8 @@ _spawn(void *data)
 //        printf("Creating connection %i\n", x);
         if (!ecore_con_server_connect(ECORE_CON_REMOTE_NODELAY, "127.0.0.1", 8080, NULL))
           {
-             printf("CRITICAL ERROR!\n");
+             printf("CRITICAL ERROR!\n"
+                    "Could not create connection #%i!\n", x);
              exit(1);
           }
      }
