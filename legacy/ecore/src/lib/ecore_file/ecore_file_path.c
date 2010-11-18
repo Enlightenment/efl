@@ -36,7 +36,8 @@ _ecore_file_path_from_env(const char *env)
    if (!env_tmp)
      return path;
 
-   env_path = alloca(strlen(env_tmp) + 1);
+   env_path = alloca(sizeof(char) * strlen(env_tmp) + 1);
+   memset(env_path, 0, strlen(env_tmp));
    strcpy(env_path, env_tmp);
    last = env_path;
    for (p = env_path; *p; p++)
