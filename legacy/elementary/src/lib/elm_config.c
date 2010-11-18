@@ -1084,8 +1084,10 @@ _elm_config_sub_init(void)
                     {
                        _elm_config->scale = (double)val / 1000.0;
                        // FIXME: hack until e export finger size too
-                       if (getenv("ELM_FINGER_SIZE"))
-                         _elm_config->finger_size = 40.0 * _elm_config->scale;
+                       if (!getenv("ELM_FINGER_SIZE"))
+                         {
+                            _elm_config->finger_size = 40.0 * _elm_config->scale;
+                         }
                        edje_scale_set(_elm_config->scale);
                     }
                }

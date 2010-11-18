@@ -563,6 +563,7 @@ elm_quicklaunch_sub_init(int argc, char **argv)
         ecore_app_args_set(argc, (const char **)argv);
         evas_init();
         edje_init();
+        _elm_module_init();
         _elm_config_sub_init();
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
@@ -577,7 +578,6 @@ elm_quicklaunch_sub_init(int argc, char **argv)
           }
         ecore_evas_init(); // FIXME: check errors
         ecore_imf_init();
-        _elm_module_init();
      }
    return _elm_sub_init_count;
 }
@@ -1473,7 +1473,7 @@ elm_finger_size_set(Evas_Coord size)
 {
    if (_elm_config->finger_size == size) return;
    _elm_config->finger_size = size;
-   _elm_rescale();
+  _elm_rescale();
 }
 
 /**
