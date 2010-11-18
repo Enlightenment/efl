@@ -63,7 +63,9 @@ static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
+static void _disable_hook(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _fix_items(Evas_Object *obj);
@@ -432,6 +434,28 @@ _show_region_hook(void *data, Evas_Object *obj)
    Evas_Coord x, y, w, h;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
+}
+
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_disabled_get(obj))
+     {
+        _signal_emit_hook(obj, "elm,state,disabled", "elm");
+        elm_widget_scroll_freeze_push(obj);
+        elm_widget_scroll_hold_push(obj);
+        /* FIXME: if we get to have a way to only un-hilight items
+         * in the future, keeping them selected... */
+        _deselect_all_items(wd);
+     }
+   else
+     {
+        _signal_emit_hook(obj, "elm,state,enabled", "elm");
+        elm_widget_scroll_freeze_pop(obj);
+        elm_widget_scroll_hold_pop(obj);
+     }
 }
 
 static void
@@ -1137,7 +1161,7 @@ _hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->scr)
-     elm_widget_scroll_hold_push(wd->scr);
+     elm_smart_scroller_hold_set(wd->scr, EINA_TRUE);
 }
 
 static void
@@ -1146,7 +1170,7 @@ _hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->scr)
-     elm_widget_scroll_hold_pop(wd->scr);
+     elm_smart_scroller_hold_set(wd->scr, EINA_FALSE);
 }
 
 static void
@@ -1155,7 +1179,7 @@ _freeze_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->scr)
-     elm_widget_scroll_hold_push(wd->scr);
+     elm_smart_scroller_freeze_set(wd->scr, EINA_TRUE);
 }
 
 static void
@@ -1164,7 +1188,7 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->scr)
-     elm_widget_scroll_hold_pop(wd->scr);
+     elm_smart_scroller_freeze_set(wd->scr, EINA_FALSE);
 }
 
 static void
@@ -1199,6 +1223,7 @@ elm_list_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
@@ -1510,8 +1535,8 @@ elm_list_multi_select_get(const Evas_Object *obj)
  * Set which mode to use for the list with.
  *
  * @param obj The list object
- * @param mode One of @c ELM_LIST_COMPRESS, @c ELM_LIST_SCROLL or @c
- *             ELM_LIST_LIMIT.
+ * @param mode One of @c ELM_LIST_COMPRESS, @c ELM_LIST_SCROLL, @c
+ *             ELM_LIST_LIMIT or @c ELM_LIST_EXPAND.
  *
  * @note Default value is @c ELM_LIST_SCROLL. At this mode, the list
  * object won't set any of its size hints to inform how a possible
@@ -1768,9 +1793,11 @@ elm_list_item_separator_get(const Elm_List_Item *it)
 EAPI void
 elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
 {
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+
    Widget_Data *wd = elm_widget_data_get(it->base.widget);
    if (!wd) return;
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
+
    selected = !!selected;
    if (it->selected == selected) return;
 

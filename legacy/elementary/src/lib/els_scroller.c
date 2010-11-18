@@ -1325,7 +1325,9 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
      y += ev->z * sd->step.y;
    else if (ev->direction == 1)
      x += ev->z * sd->step.x;
-   elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+
+   if ((!sd->hold) && (!sd->freeze))
+     elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
 }
 
 static void
