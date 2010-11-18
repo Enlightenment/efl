@@ -560,7 +560,7 @@ elm_slider_icon_unset(Evas_Object *obj)
  *
  * @ingroup Slider
  */
-EAPI const Evas_Object *
+EAPI Evas_Object *
 elm_slider_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -996,7 +996,7 @@ elm_slider_end_unset(Evas_Object *obj)
  *
  * @ingroup Slider
  */
-EAPI const Evas_Object *
+EAPI Evas_Object *
 elm_slider_end_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
