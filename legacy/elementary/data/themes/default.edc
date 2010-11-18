@@ -353,8 +353,6 @@ collections {
 	 image: "bt_sm_shine.png" COMP;
 	 image: "bt_sm_hilight.png" COMP;
          image: "sl_bt2_2.png" COMP;
-	 image: "sb_runnerh.png" COMP;
-	 image: "sb_runnerv.png" COMP;
       }
       parts {
          part { name: "bg";
@@ -447,33 +445,20 @@ collections {
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
 	       visible: 0;
-	       min: 17 17;
+	       min: 10 17;
 	       align: 1.0 0.0;
 	       rel1 {
 		  relative: 1.0 0.0;
-		  offset:   -2 2;
+		  offset:   0 2;
 		  to_y:     "elm.swallow.content";
+                  to_x:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 1.0 0.0;
-		  offset:   -2 -1;
+		  offset:   -1 -1;
 		  to_y:     "sb_hbar";
+                  to_x:     "elm.swallow.content";
 	       }
-	    }
-	 }
-	 part { name: "sb_vbar_runner";
-	    clip_to: "sb_vbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       min: 3 3;
-	       max: 3 99999;
-	       rel1.to:       "sb_vbar";
-	       rel2.to:       "sb_vbar";
-	       image {
-		  normal: "sb_runnerv.png";
-		  border: 0 0 4 4;
-	       }
-	       fill.smooth: 0;
 	    }
 	 }
 	 part { name: "elm.dragable.vbar";
@@ -486,7 +471,8 @@ collections {
 	    }
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
-	       min: 17 17;
+	       min: 10 17;
+               max: 10 99999;
 	       rel1 {
 		  relative: 0.5  0.5;
 		  offset:   0    0;
@@ -500,8 +486,8 @@ collections {
 	       image {
 		  normal: "bt_sm_base2.png";
 		  border: 6 6 6 6;
+                  middle: SOLID;
 	       }
-               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "sb_vbar_over1";
@@ -557,33 +543,20 @@ collections {
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
 	       visible: 0;
-	       min: 17 17;
+	       min: 17 10;
 	       align: 0.0 1.0;
 	       rel1 {
 		  relative: 0.0 1.0;
-		  offset:   2 -2;
+		  offset:   2 0;
 		  to_x:     "elm.swallow.content";
+                  to_y:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 0.0 1.0;
-		  offset:   -1 -2;
+		  offset:   -1 -1;
 		  to_x:     "sb_vbar";
+                  to_y:     "elm.swallow.content";
 	       }
-	    }
-	 }
-	 part { name: "sb_hbar_runner";
-	    clip_to: "sb_hbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       min: 3 3;
-	       max: 99999 3;
-	       rel1.to:       "sb_hbar";
-	       rel2.to:       "sb_hbar";
-	       image {
-		  normal: "sb_runnerh.png";
-		  border: 4 4 0 0;
-	       }
-	       fill.smooth: 0;
 	    }
 	 }
 	 part { name: "elm.dragable.hbar";
@@ -596,7 +569,8 @@ collections {
 	    }
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
-	       min: 17 17;
+	       min: 17 10;
+               max: 99999 10;
 	       rel1 {
 		  relative: 0.5  0.5;
 		  offset:   0    0;
@@ -609,9 +583,9 @@ collections {
 	       }
 	       image {
 		  normal: "bt_sm_base2.png";
-		  border: 6 6 6 6;
+		  border: 4 4 4 4;
+                  middle: SOLID;
 	       }
-               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "sb_hbar_over1";
@@ -623,7 +597,7 @@ collections {
 	       rel2.to: "elm.dragable.hbar";
 	       image {
 		  normal: "bt_sm_hilight.png";
-		  border: 6 6 6 0;
+		  border: 4 4 4 0;
 	       }
 	    }
 	 }
@@ -635,7 +609,7 @@ collections {
 	       rel2.to: "elm.dragable.hbar";
 	       image {
 		  normal: "bt_sm_shine.png";
-		  border: 6 6 6 0;
+		  border: 4 4 4 0;
 	       }
 	    }
 	 }
@@ -715,14 +689,14 @@ collections {
 	    signal: "do-show-vbar";
 	    source: "";
 	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_vbar_clip";
 	 }
 	 program { name: "sb_vbar_hide";
 	    signal: "do-hide-vbar";
 	    source: "";
 	    action:  STATE_SET "hidden" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_vbar_clip";
 	 }
 
@@ -772,14 +746,14 @@ collections {
 	    signal: "do-show-hbar";
 	    source: "";
 	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_hbar_clip";
 	 }
 	 program { name: "sb_hbar_hide";
 	    signal: "do-hide-hbar";
 	    source: "";
 	    action:  STATE_SET "hidden" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_hbar_clip";
 	 }
 
@@ -802,7 +776,7 @@ collections {
 	       }
 	       v = get_int(sbvis_timer);
 	       if (v > 0) cancel_timer(v);
-	       v = timer(2.0, "timer0", 0);
+	       v = timer(1.0, "timer0", 0);
 	       set_int(sbvis_timer, v);
 	    }
 	 }
@@ -875,8 +849,6 @@ collections {
 	 image: "bt_sm_shine.png" COMP;
 	 image: "bt_sm_hilight.png" COMP;
          image: "sl_bt2_2.png" COMP;
-	 image: "sb_runnerh.png" COMP;
-	 image: "sb_runnerv.png" COMP;
       }
       parts {
          part { name: "bg";
@@ -1051,7 +1023,7 @@ collections {
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
 	       visible: 0;
-	       min: 17 17;
+	       min: 10 17;
 	       align: 1.0 0.0;
 	       rel1 {
 		  relative: 0.0 0.0;
@@ -1067,21 +1039,6 @@ collections {
 	       }
 	    }
 	 }
-	 part { name: "sb_vbar_runner";
-	    clip_to: "sb_vbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       min: 3 3;
-	       max: 3 99999;
-	       rel1.to:       "sb_vbar";
-	       rel2.to:       "sb_vbar";
-	       image {
-		  normal: "sb_runnerv.png";
-		  border: 0 0 4 4;
-	       }
-	       fill.smooth: 0;
-	    }
-	 }
 	 part { name: "elm.dragable.vbar";
 	    clip_to: "sb_vbar_clip";
 	    mouse_events: 0;
@@ -1092,7 +1049,8 @@ collections {
 	    }
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
-	       min: 17 17;
+	       min: 10 17;
+               max: 10 99999;
 	       rel1 {
 		  relative: 0.5  0.5;
 		  offset:   0    0;
@@ -1106,8 +1064,8 @@ collections {
 	       image {
 		  normal: "bt_sm_base2.png";
 		  border: 6 6 6 6;
+                  middle: SOLID;
 	       }
-               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "sb_vbar_over1";
@@ -1163,33 +1121,20 @@ collections {
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
 	       visible: 0;
-	       min: 17 17;
+	       min: 17 10;
 	       align: 0.0 1.0;
 	       rel1 {
 		  relative: 0.0 1.0;
-		  offset:   2 -2;
+		  offset:   2 0;
 		  to_x:     "elm.swallow.content";
+                  to_y:     "elm.swallow.content";
 	       }
 	       rel2 {
 		  relative: 0.0 1.0;
-		  offset:   -1 -2;
+		  offset:   -1 -1;
 		  to_x:     "sb_vbar";
+                  to_y:     "elm.swallow.content";
 	       }
-	    }
-	 }
-	 part { name: "sb_hbar_runner";
-	    clip_to: "sb_hbar_clip";
-	    mouse_events: 0;
-	    description { state: "default" 0.0;
-	       min: 3 3;
-	       max: 99999 3;
-	       rel1.to:       "sb_hbar";
-	       rel2.to:       "sb_hbar";
-	       image {
-		  normal: "sb_runnerh.png";
-		  border: 4 4 0 0;
-	       }
-	       fill.smooth: 0;
 	    }
 	 }
 	 part { name: "elm.dragable.hbar";
@@ -1202,7 +1147,8 @@ collections {
 	    }
 	    description { state: "default" 0.0;
 	       fixed: 1 1;
-	       min: 17 17;
+	       min: 17 10;
+               max: 99999 10;
 	       rel1 {
 		  relative: 0.5  0.5;
 		  offset:   0    0;
@@ -1215,9 +1161,9 @@ collections {
 	       }
 	       image {
 		  normal: "bt_sm_base2.png";
-		  border: 6 6 6 6;
+		  border: 4 4 4 4;
+                  middle: SOLID;
 	       }
-               image.middle: SOLID;
 	    }
 	 }
 	 part { name: "sb_hbar_over1";
@@ -1229,7 +1175,7 @@ collections {
 	       rel2.to: "elm.dragable.hbar";
 	       image {
 		  normal: "bt_sm_hilight.png";
-		  border: 6 6 6 0;
+		  border: 4 4 4 0;
 	       }
 	    }
 	 }
@@ -1241,7 +1187,7 @@ collections {
 	       rel2.to: "elm.dragable.hbar";
 	       image {
 		  normal: "bt_sm_shine.png";
-		  border: 6 6 6 0;
+		  border: 4 4 4 0;
 	       }
 	    }
 	 }
@@ -1330,14 +1276,14 @@ collections {
 	    signal: "do-show-vbar";
 	    source: "";
 	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_vbar_clip";
 	 }
 	 program { name: "sb_vbar_hide";
 	    signal: "do-hide-vbar";
 	    source: "";
 	    action:  STATE_SET "hidden" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_vbar_clip";
 	 }
 
@@ -1387,14 +1333,14 @@ collections {
 	    signal: "do-show-hbar";
 	    source: "";
 	    action:  STATE_SET "default" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_hbar_clip";
 	 }
 	 program { name: "sb_hbar_hide";
 	    signal: "do-hide-hbar";
 	    source: "";
 	    action:  STATE_SET "hidden" 0.0;
-	    transition: LINEAR 1.0;
+	    transition: LINEAR 0.5;
 	    target: "sb_hbar_clip";
 	 }
 
@@ -1417,7 +1363,7 @@ collections {
 	       }
 	       v = get_int(sbvis_timer);
 	       if (v > 0) cancel_timer(v);
-	       v = timer(2.0, "timer0", 0);
+	       v = timer(1.0, "timer0", 0);
 	       set_int(sbvis_timer, v);
 	    }
 	 }
@@ -7635,8 +7581,6 @@ collections {
          image: "bt_sm_shine.png" COMP;
          image: "bt_sm_hilight.png" COMP;
          image: "sl_bt2_2.png" COMP;
-         image: "sb_runnerh.png" COMP;
-         image: "sb_runnerv.png" COMP;
       }
       parts {
          part { name: "bg";
@@ -7712,33 +7656,20 @@ collections {
             description { state: "default" 0.0;
                fixed: 1 1;
                visible: 0;
-               min: 17 17;
+               min: 10 17;
                align: 1.0 0.0;
                rel1 {
                   relative: 1.0 0.0;
-                  offset:   -2 2;
+                  offset:   0 2;
                   to_y:     "elm.swallow.content";
+                  to_x:     "elm.swallow.content";
                }
                rel2 {
                   relative: 1.0 0.0;
-                  offset:   -2 -1;
+                  offset:   -1 -1;
                   to_y:     "sb_hbar";
+                  to_x:     "elm.swallow.content";
                }
-            }
-         }
-         part { name: "sb_vbar_runner";
-            clip_to: "sb_vbar_clip";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               min: 3 3;
-               max: 3 99999;
-               rel1.to:       "sb_vbar";
-               rel2.to:       "sb_vbar";
-               image {
-                  normal: "sb_runnerv.png";
-                  border: 0 0 4 4;
-               }
-               fill.smooth: 0;
             }
          }
          part { name: "elm.dragable.vbar";
@@ -7751,7 +7682,8 @@ collections {
             }
             description { state: "default" 0.0;
                fixed: 1 1;
-               min: 17 17;
+               min: 10 17;
+               max: 10 99999;
                rel1 {
                   relative: 0.5  0.5;
                   offset:   0    0;
@@ -7765,8 +7697,8 @@ collections {
                image {
                   normal: "bt_sm_base2.png";
                   border: 6 6 6 6;
+                  middle: SOLID;
                }
-               image.middle: SOLID;
             }
          }
          part { name: "sb_vbar_over1";
@@ -7821,33 +7753,20 @@ collections {
             description { state: "default" 0.0;
                fixed: 1 1;
                visible: 0;
-               min: 17 17;
+               min: 17 10;
                align: 0.0 1.0;
                rel1 {
                   relative: 0.0 1.0;
-                  offset:   2 -2;
+                  offset:   2 0;
                   to_x:     "elm.swallow.content";
+                  to_y:     "elm.swallow.content";
                }
                rel2 {
                   relative: 0.0 1.0;
-                  offset:   -1 -2;
+                  offset:   -1 -1;
                   to_x:     "sb_vbar";
+                  to_y:     "elm.swallow.content";
                }
-            }
-         }
-         part { name: "sb_hbar_runner";
-            clip_to: "sb_hbar_clip";
-            mouse_events: 0;
-            description { state: "default" 0.0;
-               min: 3 3;
-               max: 99999 3;
-               rel1.to:       "sb_hbar";
-               rel2.to:       "sb_hbar";
-               image {
-                  normal: "sb_runnerh.png";
-                  border: 4 4 0 0;
-               }
-               fill.smooth: 0;
             }
          }
          part { name: "elm.dragable.hbar";
@@ -7860,7 +7779,8 @@ collections {
             }
             description { state: "default" 0.0;
                fixed: 1 1;
-               min: 17 17;
+               min: 17 10;
+               max: 99999 10;
                rel1 {
                   relative: 0.5  0.5;
                   offset:   0    0;
@@ -7873,9 +7793,9 @@ collections {
                }
                image {
                   normal: "bt_sm_base2.png";
-                  border: 6 6 6 6;
+                  border: 4 4 4 4;
+                  middle: SOLID;
                }
-               image.middle: SOLID;
             }
          }
          part { name: "sb_hbar_over1";
@@ -7964,14 +7884,14 @@ collections {
             signal: "do-show-vbar";
             source: "";
             action:  STATE_SET "default" 0.0;
-            transition: LINEAR 1.0;
+            transition: LINEAR 0.5;
             target: "sb_vbar_clip";
          }
          program { name: "sb_vbar_hide";
             signal: "do-hide-vbar";
             source: "";
             action:  STATE_SET "hidden" 0.0;
-            transition: LINEAR 1.0;
+            transition: LINEAR 0.5;
             target: "sb_vbar_clip";
          }
          program { name: "hbar_show";
@@ -8020,14 +7940,14 @@ collections {
             signal: "do-show-hbar";
             source: "";
             action:  STATE_SET "default" 0.0;
-            transition: LINEAR 1.0;
+            transition: LINEAR 0.5;
             target: "sb_hbar_clip";
          }
          program { name: "sb_hbar_hide";
             signal: "do-hide-hbar";
             source: "";
             action:  STATE_SET "hidden" 0.0;
-            transition: LINEAR 1.0;
+            transition: LINEAR 0.5;
             target: "sb_hbar_clip";
          }
          program { name: "scroll";
@@ -8049,7 +7969,7 @@ collections {
                }
                v = get_int(sbvis_timer);
                if (v > 0) cancel_timer(v);
-               v = timer(2.0, "timer0", 0);
+               v = timer(1.0, "timer0", 0);
                set_int(sbvis_timer, v);
             }
          }
@@ -26692,8 +26612,6 @@ collections {
            image: "bt_sm_base2.png" COMP;
            image: "bt_sm_shine.png" COMP;
            image: "bt_sm_hilight.png" COMP;
-           image: "sb_runnerh.png" COMP;
-           image: "sb_runnerv.png" COMP;
            image: "busy-1.png" COMP;
            image: "busy-2.png" COMP;
            image: "busy-3.png" COMP;
@@ -26811,7 +26729,7 @@ collections {
                description { state: "default" 0.0;
                    fixed: 1 1;
                    visible: 0;
-                   min: 17 17;
+                   min: 10 17;
                    align: 1.0 0.0;
                    rel1 {
                        relative: 1.0 0.0;
@@ -26824,21 +26742,6 @@ collections {
                    }
                }
            }
-           part { name: "sb_vbar_runner";
-               clip_to: "sb_vbar_clip";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   min: 3 3;
-                   max: 3 99999;
-                   rel1.to:       "sb_vbar";
-                   rel2.to:       "sb_vbar";
-                   image {
-                       normal: "sb_runnerv.png";
-                       border: 0 0 4 4;
-                   }
-                   fill.smooth: 0;
-               }
-           }
            part { name: "elm.dragable.vbar";
                clip_to: "sb_vbar_clip";
                mouse_events: 0;
@@ -26849,7 +26752,8 @@ collections {
                }
                description { state: "default" 0.0;
                    fixed: 1 1;
-                   min: 17 17;
+                   min: 10 17;
+                   max: 10 99999;
                    rel1 {
                        relative: 0.5  0.5;
                        offset:   0    0;
@@ -26863,8 +26767,8 @@ collections {
                    image {
                        normal: "bt_sm_base2.png";
                        border: 6 6 6 6;
+                       middle: SOLID;
                    }
-                   image.middle: SOLID;
                }
            }
            part { name: "sb_vbar_over1";
@@ -26920,7 +26824,7 @@ collections {
                description { state: "default" 0.0;
                    fixed: 1 1;
                    visible: 0;
-                   min: 17 17;
+                   min: 17 10;
                    align: 0.0 1.0;
                    rel1 {
                        relative: 0.0 1.0;
@@ -26933,21 +26837,6 @@ collections {
                    }
                }
            }
-           part { name: "sb_hbar_runner";
-               clip_to: "sb_hbar_clip";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   min: 3 3;
-                   max: 99999 3;
-                   rel1.to:       "sb_hbar";
-                   rel2.to:       "sb_hbar";
-                   image {
-                       normal: "sb_runnerh.png";
-                       border: 4 4 0 0;
-                   }
-                   fill.smooth: 0;
-               }
-           }
            part { name: "elm.dragable.hbar";
                clip_to: "sb_hbar_clip";
                mouse_events: 0;
@@ -26958,7 +26847,8 @@ collections {
                }
                description { state: "default" 0.0;
                    fixed: 1 1;
-                   min: 17 17;
+                   min: 17 10;
+                   max: 99999 10;
                    rel1 {
                        relative: 0.5  0.5;
                        offset:   0    0;
@@ -26971,9 +26861,9 @@ collections {
                    }
                    image {
                        normal: "bt_sm_base2.png";
-                       border: 6 6 6 6;
+                       border: 4 4 4 4;
+                       middle: SOLID;
                    }
-                   image.middle: SOLID;
                }
            }
            part { name: "sb_hbar_over1";
@@ -26985,7 +26875,7 @@ collections {
                    rel2.to: "elm.dragable.hbar";
                    image {
                        normal: "bt_sm_hilight.png";
-                       border: 6 6 6 0;
+                       border: 4 4 4 0;
                    }
                }
            }
@@ -26997,7 +26887,7 @@ collections {
                    rel2.to: "elm.dragable.hbar";
                    image {
                        normal: "bt_sm_shine.png";
-                       border: 6 6 6 0;
+                       border: 4 4 4 0;
                    }
                }
            }
@@ -27063,14 +26953,14 @@ collections {
                signal: "do-show-vbar";
                source: "";
                action:  STATE_SET "default" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_vbar_clip";
            }
            program { name: "sb_vbar_hide";
                signal: "do-hide-vbar";
                source: "";
                action:  STATE_SET "hidden" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_vbar_clip";
            }
 
@@ -27120,14 +27010,14 @@ collections {
                signal: "do-show-hbar";
                source: "";
                action:  STATE_SET "default" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_hbar_clip";
            }
            program { name: "sb_hbar_hide";
                signal: "do-hide-hbar";
                source: "";
                action:  STATE_SET "hidden" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_hbar_clip";
            }
 
@@ -27150,7 +27040,7 @@ collections {
                    }
                    v = get_int(sbvis_timer);
                    if (v > 0) cancel_timer(v);
-                   v = timer(2.0, "timer0", 0);
+                   v = timer(1.0, "timer0", 0);
                    set_int(sbvis_timer, v);
                }
            }
@@ -27215,8 +27105,6 @@ collections {
            image: "bt_sm_base2.png" COMP;
            image: "bt_sm_shine.png" COMP;
            image: "bt_sm_hilight.png" COMP;
-           image: "sb_runnerh.png" COMP;
-           image: "sb_runnerv.png" COMP;
            image: "busy-1.png" COMP;
            image: "busy-2.png" COMP;
            image: "busy-3.png" COMP;
@@ -27334,7 +27222,7 @@ collections {
                description { state: "default" 0.0;
                    fixed: 1 1;
                    visible: 0;
-                   min: 17 17;
+                   min: 10 17;
                    align: 1.0 0.0;
                    rel1 {
                        relative: 1.0 0.0;
@@ -27347,21 +27235,6 @@ collections {
                    }
                }
            }
-           part { name: "sb_vbar_runner";
-               clip_to: "sb_vbar_clip";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   min: 3 3;
-                   max: 3 99999;
-                   rel1.to:       "sb_vbar";
-                   rel2.to:       "sb_vbar";
-                   image {
-                       normal: "sb_runnerv.png";
-                       border: 0 0 4 4;
-                   }
-                   fill.smooth: 0;
-               }
-           }
            part { name: "elm.dragable.vbar";
                clip_to: "sb_vbar_clip";
                mouse_events: 0;
@@ -27372,7 +27245,8 @@ collections {
                }
                description { state: "default" 0.0;
                    fixed: 1 1;
-                   min: 17 17;
+                   min: 10 17;
+                   max: 10 99999;
                    rel1 {
                        relative: 0.5  0.5;
                        offset:   0    0;
@@ -27386,8 +27260,8 @@ collections {
                    image {
                        normal: "bt_sm_base2.png";
                        border: 6 6 6 6;
+                       middle: SOLID;
                    }
-                   image.middle: SOLID;
                }
            }
            part { name: "sb_vbar_over1";
@@ -27443,7 +27317,7 @@ collections {
                description { state: "default" 0.0;
                    fixed: 1 1;
                    visible: 0;
-                   min: 17 17;
+                   min: 17 10;
                    align: 0.0 1.0;
                    rel1 {
                        relative: 0.0 1.0;
@@ -27456,21 +27330,6 @@ collections {
                    }
                }
            }
-           part { name: "sb_hbar_runner";
-               clip_to: "sb_hbar_clip";
-               mouse_events: 0;
-               description { state: "default" 0.0;
-                   min: 3 3;
-                   max: 99999 3;
-                   rel1.to:       "sb_hbar";
-                   rel2.to:       "sb_hbar";
-                   image {
-                       normal: "sb_runnerh.png";
-                       border: 4 4 0 0;
-                   }
-                   fill.smooth: 0;
-               }
-           }
            part { name: "elm.dragable.hbar";
                clip_to: "sb_hbar_clip";
                mouse_events: 0;
@@ -27481,7 +27340,8 @@ collections {
                }
                description { state: "default" 0.0;
                    fixed: 1 1;
-                   min: 17 17;
+                   min: 17 10;
+                   max: 99999 10;
                    rel1 {
                        relative: 0.5  0.5;
                        offset:   0    0;
@@ -27494,9 +27354,9 @@ collections {
                    }
                    image {
                        normal: "bt_sm_base2.png";
-                       border: 6 6 6 6;
+                       border: 4 4 4 4;
+                       middle: SOLID;
                    }
-                   image.middle: SOLID;
                }
            }
            part { name: "sb_hbar_over1";
@@ -27508,7 +27368,7 @@ collections {
                    rel2.to: "elm.dragable.hbar";
                    image {
                        normal: "bt_sm_hilight.png";
-                       border: 6 6 6 0;
+                       border: 4 4 4 0;
                    }
                }
            }
@@ -27520,7 +27380,7 @@ collections {
                    rel2.to: "elm.dragable.hbar";
                    image {
                        normal: "bt_sm_shine.png";
-                       border: 6 6 6 0;
+                       border: 4 4 4 0;
                    }
                }
            }
@@ -27586,14 +27446,14 @@ collections {
                signal: "do-show-vbar";
                source: "";
                action:  STATE_SET "default" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_vbar_clip";
            }
            program { name: "sb_vbar_hide";
                signal: "do-hide-vbar";
                source: "";
                action:  STATE_SET "hidden" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_vbar_clip";
            }
 
@@ -27643,14 +27503,14 @@ collections {
                signal: "do-show-hbar";
                source: "";
                action:  STATE_SET "default" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_hbar_clip";
            }
            program { name: "sb_hbar_hide";
                signal: "do-hide-hbar";
                source: "";
                action:  STATE_SET "hidden" 0.0;
-               transition: LINEAR 1.0;
+               transition: LINEAR 0.5;
                target: "sb_hbar_clip";
            }
 
@@ -27673,7 +27533,7 @@ collections {
                    }
                    v = get_int(sbvis_timer);
                    if (v > 0) cancel_timer(v);
-                   v = timer(2.0, "timer0", 0);
+                   v = timer(1.0, "timer0", 0);
                    set_int(sbvis_timer, v);
                }
            }
