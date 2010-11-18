@@ -12,6 +12,7 @@
 Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
+static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 
 const char *_elm_engines[] = {
    "software_x11",
@@ -27,6 +28,34 @@ const char *_elm_engines[] = {
    "software_16_sdl",
    "opengl_sdl",
    NULL
+};
+
+/* whenever you want to add a new text class support into Elementary,
+   declare it both here and in the (default) theme */
+static const Elm_Text_Class _elm_text_classes[] = {
+   {"button", "Button Labels"},
+
+   /* FIXME: put in the right/definitive font classes */
+   {"title_bar", "Title Bar"},
+   {"menu_item", "Menu Item"},
+   {"menu_title", "Menu Title"},
+   {"tb_plain", "Textblock Plain"},
+   {"tb_light", "Textblock Light"},
+   {"tb_big", "Textblock Big"},
+   {"move_text", "Move Text"},
+   {"resize_text", "Resize Text"},
+   {"winlist_title", "Winlist Title"},
+   {"configure", "Settings Heading"},
+   {"about_title", "About Title"},
+   {"about_version", "About Version"},
+   {"desklock_title", "Desklock Title"},
+   {"desklock_passwd", "Desklock Password"},
+   {"dialog_error", "Dialog Error"},
+   {"exebuf_command", "Exebuf Command"},
+   {"init_title", "Splash Title"},
+   {"init_text", "Splash Text"},
+   {"init_version", "Splash Version"},
+   {NULL, NULL}
 };
 
 static void _desc_init(void);
@@ -50,7 +79,7 @@ static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ..
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_X_Window _root_1st = 0;
-#define ATOM_COUNT 5
+#define ATOM_COUNT 6
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
@@ -59,13 +88,15 @@ static const char *_atom_names[ATOM_COUNT] =
     "ENLIGHTENMENT_FINGER_SIZE",
     "ENLIGHTENMENT_THEME",
     "ENLIGHTENMENT_PROFILE",
+    "ENLIGHTENMENT_FONT_OVERLAY",
     "ENLIGHTENMENT_CONFIG"
   };
 #define ATOM_E_SCALE 0
 #define ATOM_E_FINGER_SIZE 1
 #define ATOM_E_THEME 2
 #define ATOM_E_PROFILE 3
-#define ATOM_E_CONFIG 4
+#define ATOM_E_FONT_OVERLAY 4
+#define ATOM_E_CONFIG 5
 
 static Eina_Bool _prop_config_get(void);
 static Eina_Bool _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
@@ -117,6 +148,7 @@ _prop_config_get(void)
    _config_free();
    _elm_config = config_data;
    _config_apply();
+   _elm_config_font_overlay_apply();
    _elm_rescale();
    return EINA_TRUE;
 }
@@ -195,9 +227,25 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                             _config_free();
                             _config_load();
                             _config_apply();
+                            _elm_config_font_overlay_apply();
                             _elm_rescale();
                          }
                     }
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_FONT_OVERLAY])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  _config_free();
+                  _config_load();
+                  _config_apply();
+                  _elm_config_font_overlay_apply();
+                  _elm_rescale();
                }
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
@@ -226,12 +274,33 @@ _desc_init(void)
         return;
      }
 
-#define T Elm_Config
-#define D _config_edd
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Font_Overlay);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_font_overlay_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_font_overlay_edd)
+     {
+        printf("EEEK! eet_data_descriptor_stream_new() failed\n");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
 #define T_INT EET_T_INT
 #define T_DOUBLE EET_T_DOUBLE
 #define T_STRING EET_T_STRING
 #define T_UCHAR EET_T_UCHAR
+
+#define T Elm_Font_Overlay
+#define D _config_font_overlay_edd
+   ELM_CONFIG_VAL(D, T, text_class, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, font, EET_T_STRING);
+   ELM_CONFIG_VAL(D, T, size, EET_T_INT);
+#undef T
+#undef D
+
+#define T Elm_Config
+#define D _config_edd
    ELM_CONFIG_VAL(D, T, config_version, T_INT);
    ELM_CONFIG_VAL(D, T, engine, T_STRING);
    ELM_CONFIG_VAL(D, T, thumbscroll_enable, T_UCHAR);
@@ -248,6 +317,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, bgpixmap, T_INT);
    ELM_CONFIG_VAL(D, T, compositing, T_INT);
    /* EET_DATA_DESCRIPTOR_ADD_LIST(D, T, "font_dirs", font_dirs, sub_edd); */
+   ELM_CONFIG_LIST(D, T, font_overlays, _config_font_overlay_edd);
    ELM_CONFIG_VAL(D, T, font_hinting, T_INT);
    ELM_CONFIG_VAL(D, T, image_cache, T_INT);
    ELM_CONFIG_VAL(D, T, font_cache, T_INT);
@@ -274,9 +344,17 @@ _desc_init(void)
 static void
 _desc_shutdown(void)
 {
-   if (!_config_edd) return;
-   eet_data_descriptor_free(_config_edd);
-   _config_edd = NULL;
+   if (_config_edd)
+     {
+        eet_data_descriptor_free(_config_edd);
+        _config_edd = NULL;
+     }
+
+   if (_config_font_overlay_edd)
+     {
+        eet_data_descriptor_free(_config_font_overlay_edd);
+        _config_font_overlay_edd = NULL;
+     }
 }
 
 static int
@@ -363,6 +441,106 @@ _elm_config_profile_dir_get(const char *prof, Eina_Bool is_user)
      return strdup(buf);
 
    return NULL;
+}
+
+Eina_List *
+_elm_config_font_overlays_list(void)
+{
+   return _elm_config->font_overlays;
+}
+
+void
+_elm_config_font_overlay_set(const char    *text_class,
+                             const char    *font,
+                             Evas_Font_Size size)
+{
+   Elm_Font_Overlay *efd;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
+     {
+        if (strcmp(efd->text_class, text_class))
+          continue;
+
+        if (efd->font) eina_stringshare_del(efd->font);
+        efd->font = eina_stringshare_add(font);
+        efd->size = size;
+        _elm_config->font_overlays =
+          eina_list_promote_list(_elm_config->font_overlays, l);
+        return;
+     }
+
+   /* the text class doesn't exist */
+   efd = calloc(1, sizeof(Elm_Font_Overlay));
+   efd->text_class = eina_stringshare_add(text_class);
+   efd->font = eina_stringshare_add(font);
+   efd->size = size;
+
+   _elm_config->font_overlays = eina_list_prepend(_elm_config->font_overlays,
+                                                  efd);
+}
+
+void
+_elm_config_font_overlay_remove(const char *text_class)
+{
+   Elm_Font_Overlay *efd;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
+     {
+        if (strcmp(efd->text_class, text_class))
+          continue;
+
+        _elm_config->font_overlays =
+          eina_list_remove_list(_elm_config->font_overlays, l);
+        if (efd->text_class) eina_stringshare_del(efd->text_class);
+        if (efd->font) eina_stringshare_del(efd->font);
+        free(efd);
+
+        return;
+     }
+}
+
+void
+_elm_config_font_overlay_apply(void)
+{
+   Elm_Font_Overlay *efd;
+   Eina_List *l;
+   int i;
+
+   for (i = 0; _elm_text_classes[i].desc; i++)
+     edje_text_class_del(_elm_text_classes[i].name);
+
+   EINA_LIST_FOREACH(_elm_config->font_overlays, l, efd)
+     edje_text_class_set(efd->text_class, efd->font, efd->size);
+}
+
+Eina_List *
+_elm_config_text_classes_get(void)
+{
+   Eina_List *ret = NULL;
+   int i;
+
+   for (i = 0; _elm_text_classes[i].desc; i++)
+     {
+        Elm_Text_Class *tc;
+        tc = malloc(sizeof(*tc));
+
+        *tc = _elm_text_classes[i];
+
+        ret = eina_list_append(ret, tc);
+     }
+
+   return ret;
+}
+
+void
+_elm_config_text_classes_free(Eina_List *l)
+{
+   Elm_Text_Class *tc;
+
+   EINA_LIST_FREE(l, tc)
+     free(tc);
 }
 
 Eina_List *
@@ -512,6 +690,7 @@ _profile_fetch_from_conf(void)
 static void
 _config_free(void)
 {
+   Elm_Font_Overlay *fo;
    const char *fontdir;
 
    if (!_elm_config) return;
@@ -520,6 +699,12 @@ _config_free(void)
         eina_stringshare_del(fontdir);
      }
    if (_elm_config->engine) eina_stringshare_del(_elm_config->engine);
+   EINA_LIST_FREE(_elm_config->font_overlays, fo)
+     {
+        if (fo->text_class) eina_stringshare_del(fo->text_class);
+        if (fo->font) eina_stringshare_del(fo->font);
+        free(fo);
+     }
    if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
    if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
    free(_elm_config);
@@ -1040,6 +1225,7 @@ _elm_config_init(void)
    _config_load();
    _env_get();
    _config_apply();
+   _elm_config_font_overlay_apply();
 }
 
 void
@@ -1143,6 +1329,7 @@ _elm_config_reload(void)
   _config_free();
   _config_load();
   _config_apply();
+  _elm_config_font_overlay_apply();
   _elm_rescale();
 }
 
@@ -1174,6 +1361,7 @@ _elm_config_profile_set(const char *profile)
       _config_free();
       _config_load();
       _config_apply();
+      _elm_config_font_overlay_apply();
       _elm_rescale();
     }
 }

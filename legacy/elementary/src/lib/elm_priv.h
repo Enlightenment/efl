@@ -67,6 +67,8 @@ extern const char *_elm_engines[];
 #define ELM_SOFTWARE_16_SDL   (_elm_engines[10])
 #define ELM_OPENGL_SDL        (_elm_engines[11])
 
+#define ELM_FONT_TOKEN_STYLE ":style="
+
 struct _Elm_Config
 {
    int          config_version;
@@ -85,6 +87,7 @@ struct _Elm_Config
    int          bgpixmap;
    int          compositing;
    Eina_List   *font_dirs;
+   Eina_List   *font_overlays;
    int          font_hinting;
    int          image_cache;
    int          font_cache;
@@ -155,6 +158,17 @@ Eina_List          *_elm_config_profiles_list(void);
 void                _elm_config_profile_set(const char *profile);
 
 void                _elm_config_engine_set(const char *engine);
+
+Eina_List          *_elm_config_font_overlays_list(void);
+void                _elm_config_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
+void                _elm_config_font_overlay_remove(const char *text_class);
+void                _elm_config_font_overlay_apply(void);
+Eina_List          *_elm_config_text_classes_get(void);
+void                _elm_config_text_classes_free(Eina_List *l);
+
+Elm_Font_Properties *_elm_font_properties_get(Eina_Hash **font_hash, const char *font);
+Eina_Hash           *_elm_font_available_hash_add(Eina_Hash *font_hash, const char *full_name);
+void                 _elm_font_available_hash_del(Eina_Hash *hash);
 
 void                 elm_tooltip_theme(Elm_Tooltip *tt);
 void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);

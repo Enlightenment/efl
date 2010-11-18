@@ -80,6 +80,7 @@ elm_conform.c \
 elm_mapbuf.c \
 elm_thumb.c \
 elm_config.c \
+elm_font.c \
 elm_animator.c \
 elm_transit.c \
 elm_calendar.c \

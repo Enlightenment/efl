@@ -5,6 +5,9 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 typedef struct _Theme Theme;
+typedef struct _Fonts_Data Fonts_Data;
+typedef struct _Elm_Text_Class_Data Elm_Text_Class_Data;
+typedef struct _Elm_Font_Size_Data Elm_Font_Size_Data;
 
 struct _Theme
 {
@@ -17,18 +20,101 @@ struct _Theme
 static Theme *tsel = NULL;
 static Eina_List *themes = NULL;
 
+struct _Elm_Text_Class_Data
+{
+   const char    *name;
+   const char    *desc;
+   const char    *font;
+   const char    *style;
+   Evas_Font_Size size;
+};
+
+struct _Elm_Font_Size_Data
+{
+   const char    *size_str;
+   Evas_Font_Size size;
+};
+
+struct _Fonts_Data
+{
+   Eina_List  *text_classes;
+
+   Eina_Hash  *font_hash;
+   Eina_List  *font_px_list;
+   Eina_List  *font_scale_list;
+
+   const char *cur_font;
+   const char *cur_style;
+   double      cur_size;
+};
+
+#define ELM_LIST_DISABLE(list)                         \
+  do                                                   \
+    {                                                  \
+       const Eina_List *l = elm_list_items_get(list);  \
+       if (l)                                          \
+         {                                             \
+            elm_list_item_show(eina_list_data_get(l)); \
+            elm_object_disabled_set(list, EINA_TRUE);  \
+         }                                             \
+    }                                                  \
+  while (0);
+
+#define ELM_LIST_ENABLE(list)                     \
+  do                                              \
+    {                                             \
+       elm_object_disabled_set(list, EINA_FALSE); \
+    }                                             \
+  while (0);
+
 static int quiet = 0;
 static int interactive = 1;
 
 static const char *theme_set = NULL;
 static const char *finger_size_set = NULL;
 static const char *scale_set = NULL;
+static Fonts_Data fdata = {NULL, NULL, NULL, NULL, NULL, NULL, 0.0};
 
 static void
-my_win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_font_styles_list_sel(void *data   __UNUSED__,
+                      Evas_Object *obj,
+                      void        *event_info);
+
+static void
+config_exit(void *data       __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void *event_info __UNUSED__)
 {
+   Elm_Text_Class_Data *tc_data;
+   Elm_Font_Size_Data *sd;
+
+   EINA_LIST_FREE(fdata.text_classes, tc_data)
+     {
+        eina_stringshare_del(tc_data->name);
+        eina_stringshare_del(tc_data->desc);
+        eina_stringshare_del(tc_data->font);
+        eina_stringshare_del(tc_data->style);
+        free(tc_data);
+     }
+
+   elm_font_available_hash_del(fdata.font_hash);
+
+   EINA_LIST_FREE(fdata.font_px_list, sd)
+     {
+        eina_stringshare_del(sd->size_str);
+        free(sd);
+     }
+
+   EINA_LIST_FREE(fdata.font_scale_list, sd)
+     {
+        eina_stringshare_del(sd->size_str);
+        free(sd);
+     }
+
+   if (fdata.cur_font) eina_stringshare_del(fdata.cur_font);
+   if (fdata.cur_style) eina_stringshare_del(fdata.cur_style);
+
    elm_config_save();
-   /* called when my_win_main is requested to be deleted */
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
 }
 
@@ -258,6 +344,110 @@ _elm_theme_current_get(const char *theme_search_order)
      }
 
    return ret;
+}
+
+static void
+_font_overlay_reset(void            *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
+{
+   Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
+   Elm_Text_Class_Data *tc_data;
+   Elm_List_Item *it;
+
+   win = data;
+
+   fclasses = evas_object_data_get(win, "font_classes_list");
+   it = elm_list_selected_item_get(fclasses);
+   if (!it) return;
+   tc_data = elm_list_item_data_get(it);
+
+   fnames = evas_object_data_get(win, "font_names_list");
+   fstyles = evas_object_data_get(win, "font_styles_list");
+   fsizes = evas_object_data_get(win, "font_sizes_list");
+
+   elm_font_overlay_unset(tc_data->name);
+
+   eina_stringshare_replace(&fdata.cur_font, NULL);
+   eina_stringshare_replace(&tc_data->font, NULL);
+   eina_stringshare_replace(&fdata.cur_style, NULL);
+   eina_stringshare_replace(&tc_data->style, NULL);
+   fdata.cur_size = 0.0;
+   tc_data->size = 0.0;
+
+   ELM_LIST_DISABLE(fnames);
+   ELM_LIST_DISABLE(fstyles);
+   ELM_LIST_DISABLE(fsizes);
+
+   elm_config_save();
+}
+
+static void
+_font_overlay_reset_all(void            *data,
+                        Evas_Object *obj __UNUSED__,
+                        void *event_info __UNUSED__)
+{
+   Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
+   Elm_Text_Class_Data *tc_data;
+   Elm_List_Item *it;
+   Eina_List *l;
+
+   win = data;
+   eina_stringshare_replace(&fdata.cur_font, NULL);
+   eina_stringshare_replace(&fdata.cur_style, NULL);
+   fdata.cur_size = 0.0;
+
+   EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
+     {
+        elm_font_overlay_unset(tc_data->name);
+
+        eina_stringshare_replace(&tc_data->font, NULL);
+        eina_stringshare_replace(&tc_data->style, NULL);
+        tc_data->size = 0.0;
+     }
+
+   fclasses = evas_object_data_get(win, "font_classes_list");
+   fnames = evas_object_data_get(win, "font_names_list");
+   fstyles = evas_object_data_get(win, "font_styles_list");
+   fsizes = evas_object_data_get(win, "font_sizes_list");
+
+   it = elm_list_selected_item_get(fclasses);
+   if (it) elm_list_item_selected_set(it, EINA_FALSE);
+
+   ELM_LIST_DISABLE(fnames);
+   ELM_LIST_DISABLE(fstyles);
+   ELM_LIST_DISABLE(fsizes);
+
+   elm_config_save();
+}
+
+static void
+_font_overlay_change(void *data       __UNUSED__,
+                     Evas_Object *obj __UNUSED__,
+                     void *event_info __UNUSED__)
+{
+   Elm_Text_Class_Data *tc_data;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
+     {
+        if (tc_data->font)
+          {
+             const char *name;
+
+             name = elm_font_fontconfig_name_get(tc_data->font, tc_data->style);
+             elm_font_overlay_set(tc_data->name, name,
+                                  tc_data->size ? tc_data->size : -100);
+             elm_font_fontconfig_name_free(name);
+          }
+        else
+          elm_font_overlay_unset(tc_data->name);
+     }
+
+   elm_config_save();
+   elm_font_overlay_all_apply();
+
+   /* TODO: apply hinting */
 }
 
 static void
@@ -774,9 +964,614 @@ _unimplemented(Evas_Object *win, Evas_Object *pager, const char *name)
 }
 
 static void
-_status_config_fonts(Evas_Object *win, Evas_Object *pager)
+_font_preview_update(Evas_Object *win)
 {
-   _unimplemented(win, pager, "fonts");
+   Evas_Font_Size sz;
+   const char *name;
+
+   if (!fdata.cur_font)
+     return;
+
+   name = elm_font_fontconfig_name_get(fdata.cur_font, fdata.cur_style);
+   sz = fdata.cur_size;
+
+   if (sz < 0)
+     sz = (-sz * 10) / 100;
+   if (sz == 0)
+     sz = 10;
+
+   edje_object_text_class_set(evas_object_data_get(win, "font_preview"),
+                              "font_preview", name, sz);
+
+   elm_font_fontconfig_name_free(name);
+}
+
+static void
+_font_classes_list_sel(void *data   __UNUSED__,
+                       Evas_Object *obj,
+                       void        *event_info)
+{
+   const Eina_List *f_names_items, *l;
+   Elm_Text_Class_Data *tc_data;
+   Evas_Object *f_names_list;
+   Elm_List_Item *it;
+
+   tc_data = elm_list_item_data_get(event_info);
+
+   f_names_list = evas_object_data_get(elm_object_top_widget_get(obj),
+                                       "font_names_list");
+   ELM_LIST_ENABLE(f_names_list);
+
+   f_names_items = elm_list_items_get(f_names_list);
+
+   EINA_LIST_FOREACH(f_names_items, l, it)
+     {
+        const char *l;
+
+        l = elm_list_item_label_get(it);
+
+        if (tc_data->font && !strcmp(l, tc_data->font))
+          {
+             elm_list_item_selected_set(it, EINA_TRUE);
+             elm_list_item_show(it);
+             break;
+          }
+     }
+}
+
+static void
+_font_names_list_sel(void *data   __UNUSED__,
+                     Evas_Object *obj,
+                     void        *event_info)
+{
+   Evas_Object *style_list, *cls_list, *sizes_list, *win;
+   const char *style, *sel_font;
+   Elm_Text_Class_Data *tc_data;
+   Elm_List_Item *it, *fc_it;
+   Elm_Font_Properties *efp;
+   const Eina_List *l;
+
+   it = event_info;
+   sel_font = elm_list_item_label_get(it);
+
+   win = elm_object_top_widget_get(obj);
+   style_list = evas_object_data_get(win, "font_styles_list");
+   cls_list = evas_object_data_get(win, "font_classes_list");
+   sizes_list = evas_object_data_get(win, "font_sizes_list");
+
+   fc_it = elm_list_selected_item_get(cls_list);
+   if (!fc_it) return;  /* should not happen, fonts list disabled in
+                         * this case */
+
+   eina_stringshare_replace(&fdata.cur_font, sel_font);
+
+   tc_data = elm_list_item_data_get(fc_it);
+   if (tc_data->font) eina_stringshare_del(tc_data->font);
+   if (fdata.cur_font) tc_data->font = eina_stringshare_ref(fdata.cur_font);
+
+   /* load styles list */
+   efp = eina_hash_find(fdata.font_hash, sel_font);
+
+   ELM_LIST_ENABLE(style_list);
+   elm_list_clear(style_list);
+
+   evas_event_freeze(evas_object_evas_get(style_list));
+   edje_freeze();
+
+   it = NULL;
+
+   EINA_LIST_FOREACH(efp->styles, l, style)
+     {
+        Elm_List_Item *i;
+
+        i = elm_list_item_append(style_list, style, NULL, NULL,
+                                 _font_styles_list_sel, NULL);
+
+        if (tc_data->style && (!strcmp(style, tc_data->style)))
+          it = i;
+     }
+
+   elm_list_go(style_list);
+
+   edje_thaw();
+   evas_event_thaw(evas_object_evas_get(style_list));
+
+   if (it)
+     elm_list_item_selected_set(it, EINA_TRUE);
+
+   _font_preview_update(win);
+}
+
+static void
+_font_styles_list_sel(void *data   __UNUSED__,
+                      Evas_Object *obj,
+                      void        *event_info)
+{
+   Evas_Object *fc_list, *fs_list, *win;
+   Elm_Text_Class_Data *tc_data;
+   const Eina_List *l;
+   Elm_List_Item *it;
+
+   win = elm_object_top_widget_get(obj);
+   fc_list = evas_object_data_get(win, "font_classes_list");
+   fs_list = evas_object_data_get(win, "font_sizes_list");
+
+   it = elm_list_selected_item_get(fc_list);
+   if (!it) return;  /* should not happen */
+
+   eina_stringshare_replace(&fdata.cur_style,
+                            elm_list_item_label_get(event_info));
+   ELM_LIST_ENABLE(fs_list);
+
+   tc_data = elm_list_item_data_get(it);
+   eina_stringshare_del(tc_data->style);
+   tc_data->style = eina_stringshare_ref(fdata.cur_style);
+
+   evas_event_freeze(evas_object_evas_get(fs_list));
+   edje_freeze();
+
+   EINA_LIST_FOREACH(elm_list_items_get(fs_list), l, it)
+     {
+        Elm_Font_Size_Data *sdata;
+
+        sdata = elm_list_item_data_get(it);
+        elm_list_item_selected_set(l->data, EINA_FALSE);
+
+        if (tc_data->size == sdata->size)
+          {
+             elm_list_item_selected_set(it, EINA_TRUE);
+             elm_list_item_show(it);
+             break;
+          }
+     }
+
+   edje_thaw();
+   evas_event_thaw(evas_object_evas_get(fs_list));
+
+   _font_preview_update(win);
+}
+
+static void
+_font_sizes_list_sel(void *data       __UNUSED__,
+                     Evas_Object *obj __UNUSED__,
+                     void *event_info __UNUSED__)
+{
+   Elm_Text_Class_Data *tc_data;
+   Evas_Object *fc_list, *win;
+   Elm_Font_Size_Data *sd;
+   Elm_List_Item *it;
+
+   win = elm_object_top_widget_get(obj);
+   fc_list = evas_object_data_get(win, "font_classes_list");
+
+   it = elm_list_selected_item_get(fc_list);
+   if (!it) return;  /* should not happen */
+
+   sd = elm_list_item_data_get(event_info);
+   fdata.cur_size = sd->size;
+
+   tc_data = elm_list_item_data_get(it);
+   tc_data->size = fdata.cur_size;
+
+   _font_preview_update(win);
+}
+
+static void
+_fstyle_list_unselect_cb(void *data       __UNUSED__,
+                         Evas_Object     *obj,
+                         void *event_info __UNUSED__)
+{
+   Evas_Object *sizes_list, *win;
+
+   if (elm_list_selected_item_get(obj)) return;
+
+   win = elm_object_top_widget_get(obj);
+
+   sizes_list = evas_object_data_get(win, "font_sizes_list");
+   ELM_LIST_DISABLE(sizes_list);
+}
+
+static void
+_fc_list_unselect_cb(void *data       __UNUSED__,
+                     Evas_Object     *obj,
+                     void *event_info __UNUSED__)
+{
+   Evas_Object *font_names_list, *styles_list, *sizes_list, *win;
+
+   if (elm_list_selected_item_get(obj)) return;
+
+   win = elm_object_top_widget_get(obj);
+
+   font_names_list = evas_object_data_get(win, "font_names_list");
+   ELM_LIST_DISABLE(font_names_list);
+
+   styles_list = evas_object_data_get(win, "font_styles_list");
+   ELM_LIST_DISABLE(styles_list);
+
+   sizes_list = evas_object_data_get(win, "font_sizes_list");
+   ELM_LIST_DISABLE(sizes_list);
+}
+
+static void
+_font_classes_list_load(Evas_Object *li)
+{
+   Elm_Text_Class_Data *tc_data;
+   Eina_List *l;
+   Evas *evas;
+
+   evas = evas_object_evas_get(li);
+   evas_event_freeze(evas);
+   edje_freeze();
+
+   EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
+     elm_list_item_append(li, tc_data->desc, NULL, NULL, _font_classes_list_sel,
+                          tc_data);
+
+   evas_object_smart_callback_add(li, "unselected", _fc_list_unselect_cb,
+                                  NULL);
+
+   elm_list_go(li);
+   edje_thaw();
+   evas_event_thaw(evas);
+}
+
+static void
+_fonts_data_fill(Evas *evas)
+{
+   const Eina_List *fo_list, *text_classes, *l;
+   Elm_Text_Class_Data *tc_data;
+   Elm_Font_Size_Data *sd;
+   Elm_Font_Overlay *efo;
+   Eina_List *evas_fonts;
+   Elm_Text_Class *etc;
+   int i;
+
+   evas_fonts = evas_font_available_list(evas);
+   fdata.font_hash = elm_font_available_hash_add(evas_fonts);
+   evas_font_available_list_free(evas, evas_fonts);
+
+   text_classes = elm_text_classes_list_get();
+   fo_list = elm_font_overlay_list_get();
+
+   EINA_LIST_FOREACH(text_classes, l, etc)
+     {
+        const Eina_List *ll;
+
+        tc_data = calloc(1, sizeof(*tc_data));
+        tc_data->name = eina_stringshare_add(etc->name);
+        tc_data->desc = eina_stringshare_add(etc->desc);
+
+        EINA_LIST_FOREACH(fo_list, ll, efo)
+          {
+             if (strcmp(tc_data->name, efo->text_class))
+               continue;
+
+             if (efo->font)
+               {
+                  Elm_Font_Properties *efp;
+
+                  efp = elm_font_properties_get(efo->font);
+                  if (efp)
+                    {
+                       tc_data->font = eina_stringshare_add(efp->name);
+                       /* we're sure we recorded with only 1 style selected */
+                       tc_data->style = eina_stringshare_add(efp->styles->data);
+                       elm_font_properties_free(efp);
+                    }
+               }
+             tc_data->size = efo->size;
+          }
+
+        fdata.text_classes = eina_list_append(fdata.text_classes, tc_data);
+     }
+
+   elm_text_classes_list_free(text_classes);
+
+   /* FIXME: hinting later */
+   /* fdata.hinting = e_config->font_hinting; */
+
+   sd = calloc(1, sizeof(Elm_Font_Size_Data));
+   sd->size_str = eina_stringshare_add("Tiny");
+   sd->size = -50;
+   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+
+   sd = calloc(1, sizeof(Elm_Font_Size_Data));
+   sd->size_str = eina_stringshare_add("Small");
+   sd->size = -80;
+   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+
+   sd = calloc(1, sizeof(Elm_Font_Size_Data));
+   sd->size_str = eina_stringshare_add("Normal");
+   sd->size = -100;
+   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+
+   sd = calloc(1, sizeof(Elm_Font_Size_Data));
+   sd->size_str = eina_stringshare_add("Big");
+   sd->size = -150;
+   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+
+   sd = calloc(1, sizeof(Elm_Font_Size_Data));
+   sd->size_str = eina_stringshare_add("Really Big");
+   sd->size = -190;
+   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+
+   sd = calloc(1, sizeof(Elm_Font_Size_Data));
+   sd->size_str = eina_stringshare_add("Huge");
+   sd->size = -250;
+   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+
+   for (i = 5; i < 21; i++)
+     {
+        char str[16];
+
+        str[0] = 0;
+        snprintf(str, sizeof(str), "%d pixels", i);
+
+        sd = calloc(1, sizeof(Elm_Font_Size_Data));
+        sd->size_str = eina_stringshare_add(str);
+        sd->size = i;
+        fdata.font_px_list = eina_list_append(fdata.font_px_list, sd);
+     }
+}
+
+static int
+_font_sort_cb(const void *data1,
+              const void *data2)
+{
+   if (!data1) return 1;
+   if (!data2) return -1;
+   return strcmp(data1, data2);
+}
+
+static void
+_font_sizes_list_load(Evas_Object *size_list)
+{
+   Elm_Font_Size_Data *size_data;
+   Eina_List *l;
+   Evas *evas;
+
+   evas = evas_object_evas_get(size_list);
+   evas_event_freeze(evas);
+   edje_freeze();
+
+   EINA_LIST_FOREACH(fdata.font_scale_list, l, size_data)
+     elm_list_item_append(size_list, size_data->size_str, NULL, NULL,
+                          _font_sizes_list_sel, size_data);
+
+   EINA_LIST_FOREACH(fdata.font_px_list, l, size_data)
+     elm_list_item_append(size_list, size_data->size_str, NULL, NULL,
+                          _font_sizes_list_sel, size_data);
+
+   elm_list_go(size_list);
+   edje_thaw();
+   evas_event_thaw(evas);
+}
+
+static void
+_fnames_list_unselect_cb(void *data       __UNUSED__,
+                         Evas_Object     *obj,
+                         void *event_info __UNUSED__)
+{
+   Evas_Object *styles_list, *sizes_list, *win;
+
+   if (elm_list_selected_item_get(obj)) return;
+
+   win = elm_object_top_widget_get(obj);
+
+   styles_list = evas_object_data_get(win, "font_styles_list");
+   ELM_LIST_DISABLE(styles_list);
+
+   sizes_list = evas_object_data_get(win, "font_sizes_list");
+   ELM_LIST_DISABLE(sizes_list);
+}
+
+static Eina_Bool
+_font_list_fill(const Eina_Hash *hash __UNUSED__,
+                const void *key       __UNUSED__,
+                void                 *data,
+                void                 *fdata)
+{
+   Elm_Font_Properties *efp;
+   Eina_List **flist;
+
+   flist = fdata;
+   efp = data;
+
+   *flist = eina_list_append(*flist, efp->name);
+
+   return EINA_TRUE;
+}
+
+static void
+_font_names_list_load(Evas_Object *flist)
+{
+   Eina_List *l, *names_list = NULL;
+   const char *font;
+   Evas *evas;
+
+   evas = evas_object_evas_get(flist);
+   evas_event_freeze(evas);
+   edje_freeze();
+
+   eina_hash_foreach(fdata.font_hash, _font_list_fill, &names_list);
+   names_list = eina_list_sort(names_list, eina_list_count(names_list),
+                               _font_sort_cb);
+
+   EINA_LIST_FOREACH(names_list, l, font)
+     elm_list_item_append(flist, font, NULL, NULL, _font_names_list_sel, NULL);
+
+   EINA_LIST_FREE(names_list, font);
+
+   evas_object_smart_callback_add(flist, "unselected", _fnames_list_unselect_cb,
+                                  NULL);
+
+   elm_list_go(flist);
+
+   edje_thaw();
+   evas_event_thaw(evas);
+}
+
+static void
+_status_config_fonts(Evas_Object *win,
+                     Evas_Object *pager)
+{
+   Evas_Object *base, *fr, *li, *rc, *preview, *sp, *pd, *bt, *bx;
+   char buf[PATH_MAX];
+
+   _fonts_data_fill(evas_object_evas_get(win));
+
+   base = elm_table_add(win);
+   evas_object_size_hint_weight_set(base, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(base, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   /* yeah, dummy rectangles are ugly as hell, but no good way yet of
+      fixing sizes */
+   rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_min_set(rc, 70, 170);
+   elm_table_pack(base, rc, 1, 0, 1, 1);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Font Class");
+   elm_table_pack(base, fr, 0, 0, 1, 2);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(fr);
+
+   /* FIXME: no multiselection for this list, for now */
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_frame_content_set(fr, li);
+   evas_object_show(li);
+
+   evas_object_data_set(win, "font_classes_list", li);
+   _font_classes_list_load(li);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Font");
+   elm_table_pack(base, fr, 1, 0, 1, 2);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(fr);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_frame_content_set(fr, li);
+   evas_object_show(li);
+
+   evas_object_data_set(win, "font_names_list", li);
+   _font_names_list_load(li);
+   ELM_LIST_DISABLE(li);
+
+   rc = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_min_set(rc, 70, 130);
+   elm_table_pack(base, rc, 1, 2, 1, 1);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Style");
+   elm_table_pack(base, fr, 0, 2, 1, 1);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(fr);
+   ELM_LIST_DISABLE(li);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_frame_content_set(fr, li);
+   evas_object_show(li);
+
+   evas_object_data_set(win, "font_styles_list", li);
+   evas_object_smart_callback_add(li, "unselected", _fstyle_list_unselect_cb,
+                                  NULL);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Size");
+   elm_table_pack(base, fr, 1, 2, 1, 1);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(fr);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_frame_content_set(fr, li);
+   evas_object_show(li);
+
+   evas_object_data_set(win, "font_sizes_list", li);
+   _font_sizes_list_load(li);
+   ELM_LIST_DISABLE(li);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(base, bx, 0, 3, 2, 1);
+   evas_object_show(bx);
+
+   /* FIXME: what to do here? dedicated widget? some new entry API set? */
+   snprintf(buf, sizeof(buf), "%s/objects/font_preview.edj", PACKAGE_DATA_DIR);
+   preview = elm_layout_add(win);
+   elm_layout_file_set(preview, buf, "font_preview");
+   elm_layout_text_set(preview, "elm.text", "Preview Text — 我真的会写中文");
+   evas_object_size_hint_weight_set(preview, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(preview, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(preview);
+
+   elm_box_pack_end(bx, preview);
+   evas_object_data_set(win, "font_preview", elm_layout_edje_get(preview));
+
+   /////////////////////////////////////////////
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_table_pack(base, sp, 0, 4, 2, 1);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   elm_object_style_set(pd, "pad_medium");
+   evas_object_size_hint_weight_set(pd, 0.0, 0.0);
+   evas_object_size_hint_align_set(pd, 0.5, 0.5);
+   elm_table_pack(base, pd, 0, 5, 2, 1);
+   evas_object_show(pd);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bx);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _font_overlay_reset, win);
+   elm_button_label_set(bt, "Reset");
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _font_overlay_reset_all, win);
+   elm_button_label_set(bt, "Reset All");
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _font_overlay_change, win);
+   elm_button_label_set(bt, "Apply");
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   elm_frame_content_set(pd, bx);
+
+   evas_object_data_set(win, "fonts", base);
+
+   elm_pager_content_push(pager, base);
 }
 
 static void
@@ -1264,7 +2059,7 @@ status_win(void)
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    elm_win_title_set(win, "Elementary Config");
 
-   evas_object_smart_callback_add(win, "delete,request", my_win_del, NULL);
+   evas_object_smart_callback_add(win, "delete,request", config_exit, NULL);
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, 1.0, 1.0);
    elm_win_resize_object_add(win, bg);

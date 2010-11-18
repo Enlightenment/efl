@@ -6,13 +6,14 @@ EDJE_FLAGS = -v -id $(top_srcdir)/data/objects -fd $(top_srcdir)/data/objects
 
 filesdir = $(datadir)/elementary/objects
 
-files_DATA = test.edj multip.edj colorpreview.edj cursors.edj
+files_DATA = test.edj multip.edj colorpreview.edj cursors.edj font_preview.edj
 
 EXTRA_DIST = \
 test.edc \
 multip.edc \
 colorpreview.edc \
 cursors.edc \
+font_preview.edc \
 grid_bg.png \
 over.png \
 under.png \
@@ -24,7 +25,7 @@ test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/objects/test.edc \
 	$(top_builddir)/data/objects/test.edj
-			
+
 multip.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/objects/multip.edc \
@@ -39,6 +40,11 @@ cursors.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/objects/cursors.edc \
 	$(top_builddir)/data/objects/cursors.edj
-			
+
+font_preview.edj: Makefile $(EXTRA_DIST)
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/objects/font_preview.edc \
+	$(top_builddir)/data/objects/font_preview.edj
+
 clean-local:
 	rm -f *.edj

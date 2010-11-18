@@ -282,6 +282,41 @@ extern "C" {
    EAPI const char  *elm_engine_current_get(void);
    EAPI void         elm_engine_set(const char *engine);
 
+  typedef struct _Elm_Text_Class
+    {
+       const char *name;
+       const char *desc;
+    } Elm_Text_Class;
+
+  typedef struct _Elm_Font_Overlay
+    {
+       const char    *text_class;
+       const char    *font;
+       Evas_Font_Size size;
+    } Elm_Font_Overlay;
+
+  typedef struct _Elm_Font_Properties
+    {
+       const char *name;
+       Eina_List  *styles;
+    } Elm_Font_Properties;
+
+   EAPI const Eina_List     *elm_text_classes_list_get(void);
+   EAPI void                 elm_text_classes_list_free(const Eina_List *list);
+
+   EAPI const Eina_List     *elm_font_overlay_list_get(void);
+   EAPI void                 elm_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
+   EAPI void                 elm_font_overlay_unset(const char *text_class);
+   EAPI void                 elm_font_overlay_apply();
+   EAPI void                 elm_font_overlay_all_apply();
+
+   EAPI Elm_Font_Properties *elm_font_properties_get(const char *font);
+   EAPI void                 elm_font_properties_free(Elm_Font_Properties *efp);
+   EAPI const char          *elm_font_fontconfig_name_get(const char *name, const char *style);
+   EAPI void                 elm_font_fontconfig_name_free(const char *name);
+   EAPI Eina_Hash           *elm_font_available_hash_add(Eina_List *list);
+   EAPI void                 elm_font_available_hash_del(Eina_Hash *hash);
+
    EAPI Evas_Coord   elm_finger_size_get(void);
    EAPI void         elm_finger_size_set(Evas_Coord size);
    EAPI void         elm_finger_size_all_set(Evas_Coord size);

@@ -1440,6 +1440,280 @@ elm_engine_set(const char *engine)
 }
 
 /**
+ * @defgroup Fonts Elementary Fonts
+ *
+ * These are functions dealing with font rendering, selection and the
+ * like for Elementary applications. One might fetch which system
+ * fonts are there to use and set custom fonts for individual classes
+ * of UI items containing text (text classes).
+ */
+
+/**
+ * Get Elementary's list of supported text classes.
+ *
+ * @return The text classes list, with @c Elm_Text_Class blobs as data.
+ * @ingroup Fonts
+ *
+ * Release the list with elm_text_classes_list_free().
+ */
+EAPI const Eina_List *
+elm_text_classes_list_get(void)
+{
+   return _elm_config_text_classes_get();
+}
+
+/**
+ * Free Elementary's list of supported text classes.
+ *
+ * @ingroup Fonts
+ *
+ * @see elm_text_classes_list_get().
+ */
+EAPI void
+elm_text_classes_list_free(const Eina_List *list)
+{
+   _elm_config_text_classes_free((Eina_List *)list);
+}
+
+/**
+ * Get Elementary's list of font overlays, set with
+ * elm_font_overlay_set().
+ *
+ * @return The font overlays list, with @c Elm_Font_Overlay blobs as
+ * data.
+ *
+ * @ingroup Fonts
+ *
+ * For each text class, one can set a <b>font overlay</b> for it,
+ * overriding the default font properties for that class coming from
+ * the theme in use. There is no need to free this list.
+ *
+ * @see elm_font_overlay_set() and elm_font_overlay_unset().
+ */
+EAPI const Eina_List *
+elm_font_overlay_list_get(void)
+{
+   return _elm_config_font_overlays_list();
+}
+
+/**
+ * Set a font overlay for a given Elementary text class.
+ *
+ * @param text_class Text class name
+ * @param font Font name and style string
+ * @param size Font size
+ *
+ * @ingroup Fonts
+ *
+ * @p font has to be in the format returned by
+ * elm_font_fontconfig_name_get(). @see elm_font_overlay_list_get()
+ * and @elm_font_overlay_unset().
+ */
+EAPI void
+elm_font_overlay_set(const char    *text_class,
+                     const char    *font,
+                     Evas_Font_Size size)
+{
+   _elm_config_font_overlay_set(text_class, font, size);
+}
+
+/**
+ * Unset a font overlay for a given Elementary text class.
+ *
+ * @param text_class Text class name
+ *
+ * @ingroup Fonts
+ *
+ * This will bring back text elements belonging to text class @p
+ * text_class back to their default font settings.
+ */
+EAPI void
+elm_font_overlay_unset(const char *text_class)
+{
+   _elm_config_font_overlay_remove(text_class);
+}
+
+/**
+ * Apply the changes made with elm_font_overlay_set() and
+ * elm_font_overlay_unset() on the current Elementary window.
+ *
+ * @ingroup Fonts
+ *
+ * This applies all font overlays set to all objects in the UI.
+ */
+EAPI void
+elm_font_overlay_apply(void)
+{
+   _elm_config_font_overlay_apply();
+}
+
+/**
+ * Apply the changes made with elm_font_overlay_set() and
+ * elm_font_overlay_unset() on all Elementary application windows.
+ *
+ * @ingroup Fonts
+ *
+ * This applies all font overlays set to all objects in the UI.
+ */
+EAPI void
+elm_font_overlay_all_apply(void)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int dummy = (unsigned int)(1 * 1000.0);
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FONT_OVERLAY");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(), atom, &dummy,
+                                  1);
+#endif
+}
+
+/**
+ * Translate a font (family) name string in fontconfig's font names
+ * syntax into an @c Elm_Font_Properties struct.
+ *
+ * @param font The font name and styles string
+ * @return the font properties struct
+ *
+ * @ingroup Fonts
+ *
+ * @note The reverse translation can be achived with
+ * elm_font_fontconfig_name_get(), for one style only (single font
+ * instance, not family).
+ */
+EAPI Elm_Font_Properties *
+elm_font_properties_get(const char *font)
+{
+   if (!font) return NULL;
+   return _elm_font_properties_get(NULL, font);
+}
+
+/**
+ * Free font properties return by elm_font_properties_get().
+ *
+ * @param efp the font properties struct
+ *
+ * @ingroup Fonts
+ */
+EAPI void
+elm_font_properties_free(Elm_Font_Properties *efp)
+{
+   const char *str;
+
+   EINA_LIST_FREE(efp->styles, str)
+     if (str) eina_stringshare_del(str);
+   if (efp->name) eina_stringshare_del(efp->name);
+   free(efp);
+}
+
+/**
+ * Translate a font name, bound to a style, into fontconfig's font names
+ * syntax.
+ *
+ * @param name The font (family) name
+ * @param style The given style (may be @c NULL)
+ *
+ * @return the font name and style string
+ *
+ * @ingroup Fonts
+ *
+ * @note The reverse translation can be achived with
+ * elm_font_properties_get(), for one style only (single font
+ * instance, not family).
+ */
+EAPI const char *
+elm_font_fontconfig_name_get(const char *name,
+                             const char *style)
+{
+   char buf[256];
+
+   if (!name) return NULL;
+   if (!style || style[0] == 0) return eina_stringshare_add(name);
+   snprintf(buf, 256, "%s" ELM_FONT_TOKEN_STYLE "%s", name, style);
+   return eina_stringshare_add(buf);
+}
+
+/**
+ * Free the font string return by elm_font_fontconfig_name_get().
+ *
+ * @param efp the font properties struct
+ *
+ * @ingroup Fonts
+ */
+EAPI void
+elm_font_fontconfig_name_free(const char *name)
+{
+   eina_stringshare_del(name);
+}
+
+/**
+ * Create a font hash table of available system fonts.
+ *
+ * One must call it with @p list being the return value of
+ * evas_font_available_list(). The hash will be indexed by font
+ * (family) names, being its values @c Elm_Font_Properties blobs.
+ *
+ * @param list The list of available system fonts, as returned by
+ * evas_font_available_list().
+ * @return the font hash.
+ *
+ * @ingroup Fonts
+ *
+ * @note The user is supposed to get it populated at least with 3
+ * default font families (Sans, Serif, Monospace), which should be
+ * present on most systems.
+ */
+EAPI Eina_Hash *
+elm_font_available_hash_add(Eina_List *list)
+{
+   Eina_Hash *font_hash;
+   Eina_List *l;
+   void *key;
+
+   font_hash = NULL;
+
+   /* populate with default font families */
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Sans:style=Bold Oblique");
+
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Serif:style=Bold Oblique");
+
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Bold Oblique");
+
+   EINA_LIST_FOREACH(list, l, key)
+     font_hash = _elm_font_available_hash_add(font_hash, key);
+
+   return font_hash;
+}
+
+/**
+ * Free the hash return by elm_font_available_hash_add().
+ *
+ * @param hash the hash to be freed.
+ *
+ * @ingroup Fonts
+ */
+EAPI void
+elm_font_available_hash_del(Eina_Hash *hash)
+{
+   _elm_font_available_hash_del(hash);
+}
+
+/**
  * @defgroup Fingers Fingers
  *
  * Elementary is designed to be finger-friendly for touchscreens, and so in
