@@ -13,12 +13,11 @@
 
 static const Ecore_Getopt options = {
    "emotion_test",
-   "%prog [options]",
+   "%prog [options] <filename>",
    "1.0.0",
    "(C) 2010 Enlightenment",
    "BSD\nThis is a 3 clause bsd bla bla",
-   "a simple test program for emotion using enlightenment foundation libraries.\n"
-   "Here is the text of the licence",
+   "a simple test program for emotion.",
    1,
    {
       ECORE_GETOPT_STORE_STR('e', "engine", "ecore-evas engine to use"),
@@ -27,7 +26,6 @@ static const Ecore_Getopt options = {
       ECORE_GETOPT_CALLBACK_ARGS('g', "geometry", "geometry to use in x:y:w:h form.", "X:Y:W:H",
                                  ecore_getopt_callback_geometry_parse, NULL),
       ECORE_GETOPT_STORE_STR('b', "backend", "backend to use"),
-      ECORE_GETOPT_STORE_STR('f', "filename", "file to playback"),
       ECORE_GETOPT_STORE_INT('v', "vis", "visualization type"),
       ECORE_GETOPT_COUNT('v', "verbose", "be more verbose"),
       ECORE_GETOPT_VERSION('V', "version"),
@@ -725,8 +723,7 @@ main(int argc, char **argv)
    int args;
    Eina_Rectangle     geometry = {0, 0, startw, starth};
    char              *engine = NULL;
-   char              *backend = "xine";
-   char              *filename = NULL;
+   char              *backend = NULL;
    int                verbose = 0;
    int                visual = EMOTION_VIS_NONE;
    unsigned char      help = 0;
@@ -736,7 +733,6 @@ main(int argc, char **argv)
       ECORE_GETOPT_VALUE_BOOL(engines_listed),
       ECORE_GETOPT_VALUE_PTR_CAST(geometry),
       ECORE_GETOPT_VALUE_STR(backend),
-      ECORE_GETOPT_VALUE_STR(filename),
       ECORE_GETOPT_VALUE_INT(visual),
       ECORE_GETOPT_VALUE_INT(verbose),
       ECORE_GETOPT_VALUE_NONE,
@@ -758,44 +754,28 @@ main(int argc, char **argv)
 
    ecore_app_args_set(argc, (const char **)argv);
    args = ecore_getopt_parse(&options, values, argc, argv);
-   if (args < 0)
-     goto shutdown_edje;
+   if (args < 0) goto shutdown_edje;
+   else if (help) goto shutdown_edje;
+   else if (engines_listed) goto shutdown_edje;
+   else if (args == argc)
+     {
+        printf("must provide at least one file to play!\n");
+        goto shutdown_edje;
+     }
 
-   if (help)
-     goto shutdown_edje;
-   if (engines_listed)
-     goto shutdown_edje;
-   if (!engine)
-     {
-       printf ("select engine\n");
-       goto shutdown_edje;
-     }
-   if (!filename)
-     {
-       printf ("select engine\n");
-       goto shutdown_edje;
-     }
-   if (!backend)
-     {
-       backend = "xine";
-       printf ("selected backend: %s\n", backend);
-       goto shutdown_edje;
-     }
    if ((geometry.w == 0) || (geometry.h == 0))
      {
-       printf("size nulle\n");
-       goto shutdown_edje;
+        if (geometry.w == 0) geometry.w = 320;
+        if (geometry.h == 0) geometry.h = 240;
      }
 
-   printf ("backend: %s\n", backend);
-   printf ("filename: %s\n", filename);
-   printf ("vis: %d\n", vis);
-   printf ("engine: %s\n", engine);
-   printf ("geometry: %d %d %dx%d\n", geometry.x, geometry.y, geometry.w, geometry.h);
+   printf("evas engine: %s\n", engine ? engine : "<auto>");
+   printf("emotion backend: %s\n", backend ? backend : "<auto>");
+   printf("vis: %d\n", vis);
+   printf("geometry: %d %d %dx%d\n", geometry.x, geometry.y, geometry.w, geometry.h);
 
-   ecore_evas = ecore_evas_new(engine,
-                               geometry.x, geometry.y, geometry.w, geometry.h,
-                               NULL);
+   ecore_evas = ecore_evas_new
+     (engine, geometry.x, geometry.y, geometry.w, geometry.h, NULL);
    if (!ecore_evas)
      goto shutdown_edje;
 
@@ -811,7 +791,8 @@ main(int argc, char **argv)
 
    bg_setup();
 
-   init_video_object(backend, filename);
+   for (; args < argc; args++)
+     init_video_object(backend, argv[args]);
 
    ecore_idle_enterer_add(enter_idle, NULL);
    ecore_animator_add(check_positions, NULL);
