@@ -436,8 +436,12 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    /* checkme */
    EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL
-      ((item != list) && (!item->prev) && (!item->next), list);
+   if (EINA_UNLIKELY((item != list) && (!item->prev) && (!item->next)))
+     {
+        eina_error_set(EINA_ERROR_SAFETY_FAILED);
+        EINA_LOG_ERR("safety check failed: item %p does not appear to be part of an inlist!", item);
+        return list;
+     }
 
    if (item->next)
       item->next->prev = item->prev;
