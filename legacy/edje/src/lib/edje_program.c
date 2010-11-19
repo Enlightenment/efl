@@ -1387,17 +1387,18 @@ _edje_external_param_info_get(const Evas_Object *obj, const char *name)
 }
 
 static Edje_External_Param *
-_edje_param_external_get(const Evas_Object *obj, const char *name, Edje_External_Param *param)
+_edje_param_external_get(Edje_Real_Part *rp, const char *name, Edje_External_Param *param)
 {
+   Evas_Object *swallowed_object = rp->swallowed_object;
    const Edje_External_Param_Info *info;
 
-   info = _edje_external_param_info_get(obj, name);
+   info = _edje_external_param_info_get(swallowed_object, name);
    if (!info) return NULL;
 
    memset(param, 0, sizeof(*param));
    param->name = info->name;
    param->type = info->type;
-   if (!_edje_external_param_get(obj, param)) return NULL;
+   if (!_edje_external_param_get(NULL, rp, param)) return NULL;
    return param;
 }
 
@@ -1999,7 +2000,7 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
    if (src_part->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
 	if (!_edje_param_external_get
-	    (src_part->swallowed_object, src_param, &val))
+	    (src_part, src_param, &val))
 	  {
 	     ERR("cannot get parameter '%s' of part '%s'",
 		 src_param, src_part->part->name);
@@ -2034,7 +2035,7 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
    if (dst_part->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
 	val.name = dst_param;
-	if (!_edje_external_param_set(dst_part->swallowed_object, &val))
+	if (!_edje_external_param_set(NULL, dst_part, &val))
 	  {
 	     ERR("failed to set parameter '%s' (%s) of part '%s'",
 		 dst_param, edje_external_param_type_str(dst_info->type),
@@ -2099,7 +2100,7 @@ _edje_param_set(Edje_Real_Part *part, const char *param, const char *value)
    if (part->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
 	val.name = param;
-	if (!_edje_external_param_set(part->swallowed_object, &val))
+	if (!_edje_external_param_set(NULL, part, &val))
 	  {
 	     ERR("failed to set parameter '%s' (%s) of part '%s'",
 		 param, edje_external_param_type_str(info->type),

@@ -125,7 +125,7 @@ edje_object_part_external_param_set(Evas_Object *obj, const char *part, const Ed
 	return EINA_FALSE;
      }
 
-   return _edje_external_param_set(rp->swallowed_object, param);
+   return _edje_external_param_set(obj, rp, param);
 }
 
 /**
@@ -174,7 +174,7 @@ edje_object_part_external_param_get(const Evas_Object *obj, const char *part, Ed
 	return EINA_FALSE;
      }
 
-   return _edje_external_param_get(rp->swallowed_object, param);
+   return _edje_external_param_get(obj, rp, param);
 }
 
 
@@ -585,12 +585,23 @@ _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *s
 }
 
 Eina_Bool
-_edje_external_param_set(Evas_Object *obj, const Edje_External_Param *param)
+_edje_external_param_set(Evas_Object *obj, Edje_Real_Part *rp, const Edje_External_Param *param)
 {
-   Edje_External_Type *type = evas_object_data_get(obj, "Edje_External_Type");
+   Evas_Object *swallowed_object = rp->swallowed_object;
+   Edje_External_Type *type = evas_object_data_get(swallowed_object, "Edje_External_Type");
    if (!type)
      {
-	ERR("no external type for object %p", obj);
+	if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+            (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+	  {
+	     if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING) &&
+		 (!strcmp (param->name, "text")) && (obj))
+		{
+	           return edje_object_part_text_set(obj, rp->part->name, param->s);
+		}
+	  }
+
+	ERR("no external type for object %p", swallowed_object);
 	return EINA_FALSE;
      }
    if (!type->param_set)
@@ -599,16 +610,28 @@ _edje_external_param_set(Evas_Object *obj, const Edje_External_Param *param)
 	    type->module_name, type->module);
 	return EINA_FALSE;
      }
-   return type->param_set(type->data, obj, param);
+   return type->param_set(type->data, swallowed_object, param);
 }
 
 Eina_Bool
-_edje_external_param_get(const Evas_Object *obj, Edje_External_Param *param)
+_edje_external_param_get(const Evas_Object *obj, Edje_Real_Part *rp, Edje_External_Param *param)
 {
-   Edje_External_Type *type = evas_object_data_get(obj, "Edje_External_Type");
+   Evas_Object *swallowed_object = rp->swallowed_object;
+   Edje_External_Type *type = evas_object_data_get(swallowed_object, "Edje_External_Type");
    if (!type)
      {
-	ERR("no external type for object %p", obj);
+	if ((rp->part->type == EDJE_PART_TYPE_TEXT) ||
+            (rp->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+	  {
+	     const char *text;
+	     param->type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
+	     param->name = "text";
+	     text = edje_object_part_text_get(obj, rp->part->name);
+	     strcpy (param->s, text);
+	     return EINA_TRUE;
+	  }
+       
+	ERR("no external type for object %p", swallowed_object);
 	return EINA_FALSE;
      }
    if (!type->param_get)
@@ -617,7 +640,7 @@ _edje_external_param_get(const Evas_Object *obj, Edje_External_Param *param)
 	    type->module_name, type->module);
 	return EINA_FALSE;
      }
-   return type->param_get(type->data, obj, param);
+   return type->param_get(type->data, swallowed_object, param);
 }
 
 Evas_Object*

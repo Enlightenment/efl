@@ -2568,7 +2568,7 @@ _edje_embryo_fn_external_param_get_int(Embryo_Program *ep, Embryo_Cell *params)
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_INT;
    eep.i = 0;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    return eep.i;
 }
 
@@ -2594,7 +2594,7 @@ _edje_embryo_fn_external_param_set_int(Embryo_Program *ep, Embryo_Cell *params)
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_INT;
    eep.i = params[3];
-   return _edje_external_param_set(rp->swallowed_object, &eep);
+   return _edje_external_param_set(NULL, rp, &eep);
 }
 
 /* Float:external_param_get_float(id, param_name[]) */
@@ -2620,7 +2620,7 @@ _edje_embryo_fn_external_param_get_float(Embryo_Program *ep, Embryo_Cell *params
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
    eep.d = 0.0;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    v = eep.d;
    return EMBRYO_FLOAT_TO_CELL(v);
 }
@@ -2647,7 +2647,7 @@ _edje_embryo_fn_external_param_set_float(Embryo_Program *ep, Embryo_Cell *params
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_DOUBLE;
    eep.d = EMBRYO_CELL_TO_FLOAT(params[3]);
-   return _edje_external_param_set(rp->swallowed_object, &eep);
+   return _edje_external_param_set(NULL, rp, &eep);
 }
 
 /* external_param_get_strlen(id, param_name[]) */
@@ -2672,7 +2672,7 @@ _edje_embryo_fn_external_param_get_strlen(Embryo_Program *ep, Embryo_Cell *param
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
    eep.s = NULL;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    if (!eep.s) return 0;
    return strlen(eep.s);
 }
@@ -2703,7 +2703,7 @@ _edje_embryo_fn_external_param_get_str(Embryo_Program *ep, Embryo_Cell *params)
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
    eep.s = NULL;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    if (!eep.s) goto error;
    src_len = strlen(eep.s);
    if (src_len < dst_len)
@@ -2748,7 +2748,7 @@ _edje_embryo_fn_external_param_set_str(Embryo_Program *ep, Embryo_Cell *params)
    GETSTR(val, params[3]);
    if (!val) return 0;
    eep.s = val;
-   return _edje_external_param_set(rp->swallowed_object, &eep);
+   return _edje_external_param_set(NULL, rp, &eep);
 }
 
 /* external_param_get_choice_len(id, param_name[]) */
@@ -2773,7 +2773,7 @@ _edje_embryo_fn_external_param_get_choice_len(Embryo_Program *ep, Embryo_Cell *p
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
    eep.s = NULL;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    if (!eep.s) return 0;
    return strlen(eep.s);
 }
@@ -2804,7 +2804,7 @@ _edje_embryo_fn_external_param_get_choice(Embryo_Program *ep, Embryo_Cell *param
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_CHOICE;
    eep.s = NULL;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    if (!eep.s) goto error;
    src_len = strlen(eep.s);
    if (src_len < dst_len)
@@ -2849,7 +2849,7 @@ _edje_embryo_fn_external_param_set_choice(Embryo_Program *ep, Embryo_Cell *param
    GETSTR(val, params[3]);
    if (!val) return 0;
    eep.s = val;
-   return _edje_external_param_set(rp->swallowed_object, &eep);
+   return _edje_external_param_set(NULL, rp, &eep);
 }
 
 /* external_param_get_bool(id, param_name[]) */
@@ -2874,7 +2874,7 @@ _edje_embryo_fn_external_param_get_bool(Embryo_Program *ep, Embryo_Cell *params)
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
    eep.i = 0;
-   _edje_external_param_get(rp->swallowed_object, &eep);
+   _edje_external_param_get(NULL, rp, &eep);
    return eep.i;
 }
 
@@ -2900,7 +2900,7 @@ _edje_embryo_fn_external_param_set_bool(Embryo_Program *ep, Embryo_Cell *params)
    eep.name = param_name;
    eep.type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
    eep.i = params[3];
-   return _edje_external_param_set(rp->swallowed_object, &eep);
+   return _edje_external_param_set(NULL, rp, &eep);
 }
 
 void
