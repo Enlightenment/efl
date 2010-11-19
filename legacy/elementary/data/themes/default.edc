@@ -1394,7 +1394,7 @@ collections {
       data.item: "max_font_size" "60";
       styles {
          style { name: "textblock_style";
-            base: "font=Sans font_size=10 color=#000 wrap=word";
+            base: "font=Sans font_size=10 color=#000 wrap=word text_class=label";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "hilight" "+ font=Sans:style=Bold";
@@ -1458,7 +1458,7 @@ collections {
       data.item: "max_font_size" "60";
       styles {
          style { name: "textblock_style2";
-	   base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word";
+	   base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word text_class=label";
            tag:  "br" "\n";
            tag:  "ps" "ps";
 	   tag:  "hilight" "+ color=#ffff";
@@ -4050,6 +4050,7 @@ collections {
                        size:     10;
                        min:      1 1;
                        align:    0.0 0.5;
+                       text_class: "menu";
                    }
                }
                description { state: "visible" 0.0;
@@ -4412,6 +4413,7 @@ collections {
                        size:     10;
                        min:      1 1;
                        align:    0.0 0.5;
+                       text_class: "menu";
                    }
                }
                description { state: "visible" 0.0;
@@ -8120,7 +8122,7 @@ collections {
       styles
       {
          style { name: "entry_textblock_style";
-            base: "font=Sans font_size=10 color=#000 wrap=word";
+            base: "font=Sans font_size=10 color=#000 wrap=word text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
@@ -8130,7 +8132,7 @@ collections {
             tag:  "hilight" "+ font=Sans:style=Bold";
          }
          style { name: "entry_textblock_disabled_style";
-            base: "font=Sans font_size=10 color=#00000080 wrap=word";
+            base: "font=Sans font_size=10 color=#00000080 wrap=word text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
@@ -8200,7 +8202,7 @@ collections {
       styles
       {
          style { name: "entry_textblock_style_charwrap";
-            base: "font=Sans font_size=10 color=#000 wrap=char";
+            base: "font=Sans font_size=10 color=#000 wrap=char text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
@@ -8210,7 +8212,7 @@ collections {
             tag:  "hilight" "+ font=Sans:style=Bold";
          }
          style { name: "entry_textblock_disabled_style_charwrap";
-            base: "font=Sans font_size=10 color=#00000080 wrap=char";
+            base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
@@ -8355,7 +8357,7 @@ collections {
       styles
       {
          style { name: "entry_single_textblock_style";
-            base: "font=Sans font_size=10 color=#000 wrap=none";
+            base: "font=Sans font_size=10 color=#000 wrap=none text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
@@ -8365,7 +8367,7 @@ collections {
             tag:  "hilight" "+ font=Sans:style=Bold";
          }
          style { name: "entry_single_textblock_disabled_style";
-            base: "font=Sans font_size=10 color=#00000080 wrap=none";
+            base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry";
             tag:  "br" "\n";
             tag:  "ps" "ps";
             tag:  "tab" "\t";
@@ -31992,6 +31994,7 @@ collections {
                   size: 12;
                   min: 0 0;
                   align: 0.5 0.5;
+                  text_class: "title_bar";
                }
             }
          }

@@ -34,27 +34,10 @@ const char *_elm_engines[] = {
    declare it both here and in the (default) theme */
 static const Elm_Text_Class _elm_text_classes[] = {
    {"button", "Button Labels"},
-
-   /* FIXME: put in the right/definitive font classes */
+   {"label", "Text Labels"},
+   {"entry", "Text Entries"},
    {"title_bar", "Title Bar"},
-   {"menu_item", "Menu Item"},
-   {"menu_title", "Menu Title"},
-   {"tb_plain", "Textblock Plain"},
-   {"tb_light", "Textblock Light"},
-   {"tb_big", "Textblock Big"},
-   {"move_text", "Move Text"},
-   {"resize_text", "Resize Text"},
-   {"winlist_title", "Winlist Title"},
-   {"configure", "Settings Heading"},
-   {"about_title", "About Title"},
-   {"about_version", "About Version"},
-   {"desklock_title", "Desklock Title"},
-   {"desklock_passwd", "Desklock Password"},
-   {"dialog_error", "Dialog Error"},
-   {"exebuf_command", "Exebuf Command"},
-   {"init_title", "Splash Title"},
-   {"init_text", "Splash Text"},
-   {"init_version", "Splash Version"},
+   {"menu", "Menu Items"},
    {NULL, NULL}
 };
 
