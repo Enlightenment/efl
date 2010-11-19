@@ -118,12 +118,12 @@ _emotion_pipeline_build(Emotion_Gstreamer_Video *ev, const char *file)
        gchar        *str;
        Eina_Bool     build_stream = EINA_FALSE;
 
-       gdouble length_time;
+       gdouble length_time = 0.0;
        gint width;
        gint height;
        gint fps_num;
        gint fps_den;
-       guint32 fourcc;
+       guint32 fourcc = 0;
 
        g_signal_emit_by_name(ev->pipeline, "get-video-pad", i, &pad);
        if (!pad)
@@ -198,7 +198,7 @@ _emotion_pipeline_build(Emotion_Gstreamer_Video *ev, const char *file)
        GstQuery     *query;
        Eina_Bool     build_stream = EINA_FALSE;
 
-       gdouble length_time;
+       gdouble length_time = 0.0;
        gint channels;
        gint samplerate;
 

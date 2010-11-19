@@ -70,12 +70,12 @@ main_resize(Ecore_Evas *ee)
 {
    Evas_Coord w, h;
 
-   evas_output_viewport_get(evas, NULL, NULL, &w, &h);
+   evas_output_viewport_get(ecore_evas_get(ee), NULL, NULL, &w, &h);
    bg_resize(w, h);
 }
 
 static Eina_Bool
-main_signal_exit(void *data, int ev_type, void *ev)
+main_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
 {
    ecore_main_loop_quit();
    while (video_objs)
@@ -89,7 +89,7 @@ main_signal_exit(void *data, int ev_type, void *ev)
 }
 
 static void
-main_delete_request(Ecore_Evas *ee)
+main_delete_request(Ecore_Evas *ee __UNUSED__)
 {
    ecore_main_loop_quit();
 }
@@ -127,13 +127,12 @@ broadcast_event(Emotion_Event ev)
 }
 
 static void
-bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
+bg_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Evas_Event_Key_Down *ev;
+   Evas_Event_Key_Down *ev = event_info;
    Eina_List *l;
    Evas_Object *o;
 
-   ev = (Evas_Event_Key_Down *)event_info;
    if      (!strcmp(ev->keyname, "Escape"))
      ecore_main_loop_quit();
    else if (!strcmp(ev->keyname, "Up"))
@@ -294,60 +293,6 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 }
 
 static void
-video_obj_in_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
-{
-//   evas_object_color_set(obj, 255, 255, 255, 100);
-}
-
-static void
-video_obj_out_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
-{
-//   evas_object_color_set(obj, 255, 255, 255, 200);
-}
-
-static void
-video_obj_down_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
-{
-   Evas_Event_Mouse_Down *e;
-
-   e = event_info;
-   evas_object_color_set(obj, 200, 50, 40, 200);
-   evas_object_raise(obj);
-}
-
-static void
-video_obj_up_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
-{
-   evas_object_color_set(obj, 100, 100, 100, 100);
-}
-
-static void
-video_obj_move_cb(void *data, Evas *ev, Evas_Object *obj, void *event_info)
-{
-   Evas_Event_Mouse_Move *e;
-
-   e = event_info;
-   if (e->buttons & 0x1)
-     {
-	Evas_Coord x, y;
-
-	evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-	x += e->cur.canvas.x - e->prev.canvas.x;
-	y += e->cur.canvas.y - e->prev.canvas.y;
-	evas_object_move(obj, x, y);
-     }
-   else if (e->buttons & 0x4)
-     {
-	Evas_Coord w, h;
-
-	evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-	w += e->cur.canvas.x - e->prev.canvas.x;
-	h += e->cur.canvas.y - e->prev.canvas.y;
-	evas_object_resize(obj, w, h);
-     }
-}
-
-static void
 video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 {
    double pos, len, scale;
@@ -372,7 +317,7 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 }
 
 static void
-video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    video_obj_time_changed(obj, data);
 
@@ -387,7 +332,7 @@ video_obj_frame_decode_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *oe;
    int iw, ih;
@@ -408,19 +353,19 @@ video_obj_frame_resize_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_length_change_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_length_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    video_obj_time_changed(obj, data);
 }
 
 static void
-video_obj_position_update_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_position_update_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    video_obj_time_changed(obj, data);
 }
 
 static void
-video_obj_stopped_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_stopped_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("video stopped!\n");
    emotion_object_position_set(obj, 0.0);
@@ -428,7 +373,7 @@ video_obj_stopped_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_channels_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_channels_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("channels changed: [AUD %i][VID %i][SPU %i]\n",
 	  emotion_object_audio_channel_count(obj),
@@ -437,13 +382,13 @@ video_obj_channels_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_title_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_title_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("video title to: \"%s\"\n", emotion_object_title_get(obj));
 }
 
 static void
-video_obj_progress_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_progress_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("progress: \"%s\" %3.3f\n",
 	  emotion_object_progress_info_get(obj),
@@ -451,7 +396,7 @@ video_obj_progress_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_ref_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_ref_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("video ref to: \"%s\" %i\n",
 	  emotion_object_ref_file_get(obj),
@@ -459,14 +404,14 @@ video_obj_ref_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-video_obj_button_num_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_button_num_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("video spu buttons to: %i\n",
 	  emotion_object_spu_button_count_get(obj));
 }
 
 static void
-video_obj_button_cb(void *data, Evas_Object *obj, void *event_info)
+video_obj_button_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("video selected spu button: %i\n",
 	  emotion_object_spu_button_get(obj));
@@ -475,58 +420,50 @@ video_obj_button_cb(void *data, Evas_Object *obj, void *event_info)
 
 
 static void
-video_obj_signal_play_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_play_cb(void *data, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *ov;
-
-   ov = data;
+   Evas_Object *ov = data;
    emotion_object_play_set(ov, 1);
    edje_object_signal_emit(o, "video_state", "play");
 }
 
 static void
-video_obj_signal_pause_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_pause_cb(void *data, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *ov;
-
-   ov = data;
+   Evas_Object *ov = data;
    emotion_object_play_set(ov, 0);
    edje_object_signal_emit(o, "video_state", "pause");
 }
 
 static void
-video_obj_signal_stop_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_stop_cb(void *data, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *ov;
-
-   ov = data;
+   Evas_Object *ov = data;
    emotion_object_play_set(ov, 0);
    emotion_object_position_set(ov, 0);
    edje_object_signal_emit(o, "video_state", "stop");
 }
 
 static void
-video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *ov;
+   Evas_Object *ov = data;
    double len;
    double x, y;
 
-   ov = data;
    edje_object_part_drag_value_get(o, source, &x, &y);
    len = emotion_object_play_length_get(ov);
    emotion_object_position_set(ov, x * len);
 }
 
 static void
-video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Evas_Object *ov;
+   Evas_Object *ov = data;
    double spd;
    double x, y;
    char buf[256];
 
-   ov = data;
    edje_object_part_drag_value_get(o, source, &x, &y);
    spd = 255 * y;
    evas_object_color_set(ov, spd, spd, spd, spd);
@@ -535,7 +472,7 @@ video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission, cons
 }
 
 static void
-video_obj_signal_frame_move_start_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_frame_move_start_cb(void *data __UNUSED__, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Frame_Data *fd;
    Evas_Coord x, y;
@@ -549,7 +486,7 @@ video_obj_signal_frame_move_start_cb(void *data, Evas_Object *o, const char *emi
 }
 
 static void
-video_obj_signal_frame_move_stop_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_frame_move_stop_cb(void *data __UNUSED__, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Frame_Data *fd;
 
@@ -558,7 +495,7 @@ video_obj_signal_frame_move_stop_cb(void *data, Evas_Object *o, const char *emis
 }
 
 static void
-video_obj_signal_frame_resize_start_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_frame_resize_start_cb(void *data __UNUSED__, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Frame_Data *fd;
    Evas_Coord x, y;
@@ -572,7 +509,7 @@ video_obj_signal_frame_resize_start_cb(void *data, Evas_Object *o, const char *e
 }
 
 static void
-video_obj_signal_frame_resize_stop_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_frame_resize_stop_cb(void *data __UNUSED__, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Frame_Data *fd;
 
@@ -581,7 +518,7 @@ video_obj_signal_frame_resize_stop_cb(void *data, Evas_Object *o, const char *em
 }
 
 static void
-video_obj_signal_frame_move_cb(void *data, Evas_Object *o, const char *emission, const char *source)
+video_obj_signal_frame_move_cb(void *data __UNUSED__, Evas_Object *o, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Frame_Data *fd;
 
@@ -610,7 +547,7 @@ video_obj_signal_frame_move_cb(void *data, Evas_Object *o, const char *emission,
 
 
 static void
-init_video_object(char *module_filename, char *filename)
+init_video_object(const char *module_filename, const char *filename)
 {
    Evas_Object *o, *oe;
    int iw, ih;
@@ -687,8 +624,8 @@ init_video_object(char *module_filename, char *filename)
    evas_object_show(oe);
 }
 
-static Eina_Bool 
-enter_idle(void *data)
+static Eina_Bool
+enter_idle(void *data __UNUSED__)
 {
    double t;
    static double pt = 0.0;
@@ -706,7 +643,7 @@ enter_idle(void *data)
 }
 
 static Eina_Bool
-check_positions(void *data)
+check_positions(void *data __UNUSED__)
 {
    const Eina_List *lst;
    Evas_Object *o;

@@ -1280,7 +1280,7 @@ _free_metadata(Emotion_Gstreamer_Metadata *m)
 }
 
 static void
-_em_buffer_read(void *data, void *buf, unsigned int nbyte __UNUSED__)
+_em_buffer_read(void *data, void *buf __UNUSED__, unsigned int nbyte __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev;
    Emotion_Video_Stream      *vstream;

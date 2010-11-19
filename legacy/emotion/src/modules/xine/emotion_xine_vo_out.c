@@ -327,7 +327,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
    dv = (Emotion_Driver *)vo_driver;
    fr = (Emotion_Frame *)vo_frame;
    
-   if ((fr->width != width) ||  (fr->height != height) || 
+   if ((fr->width != (int)width) ||  (fr->height != (int)height) || 
        (fr->format != format) || (!fr->vo_frame.base[0]))
      {
 //   DBG("");

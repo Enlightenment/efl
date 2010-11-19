@@ -1238,7 +1238,7 @@ _em_audio_only_poller(void *data)
 }
 
 static Eina_Bool
-_em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
+_em_fd_ev_active(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 {
    int fd, len;
    void *buf[2];

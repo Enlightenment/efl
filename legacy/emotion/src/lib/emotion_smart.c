@@ -319,7 +319,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 {
    Smart_Data *sd;
 
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
 
    DBG("file=%s", file);
    if (!sd->module) return EINA_FALSE;
