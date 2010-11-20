@@ -15640,7 +15640,7 @@ collections {
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
                text {
-                  style: "genlist_textblock_style20";
+                  style: "genlist_textblock_style2";
                }
             }
          }
@@ -15911,7 +15911,7 @@ collections {
             description { state: "selected" 0.0;
                inherit: "default" 0.0;
                text {
-                  style: "genlist_textblock_style20";
+                  style: "genlist_textblock_style2";
                }
             }
          }
