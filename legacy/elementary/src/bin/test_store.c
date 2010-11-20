@@ -260,7 +260,7 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
   elm_store_unfetch_func_set(st, _st_store_unfetch, NULL);
   elm_store_sorted_set(st, EINA_TRUE);
   elm_store_target_genlist_set(st, gl);
-  elm_store_filesystem_directory_set(st, "/home/raster/tst");
+  elm_store_filesystem_directory_set(st, "./store");
   
   evas_object_resize(win, 480, 800);
   evas_object_show(win);
