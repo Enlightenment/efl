@@ -1317,6 +1317,8 @@ _item_cache_find(Elm_Genlist_Item *it)
   odd = (it->order_num_in & 0x1);
   EINA_INLIST_FOREACH(it->wd->item_cache, itc)
     {
+      if ((itc->selected) || (itc->disabled) || (itc->expanded))
+        continue;
       if ((itc->tree == tree) && 
           (itc->odd == odd) && 
           (itc->compress == it->wd->compress) &&
@@ -1415,22 +1417,16 @@ _item_realize(Elm_Genlist_Item *it, int in, int calc)
                {
                  if (it->selected)
                    edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
-                 else
-                   edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
                }
              if (it->disabled != itc->disabled)
                {
                  if (it->disabled)
                    edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");
-                 else
-                   edje_object_signal_emit(it->base.view, "elm,state,enabled", "elm");
                }
              if (it->expanded != itc->expanded)
                {
                  if (it->expanded)
                    edje_object_signal_emit(it->base.view, "elm,state,expanded", "elm");
-                 else
-                   edje_object_signal_emit(it->base.view, "elm,state,contracted", "elm");
                }
           }
         else
