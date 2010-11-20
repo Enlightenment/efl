@@ -15432,7 +15432,6 @@ collections {
       }
    }
    group { name: "elm/genlist/item_compress/message/default";
-      alias: "elm/genlist/item_compress_odd/message/default";
       data.item: "stacking" "above";
       data.item: "selectraise" "on";
       data.item: "labels" "elm.title.1 elm.title.2 elm.text";
@@ -15712,6 +15711,7 @@ collections {
             target:  "fg2";
             target:  "elm.title.1";
             target:  "elm.title.2";
+            target:  "elm.text";
          }
          program {
             name:    "go_passive";
@@ -15723,6 +15723,278 @@ collections {
             target:  "fg2";
             target:  "elm.title.1";
             target:  "elm.title.2";
+            target:  "elm.text";
+            transition: LINEAR 0.1;
+         }
+         program {
+            name:    "go_disabled";
+            signal:  "elm,state,disabled";
+            source:  "elm";
+            action:  STATE_SET "disabled" 0.0;
+            target:  "disclip";
+         }
+         program {
+            name:    "go_enabled";
+            signal:  "elm,state,enabled";
+            source:  "elm";
+            action:  STATE_SET "default" 0.0;
+            target:  "disclip";
+         }
+      }
+   }
+   group { name: "elm/genlist/item_compress_odd/message/default";
+      data.item: "stacking" "below";
+      data.item: "selectraise" "on";
+      data.item: "labels" "elm.title.1 elm.title.2 elm.text";
+//      data.item: "icons" "elm.swallow.icon elm.swallow.end";
+      data.item: "treesize" "20";
+//      data.item: "states" "";
+      images {
+         image: "bt_sm_base1.png" COMP;
+         image: "bt_sm_shine.png" COMP;
+         image: "bt_sm_hilight.png" COMP;
+         image: "ilist_2.png" COMP;
+      }
+      parts {
+         part { name: "event";
+            type: RECT;
+            repeat_events: 1;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+            }
+         }
+         part {
+            name: "base";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               image {
+                  normal: "ilist_2.png";
+                  border: 2 2 2 2;
+               }
+               fill.smooth: 0;
+            }
+         }
+         part { name: "bg";
+            clip_to: "disclip";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               color: 255 255 255 0;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: -5 -5;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: 4 4;
+               }
+               image {
+                  normal: "bt_sm_base1.png";
+                  border: 6 6 6 6;
+               }
+               image.middle: SOLID;
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+               rel1 {
+                  relative: 0.0 0.0;
+                  offset: -2 -2;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+                  offset: 1 1;
+               }
+            }
+         }
+         part { name: "elm.title.1";
+            clip_to: "disclip";
+            type:           TEXT;
+            effect:         SOFT_SHADOW;
+            mouse_events:   0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+               fixed: 0 1;
+//               min: 16 16;
+               rel1 {
+                  relative: 0.0  0.0;
+                  offset:   4 4;
+               }
+               rel2 {
+                  relative: 1.0  0.0;
+                  offset:   -5 4;
+               }
+               color: 0 0 0 255;
+               color3: 0 0 0 0;
+               align: 0.0 0.0;
+               text {
+                  font: "Sans";
+                  size: 10;
+                  min: 0 1;
+//                  min: 1 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               color: 224 224 224 255;
+               color3: 0 0 0 64;
+            }
+         }
+         part { name: "elm.title.2";
+            clip_to: "disclip";
+            type:           TEXT;
+            effect:         SOFT_SHADOW;
+            mouse_events:   0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+               fixed: 0 1;
+//               min: 16 16;
+               rel1 {
+                  to_y:     "elm.title.1";
+                  relative: 0.0  1.0;
+                  offset:   4 0;
+               }
+               rel2 {
+                  to_y:     "elm.title.1";
+                  relative: 1.0  1.0;
+                  offset:   -5 0;
+               }
+               color: 0 0 0 255;
+               color3: 0 0 0 0;
+               align: 0.0 0.0;
+               text {
+                  font: "Sans";
+                  size: 10;
+                  min: 0 1;
+//                  min: 1 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               color: 224 224 224 255;
+               color3: 0 0 0 64;
+            }
+         }
+         part { name: "elm.text";
+            clip_to: "disclip";
+            type:           TEXTBLOCK;
+            mouse_events:   0;
+            scale: 1;
+            description {
+               state: "default" 0.0;
+//               fixed: 0 1;
+//               min: 16 16;
+               rel1 {
+                  to_y:     "elm.title.2";
+                  relative: 0.0  1.0;
+                  offset:   4 0;
+               }
+               rel2 {
+                  relative: 1.0  1.0;
+                  offset:   -5 -5;
+               }
+               align: 0.0 0.0;
+               text {
+                  style: "genlist_textblock_style";
+                  min: 0 1;
+//                  min: 1 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               text {
+                  style: "genlist_textblock_style20";
+               }
+            }
+         }
+         part { name: "fg1";
+            clip_to: "disclip";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               color: 255 255 255 0;
+               rel1.to: "bg";
+               rel2.relative: 1.0 0.5;
+               rel2.to: "bg";
+               image {
+                  normal: "bt_sm_hilight.png";
+                  border: 6 6 6 0;
+               }
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "fg2";
+            clip_to: "disclip";
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               visible: 0;
+               color: 255 255 255 0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+               image {
+                  normal: "bt_sm_shine.png";
+                  border: 6 6 6 0;
+               }
+            }
+            description { state: "selected" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "disclip";
+            type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "bg";
+               rel2.to: "bg";
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 64;
+            }
+         }
+      }
+      programs {
+         // signal: elm,state,%s,active
+         //   a "check" item named %s went active
+         // signal: elm,state,%s,passive
+         //   a "check" item named %s went passive
+         // default is passive
+         program {
+            name:    "go_active";
+            signal:  "elm,state,selected";
+            source:  "elm";
+            action:  STATE_SET "selected" 0.0;
+            target:  "bg";
+            target:  "fg1";
+            target:  "fg2";
+            target:  "elm.title.1";
+            target:  "elm.title.2";
+            target:  "elm.text";
+         }
+         program {
+            name:    "go_passive";
+            signal:  "elm,state,unselected";
+            source:  "elm";
+            action:  STATE_SET "default" 0.0;
+            target:  "bg";
+            target:  "fg1";
+            target:  "fg2";
+            target:  "elm.title.1";
+            target:  "elm.title.2";
+            target:  "elm.text";
             transition: LINEAR 0.1;
          }
          program {
