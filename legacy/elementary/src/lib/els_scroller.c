@@ -41,6 +41,7 @@ struct _Smart_Data
       double anim_start2;
       double anim_start3;
       double onhold_vx, onhold_vy, onhold_tlast, onhold_vxe, onhold_vye;
+      double extra_time;
       Evas_Coord hold_x, hold_y;
       Ecore_Animator *hold_animator;
       Ecore_Animator *onhold_animator;
@@ -626,11 +627,11 @@ _smart_momentum_animator(void *data)
              sd->down.cancelled = 1;
           }
          */
-	dt = dt / _elm_config->thumbscroll_friction;
+	dt = dt / (_elm_config->thumbscroll_friction + sd->down.extra_time);
 	if (dt > 1.0) dt = 1.0;
 	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
-	dx = (sd->down.dx * _elm_config->thumbscroll_friction * p);
-	dy = (sd->down.dy * _elm_config->thumbscroll_friction * p);
+	dx = (sd->down.dx * (_elm_config->thumbscroll_friction + sd->down.extra_time) * p);
+	dy = (sd->down.dy * (_elm_config->thumbscroll_friction + sd->down.extra_time) * p);
         sd->down.ax = dx;
         sd->down.ay = dy;
 	x = sd->down.sx - dx;
@@ -1549,10 +1550,25 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                  sd->down.dy = ((double)dy / at);
                                  if (((sd->down.dx > 0) && (sd->down.pdx > 0)) ||
                                      ((sd->down.dx < 0) && (sd->down.pdx < 0)))
-                                   sd->down.dx += sd->down.pdx * 2; // * 2 - probably should be config
+                                   sd->down.dx += (double)sd->down.pdx * 1.5; // FIXME: * 1.5 - probably should be config
                                  if (((sd->down.dy > 0) && (sd->down.pdy > 0)) ||
                                      ((sd->down.dy < 0) && (sd->down.pdy < 0)))
-                                   sd->down.dy += sd->down.pdy * 2; // * 2 - probably should be config
+                                   sd->down.dy += (double)sd->down.pdy * 1.5; // FIXME: * 1.5 - probably should be config
+                                 if (((sd->down.dx > 0) && (sd->down.pdx > 0)) ||
+                                     ((sd->down.dx < 0) && (sd->down.pdx < 0)) ||
+                                     ((sd->down.dy > 0) && (sd->down.pdy > 0)) ||
+                                     ((sd->down.dy < 0) && (sd->down.pdy < 0)))
+                                  {
+                                    double t = ecore_loop_time_get();
+                                    double dt = t - sd->down.anim_start;
+                                    
+                                    if (dt < 0.0) dt = 0.0;
+                                    else if (dt > _elm_config->thumbscroll_friction)
+                                      dt = _elm_config->thumbscroll_friction;
+                                    sd->down.extra_time = _elm_config->thumbscroll_friction - dt;
+                                  }
+                                 else
+                                  sd->down.extra_time = 0.0;
                                  sd->down.pdx = sd->down.dx;
                                  sd->down.pdy = sd->down.dy;
                                  ox = -sd->down.dx;
