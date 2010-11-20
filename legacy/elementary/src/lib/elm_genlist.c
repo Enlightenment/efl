@@ -722,7 +722,6 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
    minh = -1;
-  //GGGG:
    if (wd->height_for_width)
      {
        Evas_Coord  vw, vh;
@@ -1292,7 +1291,7 @@ _item_cache_add(Elm_Genlist_Item *it)
       ecore_timer_del(it->swipe_timer);
       it->swipe_timer = NULL;
     }
-  // FIXME: other callbacks? GGG
+  // FIXME: other callbacks?
   edje_object_signal_callback_del_full(itc->base_view, "elm,action,expand,toggle",
                                   "elm", _signal_expand_toggle, it);
   edje_object_signal_callback_del_full(itc->base_view, "elm,action,expand", "elm",
@@ -1749,7 +1748,6 @@ _calc_job(void *data)
    Eina_Bool did_must_recalc = EINA_FALSE;
    if (!wd) return;
 
-  //GGGG:
    t0 = ecore_time_get();
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &wd->h);
    if (wd->w != ow)
@@ -1840,7 +1838,6 @@ _calc_job(void *data)
         wd->minh = minh;
         evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
         _sizing_eval(wd->obj);
-       //HHHH:
         if ((wd->anchor_item) && (wd->anchor_item->block))
           {
             Elm_Genlist_Item *it;
@@ -1959,7 +1956,6 @@ _pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
             {
               if ((itb->y + it->y) >= y)
                 {
-                  //HHHH:
                   sd->wd->anchor_item = it;
                   sd->wd->anchor_y = -(itb->y + it->y - y);
                   goto done;
