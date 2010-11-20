@@ -33,6 +33,7 @@ AUTHORS \
 COPYING \
 autogen.sh \
 elementary.pc.in \
+elementary.spec \
 elementary.spec.in \
 m4/ac_attribute.m4 \
 m4/efl_binary.m4 \
