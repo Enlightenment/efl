@@ -85,12 +85,12 @@ case "$host_os" in
    mingw*)
       ;;
    solaris*)
-      _efl_thread_cflags="-mt"
-      _efl_thread_libs="-mt"
+      _efl_threads_cflags="-mt"
+      _efl_threads_libs="-mt"
       ;;
    *)
-      _efl_thread_cflags="-pthread"
-      _efl_thread_libs="-pthread"
+      _efl_threads_cflags="-pthread"
+      _efl_threads_libs="-pthread"
       ;;
 esac
 
@@ -127,8 +127,8 @@ fi
 EFL_PTHREAD_CFLAGS=""
 EFL_PTHREAD_LIBS=""
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
-   EFL_PTHREAD_CFLAGS=${_efl_thread_cflags}
-   EFL_PTHREAD_LIBS=${_efl_thread_libs}
+   EFL_PTHREAD_CFLAGS=${_efl_threads_cflags}
+   EFL_PTHREAD_LIBS=${_efl_threads_libs}
 fi
 
 AC_SUBST(EFL_PTHREAD_CFLAGS)
