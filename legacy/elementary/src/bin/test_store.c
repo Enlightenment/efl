@@ -32,6 +32,7 @@ typedef struct _Elm_Store_Item_Info_Filesystem Elm_Store_Item_Info_Filesystem;
 typedef struct _Elm_Store_Item_Mapping         Elm_Store_Item_Mapping;
 typedef struct _Elm_Store_Item_Mapping_Empty   Elm_Store_Item_Mapping_Empty;
 typedef struct _Elm_Store_Item_Mapping_Icon    Elm_Store_Item_Mapping_Icon;
+typedef struct _Elm_Store_Item_Mapping_Photo   Elm_Store_Item_Mapping_Photo;
 typedef struct _Elm_Store_Item_Mapping_Custom  Elm_Store_Item_Mapping_Custom;
 
 typedef Eina_Bool (*Elm_Store_Item_List_Cb) (void *data, Elm_Store_Item_Info *info);
@@ -54,6 +55,7 @@ typedef enum
 
 struct _Elm_Store_Item_Mapping_Icon
 {
+  // FIXME: allow edje file icons
   int                   w, h;
   Elm_Icon_Lookup_Order lookup_order;
   Eina_Bool             standard_name : 1;
@@ -61,12 +63,16 @@ struct _Elm_Store_Item_Mapping_Icon
   Eina_Bool             smooth : 1;
   Eina_Bool             scale_up : 1;
   Eina_Bool             scale_down : 1;
-  Eina_Bool             preload : 1;
 };
 
 struct _Elm_Store_Item_Mapping_Empty
 {
   Eina_Bool             dummy;
+};
+
+struct _Elm_Store_Item_Mapping_Photo
+{
+  int                   size;
 };
 
 struct _Elm_Store_Item_Mapping_Custom
@@ -82,6 +88,7 @@ struct _Elm_Store_Item_Mapping
   union {
     Elm_Store_Item_Mapping_Empty  empty;
     Elm_Store_Item_Mapping_Icon   icon;
+    Elm_Store_Item_Mapping_Photo  photo;
     Elm_Store_Item_Mapping_Custom custom;
     // add more types here
   } details;
@@ -145,7 +152,6 @@ struct _Elm_Store
   void         (*free)(Elm_Store *store);
   struct {
      void        (*free)(Elm_Store_Item *item);
-     const char *(*label_get)(Elm_Store_Item *item);
   } item;
   Evas_Object   *genlist;
   Ecore_Thread  *list_th;
@@ -175,16 +181,17 @@ struct _Elm_Store_Item
 {
   EINA_INLIST;
   EINA_MAGIC;
-  Elm_Store        *store;
-  Elm_Genlist_Item *item;
-  Ecore_Thread     *fetch_th;
-  Ecore_Job        *eval_job;
-  void *data;
+  Elm_Store                    *store;
+  Elm_Genlist_Item             *item;
+  Ecore_Thread                 *fetch_th;
+  Ecore_Job                    *eval_job;
+  const Elm_Store_Item_Mapping *mapping;
+  void                         *data;
   LK(lock);
-  Eina_Bool         live : 1;
-  Eina_Bool         was_live : 1;
-  Eina_Bool         realized : 1;
-  Eina_Bool         fetched : 1;
+  Eina_Bool                     live : 1;
+  Eina_Bool                     was_live : 1;
+  Eina_Bool                     realized : 1;
+  Eina_Bool                     fetched : 1;
 };
 
 struct _Elm_Store_Filesystem
@@ -221,11 +228,6 @@ _store_cache_trim(Elm_Store *st)
           LKU(sti->lock);
           if (sti->fetch_th)
             {
-              DBG(".. do cancel [%i] [%i] %p for: %s\n",
-                  sti->live,
-                  sti->fetched,
-                  sti->fetch_th,
-                  elm_store_item_filesystem_path_get(sti));
               ecore_thread_cancel(sti->fetch_th);
               sti->fetch_th = NULL;
             }
@@ -258,11 +260,6 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
       if (sti->eval_job) ecore_job_del(sti->eval_job);
       if (sti->fetch_th)
         {
-          DBG(".. do cancel3 [%i] [%i] %p for: %s\n", 
-              sti->live,
-              sti->fetched,
-              sti->fetch_th,
-              elm_store_item_filesystem_path_get(sti));
           ecore_thread_cancel(sti->fetch_th);
           sti->fetch_th = NULL;
         }
@@ -312,11 +309,7 @@ _store_filesystem_fetch_end(void *data, Ecore_Thread *th)
 {
   Elm_Store_Item *sti = data;
   LKL(sti->lock);
-  if (sti->data)
-    {
-      DBG("------UPDATE: %p %s\n", th, elm_store_item_filesystem_path_get(sti));
-      elm_genlist_item_update(sti->item);
-    }
+  if (sti->data) elm_genlist_item_update(sti->item);
   LKU(sti->lock);
   if (th == sti->fetch_th) sti->fetch_th = NULL;
 }
@@ -326,14 +319,9 @@ static void
 _store_filesystem_fetch_cancel(void *data, Ecore_Thread *th)
 {
   Elm_Store_Item *sti = data;
-  DBG("------CANCEL: %p %s\n", th, elm_store_item_filesystem_path_get(sti));
   LKL(sti->lock);
   if (th == sti->fetch_th) sti->fetch_th = NULL;
-  if (sti->data)
-    {
-      DBG("------UPDATE: %p %s\n", th, elm_store_item_filesystem_path_get(sti));
-      elm_genlist_item_update(sti->item);
-    }
+  if (sti->data) elm_genlist_item_update(sti->item);
   LKU(sti->lock);
 }
 
@@ -352,37 +340,20 @@ _store_item_eval(void *data)
       sti->store->realized = eina_list_append(sti->store->realized, sti);
       sti->realized = EINA_TRUE;
       if ((sti->store->fetch_thread) && (!sti->fetch_th))
-        {
-          sti->fetch_th = ecore_thread_run(_store_filesystem_fetch_do,
-                                           _store_filesystem_fetch_end,
-                                           _store_filesystem_fetch_cancel,
-                                           sti);
-          DBG(".. do fetch [%i] [%i] = %p for: %s\n", 
-              sti->live,
-              sti->fetched,
-              sti->fetch_th,
-              elm_store_item_filesystem_path_get(sti));
-        }
+        sti->fetch_th = ecore_thread_run(_store_filesystem_fetch_do,
+                                         _store_filesystem_fetch_end,
+                                         _store_filesystem_fetch_cancel,
+                                         sti);
       else if ((!sti->store->fetch_thread))
         {
-           DBG(".. do fetch in same thread [%i] [%i] = %p for: %s\n",
-              sti->live,
-              sti->fetched,
-              sti->fetch_th,
-              elm_store_item_filesystem_path_get(sti));
-           _store_filesystem_fetch_do(sti, NULL);
-           _store_filesystem_fetch_end(sti, NULL);
+          _store_filesystem_fetch_do(sti, NULL);
+          _store_filesystem_fetch_end(sti, NULL);
         }
     }
   else
     {
       if (sti->fetch_th)
         {
-          DBG(".. do cancel2 [%i] [%i] %p for: %s\n", 
-              sti->live,
-              sti->fetched,
-              sti->fetch_th,
-              elm_store_item_filesystem_path_get(sti));
           ecore_thread_cancel(sti->fetch_th);
           sti->fetch_th = NULL;
         }
@@ -416,33 +387,101 @@ _store_genlist_item_unrealized(void *data, Evas_Object *obj __UNUSED__, void *ev
   sti->eval_job = ecore_job_add(_store_item_eval, sti);
 }
 
+static const Elm_Store_Item_Mapping *
+_store_item_mapping_find(Elm_Store_Item *sti, const char *part)
+{
+  const Elm_Store_Item_Mapping *m;
+  
+  for (m = sti->mapping; m; m ++)
+    {
+      if (m->type == ELM_STORE_ITEM_MAPPING_NONE) break;
+      if (!strcmp(part, m->part)) return m;
+    }
+  return NULL;
+}
+
 static char *
-_store_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_store_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 {
   Elm_Store_Item *sti = data;
   const char *s = "";
-  // FIXME: use item mapping for partname -> data pointer offset for string
   LKL(sti->lock);
-  if ((sti->data) && (sti->store->item.label_get))
-      s = sti->store->item.label_get(sti);
+  if (sti->data)
+    {
+      const Elm_Store_Item_Mapping *m = _store_item_mapping_find(sti, part);
+      if (m)
+        {
+          switch (m->type)
+            {
+            case ELM_STORE_ITEM_MAPPING_LABEL:
+              s = *(char **)(((unsigned char *)sti->data) + m->offset);
+              break;
+            case ELM_STORE_ITEM_MAPPING_CUSTOM:
+              if (m->details.custom.func)
+                s = m->details.custom.func(sti->data, sti, part);
+              break;
+            default:
+              break;
+            }
+        }
+    }
   LKU(sti->lock);
   return strdup(s);
 }
 
 static Evas_Object *
-_store_item_icon_get(void *data, Evas_Object *obj, const char *part __UNUSED__)
+_store_item_icon_get(void *data, Evas_Object *obj, const char *part)
 {
   Elm_Store_Item *sti = data;
-  char buf[PATH_MAX];
   LKL(sti->lock);
   if (sti->data)
     {
-      Evas_Object *ic = elm_icon_add(obj);
-      LKU(sti->lock);
-      snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
-      elm_icon_file_set(ic, buf, NULL);
-      evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-      return ic;
+      const Elm_Store_Item_Mapping *m = _store_item_mapping_find(sti, part);
+      if (m)
+        {
+          Evas_Object *ic = NULL;
+          const char *s = NULL;
+          
+          switch (m->type)
+            {
+            case ELM_STORE_ITEM_MAPPING_ICON:
+              ic = elm_icon_add(obj);
+              s = *(char **)(((unsigned char *)sti->data) + m->offset);
+              elm_icon_order_lookup_set(ic, m->details.icon.lookup_order);
+              evas_object_size_hint_aspect_set(ic, 
+                                               EVAS_ASPECT_CONTROL_VERTICAL, 
+                                               m->details.icon.w,
+                                               m->details.icon.h);
+              elm_icon_smooth_set(ic, m->details.icon.smooth);
+              elm_icon_no_scale_set(ic, m->details.icon.no_scale);
+              elm_icon_scale_set(ic, 
+                                 m->details.icon.scale_up, 
+                                 m->details.icon.scale_down);
+              if (s)
+                {
+                  if (m->details.icon.standard_name)
+                    elm_icon_standard_set(ic, s);
+                  else
+                    elm_icon_file_set(ic, s, NULL);
+                }
+              break;
+            case ELM_STORE_ITEM_MAPPING_PHOTO:
+              ic = elm_icon_add(obj);
+              s = *(char **)(((unsigned char *)sti->data) + m->offset);
+              elm_photo_size_set(ic, m->details.photo.size);
+              if (s)
+                elm_photo_file_set(ic, s);
+              break;
+            case ELM_STORE_ITEM_MAPPING_CUSTOM:
+              if (m->details.custom.func)
+                ic = m->details.custom.func(sti->data, sti, part);
+              break;
+            default:
+              break;
+            }
+          LKU(sti->lock);
+          return ic;
+        }
     }
   LKU(sti->lock);
   return NULL;
@@ -544,6 +583,7 @@ _store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg
   EINA_MAGIC_SET(&(sti->base), ELM_STORE_ITEM_MAGIC);
   sti->base.store = st;
   sti->base.data = info->base.data;
+  sti->base.mapping = info->base.mapping;
   sti->path = eina_stringshare_add(info->path);
   
   itc = info->base.item_class;
@@ -570,7 +610,7 @@ done:
 }
 
 // public api calls
-EAPI Elm_Store *
+static Elm_Store *
 _elm_store_new(size_t size)
 {
   Elm_Store *st = calloc(1, size);
@@ -609,13 +649,6 @@ _elm_store_filesystem_item_free(Elm_Store_Item *item)
    eina_stringshare_del(sti->path);
 }
 
-static const char *
-_elm_store_filesystem_item_label_get(Elm_Store_Item *item)
-{
-   Elm_Store_Item_Filesystem *sti = (Elm_Store_Item_Filesystem *)item;
-   return sti->path;
-}
-
 EAPI Elm_Store *
 elm_store_filesystem_new(void)
 {
@@ -625,7 +658,6 @@ elm_store_filesystem_new(void)
   EINA_MAGIC_SET(st, ELM_STORE_FILESYSTEM_MAGIC);
   st->base.free = _elm_store_filesystem_free;
   st->base.item.free = _elm_store_filesystem_item_free;
-  st->base.item.label_get = _elm_store_filesystem_item_label_get;
 
   return &st->base;
 }
@@ -648,11 +680,6 @@ elm_store_free(Elm_Store *st)
       if (sti->eval_job) ecore_job_del(sti->eval_job);
       if (sti->fetch_th)
         {
-          DBG(".. do cancel3 [%i] [%i] %p for: %s\n", 
-              sti->live,
-              sti->fetched,
-              sti->fetch_th,
-              elm_store_item_filesystem_path_get(sti));
           ecore_thread_cancel(sti->fetch_th);
           sti->fetch_th = NULL;
         }
@@ -886,7 +913,10 @@ _st_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 // store callbacks to handle loading/parsing/freeing of store items from src
-static Elm_Genlist_Item_Class itc1;
+static Elm_Genlist_Item_Class itc1 =
+{
+  "message", { NULL, NULL, NULL, NULL }
+};
 
 static const Elm_Store_Item_Mapping it1_mapping[] =
 {
@@ -898,13 +928,13 @@ static const Elm_Store_Item_Mapping it1_mapping[] =
       } } },
   {
     ELM_STORE_ITEM_MAPPING_LABEL,
-      "elm.title.2", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, from),
+      "elm.title.2", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, subject),
       { .empty = {
         EINA_TRUE
       } } },
   {
     ELM_STORE_ITEM_MAPPING_LABEL,
-      "elm.text", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, from),
+      "elm.text", ELM_STORE_ITEM_MAPPING_OFFSET(My_Item, head_content),
       { .empty = {
         EINA_TRUE
       } } },
@@ -917,7 +947,6 @@ static const Elm_Store_Item_Mapping it1_mapping[] =
         EINA_TRUE, EINA_FALSE,
         EINA_TRUE,
         EINA_FALSE, EINA_FALSE,
-        EINA_TRUE
       } } },
   {
     ELM_STORE_ITEM_MAPPING_CUSTOM,
@@ -985,7 +1014,6 @@ _st_store_fetch(void *data __UNUSED__, Elm_Store_Item *sti)
   f = fopen(path, "r");
   if (!f) return;
   
-  DBG("parse %s\n", path);
   // alloc my item in memory that holds data to show in the list
   myit = calloc(1, sizeof(My_Item));
   if (!myit)
@@ -1054,7 +1082,8 @@ _st_store_fetch(void *data __UNUSED__, Elm_Store_Item *sti)
         }
     }
   fclose(f);
-  myit->head_content = content;
+  myit->head_content = elm_entry_utf8_to_markup(content);
+  free(content);
   elm_store_item_data_set(sti, myit);
 }
 //     ************************************************************************
@@ -1096,7 +1125,7 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
   evas_object_show(bx);
   
   gl = elm_genlist_add(win);
-  elm_genlist_compress_mode_set(gl, EINA_TRUE);
+  elm_genlist_height_for_width_mode_set(gl, EINA_TRUE);
   evas_object_smart_callback_add(gl, "selected", _st_selected, NULL);
   evas_object_smart_callback_add(gl, "clicked", _st_clicked, NULL);
   evas_object_smart_callback_add(gl, "longpressed", _st_longpress, NULL);
@@ -1105,8 +1134,6 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
   elm_box_pack_end(bx, gl);
   evas_object_show(gl);
 
-  itc1.item_style     = "default"; // set up 1 item style to use
-  
   st = elm_store_filesystem_new();
   elm_store_list_func_set(st, _st_store_list, NULL);
   elm_store_fetch_func_set(st, _st_store_fetch, NULL);

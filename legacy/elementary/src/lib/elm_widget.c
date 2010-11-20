@@ -2486,7 +2486,6 @@ _if_focused_revert(Evas_Object *obj, Eina_Bool can_focus_only)
         newest = _newest_focus_order_get(top, &newest_focus_order, can_focus_only);
         if (newest)
           {
-             Smart_Data *sd2 = evas_object_smart_data_get(newest);
              elm_object_unfocus(newest);
              elm_object_focus(newest);
           }
