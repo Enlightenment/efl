@@ -36,6 +36,7 @@ elm_priv.h \
 elm_main.c \
 elm_theme.c \
 elm_module.c \
+elm_store.c \
 \
 elm_win.c \
 elm_widget.c \

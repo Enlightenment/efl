@@ -446,7 +446,17 @@ ELM_LIBINTL_H_DEF="#undef"
 AC_CHECK_HEADER(libintl.h, [ELM_LIBINTL_H_DEF="#define"])
 AC_SUBST(ELM_LIBINTL_H_DEF)
 
-my_libs="-lm"
+AC_CHECK_HEADER(pthread.h, [
+  AC_CHECK_LIB(pthread, pthread_mutex_lock, , [
+    AC_MSG_ERROR(pthread not found)
+  ])
+                            
+], [
+  AC_MSG_ERROR(pthreads headers or not found)
+  exit 1
+])
+
+my_libs="-lm -lpthread"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
 
