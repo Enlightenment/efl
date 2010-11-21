@@ -194,7 +194,8 @@ _edje_mouse_down_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
    if (rp->clicked_button == 0)
      {
 	rp->clicked_button = ev->button;
-	rp->still_in = 1;
+        if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+         rp->still_in = 1;
      }
 //   _edje_recalc_do(ed);
    _edje_thaw(ed);
@@ -293,21 +294,30 @@ _edje_mouse_move_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
 
    if (rp->still_in)
      {
-	Evas_Coord x, y, w, h;
 
-	evas_object_geometry_get(obj, &x, &y, &w, &h);
-	if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
-	    (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
-	  rp->still_in = 0;
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+          rp->still_in = 0;
+        else
+          {
+            Evas_Coord x, y, w, h;
+            
+            evas_object_geometry_get(obj, &x, &y, &w, &h);
+            if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
+                (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
+              rp->still_in = 0;
+          }
      }
    else
      {
-	Evas_Coord x, y, w, h;
+        if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
+          {
+            Evas_Coord x, y, w, h;
 
-	evas_object_geometry_get(obj, &x, &y, &w, &h);
-	if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
-	    (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
-	  rp->still_in = 1;
+            evas_object_geometry_get(obj, &x, &y, &w, &h);
+            if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) &&
+                (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
+              rp->still_in = 1;
+          }
      }
    _edje_freeze(ed);
    if (rp->drag)
