@@ -723,7 +723,11 @@ eet_node_init(void)
    const char *choice;
    const char *tmp;
 
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
    choice = "chained_mempool";
+#endif
    tmp = getenv("EET_MEMPOOL");
    if (tmp && tmp[0])
       choice = tmp;
