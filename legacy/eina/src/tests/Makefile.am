@@ -112,4 +112,9 @@ eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
 
 endif
 
-EXTRA_DIST = eina_bench.h eina_suite.h Ecore_Data.h Evas_Data.h evas_mempool.h
+EXTRA_DIST = eina_bench.h \
+	eina_suite.h \
+	Ecore_Data.h \
+	Evas_Data.h \
+	evas_mempool.h \
+	strlog
