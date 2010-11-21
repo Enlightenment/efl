@@ -882,6 +882,8 @@ eina_quadtree_increase(Eina_QuadTree_Item *object)
 Eina_Bool
 eina_quadtree_init(void)
 {
+   const char *choice, *tmp;
+
    _eina_log_qd_dom = eina_log_domain_register("eina_quadtree",
                                                EINA_LOG_COLOR_DEFAULT);
    if (_eina_log_qd_dom < 0)
@@ -896,9 +898,18 @@ eina_quadtree_init(void)
    EMS(EINA_MAGIC_QUADTREE_ITEM);
 #undef EMS
 
-   items_mp = eina_mempool_add("chained_mempool", "QuadTree Item", NULL,
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
+   choice = "chained_mempool";
+#endif
+   tmp = getenv("EINA_MEMPOOL");
+   if (tmp && tmp[0])
+      choice = tmp;
+
+   items_mp = eina_mempool_add(choice, "QuadTree Item", NULL,
                                sizeof (Eina_QuadTree_Item), 320);
-   root_mp = eina_mempool_add("chained_mempool", "QuadTree Root", NULL,
+   root_mp = eina_mempool_add(choice, "QuadTree Root", NULL,
                               sizeof (Eina_QuadTree_Root), 32);
 
    return EINA_TRUE;
