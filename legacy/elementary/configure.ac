@@ -1,4 +1,4 @@
-##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+=-------##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [7])
@@ -446,17 +446,16 @@ ELM_LIBINTL_H_DEF="#undef"
 AC_CHECK_HEADER(libintl.h, [ELM_LIBINTL_H_DEF="#define"])
 AC_SUBST(ELM_LIBINTL_H_DEF)
 
-AC_CHECK_HEADER(pthread.h, [
-  AC_CHECK_LIB(pthread, pthread_mutex_lock, , [
-    AC_MSG_ERROR(pthread not found)
-  ])
-                            
-], [
-  AC_MSG_ERROR(pthreads headers or not found)
+EFL_CHECK_THREADS([
+   
+] , [
+  AC_MSG_ERROR(no thread support found. required.)
   exit 1
 ])
+AC_SUBST(EFL_PTHREAD_CFLAGS)
+AC_SUBST(EFL_PTHREAD_LIBS)
 
-my_libs="-lm -lpthread"
+my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)
 

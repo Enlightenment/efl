@@ -2,13 +2,27 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
-#include <pthread.h>
-#define LK(x)  pthread_mutex_t x
-#define LKI(x) pthread_mutex_init(&(x), NULL);
-#define LKD(x) pthread_mutex_destroy(&(x));
-#define LKL(x) pthread_mutex_lock(&(x));
-#define LKT(x) pthread_mutex_trylock(&(x));
-#define LKU(x) pthread_mutex_unlock(&(x));
+#ifndef EFL_HAVE_THREADS
+# error "No thread support. Required." 
+#endif
+
+#ifdef EFL_HAVE_POSIX_THREADS
+# include <pthread.h>
+# define LK(x)  pthread_mutex_t x
+# define LKI(x) pthread_mutex_init(&(x), NULL);
+# define LKD(x) pthread_mutex_destroy(&(x));
+# define LKL(x) pthread_mutex_lock(&(x));
+# define LKU(x) pthread_mutex_unlock(&(x));
+#else /* EFL_HAVE_WIN32_THREADS */
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+# define LK(x)  HANDLE x
+# define LKI(x) x = CreateMutex(NULL, FALSE, NULL)
+# define LKD(x) CloseHandle(x)
+# define LKL(x) WaitForSingleObject(x, INFINITE)
+# define LKU(x) ReleaseMutex(x)
+#endif
 
 #define ELM_STORE_MAGIC            0x3f89ea56
 #define ELM_STORE_FILESYSTEM_MAGIC 0x3f89ea57

@@ -19,7 +19,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
-@EVIL_CFLAGS@
+@EVIL_CFLAGS@ \
+@EFL_PTHREAD_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -27,7 +28,10 @@ endif
 
 lib_LTLIBRARIES = libelementary.la
 
-includes_HEADERS = Elementary.h Elementary_Cursor.h elm_widget.h
+includes_HEADERS = \
+Elementary.h \
+Elementary_Cursor.h \
+elm_widget.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 libelementary_la_SOURCES = \
@@ -113,5 +117,20 @@ elm_cnp_helper.c
 
 
 libelementary_la_CFLAGS =
-libelementary_la_LIBADD = @my_libs@ @dlopen_libs@ @ELEMENTARY_LIBS@ @ELEMENTARY_X_LIBS@ @ELEMENTARY_FB_LIBS@ @ELEMENTARY_SDL_LIBS@ @ELEMENTARY_WIN32_LIBS@ @ELEMENTARY_WINCE_LIBS@ @ELEMENTARY_EDBUS_LIBS@ @ELEMENTARY_EFREET_LIBS@ @ELEMENTARY_ETHUMB_LIBS@ @EVIL_LIBS@
-libelementary_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+libelementary_la_LIBADD = \
+@my_libs@ \
+@dlopen_libs@ \
+@ELEMENTARY_LIBS@ \
+@ELEMENTARY_X_LIBS@ \
+@ELEMENTARY_FB_LIBS@ \
+@ELEMENTARY_SDL_LIBS@ \
+@ELEMENTARY_WIN32_LIBS@ \
+@ELEMENTARY_WINCE_LIBS@ \
+@ELEMENTARY_EDBUS_LIBS@ \
+@ELEMENTARY_EFREET_LIBS@ \
+@ELEMENTARY_ETHUMB_LIBS@ \
+@EVIL_LIBS@ \
+@EFL_PTHREAD_LIBS@
+libelementary_la_LDFLAGS = \
+-no-undefined @lt_enable_auto_import@ \
+-version-info @version_info@ @release_info@
