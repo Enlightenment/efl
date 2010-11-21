@@ -56,7 +56,7 @@ m4/eina_check.m4
 
 doc:
 	@echo "entering doc/"
-	make -C doc doc
+	@cd doc && make doc
 
 # Unit tests
 
@@ -107,7 +107,7 @@ endif
 if EFL_ENABLE_BENCHMARK
 
 benchmark:
-	@make -C src benchmark
+	@cd src && make benchmark
 	@mkdir result || true
 	@cd result && ../src/tests/eina_bench `date +%F_%s`
 

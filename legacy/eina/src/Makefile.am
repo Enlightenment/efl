@@ -7,7 +7,7 @@ MAINTAINERCLEANFILES = Makefile.in
 if EFL_ENABLE_BENCHMARK
 
 benchmark: all
-	make -C tests eina_bench
+	cd tests && make eina_bench
 
 else
 
