@@ -1833,7 +1833,7 @@ eet_read_cipher(Eet_File   *ef,
    /* compressed data */
    else
      {
-        void *tmp_data;
+        void *tmp_data = NULL;
         void *data_deciphered = NULL;
         unsigned int data_deciphered_sz = 0;
         int free_tmp = 0;
@@ -1873,7 +1873,9 @@ eet_read_cipher(Eet_File   *ef,
                   goto on_error;
                }
 
-             free(tmp_data);
+             if (free_tmp)
+                free(tmp_data);
+             free_tmp = 1;
              tmp_data = data_deciphered;
              compr_size = data_deciphered_sz;
           }
@@ -1882,7 +1884,11 @@ eet_read_cipher(Eet_File   *ef,
         dlen = size;
         if (uncompress((Bytef *)data, &dlen,
                        tmp_data, (uLongf)compr_size))
-           goto on_error;
+          {
+             if (free_tmp)
+                free(tmp_data);
+             goto on_error;
+          }
 
         if (free_tmp)
            free(tmp_data);
