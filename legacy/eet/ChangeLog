@@ -448,3 +448,9 @@
 2010-11-14  Cedric BAIL
 
 	* Fix bug with cypher and compression used together.
+
+2010-11-21  Carsten Haitzler (The Rasterman)
+
+	* Fix another bug related to cipher and compression (leak and
+        bad free)
+
