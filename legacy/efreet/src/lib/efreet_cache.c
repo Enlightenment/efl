@@ -289,9 +289,9 @@ efreet_icon_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUS
     Eet_File *tmp = NULL;
     Efreet_Event_Cache_Update *ev = NULL;
 
-    if (strcmp(path, icon_cache_file)) return;
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
         event != ECORE_FILE_EVENT_MODIFIED) return;
+    if (!icon_cache_file || strcmp(path, icon_cache_file)) return;
 
     tmp = eet_open(icon_cache_file, EET_FILE_MODE_READ);
     if (!tmp) return;
