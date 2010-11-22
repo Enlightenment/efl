@@ -2,6 +2,11 @@
 # include <config.h>
 #endif
 
+#include <unistd.h>
+
+#include <Ecore.h>
+#include <Ecore_File.h>
+
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -12,14 +17,28 @@ static Eet_Data_Descriptor *cache_icon_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_element_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
 
-static Eet_File *cache = NULL;
-static const char *cache_name;
+static Eet_File            *icon_cache = NULL;
+static const char          *icon_cache_name = NULL;
+static const char          *icon_cache_file = NULL;
+
+static Ecore_File_Monitor  *icon_cache_monitor = NULL;
+
+static Ecore_Exe           *icon_cache_exe = NULL;
+static int                  icon_cache_exe_lock = -1;
+static Ecore_Event_Handler *icon_cache_exe_handler;
 
 static void efreet_icon_edd_shutdown(void);
+static Eina_Bool efreet_icon_exe_cb(void *data, int type, void *event);
+static void efreet_icon_cache_update_cb(void *data, Ecore_File_Monitor *em,
+                               Ecore_File_Event event, const char *path);
+
+EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 
 int
 efreet_cache_init(void)
 {
+    char buf[PATH_MAX];
+
     if (!efreet_icon_edd_init())
     {
         efreet_icon_edd_shutdown();
@@ -30,12 +49,46 @@ efreet_cache_init(void)
         efreet_icon_edd_shutdown();
         return 0;
     }
+
+    EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
+
+    snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
+    if (!ecore_file_mkpath(buf)) goto cache_error;
+
+    if (efreet_cache_update)
+    {
+        icon_cache_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                             efreet_icon_exe_cb, NULL);
+        if (!icon_cache_exe_handler) goto cache_error;
+
+        icon_cache_monitor = ecore_file_monitor_add(buf,
+                                               efreet_icon_cache_update_cb,
+                                               NULL);
+        if (!icon_cache_monitor) goto cache_error;
+
+#if 0
+        efreet_desktop_changes_listen();
+#endif
+
+        ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_icon_cache_create", NULL);
+    }
+
     return 1;
+cache_error:
+    if (icon_cache_exe_handler) ecore_event_handler_del(icon_cache_exe_handler);
+    if (icon_cache_monitor) ecore_file_monitor_del(icon_cache_monitor);
+    return 0;
 }
 
 void
 efreet_cache_shutdown(void)
 {
+    if (icon_cache) eet_close(icon_cache);
+    IF_RELEASE(icon_cache_name);
+    IF_RELEASE(icon_cache_file);
+
+    if (icon_cache_exe_handler) ecore_event_handler_del(icon_cache_exe_handler);
+    if (icon_cache_monitor) ecore_file_monitor_del(icon_cache_monitor);
     efreet_icon_edd_shutdown();
 }
 
@@ -185,26 +238,72 @@ efreet_cache_icon_free(Efreet_Cache_Icon *icon)
 Efreet_Cache_Icon *
 efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
 {
-    if (cache)
+    if (icon_cache)
     {
-        if (!strcmp(cache_name, theme->name.internal))
+        if (!strcmp(icon_cache_name, theme->name.internal))
         {
-            eet_close(cache);
-            eina_stringshare_del(cache_name);
-            cache = NULL;
-            cache_name = NULL;
+            eet_close(icon_cache);
+            eina_stringshare_del(icon_cache_name);
+            eina_stringshare_del(icon_cache_file);
+            icon_cache = NULL;
+            icon_cache_name = NULL;
+            icon_cache_file = NULL;
         }
     }
-    if (!cache)
+    if (!icon_cache)
     {
         const char *path;
 
         path = efreet_icon_cache_file(theme->name.internal);
-        cache = eet_open(path, EET_FILE_MODE_READ);
-        if (cache)
-            cache_name = eina_stringshare_add(theme->name.internal);
+        icon_cache = eet_open(path, EET_FILE_MODE_READ);
+        if (icon_cache)
+        {
+            icon_cache_name = eina_stringshare_add(theme->name.internal);
+            icon_cache_file = eina_stringshare_add(path);
+        }
     }
-    if (cache)
-        return eet_data_read(cache, cache_icon_edd, icon);
+    if (icon_cache)
+        return eet_data_read(icon_cache, cache_icon_edd, icon);
     return NULL;
 }
+
+static Eina_Bool
+efreet_icon_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+    Ecore_Exe_Event_Del *ev;
+
+    ev = event;
+    if (ev->exe != icon_cache_exe) return ECORE_CALLBACK_RENEW;
+    if (icon_cache_exe_lock > 0)
+    {
+        close(icon_cache_exe_lock);
+        icon_cache_exe_lock = -1;
+    }
+    return ECORE_CALLBACK_RENEW;
+}
+
+static void
+efreet_icon_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
+                               Ecore_File_Event event, const char *path)
+{
+    Eet_File *tmp = NULL;
+    Efreet_Event_Cache_Update *ev = NULL;
+
+    if (strcmp(path, icon_cache_file)) return;
+    if (event != ECORE_FILE_EVENT_CREATED_FILE &&
+        event != ECORE_FILE_EVENT_MODIFIED) return;
+
+    tmp = eet_open(icon_cache_file, EET_FILE_MODE_READ);
+    if (!tmp) return;
+    ev = NEW(Efreet_Event_Cache_Update, 1);
+    if (!ev) goto error;
+
+    eet_close(icon_cache);
+    icon_cache = tmp;
+
+    ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
+    return;
+error:
+    if (tmp) eet_close(tmp);
+}
+

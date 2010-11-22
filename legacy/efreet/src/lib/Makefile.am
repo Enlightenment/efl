@@ -11,7 +11,8 @@ efreet_icon.h \
 efreet_ini.h \
 efreet_menu.h \
 efreet_utils.h \
-efreet_uri.h
+efreet_uri.h \
+efreet_cache.h
 
 EFREETSOURCES = \
 efreet.c \
