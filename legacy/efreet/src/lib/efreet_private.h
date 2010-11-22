@@ -2,6 +2,8 @@
 #define EFREET_PRIVATE_H
 
 #include <Eet.h>
+#include <Ecore.h>
+#include <Ecore_File.h>
 
 #undef alloca
 #ifdef HAVE_ALLOCA_H
