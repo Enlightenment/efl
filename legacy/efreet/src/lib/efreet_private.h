@@ -169,7 +169,7 @@ void efreet_base_shutdown(void);
 
 #ifdef ICON_CACHE
 int efreet_cache_init(void);
-void efreet_cavoidche_shutdown(void);
+void efreet_cache_shutdown(void);
 #endif
 
 int efreet_icon_init(void);
