@@ -70,8 +70,8 @@ struct _Font_List
 
 struct _Font
 {
-   char *file;
    char *name;
+   char *file;
 };
 
 struct _Code
