@@ -4,9 +4,6 @@
 
 #include <unistd.h>
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -23,6 +20,7 @@ static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
 static Eet_File            *icon_cache = NULL;
 static const char          *icon_cache_name = NULL;
 static const char          *icon_cache_file = NULL;
+static Eet_File            *icon_fallback_cache = NULL;
 
 static Ecore_File_Monitor  *icon_cache_monitor = NULL;
 
@@ -88,6 +86,7 @@ void
 efreet_cache_shutdown(void)
 {
     if (icon_cache) eet_close(icon_cache);
+    if (icon_fallback_cache) eet_close(icon_fallback_cache);
     IF_RELEASE(icon_cache_name);
     IF_RELEASE(icon_cache_file);
 
@@ -268,6 +267,21 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
     }
     if (icon_cache)
         return eet_data_read(icon_cache, cache_icon_edd, icon);
+    return NULL;
+}
+
+const char *
+efreet_cache_icon_fallback_find(const char *icon)
+{
+    if (!icon_fallback_cache)
+    {
+        const char *path;
+
+        path = efreet_icon_cache_file("_fallback");
+        icon_fallback_cache = eet_open(path, EET_FILE_MODE_READ);
+    }
+    if (icon_fallback_cache)
+        return eet_data_read(icon_fallback_cache, cache_icon_fallback_edd, icon);
     return NULL;
 }
 

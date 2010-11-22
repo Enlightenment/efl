@@ -10,9 +10,6 @@
 #include <dirent.h>
 #include <limits.h>
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -411,8 +408,8 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
      * then just look for a non theme icon
      */
     if (!value || (value == NON_EXISTING))
-#if 0//def ICON_CACHE
-        value = efreet_cache_icon_fallback_icon(icon);
+#ifdef ICON_CACHE
+        value = efreet_cache_icon_fallback_find(icon);
 #else
         value = efreet_icon_fallback_icon(icon);
 #endif
