@@ -307,6 +307,9 @@ static void
 icon_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
                                Ecore_File_Event event, const char *path)
 {
+    /* TODO: This is stupid, we should only emit event when the complete
+     * cache update process is done. Else we will reload icons several times
+     * during cache update */
     const char *file, *ext;
     Efreet_Event_Cache_Update *ev = NULL;
 
