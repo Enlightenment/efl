@@ -152,6 +152,8 @@ void                _elm_config_shutdown(void);
 Eina_Bool           _elm_config_save(void);
 void                _elm_config_reload(void);
 
+void                _elm_recache(void);
+
 const char         *_elm_config_current_profile_get(void);
 const char         *_elm_config_profile_dir_get(const char *prof, Eina_Bool is_user);
 Eina_List          *_elm_config_profiles_list(void);

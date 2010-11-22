@@ -62,7 +62,7 @@ static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ..
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_X_Window _root_1st = 0;
-#define ATOM_COUNT 6
+#define ATOM_COUNT 8
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
@@ -72,6 +72,8 @@ static const char *_atom_names[ATOM_COUNT] =
     "ENLIGHTENMENT_THEME",
     "ENLIGHTENMENT_PROFILE",
     "ENLIGHTENMENT_FONT_OVERLAY",
+    "ENLIGHTENMENT_FONT_CACHE",
+    "ENLIGHTENMENT_IMAGE_CACHE",
     "ENLIGHTENMENT_CONFIG"
   };
 #define ATOM_E_SCALE 0
@@ -79,7 +81,9 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_THEME 2
 #define ATOM_E_PROFILE 3
 #define ATOM_E_FONT_OVERLAY 4
-#define ATOM_E_CONFIG 5
+#define ATOM_E_FONT_CACHE 5
+#define ATOM_E_IMAGE_CACHE 6
+#define ATOM_E_CONFIG 7
 
 static Eina_Bool _prop_config_get(void);
 static Eina_Bool _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
@@ -229,6 +233,38 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   _config_apply();
                   _elm_config_font_overlay_apply();
                   _elm_rescale();
+               }
+          }
+        if (event->atom == _atom[ATOM_E_FONT_CACHE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  int font_cache;
+
+                  font_cache = _elm_config->font_cache;
+                    _elm_config->font_cache = val;
+                  if (font_cache != _elm_config->font_cache)
+                    _elm_recache();
+               }
+          }
+        if (event->atom == _atom[ATOM_E_IMAGE_CACHE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  int image_cache;
+
+                  image_cache = _elm_config->image_cache;
+                    _elm_config->image_cache = val;
+                  if (image_cache != _elm_config->image_cache)
+                    _elm_recache();
                }
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
@@ -707,6 +743,22 @@ _config_sub_apply(void)
    edje_frametime_set(1.0 / _elm_config->fps);
    edje_scale_set(_elm_config->scale);
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
+}
+
+void
+_elm_recache(void)
+{
+   Eina_List *l;
+   Evas_Object *win;
+
+   elm_all_flush();
+
+   EINA_LIST_FOREACH(_elm_win_list, l, win)
+     {
+        Evas *e = evas_object_evas_get(win);
+        evas_image_cache_set(e, _elm_config->image_cache * 1024);
+        evas_font_cache_set(e, _elm_config->font_cache * 1024);
+     }
 }
 
 static Elm_Config *

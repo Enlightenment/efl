@@ -1043,26 +1043,6 @@ elm_policy_get(unsigned int policy)
 }
 
 /**
- * Flush all caches & dump all data that can be to lean down to use less memory
- */
-EAPI void
-elm_all_flush(void)
-{
-   const Eina_List *l;
-   Evas_Object *obj;
-   
-   EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     {
-        Evas *e = evas_object_evas_get(obj);
-        edje_file_cache_flush();
-        edje_collection_cache_flush();
-        evas_image_cache_flush(e);
-        evas_font_cache_flush(e);
-        evas_render_dump(e);
-     }
-}
-
-/**
  * @defgroup Scaling Selective Widget Scaling
  *
  * Different widgets can be scaled independently. These functions allow you to
@@ -1777,59 +1757,145 @@ elm_finger_size_all_set(Evas_Coord size)
    if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FINGER_SIZE");
    ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
                                   atom, &size_i, 1);
-#endif   
+#endif
 }
 
 /**
- * Get the enable status of the focus highlight
+ * @defgroup Caches Caches
  *
- * This gets whether the highlight on focused objects is enabled or not
- * @ingroup Config
+ * These are functions which let one fine-tune some cache values for
+ * Elementary applications, thus allowing for performance adjustments.
  */
-EAPI Eina_Bool
-elm_focus_highlight_enable_get(void)
-{
-   return _elm_config->focus_highlight_enable;
-}
 
 /**
- * Set the enable status of the focus highlight
+ * Flush all caches & dump all data that can be to lean down to use
+ * less memory
  *
- * Set whether to show or not the highlight on focused objects
- * @param enable Enable highlight if EINA_TRUE, disable otherwise
- * @ingroup Config
+ * @ingroup Caches
  */
 EAPI void
-elm_focus_highlight_enable_set(Eina_Bool enable)
+elm_all_flush(void)
 {
-   _elm_config->focus_highlight_enable = !!enable;
+   const Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     {
+        Evas *e = evas_object_evas_get(obj);
+        edje_file_cache_flush();
+        edje_collection_cache_flush();
+        evas_image_cache_flush(e);
+        evas_font_cache_flush(e);
+        evas_render_dump(e);
+     }
 }
 
 /**
- * Get the enable status of the highlight animation
+ * Get the configured font cache size
  *
- * Get whether the focus highlight, if enabled, will animate its switch from
- * one object to the next
- * @ingroup Config
+ * This gets the globally configured font cache size, in bytes
+ *
+ * @return The font cache size
+ * @ingroup Caches
  */
-EAPI Eina_Bool
-elm_focus_highlight_animate_get(void)
+EAPI int
+elm_font_cache_get(void)
 {
-   return _elm_config->focus_highlight_animate;
+   return _elm_config->font_cache;
 }
 
 /**
- * Set the enable status of the highlight animation
+ * Set the configured font cache size
  *
- * Set whether the focus highlight, if enabled, will animate its switch from
- * one object to the next
- * @param animate Enable animation if EINA_TRUE, disable otherwise
- * @ingroup Config
+ * This sets the globally configured font cache size, in bytes
+ *
+ * @param size The font cache size
+ * @ingroup Caches
  */
 EAPI void
-elm_focus_highlight_animate_set(Eina_Bool animate)
+elm_font_cache_set(int size)
 {
-   _elm_config->focus_highlight_animate = !!animate;
+   if (_elm_config->font_cache == size) return;
+   _elm_config->font_cache = size;
+
+   _elm_recache();
+}
+
+/**
+ * Set the configured font cache size for all applications on the
+ * display
+ *
+ * This sets the globally configured font cache size -- in bytes
+ * -- for all applications on the display.
+ *
+ * @param size The font cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_font_cache_all_set(int size)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int size_i = (unsigned int)size;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_FONT_CACHE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &size_i, 1);
+#endif
+}
+
+/**
+ * Get the configured image cache size
+ *
+ * This gets the globally configured image cache size, in bytes
+ *
+ * @return The image cache size
+ * @ingroup Caches
+ */
+EAPI int
+elm_image_cache_get(void)
+{
+   return _elm_config->image_cache;
+}
+
+/**
+ * Set the configured image cache size
+ *
+ * This sets the globally configured image cache size, in bytes
+ *
+ * @param size The image cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_image_cache_set(int size)
+{
+   if (_elm_config->image_cache == size) return;
+   _elm_config->image_cache = size;
+
+   _elm_recache();
+}
+
+/**
+ * Set the configured image cache size for all applications on the
+ * display
+ *
+ * This sets the globally configured image cache size -- in bytes
+ * -- for all applications on the display.
+ *
+ * @param size The image cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_image_cache_all_set(int size)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int size_i = (unsigned int)size;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_IMAGE_CACHE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &size_i, 1);
+#endif
 }
 
 /**
@@ -2061,12 +2127,64 @@ elm_object_focus_direction_go(Evas_Object *obj, int x, int y)
 }
 
 /**
+ * Get the enable status of the focus highlight
+ *
+ * This gets whether the highlight on focused objects is enabled or not
+ * @ingroup Focus
+ */
+EAPI Eina_Bool
+elm_focus_highlight_enable_get(void)
+{
+   return _elm_config->focus_highlight_enable;
+}
+
+/**
+ * Set the enable status of the focus highlight
+ *
+ * Set whether to show or not the highlight on focused objects
+ * @param enable Enable highlight if EINA_TRUE, disable otherwise
+ * @ingroup Focus
+ */
+EAPI void
+elm_focus_highlight_enable_set(Eina_Bool enable)
+{
+   _elm_config->focus_highlight_enable = !!enable;
+}
+
+/**
+ * Get the enable status of the highlight animation
+ *
+ * Get whether the focus highlight, if enabled, will animate its switch from
+ * one object to the next
+ * @ingroup Focus
+ */
+EAPI Eina_Bool
+elm_focus_highlight_animate_get(void)
+{
+   return _elm_config->focus_highlight_animate;
+}
+
+/**
+ * Set the enable status of the highlight animation
+ *
+ * Set whether the focus highlight, if enabled, will animate its switch from
+ * one object to the next
+ * @param animate Enable animation if EINA_TRUE, disable otherwise
+ * @ingroup Config
+ */
+EAPI void
+elm_focus_highlight_animate_set(Eina_Bool animate)
+{
+   _elm_config->focus_highlight_animate = !!animate;
+}
+
+/**
  * @defgroup Scrollhints Scrollhints
  *
  * Objects when inside a scroller can scroll, but this may not always be
  * desirable in certain situations. This allows an object to hint to itself
  * and parents to "not scroll" in one of 2 ways.
- * 
+ *
  * 1. To hold on scrolling. This means just flicking and dragging may no
  * longer scroll, but pressing/dragging near an edge of the scroller will
  * still scroll. This is automastically used by the entry object when

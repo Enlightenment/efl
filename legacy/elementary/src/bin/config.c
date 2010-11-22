@@ -119,6 +119,46 @@ config_exit(void *data       __UNUSED__,
 }
 
 static void
+fc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 10.0))) / 10.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+fc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double font_cache = elm_font_cache_get();
+   double val = elm_slider_value_get(obj);
+
+   if (font_cache == val) return;
+   elm_font_cache_all_set(val * 1024);
+}
+
+static void
+ic_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 10.0))) / 10.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+ic_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double image_cache = elm_image_cache_get();
+   double val = elm_slider_value_get(obj);
+
+   if (image_cache == val) return;
+   elm_image_cache_all_set(val * 1024);
+}
+
+static void
 sc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
@@ -1993,7 +2033,80 @@ _status_config_rendering(Evas_Object *win, Evas_Object *pager)
 static void
 _status_config_caches(Evas_Object *win, Evas_Object *pager)
 {
-   _unimplemented(win, pager, "caches");
+   Evas_Object *lb, *pd, *bx, *sl, *sp;
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+
+   pd = elm_frame_add(win);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
+   elm_object_style_set(pd, "pad_medium");
+   elm_box_pack_end(bx, pd);
+   evas_object_show(pd);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   elm_label_label_set(lb,"<hilight>Font Cache Size</>");
+   elm_frame_content_set(pd, lb);
+   evas_object_show(lb);
+
+   sl = elm_slider_add(win);
+   evas_object_data_set(win, "font_cache_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.1f");
+   elm_slider_indicator_format_set(sl, "%1.1f MB");
+   elm_slider_min_max_set(sl, 0.0, 4.0);
+   elm_slider_value_set(sl, (double)elm_font_cache_get() / 1024);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", fc_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", fc_change, NULL);
+
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, 1);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
+   elm_object_style_set(pd, "pad_medium");
+   elm_box_pack_end(bx, pd);
+   evas_object_show(pd);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   elm_label_label_set(lb, "<hilight>Image Cache Size</><br>");
+   elm_frame_content_set(pd, lb);
+   evas_object_show(lb);
+
+   sl = elm_slider_add(win);
+   evas_object_data_set(win, "image_cache_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f");
+   elm_slider_indicator_format_set(sl, "%1.0f MB");
+   elm_slider_min_max_set(sl, 0, 32);
+   elm_slider_value_set(sl, (double)elm_image_cache_get() / 1024);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", ic_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", ic_change, NULL);
+
+   evas_object_data_set(win, "caches", bx);
+
+   elm_pager_content_push(pager, bx);
 }
 
 static void
