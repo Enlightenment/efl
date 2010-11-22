@@ -17,9 +17,6 @@
 # include <winsock2.h>
 #endif
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -162,8 +159,6 @@ efreet_desktop_init(void)
         ERROR("Efreet: Could not create a log domain for efreet_desktop");
         return 0;
     }
-    if (!ecore_file_init())
-        goto ecore_error;
     if (!efreet_desktop_edd_init())
         goto edd_error;
 
@@ -212,8 +207,6 @@ handler_error:
 cache_error:
     if (efreet_desktop_cache) eina_hash_free(efreet_desktop_cache);
 edd_error:
-    ecore_file_shutdown();
-ecore_error:
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     return 0;
 }
