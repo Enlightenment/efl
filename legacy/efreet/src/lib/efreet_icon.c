@@ -118,16 +118,10 @@ efreet_icon_init(void)
         const char *default_exts[] = {".png", ".xpm", NULL};
         int i;
 
-        if (!ecore_init())
-            return 0;
-
         _efreet_icon_log_dom = eina_log_domain_register
             ("efreet_icon", EFREET_DEFAULT_LOG_COLOR);
         if (_efreet_icon_log_dom < 0)
-        {
-            ecore_shutdown();
             return 0;
-        }
 
         /* setup the default extension list */
         for (i = 0; default_exts[i]; i++)
