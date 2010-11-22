@@ -2012,7 +2012,7 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
    if (screensaver_event->state == ScreenSaverOn)
       e->on = EINA_TRUE;
    else
-      e->on = EINA_TRUE;
+      e->on = EINA_FALSE;
 
    e->time = screensaver_event->time;
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
