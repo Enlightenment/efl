@@ -115,6 +115,7 @@ main(int argc, char ** argv)
     double total;
 
     eina_init();
+    ecore_init();
 
     total = ecore_time_get();
     if (argc > 1)
@@ -178,6 +179,7 @@ main(int argc, char ** argv)
 
     printf("Total run: %.3f seconds\n", ecore_time_get() - total);
 
+    ecore_shutdown();
     eina_shutdown();
     return 0;
 }
