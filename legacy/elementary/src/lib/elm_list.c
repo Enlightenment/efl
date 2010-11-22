@@ -552,6 +552,7 @@ _theme_hook(Evas_Object *obj)
      }
    EINA_LIST_FOREACH(wd->items, n, it)
      {
+        edje_object_scale_set(it->base.view, elm_widget_scale_get(obj) * _elm_config->scale);
         it->fixed = 0;
      }
    _fix_items(obj);

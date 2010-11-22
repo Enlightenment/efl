@@ -998,6 +998,7 @@ elm_smart_scroller_object_theme_set(Evas_Object *parent, Evas_Object *obj, const
    API_ENTRY return;
    Evas_Coord mw, mh;
    _elm_theme_object_set(parent, sd->edje_obj, clas, group, style);
+   edje_object_scale_set(sd->edje_obj, elm_widget_scale_get(parent) * _elm_config->scale);
    if (sd->pan_obj)
      edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
    mw = mh = -1;
