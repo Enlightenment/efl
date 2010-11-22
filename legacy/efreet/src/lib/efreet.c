@@ -37,9 +37,9 @@ efreet_init(void)
     if (!eet_init())
         goto shutdown_eina;
     if (!ecore_init())
-        goto shutdown_ecore;
+        goto shutdown_eet;
     if (!ecore_file_init())
-        goto shutdown_ecore_file;
+        goto shutdown_ecore;
     _efreet_log_domain_global = eina_log_domain_register("efreet", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_log_domain_global < 0)
     {
