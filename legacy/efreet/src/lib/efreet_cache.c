@@ -11,6 +11,7 @@
 #include "efreet_private.h"
 
 /* TODO: Listen for changes for icon dirs */
+/* TODO: Transfer some of desktop cache to this file, to share some infrastructure */
 
 /**
  * Data for cache files
