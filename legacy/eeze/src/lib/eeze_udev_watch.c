@@ -301,7 +301,7 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
    Eeze_Udev_Watch *watch = NULL;
    struct _store_data *store = NULL;
 
-   if (!(store = calloc(sizeof(struct _store_data), 1)))
+   if (!(store = calloc(1, sizeof(struct _store_data))))
      return NULL;
 
    if (!(watch = malloc(sizeof(Eeze_Udev_Watch))))
