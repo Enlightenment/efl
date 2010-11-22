@@ -1776,6 +1776,18 @@ efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem)
     const char *dir;
     char buf[PATH_MAX];
 
+    if (eina_list_count(elem->paths) == 1)
+    {
+        const char *pp, *ext;
+
+        path = eina_list_data_get(elem->paths);
+        pp = strrchr(path, '.');
+
+        EINA_LIST_FOREACH(efreet_icon_extensions, l, ext)
+            if (!strcmp(pp, ext))
+                return path;
+        return NULL;
+    }
 
     path = efreet_cache_icon_lookup_path_path(elem, efreet_icon_deprecated_user_dir_get());
     if (path) return path;
