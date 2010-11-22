@@ -4318,6 +4318,34 @@ edje_edit_font_del(Evas_Object *obj, const char* alias)
 }
 
 EAPI const char *
+edje_edit_font_path_get(Evas_Object *obj, const char *alias)
+{
+   Eina_Iterator *it;
+   Edje_Font_Directory_Entry *f;
+   const char *str = NULL;
+
+   eina_error_set(0);
+
+   if (!alias) return NULL;
+   GET_ED_OR_RETURN(NULL);
+
+   if (!ed->file || !ed->file->fonts) return NULL;
+
+   it = eina_hash_iterator_data_new(ed->file->fonts);
+   if (!it) return NULL;
+
+   EINA_ITERATOR_FOREACH(it, f)
+     if (!strcmp(f->entry, alias))
+       {
+          str = f->file;
+          break;
+       }
+
+   eina_iterator_free(it);
+   return eina_stringshare_add(str);
+}
+
+EAPI const char *
 edje_edit_state_font_get(Evas_Object *obj, const char *part, const char *state, double value)
 {
    Edje_Part_Description_Text *txt;

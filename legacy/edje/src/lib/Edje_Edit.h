@@ -2316,6 +2316,18 @@ EAPI Eina_Bool edje_edit_font_add(Evas_Object *obj, const char *path, const char
  */
 EAPI Eina_Bool edje_edit_font_del(Evas_Object *obj, const char* alias);
 
+/** Get font path for a given font alias.
+ *
+ * Remember to free the string with edje_edit_string_free()
+ *
+ * @param obj Object being edited.
+ * @param alias The font alias.
+ *
+ * @return The path of the given font alias.
+ */
+EAPI const char *edje_edit_font_path_get(Evas_Object *obj, const char *alias);
+
+
 /** Get font name for a given part state.
  *
  * Remember to free the returned string using edje_edit_string_free().
