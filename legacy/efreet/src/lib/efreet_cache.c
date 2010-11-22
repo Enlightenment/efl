@@ -10,6 +10,8 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
+/* TODO: Listen for changes for icon dirs */
+
 /**
  * Data for cache files
  */
