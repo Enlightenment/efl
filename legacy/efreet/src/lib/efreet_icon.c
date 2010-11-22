@@ -113,25 +113,22 @@ static const char *efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element 
 int
 efreet_icon_init(void)
 {
-    if (!efreet_icon_themes)
-    {
-        const char *default_exts[] = {".png", ".xpm", NULL};
-        int i;
+    const char *default_exts[] = {".png", ".xpm", NULL};
+    int i;
 
-        _efreet_icon_log_dom = eina_log_domain_register
-            ("efreet_icon", EFREET_DEFAULT_LOG_COLOR);
-        if (_efreet_icon_log_dom < 0)
-            return 0;
+    _efreet_icon_log_dom = eina_log_domain_register
+        ("efreet_icon", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_icon_log_dom < 0)
+        return 0;
 
-        /* setup the default extension list */
-        for (i = 0; default_exts[i]; i++)
-            efreet_icon_extensions = eina_list_append(efreet_icon_extensions, eina_stringshare_add(default_exts[i]));
+    /* setup the default extension list */
+    for (i = 0; default_exts[i]; i++)
+        efreet_icon_extensions = eina_list_append(efreet_icon_extensions, eina_stringshare_add(default_exts[i]));
 
-        efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_theme_free));
+    efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_theme_free));
 
-        efreet_extra_icon_dirs = NULL;
-        efreet_icon_cache = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_cache_free));
-    }
+    efreet_extra_icon_dirs = NULL;
+    efreet_icon_cache = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_cache_free));
 
     return 1;
 }
