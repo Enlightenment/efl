@@ -60,7 +60,7 @@ external_label_params_parse(void *data, Evas_Object *obj, const Eina_List *param
    Edje_External_Param *param;
    const Eina_List *l;
 
-   //mem = external_common_params_parse(Elm_Params_Label, data, obj, params);
+   mem = ELM_NEW(Elm_Params_Label);
    if (!mem)
      return NULL;
 

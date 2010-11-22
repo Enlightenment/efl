@@ -80,7 +80,7 @@ external_button_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina
    Edje_External_Param *param;
    const Eina_List *l;
 
-   mem = calloc(1, sizeof(Elm_Params_Button));
+   mem = ELM_NEW(Elm_Params_Button);
    if (!mem)
      return NULL;
 

@@ -74,7 +74,7 @@ external_icon_params_parse(void *data, Evas_Object *obj, const Eina_List *params
    Edje_External_Param *param;
    const Eina_List *l;
 
-   //mem = external_common_params_parse(Elm_Params_Icon, data, obj, params);
+   mem = ELM_NEW(Elm_Params_Icon);
    if (!mem)
      return NULL;
 

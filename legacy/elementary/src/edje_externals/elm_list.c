@@ -235,7 +235,7 @@ external_list_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, c
    Edje_External_Param *param;
    const Eina_List *l;
 
-   mem = calloc(1, sizeof(Elm_Params_List));
+   mem = ELM_NEW(Elm_Params_List);
    if (!mem)
      return NULL;
 

@@ -66,7 +66,7 @@ static void * external_scroller_params_parse(void *data, Evas_Object *obj,
 	Edje_External_Param *param;
 	const Eina_List *l;
 
-	//mem = external_common_params_parse(Elm_Params_Scroller, data, obj, params);
+        mem = ELM_NEW(Elm_Params_Scroller);
 	if (!mem)
 		return NULL;
 
