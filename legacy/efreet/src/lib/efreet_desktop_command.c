@@ -7,9 +7,6 @@
 #include <limits.h>
 #include <ctype.h>
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-
 #include "Efreet.h"
 #include "efreet_private.h"
 

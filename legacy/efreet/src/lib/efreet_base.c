@@ -6,9 +6,6 @@
 #include <string.h>
 #include <limits.h>
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-
 #include "Efreet.h"
 #include "efreet_private.h"
 

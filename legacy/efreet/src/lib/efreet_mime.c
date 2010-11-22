@@ -40,11 +40,8 @@ void *alloca (size_t);
 # include <arpa/inet.h>
 #endif
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-
-#include <Efreet.h>
-#include <Efreet_Mime.h>
+#include "Efreet.h"
+#include "Efreet_Mime.h"
 #include "efreet_private.h"
 
 static Eina_List *globs = NULL;     /* contains Efreet_Mime_Glob structs */
