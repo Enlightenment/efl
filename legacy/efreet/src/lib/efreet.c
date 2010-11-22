@@ -7,6 +7,8 @@
 #include <string.h>
 #include <limits.h>
 
+#include <Ecore.h>
+
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"
