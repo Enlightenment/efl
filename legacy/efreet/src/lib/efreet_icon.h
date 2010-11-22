@@ -11,6 +11,12 @@
  * @{
  */
 
+
+/**
+ * Event id for cache update.
+ */
+EAPI extern int EFREET_EVENT_ICON_CACHE_UPDATE;
+
 /**
  * The possible contexts for an icon directory
  */
