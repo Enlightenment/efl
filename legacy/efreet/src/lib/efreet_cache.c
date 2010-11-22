@@ -19,7 +19,6 @@ static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
 
 static Eet_File            *icon_cache = NULL;
 static const char          *icon_cache_name = NULL;
-static const char          *icon_cache_file = NULL;
 static Eet_File            *icon_fallback_cache = NULL;
 
 static Ecore_File_Monitor  *icon_cache_monitor = NULL;
@@ -251,10 +250,8 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
         {
             eet_close(icon_cache);
             eina_stringshare_del(icon_cache_name);
-            eina_stringshare_del(icon_cache_file);
             icon_cache = NULL;
             icon_cache_name = NULL;
-            icon_cache_file = NULL;
         }
     }
     if (!icon_cache)
@@ -266,7 +263,6 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
         if (icon_cache)
         {
             icon_cache_name = eina_stringshare_add(theme->name.internal);
-            icon_cache_file = eina_stringshare_add(path);
             icon_cache_timer_update();
         }
     }
@@ -311,25 +307,21 @@ static void
 icon_cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
                                Ecore_File_Event event, const char *path)
 {
-    Eet_File *tmp = NULL;
+    const char *file, *ext;
     Efreet_Event_Cache_Update *ev = NULL;
 
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
         event != ECORE_FILE_EVENT_MODIFIED) return;
-    if (!icon_cache_file || strcmp(path, icon_cache_file)) return;
+    file = ecore_file_file_get(path);
+    if (!file || strncmp(file, "icon_", 5)) return;
+    ext = strrchr(file, '.');
+    if (!ext || strcmp(ext, ".cache")) return;
 
-    tmp = eet_open(icon_cache_file, EET_FILE_MODE_READ);
-    if (!tmp) return;
+    icon_cache_close();
+
     ev = NEW(Efreet_Event_Cache_Update, 1);
-    if (!ev) goto error;
-
-    eet_close(icon_cache);
-    icon_cache = tmp;
-
+    if (!ev) return;
     ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
-    return;
-error:
-    if (tmp) eet_close(tmp);
 }
 
 static void
@@ -358,5 +350,4 @@ icon_cache_close(void)
     if (icon_fallback_cache) eet_close(icon_fallback_cache);
     icon_fallback_cache = NULL;
     IF_RELEASE(icon_cache_name);
-    IF_RELEASE(icon_cache_file);
 }
