@@ -31,7 +31,8 @@ static int                  icon_cache_exe_lock = -1;
 static Ecore_Event_Handler *icon_cache_exe_handler;
 
 static void efreet_icon_edd_shutdown(void);
-static Eina_Bool efreet_icon_exe_cb(void *data, int type, void *event);
+
+static Eina_Bool icon_cache_exe_cb(void *data, int type, void *event);
 static void efreet_icon_cache_update_cb(void *data, Ecore_File_Monitor *em,
                                Ecore_File_Event event, const char *path);
 
@@ -61,7 +62,7 @@ efreet_cache_init(void)
     if (efreet_cache_update)
     {
         icon_cache_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                             efreet_icon_exe_cb, NULL);
+                                                             icon_cache_exe_cb, NULL);
         if (!icon_cache_exe_handler) goto cache_error;
 
         icon_cache_monitor = ecore_file_monitor_add(buf,
@@ -271,7 +272,7 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
 }
 
 static Eina_Bool
-efreet_icon_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
+icon_cache_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
     Ecore_Exe_Event_Del *ev;
 
