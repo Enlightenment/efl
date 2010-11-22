@@ -498,22 +498,36 @@ _get_item_day(Evas_Object *obj, int selected_it)
 }
 
 static void
-_day_selected(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source)
+_update_sel_it(Evas_Object *obj, int sel_it)
 {
-   int sel_it, day;
-   Widget_Data *wd = elm_widget_data_get(data);
+   int day;
+   Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->selection_enabled))
       return;
-   sel_it = atoi(source);
-   day = _get_item_day(data, sel_it);
+
+   day = _get_item_day(obj, sel_it);
    if (!day)
      return;
+
    _unselect(wd, wd->selected_it);
+
    wd->selected_it = sel_it;
    wd->selected_time.tm_mday = day;
    _select(wd, wd->selected_it);
    _fix_selected_time(wd);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(obj, "changed", NULL);
+}
+
+static void
+_day_selected(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source)
+{
+   int sel_it;
+   Widget_Data *wd = elm_widget_data_get(data);
+   if ((!wd) || (!wd->selection_enabled))
+      return;
+   sel_it = atoi(source);
+
+   _update_sel_it(data, sel_it);
 }
 
 static inline int
@@ -547,6 +561,48 @@ _update_cur_date(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (!wd->selection_enabled) return EINA_FALSE;
+
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
+     {
+        _update_sel_it(obj, wd->selected_it-1);
+     }
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            (!strcmp(ev->keyname, "KP_Right")))
+     {
+        _update_sel_it(obj, wd->selected_it+1);
+     }
+   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
+     {
+        _update_sel_it(obj, wd->selected_it-7);
+     }
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+     {
+        _update_sel_it(obj, wd->selected_it+7);
+     }
+   else if ((!strcmp(ev->keyname, "Prior")) ||
+            (!strcmp(ev->keyname, "KP_Prior")))
+     {
+        if (_update_month(obj, -1)) _populate(obj);
+     }
+   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
+     {
+        if (_update_month(obj, 1)) _populate(obj);
+     }
+   else return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 /**
  * Add a new calendar to the parent
  *
@@ -578,6 +634,7 @@ elm_calendar_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->first_interval = 0.85;
    wd->year_min = 2;
