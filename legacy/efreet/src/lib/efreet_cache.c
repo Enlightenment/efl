@@ -275,7 +275,7 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
     return NULL;
 }
 
-const char *
+Efreet_Cache_Icon *
 efreet_cache_icon_fallback_find(const char *icon)
 {
     if (!icon_fallback_cache)
@@ -285,7 +285,7 @@ efreet_cache_icon_fallback_find(const char *icon)
         path = efreet_icon_cache_file("_fallback");
         icon_fallback_cache = eet_open(path, EET_FILE_MODE_READ);
         if (icon_fallback_cache)
-            icon_cache_close();
+            icon_cache_timer_update();
     }
     if (icon_fallback_cache)
         return eet_data_read(icon_fallback_cache, cache_icon_fallback_edd, icon);

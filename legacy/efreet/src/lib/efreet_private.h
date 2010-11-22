@@ -216,7 +216,7 @@ EAPI Eet_Data_Descriptor *efreet_icon_edd_init(void);
 EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd_init(void);
 EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
-const char *efreet_cache_icon_fallback_find(const char *icon);
+Efreet_Cache_Icon *efreet_cache_icon_fallback_find(const char *icon);
 #endif
 
 #define NON_EXISTING (void *)-1

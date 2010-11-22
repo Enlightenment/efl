@@ -100,6 +100,8 @@ static int efreet_cache_icon_size_match(Efreet_Cache_Icon_Element *elem, unsigne
 static double efreet_cache_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int size);
 static const char *efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem);
 static const char *efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path);
+static const char *efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Icon *icon);
+static const char *efreet_cache_icon_fallback_lookup_path_path(Efreet_Cache_Icon *icon, const char *path);
 #endif
 
 /**
@@ -409,7 +411,11 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
      */
     if (!value || (value == NON_EXISTING))
 #ifdef ICON_CACHE
-        value = efreet_cache_icon_fallback_find(icon);
+    {
+        cache = efreet_cache_icon_fallback_find(icon);
+        value = efreet_cache_icon_fallback_lookup_path(cache);
+        efreet_cache_icon_free(cache);
+    }
 #else
         value = efreet_icon_fallback_icon(icon);
 #endif
@@ -1823,4 +1829,87 @@ efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *
     }
     return NULL;
 }
+
+static const char *
+efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Icon *icon)
+{
+    const char *path;
+    Eina_List *xdg_dirs, *l;
+    const char *dir;
+    char buf[PATH_MAX];
+
+    if (!icon) return NULL;
+
+    if (eina_list_count(icon->icons) == 1)
+    {
+        const char *pp, *ext;
+
+        path = eina_list_data_get(icon->icons);
+        pp = strrchr(path, '.');
+
+        EINA_LIST_FOREACH(efreet_icon_extensions, l, ext)
+            if (!strcmp(pp, ext))
+                return path;
+        return NULL;
+    }
+
+    path = efreet_cache_icon_fallback_lookup_path_path(icon, efreet_icon_deprecated_user_dir_get());
+    if (path) return path;
+    path = efreet_cache_icon_fallback_lookup_path_path(icon, efreet_icon_user_dir_get());
+    if (path) return path;
+#if 0
+    EINA_LIST_FOREACH(efreet_extra_icon_dirs, l, dir)
+    {
+        path = efreet_cache_icon_lookup_path_path(elem, dir);
+        if (path) return path;
+    }
+#endif
+
+    xdg_dirs = efreet_data_dirs_get();
+
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(buf, sizeof(buf), "%s/icons", dir);
+        path = efreet_cache_icon_fallback_lookup_path_path(icon, buf);
+        if (path) return path;
+    }
+
+#ifndef STRICT_SPEC
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
+        path = efreet_cache_icon_fallback_lookup_path_path(icon, buf);
+        if (path) return path;
+    }
+#endif
+
+    path = efreet_cache_icon_fallback_lookup_path_path(icon, "/usr/share/pixmaps");
+    if (path) return path;
+
+    return NULL;
+}
+
+static const char *
+efreet_cache_icon_fallback_lookup_path_path(Efreet_Cache_Icon *icon, const char *path)
+{
+    Eina_List *l, *ll;
+    const char *ext, *p, *pp;
+    int len;
+
+    len = strlen(path);
+
+    EINA_LIST_FOREACH(icon->icons, l, p)
+    {
+
+        if (strncmp(path, p, len)) continue;
+        pp = strrchr(p, '.');
+        if (!pp) continue;
+
+        EINA_LIST_FOREACH(efreet_icon_extensions, ll, ext)
+            if (!strcmp(pp, ext))
+                return p;
+    }
+    return NULL;
+}
+
 #endif
