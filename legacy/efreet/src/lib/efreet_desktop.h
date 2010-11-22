@@ -28,11 +28,6 @@ EAPI extern int EFREET_EVENT_DESKTOP_CACHE_UPDATE;
 typedef struct _Efreet_Desktop Efreet_Desktop;
 
 /**
- * Efreet_Event_Cache_Update
- */
-typedef struct _Efreet_Event_Cache_Update Efreet_Event_Cache_Update;
-
-/**
  * A callback used with efreet_desktop_command_get()
  */
 typedef void *(*Efreet_Desktop_Command_Cb) (void *data, Efreet_Desktop *desktop,
@@ -101,15 +96,6 @@ struct _Efreet_Desktop
 
     Eina_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */
     void *type_data; /**< Type specific data for custom types */
-};
-
-/**
- * Efreet_Event_Cache_Update
- * @brief event struct sent with EFREET_EVENT_CACHE_UPDATE
- */
-struct _Efreet_Event_Cache_Update
-{
-    int dummy;
 };
 
 EAPI Efreet_Desktop   *efreet_desktop_get(const char *file);
