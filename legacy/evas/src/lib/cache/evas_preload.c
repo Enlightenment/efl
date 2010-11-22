@@ -8,7 +8,6 @@
 
 #ifdef BUILD_ASYNC_PRELOAD
 # include <pthread.h>
-# include <sched.h>
 # ifdef __linux__
 # include <sys/syscall.h>
 # endif
