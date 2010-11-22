@@ -134,7 +134,8 @@ ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
 {
    int fd;
 
-   _monitors = ECORE_FILE_MONITOR(eina_inlist_remove(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
+   if (_monitors)
+     _monitors = ECORE_FILE_MONITOR(eina_inlist_remove(EINA_INLIST_GET(_monitors), EINA_INLIST_GET(em)));
 
    fd = ecore_main_fd_handler_fd_get(_fdh);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd)
