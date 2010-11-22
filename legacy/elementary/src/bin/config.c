@@ -799,11 +799,11 @@ _status_config_themes(Evas_Object *win, Evas_Object *pager)
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_min_set(rc, 320, 120);
+   evas_object_size_hint_min_set(rc, 0, 130);
    elm_table_pack(tb, rc, 0, 0, 1, 1);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_min_set(rc, 320, 240);
+   evas_object_size_hint_min_set(rc, 0, 200);
    elm_table_pack(tb, rc, 0, 1, 1, 1);
 
    /////////////////////////////////////////////
