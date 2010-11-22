@@ -877,7 +877,7 @@ efreet_icon_fallback_icon(const char *icon_name)
         EINA_LIST_FOREACH(xdg_dirs, l, dir)
         {
             snprintf(path, sizeof(path), "%s/icons", dir);
-            efreet_icon_fallback_dir_scan(path, icon_name);
+            icon = efreet_icon_fallback_dir_scan(path, icon_name);
             if (icon)
             {
                 efreet_icon_cache_add(NULL, icon_name, 0, icon);
