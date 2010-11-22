@@ -2399,7 +2399,7 @@ elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bo
 /**
  * Set the scrollbar policy
  *
- * This sets the scrollbar visibility policy for the given scroller.
+ * This sets the scrollbar visibility policy for the given list scroller.
  * ELM_SMART_SCROLLER_POLICY_AUTO means the scrollber is made visible if it
  * is needed, and otherwise kept hidden. ELM_SMART_SCROLLER_POLICY_ON turns
  * it on all the time, and ELM_SMART_SCROLLER_POLICY_OFF always keeps it off.
@@ -2417,7 +2417,8 @@ elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((policy_h >= 3) || (policy_v >= 3)) return;
+   if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
+       (policy_v >= ELM_SCROLLER_POLICY_LAST))
    if (wd->scr)
      elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
 }
@@ -2430,8 +2431,8 @@ elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy
    Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
    if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
-   *policy_h = (Elm_Scroller_Policy) s_policy_h;
-   *policy_v = (Elm_Scroller_Policy) s_policy_v;
+   if (policy_h) *policy_h = (Elm_Scroller_Policy) s_policy_h;
+   if (policy_v) *policy_v = (Elm_Scroller_Policy) s_policy_v;
 }
 
 /**

@@ -1683,6 +1683,8 @@ extern "C" {
    EAPI Elm_Genlist_Item *elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret);
    EAPI Elm_Genlist_Item *elm_genlist_first_item_get(const Evas_Object *obj);
    EAPI Elm_Genlist_Item *elm_genlist_last_item_get(const Evas_Object *obj);
+   EAPI void              elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+   EAPI void              elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
    /* available item styles:
     * default
     * default_style - The text part is a textblock
