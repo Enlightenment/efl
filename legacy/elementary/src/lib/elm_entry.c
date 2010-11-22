@@ -1509,7 +1509,6 @@ _get_item(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__,
    Evas_Object *o;
    Eina_List *l;
    Elm_Entry_Item_Provider *ip;
-   int ok = 0;
 
    EINA_LIST_FOREACH(wd->item_providers, l, ip)
      {
@@ -1517,9 +1516,7 @@ _get_item(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__,
         if (o) return o;
      }
    o = edje_object_add(evas_object_evas_get(data));
-   if (!strncmp(item, "emoticon/", 9))
-     ok = _elm_theme_object_set(data, o, "entry", item, elm_widget_style_get(data));
-   if (!ok)
+   if (!_elm_theme_object_set(data, o, "entry", item, elm_widget_style_get(data)))
      _elm_theme_object_set(data, o, "entry/emoticon", "wtf", elm_widget_style_get(data));
    return o;
 }
