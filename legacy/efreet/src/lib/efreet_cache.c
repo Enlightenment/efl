@@ -23,6 +23,7 @@ static const char          *icon_cache_file = NULL;
 static Eet_File            *icon_fallback_cache = NULL;
 
 static Ecore_File_Monitor  *icon_cache_monitor = NULL;
+static Ecore_Timer         *icon_cache_timer = NULL;
 
 static Ecore_Exe           *icon_cache_exe = NULL;
 static int                  icon_cache_exe_lock = -1;
@@ -33,6 +34,11 @@ static void efreet_icon_edd_shutdown(void);
 static Eina_Bool icon_cache_exe_cb(void *data, int type, void *event);
 static void icon_cache_update_cb(void *data, Ecore_File_Monitor *em,
                                Ecore_File_Event event, const char *path);
+
+static void icon_cache_timer_update(void);
+static Eina_Bool icon_cache_timer_cb(void *data);
+
+static void icon_cache_close(void);
 
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 
@@ -85,10 +91,8 @@ cache_error:
 void
 efreet_cache_shutdown(void)
 {
-    if (icon_cache) eet_close(icon_cache);
-    if (icon_fallback_cache) eet_close(icon_fallback_cache);
-    IF_RELEASE(icon_cache_name);
-    IF_RELEASE(icon_cache_file);
+    if (icon_cache_timer) ecore_timer_del(icon_cache_timer);
+    icon_cache_close();
 
     if (icon_cache_exe_handler) ecore_event_handler_del(icon_cache_exe_handler);
     if (icon_cache_monitor) ecore_file_monitor_del(icon_cache_monitor);
@@ -263,6 +267,7 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
         {
             icon_cache_name = eina_stringshare_add(theme->name.internal);
             icon_cache_file = eina_stringshare_add(path);
+            icon_cache_timer_update();
         }
     }
     if (icon_cache)
@@ -279,6 +284,8 @@ efreet_cache_icon_fallback_find(const char *icon)
 
         path = efreet_icon_cache_file("_fallback");
         icon_fallback_cache = eet_open(path, EET_FILE_MODE_READ);
+        if (icon_fallback_cache)
+            icon_cache_close();
     }
     if (icon_fallback_cache)
         return eet_data_read(icon_fallback_cache, cache_icon_fallback_edd, icon);
@@ -325,3 +332,31 @@ error:
     if (tmp) eet_close(tmp);
 }
 
+static void
+icon_cache_timer_update(void)
+{
+    if (icon_cache_timer)
+        ecore_timer_interval_set(icon_cache_timer, 60.0);
+    else
+        icon_cache_timer = ecore_timer_add(60.0, icon_cache_timer_cb, NULL);
+}
+
+static Eina_Bool
+icon_cache_timer_cb(void *data __UNUSED__)
+{
+    icon_cache_timer = NULL;
+
+    icon_cache_close();
+    return ECORE_CALLBACK_DONE;
+}
+
+static void
+icon_cache_close(void)
+{
+    if (icon_cache) eet_close(icon_cache);
+    icon_cache = NULL;
+    if (icon_fallback_cache) eet_close(icon_fallback_cache);
+    icon_fallback_cache = NULL;
+    IF_RELEASE(icon_cache_name);
+    IF_RELEASE(icon_cache_file);
+}
