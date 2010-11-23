@@ -1638,7 +1638,6 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
    else
      prog = parser->prog;
 
-   if (argc == 1) return 0;
    nonargs = _ecore_getopt_parse_find_nonargs_base(parser, argc, argv);
    if (nonargs < 0)
      goto error;
@@ -1647,7 +1646,7 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
      nonargs = argc;
 
    i = 1;
-   while (i < nonargs)
+   while ((i < nonargs ? nonargs : argc) && (argv[i]))
      if (!_ecore_getopt_parse_arg(parser, values, argc, argv, &i, &nonargs))
        goto error;
 
