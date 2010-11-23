@@ -1602,7 +1602,7 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  *        retrieved with ecore_app_args_get().
  * @param argv command line parameters.
  *
- * @return index of first non-option parameter or -1 on error.
+ * @return index of first non-option parameter, 0 if only a progname is passed, or -1 on error.
  */
 int
 ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv)
@@ -1634,6 +1634,7 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
    else
      prog = parser->prog;
 
+   if (argc == 1) return 0;
    nonargs = _ecore_getopt_parse_find_nonargs_base(parser, argc, argv);
    if (nonargs < 0)
      goto error;
