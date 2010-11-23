@@ -214,12 +214,11 @@ int efreet_desktop_write_cache_dirs_file(void);
 void efreet_desktop_changes_listen(void);
 
 void efreet_cache_desktop_update(void);
+#ifdef ICON_CACHE
 void efreet_cache_icon_update(void);
+#endif
 void efreet_cache_desktop_free(Efreet_Desktop *desktop);
 Efreet_Desktop *efreet_cache_desktop_find(const char *file);
-#if 0
-void efreet_icon_update_cache(void);
-#endif
 
 #ifdef ICON_CACHE
 EAPI const char *efreet_icon_cache_file(const char *theme);

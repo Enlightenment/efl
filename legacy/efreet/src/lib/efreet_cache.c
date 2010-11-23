@@ -22,6 +22,7 @@ struct _Efreet_Old_Cache
 /**
  * Data for cache files
  */
+#ifdef ICON_CACHE
 static Eet_Data_Descriptor *cache_icon_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_element_edd = NULL;
 static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
@@ -29,6 +30,7 @@ static Eet_Data_Descriptor *cache_icon_fallback_edd = NULL;
 static Eet_File            *icon_cache = NULL;
 static const char          *icon_cache_name = NULL;
 static Eet_File            *icon_fallback_cache = NULL;
+#endif
 
 static Eet_Data_Descriptor *desktop_edd = NULL;
 
@@ -41,16 +43,20 @@ static Ecore_File_Monitor  *cache_monitor = NULL;
 static Ecore_Timer         *cache_timer = NULL;
 
 static Ecore_Event_Handler *cache_exe_handler = NULL;
+#ifdef ICON_CACHE
 static Ecore_Job           *icon_cache_job = NULL;
 static Ecore_Exe           *icon_cache_exe = NULL;
 static int                  icon_cache_exe_lock = -1;
+#endif
 static Ecore_Job           *desktop_cache_job = NULL;
 static Ecore_Exe           *desktop_cache_exe = NULL;
 static int                  desktop_cache_exe_lock = -1;
 
 static Eina_List           *old_desktop_caches = NULL;
 
+#ifdef ICON_CACHE
 static void efreet_icon_edd_shutdown(void);
+#endif
 static void efreet_desktop_edd_shutdown(void);
 
 static Eina_Bool cache_exe_cb(void *data, int type, void *event);
@@ -60,13 +66,19 @@ static void cache_update_cb(void *data, Ecore_File_Monitor *em,
 static void cache_timer_update(void);
 static Eina_Bool cache_timer_cb(void *data);
 
+#ifdef ICON_CACHE
 static void icon_cache_close(void);
+#endif
 
 static void desktop_cache_update_cache_job(void *data);
+#ifdef ICON_CACHE
 static void icon_cache_update_cache_job(void *data);
+#endif
 static void desktop_cache_update_free(void *data, void *ev);
 
+#ifdef ICON_CACHE
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
+#endif
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 
 int
@@ -74,14 +86,18 @@ efreet_cache_init(void)
 {
     char buf[PATH_MAX];
 
+#ifdef ICON_CACHE
     if (!efreet_icon_edd_init())
         goto error;
     if (!efreet_icon_fallback_edd_init())
         goto error;
+#endif
     if (!efreet_desktop_edd_init())
         goto error;
 
+#ifdef ICON_CACHE
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
+#endif
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
 
     snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
@@ -103,7 +119,9 @@ efreet_cache_init(void)
         efreet_icon_changes_listen();
 #endif
 
+#ifdef ICON_CACHE
         efreet_cache_icon_update();
+#endif
         efreet_cache_desktop_update();
     }
 
@@ -111,7 +129,9 @@ efreet_cache_init(void)
 error:
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+#ifdef ICON_CACHE
     efreet_icon_edd_shutdown();
+#endif
     efreet_desktop_edd_shutdown();
     return 0;
 }
@@ -122,27 +142,33 @@ efreet_cache_shutdown(void)
     Efreet_Old_Cache *d;
 
     if (cache_timer) ecore_timer_del(cache_timer);
+#ifdef ICON_CACHE
     icon_cache_close();
+#endif
     if (desktop_cache) eet_close(desktop_cache);
     IF_RELEASE(desktop_cache_file);
     IF_RELEASE(desktop_cache_dirs);
 
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+#ifdef ICON_CACHE
     efreet_icon_edd_shutdown();
+#endif
     efreet_desktop_edd_shutdown();
     if (desktop_cache_job)
     {
         ecore_job_del(desktop_cache_job);
         desktop_cache_job = NULL;
     }
+#ifdef ICON_CACHE
     if (icon_cache_exe) ecore_exe_terminate(icon_cache_exe);
-    if (desktop_cache_exe) ecore_exe_terminate(desktop_cache_exe);
     if (icon_cache_exe_lock > 0)
     {
         close(icon_cache_exe_lock);
         icon_cache_exe_lock = -1;
     }
+#endif
+    if (desktop_cache_exe) ecore_exe_terminate(desktop_cache_exe);
     if (desktop_cache_exe_lock > 0)
     {
         close(desktop_cache_exe_lock);
@@ -156,6 +182,7 @@ efreet_cache_shutdown(void)
     }
 }
 
+#ifdef ICON_CACHE
 /*
  * Needs EAPI because of helper binaries
  */
@@ -171,6 +198,7 @@ efreet_icon_cache_file(const char *theme)
 
     return cache_file;
 }
+#endif
 
 /*
  * Needs EAPI because of helper binaries
@@ -217,6 +245,7 @@ efreet_desktop_cache_dirs(void)
     return desktop_cache_dirs;
 }
 
+#ifdef ICON_CACHE
 /*
  * Needs EAPI because of helper binaries
  */
@@ -298,6 +327,7 @@ efreet_icon_edd_shutdown(void)
     if (cache_icon_fallback_edd) eet_data_descriptor_free(cache_icon_fallback_edd);
     cache_icon_fallback_edd = NULL;
 }
+#endif
 
 /*
  * Needs EAPI because of helper binaries
@@ -345,6 +375,7 @@ efreet_desktop_edd_shutdown(void)
     desktop_edd = NULL;
 }
 
+#ifdef ICON_CACHE
 /*
  * Needs EAPI because of helper binaries
  */
@@ -436,6 +467,7 @@ efreet_cache_icon_fallback_find(const char *icon)
         return eet_data_read(icon_fallback_cache, cache_icon_fallback_edd, icon);
     return NULL;
 }
+#endif
 
 Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)
@@ -469,6 +501,7 @@ efreet_cache_desktop_update(void)
     desktop_cache_job = ecore_job_add(desktop_cache_update_cache_job, NULL);
 }
 
+#ifdef ICON_CACHE
 void
 efreet_cache_icon_update(void)
 {
@@ -478,6 +511,7 @@ efreet_cache_icon_update(void)
     if (icon_cache_job) ecore_job_del(icon_cache_job);
     icon_cache_job = ecore_job_add(icon_cache_update_cache_job, NULL);
 }
+#endif
 
 void
 efreet_cache_desktop_free(Efreet_Desktop *desktop)
@@ -510,16 +544,7 @@ cache_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
     Ecore_Exe_Event_Del *ev;
 
     ev = event;
-    if (ev->exe == icon_cache_exe)
-    {
-        if (icon_cache_exe_lock > 0)
-        {
-            close(icon_cache_exe_lock);
-            icon_cache_exe_lock = -1;
-        }
-        icon_cache_exe = NULL;
-    }
-    else if (ev->exe == desktop_cache_exe)
+    if (ev->exe == desktop_cache_exe)
     {
         if (desktop_cache_exe_lock > 0)
         {
@@ -528,6 +553,17 @@ cache_exe_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
         }
         desktop_cache_exe = NULL;
     }
+#ifdef ICON_CACHE
+    else if (ev->exe == icon_cache_exe)
+    {
+        if (icon_cache_exe_lock > 0)
+        {
+            close(icon_cache_exe_lock);
+            icon_cache_exe_lock = -1;
+        }
+        icon_cache_exe = NULL;
+    }
+#endif
     return ECORE_CALLBACK_RENEW;
 }
 
@@ -546,16 +582,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 
     file = ecore_file_file_get(path);
     if (!file) return;
-    if (!strcmp(file, "icon_data.update"))
-    {
-        printf("update icon cache\n");
-        icon_cache_close();
-
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (!ev) return;
-        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
-    }
-    else if (!strcmp(file, "desktop_data.update"))
+    if (!strcmp(file, "desktop_data.update"))
     {
         printf("update desktop cache\n");
         tmp = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
@@ -576,6 +603,17 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
         return;
     }
+#ifdef ICON_CACHE
+    else if (!strcmp(file, "icon_data.update"))
+    {
+        printf("update icon cache\n");
+        icon_cache_close();
+
+        ev = NEW(Efreet_Event_Cache_Update, 1);
+        if (!ev) return;
+        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
+    }
+#endif
 error:
     IF_FREE(ev);
     IF_FREE(d);
@@ -596,12 +634,15 @@ cache_timer_cb(void *data __UNUSED__)
 {
     cache_timer = NULL;
 
+#ifdef ICON_CACHE
     icon_cache_close();
+#endif
     if (desktop_cache) eet_close(desktop_cache);
     desktop_cache = NULL;
     return ECORE_CALLBACK_DONE;
 }
 
+#ifdef ICON_CACHE
 static void
 icon_cache_close(void)
 {
@@ -611,6 +652,7 @@ icon_cache_close(void)
     icon_fallback_cache = NULL;
     IF_RELEASE(icon_cache_name);
 }
+#endif
 
 static void
 desktop_cache_update_cache_job(void *data __UNUSED__)
@@ -646,6 +688,7 @@ error:
     }
 }
 
+#ifdef ICON_CACHE
 static void
 icon_cache_update_cache_job(void *data __UNUSED__)
 {
@@ -677,6 +720,7 @@ error:
         icon_cache_exe_lock = -1;
     }
 }
+#endif
 
 static void
 desktop_cache_update_free(void *data, void *ev)
