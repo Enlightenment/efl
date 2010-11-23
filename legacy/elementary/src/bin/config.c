@@ -1424,7 +1424,7 @@ _fonts_data_fill(Evas *evas)
    sd->size = -250;
    fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
 
-   for (i = 5; i < 21; i++)
+   for (i = 5; i < 51; i++)
      {
         char str[16];
 
