@@ -25,25 +25,35 @@ static Eina_List *extensions;
 
 static int verbose = 0;
 
+static char file[PATH_MAX] = { '\0' };
+
+static void
+int_handler (int sig, siginfo_t * info, void *data)
+{
+    if (file[0]) unlink(file);
+    if (verbose) printf("EXIT\n");
+    exit(1);
+}
+
 static int
 cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *changed)
 {
     Eina_Iterator *it;
     char buf[PATH_MAX];
-    const char *ext, *file;
+    const char *ext, *ent;
 
     if (eina_hash_find(dirs, dir)) return 1;
     eina_hash_add(dirs, dir, (void *)-1);
 
     it = eina_file_ls(dir);
     if (!it) return 1;
-    EINA_ITERATOR_FOREACH(it, file)
+    EINA_ITERATOR_FOREACH(it, ent)
     {
         Eina_List *l;
         Efreet_Cache_Icon *icon;
         char *name, *tmp;
 
-        ext = strrchr(file, '.');
+        ext = strrchr(ent, '.');
         if (!ext) continue;
         ext = eina_stringshare_add(ext);
         if (!eina_list_data_find(extensions, ext))
@@ -52,7 +62,7 @@ cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *cha
             continue;
         }
         /* icon with known extension */
-        name = strdup(ecore_file_file_get(file));
+        name = strdup(ecore_file_file_get(ent));
         tmp = strrchr(name, '.');
         if (tmp) *tmp = '\0';
         icon = eet_data_read(ef, fallback_edd, name);
@@ -70,7 +80,7 @@ cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *cha
 #endif
         }
 
-        icon->icons = eina_list_append(icon->icons, eina_stringshare_ref(file));
+        icon->icons = eina_list_append(icon->icons, eina_stringshare_ref(ent));
         if (!eet_data_write(ef, fallback_edd, name, icon, 1))
         {
             free(name);
@@ -120,19 +130,19 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme, const char *path, Efreet_Icon_Them
 {
     Eina_Iterator *it;
     char buf[PATH_MAX];
-    const char *ext, *file;
+    const char *ext, *ent;
 
     snprintf(buf, sizeof(buf), "%s/%s", path, dir->name);
     it = eina_file_ls(buf);
     if (!it) return 1;
-    EINA_ITERATOR_FOREACH(it, file)
+    EINA_ITERATOR_FOREACH(it, ent)
     {
         Eina_List *l;
         Efreet_Cache_Icon *icon;
         Efreet_Cache_Icon_Element *elem = NULL, *oelem = NULL;
         char *name, *tmp;
 
-        ext = strrchr(file, '.');
+        ext = strrchr(ent, '.');
         if (!ext) continue;
         ext = eina_stringshare_add(ext);
         if (!eina_list_data_find(extensions, ext))
@@ -141,7 +151,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme, const char *path, Efreet_Icon_Them
             continue;
         }
         /* icon with known extension */
-        name = strdup(ecore_file_file_get(file));
+        name = strdup(ecore_file_file_get(ent));
         tmp = strrchr(name, '.');
         if (tmp) *tmp = '\0';
         icon = eet_data_read(ef, edd, name);
@@ -178,12 +188,12 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme, const char *path, Efreet_Icon_Them
         }
         if (elem)
         {
-            elem->paths = eina_list_append(elem->paths, eina_stringshare_ref(file));
+            elem->paths = eina_list_append(elem->paths, eina_stringshare_ref(ent));
         }
         else
         {
             elem = NEW(Efreet_Cache_Icon_Element, 1);
-            elem->paths = eina_list_append(elem->paths, eina_stringshare_ref(file));
+            elem->paths = eina_list_append(elem->paths, eina_stringshare_ref(ent));
             elem->type = dir->type;
             elem->size.normal = dir->size.normal;
             elem->size.min = dir->size.min;
@@ -257,7 +267,6 @@ main(int argc, char **argv)
      * - make sure programs with different extra dirs all work together
      */
     Eet_File *ef;
-    char file[PATH_MAX];
     Eina_List *l = NULL;
     Efreet_Icon_Theme *theme;
     char *dir = NULL;
@@ -266,6 +275,7 @@ main(int argc, char **argv)
     int i;
     struct flock fl;
     const char *exts[] = { ".png", ".xpm", ".svg", NULL };
+    struct sigaction act;
 
     for (i = 1; i < argc; i++)
     {
@@ -283,7 +293,18 @@ main(int argc, char **argv)
     /* init external subsystems */
     if (!eina_init()) goto eina_error;
     if (!eet_init()) goto eet_error;
-    if (!ecore_init()) goto eet_error;
+    if (!ecore_init()) goto ecore_error;
+
+    // Trap SIGINT for clean shutdown
+    act.sa_sigaction = int_handler;
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+    sigemptyset(&act.sa_mask);
+
+    if (sigaction(SIGINT, &act, NULL) < 0)
+    {
+        perror("sigaction");
+        goto efreet_error;
+    }
 
     for (i = 0; exts[i]; i++)
         extensions = eina_list_append(extensions, eina_stringshare_add(exts[i]));
@@ -438,6 +459,12 @@ main(int argc, char **argv)
         unlink(file);
     }
 
+    /* Remove signal handler, no need to exit now */
+    act.sa_sigaction = SIG_DFL;
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+    sigemptyset(&act.sa_mask);
+    sigaction(SIGINT, &act, NULL);
+
     eina_list_free(extensions);
 
     /* touch update file */
@@ -464,6 +491,8 @@ error:
 edd_error:
     efreet_shutdown();
 efreet_error:
+    ecore_shutdown();
+ecore_error:
     eet_shutdown();
 eet_error:
     eina_shutdown();

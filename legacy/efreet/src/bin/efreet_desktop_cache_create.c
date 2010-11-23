@@ -27,6 +27,18 @@ static Eina_Hash *paths = NULL;
 
 static int verbose = 0;
 
+static char file[PATH_MAX] = { '\0' };
+static char util_file[PATH_MAX] = { '\0' };
+
+static void
+int_handler (int sig, siginfo_t * info, void *data)
+{
+    if (util_file[0]) unlink(util_file);
+    if (file[0]) unlink(file);
+    if (verbose) printf("EXIT\n");
+    exit(1);
+}
+
 static int
 strcmplen(const void *data1, const void *data2)
 {
@@ -158,28 +170,28 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
     char id[PATH_MAX];
     char buf[PATH_MAX];
     DIR *files;
-    struct dirent *file;
+    struct dirent *ent;
 
     if (!ecore_file_is_dir(path)) return 1;
 
     files = opendir(path);
     if (!files) return 1;
     id[0] = '\0';
-    while ((file = readdir(files)))
+    while ((ent = readdir(files)))
     {
-        if (!file) break;
-        if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
+        if (!ent) break;
+        if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
 
         if (base_id)
         {
             if (*base_id)
-                snprintf(id, sizeof(id), "%s-%s", base_id, file->d_name);
+                snprintf(id, sizeof(id), "%s-%s", base_id, ent->d_name);
             else
-                strcpy(id, file->d_name);
+                strcpy(id, ent->d_name);
             file_id = id;
         }
 
-        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
+        snprintf(buf, sizeof(buf), "%s/%s", path, ent->d_name);
         if (ecore_file_is_dir(buf))
         {
             if (recurse)
@@ -206,8 +218,6 @@ main(int argc, char **argv)
      *   during whilst this program runs.
      * - Maybe linger for a while to reduce number of cache re-creates.
      */
-    char file[PATH_MAX];
-    char util_file[PATH_MAX];
     Eina_List *dirs = NULL, *user_dirs = NULL;
     int priority = 0;
     char *dir = NULL;
@@ -217,6 +227,7 @@ main(int argc, char **argv)
     int changed = 0;
     int i;
     struct flock fl;
+    struct sigaction act;
 
     for (i = 1; i < argc; i++)
     {
@@ -234,7 +245,18 @@ main(int argc, char **argv)
     /* init external subsystems */
     if (!eina_init()) goto eina_error;
     if (!eet_init()) goto eet_error;
-    if (!ecore_init()) goto eet_error;
+    if (!ecore_init()) goto ecore_error;
+
+    // Trap SIGINT for clean shutdown
+    act.sa_sigaction = int_handler;
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+    sigemptyset(&act.sa_mask);
+
+    if (sigaction(SIGINT, &act, NULL) < 0)
+    {
+        perror("sigaction");
+        goto efreet_error;
+    }
 
     efreet_cache_update = 0;
 
@@ -378,6 +400,12 @@ main(int argc, char **argv)
     eet_close(util_ef);
     eet_close(ef);
 
+    /* Remove signal handler, no need to exit now */
+    act.sa_sigaction = SIG_DFL;
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+    sigemptyset(&act.sa_mask);
+    sigaction(SIGINT, &act, NULL);
+
     /* unlink old cache files */
     if (changed)
     {
@@ -392,19 +420,6 @@ main(int argc, char **argv)
         /* rename tmp files to real files */
         if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
         if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
-
-        /* touch update file */
-        snprintf(file, sizeof(file), "%s/.efreet/desktop_data.update", efreet_home_dir_get());
-        tmpfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-        if (tmpfd >= 0)
-        {
-            struct timeval tv[2];
-
-            gettimeofday(&tv[0], NULL);
-            tv[1] = tv[0];
-            futimes(tmpfd, tv);
-            close(tmpfd);
-        }
     }
     else
     {
@@ -412,6 +427,18 @@ main(int argc, char **argv)
         unlink(file);
     }
 
+    /* touch update file */
+    snprintf(file, sizeof(file), "%s/.efreet/desktop_data.update", efreet_home_dir_get());
+    tmpfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (tmpfd >= 0)
+    {
+        struct timeval tv[2];
+
+        gettimeofday(&tv[0], NULL);
+        tv[1] = tv[0];
+        futimes(tmpfd, tv);
+        close(tmpfd);
+    }
     efreet_shutdown();
     ecore_shutdown();
     eet_shutdown();
@@ -424,6 +451,8 @@ error:
 edd_error:
     efreet_shutdown();
 efreet_error:
+    ecore_shutdown();
+ecore_error:
     eet_shutdown();
 eet_error:
     eina_shutdown();
