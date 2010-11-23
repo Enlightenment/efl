@@ -447,6 +447,37 @@ _elm_theme_current_get(const char *theme_search_order)
 }
 
 static void
+_font_overlay_set_all(void            *data,
+                      Evas_Object *obj __UNUSED__,
+                      void *event_info __UNUSED__)
+{
+   Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
+   Elm_Text_Class_Data *tc_data, *tc;
+   Elm_List_Item *it;
+   Eina_List *l;
+
+   win = data;
+
+   fclasses = evas_object_data_get(win, "font_classes_list");
+   it = elm_list_selected_item_get(fclasses);
+   if (!it) return;
+   tc_data = elm_list_item_data_get(it);
+
+   fnames = evas_object_data_get(win, "font_names_list");
+   fstyles = evas_object_data_get(win, "font_styles_list");
+   fsizes = evas_object_data_get(win, "font_sizes_list");
+
+   EINA_LIST_FOREACH(fdata.text_classes, l, tc)
+     {
+        eina_stringshare_replace(&tc->font, tc_data->font);
+        eina_stringshare_replace(&tc->style, tc_data->style);
+        tc->size = tc_data->size;
+     }
+
+   elm_config_save();
+}
+
+static void
 _font_overlay_reset(void            *data,
                     Evas_Object *obj __UNUSED__,
                     void *event_info __UNUSED__)
@@ -1666,6 +1697,14 @@ _status_config_fonts(Evas_Object *win,
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bx);
+
+   bt = elm_button_add(win);
+   evas_object_smart_callback_add(bt, "clicked", _font_overlay_set_all, win);
+   elm_button_label_set(bt, "Set to All");
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, 0.5, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _font_overlay_reset, win);
