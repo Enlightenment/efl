@@ -128,7 +128,9 @@ efreet_cache_init(void)
     return 1;
 error:
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
+    cache_exe_handler = NULL;
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+    cache_monitor = NULL;
 #ifdef ICON_CACHE
     efreet_icon_edd_shutdown();
 #endif
@@ -142,15 +144,19 @@ efreet_cache_shutdown(void)
     Efreet_Old_Cache *d;
 
     if (cache_timer) ecore_timer_del(cache_timer);
+    cache_timer = NULL;
 #ifdef ICON_CACHE
     icon_cache_close();
 #endif
     if (desktop_cache) eet_close(desktop_cache);
+    desktop_cache = NULL;
     IF_RELEASE(desktop_cache_file);
     IF_RELEASE(desktop_cache_dirs);
 
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
+    cache_exe_handler = NULL;
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);
+    cache_monitor = NULL;
 #ifdef ICON_CACHE
     efreet_icon_edd_shutdown();
 #endif
