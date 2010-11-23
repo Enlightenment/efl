@@ -85,6 +85,9 @@ struct _Ecore_Pthread_Worker
          Ecore_Thread_Notify_Cb func_notify;
          Ecore_Pipe *notify;
 
+         Ecore_Pipe *direct_pipe;
+         Ecore_Pthread_Worker *direct_worker;
+
          int send;
          int received;
       } feedback_run;
@@ -111,14 +114,27 @@ typedef struct _Ecore_Pthread_Data Ecore_Pthread_Data;
 
 struct _Ecore_Pthread_Data
 {
+   Ecore_Pthread_Worker *death_job;
    Ecore_Pipe *p;
    void *data;
    PH(thread);
 };
 #endif
 
+static void _ecore_thread_handler(void *data __UNUSED__, void *buffer, unsigned int nbyte);
+
 static int _ecore_thread_count_max = 0;
 static int ECORE_THREAD_PIPE_DEL = 0;
+static Eina_Array *_ecore_thread_pipe = NULL;
+
+static Ecore_Pipe*
+_ecore_thread_pipe_get(void)
+{
+   if (eina_array_count_get(_ecore_thread_pipe) > 0)
+     return eina_array_pop(_ecore_thread_pipe);
+
+   return ecore_pipe_add(_ecore_thread_handler, NULL);
+}
 
 #ifdef EFL_HAVE_PTHREAD
 static int _ecore_thread_count = 0;
@@ -137,6 +153,34 @@ static CD(_ecore_thread_global_hash_cond);
 static PH(main_loop_thread);
 static Eina_Bool have_main_loop_thread = 0;
 
+static Eina_Trash *_ecore_thread_worker_trash = NULL;
+static int _ecore_thread_worker_count = 0;
+
+static Ecore_Pthread_Worker *
+_ecore_thread_worker_new(void)
+{
+   Ecore_Pthread_Worker *result;
+
+   result = eina_trash_pop(&_ecore_thread_worker_trash);
+
+   if (!result) result = malloc(sizeof (Ecore_Pthread_Worker));
+   else _ecore_thread_worker_count--;
+
+   return result;
+}
+
+static void
+_ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
+{
+   if (_ecore_thread_worker_count > (_ecore_thread_count_max + 1) * 16)
+     {
+        free(worker);
+        return ;
+     }
+
+   eina_trash_push(&_ecore_thread_worker_trash, worker);
+}
+
 static void
 _ecore_thread_data_free(void *data)
 {
@@ -151,7 +195,7 @@ _ecore_thread_pipe_free(void *data __UNUSED__, void *event)
 {
    Ecore_Pipe *p = event;
 
-   ecore_pipe_del(p);
+   eina_array_push(_ecore_thread_pipe, p);
    eina_threads_shutdown();
 }
 
@@ -191,7 +235,14 @@ _ecore_thread_kill(Ecore_Pthread_Worker *work)
      }
 
    if (work->feedback_run)
-     ecore_pipe_del(work->u.feedback_run.notify);
+     {
+        ecore_pipe_del(work->u.feedback_run.notify);
+
+        if (work->u.feedback_run.direct_pipe)
+          eina_array_push(_ecore_thread_pipe, work->u.feedback_run.direct_pipe);
+        if (work->u.feedback_run.direct_worker)
+          _ecore_thread_worker_free(work->u.feedback_run.direct_worker);
+     }
    CDD(work->cond);
    LKD(work->mutex);
    if (work->hash)
@@ -310,7 +361,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    pth = malloc(sizeof (Ecore_Pthread_Data));
    if (!pth) return NULL;
 
-   pth->p = ecore_pipe_add(_ecore_thread_handler, NULL);
+   pth->p = work->u.feedback_run.direct_pipe;
    if (!pth->p)
      {
         free(pth);
@@ -323,10 +374,9 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 
    ecore_pipe_write(pth->p, &work, sizeof (Ecore_Pthread_Worker *));
 
-   work = malloc(sizeof (Ecore_Pthread_Worker));
+   work = work->u.feedback_run.direct_worker;
    if (!work)
      {
-        ecore_pipe_del(pth->p);
         free(pth);
         return NULL;
      }
@@ -386,7 +436,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    _ecore_thread_count--;
    LKU(_ecore_pending_job_threads_mutex);
 
-   work = malloc(sizeof (Ecore_Pthread_Worker));
+   work = pth->death_job;
    if (!work) return NULL;
 
    work->data = pth;
@@ -415,6 +465,8 @@ _ecore_thread_init(void)
      _ecore_thread_count_max = 1;
 
    ECORE_THREAD_PIPE_DEL = ecore_event_type_new();
+   _ecore_thread_pipe = eina_array_new(8);
+
 #ifdef EFL_HAVE_PTHREAD
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
    main_loop_thread = PHS();
@@ -431,6 +483,10 @@ void
 _ecore_thread_shutdown(void)
 {
    /* FIXME: If function are still running in the background, should we kill them ? */
+   Ecore_Pipe *p;
+   Eina_Array_Iterator it;
+   unsigned int i;
+
 #ifdef EFL_HAVE_PTHREAD
    Ecore_Pthread_Worker *work;
    Ecore_Pthread_Data *pth;
@@ -474,6 +530,12 @@ _ecore_thread_shutdown(void)
    LKD(_ecore_thread_global_hash_mutex);
    CDD(_ecore_thread_global_hash_cond);
 #endif
+
+   EINA_ARRAY_ITER_NEXT(_ecore_thread_pipe, i, p, it)
+     ecore_pipe_del(p);
+
+   eina_array_free(_ecore_thread_pipe);
+   _ecore_thread_pipe = NULL;
 }
 
 /**
@@ -523,7 +585,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
 
    if (!func_blocking) return NULL;
 
-   work = malloc(sizeof (Ecore_Pthread_Worker));
+   work = _ecore_thread_worker_new();
    if (!work)
      {
         if (func_cancel)
@@ -559,8 +621,9 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    pth = malloc(sizeof (Ecore_Pthread_Data));
    if (!pth) goto on_error;
 
-   pth->p = ecore_pipe_add(_ecore_thread_handler, NULL);
-   if (!pth->p) goto on_error;
+   pth->p = _ecore_thread_pipe_get();
+   pth->death_job = _ecore_thread_worker_new();
+   if (!pth->p || !pth->death_job) goto on_error;
 
    eina_threads_init();
 
@@ -572,8 +635,8 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
  on_error:
    if (pth)
      {
-        if (pth->p) ecore_pipe_del(pth->p);
-        pth->p = NULL;
+        if (pth->p) eina_array_push(_ecore_thread_pipe, pth->p);
+        if (pth->death_job) _ecore_thread_worker_free(pth->death_job);
         free(pth);
      }
 
@@ -750,7 +813,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
 
    if (!func_heavy) return NULL;
 
-   worker = malloc(sizeof (Ecore_Pthread_Worker));
+   worker = _ecore_thread_worker_new();
    if (!worker) goto on_error;
 
    worker->u.feedback_run.func_heavy = func_heavy;
@@ -768,10 +831,15 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
    worker->u.feedback_run.received = 0;
 
    worker->u.feedback_run.notify = ecore_pipe_add(_ecore_notify_handler, worker);
+   worker->u.feedback_run.direct_pipe = NULL;
+   worker->u.feedback_run.direct_worker = NULL;
 
    if (!try_no_queue)
      {
         PH(t);
+
+        worker->u.feedback_run.direct_pipe = _ecore_thread_pipe_get();
+        worker->u.feedback_run.direct_worker = _ecore_thread_worker_new();
 
         if (PHC(t, _ecore_direct_worker, worker) == 0)
            return (Ecore_Thread *) worker;
@@ -792,8 +860,9 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
    pth = malloc(sizeof (Ecore_Pthread_Data));
    if (!pth) goto on_error;
 
-   pth->p = ecore_pipe_add(_ecore_thread_handler, NULL);
-   if (!pth->p) goto on_error;
+   pth->p = _ecore_thread_pipe_get();
+   pth->death_job = _ecore_thread_worker_new();
+   if (!pth->p || !pth->death_job) goto on_error;
 
    eina_threads_init();
 
@@ -805,7 +874,8 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
  on_error:
    if (pth)
      {
-        if (pth->p) ecore_pipe_del(pth->p);
+        if (pth->p) eina_array_push(_ecore_thread_pipe, pth->p);
+        if (pth->death_job) _ecore_thread_worker_free(pth->death_job);
         free(pth);
      }
 
