@@ -48,7 +48,7 @@ struct _Elm_Theme
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define ELM_CONFIG_FILE_GENERATION 0x0001
+#define ELM_CONFIG_FILE_GENERATION 0x0002
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | ELM_CONFIG_FILE_GENERATION)
 
 /* note: always remember to sync it with elm_config.c */
@@ -89,8 +89,11 @@ struct _Elm_Config
    Eina_List   *font_dirs;
    Eina_List   *font_overlays;
    int          font_hinting;
+   int          cache_flush_poll_interval;
    int          image_cache;
    int          font_cache;
+   int          edje_cache;
+   int          edje_collection_cache;
    int          finger_size;
    double       fps;
    const char  *theme;

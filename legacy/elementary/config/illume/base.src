@@ -15,8 +15,11 @@ group "Elm_Config" struct {
   value "bgpixmap" int: 0;
   value "compositing" int: 1;
   value "font_hinting" int: 2;
+  value "cache_flush_poll_interval" int: 512;
   value "image_cache" int: 4096;
   value "font_cache" int: 512;
+  value "edje_cache" int: 32;
+  value "edje_collection_cache" int: 64;
   value "finger_size" int: 40;
   value "fps" double: 60.0;
   value "theme" string: "default";

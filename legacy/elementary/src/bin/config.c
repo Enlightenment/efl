@@ -119,6 +119,26 @@ config_exit(void *data       __UNUSED__,
 }
 
 static void
+cf_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 5.0))) / 5.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+cf_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double scale = elm_scale_get();
+   double val = elm_slider_value_get(obj);
+
+   if (scale == val) return;
+   elm_cache_flush_interval_all_set(val);
+}
+
+static void
 fc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
@@ -196,6 +216,46 @@ fs_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 
    if (scale == val) return;
    elm_finger_size_all_set(val);
+}
+
+static void
+efc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 5.0))) / 5.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+efc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double scale = elm_scale_get();
+   double val = elm_slider_value_get(obj);
+
+   if (scale == val) return;
+   elm_edje_file_cache_all_set(val);
+}
+
+static void
+ecc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double val = elm_slider_value_get(obj);
+   double v;
+
+   v = ((double)((int)(val * 5.0))) / 5.0;
+   if (v != val) elm_slider_value_set(obj, v);
+}
+
+static void
+ecc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double scale = elm_scale_get();
+   double val = elm_slider_value_get(obj);
+
+   if (scale == val) return;
+   elm_edje_collection_cache_all_set(val);
 }
 
 static void
@@ -493,6 +553,7 @@ _font_overlay_change(void *data       __UNUSED__,
 static void
 _profile_change_do(Evas_Object *win, const char *profile)
 {
+   int flush_interval, font_c, image_c, edje_file_c, edje_col_c;
    const char *curr_theme, *curr_engine;
    const Eina_List *l_items, *l;
    Elm_List_Item *it;
@@ -504,12 +565,35 @@ _profile_change_do(Evas_Object *win, const char *profile)
 
    scale = elm_scale_get();
    fs = elm_finger_size_get();
+   flush_interval = elm_cache_flush_interval_get();
+   font_c = elm_font_cache_get();
+   image_c = elm_image_cache_get();
+   edje_file_c = elm_edje_file_cache_get();
+   edje_col_c = elm_edje_collection_cache_get();
 
    /* gotta update root windows' atoms */
    elm_scale_all_set(scale);
    elm_slider_value_set(evas_object_data_get(win, "scale_slider"), scale);
    elm_finger_size_all_set(fs);
    elm_slider_value_set(evas_object_data_get(win, "fs_slider"), fs);
+
+   elm_cache_flush_interval_all_set(flush_interval);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "cache_flush_interval_slider"),
+                        flush_interval);
+   elm_font_cache_all_set(font_c);
+   elm_slider_value_set(evas_object_data_get(win, "font_cache_slider"),
+                        font_c / 1024.0);
+   elm_image_cache_all_set(image_c);
+   elm_slider_value_set(evas_object_data_get(win, "image_cache_slider"),
+                        image_c / 1024.0);
+   elm_edje_file_cache_all_set(edje_file_c);
+   elm_slider_value_set(evas_object_data_get(win, "edje_file_cache_slider"),
+                        edje_file_c);
+   elm_edje_collection_cache_all_set(edje_col_c);
+   elm_slider_value_set(evas_object_data_get(win,
+                                             "edje_collection_cache_slider"),
+                        edje_col_c);
 
    curr_theme = _elm_theme_current_get(elm_theme_get(NULL));
    elm_theme_all_set(curr_theme);
@@ -2049,6 +2133,42 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   elm_label_label_set(lb,"<hilight>Cache Flush Interval</>");
+   elm_frame_content_set(pd, lb);
+   evas_object_show(lb);
+
+   sl = elm_slider_add(win);
+   evas_object_data_set(win, "cache_flush_interval_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f ticks");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 8.0, 4096.0);
+   elm_slider_value_set(sl, elm_cache_flush_interval_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", cf_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", cf_change, NULL);
+
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, 1);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
+   elm_object_style_set(pd, "pad_medium");
+   elm_box_pack_end(bx, pd);
+   evas_object_show(pd);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
    elm_label_label_set(lb,"<hilight>Font Cache Size</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
@@ -2058,10 +2178,10 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.1f");
-   elm_slider_indicator_format_set(sl, "%1.1f MB");
+   elm_slider_unit_format_set(sl, "%1.1f MB");
+   elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 4.0);
-   elm_slider_value_set(sl, (double)elm_font_cache_get() / 1024);
+   elm_slider_value_set(sl, (double)elm_font_cache_get() / 1024.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2094,15 +2214,87 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    elm_slider_span_size_set(sl, 120);
-   elm_slider_unit_format_set(sl, "%1.0f");
-   elm_slider_indicator_format_set(sl, "%1.0f MB");
+   elm_slider_unit_format_set(sl, "%1.0f MB");
+   elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 32);
-   elm_slider_value_set(sl, (double)elm_image_cache_get() / 1024);
+   elm_slider_value_set(sl, (double)elm_image_cache_get() / 1024.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
    evas_object_smart_callback_add(sl, "changed", ic_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", ic_change, NULL);
+
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, 1);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
+   elm_object_style_set(pd, "pad_medium");
+   elm_box_pack_end(bx, pd);
+   evas_object_show(pd);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   elm_label_label_set(lb,"<hilight>Number of Edje Files to Cache</>");
+   elm_frame_content_set(pd, lb);
+   evas_object_show(lb);
+
+   sl = elm_slider_add(win);
+   evas_object_data_set(win, "edje_file_cache_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f files");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 0, 256);
+   elm_slider_value_set(sl, elm_edje_file_cache_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", efc_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", efc_change, NULL);
+
+   sp = elm_separator_add(win);
+   elm_separator_horizontal_set(sp, 1);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, sp);
+   evas_object_show(sp);
+
+   pd = elm_frame_add(win);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);
+   elm_object_style_set(pd, "pad_medium");
+   elm_box_pack_end(bx, pd);
+   evas_object_show(pd);
+
+   lb = elm_label_add(win);
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
+   elm_label_label_set(lb,"<hilight>Number of Edje Collections to Cache</>");
+   elm_frame_content_set(pd, lb);
+   evas_object_show(lb);
+
+   sl = elm_slider_add(win);
+   evas_object_data_set(win, "edje_collection_cache_slider", sl);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
+   elm_slider_span_size_set(sl, 120);
+   elm_slider_unit_format_set(sl, "%1.0f collections");
+   elm_slider_indicator_format_set(sl, "%1.0f");
+   elm_slider_min_max_set(sl, 0, 512);
+   elm_slider_value_set(sl, elm_edje_collection_cache_get());
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "changed", ecc_round, NULL);
+   evas_object_smart_callback_add(sl, "delay,changed", ecc_change, NULL);
 
    evas_object_data_set(win, "caches", bx);
 

@@ -1791,6 +1791,65 @@ elm_all_flush(void)
 }
 
 /**
+ * Get the configured cache flush interval time
+ *
+ * This gets the globally configured cache flush interval time, in
+ * ticks
+ *
+ * @return The cache flush interval time
+ * @ingroup Caches
+ *
+ * @see elm_all_flush()
+ */
+EAPI int
+elm_cache_flush_interval_get(void)
+{
+   return _elm_config->cache_flush_poll_interval;
+}
+
+/**
+ * Set the configured cache flush interval time
+ *
+ * This sets the globally configured cache flush interval time, in ticks
+ *
+ * @param size The cache flush interval time
+ * @ingroup Caches
+ *
+ * @see elm_all_flush()
+ */
+EAPI void
+elm_cache_flush_interval_set(int size)
+{
+   if (_elm_config->cache_flush_poll_interval == size) return;
+   _elm_config->cache_flush_poll_interval = size;
+
+   _elm_recache();
+}
+
+/**
+ * Set the configured cache flush interval time for all applications on the
+ * display
+ *
+ * This sets the globally configured cache flush interval time -- in ticks
+ * -- for all applications on the display.
+ *
+ * @param size The cache flush interval time
+ * @ingroup Caches
+ */
+EAPI void
+elm_cache_flush_interval_all_set(int size)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int size_i = (unsigned int)size;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_CACHE_FLUSH_INTERVAL");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &size_i, 1);
+#endif
+}
+
+/**
  * Get the configured font cache size
  *
  * This gets the globally configured font cache size, in bytes
@@ -1893,6 +1952,118 @@ elm_image_cache_all_set(int size)
    unsigned int size_i = (unsigned int)size;
 
    if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_IMAGE_CACHE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &size_i, 1);
+#endif
+}
+
+/**
+ * Get the configured edje file cache size.
+ *
+ * This gets the globally configured edje file cache size, in number
+ * of files.
+ *
+ * @return The edje file cache size
+ * @ingroup Caches
+ */
+EAPI int
+elm_edje_file_cache_get(void)
+{
+   return _elm_config->edje_cache;
+}
+
+/**
+ * Set the configured edje file cache size
+ *
+ * This sets the globally configured edje file cache size, in number
+ * of files.
+ *
+ * @param size The edje file cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_edje_file_cache_set(int size)
+{
+   if (_elm_config->edje_cache == size) return;
+   _elm_config->edje_cache = size;
+
+   _elm_recache();
+}
+
+/**
+ * Set the configured edje file cache size for all applications on the
+ * display
+ *
+ * This sets the globally configured edje file cache size -- in number
+ * of files -- for all applications on the display.
+ *
+ * @param size The edje file cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_edje_file_cache_all_set(int size)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int size_i = (unsigned int)size;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_EDJE_FILE_CACHE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &size_i, 1);
+#endif
+}
+
+/**
+ * Get the configured edje collections (groups) cache size.
+ *
+ * This gets the globally configured edje collections cache size, in
+ * number of collections.
+ *
+ * @return The edje collections cache size
+ * @ingroup Caches
+ */
+EAPI int
+elm_edje_collection_cache_get(void)
+{
+   return _elm_config->edje_collection_cache;
+}
+
+/**
+ * Set the configured edje collections (groups) cache size
+ *
+ * This sets the globally configured edje collections cache size, in
+ * number of collections.
+ *
+ * @param size The edje collections cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_edje_collection_cache_set(int size)
+{
+   if (_elm_config->edje_collection_cache == size) return;
+   _elm_config->edje_collection_cache = size;
+
+   _elm_recache();
+}
+
+/**
+ * Set the configured edje collections (groups) cache size for all
+ * applications on the display
+ *
+ * This sets the globally configured edje collections cache size -- in
+ * number of collections -- for all applications on the display.
+ *
+ * @param size The edje collections cache size
+ * @ingroup Caches
+ */
+EAPI void
+elm_edje_collection_cache_all_set(int size)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int size_i = (unsigned int)size;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_EDJE_COLLECTION_CACHE");
    ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
                                   atom, &size_i, 1);
 #endif

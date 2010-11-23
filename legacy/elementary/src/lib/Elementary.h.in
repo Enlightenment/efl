@@ -251,12 +251,21 @@ extern "C" {
    EAPI int          elm_policy_get(unsigned int policy);
 
    EAPI void         elm_all_flush(void);
+   EAPI int          elm_cache_flush_interval_get(void);
+   EAPI void         elm_cache_flush_interval_set(int size);
+   EAPI void         elm_cache_flush_interval_all_set(int size);
    EAPI int          elm_font_cache_get(void);
    EAPI void         elm_font_cache_set(int size);
    EAPI void         elm_font_cache_all_set(int size);
    EAPI int          elm_image_cache_get(void);
    EAPI void         elm_image_cache_set(int size);
    EAPI void         elm_image_cache_all_set(int size);
+   EAPI int          elm_edje_file_cache_get(void);
+   EAPI void         elm_edje_file_cache_set(int size);
+   EAPI void         elm_edje_file_cache_all_set(int size);
+   EAPI int          elm_edje_collection_cache_get(void);
+   EAPI void         elm_edje_collection_cache_set(int size);
+   EAPI void         elm_edje_collection_cache_all_set(int size);
 
    EAPI void         elm_object_scale_set(Evas_Object *obj, double scale);
    EAPI double       elm_object_scale_get(const Evas_Object *obj);

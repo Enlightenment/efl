@@ -14,6 +14,8 @@ char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
 
+static Ecore_Poller *_elm_cache_flush_poller = NULL;
+
 const char *_elm_engines[] = {
    "software_x11",
    "fb",
@@ -62,7 +64,7 @@ static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ..
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_X_Window _root_1st = 0;
-#define ATOM_COUNT 8
+#define ATOM_COUNT 11
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
@@ -72,8 +74,11 @@ static const char *_atom_names[ATOM_COUNT] =
     "ENLIGHTENMENT_THEME",
     "ENLIGHTENMENT_PROFILE",
     "ENLIGHTENMENT_FONT_OVERLAY",
+    "ENLIGHTENMENT_CACHE_FLUSH_INTERVAL",
     "ENLIGHTENMENT_FONT_CACHE",
     "ENLIGHTENMENT_IMAGE_CACHE",
+    "ENLIGHTENMENT_EDJE_FILE_CACHE",
+    "ENLIGHTENMENT_EDJE_COLLECTION_CACHE",
     "ENLIGHTENMENT_CONFIG"
   };
 #define ATOM_E_SCALE 0
@@ -81,9 +86,12 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_THEME 2
 #define ATOM_E_PROFILE 3
 #define ATOM_E_FONT_OVERLAY 4
-#define ATOM_E_FONT_CACHE 5
-#define ATOM_E_IMAGE_CACHE 6
-#define ATOM_E_CONFIG 7
+#define ATOM_E_CACHE_FLUSH_INTERVAL 5
+#define ATOM_E_FONT_CACHE 6
+#define ATOM_E_IMAGE_CACHE 7
+#define ATOM_E_EDJE_FILE_CACHE 8
+#define ATOM_E_EDJE_COLLECTION_CACHE 9
+#define ATOM_E_CONFIG 10
 
 static Eina_Bool _prop_config_get(void);
 static Eina_Bool _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
@@ -137,6 +145,7 @@ _prop_config_get(void)
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_rescale();
+   _elm_recache();
    return EINA_TRUE;
 }
 
@@ -159,7 +168,11 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 
                   pscale = _elm_config->scale;
                   if (val > 0) _elm_config->scale = (double)val / 1000.0;
-                  if (pscale != _elm_config->scale) _elm_rescale();
+                  if (pscale != _elm_config->scale)
+                      {
+                         _elm_rescale();
+                         _elm_recache();
+                      }
                }
           }
         else if (event->atom == _atom[ATOM_E_FINGER_SIZE])
@@ -174,7 +187,11 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 
                   pfinger_size = _elm_config->finger_size;
                   _elm_config->finger_size = val;
-                  if (pfinger_size != _elm_config->finger_size) _elm_rescale();
+                  if (pfinger_size != _elm_config->finger_size)
+                      {
+                         _elm_rescale();
+                         _elm_recache();
+                      }
                }
           }
         else if (event->atom == _atom[ATOM_E_THEME])
@@ -189,6 +206,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   _elm_theme_parse(NULL, val);
                   free(val);
                   _elm_rescale();
+                  _elm_recache();
                }
           }
         else if (event->atom == _atom[ATOM_E_PROFILE])
@@ -235,6 +253,23 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   _elm_rescale();
                }
           }
+        if (event->atom == _atom[ATOM_E_CACHE_FLUSH_INTERVAL])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  int cache_flush_interval;
+
+                  cache_flush_interval = _elm_config->cache_flush_poll_interval;
+                    _elm_config->cache_flush_poll_interval = val;
+                  if (cache_flush_interval !=
+                      _elm_config->cache_flush_poll_interval)
+                    _elm_recache();
+               }
+          }
         if (event->atom == _atom[ATOM_E_FONT_CACHE])
           {
              unsigned int val = 1000;
@@ -264,6 +299,39 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   image_cache = _elm_config->image_cache;
                     _elm_config->image_cache = val;
                   if (image_cache != _elm_config->image_cache)
+                    _elm_recache();
+               }
+          }
+        if (event->atom == _atom[ATOM_E_EDJE_FILE_CACHE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  int edje_file_cache;
+
+                  edje_file_cache = _elm_config->edje_cache;
+                    _elm_config->edje_cache = val;
+                  if (edje_file_cache != _elm_config->edje_cache)
+                    _elm_recache();
+               }
+          }
+        if (event->atom == _atom[ATOM_E_EDJE_COLLECTION_CACHE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  int edje_collection_cache;
+
+                  edje_collection_cache = _elm_config->edje_collection_cache;
+                    _elm_config->edje_collection_cache = val;
+                  if (edje_collection_cache !=
+                      _elm_config->edje_collection_cache)
                     _elm_recache();
                }
           }
@@ -338,8 +406,11 @@ _desc_init(void)
    /* EET_DATA_DESCRIPTOR_ADD_LIST(D, T, "font_dirs", font_dirs, sub_edd); */
    ELM_CONFIG_LIST(D, T, font_overlays, _config_font_overlay_edd);
    ELM_CONFIG_VAL(D, T, font_hinting, T_INT);
+   ELM_CONFIG_VAL(D, T, cache_flush_poll_interval, T_INT);
    ELM_CONFIG_VAL(D, T, image_cache, T_INT);
    ELM_CONFIG_VAL(D, T, font_cache, T_INT);
+   ELM_CONFIG_VAL(D, T, edje_cache, T_INT);
+   ELM_CONFIG_VAL(D, T, edje_collection_cache, T_INT);
    ELM_CONFIG_VAL(D, T, finger_size, T_INT);
    ELM_CONFIG_VAL(D, T, fps, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, theme, T_STRING);
@@ -745,6 +816,16 @@ _config_sub_apply(void)
    if (_elm_config->modules) _elm_module_parse(_elm_config->modules);
 }
 
+static Eina_Bool
+_elm_cache_flush_cb(void *data __UNUSED__)
+{
+   elm_all_flush();
+   return ECORE_CALLBACK_RENEW;
+}
+
+/* kind of abusing this call right now -- shared between all of those
+ * properties -- but they are not meant to be called that periodically
+ * anyway */
 void
 _elm_recache(void)
 {
@@ -756,8 +837,23 @@ _elm_recache(void)
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
         Evas *e = evas_object_evas_get(win);
-        evas_image_cache_set(e, _elm_config->image_cache * 1024);
-        evas_font_cache_set(e, _elm_config->font_cache * 1024);
+        evas_image_cache_set(e, _elm_config->image_cache);
+        evas_font_cache_set(e, _elm_config->font_cache);
+     }
+   edje_file_cache_set(_elm_config->edje_cache);
+   edje_collection_cache_set(_elm_config->edje_collection_cache);
+
+   if (_elm_cache_flush_poller)
+     {
+        ecore_poller_del(_elm_cache_flush_poller);
+        _elm_cache_flush_poller = NULL;
+     }
+   if (_elm_config->cache_flush_poll_interval > 0)
+     {
+        _elm_cache_flush_poller =
+          ecore_poller_add(ECORE_POLLER_CORE,
+                           _elm_config->cache_flush_poll_interval,
+                           _elm_cache_flush_cb, NULL);
      }
 }
 
@@ -829,19 +925,22 @@ _config_load(void)
    _elm_config->thumbscroll_momentum_threshold = 100.0;
    _elm_config->thumbscroll_friction = 1.0;
    _elm_config->thumbscroll_bounce_friction = 0.5;
-   _elm_config->thumbscroll_border_friction = 0.5;
+   _elm_config->thumbscroll_bounce_enable = EINA_TRUE;
    _elm_config->page_scroll_friction = 0.5;
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
-   _elm_config->thumbscroll_bounce_enable = EINA_TRUE;
+   _elm_config->thumbscroll_border_friction = 0.5;
    _elm_config->scale = 1.0;
    _elm_config->bgpixmap = 0;
+   _elm_config->compositing = 1;
    _elm_config->font_hinting = 2;
+   _elm_config->cache_flush_poll_interval = 512;
    _elm_config->font_dirs = NULL;
    _elm_config->image_cache = 4096;
    _elm_config->font_cache = 512;
+   _elm_config->edje_cache = 32;
+   _elm_config->edje_collection_cache = 64;
    _elm_config->finger_size = 40;
-   _elm_config->compositing = 1;
    _elm_config->fps = 60.0;
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
@@ -1261,6 +1360,7 @@ _elm_config_init(void)
    _env_get();
    _config_apply();
    _elm_config_font_overlay_apply();
+   _elm_recache();
 }
 
 void
@@ -1366,6 +1466,7 @@ _elm_config_reload(void)
   _config_apply();
   _elm_config_font_overlay_apply();
   _elm_rescale();
+  _elm_recache();
 }
 
 void
@@ -1398,6 +1499,7 @@ _elm_config_profile_set(const char *profile)
       _config_apply();
       _elm_config_font_overlay_apply();
       _elm_rescale();
+      _elm_recache();
     }
 }
 
