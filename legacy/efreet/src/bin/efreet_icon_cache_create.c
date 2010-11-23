@@ -39,7 +39,6 @@ static int
 cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *changed)
 {
     Eina_Iterator *it;
-    char buf[PATH_MAX];
     const char *ext, *ent;
 
     if (eina_hash_find(dirs, dir)) return 1;
@@ -49,7 +48,6 @@ cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *cha
     if (!it) return 1;
     EINA_ITERATOR_FOREACH(it, ent)
     {
-        Eina_List *l;
         Efreet_Cache_Icon *icon;
         char *name, *tmp;
 
