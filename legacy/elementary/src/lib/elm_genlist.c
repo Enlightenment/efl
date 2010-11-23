@@ -1988,6 +1988,13 @@ _pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 }
 
 static void
+_pan_min_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
+{
+   if (x) *x = 0;
+   if (y) *y = 0;
+}
+
+static void
 _pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    Pan *sd = evas_object_smart_data_get(obj);
@@ -2224,8 +2231,8 @@ elm_genlist_add(Evas_Object *parent)
    wd->pan->wd = wd;
 
    elm_smart_scroller_extern_pan_set(wd->scr, wd->pan_smart,
-                                     _pan_set, _pan_get,
-                                     _pan_max_get, _pan_child_size_get);
+                                     _pan_set, _pan_get, _pan_max_get,
+                                     _pan_min_get, _pan_child_size_get);
 
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);

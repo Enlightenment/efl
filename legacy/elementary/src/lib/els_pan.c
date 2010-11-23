@@ -123,6 +123,16 @@ _elm_smart_pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 }
 
 void
+_elm_smart_pan_min_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
+{
+   API_ENTRY return;
+   if (x)
+      *x = 0;
+   if (y)
+      *y = 0;
+}
+
+void
 _elm_smart_pan_child_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    API_ENTRY return;
