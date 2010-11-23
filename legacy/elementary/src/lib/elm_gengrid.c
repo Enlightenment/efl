@@ -1022,8 +1022,6 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
    item->x = cx;
    item->y = cy;
    evas_object_geometry_get(item->wd->pan_smart, &ox, &oy, &vw, &vh);
-   evas_output_viewport_get(evas_object_evas_get(item->wd->self),
-			    &cvx, &cvy, &cvw, &cvh);
 
    /* Preload rows/columns at each side of the Gengrid */
    cvx = ox - PRELOAD * item->wd->item_width;
@@ -1047,11 +1045,9 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
         if (item->wd->count % items_visible)
            columns++;
 
-        if (item->wd->minw < vw)
-          {
-             tcw = item->wd->item_width * columns;
-             alignw = (vw - tcw) * item->wd->align_x;
-          }
+        tcw = item->wd->item_width * columns;
+        alignw = (vw - tcw) * item->wd->align_x;
+
         items_row = items_visible;
         if (items_row > item->wd->count)
            items_row = item->wd->count;
@@ -1071,11 +1067,9 @@ _item_place(Elm_Gengrid_Item *item, Evas_Coord cx, Evas_Coord cy)
         if (item->wd->count % items_visible)
            rows++;
 
-        if (item->wd->minh < vh)
-          {
-             tch = item->wd->item_height * rows;
-             alignh = (vh - tch) * item->wd->align_y;
-          }
+        tch = item->wd->item_height * rows;
+        alignh = (vh - tch) * item->wd->align_y;
+
         items_col = items_visible;
         if (items_col > item->wd->count)
            items_col = item->wd->count;
@@ -1290,6 +1284,20 @@ _pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 }
 
 static void
+_pan_min_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
+{
+   Pan *sd = evas_object_smart_data_get(obj);
+   Evas_Coord mx, my;
+
+   if (!sd) return;
+   _pan_max_get(obj, &mx, &my);
+   if (x)
+      *x = -mx * sd->wd->align_x;
+   if (y)
+      *y = -my * sd->wd->align_y;
+}
+
+static void
 _pan_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    Pan *sd = evas_object_smart_data_get(obj);
@@ -1469,8 +1477,8 @@ elm_gengrid_add(Evas_Object *parent)
      }
 
    elm_smart_scroller_extern_pan_set(wd->scr, wd->pan_smart,
-				     _pan_set, _pan_get,
-				     _pan_max_get, _pan_child_size_get);
+                                     _pan_set, _pan_get, _pan_max_get,
+                                     _pan_min_get, _pan_child_size_get);
 
    return obj;
 }
