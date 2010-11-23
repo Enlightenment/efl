@@ -1241,7 +1241,7 @@ static void
 _pan_min_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
    if (x) *x = 0;
-   if (y < 0) y = 0;
+   if (y) *y = 0;
 }
 
 static void
