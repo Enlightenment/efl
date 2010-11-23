@@ -764,11 +764,7 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char
         dst++;
      }
 
-   if (base != argc)
-     memmove(argv + dst, nonargs, used * sizeof(char *));
-   else
-     /* return 0 since argv[0] is technically the nonargs base */
-     base = 0;
+   memmove(argv + dst, nonargs, used * sizeof(char *));
    return base;
 }
 
@@ -1606,7 +1602,7 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  *        retrieved with ecore_app_args_get().
  * @param argv command line parameters.
  *
- * @return index of first non-option parameter, 0 if only a progname is passed, or -1 on error.
+ * @return index of first non-option parameter or -1 on error.
  */
 int
 ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int argc, char **argv)
@@ -1646,20 +1642,9 @@ ecore_getopt_parse(const Ecore_Getopt *parser, Ecore_Getopt_Value *values, int a
      nonargs = argc;
 
    i = 1;
-   if (nonargs)
-     {
-        while (i < nonargs)
-          if (!_ecore_getopt_parse_arg(parser, values, argc, argv, &i, &nonargs))
-            goto error;
-     }
-   else
-     {
-        int tmp = 0;
-
-        while (i < argc)
-          if (!_ecore_getopt_parse_arg(parser, values, argc, argv, &i, &tmp))
-            goto error;
-     }
+   while (i < nonargs)
+     if (!_ecore_getopt_parse_arg(parser, values, argc, argv, &i, &nonargs))
+       goto error;
 
    return nonargs;
 
