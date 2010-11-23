@@ -50,10 +50,8 @@ efreet_init(void)
     if (!efreet_base_init())
         goto unregister_log_domain;
 
-#ifdef ICON_CACHE
     if (!efreet_cache_init())
         goto shutdown_efreet_base;
-#endif
 
     if (!efreet_xml_init())
         goto shutdown_efreet_cache;
@@ -86,10 +84,8 @@ shutdown_efreet_icon:
 shutdown_efreet_xml:
     efreet_xml_shutdown();
 shutdown_efreet_cache:
-#ifdef ICON_CACHE
     efreet_cache_shutdown();
 shutdown_efreet_base:
-#endif
     efreet_base_shutdown();
 unregister_log_domain:
     eina_log_domain_unregister(_efreet_log_domain_global);
@@ -123,9 +119,7 @@ efreet_shutdown(void)
     efreet_ini_shutdown();
     efreet_icon_shutdown();
     efreet_xml_shutdown();
-#ifdef ICON_CACHE
     efreet_cache_shutdown();
-#endif
     efreet_base_shutdown();
     eina_log_domain_unregister(_efreet_log_domain_global);
 
