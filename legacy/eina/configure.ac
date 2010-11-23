@@ -17,7 +17,7 @@ m4_define([lt_cur], v_mic)
 m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
- 
+
 AC_INIT([eina], [v_ver.beta2], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.59])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -455,7 +455,7 @@ if test "x${have_iconv}" = "xno" ; then
 
    if test "x${have_iconv}" = "xyes" ; then
       AC_MSG_CHECKING([whether iconv() is in libc])
-      
+
       AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
              [[
