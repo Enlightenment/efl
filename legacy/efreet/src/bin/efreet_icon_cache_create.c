@@ -440,6 +440,18 @@ main(int argc, char **argv)
 
     eina_list_free(extensions);
 
+    /* touch update file */
+    snprintf(file, sizeof(file), "%s/.efreet/icon_data.update", efreet_home_dir_get());
+    tmpfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (tmpfd >= 0)
+    {
+        struct timeval tv[2];
+
+        gettimeofday(&tv[0], NULL);
+        tv[1] = tv[0];
+        futimes(tmpfd, tv);
+        close(tmpfd);
+    }
     efreet_shutdown();
     ecore_shutdown();
     eet_shutdown();

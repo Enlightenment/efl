@@ -392,6 +392,19 @@ main(int argc, char **argv)
         /* rename tmp files to real files */
         if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
         if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
+
+        /* touch update file */
+        snprintf(file, sizeof(file), "%s/.efreet/desktop_data.update", efreet_home_dir_get());
+        tmpfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+        if (tmpfd >= 0)
+        {
+            struct timeval tv[2];
+
+            gettimeofday(&tv[0], NULL);
+            tv[1] = tv[0];
+            futimes(tmpfd, tv);
+            close(tmpfd);
+        }
     }
     else
     {
