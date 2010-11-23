@@ -31,7 +31,7 @@ static char file[PATH_MAX] = { '\0' };
 static char util_file[PATH_MAX] = { '\0' };
 
 static void
-int_handler (int sig, siginfo_t * info, void *data)
+term_handler (int sig, siginfo_t * info, void *data)
 {
     if (util_file[0]) unlink(util_file);
     if (file[0]) unlink(file);
@@ -247,12 +247,12 @@ main(int argc, char **argv)
     if (!eet_init()) goto eet_error;
     if (!ecore_init()) goto ecore_error;
 
-    // Trap SIGINT for clean shutdown
-    act.sa_sigaction = int_handler;
+    // Trap SIGTERM for clean shutdown
+    act.sa_sigaction = term_handler;
     act.sa_flags = SA_RESTART | SA_SIGINFO;
     sigemptyset(&act.sa_mask);
 
-    if (sigaction(SIGINT, &act, NULL) < 0)
+    if (sigaction(SIGTERM, &act, NULL) < 0)
     {
         perror("sigaction");
         goto efreet_error;
@@ -401,10 +401,10 @@ main(int argc, char **argv)
     eet_close(ef);
 
     /* Remove signal handler, no need to exit now */
-    act.sa_sigaction = SIG_DFL;
+    act.sa_sigaction = SIG_IGN;
     act.sa_flags = SA_RESTART | SA_SIGINFO;
     sigemptyset(&act.sa_mask);
-    sigaction(SIGINT, &act, NULL);
+    sigaction(SIGTERM, &act, NULL);
 
     /* unlink old cache files */
     if (changed)
