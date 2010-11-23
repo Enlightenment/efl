@@ -24,7 +24,7 @@ module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
 install-data-hook:
-	rm -f $(controllerdir)/$(controller_LTLIBRARIES)
+	rm -f $(DESTDIR)$(controllerdir)/$(controller_LTLIBRARIES)
 
 endif
 endif
