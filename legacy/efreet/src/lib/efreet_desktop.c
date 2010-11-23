@@ -233,7 +233,6 @@ efreet_desktop_shutdown(void)
     if (change_monitors) eina_hash_free(change_monitors);
     if (cache) eet_close(cache);
     efreet_desktop_edd_shutdown();
-    ecore_file_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
     IF_RELEASE(cache_file);
     IF_RELEASE(cache_dirs);

@@ -150,8 +150,6 @@ efreet_icon_shutdown(void)
     IF_FREE_HASH(efreet_icon_cache);
 
     eina_log_domain_unregister(_efreet_icon_log_dom);
-
-    ecore_shutdown();
 }
 
 /**
