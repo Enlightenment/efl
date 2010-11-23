@@ -764,7 +764,11 @@ _ecore_getopt_parse_find_nonargs_base(const Ecore_Getopt *parser, int argc, char
         dst++;
      }
 
-   memmove(argv + dst, nonargs, used * sizeof(char *));
+   if (base != argc)
+     memmove(argv + dst, nonargs, used * sizeof(char *));
+   else
+     /* return 0 since argv[0] is technically the nonargs base */
+     base = 0;
    return base;
 }
 
