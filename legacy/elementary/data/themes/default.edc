@@ -13628,6 +13628,7 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/slider/horizontal/default";
+           alias: "elm/slider/horizontal/disabled";
       images {
 	 image: "sl_bg.png" COMP;
 	 image: "sl_bg_over.png" COMP;
