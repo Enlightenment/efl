@@ -209,7 +209,6 @@ EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);
 EAPI const char *efreet_desktop_cache_dirs(void);
 int efreet_desktop_write_cache_dirs_file(void);
-void efreet_desktop_changes_listen(void);
 
 void efreet_cache_desktop_update(void);
 #ifdef ICON_CACHE

@@ -91,6 +91,7 @@ static Eina_Bool efreet_desktop_x_fields_save(const Eina_Hash *hash,
                                                 void *fdata);
 static int efreet_desktop_environment_check(Efreet_Desktop *desktop);
 
+static void efreet_desktop_changes_listen(void);
 static void efreet_desktop_changes_listen_recursive(const char *path);
 static void efreet_desktop_changes_monitor_add(const char *path);
 static void efreet_desktop_changes_cb(void *data, Ecore_File_Monitor *em,
@@ -125,6 +126,7 @@ efreet_desktop_init(void)
     EFREET_DESKTOP_TYPE_DIRECTORY = efreet_desktop_type_add("Directory", NULL,
                                                                 NULL, NULL);
 
+    efreet_desktop_changes_listen();
     return 1;
 }
 
@@ -800,13 +802,15 @@ error:
     return 0;
 }
 
-void
+static void
 efreet_desktop_changes_listen(void)
 {
     int dirsfd = -1;
     Eina_List *dirs;
     char *path;
     struct stat st;
+
+    if (!efreet_cache_update) return;
 
     change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
     if (!change_monitors) return;

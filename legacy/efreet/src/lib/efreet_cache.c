@@ -118,7 +118,6 @@ efreet_cache_init(void)
                                                NULL);
         if (!cache_monitor) goto error;
 
-        efreet_desktop_changes_listen();
 #if 0
         efreet_icon_changes_listen();
 #endif
