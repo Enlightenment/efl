@@ -212,7 +212,7 @@ main(int argc, char **argv)
     int priority = 0;
     char *dir = NULL;
     char *path;
-    int fd = -1, tmpfd, dirsfd = -1;
+    int lockfd = -1, tmpfd, dirsfd = -1;
     struct stat st;
     int changed = 0;
     int i;
@@ -244,12 +244,12 @@ main(int argc, char **argv)
 
     /* lock process, so that we only run one copy of this program */
     snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
-    fd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    if (fd < 0) goto efreet_error;
+    lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (lockfd < 0) goto efreet_error;
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;
-    if (fcntl(fd, F_SETLK, &fl) < 0)
+    if (fcntl(lockfd, F_SETLK, &fl) < 0)
     {
         if (verbose)
         {
@@ -403,7 +403,7 @@ main(int argc, char **argv)
     ecore_shutdown();
     eet_shutdown();
     eina_shutdown();
-    close(fd);
+    close(lockfd);
     return 0;
 error:
     if (dirsfd >= 0) close(dirsfd);
@@ -415,6 +415,6 @@ efreet_error:
 eet_error:
     eina_shutdown();
 eina_error:
-    if (fd > 0) close(fd);
+    if (lockfd >= 0) close(lockfd);
     return 1;
 }
