@@ -40,7 +40,9 @@ static const char          *desktop_cache_file = NULL;
 
 static Ecore_File_Monitor  *cache_monitor = NULL;
 
+#ifdef ICON_CACHE
 static Ecore_Timer         *cache_timer = NULL;
+#endif
 
 static Ecore_Event_Handler *cache_exe_handler = NULL;
 #ifdef ICON_CACHE
@@ -63,8 +65,10 @@ static Eina_Bool cache_exe_cb(void *data, int type, void *event);
 static void cache_update_cb(void *data, Ecore_File_Monitor *em,
                                Ecore_File_Event event, const char *path);
 
+#ifdef ICON_CACHE
 static void cache_timer_update(void);
 static Eina_Bool cache_timer_cb(void *data);
+#endif
 
 #ifdef ICON_CACHE
 static void icon_cache_close(void);
@@ -143,9 +147,9 @@ efreet_cache_shutdown(void)
 {
     Efreet_Old_Cache *d;
 
+#ifdef ICON_CACHE
     if (cache_timer) ecore_timer_del(cache_timer);
     cache_timer = NULL;
-#ifdef ICON_CACHE
     icon_cache_close();
 #endif
     if (desktop_cache) eet_close(desktop_cache);
@@ -488,8 +492,6 @@ efreet_cache_desktop_find(const char *file)
     if (!desktop_cache)
         return NULL;
 
-    cache_timer_update();
-
     desktop = eet_data_read(desktop_cache, desktop_edd, rp);
     if (!desktop) return NULL;
     desktop->ref = 1;
@@ -626,6 +628,7 @@ error:
     if(tmp) eet_close(tmp);
 }
 
+#ifdef ICON_CACHE
 static void
 cache_timer_update(void)
 {
@@ -640,15 +643,10 @@ cache_timer_cb(void *data __UNUSED__)
 {
     cache_timer = NULL;
 
-#ifdef ICON_CACHE
     icon_cache_close();
-#endif
-    if (desktop_cache) eet_close(desktop_cache);
-    desktop_cache = NULL;
     return ECORE_CALLBACK_DONE;
 }
 
-#ifdef ICON_CACHE
 static void
 icon_cache_close(void)
 {
