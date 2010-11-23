@@ -123,6 +123,7 @@ _item_unselect(Elm_Toolbar_Item *item)
    item->selected = EINA_FALSE;
    wd->selected_item = NULL;
    edje_object_signal_emit(item->base.view, "elm,state,unselected", "elm");
+   elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
 }
 
 static void
