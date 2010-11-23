@@ -136,6 +136,8 @@ extern int _efreet_log_dom_global;
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 
+extern Eina_Hash *efreet_desktop_cache;
+
 #ifdef ICON_CACHE
 typedef struct Efreet_Cache_Icon Efreet_Cache_Icon;
 struct Efreet_Cache_Icon
@@ -208,6 +210,16 @@ void efreet_util_desktop_cache_reload(void);
 EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);
 EAPI const char *efreet_desktop_cache_dirs(void);
+int efreet_desktop_write_cache_dirs_file(void);
+void efreet_desktop_changes_listen(void);
+
+void efreet_cache_desktop_update(void);
+void efreet_cache_icon_update(void);
+void efreet_cache_desktop_free(Efreet_Desktop *desktop);
+Efreet_Desktop *efreet_cache_desktop_find(const char *file);
+#if 0
+void efreet_icon_update_cache(void);
+#endif
 
 #ifdef ICON_CACHE
 EAPI const char *efreet_icon_cache_file(const char *theme);
