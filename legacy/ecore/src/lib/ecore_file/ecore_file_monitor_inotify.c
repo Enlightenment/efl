@@ -311,38 +311,32 @@ _ecore_file_monitor_inotify_print(char *file, int mask)
    else
      type = "file";
 
+   if (mask & IN_ACCESS)
+     INF("Inotify accessed %s: %s", type, file);
    if (mask & IN_MODIFY)
-     {
-        WRN("Inotify modified %s: %s", type, file);
-     }
+     INF("Inotify modified %s: %s", type, file);
+   if (mask & IN_ATTRIB)
+     INF("Inotify attributes %s: %s", type, file);
+   if (mask & IN_CLOSE_WRITE)
+     INF("Inotify close write %s: %s", type, file);
+   if (mask & IN_CLOSE_NOWRITE)
+     INF("Inotify close write %s: %s", type, file);
+   if (mask & IN_OPEN)
+     INF("Inotify open %s: %s", type, file);
    if (mask & IN_MOVED_FROM)
-     {
-        WRN("Inotify moved from %s: %s", type, file);
-     }
+     INF("Inotify moved from %s: %s", type, file);
    if (mask & IN_MOVED_TO)
-     {
-        WRN("Inotify moved to %s: %s", type, file);
-     }
+     INF("Inotify moved to %s: %s", type, file);
    if (mask & IN_DELETE)
-     {
-        WRN("Inotify delete %s: %s", type, file);
-     }
+     INF("Inotify delete %s: %s", type, file);
    if (mask & IN_CREATE)
-     {
-        WRN("Inotify create %s: %s", type, file);
-     }
+     INF("Inotify create %s: %s", type, file);
    if (mask & IN_DELETE_SELF)
-     {
-        WRN("Inotify delete self %s: %s", type, file);
-     }
+     INF("Inotify delete self %s: %s", type, file);
    if (mask & IN_MOVE_SELF)
-     {
-        WRN("Inotify move self %s: %s", type, file);
-     }
+     INF("Inotify move self %s: %s", type, file);
    if (mask & IN_UNMOUNT)
-     {
-        WRN("Inotify unmount %s: %s", type, file);
-     }
+     INF("Inotify unmount %s: %s", type, file);
 }
 #endif
 #endif /* HAVE_INOTIFY */
