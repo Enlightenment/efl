@@ -50,6 +50,9 @@ struct _Elm_Theme
  */
 #define ELM_CONFIG_FILE_GENERATION 0x0002
 #define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | ELM_CONFIG_FILE_GENERATION)
+/* NB: profile configuration files (.src) must have their
+ * "config_version" entry's value up-to-date with ELM_CONFIG_VERSION
+ * (in decimal)!! */
 
 /* note: always remember to sync it with elm_config.c */
 extern const char *_elm_engines[];
