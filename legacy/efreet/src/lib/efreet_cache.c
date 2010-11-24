@@ -607,7 +607,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 
         efreet_util_desktop_cache_reload();
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
-        return;
     }
 #ifdef ICON_CACHE
     else if (!strcmp(file, "icon_data.update"))
@@ -618,6 +617,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         if (!ev) return;
         ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
     }
+    return;
 #endif
 error:
     IF_FREE(ev);
