@@ -2654,3 +2654,28 @@ elm_object_tree_dot_dump(const Evas_Object *top, const char *file)
    (void)file;
 #endif
 }
+
+/**
+ * Set the duration for occuring long press event.
+ *
+ * @param lonpress_timeout Timeout for long press event
+ * @ingroup Longpress
+ */
+EAPI void
+elm_longpress_timeout_set(double longpress_timeout)
+{
+   _elm_config->longpress_timeout = longpress_timeout;
+}
+
+/**
+ * Get the duration for occuring long press event.
+ *
+ * @return Timeout for long press event
+ * @ingroup Longpress
+ */
+EAPI double
+elm_longpress_timeout_get(void)
+{
+   return _elm_config->longpress_timeout;
+}
+

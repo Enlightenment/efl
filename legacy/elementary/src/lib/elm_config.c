@@ -426,6 +426,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, fileselector_expand_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, inwin_dialogs_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, icon_size, T_INT);
+   ELM_CONFIG_VAL(D, T, longpress_timeout, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -955,6 +956,7 @@ _config_load(void)
    _elm_config->fileselector_expand_enable = EINA_FALSE;
    _elm_config->inwin_dialogs_enable = EINA_FALSE;
    _elm_config->icon_size = 32;
+   _elm_config->longpress_timeout = 1.0;
 }
 
 static const char *
@@ -1156,12 +1158,9 @@ _config_update(void)
     * if needed, but that will be dependent on new properties added
     * with each version */
 
-   /* nothing here, just an example */
-   /*
-     IFCFG(0x0002);
-     COPYVAL(some_value);
-     IFCFGEND;
-   */
+   IFCFG(0x0003);
+   COPYVAL(longpress_timeout);
+   IFCFGEND;
 
 #undef COPYSTR
 #undef COPYPTR
@@ -1352,6 +1351,10 @@ _env_get(void)
 
    s = getenv("ELM_ICON_SIZE");
    if (s) _elm_config->icon_size = atoi(s);
+   
+   s = getenv("ELM_LONGPRESS_TIMEOUT");
+   if (s) _elm_config->longpress_timeout = atof(s);
+   if (_elm_config->longpress_timeout < 0.0) _elm_config->longpress_timeout = 0.0;
 }
 
 void
