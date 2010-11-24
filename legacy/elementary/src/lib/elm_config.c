@@ -39,7 +39,10 @@ static const Elm_Text_Class _elm_text_classes[] = {
    {"label", "Text Labels"},
    {"entry", "Text Entries"},
    {"title_bar", "Title Bar"},
-   {"menu", "Menu Items"},
+   {"list_item", "List Items"},
+   {"grid_item", "Grid Items"},
+   {"toolbar_item", "Toolbar Items"},
+   {"menu_item", "Menu Items"},
    {NULL, NULL}
 };
 

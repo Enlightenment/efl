@@ -4050,7 +4050,7 @@ collections {
                        size:     10;
                        min:      1 1;
                        align:    0.0 0.5;
-                       text_class: "menu";
+                       text_class: "menu_item";
                    }
                }
                description { state: "visible" 0.0;
@@ -4413,7 +4413,7 @@ collections {
                        size:     10;
                        min:      1 1;
                        align:    0.0 0.5;
-                       text_class: "menu";
+                       text_class: "menu_item";
                    }
                }
                description { state: "visible" 0.0;
@@ -7476,6 +7476,7 @@ collections {
                   size: 10;
                   min: 1 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -10070,6 +10071,7 @@ collections {
                        size: 10;
                        min: 1 1;
                        align: 0.5 0.5;
+                       text_class: "toolbar_item";
                    }
                }
                description { state: "selected" 0.0;
@@ -10106,6 +10108,7 @@ collections {
                        size: 10;
                        min: 1 1;
                        align: 0.5 0.5;
+                       text_class: "toolbar_item";
                    }
                }
                description { state: "selected" 0.0;
@@ -10209,6 +10212,7 @@ collections {
                        size: 10;
                        min: 1 1;
                        align: 0.5 0.5;
+                       text_class: "toolbar_item";
                    }
                }
                description { state: "selected" 0.0;
@@ -10258,6 +10262,7 @@ collections {
                        size: 10;
                        min: 1 1;
                        align: 0.5 0.5;
+                       text_class: "toolbar_item";
                    }
                }
                description { state: "selected" 0.0;
@@ -12004,7 +12009,7 @@ collections {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-   ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/list/item/default";
       data.item: "stacking" "above";
       images {
@@ -12149,6 +12154,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -12342,6 +12348,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -12556,6 +12563,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -12747,6 +12755,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -12962,6 +12971,7 @@ collections {
                   size: 10;
                   min: 1 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -13153,6 +13163,7 @@ collections {
                   size: 10;
                   min: 1 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -13366,6 +13377,7 @@ collections {
                   size: 10;
                   min: 1 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -13555,6 +13567,7 @@ collections {
                   size: 10;
                   min: 1 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -15330,6 +15343,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -15448,13 +15462,13 @@ collections {
       }
       styles {
         style { name: "genlist_textblock_style";
-          base: "font=Sans font_size=10 color=#000 wrap=char";
+          base: "font=Sans font_size=10 color=#000 wrap=char text_class=list_item";
           tag:  "br" "\n";
           tag:  "ps" "ps";
           tag:  "tab" "\t";
         }
         style { name: "genlist_textblock_style2";
-          base: "font=Sans font_size=10 color=#fff wrap=char";
+          base: "font=Sans font_size=10 color=#fff wrap=char text_class=list_item";
           tag:  "br" "\n";
           tag:  "ps" "ps";
           tag:  "tab" "\t";
@@ -15567,6 +15581,7 @@ collections {
                   min: 0 1;
 //                  min: 1 1;
                   align: 0.0 0.0;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -15604,6 +15619,7 @@ collections {
                   min: 0 1;
 //                  min: 1 1;
                   align: 0.0 0.0;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -15838,6 +15854,7 @@ collections {
                   min: 0 1;
 //                  min: 1 1;
                   align: 0.0 0.0;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -15875,6 +15892,7 @@ collections {
                   min: 0 1;
 //                  min: 1 1;
                   align: 0.0 0.0;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -16186,6 +16204,7 @@ collections {
                   min: 0 1;
 //                  min: 1 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -16434,6 +16453,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -16682,6 +16702,7 @@ collections {
                   min: 0 1;
 //                  min: 1 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -16983,6 +17004,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -17303,6 +17325,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -17598,6 +17621,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -17893,6 +17917,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -18020,7 +18045,7 @@ collections {
        styles
        {
            style { name: "genlist_style";
-               base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
+               base: "font=Sans font_size=10 align=left valign=0.5 color=#000 text_class=list_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
@@ -18028,7 +18053,7 @@ collections {
                tag:  "tab" "\t";
            }
            style { name: "genlist_selected_style";
-               base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
+               base: "font=Sans font_size=10 align=left valign=0.5 color=#fff text_class=list_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
@@ -19341,6 +19366,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -19375,6 +19401,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -19651,6 +19678,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -19685,6 +19713,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -19935,6 +19964,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -19969,6 +19999,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -20219,6 +20250,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -20253,6 +20285,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -20556,6 +20589,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -20590,6 +20624,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -20912,6 +20947,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -20946,6 +20982,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -21243,6 +21280,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -21277,6 +21315,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -21555,6 +21594,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -21784,6 +21824,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -22065,6 +22106,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -22340,6 +22382,7 @@ collections {
                   min: 1 1;
 //                  min: 0 1;
                   align: 0.5 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -23103,6 +23146,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -23137,6 +23181,7 @@ collections {
 //                  min: 1 1;
                   min: 0 1;
                   align: 0.0 0.5;
+                  text_class: "list_item";
                }
             }
             description { state: "selected" 0.0;
@@ -28413,7 +28458,7 @@ collections {
        }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/gengrid/item/default/default";
       data.item: "labels" "elm.text";
       data.item: "icons" "elm.swallow.icon elm.swallow.end";
@@ -28572,6 +28617,7 @@ collections {
                   size: 10;
                   min: 0 1;
                   align: 0.5 0.0;
+                  text_class: "grid_item";
                }
             }
             description { state: "selected" 0.0;
@@ -28674,7 +28720,7 @@ collections {
        styles
        {
            style { name: "gengrid_style";
-               base: "font=Sans font_size=10 align=left valign=0.5 color=#000";
+               base: "font=Sans font_size=10 align=left valign=0.5 color=#000 text_class=grid_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
@@ -28682,7 +28728,7 @@ collections {
                tag:  "tab" "\t";
            }
            style { name: "gengrid_selected_style";
-               base: "font=Sans font_size=10 align=left valign=0.5 color=#fff";
+               base: "font=Sans font_size=10 align=left valign=0.5 color=#fff text_class=grid_item";
                tag:  "br" "\n";
                tag:  "ps" "ps";
                tag:  "hilight" "+ font=Sans:style=Bold";
@@ -29020,6 +29066,7 @@ collections {
                   size: 10;
                   min: 0 1;
                   align: 0.5 0.0;
+                  text_class: "grid_item";
                }
             }
             description { state: "selected" 0.0;
@@ -29301,6 +29348,7 @@ collections {
                   size: 10;
                   min: 0 1;
                   align: 0.5 0.0;
+                  text_class: "grid_item";
                }
             }
             description { state: "selected" 0.0;
@@ -29510,6 +29558,7 @@ collections {
                        size: 10;
                        min: 0 1;
                        align: 0.5 0.0;
+                       text_class: "grid_item";
                    }
                }
            }
@@ -29574,7 +29623,7 @@ collections {
        }
    }
 
-   ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/photocam/base/default";
        script {
            public sbvis_v, sbvis_h, sbalways_v, sbalways_h, sbvis_timer;
