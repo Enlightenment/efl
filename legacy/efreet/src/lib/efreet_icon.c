@@ -553,7 +553,7 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
     }
     /* if this isn't the hicolor theme, and we have no other fallbacks
      * check hicolor */
-    else if (strcmp(theme->name.internal, "hicolor"))
+    else if (theme->name.internal && strcmp(theme->name.internal, "hicolor"))
     {
         Efreet_Icon_Theme *parent_theme;
 
