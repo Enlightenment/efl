@@ -196,7 +196,7 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
    isdir = mask & IN_ISDIR;
 
 #if 0
-   _ecore_file_monitor_inotify_print(file, mask);
+   _ecore_file_monitor_inotify_print(buf, mask);
 #endif
 
    if (mask & IN_MODIFY)
