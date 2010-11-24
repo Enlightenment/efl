@@ -802,56 +802,6 @@ error:
     return 0;
 }
 
-static void
-efreet_desktop_changes_listen(void)
-{
-    int dirsfd = -1;
-    Eina_List *dirs;
-    char *path;
-    struct stat st;
-
-    if (!efreet_cache_update) return;
-
-    change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
-    if (!change_monitors) return;
-
-    dirs = efreet_default_dirs_get(efreet_data_home_get(),
-                                   efreet_data_dirs_get(), "applications");
-
-    EINA_LIST_FREE(dirs, path)
-    {
-        efreet_desktop_changes_listen_recursive(path);
-        eina_stringshare_del(path);
-    }
-
-    dirsfd = open(efreet_desktop_cache_dirs(), O_RDONLY, S_IRUSR | S_IWUSR);
-    if (dirsfd >= 0)
-    {
-        if ((fstat(dirsfd, &st) == 0) && (st.st_size > 0))
-        {
-            char *p;
-            char *map;
-
-            map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
-            if (map == MAP_FAILED) goto error;
-            p = map;
-            while (p < map + st.st_size)
-            {
-                unsigned int size = *(unsigned int *)p;
-                p += sizeof(unsigned int);
-                efreet_desktop_changes_monitor_add(p);
-                p += size;
-            }
-            munmap(map, st.st_size);
-        }
-        close(dirsfd);
-    }
-
-    return;
-error:
-    if (dirsfd >= 0) close(dirsfd);
-}
-
 /**
  * @internal
  * @param desktop: The desktop to check
@@ -1260,6 +1210,56 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
     }
 
     return 1;
+}
+
+static void
+efreet_desktop_changes_listen(void)
+{
+    int dirsfd = -1;
+    Eina_List *dirs;
+    char *path;
+    struct stat st;
+
+    if (!efreet_cache_update) return;
+
+    change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
+    if (!change_monitors) return;
+
+    dirs = efreet_default_dirs_get(efreet_data_home_get(),
+                                   efreet_data_dirs_get(), "applications");
+
+    EINA_LIST_FREE(dirs, path)
+    {
+        efreet_desktop_changes_listen_recursive(path);
+        eina_stringshare_del(path);
+    }
+
+    dirsfd = open(efreet_desktop_cache_dirs(), O_RDONLY, S_IRUSR | S_IWUSR);
+    if (dirsfd >= 0)
+    {
+        if ((fstat(dirsfd, &st) == 0) && (st.st_size > 0))
+        {
+            char *p;
+            char *map;
+
+            map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
+            if (map == MAP_FAILED) goto error;
+            p = map;
+            while (p < map + st.st_size)
+            {
+                unsigned int size = *(unsigned int *)p;
+                p += sizeof(unsigned int);
+                efreet_desktop_changes_monitor_add(p);
+                p += size;
+            }
+            munmap(map, st.st_size);
+        }
+        close(dirsfd);
+    }
+
+    return;
+error:
+    if (dirsfd >= 0) close(dirsfd);
 }
 
 static void
