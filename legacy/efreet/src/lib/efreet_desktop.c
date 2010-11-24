@@ -1301,6 +1301,8 @@ static void
 efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
                                  Ecore_File_Event event, const char *path)
 {
+    const char *ext;
+
     switch (event)
     {
         case ECORE_FILE_EVENT_NONE:
@@ -1310,7 +1312,9 @@ efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED
         case ECORE_FILE_EVENT_CREATED_FILE:
         case ECORE_FILE_EVENT_DELETED_FILE:
         case ECORE_FILE_EVENT_MODIFIED:
-            efreet_cache_desktop_update();
+            ext = strrchr(path, '.');
+            if (!strcmp(ext, ".desktop") || !strcmp(ext, ".directory"))
+                efreet_cache_desktop_update();
             break;
 
         case ECORE_FILE_EVENT_DELETED_SELF:
