@@ -406,6 +406,7 @@ _ecore_wince_event_handle_key_press(Ecore_WinCE_Callback_Data *msg,
      }
 
    e->window = (Ecore_Window)GetWindowLong(msg->window, GWL_USERDATA);
+   e->event_window = e->window;
    if (!e->window)
      {
         free(e);
@@ -453,6 +454,7 @@ _ecore_wince_event_handle_key_release(Ecore_WinCE_Callback_Data *msg,
      }
 
    e->window = (Ecore_Window)GetWindowLong(msg->window, GWL_USERDATA);
+   e->event_window = e->window;
    if (!e->window)
      {
         free(e);
@@ -482,6 +484,7 @@ _ecore_wince_event_handle_button_press(Ecore_WinCE_Callback_Data *msg,
       if (!e) return;
 
       e->window = (Ecore_Window)window;
+      e->event_window = e->window;
       e->x = LOWORD(msg->data_param);
       e->y = HIWORD(msg->data_param);
       e->timestamp = msg->time;
@@ -507,6 +510,7 @@ _ecore_wince_event_handle_button_press(Ecore_WinCE_Callback_Data *msg,
       if (!e) return;
 
       e->window = (Ecore_Window)window;
+      e->event_window = e->window;
       e->buttons = button;
       e->x = LOWORD(msg->data_param);
       e->y = HIWORD(msg->data_param);
@@ -561,6 +565,7 @@ _ecore_wince_event_handle_button_release(Ecore_WinCE_Callback_Data *msg,
       if (!e) return;
 
       e->window = (Ecore_Window)window;
+      e->event_window = e->window;
       e->x = LOWORD(msg->data_param);
       e->y = HIWORD(msg->data_param);
       e->timestamp = msg->time;
@@ -578,6 +583,7 @@ _ecore_wince_event_handle_button_release(Ecore_WinCE_Callback_Data *msg,
       if (!e) return;
 
       e->window = (Ecore_Window)window;
+      e->event_window = e->window;
       e->buttons = button;
       e->x = LOWORD(msg->data_param);
       e->y = HIWORD(msg->data_param);
@@ -614,6 +620,7 @@ _ecore_wince_event_handle_motion_notify(Ecore_WinCE_Callback_Data *msg)
    if (!e) return;
 
    e->window = (Ecore_Window)GetWindowLong(msg->window, GWL_USERDATA);
+   e->event_window = e->window;
    e->x = LOWORD(msg->data_param);
    e->y = HIWORD(msg->data_param);
    e->timestamp = msg->time;
@@ -637,6 +644,7 @@ _ecore_wince_event_handle_enter_notify(Ecore_WinCE_Callback_Data *msg)
       if (!e) return;
 
       e->window = (Ecore_Window)window;
+      e->event_window = e->window;
       e->x = msg->x;
       e->y = msg->y;
       e->timestamp = msg->time;
@@ -680,6 +688,7 @@ _ecore_wince_event_handle_leave_notify(Ecore_WinCE_Callback_Data *msg)
       if (!e) return;
 
       e->window = (Ecore_Window)window;
+      e->event_window = e->window;
       e->x = msg->x;
       e->y = msg->y;
       e->timestamp = msg->time;
