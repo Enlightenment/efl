@@ -119,10 +119,6 @@ efreet_cache_init(void)
                                                NULL);
         if (!cache_monitor) goto error;
 
-#if 0
-        efreet_icon_changes_listen();
-#endif
-
 #ifdef ICON_CACHE
         efreet_cache_icon_update();
 #endif

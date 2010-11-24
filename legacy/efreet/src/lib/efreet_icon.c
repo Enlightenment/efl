@@ -29,6 +29,8 @@ static Eina_List *efreet_icon_extensions = NULL;
 static Eina_List *efreet_extra_icon_dirs = NULL;
 static Eina_Hash *efreet_icon_cache = NULL;
 
+static Eina_Hash *change_monitors = NULL;
+
 typedef struct Efreet_Icon_Cache Efreet_Icon_Cache;
 struct Efreet_Icon_Cache
 {
@@ -102,6 +104,12 @@ static const char *efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem
 static const char *efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path);
 static const char *efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Icon *icon);
 static const char *efreet_cache_icon_fallback_lookup_path_path(Efreet_Cache_Icon *icon, const char *path);
+
+static void efreet_icon_changes_listen(void);
+static void efreet_icon_changes_monitor_add(const char *path);
+static void efreet_icon_changes_cb(void *data, Ecore_File_Monitor *em,
+                                             Ecore_File_Event event, const char *path);
+
 #endif
 
 /**
@@ -129,6 +137,7 @@ efreet_icon_init(void)
     efreet_extra_icon_dirs = NULL;
     efreet_icon_cache = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_cache_free));
 
+    efreet_icon_changes_listen();
     return 1;
 }
 
@@ -150,6 +159,7 @@ efreet_icon_shutdown(void)
     IF_FREE_HASH(efreet_icon_cache);
 
     eina_log_domain_unregister(_efreet_icon_log_dom);
+    IF_FREE_HASH(change_monitors);
 }
 
 /**
@@ -1910,4 +1920,77 @@ efreet_cache_icon_fallback_lookup_path_path(Efreet_Cache_Icon *icon, const char 
     return NULL;
 }
 
+static void
+efreet_icon_changes_listen(void)
+{
+    Eina_List *l;
+    Eina_List *xdg_dirs;
+    char buf[PATH_MAX];
+    const char *dir;
+
+    if (!efreet_cache_update) return;
+
+    change_monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
+    if (!change_monitors) return;
+
+    efreet_icon_changes_monitor_add(efreet_icon_deprecated_user_dir_get());
+    efreet_icon_changes_monitor_add(efreet_icon_user_dir_get());
+    EINA_LIST_FOREACH(efreet_extra_icon_dirs, l, dir)
+        efreet_icon_changes_monitor_add(dir);
+
+    xdg_dirs = efreet_data_dirs_get();
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(buf, sizeof(buf), "%s/icons", dir);
+        efreet_icon_changes_monitor_add(buf);
+    }
+
+#ifndef STRICT_SPEC
+    EINA_LIST_FOREACH(xdg_dirs, l, dir)
+    {
+        snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
+        efreet_icon_changes_monitor_add(buf);
+    }
+#endif
+
+    efreet_icon_changes_monitor_add("/usr/share/pixmaps");
+}
+
+static void
+efreet_icon_changes_monitor_add(const char *path)
+{
+    char rp[PATH_MAX];
+
+    if (!realpath(path, rp)) return;
+    if (eina_hash_find(change_monitors, rp)) return;
+    eina_hash_add(change_monitors, rp,
+                  ecore_file_monitor_add(rp,
+                                         efreet_icon_changes_cb,
+                                         NULL));
+}
+
+static void
+efreet_icon_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
+                                 Ecore_File_Event event, const char *path)
+{
+    switch (event)
+    {
+        case ECORE_FILE_EVENT_NONE:
+            /* noop */
+            break;
+
+        case ECORE_FILE_EVENT_CREATED_FILE:
+        case ECORE_FILE_EVENT_DELETED_FILE:
+        case ECORE_FILE_EVENT_MODIFIED:
+        case ECORE_FILE_EVENT_DELETED_DIRECTORY:
+        case ECORE_FILE_EVENT_CREATED_DIRECTORY:
+            efreet_cache_icon_update();
+            break;
+
+        case ECORE_FILE_EVENT_DELETED_SELF:
+            eina_hash_del_by_key(change_monitors, path);
+            efreet_cache_icon_update();
+            break;
+    }
+}
 #endif
