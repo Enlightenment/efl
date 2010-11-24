@@ -467,14 +467,10 @@ main(int argc, char **argv)
 
     /* touch update file */
     snprintf(file, sizeof(file), "%s/.efreet/icon_data.update", efreet_home_dir_get());
-    tmpfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
-        struct timeval tv[2];
-
-        gettimeofday(&tv[0], NULL);
-        tv[1] = tv[0];
-        futimes(tmpfd, tv);
+        write(tmpfd, "a", 1);
         close(tmpfd);
     }
     efreet_shutdown();
