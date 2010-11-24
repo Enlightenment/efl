@@ -1964,17 +1964,21 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    if (_edje_real_part_get(ed, name))
      return EINA_FALSE;
 
+   ce = eina_hash_find(ed->file->collection, ed->group);
+
    /* Alloc Edje_Part or return */
-   ep = _alloc(sizeof(Edje_Part));
+   ep = eina_mempool_malloc(ce->mp.part, sizeof(Edje_Part));
    if (!ep) return EINA_FALSE;
+   memset(ep, 0, sizeof(Edje_Part));
 
    /* Alloc Edje_Real_Part or return */
-   rp = _alloc(sizeof(Edje_Real_Part));
+   rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
    if (!rp)
      {
-	free(ep);
+	eina_mempool_free(ce->mp.part, ep);
 	return EINA_FALSE;
      }
+   memset(rp, 0, sizeof(Edje_Real_Part));
 
    /* Init Edje_Part */
    pc = ed->collection;
@@ -1982,8 +1986,8 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
    tmp = realloc(pc->parts, (pc->parts_count + 1) * sizeof (Edje_Part *));
    if (!tmp)
      {
-	free(ep);
-	free(rp);
+	eina_mempool_free(ce->mp.part, ep);
+	eina_mempool_free(_edje_real_part_mp, rp);
 	return EINA_FALSE;
      }
 
@@ -2088,14 +2092,12 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 	_edje_if_string_free(ed, ep->name);
 	if (source)
 	  _edje_if_string_free(ed, ep->source);
-	free(ep);
-	free(rp);
-	free(ed);
+	eina_mempool_free(ce->mp.part, ep);
+	eina_mempool_free(_edje_real_part_mp, rp);
 	return EINA_FALSE;
      }
    edje_edit_part_selected_state_set(obj, name, "default", 0.0);
 
-   ce = eina_hash_find(ed->file->collection, ed->group);
    ce->count.part++;
 
    return EINA_TRUE;
