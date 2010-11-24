@@ -147,7 +147,7 @@ efreet_desktop_shutdown(void)
         efreet_desktop_type_info_free(info);
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
         eina_stringshare_del(dir);
-    if (change_monitors) eina_hash_free(change_monitors);
+    IF_FREE_HASH(change_monitors);
     eina_log_domain_unregister(_efreet_desktop_log_dom);
 }
 
