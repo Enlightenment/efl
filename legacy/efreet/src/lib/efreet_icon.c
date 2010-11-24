@@ -137,7 +137,9 @@ efreet_icon_init(void)
     efreet_extra_icon_dirs = NULL;
     efreet_icon_cache = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_icon_cache_free));
 
+#if ICON_CACHE
     efreet_icon_changes_listen();
+#endif
     return 1;
 }
 
