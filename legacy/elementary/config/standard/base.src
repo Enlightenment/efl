@@ -25,7 +25,7 @@ group "Elm_Config" struct {
   value "theme" string: "default-desktop";
   value "modules" string: "";
   value "tooltip_delay" double: 1.0;
-  value "cursor_engine_only" int: 1;
+  value "cursor_engine_only" uchar: 1;
   value "focus_highlight_enable" uchar: 0;
   value "focus_highlight_animate" uchar: 0;
   value "toolbar_shrink_mode" int: 3;
