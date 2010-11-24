@@ -4,17 +4,17 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
-typedef struct _Theme Theme;
-typedef struct _Fonts_Data Fonts_Data;
+typedef struct _Theme               Theme;
+typedef struct _Fonts_Data          Fonts_Data;
 typedef struct _Elm_Text_Class_Data Elm_Text_Class_Data;
-typedef struct _Elm_Font_Size_Data Elm_Font_Size_Data;
+typedef struct _Elm_Font_Size_Data  Elm_Font_Size_Data;
 
 struct _Theme
 {
    const char *label;
    const char *name;
    const char *path;
-   Eina_Bool in_search_path;
+   Eina_Bool   in_search_path;
 };
 
 static Theme *tsel = NULL;
@@ -119,7 +119,9 @@ config_exit(void *data       __UNUSED__,
 }
 
 static void
-cf_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+cf_round(void *data       __UNUSED__,
+         Evas_Object     *obj,
+         void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -129,7 +131,9 @@ cf_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-cf_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+cf_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -139,7 +143,9 @@ cf_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-fc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+fc_round(void *data       __UNUSED__,
+         Evas_Object     *obj,
+         void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -149,7 +155,9 @@ fc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-fc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+fc_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double font_cache = elm_font_cache_get();
    double val = elm_slider_value_get(obj);
@@ -159,7 +167,9 @@ fc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-ic_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+ic_round(void *data       __UNUSED__,
+         Evas_Object     *obj,
+         void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -169,7 +179,9 @@ ic_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-ic_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+ic_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double image_cache = elm_image_cache_get();
    double val = elm_slider_value_get(obj);
@@ -179,7 +191,9 @@ ic_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-sc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+sc_round(void *data       __UNUSED__,
+         Evas_Object     *obj,
+         void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -189,7 +203,9 @@ sc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-sc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+sc_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -199,7 +215,9 @@ sc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-fs_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+fs_round(void *data       __UNUSED__,
+         Evas_Object     *obj,
+         void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -209,7 +227,9 @@ fs_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-fs_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+fs_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -219,7 +239,9 @@ fs_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-efc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+efc_round(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -229,7 +251,9 @@ efc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-efc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+efc_change(void *data       __UNUSED__,
+           Evas_Object     *obj,
+           void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -239,7 +263,9 @@ efc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-ecc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+ecc_round(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    double val = elm_slider_value_get(obj);
    double v;
@@ -249,7 +275,9 @@ ecc_round(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-ecc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+ecc_change(void *data       __UNUSED__,
+           Evas_Object     *obj,
+           void *event_info __UNUSED__)
 {
    double scale = elm_scale_get();
    double val = elm_slider_value_get(obj);
@@ -259,7 +287,8 @@ ecc_change(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_status_basic(Evas_Object *win, Evas_Object *bx0)
+_status_basic(Evas_Object *win,
+              Evas_Object *bx0)
 {
    Evas_Object *lb, *fr;
 
@@ -278,7 +307,8 @@ _status_basic(Evas_Object *win, Evas_Object *bx0)
 }
 
 static void
-_status_config(Evas_Object *win, Evas_Object *bx0)
+_status_config(Evas_Object *win,
+               Evas_Object *bx0)
 {
    Evas_Object *lb, *pd, *bx2, *fr, *sl, *sp;
 
@@ -303,7 +333,7 @@ _status_config(Evas_Object *win, Evas_Object *bx0)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, 1.0, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
-   elm_label_label_set(lb,"<hilight>Scale</>");
+   elm_label_label_set(lb, "<hilight>Scale</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -359,13 +389,13 @@ _status_config(Evas_Object *win, Evas_Object *bx0)
    // FIXME: add theme selector (basic mode and advanced for fallbacks)
    // FIXME: save config
    // FIXME: profile selector / creator etc.
-   //
    elm_frame_content_set(fr, bx2);
    evas_object_show(bx2);
 }
 
 static void
-_flip_to(Evas_Object *win, const char *name)
+_flip_to(Evas_Object *win,
+         const char  *name)
 {
    Evas_Object *wid, *pager;
    wid = evas_object_data_get(win, name);
@@ -374,43 +404,57 @@ _flip_to(Evas_Object *win, const char *name)
 }
 
 static void
-_cf_sizing(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_sizing(void            *data,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
 {
    _flip_to(data, "sizing");
 }
 
 static void
-_cf_themes(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_themes(void            *data,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
 {
    _flip_to(data, "themes");
 }
 
 static void
-_cf_fonts(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_fonts(void            *data,
+          Evas_Object *obj __UNUSED__,
+          void *event_info __UNUSED__)
 {
    _flip_to(data, "fonts");
 }
 
 static void
-_cf_profiles(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_profiles(void            *data,
+             Evas_Object *obj __UNUSED__,
+             void *event_info __UNUSED__)
 {
    _flip_to(data, "profiles");
 }
 
 static void
-_cf_scrolling(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_scrolling(void            *data,
+              Evas_Object *obj __UNUSED__,
+              void *event_info __UNUSED__)
 {
    _flip_to(data, "scrolling");
 }
 
 static void
-_cf_rendering(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_rendering(void            *data,
+              Evas_Object *obj __UNUSED__,
+              void *event_info __UNUSED__)
 {
    _flip_to(data, "rendering");
 }
 
 static void
-_cf_caches(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cf_caches(void            *data,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
 {
    _flip_to(data, "caches");
 }
@@ -424,23 +468,23 @@ _elm_theme_current_get(const char *theme_search_order)
    if (!theme_search_order)
      return NULL;
 
-   for (p = theme_search_order; ; p++)
+   for (p = theme_search_order;; p++)
      {
-       if ((*p == ':') || (!*p))
-         {
-           if (p > theme_search_order)
-             {
-               char *n = malloc(p - theme_search_order + 1);
-               if (!n)
-                 return NULL;
+        if ((*p == ':') || (!*p))
+          {
+             if (p > theme_search_order)
+               {
+                  char *n = malloc(p - theme_search_order + 1);
+                  if (!n)
+                    return NULL;
 
-               strncpy(n, theme_search_order, p - theme_search_order);
-               n[p - theme_search_order] = 0;
-               ret = eina_stringshare_add(n);
-               free(n);
-               break;
-             }
-         }
+                  strncpy(n, theme_search_order, p - theme_search_order);
+                  n[p - theme_search_order] = 0;
+                  ret = eina_stringshare_add(n);
+                  free(n);
+                  break;
+               }
+          }
      }
 
    return ret;
@@ -566,7 +610,8 @@ _font_overlay_change(void *data       __UNUSED__,
           {
              const char *name;
 
-             name = elm_font_fontconfig_name_get(tc_data->font, tc_data->style);
+             name = elm_font_fontconfig_name_get(tc_data->font,
+                                                 tc_data->style);
              elm_font_overlay_set(tc_data->name, name,
                                   tc_data->size ? tc_data->size : -100);
              elm_font_fontconfig_name_free(name);
@@ -582,7 +627,8 @@ _font_overlay_change(void *data       __UNUSED__,
 }
 
 static void
-_profile_change_do(Evas_Object *win, const char *profile)
+_profile_change_do(Evas_Object *win,
+                   const char  *profile)
 {
    int flush_interval, font_c, image_c, edje_file_c, edje_col_c;
    const char *curr_theme, *curr_engine;
@@ -639,16 +685,18 @@ _profile_change_do(Evas_Object *win, const char *profile)
    l_items = elm_list_items_get(evas_object_data_get(win, "engines_list"));
    EINA_LIST_FOREACH(l_items, l, it)
      {
-       if (!strcmp(elm_list_item_data_get(it), curr_engine))
-         {
-           elm_list_item_selected_set(it, EINA_TRUE);
-           break;
-         }
+        if (!strcmp(elm_list_item_data_get(it), curr_engine))
+          {
+             elm_list_item_selected_set(it, EINA_TRUE);
+             break;
+          }
      }
 }
 
 static void
-_engine_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_engine_use(void            *data,
+            Evas_Object *obj __UNUSED__,
+            void *event_info __UNUSED__)
 {
    Evas_Object *li;
    const char *selection;
@@ -664,7 +712,9 @@ _engine_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_profile_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_profile_use(void            *data,
+             Evas_Object *obj __UNUSED__,
+             void *event_info __UNUSED__)
 {
    Evas_Object *li;
    const char *selection;
@@ -683,13 +733,17 @@ _profile_use(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 }
 
 static void
-_btn_todo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_btn_todo(void *data       __UNUSED__,
+          Evas_Object *obj __UNUSED__,
+          void *event_info __UNUSED__)
 {
    printf("To be done!\n");
 }
 
 static void
-_profile_reset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_profile_reset(void            *data,
+               Evas_Object *obj __UNUSED__,
+               void *event_info __UNUSED__)
 {
    const char *selection, *curr;
    const char *pdir;
@@ -715,7 +769,9 @@ _profile_reset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_theme_use(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_theme_use(void *data       __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void *event_info __UNUSED__)
 {
    const char *defth;
    char *newth;
@@ -743,7 +799,9 @@ _theme_use(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 static void
-_theme_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_theme_sel(void            *data,
+           Evas_Object     *obj,
+           void *event_info __UNUSED__)
 {
    Theme *t = data;
    Evas_Object *win = elm_object_top_widget_get(obj);
@@ -777,13 +835,14 @@ _theme_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 /*static void
-  _theme_browse(void *data, Evas_Object *obj, void *event_info)
-  {
-  printf("not implemented\n");
-  }*/
+   _theme_browse(void *data, Evas_Object *obj, void *event_info)
+   {
+   printf("not implemented\n");
+   }*/
 
 static void
-_status_config_sizing(Evas_Object *win, Evas_Object *pager)
+_status_config_sizing(Evas_Object *win,
+                      Evas_Object *pager)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp;
 
@@ -801,7 +860,7 @@ _status_config_sizing(Evas_Object *win, Evas_Object *pager)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
-   elm_label_label_set(lb,"<hilight>Scale</>");
+   elm_label_label_set(lb, "<hilight>Scale</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -930,9 +989,9 @@ _sample_theme_new(Evas_Object *win)
    elm_frame_content_set(fr, li);
    evas_object_show(li);
 
-   elm_list_item_append(li, "List Item 1", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Second Item", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Third Item", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "List Item 1", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Second Item", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Third Item", NULL, NULL, NULL, NULL);
    elm_list_go(li);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
@@ -943,7 +1002,8 @@ _sample_theme_new(Evas_Object *win)
 }
 
 static void
-_status_config_themes(Evas_Object *win, Evas_Object *pager)
+_status_config_themes(Evas_Object *win,
+                      Evas_Object *pager)
 {
    Evas_Object *tb, *rc, *sc, *sp, *li, *pd, *fr, *bt, *sample;
    Eina_List *list, *l;
@@ -1016,7 +1076,7 @@ _status_config_themes(Evas_Object *win, Evas_Object *pager)
                t->label = eina_stringshare_add(s);
           }
         themes = eina_list_append(themes, t);
-        elm_list_item_append(li, t->label, NULL, NULL,  _theme_sel, t);
+        elm_list_item_append(li, t->label, NULL, NULL, _theme_sel, t);
      }
    elm_theme_name_available_list_free(list);
 
@@ -1037,7 +1097,7 @@ _status_config_themes(Evas_Object *win, Evas_Object *pager)
       evas_object_size_hint_align_set(bt, 0.9, 0.9);
       elm_frame_content_set(pd, bt);
       evas_object_show(bt);
-   */
+    */
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
    evas_object_size_hint_weight_set(pd, 1.0, 0.0);
@@ -1092,7 +1152,9 @@ _status_config_themes(Evas_Object *win, Evas_Object *pager)
 }
 
 static void
-_unimplemented(Evas_Object *win, Evas_Object *pager, const char *name)
+_unimplemented(Evas_Object *win,
+               Evas_Object *pager,
+               const char  *name)
 {
    Evas_Object *lb, *pd, *bx2;
 
@@ -1110,7 +1172,7 @@ _unimplemented(Evas_Object *win, Evas_Object *pager, const char *name)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, 0.0, 0.0);
    evas_object_size_hint_align_set(lb, 0.5, 0.5);
-   elm_label_label_set(lb,"<hilight>Not implemented yet</>");
+   elm_label_label_set(lb, "<hilight>Not implemented yet</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -1359,8 +1421,8 @@ _font_classes_list_load(Evas_Object *li)
    edje_freeze();
 
    EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
-     elm_list_item_append(li, tc_data->desc, NULL, NULL, _font_classes_list_sel,
-                          tc_data);
+     elm_list_item_append(li, tc_data->desc, NULL, NULL,
+                          _font_classes_list_sel, tc_data);
 
    evas_object_smart_callback_add(li, "unselected", _fc_list_unselect_cb,
                                   NULL);
@@ -1410,7 +1472,8 @@ _fonts_data_fill(Evas *evas)
                     {
                        tc_data->font = eina_stringshare_add(efp->name);
                        /* we're sure we recorded with only 1 style selected */
-                       tc_data->style = eina_stringshare_add(efp->styles->data);
+                       tc_data->style =
+                          eina_stringshare_add(efp->styles->data);
                        elm_font_properties_free(efp);
                     }
                }
@@ -1555,10 +1618,10 @@ _font_names_list_load(Evas_Object *flist)
    EINA_LIST_FOREACH(names_list, l, font)
      elm_list_item_append(flist, font, NULL, NULL, _font_names_list_sel, NULL);
 
-   EINA_LIST_FREE(names_list, font);
+   EINA_LIST_FREE(names_list, font) ;
 
-   evas_object_smart_callback_add(flist, "unselected", _fnames_list_unselect_cb,
-                                  NULL);
+   evas_object_smart_callback_add(flist, "unselected",
+                                  _fnames_list_unselect_cb, NULL);
 
    elm_list_go(flist);
 
@@ -1738,19 +1801,25 @@ _status_config_fonts(Evas_Object *win,
 }
 
 static void
-_engines_list_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_engines_list_item_del_cb(void            *data,
+                          Evas_Object *obj __UNUSED__,
+                          void *event_info __UNUSED__)
 {
    free(data);
 }
 
 static void
-_profiles_list_item_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_profiles_list_item_del_cb(void            *data,
+                           Evas_Object *obj __UNUSED__,
+                           void *event_info __UNUSED__)
 {
    free(data);
 }
 
 static void
-_profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_profiles_list_selected_cb(void            *data,
+                           Evas_Object     *obj,
+                           void *event_info __UNUSED__)
 {
    const char *cur_profile = NULL;
    const char *sel_profile, *pdir;
@@ -1776,16 +1845,16 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    if ((desk) && (desk->name)) prof_name = desk->name;
    else
 #endif
-     prof_name = cur_profile;
+   prof_name = cur_profile;
 
    if (!pdir)
-       elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
-                               cur_selected);
+     elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
+                             cur_selected);
    else
      {
-       elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
-                               EINA_TRUE);
-       elm_profile_dir_free(pdir);
+        elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
+                                EINA_TRUE);
+        elm_profile_dir_free(pdir);
      }
 
    snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br>",
@@ -1797,7 +1866,7 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
    if (desk) elm_scrolled_entry_entry_set(en, desk->comment);
    else
 #endif
-     elm_scrolled_entry_entry_set(en, "Unknown");
+   elm_scrolled_entry_entry_set(en, "Unknown");
 
 #ifdef ELM_EFREET
    if (desk) efreet_desktop_free(desk);
@@ -1805,7 +1874,8 @@ _profiles_list_selected_cb(void *data, Evas_Object *obj, void *event_info __UNUS
 }
 
 static void
-_profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
+_profiles_list_fill(Evas_Object *l_widget,
+                    Eina_List   *p_names)
 {
    const char *cur_profile = NULL;
    const char *profile;
@@ -1822,7 +1892,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
    EINA_LIST_FOREACH(p_names, l, profile)
      {
 #ifdef ELM_EFREET
-       Efreet_Desktop *desk = NULL;
+        Efreet_Desktop *desk = NULL;
 #endif
         const char *label, *ext, *pdir;
         char buf[PATH_MAX];
@@ -1865,7 +1935,7 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
         elm_profile_dir_free(pdir);
 
 #ifdef ELM_EFREET
-       if (desk) efreet_desktop_free(desk);
+        if (desk) efreet_desktop_free(desk);
 #endif
      }
 
@@ -1874,10 +1944,11 @@ _profiles_list_fill(Evas_Object *l_widget, Eina_List *p_names)
 }
 
 static void
-_status_config_profiles(Evas_Object *win, Evas_Object *pager)
+_status_config_profiles(Evas_Object *win,
+                        Evas_Object *pager)
 {
    Evas_Object *li, *bx, *fr_bx1, *fr_bx2, *btn_bx, *fr, *lb, *en, *sp, *pd,
-      *bt;
+   *bt;
    Eina_List *profs;
    Evas *evas;
 
@@ -1886,13 +1957,15 @@ _status_config_profiles(Evas_Object *win, Evas_Object *pager)
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    fr_bx1 = elm_box_add(win);
-   evas_object_size_hint_weight_set(fr_bx1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(fr_bx1, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr_bx1, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_homogenous_set(fr_bx1, EINA_TRUE);
    evas_object_show(fr_bx1);
 
    fr_bx2 = elm_box_add(win);
-   evas_object_size_hint_weight_set(fr_bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(fr_bx2, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr_bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(fr_bx2);
 
@@ -1949,7 +2022,8 @@ _status_config_profiles(Evas_Object *win, Evas_Object *pager)
 
    btn_bx = elm_box_add(win);
    elm_box_horizontal_set(btn_bx, EINA_TRUE);
-   evas_object_size_hint_weight_set(btn_bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(btn_bx, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(btn_bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(btn_bx);
 
@@ -2007,7 +2081,8 @@ _status_config_profiles(Evas_Object *win, Evas_Object *pager)
 }
 
 static void
-_status_config_scrolling(Evas_Object *win, Evas_Object *pager)
+_status_config_scrolling(Evas_Object *win,
+                         Evas_Object *pager)
 {
    _unimplemented(win, pager, "scrolling");
 }
@@ -2015,17 +2090,17 @@ _status_config_scrolling(Evas_Object *win, Evas_Object *pager)
 static char *
 _engine_name_prettify(const char *engine)
 {
-  char *ret, *ptr;
+   char *ret, *ptr;
 
-  ret = strdup(engine);
-  ret[0] -= 0x20;
+   ret = strdup(engine);
+   ret[0] -= 0x20;
 
-  while ((ptr = strpbrk(ret, "_")))
-    {
-      *ptr = ' ';
-    }
+   while ((ptr = strpbrk(ret, "_")))
+     {
+        *ptr = ' ';
+     }
 
-  return ret;
+   return ret;
 }
 
 /* FIXME! ideally, we would trim elm_config.c's _elm_engines list at
@@ -2033,37 +2108,38 @@ _engine_name_prettify(const char *engine)
 static Eina_Bool
 _elm_engine_supported(const char *engine)
 {
-  const char *engines[] = {
-   "software_x11",
-   "fb",
-   "directfb",
-   "software_16_x11",
-   "software_8_x11",
-   "xrender_x11",
-   "opengl_x11",
-   "software_gdi",
-   "software_16_wince_gdi",
-   "sdl",
-   "software_16_sdl",
-   "opengl_sdl",
-   NULL
-  };
+   const char *engines[] = {
+      "software_x11",
+      "fb",
+      "directfb",
+      "software_16_x11",
+      "software_8_x11",
+      "xrender_x11",
+      "opengl_x11",
+      "software_gdi",
+      "software_16_wince_gdi",
+      "sdl",
+      "software_16_sdl",
+      "opengl_sdl",
+      NULL
+   };
 
-  unsigned int i;
+   unsigned int i;
 
-  for (i = 0; engines[i]; i++)
-    {
+   for (i = 0; engines[i]; i++)
+     {
 #define ENGINE_COMPARE(name) (!strcmp(engines[i], name))
-      if (ENGINE_COMPARE(engine))
-        return EINA_TRUE;
+        if (ENGINE_COMPARE(engine))
+          return EINA_TRUE;
 #undef ENGINE_COMPARE
-    }
+     }
 
-  return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 static void
-_engines_list_fill(Evas_Object *l_widget, Eina_List *e_names)
+_engines_list_fill(Evas_Object *l_widget,
+                   Eina_List   *e_names)
 {
    const char *engine, *cur_engine;
    void *sel_it = NULL;
@@ -2098,7 +2174,8 @@ _engines_list_fill(Evas_Object *l_widget, Eina_List *e_names)
 }
 
 static void
-_status_config_rendering(Evas_Object *win, Evas_Object *pager)
+_status_config_rendering(Evas_Object *win,
+                         Evas_Object *pager)
 {
    Evas_Object *li, *bx, *fr, *sp, *pd, *bt;
    Eina_List *engines;
@@ -2154,7 +2231,8 @@ _status_config_rendering(Evas_Object *win, Evas_Object *pager)
 }
 
 static void
-_status_config_caches(Evas_Object *win, Evas_Object *pager)
+_status_config_caches(Evas_Object *win,
+                      Evas_Object *pager)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp;
 
@@ -2172,7 +2250,7 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
-   elm_label_label_set(lb,"<hilight>Cache Flush Interval</>");
+   elm_label_label_set(lb, "<hilight>Cache Flush Interval</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -2208,7 +2286,7 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
-   elm_label_label_set(lb,"<hilight>Font Cache Size</>");
+   elm_label_label_set(lb, "<hilight>Font Cache Size</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -2280,7 +2358,7 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
-   elm_label_label_set(lb,"<hilight>Number of Edje Files to Cache</>");
+   elm_label_label_set(lb, "<hilight>Number of Edje Files to Cache</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -2316,7 +2394,7 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
    lb = elm_label_add(win);
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);
-   elm_label_label_set(lb,"<hilight>Number of Edje Collections to Cache</>");
+   elm_label_label_set(lb, "<hilight>Number of Edje Collections to Cache</>");
    elm_frame_content_set(pd, lb);
    evas_object_show(lb);
 
@@ -2341,7 +2419,8 @@ _status_config_caches(Evas_Object *win, Evas_Object *pager)
 }
 
 static void
-_status_config_full(Evas_Object *win, Evas_Object *bx0)
+_status_config_full(Evas_Object *win,
+                    Evas_Object *bx0)
 {
    Evas_Object *tb, *pager;
    Elm_Toolbar_Item *sizing, *it;
@@ -2415,7 +2494,8 @@ status_win(void)
    evas_object_show(bx0);
 
    if (!interactive) _status_basic(win, bx0);
-   else if (0) _status_config(win, bx0);
+   else if (0)
+     _status_config(win, bx0);
    else _status_config_full(win, bx0);
 
    evas_object_resize(win, 320, 480);
@@ -2433,7 +2513,8 @@ _exit_timer(void *data __UNUSED__)
  * after elm_init() and MUST be passed argc and argv, and MUST be called
  * elm_main and not be static - must be a visible symbol with EAPI infront */
 EAPI int
-elm_main(int argc, char **argv)
+elm_main(int    argc,
+         char **argv)
 {
    int i;
 
@@ -2508,6 +2589,7 @@ elm_main(int argc, char **argv)
    /* exit code */
    return 0;
 }
+
 #endif
 /* All emelentary apps should use this. Put it right after elm_main() */
 ELM_MAIN()
