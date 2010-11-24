@@ -660,6 +660,7 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
 {
     char file[PATH_MAX];
     struct flock fl;
+    int prio;
 
     desktop_cache_job = NULL;
 
@@ -676,7 +677,10 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;
     if (fcntl(desktop_cache_exe_lock, F_SETLK, &fl) < 0) goto error;
+    prio = ecore_exe_run_priority_get();
+    ecore_exe_run_priority_set(19);
     desktop_cache_exe = ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", NULL);
+    ecore_exe_run_priority_set(prio);
     if (!desktop_cache_exe) goto error;
 
     return;
@@ -695,6 +699,7 @@ icon_cache_update_cache_job(void *data __UNUSED__)
 {
     char file[PATH_MAX];
     struct flock fl;
+    int prio;
 
     icon_cache_job = NULL;
 
@@ -709,7 +714,10 @@ icon_cache_update_cache_job(void *data __UNUSED__)
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;
     if (fcntl(icon_cache_exe_lock, F_SETLK, &fl) < 0) goto error;
+    prio = ecore_exe_run_priority_get();
+    ecore_exe_run_priority_set(19);
     icon_cache_exe = ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_icon_cache_create", NULL);
+    ecore_exe_run_priority_set(prio);
     if (!icon_cache_exe) goto error;
 
     return;
