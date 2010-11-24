@@ -300,7 +300,7 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 
                        f->name = strdup(file);
                        f->mtime = ecore_file_mod_time(buf);
-                       f->is_dir = ecore_file_mod_time(buf);
+                       f->is_dir = ecore_file_is_dir(buf);
                        if (f->is_dir)
                          event = ECORE_FILE_EVENT_CREATED_DIRECTORY;
                        else
