@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 65537;
+  value "config_version" int: 65538;
   value "engine" string: "software_x11";
   value "thumbscroll_enable" uchar: 0;
   value "thumbscroll_threshold" int: 4;
