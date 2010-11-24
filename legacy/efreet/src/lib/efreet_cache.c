@@ -622,7 +622,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 error:
     IF_FREE(ev);
     IF_FREE(d);
-    if(tmp) eet_close(tmp);
+    if (tmp) eet_close(tmp);
 }
 
 #ifdef ICON_CACHE
