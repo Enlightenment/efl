@@ -1962,11 +1962,30 @@ efreet_icon_changes_monitor_add(const char *path)
     char rp[PATH_MAX];
 
     if (!realpath(path, rp)) return;
+    if (!ecore_file_is_dir(rp)) return;
     if (eina_hash_find(change_monitors, rp)) return;
     eina_hash_add(change_monitors, rp,
                   ecore_file_monitor_add(rp,
                                          efreet_icon_changes_cb,
                                          NULL));
+
+    if (ecore_file_is_dir(rp))
+    {
+        Eina_Iterator *it;
+        const char *ent;
+
+        it = eina_file_ls(rp);
+        if (!it) return;
+        EINA_ITERATOR_FOREACH(it, ent)
+        {
+            if (!realpath(ent, rp)) continue;
+            if (!ecore_file_is_dir(rp)) continue;
+            eina_hash_add(change_monitors, rp,
+                            ecore_file_monitor_add(rp,
+                                    efreet_icon_changes_cb,
+                                    NULL));
+        }
+    }
 }
 
 static void
