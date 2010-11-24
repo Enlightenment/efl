@@ -142,13 +142,7 @@ extern Eina_Hash *efreet_desktop_cache;
 typedef struct Efreet_Cache_Icon Efreet_Cache_Icon;
 struct Efreet_Cache_Icon
 {
-#if 0
-    const char *name;
-#endif
     const char *theme;
-#if 0
-    int         context; /* the type of icon */
-#endif
     Eina_List  *icons;
     unsigned char fallback;
     unsigned char free:1;

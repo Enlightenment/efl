@@ -276,17 +276,8 @@ efreet_icon_edd_init(void)
         if (!cache_icon_element_edd)
             goto error;
 
-#if 0
-        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_edd, Efreet_Cache_Icon, "name", name, EET_T_STRING);
-#endif
         EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_edd, Efreet_Cache_Icon, "theme", theme, EET_T_STRING);
-#if 0
-        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_edd, Efreet_Cache_Icon, "context", context, EET_T_INT);
-#endif
         EET_DATA_DESCRIPTOR_ADD_LIST(cache_icon_edd, Efreet_Cache_Icon, "icons", icons, cache_icon_element_edd);
-#if 0
-        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_element_edd, Efreet_Cache_Icon_Element, "type", type, EET_T_INT);
-#endif
         eet_data_descriptor_element_add(cache_icon_element_edd, "paths", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Icon_Element, paths), 0, NULL, NULL);
         EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_element_edd, Efreet_Cache_Icon_Element, "size.normal", size.normal, EET_T_USHORT);
         EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_element_edd, Efreet_Cache_Icon_Element, "size.min", size.min, EET_T_USHORT);
@@ -313,11 +304,6 @@ efreet_icon_fallback_edd_init(void)
         if (!cache_icon_fallback_edd)
             goto error;
 
-#if 0
-        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "name", name, EET_T_STRING);
-        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "theme", theme, EET_T_STRING);
-        EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "context", context, EET_T_INT);
-#endif
         EET_DATA_DESCRIPTOR_ADD_BASIC(cache_icon_fallback_edd, Efreet_Cache_Icon, "fallback", fallback, EET_T_UCHAR);
         eet_data_descriptor_element_add(cache_icon_fallback_edd, "icons", EET_T_STRING, EET_G_LIST, offsetof(Efreet_Cache_Icon, icons), 0, NULL, NULL);
     }
@@ -397,12 +383,7 @@ efreet_cache_icon_free(Efreet_Cache_Icon *icon)
     if (!icon) return;
 
     if (icon->free)
-    {
-#if 0
-        eina_stringshare_del(icon->name);
-#endif
         eina_stringshare_del(icon->theme);
-    }
 
     EINA_LIST_FREE(icon->icons, data)
     {

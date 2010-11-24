@@ -69,13 +69,7 @@ cache_fallback_scan_dir(Eet_File *ef, Eina_Hash *dirs, const char *dir, int *cha
             icon = NEW(Efreet_Cache_Icon, 1);
             icon->free = 1;
             icon->fallback = 1;
-#if 0
-            icon->name = eina_stringshare_add(name);
-#endif
             icon->theme = NULL;
-#if 0
-            icon->context = dir->context;
-#endif
         }
 
         icon->icons = eina_list_append(icon->icons, eina_stringshare_ref(ent));
@@ -157,13 +151,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme, const char *path, Efreet_Icon_Them
         {
             icon = NEW(Efreet_Cache_Icon, 1);
             icon->free = 1;
-#if 0
-            icon->name = eina_stringshare_add(name);
-#endif
             icon->theme = eina_stringshare_add(theme->name.internal);
-#if 0
-            icon->context = dir->context;
-#endif
         }
         else if (strcmp(icon->theme, theme->name.internal))
         {
