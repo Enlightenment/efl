@@ -584,7 +584,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     Eet_File *tmp = NULL;
     Efreet_Old_Cache *d = NULL;
 
-
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
         event != ECORE_FILE_EVENT_MODIFIED) return;
 
@@ -592,7 +591,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     if (!file) return;
     if (!strcmp(file, "desktop_data.update"))
     {
-        printf("update desktop cache\n");
         tmp = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
         if (!tmp) return;
         ev = NEW(Efreet_Event_Cache_Update, 1);
@@ -614,7 +612,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 #ifdef ICON_CACHE
     else if (!strcmp(file, "icon_data.update"))
     {
-        printf("update icon cache\n");
         icon_cache_close();
 
         ev = NEW(Efreet_Event_Cache_Update, 1);
