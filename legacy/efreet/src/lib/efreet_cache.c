@@ -617,8 +617,8 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         if (!ev) return;
         ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
     }
-    return;
 #endif
+    return;
 error:
     IF_FREE(ev);
     IF_FREE(d);
