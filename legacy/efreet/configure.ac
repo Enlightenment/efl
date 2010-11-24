@@ -112,7 +112,7 @@ AM_CONDITIONAL(ICON_CACHE, test "x$enable_icon_cache" = "xyes")
 #    AC_DEFINE(DEFAULT_VISIBLITY, 1, [Default visibility])
 #fi
 #AM_CONDITIONAL(DEFAULT_VISIBILITY, test "x$enable_hidden_visibility" != "xyes")
-AM_CONDITIONAL(DEFAULT_VISIBILITY, 0)
+AM_CONDITIONAL(DEFAULT_VISIBILITY, false)
 
 
 ### Checks for programs
