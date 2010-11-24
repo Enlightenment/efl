@@ -1649,15 +1649,14 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
 {
     Efreet_Xml *merge_xml;
     Efreet_Menu_Internal *internal;
-    char *rp;
+    char rp[PATH_MAX];
 
     if (!parent || !xml || !path) return 0;
 
     /* do nothing if the file doesn't exist */
     if (!ecore_file_exists(path)) return 1;
 
-    rp = ecore_file_realpath(path);
-    if (rp[0] == '\0')
+    if (!realpath(path, rp))
     {
         INF("efreet_menu_merge() unable to get real path for %s", path);
         return 0;
@@ -1666,7 +1665,6 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     /* don't merge the same path twice */
     if (eina_hash_find(efreet_merged_menus, rp)) 
     {
-        FREE(rp);
         return 1;
     }
 
@@ -1678,11 +1676,8 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     {
         INF("efreet_menu_merge() failed to read in the "
                 "merge file (%s)", rp);
-        FREE(rp);
         return 0;
     }
-
-    FREE(rp);
 
     internal = efreet_menu_internal_new();
     if (!internal) return 0;
