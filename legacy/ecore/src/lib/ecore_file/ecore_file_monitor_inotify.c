@@ -199,7 +199,11 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
    _ecore_file_monitor_inotify_print(buf, mask);
 #endif
 
-   if (mask & IN_MODIFY)
+   if (mask & IN_ATTRIB)
+     {
+        em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
+     }
+   if (mask & IN_CLOSE_WRITE)
      {
         if (!isdir)
           em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
@@ -264,7 +268,7 @@ static int
 _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
 {
    int mask;
-   mask = IN_MODIFY|
+   mask = IN_ATTRIB|IN_CLOSE_WRITE|
           IN_MOVED_FROM|IN_MOVED_TO|
           IN_DELETE|IN_CREATE|
           IN_DELETE_SELF|IN_MOVE_SELF|
