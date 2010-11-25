@@ -214,7 +214,8 @@ _selection_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    wd->fsw = NULL;
    evas_object_del(del);
 
-   evas_object_smart_callback_call(wd->self, SIG_FILE_CHOSEN, event_info);
+   evas_object_smart_callback_call(wd->self, SIG_FILE_CHOSEN, 
+                                   (void *)wd->fsd.path);
 }
 
 /**

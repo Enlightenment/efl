@@ -253,7 +253,7 @@ _sel_do(void *data)
           elm_scrolled_entry_entry_set(wd->filename_entry, ecore_file_file_get(path));
      }
 
-   evas_object_smart_callback_call(sd->fs, SIG_SELECTED, (void*)path);
+   evas_object_smart_callback_call(sd->fs, SIG_SELECTED, (void *)path);
 
  end:
    wd->sel_idler = NULL;
@@ -267,6 +267,7 @@ _sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    struct sel_data *sd;
    Widget_Data *wd;
    void *old_sd;
+   char *dir;
 
    wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -275,6 +276,17 @@ _sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    sd->fs = data;
    sd->path = elm_genlist_item_data_get(event_info);
 
+   dir = ecore_file_dir_get(sd->path);
+   if (dir)
+     {
+        eina_stringshare_replace(&wd->path, dir);
+        free(dir);
+     }
+   else
+     {
+        eina_stringshare_replace(&wd->path, "");
+     }
+  
    if (wd->sel_idler)
      {
         old_sd = ecore_idler_del(wd->sel_idler);
@@ -308,7 +320,7 @@ _ok(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    evas_object_smart_callback_call(fs, SIG_DONE,
-				   (void*)elm_fileselector_selected_get(fs));
+				   (void *)elm_fileselector_selected_get(fs));
 }
 
 static void
@@ -329,7 +341,7 @@ _anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    // keep a ref to path 'couse it will be destroyed by _populate
    p = eina_stringshare_add(info->name);
    _populate(fs, p, NULL);
-   evas_object_smart_callback_call(data, SIG_SELECTED, (void*)p);
+   evas_object_smart_callback_call(data, SIG_SELECTED, (void *)p);
    eina_stringshare_del(p);
 }
 
@@ -377,7 +389,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
    if ((!wd) || (!ecore_file_is_dir(path))) return;
    dir = opendir(path);
    if (!dir) return;
-   evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void*)path);
+   evas_object_smart_callback_call(obj, SIG_DIRECTORY_OPEN, (void *)path);
    if (!parent)
      {
         elm_genlist_clear(wd->files_list);
@@ -394,7 +406,7 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
         real = ecore_file_realpath(buf); //TODO this will resolv symlinks...I dont like it
         if (ecore_file_is_dir(real))
           dirs = eina_list_append(dirs, real);
-        else if(!wd->only_folder)
+        else if (!wd->only_folder)
           files = eina_list_append(files, real);
      }
    closedir(dir);
@@ -634,7 +646,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool visible)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *box, *bt;
+   Evas_Object *bt;
    if (!wd) return;
 
    if (visible)
