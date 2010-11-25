@@ -295,6 +295,9 @@ _sizing_eval(Evas_Object *obj)
         edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
         if (wd->min_w) w = vmw + minw;
         if (wd->min_h) h = vmh + minh;
+        evas_object_size_hint_max_get(obj, &maxw, &maxh);
+        if ((maxw > 0) && (w > maxw)) w = maxw;
+        if ((maxh > 0) && (h > maxh)) h = maxh;
         evas_object_size_hint_min_set(obj, w, h);
      }
 }
