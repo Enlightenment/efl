@@ -16,6 +16,7 @@
  *   IN_ACCESS, IN_ATTRIB, IN_CLOSE_WRITE, IN_CLOSE_NOWRITE, IN_OPEN
  * - Read all events first, then call the callbacks. This will prevent several
  *   callbacks with the typic save cycle (delete file, new file)
+ * - Listen to IN_IGNORED, emitted when the watch is removed
  */
 
 #ifdef HAVE_INOTIFY
