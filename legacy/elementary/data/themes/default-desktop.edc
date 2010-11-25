@@ -776,7 +776,7 @@ collections {
                 description { state: "default" 0.0;
                     rel1.offset: 1 1;
                     rel2.offset: -2 -2;
-                    color: 255 255 255 255;
+                    color: 255 255 255 0;
                 }
             }
             part { name: "clipper";
