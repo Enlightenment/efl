@@ -78,7 +78,6 @@ static void efreet_icon_theme_free(Efreet_Icon_Theme *theme);
 static void efreet_icon_theme_dir_scan_all(const char *theme_name);
 static void efreet_icon_theme_dir_scan(const char *dir,
                                         const char *theme_name);
-static void efreet_icon_theme_dir_validity_check(void);
 static void efreet_icon_theme_path_add(Efreet_Icon_Theme *theme,
                                                 const char *path);
 static void efreet_icon_theme_index_read(Efreet_Icon_Theme *theme,
@@ -263,7 +262,6 @@ efreet_icon_theme_list_get(void)
 
     /* update the list to include all icon themes */
     efreet_icon_theme_dir_scan_all(NULL);
-    efreet_icon_theme_dir_validity_check();
 
     /* create the list for the user */
     it = eina_hash_iterator_key_new(efreet_icon_themes);
@@ -275,7 +273,7 @@ efreet_icon_theme_list_get(void)
         Efreet_Icon_Theme *theme;
 
         theme = eina_hash_find(efreet_icon_themes, dir);
-        if (theme->hidden || theme->fake) continue;
+        if (theme->hidden || !theme->valid) continue;
 #ifndef STRICT_SPEC
         if (!theme->name.name) continue;
 #endif
@@ -362,7 +360,6 @@ efreet_icon_find_theme_check(const char *theme_name)
     {
         theme = efreet_icon_theme_new();
         if (!theme) return NULL;
-        theme->fake = 1;
         theme->name.internal = eina_stringshare_add(theme_name);
         eina_hash_add(efreet_icon_themes, (void *)theme->name.internal, theme);
     }
@@ -538,6 +535,8 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
     const char *parent = NULL;
     const char *value = NULL;
 
+    if (!theme->valid) return NULL;
+
     if (theme->inherits)
     {
         EINA_LIST_FOREACH(theme->inherits, l, parent)
@@ -588,8 +587,8 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
     if (recurse > 256) return NULL;
     recurse++;
 
-    /* go no further if this theme is fake */
-    if (theme->fake || !theme->valid)
+    /* go no further if this theme is not valid */
+    if (!theme->valid)
         value = NULL;
     else
         value = efreet_icon_lookup_icon(theme, icon, size);
@@ -670,8 +669,8 @@ efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
 
     efreet_icon_theme_cache_check(theme);
 
-    /* go no further if this theme is fake */
-    if (theme->fake || !theme->valid) return NULL;
+    /* go no further if this theme is not valid */
+    if (!theme->valid) return NULL;
 
     /* limit recursion in finding themes and inherited themes to 256 levels */
     if (recurse > 256) return NULL;
@@ -1245,7 +1244,7 @@ efreet_icon_theme_cache_check(Efreet_Icon_Theme *theme)
     /* we're within 5 seconds of the last time we checked the cache */
     if ((new_check - 5) <= theme->last_cache_check) return;
 
-    if (theme->fake)
+    if (!theme->valid)
         efreet_icon_theme_dir_scan_all(theme->name.internal);
 
     else
@@ -1333,17 +1332,6 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
 #endif
 
     efreet_icon_theme_dir_scan("/usr/share/pixmaps", theme_name);
-
-    /* if we were given a theme name we want to make sure that that given
-     * theme is valid before finishing, unless it's a fake theme */
-    if (theme_name)
-    {
-        Efreet_Icon_Theme *theme;
-
-        theme = eina_hash_find(efreet_icon_themes, theme_name);
-        if (theme && !theme->valid && !theme->fake)
-            eina_hash_del(efreet_icon_themes, theme_name, theme);
-    }
 }
 
 /**
@@ -1394,11 +1382,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
                           (void *)theme->name.internal, theme);
         }
         else
-        {
-            if (theme->fake)
-                theme->fake = 0;
             eina_stringshare_del(key);
-        }
 
         efreet_icon_theme_path_add(theme, path);
 
@@ -1507,37 +1491,6 @@ efreet_icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 
 error:
     efreet_ini_free(ini);
-}
-
-/**
- * @internal
- * @return Returns no value
- * @brief Because the theme icon directories can be spread over multiple
- * base directories we may need to create the icon theme strucutre before
- * finding the index.theme file. It may also be that we never find an
- * index.theme file as this isn't a valid theme. This function makes sure
- * that everything we've got in our hash has a valid key to it.
- */
-static void
-efreet_icon_theme_dir_validity_check(void)
-{
-    Eina_List *keys;
-    const char *name;
-    Eina_Iterator *it;
-
-    keys = NULL;
-    it = eina_hash_iterator_key_new(efreet_icon_themes);
-    eina_iterator_foreach(it, EINA_EACH_CB(_hash_keys), &keys);
-    eina_iterator_free(it);
-
-    EINA_LIST_FREE(keys, name)
-    {
-        Efreet_Icon_Theme *theme;
-
-        theme = eina_hash_find(efreet_icon_themes, name);
-        if (theme && !theme->valid && !theme->fake)
-            eina_hash_del(efreet_icon_themes, name, theme);
-    }
 }
 
 /**
