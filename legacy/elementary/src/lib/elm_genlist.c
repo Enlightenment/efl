@@ -848,12 +848,6 @@ _item_del(Elm_Genlist_Item *it)
    elm_widget_item_pre_notify_del(it);
    elm_genlist_item_subitems_clear(it);
    it->wd->walking -= it->walking;
-   if (it->wd->anchor_item == it)
-     {
-        it->wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->next);
-        if (!it->wd->anchor_item)
-          it->wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
-     }
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _item_unrealize(it);
@@ -863,6 +857,12 @@ _item_del(Elm_Genlist_Item *it)
    it->delete_me = EINA_TRUE;
    if (it->queued)
      it->wd->queue = eina_list_remove(it->wd->queue, it);
+   if (it->wd->anchor_item == it)
+     {
+        it->wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->next);
+        if (!it->wd->anchor_item)
+          it->wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
+     }
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    if (it->parent)
      it->parent->items = eina_list_remove(it->parent->items, it);
@@ -2693,6 +2693,12 @@ elm_genlist_clear(Evas_Object *obj)
      {
         Elm_Genlist_Item *it = ELM_GENLIST_ITEM_FROM_INLIST(wd->items);
 
+       if (wd->anchor_item == it)
+         {
+           wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->next);
+           if (!wd->anchor_item)
+             wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
+         }
         wd->items = eina_inlist_remove(wd->items, wd->items);
         elm_widget_item_pre_notify_del(it);
         if (it->realized) _item_unrealize(it);
@@ -2702,6 +2708,7 @@ elm_genlist_clear(Evas_Object *obj)
         if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
         elm_widget_item_del(it);
      }
+   wd->anchor_item = NULL;
    while (wd->blocks)
      {
         Item_Block *itb = (Item_Block *)(wd->blocks);
