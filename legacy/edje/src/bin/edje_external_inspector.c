@@ -180,9 +180,14 @@ _param_flags_str_get(const Edje_External_Param_Info *param)
 static void
 _param_choices_print(const char * const *choices)
 {
-   fputs(", choices:", stdout);
+   if (machine) puts("CHOICES-BEGIN");
+   else fputs(", choices:", stdout);
    for (; *choices != NULL; choices++)
-     printf(" \"%s\"", *choices);
+     {
+        if (machine) puts(*choices);
+        else printf(" \"%s\"", *choices);
+     }
+   if (machine) puts("CHOICES-END");
 }
 
 static void
@@ -196,34 +201,64 @@ _param_extra_details(const Edje_External_Type *type, const Edje_External_Param_I
      {
       case EDJE_EXTERNAL_PARAM_TYPE_INT:
          if (param->info.i.min != EDJE_EXTERNAL_INT_UNSET)
-           printf(", min: %d", param->info.i.min);
+           {
+              if (machine) printf("MIN: %d\n", param->info.i.min);
+              else printf(", min: %d", param->info.i.min);
+           }
          if (param->info.i.max != EDJE_EXTERNAL_INT_UNSET)
-           printf(", max: %d", param->info.i.max);
+           {
+              if (machine) printf("MAX: %d\n", param->info.i.max);
+              else printf(", max: %d", param->info.i.max);
+           }
          if (param->info.i.step != EDJE_EXTERNAL_INT_UNSET)
-           printf(", step: %d", param->info.i.step);
+           {
+              if (machine) printf("STEP: %d\n", param->info.i.step);
+              else printf(", step: %d", param->info.i.step);
+           }
          break;
 
       case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
          if (param->info.d.min != EDJE_EXTERNAL_DOUBLE_UNSET)
-           printf(", min: %g", param->info.d.min);
+           {
+              if (machine) printf("MIN: %g\n", param->info.d.min);
+              else printf(", min: %g", param->info.d.min);
+           }
          if (param->info.d.max != EDJE_EXTERNAL_DOUBLE_UNSET)
-           printf(", max: %g", param->info.d.max);
+           {
+              if (machine) printf("MAX: %g\n", param->info.d.max);
+              else printf(", max: %g", param->info.d.max);
+           }
          if (param->info.d.step != EDJE_EXTERNAL_DOUBLE_UNSET)
-           printf(", step: %g", param->info.d.step);
+           {
+              if (machine) printf("STEP: %g\n", param->info.d.step);
+              else printf(", step: %g", param->info.d.step);
+           }
          break;
 
       case EDJE_EXTERNAL_PARAM_TYPE_STRING:
          if (param->info.s.accept_fmt)
-           printf(", accept_fmt: \"%s\"", param->info.s.accept_fmt);
+           {
+              if (machine) printf("ACCEPT_FMT: %s\n", param->info.s.accept_fmt);
+              else printf(", accept_fmt: \"%s\"", param->info.s.accept_fmt);
+           }
          if (param->info.s.deny_fmt)
-           printf(", deny_fmt: \"%s\"", param->info.s.deny_fmt);
+           {
+              if (machine) printf("DENY_FMT: %s\n", param->info.s.deny_fmt);
+              else printf(", deny_fmt: \"%s\"", param->info.s.deny_fmt);
+           }
          break;
 
       case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
          if (param->info.b.false_str)
-           printf(", false_str: \"%s\"", param->info.b.false_str);
+           {
+              if (machine) printf("FALSE_STR: %s\n", param->info.b.false_str);
+              else printf(", false_str: \"%s\"", param->info.b.false_str);
+           }
          if (param->info.b.true_str)
-           printf(", true_str: \"%s\"", param->info.b.true_str);
+           {
+              if (machine) printf("TRUE_STR: %s\n", param->info.b.true_str);
+              else printf(", true_str: \"%s\"", param->info.b.true_str);
+           }
          break;
 
       case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
