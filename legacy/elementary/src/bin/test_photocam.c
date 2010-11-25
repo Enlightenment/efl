@@ -105,36 +105,13 @@ my_ph_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED_
 }
 
 static void
-sel_done(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+my_bt_open(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Evas_Object *ph, *iw;
+   Evas_Object *ph = data;
+   const char *file = event_info;
 
-   ph = data;
-   iw = evas_object_data_get(ph, "inwin");
-   elm_photocam_file_set(ph, elm_fileselector_selected_get(obj));
-   evas_object_del(iw);
-}
-
-static void
-my_bt_open(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Evas_Object *ph, *win;
-   Evas_Object *iw, *fs;
-
-   ph = data;
-   win = evas_object_data_get(ph, "window");
-   iw = elm_win_inwin_add(win);
-
-   fs = elm_fileselector_add(win);
-   elm_fileselector_expandable_set(fs, EINA_TRUE);
-   elm_fileselector_path_set(fs, getenv("HOME"));
-   evas_object_smart_callback_add(fs, "done", sel_done, ph);
-
-   evas_object_data_set(ph, "inwin", iw);
-
-   elm_win_inwin_content_set(iw, fs);
-   evas_object_show(fs);
-   elm_win_inwin_activate(iw);
+   if (file)
+     elm_photocam_file_set(ph, file);
 }
 
 static void
@@ -301,9 +278,9 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_table_pack(tb2, bt, 0, 0, 1, 1);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Select Photo");
-   evas_object_smart_callback_add(bt, "clicked", my_bt_open, ph);
+   bt = elm_fileselector_button_add(win);
+   elm_fileselector_button_label_set(bt, "Select Photo");
+   evas_object_smart_callback_add(bt, "file,chosen", my_bt_open, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.1);
    elm_table_pack(tb2, bt, 1, 0, 1, 1);
