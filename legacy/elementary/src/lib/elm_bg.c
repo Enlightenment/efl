@@ -165,6 +165,9 @@ elm_bg_add(Evas_Object *parent)
  * will be stretched (retaining aspect if its an image file) to completely fill
  * the bg object. This may mean some parts are not visible.
  *
+ * @note  Once the image of @p obj is set, a previously set one will be deleted,
+ * even if @p file is NULL.
+ *
  * @ingroup Bg
  */
 EAPI void
@@ -179,7 +182,14 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 	evas_object_del(wd->img);
 	wd->img = NULL;
      }
-   if (!file) return;
+   if (!file)
+     {
+        eina_stringshare_del(wd->file);
+        wd->file = NULL;
+        eina_stringshare_del(wd->group);
+        wd->group = NULL;
+        return;
+     }
    eina_stringshare_replace(&wd->file, file);
    eina_stringshare_replace(&wd->group, group);
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
@@ -212,7 +222,6 @@ elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!file) return;
    if (file) *file = wd->file;
    if (group) *group = wd->group;
 }
