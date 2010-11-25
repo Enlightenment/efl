@@ -92,7 +92,7 @@ static inline void     *eina_array_data_get(const Eina_Array *array,
                                             unsigned int      idx) EINA_ARG_NONNULL(1);
 static inline void      eina_array_data_set(const Eina_Array *array,
                                             unsigned int      idx,
-                                            const void       *data) EINA_ARG_NONNULL(1, 3);
+                                            const void       *data) EINA_ARG_NONNULL(1);
 static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI Eina_Iterator        *eina_array_iterator_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
