@@ -2730,14 +2730,16 @@ elm_gengrid_item_show(Elm_Gengrid_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    Widget_Data *wd = elm_widget_data_get(item->wd->self);
+   Evas_Coord minx = 0, miny = 0;
 
    if (!wd) return;
    if ((!item) || (item->delete_me)) return;
+   _pan_min_get(wd->pan_smart, &minx, &miny);
 
    elm_smart_scroller_child_region_show(item->wd->scr,
-					item->x * wd->item_width,
-					item->y * wd->item_height,
-					item->wd->item_width, item->wd->item_height);
+                                        item->x * wd->item_width + minx,
+                                        item->y * wd->item_height + miny,
+                                        item->wd->item_width, item->wd->item_height);
 }
 
 /**
@@ -2757,11 +2759,13 @@ elm_gengrid_item_bring_in(Elm_Gengrid_Item *item)
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if (item->delete_me) return;
 
+   Evas_Coord minx = 0, miny = 0;
    Widget_Data *wd = elm_widget_data_get(item->wd->self);
    if (!wd) return;
+   _pan_min_get(wd->pan_smart, &minx, &miny);
 
    elm_smart_scroller_region_bring_in(item->wd->scr,
-				      item->x * wd->item_width,
-				      item->y * wd->item_height,
-				      item->wd->item_width, item->wd->item_height);
+                                      item->x * wd->item_width + minx,
+                                      item->y * wd->item_height + miny,
+                                      item->wd->item_width, item->wd->item_height);
 }
