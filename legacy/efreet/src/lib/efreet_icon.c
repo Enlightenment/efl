@@ -21,6 +21,7 @@
 static int _efreet_icon_log_dom = -1;
 
 /* TODO: Scan efreet_extra_icon_dirs for themes */
+/* TODO: icon theme cache */
 
 static const char *efreet_icon_deprecated_user_dir = NULL;
 static const char *efreet_icon_user_dir = NULL;

@@ -9,8 +9,6 @@
 #include "Efreet.h"
 #include "efreet_private.h"
 
-/* TODO: Listen for changes for icon dirs */
-
 typedef struct _Efreet_Old_Cache Efreet_Old_Cache;
 
 struct _Efreet_Old_Cache
