@@ -25,6 +25,8 @@ void *alloca (size_t);
 #include <string.h>
 #include <limits.h>
 
+#include <Ecore_File.h>
+
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"

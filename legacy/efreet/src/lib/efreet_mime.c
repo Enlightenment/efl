@@ -40,6 +40,8 @@ void *alloca (size_t);
 # include <arpa/inet.h>
 #endif
 
+#include <Ecore_File.h>
+
 #include "Efreet.h"
 #include "Efreet_Mime.h"
 #include "efreet_private.h"
