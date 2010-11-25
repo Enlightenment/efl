@@ -435,11 +435,12 @@ _smart_do_page(Smart_Data *sd)
 static Evas_Coord
 _smart_page_x_get(Smart_Data *sd, int offset)
 {
-   Evas_Coord x, y, w, h, cw, ch;
+   Evas_Coord x, y, w, h, cw, ch, minx = 0;
 
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
+   sd->pan_func.min_get(sd->pan_obj, &minx, NULL);
 
    x += offset;
 
@@ -455,7 +456,7 @@ _smart_page_x_get(Smart_Data *sd, int offset)
         x = x / (sd->pagesize_h);
         x = x * (sd->pagesize_h);
      }
-   if (x < 0) x = 0;
+   if (x < minx) x = minx;
    else if ((x + w) > cw) x = cw - w;
    return x;
 }
@@ -463,11 +464,12 @@ _smart_page_x_get(Smart_Data *sd, int offset)
 static Evas_Coord
 _smart_page_y_get(Smart_Data *sd, int offset)
 {
-   Evas_Coord x, y, w, h, cw, ch;
+   Evas_Coord x, y, w, h, cw, ch, miny = 0;
 
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
+   sd->pan_func.min_get(sd->pan_obj, NULL, &miny);
 
    y += offset;
 
@@ -483,7 +485,7 @@ _smart_page_y_get(Smart_Data *sd, int offset)
         y = y / (sd->pagesize_v);
         y = y * (sd->pagesize_v);
      }
-   if (y < 0) y = 0;
+   if (y < miny) y = miny;
    else if ((y + h) > ch) y = ch - h;
    return y;
 }
@@ -1091,10 +1093,11 @@ elm_smart_scroller_paging_get(Evas_Object *obj, double *pagerel_h, double *pager
 void
 elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny;
+   Evas_Coord mx = 0, my = 0, cw = 0, ch = 0, px = 0, py = 0, nx, ny, minx = 0, miny = 0;
 
    API_ENTRY return;
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
+   sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
    sd->pan_func.get(sd->pan_obj, &px, &py);
 
@@ -1158,11 +1161,11 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
         sd->down.pdy = 0;
      }
    x = nx;
-   if (x < 0) x = 0;
+   if (x < minx) x = minx;
    else if ((x + w) > cw) x = cw - w;
    _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);
    y = ny;
-   if (y < 0) y = 0;
+   if (y < miny) y = miny;
    else if ((y + h) > ch) y = ch - h;
    _smart_scrollto_y(sd, _elm_config->bring_in_scroll_friction, y);
 }
