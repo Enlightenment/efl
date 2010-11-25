@@ -393,6 +393,46 @@ edje_external_type_abi_version_get(void)
    return EDJE_EXTERNAL_TYPE_ABI_VERSION;
 }
 
+/**
+ * Returns an iterator that emits Eina_Hash_Tuple pointers with key
+ * being the name and data being the Edje_External_Type pointer.
+ *
+ * @code
+ * const Eina_Hash_Tuple *tuple;
+ * Eina_Iterator *itr;
+ * const Eina_List *l, *modules;
+ * const char *s;
+ *
+ * modules = edje_available_modules_get();
+ * EINA_LIST_FOREACH(modules, l, s)
+ *   {
+ *      if (!edje_module_load(s))
+ *        printf("Error loading edje module: %s\n", s);
+ *   }
+ *
+ * itr = edje_external_iterator_get();
+ * EINA_ITERATOR_FOREACH(itr, tuple)
+ *   {
+ *      const char *name = tuple->key;
+ *      const Edje_External_Type *type = tuple->data;
+ *
+ *      if ((!type) ||
+ *          (type->abi_version != edje_external_type_abi_version_get()))
+ *        {
+ *           printf("Error: invalid type %p (abi: %d, expected: %d)\n",
+ *                   type, type ? type->abi_version : 0,
+ *                   edje_external_type_abi_version_get());
+ *           continue;
+ *        }
+ *
+ *      printf("%s: %s (%s) label='%s' desc='%s'\n",
+ *             name, type->module, type->module_name,
+ *             type->label_get ? type->label_get(type->data) : "",
+ *             type->description_get ? type->description_get(type->data) : "");
+ *   }
+ *
+ * @endcode
+ */
 EAPI Eina_Iterator *
 edje_external_iterator_get(void)
 {
