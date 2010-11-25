@@ -690,11 +690,10 @@ elm_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, E
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
    if ((!wd) || (!wd->scr)) return;
-   elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
-   *policy_h = (Elm_Scroller_Policy) s_policy_h;
-   *policy_v = (Elm_Scroller_Policy) s_policy_v;
+   elm_smart_scroller_policy_get(wd->scr,
+                                 (Elm_Smart_Scroller_Policy *) policy_h,
+                                 (Elm_Smart_Scroller_Policy *) policy_v);
 }
 
 /**
@@ -718,8 +717,8 @@ elm_scroller_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Ev
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->scr)) return;
-   if ((x) && (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
-   if ((w) && (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
+   if ((x) || (y)) elm_smart_scroller_child_pos_get(wd->scr, x, y);
+   if ((w) || (h)) elm_smart_scroller_child_viewport_size_get(wd->scr, w, h);
 }
 
 /**
