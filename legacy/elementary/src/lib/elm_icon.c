@@ -130,8 +130,7 @@ _sizing_eval(Evas_Object *obj)
            request another, higher resolution, icon.
            FIXME: Find a better heuristic to determine if there should be
            an icon with a different resolution. */
-        if (!_icon_freedesktop_set(wd, obj, wd->stdicon, w))
-          wd->freedesktop.use = EINA_TRUE;
+        _icon_freedesktop_set(wd, obj, wd->stdicon, w);
      }
 #endif
    _els_smart_icon_scale_up_set(wd->img, wd->scale_up);
@@ -265,6 +264,7 @@ _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name)
    if (_elm_theme_object_icon_set(obj, wd->img, name, "default"))
      {
 #ifdef ELM_EFREET
+        /* TODO: elm_unneed_efreet() */
         wd->freedesktop.use = EINA_FALSE;
 #endif
         return EINA_TRUE;
@@ -278,6 +278,7 @@ _icon_file_set(Widget_Data *wd, Evas_Object *obj, const char *path)
    if (elm_icon_file_set(obj, path, NULL))
      {
 #ifdef ELM_EFREET
+        /* TODO: elm_unneed_efreet() */
         wd->freedesktop.use = EINA_FALSE;
 #endif
         return EINA_TRUE;
