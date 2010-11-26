@@ -667,7 +667,7 @@ _edje_external_param_get(const Evas_Object *obj, Edje_Real_Part *rp, Edje_Extern
 	     param->type = EDJE_EXTERNAL_PARAM_TYPE_STRING;
 	     param->name = "text";
 	     text = edje_object_part_text_get(obj, rp->part->name);
-	     strcpy (param->s, text);
+             param->s = text;
 	     return EINA_TRUE;
 	  }
        
