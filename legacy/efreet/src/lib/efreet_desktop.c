@@ -133,11 +133,13 @@ efreet_desktop_init(void)
         return 0;
     }
 
+#ifdef HAVE_EVIL
     if (!evil_sockets_init())
       {
          ERR("Could not initialize Winsock system");
          return 0;
       }
+#endif
 
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     efreet_desktop_types = NULL;
@@ -174,7 +176,9 @@ efreet_desktop_shutdown(void)
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
         eina_stringshare_del(dir);
     IF_FREE_HASH(change_monitors);
+#ifdef HAVE_EVIL
     evil_sockets_shutdown();
+#endif
     eina_log_domain_unregister(_efreet_desktop_log_dom);
 }
 

@@ -12,11 +12,13 @@
 #include <errno.h>
 
 #include <Eina.h>
+#include <Eet.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
+#include "efreet_icon_private.h"
 
 static Eet_Data_Descriptor *edd = NULL;
 static Eet_File *ef = NULL;
