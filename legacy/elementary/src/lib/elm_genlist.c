@@ -1988,7 +1988,7 @@ _pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 }
 
 static void
-_pan_min_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
+_pan_min_get(Evas_Object *obj __UNUSED__, Evas_Coord *x, Evas_Coord *y)
 {
    if (x) *x = 0;
    if (y) *y = 0;
