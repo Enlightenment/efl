@@ -465,7 +465,6 @@ test_tooltip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(gl, "expand,request", gltt_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", gltt_con_req, gl);
    evas_object_smart_callback_add(gl, "expanded", gltt_exp, gl);
-   evas_object_smart_callback_add(gl, "clicked", NULL, gl);
    evas_object_smart_callback_add(gl, "contracted", gltt_con, gl);
 
    elm_box_pack_end(bx, gl);

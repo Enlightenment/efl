@@ -246,7 +246,6 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_smart_callback_add(gl, "expand,request", glt_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", glt_con_req, gl);
    evas_object_smart_callback_add(gl, "expanded", glt_exp, gl);
-   evas_object_smart_callback_add(gl, "clicked", NULL, gl);
    evas_object_smart_callback_add(gl, "contracted", glt_con, gl);
 
    elm_box_pack_end(bx, gl);
