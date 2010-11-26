@@ -405,7 +405,7 @@ elm_need_efreet(void)
      {
         const char **itr;
         static const char *themes[] = {
-           "default", "highcolor", "hicolor", "gnome", "Human", "oxygen", NULL
+           "gnome", "Human", "oxygen", "hicolor", NULL
         };
         for (itr = themes; *itr; itr++)
           {
