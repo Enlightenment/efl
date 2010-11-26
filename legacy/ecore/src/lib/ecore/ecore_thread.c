@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <sys/time.h>
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -15,7 +17,6 @@
 #  include <pthread.h>
 #  ifdef __linux__
 #   include <sched.h>
-#   include <sys/time.h>
 #   include <sys/resource.h>
 #   include <unistd.h>
 #   include <sys/syscall.h>
@@ -99,6 +100,12 @@ int _ecore_thread_win32_join(win32_thread *x, void **res)
 #  define PHJ(x, p) _ecore_thread_win32_join(x, (void**)(&(p)))
 #  define PHA(x) TerminateThread(x->thread, 0)
 
+#  define LK(x)  HANDLE x
+#  define LKI(x) x = CreateMutex(NULL, FALSE, NULL)
+#  define LKD(x) CloseHandle(x)
+#  define LKL(x) WaitForSingleObject(x, INFINITE)
+#  define LKU(x) ReleaseMutex(x)
+
 typedef struct
 {
   HANDLE semaphore;
@@ -139,65 +146,155 @@ do {                                                        \
   LeaveCriticalSection (&x->threads_count_lock);            \
  } while (0)
 
-#  define CDW(x, y, t)                                \
-do {                                                  \
-  DWORD val = t->tv_sec * 1000 + (tv_nsec / 1000000); \
-  LKL(y);                                             \
-  EnterCriticalSection (&x->threads_count_lock);      \
-  x->threads_count++;                                 \
-  LeaveCriticalSection (&x->threads_count_lock);      \
-  LKU(y);                                             \
-  WaitForingleObject(x->semaphore, val);              \
- } while (0)
-
-#  define LK(x)  HANDLE x
-#  define LKI(x) x = CreateMutex(NULL, FALSE, NULL)
-#  define LKD(x) CloseHandle(x)
-#  define LKL(x) WaitForSingleObject(x, INFINITE)
-#  define LKU(x) ReleaseMutex(x)
+int _ecore_thread_win32_cond_timedwait(win32_cond *c, HANDLE *external_mutex, struct timeval *t)
+{
+  DWORD res;
+  DWORD val = t->tv_sec * 1000 + (t->tv_usec / 1000);
+  LKL(external_mutex);
+  EnterCriticalSection (&c->threads_count_lock);
+  c->threads_count++;
+  LeaveCriticalSection (&c->threads_count_lock);
+  LKU(external_mutex);
+  res = WaitForSingleObject(c->semaphore, val);
+  if (res == WAIT_OBJECT_0)
+    return 0;
+  else
+    return -1;
+}
+#  define CDW(x, y, t) _ecore_thread_win32_cond_timedwait(x, y, t)
 
 typedef struct
 {
-  HANDLE semaphore_read;
-  HANDLE semaphore_write;
-  SRWLOCK l;
+  LONG readers_count;
+  LONG writers_count;
+  int readers;
+  int writers; 
+  LK(mutex);
+  CD(cond_read);
+  CD(cond_write);
 } win32_rwl;
 
 #  define LRWK(x)   win32_rwl *x
-#  define LRWKI(x)                                                 \
-do {                                                               \
-  x = (win32_rwl *)calloc(1, sizeof(win32_rwl));                   \
-  if (x)                                                           \
-    {                                                              \
-      InitializeSRWLock(&x->l);                                    \
-      x->semaphore_read = CreateSemaphore (NULL, 0, 1, NULL);      \
-      if (x->semaphore_read)                                       \
-        {                                                          \
-          x->semaphore_write = CreateSemaphore (NULL, 0, 1, NULL); \
-          if (!semaphore_write)                                    \
-            {                                                      \
-              CloseHandle(x->semaphore_read);                      \
-              free(x);                                             \
-              x = NULL;                                            \
-            }                                                      \
-        }                                                          \
-      else                                                         \
-        {                                                          \
-          free(x);                                                 \
-          x = NULL;                                                \
-        }                                                          \
-    }                                                              \
- } while (0)
+#  define LRWKI(x)                                 \
+  do {                                             \
+    x = (win32_rwl *)calloc(1, sizeof(win32_rwl)); \
+    if (x)                                         \
+      {                                            \
+        LKI(x->mutex);                             \
+        if (x->mutex)                              \
+          {                                        \
+            CDI(x->cond_read);                     \
+            if (x->cond_read)                      \
+              {                                    \
+                CDI(x->cond_write);                \
+                if (!x->cond_write)                \
+                  {                                \
+                    CDD(x->cond_read);             \
+                    LKD(x->mutex);                 \
+                    free(x);                       \
+                    x = NULL;                      \
+                  }                                \
+              }                                    \
+            else                                   \
+              {                                    \
+                LKD(x->mutex);                     \
+                free(x);                           \
+                x = NULL;                          \
+              }                                    \
+          }                                        \
+        else                                       \
+          {                                        \
+            free(x);                               \
+            x = NULL;                              \
+          }                                        \
+      }                                            \
+  } while (0)
 
 #  define LRWKD(x)                   \
   do {                               \
-    CloseHandle(x->semaphore_write); \
-    CloseHandle(x->semaphore_read);  \
+    LKU(x->mutex);                   \
+    LKD(x->mutex);                   \
+    CDD(x->cond_write);              \
+    CDD(x->cond_read);               \
     free(x);                         \
   } while (0)
-#  define LRWKWL(x) AcquireSRWLockExclusive(&x->l)
-#  define LRWKRL(x) AcquireSRWLockShared(&x->l)
-#  define LRWKU(x)  ReleaseSRWLockExclusive(&x->l)
+#  define LRWKWL(x)                                                       \
+  do {                                                                    \
+    DWORD res;                                                            \
+    LKU(x->mutex);                                                        \
+    if (x->writers || x->readers > 0)                                     \
+      {                                                                   \
+        x->writers_count++;                                               \
+        while (x->writers || x->readers > 0)                              \
+          {                                                               \
+            EnterCriticalSection(&x->cond_write->threads_count_lock);     \
+            x->cond_read->threads_count++;                                \
+            LeaveCriticalSection(&x->cond_write->threads_count_lock);     \
+            res = WaitForSingleObject(x->cond_write->semaphore, INFINITE); \
+            if (res != WAIT_OBJECT_0) break;                              \
+          }                                                               \
+        x->writers_count--;                                               \
+      }                                                                   \
+    if (res == 0) x->writers_count = 1;                                   \
+    LKU(x->mutex);                                                        \
+  } while (0)
+#  define LRWKRL(x)                                                       \
+  do {                                                                    \
+    DWORD res;                                                            \
+    LKL(x->mutex);                                                        \
+    if (x->writers)                                                       \
+      {                                                                   \
+        x->readers_count++;                                               \
+        while (x->writers)                                                \
+          {                                                               \
+            EnterCriticalSection(&x->cond_write->threads_count_lock);     \
+            x->cond_read->threads_count++;                                \
+            LeaveCriticalSection(&x->cond_write->threads_count_lock);     \
+            res = WaitForSingleObject(x->cond_write->semaphore, INFINITE); \
+            if (res != WAIT_OBJECT_0) break;                              \
+          }                                                               \
+        x->readers_count--;                                               \
+      }                                                                   \
+    if (res == 0)                                                         \
+      x->readers++;                                                       \
+    LKU(x->mutex);                                                        \
+  } while (0)
+#  define LRWKU(x)                                                     \
+  do {                                                                 \
+    LKL(x->mutex);                                                     \
+    if (x->writers)                                                    \
+      {                                                                \
+        x->writers = 0;                                                \
+        if (x->readers_count == 1)                                     \
+          {                                                            \
+            EnterCriticalSection(&x->cond_read->threads_count_lock);   \
+            if (x->cond_read->threads_count > 0)                       \
+              ReleaseSemaphore(x->cond_read->semaphore, 1, 0);         \
+            LeaveCriticalSection(&x->cond_read->threads_count_lock);   \
+          }                                                            \
+        else if (x->readers_count > 0)                                 \
+          CDB(x->cond_read);                                           \
+        else if (x->writers_count > 0)                                 \
+          {                                                            \
+            EnterCriticalSection (&x->cond_write->threads_count_lock); \
+            if (x->cond_write->threads_count > 0)                      \
+              ReleaseSemaphore(x->cond_write->semaphore, 1, 0);        \
+            LeaveCriticalSection (&x->cond_write->threads_count_lock); \
+          }                                                            \
+      }                                                                \
+    else if (x->readers > 0)                                           \
+      {                                                                \
+        x->readers--;                                                  \
+        if (x->readers == 0 && x->writers_count > 0)                   \
+          {                                                            \
+            EnterCriticalSection (&x->cond_write->threads_count_lock); \
+            if (x->cond_write->threads_count > 0)                      \
+              ReleaseSemaphore(x->cond_write->semaphore, 1, 0);        \
+            LeaveCriticalSection (&x->cond_write->threads_count_lock); \
+          }                                                            \
+      }                                                                \
+    LKU(x->mutex);                                                     \
+  } while (0)
 
 # endif
 
@@ -480,8 +577,11 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
 {
    Ecore_Pthread_Data *pth;
 
+#ifdef EFL_POSIX_THREADS
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+#endif
+
    eina_sched_prio_drop();
 
    pth = malloc(sizeof (Ecore_Pthread_Data));
@@ -528,8 +628,11 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
 {
    Ecore_Pthread_Worker *work;
 
+#ifdef EFL_POSIX_THREADS
    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+#endif
+
    eina_sched_prio_drop();
 
    LKL(_ecore_pending_job_threads_mutex);
@@ -1311,7 +1414,7 @@ ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, 
    void *ret;
    if ((!thread) || (!key) || (!value))
      return NULL;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return NULL;
 
    if (!worker->hash)
@@ -1354,7 +1457,7 @@ ecore_thread_local_data_find(Ecore_Thread *thread, const char *key)
 
    if ((!thread) || (!key))
      return NULL;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return NULL;
 
    if (!worker->hash)
@@ -1383,7 +1486,7 @@ ecore_thread_local_data_del(Ecore_Thread *thread, const char *key)
    Ecore_Thread_Data *d;
    if ((!thread) || (!key))
      return EINA_FALSE;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
 
    if (!worker->hash)
@@ -1416,7 +1519,7 @@ ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina
 
    if ((!key) || (!value))
      return EINA_FALSE;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    LRWKWL(_ecore_thread_global_hash_lock);
    if (!_ecore_thread_global_hash)
      _ecore_thread_global_hash = eina_hash_string_small_new(_ecore_thread_data_free);
@@ -1464,7 +1567,7 @@ ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb)
 
    if ((!key) || (!value))
      return NULL;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    LRWKWL(_ecore_thread_global_hash_lock);
    if (!_ecore_thread_global_hash)
      _ecore_thread_global_hash = eina_hash_string_small_new(_ecore_thread_data_free);
@@ -1511,7 +1614,7 @@ ecore_thread_global_data_find(const char *key)
    Ecore_Thread_Data *ret;
    if (!key)
      return NULL;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!_ecore_thread_global_hash) return NULL;
 
    LRWKRL(_ecore_thread_global_hash_lock);
@@ -1539,7 +1642,7 @@ ecore_thread_global_data_del(const char *key)
 
    if (!key)
      return EINA_FALSE;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!_ecore_thread_global_hash)
      return EINA_FALSE;
 
@@ -1573,7 +1676,7 @@ ecore_thread_global_data_wait(const char *key, double seconds)
    Ecore_Thread_Data *ret = NULL;
    if (!key)
      return NULL;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!_ecore_thread_global_hash)
      return NULL;
    if (seconds > 0)
@@ -1581,10 +1684,17 @@ ecore_thread_global_data_wait(const char *key, double seconds)
 
    while (1)
      {
+#ifndef _WIN32
         struct timespec t = { 0, 0 };
 
         t.tv_sec = (long int)time;
         t.tv_nsec = (long int)((time - (double)t.tv_sec) * 1000000000);
+#else
+        struct timeval t = { 0, 0 };
+
+        t.tv_sec = (long int)time;
+        t.tv_usec = (long int)((time - (double)t.tv_sec) * 1000000);
+#endif
         LRWKRL(_ecore_thread_global_hash_lock);
         ret = eina_hash_find(_ecore_thread_global_hash, key);
         LRWKU(_ecore_thread_global_hash_lock);
