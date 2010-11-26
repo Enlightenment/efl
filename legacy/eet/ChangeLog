@@ -457,3 +457,8 @@
 2010-11-25  Cedric BAIL
 
 	* Add EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY_STRING.
+
+2010-11-26  Cedric BAIL
+
+	* Reduce memory used by Eet dictionary.
+

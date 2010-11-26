@@ -7,18 +7,30 @@ typedef enum _Eet_Convert_Type   Eet_Convert_Type;
 
 enum _Eet_Convert_Type
 {
-   EET_D_NOT_CONVERTED = 0,
+   EET_D_NOTHING       = 0,
    EET_D_FLOAT         = 1 << 1,
    EET_D_DOUBLE        = 1 << 2,
    EET_D_FIXED_POINT   = 1 << 4
 };
 
 typedef struct _Eet_String   Eet_String;
+typedef struct _Eet_Convert  Eet_Convert;
+
+struct _Eet_Convert
+{
+   float            f;
+   double           d;
+   Eina_F32p32      fp;
+
+   Eet_Convert_Type type;
+};
 
 struct _Eet_String
 {
-   const char      *mmap;
-   char            *str;
+   union {
+      const char      *mmap;
+      char            *str;
+   } u;
 
    int              hash;
    int              len;
@@ -26,15 +38,12 @@ struct _Eet_String
    int              next;
    int              prev;
 
-   float            f;
-   double           d;
-   Eina_F32p32      fp;
-
-   Eet_Convert_Type type;
+   unsigned char    allocated : 1;
 };
 struct _Eet_Dictionary
 {
    Eet_String *all;
+   Eina_Hash  *converts;
 
    int         size;
    int         offset;
