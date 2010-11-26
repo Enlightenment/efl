@@ -29,6 +29,7 @@ void *alloca (size_t);
 # include <winsock2.h>
 #endif
 
+#include <Ecore.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
