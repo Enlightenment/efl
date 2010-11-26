@@ -1,6 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#ifdef ELM_EFREET
+#define NON_EXISTING (void *)-1
+static Efreet_Icon_Theme *icon_theme = NULL;
+#endif
+
 /**
  * @defgroup Icon Icon
  *
@@ -293,7 +298,28 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
    const char *path;
 
    elm_need_efreet();
-   if (!icon_theme) return EINA_FALSE;
+   if (icon_theme == NON_EXISTING) return EINA_FALSE;
+   if (!icon_theme)
+     {
+        icon_theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
+        if (!icon_theme)
+          {
+             const char **itr;
+             static const char *themes[] = {
+                  "gnome", "Human", "oxygen", "hicolor", NULL
+             };
+             for (itr = themes; *itr; itr++)
+               {
+                  icon_theme = efreet_icon_theme_find(*itr);
+                  if (icon_theme) break;
+               }
+          }
+     }
+   if (!icon_theme)
+     {
+        icon_theme = NON_EXISTING;
+        return EINA_FALSE;
+     }
    path = efreet_icon_path_find(icon_theme->name.internal, name, size);
    wd->freedesktop.use = !!path;
    if (wd->freedesktop.use)

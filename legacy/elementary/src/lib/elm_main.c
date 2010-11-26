@@ -390,7 +390,6 @@ _elm_unneed_e_dbus(void)
 
 #ifdef ELM_EFREET
 static int _elm_need_efreet = 0;
-Efreet_Icon_Theme *icon_theme = NULL;
 #endif
 EAPI Eina_Bool
 elm_need_efreet(void)
@@ -400,19 +399,6 @@ elm_need_efreet(void)
    efreet_init();
    efreet_mime_init();
    efreet_trash_init();
-   icon_theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
-   if (!icon_theme)
-     {
-        const char **itr;
-        static const char *themes[] = {
-           "gnome", "Human", "oxygen", "hicolor", NULL
-        };
-        for (itr = themes; *itr; itr++)
-          {
-             icon_theme = efreet_icon_theme_find(*itr);
-             if (icon_theme) break;
-          }
-     }
     /*
      {
         Eina_List **list;
@@ -439,7 +425,6 @@ _elm_unneed_efreet(void)
 #ifdef ELM_EFREET
    if (--_elm_need_efreet) return;
 
-   icon_theme = NULL;
    _elm_need_efreet = 0;
    efreet_trash_shutdown();
    efreet_mime_shutdown();
