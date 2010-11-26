@@ -6,62 +6,170 @@
 # include <Evil.h>
 #endif
 
-#ifdef EFL_HAVE_PTHREAD
-# include <pthread.h>
-# ifdef __linux__
-#  include <sched.h>
-#  include <sys/time.h>
-#  include <sys/resource.h>
-#  include <unistd.h>
-#  include <sys/syscall.h>
-#  include <errno.h>
-# endif
-#endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#ifdef EFL_HAVE_PTHREAD
-# include <pthread.h>
+#ifdef EFL_HAVE_THREADS
 
-# define PH(x)        pthread_t x
-# define PHE(x, y)    pthread_equal(x, y)
-# define PHS()        pthread_self()
-# define PHC(x, f, d) pthread_create(&(x), NULL, (void*) f, d)
-# define PHJ(x, p)    pthread_join(x, (void**)(&(p)))
-# define PHA(x)       pthread_cancel(x)
+# ifdef EFL_HAVE_POSIX_THREADS
+#  include <pthread.h>
+#  ifdef __linux__
+#   include <sched.h>
+#   include <sys/time.h>
+#   include <sys/resource.h>
+#   include <unistd.h>
+#   include <sys/syscall.h>
+#   include <errno.h>
+#  endif
 
-# define CD(x)  pthread_cond_t x
-# define CDI(x) pthread_cond_init(&(x), NULL);
-# define CDD(x) pthread_cond_destroy(&(x));
-# define CDB(x) pthread_cond_broadcast(&(x));
-# define CDW(x, y, t) pthread_cond_timedwait(&(x), &(y), t);
+#  define PH(x)        pthread_t x
+#  define PHE(x, y)    pthread_equal(x, y)
+#  define PHS()        pthread_self()
+#  define PHC(x, f, d) pthread_create(&(x), NULL, (void*) f, d)
+#  define PHJ(x, p)    pthread_join(x, (void**)(&(p)))
+#  define PHA(x)       pthread_cancel(x)
 
-# define LK(x)  pthread_mutex_t x
-# define LKI(x) pthread_mutex_init(&(x), NULL);
-# define LKD(x) pthread_mutex_destroy(&(x));
-# define LKL(x) pthread_mutex_lock(&(x));
-# define LKU(x) pthread_mutex_unlock(&(x));
+#  define CD(x)  pthread_cond_t x
+#  define CDI(x) pthread_cond_init(&(x), NULL);
+#  define CDD(x) pthread_cond_destroy(&(x));
+#  define CDB(x) pthread_cond_broadcast(&(x));
+#  define CDW(x, y, t) pthread_cond_timedwait(&(x), &(y), t);
 
-# define LRWK(x)   pthread_rwlock_t x
-# define LRWKI(x)  pthread_rwlock_init(&(x), NULL);
-# define LRWKD(x)  pthread_rwlock_destroy(&(x));
-# define LRWKWL(x) pthread_rwlock_wrlock(&(x));
-# define LRWKRL(x) pthread_rwlock_rdlock(&(x));
-# define LRWKU(x)  pthread_rwlock_unlock(&(x));
+#  define LK(x)  pthread_mutex_t x
+#  define LKI(x) pthread_mutex_init(&(x), NULL);
+#  define LKD(x) pthread_mutex_destroy(&(x));
+#  define LKL(x) pthread_mutex_lock(&(x));
+#  define LKU(x) pthread_mutex_unlock(&(x));
 
-#else /* EFL_HAVE_WIN32_THREADS */
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
+#  define LRWK(x)   pthread_rwlock_t x
+#  define LRWKI(x)  pthread_rwlock_init(&(x), NULL);
+#  define LRWKD(x)  pthread_rwlock_destroy(&(x));
+#  define LRWKWL(x) pthread_rwlock_wrlock(&(x));
+#  define LRWKRL(x) pthread_rwlock_rdlock(&(x));
+#  define LRWKU(x)  pthread_rwlock_unlock(&(x));
 
-# error "Please define PH*, CD* and LRWK* on windows"
+# else /* EFL_HAVE_WIN32_THREADS */
 
-# define LK(x)  HANDLE x
-# define LKI(x) x = CreateMutex(NULL, FALSE, NULL)
-# define LKD(x) CloseHandle(x)
-# define LKL(x) WaitForSingleObject(x, INFINITE)
-# define LKU(x) ReleaseMutex(x)
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#  undef WIN32_LEAN_AND_MEAN
+
+#  define PH(x)        HANDLE x
+#  define PHE(x, y)    ((x) == (y))
+#  define PHS()        (HANDLE)GetCurrentThreadId()
+#  define PHC(x, f, d) ((x = CreateThread(NULL, 0, f, d, 0, NULL)) == NULL)
+#  define PHJ(x, p)                          \
+   do {                                      \
+      if (!PHE(x, PHS()))                    \
+        {                                    \
+           WaitForSingleObject(x, INFINITE); \
+           CloseHandle(x);                   \
+        }                                    \
+   } while (0)
+#  define PHA(x)       TerminateThread(x)
+
+typedef struct
+{
+  HANDLE semaphore;
+  LONG threads_count;
+  CRITICAL_SECTION threads_count_lock;
+} win32_cond;
+
+#  define CD(x)  win32_cond *x
+
+#  define CDI(x)                                                     \
+   do {                                                              \
+     x = (win32_cond *)calloc(1, sizeof(win32_cond));                \
+     if (x)                                                          \
+        {                                                            \
+          x->semaphore = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
+          if (x->semaphore)                                          \
+            InitializeCriticalSection(&_c->threads_count_lock_);     \
+          else                                                       \
+            {                                                        \
+              free(x);                                               \
+              x = NULL;                                              \
+            }                                                        \
+        }                                                            \
+   } while (0)
+
+#  define CDD(x)               \
+  do {                         \
+    CloseHandle(x->semaphore); \
+    free(x);                   \
+    x = NULL;                  \
+   } while (0)
+
+#  define CDB(x)                                            \
+do {                                                        \
+  EnterCriticalSection(&x->threads_count_lock);             \
+  if (x->threads_count > 0)                                 \
+    ReleaseSemaphore(x->semaphore, x->threads_count, NULL); \
+  LeaveCriticalSection (&x->threads_count_lock);            \
+ } while (0)
+
+#  define CDW(x, y, t)                                \
+do {                                                  \
+  DWORD val = t->tv_sec * 1000 + (tv_nsec / 1000000); \
+  LKL(y);                                             \
+  EnterCriticalSection (&x->threads_count_lock);      \
+  x->threads_count++;                                 \
+  LeaveCriticalSection (&x->threads_count_lock);      \
+  LKU(y);                                             \
+  WaitForingleObject(x->semaphore, val);              \
+ } while (0)
+
+#  define LK(x)  HANDLE x
+#  define LKI(x) x = CreateMutex(NULL, FALSE, NULL)
+#  define LKD(x) CloseHandle(x)
+#  define LKL(x) WaitForSingleObject(x, INFINITE)
+#  define LKU(x) ReleaseMutex(x)
+
+typedef struct
+{
+  HANDLE semaphore_read;
+  HANDLE semaphore_write;
+  SRWLOCK l;
+} win32_rwl;
+
+#  define LRWK(x)   win32_rwl *x
+#  define LRWKI(x)                                                 \
+do {                                                               \
+  x = (win32_rwl *)calloc(1, sizeof(win32_rwl));                   \
+  if (x)                                                           \
+    {                                                              \
+      InitializeSRWLock(&x->l);                                    \
+      x->semaphore_read = CreateSemaphore (NULL, 0, 1, NULL);      \
+      if (x->semaphore_read)                                       \
+        {                                                          \
+          x->semaphore_write = CreateSemaphore (NULL, 0, 1, NULL); \
+          if (!semaphore_write)                                    \
+            {                                                      \
+              CloseHandle(x->semaphore_read);                      \
+              free(x);                                             \
+              x = NULL;                                            \
+            }                                                      \
+        }                                                          \
+      else                                                         \
+        {                                                          \
+          free(x);                                                 \
+          x = NULL;                                                \
+        }                                                          \
+    }                                                              \
+ } while (0)
+
+#  define LRWKD(x)                   \
+  do {                               \
+    CloseHandle(x->semaphore_write); \
+    CloseHandle(x->semaphore_read);  \
+    free(x);                         \
+  } while (0)
+#  define LRWKWL(x) AcquireSRWLockExclusive(&x->l)
+#  define LRWKRL(x) AcquireSRWLockShared(&x->l)
+#  define LRWKU(x)  ReleaseSRWLockExclusive(&x->l)
+
+# endif
+
 #endif
 
 typedef struct _Ecore_Pthread_Worker Ecore_Pthread_Worker;
@@ -95,7 +203,7 @@ struct _Ecore_Pthread_Worker
 
    Ecore_Thread_Cb func_cancel;
    Ecore_Thread_Cb func_end;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    PH(self);
    Eina_Hash *hash;
    CD(cond);
@@ -109,7 +217,7 @@ struct _Ecore_Pthread_Worker
    Eina_Bool kill : 1;
 };
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 typedef struct _Ecore_Pthread_Data Ecore_Pthread_Data;
 
 struct _Ecore_Pthread_Data
@@ -136,7 +244,7 @@ _ecore_thread_pipe_get(void)
    return ecore_pipe_add(_ecore_thread_handler, NULL);
 }
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
 static int _ecore_thread_count = 0;
 
 static Ecore_Event_Handler *del_handler = NULL;
@@ -155,19 +263,6 @@ static Eina_Bool have_main_loop_thread = 0;
 
 static Eina_Trash *_ecore_thread_worker_trash = NULL;
 static int _ecore_thread_worker_count = 0;
-
-static Ecore_Pthread_Worker *
-_ecore_thread_worker_new(void)
-{
-   Ecore_Pthread_Worker *result;
-
-   result = eina_trash_pop(&_ecore_thread_worker_trash);
-
-   if (!result) result = malloc(sizeof (Ecore_Pthread_Worker));
-   else _ecore_thread_worker_count--;
-
-   return result;
-}
 
 static void
 _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
@@ -457,6 +552,23 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
 
 #endif
 
+static Ecore_Pthread_Worker *
+_ecore_thread_worker_new(void)
+{
+   Ecore_Pthread_Worker *result;
+
+#ifdef EFL_HAVE_THREADS
+   result = eina_trash_pop(&_ecore_thread_worker_trash);
+
+   if (!result) result = malloc(sizeof (Ecore_Pthread_Worker));
+   else _ecore_thread_worker_count--;
+
+   return result;
+#else
+   return malloc(sizeof (Ecore_Pthread_Worker));
+#endif
+}
+
 void
 _ecore_thread_init(void)
 {
@@ -467,7 +579,7 @@ _ecore_thread_init(void)
    ECORE_THREAD_PIPE_DEL = ecore_event_type_new();
    _ecore_thread_pipe = eina_array_new(8);
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    del_handler = ecore_event_handler_add(ECORE_THREAD_PIPE_DEL, _ecore_thread_pipe_del, NULL);
    main_loop_thread = PHS();
    have_main_loop_thread = 1;
@@ -487,7 +599,7 @@ _ecore_thread_shutdown(void)
    Eina_Array_Iterator it;
    unsigned int i;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *work;
    Ecore_Pthread_Data *pth;
 
@@ -579,7 +691,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
                  const void *data)
 {
    Ecore_Pthread_Worker *work;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Data *pth = NULL;
 #endif
 
@@ -601,7 +713,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->kill = EINA_FALSE;
    work->data = data;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    work->hash = NULL;
    CDI(work->cond);
    LKI(work->mutex);
@@ -687,7 +799,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
 EAPI Eina_Bool
 ecore_thread_cancel(Ecore_Thread *thread)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *work = (Ecore_Pthread_Worker *)thread;
    Eina_List *l;
 
@@ -807,7 +919,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
                                              Eina_Bool try_no_queue)
 {
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker;
    Ecore_Pthread_Data *pth = NULL;
 
@@ -947,7 +1059,7 @@ ecore_thread_feedback(Ecore_Thread *thread, const void *data)
    if (!worker) return EINA_FALSE;
    if (!worker->feedback_run) return EINA_FALSE;
 
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
 
    worker->u.feedback_run.send++;
@@ -970,7 +1082,7 @@ ecore_thread_feedback(Ecore_Thread *thread, const void *data)
 EAPI int
 ecore_thread_active_get(void)
 {
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    return _ecore_thread_count;
 #else
    return 0;
@@ -987,7 +1099,7 @@ EAPI int
 ecore_thread_pending_get(void)
 {
    int ret;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    LKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads);
    LKU(_ecore_pending_job_threads_mutex);
@@ -1007,7 +1119,7 @@ EAPI int
 ecore_thread_pending_feedback_get(void)
 {
    int ret;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    LKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads_feedback);
    LKU(_ecore_pending_job_threads_mutex);
@@ -1027,7 +1139,7 @@ EAPI int
 ecore_thread_pending_total_get(void)
 {
    int ret;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    LKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_feedback);
    LKU(_ecore_pending_job_threads_mutex);
@@ -1087,7 +1199,7 @@ EAPI int
 ecore_thread_available_get(void)
 {
    int ret;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    LKL(_ecore_pending_job_threads_mutex);
    ret = _ecore_thread_count_max - _ecore_thread_count;
    LKU(_ecore_pending_job_threads_mutex);
@@ -1121,7 +1233,7 @@ ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value, 
 
    if ((!thread) || (!key) || (!value))
      return EINA_FALSE;
-#ifdef EFL_HAVE_PTHREAD
+#ifdef EFL_HAVE_THREADS
    if (!PHE(worker->self, PHS())) return EINA_FALSE;
 
    if (!worker->hash)

@@ -923,9 +923,21 @@ if test "x${want_epoll}" = "xyes" ; then
 fi
 
 
-# basic pthread support
+# thread support
 
-EFL_CHECK_PTHREAD([no], [have_pthread="yes"], [have_pthread="no"])
+EFL_CHECK_THREADS(
+   [
+    if test "x${_efl_have_posix_threads}" = "xyes" ; then
+       have_threads="POSIX"
+    else
+       if test "x${_efl_have_win32_threads}" = "xyes" ; then
+          have_threads="Win32"
+       else
+          have_threads="no"
+       fi
+    fi
+   ],
+   [have_threads="no"])
 
 ### Checks for types
 AC_CHECK_SIZEOF(int, 4)
@@ -1422,7 +1434,7 @@ echo
 echo " Core:"
 echo
 echo "  Ecore........................: always"
-echo "    Thread support.............: $have_pthread"
+echo "    Thread support.............: $have_pthreads"
 echo "    GLib support...............: $have_glib"
 echo "    Always integrate GLib......: $want_glib_integration_always"
 echo "    Use g_main_loop............: $want_g_main_loop"
