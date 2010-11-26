@@ -1250,7 +1250,8 @@ efreet_desktop_changes_listen(void)
 
     EINA_LIST_FREE(dirs, path)
     {
-        efreet_desktop_changes_listen_recursive(path);
+        if (ecore_file_is_dir(path))
+            efreet_desktop_changes_listen_recursive(path);
         eina_stringshare_del(path);
     }
 
@@ -1269,7 +1270,8 @@ efreet_desktop_changes_listen(void)
             {
                 unsigned int size = *(unsigned int *)p;
                 p += sizeof(unsigned int);
-                efreet_desktop_changes_monitor_add(p);
+                if (ecore_file_is_dir(p))
+                    efreet_desktop_changes_monitor_add(p);
                 p += size;
             }
             munmap(map, st.st_size);
