@@ -292,19 +292,8 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
    const char *path;
 
    elm_need_efreet();
-   path = efreet_icon_path_find(getenv("E_ICON_THEME"), name, size);
-   if (!path)
-     {
-        const char **itr;
-        static const char *themes[] = {
-           "default", "highcolor", "hicolor", "gnome", "Human", "oxygen", NULL
-        };
-        for (itr = themes; (!path) && (*itr); itr++)
-          {
-             path = efreet_icon_path_find(*itr, name, size);
-             if (path) break;
-          }
-     }
+   if (!icon_theme) return EINA_FALSE;
+   path = efreet_icon_path_find(icon_theme->name.internal, name, size);
    wd->freedesktop.use = !!path;
    if (wd->freedesktop.use)
      {
