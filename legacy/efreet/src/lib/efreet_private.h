@@ -120,26 +120,60 @@ extern int _efreet_log_dom_global;
 extern Eina_Hash *efreet_desktop_cache;
 
 #ifdef ICON_CACHE
-typedef struct Efreet_Cache_Icon Efreet_Cache_Icon;
-struct Efreet_Cache_Icon
+#define EFREET_CACHE_MAJOR 0
+#define EFREET_CACHE_MINOR 2
+
+typedef struct _Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
+typedef struct _Efreet_Cache_Fallback_Icon Efreet_Cache_Fallback_Icon;
+typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
+typedef struct _Efreet_Cache_Theme Efreet_Cache_Theme;
+
+struct _Efreet_Cache_Theme
 {
-    const char *theme;
-    Eina_List  *icons;
-    unsigned char fallback;
-    unsigned char free:1;
+   struct {
+      unsigned char major;
+      unsigned char minor;
+   } version;
+
+   Eina_Hash *icons;
 };
 
-typedef struct Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
-struct Efreet_Cache_Icon_Element
+struct _Efreet_Cache_Icon
 {
-    int        type;  /* size type of icon */
-    Eina_List *paths; /* possible paths for icon */
-    struct
-    {
-        unsigned short normal;        /* The size for this icon */
-        unsigned short min;           /* The minimum size for this icon */
-        unsigned short max;           /* The maximum size for this icon */
-    } size;
+   const char *theme;
+
+   Efreet_Cache_Icon_Element **icons;
+   unsigned int icons_count;
+
+   unsigned char free:1;
+};
+
+struct _Efreet_Cache_Icon_Element
+{
+   const char **paths;          /* possible paths for icon */
+   unsigned int paths_count;
+
+   unsigned short type;         /* size type of icon */
+
+   unsigned short normal;       /* The size for this icon */
+   unsigned short min;          /* The minimum size for this icon */
+   unsigned short max;          /* The maximum size for this icon */
+};
+
+struct _Efreet_Cache_Fallback_Icon
+{
+#if 0
+   const char *name;
+#endif
+   const char *theme;
+#if 0
+   int         context; /* the type of icon */
+#endif
+
+   const char **icons;
+   unsigned int icons_count;
+
+   unsigned char free:1;
 };
 #endif
 
@@ -193,13 +227,14 @@ void efreet_cache_desktop_free(Efreet_Desktop *desktop);
 Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 
 #ifdef ICON_CACHE
-EAPI const char *efreet_icon_cache_file(const char *theme);
+EAPI const char *efreet_icon_cache_file(void);
 
-EAPI Eet_Data_Descriptor *efreet_icon_edd_init(void);
-EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd_init(void);
+EAPI Eet_Data_Descriptor *efreet_icon_theme_edd(void);
+EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd(void);
 EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
+EAPI void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
-Efreet_Cache_Icon *efreet_cache_icon_fallback_find(const char *icon);
+Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 #endif
 
 #define NON_EXISTING (void *)-1

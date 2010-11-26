@@ -23,78 +23,79 @@ static Eet_Data_Descriptor *edd = NULL;
 int verbose = 0;
 
 static void
-dump(Efreet_Icon_Theme *theme)
+dump(Efreet_Icon_Theme *theme, Eet_File *ef)
 {
-    Eet_File *ef;
-    char **keys;
-    int i, num;
-    double start, max, avg;
+   Efreet_Cache_Theme *cache;
+   Eina_Iterator *it;
+   const char *key;
+   unsigned int count;
+   double start, avg;
 
-    start = ecore_time_get();
-    ef = eet_open(efreet_icon_cache_file(theme->name.internal), EET_FILE_MODE_READ);
-    printf("open: %s %f\n", theme->name.internal, ecore_time_get() - start);
-    if (!ef) return;
-    start = ecore_time_get();
-    keys = eet_list(ef, "*", &num);
-    printf("list: %s %d, %f\n", theme->name.internal, num, ecore_time_get() - start);
-    if (!keys)
-    {
-        eet_close(ef);
-        return;
-    }
-    start = ecore_time_get();
-    for (i = 0; i < num; i++)
-    {
+   start = ecore_time_get();
+
+   printf("open: %s\n", theme->name.internal);
+
+   cache = eet_data_read(ef, edd, theme->name.internal);
+
+   printf("read: %s %f\n", theme->name.internal, ecore_time_get() - start);
+
+   if (!cache || !cache->icons) return ;
+
+   it = eina_hash_iterator_key_new(cache->icons);
+
+   EINA_ITERATOR_FOREACH(it, key)
+     {
         Efreet_Cache_Icon *icon;
-        double dt;
+        unsigned int i;
 
-        dt = ecore_time_get();
-        icon = eet_data_read(ef, edd, keys[i]);
-        if (!icon) continue;
-        dt = ecore_time_get() - dt;
-        if (dt > max)
-            max = dt;
-        efreet_cache_icon_free(icon);
-    }
-    start = ecore_time_get() - start;
-    avg = start / num;
-    printf("read: %s %f %f %f\n", theme->name.internal, start, avg, max);
-    free(keys);
-    eet_close(ef);
+        icon = eina_hash_find(cache->icons, key);
+
+        for (i = 0; i < icon->icons_count; ++i)
+          count += icon->icons[i]->paths_count;
+     }
+
+   eina_iterator_free(it);
+
+   eina_hash_free(cache->icons);
+   free(cache);
+
+   start = ecore_time_get() - start;
+   avg = start / count;
+   printf("read: %s - %i paths (time: %f) (avg %f)\n", theme->name.internal, count, start, avg);
 }
 
 int
 main(int argc, char **argv)
 {
-    Eina_List *l = NULL;
-    Efreet_Icon_Theme *theme;
-    int i;
+   Eet_File *ef;
+   Eina_List *l = NULL;
+   Efreet_Icon_Theme *theme;
+   int i;
 
-    efreet_cache_update = 0;
+   efreet_cache_update = 0;
 
-    if (!efreet_init()) goto efreet_error;
-    edd = efreet_icon_edd_init();
-    if (!edd) goto edd_error;
+   if (!efreet_init()) return -1;
 
-    if (argc > 1)
-    {
-        for (i = 1; i < argc; i++)
-        {
-            theme = efreet_icon_theme_find(argv[i]);
-            if (theme) l = eina_list_append(l, theme);
-        }
-    }
-    if (!l)
-        l = efreet_icon_theme_list_get();
-    EINA_LIST_FREE(l, theme)
-    {
-        dump(theme);
-    }
+   edd = efreet_icon_theme_edd();
+   if (!edd) return -1;
 
-    efreet_shutdown();
-    return 0;
-edd_error:
-    efreet_shutdown();
-efreet_error:
-    return 1;
+   if (argc > 1)
+     for (i = 1; i < argc; i++)
+       {
+          theme = efreet_icon_theme_find(argv[i]);
+          if (theme) l = eina_list_append(l, theme);
+       }
+
+   if (!l) l = efreet_icon_theme_list_get();
+
+   ef = eet_open(efreet_icon_cache_file(), EET_FILE_MODE_READ);
+   if (!ef) return -1;
+
+   EINA_LIST_FREE(l, theme)
+     dump(theme, ef);
+
+   eet_close(ef);
+
+   efreet_shutdown();
+   return 0;
 }
