@@ -431,6 +431,15 @@ _ecore_file_mkpath_if_not_exists(const char *path)
 {
    struct stat st;
 
+   /* Windows: path like C: or D: etc are valid, but stat() returns an error */
+#ifdef _WIN32
+   if ((strlen(path) == 2) &&
+       ((path[0] >= 'a' && path[0] <= 'z') ||
+        (path[0] >= 'A' && path[0] <= 'Z')) &&
+       (path[1] == ':'))
+     return EINA_TRUE;
+#endif
+
    if (stat(path, &st) < 0)
      return ecore_file_mkdir(path);
    else if (!S_ISDIR(st.st_mode))
@@ -446,9 +455,9 @@ _ecore_file_mkpath_if_not_exists(const char *path)
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
  * This function create @p path and all the subdirectories it
- * contains. The separator is '/' so, on Windows, '\' must be replaced
- * by '/'. If @p path exists, this function returns EINA_TRUE
- * immediatly. It returns EINA_TRUE on success, EINA_FALSE otherwise.
+ * contains. The separator is '/' or '\'. If @p path exists, this
+ * function returns EINA_TRUE immediatly. It returns EINA_TRUE on
+ * success, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_mkpath(const char *path)
@@ -462,7 +471,7 @@ ecore_file_mkpath(const char *path)
    for (i = 0; path[i] != '\0'; ss[i] = path[i], i++)
      {
         if (i == sizeof(ss) - 1) return EINA_FALSE;
-        if ((path[i] == '/') && (i > 0))
+        if (((path[i] == '/') || (path[i] == '\\')) && (i > 0))
           {
              ss[i] = '\0';
              if (!_ecore_file_mkpath_if_not_exists(ss))
