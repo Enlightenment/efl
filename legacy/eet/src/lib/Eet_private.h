@@ -32,12 +32,12 @@ struct _Eet_String
       char            *str;
    } u;
 
-   int              hash;
    int              len;
 
    int              next;
    int              prev;
 
+   unsigned char    hash;
    unsigned char    allocated : 1;
 };
 struct _Eet_Dictionary
