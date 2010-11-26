@@ -1434,7 +1434,7 @@ echo
 echo " Core:"
 echo
 echo "  Ecore........................: always"
-echo "    Thread support.............: $have_pthreads"
+echo "    Thread support.............: $have_threads"
 echo "    GLib support...............: $have_glib"
 echo "    Always integrate GLib......: $want_glib_integration_always"
 echo "    Use g_main_loop............: $want_g_main_loop"
