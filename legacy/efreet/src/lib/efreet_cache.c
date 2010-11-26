@@ -6,10 +6,13 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#include <Eet.h>
+#include <Ecore.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
+#include "efreet_icon_private.h"
 
 typedef struct _Efreet_Old_Cache Efreet_Old_Cache;
 

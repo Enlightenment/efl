@@ -25,6 +25,10 @@ void *alloca (size_t);
 #include <limits.h>
 #include <ctype.h>
 
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
+
 #include <Ecore_File.h>
 
 #include "Efreet.h"

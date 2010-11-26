@@ -734,7 +734,12 @@ efreet_mime_special_check(const char *file)
     struct stat s;
     int path_len = 0;
 
+    /* no link on Windows < Vista */
+#ifdef _WIN32
+    if (!stat(file, &s))
+#else
     if (!lstat(file, &s))
+#endif
     {
         if (S_ISREG(s.st_mode))
             return NULL;
@@ -775,7 +780,11 @@ efreet_mime_special_check(const char *file)
             /* Truncate to last slash */
             while (parent[--path_len] != '/') parent[path_len] = '\0';
 
+#ifdef _WIN32
+            if (!stat(file, &s2))
+#else
             if (!lstat(parent, &s2))
+#endif
             {
                 if (s.st_dev != s2.st_dev)
                     return _mime_inode_mountpoint;

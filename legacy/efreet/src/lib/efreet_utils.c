@@ -27,6 +27,7 @@ void *alloca (size_t);
 #include <fnmatch.h>
 #include <limits.h>
 
+#include <Eet.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"

@@ -26,8 +26,8 @@ void *alloca (size_t);
 #include <sys/mman.h>
 #include <fcntl.h>
 
-#ifdef _WIN32
-# include <winsock2.h>
+#ifdef HAVE_EVIL
+# include <Evil.h>
 #endif
 
 #include <Ecore_File.h>
@@ -133,6 +133,12 @@ efreet_desktop_init(void)
         return 0;
     }
 
+    if (!evil_sockets_init())
+      {
+         ERR("Could not initialize Winsock system");
+         return 0;
+      }
+
     efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     efreet_desktop_types = NULL;
 
@@ -168,6 +174,7 @@ efreet_desktop_shutdown(void)
     EINA_LIST_FREE(efreet_desktop_dirs, dir)
         eina_stringshare_del(dir);
     IF_FREE_HASH(change_monitors);
+    evil_sockets_shutdown();
     eina_log_domain_unregister(_efreet_desktop_log_dom);
 }
 

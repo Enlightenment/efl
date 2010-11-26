@@ -28,10 +28,12 @@ void *alloca (size_t);
 #include <dirent.h>
 #include <limits.h>
 
+#include <Eet.h>
 #include <Ecore_File.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
+#include "efreet_icon_private.h"
 
 #ifdef EFREET_MODULE_LOG_DOM
 #undef EFREET_MODULE_LOG_DOM
