@@ -54,19 +54,50 @@
 #  include <windows.h>
 #  undef WIN32_LEAN_AND_MEAN
 
-#  define PH(x)        HANDLE x
+typedef struct
+{
+  HANDLE thread;
+  void *val;
+} win32_thread;
+
+#  define PH(x)        win32_thread *x
 #  define PHE(x, y)    ((x) == (y))
 #  define PHS()        (HANDLE)GetCurrentThreadId()
-#  define PHC(x, f, d) ((x = CreateThread(NULL, 0, f, d, 0, NULL)) == NULL)
-#  define PHJ(x, p)                          \
-   do {                                      \
-      if (!PHE(x, PHS()))                    \
-        {                                    \
-           WaitForSingleObject(x, INFINITE); \
-           CloseHandle(x);                   \
-        }                                    \
-   } while (0)
-#  define PHA(x)       TerminateThread(x)
+
+int _ecore_thread_win32_create(win32_thread **x, LPTHREAD_START_ROUTINE f, void *d)
+{
+  win32_thread *t;
+  t = (win32_thread *)calloc(1, sizeof(win32_thread));
+  if (!t)
+    return -1;
+
+  (t)->thread = CreateThread(NULL, 0, f, d, 0, NULL);
+  if (!t->thread)
+    {
+      free(t);
+      return -1;
+    }
+  t->val = d;
+  *x = t;
+
+  return 0;
+}
+#  define PHC(x, f, d) _ecore_thread_win32_create(&(x), (LPTHREAD_START_ROUTINE)f, d)
+
+int _ecore_thread_win32_join(win32_thread *x, void **res)
+{
+  if (!PHE(x, PHS()))
+    {
+      WaitForSingleObject(x->thread, INFINITE);
+      CloseHandle(x->thread);
+    }
+  if (res) *res = x->val;
+
+  return 0;
+}
+
+#  define PHJ(x, p) _ecore_thread_win32_join(x, (void**)(&(p)))
+#  define PHA(x) TerminateThread(x->thread, 0)
 
 typedef struct
 {
@@ -84,7 +115,7 @@ typedef struct
         {                                                            \
           x->semaphore = CreateSemaphore(NULL, 0, 0x7fffffff, NULL); \
           if (x->semaphore)                                          \
-            InitializeCriticalSection(&_c->threads_count_lock_);     \
+            InitializeCriticalSection(&x->threads_count_lock);     \
           else                                                       \
             {                                                        \
               free(x);                                               \
