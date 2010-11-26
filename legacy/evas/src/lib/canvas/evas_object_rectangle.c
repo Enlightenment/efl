@@ -72,6 +72,8 @@ static const Evas_Object_Func object_func =
  * @{
  */
 
+EVAS_MEMPOOL(_mp_obj);
+
 /**
  * Adds a rectangle to the given evas.
  * @param   e The given evas.
@@ -125,7 +127,10 @@ evas_object_rectangle_new(void)
    Evas_Object_Rectangle *o;
 
    /* alloc obj private data */
-   o = calloc(1, sizeof(Evas_Object_Rectangle));
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_rectangle", Evas_Object_Rectangle, 256, NULL);
+   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Rectangle);
+   if (!o) return NULL;
+   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Rectangle);
    o->magic = MAGIC_OBJ_RECTANGLE;
    return o;
 }
@@ -142,7 +147,7 @@ evas_object_rectangle_free(Evas_Object *obj)
    MAGIC_CHECK_END();
    /* free obj */
    o->magic = 0;
-   free(o);
+   EVAS_MEMPOOL_FREE(_mp_obj, o);
 }
 
 static void

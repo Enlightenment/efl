@@ -821,7 +821,64 @@ void evas_render_object_recalc(Evas_Object *obj);
 Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
 
-         
+/****************************************************************************/
+/*****************************************/
+/********************/
+//#define MPOOL 1
+
+#ifdef MPOOL 
+typedef struct _Evas_Mempool Evas_Mempool;
+  
+struct _Evas_Mempool
+{
+  int           count;
+  int           num_allocs;
+  int           num_frees;
+  Eina_Mempool *mp;
+};
+# define EVAS_MEMPOOL(x) \
+   static Evas_Mempool x = {0, 0, 0, NULL}
+# define EVAS_MEMPOOL_INIT(x, nam, siz, cnt, ret) \
+   do { \
+     if (!x.mp) { \
+       x.mp = eina_mempool_add("chained_mempool", nam, NULL, sizeof(siz), cnt); \
+       if (!x.mp) { \
+         return ret; \
+       } \
+     } \
+   } while (0)
+# define EVAS_MEMPOOL_ALLOC(x, siz) \
+   eina_mempool_malloc(x.mp, sizeof(siz))
+# define EVAS_MEMPOOL_PREP(x, p, siz) \
+   do { \
+     x.count++; \
+     x.num_allocs++; \
+     memset(p, 0, sizeof(siz)); \
+   } while (0)
+# define EVAS_MEMPOOL_FREE(x, p) \
+   do { \
+     eina_mempool_free(x.mp, p); \
+     x.count--; \
+     x.num_frees++; \
+     if (x.count <= 0) { \
+       eina_mempool_del(x.mp); \
+       x.mp = NULL; \
+       x.count = 0; \
+     } \
+   } while (0)
+#else
+# define EVAS_MEMPOOL(x)
+# define EVAS_MEMPOOL_INIT(x, nam, siz, cnt, ret)
+# define EVAS_MEMPOOL_PREP(x, p, siz)
+# define EVAS_MEMPOOL_ALLOC(x, siz) \
+   calloc(1, sizeof(siz))
+# define EVAS_MEMPOOL_FREE(x, p) \
+   free(p)
+#endif  
+/********************/
+/*****************************************/
+/****************************************************************************/
+  
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
 

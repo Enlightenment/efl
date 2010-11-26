@@ -784,6 +784,7 @@ static const char escape_strings[] =
 "&bull;\0"     "\xe2\x80\xa2\0"
 ;
 
+EVAS_MEMPOOL(_mp_obj);
 
 /**
  * @internal
@@ -7170,7 +7171,10 @@ evas_object_textblock_new(void)
    Evas_Object_Textblock *o;
 
    /* alloc obj private data */
-   o = calloc(1, sizeof(Evas_Object_Textblock));
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_textblock", Evas_Object_Textblock, 64, NULL);
+   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Textblock);
+   if (!o) return NULL;
+   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Textblock);
    o->magic = MAGIC_OBJ_TEXTBLOCK;
    o->cursor = calloc(1, sizeof(Evas_Textblock_Cursor));
    _format_command_init();
@@ -7196,8 +7200,8 @@ evas_object_textblock_free(Evas_Object *obj)
      }
    if (o->repch) eina_stringshare_del(o->repch);
    o->magic = 0;
-   free(o);
-   _format_command_shutdown();
+   EVAS_MEMPOOL_FREE(_mp_obj, o);
+  _format_command_shutdown();
 }
 
 

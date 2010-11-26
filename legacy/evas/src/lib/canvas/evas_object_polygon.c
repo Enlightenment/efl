@@ -80,6 +80,8 @@ static const Evas_Object_Func object_func =
  * @{
  */
 
+EVAS_MEMPOOL(_mp_obj);
+
 /**
  * Adds a new evas polygon object to the given evas.
  * @param   e The given evas.
@@ -281,7 +283,10 @@ evas_object_polygon_new(void)
    Evas_Object_Polygon *o;
 
    /* alloc obj private data */
-   o = calloc(1, sizeof(Evas_Object_Polygon));
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_polygon", Evas_Object_Polygon, 32, NULL);
+   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Polygon);
+   if (!o) return NULL;
+   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Polygon);
    o->magic = MAGIC_OBJ_POLYGON;
    return o;
 }
@@ -306,7 +311,7 @@ evas_object_polygon_free(Evas_Object *obj)
 									obj->layer->evas->engine.data.context,
 									o->engine_data);
    o->magic = 0;
-   free(o);
+   EVAS_MEMPOOL_FREE(_mp_obj, o);
 }
 
 static void

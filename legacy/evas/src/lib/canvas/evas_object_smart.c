@@ -64,6 +64,9 @@ static const Evas_Object_Func object_func =
      NULL
 };
 
+EVAS_MEMPOOL(_mp_obj);
+EVAS_MEMPOOL(_mp_cb);
+
 /* public funcs */
 /**
  * Store a pointer to user data for a smart object.
@@ -428,7 +431,10 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
    MAGIC_CHECK_END();
    if (!event) return;
    if (!func) return;
-   cb = calloc(1, sizeof(Evas_Smart_Callback));
+   EVAS_MEMPOOL_INIT(_mp_cb, "evas_smart_callback", Evas_Smart_Callback, 512, );
+   cb = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Smart_Callback);
+   if (!cb) return;
+   EVAS_MEMPOOL_PREP(_mp_cb, cb, Evas_Smart_Callback);
    cb->event = eina_stringshare_add(event);
    cb->func = func;
    cb->func_data = (void *)data;
@@ -887,7 +893,7 @@ evas_object_smart_callbacks_clear(Evas_Object *obj)
 	  {
 	     o->callbacks = eina_list_remove(o->callbacks, cb);
 	     if (cb->event) eina_stringshare_del(cb->event);
-	     free(cb);
+             EVAS_MEMPOOL_FREE(_mp_cb, cb);
 	  }
      }
 }
@@ -925,7 +931,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
 	     cb = o->callbacks->data;
 	     o->callbacks = eina_list_remove(o->callbacks, cb);
 	     if (cb->event) eina_stringshare_del(cb->event);
-	     free(cb);
+             EVAS_MEMPOOL_FREE(_mp_cb, cb);
 	  }
 
 	evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
@@ -1022,7 +1028,10 @@ evas_object_smart_new(void)
    Evas_Object_Smart *o;
 
    /* alloc obj private data */
-   o = calloc(1, sizeof(Evas_Object_Smart));
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_smart", Evas_Object_Smart, 256, NULL);
+   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Smart);
+   if (!o) return NULL;
+   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Smart);
    o->magic = MAGIC_OBJ_SMART;
    return o;
 }
@@ -1039,7 +1048,7 @@ evas_object_smart_free(Evas_Object *obj)
    MAGIC_CHECK_END();
    /* free obj */
    o->magic = 0;
-   free(o);
+   EVAS_MEMPOOL_FREE(_mp_obj, o);
 }
 
 static void

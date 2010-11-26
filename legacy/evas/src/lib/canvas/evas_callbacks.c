@@ -5,6 +5,10 @@ static void evas_object_event_callback_clear(Evas_Object *obj);
 static void evas_event_callback_clear(Evas *e);
 int _evas_event_counter = 0;
 
+EVAS_MEMPOOL(_mp_fn);
+EVAS_MEMPOOL(_mp_cb);
+EVAS_MEMPOOL(_mp_pc);
+
 void
 _evas_post_event_callback_call(Evas *e)
 {
@@ -19,7 +23,7 @@ _evas_post_event_callback_call(Evas *e)
           {
              if (!pc->func((void*)pc->data, e)) skip = 1;
           }
-        free(pc);
+       EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
    _evas_unwalk(e);
 }
@@ -31,7 +35,7 @@ _evas_post_event_callback_free(Evas *e)
    
    EINA_LIST_FREE(e->post_events, pc)
      {
-        free(pc);
+       EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
    _evas_unwalk(e);
 }
@@ -51,7 +55,7 @@ evas_event_callback_list_post_free(Eina_Inlist **list)
 	if (fn->delete_me)
 	  {
              *list = eina_inlist_remove(*list, EINA_INLIST_GET(fn));
-	     free(fn);
+             EVAS_MEMPOOL_FREE(_mp_fn, fn);
 	  }
      }
 }
@@ -65,7 +69,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
    evas_event_callback_list_post_free(&obj->callbacks->callbacks);
    if (!obj->callbacks->callbacks)
      {
-        free(obj->callbacks);
+        EVAS_MEMPOOL_FREE(_mp_cb, obj->callbacks);
 	obj->callbacks = NULL;
      }
 }
@@ -79,7 +83,7 @@ evas_event_callback_clear(Evas *e)
    evas_event_callback_list_post_free(&e->callbacks->callbacks);
    if (!e->callbacks->callbacks)
      {
-        free(e->callbacks);
+        EVAS_MEMPOOL_FREE(_mp_cb, e->callbacks);
 	e->callbacks = NULL;
      }
 }
@@ -100,7 +104,7 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
    /* MEM OK */
    if (!obj->callbacks) return;
    evas_event_callback_list_post_free(&obj->callbacks->callbacks);
-   free(obj->callbacks);
+   EVAS_MEMPOOL_FREE(_mp_cb, obj->callbacks);
    obj->callbacks = NULL;
 }
 
@@ -120,7 +124,7 @@ evas_event_callback_cleanup(Evas *e)
    /* MEM OK */
    if (!e->callbacks) return;
    evas_event_callback_list_post_free(&e->callbacks->callbacks);
-   free(e->callbacks);
+   EVAS_MEMPOOL_FREE(_mp_cb, e->callbacks);
    e->callbacks = NULL;
 }
 
@@ -440,19 +444,22 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, Evas_O
 
    if (!func) return;
 
-   fn = evas_mem_calloc(sizeof(Evas_Func_Node));
+   if (!obj->callbacks)
+     {
+        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 512, );
+        obj->callbacks = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Callbacks);
+        if (!obj->callbacks) return;
+        EVAS_MEMPOOL_PREP(_mp_cb, obj->callbacks, Evas_Callbacks);
+     }
+  
+   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 2048, );
+   fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
    if (!fn) return;
+   EVAS_MEMPOOL_PREP(_mp_fn, fn, Evas_Func_Node);
    fn->func = func;
    fn->data = (void *)data;
    fn->type = type;
 
-   if (!obj->callbacks)
-     obj->callbacks = evas_mem_calloc(sizeof(Evas_Callbacks));
-   if (!obj->callbacks)
-     {
-	free(fn);
-	return;
-     }
    obj->callbacks->callbacks =
      eina_inlist_prepend(obj->callbacks->callbacks, EINA_INLIST_GET(fn));
 }
@@ -648,19 +655,22 @@ evas_event_callback_add(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, co
 
    if (!func) return;
 
-   fn = evas_mem_calloc(sizeof(Evas_Func_Node));
+   if (!e->callbacks)
+     {
+        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 512, );
+        e->callbacks = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Callbacks);
+        if (!e->callbacks) return;
+        EVAS_MEMPOOL_PREP(_mp_cb, e->callbacks, Evas_Callbacks);
+     }
+  
+   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 2048, );
+   fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
    if (!fn) return;
+   EVAS_MEMPOOL_PREP(_mp_fn, fn, Evas_Func_Node);
    fn->func = func;
    fn->data = (void *)data;
    fn->type = type;
 
-   if (!e->callbacks)
-     e->callbacks = evas_mem_calloc(sizeof(Evas_Callbacks));
-   if (!e->callbacks)
-     {
-	free(fn);
-	return;
-     }
    e->callbacks->callbacks =
      eina_inlist_prepend(e->callbacks->callbacks, EINA_INLIST_GET(fn));
 }
@@ -809,8 +819,10 @@ evas_post_event_callback_push(Evas *e, Evas_Object_Event_Post_Cb func, const voi
    return;
    MAGIC_CHECK_END();
    
-   pc = evas_mem_calloc(sizeof(Evas_Post_Callback));
+   EVAS_MEMPOOL_INIT(_mp_pc, "evas_post_callback", Evas_Post_Callback, 64, );
+   pc = EVAS_MEMPOOL_ALLOC(_mp_pc, Evas_Post_Callback);
    if (!pc) return;
+   EVAS_MEMPOOL_PREP(_mp_pc, pc, Evas_Post_Callback);
    if (e->delete_me) return;
    
    pc->func = func;

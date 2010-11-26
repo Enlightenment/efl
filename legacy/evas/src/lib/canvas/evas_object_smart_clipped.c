@@ -67,7 +67,7 @@ evas_object_smart_clipped_smart_add(Evas_Object *obj)
 
    cso = evas_object_smart_data_get(obj);
    if (!cso)
-     cso = malloc(sizeof(*cso)); /* users can provide it or realloc() later */
+     cso = calloc(1, sizeof(*cso)); /* users can provide it or realloc() later */
 
    cso->evas = evas_object_evas_get(obj);
    clipper = evas_object_rectangle_add(cso->evas);

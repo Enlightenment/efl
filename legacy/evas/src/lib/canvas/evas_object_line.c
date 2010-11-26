@@ -78,6 +78,8 @@ static const Evas_Object_Func object_func =
  * @{
  */
 
+EVAS_MEMPOOL(_mp_obj);
+
 /**
  * Adds a new evas line object to the given evas.
  * @param   e The given evas.
@@ -253,7 +255,10 @@ evas_object_line_new(void)
    Evas_Object_Line *o;
 
    /* alloc obj private data */
-   o = calloc(1, sizeof(Evas_Object_Line));
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_line", Evas_Object_Line, 16, NULL);
+   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Line);
+   if (!o) return NULL;
+   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Line);
    o->magic = MAGIC_OBJ_LINE;
    o->cur.x1 = 0;
    o->cur.y1 = 0;
