@@ -46,7 +46,7 @@
 #define IF_FREE_LIST(list, free_cb) do { \
     void *_data; \
     EINA_LIST_FREE(list, _data) \
-        free_cb(_data); \
+    free_cb(_data); \
     list = NULL; \
 } while (0)
 
@@ -126,50 +126,50 @@ typedef struct _Efreet_Cache_Theme Efreet_Cache_Theme;
 
 struct _Efreet_Cache_Theme
 {
-   struct {
-      unsigned char major;
-      unsigned char minor;
-   } version;
+    struct {
+        unsigned char major;
+        unsigned char minor;
+    } version;
 
-   Eina_Hash *icons;
+    Eina_Hash *icons;
 };
 
 struct _Efreet_Cache_Icon
 {
-   const char *theme;
+    const char *theme;
 
-   Efreet_Cache_Icon_Element **icons;
-   unsigned int icons_count;
+    Efreet_Cache_Icon_Element **icons;
+    unsigned int icons_count;
 
-   unsigned char free:1;
+    unsigned char free:1;
 };
 
 struct _Efreet_Cache_Icon_Element
 {
-   const char **paths;          /* possible paths for icon */
-   unsigned int paths_count;
+    const char **paths;          /* possible paths for icon */
+    unsigned int paths_count;
 
-   unsigned short type;         /* size type of icon */
+    unsigned short type;         /* size type of icon */
 
-   unsigned short normal;       /* The size for this icon */
-   unsigned short min;          /* The minimum size for this icon */
-   unsigned short max;          /* The maximum size for this icon */
+    unsigned short normal;       /* The size for this icon */
+    unsigned short min;          /* The minimum size for this icon */
+    unsigned short max;          /* The maximum size for this icon */
 };
 
 struct _Efreet_Cache_Fallback_Icon
 {
 #if 0
-   const char *name;
+    const char *name;
 #endif
-   const char *theme;
+    const char *theme;
 #if 0
-   int         context; /* the type of icon */
+    int         context; /* the type of icon */
 #endif
 
-   const char **icons;
-   unsigned int icons_count;
+    const char **icons;
+    unsigned int icons_count;
 
-   unsigned char free:1;
+    unsigned char free:1;
 };
 #endif
 
