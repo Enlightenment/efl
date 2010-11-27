@@ -29,7 +29,7 @@ dump(Efreet_Icon_Theme *theme, Eet_File *ef)
     Efreet_Cache_Theme *cache;
     Eina_Iterator *it;
     const char *key;
-    unsigned int count;
+    unsigned int count = 0;
     double start, avg;
 
     start = ecore_time_get();
@@ -62,7 +62,7 @@ dump(Efreet_Icon_Theme *theme, Eet_File *ef)
 
     start = ecore_time_get() - start;
     avg = start / count;
-    printf("read: %s - %i paths (time: %f) (avg %f)\n", theme->name.internal, count, start, avg);
+    printf("read: %s - %u paths (time: %f) (avg %f)\n", theme->name.internal, count, start, avg);
 }
 
 int
