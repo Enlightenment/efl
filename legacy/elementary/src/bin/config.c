@@ -718,11 +718,19 @@ _profile_use(void            *data,
 {
    Evas_Object *li;
    const char *selection;
+   const char *profile;
 
    li = data;
    selection = elm_list_item_data_get(elm_list_selected_item_get(li));
+   profile = elm_profile_current_get();
 
-   if (!strcmp(elm_profile_current_get(), selection))
+   if (!profile)
+     {
+        fprintf(stderr, "No profile currently set!");
+        return;
+     }
+
+   if (!strcmp(profile, selection))
      return;
 
    elm_config_save(); /* dump config into old profile's data dir */
