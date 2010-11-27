@@ -1,6 +1,9 @@
 #ifndef EFREET_PRIVATE_H
 #define EFREET_PRIVATE_H
 
+#ifdef ICON_CACHE
+# include <Eet.h>
+#endif
 
 /**
  * @file efreet_private.h
