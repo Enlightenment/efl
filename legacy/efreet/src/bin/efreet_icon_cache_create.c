@@ -17,6 +17,7 @@
 
 #include "Efreet.h"
 #include "efreet_private.h"
+#include "efreet_cache_private.h"
 
 static const char *exts[] = { ".png", ".xpm", ".svg", NULL };
 

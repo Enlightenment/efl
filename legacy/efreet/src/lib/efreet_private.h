@@ -1,10 +1,6 @@
 #ifndef EFREET_PRIVATE_H
 #define EFREET_PRIVATE_H
 
-#ifdef ICON_CACHE
-# include <Eet.h>
-#endif
-
 /**
  * @file efreet_private.h
  * @brief Contains methods and defines that are private to the Efreet
@@ -227,8 +223,6 @@ Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 #ifdef ICON_CACHE
 EAPI const char *efreet_icon_cache_file(void);
 
-EAPI Eet_Data_Descriptor *efreet_icon_theme_edd(void);
-EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd(void);
 EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
 EAPI void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
