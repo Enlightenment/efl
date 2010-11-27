@@ -44,14 +44,14 @@ term_handler(int sig __UNUSED__, siginfo_t * info __UNUSED__, void *data __UNUSE
 static void
 catch_sigterm(void)
 {
-   struct sigaction act;
+    struct sigaction act;
 
-   act.sa_sigaction = term_handler;
-   act.sa_flags = SA_RESTART | SA_SIGINFO;
-   sigemptyset(&act.sa_mask);
+    act.sa_sigaction = term_handler;
+    act.sa_flags = SA_RESTART | SA_SIGINFO;
+    sigemptyset(&act.sa_mask);
 
-   if (sigaction(SIGTERM, &act, NULL) < 0)
-     perror("sigaction"); /* It's bad if we can't deal with SIGTERM, but not dramatic */
+    if (sigaction(SIGTERM, &act, NULL) < 0)
+        perror("sigaction"); /* It's bad if we can't deal with SIGTERM, but not dramatic */
 }
 
 static int
@@ -68,8 +68,8 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
 
     if (verbose)
     {
-         printf("FOUND: %s\n", path);
-         if (file_id) printf(" (id): %s\n", file_id);
+        printf("FOUND: %s\n", path);
+        if (file_id) printf(" (id): %s\n", file_id);
     }
     ext = strrchr(path, '.');
     if (!ext || (strcmp(ext, ".desktop") && strcmp(ext, ".directory"))) return 1;
