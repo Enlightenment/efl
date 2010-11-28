@@ -12,6 +12,7 @@
 #include <errno.h>
 
 #include <Eina.h>
+#include <Eet.h>
 #include <Ecore.h>
 #include <Ecore_File.h>
 
