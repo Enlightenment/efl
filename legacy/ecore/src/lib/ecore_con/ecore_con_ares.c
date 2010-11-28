@@ -435,7 +435,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
       case ARES_SUCCESS:
         if (!hostent->h_addr_list[0])
           {
-             fprintf(stderr, "No IP found\n");
+             ERR("No IP found");
              goto on_error;
           }
 
@@ -484,7 +484,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
            }
 
            default:
-             fprintf(stderr, "Unknown addrtype %i\n", hostent->h_addrtype);
+             ERR("Unknown addrtype %i", hostent->h_addrtype);
              goto on_error;
           }
 
@@ -555,8 +555,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
         goto on_error;
 
       default:
-        fprintf(stderr,
-                "Unknown status returned by c-ares: %i assuming error\n",
+        ERR("Unknown status returned by c-ares: %i assuming error",
                 status);
         goto on_error;
      }
@@ -564,7 +563,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
    return;
 
 on_mem_error:
-   fprintf(stderr, "Not enough memory\n");
+   ERR("Not enough memory");
 
 on_error:
    arg->done_cb(arg->data, NULL);
