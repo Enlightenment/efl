@@ -121,8 +121,8 @@
  * To programmatically (un)select a item use elm_gengrid_item_selected_set().
  * To get its selected state use elm_gengrid_item_selected_get(). To make a
  * item disabled (unable to be selected and appear differently) use
- * elm_gengrid_item_disable_set() to set this and
- * elm_gengrid_item_disable_get() to get the disabled state.
+ * elm_gengrid_item_disabled_set() to set this and
+ * elm_gengrid_item_disabled_get() to get the disabled state.
  *
  * Cells will only call their selection func and callback when first becoming
  * selected. Any further clicks will do nothing, unless you enable always

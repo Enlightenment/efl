@@ -2336,7 +2336,7 @@ elm_object_focus_direction_go(Evas_Object *obj,
  * @ingroup Focus
  */
 EAPI Eina_Bool
-elm_focus_highlight_enable_get(void)
+elm_focus_highlight_enabled_get(void)
 {
    return _elm_config->focus_highlight_enable;
 }
@@ -2349,7 +2349,7 @@ elm_focus_highlight_enable_get(void)
  * @ingroup Focus
  */
 EAPI void
-elm_focus_highlight_enable_set(Eina_Bool enable)
+elm_focus_highlight_enabled_set(Eina_Bool enable)
 {
    _elm_config->focus_highlight_enable = !!enable;
 }
