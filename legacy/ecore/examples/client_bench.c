@@ -58,6 +58,7 @@ int main(void)
    ecore_con_init();
 
    eina_log_domain_level_set("ecore_con", EINA_LOG_LEVEL_ERR);
+   eina_log_domain_level_set("eina", EINA_LOG_LEVEL_ERR);
    counter = eina_counter_new("client");
    eina_counter_start(counter);
    done = ecore_time_get();

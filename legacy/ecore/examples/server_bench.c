@@ -23,7 +23,7 @@ Eina_Bool
 _del(void *data, int type, Ecore_Con_Event_Client_Del *ev)
 {
    ++del;
-//   printf("Disconnected #%i!\n", del);
+   printf("Disconnected #%i!\n", del);
    if (add == del)
      ecore_main_loop_quit();
    return ECORE_CALLBACK_RENEW;
@@ -35,6 +35,7 @@ int main(int argc, const char *argv[])
    ecore_con_init();
    ecore_app_args_set(argc, argv);
    eina_log_domain_level_set("ecore_con", EINA_LOG_LEVEL_ERR);
+   eina_log_domain_level_set("eina", EINA_LOG_LEVEL_ERR);
 
 
 /* to use a PEM certificate with TLS and SSL3, uncomment the lines below */
