@@ -1096,6 +1096,59 @@ elm_object_scale_get(const Evas_Object *obj)
 }
 
 /**
+ * Get the global scaling factor
+ *
+ * This gets the globally configured scaling factor that is applied to all
+ * objects.
+ *
+ * @return The scaling factor
+ * @ingroup Scaling
+ */
+EAPI double
+elm_scale_get(void)
+{
+   return _elm_config->scale;
+}
+
+/**
+ * Set the global scaling factor
+ *
+ * This sets the globally configured scaling factor that is applied to all
+ * objects.
+ *
+ * @param scale The scaling factor to set
+ * @ingroup Scaling
+ */
+EAPI void
+elm_scale_set(double scale)
+{
+   if (_elm_config->scale == scale) return;
+   _elm_config->scale = scale;
+   _elm_rescale();
+}
+
+/**
+ * Set the global scaling factor for all applications on the display
+ *
+ * This sets the globally configured scaling factor that is applied to all
+ * objects for all applications.
+ * @param scale The scaling factor to set
+ * @ingroup Scaling
+ */
+EAPI void
+elm_scale_all_set(double scale)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int scale_i = (unsigned int)(scale * 1000.0);
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &scale_i, 1);
+#endif
+}
+
+/**
  * @defgroup Styles Styles
  *
  * Widgets can have different styles of look. These generic API's set
@@ -1163,59 +1216,6 @@ EAPI Eina_Bool
 elm_object_disabled_get(const Evas_Object *obj)
 {
    return elm_widget_disabled_get(obj);
-}
-
-/**
- * Get the global scaling factor
- *
- * This gets the globally configured scaling factor that is applied to all
- * objects.
- *
- * @return The scaling factor
- * @ingroup Scaling
- */
-EAPI double
-elm_scale_get(void)
-{
-   return _elm_config->scale;
-}
-
-/**
- * Set the global scaling factor
- *
- * This sets the globally configured scaling factor that is applied to all
- * objects.
- *
- * @param scale The scaling factor to set
- * @ingroup Scaling
- */
-EAPI void
-elm_scale_set(double scale)
-{
-   if (_elm_config->scale == scale) return;
-   _elm_config->scale = scale;
-   _elm_rescale();
-}
-
-/**
- * Set the global scaling factor for all applications on the display
- *
- * This sets the globally configured scaling factor that is applied to all
- * objects for all applications.
- * @param scale The scaling factor to set
- * @ingroup Scaling
- */
-EAPI void
-elm_scale_all_set(double scale)
-{
-#ifdef HAVE_ELEMENTARY_X
-   static Ecore_X_Atom atom = 0;
-   unsigned int scale_i = (unsigned int)(scale * 1000.0);
-
-   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
-   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                  atom, &scale_i, 1);
-#endif
 }
 
 /**
@@ -1780,6 +1780,32 @@ elm_finger_size_all_set(Evas_Coord size)
 }
 
 /**
+ * Adjust size of an element for finger usage
+ *
+ * This takes width and height sizes (in pixels) as input and a size multiple
+ * (which is how many fingers you want to place within the area), and adjusts
+ * the size tobe large enough to accommodate finger. On return the w and h
+ * sizes poiner do by these parameters will be modified.
+ *
+ * @param times_w How many fingers should fit horizontally
+ * @param w Pointer to the width size to adjust
+ * @param times_h How many fingers should fit vertically
+ * @param h Pointer to the height size to adjust
+ * @ingroup Fingers
+ */
+EAPI void
+elm_coords_finger_size_adjust(int         times_w,
+                              Evas_Coord *w,
+                              int         times_h,
+                              Evas_Coord *h)
+{
+   if ((w) && (*w < (_elm_config->finger_size * times_w)))
+     *w = _elm_config->finger_size * times_w;
+   if ((h) && (*h < (_elm_config->finger_size * times_h)))
+     *h = _elm_config->finger_size * times_h;
+}
+
+/**
  * @defgroup Caches Caches
  *
  * These are functions which let one fine-tune some cache values for
@@ -2086,32 +2112,6 @@ elm_edje_collection_cache_all_set(int size)
    ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
                                   atom, &size_i, 1);
 #endif
-}
-
-/**
- * Adjust size of an element for finger usage
- *
- * This takes width and height sizes (in pixels) as input and a size multiple
- * (which is how many fingers you want to place within the area), and adjusts
- * the size tobe large enough to accommodate finger. On return the w and h
- * sizes poiner do by these parameters will be modified.
- *
- * @param times_w How many fingers should fit horizontally
- * @param w Pointer to the width size to adjust
- * @param times_h How many fingers should fit vertically
- * @param h Pointer to the height size to adjust
- * @ingroup Fingers
- */
-EAPI void
-elm_coords_finger_size_adjust(int         times_w,
-                              Evas_Coord *w,
-                              int         times_h,
-                              Evas_Coord *h)
-{
-   if ((w) && (*w < (_elm_config->finger_size * times_w)))
-     *w = _elm_config->finger_size * times_w;
-   if ((h) && (*h < (_elm_config->finger_size * times_h)))
-     *h = _elm_config->finger_size * times_h;
 }
 
 /**
