@@ -1516,7 +1516,7 @@ eina_log_print_unlocked(int domain,
         }
 
       tmp = wfmt;
-      while (strchr(tmp, "%"))
+      while (strchr(tmp, '%'))
         {
            tmp++;
            if (*tmp == 'z')
