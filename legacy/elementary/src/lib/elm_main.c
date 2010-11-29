@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#include <dlfcn.h>      /* dlopen,dlclose,etc */
+#include <dlfcn.h> /* dlopen,dlclose,etc */
 
 #ifdef HAVE_CRT_EXTERNS_H
 # include <crt_externs.h>
@@ -25,7 +25,7 @@ _elm_dangerous_call_check(const char *call)
 {
    char buf[256];
    const char *eval;
-   
+
    snprintf(buf, sizeof(buf), "%i.%i.%i.%i", VMAJ, VMIN, VMIC, VREV);
    eval = getenv("ELM_NO_FINGER_WAGGLING");
    if ((eval) && (!strcmp(eval, buf)))
@@ -286,7 +286,9 @@ myapp_CFLAGS =
  *
  */
 
-static Eina_Bool _elm_signal_exit(void *data, int ev_type, void *ev);
+static Eina_Bool _elm_signal_exit(void *data,
+                                  int   ev_type,
+                                  void *ev);
 
 char *_elm_appname = NULL;
 const char *_elm_data_dir = NULL;
@@ -303,7 +305,9 @@ static Ecore_Event_Handler *_elm_exit_handler = NULL;
 static Eina_Bool quicklaunch_on = 0;
 
 static Eina_Bool
-_elm_signal_exit(void *data __UNUSED__, int ev_type __UNUSED__, void *ev __UNUSED__)
+_elm_signal_exit(void *data  __UNUSED__,
+                 int ev_type __UNUSED__,
+                 void *ev    __UNUSED__)
 {
    elm_exit();
    return ECORE_CALLBACK_PASS_ON;
@@ -322,15 +326,16 @@ _elm_rescale(void)
 
 /**
  * Inititalise Elementary
- * 
+ *
  * @return The init counter value.
- * 
+ *
  * This call is exported only for use by the ELM_MAIN() macro. There is no
  * need to use this if you use this macro (which is highly advisable).
  * @ingroup General
  */
 EAPI int
-elm_init(int argc, char **argv)
+elm_init(int    argc,
+         char **argv)
 {
    _elm_init_count++;
    if (_elm_init_count > 1) return _elm_init_count;
@@ -343,7 +348,7 @@ elm_init(int argc, char **argv)
  * Shut down Elementary
  *
  * @return The init counter value.
- * 
+ *
  * This should be called at the end of your application just before it ceases
  * to do any more processing. This will clean up any permanent resources your
  * application may have allocated via Elementary that would otherwise persist
@@ -371,7 +376,7 @@ elm_need_e_dbus(void)
    e_dbus_init();
    e_hal_init();
    return EINA_TRUE;
-#else  
+#else
    return EINA_FALSE;
 #endif
 }
@@ -402,7 +407,7 @@ elm_need_efreet(void)
     /*
      {
         Eina_List **list;
-        
+
         list = efreet_icon_extra_list_get();
         if (list)
           {
@@ -445,18 +450,19 @@ elm_quicklaunch_mode_get(void)
 }
 
 EAPI int
-elm_quicklaunch_init(int argc, char **argv)
+elm_quicklaunch_init(int    argc,
+                     char **argv)
 {
    char buf[PATH_MAX], *s;
-   
+
    _elm_ql_init_count++;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    eina_init();
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
    if (!_elm_log_dom)
      {
-	EINA_LOG_ERR("could not register elementary log domain.");
-	_elm_log_dom = EINA_LOG_DOMAIN_GLOBAL;
+        EINA_LOG_ERR("could not register elementary log domain.");
+        _elm_log_dom = EINA_LOG_DOMAIN_GLOBAL;
      }
 
    eet_init();
@@ -475,44 +481,44 @@ elm_quicklaunch_init(int argc, char **argv)
 
    if (!_elm_data_dir)
      {
-	s = getenv("ELM_DATA_DIR");
-	_elm_data_dir = eina_stringshare_add(s);
+        s = getenv("ELM_DATA_DIR");
+        _elm_data_dir = eina_stringshare_add(s);
      }
    if (!_elm_data_dir)
      {
-	s = getenv("ELM_PREFIX");
-	if (s)
-	  {
-	     snprintf(buf, sizeof(buf), "%s/share/elementary", s);
-	     _elm_data_dir = eina_stringshare_add(buf);
-	  }
+        s = getenv("ELM_PREFIX");
+        if (s)
+          {
+             snprintf(buf, sizeof(buf), "%s/share/elementary", s);
+             _elm_data_dir = eina_stringshare_add(buf);
+          }
      }
    if (!_elm_lib_dir)
      {
-	s = getenv("ELM_LIB_DIR");
-	_elm_lib_dir = eina_stringshare_add(s);
+        s = getenv("ELM_LIB_DIR");
+        _elm_lib_dir = eina_stringshare_add(s);
      }
    if (!_elm_lib_dir)
      {
-	s = getenv("ELM_PREFIX");
-	if (s)
-	  {
-	     snprintf(buf, sizeof(buf), "%s/lib", s);
-	     _elm_lib_dir = eina_stringshare_add(buf);
-	  }
+        s = getenv("ELM_PREFIX");
+        if (s)
+          {
+             snprintf(buf, sizeof(buf), "%s/lib", s);
+             _elm_lib_dir = eina_stringshare_add(buf);
+          }
      }
 #ifdef HAVE_DLADDR
    if ((!_elm_data_dir) || (!_elm_lib_dir))
      {
-	Dl_info elementary_dl;
-	// libelementary.so/../../share/elementary/
-	if (dladdr(elm_init, &elementary_dl))
-	  {
-	     char *dir, *dir2;
+        Dl_info elementary_dl;
+        // libelementary.so/../../share/elementary/
+        if (dladdr(elm_init, &elementary_dl))
+          {
+             char *dir, *dir2;
 
-	     dir = ecore_file_dir_get(elementary_dl.dli_fname);
-	     if (dir)
-	       {
+             dir = ecore_file_dir_get(elementary_dl.dli_fname);
+             if (dir)
+               {
                   if (!_elm_lib_dir)
                     {
                        if (ecore_file_is_dir(dir))
@@ -529,9 +535,9 @@ elm_quicklaunch_init(int argc, char **argv)
                             free(dir2);
                          }
                     }
-		  free(dir);
-	       }
-	  }
+                  free(dir);
+               }
+          }
      }
 #endif
    if (!_elm_data_dir)
@@ -548,7 +554,8 @@ elm_quicklaunch_init(int argc, char **argv)
 }
 
 EAPI int
-elm_quicklaunch_sub_init(int argc, char **argv)
+elm_quicklaunch_sub_init(int    argc,
+                         char **argv)
 {
    _elm_sub_init_count++;
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
@@ -621,7 +628,7 @@ elm_quicklaunch_sub_shutdown(void)
             ENGINE_COMPARE(ELM_SOFTWARE_WIN32) ||
             ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
 #undef ENGINE_COMPARE
-           evas_cserve_disconnect();
+          evas_cserve_disconnect();
         edje_shutdown();
         evas_shutdown();
      }
@@ -640,9 +647,9 @@ elm_quicklaunch_shutdown(void)
 
    free(_elm_appname);
    _elm_appname = NULL;
-   
+
    _elm_config_shutdown();
-   
+
    ecore_event_handler_del(_elm_exit_handler);
    _elm_exit_handler = NULL;
 
@@ -656,12 +663,12 @@ elm_quicklaunch_shutdown(void)
 
    if ((_elm_log_dom > -1) && (_elm_log_dom != EINA_LOG_DOMAIN_GLOBAL))
      {
-	eina_log_domain_unregister(_elm_log_dom);
-	_elm_log_dom = -1;
+        eina_log_domain_unregister(_elm_log_dom);
+        _elm_log_dom = -1;
      }
 
    _elm_widget_type_clear();
-   
+
    eina_shutdown();
    return _elm_ql_init_count;
 }
@@ -669,11 +676,11 @@ elm_quicklaunch_shutdown(void)
 EAPI void
 elm_quicklaunch_seed(void)
 {
-#ifndef SEMI_BROKEN_QUICKLAUNCH  
+#ifndef SEMI_BROKEN_QUICKLAUNCH
    if (quicklaunch_on)
      {
         Evas_Object *win, *bg, *bt;
-        
+
         win = elm_win_add(NULL, "seed", ELM_WIN_BASIC);
         bg = elm_bg_add(win);
         elm_win_resize_object_add(win, bg);
@@ -697,53 +704,55 @@ elm_quicklaunch_seed(void)
           }
         ecore_main_loop_iterate();
      }
-#endif   
+#endif
 }
 
 static void *qr_handle = NULL;
-static int (*qr_main) (int argc, char **argv) = NULL;
+static int (*qr_main)(int    argc,
+                      char **argv) = NULL;
 
 EAPI Eina_Bool
-elm_quicklaunch_prepare(int argc __UNUSED__, char **argv)
+elm_quicklaunch_prepare(int argc __UNUSED__,
+                        char   **argv)
 {
 #ifdef HAVE_FORK
    char *exe = elm_quicklaunch_exe_path_get(argv[0]);
    if (!exe)
      {
-	ERR("requested quicklaunch binary '%s' does not exist\n", argv[0]);
-	return EINA_FALSE;
+        ERR("requested quicklaunch binary '%s' does not exist\n", argv[0]);
+        return EINA_FALSE;
      }
    else
      {
-	char *exe2, *p;
-	char *exename;
+        char *exe2, *p;
+        char *exename;
 
-	exe2 = malloc(strlen(exe) + 1 + 10);
-	strcpy(exe2, exe);
-	p = strrchr(exe2, '/');
-	if (p) p++;
-	else p = exe2;
-	exename = alloca(strlen(p) + 1);
-	strcpy(exename, p);
-	*p = 0;
-	strcat(p, "../lib/");
-	strcat(p, exename);
-	strcat(p, ".so");
-	if (!access(exe2, R_OK | X_OK))
-	  {
-	     free(exe);
-	     exe = exe2;
-	  }
-	else
-	  free(exe2);
+        exe2 = malloc(strlen(exe) + 1 + 10);
+        strcpy(exe2, exe);
+        p = strrchr(exe2, '/');
+        if (p) p++;
+        else p = exe2;
+        exename = alloca(strlen(p) + 1);
+        strcpy(exename, p);
+        *p = 0;
+        strcat(p, "../lib/");
+        strcat(p, exename);
+        strcat(p, ".so");
+        if (!access(exe2, R_OK | X_OK))
+          {
+             free(exe);
+             exe = exe2;
+          }
+        else
+          free(exe2);
      }
    qr_handle = dlopen(exe, RTLD_NOW | RTLD_GLOBAL);
    if (!qr_handle)
      {
         fprintf(stderr, "dlerr: %s\n", dlerror());
-	WRN("dlopen('%s') failed: %s", exe, dlerror());
-	free(exe);
-	return EINA_FALSE;
+        WRN("dlopen('%s') failed: %s", exe, dlerror());
+        free(exe);
+        return EINA_FALSE;
      }
    INF("dlopen('%s') = %p", exe, qr_handle);
    free(exe);
@@ -751,10 +760,10 @@ elm_quicklaunch_prepare(int argc __UNUSED__, char **argv)
    INF("dlsym(%p, 'elm_main') = %p", qr_handle, qr_main);
    if (!qr_main)
      {
-	WRN("not quicklauncher capable: no elm_main in '%s'", exe);
-	dlclose(qr_handle);
-	qr_handle = NULL;
-	return EINA_FALSE;
+        WRN("not quicklauncher capable: no elm_main in '%s'", exe);
+        dlclose(qr_handle);
+        qr_handle = NULL;
+        return EINA_FALSE;
      }
    return EINA_TRUE;
 #else
@@ -785,10 +794,15 @@ save_env(void)
      environ[i] = strdup(oldenv[i]);
    environ[i] = NULL;
 }
+
 #endif
 
 EAPI Eina_Bool
-elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (void *data), void *postfork_data)
+elm_quicklaunch_fork(int    argc,
+                     char **argv,
+                     char  *cwd,
+                     void (postfork_func) (void *data),
+                     void  *postfork_data)
 {
 #ifdef HAVE_FORK
    pid_t child;
@@ -800,36 +814,36 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
    // need to accept current environment from elementary_run
    if (!qr_main)
      {
-	int i;
-	char **args;
+        int i;
+        char **args;
 
-	child = fork();
-	if (child > 0) return EINA_TRUE;
-	else if (child < 0)
-	  {
-	     perror("could not fork");
-	     return EINA_FALSE;
-	  }
-	setsid();
-	if (chdir(cwd) != 0)
-	  perror("could not chdir");
-	args = alloca((argc + 1) * sizeof(char *));
-	for (i = 0; i < argc; i++) args[i] = argv[i];
-	args[argc] = NULL;
-	WRN("%s not quicklaunch capable, fallback...", argv[0]);
-	execvp(argv[0], args);
-	ERR("failed to execute '%s': %s", argv[0], strerror(errno));
-	exit(-1);
+        child = fork();
+        if (child > 0) return EINA_TRUE;
+        else if (child < 0)
+          {
+             perror("could not fork");
+             return EINA_FALSE;
+          }
+        setsid();
+        if (chdir(cwd) != 0)
+          perror("could not chdir");
+        args = alloca((argc + 1) * sizeof(char *));
+        for (i = 0; i < argc; i++) args[i] = argv[i];
+        args[argc] = NULL;
+        WRN("%s not quicklaunch capable, fallback...", argv[0]);
+        execvp(argv[0], args);
+        ERR("failed to execute '%s': %s", argv[0], strerror(errno));
+        exit(-1);
      }
    child = fork();
    if (child > 0) return EINA_TRUE;
    else if (child < 0)
      {
-	perror("could not fork");
-	return EINA_FALSE;
+        perror("could not fork");
+        return EINA_FALSE;
      }
    if (postfork_func) postfork_func(postfork_data);
-   
+
    if (quicklaunch_on)
      {
 #ifdef SEMI_BROKEN_QUICKLAUNCH
@@ -853,7 +867,7 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
         _elm_module_init();
 #endif
      }
-   
+
    setsid();
    if (chdir(cwd) != 0)
      perror("could not chdir");
@@ -863,12 +877,12 @@ elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (voi
    save_env();
    if (argv)
      {
-	char *lastarg, *p;
+        char *lastarg, *p;
 
-	ecore_app_args_get(&real_argc, &real_argv);
-	lastarg = real_argv[real_argc - 1] + strlen(real_argv[real_argc - 1]);
-	for (p = real_argv[0]; p < lastarg; p++) *p = 0;
-	strcpy(real_argv[0], argv[0]);
+        ecore_app_args_get(&real_argc, &real_argv);
+        lastarg = real_argv[real_argc - 1] + strlen(real_argv[real_argc - 1]);
+        for (p = real_argv[0]; p < lastarg; p++) *p = 0;
+        strcpy(real_argv[0], argv[0]);
      }
    ecore_app_args_set(argc, (const char **)argv);
    ret = qr_main(argc, argv);
@@ -890,15 +904,16 @@ elm_quicklaunch_cleanup(void)
 #ifdef HAVE_FORK
    if (qr_handle)
      {
-	dlclose(qr_handle);
-	qr_handle = NULL;
-	qr_main = NULL;
+        dlclose(qr_handle);
+        qr_handle = NULL;
+        qr_main = NULL;
      }
 #endif
 }
 
 EAPI int
-elm_quicklaunch_fallback(int argc, char **argv)
+elm_quicklaunch_fallback(int    argc,
+                         char **argv)
 {
    int ret;
    elm_quicklaunch_init(argc, argv);
@@ -922,37 +937,37 @@ elm_quicklaunch_exe_path_get(const char *exe)
    if ((exe[0] == '.') && (exe[1] == '.') && (exe[2] == '/')) return strdup(exe);
    if (!path)
      {
-	const char *p, *pp;
-	char *buf2;
-	path = getenv("PATH");
-	buf2 = alloca(strlen(path) + 1);
-	p = path;
-	pp = p;
-	for (;;)
-	  {
-	     if ((*p == ':') || (!*p))
-	       {
-		  int len;
+        const char *p, *pp;
+        char *buf2;
+        path = getenv("PATH");
+        buf2 = alloca(strlen(path) + 1);
+        p = path;
+        pp = p;
+        for (;; )
+          {
+             if ((*p == ':') || (!*p))
+               {
+                  int len;
 
-		  len = p - pp;
-		  strncpy(buf2, pp, len);
-		  buf2[len] = 0;
-		  pathlist = eina_list_append(pathlist, eina_stringshare_add(buf2));
-		  if (!*p) break;
-		  p++;
-		  pp = p;
-	       }
-	     else
-	       {
-		  if (!*p) break;
-		  p++;
-	       }
-	  }
+                  len = p - pp;
+                  strncpy(buf2, pp, len);
+                  buf2[len] = 0;
+                  pathlist = eina_list_append(pathlist, eina_stringshare_add(buf2));
+                  if (!*p) break;
+                  p++;
+                  pp = p;
+               }
+             else
+               {
+                  if (!*p) break;
+                  p++;
+               }
+          }
      }
    EINA_LIST_FOREACH(pathlist, l, pathitr)
      {
-	snprintf(buf, sizeof(buf), "%s/%s", pathitr, exe);
-	if (!access(buf, R_OK | X_OK)) return strdup(buf);
+        snprintf(buf, sizeof(buf), "%s/%s", pathitr, exe);
+        if (!access(buf, R_OK | X_OK)) return strdup(buf);
      }
    return NULL;
 }
@@ -984,7 +999,6 @@ elm_exit(void)
    ecore_main_loop_quit();
 }
 
-
 /**
  * Set new policy value.
  *
@@ -1003,7 +1017,8 @@ elm_exit(void)
  *         value might be enforced).
  */
 EAPI Eina_Bool
-elm_policy_set(unsigned int policy, int value)
+elm_policy_set(unsigned int policy,
+               int          value)
 {
    Elm_Event_Policy_Changed *ev;
 
@@ -1061,7 +1076,8 @@ elm_policy_get(unsigned int policy)
  * @ingroup Scaling
  */
 EAPI void
-elm_object_scale_set(Evas_Object *obj, double scale)
+elm_object_scale_set(Evas_Object *obj,
+                     double       scale)
 {
    elm_widget_scale_set(obj, scale);
 }
@@ -1095,7 +1111,8 @@ elm_object_scale_get(const Evas_Object *obj)
  * @ingroup Styles
  */
 EAPI void
-elm_object_style_set(Evas_Object *obj, const char *style)
+elm_object_style_set(Evas_Object *obj,
+                     const char  *style)
 {
    elm_widget_style_set(obj, style);
 }
@@ -1127,7 +1144,8 @@ elm_object_style_get(const Evas_Object *obj)
  * @ingroup Styles
  */
 EAPI void
-elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+elm_object_disabled_set(Evas_Object *obj,
+                        Eina_Bool    disabled)
 {
    elm_widget_disabled_set(obj, disabled);
 }
@@ -1181,7 +1199,7 @@ elm_scale_set(double scale)
 
 /**
  * Set the global scaling factor for all applications on the display
- * 
+ *
  * This sets the globally configured scaling factor that is applied to all
  * objects for all applications.
  * @param scale The scaling factor to set
@@ -1197,7 +1215,7 @@ elm_scale_all_set(double scale)
    if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_SCALE");
    ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
                                   atom, &scale_i, 1);
-#endif   
+#endif
 }
 
 /**
@@ -1288,7 +1306,8 @@ elm_profile_current_get(void)
  * @note You must free it with elm_profile_dir_free().
  */
 EAPI const char *
-elm_profile_dir_get(const char *profile, Eina_Bool is_user)
+elm_profile_dir_get(const char *profile,
+                    Eina_Bool   is_user)
 {
    return _elm_config_profile_dir_get(profile, is_user);
 }
@@ -1735,7 +1754,7 @@ elm_finger_size_set(Evas_Coord size)
 {
    if (_elm_config->finger_size == size) return;
    _elm_config->finger_size = size;
-  _elm_rescale();
+   _elm_rescale();
 }
 
 /**
@@ -2084,7 +2103,10 @@ elm_edje_collection_cache_all_set(int size)
  * @ingroup Fingers
  */
 EAPI void
-elm_coords_finger_size_adjust(int times_w, Evas_Coord *w, int times_h, Evas_Coord *h)
+elm_coords_finger_size_adjust(int         times_w,
+                              Evas_Coord *w,
+                              int         times_h,
+                              Evas_Coord *h)
 {
    if ((w) && (*w < (_elm_config->finger_size * times_w)))
      *w = _elm_config->finger_size * times_w;
@@ -2158,7 +2180,8 @@ elm_object_unfocus(Evas_Object *obj)
  * @ingroup Focus
  */
 EAPI void
-elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable)
+elm_object_focus_allow_set(Evas_Object *obj,
+                           Eina_Bool    enable)
 {
    elm_widget_can_focus_set(obj, enable);
 }
@@ -2193,7 +2216,8 @@ elm_object_focus_allow_get(const Evas_Object *obj)
  * @ingroup Focus
  */
 EAPI void
-elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs)
+elm_object_focus_custom_chain_set(Evas_Object *obj,
+                                  Eina_List   *objs)
 {
    elm_widget_focus_custom_chain_set(obj, objs);
 }
@@ -2236,11 +2260,12 @@ elm_object_focus_custom_chain_get(const Evas_Object *obj)
  * @ingroup Focus
  */
 EAPI void
-elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
+elm_object_focus_custom_chain_append(Evas_Object *obj,
+                                     Evas_Object *child,
+                                     Evas_Object *relative_child)
 {
    elm_widget_focus_custom_chain_append(obj, child, relative_child);
 }
-
 
 /**
  * Prepend object to custom focus chain.
@@ -2256,7 +2281,9 @@ elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_
  * @ingroup Focus
  */
 EAPI void
-elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
+elm_object_focus_custom_chain_prepend(Evas_Object *obj,
+                                      Evas_Object *child,
+                                      Evas_Object *relative_child)
 {
    elm_widget_focus_custom_chain_prepend(obj, child, relative_child);
 }
@@ -2274,7 +2301,8 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas
  * @ingroup Focus
  */
 EAPI void
-elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
+elm_object_focus_cycle(Evas_Object        *obj,
+                       Elm_Focus_Direction dir)
 {
    elm_widget_focus_cycle(obj, dir);
 }
@@ -2292,7 +2320,9 @@ elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
  * @ingroup Widget
  */
 EAPI void
-elm_object_focus_direction_go(Evas_Object *obj, int x, int y)
+elm_object_focus_direction_go(Evas_Object *obj,
+                              int          x,
+                              int          y)
 {
    elm_widget_focus_direction_go(obj, x, y);
 }
@@ -2419,7 +2449,8 @@ elm_object_scroll_freeze_push(Evas_Object *obj)
  * @ingroup Scrollhints
  */
 EAPI void
-elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock)
+elm_object_scroll_lock_x_set(Evas_Object *obj,
+                             Eina_Bool    lock)
 {
    elm_widget_drag_lock_x_set(obj, lock);
 }
@@ -2435,7 +2466,8 @@ elm_object_scroll_lock_x_set(Evas_Object *obj, Eina_Bool lock)
  * @ingroup Scrollhints
  */
 EAPI void
-elm_object_scroll_lock_y_set(Evas_Object *obj, Eina_Bool lock)
+elm_object_scroll_lock_y_set(Evas_Object *obj,
+                             Eina_Bool    lock)
 {
    elm_widget_drag_lock_y_set(obj, lock);
 }
@@ -2561,10 +2593,12 @@ elm_object_widget_type_get(const Evas_Object *obj)
  * @param source The signal's source.
  * @ingroup General
  */
-EAPI void 
-elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+EAPI void
+elm_object_signal_emit(Evas_Object *obj,
+                       const char  *emission,
+                       const char  *source)
 {
-    elm_widget_signal_emit(obj, emission, source);
+   elm_widget_signal_emit(obj, emission, source);
 }
 
 /**
@@ -2642,7 +2676,8 @@ elm_object_tree_dump(const Evas_Object *top)
  * @ingroup Debug
  */
 EAPI void
-elm_object_tree_dot_dump(const Evas_Object *top, const char *file)
+elm_object_tree_dot_dump(const Evas_Object *top,
+                         const char        *file)
 {
 #ifdef ELM_DEBUG
    FILE *f = fopen(file, "w");
@@ -2678,4 +2713,3 @@ elm_longpress_timeout_get(void)
 {
    return _elm_config->longpress_timeout;
 }
-
