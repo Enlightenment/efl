@@ -467,3 +467,4 @@
 	* Improve speed of Eet_String users. It does impact all string
 	encoding/decoding, but even faster for stringshare encoding.
 
+	* Improve speed when decoding mostly array with eet_data_read.
