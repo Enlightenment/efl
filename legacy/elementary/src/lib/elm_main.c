@@ -1011,6 +1011,7 @@ elm_exit(void)
  *        an enumeration with the same prefix as the policy name, for
  *        example: ELM_POLICY_QUIT and Elm_Policy_Quit
  *        (ELM_POLICY_QUIT_NONE, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED).
+ * @ingroup General
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on error (right
  *         now just invalid policy identifier, but in future policy
@@ -1046,6 +1047,7 @@ elm_policy_set(unsigned int policy,
  * Gets the policy value set for given identifier.
  *
  * @param policy policy identifier as in Elm_Policy.
+ * @ingroup General
  *
  * @return policy value. Will be 0 if policy identifier is invalid.
  */
@@ -1366,7 +1368,7 @@ elm_profile_list_free(Eina_List *l)
  * affected.
  *
  * @param profile The profile's name
- * @ingroup Scaling
+ * @ingroup Profile
  *
  */
 EAPI void
@@ -1384,7 +1386,7 @@ elm_profile_set(const char *profile)
  * applications. All running Elementary windows will be affected.
  *
  * @param profile The profile's name
- * @ingroup Scaling
+ * @ingroup Profile
  *
  */
 EAPI void
@@ -2317,7 +2319,7 @@ elm_object_focus_cycle(Evas_Object        *obj,
  * @param x Horizontal component of direction to focus
  * @param y Vertical component of direction to focus
  *
- * @ingroup Widget
+ * @ingroup Focus
  */
 EAPI void
 elm_object_focus_direction_go(Evas_Object *obj,
@@ -2371,7 +2373,7 @@ elm_focus_highlight_animate_get(void)
  * Set whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
  * @param animate Enable animation if EINA_TRUE, disable otherwise
- * @ingroup Config
+ * @ingroup Focus
  */
 EAPI void
 elm_focus_highlight_animate_set(Eina_Bool animate)
@@ -2529,6 +2531,7 @@ elm_object_scroll_freeze_pop(Evas_Object *obj)
  * @param obj the object to query.
  * @return @c EINA_TRUE if it is an elementary widget variant,
  *         @c EINA_FALSE otherwise
+ * @ingroup WidgetNavigation
  */
 EAPI Eina_Bool
 elm_object_widget_check(const Evas_Object *obj)
@@ -2542,6 +2545,7 @@ elm_object_widget_check(const Evas_Object *obj)
  * @param obj the object to query.
  * @return the parent object that is an Elementary widget, or @c NULL
  *         if no parent is, or no parents at all.
+ * @ingroup WidgetNavigation
  */
 EAPI Evas_Object *
 elm_object_parent_widget_get(const Evas_Object *obj)
@@ -2555,6 +2559,7 @@ elm_object_parent_widget_get(const Evas_Object *obj)
  * @param obj The object to query.
  * @return The top level Elementary widget, or @c NULL if parent cannot be
  * found.
+ * @ingroup WidgetNavigation
  */
 EAPI Evas_Object *
 elm_object_top_widget_get(const Evas_Object *obj)
@@ -2574,6 +2579,7 @@ elm_object_top_widget_get(const Evas_Object *obj)
  *
  * @param obj the object to query.
  * @return Elementary widget name, or @c NULL if not a valid widget.
+ * @ingroup WidgetNavigation
  */
 EAPI const char *
 elm_object_widget_type_get(const Evas_Object *obj)
