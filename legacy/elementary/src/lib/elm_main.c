@@ -2651,6 +2651,50 @@ elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const cha
     return elm_widget_signal_callback_del(obj, emission, source, func);
 }
 
+/**
+ * Add a callback for a event emitted by widget or their children.
+ *
+ * This function connects a callback function to any key_down key_up event
+ * emitted by the @p obj or their children.
+ * This only will be called if no other callback has consumed the event.
+ * If you want consume the event, and no other get it, func should return
+ * EINA_TRUE and put EVAS_EVENT_FLAG_ON_HOLD in event_flags.
+ *
+ * @warning Accept duplicated callback addition.
+ *
+ * @param obj The object
+ * @param func The callback function to be executed when the event is
+ * emitted.
+ * @param data Data to pass in to the callback function.
+ * @ingroup General
+ */
+EAPI void
+elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data)
+{
+   elm_widget_event_callback_add(obj, func, data);
+}
+
+/**
+ * Remove a event callback from an widget.
+ *
+ * This function removes a callback, previoulsy attached to event emission
+ * by the @p obj.
+ * The parameters func and data must match exactly those passed to
+ * a previous call to elm_object_event_callback_add(). The data pointer that
+ * was passed to this call will be returned.
+ *
+ * @param obj The object
+ * @param func The callback function to be executed when the event is
+ * emitted.
+ * @param data Data to pass in to the callback function.
+ * @return The data pointer
+ * @ingroup General
+ */
+EAPI void *
+elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data)
+{
+   return elm_widget_event_callback_del(obj, func, data);
+}
 
 
 /**

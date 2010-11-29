@@ -12,6 +12,7 @@ static const char SMART_NAME[] = "elm_widget";
 
 typedef struct _Smart_Data Smart_Data;
 typedef struct _Edje_Signal_Data Edje_Signal_Data;
+typedef struct _Elm_Event_Cb_Data Elm_Event_Cb_Data;
 
 struct _Smart_Data
 {
@@ -77,6 +78,7 @@ struct _Smart_Data
    Eina_Bool      disabled : 1;
 
    Eina_List     *focus_chain;
+   Eina_List     *event_cb;
 };
 
 struct _Edje_Signal_Data
@@ -86,6 +88,11 @@ struct _Edje_Signal_Data
    const char *emission;
    const char *source;
    void *data;
+};
+
+struct _Elm_Event_Cb_Data {
+     Elm_Event_Cb func;
+     const void *data;
 };
 
 /* local subsystem functions */
@@ -238,13 +245,7 @@ _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
         break;
      }
 
-   if ((event_flags) && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))
-      return;
-
-   if ((sd->event_func) && (sd->event_func(obj, obj, type, event_info)))
-      return;
-
-   elm_widget_parent_event_propagate(obj, type, event_info, event_flags);
+   elm_widget_event_propagate(obj, type, event_info, event_flags);
 }
 
 static void
@@ -897,11 +898,40 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
    return parent;
 }
 
-EAPI Eina_Bool
-elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags)
+EAPI void
+elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data)
 {
-   API_ENTRY return EINA_FALSE;
-   Evas_Object *parent = sd->parent_obj;
+   API_ENTRY return;
+   Elm_Event_Cb_Data *ecb = ELM_NEW(Elm_Event_Cb_Data);
+   ecb->func = func;
+   ecb->data = data;
+   sd->event_cb = eina_list_append(sd->event_cb, ecb);
+}
+
+EAPI void *
+elm_widget_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data)
+{
+   API_ENTRY return NULL;
+   Eina_List *l;
+   Elm_Event_Cb_Data *ecd;
+   EINA_LIST_FOREACH(sd->event_cb, l, ecd)
+      if ((ecd->func == func) && (ecd->data == data))
+        {
+           free(ecd);
+           sd->event_cb = eina_list_remove_list(sd->event_cb, l);
+           return (void *)data;
+        }
+   return NULL;
+}
+
+EAPI Eina_Bool
+elm_widget_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *event_info, Evas_Event_Flags *event_flags)
+{
+   API_ENTRY return EINA_FALSE; //TODO reduce.
+   if (!_elm_widget_is(obj)) return EINA_FALSE;
+   Evas_Object *parent = obj;
+   Elm_Event_Cb_Data *ecd;
+   Eina_List *l, *l_prev;
 
    while (parent &&
           (!(event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD))))
@@ -909,8 +939,16 @@ elm_widget_parent_event_propagate(Evas_Object *obj, Evas_Callback_Type type, voi
         sd = evas_object_smart_data_get(parent);
         if ((!sd) || (!_elm_widget_is(obj)))
           return EINA_FALSE; //Not Elm Widget
+
         if (sd->event_func && (sd->event_func(parent, obj, type, event_info)))
           return EINA_TRUE;
+
+        EINA_LIST_FOREACH_SAFE(sd->event_cb, l, l_prev, ecd)
+          {
+             if (ecd->func((void *)ecd->data, parent, obj, type, event_info) ||
+                 (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD)))
+                 return EINA_TRUE;
+          }
         parent = sd->parent_obj;
      }
 
@@ -2499,7 +2537,7 @@ _smart_del(Evas_Object *obj)
    Edje_Signal_Data *esd;
 
    INTERNAL_ENTRY;
-  
+
    if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
      {
@@ -2531,6 +2569,7 @@ _smart_del(Evas_Object *obj)
         eina_stringshare_del(esd->source);
         free(esd);
      }
+   eina_list_free(sd->event_cb); /* should be empty anyway */
    if (sd->del_func) sd->del_func(obj);
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);

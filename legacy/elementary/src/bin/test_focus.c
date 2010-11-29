@@ -5,6 +5,23 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+static Eina_Bool
+_event(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   const char *key;
+   if (type == EVAS_CALLBACK_KEY_DOWN)
+     printf ("Key Down:");
+   else if (type == EVAS_CALLBACK_KEY_UP)
+     printf ("Key Up:");
+   else
+     return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   printf("%s\n", ev->key);
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
+}
+
 static void
 _on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *einfo __UNUSED__)
 {
@@ -31,6 +48,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_win_title_set(win, "Focus");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    evas_object_resize(win, 800, 600);
+   elm_object_event_callback_add(win, _event, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
    my_show(win);
 
@@ -126,8 +144,10 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                        EVAS_HINT_FILL);
                        evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+                       elm_object_event_callback_add(bt, _event, NULL);
                        elm_scroller_content_set(sc, bt);
                        my_show(bt);
+                       elm_object_event_callback_del(bt, _event, NULL);
                     }
                }
 
