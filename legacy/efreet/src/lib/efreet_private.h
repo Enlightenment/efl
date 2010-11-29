@@ -117,12 +117,13 @@ extern Eina_Hash *efreet_desktop_cache;
 
 #ifdef ICON_CACHE
 #define EFREET_CACHE_MAJOR 0
-#define EFREET_CACHE_MINOR 2
+#define EFREET_CACHE_MINOR 3
 
 typedef struct _Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
 typedef struct _Efreet_Cache_Fallback_Icon Efreet_Cache_Fallback_Icon;
 typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
 typedef struct _Efreet_Cache_Theme Efreet_Cache_Theme;
+typedef struct _Efreet_Cache_Directory Efreet_Cache_Directory;
 
 struct _Efreet_Cache_Theme
 {
@@ -132,6 +133,12 @@ struct _Efreet_Cache_Theme
     } version;
 
     Eina_Hash *icons;
+   Eina_Hash *dirs;
+};
+
+struct _Efreet_Cache_Directory
+{
+   long long modified_time;
 };
 
 struct _Efreet_Cache_Icon
@@ -140,8 +147,6 @@ struct _Efreet_Cache_Icon
 
     Efreet_Cache_Icon_Element **icons;
     unsigned int icons_count;
-
-    unsigned char free:1;
 };
 
 struct _Efreet_Cache_Icon_Element
@@ -168,8 +173,6 @@ struct _Efreet_Cache_Fallback_Icon
 
     const char **icons;
     unsigned int icons_count;
-
-    unsigned char free:1;
 };
 #endif
 

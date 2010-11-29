@@ -78,7 +78,7 @@ main(int argc, char **argv)
 
     if (!efreet_init()) return -1;
 
-    edd = efreet_icon_theme_edd();
+    edd = efreet_icon_theme_edd(EINA_FALSE);
     if (!edd) return -1;
 
     if (argc > 1)
