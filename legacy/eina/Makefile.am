@@ -83,7 +83,7 @@ lcov-reset:
 lcov-report:
 	@mkdir coverage
 	@lcov --compat-libtool --directory $(top_srcdir)/src --capture --output-file coverage/coverage.info
-	@lcov -l coverage/coverage.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d: -f1 > coverage/remove
+	@lcov -l coverage/coverage.info |grep "\\.h"  |cut -d " " -f 2 > coverage/remove
 	@lcov -r coverage/coverage.info `cat coverage/remove` > coverage/coverage.cleaned.info
 	@rm coverage/remove
 	@mv coverage/coverage.cleaned.info coverage/coverage.info
