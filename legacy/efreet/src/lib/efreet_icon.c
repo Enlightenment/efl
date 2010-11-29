@@ -1745,7 +1745,6 @@ efreet_cache_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int si
         if (elem->max < size)
             return (size / (double)elem->max);
 #endif
-        return 0;
     }
 
     return 0;
