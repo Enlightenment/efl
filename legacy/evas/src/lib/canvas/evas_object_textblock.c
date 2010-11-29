@@ -5695,28 +5695,24 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    if (n)
      {
         Evas_Object_Textblock_Node_Format *nnode;
-        if (evas_textblock_cursor_format_is_visible_get(cur))
-          {
-             fnode = _evas_textblock_cursor_node_format_before_pos_get(cur);
-          }
-        else
-          {
-             fnode = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
-             fnode = _evas_textblock_node_format_last_at_off(fnode);
-          }
+        fnode = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
+        fnode = _evas_textblock_node_format_last_at_off(fnode);
         /* find the node after the current in the same paragraph
          * either we find one and then take the next, or we try to get
          * the first for the paragraph which must be after our position  */
         if (fnode)
           {
-             nnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-             if (nnode && (nnode->text_node == n))
+             if (!evas_textblock_cursor_format_is_visible_get(cur))
                {
-                  fnode = nnode;
-               }
-             else
-               {
-                  fnode = NULL;
+                  nnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+                  if (nnode && (nnode->text_node == n))
+                    {
+                       fnode = nnode;
+                    }
+                  else
+                    {
+                       fnode = NULL;
+                    }
                }
           }
         else
