@@ -636,13 +636,8 @@ eet_flush2(Eet_File *ef)
    if (ef->ed)
       for (j = 0; j < ef->ed->count; ++j)
         {
-           if (ef->ed->all[j].allocated)
-             {
-                if (fwrite(ef->ed->all[j].u.str, ef->ed->all[j].len, 1, fp) != 1)
-                   goto write_error;
-             }
-           else if (fwrite(ef->ed->all[j].u.mmap, ef->ed->all[j].len, 1, fp) != 1)
-              goto write_error;
+           if (fwrite(ef->ed->all[j].str, ef->ed->all[j].len, 1, fp) != 1)
+             goto write_error;
         }
 
    /* write data */
@@ -1082,13 +1077,13 @@ eet_internal_read2(Eet_File *ef)
                                       ef->data_size)), ef))
                 return NULL;
 
-             ef->ed->all[j].u.mmap = start + offset;
+             ef->ed->all[j].str = start + offset;
 
-             if (ef->ed->all[j].u.mmap + ef->ed->all[j].len > ef->ed->end)
-                ef->ed->end = ef->ed->all[j].u.mmap + ef->ed->all[j].len;
+             if (ef->ed->all[j].str + ef->ed->all[j].len > ef->ed->end)
+                ef->ed->end = ef->ed->all[j].str + ef->ed->all[j].len;
 
              /* Check '\0' at the end of the string */
-             if (eet_test_close(ef->ed->all[j].u.mmap[ef->ed->all[j].len - 1] !=
+             if (eet_test_close(ef->ed->all[j].str[ef->ed->all[j].len - 1] !=
                                 '\0', ef))
                 return NULL;
 

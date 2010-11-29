@@ -27,10 +27,7 @@ struct _Eet_Convert
 
 struct _Eet_String
 {
-   union {
-      const char      *mmap;
-      char            *str;
-   } u;
+   const char      *str;
 
    int              len;
 

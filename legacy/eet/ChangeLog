@@ -462,3 +462,8 @@
 
 	* Reduce memory used by Eet dictionary.
 
+2010-11-29  Cedric BAIL
+
+	* Improve speed of Eet_String users. It does impact all string
+	encoding/decoding, but even faster for stringshare encoding.
+

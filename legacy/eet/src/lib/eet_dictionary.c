@@ -34,7 +34,7 @@ eet_dictionary_free(Eet_Dictionary *ed)
 
         for (i = 0; i < ed->count; ++i)
           if (ed->all[i].allocated)
-            free(ed->all[i].u.str);
+            eina_stringshare_del(ed->all[i].str);
 
         if (ed->all)
           free(ed->all);
@@ -61,20 +61,12 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
      {
 	if (ed->all[current].len == len)
 	  {
-	     if (ed->all[current].allocated)
+             if (ed->all[current].str &&
+                 (ed->all[current].str == string || strcmp(ed->all[current].str, string) == 0))
                {
-                  if (strcmp(ed->all[current].u.str, string) == 0)
-                    {
-                       found = EINA_TRUE;
-                       break;
-                    }
+                  found = EINA_TRUE;
+                  break;
                }
-             else if (ed->all[current].u.mmap
-                      && strcmp(ed->all[current].u.mmap, string) == 0)
-		 {
-		    found = EINA_TRUE;
-		    break;
-		 }
 	  }
 
         prev = current;
@@ -92,7 +84,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
                           const char     *string)
 {
    Eet_String *current;
-   char *str;
+   const char *str;
    int hash;
    int idx;
    int len;
@@ -107,12 +99,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    if (idx != -1)
      {
-        if (ed->all[idx].allocated)
-          {
-             if (strcmp(ed->all[idx].u.str, string) == 0)
-               return idx;
-          }
-        else if (ed->all[idx].u.mmap && strcmp(ed->all[idx].u.mmap, string) == 0)
+        if (ed->all[idx].str && (ed->all[idx].str == string ||  strcmp(ed->all[idx].str, string) == 0))
           return idx;
      }
 
@@ -131,7 +118,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
         ed->total = total;
      }
 
-   str = strdup(string);
+   str = eina_stringshare_add(string);
    if (!str)
       return -1;
 
@@ -141,7 +128,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    current->hash = hash;
 
-   current->u.str = str;
+   current->str = str;
    current->len = len;
 
    if (idx == -1)
@@ -215,16 +202,11 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
         /* Windows file system could change the mmaped file when replacing a file. So we need to copy all string in memory to avoid bugs. */
         if (!ed->all[idx].allocated)
           {
-             ed->all[idx].u.str = strdup(ed->all[idx].u.mmap);
+             ed->all[idx].str = strdup(ed->all[idx].str);
              ed->all[idx].allocated = EINA_TRUE;
           }
-
-#else /* ifdef _WIN32 */
-        if (!(ed->all[idx].allocated) && ed->all[idx].u.mmap)
-           return ed->all[idx].u.mmap;
-
 #endif /* ifdef _WIN32 */
-        return ed->all[idx].u.str;
+        return ed->all[idx].str;
      }
 
    return NULL;
@@ -316,7 +298,7 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
 {
    Eet_Convert *result;
 
-   *str = ed->all[idx].allocated ? ed->all[idx].u.str : ed->all[idx].u.mmap;
+   *str = ed->all[idx].str;
 
    if (!ed->converts)
      {
@@ -449,7 +431,7 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
       return 1;
 
    for (i = 0; i < ed->count; ++i)
-     if ((ed->all[i].allocated) && ed->all[i].u.str == string)
+     if ((ed->all[i].allocated) && ed->all[i].str == string)
        return 1;
 
    return 0;
