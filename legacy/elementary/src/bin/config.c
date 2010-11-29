@@ -726,7 +726,7 @@ _profile_use(void            *data,
 
    if (!profile)
      {
-        fprintf(stderr, "No profile currently set!");
+        fprintf(stderr, "No profile currently set!\n"); /* FIXME: log domain */
         return;
      }
 
@@ -1857,11 +1857,15 @@ _profiles_list_selected_cb(void            *data,
 
    if (!pdir)
      elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
-                             cur_selected);
+                             EINA_TRUE);
    else
      {
         elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
                                 EINA_TRUE);
+        elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
+                                EINA_FALSE);
+        elm_object_disabled_set(evas_object_data_get(obj, "prof_use_btn"),
+                                EINA_FALSE);
         elm_profile_dir_free(pdir);
      }
 
@@ -1952,6 +1956,20 @@ _profiles_list_fill(Evas_Object *l_widget,
 }
 
 static void
+_profiles_list_unselect_cb(void *data       __UNUSED__,
+                         Evas_Object     *obj,
+                         void *event_info __UNUSED__)
+{
+   if (elm_list_selected_item_get(obj)) return;
+   elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
+                           EINA_TRUE);
+   elm_object_disabled_set(evas_object_data_get(obj, "prof_reset_btn"),
+                           EINA_TRUE);
+   elm_object_disabled_set(evas_object_data_get(obj, "prof_use_btn"),
+                           EINA_TRUE);
+}
+
+static void
 _status_config_profiles(Evas_Object *win,
                         Evas_Object *pager)
 {
@@ -1988,6 +2006,8 @@ _status_config_profiles(Evas_Object *win,
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(li, "unselected", _profiles_list_unselect_cb,
+                                  NULL);
 
    profs = elm_profile_list_get();
 
@@ -2042,6 +2062,8 @@ _status_config_profiles(Evas_Object *win,
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_box_pack_end(btn_bx, bt);
    evas_object_show(bt);
+
+   evas_object_data_set(li, "prof_use_btn", bt);
 
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _btn_todo, NULL); /* TODO */
