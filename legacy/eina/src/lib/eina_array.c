@@ -484,24 +484,6 @@ eina_array_step_set(Eina_Array *array,
 }
 
 /**
- * @brief Clean an array.
- *
- * @param array The array to clean.
- *
- * This function sets the count member of @p array to 0. For
- * performance reasons, there is no check of @p array. If it is
- * @c NULL or invalid, the program may crash.
- */
-EAPI void
-eina_array_clean(Eina_Array *array)
-{
-   EINA_SAFETY_ON_NULL_RETURN(array);
-   EINA_MAGIC_CHECK_ARRAY(array);
-
-   array->count = 0;
-}
-
-/**
  * @brief Flush an array.
  *
  * @param array The array to flush.

@@ -175,6 +175,21 @@ eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *fdata)
 }
 
 /**
+ * @brief Clean an array.
+ *
+ * @param array The array to clean.
+ *
+ * This function sets the count member of @p array to 0. For
+ * performance reasons, there is no check of @p array. If it is
+ * @c NULL or invalid, the program may crash.
+ */
+static inline void
+eina_array_clean(Eina_Array *array)
+{
+   array->count = 0;
+}
+
+/**
  * @}
  */
 

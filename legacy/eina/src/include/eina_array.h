@@ -80,7 +80,7 @@ EAPI void        eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void        eina_array_step_set(Eina_Array  *array,
                                      unsigned int sizeof_eina_array,
                                      unsigned int step) EINA_ARG_NONNULL(1);
-EAPI void eina_array_clean(Eina_Array *array) EINA_ARG_NONNULL(1);
+static inline void eina_array_clean(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI void eina_array_flush(Eina_Array *array) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_array_remove(Eina_Array * array,
                                  Eina_Bool (*keep)(void *data, void *gdata),
