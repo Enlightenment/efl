@@ -487,35 +487,41 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y += step_y;
      }
-   else if (!strcmp(ev->keyname, "Home"))
+   else if ((!strcmp(ev->keyname, "Home")) ||
+            (!strcmp(ev->keyname, "KP_Home")))
      {
         it = elm_genlist_first_item_get(obj);
         elm_genlist_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "End"))
+   else if ((!strcmp(ev->keyname, "End")) ||
+            (!strcmp(ev->keyname, "KP_End")))
      {
         it = elm_genlist_last_item_get(obj);
         elm_genlist_item_bring_in(it);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "Prior"))
+   else if ((!strcmp(ev->keyname, "Prior")) ||
+            (!strcmp(ev->keyname, "KP_Prior")))
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if ((!strcmp(ev->keyname, "Next")) ||
+            (!strcmp(ev->keyname, "KP_Next")))
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;
         else
           y += page_y;
      }
-   else if(((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "space")))
+   else if(((!strcmp(ev->keyname, "Return")) ||
+            (!strcmp(ev->keyname, "KP_Enter")) ||
+            (!strcmp(ev->keyname, "space")))
            && (!wd->multi) && (wd->selected))
      {
         Elm_Genlist_Item *it = elm_genlist_selected_item_get(obj);

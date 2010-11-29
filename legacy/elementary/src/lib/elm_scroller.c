@@ -119,22 +119,22 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      {
         y += step_y;
      }
-   else if (!strcmp(ev->keyname, "Home"))
+   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
         y = 0;
      }
-   else if (!strcmp(ev->keyname, "End"))
+   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
         y = max_y - v_h;
      }
-   else if (!strcmp(ev->keyname, "Prior"))
+   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
      {
 	if (page_y < 0)
 	  y -= -(page_y * v_h) / 100;
 	else
            y -= page_y;
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
      {
 	if (page_y < 0)
 	  y += -(page_y * v_h) / 100;

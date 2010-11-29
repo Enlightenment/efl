@@ -572,7 +572,8 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (!wd->selection_enabled) return EINA_FALSE;
 
-   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
+   if ((!strcmp(ev->keyname, "Left")) ||
+       (!strcmp(ev->keyname, "KP_Left")))
      {
         _update_sel_it(obj, wd->selected_it-1);
      }
@@ -581,11 +582,13 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      {
         _update_sel_it(obj, wd->selected_it+1);
      }
-   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
+   else if ((!strcmp(ev->keyname, "Up"))  ||
+            (!strcmp(ev->keyname, "KP_Up")))
      {
         _update_sel_it(obj, wd->selected_it-7);
      }
-   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+   else if ((!strcmp(ev->keyname, "Down")) ||
+            (!strcmp(ev->keyname, "KP_Down")))
      {
         _update_sel_it(obj, wd->selected_it+7);
      }
@@ -594,7 +597,8 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      {
         if (_update_month(obj, -1)) _populate(obj);
      }
-   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
+   else if ((!strcmp(ev->keyname, "Next")) ||
+            (!strcmp(ev->keyname, "KP_Next")))
      {
         if (_update_month(obj, 1)) _populate(obj);
      }

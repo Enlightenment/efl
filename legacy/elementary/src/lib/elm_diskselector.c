@@ -329,9 +329,9 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         if ((!l) && (wd->round))
           l = wd->items;
      }
-   else if (!strcmp(ev->keyname, "Home"))
+   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      l = wd->items;
-   else if (!strcmp(ev->keyname, "End"))
+   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      l = eina_list_last(wd->items);
    else return EINA_FALSE;
 

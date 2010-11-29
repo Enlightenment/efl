@@ -81,7 +81,9 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "space")))
+   if ((!strcmp(ev->keyname, "Return")) ||
+       (!strcmp(ev->keyname, "KP_Enter")) ||
+       (!strcmp(ev->keyname, "space")))
      {
         if (wd->timeout)
           elm_slideshow_timeout_set(obj, 0);

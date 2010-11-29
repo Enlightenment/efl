@@ -354,21 +354,21 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         else
           y += step_y;
      }
-   else if (!strcmp(ev->keyname, "Home"))
+   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
         item = elm_gengrid_first_item_get(obj);
         elm_gengrid_item_bring_in(item);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "End"))
+   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
         item = elm_gengrid_last_item_get(obj);
         elm_gengrid_item_bring_in(item);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if (!strcmp(ev->keyname, "Prior"))
+   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
      {
         if (wd->horizontal)
           {
@@ -385,7 +385,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
                y -= page_y;
           }
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
      {
         if (wd->horizontal)
           {

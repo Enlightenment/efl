@@ -54,7 +54,9 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if ((strcmp(ev->keyname, "Return")) && (strcmp(ev->keyname, "space")))
+   if ((strcmp(ev->keyname, "Return")) &&
+       (strcmp(ev->keyname, "KP_Enter")) &&
+       (strcmp(ev->keyname, "space")))
      return EINA_FALSE;
    elm_toggle_state_set(obj, !wd->state);
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
