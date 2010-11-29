@@ -1011,6 +1011,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 
    if (cl->client_addr)
      free(cl->client_addr);
+   cl->client_addr = NULL;
 
    data = cl->data;
    cl->delete_me = EINA_TRUE;
