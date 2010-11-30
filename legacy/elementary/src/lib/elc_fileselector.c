@@ -41,11 +41,12 @@ struct _Widget_Data
 
    const char *path;
    const char *selection;
-   Eina_Bool only_folder;
-   Eina_Bool expand;
    Ecore_Idler *sel_idler;
 
    const char *path_separator;
+
+   Eina_Bool only_folder : 1;
+   Eina_Bool expand : 1;
 };
 
 struct sel_data
@@ -455,7 +456,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    // Elementary Widget
    wd = ELM_NEW(Widget_Data);
-   wd->expand = _elm_config->fileselector_expand_enable;
+   wd->expand = !!_elm_config->fileselector_expand_enable;
    obj = elm_widget_add(evas_object_evas_get(parent));
    ELM_SET_WIDTYPE(widtype, "fileselector");
    elm_widget_type_set(obj, "fileselector");
@@ -609,7 +610,7 @@ elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->only_folder == only) return;
-   wd->only_folder = only;
+   wd->only_folder = !!only;
 }
 
 
@@ -718,7 +719,7 @@ elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   wd->expand = expand;
+   wd->expand = !!expand;
 }
 
 /**
