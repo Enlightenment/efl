@@ -1001,83 +1001,61 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 
    if (ed->delete_me) return;
 
-   sep = strchr(sig, EDJE_PART_PATH_SEPARATOR);
+   sep = strrchr(sig, EDJE_PART_PATH_SEPARATOR);
 
    /* If we are not sending the signal to a part of the child, the
     * signal if for ourself
     */
    if (sep)
      {
-        char *idx, *newsig;
+        Edje_Real_Part *rp;
+        char *newsig;
         size_t length;
         char *part;
-        unsigned int i;
 
-        /* the signal contains a colon, split the signal into "part:signal",
-         * and deliver it to "part" (if there is a GROUP or EXTERNAL part named "part")
+        /* the signal contains a colon, split the signal into "parts:signal",
+         * use _edje_real_part_recursive_get_helper to find the real part.
          */
         length = strlen(sig) + 1;
         part = alloca(length);
         memcpy(part, sig, length);
 
-        /* The part contain a [index], retrieve it */
-        idx = strchr(sig, EDJE_PART_PATH_SEPARATOR_INDEXL);
-        if (!idx || sep < idx) newsig = part + (sep - sig);
-        else newsig = part + (idx - sig);
+        newsig = part + (sep - sig);
 
         *newsig = '\0';
         newsig++;
 
-        for (i = 0; i < ed->table_parts_size; i++)
+        rp = _edje_real_part_recursive_get(ed, part);
+        if (rp && rp->part)
           {
-             Edje_Real_Part *rp = ed->table_parts[i];
-             if ((((rp->part->type == EDJE_PART_TYPE_GROUP
-                    || rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-                   && (rp->swallowed_object))
-                  || rp->part->type == EDJE_PART_TYPE_BOX || rp->part->type == EDJE_PART_TYPE_TABLE) &&
-                 (rp->part) && (rp->part->name) &&
-                 (strcmp(rp->part->name, part) == 0))
+             switch (rp->part->type)
                {
-                  if (rp->part->type == EDJE_PART_TYPE_GROUP)
-                    {
-                       Edje *ed2 = _edje_fetch(rp->swallowed_object);
-                       if (ed2) _edje_emit(ed2, newsig, src);
-                       return; /* stop processing.
-                                * XXX maybe let signal be processed anyway?
-                                * XXX in this case, just comment this line
-                                */
-                    }
-                  else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
-                    {
-                       _edje_external_signal_emit(rp->swallowed_object, newsig, src);
-                       return;
-                    }
-                  else if (rp->part->type == EDJE_PART_TYPE_BOX
-                           || rp->part->type == EDJE_PART_TYPE_TABLE)
-                    {
-                       const char *partid;
-                       Evas_Object *child;
-                       Edje *ed2 = NULL;
+                case EDJE_PART_TYPE_GROUP:
+                  {
+                     Edje *ed2;
 
-                       idx = strchr(newsig, EDJE_PART_PATH_SEPARATOR_INDEXR);
+                     if (!rp->swallowed_object) break ;
 
-                       if (!idx) return ;
-                       if (idx[1] != ':') return ;
-                       if (!rp->object) return;
+                     ed2 = _edje_fetch(rp->swallowed_object);
+                     if (ed2) _edje_emit(ed2, newsig, src);
+                     return; /* stop processing.
+                              * XXX maybe let signal be processed anyway?
+                              * XXX in this case, just comment this line
+                              */
+                  }
+                case EDJE_PART_TYPE_EXTERNAL:
+                  {
+                     if (!rp->swallowed_object) break ;
 
-                       partid = newsig;
-                       newsig = idx;
-
-                       *newsig = '\0';
-                       newsig += 2; /* we jump over ']' and ':' */
-
-                       child = _edje_children_get(rp, partid);
-
-                       if (child) ed2 = _edje_fetch(child);
-                       if (ed2) _edje_emit(ed2, newsig, src);
-
-                       return;
-                    }
+                     _edje_external_signal_emit(rp->swallowed_object, newsig, src);
+                     return;
+                  }
+                case EDJE_PART_TYPE_BOX:
+                case EDJE_PART_TYPE_TABLE:
+                  {
+                     _edje_emit(rp->edje, newsig, src);
+                     return;
+                  }
                }
           }
      }
@@ -1088,7 +1066,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
    EINA_LIST_FOREACH(ed->subobjs, l, obj)
      {
         Edje *ed2;
-        
+
         ed2 = _edje_fetch(obj);
         if (!ed2) continue;
         if (ed2->delete_me) continue;
