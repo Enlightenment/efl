@@ -8,7 +8,6 @@
 static Eina_Bool
 _event(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
-   const char *key;
    if (type == EVAS_CALLBACK_KEY_DOWN)
      printf ("Key Down:");
    else if (type == EVAS_CALLBACK_KEY_UP)
