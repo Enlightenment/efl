@@ -232,7 +232,7 @@ _sel_do(void *data)
    wd = elm_widget_data_get(sd->fs);
    path = sd->path;
 
-   if (ecore_file_is_dir(path))
+   if ((!wd->only_folder) && ecore_file_is_dir(path))
      {
         if (wd->expand)
           {
