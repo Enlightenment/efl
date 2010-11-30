@@ -1937,6 +1937,7 @@ ob_collections_group_script(void)
 		  exit(-1);
 	       }
 	     cd->shared = s;
+             cd->original = strdup(s);
 	     cd->is_lua = 0;
 	     set_verbatim(NULL, 0, 0);
 	  }
@@ -7026,6 +7027,7 @@ ob_collections_group_programs_program_script(void)
 	     cp->l1 = get_verbatim_line1();
 	     cp->l2 = get_verbatim_line2();
 	     cp->script = s;
+             cp->original = strdup(s);
 	     if (cd->shared && cd->is_lua)
 	       {
 		  ERR("%s: Error. parse error %s:%i. You're trying to mix Embryo and Lua scripting in the same group",
