@@ -168,7 +168,7 @@ ecore_con_url_init(void)
         long ms;
 
         FD_ZERO(&_current_fd_set);
-        if (curl_global_init(CURL_GLOBAL_NOTHING))
+        if (curl_global_init(CURL_GLOBAL_ALL))
           {
              while (_url_con_list)
                ecore_con_url_free(eina_list_data_get(_url_con_list));
