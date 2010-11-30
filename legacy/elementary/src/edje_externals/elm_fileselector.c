@@ -159,8 +159,8 @@ external_fileselector_params_parse(void *data __UNUSED__, Evas_Object *obj __UNU
 static Evas_Object *external_fileselector_content_get(void *data __UNUSED__,
 		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("No content.");
-	return NULL;
+   ERR("No content.");
+   return NULL;
 }
 
 static void
@@ -172,7 +172,7 @@ external_fileselector_params_free(void *params)
 
 static Edje_External_Param_Info external_fileselector_params[] =
   {
-   DEFINE_EXTERNAL_COMMON_PARAMS,
+    DEFINE_EXTERNAL_COMMON_PARAMS,
     EDJE_EXTERNAL_PARAM_INFO_BOOL("save"),
     EDJE_EXTERNAL_PARAM_INFO_BOOL("folder only"),
     EDJE_EXTERNAL_PARAM_INFO_BOOL("show buttons"),
