@@ -487,6 +487,7 @@ externals.external: "elm";
                     min: 17 17; \
                     align: 1.0 1.0; \
                     aspect: 1.0 1.0; \
+                    fixed: 1 1; \
                     aspect_preference: VERTICAL; \
                     color: 0 0 0 0; \
                     rel1 { \
