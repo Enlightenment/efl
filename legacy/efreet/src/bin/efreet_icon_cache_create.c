@@ -27,7 +27,7 @@ static int verbose = 0;
 static void
 _cache_directory_free(void *dcache)
 {
-   free(dcache);
+    free(dcache);
 }
 
 static Eina_Bool
@@ -39,13 +39,13 @@ cache_directory_find(Eina_Hash *dirs, const char *dir)
     if (stat(dir, &st)) return EINA_FALSE;
     dcache = eina_hash_find(dirs, dir);
     if (!dcache)
-      {
-         dcache = malloc(sizeof (Efreet_Cache_Directory));
-         if (!dcache) return 1;
+    {
+        dcache = malloc(sizeof (Efreet_Cache_Directory));
+        if (!dcache) return 1;
 
-         dcache->modified_time = (long long) st.st_mtime;
-         eina_hash_add(dirs, dir, dcache);
-      }
+        dcache->modified_time = (long long) st.st_mtime;
+        eina_hash_add(dirs, dir, dcache);
+    }
     else if (dcache->modified_time == (long long) st.st_mtime) return EINA_FALSE;
     dcache->modified_time = st.st_mtime;
 
@@ -167,7 +167,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
     snprintf(buf, sizeof(buf), "%s/%s", path, dir->name);
 
     if (!cache_directory_find(dirs, buf))
-      return 1;
+        return 1;
 
     it = eina_file_stat_ls(buf);
     if (!it) return 1;
@@ -263,7 +263,7 @@ cache_scan_path(Efreet_Icon_Theme *theme, Eina_Hash *icons, Eina_Hash *dirs, con
     Efreet_Icon_Theme_Directory *dir;
 
     EINA_LIST_FOREACH(theme->directories, l, dir)
-      if (!cache_scan_path_dir(theme, path, dir, icons, dirs, changed)) return 0;
+        if (!cache_scan_path_dir(theme, path, dir, icons, dirs, changed)) return 0;
 
     return 1;
 }
@@ -281,7 +281,7 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
 
     /* scan theme */
     EINA_LIST_FOREACH(theme->paths, l, path)
-      if (!cache_scan_path(theme, icons, dirs, path, changed)) return 0;
+        if (!cache_scan_path(theme, icons, dirs, path, changed)) return 0;
 
     /* scan inherits */
     if (theme->inherits)
@@ -460,10 +460,10 @@ main(int argc, char **argv)
         }
 
         if (!cache->icons)
-          cache->icons = eina_hash_string_superfast_new((Eina_Free_Cb) efreet_cache_icon_fallback_free);
+            cache->icons = eina_hash_string_superfast_new((Eina_Free_Cb) efreet_cache_icon_fallback_free);
 
         if (!cache->dirs)
-          cache->dirs = eina_hash_string_superfast_new(_cache_directory_free);
+            cache->dirs = eina_hash_string_superfast_new(_cache_directory_free);
 
         if (cache_scan(theme, themes, cache->icons, cache->dirs, &changed))
         {
@@ -509,10 +509,10 @@ main(int argc, char **argv)
     }
 
     if (!cache->icons)
-      cache->icons = eina_hash_string_superfast_new((Eina_Free_Cb) efreet_cache_icon_fallback_free);
+        cache->icons = eina_hash_string_superfast_new((Eina_Free_Cb) efreet_cache_icon_fallback_free);
 
     if (!cache->dirs)
-      cache->dirs = eina_hash_string_superfast_new(_cache_directory_free);
+        cache->dirs = eina_hash_string_superfast_new(_cache_directory_free);
 
     /* Save fallback in the right part */
     if (cache_fallback_scan(cache->icons, cache->dirs, &changed))
@@ -536,7 +536,7 @@ on_error:
     close(lockfd);
 
     while ((path = eina_array_pop(strs)))
-      eina_stringshare_del(path);
+        eina_stringshare_del(path);
     eina_array_free(strs);
 
     ecore_shutdown();

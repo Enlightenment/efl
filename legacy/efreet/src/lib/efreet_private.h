@@ -133,12 +133,12 @@ struct _Efreet_Cache_Theme
     } version;
 
     Eina_Hash *icons;
-   Eina_Hash *dirs;
+    Eina_Hash *dirs;
 };
 
 struct _Efreet_Cache_Directory
 {
-   long long modified_time;
+    long long modified_time;
 };
 
 struct _Efreet_Cache_Icon
