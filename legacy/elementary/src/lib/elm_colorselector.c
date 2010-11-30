@@ -14,8 +14,22 @@
 #define LIG_STEP 256.0
 #define ALP_STEP 256.0
 
-typedef struct _Colorselector_Data Colorselector_Data;
+typedef enum _Button_State
+{
+   BUTTON_RELEASED,
+   L_BUTTON_PRESSED,
+   R_BUTTON_PRESSED
+} Button_State;
 
+typedef enum _Color_Type
+{
+   HUE,
+   SATURATION,
+   LIGHTNESS,
+   ALPHA
+} Color_Type;
+
+typedef struct _Colorselector_Data Colorselector_Data;
 struct _Colorselector_Data
 {
    Evas_Object *parent;
@@ -26,12 +40,11 @@ struct _Colorselector_Data
    Evas_Object *bg_rect;
    Evas_Object *arrow;
    Evas_Object *touch_area;
-   int colorselector_num;
-   int button_state;
+   Color_Type color_type;
+   Button_State button_state;
 };
 
 typedef struct _Widget_Data Widget_Data;
-
 struct _Widget_Data
 {
    Evas_Object *base;
@@ -45,13 +58,6 @@ struct _Widget_Data
    Ecore_Timer *lp_timer;
    Ecore_Timer *mv_timer;
 };
-
-typedef enum
-{
-   BUTTON_RELEASED,
-   L_BUTTON_PRESSED,
-   R_BUTTON_PRESSED
-} Button_State;
 
 static const char *widtype = NULL;
 
@@ -317,9 +323,9 @@ _draw_rects(void *data, double x)
    Widget_Data *wd = elm_widget_data_get(cp->parent);
    double one_six = 1.0 / 6.0;
 
-   switch (cp->colorselector_num)
+   switch (cp->color_type)
      {
-     case 0:
+     case HUE:
         wd->h = 360.0 * x;
         
         if (x < one_six)
@@ -377,26 +383,25 @@ _draw_rects(void *data, double x)
                               wd->a);
         break;
         
-     case 1:
+     case SATURATION:
         wd->s = 1.0 - x;
         _color_with_saturation(wd);
         evas_object_color_set(wd->cp[1]->arrow, wd->sr, wd->sg, wd->sb, 255);
         break;
         
-     case 2:
+     case LIGHTNESS:
         wd->l = x;
         _color_with_lightness(wd);
         evas_object_color_set(wd->cp[2]->arrow, wd->lr, wd->lg, wd->lb, 255);
         break;
         
-     case 3:
+     case ALPHA:
         wd->a = 255.0 * x;
         evas_object_color_set(wd->cp[3]->arrow, wd->er, wd->eg, wd->eb, wd->a);
         break;
         
      default:
         break;
-        
      }
    _hsl_to_rgb(wd);
 }
@@ -502,10 +507,23 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 			   "left_button");
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
 
-   if (!cp->colorselector_num) x -= 1.0 / HUE_STEP;
-   else if (cp->colorselector_num == 1) x -= 1.0 / SAT_STEP;
-   else if (cp->colorselector_num == 2) x -= 1.0 / LIG_STEP;
-   else if (cp->colorselector_num == 3) x -= 1.0 / ALP_STEP;
+   switch(cp->color_type)
+     {
+      case HUE :
+         x -= 1.0 / HUE_STEP;
+         break;
+      case SATURATION :
+         x -= 1.0 / SAT_STEP;
+         break;
+      case LIGHTNESS :
+         x -= 1.0 / LIG_STEP;
+         break;
+      case ALPHA :
+         x -= 1.0 / ALP_STEP;
+         break;
+      default : 
+         break;         
+     }
 
    if (x < 0.0) x = 0.0;
 
@@ -528,10 +546,23 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 			   "right_button");
    edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
 
-   if (!cp->colorselector_num) x += 1.0 / HUE_STEP;
-   else if (cp->colorselector_num == 1) x += 1.0 / SAT_STEP;
-   else if (cp->colorselector_num == 2) x += 1.0 / LIG_STEP;
-   else if (cp->colorselector_num == 3) x += 1.0 / ALP_STEP;
+   switch(cp->color_type)
+     {
+      case HUE :
+         x += 1.0 / HUE_STEP;
+         break;
+      case SATURATION :
+         x += 1.0 / SAT_STEP;
+         break;
+      case LIGHTNESS :
+         x += 1.0 / LIG_STEP;
+         break;
+      case ALPHA :
+         x += 1.0 / ALP_STEP;
+         break;
+      default : 
+         break;         
+     }
 
    if (x > 1.0) x = 1.0;
 
@@ -602,11 +633,25 @@ _add_colorbar(Evas_Object *obj)
    for (i = 0; i < 4; i++)
      {
 	wd->cp[i] = ELM_NEW(Colorselector_Data);
-
 	wd->cp[i]->parent = obj;
-	wd->cp[i]->colorselector_num = i;
-
-	/* load colorbar area */
+        switch(i)
+          {
+           case 0 :
+              wd->cp[i]->color_type = HUE;
+              break;
+           case 1 :
+              wd->cp[i]->color_type = SATURATION;
+              break;
+           case 2 :
+              wd->cp[i]->color_type = LIGHTNESS;
+              break;
+           case 3 :
+              wd->cp[i]->color_type = ALPHA;
+              break;
+           default : 
+              break;         
+          }
+        /* load colorbar area */
 	wd->cp[i]->colorbar = edje_object_add(e);
 	_elm_theme_object_set(obj, wd->cp[i]->colorbar, "colorselector", "base",
 			      "default");

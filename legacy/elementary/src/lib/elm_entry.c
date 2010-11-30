@@ -1387,7 +1387,7 @@ _signal_mouse_down(void *data, Evas_Object *obj __UNUSED__, const char *emission
 }
 
 static void
-_signal_mouse_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_signal_mouse_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -1624,8 +1624,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_key_enter, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,down,1", "elm.text",
                                    _signal_mouse_down, obj);
-   edje_object_signal_callback_add(wd->ent, "mouse,up,1", "elm.text",
-                                   _signal_mouse_up, obj);
+   edje_object_signal_callback_add(wd->ent, "mouse,clicked,1", "elm.text",
+                                   _signal_mouse_clicked, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,down,1,double", "elm.text",
                                    _signal_mouse_double, obj);
    edje_object_part_text_set(wd->ent, "elm.text", "");
