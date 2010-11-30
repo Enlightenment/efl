@@ -20,7 +20,7 @@
 #include "efreet_private.h"
 #include "efreet_cache_private.h"
 
-static const char *exts[] = { ".png", ".xpm", ".svg", NULL };
+static const char *exts[] = { ".png", ".xpm", ".svg", ".edj", NULL };
 static Eina_Array *strs = NULL;
 static int verbose = 0;
 
