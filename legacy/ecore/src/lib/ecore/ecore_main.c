@@ -1013,16 +1013,14 @@ _ecore_main_shutdown(void)
         free(fdh);
      }
    if (fd_handlers_with_buffer)
-     eina_list_free(fd_handlers_with_buffer);
-   fd_handlers_with_buffer = NULL;
+     fd_handlers_with_buffer = eina_list_free(fd_handlers_with_buffer);
    if (fd_handlers_with_prep)
-     eina_list_free(fd_handlers_with_prep);
-   fd_handlers_with_prep = NULL;
+     fd_handlers_with_prep = eina_list_free(fd_handlers_with_prep);
    if (fd_handlers_to_delete)
-     eina_list_free(fd_handlers_to_delete);
+     fd_handlers_to_delete = eina_list_free(fd_handlers_to_delete);
    if (fd_handlers_to_call)
-     eina_list_free(fd_handlers_to_call);
-   fd_handlers_to_call = NULL;
+     fd_handlers_to_call = eina_list_free(fd_handlers_to_call);
+  
    fd_handlers_to_call_current = NULL;
    fd_handlers_to_delete = NULL;
    fd_handler_current = NULL;
