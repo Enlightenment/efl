@@ -1,9 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Elementary Configuration
+Name[pt]=Configuração do Elementary
 Comment=Elementary Configuration
 Comment[fr]=Configuration pour Elementary
 Comment[it]=Configurazione di Elementary
+Comment[pt]=Configure o Elementary
 Exec=elementary_config
 Icon=elementary
 Terminal=false
