@@ -11,10 +11,10 @@ _list_item_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
-_hoverlist_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("hoverlist item selected: %s\n",
-          elm_hoverlist_item_label_get(event_info));
+   printf("ctxpopup item selected: %s\n",
+          elm_ctxpopup_item_label_get(event_info));
 }
 
 static void _list_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
@@ -23,10 +23,10 @@ static void _list_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
 }
 
 void
-test_hoverlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *list, *hov1, *hov2, *hov3, *hov4, *ic;
-   Elm_Hoverlist_Item *it;
+   Elm_Ctxpopup_Item *it;
 
    win = elm_win_add(NULL, "Contexual Popup 2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Contextual Popup 2");
@@ -46,39 +46,39 @@ test_hoverlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ic = elm_icon_add(win);                                              \
    elm_icon_standard_set(ic, _icon);                                    \
    elm_icon_scale_set(ic, EINA_FALSE, EINA_FALSE);                      \
-   it = elm_hoverlist_item_append(_hov, _label, ic, _hoverlist_item_cb, NULL);
+   it = elm_ctxpopup_item_append(_hov, _label, ic, _ctxpopup_item_cb, NULL);
 
-   hov1 = elm_hoverlist_add(win);
+   hov1 = elm_ctxpopup_add(win);
 
    ITEM_NEW(hov1, "home", "Go to home folder");
    ITEM_NEW(hov1, "file", "Save file");
    ITEM_NEW(hov1, "delete", "Delete file");
    ITEM_NEW(hov1, "folder", "Navigate to folder");
-   elm_hoverlist_item_disabled_set(it, EINA_TRUE);
+   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(hov1, "edit", "Edit entry");
    ITEM_NEW(hov1, "clock", "Set date and time");
    ITEM_NEW(hov1, "arrow_up", "Go up");
    ITEM_NEW(hov1, "arrow_down", "Go down");
    ITEM_NEW(hov1, "arrow_left", "Go left");
-   elm_hoverlist_item_disabled_set(it, EINA_TRUE);
+   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(hov1, "arrow_right", "Go right");
 
-   hov2 = elm_hoverlist_add(win);
+   hov2 = elm_ctxpopup_add(win);
 
    ITEM_NEW(hov2, "home", NULL);
    ITEM_NEW(hov2, "file", NULL);
    ITEM_NEW(hov2, "delete", NULL);
    ITEM_NEW(hov2, "folder", NULL);
    ITEM_NEW(hov2, "edit", NULL);
-   elm_hoverlist_item_disabled_set(it, EINA_TRUE);
+   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(hov2, "clock", NULL);
    ITEM_NEW(hov2, "arrow_up", NULL);
    ITEM_NEW(hov2, "arrow_down", NULL);
    ITEM_NEW(hov2, "arrow_left", NULL);
    ITEM_NEW(hov2, "arrow_right", NULL);
 
-   hov3 = elm_hoverlist_add(win);
-   elm_hoverlist_horizontal_set(hov3, EINA_TRUE);
+   hov3 = elm_ctxpopup_add(win);
+   elm_ctxpopup_horizontal_set(hov3, EINA_TRUE);
 
    ITEM_NEW(hov3, "home", "Zero");
    ITEM_NEW(hov3, "file", "Um");
@@ -87,25 +87,25 @@ test_hoverlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ITEM_NEW(hov3, "edit", "Vier");
    ITEM_NEW(hov3, "clock", "五");
 
-   hov4 = elm_hoverlist_add(win);
+   hov4 = elm_ctxpopup_add(win);
 
    ITEM_NEW(hov4, NULL, "Eina");
    ITEM_NEW(hov4, NULL, "Eet");
    ITEM_NEW(hov4, NULL, "Evas");
    ITEM_NEW(hov4, NULL, "Ecore");
-   elm_hoverlist_item_disabled_set(it, EINA_TRUE);
+   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(hov4, NULL, "Embryo");
    ITEM_NEW(hov4, NULL, "Edje");
 
 #undef ITEM_NEW
 
-   elm_list_item_append(list, "Hoverlist with icons and labels", NULL, NULL,
+   elm_list_item_append(list, "Ctxpopup with icons and labels", NULL, NULL,
                         _list_item_cb, hov1);
-   elm_list_item_append(list, "Hoverlist with icons only", NULL, NULL,
+   elm_list_item_append(list, "Ctxpopup with icons only", NULL, NULL,
                         _list_item_cb, hov2);
-   elm_list_item_append(list, "Hoverlist at horizontal mode", NULL, NULL,
+   elm_list_item_append(list, "Ctxpopup at horizontal mode", NULL, NULL,
                         _list_item_cb, hov3);
-   elm_list_item_append(list, "Hoverlist with no icons", NULL, NULL,
+   elm_list_item_append(list, "Ctxpopup with no icons", NULL, NULL,
                         _list_item_cb, hov4);
    evas_object_show(list);
    elm_list_go(list);

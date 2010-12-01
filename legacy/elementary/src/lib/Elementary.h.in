@@ -2365,26 +2365,26 @@ extern "C" {
     * "changed" - when the color value changes
     */
 
-   /* hoverlist */
-   typedef struct _Elm_Hoverlist_Item Elm_Hoverlist_Item;
+   /* ctxpopup */
+   typedef struct _Elm_Ctxpopup_Item Elm_Ctxpopup_Item;
   
-   EAPI Evas_Object        *elm_hoverlist_add(Evas_Object* parent);
-   EAPI void                elm_hoverlist_hover_end(Evas_Object *obj);
-   EAPI Evas_Object        *elm_hoverlist_item_icon_get(const Elm_Hoverlist_Item *item);
-   EAPI void                elm_hoverlist_item_icon_set(Elm_Hoverlist_Item *item, Evas_Object *icon);
-   EAPI const char         *elm_hoverlist_item_label_get(const Elm_Hoverlist_Item *item);
-   EAPI void                elm_hoverlist_item_label_set(Elm_Hoverlist_Item *item, const char *label);
-   EAPI void                elm_hoverlist_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
-   EAPI Evas_Object        *elm_hoverlist_hover_parent_get(const Evas_Object *obj);
-   EAPI void                elm_hoverlist_clear(Evas_Object* obj);
-   EAPI void                elm_hoverlist_horizontal_set(Evas_Object* obj, Eina_Bool horizontal);
-   EAPI Eina_Bool           elm_hoverlist_horizontal_get(const Evas_Object *obj);
-   EAPI Elm_Hoverlist_Item *elm_hoverlist_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
-   EAPI void                elm_hoverlist_item_del(Elm_Hoverlist_Item *item);
-   EAPI void                elm_hoverlist_item_disabled_set(Elm_Hoverlist_Item *item, Eina_Bool disabled);
-   EAPI Eina_Bool           elm_hoverlist_item_disabled_get(const Elm_Hoverlist_Item *item);
+   EAPI Evas_Object        *elm_ctxpopup_add(Evas_Object* parent);
+   EAPI void                elm_ctxpopup_hover_end(Evas_Object *obj);
+   EAPI Evas_Object        *elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item);
+   EAPI void                elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon);
+   EAPI const char         *elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item);
+   EAPI void                elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label);
+   EAPI void                elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+   EAPI Evas_Object        *elm_ctxpopup_hover_parent_get(const Evas_Object *obj);
+   EAPI void                elm_ctxpopup_clear(Evas_Object* obj);
+   EAPI void                elm_ctxpopup_horizontal_set(Evas_Object* obj, Eina_Bool horizontal);
+   EAPI Eina_Bool           elm_ctxpopup_horizontal_get(const Evas_Object *obj);
+   EAPI Elm_Ctxpopup_Item  *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
+   EAPI void                elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item);
+   EAPI void                elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled);
+   EAPI Eina_Bool           elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item);
    /* smart callbacks called:
-    * "dismissed" - the hoverlist was dismissed
+    * "dismissed" - the ctxpopup was dismissed
     */
 
    /* transit */

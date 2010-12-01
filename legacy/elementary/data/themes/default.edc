@@ -6981,7 +6981,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/hover/base/hoverlist/default";
+   group { name: "elm/hover/base/ctxpopup/default";
       images {
          image: "bt_base2.png" COMP;
          image: "bt_hilight.png" COMP;
@@ -7418,10 +7418,10 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/list/item/hoverlist";
-      alias: "elm/list/item_odd/hoverlist";
-      alias: "elm/list/h_item/hoverlist";
-      alias: "elm/list/h_item_odd/hoverlist";
+   group { name: "elm/list/item/ctxpopup";
+      alias: "elm/list/item_odd/ctxpopup";
+      alias: "elm/list/h_item/ctxpopup";
+      alias: "elm/list/h_item_odd/ctxpopup";
       parts {
          part { name: "button_image";
             mouse_events: 1;
@@ -7551,7 +7551,7 @@ collections {
    }
 
 ///////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/list/base/hoverlist";
+   group { name: "elm/list/base/ctxpopup";
       data {
          item: "focus_highlight" "on";
       }

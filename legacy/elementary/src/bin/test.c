@@ -115,7 +115,7 @@ void test_focus2(void *data, Evas_Object *obj, void *event_info);
 void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
-void test_hoverlist(void *data, Evas_Object *obj, void *event_info);
+void test_ctxpopup(void *data, Evas_Object *obj, void *event_info);
 void test_bubble(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
 
@@ -350,7 +350,7 @@ my_win_main(char *autorun)
    ADD_TEST("Flip Selector", test_flipselector);
    ADD_TEST("Disk Selector", test_diskselector);
    ADD_TEST("Color Selector", test_colorselector);
-   ADD_TEST("Hoverlist", test_hoverlist);
+   ADD_TEST("Ctxpopup", test_ctxpopup);
    ADD_TEST("Bubble", test_bubble);
    ADD_TEST("Store", test_store);
 #undef ADD_TEST

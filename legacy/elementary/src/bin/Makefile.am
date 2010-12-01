@@ -91,7 +91,7 @@ test_focus2.c \
 test_flipselector.c \
 test_diskselector.c \
 test_colorselector.c \
-test_hoverlist.c \
+test_ctxpopup.c \
 test_bubble.c \
 test_store.c
 

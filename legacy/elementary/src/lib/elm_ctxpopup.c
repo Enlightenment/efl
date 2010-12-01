@@ -2,13 +2,13 @@
 #include "elm_priv.h"
 
 /**
- * @defgroup Hoverlist
+ * @defgroup Ctxpopup
  *
- * A hoverlist is a widget that, when show, pops up a list of items.
+ * A ctxpopup is a widget that, when show, pops up a list of items.
  * It automatically chooses an area inside its parent object's view
- * (set via elm_hoverlist_add() and elm_hoverlist_hover_parent_set())
+ * (set via elm_ctxpopup_add() and elm_ctxpopup_hover_parent_set())
  * to optimally fit into it. In the default theme, it will also point
- * an arrow to the cursor position at the time one shows it. Hoverlist
+ * an arrow to the cursor position at the time one shows it. Ctxpopup
  * items have a label and/or an icon. It is intended for a small
  * number of items (hence the use of list, not genlist).
  *
@@ -19,7 +19,7 @@
 
 typedef struct _Widget_Data Widget_Data;
 
-struct _Elm_Hoverlist_Item
+struct _Elm_Ctxpopup_Item
 {
    Elm_Widget_Item base;
 
@@ -54,8 +54,8 @@ static void _del_pre_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _hover_clicked_cb(void *data, Evas_Object *obj, void *event_info);
 static void _parent_resize_cb(void *data, Evas *evas, Evas_Object *obj, void *event_info);
-static void _hoverlist_show(void *data, Evas *evas, Evas_Object *obj, void *event_info);
-static void _hoverlist_hide(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static void _ctxpopup_show(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static void _ctxpopup_hide(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 
 static const char SIG_DISMISSED[] = "dismissed";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -63,16 +63,16 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {NULL, NULL}
 };
 
-#define ELM_HOVERLIST_ITEM_CHECK_RETURN(it, ...)                        \
+#define ELM_CTXPOPUP_ITEM_CHECK_RETURN(it, ...)                        \
   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__);	\
   ELM_CHECK_WIDTYPE(item->base.widget, widtype) __VA_ARGS__;
 
-static Elm_Hoverlist_Item *
+static Elm_Ctxpopup_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
-   Elm_Hoverlist_Item *it;
+   Elm_Ctxpopup_Item *it;
 
-   it = elm_widget_item_new(obj, Elm_Hoverlist_Item);
+   it = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
    if (!it)
      return NULL;
 
@@ -85,7 +85,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb 
 }
 
 static inline void
-_item_free(Elm_Hoverlist_Item *it)
+_item_free(Elm_Ctxpopup_Item *it)
 {
    eina_stringshare_del(it->label);
    elm_widget_item_del(it);
@@ -104,7 +104,7 @@ _del_pre_hook(Evas_Object* obj)
 static void
 _del_hook(Evas_Object* obj)
 {
-   Elm_Hoverlist_Item *it;
+   Elm_Ctxpopup_Item *it;
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
@@ -169,9 +169,9 @@ _theme_hook(Evas_Object* obj)
    if (!wd)
      return;
 
-   elm_widget_style_set(wd->list, "hoverlist");
+   elm_widget_style_set(wd->list, "ctxpopup");
 
-   snprintf(buf, sizeof(buf), "hoverlist/%s", elm_widget_style_get(obj));
+   snprintf(buf, sizeof(buf), "ctxpopup/%s", elm_widget_style_get(obj));
    elm_object_style_set(wd->hover, buf);
 }
 
@@ -204,7 +204,7 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 static void
 _item_func_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Hoverlist_Item *it;
+   Elm_Ctxpopup_Item *it;
 
    elm_list_item_selected_set(event_info, EINA_FALSE);
 
@@ -234,7 +234,7 @@ _content_placement_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *eve
 }
 
 static void
-_hoverlist_show(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ctxpopup_show(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data* wd;
    int px, py;
@@ -257,7 +257,7 @@ _hoverlist_show(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, 
 }
 
 static void
-_hoverlist_hide(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ctxpopup_hide(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd)
@@ -292,15 +292,15 @@ _parent_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 }
 
 /**
- * Add a new Hoverlist object to the parent.
+ * Add a new Ctxpopup object to the parent.
  *
  * @param parent Parent object
  * @return New object or @c NULL, if it cannot be created
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI Evas_Object*
-elm_hoverlist_add(Evas_Object* parent)
+elm_ctxpopup_add(Evas_Object* parent)
 {
    Evas_Object* obj;
    Widget_Data* wd;
@@ -309,8 +309,8 @@ elm_hoverlist_add(Evas_Object* parent)
    wd = ELM_NEW(Widget_Data);
    wd->evas = evas_object_evas_get(parent);
    obj = elm_widget_add(wd->evas);
-   ELM_SET_WIDTYPE(widtype, "hoverlist");
-   elm_widget_type_set(obj, "hoverlist");
+   ELM_SET_WIDTYPE(widtype, "ctxpopup");
+   elm_widget_type_set(obj, "ctxpopup");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
@@ -324,7 +324,7 @@ elm_hoverlist_add(Evas_Object* parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    wd->list = elm_list_add(obj);
-   elm_widget_style_set(wd->list, "hoverlist");
+   elm_widget_style_set(wd->list, "ctxpopup");
 
    elm_list_mode_set(wd->list, ELM_LIST_EXPAND);
    evas_object_show(wd->list);
@@ -340,21 +340,21 @@ elm_hoverlist_add(Evas_Object* parent)
 
    wd->hover = elm_hover_add(obj);
 
-   snprintf(buf, sizeof(buf), "hoverlist/%s", elm_widget_style_get(obj));
+   snprintf(buf, sizeof(buf), "ctxpopup/%s", elm_widget_style_get(obj));
    elm_object_style_set(wd->hover, buf);
 
    evas_object_smart_callback_add(wd->hover, "smart,changed",
                                   _content_placement_changed_cb, obj);
 
-   elm_hoverlist_hover_parent_set(obj, parent);
+   elm_ctxpopup_hover_parent_set(obj, parent);
    elm_hover_target_set(wd->hover, wd->target);
 
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked_cb, obj);
    elm_hover_content_set(wd->hover, "smart", wd->list);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _hoverlist_show,
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _ctxpopup_show,
                                   NULL);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hoverlist_hide,
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _ctxpopup_hide,
                                   NULL);
 
    elm_widget_sub_object_add(obj, wd->list);
@@ -365,15 +365,15 @@ elm_hoverlist_add(Evas_Object* parent)
 }
 
 /**
- * This ends the Hoverlist's popup as if the user had clicked
+ * This ends the Ctxpopup's popup as if the user had clicked
  * outside the hover.
  *
- * @param obj The hoverlist object
+ * @param obj The ctxpopup object
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_hover_end(Evas_Object *obj)
+elm_ctxpopup_hover_end(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -388,38 +388,38 @@ elm_hoverlist_hover_end(Evas_Object *obj)
 }
 
 /**
- * Get the icon object for the given hoverlist item.
+ * Get the icon object for the given ctxpopup item.
  *
- * @param item Hoverlist item
+ * @param item Ctxpopup item
  * @return icon object or @c NULL, if the item does not have icon or
  *         an error occured
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI Evas_Object *
-elm_hoverlist_item_icon_get(const Elm_Hoverlist_Item *item)
+elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item, NULL);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, NULL);
    return item->icon;
 }
 
 /**
- * Sets the side icon associated with the hoverlist item.
+ * Sets the side icon associated with the ctxpopup item.
  *
  * Once the icon object is set, a previously set one will be deleted.
  * You probably don't want, then, to have the <b>same</b> icon object
  * set for more than one item of the list (when replacing one of its
  * instances).
  *
- * @param item Hoverlist item
+ * @param item Ctxpopup item
  * @param icon Icon object to be set
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_item_icon_set(Elm_Hoverlist_Item *item, Evas_Object *icon)
+elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
 
    Widget_Data *wd;
 
@@ -439,33 +439,33 @@ elm_hoverlist_item_icon_set(Elm_Hoverlist_Item *item, Evas_Object *icon)
 }
 
 /**
- * Get the label object for the given hoverlist item.
+ * Get the label object for the given ctxpopup item.
  *
- * @param item Hoverlist item
+ * @param item Ctxpopup item
  * @return label object or @c NULL, if the item does not have label or
  *         an error occured
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI const char *
-elm_hoverlist_item_label_get(const Elm_Hoverlist_Item *item)
+elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item, NULL);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, NULL);
    return item->label;
 }
 
 /**
- * (Re)set the label on the given hoverlist item.
+ * (Re)set the label on the given ctxpopup item.
  *
- * @param obj Hoverlist item
+ * @param obj Ctxpopup item
  * @param label String to set as label
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_item_label_set(Elm_Hoverlist_Item *item, const char *label)
+elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
 
    Widget_Data *wd;
 
@@ -481,22 +481,22 @@ elm_hoverlist_item_label_set(Elm_Hoverlist_Item *item, const char *label)
 }
 
 /**
- * Set the Hoverlist's parent.
+ * Set the Ctxpopup's parent.
  *
  * Sets the hover's parent object (it would much probably be the
- * window that the hoverlist is in). See Hover objects for more
+ * window that the ctxpopup is in). See Hover objects for more
  * information.
  *
- * @param obj The hoverlist object
+ * @param obj The ctxpopup object
  * @param parent The parent to use
  *
- * @note elm_hoverlist_add() will automatically call this function
+ * @note elm_ctxpopup_add() will automatically call this function
  * with its @c parent argument.
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
+elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -527,17 +527,17 @@ elm_hoverlist_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 }
 
 /**
- * Get the Hoverlist's parent object.
+ * Get the Ctxpopup's parent object.
  *
- * @param obj The hoverlist object
+ * @param obj The ctxpopup object
  * @param parent The parent to use
  *
- * See elm_hoverlist_hover_parent_set() for more information.
+ * See elm_ctxpopup_hover_parent_set() for more information.
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI Evas_Object *
-elm_hoverlist_hover_parent_get(const Evas_Object *obj)
+elm_ctxpopup_hover_parent_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
@@ -551,18 +551,18 @@ elm_hoverlist_hover_parent_get(const Evas_Object *obj)
 }
 
 /**
- * Clear all items in the given hoverlist object.
+ * Clear all items in the given ctxpopup object.
  *
- * @param obj Hoverlist object
+ * @param obj Ctxpopup object
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_clear(Evas_Object* obj)
+elm_ctxpopup_clear(Evas_Object* obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
-   Elm_Hoverlist_Item *item;
+   Elm_Ctxpopup_Item *item;
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
@@ -579,16 +579,16 @@ elm_hoverlist_clear(Evas_Object* obj)
 }
 
 /**
- * Change the hoverlist's orientation to horizontal or vertical.
+ * Change the ctxpopup's orientation to horizontal or vertical.
  *
- * @param obj Hoverlist object
+ * @param obj Ctxpopup object
  * @param horizontal @c EINA_TRUE for horizontal mode, @c EINA_FALSE
  *        for vertical
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_horizontal_set(Evas_Object* obj, Eina_Bool horizontal)
+elm_ctxpopup_horizontal_set(Evas_Object* obj, Eina_Bool horizontal)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -606,16 +606,16 @@ elm_hoverlist_horizontal_set(Evas_Object* obj, Eina_Bool horizontal)
 }
 
 /**
- * Get the value of current hoverlist object's orientation.
+ * Get the value of current ctxpopup object's orientation.
  *
- * @param obj Hoverlist object
+ * @param obj Ctxpopup object
  * @return @c EINA_TRUE for horizontal mode, @c EINA_FALSE for
  *            vertical mode (or errors)
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI Eina_Bool
-elm_hoverlist_horizontal_get(const Evas_Object *obj)
+elm_ctxpopup_horizontal_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 
@@ -629,23 +629,23 @@ elm_hoverlist_horizontal_get(const Evas_Object *obj)
 }
 
 /**
- * Append a new item to a hoverlist object.
+ * Append a new item to a ctxpopup object.
  *
- * @param obj Hoverlist object
+ * @param obj Ctxpopup object
  * @param label The label of the new item
  * @param icon Icon to be set on new item
  * @param func Convenience function called when item selected
  * @param data Data passed to @p func above
  * @return A handle to the item added or @c NULL, on errors
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
-EAPI Elm_Hoverlist_Item *
-elm_hoverlist_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
+EAPI Elm_Ctxpopup_Item *
+elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
-   Elm_Hoverlist_Item* item;
+   Elm_Ctxpopup_Item* item;
    Widget_Data* wd;
 
    wd = elm_widget_data_get(obj);
@@ -664,16 +664,16 @@ elm_hoverlist_item_append(Evas_Object *obj, const char *label, Evas_Object *icon
 }
 
 /**
- * Delete the given item in a hoverlist object.
+ * Delete the given item in a ctxpopup object.
  *
- * @param item Hoverlist item to be deleted
+ * @param item Ctxpopup item to be deleted
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_item_del(Elm_Hoverlist_Item *item)
+elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
 
    Widget_Data *wd;
 
@@ -693,17 +693,17 @@ elm_hoverlist_item_del(Elm_Hoverlist_Item *item)
 }
 
 /**
- * Set the hoverlist item's state as disabled or enabled
+ * Set the ctxpopup item's state as disabled or enabled
  *
- * @param item Hoverlist item to be enabled/disabled
+ * @param item Ctxpopup item to be enabled/disabled
  * @param disabled @c EINA_TRUE to disable it, @c EINA_FALSE to enable
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI void
-elm_hoverlist_item_disabled_set(Elm_Hoverlist_Item *item, Eina_Bool disabled)
+elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item);
 
    Widget_Data *wd;
 
@@ -719,17 +719,17 @@ elm_hoverlist_item_disabled_set(Elm_Hoverlist_Item *item, Eina_Bool disabled)
 }
 
 /**
- * Get the hoverlist item's disabled/enabled state.
+ * Get the ctxpopup item's disabled/enabled state.
  *
- * @param item Hoverlist item to be enabled/disabled
+ * @param item Ctxpopup item to be enabled/disabled
  * @return @c EINA_TRUE, if disabled, @c EINA_FALSE otherwise
  *
- * @ingroup Hoverlist
+ * @ingroup Ctxpopup
  */
 EAPI Eina_Bool
-elm_hoverlist_item_disabled_get(const Elm_Hoverlist_Item *item)
+elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
 {
-   ELM_HOVERLIST_ITEM_CHECK_RETURN(item, EINA_FALSE);
+   ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, EINA_FALSE);
 
    return item->disabled;
 }
