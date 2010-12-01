@@ -23,7 +23,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 		//  Mulitply s * c (= sc)
 		"vmull.u8	q4,	d0,d14		\n\t"
 		// sc in d8
-		"vshrn.u16	d4,	q4, #8		\n\t"
+		"vqrshrn.u16	d4,	q4, #8		\n\t"
 
 		// sca in d9
 		"vmvn.u32	d6,	d4		\n\t"
@@ -33,7 +33,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 
 		/* d * alpha */
 		"vmull.u8	q4,	d6, d2 	 	\n\t"
-		"vshrn.u16	d0,	q4, #8		\n\t"
+		"vqrshrn.u16	d0,	q4, #8		\n\t"
 
 		"vqadd.u8	d2,	d0, d4		\n\t"
 
@@ -57,7 +57,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 		//  Mulitply s * c (= sc)
 		"vmull.u8	q4,	d0,d14		\n\t"
 		// sc in d8
-		"vshrn.u16	d4,	q4, #8		\n\t"
+		"vqrshrn.u16	d4,	q4, #8		\n\t"
 
 		// sca in d9
 		"vmvn.u32	d6,	d4		\n\t"
@@ -67,7 +67,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 
 		/* d * alpha */
 		"vmull.u8	q4,	d6, d2 	 	\n\t"
-		"vshrn.u16	d0,	q4, #8		\n\t"
+		"vqrshrn.u16	d0,	q4, #8		\n\t"
 
 		"vqadd.u8	d2,	d0, d4		\n\t"
 
@@ -90,8 +90,8 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 		"vmull.u8	q5,	d1,d14	\n\t"
 
 		// Get sc & sc alpha
-		"vshrn.u16	d4,	q4, #8		\n\t"
-		"vshrn.u16	d5,	q5, #8		\n\t"
+		"vqrshrn.u16	d4,	q4, #8		\n\t"
+		"vqrshrn.u16	d5,	q5, #8		\n\t"
 			// sc is now in q2, 8bpp
 		// Shift out, then spread alpha for q2
 		"vmvn.u32	q3,	q2		\n\t"
@@ -102,8 +102,8 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 		"vmull.u8	q4,	d6,d2		\n\t"
 		"vmull.u8	q5,	d7,d3		\n\t"
 
-		"vshrn.u16	d0,	q4, #8		\n\t"
-		"vshrn.u16	d1,	q5, #8		\n\t"
+		"vqrshrn.u16	d0,	q4, #8		\n\t"
+		"vqrshrn.u16	d1,	q5, #8		\n\t"
 
 		"vqadd.u8	q1,	q0, q2		\n\t"
 
@@ -131,7 +131,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 		//  Mulitply s * c (= sc)
 		"vmull.u8	q4,	d0,d14		\n\t"
 		// sc in d8
-		"vshrn.u16	d4,	q4, #8		\n\t"
+		"vqrshrn.u16	d4,	q4, #8		\n\t"
 
 		// sca in d9
 		// XXX: I can probably squash one of these 3
@@ -141,7 +141,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 
 		/* d * alpha */
 		"vmull.u8	q4,	d6, d2 	 	\n\t"
-		"vshrn.u16	d0,	q4, #8		\n\t"
+		"vqrshrn.u16	d0,	q4, #8		\n\t"
 
 		"vqadd.u8	d2,	d0, d4		\n\t"
 
@@ -160,7 +160,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 		//  Mulitply s * c (= sc)
 		"vmull.u8	q4,	d0,d14		\n\t"
 		// sc in d8
-		"vshrn.u16	d4,	q4, #8		\n\t"
+		"vqrshrn.u16	d4,	q4, #8		\n\t"
 
 		// sca in d6
 		"vmvn.u32	d6,	d4		\n\t"
@@ -169,7 +169,7 @@ _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l
 
 		/* d * alpha */
 		"vmull.u8	q4,	d6, d2 	 	\n\t"
-		"vshrn.u16	d0,	q4, #8		\n\t"
+		"vqrshrn.u16	d0,	q4, #8		\n\t"
 
 		"vqadd.u8	d2,	d0, d4		\n\t"
 

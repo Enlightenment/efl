@@ -24,6 +24,8 @@ _op_blend_p_dp_mmx(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *
 
 static void
 _op_blend_pas_dp_mmx(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d, int l) {
+   _op_blend_p_dp_mmx(s, m, c, d, l);
+   return;
    DATA32 *e = d + l;
    pxor_r2r(mm0, mm0);
    MOV_A2R(ALPHA_256, mm6)
