@@ -119,10 +119,14 @@ static Eina_List        *fd_handlers_with_prep = NULL;
 static Eina_List        *fd_handlers_with_buffer = NULL;
 static Eina_List        *fd_handlers_to_delete = NULL;
 
+static Eina_List        *fd_handlers_to_call = NULL;
+static Eina_List        *fd_handlers_to_call_current;
+static Eina_List        *fd_handlers_to_call_current_next;
+
 #ifdef _WIN32
 static Ecore_Win32_Handler *win32_handlers = NULL;
 static Ecore_Win32_Handler *win32_handler_current = NULL;
-static int                  win32_handlers_delete_me = 0;
+static int                  win32_handlers_delete_me = EINA_FALSE;
 #endif
 
 #ifdef _WIN32
@@ -329,9 +333,33 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
              ERR("deleted fd in epoll");
              continue;
           }
-        if (ev[i].events & EPOLLIN) fdh->read_active = EINA_TRUE;
-        if (ev[i].events & EPOLLOUT) fdh->write_active = EINA_TRUE;
-        if (ev[i].events & EPOLLERR) fdh->error_active = EINA_TRUE;
+        if (ev[i].events & EPOLLIN)
+          {
+             if (!fdh->read_active)
+               {
+                  fdh->read_active = EINA_TRUE;
+                  if ((!fdh->write_active) && (!fdh->error_active))
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+               }
+          }
+        if (ev[i].events & EPOLLOUT)
+          {
+             if (!fdh->write_active)
+               {
+                  fdh->write_active = EINA_TRUE;
+                  if ((!fdh->read_active) && (!fdh->error_active))
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+               }
+          }
+        if (ev[i].events & EPOLLERR)
+          {
+             if (!fdh->error_active)
+               {
+                  fdh->error_active = EINA_TRUE;
+                  if ((!fdh->read_active) && (!fdh->write_active))
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+               }
+          }
      }
 
    return ret;
@@ -350,9 +378,33 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
         if (fdh->delete_me)
            continue;
         
-        if (fdh->gfd.revents & G_IO_IN) fdh->read_active = EINA_TRUE;
-        if (fdh->gfd.revents & G_IO_OUT) fdh->write_active = EINA_TRUE;
-        if (fdh->gfd.revents & G_IO_ERR) fdh->error_active = EINA_TRUE;
+        if (fdh->gfd.revents & G_IO_IN)
+          {
+             if (!fdh->read_active)
+               {
+                  fdh->read_active = EINA_TRUE;
+                  if ((!fdh->write_active) && (!fdh->error_active))
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+               }
+          }
+        if (fdh->gfd.revents & G_IO_OUT)
+          {
+             if (!fdh->write_active)
+               {
+                  fdh->write_active = EINA_TRUE;
+                  if ((!fdh->read_active) && (!fdh->error_active))
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+               }
+          }
+        if (fdh->gfd.revents & G_IO_ERR)
+          {
+             if (!fdh->error_active)
+               {
+                  fdh->error_active = EINA_TRUE;
+                  if ((!fdh->read_active) && (!fdh->write_active))
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+               }
+          }
         if (fdh->gfd.revents & (G_IO_IN|G_IO_OUT|G_IO_ERR)) ret++;
      }
 
@@ -744,7 +796,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    fdh->read_active = EINA_FALSE;
    fdh->write_active = EINA_FALSE;
    fdh->error_active = EINA_FALSE;
-   fdh->delete_me = 0;
+   fdh->delete_me = EINA_FALSE;
    fdh->func = func;
    fdh->data = (void *)data;
    fdh->buf_func = buf_func;
@@ -769,7 +821,7 @@ ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data)
    if (!wh) return NULL;
    ECORE_MAGIC_SET(wh, ECORE_MAGIC_WIN32_HANDLER);
    wh->h = (HANDLE)h;
-   wh->delete_me = 0;
+   wh->delete_me = EINA_FALSE;
    wh->func = func;
    wh->data = (void *)data;
    win32_handlers = (Ecore_Win32_Handler *)
@@ -811,7 +863,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
      /* FIXME: should this return NULL instead? */
      return fd_handler->data;
      
-   fd_handler->delete_me = 1;
+   fd_handler->delete_me = EINA_TRUE;
    _ecore_main_fdh_poll_del(fd_handler);
    fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
    if (fd_handler->prep_func && fd_handlers_with_prep)
@@ -831,8 +883,8 @@ ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
                          "ecore_main_win32_handler_del");
         return NULL;
      }
-   win32_handler->delete_me = 1;
-   win32_handlers_delete_me = 1;
+   win32_handler->delete_me = EINA_TRUE;
+   win32_handlers_delete_me = EINA_TRUE;
    return win32_handler->data;
 }
 #else
@@ -968,6 +1020,10 @@ _ecore_main_shutdown(void)
    fd_handlers_with_prep = NULL;
    if (fd_handlers_to_delete)
      eina_list_free(fd_handlers_to_delete);
+   if (fd_handlers_to_call)
+     eina_list_free(fd_handlers_to_call);
+   fd_handlers_to_call = NULL;
+   fd_handlers_to_call_current = NULL;
    fd_handlers_to_delete = NULL;
    fd_handler_current = NULL;
 
@@ -982,7 +1038,7 @@ _ecore_main_shutdown(void)
         ECORE_MAGIC_SET(wh, ECORE_MAGIC_NONE);
         free(wh);
      }
-   win32_handlers_delete_me = 0;
+   win32_handlers_delete_me = EINA_FALSE;
    win32_handler_current = NULL;
 #endif
 }
@@ -1101,11 +1157,32 @@ _ecore_main_select(double timeout)
              if (!fdh->delete_me)
                {
                   if (FD_ISSET(fdh->fd, &rfds))
-                     fdh->read_active = EINA_TRUE;
+                    {
+                       if (!fdh->read_active)
+                         {
+                            fdh->read_active = EINA_TRUE;
+                            if ((!fdh->write_active) && (!fdh->error_active))
+                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+                         }
+                    }
                   if (FD_ISSET(fdh->fd, &wfds))
-                     fdh->write_active = EINA_TRUE;
+                    {
+                       if (!fdh->write_active)
+                         {
+                            fdh->write_active = EINA_TRUE;
+                            if ((!fdh->read_active) && (!fdh->error_active))
+                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+                         }
+                    }
                   if (FD_ISSET(fdh->fd, &exfds))
-                     fdh->error_active = EINA_TRUE;
+                    {
+                       if (!fdh->error_active)
+                         {
+                            fdh->error_active = EINA_TRUE;
+                            if ((!fdh->read_active) && (!fdh->write_active))
+                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+                         }
+                    }
                }
           }
 #endif /* HAVE_EPOLL */
@@ -1145,7 +1222,7 @@ _ecore_main_fd_handlers_bads_rem(void)
                        ERR("Fd function err returned 0, remove it");
                        if (!fdh->delete_me)
                          {
-                            fdh->delete_me = 1;
+                            fdh->delete_me = EINA_TRUE;
                             fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                          }
                        found++;
@@ -1157,7 +1234,7 @@ _ecore_main_fd_handlers_bads_rem(void)
                   ERR("Problematic fd found at %d! setting it for delete", fdh->fd);
                   if (!fdh->delete_me)
                     {
-                       fdh->delete_me = 1;
+                       fdh->delete_me = EINA_TRUE;
                        fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                     }
 
@@ -1231,27 +1308,29 @@ _ecore_main_win32_handlers_cleanup(void)
              free(wh);
           }
      }
-   if (!deleted_in_use) win32_handlers_delete_me = 0;
+   if (!deleted_in_use) win32_handlers_delete_me = EINA_FALSE;
 }
 #endif
 
 static void
 _ecore_main_fd_handlers_call(void)
 {
-   if (!fd_handler_current)
+   if (!fd_handlers_to_call_current)
      {
         /* regular main loop, start from head */
-        fd_handler_current = fd_handlers;
+        fd_handlers_to_call_current = fd_handlers_to_call;
+        fd_handlers_to_call_current_next = eina_list_next(fd_handlers_to_call_current);
      }
    else
      {
         /* recursive main loop, continue from where we were */
-        fd_handler_current = (Ecore_Fd_Handler *)EINA_INLIST_GET(fd_handler_current)->next;
+        fd_handlers_to_call_current = fd_handlers_to_call_current_next;
+        fd_handlers_to_call_current_next = eina_list_next(fd_handlers_to_call_current);
      }
 
-   while (fd_handler_current)
+   while (fd_handlers_to_call_current)
      {
-        Ecore_Fd_Handler *fdh = fd_handler_current;
+        Ecore_Fd_Handler *fdh = fd_handlers_to_call_current->data;
 
         if (!fdh->delete_me)
           {
@@ -1264,7 +1343,7 @@ _ecore_main_fd_handlers_call(void)
                     {
                        if (!fdh->delete_me)
                          {
-                            fdh->delete_me = 1;
+                            fdh->delete_me = EINA_TRUE;
                             fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fdh);
                          }
 
@@ -1277,8 +1356,9 @@ _ecore_main_fd_handlers_call(void)
                }
           }
 
-        if (fd_handler_current) /* may have changed in recursive main loops */
-          fd_handler_current = (Ecore_Fd_Handler *)EINA_INLIST_GET(fd_handler_current)->next;
+        fd_handlers_to_call = eina_list_remove_list(fd_handlers_to_call, fd_handlers_to_call_current);
+        fd_handlers_to_call_current = fd_handlers_to_call_current_next;
+        fd_handlers_to_call_current_next = eina_list_next(fd_handlers_to_call_current_next);
      }
 }
 
@@ -1299,7 +1379,15 @@ _ecore_main_fd_handlers_buf_call(void)
              if (fdh->buf_func(fdh->buf_data, fdh))
                {
                   ret |= fdh->func(fdh->data, fdh);
-                  fdh->read_active = EINA_TRUE;
+                  if (!fdh->read_active)
+                    {
+                       if (!fdh->read_active)
+                         {
+                            fdh->read_active = EINA_TRUE;
+                            if ((!fdh->write_active) && (!fdh->error_active))
+                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+                         }
+                    }
                }
              fdh->references--;
           }
@@ -1601,8 +1689,8 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
                        wh->references++;
                        if (!wh->func(wh->data, wh))
                          {
-                            wh->delete_me = 1;
-                            win32_handlers_delete_me = 1;
+                            wh->delete_me = EINA_TRUE;
+                            win32_handlers_delete_me = EINA_TRUE;
                          }
                        wh->references--;
                     }
