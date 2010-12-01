@@ -52,12 +52,14 @@ _gnutls_print_errors(int ret)
      ERR("gnutls returned with error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
 }
 
+#ifdef ISCOMFITOR
 static void
 _gnutls_log_func(int         level,
                  const char *str)
 {
    DBG("|<%d>| %s", level, str);
 }
+#endif
 
 static const char *
 SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
@@ -413,9 +415,11 @@ _ecore_con_ssl_init_gnutls(void)
 #endif
    if (gnutls_global_init())
      return ECORE_CON_SSL_ERROR_INIT_FAILED;
+
+#ifdef ISCOMFITOR
    gnutls_global_set_log_level(9);
    gnutls_global_set_log_function(_gnutls_log_func);
-
+#endif
    return ECORE_CON_SSL_ERROR_NONE;
 }
 
@@ -1142,6 +1146,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
         break;
      }
 
+#ifdef ISCOMFITOR
    {
       /* print session info into DBG */
        SSL_SESSION *s;
@@ -1157,7 +1162,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
 
        BIO_free(b);
    }
-
+#endif
    if (!svr->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
@@ -1384,6 +1389,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
         break;
      }
 
+#ifdef ISCOMFITOR
    {
       /* print session info into DBG */
        SSL_SESSION *s;
@@ -1399,6 +1405,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
 
        BIO_free(b);
    }
+#endif
 
    if (!cl->host_server->verify)
      /* not verifying certificates, so we're done! */
