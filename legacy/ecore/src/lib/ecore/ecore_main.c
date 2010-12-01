@@ -329,9 +329,9 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
              ERR("deleted fd in epoll");
              continue;
           }
-        if (ev[i].events & EPOLLIN) fdh->read_active = 1;
-        if (ev[i].events & EPOLLOUT) fdh->write_active = 1;
-        if (ev[i].events & EPOLLERR) fdh->error_active = 1;
+        if (ev[i].events & EPOLLIN) fdh->read_active = EINA_TRUE;
+        if (ev[i].events & EPOLLOUT) fdh->write_active = EINA_TRUE;
+        if (ev[i].events & EPOLLERR) fdh->error_active = EINA_TRUE;
      }
 
    return ret;
@@ -350,9 +350,9 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
         if (fdh->delete_me)
            continue;
         
-        if (fdh->gfd.revents & G_IO_IN) fdh->read_active = 1;
-        if (fdh->gfd.revents & G_IO_OUT) fdh->write_active = 1;
-        if (fdh->gfd.revents & G_IO_ERR) fdh->error_active = 1;
+        if (fdh->gfd.revents & G_IO_IN) fdh->read_active = EINA_TRUE;
+        if (fdh->gfd.revents & G_IO_OUT) fdh->write_active = EINA_TRUE;
+        if (fdh->gfd.revents & G_IO_ERR) fdh->error_active = EINA_TRUE;
         if (fdh->gfd.revents & (G_IO_IN|G_IO_OUT|G_IO_ERR)) ret++;
      }
 
@@ -741,9 +741,9 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
         free(fdh);
         return NULL;
      }
-   fdh->read_active = 0;
-   fdh->write_active = 0;
-   fdh->error_active = 0;
+   fdh->read_active = EINA_FALSE;
+   fdh->write_active = EINA_FALSE;
+   fdh->error_active = EINA_FALSE;
    fdh->delete_me = 0;
    fdh->func = func;
    fdh->data = (void *)data;
@@ -1101,11 +1101,11 @@ _ecore_main_select(double timeout)
              if (!fdh->delete_me)
                {
                   if (FD_ISSET(fdh->fd, &rfds))
-                     fdh->read_active = 1;
+                     fdh->read_active = EINA_TRUE;
                   if (FD_ISSET(fdh->fd, &wfds))
-                     fdh->write_active = 1;
+                     fdh->write_active = EINA_TRUE;
                   if (FD_ISSET(fdh->fd, &exfds))
-                     fdh->error_active = 1;
+                     fdh->error_active = EINA_TRUE;
                }
           }
 #endif /* HAVE_EPOLL */
@@ -1271,9 +1271,9 @@ _ecore_main_fd_handlers_call(void)
                     }
                   fdh->references--;
 
-                  fdh->read_active = 0;
-                  fdh->write_active = 0;
-                  fdh->error_active = 0;
+                  fdh->read_active = EINA_FALSE;
+                  fdh->write_active = EINA_FALSE;
+                  fdh->error_active = EINA_FALSE;
                }
           }
 
@@ -1299,7 +1299,7 @@ _ecore_main_fd_handlers_buf_call(void)
              if (fdh->buf_func(fdh->buf_data, fdh))
                {
                   ret |= fdh->func(fdh->data, fdh);
-                  fdh->read_active = 1;
+                  fdh->read_active = EINA_TRUE;
                }
              fdh->references--;
           }
