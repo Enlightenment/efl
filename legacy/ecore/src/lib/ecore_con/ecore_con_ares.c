@@ -211,7 +211,7 @@ _ecore_con_info_ares_getnameinfo(Ecore_Con_CAres *arg,
    else
      length = 1;
 
-   arg->result = malloc(sizeof (Ecore_Con_Info) + length);
+   arg->result = malloc(sizeof(Ecore_Con_Info) + length);
    if (!arg->result)
      return EINA_FALSE;
 
@@ -250,7 +250,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
    Ecore_Con_CAres *cares;
    int ai_family = AF_INET6;
 
-   cares = calloc(1, sizeof (Ecore_Con_CAres));
+   cares = calloc(1, sizeof(Ecore_Con_CAres));
    if (!cares)
      return 0;
 
@@ -261,7 +261,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
    if (hints)
      {
         ai_family = hints->ai_family;
-        memcpy(&cares->hints, hints, sizeof (struct addrinfo));
+        memcpy(&cares->hints, hints, sizeof(struct addrinfo));
      }
 
    if (inet_pton(AF_INET, svr->name, &cares->addr.v4) == 1)
@@ -269,7 +269,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         cares->byaddr = EINA_TRUE;
         cares->isv6 = EINA_FALSE;
         ares_gethostbyaddr(info_channel, &cares->addr.v4,
-                           sizeof (cares->addr.v4),
+                           sizeof(cares->addr.v4),
                            AF_INET,
                            (ares_host_callback)_ecore_con_info_ares_host_cb,
                            cares);
@@ -279,7 +279,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         cares->byaddr = EINA_TRUE;
         cares->isv6 = EINA_TRUE;
         ares_gethostbyaddr(info_channel, &cares->addr.v6,
-                           sizeof (cares->addr.v6),
+                           sizeof(cares->addr.v6),
                            AF_INET6,
                            (ares_host_callback)_ecore_con_info_ares_host_cb,
                            cares);
@@ -348,21 +348,20 @@ _ecore_con_info_cares_clean(void)
         if (FD_ISSET(i, &writers))
           flags |= ECORE_FD_WRITE;
 
-        if (flags)
-          if (!_ecore_con_info_fds_lookup(i))
-            {
-               ecf = malloc(sizeof (Ecore_Con_FD));
-               if (ecf)
-                 {
-                    ecf->fd = i;
-                    ecf->active = active;
-                    ecf->handler = ecore_main_fd_handler_add(
-                        i, ECORE_FD_WRITE | ECORE_FD_READ,
-                        _ecore_con_info_cares_fd_cb,
-                        NULL, NULL, NULL);
-                    info_fds = eina_list_append(info_fds, ecf);
-                 }
-            }
+        if (flags &&  (!_ecore_con_info_fds_lookup(i)))
+          {
+             ecf = malloc(sizeof(Ecore_Con_FD));
+             if (ecf)
+               {
+                  ecf->fd = i;
+                  ecf->active = active;
+                  ecf->handler = ecore_main_fd_handler_add(
+                      i, ECORE_FD_WRITE | ECORE_FD_READ,
+                      _ecore_con_info_cares_fd_cb,
+                      NULL, NULL, NULL);
+                  info_fds = eina_list_append(info_fds, ecf);
+               }
+          }
      }
 
    info_readers = readers;
@@ -445,7 +444,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
            {
               struct sockaddr_in *addri;
 
-              addrlen = sizeof (struct sockaddr_in);
+              addrlen = sizeof(struct sockaddr_in);
               addri = malloc(addrlen);
 
               if (!addri)
@@ -455,7 +454,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               addri->sin_port = htons(arg->svr->port);
 
               memcpy(&addri->sin_addr.s_addr,
-                     hostent->h_addr_list[0], sizeof (struct in_addr));
+                     hostent->h_addr_list[0], sizeof(struct in_addr));
 
               addr = (struct sockaddr *)addri;
               break;
@@ -465,7 +464,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
            {
               struct sockaddr_in6 *addri6;
 
-              addrlen = sizeof (struct sockaddr_in6);
+              addrlen = sizeof(struct sockaddr_in6);
               addri6 = malloc(addrlen);
 
               if (!addri6)
@@ -477,7 +476,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
               addri6->sin6_scope_id = 0;
 
               memcpy(&addri6->sin6_addr.s6_addr,
-                     hostent->h_addr_list[0], sizeof (struct in6_addr));
+                     hostent->h_addr_list[0], sizeof(struct in6_addr));
 
               addr = (struct sockaddr *)addri6;
               break;
@@ -503,7 +502,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                 {
                    struct sockaddr_in6 *addri6;
 
-                   addrlen = sizeof (struct sockaddr_in6);
+                   addrlen = sizeof(struct sockaddr_in6);
                    addri6 = malloc(addrlen);
 
                    if (!addri6)
@@ -515,7 +514,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                    addri6->sin6_scope_id = 0;
 
                    memcpy(&addri6->sin6_addr.s6_addr,
-                          &arg->addr.v6, sizeof (struct in6_addr));
+                          &arg->addr.v6, sizeof(struct in6_addr));
 
                    addr = (struct sockaddr *)addri6;
                 }
@@ -523,7 +522,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                 {
                    struct sockaddr_in *addri;
 
-                   addrlen = sizeof (struct sockaddr_in);
+                   addrlen = sizeof(struct sockaddr_in);
                    addri = malloc(addrlen);
 
                    if (!addri)
@@ -533,7 +532,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                    addri->sin_port = htons(arg->svr->port);
 
                    memcpy(&addri->sin_addr.s_addr,
-                          &arg->addr.v4, sizeof (struct in_addr));
+                          &arg->addr.v4, sizeof(struct in_addr));
 
                    addr = (struct sockaddr *)addri;
                 }
