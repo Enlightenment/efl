@@ -1016,7 +1016,11 @@ _ecore_main_prepare_handlers(void)
    /* call the prepare callback for all handlers with prep functions */
    EINA_LIST_FOREACH_SAFE(fd_handlers_with_prep, l, l2, fdh)
      {
-        if (!fdh) fd_handlers_with_prep = eina_list_remove_list(l, fd_handlers_with_prep);
+        if (!fdh)
+          {
+             fd_handlers_with_prep = eina_list_remove_list(l, fd_handlers_with_prep);
+             continue;
+          }
         if (!fdh->delete_me && fdh->prep_func)
           {
              fdh->references++;
@@ -1210,7 +1214,11 @@ _ecore_main_fd_handlers_cleanup(void)
    if (!fd_handlers_to_delete) return;
    EINA_LIST_FOREACH_SAFE(fd_handlers_to_delete, l, l2, fdh)
      {
-        if (!fdh) fd_handlers_to_delete = eina_list_remove_list(l, fd_handlers_to_delete);
+        if (!fdh)
+          {
+             fd_handlers_to_delete = eina_list_remove_list(l, fd_handlers_to_delete);
+             continue;
+          }
         /* fdh->delete_me should be set for all fdhs at the start of the list */
         if (fdh->references)
           continue;
@@ -1319,7 +1327,11 @@ _ecore_main_fd_handlers_buf_call(void)
    ret = 0;
    EINA_LIST_FOREACH_SAFE(fd_handlers_with_buffer, l, l2, fdh)
      {
-        if (!fdh) fd_handlers_with_buffer = eina_list_remove_list(l, fd_handlers_with_buffer);
+        if (!fdh)
+          {
+             fd_handlers_with_buffer = eina_list_remove_list(l, fd_handlers_with_buffer);
+             continue;
+          }
         if ((!fdh->delete_me) && fdh->buf_func)
           {
              fdh->references++;
