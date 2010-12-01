@@ -64,7 +64,7 @@ elm_photo.c \
 elm_toolbar.c \
 elm_list.c \
 elm_slider.c \
-elm_magnetslider.c \
+elm_actionslider.c \
 elm_genlist.c \
 elm_check.c \
 elm_radio.c \

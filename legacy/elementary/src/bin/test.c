@@ -57,7 +57,7 @@ void test_inwin2(void *data, Evas_Object *obj, void *event_info);
 void test_scaling(void *data, Evas_Object *obj, void *event_info);
 void test_scaling2(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
-void test_magnetslider(void *data, Evas_Object *obj, void *event_info);
+void test_actionslider(void *data, Evas_Object *obj, void *event_info);
 void test_genlist(void *data, Evas_Object *obj, void *event_info);
 void test_genlist2(void *data, Evas_Object *obj, void *event_info);
 void test_genlist3(void *data, Evas_Object *obj, void *event_info);
@@ -291,7 +291,7 @@ my_win_main(char *autorun)
    ADD_TEST("Scaling", test_scaling);
    ADD_TEST("Scaling 2", test_scaling2);
    ADD_TEST("Slider", test_slider);
-   ADD_TEST("Magnetslider", test_magnetslider);
+   ADD_TEST("Actionslider", test_actionslider);
    ADD_TEST("Genlist", test_genlist);
    ADD_TEST("Genlist 2", test_genlist2);
    ADD_TEST("Genlist 3", test_genlist3);

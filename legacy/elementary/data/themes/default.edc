@@ -14870,9 +14870,9 @@ collections {
    }
 
 ////////////////////////////////////////////////////////////////////////////////
-// magnetslider
+// actionslider
 ////////////////////////////////////////////////////////////////////////////////
-   group { name: "elm/magnetslider/base/default";
+   group { name: "elm/actionslider/base/default";
 
       images {
          image: "shelf_inset.png" COMP;
@@ -14983,8 +14983,8 @@ collections {
       }
    }
 
-   group { name: "elm/magnetslider/icon/default";
-      alias: "elm/magnetslider/icon/bar";
+   group { name: "elm/actionslider/icon/default";
+      alias: "elm/actionslider/icon/bar";
 
       images {
          image: "bt_bases.png" COMP;
@@ -15044,7 +15044,7 @@ collections {
       }
    }
 
-   group { name: "elm/magnetslider/base/bar";
+   group { name: "elm/actionslider/base/bar";
 
       images {
          image: "shelf_inset.png" COMP;

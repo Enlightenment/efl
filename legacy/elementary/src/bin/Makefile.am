@@ -53,7 +53,7 @@ test_list.c \
 test_inwin.c \
 test_scaling.c \
 test_slider.c \
-test_magnetslider.c \
+test_actionslider.c \
 test_genlist.c \
 test_check.c \
 test_pager.c \

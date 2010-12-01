@@ -1,5 +1,5 @@
 /**
- * @addtogroup Magnetslider Magnetslider
+ * @addtogroup Actionslider Actionslider
  *
  * A magnet slider is a switcher for 3 labels with customizable
  * magnet properties. When the position is set with magnet, the knob
@@ -20,9 +20,9 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object *ms;     // magnetslider
+   Evas_Object *ms;     // actionslider
    Evas_Object *icon;      // an icon for a button or a bar
-   Elm_Magnetslider_Pos magnet_position, enabled_position;
+   Elm_Actionslider_Pos magnet_position, enabled_position;
    const char *text_left, *text_right, *text_center;
    Ecore_Animator *icon_animator;
    double final_position;
@@ -71,9 +71,9 @@ _theme_hook(Evas_Object *obj)
    if (!edje_object_part_swallow_get(wd->ms, "elm.swallow.icon"))
      edje_object_part_unswallow(wd->ms, wd->icon);
 
-   _elm_theme_object_set(obj, wd->ms, "magnetslider",
+   _elm_theme_object_set(obj, wd->ms, "actionslider",
                          "base", elm_widget_style_get(obj));
-   _elm_theme_object_set(obj, wd->icon, "magnetslider",
+   _elm_theme_object_set(obj, wd->icon, "actionslider",
                          "icon", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->ms, "elm.swallow.icon", wd->icon);
    edje_object_part_text_set(wd->ms, "elm.text.left", wd->text_left);
@@ -133,7 +133,7 @@ _icon_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    edje_object_part_drag_value_get(wd->ms, "elm.swallow.icon",
                                    &position, NULL);
 
-   if (position == 0.0 && (wd->enabled_position & ELM_MAGNETSLIDER_LEFT))
+   if (position == 0.0 && (wd->enabled_position & ELM_ACTIONSLIDER_LEFT))
      {
         wd->final_position = 0;
         evas_object_smart_callback_call(data, SIG_SELECTED,
@@ -141,14 +141,14 @@ _icon_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
         return;
      }
    if (position >= 0.45 && position <= 0.55 &&
-       (wd->enabled_position & ELM_MAGNETSLIDER_CENTER))
+       (wd->enabled_position & ELM_ACTIONSLIDER_CENTER))
      {
         wd->final_position = 0.5;
         evas_object_smart_callback_call(data, SIG_SELECTED,
                                         (void *)wd->text_center);
         return;
      }
-   if (position == 1.0 && (wd->enabled_position & ELM_MAGNETSLIDER_RIGHT))
+   if (position == 1.0 && (wd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
      {
         wd->final_position = 1;
         evas_object_smart_callback_call(data, SIG_SELECTED,
@@ -164,27 +164,27 @@ _icon_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    if (position < 0.3)
      {
-        if (wd->magnet_position & ELM_MAGNETSLIDER_LEFT)
+        if (wd->magnet_position & ELM_ACTIONSLIDER_LEFT)
           wd->final_position = 0;
-        else if (wd->magnet_position & ELM_MAGNETSLIDER_CENTER)
+        else if (wd->magnet_position & ELM_ACTIONSLIDER_CENTER)
           wd->final_position = 0.5;
-        else if (wd->magnet_position & ELM_MAGNETSLIDER_RIGHT)
+        else if (wd->magnet_position & ELM_ACTIONSLIDER_RIGHT)
           wd->final_position = 1;
      }
    else if ((position >= 0.3) && (position <= 0.7))
      {
-        if (wd->magnet_position & ELM_MAGNETSLIDER_CENTER)
+        if (wd->magnet_position & ELM_ACTIONSLIDER_CENTER)
           wd->final_position = 0.5;
         else if (position < 0.5)
           {
-             if (wd->magnet_position & ELM_MAGNETSLIDER_LEFT)
+             if (wd->magnet_position & ELM_ACTIONSLIDER_LEFT)
                wd->final_position = 0;
              else
                wd->final_position = 1;
           }
         else
           {
-             if (wd->magnet_position & ELM_MAGNETSLIDER_RIGHT)
+             if (wd->magnet_position & ELM_ACTIONSLIDER_RIGHT)
                wd->final_position = 1;
              else
                wd->final_position = 0;
@@ -192,9 +192,9 @@ _icon_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
      }
    else
      {
-        if (wd->magnet_position & ELM_MAGNETSLIDER_RIGHT)
+        if (wd->magnet_position & ELM_ACTIONSLIDER_RIGHT)
           wd->final_position = 1;
-        else if (wd->magnet_position & ELM_MAGNETSLIDER_CENTER)
+        else if (wd->magnet_position & ELM_ACTIONSLIDER_CENTER)
           wd->final_position = 0.5;
         else
           wd->final_position = 0;
@@ -239,15 +239,15 @@ _icon_animation(void *data)
    if (flag_finish_animation)
      {
         if ((!wd->final_position) &&
-            (wd->enabled_position & ELM_MAGNETSLIDER_LEFT))
+            (wd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           evas_object_smart_callback_call(data, SIG_SELECTED,
                                           (void *)wd->text_left);
         else if ((wd->final_position == 0.5) &&
-                 (wd->enabled_position & ELM_MAGNETSLIDER_CENTER))
+                 (wd->enabled_position & ELM_ACTIONSLIDER_CENTER))
           evas_object_smart_callback_call(data, SIG_SELECTED,
                                           (void *)wd->text_center);
         else if ((wd->final_position == 1) &&
-                 (wd->enabled_position & ELM_MAGNETSLIDER_RIGHT))
+                 (wd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
           evas_object_smart_callback_call(data, SIG_SELECTED,
                                           (void *)wd->text_right);
         return EINA_FALSE;
@@ -256,15 +256,15 @@ _icon_animation(void *data)
 }
 
 /**
- * Add a new magnetslider to the parent.
+ * Add a new actionslider to the parent.
  *
  * @param parent The parent object
- * @return The new magnetslider object or NULL if it cannot be created
+ * @return The new actionslider object or NULL if it cannot be created
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI Evas_Object *
-elm_magnetslider_add(Evas_Object *parent)
+elm_actionslider_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Widget_Data *wd;
@@ -273,23 +273,23 @@ elm_magnetslider_add(Evas_Object *parent)
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
-   ELM_SET_WIDTYPE(widtype, "magnetslider");
-   elm_widget_type_set(obj, "magnetslider");
+   ELM_SET_WIDTYPE(widtype, "actionslider");
+   elm_widget_type_set(obj, "actionslider");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->mouse_down = EINA_FALSE;
-   wd->enabled_position = ELM_MAGNETSLIDER_ALL;
+   wd->enabled_position = ELM_ACTIONSLIDER_ALL;
 
    wd->ms = edje_object_add(e);
-   _elm_theme_object_set(obj, wd->ms, "magnetslider", "base", "default");
+   _elm_theme_object_set(obj, wd->ms, "actionslider", "base", "default");
    elm_widget_resize_object_set(obj, wd->ms);
 
    wd->icon = edje_object_add(e);
    elm_widget_sub_object_add(obj, wd->icon);
-   _elm_theme_object_set(obj, wd->icon, "magnetslider", "icon", "default");
+   _elm_theme_object_set(obj, wd->icon, "actionslider", "icon", "default");
    edje_object_part_swallow(wd->ms, "elm.swallow.icon", wd->icon);
 
    evas_object_event_callback_add(wd->icon, EVAS_CALLBACK_MOUSE_DOWN,
@@ -305,62 +305,62 @@ elm_magnetslider_add(Evas_Object *parent)
 }
 
 /**
- * Set magnetslider indicator position.
+ * Set actionslider indicator position.
  *
- * @param obj The magnetslider object.
+ * @param obj The actionslider object.
  * @param pos The position of the indicator.
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI void
-elm_magnetslider_indicator_pos_set(Evas_Object *obj, Elm_Magnetslider_Pos pos)
+elm_actionslider_indicator_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    double position = 0.0;
    if (!wd) return;
-   if (pos == ELM_MAGNETSLIDER_CENTER) position = 0.5;
-   else if (pos == ELM_MAGNETSLIDER_RIGHT) position = 1.0;
+   if (pos == ELM_ACTIONSLIDER_CENTER) position = 0.5;
+   else if (pos == ELM_ACTIONSLIDER_RIGHT) position = 1.0;
    edje_object_part_drag_value_set(wd->ms, "elm.swallow.icon", position, 0.5);
 }
 
 /**
- * Get magnetslider indicator position.
+ * Get actionslider indicator position.
  *
- * @param obj The magnetslider object.
+ * @param obj The actionslider object.
  * @return The position of the indicator.
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
-EAPI Elm_Magnetslider_Pos
-elm_magnetslider_indicator_pos_get(const Evas_Object *obj)
+EAPI Elm_Actionslider_Pos
+elm_actionslider_indicator_pos_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAGNETSLIDER_NONE;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_ACTIONSLIDER_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
    double position;
-   if (!wd) return ELM_MAGNETSLIDER_NONE;
+   if (!wd) return ELM_ACTIONSLIDER_NONE;
 
    edje_object_part_drag_value_get(wd->ms, "elm.swallow.icon", &position, NULL);
    if (position < 0.3)
-     return ELM_MAGNETSLIDER_LEFT;
+     return ELM_ACTIONSLIDER_LEFT;
    else if (position < 0.7)
-     return ELM_MAGNETSLIDER_CENTER;
+     return ELM_ACTIONSLIDER_CENTER;
    else
-     return ELM_MAGNETSLIDER_RIGHT;
+     return ELM_ACTIONSLIDER_RIGHT;
 }
 
 /**
- * Set magnetslider magnet position.
+ * Set actionslider magnet position.
  *
- * @param obj The magnetslider object.
+ * @param obj The actionslider object.
  * @param pos Bit mask indicating the magnet positions.
- * Example: use (ELM_MAGNETSLIDER_LEFT | ELM_MAGNETSLIDER_RIGHT)
+ * Example: use (ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
  * to put magnet property on both positions
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI void
-elm_magnetslider_magnet_pos_set(Evas_Object *obj, Elm_Magnetslider_Pos pos)
+elm_actionslider_magnet_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -369,36 +369,36 @@ elm_magnetslider_magnet_pos_set(Evas_Object *obj, Elm_Magnetslider_Pos pos)
 }
 
 /**
- * Get magnetslider magnet position.
+ * Get actionslider magnet position.
  *
- * @param obj The magnetslider object.
+ * @param obj The actionslider object.
  * @return The positions with magnet property.
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
-EAPI Elm_Magnetslider_Pos
-elm_magnetslider_magnet_pos_get(const Evas_Object *obj)
+EAPI Elm_Actionslider_Pos
+elm_actionslider_magnet_pos_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAGNETSLIDER_NONE;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_ACTIONSLIDER_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_MAGNETSLIDER_NONE;
+   if (!wd) return ELM_ACTIONSLIDER_NONE;
    return wd->magnet_position;
 }
 
 /**
- * Set magnetslider enabled position.
+ * Set actionslider enabled position.
  *
  * All the positions are enabled by default.
  *
- * @param obj The magnetslider object.
+ * @param obj The actionslider object.
  * @param pos Bit mask indicating the enabled positions.
- * Example: use (ELM_MAGNETSLIDER_LEFT | ELM_MAGNETSLIDER_RIGHT)
+ * Example: use (ELM_ACTIONSLIDER_LEFT | ELM_ACTIONSLIDER_RIGHT)
  * to enable both positions, so the user can select it.
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI void
-elm_magnetslider_enabled_pos_set(Evas_Object *obj, Elm_Magnetslider_Pos pos)
+elm_actionslider_enabled_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -407,36 +407,36 @@ elm_magnetslider_enabled_pos_set(Evas_Object *obj, Elm_Magnetslider_Pos pos)
 }
 
 /**
- * Get magnetslider enabled position.
+ * Get actionslider enabled position.
  *
  * All the positions are enabled by default.
  *
- * @param obj The magnetslider object.
+ * @param obj The actionslider object.
  * @return The enabled positions.
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
-EAPI Elm_Magnetslider_Pos
-elm_magnetslider_enabled_pos_get(const Evas_Object *obj)
+EAPI Elm_Actionslider_Pos
+elm_actionslider_enabled_pos_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAGNETSLIDER_NONE;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_ACTIONSLIDER_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_MAGNETSLIDER_NONE;
+   if (!wd) return ELM_ACTIONSLIDER_NONE;
    return wd->enabled_position;
 }
 
 /**
- * Set magnetslider labels.
+ * Set actionslider labels.
  *
- * @param obj The magnetslider object
+ * @param obj The actionslider object
  * @param left_label The label which is going to be set.
  * @param center_label The label which is going to be set.
  * @param right_label The label which is going to be set.
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI void
-elm_magnetslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label)
+elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -451,17 +451,17 @@ elm_magnetslider_labels_set(Evas_Object *obj, const char *left_label, const char
 }
 
 /**
- * Get magnetslider labels.
+ * Get actionslider labels.
  *
- * @param obj The magnetslider object
+ * @param obj The actionslider object
  * @param left_label A char** to place the left_label of @p obj into
  * @param center_label A char** to place the center_label of @p obj into
  * @param right_label A char** to place the right_label of @p obj into
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI void
-elm_magnetslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label)
+elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label)
 {
    if (left_label) *left_label= NULL;
    if (center_label) *center_label= NULL;
@@ -475,30 +475,30 @@ elm_magnetslider_labels_get(const Evas_Object *obj, const char **left_label, con
 }
 
 /**
- * Get magnetslider selected label.
+ * Get actionslider selected label.
  *
- * @param obj The magnetslider object
+ * @param obj The actionslider object
  * @return The selected label
  *
- * @ingroup Magnetslider
+ * @ingroup Actionslider
  */
 EAPI const char *
-elm_magnetslider_selected_label_get(const Evas_Object *obj)
+elm_actionslider_selected_label_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
    if ((wd->final_position == 0.0) &&
-       (wd->enabled_position & ELM_MAGNETSLIDER_LEFT))
+       (wd->enabled_position & ELM_ACTIONSLIDER_LEFT))
      return wd->text_left;
 
    if ((wd->final_position == 0.5) &&
-       (wd->enabled_position & ELM_MAGNETSLIDER_CENTER))
+       (wd->enabled_position & ELM_ACTIONSLIDER_CENTER))
      return wd->text_center;
 
    if ((wd->final_position == 1.0) &&
-       (wd->enabled_position & ELM_MAGNETSLIDER_RIGHT))
+       (wd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
      return wd->text_right;
 
    return NULL;
