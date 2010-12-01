@@ -353,6 +353,7 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
 static inline int _ecore_main_fdh_poll_mark_active(void)
 {
    Ecore_Fd_Handler *fdh;
+   Eina_Bool pst, st;
    int ret = 0;
 
    /* call the prepare callback for all handlers */
@@ -360,34 +361,16 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
      {
         if (fdh->delete_me)
            continue;
-        
-        if (fdh->gfd.revents & G_IO_IN)
-          {
-             if (!fdh->read_active)
-               {
-                  fdh->read_active = EINA_TRUE;
-                  if ((!fdh->write_active) && (!fdh->error_active))
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-               }
-          }
-        if (fdh->gfd.revents & G_IO_OUT)
-          {
-             if (!fdh->write_active)
-               {
-                  fdh->write_active = EINA_TRUE;
-                  if ((!fdh->read_active) && (!fdh->error_active))
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-               }
-          }
-        if (fdh->gfd.revents & G_IO_ERR)
-          {
-             if (!fdh->error_active)
-               {
-                  fdh->error_active = EINA_TRUE;
-                  if ((!fdh->read_active) && (!fdh->write_active))
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-               }
-          }
+
+        pst = st = fdh->read_active | fdh->write_active | fdh->error_active;
+        if ((fdh->gfd.revents & G_IO_IN) && (!fdh->read_active))
+         st = fdh->read_active = EINA_TRUE;
+        if ((fdh->gfd.revents & G_IO_OUT) && (!fdh->write_active))
+         st = fdh->write_active = EINA_TRUE;
+        if ((fdh->gfd.revents & G_IO_ERR) && (!fdh->error_active))
+         st = fdh->error_active = EINA_TRUE;
+        if (pst != st)
+          fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
         if (fdh->gfd.revents & (G_IO_IN|G_IO_OUT|G_IO_ERR)) ret++;
      }
 
@@ -1137,33 +1120,16 @@ _ecore_main_select(double timeout)
           {
              if (!fdh->delete_me)
                {
-                  if (FD_ISSET(fdh->fd, &rfds))
-                    {
-                       if (!fdh->read_active)
-                         {
-                            fdh->read_active = EINA_TRUE;
-                            if ((!fdh->write_active) && (!fdh->error_active))
-                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-                         }
-                    }
-                  if (FD_ISSET(fdh->fd, &wfds))
-                    {
-                       if (!fdh->write_active)
-                         {
-                            fdh->write_active = EINA_TRUE;
-                            if ((!fdh->read_active) && (!fdh->error_active))
-                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-                         }
-                    }
-                  if (FD_ISSET(fdh->fd, &exfds))
-                    {
-                       if (!fdh->error_active)
-                         {
-                            fdh->error_active = EINA_TRUE;
-                            if ((!fdh->read_active) && (!fdh->write_active))
-                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-                         }
-                    }
+                  Eina_Bool pst, st;
+                  pst = st = fdh->read_active | fdh->write_active | fdh->error_active;
+                  if ((FD_ISSET(fdh->fd, &rfds)) && (!fdh->read_active))
+                   st = fdh->read_active = EINA_TRUE;
+                  if ((FD_ISSET(fdh->fd, &wfds)) && (!fdh->write_active))
+                   st = fdh->write_active = EINA_TRUE;
+                  if ((FD_ISSET(fdh->fd, &exfds)) && (!fdh->error_active))
+                   st = fdh->error_active = EINA_TRUE;
+                  if (pst != st)
+                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
                }
           }
 #endif /* HAVE_EPOLL */
