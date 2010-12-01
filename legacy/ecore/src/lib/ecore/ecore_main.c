@@ -1381,12 +1381,9 @@ _ecore_main_fd_handlers_buf_call(void)
                   ret |= fdh->func(fdh->data, fdh);
                   if (!fdh->read_active)
                     {
-                       if (!fdh->read_active)
-                         {
-                            fdh->read_active = EINA_TRUE;
-                            if ((!fdh->write_active) && (!fdh->error_active))
-                              fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-                         }
+                       fdh->read_active = EINA_TRUE;
+                       if ((!fdh->write_active) && (!fdh->error_active))
+                         fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
                     }
                }
              fdh->references--;
