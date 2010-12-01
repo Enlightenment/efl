@@ -320,6 +320,7 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
    for (i = 0; i < ret; i++)
      {
         Ecore_Fd_Handler *fdh;
+        Eina_Bool pst, st;
         
         fdh = ev[i].data.ptr;
         if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
@@ -333,33 +334,15 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
              ERR("deleted fd in epoll");
              continue;
           }
-        if (ev[i].events & EPOLLIN)
-          {
-             if (!fdh->read_active)
-               {
-                  fdh->read_active = EINA_TRUE;
-                  if ((!fdh->write_active) && (!fdh->error_active))
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-               }
-          }
-        if (ev[i].events & EPOLLOUT)
-          {
-             if (!fdh->write_active)
-               {
-                  fdh->write_active = EINA_TRUE;
-                  if ((!fdh->read_active) && (!fdh->error_active))
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-               }
-          }
-        if (ev[i].events & EPOLLERR)
-          {
-             if (!fdh->error_active)
-               {
-                  fdh->error_active = EINA_TRUE;
-                  if ((!fdh->read_active) && (!fdh->write_active))
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-               }
-          }
+        pst = st = fdh->read_active | fdh->write_active | fdh->error_active;
+        if ((ev[i].events & EPOLLIN) && (!fdh->read_active))
+         st = fdh->read_active = EINA_TRUE;
+        if ((ev[i].events & EPOLLOUT) && (!fdh->write_active))
+         st = fdh->write_active = EINA_TRUE;
+        if ((ev[i].events & EPOLLERR) && (!fdh->error_active))
+         st = fdh->error_active = EINA_TRUE;
+        if (pst != st)
+          fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
      }
 
    return ret;
