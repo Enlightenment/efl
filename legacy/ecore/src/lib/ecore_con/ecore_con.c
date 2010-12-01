@@ -1770,7 +1770,7 @@ _ecore_con_svr_tcp_handler(void                        *data,
 
 error:
    close(new_fd);
-   if (cl->fd_handler)
+   if (cl && cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
    return ECORE_CALLBACK_RENEW;
 }
