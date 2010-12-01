@@ -126,7 +126,7 @@ static Eina_List        *fd_handlers_to_call_current_next;
 #ifdef _WIN32
 static Ecore_Win32_Handler *win32_handlers = NULL;
 static Ecore_Win32_Handler *win32_handler_current = NULL;
-static int                  win32_handlers_delete_me = EINA_FALSE;
+static Eina_Bool            win32_handlers_delete_me = EINA_FALSE;
 #endif
 
 #ifdef _WIN32
