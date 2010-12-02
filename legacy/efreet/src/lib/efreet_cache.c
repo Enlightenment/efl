@@ -83,9 +83,7 @@ static void icon_cache_update_cache_job(void *data);
 #endif
 static void desktop_cache_update_free(void *data, void *ev);
 
-#ifdef ICON_CACHE
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
-#endif
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 
 int
