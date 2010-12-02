@@ -3381,13 +3381,74 @@ EAPI Eina_Bool edje_edit_program_filter_part_set(Evas_Object *obj, const char *p
  */ //@{
 
 /**
- * Get the script for the given object,
+ * Get the Embryo script for the group of the given object.
+ *
+ * Get the shared script for the group under edition. Shared script means
+ * the script {} block for the group, not counting what's in each program.
+ * It returns a malloc'd duplicate of the code, so users are free to modify
+ * the contents directly and they should remember to free() it when done.
+ * NULL will be returned if there's no script or an error occurred.
  *
  * @param obj Object being edited.
  *
- * @return The script name.
+ * @return The shared script code for this group.
  */
-EAPI const char * edje_edit_script_get(Evas_Object *obj);
+EAPI char *edje_edit_script_get(Evas_Object *obj);
+
+/**
+ * Set the code for the group script.
+ *
+ * Set the Embryo source code for the shared script of the edited group.
+ * Note that changing the code itself will not update the running VM, you
+ * need to call edje_edit_script_compile for it to get updated.
+ *
+ * @param obj The object being edited
+ * @param code The Embryo source
+ */
+EAPI void edje_edit_script_set(Evas_Object *obj, const char *code);
+
+/**
+ * Get the Embryo script for the given program.
+ *
+ * Get the script code for the given program. Like the group script, this
+ * function returns a duplicate of the code that the user can modify at will
+ * and must free when done using it.
+ * NULL will be returned if the program doesn't exist, doesn't have any
+ * script or is not of type script.
+ *
+ * @param obj Object being edited
+ * @param prog Program name
+ *
+ * @return The program script code
+ */
+EAPI char *edje_edit_script_program_get(Evas_Object *obj, const char *prog);
+
+/**
+ * Set the Embryo script for the given program.
+ *
+ * Set the Embryo source code for the program @p prog. It must be an
+ * existing program of type EDJE_ACTION_TYPE_SCRIPT, or the function
+ * will fail and do nothing.
+ * Note that changing the code itself will not update the running VM, you
+ * need to call edje_edit_script_compile for it to get updated.
+ *
+ * @param obj The object being edited
+ * @param prog The program name.
+ * @param code The Embryo source
+ */
+EAPI void edje_edit_script_program_set(Evas_Object *obj, const char *prog, const char *code);
+
+/**
+ * Compile the Embryo script for the given object
+ *
+ * If required, this function will process all script code for the group and
+ * build the bytecode, updating the running Embryo VM Program if the build
+ * is succesful.
+ *
+ * @param obj The object being edited
+ *
+ */
+EAPI Eina_Bool edje_edit_script_compile(Evas_Object *obj);
 
 
 //@}
