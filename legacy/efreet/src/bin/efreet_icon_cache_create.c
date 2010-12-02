@@ -358,6 +358,7 @@ main(int argc, char **argv)
      * - pass extra dirs to binary, and read them
      * - make sure programs with different extra dirs all work together
      */
+    Efreet_Cache_Version *version;
     Efreet_Cache_Theme *cache;
     Efreet_Icon_Theme *theme;
     Eet_Data_Descriptor *edd;
@@ -425,6 +426,25 @@ main(int argc, char **argv)
 
     ef = eet_open(efreet_icon_cache_file(), EET_FILE_MODE_READ_WRITE);
     if (!ef) goto on_error_efreet;
+    version = eet_data_read(ef, efreet_version_edd(), EFREET_CACHE_VERSION);
+    if (version && 
+        ((version->major != EFREET_ICON_CACHE_MAJOR) || 
+         (version->minor != EFREET_ICON_CACHE_MINOR)))
+    {
+        // delete old cache
+        eet_close(ef);
+        if (unlink(efreet_icon_cache_file()) < 0)
+        {
+            if (errno != ENOENT) goto on_error_efreet;
+        }
+        ef = eet_open(efreet_icon_cache_file(), EET_FILE_MODE_READ_WRITE);
+        if (!ef) goto on_error_efreet;
+    }
+    if (!version)
+        version = NEW(Efreet_Cache_Version, 1);
+
+    version->major = EFREET_ICON_CACHE_MAJOR;
+    version->minor = EFREET_ICON_CACHE_MINOR;
 
     edd = efreet_icon_theme_edd(EINA_TRUE);
 
@@ -437,25 +457,11 @@ main(int argc, char **argv)
         /* read icons from the eet file */
         cache = eet_data_read(ef, edd, theme->name.internal);
 
-        /* Wype out in case of version change */
-        if (cache &&
-            (cache->version.major != EFREET_CACHE_MAJOR
-             || cache->version.minor != EFREET_CACHE_MINOR))
-        {
-            eina_hash_free(cache->icons);
-            eina_hash_free(cache->dirs);
-            free(cache);
-            cache = NULL;
-        }
-
         /* No existing cache before, so create it */
         if (!cache)
         {
             cache = NEW(Efreet_Cache_Theme, 1);
             if (!cache) goto on_error_efreet;
-
-            cache->version.major = EFREET_CACHE_MAJOR;
-            cache->version.minor = EFREET_CACHE_MINOR;
 
             changed = EINA_TRUE;
         }
@@ -486,25 +492,13 @@ main(int argc, char **argv)
     edd = efreet_icon_fallback_edd(EINA_TRUE);
 
     /* read fallback icons from the eet file */
-    cache = eet_data_read(ef, edd, "efreet/fallback");
-    if (cache &&
-        (cache->version.major != EFREET_CACHE_MAJOR
-         || cache->version.minor != EFREET_CACHE_MINOR))
-    {
-        if (cache->icons) eina_hash_free(cache->icons);
-        if (cache->dirs) eina_hash_free(cache->dirs);
-        free(cache);
-        cache = NULL;
-    }
+    cache = eet_data_read(ef, edd, EFREET_CACHE_ICON_FALLBACK);
 
     /* No existing fallback, create it */
     if (!cache)
     {
         cache = NEW(Efreet_Cache_Theme, 1);
         if (!cache) goto on_error_efreet;
-
-        cache->version.major = EFREET_CACHE_MAJOR;
-        cache->version.minor = EFREET_CACHE_MINOR;
 
         changed = EINA_TRUE;
     }
@@ -520,7 +514,7 @@ main(int argc, char **argv)
     {
         fprintf(stderr, "generated: fallback %i (%i)\n", changed, eina_hash_population(cache->icons));
         if (changed)
-            eet_data_write(ef, edd, "efreet/fallback", cache, 1);
+            eet_data_write(ef, edd, EFREET_CACHE_ICON_FALLBACK, cache, 1);
     }
 
     eina_hash_free(cache->icons);
@@ -528,6 +522,7 @@ main(int argc, char **argv)
     free(cache);
 
     /* save data */
+    eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, version, 1);
     eet_close(ef);
 
     /* touch update file */

@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+/* TODO: move eet file handling to eet_cache.c */
+
 #undef alloca
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -32,6 +34,7 @@ void *alloca (size_t);
 
 #include "Efreet.h"
 #include "efreet_private.h"
+#include "efreet_cache_private.h"
 
 /* define macros and variable for using the eina logging system  */
 
@@ -50,8 +53,6 @@ static Eina_List *efreet_util_menus_find_helper(Eina_List *menus, const char *co
 static Efreet_Desktop *efreet_util_cache_find(const char *search, const char *what1, const char *what2);
 static Eina_List *efreet_util_cache_list(const char *search, const char *what);
 static Eina_List *efreet_util_cache_glob_list(const char *search, const char *what);
-
-static Eina_Bool cache_check(void);
 
 static Eina_Hash *file_id_by_desktop_path = NULL;
 static const char *cache_file = NULL;
@@ -83,7 +84,7 @@ efreet_util_shutdown(void)
 
     eina_log_domain_unregister(_efreet_utils_log_dom);
     IF_FREE_HASH(file_id_by_desktop_path);
-    if (cache) eet_close(cache);
+    cache = efreet_cache_close(cache);
     IF_RELEASE(cache_file);
     return init;
 }
@@ -238,7 +239,7 @@ efreet_util_desktop_exec_find(const char *exec)
     int num, i;
     Efreet_Desktop *ret = NULL;
 
-    if (!cache_check()) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!exec) return NULL;
 
     keys = eet_list(cache, "*::e", &num);
@@ -331,7 +332,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     int num, i;
     Eina_List *ret = NULL;
 
-    if (!cache_check()) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!glob) return NULL;
 
     keys = eet_list(cache, "*::e", &num);
@@ -408,7 +409,7 @@ efreet_util_desktop_categories_list(void)
     int num, i;
     Eina_List *ret = NULL;
 
-    if (!cache_check()) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     keys = eet_list(cache, "*::ca", &num);
     if (!keys) return NULL;
     for (i = 0; i < num; i++)
@@ -506,7 +507,7 @@ efreet_util_cache_find(const char *search, const char *what1, const char *what2)
     int num, i;
     Efreet_Desktop *ret = NULL;
 
-    if (!cache_check()) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if ((!what1) && (!what2)) return NULL;
 
     keys = eet_list(cache, search, &num);
@@ -540,7 +541,7 @@ efreet_util_cache_list(const char *search, const char *what)
     int num, i;
     Eina_List *ret = NULL;
 
-    if (!cache_check()) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
 
     keys = eet_list(cache, search, &num);
@@ -575,7 +576,7 @@ efreet_util_cache_glob_list(const char *search, const char *what)
     int num, i;
     Eina_List *ret = NULL;
 
-    if (!cache_check()) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
 
     keys = eet_list(cache, search, &num);
@@ -606,20 +607,5 @@ efreet_util_cache_glob_list(const char *search, const char *what)
 void
 efreet_util_desktop_cache_reload(void)
 {
-    if (cache && cache != NON_EXISTING) eet_close(cache);
-    cache = NULL;
-}
-
-static Eina_Bool
-cache_check(void)
-{
-    if (cache == NON_EXISTING) return EINA_FALSE;
-    if (!cache) 
-        cache = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
-    if (!cache)
-    {
-        cache = NON_EXISTING;
-        return EINA_FALSE;
-    }
-    return EINA_TRUE;
+    cache = efreet_cache_close(cache);
 }

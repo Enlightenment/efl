@@ -233,6 +233,7 @@ main(int argc, char **argv)
      *   during whilst this program runs.
      * - Maybe linger for a while to reduce number of cache re-creates.
      */
+    Efreet_Cache_Version version;
     Eina_List *dirs = NULL, *user_dirs = NULL;
     int priority = 0;
     char *dir = NULL;
@@ -404,6 +405,12 @@ main(int argc, char **argv)
     }
 
     /* cleanup */
+    version.major = EFREET_DESKTOP_UTILS_CACHE_MAJOR;
+    version.minor = EFREET_DESKTOP_UTILS_CACHE_MINOR;
+    eet_data_write(util_ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
+    version.major = EFREET_DESKTOP_CACHE_MAJOR;
+    version.minor = EFREET_DESKTOP_CACHE_MINOR;
+    eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
     eet_close(util_ef);
     eet_close(ef);
 
