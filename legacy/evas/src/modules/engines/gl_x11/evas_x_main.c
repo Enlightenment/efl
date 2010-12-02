@@ -482,38 +482,41 @@ eng_window_use(Evas_GL_X11_Window *gw)
         if (_evas_gl_x11_window)
           evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
 	_evas_gl_x11_window = gw;
+       if (gw)
+         {
 // EGL / GLES
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        if (gw->egl_surface[0] != EGL_NO_SURFACE)
-          {
-             if (eglMakeCurrent(gw->egl_disp, 
-                                gw->egl_surface[0], 
-                                gw->egl_surface[0],
-                                gw->egl_context[0]) == EGL_FALSE)
-               {
-                  ERR("eglMakeCurrent() failed!");
-               }
-          }
+           if (gw->egl_surface[0] != EGL_NO_SURFACE)
+             {
+               if (eglMakeCurrent(gw->egl_disp, 
+                                  gw->egl_surface[0], 
+                                  gw->egl_surface[0],
+                                  gw->egl_context[0]) == EGL_FALSE)
+                 {
+                   ERR("eglMakeCurrent() failed!");
+                 }
+             }
 // GLX        
 #else
-        if (gw->glxwin)
-          {
-             if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
-                                        gw->context))
-               {
-                  ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
-               }
-          }
-        else
-          {
-             if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
-               {
-                  ERR("glXMakeCurrent(%p, 0x%x, %p) failed", gw->disp, (unsigned int)gw->win, (void *)gw->context);
-               }
-          }
+           if (gw->glxwin)
+             {
+               if (!glXMakeContextCurrent(gw->disp, gw->glxwin, gw->glxwin, 
+                                          gw->context))
+                 {
+                   ERR("glXMakeContextCurrent(%p, %p, %p, %p)", (void *)gw->disp, (void *)gw->win, (void *)gw->win, (void *)gw->context);
+                 }
+             }
+           else
+             {
+               if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
+                 {
+                   ERR("glXMakeCurrent(%p, 0x%x, %p) failed", gw->disp, (unsigned int)gw->win, (void *)gw->context);
+                 }
+             }
 #endif
+         }
      }
-   evas_gl_common_context_use(gw->gl_context);
+   if (gw) evas_gl_common_context_use(gw->gl_context);
 }
 
 void
