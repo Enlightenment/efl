@@ -656,7 +656,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 {
     const char *file;
     Efreet_Event_Cache_Update *ev = NULL;
-    Eet_File *tmp = NULL;
     Efreet_Old_Cache *d = NULL;
 
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
@@ -666,8 +665,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     if (!file) return;
     if (!strcmp(file, "desktop_data.update"))
     {
-        tmp = eet_open(efreet_desktop_cache_file(), EET_FILE_MODE_READ);
-        if (!tmp) return;
         ev = NEW(Efreet_Event_Cache_Update, 1);
         if (!ev) goto error;
         d = NEW(Efreet_Old_Cache, 1);
@@ -678,7 +675,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         old_desktop_caches = eina_list_append(old_desktop_caches, d);
 
         efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
-        desktop_cache = tmp;
+        desktop_cache = NULL;
 
         efreet_util_desktop_cache_reload();
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
@@ -713,7 +710,6 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 error:
     IF_FREE(ev);
     IF_FREE(d);
-    if (tmp) eet_close(tmp);
 }
 
 static void
