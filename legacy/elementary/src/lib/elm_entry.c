@@ -1515,6 +1515,24 @@ _get_item(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__,
         o = ip->func(ip->data, data, item);
         if (o) return o;
      }
+   if (!strncmp(item, "file://", 7))
+     {
+        char *fname = item + 7;
+       
+        o = evas_object_image_filled_add(evas_object_evas_get(data));
+        evas_object_image_file_set(o, fname, NULL);
+        if (evas_object_image_load_error_get(o) == EVAS_LOAD_ERROR_NONE)
+          {
+             evas_object_show(o);
+          }
+        else
+          {
+             evas_object_del(o);
+             o = edje_object_add(evas_object_evas_get(data));
+             _elm_theme_object_set(data, o, "entry/emoticon", "wtf", elm_widget_style_get(data));
+          }
+        return o;
+     }
    o = edje_object_add(evas_object_evas_get(data));
    if (!_elm_theme_object_set(data, o, "entry", item, elm_widget_style_get(data)))
      _elm_theme_object_set(data, o, "entry/emoticon", "wtf", elm_widget_style_get(data));
