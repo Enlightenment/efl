@@ -232,13 +232,13 @@ efreet_desktop_cache_file(void)
     modifier = efreet_lang_modifier_get();
 
     if (lang && country && modifier)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s@%s.cache", home, lang, country, modifier);
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s@%s.eet", home, lang, country, modifier);
     else if (lang && country)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s.cache", home, lang, country);
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s.eet", home, lang, country);
     else if (lang)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s.cache", home, lang);
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s.eet", home, lang);
     else
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.cache", home);
+        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.eet", home);
 
     desktop_cache_file = eina_stringshare_add(tmp);
     return desktop_cache_file;
