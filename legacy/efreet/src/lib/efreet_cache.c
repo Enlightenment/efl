@@ -97,7 +97,7 @@ efreet_cache_init(void)
     _efreet_cache_log_dom = eina_log_domain_register("efreet_cache", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_cache_log_dom < 0)
         return 0;
-    if (!efreet_desktop_edd_init())
+    if (!efreet_desktop_edd())
         goto error;
 
 #ifdef ICON_CACHE
@@ -447,7 +447,7 @@ efreet_icon_edd_shutdown(void)
  * Needs EAPI because of helper binaries
  */
 EAPI Eet_Data_Descriptor *
-efreet_desktop_edd_init(void)
+efreet_desktop_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
 

@@ -299,7 +299,7 @@ main(int argc, char **argv)
 
     /* finish efreet init */
     if (!efreet_init()) goto efreet_error;
-    edd = efreet_desktop_edd_init();
+    edd = efreet_desktop_edd();
     if (!edd) goto edd_error;
 
     /* create cache */
