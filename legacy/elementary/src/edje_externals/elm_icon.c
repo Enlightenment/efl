@@ -53,7 +53,7 @@ external_icon_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
 }
 
 static Eina_Bool
-external_icon_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
+external_icon_param_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, Edje_External_Param *param)
 {
    if (!strcmp(param->name, "icon"))
      {
@@ -68,7 +68,7 @@ external_icon_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
 }
 
 static void *
-external_icon_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
+external_icon_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params)
 {
    Elm_Params_Icon *mem;
    Edje_External_Param *param;
@@ -90,7 +90,7 @@ external_icon_params_parse(void *data, Evas_Object *obj, const Eina_List *params
 }
 
 static Evas_Object *external_icon_content_get(void *data __UNUSED__,
-		const Evas_Object *obj, const char *content)
+		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
 	ERR("no content");
 	return NULL;

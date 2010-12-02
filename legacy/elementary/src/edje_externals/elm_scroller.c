@@ -46,7 +46,7 @@ static Eina_Bool external_scroller_param_set(void *data __UNUSED__,
 }
 
 static Eina_Bool external_scroller_param_get(void *data __UNUSED__,
-		const Evas_Object *obj, Edje_External_Param *param)
+		const Evas_Object *obj __UNUSED__, Edje_External_Param *param)
 {
 	if (!strcmp(param->name, "content"))
 	{
@@ -60,7 +60,7 @@ static Eina_Bool external_scroller_param_get(void *data __UNUSED__,
 	return EINA_FALSE;
 }
 
-static void * external_scroller_params_parse(void *data, Evas_Object *obj,
+static void * external_scroller_params_parse(void *data __UNUSED__, Evas_Object *obj,
 		const Eina_List *params) {
 	Elm_Params_Scroller *mem;
 	Edje_External_Param *param;
@@ -90,8 +90,6 @@ static Evas_Object *external_scroller_content_get(void *data __UNUSED__,
 }
 
 static void external_scroller_params_free(void *params) {
-	Elm_Params_Scroller *mem = params;
-
 	external_common_params_free(params);
 }
 

@@ -6,7 +6,7 @@ typedef struct _Elm_Params_Label
 } Elm_Params_Label;
 
 static void
-external_label_state_set(void *data __UNUSED__, Evas_Object *obj, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_label_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const void *from_params, const void *to_params, float pos __UNUSED__)
 {
    const Elm_Params_Label *p;
 
@@ -54,11 +54,9 @@ external_label_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
 }
 
 static void *
-external_label_params_parse(void *data, Evas_Object *obj, const Eina_List *params)
+external_label_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params __UNUSED__)
 {
    Elm_Params_Label *mem;
-   Edje_External_Param *param;
-   const Eina_List *l;
 
    mem = ELM_NEW(Elm_Params_Label);
    if (!mem)
@@ -68,7 +66,7 @@ external_label_params_parse(void *data, Evas_Object *obj, const Eina_List *param
 }
 
 static Evas_Object *external_label_content_get(void *data __UNUSED__,
-		const Evas_Object *obj, const char *content)
+		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
 	ERR("no content");
 	return NULL;
@@ -77,8 +75,6 @@ static Evas_Object *external_label_content_get(void *data __UNUSED__,
 static void
 external_label_params_free(void *params)
 {
-   Elm_Params_Label *mem = params;
-
    external_common_params_free(params);
 }
 
