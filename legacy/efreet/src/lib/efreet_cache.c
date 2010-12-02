@@ -681,7 +681,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
     }
 #ifdef ICON_CACHE
-    else if (!strcmp(file, efreet_icon_cache_file()))
+    else if (!strcmp(file, "icon_data.update"))
     {
         if (theme_cache)
         {

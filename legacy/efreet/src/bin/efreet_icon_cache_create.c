@@ -368,6 +368,7 @@ main(int argc, char **argv)
     char *dir = NULL;
     Eina_Bool changed = EINA_FALSE;
     int lockfd = -1;
+    int tmpfd = -1;
     int i;
 
     for (i = 1; i < argc; i++)
@@ -528,6 +529,15 @@ main(int argc, char **argv)
 
     /* save data */
     eet_close(ef);
+
+    /* touch update file */
+    snprintf(file, sizeof(file), "%s/.efreet/icon_data.update", efreet_home_dir_get());
+    tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+    if (tmpfd >= 0)
+    {
+        write(tmpfd, "a", 1);
+        close(tmpfd);
+    }
 
 on_error_efreet:
     efreet_shutdown();
