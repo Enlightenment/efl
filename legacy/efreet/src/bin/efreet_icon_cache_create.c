@@ -450,7 +450,7 @@ main(int argc, char **argv)
         /* No existing cache before, so create it */
         if (!cache)
         {
-            cache = calloc(1, sizeof (Efreet_Cache_Theme));
+            cache = NEW(Efreet_Cache_Theme, 1);
             if (!cache) goto on_error_efreet;
 
             cache->version.major = EFREET_CACHE_MAJOR;
@@ -499,7 +499,7 @@ main(int argc, char **argv)
     /* No existing fallback, create it */
     if (!cache)
     {
-        cache = calloc(1, sizeof (Efreet_Cache_Theme));
+        cache = NEW(Efreet_Cache_Theme, 1);
         if (!cache) goto on_error_efreet;
 
         cache->version.major = EFREET_CACHE_MAJOR;
