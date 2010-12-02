@@ -115,26 +115,20 @@ extern int _efreet_log_dom_global;
 
 extern Eina_Hash *efreet_desktop_cache;
 
-#ifdef ICON_CACHE
-#define EFREET_ICON_CACHE_MAJOR 0
-#define EFREET_ICON_CACHE_MINOR 4
 #define EFREET_DESKTOP_CACHE_MAJOR 0
 #define EFREET_DESKTOP_CACHE_MINOR 1
 #define EFREET_DESKTOP_UTILS_CACHE_MAJOR 0
 #define EFREET_DESKTOP_UTILS_CACHE_MINOR 1
 
-typedef struct _Efreet_Cache_Version Efreet_Cache_Version;
+#ifdef ICON_CACHE
+#define EFREET_ICON_CACHE_MAJOR 0
+#define EFREET_ICON_CACHE_MINOR 4
+
 typedef struct _Efreet_Cache_Theme Efreet_Cache_Theme;
 typedef struct _Efreet_Cache_Directory Efreet_Cache_Directory;
 typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
 typedef struct _Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
 typedef struct _Efreet_Cache_Fallback_Icon Efreet_Cache_Fallback_Icon;
-
-struct _Efreet_Cache_Version
-{
-    unsigned char major;
-    unsigned char minor;
-};
 
 struct _Efreet_Cache_Theme
 {
@@ -181,6 +175,13 @@ struct _Efreet_Cache_Fallback_Icon
     unsigned int icons_count;
 };
 #endif
+
+typedef struct _Efreet_Cache_Version Efreet_Cache_Version;
+struct _Efreet_Cache_Version
+{
+    unsigned char major;
+    unsigned char minor;
+};
 
 int efreet_base_init(void);
 void efreet_base_shutdown(void);

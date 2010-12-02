@@ -33,7 +33,6 @@ static int _efreet_cache_log_dom = -1;
  * Data for cache files
  */
 #ifdef ICON_CACHE
-static Eet_Data_Descriptor *cache_version_edd = NULL;
 static Eet_Data_Descriptor *directory_edd = NULL;
 static Eet_Data_Descriptor *cache_theme_edd = NULL;
 static Eet_Data_Descriptor *cache_fallback_edd = NULL;
@@ -49,6 +48,7 @@ static Efreet_Cache_Theme  *theme_cache = NULL;
 static Efreet_Cache_Theme  *fallback_cache = NULL;
 #endif
 
+static Eet_Data_Descriptor *cache_version_edd = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
 
 static Eet_File            *desktop_cache = NULL;
@@ -207,6 +207,28 @@ efreet_icon_cache_file(void)
 /*
  * Needs EAPI because of helper binaries
  */
+EAPI Eet_Data_Descriptor *
+efreet_version_edd(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (cache_version_edd) return cache_version_edd;
+
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Version);
+    cache_version_edd = eet_data_descriptor_file_new(&eddc);
+    if (!cache_version_edd) return NULL;
+
+    EET_DATA_DESCRIPTOR_ADD_BASIC(cache_version_edd, Efreet_Cache_Version,
+                                  "minor", minor, EET_T_UCHAR);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(cache_version_edd, Efreet_Cache_Version,
+                                  "major", major, EET_T_UCHAR);
+
+    return cache_version_edd;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
 EAPI const char *
 efreet_desktop_cache_file(void)
 {
@@ -324,28 +346,6 @@ efreet_icon_directory_edd(void)
                                  "modified_time", modified_time, EET_T_LONG_LONG);
 
    return directory_edd;
-}
-
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI Eet_Data_Descriptor *
-efreet_version_edd(void)
-{
-    Eet_Data_Descriptor_Class eddc;
-
-    if (cache_version_edd) return cache_version_edd;
-
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Version);
-    cache_version_edd = eet_data_descriptor_file_new(&eddc);
-    if (!cache_version_edd) return NULL;
-
-    EET_DATA_DESCRIPTOR_ADD_BASIC(cache_version_edd, Efreet_Cache_Version,
-                                  "minor", minor, EET_T_UCHAR);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(cache_version_edd, Efreet_Cache_Version,
-                                  "major", major, EET_T_UCHAR);
-
-    return cache_version_edd;
 }
 
 /*
