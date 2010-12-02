@@ -97,8 +97,6 @@ efreet_cache_init(void)
     _efreet_cache_log_dom = eina_log_domain_register("efreet_cache", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_cache_log_dom < 0)
         return 0;
-    if (!efreet_desktop_edd())
-        goto error;
 
 #ifdef ICON_CACHE
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
@@ -583,7 +581,7 @@ efreet_cache_desktop_find(const char *file)
     if (!desktop_cache)
         return NULL;
 
-    desktop = eet_data_read(desktop_cache, desktop_edd, rp);
+    desktop = eet_data_read(desktop_cache, efreet_desktop_edd(), rp);
     if (!desktop) return NULL;
     desktop->ref = 1;
     desktop->eet = 1;
