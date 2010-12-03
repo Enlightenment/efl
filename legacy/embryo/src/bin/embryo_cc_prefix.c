@@ -29,6 +29,10 @@
 # include <glob.h>
 #endif /* ! HAVE_EVIL */
 
+#ifdef __MacOSX__
+# include <mach-o/dyld.h>
+#endif
+
 #include "embryo_cc_prefix.h"
 
 /* local subsystem functions */
@@ -36,6 +40,9 @@ static int _e_prefix_share_hunt(void);
 static int _e_prefix_fallbacks(void);
 static int _e_prefix_try_proc(void);
 static int _e_prefix_try_argv(char *argv0);
+#ifdef __MacOSX__
+static int _e_prefix_try_dyld(void);
+#endif
 
 /* local subsystem globals */
 static char *_exe_path = NULL;
@@ -89,8 +96,16 @@ e_prefix_determine(char *argv0)
      {
 	if (!_e_prefix_try_argv(argv0))
 	  {
-	     _e_prefix_fallbacks();
-	     return 0;
+#ifdef __MacOSX__
+		  if (!_e_prefix_try_dyld())
+		  {
+#endif
+			  _e_prefix_fallbacks();
+			  return 0;
+#ifdef __MacOSX__
+		  }
+#endif
+
 	  }
      }
    /* _exe_path is now a full absolute path TO this exe - figure out rest */
@@ -312,6 +327,21 @@ _e_prefix_fallbacks(void)
 	  _prefix_path);
    return 1;
 }
+
+#ifdef __MacOSX__
+static int
+_e_prefix_try_dyld(void)
+{
+	char path[PATH_MAX];
+	uint32_t size = sizeof (path);
+
+	if (_NSGetExecutablePath(path, &size) != 0)
+		return 0;
+
+	_exe_path = strdup(path);
+	return 1;
+}
+#endif
 
 static int
 _e_prefix_try_proc(void)
