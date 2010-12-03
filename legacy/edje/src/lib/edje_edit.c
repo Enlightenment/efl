@@ -6357,7 +6357,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              success = EINA_FALSE;
           }
         else
-          fprintf(f, eed->embryo_processed);
+          fprintf(f, "%s", eed->embryo_processed);
      }
 
    it = eina_hash_iterator_data_new(eed->program_scripts);
@@ -6384,7 +6384,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              continue;
           }
         fprintf(f, "public _p%i(sig[], src[]) {\n", ps->id);
-        fprintf(f, ps->processed);
+        fprintf(f, "%s", ps->processed);
         fprintf(f, "}\n");
      }
    eina_iterator_free(it);
