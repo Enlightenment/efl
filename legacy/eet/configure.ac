@@ -366,10 +366,11 @@ AC_C___ATTRIBUTE__
 AC_TRY_RUN(
    [
 #include <stdlib.h>
+#include <inttypes.h>
 int main (int argc, char **argv) {
   void *foo = NULL;
-  long long bar = (long long)foo;
-  return (long long)foo;
+  uintptr_t bar = (uintptr_t)foo;
+  return (uintptr_t)foo;
 }
    ],
    [have_null="yes"],
