@@ -757,7 +757,6 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Menu_Item *parent)
 {
    Elm_Menu_Item *subitem;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(parent, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    /* don't add a separator as the first item */
