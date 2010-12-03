@@ -2828,7 +2828,7 @@ efreet_menu_process_app_pool(Eina_List *pool, Eina_List *applications,
         if (efreet_menu_filter_matches(filter->op, md))
         {
             applications = eina_list_append(applications, md);
-            eina_hash_add(matches, (void *)md->id, md);
+            eina_hash_direct_add(matches, (void *)md->id, md);
             md->allocated = 1;
         }
     }

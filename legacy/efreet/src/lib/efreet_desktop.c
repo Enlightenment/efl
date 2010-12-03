@@ -241,7 +241,7 @@ efreet_desktop_get(const char *file)
         efreet_cache_desktop_update();
     }
 
-    if (efreet_desktop_cache) eina_hash_add(efreet_desktop_cache, desktop->orig_path, desktop);
+    if (efreet_desktop_cache) eina_hash_direct_add(efreet_desktop_cache, desktop->orig_path, desktop);
     desktop->cached = 1;
     return desktop;
 }

@@ -385,7 +385,7 @@ efreet_icon_find_theme_check(const char *theme_name)
         theme = efreet_icon_theme_new();
         if (!theme) return NULL;
         theme->name.internal = eina_stringshare_add(theme_name);
-        eina_hash_add(efreet_icon_themes, (void *)theme->name.internal, theme);
+        eina_hash_direct_add(efreet_icon_themes, (void *)theme->name.internal, theme);
     }
 
     return theme;
@@ -1405,7 +1405,7 @@ efreet_icon_theme_dir_scan(const char *search_dir, const char *theme_name)
             theme = efreet_icon_theme_new();
             if (!theme) goto error;
             theme->name.internal = key;
-            eina_hash_add(efreet_icon_themes,
+            eina_hash_direct_add(efreet_icon_themes,
                           (void *)theme->name.internal, theme);
         }
         else
