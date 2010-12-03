@@ -1,6 +1,6 @@
+#include <math.h>
 #include <evas_common_soft16.h>
 #include "evas_soft16_scanline_fill.c"
-#include <math.h>
 
 typedef struct _RGBA_Edge RGBA_Edge;
 typedef struct _RGBA_Vertex RGBA_Vertex;
