@@ -2179,6 +2179,8 @@ elm_genlist_add(Evas_Object *parent)
    Evas_Coord minw, minh;
    static Evas_Smart *smart = NULL;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    if (!smart)
      {
         static Evas_Smart_Class sc;
@@ -3679,7 +3681,7 @@ elm_genlist_item_item_class_update(Elm_Genlist_Item *it, const Elm_Genlist_Item_
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    if (!it->block) return;
-   if (!itc) return;
+   EINA_SAFETY_ON_NULL_RETURN(itc);
    if (it->delete_me) return;
    it->itc = itc;
    elm_genlist_item_update(it);

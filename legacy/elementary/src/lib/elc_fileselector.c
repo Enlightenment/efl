@@ -454,6 +454,8 @@ elm_fileselector_add(Evas_Object *parent)
    Evas_Object *obj, *ic, *bt, *li, *en;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    // Elementary Widget
    wd = ELM_NEW(Widget_Data);
    wd->expand = !!_elm_config->fileselector_expand_enable;

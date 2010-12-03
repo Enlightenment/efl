@@ -672,6 +672,8 @@ elm_toolbar_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -1775,7 +1777,8 @@ elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if ((!wd) || (!parent)) return;
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(parent);
    wd->menu_parent = parent;
    EINA_INLIST_FOREACH(wd->items, it)
      {

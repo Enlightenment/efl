@@ -1674,6 +1674,8 @@ elm_map_add(Evas_Object *parent)
    static Evas_Smart *smart = NULL;
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    if (!ecore_file_download_protocol_available("http://"))
      {
 	ERR("Ecore must be built with the support of HTTP for the widget map !");
@@ -2321,7 +2323,8 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
    Evas_Object *o;
 
    if (!wd) return NULL;
-   if (!clas_group || !clas) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(clas_group, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(clas, NULL);
 
    Elm_Map_Marker *marker = ELM_NEW(Elm_Map_Marker);
 
@@ -2493,7 +2496,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    Eina_List *groups;
    Widget_Data *wd;
 
-   if (!marker) return;
+   EINA_SAFETY_ON_NULL_RETURN(marker);
    wd = marker->wd;
    if (!wd) return;
    for (i = 0; i <= ZOOM_MAX; i++)
@@ -2558,7 +2561,7 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 EAPI void
 elm_map_marker_bring_in(Elm_Map_Marker *marker)
 {
-   if (!marker) return;
+   EINA_SAFETY_ON_NULL_RETURN(marker);
    elm_map_geo_region_bring_in(marker->wd->obj, marker->longitude, marker->latitude);
 }
 
@@ -2573,7 +2576,7 @@ elm_map_marker_bring_in(Elm_Map_Marker *marker)
 EAPI void
 elm_map_marker_show(Elm_Map_Marker *marker)
 {
-   if (!marker) return;
+   EINA_SAFETY_ON_NULL_RETURN(marker);
    elm_map_geo_region_show(marker->wd->obj, marker->longitude, marker->latitude);
 }
 
@@ -2598,7 +2601,7 @@ elm_map_markers_list_show(Eina_List *markers)
    Evas_Coord rw, rh, xc, yc;
    Widget_Data *wd;
 
-   if (!markers) return;
+   EINA_SAFETY_ON_NULL_RETURN(markers);
 
    EINA_LIST_FOREACH(markers, l, marker)
      {
@@ -2669,7 +2672,7 @@ elm_map_max_marker_per_group_set(Evas_Object *obj, int max)
 EAPI Evas_Object *
 elm_map_marker_object_get(const Elm_Map_Marker *marker)
 {
-   if (!marker) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(marker, NULL);
    return marker->content;
 }
 
@@ -2683,7 +2686,7 @@ elm_map_marker_object_get(const Elm_Map_Marker *marker)
 EAPI void
 elm_map_marker_update(Elm_Map_Marker *marker)
 {
-   if (!marker) return;
+   EINA_SAFETY_ON_NULL_RETURN(marker);
    if (marker->content)
      {
 	if (marker->clas->func.del)
@@ -2749,7 +2752,7 @@ elm_map_group_class_new(Evas_Object *obj)
 EAPI void
 elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    eina_stringshare_replace(&clas->style, style);
 }
 
@@ -2766,7 +2769,7 @@ elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
 EAPI void
 elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.icon_get = icon_get;
 }
 
@@ -2781,7 +2784,7 @@ elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFun
 EAPI void
 elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->data = data;
 }
 
@@ -2798,7 +2801,7 @@ elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data)
 EAPI void
 elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->zoom_displayed = zoom;
 }
 
@@ -2813,7 +2816,7 @@ elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom)
 EAPI void
 elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->zoom_grouped = zoom;
 }
 
@@ -2832,7 +2835,7 @@ elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_B
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    if (clas->hide == hide) return;
    clas->hide = hide;
    if (wd->grids)
@@ -2877,7 +2880,7 @@ elm_map_marker_class_new(Evas_Object *obj)
 EAPI void
 elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    eina_stringshare_replace(&clas->style, style);
 }
 
@@ -2894,7 +2897,7 @@ elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
 EAPI void
 elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.icon_get = icon_get;
 }
 
@@ -2913,7 +2916,7 @@ elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGet
 EAPI void
 elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.get = get;
 }
 
@@ -2931,7 +2934,7 @@ elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc 
 EAPI void
 elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del)
 {
-   if (!clas) return;
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.del = del;
 }
 
@@ -3005,7 +3008,8 @@ elm_map_source_get(const Evas_Object *obj)
 EAPI void
 elm_map_source_custom_api_set(Elm_Map_Sources source, const char *name, int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb)
 {
-   if ((!name) || (!url_cb)) return;
+   EINA_SAFETY_ON_NULL_RETURN(name);
+   EINA_SAFETY_ON_NULL_RETURN(url_cb);
    map_sources_tab[source].name = name;
    map_sources_tab[source].zoom_min = zoom_min;
    map_sources_tab[source].zoom_max = zoom_max;

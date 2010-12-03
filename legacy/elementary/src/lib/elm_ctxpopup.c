@@ -306,6 +306,8 @@ elm_ctxpopup_add(Evas_Object* parent)
    Widget_Data* wd;
    char buf[1024];
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    wd->evas = evas_object_evas_get(parent);
    obj = elm_widget_add(wd->evas);
@@ -503,8 +505,10 @@ elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
-   if ((!wd) || (!parent))
+   if (!wd)
      return;
+
+   EINA_SAFETY_ON_NULL_RETURN(parent);
 
    elm_hover_parent_set(wd->hover, parent);
 

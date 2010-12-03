@@ -624,6 +624,8 @@ elm_diskselector_add(Evas_Object *parent)
    Evas_Object *obj;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    wd->self = obj = elm_widget_add(evas_object_evas_get(parent));
    ELM_SET_WIDTYPE(widtype, "diskselector");

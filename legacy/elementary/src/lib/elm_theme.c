@@ -282,7 +282,7 @@ elm_theme_new(void)
 EAPI void
 elm_theme_free(Elm_Theme *th)
 {
-   if (!th) return;
+   EINA_SAFETY_ON_NULL_RETURN(th);
    th->ref--;
    if (th->ref < 1)
      {
@@ -841,6 +841,7 @@ elm_theme_name_available_list_free(Eina_List *list)
 EAPI void
 elm_object_theme_set(Evas_Object *obj, Elm_Theme *th)
 {
+   EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_theme_set(obj, th);
 }
 
@@ -860,5 +861,6 @@ elm_object_theme_set(Evas_Object *obj, Elm_Theme *th)
 EAPI Elm_Theme *
 elm_object_theme_get(const Evas_Object *obj)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_theme_get(obj);
 }

@@ -147,6 +147,8 @@ elm_bubble_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -438,7 +440,8 @@ elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!corner)) return;
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(corner);
    eina_stringshare_replace(&wd->corner, corner);
    _theme_hook(obj);
 }

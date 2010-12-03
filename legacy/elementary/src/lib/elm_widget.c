@@ -902,6 +902,7 @@ EAPI void
 elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data)
 {
    API_ENTRY return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Event_Cb_Data *ecb = ELM_NEW(Elm_Event_Cb_Data);
    ecb->func = func;
    ecb->data = data;
@@ -912,6 +913,7 @@ EAPI void *
 elm_widget_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data)
 {
    API_ENTRY return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
    Eina_List *l;
    Elm_Event_Cb_Data *ecd;
    EINA_LIST_FOREACH(sd->event_cb, l, ecd)
@@ -1040,6 +1042,7 @@ EAPI void
 elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
 {
    API_ENTRY return;
+   EINA_SAFETY_ON_NULL_RETURN(child);
    if (!sd->focus_next_func)
      return;
 
@@ -1073,6 +1076,7 @@ EAPI void
 elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child)
 {
    API_ENTRY return;
+   EINA_SAFETY_ON_NULL_RETURN(child);
    if (!sd->focus_next_func)
      return;
 
@@ -1450,6 +1454,7 @@ elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const cha
    Edje_Signal_Data *esd;
    API_ENTRY return;
    if (!sd->callback_add_func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    esd = ELM_NEW(Edje_Signal_Data);
    if (!esd) return;

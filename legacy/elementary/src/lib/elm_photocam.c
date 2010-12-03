@@ -975,6 +975,8 @@ elm_photocam_add(Evas_Object *parent)
    static Evas_Smart *smart = NULL;
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);

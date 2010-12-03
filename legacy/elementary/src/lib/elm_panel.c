@@ -239,6 +239,8 @@ elm_panel_add(Evas_Object *parent)
    Evas *evas;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    evas = evas_object_evas_get(parent);
    obj = elm_widget_add(evas);

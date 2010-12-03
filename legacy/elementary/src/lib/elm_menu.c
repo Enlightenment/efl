@@ -412,6 +412,8 @@ elm_menu_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -616,7 +618,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, con
 
    elm_widget_sub_object_add(subitem->base.widget, subitem->icon);
    edje_object_part_swallow(subitem->base.view, "elm.swallow.content", subitem->icon);
-   elm_menu_item_icon_set(subitem, icon);
+   if (icon) elm_menu_item_icon_set(subitem, icon);
 
    if (parent)
      {
@@ -688,7 +690,8 @@ elm_menu_item_icon_set(Elm_Menu_Item *item, const char *icon)
 {
    char icon_tmp[512];
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
-   if ((!icon) || (!*icon)) return;
+   EINA_SAFETY_ON_NULL_RETURN(icon);
+   if (!*icon) return;
    if ((item->icon_str) && (!strcmp(item->icon_str, icon))) return;
    if ((snprintf(icon_tmp, sizeof(icon_tmp), "menu/%s", icon) > 0) &&
        (elm_icon_standard_set(item->icon, icon_tmp)))

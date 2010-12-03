@@ -443,6 +443,8 @@ elm_scroller_add(Evas_Object *parent)
    Widget_Data *wd;
    Evas_Coord minw, minh;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -600,7 +602,8 @@ elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, 
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((!widget) || (!base)) return;
+   EINA_SAFETY_ON_NULL_RETURN(widget);
+   EINA_SAFETY_ON_NULL_RETURN(base);
    if (eina_stringshare_replace(&wd->widget_name, widget) |
        eina_stringshare_replace(&wd->widget_base, base))
      _theme_hook(obj);

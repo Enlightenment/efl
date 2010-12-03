@@ -340,6 +340,8 @@ elm_box_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -749,8 +751,8 @@ elm_box_transition_new(const double duration,
 {
    Elm_Box_Transition *box_data;
 
-   if ((!start_layout) || (!end_layout))
-      return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(start_layout, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(end_layout, NULL);
 
    box_data = calloc(1, sizeof(Elm_Box_Transition));
    if (!box_data)
@@ -781,6 +783,8 @@ elm_box_transition_new(const double duration,
 EAPI void
 elm_box_transition_free(void *data)
 {
+   EINA_SAFETY_ON_NULL_RETURN(data);
+
    Transition_Animation_Data *tad;
    Elm_Box_Transition *box_data = data;
    if ((box_data->start.free_data) && (box_data->start.data))

@@ -360,6 +360,8 @@ elm_scrolled_entry_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -442,7 +444,8 @@ elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
-   if ((!wd) || (!icon)) return;
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(icon);
    if (wd->icon == icon) return;
    if (wd->icon) evas_object_del(wd->icon);
    wd->icon = icon;
@@ -546,7 +549,8 @@ elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
-   if ((!wd) || (!end)) return;
+   if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(end);
    if (wd->end == end) return;
    if (wd->end) evas_object_del(wd->end);
    wd->end = end;
@@ -1328,7 +1332,7 @@ elm_scrolled_entry_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
    if (!ip) return;
    ip->func = func;
@@ -1354,7 +1358,7 @@ elm_scrolled_entry_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) 
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
    if (!ip) return;
    ip->func = func;
@@ -1382,7 +1386,7 @@ elm_scrolled_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (
    Eina_List *l;
    Elm_Entry_Item_Provider *ip;
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    EINA_LIST_FOREACH(wd->item_providers, l, ip)
      {
         if ((ip->func == func) && (ip->data == data))
@@ -1420,7 +1424,7 @@ elm_scrolled_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data
 
    wd = elm_widget_data_get(obj);
 
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    tf = ELM_NEW(Elm_Entry_Text_Filter);
    if (!tf) return;
@@ -1450,7 +1454,7 @@ elm_scrolled_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *dat
 
    wd = elm_widget_data_get(obj);
 
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    tf = ELM_NEW(Elm_Entry_Text_Filter);
    if (!tf) return;
@@ -1480,7 +1484,8 @@ elm_scrolled_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    wd = elm_widget_data_get(obj);
-   if (!func) return;
+
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    EINA_LIST_FOREACH(wd->text_filters, l, tf)
      {

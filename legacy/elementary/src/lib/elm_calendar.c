@@ -711,6 +711,8 @@ elm_calendar_add(Evas_Object *parent)
    int i, t;
    Evas *e;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -796,6 +798,8 @@ elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[])
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN(weekdays);
 
    for (i = 0; i < 7; i++)
      {
@@ -918,8 +922,6 @@ elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max)
 EAPI void
 elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max)
 {
-   if (min) *min = 0;
-   if (max) *max = 0;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -989,6 +991,8 @@ elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN(selected_time);
    wd->selected_time = *selected_time;
    _populate(obj);
    return;
@@ -1012,7 +1016,8 @@ elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   if (selected_time) *selected_time = wd->selected_time;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(selected_time, EINA_FALSE);
+   *selected_time = wd->selected_time;
    return EINA_TRUE;
 }
 
@@ -1119,7 +1124,7 @@ elm_calendar_mark_del(Elm_Calendar_Mark *mark)
    Evas_Object *obj;
    Widget_Data *wd;
 
-   if (!mark) return;
+   EINA_SAFETY_ON_NULL_RETURN(mark);
 
    obj = mark->obj;
    wd = elm_widget_data_get(obj);

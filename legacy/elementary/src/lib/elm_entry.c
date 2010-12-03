@@ -1572,6 +1572,8 @@ elm_entry_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -2398,7 +2400,7 @@ elm_entry_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void *dat
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
    if (!ip) return;
    ip->func = func;
@@ -2424,7 +2426,7 @@ elm_entry_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (void *da
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Entry_Item_Provider *ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
    if (!ip) return;
    ip->func = func;
@@ -2452,7 +2454,7 @@ elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *dat
    Eina_List *l;
    Elm_Entry_Item_Provider *ip;
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    EINA_LIST_FOREACH(wd->item_providers, l, ip)
      {
         if ((ip->func == func) && (ip->data == data))
@@ -2490,7 +2492,7 @@ elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Ob
 
    wd = elm_widget_data_get(obj);
 
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    tf = ELM_NEW(Elm_Entry_Text_Filter);
    if (!tf) return;
@@ -2520,7 +2522,7 @@ elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_O
 
    wd = elm_widget_data_get(obj);
 
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    tf = ELM_NEW(Elm_Entry_Text_Filter);
    if (!tf) return;
@@ -2550,7 +2552,8 @@ elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Ob
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    wd = elm_widget_data_get(obj);
-   if (!func) return;
+
+   EINA_SAFETY_ON_NULL_RETURN(func);
 
    EINA_LIST_FOREACH(wd->text_filters, l, tf)
      {
@@ -2625,7 +2628,9 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
    const char *(*text_get)(const Evas_Object *);
    const char *widget_type;
 
-   if (!lim) return;
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(entry);
+   EINA_SAFETY_ON_NULL_RETURN(text);
 
    /* hack. I don't want to copy the entire function to work with
     * scrolled_entry */
@@ -2705,7 +2710,10 @@ elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **te
    Eina_Bool goes_in;
    int read_idx, last_read_idx = 0, read_char;
 
-   if ((!as) || ((!as->accepted) && (!as->rejected)))
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(text);
+
+   if ((!as->accepted) && (!as->rejected))
       return;
 
    if (as->accepted)

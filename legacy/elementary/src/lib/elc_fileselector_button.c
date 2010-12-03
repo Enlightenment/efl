@@ -233,6 +233,8 @@ elm_fileselector_button_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    wd->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    wd->fsd.path = eina_stringshare_add(getenv("HOME"));

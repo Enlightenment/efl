@@ -114,6 +114,8 @@ elm_image_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -161,7 +163,8 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
    Eina_Bool ret;
    const char *p;
 
-   if ((!wd) || (!file)) return EINA_FALSE;
+   if (!wd) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      ret = _els_smart_icon_file_edje_set(wd->img, file, group);
    else

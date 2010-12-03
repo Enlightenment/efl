@@ -174,6 +174,8 @@ elm_anchorview_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    obj = elm_widget_add(e);
@@ -424,7 +426,7 @@ elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (void
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Anchorview_Item_Provider *ip = calloc(1, sizeof(Elm_Anchorview_Item_Provider));
    if (!ip) return;
    ip->func = func;
@@ -450,7 +452,7 @@ elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (voi
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    Elm_Anchorview_Item_Provider *ip = calloc(1, sizeof(Elm_Anchorview_Item_Provider));
    if (!ip) return;
    ip->func = func;
@@ -478,7 +480,7 @@ elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void
    Eina_List *l;
    Elm_Anchorview_Item_Provider *ip;
    if (!wd) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(func);
    EINA_LIST_FOREACH(wd->item_providers, l, ip)
      {
         if ((ip->func == func) && (ip->data == data))

@@ -1222,6 +1222,8 @@ elm_list_add(Evas_Object *parent)
    Widget_Data *wd;
    Evas_Coord minw, minh;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
    wd->self = obj = elm_widget_add(e);
@@ -1356,7 +1358,8 @@ elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char 
    Widget_Data *wd;
    Elm_List_Item *it;
 
-   if ((!before) || (!before->node)) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(before, NULL);
+   if (!before->node) return NULL;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(before, NULL);
 
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1390,7 +1393,8 @@ elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *l
    Widget_Data *wd;
    Elm_List_Item *it;
 
-   if ((!after) || (!after->node)) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(after, NULL);
+   if (!after->node) return NULL;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(after, NULL);
 
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
