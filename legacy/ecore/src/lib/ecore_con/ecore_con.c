@@ -1009,10 +1009,6 @@ ecore_con_client_del(Ecore_Con_Client *cl)
         return NULL;
      }
 
-   if (cl->client_addr)
-     free(cl->client_addr);
-   cl->client_addr = NULL;
-
    data = cl->data;
    cl->delete_me = EINA_TRUE;
    if (cl->event_count > 0)
@@ -1260,6 +1256,10 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
+
+   if (cl->client_addr)
+     free(cl->client_addr);
+   cl->client_addr = NULL;
 
    if (cl->ip)
      eina_stringshare_del(cl->ip);
