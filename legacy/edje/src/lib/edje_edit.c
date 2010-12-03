@@ -6391,6 +6391,9 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 
    fclose(f);
 
+   if (!success)
+     goto almost_out;
+
    fd = mkstemp(tmp_out);
    if (fd < 0)
      {
@@ -6406,7 +6409,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
      {
         success = EINA_FALSE;
         close(fd);
-        goto the_way_out;
+        goto the_doorway;
      }
 
    f = fdopen(fd, "rb");
@@ -6414,7 +6417,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
      {
         success = EINA_FALSE;
         close(fd);
-        goto the_way_out;
+        goto the_doorway;
      }
 
    fseek(f, 0, SEEK_END);
@@ -6453,6 +6456,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
 
 the_way_out:
    fclose(f);
+the_doorway:
    unlink(tmp_out);
 almost_out:
    unlink(tmp_in);
