@@ -722,47 +722,11 @@ compile(void)
                     }
                }
           }
-	/*
-	 * On some BSD based systems (MacOS, OpenBSD), the default cpp
-	 * in the path is a wrapper script that chokes on the -o option.
-	 * If the preprocessor is invoked via gcc -E, it will treat
-	 * file_in as a linker file. The safest route seems to be to
-	 * run cpp with the output as the second non-option argument.
-	 *
-	 * Redirecting the output is required for MacOS 10.3, and works fine
-	 * on other systems.
-	 *
-	 * Also, the MacOS preprocessor is not managing C++ comments, so pass gcc
-	 * preprocessor just after. Linux gcc seems to not like it, so guard the
-	 * code so that it is compiled only on MacOS
-	 *
-	 */
+
 	if (ret != 0)
 	  {
-	     snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s > %s",
-		      file_in, inc, def, tmpn);
-	     ret = system(buf);
-#if defined (__MacOSX__) || ( defined (__MACH__) && defined (__APPLE__) ) || defined (__OpenBSD__)
-             if (ret == 0)
-               {
-                  static char tmpn2[4096];
-                  
-                  snprintf (tmpn2, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
-                  fd = mkstemp(tmpn2);
-                  if (fd >= 0)
-                    {
-                       close(fd); 
-                       snprintf (buf, 4096, "gcc -xc -I%s %s -E -o %s %s",
-                                 inc, def, tmpn2, tmpn);
-                       ret = system(buf);
-                       snprintf(tmpn, 4096, "%s", tmpn2);
-                    }
-               }
-#endif
-	  }
-	if (ret != 0)
-	  {
-	     snprintf(buf, sizeof(buf), "gcc -I%s %s -E -o %s %s",
+	     snprintf(buf, sizeof(buf), "%s -I%s %s -E -o %s - < %s",
+                      getenv("CC") ? getenv("CC") : "cc",
 		      inc, def, tmpn, file_in);
 	     ret = system(buf);
 	  }
