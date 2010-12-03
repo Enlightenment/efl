@@ -24,6 +24,13 @@
  * changed - emitted when the user selects a day or changes the displayed
  * month, what actually changes the selected day as well.
  */
+typedef enum _Day_Color
+{
+  DAY_WEEKDAY = 0,
+  DAY_SATURDAY = 1,
+  DAY_SUNDAY = 2
+} Day_Color;
+
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -37,6 +44,7 @@ struct _Widget_Data
    char * (*format_func) (struct tm *stime);
    const char *weekdays[7];
    struct tm current_time, selected_time;
+   Day_Color day_color[42];
    Eina_Bool selection_enabled : 1;
 };
 
@@ -107,14 +115,16 @@ _maxdays_get(struct tm *time)
    month = time->tm_mon;
    year = time->tm_year + 1900;
 
-   return _days_in_month[((!(year % 4)) && ((!(year % 400)) || (year % 100)))]
-       [month];
+   return _days_in_month[((!(year % 4)) && 
+                          ((!(year % 400)) || 
+                              (year % 100)))]
+                        [month];
 }
 
 static inline void
 _unselect(Widget_Data *wd, int selected)
 {
-   char emission[18];
+   char emission[32];
    snprintf(emission, sizeof(emission), "cit_%i,unselected", selected);
    edje_object_signal_emit(wd->calendar, emission, "elm");
 }
@@ -122,7 +132,7 @@ _unselect(Widget_Data *wd, int selected)
 static inline void
 _select(Widget_Data *wd, int selected)
 {
-   char emission[16];
+   char emission[32];
    snprintf(emission, sizeof(emission), "cit_%i,selected", selected);
    edje_object_signal_emit(wd->calendar, emission, "elm");
 }
@@ -130,7 +140,7 @@ _select(Widget_Data *wd, int selected)
 static inline void
 _not_today(Widget_Data *wd)
 {
-   char emission[17];
+   char emission[32];
    snprintf(emission, sizeof(emission), "cit_%i,not_today", wd->today_it);
    edje_object_signal_emit(wd->calendar, emission, "elm");
    wd->today_it = -1;
@@ -139,7 +149,7 @@ _not_today(Widget_Data *wd)
 static inline void
 _today(Widget_Data *wd, int it)
 {
-   char emission[13];
+   char emission[32];
    snprintf(emission, sizeof(emission), "cit_%i,today", it);
    edje_object_signal_emit(wd->calendar, emission, "elm");
    wd->today_it = it;
@@ -168,6 +178,38 @@ _weekday_get(int first_week_day, int day)
 }
 
 static void
+_text_day_color_update(Widget_Data *wd, int pos)
+{
+   char emission[32];
+  
+   switch (wd->day_color[pos])
+    {
+    case DAY_WEEKDAY:
+      snprintf(emission, sizeof(emission), "cit_%i,weekday", pos);
+      break;
+    case DAY_SATURDAY:
+      snprintf(emission, sizeof(emission), "cit_%i,saturday", pos);
+      break;
+    case DAY_SUNDAY:
+      snprintf(emission, sizeof(emission), "cit_%i,sunday", pos);
+      break;
+    default:
+      return;
+    }
+  
+   edje_object_signal_emit(wd->calendar, emission, "elm");
+}
+
+static void
+_text_day_color_set(Widget_Data *wd, Day_Color col, int pos)
+{
+   if ((pos < 0) || (pos >= 42)) return;
+   if (wd->day_color[pos] == col) return;
+   wd->day_color[pos] = col;
+   _text_day_color_update(wd, pos);
+}
+
+static void
 _populate(Evas_Object *obj)
 {
    int maxdays, day, mon, year, i;
@@ -176,6 +218,7 @@ _populate(Evas_Object *obj)
    struct tm first_day;
    Eina_List *l;
    char *buf;
+   Eina_Bool last_row = EINA_TRUE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
@@ -188,10 +231,11 @@ _populate(Evas_Object *obj)
 
    /* Set selected month */
    buf = wd->format_func(&wd->selected_time);
-   if (buf) {
-     edje_object_part_text_set(wd->calendar, "month_text", buf);
-     free(buf);
-   }
+   if (buf)
+     {
+       edje_object_part_text_set(wd->calendar, "month_text", buf);
+       free(buf);
+     }
    else
      edje_object_part_text_set(wd->calendar, "month_text", "");
 
@@ -201,13 +245,53 @@ _populate(Evas_Object *obj)
    first_day.tm_mday = 1;
    mktime(&first_day);
 
+   // Layout of the calendar is changed for removing the unfilled last row.
+   wd->first_day_it = first_day.tm_wday;
+  
+  if ((35 - wd->first_day_it) > (maxdays - 1)) last_row = EINA_FALSE;
+  
+  if (!last_row)
+    {
+      char emission[32];
+      
+      for (i = 0; i < 5; i++)
+        {
+          snprintf(emission, sizeof(emission), "cseph_%i,row_hide", i);
+          edje_object_signal_emit(wd->calendar, emission, "elm");
+        }
+      snprintf(emission, sizeof(emission), "cseph_%i,row_invisible", 5);
+      edje_object_signal_emit(wd->calendar, emission, "elm");
+      for (i = 0; i < 35; i++)
+        {
+          snprintf(emission, sizeof(emission), "cit_%i,cell_expanded", i);
+          edje_object_signal_emit(wd->calendar, emission, "elm");
+        }
+      for (i = 35; i < 42; i++)
+        {
+          snprintf(emission, sizeof(emission), "cit_%i,cell_invisible", i);
+          edje_object_signal_emit(wd->calendar, emission, "elm");
+        }
+    }
+  else
+    {
+      char emission[32];
+      
+      for (i = 0; i < 6; i++)
+        {
+          snprintf(emission, sizeof(emission), "cseph_%i,row_show", i);
+          edje_object_signal_emit(wd->calendar, emission, "elm");
+        }
+      for (i = 0; i < 42; i++)
+        {
+          snprintf(emission, sizeof(emission), "cit_%i,cell_default", i);
+          edje_object_signal_emit(wd->calendar, emission, "elm");
+        }
+    }
+  
    for (i = 0; i < 42; i++)
      {
-	if ((!day) && (i == first_day.tm_wday))
-	  {
-	     day = 1;
-	     wd->first_day_it = i;
-	  }
+        _text_day_color_update(wd, i);
+	if ((!day) && (i == first_day.tm_wday)) day = 1;
 
 	if ((day == wd->current_time.tm_mday)
 	      && (mon == wd->current_time.tm_mon)
@@ -225,9 +309,9 @@ _populate(Evas_Object *obj)
 	  }
 
 	if ((day) && (day <= maxdays))
-	  snprintf(day_s, sizeof(day_s), "%d", day++);
+	  snprintf(day_s, sizeof(day_s), "%i", day++);
 	else
-	     day_s[0] = 0;
+          day_s[0] = 0;
 
 	snprintf(part, sizeof(part), "cit_%i.text", i);
 	edje_object_part_text_set(wd->calendar, part, day_s);
@@ -317,10 +401,12 @@ _del_hook(Evas_Object *obj)
    if (wd->update_timer) ecore_timer_del(wd->update_timer);
 
    if (wd->marks)
+     {
        EINA_LIST_FREE(wd->marks, mark)
-       {
+         {
            _mark_free(mark);
-       }
+         }
+     }
 
    for (i = 0; i < 7; i++)
      eina_stringshare_del(wd->weekdays[i]);
@@ -351,12 +437,12 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _elm_theme_object_set(obj, wd->calendar, "calendar", "base",
-	 elm_widget_style_get(obj));
+                         elm_widget_style_get(obj));
    _set_headers(obj);
    _populate(obj);
    edje_object_message_signal_process(wd->calendar);
    edje_object_scale_set(wd->calendar,
-	 elm_widget_scale_get(obj) * _elm_config->scale);
+                         elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -374,13 +460,14 @@ _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_callback_add(wd->calendar, emission,
-	 source, func_cb, data);
+                                   source, func_cb, data);
 }
 
 static void
 _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    edje_object_signal_callback_del_full(wd->calendar, emission, source, func_cb,
                                         data);
 }
@@ -533,7 +620,7 @@ _day_selected(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
 static inline int
 _time_to_next_day(struct tm *t)
 {
-  return (((24 - t->tm_hour) * 60) - t->tm_min) * 60 - t->tm_sec;
+  return ((((24 - t->tm_hour) * 60) - t->tm_min) * 60) - t->tm_sec;
 }
 
 static Eina_Bool
@@ -1099,4 +1186,55 @@ elm_calendar_marks_draw(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _populate(obj);
+}
+
+/**
+ * Set a text color to the saturday color.
+ *
+ * @param obj The calendar object
+ * @param pos The text position
+ *
+ * @ingroup Calendar
+ */
+EAPI void
+elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
+{
+  ELM_CHECK_WIDTYPE(obj, widtype);
+  Widget_Data *wd = elm_widget_data_get(obj);
+  if (!wd) return;
+  _text_day_color_set(wd, DAY_SATURDAY, pos);
+}
+
+/**
+ * Set a text color to the sunday color.
+ *
+ * @param obj The calendar object
+ * @param pos The text position
+ *
+ * @ingroup Calendar
+ */
+EAPI void
+elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
+{
+  ELM_CHECK_WIDTYPE(obj, widtype);
+  Widget_Data *wd = elm_widget_data_get(obj);
+  if (!wd) return;
+  _text_day_color_set(wd, DAY_SUNDAY, pos);
+}
+
+/**
+ * Set a text color to the weekday color.
+ *
+ * @param obj The calendar object
+ * @param pos The text position
+ *
+ * @ingroup Calendar
+ */
+EAPI void
+elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos)
+{
+  ELM_CHECK_WIDTYPE(obj, widtype);
+  Widget_Data *wd = elm_widget_data_get(obj);
+  if (!wd) return;
+  _text_day_color_set(wd, DAY_WEEKDAY, pos);
 }
