@@ -441,7 +441,7 @@ efreet_icon_fallback_edd(Eina_Bool include_dirs)
                                  "icons", icons, icon_fallback_edd);
 
     if (include_dirs)
-      EET_DATA_DESCRIPTOR_ADD_HASH(cache_theme_edd, Efreet_Cache_Theme,
+      EET_DATA_DESCRIPTOR_ADD_HASH(cache_fallback_edd, Efreet_Cache_Theme,
                                    "dirs", dirs, efreet_icon_directory_edd());
 
     return cache_fallback_edd;
