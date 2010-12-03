@@ -90,7 +90,7 @@ _eina_counter_time_get(Eina_Nano_Time *tp)
 # else
    struct timeval tv;
 
-   if (gettimeofday(tp, NULL))
+   if (gettimeofday(tv, NULL))
      return -1;
 
    tp->tv_sec = tv.tv_sec;
