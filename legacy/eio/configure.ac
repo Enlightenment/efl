@@ -107,6 +107,8 @@ if test "x${have_threads}" = "xno" ; then
    AC_MSG_ERROR([Threads not supported. Be sure to have pthread on non Windows OS])
 fi
 
+EFL_CHECK_PATH_MAX
+
 ### Checks for types
 
 ### Checks for structures
