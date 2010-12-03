@@ -124,7 +124,7 @@ evas_common_image_shutdown(void)
 EAPI void
 evas_common_image_image_all_unload(void)
 {
-   evas_common_rgba_image_scalecache_flush();
+   evas_common_rgba_image_scalecache_dump();
    evas_cache_image_unload_all(eci);
 }
 

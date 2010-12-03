@@ -360,6 +360,20 @@ evas_common_rgba_image_scalecache_size_get(void)
 }
 
 EAPI void
+evas_common_rgba_image_scalecache_dump(void)
+{
+#ifdef SCALECACHE
+   int t;
+   LKL(cache_lock);
+   t = max_cache_size;
+   max_cache_size = 0;
+   _cache_prune(NULL, 0);
+   max_cache_size = t;
+   LKU(cache_lock);
+#endif   
+}
+
+EAPI void
 evas_common_rgba_image_scalecache_flush(void)
 {
 #ifdef SCALECACHE
