@@ -415,20 +415,7 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-# use --as-needed if supported
-
-LDFLAGS_SAVE=${LDFLAGS}
-LDFLAGS="${LDFLAGS} -Wl,--as-needed"
-
-AC_LINK_IFELSE(
-   [AC_LANG_PROGRAM([[]], [])],
-   [ld_as_needed="-Wl,--as-needed"],
-   [ld_as_needed=""]
-)
-
-LDFLAGS=${LDFLAGS_SAVE}
-AC_SUBST(ld_as_needed)
-
+EFL_LINKER_FLAG([-Wl,--as-needed])
 
 ### Checks for library functions
 AC_FUNC_ALLOCA
