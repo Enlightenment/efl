@@ -368,8 +368,8 @@ AC_TRY_RUN(
 #include <stdlib.h>
 int main (int argc, char **argv) {
   void *foo = NULL;
-  int bar = (int)foo;
-  return (int)foo;
+  long long bar = (long long)foo;
+  return (long long)foo;
 }
    ],
    [have_null="yes"],
