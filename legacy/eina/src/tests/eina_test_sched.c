@@ -73,7 +73,7 @@ END_TEST
 #else
 START_TEST(eina_test_sched_prio_drop)
 {
-    fail_if(1);
+   fprintf(stderr, "scheduler priority is not supported by your configuration.\n");
 }
 END_TEST
 #endif
