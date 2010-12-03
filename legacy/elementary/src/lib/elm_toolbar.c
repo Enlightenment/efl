@@ -760,11 +760,13 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
  * Append item to the toolbar
  *
  * @param obj The toolbar object
- * @param icon The icon string
+ * @param icon A string with icon name or the absolute path of an image file.
  * @param label The label of the item
  * @param func The function to call when the item is clicked
  * @param data The data to associate with the item
  * @return The toolbar item, or NULL upon failure
+ *
+ * @see elm_toolbar_item_icon_set
  *
  * @ingroup Toolbar
  */
@@ -1057,11 +1059,13 @@ elm_toolbar_item_state_del(Elm_Toolbar_Item *item, Elm_Toolbar_Item_State *state
  * Prepend item to the toolbar
  *
  * @param obj The toolbar object
- * @param icon The icon string
+ * @param icon A string with icon name or the absolute path of an image file.
  * @param label The label of the item
  * @param func The function to call when the item is clicked
  * @param data The data to associate with the item
  * @return The toolbar item, or NULL upon failure
+ *
+ * @see elm_toolbar_item_icon_set
  *
  * @ingroup Toolbar
  */
@@ -1088,11 +1092,13 @@ elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, 
  *
  * @param obj The toolbar object
  * @param before The item to insert before
- * @param icon The icon string
+ * @param icon A string with icon name or the absolute path of an image file.
  * @param label The label of the item
  * @param func The function to call when the item is clicked
  * @param data The data to associate with the item
  * @return The toolbar item, or NULL upon failure
+ *
+ * @see elm_toolbar_item_icon_set
  *
  * @ingroup Toolbar
  */
@@ -1121,11 +1127,13 @@ elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const
  *
  * @param obj The toolbar object
  * @param after The item to insert after
- * @param icon The icon string
+ * @param icon A string with icon name or the absolute path of an image file.
  * @param label The label of the item
  * @param func The function to call when the item is clicked
  * @param data The data to associate with the item
  * @return The toolbar item, or NULL upon failure
+ *
+ * @see elm_toolbar_item_icon_set
  *
  * @ingroup Toolbar
  */
@@ -1277,30 +1285,17 @@ elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item)
 }
 
 /**
- * Get the icon associated with @p item.
+ * Get the string used to set the icon of @p item.
  *
  * @param item The toolbar item
- * @return The icon object
+ * @return The string associated with the icon object.
  *
- * @ingroup Toolbar
- */
-EAPI Evas_Object *
-elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
-{
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
-   return item->icon;
-}
-
-/**
- * Get the icon name associated with @p item.
- *
- * @param item The toolbar item
- * @return The icon name
+ * @see elm_toolbar_item_icon_set()
  *
  * @ingroup Toolbar
  */
 EAPI const char *
-elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item)
+elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->icon_str;
@@ -1526,9 +1521,15 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Ob
 /**
  * Set the icon associated with @p item.
  *
+ * Toolbar will load icon image from fdo or current theme.
+ * This behavior can be set by elm_toolbar_icon_order_lookup_set() function.
+ * If an absolute path is provided it will load it direct from a file.
+ *
  * @param obj The parent of this item
  * @param item The toolbar item
- * @param icon The icon of @p item
+ * @param icon A string with icon name or the absolute path of an image file.
+ *
+ * @see elm_toolbar_icon_order_lookup_set(), elm_toolbar_icon_order_lookup_get()
  *
  * @ingroup Toolbar
  */

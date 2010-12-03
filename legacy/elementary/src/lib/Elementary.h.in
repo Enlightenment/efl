@@ -1410,8 +1410,7 @@ extern "C" {
    EAPI Evas_Object      *elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority);
    EAPI int               elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item);
-   EAPI const char       *elm_toolbar_item_icon_name_get(const Elm_Toolbar_Item *item);
-   EAPI Evas_Object      *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item);
+   EAPI const char       *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item);
    EAPI const char       *elm_toolbar_item_label_get(const Elm_Toolbar_Item *item);
    EAPI void              elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label);
    EAPI void             *elm_toolbar_item_data_get(const Elm_Toolbar_Item *item);
