@@ -723,9 +723,18 @@ compile(void)
                }
           }
 
+        /* Trying gcc and other syntax */
 	if (ret != 0)
 	  {
-	     snprintf(buf, sizeof(buf), "%s -I%s %s -E -o %s - < %s",
+	     snprintf(buf, sizeof(buf), "%s -I%s %s -E -o %s -std=c99 - < %s",
+                      getenv("CC") ? getenv("CC") : "cc",
+		      inc, def, tmpn, file_in);
+	     ret = system(buf);
+	  }
+        /* Trying suncc syntax */
+	if (ret != 0)
+	  {
+	     snprintf(buf, sizeof(buf), "%s -I%s %s -E -o %s -xc99 - < %s",
                       getenv("CC") ? getenv("CC") : "cc",
 		      inc, def, tmpn, file_in);
 	     ret = system(buf);
