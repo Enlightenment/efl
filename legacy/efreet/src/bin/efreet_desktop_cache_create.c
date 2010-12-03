@@ -308,14 +308,14 @@ main(int argc, char **argv)
     tmpfd = mkstemp(file);
     if (tmpfd < 0) goto error;
     close(tmpfd);
-    ef = eet_open(file, EET_FILE_MODE_WRITE);
+    ef = eet_open(file, EET_FILE_MODE_READ_WRITE);
     if (!ef) goto error;
 
     snprintf(util_file, sizeof(util_file), "%s.XXXXXX", efreet_desktop_util_cache_file());
     tmpfd = mkstemp(util_file);
     if (tmpfd < 0) goto error;
     close(tmpfd);
-    util_ef = eet_open(util_file, EET_FILE_MODE_WRITE);
+    util_ef = eet_open(util_file, EET_FILE_MODE_READ_WRITE);
     if (!util_ef) goto error;
 
     file_ids = eina_hash_string_superfast_new(NULL);
