@@ -6,7 +6,6 @@
 #define MAXHOSTNAMELEN 256
 #endif /* ifndef MAXHOSTNAMELEN */
 
-#define XK_MISCELLANY  1
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
@@ -53,6 +52,10 @@
 #ifdef ECORE_XI2
 #include <X11/extensions/XInput2.h>
 #endif /* ifdef ECORE_XI2 */
+
+#ifndef XK_MISCELLANY
+# define XK_MISCELLANY  1
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
