@@ -101,7 +101,7 @@ efreet_cache_init(void)
 #endif
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
 
-    snprintf(buf, sizeof(buf), "%s/.efreet", efreet_home_dir_get());
+    snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
     if (!ecore_file_mkpath(buf)) goto error;
 
     if (efreet_cache_update)
@@ -194,11 +194,11 @@ EAPI const char *
 efreet_icon_cache_file(void)
 {
     static char cache_file[PATH_MAX] = { '\0' };
-    const char *home;
+    const char *cache;
 
-    home = efreet_home_dir_get();
+    cache = efreet_cache_home_get();
 
-    snprintf(cache_file, sizeof(cache_file), "%s/.efreet/icons.eet", home);
+    snprintf(cache_file, sizeof(cache_file), "%s/efreet/icons_%s.eet", cache, efreet_hostname_get());
 
     return cache_file;
 }
@@ -233,23 +233,23 @@ EAPI const char *
 efreet_desktop_cache_file(void)
 {
     char tmp[PATH_MAX] = { '\0' };
-    const char *home, *lang, *country, *modifier;
+    const char *cache, *lang, *country, *modifier;
 
     if (desktop_cache_file) return desktop_cache_file;
 
-    home = efreet_home_dir_get();
+    cache = efreet_cache_home_get();
     lang = efreet_lang_get();
     country = efreet_lang_country_get();
     modifier = efreet_lang_modifier_get();
 
     if (lang && country && modifier)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s@%s.eet", home, lang, country, modifier);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s_%s_%s@%s.eet", cache, efreet_hostname_get(), lang, country, modifier);
     else if (lang && country)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s_%s.eet", home, lang, country);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s_%s_%s.eet", cache, efreet_hostname_get(), lang, country);
     else if (lang)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_%s.eet", home, lang);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s_%s.eet", cache, efreet_hostname_get(), lang);
     else
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop.eet", home);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s.eet", cache, efreet_hostname_get());
 
     desktop_cache_file = eina_stringshare_add(tmp);
     return desktop_cache_file;
@@ -265,7 +265,7 @@ efreet_desktop_cache_dirs(void)
 
     if (desktop_cache_dirs) return desktop_cache_dirs;
 
-    snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_dirs.cache", efreet_home_dir_get());
+    snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_dirs.cache", efreet_cache_home_get());
 
     desktop_cache_dirs = eina_stringshare_add(tmp);
     return desktop_cache_dirs;
@@ -768,7 +768,7 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
 
     if (!efreet_desktop_write_cache_dirs_file()) return;
 
-    snprintf(file, sizeof(file), "%s/.efreet/desktop_exec.lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet/desktop_exec.lock", efreet_cache_home_get());
 
     desktop_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (desktop_cache_exe_lock < 0) return;
@@ -805,7 +805,7 @@ icon_cache_update_cache_job(void *data __UNUSED__)
     /* TODO: Retry update cache later */
     if (icon_cache_exe_lock > 0) return;
 
-    snprintf(file, sizeof(file), "%s/.efreet/icon_exec.lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet/icon_exec.lock", efreet_cache_home_get());
 
     icon_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (icon_cache_exe_lock < 0) return;

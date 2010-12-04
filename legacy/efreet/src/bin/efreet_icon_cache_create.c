@@ -312,7 +312,7 @@ cache_lock_file(void)
     struct flock fl;
     int lockfd;
 
-    snprintf(file, sizeof(file), "%s/.efreet/icon_data.lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet/icon_data.lock", efreet_cache_home_get());
     lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (lockfd < 0) return -1;
 
@@ -377,7 +377,7 @@ main(int argc, char **argv)
 
     /* FIXME: should be in cache dir maybe */
     /* create homedir */
-    snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
     if (!ecore_file_mkpath(file)) return -1;
 
     /* lock process, so that we only run one copy of this program */
@@ -505,7 +505,7 @@ main(int argc, char **argv)
     eet_close(ef);
 
     /* touch update file */
-    snprintf(file, sizeof(file), "%s/.efreet/icon_data.update", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {

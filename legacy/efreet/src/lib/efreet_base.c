@@ -23,6 +23,7 @@ void *alloca (size_t);
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include "Efreet.h"
 #include "efreet_private.h"
@@ -42,6 +43,7 @@ static const char *xdg_config_home = NULL;
 static const char *xdg_cache_home = NULL;
 static Eina_List  *xdg_data_dirs = NULL;
 static Eina_List  *xdg_config_dirs = NULL;
+static const char *hostname = NULL;
 
 /* define macros and variable for using the eina logging system  */
 #ifdef EFREET_MODULE_LOG_DOM 
@@ -89,6 +91,8 @@ efreet_base_shutdown(void)
 
     IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
     IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
+
+    IF_RELEASE(hostname);
 
     eina_log_domain_unregister(_efreet_base_log_dom);
 }
@@ -197,6 +201,23 @@ efreet_cache_home_get(void)
     if (xdg_cache_home) return xdg_cache_home;
     xdg_cache_home = efreet_dir_get("XDG_CACHE_HOME", "/.cache");
     return xdg_cache_home;
+}
+
+/**
+ * @return Returns the current hostname
+ * @brief Returns the current hostname or empty string if not found
+ */
+EAPI const char *
+efreet_hostname_get(void)
+{
+    char buf[256];
+
+    if (hostname) return hostname;
+    if (gethostname(buf, sizeof(buf)) < 0)
+        hostname = eina_stringshare_add("");
+    else
+        hostname = eina_stringshare_add(buf);
+    return hostname;
 }
 
 /**

@@ -96,23 +96,23 @@ EAPI const char *
 efreet_desktop_util_cache_file(void)
 {
     char tmp[PATH_MAX] = { '\0' };
-    const char *home, *lang, *country, *modifier;
+    const char *cache_dir, *lang, *country, *modifier;
 
     if (cache_file) return cache_file;
 
-    home = efreet_home_dir_get();
+    cache_dir = efreet_cache_home_get();
     lang = efreet_lang_get();
     country = efreet_lang_country_get();
     modifier = efreet_lang_modifier_get();
 
     if (lang && country && modifier)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_util_%s_%s@%s.eet", home, lang, country, modifier);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s_%s@%s.eet", cache_dir, efreet_hostname_get(), lang, country, modifier);
     else if (lang && country)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_util_%s_%s.eet", home, lang, country);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s_%s.eet", cache_dir, efreet_hostname_get(), lang, country);
     else if (lang)
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_util_%s.eet", home, lang);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s.eet", cache_dir, efreet_hostname_get(), lang);
     else
-        snprintf(tmp, sizeof(tmp), "%s/.efreet/desktop_util.eet", home);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s.eet", cache_dir, efreet_hostname_get());
 
     cache_file = eina_stringshare_add(tmp);
     return cache_file;

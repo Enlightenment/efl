@@ -269,11 +269,11 @@ main(int argc, char **argv)
     efreet_cache_update = 0;
 
     /* create homedir */
-    snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
     if (!ecore_file_mkpath(file)) goto efreet_error;
 
     /* lock process, so that we only run one copy of this program */
-    snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet/desktop_data.lock", efreet_cache_home_get());
     lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (lockfd < 0) goto efreet_error;
     memset(&fl, 0, sizeof(struct flock));
@@ -442,7 +442,7 @@ main(int argc, char **argv)
     }
 
     /* touch update file */
-    snprintf(file, sizeof(file), "%s/.efreet/desktop_data.update", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
