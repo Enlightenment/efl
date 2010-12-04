@@ -38,11 +38,11 @@ struct _Elm_Animator
    double duration;
    unsigned int repeat_cnt;
    unsigned int cur_repeat_cnt;
-   double (*curve_op) (double frame);
    void (*animator_op) (void *data, Elm_Animator *animator, double frame);
    void *animator_arg;
    void (*completion_op) (void *data);
    void *completion_arg;
+   Elm_Animator_Curve_Style curve_style;
    Eina_Bool auto_reverse:1;
    Eina_Bool on_animating:1;
 };
@@ -111,7 +111,24 @@ _animator_animate_cb(void *data)
    animator->cur_time = ecore_loop_time_get();
    elapsed_time = animator->cur_time - animator->begin_time;
    if (elapsed_time > animator->duration) elapsed_time = animator->duration;
-   frame = animator->curve_op(elapsed_time / animator->duration);
+
+   //Compute current frame
+   switch (animator->curve_style)
+     {
+       case ELM_ANIMATOR_CURVE_IN_OUT:
+	      frame = _animator_curve_in_out(elapsed_time / animator->duration);
+	      break;
+       case ELM_ANIMATOR_CURVE_IN:
+	      frame = _animator_curve_in(elapsed_time / animator->duration);
+	      break;
+       case ELM_ANIMATOR_CURVE_OUT:
+	      frame = _animator_curve_out(elapsed_time / animator->duration);
+	      break;
+       default:
+         frame = _animator_curve_linear(elapsed_time / animator->duration);
+	      break;
+     }
+	
    //Reverse?
    if (animator->auto_reverse)
      {
@@ -178,6 +195,22 @@ elm_animator_repeat_get(const Elm_Animator *animator)
 }
 
 /**
+ * Set the animation acceleration style.
+ *
+ * @param[in] animator Animator object
+ * @param[in] cs Curve style. Default is ELM_ANIMATOR_CURVE_LINEAR
+ *
+ * @ingroup Animator
+ */
+EAPI Elm_Animator_Curve_Style 
+elm_animator_curve_style_get(const Elm_Animator *animator)
+{
+   ELM_ANIMATOR_CHECK_OR_RETURN(animator, ELM_ANIMATOR_CURVE_LINEAR);
+  
+	return animator->curve_style;
+}
+
+/**
  * Set auto reverse function.
  *
  * @param[in] animator Animator object
@@ -212,24 +245,8 @@ elm_animator_curve_style_set(Elm_Animator *animator,
 			     Elm_Animator_Curve_Style cs)
 {
    ELM_ANIMATOR_CHECK_OR_RETURN(animator);
-   switch (cs)
-     {
-     case ELM_ANIMATOR_CURVE_LINEAR:
-	animator->curve_op = _animator_curve_linear;
-	break;
-     case ELM_ANIMATOR_CURVE_IN_OUT:
-	animator->curve_op = _animator_curve_in_out;
-	break;
-     case ELM_ANIMATOR_CURVE_IN:
-	animator->curve_op = _animator_curve_in;
-	break;
-     case ELM_ANIMATOR_CURVE_OUT:
-	animator->curve_op = _animator_curve_out;
-	break;
-     default:
-	animator->curve_op = _animator_curve_linear;
-	break;
-     }
+
+	animator->curve_style = cs;
 }
 
 /**
