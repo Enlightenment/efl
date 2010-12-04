@@ -329,25 +329,6 @@ cache_lock_file(void)
     return lockfd;
 }
 
-static void
-term_handler(int sig __UNUSED__, siginfo_t * info __UNUSED__, void *data __UNUSED__)
-{
-}
-
-/* prevent early death */
-static void
-catch_sigterm(void)
-{
-    struct sigaction act;
-
-    act.sa_sigaction = term_handler;
-    act.sa_flags = SA_RESTART | SA_SIGINFO;
-    sigemptyset(&act.sa_mask);
-
-    if (sigaction(SIGTERM, &act, NULL) < 0)
-        perror("sigaction"); /* It's bad if we can't deal with SIGTERM, but not dramatic */
-}
-
 int
 main(int argc, char **argv)
 {
@@ -398,8 +379,6 @@ main(int argc, char **argv)
     /* create homedir */
     snprintf(file, sizeof(file), "%s/.efreet", efreet_home_dir_get());
     if (!ecore_file_mkpath(file)) return -1;
-
-    catch_sigterm();
 
     /* lock process, so that we only run one copy of this program */
     lockfd = cache_lock_file();
