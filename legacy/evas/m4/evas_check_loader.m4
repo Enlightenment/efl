@@ -210,8 +210,9 @@ have_dep="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([SVG], [librsvg-2.0 >= 2.14.0],
-   [have_dep="yes" requirement="librsvg-2.0"],
+PKG_CHECK_MODULES([SVG], [librsvg-2.0 >= 2.14.0
+                          cairo >= 1.0.0],
+   [have_dep="yes" requirement="librsvg-2.0 cairo"],
    [have_svg="no"]
 )
 
