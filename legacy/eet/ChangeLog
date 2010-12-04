@@ -468,3 +468,8 @@
 	encoding/decoding, but even faster for stringshare encoding.
 
 	* Improve speed when decoding mostly array with eet_data_read.
+
+2010-12-03  Cedric BAIL
+
+	* Improve portability.
+
