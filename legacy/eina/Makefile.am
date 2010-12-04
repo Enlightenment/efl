@@ -48,7 +48,8 @@ m4/efl_fnmatch.m4 \
 m4/efl_tests.m4 \
 m4/efl_threads.m4 \
 m4/eina_bench.m4 \
-m4/eina_check.m4
+m4/eina_check.m4 \
+m4/efl_path_max.m4
 
 .PHONY: doc coverage benchmark
 
