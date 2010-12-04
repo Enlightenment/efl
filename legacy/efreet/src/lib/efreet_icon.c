@@ -419,33 +419,28 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
 
     if (theme)
     {
+        char *tmp;
 #ifdef ICON_CACHE
         Efreet_Cache_Icon *cache;
 #endif
 
 #ifdef SLOPPY_SPEC
-        {
-            char *tmp;
-
-            tmp = efreet_icon_remove_extension(icon);
-            if (!tmp) return NULL;
-#ifdef ICON_CACHE
-            cache = efreet_cache_icon_find(theme, tmp);
-            value = efreet_cache_icon_lookup_icon(cache, size);
-            if (!value) INFO("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
+        tmp = efreet_icon_remove_extension(icon);
+        if (!tmp) return NULL;
 #else
-            value = efreet_icon_find_helper(theme, tmp, size);
+        tmp = icon;
 #endif
-            FREE(tmp);
-        }
-#else
+
 #ifdef ICON_CACHE
-        cache = efreet_cache_icon_find(theme, icon);
+        cache = efreet_cache_icon_find(theme, tmp);
         value = efreet_cache_icon_lookup_icon(cache, size);
         if (!value) INFO("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
 #else
-        value = efreet_icon_find_helper(theme, icon, size);
+        value = efreet_icon_find_helper(theme, tmp, size);
 #endif
+
+#ifdef SLOPPY_SPEC
+        FREE(tmp);
 #endif
     }
 
