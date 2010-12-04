@@ -5,11 +5,15 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <Ecore.h>
+
+#define THEME "Tango"
+#define SIZE 128
 
 int
 ef_mime_cb_get(void)
 {
-    const char *mime = NULL;
+    const char *mime = NULL, *icon;
     int misses = 0, i = 0;
     struct
     {
@@ -22,7 +26,7 @@ ef_mime_cb_get(void)
         {PACKAGE_DATA_DIR"/test/sub", "inode/directory"},
         {NULL, NULL}
     };
-
+    double start;
 
     if (!efreet_mime_init())
     {
@@ -43,6 +47,9 @@ ef_mime_cb_get(void)
             printf("Got %s as %s instead of %s\n", files[i].file, mime, files[i].mime);
             misses ++;
         }
+        start = ecore_time_get();
+        icon = efreet_mime_type_icon_get(files[i].mime, THEME, SIZE);
+        printf("mime icon: %s %s %f\n", files[i].mime, icon, ecore_time_get() - start);
     }
 
     efreet_mime_shutdown();
