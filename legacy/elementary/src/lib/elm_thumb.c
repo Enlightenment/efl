@@ -703,7 +703,7 @@ elm_thumb_animate_get(const Evas_Object *obj)
  *
  * @ingroup Thumb
  */
-EAPI struct _Ethumb_Client *
+EAPI void *
 elm_thumb_ethumb_client_get(void)
 {
    return _elm_ethumb_client;
