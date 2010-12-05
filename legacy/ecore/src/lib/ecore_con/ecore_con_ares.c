@@ -371,7 +371,7 @@ _ecore_con_info_cares_clean(void)
      {
         if (ecf->active != active)
           {
-             ecore_main_fd_handler_del(ecf->handler);
+             if (ecf->handler) ecore_main_fd_handler_del(ecf->handler);
              free(ecf);
              info_fds = eina_list_remove_list(info_fds, l);
           }
