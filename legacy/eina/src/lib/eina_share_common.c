@@ -558,7 +558,7 @@ _eina_share_common_node_from_str(const char *str, Eina_Magic node_magic)
    const size_t offset = offsetof(Eina_Share_Common_Node, str);
 
    node = (Eina_Share_Common_Node *)(str - offset);
-   EINA_MAGIC_CHECK_SHARE_COMMON_NODE(node, node_magic, );
+   EINA_MAGIC_CHECK_SHARE_COMMON_NODE(node, node_magic, node = NULL);
    return node;
 
    (void) node_magic; /* When magic are disable, node_magic is unused, this remove a warning. */
@@ -821,6 +821,7 @@ eina_share_common_ref(Eina_Share *share, const char *str)
 
    SHARE_COMMON_LOCK_BIG();
    node = _eina_share_common_node_from_str(str, share->node_magic);
+   if (!node) return str;
    node->references++;
    DBG("str=%p refs=%u", str, node->references);
 
@@ -847,6 +848,9 @@ eina_share_common_del(Eina_Share *share, const char *str)
    SHARE_COMMON_LOCK_BIG();
 
    node = _eina_share_common_node_from_str(str, share->node_magic);
+   if (!node)
+      return;
+
    slen = node->length;
    eina_share_common_population_del(share, slen);
    if (node->references > 1)
@@ -901,6 +905,7 @@ eina_share_common_length(__UNUSED__ Eina_Share *share, const char *str)
       return -1;
 
    node = _eina_share_common_node_from_str(str, share->node_magic);
+   if (!node) return 0;
    return node->length;
 }
 
