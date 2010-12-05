@@ -321,7 +321,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Calc_Params *params,
 			Edje_Part_Description_Text *chosen_desc)
 {
-   const char	*text;
+   const char	*text, *str;
    const char	*font;
    char		*font2 = NULL;
    char         *sfont = NULL;
@@ -553,8 +553,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	text = _edje_text_fit_x(ed, ep, params, text, font, size, sw, &free_text);
      }
 
+   str = eina_stringshare_add(text);
    if (ep->text.cache.out_str) eina_stringshare_del(ep->text.cache.out_str);
-   ep->text.cache.out_str = eina_stringshare_add(text);
+   ep->text.cache.out_str = str;
    ep->text.cache.in_w = sw;
    ep->text.cache.in_h = sh;
    ep->text.cache.out_size = size;
