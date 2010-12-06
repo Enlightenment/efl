@@ -58,14 +58,14 @@ struct _Fonts_Data
             elm_object_disabled_set(list, EINA_TRUE);  \
          }                                             \
     }                                                  \
-  while (0);
+  while (0)
 
 #define ELM_LIST_ENABLE(list)                     \
   do                                              \
     {                                             \
        elm_object_disabled_set(list, EINA_FALSE); \
     }                                             \
-  while (0);
+  while (0)
 
 static int quiet = 0;
 static int interactive = 1;
