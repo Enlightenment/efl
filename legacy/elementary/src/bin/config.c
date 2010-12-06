@@ -761,14 +761,14 @@ _profile_reset(void            *data,
    selection = elm_list_item_data_get(elm_list_selected_item_get(li));
    curr = elm_profile_current_get();
 
+   elm_config_save(); /* dump config into old profile's data dir */
+
    pdir = elm_profile_dir_get(selection, EINA_TRUE);
    if (!pdir)
      return;
 
-   elm_config_save(); /* dump config into old profile's data dir */
-
    ecore_file_recursive_rm(pdir);
-   free((void *)pdir);
+   elm_profile_dir_free(pdir);
 
    elm_config_reload();
 
