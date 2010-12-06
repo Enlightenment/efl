@@ -1007,339 +1007,382 @@ _native_bind_cb(void *data, void *image)
    Evas_GL_Image *im = image;
    Native *n = im->native.data;
    
+  if (n->ns.type == EVAS_NATIVE_SURFACE_X11)
+    {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (n->egl_surface)
-     {
-        if (glsym_glEGLImageTargetTexture2DOES)
-          {
-             glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
-             if (eglGetError() != EGL_SUCCESS)
-               ERR("glEGLImageTargetTexture2DOES() failed.");
-          }
-        else
-          ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
-     }
+      if (n->egl_surface)
+        {
+          if (glsym_glEGLImageTargetTexture2DOES)
+            {
+              glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+              if (eglGetError() != EGL_SUCCESS)
+                ERR("glEGLImageTargetTexture2DOES() failed.");
+            }
+          else
+            ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
+        }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
-   Render_Engine *re = data;
-   
-   if (glsym_glXBindTexImage)
-     {
-        glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
-                              GLX_FRONT_LEFT_EXT, NULL);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   else
-     ERR("Try glXBindTexImage on GLX with no support");
+      Render_Engine *re = data;
+      
+      if (glsym_glXBindTexImage)
+        {
+          glsym_glXBindTexImage(re->win->disp, n->glx_pixmap, 
+                                GLX_FRONT_LEFT_EXT, NULL);
+          GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        }
+      else
+        ERR("Try glXBindTexImage on GLX with no support");
 # endif
 #endif
+    }
+  else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+    {
+      // FIXME: implement
+    }
 }
 
 static void
 _native_unbind_cb(void *data, void *image)
 {
-   Evas_GL_Image *im = image;
-
+  Evas_GL_Image *im = image;
+  Native *n = im->native.data;
+  
+  if (n->ns.type == EVAS_NATIVE_SURFACE_X11)
+    {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   // nothing
+      // nothing
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
-   Render_Engine *re = data;
-   Native *n = im->native.data;
-   
-   if (glsym_glXReleaseTexImage)
-     {
-        glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
-                                 GLX_FRONT_LEFT_EXT);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   else
-     ERR("Try glXReleaseTexImage on GLX with no support");
+      Render_Engine *re = data;
+      
+      if (glsym_glXReleaseTexImage)
+        {
+          glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap, 
+                                   GLX_FRONT_LEFT_EXT);
+          GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        }
+      else
+        ERR("Try glXReleaseTexImage on GLX with no support");
 # endif
 #endif
+    }
+  else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+    {
+      // FIXME: implement
+    }
 }
 
 static void
 _native_free_cb(void *data, void *image)
 {
-   Render_Engine *re = data;
-   Evas_GL_Image *im = image;
-   Native *n = im->native.data;
-   uint32_t pmid;
+  Render_Engine *re = data;
+  Evas_GL_Image *im = image;
+  Native *n = im->native.data;
+  uint32_t pmid;
 
-   pmid = n->pixmap;
-   eina_hash_del(re->win->gl_context->shared->native_hash, &pmid, im);
+  if (n->ns.type == EVAS_NATIVE_SURFACE_X11)
+    {
+      pmid = n->pixmap;
+      eina_hash_del(re->win->gl_context->shared->native_hash, &pmid, im);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (n->egl_surface)
-     {
-        if (glsym_eglDestroyImage)
-          {
-             glsym_eglDestroyImage(re->win->egl_disp,
-                                   n->egl_surface);
-             if (eglGetError() != EGL_SUCCESS)
-               ERR("eglDestroyImage() failed.");
-          }
-        else
-          ERR("Try eglDestroyImage on EGL with no support");
-     }
+      if (n->egl_surface)
+        {
+          if (glsym_eglDestroyImage)
+            {
+              glsym_eglDestroyImage(re->win->egl_disp,
+                                    n->egl_surface);
+              if (eglGetError() != EGL_SUCCESS)
+                ERR("eglDestroyImage() failed.");
+            }
+          else
+            ERR("Try eglDestroyImage on EGL with no support");
+        }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
-   if (n->glx_pixmap)
-     {
-        if (im->native.loose)
-          {
-             if (glsym_glXReleaseTexImage)
-               {
+      if (n->glx_pixmap)
+        {
+          if (im->native.loose)
+            {
+              if (glsym_glXReleaseTexImage)
+                {
                   glsym_glXReleaseTexImage(re->win->disp, n->glx_pixmap,
                                            GLX_FRONT_LEFT_EXT);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-               }
-             else
-               ERR("Try glXReleaseTexImage on GLX with no support");
-          }
-        if (glsym_glXDestroyPixmap)
-          {
-             glsym_glXDestroyPixmap(re->win->disp, n->glx_pixmap);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-           ERR("Try glXDestroyPixmap on GLX with no support");
-        n->glx_pixmap = 0;
-     }
+                }
+              else
+                ERR("Try glXReleaseTexImage on GLX with no support");
+            }
+          if (glsym_glXDestroyPixmap)
+            {
+              glsym_glXDestroyPixmap(re->win->disp, n->glx_pixmap);
+              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+            }
+          else
+            ERR("Try glXDestroyPixmap on GLX with no support");
+          n->glx_pixmap = 0;
+        }
 # endif
 #endif
-   im->native.data        = NULL;
-   im->native.func.data   = NULL;
-   im->native.func.bind   = NULL;
-   im->native.func.unbind = NULL;
-   im->native.func.free   = NULL;
-   free(n);
+    }
+  else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL)
+    {
+      // FIXME: implement
+    }
+  im->native.data        = NULL;
+  im->native.func.data   = NULL;
+  im->native.func.bind   = NULL;
+  im->native.func.unbind = NULL;
+  im->native.func.free   = NULL;
+  free(n);
 }
 
 static void *
 eng_image_native_set(void *data, void *image, void *native)
 {
-   Render_Engine *re = (Render_Engine *)data;
-   Evas_Native_Surface *ns = native;
-   Evas_GL_Image *im = image, *im2 = NULL;
-   Visual *vis = NULL;
-   Pixmap pm = 0;
-   Native *n = NULL;
-   uint32_t pmid;
-   
-   if (!im) return NULL;
-   
-   if (ns)
-     {
-        vis = ns->data.x11.visual;
-        pm = ns->data.x11.pixmap;
-        if (im->native.data)
-          {
-             Evas_Native_Surface *ens = im->native.data;
-             if ((ens->data.x11.visual == vis) && (ens->data.x11.pixmap == pm))
+  Render_Engine *re = (Render_Engine *)data;
+  Evas_Native_Surface *ns = native;
+  Evas_GL_Image *im = image, *im2 = NULL;
+  Visual *vis = NULL;
+  Pixmap pm = 0;
+  Native *n = NULL;
+  uint32_t pmid;
+  
+  if (!im) return NULL;
+  
+  if (ns)
+    {
+      if (ns->type == EVAS_NATIVE_SURFACE_X11)
+        {
+          vis = ns->data.x11.visual;
+          pm = ns->data.x11.pixmap;
+          if (im->native.data)
+            {
+              Evas_Native_Surface *ens = im->native.data;
+              if ((ens->data.x11.visual == vis) && (ens->data.x11.pixmap == pm))
                 return im;
-          }
-     }
-   if ((!ns) && (!im->native.data)) return im;
-   
-   eng_window_use(re->win);
-   
-   if (im->native.data)
-     {
-        if (im->native.func.free)
-           im->native.func.free(im->native.func.data, im);
-        evas_gl_common_image_native_disable(im);
-     }
-   
-   pmid = pm;
-   im2 = eina_hash_find(re->win->gl_context->shared->native_hash, &pmid);
-   if (im2 == im) return im;
-   if (im2)
-     {
-        n = im2->native.data;
-        if (n)
-          {
-             im2->references++;
-             evas_gl_common_image_free(im);
-             return im2;
-          }
-     }
-   im2 = evas_gl_common_image_new_from_data(re->win->gl_context, 
-                                            im->w, im->h, NULL, im->alpha,
-                                            EVAS_COLORSPACE_ARGB8888);
-   evas_gl_common_image_free(im);
-   im = im2;
+            }
+        }
+      else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+        {
+          // FIXME: implement
+        }
+    }
+  if ((!ns) && (!im->native.data)) return im;
+  
+  eng_window_use(re->win);
+  
+  if (im->native.data)
+    {
+      if (im->native.func.free)
+        im->native.func.free(im->native.func.data, im);
+      evas_gl_common_image_native_disable(im);
+    }
+  
+  if (ns->type == EVAS_NATIVE_SURFACE_X11)
+    {
+      pmid = pm;
+      im2 = eina_hash_find(re->win->gl_context->shared->native_hash, &pmid);
+      if (im2 == im) return im;
+      if (im2)
+        {
+          n = im2->native.data;
+          if (n)
+            {
+              im2->references++;
+              evas_gl_common_image_free(im);
+              return im2;
+            }
+        }
+    }
+  else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+    {
+      // FIXME: implement
+    }
+  im2 = evas_gl_common_image_new_from_data(re->win->gl_context, 
+                                           im->w, im->h, NULL, im->alpha,
+                                           EVAS_COLORSPACE_ARGB8888);
+  evas_gl_common_image_free(im);
+  im = im2;
+  if (ns->type == EVAS_NATIVE_SURFACE_X11)
+    {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   if (native) 
-     {
-        n = calloc(1, sizeof(Native));
-        if (n)
-          {
-             EGLConfig egl_config;
-             int config_attrs[20];
-             int num_config, i = 0;
-             
-             eina_hash_add(re->win->gl_context->shared->native_hash, &pmid, im);
-                  
-             config_attrs[i++] = EGL_RED_SIZE;
-             config_attrs[i++] = 8;
-             config_attrs[i++] = EGL_GREEN_SIZE;
-             config_attrs[i++] = 8;
-             config_attrs[i++] = EGL_BLUE_SIZE;
-             config_attrs[i++] = 8;
-             config_attrs[i++] = EGL_ALPHA_SIZE;
-             config_attrs[i++] = 8;
-             config_attrs[i++] = EGL_DEPTH_SIZE;
-             config_attrs[i++] = 0;
-             config_attrs[i++] = EGL_STENCIL_SIZE;
-             config_attrs[i++] = 0;
-             config_attrs[i++] = EGL_RENDERABLE_TYPE;
-             config_attrs[i++] = EGL_OPENGL_ES2_BIT;
-             config_attrs[i++] = EGL_SURFACE_TYPE;
-             config_attrs[i++] = EGL_PIXMAP_BIT;
-             config_attrs[i++] = EGL_NONE;
-             
-             if (!eglChooseConfig(re->win->egl_disp, config_attrs, 
-                                  &egl_config, 1, &num_config))
-               ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i", (unsigned int)pm, num_config);
-             n->pixmap = pm;
-             n->visual = vis;
-             if (glsym_eglCreateImage)
+      if (native) 
+        {
+          n = calloc(1, sizeof(Native));
+          if (n)
+            {
+              EGLConfig egl_config;
+              int config_attrs[20];
+              int num_config, i = 0;
+              
+              eina_hash_add(re->win->gl_context->shared->native_hash, &pmid, im);
+              
+              config_attrs[i++] = EGL_RED_SIZE;
+              config_attrs[i++] = 8;
+              config_attrs[i++] = EGL_GREEN_SIZE;
+              config_attrs[i++] = 8;
+              config_attrs[i++] = EGL_BLUE_SIZE;
+              config_attrs[i++] = 8;
+              config_attrs[i++] = EGL_ALPHA_SIZE;
+              config_attrs[i++] = 8;
+              config_attrs[i++] = EGL_DEPTH_SIZE;
+              config_attrs[i++] = 0;
+              config_attrs[i++] = EGL_STENCIL_SIZE;
+              config_attrs[i++] = 0;
+              config_attrs[i++] = EGL_RENDERABLE_TYPE;
+              config_attrs[i++] = EGL_OPENGL_ES2_BIT;
+              config_attrs[i++] = EGL_SURFACE_TYPE;
+              config_attrs[i++] = EGL_PIXMAP_BIT;
+              config_attrs[i++] = EGL_NONE;
+              
+              if (!eglChooseConfig(re->win->egl_disp, config_attrs, 
+                                   &egl_config, 1, &num_config))
+                ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i", (unsigned int)pm, num_config);
+              memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+              n->pixmap = pm;
+              n->visual = vis;
+              if (glsym_eglCreateImage)
                 n->egl_surface = glsym_eglCreateImage(re->win->egl_disp,
                                                       EGL_NO_CONTEXT,
                                                       EGL_NATIVE_PIXMAP_KHR,
                                                       (void *)pm,
                                                       NULL);
-             else
-               ERR("Try eglCreateImage on EGL with no support");
-             if (!n->egl_surface)
-               ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm);
-             im->native.yinvert     = 1;
-             im->native.loose       = 0;
-             im->native.data        = n;
-             im->native.func.data   = re;
-             im->native.func.bind   = _native_bind_cb;
-             im->native.func.unbind = _native_unbind_cb;
-             im->native.func.free   = _native_free_cb;
-             im->native.target      = GL_TEXTURE_2D;
-             im->native.mipmap      = 0;
-             evas_gl_common_image_native_enable(im);
-          }
-     }
+              else
+                ERR("Try eglCreateImage on EGL with no support");
+              if (!n->egl_surface)
+                ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm);
+              im->native.yinvert     = 1;
+              im->native.loose       = 0;
+              im->native.data        = n;
+              im->native.func.data   = re;
+              im->native.func.bind   = _native_bind_cb;
+              im->native.func.unbind = _native_unbind_cb;
+              im->native.func.free   = _native_free_cb;
+              im->native.target      = GL_TEXTURE_2D;
+              im->native.mipmap      = 0;
+              evas_gl_common_image_native_enable(im);
+            }
+        }
 #else
 # ifdef GLX_BIND_TO_TEXTURE_TARGETS_EXT
-   if (native)
-     {
-        int dummy;
-        unsigned int w, h, depth = 32, border;
-        Window wdummy;
-
-        // fixme: round trip :(
-        XGetGeometry(re->win->disp, pm, &wdummy, &dummy, &dummy, 
-                     &w, &h, &border, &depth);
-        n = calloc(1, sizeof(Native));
-        if (n)
-          {
-             int pixmap_att[20];
-             unsigned int target = 0;
-             unsigned int i = 0;
-
-             eina_hash_add(re->win->gl_context->shared->native_hash, &pmid, im);
-             if ((re->win->depth_cfg[depth].tex_target &
-                  GLX_TEXTURE_2D_BIT_EXT) 
-//                 && (1) // we assume npo2 for now
-                 // size is pow2 || mnpo2 supported
-                )
+      if (native)
+        {
+          int dummy;
+          unsigned int w, h, depth = 32, border;
+          Window wdummy;
+          
+          // fixme: round trip :(
+          XGetGeometry(re->win->disp, pm, &wdummy, &dummy, &dummy, 
+                       &w, &h, &border, &depth);
+          n = calloc(1, sizeof(Native));
+          if (n)
+            {
+              int pixmap_att[20];
+              unsigned int target = 0;
+              unsigned int i = 0;
+              
+              eina_hash_add(re->win->gl_context->shared->native_hash, &pmid, im);
+              if ((re->win->depth_cfg[depth].tex_target &
+                   GLX_TEXTURE_2D_BIT_EXT) 
+                  //                 && (1) // we assume npo2 for now
+                  // size is pow2 || mnpo2 supported
+                 )
                 target = GLX_TEXTURE_2D_EXT;
-             else if ((re->win->depth_cfg[depth].tex_target &
-                       GLX_TEXTURE_RECTANGLE_BIT_EXT))
-               {
+              else if ((re->win->depth_cfg[depth].tex_target &
+                        GLX_TEXTURE_RECTANGLE_BIT_EXT))
+                {
                   ERR("rect!!! (not handled)");
                   target = GLX_TEXTURE_RECTANGLE_EXT;
-               }
-             if (!target)
-               {
+                }
+              if (!target)
+                {
                   ERR("broken text-from-pixmap");
                   if (!(re->win->depth_cfg[depth].tex_target &
                         GLX_TEXTURE_2D_BIT_EXT))
-                     target = GLX_TEXTURE_RECTANGLE_EXT;
+                    target = GLX_TEXTURE_RECTANGLE_EXT;
                   else if (!(re->win->depth_cfg[depth].tex_target &
                              GLX_TEXTURE_RECTANGLE_BIT_EXT))
-                     target = GLX_TEXTURE_2D_EXT;
-               }
-             
-             
-             pixmap_att[i++] = GLX_TEXTURE_FORMAT_EXT;
-             pixmap_att[i++] = re->win->depth_cfg[depth].tex_format;
-             pixmap_att[i++] = GLX_MIPMAP_TEXTURE_EXT;
-             pixmap_att[i++] = re->win->depth_cfg[depth].mipmap;
-             
-             if (target)
-               {
+                    target = GLX_TEXTURE_2D_EXT;
+                }
+              
+              
+              pixmap_att[i++] = GLX_TEXTURE_FORMAT_EXT;
+              pixmap_att[i++] = re->win->depth_cfg[depth].tex_format;
+              pixmap_att[i++] = GLX_MIPMAP_TEXTURE_EXT;
+              pixmap_att[i++] = re->win->depth_cfg[depth].mipmap;
+              
+              if (target)
+                {
                   pixmap_att[i++] = GLX_TEXTURE_TARGET_EXT;
                   pixmap_att[i++] = target;
-               }
-             
-             pixmap_att[i++] = 0;
-             
-             memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-             n->pixmap = pm;
-             n->visual = vis;
-             n->fbc = re->win->depth_cfg[depth].fbc;
-             if (glsym_glXCreatePixmap)
+                }
+              
+              pixmap_att[i++] = 0;
+              
+              memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
+              n->pixmap = pm;
+              n->visual = vis;
+              n->fbc = re->win->depth_cfg[depth].fbc;
+              if (glsym_glXCreatePixmap)
                 n->glx_pixmap = glsym_glXCreatePixmap(re->win->disp, 
                                                       n->fbc, 
                                                       n->pixmap, 
                                                       pixmap_att);
-             else
-               ERR("Try glXCreatePixmap on GLX with no support");
-             if (n->glx_pixmap)
-               {
+              else
+                ERR("Try glXCreatePixmap on GLX with no support");
+              if (n->glx_pixmap)
+                {
 //                  printf("%p: new native texture for %x | %4i x %4i @ %2i = %p\n",
 //                         n, pm, w, h, depth, n->glx_pixmap);
                   if (!target)
                     {
-                       ERR("no target :(");
-                       if (glsym_glXQueryDrawable)
-                          glsym_glXQueryDrawable(re->win->disp,
-                                                 n->pixmap, 
-                                                 GLX_TEXTURE_TARGET_EXT, 
-                                                 &target);
+                      ERR("no target :(");
+                      if (glsym_glXQueryDrawable)
+                        glsym_glXQueryDrawable(re->win->disp,
+                                               n->pixmap, 
+                                               GLX_TEXTURE_TARGET_EXT, 
+                                               &target);
                     }
                   if (target == GLX_TEXTURE_2D_EXT)
                     {
-                       im->native.target = GL_TEXTURE_2D;
-                       im->native.mipmap = re->win->depth_cfg[depth].mipmap;
+                      im->native.target = GL_TEXTURE_2D;
+                      im->native.mipmap = re->win->depth_cfg[depth].mipmap;
                     }
 #  ifdef GL_TEXTURE_RECTANGLE_ARB             
                   else if (target == GLX_TEXTURE_RECTANGLE_EXT)
                     {
-                       im->native.target = GL_TEXTURE_RECTANGLE_ARB;
-                       im->native.mipmap = 0;
+                      im->native.target = GL_TEXTURE_RECTANGLE_ARB;
+                      im->native.mipmap = 0;
                     }
 #  endif             
                   else
                     {
-                       im->native.target = GL_TEXTURE_2D;
-                       im->native.mipmap = 0;
-                       ERR("still unknown target");
+                      im->native.target = GL_TEXTURE_2D;
+                      im->native.mipmap = 0;
+                      ERR("still unknown target");
                     }
-               }
-             else
-               ERR("GLX Pixmap create fail");
-             im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
-             im->native.loose       = re->win->detected.loose_binding;
-             im->native.data        = n;
-             im->native.func.data   = re;
-             im->native.func.bind   = _native_bind_cb;
-             im->native.func.unbind = _native_unbind_cb;
-             im->native.func.free   = _native_free_cb;
-
-             evas_gl_common_image_native_enable(im);
-          }
-     }
+                }
+              else
+                ERR("GLX Pixmap create fail");
+              im->native.yinvert     = re->win->depth_cfg[depth].yinvert;
+              im->native.loose       = re->win->detected.loose_binding;
+              im->native.data        = n;
+              im->native.func.data   = re;
+              im->native.func.bind   = _native_bind_cb;
+              im->native.func.unbind = _native_unbind_cb;
+              im->native.func.free   = _native_free_cb;
+              
+              evas_gl_common_image_native_enable(im);
+            }
+        }
 # endif   
 #endif
+    }
+  else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)
+    {
+      // FIXME: implement
+    }
    return im;
 }
 
