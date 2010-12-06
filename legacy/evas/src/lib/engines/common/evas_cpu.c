@@ -168,7 +168,7 @@ evas_common_cpu_init(void)
    if (getenv("EVAS_CPU_NO_VIS"))
      cpu_feature_mask &= ~CPU_FEATURE_VIS;
 #endif /* __SPARC__ */
-#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
+#if defined(__ARM_ARCH__)
 #ifdef BUILD_NEON
    cpu_feature_mask |= CPU_FEATURE_NEON *
      evas_common_cpu_feature_test(evas_common_cpu_neon_test);
