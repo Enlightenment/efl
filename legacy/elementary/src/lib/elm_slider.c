@@ -93,17 +93,35 @@ static const Evas_Smart_Cb_Description _signals[] = {
 static Eina_Bool
 _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   Evas_Event_Key_Down *ev = event_info;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Event_Mouse_Wheel *mev;
+   Evas_Event_Key_Down *ev;
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
+
+   if (type == EVAS_CALLBACK_KEY_DOWN) goto key_down;
+   else if (type != EVAS_CALLBACK_MOUSE_WHEEL) return EINA_FALSE;
+
+   mev = event_info;
+   if (mev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+
+   if (mev->z < 0) _drag_up(obj, NULL, NULL, NULL);
+   else _drag_down(obj, NULL, NULL, NULL);
+   mev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
+
+  key_down:
+   ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if ((!strcmp(ev->keyname, "Left"))
        || (!strcmp(ev->keyname, "KP_Left")))
      {
         if (!wd->horizontal) return EINA_FALSE;
-        _drag_up(obj, NULL, NULL, NULL);
+        if (!wd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        else _drag_up(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
@@ -111,21 +129,24 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
             || (!strcmp(ev->keyname, "KP_Right")))
      {
         if (!wd->horizontal) return EINA_FALSE;
-        _drag_down(obj, NULL, NULL, NULL);
+        if (!wd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        else _drag_down(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
    else if ((!strcmp(ev->keyname, "Up")) || (!strcmp(ev->keyname, "KP_Up")))
      {
         if (wd->horizontal) return EINA_FALSE;
-        _drag_up(obj, NULL, NULL, NULL);
+        if (wd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        else _drag_down(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
    else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
      {
         if (wd->horizontal) return EINA_FALSE;
-        _drag_down(obj, NULL, NULL, NULL);
+        if (wd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        else _drag_up(obj, NULL, NULL, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
@@ -444,8 +465,6 @@ elm_slider_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->slider, "drag,step", "*", _drag_step, obj);
    edje_object_signal_callback_add(wd->slider, "drag,page", "*", _drag_stop, obj);
 //   edje_object_signal_callback_add(wd->slider, "drag,set", "*", _drag_stop, obj);
-   edje_object_signal_callback_add(wd->slider, "mouse,wheel,0,-1", "*", _drag_up, obj);
-   edje_object_signal_callback_add(wd->slider, "mouse,wheel,0,1", "*", _drag_down, obj);
    edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", 0.0, 0.0);
 
    wd->spacer = evas_object_rectangle_add(e);
