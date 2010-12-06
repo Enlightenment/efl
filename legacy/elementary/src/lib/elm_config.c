@@ -67,7 +67,7 @@ static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ..
 #ifdef HAVE_ELEMENTARY_X
 static Ecore_Event_Handler *_prop_change_handler = NULL;
 static Ecore_X_Window _root_1st = 0;
-#define ATOM_COUNT 11
+#define ATOM_COUNT 21
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
@@ -82,6 +82,16 @@ static const char *_atom_names[ATOM_COUNT] =
     "ENLIGHTENMENT_IMAGE_CACHE",
     "ENLIGHTENMENT_EDJE_FILE_CACHE",
     "ENLIGHTENMENT_EDJE_COLLECTION_CACHE",
+    "ENLIGHTENMENT_THUMBSCROLL_BOUNCE_ENABLE",
+    "ENLIGHTENMENT_THUMBSCROLL_BOUNCE_FRICTION",
+    "ENLIGHTENMENT_THUMBSCROLL_ENABLE",
+    "ENLIGHTENMENT_THUMBSCROLL_THRESHOLD",
+    "ENLIGHTENMENT_THUMBSCROLL_MOMENTUM_THRESHOLD",
+    "ENLIGHTENMENT_THUMBSCROLL_FRICTION",
+    "ENLIGHTENMENT_THUMBSCROLL_BORDER_FRICTION",
+    "ENLIGHTENMENT_THUMBSCROLL_PAGE_SCROLL_FRICTION",
+    "ENLIGHTENMENT_THUMBSCROLL_BRING_IN_SCROLL_FRICTION",
+    "ENLIGHTENMENT_THUMBSCROLL_ZOOM_FRICTION",
     "ENLIGHTENMENT_CONFIG"
   };
 #define ATOM_E_SCALE 0
@@ -94,7 +104,17 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_IMAGE_CACHE 7
 #define ATOM_E_EDJE_FILE_CACHE 8
 #define ATOM_E_EDJE_COLLECTION_CACHE 9
-#define ATOM_E_CONFIG 10
+#define ATOM_E_THUMBSCROLL_BOUNCE_ENABLE 10
+#define ATOM_E_THUMBSCROLL_BOUNCE_FRICTION 11
+#define ATOM_E_THUMBSCROLL_ENABLE 12
+#define ATOM_E_THUMBSCROLL_THRESHOLD 13
+#define ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD 14
+#define ATOM_E_THUMBSCROLL_FRICTION 15
+#define ATOM_E_THUMBSCROLL_BORDER_FRICTION 16
+#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION 17
+#define ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION 18
+#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION 19
+#define ATOM_E_CONFIG 20
 
 static Eina_Bool _prop_config_get(void);
 static Eina_Bool _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
@@ -256,7 +276,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   _elm_rescale();
                }
           }
-        if (event->atom == _atom[ATOM_E_CACHE_FLUSH_INTERVAL])
+        else if (event->atom == _atom[ATOM_E_CACHE_FLUSH_INTERVAL])
           {
              unsigned int val = 1000;
 
@@ -273,7 +293,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                     _elm_recache();
                }
           }
-        if (event->atom == _atom[ATOM_E_FONT_CACHE])
+        else if (event->atom == _atom[ATOM_E_FONT_CACHE])
           {
              unsigned int val = 1000;
 
@@ -289,7 +309,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                     _elm_recache();
                }
           }
-        if (event->atom == _atom[ATOM_E_IMAGE_CACHE])
+        else if (event->atom == _atom[ATOM_E_IMAGE_CACHE])
           {
              unsigned int val = 1000;
 
@@ -305,7 +325,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                     _elm_recache();
                }
           }
-        if (event->atom == _atom[ATOM_E_EDJE_FILE_CACHE])
+        else if (event->atom == _atom[ATOM_E_EDJE_FILE_CACHE])
           {
              unsigned int val = 1000;
 
@@ -321,7 +341,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                     _elm_recache();
                }
           }
-        if (event->atom == _atom[ATOM_E_EDJE_COLLECTION_CACHE])
+        else if (event->atom == _atom[ATOM_E_EDJE_COLLECTION_CACHE])
           {
              unsigned int val = 1000;
 
@@ -336,6 +356,130 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   if (edje_collection_cache !=
                       _elm_config->edje_collection_cache)
                     _elm_recache();
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_BOUNCE_ENABLE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  _elm_config->thumbscroll_bounce_enable = !!val;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_BOUNCE_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                      _elm_config->thumbscroll_bounce_friction =
+                          (double)val / 1000.0;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_ENABLE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  _elm_config->thumbscroll_enable = !!val;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_THRESHOLD])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0) _elm_config->thumbscroll_threshold = val;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                      _elm_config->thumbscroll_momentum_threshold =
+                          (double)val / 1000.0;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                    _elm_config->thumbscroll_friction = (double)val / 1000.0;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_BORDER_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                      _elm_config->thumbscroll_border_friction =
+                          (double)val / 1000.0;
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                      _elm_config->page_scroll_friction =
+                          (double)val / 1000.0;
+               }
+          }
+        else if (event->atom ==
+                 _atom[ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                      _elm_config->bring_in_scroll_friction =
+                          (double)val / 1000.0;
+               }
+          }
+        else if (event->atom ==
+                 _atom[ATOM_E_THUMBSCROLL_ZOOM_FRICTION])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  if (val > 0)
+                      _elm_config->zoom_friction = (double)val / 1000.0;
                }
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
@@ -1176,6 +1320,7 @@ static void
 _env_get(void)
 {
    char *s;
+   double friction;
 
    s = getenv("ELM_ENGINE");
    if (s)
@@ -1244,6 +1389,10 @@ _env_get(void)
    if (s) _elm_config->thumbscroll_momentum_threshold = atof(s);
    s = getenv("ELM_THUMBSCROLL_FRICTION");
    if (s) _elm_config->thumbscroll_friction = atof(s);
+   s = getenv("ELM_THUMBSCROLL_BOUNCE_ENABLE");
+   if (s) _elm_config->thumbscroll_bounce_enable = !!atoi(s);
+   s = getenv("ELM_THUMBSCROLL_BOUNCE_FRICTION");
+   if (s) _elm_config->thumbscroll_bounce_friction = atof(s);
    s = getenv("ELM_PAGE_SCROLL_FRICTION");
    if (s) _elm_config->page_scroll_friction = atof(s);
    s = getenv("ELM_BRING_IN_SCROLL_FRICTION");
@@ -1251,8 +1400,17 @@ _env_get(void)
    s = getenv("ELM_ZOOM_FRICTION");
    if (s) _elm_config->zoom_friction = atof(s);
    s = getenv("ELM_THUMBSCROLL_BORDER_FRICTION");
-   if (s) _elm_config->thumbscroll_border_friction = atof(s);
+   if (s)
+     {
+        friction = atof(s);
+        if (friction < 0.0)
+          friction = 0.0;
 
+        if (friction > 1.0)
+          friction = 1.0;
+
+        _elm_config->thumbscroll_border_friction = friction;
+     }
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
@@ -1354,7 +1512,8 @@ _env_get(void)
    
    s = getenv("ELM_LONGPRESS_TIMEOUT");
    if (s) _elm_config->longpress_timeout = atof(s);
-   if (_elm_config->longpress_timeout < 0.0) _elm_config->longpress_timeout = 0.0;
+   if (_elm_config->longpress_timeout < 0.0)
+       _elm_config->longpress_timeout = 0.0;
 }
 
 void

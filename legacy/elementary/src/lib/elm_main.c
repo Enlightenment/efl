@@ -1400,8 +1400,7 @@ elm_profile_all_set(const char *profile)
 #ifdef HAVE_ELEMENTARY_X
    static Ecore_X_Atom atom = 0;
 
-   if (!atom)
-     atom = ecore_x_atom_get("ENLIGHTENMENT_PROFILE");
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_PROFILE");
    ecore_x_window_prop_string_set(ecore_x_window_root_first_get(),
                                   atom, profile);
 #endif
@@ -2398,6 +2397,567 @@ EAPI void
 elm_focus_highlight_animate_set(Eina_Bool animate)
 {
    _elm_config->focus_highlight_animate = !!animate;
+}
+
+/**
+ * @defgroup Scrolling Scrolling
+ *
+ * These are functions setting how scrollable views in Elementary
+ * widgets should behave on user interaction.
+ */
+
+/**
+ * Get whether scrollers should bounce when they reach their
+ * viewport's edge during a scroll.
+ *
+ * @return the thumb scroll bouncing state
+ *
+ * This is the default behavior for touch screens, in general.
+ * @ingroup Scrolling
+ */
+EAPI Eina_Bool
+elm_scroll_bounce_enabled_get(void)
+{
+   return _elm_config->thumbscroll_bounce_enable;
+}
+
+/**
+ * Set whether scrollers should bounce when they reach their
+ * viewport's edge during a scroll.
+ *
+ * @param enabled the thumb scroll bouncing state
+ *
+ * @see elm_thumbscroll_bounce_enabled_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_bounce_enabled_set(Eina_Bool enabled)
+{
+   _elm_config->thumbscroll_bounce_enable = enabled;
+}
+
+/**
+ * Set whether scrollers should bounce when they reach their
+ * viewport's edge during a scroll, for all Elementary application
+ * windows.
+ *
+ * @param enabled the thumb scroll bouncing state
+ *
+ * @see elm_thumbscroll_bounce_enabled_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_bounce_enabled_all_set(Eina_Bool enabled)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int bounce_enable_i = (unsigned int)enabled;
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BOUNCE_ENABLE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &bounce_enable_i, 1);
+#endif
+}
+
+/**
+ * Get the amount of inertia a scroller will impose at bounce
+ * animations.
+ *
+ * @return the thumb scroll bounce friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_bounce_friction_get(void)
+{
+   return _elm_config->thumbscroll_bounce_friction;
+}
+
+/**
+ * Set the amount of inertia a scroller will impose at bounce
+ * animations.
+ *
+ * @param friction the thumb scroll bounce friction
+ *
+ * @see elm_thumbscroll_bounce_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_bounce_friction_set(double friction)
+{
+   _elm_config->thumbscroll_bounce_friction = friction;
+}
+
+/**
+ * Set the amount of inertia a scroller will impose at bounce
+ * animations, for all Elementary application windows.
+ *
+ * @param friction the thumb scroll bounce friction
+ *
+ * @see elm_thumbscroll_bounce_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_bounce_friction_all_set(double friction)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int bounce_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BOUNCE_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &bounce_friction_i, 1);
+#endif
+}
+
+/**
+ * Get the amount of inertia a <b>paged</b> scroller will impose at
+ * page fitting animations.
+ *
+ * @return the page scroll friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_page_scroll_friction_get(void)
+{
+   return _elm_config->page_scroll_friction;
+}
+
+/**
+ * Set the amount of inertia a <b>paged</b> scroller will impose at
+ * page fitting animations.
+ *
+ * @param friction the page scroll friction
+ *
+ * @see elm_thumbscroll_page_scroll_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_page_scroll_friction_set(double friction)
+{
+   _elm_config->page_scroll_friction = friction;
+}
+
+/**
+ * Set the amount of inertia a <b>paged</b> scroller will impose at
+ * page fitting animations, for all Elementary application windows.
+ *
+ * @param friction the page scroll friction
+ *
+ * @see elm_thumbscroll_page_scroll_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_page_scroll_friction_all_set(double friction)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int page_scroll_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_PAGE_SCROLL_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &page_scroll_friction_i, 1);
+#endif
+}
+
+/**
+ * Get the amount of inertia a scroller will impose at region bring
+ * animations.
+ *
+ * @return the bring in scroll friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_bring_in_scroll_friction_get(void)
+{
+   return _elm_config->bring_in_scroll_friction;
+}
+
+/**
+ * Set the amount of inertia a scroller will impose at region bring
+ * animations.
+ *
+ * @param friction the bring in scroll friction
+ *
+ * @see elm_thumbscroll_bring_in_scroll_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_bring_in_scroll_friction_set(double friction)
+{
+   _elm_config->bring_in_scroll_friction = friction;
+}
+
+/**
+ * Set the amount of inertia a scroller will impose at region bring
+ * animations, for all Elementary application windows.
+ *
+ * @param friction the bring in scroll friction
+ *
+ * @see elm_thumbscroll_bring_in_scroll_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_bring_in_scroll_friction_all_set(double friction)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int bring_in_scroll_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom)
+     atom =
+       ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BRING_IN_SCROLL_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &bring_in_scroll_friction_i, 1);
+#endif
+}
+
+/**
+ * Get the amount of inertia scrollers will impose at animations
+ * triggered by Elementary widgets' zooming API.
+ *
+ * @return the zoom friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_zoom_friction_get(void)
+{
+   return _elm_config->zoom_friction;
+}
+
+/**
+ * Set the amount of inertia scrollers will impose at animations
+ * triggered by Elementary widgets' zooming API.
+ *
+ * @param friction the zoom friction
+ *
+ * @see elm_thumbscroll_zoom_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_zoom_friction_set(double friction)
+{
+   _elm_config->zoom_friction = friction;
+}
+
+/**
+ * Set the amount of inertia scrollers will impose at animations
+ * triggered by Elementary widgets' zooming API, for all Elementary
+ * application windows.
+ *
+ * @param friction the zoom friction
+ *
+ * @see elm_thumbscroll_zoom_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_zoom_friction_all_set(double friction)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int zoom_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_ZOOM_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &zoom_friction_i, 1);
+#endif
+}
+
+/**
+ * Get whether scrollers should be draggable from any point in their
+ * views.
+ *
+ * @return the thumb scroll state
+ *
+ * @note This is the default behavior for touch screens, in general.
+ * @note All other functions namespaced with "thumbscroll" will only
+ *       have effect if this mode is enabled.
+ *
+ * @ingroup Scrolling
+ */
+EAPI Eina_Bool
+elm_scroll_thumbscroll_enabled_get(void)
+{
+   return _elm_config->thumbscroll_enable;
+}
+
+/**
+ * Set whether scrollers should be draggable from any point in their
+ * views.
+ *
+ * @param enabled the thumb scroll state
+ *
+ * @see elm_thumbscroll_enabled_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
+{
+   _elm_config->thumbscroll_enable = enabled;
+}
+
+/**
+ * Set whether scrollers should be draggable from any point in their
+ * views, for all Elementary application windows.
+ *
+ * @param enabled the thumb scroll state
+ *
+ * @see elm_thumbscroll_enabled_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int ts_enable_i = (unsigned int)enabled;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_ENABLE");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &ts_enable_i, 1);
+#endif
+}
+
+/**
+ * Get the number of pixels one should travel while dragging a
+ * scroller's view to actually trigger scrolling.
+ *
+ * @return the thumb scroll threshould
+ *
+ * One would use higher values for touch screens, in general, because
+ * of their inherent imprecision.
+ * @ingroup Scrolling
+ */
+EAPI unsigned int
+elm_scroll_thumbscroll_threshold_get(void)
+{
+   return _elm_config->thumbscroll_threshold;
+}
+
+/**
+ * Set the number of pixels one should travel while dragging a
+ * scroller's view to actually trigger scrolling.
+ *
+ * @param threshold the thumb scroll threshould
+ *
+ * @see elm_thumbscroll_threshould_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_threshold_set(unsigned int threshold)
+{
+   _elm_config->thumbscroll_threshold = threshold;
+}
+
+/**
+ * Set the number of pixels one should travel while dragging a
+ * scroller's view to actually trigger scrolling, for all Elementary
+ * application windows.
+ *
+ * @param threshold the thumb scroll threshould
+ *
+ * @see elm_thumbscroll_threshould_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int ts_threshold_i = (unsigned int)threshold;
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_THRESHOLD");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &ts_threshold_i, 1);
+#endif
+}
+
+/**
+ * Get the minimum speed of mouse cursor movement which will trigger
+ * list self scrolling animation after a mouse up event
+ * (pixels/second).
+ *
+ * @return the thumb scroll momentum threshould
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_thumbscroll_momentum_threshold_get(void)
+{
+   return _elm_config->thumbscroll_momentum_threshold;
+}
+
+/**
+ * Set the minimum speed of mouse cursor movement which will trigger
+ * list self scrolling animation after a mouse up event
+ * (pixels/second).
+ *
+ * @param threshold the thumb scroll momentum threshould
+ *
+ * @see elm_thumbscroll_momentum_threshould_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_momentum_threshold_set(double threshold)
+{
+   _elm_config->thumbscroll_momentum_threshold = threshold;
+}
+
+/**
+ * Set the minimum speed of mouse cursor movement which will trigger
+ * list self scrolling animation after a mouse up event
+ * (pixels/second), for all Elementary application windows.
+ *
+ * @param threshold the thumb scroll momentum threshould
+ *
+ * @see elm_thumbscroll_momentum_threshould_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int ts_momentum_threshold_i = (unsigned int)(threshold * 1000.0);
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_MOMENTUM_THRESHOLD");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &ts_momentum_threshold_i, 1);
+#endif
+}
+
+/**
+ * Get the amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @return the thumb scroll friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_thumbscroll_friction_get(void)
+{
+   return _elm_config->thumbscroll_friction;
+}
+
+/**
+ * Set the amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @param friction the thumb scroll friction
+ *
+ * @see elm_thumbscroll_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_friction_set(double friction)
+{
+   _elm_config->thumbscroll_friction = friction;
+}
+
+/**
+ * Set the amount of inertia a scroller will impose at self scrolling
+ * animations, for all Elementary application windows.
+ *
+ * @param friction the thumb scroll friction
+ *
+ * @see elm_thumbscroll_friction_get()
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_friction_all_set(double friction)
+{
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int ts_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom) atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &ts_friction_i, 1);
+#endif
+}
+
+/**
+ * Get the amount of lag between your actual mouse cursor dragging
+ * movement and a scroller's view movement itself, while pushing it
+ * into bounce state manually.
+ *
+ * @return the thumb scroll border friction
+ *
+ * @ingroup Scrolling
+ */
+EAPI double
+elm_scroll_thumbscroll_border_friction_get(void)
+{
+   return _elm_config->thumbscroll_border_friction;
+}
+
+/**
+ * Set the amount of lag between your actual mouse cursor dragging
+ * movement and a scroller's view movement itself, while pushing it
+ * into bounce state manually.
+ *
+ * @param friction the thumb scroll border friction. @c 0.0 for
+ *        perfect synchrony between two movements, @c 1.0 for maximum
+ *        lag.
+ *
+ * @see elm_thumbscroll_border_friction_get()
+ * @note parameter value will get bound to 0.0 - 1.0 interval, always
+ *
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_border_friction_set(double friction)
+{
+   if (friction < 0.0)
+     friction = 0.0;
+
+   if (friction > 1.0)
+     friction = 1.0;
+
+   _elm_config->thumbscroll_friction = friction;
+}
+
+/**
+ * Set the amount of lag between your actual mouse cursor dragging
+ * movement and a scroller's view movement itself, while pushing it
+ * into bounce state manually, for all Elementary application windows.
+ *
+ * @param friction the thumb scroll border friction. @c 0.0 for
+ *        perfect synchrony between two movements, @c 1.0 for maximum
+ *        lag.
+ *
+ * @see elm_thumbscroll_border_friction_get()
+ * @note parameter value will get bound to 0.0 - 1.0 interval, always
+ *
+ * @ingroup Scrolling
+ */
+EAPI void
+elm_scroll_thumbscroll_border_friction_all_set(double friction)
+{
+   if (friction < 0.0)
+     friction = 0.0;
+
+   if (friction > 1.0)
+     friction = 1.0;
+
+#ifdef HAVE_ELEMENTARY_X
+   static Ecore_X_Atom atom = 0;
+   unsigned int border_friction_i = (unsigned int)(friction * 1000.0);
+
+   if (!atom)
+     atom = ecore_x_atom_get("ENLIGHTENMENT_THUMBSCROLL_BORDER_FRICTION");
+   ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                  atom, &border_friction_i, 1);
+#endif
 }
 
 /**

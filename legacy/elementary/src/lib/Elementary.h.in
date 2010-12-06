@@ -356,6 +356,37 @@ extern "C" {
    EAPI void             elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir) EINA_ARG_NONNULL(1);
    EAPI void             elm_object_focus_direction_go(Evas_Object *obj, int x, int y) EINA_ARG_NONNULL(1);
 
+   EAPI Eina_Bool        elm_scroll_bounce_enabled_get(void);
+   EAPI void             elm_scroll_bounce_enabled_set(Eina_Bool enabled);
+   EAPI void             elm_scroll_bounce_enabled_all_set(Eina_Bool enabled);
+   EAPI double           elm_scroll_bounce_friction_get(void);
+   EAPI void             elm_scroll_bounce_friction_set(double friction);
+   EAPI void             elm_scroll_bounce_friction_all_set(double friction);
+   EAPI double           elm_scroll_page_scroll_friction_get(void);
+   EAPI void             elm_scroll_page_scroll_friction_set(double friction);
+   EAPI void             elm_scroll_page_scroll_friction_all_set(double friction);
+   EAPI double           elm_scroll_bring_in_scroll_friction_get(void);
+   EAPI void             elm_scroll_bring_in_scroll_friction_set(double friction);
+   EAPI void             elm_scroll_bring_in_scroll_friction_all_set(double friction);
+   EAPI double           elm_scroll_zoom_friction_get(void);
+   EAPI void             elm_scroll_zoom_friction_set(double friction);
+   EAPI void             elm_scroll_zoom_friction_all_set(double friction);
+   EAPI Eina_Bool        elm_scroll_thumbscroll_enabled_get(void);
+   EAPI void             elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled);
+   EAPI void             elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
+   EAPI unsigned int     elm_scroll_thumbscroll_threshold_get(void);
+   EAPI void             elm_scroll_thumbscroll_threshold_set(unsigned int threshold);
+   EAPI void             elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold);
+   EAPI double           elm_scroll_thumbscroll_momentum_threshold_get(void);
+   EAPI void             elm_scroll_thumbscroll_momentum_threshold_set(double threshold);
+   EAPI void             elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold);
+   EAPI double           elm_scroll_thumbscroll_friction_get(void);
+   EAPI void             elm_scroll_thumbscroll_friction_set(double friction);
+   EAPI void             elm_scroll_thumbscroll_friction_all_set(double friction);
+   EAPI double           elm_scroll_thumbscroll_border_friction_get(void);
+   EAPI void             elm_scroll_thumbscroll_border_friction_set(double friction);
+   EAPI void             elm_scroll_thumbscroll_border_friction_all_set(double friction);
+
    EAPI void             elm_object_scroll_hold_push(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void             elm_object_scroll_hold_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void             elm_object_scroll_freeze_push(Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -530,7 +561,7 @@ extern "C" {
     * "focus,out" - window lost focus
     * "moved" - window that holds the canvas was moved
     */
-  
+
    /* bg */
    typedef enum _Elm_Bg_Option
      {
@@ -539,7 +570,7 @@ extern "C" {
         ELM_BG_OPTION_STRETCH, /**< stretch the background to fill */
         ELM_BG_OPTION_TILE     /**< tile background at its original size */
      } Elm_Bg_Option;
-  
+
    EAPI Evas_Object  *elm_bg_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void          elm_bg_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1);
    EAPI void          elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
@@ -1132,7 +1163,7 @@ extern "C" {
         ELM_ICON_STANDARD
      } Elm_Icon_Type;
    typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item; /**< Item of Elm_Hoversel. Sub-type of Elm_Widget_Item */
-  
+
    EAPI Evas_Object *elm_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_entry_single_line_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -1343,7 +1374,7 @@ extern "C" {
     * "generate,error" - the thumbnail generation failed
     * "load,error" - the thumbnail image loading failed
     */
-  
+
    /* hoversel */
    EAPI Evas_Object       *elm_hoversel_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void               elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
@@ -1384,7 +1415,7 @@ extern "C" {
 
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item; /**< Item of Elm_Toolbar. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State; /** State of a Elm_Toolbar_Item */
-  
+
    EAPI Evas_Object            *elm_toolbar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                    elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size) EINA_ARG_NONNULL(1);
    EAPI int                     elm_toolbar_icon_size_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -1455,7 +1486,7 @@ extern "C" {
     * default
     * transparent (no background or shadow, just show the provided content)
     */
-  
+
    /* tooltip */
    EAPI double       elm_tooltip_delay_get(void);
    EAPI Eina_Bool    elm_tooltip_delay_set(double delay);
@@ -1900,7 +1931,7 @@ extern "C" {
 
    /* index */
    typedef struct _Elm_Index_Item Elm_Index_Item; /**< Item of Elm_Index. Sub-type of Elm_Widget_Item */
-  
+
    EAPI Evas_Object    *elm_index_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void            elm_index_active_set(Evas_Object *obj, Eina_Bool active) EINA_ARG_NONNULL(1);
    EAPI void            elm_index_item_level_set(Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
@@ -1935,7 +1966,7 @@ extern "C" {
         ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL,
         ELM_PHOTOCAM_ZOOM_MODE_LAST
      } Elm_Photocam_Zoom_Mode;
-  
+
    EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Evas_Load_Error        elm_photocam_file_set(Evas_Object *obj, const char *file) EINA_ARG_NONNULL(1);
    EAPI const char            *elm_photocam_file_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2004,7 +2035,7 @@ extern "C" {
    typedef Evas_Object *(*ElmMapMarkerIconGetFunc)  (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
    typedef Evas_Object *(*ElmMapGroupIconGetFunc)   (Evas_Object *obj, void *data);
    typedef char        *(*ElmMapSourceURLFunc)      (int x, int y, int zoom);
-  
+
    EAPI Evas_Object          *elm_map_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_zoom_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
    EAPI double                elm_map_zoom_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2071,7 +2102,7 @@ extern "C" {
         ELM_PANEL_ORIENT_LEFT,
         ELM_PANEL_ORIENT_RIGHT,
      } Elm_Panel_Orient;
-  
+
    EAPI Evas_Object          *elm_panel_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                  elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient) EINA_ARG_NONNULL(1);
    EAPI Elm_Panel_Orient      elm_panel_orient_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2127,7 +2158,7 @@ extern "C" {
    /* smart callbacks called:
     * "animate,done" - when a flip animation is finished
     */
-  
+
    /* scrolledentry */
    EAPI Evas_Object *elm_scrolled_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line) EINA_ARG_NONNULL(1);
@@ -2238,7 +2269,7 @@ extern "C" {
     */
 
    /* animator */
-   typedef enum 
+   typedef enum
      {
         ELM_ANIMATOR_CURVE_LINEAR,
         ELM_ANIMATOR_CURVE_IN_OUT,
@@ -2277,12 +2308,12 @@ extern "C" {
    EAPI void                     elm_animator_resume(Elm_Animator *animator) EINA_ARG_NONNULL(1);
 
    /* calendar */
-   typedef enum 
+   typedef enum
      {
-        ELM_CALENDAR_UNIQUE, 
+        ELM_CALENDAR_UNIQUE,
         ELM_CALENDAR_DAILY,
         ELM_CALENDAR_WEEKLY,
-        ELM_CALENDAR_MONTHLY, 
+        ELM_CALENDAR_MONTHLY,
         ELM_CALENDAR_ANNUALLY
      } Elm_Calendar_Mark_Repeat;
    typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;
@@ -2307,7 +2338,7 @@ extern "C" {
    EAPI void         elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
    EAPI void         elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
    EAPI void         elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-   
+
    /* smart callbacks called:
     * changed - emitted when the user select a day or change the displayed
     * month.
@@ -2368,7 +2399,7 @@ extern "C" {
 
    /* ctxpopup */
    typedef struct _Elm_Ctxpopup_Item Elm_Ctxpopup_Item;
-  
+
    EAPI Evas_Object        *elm_ctxpopup_add(Evas_Object* parent) EINA_ARG_NONNULL(1);
    EAPI void                elm_ctxpopup_hover_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object        *elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
@@ -2413,7 +2444,7 @@ extern "C" {
         ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
         ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW
      } Elm_Fx_Wipe_Type;
-  
+
    typedef struct _Elm_Transit Elm_Transit;
 
    EAPI Elm_Transit           *elm_transit_add(double duration);
@@ -2493,7 +2524,7 @@ extern "C" {
   typedef void      (*Elm_Store_Item_Fetch_Cb) (void *data, Elm_Store_Item *sti);
   typedef void      (*Elm_Store_Item_Unfetch_Cb) (void *data, Elm_Store_Item *sti);
   typedef void     *(*Elm_Store_Item_Mapping_Cb) (void *data, Elm_Store_Item *sti, const char *part);
-  
+
   typedef enum
     {
       ELM_STORE_ITEM_MAPPING_NONE = 0,
@@ -2505,7 +2536,7 @@ extern "C" {
       // can add more here as needed by common apps
       ELM_STORE_ITEM_MAPPING_LAST
     } Elm_Store_Item_Mapping_Type;
-  
+
   struct _Elm_Store_Item_Mapping_Icon
     {
       // FIXME: allow edje file icons
@@ -2517,22 +2548,22 @@ extern "C" {
       Eina_Bool             scale_up : 1;
       Eina_Bool             scale_down : 1;
     };
-  
+
   struct _Elm_Store_Item_Mapping_Empty
     {
       Eina_Bool             dummy;
     };
-  
+
   struct _Elm_Store_Item_Mapping_Photo
     {
       int                   size;
     };
-  
+
   struct _Elm_Store_Item_Mapping_Custom
     {
       Elm_Store_Item_Mapping_Cb func;
     };
-  
+
   struct _Elm_Store_Item_Mapping
     {
       Elm_Store_Item_Mapping_Type     type;
@@ -2546,7 +2577,7 @@ extern "C" {
         // add more types here
       } details;
     };
-  
+
   struct _Elm_Store_Item_Info
     {
       Elm_Genlist_Item_Class       *item_class;
@@ -2560,26 +2591,26 @@ extern "C" {
       Elm_Store_Item_Info  base;
       char                *path;
     };
-  
+
 #define ELM_STORE_ITEM_MAPPING_END { ELM_STORE_ITEM_MAPPING_NONE, NULL, 0, { .empty = { EINA_TRUE } } }
 #define ELM_STORE_ITEM_MAPPING_OFFSET(st, it) offsetof(st, it)
-  
+
   EAPI void                    elm_store_free(Elm_Store *st);
-  
+
   EAPI Elm_Store              *elm_store_filesystem_new(void);
   EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir) EINA_ARG_NONNULL(1);
   EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
   EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
-  
+
   EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj) EINA_ARG_NONNULL(1);
-  
+
   EAPI void                    elm_store_cache_set(Elm_Store *st, int max) EINA_ARG_NONNULL(1);
   EAPI int                     elm_store_cache_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
   EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
   EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
   EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread) EINA_ARG_NONNULL(1);
   EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
-  
+
   EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
   EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted) EINA_ARG_NONNULL(1);
   EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
@@ -2587,7 +2618,7 @@ extern "C" {
   EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
   EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
   EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
-  
+
 #ifdef __cplusplus
 }
 #endif
