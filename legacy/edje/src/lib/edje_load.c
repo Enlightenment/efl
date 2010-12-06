@@ -1082,6 +1082,7 @@ _edje_file_del(Edje *ed)
    if (ed->table_programs) free(ed->table_programs);
    ed->table_programs = NULL;
    ed->table_programs_size = 0;
+   ed->focused_part = NULL;
 }
 
 void
