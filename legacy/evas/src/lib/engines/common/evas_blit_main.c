@@ -136,6 +136,7 @@ evas_common_copy_pixels_rev_neon(DATA32 *src, DATA32 *dst, int len)
    uint32_t *tmp = (void *)37;
 #define AP	"evas_common_copy_rev_pixels_neon_"
    asm volatile (
+		".fpu neon				\n\t"
 		// Can we do 32 byte?
 		"andS		%[tmp],	%[d], $0x1f	\n\t"
 		"beq		"AP"quadstart		\n\t"
@@ -334,6 +335,7 @@ evas_common_copy_pixels_neon(DATA32 *src, DATA32 *dst, int len){
    e = dst + len;
 #define AP	"evas_common_copy_pixels_neon_"
    asm volatile (
+		".fpu neon				\n\t"
 		// Can we do 32 byte?
 		"andS		%[tmp],	%[d], $0x1f	\n\t"
 		"beq		"AP"quadstart		\n\t"

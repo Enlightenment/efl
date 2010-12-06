@@ -6,7 +6,7 @@ _op_copy_p_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *
    uint32_t *e;
    e = d + l;
 //#ifdef NEON_INSTRINSICS_OK
-#if 1
+#if 0
    // odd this is faster than the below asm... :(
    e -= 15;
    uint32x4_t col1, col2, col3, col4; 
@@ -35,7 +35,7 @@ _op_copy_p_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *
         s3 = s + 8;
         s4 = s + 12;
         asm volatile (
-	".fpu neon					\n\t"
+	".fpu neon				\n\t"
                       "asmloop2:\n\t"
                       "cmp %[e], %[d]\n\t"
                       "vld1.32 {d16-d17}, [%[s]]!\n\t"

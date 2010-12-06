@@ -6,10 +6,10 @@ static void
 _op_blend_p_c_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
 #define AP	"blend_p_c_dp_"
    asm volatile (
-	".fpu neon					\n\t"
+		".fpu neon				\n\t"
 		// Load 'c'
-		"vdup.u32	q7, %[c]			\n\t"
-		"vmov.i8	q6, #1				\n\t"
+		"vdup.u32	q7, %[c]		\n\t"
+		"vmov.i8	q6, #1			\n\t"
 
 		// Choose a loop
 		"andS		%[tmp], %[d], $0xf	\n\t"

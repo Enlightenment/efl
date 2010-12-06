@@ -102,6 +102,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
    } else {
 #define AP	"convert_rgba32_rot_90_"
 	asm volatile (
+	".fpu neon						\n\t"
 	"	mov		%[s1],	%[src]			\n\t"
 	"	add		%[s1],	%[h],lsl #2		\n\t"
 	"	sub		%[s1],	#8			\n\t"
