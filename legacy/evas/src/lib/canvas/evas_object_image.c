@@ -1896,8 +1896,9 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
    return;
    MAGIC_CHECK_END();
    if (!obj->layer->evas->engine.func->image_native_set) return;
-   if ((surf->version < 2) ||
-       (surf->version > EVAS_NATIVE_SURFACE_VERSION)) return;
+   if ((surf) &&
+       ((surf->version < 2) ||
+        (surf->version > EVAS_NATIVE_SURFACE_VERSION))) return;
    o->engine_data = 
       obj->layer->evas->engine.func->image_native_set(obj->layer->evas->engine.data.output,
                                                       o->engine_data,
