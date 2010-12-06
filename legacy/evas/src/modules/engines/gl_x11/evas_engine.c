@@ -1159,7 +1159,8 @@ eng_image_native_set(void *data, void *image, void *native)
           if (im->native.data)
             {
               Evas_Native_Surface *ens = im->native.data;
-              if ((ens->data.x11.visual == vis) && (ens->data.x11.pixmap == pm))
+              if ((ens->data.x11.visual == vis) && 
+                  (ens->data.x11.pixmap == pm))
                 return im;
             }
         }
@@ -1178,6 +1179,8 @@ eng_image_native_set(void *data, void *image, void *native)
         im->native.func.free(im->native.func.data, im);
       evas_gl_common_image_native_disable(im);
     }
+
+  if (!ns) return im;
   
   if (ns->type == EVAS_NATIVE_SURFACE_X11)
     {
