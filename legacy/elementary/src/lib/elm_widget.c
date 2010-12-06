@@ -241,6 +241,12 @@ _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
              event_flags = &(ev->event_flags);
              break;
           }
+     case EVAS_CALLBACK_MOUSE_WHEEL:
+          {
+             Evas_Event_Mouse_Wheel *ev = event_info;
+             event_flags = &(ev->event_flags);
+             break;
+          }
      default:
         break;
      }
@@ -780,12 +786,17 @@ elm_widget_can_focus_set(Evas_Object *obj, Eina_Bool can_focus)
         evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP,
                                        _propagate_event,
                                        (void *)(long) EVAS_CALLBACK_KEY_UP);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_WHEEL,
+                                       _propagate_event,
+                                       (void *)(long)EVAS_CALLBACK_MOUSE_WHEEL);
      }
    else
      {
         evas_object_event_callback_del(obj, EVAS_CALLBACK_KEY_DOWN,
                                        _propagate_event);
         evas_object_event_callback_del(obj, EVAS_CALLBACK_KEY_UP,
+                                       _propagate_event);
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _propagate_event);
      }
 }
