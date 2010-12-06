@@ -38,7 +38,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    sl = elm_slider_add(win);
    sl1 = sl;
-   elm_slider_label_set(sl, "Label");
+   elm_slider_label_set(sl, "Horizontal");
    elm_slider_icon_set(sl, ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
    elm_slider_span_size_set(sl, 120);
@@ -54,7 +54,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    sl = elm_slider_add(win);
-   elm_slider_label_set(sl, "Label 2");
+   elm_slider_label_set(sl, "Horizontal inverted");
    elm_slider_end_set(sl, ic);
    elm_slider_span_size_set(sl, 80);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -71,7 +71,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    sl = elm_slider_add(win);
    elm_slider_indicator_show_set(sl, EINA_FALSE);
-   elm_slider_label_set(sl, "Label 3");
+   elm_slider_label_set(sl, "Scale doubled");
    elm_slider_unit_format_set(sl, "%3.0f units");
    elm_slider_span_size_set(sl, 40);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -92,7 +92,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    sl = elm_slider_add(win);
    elm_slider_icon_set(sl, ic);
-   elm_slider_label_set(sl, "Label 4");
+   elm_slider_label_set(sl, "Vertical inverted");
    elm_slider_inverted_set(sl, 1);
    elm_slider_unit_format_set(sl, "units");
    elm_slider_span_size_set(sl, 60);
@@ -106,8 +106,21 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(ic);
    evas_object_show(sl);
 
-
    evas_object_smart_callback_add(sl1, "changed", _change_cb, sl);
+
+   sl = elm_slider_add(win);
+   elm_slider_label_set(sl, "Vertical");
+   elm_slider_unit_format_set(sl, "units");
+   elm_slider_span_size_set(sl, 60);
+   evas_object_size_hint_align_set(sl, 0.5, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sl, 0.0, EVAS_HINT_EXPAND);
+   elm_slider_indicator_format_set(sl, "%1.1f");
+   elm_slider_value_set(sl, 0.2);
+   elm_object_scale_set(sl, 1.0);
+   elm_slider_horizontal_set(sl, EINA_FALSE);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(ic);
+   evas_object_show(sl);
 
    evas_object_show(win);
 }

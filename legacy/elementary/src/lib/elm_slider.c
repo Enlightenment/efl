@@ -59,6 +59,8 @@ struct _Widget_Data
    Evas_Coord size;
 };
 
+#define ELM_SLIDER_INVERTED_FACTOR (-1.0)
+
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
@@ -362,17 +364,39 @@ _drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 }
 
 static void
+_drag_step(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   _val_fetch(data);
+   _units_set(data);
+   _indicator_set(data);
+}
+
+static void
 _drag_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   edje_object_part_drag_step(wd->slider, "elm.dragable.slider", -0.05, -0.05);
+   double step;
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(data);
+   step = 0.05;
+
+   if (wd->inverted) step *= ELM_SLIDER_INVERTED_FACTOR;
+
+   edje_object_part_drag_step(wd->slider, "elm.dragable.slider", step, step);
 }
 
 static void
 _drag_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   edje_object_part_drag_step(wd->slider, "elm.dragable.slider", 0.05, 0.05);
+   double step;
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(data);
+   step = -0.05;
+
+   if (wd->inverted) step *= ELM_SLIDER_INVERTED_FACTOR;
+
+   edje_object_part_drag_step(wd->slider, "elm.dragable.slider", step, step);
 }
 
 /**
@@ -417,7 +441,7 @@ elm_slider_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->slider, "drag", "*", _drag, obj);
    edje_object_signal_callback_add(wd->slider, "drag,start", "*", _drag_start, obj);
    edje_object_signal_callback_add(wd->slider, "drag,stop", "*", _drag_stop, obj);
-   edje_object_signal_callback_add(wd->slider, "drag,step", "*", _drag_stop, obj);
+   edje_object_signal_callback_add(wd->slider, "drag,step", "*", _drag_step, obj);
    edje_object_signal_callback_add(wd->slider, "drag,page", "*", _drag_stop, obj);
 //   edje_object_signal_callback_add(wd->slider, "drag,set", "*", _drag_stop, obj);
    edje_object_signal_callback_add(wd->slider, "mouse,wheel,0,-1", "*", _drag_up, obj);
