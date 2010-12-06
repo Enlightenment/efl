@@ -181,6 +181,8 @@ edje_file_group_exists(const char *file, const char *glob)
    Edje_File *edf;
    int error_ret = 0;
    Eina_Bool succeed = EINA_FALSE;
+   Eina_Bool is_glob = EINA_FALSE;
+   const char *p;
 
    if ((!file) || (!*file))
       return EINA_FALSE;
@@ -188,25 +190,46 @@ edje_file_group_exists(const char *file, const char *glob)
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (!edf)
       return EINA_FALSE;
-
-   if (!edf->collection_patterns)
+   
+   for (p = glob; *p; p++)
      {
-        Edje_Part_Collection_Directory_Entry *ce;
-        Eina_Iterator *i;
-        Eina_List *l = NULL;
-
-        i = eina_hash_iterator_data_new(edf->collection);
-
-        EINA_ITERATOR_FOREACH(i, ce)
-           l = eina_list_append(l, ce);
-
-        eina_iterator_free(i);
-
-        edf->collection_patterns = edje_match_collection_dir_init(l);
-        eina_list_free(l);
+       if ((*p == '*') || (*p == '?') || (*p == '['))
+         {
+           is_glob = EINA_TRUE;
+           break;
+         }
      }
-
-   succeed = edje_match_collection_dir_exec(edf->collection_patterns, glob);
+  
+   if (is_glob)
+     {
+       if (!edf->collection_patterns)
+         {
+           Edje_Part_Collection_Directory_Entry *ce;
+           Eina_Iterator *i;
+           Eina_List *l = NULL;
+           
+           i = eina_hash_iterator_data_new(edf->collection);
+           
+           EINA_ITERATOR_FOREACH(i, ce)
+             l = eina_list_append(l, ce);
+           
+           eina_iterator_free(i);
+           
+           edf->collection_patterns = edje_match_collection_dir_init(l);
+           eina_list_free(l);
+         }
+       
+       succeed = edje_match_collection_dir_exec(edf->collection_patterns, glob);
+       if (edf->collection_patterns)
+         {
+           edje_match_patterns_free(edf->collection_patterns);
+           edf->collection_patterns = NULL;
+         }
+     }
+   else
+     {
+        if (eina_hash_find(edf->collection, glob)) succeed = EINA_TRUE;
+     }
    _edje_cache_file_unref(edf);
    return succeed;
 }
