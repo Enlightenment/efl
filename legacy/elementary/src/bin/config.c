@@ -135,10 +135,10 @@ cf_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double scale = elm_scale_get();
+   double cf = elm_cache_flush_interval_get();
    double val = elm_slider_value_get(obj);
 
-   if (scale == val) return;
+   if (cf == val) return;
    elm_cache_flush_interval_all_set(val);
 }
 
@@ -231,10 +231,10 @@ fs_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double scale = elm_scale_get();
+   double fs = elm_finger_size_get();
    double val = elm_slider_value_get(obj);
 
-   if (scale == val) return;
+   if (fs == val) return;
    elm_finger_size_all_set(val);
 }
 
@@ -255,10 +255,10 @@ efc_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double scale = elm_scale_get();
+   double efc = elm_edje_file_cache_get();
    double val = elm_slider_value_get(obj);
 
-   if (scale == val) return;
+   if (efc == val) return;
    elm_edje_file_cache_all_set(val);
 }
 
@@ -279,10 +279,10 @@ ecc_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double scale = elm_scale_get();
+   double ecc = elm_edje_collection_cache_get();
    double val = elm_slider_value_get(obj);
 
-   if (scale == val) return;
+   if (ecc == val) return;
    elm_edje_collection_cache_all_set(val);
 }
 
