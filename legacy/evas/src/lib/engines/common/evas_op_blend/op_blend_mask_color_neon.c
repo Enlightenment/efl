@@ -25,6 +25,7 @@ _op_blend_mas_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, int
 
 #define AP "blend_mas_c_dp_"
      asm volatile (
+	".fpu neon					\n\t"
 	"	vdup.i32	q15, %[c]			\n\t"
 	"	vmov.i8		q14,	#1			\n\t"
 
@@ -205,6 +206,7 @@ _op_blend_mas_can_dp_neon(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 
 #define AP	"_blend_mas_can_dp_neon_"
      asm volatile (
+	".fpu neon					\n\t"
 		"vdup.u32	q9,	%[c]		\n\t"
 		"vmov.i8	q15,	#1		\n\t"
 		"vmov.i8	q14,	#0		\n\t"

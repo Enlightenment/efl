@@ -6,6 +6,7 @@ _op_blend_c_dp_neon(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 
 	DATA32 *e, *tmp = 0;
 #define AP	"B_C_DP"
    asm volatile (
+	".fpu neon					\n\t"
 	"vdup.u32	q6, %[c]			\n\t"
 	"vmov.i8	q5, #1				\n\t"
 	"vmvn.u8	q7,q6				\n\t"

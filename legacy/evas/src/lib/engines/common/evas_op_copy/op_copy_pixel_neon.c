@@ -35,6 +35,7 @@ _op_copy_p_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *
         s3 = s + 8;
         s4 = s + 12;
         asm volatile (
+	".fpu neon					\n\t"
                       "asmloop2:\n\t"
                       "cmp %[e], %[d]\n\t"
                       "vld1.32 {d16-d17}, [%[s]]!\n\t"

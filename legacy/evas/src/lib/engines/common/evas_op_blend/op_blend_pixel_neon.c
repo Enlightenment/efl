@@ -5,6 +5,7 @@ static void
 _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #define AP "blend_p_dp_"
   asm volatile (
+	".fpu neon					\n\t"
 	//** init
 	"vmov.i8	q8,	$0x1		\n\t"
 
@@ -226,6 +227,7 @@ _op_blend_pas_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #define AP "blend_pas_dp_"
    DATA32 *e = d + l,*tmp  = e + 32,*pl=(void*)912;
       asm volatile (
+        ".fpu neon					\n\t"
 		"vmov.i8	q8,	#1			\n\t"
 	AP"loopchoose:						\n\t"
 		// If aliged - go as fast we can

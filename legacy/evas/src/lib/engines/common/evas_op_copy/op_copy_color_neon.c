@@ -6,6 +6,7 @@ _op_copy_c_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 #define AP "COPY_C_DP_"
    uint32_t *e = d + l,*tmp;
    asm volatile (
+      ".fpu neon					\n\t"
 
 		"vdup.i32 	q0,	%[c]		\n\t"
 
