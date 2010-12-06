@@ -1060,7 +1060,7 @@ fi
 ## NEON
 build_cpu_neon="no"
 case $host_cpu in
-  armv7*)
+  arm*)
     build_cpu_neon="yes"
     ;;
 esac
@@ -1070,7 +1070,7 @@ AC_ARG_ENABLE(cpu-neon,
 	  checked at run time to see if the CPU supports it]),
   [
      if test "x$enableval" = "xyes" ; then
-       AC_TRY_COMPILE([#include <arm_neon.h>],
+       AC_TRY_COMPILE([],
         [asm volatile (".fpu neon\nvqadd.u8 d0, d1, d0\n")],
         [
           AC_MSG_RESULT(yes)
