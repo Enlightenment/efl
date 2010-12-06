@@ -46,18 +46,24 @@ static const Elm_Text_Class _elm_text_classes[] = {
    {NULL, NULL}
 };
 
-static void _desc_init(void);
-static void _desc_shutdown(void);
-static void _profile_fetch_from_conf(void);
-static void _config_free(void);
-static void _config_apply(void);
-static Elm_Config * _config_user_load(void);
-static Elm_Config * _config_system_load(void);
-static void _config_load(void);
-static void _config_update(void);
-static void _env_get(void);
-static size_t _elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...) EINA_PRINTF(3 ,4);
-static size_t _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...) EINA_PRINTF(3 ,4);
+static void        _desc_init(void);
+static void        _desc_shutdown(void);
+static void        _profile_fetch_from_conf(void);
+static void        _config_free(void);
+static void        _config_apply(void);
+static Elm_Config *_config_user_load(void);
+static Elm_Config *_config_system_load(void);
+static void        _config_load(void);
+static void        _config_update(void);
+static void        _env_get(void);
+static size_t      _elm_data_dir_snprintf(char       *dst,
+                                          size_t      size,
+                                          const char *fmt, ...)
+                                          EINA_PRINTF(3, 4);
+static size_t _elm_user_dir_snprintf(char       *dst,
+                                     size_t      size,
+                                     const char *fmt, ...)
+                                     EINA_PRINTF(3, 4);
 
 #define ELM_CONFIG_VAL(edd, type, member, dtype) \
   EET_DATA_DESCRIPTOR_ADD_BASIC(edd, type, #member, member, dtype)
@@ -71,53 +77,55 @@ static Ecore_X_Window _root_1st = 0;
 static Ecore_X_Atom _atom[ATOM_COUNT];
 static Ecore_X_Atom _atom_config = 0;
 static const char *_atom_names[ATOM_COUNT] =
-  {
-    "ENLIGHTENMENT_SCALE",
-    "ENLIGHTENMENT_FINGER_SIZE",
-    "ENLIGHTENMENT_THEME",
-    "ENLIGHTENMENT_PROFILE",
-    "ENLIGHTENMENT_FONT_OVERLAY",
-    "ENLIGHTENMENT_CACHE_FLUSH_INTERVAL",
-    "ENLIGHTENMENT_FONT_CACHE",
-    "ENLIGHTENMENT_IMAGE_CACHE",
-    "ENLIGHTENMENT_EDJE_FILE_CACHE",
-    "ENLIGHTENMENT_EDJE_COLLECTION_CACHE",
-    "ENLIGHTENMENT_THUMBSCROLL_BOUNCE_ENABLE",
-    "ENLIGHTENMENT_THUMBSCROLL_BOUNCE_FRICTION",
-    "ENLIGHTENMENT_THUMBSCROLL_ENABLE",
-    "ENLIGHTENMENT_THUMBSCROLL_THRESHOLD",
-    "ENLIGHTENMENT_THUMBSCROLL_MOMENTUM_THRESHOLD",
-    "ENLIGHTENMENT_THUMBSCROLL_FRICTION",
-    "ENLIGHTENMENT_THUMBSCROLL_BORDER_FRICTION",
-    "ENLIGHTENMENT_THUMBSCROLL_PAGE_SCROLL_FRICTION",
-    "ENLIGHTENMENT_THUMBSCROLL_BRING_IN_SCROLL_FRICTION",
-    "ENLIGHTENMENT_THUMBSCROLL_ZOOM_FRICTION",
-    "ENLIGHTENMENT_CONFIG"
-  };
-#define ATOM_E_SCALE 0
-#define ATOM_E_FINGER_SIZE 1
-#define ATOM_E_THEME 2
-#define ATOM_E_PROFILE 3
-#define ATOM_E_FONT_OVERLAY 4
-#define ATOM_E_CACHE_FLUSH_INTERVAL 5
-#define ATOM_E_FONT_CACHE 6
-#define ATOM_E_IMAGE_CACHE 7
-#define ATOM_E_EDJE_FILE_CACHE 8
-#define ATOM_E_EDJE_COLLECTION_CACHE 9
-#define ATOM_E_THUMBSCROLL_BOUNCE_ENABLE 10
-#define ATOM_E_THUMBSCROLL_BOUNCE_FRICTION 11
-#define ATOM_E_THUMBSCROLL_ENABLE 12
-#define ATOM_E_THUMBSCROLL_THRESHOLD 13
-#define ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD 14
-#define ATOM_E_THUMBSCROLL_FRICTION 15
-#define ATOM_E_THUMBSCROLL_BORDER_FRICTION 16
-#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION 17
+{
+   "ENLIGHTENMENT_SCALE",
+   "ENLIGHTENMENT_FINGER_SIZE",
+   "ENLIGHTENMENT_THEME",
+   "ENLIGHTENMENT_PROFILE",
+   "ENLIGHTENMENT_FONT_OVERLAY",
+   "ENLIGHTENMENT_CACHE_FLUSH_INTERVAL",
+   "ENLIGHTENMENT_FONT_CACHE",
+   "ENLIGHTENMENT_IMAGE_CACHE",
+   "ENLIGHTENMENT_EDJE_FILE_CACHE",
+   "ENLIGHTENMENT_EDJE_COLLECTION_CACHE",
+   "ENLIGHTENMENT_THUMBSCROLL_BOUNCE_ENABLE",
+   "ENLIGHTENMENT_THUMBSCROLL_BOUNCE_FRICTION",
+   "ENLIGHTENMENT_THUMBSCROLL_ENABLE",
+   "ENLIGHTENMENT_THUMBSCROLL_THRESHOLD",
+   "ENLIGHTENMENT_THUMBSCROLL_MOMENTUM_THRESHOLD",
+   "ENLIGHTENMENT_THUMBSCROLL_FRICTION",
+   "ENLIGHTENMENT_THUMBSCROLL_BORDER_FRICTION",
+   "ENLIGHTENMENT_THUMBSCROLL_PAGE_SCROLL_FRICTION",
+   "ENLIGHTENMENT_THUMBSCROLL_BRING_IN_SCROLL_FRICTION",
+   "ENLIGHTENMENT_THUMBSCROLL_ZOOM_FRICTION",
+   "ENLIGHTENMENT_CONFIG"
+};
+#define ATOM_E_SCALE                                0
+#define ATOM_E_FINGER_SIZE                          1
+#define ATOM_E_THEME                                2
+#define ATOM_E_PROFILE                              3
+#define ATOM_E_FONT_OVERLAY                         4
+#define ATOM_E_CACHE_FLUSH_INTERVAL                 5
+#define ATOM_E_FONT_CACHE                           6
+#define ATOM_E_IMAGE_CACHE                          7
+#define ATOM_E_EDJE_FILE_CACHE                      8
+#define ATOM_E_EDJE_COLLECTION_CACHE                9
+#define ATOM_E_THUMBSCROLL_BOUNCE_ENABLE            10
+#define ATOM_E_THUMBSCROLL_BOUNCE_FRICTION          11
+#define ATOM_E_THUMBSCROLL_ENABLE                   12
+#define ATOM_E_THUMBSCROLL_THRESHOLD                13
+#define ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD       14
+#define ATOM_E_THUMBSCROLL_FRICTION                 15
+#define ATOM_E_THUMBSCROLL_BORDER_FRICTION          16
+#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION     17
 #define ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION 18
-#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION 19
-#define ATOM_E_CONFIG 20
+#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION            19
+#define ATOM_E_CONFIG                               20
 
 static Eina_Bool _prop_config_get(void);
-static Eina_Bool _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev);
+static Eina_Bool _prop_change(void *data  __UNUSED__,
+                              int ev_type __UNUSED__,
+                              void       *ev);
 
 static Eina_Bool
 _prop_config_get(void)
@@ -173,7 +181,9 @@ _prop_config_get(void)
 }
 
 static Eina_Bool
-_prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
+_prop_change(void *data  __UNUSED__,
+             int ev_type __UNUSED__,
+             void       *ev)
 {
    Ecore_X_Event_Window_Property *event = ev;
 
@@ -192,10 +202,10 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   pscale = _elm_config->scale;
                   if (val > 0) _elm_config->scale = (double)val / 1000.0;
                   if (pscale != _elm_config->scale)
-                      {
-                         _elm_rescale();
-                         _elm_recache();
-                      }
+                    {
+                       _elm_rescale();
+                       _elm_recache();
+                    }
                }
           }
         else if (event->atom == _atom[ATOM_E_FINGER_SIZE])
@@ -211,10 +221,10 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   pfinger_size = _elm_config->finger_size;
                   _elm_config->finger_size = val;
                   if (pfinger_size != _elm_config->finger_size)
-                      {
-                         _elm_rescale();
-                         _elm_recache();
-                      }
+                    {
+                       _elm_rescale();
+                       _elm_recache();
+                    }
                }
           }
         else if (event->atom == _atom[ATOM_E_THEME])
@@ -287,7 +297,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   int cache_flush_interval;
 
                   cache_flush_interval = _elm_config->cache_flush_poll_interval;
-                    _elm_config->cache_flush_poll_interval = val;
+                  _elm_config->cache_flush_poll_interval = val;
                   if (cache_flush_interval !=
                       _elm_config->cache_flush_poll_interval)
                     _elm_recache();
@@ -304,7 +314,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   int font_cache;
 
                   font_cache = _elm_config->font_cache;
-                    _elm_config->font_cache = val;
+                  _elm_config->font_cache = val;
                   if (font_cache != _elm_config->font_cache)
                     _elm_recache();
                }
@@ -320,7 +330,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   int image_cache;
 
                   image_cache = _elm_config->image_cache;
-                    _elm_config->image_cache = val;
+                  _elm_config->image_cache = val;
                   if (image_cache != _elm_config->image_cache)
                     _elm_recache();
                }
@@ -336,7 +346,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   int edje_file_cache;
 
                   edje_file_cache = _elm_config->edje_cache;
-                    _elm_config->edje_cache = val;
+                  _elm_config->edje_cache = val;
                   if (edje_file_cache != _elm_config->edje_cache)
                     _elm_recache();
                }
@@ -352,7 +362,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                   int edje_collection_cache;
 
                   edje_collection_cache = _elm_config->edje_collection_cache;
-                    _elm_config->edje_collection_cache = val;
+                  _elm_config->edje_collection_cache = val;
                   if (edje_collection_cache !=
                       _elm_config->edje_collection_cache)
                     _elm_recache();
@@ -378,8 +388,8 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                                                 &val, 1) > 0)
                {
                   if (val > 0)
-                      _elm_config->thumbscroll_bounce_friction =
-                          (double)val / 1000.0;
+                    _elm_config->thumbscroll_bounce_friction =
+                      (double)val / 1000.0;
                }
           }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_ENABLE])
@@ -413,8 +423,8 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                                                 &val, 1) > 0)
                {
                   if (val > 0)
-                      _elm_config->thumbscroll_momentum_threshold =
-                          (double)val / 1000.0;
+                    _elm_config->thumbscroll_momentum_threshold =
+                      (double)val / 1000.0;
                }
           }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_FRICTION])
@@ -438,8 +448,8 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                                                 &val, 1) > 0)
                {
                   if (val > 0)
-                      _elm_config->thumbscroll_border_friction =
-                          (double)val / 1000.0;
+                    _elm_config->thumbscroll_border_friction =
+                      (double)val / 1000.0;
                }
           }
         else if (event->atom == _atom[ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION])
@@ -451,8 +461,8 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                                                 &val, 1) > 0)
                {
                   if (val > 0)
-                      _elm_config->page_scroll_friction =
-                          (double)val / 1000.0;
+                    _elm_config->page_scroll_friction =
+                      (double)val / 1000.0;
                }
           }
         else if (event->atom ==
@@ -465,8 +475,8 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                                                 &val, 1) > 0)
                {
                   if (val > 0)
-                      _elm_config->bring_in_scroll_friction =
-                          (double)val / 1000.0;
+                    _elm_config->bring_in_scroll_friction =
+                      (double)val / 1000.0;
                }
           }
         else if (event->atom ==
@@ -479,7 +489,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
                                                 &val, 1) > 0)
                {
                   if (val > 0)
-                      _elm_config->zoom_friction = (double)val / 1000.0;
+                    _elm_config->zoom_friction = (double)val / 1000.0;
                }
           }
         else if (((_atom_config > 0) && (event->atom == _atom_config)) ||
@@ -490,6 +500,7 @@ _prop_change(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
      }
    return ECORE_CALLBACK_PASS_ON;
 }
+
 #endif
 
 static void
@@ -520,13 +531,13 @@ _desc_init(void)
         eet_data_descriptor_free(_config_edd);
         return;
      }
-#define T_INT EET_T_INT
+#define T_INT    EET_T_INT
 #define T_DOUBLE EET_T_DOUBLE
 #define T_STRING EET_T_STRING
-#define T_UCHAR EET_T_UCHAR
+#define T_UCHAR  EET_T_UCHAR
 
-#define T Elm_Font_Overlay
-#define D _config_font_overlay_edd
+#define T        Elm_Font_Overlay
+#define D        _config_font_overlay_edd
    ELM_CONFIG_VAL(D, T, text_class, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, font, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, size, EET_T_INT);
@@ -596,7 +607,8 @@ _desc_shutdown(void)
 }
 
 static int
-_sort_files_cb(const void *f1, const void *f2)
+_sort_files_cb(const void *f1,
+               const void *f2)
 {
    return strcmp(f1, f2);
 }
@@ -604,11 +616,14 @@ _sort_files_cb(const void *f1, const void *f2)
 const char *
 _elm_config_current_profile_get(void)
 {
-  return _elm_profile;
+   return _elm_profile;
 }
 
 static size_t
-_elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
+_elm_data_dir_snprintf(char       *dst,
+                       size_t      size,
+                       const char *fmt,
+                       ...)
 {
    size_t data_dir_len, off;
    va_list ap;
@@ -625,12 +640,15 @@ _elm_data_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
    off = off + vsnprintf(dst + off, size - off, fmt, ap);
    va_end(ap);
 
- end:
+end:
    return off;
 }
 
 static size_t
-_elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
+_elm_user_dir_snprintf(char       *dst,
+                       size_t      size,
+                       const char *fmt,
+                       ...)
 {
    const char *home;
    size_t user_dir_len, off;
@@ -653,12 +671,13 @@ _elm_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
    off = off + vsnprintf(dst + off, size - off, fmt, ap);
    va_end(ap);
 
- end:
+end:
    return off;
 }
 
 const char *
-_elm_config_profile_dir_get(const char *prof, Eina_Bool is_user)
+_elm_config_profile_dir_get(const char *prof,
+                            Eina_Bool   is_user)
 {
    char buf[PATH_MAX];
 
@@ -672,7 +691,7 @@ _elm_config_profile_dir_get(const char *prof, Eina_Bool is_user)
 
    return NULL;
 
- not_user:
+not_user:
    snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
 
    if (ecore_file_is_dir(buf))
@@ -1104,7 +1123,8 @@ _config_load(void)
 }
 
 static const char *
-_elm_config_eet_close_error_get(Eet_File *ef, char *file)
+_elm_config_eet_close_error_get(Eet_File *ef,
+                                char     *file)
 {
    Eet_Error err;
    const char *erstr = NULL;
@@ -1113,49 +1133,54 @@ _elm_config_eet_close_error_get(Eet_File *ef, char *file)
    switch (err)
      {
       case EET_ERROR_WRITE_ERROR:
-	erstr = "An error occurred while saving Elementary's "
-		"settings to disk. The error could not be "
-		"deterimined. The file where the error occurred was: "
-		"%s. This file has been deleted to avoid corrupt data.";
-	break;
+        erstr = "An error occurred while saving Elementary's "
+                "settings to disk. The error could not be "
+                "deterimined. The file where the error occurred was: "
+                "%s. This file has been deleted to avoid corrupt data.";
+        break;
+
       case EET_ERROR_WRITE_ERROR_FILE_TOO_BIG:
-	erstr = "Elementary's settings files are too big "
-		"for the file system they are being saved to. "
-		"This error is very strange as the files should "
-		"be extremely small. Please check the settings "
-		"for your home directory. "
-		"The file where the error occurred was: %s ."
-		"This file has been deleted to avoid corrupt data.";
-	break;
+        erstr = "Elementary's settings files are too big "
+                "for the file system they are being saved to. "
+                "This error is very strange as the files should "
+                "be extremely small. Please check the settings "
+                "for your home directory. "
+                "The file where the error occurred was: %s ."
+                "This file has been deleted to avoid corrupt data.";
+        break;
+
       case EET_ERROR_WRITE_ERROR_IO_ERROR:
-	erstr = "An output error occurred when writing the settings "
-		"files for Elementary. Your disk is having troubles "
-		"and possibly needs replacement. "
-		"The file where the error occurred was: %s ."
-		"This file has been deleted to avoid corrupt data.";
-	break;
+        erstr = "An output error occurred when writing the settings "
+                "files for Elementary. Your disk is having troubles "
+                "and possibly needs replacement. "
+                "The file where the error occurred was: %s ."
+                "This file has been deleted to avoid corrupt data.";
+        break;
+
       case EET_ERROR_WRITE_ERROR_OUT_OF_SPACE:
-	erstr = "Elementary cannot write its settings file "
-		"because it ran out of space to write the file. "
-		"You have either run out of disk space or have "
-		"gone over your quota limit. "
-		"The file where the error occurred was: %s ."
-		"This file has been deleted to avoid corrupt data.";
-	break;
+        erstr = "Elementary cannot write its settings file "
+                "because it ran out of space to write the file. "
+                "You have either run out of disk space or have "
+                "gone over your quota limit. "
+                "The file where the error occurred was: %s ."
+                "This file has been deleted to avoid corrupt data.";
+        break;
+
       case EET_ERROR_WRITE_ERROR_FILE_CLOSED:
-	erstr = "Elementary unexpectedly had the settings file "
-		"it was writing closed on it. This is very unusual. "
-		"The file where the error occurred was: %s "
-		"This file has been deleted to avoid corrupt data.";
-	break;
+        erstr = "Elementary unexpectedly had the settings file "
+                "it was writing closed on it. This is very unusual. "
+                "The file where the error occurred was: %s "
+                "This file has been deleted to avoid corrupt data.";
+        break;
+
       default:
-	break;
+        break;
      }
    if (erstr)
      {
-	/* delete any partially-written file */
-	ecore_file_unlink(file);
-        return strdup(erstr);
+        /* delete any partially-written file */
+         ecore_file_unlink(file);
+         return strdup(erstr);
      }
 
    return NULL;
@@ -1174,7 +1199,7 @@ _elm_config_profile_save(void)
    if (len + 1 >= sizeof(buf))
      return EINA_FALSE;
 
-   len = _elm_user_dir_snprintf(buf2,  sizeof(buf2), "config/profile.cfg.tmp");
+   len = _elm_user_dir_snprintf(buf2, sizeof(buf2), "config/profile.cfg.tmp");
    if (len + 1 >= sizeof(buf2))
      return EINA_FALSE;
 
@@ -1189,22 +1214,22 @@ _elm_config_profile_save(void)
    err = _elm_config_eet_close_error_get(ef, buf2);
    if (err)
      {
-       ERR("%s", err);
-       free((void *)err);
-       goto err;
+        ERR("%s", err);
+        free((void *)err);
+        goto err;
      }
 
    ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
-       ERR("Error saving Elementary's configuration file");
-       goto err;
+        ERR("Error saving Elementary's configuration file");
+        goto err;
      }
 
    ecore_file_unlink(buf2);
    return EINA_TRUE;
 
- err:
+err:
    ecore_file_unlink(buf2);
    return EINA_FALSE;
 }
@@ -1225,9 +1250,9 @@ _elm_config_save(void)
    ok = ecore_file_mkpath(buf);
    if (!ok)
      {
-       ERR("Problem acessing Elementary's user configuration directory: %s",
-           buf);
-       return EINA_FALSE;
+        ERR("Problem acessing Elementary's user configuration directory: %s",
+            buf);
+        return EINA_FALSE;
      }
 
    if (!_elm_config_profile_save())
@@ -1259,22 +1284,22 @@ _elm_config_save(void)
    err = _elm_config_eet_close_error_get(ef, buf2);
    if (err)
      {
-       ERR("%s", err);
-       free((void *)err);
-       goto err;
+        ERR("%s", err);
+        free((void *)err);
+        goto err;
      }
 
    ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
-       ERR("Error saving Elementary's configuration file");
-       goto err;
+        ERR("Error saving Elementary's configuration file");
+        goto err;
      }
 
    ecore_file_unlink(buf2);
    return EINA_TRUE;
 
- err:
+err:
    ecore_file_unlink(buf2);
    return EINA_FALSE;
 }
@@ -1289,22 +1314,22 @@ _config_update(void)
      {
         /* weird profile or something? We should probably fill
          * with hardcoded defaults, or get from default previx */
-        return;
+          return;
      }
-#define IFCFG(v) if ((_elm_config->config_version & 0xffff) < (v)) {
+#define IFCFG(v)   if ((_elm_config->config_version & 0xffff) < (v)) {
 #define IFCFGELSE } else {
-#define IFCFGEND }
-#define COPYVAL(x) do {_elm_config->x = tcfg->x;} while(0)
+#define IFCFGEND  }
+#define COPYVAL(x) do {_elm_config->x = tcfg->x; } while(0)
 #define COPYPTR(x) do {_elm_config->x = tcfg->x; tcfg->x = NULL; } while(0)
 #define COPYSTR(x) COPYPTR(x)
 
-   /* we also need to update for property changes in the root window
-    * if needed, but that will be dependent on new properties added
-    * with each version */
+     /* we also need to update for property changes in the root window
+      * if needed, but that will be dependent on new properties added
+      * with each version */
 
-   IFCFG(0x0003);
-   COPYVAL(longpress_timeout);
-   IFCFGEND;
+     IFCFG(0x0003);
+     COPYVAL(longpress_timeout);
+     IFCFGEND;
 
 #undef COPYSTR
 #undef COPYPTR
@@ -1313,7 +1338,7 @@ _config_update(void)
 #undef IFCFGELSE
 #undef IFCFG
 
-   /* after updating user config, we must save */
+     /* after updating user config, we must save */
 }
 
 static void
@@ -1417,9 +1442,11 @@ _env_get(void)
    s = getenv("ELM_FONT_HINTING");
    if (s)
      {
-        if      (!strcasecmp(s, "none"))     _elm_config->font_hinting = 0;
-        else if (!strcasecmp(s, "auto"))     _elm_config->font_hinting = 1;
-        else if (!strcasecmp(s, "bytecode")) _elm_config->font_hinting = 2;
+        if      (!strcasecmp(s, "none")) _elm_config->font_hinting = 0;
+        else if (!strcasecmp(s, "auto"))
+          _elm_config->font_hinting = 1;
+        else if (!strcasecmp(s, "bytecode"))
+          _elm_config->font_hinting = 2;
      }
 
    s = getenv("ELM_FONT_PATH");
@@ -1436,7 +1463,7 @@ _env_get(void)
         buf2 = alloca(strlen(s) + 1);
         p = s;
         pp = p;
-        for (;;)
+        for (;; )
           {
              if ((*p == ':') || (*p == 0))
                {
@@ -1509,11 +1536,11 @@ _env_get(void)
 
    s = getenv("ELM_ICON_SIZE");
    if (s) _elm_config->icon_size = atoi(s);
-   
+
    s = getenv("ELM_LONGPRESS_TIMEOUT");
    if (s) _elm_config->longpress_timeout = atof(s);
    if (_elm_config->longpress_timeout < 0.0)
-       _elm_config->longpress_timeout = 0.0;
+     _elm_config->longpress_timeout = 0.0;
 }
 
 void
@@ -1532,10 +1559,10 @@ void
 _elm_config_sub_init(void)
 {
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
-  if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
-      ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
-      ENGINE_COMPARE(ELM_XRENDER_X11) ||
-      ENGINE_COMPARE(ELM_OPENGL_X11))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+       ENGINE_COMPARE(ELM_XRENDER_X11) ||
+       ENGINE_COMPARE(ELM_OPENGL_X11))
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -1555,7 +1582,7 @@ _elm_config_sub_init(void)
         ecore_x_event_mask_set(_root_1st,
                                ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
         _prop_change_handler = ecore_event_handler_add
-          (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
+            (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
         if (!getenv("ELM_SCALE"))
           {
              if (ecore_x_window_prop_card32_get(_root_1st,
@@ -1565,7 +1592,7 @@ _elm_config_sub_init(void)
                   if (val > 0)
                     {
                        _elm_config->scale = (double)val / 1000.0;
-                       // FIXME: hack until e export finger size too
+     // FIXME: hack until e export finger size too
                        if (!getenv("ELM_FINGER_SIZE"))
                          {
                             _elm_config->finger_size = 40.0 * _elm_config->scale;
@@ -1626,56 +1653,56 @@ _elm_config_sub_init(void)
 void
 _elm_config_reload(void)
 {
-  _config_free();
-  _config_load();
-  _config_apply();
-  _elm_config_font_overlay_apply();
-  _elm_rescale();
-  _elm_recache();
+   _config_free();
+   _config_load();
+   _config_apply();
+   _elm_config_font_overlay_apply();
+   _elm_rescale();
+   _elm_recache();
 }
 
 void
 _elm_config_engine_set(const char *engine)
 {
-  if (_elm_config->engine && strcmp(_elm_config->engine, engine))
-    eina_stringshare_del(_elm_config->engine);
+   if (_elm_config->engine && strcmp(_elm_config->engine, engine))
+     eina_stringshare_del(_elm_config->engine);
 
-  _elm_config->engine = eina_stringshare_add(engine);
+   _elm_config->engine = eina_stringshare_add(engine);
 }
 
 void
 _elm_config_profile_set(const char *profile)
 {
-  Eina_Bool changed = EINA_FALSE;
+   Eina_Bool changed = EINA_FALSE;
 
-  if (_elm_profile)
-    {
-      if (strcmp(_elm_profile, profile))
-        changed = 1;
-      free(_elm_profile);
-    }
+   if (_elm_profile)
+     {
+        if (strcmp(_elm_profile, profile))
+          changed = 1;
+        free(_elm_profile);
+     }
 
-  _elm_profile = strdup(profile);
+   _elm_profile = strdup(profile);
 
-  if (changed)
-    {
-      _config_free();
-      _config_load();
-      _config_apply();
-      _elm_config_font_overlay_apply();
-      _elm_rescale();
-      _elm_recache();
-    }
+   if (changed)
+     {
+        _config_free();
+        _config_load();
+        _config_apply();
+        _elm_config_font_overlay_apply();
+        _elm_rescale();
+        _elm_recache();
+     }
 }
 
 void
 _elm_config_shutdown(void)
 {
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
-  if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
-      ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
-      ENGINE_COMPARE(ELM_XRENDER_X11) ||
-      ENGINE_COMPARE(ELM_OPENGL_X11))
+   if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
+       ENGINE_COMPARE(ELM_SOFTWARE_16_X11) ||
+       ENGINE_COMPARE(ELM_XRENDER_X11) ||
+       ENGINE_COMPARE(ELM_OPENGL_X11))
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
@@ -1691,3 +1718,4 @@ _elm_config_shutdown(void)
      }
    _desc_shutdown();
 }
+

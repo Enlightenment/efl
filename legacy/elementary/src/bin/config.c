@@ -67,24 +67,24 @@ struct _Fonts_Data
     }                                             \
   while (0)
 
-#define LABEL_FRAME_ADD(label)                                          \
-   do                                                                   \
-      {                                                                 \
-         pd = elm_frame_add(win);                                       \
-         evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);   \
-         evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);      \
-         elm_object_style_set(pd, "pad_medium");                        \
-         elm_box_pack_end(bx, pd);                                      \
-         evas_object_show(pd);                                          \
-                                                                        \
-         lb = elm_label_add(win);                                       \
-         evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0);   \
-         evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);      \
-         elm_label_label_set(lb, label);                                \
-         elm_frame_content_set(pd, lb);                                 \
-         evas_object_show(lb);                                          \
-      }                                                                 \
-   while (0)
+#define LABEL_FRAME_ADD(label)                                      \
+  do                                                                \
+    {                                                               \
+       pd = elm_frame_add(win);                                     \
+       evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0); \
+       evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, 0.5);    \
+       elm_object_style_set(pd, "pad_medium");                      \
+       elm_box_pack_end(bx, pd);                                    \
+       evas_object_show(pd);                                        \
+                                                                    \
+       lb = elm_label_add(win);                                     \
+       evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0); \
+       evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);    \
+       elm_label_label_set(lb, label);                              \
+       elm_frame_content_set(pd, lb);                               \
+       evas_object_show(lb);                                        \
+    }                                                               \
+  while (0)
 
 static int quiet = 0;
 static int interactive = 1;
@@ -138,9 +138,9 @@ config_exit(void *data       __UNUSED__,
 }
 
 static void
-sb_change(void *data   __UNUSED__,
-          Evas_Object *obj,
-          void        *event_info __UNUSED__)
+sb_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    Eina_Bool val = elm_check_state_get(obj);
    Eina_Bool sb = elm_scroll_bounce_enabled_get();
@@ -248,9 +248,9 @@ zf_change(void *data       __UNUSED__,
 }
 
 static void
-ts_change(void *data   __UNUSED__,
-          Evas_Object *obj,
-          void        *event_info __UNUSED__)
+ts_change(void *data       __UNUSED__,
+          Evas_Object     *obj,
+          void *event_info __UNUSED__)
 {
    Eina_Bool val = elm_check_state_get(obj);
    Eina_Bool sb = elm_scroll_bounce_enabled_get();
@@ -847,7 +847,7 @@ _profile_change_do(Evas_Object *win,
 {
    int flush_interval, font_c, image_c, edje_file_c, edje_col_c, ts_threshould;
    double scale, s_bounce_friction, ts_momentum_threshold, ts_friction,
-      ts_border_friction, page_friction, bring_in_friction, zoom_friction;
+          ts_border_friction, page_friction, bring_in_friction, zoom_friction;
    const char *curr_theme, *curr_engine;
    const Eina_List *l_items, *l;
    Eina_Bool s_bounce, ts;
@@ -902,7 +902,7 @@ _profile_change_do(Evas_Object *win,
 
    elm_scroll_bounce_enabled_all_set(s_bounce);
    elm_check_state_set(evas_object_data_get(win, "scroll_bounce_check"),
-                        s_bounce);
+                       s_bounce);
    elm_scroll_bounce_friction_all_set(s_bounce_friction);
    elm_slider_value_set(evas_object_data_get(win, "bounce_friction_slider"),
                         s_bounce_friction);
@@ -1691,8 +1691,7 @@ _fonts_data_fill(Evas *evas)
                     {
                        tc_data->font = eina_stringshare_add(efp->name);
                        /* we're sure we recorded with only 1 style selected */
-                       tc_data->style =
-                          eina_stringshare_add(efp->styles->data);
+                       tc_data->style = eina_stringshare_add(efp->styles->data);
                        elm_font_properties_free(efp);
                     }
                }
@@ -2168,8 +2167,8 @@ _profiles_list_fill(Evas_Object *l_widget,
 
 static void
 _profiles_list_unselect_cb(void *data       __UNUSED__,
-                         Evas_Object     *obj,
-                         void *event_info __UNUSED__)
+                           Evas_Object     *obj,
+                           void *event_info __UNUSED__)
 {
    if (elm_list_selected_item_get(obj)) return;
    elm_object_disabled_set(evas_object_data_get(obj, "prof_del_btn"),
@@ -2340,8 +2339,8 @@ _status_config_scrolling(Evas_Object *win,
 
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br>"
-                               "when they reach their viewport's edge<br>"
-                               "during a scroll");
+                                   "when they reach their viewport's edge<br>"
+                                   "during a scroll");
    elm_check_label_set(ck, "Enable scroll bounce");
    evas_object_data_set(win, "scroll_bounce_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
@@ -2356,7 +2355,7 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the amount of inertia a <br>"
-                               "scroller will impose at bounce animations");
+                                   "scroller will impose at bounce animations");
    evas_object_data_set(win, "bounce_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2380,7 +2379,7 @@ _status_config_scrolling(Evas_Object *win,
 
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set whether scrollers should be<br>"
-                               "draggable from any point in their views");
+                                   "draggable from any point in their views");
    elm_check_label_set(ck, "Enable thumb scroll");
    evas_object_data_set(win, "thumbscroll_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
@@ -2395,8 +2394,8 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the number of pixels one should<br>"
-                               "travel while dragging a scroller's view to<br>"
-                               "actually trigger scrolling");
+                                   "travel while dragging a scroller's view<br>"
+                                   "to actually trigger scrolling");
    evas_object_data_set(win, "thumbscroll_threshold_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2415,9 +2414,9 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the minimum speed of mouse <br>"
-                               "cursor movement which will trigger<br>"
-                               "list self scrolling animation after a<br>"
-                               "mouse up event (pixels/second)");
+                                   "cursor movement which will trigger<br>"
+                                   "list self scrolling animation after a<br>"
+                                   "mouse up event (pixels/second)");
    evas_object_data_set(win, "ts_momentum_threshold_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2437,8 +2436,8 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br>"
-                               "scroller will impose at self scrolling<br>"
-                               "animations");
+                                   "scroller will impose at self scrolling<br>"
+                                   "animations");
    evas_object_data_set(win, "thumbscroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2457,9 +2456,10 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the amount of lag between your<br>"
-                               "actual mouse cursor dragging movement and<br>"
-                               "a scroller's view movement itself, while<br>"
-                               "pushing it into bounce state manually");
+                                   "actual mouse cursor dragging movement<br>"
+                                   "and a scroller's view movement itself,<br>"
+                                   "while pushing it into bounce state<br>"
+                                   "manually");
    evas_object_data_set(win, "ts_border_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2485,8 +2485,8 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br>"
-                               "paged scroller will impose at<br>"
-                               "page fitting animations");
+                                   "paged scroller will impose at<br>"
+                                   "page fitting animations");
    evas_object_data_set(win, "page_scroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2505,8 +2505,8 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br>"
-                               "scroller will impose at region bring<br>"
-                               "animations");
+                                   "scroller will impose at region bring<br>"
+                                   "animations");
    evas_object_data_set(win, "bring_in_scroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -2525,8 +2525,9 @@ _status_config_scrolling(Evas_Object *win,
 
    sl = elm_slider_add(win);
    elm_object_tooltip_text_set(sl, "This is the amount of inertia inertia<br>"
-                               "scrollers will impose at animations<br>"
-                               "triggered by Elementary widgets' zooming API");
+                                   "scrollers will impose at animations<br>"
+                                   "triggered by Elementary widgets'<br>"
+                                   "zooming API");
    evas_object_data_set(win, "zoom_scroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
