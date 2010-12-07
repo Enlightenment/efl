@@ -27387,7 +27387,6 @@ collections {
            part { name: "bg";
                type: RECT;
                description { state: "default" 0.0;
-                   max: 99999 30;
                    min: 0 30;
                    rel1.offset: 1 1;
                    rel2.offset: -2 -2;
@@ -27411,14 +27410,15 @@ collections {
                mouse_events:  1;
                description { state: "default" 0.0;
                    rel1 { to: "bg";
-                       offset: 2 2;
+                       offset: 3 3;
                    }
                    rel2 { to: "bg";
-                       offset: -3 -3;
+                       offset: -4 -4;
                    }
                    align: 0.0 0.5;
                    min: 24 24;
-                   max: 24 24;
+                   aspect: 1.0 1.0;
+                   aspect_preference: VERTICAL;
                    image {
                        normal: "bt_base1.png";
                        border: 6 6 6 6;
@@ -27498,14 +27498,15 @@ collections {
                mouse_events:  1;
                description { state: "default" 0.0;
                    rel1 { to: "bg";
-                       offset: -27 3;
+                       offset: -26 3;
                    }
                    rel2 { to: "bg";
-                       offset: -3 -3;
+                       offset: -4 -4;
                    }
                    align: 1.0 0.5;
                    min: 24 24;
-                   max: 24 24;
+                   aspect: 1.0 1.0;
+                   aspect_preference: VERTICAL;
                    image {
                        normal: "bt_base1.png";
                        border: 5 5 4 12;
@@ -27585,10 +27586,13 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    rel1.to: "left_bt";
+                   rel1.offset: 4 4;
                    rel2.to: "left_bt";
+                   rel2.offset: -5 -5;
                    align: 0.5 0.5;
                    min: 16 16;
-                   max: 16 16;
+                   aspect: 1.0 1.0;
+                   aspect_preference: BOTH;
                    image.normal: "sp_bt_l.png";
                }
            }
@@ -27596,10 +27600,13 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    rel1.to: "right_bt";
+                   rel1.offset: 4 4;
                    rel2.to: "right_bt";
+                   rel2.offset: -5 -5;
                    align: 0.5 0.5;
                    min: 16 16;
-                   max: 16 16;
+                   aspect: 1.0 1.0;
+                   aspect_preference: BOTH;
                    image.normal: "sp_bt_r.png";
                }
            }
@@ -27952,7 +27959,6 @@ collections {
            part { name: "bg";
                type: RECT;
                description { state: "default" 0.0;
-                   max: 99999 30;
                    min: 0 30;
                    rel1.offset: 1 1;
                    rel2.offset: -2 -2;
@@ -27967,11 +27973,7 @@ collections {
                      relative: 0.0 0.0;
                    }
                    rel2 {
-                      to_x: "down_bt";
-                      offset: -22 -1;
-                   }
-                   rel2 {
-                      to_y: "bg";
+                      to: "bg";
                    }
                    image {
                        normal: "shelf_inset.png";
@@ -27984,19 +27986,20 @@ collections {
            part { name: "down_bt";
                mouse_events:  1;
                description { state: "default" 0.0;
+                   fixed: 1 1;
                    rel1 {
-                       to_x: "bg";
-                       to_y: "up_bt";
-                       relative: 1 1;
+                       to: "up_bt";
+                       relative: 0 1;
                        offset: 0 1;
                    }
-                   rel2 { to: "bg";
+                   rel2 {
+                       to_y: "bg";
+                       to_x: "up_bt";
                        relative: 1 1;
-                       offset: -1 -1;
+                       offset: -1 -4;
                    }
                    align: 1.0 0.5;
                    min: 24 16;
-                   max: 24 16;
                    image {
                        normal: "bt_spinner_down.png";
                        border: 6 6 6 6;
@@ -28038,17 +28041,19 @@ collections {
            part { name: "up_bt";
                mouse_events:  1;
                description { state: "default" 0.0;
+                   fixed: 1 0;
                    rel1 { to: "bg";
                        relative: 0 0;
-                       offset: 0 0;
+                       offset: 0 2;
                    }
                    rel2 { to: "bg";
                        relative: 1 0.5;
-                       offset: -1 -1;
+                       offset: -3 0;
                    }
                    align: 1.0 0.5;
                    min: 24 16;
-                   max: 24 16;
+                   aspect: 1.5 1.0;
+                   aspect_preference: BOTH;
                    image {
                        normal: "bt_spinner_up.png";
                        border: 6 6 6 6;
@@ -28111,10 +28116,10 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    rel1.to: "down_bt";
+                   rel1.offset: 5 3;
                    rel2.to: "down_bt";
+                   rel2.offset: -6 -3;
                    align: 0.5 0.5;
-                   min: 14 12;
-                   max: 14 12;
                    image.normal: "down.png";
                }
            }
@@ -28122,10 +28127,10 @@ collections {
                repeat_events: 1;
                description { state: "default" 0.0;
                    rel1.to: "up_bt";
+                   rel1.offset: 5 3;
                    rel2.to: "up_bt";
+                   rel2.offset: -6 -3;
                    align: 0.5 0.5;
-                   min: 14 12;
-                   max: 14 12;
                    image.normal: "up.png";
                }
            }
@@ -28143,7 +28148,7 @@ collections {
                    }
                    rel2 { relative: 0.0 1.0;
                        offset: -3 -2;
-                       to_x: "bg";
+                       to_x: "down_bt";
                        to_y: "bg";
                    }
                    color: 0 0 0 255;
