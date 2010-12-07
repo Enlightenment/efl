@@ -98,6 +98,8 @@ struct _Edje_Edit
    char *embryo_processed;
    Eina_Hash *program_scripts;
 
+   Eina_List *errors;
+
    Eina_Bool bytecode_dirty:1;
    Eina_Bool embryo_source_dirty:1;
    Eina_Bool all_dirty:1;
@@ -158,12 +160,21 @@ _edje_edit_smart_add(Evas_Object *obj)
 static void
 _edje_edit_data_clean(Edje_Edit *eed)
 {
+   Edje_Edit_Script_Error *se;
+
    free(eed->bytecode);
    free(eed->embryo_source);
    free(eed->embryo_processed);
 
    if (eed->program_scripts)
      eina_hash_free(eed->program_scripts);
+
+   EINA_LIST_FREE(eed->errors, se)
+     {
+        eina_stringshare_del(se->program_name);
+        eina_stringshare_del(se->error_str);
+        free(se);
+     }
 
    eed->bytecode = NULL;
    eed->embryo_source = NULL;
@@ -6130,11 +6141,12 @@ __image_replace(Edje_Edit *eed, char *pcode, char *name)
 }
 
 static char *
-_edje_edit_script_process(Edje_Edit *eed, char *code)
+_edje_edit_script_process(Edje_Edit *eed, const char *progname, char *code)
 {
    char *pcode, *psrc, *pdst;
    int codesize, pcodesize;
    int quoted = 0, escaped = 0;
+   int line = 1;
    Eina_Bool success = EINA_TRUE;
 
    codesize = strlen(code);
@@ -6150,6 +6162,7 @@ _edje_edit_script_process(Edje_Edit *eed, char *code)
         if (!quoted)
           {
              char *ptr = NULL;
+             const char *what = NULL;
              int (*func)(Edje_Edit *, char *, char *);
 
              if (*psrc == 'P')
@@ -6159,12 +6172,14 @@ _edje_edit_script_process(Edje_Edit *eed, char *code)
                        psrc += 6;
                        ptr = psrc;
                        func = __part_replace;
+                       what = "part";
                     }
                   else if (!strncmp(psrc, "PROGRAM:\"", 9))
                     {
                        psrc += 9;
                        ptr = psrc;
                        func = __program_replace;
+                       what = "program";
                     }
                }
              else if (*psrc == 'G')
@@ -6174,6 +6189,7 @@ _edje_edit_script_process(Edje_Edit *eed, char *code)
                        psrc += 7;
                        ptr = psrc;
                        func = __group_replace;
+                       what = "group";
                     }
                }
              else if (*psrc == 'I')
@@ -6183,6 +6199,7 @@ _edje_edit_script_process(Edje_Edit *eed, char *code)
                        psrc += 7;
                        ptr = psrc;
                        func = __image_replace;
+                       what = "image";
                     }
                }
              else if (*psrc == '#')
@@ -6190,10 +6207,13 @@ _edje_edit_script_process(Edje_Edit *eed, char *code)
                   while (*psrc)
                     if (*psrc == '\n')
                       break;
+                  line++;
                   continue;
                }
              else if (*psrc == '\"')
                quoted = 1;
+             else if (*psrc == '\n')
+               line++;
 
              if (ptr)
                {
@@ -6253,10 +6273,15 @@ _edje_edit_script_process(Edje_Edit *eed, char *code)
                   i = func(eed, pdst, name);
                   if (!i)
                     {
-                       /* something was not found, report it, keep track of
-                        * it to inform of non-existant referenced things
-                        * and continue processing to find all of those errors
-                        */
+                       Edje_Edit_Script_Error *se;
+                       se = malloc(sizeof(Edje_Edit_Script_Error));
+                       se->program_name = progname ?
+                          eina_stringshare_add(progname) : NULL;
+                       se->line = line;
+                       se->error_str = eina_stringshare_printf(
+                          "Referenced %s '%s' could not be found in object.",
+                          what, name);
+                       eed->errors = eina_list_append(eed->errors, se);
                        success = EINA_FALSE;
                     }
                   else
@@ -6313,6 +6338,14 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    Program_Script *ps;
    Edje_Part_Collection *edc;
    Eina_Bool success = EINA_TRUE; /* we are optimists! */
+   Edje_Edit_Script_Error *se;
+
+   EINA_LIST_FREE(eed->errors, se)
+     {
+        eina_stringshare_del(se->program_name);
+        eina_stringshare_del(se->error_str);
+        free(se);
+     }
 
 #ifdef HAVE_EVIL
    tmp_dir = evil_tmpdir_get();
@@ -6344,7 +6377,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              eed->embryo_processed = NULL;
           }
         if (!eed->embryo_processed)
-          eed->embryo_processed = _edje_edit_script_process(eed,
+          eed->embryo_processed = _edje_edit_script_process(eed, NULL,
                                                             eed->embryo_source);
         if (!eed->embryo_processed)
           {
@@ -6363,6 +6396,8 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    it = eina_hash_iterator_data_new(eed->program_scripts);
    EINA_ITERATOR_FOREACH(it, ps)
      {
+        Edje_Program *epr;
+
         if (ps->delete_me)
           continue;
         if (eed->all_dirty)
@@ -6370,8 +6405,9 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
              free(ps->processed);
              ps->processed = NULL;
           }
+        epr = eed->base.table_programs[ps->id];
         if (!ps->processed)
-          ps->processed = _edje_edit_script_process(eed, ps->code);
+          ps->processed = _edje_edit_script_process(eed, epr->name, ps->code);
         if (!ps->processed)
           {
              /* oops.. an error finding references parts or something.
@@ -6473,6 +6509,13 @@ edje_edit_script_compile(Evas_Object *obj)
      return EINA_TRUE;
 
    return _edje_edit_embryo_rebuild(eed);
+}
+
+EAPI const Eina_List *
+edje_edit_script_error_list_get(Evas_Object *obj)
+{
+   GET_ED_OR_RETURN(NULL);
+   return eed->errors;
 }
 
 /***************************/
