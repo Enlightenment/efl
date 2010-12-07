@@ -2318,26 +2318,26 @@ extern "C" {
      } Elm_Calendar_Mark_Repeat;
    typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;
 
-   EAPI Evas_Object *elm_calendar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EAPI const char **elm_calendar_weekdays_names_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]) EINA_ARG_NONNULL(1, 2);
-   EAPI double       elm_calendar_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_calendar_day_selection_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time) EINA_ARG_NONNULL(1, 2);
-   EAPI void         elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *stime)) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object       *elm_calendar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   EAPI const char       **elm_calendar_weekdays_names_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]) EINA_ARG_NONNULL(1, 2);
+   EAPI double             elm_calendar_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool          elm_calendar_day_selection_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool          elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time) EINA_ARG_NONNULL(1, 2);
+   EAPI void               elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *stime)) EINA_ARG_NONNULL(1);
    EAPI Elm_Calendar_Mark *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_mark_del(Elm_Calendar_Mark *mark) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_marks_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI const Eina_List *elm_calendar_marks_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_marks_draw(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void         elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void         elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void         elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_mark_del(Elm_Calendar_Mark *mark) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_marks_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI const Eina_List   *elm_calendar_marks_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_calendar_marks_draw(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
 
    /* smart callbacks called:
     * changed - emitted when the user select a day or change the displayed
