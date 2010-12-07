@@ -5,7 +5,9 @@
 
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-_file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_file_chosen(void            *data,
+             Evas_Object *obj __UNUSED__,
+             void            *event_info)
 {
    Evas_Object *entry = data;
    char *file = event_info;
@@ -14,7 +16,9 @@ _file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_inwin_mode_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_inwin_mode_toggle(void            *data,
+                   Evas_Object *obj __UNUSED__,
+                   void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_fileselector_entry_inwin_mode_get(fs_en);
@@ -23,7 +27,9 @@ _inwin_mode_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_folder_only_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_folder_only_toggle(void            *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Evas_Object *ic = elm_fileselector_entry_button_icon_get(fs_en);
@@ -43,7 +49,9 @@ _folder_only_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 }
 
 static void
-_expandable_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_expandable_toggle(void            *data,
+                   Evas_Object *obj __UNUSED__,
+                   void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_fileselector_entry_expandable_get(fs_en);
@@ -52,7 +60,9 @@ _expandable_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
-_disabled_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_disabled_toggle(void            *data,
+                 Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
 {
    Evas_Object *fs_en = data;
    Eina_Bool value = elm_object_disabled_get(fs_en);
@@ -61,7 +71,9 @@ _disabled_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 void
-test_fileselector_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_fileselector_entry(void *data       __UNUSED__,
+                        Evas_Object *obj __UNUSED__,
+                        void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_en, *en, *lb;
 
@@ -73,11 +85,6 @@ test_fileselector_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
-
-   vbox = elm_box_add(win);
-   elm_win_resize_object_add(win, vbox);
-   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(vbox);
 
    vbox = elm_box_add(win);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -138,7 +145,6 @@ test_fileselector_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 
-
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, EINA_FALSE);
    elm_entry_editable_set(en, EINA_FALSE);
@@ -149,4 +155,5 @@ test_fileselector_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }
+
 #endif

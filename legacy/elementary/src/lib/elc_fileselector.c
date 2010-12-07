@@ -1,10 +1,10 @@
 /**
  * @defgroup Fileselector Fileselector
  *
- * A fileselector is a widget that allows a user to navigate through a tree
- * of files.  It contains buttons for Home(~) and Up(..) as well as cancel/ok
- * buttons to confirm/cancel a selection.  This widget is currently very much
- * in progress.
+ * A fileselector is a widget that allows a user to navigate through a
+ * tree of files.  It contains buttons for Home(~) and Up(..) as well
+ * as cancel/ok buttons to confirm/cancel a selection.  This widget is
+ * currently very much in progress.
  *
  * TODO
  * userdefined icon/label cb
@@ -18,7 +18,8 @@
  * Signals that you can add callbacks for are:
  *
  * "selected" - the user clicks on a file
- * "directory,open" - the list is populated with a new content. event_info is a directory.
+ * "directory,open" - the list is populated with new content.
+ *                    event_info is a directory.
  * "done" - the user clicks on the ok or cancel button
  */
 
@@ -39,38 +40,41 @@ struct _Widget_Data
    Evas_Object *ok_button;
    Evas_Object *cancel_button;
 
-   const char *path;
-   const char *selection;
+   const char  *path;
+   const char  *selection;
    Ecore_Idler *sel_idler;
 
-   const char *path_separator;
+   const char  *path_separator;
 
-   Eina_Bool only_folder : 1;
-   Eina_Bool expand : 1;
+   Eina_Bool    only_folder : 1;
+   Eina_Bool    expand : 1;
 };
 
 struct sel_data
 {
    Evas_Object *fs;
-   const char *path;
+   const char  *path;
 };
 
 Elm_Genlist_Item_Class itc;
 
 static const char *widtype = NULL;
 
-static const char SIG_DIRECTORY_OPEN[]= "directory,open";
+static const char SIG_DIRECTORY_OPEN[] = "directory,open";
 static const char SIG_DONE[] = "done";
 static const char SIG_SELECTED[] = "selected";
 static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_DIRECTORY_OPEN, "s"},
-  {SIG_DONE, "s"},
-  {SIG_SELECTED, "s"},
-  {NULL, NULL}
+   {SIG_DIRECTORY_OPEN, "s"},
+   {SIG_DONE, "s"},
+   {SIG_SELECTED, "s"},
+   {NULL, NULL}
 };
 
-static void _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent);
-static void _do_anchors(Evas_Object *obj, const char *path);
+static void _populate(Evas_Object      *obj,
+                      const char       *path,
+                      Elm_Genlist_Item *parent);
+static void _do_anchors(Evas_Object *obj,
+                        const char  *path);
 
 /***  ELEMENTARY WIDGET  ***/
 static void
@@ -86,8 +90,8 @@ _del_hook(Evas_Object *obj)
    if (wd->selection) eina_stringshare_del(wd->selection);
    if (wd->sel_idler)
      {
-	sd = ecore_idler_del(wd->sel_idler);
-	free(sd);
+        sd = ecore_idler_del(wd->sel_idler);
+        free(sd);
      }
    free(wd);
 }
@@ -103,15 +107,15 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
-#define SWALLOW(part_name, object_ptn)                                        \
-   if (object_ptn)                                                            \
-     {                                                                        \
-        elm_widget_style_set(object_ptn, buf);                                \
-        if (edje_object_part_swallow(wd->edje, part_name, object_ptn))        \
-          evas_object_show(object_ptn);                                       \
-        else                                                                  \
-          evas_object_hide(object_ptn);                                       \
-     }
+#define SWALLOW(part_name, object_ptn)                                \
+  if (object_ptn)                                                     \
+    {                                                                 \
+       elm_widget_style_set(object_ptn, buf);                         \
+       if (edje_object_part_swallow(wd->edje, part_name, object_ptn)) \
+         evas_object_show(object_ptn);                                \
+       else                                                           \
+         evas_object_hide(object_ptn);                                \
+    }
 
 static void
 _theme_hook(Evas_Object *obj)
@@ -125,7 +129,7 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->edje, "fileselector", "base", style);
 
    if (elm_object_disabled_get(obj))
-      edje_object_signal_emit(wd->edje, "elm,state,disabled", "elm");
+     edje_object_signal_emit(wd->edje, "elm,state,disabled", "elm");
 
    data = edje_object_data_get(wd->edje, "path_separator");
    if (data)
@@ -153,25 +157,32 @@ _theme_hook(Evas_Object *obj)
 }
 
 /***  GENLIST "MODEL"  ***/
-static char*
-_itc_label_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+static char *
+_itc_label_get(void              *data,
+               Evas_Object *obj   __UNUSED__,
+               const char *source __UNUSED__)
 {
-   return strdup(ecore_file_file_get(data)); // NOTE this will be free() by the caller
+   return strdup(ecore_file_file_get(data)); /* NOTE this will be
+                                              * free() by the
+                                              * caller */
 }
 
-static Evas_Object*
-_itc_icon_get(void *data, Evas_Object *obj, const char *source)
+static Evas_Object *
+_itc_icon_get(void        *data,
+              Evas_Object *obj,
+              const char  *source)
 {
    Evas_Object *ic;
 
    if (!strcmp(source, "elm.swallow.icon"))
      {
         ic = elm_icon_add(obj);
-        if (ecore_file_is_dir((char*)data))
+        if (ecore_file_is_dir((char *)data))
           elm_icon_standard_set(ic, "folder");
         else
           elm_icon_standard_set(ic, "file");
-        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL,
+                                         1, 1);
         evas_object_show(ic);
         return ic;
      }
@@ -179,19 +190,24 @@ _itc_icon_get(void *data, Evas_Object *obj, const char *source)
 }
 
 static Eina_Bool
-_itc_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+_itc_state_get(void *data         __UNUSED__,
+               Evas_Object *obj   __UNUSED__,
+               const char *source __UNUSED__)
 {
    return EINA_FALSE;
 }
 
 static void
-_itc_del(void *data, Evas_Object *obj __UNUSED__)
+_itc_del(void            *data,
+         Evas_Object *obj __UNUSED__)
 {
    eina_stringshare_del(data);
 }
 
 static void
-_expand_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_expand_done(void            *data,
+             Evas_Object *obj __UNUSED__,
+             void            *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
@@ -199,21 +215,27 @@ _expand_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_contract_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_contract_done(void *data       __UNUSED__,
+               Evas_Object *obj __UNUSED__,
+               void            *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_subitems_clear(it);
 }
 
 static void
-_expand_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_expand_req(void *data       __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void            *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 1);
 }
 
 static void
-_contract_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_contract_req(void *data       __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              void            *event_info)
 {
    Elm_Genlist_Item *it = event_info;
    elm_genlist_item_expanded_set(it, 0);
@@ -237,7 +259,8 @@ _sel_do(void *data)
         if (wd->expand)
           {
              _do_anchors(sd->fs, path);
-             if (wd->filename_entry) elm_scrolled_entry_entry_set(wd->filename_entry, "");
+             if (wd->filename_entry)
+               elm_scrolled_entry_entry_set(wd->filename_entry, "");
           }
         else
           {
@@ -251,19 +274,22 @@ _sel_do(void *data)
    else
      {
         if (wd->filename_entry)
-          elm_scrolled_entry_entry_set(wd->filename_entry, ecore_file_file_get(path));
+          elm_scrolled_entry_entry_set(wd->filename_entry,
+                                       ecore_file_file_get(path));
      }
 
    evas_object_smart_callback_call(sd->fs, SIG_SELECTED, (void *)path);
 
- end:
+end:
    wd->sel_idler = NULL;
    free(sd);
    return ECORE_CALLBACK_CANCEL;
 }
 
 static void
-_sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_sel(void            *data,
+     Evas_Object *obj __UNUSED__,
+     void            *event_info)
 {
    struct sel_data *sd;
    Widget_Data *wd;
@@ -287,7 +313,7 @@ _sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
      {
         eina_stringshare_replace(&wd->path, "");
      }
-  
+
    if (wd->sel_idler)
      {
         old_sd = ecore_idler_del(wd->sel_idler);
@@ -297,7 +323,9 @@ _sel(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_up(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_up(void            *data,
+    Evas_Object *obj __UNUSED__,
+    void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    char *parent;
@@ -310,29 +338,37 @@ _up(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_home(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_home(void            *data,
+      Evas_Object *obj __UNUSED__,
+      void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    _populate(fs, getenv("HOME"), NULL);
 }
 
 static void
-_ok(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ok(void            *data,
+    Evas_Object *obj __UNUSED__,
+    void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    evas_object_smart_callback_call(fs, SIG_DONE,
-				   (void *)elm_fileselector_selected_get(fs));
+                                   (void *)elm_fileselector_selected_get(fs));
 }
 
 static void
-_canc(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_canc(void            *data,
+      Evas_Object *obj __UNUSED__,
+      void *event_info __UNUSED__)
 {
    Evas_Object *fs = data;
    evas_object_smart_callback_call(fs, SIG_DONE, NULL);
 }
 
 static void
-_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_anchor_clicked(void            *data,
+                Evas_Object *obj __UNUSED__,
+                void            *event_info)
 {
    Evas_Object *fs = data;
    Widget_Data *wd = elm_widget_data_get(fs);
@@ -347,10 +383,11 @@ _anchor_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_do_anchors(Evas_Object *obj, const char *path)
+_do_anchors(Evas_Object *obj,
+            const char  *path)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char **tok, buf[PATH_MAX*3];
+   char **tok, buf[PATH_MAX * 3];
    int i, j;
    if (!wd) return;
    buf[0] = '\0';
@@ -378,7 +415,9 @@ _do_anchors(Evas_Object *obj, const char *path)
 }
 
 static void
-_populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
+_populate(Evas_Object      *obj,
+          const char       *path,
+          Elm_Genlist_Item *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    DIR *dir;
@@ -401,10 +440,12 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
    if (wd->filename_entry) elm_scrolled_entry_entry_set(wd->filename_entry, "");
    while ((dp = readdir(dir)))
      {
-        if (dp->d_name[0] == '.') continue; // TODO make this configurable
+        if (dp->d_name[0] == '.') continue;  // TODO make this configurable
 
         snprintf(buf, sizeof(buf), "%s/%s", path, dp->d_name);
-        real = ecore_file_realpath(buf); //TODO this will resolv symlinks...I dont like it
+        real = ecore_file_realpath(buf); /* TODO: this will resolv
+                                          * symlinks...I dont like
+                                          * it*/
         if (ecore_file_is_dir(real))
           dirs = eina_list_append(dirs, real);
         else if (!wd->only_folder)
@@ -412,7 +453,8 @@ _populate(Evas_Object *obj, const char *path, Elm_Genlist_Item *parent)
      }
    closedir(dir);
 
-   files = eina_list_sort(files, eina_list_count(files), EINA_COMPARE_CB(strcoll));
+   files = eina_list_sort(files, eina_list_count(files),
+                          EINA_COMPARE_CB(strcoll));
    dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
    EINA_LIST_FOREACH(dirs, l, real)
      {
@@ -564,7 +606,8 @@ elm_fileselector_add(Evas_Object *parent)
  * @ingroup Fileselector
  */
 EAPI void
-elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save)
+elm_fileselector_is_save_set(Evas_Object *obj,
+                             Eina_Bool    is_save)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -595,7 +638,6 @@ elm_fileselector_is_save_get(const Evas_Object *obj)
    return elm_object_disabled_get(wd->filename_entry);
 }
 
-
 /**
  * This enables/disables folder-only view in the fileselector.
  *
@@ -606,7 +648,8 @@ elm_fileselector_is_save_get(const Evas_Object *obj)
  * @ingroup Fileselector
  */
 EAPI void
-elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
+elm_fileselector_folder_only_set(Evas_Object *obj,
+                                 Eina_Bool    only)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -614,7 +657,6 @@ elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only)
    if (wd->only_folder == only) return;
    wd->only_folder = !!only;
 }
-
 
 /**
  * This gets the state of file display in the fileselector.
@@ -634,7 +676,6 @@ elm_fileselector_folder_only_get(const Evas_Object *obj)
    return wd->only_folder;
 }
 
-
 /**
  * This enables/disables the ok,cancel buttons.
  *
@@ -645,7 +686,8 @@ elm_fileselector_folder_only_get(const Evas_Object *obj)
  * @ingroup Fileselector
  */
 EAPI void
-elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool visible)
+elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
+                                       Eina_Bool    visible)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -701,7 +743,6 @@ elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
    return wd->ok_button ? EINA_TRUE : EINA_FALSE;
 }
 
-
 /**
  * This enables tree view in the fileselector.  Arrows are created on the
  * sides of directories, allowing them to expand in place.
@@ -713,7 +754,8 @@ elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
  * @ingroup Fileselector
  */
 EAPI void
-elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand)
+elm_fileselector_expandable_set(Evas_Object *obj,
+                                Eina_Bool    expand)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
@@ -751,7 +793,8 @@ elm_fileselector_expandable_get(const Evas_Object *obj)
  * @ingroup Fileselector
  */
 EAPI void
-elm_fileselector_path_set(Evas_Object *obj, const char *path)
+elm_fileselector_path_set(Evas_Object *obj,
+                          const char  *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    _populate(obj, path, NULL);
@@ -818,7 +861,8 @@ elm_fileselector_selected_get(const Evas_Object *obj)
  * @ingroup Fileselector
  */
 EAPI Eina_Bool
-elm_fileselector_selected_set(Evas_Object *obj, const char *path)
+elm_fileselector_selected_set(Evas_Object *obj,
+                              const char  *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -834,7 +878,8 @@ elm_fileselector_selected_set(Evas_Object *obj, const char *path)
         _populate(obj, ecore_file_dir_get(path), NULL);
         if (wd->filename_entry)
           {
-             elm_scrolled_entry_entry_set(wd->filename_entry, ecore_file_file_get(path));
+             elm_scrolled_entry_entry_set(wd->filename_entry,
+                                          ecore_file_file_get(path));
              eina_stringshare_replace(&wd->selection, path);
           }
      }

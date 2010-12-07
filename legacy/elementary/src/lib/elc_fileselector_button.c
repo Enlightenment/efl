@@ -1,7 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
- /**
+/**
  * @defgroup File_Selector_Button File Selector Button
  *
  * A button that, when clicked, creates an Elementary window (or inner
@@ -15,15 +15,16 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *self, *btn, *fs, *fsw;
-   const char *window_title;
-   Evas_Coord w, h;
-   struct {
+   const char  *window_title;
+   Evas_Coord   w, h;
+   struct
+   {
       const char *path;
-      Eina_Bool expandable:1;
-      Eina_Bool folder_only:1;
-      Eina_Bool is_save:1;
+      Eina_Bool   expandable : 1;
+      Eina_Bool   folder_only : 1;
+      Eina_Bool   is_save : 1;
    } fsd;
-   Eina_Bool inwin_mode:1;
+   Eina_Bool inwin_mode : 1;
 };
 
 #define DEFAULT_WINDOW_TITLE "Select a file"
@@ -34,15 +35,21 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _on_focus_hook(void *data, Evas_Object *obj);
-static void _selection_done(void *data, Evas_Object *obj, void *event_info);
+static void _changed_size_hints(void        *data,
+                                Evas        *e,
+                                Evas_Object *obj,
+                                void        *event_info);
+static void _on_focus_hook(void        *data,
+                           Evas_Object *obj);
+static void _selection_done(void        *data,
+                            Evas_Object *obj,
+                            void        *event_info);
 static void _activate(Widget_Data *wd);
 
 static const char SIG_FILE_CHOSEN[] = "file,chosen";
 static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_FILE_CHOSEN, "s"},
-  {NULL, NULL}
+   {SIG_FILE_CHOSEN, "s"},
+   {NULL, NULL}
 };
 
 static void
@@ -58,14 +65,15 @@ _del_hook(Evas_Object *obj)
    if (wd->fsd.path) eina_stringshare_del(wd->fsd.path);
    if (wd->fs)
      {
-	win = evas_object_data_del(obj, "win");
-	evas_object_del(win);
+        win = evas_object_data_del(obj, "win");
+        evas_object_del(win);
      }
    free(wd);
 }
 
 static void
-_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+_on_focus_hook(void *data   __UNUSED__,
+               Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -79,7 +87,8 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    char buf[4096];
    if (!wd) return;
-   snprintf(buf, sizeof(buf), "fileselector_button/%s", elm_widget_style_get(obj));
+   snprintf(buf, sizeof(buf), "fileselector_button/%s",
+            elm_widget_style_get(obj));
    elm_object_style_set(wd->btn, buf);
    _sizing_eval(obj);
 }
@@ -105,7 +114,10 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_changed_size_hints(void            *data,
+                    Evas *e          __UNUSED__,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -122,7 +134,9 @@ _activate_hook(Evas_Object *obj)
 }
 
 static void
-_button_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_button_clicked(void            *data,
+                Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
 {
    _activate(data);
 }
@@ -163,11 +177,11 @@ _activate(Widget_Data *wd)
 
    if (wd->inwin_mode)
      {
-	wd->fsw = _parent_win_get(wd->self);
+        wd->fsw = _parent_win_get(wd->self);
 
-	if (!wd->fsw)
+        if (!wd->fsw)
           wd->fsw = _new_window_add(wd);
-	else
+        else
           {
              wd->fsw = elm_win_inwin_add(wd->fsw);
              is_inwin = EINA_TRUE;
@@ -182,25 +196,27 @@ _activate(Widget_Data *wd)
    elm_fileselector_is_save_set(wd->fs, wd->fsd.is_save);
    elm_fileselector_selected_set(wd->fs, wd->fsd.path);
    evas_object_size_hint_weight_set(wd->fs, EVAS_HINT_EXPAND,
-				    EVAS_HINT_EXPAND);
+                                    EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(wd->fs, "done", _selection_done, wd);
    evas_object_show(wd->fs);
 
    if (is_inwin)
      {
-	elm_win_inwin_content_set(wd->fsw, wd->fs);
-	elm_win_inwin_activate(wd->fsw);
+        elm_win_inwin_content_set(wd->fsw, wd->fs);
+        elm_win_inwin_activate(wd->fsw);
      }
    else
      {
-	elm_win_resize_object_add(wd->fsw, wd->fs);
-	evas_object_show(wd->fsw);
+        elm_win_resize_object_add(wd->fsw, wd->fs);
+        evas_object_show(wd->fsw);
      }
 }
 
 static void
-_selection_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_selection_done(void            *data,
+                Evas_Object *obj __UNUSED__,
+                void            *event_info)
 {
    const char *file = event_info;
    Widget_Data *wd = data;
@@ -214,7 +230,7 @@ _selection_done(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    wd->fsw = NULL;
    evas_object_del(del);
 
-   evas_object_smart_callback_call(wd->self, SIG_FILE_CHOSEN, 
+   evas_object_smart_callback_call(wd->self, SIG_FILE_CHOSEN,
                                    (void *)wd->fsd.path);
 }
 
@@ -260,7 +276,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    wd->btn = elm_button_add(parent);
    elm_widget_resize_object_set(obj, wd->btn);
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                  _changed_size_hints, obj);
    evas_object_smart_callback_add(wd->btn, "clicked", _button_clicked, wd);
    elm_widget_sub_object_add(obj, wd->btn);
 
@@ -278,14 +294,14 @@ elm_fileselector_button_add(Evas_Object *parent)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_label_set(Evas_Object *obj, const char *label)
+elm_fileselector_button_label_set(Evas_Object *obj,
+                                  const char  *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_button_label_set(wd->btn, label);
 }
-
 
 /**
  * Get the label used in the file selector button.
@@ -316,7 +332,8 @@ elm_fileselector_button_label_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_window_title_set(Evas_Object *obj, const char *title)
+elm_fileselector_button_window_title_set(Evas_Object *obj,
+                                         const char  *title)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -359,7 +376,9 @@ elm_fileselector_button_window_title_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height)
+elm_fileselector_button_window_size_set(Evas_Object *obj,
+                                        Evas_Coord   width,
+                                        Evas_Coord   height)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -382,7 +401,9 @@ elm_fileselector_button_window_size_set(Evas_Object *obj, Evas_Coord width, Evas
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height)
+elm_fileselector_button_window_size_get(const Evas_Object *obj,
+                                        Evas_Coord        *width,
+                                        Evas_Coord        *height)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -404,7 +425,8 @@ elm_fileselector_button_window_size_get(const Evas_Object *obj, Evas_Coord *widt
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
+elm_fileselector_button_path_set(Evas_Object *obj,
+                                 const char  *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -414,7 +436,6 @@ elm_fileselector_button_path_set(Evas_Object *obj, const char *path)
 
    if (wd->fs)
      elm_fileselector_selected_set(wd->fs, wd->fsd.path);
-
 }
 
 /**
@@ -445,7 +466,8 @@ elm_fileselector_button_path_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value)
+elm_fileselector_button_expandable_set(Evas_Object *obj,
+                                       Eina_Bool    value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -485,7 +507,8 @@ elm_fileselector_button_expandable_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value)
+elm_fileselector_button_folder_only_set(Evas_Object *obj,
+                                        Eina_Bool    value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -525,7 +548,8 @@ elm_fileselector_button_folder_only_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value)
+elm_fileselector_button_is_save_set(Evas_Object *obj,
+                                    Eina_Bool    value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -566,7 +590,8 @@ elm_fileselector_button_is_save_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
+elm_fileselector_button_inwin_mode_set(Evas_Object *obj,
+                                       Eina_Bool    value)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -606,7 +631,8 @@ elm_fileselector_button_inwin_mode_get(const Evas_Object *obj)
  * @ingroup File_Selector_Button
  */
 EAPI void
-elm_fileselector_button_icon_set(Evas_Object *obj, Evas_Object *icon)
+elm_fileselector_button_icon_set(Evas_Object *obj,
+                                 Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -653,3 +679,4 @@ elm_fileselector_button_icon_unset(Evas_Object *obj)
    if (!wd) return NULL;
    return elm_button_icon_unset(wd->btn);
 }
+
