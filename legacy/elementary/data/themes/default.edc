@@ -13741,6 +13741,15 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 100;
+            }
+            description { state: "disabled_inverted" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 100;
+               visible: 1;
+            }
          }
          part {
             name: "base_over";
@@ -13839,6 +13848,18 @@ collections {
                rel1.offset: 0 4;
                rel2.offset: 0 -5;
 	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 128 128 128;
+	       visible: 0;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       color: 0 0 0 128;
+	       color3: 0 0 0 0;
+	       visible: 1;
+	       text.min: 1 1;
+	    }
 	 }
 	 part {
             name: "elm.swallow.end";
@@ -13918,6 +13939,18 @@ collections {
 	       rel1.offset: -5 0;
 	       rel2.offset: -5 -1;
 	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 128 128 128;
+	       visible: 0;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       color: 0 0 0 128;
+	       color3: 0 0 0 0;
+	       visible: 1;
+	       text.min: 1 1;
+	    }
 	 }
          part { name: "elm.dragable.slider";
             type: RECT;
@@ -13973,6 +14006,10 @@ collections {
                }
                fill.smooth: 0;
             }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 128;
+			}
          }
          part { name: "button1";
             mouse_events: 0;
@@ -14157,6 +14194,17 @@ collections {
 	       visible: 1;
             }
          }
+ 	 part { name: "disabler";
+	    type: RECT;
+	    description { state: "default" 0.0;
+	       color: 0 0 0 0;
+	       visible: 0;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       visible: 1;
+	    }
+	 }
       }
       programs {
 	 program { name: "text_show";
@@ -14252,6 +14300,69 @@ collections {
                thumb_up();
 	    }
 	 }
+         program {
+            name:    "go_disabled";
+            signal:  "elm,state,disabled";
+            source:  "elm";
+            action:  STATE_SET "disabled" 0.0;
+            target:  "button0";
+            target:  "disabler";
+            after: "disable_text";
+         }
+         program { name: "disable_text";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"elm.text", st, 30, vl);
+               if (!strcmp(st, "visible"))
+                  set_state(PART:"elm.text", "disabled_visible", 0.0);
+               else
+                  set_state(PART:"elm.text", "disabled", 0.0);
+
+               get_state(PART:"elm.units", st, 30, vl);
+               if (!strcmp(st, "visible")) 
+                  set_state(PART:"elm.units", "disabled_visible", 0.0);
+               else 
+                  set_state(PART:"elm.units", "disabled", 0.0);
+
+               get_state(PART:"level2", st, 30, vl);
+               if (!strcmp(st, "inverted")) 
+                  set_state(PART:"level2", "disabled_inverted", 0.0);
+               else 
+                  set_state(PART:"level2", "disabled", 0.0);
+            }
+         }
+         program { name: "enable";
+            signal: "elm,state,enabled";
+            source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "button0";
+            target: "disabler";
+            after: "enable_text";
+         }
+         program { name: "enable_text";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"elm.text", st, 30, vl);
+               if (!strcmp(st, "disabled_visible"))
+                  set_state(PART:"elm.text", "visible", 0.0);
+               else
+                  set_state(PART:"elm.text", "default", 0.0);
+
+               get_state(PART:"elm.units", st, 30, vl);
+               if (!strcmp(st, "disabled_visible"))
+                  set_state(PART:"elm.units", "visible", 0.0);
+               else
+                  set_state(PART:"elm.units", "default", 0.0);
+     
+               get_state(PART:"level2", st, 30, vl);
+               if (!strcmp(st, "visible"))
+                  set_state(PART:"level2", "visible", 0.0);
+               else
+                  set_state(PART:"level2", "default", 0.0);
+            }
+         }
       }
    }
 
@@ -14357,6 +14468,15 @@ collections {
                inherit: "default" 0.0;
                visible: 1;
             }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 100;
+            }
+            description { state: "disabled_inverted" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 100;
+               visible: 1;
+            }
          }
          part {
             name: "base_over";
@@ -14432,13 +14552,13 @@ collections {
 	    scale: 1;
 	    description { state: "default" 0.0;
 	       visible: 0;
-               fixed: 1 1;
+               fixed: 0 1;
                align: 0.5 0.0;
 	       rel1.to_y: "elm.swallow.icon";
-	       rel1.relative: 0.5 1.0;
+	       rel1.relative: 0.0 1.0;
                rel1.offset: 0 -1;
 	       rel2.to_y: "elm.swallow.icon";
-	       rel2.relative: 0.5 1.0;
+	       rel2.relative: 1.0 1.0;
 	       rel2.offset: -1 -1;
 	       color: 0 0 0 255;
 	       text {
@@ -14454,6 +14574,18 @@ collections {
 	       text.min: 1 1;
                rel1.offset: 4 0;
                rel2.offset: -5 0;
+	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color: 255 128 128 128;
+	       visible: 0;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       color: 0 0 0 128;
+	       color3: 0 0 0 0;
+	       visible: 1;
+	       text.min: 1 1;
 	    }
 	 }
 	 part {
@@ -14534,6 +14666,22 @@ collections {
 	       rel1.offset: 8 -9;
 	       rel2.offset: -9 -9;
 	    }
+	    description { state: "disabled" 0.0;
+	       inherit: "default" 0.0;
+	       color:  0 0 0 128;
+	       color3: 0 0 0 0;
+	       visible: 0;
+	    }
+	    description { state: "disabled_visible" 0.0;
+	       inherit: "default" 0.0;
+	       fixed: 1 1;
+	       visible: 1;
+	       text.min: 1 1;
+	       rel1.offset: 8 -9;
+	       rel2.offset: -9 -9;
+	       color: 0 0 0 128;
+	       color3: 0 0 0 0;
+	    }
 	 }
          part { name: "elm.dragable.slider";
             type: RECT;
@@ -14589,6 +14737,10 @@ collections {
                }
                fill.smooth: 0;
             }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 128 128 128 128;
+	        }
          }
          part { name: "button1";
             mouse_events: 0;
@@ -14772,7 +14924,19 @@ collections {
 	       visible: 1;
             }
          }
-      }
+ 	     part { name: "disabler";
+	        type: RECT;
+	        description { state: "default" 0.0;
+	           color: 0 0 0 0;
+	           visible: 0;
+	        }
+	        description { state: "disabled" 0.0;
+	           inherit: "default" 0.0;
+	           visible: 1;
+	        }
+	     }
+	  }
+
       programs {
 	 program { name: "text_show";
 	    signal: "elm,state,text,visible";
@@ -14864,6 +15028,70 @@ collections {
 	    source: "elm.dragable.slider";
 	    script {
                thumb_up();
+	    }
+	 }
+	 program {
+	    name:   "go_disabled";
+	    signal: "elm,state,disabled";
+	    source: "elm";
+	    action: STATE_SET "disabled" 0.0;
+	    target: "button0";
+	    target: "disabler";
+	    after: "disable_text";
+	 }
+	 program { name: "disable_text";
+	    script {
+	    new st[31];
+	    new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+	          set_state(PART:"elm.text", "disabled_visible", 0.0);
+	       else
+	          set_state(PART:"elm.text", "disabled", 0.0);
+
+	       get_state(PART:"elm.units", st, 30, vl);
+	       if (!strcmp(st, "visible")) 
+	          set_state(PART:"elm.units", "disabled_visible", 0.0);
+	       else 
+	          set_state(PART:"elm.units", "disabled", 0.0);
+
+	       get_state(PART:"level2", st, 30, vl);
+	       if (!strcmp(st, "inverted")) 
+	          set_state(PART:"level2", "disabled_inverted", 0.0);
+	       else 
+	          set_state(PART:"level2", "disabled", 0.0);
+	    }
+	 }
+
+	 program { name: "enable";
+	    signal: "elm,state,enabled";
+	    source: "elm";
+	    action: STATE_SET "default" 0.0;
+	    target: "button0";
+	    target: "disabler";
+	    after: "enable_text";
+	 }
+	 program { name: "enable_text";
+	    script {
+	       new st[31];
+	       new Float:vl;
+	       get_state(PART:"elm.text", st, 30, vl);
+	       if (!strcmp(st, "disabled_visible"))
+	          set_state(PART:"elm.text", "visible", 0.0);
+	       else
+	          set_state(PART:"elm.text", "default", 0.0);
+
+	       get_state(PART:"elm.units", st, 30, vl);
+	       if (!strcmp(st, "disabled_visible"))
+	          set_state(PART:"elm.units", "visible", 0.0);
+	       else
+	          set_state(PART:"elm.units", "default", 0.0);
+     
+	       get_state(PART:"level2", st, 30, vl);
+	       if (!strcmp(st, "visible"))
+	          set_state(PART:"level2", "visible", 0.0);
+	       else
+	          set_state(PART:"level2", "default", 0.0);
 	    }
 	 }
       }

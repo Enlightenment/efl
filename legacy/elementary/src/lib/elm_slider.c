@@ -64,6 +64,7 @@ struct _Widget_Data
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
+static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
@@ -223,6 +224,17 @@ _theme_hook(Evas_Object *obj)
    edje_object_scale_set(wd->slider, elm_widget_scale_get(obj) * _elm_config->scale);
    _val_set(obj);
    _sizing_eval(obj);
+}
+
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_disabled_get(obj))
+      edje_object_signal_emit(wd->slider, "elm,state,disabled", "elm");
+   else
+      edje_object_signal_emit(wd->slider, "elm,state,enabled", "elm");
 }
 
 static void
@@ -449,6 +461,7 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
 
