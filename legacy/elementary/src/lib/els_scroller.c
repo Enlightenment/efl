@@ -311,7 +311,7 @@ _smart_scrollto_x_animator(void *data)
         px = sd->scrollto.x.end;
         elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
         sd->scrollto.x.animator = NULL;
-        if (!sd->scrollto.y.animator)
+        if ((!sd->scrollto.y.animator) && (!sd->down.bounce_y_animator))
           _smart_anim_stop(sd->smart_obj);
         return ECORE_CALLBACK_CANCEL;
      }
@@ -376,7 +376,7 @@ _smart_scrollto_y_animator(void *data)
         py = sd->scrollto.y.end;
         elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
         sd->scrollto.y.animator = NULL;
-        if (!sd->scrollto.x.animator)
+        if ((!sd->scrollto.x.animator) && (!sd->down.bounce_x_animator))
           _smart_anim_stop(sd->smart_obj);
         return ECORE_CALLBACK_CANCEL;
      }
@@ -530,6 +530,9 @@ _smart_bounce_x_animator(void *data)
           {
              if (sd->down.momentum_animator)
                sd->down.bounce_x_hold = 1;
+             else if ((!sd->down.bounce_y_animator) && 
+                 (!sd->scrollto.y.animator))
+               _smart_anim_stop(sd->smart_obj);
              sd->down.bounce_x_animator = NULL;
              sd->down.pdx = 0;
              sd->bouncemex = 0;
@@ -564,6 +567,9 @@ _smart_bounce_y_animator(void *data)
           {
              if (sd->down.momentum_animator)
                sd->down.bounce_y_hold = 1;
+             else if ((!sd->down.bounce_x_animator) && 
+                 (!sd->scrollto.y.animator))
+               _smart_anim_stop(sd->smart_obj);
              sd->down.bounce_y_animator = NULL;
              sd->down.pdy = 0;
              sd->bouncemey = 0;
@@ -657,7 +663,7 @@ _smart_momentum_animator(void *data)
              y = py;
           }
 	elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
-	if (dt >= 1.0)
+	if (dt >= 1.0 || ((sd->down.bounce_x_hold) && (sd->down.bounce_y_hold)))
 	  {
              _smart_anim_stop(sd->smart_obj);
 	     sd->down.momentum_animator = NULL;
