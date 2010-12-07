@@ -1789,6 +1789,25 @@ typedef struct _Eet_Data_Descriptor         Eet_Data_Descriptor;
  */
 typedef struct _Eet_Data_Descriptor_Class   Eet_Data_Descriptor_Class;
 
+typedef int         (*Eet_Descriptor_Hash_Foreach_Callback_Callback)(void *h, const char *k, void *dt, void *fdt);
+  
+typedef void       *(*Eet_Descriptor_Mem_Alloc_Callback)(size_t size);
+typedef void        (*Eet_Descriptor_Mem_Free_Callback)(void *mem);
+typedef char       *(*Eet_Descriptor_Str_Alloc_Callback)(const char *str);
+typedef void        (*Eet_Descriptor_Str_Free_Callback)(const char *str);
+typedef void       *(*Eet_Descriptor_List_Next_Callback)(void *l);
+typedef void       *(*Eet_Descriptor_List_Append_Callback)(void *l, void *d);
+typedef void       *(*Eet_Descriptor_List_Data_Callback)(void *l);
+typedef void       *(*Eet_Descriptor_List_Free_Callback)(void *l);
+typedef void        (*Eet_Descriptor_Hash_Foreach_Callback)(void *h, Eet_Descriptor_Hash_Foreach_Callback_Callback func, void *fdt);
+typedef void       *(*Eet_Descriptor_Hash_Add_Callback)(void *h, const char *k, void *d);
+typedef void        (*Eet_Descriptor_Hash_Free_Callback)(void *h);
+typedef char       *(*Eet_Descriptor_Str_Direct_Alloc_Callback)(const char *str);
+typedef void        (*Eet_Descriptor_Str_Direct_Free_Callback)(const char *str);
+typedef const char *(*Eet_Descriptor_Type_Get_Callback)(const void *data, Eina_Bool *unknow);
+typedef Eina_Bool   (*Eet_Descriptor_Type_Set_Callback)(const char *type, void *data, Eina_Bool unknow);
+typedef void       *(*Eet_Descriptor_Array_Alloc_Callback)(size_t size);
+typedef void        (*Eet_Descriptor_Array_Free_Callback)(void *mem);
 /**
  * @struct _Eet_Data_Descriptor_Class
  *
@@ -1804,25 +1823,24 @@ struct _Eet_Data_Descriptor_Class
    int         version;  /**< ABI version as #EET_DATA_DESCRIPTOR_CLASS_VERSION */
    const char *name;  /**< Name of data type to be serialized */
    int         size;  /**< Size in bytes of data type to be serialized */
-   struct
-   {
-      void       *(*mem_alloc)(size_t size);  /**< how to allocate memory (usually malloc()) */
-      void        (*mem_free)(void *mem);   /**< how to free memory (usually free()) */
-      char       *(*str_alloc)(const char *str);   /**< how to allocate a string */
-      void        (*str_free)(const char *str);   /**< how to free a string */
-      void       *(*list_next)(void *l);   /**< how to iterate to the next element of a list. Receives and should return the list node. */
-      void       *(*list_append)(void *l, void *d);    /**< how to append data @p d to list which head node is @p l */
-      void       *(*list_data)(void *l);   /**< retrieves the data from node @p l */
-      void       *(*list_free)(void *l);   /**< free all the nodes from the list which head node is @p l */
-      void        (*hash_foreach)(void *h, int (*func)(void *h, const char *k, void *dt, void *fdt), void *fdt); /**< iterates over all elements in the hash @p h in no specific order */
-      void       *(*hash_add)(void *h, const char *k, void *d);     /**< add a new data @p d as key @p k in hash @p h */
-      void        (*hash_free)(void *h);   /**< free all entries from the hash @p h */
-      char       *(*str_direct_alloc)(const char *str);   /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
-      void        (*str_direct_free)(const char *str);   /**< how to free a string returned by str_direct_alloc */
-      const char *(*type_get)(const void *data, Eina_Bool *unknow);    /**< convert any kind of data type to a name that define an Eet_Data_Element. */
-      Eina_Bool   (*type_set)(const char *type, void *data, Eina_Bool unknow);    /**< set the type at a particular address */
-      void       *(*array_alloc)(size_t size); /**< how to allocate memory for array (usually malloc()) */
-      void        (*array_free)(void *mem); /**< how to free memory for array (usually free()) */
+   struct {
+     Eet_Descriptor_Mem_Alloc_Callback mem_alloc; /**< how to allocate memory (usually malloc()) */
+     Eet_Descriptor_Mem_Free_Callback mem_free; /**< how to free memory (usually free()) */
+     Eet_Descriptor_Str_Alloc_Callback str_alloc; /**< how to allocate a string */
+     Eet_Descriptor_Str_Free_Callback str_free; /**< how to free a string */
+     Eet_Descriptor_List_Next_Callback list_next; /**< how to iterate to the next element of a list. Receives and should return the list node. */
+     Eet_Descriptor_List_Append_Callback list_append; /**< how to append data @p d to list which head node is @p l */
+     Eet_Descriptor_List_Data_Callback list_data; /**< retrieves the data from node @p l */
+     Eet_Descriptor_List_Free_Callback list_free; /**< free all the nodes from the list which head node is @p l */
+     Eet_Descriptor_Hash_Foreach_Callback hash_foreach; /**< iterates over all elements in the hash @p h in no specific order */
+     Eet_Descriptor_Hash_Add_Callback hash_add; /**< add a new data @p d as key @p k in hash @p h */
+     Eet_Descriptor_Hash_Free_Callback hash_free; /**< free all entries from the hash @p h */
+     Eet_Descriptor_Str_Direct_Alloc_Callback str_direct_alloc; /**< how to allocate a string directly from file backed/mmaped region pointed by @p str */
+     Eet_Descriptor_Str_Direct_Free_Callback str_direct_free; /**< how to free a string returned by str_direct_alloc */
+     Eet_Descriptor_Type_Get_Callback type_get; /**< convert any kind of data type to a name that define an Eet_Data_Element. */
+     Eet_Descriptor_Type_Set_Callback type_set; /**< set the type at a particular address */
+     Eet_Descriptor_Array_Alloc_Callback array_alloc; /**< how to allocate memory for array (usually malloc()) */
+     Eet_Descriptor_Array_Free_Callback array_free; /**< how to free memory for array (usually free()) */
    } func;
 };
 
@@ -1830,6 +1848,7 @@ struct _Eet_Data_Descriptor_Class
  * @}
  */
 
+  
 /**
  * Create a new empty data structure descriptor.
  * @param name The string name of this data structure (most be a
@@ -1871,16 +1890,13 @@ struct _Eet_Data_Descriptor_Class
 EINA_DEPRECATED EAPI Eet_Data_Descriptor *
 eet_data_descriptor_new(const char *name,
                         int size,
-                        void *(*func_list_next)(void *l),
-                        void *(*func_list_append)(void *l, void *d),
-                        void *(*func_list_data)(void *l),
-                        void *(*func_list_free)(void *l),
-                        void (*func_hash_foreach)(void *h, int (*func)(void       *h,
-                                                                       const char *k,
-                                                                       void       *dt,
-                                                                       void       *fdt), void *fdt),
-                        void *(*func_hash_add)(void *h, const char *k, void *d),
-                        void (*func_hash_free)(void *h));
+                        Eet_Descriptor_List_Next_Callback func_list_next,
+                        Eet_Descriptor_List_Append_Callback func_list_append,
+                        Eet_Descriptor_List_Data_Callback func_list_data,
+                        Eet_Descriptor_List_Free_Callback func_list_free,
+                        Eet_Descriptor_Hash_Foreach_Callback func_hash_foreach,
+                        Eet_Descriptor_Hash_Add_Callback func_hash_add,
+                        Eet_Descriptor_Hash_Free_Callback func_hash_free);
 /*
  * FIXME:
  *
@@ -2130,6 +2146,8 @@ eet_data_write(Eet_File            *ef,
                const void          *data,
                int                  compress);
 
+typedef void (*Eet_Dump_Callback)(void *data, const char *str);
+
 /**
  * Dump an eet encoded data structure into ascii text
  * @param data_in The pointer to the data to decode into a struct.
@@ -2180,7 +2198,7 @@ eet_data_write(Eet_File            *ef,
 EAPI int
 eet_data_text_dump(const void  *data_in,
                    int          size_in,
-                   void       (*dumpfunc)(void *data, const char *str),
+                   Eet_Dump_Callback dumpfunc,
                    void        *dumpdata);
 
 /**
@@ -2233,7 +2251,7 @@ eet_data_text_undump(const char *text,
 EAPI int
 eet_data_dump(Eet_File    *ef,
               const char  *name,
-              void       (*dumpfunc)(void *data, const char *str),
+              Eet_Dump_Callback dumpfunc,
               void        *dumpdata);
 
 /**
@@ -2762,7 +2780,7 @@ EAPI int
 eet_data_text_dump_cipher(const void *data_in,
                           const char *cipher_key,
                           int size_in,
-                          void (*dumpfunc)(void *data, const char *str),
+                          Eet_Dump_Callback dumpfunc,
                           void *dumpdata);
 
 /**
@@ -2821,7 +2839,7 @@ EAPI int
 eet_data_dump_cipher(Eet_File    *ef,
                      const char  *name,
                      const char  *cipher_key,
-                     void       (*dumpfunc)(void *data, const char *str),
+                     Eet_Dump_Callback dumpfunc,
                      void        *dumpdata);
 
 /**
@@ -3162,7 +3180,7 @@ eet_node_hash_add(Eet_Node   *parent,
 EAPI void
 eet_node_dump(Eet_Node  *n,
               int        dumplevel,
-              void     (*dumpfunc)(void *data, const char *str),
+              Eet_Dump_Callback dumpfunc,
               void      *dumpdata);
 
 /**
@@ -3218,20 +3236,29 @@ eet_data_node_write_cipher(Eet_File   *ef,
  */
 typedef struct _Eet_Node_Walk   Eet_Node_Walk;
 
+typedef void *(*Eet_Node_Walk_Struct_Alloc_Callback)(const char *type, void *user_data);
+typedef void  (*Eet_Node_Walk_Struct_Add_Callback)(void *parent, const char *name, void *child, void *user_data);
+typedef void *(*Eet_Node_Walk_Array_Callback)(Eina_Bool variable, const char *name, int count, void *user_data);
+typedef void  (*Eet_Node_Walk_Insert_Callback)(void *array, int index, void *child, void *user_data);
+typedef void *(*Eet_Node_Walk_List_Callback)(const char *name, void *user_data);
+typedef void  (*Eet_Node_Walk_Append_Callback)(void *list, void *child, void *user_data);
+typedef void *(*Eet_Node_Walk_Hash_Callback)(void *parent, const char *name, const char *key, void *value, void *user_data);
+typedef void *(*Eet_Node_Walk_Simple_Callback)(int type, Eet_Node_Data *data, void *user_data);
+  
 /**
  * @struct _Eet_Node_Walk
  * Describes how to walk trees of #Eet_Node.
  */
 struct _Eet_Node_Walk
 {
-   void *(*struct_alloc) (const char *type, void *user_data);
-   void  (*struct_add) (void *parent, const char *name, void *child, void *user_data);
-   void *(*array) (Eina_Bool variable, const char *name, int count, void *user_data);
-   void  (*insert) (void *array, int index, void *child, void *user_data);
-   void *(*list) (const char *name, void *user_data);
-   void  (*append) (void *list, void *child, void *user_data);
-   void *(*hash) (void *parent, const char *name, const char *key, void *value, void *user_data);
-   void *(*simple) (int type, Eet_Node_Data *data, void *user_data);
+   Eet_Node_Walk_Struct_Alloc_Callback struct_alloc;
+   Eet_Node_Walk_Struct_Add_Callback struct_add;
+   Eet_Node_Walk_Array_Callback array;
+   Eet_Node_Walk_Insert_Callback insert;
+   Eet_Node_Walk_List_Callback list;
+   Eet_Node_Walk_Append_Callback append;
+   Eet_Node_Walk_Hash_Callback hash;
+   Eet_Node_Walk_Simple_Callback simple;
 };
 
 EAPI void *

@@ -1789,13 +1789,13 @@ _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc,
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor_new(const char *name,
                         int size,
-                        void *(*func_list_next)(void *l),
-                        void *(*func_list_append)(void *l, void *d),
-                        void *(*func_list_data)(void *l),
-                        void *(*func_list_free)(void *l),
-                        void (*func_hash_foreach)(void *h, int (*func)(void *h, const char *k, void *dt, void *fdt), void *fdt),
-                        void *(*func_hash_add)(void *h, const char *k, void *d),
-                        void (*func_hash_free)(void *h))
+                        Eet_Descriptor_List_Next_Callback func_list_next,
+                        Eet_Descriptor_List_Append_Callback func_list_append,
+                        Eet_Descriptor_List_Data_Callback func_list_data,
+                        Eet_Descriptor_List_Free_Callback func_list_free,
+                        Eet_Descriptor_Hash_Foreach_Callback func_hash_foreach,
+                        Eet_Descriptor_Hash_Add_Callback func_hash_add,
+                        Eet_Descriptor_Hash_Free_Callback func_hash_free)
 {
    Eet_Data_Descriptor_Class eddc;
 
@@ -4440,7 +4440,7 @@ EAPI int
 eet_data_dump_cipher(Eet_File *ef,
                      const char *name,
                      const char *cipher_key,
-                     void (*dumpfunc)(void *data, const char *str),
+                     Eet_Dump_Callback dumpfunc,
                      void *dumpdata)
 {
    const Eet_Dictionary *ed = NULL;
@@ -4480,7 +4480,7 @@ eet_data_dump_cipher(Eet_File *ef,
 EAPI int
 eet_data_dump(Eet_File *ef,
               const char *name,
-              void (*dumpfunc)(void *data, const char *str),
+              Eet_Dump_Callback dumpfunc,
               void *dumpdata)
 {
    return eet_data_dump_cipher(ef, name, NULL, dumpfunc, dumpdata);
@@ -4490,7 +4490,7 @@ EAPI int
 eet_data_text_dump_cipher(const void *data_in,
                           const char *cipher_key,
                           int size_in,
-                          void (*dumpfunc)(void *data, const char *str),
+                          Eet_Dump_Callback dumpfunc,
                           void *dumpdata)
 {
    void *ret = NULL;
@@ -4534,7 +4534,7 @@ eet_data_text_dump_cipher(const void *data_in,
 EAPI int
 eet_data_text_dump(const void *data_in,
                    int size_in,
-                   void (*dumpfunc)(void *data, const char *str),
+                   Eet_Dump_Callback dumpfunc,
                    void *dumpdata)
 {
    return eet_data_text_dump_cipher(data_in, NULL, size_in, dumpfunc, dumpdata);

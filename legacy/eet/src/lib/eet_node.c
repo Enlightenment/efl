@@ -403,7 +403,7 @@ static const char *eet_node_dump_t_name[14][2] = {
 
 static void
 eet_node_dump_level(int level,
-                    void (*dumpfunc)(void *data, const char *str),
+                    Eet_Dump_Callback dumpfunc,
                     void *dumpdata)
 {
    int i;
@@ -454,7 +454,7 @@ eet_node_string_escape(const char *str)
 
 static void
 eet_node_dump_string_escape(void *dumpdata,
-                            void dumpfunc(void *data, const char *str),
+                            Eet_Dump_Callback dumpfunc,
                             const char *str)
 {
    char *s;
@@ -469,7 +469,7 @@ eet_node_dump_string_escape(void *dumpdata,
 
 static void
 eet_node_dump_simple_type(Eet_Node *n, int level,
-                          void (*dumpfunc)(void *data, const char *str),
+                          Eet_Dump_Callback dumpfunc,
                           void *dumpdata)
 {
    const char *type_name = NULL;
@@ -535,7 +535,7 @@ eet_node_dump_simple_type(Eet_Node *n, int level,
 
 static void
 eet_node_dump_group_start(int level,
-                          void (*dumpfunc)(void *data, const char *str),
+                          Eet_Dump_Callback dumpfunc,
                           void *dumpdata,
                           int group_type,
                           const char *name)
@@ -556,7 +556,7 @@ eet_node_dump_group_start(int level,
 
 static void
 eet_node_dump_group_end(int level,
-                        void (*dumpfunc)(void *data, const char *str),
+                        Eet_Dump_Callback dumpfunc,
                         void *dumpdata)
 {
    eet_node_dump_level(level, dumpfunc, dumpdata);
@@ -566,7 +566,7 @@ eet_node_dump_group_end(int level,
 void
 eet_node_dump(Eet_Node *n,
               int dumplevel,
-              void (*dumpfunc)(void *data, const char *str),
+              Eet_Dump_Callback dumpfunc,
               void *dumpdata)
 {
    Eet_Node *it;

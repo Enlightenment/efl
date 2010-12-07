@@ -473,3 +473,8 @@
 
 	* Improve portability.
 
+2010-12-07  Carsten Haitzler (The Rasterman)
+
+	* Move raw function pointer defs to typedefs in public API for
+        readability improvements.
+
