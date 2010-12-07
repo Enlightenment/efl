@@ -71,7 +71,6 @@ static void _color_with_lightness(void *data);
 static void _draw_rects(void *data, double x);
 static void _arrow_cb(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _colorbar_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _arrow_resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool _mv_timer(void *data);
 static Eina_Bool _long_press_timer(void *data);
 static void _left_button_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -139,12 +138,38 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
+_colorselector_set_size_hints(Evas_Object *obj, int timesw, int timesh)
+{
+   Evas_Coord minw = -1, minh = -1;
+
+   elm_coords_finger_size_adjust(timesw, &minw, timesh, &minh);
+   edje_object_size_min_restricted_calc(obj, &minw, &minh,
+                                        minw, minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
+   int i;
 
    if (!wd) return;
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   for (i = 0; i < 4; i++)
+     {
+        if (wd->cp[i]->bg_rect)
+             _colorselector_set_size_hints(wd->cp[i]->bg_rect, 1, 1);
+        _colorselector_set_size_hints(wd->cp[i]->bar, 1, 1);
+        _colorselector_set_size_hints(wd->cp[i]->rbt, 1, 1);
+        _colorselector_set_size_hints(wd->cp[i]->lbt, 1, 1);
+
+        _colorselector_set_size_hints(wd->cp[i]->colorbar, 4, 1);
+
+     }
+
    elm_coords_finger_size_adjust(4, &minw, 4, &minh);
    edje_object_size_min_restricted_calc(wd->base, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -438,19 +463,6 @@ _colorbar_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
    evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
 }
 
-static void
-_arrow_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Colorselector_Data *cp = data;
-   Evas_Coord arrow_w, arrow_h;
-
-   evas_object_geometry_get(cp->touch_area, NULL, NULL, NULL, &arrow_h);
-   evas_object_geometry_get(cp->arrow, NULL, NULL, &arrow_w, NULL);
-
-   evas_object_size_hint_min_set(cp->arrow, arrow_w, arrow_h);
-   evas_object_size_hint_max_set(cp->arrow, arrow_w, arrow_h);
-}
-
 static Eina_Bool
 _mv_timer(void *data)
 {
@@ -680,9 +692,6 @@ _add_colorbar(Evas_Object *obj)
 	evas_object_event_callback_add(wd->cp[i]->touch_area,
 				       EVAS_CALLBACK_MOUSE_DOWN, _colorbar_cb,
 				       wd->cp[i]);
-	evas_object_event_callback_add(wd->cp[i]->touch_area,
-				       EVAS_CALLBACK_RESIZE, _arrow_resize_cb,
-				       wd->cp[i]);
 	evas_object_show(wd->cp[i]->touch_area);
 	elm_widget_sub_object_add(obj, wd->cp[i]->touch_area);
 
@@ -715,10 +724,8 @@ _add_colorbar(Evas_Object *obj)
 	_elm_theme_object_set(obj, wd->cp[i]->arrow, "colorselector", "image",
 			      "updown");
 	evas_object_show(wd->cp[i]->arrow);
-	edje_object_part_swallow(wd->cp[i]->colorbar, "elm.arrow",
+	edje_object_part_swallow(wd->cp[i]->colorbar, "elm.arrow_icon",
 				 wd->cp[i]->arrow);
-	evas_object_event_callback_add(wd->cp[i]->arrow, EVAS_CALLBACK_RESIZE,
-				       _arrow_resize_cb, wd->cp[i]);
 	elm_widget_sub_object_add(obj, wd->cp[i]->arrow);
 	if (i == 2)
 	  evas_object_color_set(wd->cp[i]->arrow, 0, 0, 0, 255);
