@@ -149,12 +149,12 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 
    if (elm_widget_focus_get(obj))
      {
-	edje_object_signal_emit(wd->list, "elm,action,focus", "elm");
+	elm_object_signal_emit(wd->list, "elm,action,focus", "elm");
 	evas_object_focus_set(wd->list, EINA_TRUE);
      }
    else
      {
-	edje_object_signal_emit(wd->list, "elm,action,unfocus", "elm");
+	elm_object_signal_emit(wd->list, "elm,action,unfocus", "elm");
 	evas_object_focus_set(wd->list, EINA_FALSE);
      }
 }
