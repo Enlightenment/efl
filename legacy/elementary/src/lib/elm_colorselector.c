@@ -123,7 +123,7 @@ _theme_hook(Evas_Object *obj)
 	wd->cp[i]->lbt = NULL;
 	evas_object_del(wd->cp[i]->rbt);
 	wd->cp[i]->rbt = NULL;
-	if ((i == 1) || (i == 2))
+	if (i != 0)
 	  {
 	     evas_object_del(wd->cp[i]->bg_rect);
 	     wd->cp[i]->bg_rect = NULL;
