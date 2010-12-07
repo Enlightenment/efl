@@ -2227,7 +2227,7 @@ elm_genlist_add(Evas_Object *parent)
    wd->mode = ELM_LIST_SCROLL;
    wd->max_items_per_block = MAX_ITEMS_PER_BLOCK;
    wd->item_cache_max = wd->max_items_per_block * 2;
-   wd->longpress_timeout = LONGPRESS_TIMEOUT;
+   wd->longpress_timeout = _elm_config->longpress_timeout;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);

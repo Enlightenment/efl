@@ -783,7 +783,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
      evas_object_smart_callback_call(item->wd->self, "clicked", item);
    if (item->long_timer) ecore_timer_del(item->long_timer);
    if (item->realized)
-     item->long_timer = ecore_timer_add(1.0, _long_press, item);
+     item->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, item);
    else
      item->long_timer = NULL;
 }

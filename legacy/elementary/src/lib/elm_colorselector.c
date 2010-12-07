@@ -532,7 +532,7 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
    cp->button_state = L_BUTTON_PRESSED;
    if (wd->lp_timer) ecore_timer_del(wd->lp_timer);
-   wd->lp_timer = ecore_timer_add(1.0, _long_press_timer, cp);
+   wd->lp_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press_timer, cp);
 }
 
 static void
@@ -570,7 +570,7 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    _draw_rects(data, x);
    evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
    cp->button_state = R_BUTTON_PRESSED;
-   wd->lp_timer = ecore_timer_add(1.0, _long_press_timer, cp);
+   wd->lp_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press_timer, cp);
 }
 
 static void

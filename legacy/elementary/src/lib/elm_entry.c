@@ -834,7 +834,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    if (ev->button != 1) return;
    //   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
    if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
-   wd->longpress_timer = ecore_timer_add(1.0, _long_press, data);
+   wd->longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
    wd->downx = ev->canvas.x;
    wd->downy = ev->canvas.y;
 }
@@ -1517,7 +1517,7 @@ _get_item(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__,
      }
    if (!strncmp(item, "file://", 7))
      {
-        char *fname = item + 7;
+        const char *fname = item + 7;
        
         o = evas_object_image_filled_add(evas_object_evas_get(data));
         evas_object_image_file_set(o, fname, NULL);
