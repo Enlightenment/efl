@@ -351,6 +351,7 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
 /**
  * @defgroup Widget Widget
  *
+ * @internal
  * Exposed api for making widgets
  */
 EAPI void
@@ -505,6 +506,8 @@ elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force)
 }
 
 /**
+ * @internal
+ *
  * Set hook to get next object in object focus chain.
  *
  * @param obj The widget object.
@@ -543,9 +546,9 @@ elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, E
    sd->on_show_region_data = data;
 }
 
-// kill these documented calls! dont want them documented! elm_widget is
-// internal (or for those willing to risk using the nstable elm_widget.h api)
 /**
+ * @internal
+ *
  * Set the hook to use to show the focused region.
  *
  * Whenever a new widget gets focused or it's needed to show the focused
@@ -566,6 +569,8 @@ elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func) (Evas_Object *ob
 }
 
 /**
+ * @internal
+ *
  * Set the hook to retrieve the focused region of a widget.
  *
  * This hook will be called by elm_widget_focus_region_get() whenever
@@ -969,6 +974,8 @@ elm_widget_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *even
 }
 
 /**
+ * @internal
+ *
  * Set custom focus chain.
  *
  * This function i set one new and overwrite any previous custom focus chain
@@ -1003,6 +1010,8 @@ elm_widget_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs)
 }
 
 /**
+ * @internal
+ *
  * Get custom focus chain
  *
  * @param obj The container widget
@@ -1016,6 +1025,8 @@ elm_widget_focus_custom_chain_get(const Evas_Object *obj)
 }
 
 /**
+ * @internal
+ *
  * Unset custom focus chain
  *
  * @param obj The container widget
@@ -1037,6 +1048,8 @@ elm_widget_focus_custom_chain_unset(Evas_Object *obj)
 }
 
 /**
+ * @internal
+ *
  * Append object to custom focus chain.
  *
  * @note If relative_child equal to NULL or not in custom chain, the object
@@ -1071,6 +1084,8 @@ elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_
 }
 
 /**
+ * @internal
+ *
  * Prepend object to custom focus chain.
  *
  * @note If relative_child equal to NULL or not in custom chain, the object
@@ -1105,6 +1120,8 @@ elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas
 }
 
 /**
+ * @internal
+ *
  * Give focus to next object in object tree.
  *
  * Give focus to next object in focus chain of one object sub-tree.
@@ -1128,6 +1145,8 @@ elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
 }
 
 /**
+ * @internal
+ *
  * Give focus to near object in one direction.
  *
  * Give focus to near object in direction of one object.
@@ -1146,6 +1165,8 @@ elm_widget_focus_direction_go(Evas_Object *obj __UNUSED__, int x __UNUSED__, int
 }
 
 /**
+ * @internal
+ *
  * Get next object in focus chain of object tree.
  *
  * Get next object in focus chain of one object sub-tree.
@@ -1187,6 +1208,8 @@ elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
 
 
 /**
+ * @internal
+ *
  * Get next object in focus chain of object tree in list.
  *
  * Get next object in focus chain of one object sub-tree ordered by one list.
@@ -1733,6 +1756,8 @@ elm_widget_show_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
 }
 
 /**
+ * @internal
+ *
  * Get the focus region of the given widget.
  *
  * The focus region is the area of a widget that should brought into the
@@ -2020,12 +2045,15 @@ elm_widget_type_check(const Evas_Object *obj, const char *type)
 }
 
 /**
+ * @internal
+ *
  * Split string in words
  *
  * @param str Source string
  * @return List of const words
  *
  * @see elm_widget_stringlist_free()
+ * @ingroup Widget
  */
 EAPI Eina_List *
 elm_widget_stringlist_get(const char *str)
@@ -2060,6 +2088,8 @@ elm_widget_stringlist_free(Eina_List *list)
 }
 
 /**
+ * @internal
+ *
  * Allocate a new Elm_Widget_Item-derived structure.
  *
  * The goal of this structure is to provide common ground for actions
@@ -2074,6 +2104,7 @@ elm_widget_stringlist_free(Eina_List *list)
  *
  * @see elm_widget_item_new() convenience macro.
  * @see elm_widget_item_del() to release memory.
+ * @ingroup Widget
  */
 EAPI Elm_Widget_Item *
 _elm_widget_item_new(Evas_Object *widget, size_t alloc_size)
@@ -2095,6 +2126,8 @@ _elm_widget_item_new(Evas_Object *widget, size_t alloc_size)
 }
 
 /**
+ * @internal
+ *
  * Releases widget item memory, calling back del_cb() if it exists.
  *
  * If there is a Elm_Widget_Item::del_cb, then it will be called prior
@@ -2108,6 +2141,7 @@ _elm_widget_item_new(Evas_Object *widget, size_t alloc_size)
  *
  * @param item a valid #Elm_Widget_Item to be deleted.
  * @see elm_widget_item_del() convenience macro.
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_del(Elm_Widget_Item *item)
@@ -2125,6 +2159,8 @@ _elm_widget_item_del(Elm_Widget_Item *item)
 }
 
 /**
+ * @internal
+ *
  * Notify object will be deleted without actually deleting it.
  *
  * This function will callback Elm_Widget_Item::del_cb if it is set
@@ -2133,6 +2169,7 @@ _elm_widget_item_del(Elm_Widget_Item *item)
  *
  * @param item a valid #Elm_Widget_Item to be notified
  * @see elm_widget_item_pre_notify_del() convenience macro.
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_pre_notify_del(Elm_Widget_Item *item)
@@ -2144,6 +2181,8 @@ _elm_widget_item_pre_notify_del(Elm_Widget_Item *item)
 }
 
 /**
+ * @internal
+ *
  * Set the function to notify when item is being deleted.
  *
  * This function will complain if there was a callback set already,
@@ -2157,6 +2196,7 @@ _elm_widget_item_pre_notify_del(Elm_Widget_Item *item)
  *
  * @param item a valid #Elm_Widget_Item to be notified
  * @see elm_widget_item_del_cb_set() convenience macro.
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb)
@@ -2171,6 +2211,8 @@ _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb)
 }
 
 /**
+ * @internal
+ *
  * Set user-data in this item.
  *
  * User data may be used to identify this item or just store any
@@ -2180,6 +2222,7 @@ _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb)
  * @param item a valid #Elm_Widget_Item to store data in.
  * @param data user data to store.
  * @see elm_widget_item_del_cb_set() convenience macro.
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_data_set(Elm_Widget_Item *item, const void *data)
@@ -2191,10 +2234,13 @@ _elm_widget_item_data_set(Elm_Widget_Item *item, const void *data)
 }
 
 /**
+ * @internal
+ *
  * Retrieves user-data of this item.
  *
  * @param item a valid #Elm_Widget_Item to get data from.
  * @see elm_widget_item_data_set()
+ * @ingroup Widget
  */
 EAPI void *
 _elm_widget_item_data_get(const Elm_Widget_Item *item)
@@ -2231,6 +2277,8 @@ _elm_widget_item_tooltip_label_del_cb(void *data, Evas_Object *obj __UNUSED__, v
 }
 
 /**
+ * @internal
+ *
  * Set the text to be shown in the widget item.
  *
  * @param item Target item
@@ -2239,7 +2287,7 @@ _elm_widget_item_tooltip_label_del_cb(void *data, Evas_Object *obj __UNUSED__, v
  * Setup the text as tooltip to object. The item can have only one tooltip,
  * so any previous tooltip data is removed.
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text)
@@ -2269,6 +2317,8 @@ _elm_widget_item_tooltip_del_cb(void *data, Evas_Object *obj, void *event_info _
 }
 
 /**
+ * @internal
+ *
  * Set the content to be shown in the tooltip item
  *
  * Setup the tooltip to item. The item can have only one tooltip,
@@ -2286,7 +2336,7 @@ _elm_widget_item_tooltip_del_cb(void *data, Evas_Object *obj, void *event_info _
  *        dies. This callback receives as the first parameter the
  *        given @a data, and @c event_info is the item.
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
@@ -2322,6 +2372,8 @@ _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_
 }
 
 /**
+ * @internal
+ *
  * Unset tooltip from item
  *
  * @param item widget item to remove previously set tooltip.
@@ -2332,7 +2384,7 @@ _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_
  *
  * @see elm_widget_item_tooltip_content_cb_set()
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_tooltip_unset(Elm_Widget_Item *item)
@@ -2342,6 +2394,8 @@ _elm_widget_item_tooltip_unset(Elm_Widget_Item *item)
 }
 
 /**
+ * @internal
+ *
  * Sets a different style for this item tooltip.
  *
  * @note before you set a style you should define a tooltip with
@@ -2351,7 +2405,7 @@ _elm_widget_item_tooltip_unset(Elm_Widget_Item *item)
  * @param item widget item with tooltip already set.
  * @param style the theme style to use (default, transparent, ...)
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style)
@@ -2361,13 +2415,15 @@ _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item, const char *style)
 }
 
 /**
+ * @internal
+ *
  * Get the style for this item tooltip.
  *
  * @param item widget item with tooltip already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a tooltip set, then NULL is returned.
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI const char *
 _elm_widget_item_tooltip_style_get(const Elm_Widget_Item *item)
@@ -2398,6 +2454,8 @@ _elm_widget_item_cursor_unset(Elm_Widget_Item *item)
 }
 
 /**
+ * @internal
+ *
  * Sets a different style for this item cursor.
  *
  * @note before you set a style you should define a cursor with
@@ -2406,7 +2464,7 @@ _elm_widget_item_cursor_unset(Elm_Widget_Item *item)
  * @param item widget item with cursor already set.
  * @param style the theme style to use (default, transparent, ...)
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style)
@@ -2416,13 +2474,15 @@ _elm_widget_item_cursor_style_set(Elm_Widget_Item *item, const char *style)
 }
 
 /**
+ * @internal
+ *
  * Get the style for this item cursor.
  *
  * @param item widget item with cursor already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a cursor set, then NULL is returned.
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI const char *
 _elm_widget_item_cursor_style_get(const Elm_Widget_Item *item)
@@ -2432,6 +2492,8 @@ _elm_widget_item_cursor_style_get(const Elm_Widget_Item *item)
 }
 
 /**
+ * @internal
+ *
  * Set if the cursor set should be searched on the theme or should use
  * the provided by the engine, only.
  *
@@ -2443,7 +2505,7 @@ _elm_widget_item_cursor_style_get(const Elm_Widget_Item *item)
  * @param engine_only boolean to define it cursors should be looked only
  * between the provided by the engine or searched on widget's theme as well.
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI void
 _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_only)
@@ -2453,6 +2515,8 @@ _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_
 }
 
 /**
+ * @internal
+ *
  * Get the cursor engine only usage for this item cursor.
  *
  * @param item widget item with cursor already set.
@@ -2460,7 +2524,7 @@ _elm_widget_item_cursor_engine_only_set(Elm_Widget_Item *item, Eina_Bool engine_
  * between the provided by the engine or searched on widget's theme as well. If
  *         the object does not have a cursor set, then EINA_FALSE is returned.
  *
- * @internal
+ * @ingroup Widget
  */
 EAPI Eina_Bool
 _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item)
