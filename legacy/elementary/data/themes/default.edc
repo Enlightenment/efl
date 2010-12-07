@@ -7402,10 +7402,6 @@ collections {
             action: STATE_SET "bottom-left" 0.0;
             target: "arrow";
             target: "button_image";
-            after: "blah";
-         }
-         program { name: "blah";
-            action: SIGNAL_EMIT "elm,action,fuckyou" "blah";
          }
          program { name: "left-show";
             signal: "elm,action,slot,left,show";
