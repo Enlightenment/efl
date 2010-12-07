@@ -24,7 +24,8 @@
  * changed - emitted when the user selects a day or changes the displayed
  * month, what actually changes the selected day as well.
  */
-typedef enum _Day_Color
+
+typedef enum _Day_Color // EINA_DEPRECATED
 {
   DAY_WEEKDAY = 0,
   DAY_SATURDAY = 1,
@@ -44,7 +45,7 @@ struct _Widget_Data
    char * (*format_func) (struct tm *stime);
    const char *weekdays[7];
    struct tm current_time, selected_time;
-   Day_Color day_color[42];
+   Day_Color day_color[42]; // EINA_DEPRECATED
    Eina_Bool selection_enabled : 1;
 };
 
@@ -177,6 +178,7 @@ _weekday_get(int first_week_day, int day)
    return (day + first_week_day - 1) % 7;
 }
 
+// EINA_DEPRECATED
 static void
 _text_day_color_update(Widget_Data *wd, int pos)
 {
@@ -200,6 +202,7 @@ _text_day_color_update(Widget_Data *wd, int pos)
    edje_object_signal_emit(wd->calendar, emission, "elm");
 }
 
+// EINA_DEPRECATED
 static void
 _text_day_color_set(Widget_Data *wd, Day_Color col, int pos)
 {
@@ -290,7 +293,7 @@ _populate(Evas_Object *obj)
   
    for (i = 0; i < 42; i++)
      {
-        _text_day_color_update(wd, i);
+        _text_day_color_update(wd, i); // EINA_DEPRECATED
 	if ((!day) && (i == first_day.tm_wday)) day = 1;
 
 	if ((day == wd->current_time.tm_mday)
@@ -1195,13 +1198,20 @@ elm_calendar_marks_draw(Evas_Object *obj)
 
 /**
  * Set a text color to the saturday color.
- *
+ * 
+ * Deprecated. use elm_calendar_mark_add() instead like:
+ * 
+ * @code
+ * struct tm t = { 0, 0, 12, 6, 0, 0, 5, 5, -1 };
+ * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
+ * @endcode
+ * 
  * @param obj The calendar object
  * @param pos The text position
  *
  * @ingroup Calendar
  */
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
 {
   ELM_CHECK_WIDTYPE(obj, widtype);
@@ -1213,12 +1223,19 @@ elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
 /**
  * Set a text color to the sunday color.
  *
+ * Deprecated. use elm_calendar_mark_add() instead like:
+ * 
+ * @code
+ * struct tm t = { 0, 0, 12, 7, 0, 0, 6, 6, -1 };
+ * elm_calendar_mark_add(obj, "sun", &t, ELM_CALENDAR_WEEKLY);
+ * @endcode
+ * 
  * @param obj The calendar object
  * @param pos The text position
  *
  * @ingroup Calendar
  */
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
 {
   ELM_CHECK_WIDTYPE(obj, widtype);
@@ -1230,12 +1247,28 @@ elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
 /**
  * Set a text color to the weekday color.
  *
+ * Deprecated. use elm_calendar_mark_add() instead like:
+ * 
+ * @code
+ * struct tm t = { 0, 0, 12, 1, 0, 0, 0, 0, -1 };
+ * 
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // monday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // tuesday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // wednesday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // thursday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // friday
+ * @endcode
+ * 
  * @param obj The calendar object
  * @param pos The text position
  *
  * @ingroup Calendar
  */
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos)
 {
   ELM_CHECK_WIDTYPE(obj, widtype);

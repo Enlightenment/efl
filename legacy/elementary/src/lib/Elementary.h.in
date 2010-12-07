@@ -2335,9 +2335,9 @@ extern "C" {
    EAPI void         elm_calendar_marks_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List *elm_calendar_marks_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_calendar_marks_draw(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-   EAPI void         elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
 
    /* smart callbacks called:
     * changed - emitted when the user select a day or change the displayed
