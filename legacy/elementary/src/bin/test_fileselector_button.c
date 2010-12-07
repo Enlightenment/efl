@@ -31,10 +31,10 @@ static void
 _current_sel_toggle(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs_bt = data;
-   Eina_Bool value = elm_fileselector_button_folder_only_get(fs_bt);
-   elm_fileselector_button_folder_only_set(fs_bt, !value);
-   printf("Current selection entry display set to: %s\n",
-	  value ? "false" : "true");
+   Eina_Bool value = elm_fileselector_button_is_save_get(fs_bt);
+   elm_fileselector_button_is_save_set(fs_bt, !value);
+   printf("Current selection editable entry set to: %s\n",
+          value ? "false" : "true");
 }
 
 static void
