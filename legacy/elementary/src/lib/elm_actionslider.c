@@ -30,16 +30,6 @@ struct _Widget_Data
 };
 
 static const char *widtype = NULL;
-static void _del_hook(Evas_Object *obj);
-static void _theme_hook(Evas_Object *obj);
-static void _sizing_eval(Evas_Object *obj);
-static void _icon_down_cb(void *data, Evas *e,
-                          Evas_Object *obj, void *event_info);
-static void _icon_move_cb(void *data, Evas *e,
-                          Evas_Object *obj, void *event_info);
-static void _icon_up_cb(void *data, Evas *e,
-                        Evas_Object *obj, void *event_info);
-static Eina_Bool _icon_animation(void *data);
 
 #define SIG_CHANGED "pos_changed"
 #define SIG_SELECTED "selected"
@@ -64,6 +54,18 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_sizing_eval(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord minw = -1, minh = -1;
+   if (!wd) return;
+   elm_coords_finger_size_adjust(4, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc(wd->ms, &minw, &minh, minw, minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -81,18 +83,6 @@ _theme_hook(Evas_Object *obj)
    edje_object_part_text_set(wd->ms, "elm.text.center", wd->text_center);
    edje_object_message_signal_process(wd->ms);
    _sizing_eval(obj);
-}
-
-static void
-_sizing_eval(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1;
-   if (!wd) return;
-   elm_coords_finger_size_adjust(4, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc(wd->ms, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -119,6 +109,58 @@ _icon_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
      evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"right");
    else if (pos >= 0.45 && pos <= 0.55)
      evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"center");
+}
+
+static Eina_Bool
+_icon_animation(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   double cur_position = 0.0, new_position = 0.0;
+   double move_amount = 0.05;
+   Eina_Bool flag_finish_animation = EINA_FALSE;
+   if (!wd) return EINA_FALSE;
+
+   edje_object_part_drag_value_get(wd->ms,
+                                   "elm.swallow.icon", &cur_position, NULL);
+   if ((wd->final_position == 0.0) ||
+       (wd->final_position == 0.5 && cur_position >= wd->final_position))
+     {
+        new_position = cur_position - move_amount;
+        if (new_position <= wd->final_position)
+          {
+             new_position = wd->final_position;
+             flag_finish_animation = EINA_TRUE;
+          }
+     }
+   else if ((wd->final_position == 1.0) ||
+            (wd->final_position == 0.5 && cur_position < wd->final_position))
+     {
+        new_position = cur_position + move_amount;
+        if (new_position >= wd->final_position)
+          {
+             new_position = wd->final_position;
+             flag_finish_animation = EINA_TRUE;
+          }
+     }
+   edje_object_part_drag_value_set(wd->ms,
+                                   "elm.swallow.icon", new_position, 0.5);
+   if (flag_finish_animation)
+     {
+        if ((!wd->final_position) &&
+            (wd->enabled_position & ELM_ACTIONSLIDER_LEFT))
+          evas_object_smart_callback_call(data, SIG_SELECTED,
+                                          (void *)wd->text_left);
+        else if ((wd->final_position == 0.5) &&
+                 (wd->enabled_position & ELM_ACTIONSLIDER_CENTER))
+          evas_object_smart_callback_call(data, SIG_SELECTED,
+                                          (void *)wd->text_center);
+        else if ((wd->final_position == 1) &&
+                 (wd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
+          evas_object_smart_callback_call(data, SIG_SELECTED,
+                                          (void *)wd->text_right);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
 }
 
 static void
@@ -201,58 +243,6 @@ _icon_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
      }
 as_anim:
    wd->icon_animator = ecore_animator_add(_icon_animation, data);
-}
-
-static Eina_Bool
-_icon_animation(void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   double cur_position = 0.0, new_position = 0.0;
-   double move_amount = 0.05;
-   Eina_Bool flag_finish_animation = EINA_FALSE;
-   if (!wd) return EINA_FALSE;
-
-   edje_object_part_drag_value_get(wd->ms,
-                                   "elm.swallow.icon", &cur_position, NULL);
-   if ((wd->final_position == 0.0) ||
-       (wd->final_position == 0.5 && cur_position >= wd->final_position))
-     {
-        new_position = cur_position - move_amount;
-        if (new_position <= wd->final_position)
-          {
-             new_position = wd->final_position;
-             flag_finish_animation = EINA_TRUE;
-          }
-     }
-   else if ((wd->final_position == 1.0) ||
-            (wd->final_position == 0.5 && cur_position < wd->final_position))
-     {
-        new_position = cur_position + move_amount;
-        if (new_position >= wd->final_position)
-          {
-             new_position = wd->final_position;
-             flag_finish_animation = EINA_TRUE;
-          }
-     }
-   edje_object_part_drag_value_set(wd->ms,
-                                   "elm.swallow.icon", new_position, 0.5);
-   if (flag_finish_animation)
-     {
-        if ((!wd->final_position) &&
-            (wd->enabled_position & ELM_ACTIONSLIDER_LEFT))
-          evas_object_smart_callback_call(data, SIG_SELECTED,
-                                          (void *)wd->text_left);
-        else if ((wd->final_position == 0.5) &&
-                 (wd->enabled_position & ELM_ACTIONSLIDER_CENTER))
-          evas_object_smart_callback_call(data, SIG_SELECTED,
-                                          (void *)wd->text_center);
-        else if ((wd->final_position == 1) &&
-                 (wd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
-          evas_object_smart_callback_call(data, SIG_SELECTED,
-                                          (void *)wd->text_right);
-        return EINA_FALSE;
-     }
-   return EINA_TRUE;
 }
 
 /**
