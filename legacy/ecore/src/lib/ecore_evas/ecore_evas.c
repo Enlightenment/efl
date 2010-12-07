@@ -2891,16 +2891,15 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
  * @return A list of ecore_evases.
  */
 EAPI Eina_List *
-ecore_evas_ecore_evas_list_get(void){
+ecore_evas_ecore_evas_list_get(void)
+{
    Ecore_Evas *ee;
    Eina_List *l = NULL;
-
+   
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
         l = eina_list_append(l, ee);
      }
-
+   
    return l;
 }
-
-
