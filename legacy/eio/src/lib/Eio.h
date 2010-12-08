@@ -76,12 +76,6 @@ extern "C" {
  */
 
 /**
- * @typedef Eio_File_Op
- * Input/Output operations on files.
- */
-typedef enum _Eio_File_Op Eio_File_Op;
-
-/**
  * @enum _Eio_File_Op
  * Input/Output operations on files.
  */
@@ -95,6 +89,12 @@ enum _Eio_File_Op
   EIO_FILE_GETPWNAM, /**< IO operation is trying to get uid from user name */
   EIO_FILE_GETGRNAM /**< IO operation is trying to get gid from user name */
 };
+
+/**
+ * @typedef Eio_File_Op
+ * Input/Output operations on files.
+ */
+typedef enum _Eio_File_Op Eio_File_Op;
 
 /**
  * @typedef Eio_File
