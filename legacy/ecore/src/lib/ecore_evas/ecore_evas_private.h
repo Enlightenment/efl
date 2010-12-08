@@ -380,6 +380,32 @@ void _ecore_evas_register(Ecore_Evas *ee);
 void _ecore_evas_free(Ecore_Evas *ee);
 void _ecore_evas_idle_timeout_update(Ecore_Evas *ee);
 void _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp);
+void _ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
+                                          int x, int y,
+                                          double radius,
+                                          double radius_x, double radius_y,
+                                          double pressure,
+                                          double angle,
+                                          double mx, double my,
+                                          unsigned int timestamp);
+void _ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
+                                          int x, int y,
+                                          double radius,
+                                          double radius_x, double radius_y,
+                                          double pressure,
+                                          double angle,
+                                          double mx, double my,
+                                          Evas_Button_Flags flags,
+                                          unsigned int timestamp);
+void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
+                                        int x, int y,
+                                        double radius,
+                                        double radius_x, double radius_y,
+                                        double pressure,
+                                        double angle,
+                                        double mx, double my,
+                                        Evas_Button_Flags flags,
+                                        unsigned int timestamp);
 
 extern Eina_Bool _ecore_evas_app_comp_sync;
 

@@ -2881,6 +2881,152 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
      evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
 }
 
+void
+_ecore_evas_mouse_multi_move_process(Ecore_Evas *ee, int device,
+                                     int x, int y, 
+                                     double radius,
+                                     double radius_x, double radius_y,
+                                     double pressure,
+                                     double angle,
+                                     double mx, double my,
+                                     unsigned int timestamp)
+{
+   if (ee->rotation == 0)
+      evas_event_feed_multi_move(ee->evas, device,
+                                 x, y, 
+                                 radius,
+                                 radius_x, radius_y,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 mx, my,
+                                 timestamp, NULL);
+   else if (ee->rotation == 90)
+      evas_event_feed_multi_move(ee->evas, device,
+                                 ee->h - y - 1, x, 
+                                 radius,
+                                 radius_y, radius_x,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 ee->h - my - 1, mx,
+                                 timestamp, NULL);
+   else if (ee->rotation == 180)
+      evas_event_feed_multi_move(ee->evas, device,
+                                 ee->w - x - 1, ee->h - y - 1, 
+                                 radius,
+                                 radius_x, radius_y,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 ee->w - mx - 1, ee->h - my - 1,
+                                 timestamp, NULL);
+   else if (ee->rotation == 270)
+      evas_event_feed_multi_move(ee->evas, device,
+                                 y, ee->w - x - 1,
+                                 radius,
+                                 radius_y, radius_x,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 my, ee->w - mx - 1,
+                                 timestamp, NULL);
+}
+
+void
+_ecore_evas_mouse_multi_down_process(Ecore_Evas *ee, int device,
+                                     int x, int y, 
+                                     double radius,
+                                     double radius_x, double radius_y,
+                                     double pressure,
+                                     double angle,
+                                     double mx, double my,
+                                     Evas_Button_Flags flags,
+                                     unsigned int timestamp)
+{
+   if (ee->rotation == 0)
+      evas_event_feed_multi_down(ee->evas, device,
+                                 x, y, 
+                                 radius,
+                                 radius_x, radius_y,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 mx, my,
+                                 flags, timestamp, NULL);
+   else if (ee->rotation == 90)
+      evas_event_feed_multi_down(ee->evas, device,
+                                 ee->h - y - 1, x, 
+                                 radius,
+                                 radius_y, radius_x,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 ee->h - my - 1, mx,
+                                 flags, timestamp, NULL);
+   else if (ee->rotation == 180)
+      evas_event_feed_multi_down(ee->evas, device,
+                                 ee->w - x - 1, ee->h - y - 1, 
+                                 radius,
+                                 radius_x, radius_y,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 ee->w - mx - 1, ee->h - my - 1,
+                                 flags, timestamp, NULL);
+   else if (ee->rotation == 270)
+      evas_event_feed_multi_down(ee->evas, device,
+                                 y, ee->w - x - 1,
+                                 radius,
+                                 radius_y, radius_x,
+                                 pressure, 
+                                 angle - ee->rotation,
+                                 my, ee->w - mx - 1,
+                                 flags, timestamp, NULL);
+}
+
+void
+_ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
+                                   int x, int y, 
+                                   double radius,
+                                   double radius_x, double radius_y,
+                                   double pressure,
+                                   double angle,
+                                   double mx, double my,
+                                   Evas_Button_Flags flags,
+                                   unsigned int timestamp)
+{
+   if (ee->rotation == 0)
+      evas_event_feed_multi_up(ee->evas, device,
+                               x, y, 
+                               radius,
+                               radius_x, radius_y,
+                               pressure, 
+                               angle - ee->rotation,
+                               mx, my,
+                               flags, timestamp, NULL);
+   else if (ee->rotation == 90)
+      evas_event_feed_multi_up(ee->evas, device,
+                               ee->h - y - 1, x, 
+                               radius,
+                               radius_y, radius_x,
+                               pressure, 
+                               angle - ee->rotation,
+                               ee->h - my - 1, mx,
+                               flags, timestamp, NULL);
+   else if (ee->rotation == 180)
+      evas_event_feed_multi_up(ee->evas, device,
+                               ee->w - x - 1, ee->h - y - 1, 
+                               radius,
+                               radius_x, radius_y,
+                               pressure, 
+                               angle - ee->rotation,
+                               ee->w - mx - 1, ee->h - my - 1,
+                               flags, timestamp, NULL);
+   else if (ee->rotation == 270)
+      evas_event_feed_multi_up(ee->evas, device,
+                               y, ee->w - x - 1,
+                               radius,
+                               radius_y, radius_x,
+                               pressure, 
+                               angle - ee->rotation,
+                               my, ee->w - mx - 1,
+                               flags, timestamp, NULL);
+}
+
 /**
  * Get a list of all the ecore_evases.
  * 

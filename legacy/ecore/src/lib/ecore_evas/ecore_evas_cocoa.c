@@ -366,7 +366,11 @@ ecore_evas_cocoa_new(const char* name, int w, int h)
 
    _ecore_evas_cocoa_init(w, h);
 
-   ecore_event_window_register(0, ee, ee->evas, _ecore_evas_mouse_move_process);
+   ecore_event_window_register(0, ee, ee->evas, 
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_cocoa_engine_func;
 

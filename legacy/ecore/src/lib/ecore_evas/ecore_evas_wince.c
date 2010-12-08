@@ -820,7 +820,11 @@ ecore_evas_software_wince_new_internal(int                 backend,
 
    ee->engine.func->fn_render = _ecore_evas_wince_render;
    _ecore_evas_register(ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas, (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
    evas_focus_in(ee->evas);
 
    return ee;

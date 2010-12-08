@@ -18,6 +18,9 @@ struct _Ecore_Input_Window
    Evas *evas;
    void *window;
    Ecore_Event_Mouse_Move_Cb move_mouse;
+   Ecore_Event_Multi_Move_Cb move_multi;
+   Ecore_Event_Multi_Down_Cb down_multi;
+   Ecore_Event_Multi_Up_Cb up_multi;
    int ignore_event;
 };
 
@@ -65,7 +68,11 @@ ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
 }
 
 EAPI void
-ecore_event_window_register(Ecore_Window id, void *window, Evas *evas, Ecore_Event_Mouse_Move_Cb move_mouse)
+ecore_event_window_register(Ecore_Window id, void *window, Evas *evas,
+                            Ecore_Event_Mouse_Move_Cb move_mouse,
+                            Ecore_Event_Multi_Move_Cb move_multi,
+                            Ecore_Event_Multi_Down_Cb down_multi,
+                            Ecore_Event_Multi_Up_Cb up_multi)
 {
    Ecore_Input_Window *w;
 
@@ -75,6 +82,9 @@ ecore_event_window_register(Ecore_Window id, void *window, Evas *evas, Ecore_Eve
    w->evas = evas;
    w->window = window;
    w->move_mouse = move_mouse;
+   w->move_multi = move_multi;
+   w->down_multi = down_multi;
+   w->up_multi = up_multi;
    w->ignore_event = 0;
 
    eina_hash_add(_window_hash, &id, w);
@@ -156,16 +166,48 @@ _ecore_event_evas_mouse_button(Ecore_Event_Mouse_Button *e, Ecore_Event_Press pr
      {
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
         if (press == ECORE_DOWN)
-          evas_event_feed_mouse_down(lookup->evas, e->buttons, flags, e->timestamp, NULL);
+          evas_event_feed_mouse_down(lookup->evas, e->buttons, flags, 
+                                     e->timestamp, NULL);
         else
-          evas_event_feed_mouse_up(lookup->evas, e->buttons, flags, e->timestamp, NULL);
+          evas_event_feed_mouse_up(lookup->evas, e->buttons, flags, 
+                                   e->timestamp, NULL);
      }
    else
      {
         if (press == ECORE_DOWN)
-          evas_event_feed_multi_down(lookup->evas, e->multi.device, e->x, e->y, e->multi.radius, e->multi.radius_x, e->multi.radius_y, e->multi.pressure, e->multi.angle, e->multi.x, e->multi.y, flags, e->timestamp, NULL);
+          {
+             if (lookup->down_multi)
+                lookup->down_multi(lookup->window, e->multi.device, 
+                                   e->x, e->y, e->multi.radius, 
+                                   e->multi.radius_x, e->multi.radius_y, 
+                                   e->multi.pressure, e->multi.angle, 
+                                   e->multi.x, e->multi.y, flags, 
+                                   e->timestamp);
+             else
+                evas_event_feed_multi_down(lookup->evas, e->multi.device, 
+                                           e->x, e->y, e->multi.radius, 
+                                           e->multi.radius_x, e->multi.radius_y, 
+                                           e->multi.pressure, e->multi.angle, 
+                                           e->multi.x, e->multi.y, flags, 
+                                           e->timestamp, NULL);
+          }
         else
-          evas_event_feed_multi_up(lookup->evas, e->multi.device, e->x, e->y, e->multi.radius, e->multi.radius_x, e->multi.radius_y, e->multi.pressure, e->multi.angle, e->multi.x, e->multi.y, flags, e->timestamp, NULL);
+          {
+             if (lookup->up_multi)
+                lookup->up_multi(lookup->window, e->multi.device, 
+                                 e->x, e->y, e->multi.radius, 
+                                 e->multi.radius_x, e->multi.radius_y, 
+                                 e->multi.pressure, e->multi.angle, 
+                                 e->multi.x, e->multi.y, flags, 
+                                 e->timestamp);
+             else
+                evas_event_feed_multi_up(lookup->evas, e->multi.device, 
+                                         e->x, e->y, e->multi.radius, 
+                                         e->multi.radius_x, e->multi.radius_y, 
+                                         e->multi.pressure, e->multi.angle, 
+                                         e->multi.x, e->multi.y, flags, 
+                                         e->timestamp, NULL);
+          }
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -182,11 +224,27 @@ ecore_event_evas_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *ev
    if (e->multi.device == 0)
      {
         ecore_event_evas_modifier_lock_update(lookup->evas, e->modifiers);
-        lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
+        if (lookup->move_mouse)
+           lookup->move_mouse(lookup->window, e->x, e->y, e->timestamp);
+        else
+           evas_event_feed_mouse_move(lookup->evas, e->x, e->y, e->timestamp, 
+                                      NULL);
      }
    else
      {
-        evas_event_feed_multi_move(lookup->evas, e->multi.device, e->x, e->y, e->multi.radius, e->multi.radius_x, e->multi.radius_y, e->multi.pressure, e->multi.angle, e->multi.x, e->multi.y, e->timestamp, NULL);
+        if (lookup->move_multi)
+           lookup->move_multi(lookup->window, e->multi.device, 
+                              e->x, e->y, e->multi.radius, 
+                              e->multi.radius_x, e->multi.radius_y, 
+                              e->multi.pressure, e->multi.angle, 
+                              e->multi.x, e->multi.y, e->timestamp);
+        else
+           evas_event_feed_multi_move(lookup->evas, e->multi.device, 
+                                      e->x, e->y, e->multi.radius, 
+                                      e->multi.radius_x, e->multi.radius_y, 
+                                      e->multi.pressure, e->multi.angle, 
+                                      e->multi.x, e->multi.y, e->timestamp, 
+                                      NULL);
      }
    return ECORE_CALLBACK_RENEW;
 }
