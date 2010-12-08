@@ -232,12 +232,19 @@ Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 
 #ifdef ICON_CACHE
 EAPI const char *efreet_icon_cache_file(void);
+EAPI const char *efreet_icon_theme_cache_file(void);
 
 EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
 EAPI void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
 Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
+
+EAPI Efreet_Icon_Theme *efreet_icon_theme_new(void);
+EAPI Efreet_Icon_Theme_Directory *efreet_icon_theme_directory_new(Efreet_Ini *ini,
+                                                                    const char *name);
 #endif
+
+EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
 
 #define NON_EXISTING (void *)-1
 

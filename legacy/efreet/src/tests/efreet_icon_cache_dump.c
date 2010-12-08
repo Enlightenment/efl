@@ -58,7 +58,7 @@ dump(Efreet_Icon_Theme *theme, Eet_File *ef)
 
     eina_iterator_free(it);
 
-    eina_hash_free(cache->icons);
+    efreet_hash_free(cache->icons, EINA_FREE_CB(efreet_cache_icon_free));
     free(cache);
 
     start = ecore_time_get() - start;
@@ -69,7 +69,8 @@ dump(Efreet_Icon_Theme *theme, Eet_File *ef)
 int
 main(int argc, char **argv)
 {
-    Eet_File *ef;
+    Eet_File *icons_ef;
+    Eet_File *theme_ef;
     Eina_List *l = NULL;
     Efreet_Icon_Theme *theme;
     int i;
@@ -78,25 +79,55 @@ main(int argc, char **argv)
 
     if (!efreet_init()) return -1;
 
-    edd = efreet_icon_theme_edd(EINA_FALSE);
+    theme_ef = eet_open(efreet_icon_theme_cache_file(), EET_FILE_MODE_READ);
+    if (!theme_ef) return -1;
+
+    edd = efreet_icons_edd(EINA_FALSE);
     if (!edd) return -1;
 
     if (argc > 1)
+    {
         for (i = 1; i < argc; i++)
         {
-            theme = efreet_icon_theme_find(argv[i]);
+            theme = eet_data_read(theme_ef, efreet_icon_theme_edd(), argv[i]);
             if (theme) l = eina_list_append(l, theme);
         }
+    }
+    else
+    {
+        char **keys;
+        int num;
 
-    if (!l) l = efreet_icon_theme_list_get();
+        keys = eet_list(theme_ef, "*", &num);
+        if (keys)
+        {
+            for (i = 0; i < num; i++)
+            {
+                theme = eet_data_read(theme_ef, efreet_icon_theme_edd(), keys[i]);
+                if (theme) l = eina_list_append(l, theme);
+            }
+            free(keys);
+        }
+    }
 
-    ef = eet_open(efreet_icon_cache_file(), EET_FILE_MODE_READ);
-    if (!ef) return -1;
+    icons_ef = eet_open(efreet_icon_cache_file(), EET_FILE_MODE_READ);
+    if (!icons_ef) return -1;
 
     EINA_LIST_FREE(l, theme)
-        dump(theme, ef);
+    {
+        void *data;
 
-    eet_close(ef);
+        dump(theme, icons_ef);
+
+        /* free theme */
+        eina_list_free(theme->paths);
+        eina_list_free(theme->inherits);
+        EINA_LIST_FREE(theme->directories, data)
+            free(data);
+        free(theme);
+    }
+
+    eet_close(icons_ef);
 
     efreet_shutdown();
     return 0;

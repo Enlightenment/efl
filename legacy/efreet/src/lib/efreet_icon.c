@@ -100,7 +100,9 @@ static const char *efreet_icon_lookup_directory_helper(Efreet_Icon_Theme_Directo
 static Efreet_Icon *efreet_icon_new(const char *path);
 static void efreet_icon_populate(Efreet_Icon *icon, const char *file);
 
+#ifndef ICON_CACHE
 static Efreet_Icon_Theme *efreet_icon_theme_new(void);
+#endif
 static void efreet_icon_theme_free(Efreet_Icon_Theme *theme);
 static void efreet_icon_theme_dir_scan_all(const char *theme_name);
 static void efreet_icon_theme_dir_scan(const char *dir,
@@ -110,8 +112,10 @@ static void efreet_icon_theme_path_add(Efreet_Icon_Theme *theme,
 static void efreet_icon_theme_index_read(Efreet_Icon_Theme *theme,
                                          const char *path);
 
+#ifndef ICON_CACHE
 static Efreet_Icon_Theme_Directory *efreet_icon_theme_directory_new(Efreet_Ini *ini,
                                                                     const char *name);
+#endif
 static void efreet_icon_theme_directory_free(Efreet_Icon_Theme_Directory *dir);
 
 #ifndef ICON_CACHE
@@ -1244,8 +1248,14 @@ error:
  * @internal
  * @return Returns a new Efreet_Icon_Theme on success or NULL on failure
  * @brief Creates a new Efreet_Icon_Theme structure
+ *
+ * Needs EAPI because of helper binaries
  */
+#ifndef ICON_CACHE
 static Efreet_Icon_Theme *
+#else
+EAPI Efreet_Icon_Theme *
+#endif
 efreet_icon_theme_new(void)
 {
     Efreet_Icon_Theme *theme;
@@ -1577,8 +1587,14 @@ error:
  * information in @a ini.
  * @brief Creates and initialises an icon theme directory from the given ini
  * information
+ *
+ * Needs EAPI because of helper binaries
  */
+#ifndef ICON_CACHE
 static Efreet_Icon_Theme_Directory *
+#else
+EAPI Efreet_Icon_Theme_Directory *
+#endif
 efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
 {
     Efreet_Icon_Theme_Directory *dir;

@@ -609,3 +609,17 @@ efreet_util_desktop_cache_reload(void)
 {
     cache = efreet_cache_close(cache);
 }
+
+EAPI void
+efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb)
+{
+    Eina_Iterator *it;
+    void *data;
+
+    it = eina_hash_iterator_data_new(hash);
+    EINA_ITERATOR_FOREACH(it, data)
+        (*free_cb)(data);
+    eina_iterator_free(it);
+    eina_hash_free(hash);
+}
+
