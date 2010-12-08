@@ -259,23 +259,29 @@ _sel_do(void *data)
         if (wd->expand)
           {
              _do_anchors(sd->fs, path);
-             if (wd->filename_entry)
-               elm_scrolled_entry_entry_set(wd->filename_entry, "");
+             elm_scrolled_entry_entry_set(wd->filename_entry, "");
           }
         else
           {
-             // keep a ref to path 'couse it will be destroyed by _populate
+             /* keep a ref to path 'couse it will be destroyed by _populate */
              p = eina_stringshare_add(path);
              _populate(sd->fs, p, NULL);
              eina_stringshare_del(p);
           }
         goto end;
      }
-   else
+   else /* navigating through folders only or file is not a dir. */
      {
-        if (wd->filename_entry)
-          elm_scrolled_entry_entry_set(wd->filename_entry,
-                                       ecore_file_file_get(path));
+        if (wd->expand) _do_anchors(sd->fs, path);
+        else if (wd->only_folder)
+          {
+             /* keep a ref to path 'couse it will be destroyed by _populate */
+             p = eina_stringshare_add(path);
+             _populate(sd->fs, p, NULL);
+             eina_stringshare_del(p);
+          }
+        elm_scrolled_entry_entry_set(wd->filename_entry,
+                                     ecore_file_file_get(path));
      }
 
    evas_object_smart_callback_call(sd->fs, SIG_SELECTED, (void *)path);
@@ -303,7 +309,13 @@ _sel(void            *data,
    sd->fs = data;
    sd->path = elm_genlist_item_data_get(event_info);
 
-   dir = ecore_file_dir_get(sd->path);
+   if (!sd->path)
+     {
+        eina_stringshare_replace(&wd->path, "");
+        goto end;
+     }
+
+   dir = wd->only_folder ? strdup(sd->path) : ecore_file_dir_get(sd->path);
    if (dir)
      {
         eina_stringshare_replace(&wd->path, dir);
@@ -314,6 +326,7 @@ _sel(void            *data,
         eina_stringshare_replace(&wd->path, "");
      }
 
+end:
    if (wd->sel_idler)
      {
         old_sd = ecore_idler_del(wd->sel_idler);
@@ -656,6 +669,7 @@ elm_fileselector_folder_only_set(Evas_Object *obj,
    if (!wd) return;
    if (wd->only_folder == only) return;
    wd->only_folder = !!only;
+   if (wd->path) _populate(obj, wd->path, NULL);
 }
 
 /**
@@ -764,6 +778,8 @@ elm_fileselector_expandable_set(Evas_Object *obj,
    if (!wd) return;
 
    wd->expand = !!expand;
+
+   if (wd->path) _populate(obj, wd->path, NULL);
 }
 
 /**
@@ -838,7 +854,9 @@ elm_fileselector_selected_get(const Evas_Object *obj)
         char buf[PATH_MAX];
 
         name = elm_scrolled_entry_entry_get(wd->filename_entry);
-        snprintf(buf, sizeof(buf), "%s/%s", wd->path, name);
+        snprintf(buf, sizeof(buf), "%s/%s",
+                 wd->only_folder ? ecore_file_dir_get(wd->path) : wd->path,
+                 name);
         eina_stringshare_replace(&wd->selection, buf);
         return wd->selection;
      }
