@@ -92,10 +92,10 @@ elm_calendar.c \
 elm_flipselector.c \
 elm_diskselector.c \
 elm_colorselector.c \
-elm_ctxpopup.c \
 \
 elc_anchorblock.c \
 elc_anchorview.c \
+elc_ctxpopup.c \
 elc_fileselector.c \
 elc_fileselector_button.c \
 elc_fileselector_entry.c \
