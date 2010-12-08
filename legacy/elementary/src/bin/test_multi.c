@@ -70,9 +70,16 @@ _multi_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o __UNUSED__
 }
 
 void
+my_bt_rot(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win = data;
+   elm_win_rotation_set(win, elm_win_rotation_get(win) + 90);
+}
+
+void
 test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *r;
+   Evas_Object *win, *bg, *r, *bx, *bt;
    int i;
 
    win = elm_win_add(NULL, "bg-plain", ELM_WIN_BASIC);
@@ -85,6 +92,7 @@ test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bg);
 
    r = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_size_hint_weight_set(r, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(r, 0, 0, 0, 0);
    elm_win_resize_object_add(win, r);
    evas_object_show(r);
@@ -104,7 +112,20 @@ test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_event_callback_add(r, EVAS_CALLBACK_MULTI_DOWN, _multi_down, win);
    evas_object_event_callback_add(r, EVAS_CALLBACK_MULTI_UP, _multi_up, win);
    evas_object_event_callback_add(r, EVAS_CALLBACK_MULTI_MOVE, _multi_move, win);
-
+   
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+   
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Rotate");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_rot, win);
+   evas_object_size_hint_align_set(bt, 0.0, 0.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+   
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_resize(win, 480, 800);
 
