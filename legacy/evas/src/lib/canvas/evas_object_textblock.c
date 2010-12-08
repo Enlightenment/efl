@@ -4047,14 +4047,16 @@ static Evas_Object_Textblock_Node_Format *
 _evas_textblock_node_format_last_at_off(const Evas_Object_Textblock_Node_Format *n)
 {
    const Evas_Object_Textblock_Node_Format *nnode;
+   const Evas_Object_Textblock_Node_Text *tnode;
    if (!n) return NULL;
    nnode = n;
+   tnode = n->text_node;
    do
      {
         n = nnode;
         nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
      }
-   while (nnode && (nnode->offset == 0));
+   while (nnode && (nnode->text_node == tnode) && (nnode->offset == 0));
 
    return (Evas_Object_Textblock_Node_Format *) n;
 }
