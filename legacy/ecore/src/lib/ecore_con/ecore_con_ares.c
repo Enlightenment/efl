@@ -551,6 +551,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
       case ARES_EBADNAME: /* not a valid internet address */
       case ARES_ENOMEM: /* not enough memory */
       case ARES_EDESTRUCTION: /* request canceled, shuting down */
+      case ARES_ENODATA: /* no data returned */
         goto on_error;
 
       default:
