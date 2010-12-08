@@ -44,8 +44,8 @@ static Eet_Data_Descriptor *icon_edd;
 static Eet_File            *icon_cache = NULL;
 
 static const char          *theme_name = NULL;
-static Efreet_Cache_Theme  *theme_cache = NULL;
-static Efreet_Cache_Theme  *fallback_cache = NULL;
+static Efreet_Cache_Icons  *theme_cache = NULL;
+static Efreet_Cache_Icons  *fallback_cache = NULL;
 #endif
 
 static Eet_Data_Descriptor *version_edd = NULL;
@@ -70,7 +70,7 @@ static int                  desktop_cache_exe_lock = -1;
 static Eina_List           *old_desktop_caches = NULL;
 
 #ifdef ICON_CACHE
-static Efreet_Cache_Theme *_efreet_cache_free(Efreet_Cache_Theme *cache);
+static Efreet_Cache_Icons *_efreet_cache_free(Efreet_Cache_Icons *cache);
 #endif
 static void efreet_cache_edd_shutdown(void);
 
@@ -306,8 +306,8 @@ efreet_cache_edd_shutdown(void)
                                 "pointer", pointer, Edd_Source);       \
 }
 
-static Efreet_Cache_Theme *
-_efreet_cache_free(Efreet_Cache_Theme *c)
+static Efreet_Cache_Icons *
+_efreet_cache_free(Efreet_Cache_Icons *c)
 {
    if (!c) return NULL;
 
@@ -391,11 +391,11 @@ efreet_icon_theme_edd(Eina_Bool include_dirs)
     theme_edd = eet_data_descriptor_file_new(&eddc);
     if (!theme_edd) return NULL;
 
-    EET_DATA_DESCRIPTOR_ADD_HASH(theme_edd, Efreet_Cache_Theme,
+    EET_DATA_DESCRIPTOR_ADD_HASH(theme_edd, Efreet_Cache_Icons,
                                  "icons", icons, icon_edd);
 
     if (include_dirs)
-      EET_DATA_DESCRIPTOR_ADD_HASH(theme_edd, Efreet_Cache_Theme,
+      EET_DATA_DESCRIPTOR_ADD_HASH(theme_edd, Efreet_Cache_Icons,
                                    "dirs", dirs, efreet_icon_directory_edd());
 
     return theme_edd;
@@ -437,11 +437,11 @@ efreet_icon_fallback_edd(Eina_Bool include_dirs)
     fallback_edd = eet_data_descriptor_file_new(&eddc);
     if (!fallback_edd) return NULL;
 
-    EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Theme,
+    EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Icons,
                                  "icons", icons, icon_fallback_edd);
 
     if (include_dirs)
-      EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Theme,
+      EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Icons,
                                    "dirs", dirs, efreet_icon_directory_edd());
 
     return fallback_edd;

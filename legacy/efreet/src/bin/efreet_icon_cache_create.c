@@ -340,7 +340,7 @@ main(int argc, char **argv)
      * - make sure programs with different extra dirs all work together
      */
     Efreet_Cache_Version *version;
-    Efreet_Cache_Theme *cache;
+    Efreet_Cache_Icons *cache;
     Efreet_Icon_Theme *theme;
     Eet_Data_Descriptor *edd;
     Eet_File *ef;
@@ -439,7 +439,7 @@ main(int argc, char **argv)
         /* No existing cache before, so create it */
         if (!cache)
         {
-            cache = NEW(Efreet_Cache_Theme, 1);
+            cache = NEW(Efreet_Cache_Icons, 1);
             if (!cache) goto on_error_efreet;
 
             changed = EINA_TRUE;
@@ -476,7 +476,7 @@ main(int argc, char **argv)
     /* No existing fallback, create it */
     if (!cache)
     {
-        cache = NEW(Efreet_Cache_Theme, 1);
+        cache = NEW(Efreet_Cache_Icons, 1);
         if (!cache) goto on_error_efreet;
 
         changed = EINA_TRUE;

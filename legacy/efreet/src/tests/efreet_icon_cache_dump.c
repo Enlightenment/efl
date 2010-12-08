@@ -27,7 +27,7 @@ int verbose = 0;
 static void
 dump(Efreet_Icon_Theme *theme, Eet_File *ef)
 {
-    Efreet_Cache_Theme *cache;
+    Efreet_Cache_Icons *cache;
     Eina_Iterator *it;
     const char *key;
     unsigned int count = 0;
