@@ -29,31 +29,6 @@ static Eina_Hash *paths = NULL;
 
 static int verbose = 0;
 
-static char file[PATH_MAX] = { '\0' };
-static char util_file[PATH_MAX] = { '\0' };
-
-static void
-term_handler(int sig __UNUSED__, siginfo_t * info __UNUSED__, void *data __UNUSED__)
-{
-    if (util_file[0]) unlink(util_file);
-    if (file[0]) unlink(file);
-    if (verbose) printf("EXIT\n");
-    exit(1);
-}
-
-static void
-catch_sigterm(void)
-{
-    struct sigaction act;
-
-    act.sa_sigaction = term_handler;
-    act.sa_flags = SA_RESTART | SA_SIGINFO;
-    sigemptyset(&act.sa_mask);
-
-    if (sigaction(SIGTERM, &act, NULL) < 0)
-        perror("sigaction"); /* It's bad if we can't deal with SIGTERM, but not dramatic */
-}
-
 static int
 strcmplen(const void *data1, const void *data2)
 {
@@ -243,7 +218,9 @@ main(int argc, char **argv)
     int changed = 0;
     int i;
     struct flock fl;
-    struct sigaction act;
+    char file[PATH_MAX] = { '\0' };
+    char util_file[PATH_MAX] = { '\0' };
+
 
     for (i = 1; i < argc; i++)
     {
@@ -262,9 +239,6 @@ main(int argc, char **argv)
     if (!eina_init()) goto eina_error;
     if (!eet_init()) goto eet_error;
     if (!ecore_init()) goto ecore_error;
-
-    // Trap SIGTERM for clean shutdown
-    catch_sigterm();
 
     efreet_cache_update = 0;
 
@@ -413,12 +387,6 @@ main(int argc, char **argv)
     eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
     eet_close(util_ef);
     eet_close(ef);
-
-    /* Remove signal handler, no need to exit now */
-    act.sa_sigaction = SIG_IGN;
-    act.sa_flags = SA_RESTART | SA_SIGINFO;
-    sigemptyset(&act.sa_mask);
-    sigaction(SIGTERM, &act, NULL);
 
     /* unlink old cache files */
     if (changed)

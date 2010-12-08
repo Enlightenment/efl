@@ -162,7 +162,6 @@ efreet_cache_shutdown(void)
         desktop_cache_job = NULL;
     }
 #ifdef ICON_CACHE
-    if (icon_cache_exe) ecore_exe_terminate(icon_cache_exe);
     if (icon_cache_exe_lock > 0)
     {
         close(icon_cache_exe_lock);
@@ -170,7 +169,6 @@ efreet_cache_shutdown(void)
     }
 #endif
 
-    if (desktop_cache_exe) ecore_exe_terminate(desktop_cache_exe);
     if (desktop_cache_exe_lock > 0)
     {
         close(desktop_cache_exe_lock);
