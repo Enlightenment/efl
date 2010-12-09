@@ -413,7 +413,7 @@ efreet_icons_edd(Eina_Bool include_dirs)
     EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(icon_edd, Efreet_Cache_Icon,
                                       "icons", icons, icon_element_pointer_edd);
 
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icon);
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icons);
     icons_edd = eet_data_descriptor_file_new(&eddc);
     if (!icons_edd) return NULL;
 
@@ -499,7 +499,7 @@ efreet_icons_fallback_edd(Eina_Bool include_dirs)
     EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY_STRING(icon_fallback_edd,
                                              Efreet_Cache_Fallback_Icon, "icons", icons);
 
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icon);
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icons);
     fallback_edd = eet_data_descriptor_file_new(&eddc);
     if (!fallback_edd) return NULL;
 
