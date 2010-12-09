@@ -66,6 +66,13 @@ typedef enum {
   EINA_FILE_WHT      /**< Whiteout file type (unused on Windows). */
 } Eina_File_Type;
 
+/* Why do this? Well PATH_MAX may vary from when eina itself is compiled
+ * to when the app using eina is compiled. exposing the path buffer below
+ * cant safely and portably vary based on how/when you compile. it should
+ * always be the same for both eina inside ANd for apps outside that use eina
+ * so define this ti 8192 minus ther other struct bits so that 
+ * Eina_File_Direct_Info can take a nice round 2 pages. */
+#define EINA_PATH_MAX (8192 - (sizeof(size_t) * 3) - sizeof(Eina_File_Type))
 /**
  * @struct _Eina_File_Direct_Info
  * A structure to store informations of a path.
@@ -75,7 +82,7 @@ struct _Eina_File_Direct_Info
    size_t               path_length; /**< size of the whole path */
    size_t               name_length; /**< size of the filename/basename component */
    size_t               name_start; /**< where the filename/basename component starts */
-   char                 path[PATH_MAX]; /**< the path */
+   char                 path[EINA_PATH_MAX]; /**< the path */
    Eina_File_Type       type; /**< file type */
 };
 
