@@ -217,12 +217,11 @@ efreet_icon_cache_file(void)
 EAPI const char *
 efreet_icon_theme_cache_file(void)
 {
-    char *tmp;
+    char tmp[PATH_MAX] = { '\0' };
 
     if (icon_theme_cache_file) return icon_theme_cache_file;
 
-    tmp = alloca(PATH_MAX);
-    snprintf(tmp, PATH_MAX, "%s/efreet/icon_themes_%s.eet",
+    snprintf(tmp, sizeof(tmp), "%s/efreet/icon_themes_%s.eet",
              efreet_cache_home_get(), efreet_hostname_get());
     icon_theme_cache_file = eina_stringshare_add(tmp);
 
@@ -258,25 +257,24 @@ efreet_version_edd(void)
 EAPI const char *
 efreet_desktop_cache_file(void)
 {
-    char *tmp;
+    char tmp[PATH_MAX] = { '\0' };
     const char *cache, *lang, *country, *modifier;
 
     if (desktop_cache_file) return desktop_cache_file;
 
-    tmp = alloca(PATH_MAX);
     cache = efreet_cache_home_get();
     lang = efreet_lang_get();
     country = efreet_lang_country_get();
     modifier = efreet_lang_modifier_get();
 
     if (lang && country && modifier)
-        snprintf(tmp, PATH_MAX, "%s/efreet/desktop_%s_%s_%s@%s.eet", cache, efreet_hostname_get(), lang, country, modifier);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s_%s_%s@%s.eet", cache, efreet_hostname_get(), lang, country, modifier);
     else if (lang && country)
-        snprintf(tmp, PATH_MAX, "%s/efreet/desktop_%s_%s_%s.eet", cache, efreet_hostname_get(), lang, country);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s_%s_%s.eet", cache, efreet_hostname_get(), lang, country);
     else if (lang)
-        snprintf(tmp, PATH_MAX, "%s/efreet/desktop_%s_%s.eet", cache, efreet_hostname_get(), lang);
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s_%s.eet", cache, efreet_hostname_get(), lang);
     else
-        snprintf(tmp, PATH_MAX, "%s/efreet/desktop_%s.eet", cache, efreet_hostname_get());
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_%s.eet", cache, efreet_hostname_get());
 
     desktop_cache_file = eina_stringshare_add(tmp);
     return desktop_cache_file;
@@ -288,12 +286,11 @@ efreet_desktop_cache_file(void)
 EAPI const char *
 efreet_desktop_cache_dirs(void)
 {
-    char *tmp;
+    char tmp[PATH_MAX] = { '\0' };
 
     if (desktop_cache_dirs) return desktop_cache_dirs;
 
-    tmp = alloca(PATH_MAX);
-    snprintf(tmp, PATH_MAX, "%s/efreet/desktop_dirs.cache", efreet_cache_home_get());
+    snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_dirs.cache", efreet_cache_home_get());
 
     desktop_cache_dirs = eina_stringshare_add(tmp);
     return desktop_cache_dirs;
