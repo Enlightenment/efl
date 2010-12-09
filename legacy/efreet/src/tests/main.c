@@ -84,12 +84,8 @@ environment_store(void)
     char *env;
     char **e;
 
-    while (environment)
-    {
-        env = eina_list_data_get(environment);
+    EINA_LIST_FREE(environment, env)
         free(env);
-        environment = eina_list_remove_list(environment, environment);
-    }
 
     for (e = environ; *e; e++)
         environment = eina_list_append(environment, strdup(*e));
@@ -102,7 +98,7 @@ environment_restore(void)
     char *e;
     if (!environment) return;
 
-    *environ = NULL;
+    clearenv();
     EINA_LIST_FOREACH(environment, l, e)
         putenv(e);
 }
@@ -113,6 +109,7 @@ main(int argc, char ** argv)
     int i, passed = 0, num_tests = 0;
     Eina_List *run = NULL;
     double total;
+    char *env;
 
     eina_init();
     ecore_init();
@@ -167,11 +164,9 @@ main(int argc, char ** argv)
     }
 
     printf("\n-----------------\n");
-    while (environment)
-    {
-        free(eina_list_data_get(environment));
-        environment = eina_list_remove_list(environment, environment);
-    }
+    clearenv();
+    EINA_LIST_FREE(environment, env)
+        free(env);
     printf("Passed %d of %d tests.\n", passed, num_tests);
 
     while (run)
