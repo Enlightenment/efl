@@ -2231,14 +2231,16 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    if (!svr->write_buf)
      return;
 
+   num = svr->write_buf_size - svr->write_buf_offset;
+
    /* check whether we need to write anything at all.
     * we must not write zero bytes with SSL_write() since it
     * causes undefined behaviour
     */
-   if (svr->write_buf_size == svr->write_buf_offset)
-     return;
-
-   num = svr->write_buf_size - svr->write_buf_offset;
+   /* we thank Tommy[D] for needing to check negative buffer sizes
+    * here because his system is amazing.
+    */
+   if (num <= 0) return;
 
    if (svr->handshaking)
      {
