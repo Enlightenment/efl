@@ -412,7 +412,6 @@ elm_ctxpopup_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _ctxpopup_hide,
                                   NULL);
 
-   elm_widget_sub_object_add(obj, wd->list);
    elm_widget_sub_object_add(obj, wd->hover);
    elm_widget_sub_object_add(obj, wd->target);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
