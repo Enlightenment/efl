@@ -13644,6 +13644,7 @@ collections {
 	 image: "sl_bt_0.png" COMP;
 	 image: "sl_bt_1.png" COMP;
 	 image: "sl_bt_2.png" COMP;
+	 image: "sl_bt_3.png" COMP;
 	 image: "sl_bt2_0_0.png" COMP;
 	 image: "sl_bt2_0_1.png" COMP;
 	 image: "sl_bt2_0_2.png" COMP;
@@ -14011,8 +14012,11 @@ collections {
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0;
-               color: 128 128 128 128;
-			}
+               image {
+                  normal: "sl_bt_3.png";
+                  border: 5 5 5 10;
+               }
+            }
          }
          part { name: "button1";
             mouse_events: 0;
@@ -14389,6 +14393,7 @@ collections {
 	 image: "sl_bt_0.png" COMP;
 	 image: "sl_bt_1.png" COMP;
 	 image: "sl_bt_2.png" COMP;
+	 image: "sl_bt_3.png" COMP;
 	 image: "sl_bt2_0_0.png" COMP;
 	 image: "sl_bt2_0_1.png" COMP;
 	 image: "sl_bt2_0_2.png" COMP;
@@ -14762,8 +14767,11 @@ collections {
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0;
-               color: 128 128 128 128;
-	        }
+               image {
+                  normal: "sl_bt_3.png";
+                  border: 5 5 5 10;
+               }
+            }
          }
          part { name: "button1";
             mouse_events: 0;
