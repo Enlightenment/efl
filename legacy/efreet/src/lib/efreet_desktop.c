@@ -770,7 +770,7 @@ efreet_desktop_write_cache_dirs_file(void)
 
     if (!efreet_desktop_dirs) return 1;
 
-    snprintf(file, sizeof(file), "%s/.efreet/desktop_data.lock", efreet_home_dir_get());
+    snprintf(file, sizeof(file), "%s/desktop_data.lock", efreet_cache_home_get());
     fd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fd < 0) return 0;
     /* TODO: Retry update cache later */
