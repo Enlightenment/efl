@@ -29,6 +29,20 @@ _on_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
    //       obj, event->keyname, evas_object_smart_parent_get(obj));
 }
 
+static void
+_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *bt = data;
+   elm_object_disabled_set(bt, EINA_TRUE);
+}
+
+static void
+_enable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *bt = data;
+   elm_object_disabled_set(bt, EINA_FALSE);
+}
+
 static inline void
 my_show(Evas_Object *obj)
 {
@@ -257,7 +271,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt);
                   my_show(bt);
-                  elm_object_focus_custom_chain_append(bx2, bt, NULL);
+                  elm_object_focus_custom_chain_prepend(bx2, bt, NULL);
                }
           }
 
@@ -269,18 +283,30 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              elm_layout_content_set(ly, "element2", bx2);
              my_show(bx2);
 
-             for (i = 3; i; i--)
                {
                   Evas_Object *bt;
                   bt = elm_button_add(win);
-                  elm_button_label_set(bt, "Box inside Layout");
+                  elm_button_label_set(bt, "Disable");
                   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                   elm_box_pack_end(bx2, bt);
+                  evas_object_smart_callback_add(bt, "clicked", _disable, bt);
                   my_show(bt);
                   elm_object_focus_custom_chain_prepend(bx2, bt, NULL);
+
+                  Evas_Object *bt2;
+                  bt2 = elm_button_add(win);
+                  elm_button_label_set(bt2, "Enable");
+                  evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL,
+                                                  EVAS_HINT_FILL);
+                  evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
+                  elm_box_pack_end(bx2, bt2);
+                  evas_object_smart_callback_add(bt2, "clicked", _enable, bt);
+                  my_show(bt2);
+                  elm_object_focus_custom_chain_append(bx2, bt2, NULL);
                }
+
           }
      }
 
