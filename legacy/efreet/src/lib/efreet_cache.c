@@ -45,6 +45,7 @@ static Eet_Data_Descriptor *icon_element_edd = NULL;
 static Eet_Data_Descriptor *icon_edd = NULL;
 
 static Eet_File            *icon_cache = NULL;
+static Eet_File            *icon_theme_cache = NULL;
 
 static const char          *icon_theme_cache_file = NULL;
 
@@ -150,6 +151,7 @@ efreet_cache_shutdown(void)
     theme_name = NULL;
 
     icon_cache = efreet_cache_close(icon_cache);
+    icon_theme_cache = efreet_cache_close(icon_theme_cache);
 #endif
 
     desktop_cache = efreet_cache_close(desktop_cache);
@@ -627,6 +629,49 @@ efreet_cache_icon_fallback_find(const char *icon)
 
     return eina_hash_find(fallback_cache->icons, icon);
 }
+
+Efreet_Icon_Theme *
+efreet_cache_icon_theme_find(const char *theme)
+{
+    if (!efreet_cache_check(&icon_theme_cache, efreet_icon_theme_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
+    return eet_data_read(icon_theme_cache, efreet_icon_theme_edd(), theme);
+}
+
+void
+efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme)
+{
+    void *data;
+
+    if (!theme) return;
+
+    eina_list_free(theme->paths);
+    eina_list_free(theme->inherits);
+    EINA_LIST_FREE(theme->directories, data)
+        free(data);
+
+    free(theme);
+}
+
+char **
+efreet_cache_icon_theme_name_list(int *num)
+{
+    char **keys;
+    int i;
+
+    if (!efreet_cache_check(&icon_theme_cache, efreet_icon_theme_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
+    keys = eet_list(icon_theme_cache, "*", num);
+    for (i = 0; i < *num; i++)
+    {
+        if (!strcmp(keys[i], EFREET_CACHE_VERSION) && (i < (*num + 1)))
+        {
+            memmove(&keys[i], &keys[i + 1], (*num - i - 1) * sizeof(char *));
+            (*num)--;
+            break;
+        }
+    }
+    return keys;
+}
+
 #endif
 
 Efreet_Desktop *
@@ -805,6 +850,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         }
 
         icon_cache = efreet_cache_close(icon_cache);
+        icon_theme_cache = efreet_cache_close(icon_theme_cache);
 
         ev = NEW(Efreet_Event_Cache_Update, 1);
         if (!ev) return;

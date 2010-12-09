@@ -300,6 +300,73 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
     return 1;
 }
 
+static Efreet_Icon_Theme_Directory *
+icon_theme_directory_new(Efreet_Ini *ini, const char *name)
+{
+    Efreet_Icon_Theme_Directory *dir;
+    int val;
+    const char *tmp;
+
+    if (!ini) return NULL;
+
+    dir = NEW(Efreet_Icon_Theme_Directory, 1);
+    if (!dir) return NULL;
+    dir->name = eina_stringshare_add(name);
+
+    efreet_ini_section_set(ini, name);
+
+    tmp = efreet_ini_string_get(ini, "Context");
+    if (tmp)
+    {
+        if (!strcasecmp(tmp, "Actions"))
+            dir->context = EFREET_ICON_THEME_CONTEXT_ACTIONS;
+
+        else if (!strcasecmp(tmp, "Devices"))
+            dir->context = EFREET_ICON_THEME_CONTEXT_DEVICES;
+
+        else if (!strcasecmp(tmp, "FileSystems"))
+            dir->context = EFREET_ICON_THEME_CONTEXT_FILESYSTEMS;
+
+        else if (!strcasecmp(tmp, "MimeTypes"))
+            dir->context = EFREET_ICON_THEME_CONTEXT_MIMETYPES;
+    }
+
+    /* Threshold is fallback  */
+    dir->type = EFREET_ICON_SIZE_TYPE_THRESHOLD;
+
+    tmp = efreet_ini_string_get(ini, "Type");
+    if (tmp)
+    {
+        if (!strcasecmp(tmp, "Fixed"))
+            dir->type = EFREET_ICON_SIZE_TYPE_FIXED;
+
+        else if (!strcasecmp(tmp, "Scalable"))
+            dir->type = EFREET_ICON_SIZE_TYPE_SCALABLE;
+    }
+
+    dir->size.normal = efreet_ini_int_get(ini, "Size");
+
+    if (dir->type == EFREET_ICON_SIZE_TYPE_THRESHOLD)
+    {
+        val = efreet_ini_int_get(ini, "Threshold");
+        if (val < 0) val = 2;
+        dir->size.max = dir->size.normal + val;
+        dir->size.min = dir->size.normal - val;
+    }
+    else if (dir->type == EFREET_ICON_SIZE_TYPE_SCALABLE)
+    {
+        val = efreet_ini_int_get(ini, "MinSize");
+        if (val < 0) dir->size.min = dir->size.normal;
+        else dir->size.min = val;
+
+        val = efreet_ini_int_get(ini, "MaxSize");
+        if (val < 0) dir->size.max = dir->size.normal;
+        else dir->size.max = val;
+    }
+
+    return dir;
+}
+
 static void
 icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 {
@@ -376,7 +443,7 @@ icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 
             if (p) *p = '\0';
 
-            dir = efreet_icon_theme_directory_new(ini, s);
+            dir = icon_theme_directory_new(ini, s);
             if (!dir) goto error;
             theme->directories = eina_list_append(theme->directories, dir);
 
@@ -413,7 +480,7 @@ cache_theme_scan(const char *dir)
 
         if (!theme)
         {
-            theme = efreet_icon_theme_new();
+            theme = NEW(Efreet_Icon_Theme, 1);
             theme->name.internal = eina_stringshare_add(name);
             eina_hash_direct_add(icon_themes,
                           (void *)theme->name.internal, theme);
