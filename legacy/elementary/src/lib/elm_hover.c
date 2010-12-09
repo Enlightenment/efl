@@ -73,7 +73,8 @@ static void _hov_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void _hov_show(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _hov_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _on_focus_hook(void *data, Evas_Object *obj);
-static void _elm_hover_sub_obj_placement_eval(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _elm_hover_sub_obj_placement_eval_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _elm_hover_sub_obj_placement_eval(Evas_Object *obj);
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_SMART_LOCATION_CHANGED[] = "smart,changed";
@@ -134,7 +135,11 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->cov, "hover", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) *
                          _elm_config->scale);
-   _reval_content(obj);
+
+   if (wd->smt_sub)
+      _elm_hover_sub_obj_placement_eval(obj);
+   else
+      _reval_content(obj);
    _sizing_eval(obj);
    if (evas_object_visible_get(wd->cov)) _hov_show_do(obj);
 }
@@ -402,7 +407,7 @@ _target_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
      return;
 
    _sizing_eval(data);
-   _elm_hover_sub_obj_placement_eval(data, NULL, NULL, NULL);
+   _elm_hover_sub_obj_placement_eval(data);
 }
 
 static void
@@ -652,14 +657,14 @@ _elm_hover_subs_del(Widget_Data *wd)
 }
 
 static void
-_elm_hover_sub_obj_placement_eval(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_elm_hover_sub_obj_placement_eval(Evas_Object *obj)
 {
    Evas_Coord spc_l, spc_r, spc_t, spc_b;
    const char *smart_dir;
    Widget_Data *wd;
    char buf[1024];
 
-   wd = elm_widget_data_get(data);
+   wd = elm_widget_data_get(obj);
    if (!wd->smt_sub)
      return;
 
@@ -669,11 +674,17 @@ _elm_hover_sub_obj_placement_eval(void *data, Evas *e __UNUSED__, Evas_Object *o
 
    smart_dir = _elm_hover_smart_content_location_get(wd, spc_l, spc_t, spc_r,
                                                      spc_b);
-   evas_object_smart_callback_call(data, SIG_SMART_LOCATION_CHANGED,
+   evas_object_smart_callback_call(obj, SIG_SMART_LOCATION_CHANGED,
                                    (void *)smart_dir);
 
    snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", smart_dir);
    edje_object_part_swallow(wd->cov, buf, wd->smt_sub);
+}
+
+static void
+_elm_hover_sub_obj_placement_eval_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _elm_hover_sub_obj_placement_eval(data);
 }
 
 /**
@@ -731,10 +742,10 @@ elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *conten
              elm_widget_sub_object_add(obj, content);
              evas_object_event_callback_add(wd->smt_sub,
                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _elm_hover_sub_obj_placement_eval,
+                                            _elm_hover_sub_obj_placement_eval_cb,
                                             obj);
 
-             _elm_hover_sub_obj_placement_eval(obj, NULL, NULL, NULL);
+             _elm_hover_sub_obj_placement_eval(obj);
           }
 
         goto end;
@@ -817,7 +828,7 @@ _elm_hover_sub_obj_unparent(Evas_Object *obj)
    elm_widget_sub_object_del(obj, wd->smt_sub);
    evas_object_event_callback_del_full(wd->smt_sub,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _elm_hover_sub_obj_placement_eval,
+                                       _elm_hover_sub_obj_placement_eval_cb,
                                        obj);
    edje_object_part_unswallow(wd->cov, wd->smt_sub);
    wd->smt_sub = NULL;
