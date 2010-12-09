@@ -202,7 +202,7 @@ _eina_file_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 #else
         length = strlen(dp->d_name);
 #endif
-        if (it->info.name_start + length + 1 >= PATH_MAX)
+        if (it->info.name_start + length + 1 >= EINA_PATH_MAX)
            continue;
      }
    while ((dp->d_name[0] == '.') &&
@@ -571,7 +571,7 @@ eina_file_direct_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   if (length + NAME_MAX + 2 >= PATH_MAX)
+   if (length + NAME_MAX + 2 >= EINA_PATH_MAX)
       return NULL;
 
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
@@ -648,7 +648,7 @@ eina_file_stat_ls(const char *dir)
    if (length < 1)
       return NULL;
 
-   if (length + NAME_MAX + 2 >= PATH_MAX)
+   if (length + NAME_MAX + 2 >= EINA_PATH_MAX)
       return NULL;
 
    it = calloc(1, sizeof(Eina_File_Direct_Iterator) + length);
