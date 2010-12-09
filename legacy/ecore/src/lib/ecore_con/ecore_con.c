@@ -2295,6 +2295,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
    if (!count)
      {
         num = cl->buf_size - cl->buf_offset;
+        if (num <= 0) return;
         if (!(cl->host_server->type & ECORE_CON_SSL))
           count = write(cl->fd, cl->buf + cl->buf_offset, num);
         else
