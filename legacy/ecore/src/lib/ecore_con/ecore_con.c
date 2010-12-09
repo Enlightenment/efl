@@ -1209,7 +1209,10 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
 
-   if ((!cl->buf) && cl->delete_me && (!cl->dead) && (cl->event_count < 1))
+   if (cl->event_count > 0)
+     return;
+
+   if (cl->delete_me && (!cl->dead) && (cl->event_count < 1))
      {
         /* this is a catch-all for cases when a client is not properly killed. */
 
@@ -1228,8 +1231,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
            return;
      }
 
-   if (cl->event_count > 0)
-     return;
+
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
