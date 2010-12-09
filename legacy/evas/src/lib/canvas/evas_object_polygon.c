@@ -230,6 +230,8 @@ evas_object_polygon_points_clear(Evas_Object *obj)
 	free(o->points->data);
 	o->points = eina_list_remove(o->points, o->points->data);
      }
+   obj->cur.geometry.x = 0;
+   obj->cur.geometry.y = 0;
    obj->cur.geometry.w = 0;
    obj->cur.geometry.h = 0;
 ////   obj->cur.cache.geometry.validity = 0;
