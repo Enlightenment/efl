@@ -259,7 +259,6 @@ EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Directi
 EAPI void             elm_widget_focus_direction_go(Evas_Object *obj, int x, int y);
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
-EAPI int              elm_widget_focus_jump(Evas_Object *obj, int forward);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
