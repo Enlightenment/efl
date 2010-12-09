@@ -745,6 +745,7 @@ efreet_cache_check(Eet_File **ef, const char *path, int major)
     Efreet_Cache_Version *version;
 
     if (*ef == NON_EXISTING) return EINA_FALSE;
+    if (*ef) return EINA_TRUE;
     if (!*ef)
         *ef = eet_open(path, EET_FILE_MODE_READ);
     if (!*ef)
