@@ -1,18 +1,6 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CPPFLAGS = \
--I$(top_srcdir) \
--I$(top_srcdir)/src/bin \
--I$(top_srcdir)/src/lib \
--DPACKAGE_BIN_DIR=\"$(bindir)\" \
--DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EDJE_CFLAGS@ \
-@ECORE_EVAS_CFLAGS@ \
-@ECORE_FILE_CFLAGS@ \
-@EVIL_CFLAGS@
-
 bin_SCRIPTS = @EDJE_RECC_PRG@
 
 bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@ @EDJE_CONVERT_PRG@ @EDJE_INSPECTOR_PRG@ @EDJE_EXTERNAL_INSPECTOR_PRG@
@@ -28,7 +16,14 @@ edje_cc_handlers.c \
 edje_cc_sources.c \
 edje_prefix.c
 
-edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
+edje_cc_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+@EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EVIL_CFLAGS@
+edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CC_LIBS@ @EVIL_LIBS@
 edje_cc_LDFLAGS = @lt_enable_auto_import@
 
 
@@ -38,23 +33,43 @@ edje_decc.h \
 edje_cc_mem.c \
 edje_cc_sources.c
 
-edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(ECORE_FILE_LIBS)
+edje_decc_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+@EDJE_CFLAGS@ @EDJE_DECC_CFLAGS@ @EVIL_CFLAGS@
+edje_decc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_DECC_LIBS@
 edje_decc_LDFLAGS = @lt_enable_auto_import@
 
 edje_player_SOURCES = edje_player.c
-edje_player_LDADD = $(top_builddir)/src/lib/libedje.la $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
+edje_player_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+@EDJE_PLAYER_CFLAGS@ @EVIL_CFLAGS@
+edje_player_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_PLAYER_LIBS@ @EVIL_LIBS@
 edje_player_LDFLAGS = @lt_enable_auto_import@
 
 edje_convert_SOURCES = edje_convert.c edje_convert_main.c edje_data_convert.c
-edje_convert_LDADD = $(top_builddir)/src/lib/libedje.la $(EVIL_LIBS) $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
+edje_convert_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+@EDJE_CFLAGS@ @EDJE_CONVERT_CFLAGS@
+edje_convert_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CONVERT_LIBS@
 edje_convert_LDFLAGS = @lt_enable_auto_import@
 
 edje_inspector_SOURCES = edje_inspector.c
-edje_inspector_LDADD = $(top_builddir)/src/lib/libedje.la $(EVIL_LIBS) $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
+edje_inspector_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+@EDJE_INSPECTOR_CFLAGS@
+edje_inspector_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_INSPECTOR_LIBS@
 edje_inspector_LDFLAGS = @lt_enable_auto_import@
 
 edje_external_inspector_SOURCES = edje_external_inspector.c
-edje_external_inspector_LDADD = $(top_builddir)/src/lib/libedje.la $(EVIL_LIBS) $(ECORE_EVAS_LIBS) $(EVIL_LIBS)
+edje_external_inspector_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+@EDJE_EXTERNAL_INSPECTOR_CFLAGS@
+edje_external_inspector_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_EXTERNAL_INSPECTOR_LIBS@
 edje_external_inspector_LDFLAGS = @lt_enable_auto_import@
 
 
