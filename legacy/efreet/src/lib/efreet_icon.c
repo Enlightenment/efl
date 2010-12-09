@@ -279,12 +279,6 @@ efreet_icon_extra_list_get(void)
     return &efreet_extra_icon_dirs;
 }
 
-static Eina_Bool
-_hash_keys(Eina_Hash *hash __UNUSED__, const void *key, void *list)
-{
-    *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
-    return EINA_TRUE;
-}
 /**
  * @return Returns a list of Efreet_Icon structs for all the non-hidden icon
  * themes
@@ -295,23 +289,16 @@ EAPI Eina_List *
 efreet_icon_theme_list_get(void)
 {
     Eina_List *list = NULL;
-    Eina_List *theme_list = NULL;
-    char *dir;
     Eina_Iterator *it;
+    Efreet_Icon_Theme *theme;
 
     /* update the list to include all icon themes */
     efreet_icon_theme_dir_scan_all(NULL);
 
     /* create the list for the user */
-    it = eina_hash_iterator_key_new(efreet_icon_themes);
-    eina_iterator_foreach(it, EINA_EACH_CB(_hash_keys), &theme_list);
-    eina_iterator_free(it);
-
-    EINA_LIST_FREE(theme_list, dir)
+    it = eina_hash_iterator_data_new(efreet_icon_themes);
+    EINA_ITERATOR_FOREACH(it, theme)
     {
-        Efreet_Icon_Theme *theme;
-
-        theme = eina_hash_find(efreet_icon_themes, dir);
         if (theme->hidden || !theme->valid) continue;
 #ifndef STRICT_SPEC
         if (!theme->name.name) continue;
@@ -319,6 +306,7 @@ efreet_icon_theme_list_get(void)
 
         list = eina_list_append(list, theme);
     }
+    eina_iterator_free(it);
 
     return list;
 }
