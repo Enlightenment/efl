@@ -206,7 +206,7 @@ test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 void
 test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *tb, *li;
+   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *tb, *li, *en;
    char buf[PATH_MAX];
    
    win = elm_win_add(NULL, "flip2", ELM_WIN_BASIC);
@@ -269,19 +269,46 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    
    elm_flip_content_front_set(fl, o);
    evas_object_show(o);
+
+   en = elm_scrolled_entry_add(win);
+   elm_scrolled_entry_line_wrap_set(en, EINA_FALSE);
+   snprintf(buf, sizeof(buf),
+            "This is an entry widget in this window that<br>"
+            "uses markup <b>like this</> for styling and<br>"
+            "formatting <em>like this</>, as well as<br>"
+            "<a href=X><link>links in the text</></a>, so enter text<br>"
+            "in here to edit it. By the way, links are<br>"
+            "called <a href=anc-02>Anchors</a> so you will need<br>"
+            "to refer to them this way.<br>"
+            "<br>"
+            
+            "Also you can stick in items with (relsize + ascent): "
+            "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
+            " (full) "
+            "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
+            " (to the left)<br>"
+            
+            "Also (size + ascent): "
+            "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
+            " (full) "
+            "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
+            " (before this)<br>"
+            
+            "And as well (absize + ascent): "
+            "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+            " (full) "
+            "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+            " or even paths to image files on disk too like: "
+            "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
+            " ... end."
+            , PACKAGE_DATA_DIR
+           );
+   elm_scrolled_entry_entry_set(en, buf);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    
-   li = elm_list_add(win);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   
-   elm_list_item_append(li, "This is a list", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Second item", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "3rd", NULL, NULL,  NULL, NULL);
-   
-   elm_list_go(li);
-   
-   elm_flip_content_back_set(fl, li);
-   evas_object_show(li);
+   elm_flip_content_back_set(fl, en);
+   evas_object_show(en);
 
    evas_object_show(fl);
 
