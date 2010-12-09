@@ -30,17 +30,17 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, 0);
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
    ms = elm_actionslider_add(win);
-   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_RIGHT);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_RIGHT);
    elm_actionslider_labels_set(ms, "Snooze", NULL, "Stop");
@@ -53,8 +53,8 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
    elm_box_pack_end(bx, ms);
 
    ms = elm_actionslider_add(win);
-   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_CENTER);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_CENTER);
    elm_actionslider_labels_set(ms, "Snooze", NULL, "Stop");
@@ -66,8 +66,8 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 
    ms = elm_actionslider_add(win);
    elm_object_style_set(ms, "bar");
-   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_CENTER|
                                    ELM_ACTIONSLIDER_RIGHT);
@@ -80,8 +80,8 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 
    ms = elm_actionslider_add(win);
    elm_object_style_set(ms, "bar");
-   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_labels_set(ms, NULL, "Accept", "Reject");
@@ -93,8 +93,8 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
 
 
    ms = elm_actionslider_add(win);
-   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_ALL);
    elm_actionslider_labels_set(ms, "Left", "Center", "Right");
