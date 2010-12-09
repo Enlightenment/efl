@@ -2073,6 +2073,7 @@ efreet_icon_changes_monitor_add(const char *path)
                                                  efreet_icon_changes_cb,
                                                  NULL));
         }
+        eina_iterator_free(it);
     }
 }
 
