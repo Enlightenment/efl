@@ -85,7 +85,7 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
     /* TODO: We should check priority, and not just hope we search in right order */
     /* TODO: We need to find out if prioritized file id has changed because of
      * changed search order. */
-    if (desk->type == EFREET_DESKTOP_TYPE_APPLICATION &&
+    if (!desk->hidden && desk->type == EFREET_DESKTOP_TYPE_APPLICATION &&
         file_id && !eina_hash_find(file_ids, file_id))
     {
         int id;
