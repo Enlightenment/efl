@@ -151,6 +151,7 @@ efreet_cache_shutdown(void)
     theme_name = NULL;
 
     icon_cache = efreet_cache_close(icon_cache);
+    efreet_icon_themes_flush();
     icon_theme_cache = efreet_cache_close(icon_theme_cache);
 #endif
 
@@ -850,6 +851,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         }
 
         icon_cache = efreet_cache_close(icon_cache);
+        efreet_icon_themes_flush();
         icon_theme_cache = efreet_cache_close(icon_theme_cache);
 
         ev = NEW(Efreet_Event_Cache_Update, 1);

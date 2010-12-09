@@ -241,6 +241,8 @@ Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
 void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 char **efreet_cache_icon_theme_name_list(int *num);
+
+void efreet_icon_themes_flush(void);
 #endif
 
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);

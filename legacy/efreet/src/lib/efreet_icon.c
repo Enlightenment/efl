@@ -352,6 +352,18 @@ efreet_icon_theme_find(const char *theme_name)
     return theme;
 }
 
+#ifdef ICON_CACHE
+/**
+ * @internal
+ * @brief Clears icon theme cache
+ */
+void
+efreet_icon_themes_flush(void)
+{
+    IF_FREE_HASH(efreet_icon_themes);
+}
+#endif
+
 /**
  * @internal
  * @param icon: The icon name to strip extension
