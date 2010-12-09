@@ -85,8 +85,8 @@ struct _Eina_File_Direct_Info
    size_t               path_length; /**< size of the whole path */
    size_t               name_length; /**< size of the filename/basename component */
    size_t               name_start; /**< where the filename/basename component starts */
-   char                 path[EINA_PATH_MAX]; /**< the path */
    Eina_File_Type       type; /**< file type */
+   char                 path[EINA_PATH_MAX]; /**< the path */
 };
 
 /**
