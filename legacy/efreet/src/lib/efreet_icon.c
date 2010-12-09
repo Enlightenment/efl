@@ -361,6 +361,7 @@ void
 efreet_icon_themes_flush(void)
 {
     IF_FREE_HASH(efreet_icon_themes);
+    efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
 }
 #endif
 
