@@ -313,13 +313,21 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd)
      return;
 
-   ELM_HOVER_PARTS_FOREACH
+   if (wd->smt_sub)
      {
-	if (wd->subs[i].obj == sub)
-	  {
-             wd->subs[i].obj = NULL;
-             break;
-	  }
+        if (wd->smt_sub == sub)
+           wd->smt_sub = NULL;
+     }
+   else
+     {
+        ELM_HOVER_PARTS_FOREACH
+          {
+             if (wd->subs[i].obj == sub)
+               {
+                  wd->subs[i].obj = NULL;
+                  break;
+               }
+          }
      }
 }
 
