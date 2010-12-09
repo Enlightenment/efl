@@ -3,6 +3,7 @@
 #endif
 
 /* TODO: move eet file handling to eet_cache.c */
+/* TODO: add no_display check, as we might want only displayable items */
 
 #undef alloca
 #ifdef HAVE_ALLOCA_H
