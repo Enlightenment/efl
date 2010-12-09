@@ -13718,6 +13718,14 @@ collections {
                inherit: "default" 0.0;
                visible: 0;
             }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 100;
+            }
+            description { state: "disabled_inverted" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
          }
          part { name: "level2";
             type: RECT;
@@ -13739,7 +13747,6 @@ collections {
             }
             description { state: "disabled" 0.0;
                inherit: "default" 0.0;
-               color: 255 0 0 100;
             }
             description { state: "disabled_inverted" 0.0;
                inherit: "default" 0.0;
@@ -14323,9 +14330,15 @@ collections {
 
                get_state(PART:"level2", st, 30, vl);
                if (!strcmp(st, "inverted")) 
+               {
+                  set_state(PART:"level", "disabled_inverted", 0.0);
                   set_state(PART:"level2", "disabled_inverted", 0.0);
+               }
                else 
+               {
+                  set_state(PART:"level", "disabled", 0.0);
                   set_state(PART:"level2", "disabled", 0.0);
+               }
             }
          }
          program { name: "enable";
@@ -14353,10 +14366,16 @@ collections {
                   set_state(PART:"elm.units", "default", 0.0);
      
                get_state(PART:"level2", st, 30, vl);
-               if (!strcmp(st, "visible"))
-                  set_state(PART:"level2", "visible", 0.0);
+               if (!strcmp(st, "disabled_inverted"))
+               {
+                  set_state(PART:"level", "inverted", 0.0);
+                  set_state(PART:"level2", "inverted", 0.0);
+               }
                else
+               {
+                  set_state(PART:"level", "default", 0.0);
                   set_state(PART:"level2", "default", 0.0);
+               }
             }
          }
       }
@@ -14442,6 +14461,14 @@ collections {
                color: 255 0 0 200;
             }
             description { state: "inverted" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               color: 255 0 0 100;
+            }
+            description { state: "disabled_inverted" 0.0;
                inherit: "default" 0.0;
                visible: 0;
             }
@@ -15053,9 +15080,15 @@ collections {
 
 	       get_state(PART:"level2", st, 30, vl);
 	       if (!strcmp(st, "inverted")) 
+               {
+	          set_state(PART:"level", "disabled_inverted", 0.0);
 	          set_state(PART:"level2", "disabled_inverted", 0.0);
+               }
 	       else 
+               {
+	          set_state(PART:"level", "disabled", 0.0);
 	          set_state(PART:"level2", "disabled", 0.0);
+               }
 	    }
 	 }
 
@@ -15084,10 +15117,16 @@ collections {
 	          set_state(PART:"elm.units", "default", 0.0);
      
 	       get_state(PART:"level2", st, 30, vl);
-	       if (!strcmp(st, "visible"))
-	          set_state(PART:"level2", "visible", 0.0);
+	       if (!strcmp(st, "disabled_inverted"))
+               {
+	          set_state(PART:"level", "inverted", 0.0);
+	          set_state(PART:"level2", "inverted", 0.0);
+               }
 	       else
+               {
+	          set_state(PART:"level", "default", 0.0);
 	          set_state(PART:"level2", "default", 0.0);
+               }
 	    }
 	 }
       }
