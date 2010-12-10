@@ -1,3 +1,11 @@
+2010-12-10  Vincent Torri  <doursse at users dot sf dot net>
+
+	reviewed by: Vincent Torri
+	patch by: Vincent Richomme
+
+	* src/lib/evil_unistd.c:
+	remove warning
+
 2010-11-06  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
