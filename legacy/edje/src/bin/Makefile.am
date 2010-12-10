@@ -23,7 +23,7 @@ edje_cc_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EVIL_CFLAGS@
-edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CC_LIBS@ @EVIL_LIBS@
+edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CC_LIBS@ @EVIL_LIBS@ -lm
 edje_cc_LDFLAGS = @lt_enable_auto_import@
 
 
