@@ -99,6 +99,16 @@ struct _Ecore_Win32_Window
       unsigned int   layered : 1;
    } shape;
 
+   struct {
+     unsigned int x;
+     unsigned int y;
+     unsigned int w;
+     unsigned int h;
+     unsigned int px;
+     unsigned int py;
+     unsigned int dragging : 1;
+   } drag;
+
    void *dnd_drop_target;
 };
 

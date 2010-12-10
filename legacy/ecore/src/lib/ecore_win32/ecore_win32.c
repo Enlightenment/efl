@@ -3,7 +3,6 @@
 #endif
 
 #include <stdlib.h>
-#include <stdio.h>   /* for printf */
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -66,43 +65,56 @@ _ecore_win32_window_procedure(HWND   window,
      {
        /* Keyboard input notifications */
      case WM_KEYDOWN:
+       INF("keydown message");
        _ecore_win32_event_handle_key_press(data, 1);
        return 0;
      case WM_CHAR:
+       INF("char message");
        _ecore_win32_event_handle_key_press(data, 0);
        return 0;
      case WM_KEYUP:
+       INF("keyup message");
        _ecore_win32_event_handle_key_release(data, 1);
        return 0;
      case WM_SETFOCUS:
+       INF("setfocus message");
        _ecore_win32_event_handle_focus_in(data);
        return 0;
      case WM_KILLFOCUS:
+       INF("kill focus message");
        _ecore_win32_event_handle_focus_out(data);
        return 0;
        /* Mouse input notifications */
      case WM_LBUTTONDOWN:
+       INF("left button down message");
        _ecore_win32_event_handle_button_press(data, 1);
        return 0;
      case WM_MBUTTONDOWN:
+       INF("middle button down message");
        _ecore_win32_event_handle_button_press(data, 2);
        return 0;
      case WM_RBUTTONDOWN:
+       INF("right button down message");
        _ecore_win32_event_handle_button_press(data, 3);
        return 0;
      case WM_LBUTTONUP:
+       INF("left button up message");
        _ecore_win32_event_handle_button_release(data, 1);
        return 0;
      case WM_MBUTTONUP:
+       INF("middle button up message");
        _ecore_win32_event_handle_button_release(data, 2);
        return 0;
      case WM_RBUTTONUP:
+       INF("right button up message");
        _ecore_win32_event_handle_button_release(data, 3);
        return 0;
      case WM_MOUSEMOVE:
        {
           RECT                        rect;
           struct _Ecore_Win32_Window *w = NULL;
+
+          INF("moue move message");
 
           w = (struct _Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
 
@@ -140,16 +152,20 @@ _ecore_win32_window_procedure(HWND   window,
           return 0;
        }
      case WM_MOUSEWHEEL:
+       INF("mouse wheel message");
        _ecore_win32_event_handle_button_press(data, 4);
        return 0;
        /* Window notifications */
      case WM_CREATE:
+       INF("create window message");
        _ecore_win32_event_handle_create_notify(data);
        return 0;
      case WM_DESTROY:
+       INF("destroy window message");
        _ecore_win32_event_handle_destroy_notify(data);
        return 0;
      case WM_SHOWWINDOW:
+       INF("show window message");
        if ((data->data_param == SW_OTHERUNZOOM) ||
            (data->data_param == SW_OTHERZOOM))
          return 0;
@@ -161,21 +177,26 @@ _ecore_win32_window_procedure(HWND   window,
 
        return 0;
      case WM_CLOSE:
+       INF("close window message");
        _ecore_win32_event_handle_delete_request(data);
        return 0;
+     case WM_GETMINMAXINFO:
+       INF("get min max info window message");
+       return TRUE;
      case WM_MOVING:
-       printf (" * ecore message : moving\n");
+       INF("moving window message");
+       _ecore_win32_event_handle_configure_notify(data);
        return TRUE;
      case WM_MOVE:
-       printf (" * ecore message : moved\n");
+       INF("move window message");
        return 0;
      case WM_SIZING:
-       printf (" * ecore message : sizing\n");
+       INF("sizing window message");
        _ecore_win32_event_handle_resize(data);
        _ecore_win32_event_handle_configure_notify(data);
        return TRUE;
      case WM_SIZE:
-       printf (" * ecore message : sized\n");
+       INF("size window message");
        return 0;
 /*      case WM_WINDOWPOSCHANGING: */
 /*        { */
@@ -187,18 +208,170 @@ _ecore_win32_window_procedure(HWND   window,
 /*        _ecore_win32_event_handle_configure_notify(data); */
 /*        return 0; */
      case WM_WINDOWPOSCHANGED:
+       INF("position changed window message");
        _ecore_win32_event_handle_configure_notify(data);
        return 0;
-     case WM_ENTERSIZEMOVE :
-       printf (" * ecore message : WM_ENTERSIZEMOVE \n");
+     case WM_ENTERSIZEMOVE:
+       INF("enter size move window message");
        return 0;
      case WM_EXITSIZEMOVE:
-       printf (" * ecore message : WM_EXITSIZEMOVE\n");
+       INF("exit size move window message");
        return 0;
+     case WM_NCLBUTTONDOWN:
+       INF("non client left button down window message");
+       if (((DWORD)window_param == HTCAPTION) ||
+           ((DWORD)window_param == HTBOTTOM) ||
+           ((DWORD)window_param == HTBOTTOMLEFT) ||
+           ((DWORD)window_param == HTBOTTOMRIGHT) ||
+           ((DWORD)window_param == HTLEFT) ||
+           ((DWORD)window_param == HTRIGHT) ||
+           ((DWORD)window_param == HTTOP) ||
+           ((DWORD)window_param == HTTOPLEFT) ||
+           ((DWORD)window_param == HTTOPRIGHT))
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           ecore_win32_window_geometry_get(w,
+                                           &w->drag.x, &w->drag.y,
+                                           &w->drag.w, &w->drag.h);
+           w->drag.px = GET_X_LPARAM(data_param);
+           w->drag.py = GET_Y_LPARAM(data_param);
+           w->drag.dragging = 1;
+           return 0;
+         }
+       return DefWindowProc(window, message, window_param, data_param);
+     case WM_SYSCOMMAND:
+       INF("sys command window message", (int)window_param);
+       if ((((DWORD)window_param & 0xfff0) == SC_MOVE) ||
+           (((DWORD)window_param & 0xfff0) == SC_SIZE))
+         {
+           Ecore_Win32_Window *w;
+
+           INF("sys command MOVE or SIZE window message : %dx%d", GET_X_LPARAM(data_param), GET_Y_LPARAM(data_param));
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           w->drag.dragging = 1;
+           return 0;
+         }
+       return DefWindowProc(window, message, window_param, data_param);
+     case WM_NCMOUSEMOVE:
+       INF("non client mouse move window message");
+       if ((DWORD)window_param == HTCAPTION)
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           if (w->drag.dragging)
+             {
+               int dx;
+               int dy;
+
+               dx = GET_X_LPARAM(data_param) - w->drag.px;
+               dy = GET_Y_LPARAM(data_param) - w->drag.py;
+               ecore_win32_window_move(w, w->drag.x + dx, w->drag.y + dy);
+               w->drag.x += dx;
+               w->drag.y += dy;
+               w->drag.px = GET_X_LPARAM(data_param);
+               w->drag.py = GET_Y_LPARAM(data_param);
+               return 0;
+             }
+         }
+       if ((DWORD)window_param == HTLEFT)
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           if (w->drag.dragging)
+             {
+               int dw;
+               dw = GET_X_LPARAM(data_param) - w->drag.px;
+               ecore_win32_window_move_resize(w, w->drag.x + dw, w->drag.y, w->drag.w - dw, w->drag.h);
+               w->drag.x += dw;
+               w->drag.w -= dw;
+               w->drag.px = GET_X_LPARAM(data_param);
+               w->drag.py = GET_Y_LPARAM(data_param);
+               return 0;
+             }
+         }
+       if ((DWORD)window_param == HTRIGHT)
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           if (w->drag.dragging)
+             {
+               int dw;
+               dw = GET_X_LPARAM(data_param) - w->drag.px;
+               ecore_win32_window_resize(w, w->drag.w + dw, w->drag.h);
+               w->drag.w += dw;
+               w->drag.px = GET_X_LPARAM(data_param);
+               w->drag.py = GET_Y_LPARAM(data_param);
+               return 0;
+             }
+         }
+       if ((DWORD)window_param == HTTOP)
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           if (w->drag.dragging)
+             {
+               int dh;
+               dh = GET_Y_LPARAM(data_param) - w->drag.py;
+               ecore_win32_window_move_resize(w, w->drag.x, w->drag.y + dh, w->drag.w, w->drag.h - dh);
+               w->drag.y += dh;
+               w->drag.h -= dh;
+               w->drag.px = GET_X_LPARAM(data_param);
+               w->drag.py = GET_Y_LPARAM(data_param);
+               return 0;
+             }
+         }
+       if ((DWORD)window_param == HTBOTTOM)
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           if (w->drag.dragging)
+             {
+               int dh;
+               dh = GET_Y_LPARAM(data_param) - w->drag.py;
+               ecore_win32_window_resize(w, w->drag.w, w->drag.h + dh);
+               w->drag.h += dh;
+               w->drag.px = GET_X_LPARAM(data_param);
+               w->drag.py = GET_Y_LPARAM(data_param);
+               return 0;
+             }
+         }
+       return DefWindowProc(window, message, window_param, data_param);
+     case WM_NCLBUTTONUP:
+       INF("non client left button up window message");
+       if (((DWORD)window_param == HTCAPTION) ||
+           ((DWORD)window_param == HTBOTTOM) ||
+           ((DWORD)window_param == HTBOTTOMLEFT) ||
+           ((DWORD)window_param == HTBOTTOMRIGHT) ||
+           ((DWORD)window_param == HTLEFT) ||
+           ((DWORD)window_param == HTRIGHT) ||
+           ((DWORD)window_param == HTTOP) ||
+           ((DWORD)window_param == HTTOPLEFT) ||
+           ((DWORD)window_param == HTTOPRIGHT))
+         {
+           Ecore_Win32_Window *w;
+
+           w = (Ecore_Win32_Window *)GetWindowLong(window, GWL_USERDATA);
+           if (w->drag.dragging)
+             {
+               w->drag.dragging = 0;
+               return 0;
+             }
+         }
+       return DefWindowProc(window, message, window_param, data_param);
        /* GDI notifications */
      case WM_PAINT:
        {
          RECT rect;
+
+         INF("paint message");
 
          if (GetUpdateRect(window, &rect, FALSE))
            {
@@ -213,10 +386,10 @@ _ecore_win32_window_procedure(HWND   window,
          return 0;
        }
      case WM_SETREDRAW:
-       printf (" * ecore message : WM_SETREDRAW\n");
+       INF("set redraw message");
        return 0;
      case WM_SYNCPAINT:
-       printf (" * ecore message : WM_SYNCPAINT\n");
+       INF("sync paint message");
        return 0;
      default:
        return DefWindowProc(window, message, window_param, data_param);
