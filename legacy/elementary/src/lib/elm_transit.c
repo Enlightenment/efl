@@ -58,9 +58,6 @@ struct _Elm_Transit
    Eina_List *effect_list;
    Eina_List *objs;
    Elm_Transit_Tween_Mode tween_mode;
-   Eina_Bool auto_reverse:1;
-   Eina_Bool block:1;
-   Eina_Bool deleted:1;
    unsigned int effects_pending_del;
    int walking;
    struct
@@ -80,6 +77,9 @@ struct _Elm_Transit
       int current;
       Eina_Bool reverse;
    } repeat;
+   Eina_Bool auto_reverse:1;
+   Eina_Bool event_enabled:1;
+   Eina_Bool deleted:1;
 };
 
 struct _Elm_Effect
@@ -282,9 +282,8 @@ elm_transit_add(double duration)
    EINA_MAGIC_SET(transit, ELM_TRANSIT_MAGIC);
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
-
+ 	
    transit->time.duration = duration;
-
    transit->time.begin = ecore_loop_time_get();
    transit->animator = ecore_animator_add(_animator_animate_cb, transit);
 
@@ -463,8 +462,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 
    transit->objs = eina_list_append(transit->objs, obj);
 
-
-   if (transit->block)
+   if (!transit->event_enabled) 
      evas_object_pass_events_set(obj, EINA_TRUE);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
@@ -519,9 +517,9 @@ elm_transit_objects_get(const Elm_Transit *transit)
 }
 
 /**
- * Set the event blocked when transit is operating.
+ * Set the event enabled when transit is operating.
  *
- * If @p disabled is EINA_TRUE, the objects of the transit will not receives
+ * If @p enabled is EINA_TRUE, the objects of the transit will receives
  * events from mouse and keyboard during the animation.
  * @note When you add an object with elm_transit_object_add(), its state from
  * evas_object_pass_events_get(obj) is saved, and it is applied when the
@@ -530,27 +528,28 @@ elm_transit_objects_get(const Elm_Transit *transit)
  * run.
  *
  * @param transit The transit object.
- * @param disabled Disable or enable.
+ * @param enabled Disable or enable.
  *
  * @ingroup Transit
  */
 EAPI void
-elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
+elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
 
-   if (transit->block == disabled) return;
+   if (transit->event_enabled == enabled) return;
 
    Evas_Object *obj;
    Eina_List *elist;
+   Elm_Obj_Data *obj_data;
 
-   transit->block = disabled;
+   transit->event_enabled = enabled;
 
-   if (!transit->block)
+   if (enabled)
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
           {
-             Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+             obj_data = evas_object_data_get(obj, _transit_key);
              evas_object_pass_events_set(obj, obj_data->state);
           }
      }
@@ -562,22 +561,65 @@ elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
 }
 
 /**
- * Get the value of event blocked status.
+ * Get the value of event enabled status.
  *
- * @see elm_transit_event_block_set()
+ * @see elm_transit_event_enabled_set()
  *
  * @param transit The Transit object
- * @return EINA_TRUE, when event block is enabled. If @p transit is NULL
+ * @return EINA_TRUE, when event is enabled. If @p transit is NULL
  * EINA_FALSE is returned
  *
  * @ingroup Transit
  */
 EAPI Eina_Bool
-elm_transit_event_block_get(const Elm_Transit *transit)
+elm_transit_event_enabled_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
 
-   return transit->block;
+   return transit->event_enabled;
+}
+
+
+/**
+ * Set the event enabled when transit is operating.
+ *
+ * If @p disabled is EINA_TRUE, the objects of the transit will receives
+ * events from mouse and keyboard during the animation.
+ * @note When you add an object with elm_transit_object_add(), its state from
+ * evas_object_pass_events_get(obj) is saved, and it is applied when the
+ * transit ends, if you change this state with evas_object_pass_events_set()
+ * after add the object, this state will change again when @p transit stops to
+ * run.
+ *
+ * @see elm_transit_event_enabled_set()
+ *
+ * @param transit The transit object.
+ * @param disabled Disable or enable.
+ *
+ * @ingroup Transit
+ */
+EINA_DEPRECATED EAPI void
+elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled)
+{
+   elm_transit_event_enabled_set(transit, disabled);
+}
+
+
+/**
+ * Get the value of event block enabled  status.
+ *
+ * @see elm_transit_event_enabled_set(), elm_transit_event_enabled_get()
+ *
+ * @param transit The Transit object
+ * @return EINA_TRUE, when event is enabled. If @p transit is NULL
+ * EINA_FALSE is returned
+ *
+ * @ingroup Transit
+ */
+EINA_DEPRECATED EAPI Eina_Bool
+elm_transit_event_block_get(const Elm_Transit *transit)
+{
+   return !elm_transit_event_enabled_get(transit);
 }
 
 /**
@@ -720,7 +762,7 @@ elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mo
  * @ingroup Transit
  */
 EAPI Elm_Transit_Tween_Mode
-elm_transit_tween_mode_get(Elm_Transit *transit)
+elm_transit_tween_mode_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
 
@@ -1279,14 +1321,20 @@ elm_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
         if ((degree < 90) && (degree > -90))
           {
              obj = front;
-             evas_object_hide(back);
-             evas_object_show(front);
+             if (front != back) 
+               {
+                  evas_object_hide(back);
+                  evas_object_show(front);
+               }
           }
         else
           {
              obj = back;
-             evas_object_hide(front);
-             evas_object_show(back);
+             if (front != back)
+               {
+                  evas_object_hide(front);
+                  evas_object_show(back);
+               }
           }
 
         evas_map_smooth_set(map, EINA_TRUE);
@@ -1621,14 +1669,20 @@ elm_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__
         if ((degree < 90) && (degree > -90))
           {
              obj = resizable_flip_node->front;
-             evas_object_hide(resizable_flip_node->back);
-             evas_object_show(resizable_flip_node->front);
+             if (resizable_flip_node->front != resizable_flip_node->back)
+               {
+                  evas_object_hide(resizable_flip_node->back);
+                  evas_object_show(resizable_flip_node->front);
+               }
           }
         else
           {
              obj = resizable_flip_node->back;
-             evas_object_hide(resizable_flip_node->front);
-             evas_object_show(resizable_flip_node->back);
+             if (resizable_flip_node->front != resizable_flip_node->back)
+               {
+                  evas_object_hide(resizable_flip_node->front);
+                  evas_object_show(resizable_flip_node->back);
+               }
           }
 
         evas_map_smooth_set(map, EINA_TRUE);
@@ -1752,8 +1806,8 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Fx_Wipe_Dir dir, float x, float y, float w
          evas_map_point_image_uv_set(map, 3, 0, h2);
          evas_map_point_coord_set(map, 0, x, y, 0);
          evas_map_point_coord_set(map, 1, w2, y, 0);
-         evas_map_point_coord_set(map, 2, w2, h2, 0);
-         evas_map_point_coord_set(map, 3, x, h2, 0);
+         evas_map_point_coord_set(map, 2, w2, y+h2, 0);
+         evas_map_point_coord_set(map, 3, x, y+h2, 0);
          break;
       case ELM_TRANSIT_EFFECT_WIPE_DIR_DOWN:
          w2 = (x + w);
