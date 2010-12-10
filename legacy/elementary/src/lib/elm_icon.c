@@ -3,7 +3,7 @@
 
 #ifdef ELM_EFREET
 #define NON_EXISTING (void *)-1
-static Efreet_Icon_Theme *icon_theme = NULL;
+static const char *icon_theme = NULL;
 #endif
 
 /**
@@ -304,8 +304,9 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
    if (icon_theme == NON_EXISTING) return EINA_FALSE;
    if (!icon_theme)
      {
-        icon_theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
-        if (!icon_theme)
+        Efreet_Icon_Theme *theme;
+        theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
+        if (!theme)
           {
              const char **itr;
              static const char *themes[] = {
@@ -313,17 +314,20 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
              };
              for (itr = themes; *itr; itr++)
                {
-                  icon_theme = efreet_icon_theme_find(*itr);
-                  if (icon_theme) break;
+                  theme = efreet_icon_theme_find(*itr);
+                  if (theme) break;
                }
           }
+
+        if (!theme)
+          {
+             icon_theme = NON_EXISTING;
+             return EINA_FALSE;
+          }
+        else
+          icon_theme = eina_stringshare_add(theme->name.internal);
      }
-   if (!icon_theme)
-     {
-        icon_theme = NON_EXISTING;
-        return EINA_FALSE;
-     }
-   path = efreet_icon_path_find(icon_theme->name.internal, name, size);
+   path = efreet_icon_path_find(icon_theme, name, size);
    wd->freedesktop.use = !!path;
    if (wd->freedesktop.use)
      {
