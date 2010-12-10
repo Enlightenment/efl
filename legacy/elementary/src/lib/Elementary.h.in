@@ -1857,19 +1857,21 @@ extern "C" {
         ELM_FILESELECTOR_LAST
      } Elm_Fileselector_Mode;
 
-   EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EAPI void         elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_fileselector_is_save_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_fileselector_folder_only_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_fileselector_expandable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void         elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand) EINA_ARG_NONNULL(1);
-   EAPI void         elm_fileselector_path_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
-   EAPI const char  *elm_fileselector_path_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI const char  *elm_fileselector_selected_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_fileselector_selected_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+   EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode) EINA_ARG_NONNULL(1);
+   EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "selected" - the user click on a file
     * "directory,open" - the list is populate with a new content. event_info is a directory.
