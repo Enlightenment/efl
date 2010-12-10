@@ -305,6 +305,7 @@ _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int s
    if (!icon_theme)
      {
         Efreet_Icon_Theme *theme;
+        /* TODO: Listen for EFREET_EVENT_ICON_CACHE_UPDATE */
         theme = efreet_icon_theme_find(getenv("E_ICON_THEME"));
         if (!theme)
           {
