@@ -2297,7 +2297,6 @@ static Eina_Bool
 _elm_inwin_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *cur;
 
    if (!wd)
      return EINA_FALSE;
