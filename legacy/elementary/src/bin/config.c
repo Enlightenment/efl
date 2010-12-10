@@ -2524,7 +2524,7 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Zoom scroll friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia inertia<br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia<br>"
                                    "scrollers will impose at animations<br>"
                                    "triggered by Elementary widgets'<br>"
                                    "zooming API");
