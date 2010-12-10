@@ -88,6 +88,20 @@ _path_get_clicked(void            *data,
    printf("Get Path: %s\n", elm_fileselector_path_get(fs));
 }
 
+static void
+_mode_cycle_clicked(void            *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
+{
+   Evas_Object *fs = data;
+   Elm_Fileselector_Mode mode;
+
+   mode = (elm_fileselector_mode_get(fs) + 1) % ELM_FILESELECTOR_LAST;
+   elm_fileselector_mode_set(fs, mode);
+
+   printf("Setting mode to: %d\n", mode);
+}
+
 void
 test_fileselector(void *data       __UNUSED__,
                   Evas_Object *obj __UNUSED__,
@@ -180,6 +194,12 @@ test_fileselector(void *data       __UNUSED__,
    bt = elm_button_add(win);
    elm_button_label_set(bt, "path get");
    evas_object_smart_callback_add(bt, "clicked", _path_get_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "mode cycle");
+   evas_object_smart_callback_add(bt, "clicked", _mode_cycle_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 

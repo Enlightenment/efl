@@ -7,6 +7,7 @@
  * currently very much in progress.
  *
  * TODO
+ * child elements focusing support
  * userdefined icon/label cb
  * show/hide/add buttons ???
  * show/Hide hidden files
@@ -34,6 +35,7 @@ struct _Widget_Data
    Evas_Object *filename_entry;
    Evas_Object *path_entry;
    Evas_Object *files_list;
+   Evas_Object *files_grid;
    Evas_Object *up_button;
    Evas_Object *home_button;
 
@@ -46,6 +48,8 @@ struct _Widget_Data
 
    const char  *path_separator;
 
+   Elm_Fileselector_Mode mode;
+
    Eina_Bool    only_folder : 1;
    Eina_Bool    expand : 1;
 };
@@ -56,7 +60,8 @@ struct sel_data
    const char  *path;
 };
 
-Elm_Genlist_Item_Class itc;
+Elm_Genlist_Item_Class list_itc;
+Elm_Gengrid_Item_Class grid_itc;
 
 static const char *widtype = NULL;
 
@@ -107,16 +112,6 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
-#define SWALLOW(part_name, object_ptn)                                \
-  if (object_ptn)                                                     \
-    {                                                                 \
-       elm_widget_style_set(object_ptn, buf);                         \
-       if (edje_object_part_swallow(wd->edje, part_name, object_ptn)) \
-         evas_object_show(object_ptn);                                \
-       else                                                           \
-         evas_object_hide(object_ptn);                                \
-    }
-
 static void
 _theme_hook(Evas_Object *obj)
 {
@@ -140,15 +135,48 @@ _theme_hook(Evas_Object *obj)
    if (!style) style = "default";
    snprintf(buf, sizeof(buf), "fileselector/%s", style);
 
+#define SWALLOW(part_name, object_ptn)                                \
+  if (object_ptn)                                                     \
+    {                                                                 \
+       elm_widget_style_set(object_ptn, buf);                         \
+       if (edje_object_part_swallow(wd->edje, part_name, object_ptn)) \
+         evas_object_show(object_ptn);                                \
+       else                                                           \
+         evas_object_hide(object_ptn);                                \
+    }
    SWALLOW("elm.swallow.up", wd->up_button);
    SWALLOW("elm.swallow.home", wd->home_button);
-   SWALLOW("elm.swallow.files", wd->files_list);
+
+   if (wd->mode == ELM_FILESELECTOR_LIST)
+     {
+        if (edje_object_part_swallow(wd->edje, "elm.swallow.files",
+                                     wd->files_list))
+          {
+             evas_object_show(wd->files_list);
+             evas_object_hide(wd->files_grid);
+          }
+        else
+          evas_object_hide(wd->files_list);
+     }
+   else
+     {
+        if (edje_object_part_swallow(wd->edje, "elm.swallow.files",
+                                     wd->files_grid))
+          {
+             evas_object_show(wd->files_grid);
+             evas_object_hide(wd->files_list);
+          }
+        else
+          evas_object_hide(wd->files_grid);
+     }
+
    SWALLOW("elm.swallow.filename", wd->filename_entry);
    SWALLOW("elm.swallow.path", wd->path_entry);
 
    snprintf(buf, sizeof(buf), "fileselector/actions/%s", style);
    SWALLOW("elm.swallow.cancel", wd->cancel_button);
    SWALLOW("elm.swallow.ok", wd->ok_button);
+#undef SWALLOW
 
    edje_object_message_signal_process(wd->edje);
    edje_object_scale_set
@@ -256,7 +284,7 @@ _sel_do(void *data)
 
    if ((!wd->only_folder) && ecore_file_is_dir(path))
      {
-        if (wd->expand)
+        if (wd->expand && wd->mode == ELM_FILESELECTOR_LIST)
           {
              _do_anchors(sd->fs, path);
              elm_scrolled_entry_entry_set(wd->filename_entry, "");
@@ -272,7 +300,8 @@ _sel_do(void *data)
      }
    else /* navigating through folders only or file is not a dir. */
      {
-        if (wd->expand) _do_anchors(sd->fs, path);
+        if (wd->expand && wd->mode == ELM_FILESELECTOR_LIST)
+          _do_anchors(sd->fs, path);
         else if (wd->only_folder)
           {
              /* keep a ref to path 'couse it will be destroyed by _populate */
@@ -307,7 +336,9 @@ _sel(void            *data,
 
    sd = malloc(sizeof(*sd));
    sd->fs = data;
-   sd->path = elm_genlist_item_data_get(event_info);
+   sd->path = wd->mode == ELM_FILESELECTOR_LIST ?
+       elm_genlist_item_data_get(event_info) :
+       elm_gengrid_item_data_get(event_info);
 
    if (!sd->path)
      {
@@ -446,6 +477,7 @@ _populate(Evas_Object      *obj,
    if (!parent)
      {
         elm_genlist_clear(wd->files_list);
+        elm_gengrid_clear(wd->files_grid);
         eina_stringshare_replace(&wd->path, path);
         _do_anchors(obj, path);
      }
@@ -471,22 +503,33 @@ _populate(Evas_Object      *obj,
    dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
    EINA_LIST_FOREACH(dirs, l, real)
      {
-        elm_genlist_item_append(wd->files_list, &itc,
-                                eina_stringshare_add(real), /* item data */
-                                parent,
-                                wd->expand ? ELM_GENLIST_ITEM_SUBITEMS :
-                                ELM_GENLIST_ITEM_NONE,
-                                NULL, NULL);
+        if (wd->mode == ELM_FILESELECTOR_LIST)
+          elm_genlist_item_append(wd->files_list, &list_itc,
+                                  eina_stringshare_add(real), /* item data */
+                                  parent,
+                                  wd->expand ? ELM_GENLIST_ITEM_SUBITEMS :
+                                  ELM_GENLIST_ITEM_NONE,
+                                  NULL, NULL);
+        else if (wd->mode == ELM_FILESELECTOR_GRID)
+          elm_gengrid_item_append(wd->files_grid, &grid_itc,
+                                  eina_stringshare_add(real), /* item data */
+                                  NULL, NULL);
+
         free(real);
      }
    eina_list_free(dirs);
 
    EINA_LIST_FOREACH(files, l, real)
      {
-        elm_genlist_item_append(wd->files_list, &itc,
-                                eina_stringshare_add(real), /* item data */
-                                parent, ELM_GENLIST_ITEM_NONE,
-                                NULL, NULL);
+        if (wd->mode == ELM_FILESELECTOR_LIST)
+          elm_genlist_item_append(wd->files_list, &list_itc,
+                                  eina_stringshare_add(real), /* item data */
+                                  parent, ELM_GENLIST_ITEM_NONE,
+                                  NULL, NULL);
+        else if (wd->mode == ELM_FILESELECTOR_GRID)
+          elm_gengrid_item_append(wd->files_grid, &grid_itc,
+                                  eina_stringshare_add(real), /* item data */
+                                  NULL, NULL);
         free(real);
      }
    eina_list_free(files);
@@ -505,11 +548,12 @@ _populate(Evas_Object      *obj,
 EAPI Evas_Object *
 elm_fileselector_add(Evas_Object *parent)
 {
-   Evas *e = evas_object_evas_get(parent);
-   Evas_Object *obj, *ic, *bt, *li, *en;
-   Widget_Data *wd;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
+   Evas *e = evas_object_evas_get(parent);
+   Evas_Object *obj, *ic, *bt, *li, *en, *grid;
+   Widget_Data *wd;
+   int s;
 
    // Elementary Widget
    wd = ELM_NEW(Widget_Data);
@@ -555,17 +599,24 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, bt);
    wd->home_button = bt;
 
-   // genlist
-   itc.item_style = "default";
-   itc.func.label_get = _itc_label_get;
-   itc.func.icon_get = _itc_icon_get;
-   itc.func.state_get = _itc_state_get;
-   itc.func.del = _itc_del;
+   list_itc.item_style = grid_itc.item_style = "default";
+   list_itc.func.label_get = grid_itc.func.label_get = _itc_label_get;
+   list_itc.func.icon_get = grid_itc.func.icon_get = _itc_icon_get;
+   list_itc.func.state_get = grid_itc.func.state_get = _itc_state_get;
+   list_itc.func.del = grid_itc.func.del = _itc_del;
 
    li = elm_genlist_add(parent);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(li, 100, 100);
+
+   grid = elm_gengrid_add(parent);
+   evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   s = elm_finger_size_get() * 2;
+   elm_gengrid_item_size_set(grid, s, s);
+   elm_gengrid_align_set(grid, 0.0, 0.0);
 
    evas_object_smart_callback_add(li, "selected", _sel, obj);
    evas_object_smart_callback_add(li, "expand,request", _expand_req, obj);
@@ -573,8 +624,12 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_smart_callback_add(li, "expanded", _expand_done, obj);
    evas_object_smart_callback_add(li, "contracted", _contract_done, obj);
 
+   evas_object_smart_callback_add(grid, "selected", _sel, obj);
+
    elm_widget_sub_object_add(obj, li);
+   elm_widget_sub_object_add(obj, grid);
    wd->files_list = li;
+   wd->files_grid = grid;
 
    // path entry
    en = elm_scrolled_entry_add(parent);
@@ -758,12 +813,17 @@ elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj)
 }
 
 /**
- * This enables tree view in the fileselector.  Arrows are created on the
- * sides of directories, allowing them to expand in place.
+ * This enables a tree view in the fileselector, <b>if in @c
+ * ELM_FILESELECTOR_LIST mode</b>. If it's in other mode, the changes
+ * made by this function will only be visible when one switches back
+ * to list mode.
  *
  * @param obj The fileselector object
  * @param expand If true, tree view is enabled.
  * If false, tree view is disabled.
+ *
+ * In a tree view, arrows are created on the sides of directories,
+ * allowing them to expand in place.
  *
  * @ingroup Fileselector
  */
@@ -834,6 +894,80 @@ elm_fileselector_path_get(const Evas_Object *obj)
 }
 
 /**
+ * This sets the mode in which the fileselector will display files.
+ *
+ * @param obj The fileselector object
+
+ * @param mode The mode of the fileselector, being it one of @c
+ * ELM_FILESELECTOR_LIST (default) or @c ELM_FILESELECTOR_GRID. The
+ * first one, naturally, will display the files in a list. By using
+ * elm_fileselector_expandable_set(), the user will trigger a tree
+ * view for that list. The latter will make the widget to display its
+ * entries in a grid form.
+ *
+ * @see elm_fileselector_expandable_set().
+ *
+ * @ingroup Fileselector
+ */
+EAPI void
+elm_fileselector_mode_set(Evas_Object          *obj,
+                          Elm_Fileselector_Mode mode)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (mode == wd->mode) return;
+
+   if (mode == ELM_FILESELECTOR_LIST)
+     {
+        if (edje_object_part_swallow(wd->edje, "elm.swallow.files",
+                                     wd->files_list))
+          {
+             evas_object_show(wd->files_list);
+             evas_object_hide(wd->files_grid);
+          }
+        else
+          evas_object_hide(wd->files_list);
+     }
+   else
+     {
+        if (edje_object_part_swallow(wd->edje, "elm.swallow.files",
+                                     wd->files_grid))
+          {
+             evas_object_show(wd->files_grid);
+             evas_object_hide(wd->files_list);
+          }
+        else
+          evas_object_hide(wd->files_grid);
+     }
+
+   wd->mode = mode;
+
+   _populate(obj, wd->path, NULL);
+}
+
+/**
+ * This gets the mode in which the fileselector is displaying files.
+ *
+ * @param obj The fileselector object
+ * @return The mode in which the fileselector is at
+ *
+ * @ingroup Fileselector
+ */
+EAPI Elm_Fileselector_Mode
+elm_fileselector_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_FILESELECTOR_LAST;
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_FILESELECTOR_LAST;
+
+   return wd->mode;
+}
+
+/**
  * This gets the currently selected path in the file selector.
  *
  * @param obj The file selector object
@@ -846,8 +980,8 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Genlist_Item *it;
    if (!wd) return NULL;
+
    if (wd->filename_entry)
      {
         const char *name;
@@ -861,8 +995,18 @@ elm_fileselector_selected_get(const Evas_Object *obj)
         return wd->selection;
      }
 
-   it = elm_genlist_selected_item_get(wd->files_list);
-   if (it) return elm_genlist_item_data_get(it);
+   if (wd->mode == ELM_FILESELECTOR_LIST)
+     {
+        Elm_Genlist_Item *it;
+        it = elm_genlist_selected_item_get(wd->files_list);
+        if (it) return elm_genlist_item_data_get(it);
+     }
+   else
+     {
+        Elm_Gengrid_Item *it;
+        it = elm_gengrid_selected_item_get(wd->files_grid);
+        if (it) return elm_gengrid_item_data_get(it);
+     }
 
    return wd->path;
 }

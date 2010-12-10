@@ -1850,6 +1850,13 @@ extern "C" {
    EAPI const Eina_List    *elm_slideshow_layouts_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /* file selector */
+   typedef enum _Elm_Fileselector_Mode
+     {
+        ELM_FILESELECTOR_LIST = 0,
+        ELM_FILESELECTOR_GRID,
+        ELM_FILESELECTOR_LAST
+     } Elm_Fileselector_Mode;
+
    EAPI Evas_Object *elm_fileselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_fileselector_is_save_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
