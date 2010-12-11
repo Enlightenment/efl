@@ -132,8 +132,8 @@ static void _free(void *data, void *element)
 {
    Buddy *b = data;
    Block *block, *buddy;
-   unsigned int offset;
-   unsigned int index;
+   size_t offset;
+   size_t index;
 
    offset = (unsigned char *)element - (unsigned char *)b->heap;
    if (offset > b->size)
