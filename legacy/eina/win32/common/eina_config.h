@@ -30,10 +30,18 @@
 
 #define NVALGRIND
 
-#define VMAJ 1
-#define VMIN 0
-#define VMIC 0
-#define VREV 0
+#ifndef VMAJ
+# define VMAJ 1
+#endif
+#ifndef VMIN
+# define VMIN 0
+#endif
+#ifndef VMIC
+# define VMIC 0
+#endif
+#ifndef VREV
+# define VREV 0
+#endif
 
 #define MODULE_ARCH "win32-msc-x86"
 #define SHARED_LIB_SUFFIX ".dll"
