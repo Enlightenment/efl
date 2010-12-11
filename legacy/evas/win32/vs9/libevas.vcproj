@@ -21,7 +21,7 @@
 			OutputDirectory="$(DebugOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=_stricmp;_USE_MATH_DEFINES;__UNUSED__=;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EVAS_BUILD;DLL_EXPORT;__CRT_INLINE=__inline;inline=__inline;HAVE_CONFIG_H;snprintf=_snprintf_c;strcasecmp=stricmp;_USE_MATH_DEFINES;__UNUSED__="
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -66,7 +66,7 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libeet.lib libevil.lib libdl.lib freetype.lib libeina.lib"
+				AdditionalDependencies="libeet.lib libeina.lib libevil.lib libdl.lib fontconfig.lib freetype.lib"
 				OutputFile="$(OutDir)\libevas.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(LIB); $(DebugLibraryDirectory)"
@@ -104,7 +104,7 @@
 			OutputDirectory="$(ReleaseOutputDirectory)"
 			IntermediateDirectory="$(TemporaryDirectory)\$(TargetName)\$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="2"
+			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -147,7 +147,7 @@
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="libeet.lib libevil.lib libdl.lib freetype.lib libeina.lib"
+				AdditionalDependencies="libeet.lib libeina.lib libevil.lib libdl.lib fontconfig.lib freetype.lib"
 				OutputFile="$(OutDir)\libevas.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(LIB); $(ReleaseLibraryDirectory)"
@@ -204,6 +204,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\lib\cache\evas_cache_image.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\cache\evas_preload.c"
 					>
 				</File>
 			</Filter>
@@ -333,7 +337,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\lib\canvas\evas_object_gradient.c"
+					RelativePath="..\..\src\lib\canvas\evas_object_box.c"
 					>
 				</File>
 				<File
@@ -369,6 +373,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\lib\canvas\evas_object_smart_clipped.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\canvas\evas_object_table.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\lib\canvas\evas_object_text.c"
 					>
 				</File>
@@ -392,6 +404,14 @@
 					RelativePath="..\..\src\lib\canvas\evas_stack.c"
 					>
 				</File>
+				<File
+					RelativePath="..\..\src\lib\canvas\evas_stats.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\canvas\evas_transform.c"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -400,6 +420,14 @@
 			<Filter
 				Name="Header Files"
 				>
+				<File
+					RelativePath="..\..\src\lib\file\evas_module.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\file\evas_path.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Source Files"
@@ -415,27 +443,15 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="imaging"
-			>
-			<Filter
-				Name="Header Files"
-				>
-			</Filter>
-			<Filter
-				Name="Source Files"
-				>
-				<File
-					RelativePath="..\..\src\lib\imaging\evas_imaging.c"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="engines"
 			>
 			<Filter
 				Name="common"
 				>
+				<File
+					RelativePath="..\..\src\lib\engines\common\evas_bidi_utils.c"
+					>
+				</File>
 				<File
 					RelativePath="..\..\src\lib\engines\common\evas_blend_main.c"
 					>
@@ -462,6 +478,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\lib\engines\common\evas_convert_gry_8.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\lib\engines\common\evas_convert_grypal_6.c"
 					>
 				</File>
 				<File
@@ -497,6 +517,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\lib\engines\common\evas_encoding.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\lib\engines\common\evas_font_draw.c"
 					>
 				</File>
@@ -510,42 +534,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\lib\engines\common\evas_font_query.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient2_linear.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient2_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient2_radial.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient_angular.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient_linear.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient_main.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient_radial.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient_rectangular.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\lib\engines\common\evas_gradient_sinusoidal.c"
 					>
 				</File>
 				<File

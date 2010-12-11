@@ -227,7 +227,7 @@
 /* #undef HAVE_FNMATCH */
 
 /* have fontconfig searching capabilities */
-/* #define HAVE_FONTCONFIG 1 */
+#define HAVE_FONTCONFIG 1
 
 /* Define to 1 if you have the <GL/glew.h> header file. */
 #define HAVE_GL_GLEW_H 1
@@ -251,7 +251,7 @@
 /* #undef HAVE_SCHED_H */
 
 /* Define to 1 if you have the <stdint.h> header file. */
-#define HAVE_STDINT_H 1
+/* #define HAVE_STDINT_H 1 */
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
@@ -269,7 +269,7 @@
 #define HAVE_SYS_TYPES_H 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#define HAVE_UNISTD_H 1
+/* #define HAVE_UNISTD_H 1 */
 
 /* Valgrind support */
 /* #undef HAVE_VALGRIND */
@@ -279,9 +279,6 @@
 
 /* Define to 1 if you have the <X11/X.h> header file. */
 /* #undef HAVE_X11_X_H */
-
-/* "Module architecture" */
-#define MODULE_ARCH "mingw32-i686"
 
 /* Name of package */
 #define PACKAGE "evas"
@@ -293,13 +290,13 @@
 #define PACKAGE_NAME "evas"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "evas 0.9.9.042"
+#define PACKAGE_STRING "evas 1.0.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "evas"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.9.9.042"
+#define PACKAGE_VERSION "1.0.0"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -313,7 +310,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.9.9.042"
+#define VERSION "1.0.0"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
@@ -324,3 +321,8 @@
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
+
+#define VMAJ 1
+#define VMIN 0
+#define VMIC 0
+#define VREV 0
