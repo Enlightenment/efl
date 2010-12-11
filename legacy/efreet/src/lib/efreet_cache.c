@@ -90,6 +90,9 @@ static void desktop_cache_update_cache_job(void *data);
 static void icon_cache_update_cache_job(void *data);
 #endif
 static void desktop_cache_update_free(void *data, void *ev);
+#ifdef ICON_CACHE
+static void icon_cache_update_free(void *data, void *ev);
+#endif
 
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
@@ -151,7 +154,6 @@ efreet_cache_shutdown(void)
     theme_name = NULL;
 
     icon_cache = efreet_cache_close(icon_cache);
-    efreet_icon_themes_flush();
     icon_theme_cache = efreet_cache_close(icon_theme_cache);
 #endif
 
@@ -836,6 +838,11 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 #ifdef ICON_CACHE
     else if (!strcmp(file, "icon_data.update"))
     {
+        ev = NEW(Efreet_Event_Cache_Update, 1);
+        if (!ev) goto error;
+        d = NEW(Efreet_Old_Cache, 1);
+        if (!d) goto error;
+
         if (theme_cache)
         {
             INFO("Destorying theme cache due to cache change.");
@@ -852,13 +859,14 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         }
 
         icon_cache = efreet_cache_close(icon_cache);
-        efreet_icon_themes_flush();
-        /* TODO: We must delay closing this file until event is done, so users can free/refetch */
-        icon_theme_cache = efreet_cache_close(icon_theme_cache);
 
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (!ev) return;
-        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, NULL, NULL);
+        d->hash = efreet_icon_themes;
+        d->ef = icon_theme_cache;
+
+        efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
+        icon_theme_cache = NULL;
+
+        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, d);
     }
 #endif
     return;
@@ -992,3 +1000,17 @@ desktop_cache_update_free(void *data, void *ev)
     free(ev);
 }
 
+#ifdef ICON_CACHE
+static void
+icon_cache_update_free(void *data, void *ev)
+{
+    Efreet_Old_Cache *d;
+
+    d = data;
+    if (d->hash)
+        eina_hash_free(d->hash);
+    efreet_cache_close(d->ef);
+    free(d);
+    free(ev);
+}
+#endif

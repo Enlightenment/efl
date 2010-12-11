@@ -44,9 +44,10 @@ static int _efreet_icon_log_dom = -1;
 
 /* TODO: Scan efreet_extra_icon_dirs for themes */
 
+Eina_Hash *efreet_icon_themes = NULL;
+
 static const char *efreet_icon_deprecated_user_dir = NULL;
 static const char *efreet_icon_user_dir = NULL;
-static Eina_Hash *efreet_icon_themes = NULL;
 static Eina_List *efreet_icon_extensions = NULL;
 static Eina_List *efreet_extra_icon_dirs = NULL;
 #ifndef ICON_CACHE
@@ -351,19 +352,6 @@ efreet_icon_theme_find(const char *theme_name)
 
     return theme;
 }
-
-#ifdef ICON_CACHE
-/**
- * @internal
- * @brief Clears icon theme cache
- */
-void
-efreet_icon_themes_flush(void)
-{
-    IF_FREE_HASH(efreet_icon_themes);
-    efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
-}
-#endif
 
 /**
  * @internal
