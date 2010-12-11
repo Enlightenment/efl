@@ -221,7 +221,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lib\eina_file.c"
+				RelativePath="..\..\src\lib\eina_file_win32.c"
 				>
 			</File>
 			<File
