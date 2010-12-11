@@ -28,6 +28,13 @@
 # define EINA_SAFETY_CHECKS
 #endif
 
+#define NVALGRIND
+
+#define VMAJ 1
+#define VMIN 0
+#define VMIC 0
+#define VREV 0
+
 #define MODULE_ARCH "win32-msc-x86"
 #define SHARED_LIB_SUFFIX ".dll"
 

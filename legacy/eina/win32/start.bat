@@ -57,7 +57,7 @@ rem Add installation directory pathes.
 set INCLUDE=%EXT_DIR%\include;%INCLUDE%
 set LIB=%EXT_DIR%\lib;%LIB%
 
-set INCLUDE=%cd%\common;%cd%\..\src\include;%INCLUDE%
+set INCLUDE=%cd%\common;%cd%\..\src\include;%cd%\..\src\lib;%INCLUDE%
 
 set SolutionDirectory=%cd%\%PROJECT_TYPE%
 set DebugOutputDirectory=%SolutionDirectory%\out

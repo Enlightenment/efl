@@ -447,7 +447,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\eina_private.h"
+				RelativePath="..\..\src\lib\eina_private.h"
 				>
 			</File>
 			<File
