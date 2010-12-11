@@ -195,14 +195,15 @@ _eina_strbuf_common_insert_length(size_t csize,
       return EINA_FALSE;
 
    /* move the existing text */
-   memmove(buf->buf + ((len + pos) * csize), buf->buf + (pos * csize),
+   memmove(((unsigned char *)(buf->buf)) + ((len + pos) * csize), 
+           ((unsigned char *)(buf->buf)) + (pos * csize),
            (buf->len - pos) * csize);
 
    /* and now insert the given string */
    memcpy(buf->buf + (pos * csize), str, len * csize);
 
    buf->len += len;
-   memset(buf->buf + (buf->len * csize), 0, csize);
+   memset(((unsigned char *)(buf->buf)) + (buf->len * csize), 0, csize);
    return EINA_TRUE;
 }
 
@@ -305,7 +306,8 @@ eina_strbuf_common_append(size_t csize,
    if (EINA_UNLIKELY(!_eina_strbuf_common_grow(csize, buf, buf->len + len)))
       return EINA_FALSE;
 
-   memcpy(buf->buf + (buf->len * csize), str, (len + 1) * csize);
+   memcpy(((unsigned char *)(buf->buf)) + (buf->len * csize), str, 
+          (len + 1) * csize);
    buf->len += len;
    return EINA_TRUE;
 }
@@ -346,9 +348,10 @@ eina_strbuf_common_append_n(size_t csize,
    if (EINA_UNLIKELY(!_eina_strbuf_common_grow(csize, buf, buf->len + len)))
       return EINA_FALSE;
 
-   memcpy(buf->buf + (buf->len * csize), str, len * csize);
+   memcpy(((unsigned char *)(buf->buf)) + (buf->len * csize), str, 
+          len * csize);
    buf->len += len;
-   memset(buf->buf + (buf->len * csize), 0, csize);
+   memset(((unsigned char *)(buf->buf)) + (buf->len * csize), 0, csize);
    return EINA_TRUE;
 }
 
@@ -382,9 +385,10 @@ eina_strbuf_common_append_length(size_t csize,
    if (EINA_UNLIKELY(!_eina_strbuf_common_grow(csize, buf, buf->len + length)))
       return EINA_FALSE;
 
-   memcpy(buf->buf + (buf->len * csize), str, length * csize);
+   memcpy(((unsigned char *)(buf->buf)) + (buf->len * csize), str, 
+          length * csize);
    buf->len += length;
-   memset(buf->buf + (buf->len * csize), 0, csize);
+   memset(((unsigned char *)(buf->buf)) + (buf->len * csize), 0, csize);
    return EINA_TRUE;
 }
 
@@ -507,8 +511,8 @@ eina_strbuf_common_append_char(size_t csize, Eina_Strbuf *buf, const void *c)
    if (EINA_UNLIKELY(!_eina_strbuf_common_grow(csize, buf, buf->len + 1)))
       return EINA_FALSE;
 
-   memcpy(buf->buf + ((buf->len)++ *csize), c, csize);
-   memset(buf->buf + (buf->len * csize), 0, csize);
+   memcpy(((unsigned char *)(buf->buf)) + ((buf->len)++ *csize), c, csize);
+   memset(((unsigned char *)(buf->buf)) + (buf->len * csize), 0, csize);
    return EINA_TRUE;
 }
 
@@ -574,8 +578,8 @@ eina_strbuf_common_remove(size_t csize,
      }
 
    tail_len = buf->len - end + 1; /* includes '\0' */
-   memmove(buf->buf + (start * csize),
-           buf->buf + (end * csize),
+   memmove(((unsigned char *)(buf->buf)) + (start * csize),
+           ((unsigned char *)(buf->buf)) + (end * csize),
            tail_len * csize);
    buf->len -= remove_len;
    return _eina_strbuf_common_resize(csize, buf, buf->len);
@@ -747,14 +751,15 @@ eina_strbuf_replace(Eina_Strbuf *buf,
 
           }
 
-        memmove(buf->buf + pos + len2, buf->buf + pos + len1,
+        memmove(((unsigned char *)(buf->buf)) + pos + len2, 
+                ((unsigned char *)(buf->buf)) + pos + len1,
                 buf->len - pos - len1);
      }
 
    /* and now insert the given string */
-   memcpy(buf->buf + pos, with, len2);
+   memcpy(((unsigned char *)(buf->buf)) + pos, with, len2);
    buf->len += len2 - len1;
-   memset((char *)buf->buf + buf->len, 0, 1);
+   memset(((unsigned char *)(buf->buf)) + buf->len, 0, 1);
 
    return EINA_TRUE;
 }
@@ -831,9 +836,11 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
           }
 
         /* copy the untouched text */
-             memcpy(buf->buf + start, tmp_buf + start_tmp, pos - start);
+             memcpy(((unsigned char *)(buf->buf)) + start, 
+                    tmp_buf + start_tmp, pos - start);
         /* copy the new string */
-             memcpy(buf->buf + pos,   with,                len2);
+             memcpy(((unsigned char *)(buf->buf)) + pos,   
+                    with,                len2);
 
         /* calculate the next positions */
         start_tmp = pos_tmp + len1;
@@ -846,9 +853,10 @@ eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with)
         pos = start + pos_tmp - start_tmp;
      }
    /* and now copy the rest of the text */
-             memcpy(buf->buf + start, tmp_buf + start_tmp, len - start);
+             memcpy(((unsigned char *)(buf->buf)) + start, 
+                    tmp_buf + start_tmp, len - start);
    buf->len = len;
-             memset((char *)buf->buf + buf->len, 0, 1);
+             memset(((unsigned char *)(buf->buf)) + buf->len, 0, 1);
 
    free(tmp_buf);
 
