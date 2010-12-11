@@ -104,10 +104,11 @@ _eina_magic_strings_alloc(void)
           {
 #ifdef _WIN32
              ERR("could not realloc magic_strings from %Iu to %Iu buckets.",
+                 _eina_magic_strings_allocated, size);
 #else
              ERR("could not realloc magic_strings from %zu to %zu buckets.",
-#endif
                  _eina_magic_strings_allocated, size);
+#endif
              return NULL;
           }
 
@@ -319,7 +320,7 @@ eina_magic_string_get(Eina_Magic magic)
         _eina_magic_strings_dirty = 0;
      }
 
-   ems = bsearch((void *)(long)magic, _eina_magic_strings,
+   ems = bsearch((void *)(uintptr_t)magic, _eina_magic_strings,
                  _eina_magic_strings_count, sizeof(Eina_Magic_String),
                  _eina_magic_strings_find_cmp);
    if (ems)
