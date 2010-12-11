@@ -320,7 +320,7 @@ eina_magic_string_get(Eina_Magic magic)
         _eina_magic_strings_dirty = 0;
      }
 
-   ems = bsearch((void *)(uintptr_t)magic, _eina_magic_strings,
+   ems = bsearch((void *)(long)magic, _eina_magic_strings,
                  _eina_magic_strings_count, sizeof(Eina_Magic_String),
                  _eina_magic_strings_find_cmp);
    if (ems)
