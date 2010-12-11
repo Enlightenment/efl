@@ -52,7 +52,7 @@ AC_SUBST(VMAJ)
 
 ### Needed information
 
-requirement_eeze="ecore >= 1.0.0 libudev"
+requirement_eeze="ecore >= 1.0.0 eina >= 1.0.0 libudev"
 
 
 ### Checks for programs
@@ -77,8 +77,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES([ECORE], [ecore >= 1.0.0])
-PKG_CHECK_MODULES([LIBUDEV], [libudev])
+PKG_CHECK_MODULES([EEZE], [${requirement_eeze}])
 
 udev_version=$(pkg-config libudev --modversion)
 
@@ -111,6 +110,10 @@ fi
 EFL_COMPILER_FLAG([-Wshadow])
 
 
+### Binary
+
+EFL_ENABLE_BIN([eeze-udev-test], ["yes"])
+
 AC_SUBST(requirement_eeze)
 
 
@@ -136,6 +139,8 @@ echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
+echo
+echo "Test...................: ${have_eeze_udev_test}"
 echo
 echo "Documentation..........: ${build_doc}"
 echo
