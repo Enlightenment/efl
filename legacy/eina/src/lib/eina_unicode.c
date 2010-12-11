@@ -115,7 +115,7 @@ EAPI Eina_Unicode *
 eina_unicode_strdup(const Eina_Unicode *text)
 {
    Eina_Unicode *ustr;
-   int len;
+   size_t len;
 
    len = eina_unicode_strlen(text);
    ustr = (Eina_Unicode *)calloc(len + 1, sizeof(Eina_Unicode));
