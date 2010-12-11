@@ -196,7 +196,7 @@ struct _Eet_Free_Context
 
 struct _Eet_Variant_Unknow
 {
-   EINA_MAGIC;
+   EINA_MAGIC
 
    int  size;
    char data[1];
