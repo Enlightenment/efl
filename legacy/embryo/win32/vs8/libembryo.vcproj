@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EMBRYO_BUILD;DLL_EXPORT;HAVE_EVIL;__CRT_INLINE=__inline;snprintf=_snprintf_c;__UNUSED__=;HAVE_GETTIMEOFDAY;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EFL_EMBRYO_BUILD;DLL_EXPORT;HAVE_EVIL;__CRT_INLINE=__inline;snprintf=_snprintf_c;__UNUSED__=;HAVE_GETTIMEOFDAY;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(INCLUDE)"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EMBRYO_BUILD;DLL_EXPORT;HAVE_EVIL;__CRT_INLINE=__inline;snprintf=_snprintf_c;__UNUSED__=;HAVE_GETTIMEOFDAY;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EFL_EMBRYO_BUILD;DLL_EXPORT;HAVE_EVIL;__CRT_INLINE=__inline;snprintf=_snprintf_c;__UNUSED__=;HAVE_GETTIMEOFDAY;_CRT_SECURE_NO_WARNINGS;HAVE_CONFIG_H"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
