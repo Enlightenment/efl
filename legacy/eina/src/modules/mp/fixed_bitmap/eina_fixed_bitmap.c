@@ -57,7 +57,7 @@ struct _Eina_Fixed_Bitmap_Pool
    uint32_t bitmask;
 };
 
-static inline int
+static inline size_t
 _eina_rbtree_inlist_delta(void)
 {
    Eina_Fixed_Bitmap_Pool tmp;
