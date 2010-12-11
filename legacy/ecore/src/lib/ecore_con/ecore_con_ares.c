@@ -552,6 +552,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
       case ARES_ENOMEM: /* not enough memory */
       case ARES_EDESTRUCTION: /* request canceled, shuting down */
       case ARES_ENODATA: /* no data returned */
+      case ARES_ECONNREFUSED: /* connection refused */
         goto on_error;
 
       default:
