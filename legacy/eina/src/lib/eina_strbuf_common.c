@@ -192,7 +192,7 @@ _eina_strbuf_common_insert_length(size_t csize,
            (buf->len - pos) * csize);
 
    /* and now insert the given string */
-   memcpy(buf->buf + (pos * csize), str, len * csize);
+   memcpy((unsigned char *)buf->buf + (pos * csize), str, len * csize);
 
    buf->len += len;
    memset(((unsigned char *)(buf->buf)) + (buf->len * csize), 0, csize);
