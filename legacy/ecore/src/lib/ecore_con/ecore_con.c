@@ -1937,8 +1937,7 @@ _ecore_con_cl_udp_handler(void             *data,
    errno = 0;
    num = read(svr->fd, buf, READBUFSIZ);
 
-   if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) || (errno == EINVAL) ||
-       (errno == ENOSPC) || (errno == ECONNREFUSED))
+   if ((errno != EAGAIN) && (errno != EINTR))
      _ecore_con_server_kill(svr);
 
    if ((num < 1) || (svr->delete_me))
@@ -2002,8 +2001,7 @@ _ecore_con_svr_udp_handler(void             *data,
               &client_addr_len);
 #endif
 
-   if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) ||
-       (errno == EINVAL) || (errno == ENOSPC) || (errno == ECONNREFUSED))
+   if ((errno != EAGAIN) && (errno != EINTR))
      {
         if (!svr->delete_me)
           {
@@ -2106,7 +2104,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
      {
         errno = 0;
         num = read(cl->fd, buf, sizeof(buf));
-        if ((num > 0) || (errno == EAGAIN))
+        if ((num > 0) || (errno == EAGAIN) || (errno == EINTR))
           lost_client = EINA_FALSE;
      }
    else
@@ -2257,8 +2255,8 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 
    if (count < 0)
      {
-        /* we lost our server! */
-         _ecore_con_server_kill(svr);
+         if ((errno != EAGAIN) && (errno != EINTR))
+           _ecore_con_server_kill(svr);
          return;
      }
 
@@ -2304,29 +2302,27 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 
    if (count < 0)
      {
-        if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) ||
-            (errno == EINVAL) || (errno == ENOSPC) || (errno == ECONNREFUSED))
-          if (!cl->delete_me)
-            {
-               /* we lost our client! */
-                Ecore_Con_Event_Client_Del *e;
+        if ((errno != EAGAIN) && (errno != EINTR) && (!cl->delete_me))
+          {
+             /* we lost our client! */
+              Ecore_Con_Event_Client_Del *e;
 
-                e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
-                EINA_SAFETY_ON_NULL_RETURN(e);
+              e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
+              EINA_SAFETY_ON_NULL_RETURN(e);
 
-                cl->event_count++;
-                _ecore_con_cl_timer_update(cl);
-                e->client = cl;
-                ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
-                                _ecore_con_event_client_del_free, NULL);
+              cl->event_count++;
+              _ecore_con_cl_timer_update(cl);
+              e->client = cl;
+              ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
+                              _ecore_con_event_client_del_free, NULL);
 
-                cl->dead = EINA_TRUE;
-                INF("Lost client %s", (cl->ip) ? cl->ip : "");
-                if (cl->fd_handler)
-                  ecore_main_fd_handler_del(cl->fd_handler);
+              cl->dead = EINA_TRUE;
+              INF("Lost client %s", (cl->ip) ? cl->ip : "");
+              if (cl->fd_handler)
+                ecore_main_fd_handler_del(cl->fd_handler);
 
-                cl->fd_handler = NULL;
-            }
+              cl->fd_handler = NULL;
+          }
 
         return;
      }
