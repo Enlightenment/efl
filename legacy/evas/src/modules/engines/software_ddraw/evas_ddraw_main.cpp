@@ -38,7 +38,7 @@ evas_software_ddraw_init (HWND    window,
         pixel_format.dwSize = sizeof(pixel_format);
         buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
 
-        if (pixel_format.dwRGBBitCount != depth)
+        if (pixel_format.dwRGBBitCount != (DWORD)depth)
           goto release_object;
 
         buf->priv.dd.depth = depth;
@@ -114,7 +114,7 @@ evas_software_ddraw_init (HWND    window,
         pixel_format.dwSize = sizeof(pixel_format);
         buf->priv.dd.surface_primary->GetPixelFormat(&pixel_format);
 
-        if (pixel_format.dwRGBBitCount != depth)
+        if (pixel_format.dwRGBBitCount != (DWORD)depth)
           goto release_surface_back;
 
         buf->priv.dd.depth = depth;

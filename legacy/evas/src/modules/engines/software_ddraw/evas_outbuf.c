@@ -281,7 +281,7 @@ evas_software_ddraw_outbuf_push_updated_region(Outbuf     *buf,
    Outbuf_Region      *obr;
    DATA32             *src_data;
    void               *data;
-   int                 bpl = 0, yy;
+   int                 bpl = 0;
 
    conv_func = NULL;
    obr = update->extended_info;
