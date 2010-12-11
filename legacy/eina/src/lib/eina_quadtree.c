@@ -76,8 +76,6 @@ static const char EINA_MAGIC_QUADTREE_ITEM_STR[] = "Eina QuadTree Item";
 
 struct _Eina_QuadTree
 {
-   EINA_MAGIC;
-
    Eina_QuadTree_Root *root;
 
    Eina_List *hidden;
@@ -108,12 +106,12 @@ struct _Eina_QuadTree
 
    Eina_Bool resize : 1;
    Eina_Bool lost : 1;
+
+   EINA_MAGIC
 };
 
 struct _Eina_QuadTree_Root
 {
-   EINA_MAGIC;
-
    Eina_QuadTree_Root *parent;
    Eina_QuadTree_Root *left;
    Eina_QuadTree_Root *right;
@@ -121,11 +119,12 @@ struct _Eina_QuadTree_Root
    Eina_List *both;
 
    Eina_Bool sorted : 1;
+
+   EINA_MAGIC
 };
 
 struct _Eina_QuadTree_Item
 {
-   EINA_MAGIC;
    EINA_INLIST;
 
    Eina_QuadTree *quad;
@@ -139,6 +138,8 @@ struct _Eina_QuadTree_Item
    Eina_Bool delete_me : 1;
    Eina_Bool visible : 1;
    Eina_Bool hidden : 1;
+
+   EINA_MAGIC
 };
 
 static int _eina_log_qd_dom = -1;
