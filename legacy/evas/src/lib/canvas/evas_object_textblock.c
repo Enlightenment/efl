@@ -4841,9 +4841,10 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 static Eina_Bool
 _evas_textblock_format_is_visible(const char *s)
 {
-   if (!s) return EINA_FALSE;
    const char *item;
    Eina_Bool is_opener = EINA_TRUE;
+
+   if (!s) return EINA_FALSE;
 
    if (s[0] == '+' || s[0] == '-')
      {
