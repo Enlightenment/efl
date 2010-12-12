@@ -7,8 +7,13 @@
  */
 
 #ifndef ECORE_WIN32_WIP_POZEFLKSD
-# warning "You are using a work in progress API. This API is not stable"
-# warning "and is subject to change. You use this at your own risk."
+# ifdef _MSC_VER
+#  pragma message ("You are using a work in progress API. This API is not stable")
+#  pragma message ("and is subject to change. You use this at your own risk.")
+# else
+#  warning "You are using a work in progress API. This API is not stable"
+#  warning "and is subject to change. You use this at your own risk."
+# endif
 #endif
 
 #include <Eina.h>
