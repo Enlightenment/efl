@@ -94,7 +94,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
      }
 
    SetLastError(0);
-   if (!SetWindowLongPtr(w->window, GWL_USERDATA, (LONG)w) && (GetLastError() != 0))
+   if (!SetWindowLongPtr(w->window, GWL_USERDATA, (LONG_PTR)w) && (GetLastError() != 0))
      {
         ERR("SetWindowLongPtr() failed");
         DestroyWindow(w->window);
@@ -1276,8 +1276,8 @@ ecore_win32_window_cursor_set(Ecore_Win32_Window *window,
    if (!window || !cursor)
      return;
 
-   if (!SetClassLong(((struct _Ecore_Win32_Window *)window)->window,
-                     GCL_HCURSOR, (LONG)cursor))
+   if (!SetClassLongPtr(((struct _Ecore_Win32_Window *)window)->window,
+                     GCL_HCURSOR, (LONG_PTR)cursor))
      {
         ERR("SetClassLong() failed");
      }
