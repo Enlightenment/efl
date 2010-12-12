@@ -75,7 +75,7 @@ rem Add Eet lib path
 set EetInclude=%cd%\..\..\eet\src\lib
 set EetOut=%cd%\..\..\eet\win32\%PROJECT_TYPE%\out
 
-set INCLUDE=%EetInclude%;%EetInclude%\dlfcn;%INCLUDE%
+set INCLUDE=%EetInclude%;%INCLUDE%
 set LIB=%EetOut%;%LIB%
 
 rem Add installation directory pathes.
