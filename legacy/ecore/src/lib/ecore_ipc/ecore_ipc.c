@@ -1196,7 +1196,9 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 
    e = ev;
    svr = ecore_con_client_server_get(e->client);
+   if (!svr) return ECORE_CALLBACK_RENEW;
    cl = ecore_con_server_data_get(svr);
+   if (!cl) return ECORE_CALLBACK_RENEW;
    if (!eina_list_data_find(servers, cl)) return ECORE_CALLBACK_RENEW;
    /* handling code here */
      {
