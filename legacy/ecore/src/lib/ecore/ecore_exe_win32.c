@@ -621,7 +621,7 @@ ecore_exe_hup(Ecore_Exe *exe)
 static int
 _ecore_exe_win32_pipe_thread_generic_cb(void *data, Ecore_Exe_Flags flags)
 {
-#define BUFSIZE 2
+#define BUFSIZE 2048
    char        buf[BUFSIZE];
    Ecore_Exe  *exe;
    char       *current_buf = NULL;
@@ -653,7 +653,7 @@ _ecore_exe_win32_pipe_thread_generic_cb(void *data, Ecore_Exe_Flags flags)
 
    while (1)
      {
-        if (!PeekNamedPipe(child_pipe, buf, 1, &size, &current_size, NULL))
+       if (!PeekNamedPipe(child_pipe, buf, sizeof(buf), &size, &current_size, NULL))
           continue;
         if (size == 0)
           continue;
