@@ -114,6 +114,7 @@
  *    // basic - allocate data for widget and fill it
  *    wd = ELM_NEW(Widget_Data);
  *    e = evas_object_evas_get(parent);
+ *    if (!e) return NULL;
  *    obj = elm_widget_add(e);
  *    // give it a type name and set yp a mywidget type string if needed
  *    ELM_SET_WIDTYPE(widtype, "mywidget");

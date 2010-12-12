@@ -243,6 +243,7 @@ elm_panel_add(Evas_Object *parent)
 
    wd = ELM_NEW(Widget_Data);
    evas = evas_object_evas_get(parent);
+   if (!evas) return NULL;
    obj = elm_widget_add(evas);
    ELM_SET_WIDTYPE(widtype, "panel");
    elm_widget_type_set(obj, "panel");

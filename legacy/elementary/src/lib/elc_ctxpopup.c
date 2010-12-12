@@ -363,6 +363,7 @@ elm_ctxpopup_add(Evas_Object *parent)
 
    wd = ELM_NEW(Widget_Data);
    wd->evas = evas_object_evas_get(parent);
+   if (!wd->evas) return NULL;
    obj = elm_widget_add(wd->evas);
    ELM_SET_WIDTYPE(widtype, "ctxpopup");
    elm_widget_type_set(obj, "ctxpopup");

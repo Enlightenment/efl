@@ -551,6 +551,7 @@ elm_fileselector_add(Evas_Object *parent)
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
    Evas *e = evas_object_evas_get(parent);
+   if (!e) return NULL;
    Evas_Object *obj, *ic, *bt, *li, *en, *grid;
    Widget_Data *wd;
    int s;

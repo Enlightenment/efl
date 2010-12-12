@@ -260,6 +260,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    wd->h = 400;
 
    e = evas_object_evas_get(parent);
+   if (!e) return NULL;
    obj = elm_widget_add(e);
    ELM_SET_WIDTYPE(widtype, "fileselector_button");
    elm_widget_type_set(obj, "fileselector_button");

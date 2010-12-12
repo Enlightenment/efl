@@ -1226,6 +1226,7 @@ elm_list_add(Evas_Object *parent)
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
+   if (!e) return NULL;
    wd->self = obj = elm_widget_add(e);
    ELM_SET_WIDTYPE(widtype, "list");
    elm_widget_type_set(obj, "list");

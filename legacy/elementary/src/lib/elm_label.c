@@ -422,6 +422,7 @@ elm_label_add(Evas_Object *parent)
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
+   if (!e) return NULL;
    wd->bgcolor = EINA_FALSE;
    wd->bg = evas_object_rectangle_add(e);
    evas_object_color_set(wd->bg, 0, 0, 0, 0);

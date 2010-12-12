@@ -572,6 +572,7 @@ elm_flipselector_add(Evas_Object *parent)
 
    wd = ELM_NEW(Widget_Data);
    e = evas_object_evas_get(parent);
+   if (!e) return NULL;
    obj = elm_widget_add(e);
    wd->self = obj;
    ELM_SET_WIDTYPE(widtype, "flipselector");
