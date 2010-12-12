@@ -62,6 +62,32 @@ EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
  */
 #define gettimeofday(tp,tzp) evil_gettimeofday((tp),(tzp))
 
+#ifdef _MSC_VER
+
+/**
+ * @brief Suspend the execution of the calling process for microsecond
+ * intervals.
+ *
+ * @param usec The interval in microseconds.
+ * @return Always 0 (success).
+ *
+ * This function suspends the execution of the calling process for (at
+ * least) @p usec microseconds.
+ *
+ * Conformity: Not appliclable.
+ *
+ * Supported OS: Windows XP, Windows CE.
+ */
+EAPI int evil_usleep(unsigned long usec);
+
+/**
+ * @def usleep(usec)
+ *
+ * Wrapper around evil_usleep().
+ */
+#define usleep(usec) evil_usleep(usec);
+
+#endif /* _MSC_VER */
 
 /*
  * Process identifer related functions

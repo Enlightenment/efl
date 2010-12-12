@@ -78,6 +78,15 @@ evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
    return 1;
 }
 
+#ifdef _MSC_VER
+int
+evil_usleep(unsigned long usec)
+{
+   Sleep(usec / 1000);
+   return 0;
+}
+#endif
+
 
 /*
  * Process identifer related functions
