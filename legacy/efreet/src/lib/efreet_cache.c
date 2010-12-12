@@ -150,8 +150,7 @@ efreet_cache_shutdown(void)
     theme_cache = _efreet_cache_free(theme_cache);
     fallback_cache = _efreet_cache_fallback_free(fallback_cache);
 
-    if (theme_name) eina_stringshare_del(theme_name);
-    theme_name = NULL;
+    IF_RELEASE(theme_name);
 
     icon_cache = efreet_cache_close(icon_cache);
     icon_theme_cache = efreet_cache_close(icon_theme_cache);
@@ -595,9 +594,8 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
     {
         /* FIXME: this is bad if people have pointer to this cache, things will go wrong */
         INFO("theme_name change from `%s` to `%s`", theme_name, theme->name.internal);
-        eina_stringshare_del(theme_name);
+        IF_RELEASE(theme_name);
         theme_cache = _efreet_cache_free(theme_cache);
-        theme_name = NULL;
     }
 
     if (!theme_name)
@@ -849,8 +847,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
             theme_cache = _efreet_cache_free(theme_cache);
         }
 
-        if (theme_name) eina_stringshare_del(theme_name);
-        theme_name = NULL;
+        IF_RELEASE(theme_name);
 
         if (fallback_cache)
         {
