@@ -80,6 +80,10 @@ evas_common_cpu_neon_test(void)
    asm volatile (
 		".fpu neon	     \n\t"
                  "vqadd.u8 d0, d1, d0\n"
+                 : /* Out */
+                 : /* In */
+                 : /* Clobbered */
+                 "d0", "d1"
                  );
 #endif
 //#endif
