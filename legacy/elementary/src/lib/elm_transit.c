@@ -1526,7 +1526,7 @@ _set_image_uv_by_axis_y(Evas_Map *map, Elm_Fx_ResizableFlip_Node *flip, float de
         evas_map_point_image_uv_set(map, 1, flip->from_size.x, 0);
         evas_map_point_image_uv_set(map, 2, flip->from_size.x,
                                     flip->from_size.y);
-        evas_map_point_image_uv_set(map, 3, 0, flip->to_size.y);
+        evas_map_point_image_uv_set(map, 3, 0, flip->from_size.y);
      }
 }
 
@@ -1551,7 +1551,7 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Fx_ResizableFlip_Node *flip, float de
         evas_map_point_image_uv_set(map, 1, flip->from_size.x, 0);
         evas_map_point_image_uv_set(map, 2, flip->from_size.x,
                                     flip->from_size.y);
-        evas_map_point_image_uv_set(map, 3, 0, flip->to_size.y);
+        evas_map_point_image_uv_set(map, 3, 0, flip->from_size.y);
      }
 }
 
