@@ -16,6 +16,10 @@ EAPI char *evil_basename(char *path);
 
 #define basename(p) evil_basename(p)
 
+EAPI char *evil_dirname(char *path);
+
+#define dirname(p) evil_dirname(p)
+
 
 /**
  * @}
