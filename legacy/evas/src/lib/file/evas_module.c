@@ -67,7 +67,10 @@ evas_module_paths_init(void)
    /* 3. libevas.so/../evas/modules/ */
    path2 = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
    if (path2 && path && (strcmp(path, path2) == 0))
-     free(path2);
+     {
+        free(path2);
+        path2 = NULL;
+     }
    else
      evas_module_paths = _evas_module_append(evas_module_paths, path2);
 
