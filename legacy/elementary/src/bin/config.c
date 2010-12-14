@@ -2781,7 +2781,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_span_size_set(sl, 120);
    elm_slider_unit_format_set(sl, "%1.0f files");
    elm_slider_indicator_format_set(sl, "%1.0f");
-   elm_slider_min_max_set(sl, 0, 256);
+   elm_slider_min_max_set(sl, 0, 32);
    elm_slider_value_set(sl, elm_edje_file_cache_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
@@ -2805,7 +2805,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_span_size_set(sl, 120);
    elm_slider_unit_format_set(sl, "%1.0f collections");
    elm_slider_indicator_format_set(sl, "%1.0f");
-   elm_slider_min_max_set(sl, 0, 512);
+   elm_slider_min_max_set(sl, 0, 128);
    elm_slider_value_set(sl, elm_edje_collection_cache_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
