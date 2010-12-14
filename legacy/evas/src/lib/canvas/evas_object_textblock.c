@@ -4148,6 +4148,7 @@ _evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cur
  * @param cur the position to look at.
  * @return the format node found.
  */
+#if 0 // not used anymore?
 static Evas_Object_Textblock_Node_Format *
 _evas_textblock_cursor_node_format_before_pos_get(const Evas_Textblock_Cursor *cur)
 {
@@ -4183,6 +4184,8 @@ _evas_textblock_cursor_node_format_before_pos_get(const Evas_Textblock_Cursor *c
      }
    return pitr;
 }
+#endif
+
 /**
  * Return the object's main cursor.
  *
