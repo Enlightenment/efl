@@ -1786,7 +1786,7 @@ EAPI void _edje_module_shutdown();
 static inline Eina_Bool
 edje_program_is_strncmp(const char *str)
 {
-   unsigned int length;
+   size_t length;
 
    length = strlen(str);
 

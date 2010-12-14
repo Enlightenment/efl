@@ -2528,7 +2528,7 @@ static Edje_Box_Layout *
 _edje_box_layout_external_new(const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data)
 {
    Edje_Box_Layout *l;
-   int name_len;
+   size_t name_len;
 
    name_len = strlen(name) + 1;
    l = malloc(sizeof(Edje_Box_Layout) + name_len);

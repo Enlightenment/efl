@@ -1440,7 +1440,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *
              if (origin > length)
                {
                   char *tmp;
-                  int alias_length;
+                  size_t alias_length;
 
                   alias_length = strlen(alias);
                   tmp = alloca(alias_length + origin - length + 2);

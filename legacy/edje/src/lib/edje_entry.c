@@ -569,7 +569,7 @@ _edje_anchor_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
    Evas_Event_Mouse_Down *ev = event_info;
    Edje_Real_Part *rp = an->en->rp;
    char *buf, *n;
-   int len;
+   size_t len;
    int ignored;
    Entry *en;
 
@@ -601,7 +601,7 @@ _edje_anchor_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Evas_Event_Mouse_Up *ev = event_info;
    Edje_Real_Part *rp = an->en->rp;
    char *buf, *n;
-   int len;
+   size_t len;
    int ignored;
    Entry *en;
 
@@ -628,7 +628,7 @@ _edje_anchor_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
    Evas_Event_Mouse_Move *ev = event_info;
    Edje_Real_Part *rp = an->en->rp;
    char *buf, *n;
-   int len;
+   size_t len;
    int ignored;
    Entry *en;
 
@@ -655,7 +655,7 @@ _edje_anchor_mouse_in_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Evas_Event_Mouse_In *ev = event_info;
    Edje_Real_Part *rp = an->en->rp;
    char *buf, *n;
-   int len;
+   size_t len;
    int ignored;
 
    ignored = rp->part->ignore_flags & ev->event_flags;
@@ -677,7 +677,7 @@ _edje_anchor_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
    Evas_Event_Mouse_Out *ev = event_info;
    Edje_Real_Part *rp = an->en->rp;
    char *buf, *n;
-   int len;
+   size_t len;
    int ignored;
 
    ignored = rp->part->ignore_flags & ev->event_flags;

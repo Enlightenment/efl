@@ -847,7 +847,7 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 	       {
                   char *font2;
                   
-                  int len = strlen(font) + sizeof("edje/fonts/") + 1;
+                  size_t len = strlen(font) + sizeof("edje/fonts/") + 1;
                   font2 = alloca(len);
                   sprintf(font2, "edje/fonts/%s", font);
                   font = font2;
