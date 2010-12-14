@@ -2457,9 +2457,12 @@ void
 _edje_entry_cursor_copy(Edje_Real_Part *rp, Edje_Cursor cur, Edje_Cursor dst)
 {
    Entry *en = rp->entry_data;
-   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   Evas_Textblock_Cursor *c;
+   Evas_Textblock_Cursor *d;
+
+   c = _cursor_get(rp, cur);
    if (!c) return;
-   Evas_Textblock_Cursor *d = _cursor_get(rp, dst);
+   d = _cursor_get(rp, dst);
    if (!d) return;
    evas_textblock_cursor_copy(c, d);
    _curs_update_from_curs(c, rp->object, rp->entry_data);

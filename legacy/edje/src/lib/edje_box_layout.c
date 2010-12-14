@@ -79,8 +79,10 @@ _edje_box_layout_exec(Evas_Object *obj, Edje_Part_Box_Animation *anim)
    Edje_Transition_Animation_Data *tad;
    Evas_Coord x, y, w, h;
    Evas_Coord cur_x, cur_y, cur_w, cur_h;
+   double progress;
+
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   double progress = (anim->progress - anim->start_progress) / (1 - anim->start_progress);
+   progress = (anim->progress - anim->start_progress) / (1 - anim->start_progress);
 
    EINA_LIST_FOREACH(anim->objs, l, tad)
      {
