@@ -1,7 +1,9 @@
 #ifndef _EDJE_H
 #define _EDJE_H
 
-#include <stdint.h>
+#ifndef _MSC_VER
+# include <stdint.h>
+#endif
 #include <math.h>
 #include <float.h>
 #include <limits.h>
