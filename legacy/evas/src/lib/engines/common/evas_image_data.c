@@ -102,7 +102,11 @@ evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, int cspace)
       case EVAS_COLORSPACE_YCBCR422P709_PL:
 	if (dst->image.no_free)
 	  {
-	     dst->image.data = NULL;
+             ie_dst->allocated.w = 0;
+             ie_dst->allocated.h = 0;
+             ie_dst->flags.preload_done = 0;
+             ie_dst->flags.loaded = 0;
+             dst->image.data = NULL;
 	     dst->image.no_free = 0;
              /* FIXME: Must allocate image.data surface cleanly. */
 	  }

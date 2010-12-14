@@ -729,19 +729,22 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
          * causes only speed-down side-effect and no memory usage gain;
          * it will be loaded again for the very next rendering for this image.
          */
-        if ((dounload) || 
-            ((im->cache_entry.flags.loaded) && 
-             ((!im->cs.no_free) 
-#ifdef EVAS_CSERVE             
-             || (ie->data1)
-#endif             
-              )  &&
-             (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)))
+        if (ie->scale_hint != EVAS_IMAGE_SCALE_HINT_DYNAMIC)
           {
-             if ((dounload) || (im->cache.orig_usage < 
-                                (im->cache.newest_usage / 20)))
+             if ((dounload) || 
+                 ((im->cache_entry.flags.loaded) && 
+                     ((!im->cs.no_free) 
+#ifdef EVAS_CSERVE             
+                      || (ie->data1)
+#endif             
+                     )  &&
+                     (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)))
                {
-                  evas_common_rgba_image_unload(&im->cache_entry);
+                  if ((dounload) || (im->cache.orig_usage < 
+                                     (im->cache.newest_usage / 20)))
+                    {
+                       evas_common_rgba_image_unload(&im->cache_entry);
+                    }
                }
           }
 #endif

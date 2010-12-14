@@ -598,6 +598,8 @@ struct _Image_Entry
 
 #ifdef BUILD_ASYNC_PRELOAD
    LK(lock);
+   LK(lock_cancel);
+   Eina_Bool unload_cancel : 1;
 #endif
 
    Image_Entry_Flags      flags;

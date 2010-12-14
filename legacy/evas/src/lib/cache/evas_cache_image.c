@@ -272,6 +272,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 
 #ifdef BUILD_ASYNC_PRELOAD
    LKD(ie->lock);
+   LKD(ie->lock_cancel);
 #endif
 #ifdef EVAS_FRAME_QUEUING
    LKD(ie->lock_references);
@@ -336,6 +337,7 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 
 #ifdef BUILD_ASYNC_PRELOAD
    LKI(ie->lock);
+   LKI(ie->lock_cancel); 
    ie->targets = NULL;
    ie->preload = NULL;
    ie->flags.delete_me = 0;
@@ -431,6 +433,18 @@ _evas_cache_image_async_heavy(void *data)
      }
 
    current->channel = pchannel;
+   
+   // check the unload cancel flag
+   LKL(current->lock_cancel);
+   if (current->unload_cancel)
+     {
+        current->unload_cancel = EINA_FALSE;
+        cache->func.surface_delete(current);
+        current->flags.loaded = 0;
+        current->flags.preload_done = 0;
+     }
+   LKU(current->lock_cancel);
+   
    LKU(current->lock);
 }
 
@@ -1406,7 +1420,15 @@ evas_cache_image_unload_data(Image_Entry *im)
    evas_cache_image_preload_cancel(im, NULL);
 
 #ifdef BUILD_ASYNC_PRELOAD
-   LKL(im->lock);
+   LKL(im->lock_cancel);
+   if (LKT(im->lock) != 0) /* can't get image lock - busy async load */
+     {
+        im->unload_cancel = EINA_TRUE;
+        LKU(im->lock_cancel);
+        return;
+     }
+   LKU(im->lock_cancel);
+//   LKL(im->lock);
 #endif
    if ((!im->flags.loaded) || (!im->file) ||
        (!im->info.module) || (im->flags.dirty))
@@ -1453,17 +1475,22 @@ EAPI void
 evas_cache_image_preload_data(Image_Entry *im, const void *target)
 {
 #ifdef BUILD_ASYNC_PRELOAD
+   RGBA_Image *img = (RGBA_Image *)im;
+   
    assert(im);
    assert(im->cache);
 
-   if (im->flags.loaded)
+   if ((im->flags.loaded) && (img->image.data))
      {
 	evas_object_inform_call_image_preloaded((Evas_Object *)target);
 	return;
      }
+   im->flags.loaded = 0;
 
    if (!_evas_cache_image_entry_preload_add(im, target))
-     evas_object_inform_call_image_preloaded((Evas_Object *)target);
+     {
+        evas_object_inform_call_image_preloaded((Evas_Object *)target);
+     }
 #else
    evas_cache_image_load_data(im);
    evas_object_inform_call_image_preloaded((Evas_Object *)target);
