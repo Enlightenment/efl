@@ -2,6 +2,11 @@
 #include "evas_private.h"
 #include "evas_cs.h"
 
+#ifdef LKDEBUG
+EAPI Eina_Bool lockdebug = EINA_FALSE;
+EAPI int lockmax = 0;
+#endif
+
 static int _evas_init_count = 0;
 int _evas_log_dom_global = -1;
 /**
@@ -22,6 +27,14 @@ evas_init(void)
    if (++_evas_init_count != 1)
      return _evas_init_count;
 
+#ifdef LKDEBUG
+   if (getenv("EVAS_LOCK_DEBUG"))
+      {
+         lockdebug = EINA_TRUE;
+         lockmax = atoi(getenv("EVAS_LOCK_DEBUG"));
+      }
+#endif
+   
 #ifdef HAVE_EVIL
    if (!evil_init())
      return --_evas_init_count;
