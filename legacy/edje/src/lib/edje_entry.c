@@ -1881,7 +1881,9 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
    rp->entry_data = NULL;
    _sel_clear(en->cursor, rp->object, en);
    _anchors_clear(en->cursor, rp->object, en);
+#ifdef HAVE_ECORE_IMF
    _preedit_clear(en);
+#endif
    rp->edje->subobjs = eina_list_remove(rp->edje->subobjs, en->cursor_bg);
    rp->edje->subobjs = eina_list_remove(rp->edje->subobjs, en->cursor_fg);
    evas_object_del(en->cursor_bg);
@@ -2636,9 +2638,11 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    else
       evas_textblock_cursor_copy(en->cursor, tc);
 
+#ifdef HAVE_ECORE_IMF
    /* delete preedit characters */
    _preedit_del(en);
    _preedit_clear(en);
+#endif
 
    if (evas_textblock_cursor_compare(en->cursor, tc))
       cursor_move = EINA_TRUE;
