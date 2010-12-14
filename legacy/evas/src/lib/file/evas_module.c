@@ -51,10 +51,7 @@ _evas_module_append(Eina_List *list, char *path)
 void
 evas_module_paths_init(void)
 {
-   char *path, *path2;
-#ifndef _MSC_VER
-   const char *path3;
-#endif
+   char *path;
 
    /* 1. ~/.evas/modules/ */
    path = eina_module_environment_path_get("HOME", "/.evas/modules");
@@ -62,26 +59,24 @@ evas_module_paths_init(void)
 
    /* 2. $(EVAS_MODULE_DIR)/evas/modules/ */
    path = eina_module_environment_path_get("EVAS_MODULES_DIR", "/evas/modules");
-   evas_module_paths = _evas_module_append(evas_module_paths, path);
+   if (eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
+     free(path);
+   else
+     evas_module_paths = _evas_module_append(evas_module_paths, path);
 
    /* 3. libevas.so/../evas/modules/ */
-   path2 = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
-   if (path2 && path && (strcmp(path, path2) == 0))
-     {
-        free(path2);
-        path2 = NULL;
-     }
+   path = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
+   if (eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
+     free(path);
    else
-     evas_module_paths = _evas_module_append(evas_module_paths, path2);
+     evas_module_paths = _evas_module_append(evas_module_paths, path);
 
    /* 4. PREFIX/evas/modules/ */
 #ifndef _MSC_VER
-   path3 = PACKAGE_LIB_DIR "/evas/modules";
-   if ((path && (strcmp(path, path3) != 0)) ||
-       (path2 && (strcmp(path2, path3) != 0)) ||
-       (!path && !path2))
+   path = PACKAGE_LIB_DIR "/evas/modules";
+   if (!eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
      {
-	path = strdup(path3);
+	path = strdup(path);
 	if (path)
 	  evas_module_paths = _evas_module_append(evas_module_paths, path);
      }
