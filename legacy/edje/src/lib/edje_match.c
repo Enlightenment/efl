@@ -13,7 +13,7 @@ struct _Edje_States
 {
   size_t         size;
   Edje_State    *states;
-  _Bool         *has;
+  Eina_Bool     *has;
 };
 
 static void
