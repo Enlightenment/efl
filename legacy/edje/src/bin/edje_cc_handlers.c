@@ -6909,6 +6909,8 @@ st_collections_group_programs_program_target(void)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else if (ep->action == EDJE_ACTION_TYPE_FOCUS_SET)
 	  data_queue_part_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_FOCUS_OBJECT)
+	  data_queue_part_lookup(pc, name, &(et->id));
 	else
 	  {
 	     ERR("%s: Error. parse error %s:%i. "
