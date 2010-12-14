@@ -37,7 +37,7 @@
  *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
  *   ecore_con_url_ftp_upload(url_con, "/tmp/file", "user", "pass","dir");
  *
- * FIXME: Support more CURL features: Authentication, Progress callbacks and more...
+ * FIXME: Support more CURL features: Progress callbacks and more...
  */
 
 #ifdef HAVE_CONFIG_H
@@ -738,6 +738,7 @@ ecore_con_url_response_headers_get(Ecore_Con_Url *url_con)
 
 /**
  * Sets url_con to use http auth, with given username and password, "safely" or not.
+ * ATTENTION: requires libcurl >= 7.19.1 to work, otherwise will always return 0.
  *
  * @param url_con Connection object to perform a request on, previously created
  *    with ecore_con_url_new() or ecore_con_url_custom_new().
