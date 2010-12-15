@@ -48,7 +48,7 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
 
 	   p = obj->cur.map->points;
 	   p_end = p + obj->cur.map->count;
-	   p2 = obj->cur.map->points;
+	   p2 = obj->prev.map->points;
 
 	   for (; p < p_end; p++, p2++)
 	     if (p->a != p2->a ||
@@ -59,7 +59,6 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
 		 ch = 1;
 		 break;
 	       }
-		
 	 }
        else
 	 {
