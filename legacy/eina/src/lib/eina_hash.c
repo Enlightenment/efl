@@ -611,13 +611,13 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
      }
    else
      {
-        ok = eina_iterator_next(it->list, (void **)&it->hash_element);
+        ok = eina_iterator_next(it->list, (void **)(void*)&it->hash_element);
         if (!ok)
           {
                   eina_iterator_free(it->list);
              it->list = NULL;
 
-             ok = eina_iterator_next(it->current, (void **)&it->hash_head);
+             ok = eina_iterator_next(it->current, (void **)(void*)&it->hash_head);
              if (!ok)
                {
                   eina_iterator_free(it->current);
@@ -627,7 +627,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
              else
                {
                   it->list = eina_rbtree_iterator_prefix(it->hash_head->head);
-                  ok = eina_iterator_next(it->list, (void **)&it->hash_element);
+                  ok = eina_iterator_next(it->list, (void **)(void*)&it->hash_element);
                }
           }
 
@@ -642,7 +642,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
                {
                   it->current =
                      eina_rbtree_iterator_prefix(it->hash->buckets[bucket]);
-                  ok = eina_iterator_next(it->current, (void **)&it->hash_head);
+                  ok = eina_iterator_next(it->current, (void **)(void*)&it->hash_head);
                   if (ok)
                      break;
 
@@ -656,7 +656,7 @@ _eina_hash_iterator_next(Eina_Iterator_Hash *it, void **data)
                   eina_iterator_free(it->list);
 
         it->list = eina_rbtree_iterator_prefix(it->hash_head->head);
-        ok = eina_iterator_next(it->list, (void **)&it->hash_element);
+        ok = eina_iterator_next(it->list, (void **)(void*)&it->hash_element);
         if (bucket == it->hash->size)
            ok = EINA_FALSE;
      }

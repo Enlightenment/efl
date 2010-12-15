@@ -172,7 +172,7 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
  */
 #define EINA_ACCESSOR_FOREACH(accessor, counter, data)                  \
   for ((counter) = 0;                                                   \
-       eina_accessor_data_get((accessor), (counter), (void **)&(data)); \
+       eina_accessor_data_get((accessor), (counter), (void **)(void *)&(data)); \
        (counter)++)
 
 /**
