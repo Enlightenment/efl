@@ -453,7 +453,7 @@ eina_f32p32_cos(Eina_F32p32 a)
                               EINA_F32P32_PI);
    idx = eina_f32p32_int_to(interpol);
    if (idx >= MAX_PREC)
-      idx = 2 * MAX_PREC - (idx - 1);
+      idx = 2 * MAX_PREC - (idx + 1);
 
    index2 = idx + 1;
    if (index2 == MAX_PREC)
