@@ -117,6 +117,7 @@ sl_bg_over.png \
 sl_bt_0.png \
 sl_bt_1.png \
 sl_bt_2.png \
+sl_bt_3.png \
 sl_bt2_0_0.png \
 sl_bt2_0_1.png \
 sl_bt2_0_2.png \
