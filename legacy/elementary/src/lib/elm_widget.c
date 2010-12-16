@@ -1562,6 +1562,9 @@ elm_widget_disabled_get(const Evas_Object *obj)
 EAPI void
 elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   Evas_Object *parent_obj, *child_obj;
+   Evas_Coord px, py, cx, cy;
+
    API_ENTRY return;
    if ((x == sd->rx) && (y == sd->ry) && (w == sd->rw) && (h == sd->rh)) return;
    sd->rx = x;
@@ -1570,22 +1573,31 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    sd->rh = h;
    if (sd->on_show_region_func)
       sd->on_show_region_func(sd->on_show_region_data, obj);
-   else
+
+   do
      {
-        Evas_Object *parent_obj;
-        do
+        parent_obj = sd->parent_obj; 
+        child_obj = sd->obj;
+        sd = evas_object_smart_data_get(parent_obj);
+
+        if ((!parent_obj) || (!sd) || (!_elm_widget_is(parent_obj))) break;
+
+        evas_object_geometry_get(parent_obj, &px, &py, NULL, NULL);
+        evas_object_geometry_get(child_obj, &cx, &cy, NULL, NULL);
+
+        x += (cx - px);
+        y += (cy - py);
+        sd->rx = x;
+        sd->ry = y;
+        sd->rw = w;
+        sd->rh = h;
+
+        if (sd->on_show_region_func)
           {
-             parent_obj = sd->parent_obj;
-             sd = evas_object_smart_data_get(parent_obj);
-             if ((!parent_obj) || (!sd) || (!_elm_widget_is(parent_obj))) break;
-             if (sd->on_show_region_func)
-               {
-                  sd->on_show_region_func(sd->on_show_region_data, obj);
-                  break;
-               }
+             sd->on_show_region_func(sd->on_show_region_data, parent_obj);
           }
-        while (parent_obj);
      }
+   while (parent_obj);
 }
 
 EAPI void
