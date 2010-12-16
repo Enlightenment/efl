@@ -425,7 +425,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    Ecore_Con_Server *svr;
    Ecore_Con_Type type;
 
-   if (!name)
+   if ((!name) || (!name[0]))
      return NULL;
    /* local  user   socket: FILE:   ~/.ecore/[name]/[port] */
    /* local  system socket: FILE:   /tmp/.ecore_service|[name]|[port] */
@@ -434,6 +434,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if (!svr)
      return NULL;
 
+   if (!strncmp(name, "http://", 7))
+     name += 7;
+   else if (!strncmp(name, "https://", 8))
+     name += 8;
    svr->name = strdup(name);
    if (!svr->name)
      goto error;
