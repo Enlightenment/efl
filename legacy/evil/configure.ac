@@ -1,16 +1,16 @@
 
 ### Version
 
-m4_define([evil_version_major], [0])
-m4_define([evil_version_minor], [0])
-m4_define([evil_version_micro], [1])
+m4_define([v_maj], [0])
+m4_define([v_min], [0])
+m4_define([v_mic], [1])
 
 m4_define([evil_version],
-   [evil_version_major.evil_version_minor.evil_version_micro])
+   [v_maj.v_min.v_mic])
 
-m4_define([lt_rev], m4_eval(evil_version_major + evil_version_minor))
-m4_define([lt_cur], evil_version_micro)
-m4_define([lt_age], evil_version_minor)
+m4_define([lt_rev], m4_eval(v_maj + v_min))
+m4_define([lt_cur], v_mic)
+m4_define([lt_age], v_min)
 
 AC_INIT([evil], [evil_version], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
