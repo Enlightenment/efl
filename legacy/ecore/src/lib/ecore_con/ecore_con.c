@@ -373,11 +373,11 @@ error:
      free(svr->path);
 
 #ifndef _WIN32
-   if (svr->fd >= 0)
-     close(svr->fd);
-
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
+
+   if (svr->fd >= 0)
+     close(svr->fd);
 
    if (svr->write_buf)
      free(svr->write_buf);
@@ -494,11 +494,11 @@ error:
    if (svr->path)
      free(svr->path);
 
-   if (svr->fd >= 0)
-     close(svr->fd);
-
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
+
+   if (svr->fd >= 0)
+     close(svr->fd);
 
    ecore_con_ssl_server_shutdown(svr);
    free(svr);
@@ -1184,9 +1184,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      unlink(svr->path);
 
    ecore_con_ssl_server_shutdown(svr);
-   if (svr->fd >= 0)
-     close(svr->fd);
-
    if (svr->name)
      free(svr->name);
 
@@ -1198,6 +1195,9 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
+
+   if (svr->fd >= 0)
+     close(svr->fd);
 
    servers = eina_list_remove(servers, svr);
    svr->data = NULL;
@@ -1253,11 +1253,11 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->host_server->type & ECORE_CON_SSL)
      ecore_con_ssl_client_shutdown(cl);
 
-   if (cl->fd >= 0)
-     close(cl->fd);
-
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
+
+   if (cl->fd >= 0)
+     close(cl->fd);
 
    if (cl->client_addr)
      free(cl->client_addr);
@@ -1771,9 +1771,12 @@ _ecore_con_svr_tcp_handler(void                        *data,
    return ECORE_CALLBACK_RENEW;
 
 error:
-   close(new_fd);
    if (cl && cl->fd_handler)
-     ecore_main_fd_handler_del(cl->fd_handler);
+     {
+        ecore_main_fd_handler_del(cl->fd_handler);
+        close(cl->fd);
+        free(cl);
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
