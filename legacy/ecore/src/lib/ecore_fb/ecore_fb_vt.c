@@ -7,8 +7,8 @@
 
 static int _ecore_fb_vt_do_switch = 0;
 
-static int _ecore_fb_vt_tty0_fd = 0;
-static int _ecore_fb_vt_tty_fd = 0;
+static int _ecore_fb_vt_tty0_fd = -1;
+static int _ecore_fb_vt_tty_fd = -1;
 static int _ecore_fb_vt_current_vt = 0;
 static int _ecore_fb_vt_prev_vt = 0;
 
@@ -95,7 +95,7 @@ _ecore_fb_vt_setup(void)
              return 0;
           }
         close(_ecore_fb_vt_tty0_fd);
-        _ecore_fb_vt_tty0_fd = 0;
+        _ecore_fb_vt_tty0_fd = -1;
         /* FIXME detach the process from current tty ? */
      }
    else
@@ -109,6 +109,7 @@ _ecore_fb_vt_setup(void)
      {
         perror("[ecore_fb:vt_setup] can't set the mode to KD_GRAPHICS");
         close(_ecore_fb_vt_tty_fd);
+        _ecore_fb_vt_tty_fd = -1;
         return 0;
      }
    ioctl(_ecore_fb_vt_tty_fd, KDGKBMODE, &_ecore_fb_tty_prev_mode);
@@ -122,6 +123,7 @@ _ecore_fb_vt_setup(void)
      {
         perror("[ecore_fb:vt_setup] can't set the tty mode");
         close(_ecore_fb_vt_tty_fd);
+        _ecore_fb_vt_tty_fd = -1;
         return 0;
      }
    /* register signal handlers when alloc/detach of vt */
@@ -136,12 +138,14 @@ _ecore_fb_vt_setup(void)
      {
         perror("[ecore_fb:vt_setup] error on VT_ACTIVATE");
         close(_ecore_fb_vt_tty_fd);
+        _ecore_fb_vt_tty_fd = -1;
         return 0;
      }
    if(ioctl(_ecore_fb_vt_tty_fd, VT_WAITACTIVE, _ecore_fb_vt_current_vt) < 0)
      {
         perror("[ecore_fb:vt_setup] error on VT_WAITACTIVE");
         close(_ecore_fb_vt_tty_fd);
+        _ecore_fb_vt_tty_fd = -1;
         return 0;
      }
    /* FIXME assign the fb to the tty in case isn't setup */
@@ -200,7 +204,7 @@ void
 ecore_fb_vt_shutdown(void)
 {
    /* restore the previous mode */
-   if (_ecore_fb_vt_tty_fd != 0)
+   if (_ecore_fb_vt_tty_fd != -1)
      {
         tcsetattr(_ecore_fb_vt_tty_fd, TCSAFLUSH, &_ecore_fb_tty_prev_tio_mode);
         ioctl(_ecore_fb_vt_tty_fd, KDSETMODE, _ecore_fb_tty_prev_kd_mode);
@@ -208,7 +212,7 @@ ecore_fb_vt_shutdown(void)
         ioctl(_ecore_fb_vt_tty_fd, VT_SETMODE, &_ecore_fb_vt_prev_mode);
         /* go back to previous vt */
         close(_ecore_fb_vt_tty_fd);
-        _ecore_fb_vt_tty_fd = 0;
+        _ecore_fb_vt_tty_fd = -1;
      }
    
    if (_ecore_fb_user_handler) ecore_event_handler_del(_ecore_fb_user_handler);
