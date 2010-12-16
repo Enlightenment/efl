@@ -188,7 +188,7 @@ _transit_zoom(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
-   effect_context = elm_transit_effect_zoom_context_new(0.5, 5.0);
+   effect_context = elm_transit_effect_zoom_context_new(1.0, 3.0);
    elm_transit_effect_add(trans,
                           elm_transit_effect_zoom_op, effect_context,
                           elm_transit_effect_zoom_context_free);
@@ -237,7 +237,7 @@ _transit_resizable_flip(void *data, Evas_Object *obj, void *event_info __UNUSED_
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
    effect_context = elm_transit_effect_resizable_flip_context_new(
-                                                ELM_TRANSIT_EFFECT_FLIP_AXIS_X,
+                                                ELM_TRANSIT_EFFECT_FLIP_AXIS_Y,
                                                 EINA_TRUE);
    elm_transit_effect_add(trans,
                           elm_transit_effect_resizable_flip_op, effect_context,
@@ -340,13 +340,13 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Front Button - Flip Effect");
    evas_object_show(bt);
-   evas_object_move(bt, 50, 100);
-   evas_object_resize(bt, 200, 50);
+   evas_object_move(bt, 50, 50);
+   evas_object_resize(bt, 200, 200);
 
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "Back Button - Flip Effect");
-   evas_object_move(bt2, 50, 100);
-   evas_object_resize(bt2, 200, 50);
+   evas_object_move(bt2, 50, 50);
+   evas_object_resize(bt2, 200, 200);
 
    evas_object_show(win);
 
@@ -482,14 +482,14 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Front Button - Resizable Flip Effect");
+   evas_object_show(bt);
    evas_object_move(bt, 50, 100);
-   evas_object_resize(bt, 350, 200);
-
+   evas_object_resize(bt, 200, 30); 
+   
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "Back Button - Resizable Flip Effect");
-   evas_object_show(bt2);
    evas_object_move(bt2, 50, 100);
-   evas_object_resize(bt2, 200, 30);
+   evas_object_resize(bt2, 300, 200);
 
    evas_object_show(win);
 
