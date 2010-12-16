@@ -1813,14 +1813,11 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
    else
      {
        num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
-         if (num > 0)
+         if (num >= 0)
            lost_server = EINA_FALSE;
      }
 
-   if (lost_server)
-     _ecore_con_server_kill(svr);
-
-   if ((num > 0) && (!svr->delete_me))
+   if ((!svr->delete_me) && (num > 0))
    {
       Ecore_Con_Event_Server_Data *e;
 
@@ -1842,7 +1839,8 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
                       _ecore_con_event_server_data_free, NULL);
    }
 
-
+   if (lost_server)
+     _ecore_con_server_kill(svr);
 }
 
 static Eina_Bool
@@ -1944,27 +1942,26 @@ _ecore_con_cl_udp_handler(void             *data,
    errno = 0;
    num = read(svr->fd, buf, READBUFSIZ);
 
+   if ((!svr->delete_me) && (num > 0))
+     {
+        inbuf = malloc(num);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(inbuf, ECORE_CALLBACK_RENEW);
+
+        memcpy(inbuf, buf, num);
+
+        e = malloc(sizeof(Ecore_Con_Event_Server_Data));
+        EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+
+        svr->event_count++;
+        e->server = svr;
+        e->data = inbuf;
+        e->size = num;
+        ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
+                        _ecore_con_event_server_data_free, NULL);
+     }
+
    if ((errno != EAGAIN) && (errno != EINTR))
      _ecore_con_server_kill(svr);
-
-   if ((num < 1) || (svr->delete_me))
-     return ECORE_CALLBACK_RENEW;
-
-   inbuf = malloc(num);
-   if (!inbuf)
-     return ECORE_CALLBACK_RENEW;
-
-   memcpy(inbuf, buf, num);
-
-   e = calloc(1, sizeof(Ecore_Con_Event_Server_Data));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
-
-   svr->event_count++;
-   e->server = svr;
-   e->data = inbuf;
-   e->size = num;
-   ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
-                   _ecore_con_event_server_data_free, NULL);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -2052,7 +2049,7 @@ _ecore_con_svr_udp_handler(void             *data,
    { /* indent to keep it all nicely separated */
       Ecore_Con_Event_Client_Add *add;
 
-      add = calloc(1, sizeof(Ecore_Con_Event_Client_Add));
+      add = malloc(sizeof(Ecore_Con_Event_Client_Add));
       EINA_SAFETY_ON_NULL_RETURN_VAL(add, ECORE_CALLBACK_RENEW);
 
       /*cl->event_count++;*/
@@ -2065,7 +2062,7 @@ _ecore_con_svr_udp_handler(void             *data,
 
    {
       Ecore_Con_Event_Client_Data *e;
-      e = calloc(1, sizeof(Ecore_Con_Event_Client_Data));
+      e = malloc(sizeof(Ecore_Con_Event_Client_Data));
       EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
 
       svr->event_count++;
@@ -2117,8 +2114,31 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
    else
      {
         num = ecore_con_ssl_client_read(cl, buf, sizeof(buf));
-        if (num > 0)
+        if (num >= 0)
           lost_client = EINA_FALSE;
+     }
+
+   if ((!cl->delete_me) && (num > 0))
+     {
+        Ecore_Con_Event_Client_Data *e;
+
+        e = malloc(sizeof(Ecore_Con_Event_Client_Data));
+        EINA_SAFETY_ON_NULL_RETURN(e);
+
+        cl->event_count++;
+        _ecore_con_cl_timer_update(cl);
+        e->client = cl;
+        e->data = malloc(num);
+        if (!e->data)
+          {
+             ERR("alloc!");
+             free(e);
+             return;
+          }
+        memcpy(e->data, buf, num);
+        e->size = num;
+        ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
+                        _ecore_con_event_client_data_free, NULL);
      }
 
    if (lost_client)
@@ -2145,31 +2165,6 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
         cl->fd_handler = NULL;
         return;
      }
-
-   if ((num > 0) && (!cl->delete_me))
-     {
-        Ecore_Con_Event_Client_Data *e;
-
-        e = malloc(sizeof(Ecore_Con_Event_Client_Data));
-        EINA_SAFETY_ON_NULL_RETURN(e);
-
-        cl->event_count++;
-        _ecore_con_cl_timer_update(cl);
-        e->client = cl;
-        e->data = malloc(num);
-        if (!e->data)
-          {
-             ERR("alloc!");
-             free(e);
-             return;
-          }
-        memcpy(e->data, buf, num);
-        e->size = num;
-        ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
-                        _ecore_con_event_client_data_free, NULL);
-     }
-
-
 }
 
 static Eina_Bool

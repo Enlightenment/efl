@@ -741,7 +741,7 @@ _ecore_con_ssl_server_read_gnutls(Ecore_Con_Server *svr,
         if (!_ecore_con_ssl_server_init_gnutls(svr))
           return 0;
      }
-   else if (!gnutls_error_is_fatal(num))
+   else if ((!gnutls_error_is_fatal(num)) && (num != GNUTLS_E_SUCCESS))
      return 0;
 
    return -1;
@@ -963,7 +963,7 @@ _ecore_con_ssl_client_read_gnutls(Ecore_Con_Client *cl,
         WRN("Rehandshake request ignored");
         return 0;
      }
-   else if (!gnutls_error_is_fatal(num))
+   else if ((!gnutls_error_is_fatal(num)) && (num != GNUTLS_E_SUCCESS))
      return 0;
 
    return -1;
