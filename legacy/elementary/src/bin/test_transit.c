@@ -68,7 +68,6 @@ static void
 _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
@@ -76,44 +75,27 @@ _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, voi
    elm_transit_repeat_times_set(trans, 2);
 
    /* Translation Effect */
-   effect_context = elm_transit_effect_translation_context_new(-70.0, -150.0,
-                                                                 70.0, 150.0);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_translation_op, effect_context,
-                          elm_transit_effect_translation_context_free);
+   elm_transit_effect_translation_add(trans, -70.0, -150.0, 70.0, 150.0);
 
    /* Color Effect */
-   effect_context = elm_transit_effect_color_context_new(100, 255, 100,
-                                                        255, 200, 50, 200, 50);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_color_op, effect_context,
-                          elm_transit_effect_color_context_free);
+   elm_transit_effect_color_add(trans, 100, 255, 100, 255, 200, 50, 200, 50); 
 
    /* Rotation Effect */
-   effect_context = elm_transit_effect_rotation_context_new(0.0,
-                                                            135.0, EINA_FALSE);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_rotation_op, effect_context,
-                          elm_transit_effect_rotation_context_free);
-
+   elm_transit_effect_rotation_add(trans, 0.0, 135.0, EINA_FALSE);
 }
 
 static void
 _transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
 
-   effect_context = \
-        elm_transit_effect_wipe_context_new(ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
-                                            ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_wipe_op, effect_context,
-                          elm_transit_effect_wipe_context_free);
+   elm_transit_effect_wipe_add(trans, 
+                               ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
+                               ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
 }
 
 static void
@@ -123,7 +105,6 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
    char buf[PATH_MAX];
    Elm_Transit *trans;
    Evas_Object *ic = data;
-   void *effect_context;
 
    snprintf(buf, sizeof(buf), "%s/images/icon_19.png", PACKAGE_DATA_DIR);
    images = eina_list_append(images, eina_stringshare_add(buf));
@@ -139,109 +120,75 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, ic);
-
-   effect_context = \
-             elm_transit_effect_image_animation_context_new(images);
-   elm_transit_effect_add(trans,
-                         elm_transit_effect_image_animation_op, effect_context,
-                         elm_transit_effect_image_animation_context_free);
+   
+   elm_transit_effect_image_animation_add(trans, images);
 }
 
 static void
-_transit_resizing(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_resizing(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
 
    trans = elm_transit_add(5.0);
-   effect_context = elm_transit_effect_resizing_context_new(100, 50, 300, 150);
-
-   elm_transit_object_add(trans, obj);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_resizing_op, effect_context,
-                          elm_transit_effect_resizing_context_free);
+   
+   elm_transit_effect_resizing_add(trans, 100, 50, 300, 150);
 }
 
 static void
 _transit_flip(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
    Evas_Object *obj2 = data;
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
-   effect_context = elm_transit_effect_flip_context_new(
-                                                ELM_TRANSIT_EFFECT_FLIP_AXIS_X,
-                                                EINA_TRUE);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_flip_op, effect_context,
-                          elm_transit_effect_flip_context_free);
+   elm_transit_effect_flip_add(trans, ELM_TRANSIT_EFFECT_FLIP_AXIS_X, EINA_TRUE);
 }
 
 static void
-_transit_zoom(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_transit_zoom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
 
    trans = elm_transit_add(5.0);
-   elm_transit_object_add(trans, obj);
-   effect_context = elm_transit_effect_zoom_context_new(1.0, 3.0);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_zoom_op, effect_context,
-                          elm_transit_effect_zoom_context_free);
+   elm_transit_effect_zoom_add(trans, 1.0, 3.0);
 }
 
 static void
 _transit_blend(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
    Evas_Object *obj2 = data;
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
-   effect_context = elm_transit_effect_blend_context_new();
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_blend_op, effect_context,
-                          elm_transit_effect_blend_context_free);
+   elm_transit_effect_blend_add(trans);
 }
 
 static void
 _transit_fade(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
    Evas_Object *obj2 = data;
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
-   effect_context = elm_transit_effect_fade_context_new();
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_fade_op, effect_context,
-                          elm_transit_effect_fade_context_free);
+   elm_transit_effect_fade_add(trans);
 }
 
 static void
 _transit_resizable_flip(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Transit *trans;
-   void *effect_context;
    Evas_Object *obj2 = data;
 
    trans = elm_transit_add(5.0);
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
-   effect_context = elm_transit_effect_resizable_flip_context_new(
-                                                ELM_TRANSIT_EFFECT_FLIP_AXIS_Y,
-                                                EINA_TRUE);
-   elm_transit_effect_add(trans,
-                          elm_transit_effect_resizable_flip_op, effect_context,
-                          elm_transit_effect_resizable_flip_context_free);
+   elm_transit_effect_resizable_flip_add(trans, ELM_TRANSIT_EFFECT_FLIP_AXIS_Y, EINA_TRUE);
 }
 
 /* Translation, Rotation, Color, Wipe, ImagemAnimation Effect */

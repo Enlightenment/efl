@@ -2475,49 +2475,17 @@ extern "C" {
    EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode) EINA_ARG_NONNULL(1);
    EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1) EINA_ARG_NONNULL(1);
 
-   EAPI void                  *elm_transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
-   EAPI void                   elm_transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_resizing_context_free(void *data, Elm_Transit *transit);
-
-   EAPI void                  *elm_transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy);
-   EAPI void                   elm_transit_effect_translation_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_translation_context_free(void *data, Elm_Transit *transit) EINA_ARG_NONNULL(1);
-
-   EAPI void                  *elm_transit_effect_zoom_context_new(float from_rate, float to_rate);
-   EAPI void                   elm_transit_effect_zoom_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_zoom_context_free(void *data, Elm_Transit *transit);
-
-   EAPI void                  *elm_transit_effect_flip_context_new(Elm_Fx_Flip_Axis axis, Eina_Bool cw);
-   EAPI void                   elm_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_flip_context_free(void *data, Elm_Transit *transit) EINA_ARG_NONNULL(1, 2);
-
-   EAPI void                  *elm_transit_effect_resizable_flip_context_new(Elm_Fx_Flip_Axis axis, Eina_Bool cw);
-   EAPI void                   elm_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1);
-   EAPI void                   elm_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit) EINA_ARG_NONNULL(1);
-
-   EAPI void                  *elm_transit_effect_wipe_context_new(Elm_Fx_Wipe_Type type, Elm_Fx_Wipe_Dir dir);
-   EAPI void                   elm_transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_wipe_context_free(void *data, Elm_Transit *transit) EINA_ARG_NONNULL(1, 2);
-
-   EAPI void                  *elm_transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
-   EAPI void                   elm_transit_effect_color_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_color_context_free(void *data, Elm_Transit *transit);
-
-   EAPI void                  *elm_transit_effect_fade_context_new(void);
-   EAPI void                   elm_transit_effect_fade_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1);
-   EAPI void                   elm_transit_effect_fade_context_free(void *data, Elm_Transit *tranasit) EINA_ARG_NONNULL(1);
-
-   EAPI void                  *elm_transit_effect_blend_context_new(void);
-   EAPI void                   elm_transit_effect_blend_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_blend_context_free(void *data, Elm_Transit *transit) EINA_ARG_NONNULL(1);
-
-   EAPI void                  *elm_transit_effect_rotation_context_new(float from_degree, float to_degree, Eina_Bool cw);
-   EAPI void                   elm_transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_rotation_context_free(void *data, Elm_Transit *transit);
-
-   EAPI void                  *elm_transit_effect_image_animation_context_new(Eina_List *images);
-   EAPI void                   elm_transit_effect_image_animation_op(void *data, Elm_Transit *transit, double progress) EINA_ARG_NONNULL(1, 2);
-   EAPI void                   elm_transit_effect_image_animation_context_free(void *data, Elm_Transit *transit) EINA_ARG_NONNULL(1);
+   EAPI void                  *elm_transit_effect_resizing_add(Elm_Transit* transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
+   EAPI void                  *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord dy, Evas_Coord to_dx, Evas_Coord to_dy);
+   EAPI void                  *elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate);
+   EAPI void                  *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Fx_Flip_Axis axis, Eina_Bool cw);
+   EAPI void                  *elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Fx_Flip_Axis axis, Eina_Bool cw);
+   EAPI void                  *elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Fx_Wipe_Type type, Elm_Fx_Wipe_Dir dir);
+   EAPI void                  *elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
+   EAPI void                  *elm_transit_effect_fade_add(Elm_Transit *transit);
+   EAPI void                  *elm_transit_effect_blend_add(Elm_Transit *transit);
+   EAPI void                  *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree, Eina_Bool cw);
+   EAPI void                  *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);       
 
   typedef struct _Elm_Store                      Elm_Store;
   typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
