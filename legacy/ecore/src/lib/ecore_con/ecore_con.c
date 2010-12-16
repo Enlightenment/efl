@@ -434,10 +434,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if (!svr)
      return NULL;
 
-   if (!strncmp(name, "http://", 7))
-     name += 7;
-   else if (!strncmp(name, "https://", 8))
-     name += 8;
    svr->name = strdup(name);
    if (!svr->name)
      goto error;
