@@ -1610,7 +1610,6 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    int so_err = 0;
    unsigned int size = sizeof(int);
 
-   errno = 0;
    res = getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, (void *)&so_err, &size);
 #ifdef _WIN32
    if (res == SOCKET_ERROR)
@@ -1801,9 +1800,8 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
 
    if (!(svr->type & ECORE_CON_SSL))
      {
-        errno = 0;
         num = read(svr->fd, buf, sizeof(buf));
-        if ((num > 0) || (errno == EAGAIN))
+        if ((num >= 0) || (errno == EAGAIN))
           lost_server = EINA_FALSE;
      }
    else
@@ -1935,10 +1933,9 @@ _ecore_con_cl_udp_handler(void             *data,
         return ECORE_CALLBACK_RENEW;
      }
 
-   errno = 0;
    num = read(svr->fd, buf, READBUFSIZ);
 
-   if ((!svr->delete_me) && (num > 0))
+   if ((!svr->delete_me) && (num >= 0))
      {
         inbuf = malloc(num);
         EINA_SAFETY_ON_NULL_RETURN_VAL(inbuf, ECORE_CALLBACK_RENEW);
@@ -1956,7 +1953,7 @@ _ecore_con_cl_udp_handler(void             *data,
                         _ecore_con_event_server_data_free, NULL);
      }
 
-   if ((errno != EAGAIN) && (errno != EINTR))
+   if (num < 0 && (errno != EAGAIN) && (errno != EINTR))
      _ecore_con_server_kill(svr);
 
    return ECORE_CALLBACK_RENEW;
@@ -1987,7 +1984,6 @@ _ecore_con_svr_udp_handler(void             *data,
    if (!ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
      return ECORE_CALLBACK_RENEW;
 
-   errno = 0;
 #ifdef _WIN32
    num = fcntl(svr->fd, F_SETFL, O_NONBLOCK);
    if (num >= 0)
@@ -2001,7 +1997,7 @@ _ecore_con_svr_udp_handler(void             *data,
               &client_addr_len);
 #endif
 
-   if ((errno != EAGAIN) && (errno != EINTR))
+   if (num < 0 && (errno != EAGAIN) && (errno != EINTR))
      {
         if (!svr->delete_me)
           {
@@ -2102,9 +2098,8 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
 
    if (!(cl->host_server->type & ECORE_CON_SSL))
      {
-        errno = 0;
         num = read(cl->fd, buf, sizeof(buf));
-        if ((num > 0) || (errno == EAGAIN) || (errno == EINTR))
+        if ((num >= 0) || (errno == EAGAIN) || (errno == EINTR))
           lost_client = EINA_FALSE;
      }
    else
