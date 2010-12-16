@@ -2702,8 +2702,9 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
      }
 
    fprintf(output, "\"%p\" [ label = \"{%p|%s|%s|visible: %d|"
-           "disabled: %d|focused: %d/%d}\"", obj, obj, sd->type,
-           evas_object_name_get(obj), visible,disabled,focused,can_focus);
+           "disabled: %d|focused: %d/%d|focus order:%d}\"", obj, obj, sd->type,
+           evas_object_name_get(obj), visible, disabled, focused, can_focus,
+           sd->focus_order);
 
    if (focused)
         fprintf(output, ", style=bold");
