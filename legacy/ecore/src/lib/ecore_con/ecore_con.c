@@ -2005,7 +2005,7 @@ _ecore_con_svr_udp_handler(void             *data,
      {
         if (!svr->delete_me)
           {
-/* we lost our client! */
+              /* we lost our client! */
               Ecore_Con_Event_Client_Del *e;
 
               e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
@@ -2361,6 +2361,8 @@ _ecore_con_event_client_del_free(void *data __UNUSED__,
    Ecore_Con_Event_Client_Del *e;
 
    e = ev;
+   if (!e->client) return ;
+
    e->client->event_count--;
    if ((e->client->event_count <= 0) && (e->client->delete_me))
      ecore_con_client_del(e->client);
