@@ -9,6 +9,10 @@
 #include <sys/time.h>
 #include <time.h>
 
+#ifdef _MSC_VER
+# include <winsock2.h>
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
