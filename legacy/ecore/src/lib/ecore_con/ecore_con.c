@@ -1807,8 +1807,8 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
      }
    else
      {
-       num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
-         if (num >= 0)
+        num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
+        if (num >= 0)
            lost_server = EINA_FALSE;
      }
 
@@ -2358,7 +2358,7 @@ _ecore_con_event_client_del_free(void *data __UNUSED__,
    Ecore_Con_Event_Client_Del *e;
 
    e = ev;
-   if (!e->client) return ;
+   if (!e->client) return;
 
    e->client->event_count--;
    if ((e->client->event_count <= 0) && (e->client->delete_me))
