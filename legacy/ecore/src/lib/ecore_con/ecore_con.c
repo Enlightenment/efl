@@ -1935,7 +1935,7 @@ _ecore_con_cl_udp_handler(void             *data,
 
    num = read(svr->fd, buf, READBUFSIZ);
 
-   if ((!svr->delete_me) && (num >= 0))
+   if ((!svr->delete_me) && (num > 0))
      {
         inbuf = malloc(num);
         EINA_SAFETY_ON_NULL_RETURN_VAL(inbuf, ECORE_CALLBACK_RENEW);
