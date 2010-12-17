@@ -14,7 +14,6 @@ MAINTAINERCLEANFILES = \
 ABOUT-NLS \
 Makefile.in \
 aclocal.m4 \
-autom4te.cache \
 config.guess \
 config.h.in \
 config.h.in~ \
@@ -195,3 +194,6 @@ check-local:
 	@echo "reconfigure with --enable-tests"
 
 endif
+
+maintainer-clean-local:
+	rm -rf autom4te.cache
