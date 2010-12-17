@@ -1808,6 +1808,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
    else
      {
         num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
+        /* this is not an actual 0 return, 0 here just means non-fatal error such as EAGAIN */
         if (num >= 0)
            lost_server = EINA_FALSE;
      }
@@ -2107,6 +2108,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
    else
      {
         num = ecore_con_ssl_client_read(cl, buf, sizeof(buf));
+        /* this is not an actual 0 return, 0 here just means non-fatal error such as EAGAIN */
         if (num >= 0)
           lost_client = EINA_FALSE;
      }
