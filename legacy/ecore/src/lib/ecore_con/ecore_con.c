@@ -1802,7 +1802,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
      {
         num = read(svr->fd, buf, sizeof(buf));
         /* 0 is not a valid return value for a tcp socket */
-        if ((num > 0) || (errno == EAGAIN))
+        if ((num > 0) || ((num < 0) && (errno == EAGAIN)))
           lost_server = EINA_FALSE;
      }
    else
@@ -2102,7 +2102,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
      {
         num = read(cl->fd, buf, sizeof(buf));
         /* 0 is not a valid return value for a tcp socket */
-        if ((num > 0) || (errno == EAGAIN) || (errno == EINTR))
+        if ((num > 0) || ((num < 0) && ((errno == EAGAIN) || (errno == EINTR))))
           lost_client = EINA_FALSE;
      }
    else
