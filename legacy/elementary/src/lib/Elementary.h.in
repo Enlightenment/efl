@@ -781,6 +781,9 @@ extern "C" {
    EAPI void         elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel) EINA_ARG_NONNULL(1);
    EAPI void         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize) EINA_ARG_NONNULL(1);
    EAPI void         elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+   EAPI void         elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation);
+   EAPI Eina_Bool    elm_scroller_propagate_events_get(const Evas_Object *obj);
+
    /* smart callbacks called:
     * "edge,left"
     * "edge,right"

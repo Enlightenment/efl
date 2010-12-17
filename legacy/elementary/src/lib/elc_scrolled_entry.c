@@ -129,12 +129,15 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd;
-   Evas_Coord minw, minh;
-
+   Evas_Coord minw, minh, minw_scr, minh_scr;
    wd = elm_widget_data_get(obj);
-   if (!wd)
-     return;
-   evas_object_size_hint_min_get(wd->scroller, &minw, &minh);
+   if (!wd) return;
+
+   evas_object_size_hint_min_get(obj, &minw, &minh);
+   evas_object_size_hint_min_get(wd->scroller, &minw_scr, &minh_scr);
+   if (minw < minw_scr) minw = minw_scr;
+   if (minh < minh_scr) minh = minh_scr;
+
    evas_object_size_hint_min_set(obj, minw, minh);
    if (wd->single_line)
      evas_object_size_hint_max_set(obj, -1, minh);
@@ -386,6 +389,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(wd->scroller, EINA_FALSE, EINA_FALSE);
+   elm_scroller_propagate_events_set(wd->scroller, EINA_TRUE);
    evas_object_show(wd->scroller);
 
    wd->entry = elm_entry_add(obj);

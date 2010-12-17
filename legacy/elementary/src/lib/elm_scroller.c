@@ -874,3 +874,46 @@ elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_
    if ((!wd) || (!wd->scr)) return;
    elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
 }
+
+
+/**
+ * Set event propagation on a scroller
+ *
+ * This enables or disabled event propagation from the scroller content to
+ * the scroller and its parent. By default event propagation is disabled.
+ * 
+ * @param obj The scroller object
+ * @param propagation If propagation is enabled or not
+ *
+ * @ingroup Scroller
+ */
+EAPI void
+elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   evas_object_propagate_events_set(wd->scr, propagation);
+}
+
+/**
+ * Get event propagation for a scroller
+ *
+ * This gets the event propagation for a scroller. See 
+ * elm_scroller_propagate_events_set() for more information
+ * 
+ * @param obj The scroller object
+ * @return The propagation state
+ *
+ * @ingroup Scroller
+ */
+EAPI Eina_Bool
+elm_scroller_propagate_events_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   return evas_object_propagate_events_get(wd->scr);
+}
