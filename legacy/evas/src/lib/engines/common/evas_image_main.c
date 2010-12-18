@@ -213,8 +213,10 @@ evas_common_rgba_image_unload(Image_Entry *ie)
         im->image.data = NULL;
         ie->allocated.w = 0;
         ie->allocated.h = 0;
-        ie->flags.preload_done = 0;
         ie->flags.loaded = 0;
+#ifdef BUILD_ASYNC_PRELOAD
+        ie->flags.preload_done = 0;
+#endif
         return;
      }
 #endif   
@@ -224,8 +226,10 @@ evas_common_rgba_image_unload(Image_Entry *ie)
    im->image.data = NULL;
    ie->allocated.w = 0;
    ie->allocated.h = 0;
-   ie->flags.preload_done = 0;
    ie->flags.loaded = 0;
+#ifdef BUILD_ASYNC_PRELOAD
+   ie->flags.preload_done = 0;
+#endif
 }
 
 static int
