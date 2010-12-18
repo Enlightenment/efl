@@ -36,7 +36,7 @@ evil_basename(char *path)
         return _evil_basename_buf;
      }
    p2 = p1;
-   while (p2)
+   while (*p2)
      {
         if (*p2 == '/') *p2 = '\\';
         p2++;
@@ -86,7 +86,7 @@ evil_dirname(char *path)
         return _evil_dirname_buf;
      }
    p2 = p1;
-   while (p2)
+   while (*p2)
      {
         if (*p2 == '/') *p2 = '\\';
         p2++;

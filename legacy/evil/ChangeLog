@@ -1,5 +1,10 @@
 2010-12-18  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/libgen.c:
+	fix segmentation fault in basename() and dirname()
+
+2010-12-18  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/Evil.h:
 	use _tzset instead of tzset with vc++
 
