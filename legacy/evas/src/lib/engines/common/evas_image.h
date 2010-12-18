@@ -35,7 +35,7 @@ EAPI int               evas_common_save_image_to_file              (RGBA_Image *
 EAPI void evas_common_rgba_image_scalecache_size_set(unsigned int size);
 EAPI unsigned int evas_common_rgba_image_scalecache_size_get(void);
 EAPI void evas_common_rgba_image_scalecache_flush(void);
-    
+EAPI void evas_common_rgba_image_scalecache_dump(void);
 EAPI void
   evas_common_rgba_image_scalecache_prepare(Image_Entry *ie, RGBA_Image *dst,
                                             RGBA_Draw_Context *dc, int smooth,
