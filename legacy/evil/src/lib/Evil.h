@@ -102,6 +102,7 @@ typedef SSIZE_T ssize_t;
 # define fdopen(fd,m) _fdopen((fd),(m))
 # define access(p,m) _access((p),(m))
 # define hypot(x,y) _hypot((x),(y))
+# define tzset _tzset
 
 #endif /* _MSC_VER */
 

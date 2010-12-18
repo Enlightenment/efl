@@ -1,3 +1,8 @@
+2010-12-18  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	use _tzset instead of tzset with vc++
+
 2010-12-12  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_libgen.c:
