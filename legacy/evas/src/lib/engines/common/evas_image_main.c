@@ -294,7 +294,9 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
    im->image.data = NULL;
    ie->allocated.w = 0;
    ie->allocated.h = 0;
+#ifdef BUILD_ASYNC_PRELOAD
    ie->flags.preload_done = 0;
+#endif
    ie->flags.loaded = 0;
    evas_common_rgba_image_scalecache_dirty(&im->cache_entry);
 }

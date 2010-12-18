@@ -104,7 +104,9 @@ evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, int cspace)
 	  {
              ie_dst->allocated.w = 0;
              ie_dst->allocated.h = 0;
+#ifdef BUILD_ASYNC_PRELOAD
              ie_dst->flags.preload_done = 0;
+#endif
              ie_dst->flags.loaded = 0;
              dst->image.data = NULL;
 	     dst->image.no_free = 0;
