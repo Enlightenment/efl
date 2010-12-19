@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib bin tests
+SUBDIRS = lib bin
 
 if BUILD_EXAMPLES
 

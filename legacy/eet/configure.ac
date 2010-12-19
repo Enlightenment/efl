@@ -192,11 +192,6 @@ AC_ARG_ENABLE([build-examples],
    [build_examples="no"])
 AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 
-# Unit tests, coverage and benchmarking
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-
 if test "x${prefer_assert}" = "xno"; then
    DEBUG_CFLAGS="-DNDEBUG"
 else
@@ -435,7 +430,6 @@ doc/eet.dox
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
-src/tests/Makefile
 src/examples/Makefile
 README
 eet.spec
@@ -463,9 +457,6 @@ fi
 echo "  Thread Support.......: ${have_threads}"
 echo
 echo "  Old eet file format..: ${old_eet_file_format}"
-echo
-echo "  Tests................: ${enable_tests}"
-echo "  Coverage.............: ${enable_coverage}"
 echo
 echo "  Build eet............: $have_eet"
 echo
