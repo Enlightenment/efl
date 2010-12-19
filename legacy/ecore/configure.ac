@@ -301,11 +301,6 @@ if test "x${want_xim}" = "xyes" ; then
    AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
 fi
 
-# Unit tests
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-
-
 ### Checks for programs
 
 m4_ifdef([AC_PROG_OBJC],
@@ -1420,7 +1415,6 @@ src/lib/ecore_wince/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_x/xlib/Makefile
 src/lib/ecore_x/xcb/Makefile
-src/tests/Makefile
 README
 ecore.spec
 $po_makefile_in
@@ -1554,7 +1548,6 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
 fi
 echo
-echo "  Tests................: ${enable_tests}"
 echo "  Maximum log level....: ${with_max_log_level}"
 echo "Documentation..........: ${build_doc}"
 echo
