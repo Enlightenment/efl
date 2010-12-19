@@ -1,4 +1,4 @@
 
-SUBDIRS = lib bin tests
+SUBDIRS = lib bin
 
 MAINTAINERCLEANFILES = Makefile.in

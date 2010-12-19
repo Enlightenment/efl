@@ -210,17 +210,6 @@ AC_SUBST(lt_enable_auto_import)
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(strlcpy)
 
-### Unit tests, coverage
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-EFREET_CFLAGS="${EFREET_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
-EFREET_LIBS="${EFREET_LIBS} ${EFL_COVERAGE_LIBS}"
-if test "x$enable_coverage" = "xyes" ; then
-   EFREET_CFLAGS="${EFREET_CFLAGS} ${EFL_DEBUG_CFLAGS}"
-fi
-
 AC_SUBST(requirement_efreet)
 
 AC_OUTPUT([
@@ -233,10 +222,6 @@ doc/Makefile
 doc/Doxyfile
 src/Makefile
 src/lib/Makefile
-src/tests/Makefile
-src/tests/data/Makefile
-src/tests/data/sub/Makefile
-src/tests/compare/Makefile
 src/bin/Makefile
 ])
 
@@ -258,9 +243,6 @@ echo "    Strict.............: ${enable_strict_spec}"
 echo "    Sloppy.............: ${enable_sloppy_spec}"
 echo
 echo "  Icon cache...........: ${enable_icon_cache}"
-echo
-echo "  Tests................: ${enable_tests}"
-echo "  Coverage.............: ${enable_coverage}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo
