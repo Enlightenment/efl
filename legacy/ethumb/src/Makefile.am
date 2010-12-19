@@ -1,3 +1,3 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib bin plugins tests
+SUBDIRS = lib bin plugins
