@@ -811,6 +811,10 @@ extern "C" {
    EAPI void         elm_label_text_align_set(Evas_Object *obj, const char *alignmode) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis) EINA_ARG_NONNULL(1);
+   EAPI void         elm_label_slide_set(Evas_Object *obj, Eina_Bool slide) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_label_slide_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_label_slide_duration_set(Evas_Object *obj, double duration) EINA_ARG_NONNULL(1);
+   EAPI double       elm_label_slide_duration_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* available styles:
     * default
     * marker

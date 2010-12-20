@@ -15,14 +15,17 @@ struct _Widget_Data
    Evas_Object *lbl;
    Evas_Object *bg;
    const char *label;
-   Evas_Coord lastw;
    Ecore_Job *deferred_recalc_job;
+   double slide_duration;
+   Evas_Coord lastw;
    Evas_Coord wrap_w;
    Evas_Coord wrap_h;
    Eina_Bool linewrap : 1;
    Eina_Bool changed : 1;
    Eina_Bool bgcolor : 1;
    Eina_Bool ellipsis : 1;
+   Eina_Bool slidingmode : 1;
+   Eina_Bool slidingellipsis : 1;
 };
 
 static const char *widtype = NULL;
@@ -34,6 +37,7 @@ static int _strbuf_key_value_replace(Eina_Strbuf *srcbuf, const char *key, const
 static int _stringshare_key_value_replace(const char **srcstring, const char *key, const char *value, int deleteflag);
 static int _is_width_over(Evas_Object *obj, Eina_Bool multiline);
 static void _ellipsis_label_to_width(Evas_Object *obj, Eina_Bool multiline);
+static void _label_sliding_change(Evas_Object *obj);
 
 static void
 _elm_win_recalc_job(void *data)
@@ -108,6 +112,7 @@ _theme_hook(Evas_Object *obj)
    edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * 
                          _elm_config->scale);
+   _label_sliding_change(obj);
    _sizing_eval(obj);
 }
 
@@ -561,6 +566,60 @@ _ellipsis_label_to_width(Evas_Object *obj, Eina_Bool multiline)
      }
 }
 
+static void
+_label_sliding_change(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   char *plaintxt;
+   int plainlen = 0;
+   
+   // dosen't support multiline sliding effect
+   if (wd->linewrap)
+     { 
+        wd->slidingmode = EINA_FALSE;
+        return;
+     }
+
+   plaintxt = _elm_util_mkup_to_text(edje_object_part_text_get(wd->lbl, "elm.text"));
+   if (plaintxt != NULL)
+     {
+        plainlen = strlen(plaintxt);
+        free(plaintxt);
+     }
+   // too short to slide label
+   if (plainlen < 1)
+     {
+        wd->slidingmode = EINA_TRUE;
+        return;
+     }
+
+   if (wd->slidingmode)
+     {
+        Edje_Message_Float_Set *msg = alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
+        
+        if (wd->ellipsis)
+          {
+             wd->slidingellipsis = EINA_TRUE;
+             elm_label_ellipsis_set(obj, EINA_FALSE);
+          }
+        
+        msg->count = 1;
+        msg->val[0] = wd->slide_duration;
+
+        edje_object_message_send(wd->lbl, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_signal_emit(wd->lbl, "elm,state,slide,start", "elm");
+     }
+   else
+     {
+        edje_object_signal_emit(wd->lbl, "elm,state,slide,stop", "elm");
+        if (wd->slidingellipsis)
+          {
+             wd->slidingellipsis = EINA_FALSE;
+             elm_label_ellipsis_set(obj, EINA_TRUE);
+          }
+     }
+}
 
 /**
  * Add a new label to the parent
@@ -596,8 +655,11 @@ elm_label_add(Evas_Object *parent)
 
    wd->linewrap = EINA_FALSE;
    wd->ellipsis = EINA_FALSE;
+   wd->slidingmode = EINA_FALSE;
+   wd->slidingellipsis = EINA_FALSE;
    wd->wrap_w = 0;
    wd->wrap_h = 0;
+   wd->slide_duration = 10;
 
    wd->lbl = edje_object_add(e);
    _elm_theme_object_set(obj, wd->lbl, "label", "base", "default");
@@ -926,3 +988,79 @@ elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
    wd->changed = 1;
    _sizing_eval(obj);
 }
+
+/**
+ * Set the text slide of the label
+ *
+ * @param obj The label object
+ * @param slide To start slide or stop
+ * @ingroup Label
+ */
+EAPI void
+elm_label_slide_set(Evas_Object *obj,
+                    Eina_Bool    slide)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->slidingmode == slide) return;
+   wd->slidingmode = slide;
+   _label_sliding_change(obj);
+   wd->changed = 1;
+   _sizing_eval(obj);
+}
+
+/**
+ * get the text slide mode of the label
+ *
+ * @param obj The label object
+ * @return slide slide mode value
+ * @ingroup Label
+ */
+EAPI Eina_Bool
+elm_label_slide_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->slidingmode;
+}
+
+/**
+ * set the slide duration(speed) of the label
+ *
+ * @param obj The label object
+ * @return The duration time in moving text from slide begin position to slide end position
+ * @ingroup Label
+ */
+EAPI void
+elm_label_slide_duration_set(Evas_Object *obj, double duration)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Edje_Message_Float_Set *msg = alloca(sizeof(Edje_Message_Float_Set) + (sizeof(double)));
+
+   if (!wd) return;
+   wd->slide_duration = duration;
+   msg->count = 1;
+   msg->val[0] = wd->slide_duration;
+   edje_object_message_send(wd->lbl, EDJE_MESSAGE_FLOAT_SET, 0, msg);
+}
+
+/**
+ * get the slide duration(speed) of the label
+ *
+ * @param obj The label object
+ * @return The duration time in moving text from slide begin position to slide end position
+ * @ingroup Label
+ */
+EAPI double
+elm_label_slide_duration_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->slide_duration;
+}
+
