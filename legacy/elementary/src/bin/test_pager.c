@@ -77,6 +77,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bg);
 
    pg = elm_pager_add(win);
+   evas_object_size_hint_weight_set(pg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, pg);
    evas_object_show(pg);
 
