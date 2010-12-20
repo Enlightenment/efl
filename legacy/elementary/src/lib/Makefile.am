@@ -38,6 +38,7 @@ libelementary_la_SOURCES = \
 elm_priv.h \
 \
 elm_main.c \
+elm_util.c \
 elm_theme.c \
 elm_module.c \
 elm_store.c \
