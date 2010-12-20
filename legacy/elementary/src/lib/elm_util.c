@@ -5,6 +5,13 @@
 #include "elm_priv.h"
 
 static char *
+_str_ncpy(char *dest, const char *src, size_t count)
+{
+   if ((!dest) || (!src)) return NULL;
+   return strncpy(dest, src, count);
+}
+
+static char *
 _str_append(char *str, const char *txt, int *len, int *alloc)
 {
    int txt_len = strlen(txt);
@@ -51,7 +58,7 @@ _elm_util_mkup_to_text(const char *mkup)
 		  ttag = malloc(tag_end - tag_start);
 		  if (ttag)
 		    {
-		       strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
+		       _str_ncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
 		       ttag[tag_end - tag_start - 1] = 0;
 		       if (!strcmp(ttag, "br"))
 			 str = _str_append(str, "\n", &str_len, &str_alloc);
@@ -75,7 +82,7 @@ _elm_util_mkup_to_text(const char *mkup)
 		  if (ts)
 		    {
 		       const char *esc;
-		       strncpy(ts, esc_start, esc_end - esc_start);
+		       _str_ncpy(ts, esc_start, esc_end - esc_start);
 		       ts[esc_end - esc_start] = 0;
 		       esc = evas_textblock_escape_string_get(ts);
 		       if (esc)
@@ -89,7 +96,7 @@ _elm_util_mkup_to_text(const char *mkup)
 		  ts = malloc(p - s + 1);
 		  if (ts)
 		    {
-		       strncpy(ts, s, p - s);
+		       _str_ncpy(ts, s, p - s);
 		       ts[p - s] = 0;
 		       str = _str_append(str, ts, &str_len, &str_alloc);
 		       free(ts);
@@ -106,7 +113,7 @@ _elm_util_mkup_to_text(const char *mkup)
 		  ts = malloc(p - s + 1);
 		  if (ts)
 		    {
-		       strncpy(ts, s, p - s);
+		       _str_ncpy(ts, s, p - s);
 		       ts[p - s] = 0;
 		       str = _str_append(str, ts, &str_len, &str_alloc);
 		       free(ts);
@@ -131,7 +138,7 @@ _elm_util_mkup_to_text(const char *mkup)
 		  ts = malloc(p - s + 1);
 		  if (ts)
 		    {
-		       strncpy(ts, s, p - s);
+		       _str_ncpy(ts, s, p - s);
 		       ts[p - s] = 0;
 		       str = _str_append(str, ts, &str_len, &str_alloc);
 		       free(ts);
@@ -181,7 +188,7 @@ _elm_util_text_to_mkup(const char *text)
 	  {
 	     char tstr[16];
 
-	     strncpy(tstr, text + pos, pos2 - pos);
+	     _str_ncpy(tstr, text + pos, pos2 - pos);
 	     tstr[pos2 - pos] = 0;
 	     str = _str_append(str, tstr, &str_len, &str_alloc);
 	  }
