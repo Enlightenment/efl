@@ -149,7 +149,7 @@ static int notify_handler_html(struct _elm_cnp_selection *sel,
 static int vcard_receive(struct _elm_cnp_selection *sed,
       Ecore_X_Event_Selection_Notify *notify);
 
-static struct pasteimage *pasteimage_alloc(const char *file);
+static struct pasteimage *pasteimage_alloc(const char *file, int pathlen);
 static bool pasteimage_append(struct pasteimage *pi, Evas_Object *entry);
 static void pasteimage_free(struct pasteimage *pi);
 
@@ -258,7 +258,7 @@ static struct {
 	0
    },
    [CNP_ATOM_text_plain_utf8] = {
-	"text/plain;charset=ut-8",
+	"text/plain;charset=utf-8",
 	ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
 	text_converter,
 	NULL,
@@ -714,16 +714,16 @@ notify_handler_uri(struct _elm_cnp_selection *sel,
    else
       p += strlen("file://");
 
-   if ((!strstr(p,".png")) && (!strstr(p,".jpg")))
+   if ((!strcasestr(p,".png")) && (!strcasestr(p,".jpg")) && (!strcasestr(p,".bmp")))
      {
-        cnp_debug("No png, ignoring\n");
+        cnp_debug("No image(png, jpg and bmp), ignoring\n");
         if (savedtypes.textreq) savedtypes.textreq = 0;
         return 0;
      }
 
    if (savedtypes.pi) pasteimage_free(savedtypes.pi);
 
-   pi = pasteimage_alloc(p);
+   pi = pasteimage_alloc(p, data->length);
 
    if (savedtypes.textreq)
      {
@@ -829,7 +829,7 @@ notify_handler_png(struct _elm_cnp_selection *sel,
 
    /* FIXME: Add to paste image data to clean up */
 
-   pi = pasteimage_alloc(tmp->filename);
+   pi = pasteimage_alloc(tmp->filename, data->length);
    pasteimage_append(pi, sel->requestwidget);
 
    tmpinfo_free(tmp);
@@ -862,9 +862,13 @@ notify_handler_html(struct _elm_cnp_selection *sel,
         return 0;
      }
 
-
-   cnp_debug("String is %s (%d bytes)\n",data->data,data->length);
-   elm_entry_entry_insert(sel->requestwidget, (char *)data->data);
+   char *stripstr = NULL;
+   stripstr = malloc(sizeof(char)*(data->length+1));
+   strncpy(stripstr, data->data, data->length);
+   stripstr[data->length] = '\0';
+   cnp_debug("String is %s (%d bytes)\n",stripstr,data->length);
+   elm_entry_entry_insert(sel->requestwidget, stripstr);
+   free(stripstr);
 
    return 0;
 }
@@ -978,11 +982,12 @@ image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
 
 
 static struct pasteimage *
-pasteimage_alloc(const char *file)
+pasteimage_alloc(const char *file, int pathlen)
 {
    struct pasteimage *pi;
    int len;
-   char *buf;
+   char *buf, *filebuf;
+   int prefixlen = strlen("file://");
 
    pi = calloc(1,sizeof(struct pasteimage));
    if (!pi) return NULL;
@@ -1000,8 +1005,12 @@ pasteimage_alloc(const char *file)
 
    if (file)
      {
-        if (strstr(file,"file://")) file += strlen("file://");
-        pi->file = strdup(file);
+        if (strstr(file,"file://")) file += prefixlen;
+		filebuf = malloc(sizeof(char)*(pathlen-prefixlen+1));
+		strncpy(filebuf, file, pathlen-prefixlen);
+		filebuf[pathlen-prefixlen] = '\0';
+        pi->file = strdup(filebuf);
+		free(filebuf);
      }
 
    return pi;
