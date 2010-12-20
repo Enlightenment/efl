@@ -826,8 +826,10 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
         return NULL;
      }
    if (fd_handler->delete_me)
-     /* FIXME: should this return NULL instead? */
-     return fd_handler->data;
+     {
+        ERR("fdh %p deleted twice", fd_handler);
+        return NULL;
+     }
      
    fd_handler->delete_me = EINA_TRUE;
    _ecore_main_fdh_poll_del(fd_handler);
