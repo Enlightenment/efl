@@ -1015,7 +1015,7 @@ _mouse_move(void        *data,
    minh /= 2;
    if ((adx > minw) || (ady > minh))
      {
-        it->dragging = 1;
+        it->dragging = EINA_TRUE;
         if (it->long_timer)
           {
              ecore_timer_del(it->long_timer);
@@ -1114,8 +1114,8 @@ _mouse_down(void        *data,
         it->wd->on_hold = EINA_TRUE;
      }
 
-   it->down = 1;
-   it->dragging = 0;
+   it->down = EINA_TRUE;
+   it->dragging = EINA_FALSE;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    it->dx = ev->canvas.x - x;
    it->dy = ev->canvas.y - y;
@@ -1150,7 +1150,7 @@ _mouse_up(void            *data,
    Eina_Bool dragged = EINA_FALSE;
 
    if (ev->button != 1) return;
-   it->down = 0;
+   it->down = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
    if (it->long_timer)
@@ -1160,7 +1160,7 @@ _mouse_up(void            *data,
      }
    if (it->dragging)
      {
-        it->dragging = 0;
+        it->dragging = EINA_FALSE;
         evas_object_smart_callback_call(it->base.widget, "drag,stop", it);
         dragged = 1;
      }
@@ -1181,7 +1181,7 @@ _mouse_up(void            *data,
         it->wd->longpressed = EINA_FALSE;
         if (!it->wd->wasselected)
           _item_unselect(it);
-        it->wd->wasselected = 0;
+        it->wd->wasselected = EINA_FALSE;
         return;
      }
    if (dragged)
@@ -1653,7 +1653,7 @@ _item_unrealize(Elm_Genlist_Item *it)
    it->want_unrealize = EINA_FALSE;
 }
 
-static int
+static Eina_Bool 
 _item_block_recalc(Item_Block *itb,
                    int         in,
                    int         qadd,
@@ -1662,7 +1662,7 @@ _item_block_recalc(Item_Block *itb,
    const Eina_List *l;
    Elm_Genlist_Item *it;
    Evas_Coord minw = 0, minh = 0;
-   int showme = 0, changed = 0;
+   Eina_Bool showme = EINA_FALSE, changed = EINA_FALSE;
    Evas_Coord y = 0;
 
    itb->num = in;
@@ -1674,7 +1674,7 @@ _item_block_recalc(Item_Block *itb,
           {
              if (qadd)
                {
-                  if (!it->mincalcd) changed = 1;
+                  if (!it->mincalcd) changed = EINA_TRUE;
                   if (changed)
                     {
                        _item_realize(it, in, 1);
@@ -1728,14 +1728,14 @@ _item_block_unrealize(Item_Block *itb)
 {
    const Eina_List *l;
    Elm_Genlist_Item *it;
-   int dragging = 0;
+   Eina_Bool dragging = EINA_FALSE;
 
    if (!itb->realized) return;
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->dragging)
           {
-             dragging = 1;
+             dragging = EINA_TRUE;
              it->want_unrealize = EINA_TRUE;
           }
         else
@@ -1829,11 +1829,11 @@ _calc_job(void *data)
 
    EINA_INLIST_FOREACH(wd->blocks, itb)
    {
-      int showme = 0;
+      Eina_Bool showme = EINA_FALSE;
 
       itb->num = in;
       showme = itb->showme;
-      itb->showme = 0;
+      itb->showme = EINA_FALSE;
       if (chb)
         {
            if (itb->realized) _item_block_unrealize(itb);
@@ -1870,7 +1870,7 @@ _calc_job(void *data)
       in += itb->count;
       if ((showme) && (wd->show_item))
         {
-           wd->show_item->showme = 0;
+           wd->show_item->showme = EINA_FALSE;
            if (wd->bring_in)
              elm_smart_scroller_region_bring_in(wd->scr,
                                                 wd->show_item->x +
@@ -1967,7 +1967,7 @@ _update_job(void *data)
                 itminw = it->w;
                 itminh = it->h;
 
-                it->updateme = 0;
+                it->updateme = EINA_FALSE;
                 if (it->realized)
                   {
                      _item_unrealize(it);
@@ -1984,7 +1984,7 @@ _update_job(void *data)
              }
            num++;
         }
-      itb->updateme = 0;
+      itb->updateme = EINA_FALSE;
       if (recalc)
         {
            position = 1;
@@ -2530,7 +2530,8 @@ static int
 _queue_proecess(Widget_Data *wd,
                 int          norender)
 {
-   int n, showme = 0;
+   int n;
+   Eina_Bool showme = EINA_FALSE;
    double t0, t;
 
    t0 = ecore_time_get();
@@ -2549,7 +2550,7 @@ _queue_proecess(Widget_Data *wd,
                                          norender);
              it->block->changed = 0;
           }
-        if (showme) it->block->showme = 1;
+        if (showme) it->block->showme = EINA_TRUE;
         if (eina_inlist_count(wd->blocks) > 1)
           {
              if ((t - t0) > (ecore_animator_frametime_get())) break;
@@ -2653,7 +2654,7 @@ elm_genlist_item_append(Evas_Object                  *obj,
         it->rel = it2;
         it->rel->relcount++;
      }
-   it->before = 0;
+   it->before = EINA_FALSE;
    _item_queue(wd, it);
    return it;
 }
@@ -2697,7 +2698,7 @@ elm_genlist_item_prepend(Evas_Object                  *obj,
         printf("FIXME: 12 tree not handled yet\n");
      }
    it->rel = NULL;
-   it->before = 1;
+   it->before = EINA_TRUE;
    _item_queue(wd, it);
    return it;
 }
@@ -2744,7 +2745,7 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
      }
    it->rel = before;
    it->rel->relcount++;
-   it->before = 1;
+   it->before = EINA_TRUE;
    _item_queue(wd, it);
    return it;
 }
@@ -2791,7 +2792,7 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
      }
    it->rel = after;
    it->rel->relcount++;
-   it->before = 0;
+   it->before = EINA_FALSE;
    _item_queue(wd, it);
    return it;
 }
@@ -2815,14 +2816,14 @@ elm_genlist_clear(Evas_Object *obj)
      {
         Elm_Genlist_Item *it;
 
-        wd->clear_me = 1;
+        wd->clear_me = EINA_TRUE;
         EINA_INLIST_FOREACH(wd->items, it)
         {
-           it->delete_me = 1;
+           it->delete_me = EINA_TRUE;
         }
         return;
      }
-   wd->clear_me = 0;
+   wd->clear_me = EINA_FALSE;
    while (wd->items)
      {
         Elm_Genlist_Item *it = ELM_GENLIST_ITEM_FROM_INLIST(wd->items);
@@ -3467,7 +3468,7 @@ elm_genlist_item_show(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = 1;
+        it->wd->bring_in = EINA_TRUE;
         it->showme = EINA_TRUE;
         return;
      }
@@ -3501,7 +3502,7 @@ elm_genlist_item_bring_in(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = 1;
+        it->wd->bring_in = EINA_TRUE;
         it->showme = EINA_TRUE;
         return;
      }
@@ -3536,7 +3537,7 @@ elm_genlist_item_top_show(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = 1;
+        it->wd->bring_in = EINA_TRUE;
         it->showme = EINA_TRUE;
         return;
      }
@@ -3573,7 +3574,7 @@ elm_genlist_item_top_bring_in(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = 1;
+        it->wd->bring_in = EINA_TRUE;
         it->showme = EINA_TRUE;
         return;
      }
@@ -3609,7 +3610,7 @@ elm_genlist_item_middle_show(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = 1;
+        it->wd->bring_in = EINA_TRUE;
         it->showme = EINA_TRUE;
         return;
      }
@@ -3646,7 +3647,7 @@ elm_genlist_item_middle_bring_in(Elm_Genlist_Item *it)
    if ((it->queued) || (!it->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = 1;
+        it->wd->bring_in = EINA_TRUE;
         it->showme = EINA_TRUE;
         return;
      }
