@@ -272,7 +272,7 @@ _parent_focus(Evas_Object *obj)
 
 	/* we don't want to bump a common widget ancestor's
 	   focus_order *twice* while parent focusing */
-	if (!ret || (!i) || (i != focus_order) || !elm_widget_focus_get(o))
+	if (!ret || (!i) || (i != focus_order))
 	  _parent_focus(o);
      }
 
