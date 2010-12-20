@@ -177,6 +177,21 @@ static const Escape escapes[] = {
 };
 #define N_ESCAPES ((int)(sizeof(escapes) / sizeof(escapes[0])))
 
+static const char *image_extensions[] =
+{
+   ".png",
+   ".jpg", ".jpeg", ".jpe", ".jfif", ".jfi",
+   ".bmp",
+   ".xpm",
+   ".ppm", "pgm", ".pbm", ".pnm",
+   ".gif",
+   ".tif", ".tiff",
+   ".svg", ".svg.gz",
+   ".tga", ".targa",
+   
+   NULL
+};
+
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
    [CNP_ATOM_TARGETS] = {
       "TARGETS",
@@ -769,27 +784,13 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    ext = p + strlen(p);
    if (ext)
      {
-        const char *extns[] =
-          {
-             ".png",
-             ".jpg", ".jpeg", ".jpe", ".jfif", ".jfi",
-             ".bmp",
-             ".xpm",
-             ".ppm", "pgm", ".pbm", ".pnm",
-             ".gif",
-             ".tif", ".tiff",
-             ".svg", ".svg.gz",
-             ".tga", ".targa",
-             
-             NULL
-          };
         Eina_Bool extok = EINA_FALSE;
         int i;
         
-        for (i = 0; extns[i]; i++)
+        for (i = 0; image_extensions[i]; i++)
           {
-             pp = ext - strlen(extns[i]);
-             if ((pp >= p) && (!strcasecmp(pp, extns[i])))
+             pp = ext - strlen(image_extensions[i]);
+             if ((pp >= p) && (!strcasecmp(pp, image_extensions[i])))
                {
                   extok = EINA_TRUE;
                   break;
