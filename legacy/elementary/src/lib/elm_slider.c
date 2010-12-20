@@ -436,16 +436,16 @@ _drag_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 }
 
 static void
-_spacer_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+_spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
    double button_x, button_y;
-
+   
    evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
    edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider", &button_x, &button_y);
-   if(wd->horizontal)
+   if (wd->horizontal)
      {
         button_x = ((double)ev->output.x - (double)x) / (double)w;
         if (button_x > 1) button_x = 1;
