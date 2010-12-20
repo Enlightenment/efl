@@ -804,6 +804,8 @@ extern "C" {
    EAPI Eina_Bool    elm_label_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w) EINA_ARG_NONNULL(1);
    EAPI Evas_Coord   elm_label_wrap_width_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h) EINA_ARG_NONNULL(1);
+   EAPI Evas_Coord   elm_label_wrap_height_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_fontsize_set(Evas_Object *obj, int fontsize) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a) EINA_ARG_NONNULL(1);
    EAPI void         elm_label_text_align_set(Evas_Object *obj, const char *alignmode) EINA_ARG_NONNULL(1);
