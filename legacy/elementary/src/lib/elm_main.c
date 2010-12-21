@@ -1835,6 +1835,7 @@ elm_all_flush(void)
         Evas *e = evas_object_evas_get(obj);
         edje_file_cache_flush();
         edje_collection_cache_flush();
+        eet_clearcache();
         evas_image_cache_flush(e);
         evas_font_cache_flush(e);
         evas_render_dump(e);
