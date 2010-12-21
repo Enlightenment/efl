@@ -101,6 +101,8 @@ struct _Smart_Data
    unsigned char bouncemey : 1;
    unsigned char bounce_horiz : 1;
    unsigned char bounce_vert : 1;
+   unsigned char momentum_animator_disabled :1;
+   unsigned char bounce_animator_disabled :1;
 };
 
 /* local subsystem functions */
@@ -266,6 +268,56 @@ elm_smart_scroller_custom_edje_file_set(Evas_Object *obj, char *file, char *grou
      edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
    else
      edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,vbar", "elm");
+}
+
+Eina_Bool
+elm_smart_scroller_momentum_animator_disabled_get(Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->momentum_animator_disabled;
+}
+
+void
+elm_smart_scroller_momentum_animator_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   API_ENTRY return;
+   sd->momentum_animator_disabled = disabled;
+   if (sd->momentum_animator_disabled)
+     {
+        if (sd->down.momentum_animator)
+          {
+             ecore_animator_del(sd->down.momentum_animator);
+             sd->down.momentum_animator = NULL;
+          }
+     }
+}
+
+Eina_Bool
+elm_smart_scroller_bounce_animator_disabled_get(Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->bounce_animator_disabled;
+}
+
+void
+elm_smart_scroller_bounce_animator_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   API_ENTRY return;
+   sd->bounce_animator_disabled = disabled;
+   if (sd->bounce_animator_disabled)
+     {
+        if (sd->scrollto.x.animator)
+          {
+             ecore_animator_del(sd->scrollto.x.animator);
+             sd->scrollto.x.animator = NULL;
+          }	 	
+
+        if (sd->scrollto.y.animator)
+          {
+             ecore_animator_del(sd->scrollto.y.animator);
+             sd->scrollto.y.animator = NULL;
+          }
+     }
 }
 
 static void
@@ -735,7 +787,7 @@ bounce_eval(Smart_Data *sd)
    if ((!sd->widget) || 
        (!elm_widget_drag_child_locked_x_get(sd->widget)))
      {
-        if (!sd->down.bounce_x_animator)
+        if (!sd->down.bounce_x_animator && !sd->bounce_animator_disabled)
           {
              if (sd->bouncemex)
                {
@@ -757,7 +809,7 @@ bounce_eval(Smart_Data *sd)
    if ((!sd->widget) || 
        (!elm_widget_drag_child_locked_y_get(sd->widget)))
      {
-        if (!sd->down.bounce_y_animator)
+        if (!sd->down.bounce_y_animator && !sd->bounce_animator_disabled)
           {
              if (sd->bouncemey)
                {
@@ -1617,7 +1669,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                  oy = -sd->down.dy;
                                  if (!_smart_do_page(sd))
                                    {
-                                      if (!sd->down.momentum_animator)
+                                      if (!sd->down.momentum_animator && !sd->momentum_animator_disabled)
                                         {
                                            sd->down.momentum_animator = ecore_animator_add(_smart_momentum_animator, sd);
                                            ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
@@ -2368,7 +2420,9 @@ _smart_add(Evas_Object *obj)
    sd->bounce_vert = 1;
 
    sd->one_dir_at_a_time = 1;
-
+   sd->momentum_animator_disabled = 0;
+   sd->bounce_animator_disabled = 0;
+   
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_propagate_events_set(o, 0);
    sd->edje_obj = o;
