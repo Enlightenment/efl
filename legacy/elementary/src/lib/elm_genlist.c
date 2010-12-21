@@ -420,10 +420,6 @@ static void      _item_block_unrealize(Item_Block *itb);
 static void      _calc_job(void *data);
 static void      _on_focus_hook(void        *data,
                                 Evas_Object *obj);
-static Eina_Bool _event_hook(Evas_Object       *obj,
-                             Evas_Object       *src,
-                             Evas_Callback_Type type,
-                             void              *event_info);
 static Eina_Bool _item_multi_select_up(Widget_Data *wd);
 static Eina_Bool _item_multi_select_down(Widget_Data *wd);
 static Eina_Bool _item_single_select_up(Widget_Data *wd);
