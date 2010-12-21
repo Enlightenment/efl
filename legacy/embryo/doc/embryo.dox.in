@@ -23,7 +23,12 @@ compiled by the included compiler, @c embryo_cc.  It is mostly a cleaned
 up and smaller version of the original Small abstract machine.  The
 compiler is mostly untouched.
 
-For more information about the Small language, see @ref Small_Page.
+Small was renamed to Pawn.
+For more information about the Pawn language, see 
+@htmlonly <a href=http://www.compuphase.com/pawn/pawn.htm>Pawn</a>
+@endhtmlonly
+@latexonly http://www.compuphase.com/pawn/pawn.htm @endlatexonly
+For the basics about the Small language, see @ref Small_Page.
 
 @section How_to_Use How to Use Embryo?
 
@@ -45,10 +50,7 @@ To use Embryo in your code, you need to do at least the following:
 @page Small_Page Brief Introduction to Small
 
 This section describes the basics of Small, as compiled and interpreted
-with Embryo.  For the full documentation, of which this is a summary, see
-@htmlonly <a href=http://www.compuphase.com/smalldoc.pdf>Small Language Booklet</a>
-@endhtmlonly
-@latexonly http://www.compuphase.com/smalldoc.pdf @endlatexonly
+with Embryo.
 
 This summary assumes that you are familar with C.  For a full list of
 differences between C and Small, again, see the full documentation.
