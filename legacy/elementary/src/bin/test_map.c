@@ -216,6 +216,12 @@ my_bt_source_maplint(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 static void
+my_bt_source_module(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_map_source_set(data, ELM_MAP_SOURCE_MODULE);
+}
+
+static void
 my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
     int i;
@@ -580,6 +586,14 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Maplint");
         evas_object_smart_callback_add(bt, "clicked", my_bt_source_maplint, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 1.0, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Module");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_source_module, map);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, 1.0, 0.9);
         evas_object_show(bt);

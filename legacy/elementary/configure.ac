@@ -479,6 +479,7 @@ src/lib/Elementary.h
 src/bin/Makefile
 src/modules/Makefile
 src/modules/test_entry/Makefile
+src/modules/test_map/Makefile
 src/edje_externals/Makefile
 data/Makefile
 data/themes/Makefile

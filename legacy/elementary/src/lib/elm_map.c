@@ -3,6 +3,7 @@
 
 /**
  * @defgroup Map Map
+ * @ingroup Elementary
  *
  * This is a widget specifically for displaying the free map OpenStreetMap.
  *
@@ -47,6 +48,7 @@ typedef struct _Pan Pan;
 typedef struct _Grid Grid;
 typedef struct _Grid_Item Grid_Item;
 typedef struct _Marker_Group Marker_Group;
+typedef struct _Mod_Api Mod_Api;
 
 #define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
@@ -66,10 +68,11 @@ typedef struct _Map_Sources_Tab
 
 #define ZOOM_MAX 18
 //Zemm min is supposed to be 0
-static char * _mapnik_url_cb(int x, int y, int zoom);
-static char * _osmarender_url_cb(int x, int y, int zoom);
-static char * _cyclemap_url_cb(int x, int y, int zoom);
-static char * _maplint_url_cb(int x, int y, int zoom);
+static char * _mapnik_url_cb(void *data ,int x, int y, int zoom);
+static char * _osmarender_url_cb(void *data ,int x, int y, int zoom);
+static char * _cyclemap_url_cb(void *data ,int x, int y, int zoom);
+static char * _maplint_url_cb(void *data ,int x, int y, int zoom);
+static char * _module_url_cb(void *data ,int x, int y, int zoom);
 static Map_Sources_Tab map_sources_tab[] =
 {
      {ELM_MAP_SOURCE_MAPNIK, "Mapnik", 0, 18, _mapnik_url_cb},
@@ -82,7 +85,7 @@ static Map_Sources_Tab map_sources_tab[] =
      {ELM_MAP_SOURCE_CUSTOM_4, "Custom 4", 0, 18, NULL},
      {ELM_MAP_SOURCE_CUSTOM_5, "Custom 5", 0, 18, NULL},
      {ELM_MAP_SOURCE_CUSTOM_6, "Custom 6", 0, 18, NULL},
-     {ELM_MAP_SOURCE_CUSTOM_7, "Custom 7", 0, 18, NULL}
+     {ELM_MAP_SOURCE_MODULE, "Module", 0, 18, _module_url_cb}
 };
 
 struct _Elm_Map_Marker_Class
@@ -244,8 +247,17 @@ struct _Widget_Data
    Eina_List *markers_clas; // list of Elm_Map_Markers_Class*
 
    Elm_Map_Sources source;
+   Mod_Api *api;
 };
 
+struct _Mod_Api
+{
+   Eina_Bool (*obj_hook) (Evas_Object *obj);
+   Eina_Bool (*obj_unhook) (Evas_Object *obj);
+   char * (*obj_url_request) (Evas_Object *obj, int x, int y, int zoom);
+   Eina_Bool (*obj_convert_coord_into_geo) (const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
+   Eina_Bool (*obj_convert_geo_into_coord) (const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
+};
 struct _Pan
 {
    Evas_Object_Smart_Clipped_Data __clipped_data;
@@ -309,6 +321,29 @@ static int _group_bubble_content_update(Marker_Group *group);
 static void _group_bubble_content_free(Marker_Group *group);
 static void marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
 static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static Mod_Api *
+module(Evas_Object *obj __UNUSED__)
+{
+   static Elm_Module *m = NULL;
+   if (m) goto ok;
+   if (!(m = _elm_module_find_as("map/api"))) return NULL;
+
+   m->api = malloc(sizeof(Mod_Api));
+   if (!m->api) return NULL;
+   ((Mod_Api *)(m->api)      )->obj_hook =
+     _elm_module_symbol_get(m, "obj_hook");
+   ((Mod_Api *)(m->api)      )->obj_unhook =
+     _elm_module_symbol_get(m, "obj_unhook");
+   ((Mod_Api *)(m->api)      )->obj_url_request =
+     _elm_module_symbol_get(m, "obj_url_request");
+   ((Mod_Api *)(m->api)      )->obj_convert_coord_into_geo =
+     _elm_module_symbol_get(m, "obj_convert_coord_into_geo");
+   ((Mod_Api *)(m->api)      )->obj_convert_geo_into_coord =
+     _elm_module_symbol_get(m, "obj_convert_geo_into_coord");
+   ok:
+   return m->api;
+}
 
 static void
 rect_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
@@ -823,7 +858,7 @@ grid_load(Evas_Object *obj, Grid *g)
                   
 		  snprintf(buf2, sizeof(buf2), DEST_FILE_PATH, buf, y);
                   
-		  source = map_sources_tab[wd->source].url_cb(x, y, g->zoom);
+		  source = map_sources_tab[wd->source].url_cb(obj, x, y, g->zoom);
                   
 		  eina_stringshare_replace(&gi->file, buf2);
 
@@ -953,7 +988,7 @@ zoom_do(Evas_Object *obj, double t)
 
    if (wd->center_on.enabled)
      {
-	elm_map_utils_convert_geo_into_coord(wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
+	elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
 	xx -= ow / 2;
 	yy -= oh / 2;
      }
@@ -1089,6 +1124,7 @@ _del_hook(Evas_Object *obj)
    if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
    if (wd->zoom_animator) ecore_animator_del(wd->zoom_animator);
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
+   if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj);
 
    free(wd);
 }
@@ -1363,7 +1399,6 @@ _scr_anim_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 static void
 _scr_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   
    Widget_Data *wd = elm_widget_data_get(data);
    wd->center_on.enabled = EINA_FALSE;
    evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_START, NULL);
@@ -1528,9 +1563,7 @@ _group_bubble_content_update(Marker_Group *group)
 	group->sc = elm_scroller_add(group->bubble);
 	elm_scroller_content_min_limit(group->sc, EINA_FALSE, EINA_TRUE);
 	elm_scroller_policy_set(group->sc, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
-        elm_scroller_bounce_set(group->sc,
-                                _elm_config->thumbscroll_bounce_enable,
-                                EINA_FALSE);
+	elm_scroller_bounce_set(group->sc, _elm_config->thumbscroll_bounce_enable, EINA_FALSE);
 	edje_object_part_swallow(group->bubble, "elm.swallow.content", group->sc);
 	evas_object_show(group->sc);
 	evas_object_smart_member_add(group->sc,
@@ -1710,6 +1743,9 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
    elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
+
+   wd->api = module(obj);
+   if ((wd->api) && (wd->api->obj_hook)) wd->api->obj_hook(obj);
 
    wd->obj = obj;
 
@@ -2065,7 +2101,7 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
    int rx, ry, rw, rh;
 
    if (!wd) return;
-   elm_map_utils_convert_geo_into_coord(lon, lat, wd->size.w, &rx, &ry);
+   elm_map_utils_convert_geo_into_coord(obj, lon, lat, wd->size.w, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
 
    rx = rx - rw / 2;
@@ -2106,7 +2142,7 @@ elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
    int rx, ry, rw, rh;
 
    if (!wd) return;
-   elm_map_utils_convert_geo_into_coord(lon, lat, wd->size.w, &rx, &ry);
+   elm_map_utils_convert_geo_into_coord(obj, lon, lat, wd->size.w, &rx, &ry);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
 
    rx = rx - rw / 2;
@@ -2128,9 +2164,9 @@ elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
 }
 
 /**
- * Move the map to the current coordinates.
+ * Get the current coordinates of the map.
  *
- * This move the map to the current coordinates. The map will be centered on these coordinates.
+ * This gets the current coordinates of the map object.
  *
  * @param obj The map object
  * @param lat The latitude.
@@ -2151,7 +2187,7 @@ elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
    sx += sw / 2;
    sy += sh / 2;
 
-   elm_map_utils_convert_coord_into_geo(sx, sy, wd->size.w, lon, lat);
+   elm_map_utils_convert_coord_into_geo(obj, sx, sy, wd->size.w, lon, lat);
 }
 
 /**
@@ -2259,8 +2295,15 @@ elm_map_paused_markers_get(const Evas_Object *obj)
  * @ingroup Map
  */
 EAPI void
-elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double *lat)
+elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int zoom = floor(log2(size/256));
+
+   if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
+     if ((wd->api) && (wd->api->obj_convert_coord_into_geo))
+       if (wd->api->obj_convert_coord_into_geo(obj, zoom, x, y, size, lon, lat)) return;
+
    if (lon)
      {
 	*lon = x / (double)size * 360.0 - 180;
@@ -2285,8 +2328,15 @@ elm_map_utils_convert_coord_into_geo(int x, int y, int size, double *lon, double
  * @ingroup Map
  */
 EAPI void
-elm_map_utils_convert_geo_into_coord(double lon, double lat, int size, int *x, int *y)
+elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int zoom = floor(log2(size/256));
+
+   if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
+     if ((wd->api) && (wd->api->obj_convert_geo_into_coord))
+       if (wd->api->obj_convert_geo_into_coord(obj, zoom, lon, lat, size, x, y)) return;
+
    if (x)
      *x = floor((lon + 180.0) / 360.0 * size);
    if (y)
@@ -2384,7 +2434,7 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 
    for (i = clas_group->zoom_displayed; i <= ZOOM_MAX; i++)
      {
-	elm_map_utils_convert_geo_into_coord(lon, lat, pow(2.0, i)*wd->tsize,
+	elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, i)*wd->tsize,
                                              &(marker->x[i]), &(marker->y[i]));
         
 	//search in the matrixsparse the region where the marker will be
@@ -2628,7 +2678,7 @@ elm_map_markers_list_show(Eina_List *markers)
    for (zoom = map_sources_tab[wd->source].zoom_max; zoom>map_sources_tab[wd->source].zoom_min; zoom--)
      {
 	Evas_Coord size = pow(2.0, zoom)*wd->tsize;
-	elm_map_utils_convert_geo_into_coord(lon, lat, size, &xc, &yc);
+	elm_map_utils_convert_geo_into_coord(wd->obj, lon, lat, size, &xc, &yc);
         
 	if ((m_min_lon->x[zoom] - wd->marker_max_w >= xc-rw/2)
             && (m_min_lat->y[zoom] - wd->marker_max_h >= yc-rh/2)
@@ -3061,7 +3111,7 @@ elm_map_source_name_get(Elm_Map_Sources source)
 
 
 static char *
-_mapnik_url_cb(int x, int y, int zoom)
+_mapnik_url_cb(void *data, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://tile.openstreetmap.org/%d/%d/%d.png",
@@ -3070,7 +3120,7 @@ _mapnik_url_cb(int x, int y, int zoom)
 }
 
 static char *
-_osmarender_url_cb(int x, int y, int zoom)
+_osmarender_url_cb(void * data, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
@@ -3079,7 +3129,7 @@ _osmarender_url_cb(int x, int y, int zoom)
 }
 
 static char *
-_cyclemap_url_cb(int x, int y, int zoom)
+_cyclemap_url_cb(void *data, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
@@ -3088,11 +3138,25 @@ _cyclemap_url_cb(int x, int y, int zoom)
 }
 
 static char *
-_maplint_url_cb(int x, int y, int zoom)
+_maplint_url_cb(void *data, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
             zoom, x, y);
    return strdup(buf);
+}
+
+static char *
+_module_url_cb(void *data, int x, int y, int zoom)
+{
+   char *buf = NULL;
+   Widget_Data *wd = elm_widget_data_get(data);
+   if(elm_map_source_get(data) == ELM_MAP_SOURCE_MODULE)
+     if ((wd->api) && (wd->api->obj_url_request))
+       buf = wd->api->obj_url_request(data, x, y, zoom);
+
+   if(!buf) buf = strdup("");
+
+   return buf;
 }
 
