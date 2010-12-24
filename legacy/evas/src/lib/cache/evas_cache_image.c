@@ -1443,6 +1443,7 @@ evas_cache_image_unload_data(Image_Entry *im)
 #ifdef BUILD_ASYNC_PRELOAD
    LKU(im->lock);
 #endif
+   //FIXME: imagedataunload - inform owners
 }
 
 static Eina_Bool

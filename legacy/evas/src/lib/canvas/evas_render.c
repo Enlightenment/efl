@@ -1558,7 +1558,11 @@ evas_render_dump(Evas *e)
         Evas_Object *obj;
 
         EINA_INLIST_FOREACH(lay->objects, obj)
-          _evas_render_dump_map_surfaces(obj);
+          {
+             if ((obj->type) && (!strcmp(obj->type, "image")))
+                evas_object_inform_call_image_unloaded(obj);
+             _evas_render_dump_map_surfaces(obj);
+          }
      }
    if ((e->engine.func) && (e->engine.func->output_dump) &&
        (e->engine.data.output))

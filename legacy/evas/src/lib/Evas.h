@@ -102,19 +102,21 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_CHANGED_SIZE_HINTS, /**< Size hints changed event */
    EVAS_CALLBACK_IMAGE_PRELOADED, /**< Image as been preloaded */
 
-
    /*
     * The following events are only for use with canvas
     * evas_event_callback_add():
     */
-
    EVAS_CALLBACK_CANVAS_FOCUS_IN, /**< Canvas got focus as a whole */
    EVAS_CALLBACK_CANVAS_FOCUS_OUT, /**< Canvas lost focus as a whole */
    EVAS_CALLBACK_RENDER_FLUSH_PRE, /**< Called just before rendering is updated on the canvas target */
    EVAS_CALLBACK_RENDER_FLUSH_POST, /**< Called just after rendering is updated on the canvas target */
-
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, /**< Canvas object got focus */
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, /**< Canvas object lost focus */
+
+   /* 
+    * More object event types - see evas_object_event_callback_add():
+    */
+   EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in evas that throws out original image data) */
 
    /* the following id no event number, but a sentinel: */
    EVAS_CALLBACK_LAST /**< keep as last element/sentinel -- not really an event */

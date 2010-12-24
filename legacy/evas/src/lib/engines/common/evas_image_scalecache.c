@@ -743,6 +743,7 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                   if ((dounload) || (im->cache.orig_usage < 
                                      (im->cache.newest_usage / 20)))
                     {
+                       //FIXME: imagedataunload - inform owners
                        evas_common_rgba_image_unload(&im->cache_entry);
                     }
                }
