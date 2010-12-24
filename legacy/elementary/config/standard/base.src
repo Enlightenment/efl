@@ -16,6 +16,7 @@ group "Elm_Config" struct {
   value "compositing" int: 1;
   value "font_hinting" int: 2;
   value "cache_flush_poll_interval" int: 512;
+  value "cache_flush_enable" uchar: 1;
   value "image_cache" int: 4096;
   value "font_cache" int: 512;
   value "edje_cache" int: 32;

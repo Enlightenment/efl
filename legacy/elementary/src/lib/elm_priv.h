@@ -93,6 +93,7 @@ struct _Elm_Config
    Eina_List   *font_overlays;
    int          font_hinting;
    int          cache_flush_poll_interval;
+   Eina_Bool    cache_flush_enable;
    int          image_cache;
    int          font_cache;
    int          edje_cache;

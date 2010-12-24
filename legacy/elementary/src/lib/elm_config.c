@@ -84,6 +84,7 @@ static const char *_atom_names[ATOM_COUNT] =
    "ENLIGHTENMENT_PROFILE",
    "ENLIGHTENMENT_FONT_OVERLAY",
    "ENLIGHTENMENT_CACHE_FLUSH_INTERVAL",
+   "ENLIGHTENMENT_CACHE_FLUSH_ENABLE",
    "ENLIGHTENMENT_FONT_CACHE",
    "ENLIGHTENMENT_IMAGE_CACHE",
    "ENLIGHTENMENT_EDJE_FILE_CACHE",
@@ -106,21 +107,22 @@ static const char *_atom_names[ATOM_COUNT] =
 #define ATOM_E_PROFILE                              3
 #define ATOM_E_FONT_OVERLAY                         4
 #define ATOM_E_CACHE_FLUSH_INTERVAL                 5
-#define ATOM_E_FONT_CACHE                           6
-#define ATOM_E_IMAGE_CACHE                          7
-#define ATOM_E_EDJE_FILE_CACHE                      8
-#define ATOM_E_EDJE_COLLECTION_CACHE                9
-#define ATOM_E_THUMBSCROLL_BOUNCE_ENABLE            10
-#define ATOM_E_THUMBSCROLL_BOUNCE_FRICTION          11
-#define ATOM_E_THUMBSCROLL_ENABLE                   12
-#define ATOM_E_THUMBSCROLL_THRESHOLD                13
-#define ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD       14
-#define ATOM_E_THUMBSCROLL_FRICTION                 15
-#define ATOM_E_THUMBSCROLL_BORDER_FRICTION          16
-#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION     17
-#define ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION 18
-#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION            19
-#define ATOM_E_CONFIG                               20
+#define ATOM_E_CACHE_FLUSH_ENABLE                   6
+#define ATOM_E_FONT_CACHE                           7
+#define ATOM_E_IMAGE_CACHE                          8
+#define ATOM_E_EDJE_FILE_CACHE                      9
+#define ATOM_E_EDJE_COLLECTION_CACHE                10
+#define ATOM_E_THUMBSCROLL_BOUNCE_ENABLE            11
+#define ATOM_E_THUMBSCROLL_BOUNCE_FRICTION          12
+#define ATOM_E_THUMBSCROLL_ENABLE                   13
+#define ATOM_E_THUMBSCROLL_THRESHOLD                14
+#define ATOM_E_THUMBSCROLL_MOMENTUM_THRESHOLD       15
+#define ATOM_E_THUMBSCROLL_FRICTION                 16
+#define ATOM_E_THUMBSCROLL_BORDER_FRICTION          17
+#define ATOM_E_THUMBSCROLL_PAGE_SCROLL_FRICTION     18
+#define ATOM_E_THUMBSCROLL_BRING_IN_SCROLL_FRICTION 19
+#define ATOM_E_THUMBSCROLL_ZOOM_FRICTION            20
+#define ATOM_E_CONFIG                               21
 
 static Eina_Bool _prop_config_get(void);
 static Eina_Bool _prop_change(void *data  __UNUSED__,
@@ -301,6 +303,18 @@ _prop_change(void *data  __UNUSED__,
                   if (cache_flush_interval !=
                       _elm_config->cache_flush_poll_interval)
                     _elm_recache();
+               }
+          }
+        else if (event->atom == _atom[ATOM_E_CACHE_FLUSH_ENABLE])
+          {
+             unsigned int val = 1000;
+
+             if (ecore_x_window_prop_card32_get(event->win,
+                                                event->atom,
+                                                &val, 1) > 0)
+               {
+                  _elm_config->cache_flush_enable = !!val;
+                  _elm_recache();
                }
           }
         else if (event->atom == _atom[ATOM_E_FONT_CACHE])
@@ -565,6 +579,7 @@ _desc_init(void)
    ELM_CONFIG_LIST(D, T, font_overlays, _config_font_overlay_edd);
    ELM_CONFIG_VAL(D, T, font_hinting, T_INT);
    ELM_CONFIG_VAL(D, T, cache_flush_poll_interval, T_INT);
+   ELM_CONFIG_VAL(D, T, cache_flush_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, image_cache, T_INT);
    ELM_CONFIG_VAL(D, T, font_cache, T_INT);
    ELM_CONFIG_VAL(D, T, edje_cache, T_INT);
@@ -1102,6 +1117,7 @@ _config_load(void)
    _elm_config->compositing = 1;
    _elm_config->font_hinting = 2;
    _elm_config->cache_flush_poll_interval = 512;
+   _elm_config->cache_flush_enable = EINA_TRUE;
    _elm_config->font_dirs = NULL;
    _elm_config->image_cache = 4096;
    _elm_config->font_cache = 512;
