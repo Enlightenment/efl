@@ -755,7 +755,6 @@ elm_quicklaunch_prepare(int argc __UNUSED__,
         return EINA_FALSE;
      }
    INF("dlopen('%s') = %p", exe, qr_handle);
-   free(exe);
    qr_main = dlsym(qr_handle, "elm_main");
    INF("dlsym(%p, 'elm_main') = %p", qr_handle, qr_main);
    if (!qr_main)
@@ -763,8 +762,10 @@ elm_quicklaunch_prepare(int argc __UNUSED__,
         WRN("not quicklauncher capable: no elm_main in '%s'", exe);
         dlclose(qr_handle);
         qr_handle = NULL;
+        free(exe);
         return EINA_FALSE;
      }
+   free(exe);
    return EINA_TRUE;
 #else
    return EINA_FALSE;
