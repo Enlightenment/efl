@@ -5345,14 +5345,27 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos)
      }
 
    n = o->text_nodes;
-   while (pos >= eina_ustrbuf_length_get(n->unicode))
+   while (n && (pos >= eina_ustrbuf_length_get(n->unicode)))
      {
         pos -= eina_ustrbuf_length_get(n->unicode);
         n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
      }
 
-   cur->node = n;
-   cur->pos = pos;
+   if (n)
+     {
+        cur->node = n;
+        cur->pos = pos;
+     }
+   else
+     {
+        Evas_Object_Textblock_Node_Text *last_n;
+
+        last_n = _NODE_TEXT(EINA_INLIST_GET(o->text_nodes)->last);
+        cur->node = last_n;
+	cur->pos = 0;
+
+        evas_textblock_cursor_paragraph_char_last(cur);
+     }
 
 }
 
