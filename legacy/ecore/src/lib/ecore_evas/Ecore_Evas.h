@@ -150,7 +150,8 @@ EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *
 
 #define ECORE_EVAS_GL_X11_OPT_NONE     0
 #define ECORE_EVAS_GL_X11_OPT_INDIRECT 1
-#define ECORE_EVAS_GL_X11_OPT_LAST     2
+#define ECORE_EVAS_GL_X11_OPT_VSYNC    2
+#define ECORE_EVAS_GL_X11_OPT_LAST     3
 
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_Evas     *ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h, const int *opt);

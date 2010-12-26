@@ -163,6 +163,11 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                        op++;
                        einfo->indirect = opt[op];
                     }
+                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_VSYNC)
+                    {
+                       op++;
+                       einfo->vsync = opt[op];
+                    }
                }
           }
         
