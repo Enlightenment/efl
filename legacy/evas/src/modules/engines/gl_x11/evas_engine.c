@@ -66,6 +66,7 @@ int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *d) = NULL;
 void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
 void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
+void     (*glsym_glxSwapInterval)    (int a) = NULL;
 #endif
 
 static void
@@ -138,6 +139,11 @@ _sym_init(void)
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
+
+   FINDSYM(glsym_glxSwapInterval, "glxSwapInterval", glsym_func_void);
+   FINDSYM(glsym_glxSwapInterval, "glxSwapIntervalEXT", glsym_func_void);
+   FINDSYM(glsym_glxSwapInterval, "glxSwapIntervalARB", glsym_func_void);
+   FINDSYM(glsym_glxSwapInterval, "glxSwapIntervalSGI", glsym_func_void);
 #endif
 }
 
@@ -658,12 +664,24 @@ eng_output_flush(void *data)
 #ifdef VSYNC_TO_SCREEN   
    if ((re->info->vsync)/* || (1)*/)
      {
-        if ((glsym_glXGetVideoSync) && (glsym_glXWaitVideoSync))
+        if (glsym_glxSwapInterval)
           {
-             unsigned int rc;
-             
-             glsym_glXGetVideoSync(&rc);
-             glsym_glXWaitVideoSync(1, 0, &rc);
+             if (!re->vsync)
+               {
+                  if (re->info->vsync) glsym_glxSwapInterval(1);
+                  else glsym_glxSwapInterval(0);
+                  re->vsync = 1;
+               }
+          }
+        else
+          {
+             if ((glsym_glXGetVideoSync) && (glsym_glXWaitVideoSync))
+               {
+                  unsigned int rc;
+                  
+                  glsym_glXGetVideoSync(&rc);
+                  glsym_glXWaitVideoSync(1, 0, &rc);
+               }
           }
      }
 # endif
