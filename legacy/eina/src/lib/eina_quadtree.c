@@ -919,6 +919,9 @@ eina_quadtree_init(void)
 Eina_Bool
 eina_quadtree_shutdown(void)
 {
+   eina_mempool_del(root_mp);
+   eina_mempool_del(items_mp);
+
    eina_log_domain_unregister(_eina_log_qd_dom);
    _eina_log_qd_dom = -1;
    return EINA_TRUE;
