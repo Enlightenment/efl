@@ -125,7 +125,7 @@ eina_unicode_strdup(const Eina_Unicode *text)
 }
 
 /**
- * @brief Same as the standard strdup just with Eina_Unicode instead of char.
+ * @brief Same as the standard strstr just with Eina_Unicode instead of char.
  */
 EAPI Eina_Unicode *
 eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle)
