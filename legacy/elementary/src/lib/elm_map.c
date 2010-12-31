@@ -68,11 +68,11 @@ typedef struct _Map_Sources_Tab
 
 #define ZOOM_MAX 18
 //Zemm min is supposed to be 0
-static char * _mapnik_url_cb(void *data ,int x, int y, int zoom);
-static char * _osmarender_url_cb(void *data ,int x, int y, int zoom);
-static char * _cyclemap_url_cb(void *data ,int x, int y, int zoom);
-static char * _maplint_url_cb(void *data ,int x, int y, int zoom);
-static char * _module_url_cb(void *data ,int x, int y, int zoom);
+static char *_mapnik_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
+static char *_osmarender_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
+static char *_cyclemap_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
+static char *_maplint_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
+static char *_module_url_cb(Evas_Object *obj,int x, int y, int zoom);
 static Map_Sources_Tab map_sources_tab[] =
 {
      {ELM_MAP_SOURCE_MAPNIK, "Mapnik", 0, 18, _mapnik_url_cb},
@@ -3111,7 +3111,7 @@ elm_map_source_name_get(Elm_Map_Sources source)
 
 
 static char *
-_mapnik_url_cb(void *data, int x, int y, int zoom)
+_mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://tile.openstreetmap.org/%d/%d/%d.png",
@@ -3120,40 +3120,43 @@ _mapnik_url_cb(void *data, int x, int y, int zoom)
 }
 
 static char *
-_osmarender_url_cb(void * data, int x, int y, int zoom)
+_osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf), "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), 
+            "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
             zoom, x, y);
    return strdup(buf);
 }
 
 static char *
-_cyclemap_url_cb(void *data, int x, int y, int zoom)
+_cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf), "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), 
+            "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
             zoom, x, y);
    return strdup(buf);
 }
 
 static char *
-_maplint_url_cb(void *data, int x, int y, int zoom)
+_maplint_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf), "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
+   snprintf(buf, sizeof(buf), 
+            "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
             zoom, x, y);
    return strdup(buf);
 }
 
 static char *
-_module_url_cb(void *data, int x, int y, int zoom)
+_module_url_cb(Evas_Object *obj, int x, int y, int zoom)
 {
    char *buf = NULL;
-   Widget_Data *wd = elm_widget_data_get(data);
-   if(elm_map_source_get(data) == ELM_MAP_SOURCE_MODULE)
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
      if ((wd->api) && (wd->api->obj_url_request))
-       buf = wd->api->obj_url_request(data, x, y, zoom);
+       buf = wd->api->obj_url_request(obj, x, y, zoom);
 
    if(!buf) buf = strdup("");
 
