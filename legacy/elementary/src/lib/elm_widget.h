@@ -15,7 +15,6 @@
  *    
  * struct _Widget_Data
  * {
- *   // 
  *   Evas_Object *sub;
  *   // add any other widget data here too
  * };
@@ -66,7 +65,7 @@
  * {
  *    Widget_Data *wd = elm_widget_data_get(obj);
  *    if (!wd) return;
- *    // handle change in theme/scale etc. etc.
+ *    // handle change in theme/scale etc.
  *    elm_widget_theme_object_set(obj, wd->sub, "mywidget", "base", 
  *                                elm_widget_style_get(obj));
  * }
@@ -76,7 +75,7 @@
  * {
  *    Widget_Data *wd = elm_widget_data_get(obj);
  *    if (!wd) return;
- *    // optional, gbut handle if the widget gets disabled or not
+ *    // optional, but handle if the widget gets disabled or not
  *    if (elm_widget_disabled_get(obj))
  *      edje_object_signal_emit(wd->sub, "elm,state,disabled", "elm");
  *    else
@@ -88,7 +87,6 @@
  * {
  *    Widget_Data *wd = elm_widget_data_get(obj);
  *    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
- *    // 
  *    if (!wd) return;
  *    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
  *    edje_object_size_min_restricted_calc(wd->sub, &minw, &minh, minw, minh);
@@ -116,7 +114,7 @@
  *    e = evas_object_evas_get(parent);
  *    if (!e) return NULL;
  *    obj = elm_widget_add(e);
- *    // give it a type name and set yp a mywidget type string if needed
+ *    // give it a type name and set up a mywidget type string if needed
  *    ELM_SET_WIDTYPE(widtype, "mywidget");
  *    elm_widget_type_set(obj, "mywidget");
  *    // tell the parent widget that we are a sub object
@@ -127,10 +125,10 @@
  *    elm_widget_del_hook_set(obj, _del_hook);
  *    elm_widget_theme_hook_set(obj, _theme_hook);
  *    elm_widget_disable_hook_set(obj, _disable_hook);
- *    // this widget can focus (true, means yes it can, false means it can't)
+ *    // this widget can focus (true means yes it can, false means it can't)
  *    elm_widget_can_focus_set(obj, EINA_TRUE);
  * 
- *    // for this widget we will ad d1 sub object that is an edje object
+ *    // for this widget we will add 1 sub object that is an edje object
  *    wd->sub = edje_object_add(e);
  *    // set the theme. this follows a scheme for group name like this:
  *    //   "elm/WIDGETNAME/ELEMENT/STYLE"
@@ -145,7 +143,7 @@
  *    edje_object_signal_callback_add(wd->sub, "elm,action,click", "",
  *                                    _signal_clicked, obj);
  *    // set this sub object as the "resize object". widgets get 1 resize
- *    // object that is zresized along with the object wrapper.
+ *    // object that is resized along with the object wrapper.
  *    elm_widget_resize_object_set(obj, wd->sub);
  * 
  *    // evaluate sizing of the widget (minimum size calc etc.). optional but
@@ -164,7 +162,7 @@
  * {
  *    // check if type is correct - check will return if it fails
  *    ELM_CHECK_WIDTYPE(obj, widtype);
- *    // get widget data - tyope is correct and sany by this point, so this
+ *    // get widget data - type is correct and sane by this point, so this
  *    // should never fail
  *    Widget_Data *wd = elm_widget_data_get(obj);
  *    // do whatever you like
