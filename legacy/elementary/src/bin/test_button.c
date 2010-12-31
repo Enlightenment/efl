@@ -6,17 +6,17 @@
 static void
 _bt_repeated(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-	static int count;
-	char buf[16];
+   static int count;
+   char buf[16];
 
-	snprintf(buf, sizeof(buf), "count=%d", count++);
-	if (count >= 10000)
-		count = 0;
-	elm_button_label_set(obj, buf);
+   snprintf(buf, sizeof(buf), "count=%d", count++);
+   if (count >= 10000)
+     count = 0;
+   elm_button_label_set(obj, buf);
 }
 
 static void
-_bt_clicked(void *data, Evas_Object * obj, void *event_info)
+_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int param = (int)(data);
 
@@ -24,7 +24,7 @@ _bt_clicked(void *data, Evas_Object * obj, void *event_info)
 }
 
 static void
-_bt_unpressed(void *data, Evas_Object * obj, void *event_info)
+_bt_unpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int param = (int)(data);
 
@@ -134,7 +134,6 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
    evas_object_show(ic);
 
-
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
    elm_button_label_set(bt, "Anchor style");
@@ -155,7 +154,6 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
-
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
