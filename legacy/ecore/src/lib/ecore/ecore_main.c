@@ -154,6 +154,18 @@ static gboolean ecore_idling;
 static gboolean ecore_fds_ready;
 #endif
 
+void
+_ecore_fd_valid(void)
+{
+#ifdef HAVE_EPOLL
+   if (fcntl(epoll_fd, F_GETFD) < 0)
+     {
+        ERR("arghhh you caught me! report a backtrace to edevel!");
+        sleep(5);
+     }
+#endif
+}
+
 #ifdef HAVE_EPOLL
 static inline int
 _ecore_get_epoll_fd(void)
@@ -1307,6 +1319,7 @@ _ecore_main_fd_handlers_call(void)
 
                     }
                   fdh->references--;
+                  _ecore_fd_valid();
 
                   fdh->read_active = EINA_FALSE;
                   fdh->write_active = EINA_FALSE;
