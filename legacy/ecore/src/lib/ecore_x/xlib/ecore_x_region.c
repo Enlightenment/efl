@@ -112,7 +112,7 @@ ecore_x_xregion_is_empty(Ecore_X_XRegion *region)
       return EINA_TRUE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return !XEmptyRegion((Region)region) ? EINA_TRUE : EINA_FALSE;
+   return XEmptyRegion((Region)region) ? EINA_TRUE : EINA_FALSE;
 } /* ecore_x_xregion_is_empty */
 
 EAPI Eina_Bool
