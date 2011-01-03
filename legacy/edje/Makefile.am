@@ -8,14 +8,13 @@ aclocal.m4 \
 compile \
 config.guess \
 config.h.in \
+config.h.in~ \
 config.sub \
 configure \
 depcomp \
 install-sh \
 ltmain.sh \
 missing \
-mkinstalldirs \
-stamp-h.in \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
