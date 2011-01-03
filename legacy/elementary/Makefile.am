@@ -4,7 +4,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 MAINTAINERCLEANFILES = \
 Makefile.in \
-acconfig.h \
 aclocal.m4 \
 config.guess \
 elementary_config.h.in \
@@ -12,11 +11,8 @@ config.sub \
 configure \
 depcomp \
 install-sh \
-ltconfig \
 ltmain.sh \
 missing \
-mkinstalldirs \
-stamp-h.in \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
