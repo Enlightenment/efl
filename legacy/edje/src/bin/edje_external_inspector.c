@@ -2,12 +2,13 @@
 # include "config.h"
 #endif
 
-#include "Edje.h"
+#include <locale.h>
+#include <fnmatch.h>
 
 #include <Ecore.h>
 #include <Ecore_Getopt.h>
-#include <locale.h>
-#include <fnmatch.h>
+
+#include "Edje.h"
 
 static int _log_dom;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
