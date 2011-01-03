@@ -8,6 +8,7 @@ aclocal.m4 \
 compile \
 config.guess \
 config.h.in \
+config.h.in~ \
 config.sub \
 configure \
 depcomp \
