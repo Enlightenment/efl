@@ -142,19 +142,19 @@ struct _Eina_QuadTree_Item
    EINA_MAGIC
 };
 
-static int _eina_log_qd_dom = -1;
-static Eina_Mempool *root_mp = NULL;
-static Eina_Mempool *items_mp = NULL;
+static int _eina_quadtree_log_dom = -1;
+static Eina_Mempool *eina_quadtree_root_mp = NULL;
+static Eina_Mempool *_eina_quadtree_items_mp = NULL;
 
 #ifdef ERR
 #undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_eina_log_qd_dom, __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_quadtree_log_dom, __VA_ARGS__)
 
 #ifdef DBG
 #undef DBG
 #endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eina_log_qd_dom, __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_quadtree_log_dom, __VA_ARGS__)
 
 
 static int
@@ -177,13 +177,13 @@ eina_quadtree_root_free(Eina_QuadTree *q, Eina_QuadTree_Root *root)
    EINA_MAGIC_CHECK_QUADTREE_ROOT(root, NULL);
 
    EINA_LIST_FREE(root->both, item)
-   eina_mempool_free(items_mp, item);
+   eina_mempool_free(_eina_quadtree_items_mp, item);
 
    root->left = eina_quadtree_root_free(q, root->left);
    root->right = eina_quadtree_root_free(q, root->right);
 
    EINA_MAGIC_SET(root, 0);
-   eina_mempool_free(root_mp, root);
+   eina_mempool_free(eina_quadtree_root_mp, root);
 
    return NULL;
 }
@@ -215,7 +215,7 @@ eina_quadtree_root_rebuild_pre(Eina_QuadTree *q,
 
    EINA_MAGIC_SET(root, 0);
    if (q->root_count > 50)
-      eina_mempool_free(root_mp, root);
+      eina_mempool_free(eina_quadtree_root_mp, root);
    else
      {
         eina_trash_push(&q->root_trash, root);
@@ -353,7 +353,7 @@ _eina_quadtree_update(Eina_QuadTree *q, Eina_QuadTree_Root *parent,
      {
         root = eina_trash_pop(&q->root_trash);
         if (!root)
-           root = eina_mempool_malloc(root_mp, sizeof (Eina_QuadTree_Root));
+           root = eina_mempool_malloc(eina_quadtree_root_mp, sizeof (Eina_QuadTree_Root));
         else
            q->root_count--;
 
@@ -571,7 +571,7 @@ _eina_quadtree_remove(Eina_QuadTree_Item *object)
       object->quad->root = NULL;
 
    if (object->quad->root_count > 50)
-      eina_mempool_free(root_mp, object->root);
+      eina_mempool_free(eina_quadtree_root_mp, object->root);
    else
      {
         eina_trash_push(&object->quad->root_trash, object->root);
@@ -625,18 +625,18 @@ eina_quadtree_free(Eina_QuadTree *q)
         item = EINA_INLIST_CONTAINER_GET(q->change, Eina_QuadTree_Item);
         q->change = q->change->next;
         if (!item->hidden)
-           eina_mempool_free(items_mp, item);
+           eina_mempool_free(_eina_quadtree_items_mp, item);
      }
 
    EINA_LIST_FREE(q->hidden, item)
-   eina_mempool_free(items_mp, item);
+   eina_mempool_free(_eina_quadtree_items_mp, item);
 
    eina_quadtree_root_free(q, q->root);
 
    while (q->items_trash)
      {
         item = eina_trash_pop(&q->items_trash);
-        eina_mempool_free(items_mp, item);
+        eina_mempool_free(_eina_quadtree_items_mp, item);
      }
 
    while (q->root_trash)
@@ -644,7 +644,7 @@ eina_quadtree_free(Eina_QuadTree *q)
         Eina_QuadTree_Root *root;
 
         root = eina_trash_pop(&q->root_trash);
-        eina_mempool_free(root_mp, root);
+        eina_mempool_free(eina_quadtree_root_mp, root);
      }
 
         EINA_MAGIC_SET(q, 0);
@@ -663,7 +663,7 @@ eina_quadtree_add(Eina_QuadTree *q, const void *object)
 
    result = eina_trash_pop(&q->items_trash);
    if (!result)
-      result = eina_mempool_malloc(items_mp, sizeof (Eina_QuadTree_Item));
+      result = eina_mempool_malloc(_eina_quadtree_items_mp, sizeof (Eina_QuadTree_Item));
    else
       q->items_count--;
 
@@ -716,7 +716,7 @@ eina_quadtree_del(Eina_QuadTree_Item *object)
    /* This object is not anymore inside the tree, we can remove it now !*/
    EINA_MAGIC_SET(object, 0);
    if (object->quad->items_count > 256)
-      eina_mempool_free(items_mp, object);
+      eina_mempool_free(_eina_quadtree_items_mp, object);
    else
      {
         object->quad->items_count++;
@@ -885,9 +885,9 @@ eina_quadtree_init(void)
 {
    const char *choice, *tmp;
 
-   _eina_log_qd_dom = eina_log_domain_register("eina_quadtree",
-                                               EINA_LOG_COLOR_DEFAULT);
-   if (_eina_log_qd_dom < 0)
+   _eina_quadtree_log_dom = eina_log_domain_register("eina_quadtree",
+                                                     EINA_LOG_COLOR_DEFAULT);
+   if (_eina_quadtree_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register log domain: eina_quadtree");
         return EINA_FALSE;
@@ -908,10 +908,10 @@ eina_quadtree_init(void)
    if (tmp && tmp[0])
       choice = tmp;
 
-   items_mp = eina_mempool_add(choice, "QuadTree Item", NULL,
-                               sizeof (Eina_QuadTree_Item), 320);
-   root_mp = eina_mempool_add(choice, "QuadTree Root", NULL,
-                              sizeof (Eina_QuadTree_Root), 32);
+   _eina_quadtree_items_mp = eina_mempool_add(choice, "QuadTree Item", NULL,
+                                              sizeof (Eina_QuadTree_Item), 320);
+   eina_quadtree_root_mp = eina_mempool_add(choice, "QuadTree Root", NULL,
+                                            sizeof (Eina_QuadTree_Root), 32);
 
    return EINA_TRUE;
 }
@@ -919,11 +919,11 @@ eina_quadtree_init(void)
 Eina_Bool
 eina_quadtree_shutdown(void)
 {
-   eina_mempool_del(root_mp);
-   eina_mempool_del(items_mp);
+   eina_mempool_del(eina_quadtree_root_mp);
+   eina_mempool_del(_eina_quadtree_items_mp);
 
-   eina_log_domain_unregister(_eina_log_qd_dom);
-   _eina_log_qd_dom = -1;
+   eina_log_domain_unregister(_eina_quadtree_log_dom);
+   _eina_quadtree_log_dom = -1;
    return EINA_TRUE;
 }
 
