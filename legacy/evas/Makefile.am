@@ -7,40 +7,13 @@ Makefile.in \
 aclocal.m4 \
 config.guess \
 config.h.in \
+config.h.in~ \
 config.sub \
 configure \
+depcomp \
 install-sh \
-ltconfig \
 ltmain.sh \
 missing \
-mkinstalldirs \
-stamp-h.in \
-build-stamp \
-configure-stamp \
-depcomp \
-README \
-evas-cairo-x11.pc \
-evas-directfb.pc \
-evas-fb.pc \
-evas-opengl-x11.pc \
-evas-opengl-sdl.pc \
-evas-opengl-glew.pc \
-evas-quartz.pc \
-evas-software-buffer.pc \
-evas-software-qtopia.pc \
-evas-software-x11.pc \
-evas-software-16-x11.pc \
-evas-software-8-x11.pc \
-evas-xrender-x11.pc \
-evas-xrender-xcb.pc \
-evas-software-gdi.pc \
-evas-software-ddraw.pc \
-evas-software-16-ddraw.pc \
-evas-direct3d.pc \
-evas-software-16-wince.pc \
-evas-software-sdl.pc \
-evas.pc \
-evas.spec \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
@@ -78,7 +51,8 @@ evas-software-16-ddraw.pc.in \
 evas-direct3d.pc.in \
 evas-software-16-wince.pc.in \
 evas-software-sdl.pc.in \
-evas.spec.in evas.spec
+evas.spec.in \
+evas.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = evas.pc
