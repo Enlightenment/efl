@@ -424,7 +424,9 @@ struct _Edje_External_Param_Info
 #define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, 0, {.s = {NULL, NULL, NULL}}}
 
 /**
- * @struct _Edje_External_Type information about an external type to be used.
+ * @struct _Edje_External_Type
+ *
+ * @brief Information about an external type to be used.
  *
  * This structure provides information on how to display and modify a
  * third party Evas_Object in Edje.
