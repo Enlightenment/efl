@@ -405,11 +405,18 @@ case "$host_os" in
       dlopen_libs="-ldl"
       ;;
    *)
-      AC_CHECK_LIB([dl], [dlopen], [dlopen_libs=-ldl])
-      AC_SEARCH_LIBS([clock_gettime], [rt],
-         [
-          rt_libs=-lrt
-          AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [Have clock_gettime()])
+      AC_CHECK_LIB([c], [dlopen],
+         [],
+         [AC_CHECK_LIB([dl], [dlopen],
+             [dlopen_libs=-ldl])
+         ])
+      AC_CHECK_LIB([c], [clock_gettime],
+         [AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [Have clock_gettime()])],
+         [AC_CHECK_LIB([rt], [clock_gettime],
+             [
+              rt_libs=-lrt
+              AC_DEFINE(HAVE_CLOCK_GETTIME, [1], [Have clock_gettime()])
+             ])
          ])
       ;;
 esac
