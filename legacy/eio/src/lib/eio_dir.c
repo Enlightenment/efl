@@ -755,6 +755,7 @@ eio_dir_copy(const char *source,
    copy->progress.dest = eina_stringshare_add(dest);
    copy->files = NULL;
    copy->dirs = NULL;
+   copy->links = NULL;
 
    if (!eio_long_file_set(&copy->progress.common,
                           done_cb,
@@ -807,6 +808,7 @@ eio_dir_move(const char *source,
    move->progress.dest = eina_stringshare_add(dest);
    move->files = NULL;
    move->dirs = NULL;
+   move->links = NULL;
 
    if (!eio_long_file_set(&move->progress.common,
                           done_cb,
@@ -856,6 +858,7 @@ eio_dir_unlink(const char *path,
    rmrf->progress.dest = NULL;
    rmrf->files = NULL;
    rmrf->dirs = NULL;
+   rmrf->links = NULL;
 
    if (!eio_long_file_set(&rmrf->progress.common,
                           done_cb,
