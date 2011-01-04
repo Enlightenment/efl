@@ -20,7 +20,7 @@
  *
  */
 
-EAPI void perror (const char *s);
+/* EAPI void perror (const char *s); */
 
 /*
  * Stream related functions

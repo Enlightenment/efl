@@ -1,3 +1,13 @@
+2011-01-04  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/dlfcn/dlfcn.h:
+	define (temporary) PATH_MAX on Windows CE.
+	cegcc has a bug with limits.h.
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	undefine temporary the definition of perror() on Windows CE
+
 2010-12-18  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/libgen.c:

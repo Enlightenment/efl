@@ -26,6 +26,12 @@
 extern "C" {
 #endif
 
+#ifdef _WIN32_WCE
+# ifndef PATH_MAX
+#  define PATH_MAX 260
+# endif
+#endif
+
 
 /**
  * @file dlfcn.h
