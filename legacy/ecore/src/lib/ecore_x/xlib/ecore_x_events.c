@@ -475,7 +475,7 @@ void
 _ecore_x_event_handle_any_event(XEvent *xevent)
 {
    XEvent *ev = malloc(sizeof(XEvent));
-
+   if (!ev) return;
    memcpy(ev, xevent, sizeof(XEvent));
    ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
 } /* _ecore_x_event_handle_any_event */
