@@ -30,6 +30,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_quadtree.h"
 #include "eina_magic.h"
 #include "eina_mempool.h"

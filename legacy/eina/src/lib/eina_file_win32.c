@@ -183,7 +183,11 @@ _eina_file_win32_first_file(const char *dir, WIN32_FIND_DATA *fd)
 static Eina_Bool
 _eina_file_win32_ls_iterator_next(Eina_File_Iterator *it, void **data)
 {
+#ifdef UNICODE
+   wchar_t  *old_name;
+#else
    char     *old_name;
+#endif
    char     *name;
    char     *cname;
    size_t    length;
@@ -194,7 +198,11 @@ _eina_file_win32_ls_iterator_next(Eina_File_Iterator *it, void **data)
      return EINA_FALSE;
 
    is_last = it->is_last;
-   old_name = strdup(it->data.cFileName);
+#ifdef UNICODE
+   old_name = _wcsdup(it->data.cFileName);
+#else
+   old_name = _strdup(it->data.cFileName);
+#endif
    if (!old_name)
      return EINA_FALSE;
 
@@ -208,7 +216,7 @@ _eina_file_win32_ls_iterator_next(Eina_File_Iterator *it, void **data)
         }
    } while ((it->data.cFileName[0] == '.') &&
             ((it->data.cFileName[1] == '\0') ||
-             ((it->data.cFileName[1] == '.') && (it->data.cFileName[2] == '\0'))));
+             ((it->data.cFileName[1] == '.') && (it->data.cFileName[2] == '\0')))); /* FIXME: what about UNICODE ? */
 
 #ifdef UNICODE
    cname = evil_wchar_to_char(old_name);
@@ -257,7 +265,11 @@ _eina_file_win32_ls_iterator_free(Eina_File_Iterator *it)
 static Eina_Bool
 _eina_file_win32_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 {
+#ifdef UNICODE
+   wchar_t  *old_name;
+#else
    char     *old_name;
+#endif
    char     *cname;
    size_t    length;
    DWORD     attr;
@@ -269,7 +281,11 @@ _eina_file_win32_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **d
 
    attr = it->data.dwFileAttributes;
    is_last = it->is_last;
-   old_name = strdup(it->data.cFileName);
+#ifdef UNICODE
+   old_name = _wcsdup(it->data.cFileName);
+#else
+   old_name = _strdup(it->data.cFileName);
+#endif
    if (!old_name)
      return EINA_FALSE;
 
@@ -282,17 +298,25 @@ _eina_file_win32_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **d
              res = EINA_FALSE;
         }
 
+#ifdef UNICODE
+     length = wcslen(old_name);
+#else
      length = strlen(old_name);
+#endif
      if (it->info.name_start + length + 1 >= PATH_MAX)
        {
           free(old_name);
-          old_name = strdup(it->data.cFileName);
+#ifdef UNICODE
+          old_name = _wcsdup(it->data.cFileName);
+#else
+          old_name = _strdup(it->data.cFileName);
+#endif
           continue;
        }
 
    } while ((it->data.cFileName[0] == '.') &&
             ((it->data.cFileName[1] == '\0') ||
-             ((it->data.cFileName[1] == '.') && (it->data.cFileName[2] == '\0'))));
+             ((it->data.cFileName[1] == '.') && (it->data.cFileName[2] == '\0')))); /* FIXME: what about UNICODE ? */
 
 #ifdef UNICODE
    cname = evil_wchar_to_char(old_name);
