@@ -242,6 +242,7 @@ static void      _item_hilight(Elm_Gengrid_Item *item);
 static void      _item_unrealize(Elm_Gengrid_Item *item);
 static void      _item_select(Elm_Gengrid_Item *item);
 static void      _item_unselect(Elm_Gengrid_Item *item);
+static void      _calc_job(void *data);
 static void      _on_focus_hook(void        *data,
                                 Evas_Object *obj);
 static Eina_Bool _item_multi_select_up(Widget_Data *wd);
@@ -1177,6 +1178,8 @@ _item_del(Elm_Gengrid_Item *item)
      item->tooltip.del_cb((void *)item->tooltip.data, item->base.widget, item);
    item->wd->walking -= item->walking;
    item->wd->count--;
+   if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
+   item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
    elm_widget_item_del(item);
 }
 
@@ -1859,9 +1862,6 @@ elm_gengrid_item_del(Elm_Gengrid_Item *item)
      }
 
    _item_del(item);
-
-   if (item->wd->calc_job) ecore_job_del(item->wd->calc_job);
-   item->wd->calc_job = ecore_job_add(_calc_job, item->wd);
 }
 
 /**
