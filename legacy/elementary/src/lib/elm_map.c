@@ -303,6 +303,8 @@ static void _theme_hook(Evas_Object *obj);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _calc_job(void *data);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 static void grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
 static void grid_clear(Evas_Object *obj, Grid *g);
 static Grid *grid_create(Evas_Object *obj);
@@ -1687,6 +1689,84 @@ _group_open_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __U
    _group_bubble_create(group);
 }
 
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+{
+   double zoom;
+   Evas_Coord x = 0;
+   Evas_Coord y = 0;
+   Evas_Coord step_x = 0;
+   Evas_Coord step_y = 0;
+   Evas_Coord v_w = 0;
+   Evas_Coord v_h = 0;
+   Evas_Coord page_x = 0;
+   Evas_Coord page_y = 0;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
+   elm_smart_scroller_step_size_get(wd->scr, &step_x, &step_y);
+   elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
+
+   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
+     {
+        x -= step_x;
+     }
+   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
+     {
+        x += step_x;
+     }
+   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
+     {
+        y -= step_y;
+     }
+   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+     {
+        y += step_y;
+     }
+   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
+     {
+        if (page_y < 0)
+           y -= -(page_y * v_h) / 100;
+        else
+           y -= page_y;
+     }
+   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
+     {
+        if (page_y < 0)
+           y += -(page_y * v_h) / 100;
+        else
+           y += page_y;
+     }
+   else if (!strcmp(ev->keyname, "KP_Add"))
+     {
+        zoom = elm_map_zoom_get(obj);
+        zoom += 1;
+        elm_map_zoom_mode_set(obj, ELM_MAP_ZOOM_MODE_MANUAL);
+        elm_map_zoom_set(obj, zoom);
+        return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "KP_Subtract"))
+     {
+        zoom = elm_map_zoom_get(obj);
+        zoom -= 1;
+        elm_map_zoom_mode_set(obj, ELM_MAP_ZOOM_MODE_MANUAL);
+        elm_map_zoom_set(obj, zoom);
+        return EINA_TRUE;
+     }
+   else return EINA_FALSE;
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   elm_smart_scroller_child_pos_set(wd->scr, x, y);
+
+   return EINA_TRUE;
+}
+
 static int idnum = 1;
 
 /**
@@ -1728,6 +1808,7 @@ elm_map_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
