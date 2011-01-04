@@ -22,7 +22,7 @@ nobase_include_HEADERS = pwd.h sys/mman.h fnmatch.h dirent.h
 
 if EVIL_HAVE_WINCE
 
-nobase_include_HEADERS += errno.h dirent.h
+nobase_include_HEADERS += errno.h
 
 endif
 
