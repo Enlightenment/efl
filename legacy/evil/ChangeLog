@@ -1,5 +1,11 @@
 2011-01-04  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	declare and define getpid() for Windows CE.
+
+2011-01-04  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/dlfcn/dlfcn.h:
 	define (temporary) PATH_MAX on Windows CE.
 	cegcc has a bug with limits.h.

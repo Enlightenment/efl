@@ -93,7 +93,7 @@ evil_usleep(unsigned long usec)
  *
  */
 
-#ifdef _MSC_VER
+#if defined (_MSC_VER) || defined (_WIN32_WCE)
 pid_t
 getpid(void)
 {
