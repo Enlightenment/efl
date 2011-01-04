@@ -18,8 +18,8 @@ libecore_input_evas_la_SOURCES = \
 ecore_input_evas.c
 
 libecore_input_evas_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
+$(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@ \
 @EVIL_LIBS@
