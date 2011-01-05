@@ -2731,6 +2731,7 @@ EAPI Elm_Genlist_Item *
 elm_genlist_item_insert_before(Evas_Object                  *obj,
                                const Elm_Genlist_Item_Class *itc,
                                const void                   *data,
+                               Elm_Genlist_Item             *parent,
                                Elm_Genlist_Item             *before,
                                Elm_Genlist_Item_Flags        flags,
                                Evas_Smart_Cb                 func,
@@ -2739,17 +2740,17 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(before, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func,
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
                                     func_data);
    if (!wd) return NULL;
    if (!it) return NULL;
-   if (!it->parent)
-     wd->items = eina_inlist_prepend_relative(wd->items, EINA_INLIST_GET(it),
-                                              EINA_INLIST_GET(before));
-   else
+   if (it->parent)
      {
-        printf("FIXME: 13 tree not handled yet\n");
+        it->parent->items = eina_list_prepend_relative(it->parent->items, it,
+                                                       before);
      }
+   wd->items = eina_inlist_prepend_relative(wd->items, EINA_INLIST_GET(it),
+                                            EINA_INLIST_GET(before));
    it->rel = before;
    it->rel->relcount++;
    it->before = EINA_TRUE;
@@ -2778,6 +2779,7 @@ EAPI Elm_Genlist_Item *
 elm_genlist_item_insert_after(Evas_Object                  *obj,
                               const Elm_Genlist_Item_Class *itc,
                               const void                   *data,
+                              Elm_Genlist_Item             *parent,
                               Elm_Genlist_Item             *after,
                               Elm_Genlist_Item_Flags        flags,
                               Evas_Smart_Cb                 func,
@@ -2786,16 +2788,16 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(after, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Genlist_Item *it = _item_new(wd, itc, data, NULL, flags, func,
+   Elm_Genlist_Item *it = _item_new(wd, itc, data, parent, flags, func,
                                     func_data);
    if (!wd) return NULL;
    if (!it) return NULL;
-   if (!it->parent)
-     wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
-                                             EINA_INLIST_GET(after));
-   else
+   wd->items = eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                           EINA_INLIST_GET(after));
+   if (it->parent)
      {
-        printf("FIXME: 14 tree not handled yet\n");
+        it->parent->items = eina_list_append_relative(it->parent->items, it,
+                                                      after);
      }
    it->rel = after;
    it->rel->relcount++;

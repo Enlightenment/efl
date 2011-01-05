@@ -222,6 +222,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 
    elm_genlist_item_insert_before(gl, &itc1,
                                   (void *)(long)i/* item data */,
+                                  NULL/* parent */,
                                   gli_selected /* item before */,
                                   ELM_GENLIST_ITEM_NONE,
                                   gl_sel/* func */,
@@ -251,6 +252,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 
    elm_genlist_item_insert_after(gl, &itc1,
                                  (void *)(long)i/* item data */,
+                                 NULL/* parent */,
                                  gli_selected /* item after */,
                                  ELM_GENLIST_ITEM_NONE,
 				 gl_sel/* func */,
@@ -384,11 +386,11 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 				     (void *)1005/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
 				     (void *)1005/* func data */);
    gli[5] = elm_genlist_item_insert_before(gl, &itc1,
-					   (void *)1006/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-					   (void *)1006/* func data */);
+					   (void *)1006/* item data */, NULL/* parent */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE,
+					   gl_sel/* func */, (void *)1006/* func data */);
    gli[6] = elm_genlist_item_insert_after(gl, &itc1,
-					  (void *)1007/* item data */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
-					  (void *)1007/* func data */);
+					  (void *)1007/* item data */, NULL/* parent */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE,
+					  gl_sel/* func */, (void *)1007/* func data */);
 
    elm_box_pack_end(bx, gl);
 
