@@ -148,6 +148,7 @@ _get_syspath_from_watch(void             *data,
         {
            int devcheck;
 
+           errno = 0;
            devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
            if ((devcheck < 0) || errno) goto error;
            close(devcheck);

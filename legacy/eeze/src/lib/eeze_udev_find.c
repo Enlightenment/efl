@@ -305,6 +305,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
           {
              int devcheck;
 
+             errno = 0;
              devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
              if (errno)
                {
