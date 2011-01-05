@@ -2452,19 +2452,19 @@ extern "C" {
      {
         ELM_TRANSIT_EFFECT_FLIP_AXIS_X,
         ELM_TRANSIT_EFFECT_FLIP_AXIS_Y
-     } Elm_Fx_Flip_Axis;
+     } Elm_Transit_Effect_Flip_Axis;
    typedef enum
      {
         ELM_TRANSIT_EFFECT_WIPE_DIR_LEFT,
         ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT,
         ELM_TRANSIT_EFFECT_WIPE_DIR_UP,
         ELM_TRANSIT_EFFECT_WIPE_DIR_DOWN
-     } Elm_Fx_Wipe_Dir;
+     } Elm_Transit_Effect_Wipe_Dir;
    typedef enum
      {
         ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
         ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW
-     } Elm_Fx_Wipe_Type;
+     } Elm_Transit_Effect_Wipe_Type;
 
    typedef struct _Elm_Transit Elm_Transit;
 
@@ -2490,9 +2490,9 @@ extern "C" {
    EAPI void                  *elm_transit_effect_resizing_add(Elm_Transit* transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
    EAPI void                  *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord dy, Evas_Coord to_dx, Evas_Coord to_dy);
    EAPI void                  *elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate);
-   EAPI void                  *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Fx_Flip_Axis axis, Eina_Bool cw);
-   EAPI void                  *elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Fx_Flip_Axis axis, Eina_Bool cw);
-   EAPI void                  *elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Fx_Wipe_Type type, Elm_Fx_Wipe_Dir dir);
+   EAPI void                  *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
+   EAPI void                  *elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
+   EAPI void                  *elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir);
    EAPI void                  *elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
    EAPI void                  *elm_transit_effect_fade_add(Elm_Transit *transit);
    EAPI void                  *elm_transit_effect_blend_add(Elm_Transit *transit);
