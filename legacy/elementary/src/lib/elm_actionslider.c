@@ -24,6 +24,7 @@ struct _Widget_Data
    Evas_Object *drag_button_base;
    Elm_Actionslider_Pos magnet_position, enabled_position;
    const char *text_left, *text_right, *text_center;
+   const char *indicator_label;
    Ecore_Animator *button_animator;
    double final_position;
    Eina_Bool mouse_down : 1;
@@ -47,9 +48,15 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->drag_button_base) 
+     {
+        evas_object_del(wd->drag_button_base);
+        wd->drag_button_base = NULL;
+     }
    if (wd->text_left) eina_stringshare_del(wd->text_left);
    if (wd->text_right) eina_stringshare_del(wd->text_right);
    if (wd->text_center) eina_stringshare_del(wd->text_center);
+   if (wd->indicator_label) eina_stringshare_del(wd->indicator_label);
    free(wd);
 }
 
@@ -88,6 +95,7 @@ _theme_hook(Evas_Object *obj)
    edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
    edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
    edje_object_part_text_set(wd->as, "elm.text.center", wd->text_center);
+   edje_object_part_text_set(wd->as, "elm.text.indicator", wd->indicator_label);
    edje_object_message_signal_process(wd->as);
    _sizing_eval(obj);
 }
@@ -205,11 +213,7 @@ _drag_button_up_cb(void *data, Evas_Object *o __UNUSED__, const char *emission _
         return;
      }
 
-   if (!wd->magnet_position)
-     {
-        wd->final_position = 0;
-        goto as_anim;
-     }
+   if (wd->magnet_position == ELM_ACTIONSLIDER_NONE) return;
 
    if (position < 0.3)
      {
@@ -504,4 +508,40 @@ elm_actionslider_selected_label_get(const Evas_Object *obj)
      return wd->text_right;
 
    return NULL;
+}
+
+/**
+ * Set the label used on the indicator object.
+ *
+ * @param obj The actionslider object
+ * @param label The label which is going to be set.
+ *
+ * @ingroup Actionslider
+ */
+EAPI void 
+elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   eina_stringshare_replace(&wd->indicator_label, label);
+   edje_object_part_text_set(wd->as, "elm.text.indicator", wd->indicator_label);
+}
+
+/**
+ * Get the label used on the indicator object.
+ *
+ * @param obj The actionslider object
+ * @return The indicator label
+ *
+ * @ingroup Actionslider
+ */
+EAPI const char *
+elm_actionslider_indicator_label_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   return wd->indicator_label;
 }

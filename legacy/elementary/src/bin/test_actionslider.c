@@ -19,6 +19,15 @@ _position_change_magnetic_cb(void *data __UNUSED__, Evas_Object * obj, void *eve
      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_RIGHT);
 }
 
+static void
+_magnet_enable_disable_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   if (!strcmp((char *)event_info, "left"))
+      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_CENTER);
+   else if (!strcmp((char *)event_info, "right"))
+      elm_actionslider_magnet_pos_set(obj, ELM_ACTIONSLIDER_NONE);
+}
+
 void
 test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -85,6 +94,7 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_labels_set(ms, NULL, "Accept", "Reject");
+   elm_actionslider_indicator_label_set(ms, "Go");
    evas_object_smart_callback_add(ms, "pos_changed",
                                   _position_change_magnetic_cb, NULL);
    evas_object_smart_callback_add(ms, "selected", _pos_selected_cb, NULL);
@@ -98,6 +108,19 @@ test_actionslider(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *eve
    elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_ALL);
    elm_actionslider_labels_set(ms, "Left", "Center", "Right");
+   elm_actionslider_indicator_label_set(ms, "Go");
+   evas_object_smart_callback_add(ms, "selected", _pos_selected_cb, NULL);
+   evas_object_show(ms);
+   elm_box_pack_end(bx, ms);
+
+   ms = elm_actionslider_add(win);
+   evas_object_size_hint_weight_set(ms, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ms, EVAS_HINT_FILL, 0);
+   elm_actionslider_indicator_pos_set(ms, ELM_ACTIONSLIDER_CENTER);
+   elm_actionslider_magnet_pos_set(ms, ELM_ACTIONSLIDER_CENTER);
+   elm_actionslider_labels_set(ms, "Enable", "Magnet", "Disable");
+   evas_object_smart_callback_add(ms, "pos_changed",
+                                  _magnet_enable_disable_cb, NULL);
    evas_object_smart_callback_add(ms, "selected", _pos_selected_cb, NULL);
    evas_object_show(ms);
    elm_box_pack_end(bx, ms);

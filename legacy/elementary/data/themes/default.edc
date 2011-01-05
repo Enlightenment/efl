@@ -15980,6 +15980,28 @@ collections {
                color: 255 255 255 190;
             }
          }
+         part { name: "elm.text.indicator";
+            type: TEXT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "elm.drag_button";
+                  offset: 5 0;
+               }
+               rel2 {
+                  to: "elm.drag_button";
+                  offset: -5 0;
+               }
+               color: 0 0 0 255;
+               text {
+                  font: "Sans,Edje-Vera";
+                  size: 10;
+                  align: 0.5 0.5;
+                  min: 0 1;
+               }
+            }
+         }
       }
       programs {
 	 program { name: "elm.drag_button,mouse,up";
@@ -16179,6 +16201,28 @@ collections {
                   border: 4 4 4 0;
                }
                color: 255 255 255 190;
+            }
+         }
+         part { name: "elm.text.indicator";
+            type: TEXT;
+            scale: 1;
+            mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1 {
+                  to: "elm.drag_button";
+                  offset: 5 0;
+               }
+               rel2 {
+                  to: "elm.drag_button";
+                  offset: -5 0;
+               }
+               color: 0 0 0 255;
+               text {
+                  font: "Sans,Edje-Vera";
+                  size: 10;
+                  align: 0.5 0.5;
+                  min: 0 1;
+               }
             }
          }
       }
