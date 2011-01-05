@@ -252,7 +252,6 @@ _drag_button_up_cb(void *data, Evas_Object *o __UNUSED__, const char *emission _
         else
           wd->final_position = 0;
      }
-as_anim:
    wd->button_animator = ecore_animator_add(_button_animation, data);
 }
 
