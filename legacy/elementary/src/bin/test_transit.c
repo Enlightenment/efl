@@ -130,7 +130,7 @@ _transit_resizing(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Elm_Transit *trans;
 
    trans = elm_transit_add(5.0);
-   
+   elm_transit_object_add(trans, obj);   
    elm_transit_effect_resizing_add(trans, 100, 50, 300, 150);
 }
 
@@ -152,6 +152,7 @@ _transit_zoom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Transit *trans;
 
    trans = elm_transit_add(5.0);
+   elm_transit_object_add(trans, obj);
    elm_transit_effect_zoom_add(trans, 1.0, 3.0);
 }
 
