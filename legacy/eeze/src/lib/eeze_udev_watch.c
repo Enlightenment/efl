@@ -141,7 +141,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
           {
              int devcheck;
 
-             devcheck = open(udev_device_get_devnode(device), O_EXCL);
+             devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
              if ((devcheck < 0) || errno) goto error;
              close(devcheck);
           }
