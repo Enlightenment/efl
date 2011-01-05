@@ -2,6 +2,11 @@
 #include "config.h"
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+
 #include <Ecore.h>
 #include <Eeze.h>
 #include "eeze_udev_private.h"
@@ -128,11 +133,18 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
           test = udev_device_get_sysattr_value(device, "capability");
 
           if (test)
-            cap = atoi(test);
+            cap = strtol(test, NULL, 10);
 
           if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
-              (strcmp("filesystem", test)) || (cap == 52) || (cap == 50))
+              (strcmp("filesystem", test)) || (cap == 50))
             goto error;
+          {
+             int devcheck;
+
+             devcheck = open(udev_device_get_devnode(device), O_EXCL);
+             if ((devcheck < 0) || errno) goto error;
+             close(devcheck);
+          }
 
           break;
         case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
@@ -144,7 +156,7 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
           if (!(test = udev_device_get_property_value(device, "ID_BUS"))
               || (strcmp("ata", test))
               || !(test = udev_device_get_sysattr_value(device, "removable"))
-              || (atoi(test)))
+              || (strtol(test, NULL, 10)))
             goto error;
 
           break;
@@ -155,9 +167,9 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
             goto error;
 #endif
           if ((!(test = udev_device_get_sysattr_value(device, "removable"))
-               || (!atoi(test)))
+               || (!strtol(test, NULL, 10)))
               && (!(test = udev_device_get_sysattr_value(device, "capability"))
-                  || (atoi(test) != 10)))
+                  || (strtol(test, NULL, 10) != 10)))
             goto error;
 
           break;

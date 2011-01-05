@@ -2,6 +2,11 @@
 #include "config.h"
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
@@ -208,7 +213,6 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype, const char *name)
         case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
           udev_enumerate_add_match_subsystem(en, "block");
           udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");
-          udev_enumerate_add_nomatch_sysattr(en, "capability", "52");
           /* parent node */
           udev_enumerate_add_nomatch_sysattr(en, "capability", "50");
           break;
@@ -285,6 +289,19 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype, const char *name)
                 if (!(test = udev_device_get_property_value(device, "ID_USB_DRIVER")))
                   goto out;
              }
+         else if (etype == EEZE_UDEV_TYPE_DRIVE_MOUNTABLE)
+           {
+              int devcheck;
+
+              devcheck = open(udev_device_get_devnode(device), O_EXCL);
+              if (errno)
+                {
+                   if (devcheck >= 0) close(devcheck);
+                   goto out;
+                }
+              if (devcheck < 0) goto out;
+              close(devcheck);
+           }
 
         if (name && (!strstr(devname, name)))
            goto out;
