@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <errno.h>
 
 #include <Eeze.h>
 #include "eeze_udev_private.h"
@@ -305,13 +304,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
           {
              int devcheck;
 
-             errno = 0;
              devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
-             if (errno)
-               {
-                  if (devcheck >= 0) close(devcheck);
-                  goto out;
-               }
              if (devcheck < 0) goto out;
              close(devcheck);
           }

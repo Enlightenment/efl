@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <errno.h>
 
 #include <Ecore.h>
 #include <Eeze.h>
@@ -148,9 +147,8 @@ _get_syspath_from_watch(void             *data,
         {
            int devcheck;
 
-           errno = 0;
            devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
-           if ((devcheck < 0) || errno) goto error;
+           if (devcheck < 0) goto error;
            close(devcheck);
         }
 
