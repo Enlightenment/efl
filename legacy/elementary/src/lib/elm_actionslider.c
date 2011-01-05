@@ -541,6 +541,6 @@ elm_actionslider_indicator_label_get(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if (!wd) return NULL;
    return wd->indicator_label;
 }
