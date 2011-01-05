@@ -119,11 +119,11 @@ _drag_button_move_cb(void *data, Evas_Object *o __UNUSED__, const char *emission
    if (!wd->mouse_down) return;
    edje_object_part_drag_value_get(wd->as, "elm.drag_button_base", &pos, NULL);
    if (pos == 0.0)
-     evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"left");
+     evas_object_smart_callback_call(as, SIG_CHANGED, "left");
    else if (pos == 1.0)
-     evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"right");
+     evas_object_smart_callback_call(as, SIG_CHANGED, "right");
    else if (pos >= 0.45 && pos <= 0.55)
-     evas_object_smart_callback_call(as, SIG_CHANGED, (void *)"center");
+     evas_object_smart_callback_call(as, SIG_CHANGED, "center");
 }
 
 static Eina_Bool
