@@ -2688,12 +2688,23 @@ elm_genlist_item_prepend(Evas_Object                  *obj,
    if (!wd) return NULL;
    if (!it) return NULL;
    if (!it->parent)
-     wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
+     {
+        wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
+        it->rel = NULL;
+     }
    else
      {
-        printf("FIXME: 12 tree not handled yet\n");
+        Elm_Genlist_Item *it2 = NULL;
+        Eina_List *ll = it->parent->items;
+        if (ll) it2 = ll->data;
+        it->parent->items = eina_list_prepend(it->parent->items, it);
+        if (!it2) it2 = it->parent;
+        wd->items =
+           eina_inlist_prepend_relative(wd->items, EINA_INLIST_GET(it),
+                                        EINA_INLIST_GET(it2));
+        it->rel = it2;
+        it->rel->relcount++;
      }
-   it->rel = NULL;
    it->before = EINA_TRUE;
    _item_queue(wd, it);
    return it;
