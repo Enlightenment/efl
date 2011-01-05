@@ -32,7 +32,7 @@ _new_device(const char *syspath)
  * copies a device
  */
 _udev_device *
-_copy_device(_udev_device * device)
+_copy_device(_udev_device *device)
 {
    const char *syspath;
 
@@ -48,8 +48,9 @@ _copy_device(_udev_device * device)
  * with value $value
  */
 Eina_Bool
-_walk_parents_test_attr(_udev_device * device, const char *sysattr,
-                        const char *value)
+_walk_parents_test_attr(_udev_device *device,
+                        const char   *sysattr,
+                        const char   *value)
 {
    _udev_device *parent, *child = device;
    const char *test;
@@ -67,15 +68,16 @@ _walk_parents_test_attr(_udev_device * device, const char *sysattr,
         if (!value)
           return EINA_TRUE;
         else
-          if (!strcmp(test, value))
-            return EINA_TRUE;
+        if (!strcmp(test, value))
+          return EINA_TRUE;
      }
 
    return EINA_TRUE;
 }
 
 const char *
-_walk_parents_get_attr(_udev_device * device, const char *sysattr)
+_walk_parents_get_attr(_udev_device *device,
+                       const char   *sysattr)
 {
    _udev_device *parent, *child = device;
    const char *test;
@@ -99,7 +101,8 @@ _walk_parents_get_attr(_udev_device * device, const char *sysattr)
  * stringshare adding all devices that are not in the list
  */
 Eina_List *
-_get_unlisted_parents(Eina_List * list, _udev_device * device)
+_get_unlisted_parents(Eina_List    *list,
+                      _udev_device *device)
 {
    _udev_device *parent, *child = device;
    const char *test, *devname, *vendor, *vendor2, *model, *model2;
@@ -128,9 +131,9 @@ _get_unlisted_parents(Eina_List * list, _udev_device * device)
             || (vendor2 && !vendor))
           break;
         else
-          if (((model && model2) && (strcmp(model, model2))) ||
-              ((vendor && vendor2) && (strcmp(vendor, vendor2))))
-            break;
+        if (((model && model2) && (strcmp(model, model2))) ||
+            ((vendor && vendor2) && (strcmp(vendor, vendor2))))
+          break;
 
         devname = udev_device_get_syspath(parent);
         EINA_LIST_FOREACH(list, l, test)
@@ -148,3 +151,4 @@ _get_unlisted_parents(Eina_List * list, _udev_device * device)
 
    return list;
 }
+

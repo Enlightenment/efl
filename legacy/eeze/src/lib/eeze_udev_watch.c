@@ -14,20 +14,23 @@
 /* opaque */
 struct Eeze_Udev_Watch
 {
-   _udev_monitor *mon;
+   _udev_monitor    *mon;
    Ecore_Fd_Handler *handler;
-   Eeze_Udev_Type type;
-   void *data;
+   Eeze_Udev_Type    type;
+   void             *data;
 };
 
 /* private */
 struct _store_data
 {
-   void (*func)(const char *, Eeze_Udev_Event, void *, Eeze_Udev_Watch *);
-   void *data;
-   int event;
-   _udev_monitor *mon;
-   Eeze_Udev_Type type;
+   void             (*func)(const char *,
+                            Eeze_Udev_Event,
+                            void *,
+                            Eeze_Udev_Watch *);
+   void            *data;
+   int              event;
+   _udev_monitor   *mon;
+   Eeze_Udev_Type   type;
    Eeze_Udev_Watch *watch;
 };
 
@@ -42,7 +45,7 @@ struct _store_data
  * the watch object itself in case you want to stop the watch easily in a callback.
  *
  * @ingroup udev
- * 
+ *
  * @{
  */
 
@@ -50,8 +53,9 @@ struct _store_data
  * specified; helpful for new udev versions, but absolutely required for
  * old udev, which does not implement filtering in device monitors.
  */
-static Eina_Bool 
-_get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
+static Eina_Bool
+_get_syspath_from_watch(void             *data,
+                        Ecore_Fd_Handler *fd_handler)
 {
    struct _store_data *store = data;
    _udev_device *device = NULL, *parent, *tmpdev;
@@ -71,170 +75,180 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
 
    switch (store->type)
      {
-        case EEZE_UDEV_TYPE_KEYBOARD:
+      case EEZE_UDEV_TYPE_KEYBOARD:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "input")))
-            goto error;
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "input")))
+          goto error;
 
-          test = udev_device_get_property_value(device, "ID_CLASS");
+        test = udev_device_get_property_value(device, "ID_CLASS");
 
-          if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "01"))
-              || ((test) && (!strcmp(test, "kbd"))))
-            break;
+        if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "01"))
+            || ((test) && (!strcmp(test, "kbd"))))
+          break;
 
+        goto error;
+#endif
+        if ((!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD")) &&
+            (!udev_device_get_property_value(device, "ID_INPUT_KEY")))
+          goto error;
+
+        break;
+
+      case EEZE_UDEV_TYPE_MOUSE:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "input")))
+          goto error;
+
+        test = udev_device_get_property_value(device, "ID_CLASS");
+
+        if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "02"))
+            || ((test) && (!strcmp(test, "mouse"))))
+          break;
+
+        goto error;
+#endif
+
+        if (!udev_device_get_property_value(device, "ID_INPUT_MOUSE"))
+          goto error;
+
+        break;
+
+      case EEZE_UDEV_TYPE_TOUCHPAD:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "input")))
+          goto error;
+
+        if (_walk_parents_test_attr(device, "resolution", NULL))
+          break;
+
+        goto error;
+#endif
+        if (!udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD"))
+          goto error;
+
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "block")))
           goto error;
 #endif
-          if ((!udev_device_get_property_value(device, "ID_INPUT_KEYBOARD")) &&
-              (!udev_device_get_property_value(device, "ID_INPUT_KEY")))
-            goto error;
+        test = udev_device_get_sysattr_value(device, "capability");
 
-          break;
-        case EEZE_UDEV_TYPE_MOUSE:
+        if (test)
+          cap = strtol(test, NULL, 10);
+
+        if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
+            (strcmp("filesystem", test)) || (cap == 50))
+          goto error;
+        {
+           int devcheck;
+
+           devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
+           if ((devcheck < 0) || errno) goto error;
+           close(devcheck);
+        }
+
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "input")))
-            goto error;
-
-          test = udev_device_get_property_value(device, "ID_CLASS");
-
-          if ((_walk_parents_test_attr(device, "bInterfaceProtocol", "02"))
-              || ((test) && (!strcmp(test, "mouse"))))
-            break;
-
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "block")))
           goto error;
 #endif
+        if (!(test = udev_device_get_property_value(device, "ID_BUS"))
+            || (strcmp("ata", test))
+            || !(test = udev_device_get_sysattr_value(device, "removable"))
+            || (strtol(test, NULL, 10)))
+          goto error;
 
-          if (!udev_device_get_property_value(device, "ID_INPUT_MOUSE"))
-            goto error;
+        break;
 
-          break;
-        case EEZE_UDEV_TYPE_TOUCHPAD:
+      case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "input")))
-            goto error;
-
-          if (_walk_parents_test_attr(device, "resolution", NULL))
-            break;
-
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "block")))
           goto error;
 #endif
-          if (!udev_device_get_property_value(device, "ID_INPUT_TOUCHPAD"))
-            goto error;
+        if ((!(test = udev_device_get_sysattr_value(device, "removable"))
+             || (!strtol(test, NULL, 10)))
+            && (!(test = udev_device_get_sysattr_value(device, "capability"))
+                || (strtol(test, NULL, 10) != 10)))
+          goto error;
 
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_CDROM:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "block")))
-            goto error;
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "block")))
+          goto error;
 #endif
-          test = udev_device_get_sysattr_value(device, "capability");
+        if (!udev_device_get_property_value(device, "ID_CDROM"))
+          goto error;
 
-          if (test)
-            cap = strtol(test, NULL, 10);
+        break;
 
-          if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
-              (strcmp("filesystem", test)) || (cap == 50))
-            goto error;
+      case EEZE_UDEV_TYPE_POWER_AC:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "power_supply")))
+          goto error;
+#endif
+        if (!(test = udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))
+            || (strcmp("Mains", test)))
+          goto error;
+        break;
+
+      case EEZE_UDEV_TYPE_POWER_BAT:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "power_supply")))
+          goto error;
+#endif
+        if (!(test = udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))
+            || (strcmp("Battery", test)))
+          goto error;
+        break;
+
+      case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "hwmon")))
+          goto error;
+#endif /* have to do stuff up here since we need info from the parent */
+        if (!_walk_parents_test_attr(device, "temp1_input", NULL))
+          goto error;
+
+        /* if device is not the one which has the temp input, we must go up the chain */
+        if (!udev_device_get_sysattr_value(device, "temp1_input"))
           {
-             int devcheck;
+             for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
+               if (udev_device_get_sysattr_value(parent, "temp1_input"))
+                 {
+                    tmpdev = device;
 
-             devcheck = open(udev_device_get_devnode(device), O_RDONLY | O_EXCL);
-             if ((devcheck < 0) || errno) goto error;
-             close(devcheck);
+                    if (!(device = _copy_device(parent)))
+                      goto error;
+
+                    udev_device_unref(tmpdev);
+                    break;
+                 }
           }
 
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "block")))
-            goto error;
-#endif
-          if (!(test = udev_device_get_property_value(device, "ID_BUS"))
-              || (strcmp("ata", test))
-              || !(test = udev_device_get_sysattr_value(device, "removable"))
-              || (strtol(test, NULL, 10)))
-            goto error;
+        break;
 
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "block")))
-            goto error;
-#endif
-          if ((!(test = udev_device_get_sysattr_value(device, "removable"))
-               || (!strtol(test, NULL, 10)))
-              && (!(test = udev_device_get_sysattr_value(device, "capability"))
-                  || (strtol(test, NULL, 10) != 10)))
-            goto error;
-
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_CDROM:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "block")))
-            goto error;
-#endif
-          if (!udev_device_get_property_value(device, "ID_CDROM"))
-            goto error;
-
-          break;
-        case EEZE_UDEV_TYPE_POWER_AC:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "power_supply")))
-            goto error;
-#endif
-          if (!(test = udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))
-              || (strcmp("Mains", test)))
-            goto error;
-          break;
-        case EEZE_UDEV_TYPE_POWER_BAT:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "power_supply")))
-            goto error;
-#endif
-          if (!(test = udev_device_get_property_value(device, "POWER_SUPPLY_TYPE"))
-              || (strcmp("Battery", test)))
-            goto error;
-          break;
-        case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
-#ifdef OLD_UDEV_RRRRRRRRRRRRRR
-          if ((!(test = udev_device_get_subsystem(device)))
-              || (strcmp(test, "hwmon")))
-            goto error;
-#endif /* have to do stuff up here since we need info from the parent */
-          if (!_walk_parents_test_attr(device, "temp1_input", NULL))
-            goto error;
-
-          /* if device is not the one which has the temp input, we must go up the chain */
-          if (!udev_device_get_sysattr_value(device, "temp1_input"))
-            {
-               for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
-                 if (udev_device_get_sysattr_value(parent, "temp1_input"))
-                   {
-                      tmpdev = device;
-
-                      if (!(device = _copy_device(parent)))
-                        goto error;
-
-                      udev_device_unref(tmpdev);
-                      break;
-                   }
-            }
-
-          break;
-        default:
-          break;
+      default:
+        break;
      }
 
    if ((!(test = udev_device_get_action(device)))
-      || (!(ret = udev_device_get_syspath(device))))
+       || (!(ret = udev_device_get_syspath(device))))
      goto error;
 
    if (store->event)
@@ -247,48 +261,49 @@ _get_syspath_from_watch(void *data, Ecore_Fd_Handler * fd_handler)
              event |= EEZE_UDEV_EVENT_ADD;
           }
         else
-          if (!strcmp(test, "remove"))
-            {
-               if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
-                   EEZE_UDEV_EVENT_REMOVE)
-                 goto error;
+        if (!strcmp(test, "remove"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
+                 EEZE_UDEV_EVENT_REMOVE)
+               goto error;
 
-               event |= EEZE_UDEV_EVENT_REMOVE;
-            }
-          else
-            if (!strcmp(test, "change"))
-              {
-                 if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
-                     EEZE_UDEV_EVENT_CHANGE)
-                   goto error;
+             event |= EEZE_UDEV_EVENT_REMOVE;
+          }
+        else
+        if (!strcmp(test, "change"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
+                 EEZE_UDEV_EVENT_CHANGE)
+               goto error;
 
-                 event |= EEZE_UDEV_EVENT_CHANGE;
-              }
-            else
-              if (!strcmp(test, "online"))
-                {
-                   if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
-                       EEZE_UDEV_EVENT_ONLINE)
-                     goto error;
+             event |= EEZE_UDEV_EVENT_CHANGE;
+          }
+        else
+        if (!strcmp(test, "online"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
+                 EEZE_UDEV_EVENT_ONLINE)
+               goto error;
 
-                   event |= EEZE_UDEV_EVENT_ONLINE;
-                }
-              else
-                {
-                   if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
-                       EEZE_UDEV_EVENT_OFFLINE)
-                     goto error;
+             event |= EEZE_UDEV_EVENT_ONLINE;
+          }
+        else
+          {
+             if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
+                 EEZE_UDEV_EVENT_OFFLINE)
+               goto error;
 
-                   event |= EEZE_UDEV_EVENT_OFFLINE;
-                }
+             event |= EEZE_UDEV_EVENT_OFFLINE;
+          }
      }
 
-  (*func)(eina_stringshare_add(ret), event, sdata, watch);
+   (*func)(eina_stringshare_add(ret), event, sdata, watch);
 error:
    if (device)
      udev_device_unref(device);
    return EINA_TRUE;
 }
+
 /**
  * Add a watch for a device type
  *
@@ -304,8 +319,10 @@ error:
  * binary &.
  */
 EAPI Eeze_Udev_Watch *
-eeze_udev_watch_add(Eeze_Udev_Type type, int event,
-                    Eeze_Udev_Watch_Cb cb, void *user_data)
+eeze_udev_watch_add(Eeze_Udev_Type     type,
+                    int                event,
+                    Eeze_Udev_Watch_Cb cb,
+                    void              *user_data)
 {
    _udev_monitor *mon = NULL;
    int fd;
@@ -326,42 +343,51 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
 
    switch (type)
      {
-        case EEZE_UDEV_TYPE_KEYBOARD:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
-          break;
-        case EEZE_UDEV_TYPE_MOUSE:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
-          break;
-        case EEZE_UDEV_TYPE_TOUCHPAD:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
-          break;
-        case EEZE_UDEV_TYPE_DRIVE_CDROM:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
-          break;
-        case EEZE_UDEV_TYPE_POWER_AC:
-        case EEZE_UDEV_TYPE_POWER_BAT:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply",
-              NULL);
-          break;
-        case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
-          udev_monitor_filter_add_match_subsystem_devtype(mon, "hwmon", NULL);
-          break;
-          /*
-                  case EEZE_UDEV_TYPE_ANDROID:
-                    udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
-                    break;
-          */
-        default:
-          break;
+      case EEZE_UDEV_TYPE_KEYBOARD:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_MOUSE:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_TOUCHPAD:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_INTERNAL:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_DRIVE_CDROM:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_POWER_AC:
+      case EEZE_UDEV_TYPE_POWER_BAT:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply",
+                                                        NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "hwmon", NULL);
+        break;
+
+      /*
+              case EEZE_UDEV_TYPE_ANDROID:
+                udev_monitor_filter_add_match_subsystem_devtype(mon, "input", "usb_interface");
+                break;
+       */
+      default:
+        break;
      }
 
 #endif
@@ -377,8 +403,8 @@ eeze_udev_watch_add(Eeze_Udev_Type type, int event,
    store->watch = watch;
    store->event = event;
 
-   if (!(handler = ecore_main_fd_handler_add(fd, ECORE_FD_READ, 
-       _get_syspath_from_watch, store, NULL, NULL)))
+   if (!(handler = ecore_main_fd_handler_add(fd, ECORE_FD_READ,
+                                             _get_syspath_from_watch, store, NULL, NULL)))
      goto error;
 
    watch->mon = mon;
@@ -404,7 +430,7 @@ error:
  * Deletes a watch, closing file descriptors and freeing related udev memory.
  */
 EAPI void *
-eeze_udev_watch_del(Eeze_Udev_Watch * watch)
+eeze_udev_watch_del(Eeze_Udev_Watch *watch)
 {
    struct _store_data *sdata;
    void *ret = NULL;

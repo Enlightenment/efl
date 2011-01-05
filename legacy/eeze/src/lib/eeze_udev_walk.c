@@ -9,7 +9,7 @@
  * @addtogroup walks Walks
  *
  * These are functions which walk up the device chain.
- * 
+ *
  * @ingroup udev
  *
  * @{
@@ -26,7 +26,8 @@
  * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
  */
 EAPI Eina_Bool
-eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
+eeze_udev_walk_check_sysattr(const char *syspath,
+                             const char *sysattr,
                              const char *value)
 {
    _udev_device *device, *child, *parent;
@@ -40,7 +41,7 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
      return EINA_FALSE;
 
    for (parent = device; parent;
-       child = parent, parent = udev_device_get_parent(child))
+        child = parent, parent = udev_device_get_parent(child))
      {
         if (!(test = udev_device_get_sysattr_value(parent, sysattr)))
           continue;
@@ -65,7 +66,8 @@ eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr,
  * @return The stringshared value of @p sysattr if found, or NULL
  */
 EAPI const char *
-eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr)
+eeze_udev_walk_get_sysattr(const char *syspath,
+                           const char *sysattr)
 {
    _udev_device *device, *child, *parent;
    const char *test = NULL;
@@ -75,9 +77,9 @@ eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr)
 
    if (!(device = _new_device(syspath)))
      return NULL;
-     
+
    for (parent = device; parent;
-       child = parent, parent = udev_device_get_parent(child))
+        child = parent, parent = udev_device_get_parent(child))
      {
         if ((test = udev_device_get_sysattr_value(parent, sysattr)))
           {

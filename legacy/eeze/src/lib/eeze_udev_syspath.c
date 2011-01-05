@@ -8,9 +8,9 @@
 /**
  * @addtogroup syspath Syspath
  *
- * These are functions which interact with the syspath (/sys/$PATH) of 
+ * These are functions which interact with the syspath (/sys/$PATH) of
  * a device.
- * 
+ *
  * @ingroup udev
  *
  * @{
@@ -134,7 +134,8 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
  * @return A stringshared char* with the property or NULL on failure
  */
 EAPI const char *
-eeze_udev_syspath_get_property(const char *syspath, const char *property)
+eeze_udev_syspath_get_property(const char *syspath,
+                               const char *property)
 {
    _udev_device *device;
    const char *value = NULL, *test;
@@ -159,7 +160,8 @@ eeze_udev_syspath_get_property(const char *syspath, const char *property)
  * @return A stringshared char* with the sysattr or NULL on failure
  */
 EAPI const char *
-eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr)
+eeze_udev_syspath_get_sysattr(const char *syspath,
+                              const char *sysattr)
 {
    _udev_device *device;
    const char *value = NULL, *test;
@@ -317,7 +319,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    udev_list_entry_foreach(cur, devs)
      {
         ret = eina_stringshare_add(udev_list_entry_get_name(cur));
-        break;      /*just in case there's more than one somehow */
+        break; /*just in case there's more than one somehow */
      }
    udev_enumerate_unref(en);
    return ret;
