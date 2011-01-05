@@ -91,6 +91,24 @@
  * scroll,edge,right - This is called when the genlist is scrolled until the
  * right edge.
  *
+ * multi,swipe,left - This is called when the genlist is multi-touch swiped
+ * left.
+ *
+ * multi,swipe,right - This is called when the genlist is multi-touch swiped
+ * right.
+ *
+ * multi,swipe,up - This is called when the genlist is multi-touch swiped
+ * up.
+ *
+ * multi,swipe,down - This is called when the genlist is multi-touch swiped
+ * down.
+ *
+ * multi,pinch,out - This is called when the genlist is multi-touch pinched
+ * out.
+ *
+ * multi,pinch,in - This is called when the genlist is multi-touch pinched
+ * in.
+ *
  * Genlist has a fairly large API, mostly because it's relatively complex,
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview o the theory behind genlist.
@@ -283,6 +301,13 @@ struct _Widget_Data
    Elm_Genlist_Item *anchor_item;
    Evas_Coord        anchor_y;
    Elm_List_Mode     mode;
+   Ecore_Timer      *multi_timer;
+   Evas_Coord        prev_x, prev_y, prev_mx, prev_my;
+   Evas_Coord        cur_x, cur_y, cur_mx, cur_my;
+   Eina_Bool         mouse_down : 1;
+   Eina_Bool         multi_down : 1;
+   Eina_Bool         multi_timeout : 1;
+   Eina_Bool         multitouched : 1;
    Eina_Bool         on_hold : 1;
    Eina_Bool         multi : 1;
    Eina_Bool         always_select : 1;
@@ -299,6 +324,7 @@ struct _Widget_Data
    {
       Evas_Coord x, y;
    } history[SWIPE_MOVES];
+   int               multi_device;
    int               item_cache_count;
    int               item_cache_max;
    int               movements;
@@ -966,6 +992,12 @@ _mouse_move(void        *data,
                _item_unselect(it);
           }
      }
+   if (it->wd->multitouched)
+     {
+        it->wd->cur_x = ev->cur.canvas.x;
+        it->wd->cur_y = ev->cur.canvas.y;
+        return;
+     }
    if ((it->dragging) && (it->down))
      {
         if (it->wd->movements == SWIPE_MOVES) it->wd->swipe = EINA_TRUE;
@@ -1094,6 +1126,149 @@ _swipe_cancel(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_multi_cancel(void *data)
+{
+   Elm_Genlist_Item *it = data;
+
+   if (!it) return ECORE_CALLBACK_CANCEL;
+   it->wd->multi_timeout = EINA_TRUE;
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_multi_touch_gesture_eval(void *data)
+{
+   Elm_Genlist_Item *it = data;
+
+   it->wd->multitouched = EINA_FALSE;
+   if (it->wd->multi_timer)
+     {
+        ecore_timer_del(it->wd->multi_timer);
+        it->wd->multi_timer = NULL;
+     }
+   if (it->wd->multi_timeout)
+     {
+         it->wd->multi_timeout = EINA_FALSE;
+         return;
+     }
+
+   Evas_Coord minw = 0, minh = 0;
+   Evas_Coord off_x, off_y, off_mx, off_my;
+
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   off_x = abs(it->wd->cur_x - it->wd->prev_x);
+   off_y = abs(it->wd->cur_y - it->wd->prev_y);
+   off_mx = abs(it->wd->cur_mx - it->wd->prev_mx);
+   off_my = abs(it->wd->cur_my - it->wd->prev_my);
+
+   if (((off_x > minw) || (off_y > minh)) && ((off_mx > minw) || (off_my > minh)))
+     {
+        if ((off_x + off_mx) > (off_y + off_my))
+          {
+             if ((it->wd->cur_x > it->wd->prev_x) && (it->wd->cur_mx > it->wd->prev_mx))
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,swipe,right", it);
+             else if ((it->wd->cur_x < it->wd->prev_x) && (it->wd->cur_mx < it->wd->prev_mx))
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,swipe,left", it);
+             else if (abs(it->wd->cur_x - it->wd->cur_mx) > abs(it->wd->prev_x - it->wd->prev_mx))
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,pinch,out", it);
+             else
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,pinch,in", it);
+          }
+        else
+          {
+             if ((it->wd->cur_y > it->wd->prev_y) && (it->wd->cur_my > it->wd->prev_my))
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,swipe,down", it);
+             else if ((it->wd->cur_y < it->wd->prev_y) && (it->wd->cur_my < it->wd->prev_my))
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,swipe,up", it);
+             else if (abs(it->wd->cur_y - it->wd->cur_my) > abs(it->wd->prev_y - it->wd->prev_my))
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,pinch,out", it);
+             else
+               evas_object_smart_callback_call(it->base.widget,
+                                               "multi,pinch,in", it);
+          }
+     }
+     it->wd->multi_timeout = EINA_FALSE;
+}
+
+static void
+_multi_down(void        *data,
+            Evas *evas  __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void        *event_info)
+{
+   Elm_Genlist_Item *it = data;
+   Evas_Event_Multi_Down *ev = event_info;
+
+   if ((it->wd->multi_device != 0) || (it->wd->multitouched) || (it->wd->multi_timeout)) return;
+   it->wd->multi_device = ev->device;
+   it->wd->multi_down = EINA_TRUE;
+   it->wd->multitouched = EINA_TRUE;
+   it->wd->prev_mx = ev->canvas.x;
+   it->wd->prev_my = ev->canvas.y;
+   if (!it->wd->wasselected) _item_unselect(it);
+   it->wd->wasselected = EINA_FALSE;
+   it->wd->longpressed = EINA_FALSE;
+   if (it->long_timer)
+     {
+        ecore_timer_del(it->long_timer);
+        it->long_timer = NULL;
+     }
+   if (it->dragging)
+     {
+        it->dragging = EINA_FALSE;
+        evas_object_smart_callback_call(it->base.widget, "drag,stop", it);
+     }
+   if (it->swipe_timer)
+     {
+        ecore_timer_del(it->swipe_timer);
+        it->swipe_timer = NULL;
+     }
+   if (it->wd->on_hold)
+     {
+        it->wd->swipe = EINA_FALSE;
+        it->wd->movements = 0;
+        it->wd->on_hold = EINA_FALSE;
+     }
+}
+
+static void
+_multi_up(void        *data,
+          Evas *evas  __UNUSED__,
+          Evas_Object *obj __UNUSED__,
+          void        *event_info)
+{
+   Elm_Genlist_Item *it = data;
+   Evas_Event_Multi_Up *ev = event_info;
+
+   if (it->wd->multi_device != ev->device) return;
+   it->wd->multi_device = 0;
+   it->wd->multi_down = EINA_FALSE;
+   if (it->wd->mouse_down) return;
+   _multi_touch_gesture_eval(data);
+}
+
+static void
+_multi_move(void        *data,
+            Evas *evas  __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void        *event_info)
+{
+   Elm_Genlist_Item *it = data;
+   Evas_Event_Multi_Move *ev = event_info;
+
+   if (it->wd->multi_device != ev->device) return;
+   it->wd->cur_mx = ev->cur.canvas.x;
+   it->wd->cur_my = ev->cur.canvas.y;
+}
+
 static void
 _mouse_down(void        *data,
             Evas *evas   __UNUSED__,
@@ -1115,6 +1290,15 @@ _mouse_down(void        *data,
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    it->dx = ev->canvas.x - x;
    it->dy = ev->canvas.y - y;
+   it->wd->mouse_down = EINA_TRUE;
+   if (!it->wd->multitouched)
+     {
+        it->wd->prev_x = ev->canvas.x;
+        it->wd->prev_y = ev->canvas.y;
+        it->wd->multi_timeout = EINA_FALSE;
+        if (it->wd->multi_timer) ecore_timer_del(it->wd->multi_timer);
+        it->wd->multi_timer = ecore_timer_add(1, _multi_cancel, it);
+     }
    it->wd->longpressed = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
@@ -1147,6 +1331,13 @@ _mouse_up(void            *data,
 
    if (ev->button != 1) return;
    it->down = EINA_FALSE;
+   it->wd->mouse_down = EINA_FALSE;
+   if (it->wd->multitouched)
+     {
+        if (it->wd->multi_down) return;
+        _multi_touch_gesture_eval(data);
+        return;
+     }
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
    if (it->long_timer)
@@ -1164,6 +1355,12 @@ _mouse_up(void            *data,
      {
         ecore_timer_del(it->swipe_timer);
         it->swipe_timer = NULL;
+     }
+   if (it->wd->multi_timer)
+     {
+        ecore_timer_del(it->wd->multi_timer);
+        it->wd->multi_timer = NULL;
+        it->wd->multi_timeout = EINA_FALSE;
      }
    if (it->wd->on_hold)
      {
@@ -1346,6 +1543,12 @@ _item_cache_add(Elm_Genlist_Item *it)
                                        _mouse_up, it);
    evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MOUSE_MOVE,
                                        _mouse_move, it);
+   evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MULTI_DOWN,
+                                       _multi_down, it);
+   evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MULTI_UP,
+                                       _multi_up, it);
+   evas_object_event_callback_del_full(itc->base_view, EVAS_CALLBACK_MULTI_MOVE,
+                                       _multi_move, it);
    _item_cache_clean(it->wd);
 }
 
@@ -1462,6 +1665,12 @@ _item_realize(Elm_Genlist_Item *it,
                                        _mouse_up, it);
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_MOVE,
                                        _mouse_move, it);
+        evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MULTI_DOWN,
+                                       _multi_down, it);
+        evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MULTI_UP,
+                                       _multi_up, it);
+        evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MULTI_MOVE,
+                                       _multi_move, it);
         if (itc)
           {
              if (it->selected != itc->selected)
