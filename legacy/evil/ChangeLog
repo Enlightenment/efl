@@ -1,3 +1,9 @@
+2011-01-06  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	better perror() declaration / definition
+
 2011-01-04  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_unistd.c:

@@ -20,7 +20,9 @@
  *
  */
 
-/* EAPI void perror (const char *s); */
+EAPI void evil_perror (const char *s);
+
+# define perror(s) evil_perror(s)
 
 /*
  * Stream related functions
