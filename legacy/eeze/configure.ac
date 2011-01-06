@@ -22,11 +22,17 @@ AC_INIT([eeze], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
+
+AC_CONFIG_HEADERS([config.h])
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
-AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
@@ -51,6 +57,9 @@ VMAJ=v_maj
 AC_SUBST(VMAJ)
 
 ### Needed information
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 requirement_eeze="ecore >= 1.0.0 eina >= 1.0.0 libudev"
 
