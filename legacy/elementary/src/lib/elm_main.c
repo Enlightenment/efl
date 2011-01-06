@@ -374,7 +374,6 @@ elm_need_e_dbus(void)
 #ifdef ELM_EDBUS
    if (_elm_need_e_dbus++) return EINA_TRUE;
    e_dbus_init();
-   e_hal_init();
    return EINA_TRUE;
 #else
    return EINA_FALSE;
@@ -388,7 +387,6 @@ _elm_unneed_e_dbus(void)
    if (--_elm_need_e_dbus) return;
 
    _elm_need_e_dbus = 0;
-   e_hal_shutdown();
    e_dbus_shutdown();
 #endif
 }

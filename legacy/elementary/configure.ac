@@ -330,13 +330,12 @@ if test "x$want_elementary_edbus" != "xno"; then
     PKG_CHECK_MODULES([ELEMENTARY_EDBUS],
        [
         edbus >= 1.0.0
-        ehal >= 1.0.0
        ],
        [
         AC_DEFINE(HAVE_ELEMENTARY_EDBUS, 1, [EDBus support for Elementary])
         have_elementary_edbus="yes"
         ELM_EDBUS_DEF="#define"
-        requirement_elm="ehal >= 1.0.0 edbus >= 1.0.0 ${requirement_elm}"
+        requirement_elm="edbus >= 1.0.0 ${requirement_elm}"
        ],
        [have_elementary_edbus="no"]
     )
@@ -344,7 +343,7 @@ else
     have_elementary_edbus="no"
 fi
 if test "x$want_elementary_edbus" = "xyes" -a "x$have_elementary_edbus" = "xno"; then
-    AC_MSG_ERROR([E_DBus support requested, but no edbus/ehal found by pkg-config.])
+    AC_MSG_ERROR([E_DBus support requested, but no e_dbus found by pkg-config.])
 fi
 AC_SUBST(ELM_EDBUS_DEF)
 

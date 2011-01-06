@@ -75,7 +75,6 @@
 
 #ifdef ELM_EDBUS
 # include <E_DBus.h>
-# include <E_Hal.h>
 #endif
 
 #ifdef ELM_EFREET
