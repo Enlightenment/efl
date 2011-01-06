@@ -17,9 +17,19 @@ AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
-AC_CANONICAL_HOST
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
+
 
 ### If the host is not Windows, or is ceGCC, we exit
+
+AC_CANONICAL_HOST
+
 case "$host_os" in
   cegcc*)
     AC_MSG_ERROR([ceGCC compiler is not supported anymore. Exiting...])
