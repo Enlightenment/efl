@@ -22,12 +22,17 @@ AC_INIT([ecore], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_ISC_POSIX
+
+AC_CONFIG_HEADERS([config.h])
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
-AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_GNU_SOURCE
@@ -66,8 +71,6 @@ AM_CONDITIONAL([HAVE_PO], [false])
 ])
 AC_SUBST(LTLIBINTL)
 
-EFL_CHECK_PATH_MAX
-
 with_max_log_level="<unset>"
 AC_ARG_WITH(internal-maximum-log-level,
    [AC_HELP_STRING([--with-internal-maximum-log-level=NUMBER],
@@ -86,6 +89,9 @@ AC_ARG_WITH(internal-maximum-log-level,
 
 
 ### Default options with respect to host
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 # dependencies and options
 want_curl="no"
@@ -869,7 +875,10 @@ PKG_CHECK_MODULES([EVAS], [evas >= 1.0.0],
 
 ### Checks for header files
 
+EFL_CHECK_PATH_MAX
+
 AC_HEADER_SYS_WAIT
+AC_SYS_LARGEFILE
 
 have_addrinfo="no"
 case "$host_os" in
@@ -987,6 +996,7 @@ esac
 AC_SUBST(lt_enable_auto_import)
 
 ### Checks for library functions
+AC_ISC_POSIX
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(gettimeofday strlcpy)
 
