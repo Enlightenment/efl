@@ -851,8 +851,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                        w = obj->cur.cache.clip.w;
                        h = obj->cur.cache.clip.h;
                        RECTS_CLIP_TO_RECT(x, y, w, h,
-                              obj->cur.clipper->cur.cache.clip.x + off_x,
-                              obj->cur.clipper->cur.cache.clip.y + off_y,
+                              obj->cur.clipper->cur.cache.clip.x,
+                              obj->cur.clipper->cur.cache.clip.y,
                               obj->cur.clipper->cur.cache.clip.w,
                               obj->cur.clipper->cur.cache.clip.h);
                        e->engine.func->context_clip_set(e->engine.data.output,
