@@ -22,10 +22,13 @@ AC_INIT([eina], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.59])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_ISC_POSIX
-AC_GNU_SOURCE
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 AM_CONFIG_HEADER([config.h])
@@ -53,7 +56,11 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
+
 ### Needed information
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 requirement_eina=""
 
@@ -344,6 +351,7 @@ AC_C_BIGENDIAN
 AC_C_INLINE
 AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
+AC_GNU_SOURCE
 
 have_win32="no"
 EINA_CPPFLAGS=""
@@ -405,6 +413,7 @@ EFL_LINKER_FLAG([-fno-strict-aliasing])
 
 
 ### Checks for library functions
+AC_ISC_POSIX
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(strlcpy)
 
