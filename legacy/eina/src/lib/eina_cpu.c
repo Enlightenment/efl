@@ -162,11 +162,11 @@ EAPI int eina_cpu_count(void)
    size_t len = sizeof(cpus);
 
    mib[0] = CTL_HW;
-#ifdef HW_AVAILCPU
+#  ifdef HW_AVAILCPU
    mib[1] = HW_AVAILCPU;
-#else
+#  else
    mib[1] = HW_NCPU;
-#endif
+#  endif
    sysctl(mib, 2, &cpus, &len, NULL, 0);
    if (cpus < 1)
       cpus = 1;

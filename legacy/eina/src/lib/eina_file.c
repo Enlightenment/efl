@@ -44,6 +44,8 @@ void *alloca (size_t);
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 #define PATH_DELIM '/'
 
@@ -60,6 +62,7 @@ void *alloca (size_t);
 #include "eina_safety_checks.h"
 #include "eina_file.h"
 #include "eina_stringshare.h"
+#include "eina_hash.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -683,6 +686,281 @@ eina_file_stat_ls(const char *dir)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
 
    return &it->iterator;
+}
+
+
+/*
+  H : half
+  X : done
+
+  [ ] nom du fichier pour shm_open
+  [ ] stringshare pour le fichier
+  [H] flags dans des enum
+  [X] fstat pour la taille
+  [H] enregistrer dans un cache (hash) les fichiers ouverts
+  [ ] garder la liste des map ouvertes et les detruire
+  [X] mmap tout le fichier
+  [ ] hash pour les blocs mmap
+  [ ] taille de mmap : sauvegarder dans Eina_File
+ */
+
+#include "eina_log.h"
+
+static Eina_Hash *_eina_file_files = NULL;
+
+/* _eina_file_files = eina_hash_string_small_new(NULL) */
+
+typedef enum
+{
+  EINA_FILE_FLAG_READ = 0,
+  EINA_FILE_FLAG_WRITE = 1,
+  EINA_FILE_FLAG_READ_WRITE = 2,
+  EINA_FILE_FLAG_CREATE = 1 << 2,
+  EINA_FILE_FLAG_TRUNCATE = 1 << 3
+} Eina_File_Flag;
+
+typedef enum
+{
+  EINA_FILE_MODE_READ = 1 << 0,
+  EINA_FILE_MODE_WRITE = 1 << 1
+} Eina_File_Mode;
+
+typedef enum
+{
+  EINA_FILE_MAP_PROT_EXEC,
+  EINA_FILE_MAP_PROT_READ,
+  EINA_FILE_MAP_PROT_WRITE,
+  EINA_FILE_MAP_PROT_NONE
+} Eina_File_Map_Prot;
+
+typedef enum
+{
+  /* No MAP_FIXED, its use is discouraged */
+  EINA_FILE_MAP_FLAG_SHARED,
+  EINA_FILE_MAP_FLAG_PRIVATE
+} Eina_File_Map_Flag;
+
+typedef struct
+{
+  char          *filename;
+  Eina_File_Flag flag;
+  Eina_File_Mode mode;
+  int            fd;
+  off_t          file_size;
+  off_t          map_size;
+  void          *map_full;
+  Eina_Hash     *map_blocks;
+  Eina_Bool      shared : 1;
+} Eina_File;
+
+static int _eina_file_log_dom = -1;
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_file_log_dom, __VA_ARGS__)
+
+Eina_Bool
+eina_file_init(void)
+{
+   _eina_file_log_dom = eina_log_domain_register("eina_file",
+                                                  EINA_LOG_COLOR_DEFAULT);
+   if (_eina_file_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: eina_file");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eina_file_shutdown(void)
+{
+   eina_log_domain_unregister(_eina_file_log_dom);
+   _eina_file_log_dom = -1;
+   return EINA_TRUE;
+}
+
+EAPI Eina_File *
+eina_file_open(const char *filename, Eina_File_Flag flag, Eina_File_Mode mode, Eina_Bool shared)
+{
+  struct stat st;
+  Eina_File *file;
+  Eina_File *cache;
+  int oflag;
+  mode_t omode = 0;
+
+  if (!filename || !*filename) return NULL;
+
+  file = (Eina_File *)calloc(1, sizeof(Eina_File));
+  if (!file) return NULL;
+
+  if (shared)
+    {
+      size_t length;
+
+      length = strlen(filename) + 1;
+      file->filename = (char *)malloc(length + 1);
+      if (!file->filename) goto free_file;
+      *file->filename = '/';
+      memcpy(file->filename + 1, filename, length);
+    }
+  else
+    {
+      file->filename = strdup(filename);
+      if (!file->filename) goto free_file;
+    }
+
+  file->flag = flag;
+  file->mode = mode;
+  file->shared = shared;
+  switch (flag)
+    {
+    case EINA_FILE_FLAG_READ:
+      oflag = O_RDONLY;
+      break;
+    case EINA_FILE_FLAG_WRITE:
+      oflag = O_WRONLY;
+      break;
+    case EINA_FILE_FLAG_READ_WRITE:
+      oflag = O_RDWR;
+      break;
+    default:
+      oflag = O_RDONLY;
+      break;
+    }
+
+  if (flag & EINA_FILE_FLAG_CREATE) oflag |= O_CREAT;
+  if (flag & EINA_FILE_FLAG_TRUNCATE) oflag |= O_TRUNC;
+
+  if (mode & EINA_FILE_MODE_READ) omode |= S_IRUSR;
+  if (mode & EINA_FILE_MODE_WRITE) omode |= S_IWUSR;
+
+  if (shared)
+    {
+      file->fd = shm_open(file->filename, oflag, omode);
+      if (file->fd == -1)
+        goto free_filename;
+    }
+  else
+    {
+      file->fd = open(file->filename, oflag, omode);
+      if (file->fd == -1)
+        goto free_filename;
+    }
+
+  if (fstat(file->fd, &st) != 0)
+    {
+      ERR("Could not retrieve file size");
+      goto close_file;
+    }
+
+  file->file_size = st.st_size;
+
+  cache = eina_hash_find(_eina_file_files, file->filename);
+  if (cache)
+    {
+      /* faire plus de tests ? */
+      if (cache->file_size != file->file_size)
+        {
+          eina_hash_modify(_eina_file_files, file->filename, file);
+          free(cache->filename);
+          free(cache);
+        }
+      else
+        return cache;
+    }
+  else
+    eina_hash_add(_eina_file_files, file->filename, file);
+
+  return file;
+
+ close_file:
+  if (shared)
+    shm_unlink(file->filename);
+  else
+    close(file->fd);
+ free_filename:
+  free(file->filename);
+ free_file:
+  free(file);
+
+  return NULL;
+}
+
+EAPI void
+eina_file_close(Eina_File *file)
+{
+  if (!file)
+    return;
+
+  if (eina_hash_find(_eina_file_files, file->filename))
+    eina_hash_del(_eina_file_files, file->filename, file);
+
+  if (file->shared)
+    {
+      if (shm_unlink(file->filename) != 0)
+        ERR("Could not unlink %s", file->filename);
+    }
+  else
+    {
+      if (close(file->fd) != 0)
+        ERR("Could not close %s", file->filename);
+    }
+
+  free(file->filename);
+  free(file);
+}
+
+EAPI void *
+eina_file_map_full(Eina_File *file, Eina_File_Map_Prot prot, Eina_File_Map_Flag flags)
+{
+  if (!file || !file->shared)
+    return NULL;
+
+  if (!file->map_full)
+    {
+      file->map_size = file->file_size;
+      file->map_full = mmap(NULL, file->map_size, prot, flags, file->fd, 0);
+    }
+
+  return file->map_full;
+}
+
+EAPI Eina_Bool
+eina_file_unmap_full(Eina_File *file)
+{
+  if (!file || !file->map_full)
+    return EINA_FALSE;
+
+  return (munmap(file->map_full, file->map_size) == 0) ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void *
+eina_file_map(Eina_File *file, void *start, size_t length, Eina_File_Map_Prot prot, Eina_File_Map_Flag flags, off_t offset)
+{
+  if (!file)
+    return NULL;
+
+  if (length > (size_t)file->file_size)
+    {
+      ERR("Wrong length");
+      return NULL;
+    }
+
+  file->map_size = length;
+
+  return mmap(start, file->map_size, prot, flags, file->fd, offset);
+}
+
+EAPI Eina_Bool
+eina_file_unmap(Eina_File *file, void *start)
+{
+  if (!file)
+    return EINA_FALSE;
+
+  return (munmap(start, file->map_size) == 0) ? EINA_TRUE : EINA_FALSE;
 }
 
 /**

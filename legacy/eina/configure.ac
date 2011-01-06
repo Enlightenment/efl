@@ -22,6 +22,8 @@ AC_INIT([eina], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.59])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
+
+AC_CONFIG_HEADERS([config.h])
 AH_TOP([
 #ifndef EFL_CONFIG_H__
 #define EFL_CONFIG_H__
@@ -31,8 +33,9 @@ AH_BOTTOM([
 ])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
-AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+AC_GNU_SOURCE
 
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
@@ -351,7 +354,6 @@ AC_C_BIGENDIAN
 AC_C_INLINE
 AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
-AC_GNU_SOURCE
 
 have_win32="no"
 EINA_CPPFLAGS=""
