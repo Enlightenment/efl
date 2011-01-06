@@ -3769,7 +3769,7 @@ elm_genlist_item_show(Elm_Genlist_Item *it)
       gith = it->group_item->h;
    elm_smart_scroller_child_region_show(it->wd->scr,
                                         it->x + it->block->x,
-                                        it->y + it->block->y,
+                                        it->y + it->block->y - gith,
                                         it->block->w, it->h);
 }
 
