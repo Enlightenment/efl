@@ -814,8 +814,8 @@ ecore_evas_software_wince_new_internal(int                 backend,
           }
 
         ecore_wince_window_backend_set((Ecore_WinCE_Window *)ee->prop.window, backend);
-        ecore_wince_window_suspend_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.suspend);
-        ecore_wince_window_resume_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.resume);
+        ecore_wince_window_suspend_cb_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.suspend);
+        ecore_wince_window_resume_cb_set((Ecore_WinCE_Window *)ee->prop.window, einfo->func.resume);
      }
 
    ee->engine.func->fn_render = _ecore_evas_wince_render;

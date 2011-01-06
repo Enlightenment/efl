@@ -501,7 +501,7 @@ ecore_wince_window_backend_set(Ecore_WinCE_Window *window,
  * function should not be called if Ecore_Evas is used.
  */
 EAPI void
-ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int))
+ecore_wince_window_suspend_cb_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int))
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -511,7 +511,7 @@ ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int
    INF("setting suspend callback");
 
    w = (struct _Ecore_WinCE_Window *)window;
-   w->suspend = suspend;
+   w->suspend_cb = suspend_cb;
 }
 
 /**
@@ -527,7 +527,7 @@ ecore_wince_window_suspend_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int
  * function should not be called if Ecore_Evas is used.
  */
 EAPI void
-ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume_cb)(int))
+ecore_wince_window_resume_cb_set(Ecore_WinCE_Window *window, int (*resume_cb)(int))
 {
    struct _Ecore_WinCE_Window *w;
 
@@ -537,7 +537,7 @@ ecore_wince_window_resume_set(Ecore_WinCE_Window *window, int (*resume_cb)(int))
    INF("setting resume callback");
 
    w = (struct _Ecore_WinCE_Window *)window;
-   w->resume = resume;
+   w->resume_cb = resume_cb;
 }
 
 /**

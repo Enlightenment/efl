@@ -41,22 +41,22 @@ struct _Ecore_WinCE_Callback_Data
 };
 
 
-typedef int (*ecore_wince_suspend) (int);
-typedef int (*ecore_wince_resume)  (int);
+typedef int (*ecore_wince_suspend_cb) (int);
+typedef int (*ecore_wince_resume_cb)  (int);
 
 
 struct _Ecore_WinCE_Window
 {
-   HWND                window;
+   HWND                   window;
 
-   int                 backend;
-   ecore_wince_suspend suspend;
-   ecore_wince_resume  resume;
+   int                    backend;
+   ecore_wince_suspend_cb suspend_cb;
+   ecore_wince_resume_cb  resume_cb;
 
-   RECT                rect;           /* used to go fullscreen to normal */
+   RECT                   rect;           /* used to go fullscreen to normal */
 
-   unsigned int        pointer_is_in : 1;
-   unsigned int        fullscreen    : 1;
+   unsigned int           pointer_is_in : 1;
+   unsigned int           fullscreen    : 1;
 };
 
 extern HINSTANCE           _ecore_wince_instance;
