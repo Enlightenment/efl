@@ -22,12 +22,17 @@ AC_INIT([eet], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_ISC_POSIX
+
+AC_CONFIG_HEADERS([config.h])
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
-AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_LIBTOOL_WIN32_DLL
@@ -51,6 +56,12 @@ AC_SUBST(release_info)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 VMAJ=v_maj
 AC_SUBST(VMAJ)
+
+
+### Needed information
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 ### Default options with respect to host
 
@@ -413,6 +424,7 @@ AC_SUBST(lt_enable_auto_import)
 EFL_LINKER_FLAG([-Wl,--as-needed])
 
 ### Checks for library functions
+AC_ISC_POSIX
 AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS(fmemopen open_memstream realpath)
