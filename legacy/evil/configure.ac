@@ -16,6 +16,7 @@ AC_INIT([evil], [evil_version], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
+
 AC_CONFIG_HEADERS([config.h])
 AH_TOP([
 #ifndef EFL_CONFIG_H__
