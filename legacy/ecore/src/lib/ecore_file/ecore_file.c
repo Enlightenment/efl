@@ -10,10 +10,6 @@
 # include <libgen.h>
 #endif
 
-#ifndef _FILE_OFFSET_BITS
-# define _FILE_OFFSET_BITS  64
-#endif
-
 #ifdef HAVE_FEATURES_H
 # include <features.h>
 #endif
