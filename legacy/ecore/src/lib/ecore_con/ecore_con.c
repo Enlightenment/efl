@@ -376,7 +376,7 @@ error:
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
-   if (svr->fd >= 0)
+   if (svr->fd > 0)
      close(svr->fd);
 
    if (svr->write_buf)
@@ -497,7 +497,7 @@ error:
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
-   if (svr->fd >= 0)
+   if (svr->fd > 0)
      close(svr->fd);
 
    ecore_con_ssl_server_shutdown(svr);
@@ -1196,7 +1196,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
-   if (svr->fd >= 0)
+   if (svr->fd > 0)
      close(svr->fd);
 
    servers = eina_list_remove(servers, svr);
@@ -1256,7 +1256,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
 
-   if (cl->fd >= 0)
+   if (cl->fd > 0)
      close(cl->fd);
 
    if (cl->client_addr)
