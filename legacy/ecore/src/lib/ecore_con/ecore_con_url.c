@@ -1079,6 +1079,276 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
 }
 
 /**
+ * Enables the cookie engine for subsequent HTTP requests.
+ *
+ * After this function is called, cookies set by the server in HTTP responses
+ * will be parsed and stored, as well as sent back to the server in new HTTP
+ * requests.
+ *
+ * @note Even though this function is called @c ecore_con_url_cookies_init(),
+ * there is no symmetrical shutdown operation.
+ *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ */
+EAPI void
+ecore_con_url_cookies_init(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!url_con)
+     return;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_init");
+        return;
+     }
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIEFILE, "");
+#else
+   (void)url_con;
+#endif
+}
+
+/**
+ * Controls whether session cookies from previous sessions shall be loaded.
+ *
+ * Session cookies are cookies with no expire date set, which usually means
+ * they are removed after the current session is closed.
+ *
+ * By default, when Ecore_Con_Url loads cookies from a file, all cookies are
+ * loaded, including session cookies, which, most of the time, were supposed
+ * to be loaded and valid only for that session.
+ *
+ * If @p ignore is set to @c EINA_TRUE, when Ecore_Con_Url loads cookies from
+ * the files passed to @c ecore_con_url_cookies_file_add(), session cookies
+ * will not be loaded.
+ *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ * @param ignore  If @c EINA_TRUE, ignore session cookies when loading cookies
+ *                from files. If @c EINA_FALSE, all cookies will be loaded.
+ *
+ * @see ecore_con_url_cookies_file_add()
+ */
+EAPI void
+ecore_con_url_cookies_ignore_old_session_set(Ecore_Con_Url *url_con, Eina_Bool ignore)
+{
+#ifdef HAVE_CURL
+   if (!url_con)
+     return;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_ignore_old_session_set");
+        return;
+     }
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIESESSION, ignore);
+#else
+   (void)url_con;
+   (void)ignore;
+#endif
+}
+
+/**
+ * Clears currently loaded cookies.
+ *
+ * The cleared cookies are removed and will not be sent in subsequent HTTP
+ * requests, nor will they be written to the cookiejar file set via
+ * @c ecore_con_url_cookies_jar_file_set().
+ *
+ * @note This function will initialize the cookie engine if it has not been
+ *       initialized yet.
+ *
+ * @param url_con      Ecore_Con_Url instance which will be acted upon.
+ *
+ * @see ecore_con_url_cookies_session_clear()
+ * @see ecore_con_url_cookies_ignore_old_session_set()
+ */
+EAPI void
+ecore_con_url_cookies_clear(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!url_con)
+     return;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_clear");
+        return;
+     }
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIELIST, "ALL");
+#else
+   (void)url_con;
+#endif
+}
+
+/**
+ * Clears currently loaded session cookies.
+ *
+ * Session cookies are cookies with no expire date set, which usually means
+ * they are removed after the current session is closed.
+ *
+ * The cleared cookies are removed and will not be sent in subsequent HTTP
+ * requests, nor will they be written to the cookiejar file set via
+ * @c ecore_con_url_cookies_jar_file_set().
+ *
+ * @note This function will initialize the cookie engine if it has not been
+ *       initialized yet.
+ *
+ * @param url_con      Ecore_Con_Url instance which will be acted upon.
+ *
+ * @see ecore_con_url_cookies_clear()
+ * @see ecore_con_url_cookies_ignore_old_session_set()
+ */
+EAPI void
+ecore_con_url_cookies_session_clear(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!url_con)
+     return;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_session_clear");
+        return;
+     }
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIELIST, "SESS");
+#else
+   (void)url_con;
+#endif
+}
+
+/**
+ * Adds a file to the list of files from which to load cookies.
+ *
+ * Files must contain cookies defined according to two possible formats:
+ *
+ * @li HTTP-style header ("Set-Cookie: ...").
+ * @li Netscape/Mozilla cookie data format.
+ *
+ * Please notice that the file will not be read immediately, but rather added
+ * to a list of files that will be loaded and parsed at a later time.
+ *
+ * @note This function will initialize the cookie engine if it has not been
+ *       initialized yet.
+ *
+ * @param url_con   Ecore_Con_Url instance which will be acted upon.
+ * @param file_name Name of the file that will be added to the list.
+ *
+ * @see ecore_con_url_cookies_ignore_old_session_set()
+ */
+EAPI void
+ecore_con_url_cookies_file_add(Ecore_Con_Url *url_con, const char * const file_name)
+{
+#ifdef HAVE_CURL
+   if (!url_con)
+     return;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_file_add");
+        return;
+     }
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIEFILE, file_name);
+#else
+   (void)url_con;
+   (void)file_name;
+#endif
+}
+
+/**
+ * Sets the name of the file to which all current cookies will be written when
+ * either cookies are flushed or Ecore_Con is shut down.
+ *
+ * Cookies are written following Netscape/Mozilla's data format, also known as
+ * cookie-jar.
+ *
+ * @note This function will initialize the cookie engine if it has not been
+ *       initialized yet.
+ *
+ * @param url_con        Ecore_Con_Url instance which will be acted upon.
+ * @param cookiejar_file File to which the cookies will be written.
+ *
+ * @return @c EINA_TRUE is the file name has been set successfully,
+ *         @c EINA_FALSE otherwise.
+ *
+ * @see ecore_con_url_cookies_jar_write()
+ */
+EAPI Eina_Bool
+ecore_con_url_cookies_jar_file_set(Ecore_Con_Url *url_con, const char * const cookiejar_file)
+{
+#ifdef HAVE_CURL
+   CURLcode ret;
+
+   if (!url_con)
+     return EINA_FALSE;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_jar_file_set");
+        return EINA_FALSE;
+     }
+
+   ret = curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIEJAR,
+                          cookiejar_file);
+   if (ret != CURLE_OK)
+     {
+        ERR("Setting the cookie-jar name failed: %s",
+            curl_easy_strerror(ret));
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+   (void)url_con;
+   (void)cookiejar_file;
+#endif
+}
+
+/**
+ * Writes all current cookies to the cookie jar immediately.
+ *
+ * A cookie-jar file must have been previously set by
+ * @c ecore_con_url_jar_file_set, otherwise nothing will be done.
+ *
+ * @note This function will initialize the cookie engine if it has not been
+ *       initialized yet.
+ *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ *
+ * @see ecore_con_url_cookies_jar_file_set()
+ */
+EAPI void
+ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!url_con)
+     return;
+
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_cookies_jar_write");
+        return;
+     }
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_COOKIELIST, "FLUSH");
+#else
+   (void)url_con;
+#endif
+}
+
+/**
  * Toggle libcurl's verbose output.
  *
  * If @p verbose is @c EINA_TRUE, libcurl will output a lot of verbose
