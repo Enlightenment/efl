@@ -23,7 +23,7 @@ typedef struct _Ecore_Con_CAres Ecore_Con_CAres;
 struct _Ecore_Con_FD
 {
    Ecore_Fd_Handler *handler;
-   int               active;
+   Ecore_Timer      *timer;
    int               fd;
 };
 
@@ -47,9 +47,6 @@ struct _Ecore_Con_CAres
 static ares_channel info_channel;
 static int info_init = 0;
 static Eina_List *info_fds = NULL;
-static int active = 0;
-static Ecore_Timer *tm = NULL;
-static fd_set info_readers, info_writers;
 
 static void _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
                                           int              status,
@@ -60,20 +57,34 @@ static void _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                                          int              status,
                                          int              timeouts,
                                          struct hostent  *hostent);
-static Eina_Bool _ecore_con_info_cares_fd_cb(void             *data,
-                                             Ecore_Fd_Handler *fd_handler);
+static Eina_Bool _ecore_con_info_cares_fd_cb(Ecore_Con_FD     *ecf,
+                            Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_info_cares_timeout_cb(void *data);
-static void      _ecore_con_info_cares_clean(void);
+
+static void
+_ecore_con_info_cares_state_cb(void *data,
+                               int   fd,
+                               int read,
+                               int write);
+static int
+_ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
+                           const Ecore_Con_FD *fd2);
 
 int
 ecore_con_info_init(void)
 {
-   if (info_init == 0)
+   struct ares_options opts;
+   
+   if (!info_init)
      {
-        if (ares_library_init(ARES_LIB_INIT_ALL) != 0)
+        if (ares_library_init(ARES_LIB_INIT_ALL))
           return 0;
 
-        if (ares_init(&info_channel) != ARES_SUCCESS)
+        opts.lookups = "fb"; /* hosts file then dns */
+        opts.sock_state_cb = _ecore_con_info_cares_state_cb;
+
+        if (ares_init_options(&info_channel, &opts,
+            ARES_OPT_LOOKUPS | ARES_OPT_SOCK_STATE_CB) != ARES_SUCCESS)
           {
              ares_library_cleanup();
              return 0;
@@ -94,7 +105,6 @@ ecore_con_info_shutdown(void)
          ares_cancel(info_channel);
          ares_destroy(info_channel);
 
-         /* Destroy FD handler here. */
          /* Shutdown ares */
          ares_library_cleanup();
      }
@@ -292,9 +302,32 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                            cares);
      }
 
-   _ecore_con_info_cares_clean();
-
    return 1;
+}
+
+static Eina_Bool
+_ecore_con_info_cares_timeout_cb(void *data __UNUSED__)
+{
+   ares_process_fd(info_channel, ARES_SOCKET_BAD, ARES_SOCKET_BAD);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_ecore_con_info_cares_fd_cb(Ecore_Con_FD     *ecf,
+                            Ecore_Fd_Handler *fd_handler)
+{
+   int read, write;
+
+   read = write = ARES_SOCKET_BAD;
+
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+     read = ecf->fd;
+   if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
+     write = ecf->fd;
+   
+   ares_process_fd(info_channel, read, write);
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 static int
@@ -304,119 +337,47 @@ _ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
    return fd1->fd - fd2->fd;
 }
 
-static Eina_Bool
-_ecore_con_info_fds_lookup(int fd)
-{
-   Ecore_Con_FD fdl;
-   Ecore_Con_FD *search;
-
-   fdl.fd = fd;
-
-   search = eina_list_search_unsorted(
-       info_fds, (Eina_Compare_Cb)_ecore_con_info_fds_search, &fdl);
-
-   if (search)
-     {
-        search->active = active;
-        return EINA_TRUE;
-     }
-
-   return EINA_FALSE;
-}
-
 static void
-_ecore_con_info_cares_clean(void)
+_ecore_con_info_cares_state_cb(void *data __UNUSED__,
+                               int   fd,
+                               int read,
+                               int write)
 {
-   fd_set readers, writers;
-   Eina_List *l, *l_next;
-   Ecore_Con_FD *ecf;
-   int nfds;
-   int i;
+   int flags = 0;
+   Ecore_Con_FD *search, *ecf;
 
-   FD_ZERO(&readers);
-   FD_ZERO(&writers);
-   nfds = ares_fds(info_channel, &readers, &writers);
+   search = eina_list_search_unsorted(info_fds,
+            (Eina_Compare_Cb)_ecore_con_info_fds_search, &ecf);
 
-   active++;
-   for (i = 0; i < nfds; ++i)
+   if (!(read | write))
      {
-        int flags = 0;
-
-        if (FD_ISSET(i, &readers))
-          flags |= ECORE_FD_READ;
-
-        if (FD_ISSET(i, &writers))
-          flags |= ECORE_FD_WRITE;
-
-        if (flags &&  (!_ecore_con_info_fds_lookup(i)))
+        ares_process_fd(info_channel, ARES_SOCKET_BAD, ARES_SOCKET_BAD);
+        if (search)
           {
-             ecf = malloc(sizeof(Ecore_Con_FD));
-             if (ecf)
-               {
-                  ecf->fd = i;
-                  ecf->active = active;
-                  ecf->handler = ecore_main_fd_handler_add(
-                      i, ECORE_FD_WRITE | ECORE_FD_READ,
-                      _ecore_con_info_cares_fd_cb,
-                      NULL, NULL, NULL);
-                  info_fds = eina_list_append(info_fds, ecf);
-               }
+             info_fds = eina_list_remove(info_fds, search);
+             ecore_timer_del(search->timer);
+             ecore_main_fd_handler_del(search->handler);
+             free(search);
           }
+        return;
      }
 
-   info_readers = readers;
-   info_writers = writers;
-
-   EINA_LIST_FOREACH_SAFE(info_fds, l, l_next, ecf)
+   if (!search)
      {
-        if (ecf->active != active)
-          {
-             if (ecf->handler) ecore_main_fd_handler_del(ecf->handler);
-             free(ecf);
-             info_fds = eina_list_remove_list(info_fds, l);
-          }
+        search = malloc(sizeof(Ecore_Con_FD));
+        EINA_SAFETY_ON_NULL_RETURN(search);
+
+        search->fd = fd;
+        search->handler = ecore_main_fd_handler_add(fd, ECORE_FD_WRITE | ECORE_FD_READ,
+            (Ecore_Fd_Cb)_ecore_con_info_cares_fd_cb, search, NULL, NULL);
+        /* c-ares default timeout is 5 seconds */
+        search->timer = ecore_timer_add(5, _ecore_con_info_cares_timeout_cb, NULL);
+        info_fds = eina_list_append(info_fds, search);
      }
 
-   if (!info_fds)
-     {
-        if (tm)
-          ecore_timer_del(tm);
-
-        tm = NULL;
-     }
-   else
-     {
-        struct timeval tv;
-
-        ares_timeout(info_channel, NULL, &tv);
-
-        if (tm)
-          ecore_timer_delay(tm, tv.tv_sec);
-        else
-          tm =
-            ecore_timer_add((double)tv.tv_sec,
-                            _ecore_con_info_cares_timeout_cb,
-                            NULL);
-     }
-}
-
-static Eina_Bool
-_ecore_con_info_cares_timeout_cb(void *data __UNUSED__)
-{
-   ares_process(info_channel, &info_readers, &info_writers);
-   _ecore_con_info_cares_clean();
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_ecore_con_info_cares_fd_cb(void             *data  __UNUSED__,
-                            Ecore_Fd_Handler *fd_handler  __UNUSED__)
-{
-   ares_process(info_channel, &info_readers, &info_writers);
-   _ecore_con_info_cares_clean();
-
-   return ECORE_CALLBACK_RENEW;
+   if (read) flags |= ECORE_FD_READ;
+   if (write) flags |= ECORE_FD_WRITE;
+   ecore_main_fd_handler_active_set(search->handler, flags);
 }
 
 static void
