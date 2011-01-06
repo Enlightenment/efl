@@ -22,12 +22,17 @@ AC_INIT([edje], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_ISC_POSIX
+
+AC_CONFIG_HEADERS([config.h])
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
-AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_LIBTOOL_WIN32_DLL
@@ -54,9 +59,9 @@ AC_SUBST(VMAJ)
 
 AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["$shrext_cmds"], [Suffix for shared objects])
 
-EFL_CHECK_PATH_MAX
-
 ### Default options with respect to host
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
 
 case "$host_os" in
    mingw32ce* | cegcc*)
@@ -316,6 +321,8 @@ fi
 ### Checks for header files
 AC_CHECK_HEADERS([locale.h])
 
+EFL_CHECK_PATH_MAX
+
 
 ### Checks for types
 
@@ -352,6 +359,9 @@ AC_SUBST(lt_enable_auto_import)
 
 
 ### Checks for library functions
+
+AC_ISC_POSIX
+
 AC_FUNC_ALLOCA
 
 case "$host_os" in
