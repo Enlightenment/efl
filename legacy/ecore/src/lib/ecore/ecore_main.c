@@ -161,11 +161,8 @@ _ecore_fd_valid(void)
    if (fcntl(epoll_fd, F_GETFD) < 0)
      {
         ERR("arghhh you caught me! report a backtrace to edevel!");
-        close(-111);
         pause();
      }
-   else
-     close(-999);
 #endif
 }
 
