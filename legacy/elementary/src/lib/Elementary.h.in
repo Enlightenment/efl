@@ -1684,7 +1684,8 @@ extern "C" {
    typedef enum _Elm_Genlist_Item_Flags
      {
         ELM_GENLIST_ITEM_NONE = 0,
-        ELM_GENLIST_ITEM_SUBITEMS = (1 << 0)
+        ELM_GENLIST_ITEM_SUBITEMS = (1 << 0),
+        ELM_GENLIST_ITEM_GROUP = (1 << 1)
      } Elm_Genlist_Item_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item; /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */

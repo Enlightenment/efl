@@ -65,6 +65,8 @@ void test_genlist4(void *data, Evas_Object *obj, void *event_info);
 void test_genlist5(void *data, Evas_Object *obj, void *event_info);
 void test_genlist6(void *data, Evas_Object *obj, void *event_info);
 void test_genlist7(void *data, Evas_Object *obj, void *event_info);
+void test_genlist8(void *data, Evas_Object *obj, void *event_info);
+void test_genlist9(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
@@ -299,6 +301,8 @@ my_win_main(char *autorun)
    ADD_TEST("Genlist 5", test_genlist5);
    ADD_TEST("Genlist 7", test_genlist7);
    ADD_TEST("Genlist Tree", test_genlist6);
+   ADD_TEST("Genlist Group", test_genlist8);
+   ADD_TEST("Genlist Group Tree", test_genlist9);
    ADD_TEST("GenGrid", test_gengrid);
    ADD_TEST("GenGrid 2", test_gengrid2);
    ADD_TEST("Checks", test_check);

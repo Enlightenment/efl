@@ -1313,4 +1313,316 @@ test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+/*************/
+
+static Elm_Genlist_Item_Class itc_group;
+char *gl8_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Group Index # %i (Item # %i)",  (int)((long)data / 10), (int)(long)data);
+   return strdup(buf);
+}
+
+static void
+_bt_show_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+    elm_genlist_item_top_show(data);
+    //elm_genlist_item_show(data);
+    //elm_genlist_item_middle_show(data);
+}
+static void
+_bt_bring_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+    elm_genlist_item_top_bring_in(data);
+    //elm_genlist_item_bring_in(data);
+    //elm_genlist_item_middle_bring_in(data);
+}
+
+void
+test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *gl, *bt[8], *bx, *bx2, *bx3;
+   Elm_Genlist_Item *gli = NULL, *git = NULL;
+   int i, bt_count, bt_num;
+
+   win = elm_win_add(NULL, "genlist-group", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Group");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
+   evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
+   evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   itc1.item_style     = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+
+   itc_group.item_style     = "group_index";
+   itc_group.func.label_get = gl8_label_get;
+   itc_group.func.icon_get  = NULL;
+   itc_group.func.state_get = NULL;
+   itc_group.func.del       = gl_del;
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_homogenous_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt_num = 0;
+   bt[bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Show 0");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx2, bt[bt_num]);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Show 26");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx2, bt[bt_num]);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Show 101");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx2, bt[bt_num]);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Show 480");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx2, bt[bt_num]);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bx3 = elm_box_add(win);
+   elm_box_horizontal_set(bx3, EINA_TRUE);
+   elm_box_homogenous_set(bx3, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx3, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Bring top 0");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx3, bt[bt_num]);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Bring top 31");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx3, bt[bt_num]);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Bring top 239");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx3, bt[bt_num]);
+
+   bt[++bt_num] = elm_button_add(win);
+   elm_button_label_set(bt[bt_num], "Bring top 477");
+   evas_object_size_hint_align_set(bt[bt_num], EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt[bt_num], EVAS_HINT_EXPAND, 0.0);
+   evas_object_show(bt[bt_num]);
+   elm_box_pack_end(bx3, bt[bt_num]);
+
+   elm_box_pack_end(bx, bx3);
+   evas_object_show(bx3);
+
+   bt_count = 0;
+   for (i = 0; i < 500; i++)
+     {
+        if (!(i % 10))
+          {
+             gli = git = elm_genlist_item_append(gl, &itc_group,
+                                           (void *)(long)i/* item data */,
+                                           NULL/* parent */,
+                                           ELM_GENLIST_ITEM_GROUP,
+                                           gl_sel/* func */,
+                                           (void *)(long)(i * 10)/* func data */);
+          }
+        else if (git)
+          {
+             gli = elm_genlist_item_append(gl, &itc1,
+                                           (void *)(long)i/* item data */,
+                                           git/* parent */,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           gl_sel/* func */,
+                                           (void *)(long)(i * 10)/* func data */);
+          }
+        //elm_genlist_item_display_only_set(gli, EINA_TRUE);
+        switch (i)
+          {
+           case 0: 
+              evas_object_smart_callback_add(bt[0], "clicked", _bt_show_cb, gli);
+              evas_object_smart_callback_add(bt[4], "clicked", _bt_bring_cb, gli);
+              break;
+           case 26: 
+              evas_object_smart_callback_add(bt[1], "clicked", _bt_show_cb, gli);
+              break;
+           case 31: 
+              evas_object_smart_callback_add(bt[5], "clicked", _bt_bring_cb, gli);
+              break;
+           case 101: 
+              evas_object_smart_callback_add(bt[2], "clicked", _bt_show_cb, gli);
+              break;
+           case 239: 
+              evas_object_smart_callback_add(bt[6], "clicked", _bt_bring_cb, gli);
+              break;
+           case 477: 
+              evas_object_smart_callback_add(bt[7], "clicked", _bt_bring_cb, gli);
+              break;
+           case 480: 
+              evas_object_smart_callback_add(bt[3], "clicked", _bt_show_cb, gli);
+              break;
+          }
+     }
+
+   evas_object_resize(win, 480, 800);
+   evas_object_show(win);
+}
+
+/*************/
+
+static void
+gl9_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   Evas_Object *gl = elm_genlist_item_genlist_get(it);
+   int val = (int)(long)elm_genlist_item_data_get(it);
+   val *= 10;
+   elm_genlist_item_append(gl, &itc1,
+                           (void *)(long)(val + 1)/* item data */, it/* parent */,
+                           ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+                           NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+                           (void *)(long)(val + 2)/* item data */, it/* parent */,
+                           ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+                           NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+                           (void *)(long)(val + 3)/* item data */, it/* parent */,
+                           ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+                           NULL/* func data */);
+}
+static void
+gl9_con(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   elm_genlist_item_subitems_clear(it);
+}
+
+static void
+gl9_exp_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   elm_genlist_item_expanded_set(it, EINA_TRUE);
+}
+static void
+gl9_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Genlist_Item *it = event_info;
+   elm_genlist_item_expanded_set(it, EINA_FALSE);
+}
+
+void
+test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *gl, *bx;
+   Elm_Genlist_Item *git;
+
+   win = elm_win_add(NULL, "genlist-group-tree", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Group Tree");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
+   evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
+   evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   itc1.item_style     = "default";
+   itc1.func.label_get = gl_label_get;
+   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.state_get = gl_state_get;
+   itc1.func.del       = gl_del;
+
+   itc_group.item_style     = "group_index";
+   itc_group.func.label_get = gl8_label_get;
+   itc_group.func.icon_get  = NULL;
+   itc_group.func.state_get = NULL;
+   itc_group.func.del       = gl_del;
+
+   git = elm_genlist_item_append(gl, &itc_group,
+			   (void *)0/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+			   (void *)1/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+			   (void *)2/* item data */, git/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+			   (void *)3/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
+   git = elm_genlist_item_append(gl, &itc_group,
+			   (void *)4/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+			   (void *)5/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+			   (void *)6/* item data */, git/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
+			   NULL/* func data */);
+   elm_genlist_item_append(gl, &itc1,
+			   (void *)7/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
+			   NULL/* func data */);
+
+   evas_object_smart_callback_add(gl, "expand,request", gl9_exp_req, gl);
+   evas_object_smart_callback_add(gl, "contract,request", gl9_con_req, gl);
+   evas_object_smart_callback_add(gl, "expanded", gl9_exp, gl);
+   evas_object_smart_callback_add(gl, "contracted", gl9_con, gl);
+
+   evas_object_resize(win, 480, 800);
+   evas_object_show(win);
+}
 #endif
