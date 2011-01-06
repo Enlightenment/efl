@@ -10,7 +10,7 @@
  *    (and optionally the ECORE_CON_EVENT_URL_DATA event to receive
  *    the response, e.g. for HTTP/FTP downloads)
  * 3. Set the URL with ecore_con_url_url_set(...);
- * 4. Perform the operation with ecore_con_url_send(...);
+ * 4. Perform the operation with ecore_con_url_get(...);
  *
  * Note that it is good to reuse Ecore_Con_Url objects wherever possible, but
  * bear in mind that each one can only perform one operation at a time.
@@ -19,15 +19,15 @@
  *
  * Example Usage 1 (HTTP GET):
  *   ecore_con_url_url_set(url_con, "http://www.google.com");
- *   ecore_con_url_send(url_con, NULL, 0, NULL);
+ *   ecore_con_url_get(url_con, NULL, 0, NULL);
  *
  * Example usage 2 (HTTP POST):
  *   ecore_con_url_url_set(url_con, "http://www.example.com/post_handler.cgi");
- *   ecore_con_url_send(url_con, data, data_length, "multipart/form-data");
+ *   ecore_con_url_post(url_con, data, data_length, "multipart/form-data");
  *
  * Example Usage 3 (FTP download):
  *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com/pub/myfile");
- *   ecore_con_url_send(url_con, NULL, 0, NULL);
+ *   ecore_con_url_get(url_con, NULL, 0, NULL);
  *
  * Example Usage 4 (FTP upload as ftp://ftp.example.com/file):
  *   ecore_con_url_url_set(url_con, "ftp://ftp.example.com");
@@ -523,14 +523,15 @@ ecore_con_url_data_set(Ecore_Con_Url *url_con,
  * Adds an additional header to the request connection object.
  *
  * Adds an additional header to the request connection object. This addition
- * will be valid for only one ecore_con_url_send() call.
+ * will be valid for only one ecore_con_url_get() or ecore_con_url_post() call.
  *
  * @param url_con Connection object
  * @param key Header key
  * @param value Header value
  *
  *
- * @see ecore_con_url_send()
+ * @see ecore_con_url_get()
+ * @see ecore_con_url_post()
  * @see ecore_con_url_additional_headers_clear()
  */
 EAPI void
@@ -573,7 +574,8 @@ ecore_con_url_additional_header_add(Ecore_Con_Url *url_con,
  *
  *
  * @see ecore_con_url_additional_header_add()
- * @see ecore_con_url_send()
+ * @see ecore_con_url_get()
+ * @see ecore_con_url_post()
  */
 EAPI void
 ecore_con_url_additional_headers_clear(Ecore_Con_Url *url_con)
@@ -634,7 +636,8 @@ ecore_con_url_data_get(Ecore_Con_Url *url_con)
  * @param condition Condition to use for HTTP requests.
  * @param timestamp Time since 1 Jan 1970 to use in the condition.
  *
- * @sa ecore_con_url_send()
+ * @sa ecore_con_url_get()
+ * @sa ecore_con_url_post()
  */
 EAPI void
 ecore_con_url_time(Ecore_Con_Url     *url_con,
@@ -695,7 +698,8 @@ ecore_con_url_fd_set(Ecore_Con_Url *url_con,
  * @return Number of bytes received on request.
  *
  *
- * @see ecore_con_url_send()
+ * @see ecore_con_url_get()
+ * @see ecore_con_url_post()
  */
 EAPI int
 ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con)
@@ -798,31 +802,16 @@ ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
    return EINA_FALSE;
 }
 
-/**
- * Sends a request.
- *
- * @param url_con Connection object to perform a request on, previously created
- *                with ecore_con_url_new() or ecore_con_url_custom_new().
- * @param data    Payload (data sent on the request)
- * @param length  Payload length. If @c -1, rely on automatic length
- *                calculation via @c strlen() on @p data.
- * @param content_type Content type of the payload (e.g. text/xml)
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
- *
- * @see ecore_con_url_custom_new()
- * @see ecore_con_url_additional_headers_clear()
- * @see ecore_con_url_additional_header_add()
- * @see ecore_con_url_data_set()
- * @see ecore_con_url_data_get()
- * @see ecore_con_url_response_headers_get()
- * @see ecore_con_url_time()
- */
-EAPI Eina_Bool
-ecore_con_url_send(Ecore_Con_Url *url_con,
-                   const void    *data,
-                   long           length,
-                   const char    *content_type)
+#define MODE_AUTO 0
+#define MODE_GET  1
+#define MODE_POST 2
+
+static Eina_Bool
+_ecore_con_url_send(Ecore_Con_Url *url_con,
+                    int            mode,
+                    const void    *data,
+                    long           length,
+                    const char    *content_type)
 {
 #ifdef HAVE_CURL
    Eina_List *l;
@@ -849,20 +838,21 @@ ecore_con_url_send(Ecore_Con_Url *url_con,
    curl_slist_free_all(url_con->headers);
    url_con->headers = NULL;
 
-   if (data)
+   if ((mode == MODE_POST) || (mode == MODE_AUTO))
      {
-        if ((content_type) && (strlen(content_type) < 200))
+        if (data)
           {
-             snprintf(tmp, sizeof(tmp), "Content-Type: %s", content_type);
-             url_con->headers = curl_slist_append(url_con->headers, tmp);
+             if ((content_type) && (strlen(content_type) < 200))
+               {
+                  snprintf(tmp, sizeof(tmp), "Content-Type: %s", content_type);
+                  url_con->headers = curl_slist_append(url_con->headers, tmp);
+               }
+             
+             curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDS, data);
+             curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, length);
           }
-
-        curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDS, data);
-        curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, length);
      }
-   else
-      curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, 0);
-
+   
    switch (url_con->time_condition)
      {
       case ECORE_CON_URL_TIME_NONE:
@@ -901,6 +891,97 @@ ecore_con_url_send(Ecore_Con_Url *url_con,
    length = 0;
    content_type = NULL;
 #endif
+}
+
+/**
+ * Sends a request.
+ *
+ * @param url_con Connection object to perform a request on, previously created
+ *                with ecore_con_url_new() or ecore_con_url_custom_new().
+ * @param data    Payload (data sent on the request)
+ * @param length  Payload length. If @c -1, rely on automatic length
+ *                calculation via @c strlen() on @p data.
+ * @param content_type Content type of the payload (e.g. text/xml)
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ *
+ * @see ecore_con_url_custom_new()
+ * @see ecore_con_url_additional_headers_clear()
+ * @see ecore_con_url_additional_header_add()
+ * @see ecore_con_url_data_set()
+ * @see ecore_con_url_data_get()
+ * @see ecore_con_url_response_headers_get()
+ * @see ecore_con_url_time()
+ * @see ecore_con_url_get()
+ * @see ecore_con_url_post()
+ */
+EINA_DEPRECATED EAPI Eina_Bool
+ecore_con_url_send(Ecore_Con_Url *url_con,
+                   const void    *data,
+                   long           length,
+                   const char    *content_type)
+{
+   return _ecore_con_url_send(url_con, MODE_AUTO, data, length, content_type);
+}
+
+/**
+ * Sends a get request.
+ *
+ * @param url_con Connection object to perform a request on, previously created
+ *                with ecore_con_url_new() or ecore_con_url_custom_new().
+ * @param data    Payload (data sent on the request)
+ * @param length  Payload length. If @c -1, rely on automatic length
+ *                calculation via @c strlen() on @p data.
+ * @param content_type Content type of the payload (e.g. text/xml)
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ *
+ * @see ecore_con_url_custom_new()
+ * @see ecore_con_url_additional_headers_clear()
+ * @see ecore_con_url_additional_header_add()
+ * @see ecore_con_url_data_set()
+ * @see ecore_con_url_data_get()
+ * @see ecore_con_url_response_headers_get()
+ * @see ecore_con_url_time()
+ * @see ecore_con_url_post()
+ */
+EAPI Eina_Bool
+ecore_con_url_get(Ecore_Con_Url *url_con,
+                   const void    *data,
+                   long           length,
+                   const char    *content_type)
+{
+   return _ecore_con_url_send(url_con, MODE_GET, data, length, content_type);
+}
+
+/**
+ * Sends a post request.
+ *
+ * @param url_con Connection object to perform a request on, previously created
+ *                with ecore_con_url_new() or ecore_con_url_custom_new().
+ * @param data    Payload (data sent on the request)
+ * @param length  Payload length. If @c -1, rely on automatic length
+ *                calculation via @c strlen() on @p data.
+ * @param content_type Content type of the payload (e.g. text/xml)
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ *
+ * @see ecore_con_url_custom_new()
+ * @see ecore_con_url_additional_headers_clear()
+ * @see ecore_con_url_additional_header_add()
+ * @see ecore_con_url_data_set()
+ * @see ecore_con_url_data_get()
+ * @see ecore_con_url_response_headers_get()
+ * @see ecore_con_url_time()
+ * @see ecore_con_url_get()
+ */
+EAPI Eina_Bool
+ecore_con_url_post(Ecore_Con_Url *url_con,
+                   const void    *data,
+                   long           length,
+                   const char    *content_type)
+{
+   return _ecore_con_url_send(url_con, MODE_POST, data, length, content_type);
 }
 
 /**
