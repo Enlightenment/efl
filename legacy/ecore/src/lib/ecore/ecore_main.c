@@ -23,17 +23,22 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#ifndef _MSC_VER
+#ifdef HAVE_SYS_TIME_H
 # include <sys/time.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#else
+#endif
+
+#ifdef _MSC_VER
 # include <float.h>
 #endif
 
 #define FIX_HZ 1
 
 #ifdef FIX_HZ
-# ifndef _MSC_VER
+# ifdef HAVE_SYS_PARAM_H
 #  include <sys/param.h>
 # endif
 # ifndef HZ
@@ -45,9 +50,6 @@
 # include <Evil.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
-
 #ifdef HAVE_SYS_EPOLL_H
 # define HAVE_EPOLL
 # include <sys/epoll.h>
@@ -56,6 +58,9 @@
 #ifdef USE_G_MAIN_LOOP
 # include <glib.h>
 #endif
+
+#include "Ecore.h"
+#include "ecore_private.h"
 
 struct _Ecore_Fd_Handler
 {

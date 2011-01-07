@@ -5,14 +5,18 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef _MSC_VER
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+
+#ifdef HAVE_LIBGEN_H
 # include <libgen.h>
 #endif
 
 #ifdef HAVE_FEATURES_H
 # include <features.h>
 #endif
+
 #include <ctype.h>
 #include <errno.h>
 
