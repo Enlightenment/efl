@@ -918,6 +918,8 @@ _item_del(Elm_Genlist_Item *it)
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    if (it->parent)
      it->parent->items = eina_list_remove(it->parent->items, it);
+   if (it->flags & ELM_GENLIST_ITEM_GROUP)
+     it->wd->group_items = eina_list_remove(it->wd->group_items, it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
 
@@ -2009,7 +2011,7 @@ _item_block_position(Item_Block *itb,
                             if (git->scrl_y < oy)
                                git->scrl_y = oy;
                             if ((git->scrl_y + git->h) > (it->scrl_y + it->h))
-                               git->scrl_y = (it->scrl_y + it->h) - git->minh;
+                               git->scrl_y = (it->scrl_y + it->h) - git->h;
                             git->want_realize = EINA_TRUE;
                          }
                        evas_object_resize(it->base.view, it->w, it->h);
@@ -3123,6 +3125,8 @@ elm_genlist_clear(Evas_Object *obj)
                  (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
           }
         wd->items = eina_inlist_remove(wd->items, wd->items);
+        if (it->flags & ELM_GENLIST_ITEM_GROUP)
+          it->wd->group_items = eina_list_remove(it->wd->group_items, it);
         elm_widget_item_pre_notify_del(it);
         if (it->realized) _item_unrealize(it);
         if (it->itc->func.del)
