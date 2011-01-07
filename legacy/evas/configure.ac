@@ -304,6 +304,7 @@ fi
 
 ### Checks for header files
 AC_HEADER_STDC
+AC_CHECK_HEADERS([unistd.h stdint.h sys/param.h])
 
 EFL_CHECK_PATH_MAX
 
