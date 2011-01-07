@@ -153,7 +153,7 @@ again:
    EINA_LIST_FOREACH_SAFE(tmp_msgq, l, ln, em)
      {
         if (em->edje != ed) continue;
-	tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
+	tmp_msgq = eina_list_remove_list(tmp_msgq, l);
         if (!ed->delete_me)
           {
              ed->processing_messages++;
