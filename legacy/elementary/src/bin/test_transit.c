@@ -34,11 +34,11 @@ _custom_op(void *data, Elm_Transit *transit, double progress)
      {
         h = custom_effect->from.h + custom_effect->to.h;
         w = custom_effect->from.w + \
-                                  (custom_effect->to.w * (progress - 0.5) * 2);
+            (custom_effect->to.w * (progress - 0.5) * 2);
      }
 
    EINA_LIST_FOREACH(objs, elist, obj)
-     evas_object_resize(obj, w, h);
+      evas_object_resize(obj, w, h);
 
 }
 
@@ -69,7 +69,7 @@ _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, voi
 {
    Elm_Transit *trans;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
    elm_transit_repeat_times_set(trans, 2);
@@ -82,6 +82,9 @@ _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, voi
 
    /* Rotation Effect */
    elm_transit_effect_rotation_add(trans, 0.0, 135.0, EINA_FALSE);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -89,13 +92,16 @@ _transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 {
    Elm_Transit *trans;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
 
    elm_transit_effect_wipe_add(trans, 
                                ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
                                ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -118,10 +124,13 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    images = eina_list_append(images, eina_stringshare_add(buf));
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, ic);
-   
+
    elm_transit_effect_image_animation_add(trans, images);
+
+   elm_transit_duration_set(trans, 5.0); 
+   elm_transit_go(trans);
 }
 
 static void
@@ -129,9 +138,13 @@ _transit_resizing(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 {
    Elm_Transit *trans;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);   
+
    elm_transit_effect_resizing_add(trans, 100, 50, 300, 150);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -140,10 +153,14 @@ _transit_flip(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+
    elm_transit_effect_flip_add(trans, ELM_TRANSIT_EFFECT_FLIP_AXIS_X, EINA_TRUE);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -151,9 +168,13 @@ _transit_zoom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Elm_Transit *trans;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
+
    elm_transit_effect_zoom_add(trans, 1.0, 3.0);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -162,10 +183,14 @@ _transit_blend(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+
    elm_transit_effect_blend_add(trans);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -174,10 +199,14 @@ _transit_fade(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+
    elm_transit_effect_fade_add(trans);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 static void
@@ -186,10 +215,14 @@ _transit_resizable_flip(void *data, Evas_Object *obj, void *event_info __UNUSED_
    Elm_Transit *trans;
    Evas_Object *obj2 = data;
 
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_object_add(trans, obj);
    elm_transit_object_add(trans, obj2);
+
    elm_transit_effect_resizable_flip_add(trans, ELM_TRANSIT_EFFECT_FLIP_AXIS_Y, EINA_TRUE);
+
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 /* Translation, Rotation, Color, Wipe, ImagemAnimation Effect */
@@ -433,7 +466,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
    evas_object_resize(bt, 200, 30); 
-   
+
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "Back Button - Resizable Flip Effect");
    evas_object_move(bt2, 50, 100);

@@ -30,13 +30,14 @@
  *
  * Example:
  * @code
- * Elm_Transit *trans = elm_transit_add(5.0);
+ * Elm_Transit *trans = elm_transit_add();
  * elm_transit_object_add(trans, obj);
  * void *effect_context = elm_transit_effect_translation_context_new(0.0, 0.0,
  *                                                               280.0, 280.0);
  * elm_transit_effect_add(transit,
  *                        elm_transit_effect_translation_op, effect_context,
  *                        elm_transit_effect_translation_context_free);
+ * elm_transit_duration_set(transit, 5);
  * elm_transit_auto_reverse_set(transit, EINA_TRUE);
  * elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
  * elm_transit_repeat_times_set(transit, -1);
@@ -263,23 +264,17 @@ _animator_animate_cb(void *data)
  * @ingroup Transit
  */
 EAPI Elm_Transit *
-elm_transit_add(double duration)
+elm_transit_add()
 {
    Elm_Transit *transit = ELM_NEW(Elm_Transit);
-   
    if (!transit) return NULL;
    
    EINA_MAGIC_SET(transit, ELM_TRANSIT_MAGIC);
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
  	
-   transit->time.duration = duration;
-   transit->time.begin = ecore_loop_time_get();
-   transit->animator = ecore_animator_add(_animator_animate_cb, transit);
-
    return transit;
 }
-
 /**
  * Stops the animation and delete the @p transit object.
  *
@@ -316,7 +311,7 @@ elm_transit_del(Elm_Transit *transit)
  *
  * Exemple:
  * @code
- * Elm_Transit *transit = elm_transit_add(5.0);
+ * Elm_Transit *transit = elm_transit_add();
  * elm_transit_effect_add(transit,
  *                        elm_transit_effect_blend_op,
  *                        elm_transit_effect_blend_context_new(),
@@ -739,6 +734,64 @@ elm_transit_tween_mode_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
    return transit->tween_mode;
+}
+
+/**
+ * Set the transit animation time
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ * @param duration The animation time.
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_duration_set(Elm_Transit *transit, double duration)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   if (transit->animator) return;
+   transit->time.duration = duration;
+}
+
+/**
+ * Get the transit animation time
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ *
+ * @return The transit animation time.
+ *
+ * @ingroup Transit
+ */
+EAPI double 
+elm_transit_duration_get(const Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   return transit->time.duration;
+}
+
+/**
+ * Starts the transition. 
+ * Once this API is called, the transit begins to measure the time.
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_go(Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+
+   if (transit->animator)
+      ecore_animator_del(transit->animator);
+
+   transit->time.begin = ecore_loop_time_get();
+   transit->animator = ecore_animator_add(_animator_animate_cb, transit);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2496,7 +2549,7 @@ _transit_effect_image_animation_context_new(Eina_List *images)
  * @code
  * char buf[PATH_MAX];
  * Eina_List *images = NULL;
- * Elm_Transit *transi = elm_transit_add(4.0);
+ * Elm_Transit *transi = elm_transit_add();
  *
  * snprintf(buf, sizeof(buf), "%s/images/icon_11.png", PACKAGE_DATA_DIR);
  * images = eina_list_append(images, eina_stringshare_add(buf));

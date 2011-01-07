@@ -2470,7 +2470,7 @@ extern "C" {
 
    typedef struct _Elm_Transit Elm_Transit;
 
-   EAPI Elm_Transit           *elm_transit_add(double duration);
+   EAPI Elm_Transit           *elm_transit_add();
    EAPI void                   elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data, void (*data_free_cb)(void *data, Elm_Transit *transit)) EINA_ARG_NONNULL(1, 2);
    EAPI void                   elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data) EINA_ARG_NONNULL(1, 2);
@@ -2488,6 +2488,9 @@ extern "C" {
    EAPI int                    elm_transit_repeat_times_get(Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode) EINA_ARG_NONNULL(1);
    EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration) EINA_ARG_NONNULL(1); 
+   EAPI double                 elm_transit_duration_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_transit_go(Elm_Transit *transit) EINA_ARG_NONNULL(1);
 
    EAPI void                  *elm_transit_effect_resizing_add(Elm_Transit* transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
    EAPI void                  *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord dy, Evas_Coord to_dx, Evas_Coord to_dy);
