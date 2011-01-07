@@ -477,7 +477,22 @@ eng_window_free(Evas_GL_X11_Window *gw)
 void
 eng_window_use(Evas_GL_X11_Window *gw)
 {
-   if (_evas_gl_x11_window != gw)
+   Eina_Bool force_use = EINA_FALSE;
+   
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   if (_evas_gl_x11_window)
+     {
+        if ((eglGetCurrentContext() != 
+             _evas_gl_x11_window->egl_context[0]) ||
+            (eglGetCurrentSurface(EGL_READ) != 
+                _evas_gl_x11_window->egl_surface[0]) ||
+            (eglGetCurrentSurface(EGL_DRAW) != 
+                _evas_gl_x11_window->egl_surface[0]))
+           force_use = EINA_TRUE;
+     }
+#else   
+#endif   
+   if ((_evas_gl_x11_window != gw) || (force_use))
      {
         if (_evas_gl_x11_window)
           evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
@@ -488,13 +503,13 @@ eng_window_use(Evas_GL_X11_Window *gw)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
            if (gw->egl_surface[0] != EGL_NO_SURFACE)
              {
-               if (eglMakeCurrent(gw->egl_disp, 
-                                  gw->egl_surface[0], 
-                                  gw->egl_surface[0],
-                                  gw->egl_context[0]) == EGL_FALSE)
-                 {
-                   ERR("eglMakeCurrent() failed!");
-                 }
+                if (eglMakeCurrent(gw->egl_disp, 
+                                   gw->egl_surface[0], 
+                                   gw->egl_surface[0],
+                                   gw->egl_context[0]) == EGL_FALSE)
+                  {
+                     ERR("eglMakeCurrent() failed!");
+                  }
              }
 // GLX        
 #else

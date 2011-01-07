@@ -541,7 +541,11 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    re = (Render_Engine *)data;
    /* get the upate rect surface - return engine data as dummy */
    if (!re->win->draw.redraw) return NULL;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   // dont need to for egl - eng_window_use() can check for other ctxt's
+#else
    eng_window_use(NULL);
+#endif   
    eng_window_use(re->win);
    if (!_re_wincheck(re)) return NULL;
    evas_gl_common_context_flush(re->win->gl_context);
