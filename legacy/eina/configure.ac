@@ -330,6 +330,7 @@ fi
 AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
+AC_CHECK_HEADERS([unistd.h libgen.h])
 EFL_CHECK_PATH_MAX
 
 ### Checks for types
