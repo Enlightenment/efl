@@ -6,6 +6,8 @@ static Ecore_Timer *_job_loss_timer = NULL;
 
 static Eina_List *msgq = NULL;
 static Eina_List *tmp_msgq = NULL;
+static int tmp_msgq_processing = 0;
+static int tmp_msgq_restart = 0;
 
 /*============================================================================*
  *                                   API                                      *
@@ -97,6 +99,7 @@ edje_object_message_signal_process(Evas_Object *obj)
    Eina_List *l, *ln, *tmpq = NULL;
    Edje *ed;
    Edje_Message *em;
+   int gotos = 0;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
@@ -127,16 +130,70 @@ edje_object_message_signal_process(Evas_Object *obj)
 	tmpq = NULL;
      }
 
+#if 0   
    while (tmp_msgq)
      {
 	Edje_Message *em;
 
 	em = tmp_msgq->data;
 	tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
-	em->edje->message.num--;
-	_edje_message_process(em);
-	_edje_message_free(em);
+        if (!ed->delete_me)
+          {
+             ed->processing_messages++;
+             _edje_message_process(em);
+             _edje_message_free(em);
+             ed->processing_messages--;
+          }
+        else
+           _edje_message_free(em);
      }
+#else
+   tmp_msgq_processing++;
+again:
+   EINA_LIST_FOREACH_SAFE(tmp_msgq, l, ln, em)
+     {
+        if (em->edje != ed) continue;
+	tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
+        if (!ed->delete_me)
+          {
+             ed->processing_messages++;
+             _edje_message_process(em);
+             _edje_message_free(em);
+             ed->processing_messages--;
+          }
+        else
+           _edje_message_free(em);
+        if (ed->processing_messages == 0)
+          {
+             if (ed->delete_me) _edje_del(ed);
+          }
+        // if some child callback in _edje_message_process called
+        // edje_object_message_signal_process() or
+        // edje_message_signal_process() then those will mark the restart
+        // flag when they finish - it mabsicammyt means tmp_msgq and
+        // any item in it has potentially become invalid - so that means l
+        // and ln could be rogue pointers, so start again from the beginning
+        // and skip anything that is not this object and process only what is.
+        // to avoid self-feeding loops allow a max of 1024 loops.
+        if (tmp_msgq_restart)
+          {
+             tmp_msgq_restart = 0;
+             gotos++;
+             if (gotos < 1024) goto again;
+             else
+               {
+                  WRN("Edje is in a self-feeding message loop (> 1024 gotos needed in a row)");
+                  goto end;
+               }
+          }
+     }
+end:
+   tmp_msgq_processing--;
+   if (tmp_msgq_processing == 0)
+      tmp_msgq_restart = 0;
+   else
+      tmp_msgq_restart = 1;
+#endif
 }
 
 /**
@@ -740,6 +797,7 @@ _edje_message_queue_process(void)
 	     msgq = NULL;
 	  }
 
+        tmp_msgq_processing++;
 	while (tmp_msgq)
 	  {
 	     Edje_Message *em;
@@ -763,6 +821,11 @@ _edje_message_queue_process(void)
 		  if (ed->delete_me) _edje_del(ed);
 	       }
 	  }
+        tmp_msgq_processing--;
+        if (tmp_msgq_processing == 0)
+           tmp_msgq_restart = 0;
+        else
+           tmp_msgq_restart = 1;
      }
 
    /* if the message queue filled again set a timer to expire in 0.0 sec */
