@@ -3,9 +3,11 @@
 
 #ifdef BUILD_ASYNC_EVENTS
 
-#ifndef _MSC_VER
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+
 #include <fcntl.h>
 #include <errno.h>
 

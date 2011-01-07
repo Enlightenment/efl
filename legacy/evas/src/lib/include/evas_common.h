@@ -241,8 +241,12 @@ void *alloca (size_t);
 #include <sys/stat.h>
 #include <time.h>
 #include <ctype.h>
-#ifndef _MSC_VER
-# include <stdint.h>
+
+#ifdef HAVE_STDINT_H
+# include <unistd.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 

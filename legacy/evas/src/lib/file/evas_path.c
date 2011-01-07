@@ -14,8 +14,12 @@
 /* get the casefold feature! */
 #include <fnmatch.h>
 #include <dirent.h>
-#ifndef _MSC_VER
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+
+#ifndef HAVE_SYS_PARAM_H
 # include <sys/param.h>
 #endif
 
