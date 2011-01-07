@@ -1009,6 +1009,7 @@ evas_gl_common_context_target_surface_set(Evas_GL_Context *gc,
 static inline void
 array_alloc(Evas_GL_Context *gc, int n)
 {
+   gc->havestuff = EINA_TRUE;
    if (gc->pipe[n].array.num <= gc->pipe[n].array.alloc) return;
    gc->pipe[n].array.alloc += 6 * 1024;
    if (gc->pipe[n].array.use_vertex)
@@ -2284,7 +2285,8 @@ static void
 shader_array_flush(Evas_GL_Context *gc)
 {
    int i, gw, gh, setclip, cy, fbo = 0, done = 0;
-   
+
+   if (!gc->havestuff) return;
    gw = gc->w;
    gh = gc->h;
    if (!((gc->pipe[0].shader.surface == gc->def_surface) ||
@@ -2591,6 +2593,7 @@ shader_array_flush(Evas_GL_Context *gc)
      {
         if (done > 0) printf("DONE (pipes): %i\n", done);
      }
+   gc->havestuff = EINA_FALSE;
 }
 
 Eina_Bool

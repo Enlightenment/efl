@@ -277,6 +277,8 @@ struct _Evas_GL_Context
       Eina_Bool size : 1;
    } change;
    
+   Eina_Bool havestuff : 1;
+   
    Evas_GL_Image *def_surface;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
