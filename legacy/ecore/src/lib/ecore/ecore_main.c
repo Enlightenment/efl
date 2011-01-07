@@ -260,7 +260,7 @@ _ecore_main_fdh_poll_del(Ecore_Fd_Handler *fdh)
      {
         if (errno == EBADF)
           {
-             WRN("fd %d was closed, can't remove from epoll - reinit!", 
+             WRN("fd %d was closed, can't remove from epoll - reinit!",
                  fdh->fd);
              _ecore_main_loop_shutdown();
              _ecore_main_loop_init();
@@ -333,7 +333,7 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
      {
         Ecore_Fd_Handler *fdh;
         Eina_Bool pst, st;
-        
+
         fdh = ev[i].data.ptr;
         if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
           {
@@ -759,7 +759,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    Ecore_Fd_Handler *fdh;
 
    if ((fd < 0) || (flags == 0) || (!func)) return NULL;
-   
+
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
    if (!fdh) return NULL;
    ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
@@ -842,7 +842,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
         ERR("fdh %p deleted twice", fd_handler);
         return NULL;
      }
-     
+
    fd_handler->delete_me = EINA_TRUE;
    _ecore_main_fdh_poll_del(fd_handler);
    fd_handlers_to_delete = eina_list_append(fd_handlers_to_delete, fd_handler);
@@ -1000,7 +1000,7 @@ _ecore_main_shutdown(void)
      fd_handlers_to_delete = eina_list_free(fd_handlers_to_delete);
    if (fd_handlers_to_call)
      fd_handlers_to_call = eina_list_free(fd_handlers_to_call);
-  
+
    fd_handlers_to_call_current = NULL;
    fd_handlers_to_delete = NULL;
    fd_handler_current = NULL;
@@ -1212,9 +1212,9 @@ _ecore_main_fd_handlers_bads_rem(void)
      {
 # ifdef HAVE_GLIB
         ERR("No bad fd found. Maybe a foreign fd from glib?");
-# else        
+# else
         ERR("No bad fd found. EEEK!");
-# endif        
+# endif
      }
    _ecore_main_fd_handlers_cleanup();
 }
@@ -1270,7 +1270,7 @@ _ecore_main_win32_handlers_cleanup(void)
                   deleted_in_use++;
                   continue;
                }
-             
+
              win32_handlers = (Ecore_Win32_Handler *)
                 eina_inlist_remove(EINA_INLIST_GET(win32_handlers),
                                    EINA_INLIST_GET(wh));
@@ -1626,17 +1626,17 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
         WSANETWORKEVENTS network_event;
 
         WSAEnumNetworkEvents(sockets[result], objects[result], &network_event);
-        
+
         if (network_event.lNetworkEvents & FD_READ)
            FD_SET(sockets[result], readfds);
         if (network_event.lNetworkEvents & FD_WRITE)
            FD_SET(sockets[result], writefds);
         if (network_event.lNetworkEvents & FD_OOB)
            FD_SET(sockets[result], exceptfds);
-        
+
         res = 1;
      }
-   else if ((result >= (WAIT_OBJECT_0 + events_nbr)) && 
+   else if ((result >= (WAIT_OBJECT_0 + events_nbr)) &&
             (result < (WAIT_OBJECT_0 + objects_nbr)))
      {
         if (!win32_handler_current)
@@ -1653,7 +1653,7 @@ _ecore_main_win32_select(int nfds __UNUSED__, fd_set *readfds, fd_set *writefds,
         while (win32_handler_current)
           {
              wh = win32_handler_current;
-             
+
              if (objects[result - WAIT_OBJECT_0] == wh->h)
                {
                   if (!wh->delete_me)
