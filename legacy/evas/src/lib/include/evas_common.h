@@ -243,7 +243,7 @@ void *alloca (size_t);
 #include <ctype.h>
 
 #ifdef HAVE_STDINT_H
-# include <unistd.h>
+# include <stdint.h>
 #endif
 
 #ifdef HAVE_UNISTD_H
