@@ -8,7 +8,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#ifdef HAVE_UNISTD_H
+#ifndef _MSC_VER
 # include <unistd.h>
 #endif
 
@@ -27,7 +27,6 @@
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
-
 #include <Eina.h>
 
 #include "Ecore.h"

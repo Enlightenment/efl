@@ -24,13 +24,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
-
 #ifdef _MSC_VER
 # include <Evil.h>
+#else
+# include <stdint.h>
 #endif
 
 #include "eina_config.h"

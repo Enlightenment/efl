@@ -889,7 +889,7 @@ case "$host_os" in
       have_addrinfo="yes"
       ;;
    *)
-      AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h sys/time.h sys/mman.h signal.h sys/resource.h sys/param.h unistd.h libgen])
+      AC_CHECK_HEADERS([dlfcn.h features.h langinfo.h locale.h sys/time.h sys/mman.h signal.h sys/resource.h])
       ;;
 esac
 

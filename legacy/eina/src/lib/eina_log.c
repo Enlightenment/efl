@@ -268,7 +268,7 @@
 #include <assert.h>
 #include <errno.h>
 
-#ifdef HAVE_UNISTD_H
+#ifndef _MSC_VER
 # include <unistd.h>
 #endif
 

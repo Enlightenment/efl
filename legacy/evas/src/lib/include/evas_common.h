@@ -242,12 +242,8 @@ void *alloca (size_t);
 #include <time.h>
 #include <ctype.h>
 
-#ifdef HAVE_STDINT_H
+#ifndef _MSC_VER
 # include <stdint.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
 #endif
 
 #include <ft2build.h>

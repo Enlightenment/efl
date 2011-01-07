@@ -42,8 +42,10 @@ void *alloca (size_t);
 #include <dirent.h>
 #include <string.h>
 
-#ifdef HAVE_LIBGEN_H
+#ifndef _MSC_VER
 # include <libgen.h>
+#else
+# include <Evil.h>
 #endif
 
 #include <dlfcn.h>
