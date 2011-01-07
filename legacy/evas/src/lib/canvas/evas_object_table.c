@@ -1377,3 +1377,7 @@ evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned s
          return opt->obj;
    return NULL;
 }
+
+/**
+ * @}
+ */
