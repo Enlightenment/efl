@@ -805,7 +805,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      }
 
    if (savedtypes.pi) pasteimage_free(savedtypes.pi);
-   pi = pasteimage_alloc(p, data->length);
+   pi = pasteimage_alloc(p, strlen(p));
    if (savedtypes.textreq)
      {
         savedtypes.textreq = 0;
@@ -906,7 +906,7 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    munmap(tmp->map,data->length);
    
    /* FIXME: Add to paste image data to clean up */
-   pi = pasteimage_alloc(tmp->filename, data->length);
+   pi = pasteimage_alloc(tmp->filename, strlen(tmp->filename));
    pasteimage_append(pi, sel->requestwidget);
 
    tmpinfo_free(tmp);
@@ -1405,9 +1405,9 @@ _dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Position *pos;
    Ecore_X_Rectangle rect;
-   
+
    pos = ev;
-   
+
    /* Need to send a status back */
    /* FIXME: Should check I can drop here */
    /* FIXME: Should highlight widget */
