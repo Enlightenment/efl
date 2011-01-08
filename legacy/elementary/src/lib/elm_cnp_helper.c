@@ -12,6 +12,7 @@
 
 //#define DEBUGON 1
 
+
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
 #else
@@ -1073,9 +1074,9 @@ pasteimage_alloc(const char *file, int pathlen)
    if (file)
      {
         if (strstr(file,"file://")) file += prefixlen;
-        filebuf = alloca(sizeof(char) * (pathlen - prefixlen + 1));
-        strncpy(filebuf, file, pathlen - prefixlen);
-        filebuf[pathlen-prefixlen] = '\0';
+        filebuf = alloca(pathlen + 1);
+        strncpy(filebuf, file, pathlen);
+        filebuf[pathlen] = 0;
         pi->file = strdup(filebuf);
      }
 
@@ -1117,16 +1118,20 @@ pasteimage_provider_set(Evas_Object *entry)
 static Eina_Bool
 pasteimage_append(Paste_Image *pi, Evas_Object *entry)
 {
-   char entrytag[256];
-   
+   char *entrytag;
+   int len;
+   static const char *tagstring = "<item absize=240x180 href=file://%s></item>";
+
    if (!pi) return EINA_FALSE;
    if (!entry) return EINA_FALSE;
 
    pasteimage_provider_set(entry);
 
+   len = strlen(tagstring)+strlen(pi->file);
+
    pastedimages = eina_list_append(pastedimages, pi);
-   snprintf(entrytag, sizeof(entrytag), 
-            "<item absize=240x180 href=%s>", pi->tag);
+   entrytag = alloca(len + 1);
+   snprintf(entrytag, len + 1, tagstring, pi->file);
    elm_entry_entry_insert(entry, entrytag);
 
    return EINA_TRUE;
@@ -1344,11 +1349,14 @@ found:
    
    if (i == CNP_ATOM_text_urilist)
      {
-        cnp_debug("We found a URI... (%scached)\n", savedtypes.pi ? "" : "not ");
+        cnp_debug("We found a URI... (%scached) %s\n",
+                  savedtypes.pi ? "" : "not ",
+                  savedtypes.pi->file);
         if (savedtypes.pi)
           {
-             char entrytag[100];
-             
+             char *entrytag;
+             static const char *tagstring = "<item absize=240x180 href="
+                                                   "file://%s></item>";
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
 
@@ -1359,26 +1367,31 @@ found:
                   ddata.data = (char *)savedtypes.pi->file;
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
-                  
+
                   pasteimage_free(savedtypes.pi);
                   savedtypes.pi = NULL;
-                  
+
                   return EINA_TRUE;
                }
              else if (dropable->types & ELM_SEL_FORMAT_MARKUP)
                {
+                  int len;
                   ddata.format = ELM_SEL_FORMAT_MARKUP;
                   pasteimage_provider_set(dropable->obj);
-                  
+
                   pastedimages = eina_list_append(pastedimages, savedtypes.pi);
-                  snprintf(entrytag, sizeof(entrytag),
-                           "<item absize=240x180 href=%s>",
-                           savedtypes.pi->tag);
+                  len = strlen(tagstring) + strlen(savedtypes.pi->file);
+                  entrytag = alloca(len + 1);
+                  snprintf(entrytag, len + 1, tagstring, savedtypes.pi->file);
                   ddata.data = entrytag;
                   cnp_debug("Insert %s\n", (char *)ddata.data);
                   dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
                   ecore_x_dnd_send_finished();
                   return EINA_TRUE;
+               }
+             else
+               {
+                  cnp_debug("Umm,, dropped that\n");
                }
           }
         else if (savedtypes.textreq)
