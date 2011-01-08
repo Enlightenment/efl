@@ -706,6 +706,7 @@ _del_hook(Evas_Object *obj)
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->update_job) ecore_job_del(wd->update_job);
    if (wd->must_recalc_idler) ecore_idler_del(wd->must_recalc_idler);
+   if (wd->multi_timer) ecore_timer_del(wd->multi_timer);
    free(wd);
 }
 
