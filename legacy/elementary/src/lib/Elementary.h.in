@@ -2501,7 +2501,7 @@ extern "C" {
    EAPI void                  *elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a);
    EAPI void                  *elm_transit_effect_fade_add(Elm_Transit *transit);
    EAPI void                  *elm_transit_effect_blend_add(Elm_Transit *transit);
-   EAPI void                  *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree, Eina_Bool cw);
+   EAPI void                  *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree);
    EAPI void                  *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);       
 
   typedef struct _Elm_Store                      Elm_Store;

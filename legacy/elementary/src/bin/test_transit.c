@@ -81,7 +81,7 @@ _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, voi
    elm_transit_effect_color_add(trans, 100, 255, 100, 255, 200, 50, 200, 50); 
 
    /* Rotation Effect */
-   elm_transit_effect_rotation_add(trans, 0.0, 135.0, EINA_FALSE);
+   elm_transit_effect_rotation_add(trans, 0.0, 135.0);
 
    elm_transit_duration_set(trans, 5.0);
    elm_transit_go(trans);

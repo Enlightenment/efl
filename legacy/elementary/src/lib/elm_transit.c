@@ -2362,7 +2362,6 @@ typedef struct _Elm_Transit_Effect_Rotation Elm_Transit_Effect_Rotation;
 
 struct _Elm_Transit_Effect_Rotation
 {
-   Eina_Bool cw;
    float from, to;
 };
 
@@ -2395,8 +2394,6 @@ _transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress)
         evas_map_util_points_populate_from_object_full(map, obj, 0);
         degree = rotation->from + (float)(progress * rotation->to);
 
-        if (!rotation->cw) degree *= -1;
-        
         evas_object_geometry_get(obj, &x, &y, &w, &h);
 
         half_w = (float)w * 0.5;
@@ -2411,7 +2408,7 @@ _transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress)
 }
 
 static void *
-_transit_effect_rotation_context_new(float from_degree, float to_degree, Eina_Bool cw)
+_transit_effect_rotation_context_new(float from_degree, float to_degree)
 {
    Elm_Transit_Effect_Rotation *rotation;
 
@@ -2420,7 +2417,6 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree, Eina_Bo
 
    rotation->from = from_degree;
    rotation->to = to_degree - from_degree;
-   rotation->cw = cw;
 
    return rotation;
 }
@@ -2440,7 +2436,6 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree, Eina_Bo
  * @param transit Transit object.
  * @param from_degree Degree when effect begins.
  * @param to_degree Degree when effect is ends.
- * @param cw Rotation direction. EINA_TRUE is clock wise.
  * @return Rotation effect context data.
  * 
  * @ingroup Transit
@@ -2452,10 +2447,10 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree, Eina_Bo
  * to run, because the order of the objects will be affected.
  */
 EAPI void *
-elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree, Eina_Bool cw)
+elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree, cw);
+   void *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree);
    
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
