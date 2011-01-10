@@ -2420,24 +2420,35 @@ extern "C" {
     * "changed" - when the color value changes
     */
 
-   /* ctxpopup */
+   /* Contextual Popup */
    typedef struct _Elm_Ctxpopup_Item Elm_Ctxpopup_Item;
 
-   EAPI Evas_Object        *elm_ctxpopup_add(Evas_Object* parent) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_hover_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object        *elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon) EINA_ARG_NONNULL(1);
-   EAPI const char         *elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1, 2);
-   EAPI Evas_Object        *elm_ctxpopup_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_clear(Evas_Object* obj) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_horizontal_set(Evas_Object* obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool           elm_ctxpopup_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Elm_Ctxpopup_Item  *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
-   EAPI void                elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool           elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
+   typedef enum _Elm_Ctxpopup_Direction
+     {
+        ELM_CTXPOPUP_DIRECTION_DOWN,
+        ELM_CTXPOPUP_DIRECTION_RIGHT,
+        ELM_CTXPOPUP_DIRECTION_LEFT,
+        ELM_CTXPOPUP_DIRECTION_UP,
+     } Elm_Ctxpopup_Direction;
+
+   EAPI Evas_Object  *elm_ctxpopup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object  *elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1); 
+   EAPI void          elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EAPI const char   *elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);	
+   EAPI void          elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1, 2); 
+   EAPI Evas_Object  *elm_ctxpopup_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool     elm_ctxpopup_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   Elm_Ctxpopup_Item *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool     elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void	      elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
+   EAPI Evas_Object  *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void  	      elm_ctxpopup_direction_priority_set(Evas_Object *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth) EINA_ARG_NONNULL(1);
+   EAPI void  	      elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "dismissed" - the ctxpopup was dismissed
     */
