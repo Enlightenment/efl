@@ -41,7 +41,7 @@ struct _Widget_Data
    const char *transition;
 
    Ecore_Timer *timer;
-   int timeout;
+   double timeout;
    Eina_Bool loop:1;
 
    struct {
@@ -86,9 +86,9 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
        (!strcmp(ev->keyname, "space")))
      {
         if (wd->timeout)
-          elm_slideshow_timeout_set(obj, 0);
+          elm_slideshow_timeout_set(obj, 0.0);
         else
-          elm_slideshow_timeout_set(obj, 3);
+          elm_slideshow_timeout_set(obj, 3.0);
 
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -560,7 +560,7 @@ elm_slideshow_transition_get(const Evas_Object *obj)
  * @ingroup Slideshow
  */
 EAPI void
-elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
+elm_slideshow_timeout_set(Evas_Object *obj, double timeout)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -568,7 +568,7 @@ elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
    wd->timeout = timeout;
    if (wd->timer) ecore_timer_del(wd->timer);
    wd->timer = NULL;
-   if (timeout > 0)
+   if (timeout > 0.0)
      wd->timer = ecore_timer_add(timeout, _timer_cb, obj);
 }
 
@@ -580,12 +580,12 @@ elm_slideshow_timeout_set(Evas_Object *obj ,int timeout)
  *
  * @ingroup Slideshow
  */
-EAPI int
+EAPI double
 elm_slideshow_timeout_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   ELM_CHECK_WIDTYPE(obj, widtype) -1.0;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return -1;
+   if (!wd) return -1.0;
    return wd->timeout;
 }
 

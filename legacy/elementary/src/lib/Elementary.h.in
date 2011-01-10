@@ -1849,8 +1849,8 @@ extern "C" {
    EAPI const Eina_List    *elm_slideshow_transitions_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_transition_set(Evas_Object *obj, const char *transition) EINA_ARG_NONNULL(1);
    EAPI const char         *elm_slideshow_transition_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                elm_slideshow_timeout_set(Evas_Object *obj ,int timeout) EINA_ARG_NONNULL(1);
-   EAPI int                 elm_slideshow_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                elm_slideshow_timeout_set(Evas_Object *obj, double timeout) EINA_ARG_NONNULL(1);
+   EAPI double              elm_slideshow_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool           elm_slideshow_loop_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);

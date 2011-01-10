@@ -35,7 +35,7 @@ _previous(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_notify_timeout_set(data, 0);
+   elm_notify_timeout_set(data, 0.0);
    evas_object_show(data);
 }
 
@@ -43,7 +43,7 @@ _mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 static void
 _mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_notify_timeout_set(data, 3);
+   elm_notify_timeout_set(data, 3.0);
 }
 
 static void
@@ -63,25 +63,25 @@ _layout_select(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
+   elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
 
-   elm_object_disabled_set(bt_start, 1);
-   elm_object_disabled_set(bt_stop, 0);
+   elm_object_disabled_set(bt_start, EINA_TRUE);
+   elm_object_disabled_set(bt_stop, EINA_FALSE);
 }
 
 static void
 _stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_slideshow_timeout_set(slideshow, 0);
-   elm_object_disabled_set(bt_start, 0);
-   elm_object_disabled_set(bt_stop, 1);
+   elm_slideshow_timeout_set(slideshow, 0.0);
+   elm_object_disabled_set(bt_start, EINA_FALSE);
+   elm_object_disabled_set(bt_stop, EINA_TRUE);
 }
 
 static void
 _spin(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    if (elm_slideshow_timeout_get(slideshow) > 0)
-     elm_slideshow_timeout_set(slideshow, (int)elm_spinner_value_get(data));
+     elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
 }
 
 static Evas_Object *
@@ -118,7 +118,7 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bg);
 
    slideshow = elm_slideshow_add(win);
-   elm_slideshow_loop_set(slideshow, 1);
+   elm_slideshow_loop_set(slideshow, EINA_TRUE);
    elm_win_resize_object_add(win, slideshow);
    evas_object_size_hint_weight_set(slideshow, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(slideshow);
@@ -139,10 +139,10 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
    elm_win_resize_object_add(win, notify);
-   elm_notify_timeout_set(notify, 3);
+   elm_notify_timeout_set(notify, 3.0);
 
    bx = elm_box_add(win);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    elm_notify_content_set(notify, bx);
    evas_object_show(bx);
 
@@ -200,7 +200,7 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_button_label_set(bt, "Stop");
    evas_object_smart_callback_add(bt, "clicked", _stop, spin);
    elm_box_pack_end(bx, bt);
-   elm_object_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_show(bt);
 
    evas_object_event_callback_add(slideshow, EVAS_CALLBACK_MOUSE_UP,
