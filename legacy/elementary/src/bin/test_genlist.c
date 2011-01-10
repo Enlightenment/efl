@@ -28,11 +28,14 @@ char *gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __U
    return strdup(buf);
 }
 
-Evas_Object *gl_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+Evas_Object *gl_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   if (!strcmp(part, "elm.swallow.end"))
+      snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+   else
+      snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
