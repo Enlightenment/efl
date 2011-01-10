@@ -514,6 +514,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
       case ARES_EDESTRUCTION: /* request canceled, shuting down */
       case ARES_ENODATA: /* no data returned */
       case ARES_ECONNREFUSED: /* connection refused */
+      case ARES_ETIMEOUT: /* connection timed out */
         goto on_error;
 
       default:
