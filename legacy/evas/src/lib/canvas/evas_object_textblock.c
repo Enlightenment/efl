@@ -5356,15 +5356,17 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos)
         cur->node = n;
         cur->pos = pos;
      }
-   else
+   else if (o->text_nodes)
      {
+        /* In case we went pass the last node, we need to put the cursor
+         * at the absolute end. */
         Evas_Object_Textblock_Node_Text *last_n;
 
         last_n = _NODE_TEXT(EINA_INLIST_GET(o->text_nodes)->last);
-        cur->node = last_n;
-	cur->pos = 0;
+        pos = eina_ustrbuf_length_get(last_n->unicode);
 
-        evas_textblock_cursor_paragraph_char_last(cur);
+        cur->node = last_n;
+        cur->pos = pos;
      }
 
 }
