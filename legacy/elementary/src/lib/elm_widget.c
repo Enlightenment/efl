@@ -479,12 +479,14 @@ elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force)
    Evas_Object *child;
    Elm_Tooltip *tt;
    Elm_Cursor *cur;
-   Elm_Theme *th2;
+   Elm_Theme *th2, *thdef;
 
    API_ENTRY return;
    if (!force)
      {
         th2 = sd->theme;
+        thdef = elm_theme_default_get();
+        if (!th2) th2 = thdef;
         while (th2)
           {
              if (th2 == th)
@@ -492,7 +494,8 @@ elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force)
                  force = EINA_TRUE;
                  break;
                }
-            th2 = th->ref_theme;
+             th2 = th->ref_theme;
+             if (th2 == thdef) break;
           }
      }
    if (!force) return;
