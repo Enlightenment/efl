@@ -55,27 +55,15 @@ my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-my_map_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_load_detail(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("load\n");
+   printf("load,detail\n");
 }
 
 static void
-my_map_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_loaded_detail(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("loaded\n");
-}
-
-static void
-my_map_load_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   printf("load,details\n");
-}
-
-static void
-my_map_loaded_details(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   printf("loaded,details\n");
+   printf("loaded,detail\n");
 }
 
 static void
@@ -126,6 +114,14 @@ my_map_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
    double lon, lat;
    elm_map_geo_region_get(obj, &lon, &lat);
    printf("scroll longitude : %f latitude : %f\n", lon, lat);
+}
+
+static void
+my_map_downloaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   int try_num, finish_num;
+   elm_map_utils_downloading_status_get(data, &try_num, &finish_num);
+   printf("downloaded : %d / %d\n", finish_num, try_num);
 }
 
 static void
@@ -445,10 +441,8 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_smart_callback_add(map, "press", my_map_press, win);
         evas_object_smart_callback_add(map, "longpressed", my_map_longpressed, win);
         evas_object_smart_callback_add(map, "clicked,double", my_map_clicked_double, win);
-        evas_object_smart_callback_add(map, "load", my_map_load, win);
-        evas_object_smart_callback_add(map, "loaded", my_map_loaded, win);
-        evas_object_smart_callback_add(map, "load,details", my_map_load_details, win);
-        evas_object_smart_callback_add(map, "loaded,details", my_map_loaded_details, win);
+        evas_object_smart_callback_add(map, "load,detail", my_map_load_detail, win);
+        evas_object_smart_callback_add(map, "loaded,detail", my_map_loaded_detail, win);
         evas_object_smart_callback_add(map, "zoom,start", my_map_zoom_start, win);
         evas_object_smart_callback_add(map, "zoom,stop", my_map_zoom_stop, win);
         evas_object_smart_callback_add(map, "zoom,change", my_map_zoom_change, win);
@@ -457,6 +451,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_smart_callback_add(map, "scroll,drag,start", my_map_drag_start, win);
         evas_object_smart_callback_add(map, "scroll,drag,stop", my_map_drag_stop, win);
         evas_object_smart_callback_add(map, "scroll", my_map_scroll, win);
+        evas_object_smart_callback_add(map, "downloaded", my_map_downloaded, map);
 
         evas_object_show(map);
 

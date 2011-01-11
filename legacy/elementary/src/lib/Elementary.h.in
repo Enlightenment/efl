@@ -2071,6 +2071,7 @@ extern "C" {
    EAPI Eina_Bool             elm_map_paused_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num) EINA_ARG_NONNULL(1, 2, 3);
    EAPI void	              elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat);
    EAPI void                  elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y);
    EAPI Elm_Map_Marker       *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data) EINA_ARG_NONNULL(1, 4, 5);

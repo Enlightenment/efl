@@ -19,9 +19,9 @@
  *
  * clicked,double - This is called when a user has double-clicked the photo.
  *
- * load,details - Map detailed data load begins.
+ * load,detail - Map detailed data load begins.
  *
- * loaded,details - This is called when all parts of the map are loaded.
+ * loaded,detail - This is called when all parts of the map are loaded.
  *
  * zoom,start - Zoom animation started.
  *
@@ -38,6 +38,8 @@
  * scroll,drag,start - dragging the contents around has started
  *
  * scroll,drag,stop - dragging the contents around has stopped
+ *
+ * downloaded - This is called when map images are downloaded
  *
  * TODO : doxygen
  */
@@ -70,23 +72,30 @@ typedef struct _Map_Sources_Tab
 #define ZOOM_MAX 18
 
 //Zemm min is supposed to be 0
-static char *_mapnik_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
-static char *_osmarender_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
-static char *_cyclemap_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
-static char *_maplint_url_cb(Evas_Object *obj __UNUSED__,int x, int y, int zoom);
-static char *_module_url_cb(Evas_Object *obj,int x, int y, int zoom);
+static char *_mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_maplint_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_module_url_cb(Evas_Object *obj, int x, int y, int zoom);
+static char * _custom1_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char * _custom2_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char * _custom3_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char * _custom4_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char * _custom5_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char * _custom6_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+
 static Map_Sources_Tab map_sources_tab[] =
 {
      {ELM_MAP_SOURCE_MAPNIK, "Mapnik", 0, 18, _mapnik_url_cb},
      {ELM_MAP_SOURCE_OSMARENDER, "Osmarender", 0, 17, _osmarender_url_cb},
      {ELM_MAP_SOURCE_CYCLEMAP, "Cycle Map", 0, 17, _cyclemap_url_cb},
      {ELM_MAP_SOURCE_MAPLINT, "Maplint", 12, 16, _maplint_url_cb},
-     {ELM_MAP_SOURCE_CUSTOM_1, "Custom 1", 0, 18, NULL},
-     {ELM_MAP_SOURCE_CUSTOM_2, "Custom 2", 0, 18, NULL},
-     {ELM_MAP_SOURCE_CUSTOM_3, "Custom 3", 0, 18, NULL},
-     {ELM_MAP_SOURCE_CUSTOM_4, "Custom 4", 0, 18, NULL},
-     {ELM_MAP_SOURCE_CUSTOM_5, "Custom 5", 0, 18, NULL},
-     {ELM_MAP_SOURCE_CUSTOM_6, "Custom 6", 0, 18, NULL},
+     {ELM_MAP_SOURCE_CUSTOM_1, "Custom 1", 0, 18, _custom1_url_cb},
+     {ELM_MAP_SOURCE_CUSTOM_2, "Custom 2", 0, 18, _custom2_url_cb},
+     {ELM_MAP_SOURCE_CUSTOM_3, "Custom 3", 0, 18, _custom3_url_cb},
+     {ELM_MAP_SOURCE_CUSTOM_4, "Custom 4", 0, 18, _custom4_url_cb},
+     {ELM_MAP_SOURCE_CUSTOM_5, "Custom 5", 0, 18, _custom5_url_cb},
+     {ELM_MAP_SOURCE_CUSTOM_6, "Custom 6", 0, 18, _custom6_url_cb},
      {ELM_MAP_SOURCE_MODULE, "Module", 0, 18, _module_url_cb}
 };
 
@@ -252,6 +261,8 @@ struct _Widget_Data
    Elm_Map_Sources source;
    Mod_Api *api;
    Eina_List *s_event_list;
+   int try_num;
+   int finish_num;
 };
 
 struct _Mod_Api
@@ -300,6 +311,7 @@ static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 static const char SIG_ZOOM_CHANGE[] = "zoom,change";
 static const char SIG_ZOOM_START[] = "zoom,start";
 static const char SIG_ZOOM_STOP[] = "zoom,stop";
+static const char SIG_DOWNLOADED[] = "downloaded";
 static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_CHANGED, ""},
   {SIG_CLICKED, ""},
@@ -314,6 +326,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
   {SIG_ZOOM_CHANGE, ""},
   {SIG_ZOOM_START, ""},
   {SIG_ZOOM_STOP, ""},
+  {SIG_DOWNLOADED, ""},
   {NULL, NULL}
 };
 
@@ -713,6 +726,7 @@ grid_clear(Evas_Object *obj, Grid *g)
 	     ecore_file_download_abort(gi->job);
 	     ecore_file_remove(gi->file);
 	     gi->job = NULL;
+	     wd->try_num--;
 	  }
 	if (gi->file)
 	  eina_stringshare_del(gi->file);
@@ -767,6 +781,10 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
 	DBG("Download failed %s (%d) ", gi->file, status);
 	ecore_file_remove(gi->file);
      }
+   else
+     gi->wd->finish_num++;
+
+   evas_object_smart_callback_call(gi->wd->obj, SIG_DOWNLOADED, NULL);
 }
 
 static Grid *
@@ -852,14 +870,6 @@ grid_load(Evas_Object *obj, Grid *g)
 	  {
 	     if (gi->want)
 	       {
-		  wd->preload_num--;
-		  if (!wd->preload_num)
-		    {
-		       edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
-                                               "elm,state,busy,stop", "elm");
-		       evas_object_smart_callback_call(obj, SIG_LOADED_DETAIL,
-						       NULL);
-		    }
 		  evas_object_hide(gi->img);
 		  //evas_object_hide(gi->txt);
 		  evas_object_image_file_set(gi->img, NULL, NULL);
@@ -872,8 +882,18 @@ grid_load(Evas_Object *obj, Grid *g)
 		       ecore_file_download_abort(gi->job);
 		       ecore_file_remove(gi->file);
 		       gi->job = NULL;
+                       wd->try_num--;
 		    }
 		  gi->download = EINA_FALSE;
+		  wd->preload_num--;
+		  if (!wd->preload_num)
+		    {
+		       edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
+                                               "elm,state,busy,stop", "elm");
+		       evas_object_smart_callback_call(obj, SIG_LOADED_DETAIL,
+						       NULL);
+		    }
+
 	       }
 	     else if (gi->have)
 	       {
@@ -982,8 +1002,10 @@ grid_load(Evas_Object *obj, Grid *g)
 			 {
 			    DBG("DOWNLOAD %s \t in %s", source, buf2);
 			    ecore_file_download(source, buf2, _tile_downloaded, NULL, gi, &(gi->job));
-			    if (!gi->job)
-			      DBG("Can't start to download %s", buf);
+                            if (!gi->job)
+                              DBG("Can't start to download %s", buf);
+                            else
+                              wd->try_num++;
 			 }
 		    }
 		  if (source) free(source);
@@ -2658,6 +2680,35 @@ elm_map_paused_markers_get(const Evas_Object *obj)
 }
 
 /**
+ * Get the information of downloading status
+ *
+ * This gets the current downloading status for the map object.
+ *
+ * @param obj The map object
+ * @param try_num the number of download trying map
+ * @param finish_num the number of downloaded map
+ *
+ * @ingroup Map
+ */
+
+EAPI void 
+elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   if (try_num)
+     {
+        *try_num = wd->try_num;
+     }
+
+   if (finish_num)
+     {
+        *finish_num = wd->finish_num;
+     }
+}
+/**
  * Convert a pixel coordinate (x,y) into a geographic coordinate (longitude, latitude).
  *
  * @param obj The map object
@@ -3522,6 +3573,42 @@ _maplint_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
             "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
             zoom, x, y);
    return strdup(buf);
+}
+
+static char *
+_custom1_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   return strdup("");
+}
+
+static char *
+_custom2_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   return strdup("");
+}
+
+static char *
+_custom3_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   return strdup("");
+}
+
+static char *
+_custom4_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   return strdup("");
+}
+
+static char *
+_custom5_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   return strdup("");
+}
+
+static char *
+_custom6_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   return strdup("");
 }
 
 static char *
