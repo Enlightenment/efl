@@ -23,7 +23,7 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    it = elm_ctxpopup_item_append(_hov, _label, ic, _ctxpopup_item_cb, NULL);    \
 
 static void
-_list_item_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Ctxpopup_Item *it;
@@ -47,7 +47,7 @@ _list_item_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
-_list_item_cb2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Ctxpopup_Item *it;
@@ -70,7 +70,7 @@ _list_item_cb2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_list_item_cb3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Ctxpopup_Item *it;
@@ -92,7 +92,7 @@ _list_item_cb3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_list_item_cb4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Ctxpopup_Item *it;
@@ -116,11 +116,10 @@ _list_item_cb4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 
 
 static void
-_list_item_cb5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *btn;
    Evas_Coord x,y;
-   char buf[PATH_MAX];
 
    btn = elm_button_add(obj);
    elm_button_label_set(btn, "Enlightenment");
@@ -143,7 +142,7 @@ static void _list_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
 void
 test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *list, *ic;
+   Evas_Object *win, *bg, *list;
 
    win = elm_win_add(NULL, "Contexual Popup", ELM_WIN_BASIC);
    elm_win_title_set(win, "Contextual Popup");

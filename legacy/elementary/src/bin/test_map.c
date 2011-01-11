@@ -55,13 +55,13 @@ my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-my_map_load_detail(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_load_detail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("load,detail\n");
 }
 
 static void
-my_map_loaded_detail(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_loaded_detail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("loaded,detail\n");
 }
