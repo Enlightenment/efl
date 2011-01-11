@@ -344,7 +344,7 @@ _ecore_con_info_cares_state_cb(void *data __UNUSED__,
                                int write)
 {
    int flags = 0;
-   Ecore_Con_FD *search, *ecf;
+   Ecore_Con_FD *search = NULL, *ecf = NULL;
 
    search = eina_list_search_unsorted(info_fds,
             (Eina_Compare_Cb)_ecore_con_info_fds_search, &ecf);
