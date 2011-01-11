@@ -1211,7 +1211,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
 }
 
 static void
-_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *move = event_info;
@@ -1225,7 +1225,7 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_inf
 }
 
 static void
-_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
@@ -1301,7 +1301,7 @@ done:
 }
 
 static void
-_mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Multi_Move *move = event_info;
@@ -1346,7 +1346,7 @@ _mouse_multi_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *eve
 }
 
 static void
-_mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+_mouse_multi_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Multi_Up *up = event_info;
    Event *ev0;
@@ -2694,9 +2694,9 @@ elm_map_paused_markers_get(const Evas_Object *obj)
 EAPI void 
 elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
+   if (!wd) return;
 
    if (try_num)
      {
@@ -3576,37 +3576,37 @@ _maplint_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 }
 
 static char *
-_custom1_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_custom1_url_cb(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__, int zoom __UNUSED__)
 {
    return strdup("");
 }
 
 static char *
-_custom2_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_custom2_url_cb(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__, int zoom __UNUSED__)
 {
    return strdup("");
 }
 
 static char *
-_custom3_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_custom3_url_cb(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__, int zoom __UNUSED__)
 {
    return strdup("");
 }
 
 static char *
-_custom4_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_custom4_url_cb(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__, int zoom __UNUSED__)
 {
    return strdup("");
 }
 
 static char *
-_custom5_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_custom5_url_cb(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__, int zoom __UNUSED__)
 {
    return strdup("");
 }
 
 static char *
-_custom6_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_custom6_url_cb(Evas_Object *obj __UNUSED__, int x __UNUSED__, int y __UNUSED__, int zoom __UNUSED__)
 {
    return strdup("");
 }
