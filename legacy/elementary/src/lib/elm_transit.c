@@ -768,7 +768,7 @@ elm_transit_duration_set(Elm_Transit *transit, double duration)
 EAPI double 
 elm_transit_duration_get(const Elm_Transit *transit)
 {
-   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, 0.0);
    return transit->time.duration;
 }
 
