@@ -303,14 +303,14 @@ static Elm_Ctxpopup_Direction
 _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
 {
    Widget_Data *wd;
-   Evas_Coord_Point pos;
+   Evas_Coord_Point pos = {0, 0};
    Evas_Coord_Point base_size;
    Evas_Coord_Point max_size;
    Evas_Coord_Point min_size;
    Evas_Coord_Rectangle hover_area;
    Evas_Coord_Rectangle parent_size;
    Evas_Coord_Point arrow_size;
-   Elm_Ctxpopup_Direction arrow;
+   Elm_Ctxpopup_Direction arrow = ELM_CTXPOPUP_DIRECTION_DOWN;
    Evas_Coord finger_size;
    Evas_Coord_Point temp;
    int idx;
@@ -568,11 +568,8 @@ _sizing_eval(Evas_Object *obj)
 
    //Base
    wd->dir = _calc_base_geometry(obj, &rect);
-   if (wd->dir != -1)
-     {
-        _update_arrow(obj, wd->dir);
-        _shift_base_by_arrow(wd->arrow, wd->dir, &rect);
-     }
+   _update_arrow(obj, wd->dir);
+   _shift_base_by_arrow(wd->arrow, wd->dir, &rect);
 
    //resize scroller according to final size. 
    if (!wd->content)
@@ -700,7 +697,7 @@ _bg_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_parent_resize(void *data, Evas *e, Evas_Object *obj,
+_parent_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
                void *event_info __UNUSED__)
 {
    Evas_Coord w, h;
@@ -889,7 +886,7 @@ _item_new(Elm_Ctxpopup_Item *item, char *group_name)
 }
 
 static void
-_content_del(void *data, Evas *e, Evas_Object *obj __UNUSED__,
+_content_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
              void *event_info __UNUSED__)
 {
    elm_ctxpopup_content_unset(data);
