@@ -311,7 +311,6 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
 #endif
         if (sci->im)
           {
-             LKL(cache_lock);
              evas_common_rgba_image_free(&sci->im->cache_entry);
              sci->im = NULL;
              sci->usage = 0;
@@ -324,7 +323,6 @@ _cache_prune(Scaleitem *notsci, Eina_Bool copies_only)
 //             INF(" 2- %i", sci->dst_w * sci->dst_h * 4);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
              memset(sci, 0, sizeof(Eina_Inlist));
-             LKU(cache_lock);
           }
 #ifdef EVAS_FRAME_QUEUING
         RWLKU(sci->lock);
