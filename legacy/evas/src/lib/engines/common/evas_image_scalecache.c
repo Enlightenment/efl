@@ -809,17 +809,3 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
      }
 #endif
 }
-
-#if 0
-// to be done
-void
-evas_common_rgba_image_scalecache_XXX(Image_Entry *ie)
-{
-#ifdef SCALECACHE
-   RGBA_Image *im = (RGBA_Image *)ie;
-   LKL(im->cache.lock);
-   // FIXME: XXX
-   LKU(im->cache.lock);
-#endif
-}
-#endif
