@@ -505,7 +505,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(win);
 
    /* Adding Transit */
-   trans = elm_transit_add(5.0);
+   trans = elm_transit_add();
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
    elm_transit_tween_mode_set(trans, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
    elm_transit_repeat_times_set(trans, -1);
@@ -514,6 +514,8 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_transit_effect_add(trans,
                           _custom_op, effect_context,
                           _custom_context_free);
+   elm_transit_duration_set(trans, 5.0);
+   elm_transit_go(trans);
 }
 
 #endif

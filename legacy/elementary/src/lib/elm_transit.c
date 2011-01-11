@@ -264,7 +264,7 @@ _animator_animate_cb(void *data)
  * @ingroup Transit
  */
 EAPI Elm_Transit *
-elm_transit_add()
+elm_transit_add(void)
 {
    Elm_Transit *transit = ELM_NEW(Elm_Transit);
    if (!transit) return NULL;

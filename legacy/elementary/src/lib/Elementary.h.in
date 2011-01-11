@@ -2482,7 +2482,7 @@ extern "C" {
 
    typedef struct _Elm_Transit Elm_Transit;
 
-   EAPI Elm_Transit           *elm_transit_add();
+   EAPI Elm_Transit           *elm_transit_add(void);
    EAPI void                   elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data, void (*data_free_cb)(void *data, Elm_Transit *transit)) EINA_ARG_NONNULL(1, 2);
    EAPI void                   elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data) EINA_ARG_NONNULL(1, 2);
