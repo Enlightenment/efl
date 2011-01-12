@@ -1143,10 +1143,10 @@ _swipe_cancel(void *data)
 static Eina_Bool
 _multi_cancel(void *data)
 {
-   Elm_Genlist_Item *it = data;
+   Widget_Data *wd = data;
 
-   if (!it) return ECORE_CALLBACK_CANCEL;
-   it->wd->multi_timeout = EINA_TRUE;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   wd->multi_timeout = EINA_TRUE;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1311,7 +1311,7 @@ _mouse_down(void        *data,
         it->wd->prev_y = ev->canvas.y;
         it->wd->multi_timeout = EINA_FALSE;
         if (it->wd->multi_timer) ecore_timer_del(it->wd->multi_timer);
-        it->wd->multi_timer = ecore_timer_add(1, _multi_cancel, it);
+        it->wd->multi_timer = ecore_timer_add(1, _multi_cancel, it->wd);
      }
    it->wd->longpressed = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
