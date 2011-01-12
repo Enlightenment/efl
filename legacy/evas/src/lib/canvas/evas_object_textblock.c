@@ -5040,6 +5040,7 @@ _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblo
 
    o->format_nodes = _NODE_FORMAT(eina_inlist_remove(
            EINA_INLIST_GET(o->format_nodes), EINA_INLIST_GET(n)));
+   _evas_textblock_node_format_free(n);
 }
 
 /**
