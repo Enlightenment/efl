@@ -220,7 +220,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_text_urilist] = {
       "text/uri-list",
-      ELM_SEL_FORMAT_IMAGE | ELM_SEL_FORMAT_MARKUP,
+      ELM_SEL_FORMAT_IMAGE,
       uri_converter,
       NULL,
       notify_handler_uri,
@@ -959,17 +959,17 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **
    sel = selections + *((int *)data);
    if (!sel->active) return EINA_TRUE;
    
-   if ((sel->format == ELM_SEL_FORMAT_MARKUP) ||
-       (sel->format == ELM_SEL_FORMAT_HTML))
+   if ((sel->format & ELM_SEL_FORMAT_MARKUP) ||
+       (sel->format & ELM_SEL_FORMAT_HTML))
      {
 	*data_ret = remove_tags(sel->selbuf, size_ret);
      }
-   else if (sel->format == ELM_SEL_FORMAT_TEXT)
+   else if (sel->format & ELM_SEL_FORMAT_TEXT)
      {
         *data_ret = strdup(sel->selbuf);
         *size_ret = strlen(sel->selbuf);
      }
-   else if (sel->format == ELM_SEL_FORMAT_IMAGE)
+   else if (sel->format & ELM_SEL_FORMAT_IMAGE)
      {
 	cnp_debug("Image %s\n", evas_object_type_get(sel->widget));
 	cnp_debug("Elm type: %s\n", elm_object_widget_type_get(sel->widget));
@@ -1360,20 +1360,9 @@ found:
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
 
-             if (dropable->types & ELM_SEL_FORMAT_IMAGE)
-               {
-                  cnp_debug("Doing image insert (%s)\n", savedtypes.pi->file);
-                  ddata.format = ELM_SEL_FORMAT_IMAGE;
-                  ddata.data = (char *)savedtypes.pi->file;
-                  dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
-                  ecore_x_dnd_send_finished();
-
-                  pasteimage_free(savedtypes.pi);
-                  savedtypes.pi = NULL;
-
-                  return EINA_TRUE;
-               }
-             else if (dropable->types & ELM_SEL_FORMAT_MARKUP)
+             /* If it's markup that also supports images */
+             if ((dropable->types & ELM_SEL_FORMAT_MARKUP) &&
+                    (dropable->types & ELM_SEL_FORMAT_IMAGE))
                {
                   int len;
                   ddata.format = ELM_SEL_FORMAT_MARKUP;
@@ -1389,9 +1378,24 @@ found:
                   ecore_x_dnd_send_finished();
                   return EINA_TRUE;
                }
+             else if (dropable->types & ELM_SEL_FORMAT_IMAGE)
+               {
+                  cnp_debug("Doing image insert (%s)\n", savedtypes.pi->file);
+                  ddata.format = ELM_SEL_FORMAT_IMAGE;
+                  ddata.data = (char *)savedtypes.pi->file;
+                  dropable->dropcb(dropable->cbdata, dropable->obj, &ddata);
+                  ecore_x_dnd_send_finished();
+
+                  pasteimage_free(savedtypes.pi);
+                  savedtypes.pi = NULL;
+
+                  return EINA_TRUE;
+               }
              else
                {
-                  cnp_debug("Umm,, dropped that\n");
+                  cnp_debug("Item doesn't support images... passing\n");
+                  pasteimage_free(savedtypes.pi);
+                  return EINA_TRUE;
                }
           }
         else if (savedtypes.textreq)
