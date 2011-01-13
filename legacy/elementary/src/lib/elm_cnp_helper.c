@@ -234,7 +234,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_png] = {
       "image/png",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,
@@ -242,7 +242,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_jpeg] = {
       "image/jpeg",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -250,7 +250,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_bmp] = {
       "image/x-ms-bmp",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -258,7 +258,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_gif] = {
       "image/gif",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -266,7 +266,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_tiff] = {
       "image/tiff",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -274,7 +274,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_svg] = {
       "image/svg+xml",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -282,7 +282,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_xpm] = {
       "image/x-xpixmap",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -290,7 +290,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_tga] = {
       "image/x-tga",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -298,7 +298,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_image_ppm] = {
       "image/x-portable-pixmap",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+      ELM_SEL_FORMAT_IMAGE,
       image_converter,
       NULL,
       notify_handler_image,/* Raw image data is the same */
@@ -306,7 +306,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
    },
    [CNP_ATOM_text_html_utf8] = {
       "text/html;charset=utf-8",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      ELM_SEL_FORMAT_HTML,
       html_converter,
       NULL,
       notify_handler_html,
