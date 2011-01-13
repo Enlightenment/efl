@@ -135,6 +135,7 @@ struct _Widget_Data
    Eina_Bool drag_selection_asked : 1;
    Eina_Bool can_write : 1;
    Eina_Bool autosave : 1;
+   Eina_Bool textonly : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -679,7 +680,11 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
+        Elm_Sel_Format formats;
         wd->selection_asked = EINA_TRUE;
+	formats = ELM_SEL_FORMAT_MARKUP;
+	if (!wd->textonly)
+	   formats |= ELM_SEL_FORMAT_IMAGE;
 	elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data,
                           NULL, NULL);
 #endif
@@ -1411,6 +1416,7 @@ elm_entry_add(Evas_Object *parent)
    wd->disabled     = EINA_FALSE;
    wd->context_menu = EINA_TRUE;
    wd->autosave     = EINA_TRUE;
+   wd->textonly     = EINA_FALSE;
 
    wd->ent = edje_object_add(e);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
@@ -1475,7 +1481,8 @@ elm_entry_add(Evas_Object *parent)
 				  _event_selection_clear, obj);
      }
 
-   elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP,_drag_drop_cb, NULL);
+   elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE,
+		   _drag_drop_cb, NULL);
 #endif
 
    entries = eina_list_prepend(entries, obj);
@@ -1513,6 +1520,7 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    wd->single_line = single_line;
    wd->linewrap = EINA_FALSE;
    wd->char_linewrap = EINA_FALSE;
+   elm_entry_cnp_textonly_set(obj, EINA_TRUE);
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    elm_entry_entry_set(obj, t);
@@ -2672,3 +2680,51 @@ elm_entry_autosave_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->autosave;
 }
+
+
+/**
+ * Control pasting of text and images for the widget.
+ *
+ * Normally the entry allows both text and images to be pasted.  By setting
+ * textonly to be true, this prevents images from being pasted.
+ *
+ * Note this only changes the behaviour of text.
+ *
+ * @param obj The entry object
+ * @param pmode paste mode - 0 is text only, 1 is text+image+other.
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
+{
+   Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   textonly = !!textonly;
+   if (wd->textonly == textonly) return;
+   wd->textonly = !!textonly;
+   if (!textonly) format |= ELM_SEL_FORMAT_IMAGE;
+   elm_drop_target_add(obj, format, _drag_drop_cb, NULL);
+}
+
+/**
+ * Getting elm_entry text paste/drop mode.
+ *
+ * In textonly mode, only text may be pasted or dropped into the widget.
+ *
+ * @param obj The entry object
+ * @return If the widget only accepts text from pastes.
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool
+elm_entry_cnp_textonly_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->textonly;
+}
+
