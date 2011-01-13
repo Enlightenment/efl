@@ -1469,43 +1469,52 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
 {
    Dropable *drop;
    Ecore_X_Window xwin;
+   Eina_List *item;
    int first;
-   
+
    if (!obj) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
-   
+
    /* Is this the first? */
    first = (!drops) ? 1 : 0;
-   
+
+   EINA_LIST_FOREACH(drops, item, drop)
+     {
+        if (drop->obj == obj)
+          {
+             /* Update: Not a new one */
+             drop->dropcb = dropcb;
+             drop->cbdata = cbdata;
+             drop->types = format;
+             return EINA_TRUE;
+          }
+     }
+
+   /* Create new drop */
    drop = calloc(1, sizeof(Dropable));
    if (!drop) return EINA_FALSE;
-   drop->dropcb = dropcb;
-   drop->cbdata = cbdata;
-   
-   /* FIXME: Check it's not already there */
-   
    /* FIXME: Check for eina's deranged error method */
    drops = eina_list_append(drops, drop);
-   
+
    if (!drops/* || or other error */)
      {
         free(drop);
         return EINA_FALSE;
      }
-   
-   drop->obj = obj;
-   /* Something for now */
+   drop->dropcb = dropcb;
+   drop->cbdata = cbdata;
    drop->types = format;
-   
+   drop->obj = obj;
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   /* I love C and varargs */
                                   (Evas_Object_Event_Cb)elm_drop_target_del,
                                   obj);
    /* FIXME: Handle resizes */
-   
+
    /* If not the first: We're done */
    if (!first) return EINA_TRUE;
-   
+
    xwin = (Ecore_X_Window)ecore_evas_window_get
       (ecore_evas_ecore_evas_get(evas_object_evas_get(obj)));
    
