@@ -758,6 +758,7 @@ void
 evas_gl_common_context_free(Evas_GL_Context *gc)
 {
    int i, j;
+   Eina_List *l;
    
    gc->references--;
    if (gc->references > 0) return;
@@ -779,6 +780,8 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
    
    if ((gc->shared) && (gc->shared->references == 0))
      {
+        Evas_GL_Texture_Pool *pt;
+        
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.rect));
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.font));
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.img));
@@ -794,20 +797,15 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
           {
              evas_gl_common_image_free(gc->shared->images->data);
           }
-        while (gc->shared->tex.whole)
-          {
-             evas_gl_common_texture_free(gc->shared->tex.whole->data);
-          }
+        
+        EINA_LIST_FOREACH(gc->shared->tex.whole, l, pt)
+           evas_gl_texture_pool_empty(pt);
         for (i = 0; i < 33; i++)
           {
              for (j = 0; j < 3; j++)
                {
-                  while (gc->shared->tex.atlas[i][j])
-                    {
-                       evas_gl_common_texture_free
-                         ((Evas_GL_Texture *)gc->shared->tex.atlas[i][j]);
-                       gc->shared->tex.atlas[i][j] = NULL;
-                    }
+                  EINA_LIST_FOREACH(gc->shared->tex.atlas[i][j], l, pt)
+                     evas_gl_texture_pool_empty(pt);
                }
           }
         eina_hash_free(gc->shared->native_hash);

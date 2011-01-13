@@ -94,7 +94,7 @@ _tex_format_index(GLuint format)
         return 1;
      case GL_ALPHA:
         return 2;
-     case GL_LUMINANCE:
+     case GL_LUMINANCE: // never used in atlas
         return 3;
      default:
         return 0;
@@ -312,10 +312,6 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im)
      }
    if (!tex->pt)
      {
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x11, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -610,11 +606,10 @@ _pool_tex_dynamic_new(Evas_GL_Context *gc, int w, int h, int intformat, int form
    return pt;
 }
 
-static void
-pt_unref(Evas_GL_Texture_Pool *pt)
+void
+evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 {
-   pt->references--;
-   if (pt->references != 0) return;
+   if (!pt->gc) return;
    
    if (pt->format == alpha_fmt)
       {
@@ -649,14 +644,6 @@ pt_unref(Evas_GL_Texture_Pool *pt)
    
    _print_tex_count();
    
-   if (!((pt->render) || (pt->native)))
-     {
-        if (pt->whole)
-          pt->gc->shared->tex.whole = eina_list_remove(pt->gc->shared->tex.whole, pt);
-        else
-          pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
-          eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
-     }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (pt->dyn.img)
      {
@@ -677,11 +664,34 @@ pt_unref(Evas_GL_Texture_Pool *pt)
      {
         glsym_glDeleteFramebuffers(1, &(pt->fb));
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        pt->fb = 0;
      }
-   // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-   // find some mysterious bug i simply have been unable to catch or
-   // reproduce - so leave a trail and see how it goes.
-   memset(pt, 0x22, sizeof(Evas_GL_Texture_Pool));
+   while (pt->allocations)
+      pt->allocations = 
+      eina_list_remove_list(pt->allocations, pt->allocations);
+   pt->texture = 0;
+   pt->gc = NULL;
+   pt->w = 0;
+   pt->h = 0;
+}
+
+static void
+pt_unref(Evas_GL_Texture_Pool *pt)
+{
+   if (!pt->gc) return;
+   pt->references--;
+   if (pt->references != 0) return;
+
+   if (!((pt->render) || (pt->native)))
+     {
+        if (pt->whole)
+           pt->gc->shared->tex.whole = 
+           eina_list_remove(pt->gc->shared->tex.whole, pt);
+        else
+           pt->gc->shared->tex.atlas [pt->slot][pt->fslot] =
+           eina_list_remove(pt->gc->shared->tex.atlas[pt->slot][pt->fslot], pt);
+     }
+   evas_gl_texture_pool_empty(pt);
    free(pt);
 }
 
@@ -712,10 +722,6 @@ evas_gl_common_texture_native_new(Evas_GL_Context *gc, unsigned int w, unsigned 
      }
    if (!tex->pt)
      {
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x33, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -754,10 +760,6 @@ evas_gl_common_texture_render_new(Evas_GL_Context *gc, unsigned int w, unsigned 
      }
    if (!tex->pt)
      {
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x44, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -800,10 +802,6 @@ evas_gl_common_texture_dynamic_new(Evas_GL_Context *gc, Evas_GL_Image *im)
      }
    if (!tex->pt)
      {
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x55, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -913,10 +911,6 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
      }
    if (tex->ptu) pt_unref(tex->ptu);
    if (tex->ptv) pt_unref(tex->ptv);
-   // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-   // find some mysterious bug i simply have been unable to catch or
-   // reproduce - so leave a trail and see how it goes.
-   memset(tex, 0x66, sizeof(Evas_GL_Texture));
    free(tex);
 }
 
@@ -938,10 +932,6 @@ evas_gl_common_texture_alpha_new(Evas_GL_Context *gc, DATA8 *pixels,
                             gc->shared->info.tune.atlas.max_alloc_alpha_size);
    if (!tex->pt)
      {
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x77, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -985,8 +975,6 @@ Evas_GL_Texture *
 evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, unsigned int w, unsigned int h)
 {
    Evas_GL_Texture *tex;
-//   Eina_List *l_after = NULL;
-//   int u = 0, v = 0;
 
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
@@ -996,10 +984,6 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, unsigned int w
    tex->pt = _pool_tex_new(gc, w + 1, h  + 1, lum_ifmt, lum_fmt);
    if (!tex->pt)
      {
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x88, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -1010,11 +994,6 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, unsigned int w
    tex->ptu = _pool_tex_new(gc, (w / 2) + 1, (h / 2)  + 1, lum_ifmt, lum_fmt);
    if (!tex->ptu)
      {
-        pt_unref(tex->pt);
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0x99, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }
@@ -1027,10 +1006,6 @@ evas_gl_common_texture_yuv_new(Evas_GL_Context *gc, DATA8 **rows, unsigned int w
      {
         pt_unref(tex->pt);
         pt_unref(tex->ptu);
-        // FIXME: mark as freed for now with 0x66, but this is me TRYING to
-        // find some mysterious bug i simply have been unable to catch or
-        // reproduce - so leave a trail and see how it goes.
-        memset(tex, 0xaa, sizeof(Evas_GL_Texture));
         free(tex);
         return NULL;
      }

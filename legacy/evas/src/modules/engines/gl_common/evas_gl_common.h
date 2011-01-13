@@ -448,6 +448,7 @@ void              evas_gl_common_shader_program_shutdown(Evas_GL_Program *p);
     
 void              evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h);
 
+void              evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt);
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_native_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_GL_Image *im);
 Evas_GL_Texture  *evas_gl_common_texture_render_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
