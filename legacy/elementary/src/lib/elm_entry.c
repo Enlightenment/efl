@@ -685,8 +685,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 	formats = ELM_SEL_FORMAT_MARKUP;
 	if (!wd->textonly)
 	   formats |= ELM_SEL_FORMAT_IMAGE;
-	elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data,
-                          NULL, NULL);
+	elm_selection_get(ELM_SEL_CLIPBOARD, formats, data, NULL, NULL);
 #endif
      }
 }
