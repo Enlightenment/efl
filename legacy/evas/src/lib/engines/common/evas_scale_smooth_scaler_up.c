@@ -52,7 +52,6 @@
    sxx = (dsxx * cx);
    syy = (dsyy * cy);
 
-   sx = sxx >> 16;
    sy = syy >> 16;
 
    if (drh == srh)
