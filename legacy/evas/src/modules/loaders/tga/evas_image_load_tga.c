@@ -74,7 +74,8 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    struct stat ss;
    tga_header *header;
    tga_footer *footer;
-   char hasa = 0, footer_present = 0, vinverted = 0, rle = 0;
+   char hasa = 0, footer_present = 0, vinverted = 0;
+//   char rle = 0;
    int w = 0, h = 0, bpp;
 
    fd = open(file, O_RDONLY);
@@ -106,11 +107,11 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
      {
      case TGA_TYPE_COLOR_RLE:
      case TGA_TYPE_GRAY_RLE:
-        rle = 1;
+//        rle = 1;
         break;
      case TGA_TYPE_COLOR:
      case TGA_TYPE_GRAY:
-        rle = 0;
+//        rle = 0;
         break;
      default:
         goto close_file;
