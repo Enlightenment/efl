@@ -1464,6 +1464,7 @@ ecore_x_window_button_grab(Ecore_X_Window win, int button,
    unsigned int m;
    unsigned int locks[8];
    int i, ev;
+   Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    b = button;
@@ -1487,8 +1488,10 @@ ecore_x_window_button_grab(Ecore_X_Window win, int button,
       XGrabButton(_ecore_x_disp, b, m | locks[i],
                   win, False, ev, GrabModeSync, GrabModeAsync, None, None);
    _ecore_window_grabs_num++;
-   _ecore_window_grabs = realloc(_ecore_window_grabs,
-                                 _ecore_window_grabs_num * sizeof(Window));
+   t = realloc(_ecore_window_grabs,
+               _ecore_window_grabs_num * sizeof(Window));
+   if (!t) return;
+   _ecore_window_grabs = t;
    _ecore_window_grabs[_ecore_window_grabs_num - 1] = win;
 } /* ecore_x_window_button_grab */
 
@@ -1514,7 +1517,8 @@ void
 _ecore_x_window_grab_remove(Ecore_X_Window win)
 {
    int i, shuffle = 0;
-
+   Window *t;
+   
    if (_ecore_window_grabs_num > 0)
      {
         for (i = 0; i < _ecore_window_grabs_num; i++)
@@ -1528,9 +1532,17 @@ _ecore_x_window_grab_remove(Ecore_X_Window win)
         if (shuffle)
           {
              _ecore_window_grabs_num--;
-             _ecore_window_grabs = realloc(_ecore_window_grabs,
-                                           _ecore_window_grabs_num *
-                                           sizeof(Window));
+             if (_ecore_window_grabs_num <= 0)
+               {
+                  free(_ecore_window_grabs);
+                  _ecore_window_grabs = NULL;
+                  return;
+               }
+             t = realloc(_ecore_window_grabs,
+                         _ecore_window_grabs_num *
+                         sizeof(Window));
+             if (!t) return;
+             _ecore_window_grabs = t;
           }
      }
 } /* _ecore_x_window_grab_remove */
@@ -1578,6 +1590,7 @@ ecore_x_window_key_grab(Ecore_X_Window win, const char *key,
    unsigned int m;
    unsigned int locks[8];
    int i;
+   Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!strncmp(key, "Keycode-", 8))
@@ -1610,8 +1623,10 @@ ecore_x_window_key_grab(Ecore_X_Window win, const char *key,
       XGrabKey(_ecore_x_disp, keycode, m | locks[i],
                win, False, GrabModeSync, GrabModeAsync);
    _ecore_key_grabs_num++;
-   _ecore_key_grabs = realloc(_ecore_key_grabs,
-                              _ecore_key_grabs_num * sizeof(Window));
+   t = realloc(_ecore_key_grabs,
+               _ecore_key_grabs_num * sizeof(Window));
+   if (!t) return;
+   _ecore_key_grabs = t;
    _ecore_key_grabs[_ecore_key_grabs_num - 1] = win;
 } /* ecore_x_window_key_grab */
 
@@ -1619,7 +1634,8 @@ void
 _ecore_x_key_grab_remove(Ecore_X_Window win)
 {
    int i, shuffle = 0;
-
+   Window *t;
+   
    if (_ecore_key_grabs_num > 0)
      {
         for (i = 0; i < _ecore_key_grabs_num; i++)
@@ -1633,8 +1649,16 @@ _ecore_x_key_grab_remove(Ecore_X_Window win)
         if (shuffle)
           {
              _ecore_key_grabs_num--;
-             _ecore_key_grabs = realloc(_ecore_key_grabs,
-                                        _ecore_key_grabs_num * sizeof(Window));
+             if (_ecore_key_grabs_num <= 0)
+               {
+                  free(_ecore_key_grabs);
+                  _ecore_key_grabs = NULL;
+                  return;
+               }
+             t = realloc(_ecore_key_grabs,
+                         _ecore_key_grabs_num * sizeof(Window));
+             if (!t) return;
+             _ecore_key_grabs = t;
           }
      }
 } /* _ecore_x_key_grab_remove */

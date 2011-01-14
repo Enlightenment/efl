@@ -151,7 +151,7 @@ _ecore_x_e_vkbd_atom_get(Ecore_X_Virtual_Keyboard_State state)
       case ECORE_X_VIRTUAL_KEYBOARD_STATE_J2ME:
          return ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_J2ME;
 
-      default: return 0;
+      default: break;
      } /* switch */
    return 0;
 } /* _ecore_x_e_vkbd_atom_get */
@@ -207,7 +207,7 @@ _ecore_x_e_illume_atom_get(Ecore_X_Illume_Mode mode)
          return ECORE_X_ATOM_E_ILLUME_MODE_DUAL_LEFT;
 
       default:
-         return ECORE_X_ILLUME_MODE_UNKNOWN;
+         break;
      } /* switch */
    return ECORE_X_ILLUME_MODE_UNKNOWN;
 } /* _ecore_x_e_illume_atom_get */
@@ -589,7 +589,7 @@ _ecore_x_e_quickpanel_atom_get(Ecore_X_Illume_Quickpanel_State state)
          return ECORE_X_ATOM_E_ILLUME_QUICKPANEL_OFF;
 
       default:
-         return 0;
+         break;
      } /* switch */
    return 0;
 } /* _ecore_x_e_quickpanel_atom_get */

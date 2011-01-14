@@ -151,6 +151,7 @@ _ecore_x_selection_set(Window       w,
         selections[in].time = _ecore_x_event_last_time;
 
         buf = malloc(size);
+        if (!buf) return EINA_FALSE;
         memcpy(buf, data, size);
         selections[in].data = buf;
      }
@@ -416,11 +417,13 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
           }
 
         cnv->next = calloc(1, sizeof(Ecore_X_Selection_Converter));
+        if (!cnv->next) return;
         cnv = cnv->next;
      }
    else
      {
         converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
+        if (!converters) return;
         cnv = converters;
      }
 
@@ -606,6 +609,11 @@ _ecore_x_selection_converter_text(char         *target,
      {
         int bufsize = strlen((char *)text_prop.value) + 1;
         *data_ret = malloc(bufsize);
+        if (!*data_ret)
+          {
+             free(mystr);
+             return EINA_FALSE;
+          }
         memcpy(*data_ret, text_prop.value, bufsize);
         *size_ret = bufsize;
         XFree(text_prop.value);
@@ -619,6 +627,7 @@ _ecore_x_selection_converter_text(char         *target,
      {
         int bufsize = strlen(text_prop.value) + 1;
         *data_ret = malloc(bufsize);
+        if (!*data_ret) return EINA_FALSE;
         memcpy(*data_ret, text_prop.value, bufsize);
         *size_ret = bufsize;
         XFree(text_prop.value);
@@ -661,11 +670,13 @@ ecore_x_selection_parser_add(const char *target,
           }
 
         prs->next = calloc(1, sizeof(Ecore_X_Selection_Parser));
+        if (!prs->next) return;
         prs = prs->next;
      }
    else
      {
         parsers = calloc(1, sizeof(Ecore_X_Selection_Parser));
+        if (!parsers) return;
         prs = parsers;
      }
 
@@ -725,6 +736,7 @@ _ecore_x_selection_parse(const char *target, void *data, int size, int format)
 
    /* Default, just return the data */
    sel = calloc(1, sizeof(Ecore_X_Selection_Data));
+   if (!sel) return NULL;
    sel->free = _ecore_x_selection_data_default_free;
    sel->length = size;
    sel->format = format;
@@ -750,26 +762,39 @@ _ecore_x_selection_parser_files(const char *target,
                                 int format  __UNUSED__)
 {
    Ecore_X_Selection_Data_Files *sel;
-   char *data = _data;
+   char *t, *data = _data;
    int i, is;
    char *tmp;
+   char **t2;
 
    if (strcmp(target, "text/uri-list") &&
        strcmp(target, "_NETSCAPE_URL"))
       return NULL;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Files));
+   if (!sel) return NULL;
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_files_free;
 
    if (data[size - 1])
      {
         /* Isn't nul terminated */
         size++;
-        data = realloc(data, size);
+        t = realloc(data, size);
+        if (!t)
+          {
+             free(sel);
+             return NULL;
+          }
+        data = t;
         data[size - 1] = 0;
      }
 
    tmp = malloc(size);
+   if (!tmp)
+     {
+        free(sel);
+        return NULL;
+     }
    i = 0;
    is = 0;
    while ((is < size) && (data[is]))
@@ -786,9 +811,12 @@ _ecore_x_selection_parser_files(const char *target,
                   while ((data[is] == '\r') || (data[is] == '\n')) is++;
                   tmp[i] = 0;
                   sel->num_files++;
-                  sel->files =
-                     realloc(sel->files, sel->num_files * sizeof(char *));
-                  sel->files[sel->num_files - 1] = strdup(tmp);
+                  t2 = realloc(sel->files, sel->num_files * sizeof(char *));
+                  if (t2)
+                    {
+                       sel->files = t2;
+                       sel->files[sel->num_files - 1] = strdup(tmp);
+                    }
                   tmp[0] = 0;
                   i = 0;
                }
@@ -798,8 +826,12 @@ _ecore_x_selection_parser_files(const char *target,
      {
         tmp[i] = 0;
         sel->num_files++;
-        sel->files = realloc(sel->files, sel->num_files * sizeof(char *));
-        sel->files[sel->num_files - 1] = strdup(tmp);
+        t2 = realloc(sel->files, sel->num_files * sizeof(char *));
+        if (t2)
+          {
+             sel->files = t2;
+             sel->files[sel->num_files - 1] = strdup(tmp);
+          }
      }
 
    free(tmp);
@@ -837,14 +869,21 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__,
 {
    Ecore_X_Selection_Data_Text *sel;
    unsigned char *data = _data;
+   void *t;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Text));
-
+   if (!sel) return NULL;
    if (data[size - 1])
      {
         /* Isn't nul terminated */
         size++;
-        data = realloc(data, size);
+        t = realloc(data, size);
+        if (!t)
+          {
+             free(sel);
+             return NULL;
+          }
+        data = t;
         data[size - 1] = 0;
      }
 
@@ -878,10 +917,16 @@ _ecore_x_selection_parser_targets(const char *target __UNUSED__,
    int i;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Targets));
+   if (!sel) return NULL;
    targets = (unsigned long *)data;
 
    sel->num_targets = size - 2;
    sel->targets = malloc((size - 2) * sizeof(char *));
+   if (!sel->targets)
+     {
+        free(sel);
+        return NULL;
+     }
    for (i = 2; i < size; i++)
       sel->targets[i - 2] = XGetAtomName(_ecore_x_disp, targets[i]);
 

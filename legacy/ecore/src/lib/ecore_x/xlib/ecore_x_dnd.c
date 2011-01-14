@@ -37,6 +37,7 @@ _ecore_x_dnd_init(void)
    if (!_ecore_x_dnd_init_count)
      {
         _source = calloc(1, sizeof(Ecore_X_DND_Source));
+        if (!_source) return;
         _source->version = ECORE_X_DND_VERSION;
         _source->win = None;
         _source->dest = None;
@@ -44,6 +45,12 @@ _ecore_x_dnd_init(void)
         _source->prev.window = 0;
 
         _target = calloc(1, sizeof(Ecore_X_DND_Target));
+        if (!_target)
+          {
+             free(_source);
+             _source = NULL;
+             return;
+          }
         _target->win = None;
         _target->source = None;
         _target->state = ECORE_X_DND_TARGET_IDLE;
@@ -106,6 +113,11 @@ _ecore_x_dnd_converter_copy(char *target  __UNUSED__,
      {
         int bufsize = strlen((char *)text_prop.value) + 1;
         *data_ret = malloc(bufsize);
+        if (!*data_ret)
+          {
+             free(mystr);
+             return EINA_FALSE;
+          }
         memcpy(*data_ret, text_prop.value, bufsize);
         *size_ret = bufsize;
         XFree(text_prop.value);
@@ -137,6 +149,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
 {
    unsigned char *prop_data;
    int num;
+   Version_Cache_Item *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    // this looks hacky - and it is, but we need a way of caching info about
@@ -166,9 +179,11 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
              if (_version_cache_num > _version_cache_alloc)
                 _version_cache_alloc += 16;
 
-             _version_cache = realloc(_version_cache,
-                                      _version_cache_alloc *
-                                      sizeof(Version_Cache_Item));
+             t = realloc(_version_cache,
+                         _version_cache_alloc *
+                         sizeof(Version_Cache_Item));
+             if (!t) return 0;
+             _version_cache = t;
              _version_cache[_version_cache_num - 1].win = win;
              _version_cache[_version_cache_num - 1].ver = version;
           }
@@ -182,9 +197,10 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
         if (_version_cache_num > _version_cache_alloc)
            _version_cache_alloc += 16;
 
-        _version_cache =
-           realloc(_version_cache, _version_cache_alloc *
-                   sizeof(Version_Cache_Item));
+        t = realloc(_version_cache, _version_cache_alloc *
+                    sizeof(Version_Cache_Item));
+        if (!t) return 0;
+        _version_cache = t;
         _version_cache[_version_cache_num - 1].win = win;
         _version_cache[_version_cache_num - 1].ver = 0;
      }

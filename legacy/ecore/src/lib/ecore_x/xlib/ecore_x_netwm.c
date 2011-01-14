@@ -179,7 +179,7 @@ EAPI void
 ecore_x_netwm_desk_names_set(Ecore_X_Window root,
                              const char **names, unsigned int n_desks)
 {
-   char ss[32], *buf;
+   char ss[32], *buf, *t;
    const char *s;
    unsigned int i;
    int l, len;
@@ -199,8 +199,12 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root,
           }
 
         l = strlen(s) + 1;
-        buf = realloc(buf, len + l);
-        memcpy(buf + len, s, l);
+        t = realloc(buf, len + l);
+        if (t)
+          {
+             buf = t;
+             memcpy(buf + len, s, l);
+          }
         len += l;
      }
 

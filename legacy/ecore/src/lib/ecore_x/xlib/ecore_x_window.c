@@ -309,6 +309,7 @@ EAPI void
 ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
 {
    int i, j;
+   Ecore_X_Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (ignore)
@@ -320,18 +321,17 @@ ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
                   if (win == ignore_list[i])
                      return;
                }
-             ignore_list =
-                realloc(ignore_list, (ignore_num + 1) * sizeof(Ecore_X_Window));
-             if (!ignore_list)
-                return;
-
+             t = realloc(ignore_list, (ignore_num + 1) * sizeof(Ecore_X_Window));
+             if (!t) return;
+             ignore_list = t;
              ignore_list[ignore_num++] = win;
           }
         else
           {
              ignore_num = 0;
              ignore_list = malloc(sizeof(Ecore_X_Window));
-             ignore_list[ignore_num++] = win;
+             if (ignore_list)
+                ignore_list[ignore_num++] = win;
           }
      }
    else
@@ -346,7 +346,14 @@ ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
              else
                 ignore_num--;
           }
-        ignore_list = realloc(ignore_list, ignore_num * sizeof(Ecore_X_Window));
+        if (ignore_num <= 0)
+          {
+             free(ignore_list);
+             ignore_list = NULL;
+             return;
+          }
+        t = realloc(ignore_list, ignore_num * sizeof(Ecore_X_Window));
+        if (t) ignore_list = t;
      }
 } /* ecore_x_window_ignore_set */
 

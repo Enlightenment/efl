@@ -115,6 +115,7 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root, int *num)
    sizes =
       XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
                                                     root), &n);
+   if ((!sizes) || (n <= 0)) return NULL;
    ret = calloc(n, sizeof(Ecore_X_Randr_Screen_Size_MM));
    if (!ret)
       return NULL;

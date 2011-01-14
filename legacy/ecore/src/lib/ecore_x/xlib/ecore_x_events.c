@@ -226,8 +226,6 @@ _ecore_key_press(int event, XKeyEvent *xevent)
                  "Keycode-%i",
                  xevent->keycode);
         keyname = keyname_buffer;
-        if (!keyname)
-           return;
      }
 
    sym = 0;
@@ -319,9 +317,6 @@ _ecore_key_press(int event, XKeyEvent *xevent)
    key = XKeysymToString(sym);
    if (!key)
       key = keyname;
-
-   if (!key)
-      goto on_error;
 
    e =
       malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
@@ -1302,14 +1297,14 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
 {
-   Ecore_X_Selection_Intern *d;
+//   Ecore_X_Selection_Intern *d;
    Ecore_X_Event_Selection_Clear *e;
    Ecore_X_Atom sel;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_last_event_mouse_move = 0;
-   d = _ecore_x_selection_get(xevent->xselectionclear.selection);
 /* errr..... why? paranoia.
+   d = _ecore_x_selection_get(xevent->xselectionclear.selection);
    if (d && (xevent->xselectionclear.time > d->time))
      {
         _ecore_x_selection_set(None, NULL, 0,
