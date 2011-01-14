@@ -3033,9 +3033,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
    EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
      {
         Evas_Object_Textblock_Item *it;
-        Evas_Object_Textblock_Line *lnn;
 
-        lnn = (Evas_Object_Textblock_Line *)(((Eina_Inlist *)ln)->next);
         EINA_INLIST_FOREACH(ln->items, it)
           {
              if (it->source_node == n)
