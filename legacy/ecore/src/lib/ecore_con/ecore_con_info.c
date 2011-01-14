@@ -250,7 +250,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
              tosend_len = sizeof(Ecore_Con_Info) + result->ai_addrlen +
                canonname_len;
 
-             if (!(tosend = alloca(tosend_len))) goto on_error;
+             tosend = alloca(tosend_len);
              memset(tosend, 0, tosend_len);
 
              container = (Ecore_Con_Info *)tosend;
