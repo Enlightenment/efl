@@ -1500,14 +1500,6 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
           }
      }
 
-   if ((!args) || (!args[0]))
-     {
-        IF_FREE(buf);
-        IF_FREE(args);
-        ERR("arg[0] is NULL!");
-        return;
-     }
-
    if (!(flags & ECORE_EXE_NOT_LEADER)) setsid();
    if ((flags & ECORE_EXE_USE_SH))
      {
@@ -1527,6 +1519,13 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
      }
    else
      {                                /* We can run this directly. */
+        if (!args)
+          {
+             IF_FREE(buf);
+             IF_FREE(args);
+             ERR("arg[0] is NULL!");
+             return;
+          }
         errno = 0;
         execvp(args[0], args);
      }
