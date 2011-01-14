@@ -176,6 +176,8 @@ pmaps_buffer_open(Pmaps_Buffer *b, const char *filename, int *error)
    if (len < 3)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        fclose(b->file);
+        b->file = NULL;
 	return EINA_FALSE;
      }
 
