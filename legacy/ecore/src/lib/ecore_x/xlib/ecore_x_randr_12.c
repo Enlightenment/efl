@@ -1788,7 +1788,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
            goto _ecore_x_randr_move_crtcs_fail_free_crtc_info;
 
         //actually move all the crtcs, keep their rotation and mode.
-        for (i = 0; i < ncrtc; i++)
+        for (i = 0; (i < ncrtc) && crtc_info[i]; i++)
           {
              if (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL,
                                                   Ecore_X_Randr_Unset,
@@ -1805,7 +1805,7 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
           {
              //something went wrong, let's try to move the already moved crtcs
              //back.
-             while (i-- >= 0)
+             while (((i--) >= 0))
                 ecore_x_randr_crtc_settings_set(root,
                                                 crtcs[i],
                                                 NULL,
