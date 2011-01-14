@@ -66,7 +66,7 @@ _new_va(const char *name,
         va_list args)
 {
    Eina_Mempool_Backend *be;
-   Eina_Mempool *mp;
+   Eina_Mempool *mp = NULL;
 
    Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
 
@@ -88,6 +88,7 @@ _new_va(const char *name,
 
 on_error:
    eina_error_set(err);
+   if (mp) free(mp);
    return NULL;
 }
 
