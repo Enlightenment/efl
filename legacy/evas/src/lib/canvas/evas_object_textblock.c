@@ -3982,10 +3982,10 @@ _evas_textblock_cursor_nodes_merge(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock_Node_Text *nnode;
    Evas_Object_Textblock *o;
    int len;
+   if (!cur) return;
 
    len = eina_ustrbuf_length_get(cur->node->unicode);
 
-   if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    nnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->next);
    _evas_textblock_nodes_merge(o, cur->node);
@@ -4669,7 +4669,6 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
    if (!cur) return;
    if (!cur->node) return;
    index = eina_ustrbuf_length_get(cur->node->unicode) - 1;
-   if (index < 0) index = 0;
    cur->pos = index;
 
 }
@@ -4814,8 +4813,7 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 	cur->pos = it->source_pos;
 	cur->node = it->source_node;
 	index = eina_unicode_strlen(it->text) - 1;
-        if (index < 0) index = 0;
-        if (index >= 0) GET_NEXT(it->text, index);
+        GET_NEXT(it->text, index);
 	cur->pos += index;
      }
    else if (fi)
