@@ -77,7 +77,7 @@ _new_va(const char *name,
 
    err = EINA_ERROR_OUT_OF_MEMORY;
    mp = calloc(1, sizeof(Eina_Mempool));
-   if (!mp)
+   if ((!mp) || (!mp->backend.init))
       goto on_error;
 
    /* FIXME why backend is not a pointer? */
