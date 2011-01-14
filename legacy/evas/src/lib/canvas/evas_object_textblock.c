@@ -5955,7 +5955,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
              cur->node->format_node = n;
           }
      }
-   if (is_visible)
+   if (is_visible && cur->node)
      {
         eina_ustrbuf_insert_char(cur->node->unicode,
               EVAS_TEXTBLOCK_REPLACEMENT_CHAR, cur->pos);
