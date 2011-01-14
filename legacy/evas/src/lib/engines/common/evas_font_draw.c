@@ -184,6 +184,7 @@ _fash_gl_add(Fash_Glyph *fash, int item, RGBA_Font_Glyph *glyph)
      fash->bucket[grp] = calloc(1, sizeof(Fash_Glyph_Map2));
    if (!fash->bucket[grp]->bucket[maj])
      fash->bucket[grp]->bucket[maj] = calloc(1, sizeof(Fash_Glyph_Map));
+   EINA_SAFETY_ON_NULL_RETURN(fash->bucket[grp]->bucket[maj]);
    fash->bucket[grp]->bucket[maj]->item[min] = glyph;
 }
 
