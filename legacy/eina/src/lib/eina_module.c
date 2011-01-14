@@ -143,8 +143,6 @@ static void _dir_list_cb(const char *name, const char *path, void *data)
         length = strlen(path) + strlen(name) + 2;
 
         file = alloca(sizeof (char) * length);
-        if (!file)
-           return;
 
         snprintf(file, length, "%s/%s", path, name);
         m = eina_module_new(file);
