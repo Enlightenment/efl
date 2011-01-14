@@ -1500,6 +1500,14 @@ _ecore_exe_exec_it(const char *exe_cmd, Ecore_Exe_Flags flags)
           }
      }
 
+   if ((!args) || (!args[0]))
+     {
+        IF_FREE(buf);
+        IF_FREE(args);
+        ERR("arg[0] is NULL!");
+        return;
+     }
+
    if (!(flags & ECORE_EXE_NOT_LEADER)) setsid();
    if ((flags & ECORE_EXE_USE_SH))
      {
