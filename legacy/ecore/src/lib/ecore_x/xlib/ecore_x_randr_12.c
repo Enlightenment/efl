@@ -1750,10 +1750,12 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
    XRRScreenResources *res = NULL;
-   XRRCrtcInfo *crtc_info[ncrtc];
+   XRRCrtcInfo **crtc_info = NULL;
    Eina_Bool ret = EINA_TRUE;
    int i, cw, ch, w_max, h_max, nw, nh;
 
+   crtc_info = alloca(sizeof(XRRCrtcInfo *) * ncrtc);
+   memset(crtc_info, 0, sizeof(XRRCrtcInfo *) * ncrtc);
    if (_ecore_x_randr_root_validate(root)
        && (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
      {
@@ -1790,12 +1792,13 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
         //actually move all the crtcs, keep their rotation and mode.
         for (i = 0; (i < ncrtc) && crtc_info[i]; i++)
           {
-             if (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL,
-                                                  Ecore_X_Randr_Unset,
-                                                  (crtc_info[i]->x + dx),
-                                                  (crtc_info[i]->y + dy),
-                                                  crtc_info[i]->mode,
-                                                  crtc_info[i]->rotation))
+             if ((crtc_info[i]) &&
+                 (!ecore_x_randr_crtc_settings_set(root, crtcs[i], NULL,
+                                                   Ecore_X_Randr_Unset,
+                                                   (crtc_info[i]->x + dx),
+                                                   (crtc_info[i]->y + dy),
+                                                   crtc_info[i]->mode,
+                                                   crtc_info[i]->rotation)))
                {
                   ret = EINA_FALSE;
                   break;
@@ -1805,20 +1808,23 @@ ecore_x_randr_move_crtcs(Ecore_X_Window root,
           {
              //something went wrong, let's try to move the already moved crtcs
              //back.
-             while (((i--) >= 0))
-                ecore_x_randr_crtc_settings_set(root,
-                                                crtcs[i],
-                                                NULL,
-                                                Ecore_X_Randr_Unset,
-                                                (crtc_info[i]->x - dx),
-                                                (crtc_info[i]->y - dy),
-                                                crtc_info[i]->mode,
-                                                crtc_info[i]->rotation);
+             while ((i--) >= 0)
+               {
+                  if (crtc_info[i])
+                     ecore_x_randr_crtc_settings_set(root,
+                                                     crtcs[i],
+                                                     NULL,
+                                                     Ecore_X_Randr_Unset,
+                                                     (crtc_info[i]->x - dx),
+                                                     (crtc_info[i]->y - dy),
+                                                     crtc_info[i]->mode,
+                                                     crtc_info[i]->rotation);
+               }
           }
 
         for (i = 0; i < ncrtc; i++)
           {
-             XRRFreeCrtcInfo(crtc_info[i]);
+             if (crtc_info[i]) XRRFreeCrtcInfo(crtc_info[i]);
           }
      }
 
