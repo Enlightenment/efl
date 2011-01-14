@@ -33,7 +33,6 @@ _ecore_x_randr_init(void)
    _randr_minor = 3;
    _randr_version = 0;
 
-   _ecore_x_disp = _ecore_x_disp;
    _ecore_x_randr_get_screen_resources = NULL;
    if (XRRQueryVersion(_ecore_x_disp, &_randr_major, &_randr_minor))
    {
