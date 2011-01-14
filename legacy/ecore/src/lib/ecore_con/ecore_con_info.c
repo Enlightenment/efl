@@ -262,9 +262,10 @@ ecore_con_info_get(Ecore_Con_Server *svr,
              memcpy(tosend + sizeof(Ecore_Con_Info),
                     result->ai_addr,
                     result->ai_addrlen);
-             memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen,
-                    result->ai_canonname,
-                    canonname_len);
+             if (result->ai_canonname) /* FIXME: else... */
+               memcpy(tosend + sizeof(Ecore_Con_Info) + result->ai_addrlen,
+                      result->ai_canonname,
+                      canonname_len);
 
              if (!getnameinfo(result->ai_addr, result->ai_addrlen,
                               hbuf, sizeof(hbuf), sbuf, sizeof(sbuf),
