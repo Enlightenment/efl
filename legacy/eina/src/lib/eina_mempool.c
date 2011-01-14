@@ -66,18 +66,18 @@ _new_va(const char *name,
         va_list args)
 {
    Eina_Mempool_Backend *be;
-   Eina_Mempool *mp = NULL;
+   Eina_Mempool *mp;
 
    Eina_Error err = EINA_ERROR_NOT_MEMPOOL_MODULE;
 
    eina_error_set(0);
    be = eina_hash_find(_backends, name);
-   if (!be)
+   if ((!be) || (!be->init))
       goto on_error;
 
    err = EINA_ERROR_OUT_OF_MEMORY;
    mp = calloc(1, sizeof(Eina_Mempool));
-   if ((!mp) || (!mp->backend.init))
+   if (!mp)
       goto on_error;
 
    /* FIXME why backend is not a pointer? */
@@ -88,7 +88,6 @@ _new_va(const char *name,
 
 on_error:
    eina_error_set(err);
-   if (mp) free(mp);
    return NULL;
 }
 
