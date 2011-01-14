@@ -713,6 +713,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              if ((!configs) || (num < 1))
                {
                   ERR("glXChooseFBConfig returned no configs");
+                  return NULL;
                }
              for (i = 0; i < num; i++)
                {
