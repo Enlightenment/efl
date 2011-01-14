@@ -145,7 +145,7 @@ ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data)
      }
    if (ecore_raw_event_type == type)
      event_handlers_add_list = (Ecore_Event_Handler *)eina_inlist_append(EINA_INLIST_GET(event_handlers_add_list), EINA_INLIST_GET(eh));
-   else
+   else if (type < event_handlers_alloc_num)
      event_handlers[type] = (Ecore_Event_Handler *)eina_inlist_append(EINA_INLIST_GET(event_handlers[type]), EINA_INLIST_GET(eh));
    return eh;
 }
