@@ -1192,22 +1192,13 @@ eina_log_domain_new(Eina_Log_Domain *d, const char *name, const char *color)
    d->level = EINA_LOG_LEVEL_UNKNOWN;
    d->deleted = EINA_FALSE;
 
-   if (name)
-     {
-        if ((color) && (!_disable_color))
-           d->domain_str = eina_log_domain_str_get(name, color);
-        else
-           d->domain_str = eina_log_domain_str_get(name, NULL);
-
-        d->name = strdup(name);
-        d->namelen = strlen(name);
-     }
+   if ((color) && (!_disable_color))
+      d->domain_str = eina_log_domain_str_get(name, color);
    else
-     {
-        d->domain_str = NULL;
-        d->name = NULL;
-        d->namelen = 0;
-     }
+      d->domain_str = eina_log_domain_str_get(name, NULL);
+
+   d->name = strdup(name);
+   d->namelen = strlen(name);
 
    return d;
 }
