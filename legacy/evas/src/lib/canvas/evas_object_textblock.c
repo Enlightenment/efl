@@ -4519,9 +4519,7 @@ evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur)
      {
         if (cur->node->format_node)
           {
-             cur->node = cur->node;
              cur->pos = _evas_textblock_node_format_pos_get(node);
-
              return EINA_TRUE;
           }
      }
