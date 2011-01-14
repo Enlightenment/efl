@@ -208,7 +208,7 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
  * the current char pointed to and decrements ind but ensures it stays in
  * the text range.
  */
-#define GET_PREV(text, ind) (((ind) > 0) ? (text[(ind)--]) : (text[ind]))
+#define GET_PREV(text, ind) (text ? (((ind) > 0) ? (text[(ind)--]) : (text[ind])) : 0)
 /**
  * @internal
  * @def GET_NEXT(text, ind)
@@ -216,7 +216,7 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
  * the current char pointed to and increments indd but ensures it stays in
  * the text range.
  */
-#define GET_NEXT(text, ind) ((text[ind]) ? (text[(ind)++]) : (text[ind]))
+#define GET_NEXT(text, ind) (text ? ((text[ind]) ? (text[(ind)++]) : (text[ind])) : 0)
 
 /*FIXME: document the structs and struct items. */
 struct _Evas_Object_Style_Tag
