@@ -711,7 +711,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	     ev.timestamp = timestamp;
 	     ev.event_flags = EVAS_EVENT_FLAG_NONE;
 
-	     if (copy) copy = eina_list_free(copy);
+	     if (copy) eina_list_free(copy);
 	     while (outs)
 	       {
 		  Evas_Object *obj;
