@@ -167,7 +167,6 @@ evas_common_scale_rgba_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, in
    if (dst_h < 1) dst_h = 1;
 
    src_ptr = src;
-   src_ptr2 = src + src_w;
    dst_ptr = dst;
    for (y = 0; y < dst_h; y++)
      {
