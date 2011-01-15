@@ -266,11 +266,11 @@ _load_file(const char *file)
    FILE *f;
    size_t size;
    int alloc = 0, len = 0;
-   char *text = NULL, buf[PATH_MAX];
+   char *text = NULL, buf[16384 + 1];
 
    f = fopen(file, "rb");
    if (!f) return NULL;
-   while ((size = fread(buf, 1, sizeof(buf), f)))
+   while ((size = fread(buf, 1, sizeof(buf) - 1, f)))
      {
         char *tmp_text;
         buf[size] = 0;
