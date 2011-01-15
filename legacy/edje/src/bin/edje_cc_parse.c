@@ -802,7 +802,7 @@ is_param(int n)
 }
 
 int
-is_num(int n)
+is_num(int n __UNUSED__)
 {
    char *str;
    char *end;
@@ -818,10 +818,6 @@ is_num(int n)
    if (str[0] == 0) return 0;
    end = str;
    ret = strtol(str, &end, 0);
-   if ((ret == LONG_MIN) || (ret == LONG_MAX))
-     {
-        n = 0; // do nothing. shut gcc warnings up
-     }
    if ((end != str) && (end[0] == 0)) return 1;
    return 0;
 }
