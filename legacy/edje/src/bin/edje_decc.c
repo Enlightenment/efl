@@ -319,7 +319,10 @@ output(void)
 		       exit (-1);
 		    }
 		  if (!(f = fopen(out, "wb")))
-                    ERR("Could not open file: %s", out);
+                    {
+                       ERR("Could not open file: %s", out);
+		       exit (-1);
+                    }
 		  if (fwrite(font, fontsize, 1, f) != 1)
 		    ERR("Could not write font: %s", strerror(errno));
 		  if (f) fclose(f);
