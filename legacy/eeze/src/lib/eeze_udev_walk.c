@@ -53,7 +53,7 @@ eeze_udev_walk_check_sysattr(const char *syspath,
      }
 
    udev_device_unref(device);
-   return EINA_FALSE;
+   return ret;
 }
 
 /**
