@@ -10,12 +10,117 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
     *
     * Returns 0 to indicate there is no next char
     */
-   int index = *iindex, len, r;
-   unsigned char d, d2, d3, d4;
+#if 1
+   int index = *iindex, r;
+   unsigned char d;
 
    /* if this char is the null terminator, exit */
-   if (!buf[index])
-     return 0;
+   d = buf[index];
+   if (!d) return 0;
+   index++;
+     
+   if ((d & 0x80) == 0) // 1 byte ascii (7bit) - 0xxxxxxx
+     {
+        *iindex = index;
+        return d;
+     }
+   if ((d & 0xe0) == 0xc0) // 2 byte utf8 (11bit) - 110xxxxx 10xxxxxx
+     {
+        r = (d & 0x1f) << 6;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f);
+        *iindex = index;
+        return r;
+     }
+   if ((d & 0xf0) == 0xe0) // 3 byte utf8 (16bit) - 1110xxxx 10xxxxxx 10xxxxxx
+     {
+        r = (d & 0x0f) << 12;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 6;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f);
+        *iindex = index;
+        return r;
+     }
+   if ((d & 0xf8) == 0xf0) // 4 byte utf8 (21bit) - 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+     {
+        r = (d & 0x07) << 18;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 12;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 6;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f);
+        *iindex = index;
+        return r;
+     }
+   if ((d & 0xfc) == 0xf8) // 5 byte utf8 (26bit) - 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+     {
+        r = (d & 0x03) << 24;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 18;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 12;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 6;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f);
+        *iindex = index;
+        return r;
+     }
+   if ((d & 0xfe) == 0xfc) // 6 byte utf8 (31bit) - 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
+     {
+        r = (d & 0x01) << 30;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 24;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 18;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 12;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f) << 6;
+        d = buf[index];
+        if (!d) return 0;
+        index++;
+        r |= (d & 0x3f);
+        *iindex = index;
+        return r;
+     }
+   return 0;
+#else
+   int index = *iindex, r, len;
+   unsigned char d, d2, d3, d4;
+   
+   /* if this char is the null terminator, exit */
+   if (!buf[index]) return 0;
      
    d = buf[index++];
 
@@ -29,6 +134,11 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
      {
 	/* 2 bytes */
         d2 = buf[*iindex + 1];
+        if (d2 == 0)
+          {
+             *iindex = *iindex + 1;
+             return 0;
+          }
 	r = d & 0x1f; /* copy lower 5 */
 	r <<= 6;
 	r |= (d2 & 0x3f); /* copy lower 6 */
@@ -37,7 +147,17 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
      {
 	/* 3 bytes */
         d2 = buf[*iindex + 1];
+        if (d2 == 0)
+          {
+             *iindex = *iindex + 1;
+             return 0;
+          }
         d3 = buf[*iindex + 2];
+        if (d3 == 0)
+          {
+             *iindex = *iindex + 2;
+             return 0;
+          }
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
@@ -48,8 +168,23 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
      {
 	/* 4 bytes */
         d2 = buf[*iindex + 1];
+        if (d2 == 0)
+          {
+             *iindex = *iindex + 1;
+             return 0;
+          }
         d3 = buf[*iindex + 2];
+        if (d3 == 0)
+          {
+             *iindex = *iindex + 2;
+             return 0;
+          }
         d4 = buf[*iindex + 3];
+        if (d4 == 0)
+          {
+             *iindex = *iindex + 3;
+             return 0;
+          }
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
@@ -58,9 +193,9 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);
      }
-
    *iindex = index;
    return r;
+#endif
 }
 
 EAPI Eina_Unicode
