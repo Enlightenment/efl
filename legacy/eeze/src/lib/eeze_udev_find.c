@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include <Eeze.h>
 #include "eeze_udev_private.h"
@@ -280,7 +281,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
                   devname = NULL;
 
                   for (parent = udev_device_get_parent(device); parent; parent = udev_device_get_parent(parent)) /*check for parent */
-                    if (((test = udev_device_get_sysattr_value(parent, "temp1_input"))))
+                    if ((udev_device_get_sysattr_value(parent, "temp1_input")))
                       {
                          devname = udev_device_get_syspath(parent);
                          break;
