@@ -275,7 +275,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
                goto out;
 
              /* if device is not the one which has the temp input, we must go up the chain */
-             if (!(test = udev_device_get_sysattr_value(device, "temp1_input")))
+             if (!udev_device_get_sysattr_value(device, "temp1_input"))
                {
                   devname = NULL;
 
@@ -297,7 +297,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
           }
         else if (etype == EEZE_UDEV_TYPE_DRIVE_REMOVABLE)
           {
-             if (!(test = udev_device_get_property_value(device, "ID_USB_DRIVER")))
+             if (!(test = udev_device_get_property_value(device, "ID_BUS")) || (!strncmp(test, "ata", 3)))
                goto out;
           }
         else if (etype == EEZE_UDEV_TYPE_DRIVE_MOUNTABLE)
