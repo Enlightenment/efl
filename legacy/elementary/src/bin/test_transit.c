@@ -339,72 +339,65 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt;
+   Evas_Object *win, *bg, *bt;
 
    win = elm_win_add(NULL, "transit-4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 4");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 300, 300);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_min_set(bx, 318, 318);
-   evas_object_show(bx);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
-
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Zoom Effect");
-   elm_box_pack_end(bx, bt);
+   evas_object_resize(bt, 100, 50);
+   evas_object_move(bt, 100, 125); 
    evas_object_show(bt);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_zoom, NULL);
 
    evas_object_show(win);
-
-   bt = elm_button_add(win);
-   elm_button_label_set(bt, "Button");
-   elm_box_pack_end(bx, bt);
-   evas_object_show(bt);
 }
 
 /* Blend Effect */
 void
 test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt, *bt2;
+   Evas_Object *win, *bg, *bx, *bt, *bt2, *ic;
 
    win = elm_win_add(NULL, "transit-5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 5");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 300, 300);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   evas_object_size_hint_min_set(bx, 318, 318);
-   evas_object_show(bx);
+   ic = elm_icon_add(win);
+   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
+   evas_object_size_hint_max_set(ic, 50, 50);
 
    bt = elm_button_add(win);
+   elm_button_icon_set(bt, ic);
    elm_button_label_set(bt, "Before Button - Blend Effect");
-   elm_box_pack_end(bx, bt);
+   evas_object_move(bt, 25, 125);
+   evas_object_resize(bt, 250, 50);	
    evas_object_show(bt);
 
+   ic = elm_icon_add(win);
+   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
+   evas_object_size_hint_max_set(ic, 50, 50);
+
    bt2 = elm_button_add(win);
+   elm_button_icon_set(bt2, ic);
    elm_button_label_set(bt2, "After Button - Blend Effect");
-   elm_box_pack_end(bx, bt2);
+   evas_object_move(bt2, 25, 125);
+   evas_object_resize(bt2, 250, 50);	
 
    evas_object_show(win);
 
@@ -416,7 +409,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2;
+   Evas_Object *win, *bg, *bt, *bt2, *ic;
 
    win = elm_win_add(NULL, "transit-6", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 6");
@@ -428,16 +421,26 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   ic = elm_icon_add(win);
+   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_01.jpg", NULL);
+   evas_object_size_hint_max_set(ic, 50, 50);
+
    bt = elm_button_add(win);
+   elm_button_icon_set(bt, ic);
    elm_button_label_set(bt, "Before Button - Fade Effect");
+   evas_object_move(bt, 25, 125);
+   evas_object_resize(bt, 250, 50);	
    evas_object_show(bt);
-   evas_object_move(bt, 50, 100);
-   evas_object_resize(bt, 200, 50);
+
+   ic = elm_icon_add(win);
+   elm_icon_file_set(ic, PACKAGE_DATA_DIR"/images/rock_02.jpg", NULL);
+   evas_object_size_hint_max_set(ic, 50, 50);
 
    bt2 = elm_button_add(win);
+   elm_button_icon_set(bt2, ic);
    elm_button_label_set(bt2, "After Button - Fade Effect");
-   evas_object_move(bt2, 50, 100);
-   evas_object_resize(bt2, 200, 50);
+   evas_object_move(bt2, 25, 125);
+   evas_object_resize(bt2, 250, 50);	
 
    evas_object_show(win);
 
@@ -465,7 +468,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_button_label_set(bt, "Front Button - Resizable Flip Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
-   evas_object_resize(bt, 200, 30); 
+   evas_object_resize(bt, 250, 30); 
 
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "Back Button - Resizable Flip Effect");
