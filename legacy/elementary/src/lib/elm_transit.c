@@ -66,6 +66,8 @@ struct _Elm_Transit
       void *arg;
    } del_data;
    struct {
+      double delayed;
+      double paused;
       double duration;
       double begin;
       double current;
@@ -75,6 +77,7 @@ struct _Elm_Transit
       int current;
       Eina_Bool reverse;
    } repeat;
+   double progress;
    unsigned int effects_pending_del;
    int walking;
    Eina_Bool auto_reverse : 1;
@@ -155,12 +158,13 @@ _elm_transit_del(Elm_Transit *transit)
 {
    Eina_List *elist, *elist_next;
    Elm_Transit_Effect *effect;
-   
+
+   if (transit->animator)
+      ecore_animator_del(transit->animator);
+
    if (transit->del_data.func)
       transit->del_data.func(transit->del_data.arg, transit);
-   
-   ecore_animator_del(transit->animator);
-   
+
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
       _elm_transit_effect_del(transit, effect, elist);
    
@@ -196,38 +200,39 @@ static Eina_Bool
 _animator_animate_cb(void *data)
 {
    Elm_Transit *transit = data;
-   double elapsed_time, progress;
-   
+   double elapsed_time, duration;
+
    transit->time.current = ecore_loop_time_get();
    elapsed_time = transit->time.current - transit->time.begin;
-   
-   if (elapsed_time > transit->time.duration)
-      elapsed_time = transit->time.duration;
-   
-   progress = elapsed_time / transit->time.duration;
+   duration = transit->time.duration + transit->time.delayed; 
+
+   if (elapsed_time > duration) 
+      elapsed_time = duration;
+
+   transit->progress = elapsed_time / duration;
    switch (transit->tween_mode)
      {
       case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
-        progress = 1.0 - sin((ELM_PI / 2.0) + (progress * ELM_PI / 2.0));
+        transit->progress = 1.0 - sin((ELM_PI / 2.0) + (transit->progress * ELM_PI / 2.0));
         break;
       case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
-        progress = sin(progress * ELM_PI / 2.0);
+        transit->progress = sin(transit->progress * ELM_PI / 2.0);
         break;
       case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
-        progress = (1.0 - cos(progress * ELM_PI)) / 2.0;
+        transit->progress = (1.0 - cos(transit->progress * ELM_PI)) / 2.0;
         break;
       default:
         break;
      }
    
    /* Reverse? */
-   if (transit->repeat.reverse) progress = 1 - progress;
+   if (transit->repeat.reverse) transit->progress = 1 - transit->progress;
    
-   if (transit->time.duration > 0) _transit_animate_op(transit, progress);
+   if (transit->time.duration > 0) _transit_animate_op(transit, transit->progress);
    
    /* Not end. Keep going. */
-   if (elapsed_time < transit->time.duration) return ECORE_CALLBACK_RENEW;
-   
+   if (elapsed_time < duration) return ECORE_CALLBACK_RENEW;
+
    /* Repeat and reverse and time done! */
    if ((transit->repeat.current == transit->repeat.count)
        && (!transit->auto_reverse || transit->repeat.reverse))
@@ -790,8 +795,88 @@ elm_transit_go(Elm_Transit *transit)
    if (transit->animator)
       ecore_animator_del(transit->animator);
 
+   transit->time.paused = 0;
+   transit->time.delayed = 0;
    transit->time.begin = ecore_loop_time_get();
    transit->animator = ecore_animator_add(_animator_animate_cb, transit);
+}
+
+/**
+ * Pause/Resume the transition. 
+ * If you call elm_transit_go again, paused states will affect no anymore. 
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+
+   if (!transit->animator) return;
+
+   if (paused)
+     {
+        if (transit->time.paused > 0) 
+           return;
+        ecore_animator_freeze(transit->animator);
+        transit->time.paused = ecore_loop_time_get();
+     }
+   else
+     {
+        if (transit->time.paused == 0) 
+           return;
+        ecore_animator_thaw(transit->animator);
+        transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
+        transit->time.paused = 0;
+     }
+}
+
+/**
+ * Get the value of paused status. 
+ *
+ * @see elm_transit_paused_set()
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ * @return EINA_TRUE means transition is paused. If @p transit is NULL
+ * EINA_FALSE is returned
+ *
+ * @ingroup Transit
+ */
+EAPI Eina_Bool
+elm_transit_paused_get(const Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
+
+   if (transit->time.paused == 0) 
+      return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+/**
+ * Get the time progression of the animation (a double value between 0.0 and 1.0).
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ *
+ * @return The time progression value. If @p transit is NULL
+ * 0 is returned
+ *
+ * @ingroup Transit
+ */
+EAPI double
+elm_transit_progress_value_get(const Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
+
+   return transit->progress;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -2506,6 +2506,9 @@ extern "C" {
    EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration) EINA_ARG_NONNULL(1); 
    EAPI double                 elm_transit_duration_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_go(Elm_Transit *transit) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+   EAPI double                 elm_transit_progress_value_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
 
    EAPI void                  *elm_transit_effect_resizing_add(Elm_Transit* transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
    EAPI void                  *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord dy, Evas_Coord to_dx, Evas_Coord to_dy);
