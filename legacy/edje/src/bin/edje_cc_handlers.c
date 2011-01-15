@@ -4733,8 +4733,6 @@ st_collections_group_parts_part_description_fill_spread(void)
 
    check_arg_count(1);
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-
    /* XXX this will need to include IMAGES when spread support is added to evas images */
    {
       ERR("%s: Error. parse error %s:%i. "
@@ -4742,6 +4740,9 @@ st_collections_group_parts_part_description_fill_spread(void)
 	  progname, file_in, line - 1);
       exit(-1);
    }
+
+#if 0
+   pc = eina_list_data_get(eina_list_last(edje_collections));
 
    ep = pc->parts[pc->parts_count - 1];
 
@@ -4757,6 +4758,7 @@ st_collections_group_parts_part_description_fill_spread(void)
    if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
    ed->image.fill.spread = parse_int_range(0, 0, 1);
+#endif
 }
 
 /**
