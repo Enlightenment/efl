@@ -168,6 +168,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
              FPc t256;
              
              h = (p[e2].y - p[e1].y) >> FP; // height of edge
+             if (h < 1) h = 1;
              t = (((y << FP) + (FP1 - 1)) - p[e1].y) >> FP;
              x = p[e2].x - p[e1].x;
              x = p[e1].x + ((x * t) / h);
