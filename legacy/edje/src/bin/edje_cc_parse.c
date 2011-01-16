@@ -1452,7 +1452,7 @@ _is_op1f(char c)
      case '*':;
      case '%':;
      case '/': return 1;
-     default: return 0;
+     default: break;
      }
    return 0;
 }
@@ -1464,7 +1464,7 @@ _is_op2f(char c)
      {
      case '+':;
      case '-': return 1;
-     default: return 0;
+     default: break;
      }
    return 0;
 }
@@ -1498,8 +1498,8 @@ _calcf(char op, double a, double b)
      default:
 	ERR("%s: Error. %s:%i unexpected character '%c'\n",
 	    progname, file_in, line - 1, op);
-	return a;
      }
+   return a;
 }
 
 static int
