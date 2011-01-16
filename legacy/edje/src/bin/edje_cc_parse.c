@@ -1232,12 +1232,12 @@ _is_numi(char c)
 int
 _is_op1i(char c)
 {
-   switch(c)
+   switch (c)
      {
      case '*':;
      case '%':;
      case '/': return 1;
-     default: return 0;
+     default: break;
      }
    return 0;
 }
@@ -1245,11 +1245,11 @@ _is_op1i(char c)
 int
 _is_op2i(char c)
 {
-   switch(c)
+   switch (c)
      {
      case '+':;
      case '-': return 1;
-     default: return 0;
+     default: break;
      }
    return 0;
 }
@@ -1283,8 +1283,8 @@ _calci(char op, int a, int b)
      default:
 	ERR("%s: Error. %s:%i unexpected character '%c'\n",
 	    progname, file_in, line - 1, op);
-	return a;
      }
+   return a;
 }
 
 /* float set of functoins */
