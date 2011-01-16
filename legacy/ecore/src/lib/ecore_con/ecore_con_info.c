@@ -278,7 +278,6 @@ ecore_con_info_get(Ecore_Con_Server *svr,
              err = write(fd[1], tosend, tosend_len);
           }
 
-on_error:
         if (result)
           freeaddrinfo(result);
 
