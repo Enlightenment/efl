@@ -2237,9 +2237,9 @@ again:
         else
           {
              PUSH_VERTEX(pn,
-                         (p[points[i]].x3 >> FP) + gc->shared->ax, 
-                         (p[points[i]].y3 >> FP) + gc->shared->ay,
-                         (p[points[i]].z >> FP) 
+                         (p[points[i]].fx) + gc->shared->ax, 
+                         (p[points[i]].fy) + gc->shared->ay,
+                         (p[points[i]].fz) 
                          + (gc->shared->foc - gc->shared->z0));
           }
         PUSH_TEXUV(pn,

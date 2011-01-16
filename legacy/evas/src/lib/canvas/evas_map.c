@@ -840,7 +840,8 @@ static inline void
 _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord y, const Evas_Coord w, const Evas_Coord h, const Evas_Coord z)
 {
    Evas_Map_Point *p = m->points;
-
+   int i;
+   
    p[0].x = x;
    p[0].y = y;
    p[0].z = z;
@@ -864,15 +865,12 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
    p[3].z = z;
    p[3].u = 0.0;
    p[3].v = h;
-
-   p[0].px = p[0].x;
-   p[0].py = p[0].y;
-   p[1].px = p[1].x;
-   p[1].py = p[1].y;
-   p[2].px = p[2].x;
-   p[2].py = p[2].y;
-   p[3].px = p[3].x;
-   p[3].py = p[3].y;
+   
+   for (i = 0; i < 4; i++)
+     {
+        p[i].px = p[i].x;
+        p[i].py = p[i].y;
+     }
 }
 
 /**
@@ -1052,7 +1050,7 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 
    for (; p < p_end; p++)
      {
-        Evas_Coord x, y, xx, yy;
+        double x, y, xx, yy;
 
         x = p->x - cx;
         y = p->y - cy;
@@ -1062,10 +1060,8 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
         x = xx + (y * cos(r + (M_PI / 2.0)));
         y = yy + (y * sin(r + (M_PI / 2.0)));
 
-        p->x = x + cx;
-        p->y = y + cy;
-        p->px = p->x;
-        p->py = p->y;
+        p->px = p->x = x + cx;
+        p->py = p->y = y + cy;
      }
 }
 
@@ -1098,7 +1094,7 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
 
    for (; p < p_end; p++)
      {
-        Evas_Coord x, y;
+        double x, y;
 
         x = p->x - cx;
         y = p->y - cy;
@@ -1106,10 +1102,8 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
         x = (((double)x) * zoomx);
         y = (((double)y) * zoomy);
 
-        p->x = x + cx;
-        p->y = y + cy;
-        p->px = p->x;
-        p->py = p->y;
+        p->px = p->x = x + cx;
+        p->py = p->y = y + cy;
      }
 }
 
@@ -1176,11 +1170,9 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
              y = yy + (y * sin(rx + M_PI_2));
           }
         
-        p->x = x + cx;
-        p->y = y + cy;
+        p->px = p->x = x + cx;
+        p->py = p->y = y + cy;
         p->z = z + cz;
-        p->px = p->x;
-        p->py = p->y;
      }
 }
 
@@ -1321,7 +1313,7 @@ evas_map_util_3d_perspective(Evas_Map *m,
    m->persp.foc = foc;
    for (; p < p_end; p++)
      {
-        Evas_Coord x, y, zz;
+        double x, y, zz;
 
         if (foc > 0)
           {

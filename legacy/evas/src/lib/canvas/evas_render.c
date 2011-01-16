@@ -681,8 +681,11 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              pt->x = (p->x + off_x) << FP;
              pt->y = (p->y + off_y) << FP;
              pt->z = (p->z)         << FP;
-             pt->x3 = p->px << FP;
-             pt->y3 = p->py << FP;
+//             pt->x3 = p->px << FP;
+//             pt->y3 = p->py << FP;
+             pt->fx = p->px;
+             pt->fy = p->py;
+             pt->fz = p->z;
              pt->u = p->u * FP1;
              pt->v = p->v * FP1;
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
