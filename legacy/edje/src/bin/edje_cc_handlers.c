@@ -4727,9 +4727,11 @@ st_collections_group_parts_part_description_fill_smooth(void)
 static void
 st_collections_group_parts_part_description_fill_spread(void)
 {
+#if 0
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Description_Image *ed;
+#endif
 
    check_arg_count(1);
 
