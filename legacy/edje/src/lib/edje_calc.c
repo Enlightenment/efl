@@ -1419,8 +1419,9 @@ _edje_part_recalc_single(Edje *ed,
 	 break;
       case EDJE_PART_TYPE_GRADIENT:
 	 /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
-	 abort();
 	 break;
+      default:
+        break;
      }
 }
 
