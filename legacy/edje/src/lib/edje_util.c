@@ -4767,15 +4767,13 @@ _edje_block_violate(Edje *ed)
 }
 
 void
-_edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *edje_obj;
 
    edje_obj = data;
    edje_object_part_unswallow(edje_obj, obj);
    return;
-   e = NULL;
-   event_info = NULL;
 }
 
 static void
