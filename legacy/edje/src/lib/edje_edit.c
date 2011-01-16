@@ -258,7 +258,7 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
         ps->code = eet_read(ef, keys[i], &size);
         eina_hash_add(eed->program_scripts, &ps->id, ps);
      }
-   if (keys) freE(keys);
+   if (keys) free(keys);
    return EINA_TRUE;
 }
 
