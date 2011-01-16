@@ -7694,10 +7694,11 @@ edje_edit_save_all(Evas_Object *obj)
 EAPI void
 edje_edit_print_internal_status(Evas_Object *obj)
 {
+/*   
    Edje_Program *epr;
    unsigned int i;
    int j;
-
+*/
    eina_error_set(0);
 
    GET_ED_OR_RETURN();
