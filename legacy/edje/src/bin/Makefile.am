@@ -65,5 +65,5 @@ edje_external_inspector_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_EXTERNA
 edje_external_inspector_LDFLAGS = @lt_enable_auto_import@
 
 
-EXTRA_DIST = @EDJE_RECC_PRG@ edje_prefix.h edje_cc.h edje_convert.hedje_convert.c edje_convert_main.c edje_data_convert.c
+EXTRA_DIST = @EDJE_RECC_PRG@ edje_prefix.h edje_cc.h edje_convert.h edje_convert.c edje_convert_main.c edje_data_convert.c
 EXTRA_SCRIPTS = edje_recc
