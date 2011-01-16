@@ -178,13 +178,11 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
 {
    FT_UInt index;
    RGBA_Font_Glyph *fg;
-   int chr;
    int gl;
    RGBA_Font_Int *fi;
 
    fi = fn->fonts->data;
 
-   chr = 0;
    if (!*text) return 0;
    gl = *text;
    if (gl == 0) return 0;
