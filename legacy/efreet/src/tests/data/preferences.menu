@@ -1,0 +1,41 @@
+<!DOCTYPE Menu PUBLIC 
+        "-//freedesktop//DTD Menu 1.0//EN"
+        "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+
+<Menu>
+  <Name>Preferences</Name>
+  <Directory>Preferences.directory</Directory>
+
+  <AppDir>blah</AppDir>
+  <AppDir>/var/tmp</AppDir>
+
+  <Move> 
+    <Old>Blah</Old 
+    <New>Borp</New> 
+  </Move>  
+
+  <Menu> 
+    <Name>House</Name> 
+    <Directory>House.directory</Directory> 
+    <Include> 
+      <Category>House</Category> 
+      <Category>Garden</Category>
+    </Include> 
+  </Menu> 
+  <Menu> 
+    <Name>Mouse</Name> 
+    <Directory>House.directory</Directory> 
+    <Include> 
+      <Category>House</Category> 
+      <Category>Garden</Category>
+    </Include> 
+  </Menu> 
+  <Menu> 
+    <Name>House</Name> 
+    <Directory>House.directory</Directory> 
+    <Include> 
+      <Category>Cat</Category>
+    </Include> 
+  </Menu> 
+</Menu>
+

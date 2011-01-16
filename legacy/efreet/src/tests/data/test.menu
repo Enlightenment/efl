@@ -1,0 +1,52 @@
+<!DOCTYPE Menu PUBLIC 
+        "-//freedesktop//DTD Menu 1.0//EN"
+        "http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd">
+
+<Menu>
+  <Name>Applications</Name>
+  <Directory>Applications.directory</Directory>
+
+  <DefaultAppDirs/>
+  <DefaultDirectoryDirs/>
+
+  <MergeDir>applications-merged</MergeDir>
+
+  <LegacyDir>/usr/share/applnk</LegacyDir>
+
+  <DefaultLayout>
+    <Merge type="menus"/>
+    <Merge type="files"/>
+    <Separator/>
+    <Menuname>More</Menuname>
+  </DefaultLayout>
+
+  <Move> 
+    <Old>Foo</Old> 
+    <New>Bar</New> 
+    <Old>Foo2</Old> 
+    <New>Bar2</New> 
+  </Move>  
+
+  <Menu> 
+    <Name>Preferences</Name> 
+    <Directory>Preferences.directory</Directory> 
+    <MergeFile>preferences.menu</MergeFile> 
+  </Menu> 
+
+  <Menu> 
+    <Name>Office</Name> 
+    <Directory>Office.directory</Directory> 
+    <Include> 
+      <Category>Office</Category> 
+    </Include> 
+    <Exclude> 
+      <Filename>foo.desktop</Filename> 
+      <And>
+        <Not>
+          <Filename>bar.desktop</Filename>
+        </Not>
+      </And>
+    </Exclude> 
+  </Menu> 
+</Menu>
+
