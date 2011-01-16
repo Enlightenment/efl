@@ -569,6 +569,20 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 
 ### Make the debug preprocessor configurable
 
+### Unit tests, coverage and benchmarking
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+EINA_CFLAGS="${EINA_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
+EINA_LIBS="${EINA_LIBS} ${EFL_COVERAGE_LIBS}"
+if test "x$enable_coverage" = "xyes" ; then
+   EINA_CFLAGS="${EINA_CFLAGS} ${EFL_DEBUG_CFLAGS}"
+fi
+
+EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
+EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
+
 AC_SUBST(requirement_eina)
 
 ### Create the .pc.in file according to the major version
@@ -605,6 +619,7 @@ src/modules/mp/pass_through/Makefile
 src/modules/mp/fixed_bitmap/Makefile
 src/modules/mp/buddy/Makefile
 src/modules/mp/one_big/Makefile
+src/tests/Makefile
 ])
 
 AC_OUTPUT
@@ -638,6 +653,13 @@ echo "  Iconv support........: ${have_iconv}"
 echo "  File dirfd...........: ${have_dirfd}"
 echo
 echo "  Documentation........: ${build_doc}"
+echo "  Tests................: ${enable_tests}"
+echo "  Coverage.............: ${enable_coverage}"
+echo "  Benchmark............: ${enable_benchmark}"
+if test "x${enable_benchmark}" = "xyes" ; then
+echo "    Glib...............: ${enable_benchmark_glib}"
+echo "    E17 real data......: ${enable_benchmark_e17}"
+fi
 echo
 echo "  CPU Specific Extensions:"
 echo "    MMX................: ${have_mmx}"
