@@ -2,7 +2,9 @@
 # include <config.h>
 #endif
 
+#include <sys/types.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <tiffio.h>
 
 #ifdef HAVE_EVIL

@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
