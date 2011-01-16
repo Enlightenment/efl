@@ -118,9 +118,9 @@ eina_unicode_strdup(const Eina_Unicode *text)
    size_t len;
 
    len = eina_unicode_strlen(text);
-   ustr = (Eina_Unicode *)calloc(len + 1, sizeof(Eina_Unicode));
+   ustr = (Eina_Unicode *)malloc((len + 1) * sizeof(Eina_Unicode));
    memcpy(ustr, text, len * sizeof(Eina_Unicode));
-
+   ustr[len] = 0;
    return ustr;
 }
 
