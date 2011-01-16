@@ -1,7 +1,7 @@
 #include "edje_private.h"
 
 static void
-_edje_hold_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_hold_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Hold *ev;
    Edje *ed;
@@ -15,12 +15,10 @@ _edje_hold_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      _edje_emit(ed, "hold,on", rp->part->name);
    else
      _edje_emit(ed, "hold,off", rp->part->name);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_focus_in_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info __UNUSED__)
+_edje_focus_in_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -31,12 +29,10 @@ _edje_focus_in_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
      return;
 
    _edje_emit(ed, "focus,part,in", rp->part->name);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_focus_out_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info __UNUSED__)
+_edje_focus_out_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Edje *ed;
    Edje_Real_Part *rp;
@@ -47,12 +43,10 @@ _edje_focus_out_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
      return;
 
    _edje_emit(ed, "focus,part,out", rp->part->name);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_mouse_in_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_mouse_in_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_In *ev;
    Edje *ed;
@@ -65,12 +59,10 @@ _edje_mouse_in_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
        ((ev->event_flags) &&
 	(rp->part->ignore_flags & ev->event_flags))) return;
    _edje_emit(ed, "mouse,in", rp->part->name);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_mouse_out_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_mouse_out_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Out *ev;
    Edje *ed;
@@ -83,12 +75,10 @@ _edje_mouse_out_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
        ((ev->event_flags) &&
 	(rp->part->ignore_flags & ev->event_flags))) return;
    _edje_emit(ed, "mouse,out", rp->part->name);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_mouse_down_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_mouse_down_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
    Edje *ed;
@@ -200,12 +190,10 @@ _edje_mouse_down_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
 //   _edje_recalc_do(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_mouse_up_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_mouse_up_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Up *ev;
    Edje *ed;
@@ -268,12 +256,10 @@ _edje_mouse_up_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info
 //   _edje_recalc_do(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_mouse_move_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_mouse_move_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev;
    Edje *ed;
@@ -356,12 +342,10 @@ _edje_mouse_move_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_in
      }
    _edje_unref(ed);
    _edje_thaw(ed);
-   return;
-   e = NULL;
 }
 
 static void
-_edje_mouse_wheel_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_edje_mouse_wheel_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Wheel *ev;
    Edje *ed;
@@ -377,8 +361,6 @@ _edje_mouse_wheel_signal_cb(void *data, Evas *e, Evas_Object *obj, void *event_i
 
    snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i", ev->direction, (ev->z < 0) ? (-1) : (1));
    _edje_emit(ed, buf, rp->part->name);
-   return;
-   e = NULL;
 }
 
 Eina_Bool
