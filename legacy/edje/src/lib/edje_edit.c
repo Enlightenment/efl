@@ -7703,8 +7703,7 @@ edje_edit_print_internal_status(Evas_Object *obj)
    GET_ED_OR_RETURN();
 
    _edje_generate_source(obj);
-   return;
-
+/*
    INF("****** CHECKIN' INTERNAL STRUCTS STATUS *********");
 
    INF("path: '%s', group: '%s', parent: '%s'",
@@ -7740,4 +7739,5 @@ edje_edit_print_internal_status(Evas_Object *obj)
      }
 
    INF("******************  END  ************************");
+ */
 }
