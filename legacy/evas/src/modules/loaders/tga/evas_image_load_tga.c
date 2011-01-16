@@ -227,8 +227,6 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    bufptr = filedata + header->idLength;
    bufend = filedata + datasize;
 
-   dataptr = surface;
-
    if (!rle)
      {
         for (y = 0; y < h; y++)
