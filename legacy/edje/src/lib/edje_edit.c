@@ -258,7 +258,7 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
         ps->code = eet_read(ef, keys[i], &size);
         eina_hash_add(eed->program_scripts, &ps->id, ps);
      }
-
+   if (keys) freE(keys);
    return EINA_TRUE;
 }
 
@@ -1155,10 +1155,15 @@ edje_edit_group_del(Evas_Object *obj, const char *group_name)
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/source/%d/*", e->id);
    keys = eet_list(eetf, buf, &count);
    if (keys)
-     do {
-          count--;
-          eet_delete(eetf, keys[count]);
-     } while(count);
+     {
+        do
+          {
+             count--;
+             eet_delete(eetf, keys[count]);
+          }
+        while(count);
+        free(keys);
+     }
    eet_close(eetf);
 
    /* Free Group */
