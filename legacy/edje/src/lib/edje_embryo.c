@@ -811,6 +811,7 @@ _edje_embryo_fn_get_part_id(Embryo_Program *ep, Embryo_Cell *params)
    CHKPARAM(1);
    ed = embryo_program_data_get(ep);
    GETSTR(p, params[1]);
+   if (!p) return -1;
    col = ed->collection;
    if (!col) return -1;
    for (part = col->parts; *part; part++)
