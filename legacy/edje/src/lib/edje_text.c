@@ -283,7 +283,7 @@ _edje_text_font_get(const char *base, const char *new, char **free_later)
 
    font_len = strlen(new);
    aux = strchr(base_style, ',');
-   style_len = (aux) ? (aux - base_style) : strlen(base_style);
+   style_len = (aux) ? (size_t)(aux - base_style) : strlen(base_style);
 
    *free_later = malloc(font_len + style_len + 1);
    memcpy(*free_later, new, font_len);
