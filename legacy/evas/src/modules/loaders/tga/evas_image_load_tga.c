@@ -73,9 +73,8 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    unsigned char *seg = MAP_FAILED, *filedata;
    struct stat ss;
    tga_header *header;
-   tga_footer *footer;
+   tga_footer *footer, tfooter;
    char hasa = 0, footer_present = 0, vinverted = 0;
-//   char rle = 0;
    int w = 0, h = 0, bpp;
 
    fd = open(file, O_RDONLY);
@@ -94,7 +93,8 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    header = (tga_header *)filedata;
    // no unaligned data accessed, so ok
    footer = (tga_footer *)(filedata + (ss.st_size - sizeof(tga_footer)));
-   if (!memcmp(footer->signature, TGA_SIGNATURE, sizeof(footer->signature)))
+   memcpy(&tfooter, footer, sizeof(tga_footer));
+   if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
         // footer is there and matches. this is a tga file - any problems now
         // are a corrupt file
@@ -149,7 +149,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    unsigned char *seg = MAP_FAILED, *filedata;
    struct stat ss;
    tga_header *header;
-   tga_footer *footer;
+   tga_footer *footer, tfooter;
    char hasa = 0, footer_present = 0, vinverted = 0, rle = 0;
    int w = 0, h = 0, x, y, bpp;
    unsigned int *surface, *dataptr;
@@ -172,7 +172,8 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    header = (tga_header *)filedata;
    // no unaligned data accessed, so ok
    footer = (tga_footer *)(filedata + (ss.st_size - sizeof(tga_footer)));
-   if (!memcmp(footer->signature, TGA_SIGNATURE, sizeof(footer->signature)))
+   memcpy(&tfooter, footer, sizeof(tga_footer));
+   if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
         // footer is there and matches. this is a tga file - any problems now
         // are a corrupt file
