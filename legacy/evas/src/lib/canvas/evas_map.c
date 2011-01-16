@@ -1054,8 +1054,8 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
      {
         Evas_Coord x, y, xx, yy;
 
-        xx = x = p->x - cx;
-        yy = y = p->y - cy;
+        x = p->x - cx;
+        y = p->y - cy;
 
         xx = (x * cos(r));
         yy = (x * sin(r));
