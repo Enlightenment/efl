@@ -2961,11 +2961,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
-         (o->style_pad.t != style_pad_t) || (o->style_pad.b != style_pad_b))
+       (o->style_pad.t != style_pad_t) || (o->style_pad.b != style_pad_b))
      {
-        Evas_Object_Textblock_Line *lines;
-
-        lines = c->par->lines;
         c->par->lines = NULL;
         o->style_pad.l = style_pad_l;
         o->style_pad.r = style_pad_r;
