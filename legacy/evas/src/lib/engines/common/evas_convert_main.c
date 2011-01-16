@@ -161,7 +161,7 @@ evas_common_convert_init(void)
 }
 
 EAPI Gfx_Func_Convert
-evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask, DATA32 gmask, DATA32 bmask, Convert_Pal_Mode pal_mode, int rotation)
+evas_common_convert_func_get(DATA8 *dest, int w, int h __UNUSED__, int depth, DATA32 rmask, DATA32 gmask, DATA32 bmask, Convert_Pal_Mode pal_mode, int rotation)
 {
    if ((rmask == 0) && (gmask == 0) && (bmask == 0))
      {
@@ -207,12 +207,6 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
          if (pal_mode == PAL_MODE_GRAY64)
             return evas_common_convert_rgba_to_8bpp_pal_gray64;
 #endif
-	  }
-	if (depth == 1)
-	  {
-	  }
-	if (depth == 4)
-	  {
 	  }
      }
    else
@@ -632,15 +626,7 @@ evas_common_convert_func_get(DATA8 *dest, int w, int h, int depth, DATA32 rmask,
 	       return evas_common_convert_rgba_to_8bpp_rgb_111_dith;
 #endif
 	  }
-	if (depth == 1)
-	  {
-	  }
-	if (depth == 4)
-	  {
-	  }
     }
    /* no optimised converter for this... no generic one either. NULL */
    return NULL;
-   h = 0;
-   pal_mode = 0;
 }
