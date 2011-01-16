@@ -1322,7 +1322,6 @@ _deltaf(char *s, double *val)
 	s++;
 	s = _alphaf(s, val);
 	s++;
-	return s;
      }
    return s;
 }
@@ -1440,8 +1439,7 @@ _is_numf(char c)
        || ('.' == c)
        || ('+' == c))
      return 1;
-   else
-     return 0;
+   return 0;
 }
 
 static int
