@@ -99,7 +99,6 @@ EFL_ENABLE_BIN([edje-cc])
 EFL_ENABLE_BIN([edje-decc])
 EFL_ENABLE_BIN([edje-recc])
 EFL_ENABLE_BIN([edje-player])
-EFL_ENABLE_BIN([edje-convert])
 EFL_ENABLE_BIN([edje-inspector])
 EFL_ENABLE_BIN([edje-external-inspector])
 
@@ -304,11 +303,6 @@ if test "x$have_edje_player" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_PLAYER], [ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0])
 fi
 
-if test "x$have_edje_convert" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_CONVERT], [eet >= 1.0.0 eina >= 1.0.0])
-   EDJE_CONVERT_LIBS="${EDJE_CONVERT_LIBS} ${LUA_LIBS} ${lua_libs}"
-fi
-
 if test "x$have_edje_inspector" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_INSPECTOR], [ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0])
 fi
@@ -416,7 +410,6 @@ echo "  Build edje_cc................: $have_edje_cc"
 echo "  Build edje_decc..............: $have_edje_decc"
 echo "  Build edje_recc..............: $have_edje_recc"
 echo "  Build edje_player............: $have_edje_player"
-echo "  Build edje_convert...........: $have_edje_convert"
 echo "  Build edje_inspector.........: $have_edje_inspector"
 echo "  Build edje_external_inspector: $have_edje_external_inspector"
 echo
