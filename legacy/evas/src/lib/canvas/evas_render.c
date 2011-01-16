@@ -678,11 +678,9 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
         pt = pts;
         for (; p < p_end; p++, pt++)
           {
-             pt->x = (p->x + off_x) << FP;
-             pt->y = (p->y + off_y) << FP;
-             pt->z = (p->z)         << FP;
-//             pt->x3 = p->px << FP;
-//             pt->y3 = p->py << FP;
+             pt->x = (p->x + (double)off_x) * FP1;
+             pt->y = (p->y + (double)off_y) * FP1;
+             pt->z = (p->z)                 * FP1;
              pt->fx = p->px;
              pt->fy = p->py;
              pt->fz = p->z;

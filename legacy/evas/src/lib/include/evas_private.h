@@ -358,8 +358,7 @@ struct _Evas_Size_Hints
 
 struct _Evas_Map_Point
 {
-   Evas_Coord x, y, z, px, py;
-   double fx, fy, fz, fpx, fpy;
+   double x, y, z, px, py;
    double u, v;
    unsigned char r, g, b, a;
 };
