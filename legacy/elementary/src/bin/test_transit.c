@@ -366,7 +366,7 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt, *bt2, *ic;
+   Evas_Object *win, *bg, *bt, *bt2, *ic;
 
    win = elm_win_add(NULL, "transit-5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 5");
