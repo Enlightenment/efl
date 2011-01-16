@@ -798,6 +798,10 @@ _ecore_win32_event_keystroke_get(int    key,
            kc = "KP_Delete";
          }
        break;
+     case VK_SPACE:
+       kn = "space";
+       ks = "space";
+       kc = "space";
      case VK_F1:
        kn = "F1";
        ks = "F1";
@@ -985,6 +989,11 @@ _ecore_win32_event_char_get(int    key,
        strncpy(kn, "Escape", 32);
        strncpy(ks, "Escape", 32);
        strncpy(kc, "Escape", 32);
+       break;
+     case VK_SPACE:
+       strncpy(kn, "space", 32);
+       strncpy(ks, "space", 32);
+       strncpy(kc, "space", 32);
        break;
      default:
        /* displayable characters */
