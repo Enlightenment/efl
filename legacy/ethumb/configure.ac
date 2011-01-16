@@ -211,6 +211,7 @@ src/lib/client/Makefile
 src/plugins/Makefile
 src/plugins/emotion/Makefile
 src/plugins/epdf/Makefile
+src/tests/Makefile
 data/Makefile
 data/frames/Makefile
 m4/Makefile
