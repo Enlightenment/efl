@@ -2469,11 +2469,9 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
              // draw geom +x +y
              for (; p < p_end; p++, pt++)
                {
-                  pt->x = ((int)p->x + x) << FP;
-                  pt->y = ((int)p->y + y) << FP;
-                  pt->z = ((int)p->z)     << FP;
-//                  pt->x3 = p->px << FP;
-//                  pt->y3 = p->py << FP;
+                  pt->x = (p->x + (double)x) * FP1;
+                  pt->y = (p->y + (double)y) * FP1;
+                  pt->z = (p->z)             * FP1;
                   pt->fx = p->px;
                   pt->fy = p->py;
                   pt->fz = p->z;
