@@ -7,7 +7,7 @@ typedef struct _Pginfo Pginfo;
 
 struct _Pginfo
 {
-   Evas_Object *win, *pager, *pg1, *pg2, *pg3;
+    Evas_Object *win, *pager, *pg1, *pg2, *pg3, *pg4;
 };
 
 static void
@@ -28,8 +28,17 @@ static void
 my_pager_3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Pginfo *info = data;
+   elm_pager_content_promote(info->pager, info->pg4);
+}
+
+
+static void
+my_pager_4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Pginfo *info = data;
    elm_pager_content_promote(info->pager, info->pg1);
 }
+
 
 static void
 my_pager_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -103,7 +112,6 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 		       "show and hide of pages. Select one theme style:");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
-
 
    unsigned int i = 0;
    Evas_Object *rdg = NULL, *rd;
@@ -190,6 +198,44 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bt);
    elm_pager_content_push(pg, bx);
    info.pg3 = bx;
+
+   Evas_Object *ly, *ly2;
+   char buf[4096];
+   
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   elm_layout_file_set(ly, buf, "test/layout");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(ly);
+
+   ly2 = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
+   elm_layout_file_set(ly2, buf, "layout2");
+   evas_object_size_hint_weight_set(ly2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   //elm_win_resize_object_add(win, ly2);
+   evas_object_show(ly2);
+
+   
+
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Flip to 1");
+   evas_object_smart_callback_add(bt, "clicked", my_pager_4, &info);
+   elm_layout_content_set(ly2, "element1", bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_button_label_set(bt, "Popme");
+   evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
+   evas_object_show(bt);
+   elm_layout_content_set(ly2, "element2", bt);
+
+   elm_layout_content_set(ly, "swallow", ly2);
+   evas_object_show(ly);
+
+   elm_pager_content_push(pg, ly);
+   info.pg4 = ly2;
+
 
    evas_object_show(win);
 }

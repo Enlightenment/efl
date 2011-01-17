@@ -168,6 +168,147 @@ collections {
          }
       }
    }
+   group { name: "layout2";
+      images {
+	 image: "over.png" COMP;
+	 image: "under.png" COMP;
+	 image: "sky.jpg" LOSSY 80;
+	 image: "clo.png" LOSSY 60;
+      }
+      parts {
+         part { name: "clip";
+            type: RECT;
+            description { state: "default" 0.0;
+            }
+         }
+	 part { name: "sky";
+            mouse_events: 0;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       aspect: 2.6225 2.6225;
+	       aspect_preference: NONE;
+	       image.normal: "sky.jpg";
+	    }
+	    description { state: "drift" 0.0;
+               inherit: "default" 0.0;
+               fill {
+                  origin {
+                     relative: 1.0 0.0;
+                     offset: 0 0;
+                  }
+               }
+	    }
+	 }
+	 part { name: "under";
+            mouse_events: 0;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       align: 0.5 0.0;
+	       aspect: 1.486068111 1.486068111;
+	       aspect_preference: HORIZONTAL;
+	       image.normal: "under.png";
+	    }
+	 }
+	 part { name: "text";
+	    type: TEXT;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       color: 255 255 0 255;
+	       rel1 {
+		  relative: 0.3 0.02;
+	       }
+	       rel2 {
+		  relative: 0.6 0.12;
+	       }
+	       align: 0.5 0.5;
+	       text {
+		  font: "Sans:style=Bold";
+		  size: 14;
+		  min: 1 1;
+		  text: "some edje text here";
+	       }
+	    }
+	 }
+	 part { name: "element1";
+	    type: SWALLOW;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1 {
+		  relative: 0.2 0.2;
+	       }
+	       rel2 {
+		  relative: 0.4 0.3;
+	       }
+	    }
+	 }
+	 part { name: "element2";
+	    type: SWALLOW;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1 {
+		  relative: 0.6 0.3;
+	       }
+	       rel2 {
+		  relative: 0.9 0.5;
+	       }
+	    }
+	 }
+	 part { name: "element3";
+	    type: SWALLOW;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       rel1 {
+		  relative: 0.1 0.7;
+	       }
+	       rel2 {
+		  relative: 0.9 0.9;
+	       }
+	    }
+	 }
+	 part { name: "over";
+            mouse_events: 0;
+            clip_to: "clip";
+	    description { state: "default" 0.0;
+	       align: 0.0 1.0;
+	       aspect: 2.238095238 2.238095238;
+	       max: 329 147;
+	       aspect_preference: HORIZONTAL;
+	       image.normal: "over.png";
+	    }
+	 }
+         part { name: "clo";
+            mouse_events: 0;
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               fill {
+                  smooth: 0;
+                  origin {
+                     relative: 0.0 0.0;
+                     offset: 0 0;
+                  }
+                  size {
+                     relative: 1.84722 1.0;
+                     offset: 0 0;
+                  }
+               }
+               image.normal: "clo.png";
+            }
+            description { state: "drift" 0.0;
+               inherit: "default" 0.0;
+               fill {
+                  origin {
+                     relative: 1.84722 0.0;
+                     offset: 0 0;
+                  }
+                  size {
+                     relative: 1.84722 1.0;
+                     offset: 0 0;
+                  }
+               }
+            }
+         }
+      }
+   }
    group { name: "launcher_page";
       parts {
          part { name: "slot.0.0"; type: SWALLOW;
@@ -528,5 +669,30 @@ collections {
          }
       }
    }
+group {
+      name: "test/layout";
+      images {
+	 image: "sky.jpg" LOSSY 80;
+      }
+      parts {
+            part {
+                 name: "bg";
+                 description {
+                     state: "default" 0.0;
+                     color: 255 255 255 100;
+                     image.normal: "sky.jpg";
+                 }
+            }
+            part {
+                 name: "swallow";
+                 type: SWALLOW;
+                 description {
+                     state: "default" 0.0;
+                     rel1.offset: 8 8;
+                     rel2.offset: -7 -7;
+                 }
+            }
+      }
+}
 }
 	 
