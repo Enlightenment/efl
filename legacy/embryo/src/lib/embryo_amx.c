@@ -306,7 +306,7 @@ embryo_program_const_new(void *data, int size)
  * @ingroup Embryo_Program_Creation_Group
  */
 EAPI Embryo_Program *
-embryo_program_load(char *file)
+embryo_program_load(const char *file)
 {
    Embryo_Program *ep;
    Embryo_Header   hdr;

@@ -120,7 +120,7 @@ extern "C" {
 
    EAPI Embryo_Program  *embryo_program_new(void *data, int size);
    EAPI Embryo_Program  *embryo_program_const_new(void *data, int size);
-   EAPI Embryo_Program  *embryo_program_load(char *file);
+   EAPI Embryo_Program  *embryo_program_load(const char *file);
    EAPI void             embryo_program_free(Embryo_Program *ep);
    EAPI void             embryo_program_native_call_add(Embryo_Program *ep, const char *name, Embryo_Cell (*func) (Embryo_Program *ep, Embryo_Cell *params));
    EAPI void             embryo_program_vm_reset(Embryo_Program *ep);
