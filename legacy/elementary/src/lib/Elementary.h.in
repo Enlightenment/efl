@@ -325,8 +325,8 @@ extern "C" {
    EAPI const Eina_List     *elm_font_overlay_list_get(void);
    EAPI void                 elm_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void                 elm_font_overlay_unset(const char *text_class);
-   EAPI void                 elm_font_overlay_apply();
-   EAPI void                 elm_font_overlay_all_apply();
+   EAPI void                 elm_font_overlay_apply(void);
+   EAPI void                 elm_font_overlay_all_apply(void);
 
    EAPI Elm_Font_Properties *elm_font_properties_get(const char *font) EINA_ARG_NONNULL(1);
    EAPI void                 elm_font_properties_free(Elm_Font_Properties *efp) EINA_ARG_NONNULL(1);
