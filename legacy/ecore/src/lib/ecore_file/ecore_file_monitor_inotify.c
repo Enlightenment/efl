@@ -209,6 +209,11 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
         if (!isdir)
           em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
      }
+   if (mask & IN_MODIFY)
+     {
+        if (!isdir)
+          em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
+     }
    if (mask & IN_MOVED_FROM)
      {
         if (isdir)
@@ -268,14 +273,20 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
 static int
 _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
 {
-   int mask;
-   mask = IN_ATTRIB|IN_CLOSE_WRITE|
-          IN_MOVED_FROM|IN_MOVED_TO|
-          IN_DELETE|IN_CREATE|
-          IN_DELETE_SELF|IN_MOVE_SELF|
-          IN_UNMOUNT;
-   ECORE_FILE_MONITOR_INOTIFY(em)->wd = inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh),
-                                                          path, mask);
+   int mask = 
+      IN_ATTRIB | 
+      IN_CLOSE_WRITE |
+      IN_MOVED_FROM | 
+      IN_MOVED_TO |
+      IN_DELETE | 
+      IN_CREATE |
+      IN_MODIFY |
+      IN_DELETE_SELF | 
+      IN_MOVE_SELF |
+      IN_UNMOUNT;
+   
+   ECORE_FILE_MONITOR_INOTIFY(em)->wd = 
+      inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh), path, mask);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
      {
         ERR("inotify_add_watch error");
