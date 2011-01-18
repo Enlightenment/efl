@@ -111,8 +111,8 @@ static const char EINA_MAGIC_SHARE_HEAD_STR[] = "Eina Share Head";
    do {                                                          \
         if (!EINA_MAGIC_CHECK((d), _node_magic))    \
           {                                                           \
-             unlock;                                                   \
              EINA_MAGIC_FAIL((d), _node_magic);        \
+             unlock;                                                   \
           }                                                           \
      } while (0)
 
