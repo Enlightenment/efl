@@ -1005,6 +1005,7 @@ elm_layout_edje_get(const Evas_Object *obj)
  * @return The edje data string
  *
  * This function fetches data specified at the object level.
+ * This function return NULL if data is not found.
  *
  * In EDC this comes from a data block within the group block that @a
  * obj was loaded from. E.g.
