@@ -67,7 +67,8 @@ evas_object_change(Evas_Object *obj)
 {
    Eina_List *l;
    Evas_Object *obj2;
-
+   Eina_Bool movch = 0;
+   
    if (obj->layer->evas->nochange)
      {
 //        printf("nochange %p\n", obj);
@@ -76,11 +77,26 @@ evas_object_change(Evas_Object *obj)
 //   else
 //      printf("ch %p\n", obj);
    obj->layer->evas->changed = 1;
-   if (obj->changed) return;
+   if (obj->changed_move)
+     {
+        movch = 1;
+        obj->changed_move = 0;
+        if (!obj->changed_nomove) obj->changed_move_only = 1;
+        if (obj->changed) return;
+     }
+   else
+     {
+        obj->changed_move_only = 0;
+        obj->changed_nomove = 1;
+        if (obj->changed) return;
+     }
 //   obj->changed = 1;
    evas_render_object_recalc(obj);
    /* set changed flag on all objects this one clips too */
-   EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) evas_object_change(obj2);
+   if (!((movch) && (obj->is_static_clip)))
+     {
+        EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) evas_object_change(obj2);
+     }
    if (obj->smart.parent) evas_object_change(obj->smart.parent);
 }
 
@@ -437,6 +453,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    obj->cur.geometry.x = x;
    obj->cur.geometry.y = y;
 ////   obj->cur.cache.geometry.validity = 0;
+   obj->changed_move = 1;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    obj->doing.in_move--;

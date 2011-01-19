@@ -607,9 +607,56 @@ pending_change(void *data, void *gdata __UNUSED__)
         obj->pre_render_done = 0;
 //// FIXME: this wipes out changes
         obj->changed = 0;
+        obj->changed_move_only = 0;
+        obj->changed_nomove = 0;
+        obj->changed_move = 0;
      }
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
+/*
+static void
+unchange(Evas_Object *obj)
+{
+   Evas_Object *obj2;
+
+   if (!obj->changed) return;
+   obj->changed = 0;
+   obj->changed_move_only = 0;
+   obj->changed_nomove = 0;
+   obj->changed_move = 0;
+   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+     {
+        unchange(obj2);
+     }
+}
+
+static int
+chlist(Evas_Object *obj, int i)
+{
+   Evas_Object *obj2;
+   int j;
+   int ret = 0;
+
+   if (!obj->changed) return 0;
+   for (j = 0; j < i; j++) printf(" ");
+   printf("ch2 %p %s %i [%i %i %ix%i] v %i/%i [r%i] %p\n", obj, 
+          obj->type, 
+          obj->changed_move_only,
+          obj->cur.geometry.x,
+          obj->cur.geometry.y,
+          obj->cur.geometry.w,
+          obj->cur.geometry.h,
+          obj->cur.visible,
+          obj->prev.visible,
+          obj->restack,
+          obj->clip.clipees);
+   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+     {
+        if (obj2->changed)
+           ret |= chlist(obj2, i + 1);
+     }
+}
+*/
 
 static Eina_Bool
 evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
@@ -725,23 +772,37 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                       !evas_object_was_visible(obj2))
                     {
                        obj2->changed = 0;
+                       obj2->changed_move_only = 0;
+                       obj2->changed_nomove = 0;
+                       obj2->changed_move = 0;
                        continue;
                     }
                   if (obj2->changed)
                     {
-                       obj2->changed = 0;
+//                       chlist(obj2, 0);
                        changed = 1;
+                       obj2->changed = 0;
+                       obj2->changed_move_only = 0;
+                       obj2->changed_nomove = 0;
+                       obj2->changed_move = 0;
                        break;
                     }
                }
+//             unchange(obj);
              obj->changed = 0;
+             obj->changed_move_only = 0;
+             obj->changed_nomove = 0;
+             obj->changed_move = 0;
           }
         else
           {
              if (obj->changed)
                {
-                  obj->changed = 0;
                   changed = 1;
+                  obj->changed = 0;
+                  obj->changed_move_only = 0;
+                  obj->changed_nomove = 0;
+                  obj->changed_move = 0;
                }
           }
 
@@ -1306,6 +1367,9 @@ evas_render_updates_internal(Evas *e,
 	     obj->func->render_post(obj);
 	     obj->restack = 0;
 	     obj->changed = 0;
+             obj->changed_move_only = 0;
+             obj->changed_nomove = 0;
+             obj->changed_move = 0;
 	  }
         else if ((obj->cur.map != obj->prev.map) ||
                  (obj->cur.usemap != obj->prev.usemap))
@@ -1314,6 +1378,9 @@ evas_render_updates_internal(Evas *e,
 	     obj->func->render_post(obj);
 	     obj->restack = 0;
 	     obj->changed = 0;
+             obj->changed_move_only = 0;
+             obj->changed_nomove = 0;
+             obj->changed_move = 0;
           }
 /* moved to other pre-process phase 1
 	if (obj->delete_me == 2)
