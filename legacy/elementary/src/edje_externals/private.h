@@ -8,6 +8,7 @@ typedef struct {
     const char *style;
 } Elm_Params;
 
+void external_elm_init(void);
 void external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
 void external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_name);
 const char *external_translate(void *data, const char *orig);
@@ -89,6 +90,7 @@ static Evas_Object *                                \
 external_##type_name##_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name) \
 {									\
    Evas_Object *parent, *obj;						\
+   external_elm_init();                                                 \
    parent = elm_widget_parent_widget_get(edje);			\
    if (!parent) parent = edje;						\
    obj = elm_##type_name##_add(parent);				\

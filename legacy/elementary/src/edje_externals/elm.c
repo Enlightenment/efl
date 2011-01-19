@@ -3,6 +3,38 @@
 
 int _elm_log_dom = -1;
 
+static int init_count = 0;
+
+void
+external_elm_init(void)
+{
+   int argc = 0;
+   char **argv = NULL;
+
+   init_count++;
+   printf("elm_real_init\n");
+   if (init_count > 1) return;
+   ecore_app_args_get(&argc, &argv);
+   elm_init(argc, argv);
+}
+
+static void
+external_elm_shutdown(void)
+{
+   init_count--;
+   printf("elm_real_shutdown\n");
+   if (init_count > 1) return;
+   elm_shutdown();
+}
+
+static void
+_external_obj_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, 
+                                  _external_obj_del);
+   external_elm_shutdown();
+}
+
 void
 external_signal(void *data __UNUSED__, Evas_Object *obj, const char *signal, const char *source)
 {
@@ -133,6 +165,8 @@ external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_nam
 	evas_object_smart_callback_add
 	  (obj, d->name, _external_signal_proxy_cb, ctxt);
      }
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, 
+                                  _external_obj_del, NULL);
 }
 
 void
@@ -248,12 +282,6 @@ static Edje_External_Type_Info elm_external_types[] =
 static Eina_Bool
 elm_mod_init(void)
 {
-   int argc = 0;
-   char **argv = NULL;
-
-   ecore_app_args_get(&argc, &argv);
-   elm_init(argc, argv);
-
    _elm_log_dom = eina_log_domain_register("elm-externals", EINA_COLOR_LIGHTBLUE);
    edje_external_type_array_register(elm_external_types);
    return EINA_TRUE;
@@ -263,11 +291,9 @@ static void
 elm_mod_shutdown(void)
 {
    edje_external_type_array_unregister(elm_external_types);
-
    eina_log_domain_unregister(_elm_log_dom);
    _elm_log_dom = -1;
 
-   elm_shutdown();
 }
 
 EINA_MODULE_INIT(elm_mod_init);

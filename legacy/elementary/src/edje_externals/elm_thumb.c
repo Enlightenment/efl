@@ -135,6 +135,7 @@ static Evas_Object *
 external_thumb_add(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *edje, const Eina_List *params __UNUSED__, const char *part_name)
 {
    Evas_Object *parent, *obj;
+   external_elm_init();
    parent = elm_widget_parent_widget_get(edje);
    if (!parent) parent = edje;
    elm_need_ethumb(); /* extra command needed */
