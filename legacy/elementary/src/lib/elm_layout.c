@@ -997,8 +997,43 @@ elm_layout_edje_get(const Evas_Object *obj)
 }
 
 /**
+ * Get the edje data of the given layout
+ *
+ * @param obj The layout object
+ * @param key The data key
+ *
+ * @return The edje data string
+ *
+ * This function fetches data specified at the object level.
+ *
+ * In EDC this comes from a data block within the group block that @a
+ * obj was loaded from. E.g.
+ *
+ * @code
+ * collections {
+ *   group {
+ *     name: "a_group";
+ *     data {
+ *	 item: "key1" "value1";
+ *	 item: "key2" "value2";
+ *     }
+ *   }
+ * }
+ * @endcode
+ *
+ * @ingroup Layout
+ */
+EAPI const char *
+elm_layout_data_get(const Evas_Object *obj, const char *key)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return edje_object_data_get(wd->lay, key);
+}
+
+/**
  * Eval sizing
- * 
+ *
  * Manually forms a sizing re-evaluation when contents changed state so that
  * minimum size might have changed and needs re-evaluation. Also note that
  * a standard signal of "size,eval" "elm" emitted by the edje object will
@@ -1233,3 +1268,6 @@ elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
    return elm_object_cursor_engine_only_get(pc->obj);
 }
+
+
+

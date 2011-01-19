@@ -1016,6 +1016,7 @@ extern "C" {
    EAPI Evas_Object       *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj) EINA_ARG_NONNULL(1, 2, 3);
    EAPI void               elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Object       *elm_layout_edje_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI const char        *elm_layout_data_get(const Evas_Object *obj, const char *key) EINA_ARG_NONNULL(1, 2);
    EAPI void               elm_layout_sizing_eval(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor) EINA_ARG_NONNULL(1, 2);
    EAPI const char        *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name) EINA_ARG_NONNULL(1, 2);
