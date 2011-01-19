@@ -2399,12 +2399,12 @@ _smart_reconfigure(Smart_Data *sd)
 {
    if (sd->resize_obj)
      {
-	evas_object_move(sd->resize_obj, sd->x, sd->y);
+        evas_object_move(sd->resize_obj, sd->x, sd->y);
 	evas_object_resize(sd->resize_obj, sd->w, sd->h);
      }
    if (sd->hover_obj)
      {
-	evas_object_move(sd->hover_obj, sd->x, sd->y);
+        evas_object_move(sd->hover_obj, sd->x, sd->y);
 	evas_object_resize(sd->hover_obj, sd->w, sd->h);
      }
 }

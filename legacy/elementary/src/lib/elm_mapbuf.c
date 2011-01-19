@@ -115,7 +115,7 @@ _configure(Evas_Object *obj)
    if (wd->content)
      {
         Evas_Coord x, y, w, h, x2, y2;
-        
+
         evas_object_geometry_get(wd->clip, &x, &y, &w, &h);
         evas_object_geometry_get(wd->content, &x2, &y2, NULL, NULL);
         if ((x != x2) || (y != y2))
@@ -128,7 +128,7 @@ _configure(Evas_Object *obj)
                   Evas *e = evas_object_evas_get(obj);
                   evas_smart_objects_calculate(e);
                   evas_nochange_push(e);
-//                  printf("x--------------------\n");
+//                  printf("x-------------------- %i %i\n", x, y);
                   evas_object_move(wd->content, x, y);
                   evas_smart_objects_calculate(e);
 //                  printf("y--------------------\n");
@@ -182,15 +182,16 @@ elm_mapbuf_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->clip = evas_object_rectangle_add(e);
+   evas_object_static_clip_set(wd->clip, EINA_TRUE);
    evas_object_pass_events_set(wd->clip, EINA_TRUE);
    evas_object_color_set(wd->clip, 0, 0, 0, 0);
 
-   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_RESIZE, _resize, obj);
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
   
    elm_widget_resize_object_set(obj, wd->clip);
-  
+   
    wd->enabled = 0;
    wd->alpha = 1;
    wd->smooth = 1;
@@ -300,6 +301,7 @@ elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
    if (!wd) return;
    if (wd->enabled == enabled) return;
    wd->enabled = enabled;
+   if (wd->content) evas_object_static_clip_set(wd->content, wd->enabled);
    _configure(obj);
 }
 
