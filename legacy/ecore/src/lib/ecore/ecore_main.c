@@ -767,7 +767,8 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    fdh->flags = flags;
    if (_ecore_main_fdh_poll_add(fdh) < 0)
      {
-        ERR("Failed to add poll on fd %d (errno = %d)!", fd, errno);
+        int err = errno;
+        ERR("Failed to add poll on fd %d (errno = %d: %s)!", fd, err, strerror(err));
         free(fdh);
         return NULL;
      }
