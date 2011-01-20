@@ -86,10 +86,15 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
        (!strcmp(ev->keyname, "space")))
      {
         if (wd->timeout)
-          elm_slideshow_timeout_set(obj, 0.0);
-        else
-          elm_slideshow_timeout_set(obj, wd->timeout);
-
+          {
+             if (wd->timer)
+               {
+                  ecore_timer_del(wd->timer);
+                  wd->timer = NULL;
+               }
+             else
+               elm_slideshow_timeout_set(obj, wd->timeout);
+          }
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
