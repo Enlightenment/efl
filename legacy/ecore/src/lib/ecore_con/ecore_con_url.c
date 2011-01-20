@@ -304,7 +304,7 @@ ecore_con_url_new(const char *url)
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION,
                     _ecore_con_url_progress_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_FALSE);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_TRUE);
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERFUNCTION,
                     _ecore_con_url_header_cb);
