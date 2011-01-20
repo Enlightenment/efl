@@ -3,61 +3,47 @@
 #ifdef BUILD_NEON
 static void
 _op_copy_p_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d, int l) {
-   uint32_t *e;
-   e = d + l;
-//#ifdef NEON_INSTRINSICS_OK
-#if 0
-   // odd this is faster than the below asm... :(
-   e -= 15;
-   uint32x4_t col1, col2, col3, col4; 
-   // fill a run of 4x4 (16) pixels with the color
-   for (; d < e; d += 16, s += 16) {
-      col1 = vld1q_u32(s+0); // OP
-      col2 = vld1q_u32(s+4); // OP
-      col3 = vld1q_u32(s+8); // OP
-      col4 = vld1q_u32(s+12); // OP
-      vst1q_u32(d+0, col1); // OP
-      vst1q_u32(d+4, col2); // OP
-      vst1q_u32(d+8, col3); // OP
-      vst1q_u32(d+12, col4); // OP
-   }
-   e += 15;
-#else
-   if ((e - d) >= 16)
+   DATA32 *e;
+//   if (((unsigned long)s & 0xf) || ((unsigned long)d & 0xf))
+//     {
+        memcpy(d, s, l * sizeof(DATA32));
+//        return;
+//     }
+/*
+   e = d + l - 23;
+   if (e > d)
      {
-        DATA32 *d2, *d3, *d4;
-        DATA32 *s2, *s3, *s4;
-        e -= 31;
-        d2 = d + 4;
-        d3 = d + 8;
-        d4 = d + 12;
-        s2 = s + 4;
-        s3 = s + 8;
-        s4 = s + 12;
+        int dl;
         asm volatile (
-	".fpu neon				\n\t"
-                      "asmloop2:\n\t"
-                      "cmp %[e], %[d]\n\t"
-                      "vld1.32 {d16-d17}, [%[s]]!\n\t"
-                      "vld1.32 {d18-d19}, [%[s2]]!\n\t"
-                      "vld1.32 {d20-d21}, [%[s3]]!\n\t"
-                      "vld1.32 {d22-d23}, [%[s4]]!\n\t"
-                      "vst1.32 {d16-d17}, [%[d]]!\n\t"
-                      "vst1.32 {d18-d19}, [%[d2]]!\n\t"
-                      "vst1.32 {d20-d21}, [%[d3]]!\n\t"
-                      "vst1.32 {d22-d23}, [%[d4]]!\n\t"
-                      "bhi asmloop2\n\t"
+                      ".fpu neon                  \n\t"
+                      "asmloop2:                  \n\t"
+                      "cmp     %[e], %[d]         \n\t" // compare current and end ptr
+                      "pld     [%[s], #64]        \n\t" // preload 64 bytes ahead
+                      "pld     [%[s], #256]       \n\t" // preload 256 bytes ahead
+                      "pld     [%[s], #320]       \n\t" // preload 320 bytes ahead
+                      "vld1.64 {d0-d3},  [%[s]]!  \n\t" // load 256bits (32 bytes 8 pix)
+                      "vld1.64 {d4-d7} , [%[s]]!  \n\t" // load 256bits (32 bytes 8 pix)
+                      "vld1.64 {d8-d11}, [%[s]]!  \n\t" // load 256bits (32 bytes 8 pix)
+                      "vst1.64 {d0-d3},  [%[d]]!  \n\t" // store 256bits (32 bytes 8 pix)
+                      "vst1.64 {d4-d7},  [%[d]]!  \n\t" // store 256bits (32 bytes 8 pix)
+                      "vst1.64 {d8-d11}, [%[d]]!  \n\t" // store 256bits (32 bytes 8 pix)
+                      "bhi asmloop2               \n\t"
                       : // output regs
-                      : [s] "r" (s), [s2] "r" (s2), [s3] "r" (s3), [s4] "r" (s4), [e] "r" (e), [d] "r" (d), [d2] "r" (d2), [d3] "r" (d3), [d4] "r" (d4) // input
-                      : "q8", "q9", "q10", "q11", "d16", "d17", "d18", "d19", "d20", "d21", "d22", "d23", "memory" // clobbered
-                      );
-                e += 31;
+                      : [s] "r" (s), [e] "r" (e), [d] "r" (d) // input
+                      : "q0", "q1", "q2", "q3", "q4", "q5", 
+                      "d0", "d1", "d2", "d3", "d4", "d5", 
+                      "d6", "d7", "d8", "d9", "d10", "d11",
+                      "memory" // clobbered
+                     );
+        e = d + l;
+        dl = l - (l % 24);
+        s = s + dl;
+        d = d + dl;
      }
-#endif   
-   // fixup any leftover pixels in the run
    for (; d < e; d++, s++) {
-      *d = *s; // OP
+      *d = *s;
    }
+ */
 }
 
 #define _op_copy_pan_dp_neon _op_copy_p_dp_neon
