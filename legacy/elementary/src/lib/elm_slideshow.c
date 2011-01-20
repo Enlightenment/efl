@@ -88,7 +88,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         if (wd->timeout)
           elm_slideshow_timeout_set(obj, 0.0);
         else
-          elm_slideshow_timeout_set(obj, 3.0);
+          elm_slideshow_timeout_set(obj, wd->timeout);
 
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -389,7 +389,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
    _end(item->base.widget, item->base.widget, NULL, NULL);
 
    if (wd->timer) ecore_timer_del(wd->timer);
-   if (wd->timeout > 0)
+   if (wd->timeout > 0.0)
 	   wd->timer = ecore_timer_add(wd->timeout, _timer_cb, item->base.widget);
    _item_realize(next);
    edje_object_part_swallow(wd->slideshow, "elm.swallow.2", next->base.view);
@@ -398,7 +398,6 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
    wd->previous = wd->current;
    wd->current = next;
-
 }
 
 /**
@@ -427,7 +426,7 @@ elm_slideshow_next(Evas_Object *obj)
    _end(obj, obj, NULL, NULL);
 
    if (wd->timer) ecore_timer_del(wd->timer);
-   if (wd->timeout > 0)
+   if (wd->timeout > 0.0)
 	   wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 
    _item_realize(next);
@@ -467,7 +466,7 @@ elm_slideshow_previous(Evas_Object *obj)
    _end(obj, obj, NULL, NULL);
 
    if (wd->timer) ecore_timer_del(wd->timer);
-   if (wd->timeout > 0)
+   if (wd->timeout > 0.0)
 	   wd->timer = ecore_timer_add(wd->timeout, _timer_cb, obj);
 
    _item_realize(prev);
