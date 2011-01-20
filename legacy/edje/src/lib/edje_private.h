@@ -1493,8 +1493,9 @@ const char *   _edje_text_class_font_get(Edje *ed,
 					 int *size, char **free_later);
 
 
-Edje_Real_Part   *_edje_real_part_get(Edje *ed, const char *part);
-Edje_Real_Part   *_edje_real_part_recursive_get(Edje *ed, const char *part);
+Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
+Edje_Real_Part   *_edje_real_part_recursive_get(const Edje *ed, const char *part);
+Edje             *_edje_recursive_get(Edje *ed, const char *part, Edje_Real_Part **orp);
 Edje_Color_Class *_edje_color_class_find(Edje *ed, const char *color_class);
 void              _edje_color_class_member_add(Edje *ed, const char *color_class);
 void              _edje_color_class_member_del(Edje *ed, const char *color_class);

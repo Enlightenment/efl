@@ -37,7 +37,8 @@ static Eina_Bool _edje_text_class_list_foreach(const Eina_Hash *hash, const void
 static void _edje_object_image_preload_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _edje_object_signal_preload_cb(void *data, Evas_Object *obj, const char *emission, const char *source);
 
-Edje_Real_Part *_edje_real_part_recursive_get_helper(Edje *ed, char **path);
+Edje_Real_Part *_edje_real_part_recursive_get_helper(const Edje *ed, char **path);
+static Edje *_edje_recursive_get_helper(Edje *ed, char **path, Edje_Real_Part **orp);
 
 /************************** API Routines **************************/
 
@@ -4357,7 +4358,7 @@ _edje_real_part_table_clear(Edje_Real_Part *rp, Eina_Bool clear)
 }
 
 Edje_Real_Part *
-_edje_real_part_recursive_get(Edje *ed, const char *part)
+_edje_real_part_recursive_get(const Edje *ed, const char *part)
 {
    Edje_Real_Part *rp;
    char **path;
@@ -4371,6 +4372,23 @@ _edje_real_part_recursive_get(Edje *ed, const char *part)
    free(*path);
    free(path);
    return rp;
+}
+
+Edje *
+_edje_recursive_get(Edje *ed, const char *part, Edje_Real_Part **orp)
+{
+   Edje *oed;
+   char **path;
+
+   path = eina_str_split(part, EDJE_PART_PATH_SEPARATOR_STRING, 0);
+   if (!path) return NULL;
+
+   //printf("recursive get: %s\n", part);
+   oed = _edje_recursive_get_helper(ed, path, orp);
+
+   free(*path);
+   free(path);
+   return oed;
 }
 
 Evas_Object *
@@ -4422,16 +4440,22 @@ _edje_children_get(Edje_Real_Part *rp, const char *partid)
 }
 
 Edje_Real_Part *
-_edje_real_part_recursive_get_helper(Edje *ed, char **path)
+_edje_real_part_recursive_get_helper(const Edje *ed, char **path)
 {
    Edje_Real_Part *rp;
    Evas_Object *child;
    const char *alias = NULL;
    char *idx = NULL;
 
+   if (ed->collection && ed->collection->alias)
+     alias = eina_hash_find(ed->collection->alias, path[0]);
+
+   if (!alias)
+     alias = path[0];
+
    //printf("  lookup: %s on %s\n", path[0], ed->parent ? ed->parent : "-");
-   if (path[0])
-     idx = strchr(path[0], EDJE_PART_PATH_SEPARATOR_INDEXL);
+   if (alias)
+     idx = strchr(alias, EDJE_PART_PATH_SEPARATOR_INDEXL);
    if (idx)
      {
 	char *end;
@@ -4445,18 +4469,16 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 	  }
      }
 
-   if (ed->collection && ed->collection->alias)
-     alias = eina_hash_find(ed->collection->alias, path[0]);
-   if (alias)
+   if (alias != path[0])
      {
 	rp = _edje_real_part_recursive_get(ed, alias);
-	if (!path[1]) return rp;
+	if (!path[1] && !idx) return rp;
 	if (!rp) return NULL;
      }
    else
      {
 	rp = _edje_real_part_get(ed, path[0]);
-	if (!path[1]) return rp;
+	if (!path[1] && !idx) return rp;
 	if (!rp) return NULL;
      }
 
@@ -4478,20 +4500,89 @@ _edje_real_part_recursive_get_helper(Edje *ed, char **path)
 
 	 ed = _edje_fetch(child);
 	 if (!ed) return NULL;
-	 if ((rp = _edje_real_part_recursive_get_helper(ed, path)))
-	   return rp;
-
-	 return NULL;
+	 return _edje_real_part_recursive_get_helper(ed, path);
       default:
 	 return NULL;
      }
 }
 
-
 /* Private Routines */
+static Edje *
+_edje_recursive_get_helper(Edje *ed, char **path, Edje_Real_Part **orp)
+{
+   Evas_Object *child;
+   Edje_Real_Part *rp;
+   const char *alias = NULL;
+   char *idx = NULL;
+
+   if (ed->collection && ed->collection->alias)
+     alias = eina_hash_find(ed->collection->alias, path[0]);
+
+   if (!alias)
+     alias = path[0];
+
+   //printf("  lookup: %s on %s\n", path[0], ed->parent ? ed->parent : "-");
+   if (alias)
+     idx = strchr(alias, EDJE_PART_PATH_SEPARATOR_INDEXL);
+   if (idx)
+     {
+	char *end;
+
+	end = strchr(idx + 1, EDJE_PART_PATH_SEPARATOR_INDEXR);
+	if (end)
+	  {
+	     *end = '\0';
+	     *idx = '\0';
+	     idx++;
+	  }
+     }
+
+   if (alias != path[0])
+     {
+	rp = _edje_real_part_recursive_get(ed, alias);
+	if (!rp) return NULL;
+	if (!path[1] && !idx) return rp->edje;
+     }
+   else
+     {
+	rp = _edje_real_part_get(ed, path[0]);
+	if (!rp) return NULL;
+	if (!path[1] && !idx) return rp->edje;
+     }
+
+   switch (rp->part->type)
+     {
+      case EDJE_PART_TYPE_GROUP:
+	 if (!rp->swallowed_object) return NULL;
+	 ed = _edje_fetch(rp->swallowed_object);
+	 if (!ed) return NULL;
+	 path++;
+
+         if (!path[0]) return ed;
+	 return _edje_recursive_get_helper(ed, path, orp);
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_EXTERNAL:
+	 if (!idx)
+           {
+              *orp = rp;
+              return NULL;
+           }
+	 path++;
+
+	 child = _edje_children_get(rp, idx);
+
+	 ed = _edje_fetch(child);
+	 if (!ed) return NULL;
+         if (!path[0]) return ed;
+	 return _edje_recursive_get_helper(ed, path, orp);
+      default:
+	 return NULL;
+     }
+}
 
 Edje_Real_Part *
-_edje_real_part_get(Edje *ed, const char *part)
+_edje_real_part_get(const Edje *ed, const char *part)
 {
    unsigned int i;
 
