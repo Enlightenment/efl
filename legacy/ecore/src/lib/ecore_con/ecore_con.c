@@ -1134,12 +1134,23 @@ ecore_con_client_flush(Ecore_Con_Client *cl)
  * @}
  */
 
+void
+ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info)
+{
+   svr->infos = eina_list_remove(svr->infos, info);
+}
+
 static void
 _ecore_con_server_free(Ecore_Con_Server *svr)
 {
    Ecore_Con_Client *cl;
    double t_start, t;
 
+   while (svr->infos)
+     {
+        ecore_con_info_data_clear(svr->infos->data);
+        svr->infos = eina_list_remove_list(svr->infos, svr->infos);
+     }
    if ((!svr->write_buf) && svr->delete_me && (!svr->dead) && (svr->event_count < 1))
      {
         /* this is a catch-all for cases when a server is not properly killed. */

@@ -302,7 +302,15 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                            cares);
      }
 
+   svr->infos = eina_list_append(svr->infos, cares);
    return 1;
+}
+
+void
+ecore_con_info_data_clear(void *info)
+{
+   Ecore_Con_CAres *cares = info;
+   cares->data = NULL;
 }
 
 static Eina_Bool
@@ -529,7 +537,11 @@ on_mem_error:
    ERR("Not enough memory");
 
 on_error:
-   arg->done_cb(arg->data, NULL);
+   if (arg->data)
+     {
+        ecore_con_server_infos_del(arg->data, arg);
+        arg->done_cb(arg->data, NULL);
+     }
    free(arg);
 }
 
@@ -567,6 +579,7 @@ _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
 
    free(arg->result->info.ai_addr);
    free(arg->result);
+   if (arg->data) ecore_con_server_infos_del(arg->data, arg);
    free(arg);
 }
 

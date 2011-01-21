@@ -127,6 +127,7 @@ struct _Ecore_Con_Server
    int write_buf_size;
    int write_buf_offset;
    unsigned char *write_buf;
+   Eina_List *infos;
    int event_count;
    int client_limit;
    pid_t ppid;
@@ -197,6 +198,9 @@ struct _Ecore_Con_Lookup
    const void *data;
 };
 
+/* from ecore_con.c */
+void ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info);
+
 /* from ecore_local.c */
 int ecore_con_local_init(void);
 int ecore_con_local_shutdown(void);
@@ -230,6 +234,8 @@ int                 ecore_con_info_udp_listen(Ecore_Con_Server *svr,
 int                 ecore_con_info_mcast_listen(Ecore_Con_Server *svr,
                                                 Ecore_Con_Info_Cb done_cb,
                                                 void *data);
+void                ecore_con_info_data_clear(void *info);
+
 /* from ecore_con_ssl.c */
 Ecore_Con_Ssl_Error ecore_con_ssl_init(void);
 Ecore_Con_Ssl_Error ecore_con_ssl_shutdown(void);
