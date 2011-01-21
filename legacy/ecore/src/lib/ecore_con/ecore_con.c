@@ -1439,11 +1439,11 @@ _ecore_con_cb_udp_listen(void           *data,
                             (const void *)&mreq6, sizeof(mreq6)) != 0)
                goto error;
           }
-
-        if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&on,
-                       sizeof(on)) != 0)
-          goto error;
      }
+
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&on,
+                  sizeof(on)) != 0)
+     goto error;
 
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
      goto error;
