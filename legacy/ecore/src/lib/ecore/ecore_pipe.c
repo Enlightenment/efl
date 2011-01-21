@@ -538,7 +538,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                }
              else if (ret == 0)
                {
-                  p->handler((void *)p->data, NULL, 0);
+                  if (!p->delete_me)
+                      p->handler((void *)p->data, NULL, 0);
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
@@ -546,7 +547,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   return ECORE_CALLBACK_CANCEL;
                }
 #ifndef _WIN32
-             else if ((ret == PIPE_FD_ERROR) && ((errno == EINTR) || (errno == EAGAIN)))
+             else if ((ret == PIPE_FD_ERROR) && 
+                      ((errno == EINTR) || (errno == EAGAIN)))
                {
                   _ecore_pipe_unhandle(p);
                   return ECORE_CALLBACK_RENEW;
@@ -564,7 +566,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                {
                   if (WSAGetLastError() != WSAEWOULDBLOCK)
                     {
-                       p->handler((void *)p->data, NULL, 0);
+                       if (!p->delete_me)
+                          p->handler((void *)p->data, NULL, 0);
                        pipe_close(p->fd_read);
                        p->fd_read = PIPE_FD_INVALID;
                        p->fd_handler = NULL;
@@ -586,7 +589,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         /* catch the non error case first */
         if (ret == (ssize_t)(p->len - p->already_read))
           {
-             p->handler((void *)p->data, p->passed_data, p->len);
+             if (!p->delete_me)
+                p->handler((void *)p->data, p->passed_data, p->len);
              free(p->passed_data);
              /* reset all values to 0 */
              p->passed_data = NULL;
@@ -601,7 +605,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           }
         else if (ret == 0)
           {
-             p->handler((void *)p->data, NULL, 0);
+             if (!p->delete_me)
+                p->handler((void *)p->data, NULL, 0);
              pipe_close(p->fd_read);
              p->fd_read = PIPE_FD_INVALID;
              p->fd_handler = NULL;
@@ -609,10 +614,9 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              return ECORE_CALLBACK_CANCEL;
           }
 #ifndef _WIN32
-        else if (ret == PIPE_FD_ERROR && (errno == EINTR || errno == EAGAIN))
-          {
-             return ECORE_CALLBACK_RENEW;
-          }
+        else if ((ret == PIPE_FD_ERROR) && 
+                 ((errno == EINTR) || (errno == EAGAIN)))
+           return ECORE_CALLBACK_RENEW;
         else
           {
              ERR("An unhandled error (ret: %zd errno: %d)"
@@ -626,7 +630,8 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           {
              if (WSAGetLastError() != WSAEWOULDBLOCK)
                {
-                  p->handler((void *)p->data, NULL, 0);
+                  if (!p->delete_me)
+                     p->handler((void *)p->data, NULL, 0);
                   pipe_close(p->fd_read);
                   p->fd_read = PIPE_FD_INVALID;
                   p->fd_handler = NULL;
