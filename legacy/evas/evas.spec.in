@@ -391,7 +391,7 @@ Xrender XCB X11 rendering engine module for Evas
 %endif
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 
 %build
 %{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib} \
@@ -450,7 +450,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
-%{_includedir}/*.h
+%{_includedir}/evas-1/*.h
 %{_datadir}/evas/examples/*.c
 %files module_engine_software_generic
 %defattr(-, root, root)

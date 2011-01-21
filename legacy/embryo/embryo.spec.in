@@ -72,6 +72,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
-%{_includedir}/*.h
+%{_includedir}/embryo-1/*.h
 
 %changelog

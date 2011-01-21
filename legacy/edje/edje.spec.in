@@ -91,7 +91,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files bin
 %defattr(-, root, root)
 %{_bindir}/edje_cc
-%{_bindir}/edje_convert
 %{_bindir}/edje_decc
 %{_bindir}/edje_recc
 %{_bindir}/edje_player

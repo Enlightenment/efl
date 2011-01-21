@@ -59,7 +59,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-, root, root)
-%{_includedir}/%{name}
+%{_includedir}/%{name}-1
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/*.a
