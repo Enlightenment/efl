@@ -708,7 +708,7 @@ ecore_main_loop_select_func_set(Ecore_Select_Function func)
  * or the native select function if none was set.
  *
  */
-EAPI void *
+EAPI Ecore_Select_Function
 ecore_main_loop_select_func_get(void)
 {
    return main_loop_select;

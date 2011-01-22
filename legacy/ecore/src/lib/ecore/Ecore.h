@@ -438,7 +438,7 @@ extern "C" {
    EAPI void              ecore_main_loop_iterate(void);
 
    EAPI void              ecore_main_loop_select_func_set(Ecore_Select_Function func);
-   EAPI void             *ecore_main_loop_select_func_get(void);
+   EAPI Ecore_Select_Function ecore_main_loop_select_func_get(void);
 
    EAPI Eina_Bool         ecore_main_loop_glib_integrate(void);
    EAPI void              ecore_main_loop_glib_always_integrate_disable(void);
