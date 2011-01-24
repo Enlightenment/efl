@@ -13,6 +13,7 @@ void elm_smart_scroller_custom_edje_file_set    (Evas_Object *obj, char *file, c
 void elm_smart_scroller_child_pos_set           (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 void elm_smart_scroller_child_pos_get           (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
 void elm_smart_scroller_child_region_show       (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+void elm_smart_scroller_child_region_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 void elm_smart_scroller_child_viewport_size_get (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 void elm_smart_scroller_step_size_set           (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 void elm_smart_scroller_step_size_get           (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
