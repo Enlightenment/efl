@@ -121,7 +121,7 @@ static const char *_ecore_fb_btn_syms[128] =
      "0x7e", 
      "0x7f"
 };
-static int _ecore_fb_kbd_fd = 0;
+static int _ecore_fb_kbd_fd = -1;
 static int _ecore_fb_ctrl = 0;
 static int _ecore_fb_alt = 0;
 static int _ecore_fb_shift = 0;
@@ -296,7 +296,7 @@ ecore_fb_kbd_shutdown(void)
    if (_ecore_fb_kbd_fd_handler_handle) 
       ecore_main_fd_handler_del(_ecore_fb_kbd_fd_handler_handle);
    if (_ecore_fb_kbd_fd >= 0) close(_ecore_fb_kbd_fd);
-   _ecore_fb_kbd_fd = 0;
+   _ecore_fb_kbd_fd = -1;
    _ecore_fb_kbd_fd_handler_handle = NULL;
    _ecore_fb_ctrl = 0;
    _ecore_fb_lock = 0;
