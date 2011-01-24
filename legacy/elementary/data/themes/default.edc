@@ -1428,7 +1428,7 @@ collections {
                rel2.relative: 1.0 1.0;
                text {
                   style: "textblock_style";
-                  min: 1 0;
+                  min: 1 1;
                }
 	    }
 	 }
@@ -1643,7 +1643,7 @@ collections {
                align: 0.0 0.0;
                text {
                   style: "textblock_style";
-                  min: 1 0;
+                  min: 1 1;
                }
 	    }
             description { state: "slide_end" 0.0;
@@ -1769,7 +1769,7 @@ collections {
                align: 0.0 0.0;
                text {
                   style: "textblock_style";
-                  min: 1 0;
+                  min: 1 1;
                }
 	    }
             description { state: "slide_end" 0.0;
@@ -1906,7 +1906,7 @@ collections {
                align: 0.0 0.0;
                text {
                   style: "textblock_style";
-                  min: 1 0;
+                  min: 1 1;
                }
 	    }
             description { state: "slide_end" 0.0;
