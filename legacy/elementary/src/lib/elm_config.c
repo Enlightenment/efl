@@ -1030,12 +1030,15 @@ _elm_recache(void)
         ecore_poller_del(_elm_cache_flush_poller);
         _elm_cache_flush_poller = NULL;
      }
-   if (_elm_config->cache_flush_poll_interval > 0)
+   if (_elm_config->cache_flush_enable)
      {
-        _elm_cache_flush_poller =
-          ecore_poller_add(ECORE_POLLER_CORE,
-                           _elm_config->cache_flush_poll_interval,
-                           _elm_cache_flush_cb, NULL);
+        if (_elm_config->cache_flush_poll_interval > 0)
+          {
+             _elm_cache_flush_poller =
+                ecore_poller_add(ECORE_POLLER_CORE,
+                                 _elm_config->cache_flush_poll_interval,
+                                 _elm_cache_flush_cb, NULL);
+          }
      }
 }
 
