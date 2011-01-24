@@ -1844,6 +1844,32 @@ elm_entry_select_all(Evas_Object *obj)
 }
 
 /**
+ * This function returns the geometry of the cursor.
+ *
+ * It's useful if you want to draw something on the cursor (or where it is),
+ * or for example in the case of scrolled entry where you want to show the
+ * cursor.
+ *
+ * @param obj The entry object
+ * @param x returned geometry
+ * @param y returned geometry
+ * @param w returned geometry
+ * @param h returned geometry
+ * @return EINA_TRUE upon success, EINA_FALSE upon failure
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool
+elm_entry_cursor_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text", x, y, w, h);
+   return EINA_TRUE;
+}
+
+/**
  * This moves the cursor one place to the right within the entry.
  *
  * @param obj The entry object
