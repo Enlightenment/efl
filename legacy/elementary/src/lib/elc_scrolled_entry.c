@@ -1008,10 +1008,10 @@ elm_scrolled_entry_cursor_end_set(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord x, y, w, h;
    if (!wd) return;
-   int x, y, w, h;
-   elm_scroller_region_get(wd->scroller, &x, &y, &w, &h);
    elm_entry_cursor_end_set(wd->entry);
+   elm_entry_cursor_geometry_get(wd->entry, &x, &y, &w, &h);
    elm_scroller_region_show(wd->scroller, x, y, w, h);
 }
 
