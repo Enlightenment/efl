@@ -1636,7 +1636,7 @@ ecore_config_init_global(const char *name)
 	snprintf(buf, PATH_MAX, "%s/.ecore/%s/.global", p, name);
 	global = creat(buf, S_IRWXU);
 
-	if (global)
+	if (global >= 0)
 	   close(global);
 
 	free(buf);
