@@ -732,11 +732,11 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 		  evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
 		  mw = ins_l + tw + ins_r;
 		  mh = ins_t + th + ins_b;
-//		  if (chosen_desc->text.min_x)
+		  if (chosen_desc->text.min_x)
 		    {
 		       if (mw > *minw) *minw = mw;
 		    }
-//		  if (chosen_desc->text.min_y)
+		  if (chosen_desc->text.min_y)
 		    {
 		       if (mh > *minh) *minh = mh;
 		    }
@@ -760,10 +760,12 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 	     if (chosen_desc->text.max_x)
 	       {
 		  if (mw > *maxw) *maxw = mw;
+                  if (*maxw < *minw) *maxw = *minw;
 	       }
 	     if (chosen_desc->text.max_y)
 	       {
 		  if (mh > *maxw) *maxh = mh;
+                  if (*maxh < *minh) *maxh = *minh;
 	       }
 	  }
      }
