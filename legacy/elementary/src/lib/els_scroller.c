@@ -941,7 +941,9 @@ elm_smart_scroller_child_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord 
 	ny = y + h - (ch - my);
 	if (ny > y) ny = y;
      }
-   if ((nx == px) && (ny == py)) return;
+   /* Note: this function should "show" a cursor position even if it's the same
+    * as the cached position, because it makes sense if the size of the
+    * scroller or the child have changed */
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
        (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
      {
