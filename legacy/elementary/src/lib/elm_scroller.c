@@ -34,7 +34,6 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Coord wx, wy, ww, wh; /* Last "wanted" geometry */
    Evas_Object *scr;
    Evas_Object *content;
    const char *widget_name, *widget_base;
@@ -248,15 +247,20 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 static void
 _show_region_hook(void *data, Evas_Object *obj)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y, w, h;
+   if (!wd) return;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
-   elm_scroller_region_show(data, x, y, w, h);
+   if (wd->scr)
+     elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
 static void
 _focus_region_hook(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   elm_scroller_region_show(obj, x, y, w, h);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->scr)
+     elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
 static void
@@ -295,7 +299,6 @@ _sizing_eval(Evas_Object *obj)
         if ((maxw > 0) && (w > maxw)) w = maxw;
         if ((maxh > 0) && (h > maxh)) h = maxh;
         evas_object_size_hint_min_set(obj, w, h);
-        elm_smart_scroller_child_region_show(wd->scr, wd->wx, wd->wy, wd->ww, wd->wh);
      }
 }
 
@@ -528,8 +531,6 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
    if (!wd) return;
    if (wd->content == content) return;
    if (wd->content) evas_object_del(wd->content);
-   wd->wx = wd->wh = wd->ww = wd->wy = 0;
-
    wd->content = content;
    if (content)
      {
@@ -654,11 +655,6 @@ elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coor
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->scr)) return;
-   wd->wx = x;
-   wd->wh = h;
-   wd->ww = w;
-   wd->wy = y;
-
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
 }
 
@@ -876,10 +872,6 @@ elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->scr)) return;
-   wd->wx = x;
-   wd->wh = h;
-   wd->ww = w;
-   wd->wy = y;
    elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
 }
 
