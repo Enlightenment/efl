@@ -1010,8 +1010,8 @@ elm_scrolled_entry_cursor_end_set(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    int x, y, w, h;
-   elm_scroller_region_get(wd->scroller, &x, &y, &w, &h);
    elm_entry_cursor_end_set(wd->entry);
+   elm_widget_show_region_get(wd->entry, &x, &y, &w, &h);
    elm_scroller_region_show(wd->scroller, x, y, w, h);
 }
 
