@@ -1008,7 +1008,8 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
     */
    if (sep)
      {
-        Edje_Real_Part *rp;
+        Edje_Real_Part *rp = NULL;
+        Edje *ed2;
         char *newsig;
         size_t length;
         char *part;
@@ -1025,24 +1026,20 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
         *newsig = '\0';
         newsig++;
 
-        rp = _edje_real_part_recursive_get(ed, part);
-        if (rp && rp->part)
+        ed2 = _edje_recursive_get(ed, part, &rp);
+        if (ed2 && ed2 != ed)
+          {
+             _edje_emit(ed2, newsig, src);
+             return; /* stop processing.
+                      * XXX maybe let signal be processed anyway?
+                      * XXX in this case, just comment this line
+                      */
+          }
+
+        if (rp)
           {
              switch (rp->part->type)
                {
-                case EDJE_PART_TYPE_GROUP:
-                  {
-                     Edje *ed2;
-
-                     if (!rp->swallowed_object) break ;
-
-                     ed2 = _edje_fetch(rp->swallowed_object);
-                     if (ed2) _edje_emit(ed2, newsig, src);
-                     return; /* stop processing.
-                              * XXX maybe let signal be processed anyway?
-                              * XXX in this case, just comment this line
-                              */
-                  }
                 case EDJE_PART_TYPE_EXTERNAL:
                   {
                      if (!rp->swallowed_object) break ;
@@ -1056,6 +1053,17 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
                      _edje_emit(rp->edje, newsig, src);
                      return;
                   }
+                case EDJE_PART_TYPE_GROUP:
+                   if (!rp->swallowed_object) break;
+
+                   ed2 = _edje_fetch(rp->swallowed_object);
+                   if (!ed2) break;
+
+                   _edje_emit(ed2, newsig, src);
+                   return;
+                default:
+                   fprintf(stderr, "SPANK SPANK SPANK !!!\nYou should never be here !\n");
+                   break;
                }
           }
      }
