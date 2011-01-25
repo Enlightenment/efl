@@ -1470,6 +1470,7 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
      {
         sd->wx = x;
         sd->wy = y;
+        elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &sd->ww, &sd->wh);
         elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
      }
 }
@@ -1584,8 +1585,6 @@ _smart_hold_animator(void *data)
           }
      }
    elm_smart_scroller_child_pos_set(sd->smart_obj, ox, oy);
-   sd->wx = ox;
-   sd->wy = oy;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1806,6 +1805,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
              elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
              sd->wx = x;
              sd->wy = y;
+             elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &sd->ww, &sd->wh);
              if (!_smart_do_page(sd))
                bounce_eval(sd);
 	  }
@@ -1854,9 +1854,6 @@ _smart_onhold_animator(void *data)
           }
         
         elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
-        sd->wx = x;
-        sd->wy = y;
-//        printf("scroll %i %i\n", sd->down.hold_x, sd->down.hold_y);
      }
    sd->down.onhold_tlast = t;
    return ECORE_CALLBACK_RENEW;
@@ -1945,8 +1942,6 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
 #ifdef SCROLLDBG
              printf("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
 #endif
-             sd->wx = ev->cur.canvas.x;
-             sd->wy = ev->cur.canvas.y;
 	     memmove(&(sd->down.history[1]), &(sd->down.history[0]),
 		     sizeof(sd->down.history[0]) * 19);
 #ifdef EVTIME
@@ -2081,7 +2076,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                        sd->down.hold_y = y;
                        if (!sd->down.hold_animator)
                          sd->down.hold_animator = 
-                         ecore_animator_add(_smart_hold_animator, sd);
+                            ecore_animator_add(_smart_hold_animator, sd);
 //                       printf("a %i %i\n", sd->down.hold_x, sd->down.hold_y);
 //                       _smart_onhold_animator(sd);
 //                       elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
