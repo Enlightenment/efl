@@ -4608,12 +4608,17 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
      {
         if (!evas_textblock_cursor_paragraph_next(cur))
           {
+             /* If we already were at the end, that means we don't have
+              * where to go next we should return FALSE */
+             if (cur->pos == (size_t) index)
+               return EINA_FALSE;
+
              cur->pos = index;
              return EINA_TRUE;
           }
         else
           {
-             return EINA_FALSE;
+             return EINA_TRUE;
           }
      }
 }
