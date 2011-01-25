@@ -442,7 +442,7 @@ _show_region_hook(void *data, Evas_Object *obj)
    Evas_Coord x, y, w, h;
    if (!wd) return;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
-   elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
+   elm_smart_scroller_child_region_set(wd->scr, x, y, w, h);
 }
 
 static void
