@@ -765,6 +765,24 @@ elm_scrolled_entry_entry_get(const Evas_Object *obj)
 }
 
 /**
+ * This returns EINA_TRUE if the entry is empty/there was an error
+ * and EINA_FALSE if it is not empty.
+ *
+ * @param obj The entry object
+ * @return If the entry is empty or not.
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool
+elm_scrolled_entry_is_empty(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_TRUE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_TRUE;
+   return elm_entry_is_empty(wd->entry);
+}
+
+/**
  * This returns all selected text within the scrolled entry.
  *
  * @param obj The scrolled entry object

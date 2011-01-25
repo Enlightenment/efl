@@ -1183,6 +1183,7 @@ extern "C" {
    EAPI Eina_Bool    elm_entry_password_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_entry_set(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_entry_entry_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_entry_is_empty(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_entry_insert(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
@@ -2196,6 +2197,7 @@ extern "C" {
    EAPI Eina_Bool    elm_scrolled_entry_password_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_scrolled_entry_entry_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_scrolled_entry_is_empty(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_scrolled_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_entry_insert(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);

@@ -1643,6 +1643,42 @@ elm_entry_entry_get(const Evas_Object *obj)
    return wd->text;
 }
 
+
+/**
+ * This returns EINA_TRUE if the entry is empty/there was an error
+ * and EINA_FALSE if it is not empty.
+ *
+ * @param obj The entry object
+ * @return If the entry is empty or not.
+ *
+ * @ingroup Entry
+ */
+EAPI Eina_Bool
+elm_entry_is_empty(const Evas_Object *obj)
+{
+   /* FIXME: until there's support for that in textblock, we just check
+    * to see if the there is text or not. */
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_TRUE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Evas_Object *tb;
+   Evas_Textblock_Cursor *cur;
+   Eina_Bool ret;
+   if (!wd) return EINA_TRUE;
+   /* It's a hack until we get the support suggested above.
+    * We just create a cursor, point it to the begining, and then
+    * try to advance it, if it can advance, the tb is not empty,
+    * otherwise it is. */
+   tb = edje_object_part_object_get(wd->ent, "elm.text");
+   cur = evas_object_textblock_cursor_new((Evas_Object *) tb); /* This is
+      actually, ok for the time being, thsese hackish stuff will be removed
+      once evas 1.0 is out*/
+   evas_textblock_cursor_pos_set(cur, 0);
+   ret = evas_textblock_cursor_char_next(cur);
+   evas_textblock_cursor_free(cur);
+
+   return !ret;
+}
+
 /**
  * This returns all selected text within the entry.
  *
