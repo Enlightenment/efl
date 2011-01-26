@@ -3,47 +3,47 @@
 #ifdef BUILD_NEON
 static void
 _op_copy_p_dp_neon(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d, int l) {
+//#define USENEON 1
+#ifndef USENEON
+   memcpy(d, s, l * sizeof(DATA32));
+   return;
+#else
    DATA32 *e;
-//   if (((unsigned long)s & 0xf) || ((unsigned long)d & 0xf))
-//     {
-        memcpy(d, s, l * sizeof(DATA32));
-//        return;
-//     }
-/*
    e = d + l - 23;
    if (e > d)
      {
         int dl;
-        asm volatile (
-                      ".fpu neon                  \n\t"
-                      "asmloop2:                  \n\t"
-                      "cmp     %[e], %[d]         \n\t" // compare current and end ptr
-                      "pld     [%[s], #64]        \n\t" // preload 64 bytes ahead
-                      "pld     [%[s], #256]       \n\t" // preload 256 bytes ahead
-                      "pld     [%[s], #320]       \n\t" // preload 320 bytes ahead
-                      "vld1.64 {d0-d3},  [%[s]]!  \n\t" // load 256bits (32 bytes 8 pix)
-                      "vld1.64 {d4-d7} , [%[s]]!  \n\t" // load 256bits (32 bytes 8 pix)
-                      "vld1.64 {d8-d11}, [%[s]]!  \n\t" // load 256bits (32 bytes 8 pix)
-                      "vst1.64 {d0-d3},  [%[d]]!  \n\t" // store 256bits (32 bytes 8 pix)
-                      "vst1.64 {d4-d7},  [%[d]]!  \n\t" // store 256bits (32 bytes 8 pix)
-                      "vst1.64 {d8-d11}, [%[d]]!  \n\t" // store 256bits (32 bytes 8 pix)
-                      "bhi asmloop2               \n\t"
-                      : // output regs
-                      : [s] "r" (s), [e] "r" (e), [d] "r" (d) // input
-                      : "q0", "q1", "q2", "q3", "q4", "q5", 
-                      "d0", "d1", "d2", "d3", "d4", "d5", 
-                      "d6", "d7", "d8", "d9", "d10", "d11",
-                      "memory" // clobbered
-                     );
-        e = d + l;
-        dl = l - (l % 24);
-        s = s + dl;
-        d = d + dl;
+        
+        asm volatile 
+        (".fpu neon \n\t"
+            "_op_copy_p_dp_neon_asmloop: \n\t"
+            "pld     [%[s], #192]      \n\t" // preload 256 bytes ahead
+            "pld     [%[s], #320]      \n\t" // preload 320 bytes ahead
+            "vld1.32 {d0-d3},  [%[s]]! \n\t" // load 256bits (32 bytes 8 pix), 32bit aligned
+            "vld1.32 {d4-d7} , [%[s]]! \n\t" // load 256bits (32 bytes 8 pix), 32bit aligned
+            "vld1.32 {d8-d11}, [%[s]]! \n\t" // load 256bits (32 bytes 8 pix), 32bit aligned
+            "vst1.32 {d0-d3},  [%[d]]! \n\t" // store 256bits (32 bytes 8 pix), 32bit aligned
+            "vst1.32 {d4-d7},  [%[d]]! \n\t" // store 256bits (32 bytes 8 pix), 32bit aligned
+            "vst1.32 {d8-d11}, [%[d]]! \n\t" // store 256bits (32 bytes 8 pix), 32bit aligned
+            "cmp     %[e], %[d]        \n\t" // compare current and end ptr
+            "bgt     _op_copy_p_dp_neon_asmloop \n\t"
+          : /*out*/
+          : /*in */ [s] "r" (s), [e] "r" (e), [d] "r" (d)
+          : /*clobber*/
+            "q0", "q1", "q2","q3", "q4", "q5", "q6",
+            "d0", "d1", "d2", "d3", 
+            "d4", "d5", "d6", "d7", 
+            "d8", "d9", "d10", "d11",
+            "memory" // clobbered
+        );
+        dl = l % 24; // dl is how many pixels at end that is not a multiple of 24 
+        l = l - dl; // jump to there at the end of the run?
+        s = s + l;
+        d = d + l;
      }
-   for (; d < e; d++, s++) {
-      *d = *s;
-   }
- */
+   e += 23;
+   for (;d < e; d++, s++) *d = *s;
+#endif
 }
 
 #define _op_copy_pan_dp_neon _op_copy_p_dp_neon
