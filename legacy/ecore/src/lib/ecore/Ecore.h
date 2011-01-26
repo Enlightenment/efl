@@ -265,9 +265,9 @@ extern "C" {
 
    struct _Ecore_Event_Signal_Exit /** Exit request event */
      {
-        unsigned int   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
-        unsigned int   quit      : 1; /**< set if the exit request was a quit signal */
-        unsigned int   terminate : 1; /**< Set if the exit request was a terminate singal */
+        Eina_Bool   interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
+        Eina_Bool   quit      : 1; /**< set if the exit request was a quit signal */
+        Eina_Bool   terminate : 1; /**< Set if the exit request was a terminate singal */
         void          *ext_data; /**< Extension data - not used */
 
 #ifndef _WIN32
@@ -305,8 +305,8 @@ extern "C" {
         int           exit_code; /**< The exit code of the process */
         Ecore_Exe    *exe; /**< The handle to the exited process, or NULL if not found */
         int           exit_signal; /** < The signal that caused the process to exit */
-        unsigned int  exited    : 1; /** < set to 1 if the process exited of its own accord */
-        unsigned int  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
+        Eina_Bool  exited    : 1; /** < set to 1 if the process exited of its own accord */
+        Eina_Bool  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
         void         *ext_data; /**< Extension data - not used */
 #ifndef _WIN32
         siginfo_t     data; /**< Signal info */
