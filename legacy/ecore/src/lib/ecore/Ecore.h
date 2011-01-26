@@ -50,6 +50,7 @@ extern "C" {
 #endif
 
   /**
+   * @file Ecore.h
    * @defgroup Ecore_Group Ecore - Main Loop and Job Functions.
    * @brief The file that provides the program utility, main loop and timer
    *        functions.
