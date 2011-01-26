@@ -88,8 +88,8 @@ evas_event_passes_through(Evas_Object *obj)
 
 static inline int
 evas_object_is_visible(Evas_Object *obj)
-{
-   if ((obj->cur.visible) &&
+{                        /* post 1.0 -> enable? */
+   if ((obj->cur.visible)/* && (obj->cur.color.a > 0)*/ &&
        ((obj->cur.cache.clip.visible) || (obj->smart.smart)) &&
        ((obj->cur.cache.clip.a > 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
        || obj->cur.render_op != EVAS_RENDER_BLEND))
