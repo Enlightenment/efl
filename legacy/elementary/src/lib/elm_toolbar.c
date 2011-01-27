@@ -215,6 +215,7 @@ static void
 _item_del(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item_State *it_state;
+   _item_unselect(it);
    elm_widget_item_pre_notify_del(it);
    EINA_LIST_FREE(it->states, it_state)
      {
