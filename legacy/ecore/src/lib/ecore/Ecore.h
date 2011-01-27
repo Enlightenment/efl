@@ -117,6 +117,7 @@ extern "C" {
 
    enum _Ecore_Exe_Flags /* flags for executing a child with its stdin and/or stdout piped back */
      {
+        ECORE_EXE_NONE = 0, /**< No exe flags at all */
         ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
         ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
         ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
