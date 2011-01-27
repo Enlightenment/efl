@@ -1494,6 +1494,8 @@ _ecore_con_cb_tcp_connect(void           *data,
    if (!net_info)
      goto error;
 
+   if (!svr) return;
+
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
    if (svr->fd < 0)
