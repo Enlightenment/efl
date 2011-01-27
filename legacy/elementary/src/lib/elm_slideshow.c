@@ -391,6 +391,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
      return;
 
    next = item;
+   evas_object_smart_callback_call(item->base.widget, "changed", next);
    _end(item->base.widget, item->base.widget, NULL, NULL);
 
    if (wd->timer) ecore_timer_del(wd->timer);
@@ -426,7 +427,7 @@ elm_slideshow_next(Evas_Object *obj)
 	   next = _item_next_get(wd->current);
 
    if ((!next) || (next == wd->current)) return;
-   
+   evas_object_smart_callback_call(obj, "changed", next);
 
    _end(obj, obj, NULL, NULL);
 
@@ -467,6 +468,7 @@ elm_slideshow_previous(Evas_Object *obj)
      prev = _item_prev_get(wd->current);
 
    if ((!prev) ||  (prev == wd->current)) return;
+   evas_object_smart_callback_call(obj, "changed", prev);
 
    _end(obj, obj, NULL, NULL);
 
