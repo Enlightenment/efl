@@ -104,6 +104,10 @@ EAPI Efreet_Desktop   *efreet_desktop_empty_new(const char *file);
 EAPI Efreet_Desktop   *efreet_desktop_new(const char *file);
 EAPI Efreet_Desktop   *efreet_desktop_uncached_new(const char *file);
 EAPI void              efreet_desktop_free(Efreet_Desktop *desktop);
+/**
+ * @def efreet_desktop_unref(desktop)
+ * Alias for efreet_desktop_free(desktop)
+ */
 #define efreet_desktop_unref(desktop) efreet_desktop_free((desktop))
 
 EAPI int               efreet_desktop_save(Efreet_Desktop *desktop);

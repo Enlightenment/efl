@@ -249,6 +249,7 @@ efreet_desktop_get(const char *file)
 /**
  * @param desktop: The Efreet_Desktop to ref
  * @return Returns the new reference count
+ * @brief Increases reference count on desktop
  */
 EAPI int
 efreet_desktop_ref(Efreet_Desktop *desktop)
@@ -425,7 +426,6 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 }
 
 /**
- * @internal
  * @param desktop: The Efreet_Desktop to work with
  * @return Returns no value
  * @brief Frees the Efreet_Desktop structure and all of it's data
@@ -618,6 +618,15 @@ efreet_desktop_type_alias(int from_type, const char *alias)
     return efreet_desktop_type_add(alias, info->parse_func, info->save_func, info->free_func);
 }
 
+/**
+ * @brief Set the value for a X- field (Non spec) in the structure
+ * @param desktop the desktop
+ * @param key the key name to set
+ * @param data the value to set
+ * @return EINA_TRUE on success
+ *
+ * The key has to start with "X-"
+ */
 EAPI Eina_Bool
 efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char *data)
 {
@@ -633,6 +642,12 @@ efreet_desktop_x_field_set(Efreet_Desktop *desktop, const char *key, const char 
     return EINA_TRUE;
 }
 
+/**
+ * @brief Get the value for a X- field (Non spec) in the structure
+ * @param desktop the desktop
+ * @param key the key
+ * @return The value referenced by the key, or NULL if the key does not exist
+ */
 EAPI const char *
 efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
 {
@@ -651,6 +666,12 @@ efreet_desktop_x_field_get(Efreet_Desktop *desktop, const char *key)
     return eina_stringshare_add(ret);
 }
 
+/**
+ * @brief Delete the key and value for a X- field (Non spec) in the structure
+ * @param desktop the desktop
+ * @param key the key
+ * @return EINA_TRUE if the key existed
+ */
 EAPI Eina_Bool
 efreet_desktop_x_field_del(Efreet_Desktop *desktop, const char *key)
 {
