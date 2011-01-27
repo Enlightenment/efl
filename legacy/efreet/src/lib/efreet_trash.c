@@ -172,8 +172,8 @@ efreet_trash_dir_get(const char *file)
 }
 
 /**
- * @param uri: The local uri to move in the trash
- * @param force_delete: If you set this to 1 than files on different filesystems
+ * @param uri The local uri to move in the trash
+ * @param force_delete If you set this to 1 than files on different filesystems
  * will be deleted permanently
  * @return Return 1 on success, 0 on failure or -1 in case the uri is not on the
  * same filesystem and force_delete is not set.

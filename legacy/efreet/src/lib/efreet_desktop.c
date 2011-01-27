@@ -183,7 +183,7 @@ efreet_desktop_shutdown(void)
 }
 
 /**
- * @param file: The file to get the Efreet_Desktop from
+ * @param file The file to get the Efreet_Desktop from
  * @return Returns a reference to a cached Efreet_Desktop on success, NULL
  * on failure. This reference should not be freed.
  * @brief Gets a reference to an Efreet_Desktop structure representing the
@@ -247,7 +247,7 @@ efreet_desktop_get(const char *file)
 }
 
 /**
- * @param desktop: The Efreet_Desktop to ref
+ * @param desktop The Efreet_Desktop to ref
  * @return Returns the new reference count
  * @brief Increases reference count on desktop
  */
@@ -260,7 +260,7 @@ efreet_desktop_ref(Efreet_Desktop *desktop)
 }
 
 /**
- * @param file: The file to create the Efreet_Desktop from
+ * @param file The file to create the Efreet_Desktop from
  * @return Returns a new empty_Efreet_Desktop on success, NULL on failure
  * @brief Creates a new empty Efreet_Desktop structure or NULL on failure
  */
@@ -281,7 +281,7 @@ efreet_desktop_empty_new(const char *file)
 }
 
 /**
- * @param file: The file to create the Efreet_Desktop from
+ * @param file The file to create the Efreet_Desktop from
  * @return Returns a new Efreet_Desktop on success, NULL on failure
  * @brief Creates a new Efreet_Desktop structure initialized from the
  * contents of @a file or NULL on failure
@@ -314,7 +314,7 @@ efreet_desktop_new(const char *file)
 }
 
 /**
- * @param file: The file to create the Efreet_Desktop from
+ * @param file The file to create the Efreet_Desktop from
  * @return Returns a new Efreet_Desktop on success, NULL on failure
  * @brief Creates a new Efreet_Desktop structure initialized from the
  * contents of @a file or NULL on failure
@@ -346,7 +346,7 @@ efreet_desktop_uncached_new(const char *file)
 }
 
 /**
- * @param desktop: The desktop file to save
+ * @param desktop The desktop file to save
  * @return Returns 1 on success or 0 on failure
  * @brief Saves any changes made to @a desktop back to the file on the
  * filesystem
@@ -406,8 +406,8 @@ efreet_desktop_save(Efreet_Desktop *desktop)
 }
 
 /**
- * @param desktop: The desktop file to save
- * @param file: The filename to save as
+ * @param desktop The desktop file to save
+ * @param file The filename to save as
  * @return Returns 1 on success or 0 on failure
  * @brief Saves @a desktop to @a file
  */
@@ -426,7 +426,7 @@ efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 }
 
 /**
- * @param desktop: The Efreet_Desktop to work with
+ * @param desktop The Efreet_Desktop to work with
  * @return Returns no value
  * @brief Frees the Efreet_Desktop structure and all of it's data
  */
@@ -492,7 +492,7 @@ efreet_desktop_free(Efreet_Desktop *desktop)
 }
 
 /**
- * @param environment: the environment name
+ * @param environment the environment name
  * @brief sets the global desktop environment name
  */
 EAPI void
@@ -504,7 +504,7 @@ efreet_desktop_environment_set(const char *environment)
 }
 
 /**
- * @return environment: the environment name
+ * @return environment the environment name
  * @brief sets the global desktop environment name
  */
 EAPI const char *
@@ -514,7 +514,7 @@ efreet_desktop_environment_get(void)
 }
 
 /**
- * @param desktop: The desktop to work with
+ * @param desktop The desktop to work with
  * @return Returns the number of categories assigned to this desktop
  * @brief Retrieves the number of categories the given @a desktop belongs
  * too
@@ -527,8 +527,8 @@ efreet_desktop_category_count_get(Efreet_Desktop *desktop)
 }
 
 /**
- * @param desktop: the desktop
- * @param category: the category name
+ * @param desktop the desktop
+ * @param category the category name
  * @brief add a category to a desktop
  */
 EAPI void
@@ -544,8 +544,8 @@ efreet_desktop_category_add(Efreet_Desktop *desktop, const char *category)
 }
 
 /**
- * @param desktop: the desktop
- * @param category: the category name
+ * @param desktop the desktop
+ * @param category the category name
  * @brief removes a category from a desktop
  * @return 1 if the desktop had his category listed, 0 otherwise
  */
@@ -569,10 +569,10 @@ efreet_desktop_category_del(Efreet_Desktop *desktop, const char *category)
 }
 
 /**
- * @param type: The type to add to the list of matching types
- * @param parse_func: a function to parse out custom fields
- * @param save_func: a function to save data returned from @a parse_func
- * @param free_func: a function to free data returned from @a parse_func
+ * @param type The type to add to the list of matching types
+ * @param parse_func a function to parse out custom fields
+ * @param save_func a function to save data returned from @a parse_func
+ * @param free_func a function to free data returned from @a parse_func
  * @return Returns the id of the new type
  * @brief Adds the given type to the list of types in the system
  */
@@ -696,7 +696,7 @@ efreet_desktop_type_data_get(Efreet_Desktop *desktop)
 }
 
 /**
- * @param string: the raw string list
+ * @param string the raw string list
  * @return an Eina_List of ecore string's
  * @brief Parse ';' separate list of strings according to the desktop spec
  */
@@ -736,7 +736,7 @@ efreet_desktop_string_list_parse(const char *string)
 }
 
 /**
- * @param list: Eina_List with strings
+ * @param list Eina_List with strings
  * @return a raw string list
  * @brief Create a ';' separate list of strings according to the desktop spec
  */
@@ -856,7 +856,7 @@ error:
 
 /**
  * @internal
- * @param desktop: The desktop to check
+ * @param desktop The desktop to check
  * @return Returns 1 if the cache is still valid, 0 otherwise
  * @brief This will check if the desktop cache is still valid.
  */
@@ -874,7 +874,7 @@ efreet_desktop_cache_check(Efreet_Desktop *desktop)
 
 /**
  * @internal
- * @param desktop: The desktop to fill
+ * @param desktop The desktop to fill
  * @return Returns 1 on success, 0 on failure
  * @brief initialize an Efreet_Desktop from the contents of @a file
  */
@@ -937,7 +937,7 @@ efreet_desktop_read(Efreet_Desktop *desktop)
 
 /**
  * @internal
- * @param type_str: the type as a string
+ * @param type_str the type as a string
  * @return the parsed type
  * @brief parse the type string into an Efreet_Desktop_Type
  */
@@ -972,8 +972,8 @@ efreet_desktop_type_info_free(Efreet_Desktop_Type_Info *info)
 
 /**
  * @internal
- * @param desktop: the Efreet_Desktop to store parsed fields in
- * @param ini: the Efreet_Ini to parse fields from
+ * @param desktop the Efreet_Desktop to store parsed fields in
+ * @param ini the Efreet_Ini to parse fields from
  * @return No value
  * @brief Parse application specific desktop fields
  */
@@ -1007,8 +1007,8 @@ efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini
 
 /**
  * @internal
- * @param desktop: the Efreet_Desktop to save fields from
- * @param ini: the Efreet_Ini to save fields to
+ * @param desktop the Efreet_Desktop to save fields from
+ * @param ini the Efreet_Ini to save fields to
  * @return Returns no value
  * @brief Save application specific desktop fields
  */
@@ -1055,8 +1055,8 @@ efreet_desktop_application_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
 /**
  * @internal
- * @param desktop: the Efreet_Desktop to store parsed fields in
- * @param ini: the Efreet_Ini to parse fields from
+ * @param desktop the Efreet_Desktop to store parsed fields in
+ * @param ini the Efreet_Ini to parse fields from
  * @return Returns no value
  * @brief Parse link specific desktop fields
  */
@@ -1072,8 +1072,8 @@ efreet_desktop_link_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
 /**
  * @internal
- * @param desktop: the Efreet_Desktop to save fields from
- * @param ini: the Efreet_Ini to save fields in
+ * @param desktop the Efreet_Desktop to save fields from
+ * @param ini the Efreet_Ini to save fields in
  * @return Returns no value
  * @brief Save link specific desktop fields
  */
@@ -1085,8 +1085,8 @@ efreet_desktop_link_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
 /**
  * @internal
- * @param desktop: the Efreet_Desktop to store parsed fields in
- * @param ini: the Efreet_Ini to parse fields from
+ * @param desktop the Efreet_Desktop to store parsed fields in
+ * @param ini the Efreet_Ini to parse fields from
  * @return 1 if parsed successfully, 0 otherwise
  * @brief Parse desktop fields that all types can include
  */
@@ -1128,8 +1128,8 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
 /**
  * @internal
- * @param desktop: the Efreet_Desktop to save fields from
- * @param ini: the Efreet_Ini to save fields to
+ * @param desktop the Efreet_Desktop to save fields from
+ * @param ini the Efreet_Ini to save fields to
  * @return Returns nothing
  * @brief Save desktop fields that all types can include
  */
@@ -1176,8 +1176,8 @@ efreet_desktop_generic_fields_save(Efreet_Desktop *desktop, Efreet_Ini *ini)
 
 /**
  * @internal
- * @param node: The node to work with
- * @param desktop: The desktop file to work with
+ * @param node The node to work with
+ * @param desktop The desktop file to work with
  * @return Returns always true, to be used in eina_hash_foreach()
  * @brief Parses out an X- key from @a node and stores in @a desktop
  */
@@ -1199,8 +1199,8 @@ efreet_desktop_x_fields_parse(const Eina_Hash *hash __UNUSED__, const void *key,
 
 /**
  * @internal
- * @param node: The node to work with
- * @param ini: The ini file to work with
+ * @param node The node to work with
+ * @param ini The ini file to work with
  * @return Returns no value
  * @brief Stores an X- key from @a node and stores in @a ini
  */
@@ -1216,7 +1216,7 @@ efreet_desktop_x_fields_save(const Eina_Hash *hash __UNUSED__, const void *key, 
 
 /**
  * @internal
- * @param ini: The Efreet_Ini to parse values from
+ * @param ini The Efreet_Ini to parse values from
  * @return 1 if desktop should be included in current environement, 0 otherwise
  * @brief Determines if a desktop should be included in the current environment,
  * based on the values of the OnlyShowIn and NotShowIn fields

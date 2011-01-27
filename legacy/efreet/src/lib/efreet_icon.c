@@ -199,8 +199,8 @@ efreet_icon_shutdown(void)
 }
 
 /**
- * @return Returns the user icon directory
- * @brief Returns the user icon directory
+ * @return Returns the deprecated user icon directory
+ * @brief Returns the deprecated user icon directory
  */
 EAPI const char *
 efreet_icon_deprecated_user_dir_get(void)
@@ -221,6 +221,10 @@ efreet_icon_deprecated_user_dir_get(void)
     return efreet_icon_deprecated_user_dir;
 }
 
+/**
+ * @return Returns the user icon directory
+ * @brief Returns the user icon directory
+ */
 EAPI const char *
 efreet_icon_user_dir_get(void)
 {
@@ -241,7 +245,7 @@ efreet_icon_user_dir_get(void)
 }
 
 /**
- * @param ext: The extension to add to the list of checked extensions
+ * @param ext The extension to add to the list of checked extensions
  * @return Returns no value.
  * @brief Adds the given extension to the list of possible icon extensions
  */
@@ -326,7 +330,7 @@ efreet_icon_theme_list_get(void)
 }
 
 /**
- * @param theme_name: The theme to look for
+ * @param theme_name The theme to look for
  * @return Returns the icon theme related to the given theme name or NULL if
  * none exists.
  * @brief Tries to get the icon theme structure for the given theme name
@@ -355,7 +359,7 @@ efreet_icon_theme_find(const char *theme_name)
 
 /**
  * @internal
- * @param icon: The icon name to strip extension
+ * @param icon The icon name to strip extension
  * @return Extension removed if in list of extensions, else untouched.
  * @brief Removes extension from icon name if in list of extensions.
  */
@@ -392,7 +396,7 @@ efreet_icon_remove_extension(const char *icon)
 #ifndef ICON_CACHE
 /**
  * @internal
- * @param theme_name: The icon theme to look for
+ * @param theme_name The icon theme to look for
  * @return Returns the Efreet_Icon_Theme structure representing this theme
  * or a new blank theme if not found
  * @brief Retrieves a theme, or creates a blank one if not found.
@@ -416,8 +420,8 @@ efreet_icon_find_theme_check(const char *theme_name)
 #endif
 
 /**
- * @param theme_name: The icon theme to look for
- * @param icon: The icon to look for
+ * @param theme_name The icon theme to look for
+ * @param icon The icon to look for
  * @param size; The icon size to look for
  * @return Returns the path to the given icon or NULL if none found
  * @brief Retrives the path to the given icon.
@@ -482,8 +486,8 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
 }
 
 /**
- * @param theme_name: The icon theme to look for
- * @param icons: List of icons to look for
+ * @param theme_name The icon theme to look for
+ * @param icons List of icons to look for
  * @param size; The icon size to look for
  * @return Returns the path representing first found icon or
  * NULL if none of the icons are found
@@ -587,9 +591,9 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
 }
 
 /**
- * @param theme_name: The icon theme to look for
- * @param icon: The icon to look for
- * @param size: The icon size to look for
+ * @param theme_name The icon theme to look for
+ * @param icon The icon to look for
+ * @param size The icon size to look for
  * @return Returns the Efreet_Icon structure representing this icon or NULL
  * if the icon is not found
  * @brief Retrieves all of the information about the given icon.
@@ -614,9 +618,9 @@ efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
 #ifndef ICON_CACHE
 /**
  * @internal
- * @param theme: The theme to search in
- * @param icon: The icon to search for
- * @param size: The size to search for
+ * @param theme The theme to search in
+ * @param icon The icon to search for
+ * @param size The size to search for
  * @return Returns the icon matching the given information or NULL if no
  * icon found
  * @brief Scans inheriting themes for the given icon
@@ -660,9 +664,9 @@ efreet_icon_find_fallback(Efreet_Icon_Theme *theme,
 
 /**
  * @internal
- * @param theme: The theme to search in
- * @param icon: The icon to search for
- * @param size: The size to search for
+ * @param theme The theme to search in
+ * @param icon The icon to search for
+ * @param size The size to search for
  * @return Returns the icon matching the given information or NULL if no
  * icon found
  * @brief Scans the theme and any inheriting themes for the given icon
@@ -697,9 +701,9 @@ efreet_icon_find_helper(Efreet_Icon_Theme *theme,
 
 /**
  * @internal
- * @param theme: The theme to search in
- * @param icons: The icons to search for
- * @param size: The size to search for
+ * @param theme The theme to search in
+ * @param icons The icons to search for
+ * @param size The size to search for
  * @return Returns the icon matching the given information or NULL if no
  * icon found
  * @brief Scans inheriting themes for the given icons
@@ -745,9 +749,9 @@ efreet_icon_list_find_fallback(Efreet_Icon_Theme *theme,
 
 /**
  * @internal
- * @param theme: The theme to search in
- * @param icons: The icons to search for
- * @param size: The size to search for
+ * @param theme The theme to search in
+ * @param icons The icons to search for
+ * @param size The size to search for
  * @return Returns the icon matching the given information or NULL if no
  * icon found
  * @brief Scans the theme and any inheriting themes for the given icons
@@ -787,9 +791,9 @@ efreet_icon_list_find_helper(Efreet_Icon_Theme *theme,
 
 /**
  * @internal
- * @param theme: The icon theme to look in
- * @param icon_name: The icon name to look for
- * @param size: The icon size to look for
+ * @param theme The icon theme to look in
+ * @param icon_name The icon name to look for
+ * @param size The icon size to look for
  * @return Returns the path for the theme/icon/size combo or NULL if
  * none found
  * @brief Looks for the @a icon in the @a theme for the @a size given.
@@ -850,9 +854,9 @@ efreet_icon_lookup_icon(Efreet_Icon_Theme *theme, const char *icon_name,
 
 /**
  * @internal
- * @param theme: The theme to use
- * @param dir: The theme directory to look in
- * @param icon_name: The icon name to look for
+ * @param theme The theme to use
+ * @param dir The theme directory to look in
+ * @param icon_name The icon name to look for
  * @return Returns the icon cloest matching the given information or NULL if
  * none found
  * @brief Tries to find the file closest matching the given icon
@@ -881,8 +885,8 @@ efreet_icon_lookup_directory(Efreet_Icon_Theme *theme,
 
 /**
  * @internal
- * @param dir: The theme directory to work with
- * @param size: The size to check
+ * @param dir The theme directory to work with
+ * @param size The size to check
  * @return Returns true if the size matches for the given directory, 0
  * otherwise
  * @brief Checks if the size matches for the given directory or not
@@ -903,8 +907,8 @@ efreet_icon_directory_size_match(Efreet_Icon_Theme_Directory *dir,
 
 /**
  * @internal
- * @param dir: The directory to work with
- * @param size: The size to check for
+ * @param dir The directory to work with
+ * @param size The size to check for
  * @return Returns the distance this size is away from the desired size
  * @brief Returns the distance the given size is away from the desired size
  */
@@ -937,7 +941,7 @@ efreet_icon_directory_size_distance(Efreet_Icon_Theme_Directory *dir,
 
 /**
  * @internal
- * @param icon_name: The icon name to look for
+ * @param icon_name The icon name to look for
  * @return Returns the Efreet_Icon for the given name or NULL if none found
  * @brief Looks for the un-themed icon in the base directories
  */
@@ -1004,8 +1008,8 @@ efreet_icon_fallback_icon(const char *icon_name)
 
 /**
  * @internal
- * @param dir: The directory to scan
- * @param icon_name: The icon to look for
+ * @param dir The directory to scan
+ * @param icon_name The icon to look for
  * @return Returns the icon for the given name or NULL on failure
  * @brief Scans the given @a dir for the given @a icon_name returning the
  * Efreet_icon if found, NULL otherwise.
@@ -1053,9 +1057,9 @@ efreet_icon_fallback_dir_scan(const char *dir, const char *icon_name)
 
 /**
  * @internal
- * @param theme: The theme to work with
- * @param dir: The theme directory to work with
- * @param path: The partial path to use
+ * @param theme The theme to work with
+ * @param dir The theme directory to work with
+ * @param path The partial path to use
  * @return Returns no value
  * @brief Caches the icons in the given theme directory path at the given
  * size
@@ -1139,7 +1143,7 @@ efreet_icon_new(const char *path)
 }
 
 /**
- * @param icon: The Efreet_Icon to cleanup
+ * @param icon The Efreet_Icon to cleanup
  * @return Returns no value.
  * @brief Free's the given icon and all its internal data.
  */
@@ -1160,8 +1164,8 @@ efreet_icon_free(Efreet_Icon *icon)
 
 /**
  * @internal
- * @param icon: The icon to populate
- * @param file: The file to populate from
+ * @param icon The icon to populate
+ * @param file The file to populate from
  * @return Returns no value
  * @brief Tries to populate the icon information from the given file
  */
@@ -1282,7 +1286,7 @@ efreet_icon_theme_new(void)
 
 /**
  * @internal
- * @param theme: The theme to free
+ * @param theme The theme to free
  * @return Returns no value
  * @brief Frees up the @a theme structure.
  */
@@ -1306,8 +1310,8 @@ efreet_icon_theme_free(Efreet_Icon_Theme *theme)
 
 /**
  * @internal
- * @param theme: The theme to work with
- * @param path: The path to add
+ * @param theme The theme to work with
+ * @param path The path to add
  * @return Returns no value
  * @brief This will correctly add the given path to the list of theme paths.
  * @Note Assumes you've already verified that @a path is a valid directory.
@@ -1360,8 +1364,8 @@ efreet_icon_theme_cache_check(Efreet_Icon_Theme *theme)
 
 /**
  * @internal
- * @param theme: The icon theme to check
- * @param dir: The directory to check
+ * @param theme The icon theme to check
+ * @param dir The directory to check
  * @return Returns 1 if the cache is still valid, 0 otherwise
  * @brief This will check if the theme cache is still valid. If it isn't the
  * cache will be invalided and 0 returned.
@@ -1399,7 +1403,7 @@ efreet_icon_theme_cache_check_dir(Efreet_Icon_Theme *theme, const char *dir)
 
 /**
  * @internal
- * @param theme_name: The theme to scan for
+ * @param theme_name The theme to scan for
  * @return Returns no value
  * @brief Scans the theme directories. If @a theme_name is NULL it will load
  * up all theme data. If @a theme_name is not NULL it will look for that
@@ -1434,8 +1438,8 @@ efreet_icon_theme_dir_scan_all(const char *theme_name)
 
 /**
  * @internal
- * @param search_dir: The directory to scan
- * @param theme_name: Scan for this specific theme, set to NULL to find all
+ * @param search_dir The directory to scan
+ * @param theme_name Scan for this specific theme, set to NULL to find all
  * themes.
  * @return Returns no value
  * @brief Scans the given directory and adds non-hidden icon themes to the
@@ -1498,8 +1502,8 @@ error:
 
 /**
  * @internal
- * @param theme: The theme to set the values into
- * @param path: The path to the index.theme file for this theme
+ * @param theme The theme to set the values into
+ * @param path The path to the index.theme file for this theme
  * @return Returns no value
  * @brief This will load up the theme with the data in the index.theme file
  */
@@ -1593,8 +1597,8 @@ error:
 
 /**
  * @internal
- * @param ini: The ini file with information on this directory
- * @param name: The name of the directory
+ * @param ini The ini file with information on this directory
+ * @param name The name of the directory
  * @return Returns a new Efreet_Icon_Theme_Directory based on the
  * information in @a ini.
  * @brief Creates and initialises an icon theme directory from the given ini
@@ -1671,7 +1675,7 @@ efreet_icon_theme_directory_new(Efreet_Ini *ini, const char *name)
 
 /**
  * @internal
- * @param dir: The Efreet_Icon_Theme_Directory to free
+ * @param dir The Efreet_Icon_Theme_Directory to free
  * @return Returns no value
  * @brief Frees the given directory @a dir
  */

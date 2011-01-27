@@ -223,7 +223,7 @@ efreet_parse_locale(void)
 
 /**
  * @internal
- * @param env: The environment variable to grab
+ * @param env The environment variable to grab
  * @return Returns 1 if we parsed something of @a env, 0 otherwise
  * @brief Tries to parse the lang settings out of the given environment
  * variable
@@ -275,9 +275,9 @@ efreet_parse_locale_setting(const char *env)
 
 /**
  * @internal
- * @param buffer: The destination buffer
- * @param size: The destination buffer size
- * @param strs: The strings to concatenate together
+ * @param buffer The destination buffer
+ * @param size The destination buffer size
+ * @param strs The strings to concatenate together
  * @return Returns the size of the string in @a buffer
  * @brief Concatenates the strings in @a strs into the given @a buffer not
  * exceeding the given @a size.

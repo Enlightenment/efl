@@ -130,12 +130,12 @@ struct Efreet_Icon
 };
 
 /**
- * Efreet_Point
+ * Efreet_Icon_Point
  */
 typedef struct Efreet_Icon_Point Efreet_Icon_Point;
 
 /**
- * Efreet_Point
+ * Efreet_Icon_Point
  * @brief Stores an x, y point.
  */
 struct Efreet_Icon_Point

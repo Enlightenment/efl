@@ -639,6 +639,13 @@ efreet_menu_new(const char *name)
     return menu;
 }
 
+/**
+ * @brief Override which file is used for menu creation
+ * @param file The file to use for menu creation
+ *
+ * This file is only used if it exists, else the standard files will be used
+ * for the menu.
+ */
 EAPI void
 efreet_menu_file_set(const char *file)
 {
@@ -688,7 +695,7 @@ efreet_menu_get(void)
 }
 
 /**
- * @param path: The path of the menu to load
+ * @param path The path of the menu to load
  * @return Returns the Efreet_Menu_Internal representation on success or NULL on
  * failure
  * @brief Parses the given .menu file and creates the menu representation
@@ -766,8 +773,8 @@ efreet_menu_parse(const char *path)
 }
 
 /**
- * @param menu: The menu to work with
- * @param path: The path where the menu should be saved
+ * @param menu The menu to work with
+ * @param path The path where the menu should be saved
  * @return Returns 1 on success, 0 on failure
  * @brief Saves the menu to file
  */
@@ -886,9 +893,9 @@ efreet_menu_save_indent(FILE *f, int indent)
 }
 
 /**
- * @param menu: The menu to work with
- * @param desktop: The desktop to insert
- * @param pos: The position to place the new desktop
+ * @param menu The menu to work with
+ * @param desktop The desktop to insert
+ * @param pos The position to place the new desktop
  * @return Returns 1 on success, 0 on failure
  * @brief Insert a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
@@ -922,8 +929,8 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 }
 
 /**
- * @param menu: The menu to work with
- * @param desktop: The desktop to remove
+ * @param menu The menu to work with
+ * @param desktop The desktop to remove
  * @return Returns 1 on success, 0 on failure
  * @brief Remove a desktop element in a menu structure. Only accepts desktop files
  * in default directories.
@@ -948,9 +955,9 @@ efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
 }
 
 /**
- * @param menu: The menu to work with
- * @param menu: The menu to work with
- * @param indent: The indent level to print the menu at
+ * @param menu The menu to work with
+ * @param menu The menu to work with
+ * @param indent The indent level to print the menu at
  * @return Returns no value
  * @brief Dumps the contents of the menu to the command line
  */
@@ -989,9 +996,9 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 }
 
 /**
- * @param user_dir: The user directory to work with
- * @param system_dirs: The system directories to work with
- * @param suffix: The path suffix to add
+ * @param user_dir The user directory to work with
+ * @param system_dirs The system directories to work with
+ * @param suffix The path suffix to add
  * @return Returns the list of directories
  * @brief Creates the list of directories based on the user
  * dir, system dirs and given suffix.
@@ -1041,7 +1048,7 @@ efreet_menu_internal_new(void)
 }
 
 /**
- * @param menu: The menu to free
+ * @param menu The menu to free
  * @return Returns no value
  * @brief Frees up the given menu structure
  */
@@ -1093,8 +1100,8 @@ efreet_menu_prefix_get(void)
 
 /**
  * @internal
- * @param menu: The menu to populate
- * @param xml: The xml dom tree to populate from
+ * @param menu The menu to populate
+ * @param xml The xml dom tree to populate from
  * @return Returns 1 if this XML tree is valid, 0 otherwise
  * @brief Populates the given menu from the given xml structure
  *
@@ -1129,8 +1136,8 @@ efreet_menu_handle_menu(Efreet_Menu_Internal *internal, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent Menu
- * @param xml: The xml that defines the menu
+ * @param parent The parent Menu
+ * @param xml The xml that defines the menu
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the sub-menu nodes of the XML file
  */
@@ -1168,8 +1175,8 @@ efreet_menu_handle_sub_menu(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the AppDir tag
  */
@@ -1204,8 +1211,8 @@ efreet_menu_handle_app_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: UNUSED
+ * @param parent The parent menu
+ * @param xml UNUSED
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the DefaultAppDirs
  */
@@ -1244,8 +1251,8 @@ efreet_menu_handle_default_app_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xm
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the DirectoryDir tag
  */
@@ -1274,8 +1281,8 @@ efreet_menu_handle_directory_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: UNUSED
+ * @param parent The parent menu
+ * @param xml UNUSED
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the DefaultDirectoryDirs tag
  */
@@ -1302,8 +1309,8 @@ efreet_menu_handle_default_directory_dirs(Efreet_Menu_Internal *parent, Efreet_X
 
 /**
  * @internal
- * @param parent: The parent Menu
- * @param xml: The xml to work with
+ * @param parent The parent Menu
+ * @param xml The xml to work with
  * @return Returns 1 on success or 0 on failure
  * @brief Sets the menu name from the given XML fragment.
  */
@@ -1327,8 +1334,8 @@ efreet_menu_handle_name(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Directory tag
  *
@@ -1348,8 +1355,8 @@ efreet_menu_handle_directory(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the OnlyUnallocated tag
  */
@@ -1369,8 +1376,8 @@ efreet_menu_handle_only_unallocated(Efreet_Menu_Internal *parent, Efreet_Xml *xm
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the NotOnlyUnallocated tag
  */
@@ -1390,8 +1397,8 @@ efreet_menu_handle_not_only_unallocated(Efreet_Menu_Internal *parent, Efreet_Xml
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Deleted tag
  */
@@ -1411,8 +1418,8 @@ efreet_menu_handle_deleted(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the NotDeleted tag
  */
@@ -1432,8 +1439,8 @@ efreet_menu_handle_not_deleted(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The XML tree to work with
+ * @param parent The parent menu
+ * @param xml The XML tree to work with
  * @return Returns 1 on success or 0 on failure
  * @brief Handles parsing the Include tag and all subtags
  */
@@ -1446,8 +1453,8 @@ efreet_menu_handle_include(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Exclude tag and all subtags
  */
@@ -1460,8 +1467,8 @@ efreet_menu_handle_exclude(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param op: The filter operation
- * @param xml: The xml tree
+ * @param op The filter operation
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Filename tag
  */
@@ -1477,8 +1484,8 @@ efreet_menu_handle_filename(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param op: The filter operation
- * @param xml: The xml tree
+ * @param op The filter operation
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Category tag
  */
@@ -1495,8 +1502,8 @@ efreet_menu_handle_category(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param op: The filter operation
- * @param xml: The xml tree
+ * @param op The filter operation
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the All tag and all subtags
  */
@@ -1512,8 +1519,8 @@ efreet_menu_handle_all(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param op: The filter operation
- * @param xml: The xml tree
+ * @param op The filter operation
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the And tag and all subtags
  */
@@ -1528,8 +1535,8 @@ efreet_menu_handle_and(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param op: The filter operation
- * @param xml: The xml tree
+ * @param op The filter operation
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Or tag and all subtags
  */
@@ -1544,8 +1551,8 @@ efreet_menu_handle_or(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param op: The filter operation
- * @param xml: The xml tree
+ * @param op The filter operation
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Not tag and all subtags
  */
@@ -1560,8 +1567,8 @@ efreet_menu_handle_not(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the MergeFile tag
  */
@@ -1658,9 +1665,9 @@ efreet_menu_handle_merge_file(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu to merge into
- * @param xml: The XML to be merged
- * @param path: The path to the .menu file to merge
+ * @param parent The parent menu to merge into
+ * @param xml The XML to be merged
+ * @param path The path to the .menu file to merge
  */
 static int
 efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *path)
@@ -1711,8 +1718,8 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the MergeDir tag
  */
@@ -1740,9 +1747,9 @@ efreet_menu_handle_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: the parent menu of the merge
- * @param xml: The xml tree
- * @param path: The path to the merge directory
+ * @param parent the parent menu of the merge
+ * @param xml The xml tree
+ * @param path The path to the merge directory
  * @return Returns 1 on success or 0 on failure
  * @brief Find all of the .menu files in the given directory and merge them
  * into the @a parent menu.
@@ -1786,8 +1793,8 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the DefaultMergeDirs tag
  */
@@ -1848,8 +1855,8 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the LegacyDir tag
  */
@@ -1874,9 +1881,9 @@ efreet_menu_handle_legacy_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param legacy_dir: The legacy directory path
- * @param prefix: The legacy directory prefix if one set
+ * @param parent The parent menu
+ * @param legacy_dir The legacy directory path
+ * @param prefix The legacy directory prefix if one set
  * @return Returns the Efreet_Menu_Internal representing the legacy hierarchy
  * @brief Handles the process of merging @a legacy_dir into @a parent menu
  */
@@ -2036,8 +2043,8 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: UNUSED
+ * @param parent The parent menu
+ * @param xml UNUSED
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the KDELegacyDirs tag
  */
@@ -2071,8 +2078,8 @@ efreet_menu_handle_kde_legacy_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *xml
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Move tag and all subtags
  */
@@ -2111,8 +2118,8 @@ efreet_menu_handle_move(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Old tag
  */
@@ -2154,8 +2161,8 @@ efreet_menu_handle_old(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the New tag
  */
@@ -2178,8 +2185,8 @@ efreet_menu_handle_new(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the Layout tag and all subtags
  */
@@ -2219,8 +2226,8 @@ efreet_menu_handle_layout(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The xml tree
+ * @param parent The parent menu
+ * @param xml The xml tree
  * @return Returns 1 on success or 0 on failure
  * @brief Handles the DefaultLayout tag
  */
@@ -2389,9 +2396,9 @@ efreet_menu_handle_layout_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, i
 
 /**
  * @internal
- * @param parent: The parent menu
- * @param xml: The XML tree to parse
- * @param type: The type of filter
+ * @param parent The parent menu
+ * @param xml The XML tree to parse
+ * @param type The type of filter
  * @return Returns 1 on success or 0 on failure
  * @brief Parses the given XML tree and adds the filter to the parent menu
  */
@@ -2422,8 +2429,8 @@ efreet_menu_handle_filter(Efreet_Menu_Internal *parent, Efreet_Xml *xml,
 
 /**
  * @internal
- * @param op: The operation to work with
- * @param xml: The XML tree representing this operation
+ * @param op The operation to work with
+ * @param xml The XML tree representing this operation
  * @return Returns 1 on success or 0 on failure
  * @brief Parses the given XML tree and populates the operation
  */
@@ -2476,7 +2483,7 @@ efreet_menu_filter_new(void)
 
 /**
  * @internal
- * @param filter: The filter to work with
+ * @param filter The filter to work with
  * @return Returns no data
  * @brief Frees the given filter and all data
  */
@@ -2513,7 +2520,7 @@ efreet_menu_layout_new(void)
 
 /**
  * @internal
- * @param filter: The filter to work with
+ * @param filter The filter to work with
  * @return Returns no data
  * @brief Frees the given filter and all data
  */
@@ -2543,7 +2550,7 @@ efreet_menu_filter_op_new(void)
 
 /**
  * @internal
- * @param op: The operation to work with
+ * @param op The operation to work with
  * @return Returns no value.
  * @brief Frees the given operation and all sub data
  */
@@ -2576,7 +2583,7 @@ efreet_menu_desktop_new(void)
 
 /**
  * @internal
- * @param md: The Efreet_Menu_Desktop to free
+ * @param md The Efreet_Menu_Desktop to free
  * @return Returns no value
  * @brief Frees the given structure
  */
@@ -2604,8 +2611,7 @@ efreet_menu_entry_new(void)
 }
 
 /**
- * @internal
- * @param entry: The Efreet_Menu to free
+ * @param entry The Efreet_Menu to free
  * @return Returns no value
  * @brief Frees the given structure
  */
@@ -2625,9 +2631,9 @@ efreet_menu_free(Efreet_Menu *entry)
 
 /**
  * @internal
- * @param op: The op to add a child too
- * @param xml: The XML tree of the child
- * @param type: The type of child to add
+ * @param op The op to add a child too
+ * @param xml The XML tree of the child
+ * @param type The type of child to add
  * @return Returns 1 on success or 0 on failure
  * @brief Parses the given XML tree and populates a new child operation.
  */
@@ -2653,8 +2659,8 @@ efreet_menu_handle_filter_child_op(Efreet_Menu_Filter_Op *op, Efreet_Xml *xml,
 
 /**
  * @internal
- * @param menu: The menu to work with
- * @param only_unallocated: Do we only look for unallocated items?
+ * @param menu The menu to work with
+ * @param only_unallocated Do we only look for unallocated items?
  * @return Returns 1 if we've successfully processed the menu, 0 otherwise
  * @brief Handles the processing of the menu data to retrieve the .desktop
  * files for the menu
@@ -2718,8 +2724,8 @@ efreet_menu_process_dirs(Efreet_Menu_Internal *internal)
 
 /**
  * @internal
- * @param menu: the menu to process
- * @param only_unallocated: Only handle menus that deal with unallocated items
+ * @param menu the menu to process
+ * @param only_unallocated Only handle menus that deal with unallocated items
  * @return Returns no value
  * @brief Handles the processing of the filters attached to the given menu.
  *
@@ -2802,11 +2808,11 @@ efreet_menu_process_filters(Efreet_Menu_Internal *internal, unsigned int only_un
 
 /**
  * @internal
- * @param pool: The app pool to iterate
- * @param applications: The list of applications to append too
- * @param matches: The hash of previously matched ids
- * @param filter: The menu filter to run on the pool items
- * @param only_unallocated: Do we check only unallocated pool items?
+ * @param pool The app pool to iterate
+ * @param applications The list of applications to append too
+ * @param matches The hash of previously matched ids
+ * @param filter The menu filter to run on the pool items
+ * @param only_unallocated Do we check only unallocated pool items?
  * @return Returns no value.
  * @brief This will iterate the items in @a pool and append them to @a
  * applications if they match the @a filter given and aren't previoulsy entered
@@ -2837,8 +2843,8 @@ efreet_menu_process_app_pool(Eina_List *pool, Eina_List *applications,
 
 /**
  * @internal
- * @param op: The filter operation to execute
- * @param md: The desktop to run the filter on
+ * @param op The filter operation to execute
+ * @param md The desktop to run the filter on
  * @return Returns 1 if this desktop matches the given filter, 0 otherwise
  * @brief This will execute the given @a filter on the given desktop
  */
@@ -2859,8 +2865,8 @@ efreet_menu_filter_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *md)
 
 /**
  * @internal
- * @param op: The filter operation to execute
- * @param md: The desktop to execute on
+ * @param op The filter operation to execute
+ * @param md The desktop to execute on
  * @return Returns 1 if the desktop matches, 0 otherwise
  * @brief Executes the OR operation, @a op, on the desktop, @a md.
  */
@@ -2903,8 +2909,8 @@ efreet_menu_filter_or_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *md
 
 /**
  * @internal
- * @param op: The filter operation to execute
- * @param md: The desktop to execute on
+ * @param op The filter operation to execute
+ * @param md The desktop to execute on
  * @return Returns 1 if the desktop matches, 0 otherwise
  * @brief Executes the AND operation, @a op, on the desktop, @a md.
  */
@@ -2950,8 +2956,8 @@ efreet_menu_filter_and_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
 
 /**
  * @internal
- * @param op: The filter operation to execute
- * @param md: The desktop to execute on
+ * @param op The filter operation to execute
+ * @param md The desktop to execute on
  * @return Returns 1 if the desktop matches, 0 otherwise
  * @brief Executes the NOT operation, @a op, on the desktop, @a md.
  */
@@ -3000,8 +3006,8 @@ efreet_menu_filter_not_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
 
 /**
  * @internal
- * @param dest: The destination menu
- * @param src: The source menu
+ * @param dest The destination menu
+ * @param src The source menu
  * @return Returns no value
  * @brief Takes the child elements of the menu @a src and puts then on the
  * _start_ of the menu @a dest.
@@ -3091,7 +3097,7 @@ efreet_menu_concatenate(Efreet_Menu_Internal *dest, Efreet_Menu_Internal *src)
 
 /**
  * @internal
- * @param menu: The menu to work with
+ * @param menu The menu to work with
  * @return Returns no value
  * @brief Handles any \<Move\> commands in the menus
  */
@@ -3174,9 +3180,9 @@ error:
 
 /**
  * @internal
- * @param menu: The menu to start searching from
- * @param name: The menu name to find
- * @param parent: The parent of the found menu
+ * @param menu The menu to start searching from
+ * @param name The menu name to find
+ * @param parent The parent of the found menu
  * @return Returns the menu with the given @a name or NULL if none found
  * @brief Searches the menu tree starting at @a menu looking for a menu with
  * @a name.
@@ -3260,7 +3266,7 @@ efreet_menu_move_new(void)
 
 /**
  * @internal
- * @param move: The Efreet_Menu_Move to free
+ * @param move The Efreet_Menu_Move to free
  * @return Returns no value.
  * @brief Frees the given move structure
  */
@@ -3292,7 +3298,7 @@ efreet_menu_app_dir_new(void)
 
 /**
  * @internal
- * @param dir: The Efreet_Menu_App_Dir to free
+ * @param dir The Efreet_Menu_App_Dir to free
  * @return Returns no value.
  * @brief Frees the given dir structure
  */
@@ -3308,8 +3314,8 @@ efreet_menu_app_dir_free(Efreet_Menu_App_Dir *dir)
 
 /**
  * @internal
- * @param a: The app dir to compare too
- * @param b: The path to compare too
+ * @param a The app dir to compare too
+ * @param b The path to compare too
  * @return Returns 0 if the strings are equals, != 0 otherwise
  * @brief Compares the too strings
  */
@@ -3494,7 +3500,7 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
 
 /**
  * @internal
- * @param menu: The menu to work with
+ * @param menu The menu to work with
  * @return Returns 1 on success or 0 on failure
  * @brief Process the directory dirs in @a menu
  */
@@ -3531,9 +3537,9 @@ efreet_menu_directory_dirs_process(Efreet_Menu_Internal *internal)
 
 /**
  * @internal
- * @param path: The path to scan
- * @param relative_path: The relative portion of the path
- * @param cache: The cache to populate
+ * @param path The path to scan
+ * @param relative_path The relative portion of the path
+ * @param cache The cache to populate
  * @return Returns 1 on success or 0 on failure
  * @brief Scans the given directory dir for .directory files and adds the
  * applications to the cache
@@ -3586,8 +3592,8 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
 
 /**
  * @internal
- * @param menu: The menu to work with
- * @param path: The path to work with
+ * @param menu The menu to work with
+ * @param path The path to work with
  * @return Returns the desktop file for this path or NULL if none exists
  * @brief Finds the desktop file for the given path.
  */
@@ -3610,8 +3616,8 @@ efreet_menu_directory_get(Efreet_Menu_Internal *internal, const char *path)
 
 /**
  * @internal
- * @param a: The first desktop
- * @param b: The second desktop
+ * @param a The first desktop
+ * @param b The second desktop
  * @return Returns the comparison of the desktop files
  * @brief Compares the desktop files.
  */

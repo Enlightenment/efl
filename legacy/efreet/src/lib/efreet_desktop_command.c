@@ -141,9 +141,9 @@ static char *efreet_string_append_char(char *dest, int *size,
 
 
 /**
- * @param desktop: The desktop file to work with
- * @param files: The files to be substituted into the exec line
- * @param data: The data pointer to pass
+ * @param desktop The desktop file to work with
+ * @param files The files to be substituted into the exec line
+ * @param data The data pointer to pass
  * @return Returns the Ecore_Exce for @a desktop
  * @brief Parses the @a desktop exec line and returns an Ecore_Exe.
  */
@@ -154,11 +154,11 @@ efreet_desktop_exec(Efreet_Desktop *desktop, Eina_List *files, void *data)
 }
 
 /**
- * @param desktop: the desktop entry
- * @param files: an eina list of file names to execute, as either absolute paths,
+ * @param desktop the desktop entry
+ * @param files an eina list of file names to execute, as either absolute paths,
  * relative paths, or uris
- * @param func: a callback to call for each prepared command line
- * @param data: user data passed to the callback
+ * @param func a callback to call for each prepared command line
+ * @param data user data passed to the callback
  * @return Returns the return value of @p func on success or NULL on failure
  * @brief Get a command to use to execute a desktop entry.
  */
@@ -170,8 +170,8 @@ efreet_desktop_command_get(Efreet_Desktop *desktop, Eina_List *files,
 }
 
 /**
- * @param desktop: the desktop entry
- * @param files an eina list of local files, as absolute paths, local paths, or file:// uris (or NULL to get exec string with no files appended)
+ * @param desktop the desktop entry
+ * @param files an eina list of local files, as absolute paths, local paths, or file// uris (or NULL to get exec string with no files appended)
  * @return Returns an eina list of exec strings
  * @brief Get the command to use to execute a desktop entry
  *
@@ -217,12 +217,12 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
 }
 
 /**
- * @param desktop: the desktop entry
- * @param files: an eina list of file names to execute, as either absolute paths,
+ * @param desktop the desktop entry
+ * @param files an eina list of file names to execute, as either absolute paths,
  * relative paths, or uris
- * @param cb_command: a callback to call for each prepared command line
- * @param cb_progress: a callback to get progress for the downloads
- * @param data: user data passed to the callback
+ * @param cb_command a callback to call for each prepared command line
+ * @param cb_progress a callback to get progress for the downloads
+ * @param data user data passed to the callback
  * @return Returns 1 on success or 0 on failure
  * @brief Get a command to use to execute a desktop entry, and receive progress
  * updates for downloading of remote URI's passed in.
@@ -368,7 +368,7 @@ efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List 
  * processed filename information. The callback passed in to
  * efreet_desktop_command_get is called for each exec string created.
  *
- * @param command: the command to build
+ * @param command the command to build
  * @return a list of executable strings
  */
 static Eina_List *
@@ -653,8 +653,8 @@ efreet_desktop_command_append_icon(char *dest, int *size, int *len,
 }
 
 /**
- * @param command: the Efreet_Desktop_Comand that this file is for
- * @param file: the filname as either an absolute path, relative path, or URI
+ * @param command the Efreet_Desktop_Comand that this file is for
+ * @param file the filname as either an absolute path, relative path, or URI
  */
 static Efreet_Desktop_Command_File *
 efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char *file)
@@ -740,7 +740,7 @@ error:
 
 /**
  * @brief Find the local path portion of a file uri.
- * @param uri: a uri beginning with "file:"
+ * @param uri a uri beginning with "file"
  * @return the location of the path portion of the uri,
  * or NULL if the file is not on this machine
  */
@@ -853,7 +853,7 @@ efreet_desktop_cb_download_progress(void *data,
 
 /**
  * @brief Build an absolute path from an absolute or relative one.
- * @param path: an absolute or relative path
+ * @param path an absolute or relative path
  * @return an allocated absolute path (must be freed)
  */
 static char *

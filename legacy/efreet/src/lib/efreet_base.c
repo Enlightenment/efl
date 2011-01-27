@@ -222,8 +222,8 @@ efreet_hostname_get(void)
 
 /**
  * @internal
- * @param key: The environemnt key to lookup
- * @param fallback: The fallback value to use
+ * @param key The environemnt key to lookup
+ * @param fallback The fallback value to use
  * @return Returns the directory related to the given key or the fallback
  * @brief This trys to determine the correct directory name given the
  * environment key @a key and fallbacks @a fallback.
@@ -256,8 +256,8 @@ efreet_dir_get(const char *key, const char *fallback)
 
 /**
  * @internal
- * @param key: The environment key to lookup
- * @param fallback: The fallback value to use
+ * @param key The environment key to lookup
+ * @param fallback The fallback value to use
  * @return Returns a list of directories specified by the given key @a key
  * or from the list of fallbacks in @a fallback.
  * @brief Creates a list of directories as given in the environment key @a
