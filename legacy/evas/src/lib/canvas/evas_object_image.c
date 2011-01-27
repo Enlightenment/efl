@@ -2477,6 +2477,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   pt->fz = p->z;
                   pt->u = p->u * FP1;
                   pt->v = p->v * FP1;
+                  if      (pt->u < 0) pt->u = 0;
+                  else if (pt->u > (o->cur.image.w * FP1)) pt->u = (o->cur.image.w * FP1);
+                  if      (pt->v < 0) pt->v = 0;
+                  else if (pt->v > (o->cur.image.h * FP1)) pt->v = (o->cur.image.h * FP1);
                   pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
               }
              obj->layer->evas->engine.func->image_map4_draw

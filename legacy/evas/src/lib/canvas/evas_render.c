@@ -733,6 +733,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              pt->fz = p->z;
              pt->u = p->u * FP1;
              pt->v = p->v * FP1;
+             if      (pt->u < 0) pt->u = 0;
+             else if (pt->u > (sw * FP1)) pt->u = (sw * FP1);
+             if      (pt->v < 0) pt->v = 0;
+             else if (pt->v > (sh * FP1)) pt->v = (sh * FP1);
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
           }
 
