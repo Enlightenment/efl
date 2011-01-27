@@ -364,6 +364,14 @@ main(int argc, char **argv)
     eina_hash_free(file_ids);
     eina_hash_free(paths);
 
+    /* write cache version */
+    version.major = EFREET_DESKTOP_UTILS_CACHE_MAJOR;
+    version.minor = EFREET_DESKTOP_UTILS_CACHE_MINOR;
+    eet_data_write(util_ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
+    version.major = EFREET_DESKTOP_CACHE_MAJOR;
+    version.minor = EFREET_DESKTOP_CACHE_MINOR;
+    eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
+
     /* check if old and new caches contain the same number of entries */
     if (!changed)
     {
@@ -379,12 +387,6 @@ main(int argc, char **argv)
     }
 
     /* cleanup */
-    version.major = EFREET_DESKTOP_UTILS_CACHE_MAJOR;
-    version.minor = EFREET_DESKTOP_UTILS_CACHE_MINOR;
-    eet_data_write(util_ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
-    version.major = EFREET_DESKTOP_CACHE_MAJOR;
-    version.minor = EFREET_DESKTOP_CACHE_MINOR;
-    eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
     eet_close(util_ef);
     eet_close(ef);
 
@@ -410,6 +412,7 @@ main(int argc, char **argv)
     }
 
     /* touch update file */
+    /* TODO: We need to signal whether the cache was updated or not */
     snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
