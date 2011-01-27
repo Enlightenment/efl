@@ -587,7 +587,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
 }
 
 /**
- * @param theme: The icon theme to look for
+ * @param theme_name: The icon theme to look for
  * @param icon: The icon to look for
  * @param size: The icon size to look for
  * @return Returns the Efreet_Icon structure representing this icon or NULL
