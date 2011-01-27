@@ -78,7 +78,7 @@ ecore_file_download_shutdown(void)
 }
 
 /**
- * @addtogroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ * @addtogroup Ecore_File_Group Ecore_File - Files and directories convenience functions
  *
  * @{
  */

@@ -77,7 +77,7 @@ _ecore_file_path_from_env(const char *env)
 }
 
 /**
- * @addtogroup Ecore_File_Group Ecore_File - Files and direcotries convenience functions
+ * @addtogroup Ecore_File_Group Ecore_File - Files and directories convenience functions
  *
  * @{
  */
