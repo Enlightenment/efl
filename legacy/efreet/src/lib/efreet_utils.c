@@ -202,6 +202,7 @@ efreet_util_desktop_mime_list(const char *mime)
  *
  * This list must be freed using EINA_LIST_FREE / efreet_desktop_free
  *
+ * @param wmname the wm name
  * @param wmclass the wm class
  * @return a list of desktops
  */
