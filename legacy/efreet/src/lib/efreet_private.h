@@ -62,7 +62,7 @@
 } while (0)
 
 /**
- * @def _efree_log_domain_global
+ * @def _efreet_log_domain_global
  * global log domain for efreet (see eina_log module)
  */
 
