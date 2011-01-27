@@ -90,7 +90,7 @@ typedef void (*Ecore_File_Download_Completion_Cb)(void *data, const char *file, 
 
 /**
  * @typedef Ecore_File_Download_Progress_Cb
- * Callback type used when a download is finished.
+ * Callback type used while a download is in progress.
  */
 typedef int (*Ecore_File_Download_Progress_Cb)(void *data,
                                                const char *file,
