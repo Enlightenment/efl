@@ -511,9 +511,7 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
 EINA_DEPRECATED EAPI Eina_Bool         ecore_con_url_send(Ecore_Con_Url *url_con,
                                                           const void *data, long length,
                                                           const char *content_type);
-EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con,
-                                          const void *data, long length,
-                                          const char *content_type);
+EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con);
 EAPI Eina_Bool         ecore_con_url_post(Ecore_Con_Url *url_con,
                                           const void *data, long length,
                                           const char *content_type);
