@@ -104,7 +104,7 @@ ecore_file_download_shutdown(void)
  * will be filled with the status of the download (200, 404,...). The
  * @p progress_cb is called during the download operation, each time a
  * packet is received or when CURL wants. It can be used to display the
- * percentage of the downloaded file. Return 0 from this callback if provided
+ * percentage of the downloaded file. Return 0 from this callback, if provided,
  * to continue the operation or anything else to abort the download. The only
  * operations that can be aborted are those with protocol 'http' or 'ftp'. In 
  * that case @p job_ret can be filled. It can be used with
