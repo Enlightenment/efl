@@ -11,8 +11,8 @@
  *
  */
 
-#define URL "http://cdimage.ubuntu.com/releases/10.10/release/ubuntu-10.10-dvd-i386.iso.zsync"
-#define DST "ubuntu.zsync"
+#define URL "http://www.kernel.org/pub/linux/kernel/v1.0/linux-1.0.tar.gz"
+#define DST "linux-1.0.tar.gz"
 
 
 void
