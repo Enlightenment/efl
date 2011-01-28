@@ -304,7 +304,7 @@ ecore_con_url_new(const char *url)
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION,
                     _ecore_con_url_progress_cb);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSDATA, url_con);
-   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_TRUE);
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_FALSE);
 
    curl_easy_setopt(url_con->curl_easy, CURLOPT_HEADERFUNCTION,
                     _ecore_con_url_header_cb);
@@ -415,19 +415,19 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
      {
         // FIXME: For an unknown reason, progress continue to arrive after destruction
         // this prevent any further call to the callback.
-            curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, NULL);
-
-            if (url_con->active)
-              {
-                 url_con->active = EINA_FALSE;
-
-                 ret = curl_multi_remove_handle(_curlm, url_con->curl_easy);
-                 if (ret != CURLM_OK)
-                   ERR("curl_multi_remove_handle failed: %s",
-                       curl_multi_strerror(ret));
-              }
-
-            curl_easy_cleanup(url_con->curl_easy);
+        curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, NULL);
+        
+        if (url_con->active)
+          {
+             url_con->active = EINA_FALSE;
+             
+             ret = curl_multi_remove_handle(_curlm, url_con->curl_easy);
+             if (ret != CURLM_OK)
+                ERR("curl_multi_remove_handle failed: %s",
+                    curl_multi_strerror(ret));
+          }
+        
+        curl_easy_cleanup(url_con->curl_easy);
      }
 
    _url_con_list = eina_list_remove(_url_con_list, url_con);
