@@ -58,9 +58,11 @@ struct _Eina_Inlist
    Eina_Inlist *prev; /**< previous node */
    Eina_Inlist *last; /**< last node */
 };
-
+/** Used for declaring an inlist member in a struct */
 #define EINA_INLIST Eina_Inlist __in_list
+/** Utility macro to get the inlist object of a struct */
 #define EINA_INLIST_GET(Inlist)         (& ((Inlist)->__in_list))
+/** Utility macro to get the container object of an inlist */
 #define EINA_INLIST_CONTAINER_GET(ptr,                          \
                                   type) ((type *)((char *)ptr - \
                                                   offsetof(type, __in_list)))
