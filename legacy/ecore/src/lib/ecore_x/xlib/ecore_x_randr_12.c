@@ -406,11 +406,13 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode)
                   ret->vTotal = res->modes[i].vTotal;
                   ret->name = NULL;
                   ret->nameLength = 0;
-                  if (res->modes[i].nameLength > 0) 
+                  if (res->modes[i].nameLength > 0)
                     {
                        ret->nameLength = res->modes[i].nameLength;
-                       ret->name = strndup(res->modes[i].name, 
-                                           res->modes[i].nameLength);
+                       ret->name = malloc(res->modes[i].nameLength + 1);
+                       if (ret->name)
+                         memcpy(ret->name, res->modes[i].name,
+                                res->modes[i].nameLength + 1);
                     }
                   ret->modeFlags = res->modes[i].modeFlags;
                   break;
