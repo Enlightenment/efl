@@ -28,7 +28,7 @@ progress_cb(void *data, const char *file,
             long int ultotal, long int ulnow)
 {
    printf("Progress: %ld/%ld\n", dlnow, dltotal);
-   return ECORE_CALLBACK_RENEW;
+   return 0; // 0 to continue the download, or 1 to abort
 }
 
 
