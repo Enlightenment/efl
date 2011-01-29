@@ -21,14 +21,14 @@ m4_define([lt_age], v_min)
 # rw_PROG_OBJC_WORKS
 # Check whether the Objective C compiler works.
 AC_DEFUN([rw_PROG_OBJC_WORKS],
-[AC_REQUIRE([AC_PROG_OBJC])dnl
+[m4_ifdef([AC_PROG_OBJC], [AC_REQUIRE([AC_PROG_OBJC])dnl
 AC_CACHE_CHECK([whether the Objective C compiler works],
                [rw_cv_prog_objc_works],
                [AC_LANG_PUSH([Objective C])
                 AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])],
                                [rw_cv_prog_objc_works=yes],
                                [rw_cv_prog_objc_works=no])
-                AC_LANG_POP([Objective C])])
+                AC_LANG_POP([Objective C])])], [rw_cv_prog_objc_works=no])
 ])
 
 AC_INIT([evas], [v_ver.beta3], [enlightenment-devel@lists.sourceforge.net])
@@ -192,9 +192,9 @@ m4_ifdef([AC_PROG_OBJC],
     _AM_DEPENDENCIES(OBJC)
    ],
    [
-    AC_CHECK_TOOL([OBJC], [gcc])
-    AC_SUBST([OBJC])
-    AC_SUBST([OBJCFLAGS])
+    dnl#AC_CHECK_TOOL([OBJC], [gcc])
+    dnl#AC_SUBST([OBJC])
+    dnl#AC_SUBST([OBJCFLAGS])
    ])
 
 rw_PROG_OBJC_WORKS
