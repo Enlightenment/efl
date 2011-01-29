@@ -132,7 +132,7 @@ ecore_file_download(const char *url,
    free(dir);
    if (ecore_file_exists(dst))
      {
-	EINA_LOG_ERR("Parent of %s, %s, is not a directory", dst, dir);
+	EINA_LOG_ERR("%s already exists", dst);
 	return EINA_FALSE;
      }
 
