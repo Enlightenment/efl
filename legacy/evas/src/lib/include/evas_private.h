@@ -827,7 +827,7 @@ Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Eva
 /****************************************************************************/
 /*****************************************/
 /********************/
-//#define MPOOL 1
+#define MPOOL 1
 
 #ifdef MPOOL 
 typedef struct _Evas_Mempool Evas_Mempool;
