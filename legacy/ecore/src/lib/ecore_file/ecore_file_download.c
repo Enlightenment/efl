@@ -125,13 +125,17 @@ ecore_file_download(const char *url,
 
    if (!ecore_file_is_dir(dir))
      {
+	EINA_LOG_ERR("%s is not a directory", dir);
         free(dir);
         return EINA_FALSE;
      }
    free(dir);
-   if (ecore_file_exists(dst)) return EINA_FALSE;
+   if (ecore_file_exists(dst))
+     {
+	EINA_LOG_ERR("Parent of %s, %s, is not a directory", dst, dir);
+	return EINA_FALSE;
+     }
 
-   /* FIXME: Add handlers for http and ftp! */
    if (!strncmp(url, "file://", 7))
      {
         /* FIXME: Maybe fork? Might take a while to copy.
@@ -144,7 +148,7 @@ ecore_file_download(const char *url,
         return ecore_file_cp(url, dst);
      }
 # ifdef HAVE_CURL
-   else if ((!strncmp(url, "http://", 7)) ||
+   else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
             (!strncmp(url, "ftp://", 6)))
      {
         /* download */
@@ -152,10 +156,17 @@ ecore_file_download(const char *url,
 
         job = _ecore_file_download_curl(url, dst, completion_cb, progress_cb, data);
         if(job_ret) *job_ret = job;
+        if(job)
+          return EINA_TRUE;
+        else
+          {
+             EINA_LOG_ERR("no job returned\n");
+             return EINA_FALSE;
+          }
         return job ? EINA_TRUE : EINA_FALSE;
      }
 # else
-   else if ((!strncmp(url, "http://", 7)) ||
+   else if ((!strncmp(url, "http://", 7)) || (!strncmp(url, "https://", 8)) ||
             (!strncmp(url, "ftp://", 6)))
      {
         (void)completion_cb;
