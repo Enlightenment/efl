@@ -64,7 +64,6 @@ AM_GNU_GETTEXT_VERSION([0.12.1])
 
 m4_ifdef([AM_GNU_GETTEXT], [
 AM_GNU_GETTEXT([external])
-po_makefile_in=po/Makefile.in
 AM_CONDITIONAL([HAVE_PO], [true])
 ],[
 AM_CONDITIONAL([HAVE_PO], [false])
@@ -1371,7 +1370,7 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
    [${have_ecore_wince}],
    [requirements_ecore_evas="ecore-wince >= 1.0.0 ${requirements_ecore_evas}"])
 
-
+test -z "$po_makefile_in" && po_makefile_in="po/Makefile.in"
 
 ### requirements
 
@@ -1393,7 +1392,7 @@ AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 ecore-con.pc
 ecore-config.pc
@@ -1439,8 +1438,11 @@ src/lib/ecore_x/xcb/Makefile
 src/tests/Makefile
 README
 ecore.spec
-$po_makefile_in
 ])
+
+m4_ifdef([AM_GNU_GETTEXT], [AC_CONFIG_FILES([po/Makefile.in])])
+
+AC_OUTPUT
 
 echo
 echo "$PACKAGE $VERSION"
