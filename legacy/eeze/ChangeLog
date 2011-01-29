@@ -1,4 +1,43 @@
+2010-01-29  Mike Blumenkrantz (discomfitor/zmike)
++Eeze_Disk_Type enum
++Eeze_Mount_Opts enum
+
++EEZE_EVENT_DISK_MOUNT
++EEZE_EVENT_DISK_UNMOUNT
++EEZE_EVENT_DISK_ERROR
+
++Eeze_Event_Disk_Mount struct
++Eeze_Event_Disk_Unmount struct
++Eeze_Event_Disk_Error struct
+
++the following functions:
+EAPI void           eeze_disk_function(void);
+EAPI Eeze_Disk     *eeze_disk_new(const char *path);
+EAPI Eeze_Disk     *eeze_disk_new_from_mount(const char *mount_point);
+EAPI void           eeze_disk_free(Eeze_Disk *disk);
+EAPI void           eeze_disk_scan(Eeze_Disk *disk);
+EAPI void           eeze_disk_data_set(Eeze_Disk *disk, void *data);
+EAPI void          *eeze_disk_data_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_syspath_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_devpath_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_fstype_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_vendor_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_model_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_serial_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_uuid_get(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_label_get(Eeze_Disk *disk);
+EAPI Eeze_Disk_Type eeze_disk_type_get(Eeze_Disk *disk);
+EAPI Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
+EAPI Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
+EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
+EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
+EAPI const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
+EAPI Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point);
+EAPI Eina_Bool      eeze_mount_tabs_watch(void);
+EAPI void           eeze_mount_tabs_unwatch(void);
+EAPI Eina_Bool      eeze_mount_mtab_scan(void);
+EAPI Eina_Bool      eeze_mount_fstab_scan(void);
+
 2010-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
-        

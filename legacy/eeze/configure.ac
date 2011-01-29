@@ -7,9 +7,6 @@ m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v expor
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
-##--   When doing snapshots - change soname. remove dnl on below line
-dnl dnl m4_define([relname], [ver-pre-svn-06])
-dnl m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])], [m4_define([v_ver], [v_maj.v_min.v_mic])])
 m4_define([lt_rev], m4_eval(v_maj + v_min))
@@ -67,6 +64,7 @@ requirement_eeze="ecore >= 1.0.0 eina >= 1.0.0 libudev"
 ### Checks for programs
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_C___ATTRIBUTE__
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
@@ -97,6 +95,33 @@ elif test $udev_version -lt 148;then
   AC_DEFINE([OLD_UDEV_RRRRRRRRRRRRRR],[1],[compat functionality for udev < 148])
 fi
 
+eeze_mount=
+PKG_CHECK_EXISTS([mount >= 2.18.0],
+  [
+     AC_DEFINE([HAVE_EEZE_MOUNT], [1], [Eeze is mount-capable])
+     AM_CONDITIONAL([HAVE_EEZE_MOUNT], [true])
+     eeze_mount="yes"
+  ],
+  AM_CONDITIONAL([HAVE_EEZE_MOUNT], [false])
+)
+if test "x$eeze_mount" = "xyes";then
+  with_mount="/bin/mount"
+  with_umount="/bin/umount"
+  AC_ARG_WITH([mount], AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@]))
+  AC_ARG_WITH([umount], AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@]))
+  PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
+  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.0.0])
+
+  if test "x$with_mount" = "xdetect";then
+    AC_PATH_PROG([with_mount], [mount], AC_MSG_ERROR([mount could not be found in PATH]))
+  fi
+  AC_DEFINE_UNQUOTED([EEZE_MOUNT_BIN], ["$with_mount"], [mount bin to use])
+
+  if test "x$with_umount" = "xdetect";then
+    AC_PATH_PROG([with_umount], [umount], AC_MSG_ERROR([umount could not be found in PATH]))
+  fi
+  AC_DEFINE_UNQUOTED([EEZE_UNMOUNT_BIN], ["$with_umount"], [umount bin to use])
+fi
 
 ### Checks for header files
 
@@ -148,7 +173,12 @@ echo "$PACKAGE $VERSION"
 echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
-echo
+if test "x$eeze_mount" = "xyes";then
+  echo
+  echo "Mount..................: ${with_mount}"
+  echo "Umount.................: ${with_umount}"
+  echo
+fi
 echo "Test...................: ${have_eeze_udev_test}"
 echo
 echo "Documentation..........: ${build_doc}"
@@ -161,3 +191,4 @@ echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
+

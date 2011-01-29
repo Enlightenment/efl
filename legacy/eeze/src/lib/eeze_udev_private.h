@@ -1,6 +1,6 @@
 #ifndef EEZE_UDEV_PRIVATE_H
 #define EEZE_UDEV_PRIVATE_H
-#include "Eeze.h"
+#include <Eeze.h>
 
 #ifndef EEZE_UDEV_COLOR_DEFAULT
 #define EEZE_UDEV_COLOR_DEFAULT EINA_COLOR_CYAN
@@ -20,7 +20,7 @@ extern int _eeze_udev_log_dom;
 #endif
 
 #define DBG(...)   EINA_LOG_DOM_DBG(_eeze_udev_log_dom, __VA_ARGS__)
-#define INFO(...)    EINA_LOG_DOM_INFO(_eeze_udev_log_dom, __VA_ARGS__)
+#define INF(...)    EINA_LOG_DOM_INFO(_eeze_udev_log_dom, __VA_ARGS__)
 #define WARN(...) EINA_LOG_DOM_WARN(_eeze_udev_log_dom, __VA_ARGS__)
 #define ERR(...)   EINA_LOG_DOM_ERR(_eeze_udev_log_dom, __VA_ARGS__)
 
