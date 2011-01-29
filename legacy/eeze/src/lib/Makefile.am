@@ -7,7 +7,7 @@ if HAVE_EEZE_MOUNT
   MOUNT_FILES = eeze_disk.c eeze_disk_mount.c eeze_disk_libmount.c
   MOUNT_INCLUDES = Eeze_Disk.h
 else
-  AM_CFLAGS = @EEZE_CFLAGS@ @LIBUDEV_CFLAGS@
+  AM_CFLAGS = @EEZE_CFLAGS@
   MOUNT_FILES = 
   MOUNT_INCLUDES =
 endif
