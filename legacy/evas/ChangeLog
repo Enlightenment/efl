@@ -2,3 +2,9 @@
 
         1.0.0 release
         
+2010-01-29  Carsten Haitzler (The Rasterman)
+
+        * Enabled mempool for object allocation
+        * Allow shorter pre-render handler for rect objects if they are
+          invisible
+        
