@@ -26,7 +26,7 @@ eeze_udev_watch.c \
 $(MOUNT_FILES)
 
 if HAVE_EEZE_MOUNT
-  libeeze_la_LIBADD = @EEZE_LIBS@ @LIBMOUNT_LIBS@ @ECORE_FILE_LIBS@
+  libeeze_la_LIBADD = @EEZE_LIBS@ @ECORE_FILE_LIBS@
 else
   libeeze_la_LIBADD = @EEZE_LIBS@
 endif
