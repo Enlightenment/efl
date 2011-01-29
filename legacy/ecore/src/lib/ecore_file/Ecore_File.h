@@ -89,6 +89,17 @@ typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_
 typedef void (*Ecore_File_Download_Completion_Cb)(void *data, const char *file, int status);
 
 /**
+ * @typedef Ecore_File_Progress_Return
+ * What to do with the download as a return from the 
+ * Ecore_File_Download_Progress_Cb function, if provided.
+ */
+typedef enum _Ecore_File_Progress_Return
+{
+   ECORE_FILE_PROGRESS_CONTINUE = 0,   /**< Continue the download. */
+   ECORE_FILE_PROGRESS_ABORT = 1       /**< Abort the download. */
+} Ecore_File_Progress_Return;
+
+/**
  * @typedef Ecore_File_Download_Progress_Cb
  * Callback type used while a download is in progress.
  */
