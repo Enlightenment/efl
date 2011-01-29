@@ -202,7 +202,7 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
         /* Windows file system could change the mmaped file when replacing a file. So we need to copy all string in memory to avoid bugs. */
         if (!ed->all[idx].allocated)
           {
-             ed->all[idx].str = strdup(ed->all[idx].str);
+             ed->all[idx].str = eina_stringshare_add(ed->all[idx].str);
              ed->all[idx].allocated = EINA_TRUE;
           }
 #endif /* ifdef _WIN32 */
