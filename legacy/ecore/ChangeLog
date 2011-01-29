@@ -1,8 +1,8 @@
-2010-01-29  Mike McCormack
-
-        Convert fd list to inlist to save allocs
-
 2010-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
         
+2010-01-29  Mike McCormack
+
+        Convert fd list to inlist to save allocs
+
