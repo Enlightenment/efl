@@ -478,3 +478,7 @@
 	* Move raw function pointer defs to typedefs in public API for
         readability improvements.
 
+2010-01-29  Carsten Haitzler (The Rasterman)
+
+	1.4.0 release
+
