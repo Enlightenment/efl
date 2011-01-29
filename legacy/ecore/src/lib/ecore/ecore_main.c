@@ -61,6 +61,7 @@ struct _Ecore_Fd_Handler
 {
    EINA_INLIST;
    ECORE_MAGIC;
+   Ecore_Fd_Handler        *next_ready;
    int                      fd;
    Ecore_Fd_Handler_Flags   flags;
    Ecore_Fd_Cb              func;
@@ -119,9 +120,9 @@ static Eina_List        *fd_handlers_with_prep = NULL;
 static Eina_List        *fd_handlers_with_buffer = NULL;
 static Eina_List        *fd_handlers_to_delete = NULL;
 
-static Eina_List        *fd_handlers_to_call = NULL;
-static Eina_List        *fd_handlers_to_call_current;
-static Eina_List        *fd_handlers_to_call_current_next;
+/* single linked list of ready fdhs, terminated by loop to self */
+static Ecore_Fd_Handler    *fd_handlers_to_call;
+static Ecore_Fd_Handler    *fd_handlers_to_call_current;
 
 #ifdef _WIN32
 static Ecore_Win32_Handler *win32_handlers = NULL;
@@ -164,6 +165,24 @@ _ecore_fd_valid(void)
         pause();
      }
 #endif
+}
+
+static inline void
+_ecore_try_add_to_call_list(Ecore_Fd_Handler *fdh)
+{
+   /* check if this fdh is already in the list */
+   if (fdh->next_ready)
+     return;
+   if (fdh->read_active || fdh->write_active || fdh->error_active)
+     {
+        /*
+         * make sure next_ready is non-null by pointing to ourselves
+         * use that to indicate this fdh is in the ready list
+         * insert at the head of the list to avoid trouble
+         */
+        fdh->next_ready = fd_handlers_to_call ? fd_handlers_to_call : fdh;
+        fd_handlers_to_call = fdh;
+     }
 }
 
 #ifdef HAVE_EPOLL
@@ -332,7 +351,6 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
    for (i = 0; i < ret; i++)
      {
         Ecore_Fd_Handler *fdh;
-        Eina_Bool pst, st;
 
         fdh = ev[i].data.ptr;
         if (!ECORE_MAGIC_CHECK(fdh, ECORE_MAGIC_FD_HANDLER))
@@ -346,15 +364,15 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
              ERR("deleted fd in epoll");
              continue;
           }
-        pst = st = fdh->read_active | fdh->write_active | fdh->error_active;
-        if ((ev[i].events & EPOLLIN) && (!fdh->read_active))
-         st = fdh->read_active = EINA_TRUE;
-        if ((ev[i].events & EPOLLOUT) && (!fdh->write_active))
-         st = fdh->write_active = EINA_TRUE;
-        if ((ev[i].events & EPOLLERR) && (!fdh->error_active))
-         st = fdh->error_active = EINA_TRUE;
-        if (pst != st)
-          fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+
+        if (ev[i].events & EPOLLIN)
+          fdh->read_active = EINA_TRUE;
+        if (ev[i].events & EPOLLOUT)
+          fdh->write_active = EINA_TRUE;
+        if (ev[i].events & EPOLLERR)
+          fdh->error_active = EINA_TRUE;
+
+        _ecore_try_add_to_call_list(fdh);
      }
 
    return ret;
@@ -365,7 +383,6 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
 static inline int _ecore_main_fdh_poll_mark_active(void)
 {
    Ecore_Fd_Handler *fdh;
-   Eina_Bool pst, st;
    int ret = 0;
 
    /* call the prepare callback for all handlers */
@@ -374,15 +391,15 @@ static inline int _ecore_main_fdh_poll_mark_active(void)
         if (fdh->delete_me)
            continue;
 
-        pst = st = fdh->read_active | fdh->write_active | fdh->error_active;
-        if ((fdh->gfd.revents & G_IO_IN) && (!fdh->read_active))
-         st = fdh->read_active = EINA_TRUE;
-        if ((fdh->gfd.revents & G_IO_OUT) && (!fdh->write_active))
-         st = fdh->write_active = EINA_TRUE;
-        if ((fdh->gfd.revents & G_IO_ERR) && (!fdh->error_active))
-         st = fdh->error_active = EINA_TRUE;
-        if (pst != st)
-          fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+        if (fdh->gfd.revents & G_IO_IN)
+           fdh->read_active = EINA_TRUE;
+        if (fdh->gfd.revents & G_IO_OUT)
+           fdh->write_active = EINA_TRUE;
+        if (fdh->gfd.revents & G_IO_ERR)
+           fdh->error_active = EINA_TRUE;
+
+        _ecore_try_add_to_call_list(fdh);
+
         if (fdh->gfd.revents & (G_IO_IN|G_IO_OUT|G_IO_ERR)) ret++;
      }
 
@@ -763,6 +780,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
    fdh = calloc(1, sizeof(Ecore_Fd_Handler));
    if (!fdh) return NULL;
    ECORE_MAGIC_SET(fdh, ECORE_MAGIC_FD_HANDLER);
+   fdh->next_ready = NULL;
    fdh->fd = fd;
    fdh->flags = flags;
    if (_ecore_main_fdh_poll_add(fdh) < 0)
@@ -999,9 +1017,8 @@ _ecore_main_shutdown(void)
      fd_handlers_with_prep = eina_list_free(fd_handlers_with_prep);
    if (fd_handlers_to_delete)
      fd_handlers_to_delete = eina_list_free(fd_handlers_to_delete);
-   if (fd_handlers_to_call)
-     fd_handlers_to_call = eina_list_free(fd_handlers_to_call);
 
+   fd_handlers_to_call = NULL;
    fd_handlers_to_call_current = NULL;
    fd_handlers_to_delete = NULL;
    fd_handler_current = NULL;
@@ -1140,16 +1157,13 @@ _ecore_main_select(double timeout)
           {
              if (!fdh->delete_me)
                {
-                  Eina_Bool pst, st;
-                  pst = st = fdh->read_active | fdh->write_active | fdh->error_active;
-                  if ((FD_ISSET(fdh->fd, &rfds)) && (!fdh->read_active))
-                   st = fdh->read_active = EINA_TRUE;
-                  if ((FD_ISSET(fdh->fd, &wfds)) && (!fdh->write_active))
-                   st = fdh->write_active = EINA_TRUE;
-                  if ((FD_ISSET(fdh->fd, &exfds)) && (!fdh->error_active))
-                   st = fdh->error_active = EINA_TRUE;
-                  if (pst != st)
-                    fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
+                  if (FD_ISSET(fdh->fd, &rfds))
+                    fdh->read_active = EINA_TRUE;
+                  if (FD_ISSET(fdh->fd, &wfds))
+                    fdh->write_active = EINA_TRUE;
+                  if (FD_ISSET(fdh->fd, &exfds))
+                    fdh->error_active = EINA_TRUE;
+                  _ecore_try_add_to_call_list(fdh);
                }
           }
 #endif /* HAVE_EPOLL */
@@ -1286,22 +1300,16 @@ _ecore_main_win32_handlers_cleanup(void)
 static void
 _ecore_main_fd_handlers_call(void)
 {
+   /* grab a new list */
    if (!fd_handlers_to_call_current)
      {
-        /* regular main loop, start from head */
         fd_handlers_to_call_current = fd_handlers_to_call;
-        fd_handlers_to_call_current_next = eina_list_next(fd_handlers_to_call_current);
-     }
-   else
-     {
-        /* recursive main loop, continue from where we were */
-        fd_handlers_to_call_current = fd_handlers_to_call_current_next;
-        fd_handlers_to_call_current_next = eina_list_next(fd_handlers_to_call_current);
+        fd_handlers_to_call = NULL;
      }
 
    while (fd_handlers_to_call_current)
      {
-        Ecore_Fd_Handler *fdh = fd_handlers_to_call_current->data;
+        Ecore_Fd_Handler *fdh = fd_handlers_to_call_current;
 
         if (!fdh->delete_me)
           {
@@ -1328,9 +1336,16 @@ _ecore_main_fd_handlers_call(void)
                }
           }
 
-        fd_handlers_to_call = eina_list_remove_list(fd_handlers_to_call, fd_handlers_to_call_current);
-        fd_handlers_to_call_current = fd_handlers_to_call_current_next;
-        fd_handlers_to_call_current_next = eina_list_next(fd_handlers_to_call_current_next);
+        /* stop when we point to ourselves */
+        if (fdh->next_ready == fdh)
+          {
+             fdh->next_ready = NULL;
+             fd_handlers_to_call_current = NULL;
+             break;
+          }
+
+        fd_handlers_to_call_current = fdh->next_ready;
+        fdh->next_ready = NULL;
      }
 }
 
@@ -1355,12 +1370,8 @@ _ecore_main_fd_handlers_buf_call(void)
              if (fdh->buf_func(fdh->buf_data, fdh))
                {
                   ret |= fdh->func(fdh->data, fdh);
-                  if (!fdh->read_active)
-                    {
-                       fdh->read_active = EINA_TRUE;
-                       if ((!fdh->write_active) && (!fdh->error_active))
-                         fd_handlers_to_call = eina_list_append(fd_handlers_to_call, fdh);
-                    }
+                  fdh->read_active = EINA_TRUE;
+                  _ecore_try_add_to_call_list(fdh);
                }
              fdh->references--;
           }
