@@ -1,4 +1,4 @@
-2010-01-29  Mike Blumenkrantz (discomfitor/zmike)
+2011-01-29  Mike Blumenkrantz (discomfitor/zmike)
 +Eeze_Disk_Type enum
 +Eeze_Mount_Opts enum
 
@@ -38,6 +38,6 @@ EAPI void           eeze_mount_tabs_unwatch(void);
 EAPI Eina_Bool      eeze_mount_mtab_scan(void);
 EAPI Eina_Bool      eeze_mount_fstab_scan(void);
 
-2010-01-29  Carsten Haitzler (The Rasterman)
+2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
