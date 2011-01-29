@@ -1370,8 +1370,6 @@ ECORE_EVAS_CHECK_MODULE([software-16-wince],
    [${have_ecore_wince}],
    [requirements_ecore_evas="ecore-wince >= 1.0.0 ${requirements_ecore_evas}"])
 
-test -z "$po_makefile_in" && po_makefile_in="po/Makefile.in"
-
 ### requirements
 
 AC_SUBST(requirements_ecore)
