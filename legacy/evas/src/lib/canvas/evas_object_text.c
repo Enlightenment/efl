@@ -149,26 +149,68 @@ _evas_object_text_items_clear(Evas_Object_Text *o)
      }
 }
 
+static int
+_evas_object_text_it_compare_logical(const void *_it1, const void *_it2)
+{
+   const Evas_Object_Text_Item *it1 = _it1, *it2 = _it2;
+   if (it1->text_pos < it2->text_pos)
+     return -1;
+   else if (it1->text_pos == it2->text_pos)
+     return 0;
+   else
+     return 1;
+
+}
 /* FIXME: doc */
 static int
 _evas_object_text_last_up_to_pos(const Evas_Object *obj,
       const Evas_Object_Text *o, Evas_Coord cx, Evas_Coord cy)
 {
    Evas_Object_Text_Item *it;
-   Evas_Coord x;
 
-   x = 0;
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
+#ifdef BIDI_SUPPORT
+   /*FIXME: not very efficient, sort the items arrays. */
+   /* Reorder if it's a bidi text */
+   if (o->bidi_par_props)
      {
-        if ((x <= cx) && (cx < x + it->adv))
+        Eina_List *logical_it = NULL;
+        Evas_Object_Text_Item *i;
+        Eina_List *itr;
+        Evas_Coord x = 0;
+        /* Insert all to the logical list */
+        EINA_INLIST_FOREACH(o->items, i)
           {
-             return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
-                   o->engine_data,
-                   it->text, &it->text_props,
-                   cx - x,
-                   cy);
+             logical_it = eina_list_sorted_insert(logical_it,
+                   _evas_object_text_it_compare_logical, i);
           }
-        x += it->adv;
+        EINA_LIST_FOREACH(logical_it, itr, it)
+          {
+             if ((x <= cx) && (cx < x + it->adv))
+               {
+                  return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
+                        o->engine_data,
+                        it->text, &it->text_props,
+                        cx - x,
+                        cy);
+               }
+             x += it->adv;
+          }
+        eina_list_free(logical_it);
+     }
+   else
+#endif
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
+          {
+             if ((it->x <= cx) && (cx < it->x + it->adv))
+               {
+                  return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
+                        o->engine_data,
+                        it->text, &it->text_props,
+                        cx - it->x,
+                        cy);
+               }
+          }
      }
    return -1;
 }
@@ -180,12 +222,10 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
       Evas_Coord *rx, Evas_Coord *ry, Evas_Coord *rw, Evas_Coord *rh)
 {
    Evas_Object_Text_Item *it;
-   Evas_Coord x;
 
-   x = 0;
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
-        if ((x <= cx) && (cx < x + it->adv))
+        if ((it->x <= cx) && (cx < it->x + it->adv))
           {
              return it->text_pos + ENFN->font_char_at_coords_get(ENDT,
                    o->engine_data,
@@ -195,7 +235,6 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
                    rx, ry,
                    rw, rh);
           }
-        x += it->adv;
      }
    return -1;
 }
@@ -599,13 +638,12 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 #endif
    visual_pos = pos = 0;
 
-   cutoff = len;
    do
      {
         cutoff = evas_common_language_script_end_of_run_get(
               text,
               o->bidi_par_props,
-              pos, cutoff);
+              pos, len);
         if (cutoff > 0)
           {
 #ifdef BIDI_SUPPORT
