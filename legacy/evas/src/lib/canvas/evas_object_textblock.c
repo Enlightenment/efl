@@ -7616,7 +7616,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 
         if (pback && !EINA_INLIST_GET(itr)->next)
           {
-             DRAW_RECT(backx, 0, itr->w, ln->h, r, g, b, a);
+             DRAW_RECT(itr->x, 0, itr->w, ln->h, r, g, b, a);
           }
         pback = (ti) ? ti->format->backing : pback;
         backx = itr->x;
@@ -7790,7 +7790,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                   g = ti->format->color.underline.g;
                   b = ti->format->color.underline.b;
                   a = ti->format->color.underline.a;
-                  linex = itr->x;
                }
              else
                {
@@ -7803,6 +7802,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              DRAW_RECT(itr->x, ln->baseline + 1, itr->w, 1, r, g, b, a);
           }
         pline = (ti) ? ti->format->underline : pline;
+        linex = itr->x;
 
         /* UNDERLINE2 */
         if ((pline2) && (itr->x > line2x))
@@ -7819,7 +7819,6 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                   g2 = ti->format->color.underline2.g;
                   b2 = ti->format->color.underline2.b;
                   a2 = ti->format->color.underline2.a;
-                  line2x = itr->x;
                }
              else
                {
@@ -7832,6 +7831,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              DRAW_RECT(itr->x, ln->baseline + 3, itr->w, 1, r2, g2, b2, a2);
           }
         pline2 = (ti) ? ti->format->underline2 : pline2;
+        line2x = itr->x;
      }
    ITEM_WALK_END();
 }
