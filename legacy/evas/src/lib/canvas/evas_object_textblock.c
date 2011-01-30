@@ -3018,6 +3018,8 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    wrap = _layout_text_cutoff_get(c, fmt, ti);
    if (wrap == 0)
      GET_NEXT(ti->text, wrap);
+   if (!ti->text[wrap])
+     wrap = -1;
 
    return wrap;
 }
