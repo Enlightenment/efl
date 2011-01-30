@@ -512,7 +512,7 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
          it->text_pos);
    evas_common_text_props_script_set(&it->text_props, it->text);
    ENFN->font_shape(ENDT, o->engine_data, it->text, &it->text_props,
-         o->bidi_par_props, it->text_pos, eina_unicode_strlen(it->text));
+         o->bidi_par_props, it->text_pos, len);
    ENFN->font_string_size_get(ENDT,
          o->engine_data,
          it->text, &it->text_props,
