@@ -165,7 +165,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
    else
 #endif
      {
-        EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START()
+        EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START()
           {
              EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_FALSE);
              if (!visible) continue;
