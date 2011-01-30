@@ -2494,7 +2494,7 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         inset = 0;
         if (fmt->font.font)
           inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
-                ti->text);
+               ti->text);
         ti->inset = inset;
         ti->parent.x = c->x;
         adv = 0;
@@ -6853,7 +6853,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
                    &x, &y, &w, &h);
           }
 
-        x += ln->x + _ITEM(ti)->x - ti->inset;
+        x += ln->x + _ITEM(ti)->x;
 
         if (x < ln->x)
           {
@@ -7744,9 +7744,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                   yoff = (ti->format->valign * (double)(ln->h - ti->parent.h)) + ti->baseline; \
                   if (clip) \
                     { \
-                       if ((obj->cur.geometry.x + x + ln->x + ti->parent.x - ti->inset + ti->parent.w) < (cx - 20)) \
+                       if ((obj->cur.geometry.x + x + ln->x + ti->parent.x + ti->parent.w) < (cx - 20)) \
                        continue; \
-                       if ((obj->cur.geometry.x + x + ln->x + ti->parent.x - ti->inset) > (cx + cw + 20)) \
+                       if ((obj->cur.geometry.x + x + ln->x + ti->parent.x) > (cx + cw + 20)) \
                        break; \
                     } \
                } \
@@ -7771,7 +7771,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          (obj->cur.cache.clip.a * ti->format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy) \
    if (ti->format->font.font) ENFN->font_draw(output, context, surface, ti->format->font.font, \
-         obj->cur.geometry.x + ln->x + ti->parent.x - ti->inset + x + (ox), \
+         obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, ti->text, &ti->parent.bidi_props);
 #define ITEM_WALK_LINE_SKIP_DROP() \
