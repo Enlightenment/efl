@@ -3132,7 +3132,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              if (wrap >= 0)
                return (str[wrap]) ? wrap : -1;
              else if (twrap >= 0)
-               return (str[twrap]) ? wrap : -1;
+               return (str[twrap]) ? twrap : -1;
           }
      }
    return -1;
