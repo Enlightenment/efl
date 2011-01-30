@@ -7007,7 +7007,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
 		       it_break = it;
 		       break;
 		    }
-		  if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->w) > x))
+		  if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
 		    {
                        if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
                          {
