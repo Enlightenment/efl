@@ -162,7 +162,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
      {
         if ((x <= cx) && (cx < x + it->adv))
           {
-             return ENFN->font_last_up_to_pos(ENDT,
+             return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
                    o->engine_data,
                    it->text, &it->text_props,
                    cx - x,
@@ -187,7 +187,7 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
      {
         if ((x <= cx) && (cx < x + it->adv))
           {
-             return ENFN->font_char_at_coords_get(ENDT,
+             return it->text_pos + ENFN->font_char_at_coords_get(ENDT,
                    o->engine_data,
                    it->text, &it->text_props,
                    cx,
