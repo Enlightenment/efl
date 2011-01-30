@@ -134,6 +134,61 @@ evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff)
 
 }
 
+/* Won't work in the middle of ligatures
+ * assumes ext doesn't have an already init ot_data
+ * we assume there's at least one char in each part */
+EAPI void
+evas_common_font_ot_split_text_props(Evas_Text_Props *base,
+      Evas_Text_Props *ext, int cutoff)
+{
+   Evas_Font_OT_Data_Item *tmp;
+   int i;
+   if ((cutoff <= 0) || (!base->ot_data) ||
+         (((size_t) cutoff) >= base->ot_data->len))
+     return;
+
+   ext->ot_data = calloc(1, sizeof(Evas_Font_OT_Data));
+   ext->ot_data->refcount = 1;
+   ext->ot_data->len = base->ot_data->len - cutoff;
+   ext->ot_data->items = calloc(ext->ot_data->len,
+         sizeof(Evas_Font_OT_Data_Item));
+   if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        memcpy(ext->ot_data->items, base->ot_data->items,
+              ext->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+        memmove(base->ot_data->items,
+              base->ot_data->items + ext->ot_data->len,
+              cutoff * sizeof(Evas_Font_OT_Data_Item));
+     }
+   else
+     {
+        memcpy(ext->ot_data->items, base->ot_data->items + cutoff,
+              ext->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+     }
+
+   /* Adjust the offset of the clusters */
+     {
+        size_t min;
+        min = ext->ot_data->items[0].source_cluster;
+        for (i = 1 ; i < (int) ext->ot_data->len ; i++)
+          {
+             if (ext->ot_data->items[i].source_cluster < min)
+               {
+                  min = ext->ot_data->items[i].source_cluster;
+               }
+          }
+        for (i = 0 ; i < (int) ext->ot_data->len ; i++)
+          {
+             ext->ot_data->items[i].source_cluster -= min;
+          }
+     }
+   tmp = realloc(base->ot_data->items,
+         cutoff * sizeof(Evas_Font_OT_Data_Item));
+   base->ot_data->items = tmp;
+   base->ot_data->len = cutoff;
+
+}
+
 EAPI Eina_Bool
 evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
       Evas_Text_Props *props, int len)

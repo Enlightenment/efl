@@ -666,7 +666,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 
 end:
 
-  evas_common_font_int_use_trim();
+   evas_common_font_int_use_trim();
    return ret_val;
 }
 

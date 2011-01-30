@@ -323,6 +323,13 @@ struct _Evas_Object_Textblock_Item
 #endif
    Evas_Coord                           adv, x, w, h;
    Evas_Text_Props                      text_props;
+   Eina_Bool                            merge : 1; /* Indicates whether this
+                                                      item should merge to the
+                                                      previous item or not */
+   Eina_Bool                            visually_deleted : 1;
+                                                   /* Indicates whether this
+                                                      item is used in the visual
+                                                      layout or not. */
 };
 
 struct _Evas_Object_Textblock_Text_Item
@@ -1758,6 +1765,7 @@ struct _Ctxt
    Eina_Bool align_auto;
 };
 
+static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Text_Item *ti, const Evas_Object_Textblock_Item *rel);
 /**
  * @internal
  * Adjust the ascent/descent of the format and context.
@@ -2320,6 +2328,66 @@ _layout_item_text_cutoff(Ctxt *c __UNUSED__, Evas_Object_Textblock_Text_Item *ti
 
 /**
  * @internal
+ * Cut the text up until cut and split
+ *
+ * @param c the context to work on - Not NULL.
+ * @param it the item to cut - not null.
+ * @param cut the cut index.
+ * @return the second (newly created) item.
+ */
+static Evas_Object_Textblock_Text_Item *
+_layout_item_text_split_strip_white(Ctxt *c,
+      Evas_Object_Textblock_Text_Item *ti, int cut)
+{
+   Eina_Unicode *ts;
+   Evas_Object_Textblock_Text_Item *new_ti;
+   int cut2;
+
+   ts = ti->text;
+   if (_is_white(ts[cut]))
+     cut2 = cut + 1;
+   else
+     cut2 = cut;
+
+   new_ti = _layout_text_item_new(c, ti->format, &ts[cut2]);
+   new_ti->parent.text_node = ti->parent.text_node;
+   new_ti->parent.text_pos = ti->parent.text_pos + cut2;
+   new_ti->parent.merge = EINA_TRUE;
+   ts[cut2] = 0;
+
+   evas_common_text_props_split(&ti->parent.text_props,
+         &new_ti->parent.text_props, cut2);
+   _layout_text_add_logical_item(c, ti->format, new_ti, _ITEM(ti));
+
+   /* FIXME: Will break with kerning and a bunch of other stuff, should
+    * maybe adjust the last adv of the prev and the offset of the cur*/
+   ti->parent.w -= new_ti->parent.w;
+   ti->parent.adv -= new_ti->parent.adv;
+
+   if (cut2 > cut)
+     {
+        Evas_Object_Textblock_Text_Item *white_ti;
+        white_ti = _layout_text_item_new(c, ti->format, &ts[cut]);
+        white_ti->parent.text_node = ti->parent.text_node;
+        white_ti->parent.text_pos = ti->parent.text_pos + cut;
+        white_ti->parent.merge = EINA_TRUE;
+        white_ti->parent.visually_deleted = EINA_TRUE;
+        ts[cut] = 0;
+
+        evas_common_text_props_split(&ti->parent.text_props,
+              &white_ti->parent.text_props, cut);
+        _layout_text_add_logical_item(c, ti->format, white_ti, _ITEM(ti));
+        ti->parent.w -= white_ti->parent.w;
+        ti->parent.adv -= white_ti->parent.adv;
+     }
+
+   ti->text = eina_unicode_strdup(ts);
+   free(ts);
+   return new_ti;
+}
+
+/**
+ * @internal
  * Return the start of the last word up until start.
  *
  * @param str the string to work on.
@@ -2488,10 +2556,12 @@ _layout_word_next(Eina_Unicode *str, int p)
  * @param c the context
  * @param fmt the format of the item.
  * @param it the item itself.
+ * @param rel item ti will be appened after, NULL = last.
  */
 static void
 _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      Evas_Object_Textblock_Text_Item *ti)
+      Evas_Object_Textblock_Text_Item *ti,
+      const Evas_Object_Textblock_Item *rel)
 {
    int tw, th, adv, inset;
 
@@ -2512,7 +2582,8 @@ _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            ti->text, &ti->parent.text_props);
    ti->parent.adv = adv;
    ti->parent.x = 0;
-   c->par->logical_items = eina_list_append(c->par->logical_items, ti);
+   c->par->logical_items = eina_list_append_relative(
+         c->par->logical_items, ti, rel);
 }
 
 /**
@@ -2632,7 +2703,7 @@ skip:
           }
         str += tmp_len;
 
-        _layout_text_add_logical_item(c, fmt, ti);
+        _layout_text_add_logical_item(c, fmt, ti, NULL);
      }
 
    if (alloc_str) free(alloc_str);
@@ -2872,6 +2943,128 @@ _layout_update_par(Ctxt *c)
         c->par->y = last_par->y + last_par->h;
      }
 }
+
+/* -1 means no wrap */
+static int
+_layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Text_Item *ti)
+{
+   int wrap;
+
+   wrap = _layout_text_cutoff_get(c, fmt, ti);
+   if (wrap == 0)
+     GET_NEXT(ti->text, wrap);
+
+   return wrap;
+}
+
+/* -1 means no wrap */
+static int
+_layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Text_Item *ti)
+{
+   int wrap = -1, twrap;
+   Eina_Unicode ch;
+   const Eina_Unicode *str = ti->text;
+
+   wrap = _layout_text_cutoff_get(c, fmt, ti);
+   /* Avoiding too small textblocks to even contain one char */
+   if (wrap == 0)
+     GET_NEXT(str, wrap);
+   /* We need to wrap and found the position that overflows */
+   if (wrap > 0)
+     {
+        int index = wrap;
+        ch = GET_NEXT(str, index);
+        if (!_is_white(ch))
+          wrap = _layout_word_start(str, wrap);
+        /* If we found where to cut the text at, i.e the start
+         * of the word we were pointing at */
+        if (wrap > 0)
+          {
+             twrap = wrap;
+             ch = GET_PREV(str, twrap);
+             /* the text intersects the wrap point on a whitespace char */
+             if (_is_white(ch))
+               {
+                  return wrap;
+               }
+             /* intersects a word */
+             else
+               {
+                  /* walk back to start of word */
+                  twrap = _layout_word_start(str, wrap);
+                  if (twrap != 0)
+                    {
+                       wrap = twrap;
+                       ch = GET_PREV(str, wrap);
+                       return (str[wrap]) ? wrap : -1;
+                    }
+               }
+          }
+        /* If we weren't able to find the start of the word we
+         * are currently pointing at, or we were able but it's
+         * the first word - the end of this word is the wrap point, o */
+        else
+          {
+             /* wrap now is the index of the word START */
+             index = wrap;
+             ch = GET_NEXT(str, index);
+
+             /* If there are already items in this line, we
+              * should just try creating a new line for it */
+             if (c->ln->items)
+               {
+                  return 0;
+               }
+             /* If there were no items in this line, try to do
+              * our best wrapping possible since it's the middle
+              * of the word */
+             else
+               {
+                  wrap = 0;
+                  twrap = _layout_word_end(ti->text, wrap);
+                  wrap = twrap;
+                  if (twrap >= 0)
+                    {
+                       ch = GET_NEXT(str, wrap);
+                       return (str[wrap]) ? wrap : -1;
+                    }
+                  else
+                    {
+                       return 0;
+                    }
+               }
+          }
+     }
+   /* We need to wrap, but for some reason we failed obatining the
+    * overflow position. */
+   else
+     {
+        /*FIXME: sanitize this error handling - should probably
+         * never get here anyway unless something really bad
+         * has happend */
+        /* wrap now is the index of the word START */
+        if (wrap < 0) wrap = 0;
+
+        /* If there are already items in the line, break before. */
+        if (c->ln->items)
+          {
+             return 0;
+          }
+        else
+          {
+             twrap = _layout_word_end(ti->text, wrap);
+             wrap = _layout_word_next(ti->text, wrap);
+             if (wrap >= 0)
+               return (str[wrap]) ? wrap : -1;
+             else if (twrap >= 0)
+               return (str[twrap]) ? wrap : -1;
+          }
+     }
+   return -1;
+}
+
 static void
 _layout_visualize_par(Ctxt *c)
 {
@@ -2881,29 +3074,97 @@ _layout_visualize_par(Ctxt *c)
      return;
 
    _layout_line_new(c, c->fmt);
-   EINA_LIST_FOREACH(c->par->logical_items, i, it)
+   /* We walk on our own because we want to be able to add items from
+    * inside the list and then walk them on the next iteration. */
+   for (i = c->par->logical_items ; i ; )
      {
-        c->ln->items = (Evas_Object_Textblock_Item *)
-           eina_inlist_append(EINA_INLIST_GET(c->ln->items),
-                 EINA_INLIST_GET(it));
-        /* FIXME: Add word wrappnig here */
-        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+        int adv_line = 0;
+        int redo_item = 0;
+        it = _ITEM(eina_list_data_get(i));
+        /* Skip visually deleted items */
+        if (it->visually_deleted)
           {
-             Evas_Object_Textblock_Format_Item *fi;
-             fi = _ITEM_FORMAT(it);
-             fi->y = c->y;
-             if (_IS_LINE_SEPARATOR(
-                      eina_strbuf_string_get(fi->source_node->format)))
+             i = eina_list_next(i);
+             continue;
+          }
+        /* FIXME: Add item merging back here */
+        /* Check if we need to wrap, i.e the text is bigger than the width
+         * Only calculate wrapping if the width of the object is > 0 */
+        if ((c->w >= 0) &&
+              ((c->fmt->wrap_word) || (c->fmt->wrap_char)) &&
+              ((c->x + it->adv) >
+               (c->w - c->o->style_pad.l - c->o->style_pad.r -
+                c->marginl - c->marginr)))
+          {
+             if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
                {
-                  _layout_line_advance(c, c->fmt, EINA_TRUE);
+                  /* Don't wrap if it's the only item */
+                  if (c->ln->items)
+                    {
+                       /*FIXME: I should handle tabs correctly, i.e like
+                        * spaces */
+                       _layout_line_advance(c, c->fmt, EINA_TRUE);
+                    }
+               }
+             else
+               {
+                  Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+                  int wrap;
+
+                  adv_line = 1;
+                  if (c->fmt->wrap_word)
+                    {
+                       wrap = _layout_get_wordwrap(c, c->fmt, ti);
+                       if (wrap > 0)
+                         {
+                            _layout_item_text_split_strip_white(c, ti, wrap);
+                         }
+                       else if (c->ln->items)
+                         {
+                            /* Should wrap before the item */
+                            adv_line = 0;
+                            redo_item = 1;
+                            _layout_line_advance(c, c->fmt, EINA_TRUE);
+                         }
+                    }
+                  else if (c->fmt->wrap_char)
+                    {
+                       wrap = _layout_get_charwrap(c, c->fmt, ti);
+                       if (wrap > 0)
+                         {
+                            _layout_item_text_split_strip_white(c, ti, wrap);
+                         }
+                    }
                }
           }
-        else
+
+        if (!redo_item)
           {
-             c->fmt = _ITEM_TEXT(it)->format;
+             c->ln->items = (Evas_Object_Textblock_Item *)
+                eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+                      EINA_INLIST_GET(it));
+             if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+               {
+                  Evas_Object_Textblock_Format_Item *fi;
+                  fi = _ITEM_FORMAT(it);
+                  fi->y = c->y;
+                  if (_IS_LINE_SEPARATOR(fi->item))
+                    {
+                       adv_line = 1;
+                    }
+               }
+             else
+               {
+                  c->fmt = _ITEM_TEXT(it)->format;
+               }
+             c->x += it->adv;
+             i = eina_list_next(i);
           }
+        if (adv_line)
+          _layout_line_advance(c, c->fmt, EINA_TRUE);
      }
-   _layout_line_advance(c, c->fmt, EINA_FALSE);
+   if (c->ln->items)
+     _layout_line_advance(c, c->fmt, EINA_FALSE);
 }
 
 /**
@@ -2922,9 +3183,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 {
    Evas_Object_Textblock *o;
    Ctxt ctxt, *c;
-   Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock_Node_Text *n;
-   Eina_List *removes = NULL;
    Evas_Object_Textblock_Format *fmt = NULL;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
 
@@ -2961,17 +3220,14 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         if (h_ret) *h_ret = 0;
         return;
      }
-   /* run through all text and format nodes generating lines */
-   if (!c->o->text_nodes && !c->o->format_nodes)
+
+   /* If there are no nodes and lines, do the initial creation. */
+   if (!c->o->text_nodes)
      {
-        /* If there are no nodes and lines, do the initial creation. */
-        if (!c->par && !c->ln)
-          {
-             _layout_paragraph_new(c, NULL);
-             _layout_line_new(c, fmt);
-             _layout_text_append(c, fmt, NULL, 0, 0, NULL);
-             _layout_line_advance(c, fmt, EINA_TRUE);
-          }
+        _layout_paragraph_new(c, NULL);
+        _layout_line_new(c, fmt);
+        _layout_text_append(c, fmt, NULL, 0, 0, NULL);
+        _layout_line_advance(c, fmt, EINA_FALSE);
      }
 
    /* Go through all the text nodes to create the layout from */
@@ -3022,7 +3278,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    /* FIXME: move away? */
    {
-      /* FIXME: is this the right format? or maybe it can change with pops? */
+      /* FIXME: is this the right format? or maybe it can change with pops?
+       * maybe this is the last? we need the first... Maybe we should
+       * just keep at the begining or something */
       c->fmt = c->format_stack->data;
       Evas_Object_Textblock_Paragraph *par;
       EINA_INLIST_FOREACH(c->paragraphs, par)
@@ -3033,10 +3291,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         }
    }
 
-   /* Advance the line so it'll calculate the size */
-   if ((c->ln) && (c->ln->items) && (fmt))
-     //_layout_line_advance(c, fmt, EINA_TRUE);
-
    /* Clean the rest of the format stack */
    while (c->format_stack)
      {
@@ -3044,25 +3298,13 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         c->format_stack = eina_list_remove_list(c->format_stack, c->format_stack);
         _format_unref_free(c->obj, fmt);
      }
-   EINA_INLIST_FOREACH(c->par->lines, ln)
+
+   if (c->paragraphs)
      {
-        if (ln->line_no == -1)
-          {
-             removes = eina_list_append(removes, ln);
-          }
-        else
-          {
-             if ((ln->par->y + ln->y + ln->h) > c->hmax) c->hmax = ln->par->y + ln->y + ln->h;
-          }
-     }
-   /* Remove the lines we marked for removal, mostly lines added after
-    * just to force calculation of line sizes */
-   while (removes)
-     {
-        ln = removes->data;
-        c->par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(c->par->lines), EINA_INLIST_GET(ln));
-        removes = eina_list_remove_list(removes, removes);
-        _line_free(obj, ln);
+        Evas_Object_Textblock_Paragraph *last_par;
+        last_par = (Evas_Object_Textblock_Paragraph *)
+           EINA_INLIST_GET(c->paragraphs)->last;
+        c->hmax = last_par->y + last_par->h;
      }
 
    if (w_ret) *w_ret = c->wmax;
@@ -8177,6 +8419,57 @@ ptnode(Evas_Object_Textblock_Node_Text *n)
    printf("next = %p, prev = %p, last = %p\n", EINA_INLIST_GET(n)->next, EINA_INLIST_GET(n)->prev, EINA_INLIST_GET(n)->last);
    printf("format_node = %p\n", n->format_node);
    printf("'%ls'\n", eina_ustrbuf_string_get(n->unicode));
+   if (n->bidi_props)
+     {
+        size_t i;
+        for (i = 0 ; i < eina_ustrbuf_length_get(n->unicode) ; i++)
+          {
+             printf("%d", n->bidi_props->embedding_levels[i]);
+          }
+        printf("\n");
+     }
 }
+
+void
+pitem(Evas_Object_Textblock_Item *it)
+{
+   Evas_Object_Textblock_Text_Item *ti;
+   Evas_Object_Textblock_Format_Item *fi;
+   printf("Item: %p\n", it);
+   printf("Type: %s (%d)\n", (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+         "TEXT" : "FORMAT", it->type);
+   printf("Text pos: %d Visual pos: %d\n", it->text_pos,
+#ifdef BIDI_SUPPORT
+         it->visual_pos
+#else
+         it->text_pos
+#endif
+         );
+   printf("Coords: x = %d w = %d adv = %d\n", (int) it->x, (int) it->w,
+         (int) it->adv);
+   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+     {
+        ti = _ITEM_TEXT(it);
+        printf("Text: '%ls'\n", ti->text);
+     }
+   else
+     {
+        fi = _ITEM_FORMAT(it);
+        printf("Format: '%s'\n", fi->item);
+     }
+}
+
+void
+ppar(Evas_Object_Textblock_Paragraph *par)
+{
+   Evas_Object_Textblock_Item *it;
+   Eina_List *i;
+   EINA_LIST_FOREACH(par->logical_items, i, it)
+     {
+        printf("***********************\n");
+        pitem(it);
+     }
+}
+
 #endif
 

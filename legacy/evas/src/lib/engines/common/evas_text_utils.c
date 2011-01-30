@@ -66,4 +66,17 @@ evas_common_text_props_cutoff(Evas_Text_Props *props, int cutoff)
 #endif
 }
 
+/* Won't work in the middle of ligatures */
+EAPI void
+evas_common_text_props_split(Evas_Text_Props *base,
+      Evas_Text_Props *ext, int cutoff)
+{
+   /* FIXME: move to their own functions */
+   memcpy(&ext->bidi, &base->bidi, sizeof(Evas_BiDi_Props));
+   memcpy(&ext->script, &base->script, sizeof(Evas_Script_Type));
+#ifdef OT_SUPPORT
+   evas_common_font_ot_split_text_props(base, ext, cutoff);
+#endif
+}
+
 

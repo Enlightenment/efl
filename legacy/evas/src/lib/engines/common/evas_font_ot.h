@@ -78,5 +78,8 @@ evas_common_font_ot_populate_text_props(void *fn, const Eina_Unicode *text,
 
 EAPI void
 evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff);
+
+EAPI void
+evas_common_font_ot_split_text_props(Evas_Text_Props *base, Evas_Text_Props *ext, int cutoff);
 #endif
 
