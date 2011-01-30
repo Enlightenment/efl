@@ -2424,26 +2424,6 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
 /**
  * @internal
- * Cut the text in the item up until cut.
- *
- * @param c the context to work on - Not NULL.
- * @param it the item to cut - not null.
- * @param cut the cut index.
- */
-static void
-_layout_item_text_cutoff(Ctxt *c __UNUSED__, Evas_Object_Textblock_Text_Item *ti, int cut)
-{
-   Eina_Unicode *ts;
-
-   ts = ti->text;
-   ts[cut] = 0;
-   ti->text = eina_unicode_strdup(ts);
-   free(ts);
-   evas_common_text_props_cutoff(&ti->parent.text_props, cut);
-}
-
-/**
- * @internal
  * Cut the text up until cut and split
  *
  * @param c the context to work on - Not NULL.
@@ -2785,7 +2765,12 @@ skip:
                    ti->parent.text_pos, tmp_len);
              if (tmp_cut > 0)
                {
-                  _layout_item_text_cutoff(c, ti, tmp_cut);
+                  Eina_Unicode *ts;
+
+                  ts = ti->text;
+                  ts[tmp_cut] = 0;
+                  ti->text = eina_unicode_strdup(ts);
+                  free(ts);
                   tmp_len = tmp_cut;
                }
              evas_common_text_props_bidi_set(&ti->parent.text_props,
