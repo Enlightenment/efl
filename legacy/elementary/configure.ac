@@ -73,7 +73,9 @@ VMIN=v_min
 AC_SUBST(VMAJ)
 AC_SUBST(VMIN)
 
-EDJE_VERSION=`pkg-config edje --modversion | awk -F . '{printf("%s.0.0", $1);}'`
+# pkg-config
+PKG_PROG_PKG_CONFIG
+EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.0.0", $1);}'`
 
 case "$host_os" in
   mingw32ce* | cegcc*)
@@ -197,11 +199,11 @@ PKG_CHECK_MODULES([ELEMENTARY],
     ecore-evas >= 1.0.0
     ecore-file >= 1.0.0
     ecore-imf >= 1.0.0
-    edje >= ${EDJE_VERSION}
+    edje >= 1.0.0
    ]
 )
 
-requirement_elm="edje >= ${EDJE_VERSION} ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
+requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
 want_elementary_x="auto"
