@@ -2178,7 +2178,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                }
           }
 
-        endx = it->x + it->w;
+        endx = it->x + it->adv;
         if (endx > c->ln->w) c->ln->w = endx;
      }
 
