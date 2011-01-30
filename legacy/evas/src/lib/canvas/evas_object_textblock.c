@@ -2514,7 +2514,7 @@ _layout_text_add_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch)
 {
-   int tw, th, new_line, empty_item;
+   int tw, new_line, empty_item;
    int wrap, twrap, ch, index, white_stripped;
    Eina_Unicode *alloc_str = NULL;
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
@@ -2617,10 +2617,10 @@ skip:
                    &ti->parent.text_props, ti->parent.text_node->bidi_props,
                    ti->parent.text_pos, tmp_len);
           }
-        tw = th = 0;
+        tw = 0;
         if (fmt->font.font)
-          c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
-                &ti->parent.text_props, &tw, &th);
+          tw = c->ENFN->font_h_advance_get(c->ENDT, ti->format->font.font,
+                ti->text, &ti->parent.text_props);
         /* Check if we need to wrap, i.e the text is bigger than the width
          * Only calculate wrapping if the width of the object is > 0 */
         if ((c->w >= 0) &&
