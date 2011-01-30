@@ -2212,7 +2212,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (endx > c->ln->w) c->ln->w = endx;
      }
 
-   c->ln->y = c->y + c->o->style_pad.t;
+   c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
    c->ln->h = c->maxascent + c->maxdescent;
    c->ln->baseline = c->maxascent;
    if (c->have_underline2)
@@ -2233,7 +2233,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    c->y += c->maxascent + c->maxdescent;
    if (c->w >= 0)
      {
-        c->ln->x = c->marginl + c->o->style_pad.l +
+        c->ln->x = c->par->x + c->marginl + c->o->style_pad.l +
            ((c->w - c->ln->w -
              c->o->style_pad.l - c->o->style_pad.r -
              c->marginl - c->marginr) * _layout_line_align_get(c));
@@ -2242,15 +2242,12 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
      }
    else
      {
-        c->ln->x = c->marginl + c->o->style_pad.l;
+        c->ln->x = c->par->x + c->marginl + c->o->style_pad.l;
         if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
           c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
    c->par->h += c->ln->h;
-   if (c->par->w < c->ln->w)
-     {
-        c->par->w = c->ln->w;
-     }
+   c->par->w = c->w;
    if (add_line)
      _layout_line_new(c, fmt);
 }
@@ -3213,7 +3210,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
           }
         else
           {
-             if ((ln->y + ln->h) > c->hmax) c->hmax = ln->y + ln->h;
+             if ((ln->par->y + ln->y + ln->h) > c->hmax) c->hmax = ln->par->y + ln->y + ln->h;
           }
      }
    /* Remove the lines we marked for removal, mostly lines added after
@@ -6836,8 +6833,8 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
              if (!o->paragraphs) return -1;
              ln = o->paragraphs->lines;
              if (!ln) return -1;
-             if (cx) *cx = ln->x;
-             if (cy) *cy = ln->y;
+             if (cx) *cx = ln->par->x + ln->x;
+             if (cy) *cy = ln->par->y + ln->y;
              if (cw) *cw = ln->w;
              if (ch) *ch = ln->h;
              return ln->par->line_no + ln->line_no;
@@ -6876,13 +6873,13 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
                    &x, &y, &w, &h);
           }
 
-        x += ln->x + _ITEM(ti)->x;
+        x += ln->par->x + ln->x + _ITEM(ti)->x;
 
-        if (x < ln->x)
+        if (x < ln->par->x + ln->x)
           {
-             x = ln->x;
+             x = ln->par->x + ln->x;
           }
-	y = ln->y;
+	y = ln->par->y + ln->y;
 	h = ln->h;
      }
    else if (ln && fi)
@@ -6893,7 +6890,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
                       eina_strbuf_string_get(fi->source_node->format)))
                {
                   x = 0;
-                  y = ln->y + ln->h;
+                  y = ln->par->y + ln->y + ln->h;
                }
              else
                {
@@ -6901,22 +6898,22 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
                   if (EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
                            fi->parent.text_node->bidi_props))
                     {
-                       x = ln->x;
+                       x = ln->par->x + ln->x;
                     }
                   else
 #endif
                     {
-                       x = ln->x + ln->w;
+                       x = ln->par->x + ln->x + ln->w;
                     }
-                  y = ln->y;
+                  y = ln->par->y + ln->y;
                }
              w = 0;
              h = ln->h;
           }
         else
           {
-             x = ln->x + _ITEM(fi)->x;
-             y = ln->y;
+             x = ln->par->x + ln->x + _ITEM(fi)->x;
+             y = ln->par->y + ln->y;
              w = _ITEM(fi)->w;
              h = ln->h;
           }
@@ -6996,8 +6993,8 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
         _find_layout_item_match(cur, &ln, &it);
      }
    if (!ln) return -1;
-   x = ln->x;
-   y = ln->y;
+   x = ln->par->x + ln->x;
+   y = ln->par->y + ln->y;
    w = ln->w;
    h = ln->h;
    if (cx) *cx = x;
@@ -7041,17 +7038,17 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
      {
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
-             if (ln->y > y) break;
-             if ((ln->y <= y) && ((ln->y + ln->h) > y))
+             if (ln->par->y + ln->y > y) break;
+             if ((ln->par->y + ln->y <= y) && ((ln->par->y + ln->y + ln->h) > y))
                {
                   EINA_INLIST_FOREACH(ln->items, it)
                     {
-                       if ((it->x + ln->x) > x)
+                       if ((it->x + ln->par->x + ln->x) > x)
                          {
                             it_break = it;
                             break;
                          }
-                       if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
+                       if (((it->x + ln->par->x + ln->x) <= x) && (((it->x + ln->par->x + ln->x) + it->adv) > x))
                          {
                             if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
                               {
@@ -7066,7 +7063,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                                          cur->ENDT,
                                          ti->format->font.font,
                                          ti->text, &ti->parent.text_props,
-                                         x - it->x - ln->x, 0,
+                                         x - it->x - ln->par->x - ln->x, 0,
                                          &cx, &cy, &cw, &ch);
                                  if (pos < 0)
                                    return EINA_FALSE;
@@ -7138,8 +7135,8 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
      {
         EINA_INLIST_FOREACH(found_par->lines, ln)
           {
-             if (ln->y > y) break;
-             if ((ln->y <= y) && ((ln->y + ln->h) > y))
+             if (ln->par->y + ln->y > y) break;
+             if ((ln->par->y + ln->y <= y) && ((ln->par->y + ln->y + ln->h) > y))
                {
                   evas_textblock_cursor_line_set(cur, ln->par->line_no +
                         ln->line_no);
@@ -7324,8 +7321,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
              rects = eina_list_append(rects, tr);
-             tr->x = ln->x + it1->x + x;
-             tr->y = ln->y;
+             tr->x = ln->par->x + ln->x + it1->x + x;
+             tr->y = ln->par->y + ln->y;
              tr->h = ln->h;
              tr->w = w;
           }
@@ -7372,8 +7369,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
              rects = eina_list_append(rects, tr);
-             tr->x = ln->x + it1->x + x;
-             tr->y = ln->y;
+             tr->x = ln->par->x + ln->x + it1->x + x;
+             tr->y = ln->par->y + ln->y;
              tr->h = ln->h;
              tr->w = w;
           }
@@ -7387,8 +7384,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
              rects = eina_list_append(rects, tr);
-             tr->x = ln->x + min_x;
-             tr->y = ln->y;
+             tr->x = ln->par->x + ln->x + min_x;
+             tr->y = ln->par->y + ln->y;
              tr->h = ln->h;
              tr->w = max_x - min_x;
           }
@@ -7426,8 +7423,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
              rects = eina_list_append(rects, tr);
-             tr->x = ln->x + it2->x + x;
-             tr->y = ln->y;
+             tr->x = ln->par->x + ln->x + it2->x + x;
+             tr->y = ln->par->y + ln->y;
              tr->h = ln->h;
              tr->w = w;
           }
@@ -7527,8 +7524,8 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
    _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln,
          (Evas_Object_Textblock_Item **) &fi);
    if ((!ln) || (!fi)) return EINA_FALSE;
-   x = ln->x + fi->parent.x;
-   y = ln->y + ln->baseline + fi->y;
+   x = ln->par->x + ln->x + fi->parent.x;
+   y = ln->par->y + ln->y + ln->baseline + fi->y;
    w = fi->parent.w;
    h = fi->parent.h;
    if (cx) *cx = x;
@@ -7580,8 +7577,8 @@ evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line,
    TB_HEAD_RETURN(0);
    ln = _find_layout_line_num(obj, line);
    if (!ln) return EINA_FALSE;
-   if (cx) *cx = ln->x;
-   if (cy) *cy = ln->y;
+   if (cx) *cx = ln->par->x + ln->x;
+   if (cy) *cy = ln->par->y + ln->y;
    if (cw) *cw = ln->w;
    if (ch) *ch = ln->h;
    return EINA_TRUE;
@@ -7815,9 +7812,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              pbacking = punderline = punderline2 = pstrikethrough = 0; \
              if (clip) \
                { \
-                  if ((obj->cur.geometry.y + y + ln->y + ln->h) < (cy - 20)) \
+                  if ((obj->cur.geometry.y + y + ln->par->y + ln->y + ln->h) < (cy - 20)) \
                   continue; \
-                  if ((obj->cur.geometry.y + y + ln->y) > (cy + ch + 20)) \
+                  if ((obj->cur.geometry.y + y + ln->par->y + ln->y) > (cy + ch + 20)) \
                   break; \
                } \
              EINA_INLIST_FOREACH(ln->items, itr) \
@@ -7833,9 +7830,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                        yoff = (ti->format->valign * (double)(ln->h - ti->parent.h)) + ti->baseline; \
                        if (clip) \
                          { \
-                            if ((obj->cur.geometry.x + x + ln->x + ti->parent.x + ti->parent.w) < (cx - 20)) \
+                            if ((obj->cur.geometry.x + x + ln->par->x + ln->x + ti->parent.x + ti->parent.w) < (cx - 20)) \
                             continue; \
-                            if ((obj->cur.geometry.x + x + ln->x + ti->parent.x) > (cx + cw + 20)) \
+                            if ((obj->cur.geometry.x + x + ln->par->x + ln->x + ti->parent.x) > (cx + cw + 20)) \
                             break; \
                          } \
                     } \
@@ -7861,12 +7858,12 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          (obj->cur.cache.clip.a * ti->format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy) \
    if (ti->format->font.font) ENFN->font_draw(output, context, surface, ti->format->font.font, \
-         obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox), \
-         obj->cur.geometry.y + ln->y + yoff + y + (oy), \
+         obj->cur.geometry.x + ln->par->x + ln->x + ti->parent.x + x + (ox), \
+         obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, ti->text, &ti->parent.text_props);
 #define ITEM_WALK_LINE_SKIP_DROP() \
-   if ((ln->y + ln->h) <= 0) continue; \
-   if (ln->y > obj->cur.geometry.h) break
+   if ((ln->par->y + ln->y + ln->h) <= 0) continue; \
+   if (ln->par->y + ln->y > obj->cur.geometry.h) break
 
 
    /* backing */
@@ -7882,8 +7879,8 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
         ENFN->rectangle_draw(output, \
               context, \
               surface, \
-              obj->cur.geometry.x + ln->x + x + (ox), \
-              obj->cur.geometry.y + ln->y + y + (oy), \
+              obj->cur.geometry.x + ln->par->x + ln->x + x + (ox), \
+              obj->cur.geometry.y + ln->par->y + ln->y + y + (oy), \
               (ow), \
               (oh)); \
      } \
