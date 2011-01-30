@@ -44,7 +44,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
  * intl_props, char_index, adv, fi, kern, pen_x
  */
 #ifdef BIDI_SUPPORT
-#define EVAS_FONT_UPDATE_KERN() \
+#define EVAS_FONT_UPDATE_KERN(is_visual) \
    do \
       { \
          /* if it's rtl, the kerning matching should be reversed, */ \
@@ -52,7 +52,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
          /* around. There is a slight exception when there are */ \
          /* compositing chars involved.*/ \
          if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL) && \
-               adv > 0) \
+               visible && !is_visual) \
            { \
               if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
                 pen_x += kern; \
@@ -65,9 +65,10 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
       } \
    while (0)
 #else
-#define EVAS_FONT_UPDATE_KERN() \
+#define EVAS_FONT_UPDATE_KERN(is_visual) \
    do \
       { \
+         (void) is_visual; \
          if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
            pen_x += kern; \
       } \
@@ -131,7 +132,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
  * @see EVAS_FONT_WALK_TEXT_INIT
  * @see EVAS_FONT_WALK_TEXT_END
  */
-#define EVAS_FONT_WALK_TEXT_WORK() \
+#define EVAS_FONT_WALK_TEXT_WORK(is_visual) \
              index = evas_common_font_glyph_search(fn, &fi, gl); \
              LKL(fi->ft_mutex); \
              fg = evas_common_font_int_cache_glyph_get(fi, index); \
@@ -160,7 +161,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
              if ((use_kerning) && (prev_index) && (index) && \
                    (pface == fi->src->ft.face)) \
                { \
-                  EVAS_FONT_UPDATE_KERN(); \
+                  EVAS_FONT_UPDATE_KERN(is_visual); \
                } \
  \
              pface = fi->src->ft.face; \
