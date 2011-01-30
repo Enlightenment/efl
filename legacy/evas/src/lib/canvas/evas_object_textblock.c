@@ -7542,11 +7542,14 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                        if ((obj->cur.geometry.x + x + ln->x + ti->parent.x - ti->inset) > (cx + cw + 20)) \
                        break; \
                     } \
-               }
+               } \
+             do
 
 #define ITEM_WALK_END() \
+             while (0); \
           } \
-     }
+     } \
+   do {} while(0)
 #define COLOR_SET(col) \
    ENFN->context_color_set(output, context, \
          (obj->cur.cache.clip.r * ti->format->color.col.r) / 255, \
