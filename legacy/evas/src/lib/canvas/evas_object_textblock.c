@@ -2047,7 +2047,8 @@ _layout_line_reorder(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
           }
      }
 
-   /*FIXME: not very efficient, sort the items arrays. */
+   /*FIXME: not very efficient, sort the items arrays. Anyhow, should only
+    * reorder if it's a bidi paragraph */
      {
         Evas_Object_Textblock_Item *i, *j, *min;
         i = line->items;
@@ -2635,10 +2636,14 @@ skip:
         ti->parent.text_pos = start + str - tbase;
         if (ti->parent.text_node)
           {
+#ifdef BIDI_SUPPORT
              ti->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
                    ti->parent.text_node->bidi_props,
                    ti->parent.text_pos,
                    0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
+#else
+             ti->parent.bidi_props.dir = EVAS_BIDI_DIRECTION_LTR;
+#endif
           }
         tw = th = 0;
         if (fmt->font.font)
@@ -2855,10 +2860,14 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
         fi->parent.text_node = n->text_node;
         /* FIXME: make it more efficient */
         fi->parent.text_pos = _evas_textblock_node_format_pos_get(n);
+#ifdef BIDI_SUPPORT
         fi->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
                  fi->parent.text_node->bidi_props,
                  fi->parent.text_pos,
                  0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
+#else
+        fi->parent.bidi_props.dir = EVAS_BIDI_DIRECTION_LTR;
+#endif
      }
    return fi;
 }

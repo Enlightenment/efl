@@ -27,6 +27,8 @@ evas_common_script_end_of_run_get(const Eina_Unicode *str,
    return evas_bidi_end_of_run_get(bidi_props, start, len);
 #else
    (void) bidi_props;
+   (void) start;
+   (void) len;
    return 0;
 #endif
 }

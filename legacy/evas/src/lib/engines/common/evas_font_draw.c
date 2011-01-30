@@ -510,6 +510,9 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
      {
         text = in_text;
      }
+#else
+   /*Suppress warnings */
+   (void) intl_props;
 #endif
    if (fi->src->current_size != fi->size)
      {
