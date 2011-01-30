@@ -6777,12 +6777,23 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    if (dir && dir_cur && dir_cur->node)
      {
 #ifdef BIDI_SUPPORT
-        *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
-                 dir_cur->pos)) ?
-           EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-#else
-        *dir = EVAS_BIDI_DIRECTION_LTR;
+        if (_evas_textblock_cursor_is_at_the_end(dir_cur) && (dir_cur->pos > 0))
+          {
+             *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                      dir_cur->pos - 1)) ?
+                EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
+          }
+        else if (dir_cur->pos > 0)
+          {
+             *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                      dir_cur->pos)) ?
+                EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
+          }
+        else
 #endif
+          {
+             *dir = EVAS_BIDI_DIRECTION_LTR;
+          }
      }
    return ret;
 }
