@@ -2202,31 +2202,52 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              if (!fi->formatme) continue;
              fi->ascent = c->maxascent;
              fi->descent = c->maxdescent;
-             /* Adjust relsize */
-             if (fi->size == SIZE_REL)
+             /* Adjust sizes according to current line height/scale */
                {
-                  Evas_Coord w = 1, h = 1;
+                  Evas_Coord w, h;
                   const char *p, *s;
+
                   s = eina_strbuf_string_get(fi->source_node->format);
-                  p = strstr((char *) s, " relsize=");
-                  p += 9;
-                  if (sscanf(p, "%ix%i", &w, &h) == 2)
+                  w = fi->parent.w;
+                  h = fi->parent.h;
+                  switch (fi->size)
                     {
-                       int sz = 1;
-                       if (fi->vsize == VSIZE_FULL)
-                         {
-                            sz = c->maxdescent + c->maxascent;
-                         }
-                       else if (fi->vsize == VSIZE_ASCENT)
-                         {
-                            sz = c->maxascent;
-                         }
-                       w = (w * sz) / h;
-                       h = sz;
+                     case SIZE:
+                        p = strstr(s, " size=");
+                        p += 6;
+                        if (sscanf(p, "%ix%i", &w, &h) == 2)
+                          {
+                             w = w * c->obj->cur.scale;
+                             h = h * c->obj->cur.scale;
+                          }
+                        break;
+                     case SIZE_REL:
+                        p = strstr((char *) s, " relsize=");
+                        p += 9;
+                        if (sscanf(p, "%ix%i", &w, &h) == 2)
+                          {
+                             int sz = 1;
+                             if (fi->vsize == VSIZE_FULL)
+                               {
+                                  sz = c->maxdescent + c->maxascent;
+                               }
+                             else if (fi->vsize == VSIZE_ASCENT)
+                               {
+                                  sz = c->maxascent;
+                               }
+                             w = (w * sz) / h;
+                             h = sz;
+                          }
+                        break;
+                     case SIZE_ABS:
+                        /* Nothing to do */
+                     default:
+                        break;
                     }
                   fi->parent.w = fi->parent.adv = w;
                   fi->parent.h = h;
                }
+
              switch (fi->size)
                {
                 case SIZE:
@@ -2815,7 +2836,7 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
  * @param style_pad_b the pad to update.
  */
 static void
-_layout_do_format(const Evas_Object *obj, Ctxt *c,
+_layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
       Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n,
       int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b)
 {
@@ -2866,8 +2887,10 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
              p += 6;
              if (sscanf(p, "%ix%i", &w, &h) == 2)
                {
-                  w = w * obj->cur.scale;
-                  h = h * obj->cur.scale;
+                  /* this is handled somewhere else because it depends
+                   * on the current scaling factor of the object which
+                   * may change and break because the results of this
+                   * function are cached */
                   size = SIZE;
                }
           }
@@ -2887,8 +2910,11 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                   p = strstr(s, " relsize=");
                   if (p)
                     {
-                       /* relsize in handled somewhere else, pretty hacky, but
-                        * couldn't think of another solution atm. */
+                       /* this is handled somewhere else because it depends
+                        * on the line it resides in, which is not defined
+                        * at this point and will change anyway, which will
+                        * break because the results of this function are
+                        * cached */
                        size = SIZE_REL;
                     }
                }
