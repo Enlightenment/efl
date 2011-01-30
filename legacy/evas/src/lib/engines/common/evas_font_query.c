@@ -315,7 +315,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
                }
              else if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
                    ((EVAS_FONT_WALK_OT_POS_PREV > (size_t) position) ||
-                    (EVAS_FONT_WALK_OT_IS_LAST)) &&
+                    (EVAS_FONT_WALK_OT_IS_FIRST)) &&
                    (((size_t) position) >= EVAS_FONT_WALK_OT_POS))
                {
                   found = 1;
@@ -455,7 +455,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
                }
              else if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
                    ((EVAS_FONT_WALK_OT_POS_PREV > (size_t) position) ||
-                    (EVAS_FONT_WALK_OT_IS_LAST)) &&
+                    (EVAS_FONT_WALK_OT_IS_FIRST)) &&
                    (((size_t) position) >= EVAS_FONT_WALK_OT_POS))
                {
                   found = 1;
