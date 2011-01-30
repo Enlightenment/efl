@@ -8,19 +8,14 @@
 /**
  * @def EVAS_FONT_WALK_OT_TEXT_VISUAL_START
  * @internal
- * This runs through the variable text while updating char_index,
- * which is the current index in the text. This macro exposes (inside
- * the loop) the following vars:
- * adv - advancement
- * gl - the current unicode code point
- * bear_x, bear_y, width - info about the bitmap
- * pen_x, pen_y - (also available outside of the loop, but updated here)
- * fg - the font glyph.
- * index, prev_index - font indexes.
+ * This runs through the text in visual order while updating char_index,
+ * which is the current index in the text.
  * Does not end with a ;
+ * Take a look at EVAS_FONT_WALK_OT_X_OFF and the like.
  * @see EVAS_FONT_WALK_OT_TEXT_INIT
  * @see EVAS_FONT_WALK_OT_TEXT_WORK
  * @see EVAS_FONT_WALK_OT_TEXT_END
+ * @see EVAS_FONT_WALK_OT_TEXT_LOGICAL_START
  */
 #define EVAS_FONT_WALK_OT_TEXT_VISUAL_START() \
    do \
@@ -34,24 +29,18 @@
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
-             int kern; \
+
 /**
  * @def EVAS_FONT_WALK_OT_TEXT_LOGICAL_START
  * @internal
- * FIXME: not up to date
- * This runs through the variable text while updating char_index,
- * which is the current index in the text. This macro exposes (inside
- * the loop) the following vars:
- * adv - advancement
- * gl - the current unicode code point
- * bear_x, bear_y, width - info about the bitmap
- * pen_x, pen_y - (also available outside of the loop, but updated here)
- * fg - the font glyph.
- * index, prev_index - font indexes.
+ * This runs through the text in logical order while updating char_index,
+ * which is the current index in the text.
  * Does not end with a ;
+ * Take a look at EVAS_FONT_WALK_OT_X_OFF and the like.
  * @see EVAS_FONT_WALK_OT_TEXT_INIT
  * @see EVAS_FONT_WALK_OT_TEXT_WORK
  * @see EVAS_FONT_WALK_OT_TEXT_END
+ * @see EVAS_FONT_WALK_OT_TEXT_VISUAL_START
  */
 #define EVAS_FONT_WALK_OT_TEXT_LOGICAL_START() \
    do \
@@ -77,7 +66,6 @@
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
-             int kern; \
 
 /*FIXME: doc */
 #define EVAS_FONT_WALK_OT_X_OFF \
@@ -130,7 +118,6 @@
                   LKU(fi->ft_mutex); \
                   continue; \
                } \
-             kern = 0; \
              if (EVAS_FONT_CHARACTER_IS_INVISIBLE(text[EVAS_FONT_WALK_OT_POS])) \
                { \
                   visible = 0; \

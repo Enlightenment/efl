@@ -5,9 +5,9 @@
 /**
  * @def EVAS_FONT_UPDATE_KERN()
  * @internal
- * This macro updates pen_x and kern according to kerning.
+ * This macro updates kern according to kerning.
  * This macro assumes the following variables exist:
- * intl_props, char_index, adv, fi, kern, pen_x
+ * intl_props, char_index, fi, kern, index, prev_index
  */
 #ifdef BIDI_SUPPORT
 #define EVAS_FONT_UPDATE_KERN(is_visual) \
@@ -20,13 +20,13 @@
          if (intl_props && (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) && \
                visible && !is_visual) \
            { \
-              if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
-                pen_x += kern; \
+              if (!evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
+                kern = 0; \
            } \
          else \
            { \
-              if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-                pen_x += kern; \
+              if (!evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
+                kern = 0; \
            } \
       } \
    while (0)
@@ -35,8 +35,8 @@
    do \
       { \
          (void) is_visual; \
-         if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-           pen_x += kern; \
+         if (!evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
+           kern = 0; \
       } \
    while (0)
 #endif
@@ -44,19 +44,14 @@
 /**
  * @def EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
  * @internal
- * This runs through the variable text while updating char_index,
- * which is the current index in the text. This macro exposes (inside
- * the loop) the following vars:
- * adv - advancement
- * _gl - the current unicode code point
- * bear_x, bear_y, width - info about the bitmap
- * pen_x, pen_y - (also available outside of the loop, but updated here)
- * fg - the font glyph.
- * index, prev_index - font indexes.
+ * This runs through the text in visual order while updating char_index,
+ * which is the current index in the text.
  * Does not end with a ;
+ * Take a look at EVAS_FONT_WALK_DEFAULT_X_OFF and the like.
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_INIT
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_WORK
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_END
+ * @see EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START
  */
 #define EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START() \
    do \
@@ -87,23 +82,18 @@
              int _gl, kern; \
              _gl = *text; \
              if (_gl == 0) break;
+
 /**
  * @def EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START
  * @internal
- * FIXME: update
- * This runs through the variable text while updating char_index,
- * which is the current index in the text. This macro exposes (inside
- * the loop) the following vars:
- * adv - advancement
- * _gl - the current unicode code point
- * bear_x, bear_y, width - info about the bitmap
- * pen_x, pen_y - (also available outside of the loop, but updated here)
- * fg - the font glyph.
- * index, prev_index - font indexes.
+ * This runs through the text in logical order while updating char_index,
+ * which is the current index in the text.
  * Does not end with a ;
+ * Take a look at EVAS_FONT_WALK_DEFAULT_X_OFF and the like.
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_INIT
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_WORK
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_END
+ * @see EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
  */
 #define EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START() \
    do \
