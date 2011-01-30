@@ -2481,6 +2481,7 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    int tw, th, adv, inset;
 
    int cutoff, len;
+   int shape_len = 0;
 
 
    cutoff = 0;
@@ -2507,11 +2508,16 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                         new_ti->parent.text_pos);
                   evas_common_text_props_script_set (&new_ti->parent.text_props,
                         new_ti->text);
-                  c->ENFN->font_shape(c->ENDT, new_ti->format->font.font,
-                        new_ti->text,
-                        &new_ti->parent.text_props,
-                        new_ti->parent.text_node->bidi_props,
-                        new_ti->parent.text_pos, len - cutoff);
+                  shape_len = len - cutoff;
+               }
+             else if (shape_len)
+               {
+                  c->ENFN->font_shape(c->ENDT, ti->format->font.font,
+                        ti->text,
+                        &ti->parent.text_props,
+                        ti->parent.text_node->bidi_props,
+                        ti->parent.text_pos, shape_len);
+                  shape_len = 0;
                }
           }
 
