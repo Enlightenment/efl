@@ -4020,18 +4020,14 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
    TB_HEAD();
    if (ts == o->style) return;
    if ((ts) && (ts->delete_me)) return;
-   if (o->markup_text)
-     {
-        if (o->style)
-          {
-             free(o->markup_text);
-             o->markup_text = NULL;
-             evas_object_textblock_text_markup_get(obj);
-          }
-     }
    if (o->style)
      {
         Evas_Textblock_Style *old_ts;
+        if (o->markup_text)
+          {
+             free(o->markup_text);
+             o->markup_text = NULL;
+          }
 
         old_ts = o->style;
         old_ts->objects = eina_list_remove(old_ts->objects, obj);
@@ -4041,12 +4037,8 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
    if (ts)
      {
         ts->objects = eina_list_append(ts->objects, obj);
-        o->style = ts;
      }
-   else
-     {
-        o->style = NULL;
-     }
+   o->style = ts;
 
     _evas_textblock_text_node_changed(o, obj, NULL);
 }
