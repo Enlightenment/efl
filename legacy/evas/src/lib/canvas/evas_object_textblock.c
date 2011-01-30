@@ -2465,83 +2465,38 @@ _layout_word_next(Eina_Unicode *str, int p)
 /**
  * @internal
  * Adds the item to the list, updates the item's properties (e.g, x,w,h)
- * and splits the items to text runs, i.e splits each item to rtl/ltr runs of
- * text.
  *
  * @param c the context
  * @param fmt the format of the item.
  * @param it the item itself.
  */
 static void
-_layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+_layout_text_add_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       Evas_Object_Textblock_Text_Item *ti)
 {
    int tw, th, adv, inset;
 
-   int cutoff, len;
-
-
-   cutoff = 0;
-   len = eina_unicode_strlen(ti->text);
-   do
-     {
-        Evas_Object_Textblock_Text_Item *new_ti;
-        /* FIXME: We assume here that it's ok to have an empty item with
-         * no text nodes, make sure it's the case. */
-        if (ti->parent.text_node)
-          {
-             cutoff = evas_common_language_script_end_of_run_get(
-                   ti->text,
-                   ti->parent.text_node->bidi_props,
-                   ti->parent.text_pos, len);
-             if (cutoff > 0)
-               {
-                  new_ti = _layout_text_item_new(c, fmt, ti->text + cutoff);
-                  _layout_item_text_cutoff(c, ti, cutoff);
-                  new_ti->parent.text_node = ti->parent.text_node;
-                  new_ti->parent.text_pos = ti->parent.text_pos + cutoff;
-                  evas_common_text_props_bidi_set(&new_ti->parent.text_props,
-                        new_ti->parent.text_node->bidi_props,
-                        new_ti->parent.text_pos);
-                  evas_common_text_props_script_set (&new_ti->parent.text_props,
-                        new_ti->text);
-                  c->ENFN->font_shape(c->ENDT, new_ti->format->font.font,
-                        new_ti->text,
-                        &new_ti->parent.text_props,
-                        new_ti->parent.text_node->bidi_props,
-                        new_ti->parent.text_pos, len - cutoff);
-               }
-          }
-
-        tw = th = 0;
-        if (fmt->font.font)
-          c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
-                &ti->parent.text_props, &tw, &th);
-        ti->parent.w = tw;
-        ti->parent.h = th;
-        inset = 0;
-        if (fmt->font.font)
-          inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
-               ti->text);
-        ti->inset = inset;
-        ti->parent.x = c->x;
-        adv = 0;
-        if (fmt->font.font)
-          adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
-                ti->text, &ti->parent.text_props);
-        ti->parent.adv = adv;
-        c->x += adv;
-        c->ln->items = (Evas_Object_Textblock_Item *)
-           eina_inlist_append(EINA_INLIST_GET(c->ln->items),
-                 EINA_INLIST_GET(_ITEM(ti)));
-
-        if (cutoff > 0)
-          {
-             ti = new_ti;
-             len -= cutoff;
-          }
-     }
-   while (cutoff > 0);
+   tw = th = 0;
+   if (fmt->font.font)
+     c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
+           &ti->parent.text_props, &tw, &th);
+   ti->parent.w = tw;
+   ti->parent.h = th;
+   inset = 0;
+   if (fmt->font.font)
+     inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
+           ti->text);
+   ti->inset = inset;
+   ti->parent.x = c->x;
+   adv = 0;
+   if (fmt->font.font)
+     adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
+           ti->text, &ti->parent.text_props);
+   ti->parent.adv = adv;
+   c->x += adv;
+   c->ln->items = (Evas_Object_Textblock_Item *)
+      eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+            EINA_INLIST_GET(_ITEM(ti)));
 }
 
 /**
@@ -2631,24 +2586,36 @@ skip:
    empty_item = 0;
 
 
-   while (str)
+   while (str && *str)
      {
         /* if this is the first line item and it starts with spaces - remove them */
+        int tmp_len = 0;
         wrap = 0;
         white_stripped = 0;
 
         ti = _layout_text_item_new(c, fmt, str);
         ti->parent.text_node = n;
         ti->parent.text_pos = start + str - tbase;
+        tmp_len = eina_unicode_strlen(ti->text);
         if (ti->parent.text_node)
           {
+             int tmp_cut;
+             tmp_cut = evas_common_language_script_end_of_run_get(
+                   ti->text,
+                   ti->parent.text_node->bidi_props,
+                   ti->parent.text_pos, tmp_len);
+             if (tmp_cut > 0)
+               {
+                  _layout_item_text_cutoff(c, ti, tmp_cut);
+                  tmp_len = tmp_cut;
+               }
              evas_common_text_props_bidi_set(&ti->parent.text_props,
                    ti->parent.text_node->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set (&ti->parent.text_props,
                    ti->text);
              c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
                    &ti->parent.text_props, ti->parent.text_node->bidi_props,
-                   ti->parent.text_pos, eina_unicode_strlen(ti->text));
+                   ti->parent.text_pos, tmp_len);
           }
         tw = th = 0;
         if (fmt->font.font)
@@ -2794,16 +2761,16 @@ skip:
                             if (wrap >= 0)
                               str += wrap;
                             else
-                              str = NULL;
+                              str += tmp_len;
                          }
                        else
-                         str = NULL;
+                         str += tmp_len;
                        new_line = 1;
                     }
                }
           }
         else
-          str = NULL;
+          str += tmp_len;
 
         /* Set item properties */
         if (empty_item)
@@ -2812,7 +2779,7 @@ skip:
           }
         else
           {
-             _layout_text_add_and_split_item(c, fmt, ti);
+             _layout_text_add_item(c, fmt, ti);
           }
 
 
