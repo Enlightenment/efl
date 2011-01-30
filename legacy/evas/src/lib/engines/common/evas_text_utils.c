@@ -31,10 +31,16 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
       const Evas_Text_Props *src)
 {
    memcpy(dst, src, sizeof(Evas_Text_Props));
+   evas_common_text_props_content_ref(dst);
+}
+
+void
+evas_common_text_props_content_ref(Evas_Text_Props *props)
+{
 #ifdef OT_SUPPORT
-   if (dst->ot_data)
+   if (props->ot_data)
      {
-        evas_common_font_ot_props_ref(dst->ot_data);
+        evas_common_font_ot_props_ref(props->ot_data);
      }
 #endif
 }

@@ -27,6 +27,9 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
       const Evas_Text_Props *src);
 
 void
+evas_common_text_props_content_ref(Evas_Text_Props *props);
+
+void
 evas_common_text_props_content_unref(Evas_Text_Props *props);
 
 EAPI void
