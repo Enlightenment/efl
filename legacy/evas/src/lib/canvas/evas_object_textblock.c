@@ -1753,7 +1753,6 @@ struct _Ctxt
    Evas_Object_Textblock_Line *ln;
 
    Eina_List *format_stack;
-   Evas_Object_Textblock_Format *fmt;
 
    int x, y;
    int w, h;
@@ -3080,7 +3079,8 @@ _layout_visualize_par(Ctxt *c)
    if (!c->par->logical_items)
      return;
 
-   _layout_line_new(c, c->fmt);
+   it = _ITEM(eina_list_data_get(c->par->logical_items));
+   _layout_line_new(c, it->format);
    /* We walk on our own because we want to be able to add items from
     * inside the list and then walk them on the next iteration. */
    for (i = c->par->logical_items ; i ; )
@@ -3098,7 +3098,7 @@ _layout_visualize_par(Ctxt *c)
         /* Check if we need to wrap, i.e the text is bigger than the width
          * Only calculate wrapping if the width of the object is > 0 */
         if ((c->w >= 0) &&
-              ((c->fmt->wrap_word) || (c->fmt->wrap_char)) &&
+              ((it->format->wrap_word) || (it->format->wrap_char)) &&
               ((c->x + it->adv) >
                (c->w - c->o->style_pad.l - c->o->style_pad.r -
                 c->marginl - c->marginr)))
@@ -3110,7 +3110,7 @@ _layout_visualize_par(Ctxt *c)
                     {
                        /*FIXME: I should handle tabs correctly, i.e like
                         * spaces */
-                       _layout_line_advance(c, c->fmt, EINA_TRUE);
+                       _layout_line_advance(c, it->format, EINA_TRUE);
                     }
                }
              else
@@ -3119,9 +3119,9 @@ _layout_visualize_par(Ctxt *c)
                   int wrap;
 
                   adv_line = 1;
-                  if (c->fmt->wrap_word)
+                  if (it->format->wrap_word)
                     {
-                       wrap = _layout_get_wordwrap(c, c->fmt, ti);
+                       wrap = _layout_get_wordwrap(c, it->format, ti);
                        if (wrap > 0)
                          {
                             _layout_item_text_split_strip_white(c, ti, wrap);
@@ -3131,12 +3131,12 @@ _layout_visualize_par(Ctxt *c)
                             /* Should wrap before the item */
                             adv_line = 0;
                             redo_item = 1;
-                            _layout_line_advance(c, c->fmt, EINA_TRUE);
+                            _layout_line_advance(c, it->format, EINA_TRUE);
                          }
                     }
-                  else if (c->fmt->wrap_char)
+                  else if (it->format->wrap_char)
                     {
-                       wrap = _layout_get_charwrap(c, c->fmt, ti);
+                       wrap = _layout_get_charwrap(c, it->format, ti);
                        if (wrap > 0)
                          {
                             _layout_item_text_split_strip_white(c, ti, wrap);
@@ -3160,18 +3160,25 @@ _layout_visualize_par(Ctxt *c)
                        adv_line = 1;
                     }
                }
-             else
-               {
-                  c->fmt = _ITEM_TEXT(it)->parent.format;
-               }
              c->x += it->adv;
              i = eina_list_next(i);
           }
         if (adv_line)
-          _layout_line_advance(c, c->fmt, EINA_TRUE);
+          {
+             /* Each line is according to the first item in it, and here
+              * i is already the next item (or the current if we redo it) */
+             if (i)
+               {
+                  it = _ITEM(eina_list_data_get(i));
+               }
+             _layout_line_advance(c, it->format, EINA_TRUE);
+          }
      }
    if (c->ln->items)
-     _layout_line_advance(c, c->fmt, EINA_FALSE);
+     {
+        /* Here it is the last format used */
+        _layout_line_advance(c, it->format, EINA_FALSE);
+     }
 }
 
 /**
@@ -3288,7 +3295,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
       /* FIXME: is this the right format? or maybe it can change with pops?
        * maybe this is the last? we need the first... Maybe we should
        * just keep at the begining or something */
-      c->fmt = c->format_stack->data;
       Evas_Object_Textblock_Paragraph *par;
       EINA_INLIST_FOREACH(c->paragraphs, par)
         {
