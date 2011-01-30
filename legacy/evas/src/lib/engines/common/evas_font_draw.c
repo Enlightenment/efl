@@ -535,7 +535,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
              LKU(fi->ft_mutex);
              continue;
           }
-        if (EVAS_FONT_CHARACTER_IS_INVISIBLE(text[EVAS_FONT_WALK_POS]))
+        if (EVAS_FONT_CHARACTER_IS_INVISIBLE(text[EVAS_FONT_WALK_POS - text_props->start]))
           {
              visible = 0;
           }
