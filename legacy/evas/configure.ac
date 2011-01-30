@@ -323,7 +323,6 @@ if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
       [harfbuzz >= 0.2],
       [
        have_harfbuzz="yes"
-       AC_DEFINE(HAVE_HARFBUZZ, 1, [have harfbuzz support])
        requirement_evas="harfbuzz ${requirement_evas}"
       ],
       [
@@ -334,12 +333,14 @@ if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
    if test "x$have_harfbuzz" = "xyes" ; then
 
       CPPFLAGS_SAVE="$CPPFLAGS"
-      CPPFLAGS="$CPPFLAGS $HARFBUZZ_CFLAGS"
+      CPPFLAGS="$CPPFLAGS $HARFBUZZ_CFLAGS $FREETYPE_CFLAGS"
 # must have for usage with harfbuzz although harfbuzz may not have it.
 
       AC_CHECK_HEADER(hb-ft.h,
           [
            have_harfbuzz_ft="yes"
+           #Depend on harfbuzz ft for harfbuzz support
+           AC_DEFINE(HAVE_HARFBUZZ, 1, [have harfbuzz support])
           ],
           [
            if test "x$want_harfbuzz" = "xyes" -a "x$use_strict" = "xyes" ; then
