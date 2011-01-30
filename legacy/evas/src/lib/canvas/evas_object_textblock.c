@@ -6863,24 +6863,8 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
                    &x, &y, &w, &h);
           }
 
-        /* Handle bidi adjustments */
-        if (_evas_textblock_cursor_is_at_the_end(cur))
-          {
-#ifdef BIDI_SUPPORT
-             if (EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(ti->bidi_props.props))
-               {
-                  x = ln->x;
-               }
-             else
-#endif
-               {
-                  x = ln->x + ln->w;
-               }
-          }
-        else
-          {
-             x += ln->x + _ITEM(ti)->x - ti->inset;
-          }
+        x += ln->x + _ITEM(ti)->x - ti->inset;
+
         if (x < ln->x)
           {
              x = ln->x;
