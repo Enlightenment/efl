@@ -1857,10 +1857,10 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n)
 
 /**
  * @internal
- * Free the layout paragraph and all of it's lines.
+ * Free the visual lines in the paragraph (logical items are kept)
  */
 static void
-_paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
+_paragraph_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
 {
    while (par->lines)
      {
@@ -1870,6 +1870,16 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
         par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(par->lines), EINA_INLIST_GET(par->lines));
         _line_free(obj, ln);
      }
+}
+
+/**
+ * @internal
+ * Free the layout paragraph and all of it's lines and logical items.
+ */
+static void
+_paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
+{
+   _paragraph_clear(obj, par);
 
      {
         Eina_List *i, *i_prev;
@@ -1892,6 +1902,28 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
  */
 static void
 _paragraphs_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Paragraph *par;
+   o = (Evas_Object_Textblock *)(obj->object_data);
+
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(pars), par)
+     {
+        _paragraph_clear(obj, par);
+     }
+}
+
+/**
+ * @internal
+ * Free the paragraphs from the inlist pars, the difference between this and
+ * _paragraphs_clear is that the latter keeps the logical items and the par
+ * items, while the former frees them as well.
+ *
+ * @param obj the evas object - Not NULL.
+ * @param pars the paragraphs to clean - Not NULL.
+ */
+static void
+_paragraphs_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *pars)
 {
    Evas_Object_Textblock *o;
    o = (Evas_Object_Textblock *)(obj->object_data);
@@ -2373,7 +2405,8 @@ _layout_item_text_split_strip_white(Ctxt *c,
    _layout_text_add_logical_item(c, ti->parent.format, new_ti, _ITEM(ti));
 
    /* FIXME: Will break with kerning and a bunch of other stuff, should
-    * maybe adjust the last adv of the prev and the offset of the cur*/
+    * maybe adjust the last adv of the prev and the offset of the cur
+    * There's also another similar fixme below (same case, not marked) */
    ti->parent.w -= new_ti->parent.w;
    ti->parent.adv -= new_ti->parent.adv;
 
@@ -2397,6 +2430,38 @@ _layout_item_text_split_strip_white(Ctxt *c,
    ti->text = eina_unicode_strdup(ts);
    free(ts);
    return new_ti;
+}
+
+/**
+ * @internal
+ * Merge item2 into item1 and free item2.
+ *
+ * @param c the context to work on - Not NULL.
+ * @param item1 the item to copy to
+ * @param item2 the item to copy from
+ */
+static void
+_layout_item_merge_and_free(Ctxt *c,
+      Evas_Object_Textblock_Text_Item *item1,
+      Evas_Object_Textblock_Text_Item *item2)
+{
+   Eina_Unicode *tmp;
+   size_t len1, len2;
+   item1->parent.w += item2->parent.w;
+   item1->parent.adv += item2->parent.adv;
+   evas_common_text_props_merge(&item1->parent.text_props,
+         &item2->parent.text_props);
+   len1 = eina_unicode_strlen(item1->text);
+   len2 = eina_unicode_strlen(item2->text);
+   tmp = realloc(item1->text, (len1 + len2 + 1) * sizeof(Eina_Unicode));
+   eina_unicode_strcpy(tmp + len1, item2->text);
+   item1->text = tmp;
+   item1->text[len1 + len2] = 0;
+
+   item1->parent.merge = EINA_FALSE;
+   item1->parent.visually_deleted = EINA_FALSE;
+
+   _item_free(c->obj, NULL, _ITEM(item2));
 }
 
 /**
@@ -3183,8 +3248,92 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
      }
 
 
-   /* If there are no nodes and lines, do the initial creation. */
-   if (!c->o->text_nodes)
+   if (o->content_changed)
+     {
+        _paragraphs_free(obj, o->paragraphs);
+   /* Go through all the text nodes to create the logical layout */
+        EINA_INLIST_FOREACH(c->o->text_nodes, n)
+          {
+             Evas_Object_Textblock_Node_Format *fnode;
+             size_t start;
+             int off;
+
+             n->dirty = 0; /* Mark as if we cleaned the paragraph, although
+                              we should really use it to fine tune the
+                              changes here, and not just blindly mark */
+             _layout_paragraph_new(c, n); /* Each node is a paragraph */
+
+             /* For each text node to thorugh all of it's format nodes
+              * append text from the start to the offset of the next format
+              * using the last format got. if needed it also creates format items
+              * this is the core algorithm of the layout mechanism.
+              * Skip the unicode replacement chars when there are because
+              * we don't want to print them. */
+             fnode = n->format_node;
+             start = off = 0;
+             while (fnode && (fnode->text_node == n))
+               {
+                  off += fnode->offset;
+                  /* No need to skip on the first run, or a non-visible one */
+                  _layout_text_append(c, fmt, n, start, off, o->repch);
+                  _layout_do_format(obj, c, &fmt, fnode, &style_pad_l,
+                        &style_pad_r, &style_pad_t, &style_pad_b);
+                  if ((c->have_underline2) || (c->have_underline))
+                    {
+                       if (style_pad_b < c->underline_extend)
+                         style_pad_b = c->underline_extend;
+                       c->have_underline = 0;
+                       c->have_underline2 = 0;
+                       c->underline_extend = 0;
+                    }
+                  start += off;
+                  if (fnode->visible)
+                    {
+                       off = -1;
+                       start++;
+                    }
+                  else
+                    {
+                       off = 0;
+                    }
+                  fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+               }
+             _layout_text_append(c, fmt, n, start, -1, o->repch);
+          }
+     }
+   else
+     {
+        _paragraphs_clear(obj, o->paragraphs);
+        c->paragraphs = o->paragraphs;
+        /* Merge the ones that need merging. */
+        /* Go through all the paragraphs, lines, items and merge if should be
+         * merged we merge backwards!!! */
+        Evas_Object_Textblock_Paragraph *par;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(c->paragraphs), par)
+          {
+             Eina_List *itr, *itr_next;
+             Evas_Object_Textblock_Item *it, *prev_it = NULL;
+             EINA_LIST_FOREACH_SAFE(par->logical_items, itr, itr_next, it)
+               {
+                  if (it->merge && prev_it &&
+                        (prev_it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
+                        (it->type == EVAS_TEXTBLOCK_ITEM_TEXT))
+                    {
+                       _layout_item_merge_and_free(c, _ITEM_TEXT(prev_it),
+                             _ITEM_TEXT(it));
+                       par->logical_items =
+                          eina_list_remove_list(par->logical_items, itr);
+                    }
+                  else
+                    {
+                       prev_it = it;
+                    }
+               }
+          }
+     }
+
+   /* If there are no paragraphs, create the minimum needed */
+   if (!c->paragraphs)
      {
         _layout_paragraph_new(c, NULL);
         _layout_line_new(c, fmt);
@@ -3192,51 +3341,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout_line_finalize(c, fmt);
      }
 
-   /* Go through all the text nodes to create the logical layout */
-   EINA_INLIST_FOREACH(c->o->text_nodes, n)
-     {
-        Evas_Object_Textblock_Node_Format *fnode;
-        size_t start;
-        int off;
-
-        _layout_paragraph_new(c, n); /* Each node is a paragraph */
-
-        /* For each text node to thorugh all of it's format nodes
-         * append text from the start to the offset of the next format
-         * using the last format got. if needed it also creates format items
-         * this is the core algorithm of the layout mechanism.
-         * Skip the unicode replacement chars when there are because
-         * we don't want to print them. */
-        fnode = n->format_node;
-        start = off = 0;
-        while (fnode && (fnode->text_node == n))
-          {
-             off += fnode->offset;
-             /* No need to skip on the first run, or a non-visible one */
-             _layout_text_append(c, fmt, n, start, off, o->repch);
-             _layout_do_format(obj, c, &fmt, fnode, &style_pad_l, &style_pad_r, &style_pad_t, &style_pad_b);
-             if ((c->have_underline2) || (c->have_underline))
-               {
-                  if (style_pad_b < c->underline_extend)
-                    style_pad_b = c->underline_extend;
-                  c->have_underline = 0;
-                  c->have_underline2 = 0;
-                  c->underline_extend = 0;
-               }
-             start += off;
-             if (fnode->visible)
-               {
-                  off = -1;
-                  start++;
-               }
-             else
-               {
-                  off = 0;
-               }
-             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-          }
-        _layout_text_append(c, fmt, n, start, -1, o->repch);
-     }
 
    /* End of logical layout creation */
 
@@ -3271,24 +3375,21 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
+   o->paragraphs = c->paragraphs;
+
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
        (o->style_pad.t != style_pad_t) || (o->style_pad.b != style_pad_b))
      {
-        c->par->lines = NULL;
         o->style_pad.l = style_pad_l;
         o->style_pad.r = style_pad_r;
         o->style_pad.t = style_pad_t;
         o->style_pad.b = style_pad_b;
-        _layout(obj, calc_only, w, h, w_ret, h_ret);
         _paragraphs_clear(obj, c->paragraphs);
+        _layout(obj, calc_only, w, h, w_ret, h_ret);
         return;
      }
-   if (!calc_only)
-     {
-        o->paragraphs = c->paragraphs;
-        return;
-     }
-   if (c->paragraphs) _paragraphs_clear(obj, c->paragraphs);
+
+   return;
 }
 
 /*
@@ -3301,17 +3402,13 @@ static void
 _relayout(const Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Paragraph *paragraphs;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   paragraphs = o->paragraphs;
-   o->paragraphs = NULL;
    _layout(obj,
          0,
          obj->cur.geometry.w, obj->cur.geometry.h,
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
-   if (paragraphs) _paragraphs_clear(obj, paragraphs);
    o->last_w = obj->cur.geometry.w;
    o->changed = 0;
    o->content_changed = 0;
@@ -7670,7 +7767,7 @@ evas_object_textblock_clear(Evas_Object *obj)
      }
    if (o->paragraphs)
      {
-	_paragraphs_clear(obj, o->paragraphs);
+	_paragraphs_free(obj, o->paragraphs);
 	o->paragraphs = NULL;
      }
    _evas_textblock_text_node_changed(o, obj, NULL);
@@ -8146,20 +8243,12 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    if ((o->changed) || (o->content_changed) ||
        (o->last_w != obj->cur.geometry.w))
      {
-	Evas_Object_Textblock_Paragraph *paragraphs;
-
-	paragraphs = o->paragraphs;
-	o->paragraphs = NULL;
 	o->formatted.valid = 0;
 	_layout(obj,
 		0,
 		obj->cur.geometry.w, obj->cur.geometry.h,
 		&o->formatted.w, &o->formatted.h);
 	o->formatted.valid = 1;
-        if (paragraphs)
-          {
-             _paragraphs_clear(obj, paragraphs);
-          }
 	o->last_w = obj->cur.geometry.w;
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
@@ -8378,15 +8467,6 @@ ptnode(Evas_Object_Textblock_Node_Text *n)
    printf("next = %p, prev = %p, last = %p\n", EINA_INLIST_GET(n)->next, EINA_INLIST_GET(n)->prev, EINA_INLIST_GET(n)->last);
    printf("format_node = %p\n", n->format_node);
    printf("'%ls'\n", eina_ustrbuf_string_get(n->unicode));
-   if (n->bidi_props)
-     {
-        size_t i;
-        for (i = 0 ; i < eina_ustrbuf_length_get(n->unicode) ; i++)
-          {
-             printf("%d", n->bidi_props->embedding_levels[i]);
-          }
-        printf("\n");
-     }
 }
 
 void

@@ -79,4 +79,14 @@ evas_common_text_props_split(Evas_Text_Props *base,
 #endif
 }
 
+/* Won't work in the middle of ligatures */
+EAPI void
+evas_common_text_props_merge(Evas_Text_Props *item1,
+      const Evas_Text_Props *item2)
+{
+#ifdef OT_SUPPORT
+   evas_common_font_ot_merge_text_props(item1, item2);
+#endif
+}
+
 

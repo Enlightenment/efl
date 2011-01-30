@@ -19,6 +19,8 @@ struct _Evas_Font_OT_Data
    int refcount;
    size_t len;
    Evas_Font_OT_Data_Item *items;
+   size_t offset; /* The offset from the start of the script segment,
+                     this is useful when it's a split item */
 };
 # else
 typedef void *Evas_Font_OT_Data;
@@ -81,5 +83,8 @@ evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff);
 
 EAPI void
 evas_common_font_ot_split_text_props(Evas_Text_Props *base, Evas_Text_Props *ext, int cutoff);
+
+EAPI void
+evas_common_font_ot_merge_text_props(Evas_Text_Props *item1, const Evas_Text_Props *item2);
 #endif
 

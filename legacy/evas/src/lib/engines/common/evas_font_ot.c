@@ -135,7 +135,7 @@ evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff)
 }
 
 /* Won't work in the middle of ligatures
- * assumes ext doesn't have an already init ot_data
+ * aissumes ext doesn't have an already init ot_data
  * we assume there's at least one char in each part */
 EAPI void
 evas_common_font_ot_split_text_props(Evas_Text_Props *base,
@@ -181,12 +181,60 @@ evas_common_font_ot_split_text_props(Evas_Text_Props *base,
           {
              ext->ot_data->items[i].source_cluster -= min;
           }
+        ext->ot_data->offset = base->ot_data->offset + min;
      }
    tmp = realloc(base->ot_data->items,
          cutoff * sizeof(Evas_Font_OT_Data_Item));
    base->ot_data->items = tmp;
    base->ot_data->len = cutoff;
 
+}
+
+/* Won't work in the middle of ligatures
+ * assumes both are init correctly and that both are from the
+ * same origin item, i.e both have the same script + direction.
+ * assume item1 is logically first */
+EAPI void
+evas_common_font_ot_merge_text_props(Evas_Text_Props *item1,
+      const Evas_Text_Props *item2)
+{
+   Evas_Font_OT_Data_Item *tmp, *itr; /* Itr will be used for adding back
+                                         the offsets */
+   size_t len;
+   if (!item1->ot_data || !item2->ot_data)
+     return;
+   len = item1->ot_data->len + item2->ot_data->len;
+   tmp = calloc(len, sizeof(Evas_Font_OT_Data_Item));
+   if (item1->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        memcpy(tmp, item2->ot_data->items,
+              item2->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+        memcpy(tmp + item2->ot_data->len, item1->ot_data->items,
+              item1->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+        itr = tmp;
+     }
+   else
+     {
+        memcpy(tmp, item1->ot_data->items,
+              item1->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+        memcpy(tmp + item1->ot_data->len, item2->ot_data->items,
+              item2->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+        itr = tmp + item1->ot_data->len;
+     }
+   free(item1->ot_data->items);
+   item1->ot_data->items = tmp;
+   item1->ot_data->len = len;
+   /* Add back the offset of item2 to the newly created */
+   if (item2->ot_data->offset > 0)
+     {
+        int i;
+        for (i = 0 ; i < (int) item2->ot_data->len ; i++, itr++)
+          {
+             /* This must be > 0, just because this is how it works */
+             itr->source_cluster += item2->ot_data->offset -
+                item1->ot_data->offset;
+          }
+     }
 }
 
 EAPI Eina_Bool

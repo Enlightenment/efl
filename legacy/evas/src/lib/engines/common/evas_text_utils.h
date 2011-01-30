@@ -35,4 +35,6 @@ evas_common_text_props_cutoff(Evas_Text_Props *props, int cutoff);
 EAPI void
 evas_common_text_props_split(Evas_Text_Props *base, Evas_Text_Props *ext,
       int cutoff);
+EAPI void
+evas_common_text_props_merge(Evas_Text_Props *item1, const Evas_Text_Props *item2);
 #endif
