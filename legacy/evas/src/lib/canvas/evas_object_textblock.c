@@ -3414,6 +3414,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    if (!c->paragraphs)
      {
         _layout_paragraph_new(c, NULL);
+        o->paragraphs = c->paragraphs;
      }
    c->par = (Evas_Object_Textblock_Paragraph *)
       EINA_INLIST_GET(c->paragraphs)->last;
