@@ -365,7 +365,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
              /* we need to see if the char at the visual position is the char wanted */
              if (EVAS_FONT_WALK_DEFAULT_POS == (size_t) position)
                {
-                  if (cx) *cx = chr_x + EVAS_FONT_WALK_DEFAULT_WIDTH;
+                  if (cx) *cx = chr_x;
                   if (cy) *cy = -asc;
                   if (cw) *cw = chr_w;
                   if (ch) *ch = asc + desc;
@@ -523,16 +523,14 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
                     {
                        if (EVAS_FONT_WALK_DEFAULT_X_ADV > 0)
                          {
-                            if (cpen_x) *cpen_x = pen_x +
-                              EVAS_FONT_WALK_DEFAULT_X_ADV;
+                            if (cpen_x) *cpen_x = pen_x;
                             if (cadv) *cadv = EVAS_FONT_WALK_DEFAULT_X_ADV;
                          }
                        else
                          {
                             if (cpen_x) *cpen_x = pen_x +
                               EVAS_FONT_WALK_DEFAULT_X_OFF +
-                              EVAS_FONT_WALK_DEFAULT_X_BEAR +
-                                 EVAS_FONT_WALK_DEFAULT_WIDTH;
+                              EVAS_FONT_WALK_DEFAULT_X_BEAR;
                             if (cadv) *cadv = EVAS_FONT_WALK_DEFAULT_WIDTH;
                          }
                     }
