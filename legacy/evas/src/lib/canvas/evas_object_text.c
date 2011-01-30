@@ -641,7 +641,7 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
    do
      {
         cutoff = evas_common_language_script_end_of_run_get(
-              text,
+              text + pos,
               o->bidi_par_props,
               pos, len - pos);
         if (cutoff > 0)
