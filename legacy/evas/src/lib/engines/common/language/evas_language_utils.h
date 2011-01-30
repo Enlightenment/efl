@@ -119,6 +119,9 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str, const Evas_B
 Evas_Script_Type
 evas_common_language_script_type_get(const Eina_Unicode *str);
 
+Evas_Script_Type
+evas_common_language_char_script_get(Eina_Unicode unicode);
+
 const char *
 evas_common_language_from_locale_get(void);
 
