@@ -7092,6 +7092,226 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 }
 
 /**
+ * @internal
+ * Returns the geometry of the range in line ln. Cur1 is the start cursor,
+ * cur2 is the end cursor, NULL means from the start or to the end accordingly.
+ * Assumes that ln is valid, and that at least one of cur1 and cur2 is not NULL.
+ *
+ * @param ln the line to work on.
+ * @param cur1 the start cursor
+ * @param cur2 the end cursor
+ * @return Returns the geometry of the range
+ */
+static Eina_List *
+_evas_textblock_cursor_range_in_line_geometry_get(
+      const Evas_Object_Textblock_Line *ln, const Evas_Textblock_Cursor *cur1,
+      const Evas_Textblock_Cursor *cur2)
+{
+   Evas_Object_Textblock_Item *it;
+   Evas_Object_Textblock_Item *it1, *it2;
+   Eina_List *rects = NULL;
+   Evas_Textblock_Rectangle *tr;
+   size_t start, end;
+   const Evas_Textblock_Cursor *cur;
+   cur = (cur1) ? cur1 : cur2;
+
+   /* Find the first and last items */
+   it1 = it2 = NULL;
+   start = end = 0;
+   EINA_INLIST_FOREACH(ln->items, it)
+     {
+        size_t item_len;
+        item_len = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+           eina_unicode_strlen(((Evas_Object_Textblock_Text_Item *) it)->text)
+           : 1;
+        if ((!cur1 || (cur1->pos < it->text_pos + item_len)) &&
+              (!cur2 || (cur2->pos >= it->text_pos)))
+          {
+             if (!it1)
+               {
+                  it1 = it;
+                  start = (cur1) ? (cur1->pos - it->text_pos) : 0;
+               }
+             it2 = it;
+             end = (cur2) ? (cur2->pos - it->text_pos) : item_len;
+          }
+     }
+   /* Special case when they share the same item. */
+   if (it1 == it2)
+     {
+        Evas_Coord x1, w1, x2, w2;
+        Evas_Coord x, w, y, h;
+        if (it1->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             Evas_Object_Textblock_Text_Item *ti;
+             int ret;
+             ti = _ITEM_TEXT(it1);
+             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+                   ti->format->font.font,
+                   ti->text, &ti->bidi_props,
+                   start,
+                   &x1, &y, &w1, &h);
+             if (!ret)
+               {
+                  return NULL;
+               }
+             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+                   ti->format->font.font,
+                   ti->text, &ti->bidi_props,
+                   end,
+                   &x2, &y, &w2, &h);
+             if (!ret)
+               {
+                  return NULL;
+               }
+
+             /* This also takes bidi into account because of the positions
+              * in the text are taken into account */
+             if (x2 > x1)
+               {
+                  w = x2 - x1;
+                  x = x1;
+               }
+             else
+               {
+                  w = x1 - x2;
+                  x = x2;
+               }
+          }
+        else
+          {
+             x = 0;
+             w = it1->w;
+          }
+        if (w > 0)
+          {
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             rects = eina_list_append(rects, tr);
+             tr->x = ln->x + it1->x + x;
+             tr->y = ln->y;
+             tr->h = ln->h;
+             tr->w = w;
+          }
+     }
+   else
+     {
+        /* Get the middle items */
+        Evas_Coord min_x, max_x;
+        Evas_Coord x, w;
+        it = _ITEM(EINA_INLIST_GET(it1)->next);
+        min_x = max_x = it->x;
+
+        if (it1->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             Evas_Coord y, h;
+             Evas_Object_Textblock_Text_Item *ti;
+             int ret;
+             ti = _ITEM_TEXT(it1);
+
+             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+                   ti->format->font.font,
+                   ti->text, &ti->bidi_props,
+                   start,
+                   &x, &y, &w, &h);
+             if (!ret)
+               {
+                  /* BUG! Skip the first item */
+                  x = w = 0;
+               }
+             else
+               {
+#ifdef BIDI_SUPPORT
+                  if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
+                    {
+                       w = x;
+                       x = 0;
+                    }
+                  else
+#endif
+                    {
+                       w = it1->w - x;
+                    }
+               }
+          }
+        else
+          {
+             x = 0;
+             w = it1->w;
+          }
+        if (w > 0)
+          {
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             rects = eina_list_append(rects, tr);
+             tr->x = ln->x + it1->x + x;
+             tr->y = ln->y;
+             tr->h = ln->h;
+             tr->w = w;
+          }
+
+        while (it && (it != it2))
+          {
+             max_x = it->x + it->w;
+             it = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(it)->next;
+          }
+        if (min_x != max_x)
+          {
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             rects = eina_list_append(rects, tr);
+             tr->x = ln->x + min_x;
+             tr->y = ln->y;
+             tr->h = ln->h;
+             tr->w = max_x - min_x;
+          }
+        if (it2->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+          {
+             Evas_Coord y, h;
+             Evas_Object_Textblock_Text_Item *ti;
+             int ret;
+             ti = _ITEM_TEXT(it2);
+
+             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+                   ti->format->font.font,
+                   ti->text, &ti->bidi_props,
+                   end,
+                   &x, &y, &w, &h);
+             if (!ret)
+               {
+                  /* BUG! skip the last item */
+                  x = w = 0;
+               }
+             else
+               {
+#ifdef BIDI_SUPPORT
+                  if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
+                    {
+                       w = it2->w - x;
+                    }
+                  else
+#endif
+                    {
+                       w = x;
+                       x = 0;
+                    }
+               }
+          }
+        else
+          {
+             x = 0;
+             w = it2->w;
+          }
+        if (w > 0)
+          {
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             rects = eina_list_append(rects, tr);
+             tr->x = ln->x + it2->x + x;
+             tr->y = ln->y;
+             tr->h = ln->h;
+             tr->w = w;
+          }
+     }
+   return rects;
+}
+/**
  * Get the geometry of a range.
  *
  * @param cur1 one side of the range.
@@ -7101,14 +7321,17 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 EAPI Eina_List *
 evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Line *ln1, *ln2;
+   Evas_Object_Textblock_Item *it1, *it2;
    Eina_List *rects = NULL;
-   Evas_Coord cx, cy, cw, ch, lx, ly, lw, lh;
    Evas_Textblock_Rectangle *tr;
-   int i, line, line2;
 
-   if (!cur1) return NULL;
-   if (!cur2) return NULL;
+   if (!cur1 || !cur1->node) return NULL;
+   if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
+   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
+   if (!o->formatted.valid) _relayout(cur1->obj);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
@@ -7118,76 +7341,41 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 	cur2 = tc;
      }
 
-   line = evas_textblock_cursor_char_geometry_get(cur1, &cx, &cy, &cw, &ch);
-   if (line < 0) return NULL;
-   line = evas_textblock_cursor_line_geometry_get(cur1, &lx, &ly, &lw, &lh);
-   if (line < 0) return NULL;
-   line2 = evas_textblock_cursor_line_geometry_get(cur2, NULL, NULL, NULL, NULL);
-   if (line2 < 0) return NULL;
+   ln1 = ln2 = NULL;
+   it1 = it2 = NULL;
+   _find_layout_item_match(cur1, &ln1, &it1);
+   if (!ln1 || !it1) return NULL;
+   _find_layout_item_match(cur2, &ln2, &it2);
+   if (!ln2 || !it2) return NULL;
 
-   if (line == line2)
+   if (ln1 == ln2)
      {
-	tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
-	rects = eina_list_append(rects, tr);
-	tr->x = cx;
-	tr->y = ly;
-	tr->h = lh;
-	line = evas_textblock_cursor_char_geometry_get(cur2, &cx, &cy, &cw, &ch);
-	if (line < 0)
-	  {
-	     while (rects)
-	       {
-		  free(rects->data);
-		  rects = eina_list_remove_list(rects, rects);
-	       }
-	     return NULL;
-	  }
-	tr->w = cx - tr->x;
+        rects = _evas_textblock_cursor_range_in_line_geometry_get(ln1,
+              cur1, cur2);
      }
    else
      {
-	tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
-	rects = eina_list_append(rects, tr);
-	tr->x = cx;
-	tr->y = ly;
-	tr->h = lh;
-	tr->w = lx + lw - cx;
-	for (i = line +1; i < line2; i++)
-	  {
-	     evas_object_textblock_line_number_geometry_get(cur1->obj, i, &lx, &ly, &lw, &lh);
+        Evas_Object_Textblock_Line *lni;
+        Eina_List *rects2 = NULL;
+        /* Handle the first line */
+        rects = _evas_textblock_cursor_range_in_line_geometry_get(ln1,
+              cur1, NULL);
+
+        /* Handle the lines between the first and the last line */
+        lni = (Evas_Object_Textblock_Line *) EINA_INLIST_GET(ln1)->next;
+        while (lni && (lni != ln2))
+          {
 	     tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
 	     rects = eina_list_append(rects, tr);
-	     tr->x = lx;
-	     tr->y = ly;
-	     tr->h = lh;
-	     tr->w = lw;
-	  }
-	line = evas_textblock_cursor_char_geometry_get(cur2, &cx, &cy, &cw, &ch);
-	if (line < 0)
-	  {
-	     while (rects)
-	       {
-		  free(rects->data);
-		  rects = eina_list_remove_list(rects, rects);
-	       }
-	     return NULL;
-	  }
-	line = evas_textblock_cursor_line_geometry_get(cur2, &lx, &ly, &lw, &lh);
-	if (line < 0)
-	  {
-	     while (rects)
-	       {
-		  free(rects->data);
-		  rects = eina_list_remove_list(rects, rects);
-	       }
-	     return NULL;
-	  }
-	tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
-	rects = eina_list_append(rects, tr);
-	tr->x = lx;
-	tr->y = ly;
-	tr->h = lh;
-	tr->w = cx - lx;
+	     tr->x = lni->x;
+	     tr->y = lni->y;
+	     tr->h = lni->h;
+	     tr->w = lni->w;
+             lni = (Evas_Object_Textblock_Line *) EINA_INLIST_GET(lni)->next;
+          }
+        rects2 = _evas_textblock_cursor_range_in_line_geometry_get(ln2,
+              NULL, cur2);
+        rects = eina_list_merge(rects, rects2);
      }
    return rects;
 }
