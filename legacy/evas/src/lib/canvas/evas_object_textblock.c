@@ -3173,7 +3173,6 @@ _layout_visualize_par(Ctxt *c)
              i = eina_list_next(i);
              continue;
           }
-        /* FIXME: Add item merging back here */
         /* Check if we need to wrap, i.e the text is bigger than the width
          * Only calculate wrapping if the width of the object is > 0 */
         if ((c->w >= 0) &&
@@ -3317,11 +3316,10 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         return;
      }
 
-
    if (o->content_changed)
      {
         _paragraphs_free(obj, o->paragraphs);
-   /* Go through all the text nodes to create the logical layout */
+        /* Go through all the text nodes to create the logical layout */
         EINA_INLIST_FOREACH(c->o->text_nodes, n)
           {
              Evas_Object_Textblock_Node_Format *fnode;
@@ -3370,8 +3368,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                }
              _layout_text_append(c, fmt, n, start, -1, o->repch);
           }
+        o->paragraphs = c->paragraphs;
      }
-   else
+   else if (!calc_only)
      {
         _paragraphs_clear(obj, o->paragraphs);
         c->paragraphs = o->paragraphs;
@@ -3401,6 +3400,10 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                }
           }
      }
+   else /* Calc only and content hasn't changed */
+     {
+        c->paragraphs = o->paragraphs;
+     }
 
    /* If there are no paragraphs, create the minimum needed,
     * if the last paragraph has no lines/text, create that as well */
@@ -3413,6 +3416,50 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    if (!c->par->logical_items)
      {
         _layout_text_append(c, fmt, NULL, 0, 0, NULL);
+     }
+
+   /* In the case of calc only, we copy the items and the paragraphs,
+    * but because we don't change OT_DATA we can use it, just copy the item
+    * and ref */
+   if (calc_only)
+     {
+        Evas_Object_Textblock_Paragraph *orig_pars, *par;
+        Eina_List *itr;
+        orig_pars = c->paragraphs;
+        c->paragraphs = NULL;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(orig_pars), par)
+          {
+             Evas_Object_Textblock_Item *it;
+             c->par = malloc(sizeof(Evas_Object_Textblock_Paragraph));
+             memcpy(c->par, par, sizeof(Evas_Object_Textblock_Paragraph));
+             /* Both of these should not be copied */
+             c->par->lines = NULL;
+             c->par->logical_items = NULL;
+             c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+                eina_inlist_append(EINA_INLIST_GET(c->paragraphs),
+                      EINA_INLIST_GET(c->par));
+
+             /* Copy all the items */
+             EINA_LIST_FOREACH(par->logical_items, itr, it)
+               {
+                  Evas_Object_Textblock_Item *new_it;
+                  if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                    {
+                       new_it = malloc(sizeof(Evas_Object_Textblock_Text_Item));
+                       memcpy(new_it, it,
+                             sizeof(Evas_Object_Textblock_Text_Item));
+                    }
+                  else
+                    {
+                       new_it = malloc(
+                             sizeof(Evas_Object_Textblock_Format_Item));
+                       memcpy(new_it, it,
+                             sizeof(Evas_Object_Textblock_Format_Item));
+                    }
+                  c->par->logical_items =
+                     eina_list_append(c->par->logical_items, new_it);
+               }
+          }
      }
 
 
@@ -3449,7 +3496,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
-   o->paragraphs = c->paragraphs;
 
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
        (o->style_pad.t != style_pad_t) || (o->style_pad.b != style_pad_b))
@@ -3458,9 +3504,34 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         o->style_pad.r = style_pad_r;
         o->style_pad.t = style_pad_t;
         o->style_pad.b = style_pad_b;
-        _paragraphs_clear(obj, c->paragraphs);
+        if (!calc_only)
+          {
+             _paragraphs_clear(obj, c->paragraphs);
+          }
         _layout(obj, calc_only, w, h, w_ret, h_ret);
         return;
+     }
+
+   if (calc_only)
+     {
+        Evas_Object_Textblock_Paragraph *par;
+        while (c->paragraphs)
+          {
+             Eina_List *itr, *itrn;
+             Evas_Object_Textblock_Item *it;
+             par = c->paragraphs;
+             /* Copy all the items */
+             EINA_LIST_FOREACH_SAFE(par->logical_items, itr, itrn, it)
+               {
+                  par->logical_items =
+                     eina_list_remove_list(par->logical_items, itr);
+                  free(it);
+               }
+             c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+                eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
+                      EINA_INLIST_GET(c->paragraphs));
+             free(par);
+          }
      }
 }
 
