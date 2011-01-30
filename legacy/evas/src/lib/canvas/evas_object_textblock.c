@@ -7165,17 +7165,30 @@ _evas_textblock_cursor_range_in_line_geometry_get(
                   return NULL;
                }
 
-             /* This also takes bidi into account because of the positions
-              * in the text are taken into account */
-             if (x2 > x1)
+             /* Make x2 the one on the right */
+             if (x2 < x1)
                {
-                  w = x2 - x1;
-                  x = x1;
+                  Evas_Coord tmp;
+                  tmp = x1;
+                  x1 = x2;
+                  x2 = tmp;
+
+                  tmp = w1;
+                  w1 = w2;
+                  w2 = tmp;
+               }
+
+#ifdef BIDI_SUPPORT
+             if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
+               {
+                  x = x1 + w1;
+                  w = x2 + w2 - x;
                }
              else
+#endif
                {
-                  w = x1 - x2;
-                  x = x2;
+                  x = x1;
+                  w = x2 - x1;
                }
           }
         else
@@ -7223,7 +7236,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 #ifdef BIDI_SUPPORT
                   if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
                     {
-                       w = x;
+                       w = x + w;
                        x = 0;
                     }
                   else
@@ -7284,6 +7297,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 #ifdef BIDI_SUPPORT
                   if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
                     {
+                       x += w;
                        w = it2->w - x;
                     }
                   else
