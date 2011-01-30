@@ -739,6 +739,31 @@ evas_object_text_text_get(const Evas_Object *obj)
 }
 
 /**
+ * Retrieves the direction of the text currently being displayed in the
+ * text object.
+ * @param  obj The given evas text object.
+ * @return the direction of the text
+ */
+EAPI Evas_BiDi_Direction
+evas_object_text_direction_get(const Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EVAS_BIDI_DIRECTION_NATURAL;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Text *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   return EVAS_BIDI_DIRECTION_NATURAL;
+   MAGIC_CHECK_END();
+   if (o->items)
+     {
+        return o->items->text_props.bidi.dir;
+     }
+   return EVAS_BIDI_DIRECTION_NATURAL;
+}
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
