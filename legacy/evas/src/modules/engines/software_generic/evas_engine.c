@@ -722,8 +722,7 @@ eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_
 #ifdef OT_SUPPORT
    if (evas_common_font_ot_is_enabled())
      {
-        return evas_common_font_ot_populate_text_props(font, text,
-              intl_props, len);
+        return evas_common_font_glyph_info_create(font, text, intl_props, len);
      }
    else
 #endif

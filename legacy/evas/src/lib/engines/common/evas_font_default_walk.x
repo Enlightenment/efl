@@ -3,190 +3,163 @@
 /* Macros for text walking */
 
 /**
- * @def EVAS_FONT_UPDATE_KERN()
+ * @def EVAS_FONT_WALK_TEXT_INIT
  * @internal
- * This macro updates kern according to kerning.
- * This macro assumes the following variables exist:
- * intl_props, char_index, fi, kern, index, prev_index
+ * This macro defines the variables that will later be used with the following
+ * macros, and by font handling functions.
+ * @see EVAS_FONT_WALK_TEXT_START
+ * @see EVAS_FONT_WALK_TEXT_WORK
+ * @see EVAS_FONT_WALK_TEXT_END
  */
-#ifdef BIDI_SUPPORT
-#define EVAS_FONT_UPDATE_KERN(is_visual) \
-   do \
-      { \
-         /* if it's rtl, the kerning matching should be reversed, */ \
-         /* i.e prev index is now the index and the other way */ \
-         /* around. There is a slight exception when there are */ \
-         /* compositing chars involved.*/ \
-         if (intl_props && (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) && \
-               visible && !is_visual) \
-           { \
-              if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
-                _pen_x += kern; \
-           } \
-         else \
-           { \
-              if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-                _pen_x += kern; \
-           } \
-      } \
-   while (0)
-#else
-#define EVAS_FONT_UPDATE_KERN(is_visual) \
-   do \
-      { \
-         (void) is_visual; \
-         if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-           _pen_x += kern; \
-      } \
-   while (0)
-#endif
+# define EVAS_FONT_WALK_TEXT_INIT() \
+        int _pen_x = 0, _pen_y = 0; \
+        size_t char_index; \
+        (void) _pen_y; /* Sometimes it won't be used */
 
 /**
- * @def EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
+ * @def EVAS_FONT_WALK_TEXT_VISUAL_START
  * @internal
  * This runs through the text in visual order while updating char_index,
  * which is the current index in the text.
  * Does not end with a ;
- * Take a look at EVAS_FONT_WALK_DEFAULT_X_OFF and the like.
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_INIT
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_WORK
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_END
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START
+ * Take a look at EVAS_FONT_WALK_X_OFF and the like.
+ * @see EVAS_FONT_WALK_TEXT_INIT
+ * @see EVAS_FONT_WALK_TEXT_WORK
+ * @see EVAS_FONT_WALK_TEXT_END
+ * @see EVAS_FONT_WALK_TEXT_LOGICAL_START
  */
-#define EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START() \
+#define EVAS_FONT_WALK_TEXT_VISUAL_START() \
    do \
      { \
-        const Eina_Unicode *_base_text; \
+        int visible = 1; \
+        for (char_index = 0 ; char_index < text_props->len ; char_index++) \
+          {
+
+/**
+ * @def EVAS_FONT_WALK_TEXT_LOGICAL_START
+ * @internal
+ * This runs through the text in logical order while updating char_index,
+ * which is the current index in the text.
+ * Does not end with a ;
+ * Take a look at EVAS_FONT_WALK_X_OFF and the like.
+ * @see EVAS_FONT_WALK_TEXT_INIT
+ * @see EVAS_FONT_WALK_TEXT_WORK
+ * @see EVAS_FONT_WALK_TEXT_END
+ * @see EVAS_FONT_WALK_TEXT_VISUAL_START
+ */
+#ifdef BIDI_SUPPORT
+#define EVAS_FONT_WALK_TEXT_LOGICAL_START() \
+   do \
+     { \
         int _char_index_d, _i; \
-        int visible; \
-        prev_index = 0; \
-        _base_text = text; \
-        for ( ; *text ; text++); \
-        _i = text - _base_text; \
-        if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) \
+        int visible = 1; \
+        _i = text_props->len; \
+        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) \
           { \
-             char_index = text - _base_text - 1; \
-             text--; \
+             char_index = text_props->len - 1; \
              _char_index_d = -1; \
           } \
         else \
           { \
              char_index = 0; \
-             text = _base_text; \
              _char_index_d = 1; \
           } \
-        for ( ; _i > 0 ; char_index += _char_index_d, text += _char_index_d, _i--) \
-          { \
-             FT_UInt index; \
-             RGBA_Font_Glyph *fg; \
-             int _gl, kern; \
-             _gl = *text; \
-             if (_gl == 0) break;
-
-/**
- * @def EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START
- * @internal
- * This runs through the text in logical order while updating char_index,
- * which is the current index in the text.
- * Does not end with a ;
- * Take a look at EVAS_FONT_WALK_DEFAULT_X_OFF and the like.
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_INIT
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_WORK
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_END
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
- */
-#define EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START() \
-   do \
-     { \
-        int visible; \
-        prev_index = 0; \
-        for (char_index = 0 ; *text ; text++, char_index++) \
-          { \
-             FT_UInt index; \
-             RGBA_Font_Glyph *fg; \
-             int _gl, kern; \
-             _gl = *text; \
-             if (_gl == 0) break;
+        for ( ; _i > 0 ; char_index += _char_index_d, _i--) \
+          {
+#else
+#define EVAS_FONT_WALK_TEXT_LOGICAL_START() EVAS_FONT_WALK_TEXT_VISUAL_START()
+#endif
 
 /*FIXME: doc */
-#define EVAS_FONT_WALK_DEFAULT_X_OFF (0)
-#define EVAS_FONT_WALK_DEFAULT_Y_OFF (0)
-#define EVAS_FONT_WALK_DEFAULT_X_BEAR (fg->glyph_out->left)
-#define EVAS_FONT_WALK_DEFAULT_Y_BEAR (fg->glyph_out->top)
-#define _EVAS_FONT_WALK_DEFAULT_X_ADV (fg->glyph->advance.x >> 10)
-#define EVAS_FONT_WALK_DEFAULT_X_ADV \
-             (EVAS_FONT_ROUND_26_6_TO_INT(_EVAS_FONT_WALK_DEFAULT_X_ADV))
-#define EVAS_FONT_WALK_DEFAULT_Y_ADV (0)
-#define EVAS_FONT_WALK_DEFAULT_WIDTH (fg->glyph_out->bitmap.width)
-#define EVAS_FONT_WALK_DEFAULT_POS (char_index)
-#define EVAS_FONT_WALK_DEFAULT_IS_LAST \
-             (!text[char_index])
-#define EVAS_FONT_WALK_DEFAULT_IS_FIRST \
+#ifdef OT_SUPPORT
+# define EVAS_FONT_WALK_X_OFF \
+             ((text_props->info->ot) ? \
+             (EVAS_FONT_ROUND_26_6_TO_INT( \
+                EVAS_FONT_OT_X_OFF_GET( \
+                   text_props->info->ot[char_index]))) : \
+              (0))
+# define EVAS_FONT_WALK_Y_OFF \
+             ((text_props->info->ot) ? \
+             (EVAS_FONT_ROUND_26_6_TO_INT( \
+                EVAS_FONT_OT_Y_OFF_GET( \
+                   text_props->info->ot[char_index]))) : \
+              (0))
+# define EVAS_FONT_WALK_POS \
+             ((text_props->info->ot) ? \
+             (EVAS_FONT_OT_POS_GET( \
+                      text_props->info->ot[char_index])) : \
+              (char_index))
+# define EVAS_FONT_WALK_POS_NEXT \
+             ((text_props->info->ot) ? \
+              ((!EVAS_FONT_WALK_IS_LAST) ? \
+               EVAS_FONT_OT_POS_GET( \
+                                     text_props->info->ot[char_index + 1]) : \
+               EVAS_FONT_WALK_POS \
+              ) : \
+              ((!EVAS_FONT_WALK_IS_LAST) ? \
+               (char_index + 1) : EVAS_FONT_WALK_POS))
+# define EVAS_FONT_WALK_POS_PREV \
+             ((text_props->info->ot) ? \
+             ((char_index > 0) ? \
+             EVAS_FONT_OT_POS_GET( \
+                      text_props->info->ot[char_index - 1]) : \
+              EVAS_FONT_WALK_POS \
+             ) : \
+             ((char_index > 0) ? \
+              (char_index - 1) : EVAS_FONT_WALK_POS))
+#else
+# define EVAS_FONT_WALK_X_OFF 0
+# define EVAS_FONT_WALK_Y_OFF 0
+# define EVAS_FONT_WALK_POS (char_index)
+# define EVAS_FONT_WALK_POS_NEXT \
+             ((!EVAS_FONT_WALK_IS_LAST) ? \
+              (char_index + 1) : EVAS_FONT_WALK_POS)
+# define EVAS_FONT_WALK_POS_PREV \
+             ((char_index > 0) ? \
+              (char_index - 1) : EVAS_FONT_WALK_POS)
+#endif
+
+#define EVAS_FONT_WALK_X_BEAR (text_props->info->glyph[char_index].x_bear)
+#define EVAS_FONT_WALK_Y_BEAR (fg->glyph_out->top)
+#define _EVAS_FONT_WALK_X_ADV \
+                (text_props->info->glyph[char_index].advance)
+#define EVAS_FONT_WALK_WIDTH (text_props->info->glyph[char_index].width)
+
+#define EVAS_FONT_WALK_X_ADV \
+             (EVAS_FONT_ROUND_26_6_TO_INT(_EVAS_FONT_WALK_X_ADV))
+#define EVAS_FONT_WALK_PEN_X (EVAS_FONT_ROUND_26_6_TO_INT(_pen_x))
+#define EVAS_FONT_WALK_PEN_Y (EVAS_FONT_ROUND_26_6_TO_INT(_pen_y))
+#define EVAS_FONT_WALK_Y_ADV (0)
+#define EVAS_FONT_WALK_IS_LAST \
+             (char_index + 1 == text_props->len)
+#define EVAS_FONT_WALK_IS_FIRST \
              (!char_index)
-#define EVAS_FONT_WALK_DEFAULT_POS_NEXT \
-             ((!EVAS_FONT_WALK_DEFAULT_IS_LAST) ? \
-                      (char_index + 1) : \
-              (char_index) \
-             )
-#define EVAS_FONT_WALK_DEFAULT_POS_PREV \
-             ((!EVAS_FONT_WALK_DEFAULT_IS_FIRST) ? \
-             (char_index - 1) : \
-              EVAS_FONT_WALK_DEFAULT_POS \
-             )
-#define EVAS_FONT_WALK_DEFAULT_LEN (EVAS_FONT_WALK_ORIG_LEN)
-/**
- * @def EVAS_FONT_WALK_DEFAULT_TEXT_WORK
- * @internal
- * This macro actually updates the values mentioned in EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
- * according to the current positing in the walk.
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_INIT
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_END
- */
-#define EVAS_FONT_WALK_DEFAULT_TEXT_WORK(is_visual) \
-             index = evas_common_font_glyph_search(fn, &fi, _gl); \
-             LKL(fi->ft_mutex); \
-             fg = evas_common_font_int_cache_glyph_get(fi, index); \
-             if (!fg) \
-               { \
-                  LKU(fi->ft_mutex); \
-                  continue; \
-               } \
-             kern = 0; \
-             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(_gl)) \
-               { \
-                  visible = 0; \
-               } \
-             else \
-               { \
-                  visible = 1; \
-               } \
-             /* hmmm kerning means i can't sanely do my own cached metric */ \
-             /* tables! grrr - this means font face sharing is kinda... not */ \
-             /* an option if you want performance */ \
-             if ((use_kerning) && (prev_index) && (index) && \
-                   (pface == fi->src->ft.face)) \
-               { \
-                  EVAS_FONT_UPDATE_KERN(is_visual); \
-               } \
- \
-             pface = fi->src->ft.face; \
-             LKU(fi->ft_mutex); \
+#define EVAS_FONT_WALK_LEN (text_props->len)
 
 /**
- * @def EVAS_FONT_WALK_DEFAULT_TEXT_END
+ * @def EVAS_FONT_WALK_TEXT_WORK
  * @internal
- * Closes EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START, needs to end with a ;
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_INIT
- * @see EVAS_FONT_WALK_DEFAULT_TEXT_WORK
+ * This macro actually updates the values mentioned in EVAS_FONT_WALK_TEXT_VISUAL_START
+ * according to the current positing in the walk.
+ * @see EVAS_FONT_WALK_TEXT_VISUAL_START
+ * @see EVAS_FONT_WALK_TEXT_INIT
+ * @see EVAS_FONT_WALK_TEXT_END
  */
-#define EVAS_FONT_WALK_DEFAULT_TEXT_END() \
+#define EVAS_FONT_WALK_TEXT_WORK() do {} while(0);
+
+/**
+ * @def EVAS_FONT_WALK_TEXT_END
+ * @internal
+ * Closes EVAS_FONT_WALK_TEXT_VISUAL_START, needs to end with a ;
+ * @see EVAS_FONT_WALK_TEXT_VISUAL_START
+ * @see EVAS_FONT_WALK_TEXT_INIT
+ * @see EVAS_FONT_WALK_TEXT_WORK
+ */
+#define EVAS_FONT_WALK_TEXT_END() \
              if (visible) \
                { \
-                  _pen_x += _EVAS_FONT_WALK_DEFAULT_X_ADV; \
+                  _pen_x += _EVAS_FONT_WALK_X_ADV; \
                } \
-             prev_index = index; \
           } \
      } \
    while(0)

@@ -1,6 +1,7 @@
 #include "evas_common.h"
 #include "language/evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
+#include "evas_font_ot.h"
 
 EAPI int
 evas_common_font_query_kerning(RGBA_Font_Int* fi,
@@ -104,132 +105,62 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
   return fg->glyph_out->left;
 }
 
-/**
- * @def _INIT_FI_AND_KERNINNG()
- * @internal
- * This macro inits fi and use_kerning.
- * Assumes the following variables exist:
- * fi, fn and use_kerning.
- */
-#define _INIT_FI_AND_KERNING() \
-   do \
-     { \
-        fi = fn->fonts->data; \
-        /* evas_common_font_size_use(fn); */ \
-        evas_common_font_int_reload(fi); \
-        if (fi->src->current_size != fi->size) \
-          { \
-             FTLOCK(); \
-             FT_Activate_Size(fi->ft.size); \
-             FTUNLOCK(); \
-             fi->src->current_size = fi->size; \
-          } \
-        FTLOCK(); \
-        use_kerning = FT_HAS_KERNING(fi->src->ft.face); \
-        FTUNLOCK(); \
-     } \
-   while (0)
-
 /* size of the string (width and height) in pixels
- * BiDi handling: We receive the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from text_props,
  * We only care about the size, and the size does not depend on the visual order.
  * As long as we follow the logical string and get kerning data like we should,
  * we are fine.
  */
 
 EAPI void
-evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props __UNUSED__, int *w, int *h)
+evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *text_props __UNUSED__, int *w, int *h)
 {
    int keep_width = 0;
    int prev_pen_x = 0;
-   int use_kerning;
-   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
-   _INIT_FI_AND_KERNING();
 
-#ifdef OT_SUPPORT
-   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
+   EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
-        EVAS_FONT_WALK_OT_TEXT_VISUAL_START()
-          {
-             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_FALSE);
-             if (!visible) continue;
-             /* Keep the width because we'll need it for the last char */
-             keep_width = EVAS_FONT_WALK_OT_WIDTH + EVAS_FONT_WALK_OT_X_OFF +
-                EVAS_FONT_WALK_OT_X_BEAR;
-             /* Keep the previous EVAS_FONT_WALK_PEN_X, before it's advanced in TEXT_END */
-             prev_pen_x = EVAS_FONT_WALK_PEN_X;
-          }
-        EVAS_FONT_WALK_OT_TEXT_END();
+        EVAS_FONT_WALK_TEXT_WORK();
+        if (!visible) continue;
+        /* Keep the width because we'll need it for the last char */
+        keep_width = EVAS_FONT_WALK_WIDTH +
+           EVAS_FONT_WALK_X_OFF +
+           EVAS_FONT_WALK_X_BEAR;
+        /* Keep the previous EVAS_FONT_WALK_PEN_X, before it's advanced in TEXT_END */
+        prev_pen_x = EVAS_FONT_WALK_PEN_X;
      }
-   else
-#endif
-     {
-        EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START()
-          {
-             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_FALSE);
-             if (!visible) continue;
-             /* Keep the width because we'll need it for the last char */
-             keep_width = EVAS_FONT_WALK_DEFAULT_WIDTH +
-                EVAS_FONT_WALK_DEFAULT_X_OFF +
-                EVAS_FONT_WALK_DEFAULT_X_BEAR;
-             /* Keep the previous EVAS_FONT_WALK_PEN_X, before it's advanced in TEXT_END */
-             prev_pen_x = EVAS_FONT_WALK_PEN_X;
-          }
-        EVAS_FONT_WALK_DEFAULT_TEXT_END();
-     }
+   EVAS_FONT_WALK_TEXT_END();
+
    if (w) *w = prev_pen_x + keep_width;
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
-  evas_common_font_int_use_trim();
 }
 
 /* h & v advance
- * BiDi handling: We receive the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from text_props,
  * We don't care about the order, as heights will remain the same (we already did
  * shaping) and as long as we go through the logical string and match the kerning
  * this way, we are safe.
  */
 EAPI void
-evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int *h_adv, int *v_adv)
+evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *text_props, int *h_adv, int *v_adv)
 {
-   int use_kerning;
-   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
-   _INIT_FI_AND_KERNING();
-#ifndef BIDI_SUPPORT
-   /* Suppress warnings */
-   (void) intl_props;
-#endif
 
-#ifdef OT_SUPPORT
-   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
+   EVAS_FONT_WALK_TEXT_LOGICAL_START()
      {
-        EVAS_FONT_WALK_OT_TEXT_VISUAL_START()
-          {
-             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_FALSE);
-             if (!visible) continue;
-          }
-        EVAS_FONT_WALK_OT_TEXT_END();
+        EVAS_FONT_WALK_TEXT_WORK();
+        if (!visible) continue;
      }
-   else
-#endif
-     {
-        EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START()
-          {
-             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_FALSE);
-             if (!visible) continue;
-          }
-        EVAS_FONT_WALK_DEFAULT_TEXT_END();
-     }
+   EVAS_FONT_WALK_TEXT_END();
 
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
    if (h_adv) *h_adv = EVAS_FONT_WALK_PEN_X;
-  evas_common_font_int_use_trim();
 }
 
 /* x y w h for char at char pos for null it returns the position right after
  * the last char with 0 as width and height.
- * BiDi handling: We receive the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from text_props,
  * We care about the actual drawing location of the string, this is why we need
  * the visual string. We need to know how it's printed. After that we need to calculate
  * the reverse kerning in case of rtl parts. "pos" passed to this function is an
@@ -238,28 +169,24 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
  */
 
 EAPI int
-evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
+evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    int asc, desc;
    int position = 0;
-   const Eina_Unicode *text = in_text;
    int ret_val = 0;
-   int use_kerning;
-   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
-   _INIT_FI_AND_KERNING();
 
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
 
    position = pos;
    /* If it's the null, choose location according to the direction. */
-   if (!text[position])
+   if (text_props->len == position)
      {
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              if (cx) *cx = 0;
              if (ch) *ch = asc + desc;
@@ -267,7 +194,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         else
 #endif
           {
-             evas_common_font_query_advance(fn, in_text, intl_props, cx, ch);
+             evas_common_font_query_advance(fn, in_text, text_props, cx, ch);
           }
         if (cy) *cy = 0;
         if (cw) *cw = 0;
@@ -275,122 +202,95 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         goto end;
      }
 
+   Evas_Coord cluster_start, last_end;
+   int prev_cluster = -1;
+   int found = 0, items = 1, item_pos = 1;
+   int last_is_visible;
+   EVAS_FONT_WALK_TEXT_VISUAL_START()
+     {
+        EVAS_FONT_WALK_TEXT_WORK();
+
+        if (prev_cluster != (int) EVAS_FONT_WALK_POS)
+          {
+             if (found)
+               {
+                  break;
+               }
+             else
+               {
+                  cluster_start = EVAS_FONT_WALK_PEN_X +
+                     EVAS_FONT_WALK_X_OFF +
+                     EVAS_FONT_WALK_X_BEAR;
+               }
+          }
+        last_is_visible = visible;
+        last_end = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF +
+           EVAS_FONT_WALK_X_BEAR + EVAS_FONT_WALK_WIDTH;
+        /* we need to see if the char at the visual position is the char wanted */
+        if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
+              (EVAS_FONT_WALK_POS <= (size_t) position) &&
+              ((((size_t) position) < EVAS_FONT_WALK_POS_NEXT) ||
+               (EVAS_FONT_WALK_IS_LAST)))
+          {
+             found = 1;
 #ifdef OT_SUPPORT
-   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
-     {
-        Evas_Coord cluster_start, last_end;
-        int prev_cluster = -1;
-        int found = 0, items = 0, item_pos = 1;
-        int last_is_visible;
-        EVAS_FONT_WALK_OT_TEXT_VISUAL_START()
-          {
-             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_TRUE);
-
-             if (prev_cluster != (int) EVAS_FONT_WALK_OT_POS)
+             if (evas_common_font_ot_is_enabled())
                {
-                  if (found)
-                    {
-                       break;
-                    }
-                  else
-                    {
-                       cluster_start = EVAS_FONT_WALK_PEN_X +
-                          EVAS_FONT_WALK_OT_X_OFF +
-                          EVAS_FONT_WALK_OT_X_BEAR;
-                    }
+                  items = evas_common_font_ot_cluster_size_get(text_props,
+                        char_index);
                }
-             last_is_visible = visible;
-             last_end = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_OFF +
-                 EVAS_FONT_WALK_OT_X_BEAR + EVAS_FONT_WALK_OT_WIDTH;
-             /* we need to see if the char at the visual position is the char wanted */
-             if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
-                   (EVAS_FONT_WALK_OT_POS <= (size_t) position) &&
-                   ((((size_t) position) < EVAS_FONT_WALK_OT_POS_NEXT) ||
-                    (EVAS_FONT_WALK_OT_IS_LAST)))
-               {
-                  found = 1;
-                  items = evas_common_font_ot_cluster_size_get(intl_props,
-                        char_index, EVAS_FONT_WALK_ORIG_LEN);
-                  item_pos = position - EVAS_FONT_WALK_OT_POS + 1;
-               }
-             else if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
-                   ((EVAS_FONT_WALK_OT_POS_PREV > (size_t) position) ||
-                    (EVAS_FONT_WALK_OT_IS_FIRST)) &&
-                   (((size_t) position) >= EVAS_FONT_WALK_OT_POS))
-               {
-                  found = 1;
-                  items = evas_common_font_ot_cluster_size_get(intl_props,
-                        char_index, EVAS_FONT_WALK_ORIG_LEN);
-                  item_pos = items - (position - EVAS_FONT_WALK_OT_POS);
-               }
-
-             prev_cluster = EVAS_FONT_WALK_OT_POS;
-          }
-        EVAS_FONT_WALK_OT_TEXT_END();
-        if (found)
-          {
-             Evas_Coord cluster_w;
-             cluster_w = last_end - cluster_start;
-             if (cy) *cy = -asc;
-             if (ch) *ch = asc + desc;
-             if (last_is_visible)
-               {
-                  if (cx) *cx = cluster_start +
-                    (cluster_w / items) *
-                       (item_pos - 1);
-                  if (cw) *cw = (cluster_w / items);
-               }
-             else
-               {
-                  if (cx) *cx = cluster_start;
-                  if (cw) *cw = 0;
-               }
-             ret_val = 1;
-             goto end;
-          }
-     }
-   else
 #endif
-     {
-        EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START()
-          {
-             int chr_x, chr_w;
-
-             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_TRUE);
-             if (visible)
-               {
-                  chr_x = (EVAS_FONT_WALK_PEN_X) + EVAS_FONT_WALK_DEFAULT_X_OFF +
-                     EVAS_FONT_WALK_DEFAULT_X_BEAR;
-                  chr_w = EVAS_FONT_WALK_DEFAULT_WIDTH;
-               }
-             else
-               {
-                  chr_x = EVAS_FONT_WALK_PEN_X;
-                  chr_w = 0;
-               }
-             /* we need to see if the char at the visual position is the char wanted */
-             if (EVAS_FONT_WALK_DEFAULT_POS == (size_t) position)
-               {
-                  if (cx) *cx = chr_x;
-                  if (cy) *cy = -asc;
-                  if (cw) *cw = chr_w;
-                  if (ch) *ch = asc + desc;
-                  ret_val = 1;
-                  goto end;
-               }
+             item_pos = position - EVAS_FONT_WALK_POS + 1;
           }
-        EVAS_FONT_WALK_DEFAULT_TEXT_END();
+        else if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
+              ((EVAS_FONT_WALK_POS_PREV > (size_t) position) ||
+               (EVAS_FONT_WALK_IS_FIRST)) &&
+              (((size_t) position) >= EVAS_FONT_WALK_POS))
+          {
+             found = 1;
+#ifdef OT_SUPPORT
+             if (evas_common_font_ot_is_enabled())
+               {
+                  items = evas_common_font_ot_cluster_size_get(text_props,
+                        char_index);
+               }
+#endif
+             item_pos = items - (position - EVAS_FONT_WALK_POS);
+          }
+
+        prev_cluster = EVAS_FONT_WALK_POS;
+     }
+   EVAS_FONT_WALK_TEXT_END();
+   if (found)
+     {
+        Evas_Coord cluster_w;
+        cluster_w = last_end - cluster_start;
+        if (cy) *cy = -asc;
+        if (ch) *ch = asc + desc;
+        if (last_is_visible)
+          {
+             if (cx) *cx = cluster_start +
+               (cluster_w / items) *
+                  (item_pos - 1);
+             if (cw) *cw = (cluster_w / items);
+          }
+        else
+          {
+             if (cx) *cx = cluster_start;
+             if (cw) *cw = 0;
+          }
+        ret_val = 1;
+        goto end;
      }
 end:
 
-  evas_common_font_int_use_trim();
-  return ret_val;
+   return ret_val;
 }
 
 /* x y w h for pen at char pos for null it returns the position right after
  * the last char with 0 as width and height. This is the same as char_coords
  * but it returns the pen_x and adv instead of x and w.
- * BiDi handling: We receive the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from text_props,
  * We care about the actual drawing location of the string, this is why we need
  * the visual string. We need to know how it's printed. After that we need to calculate
  * the reverse kerning in case of rtl parts. "pos" passed to this function is an
@@ -399,28 +299,24 @@ end:
  */
 
 EAPI int
-evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    int asc, desc;
    int position = 0;
-   const Eina_Unicode *text = in_text;
    int ret_val = 0;
-   int use_kerning;
-   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
-   _INIT_FI_AND_KERNING();
 
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
 
    position = pos;
    /* If it's the null, choose location according to the direction. */
-   if (!text[position])
+   if (text_props->len == position)
      {
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              if (cpen_x) *cpen_x = 0;
              if (ch) *ch = asc + desc;
@@ -428,122 +324,89 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
         else
 #endif
           {
-             evas_common_font_query_advance(fn, in_text, intl_props, cpen_x, ch);
+             evas_common_font_query_advance(fn, in_text, text_props, cpen_x, ch);
           }
         if (cy) *cy = 0;
         if (cadv) *cadv = 0;
         ret_val = 1;
         goto end;
      }
-#ifdef OT_SUPPORT
-   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
+   Evas_Coord cluster_start;
+   int prev_cluster = -1;
+   int found = 0, items = 1, item_pos = 1;
+   int last_is_visible = 1;
+   EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
-        Evas_Coord cluster_start;
-        int prev_cluster = -1;
-        int found = 0, items = 0, item_pos = 1;
-        int last_is_visible = 1;
-        EVAS_FONT_WALK_OT_TEXT_VISUAL_START()
+        EVAS_FONT_WALK_TEXT_WORK();
+
+        if (prev_cluster != (int) EVAS_FONT_WALK_POS)
           {
-             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_TRUE);
-
-             if (prev_cluster != (int) EVAS_FONT_WALK_OT_POS)
+             if (found)
                {
-                  if (found)
-                    {
-                       break;
-                    }
-                  else
-                    {
-                       cluster_start = EVAS_FONT_WALK_PEN_X;
-                    }
-               }
-             last_is_visible = visible;
-
-             if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
-                   (EVAS_FONT_WALK_OT_POS <= (size_t) position) &&
-                   ((((size_t) position) < EVAS_FONT_WALK_OT_POS_NEXT) ||
-                    (EVAS_FONT_WALK_OT_IS_LAST)))
-               {
-                  found = 1;
-                  items = evas_common_font_ot_cluster_size_get(intl_props,
-                        char_index, EVAS_FONT_WALK_ORIG_LEN);
-                  item_pos = position - EVAS_FONT_WALK_OT_POS + 1;
-               }
-             else if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
-                   ((EVAS_FONT_WALK_OT_POS_PREV > (size_t) position) ||
-                    (EVAS_FONT_WALK_OT_IS_FIRST)) &&
-                   (((size_t) position) >= EVAS_FONT_WALK_OT_POS))
-               {
-                  found = 1;
-                  items = evas_common_font_ot_cluster_size_get(intl_props,
-                        char_index, EVAS_FONT_WALK_ORIG_LEN);
-                  item_pos = items - (position - EVAS_FONT_WALK_OT_POS);
-               }
-
-             prev_cluster = EVAS_FONT_WALK_OT_POS;
-          }
-        EVAS_FONT_WALK_OT_TEXT_END();
-
-        if (found)
-          {
-             Evas_Coord cluster_adv;
-             cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
-             if (cy) *cy = -asc;
-             if (ch) *ch = asc + desc;
-             if (last_is_visible)
-               {
-                  if (cpen_x) *cpen_x = cluster_start +
-                    (cluster_adv / items) *
-                       (item_pos - 1);
-                  if (cadv) *cadv = (cluster_adv / items);
+                  break;
                }
              else
                {
-                  if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
-                  if (cadv) *cadv = 0;
+                  cluster_start = EVAS_FONT_WALK_PEN_X;
                }
-             ret_val = 1;
-             goto end;
           }
-     }
-   else
-#endif
-     {
-        EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START()
-          {
-             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_TRUE);
+        last_is_visible = visible;
 
-             if ((EVAS_FONT_WALK_DEFAULT_POS == (size_t) position))
+        if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
+              (EVAS_FONT_WALK_POS <= (size_t) position) &&
+              ((((size_t) position) < EVAS_FONT_WALK_POS_NEXT) ||
+               (EVAS_FONT_WALK_IS_LAST)))
+          {
+             found = 1;
+#ifdef OT_SUPPORT
+             if (evas_common_font_ot_is_enabled())
                {
-                  if (cy) *cy = -asc;
-                  if (ch) *ch = asc + desc;
-                  /* FIXME: A hack to make combining chars work nice, should change
-                   * to take the base char's adv. */
-                  if (visible)
-                    {
-                       if (EVAS_FONT_WALK_DEFAULT_X_ADV > 0)
-                         {
-                            if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
-                            if (cadv) *cadv = EVAS_FONT_WALK_DEFAULT_X_ADV;
-                         }
-                       else
-                         {
-                            if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X +
-                              EVAS_FONT_WALK_DEFAULT_X_OFF +
-                              EVAS_FONT_WALK_DEFAULT_X_BEAR;
-                            if (cadv) *cadv = EVAS_FONT_WALK_DEFAULT_WIDTH;
-                         }
-                    }
-                  else
-                    {
-                       if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
-                       if (cadv) *cadv = 0;
-                    }
-                  ret_val = 1;
-                  goto end;
+                  items = evas_common_font_ot_cluster_size_get(text_props,
+                        char_index);
                }
+#endif
+             item_pos = position - EVAS_FONT_WALK_POS + 1;
           }
-        EVAS_FONT_WALK_DEFAULT_TEXT_END();
+        else if ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) &&
+              ((EVAS_FONT_WALK_POS_PREV > (size_t) position) ||
+               (EVAS_FONT_WALK_IS_FIRST)) &&
+              (((size_t) position) >= EVAS_FONT_WALK_POS))
+          {
+             found = 1;
+#ifdef OT_SUPPORT
+             if (evas_common_font_ot_is_enabled())
+               {
+                  items = evas_common_font_ot_cluster_size_get(text_props,
+                        char_index);
+               }
+#endif
+             item_pos = items - (position - EVAS_FONT_WALK_POS);
+          }
+
+        prev_cluster = EVAS_FONT_WALK_POS;
+     }
+   EVAS_FONT_WALK_TEXT_END();
+
+   if (found)
+     {
+        Evas_Coord cluster_adv;
+        cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
+        if (cy) *cy = -asc;
+        if (ch) *ch = asc + desc;
+        if (last_is_visible)
+          {
+             if (cpen_x) *cpen_x = cluster_start +
+               (cluster_adv / items) *
+                  (item_pos - 1);
+             if (cadv) *cadv = (cluster_adv / items);
+          }
+        else
+          {
+             if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
+             if (cadv) *cadv = 0;
+          }
+        ret_val = 1;
+        goto end;
      }
 end:
 
@@ -558,179 +421,117 @@ end:
  */
 
 EAPI int
-evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    int asc, desc;
-   const Eina_Unicode *text = in_text;
    int ret_val = -1;
-   int use_kerning;
-   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
-   _INIT_FI_AND_KERNING();
-#ifndef BIDI_SUPPORT
-   /* Suppress warnings */
-   (void) intl_props;
-#endif
 
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
-#ifdef OT_SUPPORT
-   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
+   Evas_Coord cluster_start;
+   int prev_cluster = -1;
+   int found = 0, items = 1;
+   EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
-        Evas_Coord cluster_start;
-        int prev_cluster = -1;
-        int found = 0, items = 0;
-        EVAS_FONT_WALK_OT_TEXT_VISUAL_START()
+        EVAS_FONT_WALK_TEXT_WORK();
+        if (prev_cluster != (int) EVAS_FONT_WALK_POS)
           {
-             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_TRUE);
-             if (prev_cluster != (int) EVAS_FONT_WALK_OT_POS)
+             if (found)
                {
-                  if (found)
-                    {
-                       break;
-                    }
-                  else
-                    {
-                       cluster_start = EVAS_FONT_WALK_PEN_X;
-                    }
-               }
-
-             if (!visible) continue;
-
-             /* we need to see if the char at the visual position is the char,
-              * we check that by checking if it's before the current pen
-              * position and the next */
-             if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_ADV)) &&
-                   (y >= -asc) && (y <= desc))
-               {
-                  items = evas_common_font_ot_cluster_size_get(intl_props,
-                        char_index, EVAS_FONT_WALK_ORIG_LEN);
-                  found = 1;
-               }
-
-             prev_cluster = EVAS_FONT_WALK_OT_POS;
-          }
-        EVAS_FONT_WALK_OT_TEXT_END();
-        if (found)
-          {
-             int item_pos;
-             Evas_Coord cluster_adv;
-             cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
-
-             if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR)
-               {
-                  double part;
-                  part = cluster_adv / items;
-                  item_pos = (int) ((x - cluster_start) / part);
+                  break;
                }
              else
                {
-                  double part;
-                  part = cluster_adv / items;
-                  item_pos = items - ((int) ((x - cluster_start) / part)) - 1;
+                  cluster_start = EVAS_FONT_WALK_PEN_X;
                }
-             if (cx) *cx = EVAS_FONT_WALK_PEN_X +
-               ((cluster_adv / items) * (item_pos - 1));
-             if (cy) *cy = -asc;
-             if (cw) *cw = (cluster_adv / items);
-             if (ch) *ch = asc + desc;
-             ret_val = prev_cluster + item_pos;
-             goto end;
           }
-     }
-   else
-#endif
-     {
-        EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START()
+
+        if (!visible) continue;
+
+        /* we need to see if the char at the visual position is the char,
+         * we check that by checking if it's before the current pen
+         * position and the next */
+        if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_ADV)) &&
+              (y >= -asc) && (y <= desc))
           {
-             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_TRUE);
-             if (!visible) continue;
-
-             /* we need to see if the char at the visual position is the char,
-              * we check that by checking if it's before the current pen position
-              * and the next */
-             if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_ADV))
-                   && (y >= -asc) && (y <= desc))
+#ifdef OT_SUPPORT
+             if (evas_common_font_ot_is_enabled())
                {
-                  if (cx) *cx = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_OFF +
-                    EVAS_FONT_WALK_DEFAULT_X_BEAR +
-                       EVAS_FONT_WALK_DEFAULT_X_ADV;
-                  if (cy) *cy = -asc;
-                  if (cw) *cw = EVAS_FONT_WALK_DEFAULT_X_ADV;
-                  if (ch) *ch = asc + desc;
-                  ret_val = EVAS_FONT_WALK_DEFAULT_POS;
-                  goto end;
+                  items = evas_common_font_ot_cluster_size_get(text_props,
+                        char_index);
                }
+#endif
+             found = 1;
           }
-        EVAS_FONT_WALK_DEFAULT_TEXT_END();
-     }
 
+        prev_cluster = EVAS_FONT_WALK_POS;
+     }
+   EVAS_FONT_WALK_TEXT_END();
+   if (found)
+     {
+        int item_pos;
+        Evas_Coord cluster_adv;
+        cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
+
+        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR)
+          {
+             double part;
+             part = cluster_adv / items;
+             item_pos = (int) ((x - cluster_start) / part);
+          }
+        else
+          {
+             double part;
+             part = cluster_adv / items;
+             item_pos = items - ((int) ((x - cluster_start) / part)) - 1;
+          }
+        if (cx) *cx = EVAS_FONT_WALK_PEN_X +
+          ((cluster_adv / items) * (item_pos - 1));
+        if (cy) *cy = -asc;
+        if (cw) *cw = (cluster_adv / items);
+        if (ch) *ch = asc + desc;
+        ret_val = prev_cluster + item_pos;
+        goto end;
+     }
 end:
 
-   evas_common_font_int_use_trim();
    return ret_val;
 }
 
 /* position of the char after the last char in the text that will fit in xy.
- * BiDi handling: We receive the shaped string + other props from intl_props,
+ * BiDi handling: We receive the shaped string + other props from text_props,
  * All we care about is char sizes + kerning so we only really need to get the
  * shaped string to utf8, and then just go through it like in english, as it's
  * just the logical string, nothing special about that.
  */
 
 EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *intl_props __UNUSED__, int x, int y)
+evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *text_props __UNUSED__, int x, int y)
 {
    int asc, desc;
    int ret=-1;
-   const Eina_Unicode *text = in_text;
-   int use_kerning;
-   RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
-   _INIT_FI_AND_KERNING();
 
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
 
-#ifdef OT_SUPPORT
-   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
+   EVAS_FONT_WALK_TEXT_LOGICAL_START()
      {
-        EVAS_FONT_WALK_OT_TEXT_LOGICAL_START()
-          {
-             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_FALSE);
-             if (!visible) continue;
+        EVAS_FONT_WALK_TEXT_WORK();
+        if (!visible) continue;
 
-             if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_ADV)) &&
-                   (y >= -asc) && (y <= desc))
-               {
-                  ret = EVAS_FONT_WALK_OT_POS;
-                  goto end;
-               }
-          }
-        EVAS_FONT_WALK_OT_TEXT_END();
-     }
-   else
-#endif
-     {
-        EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START()
+        if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_ADV)) &&
+              (y >= -asc) && (y <= desc))
           {
-             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_FALSE);
-             if (!visible) continue;
-
-             if ((x >= EVAS_FONT_WALK_PEN_X) &&
-                   (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_ADV)) &&
-                   (y >= -asc) && (y <= desc))
-               {
-                  ret = char_index;
-                  goto end;
-               }
+             ret = EVAS_FONT_WALK_POS;
+             goto end;
           }
-        EVAS_FONT_WALK_DEFAULT_TEXT_END();
      }
+   EVAS_FONT_WALK_TEXT_END();
 
 end:
 
-  evas_common_font_int_use_trim();
   return ret;
 }
 
