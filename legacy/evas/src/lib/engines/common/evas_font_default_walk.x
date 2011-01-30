@@ -32,7 +32,7 @@
    do \
      { \
         int visible = 1; \
-        for (char_index = text_props->start ; char_index < text_props->start + text_props->len ; char_index++) \
+        for (char_index = 0 ; char_index < text_props->len ; char_index++) \
           {
 
 /**
@@ -64,9 +64,7 @@
              char_index = 0; \
              _char_index_d = 1; \
           } \
-        char_index += text_props->start; \
-        _i += text_props->start; \
-        for ( ; _i > text_props->start ; char_index += _char_index_d, _i--) \
+        for ( ; _i > 0 ; char_index += _char_index_d, _i--) \
           {
 #else
 #define EVAS_FONT_WALK_TEXT_LOGICAL_START() EVAS_FONT_WALK_TEXT_VISUAL_START()
@@ -133,7 +131,7 @@
 #define EVAS_FONT_WALK_PEN_Y (EVAS_FONT_ROUND_26_6_TO_INT(_pen_y))
 #define EVAS_FONT_WALK_Y_ADV (0)
 #define EVAS_FONT_WALK_IS_LAST \
-             (char_index + 1 == text_props->start + text_props->len)
+             (char_index + 1 == text_props->len)
 #define EVAS_FONT_WALK_IS_FIRST \
              (!char_index)
 #define EVAS_FONT_WALK_LEN (text_props->len)

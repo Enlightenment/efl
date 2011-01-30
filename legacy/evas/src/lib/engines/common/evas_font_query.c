@@ -202,7 +202,6 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         goto end;
      }
 
-   position += text_props->start;
    Evas_Coord cluster_start, last_end;
    int prev_cluster = -1;
    int found = 0, items = 1, item_pos = 1;
@@ -336,7 +335,6 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
    int prev_cluster = -1;
    int found = 0, items = 1, item_pos = 1;
    int last_is_visible = 1;
-   position += text_props->start;
    EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
@@ -498,7 +496,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
      }
 end:
 
-   return ret_val - text_props->start;
+   return ret_val;
 }
 
 /* position of the char after the last char in the text that will fit in xy.
@@ -509,7 +507,7 @@ end:
  */
 
 EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int x, int y)
+evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_Text_Props *text_props __UNUSED__, int x, int y)
 {
    int asc, desc;
    int ret=-1;
@@ -534,6 +532,6 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
 
 end:
 
-  return ret - text_props->start;
+  return ret;
 }
 
