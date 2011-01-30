@@ -2470,7 +2470,6 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 {
    int tw, th, adv, inset;
 
-#ifdef BIDI_SUPPORT
    int cutoff, len;
 
 
@@ -2492,7 +2491,6 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                   _layout_item_text_cutoff(c, ti, cutoff);
                }
           }
-#endif
 
         tw = th = 0;
         if (fmt->font.font)
@@ -2516,21 +2514,23 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            eina_inlist_append(EINA_INLIST_GET(c->ln->items),
                  EINA_INLIST_GET(_ITEM(ti)));
 
-#ifdef BIDI_SUPPORT
         if (cutoff > 0)
           {
              new_ti->parent.text_node = ti->parent.text_node;
              new_ti->parent.text_pos = ti->parent.text_pos + cutoff;
+#ifdef BIDI_SUPPORT
              new_ti->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
                    new_ti->parent.text_node->bidi_props,
                    new_ti->parent.text_pos,
                    0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
+#else
+             new_ti->parent.bidi_props.dir = EVAS_BIDI_DIRECTION_LTR;
+#endif
              ti = new_ti;
              len -= cutoff;
           }
      }
    while (cutoff > 0);
-#endif
 }
 
 /**
