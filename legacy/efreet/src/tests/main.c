@@ -1,5 +1,6 @@
 #include "Efreet.h"
 #include "Efreet_Mime.h"
+#include "config.h"
 #include <Ecore.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,12 +84,12 @@ environment_store(void)
 {
     char *env;
     char **e;
-
+#ifdef HAVE_CLEARENV
     EINA_LIST_FREE(environment, env)
         free(env);
-
     for (e = environ; *e; e++)
         environment = eina_list_append(environment, strdup(*e));
+#endif   
 }
 
 void
@@ -97,10 +98,11 @@ environment_restore(void)
     Eina_List *l;
     char *e;
     if (!environment) return;
-
+#ifdef HAVE_CLEARENV
     clearenv();
     EINA_LIST_FOREACH(environment, l, e)
         putenv(e);
+#endif
 }
 
 int

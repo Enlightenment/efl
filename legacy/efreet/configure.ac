@@ -217,7 +217,7 @@ AC_SUBST(lt_enable_auto_import)
 ### Checks for library functions
 AC_ISC_POSIX
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS(strlcpy)
+AC_CHECK_FUNCS(strlcpy clearenv)
 
 ### Unit tests, coverage
 

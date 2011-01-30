@@ -5,3 +5,7 @@
 2011-01-29  Brian Mattern
 
         Fix bug when you have an empty <Name></Name> in a menu
+
+2011-01-30  Carsten Haitzler (The Rasterman)
+
+        Fix tests to not build clearenv related code if not available
