@@ -11,7 +11,7 @@
 # endif
 
 # ifdef OT_SUPPORT
-#include <stdlib.h>
+#  include <stdlib.h>
 typedef struct _Evas_Font_OT_Data Evas_Font_OT_Data;
 typedef struct _Evas_Font_OT_Data_Item Evas_Font_OT_Data_Item;
 struct _Evas_Font_OT_Data
@@ -24,11 +24,11 @@ struct _Evas_Font_OT_Data
 };
 # else
 typedef void *Evas_Font_OT_Data;
-#endif
+# endif
 
-#include "Evas.h"
+# include "Evas.h"
 
-#ifdef OT_SUPPORT
+# ifdef OT_SUPPORT
 struct _Evas_Font_OT_Data_Item
 {
    unsigned int index; /* Should conform to FT */
@@ -46,7 +46,7 @@ struct _Evas_Font_OT_Data_Item
 //#  define EVAS_FONT_OT_Y_ADV_GET(a) ((a).y_advance)
 #  define EVAS_FONT_OT_INDEX_GET(a) ((a).index)
 #  define EVAS_FONT_OT_POS_GET(a)   ((a).source_cluster)
-#else
+# else
 #  define EVAS_FONT_OT_X_OFF_GET(a) (0)
 #  define EVAS_FONT_OT_Y_OFF_GET(a) (0)
 #  define EVAS_FONT_OT_X_ADV_GET(a) (0)
@@ -70,7 +70,7 @@ evas_common_font_ot_load_face(void *_font);
 EAPI void
 evas_common_font_ot_unload_face(void *_font);
 
-#include "evas_text_utils.h"
+# include "evas_text_utils.h"
 EAPI int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index, int orig_len);
 
