@@ -20,6 +20,8 @@ struct _Evas_Font_OT_Data
    size_t len;
    Evas_Font_OT_Data_Item *items;
 };
+# else
+typedef void *Evas_Font_OT_Data;
 #endif
 
 #include "Evas.h"
@@ -33,8 +35,6 @@ struct _Evas_Font_OT_Data_Item
    Evas_Coord y_offset;
    Evas_Coord x_advance;
 };
-# else
-typedef void *Evas_Font_OT_Data;
 # endif
 
 # ifdef OT_SUPPORT
