@@ -2684,9 +2684,8 @@ skip:
    empty_item = 0;
 
 
-   while (str && *str)
+   while (str)
      {
-        /* if this is the first line item and it starts with spaces - remove them */
         int tmp_len;
 
         ti = _layout_text_item_new(c, fmt, str);
@@ -2717,6 +2716,10 @@ skip:
         str += tmp_len;
 
         _layout_text_add_logical_item(c, fmt, ti, NULL);
+
+        /* Break if we reached the end. */
+        if (!*str)
+          break;
      }
 
    if (alloc_str) free(alloc_str);
@@ -3332,13 +3335,17 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
           }
      }
 
-   /* If there are no paragraphs, create the minimum needed */
+   /* If there are no paragraphs, create the minimum needed,
+    * if the last paragraph has no lines/text, create that as well */
    if (!c->paragraphs)
      {
         _layout_paragraph_new(c, NULL);
-        _layout_line_new(c, fmt);
+     }
+   c->par = (Evas_Object_Textblock_Paragraph *)
+      EINA_INLIST_GET(c->paragraphs)->last;
+   if (!c->par->logical_items)
+     {
         _layout_text_append(c, fmt, NULL, 0, 0, NULL);
-        _layout_line_finalize(c, fmt);
      }
 
 
