@@ -275,7 +275,7 @@ _evas_object_text_string_size_get(const Evas_Object *obj,
       const Evas_Object_Text *o,
       Evas_Coord *cw, Evas_Coord *ch)
 {
-   Evas_Object_Text_Item *it;
+   Evas_Object_Text_Item *it, *last_it = NULL;
    Evas_Coord w, h;
    (void) obj;
 
@@ -287,7 +287,14 @@ _evas_object_text_string_size_get(const Evas_Object *obj,
           {
              h = it->h;
           }
+        last_it = it;
      }
+   /* Take the width, not the advance of the last item */
+   if (last_it)
+     {
+        w += last_it->w - last_it->adv;
+     }
+
    if (cw) *cw = w;
    if (ch) *ch = h;
 }
