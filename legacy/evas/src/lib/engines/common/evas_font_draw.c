@@ -5,7 +5,13 @@
 #include "evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
 
-#define WORD_CACHE_MAXLEN 50
+#define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
+      ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
+      ((0x200E <= (x)) && ((x) <= 0x200F)) || /* BIDI stuff */ \
+      ((0x202A <= (x)) && ((x) <= 0x202E)) /* BIDI stuff */ \
+      )
+
+#define WORD_CACHE_MAXLEN	50
 /* How many to cache */
 #define WORD_CACHE_NWORDS 40
 static int max_cached_words = WORD_CACHE_NWORDS;
@@ -530,6 +536,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 	int gl, kern;
 
 	gl = *text;
+        if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl))
+             continue;
 
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
