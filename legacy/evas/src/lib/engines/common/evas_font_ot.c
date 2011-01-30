@@ -131,6 +131,7 @@ evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff)
          cutoff * sizeof(Evas_Font_OT_Data_Item));
    props->ot_data->items = tmp;
    props->ot_data->len = cutoff;
+
 }
 
 EAPI Eina_Bool
