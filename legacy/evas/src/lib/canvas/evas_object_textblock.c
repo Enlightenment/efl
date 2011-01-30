@@ -6964,6 +6964,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
 {
    int ret = -1;
    const Evas_Textblock_Cursor *dir_cur;
+   Evas_Textblock_Cursor cur2;
 
    dir_cur = cur;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
@@ -6976,19 +6977,19 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
          * of just after the previous char (which in bidi text may not be
          * just before the current char). */
         Evas_Coord x, y, h, w;
-        Evas_Textblock_Cursor cur2;
         Evas_Object_Textblock_Node_Format *fmt;
-
-        cur2.obj = cur->obj;
-        evas_textblock_cursor_copy(cur, &cur2);
-        cur2.pos--;
-        fmt = _evas_textblock_cursor_node_format_at_pos_get(&cur2);
 
         /* If it's at the end of the line, we want to get the position, not
          * the position of the previous */
         if ((cur->pos > 0) && !_evas_textblock_cursor_is_at_the_end(cur))
           {
              Eina_Bool before_char = EINA_FALSE;
+             cur2.obj = cur->obj;
+             evas_textblock_cursor_copy(cur, &cur2);
+             evas_textblock_cursor_char_prev(&cur2);
+
+             fmt = _evas_textblock_cursor_node_format_at_pos_get(&cur2);
+
              if (!fmt ||
                    !_IS_LINE_SEPARATOR(eina_strbuf_string_get(fmt->format)))
                {
@@ -7016,6 +7017,20 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
                        /* Just don't advance the width */
                        w = 0;
                     }
+               }
+#endif
+          }
+        else if (cur->pos == 0)
+          {
+             ret = evas_textblock_cursor_pen_geometry_get(
+                   dir_cur, &x, &y, &w, &h);
+#ifdef BIDI_SUPPORT
+             /* Adjust if the char is an rtl char */
+             if ((ret >= 0) && (!evas_bidi_is_rtl_char(
+                         dir_cur->node->bidi_props, 0, dir_cur->pos)))
+               {
+                  /* Just don't advance the width */
+                  w = 0;
                }
 #endif
           }
