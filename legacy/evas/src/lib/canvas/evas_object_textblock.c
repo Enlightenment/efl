@@ -2344,8 +2344,8 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           c->wmax = c->par->x + c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
    c->par->h = c->ln->y + c->ln->h;
-   if (c->ln->w > c->par->w)
-     c->par->w = c->ln->w;
+   if (c->ln->w + c->ln->x > c->par->w)
+     c->par->w = c->ln->x + c->ln->w;
 }
 
 /**
