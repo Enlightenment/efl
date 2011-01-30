@@ -2477,7 +2477,8 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    do
      {
         Evas_Object_Textblock_Text_Item *new_ti;
-        cutoff = evas_bidi_end_of_run_get(&ti->parent.bidi_props, len);
+        cutoff = evas_bidi_end_of_run_get(ti->parent.text_node->bidi_props,
+              ti->parent.text_pos, len);
         if (cutoff > 0)
           {
              new_ti = _layout_text_item_new(c, fmt, ti->text + cutoff);
@@ -2592,7 +2593,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
         /* Use the string, just cut the relevant parts */
         else
           {
-             Evas_BiDi_Props props;
              str = eina_ustrbuf_string_get(n->unicode);
              alloc_str = eina_unicode_strdup(str + start);
 
@@ -2603,10 +2603,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              str = alloc_str;
 
              /* Shape the string */
-             props.start = start;
-             props.props = n->bidi_props;
 # ifdef BIDI_SUPPORT
-             evas_bidi_shape_string(alloc_str, &props, off);
+             evas_bidi_shape_string(alloc_str, n->bidi_props, start, off);
 # endif
           }
      }
@@ -6735,14 +6733,12 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              /* Adjust if the char is an rtl char */
              if (ret >= 0)
                {
-                  Evas_BiDi_Props props;
-                  props.props = dir_cur->node->bidi_props;
-                  props.start = 0;
-
                   if ((!before_char &&
-                           evas_bidi_is_rtl_char(&props, dir_cur->pos)) ||
+                           evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                              dir_cur->pos)) ||
                         (before_char &&
-                         !evas_bidi_is_rtl_char(&props, dir_cur->pos)))
+                         !evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                            dir_cur->pos)))
 
                     {
                        /* Just don't advance the width */
@@ -6768,11 +6764,8 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    if (dir && dir_cur && dir_cur->node)
      {
 #ifdef BIDI_SUPPORT
-        Evas_BiDi_Props props;
-        props.props = dir_cur->node->bidi_props;
-        props.start = 0;
-
-        *dir = (evas_bidi_is_rtl_char(&props, dir_cur->pos)) ?
+        *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, dir_cur->pos,
+                 0)) ?
            EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
 #else
         *dir = EVAS_BIDI_DIRECTION_LTR;
@@ -7119,7 +7112,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
    if ((start && !switch_items) || (!start && switch_items))
      {
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(&it->bidi_props, 0))
+        if (evas_bidi_is_rtl_char(it->text_node->bidi_props, 0, 0))
           {
              *w = *x + *w;
              *x = 0;
@@ -7133,7 +7126,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
    else
      {
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(&it->bidi_props, 0))
+        if (evas_bidi_is_rtl_char(it->text_node->bidi_props, 0, 0))
           {
              *x = *x + *w;
              *w = it->adv - *x;
@@ -7259,7 +7252,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
 
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(&ti->parent.bidi_props, 0))
+        if (evas_bidi_is_rtl_char(ti->parent.text_node->bidi_props, 0, 0))
           {
              x = x1 + w1;
              w = x2 + w2 - x;

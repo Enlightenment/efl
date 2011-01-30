@@ -92,15 +92,16 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str)
  *
  * @param str The string to shape
  * @param bidi_props the bidi props to shaped according.
+ * @param start the start of the string to shape (offset in bidi_props)
  * @param len the length of th string.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  */
 Eina_Bool
-evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *bidi_props, size_t len)
+evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, size_t len)
 {
    FriBidiChar *ustr, *base_ustr = NULL;
 
-   if (!bidi_props->props)
+   if (!bidi_props)
      return EINA_FALSE;
 
    /* The size of fribidichar is different than eina_unicode, convert */
@@ -126,12 +127,13 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *bidi_prop
      }
    fribidi_get_joining_types(ustr, len, join_types);
 
-   fribidi_join_arabic(bidi_props->props->char_types + bidi_props->start, len, bidi_props->props->embedding_levels + bidi_props->start, join_types);
+   fribidi_join_arabic(bidi_props->char_types + start, len,
+         bidi_props->embedding_levels + start, join_types);
 
 
    /* Actually modify the string */
    fribidi_shape(FRIBIDI_FLAGS_DEFAULT | FRIBIDI_FLAGS_ARABIC,
-               bidi_props->props->embedding_levels + bidi_props->start, len, join_types, ustr);
+               bidi_props->embedding_levels + start, len, join_types, ustr);
 
    if (join_types) free(join_types);
 
@@ -333,21 +335,23 @@ error:
  * @internal
  * Returns the end of the current run of text
  *
- * @param bidi_props the properties
+ * @param bidi_props the paragraph properties
+ * @param start where to start looking from
  * @param len the length of the string
  * @return the position of the end of the run (offset from
  * bidi_props->props->start), 0 when there is no end (i.e all the text)
  */
 int
-evas_bidi_end_of_run_get(const Evas_BiDi_Props *bidi_props, int len)
+evas_bidi_end_of_run_get(const Evas_BiDi_Paragraph_Props *bidi_props,
+      size_t start, int len)
 {
    EvasBiDiLevel *i;
    EvasBiDiLevel base;
 
-   if (!bidi_props || !bidi_props->props || (len <= 0))
+   if (!bidi_props || (len <= 0))
      return 0;
 
-   i = bidi_props->props->embedding_levels + bidi_props->start;
+   i = bidi_props->embedding_levels + start;
    base = *i;
    for ( ; (len > 0) && (base == *i) ; len--, i++)
      ;
@@ -356,7 +360,7 @@ evas_bidi_end_of_run_get(const Evas_BiDi_Props *bidi_props, int len)
      {
         return 0;
      }
-   return i - (bidi_props->props->embedding_levels + bidi_props->start);
+   return i - (bidi_props->embedding_levels + start);
 }
 
 /**
@@ -391,17 +395,18 @@ evas_bidi_position_logical_to_visual(EvasBiDiStrIndex *v_to_l, int len, EvasBiDi
  * Checks if the char is rtl oriented. I.e even a neutral char can become rtl
  * if surrounded by rtl chars.
  *
- * @param bidi_props The bidi properties
- * @param index the index of the string.
+ * @param bidi_props The bidi paragraph properties
+ * @param start the base position
+ * @param index the offset from the base position.
  * @return #EINA_TRUE if true, #EINA_FALSE otherwise.
  */
 Eina_Bool
-evas_bidi_is_rtl_char(const Evas_BiDi_Props *bidi_props, EvasBiDiStrIndex index)
+evas_bidi_is_rtl_char(const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, EvasBiDiStrIndex index)
 {
-   if(!bidi_props || !bidi_props->props || index < 0)
+   if(!bidi_props || index < 0)
       return EINA_FALSE;
    return (FRIBIDI_IS_RTL(
-            bidi_props->props->embedding_levels[index + bidi_props->start]))
+            bidi_props->embedding_levels[index + start]))
       ? EINA_TRUE : EINA_FALSE;
 }
 

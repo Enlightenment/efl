@@ -52,7 +52,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
          /* around. There is a slight exception when there are */ \
          /* compositing chars involved.*/ \
          if (intl_props && \
-               evas_bidi_is_rtl_char(intl_props, char_index) && \
+               evas_bidi_is_rtl_char(intl_props->props, intl_props->start, char_index) && \
                adv > 0) \
            { \
               if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \

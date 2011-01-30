@@ -108,10 +108,10 @@ Eina_Bool
 evas_bidi_is_rtl_str(const Eina_Unicode *str);
 
 Eina_Bool
-evas_bidi_is_rtl_char(const Evas_BiDi_Props *bidi_props, EvasBiDiStrIndex index);
+evas_bidi_is_rtl_char(const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, EvasBiDiStrIndex index);
 
 int
-evas_bidi_end_of_run_get(const Evas_BiDi_Props *bidi_props, int len);
+evas_bidi_end_of_run_get(const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, int len);
 
 Eina_Bool
 evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l);
@@ -123,7 +123,7 @@ void
 evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst);
 
 Eina_Bool
-evas_bidi_shape_string(Eina_Unicode *ustr, const Evas_BiDi_Props *intl_props, size_t len);
+evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, size_t len);
 
 void
 evas_bidi_props_clean(Evas_BiDi_Props *intl_props) EINA_ARG_NONNULL(1);

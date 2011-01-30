@@ -243,7 +243,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(intl_props, 0))
+        if (evas_bidi_is_rtl_char(intl_props->props, intl_props->start, 0))
           {
              if (cx) *cx = 0;
              if (ch) *ch = asc + desc;
@@ -349,7 +349,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(intl_props, 0))
+        if (evas_bidi_is_rtl_char(intl_props->props, 0, 0))
           {
              if (cpen_x) *cpen_x = 0;
              if (ch) *ch = asc + desc;

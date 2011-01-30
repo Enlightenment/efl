@@ -355,7 +355,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->cur.intl_props.props);
    o->cur.intl_props.props = evas_bidi_paragraph_props_get(text);
-   evas_bidi_shape_string(text, &o->cur.intl_props, len);
+   evas_bidi_shape_string(text, o->cur.intl_props.props, 0, len);
 #endif
    if (o->cur.text) eina_ustringshare_del(o->cur.text);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
