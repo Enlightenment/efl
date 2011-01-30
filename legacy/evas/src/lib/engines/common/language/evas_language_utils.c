@@ -59,7 +59,7 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str,
      {
         Evas_Script_Type first = EVAS_SCRIPT_UNKNOWN;
         int i;
-        for (i = 0 ; (i < len) ; i++, str++)
+        for (i = start, str += start ; (i < len) ; i++, str++)
           {
             Evas_Script_Type tmp;
             tmp = _get_script(*str);
@@ -75,6 +75,7 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str,
                  break;
               }
           }
+        i = i - start;
 #ifdef BIDI_SUPPORT
           {
              int bidi_end;
