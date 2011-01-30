@@ -29,4 +29,7 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
 void
 evas_common_text_props_content_unref(Evas_Text_Props *props);
 
+EAPI void
+evas_common_text_props_cutoff(Evas_Text_Props *props, int cutoff);
+
 #endif

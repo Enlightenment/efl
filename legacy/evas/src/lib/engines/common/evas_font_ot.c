@@ -112,6 +112,28 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Source *src)
    hb_font_destroy(hb_font);
 }
 
+/* Won't work in the middle of ligatures */
+EAPI void
+evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff)
+{
+   Evas_Font_OT_Data_Item *tmp;
+   if ((cutoff <= 0) || (!props->ot_data) ||
+         (((size_t) cutoff) >= props->ot_data->len))
+     return;
+
+   if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        memmove(props->ot_data->items,
+              props->ot_data->items + (props->ot_data->len - cutoff),
+              cutoff * sizeof(Evas_Font_OT_Data_Item));
+     }
+   tmp = realloc(props->ot_data->items,
+         cutoff * sizeof(Evas_Font_OT_Data_Item));
+   props->ot_data->items = tmp;
+   props->ot_data->len = cutoff;
+
+}
+
 EAPI Eina_Bool
 evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
       Evas_Text_Props *props, int len)

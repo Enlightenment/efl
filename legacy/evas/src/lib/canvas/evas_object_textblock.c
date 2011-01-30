@@ -2296,9 +2296,7 @@ _layout_item_text_cutoff(Ctxt *c __UNUSED__, Evas_Object_Textblock_Text_Item *ti
    ts[cut] = 0;
    ti->text = eina_unicode_strdup(ts);
    free(ts);
-   c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
-         &ti->parent.text_props, ti->parent.text_node->bidi_props,
-         ti->parent.text_pos, cut);
+   evas_common_text_props_cutoff(&ti->parent.text_props, cut);
 }
 
 /**

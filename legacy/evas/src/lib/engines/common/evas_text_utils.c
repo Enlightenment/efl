@@ -57,3 +57,13 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
 #endif
 }
 
+/* Won't work in the middle of ligatures */
+EAPI void
+evas_common_text_props_cutoff(Evas_Text_Props *props, int cutoff)
+{
+#ifdef OT_SUPPORT
+   evas_common_font_ot_cutoff_text_props(props, cutoff);
+#endif
+}
+
+

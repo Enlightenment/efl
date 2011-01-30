@@ -75,5 +75,8 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
 EAPI Eina_Bool
 evas_common_font_ot_populate_text_props(void *fn, const Eina_Unicode *text,
       Evas_Text_Props *props, int len);
+
+EAPI void
+evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff);
 #endif
 
