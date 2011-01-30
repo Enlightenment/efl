@@ -2606,6 +2606,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
         /* Use the string, just cut the relevant parts */
         else
           {
+             Evas_BiDi_Props props;
              str = eina_ustrbuf_string_get(n->unicode);
              alloc_str = eina_unicode_strdup(str + start);
 
@@ -2614,6 +2615,13 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
                   alloc_str[off] = 0;
                }
              str = alloc_str;
+
+             /* Shape the string */
+             props.start = start;
+             props.props = n->bidi_props;
+# ifdef BIDI_SUPPORT
+             evas_bidi_shape_string(alloc_str, &props, off);
+# endif
           }
      }
 
@@ -2621,6 +2629,7 @@ skip:
    tbase = str;
    new_line = 0;
    empty_item = 0;
+
 
    while (str)
      {
@@ -2635,10 +2644,6 @@ skip:
           {
              ti->bidi_props.start = ti->parent.text_pos;
              ti->bidi_props.props = ti->parent.text_node->bidi_props;
-# ifdef BIDI_SUPPORT
-             evas_bidi_shape_string(ti->text, &ti->bidi_props,
-                   eina_unicode_strlen(ti->text));
-# endif
           }
         tw = th = 0;
         if (fmt->font.font)
