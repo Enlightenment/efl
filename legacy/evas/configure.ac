@@ -89,6 +89,7 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 want_fontconfig="auto"
 want_fribidi="auto"
+want_harfbuzz="auto"
 want_evas_cserve="yes"
 
 want_evas_engine_buffer="yes"
@@ -300,6 +301,38 @@ fi
 
 if test "x${have_fribidi}" = "xno"; then
   HAS_BIDI=0
+fi
+
+# harfbuzz support
+have_harfbuzz="no"
+AC_ARG_ENABLE([harfbuzz],
+   AC_HELP_STRING([--disable-harfbuzz],
+      [disable complex text shaping and layouting support. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_harfbuzz="yes"
+    else
+       want_harfbuzz="no"
+    fi
+   ])
+
+if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
+   PKG_CHECK_MODULES([HARFBUZZ],
+      [harfbuzz >= 0.2],
+      [
+       have_harfbuzz="yes"
+       AC_DEFINE(HAVE_HARFBUZZ, 1, [have harfbuzz support])
+       requirement_evas="harfbuzz ${requirement_evas}"
+      ],
+      [
+       if test "x$want_harfbuzz" = "xyes" -a "x$use_strict" = "xyes" ; then
+          AC_MSG_ERROR([Harfbuzz not found (strict dependencies checking)])
+       fi
+      ])
+fi
+
+if test "x${have_harfbuzz}" = "xno"; then
+  HAS_HARFBUZZ=0
 fi
 
 ### Checks for header files
@@ -1639,7 +1672,10 @@ echo "  EET.....................: $have_evas_font_loader_eet"
 echo
 echo "Font Searching Systems:"
 echo "  Fontconfig..............: $have_fontconfig"
+echo
+echo "Font Rendering Helpers:"
 echo "  Fribidi.................: $have_fribidi"
+echo "  Harfbuzz................: $have_harfbuzz"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo

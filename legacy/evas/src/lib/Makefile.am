@@ -185,6 +185,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
+@HARFBUZZ_CFLAGS@ \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
 @pthread_cflags@
@@ -212,6 +213,7 @@ $(libevas_cserve_la) \
 engines/common/libevas_engine_common.la \
 @FREETYPE_LIBS@ \
 @FRIBIDI_LIBS@ \
+@HARFBUZZ_LIBS@ \
 @EET_LIBS@ \
 @FONTCONFIG_LIBS@ \
 @pthread_libs@ \
