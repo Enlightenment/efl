@@ -8176,6 +8176,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	o->changed = 0;
+	o->content_changed = 0;
 	is_v = evas_object_is_visible(obj);
 	was_v = evas_object_was_visible(obj);
 	goto done;
