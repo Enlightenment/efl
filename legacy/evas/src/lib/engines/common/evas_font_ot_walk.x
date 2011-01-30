@@ -90,16 +90,19 @@
 
 /*FIXME: doc */
 #define EVAS_FONT_WALK_OT_X_OFF \
-             (EVAS_FONT_OT_X_OFF_GET( \
-                      intl_props->ot_data->items[char_index]) >> 6)
+             (EVAS_FONT_ROUND_26_6_TO_INT( \
+                EVAS_FONT_OT_X_OFF_GET( \
+                   intl_props->ot_data->items[char_index])))
 #define EVAS_FONT_WALK_OT_Y_OFF \
-             (EVAS_FONT_OT_Y_OFF_GET( \
-                      intl_props->ot_data->items[char_index]) >> 6)
+             (EVAS_FONT_ROUND_26_6_TO_INT( \
+                EVAS_FONT_OT_Y_OFF_GET( \
+                   intl_props->ot_data->items[char_index])))
 #define EVAS_FONT_WALK_OT_X_BEAR (fg->glyph_out->left)
 #define EVAS_FONT_WALK_OT_Y_BEAR (fg->glyph_out->top)
 #define EVAS_FONT_WALK_OT_X_ADV \
-             (EVAS_FONT_OT_X_ADV_GET( \
-                      intl_props->ot_data->items[char_index]) >> 6)
+             (EVAS_FONT_ROUND_26_6_TO_INT( \
+                EVAS_FONT_OT_X_ADV_GET( \
+                   intl_props->ot_data->items[char_index])))
 #define EVAS_FONT_WALK_OT_WIDTH (fg->glyph_out->bitmap.width)
 #define EVAS_FONT_WALK_OT_POS \
              (EVAS_FONT_OT_POS_GET( \

@@ -37,6 +37,9 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
 #  define OTUNLOCK()
 # endif
 
+# define EVAS_FONT_ROUND_26_6_TO_INT(x) \
+   (((0x3F & x) > 31) ? ((x >> 6) + 1) : (x >> 6))
+
 # define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
       ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
       ((0x200E <= (x)) && ((x) <= 0x200F)) || /* BIDI stuff */ \
