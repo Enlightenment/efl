@@ -139,7 +139,7 @@ evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
 EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props __UNUSED__, int *w, int *h)
 {
-   int keep_width;
+   int keep_width = 0;
    int use_kerning;
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
@@ -149,7 +149,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
      {
         EVAS_FONT_WALK_TEXT_WORK();
         /* Keep the width because we'll need it for the last char */
-        keep_width = width;
+        keep_width = width + bear_x;
      }
    EVAS_FONT_WALK_TEXT_END();
    if (w) *w = pen_x + keep_width;
@@ -167,7 +167,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 EAPI void
 evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *h_adv, int *v_adv)
 {
-   int keep_adv;
+   int keep_adv = 0;
    int use_kerning;
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
