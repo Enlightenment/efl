@@ -2589,14 +2589,14 @@ skip:
    while (str && *str)
      {
         /* if this is the first line item and it starts with spaces - remove them */
-        int tmp_len = 0;
+        int tmp_len;
         wrap = 0;
         white_stripped = 0;
 
         ti = _layout_text_item_new(c, fmt, str);
         ti->parent.text_node = n;
         ti->parent.text_pos = start + str - tbase;
-        tmp_len = eina_unicode_strlen(ti->text);
+        tmp_len = off - (str - tbase);
         if (ti->parent.text_node)
           {
              int tmp_cut;
