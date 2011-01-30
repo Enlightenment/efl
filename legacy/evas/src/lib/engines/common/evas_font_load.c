@@ -45,6 +45,12 @@ _evas_common_font_source_free(RGBA_Font_Source *fs)
    FTLOCK();
    FT_Done_Face(fs->ft.face);
    FTUNLOCK();
+#ifdef OT_SUPPORT
+   if (evas_common_font_ot_is_enabled())
+     {
+        evas_common_font_ot_unload_face(fs);
+     }
+#endif
    if (fs->name) eina_stringshare_del(fs->name);
    free(fs);
 }
