@@ -125,7 +125,7 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr) EINA_ARG_NONNULL(1)
 void
 evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst);
 
-Eina_Bool
+EAPI Eina_Bool
 evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, size_t len);
 
 void
