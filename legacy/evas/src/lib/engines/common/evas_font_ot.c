@@ -73,12 +73,13 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
      {
         if (right_bound == (int) props->ot_data->len)
           {
-             items = orig_len - props->ot_data->items[left_bound].source_cluster;
+             items = orig_len -
+                props->ot_data->items[right_bound - 1].source_cluster;
           }
         else
           {
-             items = props->ot_data->items[right_bound - 1].source_cluster -
-                props->ot_data->items[right_bound].source_cluster;
+             items = props->ot_data->items[right_bound].source_cluster -
+                props->ot_data->items[right_bound - 1].source_cluster;
           }
      }
    return (items > 0) ? items : 1;
