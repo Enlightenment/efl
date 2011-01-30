@@ -1,3 +1,10 @@
+2011-01-30  Tom Hacohen (TAsn)
+
+        * Added "UNDER" cursor mode.
+        * Added auto-alignment to text parts, just set text.alignment to -1 to
+          activate it. It's only relevant to TEXT parts, textblock objects
+          already have that by default.
+
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
