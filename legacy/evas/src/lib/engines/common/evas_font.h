@@ -60,6 +60,7 @@ EAPI void              evas_common_font_query_size           (RGBA_Font *fn, con
 EAPI int               evas_common_font_query_inset          (RGBA_Font *fn, const Eina_Unicode *text);
 EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *h_adv, int *v_adv);
 EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_query_pen_coords     (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
 EAPI int               evas_common_font_query_char_at_coords (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
 EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int x, int y);
 

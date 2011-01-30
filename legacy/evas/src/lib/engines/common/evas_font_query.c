@@ -292,6 +292,105 @@ end:
    return ret_val;
 }
 
+/* x y w h for pen at char pos for null it returns the position right after
+ * the last char with 0 as width and height. This is the same as char_coords
+ * but it returns the pen_x and adv instead of x and w.
+ * BiDi handling: We receive the shaped string + other props from intl_props,
+ * We care about the actual drawing location of the string, this is why we need
+ * the visual string. We need to know how it's printed. After that we need to calculate
+ * the reverse kerning in case of rtl parts. "pos" passed to this function is an
+ * index in bytes, that is the actual byte location of the string, we need to find
+ * the index in order to find it in the visual string.
+ */
+
+EAPI int
+evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+{
+   int asc, desc;
+   int position = 0;
+   const Eina_Unicode *text = in_text;
+   int ret_val = 0;
+   int use_kerning;
+   RGBA_Font_Int *fi;
+   EVAS_FONT_WALK_TEXT_INIT();
+   _INIT_FI_AND_KERNING();
+
+#ifdef BIDI_SUPPORT
+   int len = 0;
+   EvasBiDiStrIndex *visual_to_logical = NULL;
+   Eina_Unicode *visual_text;
+
+   visual_text = eina_unicode_strdup(in_text);
+   if (visual_text)
+     {
+        evas_bidi_props_reorder_line(visual_text, intl_props->start,
+              eina_unicode_strlen(visual_text), intl_props->props,
+              &visual_to_logical);
+        text = visual_text;
+     }
+   else
+     {
+        text = in_text;
+     }
+   len = eina_unicode_strlen(text);
+#endif
+
+   asc = evas_common_font_max_ascent_get(fn);
+   desc = evas_common_font_max_descent_get(fn);
+
+#ifdef BIDI_SUPPORT
+   /* Get the position in the visual string because those are the coords we care about */
+   position = evas_bidi_position_logical_to_visual(visual_to_logical, len, pos);
+#else
+   position = pos;
+#endif
+   /* If it's the null, choose location according to the direction. */
+   if (!text[position])
+     {
+        /* if it's rtl then the location is the left of the string,
+         * otherwise, the right. */
+#ifdef BIDI_SUPPORT
+        if (evas_bidi_is_rtl_char(intl_props, 0))
+          {
+             if (cpen_x) *cpen_x = 0;
+             if (ch) *ch = asc + desc;
+          }
+        else
+#endif
+          {
+             evas_common_font_query_advance(fn, text, intl_props, cpen_x, ch);
+          }
+        if (cy) *cy = 0;
+        if (cadv) *cadv = 0;
+        ret_val = 1;
+        goto end;
+     }
+
+   EVAS_FONT_WALK_TEXT_START()
+     {
+        EVAS_FONT_WALK_TEXT_WORK();
+	/* we need to see if the char at the visual position is the char wanted */
+	if (char_index == position)
+	  {
+	     if (cpen_x) *cpen_x = pen_x;
+	     if (cy) *cy = -asc;
+	     if (cadv) *cadv = adv;
+	     if (ch) *ch = asc + desc;
+	     ret_val = 1;
+	     goto end;
+	  }
+     }
+   EVAS_FONT_WALK_TEXT_END();
+end:
+
+#ifdef BIDI_SUPPORT
+   if (visual_to_logical) free(visual_to_logical);
+   if (visual_text) free(visual_text);
+#endif
+
+   return ret_val;
+}
+
 /* char pos of text at xy pos
  * BiDi handling: Since we are looking for the char at the specific coords,
  * we have to get the visual string (to which the coords relate to), do

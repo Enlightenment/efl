@@ -93,6 +93,7 @@ static int eng_font_inset_get(void *data, void *font, char *text);
 static int eng_font_h_advance_get(void *data, void *font, char *text);
 static int eng_font_v_advance_get(void *data, void *font, char *text);
 static int eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
+static int eng_font_pen_coords_get(void *data, void *font, char *text, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
 static int eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
 static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
 static void eng_font_cache_flush(void *data);
@@ -211,9 +212,13 @@ static Evas_Func eng_func =
      eng_image_scale_hint_get,
      /* more font draw functions */
      eng_font_last_up_to_pos,
-     NULL, // image_map4_draw
-     NULL, // image_map_surface_new
-     NULL // image_map_surface_free
+     NULL, //   ORD(image_map4_draw);
+     NULL, //   ORD(image_map_surface_new);
+     NULL, //   ORD(image_map_surface_free);
+     NULL, // eng_image_content_hint_set - software doesn't use it
+     NULL, // eng_image_content_hint_get - software doesn't use it
+     eng_font_pen_coords_get
+     /* FUTURE software generic calls go here */
 };
 
 static void *
@@ -1264,6 +1269,16 @@ eng_font_v_advance_get(void *data, void *font, char *text)
 
 static int
 eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch)
+{
+   Render_Engine *re;
+
+   /* FIXME, use cairo font subsystem */
+   re = (Render_Engine *)data;
+   return 0;
+}
+
+static int
+eng_font_pen_coords_get(void *data, void *font, char *text, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    Render_Engine *re;
 

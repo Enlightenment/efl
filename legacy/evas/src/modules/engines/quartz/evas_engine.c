@@ -1096,6 +1096,15 @@ eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Bi
    return 1;
 }
 
+/*FIXME: this is *NOT* implemennted correctly, look at the other engines to
+ * see what needed to be done */
+static int
+eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+{
+   return eng_font_char_coords_get(data, font, text, intl_props, pos, cpen_x,
+         cy, cadv, ch)
+}
+
 static int
 eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {

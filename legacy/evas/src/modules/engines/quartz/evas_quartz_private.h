@@ -80,6 +80,7 @@ static int eng_font_inset_get(void *data, void *font, const char *text);
 static int eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props);
 static int eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props);
 static int eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+static int eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
 static int eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
 static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text, const Evas_BiDi_Props *intl_props);
 static void eng_font_hinting_set(void *data, void *font, int hinting);

@@ -535,6 +535,12 @@ eng_font_v_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *te
 }
 
 static int
+eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+{
+   return evas_common_font_query_pen_coords(font, text, intl_props, pos, cpen_x, cy, cadv, ch);
+}
+
+static int
 eng_font_char_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_coords(font, text, intl_props, pos, cx, cy, cw, ch);
@@ -723,7 +729,8 @@ static Evas_Func func =
      NULL, //   ORD(image_map_surface_new);
      NULL, //   ORD(image_map_surface_free);
      NULL, // eng_image_content_hint_set - software doesn't use it
-     NULL // eng_image_content_hint_get - software doesn't use it
+     NULL, // eng_image_content_hint_get - software doesn't use it
+     eng_font_pen_coords_get
      /* FUTURE software generic calls go here */
 };
 
