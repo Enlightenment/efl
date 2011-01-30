@@ -573,8 +573,28 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
    part_get_geometry(ep, &tw, &th);
-   ep->text.offset.x = TO_INT(SCALE(params->type.text.align.x, (sw - tw)));
-   ep->text.offset.y = TO_INT(SCALE(params->type.text.align.y, (sh - th)));
+   /* Handle alignment */
+     {
+        double align_x;
+        if (params->type.text.align.x < 0.0)
+          {
+             if (evas_object_text_direction_get(ep->object) ==
+                   EVAS_BIDI_DIRECTION_RTL)
+               {
+                  align_x = 1.0;
+               }
+             else
+               {
+                  align_x = 0.0;
+               }
+          }
+        else
+          {
+             align_x = params->type.text.align.x;
+          }
+        ep->text.offset.x = TO_INT(SCALE(align_x, (sw - tw)));
+        ep->text.offset.y = TO_INT(SCALE(params->type.text.align.y, (sh - th)));
+     }
 
    evas_object_move(ep->object,
 		    ed->x + params->x + ep->text.offset.x,

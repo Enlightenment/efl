@@ -5467,7 +5467,7 @@ st_collections_group_parts_part_description_text_align(void)
    ed = (Edje_Part_Description_Text*) ep->default_desc;
    if (ep->other.desc_count) ed = (Edje_Part_Description_Text*)  ep->other.desc[ep->other.desc_count - 1];
 
-   ed->text.align.x = FROM_DOUBLE(parse_float_range(0, 0.0, 1.0));
+   ed->text.align.x = FROM_DOUBLE(parse_float_range(0, -1.0, 1.0));
    ed->text.align.y = FROM_DOUBLE(parse_float_range(1, 0.0, 1.0));
 }
 
