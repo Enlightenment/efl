@@ -5,12 +5,6 @@
 #include "evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
 
-#define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
-      ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
-      ((0x200E <= (x)) && ((x) <= 0x200F)) || /* BIDI stuff */ \
-      ((0x202A <= (x)) && ((x) <= 0x202E)) /* BIDI stuff */ \
-      )
-
 #define WORD_CACHE_MAXLEN	50
 /* How many to cache */
 #define WORD_CACHE_NWORDS 40

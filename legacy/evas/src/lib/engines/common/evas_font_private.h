@@ -29,6 +29,13 @@ void evas_common_font_int_use_trim(void);
 void evas_common_font_int_unload(RGBA_Font_Int *fi);
 void evas_common_font_int_reload(RGBA_Font_Int *fi);
 /* Macros for text walking */
+
+#define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
+      ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
+      ((0x200E <= (x)) && ((x) <= 0x200F)) || /* BIDI stuff */ \
+      ((0x202A <= (x)) && ((x) <= 0x202E)) /* BIDI stuff */ \
+      )
+
 /**
  * @def EVAS_FONT_UPDATE_KERN()
  * @internal
@@ -106,6 +113,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
    do \
      { \
         int adv; \
+        int visible; \
         prev_index = 0; \
         last_adv = 0; \
         for (char_index = 0 ; *text ; text++, char_index++) \
@@ -136,10 +144,19 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
                   continue; \
                } \
              kern = 0; \
-             bear_x = fg->glyph_out->left; \
-             bear_y = fg->glyph_out->top; \
-             adv = fg->glyph->advance.x >> 16; \
-             width = fg->glyph_out->bitmap.width; \
+             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl)) \
+               { \
+                  adv = width = bear_x = bear_y = 0; \
+                  visible = 0; \
+               } \
+             else \
+               { \
+                  bear_x = fg->glyph_out->left; \
+                  bear_y = fg->glyph_out->top; \
+                  adv = fg->glyph->advance.x >> 16; \
+                  width = fg->glyph_out->bitmap.width; \
+                  visible = 1; \
+               } \
              /* hmmm kerning means i can't sanely do my own cached metric */ \
              /* tables! grrr - this means font face sharing is kinda... not */ \
              /* an option if you want performance */ \
@@ -153,8 +170,11 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
              LKU(fi->ft_mutex); \
              /* If the current one is not a compositing char, do the */ \
              /* previous advance and set the current advance as the next */ \
-             /* advance to do */ \
-             if (adv > 0) \
+             /* advance to do. If it's an invisible char (i.e one that shouldn't
+              * be printed anyhow, we want to advance everything as if it's
+              * a visible char. FIXME: use a proper way to detect diacritic
+              * instead. */ \
+             if ((adv > 0) || !visible) \
                { \
                   pen_x += last_adv; \
                   last_adv = adv; \
