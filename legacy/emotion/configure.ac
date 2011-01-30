@@ -55,7 +55,6 @@ AC_SUBST(VMAJ)
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
-### Needed information
 EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.0.0", \$1);}'`
 
 want_vlc="no"
