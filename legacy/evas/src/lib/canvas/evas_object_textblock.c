@@ -3179,8 +3179,8 @@ _layout_visualize_par(Ctxt *c)
              i = eina_list_next(i);
              continue;
           }
-        /* Check if we need to wrap, i.e the text is bigger than the width
-         * Only calculate wrapping if the width of the object is > 0 */
+
+        /* Check if we need to wrap, i.e the text is bigger than the width */
         if ((c->w >= 0) &&
               ((it->format->wrap_word) || (it->format->wrap_char) ||
                it->format->wrap_mixed) &&
