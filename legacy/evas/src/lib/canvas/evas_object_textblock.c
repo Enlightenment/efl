@@ -7193,65 +7193,58 @@ _evas_textblock_cursor_range_in_line_geometry_get(
    /* IMPORTANT: Don't use cur1/cur2 past this point (because of bidi),
     * unless you are know what you are doing */
 
-   /* Special case when they share the same item. */
-   if (it1 == it2)
+   /* Special case when they share the same item and it's a text item */
+   if ((it1 == it2) && (it1->type == EVAS_TEXTBLOCK_ITEM_TEXT))
      {
         Evas_Coord x1, w1, x2, w2;
         Evas_Coord x, w, y, h;
-        if (it1->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+        Evas_Object_Textblock_Text_Item *ti;
+        int ret;
+
+        ti = _ITEM_TEXT(it1);
+        ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+              ti->format->font.font,
+              ti->text, &ti->bidi_props,
+              start,
+              &x1, &y, &w1, &h);
+        if (!ret)
           {
-             Evas_Object_Textblock_Text_Item *ti;
-             int ret;
-             ti = _ITEM_TEXT(it1);
-             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
-                   ti->format->font.font,
-                   ti->text, &ti->bidi_props,
-                   start,
-                   &x1, &y, &w1, &h);
-             if (!ret)
-               {
-                  return NULL;
-               }
-             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
-                   ti->format->font.font,
-                   ti->text, &ti->bidi_props,
-                   end,
-                   &x2, &y, &w2, &h);
-             if (!ret)
-               {
-                  return NULL;
-               }
+             return NULL;
+          }
+        ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+              ti->format->font.font,
+              ti->text, &ti->bidi_props,
+              end,
+              &x2, &y, &w2, &h);
+        if (!ret)
+          {
+             return NULL;
+          }
 
-             /* Make x2 the one on the right */
-             if (x2 < x1)
-               {
-                  Evas_Coord tmp;
-                  tmp = x1;
-                  x1 = x2;
-                  x2 = tmp;
+        /* Make x2 the one on the right */
+        if (x2 < x1)
+          {
+             Evas_Coord tmp;
+             tmp = x1;
+             x1 = x2;
+             x2 = tmp;
 
-                  tmp = w1;
-                  w1 = w2;
-                  w2 = tmp;
-               }
+             tmp = w1;
+             w1 = w2;
+             w2 = tmp;
+          }
 
 #ifdef BIDI_SUPPORT
-             if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
-               {
-                  x = x1 + w1;
-                  w = x2 + w2 - x;
-               }
-             else
-#endif
-               {
-                  x = x1;
-                  w = x2 - x1;
-               }
+        if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
+          {
+             x = x1 + w1;
+             w = x2 + w2 - x;
           }
         else
+#endif
           {
-             x = 0;
-             w = it1->w;
+             x = x1;
+             w = x2 - x1;
           }
         if (w > 0)
           {
@@ -7263,7 +7256,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              tr->w = w;
           }
      }
-   else
+   else if (it1 != it2)
      {
         /* Get the middle items */
         Evas_Coord min_x, max_x;
@@ -7348,8 +7341,17 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
         else
           {
+        /* FIXME: This should be here for rtl, items, this can't be achieved
+         * yet, there are stuff to do before. ask Tom (TAsn) what's needed
+         * to be done in order to get that right to rtl as well if you
+         * are interested. - If you see this message please let me Tom (TAsn)
+         * know, because I should have fixed it immediately. */
+#if 0
              x = 0;
              w = it2->w;
+#else
+             w = 0; /* Disable this item for the moment */
+#endif
           }
         if (w > 0)
           {
