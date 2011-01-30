@@ -3099,7 +3099,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                          }
                        else
                          {
-                            return 0;
+                            return -1;
                          }
                     }
                }
