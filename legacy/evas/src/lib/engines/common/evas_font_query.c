@@ -252,7 +252,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         else
 #endif
           {
-             evas_common_font_query_size(fn, text, intl_props, cx, ch);
+             evas_common_font_query_advance(fn, text, intl_props, cx, ch);
           }
         if (cy) *cy = 0;
         if (cw) *cw = 0;
