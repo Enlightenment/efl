@@ -138,6 +138,12 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
       free(fs);
       return NULL;
     }
+#ifdef OT_SUPPORT
+   if (evas_common_font_ot_is_enabled())
+     {
+        evas_common_font_ot_load_face(fs);
+     }
+#endif
    FTUNLOCK();
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    fs->references = 1;
