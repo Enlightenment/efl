@@ -73,7 +73,7 @@ VMIN=v_min
 AC_SUBST(VMAJ)
 AC_SUBST(VMIN)
 
-EDJE_VERSION="1.0.0"
+EDJE_VERSION=`pkg-config edje --modversion | awk -F . '{printf("%s.0.0", $1);}'`
 
 case "$host_os" in
   mingw32ce* | cegcc*)
