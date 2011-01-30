@@ -7732,7 +7732,7 @@ evas_object_textblock_clear(Evas_Object *obj)
 	_paragraphs_clear(obj, o->paragraphs);
 	o->paragraphs = NULL;
      }
-   _evas_textblock_text_node_changed(o, cur->obj, cur->node);
+   _evas_textblock_text_node_changed(o, obj, NULL);
 }
 
 /**
