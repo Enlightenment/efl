@@ -1109,9 +1109,9 @@ static Eina_Bool
 eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props __UNUSED__, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
 {
 #ifdef BIDI_SUPPORT
-   evas_bidi_shape_string(text, par_props, pos, len);
+   return !evas_bidi_shape_string(text, par_props, pos, len);
 #endif
-   return evas_common_font_glyph_info_create(font, text, intl_props, len);
+   return EINA_TRUE;
 }
 
 static int

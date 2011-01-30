@@ -63,7 +63,6 @@ language/evas_bidi_utils.c \
 language/evas_language_utils.c \
 evas_text_utils.c \
 evas_font_ot.c \
-evas_font_glyph_info.c \
 evas_map_image.c \
 evas_map_image.h
 
@@ -106,7 +105,6 @@ language/evas_bidi_utils.h \
 language/evas_language_utils.h \
 evas_text_utils.h \
 evas_font_ot.h \
-evas_font_glyph_info.h \
 evas_map_image_internal.c \
 evas_map_image_core.c \
 evas_map_image_loop.c

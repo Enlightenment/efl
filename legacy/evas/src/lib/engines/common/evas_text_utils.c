@@ -1,4 +1,3 @@
-#include "evas_common.h"
 #include "evas_text_utils.h"
 #include "language/evas_bidi_utils.h"
 #include "language/evas_language_utils.h"
@@ -38,34 +37,39 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
 void
 evas_common_text_props_content_ref(Evas_Text_Props *props)
 {
-   props->info->refcount++;
+#ifdef OT_SUPPORT
+   if (props->ot_data)
+     {
+        evas_common_font_ot_props_ref(props->ot_data);
+     }
+#endif
 }
 
 void
 evas_common_text_props_content_unref(Evas_Text_Props *props)
 {
-   /* We allow this, because sometimes we want to have props without info,
-    * and we don't want to diverge the code paths too much. */
-   if (!props->info)
-     return;
-
-   if (props->info->refcount == 0)
-     {
-        ERR("Trying to unref props with refount == 0");
-        return;
-     }
-
-   if (--(props->info->refcount) == 0)
-     {
-        if (props->info->glyph)
-          free(props->info->glyph);
 #ifdef OT_SUPPORT
-        if (props->info->ot)
-          free(props->info->ot);
-#endif
-        free(props->info);
-        props->info = NULL;
+   if (props->ot_data)
+     {
+        evas_common_font_ot_props_unref(props->ot_data);
      }
+#else
+   (void) props;
+#endif
+#ifdef BIDI_SUPPORT
+   evas_bidi_props_clean(&props->bidi);
+#else
+   (void) props;
+#endif
+}
+
+/* Won't work in the middle of ligatures */
+EAPI void
+evas_common_text_props_cutoff(Evas_Text_Props *props, int cutoff)
+{
+#ifdef OT_SUPPORT
+   evas_common_font_ot_cutoff_text_props(props, cutoff);
+#endif
 }
 
 /* Won't work in the middle of ligatures */
@@ -73,20 +77,12 @@ EAPI void
 evas_common_text_props_split(Evas_Text_Props *base,
       Evas_Text_Props *ext, int cutoff)
 {
-   evas_common_text_props_content_copy_and_ref(ext, base);
-   if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
-     {
-        ext->start = base->start;
-        base->start = cutoff;
-        ext->len = cutoff;
-        base->len = base->len - cutoff;
-     }
-   else
-     {
-        ext->start = cutoff;
-        ext->len = base->len - cutoff;
-        base->len = cutoff;
-     }
+   /* FIXME: move to their own functions */
+   memcpy(&ext->bidi, &base->bidi, sizeof(Evas_BiDi_Props));
+   memcpy(&ext->script, &base->script, sizeof(Evas_Script_Type));
+#ifdef OT_SUPPORT
+   evas_common_font_ot_split_text_props(base, ext, cutoff);
+#endif
 }
 
 /* Won't work in the middle of ligatures */
@@ -94,16 +90,9 @@ EAPI void
 evas_common_text_props_merge(Evas_Text_Props *item1,
       const Evas_Text_Props *item2)
 {
-   if (item1->info != item2->info)
-     {
-        ERR("tried merge back items that weren't together in the first place.");
-        return;
-     }
-   if (item1->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
-     {
-        item1->start = item2->start;
-     }
-
-   item1->len += item2->len;
+#ifdef OT_SUPPORT
+   evas_common_font_ot_merge_text_props(item1, item2);
+#endif
 }
+
 

@@ -543,23 +543,17 @@ eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *t
 static Eina_Bool
 eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
 {
-   (void) font;
-   (void) text;
-   (void) intl_props;
-   (void) par_props;
-   (void) pos;
-   (void) len;
 #ifdef OT_SUPPORT
    if (evas_common_font_ot_is_enabled())
      {
-        return evas_common_font_glyph_info_create(font, text, intl_props, len);
+        return evas_common_font_ot_populate_text_props(font, text,
+              intl_props, len);
      }
    else
 #endif
      {
 #ifdef BIDI_SUPPORT
-        evas_bidi_shape_string(text, par_props, pos, len);
-        return evas_common_font_glyph_info_create(font, text, intl_props, len);
+        return !evas_bidi_shape_string(text, par_props, pos, len);
 #endif
      }
    return EINA_TRUE;

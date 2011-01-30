@@ -36,7 +36,7 @@
              if (!*tmp && (tmp > text)) tmp--; \
              evas_common_font_glyph_search(fn, &fi, *tmp); \
           } \
-        for (char_index = 0 ; char_index < intl_props->len ; char_index++) \
+        for (char_index = 0 ; char_index < intl_props->ot_data->len ; char_index++) \
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
@@ -72,10 +72,10 @@
              evas_common_font_glyph_search(fn, &fi, *tmp); \
           } \
         prev_index = 0; \
-        _i = intl_props->len; \
+        _i = intl_props->ot_data->len; \
         if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) \
           { \
-             char_index = intl_props->len - 1; \
+             char_index = intl_props->ot_data->len - 1; \
              _char_index_d = -1; \
           } \
         else \
@@ -92,39 +92,39 @@
 #define EVAS_FONT_WALK_OT_X_OFF \
              (EVAS_FONT_ROUND_26_6_TO_INT( \
                 EVAS_FONT_OT_X_OFF_GET( \
-                   intl_props->info->ot[char_index])))
+                   intl_props->ot_data->items[char_index])))
 #define EVAS_FONT_WALK_OT_Y_OFF \
              (EVAS_FONT_ROUND_26_6_TO_INT( \
                 EVAS_FONT_OT_Y_OFF_GET( \
-                   intl_props->info->ot[char_index])))
-#define EVAS_FONT_WALK_OT_X_BEAR (intl_props->info->glyph[char_index].x_bear)
+                   intl_props->ot_data->items[char_index])))
+#define EVAS_FONT_WALK_OT_X_BEAR (fg->glyph_out->left)
 #define EVAS_FONT_WALK_OT_Y_BEAR (fg->glyph_out->top)
 #define _EVAS_FONT_WALK_OT_X_ADV \
-                (intl_props->info->glyph[char_index].advance)
+                (EVAS_FONT_OT_X_ADV_GET( \
+                   intl_props->ot_data->items[char_index]))
 #define EVAS_FONT_WALK_OT_X_ADV \
-             (EVAS_FONT_ROUND_26_6_TO_INT( \
-                _EVAS_FONT_WALK_OT_X_ADV))
-#define EVAS_FONT_WALK_OT_WIDTH (intl_props->info->glyph[char_index].width)
+             (EVAS_FONT_ROUND_26_6_TO_INT(_EVAS_FONT_WALK_OT_X_ADV))
+#define EVAS_FONT_WALK_OT_WIDTH (fg->glyph_out->bitmap.width)
 #define EVAS_FONT_WALK_OT_POS \
              (EVAS_FONT_OT_POS_GET( \
-                      intl_props->info->ot[char_index]))
+                      intl_props->ot_data->items[char_index]))
 #define EVAS_FONT_WALK_OT_IS_LAST \
-             (char_index + 1 == intl_props->len)
+             (char_index + 1 == intl_props->ot_data->len)
 #define EVAS_FONT_WALK_OT_IS_FIRST \
              (!char_index)
 #define EVAS_FONT_WALK_OT_POS_NEXT \
              ((!EVAS_FONT_WALK_OT_IS_LAST) ? \
              EVAS_FONT_OT_POS_GET( \
-                      intl_props->info->ot[char_index + 1]) : \
+                      intl_props->ot_data->items[char_index + 1]) : \
               EVAS_FONT_WALK_OT_POS \
              )
 #define EVAS_FONT_WALK_OT_POS_PREV \
              ((char_index > 0) ? \
              EVAS_FONT_OT_POS_GET( \
-                      intl_props->info->ot[char_index - 1]) : \
+                      intl_props->ot_data->items[char_index - 1]) : \
               EVAS_FONT_WALK_OT_POS \
              )
-#define EVAS_FONT_WALK_OT_LEN (intl_props->len)
+#define EVAS_FONT_WALK_OT_LEN (intl_props->ot_data->len)
 /**
  * @def EVAS_FONT_WALK_OT_TEXT_WORK
  * @internal
@@ -135,7 +135,7 @@
  * @see EVAS_FONT_WALK_OT_TEXT_END
  */
 #define EVAS_FONT_WALK_OT_TEXT_WORK(is_visual) \
-             index = intl_props->info->glyph[char_index].index; \
+             index = EVAS_FONT_OT_INDEX_GET(intl_props->ot_data->items[char_index]); \
              LKL(fi->ft_mutex); \
              fg = evas_common_font_int_cache_glyph_get(fi, index); \
              if (!fg) \
