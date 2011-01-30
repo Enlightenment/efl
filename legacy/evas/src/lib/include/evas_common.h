@@ -884,6 +884,8 @@ struct _RGBA_Font_Int
    unsigned char    inuse : 1;
 };
 
+#include "../engines/common/evas_font_ot.h"
+
 struct _RGBA_Font_Source
 {
    const char       *name;
@@ -896,6 +898,11 @@ struct _RGBA_Font_Source
       int            orig_upem;
       FT_Face        face;
    } ft;
+#ifdef OT_SUPPORT
+   struct {
+      void *face;
+   } hb;
+#endif
 };
 
 struct _RGBA_Font_Glyph

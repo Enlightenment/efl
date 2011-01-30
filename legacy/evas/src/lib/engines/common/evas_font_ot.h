@@ -62,6 +62,12 @@ evas_common_font_ot_props_ref(Evas_Font_OT_Data *data);
 EAPI void
 evas_common_font_ot_props_unref(Evas_Font_OT_Data *data);
 
+EAPI void
+evas_common_font_ot_load_face(void *_font);
+
+EAPI void
+evas_common_font_ot_unload_face(void *_font);
+
 #include "evas_text_utils.h"
 EAPI int
 evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index, int orig_len);

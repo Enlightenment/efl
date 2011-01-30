@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "evas_font_private.h" /* for Frame-Queuing support */
+#include "evas_font_ot.h"
 
 extern FT_Library         evas_ft_lib;
 
@@ -164,6 +165,12 @@ evas_common_font_source_unload(RGBA_Font_Source *fs)
    FTLOCK();
    FT_Done_Face(fs->ft.face);
    fs->ft.face = NULL;
+#ifdef OT_SUPPORT
+   if (evas_common_font_ot_is_enabled())
+     {
+        evas_common_font_ot_unload_face(fs);
+     }
+#endif
    FTUNLOCK();
 }
 
@@ -213,6 +220,12 @@ evas_common_font_source_load_complete(RGBA_Font_Source *fs)
 	fs->ft.face = NULL;
 	return error;
      }
+#ifdef OT_SUPPORT
+   if (evas_common_font_ot_is_enabled())
+     {
+        evas_common_font_ot_load_face(fs);
+     }
+#endif
    FTUNLOCK();
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    return error;

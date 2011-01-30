@@ -85,18 +85,31 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
    return (items > 0) ? items : 1;
 }
 
-static void
-_evas_common_font_ot_shape(hb_buffer_t *buffer, FT_Face face)
+EAPI void
+evas_common_font_ot_load_face(void *_font)
 {
-   hb_face_t   *hb_face;
+   RGBA_Font_Source *font = (RGBA_Font_Source *) _font;
+   font->hb.face = hb_ft_face_create(font->ft.face, NULL);
+}
+
+EAPI void
+evas_common_font_ot_unload_face(void *_font)
+{
+   RGBA_Font_Source *font = (RGBA_Font_Source *) _font;
+   if (!font->hb.face) return;
+   hb_face_destroy(font->hb.face);
+   font->hb.face = NULL;
+}
+
+static void
+_evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Source *src)
+{
    hb_font_t   *hb_font;
 
-   hb_face = hb_ft_face_create(face, NULL);
-   hb_font = hb_ft_font_create(face, NULL);
+   hb_font = hb_ft_font_create(src->ft.face, NULL);
 
-   hb_shape(hb_font, hb_face, buffer, NULL, 0);
+   hb_shape(hb_font, src->hb.face, buffer, NULL, 0);
    hb_font_destroy(hb_font);
-   hb_face_destroy(hb_face);
 }
 
 EAPI Eina_Bool
@@ -149,7 +162,7 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    /* FIXME: add run-time conversions if needed, which is very unlikely */
    hb_buffer_add_utf32(buffer, (const uint32_t *) text, slen, 0, slen);
 
-   _evas_common_font_ot_shape(buffer, fi->src->ft.face);
+   _evas_common_font_ot_shape(buffer, fi->src);
 
    props->ot_data->len = hb_buffer_get_length(buffer);
    props->ot_data->items = calloc(props->ot_data->len,
