@@ -4589,54 +4589,6 @@ _evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cur
 
 /**
  * @internal
- * Return the last format that applies to a specific cursor or at the specific
- * position the cursor points to. This means the format node before the
- * position of the cursor in the text node is returned or the previous's text
- * node's format node.
- *
- * @param cur the position to look at.
- * @return the format node found.
- */
-#if 0 // not used anymore?
-static Evas_Object_Textblock_Node_Format *
-_evas_textblock_cursor_node_format_before_pos_get(const Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock_Node_Format *node, *pitr = NULL;
-   Evas_Object_Textblock_Node_Format *itr;
-   size_t position = 0;
-
-   if (!cur->node) return NULL;
-
-   node = cur->node->format_node;
-   if (!node) return NULL;
-   /* If there is no exclusive format node to this paragraph return the
-    * previous's node */
-   if (node->text_node != cur->node)
-     {
-        return node;
-     }
-   else if (node->offset > cur->pos)
-     {
-        return _NODE_FORMAT(EINA_INLIST_GET(node)->prev);
-     }
-   /* Find the main format node */
-   pitr = _NODE_FORMAT(EINA_INLIST_GET(node)->prev);
-   EINA_INLIST_FOREACH(node, itr)
-     {
-        position += itr->offset;
-        if ((itr->text_node != cur->node) ||
-            (position >= cur->pos))
-          {
-             return pitr;
-          }
-        pitr = itr;
-     }
-   return pitr;
-}
-#endif
-
-/**
- * @internal
  * Find the layout item and line that match the cursor.
  *
  * @param cur the cursor we are currently at. - NOT NULL.
