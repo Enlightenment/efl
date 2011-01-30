@@ -339,19 +339,6 @@ error:
 
 /**
  * @internal
- * Reverses the string according to the props
- *
- * @param str the string to reverse.
- */
-void
-evas_bidi_reverse_string(Eina_Unicode *str)
-{
-   eina_unicode_reverse(str);
-}
-
-
-/**
- * @internal
  * Returns the end of the current run of text
  *
  * @param bidi_props the paragraph properties
