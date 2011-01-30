@@ -317,6 +317,7 @@ struct _Evas_Object_Textblock_Item
    EINA_INLIST;
    Evas_Textblock_Item_Type             type;
    Evas_Object_Textblock_Node_Text     *text_node;
+   Evas_Object_Textblock_Format        *format;
    size_t                               text_pos;
 #ifdef BIDI_SUPPORT
    size_t                               visual_pos;
@@ -336,7 +337,6 @@ struct _Evas_Object_Textblock_Text_Item
 {
    Evas_Object_Textblock_Item       parent;
    Eina_Unicode                    *text;
-   Evas_Object_Textblock_Format    *format;
    int                              inset, baseline;
 };
 
@@ -658,7 +658,6 @@ _item_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln, Evas_Object_T
         Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
 
         if (ti->text) free(ti->text);
-        _format_unref_free(obj, ti->format);
      }
    else
      {
@@ -666,6 +665,7 @@ _item_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln, Evas_Object_T
 
         if (fi->item) eina_stringshare_del(fi->item);
      }
+   _format_unref_free(obj, it->format);
    evas_common_text_props_content_unref(&it->text_props);
    if (ln)
      {
@@ -2163,9 +2163,9 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-             if (ti->format->font.font)
-               ti->baseline = c->ENFN->font_max_ascent_get(c->ENDT, ti->format->font.font);
-             _layout_format_ascent_descent_adjust(c, ti->format);
+             if (ti->parent.format->font.font)
+               ti->baseline = c->ENFN->font_max_ascent_get(c->ENDT, ti->parent.format->font.font);
+             _layout_format_ascent_descent_adjust(c, ti->parent.format);
           }
         else
           {
@@ -2274,8 +2274,8 @@ _layout_text_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, con
    Evas_Object_Textblock_Text_Item *ti;
 
    ti = calloc(1, sizeof(Evas_Object_Textblock_Text_Item));
-   ti->format = fmt;
-   ti->format->ref++;
+   ti->parent.format = fmt;
+   ti->parent.format->ref++;
    ti->text = eina_unicode_strdup(str);
    ti->parent.type = EVAS_TEXTBLOCK_ITEM_TEXT;
    return ti;
@@ -2351,7 +2351,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
    else
      cut2 = cut;
 
-   new_ti = _layout_text_item_new(c, ti->format, &ts[cut2]);
+   new_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut2]);
    new_ti->parent.text_node = ti->parent.text_node;
    new_ti->parent.text_pos = ti->parent.text_pos + cut2;
    new_ti->parent.merge = EINA_TRUE;
@@ -2359,7 +2359,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    evas_common_text_props_split(&ti->parent.text_props,
          &new_ti->parent.text_props, cut2);
-   _layout_text_add_logical_item(c, ti->format, new_ti, _ITEM(ti));
+   _layout_text_add_logical_item(c, ti->parent.format, new_ti, _ITEM(ti));
 
    /* FIXME: Will break with kerning and a bunch of other stuff, should
     * maybe adjust the last adv of the prev and the offset of the cur*/
@@ -2369,7 +2369,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
    if (cut2 > cut)
      {
         Evas_Object_Textblock_Text_Item *white_ti;
-        white_ti = _layout_text_item_new(c, ti->format, &ts[cut]);
+        white_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut]);
         white_ti->parent.text_node = ti->parent.text_node;
         white_ti->parent.text_pos = ti->parent.text_pos + cut;
         white_ti->parent.merge = EINA_TRUE;
@@ -2378,7 +2378,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
         evas_common_text_props_split(&ti->parent.text_props,
               &white_ti->parent.text_props, cut);
-        _layout_text_add_logical_item(c, ti->format, white_ti, _ITEM(ti));
+        _layout_text_add_logical_item(c, ti->parent.format, white_ti, _ITEM(ti));
         ti->parent.w -= white_ti->parent.w;
         ti->parent.adv -= white_ti->parent.adv;
      }
@@ -2458,12 +2458,14 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt __U
           {
              _layout_item_text_cutoff(c, ti, tp);
              adv = 0;
-             if (ti->format->font.font)
-               adv = c->ENFN->font_h_advance_get(c->ENDT, ti->format->font.font,
+             if (ti->parent.format->font.font)
+               adv = c->ENFN->font_h_advance_get(c->ENDT,
+                     ti->parent.format->font.font,
                      ti->text, &ti->parent.text_props);
              tw = th = 0;
-             if (ti->format->font.font)
-               c->ENFN->font_string_size_get(c->ENDT, ti->format->font.font,
+             if (ti->parent.format->font.font)
+               c->ENFN->font_string_size_get(c->ENDT,
+                     ti->parent.format->font.font,
                      ti->text, &ti->parent.text_props, &tw, &th);
              it->w = tw;
              it->h = th;
@@ -2699,8 +2701,9 @@ skip:
                    ti->parent.text_node->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set (&ti->parent.text_props,
                    ti->text);
-             c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
-                   &ti->parent.text_props, ti->parent.text_node->bidi_props,
+             c->ENFN->font_shape(c->ENDT, ti->parent.format->font.font,
+                   ti->text, &ti->parent.text_props,
+                   ti->parent.text_node->bidi_props,
                    ti->parent.text_pos, tmp_len);
           }
         str += tmp_len;
@@ -2722,7 +2725,7 @@ skip:
  * @return the new format item.
  */
 static Evas_Object_Textblock_Format_Item *
-_layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const char *item)
+_layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const char *item, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Format_Item *fi;
 
@@ -2730,6 +2733,8 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
    fi->item = eina_stringshare_add(item);
    fi->source_node = n;
    fi->parent.type = EVAS_TEXTBLOCK_ITEM_FORMAT;
+   fi->parent.format = fmt;
+   fi->parent.format->ref++;
    c->par->logical_items = eina_list_append(c->par->logical_items, fi);
    if (n)
      {
@@ -2867,7 +2872,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
 
         x2 = c->x + w;
 
-        fi = _layout_format_item_add(c, n, NULL);
+        fi = _layout_format_item_add(c, n, NULL, fmt);
         fi->vsize = vsize;
         fi->size = size;
         fi->formatme = 1;
@@ -2907,7 +2912,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                     {
                        Evas_Object_Textblock_Format_Item *fi;
 
-                       fi = _layout_format_item_add(c, n, item);
+                       fi = _layout_format_item_add(c, n, item, fmt);
                        fi->parent.w = fi->parent.adv = 0;
                     }
                   else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
@@ -2916,7 +2921,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                        int x2;
 
                        x2 = c->x + fmt->tabstops;
-                       fi = _layout_format_item_add(c, n, item);
+                       fi = _layout_format_item_add(c, n, item, fmt);
                        fi->parent.w = fi->parent.adv = x2 - c->x;
                        fi->formatme = 1;
                        c->x = x2;
@@ -3157,7 +3162,7 @@ _layout_visualize_par(Ctxt *c)
                }
              else
                {
-                  c->fmt = _ITEM_TEXT(it)->format;
+                  c->fmt = _ITEM_TEXT(it)->parent.format;
                }
              c->x += it->adv;
              i = eina_list_next(i);
@@ -6984,10 +6989,10 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
         ret = -1;
 
         if (pos < 0) pos = 0;
-        if (ti->format->font.font)
+        if (ti->parent.format->font.font)
           {
              ret = query_func(cur->ENDT,
-                   ti->format->font.font,
+                   ti->parent.format->font.font,
                    ti->text, &ti->parent.text_props,
                    pos,
                    &x, &y, &w, &h);
@@ -7178,10 +7183,10 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                                  ti = _ITEM_TEXT(it);
 
                                  pos = -1;
-                                 if (ti->format->font.font)
+                                 if (ti->parent.format->font.font)
                                    pos = cur->ENFN->font_char_at_coords_get(
                                          cur->ENDT,
-                                         ti->format->font.font,
+                                         ti->parent.format->font.font,
                                          ti->text, &ti->parent.text_props,
                                          x - it->x - ln->par->x - ln->x, 0,
                                          &cx, &cy, &cw, &ch);
@@ -7394,7 +7399,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
         ti = _ITEM_TEXT(it1);
         ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
-              ti->format->font.font,
+              ti->parent.format->font.font,
               ti->text, &ti->parent.text_props,
               start,
               &x1, &y, &w1, &h);
@@ -7403,7 +7408,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              return NULL;
           }
         ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
-              ti->format->font.font,
+              ti->parent.format->font.font,
               ti->text, &ti->parent.text_props,
               end,
               &x2, &y, &w2, &h);
@@ -7463,7 +7468,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              ti = _ITEM_TEXT(it1);
 
              ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
-                   ti->format->font.font,
+                   ti->parent.format->font.font,
                    ti->text, &ti->parent.text_props,
                    start,
                    &x, &y, &w, &h);
@@ -7517,7 +7522,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              ti = _ITEM_TEXT(it2);
 
              ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
-                   ti->format->font.font,
+                   ti->parent.format->font.font,
                    ti->text, &ti->parent.text_props,
                    end,
                    &x, &y, &w, &h);
@@ -7940,21 +7945,17 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              EINA_INLIST_FOREACH(ln->items, itr) \
                { \
                   int yoff; \
-                  Evas_Object_Textblock_Text_Item *ti; \
-                  ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL; \
-                  \
-                  if (ti) \
+                  yoff = ln->baseline; \
+                  if (itr->format->valign != -1.0) \
+                     yoff = (itr->format->valign * (double)(ln->h - itr->h)) + \
+                     (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? \
+                     _ITEM_TEXT(itr)->baseline : ln->baseline; \
+                  if (clip) \
                     { \
-                       yoff = ln->baseline; \
-                       if (ti->format->valign != -1.0) \
-                       yoff = (ti->format->valign * (double)(ln->h - ti->parent.h)) + ti->baseline; \
-                       if (clip) \
-                         { \
-                            if ((obj->cur.geometry.x + x + ln->par->x + ln->x + ti->parent.x + ti->parent.w) < (cx - 20)) \
-                            continue; \
-                            if ((obj->cur.geometry.x + x + ln->par->x + ln->x + ti->parent.x) > (cx + cw + 20)) \
-                            break; \
-                         } \
+                       if ((obj->cur.geometry.x + x + ln->par->x + ln->x + itr->x + itr->w) < (cx - 20)) \
+                       continue; \
+                       if ((obj->cur.geometry.x + x + ln->par->x + ln->x + itr->x) > (cx + cw + 20)) \
+                       break; \
                     } \
                   do
 
@@ -7966,18 +7967,18 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    do {} while(0)
 #define COLOR_SET(col) \
    ENFN->context_color_set(output, context, \
-         (obj->cur.cache.clip.r * ti->format->color.col.r) / 255, \
-         (obj->cur.cache.clip.g * ti->format->color.col.g) / 255, \
-         (obj->cur.cache.clip.b * ti->format->color.col.b) / 255, \
-         (obj->cur.cache.clip.a * ti->format->color.col.a) / 255);
+         (obj->cur.cache.clip.r * ti->parent.format->color.col.r) / 255, \
+         (obj->cur.cache.clip.g * ti->parent.format->color.col.g) / 255, \
+         (obj->cur.cache.clip.b * ti->parent.format->color.col.b) / 255, \
+         (obj->cur.cache.clip.a * ti->parent.format->color.col.a) / 255);
 #define COLOR_SET_AMUL(col, amul) \
    ENFN->context_color_set(output, context, \
-         (obj->cur.cache.clip.r * ti->format->color.col.r * (amul)) / 65025, \
-         (obj->cur.cache.clip.g * ti->format->color.col.g * (amul)) / 65025, \
-         (obj->cur.cache.clip.b * ti->format->color.col.b * (amul)) / 65025, \
-         (obj->cur.cache.clip.a * ti->format->color.col.a * (amul)) / 65025);
+         (obj->cur.cache.clip.r * ti->parent.format->color.col.r * (amul)) / 65025, \
+         (obj->cur.cache.clip.g * ti->parent.format->color.col.g * (amul)) / 65025, \
+         (obj->cur.cache.clip.b * ti->parent.format->color.col.b * (amul)) / 65025, \
+         (obj->cur.cache.clip.a * ti->parent.format->color.col.a * (amul)) / 65025);
 #define DRAW_TEXT(ox, oy) \
-   if (ti->format->font.font) ENFN->font_draw(output, context, surface, ti->format->font.font, \
+   if (ti->parent.format->font.font) ENFN->font_draw(output, context, surface, ti->parent.format->font.font, \
          obj->cur.geometry.x + ln->par->x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, ti->text, &ti->parent.text_props);
@@ -8015,27 +8016,24 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                    oa); \
           } \
         \
-        if (ti) \
+        if (itr->format->oname) \
           { \
-             if (ti->format->oname) \
-               { \
-                  p ## oname = 1; \
-                  or = ti->format->color.oname.r; \
-                  og = ti->format->color.oname.g; \
-                  ob = ti->format->color.oname.b; \
-                  oa = ti->format->color.oname.a; \
-               } \
-             else \
-               { \
-                  p ## oname = 0; \
-               } \
+             p ## oname = 1; \
+             or = itr->format->color.oname.r; \
+             og = itr->format->color.oname.g; \
+             ob = itr->format->color.oname.b; \
+             oa = itr->format->color.oname.a; \
+          } \
+        else \
+          { \
+             p ## oname = 0; \
           } \
         \
         if (p ## oname && !EINA_INLIST_GET(itr)->next) \
           { \
              DRAW_RECT(itr->x, oy, itr->w, oh, or, og, ob, oa); \
           } \
-        p ## oname = (ti) ? ti->format->oname : p ## oname; \
+        p ## oname = itr->format->oname; \
         oname ## x = itr->x; \
      } \
    while (0)
@@ -8055,22 +8053,24 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    /* shadows */
    ITEM_WALK()
      {
+        Evas_Object_Textblock_Text_Item *ti;
         ITEM_WALK_LINE_SKIP_DROP();
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
-        if (ti->format->style == EVAS_TEXT_STYLE_SHADOW)
+        if (ti->parent.format->style == EVAS_TEXT_STYLE_SHADOW)
           {
              COLOR_SET(shadow);
              DRAW_TEXT(1, 1);
           }
-        else if ((ti->format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-              (ti->format->style == EVAS_TEXT_STYLE_FAR_SHADOW))
+        else if ((ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+              (ti->parent.format->style == EVAS_TEXT_STYLE_FAR_SHADOW))
           {
              COLOR_SET(shadow);
              DRAW_TEXT(2, 2);
           }
-        else if ((ti->format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
-              (ti->format->style == EVAS_TEXT_STYLE_FAR_SOFT_SHADOW))
+        else if ((ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
+              (ti->parent.format->style == EVAS_TEXT_STYLE_FAR_SOFT_SHADOW))
           {
              for (j = 0; j < 5; j++)
                {
@@ -8084,7 +8084,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                     }
                }
           }
-        else if (ti->format->style == EVAS_TEXT_STYLE_SOFT_SHADOW)
+        else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_SHADOW)
           {
              for (j = 0; j < 5; j++)
                {
@@ -8104,10 +8104,12 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    /* glows */
    ITEM_WALK()
      {
+        Evas_Object_Textblock_Text_Item *ti;
         ITEM_WALK_LINE_SKIP_DROP();
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
-        if (ti->format->style == EVAS_TEXT_STYLE_GLOW)
+        if (ti->parent.format->style == EVAS_TEXT_STYLE_GLOW)
           {
              for (j = 0; j < 5; j++)
                {
@@ -8132,12 +8134,14 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    /* outlines */
    ITEM_WALK()
      {
+        Evas_Object_Textblock_Text_Item *ti;
         ITEM_WALK_LINE_SKIP_DROP();
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
-        if ((ti->format->style == EVAS_TEXT_STYLE_OUTLINE) ||
-              (ti->format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-              (ti->format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
+        if ((ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE) ||
+              (ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+              (ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
           {
              COLOR_SET(outline);
              DRAW_TEXT(-1, 0);
@@ -8145,7 +8149,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
              DRAW_TEXT(0, -1);
              DRAW_TEXT(0, 1);
           }
-        else if (ti->format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
+        else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
           {
              for (j = 0; j < 5; j++)
                {
@@ -8165,7 +8169,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    /* normal text and lines */
    ITEM_WALK()
      {
+        Evas_Object_Textblock_Text_Item *ti;
         ITEM_WALK_LINE_SKIP_DROP();
+        ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         /* NORMAL TEXT */
         if (ti)
           {
@@ -8397,13 +8403,13 @@ _evas_object_textblock_rehint(Evas_Object *obj)
                   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
                     {
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-                       if (ti->format->font.font)
+                       if (ti->parent.format->font.font)
                          {  
 #ifdef EVAS_FRAME_QUEUING
-                            evas_common_pipe_op_text_flush(ti->format->font.font);
+                            evas_common_pipe_op_text_flush(ti->parent.format->font.font);
 #endif
                             evas_font_load_hinting_set(obj->layer->evas,
-                                  ti->format->font.font,
+                                  ti->parent.format->font.font,
                                   obj->layer->evas->hinting);
                          }
                     }
