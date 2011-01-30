@@ -2,7 +2,7 @@
 #include "evas_private.h"
 #include "evas_blend_private.h"
 
-#include "evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
+#include "language/evas_bidi_utils.h" /*defines BIDI_SUPPORT if possible */
 #include "evas_font_private.h" /* for Frame-Queuing support */
 
 #define WORD_CACHE_MAXLEN	50

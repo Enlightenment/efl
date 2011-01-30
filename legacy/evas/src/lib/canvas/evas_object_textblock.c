@@ -2477,9 +2477,13 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    do
      {
         Evas_Object_Textblock_Text_Item *new_ti;
+        /* FIXME: We assume here that it's ok to have an empty item with
+         * no text nodes, make sure it's the case. */
         if (ti->parent.text_node)
           {
-             cutoff = evas_bidi_end_of_run_get(ti->parent.text_node->bidi_props,
+             cutoff = evas_common_script_end_of_run_get(
+                   eina_ustrbuf_string_get(ti->parent.text_node->unicode),
+                   ti->parent.text_node->bidi_props,
                    ti->parent.text_pos, len);
              if (cutoff > 0)
                {

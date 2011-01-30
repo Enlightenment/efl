@@ -1,6 +1,6 @@
 #ifndef _EVAS_FONT_H
 #define _EVAS_FONT_H
-#include "evas_bidi_utils.h"
+#include "language/evas_bidi_utils.h"
 
 
 /* main */

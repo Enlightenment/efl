@@ -26,7 +26,6 @@
 #endif
 
 #include <Eina.h>
-#include "evas_common.h"
 
 #ifdef USE_FRIBIDI
 # include <fribidi/fribidi.h>
@@ -75,6 +74,7 @@ struct _Evas_BiDi_Paragraph_Props {
 #endif
 };
 
+#include "evas_common.h"
 struct _Evas_BiDi_Props {
    Evas_BiDi_Direction  dir;
 };

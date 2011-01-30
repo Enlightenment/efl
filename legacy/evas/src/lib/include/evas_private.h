@@ -11,7 +11,8 @@
 
 #include "../file/evas_module.h"
 #include "../file/evas_path.h"
-#include "../engines/common/evas_bidi_utils.h"
+#include "../engines/common/language/evas_bidi_utils.h"
+#include "../engines/common/language/evas_script_utils.h"
 
 #ifdef EVAS_MAGIC_DEBUG
 /* complain when peole pass in wrong object types etc. */
