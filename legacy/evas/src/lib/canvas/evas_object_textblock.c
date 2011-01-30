@@ -3525,7 +3525,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
              Eina_List *itr, *itrn;
              Evas_Object_Textblock_Item *it;
              par = c->paragraphs;
-             /* Copy all the items */
+             /* free all the items */
              EINA_LIST_FOREACH_SAFE(par->logical_items, itr, itrn, it)
                {
                   par->logical_items =
@@ -3535,6 +3535,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
              c->paragraphs = (Evas_Object_Textblock_Paragraph *)
                 eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
                       EINA_INLIST_GET(c->paragraphs));
+             _paragraph_clear(obj, par);
              free(par);
           }
      }
