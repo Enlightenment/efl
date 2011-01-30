@@ -34,7 +34,7 @@ evas_common_font_ot_is_enabled(void)
 #ifdef OT_SUPPORT
 /* FIXME: doc. returns #items */
 EAPI int
-evas_common_font_ot_cluster_size_get(Evas_Text_Props *props, size_t char_index, int orig_len)
+evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_index, int orig_len)
 {
    int i;
    int items;
@@ -61,24 +61,24 @@ evas_common_font_ot_cluster_size_get(Evas_Text_Props *props, size_t char_index, 
         if (left_bound < 0)
           {
              items = orig_len -
-                props->ot_data->items[left_bound + 1].source_pos;
+                props->ot_data->items[left_bound + 1].source_cluster;
           }
         else
           {
-             items = props->ot_data->items[left_bound].source_pos -
-                props->ot_data->items[left_bound + 1].source_pos;
+             items = props->ot_data->items[left_bound].source_cluster -
+                props->ot_data->items[left_bound + 1].source_cluster;
           }
      }
    else
      {
         if (right_bound == (int) props->ot_data->len)
           {
-             items = orig_len - props->ot_data->items[left_bound].source_pos;
+             items = orig_len - props->ot_data->items[left_bound].source_cluster;
           }
         else
           {
-             items = props->ot_data->items[right_bound - 1].source_pos -
-                props->ot_data->items[right_bound].source_pos;
+             items = props->ot_data->items[right_bound - 1].source_cluster -
+                props->ot_data->items[right_bound].source_cluster;
           }
      }
    return (items > 0) ? items : 1;
@@ -158,7 +158,7 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    for (i = 0 ; i < props->ot_data->len ; i++)
      {
         props->ot_data->items[i].index = infos[i].codepoint;
-        props->ot_data->items[i].source_pos = infos[i].cluster;
+        props->ot_data->items[i].source_cluster = infos[i].cluster;
         props->ot_data->items[i].x_advance = positions[i].x_advance;
         props->ot_data->items[i].x_offset = positions[i].x_offset;
         props->ot_data->items[i].y_offset = positions[i].y_offset;
