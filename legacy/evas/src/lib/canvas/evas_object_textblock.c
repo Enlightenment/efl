@@ -7093,6 +7093,56 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 
 /**
  * @internal
+ * Updates x and w according to the text direction, position in text and
+ * if it's a special case switch
+ *
+ * @param ti the text item we are working on
+ * @param x the current x (we get) and the x we return
+ * @param w the current w (we get) and the w we return
+ * @param start if this is the first item or not
+ * @param switch_items toogles item switching (rtl cases)
+ */
+static void
+_evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Text_Item *ti,
+      Evas_Coord *x, Evas_Coord *w, Eina_Bool start, Eina_Bool switch_items)
+{
+   Evas_Object_Textblock_Item *it;
+   it = _ITEM(ti);
+
+   if ((start && !switch_items) || (!start && switch_items))
+     {
+#ifdef BIDI_SUPPORT
+        if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
+          {
+             *w = *x + *w;
+             *x = 0;
+          }
+        else
+#endif
+          {
+             *w = it->w - *x;
+          }
+     }
+   else
+     {
+#ifdef BIDI_SUPPORT
+        if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
+          {
+             *x = *x + *w;
+             *w = it->w - *x;
+          }
+        else
+#endif
+          {
+             *w = *x;
+             *x = 0;
+          }
+     }
+
+}
+
+/**
+ * @internal
  * Returns the geometry of the range in line ln. Cur1 is the start cursor,
  * cur2 is the end cursor, NULL means from the start or to the end accordingly.
  * Assumes that ln is valid, and that at least one of cur1 and cur2 is not NULL.
@@ -7112,7 +7162,9 @@ _evas_textblock_cursor_range_in_line_geometry_get(
    Eina_List *rects = NULL;
    Evas_Textblock_Rectangle *tr;
    size_t start, end;
+   Eina_Bool switch_items;
    const Evas_Textblock_Cursor *cur;
+
    cur = (cur1) ? cur1 : cur2;
 
    /* Find the first and last items */
@@ -7130,12 +7182,33 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              if (!it1)
                {
                   it1 = it;
-                  start = (cur1) ? (cur1->pos - it->text_pos) : 0;
                }
              it2 = it;
-             end = (cur2) ? (cur2->pos - it->text_pos) : item_len;
+             end = item_len; /* end stores the last item_len */
           }
      }
+
+   /* If we couldn't find even one item, return */
+   if (!it1) return NULL;
+
+   /* If the first item is logically before or equal the second item
+    * we have to set start and end differently than in the other case */
+   if (it1->text_pos <= it2->text_pos)
+     {
+        start = (cur1) ? (cur1->pos - it1->text_pos) : 0;
+        end = (cur2) ? (cur2->pos - it2->text_pos) : end;
+        switch_items = EINA_FALSE;
+     }
+   else
+     {
+        start = (cur2) ? (cur2->pos - it1->text_pos) : 0;
+        end = (cur1) ? (cur1->pos - it2->text_pos) : end;
+        switch_items = EINA_TRUE;
+     }
+
+   /* IMPORTANT: Don't use cur1/cur2 past this point (because of bidi),
+    * unless you are know what you are doing */
+
    /* Special case when they share the same item. */
    if (it1 == it2)
      {
@@ -7233,17 +7306,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
                }
              else
                {
-#ifdef BIDI_SUPPORT
-                  if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
-                    {
-                       w = x + w;
-                       x = 0;
-                    }
-                  else
-#endif
-                    {
-                       w = it1->w - x;
-                    }
+                  _evas_textblock_range_calc_x_w(ti, &x, &w, EINA_TRUE,
+                        switch_items);
                }
           }
         else
@@ -7294,18 +7358,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
                }
              else
                {
-#ifdef BIDI_SUPPORT
-                  if (evas_bidi_is_rtl_char(&ti->bidi_props, 0))
-                    {
-                       x += w;
-                       w = it2->w - x;
-                    }
-                  else
-#endif
-                    {
-                       w = x;
-                       x = 0;
-                    }
+                  _evas_textblock_range_calc_x_w(ti, &x, &w, EINA_FALSE,
+                        switch_items);
                }
           }
         else
