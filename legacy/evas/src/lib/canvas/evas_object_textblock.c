@@ -2173,7 +2173,7 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
 static void
 _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
-   Evas_Object_Textblock_Item *it, *last_it = NULL;
+   Evas_Object_Textblock_Item *it;
    Eina_Bool no_text = EINA_TRUE;
 
    _layout_line_order(c, c->ln);
@@ -2191,9 +2191,9 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    if (no_text)
      _layout_format_ascent_descent_adjust(c, fmt);
 
-   c->ln->w = 0;
    EINA_INLIST_FOREACH(c->ln->items, it)
      {
+        int endx;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
@@ -2303,11 +2303,9 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                }
           }
 
-        c->ln->w += it->adv;
-        last_it = it;
+        endx = it->x + it->adv;
+        if (endx > c->ln->w) c->ln->w = endx;
      }
-   if (last_it)
-     c->ln->w += last_it->w - last_it->adv;
 
    c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
    c->ln->h = c->maxascent + c->maxdescent;
@@ -3184,7 +3182,7 @@ _layout_visualize_par(Ctxt *c)
         if ((c->w >= 0) &&
               ((it->format->wrap_word) || (it->format->wrap_char) ||
                it->format->wrap_mixed) &&
-              ((c->x + it->w) >
+              ((c->x + it->adv) >
                (c->w - c->o->style_pad.l - c->o->style_pad.r -
                 c->marginl - c->marginr)))
           {
