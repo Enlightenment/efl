@@ -54,7 +54,7 @@ VMAJ=v_maj
 AC_SUBST(VMAJ)
 
 ### Needed information
-EDJE_VERSION="1.0.0"
+EDJE_VERSION=`pkg-config edje --modversion | awk -F . '{printf("%s.0.0", $1);}'`
 
 want_vlc="no"
 case "$host_os" in
