@@ -289,6 +289,7 @@ struct _Evas_Object_Textblock_Paragraph
 {
    EINA_INLIST;
    Evas_Object_Textblock_Line        *lines;
+   Evas_Object_Textblock_Node_Text   *text_node;
 //   int                                x, y, w, h;
    int                                line_no;
 };
@@ -1838,12 +1839,13 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
  * @param c The context to work on - Not NULL.
  */
 static void
-_layout_paragraph_new(Ctxt *c)
+_layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n)
 {
    c->par = calloc(1, sizeof(Evas_Object_Textblock_Paragraph));
    c->paragraphs = (Evas_Object_Textblock_Paragraph *)eina_inlist_append(EINA_INLIST_GET(c->paragraphs), EINA_INLIST_GET(c->par));
    c->x = 0;
    c->ln = NULL;
+   c->par->text_node = n;
    c->par->line_no = -1;
 }
 
@@ -2116,9 +2118,11 @@ _layout_line_reorder(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
  *
  * @param c the context to work on - Not NULL.
  * @param fmt the format to use.
+ * @param add_line true if we should create a line, false otherwise.
  */
 static void
-_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      Eina_Bool add_line)
 {
    Evas_Object_Textblock_Item *it;
    Eina_Bool no_text = EINA_TRUE;
@@ -2149,7 +2153,6 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
              if (ti->format->font.font)
                ti->baseline = c->ENFN->font_max_ascent_get(c->ENDT, ti->format->font.font);
              _layout_format_ascent_descent_adjust(c, ti->format);
-             no_text = EINA_FALSE;
           }
         else
           {
@@ -2219,7 +2222,7 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
         c->par->line_no = c->line_no;
      }
-   c->ln->line_no = c->ln->par->line_no - c->line_no;
+   c->ln->line_no = c->line_no - c->ln->par->line_no;
    c->line_no++;
    c->y += c->maxascent + c->maxdescent;
    if (c->w >= 0)
@@ -2237,7 +2240,8 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
           c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
-   _layout_line_new(c, fmt);
+   if (add_line)
+     _layout_line_new(c, fmt);
 }
 
 /**
@@ -2803,7 +2807,7 @@ skip:
                     }
                }
              new_line = 0;
-             _layout_line_advance(c, fmt);
+             _layout_line_advance(c, fmt, EINA_TRUE);
           }
      }
 
@@ -2973,7 +2977,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                c->o->style_pad.r -
                c->marginl - c->marginr))
           {
-             _layout_line_advance(c, fmt);
+             _layout_line_advance(c, fmt, EINA_TRUE);
              x2 = w;
           }
         fi = _layout_format_item_add(c, n, NULL);
@@ -3013,24 +3017,15 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                }
              else
                {
-                  if (_IS_PARAGRAPH_SEPARATOR(item))
+                  if ((_IS_PARAGRAPH_SEPARATOR(item)) ||
+                        (_IS_LINE_SEPARATOR(item)))
                     {
                        Evas_Object_Textblock_Format_Item *fi;
 
                        fi = _layout_format_item_add(c, n, item);
                        fi->parent.x = c->x;
                        fi->parent.w = fi->parent.adv = 0;
-                       _layout_line_advance(c, fmt);
-
-                    }
-                  else if (_IS_LINE_SEPARATOR(item))
-                    {
-                       Evas_Object_Textblock_Format_Item *fi;
-
-                       fi = _layout_format_item_add(c, n, item);
-                       fi->parent.x = c->x;
-                       fi->parent.w = fi->parent.adv = 0;
-                       _layout_line_advance(c, fmt);
+                       _layout_line_advance(c, fmt, EINA_TRUE);
                     }
                   else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
                     {
@@ -3044,7 +3039,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                               c->o->style_pad.r -
                               c->marginl - c->marginr)))
                          {
-                            _layout_line_advance(c, fmt);
+                            _layout_line_advance(c, fmt, EINA_TRUE);
                             x2 = c->x + fmt->tabstops;
                          }
                        if (c->ln->items)
@@ -3134,10 +3129,10 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         /* If there are no nodes and lines, do the initial creation. */
         if (!c->par && !c->ln)
           {
-             _layout_paragraph_new(c);
+             _layout_paragraph_new(c, NULL);
              _layout_line_new(c, fmt);
              _layout_text_append(c, fmt, NULL, 0, 0, NULL);
-             _layout_line_advance(c, fmt);
+             _layout_line_advance(c, fmt, EINA_TRUE);
           }
      }
 
@@ -3148,7 +3143,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         size_t start;
         int off;
 
-        _layout_paragraph_new(c); /* Each node is a paragraph */
+        _layout_paragraph_new(c, n); /* Each node is a paragraph */
         _layout_line_new(c, fmt);
 
         /* For each text node to thorugh all of it's format nodes
@@ -3190,7 +3185,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    /* Advance the line so it'll calculate the size */
    if ((c->ln) && (c->ln->items) && (fmt))
-     _layout_line_advance(c, fmt);
+     _layout_line_advance(c, fmt, EINA_TRUE);
 
    /* Clean the rest of the format stack */
    while (c->format_stack)
@@ -3345,14 +3340,22 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
 static Evas_Object_Textblock_Line *
 _find_layout_line_num(const Evas_Object *obj, int line)
 {
-   Evas_Object_Textblock_Paragraph *par;
+   Evas_Object_Textblock_Paragraph *par, *prev_par = NULL;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        EINA_INLIST_FOREACH(par->lines, ln)
+        if (prev_par && (prev_par->line_no <= line) && (line < par->line_no))
+          {
+             break;
+          }
+        prev_par = par;
+     }
+   if (prev_par)
+     {
+        EINA_INLIST_FOREACH(prev_par->lines, ln)
           {
              if (ln->par->line_no + ln->line_no == line) return ln;
           }
