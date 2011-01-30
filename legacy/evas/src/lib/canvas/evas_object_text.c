@@ -260,24 +260,10 @@ _evas_object_text_horiz_advance_get(const Evas_Object *obj,
 
 /* FIXME: doc */
 static Evas_Coord
-_evas_object_text_vert_advance_get(const Evas_Object *obj,
+_evas_object_text_vert_advance_get(const Evas_Object *obj __UNUSED__,
       const Evas_Object_Text *o)
 {
-   Evas_Object_Text_Item *it;
-   Evas_Coord adv;
-
-   adv = 0;
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
-     {
-        Evas_Coord tmp;
-        tmp = ENFN->font_v_advance_get(ENDT, o->engine_data, it->text,
-              &it->text_props);
-        if (tmp > adv)
-          {
-             adv = tmp;
-          }
-     }
-   return adv;
+   return o->max_ascent + o->max_descent;
 }
 
 /* FIXME: returns the advance instead of the width just because it's usuallly
