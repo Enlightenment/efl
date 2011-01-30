@@ -48,7 +48,7 @@
  * which is the current index in the text. This macro exposes (inside
  * the loop) the following vars:
  * adv - advancement
- * gl - the current unicode code point
+ * _gl - the current unicode code point
  * bear_x, bear_y, width - info about the bitmap
  * pen_x, pen_y - (also available outside of the loop, but updated here)
  * fg - the font glyph.
@@ -84,9 +84,9 @@
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
-             int gl, kern; \
-             gl = *text; \
-             if (gl == 0) break;
+             int _gl, kern; \
+             _gl = *text; \
+             if (_gl == 0) break;
 /**
  * @def EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START
  * @internal
@@ -95,7 +95,7 @@
  * which is the current index in the text. This macro exposes (inside
  * the loop) the following vars:
  * adv - advancement
- * gl - the current unicode code point
+ * _gl - the current unicode code point
  * bear_x, bear_y, width - info about the bitmap
  * pen_x, pen_y - (also available outside of the loop, but updated here)
  * fg - the font glyph.
@@ -114,9 +114,9 @@
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
-             int gl, kern; \
-             gl = *text; \
-             if (gl == 0) break;
+             int _gl, kern; \
+             _gl = *text; \
+             if (_gl == 0) break;
 
 /*FIXME: doc */
 #define EVAS_FONT_WALK_DEFAULT_X_OFF (kern)
@@ -152,7 +152,7 @@
  * @see EVAS_FONT_WALK_DEFAULT_TEXT_END
  */
 #define EVAS_FONT_WALK_DEFAULT_TEXT_WORK(is_visual) \
-             index = evas_common_font_glyph_search(fn, &fi, gl); \
+             index = evas_common_font_glyph_search(fn, &fi, _gl); \
              LKL(fi->ft_mutex); \
              fg = evas_common_font_int_cache_glyph_get(fi, index); \
              if (!fg) \
@@ -161,7 +161,7 @@
                   continue; \
                } \
              kern = 0; \
-             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl)) \
+             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(_gl)) \
                { \
                   visible = 0; \
                } \

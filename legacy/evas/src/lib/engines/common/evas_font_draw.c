@@ -514,9 +514,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
           {
              int chr_x, chr_y, chr_w;
 
-             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl))
-               continue;
-
              EVAS_FONT_WALK_OT_TEXT_WORK(EINA_TRUE);
 
              if (dc->font_ext.func.gl_new)
@@ -665,9 +662,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         EVAS_FONT_WALK_DEFAULT_TEXT_VISUAL_START()
           {
              int chr_x, chr_y, chr_w;
-
-             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl))
-               continue;
 
              EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_TRUE);
 

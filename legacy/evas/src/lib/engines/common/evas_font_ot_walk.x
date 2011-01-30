@@ -34,8 +34,7 @@
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
-             int gl, kern; \
-             gl = 0; /* FIXME: hack */
+             int kern; \
 /**
  * @def EVAS_FONT_WALK_OT_TEXT_LOGICAL_START
  * @internal
@@ -78,8 +77,7 @@
           { \
              FT_UInt index; \
              RGBA_Font_Glyph *fg; \
-             int gl, kern; \
-             gl = 0; /* FIXME: hack */
+             int kern; \
 
 /*FIXME: doc */
 #define EVAS_FONT_WALK_OT_X_OFF \
@@ -133,7 +131,7 @@
                   continue; \
                } \
              kern = 0; \
-             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl)) \
+             if (EVAS_FONT_CHARACTER_IS_INVISIBLE(text[EVAS_FONT_WALK_OT_POS])) \
                { \
                   visible = 0; \
                } \
