@@ -3019,10 +3019,11 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
 /* -1 means no wrap */
 static int
-_layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti)
+_layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap)
 {
    int wrap = -1, twrap;
+   int orig_wrap;
    Eina_Unicode ch;
    const Eina_Unicode *str = ti->text;
 
@@ -3030,6 +3031,7 @@ _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    /* Avoiding too small textblocks to even contain one char */
    if (wrap == 0)
      GET_NEXT(str, wrap);
+   orig_wrap = wrap;
    /* We need to wrap and found the position that overflows */
    if (wrap > 0)
      {
@@ -3081,17 +3083,24 @@ _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
               * of the word */
              else
                {
-                  wrap = 0;
-                  twrap = _layout_word_end(ti->text, wrap);
-                  wrap = twrap;
-                  if (twrap >= 0)
+                  if (mixed_wrap)
                     {
-                       ch = GET_NEXT(str, wrap);
-                       return (str[wrap]) ? wrap : -1;
+                       return (str[orig_wrap]) ? orig_wrap : -1;
                     }
                   else
                     {
-                       return 0;
+                       wrap = 0;
+                       twrap = _layout_word_end(ti->text, wrap);
+                       wrap = twrap;
+                       if (twrap >= 0)
+                         {
+                            ch = GET_NEXT(str, wrap);
+                            return (str[wrap]) ? wrap : -1;
+                         }
+                       else
+                         {
+                            return 0;
+                         }
                     }
                }
           }
@@ -3122,6 +3131,23 @@ _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           }
      }
    return -1;
+}
+
+/* -1 means no wrap */
+static int
+_layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Text_Item *ti)
+{
+   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE);
+}
+
+/* -1 means no wrap - unused atm but can be used by whoever wants this
+ * I'm leaving it here because of the many requests I got about it... */
+static int __UNUSED__
+_layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Text_Item *ti)
+{
+   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE);
 }
 
 static void
