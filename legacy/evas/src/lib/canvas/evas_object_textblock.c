@@ -317,7 +317,7 @@ struct _Evas_Object_Textblock_Item
 #ifdef BIDI_SUPPORT
    size_t                               visual_pos;
 #endif
-   Evas_Coord                           x, w, h;
+   Evas_Coord                           adv, x, w, h;
    Evas_BiDi_Props                  bidi_props;
 };
 
@@ -1992,7 +1992,7 @@ _layout_line_align_get(Ctxt *c)
  * @param line the line to reorder
  */
 static void
-_layout_line_reorder(Ctxt *c, Evas_Object_Textblock_Line *line)
+_layout_line_reorder(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
 {
    /*FIXME: do it a bit more efficient - not very efficient ATM. */
    Evas_Object_Textblock_Item *it;
@@ -2079,23 +2079,7 @@ _layout_line_reorder(Ctxt *c, Evas_Object_Textblock_Line *line)
         while (it)
           {
              it->x = x;
-             if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-               {
-                  int adv = 0;
-                  Evas_Object_Textblock_Text_Item *ti = ti =_ITEM_TEXT(it);
-                  if (ti->format->font.font)
-                    {
-                       adv = c->ENFN->font_h_advance_get(c->ENDT,
-                             ti->format->font.font, ti->text,
-                             &ti->parent.bidi_props);
-                    }
-
-                  x += adv;
-               }
-             else
-               {
-                  x += it->w;
-               }
+             x += it->adv;
              it = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(it)->next;
           }
      }
@@ -2375,6 +2359,7 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt __U
                      ti->text, &ti->parent.bidi_props, &tw, &th);
              it->w = tw;
              it->h = th;
+             it->adv = adv;
              c->x = it->x + adv;
              return EINA_TRUE;
           }
@@ -2516,6 +2501,7 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         if (fmt->font.font)
           adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
                 ti->text, &ti->parent.bidi_props);
+        ti->parent.adv = adv;
         c->x += adv;
         c->ln->items = (Evas_Object_Textblock_Item *)
            eina_inlist_append(EINA_INLIST_GET(c->ln->items),
@@ -3004,7 +2990,9 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
         fi->vsize = vsize;
         fi->size = size;
         fi->formatme = 1;
-        fi->parent.w = w;
+        fi->parent.w = fi->parent.adv = w; /* For formats items it's usually
+                                              the same, we don't handle the
+                                              special cases yet. */
         fi->parent.h = h;
         fi->ascent = c->maxascent;
         fi->descent = c->maxdescent;
@@ -3040,7 +3028,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
 
                        fi = _layout_format_item_add(c, n, item);
                        fi->parent.x = c->x;
-                       fi->parent.w = 0;
+                       fi->parent.w = fi->parent.adv = 0;
                        _layout_line_advance(c, fmt);
 
                     }
@@ -3050,7 +3038,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
 
                        fi = _layout_format_item_add(c, n, item);
                        fi->parent.x = c->x;
-                       fi->parent.w = 0;
+                       fi->parent.w = fi->parent.adv = 0;
                        _layout_line_advance(c, fmt);
                     }
                   else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
@@ -3077,7 +3065,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                          }
                        fi = _layout_format_item_add(c, n, item);
                        fi->parent.x = c->x;
-                       fi->parent.w = x2 - c->x;
+                       fi->parent.w = fi->parent.adv = x2 - c->x;
                        fi->formatme = 1;
                        c->x = x2;
                     }
@@ -7103,7 +7091,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
         else
 #endif
           {
-             *w = it->w - *x;
+             *w = it->adv - *x;
           }
      }
    else
@@ -7112,7 +7100,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
         if (evas_bidi_is_rtl_char(&it->bidi_props, 0))
           {
              *x = *x + *w;
-             *w = it->w - *x;
+             *w = it->adv - *x;
           }
         else
 #endif
@@ -7306,7 +7294,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
         while (it && (it != it2))
           {
-             max_x = it->x + it->w;
+             max_x = it->x + it->adv;
              it = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(it)->next;
           }
         if (min_x != max_x)
