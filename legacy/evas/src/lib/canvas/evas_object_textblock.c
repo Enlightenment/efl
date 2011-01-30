@@ -3279,7 +3279,7 @@ _relayout(const Evas_Object *obj)
 static void
 _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
 {
-   Evas_Object_Textblock_Paragraph *par;
+   Evas_Object_Textblock_Paragraph *par, *found_par = NULL;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
 
@@ -3287,7 +3287,15 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
    if (!o->formatted.valid) _relayout(obj);
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        EINA_INLIST_FOREACH(par->lines, ln)
+        if (par->text_node == n)
+          {
+             found_par = par;
+             break;
+          }
+     }
+   if (found_par)
+     {
+        EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              Evas_Object_Textblock_Item *it;
              Evas_Object_Textblock_Line *lnn;
@@ -3295,34 +3303,31 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
              lnn = (Evas_Object_Textblock_Line *)(((Eina_Inlist *)ln)->next);
              EINA_INLIST_FOREACH(ln->items, it)
                {
-                  if (it->text_node == n)
+                  /* FIXME: p should be size_t, same goes for pos */
+                  int p = (int) it->text_pos;
+
+                  if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
                     {
-                       /* FIXME: p should be size_t, same goes for pos */
-                       int p = (int) it->text_pos;
+                       Evas_Object_Textblock_Text_Item *ti =
+                          _ITEM_TEXT(it);
 
-                       if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-                         {
-                            Evas_Object_Textblock_Text_Item *ti =
-                               _ITEM_TEXT(it);
+                       p += (int) eina_unicode_strlen(ti->text);
+                    }
+                  else
+                    {
+                       p++;
+                    }
 
-                            p += (int) eina_unicode_strlen(ti->text);
-                         }
-                       else
-                         {
-                            p++;
-                         }
-
-                       if (((pos >= (int) it->text_pos) && (pos < p)))
-                         {
-                            *lnr = ln;
-                            *itr = it;
-                            return;
-                         }
-                       else if (p == pos)
-                         {
-                            *lnr = ln;
-                            *itr = it;
-                         }
+                  if (((pos >= (int) it->text_pos) && (pos < p)))
+                    {
+                       *lnr = ln;
+                       *itr = it;
+                       return;
+                    }
+                  else if (p == pos)
+                    {
+                       *lnr = ln;
+                       *itr = it;
                     }
                }
           }
