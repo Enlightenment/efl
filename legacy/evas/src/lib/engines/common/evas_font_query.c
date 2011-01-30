@@ -182,7 +182,6 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
   evas_common_font_int_use_trim();
 }
-}
 
 /* h & v advance
  * BiDi handling: We receive the shaped string + other props from intl_props,
@@ -384,7 +383,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 end:
 
   evas_common_font_int_use_trim();
-   return ret_val;
+  return ret_val;
 }
 
 /* x y w h for pen at char pos for null it returns the position right after
