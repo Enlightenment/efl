@@ -6777,8 +6777,8 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    if (dir && dir_cur && dir_cur->node)
      {
 #ifdef BIDI_SUPPORT
-        *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, dir_cur->pos,
-                 0)) ?
+        *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                 dir_cur->pos)) ?
            EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
 #else
         *dir = EVAS_BIDI_DIRECTION_LTR;
@@ -7125,7 +7125,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
    if ((start && !switch_items) || (!start && switch_items))
      {
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(it->text_node->bidi_props, 0, 0))
+        if (it->bidi_props.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              *w = *x + *w;
              *x = 0;
@@ -7139,7 +7139,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
    else
      {
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(it->text_node->bidi_props, 0, 0))
+        if (it->bidi_props.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              *x = *x + *w;
              *w = it->adv - *x;
@@ -7265,7 +7265,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
 
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(ti->parent.text_node->bidi_props, 0, 0))
+        if (ti->parent.bidi_props.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              x = x1 + w1;
              w = x2 + w2 - x;
