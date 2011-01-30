@@ -140,6 +140,7 @@ EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props __UNUSED__, int *w, int *h)
 {
    int keep_width = 0;
+   int prev_pen_x = 0;
    int use_kerning;
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
@@ -150,9 +151,11 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
         EVAS_FONT_WALK_TEXT_WORK();
         /* Keep the width because we'll need it for the last char */
         keep_width = width + bear_x;
+        /* Keep the previous pen_x, before it's advanced in TEXT_END */
+        prev_pen_x = pen_x;
      }
    EVAS_FONT_WALK_TEXT_END();
-   if (w) *w = pen_x + keep_width;
+   if (w) *w = prev_pen_x + keep_width;
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
   evas_common_font_int_use_trim();
 }
@@ -167,7 +170,6 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
 EAPI void
 evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *h_adv, int *v_adv)
 {
-   int keep_adv = 0;
    int use_kerning;
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
@@ -176,14 +178,11 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
    EVAS_FONT_WALK_TEXT_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
-        /* Keep the advancement because we want to also do the last
-         * advancement */
-        keep_adv = adv;
      }
    EVAS_FONT_WALK_TEXT_END();
 
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
-   if (h_adv) *h_adv = pen_x + keep_adv;
+   if (h_adv) *h_adv = pen_x;
   evas_common_font_int_use_trim();
 }
 

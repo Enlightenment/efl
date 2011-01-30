@@ -87,7 +87,6 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
 #define EVAS_FONT_WALK_TEXT_INIT() \
         int pen_x = 0, pen_y = 0; \
         int char_index; \
-        int last_adv; \
         FT_UInt prev_index; \
         FT_Face pface = NULL; \
         (void) pen_y; /* Sometimes it won't be used */
@@ -115,7 +114,6 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
         int adv; \
         int visible; \
         prev_index = 0; \
-        last_adv = 0; \
         for (char_index = 0 ; *text ; text++, char_index++) \
           { \
              FT_UInt index; \
@@ -168,17 +166,6 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
  \
              pface = fi->src->ft.face; \
              LKU(fi->ft_mutex); \
-             /* If the current one is not a compositing char, do the */ \
-             /* previous advance and set the current advance as the next */ \
-             /* advance to do. If it's an invisible char (i.e one that shouldn't
-              * be printed anyhow, we want to advance everything as if it's
-              * a visible char. FIXME: use a proper way to detect diacritic
-              * instead. */ \
-             if ((adv > 0) || !visible) \
-               { \
-                  pen_x += last_adv; \
-                  last_adv = adv; \
-               } \
 
 /**
  * @def EVAS_FONT_WALK_TEXT_END
@@ -189,6 +176,10 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
  * @see EVAS_FONT_WALK_TEXT_WORK
  */
 #define EVAS_FONT_WALK_TEXT_END() \
+             if (visible) \
+               { \
+                  pen_x += adv; \
+               } \
              prev_index = index; \
           } \
      } \
