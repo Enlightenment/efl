@@ -65,9 +65,6 @@ case "$host_os" in
       ;;
 esac
 
-AC_SUBST(MODULE_EDJE)
-AC_DEFINE_UNQUOTED(MODULE_EDJE, "$MODULE_EDJE", "Edje module architecture")
-
 requirement_emotion=""
 
 ### Additional options to configure
