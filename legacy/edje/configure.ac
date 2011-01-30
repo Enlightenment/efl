@@ -70,7 +70,7 @@ case "$host_os" in
       have_edje_cc="no"
       ;;
    *)
-      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
+      MODULE_ARCH="$host_os-$host_cpu-v_maj.0.0"
       install_vim="yes"
       have_edje_cc="yes"
       ;;
