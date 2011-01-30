@@ -20,13 +20,13 @@
          if (intl_props && (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) && \
                visible && !is_visual) \
            { \
-              if (!evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
-                kern = 0; \
+              if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
+                pen_x += kern; \
            } \
          else \
            { \
-              if (!evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-                kern = 0; \
+              if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
+                pen_x += kern; \
            } \
       } \
    while (0)
@@ -35,8 +35,8 @@
    do \
       { \
          (void) is_visual; \
-         if (!evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-           kern = 0; \
+         if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
+           pen_x += kern; \
       } \
    while (0)
 #endif
@@ -109,7 +109,7 @@
              if (_gl == 0) break;
 
 /*FIXME: doc */
-#define EVAS_FONT_WALK_DEFAULT_X_OFF (kern)
+#define EVAS_FONT_WALK_DEFAULT_X_OFF (0)
 #define EVAS_FONT_WALK_DEFAULT_Y_OFF (0)
 #define EVAS_FONT_WALK_DEFAULT_X_BEAR (fg->glyph_out->left)
 #define EVAS_FONT_WALK_DEFAULT_Y_BEAR (fg->glyph_out->top)
