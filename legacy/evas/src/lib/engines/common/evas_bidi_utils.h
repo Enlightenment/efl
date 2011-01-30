@@ -39,6 +39,8 @@
  * these types in function declarations. Defining as void should help ensuring that.
  */
 
+/* Evas_BiDi_Direction is defined in evas.h */
+
 #ifdef USE_FRIBIDI
 # define _EVAS_BIDI_TYPEDEF(type) \
    typedef FriBidi ## type EvasBiDi ## type
@@ -108,8 +110,11 @@ evas_bidi_is_rtl_str(const Eina_Unicode *str);
 Eina_Bool
 evas_bidi_is_rtl_char(const Evas_BiDi_Props *bidi_props, EvasBiDiStrIndex index);
 
+int
+evas_bidi_end_of_run_get(const Evas_BiDi_Props *bidi_props, int len);
+
 Eina_Bool
-evas_bidi_props_reorder_line(Eina_Unicode *text, const Evas_BiDi_Props *intl_props, EvasBiDiStrIndex **_v_to_l);
+evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l);
 
 Evas_BiDi_Paragraph_Props *
 evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;

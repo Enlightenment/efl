@@ -505,7 +505,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
    if (visual_text)
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props, NULL);
+        evas_bidi_props_reorder_line(visual_text, intl_props->start,
+              eina_unicode_strlen(visual_text), intl_props->props, NULL);
         text = visual_text;
      }
    else

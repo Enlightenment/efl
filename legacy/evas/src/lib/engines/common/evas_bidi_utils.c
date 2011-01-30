@@ -167,6 +167,11 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr)
       return NULL;
 
 
+   if (!evas_bidi_is_rtl_str(eina_ustr)) /* No need to handle bidi */
+     {
+        len = -1;
+        goto cleanup;
+     }
 
    len = eina_unicode_strlen(eina_ustr);
    /* The size of fribidichar s different than eina_unicode, convert */
@@ -179,13 +184,6 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr)
    else
      {
         ustr = (const FriBidiChar *) eina_ustr;
-     }
-
-
-   if (!evas_bidi_is_rtl_str(eina_ustr)) /* No need to handle bidi */
-     {
-        len = -1;
-        goto cleanup;
      }
 
    bidi_props = evas_bidi_paragraph_props_new();
@@ -260,30 +258,33 @@ evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst)
  * Reorders ustr according to the bidi props.
  *
  * @param ustr the string to reorder. - Null is ok, will just populate the map.
- * @param intl_props the intl properties to rerorder according to.
+ * @param start the start of the line
+ * @param len the length of the line
+ * @param props the paragraph props to reorder according to
  * @param _v_to_l The visual to logical map to populate - if NULL it won't populate it.
  * @return #EINA_FALSE on success, #EINA_TRUE on error.
  */
 Eina_Bool
-evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *intl_props, EvasBiDiStrIndex **_v_to_l)
+evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l)
 {
    EvasBiDiStrIndex *v_to_l = NULL;
-   FriBidiChar *ustr, *base_ustr = NULL;
-   size_t len;
+   FriBidiChar *ustr = NULL, *base_ustr = NULL;
 
-   if (!intl_props->props)
+   if (!props)
      return EINA_FALSE;
 
-   len = eina_unicode_strlen(eina_ustr);
-   /* The size of fribidichar is different than eina_unicode, convert */
-   if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+   if (eina_ustr)
      {
-        base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
-        ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
-     }
-   else
-     {
-        ustr = (FriBidiChar *) eina_ustr;
+        /* The size of fribidichar is different than eina_unicode, convert */
+        if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
+          {
+             base_ustr = ustr = calloc(len + 1, sizeof(FriBidiChar));
+             ustr = _evas_bidi_unicode_to_fribidichar(ustr, eina_ustr);
+          }
+        else
+          {
+             ustr = (FriBidiChar *) eina_ustr;
+          }
      }
 
 
@@ -304,9 +305,9 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *int
    /* Shaping must be done *BEFORE* breaking to lines so there's no choice but
     doing it in textblock. */
    if (!fribidi_reorder_line (FRIBIDI_FLAGS_DEFAULT,
-            intl_props->props->char_types + intl_props->start,
-            len, 0, intl_props->props->direction,
-            intl_props->props->embedding_levels + intl_props->start,
+            props->char_types + start,
+            len, 0, props->direction,
+            props->embedding_levels + start,
             ustr, v_to_l))
      {
         goto error;
@@ -316,7 +317,7 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, const Evas_BiDi_Props *int
    /* The size of fribidichar is different than eina_unicode, convert */
    if (sizeof(Eina_Unicode) != sizeof(FriBidiChar))
      {
-        eina_ustr = _evas_bidi_fribidichar_to_unicode(eina_ustr, base_ustr);
+        _evas_bidi_fribidichar_to_unicode(eina_ustr, base_ustr);
         free(base_ustr);
      }
    return EINA_FALSE;
@@ -327,6 +328,36 @@ error:
    return EINA_TRUE;
 }
 
+
+/**
+ * @internal
+ * Returns the end of the current run of text
+ *
+ * @param bidi_props the properties
+ * @param len the length of the string
+ * @return the position of the end of the run (offset from
+ * bidi_props->props->start), 0 when there is no end (i.e all the text)
+ */
+int
+evas_bidi_end_of_run_get(const Evas_BiDi_Props *bidi_props, int len)
+{
+   EvasBiDiLevel *i;
+   EvasBiDiLevel base;
+
+   if (!bidi_props || !bidi_props->props || (len <= 0))
+     return 0;
+
+   i = bidi_props->props->embedding_levels + bidi_props->start;
+   base = *i;
+   for ( ; (len > 0) && (base == *i) ; len--, i++)
+     ;
+
+   if (len == 0)
+     {
+        return 0;
+     }
+   return i - (bidi_props->props->embedding_levels + bidi_props->start);
+}
 
 /**
  * @internal

@@ -132,6 +132,8 @@
  * @subsection textblock_layout The layout system
  * @todo write @ref textblock_layout
  */
+#include <stdlib.h>
+
 #include "evas_common.h"
 #include "evas_private.h"
 
@@ -286,6 +288,9 @@ struct _Evas_Object_Textblock_Item
    int                              x, w, h;
    int                              inset, baseline;
    size_t                           source_pos;
+#ifdef BIDI_SUPPORT
+   size_t                           visual_pos;
+#endif
    Evas_BiDi_Props                  bidi_props;
 };
 
@@ -294,6 +299,8 @@ struct _Evas_Object_Textblock_Format_Item
    EINA_INLIST;
    const char                          *item;
    Evas_Object_Textblock_Node_Format   *source_node;
+   Evas_Object_Textblock_Node_Text     *text_node;
+   size_t                               text_pos;
    int                                  x, w, h, y, ascent, descent;
    unsigned char                        vsize : 2;
    unsigned char                        size : 2;
@@ -558,7 +565,9 @@ _nodes_clear(const Evas_Object *obj)
 	Evas_Object_Textblock_Node_Text *n;
 
 	n = o->text_nodes;
-        _evas_textblock_node_text_remove(o, n);
+        o->text_nodes = _NODE_TEXT(eina_inlist_remove(
+                 EINA_INLIST_GET(o->text_nodes), EINA_INLIST_GET(n)));
+        _evas_textblock_node_text_free(n);
      }
    while (o->format_nodes)
      {
@@ -1923,12 +1932,14 @@ static inline double
 _layout_line_align_get(Ctxt *c)
 {
 #ifdef BIDI_SUPPORT
-   if (c->align_auto && c->ln && c->ln->items)
+   if (c->align_auto && c->ln)
      {
-        if (c->ln->items->source_node &&
-
+        if ((c->ln->items && c->ln->items->source_node &&
               EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
-                 c->ln->items->source_node->bidi_props))
+                 c->ln->items->source_node->bidi_props)) ||
+              (c->ln->format_items && c->ln->format_items->text_node &&
+              EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
+                 c->ln->format_items->text_node->bidi_props)))
           {
              /* Align right*/
              return 1.0;
@@ -1943,6 +1954,177 @@ _layout_line_align_get(Ctxt *c)
    return c->align;
 }
 
+#ifdef BIDI_SUPPORT
+/**
+ * @internal
+ * Reorder the items in a line.
+ *
+ * @param line the line to reorder
+ */
+static void
+_layout_line_reorder(Ctxt *c, Evas_Object_Textblock_Line *line)
+{
+   /*FIXME: do it a bit more efficient - not very efficient ATM. */
+   Evas_Object_Textblock_Item *it;
+   Evas_Object_Textblock_Format_Item *fi;
+   Evas_BiDi_Paragraph_Props *props;
+   EvasBiDiStrIndex *v_to_l = NULL;
+   size_t start, end;
+   size_t len;
+
+   if (line->items && line->items->source_node &&
+         line->items->source_node->bidi_props)
+     {
+        props = line->items->source_node->bidi_props;
+        start = end = line->items->source_pos;
+     }
+   else if (line->format_items && line->format_items->text_node &&
+         line->format_items->text_node->bidi_props)
+     {
+        props = line->format_items->text_node->bidi_props;
+        start = end = line->format_items->text_pos;
+     }
+   else
+     {
+        return;
+     }
+
+   /* Find the first and last positions in the line */
+
+   EINA_INLIST_FOREACH(line->items, it)
+     {
+        if (it->source_pos < start)
+          {
+             start = it->source_pos;
+          }
+        else
+          {
+             int tlen;
+             tlen = eina_unicode_strlen(it->text);
+             if (it->source_pos + tlen > end)
+               {
+                  end = it->source_pos + tlen;
+               }
+          }
+     }
+   EINA_INLIST_FOREACH(line->format_items, fi)
+     {
+        if (fi->text_pos < start)
+          {
+             start = fi->text_pos;
+          }
+        else
+          {
+             if (fi->text_pos + 1 > end)
+               {
+                  end = fi->text_pos + 1;
+               }
+          }
+     }
+
+   len = end - start;
+   evas_bidi_props_reorder_line(NULL, start, len, props, &v_to_l);
+
+   /* Update visual pos */
+     {
+        Evas_Object_Textblock_Item *i;
+        i = line->items;
+        while (i)
+          {
+             i->visual_pos = evas_bidi_position_logical_to_visual(
+                           v_to_l, len, i->source_pos - start);
+             i = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(i)->next;
+          }
+     }
+
+   /*FIXME: not very efficient, sort the items arrays. */
+     {
+        Evas_Object_Textblock_Item *i, *j, *min;
+        i = line->items;
+        while (i)
+          {
+             min = i;
+             EINA_INLIST_FOREACH(i, j)
+               {
+                  if (j->visual_pos < min->visual_pos)
+                    {
+                       min = j;
+                    }
+               }
+             if (min != i)
+               {
+                  line->items = (Evas_Object_Textblock_Item *) eina_inlist_remove(EINA_INLIST_GET(line->items), EINA_INLIST_GET(min));
+                  line->items = (Evas_Object_Textblock_Item *) eina_inlist_prepend_relative(EINA_INLIST_GET(line->items), EINA_INLIST_GET(min), EINA_INLIST_GET(i));
+               }
+
+             i = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(min)->next;
+          }
+     }
+     {
+        Evas_Object_Textblock_Format_Item *i, *j, *min;
+        i = line->format_items;
+        while (i)
+          {
+             min = i;
+             EINA_INLIST_FOREACH(i, j)
+               {
+                  if (evas_bidi_position_logical_to_visual(
+                           v_to_l, len, j->text_pos - start) <
+                        evas_bidi_position_logical_to_visual(
+                           v_to_l, len, min->text_pos - start))
+                    {
+                       min = j;
+                    }
+               }
+             if (min != i)
+               {
+                  line->format_items = (Evas_Object_Textblock_Format_Item *)
+                     eina_inlist_remove(EINA_INLIST_GET(line->format_items),
+                           EINA_INLIST_GET(min));
+                  line->format_items = (Evas_Object_Textblock_Format_Item *)
+                     eina_inlist_prepend_relative(EINA_INLIST_GET(line->format_items), EINA_INLIST_GET(min), EINA_INLIST_GET(i));
+               }
+
+             i = (Evas_Object_Textblock_Format_Item *) EINA_INLIST_GET(min)->next;
+          }
+     }
+
+   /* Recalculate the positions according to the new order. */
+     {
+        Evas_Object_Textblock_Format_Item *fi = line->format_items;
+        Evas_Object_Textblock_Item *it = line->items;
+        Evas_Coord x = 0;
+
+        while (it || fi)
+          {
+             if (it && (!fi || ((int) it->visual_pos <
+                   evas_bidi_position_logical_to_visual(v_to_l, len,
+                      fi->text_pos - start))))
+               {
+                  int adv = 0;
+                  it->x = x;
+                  if (it->format->font.font)
+                    adv = c->ENFN->font_h_advance_get(c->ENDT,
+                          it->format->font.font, it->text, &it->bidi_props);
+
+                  x += adv;
+                  it = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(it)->next;
+               }
+             else if (fi)
+               {
+                  fi->x = x;
+                  x += fi->w;
+                  fi = (Evas_Object_Textblock_Format_Item *)
+                     EINA_INLIST_GET(fi)->next;
+               }
+          }
+     }
+
+   /* Fix the order in each line correctly */
+   if (v_to_l) free(v_to_l);
+}
+#endif
+
 /**
  * @internal
  * Create a new line and append it to the lines in the context.
@@ -1955,6 +2137,10 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
    Evas_Object_Textblock_Format_Item *fi;
+
+#ifdef BIDI_SUPPORT
+   _layout_line_reorder(c, c->ln);
+#endif
 
    c->maxascent = c->maxdescent = 0;
    if (!c->ln->items)
@@ -2078,7 +2264,8 @@ _layout_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, const Ei
  * @param c the context to work on - Not NULL.
  * @param fmt the format to use. - Not NULL.
  * @param it the item to check - Not null.
- * @return -1 on error, cutoff index on success.
+ * @return -1 if there is no cutoff (either because there is really none,
+ * or because of an error), cutoff index on success.
  */
 static int
 _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
@@ -2275,6 +2462,74 @@ _layout_word_next(Eina_Unicode *str, int p)
 
 /**
  * @internal
+ * Adds the item to the list, updates the item's properties (e.g, x,w,h)
+ * and splits the items to text runs, i.e splits each item to rtl/ltr runs of
+ * text.
+ *
+ * @param c the context
+ * @param fmt the format of the item.
+ * @param it the item itself.
+ */
+static void
+_layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      Evas_Object_Textblock_Item *it)
+{
+   int tw, th, adv, inset;
+
+#ifdef BIDI_SUPPORT
+   int cutoff, len;
+
+
+   len = eina_unicode_strlen(it->text);
+   do
+     {
+        Evas_Object_Textblock_Item *new_it;
+        cutoff = evas_bidi_end_of_run_get(&it->bidi_props, len);
+        if (cutoff > 0)
+          {
+             new_it = _layout_item_new(c, fmt, it->text + cutoff);
+             _layout_item_text_cutoff(c, it, cutoff);
+          }
+#endif
+
+        tw = th = 0;
+        if (fmt->font.font)
+          c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text,
+                &it->bidi_props, &tw, &th);
+        it->w = tw;
+        it->h = th;
+        inset = 0;
+        if (fmt->font.font)
+          inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
+                it->text);
+        it->inset = inset;
+        it->x = c->x;
+        adv = 0;
+        if (fmt->font.font)
+          adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
+                it->text, &it->bidi_props);
+        c->x += adv;
+        c->ln->items = (Evas_Object_Textblock_Item *)
+           eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+                 EINA_INLIST_GET(it));
+
+#ifdef BIDI_SUPPORT
+        if (cutoff > 0)
+          {
+             new_it->source_node = it->source_node;
+             new_it->source_pos = it->source_pos + cutoff;
+             new_it->bidi_props.start = new_it->source_pos;
+             new_it->bidi_props.props = new_it->source_node->bidi_props;
+             it = new_it;
+             len -= cutoff;
+          }
+     }
+   while (cutoff > 0);
+#endif
+}
+
+/**
+ * @internal
  * Appends the text from node n starting at start ending at off to the layout.
  * It uses the fmt for the formatting.
  *
@@ -2288,7 +2543,7 @@ _layout_word_next(Eina_Unicode *str, int p)
 static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node_Text *n, int start, int off, const char *repch)
 {
-   int adv, inset, tw, th, new_line, empty_item;
+   int tw, th, new_line, empty_item;
    int wrap, twrap, ch, index, white_stripped;
    Eina_Unicode *alloc_str = NULL;
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
@@ -2353,9 +2608,9 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              str = alloc_str;
           }
      }
+
 skip:
    tbase = str;
-   //   printf("add: wrap: %i|%i, width: %i '%s'\n", fmt->wrap_word, fmt->wrap_char, c->w, str);
    new_line = 0;
    empty_item = 0;
 
@@ -2380,6 +2635,8 @@ skip:
         tw = th = 0;
         if (fmt->font.font)
           c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &it->bidi_props, &tw, &th);
+        /* Check if we need to wrap, i.e the text is bigger than the width
+         * Only calculate wrapping if the width of the object is > 0 */
         if ((c->w >= 0) &&
               ((fmt->wrap_word) || (fmt->wrap_char)) &&
               ((c->x + tw) >
@@ -2387,8 +2644,10 @@ skip:
                 c->marginl - c->marginr)))
           {
              wrap = _layout_text_cutoff_get(c, fmt, it);
+             /* Avoiding too small textblocks to even contain one char */
              if (wrap == 0)
                GET_NEXT(str, wrap);
+             /* We need to wrap and found the position that overflows */
              if (wrap > 0)
                {
                   if (fmt->wrap_word)
@@ -2397,6 +2656,8 @@ skip:
                        ch = GET_NEXT(str, index);
                        if (!_is_white(ch))
                          wrap = _layout_word_start(str, wrap);
+                       /* If we found where to cut the text at, i.e the start
+                        * of the word we were pointing at */
                        if (wrap > 0)
                          {
                             twrap = wrap;
@@ -2406,10 +2667,6 @@ skip:
                               {
                                  _layout_item_text_cutoff(c, it, wrap);
                                  twrap = wrap;
-                                 /*we don't want to move next, that's why it's
-                                  * commented out.
-                                  * ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
-                                  */
                                  str += twrap;
                               }
                             /* intersects a word */
@@ -2427,6 +2684,7 @@ skip:
                                  else
                                    {
                                       empty_item = 1;
+                                      /* FIXME: use proper cleaning here */
                                       if (it->text) free(it->text);
                                       _format_unref_free(c->obj, it->format);
                                       free(it);
@@ -2446,17 +2704,25 @@ skip:
                                    }
                               }
                          }
+                       /* If we weren't able to find the start of the word we
+                        * are currently pointing at, or we were able but it's
+                        * the first word */
                        else
                          {
                             /* wrap now is the index of the word START */
                             index = wrap;
                             ch = GET_NEXT(str, index);
 
+                            /* If there are already items in this line, we
+                             * should just try creating a new line for it */
                             if (c->ln->items)
                               {
                                  white_stripped = _layout_item_abort(c, fmt, it);
                                  empty_item = 1;
                               }
+                            /* If there were no items in this line, try to do
+                             * our best wrapping possible since it's the middle
+                             * of the word */
                             else
                               {
                                  wrap = 0;
@@ -2479,10 +2745,16 @@ skip:
                        _layout_item_text_cutoff(c, it, wrap);
                        str += wrap;
                     }
+                  /* Marked we wrapped and we want to start a new line */
                   new_line = 1;
                }
+             /* We need to wrap, but for some reason we failed obatining the
+              * overflow position. */
              else
                {
+                  /*FIXME: sanitize this error handling - should probably
+                   * never get here anyway unless something really bad
+                   * has happend */
                   /* wrap now is the index of the word START */
                   if (wrap < 0) wrap = 0;
                   index = wrap;
@@ -2513,31 +2785,21 @@ skip:
                        new_line = 1;
                     }
                }
-             if (!empty_item)
-               {
-                  tw = th = 0;
-                  if (fmt->font.font)
-                    c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &it->bidi_props, &tw, &th);
-               }
           }
         else
           str = NULL;
-        if (empty_item) empty_item = 0;
+
+        /* Set item properties */
+        if (empty_item)
+          {
+             empty_item = 0;
+          }
         else
           {
-             it->w = tw;
-             it->h = th;
-             inset = 0;
-             if (fmt->font.font)
-               inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font, it->text);
-             it->inset = inset;
-             it->x = c->x;
-             adv = 0;
-             if (fmt->font.font)
-               adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font, it->text, &it->bidi_props);
-             c->x += adv;
-             c->ln->items = (Evas_Object_Textblock_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->items), EINA_INLIST_GET(it));
+             _layout_text_add_and_split_item(c, fmt, it);
           }
+
+
         if (new_line)
           {
              if (str)
@@ -2553,6 +2815,7 @@ skip:
              _layout_line_advance(c, fmt);
           }
      }
+
    if (alloc_str) free(alloc_str);
 }
 
@@ -2576,6 +2839,12 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
    fi->source_node = n;
    c->ln->format_items = (Evas_Object_Textblock_Format_Item *)eina_inlist_append(EINA_INLIST_GET(c->ln->format_items),
          EINA_INLIST_GET(fi));
+   if (n)
+     {
+        fi->text_node = n->text_node;
+        /* FIXME: make it more efficient */
+        fi->text_pos = _evas_textblock_node_format_pos_get(n);
+     }
    return fi;
 }
 
@@ -2926,6 +3195,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
           }
         _layout_text_append(c, fmt, n, start, -1, o->repch);
      }
+
    /* Advance the line so it'll calculate the size */
    if ((c->ln) && (c->ln->items || c->ln->format_items) && (fmt))
      _layout_line_advance(c, fmt);
@@ -4724,12 +4994,38 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
      }
 
    if (!ln) return;
+   if (ln->items)
+     {
+        Evas_Object_Textblock_Item *i;
+        it = ln->items;
+        EINA_INLIST_FOREACH(ln->items, i)
+          {
+             if (it->source_pos > i->source_pos)
+               {
+                  it = i;
+               }
+          }
+     }
+   else
+     it = NULL;
 
-   it = (Evas_Object_Textblock_Item *)ln->items;
-   fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
+   if (ln->format_items)
+     {
+        Evas_Object_Textblock_Format_Item *i;
+        fi = ln->format_items;
+        EINA_INLIST_FOREACH(ln->format_items, i)
+          {
+             if (fi->text_pos > i->text_pos)
+               {
+                  fi = i;
+               }
+          }
+     }
+   else
+     fi = NULL;
    if ((it) && (fi))
      {
-	if (it->x < fi->x) fi = NULL;
+	if (it->source_pos < fi->text_pos) fi = NULL;
 	else it = NULL;
      }
    if (it)
@@ -4795,17 +5091,37 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 
    if (!ln) return;
    if (ln->items)
-     it = (Evas_Object_Textblock_Item *)((EINA_INLIST_GET(ln->items))->last);
+     {
+        Evas_Object_Textblock_Item *i;
+        it = ln->items;
+        EINA_INLIST_FOREACH(ln->items, i)
+          {
+             if (it->source_pos < i->source_pos)
+               {
+                  it = i;
+               }
+          }
+     }
    else
      it = NULL;
 
    if (ln->format_items)
-     fi = (Evas_Object_Textblock_Format_Item *)((EINA_INLIST_GET(ln->format_items))->last);
+     {
+        Evas_Object_Textblock_Format_Item *i;
+        fi = ln->format_items;
+        EINA_INLIST_FOREACH(ln->format_items, i)
+          {
+             if (fi->text_pos < i->text_pos)
+               {
+                  fi = i;
+               }
+          }
+     }
    else
      fi = NULL;
    if ((it) && (fi))
      {
-	if ((it->x + it->w) > (fi->x + fi->w)) fi = NULL;
+	if (it->source_pos > fi->text_pos) fi = NULL;
 	else it = NULL;
      }
    if (it)
@@ -5960,7 +6276,6 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
 
         /* Advance all the cursors after our cursor */
         _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
-
         if (_IS_PARAGRAPH_SEPARATOR(format))
           {
              _evas_textblock_cursor_break_paragraph(cur, n);
@@ -5973,7 +6288,6 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
                    eina_ustrbuf_string_get(cur->node->unicode));
 #endif
           }
-
      }
 
     _evas_textblock_changed(o, cur->obj);
@@ -6625,6 +6939,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      {
         _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
      }
+
    if (ln && it)
      {
         pos = cur->pos - it->source_pos;
@@ -6638,11 +6953,29 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
                    pos,
                    &x, &y, &w, &h);
           }
-	x += ln->x + it->x;
-	if (x < ln->x)
-	  {
-	     x = ln->x;
-	  }
+
+        /* Handle bidi adjustments */
+        if (_evas_textblock_cursor_is_at_the_end(cur))
+          {
+#ifdef BIDI_SUPPORT
+             if (EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(it->bidi_props.props))
+               {
+                  x = ln->x;
+               }
+             else
+#endif
+               {
+                  x = ln->x + ln->w;
+               }
+          }
+        else
+          {
+             x += ln->x + it->x - it->inset;
+          }
+        if (x < ln->x)
+          {
+             x = ln->x;
+          }
 	y = ln->y;
 	h = ln->h;
      }
@@ -6658,7 +6991,17 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
                }
              else
                {
-                  x = ln->x + fi->x + fi->w;
+#ifdef BIDI_SUPPORT
+                  if (EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
+                           fi->text_node->bidi_props))
+                    {
+                       x = ln->x;
+                    }
+                  else
+#endif
+                    {
+                       x = ln->x + ln->w;
+                    }
                   y = ln->y;
                }
              w = 0;
@@ -7890,7 +8233,7 @@ _evas_object_textblock_rehint(Evas_Object *obj)
  */
 
 
-#if 0
+#if 1
 /* Good for debugging */
 void
 pfnode(Evas_Object_Textblock_Node_Format *n)
@@ -7898,7 +8241,7 @@ pfnode(Evas_Object_Textblock_Node_Format *n)
    printf("Format Node: %p\n", n);
    printf("next = %p, prev = %p, last = %p\n", EINA_INLIST_GET(n)->next, EINA_INLIST_GET(n)->prev, EINA_INLIST_GET(n)->last);
    printf("text_node = %p, offset = %u, visible = %d\n", n->text_node, n->offset, n->visible);
-   printf("%s\n", eina_strbuf_string_get(n->format));
+   printf("'%s'\n", eina_strbuf_string_get(n->format));
 }
 
 void
@@ -7907,7 +8250,7 @@ ptnode(Evas_Object_Textblock_Node_Text *n)
    printf("Text Node: %p\n", n);
    printf("next = %p, prev = %p, last = %p\n", EINA_INLIST_GET(n)->next, EINA_INLIST_GET(n)->prev, EINA_INLIST_GET(n)->last);
    printf("format_node = %p\n", n->format_node);
-   printf("%ls\n", eina_ustrbuf_string_get(n->unicode));
+   printf("'%ls'\n", eina_ustrbuf_string_get(n->unicode));
 }
 #endif
 

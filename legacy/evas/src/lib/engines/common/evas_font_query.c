@@ -95,7 +95,6 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
         int gl, kern;
 
 	gl = *text;
-	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	LKL(fi->ft_mutex);
         if (fi->src->current_size != fi->size)
@@ -349,7 +348,9 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
    visual_text = eina_unicode_strdup(in_text);
    if (visual_text)
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props, &visual_to_logical);
+        evas_bidi_props_reorder_line(visual_text, intl_props->start,
+              eina_unicode_strlen(visual_text), intl_props->props,
+              &visual_to_logical);
         text = visual_text;
      }
    else
@@ -518,7 +519,9 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 
    if (visual_text)
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props, &visual_to_logical);
+        evas_bidi_props_reorder_line(visual_text, intl_props->start,
+              eina_unicode_strlen(visual_text), intl_props->props,
+              &visual_to_logical);
         text = visual_text;
      }
    else
