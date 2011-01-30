@@ -6853,6 +6853,10 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (!o->formatted.valid) _relayout(cur->obj);
 
    previous_format = _find_layout_item_match(cur, &ln, &it);
+   if (!it)
+     {
+        return -1;
+     }
    if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
         ti = _ITEM_TEXT(it);
