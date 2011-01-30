@@ -174,6 +174,10 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
    _INIT_FI_AND_KERNING();
+#ifndef BIDI_SUPPORT
+   /* Suppress warnings */
+   (void) intl_props;
+#endif
 
    EVAS_FONT_WALK_TEXT_START()
      {
@@ -407,6 +411,10 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
    _INIT_FI_AND_KERNING();
+#ifndef BIDI_SUPPORT
+   /* Suppress warnings */
+   (void) intl_props;
+#endif
 
 #ifdef BIDI_SUPPORT
    int len = 0;
