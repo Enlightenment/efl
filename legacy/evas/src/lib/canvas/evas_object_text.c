@@ -278,7 +278,8 @@ _evas_object_text_vert_advance_get(const Evas_Object *obj,
    return adv;
 }
 
-/* FIXME: doc */
+/* FIXME: returns the advance instead of the width just because it's usuallly
+ * bigger, major hack, should fix. */
 static void
 _evas_object_text_string_size_get(const Evas_Object *obj,
       const Evas_Object_Text *o,
@@ -291,7 +292,7 @@ _evas_object_text_string_size_get(const Evas_Object *obj,
    w = h = 0;
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
-        w += it->w;
+        w += it->adv;
         if (it->h > h)
           {
              h = it->h;
