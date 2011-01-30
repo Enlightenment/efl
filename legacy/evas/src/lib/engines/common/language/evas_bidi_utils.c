@@ -305,13 +305,21 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, 
 
    /* Shaping must be done *BEFORE* breaking to lines so there's no choice but
     doing it in textblock. */
-   if (!fribidi_reorder_line (FRIBIDI_FLAGS_DEFAULT,
-            props->char_types + start,
-            len, 0, props->direction,
-            props->embedding_levels + start,
-            ustr, v_to_l))
      {
-        goto error;
+        /* FIXME: Hack around fribidi altering embedding_levels */
+        EvasBiDiLevel *emb_lvl;
+        emb_lvl = malloc(len * sizeof(EvasBiDiLevel));
+        memcpy(emb_lvl, props->embedding_levels, len * sizeof(EvasBiDiLevel));
+        if (!fribidi_reorder_line (FRIBIDI_FLAGS_DEFAULT,
+                 props->char_types + start,
+                 len, 0, props->direction,
+                 emb_lvl,
+                 ustr, v_to_l))
+          {
+             free(emb_lvl);
+             goto error;
+          }
+        free(emb_lvl);
      }
 
 

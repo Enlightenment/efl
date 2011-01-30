@@ -2230,21 +2230,22 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    c->y += c->maxascent + c->maxdescent;
    if (c->w >= 0)
      {
-        c->ln->x = c->par->x + c->marginl + c->o->style_pad.l +
+        c->ln->x = c->marginl + c->o->style_pad.l +
            ((c->w - c->ln->w -
              c->o->style_pad.l - c->o->style_pad.r -
              c->marginl - c->marginr) * _layout_line_align_get(c));
-        if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
-          c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
+        if ((c->par->x + c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
+          c->wmax = c->par->x + c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
    else
      {
-        c->ln->x = c->par->x + c->marginl + c->o->style_pad.l;
-        if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
-          c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
+        c->ln->x = c->marginl + c->o->style_pad.l;
+        if ((c->par->x + c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
+          c->wmax = c->par->x + c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
      }
-   c->par->h += c->ln->h;
-   c->par->w = c->w;
+   c->par->h = c->ln->y + c->ln->h;
+   if (c->ln->w > c->par->w)
+     c->par->w = c->ln->w;
    if (add_line)
      _layout_line_new(c, fmt);
 }
@@ -2281,18 +2282,19 @@ _layout_text_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, con
  * or because of an error), cutoff index on success.
  */
 static int
-_layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Text_Item *ti)
+_layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
+      const Evas_Object_Textblock_Text_Item *ti)
 {
    if (fmt->font.font)
-     return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font, ti->text,
-           &ti->parent.text_props,
-           c->w -
-           c->o->style_pad.l -
-           c->o->style_pad.r -
-           c->marginl -
-           c->marginr -
-           c->x,
-           0);
+     {
+        Evas_Coord x;
+        x = c->w - c->o->style_pad.l - c->o->style_pad.r - c->marginl -
+           c->marginr - c->x;
+        if (x < 0)
+          x = 0;
+        return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font, ti->text,
+              &ti->parent.text_props, x, 0);
+     }
    return -1;
 }
 

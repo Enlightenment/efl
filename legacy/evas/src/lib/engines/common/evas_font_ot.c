@@ -154,13 +154,6 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    props->ot_data->refcount = 1;
 
    fi = fn->fonts->data;
-   if (fi->src->current_size != fi->size)
-     {
-        FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-        FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
    /* Load the font needed for this script */
      {
         /* Skip common chars */
@@ -172,6 +165,14 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
           ;
         if (!*tmp && (tmp > text)) tmp--;
         evas_common_font_glyph_search(fn, &fi, *tmp);
+     }
+   evas_common_font_int_reload(fi);
+   if (fi->src->current_size != fi->size)
+     {
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
      }
 
    if (len < 0)
@@ -211,6 +212,7 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
      }
 
    hb_buffer_destroy(buffer);
+   evas_common_font_int_use_trim();
 
    return EINA_FALSE;
 }
