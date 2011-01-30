@@ -2128,15 +2128,15 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
 
 /**
  * @internal
- * Create a new line and append it to the lines in the context.
+ * Order the items in the line, update it's properties and update it's
+ * corresponding paragraph.
  *
  * @param c the context to work on - Not NULL.
  * @param fmt the format to use.
  * @param add_line true if we should create a line, false otherwise.
  */
 static void
-_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      Eina_Bool add_line)
+_layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
    Eina_Bool no_text = EINA_TRUE;
@@ -2255,8 +2255,21 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    c->par->h = c->ln->y + c->ln->h;
    if (c->ln->w > c->par->w)
      c->par->w = c->ln->w;
-   if (add_line)
-     _layout_line_new(c, fmt);
+}
+
+/**
+ * @internal
+ * Create a new line and append it to the lines in the context.
+ *
+ * @param c the context to work on - Not NULL.
+ * @param fmt the format to use.
+ * @param add_line true if we should create a line, false otherwise.
+ */
+static void
+_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   _layout_line_finalize(c, fmt);
+   _layout_line_new(c, fmt);
 }
 
 /**
@@ -3042,7 +3055,7 @@ _layout_visualize_par(Ctxt *c)
                     {
                        /*FIXME: I should handle tabs correctly, i.e like
                         * spaces */
-                       _layout_line_advance(c, it->format, EINA_TRUE);
+                       _layout_line_advance(c, it->format);
                     }
                }
              else
@@ -3063,7 +3076,7 @@ _layout_visualize_par(Ctxt *c)
                             /* Should wrap before the item */
                             adv_line = 0;
                             redo_item = 1;
-                            _layout_line_advance(c, it->format, EINA_TRUE);
+                            _layout_line_advance(c, it->format);
                          }
                     }
                   else if (it->format->wrap_char)
@@ -3103,13 +3116,13 @@ _layout_visualize_par(Ctxt *c)
                {
                   it = _ITEM(eina_list_data_get(i));
                }
-             _layout_line_advance(c, it->format, EINA_TRUE);
+             _layout_line_advance(c, it->format);
           }
      }
    if (c->ln->items)
      {
-        /* Here it is the last format used */
-        _layout_line_advance(c, it->format, EINA_FALSE);
+        /* Here 'it' is the last format used */
+        _layout_line_finalize(c, it->format);
      }
 }
 
@@ -3177,7 +3190,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout_paragraph_new(c, NULL);
         _layout_line_new(c, fmt);
         _layout_text_append(c, fmt, NULL, 0, 0, NULL);
-        _layout_line_advance(c, fmt, EINA_FALSE);
+        _layout_line_finalize(c, fmt);
      }
 
    /* Go through all the text nodes to create the logical layout */
