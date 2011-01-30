@@ -1323,6 +1323,8 @@ efreet_menu_handle_name(Efreet_Menu_Internal *parent, Efreet_Xml *xml)
         INF("efreet_menu_handle_name() setting second name into menu");
         return 0;
     }
+    /* ignore the name if it is empty */
+    if (!xml->text) return 1;
 
     /* ignore the name if it contains a / */
     if (strchr(xml->text, '/')) return 1;
