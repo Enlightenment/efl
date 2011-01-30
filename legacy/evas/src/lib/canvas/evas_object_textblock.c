@@ -2477,12 +2477,15 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    do
      {
         Evas_Object_Textblock_Text_Item *new_ti;
-        cutoff = evas_bidi_end_of_run_get(ti->parent.text_node->bidi_props,
-              ti->parent.text_pos, len);
-        if (cutoff > 0)
+        if (ti->parent.text_node)
           {
-             new_ti = _layout_text_item_new(c, fmt, ti->text + cutoff);
-             _layout_item_text_cutoff(c, ti, cutoff);
+             cutoff = evas_bidi_end_of_run_get(ti->parent.text_node->bidi_props,
+                   ti->parent.text_pos, len);
+             if (cutoff > 0)
+               {
+                  new_ti = _layout_text_item_new(c, fmt, ti->text + cutoff);
+                  _layout_item_text_cutoff(c, ti, cutoff);
+               }
           }
 #endif
 
