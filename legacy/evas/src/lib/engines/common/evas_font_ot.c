@@ -162,7 +162,17 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
         fi->src->current_size = fi->size;
      }
    /* Load the font needed for this script */
-   evas_common_font_glyph_search(fn, &fi, *text);
+     {
+        /* Skip common chars */
+        const Eina_Unicode *tmp;
+        for (tmp = text ;
+              *tmp &&
+              evas_common_language_char_script_get(*tmp) == EVAS_SCRIPT_COMMON ;
+              tmp++)
+          ;
+        if (!*tmp && (tmp > text)) tmp--;
+        evas_common_font_glyph_search(fn, &fi, *tmp);
+     }
 
    if (len < 0)
      {

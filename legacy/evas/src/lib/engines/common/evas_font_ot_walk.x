@@ -24,7 +24,18 @@
         prev_index = 0; \
         /* Load the glyph according to the first letter of the script, preety
          * bad, but will have to do */ \
-        evas_common_font_glyph_search(fn, &fi, *text); \
+          { \
+             /* Skip common chars */ \
+             const Eina_Unicode *tmp; \
+             for (tmp = text ; \
+                   *tmp && \
+                   evas_common_language_char_script_get(*tmp) == \
+                   EVAS_SCRIPT_COMMON ; \
+                   tmp++) \
+               ; \
+             if (!*tmp && (tmp > text)) tmp--; \
+             evas_common_font_glyph_search(fn, &fi, *tmp); \
+          } \
         for (char_index = 0 ; char_index < intl_props->ot_data->len ; char_index++) \
           { \
              FT_UInt index; \
@@ -47,9 +58,19 @@
      { \
         int _char_index_d, _i; \
         int visible; \
-        /* Load the glyph according to the first letter of the script, preety
-         * bad, but will have to do */ \
-        evas_common_font_glyph_search(fn, &fi, *text); \
+        /* Load the font needed for this script */ \
+          { \
+             /* Skip common chars */ \
+             const Eina_Unicode *tmp; \
+             for (tmp = text ; \
+                   *tmp && \
+                   evas_common_language_char_script_get(*tmp) == \
+                   EVAS_SCRIPT_COMMON ; \
+                   tmp++) \
+               ; \
+             if (!*tmp && (tmp > text)) tmp--; \
+             evas_common_font_glyph_search(fn, &fi, *tmp); \
+          } \
         prev_index = 0; \
         _i = intl_props->ot_data->len; \
         if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) \
