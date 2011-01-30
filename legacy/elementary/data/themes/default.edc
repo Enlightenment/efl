@@ -12502,7 +12502,7 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
@@ -12696,7 +12696,7 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
@@ -16375,7 +16375,7 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
@@ -17485,7 +17485,7 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
@@ -18036,7 +18036,7 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
@@ -18653,7 +18653,7 @@ collections {
                   size: 10;
                   min: 1 1;
 //                  min: 0 1;
-                  align: 0.0 0.5;
+                  align: -1.0 0.5;
                   text_class: "list_item";
                }
             }
