@@ -301,6 +301,7 @@ struct _Evas_Object_Textblock_Line
    EINA_INLIST;
    Evas_Object_Textblock_Item        *items;
    Evas_Object_Textblock_Paragraph   *par;
+   Evas_Object_Textblock_Text_Item   *ellip_ti;
    int                                x, y, w, h;
    int                                baseline;
    int                                line_no;
@@ -379,6 +380,7 @@ struct _Evas_Object_Textblock_Format
    int                  linegap;
    double               linerelgap;
    double               linefill;
+   double               ellipsis;
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
@@ -681,9 +683,10 @@ _item_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln, Evas_Object_T
  * @param ln the layout line to be freed, must not be NULL.
  */
 static void
-_line_free(const Evas_Object *obj __UNUSED__, Evas_Object_Textblock_Line *ln)
+_line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 {
-   /* Items are freed from the logical list */
+   /* Items are freed from the logical list, except for the ellip item */
+   if (ln->ellip_ti) _item_free(obj, NULL, _ITEM(ln->ellip_ti));
    if (ln) free(ln);
 }
 
@@ -1126,6 +1129,7 @@ static const char *linegapstr = NULL;
 static const char *linerelgapstr = NULL;
 static const char *itemstr = NULL;
 static const char *linefillstr = NULL;
+static const char *ellipsisstr = NULL;
 
 /**
  * @internal
@@ -1165,6 +1169,7 @@ _format_command_init(void)
         linerelgapstr = eina_stringshare_add("linerelgap");
         itemstr = eina_stringshare_add("item");
         linefillstr = eina_stringshare_add("linefill");
+        ellipsisstr = eina_stringshare_add("ellipsis");
      }
    format_refcount++;
 }
@@ -1207,6 +1212,7 @@ _format_command_shutdown(void)
    eina_stringshare_del(linerelgapstr);
    eina_stringshare_del(itemstr);
    eina_stringshare_del(linefillstr);
+   eina_stringshare_del(ellipsisstr);
 }
 
 /**
@@ -1551,6 +1557,13 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
                }
           }
      }
+   else if (cmd == ellipsisstr)
+     {
+        char *endptr = NULL;
+        fmt->ellipsis = strtod(tmp_param, &endptr);
+        if ((fmt->ellipsis < 0.0) || (fmt->ellipsis > 1.0))
+          fmt->ellipsis = -1.0;
+     }
 
    if (new_font)
      {
@@ -1769,7 +1782,7 @@ struct _Ctxt
    Eina_Bool align_auto;
 };
 
-static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Text_Item *ti, const Evas_Object_Textblock_Item *rel);
+static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, const Evas_Object_Textblock_Item *rel);
 /**
  * @internal
  * Adjust the ascent/descent of the format and context.
@@ -2060,7 +2073,7 @@ _layout_line_align_get(Ctxt *c)
 
 /**
  * @internal
- * Reorder the items in a line.
+ * Reorder the items in visual order
  *
  * @param line the line to reorder
  */
@@ -2460,7 +2473,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    evas_common_text_props_split(&ti->parent.text_props,
          &new_ti->parent.text_props, cut2);
-   _layout_text_add_logical_item(c, ti->parent.format, new_ti, _ITEM(ti));
+   _layout_text_add_logical_item(c, new_ti, _ITEM(ti));
 
    /* FIXME: Will break with kerning and a bunch of other stuff, should
     * maybe adjust the last adv of the prev and the offset of the cur
@@ -2480,7 +2493,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
         evas_common_text_props_split(&ti->parent.text_props,
               &white_ti->parent.text_props, cut);
-        _layout_text_add_logical_item(c, ti->parent.format, white_ti, _ITEM(ti));
+        _layout_text_add_logical_item(c, white_ti, _ITEM(ti));
         ti->parent.w -= white_ti->parent.w;
         ti->parent.adv -= white_ti->parent.adv;
      }
@@ -2621,19 +2634,16 @@ _layout_word_next(Eina_Unicode *str, int p)
 
 /**
  * @internal
- * Adds the item to the list, updates the item's properties (e.g, x,w,h)
+ * Calculates an item's size.
  *
  * @param c the context
- * @param fmt the format of the item.
  * @param it the item itself.
- * @param rel item ti will be appened after, NULL = last.
  */
 static void
-_layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      Evas_Object_Textblock_Text_Item *ti,
-      const Evas_Object_Textblock_Item *rel)
+_text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 {
    int tw, th, adv, inset;
+   const Evas_Object_Textblock_Format *fmt = ti->parent.format;
 
    tw = th = 0;
    if (fmt->font.font)
@@ -2652,6 +2662,22 @@ _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            ti->text, &ti->parent.text_props);
    ti->parent.adv = adv;
    ti->parent.x = 0;
+}
+
+/**
+ * @internal
+ * Adds the item to the list, updates the item's properties (e.g, x,w,h)
+ *
+ * @param c the context
+ * @param it the item itself.
+ * @param rel item ti will be appened after, NULL = last.
+ */
+static void
+_layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
+      const Evas_Object_Textblock_Item *rel)
+{
+   _text_item_update_sizes(c, ti);
+
    c->par->logical_items = eina_list_append_relative(
          c->par->logical_items, ti, rel);
 }
@@ -2773,7 +2799,7 @@ skip:
           }
         str += tmp_len;
 
-        _layout_text_add_logical_item(c, fmt, ti, NULL);
+        _layout_text_add_logical_item(c, ti, NULL);
 
         /* Break if we reached the end. */
         if (!*str)
@@ -3156,13 +3182,51 @@ _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE);
 }
 
-static void
+static Evas_Object_Textblock_Text_Item *
+_layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
+{
+   Evas_Object_Textblock_Text_Item *ellip_ti;
+   const Eina_Unicode _ellip_str[4] = { '.', '.', '.', '\0' };
+   /* We assume that the format stack has at least one time,
+    * the only reason it may not have, is more </> than <>, other
+    * than that, we're safe. The last item is the base format. */
+   ellip_ti = _layout_text_item_new(c,
+         eina_list_data_get(eina_list_last(c->format_stack)),
+         _ellip_str);
+   ellip_ti->parent.text_node = cur_it->text_node;
+   ellip_ti->parent.text_pos = cur_it->text_pos;
+   if (cur_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+     {
+        ellip_ti->parent.text_pos += eina_unicode_strlen(ellip_ti->text);
+     }
+   else
+     {
+        ellip_ti->parent.text_pos++;
+     }
+
+   evas_common_text_props_bidi_set(&ellip_ti->parent.text_props,
+         ellip_ti->parent.text_node->bidi_props, ellip_ti->parent.text_pos);
+   evas_common_text_props_script_set (&ellip_ti->parent.text_props,
+         ellip_ti->text);
+   c->ENFN->font_shape(c->ENDT, ellip_ti->parent.format->font.font,
+         ellip_ti->text, &ellip_ti->parent.text_props,
+         ellip_ti->parent.text_node->bidi_props,
+         ellip_ti->parent.text_pos, eina_unicode_strlen(_ellip_str));
+   _text_item_update_sizes(c, ellip_ti);
+
+   return ellip_ti;
+}
+
+/* 0 means go ahead, 1 means break without an error, 2 means
+ * break with an error, should probably clean this a bit (enum/macro)
+ * FIXME ^ */
+static int
 _layout_visualize_par(Ctxt *c)
 {
    Evas_Object_Textblock_Item *it;
    Eina_List *i;
    if (!c->par->logical_items)
-     return;
+     return 2;
 
    it = _ITEM(eina_list_data_get(c->par->logical_items));
    _layout_line_new(c, it->format);
@@ -3182,47 +3246,122 @@ _layout_visualize_par(Ctxt *c)
 
         /* Check if we need to wrap, i.e the text is bigger than the width */
         if ((c->w >= 0) &&
-              ((it->format->wrap_word) || (it->format->wrap_char) ||
-               it->format->wrap_mixed) &&
               ((c->x + it->adv) >
                (c->w - c->o->style_pad.l - c->o->style_pad.r -
                 c->marginl - c->marginr)))
           {
-             if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+             /* Handle ellipsis here */
+             if ((it->format->ellipsis == 1.0) && (c->h >= 0) &&
+                   (2 * it->h + c->y >
+                    c->h - c->o->style_pad.t - c->o->style_pad.b))
                {
-                  /* Don't wrap if it's the only item */
-                  if (c->ln->items)
-                    {
-                       /*FIXME: I should handle tabs correctly, i.e like
-                        * spaces */
-                       _layout_line_advance(c, it->format);
-                    }
-               }
-             else
-               {
-                  Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+                  Evas_Object_Textblock_Text_Item *ellip_ti, *last_ti;
+                  Evas_Object_Textblock_Item *last_it;
+                  Evas_Coord save_cx;
                   int wrap;
+                  ellip_ti = _layout_ellipsis_item_new(c, it);
+                  last_it = it;
+                  last_ti = _ITEM_TEXT(it);
 
-                  adv_line = 1;
-                  if (it->format->wrap_word)
-                    wrap = _layout_get_wordwrap(c, it->format, ti);
-                  else if (it->format->wrap_char)
-                    wrap = _layout_get_charwrap(c, it->format, ti);
-                  else if (it->format->wrap_mixed)
-                    wrap = _layout_get_mixedwrap(c, it->format, ti);
-                  else
-                    wrap = -1;
-
-                  if (wrap > 0)
+                  save_cx = c->x;
+                  c->w -= ellip_ti->parent.w;
+                  do
                     {
-                       _layout_item_text_split_strip_white(c, ti, wrap);
+                       wrap = _layout_text_cutoff_get(c, last_it->format,
+                             last_ti);
+                       if ((wrap > 0) && last_ti->text[wrap])
+                         {
+                            _layout_item_text_split_strip_white(c, last_ti,
+                                  wrap);
+                         }
+                       else if (wrap == 0)
+                         {
+                            if (!c->ln->items)
+                              break;
+                            /* We haven't added it yet at this point */
+                            if (_ITEM(last_ti) != it)
+                              {
+                                 last_it =
+                                    _ITEM(EINA_INLIST_GET(last_it)->prev);
+                                 c->ln->items = _ITEM(eina_inlist_remove(
+                                          EINA_INLIST_GET(c->ln->items),
+                                          EINA_INLIST_GET(_ITEM(last_ti))));
+                              }
+                            else
+                              {
+                                 last_it =
+                                    _ITEM(EINA_INLIST_GET(c->ln->items)->last);
+                              }
+                            last_ti = _ITEM_TEXT(last_it);
+                            if (last_it)
+                              {
+                                 c->x -= last_it->adv;
+                              }
+                         }
                     }
-                  else if (wrap == 0)
+                  while (last_it && (wrap == 0));
+                  c->x = save_cx;
+                  c->w += ellip_ti->parent.w;
+                  /* If we should add this item, do it */
+                  if (last_it == it)
                     {
-                       /* Should wrap before the item */
-                       adv_line = 0;
-                       redo_item = 1;
-                       _layout_line_advance(c, it->format);
+                       c->ln->items = (Evas_Object_Textblock_Item *)
+                          eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+                                EINA_INLIST_GET(it));
+                       if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+                         {
+                            Evas_Object_Textblock_Format_Item *fi;
+                            fi = _ITEM_FORMAT(it);
+                            fi->y = c->y;
+                         }
+                    }
+                  c->ln->items = (Evas_Object_Textblock_Item *)
+                     eina_inlist_append(EINA_INLIST_GET(c->ln->items),
+                           EINA_INLIST_GET(_ITEM(ellip_ti)));
+                  c->ln->ellip_ti = ellip_ti;
+                  _layout_line_finalize(c, ellip_ti->parent.format);
+
+                  return 1;
+               }
+             else if (it->format->wrap_word || it->format->wrap_char ||
+                it->format->wrap_mixed)
+               {
+                  if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+                    {
+                       /* Don't wrap if it's the only item */
+                       if (c->ln->items)
+                         {
+                            /*FIXME: I should handle tabs correctly, i.e like
+                             * spaces */
+                            _layout_line_advance(c, it->format);
+                         }
+                    }
+                  else
+                    {
+                       Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+                       int wrap;
+
+                       adv_line = 1;
+                       if (it->format->wrap_word)
+                         wrap = _layout_get_wordwrap(c, it->format, ti);
+                       else if (it->format->wrap_char)
+                         wrap = _layout_get_charwrap(c, it->format, ti);
+                       else if (it->format->wrap_mixed)
+                         wrap = _layout_get_mixedwrap(c, it->format, ti);
+                       else
+                         wrap = -1;
+
+                       if (wrap > 0)
+                         {
+                            _layout_item_text_split_strip_white(c, ti, wrap);
+                         }
+                       else if (wrap == 0)
+                         {
+                            /* Should wrap before the item */
+                            adv_line = 0;
+                            redo_item = 1;
+                            _layout_line_advance(c, it->format);
+                         }
                     }
                }
           }
@@ -3261,6 +3400,7 @@ _layout_visualize_par(Ctxt *c)
         /* Here 'it' is the last format used */
         _layout_line_finalize(c, it->format);
      }
+   return 0;
 }
 
 /**
@@ -3478,7 +3618,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         {
            c->par = par;
            _layout_update_par(c);
-           _layout_visualize_par(c);
+           /* Break if we should stop here. */
+           if (_layout_visualize_par(c))
+             break;
         }
    }
    /* End of visual layout creation */
