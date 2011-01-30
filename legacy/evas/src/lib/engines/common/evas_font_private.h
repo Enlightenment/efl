@@ -39,7 +39,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
 
 /* 6th bit is on is the same as frac part >= 0.5 */
 # define EVAS_FONT_ROUND_26_6_TO_INT(x) \
-   ((0x20 & x) ? ((x >> 6) + 1) : (x >> 6))
+   (((x + 0x20) & -0x40) >> 6)
 
 # define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
       ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
