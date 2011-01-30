@@ -504,8 +504,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
      }
 
 
-   /*FIXME: Handle it sanely */
-   _pen_y = y;
    im = dst->image.data;
 #ifdef OT_SUPPORT
    if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
@@ -524,7 +522,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                }
 
              chr_x = x + EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_OFF + EVAS_FONT_WALK_OT_X_BEAR;
-             chr_y = (_pen_y) + EVAS_FONT_WALK_OT_Y_OFF + EVAS_FONT_WALK_OT_Y_BEAR;
+             chr_y = y + EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_OT_Y_OFF + EVAS_FONT_WALK_OT_Y_BEAR;
              chr_w = EVAS_FONT_WALK_OT_WIDTH;
 
              if (chr_x < (ext_x + ext_w))
@@ -673,7 +671,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                }
 
              chr_x = x + EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_OFF + EVAS_FONT_WALK_DEFAULT_X_BEAR;
-             chr_y = (_pen_y) + EVAS_FONT_WALK_DEFAULT_Y_OFF + EVAS_FONT_WALK_DEFAULT_Y_BEAR;
+             chr_y = y + EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_DEFAULT_Y_OFF + EVAS_FONT_WALK_DEFAULT_Y_BEAR;
              chr_w = EVAS_FONT_WALK_DEFAULT_WIDTH;
 
              if (chr_x < (ext_x + ext_w))

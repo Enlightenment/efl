@@ -74,5 +74,6 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
         (void) _pen_y; /* Sometimes it won't be used */
 
 # define EVAS_FONT_WALK_PEN_X (EVAS_FONT_ROUND_26_6_TO_INT(_pen_x))
+# define EVAS_FONT_WALK_PEN_Y (EVAS_FONT_ROUND_26_6_TO_INT(_pen_y))
 
 #endif /* !_EVAS_FONT_PRIVATE_H */
