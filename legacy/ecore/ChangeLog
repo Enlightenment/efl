@@ -1,12 +1,12 @@
-2011-01-29  Rui Miguel Silva Seabra
-
-        make https not fail (that's curl's responsibility, really).
-
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
 
 2011-01-29  Mike McCormack
 
-        Convert fd list to inlist to save allocs
+        * Convert fd list to inlist to save allocs
+
+2011-01-29  Rui Miguel Silva Seabra
+
+        * make https not fail (that's curl's responsibility, really).
 
