@@ -65,6 +65,7 @@ static int evas_object_text_is_opaque(Evas_Object *obj);
 static int evas_object_text_was_opaque(Evas_Object *obj);
 
 static void evas_object_text_scale_update(Evas_Object *obj);
+static void _evas_object_text_recalc(Evas_Object *obj);
 
 static const Evas_Object_Func object_func =
 {
@@ -101,6 +102,7 @@ static const Evas_Object_Func object_func =
  */
 
 EVAS_MEMPOOL(_mp_obj);
+
 /* FIXME: doc */
 static int
 _evas_object_text_char_coords_get(const Evas_Object *obj,
@@ -376,7 +378,6 @@ EAPI void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    Evas_Object_Text *o;
-   int l = 0, r = 0, t = 0, b = 0;
    int is, was = 0, pass = 0;
    int same_font = 0;
 
@@ -427,40 +428,21 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    o->cur.size = size;
    o->engine_data = evas_font_load(obj->layer->evas, o->cur.font, o->cur.source,
 				   (int)(((double)o->cur.size) * obj->cur.scale));
-   evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-   if ((o->engine_data) && (o->items))
+   if (o->engine_data)
      {
-	int w, h;
-
-        _evas_object_text_string_size_get(obj, o, &w, &h);
-	o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
-	o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
-	o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->engine_data);
-	o->max_descent = ENFN->font_max_descent_get(ENDT, o->engine_data);
-	obj->cur.geometry.w = w + l + r;
-	obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
-////        obj->cur.cache.geometry.validity = 0;
+        o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
+        o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
+        o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->engine_data);
+        o->max_descent = ENFN->font_max_descent_get(ENDT, o->engine_data);
      }
    else
      {
-	if (o->engine_data)
-	  {
-	     o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
-	     o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
-	     o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->engine_data);
-	     o->max_descent = ENFN->font_max_descent_get(ENDT, o->engine_data);
-	  }
-	else
-	  {
-	     o->ascent = 0;
-	     o->descent = 0;
-	     o->max_ascent = 0;
-	     o->max_descent = 0;
-	  }
-	obj->cur.geometry.w = 0;
-	obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
-////	obj->cur.cache.geometry.validity = 0;
+        o->ascent = 0;
+        o->descent = 0;
+        o->max_ascent = 0;
+        o->max_descent = 0;
      }
+   _evas_object_text_recalc(obj);
    o->changed = 1;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
@@ -711,27 +693,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
         free(text);
         text = NULL;
      }
-
-   if ((o->engine_data) && (o->items))
-     {
-	int w, h;
-	int l = 0, r = 0, t = 0, b = 0;
-
-        _evas_object_text_string_size_get(obj, o, &w, &h);
-	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-	obj->cur.geometry.w = w + l + r;
-        obj->cur.geometry.h = h + t + b;
-////        obj->cur.cache.geometry.validity = 0;
-     }
-   else
-     {
-	int t = 0, b = 0;
-
-	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
-	obj->cur.geometry.w = 0;
-        obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
-////        obj->cur.cache.geometry.validity = 0;
-     }
+   _evas_object_text_recalc(obj);
    o->changed = 1;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
@@ -2277,26 +2239,7 @@ _evas_object_text_rehint(Evas_Object *obj)
 				       obj->layer->evas->pointer.x,
 				       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
-   if ((o->engine_data) && (o->items))
-     {
-	int w, h;
-	int l = 0, r = 0, t = 0, b = 0;
-
-        _evas_object_text_string_size_get(obj, o, &w, &h);
-	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-	obj->cur.geometry.w = w + l + r;
-	obj->cur.geometry.h = h + t + b;
-////	obj->cur.cache.geometry.validity = 0;
-     }
-   else
-     {
-	int t = 0, b = 0;
-
-	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
-	obj->cur.geometry.w = 0;
-	obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
-////	obj->cur.cache.geometry.validity = 0;
-     }
+   _evas_object_text_recalc(obj);
    o->changed = 1;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
@@ -2312,3 +2255,44 @@ _evas_object_text_rehint(Evas_Object *obj)
 				NULL);
    evas_object_inform_call_resize(obj);
 }
+
+static void
+_evas_object_text_recalc(Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+   Eina_Unicode *text = NULL;
+   o = (Evas_Object_Text *)(obj->object_data);
+
+   if (o->items) _evas_object_text_items_clear(o);
+   if (o->cur.utf8_text)
+     text = evas_common_encoding_utf8_to_unicode(o->cur.utf8_text,
+           NULL);
+
+   if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
+
+   _evas_object_text_layout(obj, o, text);
+
+   if (text) free(text);
+
+   if ((o->engine_data) && (o->items))
+     {
+	int w, h;
+	int l = 0, r = 0, t = 0, b = 0;
+
+        _evas_object_text_string_size_get(obj, o, &w, &h);
+	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
+	obj->cur.geometry.w = w + l + r;
+        obj->cur.geometry.h = h + t + b;
+////        obj->cur.cache.geometry.validity = 0;
+     }
+   else
+     {
+	int t = 0, b = 0;
+
+	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
+	obj->cur.geometry.w = 0;
+        obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
+////        obj->cur.cache.geometry.validity = 0;
+     }
+}
+
