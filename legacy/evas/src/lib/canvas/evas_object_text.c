@@ -530,12 +530,15 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
    evas_common_text_props_script_set(&it->text_props, it->text);
    ENFN->font_shape(ENDT, o->engine_data, it->text, &it->text_props,
          o->bidi_par_props, it->text_pos, len);
-   ENFN->font_string_size_get(ENDT,
-         o->engine_data,
-         it->text, &it->text_props,
-         &it->w, &it->h);
-   it->adv = ENFN->font_h_advance_get(ENDT, o->engine_data, it->text,
-         &it->text_props);
+   if (o->engine_data)
+     {
+        ENFN->font_string_size_get(ENDT,
+              o->engine_data,
+              it->text, &it->text_props,
+              &it->w, &it->h);
+        it->adv = ENFN->font_h_advance_get(ENDT, o->engine_data, it->text,
+              &it->text_props);
+     }
    o->items = (Evas_Object_Text_Item *)
       eina_inlist_append(EINA_INLIST_GET(o->items), EINA_INLIST_GET(it));
    return it;
