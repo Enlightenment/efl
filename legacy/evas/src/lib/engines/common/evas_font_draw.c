@@ -494,22 +494,22 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 
 #ifdef BIDI_SUPPORT
-   Eina_Unicode *visual_text;
+   Eina_Unicode *visual_text = NULL;
 
-   visual_text = eina_unicode_strdup(in_text);
-
-   if (visual_text)
+   if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL))
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props->start,
-              eina_unicode_strlen(visual_text), intl_props->props, NULL);
-        text = visual_text;
+        visual_text = eina_unicode_strdup(in_text);
+
+        if (visual_text)
+          {
+             evas_bidi_reverse_string(visual_text);
+             text = visual_text;
+          }
      }
-   else
+   if (!visual_text)
      {
         text = in_text;
      }
-#else
-   intl_props = NULL;
 #endif
    if (fi->src->current_size != fi->size)
      {

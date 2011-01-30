@@ -318,7 +318,7 @@ struct _Evas_Object_Textblock_Item
    size_t                               visual_pos;
 #endif
    Evas_Coord                           adv, x, w, h;
-   Evas_BiDi_Props                  bidi_props;
+   Evas_BiDi_Props                      bidi_props;
 };
 
 struct _Evas_Object_Textblock_Text_Item
@@ -2513,8 +2513,10 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
           {
              new_ti->parent.text_node = ti->parent.text_node;
              new_ti->parent.text_pos = ti->parent.text_pos + cutoff;
-             new_ti->parent.bidi_props.start = new_ti->parent.text_pos;
-             new_ti->parent.bidi_props.props = new_ti->parent.text_node->bidi_props;
+             new_ti->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
+                   new_ti->parent.text_node->bidi_props,
+                   new_ti->parent.text_pos,
+                   0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
              ti = new_ti;
              len -= cutoff;
           }
@@ -2626,8 +2628,10 @@ skip:
         ti->parent.text_pos = start + str - tbase;
         if (ti->parent.text_node)
           {
-             ti->parent.bidi_props.start = ti->parent.text_pos;
-             ti->parent.bidi_props.props = ti->parent.text_node->bidi_props;
+             ti->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
+                   ti->parent.text_node->bidi_props,
+                   ti->parent.text_pos,
+                   0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
           }
         tw = th = 0;
         if (fmt->font.font)
@@ -2844,8 +2848,10 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
         fi->parent.text_node = n->text_node;
         /* FIXME: make it more efficient */
         fi->parent.text_pos = _evas_textblock_node_format_pos_get(n);
-        fi->parent.bidi_props.props = n->text_node->bidi_props;
-        fi->parent.bidi_props.start = fi->parent.text_pos;
+        fi->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
+                 fi->parent.text_node->bidi_props,
+                 fi->parent.text_pos,
+                 0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
      }
    return fi;
 }

@@ -51,8 +51,7 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
          /* i.e prev index is now the index and the other way */ \
          /* around. There is a slight exception when there are */ \
          /* compositing chars involved.*/ \
-         if (intl_props && \
-               evas_bidi_is_rtl_char(intl_props->props, intl_props->start, char_index) && \
+         if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL) && \
                adv > 0) \
            { \
               if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \

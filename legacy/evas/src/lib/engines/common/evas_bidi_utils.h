@@ -76,8 +76,7 @@ struct _Evas_BiDi_Paragraph_Props {
 };
 
 struct _Evas_BiDi_Props {
-   Evas_BiDi_Paragraph_Props *props;
-   size_t                     start;
+   Evas_BiDi_Direction  dir;
 };
 
 
@@ -104,6 +103,9 @@ struct _Evas_BiDi_Props {
 EvasBiDiStrIndex
 evas_bidi_position_logical_to_visual(EvasBiDiStrIndex *v_to_l, int len, EvasBiDiStrIndex position);
 
+EvasBiDiStrIndex
+evas_bidi_position_reverse(const Evas_BiDi_Props *props, int len, EvasBiDiStrIndex position);
+
 Eina_Bool
 evas_bidi_is_rtl_str(const Eina_Unicode *str);
 
@@ -115,6 +117,9 @@ evas_bidi_end_of_run_get(const Evas_BiDi_Paragraph_Props *bidi_props, size_t sta
 
 Eina_Bool
 evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l);
+
+void
+evas_bidi_reverse_string(Eina_Unicode *str) EINA_ARG_NONNULL(1);
 
 Evas_BiDi_Paragraph_Props *
 evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;

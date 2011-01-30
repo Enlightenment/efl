@@ -26,7 +26,8 @@ struct _Evas_Object_Text
       } outline, shadow, glow, glow2;
 
       unsigned char               style;
-      Evas_BiDi_Props             intl_props;
+      Evas_BiDi_Paragraph_Props  *bidi_par_props;
+      Evas_BiDi_Props             bidi_props;
    } cur, prev;
 
    float                ascent, descent;
@@ -235,7 +236,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
         o->ascent =  ENFN->font_ascent_get(ENDT, o->engine_data);
 	ENFN->font_string_size_get(ENDT,
 				   o->engine_data,
-				   o->cur.text, &o->cur.intl_props,
+				   o->cur.text, &o->cur.bidi_props,
 				   &w, &h);
 	o->ascent = ENFN->font_ascent_get(ENDT, o->engine_data);
 	o->descent = ENFN->font_descent_get(ENDT, o->engine_data);
@@ -351,11 +352,11 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
 				       obj->layer->evas->pointer.x,
 				       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
-   /*Update intl_props*/
+   /*Update bidi_props*/
 #ifdef BIDI_SUPPORT
-   evas_bidi_paragraph_props_unref(o->cur.intl_props.props);
-   o->cur.intl_props.props = evas_bidi_paragraph_props_get(text);
-   evas_bidi_shape_string(text, o->cur.intl_props.props, 0, len);
+   evas_bidi_paragraph_props_unref(o->cur.bidi_par_props);
+   o->cur.bidi_par_props = evas_bidi_paragraph_props_get(text);
+   evas_bidi_shape_string(text, o->cur.bidi_par_props, 0, len);
 #endif
    if (o->cur.text) eina_ustringshare_del(o->cur.text);
    if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
@@ -380,7 +381,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
 
 	ENFN->font_string_size_get(ENDT,
 				   o->engine_data,
-				   o->cur.text, &o->cur.intl_props,
+				   o->cur.text, &o->cur.bidi_props,
 				   &w, &h);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 	obj->cur.geometry.w = w + l + r;
@@ -560,7 +561,8 @@ evas_object_text_horiz_advance_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    if (!o->engine_data) return 0;
    if (!o->cur.text) return 0;
-   return ENFN->font_h_advance_get(ENDT, o->engine_data, o->cur.text, &o->cur.intl_props);
+   return ENFN->font_h_advance_get(ENDT, o->engine_data, o->cur.text,
+         &o->cur.bidi_props);
 }
 
 /**
@@ -583,7 +585,8 @@ evas_object_text_vert_advance_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    if (!o->engine_data) return 0;
    if (!o->cur.text) return o->ascent + o->descent;
-   return ENFN->font_v_advance_get(ENDT, o->engine_data, o->cur.text, &o->cur.intl_props);
+   return ENFN->font_v_advance_get(ENDT, o->engine_data, o->cur.text,
+         &o->cur.bidi_props);
 }
 
 /**
@@ -620,7 +623,8 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    MAGIC_CHECK_END();
    if (!o->engine_data) return EINA_FALSE;
    if (!o->cur.text) return EINA_FALSE;
-   ret = ENFN->font_char_coords_get(ENDT, o->engine_data, o->cur.text, &o->cur.intl_props,
+   ret = ENFN->font_char_coords_get(ENDT, o->engine_data, o->cur.text,
+         &o->cur.bidi_props,
 				    pos, &x, &y, &w, &h);
    evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
    y += o->max_ascent - t;
@@ -672,9 +676,9 @@ evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord
    if (!o->cur.text) return -1;
    return ENFN->font_last_up_to_pos(ENDT,
 				       o->engine_data,
-				       o->cur.text, &o->cur.intl_props,
+				       o->cur.text, &o->cur.bidi_props,
 				       x,
-				       y - o->max_ascent);	
+				       y - o->max_ascent);
 }
 
 /**
@@ -701,7 +705,7 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    if (!o->cur.text) return -1;
    ret = ENFN->font_char_at_coords_get(ENDT,
 				       o->engine_data,
-				       o->cur.text, &o->cur.intl_props,
+				       o->cur.text, &o->cur.bidi_props,
 				       x,
 				       y - o->max_ascent,
 				       &rx, &ry,
@@ -1519,7 +1523,7 @@ evas_object_text_new(void)
    o->magic = MAGIC_OBJ_TEXT;
    o->prev = o->cur;
 #ifdef BIDI_SUPPORT
-   o->cur.intl_props.props = evas_bidi_paragraph_props_new();
+   o->cur.bidi_par_props = evas_bidi_paragraph_props_new();
 #endif
    return o;
 }
@@ -1541,7 +1545,8 @@ evas_object_text_free(Evas_Object *obj)
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->engine_data) evas_font_free(obj->layer->evas, o->engine_data);
 #ifdef BIDI_SUPPORT
-   evas_bidi_props_clean(&o->cur.intl_props);
+   evas_bidi_paragraph_props_unref(o->cur.bidi_par_props);
+   evas_bidi_props_clean(&o->cur.bidi_props);
 #endif
    o->magic = 0;
    EVAS_MEMPOOL_FREE(_mp_obj, o);
@@ -1628,7 +1633,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.h, \
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
-		     o->cur.text, &o->cur.intl_props);
+		     o->cur.text, &o->cur.bidi_props);
 #if 0
 #define DRAW_TEXT(ox, oy) \
    if ((o->engine_data) && (o->cur.text)) \
@@ -1644,7 +1649,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.cache.geometry.h, \
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
-		     o->cur.text, &o->cur.intl_props);
+		     o->cur.text, &o->cur.bidi_props);
 #endif
    /* shadows */
    if (o->cur.style == EVAS_TEXT_STYLE_SHADOW)
@@ -1969,7 +1974,7 @@ _evas_object_text_rehint(Evas_Object *obj)
 
 	ENFN->font_string_size_get(ENDT,
 				   o->engine_data,
-				   o->cur.text, &o->cur.intl_props,
+				   o->cur.text, &o->cur.bidi_props,
 				   &w, &h);
 	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
 	obj->cur.geometry.w = w + l + r;

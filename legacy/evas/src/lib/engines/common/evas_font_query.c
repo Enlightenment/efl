@@ -213,19 +213,20 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
    _INIT_FI_AND_KERNING();
 
 #ifdef BIDI_SUPPORT
-   int len = 0;
-   EvasBiDiStrIndex *visual_to_logical = NULL;
-   Eina_Unicode *visual_text;
+   Eina_Unicode *visual_text = NULL;
+   int len;
 
-   visual_text = eina_unicode_strdup(in_text);
-   if (visual_text)
+   if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL))
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props->start,
-              eina_unicode_strlen(visual_text), intl_props->props,
-              &visual_to_logical);
-        text = visual_text;
+        visual_text = eina_unicode_strdup(in_text);
+
+        if (visual_text)
+          {
+             evas_bidi_reverse_string(visual_text);
+             text = visual_text;
+          }
      }
-   else
+   if (!visual_text)
      {
         text = in_text;
      }
@@ -237,7 +238,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 
 #ifdef BIDI_SUPPORT
    /* Get the position in the visual string because those are the coords we care about */
-   position = evas_bidi_position_logical_to_visual(visual_to_logical, len, pos);
+   position = evas_bidi_position_reverse(intl_props, len, pos);
 #else
    position = pos;
 #endif
@@ -247,7 +248,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(intl_props->props, intl_props->start, 0))
+        if (intl_props->dir == EVAS_BIDI_DIRECTION_RTL)
           {
              if (cx) *cx = 0;
              if (ch) *ch = asc + desc;
@@ -287,7 +288,6 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
 end:
 
 #ifdef BIDI_SUPPORT
-   if (visual_to_logical) free(visual_to_logical);
    if (visual_text) free(visual_text);
 #endif
 
@@ -319,19 +319,20 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
    _INIT_FI_AND_KERNING();
 
 #ifdef BIDI_SUPPORT
-   int len = 0;
-   EvasBiDiStrIndex *visual_to_logical = NULL;
-   Eina_Unicode *visual_text;
+   Eina_Unicode *visual_text = NULL;
+   int len;
 
-   visual_text = eina_unicode_strdup(in_text);
-   if (visual_text)
+   if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL))
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props->start,
-              eina_unicode_strlen(visual_text), intl_props->props,
-              &visual_to_logical);
-        text = visual_text;
+        visual_text = eina_unicode_strdup(in_text);
+
+        if (visual_text)
+          {
+             evas_bidi_reverse_string(visual_text);
+             text = visual_text;
+          }
      }
-   else
+   if (!visual_text)
      {
         text = in_text;
      }
@@ -343,7 +344,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
 
 #ifdef BIDI_SUPPORT
    /* Get the position in the visual string because those are the coords we care about */
-   position = evas_bidi_position_logical_to_visual(visual_to_logical, len, pos);
+   position = evas_bidi_position_reverse(intl_props, len, pos);
 #else
    position = pos;
 #endif
@@ -353,7 +354,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(intl_props->props, 0, 0))
+        if (intl_props->dir == EVAS_BIDI_DIRECTION_RTL)
           {
              if (cpen_x) *cpen_x = 0;
              if (ch) *ch = asc + desc;
@@ -387,7 +388,6 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
 end:
 
 #ifdef BIDI_SUPPORT
-   if (visual_to_logical) free(visual_to_logical);
    if (visual_text) free(visual_text);
 #endif
 
@@ -417,20 +417,20 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 #endif
 
 #ifdef BIDI_SUPPORT
-   int len = 0;
-   EvasBiDiStrIndex *visual_to_logical = NULL;
-   Eina_Unicode *visual_text;
+   Eina_Unicode *visual_text = NULL;
+   int len;
 
-   visual_text = eina_unicode_strdup(in_text);
-
-   if (visual_text)
+   if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL))
      {
-        evas_bidi_props_reorder_line(visual_text, intl_props->start,
-              eina_unicode_strlen(visual_text), intl_props->props,
-              &visual_to_logical);
-        text = visual_text;
+        visual_text = eina_unicode_strdup(in_text);
+
+        if (visual_text)
+          {
+             evas_bidi_reverse_string(visual_text);
+             text = visual_text;
+          }
      }
-   else
+   if (!visual_text)
      {
         text = in_text;
      }
@@ -463,8 +463,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
              /* we found the char position of the wanted char in the
               * visual string, we now need to translate it to the
               * position in the logical string */
-             position = evas_bidi_position_visual_to_logical(visual_to_logical,
-                   position);
+             position = evas_bidi_position_reverse(intl_props, len, position);
 #endif
 	     ret_val = position;
 	     goto end;
@@ -474,7 +473,6 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
 
 end:
 #ifdef BIDI_SUPPORT
-   if (visual_to_logical) free(visual_to_logical);
    if (visual_text) free(visual_text);
 #endif
 

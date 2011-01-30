@@ -251,8 +251,7 @@ cleanup:
 void
 evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst)
 {
-   dst->start = src->start;
-   dst->props = evas_bidi_paragraph_props_ref(src->props);
+   dst->dir = src->dir;
 }
 
 /**
@@ -330,6 +329,18 @@ error:
    return EINA_TRUE;
 }
 
+/**
+ * @internal
+ * Reverses the string according to the props
+ *
+ * @param str the string to reverse.
+ */
+void
+evas_bidi_reverse_string(Eina_Unicode *str)
+{
+   eina_unicode_reverse(str);
+}
+
 
 /**
  * @internal
@@ -388,6 +399,24 @@ evas_bidi_position_logical_to_visual(EvasBiDiStrIndex *v_to_l, int len, EvasBiDi
           }
      }
    return position;
+}
+
+/**
+ * @internal
+ * Returns the reversed pos of the index.
+ *
+ * @param dir the direction of the string
+ * @param len the length of the map.
+ * @param position the position to convert.
+ * @return on success the visual position, on failure the same position.
+ */
+EvasBiDiStrIndex
+evas_bidi_position_reverse(const Evas_BiDi_Props *props, int len, EvasBiDiStrIndex position)
+{
+   if (!props || position >= len)
+      return position;
+
+   return (props->dir == EVAS_BIDI_DIRECTION_RTL) ? (len - 1) - position : position;
 }
 
 /**
@@ -482,8 +511,7 @@ void
 evas_bidi_props_clean(Evas_BiDi_Props *bidi_props)
 {
    if (!bidi_props) return;
-   evas_bidi_paragraph_props_unref(bidi_props->props);
-   bidi_props->props = NULL;
+   bidi_props->dir = EVAS_BIDI_DIRECTION_NATURAL;
 }
 /**
  * @}
