@@ -31,8 +31,59 @@ evas_common_font_ot_is_enabled(void)
    return EINA_FALSE;
 }
 
-
 #ifdef OT_SUPPORT
+/* FIXME: doc. returns #items */
+EAPI int
+evas_common_font_ot_cluster_size_get(Evas_Text_Props *props, size_t char_index, int orig_len)
+{
+   int i;
+   int items;
+   int left_bound, right_bound;
+   size_t base_cluster = EVAS_FONT_OT_POS_GET(props->ot_data->items[char_index]);
+   for (i = (int) char_index ;
+         (i >= 0) &&
+         (EVAS_FONT_OT_POS_GET(props->ot_data->items[i]) == base_cluster) ;
+         i--)
+     ;
+   left_bound = i;
+   for (i = (int) char_index + 1;
+         (i < (int) props->ot_data->len) &&
+         (EVAS_FONT_OT_POS_GET(props->ot_data->items[i]) == base_cluster) ;
+         i++)
+     ;
+   right_bound = i;
+   if (right_bound == left_bound)
+     {
+        items = 1;
+     }
+   else if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+     {
+        if (left_bound < 0)
+          {
+             items = orig_len -
+                props->ot_data->items[left_bound + 1].source_pos;
+          }
+        else
+          {
+             items = props->ot_data->items[left_bound].source_pos -
+                props->ot_data->items[left_bound + 1].source_pos;
+          }
+     }
+   else
+     {
+        if (right_bound == (int) props->ot_data->len)
+          {
+             items = orig_len - props->ot_data->items[left_bound].source_pos;
+          }
+        else
+          {
+             items = props->ot_data->items[right_bound - 1].source_pos -
+                props->ot_data->items[right_bound].source_pos;
+          }
+     }
+   return (items > 0) ? items : 1;
+}
+
 static void
 _evas_common_font_ot_shape(hb_buffer_t *buffer, FT_Face face)
 {
