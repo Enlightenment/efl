@@ -53,8 +53,10 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
+# pkg-config
+PKG_PROG_PKG_CONFIG
 ### Needed information
-EDJE_VERSION=`pkg-config edje --modversion | awk -F . '{printf("%s.0.0", $1);}'`
+EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.0.0", \$1);}'`
 
 want_vlc="no"
 case "$host_os" in
@@ -95,9 +97,6 @@ AC_SUBST(edje_cc)
 ### Checks for programs
 AC_PROG_CC
 
-# pkg-config
-PKG_PROG_PKG_CONFIG
-
 # Check whether pkg-config supports Requires.private
 if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
    pkgconfig_requires_private="Requires.private"
@@ -117,7 +116,7 @@ PKG_CHECK_MODULES(EMOTION, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0])
 requirement_emotion="ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0"
 
 if test "x${have_emotion_test}" = "xyes" ; then
-   PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 edje >= ${EDJE_VERSION}])
+   PKG_CHECK_MODULES(EMOTION_BIN, [evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 edje >= 1.0.0])
 fi
 
 PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.0.0], [have_ecore_x="yes"], [have_ecore_x="no"])
