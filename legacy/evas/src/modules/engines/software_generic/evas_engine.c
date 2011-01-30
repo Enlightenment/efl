@@ -675,7 +675,7 @@ eng_font_max_descent_get(void *data __UNUSED__, void *font)
 }
 
 static void
-eng_font_string_size_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int *w, int *h)
+eng_font_string_size_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int *w, int *h)
 {
    evas_common_font_query_size(font, text, intl_props, w, h);
 }
@@ -687,7 +687,7 @@ eng_font_inset_get(void *data __UNUSED__, void *font, const Eina_Unicode *text)
 }
 
 static int
-eng_font_h_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+eng_font_h_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props)
 {
    int h, v;
 
@@ -696,7 +696,7 @@ eng_font_h_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *te
 }
 
 static int
-eng_font_v_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+eng_font_v_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props)
 {
    int h, v;
 
@@ -705,31 +705,56 @@ eng_font_v_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *te
 }
 
 static int
-eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    return evas_common_font_query_pen_coords(font, text, intl_props, pos, cpen_x, cy, cadv, ch);
 }
 
+static Eina_Bool
+eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
+{
+   (void) font;
+   (void) text;
+   (void) intl_props;
+   (void) par_props;
+   (void) pos;
+   (void) len;
+#ifdef OT_SUPPORT
+   if (evas_common_font_ot_is_enabled())
+     {
+        return evas_common_font_ot_populate_text_props(font, text,
+              intl_props, len);
+     }
+   else
+#endif
+     {
+#ifdef BIDI_SUPPORT
+        return !evas_bidi_shape_string(text, par_props, pos, len);
+#endif
+     }
+   return EINA_TRUE;
+}
+
 static int
-eng_font_char_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_coords(font, text, intl_props, pos, cx, cy, cw, ch);
 }
 
 static int
-eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_at_coords(font, text, intl_props, x, y, cx, cy, cw, ch);
 }
 
 static int
-eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int x, int y)
+eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int x, int y)
 {
    return evas_common_font_query_last_up_to_pos(font, text, intl_props, x, y);
 }
 
 static void
-eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_Text_Props *intl_props)
 {
 #ifdef BUILD_PIPE_RENDER
    if ((cpunum > 1)
@@ -897,7 +922,8 @@ static Evas_Func func =
      eng_image_map_surface_free,
      NULL, // eng_image_content_hint_set - software doesn't use it
      NULL, // eng_image_content_hint_get - software doesn't use it
-     eng_font_pen_coords_get
+     eng_font_pen_coords_get,
+     eng_font_shape
      /* FUTURE software generic calls go here */
 };
 

@@ -318,7 +318,7 @@ struct _Evas_Object_Textblock_Item
    size_t                               visual_pos;
 #endif
    Evas_Coord                           adv, x, w, h;
-   Evas_BiDi_Props                      bidi_props;
+   Evas_Text_Props                      text_props;
 };
 
 struct _Evas_Object_Textblock_Text_Item
@@ -632,6 +632,38 @@ _format_unref_free(const Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 
 /**
  * @internal
+ * Free a layout item
+ * @param obj The evas object, must not be NULL.
+ * @param ln the layout line on which the item is in, must not be NULL.
+ * @param it the layout item to be freed
+ */
+static void
+_item_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln, Evas_Object_Textblock_Item *it)
+{
+   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+     {
+        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+
+        if (ti->text) free(ti->text);
+        _format_unref_free(obj, ti->format);
+     }
+   else
+     {
+        Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
+
+        if (fi->item) eina_stringshare_del(fi->item);
+     }
+   evas_common_text_props_content_unref(&it->text_props);
+   if (ln)
+     {
+        ln->items = (Evas_Object_Textblock_Item *) eina_inlist_remove(
+              EINA_INLIST_GET(ln->items), EINA_INLIST_GET(ln->items));
+     }
+   free(it);
+}
+
+/**
+ * @internal
  * Free a layout line.
  * @param obj The evas object, must not be NULL.
  * @param ln the layout line to be freed, must not be NULL.
@@ -642,22 +674,7 @@ _line_free(const Evas_Object *obj, Evas_Object_Textblock_Line *ln)
    while (ln->items)
      {
         Evas_Object_Textblock_Item *it = ln->items;
-        if (ln->items->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-          {
-             Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-
-             if (ti->text) free(ti->text);
-             _format_unref_free(obj, ti->format);
-          }
-        else
-          {
-             Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
-
-             if (fi->item) eina_stringshare_del(fi->item);
-          }
-        ln->items = (Evas_Object_Textblock_Item *) eina_inlist_remove(
-              EINA_INLIST_GET(ln->items), EINA_INLIST_GET(ln->items));
-        free(it);
+        _item_free(obj, ln, it);
      }
    if (ln) free(ln);
 }
@@ -2251,7 +2268,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_
 {
    if (fmt->font.font)
      return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font, ti->text,
-           &ti->parent.bidi_props,
+           &ti->parent.text_props,
            c->w -
            c->o->style_pad.l -
            c->o->style_pad.r -
@@ -2279,6 +2296,9 @@ _layout_item_text_cutoff(Ctxt *c __UNUSED__, Evas_Object_Textblock_Text_Item *ti
    ts[cut] = 0;
    ti->text = eina_unicode_strdup(ts);
    free(ts);
+   c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
+         &ti->parent.text_props, ti->parent.text_node->bidi_props,
+         ti->parent.text_pos, cut);
 }
 
 /**
@@ -2353,11 +2373,11 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt __U
              adv = 0;
              if (ti->format->font.font)
                adv = c->ENFN->font_h_advance_get(c->ENDT, ti->format->font.font,
-                     ti->text, &ti->parent.bidi_props);
+                     ti->text, &ti->parent.text_props);
              tw = th = 0;
              if (ti->format->font.font)
                c->ENFN->font_string_size_get(c->ENDT, ti->format->font.font,
-                     ti->text, &ti->parent.bidi_props, &tw, &th);
+                     ti->text, &ti->parent.text_props, &tw, &th);
              it->w = tw;
              it->h = th;
              it->adv = adv;
@@ -2379,17 +2399,7 @@ _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textb
    /*FIXME: handle it in some way? */
    if (it->type != EVAS_TEXTBLOCK_ITEM_TEXT)
      return 0;
-   if (ti->text) free(ti->text);
-   _format_unref_free(c->obj, ti->format);
-
-#ifdef BIDI_SUPPORT
-   /* FIXME: this also unrefs the paragraph props, we should either
-    * really count the usage of the paragraph props in the items, or just
-    * not use clean here. I prefer the latter but that might break if we'll
-    * start doing fancy stuff in clean in the future. */
-   /* evas_bidi_props_clean(&it->bidi_props); */
-#endif
-   free(ti);
+   _item_free(c->obj, NULL, _ITEM(ti));
    if (c->ln->items)
      {
         it = (Evas_Object_Textblock_Item *)(EINA_INLIST_GET(c->ln->items))->last;
@@ -2473,6 +2483,7 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    int cutoff, len;
 
 
+   cutoff = 0;
    len = eina_unicode_strlen(ti->text);
    do
      {
@@ -2481,21 +2492,38 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
          * no text nodes, make sure it's the case. */
         if (ti->parent.text_node)
           {
-             cutoff = evas_common_script_end_of_run_get(
-                   eina_ustrbuf_string_get(ti->parent.text_node->unicode),
+             cutoff = evas_common_language_script_end_of_run_get(
+                   ti->text,
                    ti->parent.text_node->bidi_props,
                    ti->parent.text_pos, len);
              if (cutoff > 0)
                {
                   new_ti = _layout_text_item_new(c, fmt, ti->text + cutoff);
                   _layout_item_text_cutoff(c, ti, cutoff);
+                  new_ti->parent.text_node = ti->parent.text_node;
+                  new_ti->parent.text_pos = ti->parent.text_pos + cutoff;
+                  evas_common_text_props_bidi_set(&new_ti->parent.text_props,
+                        new_ti->parent.text_node->bidi_props,
+                        new_ti->parent.text_pos);
+                  evas_common_text_props_script_set (&new_ti->parent.text_props,
+                        new_ti->text);
+                  /* FIXME: I possibly can use the alread calculated lengths */
+                  c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
+                        &ti->parent.text_props,
+                        ti->parent.text_node->bidi_props,
+                        ti->parent.text_pos, cutoff);
+                  c->ENFN->font_shape(c->ENDT, new_ti->format->font.font,
+                        new_ti->text,
+                        &new_ti->parent.text_props,
+                        new_ti->parent.text_node->bidi_props,
+                        new_ti->parent.text_pos, len - cutoff);
                }
           }
 
         tw = th = 0;
         if (fmt->font.font)
           c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
-                &ti->parent.bidi_props, &tw, &th);
+                &ti->parent.text_props, &tw, &th);
         ti->parent.w = tw;
         ti->parent.h = th;
         inset = 0;
@@ -2507,7 +2535,7 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         adv = 0;
         if (fmt->font.font)
           adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
-                ti->text, &ti->parent.bidi_props);
+                ti->text, &ti->parent.text_props);
         ti->parent.adv = adv;
         c->x += adv;
         c->ln->items = (Evas_Object_Textblock_Item *)
@@ -2516,16 +2544,6 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
         if (cutoff > 0)
           {
-             new_ti->parent.text_node = ti->parent.text_node;
-             new_ti->parent.text_pos = ti->parent.text_pos + cutoff;
-#ifdef BIDI_SUPPORT
-             new_ti->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
-                   new_ti->parent.text_node->bidi_props,
-                   new_ti->parent.text_pos,
-                   0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-#else
-             new_ti->parent.bidi_props.dir = EVAS_BIDI_DIRECTION_LTR;
-#endif
              ti = new_ti;
              len -= cutoff;
           }
@@ -2611,11 +2629,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
                   alloc_str[off] = 0;
                }
              str = alloc_str;
-
-             /* Shape the string */
-# ifdef BIDI_SUPPORT
-             evas_bidi_shape_string(alloc_str, n->bidi_props, start, off);
-# endif
           }
      }
 
@@ -2636,19 +2649,18 @@ skip:
         ti->parent.text_pos = start + str - tbase;
         if (ti->parent.text_node)
           {
-#ifdef BIDI_SUPPORT
-             ti->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
-                   ti->parent.text_node->bidi_props,
-                   ti->parent.text_pos,
-                   0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-#else
-             ti->parent.bidi_props.dir = EVAS_BIDI_DIRECTION_LTR;
-#endif
+             evas_common_text_props_bidi_set(&ti->parent.text_props,
+                   ti->parent.text_node->bidi_props, ti->parent.text_pos);
+             evas_common_text_props_script_set (&ti->parent.text_props,
+                   ti->text);
+             c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
+                   &ti->parent.text_props, ti->parent.text_node->bidi_props,
+                   ti->parent.text_pos, eina_unicode_strlen(ti->text));
           }
         tw = th = 0;
         if (fmt->font.font)
           c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
-                &ti->parent.bidi_props, &tw, &th);
+                &ti->parent.text_props, &tw, &th);
         /* Check if we need to wrap, i.e the text is bigger than the width
          * Only calculate wrapping if the width of the object is > 0 */
         if ((c->w >= 0) &&
@@ -2698,10 +2710,7 @@ skip:
                                  else
                                    {
                                       empty_item = 1;
-                                      /* FIXME: use proper cleaning here */
-                                      if (ti->text) free(ti->text);
-                                      _format_unref_free(c->obj, ti->format);
-                                      free(ti);
+                                      _item_free(c->obj, NULL, _ITEM(ti));
                                       if (c->ln->items)
                                         {
                                            ti = _ITEM_TEXT((EINA_INLIST_GET(c->ln->items))->last);
@@ -2860,14 +2869,8 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
         fi->parent.text_node = n->text_node;
         /* FIXME: make it more efficient */
         fi->parent.text_pos = _evas_textblock_node_format_pos_get(n);
-#ifdef BIDI_SUPPORT
-        fi->parent.bidi_props.dir = (evas_bidi_is_rtl_char(
-                 fi->parent.text_node->bidi_props,
-                 fi->parent.text_pos,
-                 0)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-#else
-        fi->parent.bidi_props.dir = EVAS_BIDI_DIRECTION_LTR;
-#endif
+        evas_common_text_props_bidi_set(&fi->parent.text_props,
+              fi->parent.text_node->bidi_props, fi->parent.text_pos);
      }
    return fi;
 }
@@ -6821,7 +6824,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
  * @return line number of the char on success, -1 on error.
  */
 static int
-_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
@@ -6876,7 +6879,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
           {
              ret = query_func(cur->ENDT,
                    ti->format->font.font,
-                   ti->text, &ti->parent.bidi_props,
+                   ti->text, &ti->parent.text_props,
                    pos,
                    &x, &y, &w, &h);
           }
@@ -7058,7 +7061,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                               pos = cur->ENFN->font_char_at_coords_get(
                                     cur->ENDT,
                                     ti->format->font.font,
-                                    ti->text, &ti->parent.bidi_props,
+                                    ti->text, &ti->parent.text_props,
                                     x - it->x - ln->x, 0,
                                     &cx, &cy, &cw, &ch);
                             if (pos < 0)
@@ -7145,7 +7148,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
    if ((start && !switch_items) || (!start && switch_items))
      {
 #ifdef BIDI_SUPPORT
-        if (it->bidi_props.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (it->text_props.bidi.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              *w = *x + *w;
              *x = 0;
@@ -7159,7 +7162,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
    else
      {
 #ifdef BIDI_SUPPORT
-        if (it->bidi_props.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (it->text_props.bidi.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              *x = *x + *w;
              *w = it->adv - *x;
@@ -7255,7 +7258,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
         ti = _ITEM_TEXT(it1);
         ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
               ti->format->font.font,
-              ti->text, &ti->parent.bidi_props,
+              ti->text, &ti->parent.text_props,
               start,
               &x1, &y, &w1, &h);
         if (!ret)
@@ -7264,7 +7267,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
         ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
               ti->format->font.font,
-              ti->text, &ti->parent.bidi_props,
+              ti->text, &ti->parent.text_props,
               end,
               &x2, &y, &w2, &h);
         if (!ret)
@@ -7286,7 +7289,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
 
 #ifdef BIDI_SUPPORT
-        if (ti->parent.bidi_props.dir == EVAS_BIDI_DIRECTION_RTL)
+        if (ti->parent.text_props.bidi.dir == EVAS_BIDI_DIRECTION_RTL)
           {
              x = x1 + w1;
              w = x2 + w2 - x;
@@ -7324,7 +7327,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
              ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
                    ti->format->font.font,
-                   ti->text, &ti->parent.bidi_props,
+                   ti->text, &ti->parent.text_props,
                    start,
                    &x, &y, &w, &h);
              if (!ret)
@@ -7378,7 +7381,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
              ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
                    ti->format->font.font,
-                   ti->text, &ti->parent.bidi_props,
+                   ti->text, &ti->parent.text_props,
                    end,
                    &x, &y, &w, &h);
              if (!ret)
@@ -7836,7 +7839,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    if (ti->format->font.font) ENFN->font_draw(output, context, surface, ti->format->font.font, \
          obj->cur.geometry.x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->y + yoff + y + (oy), \
-         ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, ti->text, &ti->parent.bidi_props);
+         ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, ti->text, &ti->parent.text_props);
 #define ITEM_WALK_LINE_SKIP_DROP() \
    if ((ln->y + ln->h) <= 0) continue; \
    if (ln->y > obj->cur.geometry.h) break

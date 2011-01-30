@@ -388,7 +388,7 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const Eina_Unicode *text, const Evas_Text_Props *intl_props)
 {
    Render_Engine *re = (Render_Engine *)data;
 	RGBA_Image im;

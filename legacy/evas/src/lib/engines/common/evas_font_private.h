@@ -1,9 +1,11 @@
 #ifndef _EVAS_FONT_PRIVATE_H
 # define _EVAS_FONT_PRIVATE_H
+#include "evas_font_ot.h"
 
 #ifdef BUILD_PTHREAD
 extern LK(lock_font_draw); // for freetype2 API calls
 extern LK(lock_bidi); // for fribidi API calls
+extern LK(lock_ot); // for harfbuzz calls
 #endif
 
 # if defined(EVAS_FRAME_QUEUING) || defined(BUILD_PIPE_RENDER)
@@ -12,13 +14,15 @@ extern LK(lock_bidi); // for fribidi API calls
 
 #  define BIDILOCK() LKL(lock_bidi)
 #  define BIDIUNLOCK() LKU(lock_bidi)
+
+#  define OTLOCK() LKL(lock_ot)
+#  define OTUNLOCK() LKU(lock_ot)
 # else
 #  define FTLOCK(x)
 #  define FTUNLOCK(x)
 
 #  define BIDILOCK()
 #  define BIDIUNLOCK()
-# endif
 
 void evas_common_font_source_unload(RGBA_Font_Source *fs);
 void evas_common_font_source_reload(RGBA_Font_Source *fs);
@@ -29,51 +33,23 @@ void evas_common_font_int_use_trim(void);
 void evas_common_font_int_unload(RGBA_Font_Int *fi);
 void evas_common_font_int_reload(RGBA_Font_Int *fi);
 /* Macros for text walking */
+#  define OTLOCK()
+#  define OTUNLOCK()
+# endif
 
-#define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
+# define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
       ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
       ((0x200E <= (x)) && ((x) <= 0x200F)) || /* BIDI stuff */ \
       ((0x202A <= (x)) && ((x) <= 0x202E)) /* BIDI stuff */ \
       )
 
-/**
- * @def EVAS_FONT_UPDATE_KERN()
- * @internal
- * This macro updates pen_x and kern according to kerning.
- * This macro assumes the following variables exist:
- * intl_props, char_index, adv, fi, kern, pen_x
- */
-#ifdef BIDI_SUPPORT
-#define EVAS_FONT_UPDATE_KERN(is_visual) \
-   do \
-      { \
-         /* if it's rtl, the kerning matching should be reversed, */ \
-         /* i.e prev index is now the index and the other way */ \
-         /* around. There is a slight exception when there are */ \
-         /* compositing chars involved.*/ \
-         if (intl_props && (intl_props->dir == EVAS_BIDI_DIRECTION_RTL) && \
-               visible && !is_visual) \
-           { \
-              if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
-                pen_x += kern; \
-           } \
-         else \
-           { \
-              if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-                pen_x += kern; \
-           } \
-      } \
-   while (0)
-#else
-#define EVAS_FONT_UPDATE_KERN(is_visual) \
-   do \
-      { \
-         (void) is_visual; \
-         if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-           pen_x += kern; \
-      } \
-   while (0)
-#endif
+# define EVAS_FONT_WALK_ORIG_LEN (_len)
+
+# ifdef OT_SUPPORT
+#  include "evas_font_ot_walk.x"
+# endif
+
+# include "evas_font_default_walk.x"
 
 /**
  * @def EVAS_FONT_WALK_TEXT_INIT
@@ -84,13 +60,16 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
  * @see EVAS_FONT_WALK_TEXT_WORK
  * @see EVAS_FONT_WALK_TEXT_END
  */
-#define EVAS_FONT_WALK_TEXT_INIT() \
+# define EVAS_FONT_WALK_TEXT_INIT() \
         int pen_x = 0, pen_y = 0; \
-        int char_index; \
+        size_t char_index; \
         FT_UInt prev_index; \
         FT_Face pface = NULL; \
+        int _len = eina_unicode_strlen(text); \
+        (void) _len; /* We don't have to use it */ \
         (void) pen_y; /* Sometimes it won't be used */
 
+<<<<<<< HEAD
 /**
  * @def EVAS_FONT_WALK_TEXT_START
  * @internal
@@ -185,4 +164,6 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
      } \
    while(0)
 
+=======
+>>>>>>> Evas: Multiple changes that all relate to the Harfbuzz integration:
 #endif /* !_EVAS_FONT_PRIVATE_H */

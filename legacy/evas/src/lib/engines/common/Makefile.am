@@ -60,7 +60,9 @@ evas_tiler.c \
 evas_regionbuf.c \
 evas_pipe.c \
 language/evas_bidi_utils.c \
-language/evas_script_utils.c \
+language/evas_language_utils.c \
+evas_text_utils.c \
+evas_font_ot.c \
 evas_map_image.c \
 evas_map_image.h
 
@@ -100,7 +102,9 @@ evas_scale_smooth_scaler_up.c \
 evas_scale_span.h \
 evas_pipe.h \
 language/evas_bidi_utils.h \
-language/evas_script_utils.h \
+language/evas_language_utils.h \
+evas_text_utils.h \
+evas_font_ot.h \
 evas_map_image_internal.c \
 evas_map_image_core.c \
 evas_map_image_loop.c

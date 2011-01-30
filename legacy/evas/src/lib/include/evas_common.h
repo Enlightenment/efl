@@ -688,7 +688,7 @@ struct _RGBA_Draw_Context
 
 #ifdef BUILD_PIPE_RENDER
 #include "../engines/common/evas_map_image.h"
-#include "../engines/common/language/evas_bidi_utils.h"
+#include "../engines/common/evas_text_utils.h"
 
 struct _RGBA_Pipe_Op
 {
@@ -710,7 +710,7 @@ struct _RGBA_Pipe_Op
 	 RGBA_Font          *font;
 	 int                 x, y;
 	 Eina_Unicode       *text;
-         Evas_BiDi_Props     intl_props;
+         Evas_Text_Props     intl_props;
       } text;
       struct {
 	 RGBA_Image         *src;

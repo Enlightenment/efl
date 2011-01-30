@@ -45,7 +45,7 @@ struct _Evas_Object_Text_Item
    Eina_Unicode        *text; /*The shaped text */
    size_t               text_pos;
    size_t               visual_pos;
-   Evas_BiDi_Props      bidi_props;
+   Evas_Text_Props      text_props;
    Evas_Coord           x, w, h, adv;
 };
 
@@ -115,7 +115,7 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
               (pos < it->text_pos + eina_unicode_strlen(it->text)))
           {
              return ENFN->font_char_coords_get(ENDT, o->engine_data, it->text,
-                   &it->bidi_props, pos - it->text_pos, x, y, w, h);
+                   &it->text_props, pos - it->text_pos, x, y, w, h);
           }
      }
    return 0;
@@ -125,9 +125,7 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
 static void
 _evas_object_text_item_clean(Evas_Object_Text_Item *it)
 {
-#ifdef BIDI_SUPPORT
-   evas_bidi_props_clean(&it->bidi_props);
-#endif
+   evas_common_text_props_content_unref(&it->text_props);
    if (it->text)
      {
         free(it->text);
@@ -166,7 +164,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
           {
              return ENFN->font_last_up_to_pos(ENDT,
                    o->engine_data,
-                   it->text, &it->bidi_props,
+                   it->text, &it->text_props,
                    cx - x,
                    cy);
           }
@@ -191,7 +189,7 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
           {
              return ENFN->font_char_at_coords_get(ENDT,
                    o->engine_data,
-                   it->text, &it->bidi_props,
+                   it->text, &it->text_props,
                    cx,
                    cy,
                    rx, ry,
@@ -232,7 +230,7 @@ _evas_object_text_vert_advance_get(const Evas_Object *obj,
      {
         Evas_Coord tmp;
         tmp = ENFN->font_v_advance_get(ENDT, o->engine_data, it->text,
-              &it->bidi_props);
+              &it->text_props);
         if (tmp > adv)
           {
              adv = tmp;
@@ -510,19 +508,17 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
    it->text_pos = pos;
    it->visual_pos = visual_pos;
    eina_unicode_strncpy(it->text, str + pos, len);
-#ifdef BIDI_SUPPORT
-   it->bidi_props.dir = (evas_bidi_is_rtl_char(
-            o->bidi_par_props,
-            0,
-            it->text_pos)) ? EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
-   evas_bidi_shape_string(it->text, o->bidi_par_props, pos, len);
-#endif
+   evas_common_text_props_bidi_set(&it->text_props, o->bidi_par_props,
+         it->text_pos);
+   evas_common_text_props_script_set(&it->text_props, it->text);
+   ENFN->font_shape(ENDT, o->engine_data, it->text, &it->text_props,
+         o->bidi_par_props, it->text_pos, eina_unicode_strlen(it->text));
    ENFN->font_string_size_get(ENDT,
          o->engine_data,
-         it->text, &it->bidi_props,
+         it->text, &it->text_props,
          &it->w, &it->h);
    it->adv = ENFN->font_h_advance_get(ENDT, o->engine_data, it->text,
-         &it->bidi_props);
+         &it->text_props);
    o->items = (Evas_Object_Text_Item *)
       eina_inlist_append(EINA_INLIST_GET(o->items), EINA_INLIST_GET(it));
    return it;
@@ -606,7 +602,7 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
    cutoff = len;
    do
      {
-        cutoff = evas_common_script_end_of_run_get(
+        cutoff = evas_common_language_script_end_of_run_get(
               text,
               o->bidi_par_props,
               pos, cutoff);
@@ -1935,7 +1931,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.h, \
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
-		     it->text, &it->bidi_props);
+		     it->text, &it->text_props);
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
         /* shadows */

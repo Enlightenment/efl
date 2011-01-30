@@ -74,8 +74,9 @@ struct _Evas_BiDi_Paragraph_Props {
 #endif
 };
 
-#include "evas_common.h"
-struct _Evas_BiDi_Props {
+#include "Evas.h"
+struct _Evas_BiDi_Props
+{
    Evas_BiDi_Direction  dir;
 };
 

@@ -1026,7 +1026,7 @@ eng_font_max_descent_get(void *data, void *font)
 }
 
 static void
-eng_font_string_size_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int *w, int *h)
+eng_font_string_size_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int *w, int *h)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
@@ -1056,7 +1056,7 @@ eng_font_inset_get(void *data, void *font, const char *text)
 }
 
 static int
-eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props)
+eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props)
 {
    int w;
 
@@ -1067,7 +1067,7 @@ eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_BiDi
 }
 
 static int
-eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props)
+eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props)
 {
    int h;
 
@@ -1077,7 +1077,7 @@ eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_BiDi
 }
 
 static int
-eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
 
@@ -1099,14 +1099,23 @@ eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Bi
 /*FIXME: this is *NOT* implemennted correctly, look at the other engines to
  * see what needed to be done */
 static int
-eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    return eng_font_char_coords_get(data, font, text, intl_props, pos, cpen_x,
          cy, cadv, ch)
 }
 
+static Eina_Bool
+eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props __UNUSED__, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
+{
+#ifdef BIDI_SUPPORT
+   return !evas_bidi_shape_string(text, par_props, pos, len);
+#endif
+   return EINA_TRUE;
+}
+
 static int
-eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas_BiDi_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    // Return the index of the character at the given point, also lookup it's origin x, y, w, and h.
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
@@ -1145,7 +1154,7 @@ eng_font_hinting_can_hint(void *data, int hinting)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text, const Evas_BiDi_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text, const Evas_Text_Props *intl_props)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;

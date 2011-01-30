@@ -1037,7 +1037,7 @@ evas_engine_dfb_output_idle_flush(void *data)
  * memory.
  */
 static void
-evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props)
+evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_Text_Props *intl_props)
 {
    DirectFB_Engine_Image_Entry *eim = surface;
    IDirectFBSurface *screen;

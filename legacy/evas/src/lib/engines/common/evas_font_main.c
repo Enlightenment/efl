@@ -9,6 +9,7 @@ static int      initialised = 0;
 
 LK(lock_font_draw); // for freetype2 API calls
 LK(lock_bidi); // for evas bidi internal usage.
+LK(lock_ot); // for evas bidi internal usage.
 
 EAPI void
 evas_common_font_init(void)
@@ -23,6 +24,7 @@ evas_common_font_init(void)
    evas_common_font_draw_init();
    LKI(lock_font_draw);
    LKI(lock_bidi);
+   LKI(lock_ot);
 }
 
 EAPI void
@@ -36,6 +38,7 @@ evas_common_font_shutdown(void)
 
    LKD(lock_font_draw);
    LKD(lock_bidi);
+   LKD(lock_ot);
 
    evas_common_font_load_shutdown();
    evas_common_font_cache_set(0);
