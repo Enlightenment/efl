@@ -405,14 +405,10 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                                int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__, int use_kerning
                                )
 {
-   int pen_x, pen_y;
-   int last_adv;
    const Eina_Unicode *text = in_text;
-   FT_Face pface = NULL;
-   FT_UInt prev_index;
    DATA32 *im;
    int c;
-   int char_index = 0; /* the index of the current char */
+   EVAS_FONT_WALK_TEXT_INIT();
 
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
    unsigned int len;
@@ -522,49 +518,26 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #else
    intl_props = NULL;
 #endif
+   if (fi->src->current_size != fi->size)
+     {
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
 
    pen_x = x;
    pen_y = y;
-   last_adv = 0;
-   prev_index = 0;
    im = dst->image.data;
-   for (char_index = 0, c = 0; *text; text++, char_index++)
+   c = 0;
+   EVAS_FONT_WALK_TEXT_START()
      {
-	FT_UInt index;
-	RGBA_Font_Glyph *fg;
-	int chr_x, chr_y;
-	int gl, kern;
+	int chr_x, chr_y, chr_w;
 
-	gl = *text;
         if (EVAS_FONT_CHARACTER_IS_INVISIBLE(gl))
              continue;
 
-	index = evas_common_font_glyph_search(fn, &fi, gl);
-	LKL(fi->ft_mutex);
-        if (fi->src->current_size != fi->size)
-          {
-	     FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-	     FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
-	fg = evas_common_font_int_cache_glyph_get(fi, index);
-	if (!fg)
-          {
-             LKU(fi->ft_mutex);
-             continue;
-          }
-	/* hmmm kerning means i can't sanely do my own cached metric tables! */
-	/* grrr - this means font face sharing is kinda... not an option if */
-	/* you want performance */
-        if ((use_kerning) && (prev_index) && (index) &&
-            (pface == fi->src->ft.face))
-          {
-             if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-               pen_x += kern;
-          }
-        pface = fi->src->ft.face;
-        LKU(fi->ft_mutex);
+        EVAS_FONT_WALK_TEXT_WORK();
 
         if (dc->font_ext.func.gl_new)
           {
@@ -572,15 +545,10 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
              fg->ext_dat = dc->font_ext.func.gl_new(dc->font_ext.data, fg);
              fg->ext_dat_free = dc->font_ext.func.gl_free;
           }
-        /* If the current one is not a compositing char, do the previous advance 
-         * and set the current advance as the next advance to do */
-        if (fg->glyph->advance.x >> 16 > 0) 
-          {
-             pen_x += last_adv;
-             last_adv = fg->glyph->advance.x >> 16;
-          }
-        chr_x = (pen_x + (fg->glyph_out->left));
-        chr_y = (pen_y + (fg->glyph_out->top));
+
+        chr_x = (pen_x) + bear_x;
+	chr_y = (pen_y) + bear_y;
+        chr_w = width;
 
         if (chr_x < (ext_x + ext_w))
           {
@@ -709,9 +677,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
           }
         else
           break;
-
-        prev_index = index;
      }
+   EVAS_FONT_WALK_TEXT_END();
 #ifdef BIDI_SUPPORT
    if (visual_text) free(visual_text);
 #endif
