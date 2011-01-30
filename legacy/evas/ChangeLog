@@ -1,3 +1,20 @@
+2011-01-30  Tom Hacohen (TAsn)
+
+        * It's actually a merge from my local branch upstream so this
+          includes many changes.
+        * Fixed cursor/selection handling with BiDi text.
+        * Fixed many BiDi issues in both textblock and text objects.
+        * Cleaned up textblock and font engine a lot.
+        * Renamed a lot of stuff.
+        * Made textblock faster, mostly by saving item sizes and caching
+          layout items when text doesn't change.
+        * Added harfbuzz (ot layouting/shaping and etc) support.
+        * Currently you need to set the env var EVAS_USE_OT to '1' in order to
+          use OT support (harfbuzz) that will change soon.
+        * More code cleanups will be coming in the future. This shipment is
+          mostly to get code review started (and also make sure I don't have a
+          merging hell later on).
+
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
