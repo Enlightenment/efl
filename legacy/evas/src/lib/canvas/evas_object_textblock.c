@@ -6698,7 +6698,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    dir_cur = cur;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
      {
-        ret = evas_textblock_cursor_char_geometry_get(cur, cx, cy, cw, ch);
+        ret = evas_textblock_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
      }
    else if (ctype == EVAS_TEXTBLOCK_CURSOR_BEFORE)
      {
@@ -6729,7 +6729,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
                {
                   before_char = EINA_TRUE;
                }
-             ret = evas_textblock_cursor_char_geometry_get(
+             ret = evas_textblock_cursor_pen_geometry_get(
                    dir_cur, &x, &y, &w, &h);
 #ifdef BIDI_SUPPORT
              /* Adjust if the char is an rtl char */
@@ -6753,7 +6753,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
           }
         else
           {
-             ret = evas_textblock_cursor_char_geometry_get(
+             ret = evas_textblock_cursor_pen_geometry_get(
                    dir_cur, &x, &y, &w, &h);
           }
         if (ret >= 0)
@@ -7215,7 +7215,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
         int ret;
 
         ti = _ITEM_TEXT(it1);
-        ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+        ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
               ti->format->font.font,
               ti->text, &ti->parent.bidi_props,
               start,
@@ -7224,7 +7224,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              return NULL;
           }
-        ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+        ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
               ti->format->font.font,
               ti->text, &ti->parent.bidi_props,
               end,
@@ -7284,7 +7284,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              int ret;
              ti = _ITEM_TEXT(it1);
 
-             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+             ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
                    ti->format->font.font,
                    ti->text, &ti->parent.bidi_props,
                    start,
@@ -7338,7 +7338,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              int ret;
              ti = _ITEM_TEXT(it2);
 
-             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+             ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
                    ti->format->font.font,
                    ti->text, &ti->parent.bidi_props,
                    end,
