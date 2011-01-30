@@ -382,6 +382,7 @@ struct _Evas_Object_Textblock_Format
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
+   unsigned char        wrap_mixed : 1;
    unsigned char        underline : 1;
    unsigned char        underline2 : 1;
    unsigned char        strikethrough : 1;
@@ -1387,17 +1388,21 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
         if (!strcmp(tmp_param, "word"))
           {
              fmt->wrap_word = 1;
-             fmt->wrap_char = 0;
+             fmt->wrap_char = fmt->wrap_mixed = 0;
           }
         else if (!strcmp(tmp_param, "char"))
           {
-             fmt->wrap_word = 0;
+             fmt->wrap_word = fmt->wrap_mixed = 0;
              fmt->wrap_char = 1;
+          }
+        else if (!strcmp(tmp_param, "mixed"))
+          {
+             fmt->wrap_word = fmt->wrap_char = 0;
+             fmt->wrap_mixed = 1;
           }
         else
           {
-             fmt->wrap_word = 0;
-             fmt->wrap_char = 0;
+             fmt->wrap_word = fmt->wrap_mixed = fmt->wrap_char = 0;
           }
      }
    else if (cmd == left_marginstr)
@@ -3141,9 +3146,8 @@ _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE);
 }
 
-/* -1 means no wrap - unused atm but can be used by whoever wants this
- * I'm leaving it here because of the many requests I got about it... */
-static int __UNUSED__
+/* -1 means no wrap */
+static int
 _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Text_Item *ti)
 {
@@ -3176,7 +3180,8 @@ _layout_visualize_par(Ctxt *c)
         /* Check if we need to wrap, i.e the text is bigger than the width
          * Only calculate wrapping if the width of the object is > 0 */
         if ((c->w >= 0) &&
-              ((it->format->wrap_word) || (it->format->wrap_char)) &&
+              ((it->format->wrap_word) || (it->format->wrap_char) ||
+               it->format->wrap_mixed) &&
               ((c->x + it->adv) >
                (c->w - c->o->style_pad.l - c->o->style_pad.r -
                 c->marginl - c->marginr)))
@@ -3198,27 +3203,24 @@ _layout_visualize_par(Ctxt *c)
 
                   adv_line = 1;
                   if (it->format->wrap_word)
-                    {
-                       wrap = _layout_get_wordwrap(c, it->format, ti);
-                       if (wrap > 0)
-                         {
-                            _layout_item_text_split_strip_white(c, ti, wrap);
-                         }
-                       else if (c->ln->items)
-                         {
-                            /* Should wrap before the item */
-                            adv_line = 0;
-                            redo_item = 1;
-                            _layout_line_advance(c, it->format);
-                         }
-                    }
+                    wrap = _layout_get_wordwrap(c, it->format, ti);
                   else if (it->format->wrap_char)
+                    wrap = _layout_get_charwrap(c, it->format, ti);
+                  else if (it->format->wrap_mixed)
+                    wrap = _layout_get_mixedwrap(c, it->format, ti);
+                  else
+                    wrap = -1;
+
+                  if (wrap > 0)
                     {
-                       wrap = _layout_get_charwrap(c, it->format, ti);
-                       if (wrap > 0)
-                         {
-                            _layout_item_text_split_strip_white(c, ti, wrap);
-                         }
+                       _layout_item_text_split_strip_white(c, ti, wrap);
+                    }
+                  else if (wrap == 0)
+                    {
+                       /* Should wrap before the item */
+                       adv_line = 0;
+                       redo_item = 1;
+                       _layout_line_advance(c, it->format);
                     }
                }
           }
