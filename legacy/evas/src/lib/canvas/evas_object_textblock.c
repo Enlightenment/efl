@@ -509,7 +509,6 @@ static Eina_Bool _evas_textblock_format_is_visible(const char *s);
 static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
-static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
 static void _evas_textblock_text_node_changed(Evas_Object_Textblock *o, Evas_Object *obj, Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
@@ -4716,7 +4715,7 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
         /* pnode can never be visible! (it's the closing format) */
         _evas_textblock_node_format_remove(o, pnode, 0);
      }
-   _evas_textblock_changed(o, obj);
+   _evas_textblock_text_node_changed(o, obj, tnode);
 }
 
 /**
@@ -5951,22 +5950,6 @@ _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur,
                }
           }
      }
-}
-
-/**
- * @internal
- * Mark and notifiy that the textblock has changed.
- *
- * @param o the textblock object.
- * @param obj the evas object.
- */
-static void
-_evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
-{
-   o->formatted.valid = 0;
-   o->changed = 1;
-
-   evas_object_change(obj);
 }
 
 /**
