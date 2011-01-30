@@ -3297,7 +3297,7 @@ _relayout(const Evas_Object *obj)
  * @param n the text node - Not null.
  * @param pos the position to look for - valid.
  * @param[out] lnr the line found - not null.
- * @param[out] itr the item found - not null.
+ * @param[out] tir the item found - not null.
  * @see _find_layout_format_item_line_match()
  */
 static void
@@ -4469,6 +4469,52 @@ _evas_textblock_cursor_node_format_before_pos_get(const Evas_Textblock_Cursor *c
 #endif
 
 /**
+ * @internal
+ * Find the layout item and line that match the cursor.
+ *
+ * @param cur the cursor we are currently at. - NOT NULL.
+ * @param[out] lnr the line found - not null.
+ * @param[out] itr the item found - not null.
+ * @return EINA_TRUE if we matched the previous format, EINA_FALSE otherwise.
+ */
+static Eina_Bool
+_find_layout_item_match(const Evas_Textblock_Cursor *cur, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
+{
+   Evas_Textblock_Cursor cur2;
+   Eina_Bool previous_format = EINA_FALSE;
+
+   cur2.obj = cur->obj;
+   evas_textblock_cursor_copy(cur, &cur2);
+   if (cur2.pos > 0)
+     {
+        cur2.pos--;
+     }
+
+   if (evas_textblock_cursor_format_is_visible_get(cur))
+     {
+        _find_layout_format_item_line_match(cur->obj,
+              _evas_textblock_node_visible_at_pos_get(
+                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
+              lnr, (Evas_Object_Textblock_Format_Item **) itr);
+     }
+   else if (_evas_textblock_cursor_is_at_the_end(cur) &&
+            evas_textblock_cursor_format_is_visible_get(&cur2))
+     {
+        _find_layout_format_item_line_match(cur->obj,
+              _evas_textblock_node_visible_at_pos_get(
+                 _evas_textblock_cursor_node_format_at_pos_get(&cur2)),
+              lnr, (Evas_Object_Textblock_Format_Item **) itr);
+        previous_format = EINA_TRUE;
+     }
+   else
+     {
+        _find_layout_item_line_match(cur->obj, cur->node, cur->pos, lnr,
+              (Evas_Object_Textblock_Text_Item **) itr);
+     }
+   return previous_format;
+}
+
+/**
  * Return the object's main cursor.
  *
  * @param obj the object.
@@ -4974,42 +5020,13 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
-   Evas_Object_Textblock_Text_Item *ti = NULL;
-   Evas_Object_Textblock_Format_Item *fi = NULL;
-   Evas_Textblock_Cursor cur2;
 
    if (!cur) return;
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
 
-   /* Cur 2 is pointing to the previous char */
-   cur2.obj = cur->obj;
-   evas_textblock_cursor_copy(cur, &cur2);
-   if (cur2.pos > 0)
-     {
-        cur2.pos--;
-     }
-
-   if (evas_textblock_cursor_format_is_visible_get(cur))
-     {
-        _find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
-              &ln, &fi);
-     }
-   else if (_evas_textblock_cursor_is_at_the_end(cur) &&
-            evas_textblock_cursor_format_is_visible_get(&cur2))
-     {
-        _find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_at_pos_get(&cur2)),
-              &ln, &fi);
-     }
-   else
-     {
-        _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &ti);
-     }
+   _find_layout_item_match(cur, &ln, &it);
 
    if (!ln) return;
    if (ln->items)
@@ -5043,42 +5060,13 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
-   Evas_Object_Textblock_Text_Item *ti = NULL;
-   Evas_Object_Textblock_Format_Item *fi = NULL;
-   Evas_Textblock_Cursor cur2;
 
    if (!cur) return;
    if (!cur->node) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
 
-   /* Cur 2 is pointing to the previous char */
-   cur2.obj = cur->obj;
-   evas_textblock_cursor_copy(cur, &cur2);
-   if (cur2.pos > 0)
-     {
-        cur2.pos--;
-     }
-
-   if (evas_textblock_cursor_format_is_visible_get(cur))
-     {
-        _find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
-              &ln, &fi);
-     }
-   else if (_evas_textblock_cursor_is_at_the_end(cur) &&
-            evas_textblock_cursor_format_is_visible_get(&cur2))
-     {
-        _find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_at_pos_get(&cur2)),
-              &ln, &fi);
-     }
-   else
-     {
-        _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &ti);
-     }
+   _find_layout_item_match(cur, &ln, &it);
 
    if (!ln) return;
    if (ln->items)
@@ -6837,12 +6825,12 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
+   Evas_Object_Textblock_Item *it = NULL;
    Evas_Object_Textblock_Text_Item *ti = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
-   Evas_Textblock_Cursor cur2;
    int x = 0, y = 0, w = 0, h = 0;
    int pos, ret;
-   int previous_format = 0;
+   Eina_Bool previous_format;
 
    if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -6864,33 +6852,14 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      }
    if (!o->formatted.valid) _relayout(cur->obj);
 
-   /* Cur 2 is pointing to the previous char */
-   cur2.obj = cur->obj;
-   evas_textblock_cursor_copy(cur, &cur2);
-   if (cur2.pos > 0)
+   previous_format = _find_layout_item_match(cur, &ln, &it);
+   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
-        cur2.pos--;
-     }
-
-   if (evas_textblock_cursor_format_is_visible_get(cur))
-     {
-        _find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_at_pos_get(cur)),
-              &ln, &fi);
-     }
-   else if (_evas_textblock_cursor_is_at_the_end(cur) &&
-            evas_textblock_cursor_format_is_visible_get(&cur2))
-     {
-        _find_layout_format_item_line_match(cur->obj,
-              _evas_textblock_node_visible_at_pos_get(
-                 _evas_textblock_cursor_node_format_at_pos_get(&cur2)),
-              &ln, &fi);
-        previous_format = 1;
+        ti = _ITEM_TEXT(it);
      }
    else
      {
-        _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &ti);
+        fi = _ITEM_FORMAT(it);
      }
 
    if (ln && ti)
@@ -6995,9 +6964,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
-   Evas_Object_Textblock_Text_Item *ti = NULL;
-   Evas_Object_Textblock_Format_Item *fi = NULL;
-   Evas_Textblock_Cursor cur2;
+   Evas_Object_Textblock_Item *it = NULL;
    int x, y, w, h;
 
    if (!cur) return -1;
@@ -7009,33 +6976,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
      }
    else
      {
-        /* Cur 2 is pointing to the previous char */
-        cur2.obj = cur->obj;
-        evas_textblock_cursor_copy(cur, &cur2);
-        if (cur2.pos > 0)
-          {
-             cur2.pos--;
-          }
-
-        if (evas_textblock_cursor_format_is_visible_get(cur))
-          {
-             _find_layout_format_item_line_match(cur->obj,
-                   _evas_textblock_node_visible_at_pos_get(
-                      _evas_textblock_cursor_node_format_at_pos_get(cur)),
-                   &ln, &fi);
-          }
-        else if (_evas_textblock_cursor_is_at_the_end(cur) &&
-              evas_textblock_cursor_format_is_visible_get(&cur2))
-          {
-             _find_layout_format_item_line_match(cur->obj,
-                   _evas_textblock_node_visible_at_pos_get(
-                      _evas_textblock_cursor_node_format_at_pos_get(&cur2)),
-                   &ln, &fi);
-          }
-        else
-          {
-             _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &ti);
-          }
+        _find_layout_item_match(cur, &ln, &it);
      }
    if (!ln) return -1;
    x = ln->x;
