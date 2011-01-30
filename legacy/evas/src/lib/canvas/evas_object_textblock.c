@@ -7089,16 +7089,13 @@ evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
  * @param switch_items toogles item switching (rtl cases)
  */
 static void
-_evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Text_Item *ti,
+_evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Item *it,
       Evas_Coord *x, Evas_Coord *w, Eina_Bool start, Eina_Bool switch_items)
 {
-   Evas_Object_Textblock_Item *it;
-   it = _ITEM(ti);
-
    if ((start && !switch_items) || (!start && switch_items))
      {
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(&ti->parent.bidi_props, 0))
+        if (evas_bidi_is_rtl_char(&it->bidi_props, 0))
           {
              *w = *x + *w;
              *x = 0;
@@ -7112,7 +7109,7 @@ _evas_textblock_range_calc_x_w(const Evas_Object_Textblock_Text_Item *ti,
    else
      {
 #ifdef BIDI_SUPPORT
-        if (evas_bidi_is_rtl_char(&ti->parent.bidi_props, 0))
+        if (evas_bidi_is_rtl_char(&it->bidi_props, 0))
           {
              *x = *x + *w;
              *w = it->w - *x;
@@ -7286,7 +7283,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
                }
              else
                {
-                  _evas_textblock_range_calc_x_w(ti, &x, &w, EINA_TRUE,
+                  _evas_textblock_range_calc_x_w(it1, &x, &w, EINA_TRUE,
                         switch_items);
                }
           }
@@ -7294,6 +7291,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           {
              x = 0;
              w = it1->w;
+             _evas_textblock_range_calc_x_w(it1, &x, &w, EINA_TRUE,
+                   switch_items);
           }
         if (w > 0)
           {
@@ -7338,23 +7337,16 @@ _evas_textblock_cursor_range_in_line_geometry_get(
                }
              else
                {
-                  _evas_textblock_range_calc_x_w(ti, &x, &w, EINA_FALSE,
+                  _evas_textblock_range_calc_x_w(it2, &x, &w, EINA_FALSE,
                         switch_items);
                }
           }
         else
           {
-        /* FIXME: This should be here for rtl, items, this can't be achieved
-         * yet, there are stuff to do before. ask Tom (TAsn) what's needed
-         * to be done in order to get that right to rtl as well if you
-         * are interested. - If you see this message please let me Tom (TAsn)
-         * know, because I should have fixed it immediately. */
-#if 0
              x = 0;
              w = it2->w;
-#else
-             w = 0; /* Disable this item for the moment */
-#endif
+             _evas_textblock_range_calc_x_w(it2, &x, &w, EINA_FALSE,
+                        switch_items);
           }
         if (w > 0)
           {
