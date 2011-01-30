@@ -7190,8 +7190,9 @@ _evas_textblock_cursor_range_in_line_geometry_get(
         switch_items = EINA_TRUE;
      }
 
-   /* IMPORTANT: Don't use cur1/cur2 past this point (because of bidi),
-    * unless you are know what you are doing */
+   /* IMPORTANT: Don't use cur1/cur2 past this point (because they probably
+    * don't make sense anymore. That's why there are start and end),
+    * unless you know what you are doing */
 
    /* Special case when they share the same item and it's a text item */
    if ((it1 == it2) && (it1->type == EVAS_TEXTBLOCK_ITEM_TEXT))
