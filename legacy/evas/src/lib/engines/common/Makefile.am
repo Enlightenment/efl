@@ -13,7 +13,7 @@ AM_CPPFLAGS	     = -I. \
 		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
 		       @EET_CFLAGS@ @pthread_cflags@ \
 		       @WIN32_CFLAGS@ @EINA_CFLAGS@ \
-                       @FRIBIDI_CFLAGS@
+                       @FRIBIDI_CFLAGS@ @HARFBUZZ_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
