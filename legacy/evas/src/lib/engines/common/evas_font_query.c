@@ -474,7 +474,7 @@ end:
    return ret_val;
 }
 
-/* position of the last char in thext text that will fit in xy.
+/* position of the char after the last char in the text that will fit in xy.
  * BiDi handling: We receive the shaped string + other props from intl_props,
  * All we care about is char sizes + kerning so we only really need to get the
  * shaped string to utf8, and then just go through it like in english, as it's
@@ -496,15 +496,9 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
    desc = evas_common_font_max_descent_get(fn);
    EVAS_FONT_WALK_TEXT_START()
      {
-	int chr_x, chr_y, chr_w;
-
         EVAS_FONT_WALK_TEXT_WORK();
 
-        chr_x = (pen_x) + bear_x;
-        chr_y = (pen_y) + bear_y;
-        chr_w = width;
-
-	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
+	if ((x >= pen_x) && (x <= (pen_x + adv)) &&
 	    (y >= -asc) && (y <= desc))
 	  {
 	     ret = char_index;
