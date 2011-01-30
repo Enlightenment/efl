@@ -290,7 +290,7 @@ struct _Evas_Object_Textblock_Paragraph
    EINA_INLIST;
    Evas_Object_Textblock_Line        *lines;
    Evas_Object_Textblock_Node_Text   *text_node;
-//   int                                x, y, w, h;
+   int                                x, y, w, h;
    int                                line_no;
 };
 
@@ -1842,8 +1842,14 @@ static void
 _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n)
 {
    c->par = calloc(1, sizeof(Evas_Object_Textblock_Paragraph));
+   if (c->paragraphs)
+     {
+        Evas_Object_Textblock_Paragraph *last_par;
+        last_par = (Evas_Object_Textblock_Paragraph *)
+           EINA_INLIST_GET(c->paragraphs)->last;
+        c->par->y = last_par->y + last_par->h;
+     }
    c->paragraphs = (Evas_Object_Textblock_Paragraph *)eina_inlist_append(EINA_INLIST_GET(c->paragraphs), EINA_INLIST_GET(c->par));
-   c->x = 0;
    c->ln = NULL;
    c->par->text_node = n;
    c->par->line_no = -1;
@@ -2239,6 +2245,11 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt,
         c->ln->x = c->marginl + c->o->style_pad.l;
         if ((c->ln->x + c->ln->w + c->marginr - c->o->style_pad.l) > c->wmax)
           c->wmax = c->ln->x + c->ln->w + c->marginl + c->marginr - c->o->style_pad.l;
+     }
+   c->par->h += c->ln->h;
+   if (c->par->w < c->ln->w)
+     {
+        c->par->w = c->ln->w;
      }
    if (add_line)
      _layout_line_new(c, fmt);
@@ -7008,7 +7019,7 @@ EAPI Eina_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Paragraph *par;
+   Evas_Object_Textblock_Paragraph *par, *found_par = NULL;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
 
@@ -7019,7 +7030,16 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    y += o->style_pad.t;
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        EINA_INLIST_FOREACH(par->lines, ln)
+        if ((par->x <= x) && (par->x + par->w > x) &&
+              (par->y <= y) && (par->y + par->h > y))
+          {
+             found_par = par;
+             break;
+          }
+     }
+   if (found_par)
+     {
+        EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              if (ln->y > y) break;
              if ((ln->y <= y) && ((ln->y + ln->h) > y))
@@ -7097,16 +7117,26 @@ EAPI int
 evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Paragraph *par;
+   Evas_Object_Textblock_Paragraph *par, *found_par = NULL;
    Evas_Object_Textblock_Line *ln;
 
    if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    y += o->style_pad.t;
+
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        EINA_INLIST_FOREACH(par->lines, ln)
+        if ((par->y <= y) && (par->y + par->h > y))
+          {
+             found_par = par;
+             break;
+          }
+     }
+
+   if (found_par)
+     {
+        EINA_INLIST_FOREACH(found_par->lines, ln)
           {
              if (ln->y > y) break;
              if ((ln->y <= y) && ((ln->y + ln->h) > y))
