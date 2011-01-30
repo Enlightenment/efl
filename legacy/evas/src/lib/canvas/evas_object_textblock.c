@@ -2728,7 +2728,7 @@ skip:
  *
  * @param c the current context- NOT NULL.
  * @param n the source format node - not null.
- * @param item the format text - not null.
+ * @param item the format text.
  *
  * @return the new format item.
  */
@@ -3164,7 +3164,7 @@ _layout_visualize_par(Ctxt *c)
                   Evas_Object_Textblock_Format_Item *fi;
                   fi = _ITEM_FORMAT(it);
                   fi->y = c->y;
-                  if (_IS_LINE_SEPARATOR(fi->item))
+                  if (fi->item && _IS_LINE_SEPARATOR(fi->item))
                     {
                        adv_line = 1;
                     }
@@ -3388,8 +3388,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout(obj, calc_only, w, h, w_ret, h_ret);
         return;
      }
-
-   return;
 }
 
 /*
