@@ -3154,6 +3154,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align_auto = EINA_TRUE;
    c->ln = NULL;
 
+
+   /* Start of logical layout creation */
+
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
@@ -3167,6 +3170,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         return;
      }
 
+
    /* If there are no nodes and lines, do the initial creation. */
    if (!c->o->text_nodes)
      {
@@ -3176,7 +3180,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout_line_advance(c, fmt, EINA_FALSE);
      }
 
-   /* Go through all the text nodes to create the layout from */
+   /* Go through all the text nodes to create the logical layout */
    EINA_INLIST_FOREACH(c->o->text_nodes, n)
      {
         Evas_Object_Textblock_Node_Format *fnode;
@@ -3222,11 +3226,11 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         _layout_text_append(c, fmt, n, start, -1, o->repch);
      }
 
+   /* End of logical layout creation */
+
+   /* Start of visual layout creation */
    /* FIXME: move away? */
    {
-      /* FIXME: is this the right format? or maybe it can change with pops?
-       * maybe this is the last? we need the first... Maybe we should
-       * just keep at the begining or something */
       Evas_Object_Textblock_Paragraph *par;
       EINA_INLIST_FOREACH(c->paragraphs, par)
         {
@@ -3235,6 +3239,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
            _layout_visualize_par(c);
         }
    }
+   /* End of visual layout creation */
 
    /* Clean the rest of the format stack */
    while (c->format_stack)
@@ -7738,6 +7743,7 @@ evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Eva
 		-1, -1,
 		&o->native.w, &o->native.h);
 	o->native.valid = 1;
+        o->content_changed = 0;
      }
    if (w) *w = o->native.w;
    if (h) *h = o->native.h;
