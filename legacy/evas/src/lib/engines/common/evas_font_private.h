@@ -37,8 +37,9 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
 #  define OTUNLOCK()
 # endif
 
+/* 6th bit is on is the same as frac part >= 0.5 */
 # define EVAS_FONT_ROUND_26_6_TO_INT(x) \
-   (((0x3F & x) > 31) ? ((x >> 6) + 1) : (x >> 6))
+   ((0x20 & x) ? ((x >> 6) + 1) : (x >> 6))
 
 # define EVAS_FONT_CHARACTER_IS_INVISIBLE(x) ( \
       ((0x200C <= (x)) && ((x) <= 0x200D)) || /* ZWNJ..ZWH */ \
@@ -64,12 +65,14 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
  * @see EVAS_FONT_WALK_TEXT_END
  */
 # define EVAS_FONT_WALK_TEXT_INIT() \
-        int pen_x = 0, pen_y = 0; \
+        int _pen_x = 0, _pen_y = 0; \
         size_t char_index; \
         FT_UInt prev_index; \
         FT_Face pface = NULL; \
         int _len = eina_unicode_strlen(text); \
         (void) _len; /* We don't have to use it */ \
-        (void) pen_y; /* Sometimes it won't be used */
+        (void) _pen_y; /* Sometimes it won't be used */
+
+# define EVAS_FONT_WALK_PEN_X (EVAS_FONT_ROUND_26_6_TO_INT(_pen_x))
 
 #endif /* !_EVAS_FONT_PRIVATE_H */

@@ -504,8 +504,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
      }
 
 
-   pen_x = x;
-   pen_y = y;
+   /*FIXME: Handle it sanely */
+   _pen_y = y;
    im = dst->image.data;
 #ifdef OT_SUPPORT
    if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
@@ -523,8 +523,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                   fg->ext_dat_free = dc->font_ext.func.gl_free;
                }
 
-             chr_x = (pen_x) + EVAS_FONT_WALK_OT_X_OFF + EVAS_FONT_WALK_OT_X_BEAR;
-             chr_y = (pen_y) + EVAS_FONT_WALK_OT_Y_OFF + EVAS_FONT_WALK_OT_Y_BEAR;
+             chr_x = x + EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_OFF + EVAS_FONT_WALK_OT_X_BEAR;
+             chr_y = (_pen_y) + EVAS_FONT_WALK_OT_Y_OFF + EVAS_FONT_WALK_OT_Y_BEAR;
              chr_w = EVAS_FONT_WALK_OT_WIDTH;
 
              if (chr_x < (ext_x + ext_w))
@@ -672,8 +672,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                   fg->ext_dat_free = dc->font_ext.func.gl_free;
                }
 
-             chr_x = (pen_x) + EVAS_FONT_WALK_DEFAULT_X_OFF + EVAS_FONT_WALK_DEFAULT_X_BEAR;
-             chr_y = (pen_y) + EVAS_FONT_WALK_DEFAULT_Y_OFF + EVAS_FONT_WALK_DEFAULT_Y_BEAR;
+             chr_x = x + EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_OFF + EVAS_FONT_WALK_DEFAULT_X_BEAR;
+             chr_y = (_pen_y) + EVAS_FONT_WALK_DEFAULT_Y_OFF + EVAS_FONT_WALK_DEFAULT_Y_BEAR;
              chr_w = EVAS_FONT_WALK_DEFAULT_WIDTH;
 
              if (chr_x < (ext_x + ext_w))
@@ -969,16 +969,16 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
                  ci->fg->glyph->advance.x >> 16 > 0)
                {
                   if (evas_common_font_query_kerning(fi, ci->index, prev_index, &kern))
-                    pen_x += kern;
+                    pen_x += EVAS_FONT_ROUND_26_6_TO_INT(kern);
                }
              else
                {
                   if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
-                    pen_x += kern;
+                    pen_x += EVAS_FONT_ROUND_26_6_TO_INT(kern);
                }
 # else
              if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
-               pen_x += kern;
+               pen_x += EVAS_FONT_ROUND_26_6_TO_INT(kern);
 # endif
           }
 

@@ -36,7 +36,7 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 	int *push;
 
         FTUNLOCK();
-	*kerning = delta.x >> 6;
+	*kerning = delta.x;
 
 	push = malloc(sizeof (int) * 3);
 	if (!push) return 1;
@@ -157,8 +157,8 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
              /* Keep the width because we'll need it for the last char */
              keep_width = EVAS_FONT_WALK_OT_WIDTH + EVAS_FONT_WALK_OT_X_OFF +
                 EVAS_FONT_WALK_OT_X_BEAR;
-             /* Keep the previous pen_x, before it's advanced in TEXT_END */
-             prev_pen_x = pen_x;
+             /* Keep the previous EVAS_FONT_WALK_PEN_X, before it's advanced in TEXT_END */
+             prev_pen_x = EVAS_FONT_WALK_PEN_X;
           }
         EVAS_FONT_WALK_OT_TEXT_END();
      }
@@ -173,8 +173,8 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text, const Evas_
              keep_width = EVAS_FONT_WALK_DEFAULT_WIDTH +
                 EVAS_FONT_WALK_DEFAULT_X_OFF +
                 EVAS_FONT_WALK_DEFAULT_X_BEAR;
-             /* Keep the previous pen_x, before it's advanced in TEXT_END */
-             prev_pen_x = pen_x;
+             /* Keep the previous EVAS_FONT_WALK_PEN_X, before it's advanced in TEXT_END */
+             prev_pen_x = EVAS_FONT_WALK_PEN_X;
           }
         EVAS_FONT_WALK_DEFAULT_TEXT_END();
      }
@@ -223,7 +223,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text, const Ev
      }
 
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
-   if (h_adv) *h_adv = pen_x;
+   if (h_adv) *h_adv = EVAS_FONT_WALK_PEN_X;
   evas_common_font_int_use_trim();
 }
 
@@ -294,12 +294,13 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
                     }
                   else
                     {
-                       cluster_start = (pen_x) + EVAS_FONT_WALK_OT_X_OFF +
+                       cluster_start = EVAS_FONT_WALK_PEN_X +
+                          EVAS_FONT_WALK_OT_X_OFF +
                           EVAS_FONT_WALK_OT_X_BEAR;
                     }
                }
              last_is_visible = visible;
-             last_end = pen_x + EVAS_FONT_WALK_OT_X_OFF +
+             last_end = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_OFF +
                  EVAS_FONT_WALK_OT_X_BEAR + EVAS_FONT_WALK_OT_WIDTH;
              /* we need to see if the char at the visual position is the char wanted */
              if ((intl_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR) &&
@@ -358,13 +359,13 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *in_text, c
              EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_TRUE);
              if (visible)
                {
-                  chr_x = (pen_x) + EVAS_FONT_WALK_DEFAULT_X_OFF +
+                  chr_x = (EVAS_FONT_WALK_PEN_X) + EVAS_FONT_WALK_DEFAULT_X_OFF +
                      EVAS_FONT_WALK_DEFAULT_X_BEAR;
                   chr_w = EVAS_FONT_WALK_DEFAULT_WIDTH;
                }
              else
                {
-                  chr_x = pen_x;
+                  chr_x = EVAS_FONT_WALK_PEN_X;
                   chr_w = 0;
                }
              /* we need to see if the char at the visual position is the char wanted */
@@ -453,7 +454,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
                     }
                   else
                     {
-                       cluster_start = pen_x;
+                       cluster_start = EVAS_FONT_WALK_PEN_X;
                     }
                }
              last_is_visible = visible;
@@ -486,7 +487,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
         if (found)
           {
              Evas_Coord cluster_adv;
-             cluster_adv = pen_x - cluster_start;
+             cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
              if (cy) *cy = -asc;
              if (ch) *ch = asc + desc;
              if (last_is_visible)
@@ -498,7 +499,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
                }
              else
                {
-                  if (cpen_x) *cpen_x = pen_x;
+                  if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
                   if (cadv) *cadv = 0;
                }
              ret_val = 1;
@@ -522,12 +523,12 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
                     {
                        if (EVAS_FONT_WALK_DEFAULT_X_ADV > 0)
                          {
-                            if (cpen_x) *cpen_x = pen_x;
+                            if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
                             if (cadv) *cadv = EVAS_FONT_WALK_DEFAULT_X_ADV;
                          }
                        else
                          {
-                            if (cpen_x) *cpen_x = pen_x +
+                            if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X +
                               EVAS_FONT_WALK_DEFAULT_X_OFF +
                               EVAS_FONT_WALK_DEFAULT_X_BEAR;
                             if (cadv) *cadv = EVAS_FONT_WALK_DEFAULT_WIDTH;
@@ -535,7 +536,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *in_text, co
                     }
                   else
                     {
-                       if (cpen_x) *cpen_x = pen_x;
+                       if (cpen_x) *cpen_x = EVAS_FONT_WALK_PEN_X;
                        if (cadv) *cadv = 0;
                     }
                   ret_val = 1;
@@ -590,7 +591,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
                     }
                   else
                     {
-                       cluster_start = pen_x;
+                       cluster_start = EVAS_FONT_WALK_PEN_X;
                     }
                }
 
@@ -599,7 +600,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
              /* we need to see if the char at the visual position is the char,
               * we check that by checking if it's before the current pen
               * position and the next */
-             if ((x >= pen_x) && (x <= (pen_x + EVAS_FONT_WALK_OT_X_ADV)) &&
+             if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_ADV)) &&
                    (y >= -asc) && (y <= desc))
                {
                   items = evas_common_font_ot_cluster_size_get(intl_props,
@@ -614,7 +615,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
           {
              int item_pos;
              Evas_Coord cluster_adv;
-             cluster_adv = pen_x - cluster_start;
+             cluster_adv = EVAS_FONT_WALK_PEN_X - cluster_start;
 
              if (intl_props->bidi.dir == EVAS_BIDI_DIRECTION_LTR)
                {
@@ -628,7 +629,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
                   part = cluster_adv / items;
                   item_pos = items - ((int) ((x - cluster_start) / part)) - 1;
                }
-             if (cx) *cx = pen_x +
+             if (cx) *cx = EVAS_FONT_WALK_PEN_X +
                ((cluster_adv / items) * (item_pos - 1));
              if (cy) *cy = -asc;
              if (cw) *cw = (cluster_adv / items);
@@ -648,10 +649,10 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *in_text
              /* we need to see if the char at the visual position is the char,
               * we check that by checking if it's before the current pen position
               * and the next */
-             if ((x >= pen_x) && (x <= (pen_x + EVAS_FONT_WALK_DEFAULT_X_ADV))
+             if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_ADV))
                    && (y >= -asc) && (y <= desc))
                {
-                  if (cx) *cx = pen_x + EVAS_FONT_WALK_DEFAULT_X_OFF +
+                  if (cx) *cx = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_OFF +
                     EVAS_FONT_WALK_DEFAULT_X_BEAR +
                        EVAS_FONT_WALK_DEFAULT_X_ADV;
                   if (cy) *cy = -asc;
@@ -699,7 +700,7 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
              EVAS_FONT_WALK_OT_TEXT_WORK(EINA_FALSE);
              if (!visible) continue;
 
-             if ((x >= pen_x) && (x <= (pen_x + EVAS_FONT_WALK_OT_X_ADV)) &&
+             if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_OT_X_ADV)) &&
                    (y >= -asc) && (y <= desc))
                {
                   ret = EVAS_FONT_WALK_OT_POS;
@@ -716,8 +717,8 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *in_text
              EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_FALSE);
              if (!visible) continue;
 
-             if ((x >= pen_x) &&
-                   (x <= (pen_x + EVAS_FONT_WALK_DEFAULT_X_ADV)) &&
+             if ((x >= EVAS_FONT_WALK_PEN_X) &&
+                   (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_DEFAULT_X_ADV)) &&
                    (y >= -asc) && (y <= desc))
                {
                   ret = char_index;

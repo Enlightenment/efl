@@ -21,12 +21,12 @@
                visible && !is_visual) \
            { \
               if (evas_common_font_query_kerning(fi, index, prev_index, &kern)) \
-                pen_x += kern; \
+                _pen_x += kern; \
            } \
          else \
            { \
               if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-                pen_x += kern; \
+                _pen_x += kern; \
            } \
       } \
    while (0)
@@ -36,7 +36,7 @@
       { \
          (void) is_visual; \
          if (evas_common_font_query_kerning(fi, prev_index, index, &kern)) \
-           pen_x += kern; \
+           _pen_x += kern; \
       } \
    while (0)
 #endif
@@ -113,7 +113,9 @@
 #define EVAS_FONT_WALK_DEFAULT_Y_OFF (0)
 #define EVAS_FONT_WALK_DEFAULT_X_BEAR (fg->glyph_out->left)
 #define EVAS_FONT_WALK_DEFAULT_Y_BEAR (fg->glyph_out->top)
-#define EVAS_FONT_WALK_DEFAULT_X_ADV (fg->glyph->advance.x >> 16)
+#define _EVAS_FONT_WALK_DEFAULT_X_ADV (fg->glyph->advance.x >> 10)
+#define EVAS_FONT_WALK_DEFAULT_X_ADV \
+             (EVAS_FONT_ROUND_26_6_TO_INT(_EVAS_FONT_WALK_DEFAULT_X_ADV))
 #define EVAS_FONT_WALK_DEFAULT_Y_ADV (0)
 #define EVAS_FONT_WALK_DEFAULT_WIDTH (fg->glyph_out->bitmap.width)
 #define EVAS_FONT_WALK_DEFAULT_POS (char_index)
@@ -182,7 +184,7 @@
 #define EVAS_FONT_WALK_DEFAULT_TEXT_END() \
              if (visible) \
                { \
-                  pen_x += EVAS_FONT_WALK_DEFAULT_X_ADV; \
+                  _pen_x += _EVAS_FONT_WALK_DEFAULT_X_ADV; \
                } \
              prev_index = index; \
           } \
