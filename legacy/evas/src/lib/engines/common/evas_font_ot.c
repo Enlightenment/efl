@@ -116,22 +116,32 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Source *src)
 EAPI void
 evas_common_font_ot_cutoff_text_props(Evas_Text_Props *props, int cutoff)
 {
-   Evas_Font_OT_Data_Item *tmp;
+   Evas_Font_OT_Data *new_data;
    if ((cutoff <= 0) || (!props->ot_data) ||
          (((size_t) cutoff) >= props->ot_data->len))
      return;
 
+   new_data = malloc(sizeof(Evas_Font_OT_Data));
+   memcpy(new_data, props->ot_data, sizeof(Evas_Font_OT_Data));
+   new_data->refcount = 1;
+   new_data->len = cutoff;
+   new_data->items = malloc(cutoff * sizeof(Evas_Font_OT_Data_Item));
+
    if (props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
-        memmove(props->ot_data->items,
+        memcpy(new_data->items,
               props->ot_data->items + (props->ot_data->len - cutoff),
               cutoff * sizeof(Evas_Font_OT_Data_Item));
      }
-   tmp = realloc(props->ot_data->items,
-         cutoff * sizeof(Evas_Font_OT_Data_Item));
-   props->ot_data->items = tmp;
-   props->ot_data->len = cutoff;
+   else
+     {
+        memcpy(new_data->items,
+              props->ot_data->items,
+              cutoff * sizeof(Evas_Font_OT_Data_Item));
+     }
 
+   evas_common_font_ot_props_unref(props->ot_data);
+   props->ot_data = new_data;
 }
 
 /* Won't work in the middle of ligatures
@@ -141,7 +151,7 @@ EAPI void
 evas_common_font_ot_split_text_props(Evas_Text_Props *base,
       Evas_Text_Props *ext, int cutoff)
 {
-   Evas_Font_OT_Data_Item *tmp;
+   Evas_Font_OT_Data *new_data;
    int i;
    if ((cutoff <= 0) || (!base->ot_data) ||
          (((size_t) cutoff) >= base->ot_data->len))
@@ -152,11 +162,18 @@ evas_common_font_ot_split_text_props(Evas_Text_Props *base,
    ext->ot_data->len = base->ot_data->len - cutoff;
    ext->ot_data->items = calloc(ext->ot_data->len,
          sizeof(Evas_Font_OT_Data_Item));
+
+   new_data = malloc(sizeof(Evas_Font_OT_Data));
+   memcpy(new_data, base->ot_data, sizeof(Evas_Font_OT_Data));
+   new_data->refcount = 1;
+   new_data->items = malloc(cutoff * sizeof(Evas_Font_OT_Data_Item));
+   new_data->len = cutoff;
+
    if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
         memcpy(ext->ot_data->items, base->ot_data->items,
               ext->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
-        memmove(base->ot_data->items,
+        memcpy(new_data->items,
               base->ot_data->items + ext->ot_data->len,
               cutoff * sizeof(Evas_Font_OT_Data_Item));
      }
@@ -164,7 +181,11 @@ evas_common_font_ot_split_text_props(Evas_Text_Props *base,
      {
         memcpy(ext->ot_data->items, base->ot_data->items + cutoff,
               ext->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
+        memcpy(new_data->items, base->ot_data->items,
+              cutoff * sizeof(Evas_Font_OT_Data_Item));
      }
+   evas_common_font_ot_props_unref(base->ot_data);
+   base->ot_data = new_data;
 
    /* Adjust the offset of the clusters */
      {
@@ -183,11 +204,6 @@ evas_common_font_ot_split_text_props(Evas_Text_Props *base,
           }
         ext->ot_data->offset = base->ot_data->offset + min;
      }
-   tmp = realloc(base->ot_data->items,
-         cutoff * sizeof(Evas_Font_OT_Data_Item));
-   base->ot_data->items = tmp;
-   base->ot_data->len = cutoff;
-
 }
 
 /* Won't work in the middle of ligatures
@@ -198,32 +214,37 @@ EAPI void
 evas_common_font_ot_merge_text_props(Evas_Text_Props *item1,
       const Evas_Text_Props *item2)
 {
-   Evas_Font_OT_Data_Item *tmp, *itr; /* Itr will be used for adding back
+   Evas_Font_OT_Data *new_data;
+   Evas_Font_OT_Data_Item *itr; /* Itr will be used for adding back
                                          the offsets */
    size_t len;
    if (!item1->ot_data || !item2->ot_data)
      return;
    len = item1->ot_data->len + item2->ot_data->len;
-   tmp = calloc(len, sizeof(Evas_Font_OT_Data_Item));
+
+   new_data = malloc(sizeof(Evas_Font_OT_Data));
+   memcpy(new_data, item1->ot_data, sizeof(Evas_Font_OT_Data));
+   new_data->refcount = 1;
+   new_data->items = malloc(len * sizeof(Evas_Font_OT_Data_Item));
+   new_data->len = len;
    if (item1->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
-        memcpy(tmp, item2->ot_data->items,
+        memcpy(new_data->items, item2->ot_data->items,
               item2->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
-        memcpy(tmp + item2->ot_data->len, item1->ot_data->items,
+        memcpy(new_data->items + item2->ot_data->len, item1->ot_data->items,
               item1->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
-        itr = tmp;
+        itr = new_data->items;
      }
    else
      {
-        memcpy(tmp, item1->ot_data->items,
+        memcpy(new_data->items, item1->ot_data->items,
               item1->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
-        memcpy(tmp + item1->ot_data->len, item2->ot_data->items,
+        memcpy(new_data->items + item1->ot_data->len, item2->ot_data->items,
               item2->ot_data->len * sizeof(Evas_Font_OT_Data_Item));
-        itr = tmp + item1->ot_data->len;
+        itr = new_data->items + item1->ot_data->len;
      }
-   free(item1->ot_data->items);
-   item1->ot_data->items = tmp;
-   item1->ot_data->len = len;
+   evas_common_font_ot_props_unref(item1->ot_data);
+   item1->ot_data = new_data;
    /* Add back the offset of item2 to the newly created */
    if (item2->ot_data->offset > 0)
      {
