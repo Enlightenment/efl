@@ -7201,8 +7201,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
      }
    else
      {
-        start = (cur2) ? (cur2->pos - it1->text_pos) : 0;
-        end = (cur1) ? (cur1->pos - it2->text_pos) : end;
+        start = (cur2) ? (cur2->pos - it1->text_pos) : end;
+        end = (cur1) ? (cur1->pos - it2->text_pos) : 0;
         switch_items = EINA_TRUE;
      }
 
