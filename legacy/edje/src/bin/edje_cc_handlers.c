@@ -128,6 +128,7 @@ static void st_collections_group_parts_part_source5(void);
 static void st_collections_group_parts_part_source6(void);
 static void st_collections_group_parts_part_entry_mode(void);
 static void st_collections_group_parts_part_select_mode(void);
+static void st_collections_group_parts_part_cursor_mode(void);
 static void st_collections_group_parts_part_multiline(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
@@ -350,6 +351,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
      {"collections.group.parts.part.entry_mode", st_collections_group_parts_part_entry_mode},
      {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
+     {"collections.group.parts.part.cursor_mode", st_collections_group_parts_part_cursor_mode},
      {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
      {"collections.group.parts.part.set.name", st_images_set_name},
@@ -2685,6 +2687,38 @@ st_collections_group_parts_part_select_mode(void)
    ep->select_mode = parse_enum(0,
                                 "DEFAULT", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
                                 "EXPLICIT", EDJE_ENTRY_SELECTION_MODE_EXPLICIT,
+                                NULL);
+}
+
+/**
+    @page edcref
+    @property
+        cursor_mode
+    @parameters
+        [MODE]
+    @effect
+        Sets the cursor mode for a textblock part to one of:
+        @li UNDER
+        @li BEFORE
+        UNDER cursor mode means the cursor will draw below the character pointed
+        at. That's the default.
+        BEFORE cursor mode means the cursor is drawn as a vertical line before
+        the current character, just like many other GUI toolkits handle it.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_cursor_mode(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = pc->parts[pc->parts_count - 1];
+   ep->cursor_mode = parse_enum(0,
+                                "UNDER", EDJE_ENTRY_CURSOR_MODE_UNDER,
+                                "BEFORE", EDJE_ENTRY_CURSOR_MODE_BEFORE,
                                 NULL);
 }
 

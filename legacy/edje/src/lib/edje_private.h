@@ -362,6 +362,9 @@ typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 #define EDJE_ENTRY_SELECTION_MODE_DEFAULT 0
 #define EDJE_ENTRY_SELECTION_MODE_EXPLICIT 1
 
+#define EDJE_ENTRY_CURSOR_MODE_UNDER 0
+#define EDJE_ENTRY_CURSOR_MODE_BEFORE 1
+
 #define EDJE_PART_PATH_SEPARATOR ':'
 #define EDJE_PART_PATH_SEPARATOR_STRING ":"
 #define EDJE_PART_PATH_SEPARATOR_INDEXL '['
@@ -707,6 +710,7 @@ struct _Edje_Part
    unsigned char          pointer_mode;
    unsigned char          entry_mode;
    unsigned char          select_mode;
+   unsigned char          cursor_mode;
    unsigned char          multiline;
    Edje_Part_Api          api;
 };
