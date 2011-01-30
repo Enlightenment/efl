@@ -6781,10 +6781,21 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    return ret;
 }
 
-/** FIXME: doc
+/**
+ * @internal
+ * Returns the geometry/pen position (depending on query_func) of the char
+ * at pos.
+ *
+ * @param cur the position of the char.
+ * @param query_func the query function to use.
+ * @param cx the x of the char (or pen_x in the case of pen position).
+ * @param cy the y of the char.
+ * @param cw the w of the char (or advance in the case pen position).
+ * @param ch the h of the char.
+ * @return line number of the char on success, -1 on error.
  */
 static int
-_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
