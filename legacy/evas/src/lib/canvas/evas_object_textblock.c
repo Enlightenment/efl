@@ -349,7 +349,6 @@ struct _Evas_Object_Textblock_Format_Item
    unsigned char                        vsize : 2;
    unsigned char                        size : 2;
    unsigned char                        formatme : 1;
-   unsigned char                        ___padding___ : 3;
 };
 
 struct _Evas_Object_Textblock_Format
@@ -2201,6 +2200,33 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
              if (!fi->formatme) continue;
+             fi->ascent = c->maxascent;
+             fi->descent = c->maxdescent;
+             /* Adjust relsize */
+             if (fi->size == SIZE_REL)
+               {
+                  Evas_Coord w = 1, h = 1;
+                  const char *p, *s;
+                  s = eina_strbuf_string_get(fi->source_node->format);
+                  p = strstr((char *) s, " relsize=");
+                  p += 9;
+                  if (sscanf(p, "%ix%i", &w, &h) == 2)
+                    {
+                       int sz = 1;
+                       if (fi->vsize == VSIZE_FULL)
+                         {
+                            sz = c->maxdescent + c->maxascent;
+                         }
+                       else if (fi->vsize == VSIZE_ASCENT)
+                         {
+                            sz = c->maxascent;
+                         }
+                       w = (w * sz) / h;
+                       h = sz;
+                    }
+                  fi->parent.w = fi->parent.adv = w;
+                  fi->parent.h = h;
+               }
              switch (fi->size)
                {
                 case SIZE:
@@ -2821,7 +2847,7 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
         // href == name of item - to be found and matched later and used for
         //   positioning
         Evas_Object_Textblock_Format_Item *fi;
-        int x2, w = 1, h = 1;
+        int w = 1, h = 1;
         int vsize = 0, size = 0;
         char *p;
 
@@ -2861,27 +2887,12 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                   p = strstr(s, " relsize=");
                   if (p)
                     {
-                       p += 9;
-                       if (sscanf(p, "%ix%i", &w, &h) == 2)
-                         {
-                            int sz = 1;
-                            size = SIZE_REL;
-                            if (vsize == VSIZE_FULL)
-                              {
-                                 sz = c->maxdescent + c->maxascent;
-                              }
-                            else if (vsize == VSIZE_ASCENT)
-                              {
-                                 sz = c->maxascent;
-                              }
-                            w = (w * sz) / h;
-                            h = sz;
-                         }
+                       /* relsize in handled somewhere else, pretty hacky, but
+                        * couldn't think of another solution atm. */
+                       size = SIZE_REL;
                     }
                }
           }
-
-        x2 = c->x + w;
 
         fi = _layout_format_item_add(c, n, NULL, fmt);
         fi->vsize = vsize;
@@ -2891,8 +2902,6 @@ _layout_do_format(const Evas_Object *obj, Ctxt *c,
                                               the same, we don't handle the
                                               special cases yet. */
         fi->parent.h = h;
-        fi->ascent = c->maxascent;
-        fi->descent = c->maxdescent;
         handled = 1;
      }
    if (!handled)
