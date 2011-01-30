@@ -401,7 +401,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 {
    const Eina_Unicode *text = in_text;
    DATA32 *im;
-   int c;
    EVAS_FONT_WALK_TEXT_INIT();
 
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
@@ -523,7 +522,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    pen_x = x;
    pen_y = y;
    im = dst->image.data;
-   c = 0;
    EVAS_FONT_WALK_TEXT_START()
      {
 	int chr_x, chr_y, chr_w;
@@ -665,7 +663,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                                    }
                               }
                          }
-                       c++;
                     }
                }
           }
@@ -777,7 +774,6 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
    unsigned char *im;
    int width;
    int height, above, below, baseline, descent;
-   int c;
    int i,j;
    int char_index = 0; /* the index of the current char */
    struct prword *w;
@@ -807,7 +803,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
    metrics = malloc(sizeof(struct cinfo) * len);
 
    /* First pass: Work out how big */
-   for (char_index = 0, c = 0, chr = 0 ; *text ; text++, char_index ++)
+   for (char_index = 0, chr = 0 ; *text ; text++, char_index ++)
      {
 	struct cinfo *ci = metrics + char_index;
 	ci->gl = *text;
