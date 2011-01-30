@@ -5,6 +5,9 @@
         * Fixed cursor/selection handling with BiDi text.
         * Fixed many BiDi issues in both textblock and text objects.
         * Cleaned up textblock and font engine a lot.
+        * Added auto-alignment to tetxblock and text objects.
+        * Added mixedwrap (word wrap, and if a word is too big cut it) support
+          to textblock.
         * Renamed a lot of stuff.
         * Made textblock faster, mostly by saving item sizes and caching
           layout items when text doesn't change.
