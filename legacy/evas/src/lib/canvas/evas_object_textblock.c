@@ -289,14 +289,15 @@ struct _Evas_Object_Textblock_Paragraph
 {
    EINA_INLIST;
    Evas_Object_Textblock_Line        *lines;
-   int                                x, y, w, h;
-   int                                par_no;
+//   int                                x, y, w, h;
+   int                                line_no;
 };
 
 struct _Evas_Object_Textblock_Line
 {
    EINA_INLIST;
    Evas_Object_Textblock_Item        *items;
+   Evas_Object_Textblock_Paragraph   *par;
    int                                x, y, w, h;
    int                                baseline;
    int                                line_no;
@@ -1826,6 +1827,7 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    c->x = 0;
    c->maxascent = c->maxdescent = 0;
    c->ln->line_no = -1;
+   c->ln->par = c->par;
    _layout_format_ascent_descent_adjust(c, fmt);
 }
 
@@ -1841,7 +1843,8 @@ _layout_paragraph_new(Ctxt *c)
    c->par = calloc(1, sizeof(Evas_Object_Textblock_Paragraph));
    c->paragraphs = (Evas_Object_Textblock_Paragraph *)eina_inlist_append(EINA_INLIST_GET(c->paragraphs), EINA_INLIST_GET(c->par));
    c->x = 0;
-   c->par->par_no= -1;
+   c->ln = NULL;
+   c->par->line_no = -1;
 }
 
 /**
@@ -2211,7 +2214,12 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
         if (c->maxdescent < 2) c->underline_extend = 2 - c->maxdescent;
      }
-   c->ln->line_no = c->line_no;
+   /* Update the paragraphs line number. */
+   if (c->par->line_no == -1)
+     {
+        c->par->line_no = c->line_no;
+     }
+   c->ln->line_no = c->ln->par->line_no - c->line_no;
    c->line_no++;
    c->y += c->maxascent + c->maxdescent;
    if (c->w >= 0)
@@ -3140,13 +3148,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         size_t start;
         int off;
 
-        /*FIXME-tom: A hack, so we'll only have one paragraph
-         * until full support is implemented */
-        if (!c->par)
-          {
-             _layout_paragraph_new(c); /* Each node is a paragraph */
-          }
-        if (!c->ln) _layout_line_new(c, fmt);
+        _layout_paragraph_new(c); /* Each node is a paragraph */
+        _layout_line_new(c, fmt);
 
         /* For each text node to thorugh all of it's format nodes
          * append text from the start to the offset of the next format
@@ -3281,44 +3284,50 @@ _relayout(const Evas_Object *obj)
 static void
 _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
 {
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    if (!o->formatted.valid) _relayout(obj);
-   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        Evas_Object_Textblock_Item *it;
-
-        EINA_INLIST_FOREACH(ln->items, it)
+        EINA_INLIST_FOREACH(par->lines, ln)
           {
-             if (it->text_node == n)
+             Evas_Object_Textblock_Item *it;
+             Evas_Object_Textblock_Line *lnn;
+
+             lnn = (Evas_Object_Textblock_Line *)(((Eina_Inlist *)ln)->next);
+             EINA_INLIST_FOREACH(ln->items, it)
                {
-                  /* FIXME: p should be size_t, same goes for pos */
-                  int p = (int) it->text_pos;
+                  if (it->text_node == n)
+                    {
+                       /* FIXME: p should be size_t, same goes for pos */
+                       int p = (int) it->text_pos;
 
-                  if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-                    {
-                       Evas_Object_Textblock_Text_Item *ti =
-                          _ITEM_TEXT(it);
+                       if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                         {
+                            Evas_Object_Textblock_Text_Item *ti =
+                               _ITEM_TEXT(it);
 
-                       p += (int) eina_unicode_strlen(ti->text);
-                    }
-                  else
-                    {
-                       p++;
-                    }
+                            p += (int) eina_unicode_strlen(ti->text);
+                         }
+                       else
+                         {
+                            p++;
+                         }
 
-                  if (((pos >= (int) it->text_pos) && (pos < p)))
-                    {
-                       *lnr = ln;
-                       *itr = it;
-                       return;
-                    }
-                  else if (p == pos)
-                    {
-                       *lnr = ln;
-                       *itr = it;
+                       if (((pos >= (int) it->text_pos) && (pos < p)))
+                         {
+                            *lnr = ln;
+                            *itr = it;
+                            return;
+                         }
+                       else if (p == pos)
+                         {
+                            *lnr = ln;
+                            *itr = it;
+                         }
                     }
                }
           }
@@ -3336,13 +3345,17 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
 static Evas_Object_Textblock_Line *
 _find_layout_line_num(const Evas_Object *obj, int line)
 {
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        if (ln->line_no == line) return ln;
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             if (ln->par->line_no + ln->line_no == line) return ln;
+          }
      }
    return NULL;
 }
@@ -6808,7 +6821,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
              if (cy) *cy = ln->y;
              if (cw) *cw = ln->w;
              if (ch) *ch = ln->h;
-             return ln->line_no;
+             return ln->par->line_no + ln->line_no;
           }
         else
           return -1;
@@ -6897,7 +6910,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
    if (cy) *cy = y;
    if (cw) *cw = w;
    if (ch) *ch = h;
-   return ln->line_no;
+   return ln->par->line_no + ln->line_no;
 }
 
 /**
@@ -6972,7 +6985,7 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (cy) *cy = y;
    if (cw) *cw = w;
    if (ch) *ch = h;
-   return ln->line_no;
+   return ln->par->line_no + ln->line_no;
 }
 
 /**
@@ -6987,6 +7000,7 @@ EAPI Eina_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
 
@@ -6995,68 +7009,71 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    if (!o->formatted.valid) _relayout(cur->obj);
    x += o->style_pad.l;
    y += o->style_pad.t;
-   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-	if (ln->y > y) break;
-	if ((ln->y <= y) && ((ln->y + ln->h) > y))
-	  {
-	     EINA_INLIST_FOREACH(ln->items, it)
-	       {
-		  if ((it->x + ln->x) > x)
-		    {
-		       it_break = it;
-		       break;
-		    }
-		  if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
-		    {
-                       if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-                         {
-                            int pos;
-                            int cx, cy, cw, ch;
-                            Evas_Object_Textblock_Text_Item *ti;
-                            ti = _ITEM_TEXT(it);
-
-                            pos = -1;
-                            if (ti->format->font.font)
-                              pos = cur->ENFN->font_char_at_coords_get(
-                                    cur->ENDT,
-                                    ti->format->font.font,
-                                    ti->text, &ti->parent.text_props,
-                                    x - it->x - ln->x, 0,
-                                    &cx, &cy, &cw, &ch);
-                            if (pos < 0)
-                              return EINA_FALSE;
-                            cur->pos = pos + it->text_pos;
-                            cur->node = it->text_node;
-                            return EINA_TRUE;
-                         }
-                       else
-                         {
-                            Evas_Object_Textblock_Format_Item *fi;
-                            fi = _ITEM_FORMAT(it);
-                            cur->pos = fi->parent.text_pos;
-                            cur->node = fi->source_node->text_node;
-                            return EINA_TRUE;
-                         }
-		    }
-	       }
-	     if (it_break)
-	       {
-		  it = it_break;
-		  cur->node = it->text_node;
-		  cur->pos = it->text_pos;
-
-                  /*FIXME: needs smarter handling, ATM just check, if it's
-                   * the first item, then go to the end of the line, helps
-                   * with rtl langs, doesn't affect ltr langs that much. */
-                  if (!EINA_INLIST_GET(it)->prev)
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             if (ln->y > y) break;
+             if ((ln->y <= y) && ((ln->y + ln->h) > y))
+               {
+                  EINA_INLIST_FOREACH(ln->items, it)
                     {
-                       evas_textblock_cursor_line_char_last(cur);
-                    }
+                       if ((it->x + ln->x) > x)
+                         {
+                            it_break = it;
+                            break;
+                         }
+                       if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
+                         {
+                            if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                              {
+                                 int pos;
+                                 int cx, cy, cw, ch;
+                                 Evas_Object_Textblock_Text_Item *ti;
+                                 ti = _ITEM_TEXT(it);
 
-		  return EINA_TRUE;
-	       }
-	  }
+                                 pos = -1;
+                                 if (ti->format->font.font)
+                                   pos = cur->ENFN->font_char_at_coords_get(
+                                         cur->ENDT,
+                                         ti->format->font.font,
+                                         ti->text, &ti->parent.text_props,
+                                         x - it->x - ln->x, 0,
+                                         &cx, &cy, &cw, &ch);
+                                 if (pos < 0)
+                                   return EINA_FALSE;
+                                 cur->pos = pos + it->text_pos;
+                                 cur->node = it->text_node;
+                                 return EINA_TRUE;
+                              }
+                            else
+                              {
+                                 Evas_Object_Textblock_Format_Item *fi;
+                                 fi = _ITEM_FORMAT(it);
+                                 cur->pos = fi->parent.text_pos;
+                                 cur->node = fi->source_node->text_node;
+                                 return EINA_TRUE;
+                              }
+                         }
+                    }
+                  if (it_break)
+                    {
+                       it = it_break;
+                       cur->node = it->text_node;
+                       cur->pos = it->text_pos;
+
+                       /*FIXME: needs smarter handling, ATM just check, if it's
+                        * the first item, then go to the end of the line, helps
+                        * with rtl langs, doesn't affect ltr langs that much. */
+                       if (!EINA_INLIST_GET(it)->prev)
+                         {
+                            evas_textblock_cursor_line_char_last(cur);
+                         }
+
+                       return EINA_TRUE;
+                    }
+               }
+          }
      }
    return EINA_FALSE;
 }
@@ -7072,20 +7089,25 @@ EAPI int
 evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
 
    if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    y += o->style_pad.t;
-   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-	if (ln->y > y) break;
-	if ((ln->y <= y) && ((ln->y + ln->h) > y))
-	  {
-	     evas_textblock_cursor_line_set(cur, ln->line_no);
-	     return ln->line_no;
-	  }
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             if (ln->y > y) break;
+             if ((ln->y <= y) && ((ln->y + ln->h) > y))
+               {
+                  evas_textblock_cursor_line_set(cur, ln->par->line_no +
+                        ln->line_no);
+                  return ln->par->line_no + ln->line_no;
+               }
+          }
      }
    return -1;
 }
@@ -7714,6 +7736,7 @@ evas_object_textblock_free(Evas_Object *obj)
 static void
 evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    int i, j;
@@ -7744,42 +7767,45 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    if (!o->paragraphs) return;
 
 #define ITEM_WALK() \
-   EINA_INLIST_FOREACH(o->paragraphs->lines, ln) \
+   EINA_INLIST_FOREACH(o->paragraphs, par) \
      { \
-        Evas_Object_Textblock_Item *itr; \
-        \
-        backingx = underlinex = underline2x = strikethroughx = 0; \
-        pbacking = punderline = punderline2 = pstrikethrough = 0; \
-        if (clip) \
+        EINA_INLIST_FOREACH(par->lines, ln) \
           { \
-             if ((obj->cur.geometry.y + y + ln->y + ln->h) < (cy - 20)) \
-             continue; \
-             if ((obj->cur.geometry.y + y + ln->y) > (cy + ch + 20)) \
-             break; \
-          } \
-        EINA_INLIST_FOREACH(ln->items, itr) \
-          { \
-             int yoff; \
-             Evas_Object_Textblock_Text_Item *ti; \
-             ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL; \
+             Evas_Object_Textblock_Item *itr; \
              \
-             if (ti) \
+             backingx = underlinex = underline2x = strikethroughx = 0; \
+             pbacking = punderline = punderline2 = pstrikethrough = 0; \
+             if (clip) \
                { \
-                  yoff = ln->baseline; \
-                  if (ti->format->valign != -1.0) \
-                  yoff = (ti->format->valign * (double)(ln->h - ti->parent.h)) + ti->baseline; \
-                  if (clip) \
-                    { \
-                       if ((obj->cur.geometry.x + x + ln->x + ti->parent.x + ti->parent.w) < (cx - 20)) \
-                       continue; \
-                       if ((obj->cur.geometry.x + x + ln->x + ti->parent.x) > (cx + cw + 20)) \
-                       break; \
-                    } \
+                  if ((obj->cur.geometry.y + y + ln->y + ln->h) < (cy - 20)) \
+                  continue; \
+                  if ((obj->cur.geometry.y + y + ln->y) > (cy + ch + 20)) \
+                  break; \
                } \
-             do
+             EINA_INLIST_FOREACH(ln->items, itr) \
+               { \
+                  int yoff; \
+                  Evas_Object_Textblock_Text_Item *ti; \
+                  ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL; \
+                  \
+                  if (ti) \
+                    { \
+                       yoff = ln->baseline; \
+                       if (ti->format->valign != -1.0) \
+                       yoff = (ti->format->valign * (double)(ln->h - ti->parent.h)) + ti->baseline; \
+                       if (clip) \
+                         { \
+                            if ((obj->cur.geometry.x + x + ln->x + ti->parent.x + ti->parent.w) < (cx - 20)) \
+                            continue; \
+                            if ((obj->cur.geometry.x + x + ln->x + ti->parent.x) > (cx + cw + 20)) \
+                            break; \
+                         } \
+                    } \
+                  do
 
 #define ITEM_WALK_END() \
-             while (0); \
+                  while (0); \
+               } \
           } \
      } \
    do {} while(0)
@@ -8199,29 +8225,33 @@ void
 _evas_object_textblock_rehint(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Paragraph *par;
    Evas_Object_Textblock_Line *ln;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   EINA_INLIST_FOREACH(o->paragraphs->lines, ln)
+   EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-	Evas_Object_Textblock_Item *it;
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             Evas_Object_Textblock_Item *it;
 
-	EINA_INLIST_FOREACH(ln->items, it)
-	  {
-             if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+             EINA_INLIST_FOREACH(ln->items, it)
                {
-                  Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
-                  if (ti->format->font.font)
-                    {  
+                  if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                    {
+                       Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+                       if (ti->format->font.font)
+                         {  
 #ifdef EVAS_FRAME_QUEUING
-                       evas_common_pipe_op_text_flush(ti->format->font.font);
+                            evas_common_pipe_op_text_flush(ti->format->font.font);
 #endif
-                       evas_font_load_hinting_set(obj->layer->evas,
-                             ti->format->font.font,
-                             obj->layer->evas->hinting);
+                            evas_font_load_hinting_set(obj->layer->evas,
+                                  ti->format->font.font,
+                                  obj->layer->evas->hinting);
+                         }
                     }
                }
-	  }
+          }
      }
    o->formatted.valid = 0;
    o->native.valid = 0;
