@@ -862,7 +862,7 @@ evas_object_text_inset_get(const Evas_Object *obj)
  *
  */
 EAPI Evas_Coord
-evas_object_text_horiz_dvance_get(const Evas_Object *obj)
+evas_object_text_horiz_advance_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
 
