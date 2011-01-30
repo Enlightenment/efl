@@ -7450,10 +7450,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    Evas_Object_Textblock_Line *ln;
    Evas_Object_Textblock *o;
    int i, j;
-   int pback = 0, backx = 0;
-   int pline = 0, linex = 0;
-   int pline2 = 0, line2x = 0;
-   int pstrike = 0, strikex = 0;
+   int pbacking = 0, backingx = 0;
+   int punderline = 0, underlinex = 0;
+   int punderline2 = 0, underline2x = 0;
+   int pstrikethrough = 0, strikethroughx = 0;
    unsigned char r = 0, g = 0, b = 0, a = 0;
    unsigned char r2 = 0, g2 = 0, b2 = 0, a2 = 0;
    unsigned char r3 = 0, g3 = 0, b3 = 0, a3 = 0;
@@ -7481,11 +7481,8 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      { \
         Evas_Object_Textblock_Item *itr; \
         \
-        pback = 0; \
-        backx = 0; \
-        pline = 0; \
-        pline2 = 0; \
-        pstrike = 0; \
+        backingx = underlinex = underline2x = strikethroughx = 0; \
+        pbacking = punderline = punderline2 = pstrikethrough = 0; \
         if (clip) \
           { \
              if ((obj->cur.geometry.y + y + ln->y + ln->h) < (cy - 20)) \
@@ -7561,37 +7558,47 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
      } \
    while (0)
 
+#define DRAW_FORMAT(oname, oy, oh, or, og, ob, oa) \
+   do \
+     { \
+        if ((p ## oname) && (itr->x > oname ## x)) \
+          { \
+             DRAW_RECT(oname ## x, oy, itr->x - oname ## x, oh, or, og, ob, \
+                   oa); \
+          } \
+        \
+        if (ti) \
+          { \
+             if (ti->format->oname) \
+               { \
+                  p ## oname = 1; \
+                  or = ti->format->color.oname.r; \
+                  og = ti->format->color.oname.g; \
+                  ob = ti->format->color.oname.b; \
+                  oa = ti->format->color.oname.a; \
+               } \
+             else \
+               { \
+                  p ## oname = 0; \
+               } \
+          } \
+        \
+        if (p ## oname && !EINA_INLIST_GET(itr)->next) \
+          { \
+             DRAW_RECT(itr->x, oy, itr->w, oh, or, og, ob, oa); \
+          } \
+        p ## oname = (ti) ? ti->format->oname : p ## oname; \
+        oname ## x = itr->x; \
+     } \
+   while (0)
+
+
+   pbacking = punderline = punderline2 = pstrikethrough = 0;
    ITEM_WALK()
      {
         ITEM_WALK_LINE_SKIP_DROP();
 
-        if ((pback) && (itr->x > backx))
-          {
-             DRAW_RECT(backx, 0, itr->x - backx, ln->h, r, g, b, a);
-          }
-
-        if (ti)
-          {
-             if (ti->format->backing)
-               {
-                  pback = 1;
-                  r = ti->format->color.backing.r;
-                  g = ti->format->color.backing.g;
-                  b = ti->format->color.backing.b;
-                  a = ti->format->color.backing.a;
-               }
-             else
-               {
-                  pback = 0;
-               }
-          }
-
-        if (pback && !EINA_INLIST_GET(itr)->next)
-          {
-             DRAW_RECT(itr->x, 0, itr->w, ln->h, r, g, b, a);
-          }
-        pback = (ti) ? ti->format->backing : pback;
-        backx = itr->x;
+        DRAW_FORMAT(backing, 0, ln->h, r, g, b, a);
      }
    ITEM_WALK_END();
 
@@ -7719,91 +7726,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
           }
 
         /* STRIKETHROUGH */
-        if ((pstrike) && (itr->x > strikex))
-          {
-             DRAW_RECT(strikex, (ln->h / 2), itr->x - strikex, 1, r3, g3, b3, a3);
-          }
-
-        if (ti)
-          {
-             if (ti->format->strikethrough)
-               {
-                  pstrike = 1;
-                  r3 = ti->format->color.strikethrough.r;
-                  g3 = ti->format->color.strikethrough.g;
-                  b3 = ti->format->color.strikethrough.b;
-                  a3 = ti->format->color.strikethrough.a;
-               }
-             else
-               {
-                  pstrike = 0;
-               }
-          }
-
-        if (pstrike && !EINA_INLIST_GET(itr)->next)
-          {
-             DRAW_RECT(itr->x, (ln->h / 2), itr->w, 1, r3, g3, b3, a3);
-          }
-        pstrike = (ti) ? ti->format->strikethrough : pstrike;
-        strikex = itr->x;
+        DRAW_FORMAT(strikethrough, (ln->h / 2), 1, r, g, b, a);
 
         /* UNDERLINE */
-        if ((pline) && (itr->x > linex))
-          {
-             DRAW_RECT(linex, ln->baseline + 1, itr->x - linex, 1, r, g, b, a);
-          }
-
-        if (ti)
-          {
-             if (ti->format->underline)
-               {
-                  pline = 1;
-                  r = ti->format->color.underline.r;
-                  g = ti->format->color.underline.g;
-                  b = ti->format->color.underline.b;
-                  a = ti->format->color.underline.a;
-               }
-             else
-               {
-                  pline = 0;
-               }
-          }
-
-        if (pline && !EINA_INLIST_GET(itr)->next)
-          {
-             DRAW_RECT(itr->x, ln->baseline + 1, itr->w, 1, r, g, b, a);
-          }
-        pline = (ti) ? ti->format->underline : pline;
-        linex = itr->x;
+        DRAW_FORMAT(underline, ln->baseline + 1, 1, r2, g2, b2, a2);
 
         /* UNDERLINE2 */
-        if ((pline2) && (itr->x > line2x))
-          {
-             DRAW_RECT(line2x, ln->baseline + 3, itr->x - line2x, 1, r2, g2, b2, a2);
-          }
-
-        if (ti)
-          {
-             if (ti->format->underline2)
-               {
-                  pline2 = 1;
-                  r2 = ti->format->color.underline2.r;
-                  g2 = ti->format->color.underline2.g;
-                  b2 = ti->format->color.underline2.b;
-                  a2 = ti->format->color.underline2.a;
-               }
-             else
-               {
-                  pline2 = 0;
-               }
-          }
-
-        if (pline2 && !EINA_INLIST_GET(itr)->next)
-          {
-             DRAW_RECT(itr->x, ln->baseline + 3, itr->w, 1, r2, g2, b2, a2);
-          }
-        pline2 = (ti) ? ti->format->underline2 : pline2;
-        line2x = itr->x;
+        DRAW_FORMAT(underline2, ln->baseline + 3, 1, r3, g3, b3, a3);
      }
    ITEM_WALK_END();
 }
