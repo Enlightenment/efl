@@ -89,6 +89,8 @@ EAPI void
 evas_common_font_ot_load_face(void *_font)
 {
    RGBA_Font_Source *font = (RGBA_Font_Source *) _font;
+   /* Unload the face if by any chance it's already loaded */
+   evas_common_font_ot_unload_face(font);
    font->hb.face = hb_ft_face_create(font->ft.face, NULL);
 }
 
