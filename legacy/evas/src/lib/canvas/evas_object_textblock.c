@@ -3307,8 +3307,6 @@ _relayout(const Evas_Object *obj)
    o = (Evas_Object_Textblock *)(obj->object_data);
    paragraphs = o->paragraphs;
    o->paragraphs = NULL;
-   o->formatted.valid = 0;
-   o->native.valid = 0;
    _layout(obj,
          0,
          obj->cur.geometry.w, obj->cur.geometry.h,
@@ -5966,7 +5964,6 @@ static void
 _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
 {
    o->formatted.valid = 0;
-   o->native.valid = 0;
    o->changed = 1;
 
    evas_object_change(obj);
@@ -8171,7 +8168,6 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	paragraphs = o->paragraphs;
 	o->paragraphs = NULL;
 	o->formatted.valid = 0;
-	o->native.valid = 0;
 	_layout(obj,
 		0,
 		obj->cur.geometry.w, obj->cur.geometry.h,
@@ -8331,7 +8327,6 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
    if (obj->cur.geometry.w != o->last_w)
      {
 	o->formatted.valid = 0;
-	o->native.valid = 0;
 	o->changed = 1;
      }
 }
@@ -8374,10 +8369,7 @@ _evas_object_textblock_rehint(Evas_Object *obj)
                }
           }
      }
-   o->formatted.valid = 0;
-   o->native.valid = 0;
-   o->changed = 1;
-   evas_object_change(obj);
+   _evas_textblock_text_node_changed(o, obj, NULL);
 }
 
 /**
