@@ -53,19 +53,13 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
-# pkg-config
-PKG_PROG_PKG_CONFIG
-EDJE_VERSION=`$PKG_CONFIG edje --modversion | awk -F . '{printf("%s.0.0", \$1);}'`
-
 want_vlc="no"
 case "$host_os" in
    mingw* | cegcc*)
-      MODULE_EDJE="$host_os-$host_cpu"
       want_xine="no"
       want_gstreamer="yes"
       ;;
    *)
-      MODULE_EDJE="$host_os-$host_cpu-${EDJE_VERSION}"
       want_xine="yes"
       want_gstreamer="yes"
       ;;
@@ -95,6 +89,9 @@ AC_SUBST(edje_cc)
 
 ### Checks for programs
 AC_PROG_CC
+
+# pkg-config
+PKG_PROG_PKG_CONFIG
 
 # Check whether pkg-config supports Requires.private
 if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
