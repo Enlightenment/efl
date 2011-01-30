@@ -145,7 +145,6 @@
                } \
              prev_index = index; \
           } \
-        /* FIXME: clean up */ \
      } \
    while(0)
 
