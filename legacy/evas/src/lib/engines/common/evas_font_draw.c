@@ -30,7 +30,6 @@ struct prword
 
 struct cinfo 
 {
-   int gl;
    FT_UInt index;
    struct 
      {
@@ -50,7 +49,7 @@ struct cinfo
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
 LK(lock_words); // for word cache call
 static Eina_Inlist *words = NULL;
-static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *text, Evas_Text_Props *intl_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning);
+static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning);
 #endif
 
 EAPI void
@@ -411,12 +410,12 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    /* A fast strNlen would be nice (there is a wcsnlen strangely) */
    len = eina_unicode_strnlen(text,WORD_CACHE_MAXLEN);
 
-   if (len > 2 && len < WORD_CACHE_MAXLEN)
+   if (len > 2 && (len < WORD_CACHE_MAXLEN))
      {
         struct prword *word;
 
-        word = 
-          evas_font_word_prerender(dc, text, (Evas_Text_Props *)intl_props, 
+        word =
+          evas_font_word_prerender(dc, text, intl_props,
                                    len, fn, fi, use_kerning);
         if (word)
           {
@@ -893,21 +892,18 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 /* Only used if cache is on */
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
 struct prword *
-evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Evas_Text_Props *intl_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning)
+evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, const Evas_Text_Props *intl_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning)
 {
-   int pen_x, pen_y;
    struct cinfo *metrics;
    const Eina_Unicode *text = in_text;
-   int chr;
-   FT_Face pface = NULL;
-   FT_UInt prev_index;
    unsigned char *im;
    int width;
    int height, above, below, baseline, descent;
    int i,j;
-   int char_index = 0; /* the index of the current char */
    struct prword *w;
+   int last_delta = 0;
    int gl;
+   EVAS_FONT_WALK_TEXT_INIT();
 
 # ifndef METRIC_CACHE
    gl = dc->font_ext.func.gl_new ? 1: 0;
@@ -928,95 +924,106 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
 
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
-   pen_x = pen_y = 0;
    above = 0; below = 0; baseline = 0; height = 0; descent = 0;
-   metrics = malloc(sizeof(struct cinfo) * len);
 
-   /* First pass: Work out how big */
-   for (char_index = 0, chr = 0 ; *text ; text++, char_index ++)
+   /* First pass: Work out how big and populate */
+   /* It's a bit hackish to use index and fg here as they are internal,
+    * but that'll have to be good enough ATM */
+#ifdef OT_SUPPORT
+   if (evas_common_font_ot_is_enabled() && intl_props->ot_data)
      {
-	struct cinfo *ci = metrics + char_index;
-	ci->gl = *text;
-	ci->index = evas_common_font_glyph_search(fn, &fi, ci->gl);
-	LKL(fi->ft_mutex);
-	if (fi->src->current_size != fi->size)
-	  {
-	     FTLOCK();
-	     FT_Activate_Size(fi->ft.size);
-	     FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
-       ci->fg = evas_common_font_int_cache_glyph_get(fi, ci->index);
-       if (!ci->fg)
-	 {
-            LKU(fi->ft_mutex);
-	    continue;
-	 }
-
-	if ((use_kerning) && (prev_index) && (ci->index) &&
-            (pface == fi->src->ft.face))
+        len = intl_props->ot_data->len;
+        metrics = malloc(sizeof(struct cinfo) * len);
+        EVAS_FONT_WALK_OT_TEXT_VISUAL_START()
           {
-             int kern = 0;
-# ifdef BIDI_SUPPORT
-             /* if it's rtl, the kerning matching should be reversed, i.e prev
-              * index is now the index and the other way around.
-              * There is a slight exception when there are compositing chars
-              * involved.*/
-             if (intl_props && intl_props->props &&
-                 evas_bidi_is_rtl_char(intl_props, char_index) &&
-                 ci->fg->glyph->advance.x >> 16 > 0)
+             struct cinfo *ci = metrics + char_index;
+             EVAS_FONT_WALK_OT_TEXT_WORK(EINA_FALSE);
+             /* Currently broken with invisible chars if (!visible) continue; */
+             ci->index = index;
+             ci->fg = fg;
+
+             if (gl)
                {
-                  if (evas_common_font_query_kerning(fi, ci->index, prev_index, &kern))
-                    pen_x += EVAS_FONT_ROUND_26_6_TO_INT(kern);
+                  ci->fg->ext_dat =dc->font_ext.func.gl_new(dc->font_ext.data,ci->fg);
+                  ci->fg->ext_dat_free = dc->font_ext.func.gl_free;
                }
-             else
-               {
-                  if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
-                    pen_x += EVAS_FONT_ROUND_26_6_TO_INT(kern);
-               }
-# else
-             if (evas_common_font_query_kerning(fi, prev_index, ci->index, &kern))
-               pen_x += EVAS_FONT_ROUND_26_6_TO_INT(kern);
-# endif
+             ci->bm.data = ci->fg->glyph_out->bitmap.buffer;
+             ci->bm.w = MAX(ci->fg->glyph_out->bitmap.pitch,
+                   ci->fg->glyph_out->bitmap.width);
+             ci->bm.rows = ci->fg->glyph_out->bitmap.rows;
+             ci->bm.h = ci->fg->glyph_out->top;
+             above = ci->bm.rows - (ci->bm.rows - ci->bm.h);
+             below = ci->bm.rows - ci->bm.h;
+             if (below > descent) descent = below;
+             if (above > baseline) baseline = above;
+             ci->pos.x = EVAS_FONT_WALK_PEN_X + ci->fg->glyph_out->left;
+             ci->pos.y = EVAS_FONT_WALK_PEN_Y + ci->fg->glyph_out->top;
+             last_delta = EVAS_FONT_WALK_OT_X_ADV -
+                (ci->bm.w + ci->fg->glyph_out->left);
           }
-
-        pface = fi->src->ft.face;
-
-        LKU(fi->ft_mutex);
-        if (gl)
+        EVAS_FONT_WALK_OT_TEXT_END();
+     }
+   else
+#endif
+     {
+        metrics = malloc(sizeof(struct cinfo) * len);
+        EVAS_FONT_WALK_DEFAULT_TEXT_LOGICAL_START()
           {
-             ci->fg->ext_dat =dc->font_ext.func.gl_new(dc->font_ext.data,ci->fg);
-             ci->fg->ext_dat_free = dc->font_ext.func.gl_free;
+             struct cinfo *ci = metrics + char_index;
+             EVAS_FONT_WALK_DEFAULT_TEXT_WORK(EINA_FALSE);
+             /* Currently broken with invisible chars if (!visible) continue; */
+             ci->index = index;
+             ci->fg = fg;
+
+             if (gl)
+               {
+                  ci->fg->ext_dat =dc->font_ext.func.gl_new(dc->font_ext.data,ci->fg);
+                  ci->fg->ext_dat_free = dc->font_ext.func.gl_free;
+               }
+             ci->bm.data = ci->fg->glyph_out->bitmap.buffer;
+             ci->bm.w = MAX(ci->fg->glyph_out->bitmap.pitch,
+                   ci->fg->glyph_out->bitmap.width);
+             ci->bm.rows = ci->fg->glyph_out->bitmap.rows;
+             ci->bm.h = ci->fg->glyph_out->top;
+             above = ci->bm.rows - (ci->bm.rows - ci->bm.h);
+             below = ci->bm.rows - ci->bm.h;
+             if (below > descent) descent = below;
+             if (above > baseline) baseline = above;
+             ci->pos.x = EVAS_FONT_WALK_PEN_X + ci->fg->glyph_out->left;
+             ci->pos.y = EVAS_FONT_WALK_PEN_Y + ci->fg->glyph_out->top;
+             last_delta = EVAS_FONT_WALK_DEFAULT_X_ADV -
+                (ci->bm.w + ci->fg->glyph_out->left);
           }
-        ci->bm.data = ci->fg->glyph_out->bitmap.buffer;
-        ci->bm.w = MAX(ci->fg->glyph_out->bitmap.pitch,
-                       ci->fg->glyph_out->bitmap.width);
-        ci->bm.rows = ci->fg->glyph_out->bitmap.rows;
-        ci->bm.h = ci->fg->glyph_out->top;
-        above = ci->bm.rows - (ci->bm.rows - ci->bm.h);
-        below = ci->bm.rows - ci->bm.h;
-        if (below > descent) descent = below;
-        if (above > baseline) baseline = above;
-        ci->pos.x = pen_x + ci->fg->glyph_out->left;
-        ci->pos.y = pen_y + ci->fg->glyph_out->top;
-        pen_x += ci->fg->glyph->advance.x >> 16;
-        prev_index = ci->index;
+        EVAS_FONT_WALK_DEFAULT_TEXT_END();
      }
 
    /* First loop done */
-   width = pen_x;
+   width = EVAS_FONT_WALK_PEN_X;
+   if (last_delta < 0)
+     width -= last_delta;
    width = (width & 0x7) ? width + (8 - (width & 0x7)) : width;
 
    height = baseline + descent;
    if (!gl)
      {
         im = calloc(height, width);
-        for (i = 0 ; i  < char_index ; i ++)
+        for (i = 0 ; i  < len ; i ++)
           {
              struct cinfo *ci = metrics + i;
 
              for (j = 0 ; j < ci->bm.rows ; j ++)
-               memcpy(im + ci->pos.x + (j + baseline - ci->bm.h) * width, ci->bm.data + j * ci->bm.w, ci->bm.w);
+               {
+                  int correction; /* Used to remove negative inset and such */
+                  if (ci->pos.x < 0)
+                    correction = -ci->pos.x;
+                  else
+                    correction = 0;
+
+                  memcpy(im + ci->pos.x + (j + baseline - ci->bm.h) * width +
+                        correction,
+                        ci->bm.data + j * ci->bm.w + correction,
+                        ci->bm.w - correction);
+               }
           }
      }
    else 
@@ -1034,7 +1041,9 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, Eva
    save->size = fi->size;
    save->len = len;
    save->im = im;
-   save->width = pen_x;
+   save->width = EVAS_FONT_WALK_PEN_X;
+   if (last_delta < 0)
+     save->width += last_delta;
    save->roww = width;
    save->height = height;
    save->baseline = baseline;
