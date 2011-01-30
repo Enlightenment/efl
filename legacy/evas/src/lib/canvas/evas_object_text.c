@@ -149,6 +149,7 @@ _evas_object_text_items_clear(Evas_Object_Text *o)
      }
 }
 
+#ifdef BIDI_SUPPORT
 static int
 _evas_object_text_it_compare_logical(const void *_it1, const void *_it2)
 {
@@ -161,6 +162,7 @@ _evas_object_text_it_compare_logical(const void *_it1, const void *_it2)
      return 1;
 
 }
+#endif
 /* FIXME: doc */
 static int
 _evas_object_text_last_up_to_pos(const Evas_Object *obj,
