@@ -2213,12 +2213,18 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                   switch (fi->size)
                     {
                      case SIZE:
-                        p = strstr(s, " size=");
-                        p += 6;
-                        if (sscanf(p, "%ix%i", &w, &h) == 2)
+                        if (!strncmp(s, "item", 4))
                           {
-                             w = w * c->obj->cur.scale;
-                             h = h * c->obj->cur.scale;
+                             p = strstr(s, " size=");
+                             if (p)
+                               {
+                                  p += 6;
+                                  if (sscanf(p, "%ix%i", &w, &h) == 2)
+                                    {
+                                       w = w * c->obj->cur.scale;
+                                       h = h * c->obj->cur.scale;
+                                    }
+                               }
                           }
                         break;
                      case SIZE_REL:
