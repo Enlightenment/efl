@@ -6781,19 +6781,10 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    return ret;
 }
 
-
-/**
- * Returns the geometry of the char at cur.
- *
- * @param cur the position of the char.
- * @param cx the x of the char.
- * @param cy the y of the char.
- * @param cw the width of the char.
- * @param ch the height of the char.
- * @return line number of the char on success, -1 on error.
+/** FIXME: doc
  */
-EAPI int
-evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+static int
+_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Eina_Unicode *text, const Evas_BiDi_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
@@ -6846,7 +6837,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
         if (pos < 0) pos = 0;
         if (ti->format->font.font)
           {
-             ret = cur->ENFN->font_char_coords_get(cur->ENDT,
+             ret = query_func(cur->ENDT,
                    ti->format->font.font,
                    ti->text, &ti->parent.bidi_props,
                    pos,
@@ -6907,6 +6898,40 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    if (cw) *cw = w;
    if (ch) *ch = h;
    return ln->line_no;
+}
+
+/**
+ * Returns the geometry of the char at cur.
+ *
+ * @param cur the position of the char.
+ * @param cx the x of the char.
+ * @param cy the y of the char.
+ * @param cw the w of the char.
+ * @param ch the h of the char.
+ * @return line number of the char on success, -1 on error.
+ */
+EAPI int
+evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   return _evas_textblock_cursor_char_pen_geometry_common_get(
+         cur->ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
+}
+
+/**
+ * Returns the geometry of the pen at cur.
+ *
+ * @param cur the position of the char.
+ * @param cpen_x the pen_x of the char.
+ * @param cy the y of the char.
+ * @param cadv the adv of the char.
+ * @param ch the h of the char.
+ * @return line number of the char on success, -1 on error.
+ */
+EAPI int
+evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   return _evas_textblock_cursor_char_pen_geometry_common_get(
+         cur->ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
 }
 
 /**
