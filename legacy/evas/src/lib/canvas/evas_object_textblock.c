@@ -428,6 +428,7 @@ struct _Evas_Object_Textblock
    } formatted, native;
    unsigned char                       redraw : 1;
    unsigned char                       changed : 1;
+   unsigned char                       content_changed : 1;
 };
 
 /* private methods for textblock objects */
@@ -509,6 +510,7 @@ static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Ob
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
+static void _evas_textblock_text_node_changed(Evas_Object_Textblock *o, Evas_Object *obj, Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
 
@@ -3354,6 +3356,7 @@ _relayout(const Evas_Object *obj)
    if (paragraphs) _paragraphs_clear(obj, paragraphs);
    o->last_w = obj->cur.geometry.w;
    o->changed = 0;
+   o->content_changed = 0;
    o->redraw = 1;
 }
 
@@ -3699,7 +3702,7 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
         o->style = NULL;
      }
 
-    _evas_textblock_changed(o, obj);
+    _evas_textblock_text_node_changed(o, obj, NULL);
 }
 
 /**
@@ -3727,7 +3730,7 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
    if (o->repch) eina_stringshare_del(o->repch);
    if (ch) o->repch = eina_stringshare_add(ch);
    else o->repch = NULL;
-    _evas_textblock_changed(o, obj);
+   _evas_textblock_text_node_changed(o, obj, NULL);
 }
 
 /**
@@ -4116,7 +4119,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
              p++;
           }
      }
-    _evas_textblock_changed(o, obj);
+   _evas_textblock_text_node_changed(o, obj, o->cursor->node);
 }
 
 
@@ -6004,11 +6007,6 @@ _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->changed = 1;
-   if (o->markup_text)
-     {
-	free(o->markup_text);
-	o->markup_text = NULL;
-     }
 
    evas_object_change(obj);
 }
@@ -6019,14 +6017,34 @@ _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
  *
  * @param o the textblock object.
  * @param obj the evas object.
- * @param n the paragraph that changed.
+ * @param n the paragraph that changed - NULL means all.
  */
 static void
-_evas_textblock_content_changed(Evas_Object_Textblock *o, Evas_Object *obj,
+_evas_textblock_text_node_changed(Evas_Object_Textblock *o, Evas_Object *obj,
       Evas_Object_Textblock_Node_Text *n)
 {
-   n->dirty = EINA_TRUE;
-   _evas_textblock_changed(o, obj);
+   if (!n)
+     {
+        Evas_Object_Textblock_Node_Text *itr;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(o->text_nodes), itr)
+          {
+             itr->dirty = EINA_TRUE;
+          }
+     }
+   else
+     {
+        n->dirty = EINA_TRUE;
+     }
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->content_changed = 1;
+   if (o->markup_text)
+     {
+	free(o->markup_text);
+	o->markup_text = NULL;
+     }
+
+   evas_object_change(obj);
 }
 
 /**
@@ -6099,7 +6117,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    evas_bidi_paragraph_props_unref(n->bidi_props);
    n->bidi_props = evas_bidi_paragraph_props_get(eina_ustrbuf_string_get(n->unicode));
 #endif
-   _evas_textblock_changed(o, cur->obj);
+   _evas_textblock_text_node_changed(o, cur->obj, n);
    free(text);
    return len;
 }
@@ -6301,7 +6319,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
           }
      }
 
-    _evas_textblock_changed(o, cur->obj);
+   _evas_textblock_text_node_changed(o, cur->obj, cur->node);
 
    return is_visible;
 }
@@ -6412,7 +6430,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
      }
 
    _evas_textblock_cursors_update_offset(cur, n, ppos, -(index - ppos));
-   _evas_textblock_changed(o, cur->obj);
+   _evas_textblock_text_node_changed(o, cur->obj, cur->node);
 }
 
 /**
@@ -6513,7 +6531,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    if (reset_cursor)
      evas_textblock_cursor_copy(cur1, o->cursor);
 
-   _evas_textblock_changed(o, cur1->obj);
+   _evas_textblock_text_node_changed(o, cur1->obj, cur1->node);
 }
 
 
@@ -7714,7 +7732,7 @@ evas_object_textblock_clear(Evas_Object *obj)
 	_paragraphs_clear(obj, o->paragraphs);
 	o->paragraphs = NULL;
      }
-    _evas_textblock_changed(o, obj);
+   _evas_textblock_text_node_changed(o, cur->obj, cur->node);
 }
 
 /**
@@ -8182,7 +8200,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw textblocks */
    o = (Evas_Object_Textblock *)(obj->object_data);
-   if ((o->changed) ||
+   if ((o->changed) || (o->content_changed) ||
        (o->last_w != obj->cur.geometry.w))
      {
 	Evas_Object_Textblock_Paragraph *paragraphs;
@@ -8204,6 +8222,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	o->changed = 0;
+	o->content_changed = 0;
 	is_v = evas_object_is_visible(obj);
 	was_v = evas_object_was_visible(obj);
 	goto done;
@@ -8269,10 +8288,11 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	goto done;
      }
-   if (o->changed)
+   if (o->changed || o->content_changed)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	o->changed = 0;
+	o->content_changed = 0;
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
