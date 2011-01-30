@@ -2507,11 +2507,6 @@ _layout_text_add_and_split_item(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                         new_ti->parent.text_pos);
                   evas_common_text_props_script_set (&new_ti->parent.text_props,
                         new_ti->text);
-                  /* FIXME: I possibly can use the alread calculated lengths */
-                  c->ENFN->font_shape(c->ENDT, ti->format->font.font, ti->text,
-                        &ti->parent.text_props,
-                        ti->parent.text_node->bidi_props,
-                        ti->parent.text_pos, cutoff);
                   c->ENFN->font_shape(c->ENDT, new_ti->format->font.font,
                         new_ti->text,
                         &new_ti->parent.text_props,
