@@ -97,8 +97,8 @@ _elm_module_find_as(const char *as)
    
    m = eina_hash_find(modules_as, as);
    if (!m) return NULL;
-
-   if (_elm_module_load(m) == EINA_FALSE)
+   
+   if (!_elm_module_load(m))
      {
         _elm_module_del(m);
 	return NULL;
@@ -111,60 +111,60 @@ _elm_module_load(Elm_Module *m)
 {
    const char *home;
    char buf[PATH_MAX];
-
+   
    if (m->handle) return EINA_TRUE;
-
+   
    home = getenv("HOME");
    if (home)
      {
-         snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, m->name, MODULE_ARCH);
-         m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
-         if (m->handle)
-           {
-              m->init_func = dlsym(m->handle, "elm_modapi_init");
-              if (m->init_func)
-                {
-                   m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
-                   m->so_path = eina_stringshare_add(buf);
-                   snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s", home, m->name, MODULE_ARCH);
-                   m->bin_dir = eina_stringshare_add(buf);
-                   snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s", home, m->name);
-                   m->data_dir = eina_stringshare_add(buf);
-                }
-              else
-                {
-		   dlclose(m->handle);
-		   m->handle = NULL;
-		   return EINA_FALSE;
-                }
-           }
-      }
-
-   if (!m->handle)
-     {
-         snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, m->name, MODULE_ARCH);
-         m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
-         if (m->handle)
-           {
-              m->init_func = dlsym(m->handle, "elm_modapi_init");
-              if (m->init_func)
-                {
-                   m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
-                   m->so_path = eina_stringshare_add(buf);
-                   snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, m->name, MODULE_ARCH);
-                   m->bin_dir = eina_stringshare_add(buf);
-                   snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, m->name);
-                   m->data_dir = eina_stringshare_add(buf);
-                }
-              else
-                {
-		   dlclose(m->handle);
-		   m->handle = NULL;
-		   return EINA_FALSE;
-                }
+        snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, m->name, MODULE_ARCH);
+        m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
+        if (m->handle)
+          {
+             m->init_func = dlsym(m->handle, "elm_modapi_init");
+             if (m->init_func)
+               {
+                  m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
+                  m->so_path = eina_stringshare_add(buf);
+                  snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s", home, m->name, MODULE_ARCH);
+                  m->bin_dir = eina_stringshare_add(buf);
+                  snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s", home, m->name);
+                  m->data_dir = eina_stringshare_add(buf);
+               }
+             else
+               {
+                  dlclose(m->handle);
+                  m->handle = NULL;
+                  return EINA_FALSE;
+               }
           }
      }
-
+   
+   if (!m->handle)
+     {
+        snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, m->name, MODULE_ARCH);
+        m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
+        if (m->handle)
+          {
+             m->init_func = dlsym(m->handle, "elm_modapi_init");
+             if (m->init_func)
+               {
+                  m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
+                  m->so_path = eina_stringshare_add(buf);
+                  snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, m->name, MODULE_ARCH);
+                  m->bin_dir = eina_stringshare_add(buf);
+                  snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, m->name);
+                  m->data_dir = eina_stringshare_add(buf);
+               }
+             else
+               {
+                  dlclose(m->handle);
+                  m->handle = NULL;
+                  return EINA_FALSE;
+               }
+          }
+     }
+   
    if (!m->handle) return EINA_FALSE;
    return EINA_TRUE;
 }
