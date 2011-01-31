@@ -118,10 +118,10 @@ extern Eina_Hash *efreet_desktop_cache;
 extern Eina_Hash *efreet_icon_themes;
 #endif
 
-#define EFREET_DESKTOP_CACHE_MAJOR 0
-#define EFREET_DESKTOP_CACHE_MINOR 1
-#define EFREET_DESKTOP_UTILS_CACHE_MAJOR 0
-#define EFREET_DESKTOP_UTILS_CACHE_MINOR 1
+#define EFREET_DESKTOP_CACHE_MAJOR 1
+#define EFREET_DESKTOP_CACHE_MINOR 0
+#define EFREET_DESKTOP_UTILS_CACHE_MAJOR 1
+#define EFREET_DESKTOP_UTILS_CACHE_MINOR 0
 
 #ifdef ICON_CACHE
 #define EFREET_ICON_CACHE_MAJOR 0
@@ -186,6 +186,19 @@ struct _Efreet_Cache_Version
     unsigned char minor;
 };
 
+typedef struct _Efreet_Cache_Hash Efreet_Cache_Hash;
+struct _Efreet_Cache_Hash
+{
+    Eina_Hash *hash;
+};
+
+typedef struct _Efreet_Cache_Array_String Efreet_Cache_Array_String;
+struct _Efreet_Cache_Array_String
+{
+    const char **array;
+    unsigned int array_count;
+};
+
 int efreet_base_init(void);
 void efreet_base_shutdown(void);
 
@@ -245,6 +258,7 @@ Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
 void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 char **efreet_cache_icon_theme_name_list(int *num);
 #endif
+EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
 

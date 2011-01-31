@@ -24,8 +24,18 @@ static Eet_Data_Descriptor *edd = NULL;
 static Eet_File *ef = NULL;
 static Eet_File *util_ef = NULL;
 
+static Eina_Hash *desktops = NULL;
+
 static Eina_Hash *file_ids = NULL;
 static Eina_Hash *paths = NULL;
+
+static Eina_Hash *mime_types = NULL;
+static Eina_Hash *categories = NULL;
+static Eina_Hash *startup_wm_class = NULL;
+static Eina_Hash *name = NULL;
+static Eina_Hash *generic_name = NULL;
+static Eina_Hash *comment = NULL;
+static Eina_Hash *exec = NULL;
 
 static int verbose = 0;
 
@@ -88,67 +98,43 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
     if (!desk->hidden && desk->type == EFREET_DESKTOP_TYPE_APPLICATION &&
         file_id && !eina_hash_find(file_ids, file_id))
     {
-        int id;
-        char key[PATH_MAX];
-        char *data;
-        int i = 0;
         Eina_List *l;
+        char *data;
+        Efreet_Cache_Array_String *array;
 
-        id = eina_hash_population(file_ids);
-        i = 0;
-        EINA_LIST_FOREACH(desk->mime_types, l, data)
-        {
-            snprintf(key, sizeof(key), "%d::%d::m", id, i++);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
+#define ADD_LIST(list, hash) \
+        EINA_LIST_FOREACH((list), l, data) \
+        { \
+            array = eina_hash_find((hash), data); \
+            if (!array) \
+                array = NEW(Efreet_Cache_Array_String, 1); \
+            array->array = realloc(array->array, sizeof (char *) * (array->array_count + 1)); \
+            array->array[array->array_count++] = desk->orig_path; \
+            eina_hash_set((hash), data, array); \
         }
-        i = 0;
-        EINA_LIST_FOREACH(desk->categories, l, data)
-        {
-            snprintf(key, sizeof(key), "%d::%d::ca", id, i++);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
+#define ADD_ELEM(elem, hash) \
+        if ((elem)) \
+        { \
+            data = (elem); \
+            array = eina_hash_find((hash), data); \
+            if (!array) \
+                array = NEW(Efreet_Cache_Array_String, 1); \
+            array->array = realloc(array->array, sizeof (char *) * (array->array_count + 1)); \
+            array->array[array->array_count++] = desk->orig_path; \
+            eina_hash_set((hash), data, array); \
         }
-        if (desk->startup_wm_class)
-        {
-            data = desk->startup_wm_class;
-            snprintf(key, sizeof(key), "%d::swc", id);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
-        }
-        if (desk->name)
-        {
-            data = desk->name;
-            snprintf(key, sizeof(key), "%d::n", id);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
-        }
-        if (desk->generic_name)
-        {
-            data = desk->generic_name;
-            snprintf(key, sizeof(key), "%d::gn", id);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
-        }
-        if (desk->comment)
-        {
-            data = desk->comment;
-            snprintf(key, sizeof(key), "%d::co", id);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
-        }
-        if (desk->exec)
-        {
-            data = desk->exec;
-            snprintf(key, sizeof(key), "%d::e", id);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
-        }
-        if (desk->orig_path)
-        {
-            data = desk->orig_path;
-            snprintf(key, sizeof(key), "%d::op", id);
-            if (!eet_write(util_ef, key, data, strlen(data) + 1, 0)) return 0;
-        }
-        snprintf(key, sizeof(key), "%d::fi", id);
-        if (!eet_write(util_ef, key, file_id, strlen(file_id) + 1, 0)) return 0;
-
-        eina_hash_add(file_ids, file_id, (void *)1);
+        ADD_LIST(desk->mime_types, mime_types);
+        ADD_LIST(desk->categories, categories);
+        ADD_ELEM(desk->startup_wm_class, startup_wm_class);
+        ADD_ELEM(desk->name, name);
+        ADD_ELEM(desk->generic_name, generic_name);
+        ADD_ELEM(desk->comment, comment);
+        ADD_ELEM(desk->exec, exec);
+        eina_hash_add(file_ids, file_id, desk->orig_path);
+        eina_hash_add(desktops, desk->orig_path, desk);
     }
-    efreet_desktop_free(desk);
+    else
+        efreet_desktop_free(desk);
     return 1;
 }
 
@@ -208,6 +194,7 @@ main(int argc, char **argv)
      *   during whilst this program runs.
      * - Maybe linger for a while to reduce number of cache re-creates.
      */
+    Efreet_Cache_Hash hash;
     Efreet_Cache_Version version;
     Eina_List *dirs = NULL, *user_dirs = NULL;
     int priority = 0;
@@ -265,12 +252,12 @@ main(int argc, char **argv)
     /* create dir for desktop cache */
     dir = ecore_file_dir_get(efreet_desktop_cache_file());
     if (!ecore_file_mkpath(dir)) goto efreet_error;
-    free(dir);
+    IF_FREE(dir);
 
     /* create dir for util cache */
     dir = ecore_file_dir_get(efreet_desktop_util_cache_file());
     if (!ecore_file_mkpath(dir)) goto efreet_error;
-    free(dir);
+    IF_FREE(dir);
 
     /* finish efreet init */
     if (!efreet_init()) goto efreet_error;
@@ -292,10 +279,26 @@ main(int argc, char **argv)
     util_ef = eet_open(util_file, EET_FILE_MODE_READ_WRITE);
     if (!util_ef) goto error;
 
+    /* write cache version */
+    version.major = EFREET_DESKTOP_UTILS_CACHE_MAJOR;
+    version.minor = EFREET_DESKTOP_UTILS_CACHE_MINOR;
+    eet_data_write(util_ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
+    version.major = EFREET_DESKTOP_CACHE_MAJOR;
+    version.minor = EFREET_DESKTOP_CACHE_MINOR;
+    eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
+
+    desktops = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_desktop_free));
+
     file_ids = eina_hash_string_superfast_new(NULL);
-    if (!file_ids) goto error;
     paths = eina_hash_string_superfast_new(NULL);
-    if (!paths) goto error;
+
+    mime_types = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    categories = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    startup_wm_class = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    name = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    generic_name = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    comment = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    exec = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
 
     dirs = efreet_default_dirs_get(efreet_data_home_get(), efreet_data_dirs_get(),
                                                                     "applications");
@@ -361,16 +364,52 @@ main(int argc, char **argv)
         close(dirsfd);
         dirsfd = -1;
     }
+
+    /* store util */
+#define STORE_HASH_ARRAY(_hash) \
+    if (eina_hash_population((_hash)) > 0) \
+    { \
+        Eina_Iterator *it;   \
+        Efreet_Cache_Array_String array; \
+        const char *str;     \
+                             \
+        hash.hash = (_hash); \
+        eet_data_write(util_ef, efreet_hash_array_string_edd(), #_hash "_hash", &hash, 1); \
+        printf("key: %s = %d\n", #_hash, eina_hash_population(hash.hash)); \
+        array.array_count = 0; \
+        array.array = malloc(eina_hash_population(hash.hash) * sizeof(char *)); \
+        it = eina_hash_iterator_key_new(hash.hash); \
+        EINA_ITERATOR_FOREACH(it, str) \
+            array.array[array.array_count++] = str; \
+        eina_iterator_free(it); \
+        eet_data_write(util_ef, efreet_array_string_edd(), #_hash "_list", &array, 1); \
+    }
+    STORE_HASH_ARRAY(mime_types);
+    STORE_HASH_ARRAY(categories);
+    STORE_HASH_ARRAY(startup_wm_class);
+    STORE_HASH_ARRAY(name);
+    STORE_HASH_ARRAY(generic_name);
+    STORE_HASH_ARRAY(comment);
+    STORE_HASH_ARRAY(exec);
+    if (eina_hash_population(file_ids) > 0)
+    {
+        hash.hash = file_ids;
+        eet_data_write(util_ef, efreet_hash_string_edd(), "file_id", &hash, 1);
+        printf("key: file_id = %d\n", eina_hash_population(file_ids));
+    }
+
+    eina_hash_free(mime_types);
+    eina_hash_free(categories);
+    eina_hash_free(startup_wm_class);
+    eina_hash_free(name);
+    eina_hash_free(generic_name);
+    eina_hash_free(comment);
+    eina_hash_free(exec);
+
     eina_hash_free(file_ids);
     eina_hash_free(paths);
 
-    /* write cache version */
-    version.major = EFREET_DESKTOP_UTILS_CACHE_MAJOR;
-    version.minor = EFREET_DESKTOP_UTILS_CACHE_MINOR;
-    eet_data_write(util_ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
-    version.major = EFREET_DESKTOP_CACHE_MAJOR;
-    version.minor = EFREET_DESKTOP_CACHE_MINOR;
-    eet_data_write(ef, efreet_version_edd(), EFREET_CACHE_VERSION, &version, 1);
+    eina_hash_free(desktops);
 
     /* check if old and new caches contain the same number of entries */
     if (!changed)
@@ -383,7 +422,6 @@ main(int argc, char **argv)
         old = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
         if (!old || eet_num_entries(old) != eet_num_entries(util_ef)) changed = 1;
         if (old) eet_close(old);
-
     }
 
     /* cleanup */

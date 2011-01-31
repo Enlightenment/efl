@@ -56,6 +56,9 @@ static Efreet_Cache_Icons  *fallback_cache = NULL;
 
 static Eet_Data_Descriptor *version_edd = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
+static Eet_Data_Descriptor *hash_array_string_edd = NULL;
+static Eet_Data_Descriptor *array_string_edd = NULL;
+static Eet_Data_Descriptor *hash_string_edd = NULL;
 
 static Eet_File            *desktop_cache = NULL;
 static const char          *desktop_cache_dirs = NULL;
@@ -255,6 +258,67 @@ efreet_version_edd(void)
 /*
  * Needs EAPI because of helper binaries
  */
+EAPI Eet_Data_Descriptor *
+efreet_hash_array_string_edd(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (hash_array_string_edd) return hash_array_string_edd;
+
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Hash);
+    /* TODO: set own hash func */
+    hash_array_string_edd = eet_data_descriptor_file_new(&eddc);
+    if (!hash_array_string_edd) return NULL;
+
+    EET_DATA_DESCRIPTOR_ADD_HASH(hash_array_string_edd, Efreet_Cache_Hash,
+                                  "hash", hash, efreet_array_string_edd());
+
+    return hash_array_string_edd;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI Eet_Data_Descriptor *
+efreet_hash_string_edd(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (hash_string_edd) return hash_string_edd;
+
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Hash);
+    /* TODO: set own hash func */
+    hash_string_edd = eet_data_descriptor_file_new(&eddc);
+    if (!hash_string_edd) return NULL;
+
+    EET_DATA_DESCRIPTOR_ADD_HASH_STRING(hash_string_edd, Efreet_Cache_Hash,
+                                  "hash", hash);
+
+    return hash_string_edd;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI Eet_Data_Descriptor *
+efreet_array_string_edd(void)
+{
+    Eet_Data_Descriptor_Class eddc;
+
+    if (array_string_edd) return array_string_edd;
+
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Array_String);
+    array_string_edd = eet_data_descriptor_file_new(&eddc);
+    if (!array_string_edd) return NULL;
+    EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY_STRING(array_string_edd, Efreet_Cache_Array_String,
+                                             "array", array);
+
+    return array_string_edd;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
 EAPI const char *
 efreet_desktop_cache_file(void)
 {
@@ -306,6 +370,9 @@ efreet_cache_edd_shutdown(void)
 {
     EDD_SHUTDOWN(version_edd);
     EDD_SHUTDOWN(desktop_edd);
+    EDD_SHUTDOWN(hash_array_string_edd);
+    EDD_SHUTDOWN(array_string_edd);
+    EDD_SHUTDOWN(hash_string_edd);
 #ifdef ICON_CACHE
     EDD_SHUTDOWN(fallback_edd);
     EDD_SHUTDOWN(icon_theme_edd);
@@ -674,6 +741,13 @@ efreet_cache_icon_theme_name_list(int *num)
 }
 
 #endif
+
+EAPI void
+efreet_cache_array_string_free(Efreet_Cache_Array_String *array)
+{
+    free(array->array);
+    free(array);
+}
 
 Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)

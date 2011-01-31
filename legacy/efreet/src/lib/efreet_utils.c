@@ -4,6 +4,7 @@
 
 /* TODO: move eet file handling to eet_cache.c */
 /* TODO: add no_display check, as we might want only displayable items */
+/* TODO: Keep data read from eet in mem for a while, to make subsequent searches faster, nice for exebuf */
 
 #undef alloca
 #ifdef HAVE_ALLOCA_H
@@ -194,7 +195,7 @@ efreet_util_path_to_file_id(const char *path)
 EAPI Eina_List *
 efreet_util_desktop_mime_list(const char *mime)
 {
-    return efreet_util_cache_list("*::m", mime);
+    return efreet_util_cache_list("mime_types", mime);
 }
 
 /**
@@ -209,7 +210,7 @@ efreet_util_desktop_mime_list(const char *mime)
 EAPI Efreet_Desktop *
 efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
 {
-    return efreet_util_cache_find("*::swc", wmname, wmclass);
+    return efreet_util_cache_find("startup_wm_class", wmname, wmclass);
 }
 
 /**
@@ -223,7 +224,21 @@ efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
 EAPI Efreet_Desktop *
 efreet_util_desktop_file_id_find(const char *file_id)
 {
-    return efreet_util_cache_find("*::fi", file_id, NULL);
+    Efreet_Cache_Hash *hash;
+    Efreet_Desktop *ret = NULL;
+    const char *str;
+
+    if (!file_id) return NULL;
+    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
+
+    hash = eet_data_read(cache, efreet_hash_string_edd(), "file_id");
+    if (!hash) return NULL;
+    str = eina_hash_find(hash->hash, file_id);
+    if (str)
+        ret = efreet_desktop_get(str);
+    eina_hash_free(hash->hash);
+    free(hash);
+    return ret;
 }
 
 /**
@@ -237,25 +252,24 @@ efreet_util_desktop_file_id_find(const char *file_id)
 EAPI Efreet_Desktop *
 efreet_util_desktop_exec_find(const char *exec)
 {
-    char **keys;
-    int num, i;
+    Efreet_Cache_Hash *hash;
     Efreet_Desktop *ret = NULL;
+    Efreet_Cache_Array_String *names = NULL;
+    unsigned int i;
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!exec) return NULL;
 
-    keys = eet_list(cache, "*::e", &num);
-    if (!keys) return NULL;
-    for (i = 0; i < num; i++)
+    names = eet_data_read(cache, efreet_array_string_edd(), "exec_list");
+    if (!names) goto error;
+    for (i = 0; i < names->array_count; i++)
     {
-        const char *data, *file;
+        const char *file;
         char *exe;
-        int size, id;
-        char key[PATH_MAX];
+        unsigned int j;
+        Efreet_Cache_Array_String *array;
 
-        data = eet_read_direct(cache, keys[i], &size);
-        if (!data) continue;
-        exe = ecore_file_app_exe_get(data);
+        exe = ecore_file_app_exe_get(names->array[i]);
         if (!exe) continue;
         file = ecore_file_file_get(exe);
         if (!file) continue;
@@ -266,14 +280,26 @@ efreet_util_desktop_exec_find(const char *exec)
         }
         free(exe);
 
-        id = atoi(keys[i]);
-        snprintf(key, sizeof(key), "%d::op", id);
-        data = eet_read_direct(cache, key, &size);
-        if (!data) continue;
-        ret = efreet_desktop_get(data);
+        if (!hash)
+            hash = eet_data_read(cache, efreet_hash_array_string_edd(), "exec_hash");
+        if (!hash) goto error;
+        array = eina_hash_find(hash->hash, names->array[i]);
+        if (!array) continue;
+        for (j = 0; j < array->array_count; j++)
+        {
+            ret = efreet_desktop_get(array->array[j]);
+            if (ret) break;
+        }
         if (ret) break;
     }
-    free(keys);
+error:
+    if (hash)
+    {
+        eina_hash_free(hash->hash);
+        free(hash);
+    }
+    if (names)
+        efreet_cache_array_string_free(names);
     return ret;
 }
 
@@ -288,7 +314,7 @@ efreet_util_desktop_exec_find(const char *exec)
 EAPI Efreet_Desktop *
 efreet_util_desktop_name_find(const char *name)
 {
-    return efreet_util_cache_find("*::n", name, NULL);
+    return efreet_util_cache_find("name", name, NULL);
 }
 
 /**
@@ -302,7 +328,7 @@ efreet_util_desktop_name_find(const char *name)
 EAPI Efreet_Desktop *
 efreet_util_desktop_generic_name_find(const char *generic_name)
 {
-    return efreet_util_cache_find("*::gn", generic_name, NULL);
+    return efreet_util_cache_find("generic_name", generic_name, NULL);
 }
 
 /**
@@ -316,7 +342,7 @@ efreet_util_desktop_generic_name_find(const char *generic_name)
 EAPI Eina_List *
 efreet_util_desktop_name_glob_list(const char *glob)
 {
-    return efreet_util_cache_glob_list("*::n", glob);
+    return efreet_util_cache_glob_list("name", glob);
 }
 
 /**
@@ -330,26 +356,24 @@ efreet_util_desktop_name_glob_list(const char *glob)
 EAPI Eina_List *
 efreet_util_desktop_exec_glob_list(const char *glob)
 {
-    char **keys;
-    int num, i;
+    Efreet_Cache_Hash *hash = NULL;
     Eina_List *ret = NULL;
+    Efreet_Cache_Array_String *names = NULL;
+    unsigned int i;
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!glob) return NULL;
 
-    keys = eet_list(cache, "*::e", &num);
-    if (!keys) return NULL;
-    for (i = 0; i < num; i++)
+    names = eet_data_read(cache, efreet_array_string_edd(), "exec_list");
+    if (!names) goto error;
+    for (i = 0; i < names->array_count; i++)
     {
-        const char *data;
+        Efreet_Cache_Array_String *array;
+        unsigned int j;
         char *exe;
-        int size, id;
-        char key[PATH_MAX];
         Efreet_Desktop *desk;
 
-        data = eet_read_direct(cache, keys[i], &size);
-        if (!data) continue;
-        exe = ecore_file_app_exe_get(data);
+        exe = ecore_file_app_exe_get(names->array[i]);
         if (!exe) continue;
         if (!efreet_util_glob_match(exe, glob))
         {
@@ -358,15 +382,27 @@ efreet_util_desktop_exec_glob_list(const char *glob)
         }
         free(exe);
 
-        id = atoi(keys[i]);
-        snprintf(key, sizeof(key), "%d::op", id);
-        data = eet_read_direct(cache, key, &size);
-        if (!data) continue;
-        desk = efreet_desktop_get(data);
-        if (desk)
-            ret = eina_list_append(ret, desk);
+        if (!hash)
+            hash = eet_data_read(cache, efreet_hash_array_string_edd(), "exec_hash");
+        if (!hash) goto error;
+
+        array = eina_hash_find(hash->hash, names->array[i]);
+        if (!array) continue;
+        for (j = 0; j < array->array_count; j++)
+        {
+            desk = efreet_desktop_get(array->array[j]);
+            if (desk)
+                ret = eina_list_append(ret, desk);
+        }
     }
-    free(keys);
+error:
+    if (hash)
+    {
+        eina_hash_free(hash->hash);
+        free(hash);
+    }
+    if (names)
+        efreet_cache_array_string_free(names);
     return ret;
 }
 
@@ -381,7 +417,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
 EAPI Eina_List *
 efreet_util_desktop_generic_name_glob_list(const char *glob)
 {
-    return efreet_util_cache_glob_list("*::gn", glob);
+    return efreet_util_cache_glob_list("generic_name", glob);
 }
 
 /**
@@ -395,7 +431,7 @@ efreet_util_desktop_generic_name_glob_list(const char *glob)
 EAPI Eina_List *
 efreet_util_desktop_comment_glob_list(const char *glob)
 {
-    return efreet_util_cache_glob_list("*::co", glob);
+    return efreet_util_cache_glob_list("comment", glob);
 }
 
 /**
@@ -407,24 +443,17 @@ efreet_util_desktop_comment_glob_list(const char *glob)
 EAPI Eina_List *
 efreet_util_desktop_categories_list(void)
 {
-    char **keys;
-    int num, i;
+    Efreet_Cache_Array_String *array;
     Eina_List *ret = NULL;
+    unsigned int i;
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
-    keys = eet_list(cache, "*::ca", &num);
-    if (!keys) return NULL;
-    for (i = 0; i < num; i++)
-    {
-        const char *data;
-        int size;
 
-        data = eet_read_direct(cache, keys[i], &size);
-        if (!data) continue;
-        if (eina_list_search_unsorted(ret, EINA_COMPARE_CB(strcmp), data)) continue;
-        ret = eina_list_append(ret, data);
-    }
-    free(keys);
+    array = eet_data_read(cache, efreet_array_string_edd(), "categories_list");
+    if (!array) return NULL;
+    for (i = 0; i < array->array_count; i++)
+        ret = eina_list_append(ret, array->array[i]);
+    efreet_cache_array_string_free(array);
     return ret;
 }
 
@@ -439,7 +468,7 @@ efreet_util_desktop_categories_list(void)
 EAPI Eina_List *
 efreet_util_desktop_category_list(const char *category)
 {
-    return efreet_util_cache_list("*::ca", category);
+    return efreet_util_cache_list("categories", category);
 }
 
 static int
@@ -505,104 +534,114 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
 static Efreet_Desktop *
 efreet_util_cache_find(const char *search, const char *what1, const char *what2)
 {
-    char **keys;
-    int num, i;
+    Efreet_Cache_Hash *hash;
     Efreet_Desktop *ret = NULL;
+    Efreet_Cache_Array_String *array = NULL;
+    char key[256];
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if ((!what1) && (!what2)) return NULL;
 
-    keys = eet_list(cache, search, &num);
-    if (!keys) return NULL;
-    for (i = 0; i < num; i++)
+    snprintf(key, sizeof(key), "%s_hash", search);
+    hash = eet_data_read(cache, efreet_hash_array_string_edd(), key);
+    if (!hash) return NULL;
+    if (what1)
+        array = eina_hash_find(hash->hash, what1);
+    if (!array && what2) array = eina_hash_find(hash->hash, what2);
+    if (array)
     {
-        const char *data;
-        int size, id;
-        char key[PATH_MAX];
+        unsigned int i;
 
-        data = eet_read_direct(cache, keys[i], &size);
-        if (!data) continue;
-        if (!((what1 && !strcmp(what1, data)) ||
-              (what2 && !strcmp(what2, data)))) continue;
-
-        id = atoi(keys[i]);
-        snprintf(key, sizeof(key), "%d::op", id);
-        data = eet_read_direct(cache, key, &size);
-        if (!data) continue;
-        ret = efreet_desktop_get(data);
-        if (ret) break;
+        for (i = 0; i < array->array_count; i++)
+        {
+            ret = efreet_desktop_get(array->array[i]);
+            if (ret) break;
+        }
     }
-    free(keys);
+    eina_hash_free(hash->hash);
+    free(hash);
     return ret;
 }
 
 static Eina_List *
 efreet_util_cache_list(const char *search, const char *what)
 {
-    char **keys;
-    int num, i;
+    Efreet_Cache_Hash *hash;
+    Efreet_Cache_Array_String *array;
     Eina_List *ret = NULL;
+    char key[256];
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
 
-    keys = eet_list(cache, search, &num);
-    if (!keys) return NULL;
-    for (i = 0; i < num; i++)
+    snprintf(key, sizeof(key), "%s_hash", search);
+    hash = eet_data_read(cache, efreet_hash_array_string_edd(), key);
+    if (!hash) return NULL;
+    array = eina_hash_find(hash->hash, what);
+    if (array)
     {
-        const char *data;
-        int size, id;
-        char key[PATH_MAX];
+        unsigned int i;
         Efreet_Desktop *desk;
 
-        data = eet_read_direct(cache, keys[i], &size);
-        if (!data) continue;
-        if (strcmp(what, data)) continue;
-
-        id = atoi(keys[i]);
-        snprintf(key, sizeof(key), "%d::op", id);
-        data = eet_read_direct(cache, key, &size);
-        if (!data) continue;
-        desk = efreet_desktop_get(data);
-        if (desk)
-            ret = eina_list_append(ret, desk);
+        for (i = 0; i < array->array_count; i++)
+        {
+            desk = efreet_desktop_get(array->array[i]);
+            if (desk)
+                ret = eina_list_append(ret, desk);
+        }
     }
-    free(keys);
+    eina_hash_free(hash->hash);
+    free(hash);
     return ret;
 }
 
 static Eina_List *
 efreet_util_cache_glob_list(const char *search, const char *what)
 {
-    char **keys;
-    int num, i;
+    Efreet_Cache_Hash *hash = NULL;
     Eina_List *ret = NULL;
+    Efreet_Cache_Array_String *names = NULL;
+    char key[256];
+    unsigned int i;
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
 
-    keys = eet_list(cache, search, &num);
-    if (!keys) return NULL;
-    for (i = 0; i < num; i++)
+    snprintf(key, sizeof(key), "%s_list", search);
+    names = eet_data_read(cache, efreet_array_string_edd(), key);
+    if (!names) goto error;
+    for (i = 0; i < names->array_count; i++)
     {
-        const char *data;
-        int size, id;
-        char key[PATH_MAX];
+        Efreet_Cache_Array_String *array;
+        unsigned int j;
         Efreet_Desktop *desk;
 
-        data = eet_read_direct(cache, keys[i], &size);
-        if (!data) continue;
-        if (!efreet_util_glob_match(data, what)) continue;
+        if (!efreet_util_glob_match(names->array[i], what)) continue;
 
-        id = atoi(keys[i]);
-        snprintf(key, sizeof(key), "%d::op", id);
-        data = eet_read_direct(cache, key, &size);
-        if (!data) continue;
-        desk = efreet_desktop_get(data);
-        if (desk)
-            ret = eina_list_append(ret, desk);
+        if (!hash)
+        {
+            snprintf(key, sizeof(key), "%s_hash", search);
+            hash = eet_data_read(cache, efreet_hash_array_string_edd(), key);
+        }
+        if (!hash) goto error;
+
+        array = eina_hash_find(hash->hash, names->array[i]);
+        if (!array) continue;
+        for (j = 0; j < array->array_count; j++)
+        {
+            desk = efreet_desktop_get(array->array[j]);
+            if (desk)
+                ret = eina_list_append(ret, desk);
+        }
     }
-    free(keys);
+error:
+    if (hash)
+    {
+        eina_hash_free(hash->hash);
+        free(hash);
+    }
+    if (names)
+        efreet_cache_array_string_free(names);
     return ret;
 }
 
