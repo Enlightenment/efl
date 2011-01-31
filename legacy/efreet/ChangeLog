@@ -54,3 +54,7 @@
 
 	* Prefix internal efreet cache keys with __
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Create one cache file for each theme
+

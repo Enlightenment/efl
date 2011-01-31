@@ -2,6 +2,10 @@
 # include <config.h>
 #endif
 
+/* TODO: Add local hash cache for icons */
+/* TODO: Pass extra icon dirs to cache process */
+/* TODO: Pass icon extensions to cache process */
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -35,8 +39,6 @@ static int _efreet_cache_log_dom = -1;
 static Eet_Data_Descriptor *directory_edd = NULL;
 static Eet_Data_Descriptor *icon_theme_edd = NULL;
 static Eet_Data_Descriptor *icon_theme_directory_edd = NULL;
-static Eet_Data_Descriptor *icons_edd = NULL;
-static Eet_Data_Descriptor *fallback_edd = NULL;
 
 static Eet_Data_Descriptor *icon_fallback_edd = NULL;
 static Eet_Data_Descriptor *icon_element_pointer_edd = NULL;
@@ -44,13 +46,12 @@ static Eet_Data_Descriptor *icon_element_edd = NULL;
 static Eet_Data_Descriptor *icon_edd = NULL;
 
 static Eet_File            *icon_cache = NULL;
+static Eet_File            *fallback_cache = NULL;
 static Eet_File            *icon_theme_cache = NULL;
 
 static const char          *icon_theme_cache_file = NULL;
 
 static const char          *theme_name = NULL;
-static Efreet_Cache_Icons  *theme_cache = NULL;
-static Efreet_Cache_Icons  *fallback_cache = NULL;
 
 static Eet_Data_Descriptor *version_edd = NULL;
 static Eet_Data_Descriptor *desktop_edd = NULL;
@@ -74,8 +75,6 @@ static int                  desktop_cache_exe_lock = -1;
 
 static Eina_List           *old_desktop_caches = NULL;
 
-static Efreet_Cache_Icons *_efreet_cache_free(Efreet_Cache_Icons *cache);
-static Efreet_Cache_Icons *_efreet_cache_fallback_free(Efreet_Cache_Icons *cache);
 static void efreet_cache_edd_shutdown(void);
 
 static Eina_Bool cache_exe_cb(void *data, int type, void *event);
@@ -135,9 +134,6 @@ efreet_cache_shutdown(void)
 {
     Efreet_Old_Cache *d;
 
-    theme_cache = _efreet_cache_free(theme_cache);
-    fallback_cache = _efreet_cache_fallback_free(fallback_cache);
-
     IF_RELEASE(theme_name);
 
     icon_cache = efreet_cache_close(icon_cache);
@@ -184,14 +180,14 @@ efreet_cache_shutdown(void)
  * Needs EAPI because of helper binaries
  */
 EAPI const char *
-efreet_icon_cache_file(void)
+efreet_icon_cache_file(const char *theme)
 {
     static char cache_file[PATH_MAX] = { '\0' };
     const char *cache;
 
     cache = efreet_cache_home_get();
 
-    snprintf(cache_file, sizeof(cache_file), "%s/efreet/icons_%s.eet", cache, efreet_hostname_get());
+    snprintf(cache_file, sizeof(cache_file), "%s/efreet/icons_%s_%s.eet", cache, theme, efreet_hostname_get());
 
     return cache_file;
 }
@@ -353,10 +349,8 @@ efreet_cache_edd_shutdown(void)
     EDD_SHUTDOWN(hash_array_string_edd);
     EDD_SHUTDOWN(array_string_edd);
     EDD_SHUTDOWN(hash_string_edd);
-    EDD_SHUTDOWN(fallback_edd);
     EDD_SHUTDOWN(icon_theme_edd);
     EDD_SHUTDOWN(icon_theme_directory_edd);
-    EDD_SHUTDOWN(icons_edd);
     EDD_SHUTDOWN(directory_edd);
     EDD_SHUTDOWN(icon_fallback_edd);
     EDD_SHUTDOWN(icon_element_pointer_edd);
@@ -376,28 +370,6 @@ efreet_cache_edd_shutdown(void)
     Edd_Dest = eet_data_descriptor_file_new(&eddc);                    \
     EET_DATA_DESCRIPTOR_ADD_SUB(Edd_Dest, Efreet_##Type##_Pointer,     \
                                 "pointer", pointer, Edd_Source);       \
-}
-
-static Efreet_Cache_Icons *
-_efreet_cache_free(Efreet_Cache_Icons *c)
-{
-    if (!c) return NULL;
-
-    if (c->icons) efreet_hash_free(c->icons, EINA_FREE_CB(efreet_cache_icon_free));
-    free(c);
-
-    return NULL;
-}
-
-static Efreet_Cache_Icons *
-_efreet_cache_fallback_free(Efreet_Cache_Icons *c)
-{
-    if (!c) return NULL;
-
-    if (c->icons) efreet_hash_free(c->icons, EINA_FREE_CB(efreet_cache_icon_fallback_free));
-    free(c);
-
-    return NULL;
 }
 
 static Eet_Data_Descriptor *
@@ -421,11 +393,11 @@ efreet_icon_directory_edd(void)
  * Needs EAPI because of helper binaries
  */
 EAPI Eet_Data_Descriptor *
-efreet_icons_edd(void)
+efreet_icon_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
 
-    if (icons_edd) return icons_edd;
+    if (icon_edd) return icon_edd;
 
     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icon_Element);
     icon_element_edd = eet_data_descriptor_file_new(&eddc);
@@ -455,14 +427,7 @@ efreet_icons_edd(void)
     EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY(icon_edd, Efreet_Cache_Icon,
                                       "icons", icons, icon_element_pointer_edd);
 
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icons);
-    icons_edd = eet_data_descriptor_file_new(&eddc);
-    if (!icons_edd) return NULL;
-
-    EET_DATA_DESCRIPTOR_ADD_HASH(icons_edd, Efreet_Cache_Icons,
-                                 "icons", icons, icon_edd);
-
-    return icons_edd;
+    return icon_edd;
 }
 
 /*
@@ -533,11 +498,11 @@ efreet_icon_theme_edd(Eina_Bool cache)
  * Needs EAPI because of helper binaries
  */
 EAPI Eet_Data_Descriptor *
-efreet_icons_fallback_edd(void)
+efreet_icon_fallback_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
 
-    if (fallback_edd) return fallback_edd;
+    if (icon_fallback_edd) return icon_fallback_edd;
 
     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Fallback_Icon);
     icon_fallback_edd = eet_data_descriptor_file_new(&eddc);
@@ -546,14 +511,7 @@ efreet_icons_fallback_edd(void)
     EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY_STRING(icon_fallback_edd,
                                              Efreet_Cache_Fallback_Icon, "icons", icons);
 
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icons);
-    fallback_edd = eet_data_descriptor_file_new(&eddc);
-    if (!fallback_edd) return NULL;
-
-    EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Icons,
-                                 "icons", icons, icon_fallback_edd);
-
-    return fallback_edd;
+    return icon_fallback_edd;
 }
 
 /*
@@ -628,47 +586,27 @@ efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon)
 Efreet_Cache_Icon *
 efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
 {
-    if (!efreet_cache_check(&icon_cache, efreet_icon_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
-
     if (theme_name && strcmp(theme_name, theme->name.internal))
     {
         /* FIXME: this is bad if people have pointer to this cache, things will go wrong */
         INFO("theme_name change from `%s` to `%s`", theme_name, theme->name.internal);
         IF_RELEASE(theme_name);
-        theme_cache = _efreet_cache_free(theme_cache);
+        icon_cache = efreet_cache_close(icon_cache);
     }
 
+    if (!efreet_cache_check(&icon_cache, efreet_icon_cache_file(theme->name.internal), EFREET_ICON_CACHE_MAJOR)) return NULL;
     if (!theme_name)
-    {
-        INFO("loading theme %s", theme->name.internal);
-        theme_cache = eet_data_read(icon_cache, efreet_icons_edd(), theme->name.internal);
-        if (theme_cache && !theme_cache->icons)
-            theme_cache->icons = eina_hash_string_superfast_new(NULL);
-        if (theme_cache)
-            theme_name = eina_stringshare_add(theme->name.internal);
-    }
+        theme_name = eina_stringshare_add(theme->name.internal);
 
-    if (!theme_cache) return NULL;
-
-    return eina_hash_find(theme_cache->icons, icon);
+    return eet_data_read(icon_cache, efreet_icon_edd(), icon);
 }
 
 Efreet_Cache_Fallback_Icon *
 efreet_cache_icon_fallback_find(const char *icon)
 {
-    if (!efreet_cache_check(&icon_cache, efreet_icon_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
+    if (!efreet_cache_check(&fallback_cache, efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EFREET_ICON_CACHE_MAJOR)) return NULL;
 
-    if (!fallback_cache)
-    {
-        INFO("loading fallback cache");
-        fallback_cache = eet_data_read(icon_cache, efreet_icons_fallback_edd(), EFREET_CACHE_ICON_FALLBACK);
-        if (fallback_cache && !fallback_cache->icons)
-            fallback_cache->icons = eina_hash_string_superfast_new(NULL);
-    }
-
-    if (!fallback_cache) return NULL;
-
-    return eina_hash_find(fallback_cache->icons, icon);
+    return eet_data_read(fallback_cache, efreet_icon_fallback_edd(), icon);
 }
 
 Efreet_Icon_Theme *
@@ -703,11 +641,10 @@ efreet_cache_icon_theme_name_list(int *num)
     keys = eet_list(icon_theme_cache, "*", num);
     for (i = 0; i < *num; i++)
     {
-        if (!strcmp(keys[i], EFREET_CACHE_VERSION) && (i < (*num + 1)))
+        if (!strncmp(keys[i], "__efreet", 8) && (i < (*num + 1)))
         {
             memmove(&keys[i], &keys[i + 1], (*num - i - 1) * sizeof(char *));
             (*num)--;
-            break;
         }
     }
     return keys;
@@ -881,21 +818,10 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         d = NEW(Efreet_Old_Cache, 1);
         if (!d) goto error;
 
-        if (theme_cache)
-        {
-            INFO("Destorying theme cache due to cache change.");
-            theme_cache = _efreet_cache_free(theme_cache);
-        }
-
         IF_RELEASE(theme_name);
 
-        if (fallback_cache)
-        {
-            INFO("Destroying fallback cache due to cache change.");
-            fallback_cache = _efreet_cache_fallback_free(fallback_cache);
-        }
-
         icon_cache = efreet_cache_close(icon_cache);
+        fallback_cache = efreet_cache_close(fallback_cache);
 
         d->hash = efreet_icon_themes;
         d->ef = icon_theme_cache;
