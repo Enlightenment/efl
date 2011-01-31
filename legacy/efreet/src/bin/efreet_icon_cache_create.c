@@ -682,7 +682,6 @@ main(int argc, char **argv)
     efreet_cache_update = 0;
     strs = eina_array_new(32);
 
-    /* FIXME: should be in cache dir maybe */
     /* create homedir */
     snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
     if (!ecore_file_mkpath(file)) return -1;

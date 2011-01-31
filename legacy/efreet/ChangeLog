@@ -75,3 +75,7 @@
 
 	* Remove TODO, must be solved in src/lib/efreet_cache.c and
 	  src/bin/efreet_icon_cache_create.c
+
+2011-01-XX  Sebastian Dransfeld
+
+	* Remove FIXME, already done
