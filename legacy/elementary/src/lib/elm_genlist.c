@@ -1997,10 +1997,10 @@ _item_block_position(Item_Block *itb,
         it->scrl_x = itb->x + it->x - it->wd->pan_x + ox;
         it->scrl_y = itb->y + it->y - it->wd->pan_y + oy;
 
+        vis = (ELM_RECTS_INTERSECT(it->scrl_x, it->scrl_y, it->w, it->h,
+                                   cvx, cvy, cvw, cvh));
         if (it->flags != ELM_GENLIST_ITEM_GROUP)
           {
-             vis = (ELM_RECTS_INTERSECT(it->scrl_x, it->scrl_y, it->w, it->h,
-                                        cvx, cvy, cvw, cvh));
              if ((itb->realized) && (!it->realized))
                {
                   if (vis) _item_realize(it, in, 0);
@@ -2029,6 +2029,10 @@ _item_block_position(Item_Block *itb,
                     }
                }
              in++;
+          }
+        else
+          {
+            if (vis) it->want_realize = EINA_TRUE;
           }
         y += it->h;
      }
@@ -3425,9 +3429,9 @@ elm_genlist_last_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
    if (!wd->items) return NULL;
    Elm_Genlist_Item *it = ELM_GENLIST_ITEM_FROM_INLIST(wd->items->last);
-   if (!wd) return NULL;
    while ((it) && (it->delete_me))
      it = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
    return it;
