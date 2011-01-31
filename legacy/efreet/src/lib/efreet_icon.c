@@ -42,8 +42,6 @@ void *alloca (size_t);
 
 static int _efreet_icon_log_dom = -1;
 
-/* TODO: Scan efreet_extra_icon_dirs for themes */
-
 Eina_Hash *efreet_icon_themes = NULL;
 
 static const char *efreet_icon_deprecated_user_dir = NULL;

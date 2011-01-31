@@ -66,3 +66,12 @@
 
 	* Before doing strcmp, check if pointers are equal. They might be
 	  because of mmap and stringshare.
+
+2011-01-XX  Sebastian Dransfeld
+
+	* Remove TODO, code is correct
+
+2011-01-XX  Sebastian Dransfeld
+
+	* Remove TODO, must be solved in src/lib/efreet_cache.c and
+	  src/bin/efreet_icon_cache_create.c
