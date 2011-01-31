@@ -10,3 +10,8 @@
 
         * make https not fail (that's curl's responsibility, really).
 
+2011-01-31  Carsten Haitzler (The Rasterman)
+
+        * Fix: ecore-evas CAN send "render done" messages even if not
+        waiting for sync counter when using gl engine. new semi-sync
+        mode to account for that.
