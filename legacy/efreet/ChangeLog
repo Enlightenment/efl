@@ -26,61 +26,61 @@
 
 	* Always use icon cache, remove old code
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Make check for stat return more explicit
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Return EINA_{TRUE,FALSE} if return type is Eina_Bool
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Return Eina_Bool if the return value of a function is true or false
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Check whether dirs is NULL
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Create internal struct for theme cache
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Check if theme has changed when building cache
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Prefix internal efreet cache keys with __
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Create one cache file for each theme
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Correct english
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Before doing strcmp, check if pointers are equal. They might be
 	  because of mmap and stringshare.
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Remove TODO, code is correct
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Remove TODO, must be solved in src/lib/efreet_cache.c and
 	  src/bin/efreet_icon_cache_create.c
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Remove FIXME, already done
 
-2011-01-XX  Sebastian Dransfeld
+2011-01-31  Sebastian Dransfeld
 
 	* Add local icon cache, so we wont hit the cache file for each icon
 	  to be retrieved
