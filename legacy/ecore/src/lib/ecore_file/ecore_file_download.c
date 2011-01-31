@@ -125,15 +125,15 @@ ecore_file_download(const char *url,
 
    if (!ecore_file_is_dir(dir))
      {
-	EINA_LOG_ERR("%s is not a directory", dir);
+        EINA_LOG_ERR("%s is not a directory", dir);
         free(dir);
         return EINA_FALSE;
      }
    free(dir);
    if (ecore_file_exists(dst))
      {
-	EINA_LOG_ERR("%s already exists", dst);
-	return EINA_FALSE;
+        EINA_LOG_ERR("%s already exists", dst);
+        return EINA_FALSE;
      }
 
    if (!strncmp(url, "file://", 7))
