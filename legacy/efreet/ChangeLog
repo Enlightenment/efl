@@ -9,3 +9,7 @@
 2011-01-30  Carsten Haitzler (The Rasterman)
 
         Fix tests to not build clearenv related code if not available
+
+2011-01-31  Sebastian Dransfeld
+
+	* Fix memleak, free cache icons after retrival

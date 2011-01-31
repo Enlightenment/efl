@@ -456,6 +456,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         cache = efreet_cache_icon_find(theme, tmp);
         value = efreet_cache_icon_lookup_icon(cache, size);
         if (!value) INFO("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
+        efreet_cache_icon_free(cache);
 #else
         value = efreet_icon_find_helper(theme, tmp, size);
 #endif
@@ -476,6 +477,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         cache = efreet_cache_icon_fallback_find(icon);
         value = efreet_cache_icon_fallback_lookup_path(cache);
         if (!value) INFO("lookup for `%s` failed in fallback too with %p.", icon, cache);
+        efreet_cache_icon_fallback_free(cache);
     }
 #else
     value = efreet_icon_fallback_icon(icon);
@@ -541,6 +543,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
                 if (!strcmp(cache->theme, theme->name.internal))
                 {
                     value = efreet_cache_icon_lookup_icon(cache, size);
+                    efreet_cache_icon_free(cache);
                     break;
                 }
                 else
