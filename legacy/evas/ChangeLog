@@ -1,3 +1,20 @@
+2011-01-31  Carsten Haitzler,,,  <Please set CHANGE_LOG_EMAIL_ADDRESS or EMAIL_ADDRESS environment variable>
+
+	reviewed by: <delete if not using a buddy>
+	patch by: <delete if not someone else's patch>
+
+	* src/lib/canvas/evas_key_grab.c:
+
+2011-01-29  Carsten Haitzler (The Rasterman)
+
+        1.0.0 release
+        
+2011-01-29  Carsten Haitzler (The Rasterman)
+
+        * Enabled mempool for object allocation
+        * Allow shorter pre-render handler for rect objects if they are
+          invisible
+        
 2011-01-30  Tom Hacohen (TAsn)
 
         * It's actually a merge from my local branch upstream so this
@@ -17,14 +34,3 @@
         * More code cleanups will be coming in the future. This shipment is
           mostly to get code review started (and also make sure I don't have a
           merging hell later on).
-
-2011-01-29  Carsten Haitzler (The Rasterman)
-
-        1.0.0 release
-        
-2011-01-29  Carsten Haitzler (The Rasterman)
-
-        * Enabled mempool for object allocation
-        * Allow shorter pre-render handler for rect objects if they are
-          invisible
-        
