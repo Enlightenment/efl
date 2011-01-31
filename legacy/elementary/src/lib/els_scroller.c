@@ -944,19 +944,11 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord x, E
    sd->pan_func.get(sd->pan_obj, &px, &py);
 
    nx = px;
-   if (x < px) nx = x;
-   else if ((x + w) > (px + (cw - mx)))
-     {
-	nx = x + w - (cw - mx);
-	if (nx > x) nx = x;
-     }
+   if ((x < px) && ((x + w) < (px + (cw - mx)))) nx = x;
+   else if ((x > px) && ((x + w) > (px + (cw - mx)))) nx = x + w - (cw - mx);
    ny = py;
-   if (y < py) ny = y;
-   else if ((y + h) > (py + (ch - my)))
-     {
-	ny = y + h - (ch - my);
-	if (ny > y) ny = y;
-     }
+   if ((y < py) && ((y + h) < (py + (ch - my)))) ny = y;
+   else if ((y > py) && ((y + h) > (py + (ch - my)))) ny = y + h - (ch - my);
    if (!internal_call)
      {
         sd->wx = x;
