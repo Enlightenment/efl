@@ -163,7 +163,9 @@ struct _Elm_Entry_Text_Filter
 
 static const char *widtype = NULL;
 
+#ifdef HAVE_ELEMENTARY_X
 static Eina_Bool _drag_drop_cb(void *data, Evas_Object *obj, Elm_Selection_Data *);
+#endif
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -2767,7 +2769,9 @@ elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
    if (wd->textonly == textonly) return;
    wd->textonly = !!textonly;
    if (!textonly) format |= ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
    elm_drop_target_add(obj, format, _drag_drop_cb, NULL);
+#endif
 }
 
 /**
