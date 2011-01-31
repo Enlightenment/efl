@@ -1213,19 +1213,11 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
    sd->pan_func.get(sd->pan_obj, &px, &py);
 
    nx = px;
-   if (x < px) nx = x;
-   else if ((x + w) > (px + (cw - mx)))
-     {
-	nx = x + w - (cw - mx);
-	if (nx > x) nx = x;
-     }
+   if ((x < px) && ((x + w) < (px + (cw - mx)))) nx = x;
+   else if ((x > px) && ((x + w) > (px + (cw - mx)))) nx = x + w - (cw - mx);
    ny = py;
-   if (y < py) ny = y;
-   else if ((y + h) > (py + (ch - my)))
-     {
-	ny = y + h - (ch - my);
-	if (ny > y) ny = y;
-     }
+   if ((y < py) && ((y + h) < (py + (ch - my)))) ny = y;
+   else if ((y > py) && ((y + h) > (py + (ch - my)))) ny = y + h - (ch - my);
    if ((nx == px) && (ny == py)) return;
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
        (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
