@@ -82,7 +82,7 @@ main(int argc, char **argv)
     theme_ef = eet_open(efreet_icon_theme_cache_file(), EET_FILE_MODE_READ);
     if (!theme_ef) return -1;
 
-    edd = efreet_icons_edd(EINA_FALSE);
+    edd = efreet_icons_edd();
     if (!edd) return -1;
 
     if (argc > 1)

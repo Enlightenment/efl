@@ -13,8 +13,8 @@ EAPI Eet_Data_Descriptor *efreet_hash_array_string_edd(void);
 EAPI Eet_Data_Descriptor *efreet_hash_string_edd(void);
 EAPI Eet_Data_Descriptor *efreet_array_string_edd(void);
 EAPI Eet_Data_Descriptor *efreet_icon_theme_edd(Eina_Bool cache);
-EAPI Eet_Data_Descriptor *efreet_icons_edd(Eina_Bool include_dirs);
-EAPI Eet_Data_Descriptor *efreet_icons_fallback_edd(Eina_Bool include_dirs);
+EAPI Eet_Data_Descriptor *efreet_icons_edd(void);
+EAPI Eet_Data_Descriptor *efreet_icons_fallback_edd(void);
 
 typedef struct Efreet_Cache_Icon_Theme Efreet_Cache_Icon_Theme;
 

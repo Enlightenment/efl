@@ -46,3 +46,6 @@
 
 	* Create internal struct for theme cache
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Check if theme has changed when building cache

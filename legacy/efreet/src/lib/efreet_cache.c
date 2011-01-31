@@ -384,7 +384,6 @@ _efreet_cache_free(Efreet_Cache_Icons *c)
     if (!c) return NULL;
 
     if (c->icons) efreet_hash_free(c->icons, EINA_FREE_CB(efreet_cache_icon_free));
-    if (c->dirs) efreet_hash_free(c->dirs, free);
     free(c);
 
     return NULL;
@@ -396,7 +395,6 @@ _efreet_cache_fallback_free(Efreet_Cache_Icons *c)
     if (!c) return NULL;
 
     if (c->icons) efreet_hash_free(c->icons, EINA_FREE_CB(efreet_cache_icon_fallback_free));
-    if (c->dirs) efreet_hash_free(c->dirs, free);
     free(c);
 
     return NULL;
@@ -423,7 +421,7 @@ efreet_icon_directory_edd(void)
  * Needs EAPI because of helper binaries
  */
 EAPI Eet_Data_Descriptor *
-efreet_icons_edd(Eina_Bool include_dirs)
+efreet_icons_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
 
@@ -463,10 +461,6 @@ efreet_icons_edd(Eina_Bool include_dirs)
 
     EET_DATA_DESCRIPTOR_ADD_HASH(icons_edd, Efreet_Cache_Icons,
                                  "icons", icons, icon_edd);
-
-    if (include_dirs)
-      EET_DATA_DESCRIPTOR_ADD_HASH(icons_edd, Efreet_Cache_Icons,
-                                   "dirs", dirs, efreet_icon_directory_edd());
 
     return icons_edd;
 }
@@ -539,7 +533,7 @@ efreet_icon_theme_edd(Eina_Bool cache)
  * Needs EAPI because of helper binaries
  */
 EAPI Eet_Data_Descriptor *
-efreet_icons_fallback_edd(Eina_Bool include_dirs)
+efreet_icons_fallback_edd(void)
 {
     Eet_Data_Descriptor_Class eddc;
 
@@ -558,10 +552,6 @@ efreet_icons_fallback_edd(Eina_Bool include_dirs)
 
     EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Icons,
                                  "icons", icons, icon_fallback_edd);
-
-    if (include_dirs)
-      EET_DATA_DESCRIPTOR_ADD_HASH(fallback_edd, Efreet_Cache_Icons,
-                                   "dirs", dirs, efreet_icon_directory_edd());
 
     return fallback_edd;
 }
@@ -651,7 +641,7 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
     if (!theme_name)
     {
         INFO("loading theme %s", theme->name.internal);
-        theme_cache = eet_data_read(icon_cache, efreet_icons_edd(EINA_FALSE), theme->name.internal);
+        theme_cache = eet_data_read(icon_cache, efreet_icons_edd(), theme->name.internal);
         if (theme_cache && !theme_cache->icons)
             theme_cache->icons = eina_hash_string_superfast_new(NULL);
         if (theme_cache)
@@ -671,7 +661,7 @@ efreet_cache_icon_fallback_find(const char *icon)
     if (!fallback_cache)
     {
         INFO("loading fallback cache");
-        fallback_cache = eet_data_read(icon_cache, efreet_icons_fallback_edd(EINA_FALSE), EFREET_CACHE_ICON_FALLBACK);
+        fallback_cache = eet_data_read(icon_cache, efreet_icons_fallback_edd(), EFREET_CACHE_ICON_FALLBACK);
         if (fallback_cache && !fallback_cache->icons)
             fallback_cache->icons = eina_hash_string_superfast_new(NULL);
     }

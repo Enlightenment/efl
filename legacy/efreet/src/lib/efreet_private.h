@@ -133,7 +133,6 @@ typedef struct _Efreet_Cache_Fallback_Icon Efreet_Cache_Fallback_Icon;
 struct _Efreet_Cache_Icons
 {
     Eina_Hash *icons;
-    Eina_Hash *dirs;
 };
 
 struct _Efreet_Cache_Directory
