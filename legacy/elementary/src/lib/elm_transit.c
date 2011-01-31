@@ -162,14 +162,14 @@ _elm_transit_del(Elm_Transit *transit)
    if (transit->animator)
       ecore_animator_del(transit->animator);
 
-   if (transit->del_data.func)
-      transit->del_data.func(transit->del_data.arg, transit);
-
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
       _elm_transit_effect_del(transit, effect, elist);
 
    while (transit->objs)
       _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
+
+   if (transit->del_data.func)
+      transit->del_data.func(transit->del_data.arg, transit);
 
    EINA_MAGIC_SET(transit, EINA_MAGIC_NONE);
    free(transit);
