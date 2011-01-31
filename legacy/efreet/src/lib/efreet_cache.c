@@ -475,7 +475,7 @@ efreet_icons_edd(Eina_Bool include_dirs)
  * Needs EAPI because of helper binaries
  */
 EAPI Eet_Data_Descriptor *
-efreet_icon_theme_edd(void)
+efreet_icon_theme_edd(Eina_Bool cache)
 {
     Eet_Data_Descriptor_Class eddc;
 
@@ -500,28 +500,37 @@ efreet_icon_theme_edd(void)
     EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_directory_edd, Efreet_Icon_Theme_Directory,
                                   "size.threshold", size.threshold, EET_T_UINT);
 
-    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Icon_Theme);
+    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Icon_Theme);
     icon_theme_edd = eet_data_descriptor_file_new(&eddc);
     if (!icon_theme_edd) return NULL;
 
-    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Icon_Theme,
-                                  "name.internal", name.internal, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Icon_Theme,
-                                  "name.name", name.name, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Icon_Theme,
-                                  "comment", comment, EET_T_STRING);
-    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Icon_Theme,
-                                  "example_icon", example_icon, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                  "name.internal", theme.name.internal, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                  "name.name", theme.name.name, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                  "comment", theme.comment, EET_T_STRING);
+    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                  "example_icon", theme.example_icon, EET_T_STRING);
 
     eet_data_descriptor_element_add(icon_theme_edd, "paths", EET_T_STRING, EET_G_LIST,
-                                    offsetof(Efreet_Icon_Theme, paths), 0, NULL, NULL);
+                                    offsetof(Efreet_Cache_Icon_Theme, theme.paths), 0, NULL, NULL);
     eet_data_descriptor_element_add(icon_theme_edd, "inherits", EET_T_STRING, EET_G_LIST,
-                                    offsetof(Efreet_Icon_Theme, inherits), 0, NULL, NULL);
-    EET_DATA_DESCRIPTOR_ADD_LIST(icon_theme_edd, Efreet_Icon_Theme,
-                                  "directories", directories, icon_theme_directory_edd);
+                                    offsetof(Efreet_Cache_Icon_Theme, theme.inherits), 0, NULL, NULL);
+    EET_DATA_DESCRIPTOR_ADD_LIST(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                  "directories", theme.directories, icon_theme_directory_edd);
 
-    EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Icon_Theme,
-                                  "last_cache_check", last_cache_check, EET_T_DOUBLE);
+    if (cache)
+    {
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "last_cache_check", last_cache_check, EET_T_LONG_LONG);
+
+        EET_DATA_DESCRIPTOR_ADD_BASIC(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                      "path", path, EET_T_STRING);
+
+        EET_DATA_DESCRIPTOR_ADD_HASH(icon_theme_edd, Efreet_Cache_Icon_Theme,
+                                     "dirs", dirs, efreet_icon_directory_edd());
+    }
 
     return icon_theme_edd;
 }
@@ -676,7 +685,7 @@ Efreet_Icon_Theme *
 efreet_cache_icon_theme_find(const char *theme)
 {
     if (!efreet_cache_check(&icon_theme_cache, efreet_icon_theme_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
-    return eet_data_read(icon_theme_cache, efreet_icon_theme_edd(), theme);
+    return eet_data_read(icon_theme_cache, efreet_icon_theme_edd(EINA_FALSE), theme);
 }
 
 void

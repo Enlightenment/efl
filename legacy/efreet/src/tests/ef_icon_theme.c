@@ -558,7 +558,7 @@ ef_icons_find(Efreet_Icon_Theme *theme, Eina_Hash *icons)
                 ef_icons_find(parent_theme, icons);
         }
     }
-    else if (theme->valid && strcmp(theme->name.internal, "hicolor"))
+    else if (strcmp(theme->name.internal, "hicolor"))
     {
         Efreet_Icon_Theme *parent_theme;
 

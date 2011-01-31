@@ -42,3 +42,7 @@
 
 	* Check whether dirs is NULL
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Create internal struct for theme cache
+

@@ -89,7 +89,7 @@ main(int argc, char **argv)
     {
         for (i = 1; i < argc; i++)
         {
-            theme = eet_data_read(theme_ef, efreet_icon_theme_edd(), argv[i]);
+            theme = eet_data_read(theme_ef, efreet_icon_theme_edd(EINA_FALSE), argv[i]);
             if (theme) l = eina_list_append(l, theme);
         }
     }
@@ -103,7 +103,7 @@ main(int argc, char **argv)
         {
             for (i = 0; i < num; i++)
             {
-                theme = eet_data_read(theme_ef, efreet_icon_theme_edd(), keys[i]);
+                theme = eet_data_read(theme_ef, efreet_icon_theme_edd(EINA_FALSE), keys[i]);
                 if (theme) l = eina_list_append(l, theme);
             }
             free(keys);

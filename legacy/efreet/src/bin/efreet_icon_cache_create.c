@@ -370,7 +370,7 @@ icon_theme_directory_new(Efreet_Ini *ini, const char *name)
 }
 
 static void
-icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
+icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
 {
     /* TODO: return error value */
     Efreet_Ini *ini;
@@ -389,13 +389,13 @@ icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 
     efreet_ini_section_set(ini, "Icon Theme");
     tmp = efreet_ini_localestring_get(ini, "Name");
-    if (tmp) theme->name.name = eina_stringshare_add(tmp);
+    if (tmp) theme->theme.name.name = eina_stringshare_add(tmp);
 
     tmp = efreet_ini_localestring_get(ini, "Comment");
-    if (tmp) theme->comment = eina_stringshare_add(tmp);
+    if (tmp) theme->theme.comment = eina_stringshare_add(tmp);
 
     tmp = efreet_ini_string_get(ini, "Example");
-    if (tmp) theme->example_icon = eina_stringshare_add(tmp);
+    if (tmp) theme->theme.example_icon = eina_stringshare_add(tmp);
 
     theme->hidden = efreet_ini_boolean_get(ini, "Hidden");
 
@@ -418,11 +418,11 @@ icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
         {
             *p = '\0';
 
-            theme->inherits = eina_list_append(theme->inherits, eina_stringshare_add(s));
+            theme->theme.inherits = eina_list_append(theme->theme.inherits, eina_stringshare_add(s));
             s = ++p;
             p = strchr(s, ',');
         }
-        theme->inherits = eina_list_append(theme->inherits, eina_stringshare_add(s));
+        theme->theme.inherits = eina_list_append(theme->theme.inherits, eina_stringshare_add(s));
     }
 
     /* make sure this one is done last as setting the directory will change
@@ -447,7 +447,7 @@ icon_theme_index_read(Efreet_Icon_Theme *theme, const char *path)
 
             dir = icon_theme_directory_new(ini, s);
             if (!dir) goto error;
-            theme->directories = eina_list_append(theme->directories, dir);
+            theme->theme.directories = eina_list_append(theme->theme.directories, dir);
 
             if (p) s = ++p;
         }
@@ -468,7 +468,7 @@ cache_theme_scan(const char *dir)
 
     EINA_ITERATOR_FOREACH(it, entry)
     {
-        Efreet_Icon_Theme *theme;
+        Efreet_Cache_Icon_Theme *theme;
         const char *name;
         const char *path;
         char buf[PATH_MAX];
@@ -482,15 +482,15 @@ cache_theme_scan(const char *dir)
 
         if (!theme)
         {
-            theme = NEW(Efreet_Icon_Theme, 1);
-            theme->name.internal = eina_stringshare_add(name);
+            theme = NEW(Efreet_Cache_Icon_Theme, 1);
+            theme->theme.name.internal = eina_stringshare_add(name);
             eina_hash_direct_add(icon_themes,
-                          (void *)theme->name.internal, theme);
+                          (void *)theme->theme.name.internal, theme);
         }
 
         path = eina_stringshare_add(entry->path);
-        if (!eina_list_data_find(theme->paths, path))
-            theme->paths = eina_list_append(theme->paths, path);
+        if (!eina_list_data_find(theme->theme.paths, path))
+            theme->theme.paths = eina_list_append(theme->theme.paths, path);
         else
             eina_stringshare_del(path);
 
@@ -533,16 +533,16 @@ cache_lock_file(void)
 }
 
 static void
-icon_theme_free(Efreet_Icon_Theme *theme)
+icon_theme_free(Efreet_Cache_Icon_Theme *theme)
 {
     void *data;
     Efreet_Icon_Theme_Directory *dir;
 
-    EINA_LIST_FREE(theme->paths, data)
+    EINA_LIST_FREE(theme->theme.paths, data)
         eina_stringshare_del(data);
-    EINA_LIST_FREE(theme->inherits, data)
+    EINA_LIST_FREE(theme->theme.inherits, data)
         eina_stringshare_del(data);
-    EINA_LIST_FREE(theme->directories, dir)
+    EINA_LIST_FREE(theme->theme.directories, dir)
     {
         eina_stringshare_del(dir->name);
         free(dir);
@@ -564,7 +564,8 @@ main(int argc, char **argv)
     Efreet_Cache_Version *icon_version;
     Efreet_Cache_Version *theme_version;
     Efreet_Cache_Icons *cache;
-    Efreet_Icon_Theme *theme;
+    Efreet_Cache_Icon_Theme *theme;
+    Eet_Data_Descriptor *theme_edd;
     Eet_Data_Descriptor *edd;
     Eet_File *icon_ef;
     Eet_File *theme_ef;
@@ -616,6 +617,8 @@ main(int argc, char **argv)
 
     /* finish efreet init */
     if (!efreet_init()) goto on_error;
+    /* Need to init edd's, so they are like we want, not like userspace wants */
+    theme_edd = efreet_icon_theme_edd(EINA_TRUE);
 
     icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(icon_theme_free));
 
@@ -695,13 +698,13 @@ main(int argc, char **argv)
 
         if (!theme->valid || theme->hidden) continue;
 #ifndef STRICT_SPEC
-        if (!theme->name.name) continue;
+        if (!theme->theme.name.name) continue;
 #endif
 
         themes = eina_hash_string_superfast_new(NULL);
 
         /* read icons from the eet file */
-        cache = eet_data_read(icon_ef, edd, theme->name.internal);
+        cache = eet_data_read(icon_ef, edd, theme->theme.name.internal);
 
         /* No existing cache before, so create it */
         if (!cache)
@@ -718,14 +721,14 @@ main(int argc, char **argv)
         if (!cache->dirs)
             cache->dirs = eina_hash_string_superfast_new(NULL);
 
-        if (cache_scan(theme, themes, cache->icons, cache->dirs, &changed))
+        if (cache_scan(&(theme->theme), themes, cache->icons, cache->dirs, &changed))
         {
             fprintf(stderr, "generated: '%s' %i (%i)\n",
-                    theme->name.internal,
+                    theme->theme.name.internal,
                     changed,
                     eina_hash_population(cache->icons));
             if (changed)
-                eet_data_write(icon_ef, edd, theme->name.internal, cache, 1);
+                eet_data_write(icon_ef, edd, theme->theme.name.internal, cache, 1);
             changed = EINA_FALSE;
         }
 
@@ -735,7 +738,7 @@ main(int argc, char **argv)
         free(cache);
 
         /* TODO: Only write if changed */
-        eet_data_write(theme_ef, efreet_icon_theme_edd(), theme->name.internal, theme, 1);
+        eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, 1);
     }
     eina_iterator_free(it);
 

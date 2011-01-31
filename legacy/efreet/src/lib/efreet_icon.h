@@ -63,14 +63,9 @@ struct Efreet_Icon_Theme
     /* An icon theme can have multiple directories that store it's icons. We
      * need to be able to find a search each one. */
 
-    Eina_List *paths;          /**< The paths */
-    Eina_List *inherits;       /**< Icon themes we inherit from */
-    Eina_List *directories;    /**< List of subdirectories for this theme */
-
-    double last_cache_check;    /**< Last time the cache was checked */
-
-    unsigned char hidden:1;     /**< Should this theme be hidden from users */
-    unsigned char valid:1;      /**< Have we seen an index for this theme */
+    Eina_List *paths;           /**< The paths */
+    Eina_List *inherits;        /**< Icon themes we inherit from */
+    Eina_List *directories;     /**< List of subdirectories for this theme */
 };
 
 /**
