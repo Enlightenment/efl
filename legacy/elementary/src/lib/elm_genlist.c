@@ -914,9 +914,9 @@ _item_del(Elm_Genlist_Item *it)
      it->wd->queue = eina_list_remove(it->wd->queue, it);
    if (it->wd->anchor_item == it)
      {
-        it->wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->next);
+        it->wd->anchor_item = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
         if (!it->wd->anchor_item)
-          it->wd->anchor_item = (Elm_Genlist_Item *)(EINA_INLIST_GET(it)->prev);
+          it->wd->anchor_item = ELM_GENLIST_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
      }
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    if (it->parent)
