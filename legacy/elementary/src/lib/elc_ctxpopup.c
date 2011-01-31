@@ -676,11 +676,14 @@ _theme_hook(Evas_Object *obj)
    _elm_theme_object_set(obj, wd->arrow, "ctxpopup", "arrow",
                          elm_widget_style_get(obj));
 
-   if (!strncmp(elm_object_style_get(obj), "default", 
-                strlen("default")))
-      elm_object_style_set(wd->scr, "ctxpopup");
-   else 
-      elm_object_style_set(wd->scr, elm_object_style_get(obj));
+   if (wd->scr)
+     {
+        if (!strncmp(elm_object_style_get(obj), "default", 
+                     strlen("default")))
+           elm_object_style_set(wd->scr, "ctxpopup");
+        else 
+           elm_object_style_set(wd->scr, elm_object_style_get(obj));
+     }
 
    if (wd->visible)
      {
