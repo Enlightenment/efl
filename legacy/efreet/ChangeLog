@@ -26,3 +26,7 @@
 
 	* Always use icon cache, remove old code
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Make check for stat return more explicit
+
