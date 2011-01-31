@@ -61,3 +61,8 @@
 2011-01-XX  Sebastian Dransfeld
 
 	* Correct english
+
+2011-01-XX  Sebastian Dransfeld
+
+	* Before doing strcmp, check if pointers are equal. They might be
+	  because of mmap and stringshare.

@@ -1,5 +1,3 @@
-/* TODO: Check where strcmp can be changed with == because of stringshare */
-
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -3325,6 +3323,7 @@ static int
 efreet_menu_cb_app_dirs_compare(Efreet_Menu_App_Dir *a, const char *b)
 {
     if (!a->path || !b) return 1;
+    if (a->path == b) return 0;
     return strcmp(a->path, b);
 }
 
@@ -3422,6 +3421,7 @@ static int
 efreet_menu_cb_menu_compare(Efreet_Menu_Internal *a, Efreet_Menu_Internal *b)
 {
     if (!a->name.internal || !b->name.internal) return 1;
+    if (a->name.internal == b->name.internal) return 0;
     return strcmp(a->name.internal, b->name.internal);
 }
 
@@ -3629,6 +3629,7 @@ efreet_menu_cb_md_compare(const Efreet_Menu_Desktop *a, const Efreet_Menu_Deskto
 #ifdef STRICT_SPEC
     return strcmp(ecore_file_file_get(a->desktop->orig_path), ecore_file_file_get(b->desktop->orig_path));
 #else
+    if (a->desktop->name == b->desktop->name) return 0;
     return strcasecmp(a->desktop->name, b->desktop->name);
 #endif
 }
@@ -3636,12 +3637,14 @@ efreet_menu_cb_md_compare(const Efreet_Menu_Desktop *a, const Efreet_Menu_Deskto
 static int
 efreet_menu_cb_compare_names(Efreet_Menu_Internal *internal, const char *name)
 {
+    if (internal->name.internal == name) return 0;
     return strcmp(internal->name.internal, name);
 }
 
 static int
 efreet_menu_cb_md_compare_ids(Efreet_Menu_Desktop *md, const char *name)
 {
+    if (md->id == name) return 0;
     return strcmp(md->id, name);
 }
 
@@ -3991,6 +3994,7 @@ efreet_menu_cb_entry_compare_menu(Efreet_Menu *entry, Efreet_Menu_Internal *inte
 {
     if (entry->type != EFREET_MENU_ENTRY_MENU) return 1;
     if (!entry->name || !internal->name.name) return 1;
+    if (entry->name == internal->name.name) return 0;
     return strcmp(entry->name, internal->name.name);
 }
 
@@ -3999,6 +4003,7 @@ efreet_menu_cb_entry_compare_desktop(Efreet_Menu *entry, Efreet_Desktop *desktop
 {
     if (entry->type != EFREET_MENU_ENTRY_DESKTOP) return -1;
     if (!entry->name || !desktop->name) return -1;
+    if (entry->name == desktop->name) return 0;
     return strcmp(entry->name, desktop->name);
 }
 
