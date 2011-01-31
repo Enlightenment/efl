@@ -79,3 +79,8 @@
 2011-01-XX  Sebastian Dransfeld
 
 	* Remove FIXME, already done
+
+2011-01-XX  Sebastian Dransfeld
+
+	* Add local icon cache, so we wont hit the cache file for each icon
+	  to be retrieved

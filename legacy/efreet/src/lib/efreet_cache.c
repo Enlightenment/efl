@@ -2,7 +2,10 @@
 # include <config.h>
 #endif
 
-/* TODO: Add local hash cache for icons */
+/* TODO: Consider flushing local icons cache after idling.
+ *       Icon requests will probably come in batches, f.ex. during menu
+ *       browsing.
+ */
 /* TODO: Pass extra icon dirs to cache process */
 /* TODO: Pass icon extensions to cache process */
 
@@ -49,6 +52,9 @@ static Eet_File            *icon_cache = NULL;
 static Eet_File            *fallback_cache = NULL;
 static Eet_File            *icon_theme_cache = NULL;
 
+static Eina_Hash           *icons = NULL;
+static Eina_Hash           *fallbacks = NULL;
+
 static const char          *icon_theme_cache_file = NULL;
 
 static const char          *theme_name = NULL;
@@ -76,6 +82,8 @@ static int                  desktop_cache_exe_lock = -1;
 static Eina_List           *old_desktop_caches = NULL;
 
 static void efreet_cache_edd_shutdown(void);
+static void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
+static void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
 
 static Eina_Bool cache_exe_cb(void *data, int type, void *event);
 static void cache_update_cb(void *data, Ecore_File_Monitor *em,
@@ -100,6 +108,9 @@ efreet_cache_init(void)
 
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
+
+    icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
+    fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
 
     snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
     if (!ecore_file_mkpath(buf)) goto error;
@@ -138,6 +149,9 @@ efreet_cache_shutdown(void)
 
     icon_cache = efreet_cache_close(icon_cache);
     icon_theme_cache = efreet_cache_close(icon_theme_cache);
+
+    IF_FREE_HASH(icons);
+    IF_FREE_HASH(fallbacks);
 
     desktop_cache = efreet_cache_close(desktop_cache);
     IF_RELEASE(desktop_cache_file);
@@ -554,15 +568,13 @@ efreet_desktop_edd(void)
     return desktop_edd;
 }
 
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI void
+static void
 efreet_cache_icon_free(Efreet_Cache_Icon *icon)
 {
     unsigned int i;
 
     if (!icon) return;
+    if (icon == NON_EXISTING) return;
 
     for (i = 0; i < icon->icons_count; ++i)
     {
@@ -574,10 +586,11 @@ efreet_cache_icon_free(Efreet_Cache_Icon *icon)
     free(icon);
 }
 
-EAPI void
+static void
 efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon)
 {
     if (!icon) return;
+    if (icon == NON_EXISTING) return;
 
     free(icon->icons);
     free(icon);
@@ -586,27 +599,51 @@ efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon)
 Efreet_Cache_Icon *
 efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
 {
+    Efreet_Cache_Icon *cache = NULL;
+
     if (theme_name && strcmp(theme_name, theme->name.internal))
     {
         /* FIXME: this is bad if people have pointer to this cache, things will go wrong */
         INFO("theme_name change from `%s` to `%s`", theme_name, theme->name.internal);
         IF_RELEASE(theme_name);
         icon_cache = efreet_cache_close(icon_cache);
+        eina_hash_free(icons);
+        icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
     }
 
     if (!efreet_cache_check(&icon_cache, efreet_icon_cache_file(theme->name.internal), EFREET_ICON_CACHE_MAJOR)) return NULL;
     if (!theme_name)
         theme_name = eina_stringshare_add(theme->name.internal);
 
-    return eet_data_read(icon_cache, efreet_icon_edd(), icon);
+    cache = eina_hash_find(icons, icon);
+    if (cache == NON_EXISTING) return NULL;
+    if (cache) return cache;
+
+    cache = eet_data_read(icon_cache, efreet_icon_edd(), icon);
+    if (cache)
+        eina_hash_add(icons, icon, cache);
+    else
+        eina_hash_add(icons, icon, NON_EXISTING);
+    return cache;
 }
 
 Efreet_Cache_Fallback_Icon *
 efreet_cache_icon_fallback_find(const char *icon)
 {
+    Efreet_Cache_Fallback_Icon *cache;
+
     if (!efreet_cache_check(&fallback_cache, efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EFREET_ICON_CACHE_MAJOR)) return NULL;
 
-    return eet_data_read(fallback_cache, efreet_icon_fallback_edd(), icon);
+    cache = eina_hash_find(fallbacks, icon);
+    if (cache == NON_EXISTING) return NULL;
+    if (cache) return cache;
+
+    cache = eet_data_read(fallback_cache, efreet_icon_fallback_edd(), icon);
+    if (cache)
+        eina_hash_add(fallbacks, icon, cache);
+    else
+        eina_hash_add(fallbacks, icon, NON_EXISTING);
+    return cache;
 }
 
 Efreet_Icon_Theme *
