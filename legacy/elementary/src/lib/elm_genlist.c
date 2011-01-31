@@ -4,7 +4,6 @@
 
 #define SWIPE_MOVES         12
 #define MAX_ITEMS_PER_BLOCK 32
-#define LONGPRESS_TIMEOUT   1.0
 
 /**
  * @defgroup Genlist Genlist
