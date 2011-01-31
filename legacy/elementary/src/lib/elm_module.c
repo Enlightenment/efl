@@ -96,14 +96,96 @@ _elm_module_find_as(const char *as)
    Elm_Module *m;
    
    m = eina_hash_find(modules_as, as);
+   if (!m) return NULL;
+
+   if (_elm_module_load(m) == EINA_FALSE)
+     {
+        _elm_module_del(m);
+	return NULL;
+     }
    return m;
+}
+
+Eina_Bool
+_elm_module_load(Elm_Module *m)
+{
+   const char *home;
+   char buf[PATH_MAX];
+
+   if (m->handle) return EINA_TRUE;
+
+   home = getenv("HOME");
+   if (home)
+     {
+         snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, m->name, MODULE_ARCH);
+         m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
+         if (m->handle)
+           {
+              m->init_func = dlsym(m->handle, "elm_modapi_init");
+              if (m->init_func)
+                {
+                   m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
+                   m->so_path = eina_stringshare_add(buf);
+                   snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s", home, m->name, MODULE_ARCH);
+                   m->bin_dir = eina_stringshare_add(buf);
+                   snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s", home, m->name);
+                   m->data_dir = eina_stringshare_add(buf);
+                }
+              else
+                {
+		   dlclose(m->handle);
+		   m->handle = NULL;
+		   return EINA_FALSE;
+                }
+           }
+      }
+
+   if (!m->handle)
+     {
+         snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, m->name, MODULE_ARCH);
+         m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
+         if (m->handle)
+           {
+              m->init_func = dlsym(m->handle, "elm_modapi_init");
+              if (m->init_func)
+                {
+                   m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
+                   m->so_path = eina_stringshare_add(buf);
+                   snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, m->name, MODULE_ARCH);
+                   m->bin_dir = eina_stringshare_add(buf);
+                   snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, m->name);
+                   m->data_dir = eina_stringshare_add(buf);
+                }
+              else
+                {
+		   dlclose(m->handle);
+		   m->handle = NULL;
+		   return EINA_FALSE;
+                }
+          }
+     }
+
+   if (!m->handle) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+void
+_elm_module_unload(Elm_Module *m)
+{
+   eina_stringshare_del(m->so_path);
+   eina_stringshare_del(m->data_dir);
+   eina_stringshare_del(m->bin_dir);
+   if (m->shutdown_func) m->shutdown_func(m);
+   if (m->api) free(m->api);
+   dlclose(m->handle);
 }
 
 Elm_Module *
 _elm_module_add(const char *name, const char *as)
 {
    Elm_Module *m;
-   char buf[PATH_MAX];
+
+   if (name[0] == '/') return NULL;
 
    m = eina_hash_find(modules, name);
    if (m)
@@ -114,76 +196,7 @@ _elm_module_add(const char *name, const char *as)
    m = calloc(1, sizeof(Elm_Module));
    if (!m) return NULL;
    m->version = 1;
-   if (name[0] != '/')
-     {
-        const char *home = getenv("HOME");
-        
-        if (home)
-          {
-             snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, name, MODULE_ARCH);
-             m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
-             if (m->handle)
-               {
-                  m->init_func = dlsym(m->handle, "elm_modapi_init");
-                  if (m->init_func)
-                    {
-                       m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
-                       m->so_path = eina_stringshare_add(buf);
-                       m->name = eina_stringshare_add(name);
-                       snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s", home, name, MODULE_ARCH);
-                       m->bin_dir = eina_stringshare_add(buf);
-                       snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s", home, name);
-                       m->data_dir = eina_stringshare_add(buf);
-                    }
-                  else
-                    {
-                       dlclose(m->handle);
-                       free(m);
-                       return NULL;
-                    }
-               }
-          }
-        if (!m->handle)
-          {
-             snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, name, MODULE_ARCH);
-             m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
-             if (m->handle)
-               {
-                  m->init_func = dlsym(m->handle, "elm_modapi_init");
-                  if (m->init_func)
-                    {
-                       m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
-                       m->so_path = eina_stringshare_add(buf);
-                       m->name = eina_stringshare_add(name);
-                       snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, name, MODULE_ARCH);
-                       m->bin_dir = eina_stringshare_add(buf);
-                       snprintf(buf, sizeof(buf), "%s/elementary/modules/%s", _elm_lib_dir, name);
-                       m->data_dir = eina_stringshare_add(buf);
-                    }
-                  else
-                    {
-                       dlclose(m->handle);
-                       free(m);
-                       return NULL;
-                    }
-               }
-          }
-     }
-   if (!m->handle)
-     {
-        free(m);
-        return NULL;
-     }
-   if (!m->init_func(m))
-     {
-        dlclose(m->handle);
-        eina_stringshare_del(m->name);
-        eina_stringshare_del(m->so_path);
-        eina_stringshare_del(m->data_dir);
-        eina_stringshare_del(m->bin_dir);
-        free(m);
-        return NULL;
-     }
+   m->name = eina_stringshare_add(name);
    m->references = 1;
    eina_hash_direct_add(modules, m->name, m);
    m->as = eina_stringshare_add(as);
@@ -196,16 +209,11 @@ _elm_module_del(Elm_Module *m)
 {
    m->references--;
    if (m->references > 0) return;
-   if (m->shutdown_func) m->shutdown_func(m);
+   _elm_module_unload(m);
    eina_hash_del(modules, m->name, m);
    eina_hash_del(modules_as, m->as, m);
-   if (m->api) free(m->api);
    eina_stringshare_del(m->name);
    eina_stringshare_del(m->as);
-   eina_stringshare_del(m->so_path);
-   eina_stringshare_del(m->data_dir);
-   eina_stringshare_del(m->bin_dir);
-   dlclose(m->handle);
    free(m);
 }
 

@@ -146,6 +146,8 @@ void                _elm_module_parse(const char *s);
 Elm_Module         *_elm_module_find_as(const char *as);
 Elm_Module         *_elm_module_add(const char *name, const char *as);
 void                _elm_module_del(Elm_Module *m);
+Eina_Bool           _elm_module_load(Elm_Module *m);
+void                _elm_module_unload(Elm_Module *m);
 const void         *_elm_module_symbol_get(Elm_Module *m, const char *name);
 
 void                _elm_widget_type_clear(void);
