@@ -38,3 +38,7 @@
 
 	* Return Eina_Bool if the return value of a function is true or false
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Check whether dirs is NULL
+

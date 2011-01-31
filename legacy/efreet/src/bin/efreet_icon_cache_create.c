@@ -31,6 +31,8 @@ cache_directory_find(Eina_Hash *dirs, const char *dir)
     Efreet_Cache_Directory *dcache;
     struct stat st;
 
+    if (!dirs) return EINA_TRUE;
+
     if (stat(dir, &st) < 0) return EINA_FALSE;
     dcache = eina_hash_find(dirs, dir);
     if (!dcache)
