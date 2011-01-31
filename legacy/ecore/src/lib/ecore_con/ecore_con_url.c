@@ -321,7 +321,6 @@ ecore_con_url_new(const char *url)
    return url_con;
 #else
    return NULL;
-   url = NULL;
 #endif
 }
 
