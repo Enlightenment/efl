@@ -95,22 +95,6 @@ if test "x${enable_sloppy_spec}" = "xyes" ; then
    AC_DEFINE([SLOPPY_SPEC], [1], [Sloppy Spec Compliance])
 fi
 
-AC_ARG_ENABLE([icon-cache],
-   [AC_HELP_STRING([--enable-icon-cache], [Enable icon cache compliance @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_icon_cache="yes"
-    else
-       enable_icon_cache="no"
-    fi
-   ],
-   [enable_icon_cache="no"])
-
-if test "x${enable_icon_cache}" = "xyes" ; then
-   AC_DEFINE([ICON_CACHE], [1], [Icon Cache])
-fi
-AM_CONDITIONAL(ICON_CACHE, test "x$enable_icon_cache" = "xyes")
-
 
 #AC_ARG_ENABLE(hidden-visibility,
 #	[AC_HELP_STRING([--enable-hidden-visibility],[Enable hidden visibility])],
@@ -265,8 +249,6 @@ echo
 echo "  Specification compliance:"
 echo "    Strict.............: ${enable_strict_spec}"
 echo "    Sloppy.............: ${enable_sloppy_spec}"
-echo
-echo "  Icon cache...........: ${enable_icon_cache}"
 echo
 echo "  Tests................: ${enable_tests}"
 echo "  Coverage.............: ${enable_coverage}"

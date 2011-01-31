@@ -11,11 +11,11 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 @EFREET_CFLAGS@
 
-bin_PROGRAMS = efreet_test efreet_spec_test efreet_cache_test
-
-if ICON_CACHE
-bin_PROGRAMS += efreet_icon_cache_dump
-endif
+bin_PROGRAMS = \
+efreet_test \
+efreet_spec_test \
+efreet_cache_test \
+efreet_icon_cache_dump
 
 efreet_test_LDADD = $(top_builddir)/src/lib/libefreet.la \
                     $(top_builddir)/src/lib/libefreet_mime.la \
@@ -57,13 +57,9 @@ efreet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libefreet.la
 
 endif
 
-if ICON_CACHE
-
 efreet_icon_cache_dump_LDADD = \
 $(top_builddir)/src/lib/libefreet.la \
 @EFREET_LIBS@
 
 efreet_icon_cache_dump_SOURCES = \
 efreet_icon_cache_dump.c
-
-endif

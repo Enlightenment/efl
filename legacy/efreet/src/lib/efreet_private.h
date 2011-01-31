@@ -114,16 +114,13 @@ extern int _efreet_log_dom_global;
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 
 extern Eina_Hash *efreet_desktop_cache;
-#ifdef ICON_CACHE
 extern Eina_Hash *efreet_icon_themes;
-#endif
 
 #define EFREET_DESKTOP_CACHE_MAJOR 1
 #define EFREET_DESKTOP_CACHE_MINOR 0
 #define EFREET_DESKTOP_UTILS_CACHE_MAJOR 1
 #define EFREET_DESKTOP_UTILS_CACHE_MINOR 0
 
-#ifdef ICON_CACHE
 #define EFREET_ICON_CACHE_MAJOR 0
 #define EFREET_ICON_CACHE_MINOR 4
 
@@ -177,7 +174,6 @@ struct _Efreet_Cache_Fallback_Icon
     const char **icons;
     unsigned int icons_count;
 };
-#endif
 
 typedef struct _Efreet_Cache_Version Efreet_Cache_Version;
 struct _Efreet_Cache_Version
@@ -240,13 +236,10 @@ EAPI const char *efreet_desktop_cache_dirs(void);
 int efreet_desktop_write_cache_dirs_file(void);
 
 void efreet_cache_desktop_update(void);
-#ifdef ICON_CACHE
 void efreet_cache_icon_update(void);
-#endif
 void efreet_cache_desktop_free(Efreet_Desktop *desktop);
 Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 
-#ifdef ICON_CACHE
 EAPI const char *efreet_icon_cache_file(void);
 EAPI const char *efreet_icon_theme_cache_file(void);
 
@@ -257,7 +250,6 @@ Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
 void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 char **efreet_cache_icon_theme_name_list(int *num);
-#endif
 EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
