@@ -111,6 +111,7 @@ struct _Elm_Config
    Eina_Bool    inwin_dialogs_enable;
    int          icon_size;
    double       longpress_timeout;
+   Eina_Bool    effect_enable;
 };
 
 struct _Elm_Module

@@ -597,6 +597,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, inwin_dialogs_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, icon_size, T_INT);
    ELM_CONFIG_VAL(D, T, longpress_timeout, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, effect_enable, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1139,6 +1140,7 @@ _config_load(void)
    _elm_config->inwin_dialogs_enable = EINA_FALSE;
    _elm_config->icon_size = 32;
    _elm_config->longpress_timeout = 1.0;
+   _elm_config->effect_enable = EINA_TRUE;
 }
 
 static const char *
@@ -1560,6 +1562,9 @@ _env_get(void)
    if (s) _elm_config->longpress_timeout = atof(s);
    if (_elm_config->longpress_timeout < 0.0)
      _elm_config->longpress_timeout = 0.0;
+   
+   s = getenv("ELM_EFFECT_ENABLE");
+   if (s) _elm_config->effect_enable = !!atoi(s);
 }
 
 void
