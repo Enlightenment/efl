@@ -36,7 +36,7 @@ cache_directory_find(Eina_Hash *dirs, const char *dir)
     if (!dcache)
     {
         dcache = malloc(sizeof (Efreet_Cache_Directory));
-        if (!dcache) return 1;
+        if (!dcache) return EINA_TRUE;
 
         dcache->modified_time = (long long) st.st_mtime;
         eina_hash_add(dirs, dir, dcache);
@@ -64,10 +64,10 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
     Eina_Iterator *it;
     Eina_File_Direct_Info *entry;
 
-    if (!cache_directory_find(dirs, dir)) return 1;
+    if (!cache_directory_find(dirs, dir)) return EINA_TRUE;
 
     it = eina_file_stat_ls(dir);
-    if (!it) return 1;
+    if (!it) return EINA_TRUE;
 
     EINA_ITERATOR_FOREACH(it, entry)
     {
@@ -114,7 +114,7 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
 
     eina_iterator_free(it);
 
-    return 1;
+    return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -144,7 +144,7 @@ cache_fallback_scan(Eina_Hash *icons, Eina_Hash *dirs, Eina_Bool *changed)
 
     cache_fallback_scan_dir(icons, dirs, "/usr/share/pixmaps", changed);
 
-    return 1;
+    return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -162,10 +162,10 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
     snprintf(buf, sizeof(buf), "%s/%s", path, dir->name);
 
     if (!cache_directory_find(dirs, buf))
-        return 1;
+        return EINA_TRUE;
 
     it = eina_file_stat_ls(buf);
-    if (!it) return 1;
+    if (!it) return EINA_TRUE;
 
     EINA_ITERATOR_FOREACH(it, entry)
     {
@@ -248,7 +248,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
 
     eina_iterator_free(it);
 
-    return 1;
+    return EINA_TRUE;
 }
 
 static int
@@ -270,13 +270,13 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
     const char *path;
     const char *name;
 
-    if (!theme) return 1;
-    if (eina_hash_find(themes, theme->name.internal)) return 1;
+    if (!theme) return EINA_TRUE;
+    if (eina_hash_find(themes, theme->name.internal)) return EINA_TRUE;
     eina_hash_direct_add(themes, theme->name.internal, theme);
 
     /* scan theme */
     EINA_LIST_FOREACH(theme->paths, l, path)
-        if (!cache_scan_path(theme, icons, dirs, path, changed)) return 0;
+        if (!cache_scan_path(theme, icons, dirs, path, changed)) return EINA_FALSE;
 
     /* scan inherits */
     if (theme->inherits)
@@ -288,16 +288,16 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
             inherit = eina_hash_find(icon_themes, name);
             if (!inherit) fprintf(stderr, "Theme `%s` not found for `%s`.\n",
                                   name, theme->name.internal);
-            if (!cache_scan(inherit, themes, icons, dirs, changed)) return 0;
+            if (!cache_scan(inherit, themes, icons, dirs, changed)) return EINA_FALSE;
         }
     }
     else if (strcmp(theme->name.internal, "hicolor"))
     {
         theme = eina_hash_find(icon_themes, "hicolor");
-        if (!cache_scan(theme, themes, icons, dirs, changed)) return 0;
+        if (!cache_scan(theme, themes, icons, dirs, changed)) return EINA_FALSE;
     }
 
-    return 1;
+    return EINA_TRUE;
 }
 
 static Efreet_Icon_Theme_Directory *
@@ -462,7 +462,7 @@ cache_theme_scan(const char *dir)
     Eina_File_Direct_Info *entry;
 
     it = eina_file_stat_ls(dir);
-    if (!it) return 1;
+    if (!it) return EINA_TRUE;
 
     EINA_ITERATOR_FOREACH(it, entry)
     {
@@ -503,7 +503,7 @@ cache_theme_scan(const char *dir)
             icon_theme_index_read(theme, buf);
     }
     eina_iterator_free(it);
-    return 1;
+    return EINA_TRUE;
 }
 
 static int

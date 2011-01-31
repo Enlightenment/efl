@@ -30,3 +30,7 @@
 
 	* Make check for stat return more explicit
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Return EINA_{TRUE,FALSE} if return type is Eina_Bool
+
