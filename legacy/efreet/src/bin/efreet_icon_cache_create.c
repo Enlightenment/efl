@@ -50,7 +50,7 @@ cache_directory_find(Eina_Hash *dirs, const char *dir)
 }
 
 static Eina_Bool
-_cache_extention_lookup(const char *ext)
+_cache_extension_lookup(const char *ext)
 {
     unsigned int i;
 
@@ -82,7 +82,7 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
             continue;
 
         ext = strrchr(entry->path + entry->name_start, '.');
-        if (!ext || !_cache_extention_lookup(ext))
+        if (!ext || !_cache_extension_lookup(ext))
             continue;
 
         /* icon with known extension */
@@ -180,7 +180,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
             continue;
 
         ext = strrchr(entry->path + entry->name_start, '.');
-        if (!ext || !_cache_extention_lookup(ext))
+        if (!ext || !_cache_extension_lookup(ext))
             continue;
 
         /* icon with known extension */
