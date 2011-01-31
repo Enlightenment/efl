@@ -118,7 +118,7 @@ static void
 _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
-   
+
    evas_object_pass_events_set(obj, obj_data->state);
    free(obj_data);
    transit->objs = eina_list_remove(transit->objs, obj);
@@ -167,10 +167,10 @@ _elm_transit_del(Elm_Transit *transit)
 
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
       _elm_transit_effect_del(transit, effect, elist);
-   
+
    while (transit->objs)
       _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
-   
+
    EINA_MAGIC_SET(transit, EINA_MAGIC_NONE);
    free(transit);
 }
@@ -189,9 +189,9 @@ _transit_animate_op(Elm_Transit *transit, double progress)
            effect->animation_op(effect->user_data, transit, progress);
      }
    transit->walking--;
-   
+
    if (transit->walking) return;
-   
+
    if (transit->deleted) _elm_transit_del(transit);
    else if (transit->effects_pending_del) _remove_dead_effects(transit);
 }
@@ -224,12 +224,12 @@ _animator_animate_cb(void *data)
       default:
         break;
      }
-   
+
    /* Reverse? */
    if (transit->repeat.reverse) transit->progress = 1 - transit->progress;
-   
+
    if (transit->time.duration > 0) _transit_animate_op(transit, transit->progress);
-   
+
    /* Not end. Keep going. */
    if (elapsed_time < duration) return ECORE_CALLBACK_RENEW;
 
@@ -238,9 +238,9 @@ _animator_animate_cb(void *data)
        && (!transit->auto_reverse || transit->repeat.reverse))
      {
         elm_transit_del(transit);
-	return ECORE_CALLBACK_CANCEL;
+        return ECORE_CALLBACK_CANCEL;
      }
-   
+
    /* Repeat Case */
    if (!transit->auto_reverse || transit->repeat.reverse)
      {
@@ -248,9 +248,9 @@ _animator_animate_cb(void *data)
         transit->repeat.reverse = EINA_FALSE;
      }
    else transit->repeat.reverse = EINA_TRUE;
-   
+
    transit->time.begin = ecore_loop_time_get();
-   
+
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -273,11 +273,11 @@ elm_transit_add(void)
 {
    Elm_Transit *transit = ELM_NEW(Elm_Transit);
    if (!transit) return NULL;
-   
+
    EINA_MAGIC_SET(transit, ELM_TRANSIT_MAGIC);
 
    elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_LINEAR);
- 	
+
    return transit;
 }
 /**
@@ -352,7 +352,7 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
 
    effect = ELM_NEW(Elm_Transit_Effect);
    if (!effect) return;
-   
+
    effect->user_data_free = data_free_cb;
    effect->animation_op = cb;
    effect->user_data = data;
@@ -439,17 +439,17 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
         if (obj_data->transit == transit) return;
         elm_transit_object_remove(obj_data->transit, obj);
      }
-   
+
    obj_data = ELM_NEW(Elm_Obj_Data);
    obj_data->state = evas_object_pass_events_get(obj);
    obj_data->transit = transit;
    evas_object_data_set(obj, _transit_key, obj_data);
-   
+
    transit->objs = eina_list_append(transit->objs, obj);
-   
+
    if (!transit->event_enabled) 
       evas_object_pass_events_set(obj, EINA_TRUE);
-   
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _elm_transit_object_remove_cb, transit);
 }
@@ -909,7 +909,7 @@ _transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress)
 
    w = resizing->from.w + (resizing->to.w * progress);
    h = resizing->from.h + (resizing->to.h * progress);
-   
+
    EINA_LIST_FOREACH(transit->objs, elist, obj)
       evas_object_resize(obj, w, h);
 }
@@ -950,13 +950,13 @@ _transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_
  * @return Resizing effect context data.
  *
  * @ingroup Transit
-*/
+ */
 EAPI void *
 elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_resizing_context_new(from_w, from_h, to_w, to_h);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_resizing_op, effect_context,
@@ -990,7 +990,7 @@ _translation_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
    Elm_Transit_Effect_Translation *translation = data;
    Eina_List *elist;
    Elm_Transit_Effect_Translation_Node *translation_node;
-   
+
    EINA_LIST_FOREACH(translation->nodes, elist, translation_node)
      {
         if (translation_node->obj != obj) continue;
@@ -1008,7 +1008,7 @@ _translation_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Translation *t
    Evas_Object *obj;
    Eina_List *data_list = NULL;
    const Eina_List *objs = elm_transit_objects_get(transit);
-   
+
    EINA_LIST_FOREACH(objs, elist, obj)
      {
         translation_node = ELM_NEW(Elm_Transit_Effect_Translation_Node);
@@ -1055,10 +1055,10 @@ _transit_effect_translation_op(void *data, Elm_Transit *transit, double progress
    Elm_Transit_Effect_Translation *translation = data;
    Elm_Transit_Effect_Translation_Node *translation_node;
    Eina_List *elist;
-   
+
    if (!translation->nodes)
       translation->nodes = _translation_nodes_build(transit, translation);
-   
+
    EINA_LIST_FOREACH(translation->nodes, elist, translation_node)
      {
         x = translation_node->x + translation->from.dx
@@ -1117,7 +1117,7 @@ elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Eva
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_translation_op, effect_context,
@@ -1159,7 +1159,6 @@ _transit_effect_zoom_op(void *data, Elm_Transit *transit , double progress)
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         evas_object_geometry_get(obj, &x, &y, &w, &h);
-        evas_map_smooth_set(map, EINA_TRUE);
         evas_map_util_points_populate_from_object_full(map, obj, zoom->from +
                                                        (progress * zoom->to));
         evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, FOCAL);
@@ -1212,7 +1211,7 @@ elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_zoom_context_new(from_rate, to_rate);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_zoom_op, effect_context,
@@ -1240,7 +1239,7 @@ _transit_effect_flip_context_free(void *data, Elm_Transit *transit)
    Evas_Object *front, *back;
    int i;
    int count = eina_list_count(transit->objs);
-   
+
    for (i = 0; i < (count - 1); i += 2)
      {
         front = eina_list_nth(transit->objs, i);
@@ -1268,15 +1267,15 @@ _transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
 
    if (flip->cw) degree = (float)(progress * 180);
    else degree = (float)(progress * -180);
-   
+
    count = eina_list_count(transit->objs);
    for (i = 0; i < (count - 1); i += 2)
      {
         Evas_Coord half_w, half_h;
-        
+
         front = eina_list_nth(transit->objs, i);
         back = eina_list_nth(transit->objs, i+1);
-        
+
         if ((degree < 90) && (degree > -90))
           {
              obj = front;
@@ -1295,13 +1294,12 @@ _transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
                   evas_object_show(back);
                }
           }
-        
-        evas_map_smooth_set(map, EINA_TRUE);
+
         evas_map_util_points_populate_from_object_full(map, obj, 0);
         evas_object_geometry_get(obj, &x, &y, &w, &h);
         half_w = (w / 2);
         half_h = (h / 2);
-        
+
         if (flip->axis == ELM_TRANSIT_EFFECT_FLIP_AXIS_Y)
           {
              if ((degree >= 90) || (degree <= -90))
@@ -1380,7 +1378,7 @@ elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis a
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_flip_context_new(axis, cw);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_flip_op, effect_context,
@@ -1420,11 +1418,11 @@ _resizable_flip_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
    EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
      {
         if (resizable_flip_node->front == obj)
-          evas_object_event_callback_del(resizable_flip_node->back,
-                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+           evas_object_event_callback_del(resizable_flip_node->back,
+                                          EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
         else if (resizable_flip_node->back == obj)
-          evas_object_event_callback_del(resizable_flip_node->front,
-                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+           evas_object_event_callback_del(resizable_flip_node->front,
+                                          EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
         else continue;
 
         resizable_flip->nodes = eina_list_remove_list(resizable_flip->nodes,
@@ -1452,33 +1450,33 @@ _resizable_flip_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_ResizableFl
              eina_list_free(data_list);
              return NULL;
           }
-        
+
         resizable_flip_node->front = eina_list_nth(transit->objs, i);
         resizable_flip_node->back = eina_list_nth(transit->objs, i+1);
-        
+
         evas_object_geometry_get(resizable_flip_node->front,
                                  &front_x, &front_y, &front_w, &front_h);
         evas_object_geometry_get(resizable_flip_node->back,
                                  &back_x, &back_y, &back_w, &back_h);
-        
+
         resizable_flip_node->from_pos.x = front_x;
         resizable_flip_node->from_pos.y = front_y;
         resizable_flip_node->to_pos.x = back_x - front_x;
         resizable_flip_node->to_pos.y = back_y - front_y;
-        
+
         resizable_flip_node->from_size.x = front_w;
         resizable_flip_node->from_size.y = front_h;
         resizable_flip_node->to_size.x = back_w - front_w;
         resizable_flip_node->to_size.y = back_h - front_h;
-        
+
         data_list = eina_list_append(data_list, resizable_flip_node);
-        
+
         evas_object_event_callback_add(resizable_flip_node->back,
                                        EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb, resizable_flip);
         evas_object_event_callback_add(resizable_flip_node->front,
                                        EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb, resizable_flip);
      }
-   
+
    return data_list;
 }
 
@@ -1551,9 +1549,9 @@ _transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __U
                                                       elist);
 
         evas_object_event_callback_del(resizable_flip_node->back,
-                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+                                       EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
         evas_object_event_callback_del(resizable_flip_node->front,
-                             EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
+                                       EVAS_CALLBACK_DEL, _resizable_flip_object_del_cb);
         free(resizable_flip_node);
      }
    free(resizable_flip);
@@ -1577,11 +1575,11 @@ _transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, d
 
    if (resizable_flip->cw) degree = (float)(progress * 180);
    else degree = (float)(progress * -180);
-   
+
    if (!resizable_flip->nodes)
       resizable_flip->nodes = _resizable_flip_nodes_build(transit,
                                                           resizable_flip);
-   
+
    EINA_LIST_FOREACH(resizable_flip->nodes, elist, resizable_flip_node)
      {
         if ((degree < 90) && (degree > -90))
@@ -1602,9 +1600,7 @@ _transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, d
                   evas_object_show(resizable_flip_node->back);
                }
           }
-        
-        evas_map_smooth_set(map, EINA_TRUE);
-        
+
         x = resizable_flip_node->from_pos.x +
            (resizable_flip_node->to_pos.x * progress);
         y = resizable_flip_node->from_pos.y +
@@ -1617,10 +1613,10 @@ _transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, d
         evas_map_point_coord_set(map, 1, x + w, y, 0);
         evas_map_point_coord_set(map, 2, x + w, y + h, 0);
         evas_map_point_coord_set(map, 3, x, y + h, 0);
-        
+
         half_w = (Evas_Coord)(w / 2);
         half_h = (Evas_Coord)(h / 2);
-        
+
         if (resizable_flip->axis == ELM_TRANSIT_EFFECT_FLIP_AXIS_Y)
           {
              _set_image_uv_by_axis_y(map, resizable_flip_node, degree);
@@ -1633,7 +1629,7 @@ _transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, d
              evas_map_util_3d_rotate(map, degree, 0,
                                      0, x + half_w, y + half_h, 0);
           }
-        
+
         evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, FOCAL);
         evas_object_map_enable_set(resizable_flip_node->front, EINA_TRUE);
         evas_object_map_enable_set(resizable_flip_node->back, EINA_TRUE);
@@ -1646,7 +1642,7 @@ static void *
 _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    Elm_Transit_Effect_ResizableFlip *resizable_flip;
-   
+
    resizable_flip = ELM_NEW(Elm_Transit_Effect_ResizableFlip);
    if (!resizable_flip) return NULL;
 
@@ -1689,7 +1685,7 @@ elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_F
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_resizable_flip_context_new(axis, cw);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_resizable_flip_op, effect_context,
@@ -1866,18 +1862,16 @@ _transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress)
 
    map = evas_map_new(4);
    if (!map) return;
-   
-   evas_map_smooth_set(map, EINA_TRUE);
-   
+
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         evas_object_geometry_get(obj, &_x, &_y, &_w, &_h);
-        
+
         if (wipe->type == ELM_TRANSIT_EFFECT_WIPE_TYPE_SHOW)
            _elm_fx_wipe_show(map, wipe->dir, _x, _y, _w, _h, (float)progress);
         else
            _elm_fx_wipe_hide(map, wipe->dir, _x, _y, _w, _h, (float)progress);
-        
+
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
      }
@@ -1888,7 +1882,7 @@ static void *
 _transit_effect_wipe_context_new(Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir)
 {
    Elm_Transit_Effect_Wipe *wipe;
-   
+
    wipe = ELM_NEW(Elm_Transit_Effect_Wipe);
    if (!wipe) return NULL;
 
@@ -1928,7 +1922,7 @@ elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type t
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_wipe_context_new(type, dir);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_wipe_op, effect_context,
@@ -1967,12 +1961,12 @@ _transit_effect_color_op(void *data, Elm_Transit *transit, double progress)
    Evas_Object *obj;
    Eina_List *elist;
    unsigned int r, g, b, a;
-   
+
    r = (color->from.r + (int)((float)color->to.r * progress));
    g = (color->from.g + (int)((float)color->to.g * progress));
    b = (color->from.b + (int)((float)color->to.b * progress));
    a = (color->from.a + (int)((float)color->to.a * progress));
-   
+
    EINA_LIST_FOREACH(transit->objs, elist, obj)
       evas_object_color_set(obj, r, g, b, a);
 }
@@ -1981,10 +1975,10 @@ static void *
 _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a)
 {
    Elm_Transit_Effect_Color *color;
-   
+
    color = ELM_NEW(Elm_Transit_Effect_Color);
    if (!color) return NULL;
-   
+
    color->from.r = from_r;
    color->from.g = from_g;
    color->from.b = from_b;
@@ -1993,7 +1987,7 @@ _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsi
    color->to.g = to_g - from_g;
    color->to.b = to_b - from_b;
    color->to.a = to_a - from_a;
-   
+
    return color;
 }
 
@@ -2027,7 +2021,7 @@ elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_color_op, effect_context,
@@ -2072,7 +2066,7 @@ _fade_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *even
            evas_object_event_callback_del(fade_node->before,
                                           EVAS_CALLBACK_DEL, _fade_object_del_cb);
         else continue;
-        
+
         fade->nodes = eina_list_remove_list(fade->nodes, elist);
         free(fade_node);
         break;
@@ -2095,22 +2089,22 @@ _fade_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Fade *fade_data)
              eina_list_free(data_list);
              return NULL;
           }
-        
+
         fade->before = eina_list_nth(transit->objs, i);
         fade->after = eina_list_nth(transit->objs, i+1);
-        
+
         evas_object_color_get(fade->before,
                               &fade->before_color.r, &fade->before_color.g,
                               &fade->before_color.b, &fade->before_color.a);
         evas_object_color_get(fade->after,
                               &fade->after_color.r, &fade->after_color.g,
                               &fade->after_color.b, &fade->after_color.a);
-        
+
         fade->before_alpha = (255 - fade->before_color.a);
         fade->after_alpha = (255 - fade->after_color.a);
-        
+
         data_list = eina_list_append(data_list, fade);
-        
+
         evas_object_event_callback_add(fade->before,
                                        EVAS_CALLBACK_DEL, _fade_object_del_cb, fade_data);
         evas_object_event_callback_add(fade->after,
@@ -2126,7 +2120,7 @@ _transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__)
    Elm_Transit_Effect_Fade *fade = data;
    Elm_Transit_Effect_Fade_Node *fade_node;
    Eina_List *elist, *elist_next;
-   
+
    EINA_LIST_FOREACH_SAFE(fade->nodes, elist, elist_next, fade_node)
      {
         evas_object_color_set(fade_node->before, fade_node->before_color.r,
@@ -2140,9 +2134,9 @@ _transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__)
 
         fade->nodes = eina_list_remove_list(fade->nodes, elist);
         evas_object_event_callback_del(fade_node->before,
-                             EVAS_CALLBACK_DEL, _fade_object_del_cb);
+                                       EVAS_CALLBACK_DEL, _fade_object_del_cb);
         evas_object_event_callback_del(fade_node->after,
-                             EVAS_CALLBACK_DEL, _fade_object_del_cb);
+                                       EVAS_CALLBACK_DEL, _fade_object_del_cb);
         free(fade_node);
      }
 
@@ -2157,10 +2151,10 @@ _transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double prog
    Eina_List *elist;
    Elm_Transit_Effect_Fade_Node *fade_node;
    float _progress;
-   
+
    if (!fade->nodes)
       fade->nodes = _fade_nodes_build(transit, fade);
-   
+
    EINA_LIST_FOREACH(fade->nodes, elist, fade_node)
      {
         if (progress < 0.5)
@@ -2171,9 +2165,9 @@ _transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double prog
                   evas_object_show(fade_node->before);
                   fade_node->inversed = EINA_TRUE;
                }
-             
+
              _progress = (1 - (progress * 2));
-             
+
              evas_object_color_set(fade_node->before,
                                    fade_node->before_color.r * _progress,
                                    fade_node->before_color.g * _progress,
@@ -2189,9 +2183,9 @@ _transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double prog
                   evas_object_show(fade_node->after);
                   fade_node->inversed = EINA_FALSE;
                }
-             
+
              _progress = ((progress - 0.5) * 2);
-             
+
              evas_object_color_set(fade_node->after,
                                    fade_node->after_color.r * _progress,
                                    fade_node->after_color.g * _progress,
@@ -2241,7 +2235,7 @@ EAPI void *
 elm_transit_effect_fade_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   
+
    void *effect_context = _transit_effect_fade_context_new();
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
@@ -2275,7 +2269,7 @@ _blend_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *eve
    Elm_Transit_Effect_Blend *blend = data;
    Eina_List *elist;
    Elm_Transit_Effect_Blend_Node *blend_node;
-   
+
    EINA_LIST_FOREACH(blend->nodes, elist, blend_node)
      {
         if (blend_node->after == obj)
@@ -2285,7 +2279,7 @@ _blend_object_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *eve
            evas_object_event_callback_del(blend_node->after,
                                           EVAS_CALLBACK_DEL, _blend_object_del_cb);
         else continue;
-        
+
         blend->nodes = eina_list_remove_list(blend->nodes, elist);
         free(blend_node);
         break;
@@ -2308,21 +2302,21 @@ _blend_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Blend *blend)
              eina_list_free(data_list);
              return NULL;
           }
-        
+
         blend_node->before = eina_list_nth(transit->objs, i);
         blend_node->after = eina_list_nth(transit->objs, i + 1);
         evas_object_show(blend_node->before);
         evas_object_show(blend_node->after);
-        
+
         evas_object_color_get(blend_node->before, &blend_node->from.r,
                               &blend_node->from.g, &blend_node->from.b,
                               &blend_node->from.a);
         evas_object_color_get(blend_node->after, &blend_node->to.r,
                               &blend_node->to.g, &blend_node->to.b,
                               &blend_node->to.a);
-        
+
         data_list = eina_list_append(data_list, blend_node);
-        
+
         evas_object_event_callback_add(blend_node->before,
                                        EVAS_CALLBACK_DEL, _blend_object_del_cb, blend);
         evas_object_event_callback_add(blend_node->after,
@@ -2347,14 +2341,14 @@ _transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED__)
         evas_object_color_set(blend_node->after, blend_node->to.r,
                               blend_node->to.g, blend_node->to.b,
                               blend_node->to.a);
-        
+
         if (elm_transit_auto_reverse_get(transit))
            evas_object_hide(blend_node->after);
         else
            evas_object_hide(blend_node->before);
-        
+
         blend->nodes = eina_list_remove_list(blend->nodes, elist);
-        
+
         evas_object_event_callback_del(blend_node->before,
                                        EVAS_CALLBACK_DEL, _blend_object_del_cb);
         evas_object_event_callback_del(blend_node->after,
@@ -2374,7 +2368,7 @@ _transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
    Eina_List *elist;
 
    if (!blend->nodes) blend->nodes = _blend_nodes_build(transit, blend);
-   
+
    EINA_LIST_FOREACH(blend->nodes, elist, blend_node)
      {
         evas_object_color_set(blend_node->before,
@@ -2394,7 +2388,7 @@ static void *
 _transit_effect_blend_context_new(void)
 {
    Elm_Transit_Effect_Blend *blend;
-   
+
    blend = ELM_NEW(Elm_Transit_Effect_Blend);
    if (!blend) return NULL;
    return blend;
@@ -2431,7 +2425,7 @@ elm_transit_effect_blend_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_blend_context_new();
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_blend_op, effect_context,
@@ -2471,8 +2465,6 @@ _transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress)
 
    map = evas_map_new(4);
    if (!map) return;
-
-   evas_map_smooth_set(map, EINA_TRUE);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
@@ -2536,7 +2528,7 @@ elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float t
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_rotation_op, effect_context,
@@ -2587,10 +2579,10 @@ _transit_effect_image_animation_op(void *data, Elm_Transit *transit, double prog
 
    type = eina_stringshare_add("icon");
    len = eina_list_count(image_animation->images);
-   
+
    if (!len) count = floor(progress * len);
    else count = floor(progress * (len - 1));
-   
+
    EINA_LIST_FOREACH(transit->objs, elist, obj)
      {
         if (elm_widget_type_check(obj, type))
@@ -2655,7 +2647,7 @@ elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    void *effect_context = _transit_effect_image_animation_context_new(images);
-   
+
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit, 
                           _transit_effect_image_animation_op, effect_context,
