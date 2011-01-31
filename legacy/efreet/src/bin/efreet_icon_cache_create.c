@@ -251,16 +251,16 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
     return EINA_TRUE;
 }
 
-static int
+static Eina_Bool
 cache_scan_path(Efreet_Icon_Theme *theme, Eina_Hash *icons, Eina_Hash *dirs, const char *path, Eina_Bool *changed)
 {
     Eina_List *l;
     Efreet_Icon_Theme_Directory *dir;
 
     EINA_LIST_FOREACH(theme->directories, l, dir)
-        if (!cache_scan_path_dir(theme, path, dir, icons, dirs, changed)) return 0;
+        if (!cache_scan_path_dir(theme, path, dir, icons, dirs, changed)) return EINA_FALSE;
 
-    return 1;
+    return EINA_TRUE;
 }
 
 static Eina_Bool

@@ -34,3 +34,7 @@
 
 	* Return EINA_{TRUE,FALSE} if return type is Eina_Bool
 
+2011-01-XX  Sebastian Dransfeld
+
+	* Return Eina_Bool if the return value of a function is true or false
+
