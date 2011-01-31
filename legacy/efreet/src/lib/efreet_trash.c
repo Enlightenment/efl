@@ -244,7 +244,7 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
 
     if ((f = fopen(dest, "w")))
     {
-        fputs("[Trash Info]\n", f); //TODO is '\n' right?? (or \r\c??)
+        fputs("[Trash Info]\n", f);
 
         fputs("Path=", f);
         escaped = efreet_uri_encode(uri);
