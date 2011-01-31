@@ -1887,6 +1887,7 @@ _paragraph_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
         par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(par->lines), EINA_INLIST_GET(par->lines));
         _line_free(obj, ln);
      }
+   par->line_no = -1;
 }
 
 /**
