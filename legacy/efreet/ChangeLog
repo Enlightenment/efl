@@ -49,3 +49,8 @@
 2011-01-XX  Sebastian Dransfeld
 
 	* Check if theme has changed when building cache
+
+2011-01-XX  Sebastian Dransfeld
+
+	* Prefix internal efreet cache keys with __
+

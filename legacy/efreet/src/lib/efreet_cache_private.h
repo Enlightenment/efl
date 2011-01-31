@@ -1,8 +1,8 @@
 #ifndef EFREET_CACHE_PRIVATE_H
 #define EFREET_CACHE_PRIVATE_H
 
-#define EFREET_CACHE_VERSION "efreet//version"
-#define EFREET_CACHE_ICON_FALLBACK "efreet//fallback"
+#define EFREET_CACHE_VERSION "__efreet//version"
+#define EFREET_CACHE_ICON_FALLBACK "__efreet_fallback"
 
 Eina_Bool efreet_cache_check(Eet_File **ef, const char *path, int major);
 void *efreet_cache_close(Eet_File *ef);

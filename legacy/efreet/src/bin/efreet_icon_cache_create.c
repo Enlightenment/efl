@@ -752,7 +752,7 @@ main(int argc, char **argv)
     {
         for (i = 0; i < num; i++)
         {
-            if (!strncmp(keys[i], "efreet", 6)) continue;
+            if (!strncmp(keys[i], "__efreet", 8)) continue;
             theme = eet_data_read(theme_ef, theme_edd, keys[i]);
             if (theme) eina_hash_direct_add(icon_themes, theme->theme.name.internal, theme);
         }
