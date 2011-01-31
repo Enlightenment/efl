@@ -48,8 +48,8 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
 	if (eina_error_get())
 	  {
 	     MERR_FATAL();
-	     free(g);
 	     free(g->keyname);
+	     free(g);
 	     return NULL;
 	  }
      }
@@ -63,8 +63,8 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
 	  {
 	     MERR_FATAL();
 	     g->object->grabs = eina_list_remove(g->object->grabs, g);
-	     free(g);
 	     free(g->keyname);
+	     free(g);
 	     return NULL;
 	  }
      }

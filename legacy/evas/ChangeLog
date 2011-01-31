@@ -1,10 +1,3 @@
-2011-01-31  Carsten Haitzler,,,  <Please set CHANGE_LOG_EMAIL_ADDRESS or EMAIL_ADDRESS environment variable>
-
-	reviewed by: <delete if not using a buddy>
-	patch by: <delete if not someone else's patch>
-
-	* src/lib/canvas/evas_key_grab.c:
-
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
@@ -34,3 +27,8 @@
         * More code cleanups will be coming in the future. This shipment is
           mostly to get code review started (and also make sure I don't have a
           merging hell later on).
+
+2011-01-31  ChunEon Park
+
+	* Fix lurking free bug in key grabs.
+
