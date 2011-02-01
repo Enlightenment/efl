@@ -1116,8 +1116,6 @@ struct _Edje_Real_Part
    Eina_List                *items; // 4 //FIXME: only if table/box
    Edje_Part_Box_Animation  *anim; // 4 //FIXME: Used only if box
    void                     *entry_data; // 4 // FIXME: move to entry section
-   Evas_Object              *cursorbg_object; // 4 // FIXME: move to entry section
-   Evas_Object              *cursorfg_object; // 4 // FIXME: move to entry section
 
    Evas_Object              *swallowed_object; // 4 // FIXME: move with swallow_params data
    struct {
