@@ -259,7 +259,7 @@ efreet_util_desktop_file_id_find(const char *file_id)
 EAPI Efreet_Desktop *
 efreet_util_desktop_exec_find(const char *exec)
 {
-    Efreet_Cache_Hash *hash;
+    Efreet_Cache_Hash *hash = NULL;
     Efreet_Desktop *ret = NULL;
     Efreet_Cache_Array_String *names = NULL;
     unsigned int i;
