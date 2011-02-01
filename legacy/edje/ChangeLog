@@ -1,3 +1,7 @@
+2011-01-29  Carsten Haitzler (The Rasterman)
+
+        1.0.0 release
+        
 2011-01-30  Tom Hacohen (TAsn)
 
         * Added "UNDER" cursor mode.
@@ -5,7 +9,6 @@
           activate it. It's only relevant to TEXT parts, textblock objects
           already have that by default.
 
-2011-01-29  Carsten Haitzler (The Rasterman)
+2011-02-01  Tom Hacohen (TAsn)
 
-        1.0.0 release
-        
+        * Added Mirroring support to edje objects.
