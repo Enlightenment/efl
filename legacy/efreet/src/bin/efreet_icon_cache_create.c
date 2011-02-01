@@ -104,7 +104,7 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
                 break;
 
         if (i != icon->icons_count)
-            continue ;
+            continue;
 
         /* we don't really track path deat here, so we will leak... */
         icon->icons = realloc(icon->icons, sizeof (char *) * (icon->icons_count + 1));
@@ -220,10 +220,10 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
             /* check if the path already exist */
             for (j = 0; j < icon->icons[i]->paths_count; ++j)
                 if (!strcmp(icon->icons[i]->paths[j], entry->path))
-                    break ;
+                    break;
 
             if (j != icon->icons[i]->paths_count)
-                continue ;
+                continue;
         }
         /* no icon match so add a new one */
         else
