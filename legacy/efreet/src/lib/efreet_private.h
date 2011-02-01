@@ -121,8 +121,8 @@ extern Eina_Hash *efreet_icon_themes;
 #define EFREET_DESKTOP_UTILS_CACHE_MAJOR 1
 #define EFREET_DESKTOP_UTILS_CACHE_MINOR 0
 
-#define EFREET_ICON_CACHE_MAJOR 0
-#define EFREET_ICON_CACHE_MINOR 4
+#define EFREET_ICON_CACHE_MAJOR 1
+#define EFREET_ICON_CACHE_MINOR 0
 
 typedef struct _Efreet_Cache_Directory Efreet_Cache_Directory;
 typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
