@@ -97,6 +97,14 @@ efreet_util_shutdown(void)
     IF_FREE_HASH(file_id_by_desktop_path);
     cache = efreet_cache_close(cache);
     IF_RELEASE(cache_file);
+
+    IF_RELEASE(cache_names_key);
+    efreet_cache_array_string_free(cache_names);
+
+    IF_RELEASE(cache_hash_key);
+    eina_hash_free(cache_hash->hash);
+    free(cache_hash);
+
     return init;
 }
 
