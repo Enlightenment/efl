@@ -102,6 +102,7 @@ static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
 static void st_collections_group_data_item(void);
+static void st_collections_group_orientation(void);
 
 static void ob_collections_group_script(void);
 static void ob_collections_group_lua_script(void);
@@ -290,6 +291,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
+     {"collections.group.orientation", st_collections_group_orientation},
      {"collections.group.data.item", st_collections_group_data_item},
      {"collections.group.externals.external", st_externals_external}, /* dup */
      {"collections.group.image", st_images_image}, /* dup */
@@ -1996,6 +1998,35 @@ st_collections_group_data_item(void)
    es->str = parse_str(1);
 
    eina_hash_direct_add(pc->data, key, es);
+}
+
+/**
+    @page edcref
+    @property
+        orientation
+    @parameters
+    enum AUTO, LTR, RTL
+    @effect
+        This defines GROUP orientation.
+        This is useful if you want match interface orientation with language.
+        AUTO  - Follow system defs.
+        LTR  - suitable for Left To Right Languages (latin)
+        RTL - suitable for Right To Left Languages (Hebrew, Arabic interface)
+    @endproperty
+*/
+static void
+st_collections_group_orientation(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->prop.orientation = parse_enum(0,
+         "AUTO", EDJE_ORIENTATION_AUTO,
+         "LTR", EDJE_ORIENTATION_LTR,
+         "RTL", EDJE_ORIENTATION_RTL,
+         NULL);
 }
 
 /**

@@ -25,12 +25,15 @@ static Eina_List *_edje_swallows_collect(Edje *ed);
 EAPI Eina_Bool
 edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
+   Eina_Bool ret;
    Edje *ed;
 
    ed = _edje_fetch(obj);
    if (!ed)
      return EINA_FALSE;
-   return ed->api->file_set(obj, file, group);
+   ret = ed->api->file_set(obj, file, group);
+   _edje_object_orientation_inform(obj);
+   return ret;
 }
 
 /* FIXDOC: Verify/expand doc. */
@@ -373,6 +376,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    if (ed->collection)
      {
+	if (ed->collection->prop.orientation != EDJE_ORIENTATION_AUTO)
+          ed->is_rtl = (ed->collection->prop.orientation ==
+                EDJE_ORIENTATION_RTL);
+
 	if (ed->collection->script_only)
 	  {
 	     ed->load_error = EDJE_LOAD_ERROR_NONE;
@@ -446,7 +453,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  _edje_ref(rp->edje);
 		  rp->part = ep;
 		  parts = eina_list_append(parts, rp);
-		  rp->param1.description = ep->default_desc;
+		  rp->param1.description = _edje_part_description_find(ed,
+                        rp, "default", 0.0);
 		  rp->chosen_description = rp->param1.description;
 		  if (!rp->param1.description)
 		    ERR("no default part description!");
@@ -1204,6 +1212,10 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
 	  _edje_collection_free_part_description_clean(ep->type, ep->other.desc[j], edf->free_strings);
 
 	free(ep->other.desc);
+        /* Alloc for RTL objects in edje_calc.c:_edje_part_description_find() */
+        if(ep->other.desc_rtl)
+          free(ep->other.desc_rtl);
+
 	free(ep->items);
 // technically need this - but we ASSUME we use "one_big" so everything gets
 // freed in one go lower down when we del the mempool... but what if pool goes
@@ -1251,6 +1263,16 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp.part);
    memset(&ce->mp, 0, sizeof (ce->mp));
 
+   eina_mempool_del(ce->mp_rtl.RECTANGLE);
+   eina_mempool_del(ce->mp_rtl.TEXT);
+   eina_mempool_del(ce->mp_rtl.IMAGE);
+   eina_mempool_del(ce->mp_rtl.SWALLOW);
+   eina_mempool_del(ce->mp_rtl.TEXTBLOCK);
+   eina_mempool_del(ce->mp_rtl.GROUP);
+   eina_mempool_del(ce->mp_rtl.BOX);
+   eina_mempool_del(ce->mp_rtl.TABLE);
+   eina_mempool_del(ce->mp_rtl.EXTERNAL);
+   memset(&ce->mp_rtl, 0, sizeof (ce->mp_rtl));
    free(ec);
    ce->ref = NULL;
 }

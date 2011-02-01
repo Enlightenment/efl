@@ -502,6 +502,8 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    EAPI double       edje_scale_get                  (void);
    EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scale);
    EAPI double       edje_object_scale_get           (const Evas_Object *obj);
+   EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool rtl);
+   EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
 
    /* edje_load.c */
    EAPI Eina_List   *edje_file_collection_list       (const char *file);

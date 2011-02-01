@@ -30,12 +30,18 @@ Eina_List *_edje_edjes = NULL;
 EAPI Evas_Object *
 edje_object_add(Evas *evas)
 {
+   Edje *ed;
+   Evas_Object *e;
    if (!_edje_smart)
      {
 	_edje_object_smart_set(&_edje_smart_class);
 	_edje_smart = evas_smart_class_new((Evas_Smart_Class *)&_edje_smart_class);
      }
-   return evas_object_smart_add(evas, _edje_smart);
+
+   e = evas_object_smart_add(evas, _edje_smart);
+   ed = _edje_fetch(e);
+
+   return e;
 }
 
 void
@@ -103,6 +109,7 @@ _edje_smart_add(Evas_Object *obj)
    evas_object_move(ed->clipper, -10000, -10000);
    evas_object_resize(ed->clipper, 20000, 20000);
    evas_object_pass_events_set(ed->clipper, 1);
+   ed->is_rtl = EINA_FALSE;
    ed->have_objects = 1;
    ed->references = 1;
 

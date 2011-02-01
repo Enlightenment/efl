@@ -5,6 +5,9 @@
 #define FLAG_Y    0x02
 #define FLAG_XY   (FLAG_X | FLAG_Y)
 
+static void _edje_part_make_rtl(Edje_Part_Description_Common *desc);
+static Edje_Part_Description_Common *_edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type);
+
 static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
 				     Edje_Part_Description_Common *desc, Edje_Part_Description_Common *chosen_desc,
 				     Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
@@ -60,31 +63,172 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos)
 #endif
 }
 
+
+/**
+ * Returns part description
+ *
+ * @internal
+ *
+ * Converts part description to RTL-desc.
+ *
+ * @param desc Pointer to desc buffer.
+ *
+ **/
+static void
+_edje_part_make_rtl(Edje_Part_Description_Common *desc)
+{
+   double t;
+   int i;
+
+   if(!desc)
+     return;
+
+   /* This makes alignment right-oriented */
+   desc->align.x = 1.0 - desc->align.x;
+
+   /* same as above for relative components */
+   t = desc->rel1.relative_x;
+   desc->rel1.relative_x = 1.0 - desc->rel2.relative_x;
+   desc->rel2.relative_x = 1.0 - t;
+
+   /* +1 and +1 are because how edje works with right
+    * side borders - nothing is printed beyond that limit
+    *
+    * rel2 is now to the left of rel1, and Edje assumes
+    * the opposite so we switch corners on x-axis to define
+    * offset from right to left */
+   i = desc->rel1.offset_x;
+   desc->rel1.offset_x = -(desc->rel2.offset_x + 1);
+   desc->rel2.offset_x = -(i + 1);
+
+   i = desc->rel1.id_x;
+   desc->rel1.id_x = desc->rel2.id_x;
+   desc->rel2.id_x = i;
+}
+
+/**
+ * Returns part description
+ *
+ * @internal
+ *
+ * Returns part description according to object orientation.
+ * When object is in RTL-orientation (RTL flag is set)
+ * this returns the RTL-desc of it.
+ * RTL-desc would be allocated if was not created by a previous call.
+ * The dst pointer is updated in case of an allocation.
+ *
+ * @param ed Edje object.
+ * @param src The Left To Right (LTR), original desc.
+ * @param dst Pointer to Right To Left (RTL) desc-list.
+ * @param type name of dec type. Example: "default".
+ *
+ * @return Edje part description.
+ *
+ **/
+static Edje_Part_Description_Common *
+_edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type)
+{
+   Edje_Part_Description_Common *desc_rtl = NULL;
+   Edje_Part_Collection_Directory_Entry *ce;
+   size_t memsize = 0;
+
+   /* RTL flag is not set, return original description */
+   if(!edje_object_mirrored_get(ed->obj))
+      return src;
+
+   if(*dst)
+     return *dst; /* Was allocated before and we should use it */
+
+#define EDIT_ALLOC_POOL_RTL(Short, Type, Name)				\
+	 case EDJE_PART_TYPE_##Short:					\
+	   {								\
+	      Edje_Part_Description_##Type *Name;			\
+	      Name = eina_mempool_malloc(ce->mp_rtl.Short,		\
+                    sizeof (Edje_Part_Description_##Type));             \
+	      memset(Name, 0, sizeof(Edje_Part_Description_##Type));    \
+	      desc_rtl = &Name->common;					\
+              memsize = sizeof(Edje_Part_Description_##Type);           \
+	      break;							\
+	   }
+
+   ce = eina_hash_find(ed->file->collection, ed->group);
+
+   switch (type)
+     {
+      case EDJE_PART_TYPE_RECTANGLE:
+	 desc_rtl = eina_mempool_malloc(ce->mp_rtl.RECTANGLE,
+               sizeof (Edje_Part_Description_Common));
+	 ce->count.RECTANGLE++;
+         memsize = sizeof(Edje_Part_Description_Common);
+	 break;
+      case EDJE_PART_TYPE_SWALLOW:
+	 desc_rtl = eina_mempool_malloc(ce->mp_rtl.SWALLOW,
+               sizeof (Edje_Part_Description_Common));
+	 ce->count.SWALLOW++;
+         memsize = sizeof(Edje_Part_Description_Common);
+	 break;
+      case EDJE_PART_TYPE_GROUP:
+	 desc_rtl = eina_mempool_malloc(ce->mp_rtl.GROUP,
+               sizeof (Edje_Part_Description_Common));
+	 ce->count.GROUP++;
+         memsize = sizeof(Edje_Part_Description_Common);
+         break;
+	 EDIT_ALLOC_POOL_RTL(TEXT, Text, text);
+	 EDIT_ALLOC_POOL_RTL(TEXTBLOCK, Text, text);
+	 EDIT_ALLOC_POOL_RTL(IMAGE, Image, image);
+	 EDIT_ALLOC_POOL_RTL(BOX, Box, box);
+	 EDIT_ALLOC_POOL_RTL(TABLE, Table, table);
+	 EDIT_ALLOC_POOL_RTL(EXTERNAL, External, external_params);
+     }
+
+   if(desc_rtl)
+      memcpy(desc_rtl, src, memsize);
+
+   _edje_part_make_rtl(desc_rtl);
+
+   *dst = desc_rtl;
+   return desc_rtl;
+}
+
 Edje_Part_Description_Common *
-_edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char *name,
+_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, const char *name,
                             double val)
 {
    Edje_Part *ep = rp->part;
    Edje_Part_Description_Common *ret = NULL;
    Edje_Part_Description_Common *d;
+
    double min_dst = 99999.0;
    unsigned int i;
 
+   /* RTL flag is set, return RTL description */
+   if(edje_object_mirrored_get(ed->obj))
+     if(!ep->other.desc_rtl)
+       ep->other.desc_rtl = (Edje_Part_Description_Common **)
+          calloc(ep->other.desc_count,
+                sizeof (Edje_Part_Description_Common *));
+
    if (!strcmp(name, "default") && val == 0.0)
-     return ep->default_desc;
+     return _edje_get_description_by_orientation(ed,
+           ep->default_desc, &ep->default_desc_rtl, ep->type);
 
    if (!strcmp(name, "custom"))
-     return rp->custom ? rp->custom->description : NULL;
+     return rp->custom ?
+        _edje_get_description_by_orientation(ed, rp->custom->description,
+              &rp->custom->description_rtl, ep->type) : NULL;
 
    if (!strcmp(name, "default"))
      {
-	ret = ep->default_desc;
+	ret = _edje_get_description_by_orientation(ed, ep->default_desc,
+              &ep->default_desc_rtl, ep->type);
+
 	min_dst = ABS(ep->default_desc->state.value - val);
      }
+
    for (i = 0; i < ep->other.desc_count; ++i)
      {
 	d = ep->other.desc[i];
-	
+
 	if (d->state.name && !strcmp(d->state.name, name))
 	  {
 	     double dst;
@@ -92,7 +236,8 @@ _edje_part_description_find(Edje *ed __UNUSED__, Edje_Real_Part *rp, const char 
 	     dst = ABS(d->state.value - val);
 	     if (dst < min_dst)
 	       {
-		  ret = d;
+		  ret = _edje_get_description_by_orientation(ed, d,
+                        &ep->other.desc_rtl[i], ep->type);
 		  min_dst = dst;
 	       }
 	  }
@@ -265,7 +410,7 @@ _edje_recalc_do(Edje *ed)
 
 	ep = ed->table_parts[i];
 	if (ep->calculated != FLAG_XY)
-	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
+          _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
      }
    if (!ed->calc_only) ed->recalc = 0;
 #ifdef EDJE_CALC_CACHE

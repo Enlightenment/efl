@@ -46,21 +46,26 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    id = ce->id;
    if (id < 0) return NULL;
 
-#define INIT_EMP(Tp, Sz, Ce)						\
-   buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);		\
-   sprintf(buffer, "%s/%s", ce->entry, #Tp);				\
+#define INIT_EMP(Tp, Sz, Ce)                                           \
+   buffer = alloca(strlen(ce->entry) + strlen(#Tp) + 2);               \
+   sprintf(buffer, "%s/%s", ce->entry, #Tp);                           \
    Ce->mp.Tp = eina_mempool_add("one_big", buffer, NULL, sizeof (Sz), Ce->count.Tp); \
    _emp_##Tp = Ce->mp.Tp;
 
-   INIT_EMP(RECTANGLE, Edje_Part_Description_Common, ce);
-   INIT_EMP(TEXT, Edje_Part_Description_Text, ce);
-   INIT_EMP(IMAGE, Edje_Part_Description_Image, ce);
-   INIT_EMP(SWALLOW, Edje_Part_Description_Common, ce);
-   INIT_EMP(TEXTBLOCK, Edje_Part_Description_Text, ce);
-   INIT_EMP(GROUP, Edje_Part_Description_Common, ce);
-   INIT_EMP(BOX, Edje_Part_Description_Box, ce);
-   INIT_EMP(TABLE, Edje_Part_Description_Table, ce);
-   INIT_EMP(EXTERNAL, Edje_Part_Description_External, ce);
+#define INIT_EMP_BOTH(Tp, Sz, Ce)                                       \
+   INIT_EMP(Tp, Sz, Ce)                                                 \
+   Ce->mp_rtl.Tp = eina_mempool_add("one_big", buffer, NULL,            \
+         sizeof (Sz), Ce->count.Tp);
+
+   INIT_EMP_BOTH(RECTANGLE, Edje_Part_Description_Common, ce);
+   INIT_EMP_BOTH(TEXT, Edje_Part_Description_Text, ce);
+   INIT_EMP_BOTH(IMAGE, Edje_Part_Description_Image, ce);
+   INIT_EMP_BOTH(SWALLOW, Edje_Part_Description_Common, ce);
+   INIT_EMP_BOTH(TEXTBLOCK, Edje_Part_Description_Text, ce);
+   INIT_EMP_BOTH(GROUP, Edje_Part_Description_Common, ce);
+   INIT_EMP_BOTH(BOX, Edje_Part_Description_Box, ce);
+   INIT_EMP_BOTH(TABLE, Edje_Part_Description_Table, ce);
+   INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
    INIT_EMP(part, Edje_Part, ce);
 
    snprintf(buf, sizeof(buf), "edje/collections/%i", id);

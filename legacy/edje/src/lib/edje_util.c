@@ -262,6 +262,73 @@ edje_object_scale_get(const Evas_Object *obj)
 }
 
 /**
+ * Get the RTL orientation for this object.
+ *
+ * You can RTL orientation explicitly with edje_object_mirrored_set.
+ *
+ * @param obj the smart object
+ * @return if flag is set or not.
+ *
+ **/
+EAPI Eina_Bool
+edje_object_mirrored_get(const Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return EINA_FALSE;
+
+   return ed->is_rtl;
+}
+
+void
+_edje_object_orientation_inform(Evas_Object *obj)
+{
+   if (edje_object_mirrored_get(obj))
+     edje_object_signal_emit(obj, "edje,state,rtl", "edje");
+   else
+     edje_object_signal_emit(obj, "edje,state,ltr", "edje");
+}
+
+/**
+ * Set the RTL orientation for this object.
+ *
+ * @param obj the smart object
+ * @rtl new value of flag EINA_TRUE/EINA_FALSE
+ *
+ **/
+EAPI void
+edje_object_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Edje *ed;
+   int i;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   if (ed->is_rtl == rtl) return;
+
+   ed->is_rtl = rtl;
+
+   for (i = 0 ; i < ed->table_parts_size ; i++)
+     {
+	Edje_Real_Part *ep;
+        const char *s;
+        double v;
+
+	ep = ed->table_parts[i];
+	s = ep->param1.description->state.name,
+	v = ep->param1.description->state.value;
+        _edje_part_description_apply(ed, ep, s, v , NULL, 0.0);
+        ep->chosen_description = ep->param1.description;
+     }
+   _edje_recalc_do(ed);
+
+   _edje_object_orientation_inform(obj);
+
+   return;
+}
+
+/**
  * @brief Get Edje object data.
  *
  * @param obj A valid Evas_Object handle

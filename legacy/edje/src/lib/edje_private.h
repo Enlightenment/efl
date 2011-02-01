@@ -365,6 +365,10 @@ typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 #define EDJE_ENTRY_CURSOR_MODE_UNDER 0
 #define EDJE_ENTRY_CURSOR_MODE_BEFORE 1
 
+#define EDJE_ORIENTATION_AUTO  0
+#define EDJE_ORIENTATION_LTR   1
+#define EDJE_ORIENTATION_RTL   2
+
 #define EDJE_PART_PATH_SEPARATOR ':'
 #define EDJE_PART_PATH_SEPARATOR_STRING ":"
 #define EDJE_PART_PATH_SEPARATOR_INDEXL '['
@@ -543,6 +547,16 @@ struct _Edje_Program_After /* the action to run after another action */
 };
 
 /*----------*/
+#define PART_TYPE_FIELDS(TYPE)    \
+      TYPE      RECTANGLE;        \
+      TYPE      TEXT;             \
+      TYPE      IMAGE;            \
+      TYPE      SWALLOW;          \
+      TYPE      TEXTBLOCK;        \
+      TYPE      GROUP;            \
+      TYPE      BOX;              \
+      TYPE      TABLE;            \
+      TYPE      EXTERNAL;
 
 struct _Edje_Part_Collection_Directory_Entry
 {
@@ -551,31 +565,20 @@ struct _Edje_Part_Collection_Directory_Entry
 
    struct
    {
-      int      RECTANGLE;
-      int      TEXT;
-      int      IMAGE;
-      int      SWALLOW;
-      int      TEXTBLOCK;
-      int      GROUP;
-      int      BOX;
-      int      TABLE;
-      int      EXTERNAL;
+      PART_TYPE_FIELDS(int)
       int      part;
    } count;
 
    struct
    {
-      Eina_Mempool *RECTANGLE;
-      Eina_Mempool *TEXT;
-      Eina_Mempool *IMAGE;
-      Eina_Mempool *SWALLOW;
-      Eina_Mempool *TEXTBLOCK;
-      Eina_Mempool *GROUP;
-      Eina_Mempool *BOX;
-      Eina_Mempool *TABLE;
-      Eina_Mempool *EXTERNAL;
+      PART_TYPE_FIELDS(Eina_Mempool *)
       Eina_Mempool *part;
    } mp;
+
+   struct
+   {
+      PART_TYPE_FIELDS(Eina_Mempool *)
+   } mp_rtl; /* For Right To Left interface */
 
    Edje_Part_Collection *ref;
 };
@@ -635,6 +638,7 @@ struct _Edje_Part_Collection
 
    struct {
       Edje_Size min, max;
+      unsigned char orientation;
    } prop;
 
    int        references;
@@ -683,6 +687,7 @@ typedef struct _Edje_Part_Description_List Edje_Part_Description_List;
 struct _Edje_Part_Description_List
 {
    Edje_Part_Description_Common **desc;
+   Edje_Part_Description_Common **desc_rtl; /* desc for Right To Left interface */
    unsigned int desc_count;
 };
 
@@ -690,6 +695,7 @@ struct _Edje_Part
 {
    const char                   *name; /* the name if any of the part */
    Edje_Part_Description_Common *default_desc; /* the part descriptor for default */
+   Edje_Part_Description_Common *default_desc_rtl; /* default desc for Right To Left interface */
 
    Edje_Part_Description_List    other; /* other possible descriptors */
 
@@ -986,6 +992,7 @@ struct _Edje
    int                   load_error;
    int                   freeze;
    FLOAT_T		 scale;
+   Eina_Bool             is_rtl : 1;
 
    struct {
       Edje_Text_Change_Cb  func;
@@ -1077,6 +1084,7 @@ struct _Edje_Real_Part_Set
 struct _Edje_Real_Part_State
 {
    Edje_Part_Description_Common *description; // 4
+   Edje_Part_Description_Common *description_rtl; // 4
    Edje_Real_Part        *rel1_to_x; // 4
    Edje_Real_Part        *rel1_to_y; // 4
    Edje_Real_Part        *rel2_to_x; // 4
@@ -1087,8 +1095,8 @@ struct _Edje_Real_Part_State
 #endif
    void                  *external_params; // 4
    Edje_Real_Part_Set    *set; // 4
-}; // 28
-// WITH EDJE_CALC_CACHE 128
+}; // 32
+// WITH EDJE_CALC_CACHE 132
 
 struct _Edje_Real_Part_Drag
 {
@@ -1831,5 +1839,7 @@ void _edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src);
 
 const char *edje_string_get(const Edje_String *es);
 const char *edje_string_id_get(const Edje_String *es);
+
+void _edje_object_orientation_inform(Evas_Object *obj);
 
 #endif
