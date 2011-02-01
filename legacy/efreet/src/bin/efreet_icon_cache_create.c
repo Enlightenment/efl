@@ -840,7 +840,7 @@ main(int argc, char **argv)
         }
 
         eina_hash_free(themes);
-        efreet_hash_free(icons, EINA_FREE_CB(efreet_cache_icon_free));
+        eina_hash_free(icons);
 
         if (theme->changed || changed)
         {
@@ -914,7 +914,7 @@ main(int argc, char **argv)
         }
     }
 
-    efreet_hash_free(icons, EINA_FREE_CB(efreet_cache_icon_fallback_free));
+    eina_hash_free(icons);
     eet_data_write(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK, theme, 1);
     icon_theme_free(theme);
 

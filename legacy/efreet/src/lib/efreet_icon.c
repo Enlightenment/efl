@@ -342,7 +342,6 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         cache = efreet_cache_icon_fallback_find(icon);
         value = efreet_cache_icon_fallback_lookup_path(cache);
         if (!value) INFO("lookup for `%s` failed in fallback too with %p.", icon, cache);
-        efreet_cache_icon_fallback_free(cache);
     }
 
     if (value == NON_EXISTING) value = NULL;
@@ -398,7 +397,6 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
                 if (!strcmp(cache->theme, theme->name.internal))
                 {
                     value = efreet_cache_icon_lookup_icon(cache, size);
-                    efreet_cache_icon_free(cache);
                     break;
                 }
                 else
@@ -409,8 +407,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
         {
             if (!value)
                 value = efreet_cache_icon_list_lookup_icon(theme, tmps2, size);
-            EINA_LIST_FREE(tmps2, cache)
-                efreet_cache_icon_free(cache);
+            eina_list_free(tmps2);
         }
 
 #ifdef SLOPPY_SPEC
@@ -429,7 +426,6 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
         {
             cache = efreet_cache_icon_fallback_find(icon);
             value = efreet_cache_icon_fallback_lookup_path(cache);
-            efreet_cache_icon_fallback_free(cache);
             if (value && (value != NON_EXISTING))
                 break;
         }
