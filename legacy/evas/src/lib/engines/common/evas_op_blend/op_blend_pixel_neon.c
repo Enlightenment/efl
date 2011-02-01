@@ -113,7 +113,8 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
 		//** Oct loop
 		"vldm	%[s]!,	{d0,d1,d2,d3)		\n\t"
 		"vldm	%[d],	{d4,d5,d6,d7}		\n\t"
-
+                "pld    [%[s], #64]                     \n\t"
+                
 
 		// Copy s.a into q2 (>> 24) & subtract from 255
 		"vmvn.u8	q4,	q0		\n\t"
