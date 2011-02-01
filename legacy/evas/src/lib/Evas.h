@@ -2075,6 +2075,8 @@ struct _Evas_Smart_Cb_Description
    EAPI void                                evas_object_table_padding_get     (const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
    EAPI void                                evas_object_table_align_set       (Evas_Object *o, double horizontal, double vertical) EINA_ARG_NONNULL(1);
    EAPI void                                evas_object_table_align_get       (const Evas_Object *o, double *horizontal, double *vertical) EINA_ARG_NONNULL(1);
+   EAPI void                                evas_object_table_mirrored_set    (Evas_Object *o, Eina_Bool mirrored) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool                           evas_object_table_mirrored_get    (const Evas_Object *o) EINA_ARG_NONNULL(1);
 
    EAPI Eina_Bool                           evas_object_table_pack            (Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan) EINA_ARG_NONNULL(1, 2);
    EAPI Eina_Bool                           evas_object_table_unpack          (Evas_Object *o, Evas_Object *child) EINA_ARG_NONNULL(1, 2);
