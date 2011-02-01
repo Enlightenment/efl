@@ -2437,7 +2437,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
       Evas_Object_Textblock_Text_Item *ti, int cut)
 {
    Eina_Unicode *ts;
-   Evas_Object_Textblock_Text_Item *new_ti;
+   Evas_Object_Textblock_Text_Item *new_ti = NULL, *white_ti = NULL;
    int cut2;
 
    ts = ti->text;
@@ -2446,15 +2446,18 @@ _layout_item_text_split_strip_white(Ctxt *c,
    else
      cut2 = cut;
 
-   new_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut2]);
-   new_ti->parent.text_node = ti->parent.text_node;
-   new_ti->parent.text_pos = ti->parent.text_pos + cut2;
-   new_ti->parent.merge = EINA_TRUE;
-   ts[cut2] = 0;
+   if (ts[cut2])
+     {
+        new_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut2]);
+        new_ti->parent.text_node = ti->parent.text_node;
+        new_ti->parent.text_pos = ti->parent.text_pos + cut2;
+        new_ti->parent.merge = EINA_TRUE;
+        ts[cut2] = 0;
 
-   evas_common_text_props_split(&ti->parent.text_props,
-         &new_ti->parent.text_props, cut2);
-   _layout_text_add_logical_item(c, new_ti, _ITEM(ti));
+        evas_common_text_props_split(&ti->parent.text_props,
+                                     &new_ti->parent.text_props, cut2);
+        _layout_text_add_logical_item(c, new_ti, _ITEM(ti));
+     }
 
    /* FIXME: Will break with kerning and a bunch of other stuff, should
     * maybe adjust the last adv of the prev and the offset of the cur
@@ -2464,7 +2467,6 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    if (cut2 > cut)
      {
-        Evas_Object_Textblock_Text_Item *white_ti;
         white_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut]);
         white_ti->parent.text_node = ti->parent.text_node;
         white_ti->parent.text_pos = ti->parent.text_pos + cut;
@@ -2479,8 +2481,13 @@ _layout_item_text_split_strip_white(Ctxt *c,
         ti->parent.adv -= white_ti->parent.adv;
      }
 
-   ti->text = eina_unicode_strdup(ts);
-   free(ts);
+   if (new_ti || white_ti)
+     {
+        _text_item_update_sizes(c, ti);
+
+        ti->text = eina_unicode_strdup(ts);
+        free(ts);
+     }
    return new_ti;
 }
 
