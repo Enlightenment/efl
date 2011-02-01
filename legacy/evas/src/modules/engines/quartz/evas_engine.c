@@ -1026,7 +1026,7 @@ eng_font_max_descent_get(void *data, void *font)
 }
 
 static void
-eng_font_string_size_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int *w, int *h)
+eng_font_string_size_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props, int *w, int *h)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
@@ -1056,28 +1056,28 @@ eng_font_inset_get(void *data, void *font, const char *text)
 }
 
 static int
-eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props)
+eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props)
 {
    int w;
 
-   eng_font_string_size_get(data, font, text, intl_props, &w, NULL);
+   eng_font_string_size_get(data, font, text, text_props, &w, NULL);
 
    return w + 2; // FIXME: shouldn't need a constant here. from where do we get word spacing?
    // it seems we lose the space between differently-styled text in a text block. Why?
 }
 
 static int
-eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props)
+eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props)
 {
    int h;
 
-   eng_font_string_size_get(data, font, text, intl_props, NULL, &h);
+   eng_font_string_size_get(data, font, text, text_props, NULL, &h);
 
    return h;
 }
 
 static int
-eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
 
@@ -1099,23 +1099,29 @@ eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Te
 /*FIXME: this is *NOT* implemennted correctly, look at the other engines to
  * see what needed to be done */
 static int
-eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
-   return eng_font_char_coords_get(data, font, text, intl_props, pos, cpen_x,
+   return eng_font_char_coords_get(data, font, text, text_props, pos, cpen_x,
          cy, cadv, ch)
 }
 
 static Eina_Bool
-eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props __UNUSED__, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
+eng_font_text_props_info_create(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
 {
-#ifdef BIDI_SUPPORT
-   return !evas_bidi_shape_string(text, par_props, pos, len);
+   (void) font;
+   (void) text;
+   (void) text_props;
+   (void) par_props;
+   (void) pos;
+   (void) len;
+#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
+   evas_bidi_shape_string(text, par_props, pos, len);
 #endif
-   return EINA_TRUE;
+   return evas_common_text_props_content_create(font, text, text_props, len);
 }
 
 static int
-eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    // Return the index of the character at the given point, also lookup it's origin x, y, w, and h.
    Evas_Quartz_Font *loaded_font = (Evas_Quartz_Font *)font;
@@ -1127,8 +1133,8 @@ eng_font_char_at_coords_get(void *data, void *font, const char *text, const Evas
    int stringIndex = (int) CTLineGetStringIndexForPosition(line, CGPointMake(x, y));
 
    // In order to get the character's size and position, look up the position of this character and the next one
-   eng_font_char_coords_get(data, font, text, intl_props, stringIndex, cx, cy, NULL, NULL);
-   eng_font_char_coords_get(data, font, text, intl_props, stringIndex + 1, cw, NULL, NULL, NULL);
+   eng_font_char_coords_get(data, font, text, text_props, stringIndex, cx, cy, NULL, NULL);
+   eng_font_char_coords_get(data, font, text, text_props, stringIndex + 1, cw, NULL, NULL, NULL);
 
    if (cw && cx) *cw -= *cx;
    if (ch) *ch = loaded_font->size;
@@ -1154,7 +1160,7 @@ eng_font_hinting_can_hint(void *data, int hinting)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text, const Evas_Text_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, const char *text, const Evas_Text_Props *text_props)
 {
    Render_Engine *re = (Render_Engine *)data;
    Evas_Quartz_Context *ctxt = (Evas_Quartz_Context *)context;

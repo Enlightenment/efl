@@ -94,7 +94,7 @@ static int eng_font_h_advance_get(void *data, void *font, char *text);
 static int eng_font_v_advance_get(void *data, void *font, char *text);
 static int eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
 static int eng_font_pen_coords_get(void *data, void *font, char *text, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
-static Eina_Bool eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
+static Eina_Bool eng_font_text_props_info_create(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
 static int eng_font_char_at_coords_get(void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
 static void eng_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
 static void eng_font_cache_flush(void *data);
@@ -219,7 +219,7 @@ static Evas_Func eng_func =
      NULL, // eng_image_content_hint_set - software doesn't use it
      NULL, // eng_image_content_hint_get - software doesn't use it
      eng_font_pen_coords_get,
-     eng_font_shape
+     eng_font_text_props_info_create
      /* FUTURE software generic calls go here */
 };
 
@@ -1291,7 +1291,7 @@ eng_font_pen_coords_get(void *data, void *font, char *text, int pos, int *cpen_x
 
 
 static Eina_Bool
-eng_font_shape(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
+eng_font_text_props_info_create(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
 {
    Render_Engine *re;
 

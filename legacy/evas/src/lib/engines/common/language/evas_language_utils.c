@@ -55,48 +55,49 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str,
       const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, int len)
 {
    /* FIXME: Use the standard segmentation instead */
-   if (evas_common_font_ot_is_enabled())
+#ifdef OT_SUPPORT
+   Evas_Script_Type first = EVAS_SCRIPT_UNKNOWN;
+   int i;
+   for (i = 0 ; i < len ; i++, str++)
      {
-        Evas_Script_Type first = EVAS_SCRIPT_UNKNOWN;
-        int i;
-        for (i = 0 ; i < len ; i++, str++)
+        Evas_Script_Type tmp;
+        tmp = evas_common_language_char_script_get(*str);
+        /* Arabic is the first script in the array that's not
+         * common/inherited. */
+        if ((first == EVAS_SCRIPT_UNKNOWN) && (tmp >= EVAS_SCRIPT_ARABIC))
           {
-            Evas_Script_Type tmp;
-            tmp = evas_common_language_char_script_get(*str);
-            /* Arabic is the first script in the array that's not
-             * common/inherited. */
-            if ((first == EVAS_SCRIPT_UNKNOWN) && (tmp >= EVAS_SCRIPT_ARABIC))
-              {
-                 first = tmp;
-                 continue;
-              }
-            if ((first != tmp) && (tmp >= EVAS_SCRIPT_ARABIC))
-              {
-                 break;
-              }
+             first = tmp;
+             continue;
           }
-#ifdef BIDI_SUPPORT
+        if ((first != tmp) && (tmp >= EVAS_SCRIPT_ARABIC))
           {
-             int bidi_end;
-             bidi_end = evas_bidi_end_of_run_get(bidi_props, start, len);
-             if (bidi_end > 0)
-               {
-                  i = (i < bidi_end) ? i : bidi_end;
-               }
+             break;
           }
+     }
+# ifdef BIDI_SUPPORT
+     {
+        int bidi_end;
+        bidi_end = evas_bidi_end_of_run_get(bidi_props, start, len);
+        if (bidi_end > 0)
+          {
+             i = (i < bidi_end) ? i : bidi_end;
+          }
+     }
+# else
+   (void) bidi_props;
+   (void) start;
+# endif
+   return (i < len) ? i : 0;
+#elif defined(BIDI_SUPPORT)
+   (void) str;
+   return evas_bidi_end_of_run_get(bidi_props, start, len);
 #else
-        (void) bidi_props;
-        (void) start;
-#endif
-        return (i < len) ? i : 0;
-     }
-   else
-     {
-#ifdef BIDI_SUPPORT
-        return evas_bidi_end_of_run_get(bidi_props, start, len);
-#endif
-     }
+   (void) bidi_props;
+   (void) start;
+   (void) str;
+   (void) len;
    return 0;
+#endif
 }
 
 Evas_Script_Type

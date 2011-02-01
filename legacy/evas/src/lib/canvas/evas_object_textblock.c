@@ -1783,6 +1783,7 @@ struct _Ctxt
 };
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, const Evas_Object_Textblock_Item *rel);
+static void _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti);
 /**
  * @internal
  * Adjust the ascent/descent of the format and context.
@@ -2459,12 +2460,6 @@ _layout_item_text_split_strip_white(Ctxt *c,
         _layout_text_add_logical_item(c, new_ti, _ITEM(ti));
      }
 
-   /* FIXME: Will break with kerning and a bunch of other stuff, should
-    * maybe adjust the last adv of the prev and the offset of the cur
-    * There's also another similar fixme below (same case, not marked) */
-   ti->parent.w -= new_ti->parent.w;
-   ti->parent.adv -= new_ti->parent.adv;
-
    if (cut2 > cut)
      {
         white_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut]);
@@ -2477,8 +2472,6 @@ _layout_item_text_split_strip_white(Ctxt *c,
         evas_common_text_props_split(&ti->parent.text_props,
               &white_ti->parent.text_props, cut);
         _layout_text_add_logical_item(c, white_ti, _ITEM(ti));
-        ti->parent.w -= white_ti->parent.w;
-        ti->parent.adv -= white_ti->parent.adv;
      }
 
    if (new_ti || white_ti)
@@ -2785,7 +2778,8 @@ skip:
                    ti->parent.text_node->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set (&ti->parent.text_props,
                    ti->text);
-             c->ENFN->font_shape(c->ENDT, ti->parent.format->font.font,
+             c->ENFN->font_text_props_info_create(c->ENDT,
+                   ti->parent.format->font.font,
                    ti->text, &ti->parent.text_props,
                    ti->parent.text_node->bidi_props,
                    ti->parent.text_pos, tmp_len);
@@ -3201,7 +3195,8 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
          ellip_ti->parent.text_node->bidi_props, ellip_ti->parent.text_pos);
    evas_common_text_props_script_set (&ellip_ti->parent.text_props,
          ellip_ti->text);
-   c->ENFN->font_shape(c->ENDT, ellip_ti->parent.format->font.font,
+   c->ENFN->font_text_props_info_create(c->ENDT,
+         ellip_ti->parent.format->font.font,
          ellip_ti->text, &ellip_ti->parent.text_props,
          ellip_ti->parent.text_node->bidi_props,
          ellip_ti->parent.text_pos, eina_unicode_strlen(_ellip_str));
