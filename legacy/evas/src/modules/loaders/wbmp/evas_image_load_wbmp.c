@@ -16,119 +16,119 @@ static Eina_Bool evas_image_load_file_data_wbmp(Image_Entry *ie, const char *fil
 
 static Evas_Image_Load_Func evas_image_load_wbmp_func =
 {
-  EINA_TRUE,
-  evas_image_load_file_head_wbmp,
-  evas_image_load_file_data_wbmp
+   EINA_TRUE,
+   evas_image_load_file_head_wbmp,
+   evas_image_load_file_data_wbmp
 };
 
 
 static int
-read_mb(unsigned int *data, FILE * f)
+read_mb(unsigned int *data, FILE *f)
 {
-  int ac = 0, ct;
-  unsigned char buf;
-  
-  for (ct = 0;;)
-    {
-      if ((ct++) == 5) return -1;
-      if ((fread(&buf, 1, 1, f)) < 1)
-        return -1;
-      ac = (ac << 7) | (buf & 0x7f);
-      if ((buf & 0x80) == 0) break;
-  }
-  *data = ac;
-  return 0;
+   int ac = 0, ct;
+   unsigned char buf;
+   
+   for (ct = 0;;)
+     {
+        if ((ct++) == 5) return -1;
+        if ((fread(&buf, 1, 1, f)) < 1)
+           return -1;
+        ac = (ac << 7) | (buf & 0x7f);
+        if ((buf & 0x80) == 0) break;
+     }
+   *data = ac;
+   return 0;
 }
 
 static Eina_Bool
 evas_image_load_file_head_wbmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-  FILE *f;
-  unsigned int type, w, h;
-  unsigned char fixed_header;
-  struct stat statbuf;
-  
-  *error = EVAS_LOAD_ERROR_GENERIC;
-  f = fopen(file, "rb");
-  if (!f)
-    {
-      *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-      return EINA_FALSE;
-    }
-  
-  if (stat(file, &statbuf) == -1) goto bail;
-  if (read_mb(&type, f) < 0) goto bail;
-  
-  if (type != 0)
-    {
-      *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-      goto bail;
-    }
-  
-  if (fread(&fixed_header, 1, 1, f) != 1) goto bail;
-  if (read_mb(&w, f) < 0) goto bail;
-  if (read_mb(&h, f) < 0) goto bail;
-  fclose(f);
-  ie->w = w;
-  ie->h = h;
-  
-  *error = EVAS_LOAD_ERROR_NONE;
-  return EINA_TRUE;
+   FILE *f;
+   unsigned int type, w, h;
+   unsigned char fixed_header;
+   struct stat statbuf;
+   
+   *error = EVAS_LOAD_ERROR_GENERIC;
+   f = fopen(file, "rb");
+   if (!f)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
+     }
+   
+   if (stat(file, &statbuf) == -1) goto bail;
+   if (read_mb(&type, f) < 0) goto bail;
+   
+   if (type != 0)
+     {
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto bail;
+     }
+   
+   if (fread(&fixed_header, 1, 1, f) != 1) goto bail;
+   if (read_mb(&w, f) < 0) goto bail;
+   if (read_mb(&h, f) < 0) goto bail;
+   fclose(f);
+   ie->w = w;
+   ie->h = h;
+   
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 bail:
-  fclose(f);
-  return EINA_FALSE;
+   fclose(f);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 evas_image_load_file_data_wbmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-  FILE *f;
-  unsigned int dummy, line_length;
-  unsigned char *line = NULL;
-  int cur = 0, x, y;
-  DATA32 *dst_data;
-  
-  *error = EVAS_LOAD_ERROR_GENERIC;
-  f = fopen(file, "rb");
-  if (!f)
-    {
-      *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
-      return EINA_FALSE;
-    }
-  if (read_mb(&dummy, f) < 0) goto bail;
-  if (fread(&dummy, 1, 1, f) != 1) goto bail;
-  if (read_mb(&dummy, f) < 0) goto bail;
-  if (read_mb(&dummy, f) < 0) goto bail;
-  
-  evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-  dst_data = evas_cache_image_pixels(ie);
-  if (!dst_data)
-    {
-      *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-      goto bail;
-    }
-  
-  line_length = (ie->w + 7) >> 3;
-  line = alloca(line_length);
-  
-  for (y = 0; y < (int)ie->h; y++)
-    {
-      if (fread(line, 1, line_length, f) != line_length) goto bail;
-      for (x = 0; x < (int)ie->w; x++)
-        {
-          int idx = x >> 3;
-          int offset = 1 << (0x07 - (x & 0x07));
-          if (line[idx] & offset) dst_data[cur] = 0xffffffff;
-          else dst_data[cur] = 0xff000000;
-          cur++;
-        }
-    }
-  fclose(f);
-  *error = EVAS_LOAD_ERROR_NONE;
-  return EINA_TRUE;
+   FILE *f;
+   unsigned int dummy, line_length;
+   unsigned char *line = NULL;
+   int cur = 0, x, y;
+   DATA32 *dst_data;
+   
+   *error = EVAS_LOAD_ERROR_GENERIC;
+   f = fopen(file, "rb");
+   if (!f)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        return EINA_FALSE;
+     }
+   if (read_mb(&dummy, f) < 0) goto bail;
+   if (fread(&dummy, 1, 1, f) != 1) goto bail;
+   if (read_mb(&dummy, f) < 0) goto bail;
+   if (read_mb(&dummy, f) < 0) goto bail;
+   
+   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
+   dst_data = evas_cache_image_pixels(ie);
+   if (!dst_data)
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto bail;
+     }
+   
+   line_length = (ie->w + 7) >> 3;
+   line = alloca(line_length);
+   
+   for (y = 0; y < (int)ie->h; y++)
+     {
+        if (fread(line, 1, line_length, f) != line_length) goto bail;
+        for (x = 0; x < (int)ie->w; x++)
+          {
+             int idx = x >> 3;
+             int offset = 1 << (0x07 - (x & 0x07));
+             if (line[idx] & offset) dst_data[cur] = 0xffffffff;
+             else dst_data[cur] = 0xff000000;
+             cur++;
+          }
+     }
+   fclose(f);
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
 bail:
-  fclose(f);
-  return EINA_FALSE;
+   fclose(f);
+   return EINA_FALSE;
 }
 
 static int
