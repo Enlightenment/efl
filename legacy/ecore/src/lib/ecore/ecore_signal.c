@@ -17,20 +17,13 @@
 /* valgrind in some versions/setups uses SIGRT's... hmmm */
 #undef SIGRTMIN
 
+static int _ecore_signal_pipe[2];
+
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
 static void _ecore_signal_callback_set(int sig, Signal_Handler func);
 static void _ecore_signal_callback_ignore(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigchld(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigusr1(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigusr2(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sighup(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigquit(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigint(int sig, siginfo_t *si, void *foo);
-static void _ecore_signal_callback_sigterm(int sig, siginfo_t *si, void *foo);
-#ifdef SIGPWR
-static void _ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo);
-#endif
+static void _ecore_signal_callback_write_pipe(int sig, siginfo_t *si, void *foo);
 
 #ifdef SIGRTMIN
 static void _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo);
@@ -99,6 +92,9 @@ _ecore_signal_shutdown(void)
    sigterm_count = 0;
    sig_count = 0;
 
+   close(_ecore_signal_pipe[0]);
+   close(_ecore_signal_pipe[1]);
+
 #ifdef SIGRTMIN
    for (i = 0; i < num; i++)
      {
@@ -123,24 +119,110 @@ _ecore_signal_shutdown(void)
 #endif
 }
 
+Eina_Bool
+_ecore_signal_pipe_read(void *data, Ecore_Fd_Handler *fdh)
+{
+   siginfo_t si;
+   int sig = -1;
+   int r;
+   int n;
+
+   r = read(_ecore_signal_pipe[0], &si, sizeof si);
+   if (r != sizeof si)
+     {
+        WRN("failed to read signal\n");
+        return;
+     }
+
+   sig = si.si_signo;
+
+   switch (sig)
+     {
+      case SIGCHLD:
+         n = sigchld_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigchld_info[n] = si;
+         break;
+      case SIGUSR1:
+         n = sigusr1_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigusr1_info[n] = si;
+         break;
+      case SIGUSR2:
+         n = sigusr2_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigusr2_info[n] = si;
+         break;
+      case SIGHUP:
+         n = sighup_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sighup_info[n] = si;
+         break;
+      case SIGQUIT:
+         n = sigquit_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigquit_info[n] = si;
+         break;
+      case SIGINT:
+         n = sigint_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigint_info[n] = si;
+         break;
+      case SIGTERM:
+         n = sigterm_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigterm_info[n] = si;
+         break;
+#ifdef SIGPWR
+      case SIGPWR:
+         n = sigpwr_count++;
+         sig_count++;
+         if (n < MAXSIGQ)
+           sigpwr_info[n] = si;
+         break;
+#endif
+      default:
+         ERR("unknown signal %d\n", sig);
+         break;
+     }
+}
+
 void
 _ecore_signal_init(void)
 {
 #ifdef SIGRTMIN
    int i, num = SIGRTMAX - SIGRTMIN;
 #endif
+   int pfd[2];
+   int r;
+
+   r = pipe(_ecore_signal_pipe);
+   if (r < 0)
+     {
+       ERR("pipe failed (%d)\n", r);
+       exit(1);
+     }
+   ecore_main_fd_handler_add(_ecore_signal_pipe[0], ECORE_FD_READ,
+                             &_ecore_signal_pipe_read, NULL, NULL, NULL);
 
    _ecore_signal_callback_set(SIGPIPE, _ecore_signal_callback_ignore);
    _ecore_signal_callback_set(SIGALRM, _ecore_signal_callback_ignore);
-   _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback_sigchld);
-   _ecore_signal_callback_set(SIGUSR1, _ecore_signal_callback_sigusr1);
-   _ecore_signal_callback_set(SIGUSR2, _ecore_signal_callback_sigusr2);
-   _ecore_signal_callback_set(SIGHUP,  _ecore_signal_callback_sighup);
-   _ecore_signal_callback_set(SIGQUIT, _ecore_signal_callback_sigquit);
-   _ecore_signal_callback_set(SIGINT,  _ecore_signal_callback_sigint);
-   _ecore_signal_callback_set(SIGTERM, _ecore_signal_callback_sigterm);
+   _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback_write_pipe);
+   _ecore_signal_callback_set(SIGUSR1, _ecore_signal_callback_write_pipe);
+   _ecore_signal_callback_set(SIGUSR2, _ecore_signal_callback_write_pipe);
+   _ecore_signal_callback_set(SIGHUP,  _ecore_signal_callback_write_pipe);
+   _ecore_signal_callback_set(SIGQUIT, _ecore_signal_callback_write_pipe);
+   _ecore_signal_callback_set(SIGINT,  _ecore_signal_callback_write_pipe);
+   _ecore_signal_callback_set(SIGTERM, _ecore_signal_callback_write_pipe);
 #ifdef SIGPWR
-   _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback_sigpwr);
+   _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback_write_pipe);
 #endif
 
 #ifdef SIGRTMIN
@@ -450,159 +532,28 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
    sigaction(sig, &sa, NULL);
 }
 
+
+static void
+_ecore_signal_callback_write_pipe(int sig __UNUSED__, siginfo_t *si __UNUSED__, void *foo __UNUSED__)
+{
+   int r;
+   siginfo_t dummy = {0};
+
+   if (!si)
+     si = &dummy;
+
+   r = write(_ecore_signal_pipe[1], si, sizeof *si);
+   if (r != sizeof *si)
+     {
+        ERR("failed to write signal pipe\n");
+        _exit(1);
+     }
+}
+
 static void
 _ecore_signal_callback_ignore(int sig __UNUSED__, siginfo_t *si __UNUSED__, void *foo __UNUSED__)
 {
 }
-
-static void
-_ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigchld_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigchld_info[n] = *si;
-        else
-          sigchld_info[n].si_signo = 0;
-     }
-
-   sigchld_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigusr1_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigusr1_info[n] = *si;
-        else
-          sigusr1_info[n].si_signo = 0;
-     }
-   sigusr1_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigusr2_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigusr2_info[n] = *si;
-        else
-          sigusr2_info[n].si_signo = 0;
-     }
-   sigusr2_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sighup_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sighup_info[n] = *si;
-        else
-          sighup_info[n].si_signo = 0;
-     }
-   sighup_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigquit_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigquit_info[n] = *si;
-        else
-          sigquit_info[n].si_signo = 0;
-     }
-   sigquit_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigint_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigint_info[n] = *si;
-        else
-          sigint_info[n].si_signo = 0;
-     }
-   sigint_count++;
-   sig_count++;
-}
-
-static void
-_ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigterm_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigterm_info[n] = *si;
-        else
-          sigterm_info[n].si_signo = 0;
-     }
-   sigterm_count++;
-   sig_count++;
-}
-
-#ifdef SIGPWR
-static void
-_ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigpwr_count;
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigpwr_info[n] = *si;
-        else
-          sigpwr_info[n].si_signo = 0;
-     }
-   sigpwr_count++;
-   sig_count++;
-}
-#endif
-
-#ifdef SIGRTMIN
-static void
-_ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigrt_count[sig - SIGRTMIN];
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigrt_info[n][sig - SIGRTMIN] = *si;
-        else
-          sigrt_info[n][sig - SIGRTMIN].si_signo = 0;
-     }
-   sigrt_count[sig - SIGRTMIN]++;
-   sig_count++;
-}
-#endif
 
 static Eina_Bool
 _ecore_signal_exe_exit_delay(void *data)
