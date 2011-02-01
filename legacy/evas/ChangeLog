@@ -43,3 +43,4 @@
 	* Removed run-time OT toggling support, OT is now fast, no need for that.
 	* Renamed all of the intl_props->text_props (because it really changed purpose
 	* Fixed spliting/merging of text_props to be fast and good, not hacky and complex like before.
+	* Added "mirrored mode" to table object.
