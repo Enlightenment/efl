@@ -25,3 +25,7 @@
 	  because of mmap and stringshare.
 	* Add local icon cache, so we wont hit the cache file for each icon
 	  to be retrieved
+
+2011-02-01  Sebastian Dransfeld
+
+	* Revert hash cache, it causes corruption

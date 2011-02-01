@@ -51,6 +51,7 @@ dump(Efreet_Icon_Theme *theme)
 
         for (j = 0; j < icon->icons_count; ++j)
             count += icon->icons[j]->paths_count;
+        efreet_cache_icon_free(icon);
     }
     free(keys);
 

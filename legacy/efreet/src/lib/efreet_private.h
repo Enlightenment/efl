@@ -236,6 +236,8 @@ Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 EAPI const char *efreet_icon_cache_file(const char *theme);
 EAPI const char *efreet_icon_theme_cache_file(void);
 
+EAPI void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
+EAPI void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
 Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
