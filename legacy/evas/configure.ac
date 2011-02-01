@@ -125,6 +125,7 @@ want_evas_image_loader_tiff="yes"
 want_evas_image_loader_xpm="yes"
 want_evas_image_loader_bmp="yes"
 want_evas_image_loader_tga="yes"
+want_evas_image_loader_wbmp="yes"
 
 want_evas_font_loader_eet="yes"
 
@@ -815,6 +816,8 @@ EVAS_CHECK_IMAGE_LOADER([XPM], [${want_evas_image_loader_xpm}])
 EVAS_CHECK_IMAGE_LOADER([BMP], [${want_evas_image_loader_bmp}])
 
 EVAS_CHECK_IMAGE_LOADER([TGA], [${want_evas_image_loader_tga}])
+
+EVAS_CHECK_IMAGE_LOADER([WBMP], [${want_evas_image_loader_wbmp}])
 
 
 #####################################################################
@@ -1594,6 +1597,7 @@ src/modules/loaders/bmp/Makefile
 src/modules/loaders/tga/Makefile
 src/modules/loaders/svg/Makefile
 src/modules/loaders/pmaps/Makefile
+src/modules/loaders/wbmp/Makefile
 src/modules/savers/Makefile
 src/modules/savers/edb/Makefile
 src/modules/savers/eet/Makefile
@@ -1696,6 +1700,7 @@ echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
 echo "  BMP.....................: $have_evas_image_loader_bmp"
 echo "  TGA.....................: $have_evas_image_loader_tga"
+echo "  WBMP....................: $have_evas_image_loader_wbmp"
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_evas_font_loader_eet"

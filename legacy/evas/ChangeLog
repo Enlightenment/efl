@@ -32,3 +32,8 @@
 
 	* Fix lurking free bug in key grabs.
 
+
+2011-02-01  Carsten Haitzler (The Rasterman)
+
+	* Added WBMP loader thanks to Samsung.
+
