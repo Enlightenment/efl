@@ -691,9 +691,9 @@ void eina_bench_array(Eina_Benchmark *bench)
                            EINA_BENCHMARK(
                               eina_bench_evas_list_4evas_render),       200,
                            4000, 100);
-   /* eina_benchmark_register(bench, "ecore", */
-   /*                         EINA_BENCHMARK( */
-   /*                            eina_bench_ecore_list_4evas_render),      200, */
-   /*                         1000, 100); */
+   eina_benchmark_register(bench, "ecore",
+                           EINA_BENCHMARK(
+                              eina_bench_ecore_list_4evas_render),      200,
+                           500, 100);
 }
 
