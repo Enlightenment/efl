@@ -776,7 +776,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 /* Only used if cache is on */
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
 struct prword *
-evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning)
+evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning __UNUSED__)
 {
    struct cinfo *metrics;
    const Eina_Unicode *text = in_text;
@@ -809,6 +809,20 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
    above = 0; below = 0; baseline = 0; height = 0; descent = 0;
+   /* Load the glyph according to the first letter of the script, preety
+    * bad, but will have to do */
+     {
+        /* Skip common chars */
+        const Eina_Unicode *tmp;
+        for (tmp = text ;
+              *tmp &&
+              evas_common_language_char_script_get(*tmp) ==
+              EVAS_SCRIPT_COMMON ;
+              tmp++)
+          ;
+        if (!*tmp && (tmp > text)) tmp--;
+        evas_common_font_glyph_search(fn, &fi, *tmp);
+     }
 
    /* First pass: Work out how big and populate */
    /* It's a bit hackish to use index and fg here as they are internal,
@@ -818,7 +832,26 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
         struct cinfo *ci = metrics + char_index;
-        EVAS_FONT_WALK_TEXT_WORK(EINA_FALSE);
+        FT_UInt index;
+        RGBA_Font_Glyph *fg;
+#ifdef OT_SUPPORT
+        index = text_props->info->glyph[char_index].index;
+#else
+        /* FIXME: Should be removed once we split according to script without
+         * the use of harfbuzz */
+        index =
+           evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
+#endif
+        LKL(fi->ft_mutex);
+        fg = evas_common_font_int_cache_glyph_get(fi, index);
+        if (!fg)
+          {
+             LKU(fi->ft_mutex);
+             continue;
+          }
+
+        LKU(fi->ft_mutex);
+        EVAS_FONT_WALK_TEXT_WORK();
         /* Currently broken with invisible chars if (!EVAS_FONT_WALK_IS_VISIBLE) continue; */
         ci->index = index;
         ci->fg = fg;
@@ -837,8 +870,8 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
         below = ci->bm.rows - ci->bm.h;
         if (below > descent) descent = below;
         if (above > baseline) baseline = above;
-        ci->pos.x = EVAS_FONT_WALK_PEN_X + ci->fg->glyph_out->left;
-        ci->pos.y = EVAS_FONT_WALK_PEN_Y + ci->fg->glyph_out->top;
+        ci->pos.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
+        ci->pos.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
         last_delta = EVAS_FONT_WALK_X_ADV -
            (ci->bm.w + ci->fg->glyph_out->left);
      }
