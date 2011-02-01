@@ -60,10 +60,6 @@
 
 2011-01-31  Sebastian Dransfeld
 
-	* Correct english
-
-2011-01-31  Sebastian Dransfeld
-
 	* Before doing strcmp, check if pointers are equal. They might be
 	  because of mmap and stringshare.
 
