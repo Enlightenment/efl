@@ -440,7 +440,7 @@ efreet_util_desktop_categories_list(void)
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
 
-    array = eet_data_read(cache, efreet_array_string_edd(), "categories_list");
+    array = efreet_util_cache_names(efreet_array_string_edd(), "categories_list");
     if (!array) return NULL;
     for (i = 0; i < array->array_count; i++)
         ret = eina_list_append(ret, array->array[i]);
