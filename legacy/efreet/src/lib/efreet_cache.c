@@ -924,6 +924,7 @@ icon_cache_update_cache_job(void *data __UNUSED__)
     char file[PATH_MAX];
     struct flock fl;
     int prio;
+    Eina_List **l, *l2;
 
     icon_cache_job = NULL;
 
@@ -940,7 +941,34 @@ icon_cache_update_cache_job(void *data __UNUSED__)
     if (fcntl(icon_cache_exe_lock, F_SETLK, &fl) < 0) goto error;
     prio = ecore_exe_run_priority_get();
     ecore_exe_run_priority_set(19);
-    icon_cache_exe = ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_icon_cache_create", NULL);
+    eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_icon_cache_create", sizeof(file));
+    l = efreet_icon_extra_list_get();
+    if (l && eina_list_count(*l) > 0)
+    {
+        Eina_List *ll;
+        char *p;
+
+        eina_strlcat(file, " -d", sizeof(file));
+        EINA_LIST_FOREACH(*l, ll, p)
+        {
+            eina_strlcat(file, " ", sizeof(file));
+            eina_strlcat(file, p, sizeof(file));
+        }
+    }
+    l2 = efreet_icon_extensions_list_get();
+    if (eina_list_count(l2) > 0)
+    {
+        Eina_List *ll;
+        char *p;
+
+        eina_strlcat(file, " -e", sizeof(file));
+        EINA_LIST_FOREACH(l2, ll, p)
+        {
+            eina_strlcat(file, " ", sizeof(file));
+            eina_strlcat(file, p, sizeof(file));
+        }
+    }
+    icon_cache_exe = ecore_exe_run(file, NULL);
     ecore_exe_run_priority_set(prio);
     if (!icon_cache_exe) goto error;
 

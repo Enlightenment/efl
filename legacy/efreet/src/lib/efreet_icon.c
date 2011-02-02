@@ -209,6 +209,16 @@ efreet_icon_extra_list_get(void)
 }
 
 /**
+ * @return Returns a list of strings that are icon extensions to look for
+ * @brief Gets the list of all icon extensions to look for
+ */
+EAPI Eina_List *
+efreet_icon_extensions_list_get(void)
+{
+    return efreet_icon_extensions;
+}
+
+/**
  * @return Returns a list of Efreet_Icon structs for all the non-hidden icon
  * themes
  * @brief Retrieves all of the non-hidden icon themes available on the system.
@@ -850,13 +860,11 @@ efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
     path = efreet_cache_icon_fallback_lookup_path_path(icon, efreet_icon_user_dir_get());
     if (path) return path;
 
-#if 0
     EINA_LIST_FOREACH(efreet_extra_icon_dirs, l, dir)
     {
-        path = efreet_cache_icon_lookup_path_path(elem, dir);
+        path = efreet_cache_icon_fallback_lookup_path_path(icon, dir);
         if (path) return path;
     }
-#endif
 
     xdg_dirs = efreet_data_dirs_get();
 

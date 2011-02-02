@@ -144,6 +144,7 @@ EAPI const char        *efreet_icon_deprecated_user_dir_get(void);
 EAPI void               efreet_icon_extension_add(const char *ext);
 
 EAPI Eina_List        **efreet_icon_extra_list_get(void);
+EAPI Eina_List         *efreet_icon_extensions_list_get(void);
 EAPI Eina_List         *efreet_icon_theme_list_get(void);
 EAPI Efreet_Icon_Theme *efreet_icon_theme_find(const char *theme_name);
 EAPI Efreet_Icon       *efreet_icon_find(const char *theme_name,

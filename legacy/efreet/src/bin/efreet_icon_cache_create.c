@@ -20,7 +20,14 @@
 #include "efreet_private.h"
 #include "efreet_cache_private.h"
 
-static const char *exts[] = { ".png", ".xpm", ".svg", ".edj", NULL };
+/* TODO:
+ * - Need to cache all exts searched and extra_dirs, so we know if we
+ *   need to rescan dirs. Then re-enable cache_directory_find().
+ * - Need to check if files has disappeared, as we only add new.
+ */
+
+static Eina_Array *exts = NULL;
+static Eina_Array *extra_dirs = NULL;
 static Eina_Array *strs = NULL;
 static Eina_Hash *icon_themes = NULL;
 static int verbose = 0;
@@ -28,6 +35,8 @@ static int verbose = 0;
 static Eina_Bool
 cache_directory_find(Eina_Hash *dirs, const char *dir)
 {
+    return EINA_TRUE;
+#if 0
     Efreet_Cache_Directory *dcache;
     struct stat st;
 
@@ -47,15 +56,16 @@ cache_directory_find(Eina_Hash *dirs, const char *dir)
     dcache->modified_time = st.st_mtime;
 
     return EINA_TRUE;
+#endif
 }
 
 static Eina_Bool
-_cache_extension_lookup(const char *ext)
+cache_extension_lookup(const char *ext)
 {
     unsigned int i;
 
-    for (i = 0; exts[i]; ++i)
-        if (!strcmp(exts[i], ext))
+    for (i = 0; i < exts->count; ++i)
+        if (!strcmp(exts->data[i], ext))
             return EINA_TRUE;
     return EINA_FALSE;
 }
@@ -82,7 +92,7 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
             continue;
 
         ext = strrchr(entry->path + entry->name_start, '.');
-        if (!ext || !_cache_extension_lookup(ext))
+        if (!ext || !cache_extension_lookup(ext))
             continue;
 
         /* icon with known extension */
@@ -122,9 +132,13 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
 static Eina_Bool
 cache_fallback_scan(Eina_Hash *icons, Eina_Hash *dirs, Eina_Bool *changed)
 {
+    unsigned int i;
     Eina_List *xdg_dirs, *l;
     const char *dir;
     char path[PATH_MAX];
+
+    for (i = 0; i < extra_dirs->count; i++)
+        cache_fallback_scan_dir(icons, dirs, extra_dirs->data[i], changed);
 
     cache_fallback_scan_dir(icons, dirs, efreet_icon_deprecated_user_dir_get(), changed);
     cache_fallback_scan_dir(icons, dirs, efreet_icon_user_dir_get(), changed);
@@ -180,7 +194,7 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
             continue;
 
         ext = strrchr(entry->path + entry->name_start, '.');
-        if (!ext || !_cache_extension_lookup(ext))
+        if (!ext || !cache_extension_lookup(ext))
             continue;
 
         /* icon with known extension */
@@ -660,6 +674,12 @@ main(int argc, char **argv)
     char **keys;
     int num, i;
 
+    /* init external subsystems */
+    if (!eina_init()) return -1;
+
+    exts = eina_array_new(10);
+    extra_dirs = eina_array_new(10);
+
     for (i = 1; i < argc; i++)
     {
         if      (!strcmp(argv[i], "-v")) verbose = 1;
@@ -669,13 +689,28 @@ main(int argc, char **argv)
                  (!strcmp(argv[i], "--help")))
         {
             printf("Options:\n");
-            printf("  -v     Verbose mode\n");
+            printf("  -v              Verbose mode\n");
+            printf("  -e .ext1 .ext2  Extensions\n");
+            printf("  -d dir1 dir2    Extra dirs\n");
             exit(0);
         }
+        else if (!strcmp(argv[i], "-e"))
+        {
+            while ((i < (argc - 1)) && (argv[(i + 1)][0] != '-'))
+                eina_array_push(exts, argv[++i]);
+        }
+        else if (!strcmp(argv[i], "-d"))
+        {
+            while ((i < (argc - 1)) && (argv[(i + 1)][0] != '-'))
+                eina_array_push(extra_dirs, argv[++i]);
+        }
+    }
+    if (exts->count == 0)
+    {
+        printf("Error: Need to pass extensions to icon cache create process\n");
+        return -1;
     }
 
-    /* init external subsystems */
-    if (!eina_init()) return -1;
     if (!eet_init()) return -1;
     if (!ecore_init()) return -1;
 
@@ -892,6 +927,12 @@ main(int argc, char **argv)
         free(keys);
     }
 
+    theme->changed = changed;
+    if (theme->changed && theme->dirs)
+    {
+        efreet_hash_free(theme->dirs, free);
+        theme->dirs = NULL;
+    }
     theme = eet_data_read(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK);
     if (!theme)
         theme = NEW(Efreet_Cache_Icon_Theme, 1);
@@ -947,6 +988,8 @@ on_error:
     while ((path = eina_array_pop(strs)))
         eina_stringshare_del(path);
     eina_array_free(strs);
+    eina_array_free(exts);
+    eina_array_free(extra_dirs);
 
     ecore_shutdown();
     eet_shutdown();
