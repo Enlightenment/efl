@@ -102,8 +102,11 @@ efreet_util_shutdown(void)
     efreet_cache_array_string_free(cache_names);
 
     IF_RELEASE(cache_hash_key);
-    eina_hash_free(cache_hash->hash);
-    free(cache_hash);
+    if (cache_hash)
+    {
+        eina_hash_free(cache_hash->hash);
+        free(cache_hash);
+    }
 
     return init;
 }
