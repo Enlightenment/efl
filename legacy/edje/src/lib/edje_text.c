@@ -193,6 +193,8 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
           }
      }
 
+   buf[0] = '\0';
+
    while (((c1 >= 0) || (c2 >= 0)) && (tw > sw))
      {
 	loop++;
@@ -321,7 +323,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Calc_Params *params,
 			Edje_Part_Description_Text *chosen_desc)
 {
-   const char	*text, *str;
+   const char	*text = NULL;
+   const char   *str;
    const char	*font;
    char		*font2 = NULL;
    char         *sfont = NULL;
