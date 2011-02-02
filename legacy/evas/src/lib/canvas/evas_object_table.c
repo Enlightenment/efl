@@ -1393,6 +1393,15 @@ evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned s
    return NULL;
 }
 
+/**
+ * Gets the mirrored mode of the table. In mirrored mode the table items go
+ * from right to left instead of left to right. That is, 1,1 is top right, not
+ * to left.
+ *
+ * @param obj The table object.
+ * @return EINA_TRUE if it's a mirrored table, EINA_FALSE otherwise.
+ * @since 1.1.0
+ */
 EAPI Eina_Bool
 evas_object_table_mirrored_get(const Evas_Object *obj)
 {
@@ -1401,6 +1410,15 @@ evas_object_table_mirrored_get(const Evas_Object *obj)
    return priv->is_mirrored;
 }
 
+/**
+ * Sets the mirrored mode of the table. In mirrored mode the table items go
+ * from right to left instead of left to right. That is, 1,1 is top right, not
+ * to left.
+ *
+ * @param obj The table object.
+ * @param mirrored the mirrored mode to set
+ * @since 1.1.0
+ */
 EAPI void
 evas_object_table_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
 {
