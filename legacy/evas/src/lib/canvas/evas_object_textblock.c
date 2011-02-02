@@ -3173,7 +3173,7 @@ static Evas_Object_Textblock_Text_Item *
 _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
    Evas_Object_Textblock_Text_Item *ellip_ti;
-   const Eina_Unicode _ellip_str[4] = { '.', '.', '.', '\0' };
+   const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' }; /* Ellipsis char */
    /* We assume that the format stack has at least one time,
     * the only reason it may not have, is more </> than <>, other
     * than that, we're safe. The last item is the base format. */
