@@ -15,3 +15,7 @@
         * Fix: ecore-evas CAN send "render done" messages even if not
         waiting for sync counter when using gl engine. new semi-sync
         mode to account for that.
+
+2011-02-01 Mike McCormack
+
+        * Remove SIGRT from ecore's signals since it's unused and broken
