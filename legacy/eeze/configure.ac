@@ -159,6 +159,7 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 eeze.pc
+eeze.spec
 ])
 
 

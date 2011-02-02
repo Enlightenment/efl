@@ -1,0 +1,75 @@
+%{!?_rel:%{expand:%%global _rel 0.r%(svnversion | sed 's/[^0-9].*$//' || echo 0000)}}
+%define _missing_doc_files_terminate_build 0
+
+Summary: Device Convenience Library
+Name: @PACKAGE@
+Version: @VERSION@
+Release: %{_rel}
+License: BSD
+Group: System Environment/Libraries
+Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
+Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
+Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
+BuildRequires: ecore-devel, libudev-devel
+URL: http://www.enlightenment.org/
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
+
+%description
+Eeze is a library for manipulating devices through udev with a simple
+and fast api. It interfaces directly with libudev, avoiding such
+middleman daemons as udisks/upower or hal, to immediately gather
+device information the instant it becomes known to the system.  This
+can be used to determine such things as:
+  * If a cdrom has a disk inserted
+  * The temperature of a cpu core
+  * The remaining power left in a battery
+  * The current power consumption of various parts
+  * Monitor in realtime the status of peripheral devices
+
+Each of the above examples can be performed by using only a single
+eeze function, as one of the primary focuses of the library is to
+reduce the complexity of managing devices.
+
+%package devel
+Summary: Development files for Eeze
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+Requires: ecore-devel, libudev-devel
+
+%description devel
+Headers, static libraries, test programs and documentation for Eeze
+
+%prep
+%setup -q
+
+%build
+%{configure} --prefix=%{_prefix}
+%{__make} %{?_smp_mflags} %{?mflags}
+
+%install
+%{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+
+%clean
+test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/ldconfig
+
+%postun
+/sbin/ldconfig
+
+%files
+%defattr(-, root, root)
+%doc AUTHORS COPYING README
+%{_libdir}/*.so.*
+
+%files devel
+%defattr(-, root, root)
+%{_includedir}/*
+%{_libdir}/*.a
+%{_libdir}/*.so
+%{_libdir}/*.la
+%{_libdir}/pkgconfig/*
+
+%changelog

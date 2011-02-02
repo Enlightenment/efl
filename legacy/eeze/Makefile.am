@@ -17,6 +17,8 @@ ltconfig \
 ltmain.sh \
 missing \
 eeze*doc*tar* \
+eeze.pc \
+eeze.spec \
 m4/l*
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -29,6 +31,8 @@ README \
 $(pkgconfig_DATA) \
 autogen.sh \
 eeze.pc.in \
+eeze.spec.in \
+eeze.spec \
 m4/efl_doxygen.m4
 
 .PHONY: doc
