@@ -15,7 +15,6 @@
 /* make mono happy - this is evil though... */
 #undef SIGPWR
 /* valgrind in some versions/setups uses SIGRT's... hmmm */
-#undef SIGRTMIN
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
@@ -30,10 +29,6 @@ static void _ecore_signal_callback_sigint(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigterm(int sig, siginfo_t *si, void *foo);
 #ifdef SIGPWR
 static void _ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo);
-#endif
-
-#ifdef SIGRTMIN
-static void _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo);
 #endif
 
 static Eina_Bool _ecore_signal_exe_exit_delay(void *data);
@@ -52,9 +47,6 @@ static volatile sig_atomic_t sigterm_count = 0;
 #ifdef SIGPWR
 static volatile sig_atomic_t sigpwr_count = 0;
 #endif
-#ifdef SIGRTMIN
-static volatile sig_atomic_t *sigrt_count = NULL;
-#endif
 
 static volatile siginfo_t sigchld_info[MAXSIGQ];
 static volatile siginfo_t sigusr1_info[MAXSIGQ];
@@ -66,17 +58,10 @@ static volatile siginfo_t sigterm_info[MAXSIGQ];
 #ifdef SIGPWR
 static volatile siginfo_t sigpwr_info[MAXSIGQ];
 #endif
-#ifdef SIGRTMIN
-static volatile siginfo_t *sigrt_info[MAXSIGQ];
-#endif
 
 void
 _ecore_signal_shutdown(void)
 {
-#ifdef SIGRTMIN
-   int i, num = SIGRTMAX - SIGRTMIN;
-#endif
-
    _ecore_signal_callback_set(SIGPIPE, (Signal_Handler) SIG_DFL);
    _ecore_signal_callback_set(SIGALRM, (Signal_Handler) SIG_DFL);
    _ecore_signal_callback_set(SIGCHLD, (Signal_Handler) SIG_DFL);
@@ -99,37 +84,11 @@ _ecore_signal_shutdown(void)
    sigterm_count = 0;
    sig_count = 0;
 
-#ifdef SIGRTMIN
-   for (i = 0; i < num; i++)
-     {
-        _ecore_signal_callback_set(SIGRTMIN + i, (Signal_Handler) SIG_DFL);
-        sigrt_count[i] = 0;
-     }
-
-   if (sigrt_count)
-     {
-        free((sig_atomic_t *) sigrt_count);
-        sigrt_count = NULL;
-     }
-
-   for (i = 0; i < MAXSIGQ; i++)
-     {
-        if (sigrt_info[i])
-          {
-             free((siginfo_t *) sigrt_info[i]);
-             sigrt_info[i] = NULL;
-          }
-     }
-#endif
 }
 
 void
 _ecore_signal_init(void)
 {
-#ifdef SIGRTMIN
-   int i, num = SIGRTMAX - SIGRTMIN;
-#endif
-
    _ecore_signal_callback_set(SIGPIPE, _ecore_signal_callback_ignore);
    _ecore_signal_callback_set(SIGALRM, _ecore_signal_callback_ignore);
    _ecore_signal_callback_set(SIGCHLD, _ecore_signal_callback_sigchld);
@@ -142,20 +101,6 @@ _ecore_signal_init(void)
 #ifdef SIGPWR
    _ecore_signal_callback_set(SIGPWR,  _ecore_signal_callback_sigpwr);
 #endif
-
-#ifdef SIGRTMIN
-   sigrt_count = calloc(1, sizeof(sig_atomic_t) * num);
-   assert(sigrt_count);
-
-   for (i = 0; i < MAXSIGQ; i++)
-     {
-        sigrt_info[i] = calloc(1, sizeof(siginfo_t) * num);
-        assert(sigrt_info[i]);
-     }
-
-   for (i = 0; i < num; i++)
-      _ecore_signal_callback_set(SIGRTMIN + i, _ecore_signal_callback_sigrt);
-#endif
 }
 
 int
@@ -167,9 +112,6 @@ _ecore_signal_count_get(void)
 void
 _ecore_signal_call(void)
 {
-#ifdef SIGRTMIN
-   int i, num = SIGRTMAX - SIGRTMIN;
-#endif
    volatile sig_atomic_t n;
    sigset_t oldset, newset;
 
@@ -186,10 +128,6 @@ _ecore_signal_call(void)
    sigaddset(&newset, SIGTERM);
 #ifdef SIGPWR
    sigaddset(&newset, SIGPWR);
-#endif
-#ifdef SIGRTMIN
-   for (i = 0; i < num; i++)
-     sigaddset(&newset, SIGRTMIN + i);
 #endif
    sigprocmask(SIG_BLOCK, &newset, &oldset);
    if (sigchld_count > MAXSIGQ)
@@ -412,30 +350,6 @@ _ecore_signal_call(void)
    sigpwr_count = 0;
 #endif
 
-#ifdef SIGRTMIN
-   for (i = 0; i < num; i++)
-     {
-        if (sigrt_count[i] > MAXSIGQ)
-          WRN("%i SIGRT%i in queue. max queue size %i. losing "
-              "siginfo for extra signals.", i + 1, sigrt_count[i], MAXSIGQ);
-        for (n = 0; n < sigrt_count[i]; n++)
-          {
-             Ecore_Event_Signal_Realtime *e;
-
-             if ((e = _ecore_event_signal_realtime_new()))
-               {
-                  e->num = i;
-
-                  if ((n < MAXSIGQ) && (sigrt_info[n][i].si_signo))
-                    e->data = sigrt_info[n][i];
-
-                  ecore_event_add(ECORE_EVENT_SIGNAL_REALTIME, e, NULL, NULL);
-               }
-             sig_count--;
-          }
-        sigrt_count[i] = 0;
-     }
-#endif
    sigprocmask(SIG_SETMASK, &oldset, NULL);
 }
 
@@ -582,24 +496,6 @@ _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNU
           sigpwr_info[n].si_signo = 0;
      }
    sigpwr_count++;
-   sig_count++;
-}
-#endif
-
-#ifdef SIGRTMIN
-static void
-_ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
-{
-   volatile sig_atomic_t n;
-   n = sigrt_count[sig - SIGRTMIN];
-   if (n < MAXSIGQ)
-     {
-        if (si)
-          sigrt_info[n][sig - SIGRTMIN] = *si;
-        else
-          sigrt_info[n][sig - SIGRTMIN].si_signo = 0;
-     }
-   sigrt_count[sig - SIGRTMIN]++;
    sig_count++;
 }
 #endif
