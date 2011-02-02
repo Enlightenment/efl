@@ -268,8 +268,8 @@ edje_object_scale_get(const Evas_Object *obj)
  *
  * @param obj the smart object
  * @return if flag is set or not.
- *
- **/
+ * @since 1.1.0
+ */
 EAPI Eina_Bool
 edje_object_mirrored_get(const Evas_Object *obj)
 {
@@ -295,8 +295,8 @@ _edje_object_orientation_inform(Evas_Object *obj)
  *
  * @param obj the smart object
  * @rtl new value of flag EINA_TRUE/EINA_FALSE
- *
- **/
+ * @since 1.1.0
+ */
 EAPI void
 edje_object_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
