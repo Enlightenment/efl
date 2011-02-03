@@ -301,7 +301,7 @@ EAPI void
 edje_object_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    Edje *ed;
-   int i;
+   unsigned int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
