@@ -42,7 +42,6 @@
 #include "eina_module.h"
 #include "eina_mempool.h"
 #include "eina_trash.h"
-#include "eina_rbtree.h"
 
 #include "eina_private.h"
 
@@ -65,7 +64,6 @@ typedef struct _Chained_Mempool Chained_Mempool;
 struct _Chained_Mempool
 {
    Eina_Inlist *first;
-   Eina_Rbtree *root;
    const char *name;
    int item_alloc;
    int pool_size;
@@ -88,31 +86,12 @@ typedef struct _Chained_Pool Chained_Pool;
 struct _Chained_Pool
 {
    EINA_INLIST;
-   EINA_RBTREE;
    Eina_Trash *base;
    int usage;
 
    unsigned char *last;
    unsigned char *limit;
 };
-
-static inline Eina_Rbtree_Direction
-_eina_chained_mp_pool_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, __UNUSED__ void *data)
-{
-   if (left < right) return EINA_RBTREE_LEFT;
-   return EINA_RBTREE_RIGHT;
-}
-
-static inline int
-_eina_chained_mp_pool_key_cmp(const Eina_Rbtree *node, const void *key,
-                              __UNUSED__ int length, __UNUSED__ void *data)
-{
-   const Chained_Pool *r = EINA_RBTREE_CONTAINER_GET(node, const Chained_Pool);
-
-   if (key > (void *) r->limit) return 1;
-   if (key < (void *) r) return -1;
-   return 0;
-}
 
 static inline Chained_Pool *
 _eina_chained_mp_pool_new(Chained_Mempool *pool)
@@ -172,12 +151,16 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 #endif
 #endif
 
-   // Either we have some free space in the first one, or there is no free space.
-   p = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
-
-   // base is not NULL - has a free slot
-   if (p && !p->base && !p->last)
-     p = NULL;
+   // look 4 pool from 2nd bucket on
+   EINA_INLIST_FOREACH(pool->first, p)
+   {
+      // base is not NULL - has a free slot
+      if (p->base || p->last)
+        {
+           pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
+           break;
+        }
+   }
 
    // we have reached the end of the list - no free pools
    if (!p)
@@ -199,8 +182,6 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
           }
 
         pool->first = eina_inlist_prepend(pool->first, EINA_INLIST_GET(p));
-        pool->root = eina_rbtree_inline_insert(pool->root, EINA_RBTREE_GET(p),
-                                               _eina_chained_mp_pool_cmp, NULL);
      }
 
    if (p->last)
@@ -248,7 +229,6 @@ static void
 eina_chained_mempool_free(void *data, void *ptr)
 {
    Chained_Mempool *pool = data;
-   Eina_Rbtree *r;
    Chained_Pool *p;
    void *pmem;
 
@@ -269,52 +249,36 @@ eina_chained_mempool_free(void *data, void *ptr)
 #endif
 #endif
 
-   // searching for the right mempool
-   r = eina_rbtree_inline_lookup(pool->root, ptr, 0, _eina_chained_mp_pool_key_cmp, NULL);
+   EINA_INLIST_FOREACH(pool->first, p)
+   {
+      // Could the pointer be inside that pool
+      if ((unsigned char*) ptr < p->limit)
+        {
+           // pool mem base
+           pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
+           // is it in pool mem?
+           if (ptr >= pmem)
+             {
+                // freed node points to prev free node
+                eina_trash_push(&p->base, ptr);
+                // next free node is now the one we freed
+                p->usage--;
+                pool->usage--;
+                if (p->usage == 0)
+                  {
+                     // free bucket
+                     pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
+                     _eina_chained_mp_pool_free(p);
+                  }
+                else
+                  // move to front
+                  pool->first = eina_inlist_promote(pool->first, EINA_INLIST_GET(p));
 
-   // related mempool not found
-   if (!r)
-     {
-#ifdef DEBUG
-        INF("%p is not the property of %p Chained_Mempool", ptr, pool);
-#endif
-        goto on_error;
-     }
+                break;
+             }
+        }
+   }
 
-   p = EINA_RBTREE_CONTAINER_GET(r, Chained_Pool);
-
-   // pool mem base
-   pmem = (void *)(((unsigned char *)p) + sizeof(Chained_Pool));
-
-   // is it in pool mem?
-   if (ptr < pmem)
-     {
-#ifdef DEBUG
-        INF("%p is inside the private part of %p pool from %p Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool);
-#endif
-        goto on_error;
-     }
-
-   // freed node points to prev free node
-   eina_trash_push(&p->base, ptr);
-   // next free node is now the one we freed
-   p->usage--;
-   pool->usage--;
-   if (p->usage == 0)
-     {
-        // free bucket
-        pool->first = eina_inlist_remove(pool->first, EINA_INLIST_GET(p));
-        pool->root = eina_rbtree_inline_remove(pool->root, EINA_RBTREE_GET(p),
-                                               _eina_chained_mp_pool_cmp, NULL);
-        _eina_chained_mp_pool_free(p);
-     }
-   else
-     {
-        // move to front
-        pool->first = eina_inlist_promote(pool->first, EINA_INLIST_GET(p));
-     }
-
- on_error:
 #ifndef NVALGRIND
    if (ptr)
      {
@@ -407,15 +371,8 @@ eina_chained_mempool_shutdown(void *data)
 #endif
 
         mp->first = eina_inlist_remove(mp->first, mp->first);
-        mp->root = eina_rbtree_inline_remove(mp->root, EINA_RBTREE_GET(p),
-                                             _eina_chained_mp_pool_cmp, NULL);
         _eina_chained_mp_pool_free(p);
      }
-
-#ifdef DEBUG
-   if (mp->root)
-     INF("Bad news, list of pool and rbtree are out of sync for %p !", mp);
-#endif
 
 #ifndef NVALGRIND
    VALGRIND_DESTROY_MEMPOOL(mp);

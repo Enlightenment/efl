@@ -1,8 +1,4 @@
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
-
-2011-02-01  Cedric Bail
-
-	* Improve scalability and raw speed of Chained Mempool.
-
+        
