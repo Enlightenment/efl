@@ -3693,7 +3693,7 @@ eet_data_get_array(Eet_Free_Context     *context,
 
 on_error:
    EINA_LIST_FREE(childs, tmp)
-   eet_node_del(tmp);
+      eet_node_del(tmp);
 
    return 0;
 } /* eet_data_get_array */
