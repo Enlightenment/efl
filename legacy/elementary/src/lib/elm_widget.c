@@ -76,6 +76,7 @@ struct _Smart_Data
    Eina_Bool      highlight_ignore : 1;
    Eina_Bool      highlight_in_theme : 1;
    Eina_Bool      disabled : 1;
+   Eina_Bool      is_mirrored : 1;
 
    Eina_List     *focus_chain;
    Eina_List     *event_cb;
@@ -374,8 +375,11 @@ elm_widget_api_check(int ver)
 EAPI Evas_Object *
 elm_widget_add(Evas *evas)
 {
+   Evas_Object *obj;
    _smart_init();
-   return evas_object_smart_add(evas, _e_smart);
+   obj = evas_object_smart_add(evas, _e_smart);
+   elm_widget_mirrored_set(obj, elm_mirrored_get());
+   return obj;
 }
 
 EAPI void
@@ -527,6 +531,37 @@ elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (const Evas_O
    sd->focus_next_func = func;
 }
 
+/**
+ * Returns the widget's mirrored mode.
+ *
+ * @param obj The widget.
+ * @return mirrored mode of the object.
+ *
+ **/
+EAPI Eina_Bool
+elm_widget_mirrored_get(const Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->is_mirrored;
+}
+
+/**
+ * Sets the widget's mirrored mode.
+ *
+ * @param obj The widget.
+ * @param mirrored EINA_TRUE to set mirrored mode. EINA_FALSE to unset.
+ */
+EAPI void
+elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
+{
+   API_ENTRY return;
+   if (sd->is_mirrored != mirrored)
+     {
+	sd->is_mirrored = mirrored;
+	elm_widget_theme(obj);
+     }
+}
+
 EAPI void
 elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
 {
@@ -615,6 +650,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    API_ENTRY return;
    double scale, pscale = elm_widget_scale_get(sobj);
    Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
+   Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
 
    if (_elm_widget_is(sobj))
      {
@@ -646,7 +682,8 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
    evas_object_smart_callback_call(obj, "sub-object-add", sobj);
    scale = elm_widget_scale_get(sobj);
    th = elm_widget_theme_get(sobj);
-   if ((scale != pscale) || (th != pth)) elm_widget_theme(sobj);
+   mirrored = elm_widget_mirrored_get(sobj);
+   if ((scale != pscale) || (th != pth) || (pmirrored != mirrored)) elm_widget_theme(sobj);
    if (elm_widget_focus_get(sobj)) _focus_parents(obj);
 }
 

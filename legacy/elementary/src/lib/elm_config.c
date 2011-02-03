@@ -9,6 +9,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#define _(string) gettext(string)
+
 Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
@@ -1131,6 +1133,7 @@ _config_load(void)
    _elm_config->fps = 60.0;
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
+   _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
    _elm_config->tooltip_delay = 1.0;
    _elm_config->cursor_engine_only = EINA_TRUE;
    _elm_config->focus_highlight_enable = EINA_FALSE;
@@ -1529,6 +1532,12 @@ _env_get(void)
    s = getenv("ELM_MODULES");
    if (s) eina_stringshare_replace(&_elm_config->modules, s);
 
+   /* Get RTL orientation from system */
+   setlocale(LC_ALL, "");
+   bindtextdomain("elementary", LOCALE_DIR);
+   textdomain("elementary");
+   _elm_config->is_mirrored = !strcmp(_("default:LTR"), "default:RTL");
+
    s = getenv("ELM_TOOLTIP_DELAY");
    if (s)
      {
@@ -1565,6 +1574,31 @@ _env_get(void)
    
    s = getenv("ELM_EFFECT_ENABLE");
    if (s) _elm_config->effect_enable = !!atoi(s);
+}
+
+/**
+ * Get the system mirrored mode. This determines the default mirrored mode
+ * of widgets.
+ *
+ * @return EINA_TRUE if mirrored is set, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool
+elm_mirrored_get(void)
+{
+   return _elm_config->is_mirrored;
+}
+
+/**
+ * Set the system mirrored mode. This determines the default mirrored mode
+ * of widgets.
+ *
+ * @param mirrored EINA_TRUE to set mirrored mode, EINA_FALSE to unset it.
+ */
+EAPI void
+elm_mirrored_set(Eina_Bool mirrored)
+{
+   /* TODO: Should update all interface */
+   _elm_config->is_mirrored = mirrored;
 }
 
 void

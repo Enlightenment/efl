@@ -108,6 +108,15 @@ else
 fi
 AC_SUBST(pkgconfig_requires_private)
 
+#================================================
+if test "x${prefix}" = "xNONE"; then
+  LOCALE_DIR="${ac_default_prefix}/share/locale"
+else
+  LOCALE_DIR="${prefix}/share/locale"
+fi
+AC_SUBST(LOCALE_DIR)
+#================================================
+
 lt_enable_auto_import=""
 ELM_UNIX_DEF="#undef"
 ELM_WIN32_DEF="#undef"
@@ -476,6 +485,20 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 EFL_ENABLE_BIN([elementary-test])
 EFL_ENABLE_BIN([elementary-config])
 
+m4_ifdef([AM_GNU_GETTEXT_VERSION], [
+AM_GNU_GETTEXT_VERSION([0.12.1])
+])
+
+m4_ifdef([AM_GNU_GETTEXT], [
+AM_GNU_GETTEXT([external])
+po_makefile_in=po/Makefile.in
+AM_CONDITIONAL([HAVE_PO], [true])
+],[
+AM_CONDITIONAL([HAVE_PO], [false])
+])
+AC_SUBST(LTLIBINTL)
+
+
 AC_OUTPUT([
 Makefile
 elementary.spec
@@ -500,6 +523,7 @@ config/Makefile
 config/default/Makefile
 config/standard/Makefile
 config/illume/Makefile
+$po_makefile_in
 ])
 
 #####################################################################

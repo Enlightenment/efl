@@ -279,6 +279,8 @@ EAPI void             elm_widget_scale_set(Evas_Object *obj, double scale);
 EAPI double           elm_widget_scale_get(const Evas_Object *obj);
 EAPI void             elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
 EAPI Elm_Theme       *elm_widget_theme_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_mirrored_get(const Evas_Object *obj);
+EAPI void             elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
 EAPI void             elm_widget_style_set(Evas_Object *obj, const char *style);
 EAPI const char      *elm_widget_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_type_set(Evas_Object *obj, const char *type);
