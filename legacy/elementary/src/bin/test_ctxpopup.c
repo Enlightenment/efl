@@ -118,15 +118,28 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 static void
 _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *ctxpopup, *btn;
+   Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
 
-   btn = elm_button_add(obj);
+   bx = elm_box_add(obj);
+   evas_object_size_hint_min_set(bx, 150, 150);
+
+   sc = elm_scroller_add(bx);
+   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
+   evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(sc);
+
+   btn = elm_button_add(sc);
    elm_button_label_set(btn, "Enlightenment");
-   evas_object_size_hint_min_set(btn, 150, 150);
+   evas_object_size_hint_min_set(btn, 140, 140);
+
+   elm_scroller_content_set(sc, btn);
+
+   elm_box_pack_end(bx, sc);
 
    ctxpopup = elm_ctxpopup_add(obj);
-   elm_ctxpopup_content_set(ctxpopup, btn);
+   elm_ctxpopup_content_set(ctxpopup, bx);
 
    evas_pointer_output_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_move(ctxpopup, x, y);
