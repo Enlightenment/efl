@@ -3150,10 +3150,10 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
 
 #define NEXT_CHUNK(P, Size, Echnk, Ed)\
    {\
-      int tmp;\
-      tmp = Ed ? (int)(sizeof(int) * 2) : Echnk.len + 4;\
-      P += (4 + Echnk.size + tmp);\
-      Size -= (4 + Echnk.size + tmp);\
+      int __tmp;\
+      __tmp = Ed ? (int)(sizeof(int) * 2) : Echnk.len + 4;\
+      P += (4 + Echnk.size + __tmp);\
+      Size -= (4 + Echnk.size + __tmp);\
    }
 
 static void *
