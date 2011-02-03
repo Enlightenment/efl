@@ -351,7 +351,7 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
     {
         eina_stringshare_del(mime);
         eina_stringshare_del(theme);
-        return strdup(cache);
+        return cache;
     }
 
     /* Standard icon name */
