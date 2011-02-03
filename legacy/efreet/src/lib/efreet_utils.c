@@ -95,18 +95,21 @@ efreet_util_shutdown(void)
 
     eina_log_domain_unregister(_efreet_utils_log_dom);
     IF_FREE_HASH(file_id_by_desktop_path);
-    cache = efreet_cache_close(cache);
-    IF_RELEASE(cache_file);
 
     IF_RELEASE(cache_names_key);
     efreet_cache_array_string_free(cache_names);
+    cache_names = NULL;
 
     IF_RELEASE(cache_hash_key);
     if (cache_hash)
     {
         eina_hash_free(cache_hash->hash);
         free(cache_hash);
+        cache_hash = NULL;
     }
+
+    cache = efreet_cache_close(cache);
+    IF_RELEASE(cache_file);
 
     return init;
 }
