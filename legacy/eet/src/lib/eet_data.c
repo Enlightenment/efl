@@ -4035,7 +4035,6 @@ eet_data_get_variant(Eet_Free_Context        *context,
                      Eet_Data_Chunk chnk;
                      char *p2;
                      int size2;
-                     int ret;
 
                      p2 = echnk->data;
                      size2 = echnk->size;
