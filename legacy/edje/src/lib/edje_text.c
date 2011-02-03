@@ -1,5 +1,5 @@
 #include "edje_private.h"
-
+#define _ELLIP_STR "\xE2\x80\xA6"
 
 /* returns with and height for this part.
  *
@@ -86,12 +86,12 @@ _edje_text_fit_set(char *buf, const char *text, int c1, int c2)
 
    if (c1 >= 0)
      {
-	strcpy(buf, "...");
+	strcpy(buf, _ELLIP_STR);
 
 	if (c2 >= 0)
 	  {
 	     strncat(buf, text + c1, c2 - c1);
-	     strcat(buf, "...");
+	     strcat(buf, _ELLIP_STR);
 	  }
 	else
 	  strcat(buf, text + c1);
@@ -102,7 +102,7 @@ _edje_text_fit_set(char *buf, const char *text, int c1, int c2)
 	  {
 	     strncpy(buf, text, c2);
 	     buf[c2] = 0;
-	     strcat(buf, "...");
+	     strcat(buf, _ELLIP_STR);
 	  }
 	else
 	  strcpy(buf, text);
