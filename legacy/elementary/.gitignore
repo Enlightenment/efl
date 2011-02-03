@@ -41,3 +41,11 @@ m4/ltversion.m4
 m4/lt~obsolete.m4
 src/lib/Elementary.h
 tags
+/ABOUT-NLS
+/config.rpath
+/config/default/base.cfg
+/config/illume/base.cfg
+/config/profile.cfg
+/config/standard/base.cfg
+/mkinstalldirs
+
