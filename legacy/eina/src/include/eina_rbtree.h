@@ -96,6 +96,12 @@ struct _Eina_Rbtree
 #define EINA_RBTREE_GET(Rbtree) & ((Rbtree)->__rbtree)
 
 /**
+ * @def EINA_RBTREE_CONTAINER_GET
+ * find back the container of an red black tree.
+ */
+#define EINA_RBTREE_CONTAINER_GET(Ptr, Type) ((Type *)((char *)Ptr - offsetof(Type, __rbtree)))
+
+/**
  * @typedef Eina_Rbtree_Cmp_Node_Cb
  * Function used compare two nodes and see which direction to navigate.
  */
