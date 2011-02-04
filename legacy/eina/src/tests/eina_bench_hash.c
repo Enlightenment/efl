@@ -402,25 +402,25 @@ void eina_bench_hash(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "superfast-lookup",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_superfast),   10, 3000, 10);
+                              eina_bench_lookup_superfast),   10, 10000, 10);
    eina_benchmark_register(bench, "djb2-lookup",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_djb2),        10, 3000, 10);
+                              eina_bench_lookup_djb2),        10, 10000, 10);
    eina_benchmark_register(bench, "djb2-lookup-inline",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_djb2_inline), 10, 3000, 10);
+                              eina_bench_lookup_djb2_inline), 10, 10000, 10);
    eina_benchmark_register(bench, "rbtree",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_rbtree),      10, 3000, 10);
+                              eina_bench_lookup_rbtree),      10, 10000, 10);
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_benchmark_register(bench, "ghash-lookup",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_ghash),       10, 3000, 10);
+                              eina_bench_lookup_ghash),       10, 10000, 10);
 #endif
    eina_benchmark_register(bench, "evas-lookup",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_evas),        10, 3000, 10);
+                              eina_bench_lookup_evas),        10, 10000, 10);
    eina_benchmark_register(bench, "ecore-lookup",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_ecore),       10, 3000, 10);
+                              eina_bench_lookup_ecore),       10, 10000, 10);
 }

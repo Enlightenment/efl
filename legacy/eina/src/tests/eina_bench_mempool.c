@@ -158,31 +158,31 @@ eina_bench_mempool(Eina_Benchmark *bench)
 #ifdef EINA_BUILD_CHAINED_POOL
    eina_benchmark_register(bench, "chained mempool",
                            EINA_BENCHMARK(
-                              eina_mempool_chained_mempool), 10, 1000, 10);
+                              eina_mempool_chained_mempool), 10, 10000, 10);
 #endif
 #ifdef EINA_BUILD_PASS_THROUGH
    eina_benchmark_register(bench, "pass through",
                            EINA_BENCHMARK(
-                              eina_mempool_pass_through),    10, 1000, 10);
+                              eina_mempool_pass_through),    10, 10000, 10);
 #endif
 #ifdef EINA_BUILD_FIXED_BITMAP
    eina_benchmark_register(bench, "fixed bitmap",
                            EINA_BENCHMARK(
-                              eina_mempool_fixed_bitmap),    10, 1000, 10);
+                              eina_mempool_fixed_bitmap),    10, 10000, 10);
 #endif
 #ifdef EINA_BUILD_EMEMOA_FIXED
    eina_benchmark_register(bench, "ememoa fixed",
                            EINA_BENCHMARK(
-                              eina_mempool_ememoa_fixed),    10, 1000, 10);
+                              eina_mempool_ememoa_fixed),    10, 10000, 10);
 #endif
 #ifdef EINA_BUILD_EMEMOA_UNKNOWN
    eina_benchmark_register(bench, "ememoa unknown",
                            EINA_BENCHMARK(
-                              eina_mempool_ememoa_unknown),  10, 1000, 10);
+                              eina_mempool_ememoa_unknown),  10, 10000, 10);
 #endif
 #ifdef EINA_BENCH_HAVE_GLIB
    eina_benchmark_register(bench, "gslice",
                            EINA_BENCHMARK(
-                              eina_mempool_glib),            10, 1000, 10);
+                              eina_mempool_glib),            10, 10000, 10);
 #endif
 }
