@@ -32073,6 +32073,7 @@ collections {
          //Arrow
          part {
             name: "arrow_right";
+	    repeat_events: 1;
             description { state: "default" 0.0;
                 min: 45 45;
                 max: 45 45;
@@ -32105,6 +32106,7 @@ collections {
          }
         part {
             name: "arrow_left";
+	    repeat_events: 1;
             description { state: "default" 0.0;
                 min: 45 45;
                 max: 45 45;
@@ -32404,6 +32406,7 @@ collections {
          //Arrow
          part {
             name: "arrow_right";
+	    repeat_events: 1;
             description { state: "default" 0.0;
                 min: 45 45;
                 max: 45 45;
@@ -32436,6 +32439,7 @@ collections {
          }
         part {
             name: "arrow_left";
+            repeat_events: 1;
             description { state: "default" 0.0;
                 min: 45 45;
                 max: 45 45;
