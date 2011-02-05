@@ -38,3 +38,7 @@
           in efreet_init()
         * Set EFREET_MODULE_LOG_DOM variable to -1 after unregister
         * Remove duplicate logging macros
+
+2011-02-05  Hannes Janetzek
+
+        * Clear mem cache when closing eet file

@@ -671,6 +671,20 @@ efreet_util_cache_names(Eet_Data_Descriptor *edd, const char *key)
 void
 efreet_util_desktop_cache_reload(void)
 {
+    if (cache_names)
+    {
+        IF_RELEASE(cache_names_key);
+        efreet_cache_array_string_free(cache_names);
+        cache_names = NULL;
+    }
+    if (cache_hash)
+    {
+        IF_RELEASE(cache_hash_key);
+        eina_hash_free(cache_hash->hash);
+        free(cache_hash);
+        cache_hash = NULL;
+    }
+
     cache = efreet_cache_close(cache);
 }
 
