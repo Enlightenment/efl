@@ -16,6 +16,8 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
+#define EFREET_MODULE_LOG_DOM /* no logging in this file */
+
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_cache_private.h"

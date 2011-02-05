@@ -1,5 +1,4 @@
 #include "Efreet.h"
-#include "efreet_private.h"
 #include <stdio.h>
 
 int
