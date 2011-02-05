@@ -32,6 +32,10 @@ void *alloca (size_t);
 
 #include <Ecore_File.h>
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM _efreet_desktop_log_dom
+int _efreet_desktop_log_dom = -1;
+
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -59,13 +63,6 @@ static Eina_List *efreet_desktop_dirs = NULL;
 static Eina_List *efreet_desktop_types = NULL;
 
 static Eina_Hash *change_monitors = NULL;
-
-#ifdef EFREET_MODULE_LOG_DOM
-#undef EFREET_MODULE_LOG_DOM
-#endif
-
-#define EFREET_MODULE_LOG_DOM _efreet_desktop_log_dom
-int _efreet_desktop_log_dom = -1;
 
 EAPI int EFREET_DESKTOP_TYPE_APPLICATION = 0;
 EAPI int EFREET_DESKTOP_TYPE_LINK = 0;

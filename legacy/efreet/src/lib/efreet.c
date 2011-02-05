@@ -29,6 +29,9 @@ void *alloca (size_t);
 #include <Ecore.h>
 #include <Ecore_File.h>
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM /* no logging in this file */
+
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"
@@ -40,7 +43,6 @@ static int efreet_parsed_locale = 0;
 static const char *efreet_lang = NULL;
 static const char *efreet_lang_country = NULL;
 static const char *efreet_lang_modifier = NULL;
-int _efreet_log_domain_global = -1;
 static void efreet_parse_locale(void);
 static int efreet_parse_locale_setting(const char *env);
 
@@ -62,15 +64,9 @@ efreet_init(void)
         goto shutdown_eet;
     if (!ecore_file_init())
         goto shutdown_ecore;
-    _efreet_log_domain_global = eina_log_domain_register("efreet", EFREET_DEFAULT_LOG_COLOR);
-    if (_efreet_log_domain_global < 0)
-    {
-       EINA_LOG_ERR("Efreet could create a general log domain.");
-        goto shutdown_ecore_file;
-    }
 
     if (!efreet_base_init())
-        goto unregister_log_domain;
+        goto shutdown_ecore_file;
 
     if (!efreet_cache_init())
         goto shutdown_efreet_base;
@@ -109,8 +105,6 @@ shutdown_efreet_cache:
     efreet_cache_shutdown();
 shutdown_efreet_base:
     efreet_base_shutdown();
-unregister_log_domain:
-    eina_log_domain_unregister(_efreet_log_domain_global);
 shutdown_ecore_file:
     ecore_file_shutdown();
 shutdown_ecore:
@@ -143,7 +137,6 @@ efreet_shutdown(void)
     efreet_xml_shutdown();
     efreet_cache_shutdown();
     efreet_base_shutdown();
-    eina_log_domain_unregister(_efreet_log_domain_global);
 
     IF_RELEASE(efreet_lang);
     IF_RELEASE(efreet_lang_country);

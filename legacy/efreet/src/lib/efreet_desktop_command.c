@@ -32,15 +32,12 @@ void *alloca (size_t);
 #include <Ecore.h>
 #include <Ecore_File.h>
 
-#include "Efreet.h"
-#include "efreet_private.h"
-
-#ifdef EFREET_MODULE_LOG_DOM 
-#undef EFREET_MODULE_LOG_DOM
-#endif
-
+/* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_desktop_log_dom
 extern int _efreet_desktop_log_dom;
+
+#include "Efreet.h"
+#include "efreet_private.h"
 
 /**
  * @internal

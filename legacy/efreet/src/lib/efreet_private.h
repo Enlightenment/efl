@@ -66,13 +66,14 @@
  * global log domain for efreet (see eina_log module)
  */
 
-extern int _efreet_log_dom_global;
 #ifdef EFREET_DEFAULT_LOG_COLOR
 #undef EFREET_DEFAULT_LOG_COLOR
 #endif
 #define EFREET_DEFAULT_LOG_COLOR "\033[36m"
 
-#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global /*default log domain for each module. It can redefined inside each module */
+#ifndef EFREET_MODULE_LOG_DOM
+#error "Need to define a log domain"
+#endif
 #ifdef ERROR
 #undef ERROR
 #endif
@@ -95,7 +96,6 @@ extern int _efreet_log_dom_global;
  * four macros are defined ERR, WRN, DGB, INF. 
  * EFREET_MODULE_LOG_DOM should be defined individually for each module
  */
-#define EFREET_MODULE_LOG_DOM _efreet_log_dom_global /*default log domain for each module. It can redefined inside each module */
 #ifdef ERR
 #undef ERR
 #endif

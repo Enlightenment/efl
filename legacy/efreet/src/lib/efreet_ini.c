@@ -30,14 +30,12 @@ void *alloca (size_t);
 
 #include <Ecore_File.h>
 
-#include "Efreet.h"
-#include "efreet_private.h"
-
-#ifdef EFREET_MODULE_LOG_DOM
-#undef EFREET_MODULE_LOG_DOM
-#endif
+/* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_ini_log_dom
 static int _efreet_ini_log_dom = -1;
+
+#include "Efreet.h"
+#include "efreet_private.h"
 
 static Eina_Hash *efreet_ini_parse(const char *file);
 static const char *efreet_ini_unescape(const char *str) EINA_ARG_NONNULL(1);

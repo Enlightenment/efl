@@ -25,6 +25,10 @@ void *alloca (size_t);
 #include <limits.h>
 #include <unistd.h>
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM _efreet_base_log_dom
+static int _efreet_base_log_dom = -1;
+
 #include "Efreet.h"
 #include "efreet_private.h"
 
@@ -44,15 +48,6 @@ static const char *xdg_cache_home = NULL;
 static Eina_List  *xdg_data_dirs = NULL;
 static Eina_List  *xdg_config_dirs = NULL;
 static const char *hostname = NULL;
-
-/* define macros and variable for using the eina logging system  */
-#ifdef EFREET_MODULE_LOG_DOM 
-#undef EFREET_MODULE_LOG_DOM
-#endif
-
-#define EFREET_MODULE_LOG_DOM _efreet_base_log_dom
-static int _efreet_base_log_dom = -1;
-
 
 static const char *efreet_dir_get(const char *key, const char *fallback);
 static Eina_List  *efreet_dirs_get(const char *key,

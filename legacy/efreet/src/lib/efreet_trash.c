@@ -13,6 +13,10 @@
 
 #include <Ecore_File.h>
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM _efreet_trash_log_dom
+static int _efreet_trash_log_dom = -1;
+
 #include "Efreet.h"
 #include "Efreet_Trash.h"
 #include "efreet_private.h"
@@ -23,14 +27,6 @@ static const char *efreet_trash_dir = NULL;
 #ifdef _WIN32
 # define getuid() GetCurrentProcessId()
 #endif
-
-/* define macros and variable for using the eina logging system  */
-
-#ifdef EFREET_MODULE_LOG_DOM 
-#undef EFREET_MODULE_LOG_DOM
-#endif
-#define EFREET_MODULE_LOG_DOM _efreet_trash_log_dom
-static int _efreet_trash_log_dom = -1;
 
 /**
  * @return Returns 1 on success or 0 on failure

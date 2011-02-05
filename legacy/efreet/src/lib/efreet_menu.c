@@ -28,6 +28,10 @@ void *alloca (size_t);
 
 #include <Ecore_File.h>
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM _efreet_menu_log_dom
+static int _efreet_menu_log_dom = -1;
+
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"
@@ -249,16 +253,6 @@ static Eina_Hash *efreet_menu_handle_cbs = NULL;
 static Eina_Hash *efreet_menu_filter_cbs = NULL;
 static Eina_Hash *efreet_menu_move_cbs = NULL;
 static Eina_Hash *efreet_menu_layout_cbs = NULL;
-
-/* define macros and variable for using the eina logging system  */
-#ifdef EFREET_MODULE_LOG_DOM 
-#undef EFREET_MODULE_LOG_DOM
-#endif
-
-#define EFREET_MODULE_LOG_DOM _efreet_menu_log_dom 
-
-static int _efreet_menu_log_dom = -1;
-
 
 static const char *efreet_menu_prefix_get(void);
 

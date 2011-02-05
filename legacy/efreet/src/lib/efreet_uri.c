@@ -15,6 +15,9 @@
 # include <Evil.h>
 #endif
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM /* no logging in this file */
+
 #include "Efreet.h"
 #include "efreet_private.h"
 

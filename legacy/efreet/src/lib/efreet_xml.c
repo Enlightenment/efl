@@ -13,6 +13,10 @@
 
 #include <Ecore_File.h>
 
+/* define macros and variable for using the eina logging system  */
+#define EFREET_MODULE_LOG_DOM _efreet_xml_log_dom
+static int _efreet_xml_log_dom = -1;
+
 #include "Efreet.h"
 #include "efreet_private.h"
 #include "efreet_xml.h"
@@ -35,15 +39,7 @@ static void efreet_xml_comment_skip(char **data, int *size);
 
 static int error = 0;
 
-/* define macros and variable for using the eina logging system  */
-
-#ifdef EFREET_MODULE_LOG_DOM
-#undef EFREET_MODULE_LOG_DOM
-#endif
-#define EFREET_MODULE_LOG_DOM _efreet_xml_log_dom
-
 static int _efreet_xml_init_count = 0;
-static int _efreet_xml_log_dom = -1;
 
 /**
  * @internal
