@@ -487,6 +487,7 @@ efreet_menu_init(void)
             || !efreet_menu_move_cbs || !efreet_menu_layout_cbs)
     {
         eina_log_domain_unregister(_efreet_menu_log_dom);
+        _efreet_menu_log_dom = -1;
         return 0;
     }
 
@@ -600,6 +601,7 @@ efreet_menu_shutdown(void)
 
     efreet_xml_shutdown();
     eina_log_domain_unregister(_efreet_menu_log_dom);
+    _efreet_menu_log_dom = -1;
 }
 
 /**

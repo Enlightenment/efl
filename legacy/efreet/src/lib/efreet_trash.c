@@ -64,6 +64,7 @@ efreet_trash_shutdown(void)
 
     IF_RELEASE(efreet_trash_dir);
     eina_log_domain_unregister(_efreet_trash_log_dom);
+    _efreet_trash_log_dom = -1;
     eina_shutdown();
 
     return _efreet_trash_init_count;

@@ -36,3 +36,4 @@
           before including efreet_private.h
         * Remove efreet_xml_{init,shutdown}() from efreet_menu.c, it is done
           in efreet_init()
+        * Set EFREET_MODULE_LOG_DOM variable to -1 after unregister

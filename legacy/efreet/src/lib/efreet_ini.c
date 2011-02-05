@@ -71,6 +71,7 @@ void
 efreet_ini_shutdown(void)
 {
     eina_log_domain_unregister(_efreet_ini_log_dom);
+    _efreet_ini_log_dom = -1;
 }
 
 /**

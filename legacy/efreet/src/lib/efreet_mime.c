@@ -241,6 +241,7 @@ efreet_mime_init(void)
 
 unregister_log_domain:
     eina_log_domain_unregister(_efreet_mime_log_dom);
+    _efreet_mime_log_dom = -1;
 shutdown_efreet:
     efreet_shutdown();
 shutdown_ecore_file:
@@ -280,6 +281,7 @@ efreet_mime_shutdown(void)
     IF_FREE_HASH(wild);
     IF_FREE_HASH(mime_icons);
     eina_log_domain_unregister(_efreet_mime_log_dom);
+    _efreet_mime_log_dom = -1;
     efreet_shutdown();
     ecore_file_shutdown();
     ecore_shutdown();

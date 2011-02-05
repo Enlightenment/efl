@@ -90,6 +90,7 @@ efreet_base_shutdown(void)
     IF_RELEASE(hostname);
 
     eina_log_domain_unregister(_efreet_base_log_dom);
+    _efreet_base_log_dom = -1;
 }
 
 /**

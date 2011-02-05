@@ -185,6 +185,7 @@ efreet_cache_shutdown(void)
     }
 
     eina_log_domain_unregister(_efreet_cache_log_dom);
+    _efreet_cache_log_dom = -1;
 }
 
 /*

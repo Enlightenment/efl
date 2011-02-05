@@ -90,6 +90,7 @@ efreet_util_shutdown(void)
     if (--init) return init;
 
     eina_log_domain_unregister(_efreet_utils_log_dom);
+    _efreet_utils_log_dom = -1;
     IF_FREE_HASH(file_id_by_desktop_path);
 
     IF_RELEASE(cache_names_key);

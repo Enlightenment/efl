@@ -113,6 +113,7 @@
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 
+/* TODO: Move these to cache, make static and add accessor */
 extern Eina_Hash *efreet_desktop_cache;
 extern Eina_Hash *efreet_icon_themes;
 

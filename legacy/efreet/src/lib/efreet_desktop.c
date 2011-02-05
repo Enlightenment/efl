@@ -177,6 +177,7 @@ efreet_desktop_shutdown(void)
     evil_sockets_shutdown();
 #endif
     eina_log_domain_unregister(_efreet_desktop_log_dom);
+    _efreet_desktop_log_dom = -1;
 }
 
 /**

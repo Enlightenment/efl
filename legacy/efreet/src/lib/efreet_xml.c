@@ -73,6 +73,7 @@ efreet_xml_shutdown(void)
     _efreet_xml_init_count--;
     if (_efreet_xml_init_count > 0) return;
     eina_log_domain_unregister(_efreet_xml_log_dom);
+    _efreet_xml_log_dom = -1;
 }
 
 /**
