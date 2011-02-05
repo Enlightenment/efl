@@ -478,12 +478,6 @@ efreet_menu_init(void)
         ERROR("Efreet: Could not create a log domain for efreet_menu");
         return 0;
     }
-    if (!efreet_xml_init())
-    {
-        ERROR("Efreet: Could not init xml module");
-        eina_log_domain_unregister(_efreet_menu_log_dom);
-        return 0;
-    }
 
     efreet_menu_handle_cbs = eina_hash_string_superfast_new(NULL);
     efreet_menu_filter_cbs = eina_hash_string_superfast_new(NULL);
@@ -492,7 +486,6 @@ efreet_menu_init(void)
     if (!efreet_menu_handle_cbs || !efreet_menu_filter_cbs
             || !efreet_menu_move_cbs || !efreet_menu_layout_cbs)
     {
-        efreet_xml_shutdown();
         eina_log_domain_unregister(_efreet_menu_log_dom);
         return 0;
     }
