@@ -599,7 +599,6 @@ efreet_menu_shutdown(void)
 
     IF_RELEASE(efreet_tag_menu);
 
-    efreet_xml_shutdown();
     eina_log_domain_unregister(_efreet_menu_log_dom);
     _efreet_menu_log_dom = -1;
 }
