@@ -126,7 +126,7 @@ efreet_desktop_init(void)
       ("efreet_desktop", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_desktop_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for efreet_desktop");
+        ERR("Efreet: Could not create a log domain for efreet_desktop");
         return 0;
     }
 

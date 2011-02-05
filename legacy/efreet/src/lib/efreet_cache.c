@@ -602,7 +602,7 @@ efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
     if (theme_name && strcmp(theme_name, theme->name.internal))
     {
         /* FIXME: this is bad if people have pointer to this cache, things will go wrong */
-        INFO("theme_name change from `%s` to `%s`", theme_name, theme->name.internal);
+        INF("theme_name change from `%s` to `%s`", theme_name, theme->name.internal);
         IF_RELEASE(theme_name);
         icon_cache = efreet_cache_close(icon_cache);
         eina_hash_free(icons);

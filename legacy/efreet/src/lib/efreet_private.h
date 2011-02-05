@@ -74,22 +74,6 @@
 #ifndef EFREET_MODULE_LOG_DOM
 #error "Need to define a log domain"
 #endif
-#ifdef ERROR
-#undef ERROR
-#endif
-#define ERROR(...) EINA_LOG_DOM_ERR(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
-#ifdef DEBUG
-#undef DEBUG
-#endif
-#define DEBUG(...) EINA_LOG_DOM_DBG(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
-#ifdef INFO
-#undef INFO
-#endif
-#define INFO(...) EINA_LOG_DOM_INFO(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
-#ifdef WARN
-#undef WARN
-#endif
-#define WARN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 
 /**
  * macros that are used all around the code for message processing

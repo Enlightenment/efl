@@ -332,7 +332,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         Efreet_Cache_Icon *cache;
         cache = efreet_cache_icon_find(theme, tmp);
         value = efreet_cache_icon_lookup_icon(cache, size);
-        if (!value) INFO("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
+        if (!value) INF("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
     }
 
     /* we didn't find the icon in the theme or in the inherited directories
@@ -344,7 +344,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
 
         cache = efreet_cache_icon_fallback_find(tmp);
         value = efreet_cache_icon_fallback_lookup_path(cache);
-        if (!value) INFO("lookup for `%s` failed in fallback too with %p.", icon, cache);
+        if (!value) INF("lookup for `%s` failed in fallback too with %p.", icon, cache);
     }
 
     if (value == NON_EXISTING) value = NULL;

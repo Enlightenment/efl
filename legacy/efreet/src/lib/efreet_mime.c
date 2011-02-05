@@ -224,7 +224,7 @@ efreet_mime_init(void)
 
     if (_efreet_mime_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for efreet_mime.");
+        ERR("Efreet: Could not create a log domain for efreet_mime.");
         goto shutdown_efreet;
     }
 

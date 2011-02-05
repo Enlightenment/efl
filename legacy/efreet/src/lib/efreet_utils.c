@@ -75,7 +75,7 @@ efreet_util_init(void)
       ("efreet_util", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_utils_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for efreet_util");
+        ERR("Efreet: Could not create a log domain for efreet_util");
         return 0;
     }
 

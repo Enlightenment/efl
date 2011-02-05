@@ -45,7 +45,7 @@ efreet_trash_init(void)
       ("efreet_trash", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_trash_log_dom < 0)
     {
-        ERROR("Efreet: Could not create a log domain for efreet_trash");
+        ERR("Efreet: Could not create a log domain for efreet_trash");
         eina_shutdown();
         return --_efreet_trash_init_count;
     }

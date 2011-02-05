@@ -56,7 +56,7 @@ efreet_xml_init(void)
     if (_efreet_xml_log_dom < 0)
     {
         _efreet_xml_init_count--;
-        ERROR("Efreet: Could not create a log domain for efreet_xml.");
+        ERR("Efreet: Could not create a log domain for efreet_xml.");
         return _efreet_xml_init_count;
     }
     return _efreet_xml_init_count;
