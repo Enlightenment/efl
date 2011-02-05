@@ -2,7 +2,7 @@
 
 typedef struct _Elm_Params_Label
 {
-   Elm_Params base;
+   const char* label;
 } Elm_Params_Label;
 
 static void
@@ -14,7 +14,7 @@ external_label_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, con
    else if (from_params) p = from_params;
    else return;
 
-   //if (p->base.label) elm_label_label_set(obj, p->base.label);
+   if (p->label) elm_label_label_set(obj, p->label);
 }
 
 static Eina_Bool
@@ -57,10 +57,18 @@ static void *
 external_label_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const Eina_List *params __UNUSED__)
 {
    Elm_Params_Label *mem;
+   Edje_External_Param *param;
+   const Eina_List *l;
 
    mem = ELM_NEW(Elm_Params_Label);
    if (!mem)
      return NULL;
+
+   EINA_LIST_FOREACH(params, l, param)
+     {
+        if (!strcmp(param->name, "label"))
+           mem->label = eina_stringshare_add(param->s);
+     }
 
    return mem;
 }
