@@ -12,7 +12,7 @@ external_elm_init(void)
    char **argv = NULL;
 
    init_count++;
-   printf("elm_real_init\n");
+   LOG_DEBUG("elm_real_init\n");
    if (init_count > 1) return;
    ecore_app_args_get(&argc, &argv);
    elm_init(argc, argv);
@@ -22,7 +22,7 @@ static void
 external_elm_shutdown(void)
 {
    init_count--;
-   printf("elm_real_shutdown\n");
+   LOG_DEBUG("elm_real_shutdown\n");
    if (init_count > 1) return;
    elm_shutdown();
 }
