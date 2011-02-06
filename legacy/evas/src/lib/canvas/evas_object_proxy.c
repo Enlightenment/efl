@@ -350,8 +350,12 @@ _proxy_subrender(Evas *e, Evas_Object *source)
    ctx = e->engine.func->context_new(e->engine.data.output);
    if (source->smart.smart)
      {
-   //     EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2)
-     //      evas_render_mapped(e, obj2, ctx, surface, 0, 0, 1);
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2){
+           obj2->func->render(obj2, e->engine.data.output, ctx,
+                              source->proxy.surface,
+                              -source->cur.geometry.x,
+                              -source->cur.geometry.y);
+        }
      }
    else
      {
