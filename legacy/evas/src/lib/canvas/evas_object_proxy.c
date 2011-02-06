@@ -177,7 +177,16 @@ evas_object_proxy_new(void)
 static void
 _proxy_unset(Evas_Object *proxy)
 {
+   Evas_Object_Proxy *o;
+
    printf("Do proxy object unset\n");
+
+   o = proxy->object_data;
+   if (!o->source) return;
+
+   o->source->proxies = eina_list_remove(o->source->proxies, proxy);
+
+   o->source = NULL;
 }
 
 
@@ -190,6 +199,8 @@ _proxy_set(Evas_Object *proxy, Evas_Object *src)
 
    o->source = src;
    printf("Set %p\n",src);
+
+   src->proxies = eina_list_append(src->proxies, proxy);
 
 
 }
@@ -255,7 +266,7 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
           {
              pt->x = (p->x + x) << FP;
              pt->y = (p->y + y) << FP;
-             printf("Point %d: %8d,%8d\n",p - obj->cur.map->points,pt->x,pt->y);
+             printf("Point %d: %8d,%8d\n",(int)(p - obj->cur.map->points),pt->x,pt->y);
              pt->z = (p->z)     << FP;
              pt->x3 = p->px << FP;
              pt->y3 = p->py << FP;
