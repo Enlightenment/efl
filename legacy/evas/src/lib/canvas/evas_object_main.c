@@ -402,6 +402,8 @@ evas_object_del(Evas_Object *obj)
    evas_object_hide(obj);
    evas_object_grabs_cleanup(obj);
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
+   while (obj->proxy.proxies)
+	   evas_object_proxy_source_unset(obj->proxy.proxies->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);
    if (obj->smart.smart) evas_object_smart_del(obj);
    evas_object_map_set(obj, NULL);
