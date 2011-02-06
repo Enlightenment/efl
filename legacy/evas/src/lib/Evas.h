@@ -2089,6 +2089,14 @@ struct _Evas_Smart_Cb_Description
    EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
 
 /**
+ * @defgroup Evas_Proxy Evas Proxy Objects
+ *
+ * Provides a way of applying effects to complete objects.
+ */
+   EAPI Evas_Object                         *evas_object_proxy_add            (Evas *e) EINA_MALLOC;
+   EAPI Eina_Bool                            evas_object_proxy_source_set     (Evas_Object *o, Evas_Object *source);
+
+/**
  * @defgroup Evas_Cserve Shared Image Cache Server
  *
  * Provides client-server infrastructure to share bitmaps across
