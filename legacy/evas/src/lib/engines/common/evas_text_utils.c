@@ -39,22 +39,19 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
 void
 evas_common_text_props_content_ref(Evas_Text_Props *props)
 {
+   /* No info in this case */
+   if (props->len == 0)
+      return;
+
    props->info->refcount++;
 }
 
 void
 evas_common_text_props_content_unref(Evas_Text_Props *props)
 {
-   /* We allow this, because sometimes we want to have props without info,
-    * and we don't want to diverge the code paths too much. */
-   if (!props->info)
-     return;
-
-   if (props->info->refcount == 0)
-     {
-        ERR("Trying to unref props with refount == 0");
-        return;
-     }
+   /* No info in this case */
+   if (props->len == 0)
+      return;
 
    if (--(props->info->refcount) == 0)
      {
@@ -69,7 +66,7 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
      }
 }
 
-/* Won't work in the middle of ligatures */
+/* Won't work in the middle of ligatures, assumes cutoff < len */
 EAPI void
 evas_common_text_props_split(Evas_Text_Props *base,
       Evas_Text_Props *ext, int cutoff)
