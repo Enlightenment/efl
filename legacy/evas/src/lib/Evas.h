@@ -2095,6 +2095,8 @@ struct _Evas_Smart_Cb_Description
  */
    EAPI Evas_Object                         *evas_object_proxy_add            (Evas *e) EINA_MALLOC;
    EAPI Eina_Bool                            evas_object_proxy_source_set     (Evas_Object *o, Evas_Object *source);
+   EAPI Evas_Object                         *evas_object_proxy_source_get     (Evas_Object *o);
+   EAPI Eina_Bool                            evas_object_proxy_source_unset   (Evas_Object *o);
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
