@@ -237,7 +237,6 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
    /* Images only essentially */
    if (o->source->proxy.surface)
      {
-         printf("Just grab pixels from surface\n");
          pixels = o->source->proxy.surface;
      }
    /* Making this faster would be nice... */
@@ -247,7 +246,6 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
      //}
    else
      {
-         printf("need to render source object\n");
          _proxy_subrender(obj->layer->evas, o->source);
          pixels = o->source->proxy.surface;
      }
@@ -255,7 +253,6 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
 
    if (!pixels)
      {
-        printf("No pixels from source: Not drawing\n");
         return;
      }
 
