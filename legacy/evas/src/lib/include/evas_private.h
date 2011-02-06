@@ -442,7 +442,8 @@ struct _Evas_Object
    } smart;
 
    struct {
-      Eina_List                  *proxies;
+      Eina_List               *proxies;
+      void                    *surface;
    } proxy;
 
    Evas_Size_Hints            *size_hints;

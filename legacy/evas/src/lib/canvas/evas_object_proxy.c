@@ -22,6 +22,7 @@ static void evas_object_proxy_init(Evas_Object *obj);
 static Evas_Object_Proxy *evas_object_proxy_new(void);
 static void _proxy_unset(Evas_Object *proxy);
 static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
+static void _proxy_subrender(Evas *e, Evas_Object *source);
 
 /* Engine Functions */
 static void _proxy_free(Evas_Object *obj);
@@ -236,7 +237,24 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
    if (!o->source) return;
 
    /* Images only essentially */
-   pixels = o->source->func->engine_data_get(o->source);
+   if (o->source->proxy.surface)
+     {
+         printf("Just grab pixels from surface\n");
+         pixels = o->source->proxy.surface;
+     }
+   /* Making this faster would be nice... */
+//   else if (strcmp(evas_object_type_get(o->source),"image") == 0)
+  //   {
+    //    pixels = o->source->func->engine_data_get(o->source);
+     //}
+   else
+     {
+         printf("need to render source object\n");
+         _proxy_subrender(obj->layer->evas, o->source);
+         pixels = o->source->proxy.surface;
+     }
+
+
    if (!pixels)
      {
         printf("No pixels from source: Not drawing\n");
@@ -294,6 +312,57 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
      }
 }
 
+/**
+ * Render the subobject
+ */
+static void
+_proxy_subrender(Evas *e, Evas_Object *source)
+{
+   void *ctx;
+   Evas_Object *obj2;
+   int w,h;
+
+   if (!source) return;
+
+   if (source->proxy.surface)
+     {
+        /* FIXME: Don't free every time */
+        e->engine.func->image_map_surface_free(e->engine.data.output,
+                                               source->proxy.surface);
+
+     }
+
+   w = source->cur.geometry.w;
+   h = source->cur.geometry.h;
+
+   /* FIXME: Hardcoded alpha 'on' */
+   /* FIXME (cont): Should see if the object has alpha */
+   source->proxy.surface = e->engine.func->image_map_surface_new(
+            e->engine.data.output, w, h, 1);
+
+   ctx = e->engine.func->context_new(e->engine.data.output);
+   e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
+   e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
+   e->engine.func->rectangle_draw(e->engine.data.output, ctx,
+                                  source->proxy.surface, 0, 0, w, h);
+   e->engine.func->context_free(e->engine.data.output, ctx);
+
+   ctx = e->engine.func->context_new(e->engine.data.output);
+   if (source->smart.smart)
+     {
+   //     EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2)
+     //      evas_render_mapped(e, obj2, ctx, surface, 0, 0, 1);
+     }
+   else
+     {
+        source->func->render(source, e->engine.data.output, ctx,
+                                    source->proxy.surface,
+                                    -source->cur.geometry.x,
+                                    -source->cur.geometry.y);
+     }
+   e->engine.func->context_free(e->engine.data.output, ctx);
+}
+
 static void
 _proxy_render_pre(Evas_Object *obj)
 {
@@ -330,7 +399,7 @@ _proxy_is_opaque(Evas_Object *obj)
    /* FIXME: Do color check */
    if (obj->cur.usemap) return 0;
 
-   return 1;
+   return 0;
 }
 
 static int
@@ -338,7 +407,7 @@ _proxy_was_opaque(Evas_Object *obj)
 {
    /* FIXME: Do color check */
    if (obj->prev.usemap) return 0;
-   return 1;
+   return 0;
 }
 
 
