@@ -398,7 +398,7 @@ _proxy_is_opaque(Evas_Object *obj)
    /* No source: Sure, it's opaque */
    if (!o->source) return 1;
    if (obj->cur.usemap) return 0;
-   return o->source->func->is_opaque(o);
+   return o->source->func->is_opaque(o->source);
 }
 
 static int
@@ -409,7 +409,7 @@ _proxy_was_opaque(Evas_Object *obj)
    /* No source: Sure, it's opaque */
    if (!o->source) return 1;
    if (obj->cur.usemap) return 0;
-   return o->source->func->was_opaque(o);
+   return o->source->func->was_opaque(o->source);
 }
 
 static int
