@@ -282,14 +282,12 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
           {
              pt->x = (p->x + x) << FP;
              pt->y = (p->y + y) << FP;
-             printf("Point %d: %8d,%8d\n",(int)(p - obj->cur.map->points),pt->x,pt->y);
              pt->z = (p->z)     << FP;
              pt->x3 = p->px << FP;
              pt->y3 = p->py << FP;
              pt->u = p->u * FP1;
              pt->v = p->v * FP1;
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
-             printf("Color %8x\n",pt->col);
           }
         obj->layer->evas->engine.func->image_map4_draw
            (output, context, surface, pixels, pts,
