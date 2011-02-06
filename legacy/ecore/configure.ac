@@ -64,7 +64,7 @@ AM_GNU_GETTEXT_VERSION([0.12.1])
 
 m4_ifdef([AM_GNU_GETTEXT], [
 AM_GNU_GETTEXT([external])
-AM_CONDITIONAL([HAVE_PO], [false])
+AM_CONDITIONAL([HAVE_PO], [true])
 ],[
 AM_CONDITIONAL([HAVE_PO], [false])
 ])
