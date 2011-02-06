@@ -295,7 +295,7 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
            (output, context, surface, pixels, pts,
             1/* o->cur.smooth_scale | obj->cur.map->smooth */, 0);
      }
-   else 
+   else
      {
         obj->layer->evas->engine.func->image_draw(output, context,
                                              surface, pixels,
