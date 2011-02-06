@@ -44,8 +44,6 @@ static int _proxy_can_map(Evas_Object *obj);
    int  _proxy_is_visible (Evas_Object *obj);
    int  _proxy_was_visible (Evas_Object *obj);
 
-   int  _proxy_was_opaque (Evas_Object *obj);
-
    int  _proxy_is_inside (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    int  _proxy_was_inside (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
@@ -400,20 +398,24 @@ _proxy_engine_data_get(Evas_Object *obj)
 static int
 _proxy_is_opaque(Evas_Object *obj)
 {
-   /* FIXME: Do color check */
-   if (obj->cur.usemap) return 0;
+   Evas_Object_Proxy *o = obj->object_data;
 
-   return 0;
+   /* No source: Sure, it's opaque */
+   if (!o->source) return 1;
+   if (obj->cur.usemap) return 0;
+   return o->source->func->is_opaque(o);
 }
 
 static int
 _proxy_was_opaque(Evas_Object *obj)
 {
-   /* FIXME: Do color check */
-   if (obj->prev.usemap) return 0;
-   return 0;
-}
+   Evas_Object_Proxy *o = obj->object_data;
 
+   /* No source: Sure, it's opaque */
+   if (!o->source) return 1;
+   if (obj->cur.usemap) return 0;
+   return o->source->func->was_opaque(o);
+}
 
 static int
 _proxy_can_map (Evas_Object *obj)
