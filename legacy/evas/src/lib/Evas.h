@@ -164,7 +164,7 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
    EVAS_COLORSPACE_YCBCR422P709_PL,/**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
    EVAS_COLORSPACE_RGB565_A5P, /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
-   EVAS_COLORSPACE_GRY8 /**< 8bit grayscale */
+   EVAS_COLORSPACE_GRY8, /**< 8bit grayscale */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
 /**
@@ -331,7 +331,7 @@ typedef enum _Evas_Pixel_Import_Pixel_Format
 {
    EVAS_PIXEL_FORMAT_NONE = 0, /**< No pixel format */
    EVAS_PIXEL_FORMAT_ARGB32 = 1, /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
-   EVAS_PIXEL_FORMAT_YUV420P_601 = 2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
+   EVAS_PIXEL_FORMAT_YUV420P_601 = 2, /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
 } Evas_Pixel_Import_Pixel_Format; /**< Pixel format for import call. See evas_object_image_pixels_import() */
 
 struct _Evas_Pixel_Import_Source
@@ -995,6 +995,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI Eina_Bool         evas_map_alpha_get                (const Evas_Map *m);
    EAPI Evas_Map         *evas_map_dup                      (const Evas_Map *m);
    EAPI void              evas_map_free                     (Evas_Map *m);
+   EAPI int               evas_map_count_get               (const Evas_Map *m) EINA_CONST;
    EAPI void              evas_map_point_coord_set          (Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z);
    EAPI void              evas_map_point_coord_get          (const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z);
    EAPI void              evas_map_point_image_uv_set       (Evas_Map *m, int idx, double u, double v);
@@ -1229,6 +1230,11 @@ typedef void (*Evas_Object_Intercept_Clip_Unset_Cb) (void *data, Evas_Object *ob
  *
  * R = (r * a) / 32; G = (g * a) / 32; B = (b * a) / 32;
  *
+ * EVAS_COLORSPACE_A8:
+ *
+ * The image is just a alpha mask (8 bit's per pixel).  This is used for alpha
+ * masking.
+ *
  * @ingroup Evas_Object_Specific
  */
 typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
@@ -1286,6 +1292,8 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI Evas_Image_Scale_Hint    evas_object_image_scale_hint_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                     evas_object_image_content_hint_set       (Evas_Object *obj, Evas_Image_Content_Hint hint) EINA_ARG_NONNULL(1);
    EAPI Evas_Image_Content_Hint  evas_object_image_content_hint_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+   EAPI void                     evas_object_image_alpha_mask_set         (Evas_Object *, Eina_Bool) EINA_ARG_NONNULL(1);
 
 /**
  * @defgroup Evas_Object_Text Text Object Functions
@@ -2091,7 +2099,13 @@ struct _Evas_Smart_Cb_Description
 /**
  * @defgroup Evas_Proxy Evas Proxy Objects
  *
- * Provides a way of applying effects to complete objects.
+ * @brief Provides a way of applying effects to complete objects.
+ *
+ * A proxy object is a visible copy of another object.  Generally a map or
+ * similar effect will be applied to the proxy to apply some sort of rendering
+ * effect to.
+ * 
+ * Proxies are generally used for special effects.
  */
    EAPI Evas_Object                         *evas_object_proxy_add            (Evas *e) EINA_MALLOC;
    EAPI Eina_Bool                            evas_object_proxy_source_set     (Evas_Object *o, Evas_Object *source);

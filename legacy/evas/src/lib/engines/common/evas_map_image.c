@@ -325,23 +325,23 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
 #ifdef BUILD_SCALE_SMOOTH
 # ifdef BUILD_MMX
 #  undef FUNC_NAME
-#  define FUNC_NAME evas_common_map4_rgba_internal_mmx
+#  define FUNC_NAME evas_common_map_rgba_internal_mmx
 #  undef SCALE_USING_MMX
 #  define SCALE_USING_MMX
 #  include "evas_map_image_internal.c"
 # endif
 # ifdef BUILD_C
 #  undef FUNC_NAME
-#  define FUNC_NAME evas_common_map4_rgba_internal
+#  define FUNC_NAME evas_common_map_rgba_internal
 #  undef SCALE_USING_MMX
 #  include "evas_map_image_internal.c"
 # endif
 #endif
 
 EAPI void
-evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
+evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                       RGBA_Draw_Context *dc,
-                      RGBA_Map_Point *p, 
+                      int npoints, RGBA_Map_Point *p,
                       int smooth, int level)
 {
 #ifdef BUILD_MMX
@@ -363,11 +363,11 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
      {
 #ifdef BUILD_MMX
         if (mmx)
-          evas_common_map4_rgba_internal_mmx(src, dst, dc, p, smooth, level);
+          evas_common_map_rgba_internal_mmx(src, dst, dc, p, smooth, level);
         else
 #endif
 #ifdef BUILD_C
-          evas_common_map4_rgba_internal(src, dst, dc, p, smooth, level);
+          evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
 #endif
         return;
      }
@@ -387,11 +387,11 @@ evas_common_map4_rgba(RGBA_Image *src, RGBA_Image *dst,
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 #ifdef BUILD_MMX
         if (mmx)
-          evas_common_map4_rgba_internal_mmx(src, dst, dc, p, smooth, level);
+          evas_common_map_rgba_internal_mmx(src, dst, dc, p, smooth, level);
         else
 #endif
 #ifdef BUILD_C
-          evas_common_map4_rgba_internal(src, dst, dc, p, smooth, level);
+          evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
 #endif        
      }
    evas_common_draw_context_apply_clear_cutouts(rects);

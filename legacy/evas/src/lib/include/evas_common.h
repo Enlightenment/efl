@@ -664,6 +664,7 @@ struct _RGBA_Draw_Context
       DATA32 col;
    } col;
    struct RGBA_Draw_Context_clip {
+      DATA8  *mask;
       int    x, y, w, h;
       Eina_Bool use : 1;
    } clip;

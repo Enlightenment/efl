@@ -2050,6 +2050,39 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
 }
 
 /**
+ * Enable an image to be used as an alpha mask.
+ *
+ * This will set any flags, and discard any excess image data not used as an
+ * alpha mask.
+ *
+ * Note there is little point in using a image as alpha mask unless it has an
+ * alpha channel.
+ *
+ * @param obj Object to use as an alpha mask.
+ * @param ismask Use image as alphamask, must be true.
+ */
+EAPI void
+evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask)
+{
+   Evas_Object_Image *o;
+
+   if (!ismask) return;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+
+   /* Convert to A8 if not already */
+
+   /* done */
+
+}
+
+/**
  * Get the content hint of a given image of the canvas.
  *
  * @param obj The given canvas pointer.
@@ -2453,13 +2486,13 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	       }
 	     o->dirty_pixels = 0;
 	  }
-        if ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap))
+        if ((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap))
           {
 	     const Evas_Map_Point *p, *p_end;
-             RGBA_Map_Point pts[4], *pt;
+             RGBA_Map_Point pts[obj->cur.map->count], *pt;
 
 	     p = obj->cur.map->points;
-	     p_end = p + 4;
+	     p_end = p + obj->cur.map->count;
 	     pt = pts;
              
              pts[0].px = obj->cur.map->persp.px << FP;
@@ -2483,9 +2516,14 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   else if (pt->v > (o->cur.image.h * FP1)) pt->v = (o->cur.image.h * FP1);
                   pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
               }
-             obj->layer->evas->engine.func->image_map4_draw
-               (output, context, surface, o->engine_data, pts,
-                o->cur.smooth_scale | obj->cur.map->smooth, 0);
+	     if (obj->cur.map->count & 0x1)
+	       {
+		  pts[obj->cur.map->count] = pts[obj->cur.map->count -1];
+	       }
+
+             obj->layer->evas->engine.func->image_map_draw
+               (output, context, surface, o->engine_data, obj->cur.map->count,
+		pts, o->cur.smooth_scale | obj->cur.map->smooth, 0);
           }
         else
           {
@@ -3256,3 +3294,5 @@ evas_object_image_filled_resize_listener(void *data __UNUSED__, Evas *e __UNUSED
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_image_fill_set(obj, 0, 0, w, h);
 }
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

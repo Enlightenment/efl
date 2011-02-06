@@ -96,7 +96,15 @@ static inline Evas_Map *
 _evas_map_new(int count)
 {
    int i;
-   Evas_Map *m = calloc(1, sizeof(Evas_Map) + (count * sizeof(Evas_Map_Point)));
+   int alloc;
+   Evas_Map *m;
+
+   /* Adjust allocation such that: at least 4 points, and always an even
+    * number: this allows the software engine to work efficiently */
+   alloc = (count < 4) ? 4 : count;
+   if (alloc & 0x1) alloc ++;
+
+   m = calloc(1, sizeof(Evas_Map) + (alloc * sizeof(Evas_Map_Point)));
    if (!m) return NULL;
    m->count = count;
    m->persp.foc = 0;
@@ -155,24 +163,24 @@ Eina_Bool
 evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
                     Evas_Coord *mx, Evas_Coord *my, int grab)
 {
-   int i, j, edges, edge[4][2], douv;
+   int i, j, edges, edge[m->count][2], douv;
    Evas_Coord xe[2];
    double u[2] = { 0.0, 0.0 };
    double v[2] = { 0.0, 0.0 };
 
-   if (m->count != 4) return 0;
+   if (m->count < 4) return 0;
    // FIXME need to handle grab mode and extrapolte coords outside
    // map
    if (grab)
      {
         Evas_Coord ymin, ymax;
-        
+
         ymin = m->points[0].y;
         ymax = m->points[0].y;
         for (i = 1; i < m->count; i++)
           {
-             if (m->points[i].y < ymin) ymin = m->points[i].y; 
-             else if (m->points[i].y > ymax) ymax = m->points[i].y; 
+             if (m->points[i].y < ymin) ymin = m->points[i].y;
+             else if (m->points[i].y > ymax) ymax = m->points[i].y;
           }
         if (y <= ymin) y = ymin + 1;
         if (y >= ymax) y = ymax - 1;
@@ -250,12 +258,12 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
         if (xe[0] > xe[1])
           {
              int ti;
-             
+
              ti = xe[0]; xe[0] = xe[1]; xe[1] = ti;
              if (douv)
                {
                   double td;
-                  
+
                   td = u[0]; u[0] = u[1]; u[1] = td;
                   td = v[0]; v[0] = v[1]; v[1] = td;
                }
@@ -264,11 +272,11 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
           {
              if (douv)
                {
-                  if (mx) 
-                    *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) / 
+                  if (mx)
+                    *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) /
                                   (xe[1] - xe[0]));
                  if (my)
-                    *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) / 
+                    *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) /
                                   (xe[1] - xe[0]));
                }
              return 1;
@@ -277,11 +285,11 @@ evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y,
           {
              if (douv)
                {
-                  if (mx) 
-                    *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) / 
+                  if (mx)
+                    *mx = u[0] + (((x - xe[0]) * (u[1] - u[0])) /
                                   (xe[1] - xe[0]));
                   if (my)
-                    *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) / 
+                    *my = v[0] + (((x - xe[0]) * (v[1] - v[0])) /
                                   (xe[1] - xe[0]));
                }
              return 1;
@@ -471,20 +479,22 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
           }
         return;
      }
-   if (!obj->cur.map)
-     {
-        obj->cur.map = _evas_map_dup(map);
-        if (obj->cur.usemap)
-           evas_object_mapped_clip_across_mark(obj);
-     }
-   else
+
+   if (obj->cur.map && obj->cur.map->count == map->count)
      {
         Evas_Map *omap = obj->cur.map;
-        obj->cur.map = _evas_map_new(4);
-        memcpy(obj->cur.map, omap, sizeof(Evas_Map) + (4 * sizeof(Evas_Map_Point)));
+        obj->cur.map = _evas_map_new(map->count);
+        memcpy(obj->cur.map, omap, sizeof(Evas_Map) + (map->count * sizeof(Evas_Map_Point)));
         _evas_map_copy(obj->cur.map, map);
         if (obj->prev.map == omap) obj->prev.map = NULL;
         free(omap);
+     }
+   else
+     {
+	if (obj->cur.map) evas_map_free(obj->cur.map);
+        obj->cur.map = _evas_map_dup(map);
+        if (obj->cur.usemap)
+           evas_object_mapped_clip_across_mark(obj);
      }
    _evas_map_calc_map_geometry(obj);
 }
@@ -543,9 +553,9 @@ evas_object_map_get(const Evas_Object *obj)
 EAPI Evas_Map *
 evas_map_new(int count)
 {
-   if (count != 4)
+   if (count < 4)
      {
-	ERR("num (%i) != 4 is unsupported!", count);
+	ERR("num (%i) < 4 is unsupported!", count);
 	return NULL;
      }
    return _evas_map_new(count);
@@ -642,6 +652,21 @@ evas_map_free(Evas_Map *m)
 {
    if (!m) return;
    _evas_map_free(NULL, m);
+}
+
+/**
+ * Get a maps size.
+ *
+ * Returns the number of points in a map.  Should be at least 4.
+ *
+ * @param m map to get size.
+ * @return -1 on error, points otherwise.
+ */
+EAPI int
+evas_map_count_get(const Evas_Map *m)
+{
+   if (!m) return -1;
+   return m->count;
 }
 
 /**
@@ -1216,10 +1241,11 @@ evas_map_util_3d_lighting(Evas_Map *m,
         x = m->points[i].x;
         y = m->points[i].y;
         z = m->points[i].z;
-        
+printf("Normal %d\n",i);
         // calc normal
-        h = (i + m->count - 1) % m->count; // prev point
-        j = (i + 1) % m->count; // next point
+        h = (i - 1 + 4) % 4 + (i & ~0x3); // prev point
+        j = (i + 1)     % 4 + (i & ~0x3); // next point
+printf("\tNext/Prev: %2d/%2d\n",h,j);
 
         x1 = m->points[h].x - x;
         y1 = m->points[h].y - y;
@@ -1228,13 +1254,16 @@ evas_map_util_3d_lighting(Evas_Map *m,
         x2 = m->points[j].x - x;
         y2 = m->points[j].y - y;
         z2 = m->points[j].z - z;
-        
+printf("\tX:	%3.2lf,%3.2lf,%3.2lf\n",x,y,z);
+printf("\tX1:	%3.2lf,%3.2lf,%3.2lf\n",x1,y1,z1);
+printf("\tX2:	%3.2lf,%3.2lf,%3.2lf\n",x2,y2,z2);
         nx = (y1 * z2) - (z1 * y2);
         ny = (z1 * x2) - (x1 * z2);
         nz = (x1 * y2) - (y1 * x2);
         
         ln = (nx * nx) + (ny * ny) + (nz * nz);
         ln = sqrt(ln);
+printf("\tLength: %3.2lf\n",ln);
         
         if (ln != 0.0)
           {
@@ -1242,7 +1271,8 @@ evas_map_util_3d_lighting(Evas_Map *m,
              ny /= ln;
              nz /= ln;
           }
-        
+printf("\tpoint %2d: %3.2lf,%3.2lf,%3.2lf normal: %3.2lf %3.2lf %3.2lf\n",i,x,y,z,nx,ny,nz);
+
         // calc point -> light vector
         x = lx - x;
         y = ly - y;
@@ -1265,9 +1295,11 @@ evas_map_util_3d_lighting(Evas_Map *m,
         mr = ar + ((lr - ar) * br);
         mg = ag + ((lg - ag) * br);
         mb = ab + ((lb - ab) * br);
-        mr = (mr * m->points[i].a) / 255;
-        mg = (mg * m->points[i].a) / 255;
-        mb = (mb * m->points[i].a) / 255;
+	if (m->points[i].a != 255){
+		mr = (mr * m->points[i].a) / 255;
+		mg = (mg * m->points[i].a) / 255;
+		mb = (mb * m->points[i].a) / 255;
+	}
         m->points[i].r = (m->points[i].r * mr) / 255;
         m->points[i].g = (m->points[i].g * mg) / 255;
         m->points[i].b = (m->points[i].b * mb) / 255;

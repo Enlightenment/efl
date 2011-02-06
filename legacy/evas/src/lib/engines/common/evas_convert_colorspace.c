@@ -9,6 +9,9 @@
 #define CONVERT_A5P_TO_A8(s) \
 	((((s) << 3) & 0xf8) | (((s) >> 2) & 0x7))
 
+#define CONVERT_ARGB_8888_TO_A_8(s)	((s) >> 24)
+
+
 static inline void *
 evas_common_convert_argb8888_to_rgb565_a5p(void *data __UNUSED__, int w __UNUSED__, int h __UNUSED__, int stride __UNUSED__, Eina_Bool has_alpha __UNUSED__)
 {
@@ -43,6 +46,28 @@ evas_common_convert_rgb565_a5p_to_argb8888(void *data, int w, int h, int stride,
    return ret;
 }
 
+static inline void *
+evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bool has_alpha)
+{
+   uint32_t *src, *end;
+   uint8_t *ret, *dst;
+
+   src = data;
+   end = src + (stride * h);
+   ret = malloc(w * h);
+
+   if (!has_alpha)
+     {
+        return memset(ret,0xff, w * h);
+     }
+
+   for ( ; src < end ; src ++, dst ++)
+      *dst = CONVERT_ARGB_8888_TO_A_8(*src);
+   return ret;
+}
+
+
+
 EAPI void *
 evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool has_alpha, Evas_Colorspace cspace)
 {
@@ -50,6 +75,8 @@ evas_common_convert_argb8888_to(void *data, int w, int h, int stride, Eina_Bool 
      {
 	case EVAS_COLORSPACE_RGB565_A5P:
 	  return evas_common_convert_argb8888_to_rgb565_a5p(data, w, h, stride, has_alpha);
+        case EVAS_COLORSPACE_A8:
+          return evas_common_convert_argb8888_to_a8(data, w, h, stride, has_alpha);
 	default:
 	  break;
      }
@@ -68,3 +95,6 @@ evas_common_convert_rgb565_a5p_to(void *data, int w, int h, int stride, Eina_Boo
      }
    return NULL;
 }
+
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

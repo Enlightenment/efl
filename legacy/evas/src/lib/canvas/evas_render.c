@@ -703,7 +703,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
 
    // set render_pre - for child objs that may not have gotten it.
    obj->pre_render_done = 1;
-
+   RD("          Hasmap: %p (%d) %p %d -> %d\n",obj->func->can_map,
+                  obj->func->can_map ? obj->func->can_map(obj): -1,
+                  obj->cur.map, obj->cur.usemap,
+                  _evas_render_has_map(obj));
    if (_evas_render_has_map(obj))
      {
         const Evas_Map_Point *p, *p_end;
@@ -730,7 +733,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
         pts[0].z0 = obj->cur.map->persp.z0 << FP;
         
         p = obj->cur.map->points;
-        p_end = p + 4;
+        p_end = p + obj->cur.map->count;
         pt = pts;
         for (; p < p_end; p++, pt++)
           {
@@ -748,6 +751,12 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              else if (pt->v > (sh * FP1)) pt->v = (sh * FP1);
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
           }
+        /* Copy last for software engine */
+        if (obj->cur.map->count & 0x1)
+          {
+            pts[obj->cur.map->count] = pts[obj->cur.map->count - 1];
+          }
+
 
         if (obj->cur.map->surface)
           {
@@ -937,9 +946,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                }
           }
         if (obj->cur.cache.clip.visible)
-           obj->layer->evas->engine.func->image_map4_draw
+           obj->layer->evas->engine.func->image_map_draw
            (e->engine.data.output, e->engine.data.context, surface,
-            obj->cur.map->surface, pts, obj->cur.map->smooth, 0);
+            obj->cur.map->surface, obj->cur.map->count, pts,
+            obj->cur.map->smooth, 0);
         // FIXME: needs to cache these maps and
         // keep them only rendering updates
 //        obj->layer->evas->engine.func->image_map_surface_free

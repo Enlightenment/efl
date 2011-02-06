@@ -95,8 +95,8 @@ EAPI void evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGB
 EAPI void evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *text, const Evas_Text_Props *intl_props);
 EAPI void evas_common_pipe_image_load(RGBA_Image *im);
 EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int smooth, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-EAPI void evas_common_pipe_map4_begin(RGBA_Image *root);
-EAPI void evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
+EAPI void evas_common_pipe_map_begin(RGBA_Image *root);
+EAPI void evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
 				     RGBA_Draw_Context *dc, RGBA_Map_Point *p,
 				     int smooth, int level);
 EAPI void evas_common_pipe_flush(RGBA_Image *im);

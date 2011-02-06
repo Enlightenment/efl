@@ -1738,7 +1738,7 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
 {
    Evas_GL_Image *gim = image;
    Render_Engine *re;
@@ -1942,7 +1942,7 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_get);
    ORD(image_stride_get);
    
-   ORD(image_map4_draw);
+   ORD(image_map_draw);
    ORD(image_map_surface_new);
    ORD(image_map_surface_free);
    

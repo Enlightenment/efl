@@ -21,6 +21,7 @@ typedef struct _Evas_Object_Proxy
 
    Evas_Map *defmap;
    Eina_Bool mapupdate;
+   Eina_Bool rendering;
 } Evas_Object_Proxy;
 
 
@@ -98,6 +99,14 @@ static const Evas_Object_Func object_func =
 };
 
 
+/**
+ * Add a new proxy object.
+ *
+ * The proxy object must have a source set before it is useful.
+ *
+ * @param e Evas canvas to add proxy too.
+ * @return New proxy object.
+ */
 EAPI Evas_Object *
 evas_object_proxy_add(Evas *e)
 {
@@ -119,32 +128,33 @@ evas_object_proxy_add(Evas *e)
    return obj;
 }
 
+/**
+ * Set the source object on a proxy object.
+ *
+ * Any existing source object will be removed.  Setting the src to NULL clears
+ * the proxy object.
+ *
+ * You cannot set a proxy on a proxy.
+ *
+ * @param obj Proxy object.
+ * @param src Source of the proxy.
+ * @return EINA_TRUE on success, EINA_FALSE on error.
+ */
 EAPI Eina_Bool
 evas_object_proxy_source_set(Evas_Object *obj, Evas_Object *src)
 {
-   Evas_Object_Proxy *o,*so;
+   Evas_Object_Proxy *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return false;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    o = obj->object_data;
    MAGIC_CHECK(o, Evas_Object_Proxy, MAGIC_OBJ_PROXY);
-   return false;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
 
-   if (o->source == src) return true;
-
-   if (src)
-     {
-        MAGIC_CHECK(src, Evas_Object, MAGIC_OBJ);
-        return false;
-        MAGIC_CHECK_END();
-        so = src->object_data;
-        /* Stop the loop _now_ */
-        /* FIXME: Should I check for smarts that contain proxies too? */
-        if (so->magic == MAGIC_OBJ_PROXY)
-           return false;
-     }
+   if (src == obj) return EINA_FALSE;
+   if (o->source == src) return EINA_TRUE;
 
    if (o->source)
      {
@@ -156,9 +166,15 @@ evas_object_proxy_source_set(Evas_Object *obj, Evas_Object *src)
         _proxy_set(obj, src);
      }
 
-   return true;
+   return EINA_TRUE;
 }
 
+/**
+ * Get the current source object of a proxy.
+ *
+ * @param obj Proxy object
+ * @return Source object, or NULL on error.
+ */
 EAPI Evas_Object *
 evas_object_proxy_source_get(Evas_Object *obj)
 {
@@ -175,12 +191,20 @@ evas_object_proxy_source_get(Evas_Object *obj)
    return o->source;
 }
 
+/**
+ * Clear the source on a proxy.
+ *
+ * This is equivalent to calling evas_object_proxy_source_set with a NULL
+ * source.
+ *
+ * @param obj Proxy object to clear source of.
+ * @return EINA_TRUE on success, EINA_FALSE on error.
+ */
 EAPI Eina_Bool
-evas_object_proxy_source_unset(Evas_Object *o)
+evas_object_proxy_source_unset(Evas_Object *obj)
 {
-   return evas_object_proxy_source_set(o, NULL);
+   return evas_object_proxy_source_set(obj, NULL);
 }
-
 
 
 
@@ -313,6 +337,30 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
 
    o = obj->object_data;
 
+   if (o->rendering)
+     {
+        int r = rand() % 255;
+        int g = rand() % 255;
+        int b = rand() % 255;
+        printf("Ahh: Recursive proxies: Go away!\n");
+        obj->layer->evas->engine.func->context_color_set(output,
+                                                         context,
+                                                         r,g,b,255);
+        obj->layer->evas->engine.func->context_multiplier_unset(output,
+                                                                context);
+        obj->layer->evas->engine.func->context_render_op_set(output, context,
+                                                             obj->cur.render_op);
+        obj->layer->evas->engine.func->rectangle_draw(output,
+                                                      context,
+                                                      surface,
+                                                      obj->cur.geometry.x + x,
+                                                      obj->cur.geometry.y + y,
+                                                      obj->cur.geometry.w,
+                                                      obj->cur.geometry.h);
+        return;
+     }
+
+
    if (!o->source) return;
 
 //   ENFN->context_multiplier_unset(output, context);
@@ -331,8 +379,10 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
      }
    else
      {
+         o->rendering = true;
          _proxy_subrender(obj->layer->evas, o->source);
          pixels = o->source->proxy.surface;
+         o->rendering = false;
      }
 
    if (o->mapupdate) _proxy_map_update(obj);
@@ -383,8 +433,9 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
              pt->v = p->v * FP1;
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
           }
-        obj->layer->evas->engine.func->image_map4_draw
-           (output, context, surface, pixels, pts, map->smooth, 0);
+        obj->layer->evas->engine.func->image_map_draw
+           (output, context, surface, pixels, map->count, pts,
+            map->smooth, 0);
      }
    else
      {
