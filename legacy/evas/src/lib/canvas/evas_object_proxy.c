@@ -73,7 +73,6 @@ static const Evas_Object_Func object_func =
 
   /* Optional
   .store =
-  .unstore =
 
   .is_visible =
   .was_visible =
@@ -231,6 +230,7 @@ _proxy_set(Evas_Object *proxy, Evas_Object *src)
    o->source = src;
 
    src->proxy.proxies = eina_list_append(src->proxy.proxies, proxy);
+   src->proxy.redraw = EINA_TRUE;
 }
 
 
@@ -257,22 +257,26 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
    Evas_Object_Proxy *o;
    void *pixels;
    int w,h;
+   int iw, ih;
 
    o = obj->object_data;
-   printf("proxy render\n");
 
    if (!o->source) return;
 
-   /* Images only essentially */
-   if (o->source->proxy.surface)
+//   ENFN->context_multiplier_unset(output, context);
+  // ENFN->context_render_op_set(output, context, obj->cur.render_op);
+
+   if (o->source->proxy.surface && o->source->proxy.redraw == EINA_FALSE)
      {
          pixels = o->source->proxy.surface;
      }
    /* Making this faster would be nice... */
-//   else if (strcmp(evas_object_type_get(o->source),"image") == 0)
-  //   {
-    //    pixels = o->source->func->engine_data_get(o->source);
-     //}
+   else if (strcmp(evas_object_type_get(o->source),"image") == 0)
+     {
+        pixels = o->source->func->engine_data_get(o->source);
+        evas_object_image_size_get(o->source, &iw, &ih);
+        printf("\timage source (Pixels %p  %dx%d)\n",pixels,iw,ih);
+     }
    else
      {
          _proxy_subrender(obj->layer->evas, o->source);
@@ -321,12 +325,14 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
      }
    else
      {
+        printf("\timage draw %p %p %p %p %d %d %d %d %d %d\n",
+               output, context, surface, pixels, w,h,obj->cur.geometry.x+x,
+               obj->cur.geometry.y+y,iw,ih);
+#warning Your mum
         obj->layer->evas->engine.func->image_draw(output, context,
                                              surface, pixels,
                                              0, 0,
-                                             w, h, /* FIXME:
-                                             o->cur.image.w,
-                                             o->cur.image.h, */
+                                             w, h,
                                              obj->cur.geometry.x + /*ix +*/ x,
                                              obj->cur.geometry.y + /*iy +*/ y,
                                              w, h,/* was iw,ih */
@@ -346,21 +352,28 @@ _proxy_subrender(Evas *e, Evas_Object *source)
 
    if (!source) return;
 
-   if (source->proxy.surface)
-     {
-        /* FIXME: Don't free every time */
-        e->engine.func->image_map_surface_free(e->engine.data.output,
-                                               source->proxy.surface);
-
-     }
-
    w = source->cur.geometry.w;
    h = source->cur.geometry.h;
 
+   source->proxy.redraw = EINA_FALSE;
+
+   /* We need to redraw surface then */
+   if (source->proxy.surface && (source->proxy.w != w || source->proxy.h != h))
+     {
+        e->engine.func->image_map_surface_free(e->engine.data.output,
+                                               source->proxy.surface);
+        source->proxy.surface = NULL;
+     }
+
    /* FIXME: Hardcoded alpha 'on' */
    /* FIXME (cont): Should see if the object has alpha */
-   source->proxy.surface = e->engine.func->image_map_surface_new(
-            e->engine.data.output, w, h, 1);
+   if (!source->proxy.surface)
+     {
+        source->proxy.surface = e->engine.func->image_map_surface_new(
+           e->engine.data.output, w, h, 1);
+        source->proxy.w = w;
+        source->proxy.h = w;
+     }
 
    ctx = e->engine.func->context_new(e->engine.data.output);
    e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
@@ -387,19 +400,64 @@ _proxy_subrender(Evas *e, Evas_Object *source)
                                     -source->cur.geometry.y);
      }
    e->engine.func->context_free(e->engine.data.output, ctx);
+
 }
 
 static void
 _proxy_render_pre(Evas_Object *obj)
 {
-   printf("Proxy render pre\n");
+   Evas_Object_Proxy *o;
+   Evas *e;
+   int was_v, is_v;
+
    if (obj->pre_render_done) return;
    obj->pre_render_done = 1;
+
+   printf("Proxy render pre: %p\n",obj);
+
+   e = obj->layer->evas;
+   o = obj->object_data;
+
+   is_v = evas_object_is_visible(obj);
+   was_v = evas_object_was_visible(obj);
+
+   if (is_v != was_v)
+     {
+        printf("\tVis changed\n");
+        evas_object_render_pre_visible_change(&e->clip_changes, obj, is_v, was_v);
+     }
+   if (((obj->cur.geometry.x != obj->prev.geometry.x) ||
+	(obj->cur.geometry.y != obj->prev.geometry.y) ||
+	(obj->cur.geometry.w != obj->prev.geometry.w) ||
+	(obj->cur.geometry.h != obj->prev.geometry.h))
+       )
+     {
+        printf("\tgeo changed\n");
+	evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
+     }
+
+   if (o->source && o->source->proxy.redraw)
+     {
+        printf("\tsource redraw set\n");
+        evas_add_rect(&e->clip_changes,
+                      obj->cur.geometry.x, obj->cur.geometry.y,
+                      obj->cur.geometry.w, obj->cur.geometry.h);
+     }
+
+   evas_object_render_pre_effect_updates(&e->clip_changes, obj, is_v, was_v);
 }
 static void
 _proxy_render_post(Evas_Object *obj)
 {
+   Evas_Object_Proxy *o;
+
    printf("proxy render post\n");
+   o = obj->object_data;
+
+   evas_object_clip_changes_clean(obj);
+   /* move cur to prev safely for object data */
+   obj->prev = obj->cur;
+   //o->changed = 0;
 }
 static unsigned int
 _proxy_id_get(Evas_Object *obj)

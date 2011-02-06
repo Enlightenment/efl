@@ -191,6 +191,8 @@ _evas_render_phase1_direct(Evas *e,
                            Eina_Array *render_objects)
 {
    unsigned int i;
+   Eina_List *l;
+   Evas_Object *proxy;
 
    RD("  [--- PHASE 1 DIRECT\n");
    for (i = 0; i < render_objects->count; i++)
@@ -201,8 +203,15 @@ _evas_render_phase1_direct(Evas *e,
         RD("    OBJ [%p] changed %i\n", obj, obj->changed);
 	if (obj->changed)
           {
+             /* Flag need redraw on proxy too */
              evas_object_clip_recalc(obj);
              obj->func->render_pre(obj);
+             if (obj->proxy.proxies)
+               {
+                  obj->proxy.redraw = 1;
+                  EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
+                     proxy->func->render_pre(proxy);
+               }
              if (obj->pre_render_done)
                {
                   RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",

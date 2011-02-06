@@ -444,6 +444,8 @@ struct _Evas_Object
    struct {
       Eina_List               *proxies;
       void                    *surface;
+      int		       w,h;
+      Eina_Bool                redraw;
    } proxy;
 
    Evas_Size_Hints            *size_hints;
