@@ -184,7 +184,7 @@ _proxy_unset(Evas_Object *proxy)
    o = proxy->object_data;
    if (!o->source) return;
 
-   o->source->proxies = eina_list_remove(o->source->proxies, proxy);
+   o->source->proxy.proxies = eina_list_remove(o->source->proxy.proxies, proxy);
 
    o->source = NULL;
 }
@@ -200,7 +200,7 @@ _proxy_set(Evas_Object *proxy, Evas_Object *src)
    o->source = src;
    printf("Set %p\n",src);
 
-   src->proxies = eina_list_append(src->proxies, proxy);
+   src->proxy.proxies = eina_list_append(src->proxy.proxies, proxy);
 
 
 }

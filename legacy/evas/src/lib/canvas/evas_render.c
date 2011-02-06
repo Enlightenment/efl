@@ -1681,3 +1681,6 @@ evas_render_object_recalc(Evas_Object *obj)
 	obj->changed = 1;
      }
 }
+
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

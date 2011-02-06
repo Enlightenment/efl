@@ -441,6 +441,10 @@ struct _Evas_Object
       Evas_Object             *parent;
    } smart;
 
+   struct {
+      Eina_List                  *proxies;
+   } proxy;
+
    Evas_Size_Hints            *size_hints;
 
    int                         last_mouse_down_counter;
