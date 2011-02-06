@@ -119,12 +119,10 @@ evas_object_proxy_source_set(Evas_Object *obj, Evas_Object *src)
    Evas_Object_Proxy *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   printf("Obj is not an obj\n");
    return false;
    MAGIC_CHECK_END();
    o = obj->object_data;
    MAGIC_CHECK(o, Evas_Object_Proxy, MAGIC_OBJ_PROXY);
-   printf("Obj is not a proxy\n");
    return false;
    MAGIC_CHECK_END();
 
