@@ -21,8 +21,8 @@ desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
 {
 #ifdef ELM_EFREET   
    Efreet_Desktop *d = (Efreet_Desktop *)data;
-   const char *path;
    Evas_Object *ic;
+
    ic = elm_icon_add(obj);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    if (!(!strcmp(part, "elm.swallow.icon"))) return ic;
