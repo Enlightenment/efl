@@ -3,6 +3,10 @@
 
 #include <stdbool.h>
 
+/* Switch this to not always use the map.
+ * Tested using map, which is a little slower */
+#define ALWAYS_MAP   1
+
 /* Magic number for Proxy objects */
 static const char o_type[] = "proxy";
 
@@ -14,6 +18,9 @@ typedef struct _Evas_Object_Proxy
    Evas_Object *source;
 
    void *engine_data;
+
+   Evas_Map *defmap;
+   Eina_Bool mapupdate;
 } Evas_Object_Proxy;
 
 
@@ -231,6 +238,7 @@ _proxy_set(Evas_Object *proxy, Evas_Object *src)
 
    src->proxy.proxies = eina_list_append(src->proxy.proxies, proxy);
    src->proxy.redraw = EINA_TRUE;
+   o->mapupdate = EINA_TRUE;
 }
 
 
@@ -246,9 +254,54 @@ _proxy_free(Evas_Object *obj)
    MAGIC_CHECK_END();
 
    if (o->source) _proxy_unset(obj);
+   if (o->defmap) evas_map_free(o->defmap);
    o->magic = 0;
    free(o);
 }
+
+static void
+_proxy_map_update(Evas_Object *obj)
+{
+   Evas_Object_Proxy *o;
+   int x,y, w, h;
+   int sw,sh;
+   Evas_Map *m;
+
+   o = obj->object_data;
+
+   if (!o->source) return;
+   o->mapupdate = EINA_FALSE;
+
+
+   x = obj->cur.geometry.x;
+   y = obj->cur.geometry.y;
+   w = obj->cur.geometry.w;
+   h = obj->cur.geometry.h;
+   sw = o->source->proxy.w;
+   sh = o->source->proxy.h;
+
+   if (!o->defmap)
+      o->defmap = evas_map_new(4);
+   m = o->defmap;
+
+   evas_map_point_coord_set   (m, 0, x, y, 0);
+   evas_map_point_image_uv_set(m, 0, 0, 0);
+   evas_map_point_color_set   (m, 0, 255, 255, 255, 255);
+
+   evas_map_point_coord_set   (m, 1, x + w, y, 0);
+   evas_map_point_image_uv_set(m, 1, sw, 0);
+   evas_map_point_color_set   (m, 1, 255, 255, 255, 255);
+
+   evas_map_point_coord_set   (m, 2, x + w, y + h, 0);
+   evas_map_point_image_uv_set(m, 2, sw, sh);
+   evas_map_point_color_set   (m, 2, 255, 255, 255, 255);
+
+   evas_map_point_coord_set   (m, 3, x, y + h, 0);
+   evas_map_point_image_uv_set(m, 3, 0, sh);
+   evas_map_point_color_set   (m, 3, 255, 255, 255, 255);
+
+}
+
 
 static void
 _proxy_render(Evas_Object *obj, void *output, void *context,
@@ -257,7 +310,6 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
    Evas_Object_Proxy *o;
    void *pixels;
    int w,h;
-   int iw, ih;
 
    o = obj->object_data;
 
@@ -274,8 +326,8 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
    else if (strcmp(evas_object_type_get(o->source),"image") == 0)
      {
         pixels = o->source->func->engine_data_get(o->source);
-        evas_object_image_size_get(o->source, &iw, &ih);
-        printf("\timage source (Pixels %p  %dx%d)\n",pixels,iw,ih);
+        evas_object_image_size_get(o->source, &o->source->proxy.w,
+                                   &o->source->proxy.h);
      }
    else
      {
@@ -283,6 +335,7 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
          pixels = o->source->proxy.surface;
      }
 
+   if (o->mapupdate) _proxy_map_update(obj);
 
    if (!pixels)
      {
@@ -292,21 +345,32 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
    w = obj->cur.geometry.w;
    h = obj->cur.geometry.h;
 
-
    /* If we have a map: Use that */
-   if ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap))
+   if (ALWAYS_MAP ||
+       ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))
      {
         const Evas_Map_Point *p, *p_end;
         RGBA_Map_Point pts[4], *pt;
+        Evas_Map *map;
 
-        p = obj->cur.map->points;
+        if (!obj->cur.usemap || !obj->cur.map)
+           map = o->defmap;
+        else
+           map = obj->cur.map;
+
+        p = map->points;
         p_end = p + 4;
         pt = pts;
 
-        pts[0].px = obj->cur.map->persp.px << FP;
-        pts[0].py = obj->cur.map->persp.py << FP;
-        pts[0].foc = obj->cur.map->persp.foc << FP;
-        pts[0].z0 = obj->cur.map->persp.z0 << FP;
+        pts[0].px = map->persp.px << FP;
+        pts[0].py = map->persp.py << FP;
+        pts[0].foc = map->persp.foc << FP;
+        pts[0].z0 = map->persp.z0 << FP;
+
+        pts[0].px = map->persp.px << FP;
+        pts[0].py = map->persp.py << FP;
+        pts[0].foc = map->persp.foc << FP;
+        pts[0].z0 = map->persp.z0 << FP;
         // draw geom +x +y
         for (; p < p_end; p++, pt++)
           {
@@ -320,15 +384,10 @@ _proxy_render(Evas_Object *obj, void *output, void *context,
              pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
           }
         obj->layer->evas->engine.func->image_map4_draw
-           (output, context, surface, pixels, pts,
-            1/* o->cur.smooth_scale | obj->cur.map->smooth */, 0);
+           (output, context, surface, pixels, pts, map->smooth, 0);
      }
    else
      {
-        printf("\timage draw %p %p %p %p %d %d %d %d %d %d\n",
-               output, context, surface, pixels, w,h,obj->cur.geometry.x+x,
-               obj->cur.geometry.y+y,iw,ih);
-#warning Your mum
         obj->layer->evas->engine.func->image_draw(output, context,
                                              surface, pixels,
                                              0, 0,
@@ -413,8 +472,6 @@ _proxy_render_pre(Evas_Object *obj)
    if (obj->pre_render_done) return;
    obj->pre_render_done = 1;
 
-   printf("Proxy render pre: %p\n",obj);
-
    e = obj->layer->evas;
    o = obj->object_data;
 
@@ -423,7 +480,6 @@ _proxy_render_pre(Evas_Object *obj)
 
    if (is_v != was_v)
      {
-        printf("\tVis changed\n");
         evas_object_render_pre_visible_change(&e->clip_changes, obj, is_v, was_v);
      }
    if (((obj->cur.geometry.x != obj->prev.geometry.x) ||
@@ -432,16 +488,16 @@ _proxy_render_pre(Evas_Object *obj)
 	(obj->cur.geometry.h != obj->prev.geometry.h))
        )
      {
-        printf("\tgeo changed\n");
 	evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
+        o->mapupdate = EINA_TRUE;
      }
 
    if (o->source && o->source->proxy.redraw)
      {
-        printf("\tsource redraw set\n");
         evas_add_rect(&e->clip_changes,
                       obj->cur.geometry.x, obj->cur.geometry.y,
                       obj->cur.geometry.w, obj->cur.geometry.h);
+        o->mapupdate = EINA_TRUE;
      }
 
    evas_object_render_pre_effect_updates(&e->clip_changes, obj, is_v, was_v);
@@ -451,13 +507,12 @@ _proxy_render_post(Evas_Object *obj)
 {
    Evas_Object_Proxy *o;
 
-   printf("proxy render post\n");
    o = obj->object_data;
 
    evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
-   //o->changed = 0;
+   obj->changed = 0;
 }
 static unsigned int
 _proxy_id_get(Evas_Object *obj)
@@ -484,8 +539,7 @@ _proxy_is_opaque(Evas_Object *obj)
 
    /* No source: Sure, it's opaque */
    if (!o->source) return 1;
-   if (obj->cur.usemap) return 0;
-   return o->source->func->is_opaque(o->source);
+   return 0;
 }
 
 static int
@@ -495,8 +549,7 @@ _proxy_was_opaque(Evas_Object *obj)
 
    /* No source: Sure, it's opaque */
    if (!o->source) return 1;
-   if (obj->cur.usemap) return 0;
-   return o->source->func->was_opaque(o->source);
+   return 0;
 }
 
 static int
