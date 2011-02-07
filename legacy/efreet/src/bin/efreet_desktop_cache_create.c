@@ -188,6 +188,30 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
     return 1;
 }
 
+static int
+cache_lock_file(void)
+{
+    char file[PATH_MAX];
+    struct flock fl;
+    int lockfd;
+
+    snprintf(file, sizeof(file), "%s/efreet/desktop_data.lock", efreet_cache_home_get());
+    lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+    if (lockfd < 0) return -1;
+
+    memset(&fl, 0, sizeof(struct flock));
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    if (fcntl(lockfd, F_SETLK, &fl) < 0)
+    {
+        if (verbose) printf("LOCKED! You may want to delete %s if this persists\n", file);
+        close(lockfd);
+        return -1;
+    }
+
+    return lockfd;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -206,7 +230,6 @@ main(int argc, char **argv)
     struct stat st;
     int changed = 0;
     int i;
-    struct flock fl;
     char file[PATH_MAX] = { '\0' };
     char util_file[PATH_MAX] = { '\0' };
 
@@ -238,20 +261,9 @@ main(int argc, char **argv)
     if (!ecore_file_mkpath(file)) goto efreet_error;
 
     /* lock process, so that we only run one copy of this program */
-    snprintf(file, sizeof(file), "%s/efreet/desktop_data.lock", efreet_cache_home_get());
-    lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    if (lockfd < 0) goto efreet_error;
-    memset(&fl, 0, sizeof(struct flock));
-    fl.l_type = F_WRLCK;
-    fl.l_whence = SEEK_SET;
-    if (fcntl(lockfd, F_SETLK, &fl) < 0)
-    {
-        if (verbose)
-        {
-            printf("LOCKED! You may want to delete %s if this persists\n", file);
-        }
-        goto efreet_error;
-    }
+    lockfd = cache_lock_file();
+    if (lockfd == -1) goto efreet_error;
+
     edd = efreet_desktop_edd();
     if (!edd) goto edd_error;
 

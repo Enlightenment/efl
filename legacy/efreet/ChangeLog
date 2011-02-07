@@ -53,3 +53,4 @@
 
 	* Don't create cache dir several times
 	* Do efreet_init before using efreet_*() functions
+	* Move lock creation to own function for desktop cache
