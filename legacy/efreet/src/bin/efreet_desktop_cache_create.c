@@ -230,6 +230,8 @@ main(int argc, char **argv)
     if (!ecore_init()) goto ecore_error;
 
     efreet_cache_update = 0;
+    /* finish efreet init */
+    if (!efreet_init()) goto efreet_error;
 
     /* create homedir */
     snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
@@ -250,9 +252,6 @@ main(int argc, char **argv)
         }
         goto efreet_error;
     }
-
-    /* finish efreet init */
-    if (!efreet_init()) goto efreet_error;
     edd = efreet_desktop_edd();
     if (!edd) goto edd_error;
 

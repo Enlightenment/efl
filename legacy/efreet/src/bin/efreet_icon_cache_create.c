@@ -717,18 +717,19 @@ main(int argc, char **argv)
     if (!ecore_init()) return -1;
 
     efreet_cache_update = 0;
+    /* finish efreet init */
+    if (!efreet_init()) goto on_error;
+
     strs = eina_array_new(32);
 
     /* create homedir */
     snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
-    if (!ecore_file_mkpath(file)) return -1;
+    if (!ecore_file_mkpath(file)) goto on_error;
 
     /* lock process, so that we only run one copy of this program */
     lockfd = cache_lock_file();
-    if (lockfd == -1) return -1;
+    if (lockfd == -1) goto on_error;
 
-    /* finish efreet init */
-    if (!efreet_init()) goto on_error;
     /* Need to init edd's, so they are like we want, not like userspace wants */
     icon_edd = efreet_icon_edd();
     fallback_edd = efreet_icon_fallback_edd();
@@ -980,7 +981,7 @@ on_error_efreet:
     efreet_shutdown();
 
 on_error:
-    close(lockfd);
+    if (lockfd > 0) close(lockfd);
 
     while ((path = eina_array_pop(strs)))
         eina_stringshare_del(path);

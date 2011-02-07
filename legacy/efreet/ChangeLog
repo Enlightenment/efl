@@ -52,3 +52,4 @@
 2011-02-07  Sebastian Dransfeld
 
 	* Don't create cache dir several times
+	* Do efreet_init before using efreet_*() functions
