@@ -68,6 +68,13 @@ evas_image_load_file_head_wbmp(Image_Entry *ie, const char *file, const char *ke
    if (fread(&fixed_header, 1, 1, f) != 1) goto bail;
    if (read_mb(&w, f) < 0) goto bail;
    if (read_mb(&h, f) < 0) goto bail;
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(w, h))
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto bail;
+     }
+      
    fclose(f);
    ie->w = w;
    ie->h = h;
