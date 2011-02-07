@@ -33,7 +33,6 @@ evas_object_inform.c \
 evas_object_intercept.c \
 evas_object_line.c \
 evas_object_polygon.c \
-evas_object_proxy.c \
 evas_object_rectangle.c \
 evas_object_smart.c \
 evas_object_smart_clipped.c \
