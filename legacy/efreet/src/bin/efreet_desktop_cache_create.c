@@ -251,16 +251,6 @@ main(int argc, char **argv)
         goto efreet_error;
     }
 
-    /* create dir for desktop cache */
-    dir = ecore_file_dir_get(efreet_desktop_cache_file());
-    if (!ecore_file_mkpath(dir)) goto efreet_error;
-    IF_FREE(dir);
-
-    /* create dir for util cache */
-    dir = ecore_file_dir_get(efreet_desktop_util_cache_file());
-    if (!ecore_file_mkpath(dir)) goto efreet_error;
-    IF_FREE(dir);
-
     /* finish efreet init */
     if (!efreet_init()) goto efreet_error;
     edd = efreet_desktop_edd();

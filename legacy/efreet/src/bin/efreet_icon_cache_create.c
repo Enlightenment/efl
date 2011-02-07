@@ -727,11 +727,6 @@ main(int argc, char **argv)
     lockfd = cache_lock_file();
     if (lockfd == -1) return -1;
 
-    /* create dir for icon cache */
-    dir = ecore_file_dir_get(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK));
-    if (!ecore_file_mkpath(dir)) goto on_error;
-    free(dir);
-
     /* finish efreet init */
     if (!efreet_init()) goto on_error;
     /* Need to init edd's, so they are like we want, not like userspace wants */

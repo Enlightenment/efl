@@ -48,3 +48,7 @@
         * Fix doc for efreet_utils.{h,c},efreet_mime.c
         * Add comment for all internal EAPI functions
         * Remove doc for removed _efreet_log_domain_global
+
+2011-02-07  Sebastian Dransfeld
+
+	* Don't create cache dir several times
