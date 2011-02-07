@@ -164,7 +164,7 @@ typedef enum _Evas_Colorspace
    EVAS_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
    EVAS_COLORSPACE_YCBCR422P709_PL,/**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data poitned to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
    EVAS_COLORSPACE_RGB565_A5P, /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
-   EVAS_COLORSPACE_GRY8, /**< 8bit grayscale */
+   EVAS_COLORSPACE_GRY8 /**< 8bit grayscale */
 } Evas_Colorspace; /**< Colorspaces for pixel data supported by Evas */
 
 /**
@@ -331,7 +331,7 @@ typedef enum _Evas_Pixel_Import_Pixel_Format
 {
    EVAS_PIXEL_FORMAT_NONE = 0, /**< No pixel format */
    EVAS_PIXEL_FORMAT_ARGB32 = 1, /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
-   EVAS_PIXEL_FORMAT_YUV420P_601 = 2, /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
+   EVAS_PIXEL_FORMAT_YUV420P_601 = 2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
 } Evas_Pixel_Import_Pixel_Format; /**< Pixel format for import call. See evas_object_image_pixels_import() */
 
 struct _Evas_Pixel_Import_Source
