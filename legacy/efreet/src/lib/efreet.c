@@ -24,6 +24,9 @@ void *alloca (size_t);
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #include <Eet.h>
 #include <Ecore.h>
@@ -49,6 +52,9 @@ static const char *efreet_lang_modifier = NULL;
 static void efreet_parse_locale(void);
 static int efreet_parse_locale_setting(const char *env);
 
+static uid_t ruid;
+static uid_t rgid;
+
 /**
  * @return Returns > 0 if the initialization was successful, 0 otherwise
  * @brief Initializes the Efreet system
@@ -56,8 +62,23 @@ static int efreet_parse_locale_setting(const char *env);
 EAPI int
 efreet_init(void)
 {
+    char *tmp;
+
     if (++_efreet_init_count != 1)
         return _efreet_init_count;
+
+    /* Find users real uid and gid */
+    tmp = getenv("SUDO_UID");
+    if (tmp)
+        ruid = strtoul(tmp, NULL, 10);
+    else
+        ruid = getuid();
+
+    tmp = getenv("SUDO_GID");
+    if (tmp)
+        rgid = strtoul(tmp, NULL, 10);
+    else
+        rgid = getgid();
 
     if (!eina_init())
         return --_efreet_init_count;
@@ -288,4 +309,27 @@ efreet_array_cat(char *buffer, size_t size, const char *strs[])
         n += eina_strlcpy(buffer + n, strs[i], size - n);
     }
     return n;
+}
+
+EAPI void
+efreet_fsetowner(int fd)
+{
+    struct stat st;
+
+    if (fd < 0) return;
+    if (fstat(fd, &st) < 0) return;
+    if (st.st_uid == ruid) return;
+
+    fchown(fd, ruid, rgid);
+}
+
+EAPI void
+efreet_setowner(const char *path)
+{
+    int fd;
+
+    fd = open(path, O_RDONLY);
+    if (fd < 0) return;
+    efreet_fsetowner(fd);
+    close(fd);
 }

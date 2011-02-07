@@ -198,6 +198,7 @@ cache_lock_file(void)
     snprintf(file, sizeof(file), "%s/efreet/desktop_data.lock", efreet_cache_home_get());
     lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (lockfd < 0) return -1;
+    efreet_fsetowner(lockfd);
 
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
@@ -258,7 +259,11 @@ main(int argc, char **argv)
 
     /* create homedir */
     snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
-    if (!ecore_file_mkpath(file)) goto efreet_error;
+    if (!ecore_file_exists(file))
+    {
+        if (!ecore_file_mkpath(file)) goto efreet_error;
+        efreet_setowner(file);
+    }
 
     /* lock process, so that we only run one copy of this program */
     lockfd = cache_lock_file();
@@ -350,6 +355,7 @@ main(int argc, char **argv)
     {
         dirsfd = open(efreet_desktop_cache_dirs(), O_CREAT | O_APPEND | O_WRONLY, S_IRUSR | S_IWUSR);
         if (dirsfd < 0) goto error;
+        efreet_fsetowner(dirsfd);
         EINA_LIST_FREE(user_dirs, dir)
         {
             unsigned int size = strlen(dir) + 1;
@@ -428,7 +434,9 @@ main(int argc, char **argv)
     }
 
     /* cleanup */
+    eet_sync(util_ef);
     eet_close(util_ef);
+    eet_sync(ef);
     eet_close(ef);
 
     /* unlink old cache files */
@@ -444,7 +452,9 @@ main(int argc, char **argv)
         }
         /* rename tmp files to real files */
         if (rename(util_file, efreet_desktop_util_cache_file()) < 0) goto error;
+        efreet_setowner(efreet_desktop_util_cache_file());
         if (rename(file, efreet_desktop_cache_file()) < 0) goto error;
+        efreet_setowner(efreet_desktop_cache_file());
     }
     else
     {
@@ -458,6 +468,7 @@ main(int argc, char **argv)
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
+        efreet_fsetowner(tmpfd);
         if (write(tmpfd, "a", 1) != 1) perror("write");
         close(tmpfd);
     }

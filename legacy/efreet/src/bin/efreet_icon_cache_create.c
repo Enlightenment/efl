@@ -617,6 +617,7 @@ cache_lock_file(void)
     snprintf(file, sizeof(file), "%s/efreet/icon_data.lock", efreet_cache_home_get());
     lockfd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (lockfd < 0) return -1;
+    efreet_fsetowner(lockfd);
 
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
@@ -724,7 +725,11 @@ main(int argc, char **argv)
 
     /* create homedir */
     snprintf(file, sizeof(file), "%s/efreet", efreet_cache_home_get());
-    if (!ecore_file_mkpath(file)) goto on_error;
+    if (!ecore_file_exists(file))
+    {
+        if (!ecore_file_mkpath(file)) return -1;
+        efreet_setowner(file);
+    }
 
     /* lock process, so that we only run one copy of this program */
     lockfd = cache_lock_file();
@@ -883,7 +888,9 @@ main(int argc, char **argv)
         }
 
         eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
+        eet_sync(icon_ef);
         eet_close(icon_ef);
+        efreet_setowner(efreet_icon_cache_file(theme->theme.name.internal));
         free(icon_version);
     }
     eina_iterator_free(it);
@@ -958,14 +965,18 @@ main(int argc, char **argv)
     icon_theme_free(theme);
 
     eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
+    eet_sync(icon_ef);
     eet_close(icon_ef);
+    efreet_setowner(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK));
     free(icon_version);
 
     eina_hash_free(icon_themes);
 
     /* save data */
     eet_data_write(theme_ef, efreet_version_edd(), EFREET_CACHE_VERSION, theme_version, 1);
+    eet_sync(theme_ef);
     eet_close(theme_ef);
+    efreet_setowner(efreet_icon_theme_cache_file());
     free(theme_version);
 
     /* touch update file */
@@ -973,6 +984,7 @@ main(int argc, char **argv)
     tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
     if (tmpfd >= 0)
     {
+        efreet_fsetowner(tmpfd);
         write(tmpfd, "a", 1);
         close(tmpfd);
     }

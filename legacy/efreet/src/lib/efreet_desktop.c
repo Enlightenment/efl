@@ -792,6 +792,7 @@ efreet_desktop_write_cache_dirs_file(void)
     snprintf(file, sizeof(file), "%s/desktop_data.lock", efreet_cache_home_get());
     fd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fd < 0) return 0;
+    efreet_fsetowner(fd);
     /* TODO: Retry update cache later */
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
@@ -800,6 +801,7 @@ efreet_desktop_write_cache_dirs_file(void)
 
     cachefd = open(efreet_desktop_cache_dirs(), O_CREAT | O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
     if (cachefd < 0) goto error;
+    efreet_fsetowner(cachefd);
     if (fstat(cachefd, &st) < 0) goto error;
     if (st.st_size > 0)
     {

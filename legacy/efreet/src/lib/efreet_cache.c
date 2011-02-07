@@ -110,7 +110,11 @@ efreet_cache_init(void)
     fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
 
     snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
-    if (!ecore_file_mkpath(buf)) goto error;
+    if (!ecore_file_exists(buf))
+    {
+        if (!ecore_file_mkpath(buf)) goto error;
+        efreet_setowner(buf);
+    }
 
     if (efreet_cache_update)
     {
@@ -899,6 +903,7 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
 
     desktop_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (desktop_cache_exe_lock < 0) return;
+    efreet_fsetowner(desktop_cache_exe_lock);
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;
@@ -936,6 +941,7 @@ icon_cache_update_cache_job(void *data __UNUSED__)
 
     icon_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (icon_cache_exe_lock < 0) return;
+    efreet_fsetowner(icon_cache_exe_lock);
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
     fl.l_whence = SEEK_SET;

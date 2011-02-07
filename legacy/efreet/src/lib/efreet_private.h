@@ -224,6 +224,8 @@ char **efreet_cache_icon_theme_name_list(int *num);
 EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
+EAPI void efreet_setowner(const char *path);
+EAPI void efreet_fsetowner(int fd);
 
 #define NON_EXISTING (void *)-1
 
