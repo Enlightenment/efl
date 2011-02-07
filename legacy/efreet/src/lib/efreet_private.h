@@ -61,11 +61,6 @@
     (x) = NULL; \
 } while (0)
 
-/**
- * @def _efreet_log_domain_global
- * global log domain for efreet (see eina_log module)
- */
-
 #ifdef EFREET_DEFAULT_LOG_COLOR
 #undef EFREET_DEFAULT_LOG_COLOR
 #endif

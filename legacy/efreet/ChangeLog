@@ -42,3 +42,9 @@
 2011-02-05  Hannes Janetzek
 
         * Clear mem cache when closing eet file
+
+2011-02-06  Sebastian Dransfeld
+
+        * Fix doc for efreet_utils.{h,c},efreet_mime.c
+        * Add comment for all internal EAPI functions
+        * Remove doc for removed _efreet_log_domain_global

@@ -161,6 +161,14 @@ efreet_util_path_in_default(const char *section, const char *path)
     return ret;
 }
 
+/**
+ * Returns the fdo file id for a given path. If the file isn't inside
+ * a default fdo path it will return NULL.
+ *
+ * @param path The path to find the file id for
+ *
+ * @return File id for path or NULL
+ */
 EAPI const char *
 efreet_util_path_to_file_id(const char *path)
 {
@@ -688,6 +696,9 @@ efreet_util_desktop_cache_reload(void)
     cache = efreet_cache_close(cache);
 }
 
+/*
+ * Needs EAPI because of helper binaries
+ */
 EAPI void
 efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb)
 {

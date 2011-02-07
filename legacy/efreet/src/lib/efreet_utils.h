@@ -1,6 +1,15 @@
 #ifndef EFREET_UTILS_H
 #define EFREET_UTILS_H
 
+/**
+ * @file efreet_utils.h
+ * @brief Contains utility functions to ease usage of Efreet.
+ *        FDO desktop entry specificiation.
+ * @addtogroup Efreet_Utils Efreet utilities for FDO
+ *
+ * @{
+ */
+
 EAPI const char *efreet_util_path_to_file_id(const char *path);
 
 EAPI Eina_List *efreet_util_desktop_mime_list(const char *mime);
@@ -21,4 +30,7 @@ EAPI Eina_List *efreet_util_desktop_category_list(const char *category);
 
 EAPI Eina_List *efreet_util_menus_find(void);
 
+/**
+ * @}
+ */
 #endif

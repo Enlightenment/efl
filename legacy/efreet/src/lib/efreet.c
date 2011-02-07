@@ -36,6 +36,9 @@ void *alloca (size_t);
 #include "efreet_private.h"
 #include "efreet_xml.h"
 
+/*
+ * Needs EAPI because of helper binaries
+ */
 EAPI int efreet_cache_update = 1;
 
 static int _efreet_init_count = 0;

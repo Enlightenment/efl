@@ -406,6 +406,9 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
     return icon;
 }
 
+/**
+ * @brief Clear mime icons mapping cache
+ */
 EAPI void
 efreet_mime_type_cache_clear(void)
 {
@@ -417,6 +420,12 @@ efreet_mime_type_cache_clear(void)
     mime_icons = eina_hash_stringshared_new(EINA_FREE_CB(efreet_mime_icon_entry_head_free));
 }
 
+/**
+ * @brief Flush mime icons mapping cache
+ *
+ * Flush timeout is defined at compile time by
+ * EFREET_MIME_ICONS_FLUSH_TIMEOUT
+ */
 EAPI void
 efreet_mime_type_cache_flush(void)
 {
