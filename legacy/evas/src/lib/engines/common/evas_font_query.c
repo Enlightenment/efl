@@ -202,10 +202,10 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *text __UNU
         goto end;
      }
 
-   Evas_Coord cluster_start, last_end;
+   Evas_Coord cluster_start = 0, last_end = 0;
    int prev_cluster = -1;
    int found = 0, items = 1, item_pos = 1;
-   int last_is_visible;
+   int last_is_visible = 0;
    EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
@@ -325,10 +325,10 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *text __UNUS
         ret_val = 1;
         goto end;
      }
-   Evas_Coord cluster_start;
+   Evas_Coord cluster_start = 0;
    int prev_cluster = -1;
    int found = 0, items = 1, item_pos = 1;
-   int last_is_visible = 1;
+   int last_is_visible = 0;
    EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
@@ -417,7 +417,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *text __
 
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
-   Evas_Coord cluster_start;
+   Evas_Coord cluster_start = 0;
    int prev_cluster = -1;
    int found = 0, items = 1;
    EVAS_FONT_WALK_TEXT_VISUAL_START()
