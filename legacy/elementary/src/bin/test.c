@@ -157,9 +157,17 @@ index_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
+_ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   (void) data; (void) event_info;
+   elm_mirrored_set(elm_toggle_state_get(obj));
+}
+
+
+static void
 my_win_main(char *autorun)
 {
-   Evas_Object *win, *bg, *bx0, *lb, *li, *idx, *fr;
+   Evas_Object *win, *bg, *bx0, *lb, *li, *idx, *fr, *tg;
    Eina_List *tests, *l;
    struct elm_test *t;
 
@@ -226,6 +234,13 @@ my_win_main(char *autorun)
 		       "test window.");
    elm_frame_content_set(fr, lb);
    evas_object_show(lb);
+
+   tg = elm_toggle_add(win);
+   elm_toggle_label_set(tg, "UI-Mirroring:");
+   elm_toggle_state_set(tg, elm_mirrored_get());
+   evas_object_smart_callback_add(tg, "changed", _ui_tg_changed, NULL);
+   elm_box_pack_end(bx0, tg);
+   evas_object_show(tg);
 
    li = elm_list_add(win);
    elm_list_always_select_mode_set(li, 1);
