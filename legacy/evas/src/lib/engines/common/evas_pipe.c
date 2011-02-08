@@ -1238,8 +1238,8 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op.text.x = x;
    op->op.text.y = y;
    op->op.text.text = eina_unicode_strdup(text);
-   evas_common_text_props_content_copy_and_ref(intl_props,
-         &(op->op.text.intl_props));
+   evas_common_text_props_content_copy_and_ref(&(op->op.text.intl_props),
+         intl_props);
 #ifdef EVAS_FRAME_QUEUING
    LKL(fn->ref_fq_add);
    fn->ref_fq[0]++;
