@@ -173,6 +173,7 @@ static Elm_Slideshow_Item* _item_prev_get(Elm_Slideshow_Item* item)
 		prev = eina_list_data_get(eina_list_last(item->l));
 	return prev;
 }
+
 static Elm_Slideshow_Item* _item_next_get(Elm_Slideshow_Item* item)
 {
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
@@ -402,7 +403,6 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
      return;
 
    next = item;
-   evas_object_smart_callback_call(item->base.widget, "changed", next);
    _end(item->base.widget, item->base.widget, NULL, NULL);
 
    if (wd->timer) ecore_timer_del(wd->timer);
@@ -415,6 +415,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
    wd->previous = wd->current;
    wd->current = next;
+   evas_object_smart_callback_call(item->base.widget, "changed", wd->current);
 }
 
 /**
@@ -438,7 +439,6 @@ elm_slideshow_next(Evas_Object *obj)
 	   next = _item_next_get(wd->current);
 
    if ((!next) || (next == wd->current)) return;
-   evas_object_smart_callback_call(obj, "changed", next);
 
    _end(obj, obj, NULL, NULL);
 
@@ -456,6 +456,7 @@ elm_slideshow_next(Evas_Object *obj)
 
    wd->previous = wd->current;
    wd->current = next;
+   evas_object_smart_callback_call(obj, "changed", wd->current);
 }
 
 /**
@@ -479,7 +480,6 @@ elm_slideshow_previous(Evas_Object *obj)
      prev = _item_prev_get(wd->current);
 
    if ((!prev) ||  (prev == wd->current)) return;
-   evas_object_smart_callback_call(obj, "changed", prev);
 
    _end(obj, obj, NULL, NULL);
 
@@ -497,6 +497,7 @@ elm_slideshow_previous(Evas_Object *obj)
 
    wd->previous = wd->current;
    wd->current = prev;
+   evas_object_smart_callback_call(obj, "changed", wd->current);
 }
 
 /**
