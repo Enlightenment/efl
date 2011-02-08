@@ -847,6 +847,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
+//   printf("tex upload %ix%i\n", im->cache_entry.w, im->cache_entry.h);
    //  +-+
    //  +-+
    // 

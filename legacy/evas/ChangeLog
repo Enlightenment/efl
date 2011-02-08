@@ -57,3 +57,10 @@
         clip on the object.  This is still buggy.
         * Software support for arbitrary maps.  So you can use any size map
         (not just 4 points) for maps.  Once again this is a little buggy.
+
+2011-02-02  Carsten Haitzler (The Rasterman)
+
+        * GL engine gets a speculative texture cache to shadow the
+          normal image cache to avoid excess texture uploads when
+          cycling images often. Should improve performance in some
+          cases.

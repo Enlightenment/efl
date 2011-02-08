@@ -1815,6 +1815,42 @@ eng_image_content_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
+eng_image_cache_flush(void *data __UNUSED__)
+{
+   Render_Engine *re;
+   int tmp_size;
+   
+   re = (Render_Engine *)data;
+   
+   tmp_size = evas_common_image_get_cache();
+   evas_common_image_set_cache(0);
+   evas_common_rgba_image_scalecache_flush();
+   evas_gl_common_image_cache_flush(re->win->gl_context);
+   evas_common_image_set_cache(tmp_size);
+}
+
+static void
+eng_image_cache_set(void *data __UNUSED__, int bytes)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   evas_common_image_set_cache(bytes);
+   evas_common_rgba_image_scalecache_size_set(bytes);
+   evas_gl_common_image_cache_flush(re->win->gl_context);
+}
+
+static int
+eng_image_cache_get(void *data __UNUSED__)
+{
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
+   return evas_common_image_get_cache();
+}
+
+
+static void
 eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 {
    Evas_GL_Image *im = image;
@@ -1948,6 +1984,10 @@ module_open(Evas_Module *em)
    
    ORD(image_content_hint_set);
    ORD(image_content_hint_get);
+
+   ORD(image_cache_flush);
+   ORD(image_cache_set);
+   ORD(image_cache_get);
    
    /* now advertise out own api */
    em->functions = (void *)(&func);

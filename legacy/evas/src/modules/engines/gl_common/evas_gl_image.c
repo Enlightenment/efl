@@ -30,11 +30,14 @@ evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key
    im_im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im_im) return NULL;
 
+   // FIXME: keep unreffed shared images around
    EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
 	if (im->im == im_im)
 	  {
-             evas_cache_image_drop(&im_im->cache_entry);
+// why did i put this here? i think to free the rgba pixel data once a texture
+// exists.
+//             evas_cache_image_drop(&im_im->cache_entry);
 	     gc->shared->images = eina_list_remove_list(gc->shared->images, l);
 	     gc->shared->images = eina_list_prepend(gc->shared->images, im);
 	     im->references++;
@@ -230,6 +233,8 @@ evas_gl_common_image_native_enable(Evas_GL_Image *im)
    im->cs.no_free = 0;
    if (im->cached)
      {
+        if (im->references == 0)
+           im->gc->shared->images_size -= (im->w * im->h);
         im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
         im->cached = 0;
      }
@@ -302,6 +307,8 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
         im->cs.no_free = 0;
         if (im->cached)
           {
+             if (im->references == 0)
+                im->gc->shared->images_size -= (im->w * im->h);
              im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
              im->cached = 0;
           }
@@ -342,6 +349,59 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
      }
 }
 
+static void
+_evas_gl_image_cache_trim(Evas_GL_Context *gc)
+{
+   int size = evas_common_image_get_cache();
+        
+   while (gc->shared->images_size > size)
+     {
+        Evas_GL_Image *im2;
+        Eina_List *l;
+        
+        EINA_LIST_REVERSE_FOREACH(gc->shared->images, l, im2)
+          {
+             if (im2->references == 0)
+               {
+                  im2->cached = 0;
+                  im2->gc->shared->images = 
+                     eina_list_remove_list(im2->gc->shared->images, l);
+                  im2->gc->shared->images_size -= (im2->w * im2->h);
+                  evas_gl_common_image_free(im2);
+                  break;
+               }
+          }
+        if (!l)
+          {
+             printf("EEEK images_size > 0 but no 0 ref images in cache\n");
+             break; // something went wrong
+          }
+     }
+}
+
+static Eina_Bool
+_evas_gl_image_cache_add(Evas_GL_Image *im)
+{
+   if (im->references == 0)
+     {
+        im->gc->shared->images_size += (im->w * im->h);
+        _evas_gl_image_cache_trim(im->gc);
+        return EINA_TRUE;
+     }
+   else
+     {
+        im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
+        im->cached = 0;
+     }
+   return EINA_FALSE;
+}
+
+void
+evas_gl_common_image_cache_flush(Evas_GL_Context *gc)
+{
+   _evas_gl_image_cache_trim(gc);
+}
+
 void
 evas_gl_common_image_free(Evas_GL_Image *im)
 {
@@ -355,7 +415,10 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      {
 	if (!im->cs.no_free) free(im->cs.data);
      }
-   if (im->cached) im->gc->shared->images = eina_list_remove(im->gc->shared->images, im);
+   if (im->cached)
+     {
+        if (_evas_gl_image_cache_add(im)) return;
+     }
    if (im->im) evas_cache_image_drop(&im->im->cache_entry);
    if (im->tex) evas_gl_common_texture_free(im->tex);
    free(im);

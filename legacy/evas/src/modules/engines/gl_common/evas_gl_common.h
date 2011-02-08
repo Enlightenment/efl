@@ -125,6 +125,8 @@ struct _Evas_GL_Shared
 {
    Eina_List          *images;
    
+   int                 images_size;
+   
    struct {
       GLint max_texture_units;
       GLint max_texture_size;
@@ -471,6 +473,7 @@ void              evas_gl_common_image_native_enable(Evas_GL_Image *im);
 void              evas_gl_common_image_native_disable(Evas_GL_Image *im);
 void              evas_gl_common_image_scale_hint_set(Evas_GL_Image *im, int hint);
 void              evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint);
+void              evas_gl_common_image_cache_flush(Evas_GL_Context *gc);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
