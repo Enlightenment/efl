@@ -236,14 +236,11 @@ EAPI int
 evas_common_encoding_utf8_get_len(const char *buf)
 {
    /* returns the number of utf8 characters (not bytes) in the string */
-   int index = 0, len = 0;
+   int i = 0, len = 0;
 
-   while (buf[index])
-     {
-	if ((buf[index] & 0xc0) != 0x80)
-	  len++;
-	index++;
-     }
+   while (evas_common_encoding_utf8_get_next(buf, &i))
+        len++;
+
    return len;
 }
 
