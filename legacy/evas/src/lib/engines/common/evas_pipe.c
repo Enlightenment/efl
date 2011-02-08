@@ -1440,23 +1440,23 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
 }
 
 static void
-evas_common_pipe_op_map4_free(RGBA_Pipe_Op *op)
+evas_common_pipe_op_map_free(RGBA_Pipe_Op *op)
 {
 #ifdef EVAS_FRAME_QUEUING
    LKL(op->op.image.src->cache_entry.ref_fq_del);
    op->op.image.src->cache_entry.ref_fq[1]++;
    LKU(op->op.image.src->cache_entry.ref_fq_del);
 #else
-   op->op.map4.src->ref--;
-   if (op->op.map4.src->ref == 0)
-     evas_cache_image_drop(&op->op.map4.src->cache_entry);
+   op->op.map.src->ref--;
+   if (op->op.map.src->ref == 0)
+     evas_cache_image_drop(&op->op.map.src->cache_entry);
 #endif
-   free(op->op.map4.p);
+   free(op->op.map.p);
    evas_common_pipe_op_free(op);
 }
 
 static void
-evas_common_pipe_map4_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info)
+evas_common_pipe_map_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info)
 {
    if (info)
      {
@@ -1469,22 +1469,22 @@ evas_common_pipe_map4_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 	evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
 #endif
 
-	evas_common_map4_rgba(op->op.map4.src, dst,
-			      &context, op->op.map4.p,
-			      op->op.map4.smooth, op->op.map4.level);
+	evas_common_map_rgba(op->op.map.src, dst,
+                             &context, op->op.map.npoints, op->op.map.p,
+                             op->op.map.smooth, op->op.map.level);
      }
    else
      {
-	evas_common_map4_rgba(op->op.map4.src, dst,
-			      &(op->context), op->op.map4.p,
-			      op->op.map4.smooth, op->op.map4.level);
+	evas_common_map_rgba(op->op.map.src, dst,
+                             &(op->context), op->op.map.npoints, op->op.map.p,
+                             op->op.map.smooth, op->op.map.level);
      }
 }
 
 EAPI void
-evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
-			   RGBA_Draw_Context *dc, RGBA_Map_Point *p,
-			   int smooth, int level)
+evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
+                          RGBA_Draw_Context *dc, int npoints, RGBA_Map_Point *p,
+                          int smooth, int level)
 {
    RGBA_Pipe_Op *op;
    RGBA_Map_Point *pts_copy;
@@ -1503,8 +1503,9 @@ evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
    for (i = 0; i < 4; ++i)
      pts_copy[i] = p[i];
 
-   op->op.map4.smooth = smooth;
-   op->op.map4.level = level;
+   op->op.map.npoints = npoints;
+   op->op.map.smooth = smooth;
+   op->op.map.level = level;
 #ifdef EVAS_FRAME_QUEUING
    LKL(src->cache_entry.ref_fq_add);
    src->cache_entry.ref_fq[0]++;
@@ -1512,10 +1513,10 @@ evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
 #else
    src->ref++;
 #endif
-   op->op.map4.src = src;
-   op->op.map4.p = pts_copy;
-   op->op_func = evas_common_pipe_map4_draw_do;
-   op->free_func = evas_common_pipe_op_map4_free;
+   op->op.map.src = src;
+   op->op.map.p = pts_copy;
+   op->op_func = evas_common_pipe_map_draw_do;
+   op->free_func = evas_common_pipe_op_map_free;
    evas_common_pipe_draw_context_copy(dc, op);
 
 #ifdef EVAS_FRAME_QUEUING
@@ -1533,7 +1534,7 @@ evas_common_pipe_map4_draw(RGBA_Image *src, RGBA_Image *dst,
 }
 
 static void
-evas_common_pipe_map4_render(RGBA_Image *root)
+evas_common_pipe_map_render(RGBA_Image *root)
 {
   RGBA_Pipe *p;
   int i;
@@ -1543,15 +1544,15 @@ evas_common_pipe_map4_render(RGBA_Image *root)
     {
       for (i = 0; i < p->op_num; i++) 
 	{
-	  if (p->op[i].op_func == evas_common_pipe_map4_draw_do)
+	  if (p->op[i].op_func == evas_common_pipe_map_draw_do)
 	    {
-	      if (p->op[i].op.map4.src->cache_entry.pipe)
-		evas_common_pipe_map4_render(p->op[i].op.map4.src);
+	      if (p->op[i].op.map.src->cache_entry.pipe)
+		evas_common_pipe_map_render(p->op[i].op.map.src);
 	    }
 	  else if (p->op[i].op_func == evas_common_pipe_image_draw_do)
 	    {
 	      if (p->op[i].op.image.src->cache_entry.pipe)
-		evas_common_pipe_map4_render(p->op[i].op.image.src);
+		evas_common_pipe_map_render(p->op[i].op.image.src);
 	    }
 	}
     }
@@ -1706,7 +1707,7 @@ evas_common_pipe_image_load(RGBA_Image *im)
 }
 
 EAPI void
-evas_common_pipe_map4_begin(RGBA_Image *root)
+evas_common_pipe_map_begin(RGBA_Image *root)
 {
   if (!evas_common_pipe_init())
     {
@@ -1724,7 +1725,7 @@ evas_common_pipe_map4_begin(RGBA_Image *root)
 
   evas_common_pipe_image_load_do();
 
-  evas_common_pipe_map4_render(root);
+  evas_common_pipe_map_render(root);
 }
 
 #endif

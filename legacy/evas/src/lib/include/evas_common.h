@@ -722,9 +722,10 @@ struct _RGBA_Pipe_Op
       struct {
 	 RGBA_Image         *src;
 	 RGBA_Map_Point     *p;
+	 int                 npoints;
 	 int                 smooth;
 	 int                 level;
-      } map4;
+      } map;
    } op;
 };
 

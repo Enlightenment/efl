@@ -562,7 +562,7 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
    if (npoints > 4)
      {
         eng_image_map_draw(data, context, surface, image, npoints - 2, p + 2,
-			smooth, level);
+                           smooth, level);
      }
 }
 
