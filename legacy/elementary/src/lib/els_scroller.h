@@ -25,6 +25,7 @@ Evas_Object *elm_smart_scroller_edje_object_get (Evas_Object *obj);
 void elm_smart_scroller_single_dir_set          (Evas_Object *obj, Eina_Bool single_dir);
 Eina_Bool elm_smart_scroller_single_dir_get     (Evas_Object *obj);
 void elm_smart_scroller_object_theme_set        (Evas_Object *parent, Evas_Object *obj, const char *clas, const char *group, const char *style);
+void elm_smart_scroller_mirrored_set            (Evas_Object *obj, Eina_Bool mirrored);
 void elm_smart_scroller_hold_set                (Evas_Object *obj, Eina_Bool hold);
 void elm_smart_scroller_freeze_set              (Evas_Object *obj, Eina_Bool freeze);
 void elm_smart_scroller_bounce_allow_set        (Evas_Object *obj, Eina_Bool horiz, Eina_Bool vert);

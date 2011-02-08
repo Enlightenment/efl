@@ -104,6 +104,7 @@ struct _Smart_Data
    unsigned char bounce_vert : 1;
    unsigned char momentum_animator_disabled :1;
    unsigned char bounce_animator_disabled :1;
+   Eina_Bool is_mirrored : 1;
 };
 
 /* local subsystem functions */
@@ -152,6 +153,36 @@ elm_smart_scroller_add(Evas *evas)
    return evas_object_smart_add(evas, _smart);
 }
 
+static Evas_Coord
+_elm_smart_scroller_x_mirrored_get(Evas_Object *obj, Evas_Coord x)
+{
+   API_ENTRY return x;
+
+   Evas_Coord cw, ch, w;
+   elm_smart_scroller_child_viewport_size_get(obj, &w, NULL);
+   sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
+   return (cw - (x + w));
+}
+
+void
+elm_smart_scroller_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
+{
+   API_ENTRY return;
+   Evas_Coord px, py, wx;
+   if (sd->is_mirrored == mirrored)
+     return;
+
+   sd->is_mirrored = mirrored;
+   edje_object_mirrored_set(sd->edje_obj, mirrored);
+
+   if (sd->is_mirrored)
+     wx = _elm_smart_scroller_x_mirrored_get(sd->smart_obj, sd->wx);
+   else
+     wx = sd->wx;
+
+   elm_smart_scroller_child_pos_set(sd->smart_obj, wx, sd->y);
+}
+
 void
 elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
 {
@@ -166,7 +197,9 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
      }
 
    sd->child_obj = child;
-   sd->wx = sd->wy = sd->ww = sd->wh = 0;
+   sd->wx = sd->wy = 0;
+   /* (-1) means want viewports size */
+   sd->ww = sd->wh = -1;
    if (!child) return;
 
    if (!sd->pan_obj)
@@ -1801,6 +1834,10 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
              elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
              sd->wx = x;
              sd->wy = y;
+
+             if(sd->is_mirrored)
+               sd->wx = _elm_smart_scroller_x_mirrored_get(sd->smart_obj, sd->wx);
+
              elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &sd->ww, &sd->wh);
              if (!_smart_do_page(sd))
                bounce_eval(sd);
@@ -2523,10 +2560,26 @@ static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    INTERNAL_ENTRY;
+   Evas_Coord ww, wh, wx = sd->wx;
    sd->w = w;
    sd->h = h;
    _smart_reconfigure(sd);
-   elm_smart_scroller_child_region_set(obj, sd->wx, sd->wy, sd->ww, sd->h);
+
+   /* Flip to RTL cords only if init in RTL mode */
+   if(sd->is_mirrored)
+     wx = _elm_smart_scroller_x_mirrored_get(obj, sd->wx);
+
+   if (sd->ww == -1)
+     {
+        elm_smart_scroller_child_viewport_size_get(obj, &ww, &wh);
+     }
+   else
+     {
+        ww = sd->ww;
+        wh = sd->wh;
+     }
+
+   elm_smart_scroller_child_region_set(obj, wx, sd->wy, ww, wh);
 }
 
 static void
