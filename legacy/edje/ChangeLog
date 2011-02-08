@@ -12,3 +12,7 @@
 2011-02-01  Tom Hacohen (TAsn)
 
         * Added Mirroring support to edje objects.
+
+2011-02-08  Cedric BAIL
+
+	* Fix invalid memory access by edje alias code.
