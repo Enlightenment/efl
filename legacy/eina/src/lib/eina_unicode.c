@@ -109,19 +109,30 @@ eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
 
 
 /**
+ * @brief Same as strdup but cuts on n. Assumes n < len
+ * @since 1.1.0
+ */
+EAPI Eina_Unicode *
+eina_unicode_strndup(const Eina_Unicode *text, size_t n)
+{
+   Eina_Unicode *ustr;
+
+   ustr = (Eina_Unicode *) malloc((n + 1) * sizeof(Eina_Unicode));
+   memcpy(ustr, text, n * sizeof(Eina_Unicode));
+   ustr[n] = 0;
+   return ustr;
+}
+
+/**
  * @brief Same as the standard strdup just with Eina_Unicode instead of char.
  */
 EAPI Eina_Unicode *
 eina_unicode_strdup(const Eina_Unicode *text)
 {
-   Eina_Unicode *ustr;
    size_t len;
 
    len = eina_unicode_strlen(text);
-   ustr = (Eina_Unicode *)malloc((len + 1) * sizeof(Eina_Unicode));
-   memcpy(ustr, text, len * sizeof(Eina_Unicode));
-   ustr[len] = 0;
-   return ustr;
+   return eina_unicode_strndup(text, len);
 }
 
 /**
