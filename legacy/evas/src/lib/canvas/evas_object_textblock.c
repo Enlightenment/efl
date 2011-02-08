@@ -2733,12 +2733,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
         else
           {
              str = eina_ustrbuf_string_get(n->unicode);
-             alloc_str = eina_unicode_strdup(str + start);
-
-             if (off > 0)
-               {
-                  alloc_str[off] = 0;
-               }
+             alloc_str = eina_unicode_strndup(str + start, off);
              str = alloc_str;
           }
      }
