@@ -2830,7 +2830,7 @@ newblock:
 }
 
 static int
-_queue_proecess(Widget_Data *wd,
+_queue_process(Widget_Data *wd,
                 int          norender)
 {
    int n;
@@ -2872,7 +2872,7 @@ _item_idler(void *data)
    //if (q_start == 0.0) q_start = ecore_time_get();
    //xxx
 
-   if (_queue_proecess(wd, 1) > 0)
+   if (_queue_process(wd, 1) > 0)
      {
         if (wd->calc_job) ecore_job_del(wd->calc_job);
         wd->calc_job = ecore_job_add(_calc_job, wd);
@@ -2902,7 +2902,7 @@ _item_queue(Widget_Data      *wd,
              ecore_idler_del(wd->queue_idler);
              wd->queue_idler = NULL;
           }
-        _queue_proecess(wd, 0);
+        _queue_process(wd, 0);
      }
    if (!wd->queue_idler) wd->queue_idler = ecore_idler_add(_item_idler, wd);
 }
