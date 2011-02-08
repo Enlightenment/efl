@@ -2,6 +2,7 @@
 
 typedef struct _Elm_Params_Label
 {
+   Elm_Params base;
    const char* label;
 } Elm_Params_Label;
 
@@ -83,11 +84,15 @@ static Evas_Object *external_label_content_get(void *data __UNUSED__,
 static void
 external_label_params_free(void *params)
 {
-   external_common_params_free(params);
+   Elm_Params_Label *mem = params;
+   if (mem->label)
+      eina_stringshare_del(mem->label);
+   free(params);
 }
 
 static Edje_External_Param_Info external_label_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
+   EDJE_EXTERNAL_PARAM_INFO_STRING("label"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
