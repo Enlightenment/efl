@@ -65,6 +65,8 @@ static void _item_unselect(Elm_Toolbar_Item *it);
 static void _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled);
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
+static void _mirrored_set_item(Evas_Object *obj, Elm_Toolbar_Item *it, Eina_Bool mirrored);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -263,12 +265,20 @@ _del_hook(Evas_Object *obj)
 
 
 static void
+_mirrored_set_item(Evas_Object *obj __UNUSED__, Elm_Toolbar_Item *it, Eina_Bool mirrored)
+{
+   edje_object_mirrored_set(it->base.view, mirrored);
+   elm_widget_mirrored_set(it->o_menu, mirrored);
+}
+
+static void
 _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_size)
 {
    Evas_Object *view = it->base.view;
    Evas_Coord mw, mh;
    const char *style = elm_widget_style_get(obj);
 
+   _mirrored_set_item(obj, it, elm_widget_mirrored_get(obj));
    edje_object_scale_set(view, scale);
    if (!it->separator)
      {
@@ -308,6 +318,18 @@ _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Toolbar_Item *it;
+
+   EINA_INLIST_FOREACH(wd->items, it)
+      _mirrored_set_item(obj, it, mirrored);
+   if (wd->more_item)
+      _mirrored_set_item(obj, wd->more_item, mirrored);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -316,6 +338,7 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", elm_widget_style_get(obj));
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_scale_set(wd->scr, scale);
    wd->icon_size = _elm_toolbar_icon_size_get(wd);
@@ -434,6 +457,7 @@ _resize_job(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord mw, mh, vw, vh, w, h;
    Elm_Toolbar_Item *it;
+   Evas_Object *obj = (Evas_Object *) data;
 
    if (!wd) return;
    wd->resize_job = NULL;
@@ -541,6 +565,8 @@ _resize_job(void *data)
                }
           }
      }
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
 
 static void
@@ -583,9 +609,10 @@ _mouse_out(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
-   Widget_Data *wd = data;
+   Evas_Object *obj = (Evas_Object *) data;
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _els_box_layout(o, priv, 1, wd->homogeneous);
+   _els_box_layout(o, priv, 1, wd->homogeneous, elm_widget_mirrored_get(obj));
 }
 
 static Elm_Toolbar_Item *
@@ -710,7 +737,7 @@ elm_toolbar_add(Evas_Object *parent)
 
    wd->bx = evas_object_box_add(e);
    evas_object_size_hint_align_set(wd->bx, wd->align, 0.5);
-   evas_object_box_layout_set(wd->bx, _layout, wd, NULL);
+   evas_object_box_layout_set(wd->bx, _layout, obj, NULL);
    elm_widget_sub_object_add(obj, wd->bx);
    elm_smart_scroller_child_set(wd->scr, wd->bx);
    evas_object_show(wd->bx);

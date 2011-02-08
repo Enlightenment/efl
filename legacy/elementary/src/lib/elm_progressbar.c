@@ -45,6 +45,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -63,10 +64,19 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->progressbar, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    if (wd->horizontal)
      _elm_theme_object_set(obj, wd->progressbar, "progressbar", "horizontal", elm_widget_style_get(obj));
    else
@@ -150,10 +160,14 @@ static void
 _val_set(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool rtl;
    double pos;
    if (!wd) return;
    pos = wd->val;
-   if (wd->inverted) pos = MAX_RATIO_LVL - pos;
+   rtl = elm_widget_mirrored_get(obj);
+   if ((!rtl && wd->inverted) || (rtl &&
+            ((!wd->horizontal && wd->inverted) ||
+             (wd->horizontal && !wd->inverted)))) pos = MAX_RATIO_LVL - pos;
    edje_object_part_drag_value_set(wd->progressbar, "elm.cur.progressbar", pos, pos);
 }
 
@@ -221,6 +235,7 @@ elm_progressbar_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    _units_set(obj);
    _val_set(obj);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

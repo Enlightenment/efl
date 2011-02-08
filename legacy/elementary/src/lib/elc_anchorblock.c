@@ -48,6 +48,7 @@ static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
 static void
 _del_pre_hook(Evas_Object *obj)
@@ -72,6 +73,22 @@ _del_hook(Evas_Object *obj)
         free(ip);
      }
    free(wd);
+}
+
+static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_mirrored_set(wd->hover, rtl);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
 
 static void
@@ -110,6 +127,7 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    evas_object_move(wd->pop, info->x, info->y);
    evas_object_resize(wd->pop, info->w, info->h);
    wd->hover = elm_hover_add(obj);
+   elm_widget_mirrored_set(wd->hover, elm_widget_mirrored_get((Evas_Object *) data));
    if (wd->hover_style)
      elm_object_style_set(wd->hover, wd->hover_style);
    hover_parent = wd->hover_parent;
@@ -138,6 +156,14 @@ _anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    if (py < (y + (h / 3))) ei.hover_top = 0;
    ei.hover_bottom = 1;
    if (py > (y + ((h * 2) / 3))) ei.hover_bottom = 0;
+
+   if (elm_widget_mirrored_get(wd->hover))
+     {  /* Swap right and left because they switch sides in RTL */
+        Eina_Bool tmp = ei.hover_left;
+        ei.hover_left = ei.hover_right;
+        ei.hover_right = tmp;
+     }
+
    evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
    evas_object_smart_callback_add(wd->hover, "clicked", _hover_clicked, data);
    evas_object_show(wd->hover);
@@ -195,6 +221,7 @@ elm_anchorblock_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->entry = elm_entry_add(parent);
@@ -212,6 +239,7 @@ elm_anchorblock_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->entry, "anchor,clicked",
 				  _anchor_clicked, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class

@@ -31,6 +31,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -44,6 +45,14 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->panes, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -51,6 +60,7 @@ _theme_hook(Evas_Object *obj)
    double size;
 
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    size = elm_panes_content_left_size_get(obj);
    
    if (wd->horizontal)
@@ -234,6 +244,7 @@ elm_panes_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, 
                                   _changed_size_hints, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

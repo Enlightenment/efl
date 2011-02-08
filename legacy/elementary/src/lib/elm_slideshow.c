@@ -52,6 +52,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -133,10 +134,19 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->slideshow, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->slideshow, "slideshow", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->slideshow, elm_widget_scale_get(obj) *
                          _elm_config->scale);
@@ -335,6 +345,7 @@ elm_slideshow_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

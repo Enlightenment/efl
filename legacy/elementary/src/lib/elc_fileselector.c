@@ -113,6 +113,19 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_mirrored_set(wd->cancel_button, rtl);
+   elm_widget_mirrored_set(wd->ok_button, rtl);
+   elm_widget_mirrored_set(wd->files_list, rtl);
+   elm_widget_mirrored_set(wd->up_button, rtl);
+   elm_widget_mirrored_set(wd->home_button, rtl);
+   edje_object_mirrored_set(wd->edje, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -179,6 +192,7 @@ _theme_hook(Evas_Object *obj)
 #undef SWALLOW
 
    edje_object_message_signal_process(wd->edje);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    edje_object_scale_set
      (wd->edje, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);

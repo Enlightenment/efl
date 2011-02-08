@@ -61,6 +61,7 @@ struct _Elm_List_Item
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -536,6 +537,21 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it;
+   Eina_List *n;
+
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_mirrored_set(wd->scr, rtl);
+
+   EINA_LIST_FOREACH(wd->items, n, it)
+      edje_object_mirrored_set(it->base.view, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -543,6 +559,8 @@ _theme_hook(Evas_Object *obj)
    Eina_List *n;
 
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
    if (wd->scr)
      {
         Evas_Object *edj;
@@ -943,6 +961,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
    it->func = func;
    it->base.data = data;
    it->base.view = edje_object_add(evas_object_evas_get(obj));
+   edje_object_mirrored_set(it->base.view, elm_widget_mirrored_get(obj));
    evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, it);
    evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_UP,
@@ -1281,6 +1300,7 @@ elm_list_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

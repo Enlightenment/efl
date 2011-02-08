@@ -56,6 +56,8 @@ static void _on_focus_hook(void *data, Evas_Object *obj);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -113,10 +115,19 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->spinner, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->spinner, "spinner", "base", elm_widget_style_get(obj));
    edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
    _write_label(obj);
@@ -296,9 +307,10 @@ _val_set(Evas_Object *obj)
 }
 
 static void
-_drag(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_drag(void *data, Evas_Object *_obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Object *obj = data;
+   Widget_Data *wd = elm_widget_data_get(obj);
    double pos = 0.0, offset, delta;
    if (!wd) return;
    if (wd->entry_visible) return;
@@ -306,6 +318,9 @@ _drag(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, 
 				   &pos, NULL);
    offset = wd->step;
    delta = (pos - wd->drag_start_pos) * offset;
+   /* If we are on rtl mode, change the delta to be negative on such changes */
+   if (elm_widget_mirrored_get(obj))
+     delta *= -1;
    if (_value_set(data, delta)) _write_label(data);
    wd->drag_start_pos = pos;
    wd->dragging = 1;
@@ -620,6 +635,7 @@ elm_spinner_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->spinner, "elm,action,entry,toggle", 
                                    "*", _toggle_entry, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _write_label(obj);
    _sizing_eval(obj);
    return obj;

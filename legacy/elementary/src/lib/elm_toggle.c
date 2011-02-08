@@ -104,10 +104,19 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->tgl, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->tgl, "toggle", "base", elm_widget_style_get(obj));
    if (wd->icon)
      edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
@@ -225,6 +234,7 @@ elm_toggle_add(Evas_Object *parent)
    elm_widget_event_hook_set(obj, _event_hook);
 
    wd->tgl = edje_object_add(e);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->tgl, "toggle", "base", "default");
    wd->ontext = eina_stringshare_add("ON");
    wd->offtext = eina_stringshare_add("OFF");
@@ -237,6 +247,7 @@ elm_toggle_add(Evas_Object *parent)
    edje_object_part_text_set(wd->tgl, "elm.offtext", wd->offtext);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
 
    _sizing_eval(obj);
 

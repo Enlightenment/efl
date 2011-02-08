@@ -77,6 +77,15 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_mirrored_set(wd->btn, rtl);
+   elm_widget_mirrored_set(wd->hover, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -89,6 +98,7 @@ _theme_hook(Evas_Object *obj)
       snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
    elm_object_style_set(wd->btn, buf);
    elm_object_disabled_set(wd->btn, elm_widget_disabled_get(obj));
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
 
 static void
@@ -185,6 +195,7 @@ _activate(Evas_Object *obj)
    EINA_LIST_FOREACH(wd->items, l, item)
      {
 	bt = elm_button_add(wd->hover);
+        elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
 	elm_object_style_set(bt, buf);
 	elm_button_label_set(bt, item->label);
 	if (item->icon_file)

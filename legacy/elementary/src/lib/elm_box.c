@@ -120,6 +120,14 @@ _elm_box_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
 }
 
 static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_smart_calculate(wd->box);
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -153,9 +161,11 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
-   Widget_Data *wd = data;
+   Evas_Object *obj = (Evas_Object *) data;
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _els_box_layout(o, priv, wd->horizontal, wd->homogeneous);
+   _els_box_layout(o, priv, wd->horizontal, wd->homogeneous,
+         elm_widget_mirrored_get(obj));
 }
 
 static Eina_Bool
@@ -355,11 +365,12 @@ elm_box_add(Evas_Object *parent)
    elm_widget_focus_next_hook_set(obj, _elm_box_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
+   elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->box = evas_object_box_add(e);
    /*evas_object_box_layout_set(wd->box, evas_object_box_layout_vertical,
 			      NULL, NULL);*/
-   evas_object_box_layout_set(wd->box, _layout, wd, NULL);
+   evas_object_box_layout_set(wd->box, _layout, obj, NULL);
 
    evas_object_event_callback_add(wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _changed_size_hints, obj);
@@ -661,7 +672,7 @@ elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data
    if (cb)
      evas_object_box_layout_set(wd->box, cb, data, free_data);
    else
-     evas_object_box_layout_set(wd->box, _layout, wd, NULL);
+     evas_object_box_layout_set(wd->box, _layout, obj, NULL);
 }
 
 /**

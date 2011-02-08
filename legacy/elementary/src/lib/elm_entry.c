@@ -167,6 +167,7 @@ static const char *widtype = NULL;
 static Eina_Bool _drag_drop_cb(void *data, Evas_Object *obj, Elm_Selection_Data *);
 #endif
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -448,10 +449,18 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_mirrored_set(wd->ent, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *t;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
@@ -1493,6 +1502,7 @@ elm_entry_add(Evas_Object *parent)
    // if found - hook in
    if ((wd->api) && (wd->api->obj_hook)) wd->api->obj_hook(obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);

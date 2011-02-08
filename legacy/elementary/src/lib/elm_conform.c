@@ -27,6 +27,7 @@ struct _Widget_Data
 /* local function prototypes */
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
@@ -42,10 +43,19 @@ _del_hook(Evas_Object *obj)
 }
 
 static void 
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->base, rtl);
+}
+
+static void 
 _theme_hook(Evas_Object *obj) 
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->base, "conformant", "base", elm_widget_style_get(obj));
    if (wd->content)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->content);
@@ -266,6 +276,7 @@ elm_conformant_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

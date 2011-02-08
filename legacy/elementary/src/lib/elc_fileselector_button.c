@@ -82,11 +82,21 @@ _on_focus_hook(void *data   __UNUSED__,
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_mirrored_set(wd->btn, rtl);
+   elm_widget_mirrored_set(wd->fs, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    char buf[4096];
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    snprintf(buf, sizeof(buf), "fileselector_button/%s",
             elm_widget_style_get(obj));
    elm_object_style_set(wd->btn, buf);
@@ -191,6 +201,7 @@ _activate(Widget_Data *wd)
      wd->fsw = _new_window_add(wd);
 
    wd->fs = elm_fileselector_add(wd->fsw);
+   elm_widget_mirrored_set(wd->fs, elm_widget_mirrored_get(wd->self));
    elm_fileselector_expandable_set(wd->fs, wd->fsd.expandable);
    elm_fileselector_folder_only_set(wd->fs, wd->fsd.folder_only);
    elm_fileselector_is_save_set(wd->fs, wd->fsd.is_save);

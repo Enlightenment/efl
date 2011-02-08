@@ -445,6 +445,7 @@ struct _Pan
 static const char *widtype = NULL;
 static void      _item_cache_zero(Widget_Data *wd);
 static void      _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void      _theme_hook(Evas_Object *obj);
 //static void _show_region_hook(void *data, Evas_Object *obj);
 static void      _sizing_eval(Evas_Object *obj);
@@ -724,12 +725,22 @@ _del_pre_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _item_cache_zero(wd);
+   elm_smart_scroller_mirrored_set(wd->scr, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Item_Block *itb;
    if (!wd) return;
    _item_cache_zero(wd);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    elm_smart_scroller_object_theme_set(obj, wd->scr, "genlist", "base",
                                        elm_widget_style_get(obj));
 //   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
@@ -1648,6 +1659,8 @@ _item_realize(Elm_Genlist_Item *it,
 
         _elm_theme_object_set(it->base.widget, it->base.view, "genlist", buf,
                               elm_widget_style_get(it->base.widget));
+       edje_object_mirrored_set(it->base.view,
+             elm_widget_mirrored_get(it->base.widget));
         it->spacer =
           evas_object_rectangle_add(evas_object_evas_get(it->base.widget));
         evas_object_color_set(it->spacer, 0, 0, 0, 0);
@@ -1871,7 +1884,10 @@ _item_unrealize(Elm_Genlist_Item *it)
         it->spacer = NULL;
      }
    else
-      _item_cache_add(it);
+     {
+        edje_object_mirrored_set(it->base.view, elm_widget_mirrored_get(it->base.widget));
+        _item_cache_add(it);
+     }
    elm_widget_stringlist_free(it->labels);
    it->labels = NULL;
    elm_widget_stringlist_free(it->icons);
@@ -2638,6 +2654,7 @@ elm_genlist_add(Evas_Object *parent)
                              &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

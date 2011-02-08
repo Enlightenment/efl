@@ -63,6 +63,7 @@ struct _Widget_Data
 static const char *widtype = NULL;
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _reval_content(Evas_Object *obj);
@@ -127,10 +128,19 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->cov, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    // FIXME: hover contents doesn't seem to propagate resizes properly
    _elm_theme_object_set(obj, wd->cov, "hover", "base", elm_widget_style_get(obj));
    edje_object_scale_set(wd->cov, elm_widget_scale_get(obj) *
@@ -208,13 +218,19 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
+   Evas_Coord ofs_x, x = 0, y = 0, w = 0, h = 0, x2 = 0, y2 = 0, w2 = 0, h2 = 0;
    if (!wd) return;
    if (wd->parent) evas_object_geometry_get(wd->parent, &x, &y, &w, &h);
    if (wd->hov) evas_object_geometry_get(wd->hov, &x2, &y2, &w2, &h2);
+
+   if (elm_widget_mirrored_get(obj))
+     ofs_x = w - (x2 - x) - w2;
+   else
+     ofs_x = x2 - x;
+
    evas_object_move(wd->cov, x, y);
    evas_object_resize(wd->cov, w, h);
-   evas_object_size_hint_min_set(wd->offset, x2 - x, y2 - y);
+   evas_object_size_hint_min_set(wd->offset, ofs_x, y2 - y);
    evas_object_size_hint_min_set(wd->size, w2, h2);
    edje_object_part_swallow(wd->cov, "elm.swallow.offset", wd->offset);
    edje_object_part_swallow(wd->cov, "elm.swallow.size", wd->size);
@@ -532,6 +548,7 @@ elm_hover_add(Evas_Object *parent)
    elm_hover_parent_set(obj, parent);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }
@@ -686,6 +703,21 @@ _elm_hover_sub_obj_placement_eval(Evas_Object *obj)
    evas_object_smart_callback_call(obj, SIG_SMART_LOCATION_CHANGED,
                                    (void *)smart_dir);
 
+   if (elm_widget_mirrored_get(obj))
+     {
+        if (smart_dir == _HOV_BOTTOM_LEFT)
+          smart_dir = _HOV_BOTTOM_RIGHT;
+        else if (smart_dir == _HOV_BOTTOM_RIGHT)
+          smart_dir = _HOV_BOTTOM_LEFT;
+        else if (smart_dir == _HOV_RIGHT)
+          smart_dir = _HOV_LEFT;
+        else if (smart_dir == _HOV_LEFT)
+          smart_dir = _HOV_RIGHT;
+        else if (smart_dir == _HOV_TOP_RIGHT)
+          smart_dir = _HOV_TOP_LEFT;
+        else if (smart_dir == _HOV_TOP_LEFT)
+          smart_dir = _HOV_TOP_RIGHT;
+     }
    snprintf(buf, sizeof(buf), "elm.swallow.slot.%s", smart_dir);
    edje_object_part_swallow(wd->cov, buf, wd->smt_sub);
 }

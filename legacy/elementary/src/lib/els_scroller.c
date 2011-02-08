@@ -168,7 +168,7 @@ void
 elm_smart_scroller_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
 {
    API_ENTRY return;
-   Evas_Coord px, py, wx;
+   Evas_Coord wx;
    if (sd->is_mirrored == mirrored)
      return;
 

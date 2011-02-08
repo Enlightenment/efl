@@ -23,6 +23,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -47,10 +48,19 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->bbl, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->bbl, "bubble", wd->corner,
                          elm_widget_style_get(obj));
    edje_object_part_text_set(wd->bbl, "elm.text", wd->label);
@@ -170,7 +180,6 @@ elm_bubble_add(Evas_Object *parent)
    wd->corner = eina_stringshare_add("base");
 
    wd->bbl = edje_object_add(e);
-   _elm_theme_object_set(obj, wd->bbl, "bubble", "base", "default");
    elm_widget_resize_object_set(obj, wd->bbl);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
@@ -178,6 +187,9 @@ elm_bubble_add(Evas_Object *parent)
                                   _mouse_up, obj);
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _elm_theme_object_set(obj, wd->bbl, "bubble", wd->corner,
+                         elm_widget_style_get(obj));
    _sizing_eval(obj);
    return obj;
 }

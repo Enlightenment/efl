@@ -61,6 +61,7 @@ struct _Part_Cursor
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Widget_Data *wd);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -87,10 +88,19 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->lay, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    edje_object_scale_set(wd->lay, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(wd);
@@ -336,6 +346,7 @@ elm_layout_add(Evas_Object *parent)
    
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _request_sizing_eval(wd);
    return obj;
 }

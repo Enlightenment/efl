@@ -63,6 +63,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -184,10 +185,19 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->slider, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    if (wd->horizontal)
      _elm_theme_object_set(obj, wd->slider, "slider", "horizontal", elm_widget_style_get(obj));
    else
@@ -300,6 +310,7 @@ _delay_change(void *data)
 static void
 _val_fetch(Evas_Object *obj)
 {
+   Eina_Bool rtl;
    Widget_Data *wd = elm_widget_data_get(obj);
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
    if (!wd) return;
@@ -307,7 +318,11 @@ _val_fetch(Evas_Object *obj)
 				   &posx, &posy);
    if (wd->horizontal) pos = posx;
    else pos = posy;
-   if (wd->inverted) pos = 1.0 - pos;
+
+   rtl = elm_widget_mirrored_get(obj);
+   if ((!rtl && wd->inverted) || (rtl &&
+            ((!wd->horizontal && wd->inverted) ||
+             (wd->horizontal && !wd->inverted)))) pos = 1.0 - pos;
    val = (pos * (wd->val_max - wd->val_min)) + wd->val_min;
    if (val != wd->val)
      {
@@ -321,6 +336,7 @@ _val_fetch(Evas_Object *obj)
 static void
 _val_set(Evas_Object *obj)
 {
+   Eina_Bool rtl;
    Widget_Data *wd = elm_widget_data_get(obj);
    double pos;
    if (!wd) return;
@@ -330,7 +346,11 @@ _val_set(Evas_Object *obj)
      pos = 0.0;
    if (pos < 0.0) pos = 0.0;
    else if (pos > 1.0) pos = 1.0;
-   if (wd->inverted) pos = 1.0 - pos;
+
+   rtl = elm_widget_mirrored_get(obj);
+   if ((!rtl && wd->inverted) || (rtl &&
+            ((!wd->horizontal && wd->inverted) ||
+             (wd->horizontal && !wd->inverted)))) pos = 1.0 - pos;
    edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", pos, pos);
 }
 
@@ -359,16 +379,16 @@ _indicator_set(Evas_Object *obj)
      {
 	const char *buf;
 	buf = wd->indicator_format_func(wd->val);
-	edje_object_part_text_set(wd->slider, "elm.indicator", buf);
+	edje_object_part_text_set(wd->slider, "elm.dragable.slider:elm.indicator", buf);
      }
    else if (wd->indicator)
      {
 	char buf[1024];
 	snprintf(buf, sizeof(buf), wd->indicator, wd->val);
-	edje_object_part_text_set(wd->slider, "elm.indicator", buf);
+	edje_object_part_text_set(wd->slider, "elm.dragable.slider:elm.indicator", buf);
      }
    else
-     edje_object_part_text_set(wd->slider, "elm.indicator", NULL);
+     edje_object_part_text_set(wd->slider, "elm.dragable.slider:elm.indicator", NULL);
 }
 
 static void
@@ -519,6 +539,7 @@ elm_slider_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_cb, obj);
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class

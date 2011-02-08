@@ -34,6 +34,7 @@ struct _Elm_Index_Item
 };
 
 static const char *widtype = NULL;
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level);
@@ -63,7 +64,7 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Widget_Data *wd = data;
    if (!wd) return;
-   _els_box_layout(o, priv, wd->horizontal, 1);
+   _els_box_layout(o, priv, wd->horizontal, 1, 0);
 }
 
 static void
@@ -91,17 +92,30 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!wd->horizontal)
+     edje_object_mirrored_set(wd->base, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Evas_Coord minw = 0, minh = 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+
    _index_box_clear(obj, wd->bx[0], 0);
    _index_box_clear(obj, wd->bx[1], 1);
    if (wd->horizontal)
      _elm_theme_object_set(obj, wd->base, "index", "base/horizontal", elm_widget_style_get(obj));
    else
-     _elm_theme_object_set(obj, wd->base, "index", "base/vertical", elm_widget_style_get(obj));
+     {
+        _elm_theme_object_set(obj, wd->base, "index", "base/vertical", elm_widget_style_get(obj));
+        _mirrored_set(obj, elm_widget_mirrored_get(obj));
+     }
    edje_object_part_swallow(wd->base, "elm.swallow.event.0", wd->event[0]);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(wd->event[0], minw, minh);
@@ -200,12 +214,14 @@ static void
 _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_Bool rtl;
    Eina_List *l;
    Elm_Index_Item *it;
    Evas_Coord mw, mh, w, h;
    int i = 0;
    if (!wd) return;
    if (wd->level_active[level]) return;
+   rtl = elm_widget_mirrored_get(obj);
    evas_object_geometry_get(box, NULL, NULL, &w, &h);
    EINA_LIST_FOREACH(wd->items, l, it)
      {
@@ -215,6 +231,7 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
         if (it->level != level) continue;
         o = edje_object_add(evas_object_evas_get(obj));
         it->base.view = o;
+        edje_object_mirrored_set(it->base.view, rtl);
         if (i & 0x1)
           _elm_theme_object_set(obj, o, "index", "item_odd/vertical", elm_widget_style_get(obj));
         else
@@ -405,17 +422,17 @@ _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
-   Evas_Coord x, y;
+   Evas_Coord x, y, w;
    if (!wd) return;
    if (ev->button != 1) return;
    wd->down = 1;
-   evas_object_geometry_get(wd->base, &x, &y, NULL, NULL);
+   evas_object_geometry_get(wd->base, &x, &y, &w, NULL);
    wd->dx = ev->canvas.x - x;
    wd->dy = ev->canvas.y - y;
    elm_index_active_set(data, 1);
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
    edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer", 
-                                   wd->dx, wd->dy);
+        (!edje_object_mirrored_get(wd->base)) ? wd->dx : (wd->dx - w), wd->dy);
 }
 
 static void 
@@ -438,18 +455,19 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
-   Evas_Coord minw = 0, minh = 0, x, y, dx, adx;
+   Evas_Coord minw = 0, minh = 0, x, y, dx, adx, w;
    char buf[1024];
    if (!wd) return;
    if (!wd->down) return;
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_geometry_get(wd->base, &x, &y, NULL, NULL);
+   evas_object_geometry_get(wd->base, &x, &y, &w, NULL);
    x = ev->cur.canvas.x - x;
    y = ev->cur.canvas.y - y;
    dx = x - wd->dx;
    adx = dx;
    if (adx < 0) adx = -dx;
-   edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer", x, y);
+   edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer"
+         , (!edje_object_mirrored_get(wd->base)) ? x : (x - w), y);
    if (!wd->horizontal)
      {
         if (adx > minw)
@@ -555,6 +573,7 @@ elm_index_add(Evas_Object *parent)
         evas_object_show(wd->bx[1]);
      }
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

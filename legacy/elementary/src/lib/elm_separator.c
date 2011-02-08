@@ -18,6 +18,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 
@@ -30,10 +31,19 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->sep, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    if (wd->horizontal)
      _elm_theme_object_set(obj, wd->sep, "separator", "horizontal", elm_widget_style_get(obj));
    else
@@ -88,6 +98,7 @@ elm_separator_add(Evas_Object *parent)
    wd->sep = edje_object_add(e);
    _elm_theme_object_set(obj, wd->sep, "separator", "vertical", "default");
    elm_widget_resize_object_set(obj, wd->sep);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

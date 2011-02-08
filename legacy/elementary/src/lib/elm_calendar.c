@@ -60,6 +60,7 @@ struct _Elm_Calendar_Mark
 
 static const char *widtype = NULL;
 static void _on_focus_hook(void *data, Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
 static const char *_days_abbrev[] =
 {
@@ -435,12 +436,21 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->calendar, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _elm_theme_object_set(obj, wd->calendar, "calendar", "base",
                          elm_widget_style_get(obj));
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _set_headers(obj);
    _populate(obj);
    edje_object_message_signal_process(wd->calendar);
@@ -767,6 +777,7 @@ elm_calendar_add(Evas_Object *parent)
 
    _set_headers(obj);
    _populate(obj);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }

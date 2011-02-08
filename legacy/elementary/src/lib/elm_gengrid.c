@@ -260,6 +260,7 @@ static Eina_Bool _event_hook(Evas_Object       *obj,
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
@@ -649,10 +650,29 @@ _on_focus_hook(void *data   __UNUSED__,
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Gengrid_Item *item;
+   if (!wd) return;
+   elm_smart_scroller_mirrored_set(wd->scr, rtl);
+   if (!wd->items) return;
+   item = ELM_GENGRID_ITEM_FROM_INLIST(wd->items);
+
+   while (item)
+     {
+        edje_object_mirrored_set(item->base.view, rtl);
+        elm_gengrid_item_update(item);
+        item = ELM_GENGRID_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
+     }
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    elm_smart_scroller_object_theme_set(obj, wd->scr, "gengrid", "base",
                                        elm_widget_style_get(obj));
 }
@@ -738,6 +758,18 @@ _mouse_move(void        *data,
    minh /= 2;
    if ((adx > minw) || (ady > minh))
      {
+        const char *left_drag, *right_drag;
+        if (!elm_widget_mirrored_get(item->wd->self))
+          {
+             left_drag = "drag,start,left";
+             right_drag = "drag,start,right";
+          }
+        else
+          {
+             left_drag = "drag,start,right";
+             right_drag = "drag,start,left";
+          }
+
         item->dragging = 1;
         if (item->long_timer)
           {
@@ -755,7 +787,7 @@ _mouse_move(void        *data,
                {
                   if (dx < 0)
                     evas_object_smart_callback_call(item->wd->self,
-                                                    "drag,start,left", item);
+                          left_drag, item);
                }
           }
         else
@@ -767,10 +799,10 @@ _mouse_move(void        *data,
                {
                   if (dx < 0)
                     evas_object_smart_callback_call(item->wd->self,
-                                                    "drag,start,left", item);
+						    left_drag, item);
                   else
                     evas_object_smart_callback_call(item->wd->self,
-                                                    "drag,start,right", item);
+                          right_drag, item);
                }
           }
      }
@@ -909,6 +941,7 @@ _item_realize(Elm_Gengrid_Item *item)
    item->base.view = edje_object_add(evas_object_evas_get(item->wd->self));
    edje_object_scale_set(item->base.view, elm_widget_scale_get(item->wd->self) *
                          _elm_config->scale);
+   edje_object_mirrored_set(item->base.view, elm_widget_mirrored_get(item->base.widget));
    evas_object_smart_member_add(item->base.view, item->wd->pan_smart);
    elm_widget_sub_object_add(item->wd->self, item->base.view);
    snprintf(style, sizeof(style), "item/%s",
@@ -1060,7 +1093,6 @@ _item_place(Elm_Gengrid_Item *item,
 {
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
-
    item->x = cx;
    item->y = cy;
    evas_object_geometry_get(item->wd->pan_smart, &ox, &oy, &vw, &vh);
@@ -1120,6 +1152,13 @@ _item_place(Elm_Gengrid_Item *item,
      }
 
    x = cx * item->wd->item_width - item->wd->pan_x + ox + alignw;
+   if (elm_widget_mirrored_get(item->wd->self))
+     {  /* Switch items side and componsate for pan_x when in RTL mode */
+        Evas_Coord ww;
+        evas_object_geometry_get(item->wd->self, NULL, NULL, &ww, NULL);
+        x = ww - x - item->wd->item_width - item->wd->pan_x - item->wd->pan_x;
+     }
+
    y = cy * item->wd->item_height - item->wd->pan_y + oy + alignh;
 
    Eina_Bool was_realized = item->realized;
@@ -1560,6 +1599,7 @@ elm_gengrid_add(Evas_Object *parent)
                                      _pan_set, _pan_get, _pan_max_get,
                                      _pan_min_get, _pan_child_size_get);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    return obj;
 }
 

@@ -29,6 +29,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -72,6 +73,53 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
+/**
+ * Return Notification orientation with RTL
+ *
+ * This function switches-sides of notification area when in RTL mode.
+ *
+ * @param obj notification object.
+ *
+ * @param orient Original notification orientation.
+ *
+ * @return notification orientation with respect to the object RTL mode.
+ *
+ * @internal
+ **/
+static Elm_Notify_Orient
+_notify_orientation_with_rtl(Evas_Object *obj, Elm_Notify_Orient orient)
+{
+   if (elm_widget_mirrored_get(obj))
+     {
+        switch (orient)
+          {
+           case ELM_NOTIFY_ORIENT_LEFT:
+              orient = ELM_NOTIFY_ORIENT_RIGHT;
+              break;
+           case ELM_NOTIFY_ORIENT_RIGHT:
+              orient = ELM_NOTIFY_ORIENT_LEFT;
+              break;
+           case ELM_NOTIFY_ORIENT_TOP_LEFT:
+              orient = ELM_NOTIFY_ORIENT_TOP_RIGHT;
+              break;
+           case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+              orient = ELM_NOTIFY_ORIENT_TOP_LEFT;
+              break;
+           case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+              orient = ELM_NOTIFY_ORIENT_BOTTOM_RIGHT;
+              break;
+           case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+              orient = ELM_NOTIFY_ORIENT_BOTTOM_LEFT;
+              break;
+           default:
+              break;
+          }
+     }
+
+   return orient;
+}
+
+
 static void
 _notify_theme_apply(Evas_Object *obj)
 {
@@ -112,6 +160,68 @@ _notify_theme_apply(Evas_Object *obj)
      }
 }
 
+/**
+ * Moves notification to orientation.
+ *
+ * This fucntion moves notification to orientation
+ * according to object RTL orientation.
+ *
+ * @param obj notification object.
+ *
+ * @param orient notification orientation.
+ *
+ * @internal
+ **/
+static void
+_notify_move_to_orientation(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   int offx;
+   int offy;
+   Evas_Coord minw = -1, minh = -1;
+   Evas_Coord x, y, w, h;
+
+   if (!wd) return;
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   edje_object_size_min_get(wd->notify, &minw, &minh);
+   edje_object_size_min_restricted_calc(wd->notify, &minw, &minh, minw, minh);
+   offx = (w - minw) / 2;
+   offy = (h - minh) / 2;
+
+   switch (_notify_orientation_with_rtl(obj, wd->orient))
+     {
+      case ELM_NOTIFY_ORIENT_TOP:
+         evas_object_move(wd->notify, x + offx, y);
+         break;
+      case ELM_NOTIFY_ORIENT_CENTER:
+         evas_object_move(wd->notify, x + offx, y + offy);
+         break;
+      case ELM_NOTIFY_ORIENT_BOTTOM:
+         evas_object_move(wd->notify, x + offx, y + h - minh);
+         break;
+      case ELM_NOTIFY_ORIENT_LEFT:
+         evas_object_move(wd->notify, x, y + offy);
+         break;
+      case ELM_NOTIFY_ORIENT_RIGHT:
+         evas_object_move(wd->notify, x + w - minw, y + offy);
+         break;
+      case ELM_NOTIFY_ORIENT_TOP_LEFT:
+         evas_object_move(wd->notify, x, y);
+         break;
+      case ELM_NOTIFY_ORIENT_TOP_RIGHT:
+         evas_object_move(wd->notify, x + w - minw, y);
+         break;
+      case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
+         evas_object_move(wd->notify, x, y + h - minh);
+         break;
+      case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
+         evas_object_move(wd->notify, x + w - minw, y + h - minh);
+         break;
+      case ELM_NOTIFY_ORIENT_LAST:
+         break;
+     }
+}
+
 static void
 _block_events_theme_apply(Evas_Object *obj)
 {
@@ -121,10 +231,20 @@ _block_events_theme_apply(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->notify, rtl);
+   _notify_move_to_orientation(obj);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _notify_theme_apply(obj);
    if (wd->block_events) _block_events_theme_apply(obj);
    edje_object_scale_set(wd->notify, elm_widget_scale_get(obj) *
@@ -201,41 +321,7 @@ _calc(Evas_Object *obj)
 
    if (wd->content)
      {
-	int offx = (w - minw) / 2;
-	int offy = (h - minh) / 2;
-
-	switch (wd->orient)
-	  {
-	   case ELM_NOTIFY_ORIENT_TOP:
-             evas_object_move(wd->notify, x + offx, y);
-             break;
-	   case ELM_NOTIFY_ORIENT_CENTER:
-             evas_object_move(wd->notify, x + offx, y + offy);
-             break;
-	   case ELM_NOTIFY_ORIENT_BOTTOM:
-             evas_object_move(wd->notify, x + offx, y + h - minh);
-             break;
-	   case ELM_NOTIFY_ORIENT_LEFT:
-             evas_object_move(wd->notify, x, y + offy);
-             break;
-	   case ELM_NOTIFY_ORIENT_RIGHT:
-             evas_object_move(wd->notify, x + w - minw, y + offy);
-             break;
-	   case ELM_NOTIFY_ORIENT_TOP_LEFT:
-             evas_object_move(wd->notify, x, y);
-             break;
-	   case ELM_NOTIFY_ORIENT_TOP_RIGHT:
-             evas_object_move(wd->notify, x + w - minw, y);
-             break;
-	   case ELM_NOTIFY_ORIENT_BOTTOM_LEFT:
-             evas_object_move(wd->notify, x, y + h - minh);
-             break;
-	   case ELM_NOTIFY_ORIENT_BOTTOM_RIGHT:
-             evas_object_move(wd->notify, x + w - minw, y + h - minh);
-             break;
-           case ELM_NOTIFY_ORIENT_LAST:
-             break;
-	  }
+        _notify_move_to_orientation(obj);
         evas_object_resize(wd->notify, minw, minh);
      }
     _sizing_eval(obj);
@@ -353,6 +439,7 @@ elm_notify_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _hide, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);

@@ -30,6 +30,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static int _get_value_in_key_string(const char *oldstring, const char *key, char **value);
@@ -104,10 +105,19 @@ _theme_change(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->lbl, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _theme_change(obj);
    edje_object_part_text_set(wd->lbl, "elm.text", wd->label);
    edje_object_scale_set(wd->lbl, elm_widget_scale_get(obj) * 
@@ -664,9 +674,10 @@ elm_label_add(Evas_Object *parent)
    wd->label = eina_stringshare_add("<br>");
    edje_object_part_text_set(wd->lbl, "elm.text", "<br>");
    elm_widget_resize_object_set(obj, wd->lbl);
-   
+
    evas_object_event_callback_add(wd->lbl, EVAS_CALLBACK_RESIZE, _resize, obj);
-   
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    wd->changed = 1;
    _sizing_eval(obj);
    return obj;

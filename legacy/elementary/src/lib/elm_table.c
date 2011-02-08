@@ -21,6 +21,7 @@ static void _del_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
+static void _theme_hook(Evas_Object *obj);
 
 static void
 _del_pre_hook(Evas_Object *obj)
@@ -74,6 +75,22 @@ _elm_table_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
      list_free((Eina_List *)items);
 
    return ret;
+}
+
+static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->tbl))
+     return;
+
+   evas_object_table_mirrored_set(wd->tbl, rtl);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
 
 static void
@@ -137,6 +154,7 @@ elm_table_add(Evas_Object *parent)
    elm_widget_focus_next_hook_set(obj, _elm_table_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_FALSE);
+   elm_widget_theme_hook_set(obj, _theme_hook);
 
    wd->tbl = evas_object_table_add(e);
    evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -145,6 +163,7 @@ elm_table_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    return obj;
 }
 

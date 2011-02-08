@@ -45,7 +45,7 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
 }
 
 void
-_els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int homogeneous)
+_els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int homogeneous, int rtl)
 {
    Evas_Coord x, y, w, h, xx, yy;
    const Eina_List *l;
@@ -123,30 +123,14 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
 	if (wy > 0.0) xh = 1;
 	if (horizontal)
 	  {
+             Evas_Coord ww, hh, ow, oh;
+
 	     if (homogeneous)
 	       {
-		  Evas_Coord ww, hh, ow, oh;
-
 		  ww = (w / (Evas_Coord)count);
-		  hh = h;
-		  ow = mnw;
-		  if (fw) ow = ww;
-		  if ((mxw >= 0) && (mxw < ow))
-		    ow = mxw;
-		  oh = mnh;
-		  if (fh) oh = hh;
-		  if ((mxh >= 0) && (mxh < oh))
-		    oh = mxh;
-		  evas_object_move(obj,
-				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
-				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
-		  evas_object_resize(obj, ow, oh);
-		  xx += ww;
 	       }
 	     else
 	       {
-		  Evas_Coord ww, hh, ow, oh;
-
 		  ww = mnw;
 		  if ((expand > 0) && (xw))
 		    {
@@ -155,45 +139,31 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
 		       wdif -= ow;
 		       ww += ow;
 		    }
-		  hh = h;
-		  ow = mnw;
-		  if (fw) ow = ww;
-		  if ((mxw >= 0) && (mxw < ow)) ow = mxw;
-		  oh = mnh;
-		  if (fh) oh = hh;
-		  if ((mxh >= 0) && (mxh < oh)) oh = mxh;
-		  evas_object_move(obj,
-				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
-				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
-		  evas_object_resize(obj, ow, oh);
-		  xx += ww;
 	       }
+             hh = h;
+             ow = mnw;
+             if (fw) ow = ww;
+             if ((mxw >= 0) && (mxw < ow)) ow = mxw;
+             oh = mnh;
+             if (fh) oh = hh;
+             if ((mxh >= 0) && (mxh < oh)) oh = mxh;
+             evas_object_move(obj,
+                   ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
+                   + (Evas_Coord)(((double)(ww - ow)) * ax),
+                   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+             evas_object_resize(obj, ow, oh);
+             xx += ww;
 	  }
 	else
 	  {
+             Evas_Coord ww, hh, ow, oh;
+
 	     if (homogeneous)
 	       {
-		  Evas_Coord ww, hh, ow, oh;
-
-		  ww = w;
 		  hh = (h / (Evas_Coord)count);
-		  ow = mnw;
-		  if (fw) ow = ww;
-		  if ((mxw >= 0) && (mxw < ow)) ow = mxw;
-		  oh = mnh;
-		  if (fh) oh = hh;
-		  if ((mxh >= 0) && (mxh < oh)) oh = mxh;
-		  evas_object_move(obj,
-				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
-				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
-		  evas_object_resize(obj, ow, oh);
-		  yy += hh;
 	       }
 	     else
 	       {
-		  Evas_Coord ww, hh, ow, oh;
-
-		  ww = w;
 		  hh = mnh;
 		  if ((expand > 0) && (xh))
 		    {
@@ -202,18 +172,19 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
 		       hdif -= oh;
 		       hh += oh;
 		    }
-		  ow = mnw;
-		  if (fw) ow = ww;
-		  if ((mxw >= 0) && (mxw < ow)) ow = mxw;
-		  oh = mnh;
-		  if (fh) oh = hh;
-		  if ((mxh >= 0) && (mxh < oh)) oh = mxh;
-		  evas_object_move(obj,
-				   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
-				   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
-		  evas_object_resize(obj, ow, oh);
-		  yy += hh;
 	       }
+             ww = w;
+             ow = mnw;
+             if (fw) ow = ww;
+             if ((mxw >= 0) && (mxw < ow)) ow = mxw;
+             oh = mnh;
+             if (fh) oh = hh;
+             if ((mxh >= 0) && (mxh < oh)) oh = mxh;
+             evas_object_move(obj,
+                   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+                   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+             evas_object_resize(obj, ow, oh);
+             yy += hh;
 	  }
      }
 }

@@ -42,6 +42,19 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
+static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->scr)
+     {
+        elm_widget_mirrored_set(wd->bx, rtl);
+        elm_panel_orient_set(obj, elm_panel_orient_get(obj));
+     }
+}
+
 static void 
 _theme_hook(Evas_Object *obj) 
 {
@@ -52,6 +65,7 @@ _theme_hook(Evas_Object *obj)
         Evas_Object *edj;
         const char *str;
 
+        _mirrored_set(obj, elm_widget_mirrored_get(obj));
         elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base",
                                             elm_widget_style_get(obj));
         //   scale = (elm_widget_scale_get(obj) * _elm_config->scale);
@@ -63,6 +77,7 @@ _theme_hook(Evas_Object *obj)
         else
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
      }
+
    _sizing_eval(obj);
 }
 
@@ -172,7 +187,7 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
 {
    Widget_Data *wd = data;
    if (!wd) return;
-   _els_box_layout(o, priv, EINA_TRUE, EINA_FALSE);
+   _els_box_layout(o, priv, EINA_TRUE, EINA_FALSE, EINA_FALSE);
 }
 
 static void 
@@ -283,6 +298,7 @@ elm_panel_add(Evas_Object *parent)
 
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE, _resize, obj);
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
 }
@@ -317,12 +333,19 @@ elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient)
         elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "bottom");
         break;
      case ELM_PANEL_ORIENT_LEFT:
-        elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "left");
+        if (!elm_widget_mirrored_get(obj))
+          elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "left");
+        else
+          elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "right");
         break;
      case ELM_PANEL_ORIENT_RIGHT:
-        elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "right");
+        if (!elm_widget_mirrored_get(obj))
+          elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "right");
+        else
+          elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base", "left");
         break;
      }
+
    _sizing_eval(obj);
 }
 

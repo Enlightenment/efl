@@ -174,6 +174,15 @@ _del_hook(Evas_Object *obj)
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_mirrored_set(wd->scr, mirrored);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -183,6 +192,7 @@ _theme_hook(Evas_Object *obj)
         Evas_Object *edj;
         const char *str;
 
+        _mirrored_set(obj, elm_widget_mirrored_get(obj));
         elm_smart_scroller_object_theme_set(obj, wd->scr, 
                                             wd->widget_name, wd->widget_base,
                                             elm_widget_style_get(obj));
@@ -499,6 +509,7 @@ elm_scroller_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    return obj;
 }
 

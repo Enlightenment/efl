@@ -74,6 +74,8 @@ SIG_FWD(SELECTION_CUT)
 SIG_FWD(UNPRESSED)
 #undef SIG_FWD
 
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
+
 static void
 _FILE_CHOSEN_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -152,6 +154,15 @@ _elm_fileselector_entry_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direct
 }
 
 static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_widget_mirrored_set(wd->button, rtl);
+   edje_object_mirrored_set(wd->edje, rtl);
+}
+
+static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -159,6 +170,7 @@ _theme_hook(Evas_Object *obj)
    char buf[1024];
 
    if (!wd) return;
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->edje, "fileselector_entry", "base", style);
    if (elm_object_disabled_get(obj))
       edje_object_signal_emit(wd->edje, "elm,state,disabled", "elm");
@@ -273,6 +285,7 @@ elm_fileselector_entry_add(Evas_Object *parent)
    SIG_FWD(SELECTION_CUT);
 #undef SIG_FWD
 
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
 
    // TODO: convert Elementary to subclassing of Evas_Smart_Class

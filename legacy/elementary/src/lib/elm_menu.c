@@ -103,6 +103,7 @@ _theme_hook(Evas_Object *obj)
      {
 	EINA_LIST_FOREACH(l, _l, item)
 	  {
+             edje_object_mirrored_set(item->base.view, elm_widget_mirrored_get(obj));
 	     ll = eina_list_append(ll, item->submenu.items);
 	     if (item->separator)
 	       _elm_theme_object_set(obj, item->base.view, "menu", "separator",
@@ -152,11 +153,15 @@ _sizing_eval(Evas_Object *obj)
    x_p = wd->xloc;
    y_p = wd->yloc;
 
+   if (elm_widget_mirrored_get(obj))
+     x_p -= w_p;
+
    if (x_p+bw > x2+w2) x_p -= x_p+bw - (x2+w2);
    if (x_p < x2) x_p += x2 - x_p;
 
    if (y_p+h_p+bh > y2+h2) y_p -= y_p+h_p+bh - (y2+h2);
    if (y_p < y2) y_p += y2 - y_p;
+
 
    evas_object_move(wd->location, x_p, y_p);
    evas_object_resize(wd->location, bw, h_p);
@@ -187,6 +192,16 @@ _submenu_sizing_eval(Elm_Menu_Item *parent)
    x_p = x2+w2;
    y_p = y2;
 
+   /* If it overflows on the right, adjust the x */
+   if ((x_p + bw > px + pw) || elm_widget_mirrored_get(parent->base.widget))
+     x_p = x2-bw;
+
+   /* If it overflows on the left, adjust the x - usually only happens
+    * with an RTL interface */
+   if (x_p < px)
+     x_p = x2 + w2;
+
+   /* If after all the adjustments it still overflows, fix it */
    if (x_p + bw > px + pw)
      x_p = x2-bw;
 
@@ -345,6 +360,7 @@ _item_obj_create(Elm_Menu_Item *item)
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    if (!wd) return;
    item->base.view = edje_object_add(evas_object_evas_get(wd->bx));
+   edje_object_mirrored_set(item->base.view, elm_widget_mirrored_get(item->base.widget));
    evas_object_size_hint_weight_set(item->base.view, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(item->base.view, EVAS_HINT_FILL, EVAS_HINT_FILL);
    _elm_theme_object_set(item->base.widget, item->base.view, "menu", "item",  elm_widget_style_get(item->base.widget));
@@ -376,15 +392,18 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    if (!wd) return;
    item->submenu.location = elm_icon_add(wd->bx);
    item->submenu.hv = elm_hover_add(wd->bx);
+   elm_widget_mirrored_set(item->submenu.hv, EINA_FALSE);
    elm_hover_target_set(item->submenu.hv, item->submenu.location);
    elm_hover_parent_set(item->submenu.hv, wd->parent);
    elm_object_style_set(item->submenu.hv, "submenu");
 
    item->submenu.bx = elm_box_add(wd->bx);
+   elm_widget_mirrored_set(item->submenu.bx, EINA_FALSE);
    evas_object_size_hint_weight_set(item->submenu.bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(item->submenu.bx);
    elm_hover_content_set(item->submenu.hv, elm_hover_best_content_location_get(item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
 
+   edje_object_mirrored_set(item->base.view, elm_widget_mirrored_get(item->base.widget));
    _elm_theme_object_set(item->base.widget, item->base.view, "menu", "item_with_submenu",  elm_widget_style_get(item->base.widget));
    elm_menu_item_label_set(item, item->label);
    elm_menu_item_icon_set(item, item->icon_str);
@@ -432,12 +451,14 @@ elm_menu_add(Evas_Object *parent)
    wd->obj = obj;
 
    wd->hv = elm_hover_add(obj);
+   elm_widget_mirrored_set(wd->hv, EINA_FALSE);
    elm_hover_parent_set(wd->hv, parent);
    elm_hover_target_set(wd->hv, wd->location);
    elm_object_style_set(wd->hv, "menu");
    evas_object_smart_callback_add(wd->hv, "clicked", _hover_clicked_cb, obj);
 
    wd->bx = elm_box_add(obj);
+   elm_widget_mirrored_set(wd->bx, EINA_FALSE);
    evas_object_size_hint_weight_set(wd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(wd->bx);
    elm_hover_content_set(wd->hv, elm_hover_best_content_location_get(wd->hv, ELM_HOVER_AXIS_VERTICAL), wd->bx);
