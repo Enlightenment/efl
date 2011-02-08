@@ -8687,7 +8687,7 @@ _evas_object_textblock_rehint(Evas_Object *obj)
  */
 
 
-#if 1
+#if 0
 /* Good for debugging */
 void
 pfnode(Evas_Object_Textblock_Node_Format *n)
