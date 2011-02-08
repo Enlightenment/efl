@@ -1241,11 +1241,9 @@ evas_map_util_3d_lighting(Evas_Map *m,
         x = m->points[i].x;
         y = m->points[i].y;
         z = m->points[i].z;
-printf("Normal %d\n",i);
         // calc normal
         h = (i - 1 + 4) % 4 + (i & ~0x3); // prev point
         j = (i + 1)     % 4 + (i & ~0x3); // next point
-printf("\tNext/Prev: %2d/%2d\n",h,j);
 
         x1 = m->points[h].x - x;
         y1 = m->points[h].y - y;
@@ -1254,16 +1252,12 @@ printf("\tNext/Prev: %2d/%2d\n",h,j);
         x2 = m->points[j].x - x;
         y2 = m->points[j].y - y;
         z2 = m->points[j].z - z;
-printf("\tX:	%3.2lf,%3.2lf,%3.2lf\n",x,y,z);
-printf("\tX1:	%3.2lf,%3.2lf,%3.2lf\n",x1,y1,z1);
-printf("\tX2:	%3.2lf,%3.2lf,%3.2lf\n",x2,y2,z2);
         nx = (y1 * z2) - (z1 * y2);
         ny = (z1 * x2) - (x1 * z2);
         nz = (x1 * y2) - (y1 * x2);
         
         ln = (nx * nx) + (ny * ny) + (nz * nz);
         ln = sqrt(ln);
-printf("\tLength: %3.2lf\n",ln);
         
         if (ln != 0.0)
           {
@@ -1271,7 +1265,6 @@ printf("\tLength: %3.2lf\n",ln);
              ny /= ln;
              nz /= ln;
           }
-printf("\tpoint %2d: %3.2lf,%3.2lf,%3.2lf normal: %3.2lf %3.2lf %3.2lf\n",i,x,y,z,nx,ny,nz);
 
         // calc point -> light vector
         x = lx - x;
