@@ -126,6 +126,7 @@ eeze_disk_new(const char *path)
      
 
    disk->device = dev;
+   disk->mount_opts = EEZE_DISK_MOUNTOPT_DEFAULTS;
    disk->mount_cmd_changed = EINA_TRUE;
    disk->unmount_cmd_changed = EINA_TRUE;
    
