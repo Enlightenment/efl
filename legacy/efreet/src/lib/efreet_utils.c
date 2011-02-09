@@ -5,7 +5,6 @@
 /* TODO: move eet file handling to eet_cache.c */
 /* TODO: add no_display check, as we might want only displayable items */
 /* TODO: Consider flushing local cache after a idling a while */
-/* TODO: Add special check for glob "*" */
 
 #undef alloca
 #ifdef HAVE_ALLOCA_H
@@ -381,6 +380,8 @@ efreet_util_desktop_exec_glob_list(const char *glob)
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!glob) return NULL;
+    if (!strcmp(glob, "*"))
+        glob = NULL;
 
     names = efreet_util_cache_names(efreet_array_string_edd(), "exec_list");
     if (!names) return NULL;
@@ -393,7 +394,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
 
         exe = ecore_file_app_exe_get(names->array[i]);
         if (!exe) continue;
-        if (!efreet_util_glob_match(exe, glob))
+        if (glob && !efreet_util_glob_match(exe, glob))
         {
             free(exe);
             continue;
@@ -611,6 +612,8 @@ efreet_util_cache_glob_list(const char *search, const char *what)
 
     if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
+    if (!strcmp(what, "*"))
+        what = NULL;
 
     snprintf(key, sizeof(key), "%s_list", search);
     names = efreet_util_cache_names(efreet_array_string_edd(), key);
@@ -621,7 +624,7 @@ efreet_util_cache_glob_list(const char *search, const char *what)
         unsigned int j;
         Efreet_Desktop *desk;
 
-        if (!efreet_util_glob_match(names->array[i], what)) continue;
+        if (what && !efreet_util_glob_match(names->array[i], what)) continue;
 
         if (!hash)
         {

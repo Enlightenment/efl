@@ -62,3 +62,4 @@
 	* Don't free data returned by efreet_util_cache_names
 	* Add free callback to eet hashes
 	* Remove unneeded header
+	* Check if pattern equals "*" before doing pattern match
