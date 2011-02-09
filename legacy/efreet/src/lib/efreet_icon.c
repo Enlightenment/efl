@@ -237,7 +237,8 @@ efreet_icon_theme_list_get(void)
             Efreet_Icon_Theme *theme;
 
             theme = efreet_icon_theme_find(keys[i]);
-            list = eina_list_append(list, theme);
+            if (theme)
+                list = eina_list_append(list, theme);
         }
         free(keys);
     }

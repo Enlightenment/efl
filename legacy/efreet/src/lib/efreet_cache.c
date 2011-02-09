@@ -685,12 +685,6 @@ efreet_cache_icon_theme_name_list(int *num)
             memmove(&keys[i], &keys[i + 1], (*num - i - 1) * sizeof(char *));
             (*num)--;
         }
-        /* this fixes segv of e's icon theme chooser. FIXME is this a not intended case?*/
-        else if (!strncmp(keys[i], "efreet", 6) && (i < (*num + 1)))
-        {
-             memmove(&keys[i], &keys[i + 1], (*num - i - 1) * sizeof(char *));
-             (*num)--;
-        }
     }
     return keys;
 }
