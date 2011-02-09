@@ -341,7 +341,7 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
 EAPI void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                       RGBA_Draw_Context *dc,
-                      int npoints, RGBA_Map_Point *p,
+                      int npoints __UNUSED__, RGBA_Map_Point *p,
                       int smooth, int level)
 {
 #ifdef BUILD_MMX

@@ -1738,7 +1738,7 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
+eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints __UNUSED__, RGBA_Map_Point *p, int smooth, int level)
 {
    Evas_GL_Image *gim = image;
    Render_Engine *re;
@@ -1773,10 +1773,8 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
         dy = p[0].y >> FP;
         dw = (p[2].x >> FP) - dx;
         dh = (p[2].y >> FP) - dy;
-        eng_image_draw
-           (data, context, surface, image,
-               0, 0, gim->w, gim->h,
-               dx, dy, dw, dh, smooth);
+        eng_image_draw(data, context, surface, image,
+                       0, 0, gim->w, gim->h, dx, dy, dw, dh, smooth);
      }
    else
      {

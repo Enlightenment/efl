@@ -1293,7 +1293,9 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI void                     evas_object_image_content_hint_set       (Evas_Object *obj, Evas_Image_Content_Hint hint) EINA_ARG_NONNULL(1);
    EAPI Evas_Image_Content_Hint  evas_object_image_content_hint_get       (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
-   EAPI void                     evas_object_image_alpha_mask_set         (Evas_Object *, Eina_Bool) EINA_ARG_NONNULL(1);
+   EAPI void                     evas_object_image_alpha_mask_set         (Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool                evas_object_image_source_set             (Evas_Object *obj, Evas_Object *src) EINA_ARG_NONNULL(1, 2);
+   EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @defgroup Evas_Object_Text Text Object Functions
