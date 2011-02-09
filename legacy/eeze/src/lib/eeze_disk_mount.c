@@ -229,6 +229,7 @@ eeze_disk_mount(Eeze_Disk *disk)
                return EINA_FALSE;
           }
 
+        if ((!disk->mount_point) || (!disk->mount_point[0])) return EINA_FALSE;
         eina_strbuf_append_printf(disk->mount_cmd, "%s -o %s UUID=%s %s", EEZE_MOUNT_BIN, EEZE_MOUNT_DEFAULT_OPTS, disk->cache.uuid, disk->mount_point);
         disk->mount_cmd_changed = EINA_FALSE;
      }
