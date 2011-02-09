@@ -993,7 +993,7 @@ on_error_efreet:
     efreet_shutdown();
 
 on_error:
-    if (lockfd > 0) close(lockfd);
+    if (lockfd >= 0) close(lockfd);
 
     while ((path = eina_array_pop(strs)))
         eina_stringshare_del(path);
