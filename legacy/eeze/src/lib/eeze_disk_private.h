@@ -48,6 +48,7 @@ struct _Eeze_Disk
    const char *devpath;
    const char *fstype;
    const char *mount_point;
+   int mount_opts;
    
    struct
      {

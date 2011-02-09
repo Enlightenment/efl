@@ -44,7 +44,11 @@ typedef enum
 typedef enum
 {
    EEZE_DISK_MOUNTOPT_DEFAULTS = 0xf0,
-   EEZE_DISK_MOUNTOPT_LOOP = (1 << 1)
+   EEZE_DISK_MOUNTOPT_LOOP = (1 << 1),
+   EEZE_DISK_MOUNTOPT_UTF8 = (1 << 2),
+   EEZE_DISK_MOUNTOPT_NOEXEC = (1 << 3),
+   EEZE_DISK_MOUNTOPT_NOSUID = (1 << 4),
+   EEZE_DISK_MOUNTOPT_REMOUNT = (1 << 5)
 } Eeze_Mount_Opts;
 
 EAPI extern int EEZE_EVENT_DISK_MOUNT;
@@ -102,6 +106,8 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
 EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
 EAPI const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
 EAPI Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point);
+EAPI Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, int opts);
+EAPI int            eeze_disk_mountopts_get(Eeze_Disk *disk);
 
 EAPI Eina_Bool      eeze_mount_tabs_watch(void);
 EAPI void           eeze_mount_tabs_unwatch(void);

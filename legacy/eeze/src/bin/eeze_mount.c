@@ -15,7 +15,7 @@ static const Ecore_Getopt opts =
    "LGPL",
    "Mount a disk using either its /sys/ path or its /dev/ path\n\n",
    1,
-   {      
+   {
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -101,7 +101,11 @@ main(int argc, char *argv[])
         exit(1);
      }
    if (argc > 2)
-     eeze_disk_mount_point_set(disk, mount_point);
+     {
+        eeze_disk_mount_point_set(disk, mount_point);
+        if (eina_str_has_extension(dev, "iso"))
+          eeze_disk_mountopts_set(disk, EEZE_DISK_MOUNTOPT_LOOP | EEZE_DISK_MOUNTOPT_NOEXEC | EEZE_DISK_MOUNTOPT_NOSUID);
+     }
    ecore_event_handler_add(EEZE_EVENT_DISK_MOUNT, (Ecore_Event_Handler_Cb)_mount_cb, NULL);
    ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, (Ecore_Event_Handler_Cb)_error_cb, NULL);
    if (!eeze_disk_mount(disk))

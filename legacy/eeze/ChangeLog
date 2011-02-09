@@ -1,3 +1,12 @@
+2011-02-09  Mike Blumenkrantz (discomfitor/zmike)
+implement actual handling of mountopts, add utf8 to default mountopts, allow iso automounting in eeze_mount
++EEZE_DISK_MOUNTOPT_UTF8 = (1 << 2)
++EEZE_DISK_MOUNTOPT_NOEXEC = (1 << 3)
++EEZE_DISK_MOUNTOPT_NOSUID = (1 << 4)
++EEZE_DISK_MOUNTOPT_REMOUNT = (1 << 5)
++EAPI Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, int opts);
++EAPI int            eeze_disk_mountopts_get(Eeze_Disk *disk);
+
 2011-01-29  Mike Blumenkrantz (discomfitor/zmike)
 +Eeze_Disk_Type enum
 +Eeze_Mount_Opts enum

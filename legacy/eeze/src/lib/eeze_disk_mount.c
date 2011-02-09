@@ -9,7 +9,7 @@
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
 
-#define EEZE_MOUNT_DEFAULT_OPTS "noexec,nosuid"
+#define EEZE_MOUNT_DEFAULT_OPTS "noexec,nosuid,utf8"
 
 /**
  * @addtogroup disk Disk
@@ -168,6 +168,38 @@ eeze_disk_mounted_get(Eeze_Disk *disk)
 }
 
 /**
+ * @brief Set the mount options using flags
+ * @param disk The disk
+ * @param opts An ORed set of #Eeze_Mount_Opts
+ * @return EINA_TRUE on success, else EINA_FALSE
+ *
+ * This function replaces the current mount opts of a disk with the ones in @p opts.
+ */
+EAPI Eina_Bool
+eeze_disk_mountopts_set(Eeze_Disk *disk, int opts)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
+   if (opts != disk->mount_opts)
+     disk->mount_cmd_changed = EINA_TRUE;
+   disk->mount_opts = opts;
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Get the flags of a disk's current mount options
+ * @param disk The disk
+ * @return An ORed set of #Eeze_Mount_Opts, -1 on failure
+ *
+ * This function returns the current mount opts of a disk.
+ */
+EAPI int
+eeze_disk_mountopts_get(Eeze_Disk *disk)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, -1);
+   return disk->mount_opts;
+}
+
+/**
  * @brief Begin a mount operation on the disk
  * @param disk The disk
  * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
@@ -230,7 +262,24 @@ eeze_disk_mount(Eeze_Disk *disk)
           }
 
         if ((!disk->mount_point) || (!disk->mount_point[0])) return EINA_FALSE;
-        eina_strbuf_append_printf(disk->mount_cmd, "%s -o %s UUID=%s %s", EEZE_MOUNT_BIN, EEZE_MOUNT_DEFAULT_OPTS, disk->cache.uuid, disk->mount_point);
+        if ((!disk->mount_opts) || (disk->mount_opts = 0xf0))
+          eina_strbuf_append_printf(disk->mount_cmd, "%s -o %s UUID=%s %s", EEZE_MOUNT_BIN, EEZE_MOUNT_DEFAULT_OPTS, disk->cache.uuid, disk->mount_point);
+        else
+          {
+             eina_strbuf_append_printf(disk->mount_cmd, "%s -o ", EEZE_MOUNT_BIN);
+             /* trailing commas are okay */
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_LOOP)
+               eina_strbuf_append(disk->mount_cmd, "loop,");
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_UTF8)
+               eina_strbuf_append(disk->mount_cmd, "utf8,");
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NOEXEC)
+               eina_strbuf_append(disk->mount_cmd, "noexec,");
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NOSUID)
+               eina_strbuf_append(disk->mount_cmd, "nosuid,");
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_REMOUNT)
+               eina_strbuf_append(disk->mount_cmd, "remount,");
+             eina_strbuf_append_printf(disk->mount_cmd, " UUID=%s %s", disk->cache.uuid, disk->mount_point);
+          }
         disk->mount_cmd_changed = EINA_FALSE;
      }
 
