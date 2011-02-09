@@ -55,3 +55,7 @@
 	* Do efreet_init before using efreet_*() functions
 	* Move lock creation to own function for desktop cache
 	* Set file owner to calling user
+
+2011-02-09  Sebastian Dransfeld
+
+	* Move theme hash from efreet_icon.c to efreet_cache.c

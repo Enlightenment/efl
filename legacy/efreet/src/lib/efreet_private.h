@@ -94,7 +94,6 @@
 
 /* TODO: Move these to cache, make static and add accessor */
 extern Eina_Hash *efreet_desktop_cache;
-extern Eina_Hash *efreet_icon_themes;
 
 #define EFREET_DESKTOP_CACHE_MAJOR 1
 #define EFREET_DESKTOP_CACHE_MINOR 0
@@ -220,7 +219,7 @@ Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *
 Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
 void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
-char **efreet_cache_icon_theme_name_list(int *num);
+Eina_List *efreet_cache_icon_theme_list(void);
 EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);

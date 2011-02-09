@@ -39,8 +39,6 @@ static int _efreet_icon_log_dom = -1;
 #include "Efreet.h"
 #include "efreet_private.h"
 
-Eina_Hash *efreet_icon_themes = NULL;
-
 static const char *efreet_icon_deprecated_user_dir = NULL;
 static const char *efreet_icon_user_dir = NULL;
 static Eina_List *efreet_icon_extensions = NULL;
@@ -97,7 +95,6 @@ efreet_icon_init(void)
     for (i = 0; default_exts[i]; i++)
         efreet_icon_extensions = eina_list_append(efreet_icon_extensions, eina_stringshare_add(default_exts[i]));
 
-    efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
     efreet_icon_changes_listen();
 
     efreet_extra_icon_dirs = NULL;
@@ -117,7 +114,6 @@ efreet_icon_shutdown(void)
     IF_RELEASE(efreet_icon_deprecated_user_dir);
 
     IF_FREE_LIST(efreet_icon_extensions, eina_stringshare_del);
-    IF_FREE_HASH(efreet_icon_themes);
     efreet_extra_icon_dirs = eina_list_free(efreet_extra_icon_dirs);
 
     eina_log_domain_unregister(_efreet_icon_log_dom);
@@ -225,25 +221,7 @@ efreet_icon_extensions_list_get(void)
 EAPI Eina_List *
 efreet_icon_theme_list_get(void)
 {
-    Eina_List *list = NULL;
-    char **keys;
-    int num, i;
-
-    keys = efreet_cache_icon_theme_name_list(&num);
-    if (keys)
-    {
-        for (i = 0; i < num; i++)
-        {
-            Efreet_Icon_Theme *theme;
-
-            theme = efreet_icon_theme_find(keys[i]);
-            if (theme)
-                list = eina_list_append(list, theme);
-        }
-        free(keys);
-    }
-
-    return list;
+    return efreet_cache_icon_theme_list();
 }
 
 /**
@@ -255,18 +233,9 @@ efreet_icon_theme_list_get(void)
 EAPI Efreet_Icon_Theme *
 efreet_icon_theme_find(const char *theme_name)
 {
-    Efreet_Icon_Theme *theme;
-
     if (!theme_name) return NULL;
 
-    theme = eina_hash_find(efreet_icon_themes, theme_name);
-    if (!theme)
-    {
-        theme = efreet_cache_icon_theme_find(theme_name);
-        if (theme) eina_hash_direct_add(efreet_icon_themes, theme->name.internal, theme);
-    }
-
-    return theme;
+    return efreet_cache_icon_theme_find(theme_name);
 }
 
 /**

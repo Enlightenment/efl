@@ -47,6 +47,7 @@ static Eet_File            *icon_cache = NULL;
 static Eet_File            *fallback_cache = NULL;
 static Eet_File            *icon_theme_cache = NULL;
 
+static Eina_Hash           *themes = NULL;
 static Eina_Hash           *icons = NULL;
 static Eina_Hash           *fallbacks = NULL;
 
@@ -104,6 +105,7 @@ efreet_cache_init(void)
     EFREET_EVENT_ICON_CACHE_UPDATE = ecore_event_type_new();
     EFREET_EVENT_DESKTOP_CACHE_UPDATE = ecore_event_type_new();
 
+    themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
     icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
     fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
 
@@ -149,6 +151,7 @@ efreet_cache_shutdown(void)
     icon_cache = efreet_cache_close(icon_cache);
     icon_theme_cache = efreet_cache_close(icon_theme_cache);
 
+    IF_FREE_HASH(themes);
     IF_FREE_HASH(icons);
     IF_FREE_HASH(fallbacks);
 
@@ -649,8 +652,20 @@ efreet_cache_icon_fallback_find(const char *icon)
 Efreet_Icon_Theme *
 efreet_cache_icon_theme_find(const char *theme)
 {
+    Efreet_Cache_Icon_Theme *cache;
+
     if (!efreet_cache_check(&icon_theme_cache, efreet_icon_theme_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
-    return eet_data_read(icon_theme_cache, efreet_icon_theme_edd(EINA_FALSE), theme);
+
+    cache = eina_hash_find(themes, theme);
+    if (cache == NON_EXISTING) return NULL;
+    if (cache) return &(cache->theme);
+
+    cache = eet_data_read(icon_theme_cache, efreet_icon_theme_edd(EINA_FALSE), theme);
+    if (cache)
+        eina_hash_add(themes, theme, cache);
+    else
+        eina_hash_add(themes, theme, NON_EXISTING);
+    return &(cache->theme);
 }
 
 void
@@ -659,6 +674,7 @@ efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme)
     void *data;
 
     if (!theme) return;
+    if (theme == NON_EXISTING) return;
 
     eina_list_free(theme->paths);
     eina_list_free(theme->inherits);
@@ -668,23 +684,26 @@ efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme)
     free(theme);
 }
 
-char **
-efreet_cache_icon_theme_name_list(int *num)
+Eina_List *
+efreet_cache_icon_theme_list(void)
 {
+    Eina_List *ret = NULL;
     char **keys;
-    int i;
+    int i, num;
 
     if (!efreet_cache_check(&icon_theme_cache, efreet_icon_theme_cache_file(), EFREET_ICON_CACHE_MAJOR)) return NULL;
-    keys = eet_list(icon_theme_cache, "*", num);
-    for (i = 0; i < *num; i++)
+    keys = eet_list(icon_theme_cache, "*", &num);
+    for (i = 0; i < num; i++)
     {
-        if (!strncmp(keys[i], "__efreet", 8) && (i < (*num + 1)))
-        {
-            memmove(&keys[i], &keys[i + 1], (*num - i - 1) * sizeof(char *));
-            (*num)--;
-        }
+        Efreet_Icon_Theme *theme;
+        if (!strncmp(keys[i], "__efreet", 8)) continue;
+        /* TODO: This could be done more efficient by checking the theme hash
+         *       directly. */
+        theme = efreet_cache_icon_theme_find(keys[i]);
+        if (theme) ret = eina_list_append(ret, theme);
     }
-    return keys;
+    free(keys);
+    return ret;
 }
 
 /*
@@ -829,6 +848,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     const char *file;
     Efreet_Event_Cache_Update *ev = NULL;
     Efreet_Old_Cache *d = NULL;
+    Eina_List *l = NULL;
 
     if (event != ECORE_FILE_EVENT_CREATED_FILE &&
         event != ECORE_FILE_EVENT_MODIFIED) return;
@@ -856,31 +876,46 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     {
         ev = NEW(Efreet_Event_Cache_Update, 1);
         if (!ev) goto error;
-        d = NEW(Efreet_Old_Cache, 1);
-        if (!d) goto error;
 
         IF_RELEASE(theme_name);
 
-        eina_hash_free(icons);
+        /* Save all old caches */
+        d = NEW(Efreet_Old_Cache, 1);
+        if (!d) goto error;
+        d->hash = themes;
+        d->ef = icon_theme_cache;
+        l = eina_list_append(l, d);
+
+        d = NEW(Efreet_Old_Cache, 1);
+        if (!d) goto error;
+        d->hash = icons;
+        d->ef = icon_cache;
+        l = eina_list_append(l, d);
+
+        d = NEW(Efreet_Old_Cache, 1);
+        if (!d) goto error;
+        d->hash = fallbacks;
+        d->ef = fallback_cache;
+        l = eina_list_append(l, d);
+
+        /* Create new empty caches */
+        themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
         icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
-        eina_hash_free(fallbacks);
         fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
 
-        icon_cache = efreet_cache_close(icon_cache);
-        fallback_cache = efreet_cache_close(fallback_cache);
-
-        d->hash = efreet_icon_themes;
-        d->ef = icon_theme_cache;
-
-        efreet_icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
         icon_theme_cache = NULL;
+        icon_cache = NULL;
+        fallback_cache = NULL;
 
-        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, d);
+        /* Send event */
+        ecore_event_add(EFREET_EVENT_ICON_CACHE_UPDATE, ev, icon_cache_update_free, l);
     }
     return;
 error:
     IF_FREE(ev);
     IF_FREE(d);
+    EINA_LIST_FREE(l, d)
+        free(d);
 }
 
 static void
@@ -1040,11 +1075,15 @@ static void
 icon_cache_update_free(void *data, void *ev)
 {
     Efreet_Old_Cache *d;
+    Eina_List *l;
 
-    d = data;
-    if (d->hash)
-        eina_hash_free(d->hash);
-    efreet_cache_close(d->ef);
-    free(d);
+    l = data;
+    EINA_LIST_FREE(l, d)
+    {
+        if (d->hash)
+            eina_hash_free(d->hash);
+        efreet_cache_close(d->ef);
+        free(d);
+    }
     free(ev);
 }
