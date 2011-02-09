@@ -2976,41 +2976,42 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
    EINA_SAFETY_ON_NULL_RETURN(marker);
    wd = marker->wd;
    if (!wd) return;
-   for (i = 0; i <= ZOOM_MAX; i++)
+   for (i = marker->clas_group->zoom_displayed; i <= ZOOM_MAX; i++)
      {
-	marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
-	if (!eina_list_count(marker->groups[i]->markers))
-	  {
+        marker->groups[i]->markers = eina_list_remove(marker->groups[i]->markers, marker);
+        if (!eina_list_count(marker->groups[i]->markers))
+          {
              groups = eina_matrixsparse_cell_data_get(marker->groups[i]->cell);
              groups = eina_list_remove(groups, marker->groups[i]);
              eina_matrixsparse_cell_data_set(marker->groups[i]->cell, groups);
-             
+
              _group_object_free(marker->groups[i]);
              _group_bubble_free(marker->groups[i]);
              free(marker->groups[i]);
-	  }
-	else
-	  {
-	     marker->groups[i]->sum_x -= marker->x[i];
-	     marker->groups[i]->sum_y -= marker->y[i];
-             
-	     marker->groups[i]->x = marker->groups[i]->sum_x / eina_list_count(marker->groups[i]->markers);
-	     marker->groups[i]->y = marker->groups[i]->sum_y / eina_list_count(marker->groups[i]->markers);
-             
-	     marker->groups[i]->w = marker->groups[i]->clas->priv.edje_w
-               + marker->groups[i]->clas->priv.edje_w/8. * eina_list_count(marker->groups[i]->markers);
-	     marker->groups[i]->h = marker->groups[i]->clas->priv.edje_h
-               + marker->groups[i]->clas->priv.edje_h/8. * eina_list_count(marker->groups[i]->markers);
-	     if (marker->groups[i]->w > marker->groups[i]->clas->priv.edje_max_w)
-	       marker->groups[i]->w = marker->groups[i]->clas->priv.edje_max_w;
-	     if (marker->groups[i]->h > marker->groups[i]->clas->priv.edje_max_h)
-	       marker->groups[i]->h = marker->groups[i]->clas->priv.edje_max_h;
-	  }
-	if ((marker->groups[i]->obj) && (eina_list_count(marker->groups[i]->markers) == 1))
-	  {
-	     _group_object_free(marker->groups[i]);
-	     _group_object_create(marker->groups[i]);
-	  }
+          }
+        else
+          {
+             marker->groups[i]->sum_x -= marker->x[i];
+             marker->groups[i]->sum_y -= marker->y[i];
+
+             marker->groups[i]->x = marker->groups[i]->sum_x / eina_list_count(marker->groups[i]->markers);
+             marker->groups[i]->y = marker->groups[i]->sum_y / eina_list_count(marker->groups[i]->markers);
+
+             marker->groups[i]->w = marker->groups[i]->clas->priv.edje_w
+                + marker->groups[i]->clas->priv.edje_w/8. * eina_list_count(marker->groups[i]->markers);
+             marker->groups[i]->h = marker->groups[i]->clas->priv.edje_h
+                + marker->groups[i]->clas->priv.edje_h/8. * eina_list_count(marker->groups[i]->markers);
+             if (marker->groups[i]->w > marker->groups[i]->clas->priv.edje_max_w)
+               marker->groups[i]->w = marker->groups[i]->clas->priv.edje_max_w;
+             if (marker->groups[i]->h > marker->groups[i]->clas->priv.edje_max_h)
+               marker->groups[i]->h = marker->groups[i]->clas->priv.edje_max_h;
+
+             if ((marker->groups[i]->obj) && (eina_list_count(marker->groups[i]->markers) == 1))
+               {
+                  _group_object_free(marker->groups[i]);
+                  _group_object_create(marker->groups[i]);
+               }
+          }
      }
 
    if ((marker->content) && (marker->clas->func.del))
