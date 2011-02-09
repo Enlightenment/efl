@@ -318,6 +318,7 @@ collections {
       alias: "elm/genlist/base/default";
       alias: "elm/carousel/base/default";
       alias: "elm/gengrid/base/default";
+      alias: "elm/scroller/base/map_bubble";
 
       data {
          item: "focus_highlight" "on";

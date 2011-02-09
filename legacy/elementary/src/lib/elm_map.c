@@ -1868,6 +1868,7 @@ _group_bubble_content_update(Marker_Group *group)
    if (!group->sc)
      {
 	group->sc = elm_scroller_add(group->bubble);
+	elm_widget_style_set(group->sc, "map_bubble");
 	elm_scroller_content_min_limit(group->sc, EINA_FALSE, EINA_TRUE);
 	elm_scroller_policy_set(group->sc, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
 	elm_scroller_bounce_set(group->sc, _elm_config->thumbscroll_bounce_enable, EINA_FALSE);
