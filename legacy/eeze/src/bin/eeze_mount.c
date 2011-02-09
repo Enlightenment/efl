@@ -104,7 +104,11 @@ main(int argc, char *argv[])
      {
         eeze_disk_mount_point_set(disk, mount_point);
         if (eina_str_has_extension(dev, "iso"))
-          eeze_disk_mountopts_set(disk, EEZE_DISK_MOUNTOPT_LOOP | EEZE_DISK_MOUNTOPT_NOEXEC | EEZE_DISK_MOUNTOPT_NOSUID);
+          {
+             int f;
+             f = eeze_disk_mountopts_get(disk);
+             eeze_disk_mountopts_set(disk, f | EEZE_DISK_MOUNTOPT_LOOP);
+          }
      }
    ecore_event_handler_add(EEZE_EVENT_DISK_MOUNT, (Ecore_Event_Handler_Cb)_mount_cb, NULL);
    ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, (Ecore_Event_Handler_Cb)_error_cb, NULL);
