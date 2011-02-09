@@ -106,6 +106,7 @@ _theme_hook(Evas_Object *obj)
    Evas_Coord minw = 0, minh = 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
 
    _index_box_clear(obj, wd->bx[0], 0);
    _index_box_clear(obj, wd->bx[1], 1);

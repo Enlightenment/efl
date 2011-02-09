@@ -740,6 +740,7 @@ _theme_hook(Evas_Object *obj)
    Item_Block *itb;
    if (!wd) return;
    _item_cache_zero(wd);
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    elm_smart_scroller_object_theme_set(obj, wd->scr, "genlist", "base",
                                        elm_widget_style_get(obj));

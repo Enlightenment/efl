@@ -244,6 +244,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _notify_theme_apply(obj);
    if (wd->block_events) _block_events_theme_apply(obj);

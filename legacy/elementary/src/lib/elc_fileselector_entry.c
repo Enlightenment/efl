@@ -170,6 +170,7 @@ _theme_hook(Evas_Object *obj)
    char buf[1024];
 
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->edje, "fileselector_entry", "base", style);
    if (elm_object_disabled_get(obj))

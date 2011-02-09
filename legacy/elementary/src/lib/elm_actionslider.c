@@ -129,6 +129,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    if (!edje_object_part_swallow_get(wd->as, "elm.drag_button_base"))
      edje_object_part_unswallow(wd->as, wd->drag_button_base);
 

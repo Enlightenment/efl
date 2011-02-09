@@ -460,6 +460,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *t;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    t = eina_stringshare_add(elm_entry_entry_get(obj));

@@ -71,6 +71,7 @@ _theme_hook(Evas_Object *obj)
    Eina_List *l;
    Item *it;
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    EINA_LIST_FOREACH(wd->stack, l, it)
      {

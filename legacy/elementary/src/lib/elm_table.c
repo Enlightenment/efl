@@ -90,6 +90,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 static void
 _theme_hook(Evas_Object *obj)
 {
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 }
 

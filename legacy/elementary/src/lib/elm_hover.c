@@ -140,6 +140,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    // FIXME: hover contents doesn't seem to propagate resizes properly
    _elm_theme_object_set(obj, wd->cov, "hover", "base", elm_widget_style_get(obj));

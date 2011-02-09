@@ -559,6 +559,7 @@ _theme_hook(Evas_Object *obj)
    Eina_List *n;
 
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    if (wd->scr)

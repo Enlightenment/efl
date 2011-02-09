@@ -91,6 +91,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    char buf[4096];
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    elm_hoversel_hover_end(obj);
    if (wd->horizontal)
       snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));

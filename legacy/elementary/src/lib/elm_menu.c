@@ -98,6 +98,7 @@ _theme_hook(Evas_Object *obj)
    Elm_Menu_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    ll = eina_list_append(ll, wd->items);
    EINA_LIST_FOREACH(ll, _ll, l)
      {

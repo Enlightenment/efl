@@ -60,6 +60,7 @@ _theme_hook(Evas_Object *obj)
    double size;
 
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    size = elm_panes_content_left_size_get(obj);
    

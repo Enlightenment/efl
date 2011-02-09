@@ -60,6 +60,7 @@ _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->bbl, "bubble", wd->corner,
                          elm_widget_style_get(obj));
