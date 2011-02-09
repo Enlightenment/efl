@@ -641,8 +641,8 @@ evas_engine_sdl_image_map4_draw(void *data __UNUSED__, void *context, void *surf
 	_SDL_UPDATE_PIXELS(eim);
      }
 
-   evas_common_map4_rgba((RGBA_Image*) eim->cache_entry.src,
-			 (RGBA_Image*) dst->cache_entry.src, context, p, smooth, level);
+   evas_common_map_rgba((RGBA_Image*) eim->cache_entry.src,
+			 (RGBA_Image*) dst->cache_entry.src, context, 4, p, smooth, level);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)

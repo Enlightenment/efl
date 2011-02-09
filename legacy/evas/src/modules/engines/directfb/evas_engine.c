@@ -1570,7 +1570,7 @@ evas_engine_dfb_image_map4_draw(void *data __UNUSED__, void *context, void *surf
    if (!_dfb_lock_and_sync_image(deie->surface, src, DSLF_READ))
      goto error_src;
 
-   evas_common_map4_rgba(src, dst, context, p, smooth, level);
+   evas_common_map_rgba(src, dst, context, 4, p, smooth, level);
    evas_common_cpu_end_opt();
 
    screen->Unlock(screen);
