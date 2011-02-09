@@ -6,8 +6,6 @@
  *       Icon requests will probably come in batches, f.ex. during menu
  *       browsing.
  */
-/* TODO: Pass extra icon dirs to cache process */
-/* TODO: Pass icon extensions to cache process */
 
 #include <unistd.h>
 #include <fcntl.h>
