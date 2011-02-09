@@ -463,7 +463,6 @@ efreet_util_desktop_categories_list(void)
     if (!array) return NULL;
     for (i = 0; i < array->array_count; i++)
         ret = eina_list_append(ret, array->array[i]);
-    efreet_cache_array_string_free(array);
     return ret;
 }
 

@@ -59,3 +59,4 @@
 2011-02-09  Sebastian Dransfeld
 
 	* Move theme hash from efreet_icon.c to efreet_cache.c
+	* Don't free data returned by efreet_util_cache_names
