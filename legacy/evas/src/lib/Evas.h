@@ -1295,7 +1295,7 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
 
    EAPI void                     evas_object_image_alpha_mask_set         (Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                evas_object_image_source_set             (Evas_Object *obj, Evas_Object *src) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object             *evas_object_image_source_get             (Evas_Object *obj EINA_ARG_NONNULL(1);
+   EAPI Evas_Object             *evas_object_image_source_get             (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
@@ -2099,26 +2099,6 @@ struct _Evas_Smart_Cb_Description
    EAPI Eina_List                          *evas_object_table_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
 
-   EAPI Eina_Bool                           evas_object_image_source_set     (Evas_Object *o, Evas_Object *source);
-   EAPI Evas_Object                        *evas_object_image_source_get     (Evas_Object *o);
-   EAPI Eina_Bool                           evas_object_image_source_unset   (Evas_Object *o);
-
-
-/**
- * @defgroup Evas_Proxy Evas Proxy Objects
- *
- * @brief Provides a way of applying effects to complete objects.
- *
- * A proxy object is a visible copy of another object.  Generally a map or
- * similar effect will be applied to the proxy to apply some sort of rendering
- * effect to.
- * 
- * Proxies are generally used for special effects.
- */
-   EAPI Evas_Object                         *evas_object_proxy_add            (Evas *e) EINA_MALLOC;
-   EAPI Eina_Bool                            evas_object_proxy_source_set     (Evas_Object *o, Evas_Object *source);
-   EAPI Evas_Object                         *evas_object_proxy_source_get     (Evas_Object *o);
-   EAPI Eina_Bool                            evas_object_proxy_source_unset   (Evas_Object *o);
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
