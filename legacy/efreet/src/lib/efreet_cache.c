@@ -665,10 +665,13 @@ efreet_cache_icon_theme_find(const char *theme)
 
     cache = eet_data_read(icon_theme_cache, efreet_icon_theme_edd(EINA_FALSE), theme);
     if (cache)
+    {
         eina_hash_add(themes, theme, cache);
+        return &(cache->theme);
+    }
     else
         eina_hash_add(themes, theme, NON_EXISTING);
-    return &(cache->theme);
+    return NULL;
 }
 
 void
