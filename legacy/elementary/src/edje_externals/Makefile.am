@@ -38,6 +38,7 @@ elm_fileselector.c \
 elm_fileselector_button.c \
 elm_fileselector_entry.c \
 elm_genlist.c \
+elm_gengrid.c \
 elm_hoversel.c \
 elm_list.c \
 elm_map.c \
