@@ -1597,8 +1597,8 @@ elm_mirrored_get(void)
 EAPI void
 elm_mirrored_set(Eina_Bool mirrored)
 {
-   /* TODO: Should update all interface */
    _elm_config->is_mirrored = mirrored;
+   _elm_rescale();
 }
 
 void

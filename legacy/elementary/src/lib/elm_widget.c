@@ -77,6 +77,7 @@ struct _Smart_Data
    Eina_Bool      highlight_in_theme : 1;
    Eina_Bool      disabled : 1;
    Eina_Bool      is_mirrored : 1;
+   Eina_Bool      mirrored_auto_mode : 1; /* This is TRUE by default */
 
    Eina_List     *focus_chain;
    Eina_List     *event_cb;
@@ -559,6 +560,61 @@ elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
      {
 	sd->is_mirrored = mirrored;
 	elm_widget_theme(obj);
+     }
+}
+
+/**
+ * @internal
+ * Resets the mirrored mode from the system mirror mode for widgets that are in
+ * automatic mirroring mode. This function does not call elm_widget_theme.
+ *
+ * @param obj The widget.
+ * @param mirrored EINA_TRUE to set mirrored mode. EINA_FALSE to unset.
+ */
+void
+_elm_widget_mirrored_reload(Evas_Object *obj)
+{
+   API_ENTRY return;
+   Eina_Bool mirrored = elm_mirrored_get();
+   if (elm_widget_mirrored_automatic_get(obj) && (sd->is_mirrored != mirrored))
+     {
+	sd->is_mirrored = mirrored;
+     }
+}
+
+/**
+ * Returns the widget's mirrored mode setting.
+ *
+ * @param obj The widget.
+ * @return mirrored mode setting of the object.
+ *
+ **/
+EAPI Eina_Bool
+elm_widget_mirrored_automatic_get(const Evas_Object *obj)
+{
+   API_ENTRY return EINA_FALSE;
+   return sd->mirrored_auto_mode;
+}
+
+/**
+ * Sets the widget's mirrored mode setting.
+ * When widget in automatic mode, it follows the system mirrored mode set by
+ * elm_mirrored_set().
+ * @param obj The widget.
+ * @param automatic EINA_TRUE for auto mirrored mode. EINA_FALSE for manual.
+ */
+EAPI void
+elm_widget_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
+{
+   API_ENTRY return;
+   if (sd->mirrored_auto_mode != automatic)
+     {
+	sd->mirrored_auto_mode = automatic;
+
+        if (automatic)
+          {
+             elm_widget_mirrored_set(obj, elm_mirrored_get());
+          }
      }
 }
 
@@ -2456,6 +2512,7 @@ _smart_add(Evas_Object *obj)
    sd->obj = obj;
    sd->x = sd->y = sd->w = sd->h = 0;
    sd->can_focus = 1;
+   sd->mirrored_auto_mode = EINA_TRUE; /* will follow system locale settings */
    evas_object_smart_data_set(obj, sd);
 }
 

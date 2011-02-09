@@ -278,6 +278,8 @@ extern "C" {
    EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_widget_mirrored_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_widget_mirrored_automatic_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_widget_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic) EINA_ARG_NONNULL(1);
 
    EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);

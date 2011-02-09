@@ -157,6 +157,7 @@ void                _elm_widget_focus_region_show(const Evas_Object *obj);
 void		    _elm_unneed_ethumb(void);
 
 void                _elm_rescale(void);
+void                _elm_widget_mirrored_reload(Evas_Object *obj);
 
 void                _elm_config_init(void);
 void                _elm_config_sub_init(void);
