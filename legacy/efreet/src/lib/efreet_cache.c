@@ -90,6 +90,9 @@ static void icon_cache_update_cache_job(void *data);
 static void desktop_cache_update_free(void *data, void *ev);
 static void icon_cache_update_free(void *data, void *ev);
 
+static void *hash_array_string_add(void *hash, const char *key, void *data);
+static void *hash_string_add(void *hash, const char *key, void *data);
+
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
 
@@ -259,7 +262,7 @@ efreet_hash_array_string_edd(void)
     if (hash_array_string_edd) return hash_array_string_edd;
 
     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Hash);
-    /* TODO: set own hash func */
+    eddc.func.hash_add = hash_array_string_add;
     hash_array_string_edd = eet_data_descriptor_file_new(&eddc);
     if (!hash_array_string_edd) return NULL;
 
@@ -280,7 +283,7 @@ efreet_hash_string_edd(void)
     if (hash_string_edd) return hash_string_edd;
 
     EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Efreet_Cache_Hash);
-    /* TODO: set own hash func */
+    eddc.func.hash_add = hash_string_add;
     hash_string_edd = eet_data_descriptor_file_new(&eddc);
     if (!hash_string_edd) return NULL;
 
@@ -1086,4 +1089,26 @@ icon_cache_update_free(void *data, void *ev)
         free(d);
     }
     free(ev);
+}
+
+static void *
+hash_array_string_add(void *hash, const char *key, void *data)
+{
+    if (!hash)
+        hash = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_array_string_free));
+    if (!hash)
+        return NULL;
+    eina_hash_add(hash, key, data);
+    return hash;
+}
+
+static void *
+hash_string_add(void *hash, const char *key, void *data)
+{
+    if (!hash)
+        hash = eina_hash_string_superfast_new(free);
+    if (!hash)
+        return NULL;
+    eina_hash_add(hash, key, data);
+    return hash;
 }

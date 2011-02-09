@@ -60,3 +60,4 @@
 
 	* Move theme hash from efreet_icon.c to efreet_cache.c
 	* Don't free data returned by efreet_util_cache_names
+	* Add free callback to eet hashes
