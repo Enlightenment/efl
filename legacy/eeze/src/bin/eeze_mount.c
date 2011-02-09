@@ -106,7 +106,11 @@ main(int argc, char *argv[])
    ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, (Ecore_Event_Handler_Cb)_error_cb, NULL);
    if (!eeze_disk_mount(disk))
      {
-        printf("Mount operation could not be started!\n");
+        const char *mp;
+
+        mp = eeze_disk_mount_point_get(disk);
+        if (!mp) fprintf(stderr, "No mount point passed!\n");
+        else fprintf(stderr, "Mount operation could not be started!\n");
         exit(1);
      }
    ecore_main_loop_begin();
