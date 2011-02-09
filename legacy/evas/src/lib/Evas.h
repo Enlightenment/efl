@@ -2098,6 +2098,11 @@ struct _Evas_Smart_Cb_Description
    EAPI Eina_List                          *evas_object_table_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
 
+   EAPI Eina_Bool                           evas_object_image_source_set     (Evas_Object *o, Evas_Object *source);
+   EAPI Evas_Object                        *evas_object_image_source_get     (Evas_Object *o);
+   EAPI Eina_Bool                           evas_object_image_source_unset   (Evas_Object *o);
+
+
 /**
  * @defgroup Evas_Proxy Evas Proxy Objects
  *
