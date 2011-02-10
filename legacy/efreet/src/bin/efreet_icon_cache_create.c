@@ -652,8 +652,6 @@ main(int argc, char **argv)
      * - Add file monitor on files, so that we catch changes on files
      *   during whilst this program runs.
      * - Maybe linger for a while to reduce number of cache re-creates.
-     * - pass extra dirs to binary, and read them
-     * - make sure programs with different extra dirs all work together
      */
     Eina_Iterator *it;
     Efreet_Cache_Version *icon_version;
