@@ -24,8 +24,9 @@
 
         * Added some more possibly useless safety checks to ecore_con_ares
 
-2011-02-10 Mike Blumenkrantz
-
         * Implement event-driven error message api for all non-curl ecore_con
         +ECORE_CON_EVENT_CLIENT_ERROR, ECORE_CON_EVENT_SERVER_ERROR events
         +Ecore_Con_Event_Server_Error, Ecore_Con_Event_Client_Error types
+
+        * Unify event handler code
+        * Always increment server event count for client events
