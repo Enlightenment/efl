@@ -69,8 +69,53 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
 /* Won't work in the middle of ligatures, assumes cutoff < len */
 EAPI void
 evas_common_text_props_split(Evas_Text_Props *base,
-      Evas_Text_Props *ext, int cutoff)
+      Evas_Text_Props *ext, int _cutoff)
 {
+   size_t cutoff;
+
+   /* Translate text cutoff pos to string object cutoff point */
+#ifdef OT_SUPPORT
+   cutoff = 0;
+
+     {
+        Evas_Font_OT_Info *itr;
+        size_t i;
+        itr = base->info->ot + base->start;
+        _cutoff += base->text_offset;
+        /* FIXME: can I binary search? I don't think this is always sorted */
+        for (i = 0 ; i < base->len ; i++, itr++)
+          {
+             if (itr->source_cluster == (size_t) _cutoff)
+               {
+                  if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+                    {
+                       /* Walk to the last one of the same cluster */
+                       for ( ; i < base->len ; i++, itr++)
+                         {
+                            if (itr->source_cluster != (size_t) _cutoff)
+                              break;
+                         }
+                       cutoff = base->len - i;
+                    }
+                  else
+                    {
+                       cutoff = i;
+                    }
+                  break;
+               }
+          }
+     }
+
+   /* If we didn't find a reasonable cut location, return. */
+   if (cutoff == 0)
+     {
+        ERR("Couldn't find the cutoff position.");
+        return;
+     }
+#else
+   cutoff = (size_t) _cutoff;
+#endif
+
    evas_common_text_props_content_copy_and_ref(ext, base);
    if (base->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
