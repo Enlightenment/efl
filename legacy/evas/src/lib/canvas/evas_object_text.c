@@ -861,7 +861,6 @@ EAPI Evas_Coord
 evas_object_text_inset_get(const Evas_Object *obj)
 {
    Evas_Object_Text *o;
-   const Eina_Unicode *text;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
