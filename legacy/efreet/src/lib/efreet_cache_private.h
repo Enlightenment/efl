@@ -16,9 +16,10 @@ EAPI Eet_Data_Descriptor *efreet_icon_theme_edd(Eina_Bool cache);
 EAPI Eet_Data_Descriptor *efreet_icon_edd(void);
 EAPI Eet_Data_Descriptor *efreet_icon_fallback_edd(void);
 
-typedef struct Efreet_Cache_Icon_Theme Efreet_Cache_Icon_Theme;
+typedef struct _Efreet_Cache_Icon_Theme Efreet_Cache_Icon_Theme;
+typedef struct _Efreet_Cache_Directory Efreet_Cache_Directory;
 
-struct Efreet_Cache_Icon_Theme
+struct _Efreet_Cache_Icon_Theme
 {
     Efreet_Icon_Theme theme;
 
@@ -31,6 +32,11 @@ struct Efreet_Cache_Icon_Theme
     Eina_Bool hidden:1;         /**< Should this theme be hidden from users */
     Eina_Bool valid:1;          /**< Have we seen an index for this theme */
     Eina_Bool changed:1;        /**< Changed since last seen */
+};
+
+struct _Efreet_Cache_Directory
+{
+    long long modified_time;
 };
 
 #endif

@@ -103,15 +103,9 @@ extern Eina_Hash *efreet_desktop_cache;
 #define EFREET_ICON_CACHE_MAJOR 1
 #define EFREET_ICON_CACHE_MINOR 0
 
-typedef struct _Efreet_Cache_Directory Efreet_Cache_Directory;
 typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
 typedef struct _Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
 typedef struct _Efreet_Cache_Fallback_Icon Efreet_Cache_Fallback_Icon;
-
-struct _Efreet_Cache_Directory
-{
-    long long modified_time;
-};
 
 struct _Efreet_Cache_Icon
 {

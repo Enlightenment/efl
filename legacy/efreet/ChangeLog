@@ -65,3 +65,4 @@
 	* Check if pattern equals "*" before doing pattern match
 	* Remove EAPI from efreet_home_dir_get
 	* Make efreet_cache_icon_theme_free only used in efreet_cache.c static
+	* Move struct only used for cache to efreet_cache_private.h
