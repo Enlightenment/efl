@@ -16,3 +16,7 @@
 2011-02-08  Cedric BAIL
 
 	* Fix invalid memory access by edje alias code.
+
+2011-02-10  Cedric BAIL
+
+	* Fix use of recursive alias.
