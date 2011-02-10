@@ -22,11 +22,11 @@
 
 /**
  * @mainpage Eio
- * @author Cedric Bail <cedric.bail@free.fr>
+ * @author Cedric Bail <cedric.bail@@free.fr>
+ * @author Stephen "okra" Houston <unixtitan@@gmail.com>
+ * @author Gustavo Sverzut Barbieri <barbieri@@gmail.com>
  * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- * @author Stephen "okra" Houston <unixtitan@gmail.com>
- * @author Gustavo Sverzut Barbieri <barbieri@gmail.com>
- * @date 2010
+ * @date 2010-2011
  *
  * @section eio_intro_sec Introduction
  * @version @PACKAGE_VERSION@
