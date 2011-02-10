@@ -39,8 +39,8 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
 void
 evas_common_text_props_content_ref(Evas_Text_Props *props)
 {
-   /* No info in this case */
-   if (props->len == 0)
+   /* No content in this case */
+   if (!props->info)
       return;
 
    props->info->refcount++;
@@ -49,8 +49,8 @@ evas_common_text_props_content_ref(Evas_Text_Props *props)
 void
 evas_common_text_props_content_unref(Evas_Text_Props *props)
 {
-   /* No info in this case */
-   if (props->len == 0)
+   /* No content in this case */
+   if (!props->info)
       return;
 
    if (--(props->info->refcount) == 0)
@@ -174,6 +174,11 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    if (text_props->info)
      {
         evas_common_text_props_content_unref(text_props);
+     }
+   if (len == 0)
+     {
+        text_props->info = NULL;
+        text_props->start = text_props->len = text_props->text_offset = 0;
      }
    text_props->info = calloc(1, sizeof(Evas_Text_Props_Info));
 
