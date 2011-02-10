@@ -11,6 +11,7 @@
 
 #define EFREET_CACHE_VERSION "__efreet//version"
 #define EFREET_CACHE_ICON_FALLBACK "__efreet_fallback"
+#define EFREET_CACHE_DESKTOP_DIRS "__efreet//desktop_dirs"
 
 EAPI const char *efreet_desktop_util_cache_file(void);
 EAPI const char *efreet_desktop_cache_file(void);

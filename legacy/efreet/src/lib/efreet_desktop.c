@@ -20,7 +20,6 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include <libgen.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
@@ -51,11 +50,6 @@ Eina_Hash *efreet_desktop_cache = NULL;
  * The current desktop environment (e.g. "Enlightenment" or "Gnome")
  */
 static const char *desktop_environment = NULL;
-
-/**
- * A cache of all unknown desktop dirs
- */
-static Eina_List *efreet_desktop_dirs = NULL;
 
 /**
  * A list of the desktop types available
@@ -164,14 +158,11 @@ void
 efreet_desktop_shutdown(void)
 {
     Efreet_Desktop_Type_Info *info;
-    char *dir;
 
     IF_RELEASE(desktop_environment);
     IF_FREE_HASH(efreet_desktop_cache);
     EINA_LIST_FREE(efreet_desktop_types, info)
         efreet_desktop_type_info_free(info);
-    EINA_LIST_FREE(efreet_desktop_dirs, dir)
-        eina_stringshare_del(dir);
     IF_FREE_HASH(change_monitors);
 #ifdef HAVE_EVIL
     evil_sockets_shutdown();
@@ -223,21 +214,7 @@ efreet_desktop_get(const char *file)
     if (!desktop) return NULL;
 
     if (!desktop->eet)
-    {
-        char buf[PATH_MAX];
-        char *p;
-
-        /*
-         * Read file from disk, save path in cache so it will be included in next
-         * cache update
-         */
-        strncpy(buf, desktop->orig_path, PATH_MAX);
-        buf[PATH_MAX - 1] = '\0';
-        p = dirname(buf);
-        if (!eina_list_search_unsorted(efreet_desktop_dirs, EINA_COMPARE_CB(strcmp), p))
-            efreet_desktop_dirs = eina_list_append(efreet_desktop_dirs, eina_stringshare_add(p));
-        efreet_cache_desktop_update();
-    }
+        efreet_cache_desktop_add(desktop);
 
     if (efreet_desktop_cache) eina_hash_direct_add(efreet_desktop_cache, desktop->orig_path, desktop);
     desktop->cached = 1;
@@ -777,83 +754,6 @@ efreet_desktop_string_list_join(Eina_List *list)
     return string;
 }
 
-int
-efreet_desktop_write_cache_dirs_file(void)
-{
-    char file[PATH_MAX];
-    int fd = -1;
-    int cachefd = -1;
-    char *dir;
-    struct stat st;
-    struct flock fl;
-
-    if (!efreet_desktop_dirs) return 1;
-
-    snprintf(file, sizeof(file), "%s/desktop_data.lock", efreet_cache_home_get());
-    fd = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    if (fd < 0) return 0;
-    efreet_fsetowner(fd);
-    /* TODO: Retry update cache later */
-    memset(&fl, 0, sizeof(struct flock));
-    fl.l_type = F_WRLCK;
-    fl.l_whence = SEEK_SET;
-    if (fcntl(fd, F_SETLK, &fl) < 0) goto error;
-
-    cachefd = open(efreet_desktop_cache_dirs(), O_CREAT | O_APPEND | O_RDWR, S_IRUSR | S_IWUSR);
-    if (cachefd < 0) goto error;
-    efreet_fsetowner(cachefd);
-    if (fstat(cachefd, &st) < 0) goto error;
-    if (st.st_size > 0)
-    {
-        Eina_List *l, *ln;
-        char *p;
-        char *map;
-
-        map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, cachefd, 0);
-        if (map == MAP_FAILED) goto error;
-        p = map;
-        while (p < map + st.st_size)
-        {
-            unsigned int size = *(unsigned int *)p;
-            p += sizeof(unsigned int);
-            EINA_LIST_FOREACH_SAFE(efreet_desktop_dirs, l, ln, dir)
-            {
-                if (!strcmp(dir, p))
-                {
-                    efreet_desktop_dirs = eina_list_remove_list(efreet_desktop_dirs, l);
-                    eina_stringshare_del(dir);
-                    break;
-                }
-            }
-            p += size;
-        }
-        munmap(map, st.st_size);
-    }
-    EINA_LIST_FREE(efreet_desktop_dirs, dir)
-    {
-        unsigned int size = strlen(dir) + 1;
-        size_t count;
-
-        count = write(cachefd, &size, sizeof(int));
-        count += write(cachefd, dir, size);
-
-        if (count != sizeof(int) + size)
-            DBG("Didn't write all data on cachefd");
-
-        efreet_desktop_changes_monitor_add(dir);
-        eina_stringshare_del(dir);
-    }
-    efreet_desktop_dirs = NULL;
-    if (fd >= 0) close(fd);
-    if (cachefd >= 0) close(cachefd);
-    return 1;
-
-error:
-    if (fd >= 0) close(fd);
-    if (cachefd >= 0) close(cachefd);
-    return 0;
-}
-
 /**
  * @internal
  * @param desktop The desktop to check
@@ -1267,10 +1167,9 @@ efreet_desktop_environment_check(Efreet_Desktop *desktop)
 static void
 efreet_desktop_changes_listen(void)
 {
-    int dirsfd = -1;
+    Efreet_Cache_Array_String *arr;
     Eina_List *dirs;
-    char *path;
-    struct stat st;
+    const char *path;
 
     if (!efreet_cache_update) return;
 
@@ -1287,33 +1186,14 @@ efreet_desktop_changes_listen(void)
         eina_stringshare_del(path);
     }
 
-    dirsfd = open(efreet_desktop_cache_dirs(), O_RDONLY, S_IRUSR | S_IWUSR);
-    if (dirsfd >= 0)
+    arr = efreet_cache_desktop_dirs();
+    if (arr)
     {
-        if ((fstat(dirsfd, &st) == 0) && (st.st_size > 0))
-        {
-            char *p;
-            char *map;
+        unsigned int i;
 
-            map = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, dirsfd, 0);
-            if (map == MAP_FAILED) goto error;
-            p = map;
-            while (p < map + st.st_size)
-            {
-                unsigned int size = *(unsigned int *)p;
-                p += sizeof(unsigned int);
-                if (ecore_file_is_dir(p))
-                    efreet_desktop_changes_monitor_add(p);
-                p += size;
-            }
-            munmap(map, st.st_size);
-        }
-        close(dirsfd);
+        for (i = 0; i < arr->array_count; i++)
+            efreet_desktop_changes_monitor_add(arr->array[i]);
     }
-
-    return;
-error:
-    if (dirsfd >= 0) close(dirsfd);
 }
 
 static void

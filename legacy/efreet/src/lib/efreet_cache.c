@@ -7,6 +7,7 @@
  *       browsing.
  */
 
+#include <libgen.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -61,8 +62,8 @@ static Eet_Data_Descriptor *hash_array_string_edd = NULL;
 static Eet_Data_Descriptor *array_string_edd = NULL;
 static Eet_Data_Descriptor *hash_string_edd = NULL;
 
+static Efreet_Cache_Array_String *desktop_dirs = NULL;
 static Eet_File            *desktop_cache = NULL;
-static const char          *desktop_cache_dirs = NULL;
 static const char          *desktop_cache_file = NULL;
 
 static Ecore_File_Monitor  *cache_monitor = NULL;
@@ -175,9 +176,10 @@ efreet_cache_shutdown(void)
     IF_FREE_HASH(icons);
     IF_FREE_HASH(fallbacks);
 
+    efreet_cache_array_string_free(desktop_dirs);
+    desktop_dirs = NULL;
     desktop_cache = efreet_cache_close(desktop_cache);
     IF_RELEASE(desktop_cache_file);
-    IF_RELEASE(desktop_cache_dirs);
 
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
     cache_exe_handler = NULL;
@@ -399,22 +401,6 @@ efreet_desktop_cache_file(void)
 
     desktop_cache_file = eina_stringshare_add(tmp);
     return desktop_cache_file;
-}
-
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI const char *
-efreet_desktop_cache_dirs(void)
-{
-    char tmp[PATH_MAX] = { '\0' };
-
-    if (desktop_cache_dirs) return desktop_cache_dirs;
-
-    snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_dirs.cache", efreet_cache_home_get());
-
-    desktop_cache_dirs = eina_stringshare_add(tmp);
-    return desktop_cache_dirs;
 }
 
 #define EDD_SHUTDOWN(Edd)                       \
@@ -826,6 +812,55 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
 }
 
 void
+efreet_cache_desktop_add(Efreet_Desktop *desktop)
+{
+    char buf[PATH_MAX];
+    char *p;
+    Efreet_Cache_Array_String *arr;
+    const char **tmp;
+
+    /*
+     * Read file from disk, save path in cache so it will be included in next
+     * cache update
+     */
+    strncpy(buf, desktop->orig_path, PATH_MAX);
+    buf[PATH_MAX - 1] = '\0';
+    p = dirname(buf);
+    arr = efreet_cache_desktop_dirs();
+    if (arr)
+    {
+        unsigned int i;
+
+        for (i = 0; i < arr->array_count; i++)
+        {
+            /* Check if we already have this dir in cache */
+            if (!strcmp(p, arr->array[i]))
+                return;
+        }
+    }
+    /* TODO: We leak this data, remember and clean up on shutdown */
+    if (!arr)
+        desktop_dirs = arr = NEW(Efreet_Cache_Array_String, 1);
+    tmp = realloc(arr->array, sizeof (char *) * (arr->array_count + 1));
+    if (!tmp) return;
+    arr->array = tmp;
+    arr->array[arr->array_count++] = strdup(p);
+
+    efreet_cache_desktop_update();
+}
+
+Efreet_Cache_Array_String *
+efreet_cache_desktop_dirs(void)
+{
+    if (desktop_dirs) return desktop_dirs;
+
+    if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) return NULL;
+
+    desktop_dirs = eet_data_read(desktop_cache, efreet_array_string_edd(), EFREET_CACHE_DESKTOP_DIRS);
+    return desktop_dirs;
+}
+
+void
 efreet_cache_desktop_update(void)
 {
     if (!efreet_cache_update) return;
@@ -991,6 +1026,8 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         d->ef = desktop_cache;
         old_desktop_caches = eina_list_append(old_desktop_caches, d);
 
+        efreet_cache_array_string_free(desktop_dirs);
+        desktop_dirs = NULL;
         efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
         desktop_cache = NULL;
 
@@ -1066,8 +1103,6 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
     /* TODO: Retry update cache later */
     if (desktop_cache_exe_lock > 0) return;
 
-    if (!efreet_desktop_write_cache_dirs_file()) return;
-
     snprintf(file, sizeof(file), "%s/efreet/desktop_exec.lock", efreet_cache_home_get());
 
     desktop_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
@@ -1079,7 +1114,20 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
     if (fcntl(desktop_cache_exe_lock, F_SETLK, &fl) < 0) goto error;
     prio = ecore_exe_run_priority_get();
     ecore_exe_run_priority_set(19);
-    desktop_cache_exe = ecore_exe_run(PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", NULL);
+    eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", sizeof(file));
+    if (desktop_dirs && desktop_dirs->array_count > 0)
+    {
+        unsigned int i;
+
+        eina_strlcat(file, " -d", sizeof(file));
+        for (i = 0; i < desktop_dirs->array_count; i++)
+        {
+            eina_strlcat(file, " ", sizeof(file));
+            eina_strlcat(file, desktop_dirs->array[i], sizeof(file));
+        }
+    }
+    printf("Run desktop cache creation: %s\n", file);
+    desktop_cache_exe = ecore_exe_run(file, NULL);
     ecore_exe_run_priority_set(prio);
     if (!desktop_cache_exe) goto error;
 
