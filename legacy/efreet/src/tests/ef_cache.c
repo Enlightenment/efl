@@ -13,29 +13,11 @@ EAPI Eina_List *efreet_util_desktop_comment_glob_list(const char *glob);
 static Eina_Bool icon_cb = EINA_FALSE;
 static Eina_Bool desktop_cb = EINA_FALSE;
 
-static Eina_Bool
-icon_handler_cb(void *data __UNUSED__, int event_type __UNUSED__, void *event __UNUSED__)
-{
-    icon_cb = EINA_TRUE;
-    if (icon_cb && desktop_cb)
-        ecore_main_loop_quit();
-    return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-desktop_handler_cb(void *data __UNUSED__, int event_type __UNUSED__, void *event __UNUSED__)
-{
-    desktop_cb = EINA_TRUE;
-    if (icon_cb && desktop_cb)
-        ecore_main_loop_quit();
-    return ECORE_CALLBACK_PASS_ON;
-}
-
 static void
 check(void)
 {
     Eina_List *list;
-    Efreet_Desktop *desktop;
+    Efreet_Desktop *desktop, *desktop2;
     double start;
     const char *id;
 
@@ -150,7 +132,53 @@ check(void)
     printf("time: %.6f\n", (ecore_time_get() - start));
 
     desktop = efreet_desktop_get("/opt/google/chrome/google-chrome.desktop");
-    if (desktop) efreet_desktop_free(desktop);
+    if (desktop)
+        printf("%s: %d %d\n", desktop->orig_path, desktop->ref, desktop->eet);
+    desktop2 = efreet_desktop_new("/opt/google/chrome/google-chrome.desktop");
+    if (desktop2)
+    {
+        printf("%s: %d %d\n", desktop2->orig_path, desktop2->ref, desktop2->eet);
+        efreet_desktop_free(desktop2);
+    }
+    if (desktop)
+        efreet_desktop_free(desktop);
+
+    desktop = efreet_desktop_get("/usr/share/applications/firefox.desktop");
+    if (desktop)
+        printf("%s: %d %d\n", desktop->orig_path, desktop->ref, desktop->eet);
+    desktop2 = efreet_desktop_new("/usr/share/applications/firefox.desktop");
+    if (desktop2)
+    {
+        printf("%s: %d %d\n", desktop2->orig_path, desktop2->ref, desktop2->eet);
+        efreet_desktop_free(desktop2);
+    }
+    if (desktop)
+        efreet_desktop_free(desktop);
+    fflush(stdout);
+}
+
+static Eina_Bool
+icon_handler_cb(void *data __UNUSED__, int event_type __UNUSED__, void *event __UNUSED__)
+{
+    icon_cb = EINA_TRUE;
+    if (icon_cb && desktop_cb)
+    {
+        check();
+        ecore_main_loop_quit();
+    }
+    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+desktop_handler_cb(void *data __UNUSED__, int event_type __UNUSED__, void *event __UNUSED__)
+{
+    desktop_cb = EINA_TRUE;
+    if (icon_cb && desktop_cb)
+    {
+        check();
+        ecore_main_loop_quit();
+    }
+    return ECORE_CALLBACK_PASS_ON;
 }
 
 int
