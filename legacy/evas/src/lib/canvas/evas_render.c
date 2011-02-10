@@ -890,7 +890,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
 
         RDI(level);
-        RD("        draw map4\n");
+        RD("        draw map\n");
 
         if (rendered)
           {

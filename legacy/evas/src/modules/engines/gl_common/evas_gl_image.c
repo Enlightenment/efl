@@ -525,8 +525,8 @@ _evas_gl_common_image_update(Evas_GL_Context *gc, Evas_GL_Image *im)
 }
 
 void
-evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im, 
-                               RGBA_Map_Point *p, int smooth, int level __UNUSED__)
+evas_gl_common_image_map_draw(Evas_GL_Context *gc, Evas_GL_Image *im, 
+                              int npoints, RGBA_Map_Point *p, int smooth, int level __UNUSED__)
 {
    RGBA_Draw_Context *dc;
    int r, g, b, a;
@@ -555,10 +555,10 @@ evas_gl_common_image_map4_draw(Evas_GL_Context *gc, Evas_GL_Image *im,
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
       yuv = 1;
-   evas_gl_common_context_image_map4_push(gc, im->tex, p, 
-                                          c, cx, cy, cw, ch, 
-                                          r, g, b, a, smooth, im->tex_only,
-                                          yuv);
+   evas_gl_common_context_image_map_push(gc, im->tex, npoints, p,
+                                         c, cx, cy, cw, ch, 
+                                         r, g, b, a, smooth, im->tex_only,
+                                         yuv);
 }
 
 void

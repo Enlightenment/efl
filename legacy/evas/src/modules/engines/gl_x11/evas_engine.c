@@ -1738,7 +1738,7 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints __UNUSED__, RGBA_Map_Point *p, int smooth, int level)
+eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
 {
    Evas_GL_Image *gim = image;
    Render_Engine *re;
@@ -1748,6 +1748,11 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
    eng_window_use(re->win);
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
+   if (npoints != 4)
+     {
+        // FIXME: nash - you didnt fix this
+        abort();
+     }
    if ((p[0].x == p[3].x) &&
        (p[1].x == p[2].x) &&
        (p[0].y == p[1].y) &&
@@ -1778,8 +1783,8 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
      }
    else
      {
-        evas_gl_common_image_map4_draw(re->win->gl_context, image, p,
-                                       smooth, level);
+        evas_gl_common_image_map_draw(re->win->gl_context, image, npoints, p,
+                                      smooth, level);
      }
 }
 

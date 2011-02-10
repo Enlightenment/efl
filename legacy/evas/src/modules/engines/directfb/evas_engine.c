@@ -1551,7 +1551,7 @@ evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image
 #endif
 
 static void
-evas_engine_dfb_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+evas_engine_dfb_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
 {
    Render_Engine *re = (Render_Engine*) data;
    DirectFB_Engine_Image_Entry *deie = image;
@@ -1718,7 +1718,7 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
 
-   ORD(image_map4_draw);
+   ORD(image_map_draw);
    ORD(image_map_surface_new);
    ORD(image_map_surface_free);
 

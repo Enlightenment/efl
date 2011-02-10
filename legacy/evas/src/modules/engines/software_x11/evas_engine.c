@@ -736,7 +736,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 
    re = (Render_Engine *)data;
 #if defined(BUILD_PIPE_RENDER) && !defined(EVAS_FRAME_QUEUING)
-   evas_common_pipe_map4_begin(surface);
+   evas_common_pipe_map_begin(surface);
 #endif /* BUILD_PIPE_RENDER  && !EVAS_FRAME_QUEUING*/
 
 #ifdef EVAS_FRAME_QUEUING

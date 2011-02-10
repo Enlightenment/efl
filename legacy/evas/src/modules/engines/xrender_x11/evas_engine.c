@@ -1286,7 +1286,7 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
 
-//   ORD(image_map4_draw);
+//   ORD(image_map_draw);
 //   ORD(image_map_surface_new);
 //   ORD(image_map_surface_free);
    

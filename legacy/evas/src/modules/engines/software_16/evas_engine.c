@@ -740,7 +740,7 @@ static Evas_Func func =
      eng_image_scale_hint_get,
      /* more font draw functions */
      eng_font_last_up_to_pos,
-     NULL, //   ORD(image_map4_draw);
+     NULL, //   ORD(image_map_draw);
      NULL, //   ORD(image_map_surface_new);
      NULL, //   ORD(image_map_surface_free);
      NULL, // eng_image_content_hint_set - software doesn't use it

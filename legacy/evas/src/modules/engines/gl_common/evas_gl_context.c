@@ -1885,13 +1885,14 @@ again:
 }
 
 void
-evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
-                                       Evas_GL_Texture *tex,
-                                       RGBA_Map_Point *p,
-                                       int clip, int cx, int cy, int cw, int ch,
-                                       int r, int g, int b, int a,
-                                       Eina_Bool smooth, Eina_Bool tex_only,
-                                       Eina_Bool yuv)
+evas_gl_common_context_image_map_push(Evas_GL_Context *gc,
+                                      Evas_GL_Texture *tex,
+                                      int npoints,
+                                      RGBA_Map_Point *p,
+                                      int clip, int cx, int cy, int cw, int ch,
+                                      int r, int g, int b, int a,
+                                      Eina_Bool smooth, Eina_Bool tex_only,
+                                      Eina_Bool yuv)
 {
    int pnum, nv, nc, nu, nu2, nu3, nt, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
@@ -1905,6 +1906,11 @@ evas_gl_common_context_image_map4_push(Evas_GL_Context *gc,
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
+   if (npoints != 4)
+     {
+        // FIXME: nash - you didnt fix this for n points. its still all 4 point stuff!!! grrrr.
+        abort();
+     }
    if ((A_VAL(&(p[0].col)) < 0xff) || (A_VAL(&(p[1].col)) < 0xff) ||
        (A_VAL(&(p[2].col)) < 0xff) || (A_VAL(&(p[3].col)) < 0xff))
      blend = 1;
@@ -2220,7 +2226,7 @@ again:
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
         // FIXME: handle yinvert
-        ERR("not handling inverted y case for map4");
+        ERR("not handling inverted y case for map");
      }
    
    cmul = ARGB_JOIN(a, r, g, b);

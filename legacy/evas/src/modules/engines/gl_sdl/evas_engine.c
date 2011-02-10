@@ -785,14 +785,14 @@ eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 }
 
 static void
-eng_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
 {
    Render_Engine *re;
    
    re = (Render_Engine *)data;
    evas_gl_common_context_target_surface_set(re->gl_context, surface);
    re->gl_context->dc = context;
-   evas_gl_common_image_map4_draw(re->gl_context, image, p, smooth, level);
+   evas_gl_common_image_map_draw(re->gl_context, image, npoints, p, smooth, level);
 }
 
 static void *
@@ -922,7 +922,7 @@ module_open(Evas_Module *em)
    ORD(image_scale_hint_set);
    ORD(image_scale_hint_get);
    
-   ORD(image_map4_draw);
+   ORD(image_map_draw);
    ORD(image_map_surface_new);
    ORD(image_map_surface_free);
    

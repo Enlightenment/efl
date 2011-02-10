@@ -618,7 +618,7 @@ evas_engine_sdl_image_draw(void *data, void *context, void *surface, void *image
 }
 
 static void
-evas_engine_sdl_image_map4_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map_Point *p, int smooth, int level)
+evas_engine_sdl_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
 {
    SDL_Engine_Image_Entry *eim = image;
    SDL_Engine_Image_Entry *dst = surface;
@@ -642,7 +642,7 @@ evas_engine_sdl_image_map4_draw(void *data __UNUSED__, void *context, void *surf
      }
 
    evas_common_map_rgba((RGBA_Image*) eim->cache_entry.src,
-			 (RGBA_Image*) dst->cache_entry.src, context, 4, p, smooth, level);
+			 (RGBA_Image*) dst->cache_entry.src, context, npoints, p, smooth, level);
    evas_common_cpu_end_opt();
 
    if (mustlock_im)
@@ -903,7 +903,7 @@ static int module_open(Evas_Module *em)
    ORD(image_border_set);
    ORD(image_border_get);
    ORD(image_draw);
-   ORD(image_map4_draw);
+   ORD(image_map_draw);
    ORD(image_map_surface_new);
    ORD(image_map_surface_free);
    ORD(image_comment_get);
