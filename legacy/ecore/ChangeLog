@@ -19,3 +19,7 @@
 2011-02-01 Mike McCormack
 
         * Remove SIGRT from ecore's signals since it's unused and broken
+
+2011-02-10 Mike Blumenkrantz
+
+        * added some more possibly useless safety checks to ecore_con_ares

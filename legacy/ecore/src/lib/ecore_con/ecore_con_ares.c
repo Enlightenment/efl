@@ -565,7 +565,7 @@ _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
         else
           *arg->result->service = '\0';
 
-        arg->done_cb(arg->data, arg->result);
+        if (arg->data) arg->done_cb(arg->data, arg->result);
         break;
 
       case ARES_ENOTIMP:
@@ -573,7 +573,7 @@ _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
       case ARES_ENOMEM:
       case ARES_EDESTRUCTION:
       case ARES_EBADFLAGS:
-        arg->done_cb(arg->data, NULL);
+        if (arg->data) arg->done_cb(arg->data, NULL);
         break;
      }
 
