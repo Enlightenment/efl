@@ -58,14 +58,14 @@ static char *efreet_icon_remove_extension(const char *icon);
 static Efreet_Icon *efreet_icon_new(const char *path);
 static void efreet_icon_populate(Efreet_Icon *icon, const char *file);
 
-static const char *efreet_cache_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size);
-static const char *efreet_cache_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, unsigned int size);
-static int efreet_cache_icon_size_match(Efreet_Cache_Icon_Element *elem, unsigned int size);
-static double efreet_cache_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int size);
-static const char *efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem);
-static const char *efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path);
-static const char *efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon);
-static const char *efreet_cache_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon,
+static const char *efreet_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size);
+static const char *efreet_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, unsigned int size);
+static int efreet_icon_size_match(Efreet_Cache_Icon_Element *elem, unsigned int size);
+static double efreet_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int size);
+static const char *efreet_icon_lookup_path(Efreet_Cache_Icon_Element *elem);
+static const char *efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path);
+static const char *efreet_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon);
+static const char *efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon,
                                                                const char *path);
 
 static void efreet_icon_changes_listen(void);
@@ -300,7 +300,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     {
         Efreet_Cache_Icon *cache;
         cache = efreet_cache_icon_find(theme, tmp);
-        value = efreet_cache_icon_lookup_icon(cache, size);
+        value = efreet_icon_lookup_icon(cache, size);
         if (!value) INF("lookup for `%s` failed in theme `%s` with %p.", icon, theme_name, cache);
     }
 
@@ -312,7 +312,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         Efreet_Cache_Fallback_Icon *cache;
 
         cache = efreet_cache_icon_fallback_find(tmp);
-        value = efreet_cache_icon_fallback_lookup_path(cache);
+        value = efreet_icon_fallback_lookup_path(cache);
         if (!value) INF("lookup for `%s` failed in fallback too with %p.", icon, cache);
     }
 
@@ -372,7 +372,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
                 /* If the icon is in the asked for theme, return it */
                 if (!strcmp(cache->theme, theme->name.internal))
                 {
-                    value = efreet_cache_icon_lookup_icon(cache, size);
+                    value = efreet_icon_lookup_icon(cache, size);
                     break;
                 }
                 else
@@ -382,7 +382,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
         if (tmps2)
         {
             if (!value)
-                value = efreet_cache_icon_list_lookup_icon(theme, tmps2, size);
+                value = efreet_icon_list_lookup_icon(theme, tmps2, size);
             eina_list_free(tmps2);
         }
     }
@@ -396,7 +396,7 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
         EINA_LIST_FOREACH(tmps, l, icon)
         {
             cache = efreet_cache_icon_fallback_find(icon);
-            value = efreet_cache_icon_fallback_lookup_path(cache);
+            value = efreet_icon_fallback_lookup_path(cache);
             if (value && (value != NON_EXISTING))
                 break;
         }
@@ -604,7 +604,7 @@ error:
 }
 
 static const char *
-efreet_cache_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
+efreet_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
 {
     const char *path = NULL;
     double minimal_distance = INT_MAX;
@@ -616,8 +616,8 @@ efreet_cache_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
     /* search for allowed size == requested size */
     for (i = 0; i < icon->icons_count; ++i)
     {
-        if (!efreet_cache_icon_size_match(icon->icons[i], size)) continue;
-        path = efreet_cache_icon_lookup_path(icon->icons[i]);
+        if (!efreet_icon_size_match(icon->icons[i], size)) continue;
+        path = efreet_icon_lookup_path(icon->icons[i]);
         if (path) return path;
     }
 
@@ -627,12 +627,12 @@ efreet_cache_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
         const char *tmp = NULL;
         double distance;
 
-        distance = efreet_cache_icon_size_distance(icon->icons[i], size);
+        distance = efreet_icon_size_distance(icon->icons[i], size);
         if (distance > minimal_distance) continue;
         // prefer downsizing
         if ((distance == minimal_distance) && (size < ret_size)) continue;
 
-        tmp = efreet_cache_icon_lookup_path(icon->icons[i]);
+        tmp = efreet_icon_lookup_path(icon->icons[i]);
         if (tmp)
         {
             path = tmp;
@@ -645,7 +645,7 @@ efreet_cache_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
 }
 
 static const char *
-efreet_cache_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, unsigned int size)
+efreet_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, unsigned int size)
 {
     const char *value = NULL;
     Efreet_Cache_Icon *cache;
@@ -655,7 +655,7 @@ efreet_cache_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, u
     {
         if (!strcmp(cache->theme, theme->name.internal))
         {
-            value = efreet_cache_icon_lookup_icon(cache, size);
+            value = efreet_icon_lookup_icon(cache, size);
             if (value) break;
         }
     }
@@ -670,7 +670,7 @@ efreet_cache_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, u
             parent_theme = efreet_icon_theme_find(parent);
             if ((!parent_theme) || (parent_theme == theme)) continue;
 
-            value = efreet_cache_icon_list_lookup_icon(parent_theme, icons, size);
+            value = efreet_icon_list_lookup_icon(parent_theme, icons, size);
             if (value) break;
         }
     }
@@ -682,13 +682,13 @@ efreet_cache_icon_list_lookup_icon(Efreet_Icon_Theme *theme, Eina_List *icons, u
 
         parent_theme = efreet_icon_theme_find("hicolor");
         if (parent_theme)
-            value = efreet_cache_icon_list_lookup_icon(parent_theme, icons, size);
+            value = efreet_icon_list_lookup_icon(parent_theme, icons, size);
     }
     return value;
 }
 
 static int
-efreet_cache_icon_size_match(Efreet_Cache_Icon_Element *elem, unsigned int size)
+efreet_icon_size_match(Efreet_Cache_Icon_Element *elem, unsigned int size)
 {
     if (elem->type == EFREET_ICON_SIZE_TYPE_FIXED)
         return (elem->normal == size);
@@ -701,7 +701,7 @@ efreet_cache_icon_size_match(Efreet_Cache_Icon_Element *elem, unsigned int size)
 }
 
 static double
-efreet_cache_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int size)
+efreet_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int size)
 {
     if (elem->type == EFREET_ICON_SIZE_TYPE_FIXED)
         return (abs(elem->normal - size));
@@ -726,7 +726,7 @@ efreet_cache_icon_size_distance(Efreet_Cache_Icon_Element *elem, unsigned int si
 }
 
 static const char *
-efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem)
+efreet_icon_lookup_path(Efreet_Cache_Icon_Element *elem)
 {
     Eina_List *xdg_dirs, *l;
     const char *path;
@@ -746,16 +746,16 @@ efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem)
         return NULL;
     }
 
-    path = efreet_cache_icon_lookup_path_path(elem, efreet_icon_deprecated_user_dir_get());
+    path = efreet_icon_lookup_path_path(elem, efreet_icon_deprecated_user_dir_get());
     if (path) return path;
 
-    path = efreet_cache_icon_lookup_path_path(elem, efreet_icon_user_dir_get());
+    path = efreet_icon_lookup_path_path(elem, efreet_icon_user_dir_get());
     if (path) return path;
 
 #if 0
     EINA_LIST_FOREACH(efreet_extra_icon_dirs, l, dir)
     {
-        path = efreet_cache_icon_lookup_path_path(elem, dir);
+        path = efreet_icon_lookup_path_path(elem, dir);
         if (path) return path;
     }
 #endif
@@ -766,7 +766,7 @@ efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem)
     {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
 
-        path = efreet_cache_icon_lookup_path_path(elem, buf);
+        path = efreet_icon_lookup_path_path(elem, buf);
         if (path) return path;
     }
 
@@ -774,7 +774,7 @@ efreet_cache_icon_lookup_path(Efreet_Cache_Icon_Element *elem)
 }
 
 static const char *
-efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path)
+efreet_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *path)
 {
     Eina_List *ll;
     const char *ext, *pp;
@@ -798,7 +798,7 @@ efreet_cache_icon_lookup_path_path(Efreet_Cache_Icon_Element *elem, const char *
 }
 
 static const char *
-efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
+efreet_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
 {
     const char *path;
     Eina_List *xdg_dirs, *l;
@@ -820,15 +820,15 @@ efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
         return NULL;
     }
 
-    path = efreet_cache_icon_fallback_lookup_path_path(icon, efreet_icon_deprecated_user_dir_get());
+    path = efreet_icon_fallback_lookup_path_path(icon, efreet_icon_deprecated_user_dir_get());
     if (path) return path;
 
-    path = efreet_cache_icon_fallback_lookup_path_path(icon, efreet_icon_user_dir_get());
+    path = efreet_icon_fallback_lookup_path_path(icon, efreet_icon_user_dir_get());
     if (path) return path;
 
     EINA_LIST_FOREACH(efreet_extra_icon_dirs, l, dir)
     {
-        path = efreet_cache_icon_fallback_lookup_path_path(icon, dir);
+        path = efreet_icon_fallback_lookup_path_path(icon, dir);
         if (path) return path;
     }
 
@@ -838,7 +838,7 @@ efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
     {
         snprintf(buf, sizeof(buf), "%s/icons", dir);
 
-        path = efreet_cache_icon_fallback_lookup_path_path(icon, buf);
+        path = efreet_icon_fallback_lookup_path_path(icon, buf);
         if (path) return path;
     }
 
@@ -847,19 +847,19 @@ efreet_cache_icon_fallback_lookup_path(Efreet_Cache_Fallback_Icon *icon)
     {
         snprintf(buf, sizeof(buf), "%s/pixmaps", dir);
 
-        path = efreet_cache_icon_fallback_lookup_path_path(icon, buf);
+        path = efreet_icon_fallback_lookup_path_path(icon, buf);
         if (path) return path;
     }
 #endif
 
-    path = efreet_cache_icon_fallback_lookup_path_path(icon, "/usr/share/pixmaps");
+    path = efreet_icon_fallback_lookup_path_path(icon, "/usr/share/pixmaps");
     if (path) return path;
 
     return NULL;
 }
 
 static const char *
-efreet_cache_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon, const char *path)
+efreet_icon_fallback_lookup_path_path(Efreet_Cache_Fallback_Icon *icon, const char *path)
 {
     Eina_List *ll;
     const char *ext, *pp;

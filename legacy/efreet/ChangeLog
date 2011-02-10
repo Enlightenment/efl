@@ -71,3 +71,4 @@
 
 	* Move all eet cache handling to efreet_cache.c
 	* Free hashes on init error
+	* efreet_cache_icon -> efreet_icon for functions in efreet_icon.c
