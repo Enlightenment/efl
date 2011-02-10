@@ -91,7 +91,6 @@ struct _Efreet_Desktop
     unsigned char hidden;            /**< User delete the item */
     unsigned char terminal;          /**< Does the program run in a terminal */
     unsigned char startup_notify;    /**< The starup notify settings of the app */
-    unsigned char cached:1;          /**< The desktop file is cached by Efreet */
     unsigned char eet:1;             /**< The desktop file is in eet cache */
 
     Eina_Hash *x; /**< Keep track of all user extensions, keys that begin with X- */

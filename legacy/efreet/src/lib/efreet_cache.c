@@ -62,6 +62,7 @@ static Eet_Data_Descriptor *hash_array_string_edd = NULL;
 static Eet_Data_Descriptor *array_string_edd = NULL;
 static Eet_Data_Descriptor *hash_string_edd = NULL;
 
+static Eina_Hash           *desktops = NULL;
 static Efreet_Cache_Array_String *desktop_dirs = NULL;
 static Eet_File            *desktop_cache = NULL;
 static const char          *desktop_cache_file = NULL;
@@ -122,6 +123,7 @@ efreet_cache_init(void)
     themes = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_theme_free));
     icons = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_free));
     fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
+    desktops = eina_hash_string_superfast_new(NULL);
 
     snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
     if (!ecore_file_exists(buf))
@@ -153,6 +155,8 @@ error:
     icons = NULL;
     if (fallbacks) eina_hash_free(fallbacks);
     fallbacks = NULL;
+    if (desktops) eina_hash_free(desktops);
+    desktops = NULL;
 
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
     cache_exe_handler = NULL;
@@ -176,6 +180,7 @@ efreet_cache_shutdown(void)
     IF_FREE_HASH(icons);
     IF_FREE_HASH(fallbacks);
 
+    IF_FREE_HASH_CB(desktops, EINA_FREE_CB(efreet_cache_desktop_free));
     efreet_cache_array_string_free(desktop_dirs);
     desktop_dirs = NULL;
     desktop_cache = efreet_cache_close(desktop_cache);
@@ -772,18 +777,26 @@ efreet_cache_array_string_free(Efreet_Cache_Array_String *array)
 Efreet_Desktop *
 efreet_cache_desktop_find(const char *file)
 {
-    Efreet_Desktop *desktop;
+    Efreet_Desktop *cache;
     char rp[PATH_MAX];
 
     if (!realpath(file, rp)) return NULL;
 
     if (!efreet_cache_check(&desktop_cache, efreet_desktop_cache_file(), EFREET_DESKTOP_CACHE_MAJOR)) return NULL;
 
-    desktop = eet_data_read(desktop_cache, efreet_desktop_edd(), rp);
-    if (!desktop) return NULL;
-    desktop->ref = 1;
-    desktop->eet = 1;
-    return desktop;
+    cache = eina_hash_find(desktops, rp);
+    if (cache == NON_EXISTING) return NULL;
+    if (cache) return cache;
+
+    cache = eet_data_read(desktop_cache, efreet_desktop_edd(), rp);
+    if (cache)
+    {
+        cache->eet = 1;
+        eina_hash_add(desktops, cache->orig_path, cache);
+    }
+    else
+        eina_hash_add(desktops, rp, NON_EXISTING);
+    return cache;
 }
 
 void
@@ -793,7 +806,13 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
     Efreet_Desktop *curr;
     Eina_List *l;
 
-    if (!old_desktop_caches) return;
+    if (!desktop ||
+        desktop == NON_EXISTING ||
+        !desktop->eet) return;
+
+    curr = eina_hash_find(desktops, desktop->orig_path);
+    if (curr == desktop)
+        eina_hash_del_by_key(desktops, desktop->orig_path);
 
     EINA_LIST_FOREACH(old_desktop_caches, l, d)
     {
@@ -809,6 +828,13 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
             break;
         }
     }
+
+    eina_list_free(desktop->only_show_in);
+    eina_list_free(desktop->not_show_in);
+    eina_list_free(desktop->categories);
+    eina_list_free(desktop->mime_types);
+    IF_FREE_HASH(desktop->x);
+    free(desktop);
 }
 
 void
@@ -1024,13 +1050,13 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
 
         d = NEW(Efreet_Old_Cache, 1);
         if (!d) goto error;
-        d->hash = efreet_desktop_cache;
+        d->hash = desktops;
         d->ef = desktop_cache;
         old_desktop_caches = eina_list_append(old_desktop_caches, d);
 
         efreet_cache_array_string_free(desktop_dirs);
         desktop_dirs = NULL;
-        efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
+        desktops = eina_hash_string_superfast_new(NULL);
         desktop_cache = NULL;
 
         efreet_cache_array_string_free(util_cache_names);
@@ -1228,6 +1254,7 @@ desktop_cache_update_free(void *data, void *ev)
         it = eina_hash_iterator_tuple_new(d->hash);
         EINA_ITERATOR_FOREACH(it, tuple)
         {
+            if (tuple->data == NON_EXISTING) continue;
             printf("Efreet: %d:%s still in cache on cache close!\n",
                    ((Efreet_Desktop *)tuple->data)->ref, (char *)tuple->key);
             dangling++;

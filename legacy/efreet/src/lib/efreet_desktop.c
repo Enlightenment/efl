@@ -41,12 +41,6 @@ int _efreet_desktop_log_dom = -1;
 #define DESKTOP_VERSION "1.0"
 
 /**
- * A cache of all loaded desktops, hashed by file name.
- * Values are Efreet_Desktop structures
- */
-Eina_Hash *efreet_desktop_cache = NULL;
-
-/**
  * The current desktop environment (e.g. "Enlightenment" or "Gnome")
  */
 static const char *desktop_environment = NULL;
@@ -132,7 +126,6 @@ efreet_desktop_init(void)
       }
 #endif
 
-    efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
     efreet_desktop_types = NULL;
 
     EFREET_DESKTOP_TYPE_APPLICATION = efreet_desktop_type_add("Application",
@@ -160,7 +153,6 @@ efreet_desktop_shutdown(void)
     Efreet_Desktop_Type_Info *info;
 
     IF_RELEASE(desktop_environment);
-    IF_FREE_HASH(efreet_desktop_cache);
     EINA_LIST_FREE(efreet_desktop_types, info)
         efreet_desktop_type_info_free(info);
     IF_FREE_HASH(change_monitors);
@@ -174,50 +166,25 @@ efreet_desktop_shutdown(void)
 /**
  * @param file The file to get the Efreet_Desktop from
  * @return Returns a reference to a cached Efreet_Desktop on success, NULL
- * on failure. This reference should not be freed.
+ * on failure
  * @brief Gets a reference to an Efreet_Desktop structure representing the
  * contents of @a file or NULL if @a file is not a valid .desktop file.
  *
  * By using efreet_desktop_get the Efreet_Desktop will be saved in an internal
- * cache, and changes will be signalled by events.
- *
- * Efreet will also try to save all files fetched by efreet_desktop_get in a
- * cache to speed up further requests.
+ * cache for quicker loading.
  */
 EAPI Efreet_Desktop *
 efreet_desktop_get(const char *file)
 {
-    /* TODO: Check if we need to differentiate between desktop_new and desktop_get */
     Efreet_Desktop *desktop;
-
-    if (!file) return NULL;
-    if (efreet_desktop_cache)
-    {
-        char rp[PATH_MAX];
-
-        if (!realpath(file, rp)) return NULL;
-        desktop = eina_hash_find(efreet_desktop_cache, rp);
-        if (desktop)
-        {
-            if (efreet_desktop_cache_check(desktop))
-            {
-                desktop->ref++;
-                return desktop;
-            }
-
-            desktop->cached = 0;
-            eina_hash_del_by_key(efreet_desktop_cache, rp);
-        }
-    }
 
     desktop = efreet_desktop_new(file);
     if (!desktop) return NULL;
 
+    /* If we didn't find this file in the eet cache, add path to search path */
     if (!desktop->eet)
         efreet_cache_desktop_add(desktop);
 
-    if (efreet_desktop_cache) eina_hash_direct_add(efreet_desktop_cache, desktop->orig_path, desktop);
-    desktop->cached = 1;
     return desktop;
 }
 
@@ -256,14 +223,11 @@ efreet_desktop_empty_new(const char *file)
 }
 
 /**
- * @param file The file to create the Efreet_Desktop from
- * @return Returns a new Efreet_Desktop on success, NULL on failure
- * @brief Creates a new Efreet_Desktop structure initialized from the
- * contents of @a file or NULL on failure
- *
- * By using efreet_desktop_new the caller will get a unique copy of a
- * Efreet_Desktop. The Efreet_Desktop should immidiatly after use be free'd,
- * as there is no guarantee how long the pointers will be valid.
+ * @param file The file to get the Efreet_Desktop from
+ * @return Returns a reference to a cached Efreet_Desktop on success, NULL
+ * on failure
+ * @brief Gets a reference to an Efreet_Desktop structure representing the
+ * contents of @a file or NULL if @a file is not a valid .desktop file.
  */
 EAPI Efreet_Desktop *
 efreet_desktop_new(const char *file)
@@ -274,7 +238,8 @@ efreet_desktop_new(const char *file)
     desktop = efreet_cache_desktop_find(file);
     if (desktop)
     {
-        if (desktop->load_time == ecore_file_mod_time(desktop->orig_path))
+        desktop->ref++;
+        if (efreet_desktop_cache_check(desktop))
         {
             if (!efreet_desktop_environment_check(desktop))
             {
@@ -385,17 +350,17 @@ efreet_desktop_save(Efreet_Desktop *desktop)
  * @param file The filename to save as
  * @return Returns 1 on success or 0 on failure
  * @brief Saves @a desktop to @a file
+ *
+ * Please use efreet_desktop_uncached_new() on an existing file
+ * before using efreet_desktop_save_as()
  */
 EAPI int
 efreet_desktop_save_as(Efreet_Desktop *desktop, const char *file)
 {
-    if (desktop->cached && efreet_desktop_cache &&
-        desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
-    {
-        desktop->cached = 0;
-        eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
-    }
-    FREE(desktop->orig_path);
+    /* If we save data from eet as new, we will be in trouble */
+    if (desktop->eet) return 0;
+
+    IF_FREE(desktop->orig_path);
     desktop->orig_path = strdup(file);
     return efreet_desktop_save(desktop);
 }
@@ -413,23 +378,9 @@ efreet_desktop_free(Efreet_Desktop *desktop)
     desktop->ref--;
     if (desktop->ref > 0) return;
 
-    if (desktop->cached)
-    {
-       if (efreet_desktop_cache &&
-           desktop == eina_hash_find(efreet_desktop_cache, desktop->orig_path))
-       {
-           eina_hash_del_by_key(efreet_desktop_cache, desktop->orig_path);
-       }
-       efreet_cache_desktop_free(desktop);
-    }
-
     if (desktop->eet)
     {
-        eina_list_free(desktop->only_show_in);
-        eina_list_free(desktop->not_show_in);
-        eina_list_free(desktop->categories);
-        eina_list_free(desktop->mime_types);
-        IF_FREE_HASH(desktop->x);
+        efreet_cache_desktop_free(desktop);
     }
     else
     {
@@ -462,8 +413,8 @@ efreet_desktop_free(Efreet_Desktop *desktop)
             if (info->free_func)
                 info->free_func(desktop->type_data);
         }
+        free(desktop);
     }
-    FREE(desktop);
 }
 
 /**

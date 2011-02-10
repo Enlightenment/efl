@@ -75,3 +75,5 @@
 	* Fix memleak in desktop cache create
 	* Pass dirs to desktop cache process as arguments
 	* Delay cache recreation with a timer
+	* Move desktop cache to efreet_cache.c, and cache all requests which
+	  hit the eet cache

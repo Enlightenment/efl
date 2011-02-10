@@ -61,6 +61,17 @@
     (x) = NULL; \
 } while (0)
 
+/**
+ * @def IF_FREE_HASH_CB(x, cb)
+ * If x is a valid pointer destroy x with cb and set to NULL
+ */
+#define IF_FREE_HASH_CB(x, cb) do { \
+    if (x) { \
+        Eina_Hash *__tmp; __tmp = (x); (x) = NULL; efreet_hash_free(__tmp, cb); \
+    } \
+    (x) = NULL; \
+} while (0)
+
 #ifdef EFREET_DEFAULT_LOG_COLOR
 #undef EFREET_DEFAULT_LOG_COLOR
 #endif
@@ -91,9 +102,6 @@
 #undef WRN
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
-
-/* TODO: Move these to cache, make static and add accessor */
-extern Eina_Hash *efreet_desktop_cache;
 
 typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
 typedef struct _Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
