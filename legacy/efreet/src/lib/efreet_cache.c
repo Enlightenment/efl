@@ -146,6 +146,13 @@ efreet_cache_init(void)
 
     return 1;
 error:
+    if (themes) eina_hash_free(themes);
+    themes = NULL;
+    if (icons) eina_hash_free(icons);
+    icons = NULL;
+    if (fallbacks) eina_hash_free(fallbacks);
+    fallbacks = NULL;
+
     if (cache_exe_handler) ecore_event_handler_del(cache_exe_handler);
     cache_exe_handler = NULL;
     if (cache_monitor) ecore_file_monitor_del(cache_monitor);

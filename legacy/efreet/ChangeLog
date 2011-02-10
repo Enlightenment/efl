@@ -70,3 +70,4 @@
 2011-02-10  Sebastian Dransfeld
 
 	* Move all eet cache handling to efreet_cache.c
+	* Free hashes on init error
