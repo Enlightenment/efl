@@ -772,7 +772,12 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, i
 static void
 eng_font_cache_flush(void *data __UNUSED__)
 {
+   int tmp_size;
+
+   tmp_size = evas_common_font_cache_get();
+   evas_common_font_cache_set(0);
    evas_common_font_flush();
+   evas_common_font_cache_set(tmp_size);
 }
 
 static void
