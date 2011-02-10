@@ -573,34 +573,6 @@ efreet_desktop_edd(void)
     return desktop_edd;
 }
 
-static void
-efreet_cache_icon_free(Efreet_Cache_Icon *icon)
-{
-    unsigned int i;
-
-    if (!icon) return;
-    if (icon == NON_EXISTING) return;
-
-    for (i = 0; i < icon->icons_count; ++i)
-    {
-        free(icon->icons[i]->paths);
-        free(icon->icons[i]);
-    }
-
-    free(icon->icons);
-    free(icon);
-}
-
-static void
-efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon)
-{
-    if (!icon) return;
-    if (icon == NON_EXISTING) return;
-
-    free(icon->icons);
-    free(icon);
-}
-
 Efreet_Cache_Icon *
 efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon)
 {
@@ -674,6 +646,34 @@ efreet_cache_icon_theme_find(const char *theme)
 }
 
 static void
+efreet_cache_icon_free(Efreet_Cache_Icon *icon)
+{
+    unsigned int i;
+
+    if (!icon) return;
+    if (icon == NON_EXISTING) return;
+
+    for (i = 0; i < icon->icons_count; ++i)
+    {
+        free(icon->icons[i]->paths);
+        free(icon->icons[i]);
+    }
+
+    free(icon->icons);
+    free(icon);
+}
+
+static void
+efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon)
+{
+    if (!icon) return;
+    if (icon == NON_EXISTING) return;
+
+    free(icon->icons);
+    free(icon);
+}
+
+static void
 efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme)
 {
     void *data;
@@ -740,26 +740,6 @@ efreet_cache_desktop_find(const char *file)
 }
 
 void
-efreet_cache_desktop_update(void)
-{
-    if (!efreet_cache_update) return;
-
-    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
-    if (desktop_cache_job) ecore_job_del(desktop_cache_job);
-    desktop_cache_job = ecore_job_add(desktop_cache_update_cache_job, NULL);
-}
-
-void
-efreet_cache_icon_update(void)
-{
-    if (!efreet_cache_update) return;
-
-    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
-    if (icon_cache_job) ecore_job_del(icon_cache_job);
-    icon_cache_job = ecore_job_add(icon_cache_update_cache_job, NULL);
-}
-
-void
 efreet_cache_desktop_free(Efreet_Desktop *desktop)
 {
     Efreet_Old_Cache *d;
@@ -782,6 +762,26 @@ efreet_cache_desktop_free(Efreet_Desktop *desktop)
             break;
         }
     }
+}
+
+void
+efreet_cache_desktop_update(void)
+{
+    if (!efreet_cache_update) return;
+
+    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
+    if (desktop_cache_job) ecore_job_del(desktop_cache_job);
+    desktop_cache_job = ecore_job_add(desktop_cache_update_cache_job, NULL);
+}
+
+void
+efreet_cache_icon_update(void)
+{
+    if (!efreet_cache_update) return;
+
+    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
+    if (icon_cache_job) ecore_job_del(icon_cache_job);
+    icon_cache_job = ecore_job_add(icon_cache_update_cache_job, NULL);
 }
 
 Eina_Bool
