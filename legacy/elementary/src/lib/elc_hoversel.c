@@ -92,6 +92,7 @@ _theme_hook(Evas_Object *obj)
    char buf[4096];
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
+
    elm_hoversel_hover_end(obj);
    if (wd->horizontal)
       snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
@@ -173,6 +174,7 @@ _activate(Evas_Object *obj)
 
    if (elm_widget_disabled_get(obj)) return;
    wd->hover = elm_hover_add(obj);
+   elm_widget_mirrored_automatic_set(wd->hover, EINA_FALSE);
    if (wd->horizontal)
      snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
    else
@@ -183,6 +185,7 @@ _activate(Evas_Object *obj)
    elm_hover_target_set(wd->hover, wd->btn);
 
    bx = elm_box_add(wd->hover);
+   elm_widget_mirrored_automatic_set(bx, EINA_FALSE);
    elm_box_homogenous_set(bx, 1);
    
    elm_box_horizontal_set(bx, wd->horizontal);
@@ -196,6 +199,7 @@ _activate(Evas_Object *obj)
    EINA_LIST_FOREACH(wd->items, l, item)
      {
 	bt = elm_button_add(wd->hover);
+        elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
 	elm_object_style_set(bt, buf);
 	elm_button_label_set(bt, item->label);
@@ -289,6 +293,7 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->btn = elm_button_add(parent);
+   elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);
    wd->expanded = EINA_FALSE;
    elm_widget_resize_object_set(obj, wd->btn);
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,

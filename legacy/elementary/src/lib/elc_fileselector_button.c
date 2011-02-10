@@ -98,6 +98,7 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
    snprintf(buf, sizeof(buf), "fileselector_button/%s",
             elm_widget_style_get(obj));
    elm_object_style_set(wd->btn, buf);
@@ -203,6 +204,7 @@ _activate(Widget_Data *wd)
 
    wd->fs = elm_fileselector_add(wd->fsw);
    elm_widget_mirrored_set(wd->fs, elm_widget_mirrored_get(wd->self));
+   elm_widget_mirrored_automatic_set(wd->fs, EINA_FALSE);
    elm_fileselector_expandable_set(wd->fs, wd->fsd.expandable);
    elm_fileselector_folder_only_set(wd->fs, wd->fsd.folder_only);
    elm_fileselector_is_save_set(wd->fs, wd->fsd.is_save);
@@ -287,6 +289,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    elm_widget_activate_hook_set(obj, _activate_hook);
 
    wd->btn = elm_button_add(parent);
+   elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);
    elm_widget_resize_object_set(obj, wd->btn);
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);

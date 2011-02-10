@@ -135,6 +135,7 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
+
    _elm_theme_object_set(obj, wd->edje, "fileselector", "base", style);
 
    if (elm_object_disabled_get(obj))
@@ -592,6 +593,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_icon_standard_set(ic, "arrow_up");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(parent);
+   elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_button_icon_set(bt, ic);
    elm_button_label_set(bt, "Up");
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
@@ -606,6 +608,7 @@ elm_fileselector_add(Evas_Object *parent)
    elm_icon_standard_set(ic, "home");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(parent);
+   elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
    elm_button_icon_set(bt, ic);
    elm_button_label_set(bt, "Home");
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
@@ -622,11 +625,13 @@ elm_fileselector_add(Evas_Object *parent)
    list_itc.func.del = grid_itc.func.del = _itc_del;
 
    li = elm_genlist_add(parent);
+   elm_widget_mirrored_automatic_set(li, EINA_FALSE);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(li, 100, 100);
 
    grid = elm_gengrid_add(parent);
+   elm_widget_mirrored_automatic_set(grid, EINA_FALSE);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
@@ -649,6 +654,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    // path entry
    en = elm_scrolled_entry_add(parent);
+   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
    elm_scrolled_entry_editable_set(en, EINA_FALSE);
    elm_scrolled_entry_single_line_set(en, EINA_TRUE);
    elm_scrolled_entry_line_char_wrap_set(en, EINA_TRUE);
@@ -662,6 +668,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    // filename entry
    en = elm_scrolled_entry_add(parent);
+   elm_widget_mirrored_automatic_set(en, EINA_FALSE);
    elm_scrolled_entry_editable_set(en, EINA_TRUE);
    elm_scrolled_entry_single_line_set(en, EINA_TRUE);
    elm_scrolled_entry_line_char_wrap_set(en, EINA_TRUE);
@@ -783,6 +790,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
      {
         // cancel btn
         bt = elm_button_add(obj);
+        elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_button_label_set(bt, "Cancel");
 
         evas_object_smart_callback_add(bt, "clicked", _canc, obj);
@@ -792,6 +800,7 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
 
         // ok btn
         bt = elm_button_add(obj);
+        elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_button_label_set(bt, "OK");
 
         evas_object_smart_callback_add(bt, "clicked", _ok, obj);
