@@ -96,7 +96,7 @@ elif test $udev_version -lt 148;then
 fi
 
 eeze_mount=
-PKG_CHECK_EXISTS([mount >= 2.18.0],
+PKG_CHECK_EXISTS([mount == 2.18.0],
   [
      AC_DEFINE([HAVE_EEZE_MOUNT], [1], [Eeze is mount-capable])
      AM_CONDITIONAL([HAVE_EEZE_MOUNT], [true])
