@@ -80,6 +80,7 @@ static Eina_List           *old_desktop_caches = NULL;
 static void efreet_cache_edd_shutdown(void);
 static void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
 static void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
+static void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 
 static Eina_Bool cache_exe_cb(void *data, int type, void *event);
 static void cache_update_cb(void *data, Ecore_File_Monitor *em,
@@ -672,7 +673,7 @@ efreet_cache_icon_theme_find(const char *theme)
     return NULL;
 }
 
-void
+static void
 efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme)
 {
     void *data;

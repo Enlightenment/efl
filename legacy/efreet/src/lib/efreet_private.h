@@ -218,7 +218,6 @@ EAPI const char *efreet_icon_theme_cache_file(void);
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
 Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
-void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
 Eina_List *efreet_cache_icon_theme_list(void);
 EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
