@@ -118,7 +118,6 @@ cache_fallback_scan_dir(Eina_Hash *icons, Eina_Hash *dirs, const char *dir, Eina
         if (i != icon->icons_count)
             continue;
 
-        /* we don't really track path deat here, so we will leak... */
         icon->icons = realloc(icon->icons, sizeof (char *) * (icon->icons_count + 1));
         icon->icons[icon->icons_count] = eina_stringshare_add(entry->path);
         eina_array_push(strs, icon->icons[icon->icons_count++]);
