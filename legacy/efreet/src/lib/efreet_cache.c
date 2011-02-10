@@ -754,10 +754,12 @@ efreet_cache_icon_theme_list(void)
     {
         Efreet_Icon_Theme *theme;
         if (!strncmp(keys[i], "__efreet", 8)) continue;
-        /* TODO: This could be done more efficient by checking the theme hash
-         *       directly. */
-        theme = efreet_cache_icon_theme_find(keys[i]);
-        if (theme) ret = eina_list_append(ret, theme);
+
+        theme = eina_hash_find(themes, keys[i]);
+        if (!theme)
+            theme = efreet_cache_icon_theme_find(keys[i]);
+        if (theme && theme != NON_EXISTING)
+            ret = eina_list_append(ret, theme);
     }
     free(keys);
     return ret;
