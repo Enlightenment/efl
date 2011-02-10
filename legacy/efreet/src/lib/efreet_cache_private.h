@@ -1,11 +1,23 @@
 #ifndef EFREET_CACHE_PRIVATE_H
 #define EFREET_CACHE_PRIVATE_H
 
+#define EFREET_DESKTOP_CACHE_MAJOR 1
+#define EFREET_DESKTOP_CACHE_MINOR 0
+#define EFREET_DESKTOP_UTILS_CACHE_MAJOR 1
+#define EFREET_DESKTOP_UTILS_CACHE_MINOR 0
+
+#define EFREET_ICON_CACHE_MAJOR 1
+#define EFREET_ICON_CACHE_MINOR 0
+
 #define EFREET_CACHE_VERSION "__efreet//version"
 #define EFREET_CACHE_ICON_FALLBACK "__efreet_fallback"
 
-Eina_Bool efreet_cache_check(Eet_File **ef, const char *path, int major);
-void *efreet_cache_close(Eet_File *ef);
+EAPI const char *efreet_desktop_util_cache_file(void);
+EAPI const char *efreet_desktop_cache_file(void);
+EAPI const char *efreet_icon_cache_file(const char *theme);
+EAPI const char *efreet_icon_theme_cache_file(void);
+
+EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
 
 EAPI Eet_Data_Descriptor *efreet_version_edd(void);
 EAPI Eet_Data_Descriptor *efreet_desktop_edd(void);

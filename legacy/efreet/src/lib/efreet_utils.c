@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-/* TODO: move eet file handling to eet_cache.c */
 /* TODO: add no_display check, as we might want only displayable items */
 /* TODO: Consider flushing local cache after a idling a while */
 
@@ -31,7 +30,6 @@ void *alloca (size_t);
 #include <fnmatch.h>
 #include <limits.h>
 
-#include <Eet.h>
 #include <Ecore_File.h>
 
 /* define macros and variable for using the eina logging system  */
@@ -40,7 +38,6 @@ static int _efreet_utils_log_dom = -1;
 
 #include "Efreet.h"
 #include "efreet_private.h"
-#include "efreet_cache_private.h"
 
 static char *efreet_util_path_in_default(const char *section, const char *path);
 
@@ -52,17 +49,7 @@ static Efreet_Desktop *efreet_util_cache_find(const char *search, const char *wh
 static Eina_List *efreet_util_cache_list(const char *search, const char *what);
 static Eina_List *efreet_util_cache_glob_list(const char *search, const char *what);
 
-static Efreet_Cache_Hash *efreet_util_cache_hash(Eet_Data_Descriptor *edd, const char *key);
-static Efreet_Cache_Array_String *efreet_util_cache_names(Eet_Data_Descriptor *edd, const char *key);
-
 static Eina_Hash *file_id_by_desktop_path = NULL;
-static const char *cache_file = NULL;
-static Eet_File *cache = NULL;
-
-static Efreet_Cache_Hash *cache_hash = NULL;
-static const char *cache_hash_key = NULL;
-static Efreet_Cache_Array_String *cache_names = NULL;
-static const char *cache_names_key = NULL;
 
 static int init = 0;
 
@@ -92,51 +79,7 @@ efreet_util_shutdown(void)
     _efreet_utils_log_dom = -1;
     IF_FREE_HASH(file_id_by_desktop_path);
 
-    IF_RELEASE(cache_names_key);
-    efreet_cache_array_string_free(cache_names);
-    cache_names = NULL;
-
-    IF_RELEASE(cache_hash_key);
-    if (cache_hash)
-    {
-        eina_hash_free(cache_hash->hash);
-        free(cache_hash);
-        cache_hash = NULL;
-    }
-
-    cache = efreet_cache_close(cache);
-    IF_RELEASE(cache_file);
-
     return init;
-}
-
-/*
- * Needs EAPI because of helper binaries
- */
-EAPI const char *
-efreet_desktop_util_cache_file(void)
-{
-    char tmp[PATH_MAX] = { '\0' };
-    const char *cache_dir, *lang, *country, *modifier;
-
-    if (cache_file) return cache_file;
-
-    cache_dir = efreet_cache_home_get();
-    lang = efreet_lang_get();
-    country = efreet_lang_country_get();
-    modifier = efreet_lang_modifier_get();
-
-    if (lang && country && modifier)
-        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s_%s@%s.eet", cache_dir, efreet_hostname_get(), lang, country, modifier);
-    else if (lang && country)
-        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s_%s.eet", cache_dir, efreet_hostname_get(), lang, country);
-    else if (lang)
-        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s.eet", cache_dir, efreet_hostname_get(), lang);
-    else
-        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s.eet", cache_dir, efreet_hostname_get());
-
-    cache_file = eina_stringshare_add(tmp);
-    return cache_file;
 }
 
 static char *
@@ -256,9 +199,8 @@ efreet_util_desktop_file_id_find(const char *file_id)
     const char *str;
 
     if (!file_id) return NULL;
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
 
-    hash = efreet_util_cache_hash(efreet_hash_string_edd(), "file_id");
+    hash = efreet_cache_util_hash_string("file_id");
     if (!hash) return NULL;
     str = eina_hash_find(hash->hash, file_id);
     if (str)
@@ -282,10 +224,9 @@ efreet_util_desktop_exec_find(const char *exec)
     Efreet_Cache_Array_String *names = NULL;
     unsigned int i;
 
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!exec) return NULL;
 
-    names = efreet_util_cache_names(efreet_array_string_edd(), "exec_list");
+    names = efreet_cache_util_names("exec_list");
     if (!names) return NULL;
     for (i = 0; i < names->array_count; i++)
     {
@@ -306,7 +247,7 @@ efreet_util_desktop_exec_find(const char *exec)
         free(exe);
 
         if (!hash)
-            hash = efreet_util_cache_hash(efreet_hash_array_string_edd(), "exec_hash");
+            hash = efreet_cache_util_hash_array_string("exec_hash");
         if (!hash) return NULL;
         array = eina_hash_find(hash->hash, names->array[i]);
         if (!array) continue;
@@ -378,12 +319,11 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     Efreet_Cache_Array_String *names = NULL;
     unsigned int i;
 
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!glob) return NULL;
     if (!strcmp(glob, "*"))
         glob = NULL;
 
-    names = efreet_util_cache_names(efreet_array_string_edd(), "exec_list");
+    names = efreet_cache_util_names("exec_list");
     if (!names) return NULL;
     for (i = 0; i < names->array_count; i++)
     {
@@ -402,7 +342,7 @@ efreet_util_desktop_exec_glob_list(const char *glob)
         free(exe);
 
         if (!hash)
-            hash = efreet_util_cache_hash(efreet_hash_array_string_edd(), "exec_hash");
+            hash = efreet_cache_util_hash_array_string("exec_hash");
         if (!hash) return NULL;
 
         array = eina_hash_find(hash->hash, names->array[i]);
@@ -458,9 +398,7 @@ efreet_util_desktop_categories_list(void)
     Eina_List *ret = NULL;
     unsigned int i;
 
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
-
-    array = efreet_util_cache_names(efreet_array_string_edd(), "categories_list");
+    array = efreet_cache_util_names("categories_list");
     if (!array) return NULL;
     for (i = 0; i < array->array_count; i++)
         ret = eina_list_append(ret, array->array[i]);
@@ -549,11 +487,10 @@ efreet_util_cache_find(const char *search, const char *what1, const char *what2)
     Efreet_Cache_Array_String *array = NULL;
     char key[256];
 
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if ((!what1) && (!what2)) return NULL;
 
     snprintf(key, sizeof(key), "%s_hash", search);
-    hash = efreet_util_cache_hash(efreet_hash_array_string_edd(), key);
+    hash = efreet_cache_util_hash_array_string(key);
     if (!hash) return NULL;
     if (what1)
         array = eina_hash_find(hash->hash, what1);
@@ -579,11 +516,10 @@ efreet_util_cache_list(const char *search, const char *what)
     Eina_List *ret = NULL;
     char key[256];
 
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
 
     snprintf(key, sizeof(key), "%s_hash", search);
-    hash = efreet_util_cache_hash(efreet_hash_array_string_edd(), key);
+    hash = efreet_cache_util_hash_array_string(key);
     if (!hash) return NULL;
     array = eina_hash_find(hash->hash, what);
     if (array)
@@ -610,13 +546,12 @@ efreet_util_cache_glob_list(const char *search, const char *what)
     char key[256];
     unsigned int i;
 
-    if (!efreet_cache_check(&cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
     if (!what) return NULL;
     if (!strcmp(what, "*"))
         what = NULL;
 
     snprintf(key, sizeof(key), "%s_list", search);
-    names = efreet_util_cache_names(efreet_array_string_edd(), key);
+    names = efreet_cache_util_names(key);
     if (!names) return NULL;
     for (i = 0; i < names->array_count; i++)
     {
@@ -629,7 +564,7 @@ efreet_util_cache_glob_list(const char *search, const char *what)
         if (!hash)
         {
             snprintf(key, sizeof(key), "%s_hash", search);
-            hash = efreet_util_cache_hash(efreet_hash_array_string_edd(), key);
+            hash = efreet_cache_util_hash_array_string(key);
         }
         if (!hash) return NULL;
 
@@ -643,59 +578,6 @@ efreet_util_cache_glob_list(const char *search, const char *what)
         }
     }
     return ret;
-}
-
-static Efreet_Cache_Hash *
-efreet_util_cache_hash(Eet_Data_Descriptor *edd, const char *key)
-{
-    if (cache_hash_key && !strcmp(key, cache_hash_key))
-        return cache_hash;
-    if (cache_hash)
-    {
-        /* free previous cache */
-        IF_RELEASE(cache_hash_key);
-        eina_hash_free(cache_hash->hash);
-        free(cache_hash);
-    }
-    cache_hash_key = eina_stringshare_add(key);
-    cache_hash = eet_data_read(cache, edd, key);
-    return cache_hash;
-}
-
-static Efreet_Cache_Array_String *
-efreet_util_cache_names(Eet_Data_Descriptor *edd, const char *key)
-{
-    if (cache_names_key && !strcmp(key, cache_names_key))
-        return cache_names;
-    if (cache_names)
-    {
-        /* free previous cache */
-        IF_RELEASE(cache_names_key);
-        efreet_cache_array_string_free(cache_names);
-    }
-    cache_names_key = eina_stringshare_add(key);
-    cache_names = eet_data_read(cache, edd, key);
-    return cache_names;
-}
-
-void
-efreet_util_desktop_cache_reload(void)
-{
-    if (cache_names)
-    {
-        IF_RELEASE(cache_names_key);
-        efreet_cache_array_string_free(cache_names);
-        cache_names = NULL;
-    }
-    if (cache_hash)
-    {
-        IF_RELEASE(cache_hash_key);
-        eina_hash_free(cache_hash->hash);
-        free(cache_hash);
-        cache_hash = NULL;
-    }
-
-    cache = efreet_cache_close(cache);
 }
 
 /*

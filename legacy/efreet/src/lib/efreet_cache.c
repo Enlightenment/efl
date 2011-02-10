@@ -77,10 +77,20 @@ static int                  desktop_cache_exe_lock = -1;
 
 static Eina_List           *old_desktop_caches = NULL;
 
+static const char                *util_cache_file = NULL;
+static Eet_File                  *util_cache = NULL;
+static Efreet_Cache_Hash         *util_cache_hash = NULL;
+static const char                *util_cache_hash_key = NULL;
+static Efreet_Cache_Array_String *util_cache_names = NULL;
+static const char                *util_cache_names_key = NULL;
+
 static void efreet_cache_edd_shutdown(void);
 static void efreet_cache_icon_free(Efreet_Cache_Icon *icon);
 static void efreet_cache_icon_fallback_free(Efreet_Cache_Fallback_Icon *icon);
 static void efreet_cache_icon_theme_free(Efreet_Icon_Theme *theme);
+
+static Eina_Bool efreet_cache_check(Eet_File **ef, const char *path, int major);
+static void *efreet_cache_close(Eet_File *ef);
 
 static Eina_Bool cache_exe_cb(void *data, int type, void *event);
 static void cache_update_cb(void *data, Ecore_File_Monitor *em,
@@ -192,6 +202,21 @@ efreet_cache_shutdown(void)
         free(d);
     }
 
+    IF_RELEASE(util_cache_names_key);
+    efreet_cache_array_string_free(util_cache_names);
+    util_cache_names = NULL;
+
+    IF_RELEASE(util_cache_hash_key);
+    if (util_cache_hash)
+    {
+        eina_hash_free(util_cache_hash->hash);
+        free(util_cache_hash);
+        util_cache_hash = NULL;
+    }
+
+    util_cache = efreet_cache_close(util_cache);
+    IF_RELEASE(util_cache_file);
+
     eina_log_domain_unregister(_efreet_cache_log_dom);
     _efreet_cache_log_dom = -1;
 }
@@ -227,6 +252,35 @@ efreet_icon_theme_cache_file(void)
     icon_theme_cache_file = eina_stringshare_add(tmp);
 
     return icon_theme_cache_file;
+}
+
+/*
+ * Needs EAPI because of helper binaries
+ */
+EAPI const char *
+efreet_desktop_util_cache_file(void)
+{
+    char tmp[PATH_MAX] = { '\0' };
+    const char *cache_dir, *lang, *country, *modifier;
+
+    if (util_cache_file) return util_cache_file;
+
+    cache_dir = efreet_cache_home_get();
+    lang = efreet_lang_get();
+    country = efreet_lang_country_get();
+    modifier = efreet_lang_modifier_get();
+
+    if (lang && country && modifier)
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s_%s@%s.eet", cache_dir, efreet_hostname_get(), lang, country, modifier);
+    else if (lang && country)
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s_%s.eet", cache_dir, efreet_hostname_get(), lang, country);
+    else if (lang)
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s_%s.eet", cache_dir, efreet_hostname_get(), lang);
+    else
+        snprintf(tmp, sizeof(tmp), "%s/efreet/desktop_util_%s.eet", cache_dir, efreet_hostname_get());
+
+    util_cache_file = eina_stringshare_add(tmp);
+    return util_cache_file;
 }
 
 /*
@@ -784,7 +838,7 @@ efreet_cache_icon_update(void)
     icon_cache_job = ecore_job_add(icon_cache_update_cache_job, NULL);
 }
 
-Eina_Bool
+static Eina_Bool
 efreet_cache_check(Eet_File **ef, const char *path, int major)
 {
     Efreet_Cache_Version *version;
@@ -811,12 +865,68 @@ efreet_cache_check(Eet_File **ef, const char *path, int major)
     return EINA_TRUE;
 }
 
-void *
+static void *
 efreet_cache_close(Eet_File *ef)
 {
     if (ef && ef != NON_EXISTING)
         eet_close(ef);
     return NULL;
+}
+
+Efreet_Cache_Hash *
+efreet_cache_util_hash_string(const char *key)
+{
+    if (util_cache_hash_key && !strcmp(key, util_cache_hash_key))
+        return util_cache_hash;
+    if (!efreet_cache_check(&util_cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
+
+    if (util_cache_hash)
+    {
+        /* free previous util_cache */
+        IF_RELEASE(util_cache_hash_key);
+        eina_hash_free(util_cache_hash->hash);
+        free(util_cache_hash);
+    }
+    util_cache_hash_key = eina_stringshare_add(key);
+    util_cache_hash = eet_data_read(util_cache, efreet_hash_string_edd(), key);
+    return util_cache_hash;
+}
+
+Efreet_Cache_Hash *
+efreet_cache_util_hash_array_string(const char *key)
+{
+    if (util_cache_hash_key && !strcmp(key, util_cache_hash_key))
+        return util_cache_hash;
+    if (!efreet_cache_check(&util_cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
+
+    IF_RELEASE(util_cache_hash_key);
+    if (util_cache_hash)
+    {
+        /* free previous cache */
+        eina_hash_free(util_cache_hash->hash);
+        free(util_cache_hash);
+    }
+    util_cache_hash_key = eina_stringshare_add(key);
+    util_cache_hash = eet_data_read(util_cache, efreet_hash_array_string_edd(), key);
+    return util_cache_hash;
+}
+
+Efreet_Cache_Array_String *
+efreet_cache_util_names(const char *key)
+{
+    if (util_cache_names_key && !strcmp(key, util_cache_names_key))
+        return util_cache_names;
+    if (!efreet_cache_check(&util_cache, efreet_desktop_util_cache_file(), EFREET_DESKTOP_UTILS_CACHE_MAJOR)) return NULL;
+
+    if (util_cache_names)
+    {
+        /* free previous util_cache */
+        IF_RELEASE(util_cache_names_key);
+        efreet_cache_array_string_free(util_cache_names);
+    }
+    util_cache_names_key = eina_stringshare_add(key);
+    util_cache_names = eet_data_read(util_cache, efreet_array_string_edd(), key);
+    return util_cache_names;
 }
 
 static Eina_Bool
@@ -864,9 +974,12 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     {
         ev = NEW(Efreet_Event_Cache_Update, 1);
         if (!ev) goto error;
+
+        IF_RELEASE(util_cache_names_key);
+        IF_RELEASE(util_cache_hash_key);
+
         d = NEW(Efreet_Old_Cache, 1);
         if (!d) goto error;
-
         d->hash = efreet_desktop_cache;
         d->ef = desktop_cache;
         old_desktop_caches = eina_list_append(old_desktop_caches, d);
@@ -874,7 +987,18 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         efreet_desktop_cache = eina_hash_string_superfast_new(NULL);
         desktop_cache = NULL;
 
-        efreet_util_desktop_cache_reload();
+        efreet_cache_array_string_free(util_cache_names);
+        util_cache_names = NULL;
+
+        if (util_cache_hash)
+        {
+            eina_hash_free(util_cache_hash->hash);
+            free(util_cache_hash);
+            util_cache_hash = NULL;
+        }
+
+        util_cache = efreet_cache_close(util_cache);
+
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
     }
     else if (!strcmp(file, "icon_data.update"))

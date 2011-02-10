@@ -66,3 +66,7 @@
 	* Remove EAPI from efreet_home_dir_get
 	* Make efreet_cache_icon_theme_free only used in efreet_cache.c static
 	* Move struct only used for cache to efreet_cache_private.h
+
+2011-02-10  Sebastian Dransfeld
+
+	* Move all eet cache handling to efreet_cache.c

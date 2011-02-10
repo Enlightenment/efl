@@ -95,14 +95,6 @@
 /* TODO: Move these to cache, make static and add accessor */
 extern Eina_Hash *efreet_desktop_cache;
 
-#define EFREET_DESKTOP_CACHE_MAJOR 1
-#define EFREET_DESKTOP_CACHE_MINOR 0
-#define EFREET_DESKTOP_UTILS_CACHE_MAJOR 1
-#define EFREET_DESKTOP_UTILS_CACHE_MINOR 0
-
-#define EFREET_ICON_CACHE_MAJOR 1
-#define EFREET_ICON_CACHE_MINOR 0
-
 typedef struct _Efreet_Cache_Icon Efreet_Cache_Icon;
 typedef struct _Efreet_Cache_Icon_Element Efreet_Cache_Icon_Element;
 typedef struct _Efreet_Cache_Fallback_Icon Efreet_Cache_Fallback_Icon;
@@ -129,14 +121,7 @@ struct _Efreet_Cache_Icon_Element
 
 struct _Efreet_Cache_Fallback_Icon
 {
-#if 0
-    const char *name;
-#endif
     const char *theme;
-#if 0
-    int         context; /* the type of icon */
-#endif
-
     const char **icons;
     unsigned int icons_count;
 };
@@ -195,25 +180,24 @@ size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
 const char *efreet_desktop_environment_get(void);
 
-void efreet_util_desktop_cache_reload(void);
-EAPI const char *efreet_desktop_util_cache_file(void);
-EAPI const char *efreet_desktop_cache_file(void);
+/* TODO: Find the best placement for these */
 EAPI const char *efreet_desktop_cache_dirs(void);
 int efreet_desktop_write_cache_dirs_file(void);
 
 void efreet_cache_desktop_update(void);
 void efreet_cache_icon_update(void);
-void efreet_cache_desktop_free(Efreet_Desktop *desktop);
-Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 
-EAPI const char *efreet_icon_cache_file(const char *theme);
-EAPI const char *efreet_icon_theme_cache_file(void);
+Efreet_Desktop *efreet_cache_desktop_find(const char *file);
+void efreet_cache_desktop_free(Efreet_Desktop *desktop);
 
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
 Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
 Efreet_Icon_Theme *efreet_cache_icon_theme_find(const char *theme);
 Eina_List *efreet_cache_icon_theme_list(void);
-EAPI void efreet_cache_array_string_free(Efreet_Cache_Array_String *array);
+
+Efreet_Cache_Hash *efreet_cache_util_hash_string(const char *key);
+Efreet_Cache_Hash *efreet_cache_util_hash_array_string(const char *key);
+Efreet_Cache_Array_String *efreet_cache_util_names(const char *key);
 
 EAPI void efreet_hash_free(Eina_Hash *hash, Eina_Free_Cb free_cb);
 EAPI void efreet_setowner(const char *path);
