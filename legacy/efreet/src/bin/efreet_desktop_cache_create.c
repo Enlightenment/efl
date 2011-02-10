@@ -392,6 +392,7 @@ main(int argc, char **argv)
             array.array[array.array_count++] = str; \
         eina_iterator_free(it); \
         eet_data_write(util_ef, efreet_array_string_edd(), #_hash "_list", &array, 1); \
+        free(array.array); \
     }
     STORE_HASH_ARRAY(mime_types);
     STORE_HASH_ARRAY(categories);
