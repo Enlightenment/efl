@@ -97,10 +97,8 @@ efreet_base_shutdown(void)
  * @internal
  * @return Returns the users home directory
  * @brief Gets the users home directory and returns it.
- *
- * Needs EAPI because of helper binaries
  */
-EAPI const char *
+const char *
 efreet_home_dir_get(void)
 {
     if (efreet_home_dir) return efreet_home_dir;

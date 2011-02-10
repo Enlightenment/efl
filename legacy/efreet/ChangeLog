@@ -63,3 +63,4 @@
 	* Add free callback to eet hashes
 	* Remove unneeded header
 	* Check if pattern equals "*" before doing pattern match
+	* Remove EAPI from efreet_home_dir_get
