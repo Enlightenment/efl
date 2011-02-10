@@ -74,3 +74,4 @@
 	* efreet_cache_icon -> efreet_icon for functions in efreet_icon.c
 	* Fix memleak in desktop cache create
 	* Pass dirs to desktop cache process as arguments
+	* Delay cache recreation with a timer

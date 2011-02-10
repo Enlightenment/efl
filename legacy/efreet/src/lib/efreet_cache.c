@@ -69,10 +69,10 @@ static const char          *desktop_cache_file = NULL;
 static Ecore_File_Monitor  *cache_monitor = NULL;
 
 static Ecore_Event_Handler *cache_exe_handler = NULL;
-static Ecore_Job           *icon_cache_job = NULL;
+static Ecore_Timer         *icon_cache_timer = NULL;
 static Ecore_Exe           *icon_cache_exe = NULL;
 static int                  icon_cache_exe_lock = -1;
-static Ecore_Job           *desktop_cache_job = NULL;
+static Ecore_Timer         *desktop_cache_timer = NULL;
 static Ecore_Exe           *desktop_cache_exe = NULL;
 static int                  desktop_cache_exe_lock = -1;
 
@@ -97,8 +97,8 @@ static Eina_Bool cache_exe_cb(void *data, int type, void *event);
 static void cache_update_cb(void *data, Ecore_File_Monitor *em,
                             Ecore_File_Event event, const char *path);
 
-static void desktop_cache_update_cache_job(void *data);
-static void icon_cache_update_cache_job(void *data);
+static Eina_Bool desktop_cache_update_cache_cb(void *data);
+static Eina_Bool icon_cache_update_cache_cb(void *data);
 static void desktop_cache_update_free(void *data, void *ev);
 static void icon_cache_update_free(void *data, void *ev);
 
@@ -187,10 +187,10 @@ efreet_cache_shutdown(void)
     cache_monitor = NULL;
 
     efreet_cache_edd_shutdown();
-    if (desktop_cache_job)
+    if (desktop_cache_timer)
     {
-        ecore_job_del(desktop_cache_job);
-        desktop_cache_job = NULL;
+        ecore_timer_del(desktop_cache_timer);
+        desktop_cache_timer = NULL;
     }
     IF_RELEASE(icon_theme_cache_file);
     if (icon_cache_exe_lock > 0)
@@ -865,9 +865,10 @@ efreet_cache_desktop_update(void)
 {
     if (!efreet_cache_update) return;
 
-    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
-    if (desktop_cache_job) ecore_job_del(desktop_cache_job);
-    desktop_cache_job = ecore_job_add(desktop_cache_update_cache_job, NULL);
+    if (desktop_cache_timer)
+        ecore_timer_delay(desktop_cache_timer, 0.2);
+    else
+        desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
 }
 
 void
@@ -875,9 +876,10 @@ efreet_cache_icon_update(void)
 {
     if (!efreet_cache_update) return;
 
-    /* TODO: Make sure we don't create a lot of execs, maybe use a timer? */
-    if (icon_cache_job) ecore_job_del(icon_cache_job);
-    icon_cache_job = ecore_job_add(icon_cache_update_cache_job, NULL);
+    if (icon_cache_timer)
+        ecore_timer_delay(icon_cache_timer, 0.2);
+    else
+        icon_cache_timer = ecore_timer_add(0.2, icon_cache_update_cache_cb, NULL);
 }
 
 static Eina_Bool
@@ -1091,22 +1093,22 @@ error:
         free(d);
 }
 
-static void
-desktop_cache_update_cache_job(void *data __UNUSED__)
+static Eina_Bool
+desktop_cache_update_cache_cb(void *data __UNUSED__)
 {
     char file[PATH_MAX];
     struct flock fl;
     int prio;
 
-    desktop_cache_job = NULL;
+    desktop_cache_timer = NULL;
 
     /* TODO: Retry update cache later */
-    if (desktop_cache_exe_lock > 0) return;
+    if (desktop_cache_exe_lock > 0) return ECORE_CALLBACK_CANCEL;
 
     snprintf(file, sizeof(file), "%s/efreet/desktop_exec.lock", efreet_cache_home_get());
 
     desktop_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    if (desktop_cache_exe_lock < 0) return;
+    if (desktop_cache_exe_lock < 0) goto error;
     efreet_fsetowner(desktop_cache_exe_lock);
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
@@ -1131,33 +1133,33 @@ desktop_cache_update_cache_job(void *data __UNUSED__)
     ecore_exe_run_priority_set(prio);
     if (!desktop_cache_exe) goto error;
 
-    return;
-
+    return ECORE_CALLBACK_CANCEL;
 error:
     if (desktop_cache_exe_lock > 0)
     {
         close(desktop_cache_exe_lock);
         desktop_cache_exe_lock = -1;
     }
+    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
-icon_cache_update_cache_job(void *data __UNUSED__)
+static Eina_Bool
+icon_cache_update_cache_cb(void *data __UNUSED__)
 {
     char file[PATH_MAX];
     struct flock fl;
     int prio;
     Eina_List **l, *l2;
 
-    icon_cache_job = NULL;
+    icon_cache_timer = NULL;
 
     /* TODO: Retry update cache later */
-    if (icon_cache_exe_lock > 0) return;
+    if (icon_cache_exe_lock > 0) return ECORE_CALLBACK_CANCEL;
 
     snprintf(file, sizeof(file), "%s/efreet/icon_exec.lock", efreet_cache_home_get());
 
     icon_cache_exe_lock = open(file, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    if (icon_cache_exe_lock < 0) return;
+    if (icon_cache_exe_lock < 0) goto error;
     efreet_fsetowner(icon_cache_exe_lock);
     memset(&fl, 0, sizeof(struct flock));
     fl.l_type = F_WRLCK;
@@ -1196,7 +1198,7 @@ icon_cache_update_cache_job(void *data __UNUSED__)
     ecore_exe_run_priority_set(prio);
     if (!icon_cache_exe) goto error;
 
-    return;
+    return ECORE_CALLBACK_CANCEL;
 
 error:
     if (icon_cache_exe_lock > 0)
@@ -1204,6 +1206,7 @@ error:
         close(icon_cache_exe_lock);
         icon_cache_exe_lock = -1;
     }
+    return ECORE_CALLBACK_CANCEL;
 }
 
 static void
