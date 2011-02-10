@@ -2206,7 +2206,7 @@ elm_gengrid_item_selected_set(Elm_Gengrid_Item *item,
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    Widget_Data *wd = item->wd;
    if (!wd) return;
-   if ((!item) || (item->delete_me)) return;
+   if (item->delete_me) return;
    selected = !!selected;
    if (item->selected == selected) return;
 
