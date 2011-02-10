@@ -119,7 +119,6 @@ efreet_util_path_to_file_id(const char *path)
     char *base;
     const char *file_id;
 
-    /* TODO: Check if searching in cache is fast enough */
     if (!path) return NULL;
     file_id = eina_hash_find(file_id_by_desktop_path, path);
     if (file_id) return file_id;
