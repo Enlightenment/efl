@@ -53,7 +53,6 @@ _gnutls_print_errors(void *conn, int type, int ret)
    if (!ret) return;
    
    snprintf(buf, sizeof(buf), "GNUTLS error: %s - %s", gnutls_strerror_name(ret), gnutls_strerror(ret));
-   ERR("%s", buf);
    if (type == ECORE_CON_EVENT_CLIENT_ERROR)
      ecore_con_event_client_error(conn, buf);
    else
@@ -126,7 +125,6 @@ _openssl_print_errors(void *conn, int type)
         err = ERR_get_error();
         if (!err) break;
         snprintf(buf, sizeof(buf), "OpenSSL error: %s", ERR_reason_error_string(err));
-        ERR("%s", buf);
         if (type == ECORE_CON_EVENT_CLIENT_ERROR)
           ecore_con_event_client_error(conn, buf);
         else
