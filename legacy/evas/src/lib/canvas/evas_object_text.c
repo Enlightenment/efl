@@ -872,8 +872,7 @@ evas_object_text_inset_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    if (!o->engine_data) return 0;
    if (!o->items) return 0;
-   text = o->items->text;
-   return ENFN->font_inset_get(ENDT, o->engine_data, text);
+   return ENFN->font_inset_get(ENDT, o->engine_data, &o->items->text_props);
 }
 
 /**

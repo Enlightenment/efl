@@ -61,48 +61,10 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 /* text x inset */
 /* FIXME: should use OT info when available. */
 EAPI int
-evas_common_font_query_inset(RGBA_Font *fn, const Eina_Unicode *text)
+evas_common_font_query_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props)
 {
-   FT_UInt index;
-   RGBA_Font_Glyph *fg;
-   int gl;
-   RGBA_Font_Int *fi;
-
-   fi = fn->fonts->data;
-
-   if (!*text) return 0;
-   gl = *text;
-   if (gl == 0) return 0;
-//   evas_common_font_size_use(fn);
-   index = evas_common_font_glyph_search(fn, &fi, gl);
-   LKL(fi->ft_mutex);
-   evas_common_font_int_reload(fi);
-   if (fi->src->current_size != fi->size)
-     {
-	FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-	FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
-   fg = evas_common_font_int_cache_glyph_get(fi, index);
-   LKU(fi->ft_mutex);
-   if (!fg) return 0;
-/*
-   INF("fg->glyph_out->left = %i, "
-	  "fi->src->ft.face->glyph->bitmap_left = %i, "
-	  "fi->src->ft.face->glyph->metrics.horiBearingX = %i, "
-	  "fi->src->ft.face->glyph->metrics.horiBearingY = %i, "
-	  "fi->src->ft.face->glyph->metrics.horiAdvance = %i"
-	  ,
-	  (int)fg->glyph_out->left,
-	  (int)fi->src->ft.face->glyph->bitmap_left,
-	  (int)fi->src->ft.face->glyph->metrics.horiBearingX >> 6,
-	  (int)fi->src->ft.face->glyph->metrics.horiBearingY >> 6,
-	  (int)fi->src->ft.face->glyph->metrics.horiAdvance >> 6
-	  );
- */
-  evas_common_font_int_use_trim();
-  return fg->glyph_out->left;
+   if (!text_props->len) return 0;
+   return text_props->info->glyph[text_props->start].x_bear;
 }
 
 /* size of the string (width and height) in pixels

@@ -689,9 +689,9 @@ eng_font_string_size_get(void *data __UNUSED__, void *font, const Eina_Unicode *
 }
 
 static int
-eng_font_inset_get(void *data __UNUSED__, void *font, const Eina_Unicode *text)
+eng_font_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
 {
-   return evas_common_font_query_inset(font, text);
+   return evas_common_font_query_inset(font, text_props);
 }
 
 static int

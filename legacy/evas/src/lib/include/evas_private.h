@@ -650,7 +650,7 @@ struct _Evas_Func
    int  (*font_max_ascent_get)             (void *data, void *font);
    int  (*font_max_descent_get)            (void *data, void *font);
    void (*font_string_size_get)            (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int *w, int *h);
-   int  (*font_inset_get)                  (void *data, void *font, const Eina_Unicode *text);
+   int  (*font_inset_get)                  (void *data, void *font, const Evas_Text_Props *text_props);
    int  (*font_h_advance_get)              (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props);
    int  (*font_v_advance_get)              (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props);
    int  (*font_char_coords_get)            (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);

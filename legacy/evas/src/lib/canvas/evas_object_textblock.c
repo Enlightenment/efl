@@ -2635,7 +2635,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    inset = 0;
    if (fmt->font.font)
      inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
-           ti->text);
+           &ti->parent.text_props);
    ti->inset = inset;
    adv = 0;
    if (fmt->font.font)

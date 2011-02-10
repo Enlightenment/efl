@@ -1050,7 +1050,7 @@ eng_font_string_size_get(void *data, void *font, const char *text, const Evas_Te
 }
 
 static int
-eng_font_inset_get(void *data, void *font, const char *text)
+eng_font_inset_get(void *data, void *font, const Evas_Text_Props *intl_props)
 {
    return 0;
 }
