@@ -180,7 +180,7 @@ elm_smart_scroller_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
    else
      wx = sd->wx;
 
-   elm_smart_scroller_child_pos_set(sd->smart_obj, wx, sd->y);
+   elm_smart_scroller_child_pos_set(sd->smart_obj, wx, sd->wy);
 }
 
 void
