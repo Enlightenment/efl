@@ -523,11 +523,12 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
       case ARES_ENODATA: /* no data returned */
       case ARES_ECONNREFUSED: /* connection refused */
       case ARES_ETIMEOUT: /* connection timed out */
+        ecore_con_event_server_error(arg->svr, ares_strerror(status));
         goto on_error;
 
       default:
-        ERR("Unknown status returned by c-ares: %i assuming error",
-                status);
+        ERR("Unknown status returned by c-ares: %i assuming error", status);
+        ecore_con_event_server_error(arg->svr, ares_strerror(status));
         goto on_error;
      }
 
@@ -573,6 +574,7 @@ _ecore_con_info_ares_nameinfo(Ecore_Con_CAres *arg,
       case ARES_ENOMEM:
       case ARES_EDESTRUCTION:
       case ARES_EBADFLAGS:
+        ecore_con_event_server_error(arg->svr, ares_strerror(status));
         if (arg->data) arg->done_cb(arg->data, NULL);
         break;
      }

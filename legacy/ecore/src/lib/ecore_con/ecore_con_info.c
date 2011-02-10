@@ -54,6 +54,8 @@ void *alloca(size_t);
 # include <netdb.h>
 #endif
 
+#include <errno.h>
+
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "ecore_con_private.h"
@@ -204,7 +206,10 @@ ecore_con_info_get(Ecore_Con_Server *svr,
    int fd[2];
 
    if (pipe(fd) < 0)
-     return 0;
+     {
+        ecore_con_event_server_error(svr, strerror(errno));
+        return 0;
+     }
 
    cbdata = calloc(1, sizeof(CB_Data));
    if (!cbdata)
@@ -222,6 +227,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                                                  cbdata,
                                                  NULL, NULL)))
      {
+        ecore_con_event_server_error(svr, "Memory allocation failure");
         free(cbdata);
         close(fd[0]);
         close(fd[1]);
@@ -376,6 +382,7 @@ _ecore_con_info_readdata(CB_Data *cbdata)
      {
         if (cbdata->data)
           {
+             ecore_con_event_server_error(cbdata->data, strerror(errno));
              cbdata->cb_done(cbdata->data, NULL);
              ecore_con_server_infos_del(cbdata->data, cbdata);
           }

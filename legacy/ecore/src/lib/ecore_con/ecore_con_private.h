@@ -200,6 +200,8 @@ struct _Ecore_Con_Lookup
 
 /* from ecore_con.c */
 void ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info);
+void ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error);
+void ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error);
 
 /* from ecore_local.c */
 int ecore_con_local_init(void);
