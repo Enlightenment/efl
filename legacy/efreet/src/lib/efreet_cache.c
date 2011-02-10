@@ -24,6 +24,8 @@ static int _efreet_cache_log_dom = -1;
 #include "efreet_private.h"
 #include "efreet_cache_private.h"
 
+#define NON_EXISTING (void *)-1
+
 typedef struct _Efreet_Old_Cache Efreet_Old_Cache;
 
 struct _Efreet_Old_Cache

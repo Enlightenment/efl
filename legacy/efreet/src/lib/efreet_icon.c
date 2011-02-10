@@ -307,7 +307,7 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     /* we didn't find the icon in the theme or in the inherited directories
      * then just look for a non theme icon
      */
-    if (!value || (value == NON_EXISTING))
+    if (!value)
     {
         Efreet_Cache_Fallback_Icon *cache;
 
@@ -315,8 +315,6 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
         value = efreet_icon_fallback_lookup_path(cache);
         if (!value) INF("lookup for `%s` failed in fallback too with %p.", icon, cache);
     }
-
-    if (value == NON_EXISTING) value = NULL;
 
 #ifdef SLOPPY_SPEC
     FREE(tmp);
@@ -390,14 +388,14 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
     /* we didn't find the icons in the theme or in the inherited directories
      * then just look for a non theme icon
      */
-    if (!value || (value == NON_EXISTING))
+    if (!value)
     {
         Efreet_Cache_Fallback_Icon *cache;
         EINA_LIST_FOREACH(tmps, l, icon)
         {
             cache = efreet_cache_icon_fallback_find(icon);
             value = efreet_icon_fallback_lookup_path(cache);
-            if (value && (value != NON_EXISTING))
+            if (value)
                 break;
         }
     }
@@ -407,7 +405,6 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
         free(data);
 #endif
 
-    if (value == NON_EXISTING) value = NULL;
     return value;
 }
 
