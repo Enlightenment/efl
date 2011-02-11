@@ -1211,13 +1211,13 @@ eng_image_native_set(void *data, void *image, void *native)
       if (im2 == im) return im;
       if (im2)
         {
-          n = im2->native.data;
-          if (n)
-            {
-              im2->references++;
-              evas_gl_common_image_free(im);
-              return im2;
-            }
+           n = im2->native.data;
+           if (n)
+             {
+                evas_gl_common_image_ref(im2);
+                evas_gl_common_image_free(im);
+                return im2;
+             }
         }
     }
   else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL)

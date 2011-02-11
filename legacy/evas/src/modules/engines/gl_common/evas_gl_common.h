@@ -352,6 +352,7 @@ struct _Evas_GL_Image
    } native;
 
    int scale_hint, content_hint;
+   int csize;
    
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
@@ -465,6 +466,8 @@ void              evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 
 
 void              evas_gl_common_image_all_unload(Evas_GL_Context *gc);
 
+void              evas_gl_common_image_ref(Evas_GL_Image *im);
+void              evas_gl_common_image_unref(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, const char *file, const char *key, Evas_Image_Load_Opts *lo, int *error);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, int cspace);
