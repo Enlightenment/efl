@@ -1022,8 +1022,8 @@ _elm_recache(void)
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
         Evas *e = evas_object_evas_get(win);
-        evas_image_cache_set(e, _elm_config->image_cache);
-        evas_font_cache_set(e, _elm_config->font_cache);
+        evas_image_cache_set(e, _elm_config->image_cache * 1024);
+        evas_font_cache_set(e, _elm_config->font_cache * 1024);
      }
    edje_file_cache_set(_elm_config->edje_cache);
    edje_collection_cache_set(_elm_config->edje_collection_cache);
