@@ -5,6 +5,7 @@
 /* TODO: Consider flushing local icons cache after idling.
  *       Icon requests will probably come in batches, f.ex. during menu
  *       browsing.
+ * TODO: Retry closing desktop cache on dangling references.
  */
 
 #include <libgen.h>
@@ -864,6 +865,7 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
         for (i = 0; i < arr->array_count; i++)
         {
             /* Check if we already have this dir in cache */
+            /* TODO: Need to check if p is a subdir */
             if (!strcmp(p, arr->array[i]))
                 return;
         }

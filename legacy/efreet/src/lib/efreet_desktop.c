@@ -1188,6 +1188,7 @@ efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED
 {
     const char *ext;
 
+    /* TODO: If we get a stale symlink, we need to rerun cache creation */
     switch (event)
     {
         case ECORE_FILE_EVENT_NONE:
