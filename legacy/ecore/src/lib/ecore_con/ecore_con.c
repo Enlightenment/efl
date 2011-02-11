@@ -1082,7 +1082,7 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
 }
 
 /**
- * Gets the IP address of a cleint that has connected.
+ * Gets the IP address of a client that has connected.
  *
  * @param   cl            The given client.
  * @return  A pointer to an internal string that contains the IP address of
@@ -1102,6 +1102,25 @@ ecore_con_client_ip_get(Ecore_Con_Client *cl)
      cl->ip = _ecore_con_pretty_ip(cl->client_addr, cl->client_addr_len);
 
    return cl->ip;
+}
+
+/**
+ * @brief Return the port that the client has connected to
+ * @param cl The client
+ * @return The port that @p cl has connected to, or -1 on error
+ * Use this function to return the port on which a given client has connected.
+ */
+EAPI int
+ecore_con_client_port_get(Ecore_Con_Client *cl)
+{
+   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
+     {
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_port_get");
+        return -1;
+     }
+   if (cl->client_addr->sa_family == AF_INET)
+     return ((struct sockaddr_in*)cl->client_addr)->sin_port;
+   return ((struct sockaddr_in6*)cl->client_addr)->sin6_port;
 }
 
 /**

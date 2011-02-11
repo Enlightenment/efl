@@ -485,6 +485,7 @@ EAPI double            ecore_con_client_uptime_get(Ecore_Con_Client *cl);
 EAPI double            ecore_con_client_timeout_get(Ecore_Con_Client *cl);
 EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double timeout);
 EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
+EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
 
 /**
  * @}
