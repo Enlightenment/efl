@@ -16,6 +16,7 @@ static const Ecore_Getopt opts =
    "Mount a disk using either its /sys/ path or its /dev/ path\n\n",
    1,
    {
+      ECORE_GETOPT_STORE_TRUE('v', "verbose", "Enable debug output"),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -49,11 +50,12 @@ main(int argc, char *argv[])
 {
    int args;
    const char *dev, *mount_point;
-   Eina_Bool exit_option = EINA_FALSE;
+   Eina_Bool verbose = EINA_FALSE, exit_option = EINA_FALSE;
    Eeze_Disk *disk;
 
    Ecore_Getopt_Value values[] =
    {       
+      ECORE_GETOPT_VALUE_BOOL(verbose),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
@@ -81,13 +83,13 @@ main(int argc, char *argv[])
         ecore_getopt_help(stderr, &opts);
         exit(1);
      }
-
+   if (verbose) eina_log_domain_level_set("eeze_disk", EINA_LOG_LEVEL_DBG);
    dev = argv[args];
    if (args + 1 < argc)
      mount_point = argv[args + 1];
    if ((!strncmp(dev, "/sys/", 5)) || (!strncmp(dev, "/dev/", 5)))
      disk = eeze_disk_new(dev);
-   else if ((argc == 2) && (ecore_file_is_dir(dev)))
+   else if ((args == argc - 1) && (ecore_file_is_dir(dev)))
      disk = eeze_disk_new_from_mount(dev);
    else
      {
@@ -100,7 +102,7 @@ main(int argc, char *argv[])
         printf("[%s] is already mounted!", dev);
         exit(1);
      }
-   if (argc > 2)
+   if (argc - args > 1)
      {
         eeze_disk_mount_point_set(disk, mount_point);
         if (eina_str_has_extension(dev, "iso"))
@@ -112,6 +114,7 @@ main(int argc, char *argv[])
      }
    ecore_event_handler_add(EEZE_EVENT_DISK_MOUNT, (Ecore_Event_Handler_Cb)_mount_cb, NULL);
    ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, (Ecore_Event_Handler_Cb)_error_cb, NULL);
+   eeze_disk_mountopts_get(disk);
    if (!eeze_disk_mount(disk))
      {
         const char *mp;

@@ -16,6 +16,7 @@ static const Ecore_Getopt opts =
    "unmount a disk using either its /sys/ path or its /dev/ path\n\n",
    1,
    {      
+      ECORE_GETOPT_STORE_TRUE('v', "verbose", "Enable debug output"),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
       ECORE_GETOPT_LICENSE('L', "license"),
@@ -49,11 +50,12 @@ main(int argc, char *argv[])
 {
    int args;
    const char *dev;
-   Eina_Bool exit_option = EINA_FALSE;
+   Eina_Bool verbose = EINA_FALSE, exit_option = EINA_FALSE;
    Eeze_Disk *disk;
 
    Ecore_Getopt_Value values[] =
    {       
+      ECORE_GETOPT_VALUE_BOOL(verbose),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
@@ -81,11 +83,11 @@ main(int argc, char *argv[])
         ecore_getopt_help(stderr, &opts);
         exit(1);
      }
-
+   if (verbose) eina_log_domain_level_set("eeze_disk", EINA_LOG_LEVEL_DBG);
    dev = argv[args];
    if ((!strncmp(dev, "/sys/", 5)) || (!strncmp(dev, "/dev/", 5)))
      disk = eeze_disk_new(dev);
-   else if ((argc == 2) && (ecore_file_is_dir(dev)))
+   else if ((args == argc - 1) && (ecore_file_is_dir(dev)))
      disk = eeze_disk_new_from_mount(dev);
    else
      {
