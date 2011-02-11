@@ -106,8 +106,8 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
 EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
 EAPI const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
 EAPI Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point);
-EAPI Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, int opts);
-EAPI int            eeze_disk_mountopts_get(Eeze_Disk *disk);
+EAPI Eina_Bool      eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts);
+EAPI unsigned long  eeze_disk_mountopts_get(Eeze_Disk *disk);
 
 EAPI Eina_Bool      eeze_mount_tabs_watch(void);
 EAPI void           eeze_mount_tabs_unwatch(void);

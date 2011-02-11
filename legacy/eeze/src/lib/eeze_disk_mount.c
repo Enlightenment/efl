@@ -176,7 +176,7 @@ eeze_disk_mounted_get(Eeze_Disk *disk)
  * This function replaces the current mount opts of a disk with the ones in @p opts.
  */
 EAPI Eina_Bool
-eeze_disk_mountopts_set(Eeze_Disk *disk, int opts)
+eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
    if (opts != disk->mount_opts)
@@ -188,14 +188,18 @@ eeze_disk_mountopts_set(Eeze_Disk *disk, int opts)
 /**
  * @brief Get the flags of a disk's current mount options
  * @param disk The disk
- * @return An ORed set of #Eeze_Mount_Opts, -1 on failure
+ * @return An ORed set of #Eeze_Mount_Opts, 0 on failure
  *
  * This function returns the current mount opts of a disk.
  */
-EAPI int
+EAPI unsigned long
 eeze_disk_mountopts_get(Eeze_Disk *disk)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(disk, 0);
+#ifndef OLD_LIBMOUNT
+   if (!disk->mount_opts)
+     disk->mount_opts = eeze_disk_libmount_opts_get(disk);
+#endif
    return disk->mount_opts;
 }
 
@@ -262,8 +266,10 @@ eeze_disk_mount(Eeze_Disk *disk)
           }
 
         if ((!disk->mount_point) || (!disk->mount_point[0])) return EINA_FALSE;
-        if ((!disk->mount_opts) || (disk->mount_opts == EEZE_DISK_MOUNTOPT_DEFAULTS))
+        if (disk->mount_opts == EEZE_DISK_MOUNTOPT_DEFAULTS)
           eina_strbuf_append_printf(disk->mount_cmd, "%s -o %s UUID=%s %s", EEZE_MOUNT_BIN, EEZE_MOUNT_DEFAULT_OPTS, disk->cache.uuid, disk->mount_point);
+        else if (!disk->mount_opts)
+          eina_strbuf_append_printf(disk->mount_cmd, "%s UUID=%s %s", EEZE_MOUNT_BIN, disk->cache.uuid, disk->mount_point);
         else
           {
              eina_strbuf_append_printf(disk->mount_cmd, "%s -o ", EEZE_MOUNT_BIN);
@@ -386,7 +392,7 @@ eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(disk, EINA_FALSE);
 
-   disk->mount_point = mount_point;
+   eina_stringshare_replace(&disk->mount_point, mount_point);
    disk->mount_cmd_changed = EINA_TRUE;
    disk->unmount_cmd_changed = EINA_TRUE;
    return EINA_TRUE;

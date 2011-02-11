@@ -7,6 +7,10 @@
 #define EEZE_DISK_COLOR_DEFAULT EINA_COLOR_LIGHTBLUE
 #endif
 extern int _eeze_disk_log_dom;
+#ifdef CRI
+#undef CRI
+#endif
+
 #ifdef ERR
 #undef ERR
 #endif
@@ -20,6 +24,7 @@ extern int _eeze_disk_log_dom;
 #undef DBG
 #endif
 
+#define CRI(...)   EINA_LOG_DOM_CRIT(_eeze_disk_log_dom, __VA_ARGS__)
 #define DBG(...)   EINA_LOG_DOM_DBG(_eeze_disk_log_dom, __VA_ARGS__)
 #define INF(...)    EINA_LOG_DOM_INFO(_eeze_disk_log_dom, __VA_ARGS__)
 #define WARN(...) EINA_LOG_DOM_WARN(_eeze_disk_log_dom, __VA_ARGS__)
@@ -48,7 +53,7 @@ struct _Eeze_Disk
    const char *devpath;
    const char *fstype;
    const char *mount_point;
-   int mount_opts;
+   unsigned long mount_opts;
    
    struct
      {
@@ -69,7 +74,7 @@ void eeze_mount_shutdown(void);
 Eina_Bool eeze_libmount_init(void);
 void eeze_libmount_shutdown(void);
 Eina_Bool eeze_disk_libmount_mounted_get(Eeze_Disk *disk);
-
+unsigned long eeze_disk_libmount_opts_get(Eeze_Disk *disk);
 const char *eeze_disk_libmount_mp_find_source(const char *mount_point);
 
 const char *eeze_disk_libmount_mp_lookup_by_uuid(const char *uuid);

@@ -157,20 +157,24 @@ eeze_disk_new_from_mount(const char *mount_point)
 
    if (source[4] == '=')
      {
-        source += 4;
+        source += 5;
         uuid = eina_stringshare_add(source);
         dev = _eeze_disk_device_from_property(uuid, EINA_TRUE);
      }
    else if (source[5] == '=')
      {
-        source += 5;
+        source += 6;
         label = eina_stringshare_add(source);
         dev = _eeze_disk_device_from_property(label, EINA_FALSE);
      }
    else
      {
+        const char *spath;
+
         devpath = eina_stringshare_add(source);
-        dev = _new_device(devpath);
+        spath = eeze_udev_devpath_get_syspath(devpath);
+        dev = _new_device(spath);
+        eina_stringshare_del(spath);
      }
 
    if (!dev)
@@ -190,6 +194,7 @@ eeze_disk_new_from_mount(const char *mount_point)
      disk->cache.label = label;
    else
      disk->devpath = devpath;
+   disk->mount_point = eina_stringshare_add(mount_point);
    
    return disk;
 error:
@@ -217,7 +222,7 @@ eeze_disk_free(Eeze_Disk *disk)
 {
    EINA_SAFETY_ON_NULL_RETURN(disk);
 
-   eina_stringshare_del(disk->syspath);
+   
    udev_device_unref(disk->device);
    if (disk->mount_cmd)
      eina_strbuf_free(disk->mount_cmd);

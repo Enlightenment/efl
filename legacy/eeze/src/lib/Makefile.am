@@ -4,7 +4,12 @@ AM_CPPFLAGS = @EEZE_CFLAGS@
 
 if HAVE_EEZE_MOUNT
   AM_CFLAGS = @EEZE_CFLAGS@ @LIBMOUNT_CFLAGS@ @ECORE_FILE_CFLAGS@
-  MOUNT_FILES = eeze_disk.c eeze_disk_mount.c eeze_disk_libmount.c
+  MOUNT_FILES = eeze_disk.c eeze_disk_mount.c
+if OLD_LIBMOUNT
+  MOUNT_FILES += eeze_disk_libmount_old.c
+else
+  MOUNT_FILES += eeze_disk_libmount.c
+endif
   MOUNT_INCLUDES = Eeze_Disk.h
 else
   AM_CFLAGS = @EEZE_CFLAGS@

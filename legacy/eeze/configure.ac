@@ -96,7 +96,7 @@ elif test $udev_version -lt 148;then
 fi
 
 eeze_mount=
-PKG_CHECK_EXISTS([mount == 2.18.0],
+PKG_CHECK_EXISTS([mount >= 2.18.0],
   [
      AC_DEFINE([HAVE_EEZE_MOUNT], [1], [Eeze is mount-capable])
      AM_CONDITIONAL([HAVE_EEZE_MOUNT], [true])
@@ -110,6 +110,7 @@ if test "x$eeze_mount" = "xyes";then
   AC_ARG_WITH([mount], AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@]))
   AC_ARG_WITH([umount], AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@]))
   PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
+  mount_v=$(pkg-config --modversion mount)
   PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.0.0])
 
   if test "x$with_mount" = "xdetect";then
@@ -122,7 +123,10 @@ if test "x$eeze_mount" = "xyes";then
   fi
   AC_DEFINE_UNQUOTED([EEZE_UNMOUNT_BIN], ["$with_umount"], [umount bin to use])
 fi
-
+AM_CONDITIONAL([OLD_LIBMOUNT], [test -n $mount_v -a $(echo $mount_v | cut -d'.' -f2) -lt 19])
+if test -z "$OLD_LIBMOUNT_TRUE" ; then
+  AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
+fi
 ### Checks for header files
 
 
