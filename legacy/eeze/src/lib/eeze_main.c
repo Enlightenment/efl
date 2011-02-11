@@ -61,8 +61,7 @@ eeze_init(void)
    if (!ecore_init())
      goto fail;
 #ifdef HAVE_EEZE_MOUNT
-   _eeze_disk_log_dom = eina_log_domain_register
-       ("eeze_disk", EINA_COLOR_LIGHTBLUE);
+   _eeze_disk_log_dom = eina_log_domain_register("eeze_disk", EINA_COLOR_LIGHTBLUE);
 
    if (_eeze_disk_log_dom < 0)
      {
