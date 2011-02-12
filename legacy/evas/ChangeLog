@@ -64,3 +64,13 @@
           normal image cache to avoid excess texture uploads when
           cycling images often. Should improve performance in some
           cases.
+
+2011-02-12  Carsten Haitzler (The Rasterman)
+
+        * Fix "rediculous scaling size" bug, where scaling images to
+          sizes like 1 billion pixels high or wide caused evas to try
+          allocate scaletables on the stack and the stack just couldn't
+          handle it. Now it only allocates a table for the visible
+          region which will always be sane, and even has insanity
+          checks now. At worst you'll get an unrendered image if the
+          values are silly and some slowness. No crashes.

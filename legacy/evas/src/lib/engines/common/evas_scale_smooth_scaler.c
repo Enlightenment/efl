@@ -136,6 +136,12 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
      }
    if (dst_clip_h <= 0) return;
 
+   /* some maximum region sizes to avoid insane calc point tables */
+   if (dst_clip_w > 65536) return;
+   if (dst_clip_h > 65536) return;
+   if (dst_region_w > (65536 * 1024)) return;
+   if (dst_region_h > (65536 * 1024)) return;
+   
    /* figure out dst jump
     * NB: Unused currently, so commented out */
 //   dst_jump = dst_w - dst_clip_w;

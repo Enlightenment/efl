@@ -14,10 +14,10 @@
    dyy = dst_clip_y - dst_region_y;
    dxx = dst_clip_x - dst_region_x;
 
-   xp = xpoints + dxx;
-   yp = ypoints + dyy;
-   xapp = xapoints + dxx;
-   yapp = yapoints + dyy;
+   xp = xpoints;// + dxx;
+   yp = ypoints;// + dyy;
+   xapp = xapoints;// + dxx;
+   yapp = yapoints;// + dyy;
    pbuf = buf;
 
    if (src->cache_entry.flags.alpha)
@@ -98,8 +98,8 @@
 	     pbuf = buf;
 	     dptr += dst_w;  dst_clip_w = w;
 	     yp++;  yapp++;
-	     xp = xpoints + dxx;
-	     xapp = xapoints + dxx;
+	     xp = xpoints;// + dxx;
+	     xapp = xapoints;// + dxx;
 	  }
      }
    else
@@ -176,8 +176,8 @@
 #endif
 		  dptr += dst_w;  dst_clip_w = w;
 		  yp++;  yapp++;
-		  xp = xpoints + dxx;
-		  xapp = xapoints + dxx;
+		  xp = xpoints;// + dxx;
+		  xapp = xapoints;// + dxx;
 	       }
 	  }
 	else
@@ -252,8 +252,8 @@
 		  pbuf = buf;
 		  dptr += dst_w;  dst_clip_w = w;
 		  yp++;  yapp++;
-		  xp = xpoints + dxx;
-		  xapp = xapoints + dxx;
+		  xp = xpoints;// + dxx;
+		  xapp = xapoints;// + dxx;
 	       }
 	  }
      }

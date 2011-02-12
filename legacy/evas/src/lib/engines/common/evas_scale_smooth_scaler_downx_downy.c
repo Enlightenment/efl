@@ -17,10 +17,10 @@
    dyy = dst_clip_y - dst_region_y;
    dxx = dst_clip_x - dst_region_x;
 
-   xp = xpoints + dxx;
-   yp = ypoints + dyy;
-   xapp = xapoints + dxx;
-   yapp = yapoints + dyy;
+   xp = xpoints;// + dxx;
+   yp = ypoints;// + dyy;
+   xapp = xapoints;// + dxx;
+   yapp = yapoints;// + dyy;
    pbuf = buf;
 /*#ifndef SCALE_USING_MMX */
 /* for now there's no mmx down scaling - so C only */
@@ -145,8 +145,8 @@
 #endif
 	     pbuf = buf;
 	     dptr += dst_w;   dst_clip_w = w;
-	     xp = xpoints + dxx;
-	     xapp = xapoints + dxx;
+	     xp = xpoints;// + dxx;
+	     xapp = xapoints;// + dxx;
 	     yp++;  yapp++;
 	  }
      }
@@ -261,8 +261,8 @@
 		  ysli++;
 #endif
 		  dptr += dst_w;   dst_clip_w = w;
-		  xp = xpoints + dxx;
-		  xapp = xapoints + dxx;
+		  xp = xpoints;// + dxx;
+		  xapp = xapoints;// + dxx;
 		  yp++;  yapp++;
 	       }
 	  }
@@ -375,8 +375,8 @@
 #endif
 		  pbuf = buf;
 		  dptr += dst_w;   dst_clip_w = w;
-		  xp = xpoints + dxx;
-		  xapp = xapoints + dxx;
+		  xp = xpoints;// + dxx;
+		  xapp = xapoints;// + dxx;
 		  yp++;  yapp++;
 	       }
 	  }
