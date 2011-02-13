@@ -1951,7 +1951,8 @@ _group_bubble_place(Marker_Group *group)
    edje_object_size_min_calc(group->bubble, NULL, &hh);
 
    s = edje_object_data_get(group->bubble, "size_w");
-   ww = atoi(s);
+   if (s) ww = atoi(s);
+   else ww = 0;
    xx = x + w / 2 - ww / 2;
    yy = y-hh;
 
@@ -2830,13 +2831,17 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	o = edje_object_add(evas_object_evas_get(obj));
 	_elm_theme_object_set(obj, o, "map/marker", style, elm_widget_style_get(obj));
 	s = edje_object_data_get(o, "size_w");
-	clas_group->priv.edje_w = atoi(s);
+	if (s) clas_group->priv.edje_w = atoi(s);
+	else clas_group->priv.edje_w = 0;
 	s = edje_object_data_get(o, "size_h");
-	clas_group->priv.edje_h = atoi(s);
+	if (s) clas_group->priv.edje_h = atoi(s);
+	else clas_group->priv.edje_h = 0;
 	s = edje_object_data_get(o, "size_max_w");
-	clas_group->priv.edje_max_w = atoi(s);
+	if (s) clas_group->priv.edje_max_w = atoi(s);
+	else clas_group->priv.edje_max_w = 0;
 	s = edje_object_data_get(o, "size_max_h");
-	clas_group->priv.edje_max_h = atoi(s);
+	if (s) clas_group->priv.edje_max_h = atoi(s);
+	else clas_group->priv.edje_max_h = 0;
 	evas_object_del(o);
 
 	clas_group->priv.set = EINA_TRUE;
@@ -2851,9 +2856,11 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 	o = edje_object_add(evas_object_evas_get(obj));
 	_elm_theme_object_set(obj, o, "map/marker", style, elm_widget_style_get(obj));
 	s = edje_object_data_get(o, "size_w");
-	clas->priv.edje_w = atoi(s);
+	if (s) clas->priv.edje_w = atoi(s);
+	else clas->priv.edje_w = 0;
 	s = edje_object_data_get(o, "size_h");
-	clas->priv.edje_h = atoi(s);
+	if (s) clas->priv.edje_h = atoi(s);
+	else clas->priv.edje_h = 0;
 	evas_object_del(o);
 
 	clas->priv.set = EINA_TRUE;

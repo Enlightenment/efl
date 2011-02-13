@@ -1078,7 +1078,7 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
           }
      }
    wd->check_idler = ecore_idler_add(_check_string, wd);
-   _sizing_eval(it->base.widget);
+   _sizing_eval(wd->self);
 }
 
 /**
