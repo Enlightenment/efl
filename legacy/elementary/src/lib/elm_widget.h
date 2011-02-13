@@ -175,12 +175,18 @@
  * 
  */
 
-#ifndef ELM_INTERAL_API_MDFGELQ
+#ifndef ELM_INTERAL_API_ARGESFSDFEFC
 # warning "You are using an internal elementary API. This API is not stable"
 # warning "and is subject to change. You use this at your own risk."
 # warning "Remember to call elm_widget_api_check(ELM_INTERNAL_API_VERSION);"
 # warning "in your widgets before you call any other elm_widget calls to do"
-# warning "a correct runtime version check."
+# warning "a correct runtime version check. Also remember - you don't NEED"
+# warning "to make an Elementary widget is almost ALL cases. You can easily"
+# warning "make a smart object with Evas's API and do everything you need"
+# warning "there. You only need a widget if you want to seamlessly be part"
+# warning "of the focus tree and want to transparently become a container"
+# warning "for any number of child Elementary widgets"
+# error "ERROR. Compile aborted."
 #endif
 #define ELM_INTERNAL_API_VERSION 7000
 

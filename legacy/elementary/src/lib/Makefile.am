@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--DELM_INTERAL_API_MDFGELQ=1 \
+-DELM_INTERAL_API_ARGESFSDFEFC=1 \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \
