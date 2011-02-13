@@ -412,6 +412,12 @@ _smart_momentum_end(Smart_Data *sd)
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator)) return;
    if (sd->down.momentum_animator)
      {
+        Evas_Coord px, py;
+        elm_smart_scroller_child_pos_get(sd->smart_obj, &px, &py);
+        sd->wx = px;
+        sd->wy = py;
+        elm_smart_scroller_child_viewport_size_get(sd->smart_obj,
+                                                   &sd->ww, &sd->wh);
         ecore_animator_del(sd->down.momentum_animator);
         sd->down.momentum_animator = NULL;
         sd->down.bounce_x_hold = 0;
@@ -789,6 +795,10 @@ _smart_momentum_animator(void *data)
             (no_bounce_x_end && no_bounce_y_end))
 	  {
              _smart_anim_stop(sd->smart_obj);
+             sd->wx = x;
+             sd->wy = y;
+             elm_smart_scroller_child_viewport_size_get(sd->smart_obj,
+                                                        &sd->ww, &sd->wh);
 	     sd->down.momentum_animator = NULL;
              sd->down.bounce_x_hold = 0;
              sd->down.bounce_y_hold = 0;
