@@ -74,3 +74,12 @@
           region which will always be sane, and even has insanity
           checks now. At worst you'll get an unrendered image if the
           values are silly and some slowness. No crashes.
+
+2011-02-13  Brett Nash (nash@nash.id.au)
+	
+	* Fix crash when deleting proxies.  This _technically_ breaks
+	  evas engines which realloc engine data when a border is set.
+	  Practically no engines do this.  There is a comment there (and
+	  if the engine does that border set won't work), in which case
+	  a more complex work-around is possible.
+

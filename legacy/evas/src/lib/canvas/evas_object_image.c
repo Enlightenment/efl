@@ -341,7 +341,8 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
    if (o->cur.source == src) return EINA_TRUE;
 
    /* Kill the image if any */
-   evas_object_image_file_set(obj, NULL, NULL);
+   if (o->cur.file || o->cur.key)
+      evas_object_image_file_set(obj, NULL, NULL);
 
    if (o->cur.source)
      {
@@ -2831,9 +2832,12 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
              obj->layer->evas->engine.func->image_scale_hint_set(output,
                                                                  pixels,
                                                                  o->scale_hint);
-             o->engine_data = obj->layer->evas->engine.func->image_border_set(output, pixels,
-                                                                              o->cur.border.l, o->cur.border.r,
-                                                                              o->cur.border.t, o->cur.border.b);
+             /* This is technically a bug here: If the value is recreated
+              * (which is returned)it may be a new object, however exactly 0
+              * of all the evas engines do this. */
+             obj->layer->evas->engine.func->image_border_set(output, pixels,
+                                                                         o->cur.border.l, o->cur.border.r,
+                                                                         o->cur.border.t, o->cur.border.b);
              idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
              idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
              if (idw < 1) idw = 1;
