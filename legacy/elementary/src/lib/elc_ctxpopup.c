@@ -932,6 +932,28 @@ _list_new(Evas_Object *obj)
    elm_ctxpopup_horizontal_set(obj, wd->horizontal); 
 }
 
+static void
+_remove_items(Widget_Data *wd)
+{
+   Eina_List *elist;
+   Elm_Ctxpopup_Item *item;
+
+   if (!wd->items)
+      return;
+
+   EINA_LIST_FOREACH(wd->items, elist, item)
+     {
+        if (item->label)
+           eina_stringshare_del(item->label);
+        if (item->icon)
+           evas_object_del(item->icon);
+        wd->items = eina_list_remove(wd->items, item);
+        free(item);
+     }
+
+   wd->items = NULL;
+}
+
 /**
  * Add a new Ctxpopup object to the parent.
  *
@@ -1162,28 +1184,6 @@ elm_ctxpopup_hover_parent_get(const Evas_Object *obj)
       return NULL;
 
    return wd->hover_parent;
-}
-
-static void
-_remove_items(Widget_Data *wd)
-{
-   Eina_List *elist;
-   Elm_Ctxpopup_Item *item;
-
-   if (!wd->items)
-      return;
-
-   EINA_LIST_FOREACH(wd->items, elist, item)
-     {
-        if (item->label)
-           eina_stringshare_del(item->label);
-        if (item->icon)
-           evas_object_del(item->icon);
-        wd->items = eina_list_remove(wd->items, item);
-        free(item);
-     }
-
-   wd->items = NULL;
 }
 
 /**
