@@ -9,7 +9,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define _(string) gettext(string)
 
 Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
