@@ -59,7 +59,6 @@ evas_common_font_query_kerning(RGBA_Font_Int* fi,
 }
 
 /* text x inset */
-/* FIXME: should use OT info when available. */
 EAPI int
 evas_common_font_query_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props)
 {
