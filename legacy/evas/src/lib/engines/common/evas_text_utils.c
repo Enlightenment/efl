@@ -143,6 +143,8 @@ evas_common_text_props_split(Evas_Text_Props *base,
         ext->text_offset = base->text_offset + base->len;
 #endif
      }
+   ext->text_len = base->text_len - (ext->text_offset - base->text_offset);
+   base->text_len = (ext->text_offset - base->text_offset);
 }
 
 /* Won't work in the middle of ligatures */
@@ -161,6 +163,7 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
      }
 
    item1->len += item2->len;
+   item1->text_len += item2->text_len;
 }
 
 EAPI Eina_Bool
@@ -325,6 +328,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
      }
    text_props->len = len;
 #endif
+   text_props->text_len = len;
    text_props->info->refcount = 1;
    return EINA_TRUE;
 }

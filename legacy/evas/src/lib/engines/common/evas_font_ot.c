@@ -31,10 +31,6 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
          i++)
      ;
    right_bound = i;
-   if (left_bound < 0)
-      left_bound = 0;
-   if (right_bound >= (int) (props->start + props->len))
-      right_bound = props->start + props->len - 1;
 
    if (right_bound == left_bound)
      {
@@ -44,26 +40,22 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
      {
         if (left_bound < 0)
           {
-             items = props->start + props->len -
-                props->info->ot[left_bound + 1].source_cluster;
+             items = props->text_offset + props->text_len - base_cluster;
           }
         else
           {
-             items = props->info->ot[left_bound].source_cluster -
-                props->info->ot[left_bound + 1].source_cluster;
+             items = props->info->ot[left_bound].source_cluster - base_cluster;
           }
      }
    else
      {
-        if (right_bound == (int) (props->start + props->len))
+        if (right_bound > (int) (props->text_offset + props->text_len))
           {
-             items = props->start + props->len -
-                props->info->ot[right_bound - 1].source_cluster;
+             items = props->text_offset + props->text_len - base_cluster;
           }
         else
           {
-             items = props->info->ot[right_bound].source_cluster -
-                props->info->ot[right_bound - 1].source_cluster;
+             items = props->info->ot[right_bound].source_cluster - base_cluster;
           }
      }
    return (items > 0) ? items : 1;

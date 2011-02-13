@@ -143,7 +143,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *text __UNU
 
    position = pos;
    /* If it's the null, choose location according to the direction. */
-   if (text_props->len == position)
+   if (position == text_props->text_len)
      {
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */
@@ -267,7 +267,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *text __UNUS
 
    position = pos;
    /* If it's the null, choose location according to the direction. */
-   if (text_props->len == position)
+   if (position == text_props->text_len)
      {
         /* if it's rtl then the location is the left of the string,
          * otherwise, the right. */

@@ -16,6 +16,7 @@ struct _Evas_Text_Props
    size_t start;
    size_t len;
    size_t text_offset; /* The text offset from the start of the info */
+   size_t text_len; /* The length of the original text */
    Evas_BiDi_Props bidi;
    Evas_Script_Type script;
    Evas_Text_Props_Info *info;
