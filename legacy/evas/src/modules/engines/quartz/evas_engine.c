@@ -1102,7 +1102,7 @@ static int
 eng_font_pen_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    return eng_font_char_coords_get(data, font, text, text_props, pos, cpen_x,
-         cy, cadv, ch)
+         cy, cadv, ch);
 }
 
 static Eina_Bool
