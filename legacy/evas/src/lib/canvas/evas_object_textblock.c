@@ -1782,7 +1782,7 @@ struct _Ctxt
    Eina_Bool align_auto;
 };
 
-static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, const Evas_Object_Textblock_Item *rel);
+static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
 static void _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti);
 /**
  * @internal
@@ -2429,13 +2429,14 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
  * Cut the text up until cut and split
  *
  * @param c the context to work on - Not NULL.
- * @param it the item to cut - not null.
+ * @param ti the item to cut - not null.
+ * @param lti the logical list item of the item.
  * @param cut the cut index.
  * @return the second (newly created) item.
  */
 static Evas_Object_Textblock_Text_Item *
 _layout_item_text_split_strip_white(Ctxt *c,
-      Evas_Object_Textblock_Text_Item *ti, int cut)
+      Evas_Object_Textblock_Text_Item *ti, Eina_List *lti, int cut)
 {
    Eina_Unicode *ts;
    Evas_Object_Textblock_Text_Item *new_ti = NULL, *white_ti = NULL;
@@ -2457,7 +2458,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
         evas_common_text_props_split(&ti->parent.text_props,
                                      &new_ti->parent.text_props, cut2);
-        _layout_text_add_logical_item(c, new_ti, _ITEM(ti));
+        _layout_text_add_logical_item(c, new_ti, lti);
      }
 
    if (cut2 > cut)
@@ -2471,7 +2472,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
         evas_common_text_props_split(&ti->parent.text_props,
               &white_ti->parent.text_props, cut);
-        _layout_text_add_logical_item(c, white_ti, _ITEM(ti));
+        _layout_text_add_logical_item(c, white_ti, lti);
      }
 
    if (new_ti || white_ti)
@@ -2655,11 +2656,11 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
  */
 static void
 _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti,
-      const Evas_Object_Textblock_Item *rel)
+      Eina_List *rel)
 {
    _text_item_update_sizes(c, ti);
 
-   c->par->logical_items = eina_list_append_relative(
+   c->par->logical_items = eina_list_append_relative_list(
          c->par->logical_items, ti, rel);
 }
 
@@ -3254,7 +3255,7 @@ _layout_visualize_par(Ctxt *c)
                              last_ti);
                        if ((wrap > 0) && last_ti->text[wrap])
                          {
-                            _layout_item_text_split_strip_white(c, last_ti,
+                            _layout_item_text_split_strip_white(c, last_ti, i,
                                   wrap);
                          }
                        else if (wrap == 0)
@@ -3336,7 +3337,7 @@ _layout_visualize_par(Ctxt *c)
 
                        if (wrap > 0)
                          {
-                            _layout_item_text_split_strip_white(c, ti, wrap);
+                            _layout_item_text_split_strip_white(c, ti, i, wrap);
                          }
                        else if (wrap == 0)
                          {
