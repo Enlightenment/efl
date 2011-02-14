@@ -2500,12 +2500,12 @@ _layout_item_merge_and_free(Ctxt *c,
 {
    Eina_Unicode *tmp;
    size_t len1, len2;
-   item1->parent.w += item2->parent.w;
-   item1->parent.adv += item2->parent.adv;
+   _text_item_update_sizes(c, item1);
+   len1 = item1->parent.text_props.text_len;
+   len2 = item2->parent.text_props.text_len;
    evas_common_text_props_merge(&item1->parent.text_props,
          &item2->parent.text_props);
-   len1 = eina_unicode_strlen(item1->text);
-   len2 = eina_unicode_strlen(item2->text);
+
    tmp = realloc(item1->text, (len1 + len2 + 1) * sizeof(Eina_Unicode));
    eina_unicode_strcpy(tmp + len1, item2->text);
    item1->text = tmp;
