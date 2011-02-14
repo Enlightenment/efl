@@ -2537,7 +2537,7 @@ _layout_item_merge_and_free(Ctxt *c,
 #endif
 
    tmp = realloc(item1->text, (len1 + len2 + 1) * sizeof(Eina_Unicode));
-   eina_unicode_strcpy(tmp + len1, item2->text);
+   eina_unicode_strncpy(tmp + len1, item2->text, len2);
    item1->text = tmp;
    item1->text[len1 + len2] = 0;
 
