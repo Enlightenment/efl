@@ -4127,7 +4127,7 @@ evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode)
 EAPI Eina_Bool
 evas_object_textblock_newline_mode_get(const Evas_Object *obj)
 {
-   TB_HEAD_RETURN();
+   TB_HEAD_RETURN(EINA_FALSE);
    return o->newline_is_ps;
 }
 
