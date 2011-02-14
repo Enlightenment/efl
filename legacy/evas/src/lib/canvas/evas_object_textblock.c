@@ -3875,7 +3875,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
           {
              free(o->markup_text);
              o->markup_text = NULL;
-             evas_object_textblock_text_markup_get(obj);
           }
      }
 
