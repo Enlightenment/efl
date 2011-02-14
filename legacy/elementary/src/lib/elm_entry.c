@@ -2426,7 +2426,7 @@ elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (void *dat
    EINA_SAFETY_ON_NULL_RETURN(func);
    EINA_LIST_FOREACH(wd->item_providers, l, ip)
      {
-        if ((ip->func == func) && (ip->data == data))
+        if ((ip->func == func) && ((!data) || (ip->data == data)))
           {
              wd->item_providers = eina_list_remove_list(wd->item_providers, l);
              free(ip);
@@ -2524,7 +2524,7 @@ elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Ob
 
    EINA_LIST_FOREACH(wd->text_filters, l, tf)
      {
-        if ((tf->func == func) && (tf->data == data))
+        if ((tf->func == func) && ((!data) || (tf->data == data)))
           {
              wd->text_filters = eina_list_remove_list(wd->text_filters, l);
              _filter_free(tf);
