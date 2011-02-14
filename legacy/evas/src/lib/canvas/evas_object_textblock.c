@@ -2108,7 +2108,7 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
                {
                   int tlen;
                   tlen = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
-                     eina_unicode_strlen(_ITEM_TEXT(it)->text) : 1;
+                     it->text_props.text_len : 1;
                   if (it->text_pos + tlen > end)
                     {
                        end = it->text_pos + tlen;
@@ -3170,6 +3170,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
    Evas_Object_Textblock_Text_Item *ellip_ti;
    const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' }; /* Ellipsis char */
+   size_t len = 1; /* The length of _ellip_str */
    /* We assume that the format stack has at least one time,
     * the only reason it may not have, is more </> than <>, other
     * than that, we're safe. The last item is the base format. */
@@ -3180,7 +3181,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
    ellip_ti->parent.text_pos = cur_it->text_pos;
    if (cur_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
-        ellip_ti->parent.text_pos += eina_unicode_strlen(ellip_ti->text);
+        ellip_ti->parent.text_pos += cur_it->text_props.text_len;
      }
    else
      {
@@ -3195,7 +3196,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
          ellip_ti->parent.format->font.font,
          ellip_ti->text, &ellip_ti->parent.text_props,
          ellip_ti->parent.text_node->bidi_props,
-         ellip_ti->parent.text_pos, eina_unicode_strlen(_ellip_str));
+         ellip_ti->parent.text_pos, len);
    _text_item_update_sizes(c, ellip_ti);
 
    return ellip_ti;
@@ -3736,7 +3737,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node_Text *
                        Evas_Object_Textblock_Text_Item *ti =
                           _ITEM_TEXT(it);
 
-                       p += (int) eina_unicode_strlen(ti->text);
+                       p += (int) ti->parent.text_props.text_len;
                     }
                   else
                     {
@@ -5418,7 +5419,7 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 	cur->pos = it->text_pos;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
-             index = eina_unicode_strlen(_ITEM_TEXT(it)->text) - 1;
+             index = it->text_props.text_len - 1;
              GET_NEXT(_ITEM_TEXT(it)->text, index);
              cur->pos += index;
           }
@@ -7619,7 +7620,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
      {
         size_t item_len;
         item_len = (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
-           eina_unicode_strlen(((Evas_Object_Textblock_Text_Item *) it)->text)
+           it->text_props.text_len
            : 1;
         if ((!cur1 || (cur1->pos < it->text_pos + item_len)) &&
               (!cur2 || (cur2->pos >= it->text_pos)))
