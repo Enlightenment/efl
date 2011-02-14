@@ -2480,7 +2480,23 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    if (new_ti || white_ti)
      {
+#if 0
+        /* FIXME: This is more correct, but wayy slower, so until I make this
+         * fast I'll just take the less correct approach. At least until
+         * someone notices a glitch */
         _text_item_update_sizes(c, ti);
+#else
+        if (new_ti)
+          {
+             ti->parent.w -= new_ti->parent.w;
+             ti->parent.adv -= new_ti->parent.adv;
+          }
+        if (white_ti)
+          {
+             ti->parent.w -= white_ti->parent.w;
+             ti->parent.adv -= white_ti->parent.adv;
+          }
+#endif
 
         ti->text = eina_unicode_strndup(ts, cut);
         free(ts);
@@ -2508,7 +2524,16 @@ _layout_item_merge_and_free(Ctxt *c,
    evas_common_text_props_merge(&item1->parent.text_props,
          &item2->parent.text_props);
 
+#if 0
+   /* FIXME: This is more correct, but wayy slower, so until I make this fast
+    * I'll just take the less correct approach. At least until someone
+    * notices a glitch */
    _text_item_update_sizes(c, item1);
+#else
+   item1->parent.w += item2->parent.w;
+   item1->parent.adv += item2->parent.adv;
+#endif
+
    tmp = realloc(item1->text, (len1 + len2 + 1) * sizeof(Eina_Unicode));
    eina_unicode_strcpy(tmp + len1, item2->text);
    item1->text = tmp;
