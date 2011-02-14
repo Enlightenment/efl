@@ -20,6 +20,7 @@ EAPI int EEZE_EVENT_DISK_MOUNT = 0;
 EAPI int EEZE_EVENT_DISK_UNMOUNT = 0;
 EAPI int EEZE_EVENT_DISK_ERROR = 0;
 static Ecore_Event_Handler *_mount_handler = NULL;
+static Eina_List *eeze_events = NULL;
 
 /*
  *
@@ -57,14 +58,17 @@ static Eina_Bool
 _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
 {
    Eeze_Disk *disk;
+   Eina_List *l;
    Eeze_Event_Disk_Mount *e;
 
    if ((!ev) || (!ev->exe))
      return ECORE_CALLBACK_RENEW;
-   if (!(disk = ecore_exe_data_get(ev->exe)))
+   disk = ecore_exe_data_get(ev->exe);
+
+   if ((!disk) || (!eeze_events) || (!(l = eina_list_data_find(eeze_events, disk))))
      return ECORE_CALLBACK_RENEW;
    
-   
+   eeze_events = eina_list_remove_list(eeze_events, l);
    if (disk->mount_status == EEZE_DISK_MOUNTING)
      switch (ev->exit_code)
        {
@@ -115,6 +119,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
          default:
            INF("Could not unmount disk, retrying");
            disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->unmount_cmd), 0, disk);
+           eeze_events = eina_list_append(eeze_events, disk);
            return ECORE_CALLBACK_RENEW;
         }
    
@@ -293,7 +298,7 @@ eeze_disk_mount(Eeze_Disk *disk)
    disk->mounter = ecore_exe_pipe_run(eina_strbuf_string_get(disk->mount_cmd), 0, disk);
    if (!disk->mounter)
      return EINA_FALSE;
-     
+   eeze_events = eina_list_append(eeze_events, disk);
    disk->mount_status = EEZE_DISK_MOUNTING;
 
    return EINA_TRUE;
@@ -335,6 +340,7 @@ eeze_disk_unmount(Eeze_Disk *disk)
    if (!disk->mounter)
      return EINA_FALSE;
 
+   eeze_events = eina_list_append(eeze_events, disk);
    disk->mount_status = EEZE_DISK_UNMOUNTING;
    return EINA_TRUE;
 }
