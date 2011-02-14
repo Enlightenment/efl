@@ -2383,16 +2383,17 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
  * @param c the context to work on - Not NULL.
  * @param fmt the format to use.
  * @param str the string to use.
+ * @param len the length of the string.
  */
 static Evas_Object_Textblock_Text_Item *
-_layout_text_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, const Eina_Unicode *str)
+_layout_text_item_new(Ctxt *c __UNUSED__, Evas_Object_Textblock_Format *fmt, const Eina_Unicode *str, size_t len)
 {
    Evas_Object_Textblock_Text_Item *ti;
 
    ti = calloc(1, sizeof(Evas_Object_Textblock_Text_Item));
    ti->parent.format = fmt;
    ti->parent.format->ref++;
-   ti->text = eina_unicode_strdup(str);
+   ti->text = eina_unicode_strndup(str, len);
    ti->parent.type = EVAS_TEXTBLOCK_ITEM_TEXT;
    return ti;
 }
@@ -2450,7 +2451,8 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    if (ts[cut2])
      {
-        new_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut2]);
+        new_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut2],
+                                       ti->parent.text_props.text_len - cut2);
         new_ti->parent.text_node = ti->parent.text_node;
         new_ti->parent.text_pos = ti->parent.text_pos + cut2;
         new_ti->parent.merge = EINA_TRUE;
@@ -2463,7 +2465,8 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    if (cut2 > cut)
      {
-        white_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut]);
+        white_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut],
+                                       ti->parent.text_props.text_len - cut);
         white_ti->parent.text_node = ti->parent.text_node;
         white_ti->parent.text_pos = ti->parent.text_pos + cut;
         white_ti->parent.merge = EINA_TRUE;
@@ -2479,7 +2482,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
      {
         _text_item_update_sizes(c, ti);
 
-        ti->text = eina_unicode_strdup(ts);
+        ti->text = eina_unicode_strndup(ts, cut);
         free(ts);
      }
    return new_ti;
@@ -2684,6 +2687,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    const Eina_Unicode *str = EINA_UNICODE_EMPTY_STRING;
    const Eina_Unicode *tbase;
    Evas_Object_Textblock_Text_Item *ti;
+   size_t cur_len = 0;
 
    /* prepare a working copy of the string, either filled by the repch or
     * filled with the true values */
@@ -2737,6 +2741,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              alloc_str = eina_unicode_strndup(str + start, off);
              str = alloc_str;
           }
+
+        cur_len = off;
      }
 
 skip:
@@ -2749,7 +2755,7 @@ skip:
      {
         int tmp_len;
 
-        ti = _layout_text_item_new(c, fmt, str);
+        ti = _layout_text_item_new(c, fmt, str, cur_len);
         ti->parent.text_node = n;
         ti->parent.text_pos = start + str - tbase;
         tmp_len = off - (str - tbase);
@@ -2766,7 +2772,7 @@ skip:
 
                   ts = ti->text;
                   ts[tmp_cut] = 0;
-                  ti->text = eina_unicode_strdup(ts);
+                  ti->text = eina_unicode_strndup(ts, tmp_cut);
                   free(ts);
                   tmp_len = tmp_cut;
                }
@@ -2781,6 +2787,7 @@ skip:
                    ti->parent.text_pos, tmp_len);
           }
         str += tmp_len;
+        cur_len -= tmp_len;
 
         _layout_text_add_logical_item(c, ti, NULL);
 
@@ -3176,7 +3183,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
     * than that, we're safe. The last item is the base format. */
    ellip_ti = _layout_text_item_new(c,
          eina_list_data_get(eina_list_last(c->format_stack)),
-         _ellip_str);
+         _ellip_str, len);
    ellip_ti->parent.text_node = cur_it->text_node;
    ellip_ti->parent.text_pos = cur_it->text_pos;
    if (cur_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
@@ -4546,7 +4553,8 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
          * Skip the unicode replacement chars when there are because
          * we don't want to print them. */
         text_base = text =
-           eina_unicode_strdup(eina_ustrbuf_string_get(n->unicode));
+           eina_unicode_strndup(eina_ustrbuf_string_get(n->unicode),
+                                eina_ustrbuf_length_get(n->unicode));
         fnode = n->format_node;
         off = 0;
         while (fnode && (fnode->text_node == n))
@@ -6871,7 +6879,8 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
         int off = 0;
 
         text_base = text =
-           eina_unicode_strdup(eina_ustrbuf_string_get(tnode->unicode));
+           eina_unicode_strndup(eina_ustrbuf_string_get(tnode->unicode),
+                                eina_ustrbuf_length_get(tnode->unicode));
         if (tnode == cur2->node)
           {
              fnode = _evas_textblock_node_text_get_first_format_between(tnode,
