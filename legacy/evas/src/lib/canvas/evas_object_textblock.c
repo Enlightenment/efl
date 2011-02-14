@@ -7953,7 +7953,7 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
      }
    else
      {
-        Evas_Object_Textblock_Line *lni;
+        Evas_Object_Textblock_Line *plni, *lni;
         Eina_List *rects2 = NULL;
         /* Handle the first line */
         rects = _evas_textblock_cursor_range_in_line_geometry_get(ln1,
@@ -7961,15 +7961,26 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
 
         /* Handle the lines between the first and the last line */
         lni = (Evas_Object_Textblock_Line *) EINA_INLIST_GET(ln1)->next;
+        if (!lni && (ln1->par != ln2->par))
+          {
+             lni = ((Evas_Object_Textblock_Paragraph *)
+                    EINA_INLIST_GET(ln1->par)->next)->lines;
+          }
         while (lni && (lni != ln2))
           {
 	     tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
 	     rects = eina_list_append(rects, tr);
-	     tr->x = lni->x;
-	     tr->y = lni->y;
+	     tr->x = lni->par->x + lni->x;
+	     tr->y = lni->par->y + lni->y;
 	     tr->h = lni->h;
 	     tr->w = lni->w;
+             plni = lni;
              lni = (Evas_Object_Textblock_Line *) EINA_INLIST_GET(lni)->next;
+             if (!lni && (plni->par != ln2->par))
+               {
+                  lni = ((Evas_Object_Textblock_Paragraph *)
+                     EINA_INLIST_GET(plni->par)->next)->lines;
+               }
           }
         rects2 = _evas_textblock_cursor_range_in_line_geometry_get(ln2,
               NULL, cur2);
