@@ -432,6 +432,7 @@ struct _Evas_Object_Textblock
    unsigned char                       redraw : 1;
    unsigned char                       changed : 1;
    unsigned char                       content_changed : 1;
+   Eina_Bool                           newline_is_ps : 1;
 };
 
 /* private methods for textblock objects */
@@ -2877,8 +2878,9 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
  * Returns true if the item is a paragraph separator, false otherwise
  * @def _IS_PARAGRAPH_SEPARATOR(item)
  */
-#define _IS_PARAGRAPH_SEPARATOR(item)                                        \
-   (!strcmp(item, "ps")) /* Paragraph separator */
+#define _IS_PARAGRAPH_SEPARATOR(o, item)                                     \
+   (!strcmp(item, "ps") ||                                                   \
+    (o->newline_is_ps && _IS_LINE_SEPARATOR(item))) /* Paragraph separator */
 
 /**
  * @internal
@@ -3013,7 +3015,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                }
              else
                {
-                  if ((_IS_PARAGRAPH_SEPARATOR(item)) ||
+                  if ((_IS_PARAGRAPH_SEPARATOR(c->o, item)) ||
                         (_IS_LINE_SEPARATOR(item)))
                     {
                        Evas_Object_Textblock_Format_Item *fi;
@@ -4096,6 +4098,40 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
 }
 
 /**
+ * @brief Sets newline mode. When true, newline character will behave
+ * as a paragraph separator.
+ *
+ * @param obj The given textblock object.
+ * @param mode EINA_TRUE for PS mode, EINA_FALSE otherwise.
+ * @since 1.1.0
+ */
+EAPI void
+evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode)
+{
+   TB_HEAD();
+   if (o->newline_is_ps == mode)
+      return;
+
+   o->newline_is_ps = mode;
+    _evas_textblock_text_node_changed(o, obj, NULL);
+}
+
+/**
+ * @brief Gets newline mode. When true, newline character behaves
+ * as a paragraph separator.
+ *
+ * @param obj The given textblock object.
+ * @return EINA_TRUE if in PS mode, EINA_FALSE otherwise.
+ * @since 1.1.0
+ */
+EAPI Eina_Bool
+evas_object_textblock_newline_mode_get(const Evas_Object *obj)
+{
+   TB_HEAD_RETURN(EINA_FALSE);
+   return o->newline_is_ps;
+}
+
+/**
  * @brief Get the "replacement character" for given textblock object. Returns
  * NULL if no replacement character is in use.
  *
@@ -5059,7 +5095,7 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
         cur.obj = obj;
 
         eina_ustrbuf_remove(n->text_node->unicode, index, index + 1);
-        if (format && _IS_PARAGRAPH_SEPARATOR(format))
+        if (format && _IS_PARAGRAPH_SEPARATOR(o, format))
           {
              evas_textblock_cursor_set_at_format(&cur, n);
              _evas_textblock_cursor_nodes_merge(&cur);
@@ -5783,7 +5819,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
         if (!itr || (itr && (itr->text_node != n)))
           {
              /* Remove the PS, and return since it's the end of the node */
-             if (_IS_PARAGRAPH_SEPARATOR(
+             if (_IS_PARAGRAPH_SEPARATOR(o,
                       eina_strbuf_string_get(last_node->format)))
                {
                   _evas_textblock_node_format_remove(o, last_node, 0);
@@ -6603,7 +6639,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
 
         /* Advance all the cursors after our cursor */
         _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
-        if (_IS_PARAGRAPH_SEPARATOR(format))
+        if (_IS_PARAGRAPH_SEPARATOR(o, format))
           {
              _evas_textblock_cursor_break_paragraph(cur, n);
           }
@@ -6687,7 +6723,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
              /* If there's a PS it must be the last become it delimits paragraphs */
              last_fmt = _evas_textblock_node_format_last_at_off(fmt);
              format = eina_strbuf_string_get(last_fmt->format);
-             if (format && _IS_PARAGRAPH_SEPARATOR(format))
+             if (format && _IS_PARAGRAPH_SEPARATOR(o, format))
                {
                   merge_nodes = 1;
                }
@@ -8169,6 +8205,7 @@ evas_object_textblock_init(Evas_Object *obj)
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    o->cursor->obj = obj;
+   o->newline_is_ps = EINA_TRUE;
 }
 
 static void *
