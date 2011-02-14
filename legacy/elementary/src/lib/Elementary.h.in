@@ -590,7 +590,7 @@ extern "C" {
    EAPI void          elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay) EINA_ARG_NONNULL(1);
    EAPI Evas_Object  *elm_bg_overlay_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object  *elm_bg_overlay_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void          elm_bg_load_size_set(Evas_Object *obj, int w, int h);
+   EAPI void          elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     */
 
