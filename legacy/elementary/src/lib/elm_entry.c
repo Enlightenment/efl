@@ -395,6 +395,82 @@ _delay_write(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static Elm_Entry_Text_Filter *
+_filter_new(void (*func) (void *data, Evas_Object *entry, char **text), void *data)
+{
+   Elm_Entry_Text_Filter *tf = ELM_NEW(Elm_Entry_Text_Filter);
+   if (!tf) return NULL;
+   
+   tf->func = func;
+   if (func == elm_entry_filter_limit_size)
+     {
+        Elm_Entry_Filter_Limit_Size *lim = data, *lim2;
+
+        if (!data)
+          {
+             free(tf);
+             return NULL;
+          }
+        lim2 = malloc(sizeof(Elm_Entry_Filter_Limit_Size));
+        if (!lim2)
+          {
+             free(tf);
+             return NULL;
+          }
+        memcpy(lim2, lim, sizeof(Elm_Entry_Filter_Limit_Size));
+        tf->data = lim2;
+     }
+   else if (func == elm_entry_filter_accept_set)
+     {
+        Elm_Entry_Filter_Accept_Set *as = data, *as2;
+        
+        if (!data)
+          {
+             free(tf);
+             return NULL;
+          }
+        as2 = malloc(sizeof(Elm_Entry_Filter_Accept_Set));
+        if (!as2)
+          {
+             free(tf);
+             return NULL;
+          }
+        if (as->accepted)
+           as2->accepted = eina_stringshare_add(as->accepted);
+        else
+           as2->accepted = NULL;
+        if (as->rejected)
+           as2->rejected = eina_stringshare_add(as->rejected);
+        else
+           as2->rejected = NULL;
+        tf->data = as2;
+     }
+   else
+      tf->data = data;
+   return tf;
+}
+
+static void
+_filter_free(Elm_Entry_Text_Filter *tf)
+{
+   if (tf->func == elm_entry_filter_limit_size)
+     {
+        Elm_Entry_Filter_Limit_Size *lim = tf->data;
+        if (lim) free(lim);
+     }
+   else if (tf->func == elm_entry_filter_accept_set)
+     {
+        Elm_Entry_Filter_Accept_Set *as = tf->data;
+        if (as)
+          {
+             if (as->accepted) eina_stringshare_del(as->accepted);
+             if (as->rejected) eina_stringshare_del(as->rejected);
+             free(as);
+          }
+     }
+   free(tf);
+}
+
 static void
 _del_pre_hook(Evas_Object *obj)
 {
@@ -443,7 +519,7 @@ _del_hook(Evas_Object *obj)
      }
    EINA_LIST_FREE(wd->text_filters, tf)
      {
-        free(tf);
+        _filter_free(tf);
      }
    free(wd);
 }
@@ -2386,11 +2462,10 @@ elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Ob
    wd = elm_widget_data_get(obj);
 
    EINA_SAFETY_ON_NULL_RETURN(func);
-
-   tf = ELM_NEW(Elm_Entry_Text_Filter);
+   
+   tf = _filter_new(func, data);
    if (!tf) return;
-   tf->func = func;
-   tf->data = data;
+   
    wd->text_filters = eina_list_append(wd->text_filters, tf);
 }
 
@@ -2417,10 +2492,9 @@ elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_O
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   tf = ELM_NEW(Elm_Entry_Text_Filter);
+   tf = _filter_new(func, data);
    if (!tf) return;
-   tf->func = func;
-   tf->data = data;
+   
    wd->text_filters = eina_list_prepend(wd->text_filters, tf);
 }
 
@@ -2453,7 +2527,7 @@ elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Ob
         if ((tf->func == func) && (tf->data == data))
           {
              wd->text_filters = eina_list_remove_list(wd->text_filters, l);
-             free(tf);
+             _filter_free(tf);
              return;
           }
      }
