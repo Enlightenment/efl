@@ -55,6 +55,9 @@ evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bo
    src = data;
    end = src + (stride * h);
    ret = malloc(w * h);
+   if(!ret) return NULL;
+
+   dst = ret;
 
    if (!has_alpha)
      {
