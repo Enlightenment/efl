@@ -15,6 +15,9 @@ struct _Widget_Data
    Evas_Object *base, *rect, *img, *overlay;
    const char  *file, *group;
    Elm_Bg_Option option;
+   struct {
+      int w, h;
+   } load_opts;
 };
 
 static const char *widtype = NULL;
@@ -182,8 +185,8 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
 
    if (wd->img)
      {
-	evas_object_del(wd->img);
-	wd->img = NULL;
+        evas_object_del(wd->img);
+        wd->img = NULL;
      }
    if (!file)
      {
@@ -197,13 +200,15 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    eina_stringshare_replace(&wd->group, group);
    if (((p = strrchr(file, '.'))) && (!strcasecmp(p, ".edj")))
      {
-	wd->img = edje_object_add(evas_object_evas_get(wd->base));
-	edje_object_file_set(wd->img, file, group);
+        wd->img = edje_object_add(evas_object_evas_get(wd->base));
+        edje_object_file_set(wd->img, file, group);
      }
    else
      {
-	wd->img = evas_object_image_add(evas_object_evas_get(wd->base));
-	evas_object_image_file_set(wd->img, file, group);
+        wd->img = evas_object_image_add(evas_object_evas_get(wd->base));
+        if ((wd->load_opts.w > 0) && (wd->load_opts.h > 0))
+           evas_object_image_load_size_set(wd->img, wd->load_opts.w, wd->load_opts.h);
+        evas_object_image_file_set(wd->img, file, group);
      }
    evas_object_repeat_events_set(wd->img, EINA_TRUE);
    edje_object_part_swallow(wd->base, "elm.swallow.background", wd->img);
@@ -396,3 +401,28 @@ elm_bg_overlay_unset(Evas_Object *obj)
    _custom_resize(wd, NULL, NULL, NULL);
    return overlay;
 }
+
+/**
+ * Set the size of a loaded image of the canvas of the bg.
+ *
+ * @param obj The bg object
+ * @param w The new width of the canvas image given.
+ * @param h The new height of the canvas image given.
+ *
+ * This function sets a new size for the canvas image of the given the bg.
+ *
+ */
+EAPI void
+elm_bg_load_size_set(Evas_Object *obj, int w, int h)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);   
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *p;
+   if (!wd) return;
+   wd->load_opts.w = w;
+   wd->load_opts.h = h;
+   if (!wd->img) return;
+   if (!(((p = strrchr(wd->file, '.'))) && (!strcasecmp(p, ".edj"))))
+      evas_object_image_load_size_set(wd->img, w, h);
+}
+
