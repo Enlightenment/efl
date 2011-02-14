@@ -1757,7 +1757,7 @@ evas_object_image_load_dpi_get(const Evas_Object *obj)
  *
  * @param obj The given canvas object.
  * @param w The new width of the canvas image given.
- * @param h Th new height of the canvas image given.
+ * @param h The new height of the canvas image given.
  *
  * This function sets a new size for the given canvas image.
  *
