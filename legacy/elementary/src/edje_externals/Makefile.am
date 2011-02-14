@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--DELM_INTERAL_API_ARGESFSDFEFC=1 \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -I. \
 -I$(top_builddir) \
 -I$(top_srcdir) \

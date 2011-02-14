@@ -175,7 +175,7 @@
  * 
  */
 
-#ifndef ELM_INTERAL_API_ARGESFSDFEFC
+#ifndef ELM_INTERNAL_API_ARGESFSDFEFC
 # warning "You are using an internal elementary API. This API is not stable"
 # warning "and is subject to change. You use this at your own risk."
 # warning "Remember to call elm_widget_api_check(ELM_INTERNAL_API_VERSION);"
