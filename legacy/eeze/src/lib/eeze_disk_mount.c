@@ -20,6 +20,7 @@ EAPI int EEZE_EVENT_DISK_MOUNT = 0;
 EAPI int EEZE_EVENT_DISK_UNMOUNT = 0;
 EAPI int EEZE_EVENT_DISK_ERROR = 0;
 static Ecore_Event_Handler *_mount_handler = NULL;
+static const char *eeze_mount_handler_id = "eeze_id_string";
 
 /*
  *
@@ -54,10 +55,13 @@ _eeze_disk_mount_error_handler(Eeze_Disk *disk, const char *error)
 }
 
 static Eina_Bool
-_eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
+_eeze_disk_mount_result_handler(void *data, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
 {
    Eeze_Disk *disk;
    Eeze_Event_Disk_Mount *e;
+
+   if (data != eeze_mount_handler_id)
+     return ECORE_CALLBACK_PASS_ON;
 
    if ((!ev) || (!ev->exe))
      return ECORE_CALLBACK_RENEW;
@@ -134,7 +138,7 @@ eeze_mount_init(void)
    EEZE_EVENT_DISK_UNMOUNT = ecore_event_type_new();
    EEZE_EVENT_DISK_ERROR = ecore_event_type_new();
    _mount_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                           (Ecore_Event_Handler_Cb)_eeze_disk_mount_result_handler, NULL);
+                                           (Ecore_Event_Handler_Cb)_eeze_disk_mount_result_handler, eeze_mount_handler_id);
    return eeze_libmount_init();
 }
 
