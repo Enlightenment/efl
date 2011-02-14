@@ -627,14 +627,15 @@ efreet_icon_lookup_icon(Efreet_Cache_Icon *icon, unsigned int size)
         distance = efreet_icon_size_distance(icon->icons[i], size);
         if (distance > minimal_distance) continue;
         // prefer downsizing
-        if ((distance == minimal_distance) && (size < ret_size)) continue;
+        if ((distance == minimal_distance) && (icon->icons[i]->normal < ret_size)) continue;
 
         tmp = efreet_icon_lookup_path(icon->icons[i]);
+
         if (tmp)
         {
             path = tmp;
             minimal_distance = distance;
-            ret_size = size;
+            ret_size = icon->icons[i]->normal;
         }
     }
 
