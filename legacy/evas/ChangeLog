@@ -83,3 +83,13 @@
 	  if the engine does that border set won't work), in which case
 	  a more complex work-around is possible.
 
+2011-02-14  Tom Hacohen (TAsn)
+
+	* Added a newline character mode API to textblock. This lets us set
+	  the newline behavior to either normal (i.e only break a line, not
+	  a paragraph) to "behave as a PS" mode. Default is the latter.
+	  The former is the more correct approach but I guess everything else
+	  is in e is not yet ready to use it. These API should help with the
+	  transition.
+	* A lot of textblock speed improvements and reduced memory footprint.
+
