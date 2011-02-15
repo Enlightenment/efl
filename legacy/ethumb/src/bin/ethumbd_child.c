@@ -349,6 +349,21 @@ _ec_aspect_set(struct _Ethumbd_Child *ec, Ethumb *e)
 }
 
 static int
+_ec_orientation_set(struct _Ethumbd_Child *ec, Ethumb *e)
+{
+   int r;
+   int value;
+
+   r = _ec_read_safe(STDIN_FILENO, &value, sizeof(value));
+   if (!r)
+     return 0;
+   ethumb_thumb_orientation_set(e, value);
+   DBG("orientation = %d", value);
+
+   return 1;
+}
+
+static int
 _ec_crop_set(struct _Ethumbd_Child *ec, Ethumb *e)
 {
    int r;
@@ -573,6 +588,9 @@ _ec_setup_process(struct _Ethumbd_Child *ec, int index, int type)
 	 break;
       case ETHUMBD_ASPECT:
 	 _ec_aspect_set(ec, e);
+	 break;
+      case ETHUMBD_ORIENTATION:
+	 _ec_orientation_set(ec, e);
 	 break;
       case ETHUMBD_CROP_X:
 	 _ec_crop_set(ec, e);

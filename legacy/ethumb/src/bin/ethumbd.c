@@ -68,6 +68,7 @@ struct _Ethumb_Setup
       Eina_Bool size : 1;
       Eina_Bool format : 1;
       Eina_Bool aspect : 1;
+      Eina_Bool orientation: 1;
       Eina_Bool crop : 1;
       Eina_Bool quality : 1;
       Eina_Bool compress : 1;
@@ -85,6 +86,7 @@ struct _Ethumb_Setup
    int tw, th;
    int format;
    int aspect;
+   int orientation;
    float cx, cy;
    int quality;
    int compress;
@@ -515,6 +517,7 @@ _ethumbd_pipe_write_setup(struct _Ethumbd *ed, int type, const void *data)
       case ETHUMBD_FDO:
       case ETHUMBD_FORMAT:
       case ETHUMBD_ASPECT:
+      case ETHUMBD_ORIENTATION:
       case ETHUMBD_QUALITY:
       case ETHUMBD_COMPRESS:
       case ETHUMBD_SIZE_W:
@@ -569,6 +572,8 @@ _process_setup(struct _Ethumbd *ed)
      _ethumbd_pipe_write_setup(ed, ETHUMBD_FORMAT, &setup->format);
    if (setup->flags.aspect)
      _ethumbd_pipe_write_setup(ed, ETHUMBD_ASPECT, &setup->aspect);
+   if (setup->flags.orientation)
+     _ethumbd_pipe_write_setup(ed, ETHUMBD_ORIENTATION, &setup->orientation);
    if (setup->flags.crop)
      {
 	_ethumbd_pipe_write_setup(ed, ETHUMBD_CROP_X, &setup->cx);
@@ -1240,6 +1245,27 @@ _ethumb_dbus_aspect_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIt
 }
 
 static int
+_ethumb_dbus_orientation_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
+{
+   int type;
+   dbus_int32_t orientation;
+
+   type = dbus_message_iter_get_arg_type(iter);
+   if (type != DBUS_TYPE_INT32)
+     {
+	ERR("invalid param for orientation_set.");
+	return 0;
+     }
+
+   dbus_message_iter_get_basic(iter, &orientation);
+   DBG("setting orientation to: %d", orientation);
+   request->setup.flags.orientation = 1;
+   request->setup.orientation = orientation;
+
+   return 1;
+}
+
+static int
 _ethumb_dbus_crop_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    DBusMessageIter oiter;
@@ -1514,6 +1540,7 @@ static struct
   {"size", _ethumb_dbus_size_set},
   {"format", _ethumb_dbus_format_set},
   {"aspect", _ethumb_dbus_aspect_set},
+  {"orientation", _ethumb_dbus_orientation_set},
   {"crop", _ethumb_dbus_crop_set},
   {"quality", _ethumb_dbus_quality_set},
   {"compress", _ethumb_dbus_compress_set},
