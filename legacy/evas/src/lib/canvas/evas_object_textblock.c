@@ -2158,22 +2158,7 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
                }
           }
      }
-#endif
 
-   /* Recalculate the positions according to the new order. */
-     {
-        Evas_Object_Textblock_Item *it = line->items;
-        Evas_Coord x = 0;
-
-        while (it)
-          {
-             it->x = x;
-             x += it->adv;
-             it = (Evas_Object_Textblock_Item *) EINA_INLIST_GET(it)->next;
-          }
-     }
-
-#ifdef BIDI_SUPPORT
    if (v_to_l) free(v_to_l);
 #endif
 }
@@ -2192,6 +2177,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Item *it;
    Eina_Bool no_text = EINA_TRUE;
+   Evas_Coord x = 0;
 
    _layout_line_order(c, c->ln);
 
@@ -2210,7 +2196,6 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 
    EINA_INLIST_FOREACH(c->ln->items, it)
      {
-        int endx;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
@@ -2320,8 +2305,10 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                }
           }
 
-        endx = it->x + it->adv;
-        if (endx > c->ln->w) c->ln->w = endx;
+        it->x = x;
+        x += it->adv;
+
+        if (x > c->ln->w) c->ln->w = x;
      }
 
    c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
