@@ -1189,6 +1189,9 @@ efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED
     const char *ext;
 
     /* TODO: If we get a stale symlink, we need to rerun cache creation */
+    /* TODO: Check for desktop*.cache, as this will be created when app is installed */
+    /* TODO: Do efreet_cache_icon_update() when app is installed, as it has the same
+     *       symlink problem */
     switch (event)
     {
         case ECORE_FILE_EVENT_NONE:
