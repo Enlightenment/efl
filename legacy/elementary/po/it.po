@@ -1,0 +1,38 @@
+# Italian translation for Elementary.
+# This file is put in the public domain.
+# Massimo Maiurana <maiurana@gmail.com>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: Elementary\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-02-15 18:50+0200\n"
+"PO-Revision-Date: 2011-02-15 20:03+0200\n"
+"Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/elm_config.c:1538
+msgid "default:LTR"
+msgstr "predefintito: LTR"
+
+#: src/lib/elm_entry.c:875
+msgid "Select"
+msgstr "Seleziona"
+
+#: src/lib/elm_entry.c:880
+msgid "Paste"
+msgstr "Incolla"
+
+#: src/lib/elm_entry.c:890
+msgid "Copy"
+msgstr "Copia"
+
+#: src/lib/elm_entry.c:893
+msgid "Cut"
+msgstr "Taglia"
+
+#: src/lib/elm_entry.c:896
+msgid "Cancel"
+msgstr "Annulla"

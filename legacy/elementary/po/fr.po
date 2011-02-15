@@ -1,0 +1,42 @@
+# French translation for Elementary.
+# This file is put in the public domain.
+# batden <batden@orange.fr>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: Elementary\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-02-15 18:50+0400\n"
+"PO-Revision-Date: 2011-02-15 20:03+0400\n"
+"Last-Translator: batden <batden@orange.fr>\n"
+"Language-Team: French <pourunmondesansgourou@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: src/lib/elm_config.c:1538
+msgid "default:LTR"
+msgstr "LTR par défaut"
+
+#: src/lib/elm_entry.c:875
+msgid "Select"
+msgstr "Sélectionner"
+
+#: src/lib/elm_entry.c:880
+msgid "Paste"
+msgstr "Coller"
+
+#: src/lib/elm_entry.c:890
+msgid "Copy"
+msgstr "Copier"
+
+#: src/lib/elm_entry.c:893
+msgid "Cut"
+msgstr "Couper"
+
+#: src/lib/elm_entry.c:896
+msgid "Cancel"
+msgstr "Annuler"
