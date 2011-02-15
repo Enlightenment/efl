@@ -1158,7 +1158,7 @@ _ethumb_dbus_delete_cb(E_DBus_Object *object, DBusMessage *msg)
 }
 
 static int
-_ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request __UNUSED__)
+_ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter *iter, struct _Ethumb_Request *request)
 {
    int type;
    dbus_int32_t fdo;
@@ -1172,6 +1172,8 @@ _ethumb_dbus_fdo_set(struct _Ethumb_Object *eobject __UNUSED__, DBusMessageIter 
 
    dbus_message_iter_get_basic(iter, &fdo);
    DBG("setting fdo to: %d", fdo);
+   request->setup.flags.fdo = 1;
+   request->setup.fdo = fdo;
 
    return 1;
 }
