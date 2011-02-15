@@ -7,13 +7,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-02-15 15:39+0200\n"
+"POT-Creation-Date: 2011-02-15 16:16+0200\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@partner.samsung.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/lib/elc_fileselector.c:598
+msgid "Up"
+msgstr ""
+
+#: src/lib/elc_fileselector.c:613
+msgid "Home"
+msgstr ""
+
+#: src/lib/elc_fileselector.c:794 src/lib/elm_entry.c:896
+msgid "Cancel"
+msgstr "בטל"
+
+#: src/lib/elc_fileselector.c:804
+msgid "OK"
+msgstr ""
 
 #: src/lib/elm_config.c:1538
 msgid "default:LTR"
@@ -34,7 +50,3 @@ msgstr "העתק"
 #: src/lib/elm_entry.c:893
 msgid "Cut"
 msgstr "גזור"
-
-#: src/lib/elm_entry.c:896
-msgid "Cancel"
-msgstr "בטל"
