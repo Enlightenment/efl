@@ -3013,13 +3013,10 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                   else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
                     {
                        Evas_Object_Textblock_Format_Item *fi;
-                       int x2;
 
-                       x2 = c->x + fmt->tabstops;
                        fi = _layout_format_item_add(c, n, item, fmt);
-                       fi->parent.w = fi->parent.adv = x2 - c->x;
+                       fi->parent.w = fi->parent.adv = fmt->tabstops;
                        fi->formatme = 1;
-                       c->x = x2;
                     }
                }
           }
