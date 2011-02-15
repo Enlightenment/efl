@@ -4,6 +4,8 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#define MARKER_MAX 1000
+
 typedef struct Marker_Data
 {
     const char *file;
@@ -15,6 +17,7 @@ static Elm_Map_Group_Class *itc_group1, *itc_group2, *itc_group_parking;
 
 static Evas_Object *rect;
 static int nb_elts;
+static Elm_Map_Marker *markers[MARKER_MAX];
 
 Marker_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
 Marker_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
@@ -220,13 +223,14 @@ my_bt_source_module(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 static void
 my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-    int i;
-    Elm_Map_Group_Class *g_clas;
-    Elm_Map_Marker_Class *m_clas;
-    Marker_Data *d = &data7;
+   int i;
+   Elm_Map_Group_Class *g_clas;
+   Elm_Map_Marker_Class *m_clas;
+   Marker_Data *d = &data7;
 
-    for(i =0; i<1000; i++)
-    {
+   if (*markers) return;
+   for(i =0; i<MARKER_MAX; i++)
+     {
         d = &data7;
 
         int r1 = rand() % (180*2*100);
@@ -238,26 +242,37 @@ my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         else r2 = r2 - 85*100;
 
         int style = rand() % 3;
-        if(!style)
-            m_clas = itc1;
-        else if(style == 1)
-            m_clas = itc2;
+        if (!style) m_clas = itc1;
+        else if (style == 1) m_clas = itc2;
         else
-        {
-            m_clas = itc_parking;
-            d = &data_parking;
-        }
+          {
+             m_clas = itc_parking;
+             d = &data_parking;
+          }
 
-	style = rand() % 2;
-	if (!style)
-	  g_clas = itc_group1;
-	else
-	  g_clas = itc_group2;
+        style = rand() % 2;
+        if (!style) g_clas = itc_group1;
+	else g_clas = itc_group2;
 
-       elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d); 
+       markers[i] = elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d); 
     }
-    nb_elts+=1000;
+    nb_elts += 1000;
     printf("nb elements: %d\n", nb_elts);
+}
+
+static void
+my_bt_remove(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   int i;
+
+   for (i = 0; i<MARKER_MAX; i++)
+     { 
+        if (markers[i])
+          {
+             elm_map_marker_remove(markers[i]);
+             markers[i] = NULL;
+          }
+     }
 }
 
 static Evas_Object *
@@ -468,20 +483,36 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_show(bt);
 
         bt = elm_button_add(win);
-        elm_button_label_set(bt, "Add 1000 markers");
-        evas_object_smart_callback_add(bt, "clicked", my_bt_add, map);
-        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(bt, 0.5, 0.1);
-        elm_table_pack(tb2, bt, 1, 0, 1, 1);
-        evas_object_show(bt);
-
-        bt = elm_button_add(win);
         elm_button_label_set(bt, "Z +");
         evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_in, map);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, 0.9, 0.1);
         elm_table_pack(tb2, bt, 2, 0, 1, 1);
         evas_object_show(bt);
+
+        bx = elm_box_add(win);
+        evas_object_show(bx);
+        evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bx, 0.5, 0.1);
+        elm_table_pack(tb2, bx, 1, 0, 1, 1);
+
+        //
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "Add 1000 markers");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_add, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 0.5, 0.1);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "remove 1000 markers");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_remove, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 0.5, 0.1);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+        //
 
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Show Paris");
