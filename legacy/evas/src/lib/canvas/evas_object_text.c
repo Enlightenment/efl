@@ -688,16 +688,15 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    /*Update bidi_props*/
 
    if (o->items) _evas_object_text_items_clear(o);
-   if (o->cur.utf8_text) eina_stringshare_del(o->cur.utf8_text);
 
    if ((text) && (*text)) 
      {
         _evas_object_text_layout(obj, o, text);
-        o->cur.utf8_text = eina_stringshare_add(_text);
-     }
+	eina_stringshare_replace(&o->cur.utf8_text, _text);
+    }
    else 
      {
-        o->cur.utf8_text = NULL;
+	eina_stringshare_replace(&o->cur.utf8_text, NULL);
      }
    if (text)
      {
