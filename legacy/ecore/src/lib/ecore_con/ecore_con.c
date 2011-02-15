@@ -2046,7 +2046,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
         /* 0 is not a valid return value for a tcp socket */
         if ((num > 0) || ((num < 0) && (errno == EAGAIN)))
            lost_server = EINA_FALSE;
-        else
+        else if (num < 0)
           ecore_con_event_server_error(svr, strerror(errno));
      }
    else
@@ -2257,7 +2257,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
         /* 0 is not a valid return value for a tcp socket */
         if ((num > 0) || ((num < 0) && ((errno == EAGAIN) || (errno == EINTR))))
           lost_client = EINA_FALSE;
-        else
+        else if (num < 0)
           ecore_con_event_client_error(cl, strerror(errno));
      }
    else
