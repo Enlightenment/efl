@@ -398,8 +398,6 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_scrolled_entry_entry_set(en, "scrolled entry with icon and end objects");
    evas_object_show(en);
    elm_box_pack_end(bx, en);
-   elm_scrolled_entry_cursor_end_set(en);
-   elm_object_focus(en);
 
    /* markup scrolled entry */
    en = elm_scrolled_entry_add(win);
