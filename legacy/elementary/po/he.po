@@ -2,7 +2,6 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <a.hillel@partner.samsung.com>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
@@ -10,6 +9,7 @@ msgstr ""
 "POT-Creation-Date: 2011-02-15 16:16+0200\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@partner.samsung.com>\n"
+"Language-Team: General\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
