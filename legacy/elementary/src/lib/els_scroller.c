@@ -355,6 +355,31 @@ elm_smart_scroller_bounce_animator_disabled_set(Evas_Object *obj, Eina_Bool disa
      }
 }
 
+/* Update the wanted coordinates according to the x, y passed
+ * widget directionality, child size and etc. */
+static void
+_update_wanted_coordinates(Smart_Data *sd, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Coord cw, ch;
+
+   sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
+
+   /* Update wx/y/w/h - and if the requested positions aren't legal
+    * adjust a bit. */
+   elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &sd->ww, &sd->wh);
+   if (x < 0)
+      sd->wx = 0;
+   else if ((x + sd->ww) > cw)
+      sd->wx = cw - sd->ww;
+   else if (sd->is_mirrored)
+      sd->wx = _elm_smart_scroller_x_mirrored_get(sd->smart_obj, x);
+   else
+      sd->wx = x;
+   if (y < 0) sd->wy = 0;
+   else if ((y + sd->wh) > ch) sd->wy = ch - sd->wh;
+   else sd->wy = y;
+}
+
 static void
 _smart_anim_start(Evas_Object *obj)
 {
@@ -414,10 +439,8 @@ _smart_momentum_end(Smart_Data *sd)
      {
         Evas_Coord px, py;
         elm_smart_scroller_child_pos_get(sd->smart_obj, &px, &py);
-        sd->wx = px;
-        sd->wy = py;
-        elm_smart_scroller_child_viewport_size_get(sd->smart_obj,
-                                                   &sd->ww, &sd->wh);
+        _update_wanted_coordinates(sd, px, py);
+
         ecore_animator_del(sd->down.momentum_animator);
         sd->down.momentum_animator = NULL;
         sd->down.bounce_x_hold = 0;
@@ -795,10 +818,8 @@ _smart_momentum_animator(void *data)
             (no_bounce_x_end && no_bounce_y_end))
 	  {
              _smart_anim_stop(sd->smart_obj);
-             sd->wx = x;
-             sd->wy = y;
-             elm_smart_scroller_child_viewport_size_get(sd->smart_obj,
-                                                        &sd->ww, &sd->wh);
+             _update_wanted_coordinates(sd, px, py);
+
 	     sd->down.momentum_animator = NULL;
              sd->down.bounce_x_hold = 0;
              sd->down.bounce_y_hold = 0;
@@ -1507,10 +1528,7 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 
    if ((!sd->hold) && (!sd->freeze))
      {
-        sd->wx = x;
-        sd->wy = y;
-        elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &sd->ww, &sd->wh);
-        elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+        _update_wanted_coordinates(sd, x, y);
      }
 }
 
@@ -1842,13 +1860,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
 	     sd->down.now = 0;
              elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
              elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
-             sd->wx = x;
-             sd->wy = y;
+             _update_wanted_coordinates(sd, x, y);
 
-             if(sd->is_mirrored)
-               sd->wx = _elm_smart_scroller_x_mirrored_get(sd->smart_obj, sd->wx);
-
-             elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &sd->ww, &sd->wh);
              if (!_smart_do_page(sd))
                bounce_eval(sd);
 	  }
