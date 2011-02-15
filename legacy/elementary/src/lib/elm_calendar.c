@@ -62,6 +62,8 @@ static const char *widtype = NULL;
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
+/* Should not be translated, it's used if we failed
+ * getting from locale. */
 static const char *_days_abbrev[] =
 {
    "Sun", "Mon", "Tue", "Wed",
@@ -720,6 +722,7 @@ EAPI Evas_Object *
 elm_calendar_add(Evas_Object *parent)
 {
    time_t current_time;
+   time_t weekday = 259200; /* Just the first sunday since epoch */
    Evas_Object *obj;
    Widget_Data *wd;
    int i, t;
@@ -768,7 +771,24 @@ elm_calendar_add(Evas_Object *parent)
                                    "*", _day_selected, obj);
 
    for (i = 0; i < 7; i++)
-     wd->weekdays[i] = eina_stringshare_add(_days_abbrev[i]);
+     {
+        /* FIXME: I'm not aware of a known max, so if it fails,
+         * just make it larger. :| */
+        char buf[20];
+        /* I don't know of a better way of doing it */
+        if (strftime(buf, sizeof(buf), "%a", gmtime(&weekday)))
+          {
+             wd->weekdays[i] = eina_stringshare_add(buf);
+          }
+        else
+          {
+             /* If we failed getting day, get a default value */
+             wd->weekdays[i] = _days_abbrev[i];
+             WRN("Failed getting weekday name for '%s' from locale.",
+                  _days_abbrev[i]);
+          }
+        weekday += 86400; /* Advance by a day */
+     }
 
    current_time = time(NULL);
    localtime_r(&current_time, &wd->selected_time);
