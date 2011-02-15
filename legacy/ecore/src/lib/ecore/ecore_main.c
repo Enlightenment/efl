@@ -970,6 +970,8 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
 EAPI void
 ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
+   int ret;
+
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
      {
         ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER,
@@ -977,9 +979,10 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
         return;
      }
    fd_handler->flags = flags;
-   if (_ecore_main_fdh_poll_modify(fd_handler) < 0)
+   ret = _ecore_main_fdh_poll_modify(fd_handler);
+   if (ret < 0)
      {
-        ERR("Failed to mod epoll fd %d!", fd_handler->fd);
+        ERR("Failed to mod epoll fd %d: %s!", fd_handler->fd, strerror(ret));
      }
 }
 
