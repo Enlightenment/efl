@@ -29,7 +29,7 @@ msgstr "בטל"
 
 #: src/lib/elc_fileselector.c:804
 msgid "OK"
-msgstr ""
+msgstr "אשר"
 
 #: src/lib/elm_config.c:1538
 msgid "default:LTR"
