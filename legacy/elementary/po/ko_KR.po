@@ -1,0 +1,20 @@
+# Elementary translation file for Korean languages.
+# This file is distributed under the same license as the Elementary package.
+# FIRST AUTHOR <seojuyung2@gmail.com>, 2011.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: elementary\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-02-15 22:19+0900\n"
+"PO-Revision-Date: 2011-02-15 22:19+0900\n"
+"Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/lib/elm_config.c:1538
+msgid "default:LTR"
+msgstr "default:RTL"
