@@ -261,7 +261,7 @@ my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-my_bt_remove(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_bt_remove(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int i;
 
