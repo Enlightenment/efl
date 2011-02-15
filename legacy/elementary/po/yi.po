@@ -7,13 +7,33 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-02-03 23:59+0100\n"
+"POT-Creation-Date: 2011-02-15 15:39+0200\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elm_config.c:1539
+#: src/lib/elm_config.c:1538
 msgid "default:LTR"
 msgstr "default:RTL"
+
+#: src/lib/elm_entry.c:875
+msgid "Select"
+msgstr ""
+
+#: src/lib/elm_entry.c:880
+msgid "Paste"
+msgstr ""
+
+#: src/lib/elm_entry.c:890
+msgid "Copy"
+msgstr ""
+
+#: src/lib/elm_entry.c:893
+msgid "Cut"
+msgstr ""
+
+#: src/lib/elm_entry.c:896
+msgid "Cancel"
+msgstr ""
