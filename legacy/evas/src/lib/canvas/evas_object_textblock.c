@@ -2206,7 +2206,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
         else
           {
              Evas_Object_Textblock_Format_Item *fi = _ITEM_FORMAT(it);
-             if (!fi->formatme) continue;
+             if (!fi->formatme) goto loop_advance;
              fi->ascent = c->maxascent;
              fi->descent = c->maxdescent;
              /* Adjust sizes according to current line height/scale */
@@ -2305,6 +2305,7 @@ _layout_line_finalize(Ctxt *c, Evas_Object_Textblock_Format *fmt)
                }
           }
 
+loop_advance:
         it->x = x;
         x += it->adv;
 
