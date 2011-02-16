@@ -99,3 +99,9 @@
           improves BMP loader support to handle malformed RLE BMP's that
           encode more pixels per line than the image actuall has.
 
+2011-02-16  Tom Hacohen (TAsn)
+
+	* Dropped Evas_Encoding and moved to use Eina_unicode_utf8 instead.
+	* Started showing the unicode replacement character instead of missing
+	glyphs.
+
