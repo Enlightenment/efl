@@ -1,6 +1,12 @@
 #include "evas_common.h"
 #include "evas_encoding.h"
 
+/* The replacement range that will be used for bad utf8 chars. */
+#define ERROR_REPLACEMENT_BASE  0xDC80
+#define ERROR_REPLACEMENT_END   0xDCFF
+#define IS_INVALID_BYTE(x)      ((x == 192) || (x == 193) || (x >= 245))
+#define IS_CONTINUATION_BYTE(x) ((x & 0xC0) == 0x80)
+
 EAPI Eina_Unicode
 evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
 {
@@ -10,14 +16,15 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
     *
     * Returns 0 to indicate there is no next char
     */
-#if 1
+   /* Note: we don't currently handle overlong forms and some other
+    * broken cases. */
    int index = *iindex;
    Eina_Unicode r;
    unsigned char d;
 
    /* if this char is the null terminator, exit */
    if ((d = buf[index++]) == 0) return 0;
-     
+
    if ((d & 0x80) == 0)
      { // 1 byte (7bit) - 0xxxxxxx
         *iindex = index;
@@ -26,150 +33,91 @@ evas_common_encoding_utf8_get_next(const char *buf, int *iindex)
    if ((d & 0xe0) == 0xc0)
      { // 2 byte (11bit) - 110xxxxx 10xxxxxx
         r  = (d & 0x1f) << 6;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) return 0;
+        if (!r) goto error;
         *iindex = index;
         return r;
      }
    if ((d & 0xf0) == 0xe0)
      { // 3 byte (16bit) - 1110xxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x0f) << 12;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) return 0;
+        if (!r) goto error;
         *iindex = index;
         return r;
      }
    if ((d & 0xf8) == 0xf0)
      { // 4 byte (21bit) - 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x07) << 18;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 12;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) return 0;
+        if (!r) goto error;
         *iindex = index;
         return r;
      }
    if ((d & 0xfc) == 0xf8)
      { // 5 byte (26bit) - 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x03) << 24;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 18;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 12;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) return 0;
+        if (!r) goto error;
         *iindex = index;
         return r;
      }
    if ((d & 0xfe) == 0xfc)
      { // 6 byte (31bit) - 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
         r  = (d & 0x01) << 30;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 24;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 18;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 12;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f) << 6;
-        if ((d = buf[index++]) == 0) return 0;
+        if (((d = buf[index++]) == 0) || IS_INVALID_BYTE(d) ||
+            !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) return 0;
+        if (!r) goto error;
         *iindex = index;
         return r;
      }
-   return 0;
-#else
-   int index = *iindex, r, len;
-   unsigned char d, d2, d3, d4;
-   
-   /* if this char is the null terminator, exit */
-   if (!buf[index]) return 0;
-     
-   d = buf[index++];
 
-   while (buf[index] && ((buf[index] & 0xc0) == 0x80))
-     index++;
-   len = index - *iindex;
-
-   if (len == 1)
-      r = d;
-   else if (len == 2)
-     {
-	/* 2 bytes */
-        d2 = buf[*iindex + 1];
-        if (d2 == 0)
-          {
-             *iindex = *iindex + 1;
-             return 0;
-          }
-	r = d & 0x1f; /* copy lower 5 */
-	r <<= 6;
-	r |= (d2 & 0x3f); /* copy lower 6 */
-     }
-   else if (len == 3)
-     {
-	/* 3 bytes */
-        d2 = buf[*iindex + 1];
-        if (d2 == 0)
-          {
-             *iindex = *iindex + 1;
-             return 0;
-          }
-        d3 = buf[*iindex + 2];
-        if (d3 == 0)
-          {
-             *iindex = *iindex + 2;
-             return 0;
-          }
-	r = d & 0x0f; /* copy lower 4 */
-	r <<= 6;
-	r |= (d2 & 0x3f);
-	r <<= 6;
-	r |= (d3 & 0x3f);
-     }
-   else
-     {
-	/* 4 bytes */
-        d2 = buf[*iindex + 1];
-        if (d2 == 0)
-          {
-             *iindex = *iindex + 1;
-             return 0;
-          }
-        d3 = buf[*iindex + 2];
-        if (d3 == 0)
-          {
-             *iindex = *iindex + 2;
-             return 0;
-          }
-        d4 = buf[*iindex + 3];
-        if (d4 == 0)
-          {
-             *iindex = *iindex + 3;
-             return 0;
-          }
-	r = d & 0x0f; /* copy lower 4 */
-	r <<= 6;
-	r |= (d2 & 0x3f);
-	r <<= 6;
-	r |= (d3 & 0x3f);
-	r <<= 6;
-	r |= (d4 & 0x3f);
-     }
-   *iindex = index;
-   return r;
-#endif
+/* Gets here where there was an error and we want to replace the char
+ * we just use the invalid unicode codepoints 8 lower bits represent
+ * the original char */
+error:
+   d = buf[*iindex];
+   (*iindex)++;
+   return ERROR_REPLACEMENT_BASE | d;
 }
 
 EAPI Eina_Unicode
@@ -211,25 +159,9 @@ evas_common_encoding_utf8_get_last(const char *buf, int buflen)
     *
     * Returns -1 to indicate an error
     */
-   int index;
-   unsigned char d;
-
-   if (buflen < 1) return 0;
-   index = buflen - 1;
-   d = buf[index];
-   if (!(d & 0x80))
-     return index;
-   else
-     {
-	while (index > 0)
-	  {
-	     index--;
-	     d = buf[index];
-	     if ((d & 0xc0) != 0x80)
-	       return index;
-	  }
-     }
-   return 0;
+   /* Go one character backwards and then return the char at the new place */
+   evas_common_encoding_utf8_get_prev(buf, &buflen);
+   return evas_common_encoding_utf8_get_next(buf, &buflen);
 }
 
 EAPI int
@@ -293,10 +225,20 @@ evas_common_encoding_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
           }
         else if (*uind <= 0xFFFF) /* 3 byte char */
           {
-             *ind++ = 0xE0 | (unsigned char) (*uind >> 12);
-             *ind++ = 0x80 | (unsigned char) ((*uind >> 6) & 0x3F);
-             *ind++ = 0x80 | (unsigned char) (*uind & 0x3F);
-             len += 3;
+             /* If it's a special replacement codepoint */
+             if (*uind >= ERROR_REPLACEMENT_BASE &&
+                 *uind <= ERROR_REPLACEMENT_END)
+               {
+                  *ind++ = *uind && 0xFF;
+                  len += 1;
+               }
+             else
+               {
+                  *ind++ = 0xE0 | (unsigned char) (*uind >> 12);
+                  *ind++ = 0x80 | (unsigned char) ((*uind >> 6) & 0x3F);
+                  *ind++ = 0x80 | (unsigned char) (*uind & 0x3F);
+                  len += 3;
+               }
           }
         else /* 4 byte char */
           {
