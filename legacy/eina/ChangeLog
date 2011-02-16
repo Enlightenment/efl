@@ -13,3 +13,8 @@
 2011-02-16  Mike Blumenkrantz
 
         * Added EINA_INLIST_FOREACH_SAFE
+
+2011-02-16  Tom Hacohen
+
+	* Added eina_unicode_utf8* functions for utf8 string handling
+	and conversions to and from Eina_Unicode
