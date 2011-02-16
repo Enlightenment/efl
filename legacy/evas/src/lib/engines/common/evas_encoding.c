@@ -132,13 +132,13 @@ evas_common_encoding_utf8_get_prev(const char *buf, int *iindex)
 
    int r;
    int index = *iindex;
-   /* although when index == 0 there's no previous char, we still want to get
-    * the current char */
-   if (index < 0) 
-     return 0;
-
    /* First obtain the codepoint at iindex */
    r = evas_common_encoding_utf8_get_next(buf, &index);
+
+   /* although when index == 0 there's no previous char, we still want to get
+    * the current char */
+   if (*iindex < 0)
+     return r;
 
    /* Next advance iindex to previous codepoint */
    index = *iindex;
