@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "evas_encoding.h"
 
 #include "evas_font_private.h"
 

@@ -678,7 +678,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
      {
         return;
      }
-   text = evas_common_encoding_utf8_to_unicode(_text, &len);
+   text = eina_unicode_utf8_to_unicode(_text, &len);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
    was = evas_object_is_in_output_rect(obj,
@@ -1668,7 +1668,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
    if (decoded) *decoded = 0;
    if ((!str) || (pos < 0)) return 0;
    p = pos;
-   d = evas_common_encoding_utf8_get_next(str, &p);
+   d = eina_unicode_utf8_get_next(str, &p);
    if (decoded) *decoded = d;
    return p;
 }
@@ -1700,7 +1700,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    if (decoded) *decoded = 0;
    if ((!str) || (pos < 1)) return 0;
    p = pos;
-   d = evas_common_encoding_utf8_get_prev(str, &p);
+   d = eina_unicode_utf8_get_prev(str, &p);
    if (decoded) *decoded = d;
    return p;
 }
@@ -1715,7 +1715,7 @@ EAPI int
 evas_string_char_len_get(const char *str)
 {
    if (!str) return 0;
-   return evas_common_encoding_utf8_get_len(str);
+   return eina_unicode_utf8_get_len(str);
 }
 
 /**
@@ -2298,7 +2298,7 @@ _evas_object_text_recalc(Evas_Object *obj)
 
    if (o->items) _evas_object_text_items_clear(o);
    if (o->cur.utf8_text)
-     text = evas_common_encoding_utf8_to_unicode(o->cur.utf8_text,
+     text = eina_unicode_utf8_to_unicode(o->cur.utf8_text,
            NULL);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);

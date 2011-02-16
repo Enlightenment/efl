@@ -39,7 +39,6 @@ evas_convert_grypal_6.c \
 evas_convert_yuv.c \
 evas_cpu.c \
 evas_draw_main.c \
-evas_encoding.c \
 evas_font_draw.c \
 evas_font_load.c \
 evas_font_main.c \
@@ -82,7 +81,6 @@ evas_convert_rgb_32.h \
 evas_convert_rgb_8.h \
 evas_convert_yuv.h \
 evas_draw.h \
-evas_encoding.h \
 evas_font.h \
 evas_font_private.h \
 evas_image.h \

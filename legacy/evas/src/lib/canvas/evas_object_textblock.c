@@ -2744,7 +2744,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              str = alloca((off + 1) * sizeof(Eina_Unicode));
              tbase = str;
              ind = 0;
-             urepch = evas_common_encoding_utf8_get_next(repch, &ind);
+             urepch = eina_unicode_utf8_get_next(repch, &ind);
              for (i = 0, ptr = (Eina_Unicode *)tbase; i < off; ptr++, i++)
                *ptr = urepch;
              *ptr = 0;
@@ -4563,7 +4563,7 @@ _markup_get_format_append(Evas_Object_Textblock *o, Eina_Strbuf *txt, Evas_Objec
 static void
 _markup_get_text_append(Eina_Strbuf *txt, const Eina_Unicode *text)
 {
-   char *p = evas_common_encoding_unicode_to_utf8(text, NULL);
+   char *p = eina_unicode_unicode_to_utf8(text, NULL);
    char *base = p;
    while (*p)
      {
@@ -6391,7 +6391,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    int len = 0;
 
    if (!cur) return 0;
-   text = evas_common_encoding_utf8_to_unicode(_text, &len);
+   text = eina_unicode_utf8_to_unicode(_text, &len);
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    /* Update all the cursors after our position. */
    _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
@@ -6885,7 +6885,7 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
    ustr = eina_ustrbuf_string_get(cur->node->unicode);
    buf[0] = ustr[cur->pos];
    buf[1] = 0;
-   s = evas_common_encoding_unicode_to_utf8(buf, NULL);
+   s = eina_unicode_unicode_to_utf8(buf, NULL);
 
    return s;
 }

@@ -49,10 +49,6 @@ extern EAPI int _evas_log_dom_global;
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_EVAS_DEFAULT_LOG_DOM, __VA_ARGS__)
 
-/************************ Unicode stuff **************************/
-#include "../engines/common/evas_encoding.h"
-/*****************************************************************/
-
 #include "evas_options.h"
 
 #if defined(__ARM_ARCH_3M__)

@@ -3,7 +3,6 @@
 
 #include "evas_common.h"
 #include "evas_bidi_utils.h"
-#include "evas_encoding.h"
 
 #include "evas_font_private.h"
 
