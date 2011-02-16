@@ -207,7 +207,7 @@ ecore_file_download(const char *url,
                     void *data,
                     Ecore_File_Download_Job **job_ret)
 {
-   _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, NULL);
+   return _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, NULL);
 }
 
 /**
@@ -231,7 +231,7 @@ ecore_file_download_full(const char *url,
                          Ecore_File_Download_Job **job_ret,
                          Eina_Hash *headers)
 {
-   _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, headers);
+   return _ecore_file_download(url, dst, completion_cb, progress_cb, data, job_ret, headers);
 }
 
 /**
