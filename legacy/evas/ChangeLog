@@ -93,3 +93,9 @@
 	  transition.
 	* A lot of textblock speed improvements and reduced memory footprint.
 
+2011-02-16  Jeonghyun Yun
+
+        * Patch from Jeonghyun Yun <jh0506.yun@samsung.com> that
+          improves BMP loader support to handle malformed RLE BMP's that
+          encode more pixels per line than the image actuall has.
+

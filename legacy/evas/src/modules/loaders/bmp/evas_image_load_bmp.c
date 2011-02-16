@@ -681,32 +681,34 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                     {
                        if (p[0])
                          {
-                            unsigned int col1 = pal[p[1] >> 4];
-                            unsigned int col2 = pal[p[1] & 0xf];
+			    if ((x + p[0]) <= wpad)
+			      {
+                                 unsigned int col1 = pal[p[1] >> 4];
+                                 unsigned int col2 = pal[p[1] & 0xf];
                             
-                            if ((x + p[0]) > wpad) break;
-                            count = p[0] / 2;
-                            while (count > 0)
-                              {
-                                 if (x < w)
+                                 count = p[0] / 2;
+                                 while (count > 0)
                                    {
-                                      pix[0] = col1;
-                                      x++;
+                                      if (x < w)
+                                        {
+                                           pix[0] = col1;
+                                           x++;
+                                        }
+                                      if (x < w)
+                                        {
+                                           pix[1] = col2;
+                                           x++;
+                                        }
+                                      pix += 2;
+                                      count--;
                                    }
-                                 if (x < w)
+                                 if (p[0] & 0x1)
                                    {
-                                      pix[1] = col2;
+                                      *pix = col1;
                                       x++;
+                                      pix++;
                                    }
-                                 pix += 2;
-                                 count--;
-                              }
-                            if (p[0] & 0x1)
-                              {
-                                 *pix = col1;
-                                 x++;
-                                 pix++;
-                              }
+			      }
                             p += 2;
                          }
                        else
@@ -809,17 +811,19 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                     {
                        if (p[0])
                          {
-                            unsigned int col = pal[p[1]];
+		            if ((x + p[0]) <= w)
+			      {
+                                 unsigned int col = pal[p[1]];
                             
-                            count = p[0];
-                            if ((x + p[0]) > w) break;
-                            while (count > 0)
-                              {
-                                 *pix = col;
-                                 pix++;
-                                 count--;
-                              }
-                            x += p[0];
+                                 count = p[0];
+                                 while (count > 0)
+                                   {
+                                      *pix = col;
+                                      pix++;
+                                      count--;
+                                   }
+                                 x += p[0];
+			      }
                             p += 2;
                          }
                        else
