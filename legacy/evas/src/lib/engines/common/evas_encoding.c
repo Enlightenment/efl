@@ -229,7 +229,7 @@ evas_common_encoding_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
              if (*uind >= ERROR_REPLACEMENT_BASE &&
                  *uind <= ERROR_REPLACEMENT_END)
                {
-                  *ind++ = *uind && 0xFF;
+                  *ind++ = *uind & 0xFF;
                   len += 1;
                }
              else
