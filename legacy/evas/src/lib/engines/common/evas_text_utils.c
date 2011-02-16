@@ -5,6 +5,9 @@
 #include "language/evas_language_utils.h"
 #include "evas_font_ot.h"
 
+/* Used for showing "malformed" or missing chars */
+#define REPLACEMENT_CHAR 0xFFFD
+
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,
       Evas_BiDi_Paragraph_Props *bidi_par_props, size_t start)
@@ -197,27 +200,35 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
      }
 
 #ifdef OT_SUPPORT
+   const Eina_Unicode *base_char;
    evas_common_font_ot_populate_text_props(fn, text, text_props, len);
 
    /* Load the glyph according to the first letter of the script, preety
     * bad, but will have to do */
      {
         /* Skip common chars */
-        const Eina_Unicode *tmp;
-        for (tmp = text ;
-             *tmp &&
-             evas_common_language_char_script_get(*tmp) ==
+        for (base_char = text ;
+             *base_char &&
+             evas_common_language_char_script_get(*base_char) ==
              EVAS_SCRIPT_COMMON ;
-             tmp++)
+             base_char++)
            ;
-        if (!*tmp && (tmp > text)) tmp--;
-        evas_common_font_glyph_search(fn, &fi, *tmp);
+        if (!*base_char && (base_char > text)) base_char--;
+        evas_common_font_glyph_search(fn, &fi, *base_char);
      }
 
    for (char_index = 0 ; char_index < text_props->len ; char_index++)
      {
         FT_UInt index;
         RGBA_Font_Glyph *fg;
+        Eina_Bool is_replacement = EINA_FALSE;
+        /* If we got a malformed index, show the replacement char instead */
+        if (text_props->info->glyph[char_index].index == 0)
+          {
+             text_props->info->glyph[char_index].index =
+                evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+             is_replacement = EINA_TRUE;
+          }
         index = text_props->info->glyph[char_index].index;
         LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, index);
@@ -227,6 +238,14 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
              continue;
           }
         LKU(fi->ft_mutex);
+        if (is_replacement)
+          {
+             /* Update the advance accordingly */
+             text_props->info->glyph[char_index].advance =
+                fg->glyph->advance.x >> 10;
+             /* FIXME: reload fi, a bit slow, but I have no choice. */
+             evas_common_font_glyph_search(fn, &fi, *base_char);
+          }
         text_props->info->glyph[char_index].x_bear =
            fg->glyph_out->left;
         text_props->info->glyph[char_index].width =
@@ -273,6 +292,10 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         if (_gl == 0) break;
 
         index = evas_common_font_glyph_search(fn, &fi, _gl);
+        if (index == 0)
+          {
+             index = evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+          }
         LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, index);
         if (!fg)
