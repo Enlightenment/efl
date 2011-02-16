@@ -3168,9 +3168,15 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
              twrap = _layout_word_end(ti->text, wrap);
              wrap = _layout_word_next(ti->text, wrap);
              if (wrap >= 0)
-               return (str[wrap]) ? wrap : -1;
+               {
+                  ch = GET_NEXT(str, wrap);
+                  return (str[wrap]) ? wrap : -1;
+               }
              else if (twrap >= 0)
-               return (str[twrap]) ? twrap : -1;
+               {
+                  ch = GET_NEXT(str, twrap);
+                  return (str[twrap]) ? twrap : -1;
+               }
           }
      }
    return -1;
