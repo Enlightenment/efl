@@ -10,3 +10,6 @@
 
 	* Added eina_unicode_strndup
 
+2011-02-16  Mike Blumenkrantz
+
+        * EINA_INLIST_FOREACH_SAFE
