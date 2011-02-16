@@ -166,6 +166,14 @@ EAPI Eina_Bool ecore_file_download(const char *url,
                                    Ecore_File_Download_Progress_Cb progress_cb,
                                    void *data,
                                    Ecore_File_Download_Job **job_ret);
+EAPI Eina_Bool ecore_file_download_full(const char *url,
+                                        const char *dst,
+                                        Ecore_File_Download_Completion_Cb completion_cb,
+                                        Ecore_File_Download_Progress_Cb progress_cb,
+                                        void *data,
+                                        Ecore_File_Download_Job **job_ret,
+                                        Eina_Hash *headers);
+
 EAPI void      ecore_file_download_abort_all(void);
 EAPI void      ecore_file_download_abort(Ecore_File_Download_Job *job);
 EAPI Eina_Bool ecore_file_download_protocol_available(const char *protocol);

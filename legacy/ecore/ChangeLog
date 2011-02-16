@@ -34,3 +34,8 @@
 2011-02-11 Mike Blumenkrantz
 
         * Added ecore_con_client_port_get
+
+2011-02-16 Sangho Park
+
+	* Added ecore_file_download_full API.
+
