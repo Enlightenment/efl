@@ -1458,10 +1458,10 @@ collections {
                   style: "textblock_style";
                   min: 0 1;
                }
-            } 
+            }
          }
       }
-   } 
+   }
 
    group { name: "elm/label/base_wrap_ellipsis/default";
       data.item: "default_font_size" "10";
@@ -1482,7 +1482,7 @@ collections {
             scale: 1;
             multiline: 1;
             description { state: "default" 0.0;
-               fixed: 0 1; 
+               fixed: 0 1;
                text {
                   style: "textblock_style";
                   min: 0 1;
@@ -1560,10 +1560,10 @@ collections {
       data.item: "default_font_size" "10";
       data.item: "min_font_size" "6";
       data.item: "max_font_size" "60";
-      
+
       script {
         public g_duration, g_stopslide, g_timer_id, g_anim_id;
-          
+
         public message(Msg_Type:type, id, ...) {
            if ((type == MSG_FLOAT_SET) && (id == 0)) {
               new Float:duration;
@@ -1616,7 +1616,7 @@ collections {
            set_state(PART:"elm.text", "default", 0.0);
         }
       }
-       
+
       parts {
          part { name: "label.swallow.background";
             type: SWALLOW;
@@ -1680,7 +1680,7 @@ collections {
           }
        }
    }
-   
+
 
    group { name: "elm/label/base/slide_short";
       data.item: "default_font_size" "10";
@@ -1689,7 +1689,7 @@ collections {
 
       script {
          public g_duration, g_stopslide, g_timer_id, g_anim_id;
-         
+
          public message(Msg_Type:type, id, ...) {
             if ((type == MSG_FLOAT_SET) && (id == 0)) {
                new Float:duration;
@@ -1811,10 +1811,10 @@ collections {
       data.item: "default_font_size" "10";
       data.item: "min_font_size" "6";
       data.item: "max_font_size" "60";
-      
+
       script {
          public g_duration, g_stopslide, g_timer_id, g_anim_id;
-         
+
          public message(Msg_Type:type, id, ...) {
             if ((type == MSG_FLOAT_SET) && (id == 0)) {
                new Float:duration;
@@ -3374,7 +3374,7 @@ collections {
                else {
                   emit("elm,action,toggle,off", "");
                }
-                   
+       
             }
          }
          program { name: "toggle_on";
@@ -7540,7 +7540,7 @@ collections {
                visible: 0;
                color: 255 255 255 0;
             }
-         }       
+         }
          part { name: "sb_vbar_clip";
             clip_to:"sb_vbar_clip_master";
             type: RECT;
@@ -7569,7 +7569,7 @@ collections {
          }
          part { name: "elm.dragable.vbar";
             clip_to: "sb_vbar_clip";
-            mouse_events: 0;    
+            mouse_events: 0;
             scale: 1;
             dragable {
                x: 0 0 0;
@@ -7620,7 +7620,7 @@ collections {
                visible: 0;
                color: 255 255 255 0;
             }
-         }       
+         }
          part { name: "sb_hbar_clip";
             clip_to: "sb_hbar_clip_master";
             type: RECT;
@@ -7639,17 +7639,17 @@ collections {
             type: RECT;
             mouse_events: 0;
             scale: 1;
-            description { state: "default" 0.0; 
+            description { state: "default" 0.0;
                fixed: 1 1;
                visible: 0;
                align: 0.0 1.0;
                rel1 { to:"clipper"; relative: 0.0 1.0; }
-               rel2 { to:"clipper"; relative: 1.0 1.0; }       
+               rel2 { to:"clipper"; relative: 1.0 1.0; }
             }
          }
          part { name: "elm.dragable.hbar";
             clip_to: "sb_hbar_clip";
-            mouse_events: 0;   
+            mouse_events: 0;
             scale: 1;
             dragable {
                x: 1 1 0;
@@ -7691,7 +7691,7 @@ collections {
                }
             }
          }
-      }   
+      }
       programs {
          program { name: "load";
             signal: "load";
@@ -7705,7 +7705,7 @@ collections {
                                    set_int(sbalways_h, 0);
                set_int(sbvis_timer, 0);
             }
-         } 
+         }
          program { name: "vbar_show";
             signal: "elm,action,show,vbar";
             source: "elm";
@@ -7717,7 +7717,7 @@ collections {
             source: "elm";
             action:  STATE_SET "hidden" 0.0;
             target: "sb_vbar_clip_master";
-         }       
+         }
          program { name: "vbar_show_always";
             signal: "elm,action,show_always,vbar";
             source: "elm";
@@ -7747,7 +7747,7 @@ collections {
                   }
                }
             }
-         }       
+         }
          program { name: "sb_vbar_show";
             signal: "do-show-vbar";
             source: "";
@@ -7817,7 +7817,7 @@ collections {
             action:  STATE_SET "hidden" 0.0;
             transition: LINEAR 1.0;
             target: "sb_hbar_clip";
-         }                         
+         }             
          program { name: "scroll";
             signal: "elm,action,scroll";
             source: "elm";
@@ -7855,8 +7855,8 @@ collections {
             transition: DECELERATE 0.3;
             target: "focus_highlight";
          }
-      }  
-   }  
+      }
+   }
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/ctxpopup/bg/default";
       parts {
@@ -7889,7 +7889,7 @@ collections {
             source: "elm";
             action: STATE_SET "default" 0.0;
             target: "ctxpopup_bg";
-         }       
+         }
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -7937,9 +7937,9 @@ collections {
                rel1 { to:"base"; offset: 4 4; };
                rel2 { to:"base"; offset: -5 -5; };
             }
-         }                      
-      } 
-   } 
+         }          
+      }
+   }
 ///////////////////////////////////////////////////////////////////////////////
    group { name: "elm/ctxpopup/arrow/default";
       images {
@@ -7948,7 +7948,7 @@ collections {
          image: "icon_arrow_up.png" COMP;
          image: "icon_arrow_down.png" COMP;
       }
-      parts { 
+      parts {
                         part { name: "ctxpopup_arrow";
             type: IMAGE;
             scale: 1;
@@ -7971,7 +7971,7 @@ collections {
                min: 40 40;
                fixed: 1 1;
                align: 1.0 0.5;
-               image { normal: "icon_arrow_right.png";                
+               image { normal: "icon_arrow_right.png";    
                                         }
             }
             description { state: "top" 0.0;
@@ -8018,7 +8018,7 @@ collections {
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
-   group { 
+   group {
       name: "elm/ctxpopup/icon_text_style_item/default";
            alias: "elm/ctxpopup/text_style_item/default";
            alias: "elm/ctxpopup/icon_style_item/default";
@@ -8043,7 +8043,7 @@ collections {
                color: 255 255 255 0;
             }
             description { state: "clicked" 0.0;
-               inherit: "default" 0.0; 
+               inherit: "default" 0.0;
                color: 255 255 255 255;
             }
          }
@@ -8053,13 +8053,13 @@ collections {
             scale: 1;
             description { state: "default" 0.0;
                min: 25 25;
-               max: 25 25;              
-               align: 0 0.5;     
+               max: 25 25;  
+               align: 0 0.5;
                aspect: 1.0 1.0;
-               rel1 { offset: 10 10; }              
+               rel1 { offset: 10 10; }  
                                         rel2 { offset: 0 -10; }
             }
-         }       
+         }
          part { name: "elm.text";
             type: TEXT;
             mouse_events: 0;
@@ -8083,7 +8083,7 @@ collections {
                inherit: "default" 0.0;
                color: 0 0 0 255;
             }
-         } 
+         }
                         part { name: "over1";
             mouse_events: 1;
             repeat_events: 1;
@@ -8092,7 +8092,7 @@ collections {
                color: 255 255 255 0;
             }
             description { state: "clicked" 0.0;
-               inherit: "default" 0.0; 
+               inherit: "default" 0.0;
                color: 255 255 255 255;
             }
          }
@@ -8103,7 +8103,7 @@ collections {
                color: 255 255 255 0;
             }
             description { state: "clicked" 0.0;
-               inherit: "default" 0.0; 
+               inherit: "default" 0.0;
                color: 255 255 255 255;
             }
          }
@@ -8132,7 +8132,7 @@ collections {
             signal: "mouse,up,1";
             source: "over1";
             action: SIGNAL_EMIT "elm,action,click" "";
-         } 
+         }
          program { name: "disable";
             signal: "elm,state,disabled";
             source: "elm";
@@ -8154,17 +8154,17 @@ collections {
                set_state(PART:"elm.text", "clicked", 0.0);
                set_state(PART:"bg", "clicked", 0.0);
             }
-         }  
+         }
          program { name: "item_unclick2";
             signal: "mouse,up,1";
             source: "over2";
-            script { 
+            script {
                                         set_state(PART:"elm.text", "default", 0.0);
                set_state(PART:"bg", "default", 0.0);
-            }  
+            }
          }
-      }   
-   }   
+      }
+   }
 ///////////////////////////////////////////////////////////////////////////////
 // emoticon images from:
 // Tanya - Latvia
@@ -9081,7 +9081,7 @@ collections {
             max: 0 1;
             align: 0.0 0.0;
           }
-        } 
+        }
       }
       part { name: "elm.info";
         type: TEXT;
@@ -9111,7 +9111,7 @@ collections {
             max: 1 1;
             align: 1.0 0.0;
           }
-        } 
+        }
       }
       part { name: "base0";
         mouse_events:  0;
@@ -9970,7 +9970,7 @@ collections {
          }
      }
    }
-   
+
    group { name: "elm/photo/base/shadow";
               images {
                         image: "shadow.png" COMP;
@@ -9982,7 +9982,7 @@ collections {
                 {
                     new w;
                     new h;
-           
+
                     custom_state(PART:"size", "default", 0.0);
 
                     w = getarg(2);
@@ -10014,8 +10014,8 @@ collections {
                     image.normal: "shadow.png";
                 }
             }
-              
-            
+  
+
                  part { name: "elm.swallow.content";
                     type: SWALLOW;
                     description { state: "default" 0.0;
@@ -10024,7 +10024,7 @@ collections {
                             fixed: 1 1;
                     }
                  }
-                 
+     
                  part {
                 name: "border";
                 type: IMAGE;
@@ -12027,7 +12027,7 @@ collections {
             target: "elm.swallow.1";
             target: "elm.swallow.2";
             transition: SINUSOIDAL 1.0;
-         } 
+         }
                //
          program { name: "fade_next";
             signal: "fade,next";
@@ -14473,18 +14473,18 @@ collections {
                   set_state(PART:"elm.text", "disabled", 0.0);
 
                get_state(PART:"elm.units", st, 30, vl);
-               if (!strcmp(st, "visible")) 
+               if (!strcmp(st, "visible"))
                   set_state(PART:"elm.units", "disabled_visible", 0.0);
-               else 
+               else
                   set_state(PART:"elm.units", "disabled", 0.0);
 
                get_state(PART:"level2", st, 30, vl);
-               if (!strcmp(st, "inverted")) 
+               if (!strcmp(st, "inverted"))
                {
                   set_state(PART:"level", "disabled_inverted", 0.0);
                   set_state(PART:"level2", "disabled_inverted", 0.0);
                }
-               else 
+               else
                {
                   set_state(PART:"level", "disabled", 0.0);
                   set_state(PART:"level2", "disabled", 0.0);
@@ -14514,7 +14514,7 @@ collections {
                   set_state(PART:"elm.units", "visible", 0.0);
                else
                   set_state(PART:"elm.units", "default", 0.0);
-     
+
                get_state(PART:"level2", st, 30, vl);
                if (!strcmp(st, "disabled_inverted"))
                {
@@ -14937,18 +14937,18 @@ collections {
                   set_state(PART:"elm.text", "disabled", 0.0);
 
                get_state(PART:"elm.units", st, 30, vl);
-               if (!strcmp(st, "visible")) 
+               if (!strcmp(st, "visible"))
                   set_state(PART:"elm.units", "disabled_visible", 0.0);
-               else 
+               else
                   set_state(PART:"elm.units", "disabled", 0.0);
 
                get_state(PART:"level2", st, 30, vl);
-               if (!strcmp(st, "inverted")) 
+               if (!strcmp(st, "inverted"))
                {
                   set_state(PART:"level", "disabled_inverted", 0.0);
                   set_state(PART:"level2", "disabled_inverted", 0.0);
                }
-               else 
+               else
                {
                   set_state(PART:"level", "disabled", 0.0);
                   set_state(PART:"level2", "disabled", 0.0);
@@ -14979,7 +14979,7 @@ collections {
                   set_state(PART:"elm.units", "visible", 0.0);
                else
                   set_state(PART:"elm.units", "default", 0.0);
-     
+
                get_state(PART:"level2", st, 30, vl);
                if (!strcmp(st, "disabled_inverted"))
                {
