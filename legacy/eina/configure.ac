@@ -330,15 +330,22 @@ fi
 AC_HEADER_ASSERT
 AC_HEADER_DIRENT
 AC_HEADER_TIME
+AC_CHECK_HEADERS([unistd.h libgen.h])
 EFL_CHECK_PATH_MAX
 
 ### Checks for types
 AC_CHECK_HEADER([inttypes.h],
-		[EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"])
+   [
+    EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
+    AC_DEFINE(HAVE_INTTYPES_H, 1, [Define to 1 if you have the <inttypes.h> header file.])
+   ])
 AC_SUBST(EINA_CONFIGURE_HAVE_INTTYPES_H)
 
 AC_CHECK_HEADER([stdint.h],
-		[EINA_CONFIGURE_HAVE_STDINT_H="#define EINA_HAVE_STDINT_H"])
+   [
+    EINA_CONFIGURE_HAVE_STDINT_H="#define EINA_HAVE_STDINT_H"
+    AC_DEFINE(HAVE_STDINT_H, 1, [Define to 1 if you have the <stdint.h> header file.])
+   ])
 AC_SUBST(EINA_CONFIGURE_HAVE_STDINT_H)
 
 AC_CHECK_SIZEOF(wchar_t)
