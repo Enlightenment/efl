@@ -969,7 +969,7 @@ extern "C" {
     *
     * selected - User has selected a item.
     * unselected - User has unselected a item.
-    * clicked - User has double-clicked a item.
+    * clicked - User has double-clicked or pressed enter on a item.
     * realized - An evas object for a item was built.
     * unrealized - An evas object for a item was deleted.
     * changed - An item has been added, removed, resized or moved,

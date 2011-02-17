@@ -12,8 +12,9 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - The user has double-clicked a item. The event_info
- * parameter is the Gengrid item that was double-clicked.
+ * clicked - The user has double-clicked or pressed enter on 
+ * a item. The event_infoparameter is the Gengrid item 
+ * that was double-clicked.
  *
  * selected - The user has made an item selected. The event_info
  * parameter is the Gengrid item that was selected.
@@ -429,6 +430,11 @@ _event_hook(Evas_Object       *obj,
         if (!_deselect_all_items(wd)) return EINA_FALSE;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
+     }
+   else if (!strcmp(ev->keyname, "Return"))
+     {
+        item = elm_gengrid_selected_item_get(obj);
+        evas_object_smart_callback_call(item->wd->self, "clicked", item);
      }
    else return EINA_FALSE;
 
