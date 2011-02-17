@@ -1201,6 +1201,65 @@ eina_list_data_find(const Eina_List *list, const void *data)
 }
 
 /**
+ * @brief Move a data pointer from one list to another
+ *
+ * @param to The list to move the data to
+ * @param from The list to move from
+ * @param data The data to move
+ * @return #EINA_TRUE on success, else #EINA_FALSE
+ *
+ * This function is a shortcut for doing the following:
+ * to = eina_list_append(to, data);
+ * from = eina_list_remove(from, data);
+ */
+EAPI Eina_Bool
+eina_list_move(Eina_List **to, Eina_List **from, void *data)
+{
+   Eina_List *l;
+   
+   EINA_SAFETY_ON_NULL_RETURN_VAL(to, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(from, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   
+   EINA_MAGIC_CHECK_LIST(*to, EINA_FALSE);
+   EINA_MAGIC_CHECK_LIST(*from, EINA_FALSE);
+
+   l = eina_list_data_find_list(*from, data);
+   if (!l) return EINA_FALSE; /* should this be SAFETY_ON_NULL for a warning? */
+
+   *to = eina_list_append(*to, data);
+   *from = eina_list_remove_list(*from, l);
+   return EINA_TRUE;
+}
+
+/**
+ * @brief Move a list node from one list to another
+ *
+ * @param to The list to move the data to
+ * @param from The list to move from
+ * @param data The list node containing the data to move
+ * @return #EINA_TRUE on success, else #EINA_FALSE
+ *
+ * This function is a shortcut for doing the following:
+ * to = eina_list_append(to, data->data);
+ * from = eina_list_remove_list(from, data);
+ */
+EAPI Eina_Bool
+eina_list_move_list(Eina_List **to, Eina_List **from, Eina_List *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(to, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(from, EINA_FALSE);
+   
+   EINA_MAGIC_CHECK_LIST(*to, EINA_FALSE);
+   EINA_MAGIC_CHECK_LIST(*from, EINA_FALSE);
+   EINA_MAGIC_CHECK_LIST(data, EINA_FALSE);
+
+   *to = eina_list_append(*to, data->data);
+   *from = eina_list_remove_list(*from, data);
+   return EINA_TRUE;
+}
+
+/**
  * @brief Find a member of a list and return the list node containing that member.
  *
  * @param list The list to search for data.

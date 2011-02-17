@@ -18,3 +18,7 @@
 
 	* Added eina_unicode_utf8* functions for utf8 string handling
 	and conversions to and from Eina_Unicode
+
+2011-02-17  Mike Blumenkrantz
+
+        * Added eina_list_move* functions for moving list node data to other lists

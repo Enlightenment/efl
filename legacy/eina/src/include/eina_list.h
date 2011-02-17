@@ -110,6 +110,10 @@ EAPI Eina_List            *eina_list_demote_list(Eina_List *list, Eina_List *mov
 
 EAPI void                 *eina_list_data_find(const Eina_List *list, const void *data) EINA_PURE EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 EAPI Eina_List            *eina_list_data_find_list(const Eina_List *list, const void *data) EINA_PURE EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
+
+EAPI Eina_Bool             eina_list_move(Eina_List **to, Eina_List **from, void *data);
+EAPI Eina_Bool             eina_list_move_list(Eina_List **to, Eina_List **from, Eina_List *data);
+
 EAPI Eina_List            *eina_list_free(Eina_List *list);
 
 EAPI void                 *eina_list_nth(const Eina_List *list, unsigned int n) EINA_PURE EINA_WARN_UNUSED_RESULT;
