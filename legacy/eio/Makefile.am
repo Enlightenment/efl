@@ -50,6 +50,7 @@ EXTRA_DIST = \
 AUTHORS \
 COPYING \
 autogen.sh \
+eio.spec \
 eio.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig

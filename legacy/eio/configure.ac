@@ -164,6 +164,7 @@ fi
 
 AC_OUTPUT([
 eio.pc
+eio.spec
 Makefile
 doc/Makefile
 doc/eio.dox
