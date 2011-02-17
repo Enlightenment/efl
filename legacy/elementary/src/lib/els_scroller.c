@@ -911,7 +911,7 @@ bounce_eval(Smart_Data *sd)
 void
 elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Coord mx = 0, my = 0, px, py, minx = 0, miny = 0;
+   Evas_Coord mx = 0, my = 0, px = 0, py = 0, minx = 0, miny = 0;
    double vx, vy;
 
    API_ENTRY return;
