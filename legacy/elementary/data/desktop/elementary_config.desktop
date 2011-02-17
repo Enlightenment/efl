@@ -1,8 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Elementary Configuration
+Name[ru]=Конфигурация Elementary
 Name[pt]=Configuração do Elementary
 Comment=Elementary Configuration
+Comment[ru]=Конфигурация для Elementary (Элементарий)
 Comment[fr]=Configuration pour Elementary
 Comment[it]=Configurazione di Elementary
 Comment[pt]=Configure o Elementary
