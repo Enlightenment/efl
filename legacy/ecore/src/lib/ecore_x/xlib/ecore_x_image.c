@@ -282,7 +282,8 @@ ecore_x_image_put(Ecore_X_Image *im,
                   int h)
 {
    Ecore_X_GC tgc = 0;
-   
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!gc)
      {
         XGCValues gcv;
