@@ -201,6 +201,7 @@ AC_SUBST(dbusservicedir)
 
 AC_OUTPUT([
 ethumb.pc
+ethumb.spec
 ethumb_client.pc
 org.enlightenment.Ethumb.service
 Makefile

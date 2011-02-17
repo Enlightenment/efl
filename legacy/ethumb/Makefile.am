@@ -12,6 +12,7 @@ MAINTAINERCLEANFILES = \
 	missing
 
 EXTRA_DIST = m4/Makefile.in \
+	ethumb.spec
 	README \
 	AUTHORS \
 	COPYING
