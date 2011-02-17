@@ -484,6 +484,14 @@ extern "C" {
         ELM_WIN_KEYBOARD_KEYPAD,
         ELM_WIN_KEYBOARD_J2ME
      } Elm_Win_Keyboard_Mode;
+     
+   typedef enum _Elm_Illume_Command
+     {
+        ELM_ILLUME_COMMAND_FOCUS_BACK,
+        ELM_ILLUME_COMMAND_FOCUS_FORWARD,
+        ELM_ILLUME_COMMAND_FOCUS_HOME,
+        ELM_ILLUME_COMMAND_CLOSE
+     } Elm_Illume_Command;
 
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    EAPI void         elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
@@ -528,6 +536,8 @@ extern "C" {
    EAPI int          elm_win_quickpanel_priority_minor_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_win_quickpanel_zone_set(Evas_Object *obj, int zone) EINA_ARG_NONNULL(1);
    EAPI int          elm_win_quickpanel_zone_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip); EINA_ARG_NONNULL(1);
+   EAPI void         elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params); EINA_ARG_NONNULL(1);
    EAPI void         elm_win_focus_highlight_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_win_focus_highlight_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_win_focus_highlight_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);

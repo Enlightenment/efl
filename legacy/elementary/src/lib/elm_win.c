@@ -2162,6 +2162,98 @@ elm_win_quickpanel_zone_get(const Evas_Object *obj)
 }
 
 /**
+ * Set the window to be skipped by keyboard focus
+ * 
+ * This sets the window to be skipped by normal keyboard input. This means
+ * a window manager will be asked to not focus this window as well as omit
+ * it from things like the taskbar, pager, "alt-tab" list etc. etc.
+ * 
+ * Call this and enable it on a window BEFORE you show it for the first time,
+ * otherwise it may have no effect.
+ * 
+ * Use this for windows that have only output information or might only be
+ * interacted with by the mouse or fingers, and never for typing input.
+ * Be careful that this may have side-effects like making the window
+ * non-accessible in some cases unless the window is specially handled. Use
+ * this with care.
+ * 
+ * @param obj The window object
+ * @param skip The skip flag state (EINA_TRUE if it is to be skipped)
+ * 
+ * @ingroup Win
+ */
+EAPI void
+elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
+   if (skip)
+     {
+        if (win->xwin)
+          {
+             Ecore_X_Window_State states[2];
+             
+             ecore_x_icccm_hints_set(win->xwin, 0, 0, 0, 0, 0, 0, 0);
+             states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+             states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+             ecore_x_netwm_window_state_set(win->xwin, states, 2);
+          }
+     }
+#endif
+}
+
+/**
+ * Send a command to the windowing environment
+ * 
+ * This is intended to work in touchscreen or small screen device environments
+ * where there is a more simplistic window management policy in place. This
+ * uses the window object indicated to select which part of the environment
+ * to control (the part that this window lives in), and provides a command
+ * and an optional parameter structure (use NULL for this if not needed).
+ * 
+ * @param obj The window object that lives in the environment to control
+ * @param command The command to send
+ * @param params Optional parameters for the command
+ * 
+ * @ingroup Win
+ */
+EAPI void
+elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params __UNUSED__)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
+   if (win->xwin)
+     {
+        switch (command)
+          {
+           case ELM_ILLUME_COMMAND_FOCUS_BACK:
+             ecore_x_e_illume_focus_back_send(win->xwin);
+             break;
+           case ELM_ILLUME_COMMAND_FOCUS_FORWARD:
+             ecore_x_e_illume_focus_forward_send(win->xwin);
+             break;
+           case ELM_ILLUME_COMMAND_FOCUS_HOME:
+             ecore_x_e_illume_focus_home_send(win->xwin);
+             break;
+           case ELM_ILLUME_COMMAND_CLOSE:
+             ecore_x_e_illume_close_send(win->xwin);
+             break;
+           default:
+             break;
+          }
+     }
+#endif
+}
+
+/**
  * Set the enabled status for the focus highlight in a window
  *
  * This function will enable or disable the focus highlight only for the
