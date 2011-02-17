@@ -1529,6 +1529,7 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    if ((!sd->hold) && (!sd->freeze))
      {
         _update_wanted_coordinates(sd, x, y);
+        elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
      }
 }
 
