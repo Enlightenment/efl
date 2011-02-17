@@ -97,6 +97,87 @@
  * @endcode
  */
 
+/**
+ * @page tutorial_dir_stat_ls eio_dir_stat_ls() tutorial
+ *
+ * @li The filter callback, which allow or not a file to be seen
+ * by the main loop handler. This callback run in a separated thread.
+ * @li The main callback, which receive in the main loop all the file
+ * that are allowed by the filter. If you are updating a user interface
+ * it make sense to delay the insertion a little, so you get a chance
+ * to update the canvas for a bunch of file instead of one by one.
+ * @li The end callback, which is called in the main loop when the
+ * content of the directory has been correctly scanned and all the
+ * file notified to the main loop.
+ * @li The error callback, which is called if an error occured or
+ * if the listing was cancelled during it's run. You can then retrieve
+ * the error type as an errno error.
+ *
+ * Here is a simple example that implement a stupidly simple replacement for find:
+ *
+ * @code
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * static Eina_Bool
+ * _test_filter_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
+ * {
+ *    fprintf(stderr, "ACCEPTING: %s\n", info->path);
+ *    return EINA_TRUE;
+ * }
+ *
+ * static void
+ * _test_main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
+ * {
+ *    fprintf(stderr, "PROCESS: %s\n", info->path);
+ * }
+ *
+ * static void
+ * _test_done_cb(void *data, Eio_File *handler)
+ * {
+ *    printf("ls done\n");
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * static void
+ * _test_error_cb(void *data, Eio_File *handler, int error)
+ * {
+ *    fprintf(stderr, "error: [%s]\n", strerror(error));
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * int
+ * main(int argc, char **argv)
+ * {
+ *    Eio_File *cp;
+ *
+ *    if (argc != 2)
+ *      {
+ * 	fprintf(stderr, "eio_ls directory\n");
+ * 	return -1;
+ *      }
+ *
+ *    ecore_init();
+ *    eio_init();
+ *
+ *    cp = eio_dir_stat_ls(argv[1],
+ *                         _test_filter_cb,
+ *                         _test_main_cb,
+ *                         _test_done_cb,
+ *                         _test_error_cb,
+ *                         NULL);
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    eio_shutdown();
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ *
+ * @endcode
+ */
+
 #include "eio_private.h"
 #include "Eio.h"
 
@@ -113,69 +194,101 @@ eio_strcmp(const void *a, const void *b)
 {
    return strcmp(a, b);
 }
+static Eina_Bool
+_eio_dir_recursive_progress(Eio_Dir_Copy *copy, Eio_File *handler, const Eina_File_Direct_Info *info)
+{
+   switch (info->type)
+     {
+      case EINA_FILE_UNKNOWN:
+         eio_file_thread_error(&copy->progress.common, handler->thread);
+         return EINA_FALSE;
+      case EINA_FILE_LNK:
+         copy->links = eina_list_append(copy->links, eina_stringshare_add(info->path));
+         break;
+      case EINA_FILE_DIR:
+         copy->dirs = eina_list_append(copy->dirs, eina_stringshare_add(info->path));
+         break;
+      default:
+         copy->files = eina_list_append(copy->files, eina_stringshare_add(info->path));
+         break;
+     }
+
+   return EINA_TRUE;
+}
 
 static Eina_Bool
-_eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *target)
+_eio_file_recursiv_ls(Ecore_Thread *thread,
+                      Eio_File *common,
+                      Eio_Filter_Direct_Cb filter_cb,
+                      void *data,
+                      const char *target)
 {
-   const Eina_File_Direct_Info *info;
-   Eina_Iterator *it;
-   Eina_List *dirs = NULL;
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it = NULL;
    Eina_List *l;
+   Eina_List *dirs = NULL;
    const char *dir;
-   struct stat buffer;
 
    it = eina_file_stat_ls(target);
    if (!it)
      {
-        eio_file_thread_error(&copy->progress.common, thread);
+        eio_file_thread_error(common, thread);
         return EINA_FALSE;
      }
 
    EINA_ITERATOR_FOREACH(it, info)
      {
+        Eina_Bool filter = EINA_TRUE;
+        struct stat buffer;
+
         switch (info->type)
           {
-           case EINA_FILE_UNKNOWN:
-              eio_file_thread_error(&copy->progress.common, thread);
-              goto on_error;
            case EINA_FILE_DIR:
               if (lstat(info->path, &buffer) != 0)
                 goto on_error;
 
-              if (S_ISDIR(buffer.st_mode))
-                dirs = eina_list_append(dirs, eina_stringshare_add(info->path));
-              else /* It's a link we should not forget about it */
-                copy->links = eina_list_append(copy->links, eina_stringshare_add(info->path));
-              break;
+              if (S_ISLNK(buffer.st_mode))
+                info->type = EINA_FILE_LNK;
            default:
-              copy->files = eina_list_append(copy->files, eina_stringshare_add(info->path));
               break;
           }
+
+        filter = filter_cb(data, common, info);
+        if (filter && info->type == EINA_FILE_DIR)
+          dirs = eina_list_append(dirs, eina_stringshare_add(info->path));
 
         if (ecore_thread_check(thread))
           goto on_error;
      }
 
    eina_iterator_free(it);
+   it = NULL;
 
    EINA_LIST_FOREACH(dirs, l, dir)
-     if (!_eio_dir_recursiv_ls(thread, copy, dir))
-       {
-          EINA_LIST_FREE(dirs, dir)
-            eina_stringshare_del(dir);
-          return EINA_FALSE;
-       }
+     if (!_eio_file_recursiv_ls(thread, common, filter_cb, data, dir))
+       goto on_error;
 
-   copy->dirs = eina_list_merge(copy->dirs, dirs);
    return EINA_TRUE;
 
  on_error:
-   eina_iterator_free(it);
+   if (it) eina_iterator_free(it);
 
    EINA_LIST_FREE(dirs, dir)
      eina_stringshare_del(dir);
 
    return EINA_FALSE;
+}
+
+
+static Eina_Bool
+_eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *target)
+{
+   if (!_eio_file_recursiv_ls(thread, &copy->progress.common,
+                              (Eio_Filter_Direct_Cb) _eio_dir_recursive_progress,
+                              copy, target))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -314,7 +427,7 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
           }
 
         /* create the link */
-        if (symlink(oldpath, newpath) != 0)
+        if (symlink(newpath, oldpath) != 0)
           goto on_error;
 
         /* inform main thread */
@@ -698,6 +811,78 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
    return;
 }
 
+static Eina_Bool
+_eio_dir_stat_find_forward(Eio_File_Direct_Ls *async,
+                           Eio_File *handler,
+                           const Eina_File_Direct_Info *info)
+{
+   Eina_Bool filter = EINA_TRUE;
+
+   if (async->filter_cb)
+     {
+        filter = async->filter_cb((void*) async->ls.common.data, &async->ls.common, info);
+     }
+
+   if (filter)
+     {
+        Eina_File_Direct_Info *send;
+
+        send = eio_direct_info_malloc();
+        if (!send) return EINA_FALSE;
+
+        memcpy(send, info, sizeof (Eina_File_Direct_Info));
+
+        ecore_thread_feedback(handler->thread, send);
+     }
+
+   return EINA_TRUE;
+}
+
+static void
+_eio_dir_stat_find_heavy(void *data, Ecore_Thread *thread)
+{
+   Eio_File_Direct_Ls *async = data;
+
+   async->ls.common.thread = thread;
+
+   _eio_file_recursiv_ls(thread, &async->ls.common,
+                         (Eio_Filter_Direct_Cb) _eio_dir_stat_find_forward,
+                         async, async->ls.directory);
+}
+
+static void
+_eio_dir_stat_find_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
+{
+   Eio_File_Direct_Ls *async = data;
+   Eina_File_Direct_Info *info = msg_data;
+
+   async->main_cb((void*) async->ls.common.data, &async->ls.common, info);
+
+   eio_direct_info_free(info);
+}
+
+static void
+_eio_dir_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Eio_File_Ls *async = data;
+
+   async->common.done_cb((void*) async->common.data, &async->common);
+
+   eina_stringshare_del(async->directory);
+   free(async);
+}
+
+static void
+_eio_dir_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Eio_File_Ls *async = data;
+
+   eio_file_error(&async->common);
+
+   eina_stringshare_del(async->directory);
+   free(async);
+}
+
 /**
  * @endcond
  */
@@ -871,6 +1056,54 @@ eio_dir_unlink(const char *path,
      return NULL;
 
    return &rmrf->progress.common;
+}
+
+/**
+ * @brief List the content of a directory and all it's sub-content asynchronously
+ * @param dir The directory to list.
+ * @param filter_cb Callback called from another thread.
+ * @param main_cb Callback called from the main loop for each accepted file.
+ * @param done_cb Callback called from the main loop when the content of the directory has been listed.
+ * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @param data Data passed to callback and not modified at all by eio_dir_stat_find.
+ * @return A reference to the IO operation.
+ *
+ * eio_dir_stat_find() run eina_file_stat_ls() recursivly in a separated thread using
+ * ecore_thread_feedback_run. This prevent any lock in your apps.
+ */
+EAPI Eio_File *
+eio_dir_stat_ls(const char *dir,
+                Eio_Filter_Direct_Cb filter_cb,
+                Eio_Main_Direct_Cb main_cb,
+                Eio_Done_Cb done_cb,
+                Eio_Error_Cb error_cb,
+                const void *data)
+{
+   Eio_File_Direct_Ls *async;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+
+   async = malloc(sizeof(Eio_File_Direct_Ls));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+
+   async->filter_cb = filter_cb;
+   async->main_cb = main_cb;
+   async->ls.directory = eina_stringshare_add(dir);
+
+   if (!eio_long_file_set(&async->ls.common,
+                          done_cb,
+                          error_cb,
+                          data,
+                          _eio_dir_stat_find_heavy,
+                          _eio_dir_stat_find_notify,
+                          _eio_dir_stat_done,
+                          _eio_dir_stat_error))
+     return NULL;
+
+   return &async->ls.common;
 }
 
 /**
