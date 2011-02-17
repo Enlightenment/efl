@@ -2726,7 +2726,7 @@ EAPI void
 elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int zoom = floor(log2(size/256));
+   int zoom = floor(log(size/256) / log(2));
 
    if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
      if ((wd->api) && (wd->api->obj_convert_coord_into_geo))
@@ -2759,7 +2759,7 @@ EAPI void
 elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   int zoom = floor(log2(size/256));
+   int zoom = floor(log(size/256) / log(2));
 
    if (elm_map_source_get(obj) == ELM_MAP_SOURCE_MODULE)
      if ((wd->api) && (wd->api->obj_convert_geo_into_coord))
