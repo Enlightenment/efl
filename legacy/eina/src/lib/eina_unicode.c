@@ -230,7 +230,7 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
         if (((d = buf[ind++]) == 0) || IS_INVALID_BYTE(d) ||
             !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) goto error;
+        if (r <= 0x7F) goto error;
         *iindex = ind;
         return r;
      }
@@ -243,7 +243,7 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
         if (((d = buf[ind++]) == 0) || IS_INVALID_BYTE(d) ||
             !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) goto error;
+        if (r <= 0x7FF) goto error;
         *iindex = ind;
         return r;
      }
@@ -259,7 +259,7 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
         if (((d = buf[ind++]) == 0) || IS_INVALID_BYTE(d) ||
             !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) goto error;
+        if (r <= 0xFFFF) goto error;
         *iindex = ind;
         return r;
      }
@@ -278,7 +278,7 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
         if (((d = buf[ind++]) == 0) || IS_INVALID_BYTE(d) ||
             !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) goto error;
+        if (r <= 0x1FFFFF) goto error;
         *iindex = ind;
         return r;
      }
@@ -300,7 +300,7 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
         if (((d = buf[ind++]) == 0) || IS_INVALID_BYTE(d) ||
             !IS_CONTINUATION_BYTE(d)) goto error;
         r |= (d & 0x3f);
-        if (!r) goto error;
+        if (r <= 0x3FFFFFF) goto error;
         *iindex = ind;
         return r;
      }
