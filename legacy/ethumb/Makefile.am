@@ -11,11 +11,8 @@ MAINTAINERCLEANFILES = \
 	ltmain.sh \
 	missing
 
-EXTRA_DIST = m4/Makefile.in \
-	ethumb.spec
-	README \
-	AUTHORS \
-	COPYING
+EXTRA_DIST = \
+autogen.sh
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ethumb.pc

@@ -199,7 +199,7 @@ AC_SUBST(requirement_ethumb)
 AC_SUBST(requirement_ethumb_client)
 AC_SUBST(dbusservicedir)
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 ethumb.pc
 ethumb.spec
 ethumb_client.pc
@@ -218,6 +218,8 @@ data/frames/Makefile
 m4/Makefile
 doc/Makefile
 ])
+
+AC_OUTPUT
 
 txt_strip() {
         echo "[$]@" | sed -e 's/^[[ \t]]*\([[^ \t]]*\)[[ \t]]*$/\1/g'
