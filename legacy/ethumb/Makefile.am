@@ -12,7 +12,8 @@ MAINTAINERCLEANFILES = \
 	missing
 
 EXTRA_DIST = \
-autogen.sh
+autogen.sh  \
+ethumb.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ethumb.pc
