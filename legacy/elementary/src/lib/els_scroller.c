@@ -473,9 +473,6 @@ _smart_scrollto_x(Smart_Data *sd, double t_in, Evas_Coord pos_x)
    sd->scrollto.x.end = pos_x;
    sd->scrollto.x.t_start = t;
    sd->scrollto.x.t_end = t + t_in;
-   elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-   elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
-   elm_smart_scroller_child_region_set(sd->smart_obj, x, y, w, h);
    if (!sd->scrollto.x.animator)
      {
         if (!sd->scrollto.y.animator)
@@ -540,9 +537,6 @@ _smart_scrollto_y(Smart_Data *sd, double t_in, Evas_Coord pos_y)
    sd->scrollto.y.end = pos_y;
    sd->scrollto.y.t_start = t;
    sd->scrollto.y.t_end = t + t_in;
-   elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-   elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, &h);
-   elm_smart_scroller_child_region_set(sd->smart_obj, x, y, w, h);
    if (!sd->scrollto.y.animator)
      {
         if (!sd->scrollto.x.animator)
