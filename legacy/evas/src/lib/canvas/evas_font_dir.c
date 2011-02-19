@@ -912,7 +912,7 @@ evas_object_text_font_string_parse(char *buffer, char dest[14][256])
    while (p[i])
      {
 	dest[n][m] = p[i];
-	if ((p[i] == '-') || (m == 256))
+	if ((p[i] == '-') || (m == 255))
 	  {
 	     dest[n][m] = 0;
 	     n++;
