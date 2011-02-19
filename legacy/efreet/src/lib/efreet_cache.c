@@ -1279,6 +1279,7 @@ desktop_cache_update_free(void *data, void *ev)
     }
     else
     {
+        /* TODO: Keep in old_desktop_caches, as we might close ref later */
         printf("Efreet: ERROR. There are still %i desktop files with old\n"
                "dangling references to desktop files. This application\n"
                "has not handled the EFREET_EVENT_DESKTOP_CACHE_UPDATE\n"
