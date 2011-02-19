@@ -458,6 +458,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
+     {"collections.group.parts.part.description.text.ellipsis", st_collections_group_parts_part_description_text_elipsis},
      {"collections.group.parts.part.description.box.layout", st_collections_group_parts_part_description_box_layout},
      {"collections.group.parts.part.description.box.align", st_collections_group_parts_part_description_box_align},
      {"collections.group.parts.part.description.box.padding", st_collections_group_parts_part_description_box_padding},
@@ -5085,7 +5086,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
                     align:        X-axis     Y-axis;
                     source:      "part_name";
                     text_source: "text_part_name";
-                    elipsis:      0.0-1.0;
+                    ellipsis:     0.0-1.0;
                     style:       "stylename";
                 }
                 ..
@@ -5596,7 +5597,7 @@ st_collections_group_parts_part_description_text_text_source(void)
     @page edcref
 
     @property
-        elipsis
+        ellipsis
     @parameters
         [point of balance]
     @effect
