@@ -26,6 +26,8 @@
  * - Need to cache all exts searched and extra_dirs, so we know if we
  *   need to rescan dirs. Then re-enable cache_directory_find().
  * - Need to check if files has disappeared, as we only add new.
+ * - Base dir is touched on icon theme update, no need to scan all.
+ * - There is something weird going on with inheritance when adding extensions
  */
 
 static Eina_Array *exts = NULL;
@@ -303,8 +305,9 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
             Efreet_Icon_Theme *inherit;
 
             inherit = eina_hash_find(icon_themes, name);
-            if (!inherit) fprintf(stderr, "Theme `%s` not found for `%s`.\n",
-                                  name, theme->name.internal);
+            if (!inherit && verbose)
+                fprintf(stderr, "Theme `%s` not found for `%s`.\n",
+                        name, theme->name.internal);
             if (!cache_scan(inherit, themes, icons, dirs, changed)) return EINA_FALSE;
         }
     }
@@ -333,8 +336,9 @@ check_changed(Efreet_Cache_Icon_Theme *theme)
             Efreet_Cache_Icon_Theme *inherit;
 
             inherit = eina_hash_find(icon_themes, name);
-            if (!inherit) fprintf(stderr, "Theme `%s` not found for `%s`.\n",
-                                  name, theme->theme.name.internal);
+            if (!inherit && verbose)
+                fprintf(stderr, "Theme `%s` not found for `%s`.\n",
+                        name, theme->theme.name.internal);
             if (check_changed(inherit)) return EINA_TRUE;
         }
     }
@@ -858,10 +862,11 @@ main(int argc, char **argv)
 
         if (cache_scan(&(theme->theme), themes, icons, theme->dirs, &changed))
         {
-            fprintf(stderr, "generated: '%s' %i (%i)\n",
-                    theme->theme.name.internal,
-                    changed,
-                    eina_hash_population(icons));
+            if (verbose)
+                fprintf(stderr, "generated: '%s' %i (%i)\n",
+                        theme->theme.name.internal,
+                        changed,
+                        eina_hash_population(icons));
             if (changed)
             {
                 Eina_Iterator *icons_it;
@@ -879,7 +884,7 @@ main(int argc, char **argv)
 
         if (theme->changed || changed)
         {
-            if (theme->changed)
+            if (theme->changed && verbose)
                 fprintf(stderr, "theme change: %s %lld\n", theme->theme.name.internal, theme->last_cache_check);
             eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, 1);
         }
@@ -944,7 +949,8 @@ main(int argc, char **argv)
     /* Save fallback in the right part */
     if (cache_fallback_scan(icons, theme->dirs, &changed))
     {
-        fprintf(stderr, "generated: fallback %i (%i)\n", changed, eina_hash_population(icons));
+        if (verbose)
+            fprintf(stderr, "generated: fallback %i (%i)\n", changed, eina_hash_population(icons));
         if (changed)
         {
             Eina_Iterator *icons_it;
