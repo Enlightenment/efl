@@ -1904,3 +1904,185 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
                                          Ecore_X_Randr_Unset);
 #endif
 }
+
+/**
+ * @brief set up the backlight level to the given level.
+ * @param root the window's screen which will be set.
+ * @param level of the backlight between 0 and 1
+ */
+
+EAPI void
+ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root,
+                                         double         level)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET();
+   Atom _backlight;
+   XRRScreenResources *resources = NULL;
+   Ecore_X_Randr_Output output;
+   int o;
+
+   if ((level < 0) || (level > 1))
+     {
+        ERR("Wrong value for the backlight level. It should be between 0 and 1.");
+        return;
+     }
+
+   /*
+    * To make sure that the _backlight atomic property still exists.
+    */
+   _backlight = XInternAtom(_ecore_x_disp, RANDR_PROPERTY_BACKLIGHT, True);
+   if (_backlight == None)
+     {
+        WRN("Backlight setting is not supported on this server or driver");
+        return;
+     }
+
+   /* get the ressources */
+   resources = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root);
+   if (!resources) return;
+
+   for (o = 0; o < resources->noutput; o++)
+     {
+        output = resources->outputs[o];
+        if (ecore_x_randr_output_backlight_level_get(root, output) >= 0)
+          {
+             ecore_x_randr_output_backlight_level_set(root, output, level);
+          }
+     }
+   XRRFreeScreenResources(resources);
+#endif
+}
+
+/*
+ * @brief get the backlight level of the given output
+ * @param root window which's screen should be queried
+ * @param output from which the backlight level should be retrieved
+ * @return the backlight level
+ */
+
+EAPI double
+ecore_x_randr_output_backlight_level_get(Ecore_X_Window       root,
+                                         Ecore_X_Randr_Output output)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET(-1);
+   Atom actual_type;
+   Atom _backlight;
+   XRRPropertyInfo *info = NULL;
+   double dvalue;
+   int actual_format;
+   long value, max, min;
+   unsigned long nitems;
+   unsigned long bytes_after;
+   unsigned char *prop = NULL;
+
+   /* set backlight variable if not already done */
+
+   _backlight = XInternAtom(_ecore_x_disp, RANDR_PROPERTY_BACKLIGHT, True);
+   if (_backlight == None)
+     {
+        ERR("Backlight property is not suppported on this server or driver");
+        return -1;
+     }
+
+   if (!_ecore_x_randr_output_validate(root, output))
+     {
+        ERR("Invalid output");
+        return -1;
+     }
+
+   if (XRRGetOutputProperty(_ecore_x_disp, output, _backlight,
+                            0, 4, False, False, None,
+                            &actual_type, &actual_format,
+                            &nitems, &bytes_after, &prop) != Success)
+     {
+        WRN("Backlight not supported on this output");
+        return -1;
+     }
+
+   if ((actual_type != XA_INTEGER) || (nitems != 1) || (actual_format != 32)) return -1;
+
+   value = *((long *)prop);
+   free (prop);
+
+   /* I have the current value of the backlight */
+   /* Now retrieve the min and max intensities of the output */
+   info = XRRQueryOutputProperty(_ecore_x_disp, output, _backlight);
+   if (info)
+     {
+        dvalue = -1;
+        if ((info->range) && (info->num_values == 2))
+          {
+             /* finally convert the current value in the interval [0..1] */
+              min = info->values[0];
+              max = info->values[1];
+              dvalue = ((double)(value - min)) / ((double)(max - min));
+          }
+        free(info);
+        return dvalue;
+     }
+#endif
+   return -1;
+}
+
+/*
+ * @brief set the backlight level of a given output
+ * @param root window which's screen should be queried
+ * @param output that should be set
+ * @param level for which the backlight should be set
+ * @return EINA_TRUE in case of success
+ */
+
+EAPI Eina_Bool
+ecore_x_randr_output_backlight_level_set(Ecore_X_Window       root,
+                                         Ecore_X_Randr_Output output,
+                                         double               level)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+   Atom _backlight;
+   XRRPropertyInfo *info = NULL;
+   double min, max, tmp;
+   long new;
+
+   if ((level < 0) || (level > 1))
+     {
+        ERR("Backlight level should be between 0 and 1");
+        return EINA_FALSE;
+     }
+
+   if (!_ecore_x_randr_output_validate(root, output))
+     {
+        ERR("Wrong output value");
+        return EINA_FALSE;
+     }
+
+   _backlight = XInternAtom(_ecore_x_disp, RANDR_PROPERTY_BACKLIGHT, True);
+   if (_backlight == None)
+     {
+        WRN("Backlight property is not suppported on this server or driver");
+        return EINA_FALSE;
+     }
+
+   info = XRRQueryOutputProperty(_ecore_x_disp, output, _backlight);
+   if (info)
+     {
+        if ((info->range) && (info->num_values == 2))
+          {
+             min = info->values[0];
+             max = info->values[1];
+             tmp = (level * (max - min)) + min;
+             new = tmp;
+             if (new > max) new = max;
+             if (new < min) new = min;
+             XRRChangeOutputProperty(_ecore_x_disp, output, _backlight, XA_INTEGER, 32,
+                                     PropModeReplace, (unsigned char *)&new, 1);
+             XFlush(_ecore_x_disp);
+          }
+        free(info);
+        return EINA_TRUE;
+     }
+#endif
+   return EINA_FALSE;
+}

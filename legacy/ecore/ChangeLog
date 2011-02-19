@@ -1,3 +1,7 @@
+2011-02-09  Mathieu Taillefumier
+
+	* Add xrandr backlight support to ecore_x
+
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
