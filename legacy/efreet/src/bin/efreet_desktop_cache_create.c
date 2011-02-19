@@ -411,7 +411,6 @@ main(int argc, char **argv)
                              \
         hash.hash = (_hash); \
         eet_data_write(util_ef, efreet_hash_array_string_edd(), #_hash "_hash", &hash, 1); \
-        printf("key: %s = %d\n", #_hash, eina_hash_population(hash.hash)); \
         array.array_count = 0; \
         array.array = malloc(eina_hash_population(hash.hash) * sizeof(char *)); \
         it = eina_hash_iterator_key_new(hash.hash); \
@@ -432,7 +431,6 @@ main(int argc, char **argv)
     {
         hash.hash = file_ids;
         eet_data_write(util_ef, efreet_hash_string_edd(), "file_id", &hash, 1);
-        printf("key: file_id = %d\n", eina_hash_population(file_ids));
     }
 
     eina_hash_free(mime_types);
