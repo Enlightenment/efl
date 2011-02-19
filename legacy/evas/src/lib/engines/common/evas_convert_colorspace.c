@@ -50,7 +50,7 @@ static inline void *
 evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bool has_alpha)
 {
    uint32_t *src, *end;
-   uint8_t *ret;
+   uint8_t *ret, *dst;
 
    src = data;
    end = src + (stride * h);
@@ -62,8 +62,9 @@ evas_common_convert_argb8888_to_a8(void *data, int w, int h, int stride, Eina_Bo
         return memset(ret, 0xff, w * h);
      }
 
-   for ( ; src < end ; src++, ret++)
-      *ret = CONVERT_ARGB_8888_TO_A_8(*src);
+   dst = ret;
+   for ( ; src < end ; src++, dst++)
+      *dst = CONVERT_ARGB_8888_TO_A_8(*src);
    return ret;
 }
 
