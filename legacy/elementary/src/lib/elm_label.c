@@ -263,27 +263,35 @@ _strbuf_key_value_replace(Eina_Strbuf *srcbuf, const char *key, const char *valu
         
         if ((starttag) && (endtag) && (tagtxtlen > key_len))
           {
+             char *eqchar = NULL;
              repbuf = eina_strbuf_new();
              diffbuf = eina_strbuf_new();
              eina_strbuf_append_n(repbuf, starttag, tagtxtlen);
              srcstring = eina_strbuf_string_get(repbuf);
              curlocater = strstr(srcstring, key);
-             if (curlocater)
+             // key=value
+             //    ^ : move to here
+             eqchar = curlocater + key_len;
+             if ((curlocater) && (eqchar))
                {
-                  replocater = curlocater + key_len + 1;
-                  while ((*replocater != '=') && (replocater))
-                    replocater++;
-
-                  while ((*replocater) && 
-                         (*replocater != ' ') && 
-                         (*replocater != '>'))
-                    replocater++;
-
-                  if ((replocater - curlocater) > (key_len + 1))
+                  // some case at useless many whitespaces (key  =value)
+                  // find the separator(=) position
+                  eqchar = strchr(curlocater + key_len, '=');
+                  if (eqchar)
                     {
-                       replocater--;
-                       eina_strbuf_append_n(diffbuf, curlocater, 
-                                            replocater-curlocater);
+                       // key=value
+                       //     ^ : move to here
+                       replocater = eqchar + 1;
+                       while ((*replocater) && 
+                              (*replocater != ' ') && 
+                              (*replocater != '>'))
+                         replocater++;
+ 
+                       if ((replocater - curlocater) > key_len)
+                         eina_strbuf_append_n(diffbuf, curlocater, 
+                                              replocater-curlocater);
+                       else
+                         insertflag = 1;
                     }
                   else
                     insertflag = 1;
