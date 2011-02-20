@@ -730,7 +730,7 @@ void
 _ecore_wince_event_handle_focus_in(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Focus_In *e;
-   struct _Ecore_WinCE_Window        *window;
+   Ecore_WinCE_Window                *window;
 
    INF("focus in");
 
@@ -759,7 +759,7 @@ void
 _ecore_wince_event_handle_focus_out(Ecore_WinCE_Callback_Data *msg)
 {
    Ecore_WinCE_Event_Window_Focus_Out *e;
-   struct _Ecore_WinCE_Window         *window;
+   Ecore_WinCE_Window                 *window;
 
    INF("focus out");
 

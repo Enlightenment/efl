@@ -99,13 +99,13 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
                        int                 width,
                        int                 height)
 {
-   struct _Ecore_WinCE_Window *w;
-   HWND                        window;
-   RECT                        rect;
+   Ecore_WinCE_Window *w;
+   HWND                window;
+   RECT                rect;
 
    INF("creating window");
 
-   w = (struct _Ecore_WinCE_Window *)calloc(1, sizeof(struct _Ecore_WinCE_Window));
+   w = (Ecore_WinCE_Window *)calloc(1, sizeof(Ecore_WinCE_Window));
    if (!w)
      {
         ERR("malloc() failed");
@@ -129,7 +129,7 @@ ecore_wince_window_new(Ecore_WinCE_Window *parent,
                            WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
                            x, y,
                            rect.right - rect.left, rect.bottom - rect.top,
-                           parent ? ((struct _Ecore_WinCE_Window *)parent)->window : NULL,
+                           parent ? ((Ecore_WinCE_Window *)parent)->window : NULL,
                            NULL, _ecore_wince_instance, NULL);
    if (!window)
      {
@@ -177,7 +177,7 @@ ecore_wince_window_free(Ecore_WinCE_Window *window)
 
    INF("destroying window");
 
-   DestroyWindow(((struct _Ecore_WinCE_Window *)window)->window);
+   DestroyWindow(((Ecore_WinCE_Window *)window)->window);
    free(window);
 }
 
@@ -195,7 +195,7 @@ ecore_wince_window_hwnd_get(Ecore_WinCE_Window *window)
    if (!window)
      return NULL;
 
-   return ((struct _Ecore_WinCE_Window *)window)->window;
+   return ((Ecore_WinCE_Window *)window)->window;
 }
 
 /**
@@ -217,12 +217,12 @@ ecore_wince_window_move(Ecore_WinCE_Window *window,
    RECT rect;
    HWND w;
 
-   if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
+   if (!window || ((Ecore_WinCE_Window *)window)->fullscreen)
      return;
 
    INF("moving window (%dx%d)", x, y);
 
-   w = ((struct _Ecore_WinCE_Window *)window)->window;
+   w = ((Ecore_WinCE_Window *)window)->window;
    if (!GetWindowRect(w, &rect))
      {
         ERR("GetWindowRect() failed");
@@ -254,19 +254,19 @@ ecore_wince_window_resize(Ecore_WinCE_Window *window,
                           int                 width,
                           int                 height)
 {
-   RECT                        rect;
-   struct _Ecore_WinCE_Window *w;
-   DWORD                       style;
-   DWORD                       exstyle;
-   int                         x;
-   int                         y;
+   RECT                rect;
+   Ecore_WinCE_Window *w;
+   DWORD               style;
+   DWORD               exstyle;
+   int                 x;
+   int                 y;
 
-   if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
+   if (!window || ((Ecore_WinCE_Window *)window)->fullscreen)
      return;
 
    INF("resizing window (%dx%d)", width, height);
 
-   w = (struct _Ecore_WinCE_Window *)window;
+   w = (Ecore_WinCE_Window *)window;
    if (!GetWindowRect(w->window, &rect))
      {
         ERR("GetWindowRect() failed");
@@ -324,17 +324,17 @@ ecore_wince_window_move_resize(Ecore_WinCE_Window *window,
                                int                 width,
                                int                 height)
 {
-   RECT                        rect;
-   struct _Ecore_WinCE_Window *w;
-   DWORD                       style;
-   DWORD                       exstyle;
+   RECT                rect;
+   Ecore_WinCE_Window *w;
+   DWORD               style;
+   DWORD               exstyle;
 
-   if (!window || ((struct _Ecore_WinCE_Window *)window)->fullscreen)
+   if (!window || ((Ecore_WinCE_Window *)window)->fullscreen)
      return;
 
    INF("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
 
-   w = ((struct _Ecore_WinCE_Window *)window);
+   w = ((Ecore_WinCE_Window *)window);
    rect.left = 0;
    rect.top = 0;
    rect.right = width;
@@ -379,16 +379,16 @@ ecore_wince_window_show(Ecore_WinCE_Window *window)
 
    INF("showing window");
 
-   if (!ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_SHOWNORMAL))
+   if (!ShowWindow(((Ecore_WinCE_Window *)window)->window, SW_SHOWNORMAL))
      {
         ERR("ShowWindow() failed");
         return;
      }
-   if (!UpdateWindow(((struct _Ecore_WinCE_Window *)window)->window))
+   if (!UpdateWindow(((Ecore_WinCE_Window *)window)->window))
      {
         ERR("UpdateWindow() failed");
      }
-   if (!SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 1, 0))
+   if (!SendMessage(((Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 1, 0))
      {
         ERR("SendMessage() failed");
      }
@@ -409,12 +409,12 @@ ecore_wince_window_hide(Ecore_WinCE_Window *window)
 
    INF("hiding window");
 
-   if (!ShowWindow(((struct _Ecore_WinCE_Window *)window)->window, SW_HIDE))
+   if (!ShowWindow(((Ecore_WinCE_Window *)window)->window, SW_HIDE))
      {
         ERR("ShowWindow() failed");
         return;
      }
-   if (!SendMessage(((struct _Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0))
+   if (!SendMessage(((Ecore_WinCE_Window *)window)->window, WM_SHOWWINDOW, 0, 0))
      {
         ERR("SendMessage() failed");
      }
@@ -445,7 +445,7 @@ ecore_wince_window_title_set(Ecore_WinCE_Window *window,
    wtitle = evil_char_to_wchar(title);
    if (!wtitle) return;
 
-   if (!SetWindowText(((struct _Ecore_WinCE_Window *)window)->window, wtitle))
+   if (!SetWindowText(((Ecore_WinCE_Window *)window)->window, wtitle))
      {
         ERR("SetWindowText() failed");
      }
@@ -477,14 +477,14 @@ EAPI void
 ecore_wince_window_backend_set(Ecore_WinCE_Window *window,
                                int                 backend)
 {
-   struct _Ecore_WinCE_Window *w;
+   Ecore_WinCE_Window *w;
 
    if (!window)
      return;
 
    INF("setting backend");
 
-   w = (struct _Ecore_WinCE_Window *)window;
+   w = (Ecore_WinCE_Window *)window;
    w->backend = backend;
 }
 
@@ -503,14 +503,14 @@ ecore_wince_window_backend_set(Ecore_WinCE_Window *window,
 EAPI void
 ecore_wince_window_suspend_cb_set(Ecore_WinCE_Window *window, int (*suspend_cb)(int))
 {
-   struct _Ecore_WinCE_Window *w;
+   Ecore_WinCE_Window *w;
 
    if (!window)
      return;
 
    INF("setting suspend callback");
 
-   w = (struct _Ecore_WinCE_Window *)window;
+   w = (Ecore_WinCE_Window *)window;
    w->suspend_cb = suspend_cb;
 }
 
@@ -529,14 +529,14 @@ ecore_wince_window_suspend_cb_set(Ecore_WinCE_Window *window, int (*suspend_cb)(
 EAPI void
 ecore_wince_window_resume_cb_set(Ecore_WinCE_Window *window, int (*resume_cb)(int))
 {
-   struct _Ecore_WinCE_Window *w;
+   Ecore_WinCE_Window *w;
 
    if (!window)
      return;
 
    INF("setting resume callback");
 
-   w = (struct _Ecore_WinCE_Window *)window;
+   w = (Ecore_WinCE_Window *)window;
    w->resume_cb = resume_cb;
 }
 
@@ -579,7 +579,7 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
         return;
      }
 
-   if (!GetClientRect(((struct _Ecore_WinCE_Window *)window)->window,
+   if (!GetClientRect(((Ecore_WinCE_Window *)window)->window,
                       &rect))
      {
         ERR("GetClientRect() failed");
@@ -595,7 +595,7 @@ ecore_wince_window_geometry_get(Ecore_WinCE_Window *window,
    w = rect.right - rect.left;
    h = rect.bottom - rect.top;
 
-   if (!GetWindowRect(((struct _Ecore_WinCE_Window *)window)->window,
+   if (!GetWindowRect(((Ecore_WinCE_Window *)window)->window,
                       &rect))
      {
         ERR("GetWindowRect() failed");
@@ -645,7 +645,7 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
         return;
      }
 
-   if (!GetClientRect(((struct _Ecore_WinCE_Window *)window)->window,
+   if (!GetClientRect(((Ecore_WinCE_Window *)window)->window,
                       &rect))
      {
         ERR("GetClientRect() failed");
@@ -674,13 +674,13 @@ EAPI void
 ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,
                                   Eina_Bool           on)
 {
-   struct _Ecore_WinCE_Window *ew;
-   HWND                        w;
-   HWND                        task_bar;
+   Ecore_WinCE_Window *ew;
+   HWND                w;
+   HWND                task_bar;
 
    if (!window) return;
 
-   ew = (struct _Ecore_WinCE_Window *)window;
+   ew = (Ecore_WinCE_Window *)window;
    if (((ew->fullscreen) && (on)) ||
        ((!ew->fullscreen) && (!on)))
      return;

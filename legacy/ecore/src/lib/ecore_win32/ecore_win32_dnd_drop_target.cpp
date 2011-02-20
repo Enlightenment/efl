@@ -152,7 +152,7 @@ HRESULT DropTarget::Drop(IDataObject *pDataObject, DWORD grfKeyState, POINTL pt,
 
 // internal helper function
 
-DWORD DropTarget::DropEffect(DWORD grfKeyState, POINTL pt, DWORD dwAllowed)
+DWORD DropTarget::DropEffect(DWORD grfKeyState, POINTL pt __UNUSED__, DWORD dwAllowed)
 {
    DWORD dwEffect = 0;
 

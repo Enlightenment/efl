@@ -185,7 +185,7 @@ EAPI Eina_Bool
 ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
                                      Ecore_Win32_Dnd_DropTarget_Callback callback)
 {
-   struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
+   Ecore_Win32_Window *wnd = (Ecore_Win32_Window *)window;
 
    if (!window)
       return EINA_FALSE;
@@ -207,7 +207,7 @@ ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,
 EAPI void
 ecore_win32_dnd_unregister_drop_target(Ecore_Win32_Window *window)
 {
-   struct _Ecore_Win32_Window *wnd = (struct _Ecore_Win32_Window *)window;
+   Ecore_Win32_Window *wnd = (Ecore_Win32_Window *)window;
 
    if (!window)
       return;

@@ -81,10 +81,10 @@ _ecore_wince_window_procedure(HWND   window,
        break;
      case WM_MOUSEMOVE:
        {
-          RECT                        rect;
-          struct _Ecore_WinCE_Window *w = NULL;
+          RECT                rect;
+          Ecore_WinCE_Window *w = NULL;
 
-          w = (struct _Ecore_WinCE_Window *)GetWindowLong(window, GWL_USERDATA);
+          w = (Ecore_WinCE_Window *)GetWindowLong(window, GWL_USERDATA);
 
           if (GetClientRect(window, &rect))
             {

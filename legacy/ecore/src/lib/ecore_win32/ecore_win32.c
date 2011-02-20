@@ -117,11 +117,11 @@ _ecore_win32_window_procedure(HWND   window,
        return 0;
      case WM_LBUTTONUP:
        {
-          struct _Ecore_Win32_Window *w = NULL;
+          Ecore_Win32_Window *w = NULL;
 
           INF("left button up message");
 
-          w = (struct _Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
+          w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
           if (w->drag.dragging)
             {
                ReleaseCapture();
@@ -142,12 +142,12 @@ _ecore_win32_window_procedure(HWND   window,
        return 0;
      case WM_MOUSEMOVE:
        {
-          RECT                        rect;
-          struct _Ecore_Win32_Window *w = NULL;
+          RECT                rect;
+          Ecore_Win32_Window *w = NULL;
 
           INF("moue move message");
 
-          w = (struct _Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
+          w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
 
           if (w->drag.dragging)
             {
