@@ -1351,6 +1351,7 @@ _smart_edje_drag_v_start(void *data, Evas_Object *obj __UNUSED__, const char *em
    sd = data;
    _smart_scrollbar_read(sd);
    _smart_drag_start(sd->smart_obj);
+   sd->freeze = EINA_TRUE;
 }
 
 static void
@@ -1361,6 +1362,7 @@ _smart_edje_drag_v_stop(void *data, Evas_Object *obj __UNUSED__, const char *emi
    sd = data;
    _smart_scrollbar_read(sd);
    _smart_drag_stop(sd->smart_obj);
+   sd->freeze = EINA_FALSE;
 }
 
 static void
@@ -1380,6 +1382,7 @@ _smart_edje_drag_h_start(void *data, Evas_Object *obj __UNUSED__, const char *em
    sd = data;
    _smart_scrollbar_read(sd);
    _smart_drag_start(sd->smart_obj);
+   sd->freeze = EINA_TRUE;
 }
 
 static void
@@ -1390,6 +1393,7 @@ _smart_edje_drag_h_stop(void *data, Evas_Object *obj __UNUSED__, const char *emi
    sd = data;
    _smart_scrollbar_read(sd);
    _smart_drag_stop(sd->smart_obj);
+   sd->freeze = EINA_FALSE;
 }
 
 static void
