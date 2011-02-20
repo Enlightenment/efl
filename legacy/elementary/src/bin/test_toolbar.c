@@ -180,8 +180,8 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Menu_Item *menu_item;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar");
+   win = elm_win_add(NULL, "toolbar-2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Toolbar 2");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
@@ -290,8 +290,8 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Menu_Item *menu_item;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar");
+   win = elm_win_add(NULL, "toolbar-3", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Toolbar 3");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
@@ -401,7 +401,7 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Menu_Item *menu_item;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "toolbar-4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Toolbar 4");
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -511,8 +511,8 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Menu_Item *menu_item;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar");
+   win = elm_win_add(NULL, "toolbar-5", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Toolbar 5");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
