@@ -158,10 +158,11 @@ _elm_smart_scroller_x_mirrored_get(Evas_Object *obj, Evas_Coord x)
 {
    API_ENTRY return x;
 
-   Evas_Coord cw, ch, w;
+   Evas_Coord cw, ch, w, ret;
    elm_smart_scroller_child_viewport_size_get(obj, &w, NULL);
    sd->pan_func.child_size_get(sd->pan_obj, &cw, &ch);
-   return (cw - (x + w));
+   ret = (cw - (x + w));
+   return (ret >= 0) ? ret : 0;
 }
 
 void
