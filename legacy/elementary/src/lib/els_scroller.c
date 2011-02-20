@@ -1347,6 +1347,29 @@ elm_smart_scroller_widget_set(Evas_Object *obj, Evas_Object *wid)
    sd->widget = wid;
 }
 
+static void
+_elm_smart_scroller_wanted_region_set(Evas_Object *obj)
+{
+   INTERNAL_ENTRY;
+   Evas_Coord ww, wh, wx = sd->wx;
+
+   /* Flip to RTL cords only if init in RTL mode */
+   if(sd->is_mirrored)
+     wx = _elm_smart_scroller_x_mirrored_get(obj, sd->wx);
+
+   if (sd->ww == -1)
+     {
+        elm_smart_scroller_child_viewport_size_get(obj, &ww, &wh);
+     }
+   else
+     {
+        ww = sd->ww;
+        wh = sd->wh;
+     }
+
+   elm_smart_scroller_child_region_set(obj, wx, sd->wy, ww, wh);
+}
+
 /* local subsystem functions */
 static void
 _smart_edje_drag_v_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
@@ -1424,12 +1447,10 @@ _smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 static void
 _smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Coord x, y;
    Evas_Coord w, h;
    Smart_Data *sd;
 
    sd = data;
-   sd->pan_func.get(sd->pan_obj, &x, &y);
    sd->pan_func.child_size_get(sd->pan_obj, &w, &h);
    if ((w != sd->child.w) || (h != sd->child.h))
      {
@@ -1437,18 +1458,16 @@ _smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_inf
 	sd->child.h = h;
 	_smart_scrollbar_size_adjust(sd);
         evas_object_size_hint_min_set(sd->smart_obj, sd->child.w, sd->child.h);
-        elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+        _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
 }
 
 static void
 _smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Coord x, y;
    Smart_Data *sd;
 
    sd = data;
-   sd->pan_func.get(sd->pan_obj, &x, &y);
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
        (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
      {
@@ -1476,7 +1495,7 @@ _smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event
         sd->down.bounce_y_animator = NULL;
         sd->bouncemey = 0;
      }
-   elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+   _elm_smart_scroller_wanted_region_set(sd->smart_obj);
 }
 
 static void
@@ -2587,26 +2606,10 @@ static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    INTERNAL_ENTRY;
-   Evas_Coord ww, wh, wx = sd->wx;
    sd->w = w;
    sd->h = h;
    _smart_reconfigure(sd);
-
-   /* Flip to RTL cords only if init in RTL mode */
-   if(sd->is_mirrored)
-     wx = _elm_smart_scroller_x_mirrored_get(obj, sd->wx);
-
-   if (sd->ww == -1)
-     {
-        elm_smart_scroller_child_viewport_size_get(obj, &ww, &wh);
-     }
-   else
-     {
-        ww = sd->ww;
-        wh = sd->wh;
-     }
-
-   elm_smart_scroller_child_region_set(obj, wx, sd->wy, ww, wh);
+   _elm_smart_scroller_wanted_region_set(obj);
 }
 
 static void
