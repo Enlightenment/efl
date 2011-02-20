@@ -66,10 +66,13 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    if (interlace)
      {
 #ifdef PNG_WRITE_INTERLACING_SUPPORTED
-	png_ptr->interlaced = PNG_INTERLACE_ADAM7;
-	num_passes = png_set_interlace_handling(png_ptr);
+	interlace = PNG_INTERLACE_ADAM7;
+#else
+	interlace = PNG_INTERLACE_NONE;
 #endif
      }
+   else
+     interlace = PNG_INTERLACE_NONE;
 
    if (im->cache_entry.flags.alpha)
      {
@@ -84,7 +87,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 	evas_common_convert_argb_unpremul(data, im->cache_entry.w * im->cache_entry.h);
 	png_init_io(png_ptr, f);
         png_set_IHDR(png_ptr, info_ptr, im->cache_entry.w, im->cache_entry.h, 8,
-		     PNG_COLOR_TYPE_RGB_ALPHA, png_ptr->interlaced,
+		     PNG_COLOR_TYPE_RGB_ALPHA, interlace,
 		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 #ifdef WORDS_BIGENDIAN
 	png_set_swap_alpha(png_ptr);
@@ -97,7 +100,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 	data = im->image.data;
 	png_init_io(png_ptr, f);
 	png_set_IHDR(png_ptr, info_ptr, im->cache_entry.w, im->cache_entry.h, 8,
-		     PNG_COLOR_TYPE_RGB, png_ptr->interlaced,
+		     PNG_COLOR_TYPE_RGB, interlace,
 		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	png_data = alloca(im->cache_entry.w * 3 * sizeof(char));
      }
@@ -111,6 +114,10 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
    png_write_info(png_ptr, info_ptr);
    png_set_shift(png_ptr, &sig_bit);
    png_set_packing(png_ptr);
+
+#ifdef PNG_WRITE_INTERLACING_SUPPORTED
+   num_passes = png_set_interlace_handling(png_ptr);
+#endif
 
    for (pass = 0; pass < num_passes; pass++)
      {
