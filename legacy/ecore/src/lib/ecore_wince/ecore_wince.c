@@ -141,6 +141,8 @@ _ecore_wince_window_procedure(HWND   window,
        _ecore_wince_event_handle_delete_request(data);
        break;
        /* GDI notifications */
+     case WM_ERASEBKGND:
+       return 1;
      case WM_PAINT:
        {
           PAINTSTRUCT paint;

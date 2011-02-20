@@ -47,3 +47,4 @@
 
 	* Ecore_Win32: improve resize of windows and fix key up event for
 	the 'space' key.
+	* Ecore_WinCE: do not erase a window background
