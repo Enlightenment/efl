@@ -6,6 +6,15 @@
 extern "C" {
 #endif
 
+#ifdef MIN
+# undef MIN
+#endif
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+
+#ifdef MAX
+# undef MAX
+#endif
+#define MAX(a,b) (((a) < (b)) ? (b) : (a))
 
 /* logging messages macros */
 extern int _ecore_win32_log_dom_global;
@@ -28,6 +37,11 @@ extern int _ecore_win32_log_dom_global;
 #undef INF
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_ecore_win32_log_dom_global , __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_ecore_win32_log_dom_global, __VA_ARGS__)
 
 #define ECORE_WIN32_WINDOW_CLASS "Ecore_Win32_Window_Class"
 
@@ -100,13 +114,14 @@ struct _Ecore_Win32_Window
    } shape;
 
    struct {
-     unsigned int x;
-     unsigned int y;
-     unsigned int w;
-     unsigned int h;
-     unsigned int px;
-     unsigned int py;
-     unsigned int dragging : 1;
+      DWORD        type;
+      int x;
+      int y;
+      int w;
+      int h;
+      int px;
+      int py;
+      unsigned int dragging : 1;
    } drag;
 
    void *dnd_drop_target;

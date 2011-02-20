@@ -56,7 +56,7 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    rect.top = 0;
    rect.right = width;
    rect.bottom = height;
-   if (!AdjustWindowRect(&rect, style, FALSE))
+   if (!AdjustWindowRectEx(&rect, style, FALSE, 0))
      {
         ERR("AdjustWindowRect() failed");
         free(w);
@@ -352,6 +352,8 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    DWORD                       style;
    int                         x;
    int                         y;
+   int                         minimal_width;
+   int                         minimal_height;
 
    /* FIXME: on fullscreen, should not resize it */
    if (!window) return;
@@ -359,6 +361,10 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    INF("resizing window (%dx%d)", width, height);
 
    w = (struct _Ecore_Win32_Window *)window;
+
+   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)w->min_width);
+   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)w->min_height);
+
    if (!GetWindowRect(w->window, &rect))
      {
         ERR("GetWindowRect() failed");
@@ -369,13 +375,10 @@ ecore_win32_window_resize(Ecore_Win32_Window *window,
    y = rect.top;
    rect.left = 0;
    rect.top = 0;
-/*    if (width < w->min_width) width = w->min_width; */
-/*    if (width > w->max_width) width = w->max_width; */
-/*    printf ("ecore_win32_window_resize 1 : %d %d %d\n", w->min_height, w->max_height, height); */
-/*    if (height < w->min_height) height = w->min_height; */
-/*    printf ("ecore_win32_window_resize 2 : %d %d\n", w->max_height, height); */
-/*    if (height > w->max_height) height = w->max_height; */
-/*    printf ("ecore_win32_window_resize 3 : %d %d\n", w->max_height, height); */
+   if (width < minimal_width) width = minimal_width;
+   if (width > (int)w->max_width) width = w->max_width;
+   if (height < minimal_height) height = minimal_height;
+   if (height > (int)w->max_height) height = w->max_height;
    rect.right = width;
    rect.bottom = height;
    if (!(style = GetWindowLong(w->window, GWL_STYLE)))
@@ -421,6 +424,8 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
    RECT                        rect;
    struct _Ecore_Win32_Window *w;
    DWORD                       style;
+   int                         minimal_width;
+   int                         minimal_height;
 
    /* FIXME: on fullscreen, should not move/resize it */
    if (!window) return;
@@ -428,12 +433,16 @@ ecore_win32_window_move_resize(Ecore_Win32_Window *window,
    INF("moving and resizing window (%dx%d %dx%d)", x, y, width, height);
 
    w = ((struct _Ecore_Win32_Window *)window);
+
+   minimal_width = MAX(GetSystemMetrics(SM_CXMIN), (int)w->min_width);
+   minimal_height = MAX(GetSystemMetrics(SM_CYMIN), (int)w->min_height);
+
    rect.left = 0;
    rect.top = 0;
-   if ((unsigned int)width < w->min_width) width = w->min_width;
-   if ((unsigned int)width > w->max_width) width = w->max_width;
-   if ((unsigned int)height < w->min_height) height = w->min_height;
-   if ((unsigned int)height > w->max_height) height = w->max_height;
+   if (width < minimal_width) width = minimal_width;
+   if (width > (int)w->max_width) width = w->max_width;
+   if (height < minimal_height) height = minimal_height;
+   if (height > (int)w->max_height) height = w->max_height;
    rect.right = width;
    rect.bottom = height;
    if (!(style = GetWindowLong(w->window, GWL_STYLE)))

@@ -43,3 +43,7 @@
 
 	* Added ecore_file_download_full API.
 
+2011-02-20 Vincent Torri
+
+	* Ecore_Win32: improve resize of windows and fix key up event for
+	the 'space' key.
