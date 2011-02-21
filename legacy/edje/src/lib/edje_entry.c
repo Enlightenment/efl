@@ -1,7 +1,6 @@
 #include "edje_private.h"
 
 #ifdef HAVE_ECORE_IMF
-
 static Eina_Bool _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
 static Eina_Bool _edje_entry_imf_event_commit_cb(void *data, int type, void *event);
 static Eina_Bool _edje_entry_imf_event_preedit_changed_cb(void *data, int type, void *event);
@@ -41,7 +40,7 @@ struct _Entry
    Ecore_Event_Handler *imf_ee_handler_commit;
    Ecore_Event_Handler *imf_ee_handler_delete;
    Ecore_Event_Handler *imf_ee_handler_changed;
-#endif   
+#endif
 };
 
 struct _Sel
@@ -89,7 +88,7 @@ _preedit_del(Entry *en)
    evas_textblock_cursor_range_delete(en->preedit_start, en->preedit_end);
 }
 
-static void 
+static void
 _edje_entry_focus_in_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Edje_Real_Part *rp;
@@ -441,7 +440,7 @@ _sel_preextend(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
         en->selection = NULL;
      }
    _edje_emit(en->rp->edje, "selection,changed", en->rp->part->name);
-   
+
 #ifdef HAVE_ECORE_IMF
    if (!en->imf_context) return;
    ecore_imf_context_reset(en->imf_context);
@@ -1152,7 +1151,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              // cut
           }
         else
-          {	
+          {
              if (en->have_selection)
                 _range_del(en->cursor, rp->object, en);
              else
@@ -1264,7 +1263,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,tab", rp->part->name);
      }
    else if ((!strcmp(ev->key, "ISO_Left_Tab")) && (multiline))
-     { 
+     {
         // remove a tab
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1730,7 +1729,7 @@ _evas_focus_in_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
 
-   if (evas_focus_get(e) == ed->obj) 
+   if (evas_focus_get(e) == ed->obj)
      {
         _edje_focus_in_cb(data, NULL, NULL, NULL);
      }
@@ -1741,7 +1740,7 @@ _evas_focus_out_cb(void *data, Evas *e, __UNUSED__ void *event_info)
 {
    Edje *ed = (Edje *)data;
 
-   if (evas_focus_get(e) == ed->obj) 
+   if (evas_focus_get(e) == ed->obj)
      {
         _edje_focus_out_cb(data, NULL, NULL, NULL);
      }
@@ -1917,7 +1916,7 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
                   en->imf_ee_handler_delete = NULL;
                }
 
-             if (en->imf_ee_handler_changed) 
+             if (en->imf_ee_handler_changed)
                {
                   ecore_event_handler_del(en->imf_ee_handler_changed);
                   en->imf_ee_handler_changed = NULL;
@@ -2002,7 +2001,7 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
    if (!en) return;
    // set text as markup
    _sel_clear(en->cursor, rp->object, en);
-   evas_object_textblock_text_markup_set(rp->object, text); 
+   evas_object_textblock_text_markup_set(rp->object, text);
 
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
@@ -2655,7 +2654,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
 
    if (en->have_selection)
      {
-        if (strcmp(ev->str, "")) 
+        if (strcmp(ev->str, ""))
           {
              /* delete selected characters */
              _range_del(en->cursor, rp->object, en);
@@ -2748,7 +2747,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
 
    if (!preedit_end_state)
      {
-        /* set preedit start cursor */ 
+        /* set preedit start cursor */
         if (!en->preedit_start)
            en->preedit_start = evas_object_textblock_cursor_new(rp->object);
         evas_textblock_cursor_copy(en->cursor, en->preedit_start);
