@@ -85,7 +85,7 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
       "Thursday", "Friday", "Saturday"
    };
 
-   win = elm_win_add(NULL, "calendar", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "calendar2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Calendar 2");
    elm_win_autodel_set(win, 1);
 

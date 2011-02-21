@@ -64,7 +64,7 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    Eina_List *desktops;
 #endif
 
-   win = elm_win_add(NULL, "icon_desktops", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "icon-desktops", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Desktops");
    elm_win_autodel_set(win, 1);
 

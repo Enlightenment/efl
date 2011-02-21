@@ -384,8 +384,8 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    char buf[PATH_MAX];
    Eina_List *mbs = NULL;
    
-   win = elm_win_add(NULL, "launcher", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Launcher");
+   win = elm_win_add(NULL, "launcher2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Launcher 2");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);

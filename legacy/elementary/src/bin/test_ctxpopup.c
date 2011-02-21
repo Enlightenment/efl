@@ -157,7 +157,7 @@ test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *list;
 
-   win = elm_win_add(NULL, "Contexual Popup", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "Contextual Popup", ELM_WIN_BASIC);
    elm_win_title_set(win, "Contextual Popup");
    elm_win_autodel_set(win, EINA_TRUE);
 

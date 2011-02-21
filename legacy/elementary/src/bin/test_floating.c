@@ -70,7 +70,7 @@ test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Ecore_Animator *ani;
 
    win = elm_win_add(NULL, "floating", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Floaating");
+   elm_win_title_set(win, "Floating");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);

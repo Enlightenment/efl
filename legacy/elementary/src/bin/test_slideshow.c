@@ -108,7 +108,7 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    const Eina_List *l;
    const char *transition, *layout;
 
-   win = elm_win_add(NULL, "Slideshow", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow");
    elm_win_autodel_set(win, 1);
 

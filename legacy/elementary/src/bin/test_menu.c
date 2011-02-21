@@ -84,7 +84,7 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 {
    Elm_Menu_Item *item;
 
-   win = elm_win_add(NULL, "Menu", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
    elm_win_title_set(win, "Menu");
    elm_win_autodel_set(win, 1);
 

@@ -185,8 +185,8 @@ test_list_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    char buf[PATH_MAX];
    Elm_List_Item *it1, *it2, *it3, *it4;
 
-   win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
-   elm_win_title_set(win, "List");
+   win = elm_win_add(NULL, "list-horizontal", ELM_WIN_BASIC);
+   elm_win_title_set(win, "List Horizontal");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
@@ -327,7 +327,7 @@ test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    char buf[PATH_MAX];
    Elm_List_Item *it;
 
-   win = elm_win_add(NULL, "list-2", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "list2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
    elm_win_autodel_set(win, 1);
 
@@ -451,7 +451,7 @@ test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "list-3", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "list3", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 3");
    elm_win_autodel_set(win, 1);
 
@@ -606,7 +606,7 @@ test_list4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    static struct Pginfo info = {NULL, NULL};
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "list-4", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "list4", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 4");
    elm_win_autodel_set(win, 1);
    info.win = win;
@@ -729,7 +729,7 @@ test_list5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *bg, *li;
    static struct list5_data_cb info;
 
-   win = elm_win_add(NULL, "list-5", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "list5", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 5");
    elm_win_autodel_set(win, 1);
    info.win = win;

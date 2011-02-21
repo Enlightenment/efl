@@ -346,7 +346,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Genlist_Item *gli[10];
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "genlist-2", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "genlist2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 2");
    elm_win_autodel_set(win, 1);
 
@@ -573,7 +573,7 @@ test_genlist3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
 
-   win = elm_win_add(NULL, "genlist-3", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "genlist3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 3");
    elm_win_autodel_set(win, 1);
 
@@ -709,7 +709,7 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
 
-   win = elm_win_add(NULL, "genlist-4", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "genlist4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 4");
    elm_win_autodel_set(win, 1);
 
@@ -929,7 +929,7 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *gl, *bx, *bx2, *bt;
    static Testitem tit[3];
 
-   win = elm_win_add(NULL, "genlist-5", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "genlist5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 5");
    elm_win_autodel_set(win, 1);
 
@@ -1261,7 +1261,7 @@ test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    static struct genlist7_data info;
    static Testitem tit[3];
 
-   win = elm_win_add(NULL, "genlist-7", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "genlist7", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist 7");
    elm_win_autodel_set(win, 1);
    info.win = win;

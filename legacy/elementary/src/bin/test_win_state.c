@@ -115,7 +115,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
 
-   win = elm_win_add(NULL, "window-state", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "window-states", ELM_WIN_BASIC);
    elm_win_title_set(win, "Window States");
    evas_object_smart_callback_add(win, "moved", my_win_move, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _win_resize, NULL);
@@ -240,7 +240,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
    char buf[PATH_MAX];
    
-   win = elm_win_add(NULL, "window-state2", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "window-states2", ELM_WIN_BASIC);
    elm_win_override_set(win, 1);
    evas_object_smart_callback_add(win, "moved", my_win_move, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _win_resize, NULL);

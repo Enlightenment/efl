@@ -77,7 +77,7 @@ test_fileselector_entry(void *data       __UNUSED__,
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_en, *en, *lb;
 
-   win = elm_win_add(NULL, "fileselector entry", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "fileselector-entry", ELM_WIN_BASIC);
    elm_win_title_set(win, "File Selector Entry");
    elm_win_autodel_set(win, 1);
 

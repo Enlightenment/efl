@@ -282,7 +282,7 @@ test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt;
 
-   win = elm_win_add(NULL, "transit-2", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 2");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 400, 400);
@@ -308,7 +308,7 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt, *bt2;
 
-   win = elm_win_add(NULL, "transit-3", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 3");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 300, 300);
@@ -341,7 +341,7 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt;
 
-   win = elm_win_add(NULL, "transit-4", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 4");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 300, 300);
@@ -368,7 +368,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt, *bt2, *ic;
 
-   win = elm_win_add(NULL, "transit-5", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 5");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 300, 300);
@@ -411,7 +411,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt, *bt2, *ic;
 
-   win = elm_win_add(NULL, "transit-6", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit6", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 6");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 300, 300);
@@ -454,7 +454,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt, *bt2;
 
-   win = elm_win_add(NULL, "transit-7", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit7", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 7");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 400, 400);
@@ -489,7 +489,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Elm_Transit *trans;
    void *effect_context;
 
-   win = elm_win_add(NULL, "transit-8", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "transit8", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 8");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 400, 400);

@@ -149,8 +149,8 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    int i, n;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "grid", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Grid");
+   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   elm_win_title_set(win, "GenGrid");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);
@@ -276,8 +276,8 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *grid, *bx, *hbx, *bt, *ck;
 
-   win = elm_win_add(NULL, "grid2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Grid2");
+   win = elm_win_add(NULL, "gengrid2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "GenGrid2");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);

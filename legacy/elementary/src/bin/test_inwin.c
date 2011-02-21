@@ -39,8 +39,8 @@ test_inwin2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 {
    Evas_Object *win, *bg, *inwin, *lb;
 
-   win = elm_win_add(NULL, "inwin", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Inwin");
+   win = elm_win_add(NULL, "inwin2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Inwin 2");
    elm_win_autodel_set(win, 1);
 
    bg = elm_bg_add(win);

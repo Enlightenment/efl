@@ -72,7 +72,7 @@ test_fileselector_button(void *data       __UNUSED__,
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_bt, *en, *lb;
 
-   win = elm_win_add(NULL, "fileselector button", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "fileselector-button", ELM_WIN_BASIC);
    elm_win_title_set(win, "File Selector Button");
    elm_win_autodel_set(win, 1);
 

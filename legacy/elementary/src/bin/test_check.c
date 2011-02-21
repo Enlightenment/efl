@@ -9,7 +9,7 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *bg, *bx, *ic, *ck;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "checks", ELM_WIN_BASIC);
    elm_win_title_set(win, "Checks");
    elm_win_autodel_set(win, 1);
 

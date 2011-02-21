@@ -9,7 +9,7 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *bg, *bx, *ic, *rd, *rdg;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "radio", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "radios", ELM_WIN_BASIC);
    elm_win_title_set(win, "Radios");
    elm_win_autodel_set(win, 1);
 

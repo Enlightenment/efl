@@ -182,7 +182,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
         "wood_01.jpg",
      };
 
-   win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "cursor2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor 2");
    elm_win_autodel_set(win, 1);
 
@@ -290,7 +290,7 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    Elm_List_Item *lit;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "cursor3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor 3");
    elm_win_autodel_set(win, 1);
 
