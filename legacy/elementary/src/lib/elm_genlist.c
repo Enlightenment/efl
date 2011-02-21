@@ -1130,6 +1130,7 @@ _swipe(Elm_Genlist_Item *it)
    int i, sum = 0;
 
    if (!it) return;
+   if ((it->display_only) || (it->disabled)) return;
    it->wd->swipe = EINA_FALSE;
    for (i = 0; i < it->wd->movements; i++)
      {
@@ -1333,7 +1334,8 @@ _mouse_down(void        *data,
    it->wd->wasselected = it->selected;
    _item_hilight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(it->base.widget, "clicked", it);
+      if ((!it->disabled) && (!it->display_only))
+         evas_object_smart_callback_call(it->base.widget, "clicked", it);
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
