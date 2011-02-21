@@ -3224,7 +3224,7 @@ elm_genlist_clear(Evas_Object *obj)
 /**
  * Enable or disable multi-select in the genlist
  *
- * This enables (EINA_TRUE) or disableds (EINA_FALSE) multi-select in
+ * This enables (EINA_TRUE) or disables (EINA_FALSE) multi-select in
  * the list. This allows more than 1 item to be selected.
  *
  * @param obj The genlist object
