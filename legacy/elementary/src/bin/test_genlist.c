@@ -1470,6 +1470,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                                                  ELM_GENLIST_ITEM_GROUP,
                                                  gl_sel/* func */,
                                                  (void *)(long)(i * 10)/* func data */);
+             elm_genlist_item_display_only_set(git, EINA_TRUE);
           }
         else if (git)
           {
@@ -1480,7 +1481,6 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                                            gl_sel/* func */,
                                            (void *)(long)(i * 10)/* func data */);
           }
-        //elm_genlist_item_display_only_set(gli, EINA_TRUE);
         switch (i)
           {
            case 0: 
@@ -1598,6 +1598,7 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    git = elm_genlist_item_append(gl, &itc_group,
                                  (void *)0/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
+   elm_genlist_item_display_only_set(git, EINA_TRUE);
    elm_genlist_item_append(gl, &itc1,
                            (void *)1/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
                            NULL/* func data */);
@@ -1610,6 +1611,7 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    git = elm_genlist_item_append(gl, &itc_group,
                                  (void *)4/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
+   elm_genlist_item_display_only_set(git, EINA_TRUE);
    elm_genlist_item_append(gl, &itc1,
                            (void *)5/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
                            NULL/* func data */);
