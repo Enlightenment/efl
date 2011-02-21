@@ -48,3 +48,13 @@
 	* Ecore_Win32: improve resize of windows and fix key up event for
 	the 'space' key.
 	* Ecore_WinCE: do not erase a window background
+
+2011-02-21 Jihoon Kim
+
+	* Add get calls in ecore_imf for ecore_imf_context_canvas_get() and
+        ecore_imf_context_window_get().
+
+2011-02-21 Raoul Hecky 
+
+	* Remove 300 second timeout so large downloads work in ecore_con.
+
