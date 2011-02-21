@@ -834,7 +834,7 @@ static void
 _item_hilight(Elm_Genlist_Item *it)
 {
    const char *selectraise;
-   if ((it->wd->no_select) || (it->delete_me) || (it->hilighted)) return;
+   if ((it->wd->no_select) || (it->delete_me) || (it->hilighted) || (it->disabled)) return;
    edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(it->base.view, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
