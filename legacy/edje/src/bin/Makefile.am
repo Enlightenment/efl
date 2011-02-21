@@ -1,4 +1,6 @@
-
+if BUILD_EPP
+  SUBDIRS = epp
+endif
 MAINTAINERCLEANFILES = Makefile.in
 
 bin_SCRIPTS = @EDJE_RECC_PRG@

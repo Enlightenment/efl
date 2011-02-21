@@ -25,3 +25,6 @@
 
         * Fix missing cursor changed signale on backspace
         
+2011-02-21  Mike Blumenkrantz
+
+        * Add built-in cpp (epp) to provide consistent output on all archs/OSes

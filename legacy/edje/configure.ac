@@ -63,16 +63,16 @@ AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["$shrext_cmds"], [Suffix for shared obj
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
+
+have_edje_cc="yes"
 case "$host_os" in
    mingw32ce* | cegcc*)
       MODULE_ARCH="$host_os-$host_cpu"
       install_vim="no"
-      have_edje_cc="no"
       ;;
    *)
       MODULE_ARCH="$host_os-$host_cpu-v_maj.0.0"
       install_vim="yes"
-      have_edje_cc="yes"
       ;;
 esac
 
@@ -294,6 +294,12 @@ if test "x$have_edje_cc" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_CC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
    EDJE_CC_LIBS="${EDJE_CC_LIBS} ${LUA_LIBS} ${lua_libs}"
 fi
+AC_PATH_PROG([EPP], [epp])
+AM_CONDITIONAL([BUILD_EPP], [test "x$have_edje_cc" = "xyes" -a -z "$EPP"])
+if test -z "$EPP" ; then
+   EPP=${prefix}/bin/epp
+   AC_SUBST(EPP)
+fi
 
 if test "x$have_edje_decc" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
@@ -380,7 +386,9 @@ doc/Makefile
 doc/edje.dox
 src/Makefile
 src/lib/Makefile
+src/bin/edje_cc_parse.c
 src/bin/Makefile
+src/bin/epp/Makefile
 utils/Makefile
 ])
 
