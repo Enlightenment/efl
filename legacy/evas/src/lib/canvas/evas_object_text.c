@@ -673,11 +673,8 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    return;
    MAGIC_CHECK_END();
 
-   if ((o->cur.utf8_text) && (_text) &&
-         (!strcmp(o->cur.utf8_text, _text)))
-     {
-        return;
-     }
+   if ((o->cur.utf8_text) && (_text) && (!strcmp(o->cur.utf8_text, _text)))
+      return;
    text = eina_unicode_utf8_to_unicode(_text, &len);
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
@@ -693,6 +690,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
      {
         _evas_object_text_layout(obj, o, text);
 	eina_stringshare_replace(&o->cur.utf8_text, _text);
+        o->prev.utf8_text = NULL;
     }
    else 
      {
@@ -2138,14 +2136,8 @@ evas_object_text_render_pre(Evas_Object *obj)
    if (o->changed)
      {
 	if ((o->cur.size != o->prev.size) ||
-	    ((o->cur.font) && (o->prev.font) && 
-		(strcmp(o->cur.font, o->prev.font))) ||
-	    ((o->cur.font) && (!o->prev.font)) ||
-	    ((!o->cur.font) && (o->prev.font)) ||
-	    ((o->cur.utf8_text) && (o->prev.utf8_text) &&
-                (strcmp(o->cur.utf8_text, o->prev.utf8_text))) ||
-	    ((o->cur.utf8_text) && (!o->prev.utf8_text)) ||
-	    ((!o->cur.utf8_text) && (o->prev.utf8_text)) ||
+	    ((o->cur.font != o->prev.font)) ||
+	    ((o->cur.utf8_text != o->prev.utf8_text)) ||
 	    ((o->cur.style != o->prev.style)) ||
 	    ((o->cur.shadow.r != o->prev.shadow.r)) ||
 	    ((o->cur.shadow.g != o->prev.shadow.g)) ||
