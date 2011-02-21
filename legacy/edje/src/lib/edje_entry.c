@@ -1016,7 +1016,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    Eina_Bool control, alt, shift;
    Eina_Bool multiline;
    Eina_Bool cursor_changed;
-   Evas_Textblock_Cursor *tc;
+   int old_cur_pos;
    if (!rp) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -1036,8 +1036,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
 #endif
 
-   tc = evas_object_textblock_cursor_new(rp->object);
-   evas_textblock_cursor_copy(en->cursor, tc);
+   old_cur_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    control = evas_key_modifier_is_set(ev->modifiers, "Control");
    alt = evas_key_modifier_is_set(ev->modifiers, "Alt");
@@ -1343,9 +1342,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
      }
-   if ((evas_textblock_cursor_compare(tc, en->cursor)) && (!cursor_changed))
+   if ((old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)) && (!cursor_changed))
       _edje_emit(ed, "cursor,changed", rp->part->name);
-   evas_textblock_cursor_free(tc);
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
