@@ -834,7 +834,7 @@ static void
 _item_hilight(Elm_Genlist_Item *it)
 {
    const char *selectraise;
-   if ((it->wd->no_select) || (it->delete_me) || (it->hilighted) || (it->disabled)) return;
+   if ((it->wd->no_select) || (it->delete_me) || (it->hilighted) || (it->disabled) || (it->display_only)) return;
    edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(it->base.view, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
@@ -3751,13 +3751,12 @@ elm_genlist_item_display_only_set(Elm_Genlist_Item *it,
                                   Eina_Bool         display_only)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   if (!it->block) return;
    if (it->display_only == display_only) return;
    if (it->delete_me) return;
    it->display_only = display_only;
    it->mincalcd = EINA_FALSE;
    it->updateme = EINA_TRUE;
-   it->block->updateme = EINA_TRUE;
+   if (it->block) it->block->updateme = EINA_TRUE;
    if (it->wd->update_job) ecore_job_del(it->wd->update_job);
    it->wd->update_job = ecore_job_add(_update_job, it->wd);
 }
