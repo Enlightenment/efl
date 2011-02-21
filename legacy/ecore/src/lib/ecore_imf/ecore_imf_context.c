@@ -242,6 +242,28 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
         return;
      }
    if (ctx->klass->client_window_set) ctx->klass->client_window_set(ctx, window);
+   ctx->window = window;
+}
+
+/**
+ * Get the client window of the Input Method Context
+ *
+ * See @ref ecore_imf_context_client_window_set for more details.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return Return the client window.
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI void *
+ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_client_window_get");
+        return NULL;
+     }
+   return ctx->window;
 }
 
 /**
@@ -267,6 +289,28 @@ ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
         return;
      }
    if (ctx->klass->client_canvas_set) ctx->klass->client_canvas_set(ctx, canvas);
+   ctx->client_canvas = canvas;
+}
+
+/**
+ * Get the client canvas of the Input Method Context.
+ *
+ * See @ref ecore_imf_context_client_canvas_set for more details.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return Return the client canvas.
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI void *
+ecore_imf_context_client_canvas_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_client_canvas_get");
+        return NULL;
+     }
+   return ctx->client_canvas;
 }
 
 /**

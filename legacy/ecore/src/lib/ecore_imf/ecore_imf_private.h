@@ -43,6 +43,8 @@ struct _Ecore_IMF_Context
    const Ecore_IMF_Context_Class *klass;
    void                          *data;
    int                            input_mode;
+   void                          *window;
+   void                          *client_canvas;
    Eina_Bool                    (*retrieve_surrounding_func)(void *data, Ecore_IMF_Context *ctx, char **text, int *cursor_pos);
    void                          *retrieve_surrounding_data;
 };
