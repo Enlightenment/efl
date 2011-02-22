@@ -110,9 +110,14 @@
         * Fix bug in font string parsing that can result in a crash if a
           font element is long enough.
         * Fiix convert rgba8888 -> a8 bug so it wont crash.
-        
+
 2011-02-21  Carsten Haitzler (The Rasterman)
 
 	* Fixed bug with memory access of old utf8 string when
           comparing prev and cur state with text obj.
+
+2011-02-22  Tom Hacohen (TAsn)
+
+	* Fixed a bug in textblock cursor position with empty textblocks.
+
 
