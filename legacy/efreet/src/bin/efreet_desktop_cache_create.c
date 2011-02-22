@@ -487,7 +487,7 @@ main(int argc, char **argv)
     }
 
     /* touch update file */
-    if (changed)
+    //if (changed)
     {
         snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
         tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
