@@ -981,7 +981,7 @@ main(int argc, char **argv)
     free(theme_version);
 
     /* touch update file */
-    if (changed)
+    //if (changed)
     {
         snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
         tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
