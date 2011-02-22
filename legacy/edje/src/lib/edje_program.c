@@ -1030,29 +1030,20 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
         if (ed2 && ed2 != ed)
           {
              _edje_emit(ed2, newsig, src);
-             return; /* stop processing.
-                      * XXX maybe let signal be processed anyway?
-                      * XXX in this case, just comment this line
-                      */
           }
-
-        if (rp)
+        else if (rp)
           {
              switch (rp->part->type)
                {
                 case EDJE_PART_TYPE_EXTERNAL:
-                  {
-                     if (!rp->swallowed_object) break ;
+                   if (!rp->swallowed_object) break ;
 
-                     _edje_external_signal_emit(rp->swallowed_object, newsig, src);
-                     return;
-                  }
+                   _edje_external_signal_emit(rp->swallowed_object, newsig, src);
+                   break ;
                 case EDJE_PART_TYPE_BOX:
                 case EDJE_PART_TYPE_TABLE:
-                  {
-                     _edje_emit(rp->edje, newsig, src);
-                     return;
-                  }
+                   _edje_emit(rp->edje, newsig, src);
+                   break ;
                 case EDJE_PART_TYPE_GROUP:
                    if (!rp->swallowed_object) break;
 
@@ -1060,7 +1051,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
                    if (!ed2) break;
 
                    _edje_emit(ed2, newsig, src);
-                   return;
+                   break ;
                 default:
                    fprintf(stderr, "SPANK SPANK SPANK !!!\nYou should never be here !\n");
                    break;

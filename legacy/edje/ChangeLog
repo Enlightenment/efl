@@ -1,7 +1,7 @@
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
-        
+
 2011-01-30  Tom Hacohen (TAsn)
 
         * Added "UNDER" cursor mode.
@@ -20,11 +20,15 @@
 2011-02-10  Cedric BAIL
 
 	* Fix use of recursive alias.
-        
+
 2011-02-21  WooHyun Jung
 
         * Fix missing cursor changed signale on backspace
-        
+
 2011-02-21  Mike Blumenkrantz
 
         * Add built-in cpp (epp) to provide consistent output on all archs/OSes
+
+2011-02-10  Cedric BAIL
+
+	* Fix propagation of recursive events on existing part.
