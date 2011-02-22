@@ -2158,6 +2158,7 @@ _eet_free_add(Eet_Free *ef,
    eina_array_push(&ef->list[hash], data);
 } /* _eet_free_add */
 
+#if 0
 static void
 _eet_free_del(Eet_Free *ef,
               void     *data)
@@ -2176,6 +2177,7 @@ _eet_free_del(Eet_Free *ef,
           return;
        }
 }
+#endif
 
 static void
 _eet_free_reset(Eet_Free *ef)
