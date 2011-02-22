@@ -460,9 +460,7 @@ main(int argc, char **argv)
     }
 
     /* cleanup */
-    eet_sync(util_ef);
     eet_close(util_ef);
-    eet_sync(ef);
     eet_close(ef);
 
     /* unlink old cache files */
@@ -489,15 +487,18 @@ main(int argc, char **argv)
     }
 
     /* touch update file */
-    /* TODO: We need to signal whether the cache was updated or not */
-    snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
-    tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-    if (tmpfd >= 0)
-    {
-        efreet_fsetowner(tmpfd);
-        if (write(tmpfd, "a", 1) != 1) perror("write");
-        close(tmpfd);
-    }
+    if (changed)
+      {
+	snprintf(file, sizeof(file), "%s/efreet/desktop_data.update", efreet_cache_home_get());
+	tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+	if (tmpfd >= 0)
+	  {
+	    efreet_fsetowner(tmpfd);
+	    if (write(tmpfd, "a", 1) != 1) perror("write");
+	    close(tmpfd);
+	  }
+      }
+
     EINA_LIST_FREE(scanned, dir)
         eina_stringshare_del(dir);
     eina_list_free(extra_dirs);

@@ -968,7 +968,6 @@ main(int argc, char **argv)
     icon_theme_free(theme);
 
     eet_data_write(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION, icon_version, 1);
-    eet_sync(icon_ef);
     eet_close(icon_ef);
     efreet_setowner(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK));
     free(icon_version);
@@ -977,20 +976,22 @@ main(int argc, char **argv)
 
     /* save data */
     eet_data_write(theme_ef, efreet_version_edd(), EFREET_CACHE_VERSION, theme_version, 1);
-    eet_sync(theme_ef);
     eet_close(theme_ef);
     efreet_setowner(efreet_icon_theme_cache_file());
     free(theme_version);
 
     /* touch update file */
-    snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
-    tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
-    if (tmpfd >= 0)
-    {
-        efreet_fsetowner(tmpfd);
-        write(tmpfd, "a", 1);
-        close(tmpfd);
-    }
+    if (changed)
+      {
+	snprintf(file, sizeof(file), "%s/efreet/icon_data.update", efreet_cache_home_get());
+	tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+	if (tmpfd >= 0)
+	  {
+	    efreet_fsetowner(tmpfd);
+	    write(tmpfd, "a", 1);
+	    close(tmpfd);
+	  }
+      }
 
 on_error_efreet:
     efreet_shutdown();
