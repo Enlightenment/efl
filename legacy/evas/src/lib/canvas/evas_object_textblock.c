@@ -5401,7 +5401,10 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
    if (!cur) return;
    if (!cur->node) return;
    index = eina_ustrbuf_length_get(cur->node->unicode) - 1;
-   cur->pos = index;
+   if (index >= 0)
+      cur->pos = index;
+   else
+      cur->pos = 0;
 
 }
 
