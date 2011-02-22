@@ -1,6 +1,7 @@
 #!/bin/sh
 
 touch README
+touch ABOUT-NLS
 
 echo "Running aclocal..." ; aclocal $ACLOCAL_FLAGS -I m4 || exit 1
 echo "Running autoheader..." ; autoheader || exit 1
