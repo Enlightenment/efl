@@ -16,6 +16,19 @@
         size_t char_index; \
         (void) _pen_y; /* Sometimes it won't be used */
 
+/* Visual walk helper macros */
+#ifdef OT_SUPPORT
+#define _EVAS_FONT_WALK_TEXT_VISUAL_START() \
+        Evas_Font_OT_Info *_ot_itr = (text_props->info) ? \
+           text_props->info->ot + text_props->start : NULL; \
+        for (char_index = 0 ; char_index < text_props->len ; char_index++, _glyph_itr++, _ot_itr++) \
+          {
+#else
+#define _EVAS_FONT_WALK_TEXT_VISUAL_START() \
+        for (char_index = 0 ; char_index < text_props->len ; char_index++, _glyph_itr++) \
+          {
+#endif
+
 /**
  * @def EVAS_FONT_WALK_TEXT_VISUAL_START
  * @internal
@@ -31,8 +44,24 @@
 #define EVAS_FONT_WALK_TEXT_VISUAL_START() \
    do \
      { \
-        for (char_index = text_props->start ; char_index < text_props->start + text_props->len ; char_index++) \
+        Evas_Font_Glyph_Info *_glyph_itr = (text_props->info) ? \
+           text_props->info->glyph + text_props->start : NULL; \
+        _EVAS_FONT_WALK_TEXT_VISUAL_START()
+
+/* Logical walk helper macros */
+#ifdef OT_SUPPORT
+#define _EVAS_FONT_WALK_TEXT_LOGICAL_START() \
+        Evas_Font_OT_Info *_ot_itr = (text_props->info) ? \
+           text_props->info->ot + text_props->start : NULL; \
+        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) \
+          _ot_itr += text_props->len - 1; \
+        for ( ; _i > 0 ; char_index += _char_index_d, _i--, _glyph_itr += _char_index_d, _ot_itr += _char_index_d) \
           {
+#else
+#define _EVAS_FONT_WALK_TEXT_LOGICAL_START() \
+        for ( ; _i > 0 ; char_index += _char_index_d, _i--, _glyph_itr += _char_index_d) \
+          {
+#endif
 
 /**
  * @def EVAS_FONT_WALK_TEXT_LOGICAL_START
@@ -50,6 +79,9 @@
 #define EVAS_FONT_WALK_TEXT_LOGICAL_START() \
    do \
      { \
+        Evas_Font_Glyph_Info *_glyph_itr = (text_props->info) ? \
+           text_props->info->glyph + text_props->start : \
+           NULL; \
         int _char_index_d; \
         size_t _i; \
         _i = text_props->len; \
@@ -57,16 +89,14 @@
           { \
              char_index = text_props->len - 1; \
              _char_index_d = -1; \
+             _glyph_itr += text_props->len - 1; \
           } \
         else \
           { \
              char_index = 0; \
              _char_index_d = 1; \
           } \
-        char_index += text_props->start; \
-        _i += text_props->start; \
-        for ( ; _i > text_props->start ; char_index += _char_index_d, _i--) \
-          {
+        _EVAS_FONT_WALK_TEXT_LOGICAL_START()
 
 #else
 #define EVAS_FONT_WALK_TEXT_LOGICAL_START() EVAS_FONT_WALK_TEXT_VISUAL_START()
@@ -77,27 +107,20 @@
 /*FIXME: doc */
 #ifdef OT_SUPPORT
 # define EVAS_FONT_WALK_X_OFF \
-             (EVAS_FONT_ROUND_26_6_TO_INT( \
-                EVAS_FONT_OT_X_OFF_GET( \
-                   text_props->info->ot[char_index])))
+             (EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(*_ot_itr)))
 # define EVAS_FONT_WALK_Y_OFF \
-             (EVAS_FONT_ROUND_26_6_TO_INT( \
-                EVAS_FONT_OT_Y_OFF_GET( \
-                   text_props->info->ot[char_index])))
+             (EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_Y_OFF_GET(*_ot_itr)))
 # define EVAS_FONT_WALK_POS \
-             (EVAS_FONT_OT_POS_GET( \
-                   text_props->info->ot[char_index]) - text_props->text_offset)
+             (EVAS_FONT_OT_POS_GET(*_ot_itr) - text_props->text_offset)
 # define EVAS_FONT_WALK_POS_NEXT \
               ((!EVAS_FONT_WALK_IS_LAST) ? \
-               EVAS_FONT_OT_POS_GET( \
-                                     text_props->info->ot[char_index + 1]) - \
-               text_props->text_offset : \
+               EVAS_FONT_OT_POS_GET(*(_ot_itr + 1)) - \
+                text_props->text_offset : \
                EVAS_FONT_WALK_POS \
               )
 # define EVAS_FONT_WALK_POS_PREV \
              ((char_index > 0) ? \
-             EVAS_FONT_OT_POS_GET( \
-                                   text_props->info->ot[char_index - 1]) - \
+             EVAS_FONT_OT_POS_GET(*(_ot_itr - 1)) - \
               text_props->text_offset : \
               EVAS_FONT_WALK_POS \
              )
@@ -106,40 +129,39 @@
 # define EVAS_FONT_WALK_Y_OFF 0
 # define EVAS_FONT_WALK_POS \
               ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ? \
-               (text_props->len - (char_index - text_props->start) - 1) : \
-               (char_index - text_props->start))
+               (text_props->len - char_index - 1) : \
+               (char_index))
 # define EVAS_FONT_WALK_POS_NEXT \
              ((!EVAS_FONT_WALK_IS_LAST) ? \
               ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ? \
-               text_props->len - ((char_index + 1) - text_props->start) \
-               : (char_index + 1) - text_props->start) : \
+               text_props->len - char_index - 2 \
+               : (char_index + 1)) : \
               EVAS_FONT_WALK_POS)
 # define EVAS_FONT_WALK_POS_PREV \
-             ((char_index > text_props->start) ? \
+             ((char_index > 0) ? \
               ((text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL) ? \
-               text_props->len - ((char_index - 1) - text_props->start) \
-               : (char_index - 1) - text_props->start) : \
+               text_props->len - char_index \
+               : (char_index - 1)) : \
               EVAS_FONT_WALK_POS)
 #endif
 
 
-#define EVAS_FONT_WALK_IS_VISIBLE \
-             (text_props->info->glyph[char_index].index != 0)
-#define EVAS_FONT_WALK_X_BEAR (text_props->info->glyph[char_index].x_bear)
+#define EVAS_FONT_WALK_IS_VISIBLE (_glyph_itr->index != 0)
+#define EVAS_FONT_WALK_X_BEAR (_glyph_itr->x_bear)
 #define EVAS_FONT_WALK_Y_BEAR (fg->glyph_out->top)
-#define _EVAS_FONT_WALK_X_ADV \
-                (text_props->info->glyph[char_index].advance)
-#define EVAS_FONT_WALK_WIDTH (text_props->info->glyph[char_index].width)
+#define _EVAS_FONT_WALK_X_ADV (_glyph_itr->advance)
+#define EVAS_FONT_WALK_WIDTH (_glyph_itr->width)
 
+#define EVAS_FONT_WALK_INDEX (_glyph_itr->index)
 #define EVAS_FONT_WALK_X_ADV \
              (EVAS_FONT_ROUND_26_6_TO_INT(_EVAS_FONT_WALK_X_ADV))
 #define EVAS_FONT_WALK_PEN_X (EVAS_FONT_ROUND_26_6_TO_INT(_pen_x))
 #define EVAS_FONT_WALK_PEN_Y (EVAS_FONT_ROUND_26_6_TO_INT(_pen_y))
 #define EVAS_FONT_WALK_Y_ADV (0)
 #define EVAS_FONT_WALK_IS_LAST \
-             (char_index + 1 == text_props->start + text_props->len)
+             (char_index + 1 == text_props->len)
 #define EVAS_FONT_WALK_IS_FIRST \
-             (!char_index)
+             (char_index == 0)
 #define EVAS_FONT_WALK_LEN (text_props->len)
 
 /**

@@ -529,7 +529,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
 
 #ifdef OT_SUPPORT
-        index = text_props->info->glyph[char_index].index;
+        index = EVAS_FONT_WALK_INDEX;
 #else
         /* FIXME: Should be removed once we split according to script without
          * the use of harfbuzz */
@@ -787,6 +787,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    struct prword *w;
    int last_delta = 0;
    int gl;
+   struct cinfo *ci;
    EVAS_FONT_WALK_TEXT_INIT();
 
 # ifndef METRIC_CACHE
@@ -829,13 +830,13 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
     * but that'll have to be good enough ATM */
    len = text_props->len;
    metrics = malloc(sizeof(struct cinfo) * len);
+   ci = metrics;
    EVAS_FONT_WALK_TEXT_VISUAL_START()
      {
-        struct cinfo *ci = metrics + char_index;
         FT_UInt index;
         RGBA_Font_Glyph *fg;
 #ifdef OT_SUPPORT
-        index = text_props->info->glyph[char_index].index;
+        index = EVAS_FONT_WALK_INDEX;
 #else
         /* FIXME: Should be removed once we split according to script without
          * the use of harfbuzz */
@@ -874,6 +875,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
         ci->pos.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
         last_delta = EVAS_FONT_WALK_X_ADV -
            (ci->bm.w + ci->fg->glyph_out->left);
+        ci++;
      }
    EVAS_FONT_WALK_TEXT_END();
 

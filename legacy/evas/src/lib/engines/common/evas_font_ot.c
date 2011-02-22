@@ -18,7 +18,9 @@ evas_common_font_ot_cluster_size_get(const Evas_Text_Props *props, size_t char_i
    int i;
    int items;
    int left_bound, right_bound;
-   size_t base_cluster = EVAS_FONT_OT_POS_GET(props->info->ot[char_index]);
+   size_t base_cluster;
+   char_index += props->start;
+   base_cluster = EVAS_FONT_OT_POS_GET(props->info->ot[char_index]);
    for (i = (int) char_index ;
          (i >= (int) props->start) &&
          (EVAS_FONT_OT_POS_GET(props->info->ot[i]) == base_cluster) ;
