@@ -9118,6 +9118,13 @@ collections {
           image.middle: SOLID;
           fill.smooth: 0;
         }
+        description { state: "rtl" 0.0;
+           inherit: "default" 0.0;
+           image {
+              normal: "bubble_4.png";
+              border: 11 36 18 9;
+           }
+        }
       }
       part { name: "elm.swallow.content";
         type: SWALLOW;
@@ -9174,12 +9181,28 @@ collections {
         action: STATE_SET "default" 0.0;
         target: "elm.swallow.icon";
       }
+      program { name: "to_rtl";
+         signal: "edje,state,rtl";
+         source: "edje";
+         action: STATE_SET "rtl" 0.0;
+         target: "base0";
+         target: "shine";
+      }
+      program { name: "to_ltr";
+         signal: "edje,state,ltr";
+         source: "edje";
+         action: STATE_SET "default" 0.0;
+         target: "base0";
+         target: "shine";
+      }
     }
   }
 
   group { name: "elm/bubble/top_right/default";
     images {
+      image: "bubble_3.png" COMP;
       image: "bubble_4.png" COMP;
+      image: "bubble_shine3.png" COMP;
       image: "bubble_shine4.png" COMP;
     }
     parts {
@@ -9280,6 +9303,13 @@ collections {
           image.middle: SOLID;
           fill.smooth: 0;
         }
+        description { state: "rtl" 0.0;
+           inherit: "default" 0.0;
+           image {
+              normal: "bubble_3.png";
+              border: 36 11 18 9;
+           }
+        }
       }
       part { name: "elm.swallow.content";
         type: SWALLOW;
@@ -9336,12 +9366,27 @@ collections {
         action: STATE_SET "default" 0.0;
         target: "elm.swallow.icon";
       }
+      program { name: "to_rtl";
+         signal: "edje,state,rtl";
+         source: "edje";
+         action: STATE_SET "rtl" 0.0;
+         target: "base0";
+         target: "shine";
+      }
+      program { name: "to_ltr";
+         signal: "edje,state,ltr";
+         source: "edje";
+         action: STATE_SET "default" 0.0;
+         target: "base0";
+         target: "shine";
+      }
     }
   }
 
   group { name: "elm/bubble/bottom_left/default";
     images {
       image: "bubble_1.png" COMP;
+      image: "bubble_2.png" COMP;
       image: "bubble_shine.png" COMP;
     }
     parts {
@@ -9442,6 +9487,13 @@ collections {
           image.middle: SOLID;
           fill.smooth: 0;
         }
+        description { state: "rtl" 0.0;
+           inherit: "default" 0.0;
+           image {
+              normal: "bubble_2.png";
+              border: 11 36 10 19;
+           }
+        }
       }
       part { name: "elm.swallow.content";
         type: SWALLOW;
@@ -9474,6 +9526,13 @@ collections {
           }
           fill.smooth: 0;
         }
+        description { state: "rtl" 0.0;
+           inherit: "default" 0.0;
+           image {
+              normal: "bubble_shine4.png";
+              border: 5 36 14 0;
+           }
+        }
       }
     }
     programs {
@@ -9491,11 +9550,24 @@ collections {
         action: STATE_SET "default" 0.0;
         target: "elm.swallow.icon";
       }
+      program { name: "to_rtl";
+         signal: "edje,state,rtl";
+         source: "edje";
+         action: STATE_SET "rtl" 0.0;
+         target: "base0";
+      }
+      program { name: "to_ltr";
+         signal: "edje,state,ltr";
+         source: "edje";
+         action: STATE_SET "default" 0.0;
+         target: "base0";
+      }
     }
   }
 
   group { name: "elm/bubble/bottom_right/default";
     images {
+      image: "bubble_1.png" COMP;
       image: "bubble_2.png" COMP;
       image: "bubble_shine.png" COMP;
     }
@@ -9597,6 +9669,13 @@ collections {
           image.middle: SOLID;
           fill.smooth: 0;
         }
+        description { state: "rtl" 0.0;
+           inherit: "default" 0.0;
+           image {
+              normal: "bubble_1.png";
+              border: 36 11 10 19;
+           }
+        }
       }
       part { name: "elm.swallow.content";
         type: SWALLOW;
@@ -9629,6 +9708,13 @@ collections {
           }
           fill.smooth: 0;
         }
+        description { state: "rtl" 0.0;
+           inherit: "default" 0.0;
+           image {
+              normal: "bubble_shine3.png";
+              border: 36 5 14 0;
+           }
+        }
       }
     }
     programs {
@@ -9645,6 +9731,18 @@ collections {
         source: "elm";
         action: STATE_SET "default" 0.0;
         target: "elm.swallow.icon";
+      }
+      program { name: "to_rtl";
+         signal: "edje,state,rtl";
+         source: "edje";
+         action: STATE_SET "rtl" 0.0;
+         target: "base0";
+      }
+      program { name: "to_ltr";
+         signal: "edje,state,ltr";
+         source: "edje";
+         action: STATE_SET "default" 0.0;
+         target: "base0";
       }
     }
   }
