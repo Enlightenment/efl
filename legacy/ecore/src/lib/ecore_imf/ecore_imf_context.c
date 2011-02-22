@@ -253,6 +253,7 @@ ecore_imf_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
  * @param ctx An #Ecore_IMF_Context.
  * @return Return the client window.
  * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
  */
 EAPI void *
 ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx)
@@ -300,6 +301,7 @@ ecore_imf_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
  * @param ctx An #Ecore_IMF_Context.
  * @return Return the client canvas.
  * @ingroup Ecore_IMF_Context_Group
+ * @since 1.1.0
  */
 EAPI void *
 ecore_imf_context_client_canvas_get(Ecore_IMF_Context *ctx)
