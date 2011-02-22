@@ -897,6 +897,8 @@ main(int argc, char **argv)
     }
     eina_iterator_free(it);
 
+    changed = EINA_FALSE;
+
     /* open icon file */
     icon_ef = eet_open(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EET_FILE_MODE_READ_WRITE);
     if (!icon_ef) goto on_error_efreet;
