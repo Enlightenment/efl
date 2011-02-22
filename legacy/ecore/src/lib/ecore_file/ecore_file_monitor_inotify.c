@@ -47,6 +47,7 @@ struct _Ecore_File_Monitor_Inotify
 
 static Ecore_Fd_Handler *_fdh = NULL;
 static Ecore_File_Monitor    *_monitors = NULL;
+static pid_t             _inotify_fd_pid = -1;
 
 static Eina_Bool           _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
@@ -64,7 +65,7 @@ ecore_file_monitor_inotify_init(void)
    fd = inotify_init();
    if (fd < 0)
      return 0;
-
+   
    _fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _ecore_file_monitor_inotify_handler,
                                     NULL, NULL, NULL);
    if (!_fdh)
@@ -73,6 +74,7 @@ ecore_file_monitor_inotify_init(void)
         return 0;
      }
 
+   _inotify_fd_pid = getpid();
    return 1;
 }
 
@@ -90,6 +92,7 @@ ecore_file_monitor_inotify_shutdown(void)
         ecore_main_fd_handler_del(_fdh);
         close(fd);
      }
+   _inotify_fd_pid = -1;
    return 1;
 }
 
@@ -103,6 +106,14 @@ ecore_file_monitor_inotify_add(const char *path,
    Ecore_File_Monitor *em;
    int len;
 
+   if (_inotify_fd_pid == -1) return NULL;
+
+   if (_inotify_fd_pid != getpid())
+     {
+        ecore_file_monitor_inotify_shutdown();
+        ecore_file_monitor_inotify_init();
+     }
+   
    em = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
 

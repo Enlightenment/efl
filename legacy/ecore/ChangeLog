@@ -58,3 +58,9 @@
 
 	* Remove 300 second timeout so large downloads work in ecore_con.
 
+2011-02-22  Carsten Haitzler (The Rasterman)
+
+        * Fix: ecore-file inotify fd would be duplicated in children
+        on fork. Have it detecti this on next monitor add and re-init the
+        inotify fd and fd handler.
+
