@@ -119,5 +119,11 @@
 2011-02-22  Tom Hacohen (TAsn)
 
 	* Fixed a bug in textblock cursor position with empty textblocks.
+        
+2011-02-22  Carsten Haitzler (The Rasterman)
 
+	* Fixed bug smart calc array where it'd nuke the array when nested
+          process calls hapen and leave some objects uncalculated, but
+          removed from the array and marked as needing a calc thus never
+          getting back into the array.
 

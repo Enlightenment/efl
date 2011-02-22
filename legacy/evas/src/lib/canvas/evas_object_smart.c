@@ -735,8 +735,7 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
      return;
    o->need_recalculate = value;
 
-   if (!obj->smart.smart->smart_class->calculate)
-     return;
+   if (!obj->smart.smart->smart_class->calculate) return;
 
    /* XXX: objects can be present multiple times in calculate_objects()
     * XXX: after a set-unset-set cycle, but it's not a problem since
@@ -745,8 +744,7 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
     */
    if (o->need_recalculate)
      {
-	Evas *e;
-	e = obj->layer->evas;
+	Evas *e = obj->layer->evas;
 	eina_array_push(&e->calculate_objects, obj);
      }
    /* TODO: else, remove from array */
@@ -831,17 +829,21 @@ evas_call_smarts_calculate(Evas *e)
 {
    Eina_Array *calculate;
    unsigned int i;
+   static int in_smart_calc = 0;
 
+   in_smart_calc++;
    calculate = &e->calculate_objects;
-   for (i = 0; i < calculate->count; ++i)
+   for (i = 0; i < calculate->count; i++)
      {
 	Evas_Object *obj;
 	Evas_Object_Smart *o;
+        int before;
 
 	obj = eina_array_data_get(calculate, i);
 	if (obj->delete_me)
 	  continue;
 
+        before = calculate->count;
 	o = obj->object_data;
 	if (o->need_recalculate)
 	  {
@@ -849,8 +851,8 @@ evas_call_smarts_calculate(Evas *e)
 	     obj->smart.smart->smart_class->calculate(obj);
 	  }
      }
-
-   eina_array_flush(calculate);
+   in_smart_calc--;
+   if (in_smart_calc == 0) eina_array_flush(calculate);
 }
 
 /**
