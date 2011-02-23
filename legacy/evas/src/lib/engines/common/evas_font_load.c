@@ -158,7 +158,7 @@ evas_common_font_source_load(const char *name)
    fs->current_size = 0;
    fs->ft.face = NULL;
    fs->name = eina_stringshare_add(name);
-   fs->file = fs->name;
+   fs->file = eina_stringshare_ref(fs->name);
    fs->ft.orig_upem = 0;
    fs->references = 1;
    eina_hash_direct_add(fonts_src, fs->name, fs);
