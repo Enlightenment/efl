@@ -64,15 +64,16 @@ AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
 
-have_edje_cc="yes"
 case "$host_os" in
    mingw32ce* | cegcc*)
       MODULE_ARCH="$host_os-$host_cpu"
       install_vim="no"
+      have_edje_cc="no"
       ;;
    *)
       MODULE_ARCH="$host_os-$host_cpu-v_maj.0.0"
       install_vim="yes"
+      have_edje_cc="yes"
       ;;
 esac
 
@@ -295,8 +296,7 @@ if test "x$have_edje_cc" = "xyes"; then
    EDJE_CC_LIBS="${EDJE_CC_LIBS} ${LUA_LIBS} ${lua_libs}"
 fi
 AM_CONDITIONAL([BUILD_EPP], [test "x$have_edje_cc" = "xyes"])
-EPPDIR=${prefix}/lib/edje/utils
-AC_SUBST(EPPDIR)
+AC_DEFINE_UNQUOTED([EPPDIR], ["${libdir}/${PACKAGE}/utils"], [directory where epp will be installed])
 
 if test "x$have_edje_decc" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
@@ -383,7 +383,6 @@ doc/Makefile
 doc/edje.dox
 src/Makefile
 src/lib/Makefile
-src/bin/edje_cc_parse.c
 src/bin/Makefile
 src/bin/epp/Makefile
 utils/Makefile
