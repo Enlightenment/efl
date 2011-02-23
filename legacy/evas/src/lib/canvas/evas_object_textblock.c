@@ -7997,7 +7997,8 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
-   Evas_Object_Textblock_Format_Item *fi = NULL;
+   Evas_Object_Textblock_Format_Item *fi;
+   Evas_Object_Textblock_Item *it = NULL;
    Evas_Coord x, y, w, h;
 
    if (!cur || !evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
@@ -8005,7 +8006,8 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
    if (!o->formatted.valid) _relayout(cur->obj);
    if (!evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
    _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln,
-         (Evas_Object_Textblock_Item **) &fi);
+         (Evas_Object_Textblock_Item **) &it);
+   fi = _ITEM_FORMAT(it);
    if ((!ln) || (!fi)) return EINA_FALSE;
    x = ln->par->x + ln->x + fi->parent.x;
    y = ln->par->y + ln->y + ln->baseline + fi->y;
