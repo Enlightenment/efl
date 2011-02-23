@@ -693,12 +693,12 @@ compile(void)
 	 * Run the input through the C pre-processor.
 	 */
         ret = -1;
-   if (ecore_file_exists(EPPDIR"/epp"))
-     {
-        snprintf(buf, sizeof(buf), EPPDIR"/epp -I%s %s -P -o %s - < %s",
-                 inc, def, tmpn, file_in);
-         ret = system(buf);
-     }
+        if (ecore_file_exists(EPP_DIR"/epp"))
+          {
+             snprintf(buf, sizeof(buf), EPP_DIR"/epp -I%s %s -P -o %s - < %s",
+                      inc, def, tmpn, file_in);
+             ret = system(buf);
+          }
 	/*
 	 * On OpenSolaris, the default cpp is located in different places.
 	 * Alan Coppersmith told me to do what xorg does: using /usr/ccs/lib/cpp

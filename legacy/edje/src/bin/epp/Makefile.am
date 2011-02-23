@@ -18,20 +18,24 @@
 #the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
 MAINTAINERCLEANFILES = Makefile.in
+
 eppdir = @libdir@/@PACKAGE@/utils
+
 epp_PROGRAMS = epp
 
 epp_SOURCES = \
-	cpplib.h \
-	cpphash.h \
-	cppalloc.c \
-	cpperror.c \
-	cppexp.c \
-	cpphash.c \
-	cpplib.c \
-	cppmain.c 
+cpplib.h \
+cpphash.h \
+cppalloc.c \
+cpperror.c \
+cppexp.c \
+cpphash.c \
+cpplib.c \
+cppmain.c
 
-epp_CPPFLAGS = -I$(top_builddir) $(CWARNFLAGS)
+epp_CPPFLAGS = \
+-I$(top_builddir) \
+$(CWARNFLAGS)
 
 DEFS= \
 -DHAVE_STRERROR \

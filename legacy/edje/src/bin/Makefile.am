@@ -1,7 +1,8 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 if BUILD_EPP
   SUBDIRS = epp
 endif
-MAINTAINERCLEANFILES = Makefile.in
 
 bin_SCRIPTS = @EDJE_RECC_PRG@
 
@@ -24,6 +25,7 @@ edje_cc_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DEPP_DIR=\"$(libdir)/$(PACKAGE)/utils\" \
 @EDJE_CFLAGS@ @EDJE_CC_CFLAGS@ @EVIL_CFLAGS@
 edje_cc_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CC_LIBS@ @EVIL_LIBS@ -lm
 edje_cc_LDFLAGS = @lt_enable_auto_import@
