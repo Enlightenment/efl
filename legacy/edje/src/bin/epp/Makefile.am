@@ -18,7 +18,8 @@
 #the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
 MAINTAINERCLEANFILES = Makefile.in
-bin_PROGRAMS = epp
+eppdir = @EPPDIR@
+epp_PROGRAMS = epp
 
 epp_SOURCES = \
 	cpplib.h \

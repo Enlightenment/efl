@@ -294,12 +294,9 @@ if test "x$have_edje_cc" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_CC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
    EDJE_CC_LIBS="${EDJE_CC_LIBS} ${LUA_LIBS} ${lua_libs}"
 fi
-AC_PATH_PROG([EPP], [epp])
-AM_CONDITIONAL([BUILD_EPP], [test "x$have_edje_cc" = "xyes" -a -z "$EPP"])
-if test -z "$EPP" ; then
-   EPP=${prefix}/bin/epp
-   AC_SUBST(EPP)
-fi
+AM_CONDITIONAL([BUILD_EPP], [test "x$have_edje_cc" = "xyes"])
+EPPDIR=${prefix}/lib/edje/utils
+AC_SUBST(EPPDIR)
 
 if test "x$have_edje_decc" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
