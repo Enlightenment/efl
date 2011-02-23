@@ -25,13 +25,28 @@
  * representation. The result is stored in the buffer  @p result
  * supplied by the user. If @p timep or @p result are @c NULL, or if
  * an error occurred, this function returns @c NULL and the values in
- * @p result might be undefined. Otherwise it returns @p result. 
+ * @p result might be undefined. Otherwise it returns @p result.
  *
  * Conformity: Non applicable.
  *
  * Supported OS: Windows XP.
  */
 EAPI struct tm *localtime_r(const time_t *timep, struct tm *result);
+
+#ifdef UNDER_CE
+
+/**
+ * @brief Stub implementation of tzset().
+ *
+ * This function does nothing.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows CE.
+ */
+EAPI void tzset(void);
+
+#endif
 
 
 /**
