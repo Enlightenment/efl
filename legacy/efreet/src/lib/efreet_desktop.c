@@ -261,6 +261,9 @@ efreet_desktop_new(const char *file)
  *
  * By using efreet_desktop_uncached_new the Efreet_Desktop structure will be
  * read from disk, and not from any cache.
+ *
+ * Data in the structure is allocated with strdup, so use free and strdup to
+ * change values.
  */
 EAPI Efreet_Desktop *
 efreet_desktop_uncached_new(const char *file)
