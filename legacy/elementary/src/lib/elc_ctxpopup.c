@@ -230,11 +230,8 @@ _item_sizing_eval(Elm_Ctxpopup_Item *item)
 {
    Evas_Coord min_w = -1, min_h = -1, max_w = -1, max_h = -1;
 
-   Evas_Coord x, y, w, h;
-
    if (!item) return;
 
-   evas_object_geometry_get(item->base.view, &x, &y, &w, &h);
    edje_object_size_min_restricted_calc(item->base.view, &min_w, &min_h, min_w,
                                         min_h);
    evas_object_size_hint_min_set(item->base.view, min_w, min_h);
