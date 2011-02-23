@@ -1374,7 +1374,7 @@ elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
  * once you set a content, the previous list items will be removed. 
  *
  * @param obj Ctxpopup object
- * @param content	Content to be swallowed
+ * @param content Content to be swallowed
  *
  * @ingroup Ctxpopup
  */
