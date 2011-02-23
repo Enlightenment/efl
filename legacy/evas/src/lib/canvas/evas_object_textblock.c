@@ -8005,8 +8005,7 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
    if (!evas_textblock_cursor_format_is_visible_get(cur)) return EINA_FALSE;
-   _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln,
-         (Evas_Object_Textblock_Item **) &it);
+   _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
    fi = _ITEM_FORMAT(it);
    if ((!ln) || (!fi)) return EINA_FALSE;
    x = ln->par->x + ln->x + fi->parent.x;
