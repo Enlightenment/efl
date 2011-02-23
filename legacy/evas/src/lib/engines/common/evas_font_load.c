@@ -49,6 +49,7 @@ _evas_common_font_source_free(RGBA_Font_Source *fs)
    evas_common_font_ot_unload_face(fs);
 #endif
    if (fs->name) eina_stringshare_del(fs->name);
+   if (fs->file) eina_stringshare_del(fs->file);
    free(fs);
 }
 
