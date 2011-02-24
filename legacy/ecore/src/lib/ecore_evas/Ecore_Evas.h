@@ -118,7 +118,7 @@ typedef struct _Ecore_Win32_Window Ecore_Win32_Window;
 #endif
 
 #ifndef __ECORE_WINCE_H__
-typedef void Ecore_WinCE_Window;
+typedef struct _Ecore_WinCE_Window Ecore_WinCE_Window;
 #endif
 
 #ifndef _ECORE_EVAS_PRIVATE_H
