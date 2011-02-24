@@ -32,3 +32,8 @@
 2011-02-10  Cedric BAIL
 
 	* Fix propagation of recursive events on existing part.
+
+2011-02-24  Cedric BAIL
+
+	* fix signal comming from box/table item to include their
+	index or name correctly.

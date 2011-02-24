@@ -291,6 +291,30 @@ typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 
+typedef struct _Edje Edje;
+typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
+typedef struct _Edje_Real_Part_Drag Edje_Real_Part_Drag;
+typedef struct _Edje_Real_Part_Set Edje_Real_Part_Set;
+typedef struct _Edje_Real_Part Edje_Real_Part;
+typedef struct _Edje_Running_Program Edje_Running_Program;
+typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
+typedef struct _Edje_Calc_Params Edje_Calc_Params;
+typedef struct _Edje_Pending_Program Edje_Pending_Program;
+typedef struct _Edje_Text_Style Edje_Text_Style;
+typedef struct _Edje_Color_Class Edje_Color_Class;
+typedef struct _Edje_Text_Class Edje_Text_Class;
+typedef struct _Edje_Var Edje_Var;
+typedef struct _Edje_Var_Int Edje_Var_Int;
+typedef struct _Edje_Var_Float Edje_Var_Float;
+typedef struct _Edje_Var_String Edje_Var_String;
+typedef struct _Edje_Var_List Edje_Var_List;
+typedef struct _Edje_Var_Hash Edje_Var_Hash;
+typedef struct _Edje_Var_Animator Edje_Var_Animator;
+typedef struct _Edje_Var_Timer Edje_Var_Timer;
+typedef struct _Edje_Var_Pool Edje_Var_Pool;
+typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
+typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
+
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
 
@@ -590,6 +614,7 @@ struct _Edje_Part_Collection_Directory_Entry
 struct _Edje_Pack_Element
 {
    unsigned char    type; /* only GROUP supported for now */
+   Edje_Real_Part  *parent; /* pointer to the table/box that hold it, set at runtime */
    const char      *name; /* if != NULL, will be set with evas_object_name_set */
    const char      *source; /* group name to use as source for this element */
    Edje_Size        min, prefer, max;
@@ -891,31 +916,6 @@ struct _Edje_Part_Description_External
 };
 
 /*----------*/
-
-
-typedef struct _Edje Edje;
-typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
-typedef struct _Edje_Real_Part_Drag Edje_Real_Part_Drag;
-typedef struct _Edje_Real_Part_Set Edje_Real_Part_Set;
-typedef struct _Edje_Real_Part Edje_Real_Part;
-typedef struct _Edje_Running_Program Edje_Running_Program;
-typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
-typedef struct _Edje_Calc_Params Edje_Calc_Params;
-typedef struct _Edje_Pending_Program Edje_Pending_Program;
-typedef struct _Edje_Text_Style Edje_Text_Style;
-typedef struct _Edje_Color_Class Edje_Color_Class;
-typedef struct _Edje_Text_Class Edje_Text_Class;
-typedef struct _Edje_Var Edje_Var;
-typedef struct _Edje_Var_Int Edje_Var_Int;
-typedef struct _Edje_Var_Float Edje_Var_Float;
-typedef struct _Edje_Var_String Edje_Var_String;
-typedef struct _Edje_Var_List Edje_Var_List;
-typedef struct _Edje_Var_Hash Edje_Var_Hash;
-typedef struct _Edje_Var_Animator Edje_Var_Animator;
-typedef struct _Edje_Var_Timer Edje_Var_Timer;
-typedef struct _Edje_Var_Pool Edje_Var_Pool;
-typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
-typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
 
 struct _Edje_Signal_Source_Char
 {
