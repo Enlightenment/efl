@@ -3897,11 +3897,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
         Evas_Object_Textblock *o;
 
         o = (Evas_Object_Textblock *)(obj->object_data);
-        if (o->markup_text)
-          {
-             free(o->markup_text);
-             o->markup_text = NULL;
-          }
+        _evas_textblock_text_node_changed(o, obj, NULL);
      }
 
    _style_clear(ts);
@@ -3990,24 +3986,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                   key_start = key_stop = val_start = val_stop = NULL;
                }
              p++;
-          }
-     }
-
-   EINA_LIST_FOREACH(ts->objects, l, obj)
-     {
-        Evas_Object_Textblock *o;
-
-        o = (Evas_Object_Textblock *)(obj->object_data);
-        if (o->markup_text)
-          {
-             char *m;
-
-             m = strdup(o->markup_text);
-             if (m)
-               {
-                  evas_object_textblock_text_markup_set(obj, m);
-                  free(m);
-               }
           }
      }
 }
