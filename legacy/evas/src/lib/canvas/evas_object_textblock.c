@@ -2450,7 +2450,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
    else
      cut2 = cut;
 
-   if (ts[cut2])
+   if (ts[cut2] && (ti->text_props.text_len > 0))
      {
         new_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut2],
                                        ti->text_props.text_len - cut2);
@@ -2464,7 +2464,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
         _layout_text_add_logical_item(c, new_ti, lti);
      }
 
-   if (cut2 > cut)
+   if ((cut2 > cut) && (ti->text_props.text_len > 0))
      {
         white_ti = _layout_text_item_new(c, ti->parent.format, &ts[cut],
                                        ti->text_props.text_len - cut);
