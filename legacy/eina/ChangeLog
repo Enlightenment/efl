@@ -22,3 +22,8 @@
 2011-02-17  Mike Blumenkrantz
 
         * Added eina_list_move* functions for moving list node data to other lists
+
+2011-02-24  Vincent Torri
+
+        * Fix a compilation failure when --disable-posix-threads
+	--disable-valgrind are passed to configure

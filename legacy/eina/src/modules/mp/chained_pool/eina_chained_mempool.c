@@ -339,6 +339,7 @@ eina_chained_mempool_free(void *data, void *ptr)
 # endif
      }
 #endif
+   return;
 }
 
 static void *
