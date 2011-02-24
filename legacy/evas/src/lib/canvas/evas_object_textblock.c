@@ -394,7 +394,7 @@ struct _Evas_Object_Textblock_Format
 
 struct _Evas_Textblock_Style
 {
-   char                  *style_text;
+   const char            *style_text;
    char                  *default_tag;
    Evas_Object_Style_Tag *tags;
    Eina_List             *objects;
@@ -520,13 +520,14 @@ static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Eva
 /* styles */
 /**
  * @internal
- * Clears the textblock style passed.
+ * Clears the textblock style passed except for the style_text which is replaced.
  * @param ts The ts to be cleared. Must not be NULL.
+ * @param style_text the style's text.
  */
 static void
-_style_clear(Evas_Textblock_Style *ts)
+_style_replace(Evas_Textblock_Style *ts, const char *style_text)
 {
-   if (ts->style_text) free(ts->style_text);
+   eina_stringshare_replace(&ts->style_text, style_text);
    if (ts->default_tag) free(ts->default_tag);
    while (ts->tags)
      {
@@ -538,9 +539,19 @@ _style_clear(Evas_Textblock_Style *ts)
 	free(tag->replace);
 	free(tag);
      }
-   ts->style_text = NULL;
    ts->default_tag = NULL;
    ts->tags = NULL;
+}
+
+/**
+ * @internal
+ * Clears the textblock style passed.
+ * @param ts The ts to be cleared. Must not be NULL.
+ */
+static void
+_style_clear(Evas_Textblock_Style *ts)
+{
+   _style_replace(ts, NULL);
 }
 
 /**
@@ -3900,14 +3911,13 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
         _evas_textblock_text_node_changed(o, obj, NULL);
      }
 
-   _style_clear(ts);
-   if (text) ts->style_text = strdup(text);
+   _style_replace(ts, text);
 
    if (ts->style_text)
      {
         // format MUST be KEY='VALUE'[KEY='VALUE']...
-        char *p;
-        char *key_start, *key_stop, *val_start, *val_stop;
+        const char *p;
+        const char *key_start, *key_stop, *val_start, *val_stop;
 
         key_start = key_stop = val_start = val_stop = NULL;
         p = ts->style_text;
