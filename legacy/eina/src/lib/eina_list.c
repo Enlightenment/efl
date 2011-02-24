@@ -1174,7 +1174,7 @@ eina_list_demote_list(Eina_List *list, Eina_List *move_list)
  *
  * @param list The list to search for a data.
  * @param data The data pointer to find in the list.
- * @return The found member data pointer if foun, @c NULL otherwise.
+ * @return The found member data pointer if found, @c NULL otherwise.
  *
  * This function searches in @p list from beginning to end for the
  * first member whose data pointer is @p data. If it is found, @p data
@@ -1187,7 +1187,7 @@ eina_list_demote_list(Eina_List *list, Eina_List *move_list)
  *
  * if (eina_list_data_find(list, my_data) == my_data)
  *   {
- *     printf("Found member %p\n", my_data);
+ *      printf("Found member %p\n", my_data);
  *   }
  * @endcode
  */
