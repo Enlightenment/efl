@@ -50,9 +50,11 @@ extern "C" {
  */
 
 
-#ifndef _ECORE_EVAS_H
-typedef void Ecore_WinCE_Window;
-#endif
+/**
+ * @typedef Ecore_WinCE_Window
+ * Abstract type for a window.
+ */
+typedef struct _Ecore_WinCE_Window Ecore_WinCE_Window;
 
 
 /**
