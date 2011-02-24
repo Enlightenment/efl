@@ -3902,6 +3902,10 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
    Evas_Object *obj;
 
    if (!ts) return;
+   /* If the style wasn't really changed, abort. */
+   if ((!ts->style_text && !text) ||
+       (ts->style_text && text && !strcmp(text, ts->style_text)))
+      return;
 
    EINA_LIST_FOREACH(ts->objects, l, obj)
      {
