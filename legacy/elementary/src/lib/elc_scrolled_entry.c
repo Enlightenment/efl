@@ -1609,3 +1609,46 @@ elm_scrolled_entry_autosave_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return elm_entry_autosave_get(wd->entry);
 }
+
+/**
+ * Control pasting of text and images for the widget.
+ *
+ * Normally the scrolled entry allows both text and images to be pasted.
+ * By setting textonly to be true, this prevents images from being pasted.
+ *
+ * Note this only changes the behaviour of text.
+ *
+ * @param obj The scrolled entry object
+ * @param textonly paste mode - EINA_TRUE is text only, EINA_FALSE is text+image+other.
+ *
+ * @see elm_entry_cnp_textonly_set
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_cnp_textonly_set(wd->entry, textonly);
+}
+
+/**
+ * Getting elm_scrolled_entry text paste/drop mode.
+ *
+ * In textonly mode, only text may be pasted or dropped into the widget.
+ *
+ * @param obj The scrolled entry object
+ * @return If the widget only accepts text from pastes.
+ *
+ * @see elm_entry_cnp_textonly_get
+ * @ingroup Scrolled_Entry
+ */
+EAPI Eina_Bool
+elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return elm_entry_cnp_textonly_get(wd->entry);
+}
