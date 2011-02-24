@@ -78,6 +78,8 @@ ecore_file_download_shutdown(void)
 #endif /* BUILD_ECORE_CON */
 }
 
+#ifdef BUILD_ECORE_CON
+# ifdef HAVE_CURL
 static Eina_Bool
 _ecore_file_download_headers_foreach_cb(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
 {
@@ -86,6 +88,8 @@ _ecore_file_download_headers_foreach_cb(const Eina_Hash *hash __UNUSED__, const 
 
    return EINA_TRUE;
 }
+# endif
+#endif
 
 static Eina_Bool
 _ecore_file_download(const char *url,

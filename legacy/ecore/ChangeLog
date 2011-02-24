@@ -54,7 +54,7 @@
 	* Add get calls in ecore_imf for ecore_imf_context_canvas_get() and
         ecore_imf_context_window_get().
 
-2011-02-21 Raoul Hecky 
+2011-02-21 Raoul Hecky
 
 	* Remove 300 second timeout so large downloads work in ecore_con.
 
@@ -64,3 +64,7 @@
         on fork. Have it detecti this on next monitor add and re-init the
         inotify fd and fd handler.
 
+2011-02-24 Vincent Torri
+
+	* Ecore_File: fix compilation when ecore_con and curl are not
+	available
