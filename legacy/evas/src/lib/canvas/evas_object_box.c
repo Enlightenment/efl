@@ -1,5 +1,9 @@
 #include "evas_common.h"
 
+#ifdef _WIN32_WCE
+# undef remove
+#endif
+
 typedef struct _Evas_Object_Box_Iterator Evas_Object_Box_Iterator;
 typedef struct _Evas_Object_Box_Accessor Evas_Object_Box_Accessor;
 
