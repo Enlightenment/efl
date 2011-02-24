@@ -2839,7 +2839,7 @@ elm_entry_autosave_get(const Evas_Object *obj)
  * Note this only changes the behaviour of text.
  *
  * @param obj The entry object
- * @param pmode paste mode - 0 is text only, 1 is text+image+other.
+ * @param textonly paste mode - EINA_TRUE is text only, EINA_FALSE is text+image+other.
  *
  * @ingroup Entry
  */
