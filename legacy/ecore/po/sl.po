@@ -2,14 +2,14 @@
 # This file is put in the public domain.
 # r1to <renato.rener@gmail.com>, 2011.
 # , fuzzy
-# 
-# 
+#
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ecore 1.0\n"
 "Report-Msgid-Bugs-To: http://trac.enlightenment.org/e/\n"
 "POT-Creation-Date: 2011-02-22 20:00-0800\n"
-"PO-Revision-Date: 2011-02-24 01:43+0100\n"
+"PO-Revision-Date: 2011-02-24 16:54+0100\n"
 "Last-Translator: r1to <renato.rener@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr "%s·[možnosti]\n"
 
 #: ../src/lib/ecore/ecore_getopt.c:248
 msgid "Copyright:"
-msgstr "Avtorska zaščita:"
+msgstr "Avtorstvo:"
 
 #: ../src/lib/ecore/ecore_getopt.c:259
 msgid "License:"
@@ -139,7 +139,7 @@ msgstr "NAPAKA:·možnost·-%c zahteva argument!\n"
 
 #: ../src/lib/ecore/ecore_getopt.c:1614
 msgid "ERROR: no parser provided.\n"
-msgstr "NAPAKA::·razčlenjevalnik ni podan.\n"
+msgstr "NAPAKA:·ni podan razčlenjevalnik.\n"
 
 #: ../src/lib/ecore/ecore_getopt.c:1619
 msgid "ERROR: no values provided.\n"
@@ -172,4 +172,3 @@ msgstr "NAPAKA::·nepravilna geometrijska vrednost·'%s'\n"
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "NAPAKA::·nepravilna vrednost velikosti·'%s'\n"
-
