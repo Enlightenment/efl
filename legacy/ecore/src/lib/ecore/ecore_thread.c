@@ -1024,7 +1024,7 @@ ecore_thread_check(Ecore_Thread *thread)
  * @param func_end The function that will be called in the main loop if the thread terminate correctly.
  * @param func_cancel The function that will be called in the main loop if the thread is cancelled.
  * @param data User context data to pass to all callback.
- * @param try_no_queue If you wan't to run outside of the thread pool.
+ * @param try_no_queue If you want to run outside of the thread pool.
  * @return A reference to the newly created thread instance, or NULL if it failed.
  *
  * ecore_thread_feedback_run provide a facility for easily managing heavy task in a
