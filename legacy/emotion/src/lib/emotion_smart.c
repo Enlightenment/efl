@@ -187,6 +187,9 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
 	return NULL;
      }
 
+   if (!name && getenv("EMOTION_ENGINE"))
+     name = getenv("EMOTION_ENGINE");
+
    /* FIXME: Always look for a working backend. */
  retry:
    if (!name || index > 0)
