@@ -327,6 +327,8 @@ eina_chained_mempool_free(void *data, void *ptr)
      {
         VALGRIND_MEMPOOL_FREE(pool, ptr);
      }
+#else
+   ptr = NULL;
 #endif
 
 #ifdef EFL_HAVE_THREADS
