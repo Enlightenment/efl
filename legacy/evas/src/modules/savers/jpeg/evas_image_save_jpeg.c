@@ -24,7 +24,7 @@ static void
 _JPEGFatalErrorHandler(j_common_ptr cinfo)
 {
    emptr errmgr;
-   
+
    errmgr = (emptr) cinfo->err;
    longjmp(errmgr->setjmp_buffer, 1);
    return;
@@ -34,7 +34,7 @@ static void
 _JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
 {
 /*    emptr errmgr; */
-   
+
 /*    errmgr = (emptr) cinfo->err; */
    return;
 }
@@ -43,7 +43,7 @@ static void
 _JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
 {
 /*    emptr errmgr; */
-   
+
 /*    errmgr = (emptr) cinfo->err; */
    return;
 }
@@ -61,7 +61,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
 
    if (!im || !im->image.data || !file)
       return 0;
-   
+
    buf = alloca(im->cache_entry.w * 3 * sizeof(DATA8));
    f = fopen(file, "wb");
    if (!f)
@@ -90,7 +90,7 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    ptr = im->image.data;
    while (cinfo.next_scanline < cinfo.image_height)
      {
-        unsigned int i, j;
+	unsigned int i, j;
 	for (j = 0, i = 0; i < im->cache_entry.w; i++)
 	  {
 	     buf[j++] = ((*ptr) >> 16) & 0xff;
@@ -142,4 +142,3 @@ EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_IMAGE_SAVER, image_saver, jpeg);
 #ifndef EVAS_STATIC_BUILD_JPEG
 EVAS_EINA_MODULE_DEFINE(image_saver, jpeg);
 #endif
-
