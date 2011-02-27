@@ -1,3 +1,8 @@
+2011-02-27  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	force libtool >= 2.4
+
 2011-02-23  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_stdio.c:

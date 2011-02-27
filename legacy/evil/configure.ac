@@ -45,6 +45,7 @@ esac
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+LT_PREREQ([2.4])
 LT_INIT([win32-dll])
 
 version_info="lt_rev:lt_cur:lt_age"
