@@ -246,7 +246,7 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_saver, eet),
 #endif
-#ifdef EVAS_STATIC_BUILD_JPEG
+#if defined (EVAS_BUILD_SAVER_JPEG) && defined (EVAS_STATIC_BUILD_JPEG)
   EVAS_EINA_STATIC_MODULE_USE(image_saver, jpeg),
 #endif
 #ifdef EVAS_STATIC_BUILD_PNG
