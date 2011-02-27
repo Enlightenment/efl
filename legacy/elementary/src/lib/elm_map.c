@@ -3569,8 +3569,7 @@ elm_map_user_agent_set(Evas_Object *obj, const char *user_agent)
    else eina_stringshare_replace(&wd->user_agent, user_agent);
    
    if (!wd->ua) wd->ua = eina_hash_string_small_new(NULL);
-   if (!eina_hash_find(wd->ua, "User-Agent")) eina_hash_add(wd->ua, "User-Agent", user_agent);
-   else eina_hash_set(wd->ua, "User-Agent", user_agent);
+   eina_hash_set(wd->ua, "User-Agent", wd->user_agent);
 }
 
 /**
