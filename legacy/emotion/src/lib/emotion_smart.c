@@ -144,11 +144,17 @@ _emotion_image_data_zero(Evas_Object *img)
    data = evas_object_image_data_get(img, 1);
    if (data)
      {
-        int w, h, sz;
+        int w, h, sz = 0;
+        Evas_Colorspace cs;
         
         evas_object_image_size_get(img, &w, &h);
-        sz = w * h * 4;
-        memset(data, 0, sz);
+        cs = evas_object_image_colorspace_get(img);
+        if (cs == EVAS_COLORSPACE_ARGB8888)
+           sz = w * h * 4;
+        if ((cs == EVAS_COLORSPACE_YCBCR422P601_PL) ||
+            (cs == EVAS_COLORSPACE_YCBCR422P709_PL))
+           sz = h * 2 * sizeof(unsigned char *);
+        if (sz != 0) memset(data, 0, sz);
      }
    evas_object_image_data_set(img, data);
 }
@@ -335,6 +341,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	free(sd->file);
 	sd->file = strdup(file);
 	sd->module->file_close(sd->video);
+        evas_object_image_data_set(sd->obj, NULL);
 	evas_object_image_size_set(sd->obj, 1, 1);
 	if (!sd->module->file_open(sd->file, obj, sd->video))
 	  return EINA_FALSE;
@@ -350,6 +357,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
         if (sd->video && sd->module)
 	  {
 	     sd->module->file_close(sd->video);
+             evas_object_image_data_set(sd->obj, NULL);
 	     evas_object_image_size_set(sd->obj, 1, 1);
              _emotion_image_data_zero(sd->obj);
 	  }
