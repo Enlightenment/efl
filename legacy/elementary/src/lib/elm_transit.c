@@ -424,15 +424,18 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
  * @param obj Object to be animated.
  *
  * @ingroup Transit
- * @warning See the documentation of the effect if is safe add or remove
- * an object after @p transit begins to run.
+ * @warning It is not allowed to add a new object after transit begins to go. 
  */
 EAPI void
 elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+   Elm_Obj_Data *obj_data;
+
+   if (transit->animator) return;
+
+   obj_data = evas_object_data_get(obj, _transit_key);
 
    if (obj_data)
      {
@@ -465,15 +468,19 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
  * @param obj Object to be removed from @p transit.
  *
  * @ingroup Transit
- * @warning See the documentation of the effect if is safe add or remove
- * an object after @p transit begins to run.
+ * @warning It is not allowed to remove objects after transit begins to go. 
  */
 EAPI void
 elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   Elm_Obj_Data *obj_data = evas_object_data_get(obj, _transit_key);
+   Elm_Obj_Data *obj_data;
+  
+   if (transit->animator) return;
+
+   obj_data = evas_object_data_get(obj, _transit_key);
+ 
    if ((!obj_data) || (obj_data->transit != transit)) return;
 
    _elm_transit_object_remove(transit, obj);
@@ -935,10 +942,6 @@ _transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_
  *
  * @note This API is one of the facades. It creates resizing effect context 
  * and add it's required APIs to elm_transit_effect_add. 
- * @note This effect will be applied to the objects that are in the transit,
- * @note If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  *
  * @see elm_transit_effect_add()
  *
@@ -1090,10 +1093,6 @@ _transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, 
  *
  * @note This API is one of the facades. It creates translation effect context 
  * and add it's required APIs to elm_transit_effect_add. 
- * @note When this function is called, it gets the current objects in
- * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
- * will not cause any changes in the set of objects that this effect is being
- * applied.
  *
  * @see elm_transit_effect_add()
  *
@@ -1109,8 +1108,6 @@ _transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, 
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy)
@@ -1187,9 +1184,6 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
  *
  * @note This API is one of the facades. It creates zoom effect context 
  * and add it's required APIs to elm_transit_effect_add. 
- * @note If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  *
  * @see elm_transit_effect_add()
  *
@@ -1203,8 +1197,6 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate)
@@ -1354,9 +1346,6 @@ _transit_effect_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "front" object and the second will be the "back" object.
- * @note If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  * 
  * @see elm_transit_effect_add()
  *
@@ -1370,8 +1359,6 @@ _transit_effect_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
@@ -1660,10 +1647,6 @@ _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Ei
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "front" object and the second will be the "back" object.
- * @note When this function is called, it gets the current objects in
- * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
- * will not cause any changes in the set of objects that this effect is being
- * applied.
  * 
  * @see elm_transit_effect_add()
  *
@@ -1677,8 +1660,6 @@ _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Ei
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
@@ -1897,10 +1878,6 @@ _transit_effect_wipe_context_new(Elm_Transit_Effect_Wipe_Type type, Elm_Transit_
  *
  * @note This API is one of the facades. It creates wipe effect context 
  * and add it's required APIs to elm_transit_effect_add. 
- * @note This effect will be applied to the objects that are in the transit,
- * If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  * 
  * @see elm_transit_effect_add()
  *
@@ -1914,8 +1891,6 @@ _transit_effect_wipe_context_new(Elm_Transit_Effect_Wipe_Type type, Elm_Transit_
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir)
@@ -1996,10 +1971,6 @@ _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsi
  *
  * @note This API is one of the facades. It creates color effect context 
  * and add it's required APIs to elm_transit_effect_add. 
- * @note This effect will be applied to the objects that are in the transit,
- * If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  * 
  * @see elm_transit_effect_add()
  *
@@ -2213,10 +2184,6 @@ _transit_effect_fade_context_new(void)
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "before" object and the second will be the "after" object.
- * @note When this function is called, it gets the current objects in
- * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
- * will not cause any changes in the set of objects that this effect is being
- * applied.
  * 
  * @see elm_transit_effect_add()
  *
@@ -2228,8 +2195,6 @@ _transit_effect_fade_context_new(void)
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the color information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_fade_add(Elm_Transit *transit)
@@ -2402,10 +2367,6 @@ _transit_effect_blend_context_new(void)
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "before" object and the second will be the "after" object.
- * @note When this function be called, it gets the current objects in
- * the transit, that is, elm_transit_object_remove() and elm_transit_object_add()
- * will not cause any changes in the set of objects that this effect is being
- * applied.
  * 
  * @see elm_transit_effect_add()
  *
@@ -2417,8 +2378,6 @@ _transit_effect_blend_context_new(void)
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the color information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_blend_add(Elm_Transit *transit)
@@ -2503,10 +2462,6 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree)
  *
  * @note This API is one of the facades. It creates rotation effect context 
  * and add it's required APIs to elm_transit_effect_add. 
- * @note This effect will be applied to the objects that are in the transit,
- * If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  * 
  * @see elm_transit_effect_add()
  *
@@ -2520,8 +2475,6 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree)
  * the window that the objects of the transit belongs has already been created.
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
- * @warning Is not recommended remove or add an object after the transit begins
- * to run, because the order of the objects will be affected.
  */
 EAPI void *
 elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree)
@@ -2612,10 +2565,6 @@ _transit_effect_image_animation_context_new(Eina_List *images)
  * The @p images parameter is a list images paths. This list and
  * its contents will be deleted at the end of the effect by
  * elm_transit_effect_image_animation_context_free() function.
- * @note This effect will be applied to the objects that are in the transit,
- * If you change the set of objects in the transit with  elm_transit_object_add()
- * or elm_transit_object_remove(), the set of objects affected by this effect
- * will be changed too.
  *
  * Example:
  * @code
