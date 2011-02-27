@@ -2558,7 +2558,7 @@ _transit_effect_image_animation_context_new(Eina_List *images)
 }
 
 /**
- * Add the Rotation Effect to Elm_Transit.
+ * Add the ImageAnimation Effect to Elm_Transit.
  *
  * @note This API is one of the facades. It creates image animation effect context 
  * and add it's required APIs to elm_transit_effect_add. 
