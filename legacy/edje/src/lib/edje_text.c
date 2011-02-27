@@ -539,9 +539,17 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     size = current - 1;
 	  }
      }
-   if (size < 1) size = 1;
 
-   if (!chosen_desc->text.fit_x)
+   /* Make sure the size is in range */
+   if (size < 1)
+      size = 1;
+   else if ((size > chosen_desc->text.size_range_max) &&
+            (chosen_desc->text.size_range_max > 0))
+      size = chosen_desc->text.size_range_max;
+   else if (size < chosen_desc->text.size_range_min)
+      size = chosen_desc->text.size_range_min;
+
+   /* Handle ellipsis */
      {
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);

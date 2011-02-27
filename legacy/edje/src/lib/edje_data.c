@@ -563,6 +563,8 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.text_class", text.text_class, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.style", text.style, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.font", text.font, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.size_range_min", text.size_range_min, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.size_range_max", text.size_range_max, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.repch", text.repch, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.size", text.size, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_text, Edje_Part_Description_Text, "text.fit_x", text.fit_x, EET_T_UCHAR);
@@ -593,6 +595,8 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.font", text.font, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.repch", text.repch, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.size", text.size, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.size_range_min", text.size_range_min, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.size_range_max", text.size_range_max, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.fit_x", text.fit_x, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.fit_y", text.fit_y, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_textblock, Edje_Part_Description_Text, "text.min_x", text.min_x, EET_T_UCHAR);

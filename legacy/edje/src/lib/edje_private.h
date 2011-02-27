@@ -862,6 +862,8 @@ struct _Edje_Part_Description_Spec_Text
    unsigned char  min_y; /* if text size should be part min size */
    unsigned char  max_x; /* if text size should be part max size */
    unsigned char  max_y; /* if text size should be part max size */
+   int            size_range_min;
+   int            size_range_max; /* -1 means, no bound. */
 };
 
 struct _Edje_Part_Description_Spec_Box

@@ -198,6 +198,7 @@ static void st_collections_group_parts_part_description_text_font(void);
 static void st_collections_group_parts_part_description_text_style(void);
 static void st_collections_group_parts_part_description_text_repch(void);
 static void st_collections_group_parts_part_description_text_size(void);
+static void st_collections_group_parts_part_description_text_size_range(void);
 static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
 static void st_collections_group_parts_part_description_text_max(void);
@@ -449,6 +450,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.style", st_collections_group_parts_part_description_text_style},
      {"collections.group.parts.part.description.text.repch", st_collections_group_parts_part_description_text_repch},
      {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
+     {"collections.group.parts.part.description.text.size_range", st_collections_group_parts_part_description_text_size_range},
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
      {"collections.group.parts.part.description.text.max", st_collections_group_parts_part_description_text_max},
@@ -5339,6 +5341,54 @@ st_collections_group_parts_part_description_text_size(void)
    if (ep->other.desc_count) ed = (Edje_Part_Description_Text*)  ep->other.desc[ep->other.desc_count - 1];
 
    ed->text.size = parse_int_range(0, 0, 255);
+}
+
+/**
+    @page edcref
+
+    @property
+        size_range
+    @parameters
+        [font min size in points (pt)] [font max size in points (pt)]
+    @effect
+        Sets the allowed font size for the text part. Setting min and max to 0
+        means we won't restrict the sizing (default).
+    @endproperty
+    @since 1.1.0
+*/
+static void
+st_collections_group_parts_part_description_text_size_range(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description_Text *ed;
+
+   check_arg_count(2);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   ep = pc->parts[pc->parts_count - 1];
+
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
+     {
+	ERR("%s: Error. parse error %s:%i. "
+	    "text attributes in non-TEXT part.",
+	    progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Text*) ep->default_desc;
+   if (ep->other.desc_count) ed = (Edje_Part_Description_Text*)  ep->other.desc[ep->other.desc_count - 1];
+
+   ed->text.size_range_min = parse_int_range(0, 0, 255);
+   ed->text.size_range_max = parse_int_range(1, 0, 255);
+   if (ed->text.size_range_min > ed->text.size_range_max)
+     {
+	ERR("%s: Error. parse error %s:%i. "
+	    "min size is bigger than max size.",
+	    progname, file_in, line - 1);
+	exit(-1);
+     }
 }
 
 /**
