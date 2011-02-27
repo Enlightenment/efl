@@ -797,7 +797,7 @@ case "$host_os" in
       ;;
    *)
       if test "x${have_evas_image_loader_jpeg}" = "xyes" ; then
-      AC_DEFINE(EVAS_BUILD_SAVER_JPEG, [1], [Build JPEG saver])
+         AC_DEFINE(EVAS_BUILD_SAVER_JPEG, [1], [Build JPEG saver])
          have_evas_image_saver_jpeg="yes"
       fi
       ;;
