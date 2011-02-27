@@ -1,32 +1,32 @@
 2011-01-29  Carsten Haitzler (The Rasterman)
 
-        1.0.0 release
-        
+	1.0.0 release
+
 2011-01-29  Carsten Haitzler (The Rasterman)
 
-        * Enabled mempool for object allocation
-        * Allow shorter pre-render handler for rect objects if they are
-          invisible
+	* Enabled mempool for object allocation
+	* Allow shorter pre-render handler for rect objects if they are
+	  invisible
 
 2011-01-30  Tom Hacohen (TAsn)
 
-        * It's actually a merge from my local branch upstream so this
-          includes many changes.
-        * Fixed cursor/selection handling with BiDi text.
-        * Fixed many BiDi issues in both textblock and text objects.
-        * Cleaned up textblock and font engine a lot.
-        * Added auto-alignment to tetxblock and text objects.
-        * Added mixedwrap (word wrap, and if a word is too big cut it) support
-          to textblock.
-        * Renamed a lot of stuff.
-        * Made textblock faster, mostly by saving item sizes and caching
-          layout items when text doesn't change.
-        * Added harfbuzz (ot layouting/shaping and etc) support.
-        * Currently you need to set the env var EVAS_USE_OT to '1' in order to
-          use OT support (harfbuzz) that will change soon.
-        * More code cleanups will be coming in the future. This shipment is
-          mostly to get code review started (and also make sure I don't have a
-          merging hell later on).
+	* It's actually a merge from my local branch upstream so this
+	  includes many changes.
+	* Fixed cursor/selection handling with BiDi text.
+	* Fixed many BiDi issues in both textblock and text objects.
+	* Cleaned up textblock and font engine a lot.
+	* Added auto-alignment to tetxblock and text objects.
+	* Added mixedwrap (word wrap, and if a word is too big cut it) support
+	  to textblock.
+	* Renamed a lot of stuff.
+	* Made textblock faster, mostly by saving item sizes and caching
+	  layout items when text doesn't change.
+	* Added harfbuzz (ot layouting/shaping and etc) support.
+	* Currently you need to set the env var EVAS_USE_OT to '1' in order to
+	  use OT support (harfbuzz) that will change soon.
+	* More code cleanups will be coming in the future. This shipment is
+	  mostly to get code review started (and also make sure I don't have a
+	  merging hell later on).
 
 2011-01-31  ChunEon Park
 
@@ -47,36 +47,36 @@
 
 2011-02-07 Brett Nash (nash@nash.id.au)
 
-        * Proxy Objects; Now you can set an image to have a 'source' of
-        another object.  The proxy will display the object as well.  Proxy
-        objects should be mostly complete.
-        * Proxy objects should be complete; please report and bugs to me.
-        * Partial support for arbitrary clipping.  Final support coming soon
-        (with some other changes).  You can set most objects as a clip on
-        other objects.  This will use the alpha channel of the object as a
-        clip on the object.  This is still buggy.
-        * Software support for arbitrary maps.  So you can use any size map
-        (not just 4 points) for maps.  Once again this is a little buggy.
+	* Proxy Objects; Now you can set an image to have a 'source' of
+	another object.  The proxy will display the object as well.  Proxy
+	objects should be mostly complete.
+	* Proxy objects should be complete; please report and bugs to me.
+	* Partial support for arbitrary clipping.  Final support coming soon
+	(with some other changes).  You can set most objects as a clip on
+	other objects.  This will use the alpha channel of the object as a
+	clip on the object.  This is still buggy.
+	* Software support for arbitrary maps.  So you can use any size map
+	(not just 4 points) for maps.  Once again this is a little buggy.
 
 2011-02-02  Carsten Haitzler (The Rasterman)
 
-        * GL engine gets a speculative texture cache to shadow the
-          normal image cache to avoid excess texture uploads when
-          cycling images often. Should improve performance in some
-          cases.
+	* GL engine gets a speculative texture cache to shadow the
+	  normal image cache to avoid excess texture uploads when
+	  cycling images often. Should improve performance in some
+	  cases.
 
 2011-02-12  Carsten Haitzler (The Rasterman)
 
-        * Fix "rediculous scaling size" bug, where scaling images to
-          sizes like 1 billion pixels high or wide caused evas to try
-          allocate scaletables on the stack and the stack just couldn't
-          handle it. Now it only allocates a table for the visible
-          region which will always be sane, and even has insanity
-          checks now. At worst you'll get an unrendered image if the
-          values are silly and some slowness. No crashes.
+	* Fix "rediculous scaling size" bug, where scaling images to
+	  sizes like 1 billion pixels high or wide caused evas to try
+	  allocate scaletables on the stack and the stack just couldn't
+	  handle it. Now it only allocates a table for the visible
+	  region which will always be sane, and even has insanity
+	  checks now. At worst you'll get an unrendered image if the
+	  values are silly and some slowness. No crashes.
 
 2011-02-13  Brett Nash (nash@nash.id.au)
-	
+
 	* Fix crash when deleting proxies.  This _technically_ breaks
 	  evas engines which realloc engine data when a border is set.
 	  Practically no engines do this.  There is a comment there (and
@@ -95,9 +95,9 @@
 
 2011-02-16  Jeonghyun Yun
 
-        * Patch from Jeonghyun Yun <jh0506.yun@samsung.com> that
-          improves BMP loader support to handle malformed RLE BMP's that
-          encode more pixels per line than the image actuall has.
+	* Patch from Jeonghyun Yun <jh0506.yun@samsung.com> that
+	  improves BMP loader support to handle malformed RLE BMP's that
+	  encode more pixels per line than the image actuall has.
 
 2011-02-16  Tom Hacohen (TAsn)
 
@@ -107,23 +107,26 @@
 
 2011-02-20  Carsten Haitzler (The Rasterman)
 
-        * Fix bug in font string parsing that can result in a crash if a
-          font element is long enough.
-        * Fiix convert rgba8888 -> a8 bug so it wont crash.
+	* Fix bug in font string parsing that can result in a crash if a
+	  font element is long enough.
+	* Fiix convert rgba8888 -> a8 bug so it wont crash.
 
 2011-02-21  Carsten Haitzler (The Rasterman)
 
 	* Fixed bug with memory access of old utf8 string when
-          comparing prev and cur state with text obj.
+	  comparing prev and cur state with text obj.
 
 2011-02-22  Tom Hacohen (TAsn)
 
 	* Fixed a bug in textblock cursor position with empty textblocks.
-        
+
 2011-02-22  Carsten Haitzler (The Rasterman)
 
 	* Fixed bug smart calc array where it'd nuke the array when nested
-          process calls hapen and leave some objects uncalculated, but
-          removed from the array and marked as needing a calc thus never
-          getting back into the array.
+	  process calls hapen and leave some objects uncalculated, but
+	  removed from the array and marked as needing a calc thus never
+	  getting back into the array.
 
+2011-02-27  Vincent Torri
+
+	* Fixed static linking of the bmp, wbmp and tga loaders
