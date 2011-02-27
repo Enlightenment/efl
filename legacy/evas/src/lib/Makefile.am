@@ -113,6 +113,11 @@ SUBDIRS += ../modules/engines/xrender_x11/
 EVAS_STATIC_MODULE += ../modules/engines/xrender_x11/libevas_engine_xrender_x11.la
 EVAS_STATIC_LIBADD += @evas_engine_xrender_x11_libs@ @evas_engine_xrender_xcb_libs@
 endif
+if EVAS_STATIC_BUILD_BMP
+SUBDIRS += ../modules/loaders/bmp
+EVAS_STATIC_MODULE += ../modules/loaders/bmp/libevas_loader_bmp.la
+EVAS_STATIC_LIBADD += @evas_image_loader_bmp_libs@
+endif
 if EVAS_STATIC_BUILD_EDB
 SUBDIRS += ../modules/savers/edb ../modules/loaders/edb
 EVAS_STATIC_MODULE += ../modules/savers/edb/libevas_saver_edb.la ../modules/loaders/edb/libevas_loader_edb.la
@@ -148,10 +153,20 @@ SUBDIRS += ../modules/loaders/svg
 EVAS_STATIC_MODULE += ../modules/loaders/svg/libevas_loader_svg.la
 EVAS_STATIC_LIBADD += @evas_image_loader_svg_libs@
 endif
+if EVAS_STATIC_BUILD_TGA
+SUBDIRS += ../modules/loaders/tga
+EVAS_STATIC_MODULE += ../modules/loaders/tga/libevas_loader_tga.la
+EVAS_STATIC_LIBADD += @evas_image_loader_tga_libs@
+endif
 if EVAS_STATIC_BUILD_TIFF
 SUBDIRS += ../modules/savers/tiff ../modules/loaders/tiff
 EVAS_STATIC_MODULE += ../modules/savers/tiff/libevas_saver_tiff.la ../modules/loaders/tiff/libevas_loader_tiff.la
 EVAS_STATIC_LIBADD += @evas_image_loader_tiff_libs@
+endif
+if EVAS_STATIC_BUILD_WBMP
+SUBDIRS += ../modules/loaders/wbmp
+EVAS_STATIC_MODULE += ../modules/loaders/wbmp/libevas_loader_wbmp.la
+EVAS_STATIC_LIBADD += @evas_image_loader_wbmp_libs@
 endif
 if EVAS_STATIC_BUILD_XPM
 SUBDIRS += ../modules/loaders/xpm
