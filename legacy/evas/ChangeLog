@@ -39,24 +39,29 @@
 
 2011-02-01  Tom Hacohen (TAsn)
 
-	* Started using string objects instead of strings in most of the font engine (everywhere except draw). Haven't removed the paramteres yet, but did mark them as UNUSED. Removing them will be part of a future change.
+	* Started using string objects instead of strings in most of the
+	  font engine (everywhere except draw). Haven't removed the
+	  paramteres yet, but did mark them as UNUSED. Removing them will be
+	  part of a future change.
 	* Removed run-time OT toggling support, OT is now fast, no need for that.
-	* Renamed all of the intl_props->text_props (because it really changed purpose
-	* Fixed spliting/merging of text_props to be fast and good, not hacky and complex like before.
+	* Renamed all of the intl_props->text_props (because it really
+	  changed purpose
+	* Fixed spliting/merging of text_props to be fast and good, not
+	  hacky and complex like before.
 	* Added "mirrored mode" to table object.
 
 2011-02-07 Brett Nash (nash@nash.id.au)
 
 	* Proxy Objects; Now you can set an image to have a 'source' of
-	another object.  The proxy will display the object as well.  Proxy
-	objects should be mostly complete.
+	  another object.  The proxy will display the object as well.  Proxy
+	  objects should be mostly complete.
 	* Proxy objects should be complete; please report and bugs to me.
 	* Partial support for arbitrary clipping.  Final support coming soon
-	(with some other changes).  You can set most objects as a clip on
-	other objects.  This will use the alpha channel of the object as a
-	clip on the object.  This is still buggy.
+	  (with some other changes).  You can set most objects as a clip on
+	  other objects.  This will use the alpha channel of the object as a
+	  clip on the object.  This is still buggy.
 	* Software support for arbitrary maps.  So you can use any size map
-	(not just 4 points) for maps.  Once again this is a little buggy.
+	  (not just 4 points) for maps.  Once again this is a little buggy.
 
 2011-02-02  Carsten Haitzler (The Rasterman)
 
@@ -103,13 +108,13 @@
 
 	* Dropped Evas_Encoding and moved to use Eina_unicode_utf8 instead.
 	* Started showing the unicode replacement character instead of missing
-	glyphs.
+	  glyphs.
 
 2011-02-20  Carsten Haitzler (The Rasterman)
 
 	* Fix bug in font string parsing that can result in a crash if a
 	  font element is long enough.
-	* Fiix convert rgba8888 -> a8 bug so it wont crash.
+	* Fix convert rgba8888 -> a8 bug so it wont crash.
 
 2011-02-21  Carsten Haitzler (The Rasterman)
 
