@@ -2212,6 +2212,40 @@ elm_entry_cursor_content_get(const Evas_Object *obj)
 }
 
 /**
+ * Sets the cursor position in the entry to the given value
+ *
+ * @param obj The entry object
+ * @param pos The position of the cursor
+ *
+ * @ingroup Entry
+ */
+EAPI void
+elm_entry_cursor_pos_set(const Evas_Object *obj, int pos)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_part_text_cursor_pos_set(wd->ent, "elm.text", EDJE_CURSOR_MAIN, pos);
+}
+
+/**
+ * Retrieves the current position of the cursor in the entry
+ *
+ * @param obj The entry object
+ * @return The cursor position
+ *
+ * @ingroup Entry
+ */
+EAPI int
+elm_entry_cursor_pos_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return edje_object_part_text_cursor_pos_get(wd->ent, "elm.text", EDJE_CURSOR_MAIN);
+}
+
+/**
  * This executes a "cut" action on the selected text in the entry.
  *
  * @param obj The entry object

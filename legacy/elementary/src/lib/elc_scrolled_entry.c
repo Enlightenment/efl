@@ -1151,6 +1151,40 @@ elm_scrolled_entry_cursor_content_get(const Evas_Object *obj)
 }
 
 /**
+ * Sets the cursor position in the scrolled entry to the given value
+ *
+ * @param obj The scrolled entry object
+ * @param pos the position of the cursor
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI void
+elm_scrolled_entry_cursor_pos_set(const Evas_Object *obj, int pos)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_entry_cursor_pos_set(wd->entry, pos);
+}
+
+/**
+ * Retrieves the current position of the cursor in the scrolled entry
+ *
+ * @param obj The entry object
+ * @return the cursor position
+ *
+ * @ingroup Scrolled_Entry
+ */
+EAPI int
+elm_scrolled_entry_cursor_pos_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return elm_entry_cursor_pos_get(wd->entry);
+}
+
+/**
  * This executes a "cut" action on the selected text in the scrolled entry.
  *
  * @param obj The scrolled entry object

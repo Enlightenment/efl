@@ -1224,6 +1224,8 @@ extern "C" {
    EAPI Eina_Bool    elm_entry_cursor_is_visible_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_entry_cursor_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_entry_cursor_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
+   EAPI void         elm_entry_cursor_pos_set(const Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EAPI int          elm_entry_cursor_pos_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_selection_cut(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_selection_copy(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_selection_paste(Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -2242,6 +2244,8 @@ extern "C" {
    EAPI Eina_Bool    elm_scrolled_entry_cursor_is_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_scrolled_entry_cursor_is_visible_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_scrolled_entry_cursor_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void         elm_scrolled_entry_cursor_pos_set(const Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+   EAPI int          elm_scrolled_entry_cursor_pos_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_selection_cut(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_selection_copy(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_scrolled_entry_selection_paste(Evas_Object *obj) EINA_ARG_NONNULL(1);
