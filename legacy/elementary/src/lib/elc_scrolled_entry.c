@@ -1159,7 +1159,7 @@ elm_scrolled_entry_cursor_content_get(const Evas_Object *obj)
  * @ingroup Scrolled_Entry
  */
 EAPI void
-elm_scrolled_entry_cursor_pos_set(const Evas_Object *obj, int pos)
+elm_scrolled_entry_cursor_pos_set(Evas_Object *obj, int pos)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
