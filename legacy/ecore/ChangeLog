@@ -68,3 +68,7 @@
 
 	* Ecore_File: fix compilation when ecore_con and curl are not
 	available
+
+2011-02-27 Jihoon Kim
+
+        * Add ecore_imf_context_preedit_string_with_attributes_get API.

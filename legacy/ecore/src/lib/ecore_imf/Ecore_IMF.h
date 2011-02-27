@@ -55,6 +55,9 @@ typedef struct _Ecore_IMF_Context                  Ecore_IMF_Context;           
 typedef struct _Ecore_IMF_Context_Class            Ecore_IMF_Context_Class;            /**< An Input Method Context class */
 typedef struct _Ecore_IMF_Context_Info             Ecore_IMF_Context_Info;             /**< An Input Method Context info */
 
+/* Preedit attribute info */
+typedef struct _Ecore_IMF_Preedit_Attr             Ecore_IMF_Preedit_Attr;
+
 EAPI extern int ECORE_IMF_EVENT_PREEDIT_START;
 EAPI extern int ECORE_IMF_EVENT_PREEDIT_END;
 EAPI extern int ECORE_IMF_EVENT_PREEDIT_CHANGED;
@@ -108,6 +111,14 @@ typedef enum
    ECORE_IMF_INPUT_MODE_INVISIBLE    = 1 << 29,
    ECORE_IMF_INPUT_MODE_AUTOCAP      = 1 << 30
 } Ecore_IMF_Input_Mode;
+
+typedef enum
+{
+   ECORE_IMF_PREEDIT_TYPE_NONE,
+   ECORE_IMF_PREEDIT_TYPE_SUB1,
+   ECORE_IMF_PREEDIT_TYPE_SUB2,
+   ECORE_IMF_PREEDIT_TYPE_SUB3
+} Ecore_IMF_Preedit_Type;
 
 struct _Ecore_IMF_Event_Preedit_Start
 {
@@ -260,6 +271,13 @@ union _Ecore_IMF_Event
    Ecore_IMF_Event_Key_Up      key_up;
 };
 
+struct _Ecore_IMF_Preedit_Attr
+{
+   Ecore_IMF_Preedit_Type preedit_type;
+   unsigned int start_index;
+   unsigned int end_index;
+};
+
 struct _Ecore_IMF_Context_Class
 {
    void (*add)                 (Ecore_IMF_Context *ctx);
@@ -276,6 +294,7 @@ struct _Ecore_IMF_Context_Class
    void (*use_preedit_set)     (Ecore_IMF_Context *ctx, Eina_Bool use_preedit);
    void (*input_mode_set)      (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Mode input_mode);
    Eina_Bool (*filter_event)   (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event);
+   void (*preedit_string_with_attributes_get) (Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -308,6 +327,7 @@ EAPI void                         *ecore_imf_context_client_canvas_get(Ecore_IMF
 EAPI void                          ecore_imf_context_show(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_hide(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cursor_pos);
+EAPI void                          ecore_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char **str, Eina_List **attrs, int *cursor_pos);
 EAPI void                          ecore_imf_context_focus_in(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_focus_out(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_reset(Ecore_IMF_Context *ctx);
