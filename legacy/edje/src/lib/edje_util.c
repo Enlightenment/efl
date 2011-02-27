@@ -2214,6 +2214,57 @@ edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *par
 }
 
 /**
+ * @brief Sets the cursor position to the given value
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param cur The cursor to move
+ * @param pos the position of the cursor
+ * @since 1.1.0
+ */
+EAPI void
+edje_object_part_text_cursor_pos_set(Evas_Object *obj, const char *part, Edje_Cursor cur, int pos)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_cursor_pos_set(rp, cur, pos);
+     }
+}
+
+/**
+ * @brief Retrieves the current position of the cursor
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param cur The cursor to get the position
+ * @return The cursor position
+ * @since 1.1.0
+ */
+EAPI int
+edje_object_part_text_cursor_pos_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return 0;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_cursor_pos_get(rp, cur);
+     }
+   return 0;
+}
+
+/**
  * Add a filter function for newly inserted text.
  *
  * Whenever text is inserted (not the same as set) into the given @p part,

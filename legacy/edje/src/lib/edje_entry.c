@@ -2603,6 +2603,37 @@ _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
    return s;
 }
 
+void
+_edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos)
+{
+   Entry *en = rp->entry_data;
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return;
+   evas_textblock_cursor_pos_set(c, pos);
+   _curs_update_from_curs(c, rp->object, rp->entry_data);
+   _sel_update(c, rp->object, rp->entry_data);
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     {
+        ecore_imf_context_reset(en->imf_context);
+        ecore_imf_context_cursor_position_set(en->imf_context,
+                                              evas_textblock_cursor_pos_get(en->cursor));
+     }
+#endif
+
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+   _edje_entry_real_part_configure(rp);
+}
+
+int
+_edje_entry_cursor_pos_get(Edje_Real_Part *rp, Edje_Cursor cur)
+{
+   Evas_Textblock_Cursor *c = _cursor_get(rp, cur);
+   if (!c) return 0;
+   return evas_textblock_cursor_pos_get(c);
+}
+
 #ifdef HAVE_ECORE_IMF
 static Eina_Bool
 _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, char **text, int *cursor_pos)
