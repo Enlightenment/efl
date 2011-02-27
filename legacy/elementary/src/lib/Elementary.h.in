@@ -2128,6 +2128,8 @@ extern "C" {
    EAPI int                   elm_map_source_zoom_min_get(Elm_Map_Sources source);
    EAPI int                   elm_map_source_zoom_max_get(Elm_Map_Sources source);
    EAPI const char           *elm_map_source_name_get(Elm_Map_Sources source);
+   EAPI void                  elm_map_user_agent_set(Evas_Object *obj, const char *user_agent) EINA_ARG_NONNULL(1, 2);
+   EAPI const char           *elm_map_user_agent_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image

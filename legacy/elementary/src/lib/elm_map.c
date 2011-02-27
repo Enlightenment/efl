@@ -5,7 +5,8 @@
  * @defgroup Map Map
  * @ingroup Elementary
  *
- * This is a widget specifically for displaying the free map OpenStreetMap.
+ * This is a widget specifically for displaying the map. It uses basically
+ * OpenStreetMap provider. but it can be added custom providers.
  *
  * Signals that you can add callbacks for are:
  *
@@ -263,6 +264,9 @@ struct _Widget_Data
    Eina_List *s_event_list;
    int try_num;
    int finish_num;
+
+   Eina_Hash *ua;
+   const char *user_agent;
 };
 
 struct _Mod_Api
@@ -1001,7 +1005,7 @@ grid_load(Evas_Object *obj, Grid *g)
 		       else
 			 {
 			    DBG("DOWNLOAD %s \t in %s", source, buf2);
-			    ecore_file_download(source, buf2, _tile_downloaded, NULL, gi, &(gi->job));
+			    ecore_file_download_full(source, buf2, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
                             if (!gi->job)
                               DBG("Can't start to download %s", buf);
                             else
@@ -1432,6 +1436,8 @@ _del_hook(Evas_Object *obj)
    if (wd->zoom_animator) ecore_animator_del(wd->zoom_animator);
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
    if ((wd->api) && (wd->api->obj_unhook)) wd->api->obj_unhook(obj);
+   if (wd->user_agent) eina_stringshare_del(wd->user_agent);
+   if (wd->ua) eina_hash_free(wd->ua);
 
    free(wd);
 }
@@ -3542,6 +3548,47 @@ EAPI const char *
 elm_map_source_name_get(Elm_Map_Sources source)
 {
    return map_sources_tab[source].name;
+}
+
+/**
+ * Set the user agent of the widget map.
+ *
+ * @param obj The map object
+ * @param user_agent the user agent of the widget map
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_user_agent_set(Evas_Object *obj, const char *user_agent)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   if (!wd->user_agent) wd->user_agent = eina_stringshare_add(user_agent);
+   else eina_stringshare_replace(&wd->user_agent, user_agent);
+   
+   if (!wd->ua) wd->ua = eina_hash_string_small_new(NULL);
+   if (!eina_hash_find(wd->ua, "User-Agent")) eina_hash_add(wd->ua, "User-Agent", user_agent);
+   else eina_hash_set(wd->ua, "User-Agent", user_agent);
+}
+
+/**
+ * Get the user agent of the widget map.
+ *
+ * @param obj The map object
+ * @return The user agent of the widget map
+ *
+ * @ingroup Map
+ */
+EAPI const char *
+elm_map_user_agent_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   return wd->user_agent;
 }
 
 
