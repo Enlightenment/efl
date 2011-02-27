@@ -428,39 +428,32 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
 	part_get_geometry(ep, &tw, &th);
-	if (tw > sw)
-	  {
-	     while ((tw > sw) && (size > 0) && (tw != 0))
-	       {
-		  int psize = size;
-		  size = (size * sw) / tw;
-		  if ((psize - size) <= 0) size = psize - 1;
-		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-		  else evas_object_text_font_source_set(ep->object, NULL);
+        /* Find the wanted font size */
+	if ((tw > sw) && (size > 0) && (tw != 0))
+          {
+             size = (size * sw) / tw;
 
-		  if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-		  evas_object_text_font_set(ep->object, font, size);
-		  part_get_geometry(ep, &tw, &th);
-		  if ((size > 0) && (tw == 0)) break;
-	       }
-	  }
-	else if (tw < sw)
-	  {
-	     while ((tw < sw) && (size > 0) && (tw != 0))
-	       {
-		  int psize = size;
-		  size = (size * sw) / tw;
-		  /* fprintf(stderr, "size = %i (%i, %i)\n", size, sw, tw); */
-		  if ((psize - size) >= 0) size = psize + 1;
-		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
-		  else evas_object_text_font_source_set(ep->object, NULL);
+             if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+             else evas_object_text_font_source_set(ep->object, NULL);
 
-		  if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
-		  evas_object_text_font_set(ep->object, font, size);
-		  part_get_geometry(ep, &tw, &th);
-		  if ((size > 0) && (tw == 0)) break;
-	       }
+             if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+             evas_object_text_font_set(ep->object, font, size);
+             part_get_geometry(ep, &tw, &th);
 	  }
+	else if ((tw < sw) && (size > 0) && (tw != 0))
+          {
+             size = (size * sw) / tw;
+
+             if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+             else evas_object_text_font_source_set(ep->object, NULL);
+
+             if (ep->part->scale) evas_object_scale_set(ep->object, TO_DOUBLE(sc));
+             evas_object_text_font_set(ep->object, font, size);
+             part_get_geometry(ep, &tw, &th);
+          }
+        /* FIXME: This should possibly be replaced by more proper handling,
+         * but it's still way better than what was here before. */
+        if (tw > sw) size--;
      }
    if (chosen_desc->text.fit_y && (ep->text.cache.in_str && eina_stringshare_strlen(ep->text.cache.in_str) > 0))
      {
