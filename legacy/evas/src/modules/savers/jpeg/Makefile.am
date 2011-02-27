@@ -11,7 +11,7 @@ AM_CPPFLAGS= \
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
-if BUILD_LOADER_JPEG
+if BUILD_SAVER_JPEG
 if !EVAS_STATIC_BUILD_JPEG
 
 pkgdir = $(libdir)/evas/modules/savers/jpeg/$(MODULE_ARCH)

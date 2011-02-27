@@ -134,8 +134,12 @@ EVAS_STATIC_MODULE += ../modules/loaders/gif/libevas_loader_gif.la
 EVAS_STATIC_LIBADD += @evas_image_loader_gif_libs@
 endif
 if EVAS_STATIC_BUILD_JPEG
-SUBDIRS += ../modules/savers/jpeg ../modules/loaders/jpeg
-EVAS_STATIC_MODULE += ../modules/savers/jpeg/libevas_saver_jpeg.la ../modules/loaders/jpeg/libevas_loader_jpeg.la
+SUBDIRS += ../modules/loaders/jpeg
+EVAS_STATIC_MODULE += ../modules/loaders/jpeg/libevas_loader_jpeg.la
+if BUILD_SAVER_JPEG
+SUBDIRS += ../modules/savers/jpeg
+EVAS_STATIC_MODULE += ../modules/savers/jpeg/libevas_saver_jpeg.la
+endif
 EVAS_STATIC_LIBADD += @evas_image_loader_jpeg_libs@
 endif
 if EVAS_STATIC_BUILD_PMAPS
