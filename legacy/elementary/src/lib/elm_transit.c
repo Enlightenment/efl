@@ -346,9 +346,7 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
    Eina_List *elist;
 
    EINA_LIST_FOREACH(transit->effect_list, elist, effect)
-     {
-        if ((effect->animation_op == cb) && (effect->user_data == data)) return;
-     }
+      if ((effect->animation_op == cb) && (effect->user_data == data)) return;
 
    effect = ELM_NEW(Elm_Transit_Effect);
    if (!effect) return;
@@ -560,7 +558,6 @@ EAPI Eina_Bool
 elm_transit_event_enabled_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
-
    return transit->event_enabled;
 }
 
@@ -726,7 +723,6 @@ EAPI void
 elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-
    transit->tween_mode = tween_mode;
 }
 
@@ -882,7 +878,6 @@ EAPI double
 elm_transit_progress_value_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
-
    return transit->progress;
 }
 
