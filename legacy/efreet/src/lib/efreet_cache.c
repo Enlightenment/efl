@@ -865,8 +865,7 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
         for (i = 0; i < arr->array_count; i++)
         {
             /* Check if we already have this dir in cache */
-            /* TODO: Need to check if p is a subdir */
-            if (!strcmp(p, arr->array[i]))
+            if (!strncmp(p, arr->array[i], strlen(arr->array[i])))
                 return;
         }
     }
