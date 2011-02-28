@@ -345,10 +345,8 @@ main(int argc, char **argv)
 
         for (j = 0; j < user_dirs->array_count; j++)
         {
-            Eina_List *l;
-
-            l = eina_list_search_unsorted_list(scanned, strcmplen, user_dirs->array[j]);
-            if (l) continue;
+            if (eina_list_search_unsorted_list(scanned, strcmplen, user_dirs->array[j]))
+                continue;
             if (!ecore_file_is_dir(user_dirs->array[j])) continue;
             if (!cache_scan(user_dirs->array[j], NULL, priority, 0, &changed)) goto error;
             scanned = eina_list_append(scanned, eina_stringshare_add(user_dirs->array[j]));
@@ -364,10 +362,8 @@ main(int argc, char **argv)
 
         EINA_LIST_FOREACH(extra_dirs, l, path)
         {
-            Eina_List *ll;
-
-            ll = eina_list_search_unsorted_list(scanned, strcmplen, path);
-            if (ll) continue;
+            if (eina_list_search_unsorted_list(scanned, strcmplen, path))
+                continue;
             if (!ecore_file_is_dir(path)) continue;
 
             /* If we scan a passed dir, we must have changed */
