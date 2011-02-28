@@ -14315,6 +14315,11 @@ collections {
 //            target: "button0";
             target: "disabler";
             after: "disable_text";
+            after: "disable_ind";
+         }
+
+         program { name: "disable_ind";
+            action: SIGNAL_EMIT "elm.dragable.slider:elm,state,disabled" "elm";
          }
          program { name: "disable_text";
             script {
@@ -14352,7 +14357,13 @@ collections {
 //            target: "button0";
             target: "disabler";
             after: "enable_text";
+            after: "enable_ind";
          }
+
+         program { name: "enable_ind";
+            action: SIGNAL_EMIT "elm.dragable.slider:elm,state,enabled" "elm";
+         }
+
          program { name: "enable_text";
             script {
                new st[31];
@@ -14779,7 +14790,13 @@ collections {
 //            target: "button0";
             target: "disabler";
             after: "disable_text";
+            after: "disable_ind";
          }
+
+         program { name: "disable_ind";
+            action: SIGNAL_EMIT "elm.dragable.slider:elm,state,disabled" "elm";
+         }
+
          program { name: "disable_text";
             script {
             new st[31];
@@ -14817,6 +14834,11 @@ collections {
 //            target: "button0";
             target: "disabler";
             after: "enable_text";
+            after: "enable_ind";
+         }
+
+         program { name: "enable_ind";
+            action: SIGNAL_EMIT "elm.dragable.slider:elm,state,enabled" "elm";
          }
          program { name: "enable_text";
             script {
@@ -15143,6 +15165,20 @@ collections {
             script {
                thumb_up();
             }
+         }
+         program {
+            name:    "go_disabled";
+            signal:  "elm,state,disabled";
+            source:  "elm";
+            action:  STATE_SET "disabled" 0.0;
+            target:  "button0";
+         }
+         program {
+            name:    "go_enabled";
+            signal:  "elm,state,enabled";
+            source:  "elm";
+            action:  STATE_SET "default" 0.0;
+            target:  "button0";
          }
       }
    }
