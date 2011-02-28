@@ -59,7 +59,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if ((strcmp(ev->keyname, "Return")) &&
        (strcmp(ev->keyname, "KP_Enter")) &&
        (strcmp(ev->keyname, "space")))
-      return EINA_FALSE;
+     return EINA_FALSE;
    _activate(obj);
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    edje_object_signal_emit(wd->btn, "elm,anim,activate", "elm");
@@ -110,25 +110,25 @@ _theme_hook(Evas_Object *obj)
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->btn, "button", "base", elm_widget_style_get(obj));
    if (wd->icon)
-      edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
+     edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
    if (wd->label)
-      edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
    else
-      edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
    if (wd->icon)
-      edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
    else
-      edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
    edje_object_part_text_set(wd->btn, "elm.text", wd->label);
    if (elm_object_disabled_get(obj))
-      edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->btn);
    edje_object_scale_set(wd->btn, elm_widget_scale_get(obj) * _elm_config->scale);
    str = edje_object_data_get(wd->btn, "focus_highlight");
    if ((str) && (!strcmp(str, "on")))
-      elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
+     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
    else
-      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
+     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 
@@ -138,9 +138,9 @@ _disable_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (elm_widget_disabled_get(obj))
-      edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
    else
-      edje_object_signal_emit(wd->btn, "elm,state,enabled", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,enabled", "elm");
 }
 
 static void
@@ -271,9 +271,9 @@ _signal_pressed(void *data, Evas_Object *obj __UNUSED__, const char *emission __
    if ((wd->autorepeat) && (!wd->repeating))
      {
         if (wd->ar_threshold <= 0.0)
-           _autorepeat_initial_send(data); /* call immediately */
+          _autorepeat_initial_send(data); /* call immediately */
         else
-           wd->timer = ecore_timer_add(wd->ar_threshold, _autorepeat_initial_send, data);
+          wd->timer = ecore_timer_add(wd->ar_threshold, _autorepeat_initial_send, data);
      }
 }
 
@@ -363,9 +363,9 @@ elm_button_label_set(Evas_Object *obj, const char *label)
    if (!wd) return;
    eina_stringshare_replace(&wd->label, label);
    if (label)
-      edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
    else
-      edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
+     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(wd->btn);
    edje_object_part_text_set(wd->btn, "elm.text", label);
    _sizing_eval(obj);
