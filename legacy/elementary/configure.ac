@@ -215,6 +215,7 @@ PKG_CHECK_MODULES([ELEMENTARY],
 PKG_CHECK_MODULES([ELEMENTARY_BIN],
    [
     eina >= 1.0.0
+    evas >= 1.0.0
    ]
 )
 
