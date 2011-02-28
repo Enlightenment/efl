@@ -171,13 +171,13 @@ my_win_main(char *autorun)
    Eina_List *tests, *l;
    struct elm_test *t;
 
-   /* 1 create an elm window - it returns an evas object. this is a little
+   /* create an elm window - it returns an evas object. this is a little
     * special as the object lives in the canvas that is inside the window
     * so what is returned is really inside the window, but as you manipulate
     * the evas object returned - the window will respond. elm_win makes sure
     * of that so you can blindly treat it like any other evas object
-    * pretty much, just as long as you know it has special significance */
-   /* the first parameter is a "parent" window - eg for a dialog you want to
+    * pretty much, just as long as you know it has special significance.
+    * the first parameter is a "parent" window - eg for a dialog you want to
     * have a main window it is related to, here it is NULL meaning there
     * is no parent. "main" is the name of the window - used by the window
     * manager for identifying the window uniquely amongst all the windows
@@ -407,8 +407,8 @@ my_win_main(char *autorun)
    evas_object_show(win);
 }
 
-/* this is your elementary main function - it MUSt be called IMMEDIATELY
- * after elm_init() and MUSt be passed argc and argv, and MUST be called
+/* this is your elementary main function - it MUST be called IMMEDIATELY
+ * after elm_init() and MUST be passed argc and argv, and MUST be called
  * elm_main and not be static - must be a visible symbol with EAPI infront */
 EAPI int
 elm_main(int argc, char **argv)
@@ -430,5 +430,6 @@ elm_main(int argc, char **argv)
    return 0;
 }
 #endif
-/* all emeentary apps should use this. but it right after elm_main() */
+/* all elementary apps should use this. but it should be placed right after
+ * elm_main() */
 ELM_MAIN()
