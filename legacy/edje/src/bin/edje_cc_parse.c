@@ -695,8 +695,8 @@ compile(void)
         ret = -1;
         if (ecore_file_exists(EPP_DIR"/epp"))
           {
-             snprintf(buf, sizeof(buf), EPP_DIR"/epp -I%s %s -P -o %s - < %s",
-                      inc, def, tmpn, file_in);
+             snprintf(buf, sizeof(buf), EPP_DIR"/epp %s -I%s %s -o %s",
+                      file_in, inc, def, tmpn);
              ret = system(buf);
           }
 	/*
