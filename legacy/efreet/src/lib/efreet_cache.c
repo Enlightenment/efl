@@ -67,6 +67,7 @@ static Eet_Data_Descriptor *hash_string_edd = NULL;
 
 static Eina_Hash           *desktops = NULL;
 static Efreet_Cache_Array_String *desktop_dirs = NULL;
+static Eina_List           *desktop_dirs_add = NULL;
 static Eet_File            *desktop_cache = NULL;
 static const char          *desktop_cache_file = NULL;
 
@@ -107,6 +108,8 @@ static void desktop_cache_update_free(void *data, void *ev);
 static void icon_cache_update_free(void *data, void *ev);
 
 static void *hash_array_string_add(void *hash, const char *key, void *data);
+
+static int strcmplen(const void *data1, const void *data2);
 
 EAPI int EFREET_EVENT_ICON_CACHE_UPDATE = 0;
 EAPI int EFREET_EVENT_DESKTOP_CACHE_UPDATE = 0;
@@ -173,6 +176,7 @@ void
 efreet_cache_shutdown(void)
 {
     Efreet_Old_Cache *d;
+    void *data;
 
     IF_RELEASE(theme_name);
 
@@ -186,6 +190,8 @@ efreet_cache_shutdown(void)
     IF_FREE_HASH_CB(desktops, EINA_FREE_CB(efreet_cache_desktop_free));
     efreet_cache_array_string_free(desktop_dirs);
     desktop_dirs = NULL;
+    EINA_LIST_FREE(desktop_dirs_add, data)
+        eina_stringshare_del(data);
     desktop_cache = efreet_cache_close(desktop_cache);
     IF_RELEASE(desktop_cache_file);
 
@@ -846,9 +852,8 @@ void
 efreet_cache_desktop_add(Efreet_Desktop *desktop)
 {
     char buf[PATH_MAX];
-    char *p;
+    char *dir;
     Efreet_Cache_Array_String *arr;
-    const char **tmp;
 
     /*
      * Read file from disk, save path in cache so it will be included in next
@@ -856,7 +861,7 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
      */
     strncpy(buf, desktop->orig_path, PATH_MAX);
     buf[PATH_MAX - 1] = '\0';
-    p = dirname(buf);
+    dir = dirname(buf);
     arr = efreet_cache_desktop_dirs();
     if (arr)
     {
@@ -865,17 +870,12 @@ efreet_cache_desktop_add(Efreet_Desktop *desktop)
         for (i = 0; i < arr->array_count; i++)
         {
             /* Check if we already have this dir in cache */
-            if (!strncmp(p, arr->array[i], strlen(arr->array[i])))
+            if (!strncmp(dir, arr->array[i], strlen(arr->array[i])))
                 return;
         }
     }
-    /* TODO: We leak this data, remember and clean up on shutdown */
-    if (!arr)
-        desktop_dirs = arr = NEW(Efreet_Cache_Array_String, 1);
-    tmp = realloc(arr->array, sizeof (char *) * (arr->array_count + 1));
-    if (!tmp) return;
-    arr->array = tmp;
-    arr->array[arr->array_count++] = strdup(p);
+    if (!eina_list_search_unsorted_list(desktop_dirs_add, strcmplen, dir))
+        desktop_dirs_add = eina_list_append(desktop_dirs_add, eina_stringshare_add(dir));
 
     efreet_cache_desktop_update();
 }
@@ -1077,6 +1077,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         util_cache = efreet_cache_close(util_cache);
 
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
+        /* TODO: Check if desktop_dirs_add exists, and rebuild cache if */
     }
     else if (!strcmp(file, "icon_data.update"))
     {
@@ -1148,15 +1149,16 @@ desktop_cache_update_cache_cb(void *data __UNUSED__)
     prio = ecore_exe_run_priority_get();
     ecore_exe_run_priority_set(19);
     eina_strlcpy(file, PACKAGE_LIB_DIR "/efreet/efreet_desktop_cache_create", sizeof(file));
-    if (desktop_dirs && desktop_dirs->array_count > 0)
+    if (desktop_dirs_add)
     {
-        unsigned int i;
+        const char *str;
 
         eina_strlcat(file, " -d", sizeof(file));
-        for (i = 0; i < desktop_dirs->array_count; i++)
+        EINA_LIST_FREE(desktop_dirs_add, str)
         {
             eina_strlcat(file, " ", sizeof(file));
-            eina_strlcat(file, desktop_dirs->array[i], sizeof(file));
+            eina_strlcat(file, str, sizeof(file));
+            eina_stringshare_del(str);
         }
     }
     printf("Run desktop cache creation: %s\n", file);
@@ -1318,3 +1320,10 @@ hash_array_string_add(void *hash, const char *key, void *data)
     eina_hash_add(hash, key, data);
     return hash;
 }
+
+static int
+strcmplen(const void *data1, const void *data2)
+{
+    return strncmp(data1, data2, strlen(data1));
+}
+
