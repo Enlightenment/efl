@@ -42,13 +42,15 @@ These routines are used for Ecore Library interaction
 @author Andre Dieb <andre.dieb@@gmail.com>
 @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
 @author Rui Miguel Silva Seabra <rms@@1407.org>
-@author Saumsung Electronics
+@author Samsung Electronics
 @author Samsung SAIT
 @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
 @author Brett Nash <nash@@nash.id.au>
 @author Mike Blumenkrantz <mike@@zentific.com>
 @author Leif Middelschulte <leif.middelschulte@@gmail.com>
 @author Mike McCormack <mj.mccormack@@samsung.com>
+@author Sangho Park <gouache95@gmail.com>
+@author Jihoon Kim <jihoon48.kim@samsung.com> <imfine98@gmail.com>
 @date 2000-2011
 
 @section intro Introduction
