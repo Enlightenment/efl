@@ -112,7 +112,7 @@ elementary_config_LDFLAGS =
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
-elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
+elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_BIN_LIBS@
 elementary_quicklaunch_LDFLAGS =
 
 if BUILD_RUN
