@@ -95,13 +95,13 @@ test_ctxpopup.c \
 test_bubble.c \
 test_store.c
 
-elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @my_libs@
+elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @my_libs@ @ELEMENTARY_EFREET_LIBS@
 elementary_test_LDFLAGS =
 
 elementary_config_SOURCES = \
 config.c
 
-elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@
+elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_EFREET_LIBS@
 elementary_config_LDFLAGS =
 
 if BUILD_QUICKLAUNCH
