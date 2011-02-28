@@ -1205,7 +1205,7 @@ efreet_desktop_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED
         case ECORE_FILE_EVENT_DELETED_FILE:
         case ECORE_FILE_EVENT_MODIFIED:
             ext = strrchr(path, '.');
-            if (!strcmp(ext, ".desktop") || !strcmp(ext, ".directory"))
+            if (ext && (!strcmp(ext, ".desktop") || !strcmp(ext, ".directory")))
                 efreet_cache_desktop_update();
             break;
 
