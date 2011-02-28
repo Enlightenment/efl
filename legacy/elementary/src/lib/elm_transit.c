@@ -526,7 +526,7 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
 
    if (transit->event_enabled == enabled) return;
 
-   transit->event_enabled = enabled;
+   transit->event_enabled = !!enabled;
 
    if (enabled)
      {
