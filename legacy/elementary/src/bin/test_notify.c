@@ -143,7 +143,6 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    notify = elm_notify_add(win);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_CENTER);
-   elm_notify_timeout_set(notify, 10);
    elm_notify_timeout_set(notify, 10.0);
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
