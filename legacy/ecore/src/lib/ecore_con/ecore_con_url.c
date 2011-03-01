@@ -1403,6 +1403,42 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
 }
 
 /**
+ * Toggle libcurl's verify peer's certificate option.
+ *
+ * If @p verify is @c EINA_TRUE, libcurl will verify
+ * the authenticity of the peer's certificate, otherwise
+ * it will not. Default behavior of libcurl is to check
+ * peer's certificate.
+ *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ * @param verify Whether or not libcurl will check peer's certificate.
+ */
+EAPI void
+ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
+                              Eina_Bool      verify)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL,
+                         "ecore_con_url_ssl_verify_peer_set");
+        return;
+     }
+
+   if (url_con->active)
+     return;
+
+   if (!url_con->url)
+     return;
+
+   curl_easy_setopt(url_con->curl_easy, CURLOPT_SSL_VERIFYPEER, (int)verify);
+#else
+   (void)url_con;
+   (void)verify;
+#endif
+}
+
+/**
  * @}
  */
 
