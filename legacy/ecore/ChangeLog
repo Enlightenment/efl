@@ -76,3 +76,8 @@
 2011-03-01 Raoul Hecky
 
 	* Add ecore_con_url_ssl_verify_peer_set API.
+
+2011-03-01 Guillaume Friloux
+
+	* Fix detection of complete file write in ecore_file inotify.
+

@@ -218,7 +218,7 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
    if (mask & IN_CLOSE_WRITE)
      {
         if (!isdir)
-          em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
+          em->func(em->data, em, ECORE_FILE_EVENT_CLOSED, buf);
      }
    if (mask & IN_MODIFY)
      {

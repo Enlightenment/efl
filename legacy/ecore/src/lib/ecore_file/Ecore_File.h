@@ -73,7 +73,8 @@ typedef enum _Ecore_File_Event
    ECORE_FILE_EVENT_DELETED_FILE,      /**< Deleted file event. */
    ECORE_FILE_EVENT_DELETED_DIRECTORY, /**< Deleted directory event. */
    ECORE_FILE_EVENT_DELETED_SELF,      /**< Deleted monitored directory event. */
-   ECORE_FILE_EVENT_MODIFIED           /**< Modified file or directory event. */
+   ECORE_FILE_EVENT_MODIFIED,          /**< Modified file or directory event. */
+   ECORE_FILE_EVENT_CLOSED             /**< Closed file event */
 } Ecore_File_Event;
 
 /**
