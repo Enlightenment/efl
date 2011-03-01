@@ -95,8 +95,8 @@ struct _Elm_Transit_Effect
 
 struct _Elm_Obj_Data
 {
-   Eina_Bool state;
    Elm_Transit *transit;
+   Eina_Bool pass_events : 1;
 };
 
 typedef struct _Elm_Transit_Effect Elm_Transit_Effect;
@@ -108,7 +108,7 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
    Elm_Transit *transit = data;
 
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
-   evas_object_pass_events_set(obj, obj_data->state);
+   evas_object_pass_events_set(obj, obj_data->pass_events);
    free(obj_data);
    transit->objs = eina_list_remove(transit->objs, obj);
    if (!transit->objs) elm_transit_del(transit);
@@ -119,7 +119,7 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
 
-   evas_object_pass_events_set(obj, obj_data->state);
+   evas_object_pass_events_set(obj, obj_data->pass_events);
    free(obj_data);
    transit->objs = eina_list_remove(transit->objs, obj);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
@@ -442,7 +442,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
      }
 
    obj_data = ELM_NEW(Elm_Obj_Data);
-   obj_data->state = evas_object_pass_events_get(obj);
+   obj_data->pass_events = evas_object_pass_events_get(obj);
    obj_data->transit = transit;
    evas_object_data_set(obj, _transit_key, obj_data);
 
@@ -533,7 +533,7 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
         EINA_LIST_FOREACH(transit->objs, elist, obj)
           {
              obj_data = evas_object_data_get(obj, _transit_key);
-             evas_object_pass_events_set(obj, obj_data->state);
+             evas_object_pass_events_set(obj, obj_data->pass_events);
           }
      }
    else
