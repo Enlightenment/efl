@@ -1412,6 +1412,7 @@ ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
  *
  * @param url_con Ecore_Con_Url instance which will be acted upon.
  * @param verify Whether or not libcurl will check peer's certificate.
+ * @since 1.1.0
  */
 EAPI void
 ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
