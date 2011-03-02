@@ -922,6 +922,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
    if (!wd) return;
+   if (wd->disabled) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (ev->button != 1) return;
    //   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
@@ -937,6 +938,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
    if (!wd) return;
+   if (wd->disabled) return;
    if (ev->button != 1) return;
    if (wd->longpress_timer)
      {
@@ -951,6 +953,7 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Move *ev = event_info;
    if (!wd) return;
+   if (wd->disabled) return;
    if (!wd->selmode)
      {
 	if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
