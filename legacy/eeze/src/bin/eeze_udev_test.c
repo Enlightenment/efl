@@ -31,9 +31,9 @@ catch_events(const char      *device,
     * inside the device name
     */
    EINA_LIST_FOREACH(akbdmouse->kbds, l, name)
-     if (strncmp(device + 5, name, strlen(device + 5) - 8)) goto end;
+     if (!strncmp(device + 5, name, strlen(device + 5) - 8)) goto end;
    EINA_LIST_FOREACH(akbdmouse->mice, l, name)
-     if (strncmp(device + 5, name, strlen(device + 5) - 8)) goto end;
+     if (!strncmp(device + 5, name, strlen(device + 5) - 8)) goto end;
 
    /* check to see if the device was just plugged in */
    if (eeze_udev_syspath_is_kbd(device) || eeze_udev_syspath_is_mouse(device))
