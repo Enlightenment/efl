@@ -1281,36 +1281,39 @@ _calc_job(void *data)
    int count;
 
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &cvw, &cvh);
-   if ((wd->horizontal) && (wd->item_height > 0))
-     nmax = cvh / wd->item_height;
-   else if (wd->item_width > 0)
-     nmax = cvw / wd->item_width;
-
-   if (nmax < 1)
-     nmax = 1;
-
-   count = wd->count;
-   if (wd->horizontal)
+   if ((cvw != 0) || (cvh != 0))
      {
-        minw = ceil(count / (float)nmax) * wd->item_width;
-        minh = nmax * wd->item_height;
-     }
-   else
-     {
-        minw = nmax * wd->item_width;
-        minh = ceil(count / (float)nmax) * wd->item_height;
-     }
+        if ((wd->horizontal) && (wd->item_height > 0))
+          nmax = cvh / wd->item_height;
+        else if (wd->item_width > 0)
+          nmax = cvw / wd->item_width;
 
-   if ((minw != wd->minw) || (minh != wd->minh))
-     {
-        wd->minh = minh;
-        wd->minw = minw;
-        evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
-     }
+        if (nmax < 1)
+          nmax = 1;
 
-   wd->nmax = nmax;
-   wd->calc_job = NULL;
-   evas_object_smart_changed(wd->pan_smart);
+        count = wd->count;
+        if (wd->horizontal)
+          {
+             minw = ceil(count / (float)nmax) * wd->item_width;
+             minh = nmax * wd->item_height;
+          }
+        else
+          {
+             minw = nmax * wd->item_width;
+             minh = ceil(count / (float)nmax) * wd->item_height;
+          }
+
+        if ((minw != wd->minw) || (minh != wd->minh))
+          {
+             wd->minh = minh;
+             wd->minw = minw;
+             evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
+          }
+
+        wd->nmax = nmax;
+        wd->calc_job = NULL;
+        evas_object_smart_changed(wd->pan_smart);
+     }
 }
 
 static void
