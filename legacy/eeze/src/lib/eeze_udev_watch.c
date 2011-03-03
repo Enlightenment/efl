@@ -28,7 +28,7 @@ struct _store_data
                             void *,
                             Eeze_Udev_Watch *);
    void            *data;
-   int              event;
+   Eeze_Udev_Event  event;
    _udev_monitor   *mon;
    Eeze_Udev_Type   type;
    Eeze_Udev_Watch *watch;
@@ -73,6 +73,55 @@ _get_syspath_from_watch(void             *data,
    if (!device)
      return EINA_TRUE;
 
+   if ((!(test = udev_device_get_action(device)))
+       || (!(ret = udev_device_get_syspath(device))))
+     goto error;
+
+   if (store->event)
+     {
+        if (!strcmp(test, "add"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD)
+               goto error;
+
+             event |= EEZE_UDEV_EVENT_ADD;
+          }
+        else if (!strcmp(test, "remove"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
+                 EEZE_UDEV_EVENT_REMOVE)
+               goto error;
+
+             event |= EEZE_UDEV_EVENT_REMOVE;
+          }
+        else if (!strcmp(test, "change"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
+                 EEZE_UDEV_EVENT_CHANGE)
+               goto error;
+
+             event |= EEZE_UDEV_EVENT_CHANGE;
+          }
+        else if (!strcmp(test, "online"))
+          {
+             if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
+                 EEZE_UDEV_EVENT_ONLINE)
+               goto error;
+
+             event |= EEZE_UDEV_EVENT_ONLINE;
+          }
+        else
+          {
+             if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
+                 EEZE_UDEV_EVENT_OFFLINE)
+               goto error;
+
+             event |= EEZE_UDEV_EVENT_OFFLINE;
+          }
+     }
+
+   if ((event & EEZE_UDEV_EVENT_OFFLINE) || (event & EEZE_UDEV_EVENT_REMOVE))
+     goto out;
    switch (store->type)
      {
       case EEZE_UDEV_TYPE_KEYBOARD:
@@ -246,57 +295,7 @@ _get_syspath_from_watch(void             *data,
       default:
         break;
      }
-
-   if ((!(test = udev_device_get_action(device)))
-       || (!(ret = udev_device_get_syspath(device))))
-     goto error;
-
-   if (store->event)
-     {
-        if (!strcmp(test, "add"))
-          {
-             if ((store->event & EEZE_UDEV_EVENT_ADD) != EEZE_UDEV_EVENT_ADD)
-               goto error;
-
-             event |= EEZE_UDEV_EVENT_ADD;
-          }
-        else
-        if (!strcmp(test, "remove"))
-          {
-             if ((store->event & EEZE_UDEV_EVENT_REMOVE) !=
-                 EEZE_UDEV_EVENT_REMOVE)
-               goto error;
-
-             event |= EEZE_UDEV_EVENT_REMOVE;
-          }
-        else
-        if (!strcmp(test, "change"))
-          {
-             if ((store->event & EEZE_UDEV_EVENT_CHANGE) !=
-                 EEZE_UDEV_EVENT_CHANGE)
-               goto error;
-
-             event |= EEZE_UDEV_EVENT_CHANGE;
-          }
-        else
-        if (!strcmp(test, "online"))
-          {
-             if ((store->event & EEZE_UDEV_EVENT_ONLINE) !=
-                 EEZE_UDEV_EVENT_ONLINE)
-               goto error;
-
-             event |= EEZE_UDEV_EVENT_ONLINE;
-          }
-        else
-          {
-             if ((store->event & EEZE_UDEV_EVENT_OFFLINE) !=
-                 EEZE_UDEV_EVENT_OFFLINE)
-               goto error;
-
-             event |= EEZE_UDEV_EVENT_OFFLINE;
-          }
-     }
-
+out:
    (*func)(eina_stringshare_add(ret), event, sdata, watch);
 error:
    if (device)
