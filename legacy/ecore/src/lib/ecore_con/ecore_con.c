@@ -381,7 +381,7 @@ error:
    if (svr->path)
      free(svr->path);
 
-#ifndef _WIN32
+
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
@@ -394,7 +394,6 @@ error:
    if (svr->ip)
      eina_stringshare_del(svr->ip);
 
-#endif
    ecore_con_ssl_server_shutdown(svr);
    free(svr);
    return NULL;
@@ -1852,7 +1851,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
 {
    int res;
    int so_err = 0;
-   unsigned int size = sizeof(int);
+   socklen_t size = sizeof(int);
 
    res = getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, (void *)&so_err, &size);
 #ifdef _WIN32
@@ -2161,14 +2160,14 @@ _ecore_con_svr_udp_handler(void             *data,
 {
    unsigned char buf[READBUFSIZ];
    unsigned char client_addr[256];
-   unsigned int client_addr_len = sizeof(client_addr);
+   socklen_t client_addr_len = sizeof(client_addr);
    int num;
    Ecore_Con_Server *svr;
    Ecore_Con_Client *cl = NULL;
 
    svr = data;
 
-   if (svr->delete_me || svr->dead) 
+   if (svr->delete_me || svr->dead)
      return ECORE_CALLBACK_RENEW;
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
@@ -2183,7 +2182,7 @@ _ecore_con_svr_udp_handler(void             *data,
 #ifdef _WIN32
    num = fcntl(svr->fd, F_SETFL, O_NONBLOCK);
    if (num >= 0)
-     num = recvfrom(svr->fd, buf, sizeof(buf), 0,
+     num = recvfrom(svr->fd, (char *)buf, sizeof(buf), 0,
                 (struct sockaddr *)&client_addr,
                 &client_addr_len);
 

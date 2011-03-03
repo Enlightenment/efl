@@ -10,7 +10,11 @@
  */
 
 #include <string.h>
-#include <arpa/inet.h>
+
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
+
 #include <ares.h>
 
 #include "Ecore.h"
@@ -63,7 +67,7 @@ static Eina_Bool _ecore_con_info_cares_timeout_cb(void *data);
 
 static void
 _ecore_con_info_cares_state_cb(void *data,
-                               int   fd,
+                               ares_socket_t   fd,
                                int read,
                                int write);
 static int
@@ -347,7 +351,7 @@ _ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
 
 static void
 _ecore_con_info_cares_state_cb(void *data __UNUSED__,
-                               int   fd,
+                               ares_socket_t fd,
                                int read,
                                int write)
 {
