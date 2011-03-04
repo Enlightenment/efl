@@ -218,7 +218,7 @@ _elm_transit_del(Elm_Transit *transit)
      ecore_animator_del(transit->animator);
 
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect)
-      _elm_transit_effect_del(transit, effect, elist);
+     _elm_transit_effect_del(transit, effect, elist);
 
    while (transit->objs)
      _elm_transit_object_remove(transit, eina_list_data_get(transit->objs));
@@ -401,7 +401,7 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
    Eina_List *elist;
 
    EINA_LIST_FOREACH(transit->effect_list, elist, effect)
-      if ((effect->animation_op == cb) && (effect->user_data == data)) return;
+     if ((effect->animation_op == cb) && (effect->user_data == data)) return;
 
    effect = ELM_NEW(Elm_Transit_Effect);
    if (!effect) return;
@@ -594,7 +594,7 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
    else
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
-           evas_object_pass_events_set(obj, EINA_TRUE);
+          evas_object_pass_events_set(obj, EINA_TRUE);
      }
 }
 
@@ -1012,7 +1012,7 @@ _transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress)
    h = resizing->from.h + (resizing->to.h * progress);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-      evas_object_resize(obj, w, h);
+     evas_object_resize(obj, w, h);
 }
 
 static void *
@@ -2037,7 +2037,7 @@ _transit_effect_color_op(void *data, Elm_Transit *transit, double progress)
    a = (color->from.a + (int)((float)color->to.a * progress));
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-      evas_object_color_set(obj, r, g, b, a);
+     evas_object_color_set(obj, r, g, b, a);
 }
 
 static void *
