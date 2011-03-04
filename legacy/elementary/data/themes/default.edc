@@ -1965,6 +1965,7 @@ collections {
                image {
                   normal: "bt_base2.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                }
                image.middle: SOLID;
             }
@@ -1978,6 +1979,7 @@ collections {
                image {
                   normal: "bt_dis_base.png";
                   border: 4 4 4 4;
+                  border_scale: 1;
                }
             }
          }
@@ -2057,6 +2059,7 @@ collections {
                image {
                   normal: "bt_hilight.png";
                   border: 7 7 7 0;
+                  border_scale: 1;
                }
             }
             description { state: "disabled" 0.0;
@@ -2064,6 +2067,7 @@ collections {
                image {
                   normal: "bt_dis_hilight.png";
                   border: 4 4 4 0;
+                  border_scale: 1;
                }
             }
          }
@@ -2075,6 +2079,7 @@ collections {
                image {
                   normal: "bt_shine.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                }
             }
             description { state: "disabled" 0.0;
@@ -2090,6 +2095,7 @@ collections {
                image {
                   normal: "bt_glow.png";
                   border: 12 12 12 12;
+                  border_scale: 1;
                }
                fill.smooth : 0;
             }
@@ -2281,6 +2287,7 @@ collections {
                image {
                   normal: "bt_base2.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                }
                image.middle: SOLID;
             }
@@ -2294,6 +2301,7 @@ collections {
                image {
                   normal: "bt_dis_base.png";
                   border: 4 4 4 4;
+                  border_scale: 1;
                }
             }
          }
@@ -2402,6 +2410,7 @@ collections {
                image {
                   normal: "bt_dis_hilight.png";
                   border: 4 4 4 0;
+                  border_scale: 1;
                }
             }
          }
@@ -2413,6 +2422,7 @@ collections {
                image {
                   normal: "bt_shine.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                }
             }
             description { state: "disabled" 0.0;
@@ -2428,6 +2438,7 @@ collections {
                image {
                   normal: "bt_glow.png";
                   border: 12 12 12 12;
+                  border_scale: 1;
                }
                fill.smooth : 0;
             }
@@ -2587,6 +2598,7 @@ collections {
                color: 255 255 255 0;
                image.normal: "hoversel_entry_bg.png";
                image.border: 0 0 2 2;
+               image.border_scale: 1;
                fill.smooth: 0;
             }
             description { state: "clicked" 0.0;
@@ -2761,6 +2773,7 @@ collections {
                image {
                   normal: "bt_base2.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                }
                image.middle: SOLID;
             }
@@ -2780,6 +2793,7 @@ collections {
                image {
                   normal: "bt_dis_base.png";
                   border: 4 4 4 4;
+                  border_scale: 1;
                }
             }
          }
@@ -2860,6 +2874,7 @@ collections {
                image {
                   normal: "bt_hilight.png";
                   border: 7 7 7 0;
+                  border_scale: 1;
                }
             }
        description { state: "visible" 0.0;
@@ -2883,6 +2898,7 @@ collections {
                image {
                   normal: "bt_shine.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                }
             }
             description { state: "disabled" 0.0;
@@ -2898,6 +2914,7 @@ collections {
                image {
                   normal: "bt_glow.png";
                   border: 12 12 12 12;
+                  border_scale: 1;
                }
                fill.smooth : 0;
             }
@@ -9114,6 +9131,7 @@ collections {
           image {
             normal: "bubble_3.png";
             border: 36 11 18 9;
+            border_scale: 1;
           }
           image.middle: SOLID;
           fill.smooth: 0;
@@ -9123,6 +9141,7 @@ collections {
            image {
               normal: "bubble_4.png";
               border: 11 36 18 9;
+              border_scale: 1;
            }
         }
       }
@@ -9154,6 +9173,7 @@ collections {
           image {
             normal: "bubble_shine3.png";
             border: 36 5 14 0;
+            border_scale: 1;
           }
           fill.smooth: 0;
         }
@@ -9162,6 +9182,7 @@ collections {
            image {
               normal: "bubble_shine4.png";
               border: 5 36 14 0;
+              border_scale: 1;
            }
         }
       }
@@ -9299,6 +9320,7 @@ collections {
           image {
             normal: "bubble_4.png";
             border: 11 36 18 9;
+            border_scale: 1;
           }
           image.middle: SOLID;
           fill.smooth: 0;
@@ -9308,6 +9330,7 @@ collections {
            image {
               normal: "bubble_3.png";
               border: 36 11 18 9;
+              border_scale: 1;
            }
         }
       }
@@ -9339,6 +9362,7 @@ collections {
           image {
             normal: "bubble_shine4.png";
             border: 5 36 14 0;
+            border_scale: 1;
           }
           fill.smooth: 0;
         }
@@ -9347,6 +9371,7 @@ collections {
            image {
               normal: "bubble_shine3.png";
               border: 36 5 14 0;
+              border_scale: 1;
            }
         }
       }
@@ -9492,6 +9517,7 @@ collections {
            image {
               normal: "bubble_2.png";
               border: 11 36 10 19;
+              border_scale: 1;
            }
         }
       }
@@ -9523,6 +9549,7 @@ collections {
           image {
             normal: "bubble_shine.png";
             border: 5 5 5 0;
+            border_scale: 1;
           }
           fill.smooth: 0;
         }
@@ -9531,6 +9558,7 @@ collections {
            image {
               normal: "bubble_shine4.png";
               border: 5 36 14 0;
+              border_scale: 1;
            }
         }
       }
@@ -9665,6 +9693,7 @@ collections {
           image {
             normal: "bubble_2.png";
             border: 11 36 10 19;
+            border_scale: 1;
           }
           image.middle: SOLID;
           fill.smooth: 0;
@@ -9674,6 +9703,7 @@ collections {
            image {
               normal: "bubble_1.png";
               border: 36 11 10 19;
+              border_scale: 1;
            }
         }
       }
@@ -9705,6 +9735,7 @@ collections {
           image {
             normal: "bubble_shine.png";
             border: 5 5 5 0;
+            border_scale: 1;
           }
           fill.smooth: 0;
         }
@@ -9713,6 +9744,7 @@ collections {
            image {
               normal: "bubble_shine3.png";
               border: 36 5 14 0;
+              border_scale: 1;
            }
         }
       }
@@ -15209,6 +15241,7 @@ collections {
                image {
                   normal: "ilist_1.png";
                   border: 2 2 2 2;
+                  border_scale: 1;
                }
                fill.smooth: 0;
             }
@@ -15322,6 +15355,7 @@ collections {
                image {
                   normal: "bt_bases.png";
                   border: 11 11 11 11;
+                  border_scale: 1;
                   middle: SOLID;
                }
                color: 255 255 255 128;
@@ -15335,6 +15369,7 @@ collections {
                image {
                   normal: "bt_basew.png";
                   border: 7 7 7 7;
+                  border_scale: 1;
                   middle: SOLID;
                }
                color: 255 255 255 210;
@@ -15348,6 +15383,7 @@ collections {
                rel2.relative: 1.0 0.5;
                image {
                   normal: "bt_hilightw.png";
+                  border_scale: 1;
                   border: 4 4 4 0;
                }
                color: 255 255 255 190;
@@ -15417,6 +15453,7 @@ collections {
                image {
                   normal: "ilist_1.png";
                   border: 2 2 2 2;
+                  border_scale: 1;
                }
                fill.smooth: 0;
             }
@@ -15545,6 +15582,7 @@ collections {
                image {
                   normal: "bt_bases.png";
                   border: 11 11 11 11;
+                  border_scale: 1;
                   middle: SOLID;
                }
                color: 255 255 255 128;
@@ -15558,6 +15596,7 @@ collections {
                image {
                   normal: "bt_basew.png";
                   border: 7 7 7 7;
+                  border_scale :1;
                   middle: SOLID;
                }
                color: 255 255 255 210;
@@ -15572,6 +15611,7 @@ collections {
                image {
                   normal: "bt_hilightw.png";
                   border: 4 4 4 0;
+                  border_scale: 1;
                }
                color: 255 255 255 190;
             }
