@@ -29158,7 +29158,7 @@ collections {
                        relative: 0.0 0.0;
                        offset:   0 0;
                    }
-                   color: 0 0 255 128;
+                   //color: 0 0 255 128;
                }
            }
            part { name: "elm.swallow.event.0";
