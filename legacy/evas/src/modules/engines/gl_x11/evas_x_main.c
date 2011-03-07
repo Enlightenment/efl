@@ -300,7 +300,7 @@ eng_window_new(Display *disp,
           {
              if (!glXMakeCurrent(gw->disp, gw->win, gw->context))
                {
-                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed - '%s'\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context, gluErrorString(glGetError()));
+                  printf("Error: glXMakeCurrent(%p, 0x%x, %p) failed\n", (void *)gw->disp, (unsigned int)gw->win, (void *)gw->context);
                   eng_window_free(gw);
                   return NULL;
                }
@@ -531,7 +531,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
 #endif
          }
      }
-   if (gw && gw->gl_context) evas_gl_common_context_use(gw->gl_context);
+   if (gw) evas_gl_common_context_use(gw->gl_context);
 }
 
 void

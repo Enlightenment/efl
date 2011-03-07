@@ -24,7 +24,7 @@
 #   include <X11/Xutil.h>
 #   include <X11/extensions/Xrender.h>
 #   include <X11/Xresource.h> // xres - dpi
-#  endif
+#endif
 # else
 #  include <X11/Xlib.h>
 #  include <X11/Xatom.h>
@@ -32,7 +32,6 @@
 #  include <X11/extensions/Xrender.h>
 #  include <X11/Xresource.h> // xres - dpi
 #  include <GL/gl.h>
-#  include <GL/glu.h>
 #  include <GL/glext.h>
 #  include <GL/glx.h>
 # endif
