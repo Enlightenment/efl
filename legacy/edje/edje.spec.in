@@ -87,6 +87,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
 %{_includedir}/edje-1/*.h
+%{_libdir}/edje/utils/epp
 
 %files bin
 %defattr(-, root, root)
