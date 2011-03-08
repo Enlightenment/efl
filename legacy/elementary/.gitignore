@@ -48,4 +48,4 @@ tags
 /config/profile.cfg
 /config/standard/base.cfg
 /mkinstalldirs
-
+/config.cache
