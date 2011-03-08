@@ -44,6 +44,7 @@
 %bcond_without module_saver_eet
 %bcond_without module_loader_xpm
 %bcond_without module_loader_bmp
+%bcond_without module_loader_wbmp
 %bcond_without module_loader_tga
 
 # This just keeps a missing doxygen from killing the build.
@@ -60,6 +61,7 @@
 %define ac_with_module_loader_xpm --%{?with_module_loader_xpm:en}%{!?with_module_loader_xpm:dis}able-image-loader-xpm
 %define ac_with_module_loader_svg --%{?with_module_loader_svg:en}%{!?with_module_loader_svg:dis}able-image-loader-svg
 %define ac_with_module_loader_bmp --%{?with_module_loader_bmp:en}%{!?with_module_loader_bmp:dis}able-image-loader-bmp
+%define ac_with_module_loader_wbmp --%{?with_module_loader_wbmp:en}%{!?with_module_loader_wbmp:dis}able-image-loader-wbmp
 %define ac_with_module_loader_tga --%{?with_module_loader_tga:en}%{!?with_module_loader_tga:dis}able-image-loader-tga
 %define ac_with_module_saver_eet --%{?with_module_saver_eet:en}%{!?with_module_saver_eet:dis}able-image-saver-eet
 %define ac_with_module_saver_jpeg --%{?with_module_saver_jpeg:en}%{!?with_module_saver_jpeg:dis}able-image-saver-jpeg
@@ -245,6 +247,15 @@ Group: System Environment/Libraries
 BuildRequires: libjpeg-devel
 %description module_loader_bmp
 BMP Image loader module for Evas
+%endif
+
+%if %{with module_loader_wbmp}
+%package module_loader_wbmp
+Summary: WBMP Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libjpeg-devel
+%description module_loader_wbmp
+WBMP Image loader module for Evas
 %endif
 
 %if %{with module_loader_tga}
@@ -545,6 +556,12 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_loader_bmp
 %defattr(-, root, root)
 %{_libdir}/evas/modules/loaders/bmp/*/module.so
+%endif
+
+%if %{with module_loader_wbmp}
+%files module_loader_wbmp
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/wbmp/*/module.so
 %endif
 
 %if %{with module_loader_tga}
