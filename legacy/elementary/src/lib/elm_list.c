@@ -275,7 +275,7 @@ static Eina_Bool
 _deselect_all_items(Widget_Data *wd)
 {
    if (!wd->selected) return EINA_FALSE;
-   while(wd->selected)
+   while (wd->selected)
      elm_list_item_selected_set(wd->selected->data, EINA_FALSE);
 
    return EINA_TRUE;
