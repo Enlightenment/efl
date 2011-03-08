@@ -82,6 +82,7 @@ evas_convert_rgb_8.h \
 evas_convert_yuv.h \
 evas_draw.h \
 evas_font.h \
+evas_font_default_walk.x \
 evas_font_private.h \
 evas_image.h \
 evas_image_private.h \
