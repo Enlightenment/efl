@@ -66,7 +66,8 @@ int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *d) = NULL;
 void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
 void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
-void     (*glsym_glxSwapInterval)    (int a) = NULL;
+int      (*glsym_glxSwapIntervalSGI) (int a) = NULL;
+void     (*glsym_glxSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
 #endif
 
 static void
@@ -140,10 +141,9 @@ _sym_init(void)
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
 
-   FINDSYM(glsym_glxSwapInterval, "glxSwapInterval", glsym_func_void);
-   FINDSYM(glsym_glxSwapInterval, "glxSwapIntervalEXT", glsym_func_void);
-   FINDSYM(glsym_glxSwapInterval, "glxSwapIntervalARB", glsym_func_void);
-   FINDSYM(glsym_glxSwapInterval, "glxSwapIntervalSGI", glsym_func_void);
+   FINDSYM(glsym_glxSwapIntervalSGI, "glxSwapIntervalSGI", glsym_func_int);
+   
+   FINDSYM(glsym_glxSwapIntervalEXT, "glxSwapIntervalEXT", glsym_func_void);
 #endif
 }
 
@@ -668,12 +668,21 @@ eng_output_flush(void *data)
 #ifdef VSYNC_TO_SCREEN   
    if ((re->info->vsync)/* || (1)*/)
      {
-        if (glsym_glxSwapInterval)
+        if (glsym_glxSwapIntervalEXT)
           {
              if (!re->vsync)
                {
-                  if (re->info->vsync) glsym_glxSwapInterval(1);
-                  else glsym_glxSwapInterval(0);
+                  if (re->info->vsync) glsym_glxSwapIntervalEXT(re->win->disp, re->win->win, 1);
+                  else glsym_glxSwapIntervalEXT(re->win->disp, re->win->win, 0);
+                  re->vsync = 1;
+               }
+          }
+        if (glsym_glxSwapIntervalSGI)
+          {
+             if (!re->vsync)
+               {
+                  if (re->info->vsync) glsym_glxSwapIntervalSGI(1);
+                  else glsym_glxSwapIntervalSGI(0);
                   re->vsync = 1;
                }
           }
