@@ -356,6 +356,53 @@ evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 /* routines apps will call */
 
 /**
+ * Increments object reference count to defer deletion
+ * 
+ * This increments the reference count of an object, which if greater than
+ * 0 will defer deletion by evas_object_del() until all references are
+ * released back to 0. References cannot go below 0 and unreferencing more
+ * times that referencing will result in the reference count being limited
+ * to 0. References are limited to 2^32 - 1 for an object. Referencing it more
+ * than this will result in it being limited to this value.
+ * 
+ * @param obj The given evas object to reference
+ * @ingroup Evas_Object_Group_Basic
+ * @since 1.1.0
+ */
+EAPI void
+evas_object_ref(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   obj->ref++;
+   if (obj->ref == 0) obj->ref--;
+}
+
+/**
+ * Decrements object reference count to defer deletion
+ * 
+ * This decrements the reference count of an object. If the object has had
+ * evas_object_del() called on it while references were more than 0, it will
+ * be deleted at the time this function is called as it normally would have
+ * been. See evas_object_ref() for more information.
+ * 
+ * @param obj The given evas object to unreference
+ * @ingroup Evas_Object_Group_Basic
+ * @since 1.1.0
+ */
+EAPI void
+evas_object_unref(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->ref == 0) return;
+   obj->ref--;
+   if ((obj->del_ref) && (obj->ref == 0)) evas_object_del(obj);
+}
+
+/**
  * Deletes the given evas object and frees its memory.
  *
  * The object's 'free' callback is called when this function is called.
@@ -374,6 +421,11 @@ evas_object_del(Evas_Object *obj)
 
    if (obj->delete_me) return;
 
+   if (obj->ref > 0)
+     {
+        obj->del_ref = 1;
+        return;
+     }
 #ifdef EVAS_FRAME_QUEUING
    evas_common_frameq_flush();
 #endif

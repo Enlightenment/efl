@@ -459,6 +459,8 @@ struct _Evas_Object
    struct {
       int                      in_move, in_resize;
    } doing;
+   
+   unsigned int                ref;
 
    unsigned char               delete_me;
 
@@ -487,6 +489,7 @@ struct _Evas_Object
    Eina_Bool                   changed_move : 1;
    Eina_Bool                   changed_move_only : 1;
    Eina_Bool                   changed_nomove : 1;
+   Eina_Bool                   del_ref : 1;
 };
 
 struct _Evas_Func_Node

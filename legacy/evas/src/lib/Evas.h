@@ -898,6 +898,9 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_object_name_set              (Evas_Object *obj, const char *name) EINA_ARG_NONNULL(1);
    EAPI const char       *evas_object_name_get              (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
+   EAPI void              evas_object_ref                   (Evas_Object *obj);
+   EAPI void              evas_object_unref                 (Evas_Object *obj);
+   
    EAPI void              evas_object_del                   (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);

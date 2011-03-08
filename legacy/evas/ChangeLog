@@ -143,5 +143,6 @@
 2011-03-08  Carsten Haitzler (The Rasterman)
 
 	* Fix problem with different x vsync api between SGI and EXT flavor
-        as they have the same base name, but different prototypes.
-
+        as they have the same base name, but different prototypes
+        * Add evas_object_ref() and evas_object_unref() to defer
+        deletion of objects until all references are removed
