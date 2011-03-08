@@ -37,3 +37,4 @@ src/bin/edje_decc
 src/bin/edje_player
 stamp-h1
 tags
+/config.cache

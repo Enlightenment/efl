@@ -5,3 +5,16 @@
 Makefile
 Makefile.in
 config.*
+/aclocal.m4
+/autom4te.cache
+/compile
+/configure
+/depcomp
+/eeze.pc
+/eeze.spec
+/install-sh
+/libtool
+/ltmain.sh
+/missing
+/stamp-h1
+/doc/eeze.dox
