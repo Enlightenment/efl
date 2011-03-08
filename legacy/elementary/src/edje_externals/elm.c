@@ -23,7 +23,7 @@ external_elm_shutdown(void)
 {
    init_count--;
    DBG("elm_real_shutdown\n");
-   if (init_count > 1) return;
+   if (init_count > 0) return;
    elm_shutdown();
 }
 
