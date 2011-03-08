@@ -135,3 +135,7 @@
 2011-02-27  Vincent Torri
 
 	* Fixed static linking of the bmp, wbmp and tga loaders
+
+2011-03-07  Mike Blumenkrantz
+
+        * Fix segv when trying to set gl viewpoint with NULL ctx

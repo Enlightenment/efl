@@ -292,6 +292,7 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    GLfloat proj[16];
    int w = 1, h = 1, m = 1, rot = 1, foc = 0;
 
+   EINA_SAFETY_ON_NULL_RETURN(gc);
    foc = gc->foc;
    // surface in pipe 0 will be the same as all pipes
    if ((gc->pipe[0].shader.surface == gc->def_surface) ||
