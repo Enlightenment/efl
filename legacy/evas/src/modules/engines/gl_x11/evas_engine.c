@@ -141,9 +141,10 @@ _sym_init(void)
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableEXT", glsym_func_void);
    FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawableARB", glsym_func_void);
 
-   FINDSYM(glsym_glxSwapIntervalSGI, "glxSwapIntervalSGI", glsym_func_int);
+   FINDSYM(glsym_glxSwapIntervalSGI, "glXSwapIntervalMESA", glsym_func_int);
+   FINDSYM(glsym_glxSwapIntervalSGI, "glXSwapIntervalSGI", glsym_func_int);
    
-   FINDSYM(glsym_glxSwapIntervalEXT, "glxSwapIntervalEXT", glsym_func_void);
+   FINDSYM(glsym_glxSwapIntervalEXT, "glXSwapIntervalEXT", glsym_func_void);
 #endif
 }
 
