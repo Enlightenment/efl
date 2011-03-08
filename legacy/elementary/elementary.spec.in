@@ -71,6 +71,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS COPYING README
 %{_libdir}/libelementary*.so.*
+%{_datadir}/locale/*/LC_MESSAGES/elementary.mo
 
 %files devel
 %defattr(-, root, root)
@@ -78,12 +79,11 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so
 %{_libdir}/*.la
 %{_libdir}/*.a
-%{_libdir}/edje/*.so
-%{_libdir}/edje/*.la
-%{_libdir}/elementary/modules/test_entry/*/module.*
+%{_libdir}/edje/modules/elm/*/module.so
+%{_libdir}/edje/modules/elm/*/module.la
+%{_libdir}/elementary/modules/test_*/*/module.*
 %{_libdir}/pkgconfig/*
-%{_includedir}/*.h
-%{_includedir}/elementary/*.h
+%{_includedir}/elementary-0/*.h
 
 %files bin
 %defattr(-, root, root)
