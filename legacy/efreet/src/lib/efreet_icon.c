@@ -964,6 +964,7 @@ efreet_icon_changes_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         case ECORE_FILE_EVENT_CREATED_FILE:
         case ECORE_FILE_EVENT_DELETED_FILE:
         case ECORE_FILE_EVENT_MODIFIED:
+        case ECORE_FILE_EVENT_CLOSED:
         case ECORE_FILE_EVENT_DELETED_DIRECTORY:
         case ECORE_FILE_EVENT_CREATED_DIRECTORY:
             efreet_cache_icon_update();

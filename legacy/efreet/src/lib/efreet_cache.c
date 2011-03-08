@@ -1040,8 +1040,8 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     Efreet_Old_Cache *d = NULL;
     Eina_List *l = NULL;
 
-    if (event != ECORE_FILE_EVENT_CREATED_FILE &&
-        event != ECORE_FILE_EVENT_MODIFIED) return;
+    if (event != ECORE_FILE_EVENT_CLOSED)
+        return;
 
     file = ecore_file_file_get(path);
     if (!file) return;
