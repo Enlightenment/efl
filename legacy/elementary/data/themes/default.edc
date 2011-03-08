@@ -1961,7 +1961,7 @@ collections {
          part { name: "button_image";
             mouse_events: 1;
             description { state: "default" 0.0;
-          min: 15 15;
+               min: 15 15;
                image {
                   normal: "bt_base2.png";
                   border: 7 7 7 7;
@@ -1971,7 +1971,6 @@ collections {
             description { state: "clicked" 0.0;
                inherit: "default" 0.0;
                image.normal: "bt_base1.png";
-               image.middle: SOLID;
             }
             description { state: "disabled" 0.0;
                inherit:  "default" 0.0;
