@@ -851,8 +851,10 @@ main(int argc, char **argv)
             free(keys);
         }
 
-        changed = theme->changed = check_changed(theme);
-        if (theme->changed && theme->dirs)
+        theme->changed = check_changed(theme);
+        if (theme->changed)
+            changed = EINA_TRUE;
+        if (changed && theme->dirs)
         {
             efreet_hash_free(theme->dirs, free);
             theme->dirs = NULL;
@@ -882,7 +884,7 @@ main(int argc, char **argv)
         eina_hash_free(themes);
         eina_hash_free(icons);
 
-        if (theme->changed || changed)
+        if (changed)
         {
             if (theme->changed && verbose)
                 fprintf(stderr, "theme change: %s %lld\n", theme->theme.name.internal, theme->last_cache_check);
@@ -937,7 +939,7 @@ main(int argc, char **argv)
     }
 
     theme->changed = changed;
-    if (theme->changed && theme->dirs)
+    if (changed && theme->dirs)
     {
         efreet_hash_free(theme->dirs, free);
         theme->dirs = NULL;
