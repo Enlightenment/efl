@@ -97,8 +97,10 @@ test_store.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
-	@my_libs@ @ELEMENTARY_EFREET_LIBS@ \
-	@ELEMENTARY_BIN_LIBS@
+	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EFREET_LIBS@ \
+	@ELEMENTARY_BIN_LIBS@ \
+	@my_libs@
 elementary_test_LDFLAGS =
 
 elementary_config_SOURCES = \
@@ -106,13 +108,18 @@ config.c
 
 elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
+	@ELEMENTARY_EDBUS_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
 	@ELEMENTARY_BIN_LIBS@
 elementary_config_LDFLAGS =
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c
-elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la @ELEMENTARY_EWEATHER_LIBS@ @ELEMENTARY_BIN_LIBS@
+elementary_quicklaunch_LDADD = $(top_builddir)/src/lib/libelementary.la \
+	@ELEMENTARY_EWEATHER_LIBS@ \
+	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EFREET_LIBS@ \
+	@ELEMENTARY_BIN_LIBS@
 elementary_quicklaunch_LDFLAGS =
 
 if BUILD_RUN
@@ -133,7 +140,12 @@ elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
 elementary_testql_la_CFLAGS =
 elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
 elementary_testql_SOURCES = $(elementary_test_SOURCES)
-elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la
+elementary_testql_LDADD = $(top_builddir)/src/lib/libelementary.la \
+	@ELEMENTARY_EWEATHER_LIBS@ \
+	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EFREET_LIBS@ \
+	@ELEMENTARY_BIN_LIBS@ \
+	@my_libs@
 elementary_testql_CFLAGS = -DELM_LIB_QUICKLAUNCH=1
 elementary_testql_LDFLAGS =
 endif
