@@ -27,3 +27,8 @@
 
         * Fix a compilation failure when --disable-posix-threads
 	--disable-valgrind are passed to configure
+
+2011-03-09  Cedric Bail
+
+	* Fix stat failure when file size in bytes or the number of blocks
+	allocated to the file or the file serial number didn't fit in 32bits.

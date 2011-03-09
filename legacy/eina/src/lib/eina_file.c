@@ -21,6 +21,9 @@
 # include "config.h"
 #endif
 
+#undef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 64
+
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
