@@ -197,6 +197,9 @@ eio_strcmp(const void *a, const void *b)
 static Eina_Bool
 _eio_dir_recursive_progress(Eio_Dir_Copy *copy, Eio_File *handler, const Eina_File_Direct_Info *info)
 {
+   if (copy->filter_cb && !copy->filter_cb(&copy->progress.common.data, handler, info))
+     return EINA_FALSE;
+
    switch (info->type)
      {
       case EINA_FILE_UNKNOWN:
@@ -919,6 +922,7 @@ _eio_dir_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
 EAPI Eio_File *
 eio_dir_copy(const char *source,
              const char *dest,
+             Eio_Filter_Direct_Cb filter_cb,
              Eio_Progress_Cb progress_cb,
              Eio_Done_Cb done_cb,
              Eio_Error_Cb error_cb,
@@ -938,6 +942,7 @@ eio_dir_copy(const char *source,
    copy->progress.progress_cb = progress_cb;
    copy->progress.source = eina_stringshare_add(source);
    copy->progress.dest = eina_stringshare_add(dest);
+   copy->filter_cb = filter_cb;
    copy->files = NULL;
    copy->dirs = NULL;
    copy->links = NULL;
@@ -972,6 +977,7 @@ eio_dir_copy(const char *source,
 EAPI Eio_File *
 eio_dir_move(const char *source,
              const char *dest,
+             Eio_Filter_Direct_Cb filter_cb,
              Eio_Progress_Cb progress_cb,
              Eio_Done_Cb done_cb,
              Eio_Error_Cb error_cb,
@@ -991,6 +997,7 @@ eio_dir_move(const char *source,
    move->progress.progress_cb = progress_cb;
    move->progress.source = eina_stringshare_add(source);
    move->progress.dest = eina_stringshare_add(dest);
+   move->filter_cb = filter_cb;
    move->files = NULL;
    move->dirs = NULL;
    move->links = NULL;
@@ -1023,6 +1030,7 @@ eio_dir_move(const char *source,
  */
 EAPI Eio_File *
 eio_dir_unlink(const char *path,
+               Eio_Filter_Direct_Cb filter_cb,
                Eio_Progress_Cb progress_cb,
                Eio_Done_Cb done_cb,
                Eio_Error_Cb error_cb,
@@ -1041,6 +1049,7 @@ eio_dir_unlink(const char *path,
    rmrf->progress.progress_cb = progress_cb;
    rmrf->progress.source = eina_stringshare_add(path);
    rmrf->progress.dest = NULL;
+   rmrf->filter_cb = filter_cb;
    rmrf->files = NULL;
    rmrf->dirs = NULL;
    rmrf->links = NULL;

@@ -208,6 +208,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
 
 EAPI Eio_File *eio_dir_move(const char *source,
 			    const char *dest,
+                            Eio_Filter_Direct_Cb filter_cb,
 			    Eio_Progress_Cb progress_cb,
 			    Eio_Done_Cb done_cb,
 			    Eio_Error_Cb error_cb,
@@ -215,12 +216,14 @@ EAPI Eio_File *eio_dir_move(const char *source,
 
 EAPI Eio_File *eio_dir_copy(const char *source,
 			    const char *dest,
+                            Eio_Filter_Direct_Cb filter_cb,
 			    Eio_Progress_Cb progress_cb,
 			    Eio_Done_Cb done_cb,
 			    Eio_Error_Cb error_cb,
 			    const void *data);
 
 EAPI Eio_File *eio_dir_unlink(const char *path,
+                              Eio_Filter_Direct_Cb filter_cb,
 			      Eio_Progress_Cb progress_cb,
 			      Eio_Done_Cb done_cb,
 			      Eio_Error_Cb error_cb,

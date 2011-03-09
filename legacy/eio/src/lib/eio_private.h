@@ -143,6 +143,8 @@ struct _Eio_Dir_Copy
 {
    Eio_File_Progress progress;
 
+   Eio_Filter_Direct_Cb filter_cb;
+
    Eina_List *files;
    Eina_List *dirs;
    Eina_List *links;
