@@ -208,7 +208,7 @@ PKG_CHECK_MODULES([ELEMENTARY],
     ecore-evas >= 1.0.0
     ecore-file >= 1.0.0
     ecore-imf >= 1.0.0
-    edje >= 1.0.0
+    edje >= 1.0.999
    ]
 )
 
