@@ -9,9 +9,6 @@
 # include <features.h>
 #endif
 
-#undef _FILE_OFFSET_BITS
-#define _FILE_OFFSET_BITS 64
-
 #include <stdio.h>
 #include <string.h>
 
