@@ -215,7 +215,10 @@ PKG_CHECK_MODULES([ELEMENTARY],
 PKG_CHECK_MODULES([ELEMENTARY_BIN],
    [
     eina >= 1.0.0
+    edje >= 1.0.0
     evas >= 1.0.0
+    ecore >= 1.0.0
+    ecore-file >= 1.0.0
     ecore-evas >= 1.0.0
    ]
 )
