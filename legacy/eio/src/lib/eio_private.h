@@ -9,9 +9,8 @@
 # include <features.h>
 #endif
 
-#ifndef _FILE_OFFSET_BITS
-# define _FILE_OFFSET_BITS 64
-#endif
+#undef _FILE_OFFSET_BITS
+#define _FILE_OFFSET_BITS 64
 
 #include <stdio.h>
 #include <string.h>
@@ -190,7 +189,7 @@ Eio_Progress *eio_progress_malloc(void);
 void eio_progress_free(Eio_Progress *progress);
 
 void eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op,
-                       off_t current, off_t max);
+                       long long current, long long max);
 void eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op);
 
 Eina_Bool eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy);

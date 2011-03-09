@@ -124,8 +124,8 @@ struct _Eio_Progress
 {
    Eio_File_Op op; /**< IO type */
 
-   off_t current; /**< Current step in the IO operation */
-   off_t max; /**< Number of step to do to complete this IO */
+   long long current; /**< Current step in the IO operation */
+   long long max; /**< Number of step to do to complete this IO */
    float percent; /**< Percent done of the IO operation */
 
    const char *source; /**< source of the IO operation */

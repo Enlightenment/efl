@@ -268,10 +268,10 @@ _eio_file_write(int fd, void *mem, ssize_t length)
 #endif
 
 static Eina_Bool
-_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, off_t size)
+_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, long long size)
 {
    char *m = MAP_FAILED;
-   off_t i;
+   long long i;
 
    for (i = 0; i < size; i += EIO_PACKET_SIZE * EIO_PACKET_COUNT)
      {
@@ -320,11 +320,11 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out
 
 #ifdef EFL_HAVE_SPLICE
 static int
-_eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, off_t size)
+_eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, long long size)
 {
    int result = 0;
-   off_t count;
-   off_t i;
+   long long count;
+   long long i;
    int pipefd[2];
 
    if (pipe(pipefd) < 0)

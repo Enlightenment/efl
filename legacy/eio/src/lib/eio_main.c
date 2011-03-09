@@ -122,7 +122,7 @@ eio_progress_free(Eio_Progress *data)
 }
 
 void
-eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, off_t current, off_t max)
+eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op, long long current, long long max)
 {
    Eio_Progress *progress;
 

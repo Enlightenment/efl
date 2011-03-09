@@ -293,7 +293,7 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
 
 static Eina_Bool
 _eio_dir_init(Ecore_Thread *thread,
-              off_t *step, off_t *count,
+              long long *step, long long *count,
               int *length_source, int *length_dest,
               Eio_Dir_Copy *order,
               Eio_File_Progress *progress)
@@ -353,7 +353,7 @@ _eio_dir_target(Eio_Dir_Copy *order, char *target, const char *dir, int length_s
 
 static Eina_Bool
 _eio_dir_mkdir(Ecore_Thread *thread, Eio_Dir_Copy *order,
-               off_t *step, off_t count,
+               long long *step, long long count,
                int length_source, int length_dest)
 {
    const char *dir;
@@ -387,7 +387,7 @@ _eio_dir_mkdir(Ecore_Thread *thread, Eio_Dir_Copy *order,
 
 static Eina_Bool
 _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
-              off_t *step, off_t count,
+              long long *step, long long count,
               int length_source, int length_dest)
 {
    const char *link;
@@ -448,7 +448,7 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
 
 static Eina_Bool
 _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
-               off_t *step, off_t count,
+               long long *step, long long count,
                int length_source, int length_dest,
                Eina_Bool rmdir_source)
 {
@@ -514,8 +514,8 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
 
    int length_source = 0;
    int length_dest = 0;
-   off_t count;
-   off_t step;
+   long long count;
+   long long step;
 
    /* list all the content that should be copied */
    if (!_eio_dir_recursiv_ls(thread, copy, copy->progress.source))
@@ -636,8 +636,8 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
 
    int length_source;
    int length_dest;
-   off_t count;
-   off_t step;
+   long long count;
+   long long step;
 
    /* just try a rename, maybe we are lucky... */
    if (rename(move->progress.source, move->progress.dest) == 0)
@@ -741,8 +741,8 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
    const char *file = NULL;
    const char *dir = NULL;
 
-   off_t count;
-   off_t step;
+   long long count;
+   long long step;
 
    /* list all the content that should be moved */
    if (!_eio_dir_recursiv_ls(thread, rmrf, rmrf->progress.source))
