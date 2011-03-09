@@ -430,16 +430,7 @@ evas_object_del(Evas_Object *obj)
    evas_common_frameq_flush();
 #endif
 
-   _evas_object_event_new();
-
-   evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL);
-   _evas_post_event_callback_call(obj->layer->evas);
-   if (obj->name) evas_object_name_set(obj, NULL);
-   if (!obj->layer)
-     {
-	evas_object_free(obj, 1);
-	return;
-     }
+   evas_object_hide(obj);
    if (obj->focused)
      {
 	obj->focused = 0;
@@ -448,10 +439,18 @@ evas_object_del(Evas_Object *obj)
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
         _evas_post_event_callback_call(obj->layer->evas);
      }
+   _evas_object_event_new();
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL);
+   _evas_post_event_callback_call(obj->layer->evas);
+   if (obj->name) evas_object_name_set(obj, NULL);
+   if (!obj->layer)
+     {
+	evas_object_free(obj, 1);
+	return;
+     }
    obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
    obj->mouse_grabbed = 0;
    obj->mouse_in = 0;
-   evas_object_hide(obj);
    evas_object_grabs_cleanup(obj);
    while (obj->clip.clipees) 
      evas_object_clip_unset(obj->clip.clipees->data);

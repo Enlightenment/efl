@@ -146,3 +146,8 @@
         as they have the same base name, but different prototypes
         * Add evas_object_ref() and evas_object_unref() to defer
         deletion of objects until all references are removed
+
+2011-03-09  Carsten Haitzler (The Rasterman)
+
+	* Fix bug with evas_object_del() calling DEL callback BEFORE
+        the HIDE one.
