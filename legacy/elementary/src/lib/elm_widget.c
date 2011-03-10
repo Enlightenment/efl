@@ -61,7 +61,7 @@ struct _Smart_Data
    const char    *style;
    unsigned int   focus_order;
    Eina_Bool      focus_order_on_calc;
-   
+
    int            child_drag_x_locked;
    int            child_drag_y_locked;
 
@@ -69,7 +69,7 @@ struct _Smart_Data
 
    Eina_Bool      drag_x_locked : 1;
    Eina_Bool      drag_y_locked : 1;
-   
+
    Eina_Bool      can_focus : 1;
    Eina_Bool      child_can_focus : 1;
    Eina_Bool      focused : 1;
@@ -181,7 +181,7 @@ static void
 _sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *o = obj;
-   do 
+   do
      {
         if (_elm_widget_is(o)) break;
         o = evas_object_smart_parent_get(o);
@@ -307,7 +307,7 @@ void
 _elm_widget_type_clear(void)
 {
    const char **ptr;
-   
+
    EINA_LIST_FREE(widtypes, ptr)
      {
         eina_stringshare_del(*ptr);
@@ -727,7 +727,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
         if (data)
           {
              if (data == obj) return;
-             evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL, 
+             evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL,
                                             _sub_obj_del);
           }
      }
@@ -785,7 +785,7 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
      }
    else
      sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, 
+   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL,
                                        _sub_obj_del, sd);
    evas_object_smart_callback_call(obj, "sub-object-del", sobj);
 }
@@ -1674,7 +1674,7 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
 
    do
      {
-        parent_obj = sd->parent_obj; 
+        parent_obj = sd->parent_obj;
         child_obj = sd->obj;
         sd = evas_object_smart_data_get(parent_obj);
 
@@ -1862,7 +1862,7 @@ EAPI void
 elm_widget_style_set(Evas_Object *obj, const char *style)
 {
    API_ENTRY return;
-   
+
    if (eina_stringshare_replace(&sd->style, style))
       elm_widget_theme(obj);
 }
@@ -2521,7 +2521,7 @@ _newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order, Eina
 {
    const Eina_List *l;
    Evas_Object *child, *ret, *best;
-   
+
    API_ENTRY return NULL;
    if (!evas_object_visible_get(obj)) return NULL;
    best = NULL;
@@ -2546,7 +2546,7 @@ _if_focused_revert(Evas_Object *obj, Eina_Bool can_focus_only)
    Evas_Object *top;
    Evas_Object *newest = NULL;
    unsigned int newest_focus_order = 0;
-   
+
    INTERNAL_ENTRY;
 
    if (!sd->focused) return;
