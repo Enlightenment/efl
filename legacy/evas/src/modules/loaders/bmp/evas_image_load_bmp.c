@@ -161,6 +161,7 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         if (!read_int(f, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
         if (image_size == 0) image_size = fsize - offset;
+        if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
      }
    else if (head_size == 108) // Windows 95/NT4 + (v4)
      {
@@ -435,6 +436,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
         if (!read_int(f, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
         if (image_size == 0) image_size = fsize - offset;
+        if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
      }
    else if (head_size == 108) // Windows 95/NT4 + (v4)
      {
@@ -949,6 +951,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                }
              else if (bit_count == 32)
                {
+                  int none_zero_alpha = 0;
                   pix = surface;
                   for (y = 0; y < h; y++)
                     {
@@ -959,6 +962,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             g = p[1];
                             r = p[2];
                             a = p[3];
+                            if (a) none_zero_alpha = 1;
                             if (!hasa) a = 0xff;
                             *pix = ARGB_JOIN(a, r, g, b);
                             p += 4;
@@ -968,6 +972,17 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                        fix = (int)(((unsigned long)p) & 0x3);
                        if (fix > 0) p += 4 - fix; // align row read
                        if (p >= buffer_end) break;
+                    }
+                  if (!none_zero_alpha)
+                    {
+                       ie->flags.alpha = 0;
+                       if (hasa)
+                         {
+                            unsigned int *pixend = pix + (w * h);
+                            
+                            for (pix = surface; pix < pixend; pix++)
+                               A_VAL(pix) = 0xff;
+                         }
                     }
                }
              else
