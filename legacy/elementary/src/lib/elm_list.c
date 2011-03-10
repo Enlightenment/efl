@@ -1050,6 +1050,7 @@ static void
 _fix_items(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    const Eina_List *l;
    Elm_List_Item *it;
    Evas_Coord minw[2] = { 0, 0 }, minh[2] = { 0, 0 };
@@ -1061,7 +1062,6 @@ _fix_items(Evas_Object *obj)
    const char *it_compress = wd->h_mode ? "h_item_compress" : "item_compress";
    const char *it_compress_odd = wd->h_mode ? "h_item_compress_odd" : "item_compress_odd";
 
-   if (!wd) return;
    if (wd->walking)
      {
         wd->fix_pending = EINA_TRUE;
