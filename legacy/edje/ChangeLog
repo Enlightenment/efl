@@ -51,3 +51,10 @@
 2011-03-10  WooHyun Jung
 
         * Fix: Emit clicked signal on entry if still in - missing.
+
+2011-03-10  Cedric BAIL
+
+	* Correctly propagate recursive event with existing and non existing
+	part.
+
+

@@ -1001,7 +1001,7 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 
    if (ed->delete_me) return;
 
-   sep = strrchr(sig, EDJE_PART_PATH_SEPARATOR);
+   sep = strchr(sig, EDJE_PART_PATH_SEPARATOR);
 
    /* If we are not sending the signal to a part of the child, the
     * signal if for ourself
@@ -1009,56 +1009,119 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
    if (sep)
      {
         Edje_Real_Part *rp = NULL;
+        const char *newsig;
         Edje *ed2;
-        char *newsig;
-        size_t length;
         char *part;
+        char *idx;
+        size_t length;
 
-        /* the signal contains a colon, split the signal into "parts:signal",
-         * use _edje_real_part_recursive_get_helper to find the real part.
-         */
-        length = strlen(sig) + 1;
+        /* the signal contains a colon, split the signal into "parts:signal" */
+        length = sep - sig + 1;
         part = alloca(length);
-        memcpy(part, sig, length);
+        memcpy(part, sig, length - 1);
+        part[length - 1] = '\0';
 
-        newsig = part + (sep - sig);
+        newsig = sep + 1;
 
-        *newsig = '\0';
-        newsig++;
-
-        ed2 = _edje_recursive_get(ed, part, &rp);
-        if (ed2 && ed2 != ed)
+        /* lookup for alias */
+        if (ed->collection && ed->collection->alias)
           {
-             _edje_emit(ed2, newsig, src);
+             char *alias;
+
+             alias = eina_hash_find(ed->collection->alias, part);
+             if (alias) {
+                char *aliased;
+                int alien;
+                int nslen;
+
+                alien = strlen(alias);
+                nslen = strlen(newsig);
+                length = alien + nslen + 2;
+
+                aliased = alloca(length);
+                memcpy(aliased, alias, alien);
+                aliased[alien] = EDJE_PART_PATH_SEPARATOR;
+                memcpy(aliased + alien + 1, newsig, nslen + 1);
+
+                return _edje_emit(ed, aliased, src);
+             }
           }
-        else if (rp)
+
+        /* search for the index if present and remove it from the part */
+        idx = strchr(part, EDJE_PART_PATH_SEPARATOR_INDEXL);
+        if (idx)
           {
-             switch (rp->part->type)
+             char *end;
+
+             end = strchr(idx + 1, EDJE_PART_PATH_SEPARATOR_INDEXR);
+             if (end && end != idx + 1)
                {
-                case EDJE_PART_TYPE_EXTERNAL:
-                   if (!rp->swallowed_object) break ;
+                  char *tmp;
 
-                   _edje_external_signal_emit(rp->swallowed_object, newsig, src);
-                   break ;
-                case EDJE_PART_TYPE_BOX:
-                case EDJE_PART_TYPE_TABLE:
-                   _edje_emit(rp->edje, newsig, src);
-                   break ;
-                case EDJE_PART_TYPE_GROUP:
-                   if (!rp->swallowed_object) break;
-
-                   ed2 = _edje_fetch(rp->swallowed_object);
-                   if (!ed2) break;
-
-                   _edje_emit(ed2, newsig, src);
-                   break ;
-                default:
-                   fprintf(stderr, "SPANK SPANK SPANK !!!\nYou should never be here !\n");
-                   break;
+                  tmp = alloca(end - idx - 1);
+                  memcpy(tmp, idx + 1, end - idx - 1);
+                  tmp[end - idx - 1] = '\0';
+                  *idx = '\0';
+                  idx = tmp;
                }
+             else
+               {
+                  idx = NULL;
+               }
+          }
+
+        /* search for the right part now */
+        rp = _edje_real_part_get(ed, part);
+        if (!rp) goto end;
+
+        switch (rp->part->type)
+          {
+           case EDJE_PART_TYPE_GROUP:
+              if (!rp->swallowed_object) goto end;
+              ed2 = _edje_fetch(rp->swallowed_object);
+              if (!ed2) goto end;
+
+              _edje_emit(ed2, newsig, src);
+              break;
+
+           case EDJE_PART_TYPE_EXTERNAL:
+              if (!rp->swallowed_object) break ;
+
+              if (!idx)
+                {
+                   _edje_external_signal_emit(rp->swallowed_object, newsig, src);
+                }
+              else
+                {
+                   Evas_Object *child;
+
+                   child = _edje_children_get(rp, idx);
+                   ed2 = _edje_fetch(child);
+                   if (!ed2) goto end;
+                   _edje_emit(ed2, newsig, src);
+                }
+              break ;
+
+           case EDJE_PART_TYPE_BOX:
+           case EDJE_PART_TYPE_TABLE:
+              if (idx)
+                {
+                   Evas_Object *child;
+
+                   child = _edje_children_get(rp, idx);
+                   ed2 = _edje_fetch(child);
+                   if (!ed2) goto end;
+                   _edje_emit(ed2, newsig, src);
+                }
+              break ;
+
+           default:
+              fprintf(stderr, "SPANK SPANK SPANK !!!\nYou should never be here !\n");
+              break;
           }
      }
 
+ end:
    emsg.sig = sig;
    emsg.src = src;
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
