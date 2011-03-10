@@ -48,3 +48,6 @@
 	This lets you limit the size of the font that will be used.
 	Especially useful when using fit.
 
+2011-03-10  WooHyun Jung
+
+        * Fix: Emit clicked signal on entry if still in - missing.
