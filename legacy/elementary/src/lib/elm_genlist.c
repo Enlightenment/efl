@@ -402,7 +402,7 @@ struct _Elm_Genlist_Item
    Eina_Bool   want_realize : 1;
    Eina_Bool   realized : 1;
    Eina_Bool   selected : 1;
-   Eina_Bool   hilighted : 1;
+   Eina_Bool   highlighted : 1;
    Eina_Bool   expanded : 1;
    Eina_Bool   disabled : 1;
    Eina_Bool   display_only : 1;
@@ -831,10 +831,10 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_item_hilight(Elm_Genlist_Item *it)
+_item_highlight(Elm_Genlist_Item *it)
 {
    const char *selectraise;
-   if ((it->wd->no_select) || (it->delete_me) || (it->hilighted) || (it->disabled) || (it->display_only)) return;
+   if ((it->wd->no_select) || (it->delete_me) || (it->highlighted) || (it->disabled) || (it->display_only)) return;
    edje_object_signal_emit(it->base.view, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(it->base.view, "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
@@ -843,7 +843,7 @@ _item_hilight(Elm_Genlist_Item *it)
         if ((it->group_item) && (it->group_item->realized))
            evas_object_raise(it->group_item->base.view);
      }
-   it->hilighted = EINA_TRUE;
+   it->highlighted = EINA_TRUE;
 }
 
 static void
@@ -982,7 +982,7 @@ _item_unselect(Elm_Genlist_Item *it)
 {
    const char *stacking, *selectraise;
 
-   if ((it->delete_me) || (!it->hilighted)) return;
+   if ((it->delete_me) || (!it->highlighted)) return;
    edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
    stacking = edje_object_data_get(it->base.view, "stacking");
    selectraise = edje_object_data_get(it->base.view, "selectraise");
@@ -991,7 +991,7 @@ _item_unselect(Elm_Genlist_Item *it)
         if ((stacking) && (!strcmp(stacking, "below")))
           evas_object_lower(it->base.view);
      }
-   it->hilighted = EINA_FALSE;
+   it->highlighted = EINA_FALSE;
    if (it->selected)
      {
         it->selected = EINA_FALSE;
@@ -1332,7 +1332,7 @@ _mouse_down(void        *data,
    else it->wd->on_hold = EINA_FALSE;
    if (it->wd->on_hold) return;
    it->wd->wasselected = it->selected;
-   _item_hilight(it);
+   _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
       if ((!it->disabled) && (!it->display_only))
          evas_object_smart_callback_call(it->base.widget, "clicked", it);
@@ -1421,7 +1421,7 @@ _mouse_up(void            *data,
      {
         if (!it->selected)
           {
-             _item_hilight(it);
+             _item_highlight(it);
              _item_select(it);
           }
         else _item_unselect(it);
@@ -1443,10 +1443,10 @@ _mouse_up(void            *data,
 
              EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
                if (it2 != it) _item_unselect(it2);
-             //_item_hilight(it);
+             //_item_highlight(it);
              //_item_select(it);
           }
-        _item_hilight(it);
+        _item_highlight(it);
         _item_select(it);
      }
 }
@@ -3600,7 +3600,7 @@ elm_genlist_item_selected_set(Elm_Genlist_Item *it,
              while (wd->selected)
                _item_unselect(wd->selected->data);
           }
-        _item_hilight(it);
+        _item_highlight(it);
         _item_select(it);
      }
    else
