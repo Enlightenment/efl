@@ -175,7 +175,6 @@ _elm_module_unload(Elm_Module *m)
    eina_stringshare_del(m->so_path);
    eina_stringshare_del(m->data_dir);
    eina_stringshare_del(m->bin_dir);
-   if (m->shutdown_func) m->shutdown_func(m);
    if (m->api)
      {
         free(m->api);
