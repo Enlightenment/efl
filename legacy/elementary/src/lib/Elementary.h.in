@@ -2525,8 +2525,8 @@ extern "C" {
    EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
    EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
    EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
-   EAPI void                   elm_transit_objects_prop_hold_disabled_set(Elm_Transit *transit, Eina_Bool disabled) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool              elm_transit_objects_prop_hold_disabled_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EINA_DEPRECATED EAPI void                   elm_transit_event_block_set(Elm_Transit *transit, Eina_Bool disabled) EINA_ARG_NONNULL(1);
    EINA_DEPRECATED EAPI Eina_Bool              elm_transit_event_block_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled) EINA_ARG_NONNULL(1);

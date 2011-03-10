@@ -83,7 +83,7 @@ struct _Elm_Transit
    Eina_Bool auto_reverse : 1;
    Eina_Bool event_enabled : 1;
    Eina_Bool deleted : 1;
-   Eina_Bool prop_hold_disabled : 1;
+   Eina_Bool state_keep : 1;
 };
 
 struct _Elm_Transit_Effect
@@ -94,7 +94,7 @@ struct _Elm_Transit_Effect
    Eina_Bool deleted : 1;
 };
 
-struct _Elm_Obj_Prop
+struct _Elm_Obj_State
 {
    Evas_Coord x, y, w, h;
    int r,g,b,a;
@@ -106,35 +106,35 @@ struct _Elm_Obj_Prop
 struct _Elm_Obj_Data
 {
    Elm_Transit *transit;
-   struct _Elm_Obj_Prop *prop;
+   struct _Elm_Obj_State *state;
    Eina_Bool pass_events : 1;
 };
 
 typedef struct _Elm_Transit_Effect Elm_Transit_Effect;
 typedef struct _Elm_Obj_Data Elm_Obj_Data;
-typedef struct _Elm_Obj_Prop Elm_Obj_Prop;
+typedef struct _Elm_Obj_State Elm_Obj_State;
 
 static void 
-_elm_transit_objs_prop_save(Elm_Transit *transit)
+_elm_transit_objs_states_save(Elm_Transit *transit)
 {
    Eina_List *list;
    Evas_Object *obj;
    Elm_Obj_Data *obj_data;
-   Elm_Obj_Prop *prop;
+   Elm_Obj_State *state;
 
    EINA_LIST_FOREACH(transit->objs, list, obj)
      {
         obj_data = evas_object_data_get(obj, _transit_key);  
         if (!obj_data) continue;
-        prop = calloc(1, sizeof(Elm_Obj_Prop));
-        if (!prop) continue;
-        evas_object_geometry_get(obj, &prop->x, &prop->y, &prop->w, &prop->h);   
-        evas_object_color_get(obj, &prop->r, &prop->g, &prop->b, &prop->a);
-        prop->visible = evas_object_visible_get(obj);    
-        prop->map_enabled = evas_object_map_enable_get(obj);
+        state = calloc(1, sizeof(Elm_Obj_State));
+        if (!state) continue;
+        evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);   
+        evas_object_color_get(obj, &state->r, &state->g, &state->b, &state->a);
+        state->visible = evas_object_visible_get(obj);    
+        state->map_enabled = evas_object_map_enable_get(obj);
         if (evas_object_map_get(obj))
-          prop->map = evas_map_dup(evas_object_map_get(obj));
-        obj_data->prop = prop;
+          state->map = evas_map_dup(evas_object_map_get(obj));
+        obj_data->state = state;
      }
 }
 
@@ -144,8 +144,8 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
    Elm_Transit *transit = data;
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
    evas_object_pass_events_set(obj, obj_data->pass_events);
-   if (obj_data->prop)
-     free(obj_data->prop);
+   if (obj_data->state)
+     free(obj_data->state);
    free(obj_data);
    transit->objs = eina_list_remove(transit->objs, obj);
    if (!transit->objs) elm_transit_del(transit);
@@ -155,25 +155,25 @@ static void
 _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
-   Elm_Obj_Prop *prop = obj_data->prop;
+   Elm_Obj_State *state = obj_data->state;
 
    evas_object_pass_events_set(obj, obj_data->pass_events);
    
-   //recover the properties of the object.
-   if (prop)
+   //recover the states of the object.
+   if (state)
      {
-        evas_object_move(obj, prop->x, prop->y);
-        evas_object_resize(obj, prop->w, prop->h);
-        evas_object_color_set(obj, prop->r, prop->g, prop->b, prop->a);
-        if (prop->visible) evas_object_show(obj);
+        evas_object_move(obj, state->x, state->y);
+        evas_object_resize(obj, state->w, state->h);
+        evas_object_color_set(obj, state->r, state->g, state->b, state->a);
+        if (state->visible) evas_object_show(obj);
         else evas_object_hide(obj);
-        if (prop->map_enabled) 
+        if (state->map_enabled) 
           evas_object_map_enable_set(obj, EINA_TRUE);
         else
           evas_object_map_enable_set(obj, EINA_FALSE);
-        if (prop->map)
-          evas_object_map_set(obj, prop->map);
-        free(prop);
+        if (state->map)
+          evas_object_map_set(obj, state->map);
+        free(state);
      }
    free(obj_data);
    transit->objs = eina_list_remove(transit->objs, obj);
@@ -853,8 +853,8 @@ elm_transit_go(Elm_Transit *transit)
    if (transit->animator)
      ecore_animator_del(transit->animator);
 
-   if (transit->prop_hold_disabled)
-     _elm_transit_objs_prop_save(transit);
+   if (!transit->state_keep)
+     _elm_transit_objs_states_save(transit);
    
    transit->time.paused = 0;
    transit->time.delayed = 0;
@@ -940,44 +940,44 @@ elm_transit_progress_value_get(const Elm_Transit *transit)
 }
 
 /**
- * Enable/disable holding up the objects properties.
- * If it is disabled, the objects properties will be reset when transition ends.
+ * Enable/disable keeping up the objects states.
+ * If it is not kept, the objects states will be reset when transition ends.
  *
  * @note @p transit can not be NULL.
- * @note These properties include geometry, color, map data. 
+ * @note One state includes geometry, color, map data. 
  *
  * @param transit The transit object.
- * @param disabled Disable or enable. 
+ * @param state_keep Keeping or Non Keeping. 
  *
  * @ingroup Transit
  */
 EAPI void
-elm_transit_objects_prop_hold_disabled_set(Elm_Transit *transit, Eina_Bool disabled)
+elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-   if (transit->prop_hold_disabled == disabled) return;
+   if (transit->state_keep == state_keep) return;
    if (transit->animator) return;
-   transit->prop_hold_disabled = !!disabled;
+   transit->state_keep = !!state_keep;
 }
 
 /**
- * Get a value whether the objects properties will be reset or not.
+ * Get a value whether the objects states will be reset or not.
  *
  * @note @p transit can not be NULL
  *
- * @see elm_transit_objects_prop_hold_disabled_set()
+ * @see elm_transit_objects_final_state_keep_set()
  *
  * @param transit The transit object.
- * @return EINA_TRUE means the properties of the objects will be reset. 
+ * @return EINA_TRUE means the states of the objects will be reset. 
  * If @p transit is NULL, EINA_FALSE is returned
  
  * @ingroup Transit
  */
 EAPI Eina_Bool
-elm_transit_objects_prop_hold_disabled_get(const Elm_Transit *transit)
+elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
-   return transit->prop_hold_disabled;
+   return transit->state_keep;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
