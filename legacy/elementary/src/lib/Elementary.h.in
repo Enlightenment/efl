@@ -484,7 +484,7 @@ extern "C" {
         ELM_WIN_KEYBOARD_KEYPAD,
         ELM_WIN_KEYBOARD_J2ME
      } Elm_Win_Keyboard_Mode;
-     
+
    typedef enum _Elm_Illume_Command
      {
         ELM_ILLUME_COMMAND_FOCUS_BACK,
@@ -1389,10 +1389,10 @@ extern "C" {
 
    EAPI Evas_Object                 *elm_thumb_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                         elm_thumb_reload(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void	                     elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key) EINA_ARG_NONNULL(1);
-   EAPI void                	     elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1);
-   EAPI void	                     elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1);
-   EAPI void                	     elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting s) EINA_ARG_NONNULL(1);
+   EAPI void                         elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key) EINA_ARG_NONNULL(1);
+   EAPI void                         elm_thumb_file_get(const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1);
+   EAPI void                         elm_thumb_path_get(const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1);
+   EAPI void                         elm_thumb_animate_set(Evas_Object *obj, Elm_Thumb_Animation_Setting s) EINA_ARG_NONNULL(1);
    EAPI Elm_Thumb_Animation_Setting  elm_thumb_animate_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                        *elm_thumb_ethumb_client_get(void);
    EAPI Eina_Bool                    elm_thumb_ethumb_client_connected(void);
@@ -2469,11 +2469,11 @@ extern "C" {
      } Elm_Ctxpopup_Direction;
 
    EAPI Evas_Object  *elm_ctxpopup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-   EAPI Evas_Object  *elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1); 
+   EAPI Evas_Object  *elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
    EAPI void          elm_ctxpopup_item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon) EINA_ARG_NONNULL(1);
-   EAPI const char   *elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);	
+   EAPI const char   *elm_ctxpopup_item_label_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
    EAPI void          elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label) EINA_ARG_NONNULL(1);
-   EAPI void          elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1, 2); 
+   EAPI void          elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Object  *elm_ctxpopup_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void          elm_ctxpopup_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void          elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
@@ -2482,10 +2482,10 @@ extern "C" {
    EAPI void          elm_ctxpopup_item_del(Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
    EAPI void          elm_ctxpopup_item_disabled_set(Elm_Ctxpopup_Item *item, Eina_Bool disabled) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool     elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item) EINA_ARG_NONNULL(1);
-   EAPI void	      elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
+   EAPI void          elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
    EAPI Evas_Object  *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void  	      elm_ctxpopup_direction_priority_set(Evas_Object *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth) EINA_ARG_NONNULL(1);
-   EAPI void  	      elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_direction_priority_set(Evas_Object *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth) EINA_ARG_NONNULL(1);
+   EAPI void          elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "dismissed" - the ctxpopup was dismissed
     */
@@ -2538,7 +2538,7 @@ extern "C" {
    EAPI int                    elm_transit_repeat_times_get(Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode) EINA_ARG_NONNULL(1);
    EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1) EINA_ARG_NONNULL(1);
-   EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration) EINA_ARG_NONNULL(1); 
+   EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration) EINA_ARG_NONNULL(1);
    EAPI double                 elm_transit_duration_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_go(Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused) EINA_ARG_NONNULL(1);
@@ -2555,7 +2555,7 @@ extern "C" {
    EAPI void                  *elm_transit_effect_fade_add(Elm_Transit *transit);
    EAPI void                  *elm_transit_effect_blend_add(Elm_Transit *transit);
    EAPI void                  *elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree);
-   EAPI void                  *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);       
+   EAPI void                  *elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images);
 
   typedef struct _Elm_Store                      Elm_Store;
   typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
