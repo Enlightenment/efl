@@ -73,6 +73,7 @@ static void _elm_win_focus_highlight_anim_end(void *data, Evas_Object *obj, cons
 static void _elm_win_focus_highlight_reconfigure(Elm_Win *win);
 
 Eina_List *_elm_win_list = NULL;
+int _elm_win_deferred_free = 0;
 
 static void
 _elm_win_move(Ecore_Evas *ee)
@@ -198,6 +199,7 @@ static void
 _deferred_ecore_evas_free(void *data)
 {
    ecore_evas_free(data);
+   _elm_win_deferred_free--;
 }
 
 static void
@@ -246,7 +248,9 @@ _elm_win_obj_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void
 //   evas_font_cache_flush(win->evas);
 // FIXME: we are in the del handler for the object and delete the canvas
 // that lives under it from the handler... nasty. deferring doesn't help either
+
    ecore_job_add(_deferred_ecore_evas_free, win->ee);
+   _elm_win_deferred_free++;
 //   ecore_evas_free(win->ee);
 
    _elm_win_focus_highlight_shutdown(win);

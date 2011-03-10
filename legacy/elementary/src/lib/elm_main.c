@@ -360,6 +360,8 @@ elm_shutdown(void)
 {
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
+   _elm_win_shutdown();
+   while (_elm_win_deferred_free) ecore_main_loop_iterate();
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
    return _elm_init_count;

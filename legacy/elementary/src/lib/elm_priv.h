@@ -207,5 +207,6 @@ extern const char  *_elm_data_dir;
 extern const char  *_elm_lib_dir;
 extern int          _elm_log_dom;
 extern Eina_List   *_elm_win_list;
+extern int          _elm_win_deferred_free;
 
 #endif
