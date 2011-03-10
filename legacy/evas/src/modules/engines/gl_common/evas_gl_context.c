@@ -1504,9 +1504,9 @@ again:
    if ((tex->im) && (tex->im->native.data) && (!tex->im->native.yinvert))
      {
         tx1 = ((double)(tex->x) + sx) / (double)tex->pt->w;
-        ty1 = ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
+        ty1 = 1.0 - ((double)(tex->y) + sy) / (double)tex->pt->h;
         tx2 = ((double)(tex->x) + sx + sw) / (double)tex->pt->w;
-        ty2 = ((double)(tex->y) + sy) / (double)tex->pt->h;
+        ty2 = 1.0 - ((double)(tex->y) + sy + sh) / (double)tex->pt->h;
      }
    else
      {

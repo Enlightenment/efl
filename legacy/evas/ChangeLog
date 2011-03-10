@@ -151,3 +151,7 @@
 
 	* Fix bug with evas_object_del() calling DEL callback BEFORE
         the HIDE one.
+
+2011-03-10  Sung W. Park
+
+	* Fix bug with yinvert handling of native surfaces.
