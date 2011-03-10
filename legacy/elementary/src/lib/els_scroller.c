@@ -1061,7 +1061,13 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord x, E
         sd->down.pdx = 0;
         sd->down.pdy = 0;
      }
-   elm_smart_scroller_child_pos_set(obj, nx, ny);
+   x = nx;
+   if (x < minx) x = minx;
+   else if ((x + w) > cw) x = cw - w;
+   y = ny;
+   if (y < miny) y = miny;
+   else if ((y + h) > ch) y = ch - h;
+   elm_smart_scroller_child_pos_set(obj, x, y);
 }
 
 /* Set should be used for calculated positions, for example, when we move
