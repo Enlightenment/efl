@@ -3044,6 +3044,23 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 }
 
 /**
+ * Get the current coordinates of the marker.
+ *
+ * @param marker marker.
+ * @param lat The latitude.
+ * @param lon The longitude.
+ *
+ * @ingroup Map
+ */
+EAPI void
+elm_map_marker_region_get(const Elm_Map_Marker *marker, double *lon, double *lat)
+{
+   EINA_SAFETY_ON_NULL_RETURN(marker);
+   if (lon) *lon = marker->longitude;
+   if (lat) *lat = marker->latitude;
+}
+
+/**
  * Move the map to the coordinate of the marker.
  *
  * @param marker The marker where the map will be center.
@@ -3056,7 +3073,6 @@ elm_map_marker_bring_in(Elm_Map_Marker *marker)
    EINA_SAFETY_ON_NULL_RETURN(marker);
    elm_map_geo_region_bring_in(marker->wd->obj, marker->longitude, marker->latitude);
 }
-
 
 /**
  * Move the map to the coordinate of the marker.
