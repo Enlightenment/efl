@@ -559,7 +559,7 @@ _sizing_eval(Evas_Object *obj)
 
    //resize scroller according to final size. 
    if (!wd->content)
-      evas_object_smart_calculate(wd->scr); 
+      evas_object_smart_calculate(wd->scr);
 
    evas_object_move(wd->base, rect.x, rect.y);
    evas_object_resize(wd->base, rect.w, rect.h);
