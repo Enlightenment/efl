@@ -1201,7 +1201,14 @@ _signal_anchor_down(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 }
 
 static void
-_signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
+_signal_anchor_up(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+}
+
+static void
+_signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Entry_Anchor_Info ei;
@@ -1541,6 +1548,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_anchor_down, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,up,*", "elm.text",
                                    _signal_anchor_up, obj);
+   edje_object_signal_callback_add(wd->ent, "anchor,mouse,clicked,*", "elm.text",
+                                   _signal_anchor_clicked, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,move,*", "elm.text",
                                    _signal_anchor_move, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,in,*", "elm.text",
