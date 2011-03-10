@@ -176,8 +176,17 @@ _elm_module_unload(Elm_Module *m)
    eina_stringshare_del(m->data_dir);
    eina_stringshare_del(m->bin_dir);
    if (m->shutdown_func) m->shutdown_func(m);
-   if (m->api) free(m->api);
-   dlclose(m->handle);
+   if (m->api)
+     {
+        free(m->api);
+        m->api = NULL;
+     }
+   if (m->handle)
+     {
+        if (m->shutdown_func) m->shutdown_func(m);
+        dlclose(m->handle);
+        m->handle = NULL;
+     }
 }
 
 Elm_Module *
