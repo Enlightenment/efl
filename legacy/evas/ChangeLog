@@ -155,3 +155,10 @@
 2011-03-10  Sung W. Park
 
 	* Fix bug with yinvert handling of native surfaces.
+
+2011-03-10  Carsten Haitzler (The Rasterman)
+
+	* Fix issue with loading alpha BMP's with "check if all pixel alpha
+        are 0 or not and then force alpha off if all are 0". This
+        means you can never have a 100% empty/transparent BMP though
+        in 32bpp mode.
