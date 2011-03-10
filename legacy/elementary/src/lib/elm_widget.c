@@ -715,7 +715,8 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
           {
              if (sd2->parent_obj == obj)
                return;
-             elm_widget_sub_object_del(sd2->parent_obj, sobj);
+             if (sd2->parent_obj)
+               elm_widget_sub_object_del(sd2->parent_obj, sobj);
              sd2->parent_obj = obj;
              if (!sd->child_can_focus && (_is_focusable(sobj)))
                sd->child_can_focus = EINA_TRUE;
