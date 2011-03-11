@@ -60,6 +60,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    INIT_EMP_BOTH(RECTANGLE, Edje_Part_Description_Common, ce);
    INIT_EMP_BOTH(TEXT, Edje_Part_Description_Text, ce);
    INIT_EMP_BOTH(IMAGE, Edje_Part_Description_Image, ce);
+   INIT_EMP_BOTH(PROXY, Edje_Part_Description_Proxy, ce);
    INIT_EMP_BOTH(SWALLOW, Edje_Part_Description_Common, ce);
    INIT_EMP_BOTH(TEXTBLOCK, Edje_Part_Description_Text, ce);
    INIT_EMP_BOTH(GROUP, Edje_Part_Description_Common, ce);

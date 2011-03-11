@@ -28,6 +28,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_group = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_image = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_proxy = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_text = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_box = NULL;
@@ -38,6 +39,7 @@ Eet_Data_Descriptor *_edje_edd_edje_part_description_rectangle_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_swallow_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_group_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_image_pointer = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_part_description_proxy_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_text_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_textblock_pointer = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description_box_pointer = NULL;
@@ -69,6 +71,7 @@ Eet_Data_Descriptor *_edje_edd_edje_external_param = NULL;
 EMP(RECTANGLE, rectangle);
 EMP(TEXT, text);
 EMP(IMAGE, image);
+EMP(PROXY, proxy);
 EMP(SWALLOW, swallow);
 EMP(TEXTBLOCK, textblock);
 EMP(GROUP, group);
@@ -97,6 +100,7 @@ struct {
   { EDJE_PART_TYPE_BOX,       "box" },
   { EDJE_PART_TYPE_TABLE,     "table" },
   { EDJE_PART_TYPE_EXTERNAL,  "external" },
+  { EDJE_PART_TYPE_PROXY,     "proxy" }
 };
 
 static const char *
@@ -176,6 +180,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_swallow);
    FREED(_edje_edd_edje_part_description_group);
    FREED(_edje_edd_edje_part_description_image);
+   FREED(_edje_edd_edje_part_description_proxy);
    FREED(_edje_edd_edje_part_description_text);
    FREED(_edje_edd_edje_part_description_textblock);
    FREED(_edje_edd_edje_part_description_box);
@@ -186,6 +191,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_swallow_pointer);
    FREED(_edje_edd_edje_part_description_group_pointer);
    FREED(_edje_edd_edje_part_description_image_pointer);
+   FREED(_edje_edd_edje_part_description_proxy_pointer);
    FREED(_edje_edd_edje_part_description_text_pointer);
    FREED(_edje_edd_edje_part_description_textblock_pointer);
    FREED(_edje_edd_edje_part_description_box_pointer);
@@ -283,6 +289,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.RECTANGLE", count.RECTANGLE, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.TEXT", count.TEXT, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.IMAGE", count.IMAGE, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.PROXY", count.PROXY, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.SWALLOW", count.SWALLOW, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.TEXTBLOCK", count.TEXTBLOCK, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "count.GROUP", count.GROUP, EET_T_INT);
@@ -549,6 +556,27 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.spread", image.fill.spread, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_image, Edje_Part_Description_Image, "image.fill.type", image.fill.type, EET_T_CHAR);
 
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Proxy);
+   eddc.func.mem_free = mem_free_proxy;
+   eddc.func.mem_alloc = mem_alloc_proxy;
+   _edje_edd_edje_part_description_proxy =
+     eet_data_descriptor_file_new(&eddc);
+   EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, common);
+
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.id", proxy.id, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.smooth", proxy.fill.smooth, EET_T_CHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.pos_rel_x", proxy.fill.pos_rel_x, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.pos_abs_x", proxy.fill.pos_abs_x, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.rel_x", proxy.fill.rel_x, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.abs_x", proxy.fill.abs_x, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.pos_rel_y", proxy.fill.pos_rel_y, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.pos_abs_y", proxy.fill.pos_abs_y, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.rel_y", proxy.fill.rel_y, EDJE_T_FLOAT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.abs_y", proxy.fill.abs_y, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.angle", proxy.fill.angle, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.spread", proxy.fill.spread, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_proxy, Edje_Part_Description_Proxy, "proxy.fill.type", proxy.fill.type, EET_T_CHAR);
+
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Text);
    eddc.func.mem_free = mem_free_text;
    eddc.func.mem_alloc = mem_alloc_text;
@@ -648,6 +676,7 @@ _edje_edd_init(void)
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_swallow);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_group);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Image, part_description_image);
+   EDJE_DEFINE_POINTER_TYPE(Part_Description_Proxy, part_description_proxy);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Text, part_description_text);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Text, part_description_textblock);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Box, part_description_box);
@@ -663,6 +692,7 @@ _edje_edd_init(void)
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "swallow",   _edje_edd_edje_part_description_swallow);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "group",     _edje_edd_edje_part_description_group);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "image",     _edje_edd_edje_part_description_image);
+   EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "proxy",     _edje_edd_edje_part_description_proxy);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "text",      _edje_edd_edje_part_description_text);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "textblock", _edje_edd_edje_part_description_textblock);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(_edje_edd_edje_part_description_variant, "box",       _edje_edd_edje_part_description_box);
@@ -686,6 +716,7 @@ _edje_edd_init(void)
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "swallow",   swallow);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "group",     group);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "image",     image);
+   EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "proxy",     proxy);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "text",      text);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "textblock", textblock);
    EDJE_ADD_ARRAY_MAPPING(_edje_edd_edje_part_description_variant_list, "box",       box);

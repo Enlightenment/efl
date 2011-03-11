@@ -464,6 +464,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		     case EDJE_PART_TYPE_RECTANGLE:
 			rp->object = evas_object_rectangle_add(ed->evas);
 			break;
+                     case EDJE_PART_TYPE_PROXY:
 		     case EDJE_PART_TYPE_IMAGE:
 			rp->object = evas_object_image_add(ed->evas);
 			break;
@@ -1257,6 +1258,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp.RECTANGLE);
    eina_mempool_del(ce->mp.TEXT);
    eina_mempool_del(ce->mp.IMAGE);
+   eina_mempool_del(ce->mp.PROXY);
    eina_mempool_del(ce->mp.SWALLOW);
    eina_mempool_del(ce->mp.TEXTBLOCK);
    eina_mempool_del(ce->mp.GROUP);
@@ -1269,6 +1271,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp_rtl.RECTANGLE);
    eina_mempool_del(ce->mp_rtl.TEXT);
    eina_mempool_del(ce->mp_rtl.IMAGE);
+   eina_mempool_del(ce->mp_rtl.PROXY);
    eina_mempool_del(ce->mp_rtl.SWALLOW);
    eina_mempool_del(ce->mp_rtl.TEXTBLOCK);
    eina_mempool_del(ce->mp_rtl.GROUP);
@@ -1344,6 +1347,7 @@ _edje_collection_free_part_description_free(int type,
 	FREE_POOL(RECTANGLE, ce, desc);
 	FREE_POOL(TEXT, ce, desc);
 	FREE_POOL(IMAGE, ce, desc);
+	FREE_POOL(PROXY, ce, desc);
 	FREE_POOL(SWALLOW, ce, desc);
 	FREE_POOL(TEXTBLOCK, ce, desc);
 	FREE_POOL(GROUP, ce, desc);

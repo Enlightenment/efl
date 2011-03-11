@@ -277,6 +277,7 @@ typedef struct _Edje_Part_Api                        Edje_Part_Api;
 typedef struct _Edje_Part_Dragable		     Edje_Part_Dragable;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description_Image          Edje_Part_Description_Image;
+typedef struct _Edje_Part_Description_Proxy          Edje_Part_Description_Proxy;
 typedef struct _Edje_Part_Description_Text           Edje_Part_Description_Text;
 typedef struct _Edje_Part_Description_Box            Edje_Part_Description_Box;
 typedef struct _Edje_Part_Description_Table          Edje_Part_Description_Table;
@@ -285,6 +286,7 @@ typedef struct _Edje_Part_Description_Common         Edje_Part_Description_Commo
 typedef struct _Edje_Part_Description_Spec_Fill      Edje_Part_Description_Spec_Fill;
 typedef struct _Edje_Part_Description_Spec_Border    Edje_Part_Description_Spec_Border;
 typedef struct _Edje_Part_Description_Spec_Image     Edje_Part_Description_Spec_Image;
+typedef struct _Edje_Part_Description_Spec_Proxy     Edje_Part_Description_Spec_Proxy;
 typedef struct _Edje_Part_Description_Spec_Text      Edje_Part_Description_Spec_Text;
 typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_Box;
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
@@ -575,6 +577,7 @@ struct _Edje_Program_After /* the action to run after another action */
       TYPE      RECTANGLE;        \
       TYPE      TEXT;             \
       TYPE      IMAGE;            \
+      TYPE      PROXY;            \
       TYPE      SWALLOW;          \
       TYPE      TEXTBLOCK;        \
       TYPE      GROUP;            \
@@ -829,6 +832,8 @@ struct _Edje_Part_Description_Spec_Border
 
 struct _Edje_Part_Description_Spec_Image
 {
+   Edje_Part_Description_Spec_Fill   fill;
+
    Edje_Part_Image_Id **tweens; /* list of Edje_Part_Image_Id */
    unsigned int         tweens_count; /* number of tweens */
 
@@ -837,7 +842,13 @@ struct _Edje_Part_Description_Spec_Image
    Eina_Bool      set; /* if image condition it's content */
 
    Edje_Part_Description_Spec_Border border;
+};
+
+struct _Edje_Part_Description_Spec_Proxy
+{
    Edje_Part_Description_Spec_Fill   fill;
+
+   int id; /* the part id to use as a source for this state */
 };
 
 struct _Edje_Part_Description_Spec_Text
@@ -891,6 +902,12 @@ struct _Edje_Part_Description_Image
 {
    Edje_Part_Description_Common common;
    Edje_Part_Description_Spec_Image image;
+};
+
+struct _Edje_Part_Description_Proxy
+{
+   Edje_Part_Description_Common common;
+   Edje_Part_Description_Spec_Proxy proxy;
 };
 
 struct _Edje_Part_Description_Text
@@ -1426,6 +1443,7 @@ extern Eina_Mempool *_edje_real_part_state_mp;
 extern Eina_Mempool *_emp_RECTANGLE;
 extern Eina_Mempool *_emp_TEXT;
 extern Eina_Mempool *_emp_IMAGE;
+extern Eina_Mempool *_emp_PROXY;
 extern Eina_Mempool *_emp_SWALLOW;
 extern Eina_Mempool *_emp_TEXTBLOCK;
 extern Eina_Mempool *_emp_GROUP;

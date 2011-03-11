@@ -176,6 +176,7 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
 	 EDIT_ALLOC_POOL_RTL(TEXT, Text, text);
 	 EDIT_ALLOC_POOL_RTL(TEXTBLOCK, Text, text);
 	 EDIT_ALLOC_POOL_RTL(IMAGE, Image, image);
+	 EDIT_ALLOC_POOL_RTL(PROXY, Proxy, proxy);
 	 EDIT_ALLOC_POOL_RTL(BOX, Box, box);
 	 EDIT_ALLOC_POOL_RTL(TABLE, Table, table);
 	 EDIT_ALLOC_POOL_RTL(EXTERNAL, External, external_params);
@@ -1316,36 +1317,36 @@ _edje_part_recalc_single_drag(Edje_Real_Part *ep,
 
 static void
 _edje_part_recalc_single_fill(Edje_Real_Part *ep,
-			      Edje_Part_Description_Spec_Image *desc,
+			      Edje_Part_Description_Spec_Fill *fill,
 			      Edje_Calc_Params *params)
 {
    int fw;
    int fh;
 
-   params->smooth = desc->fill.smooth;
+   params->smooth = fill->smooth;
 
-   if (desc->fill.type == EDJE_FILL_TYPE_TILE)
+   if (fill->type == EDJE_FILL_TYPE_TILE)
      evas_object_image_size_get(ep->object, &fw, NULL);
    else
      fw = params->w;
 
-   params->type.common.fill.x = desc->fill.pos_abs_x
-     + TO_INT(SCALE(desc->fill.pos_rel_x, fw));
-   params->type.common.fill.w = desc->fill.abs_x
-     + TO_INT(SCALE(desc->fill.rel_x, fw));
+   params->type.common.fill.x = fill->pos_abs_x
+     + TO_INT(SCALE(fill->pos_rel_x, fw));
+   params->type.common.fill.w = fill->abs_x
+     + TO_INT(SCALE(fill->rel_x, fw));
 
-   if (desc->fill.type == EDJE_FILL_TYPE_TILE)
+   if (fill->type == EDJE_FILL_TYPE_TILE)
      evas_object_image_size_get(ep->object, NULL, &fh);
    else
      fh = params->h;
 
-   params->type.common.fill.y = desc->fill.pos_abs_y
-     + TO_INT(SCALE(desc->fill.pos_rel_y, fh));
-   params->type.common.fill.h = desc->fill.abs_y
-     + TO_INT(SCALE(desc->fill.rel_y, fh));
+   params->type.common.fill.y = fill->pos_abs_y
+     + TO_INT(SCALE(fill->pos_rel_y, fh));
+   params->type.common.fill.h = fill->abs_y
+     + TO_INT(SCALE(fill->rel_y, fh));
 
-   params->type.common.fill.angle = desc->fill.angle;
-   params->type.common.fill.spread = desc->fill.spread;
+   params->type.common.fill.angle = fill->angle;
+   params->type.common.fill.spread = fill->spread;
 }
 
 static void
@@ -1484,7 +1485,9 @@ _edje_part_recalc_single(Edje *ed,
 
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
-     _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image, params);
+     _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image.fill, params);
+   else if (ep->part->type == EDJE_PART_TYPE_PROXY)
+     _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Proxy *)desc)->proxy.fill, params);
 
    /* colors */
    if ((desc->color_class) && (*desc->color_class))
@@ -1563,6 +1566,7 @@ _edje_part_recalc_single(Edje *ed,
       case EDJE_PART_TYPE_TABLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_PROXY:
 	 break;
       case EDJE_PART_TYPE_GRADIENT:
 	 /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
@@ -1650,6 +1654,52 @@ _edje_image_find(Evas_Object *obj, Edje *ed, Edje_Real_Part_Set **eps, Edje_Part
     }
 
   return -1;
+}
+
+static void
+_edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edje_Part_Description_Proxy *chosen_desc, FLOAT_T pos)
+{
+   Edje_Real_Part *pp;
+   int part_id;
+
+   if (p3->type.common.fill.w == 0 || p3->type.common.fill.h == 0)
+     {
+        evas_object_image_source_set(ep->object, NULL);
+        return ;
+     }
+
+   if (pos >= 0.5) {
+      part_id = ((Edje_Part_Description_Proxy*) ep->param2->description)->proxy.id;
+   } else {
+      part_id = chosen_desc->proxy.id;
+   }
+
+   pp = ed->table_parts[part_id % ed->table_parts_size];
+
+   switch (pp->part->type)
+     {
+      case EDJE_PART_TYPE_IMAGE:
+      case EDJE_PART_TYPE_TEXT:
+      case EDJE_PART_TYPE_TEXTBLOCK:
+      case EDJE_PART_TYPE_RECTANGLE:
+      case EDJE_PART_TYPE_BOX:
+      case EDJE_PART_TYPE_TABLE:
+      case EDJE_PART_TYPE_PROXY:
+         evas_object_image_source_set(ep->object, pp->object);
+         break;
+      case EDJE_PART_TYPE_GRADIENT:
+         /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
+         break;
+      case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_SWALLOW:
+      case EDJE_PART_TYPE_EXTERNAL:
+         evas_object_image_source_set(ep->object, pp->swallowed_object);
+         break;
+     }
+
+   evas_object_image_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
+			      p3->type.common.fill.w, p3->type.common.fill.h);
+   evas_object_image_smooth_scale_set(ep->object, p3->smooth);
 }
 
 static void
@@ -2049,14 +2099,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
   	switch (part_type)
   	  {
   	   case EDJE_PART_TYPE_IMAGE:
- 	      p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
- 	      p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
- 	      p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
- 	      p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
 	      p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
 	      p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
 	      p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
 	      p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
+           case EDJE_PART_TYPE_PROXY:
+ 	      p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
+ 	      p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
+ 	      p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
+ 	      p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
   	      break;
   	   case EDJE_PART_TYPE_TEXT:
  	      p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
@@ -2113,6 +2164,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		evas_object_image_scale_hint_set(ep->object,
 						 img_desc->image.scale_hint);
 	     }
+           case EDJE_PART_TYPE_PROXY:
 	   case EDJE_PART_TYPE_RECTANGLE:
 	   case EDJE_PART_TYPE_TEXTBLOCK:
 	   case EDJE_PART_TYPE_BOX:
@@ -2153,6 +2205,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	   case EDJE_PART_TYPE_TEXT:
 	      _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc);
 	      break;
+           case EDJE_PART_TYPE_PROXY:
+              _edje_proxy_recalc_apply(ed, ep, pf, (Edje_Part_Description_Proxy*) chosen_desc, pos);
+              break;
 	   case EDJE_PART_TYPE_IMAGE:
 	      _edje_image_recalc_apply(ed, ep, pf, (Edje_Part_Description_Image*) chosen_desc, pos);
 	      break;

@@ -57,4 +57,7 @@
 	* Correctly propagate recursive event with existing and non existing
 	part.
 
+2011-03-11  Cedric BAIL
+
+	* Add PROXY part.
 
