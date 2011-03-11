@@ -209,7 +209,6 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
 	sd->pan_obj = o;
 	evas_object_smart_callback_add(o, "changed", _smart_pan_changed_hook, sd);
 	evas_object_smart_callback_add(o, "pan_changed", _smart_pan_pan_changed_hook, sd);
-	evas_object_show(o);
 	edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", o);
      }
 
