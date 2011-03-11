@@ -1186,8 +1186,10 @@ elm_smart_scroller_object_theme_set(Evas_Object *parent, Evas_Object *obj, const
 {
    API_ENTRY return;
    Evas_Coord mw, mh;
+   //Does this API require parent object absolutely? if then remove this exception. 
+   double parent_scale = parent ? elm_widget_scale_get(parent) : 1;
    _elm_theme_object_set(parent, sd->edje_obj, clas, group, style);
-   edje_object_scale_set(sd->edje_obj, elm_widget_scale_get(parent) * _elm_config->scale);
+   edje_object_scale_set(sd->edje_obj, parent_scale * _elm_config->scale);
    if (sd->pan_obj)
      edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
    mw = mh = -1;
@@ -2551,7 +2553,6 @@ _smart_add(Evas_Object *obj)
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_propagate_events_set(o, 0);
    sd->edje_obj = o;
-   // FIXME: null parent obj ... :(
    elm_smart_scroller_object_theme_set(NULL, obj, "scroller", "base", "default");
    edje_object_signal_callback_add(o, "drag", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag,start", "elm.dragable.vbar", _smart_edje_drag_v_start, sd);
