@@ -315,7 +315,7 @@ elm_button_add(Evas_Object *parent)
    ELM_SET_WIDTYPE(widtype, "button");
    elm_widget_type_set(obj, "button");
    elm_widget_sub_object_add(parent, obj);
-   elm_widget_on_focus_hook_set( obj, _on_focus_hook, NULL );
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
