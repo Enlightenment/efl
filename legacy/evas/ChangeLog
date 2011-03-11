@@ -162,3 +162,7 @@
         are 0 or not and then force alpha off if all are 0". This
         means you can never have a 100% empty/transparent BMP though
         in 32bpp mode.
+
+2011-03-11  Carsten Haitzler (The Rasterman)
+
+	* Add ICO loader to evas (also can load CUR cursor files in theory)

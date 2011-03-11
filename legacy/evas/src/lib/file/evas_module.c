@@ -125,6 +125,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, edb);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tga);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, wbmp);
+EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, ico);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, edb);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
@@ -239,6 +240,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_WBMP
   EVAS_EINA_STATIC_MODULE_USE(image_loader, wbmp),
+#endif
+#ifdef EVAS_STATIC_BUILD_ICO
+  EVAS_EINA_STATIC_MODULE_USE(image_loader, ico),
 #endif
 #ifdef EVAS_STATIC_BUILD_EDB
   EVAS_EINA_STATIC_MODULE_USE(image_saver, edb),

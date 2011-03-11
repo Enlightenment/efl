@@ -126,6 +126,7 @@ want_evas_image_loader_xpm="yes"
 want_evas_image_loader_bmp="yes"
 want_evas_image_loader_tga="yes"
 want_evas_image_loader_wbmp="yes"
+want_evas_image_loader_ico="yes"
 
 want_evas_font_loader_eet="yes"
 
@@ -820,6 +821,7 @@ EVAS_CHECK_IMAGE_LOADER([TGA], [${want_evas_image_loader_tga}])
 
 EVAS_CHECK_IMAGE_LOADER([WBMP], [${want_evas_image_loader_wbmp}])
 
+EVAS_CHECK_IMAGE_LOADER([ICO], [${want_evas_image_loader_ico}])
 
 #####################################################################
 ## Cpu based optimizations
@@ -1595,6 +1597,7 @@ src/modules/loaders/png/Makefile
 src/modules/loaders/tiff/Makefile
 src/modules/loaders/xpm/Makefile
 src/modules/loaders/bmp/Makefile
+src/modules/loaders/ico/Makefile
 src/modules/loaders/tga/Makefile
 src/modules/loaders/svg/Makefile
 src/modules/loaders/pmaps/Makefile
@@ -1702,6 +1705,7 @@ echo "  XPM.....................: $have_evas_image_loader_xpm"
 echo "  BMP.....................: $have_evas_image_loader_bmp"
 echo "  TGA.....................: $have_evas_image_loader_tga"
 echo "  WBMP....................: $have_evas_image_loader_wbmp"
+echo "  ICO.....................: $have_evas_image_loader_ico"
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_evas_font_loader_eet"
