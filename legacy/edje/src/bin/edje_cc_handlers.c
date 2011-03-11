@@ -4851,6 +4851,7 @@ st_collections_group_parts_part_description_fill_smooth(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->image.fill;
+	   break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
@@ -4860,12 +4861,13 @@ st_collections_group_parts_part_description_fill_smooth(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Proxy*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->proxy.fill;
+	   break;
         }
       default:
         {
            ERR("%s: Error. parse error %s:%i. "
-               "image and proxy attributes in non-IMAGE, non-PROXY part.",
-               progname, file_in, line - 1);
+               "image and proxy attributes in non-IMAGE, non-PROXY `%s` part (%i).",
+               progname, file_in, line - 1, ep->name, ep->type);
            exit(-1);
         }
      }
@@ -4956,6 +4958,7 @@ st_collections_group_parts_part_description_fill_type(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->image.fill;
+	   break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
@@ -4965,6 +4968,7 @@ st_collections_group_parts_part_description_fill_type(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Proxy*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->proxy.fill;
+	   break;
         }
       default:
         {
@@ -5034,6 +5038,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->image.fill;
+	   break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
@@ -5043,6 +5048,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Proxy*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->proxy.fill;
+	   break;
         }
       default:
         {
@@ -5090,6 +5096,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->image.fill;
+	   break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
@@ -5099,6 +5106,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Proxy*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->proxy.fill;
+	   break;
         }
       default:
         {
@@ -5168,6 +5176,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->image.fill;
+	   break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
@@ -5177,6 +5186,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Proxy*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->proxy.fill;
+	   break;
         }
       default:
         {
@@ -5223,6 +5233,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Image*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->image.fill;
+	   break;
         }
       case EDJE_PART_TYPE_PROXY:
         {
@@ -5232,6 +5243,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
            if (ep->other.desc_count) ed = (Edje_Part_Description_Proxy*)  ep->other.desc[ep->other.desc_count - 1];
 
            fill = &ed->proxy.fill;
+	   break;
         }
       default:
         {
