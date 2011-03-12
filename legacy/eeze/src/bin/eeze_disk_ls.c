@@ -10,7 +10,7 @@ main(void)
 {
    Eina_List *disks;
    const char *syspath;
-   
+
    eeze_init();
    eeze_disk_function();
 
@@ -25,7 +25,7 @@ main(void)
         eeze_disk_free(disk);
         eina_stringshare_del(syspath);
      }
-     
+
    disks = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_REMOVABLE, NULL);
    printf("Found the following removable drives:\n");
    EINA_LIST_FREE(disks, syspath)

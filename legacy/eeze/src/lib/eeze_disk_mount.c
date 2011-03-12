@@ -42,7 +42,7 @@ static void
 _eeze_disk_mount_error_handler(Eeze_Disk *disk, const char *error)
 {
    Eeze_Event_Disk_Error *de;
- 
+
    ERR("%s", error);
    if (!(de = calloc(1, sizeof(Eeze_Event_Disk_Error))))
      return;
@@ -67,7 +67,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
 
    if ((!disk) || (!eeze_events) || (!(l = eina_list_data_find(eeze_events, disk))))
      return ECORE_CALLBACK_RENEW;
-   
+
    eeze_events = eina_list_remove_list(eeze_events, l);
    if (disk->mount_status == EEZE_DISK_MOUNTING)
      switch (ev->exit_code)
@@ -122,7 +122,7 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
            eeze_events = eina_list_append(eeze_events, disk);
            return ECORE_CALLBACK_RENEW;
         }
-   
+
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -314,7 +314,7 @@ eeze_disk_mount(Eeze_Disk *disk)
  * as its event on completion.  If any errors are encountered, they will automatically logged
  * to the eeze_disk domain and an EEZE_EVENT_DISK_ERROR event will be generated with
  * an #Eeze_Event_Disk_Error struct as its event.
- * 
+ *
  * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
  */
 EAPI Eina_Bool

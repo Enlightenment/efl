@@ -54,14 +54,14 @@ main(int argc, char *argv[])
    Eeze_Disk *disk;
 
    Ecore_Getopt_Value values[] =
-   {       
+   {
       ECORE_GETOPT_VALUE_BOOL(verbose),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option)
    };
-   
+
    if (argc < 2)
      {
         printf("Insufficient args specified!\n");

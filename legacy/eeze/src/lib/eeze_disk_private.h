@@ -48,13 +48,13 @@ struct _Eeze_Disk
    Eina_Bool mount_cmd_changed : 1;
    Eina_Bool unmount_cmd_changed : 1;
    Ecore_Exe *mounter;
-   
+
    const char *syspath;
    const char *devpath;
    const char *fstype;
    const char *mount_point;
    unsigned long mount_opts;
-   
+
    struct
      {
         Eeze_Disk_Type type;

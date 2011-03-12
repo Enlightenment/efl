@@ -23,7 +23,7 @@
 /**
  * @file Eeze.h
  * @brief Easy device manipulation.
- * 
+ *
  * Eeze is a library for manipulating devices through udev with a simple and fast
  * api. It interfaces directly with libudev, avoiding such middleman daemons as
  * udisks/upower or hal, to immediately gather device information the instant it
@@ -42,7 +42,7 @@
  */
 /**
  * @addtogroup udev
- * 
+ *
  * These are the device subsystems of udev:
  * @li ac97
  * @li acpi
@@ -134,10 +134,10 @@ typedef enum
  * @typedef Eeze_Udev_Type Eeze_Udev_Type
  * @enum Eeze_Udev_Type
  * @brief Convenience types to simplify udev access.
- * 
+ *
  * These types allow easy access to certain udev device types.  They
  * may only be used in specified functions.
- * 
+ *
  * @{
  */
 /*FIXME: these probably need to be bitmasks with categories*/
@@ -200,7 +200,7 @@ typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Ud
    EAPI Eina_List       *eeze_udev_find_by_sysattr(const char *sysattr, const char *value);
    EAPI Eina_List       *eeze_udev_find_by_type(Eeze_Udev_Type type, const char *name);
    EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char *type, const char *name);
-   
+
    EAPI const char      *eeze_udev_devpath_get_syspath(const char *devpath);
    EAPI const char      *eeze_udev_syspath_get_parent(const char *syspath);
    EAPI Eina_List       *eeze_udev_syspath_get_parents(const char *syspath);
@@ -208,11 +208,11 @@ typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Ud
    EAPI const char      *eeze_udev_syspath_get_subsystem(const char *syspath);
    EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const char *property);
    EAPI const char      *eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr);
-   
+
    EAPI Eina_Bool       eeze_udev_syspath_is_mouse(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_kbd(const char *syspath);
    EAPI Eina_Bool       eeze_udev_syspath_is_touchpad(const char *syspath);
-   
+
    EAPI Eina_Bool       eeze_udev_walk_check_sysattr(const char *syspath, const char *sysattr, const char *value);
    EAPI const char     *eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr);
 

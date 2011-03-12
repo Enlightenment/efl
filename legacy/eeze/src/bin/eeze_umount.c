@@ -15,7 +15,7 @@ static const Ecore_Getopt opts =
    "LGPL",
    "unmount a disk using either its /sys/ path or its /dev/ path\n\n",
    1,
-   {      
+   {
       ECORE_GETOPT_STORE_TRUE('v', "verbose", "Enable debug output"),
       ECORE_GETOPT_VERSION('V', "version"),
       ECORE_GETOPT_COPYRIGHT('R', "copyright"),
@@ -54,14 +54,14 @@ main(int argc, char *argv[])
    Eeze_Disk *disk;
 
    Ecore_Getopt_Value values[] =
-   {       
+   {
       ECORE_GETOPT_VALUE_BOOL(verbose),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option),
       ECORE_GETOPT_VALUE_BOOL(exit_option)
    };
-   
+
    if (argc < 2)
      {
         printf("Insufficient args specified!\n");

@@ -155,7 +155,7 @@ Eina_Bool
 eeze_disk_libmount_mounted_get(Eeze_Disk *disk)
 {
    mnt_fs *mnt;
-   
+
    if (!disk)
      return EINA_FALSE;
 
@@ -178,7 +178,7 @@ const char *
 eeze_disk_libmount_mp_find_source(const char *mount_point)
 {
    mnt_fs *mnt;
-   
+
    if (!mount_point)
      return NULL;
 
@@ -202,7 +202,7 @@ const char *
 eeze_disk_libmount_mp_lookup_by_uuid(const char *uuid)
 {
    mnt_fs *mnt;
-   
+
    if (!uuid)
      return NULL;
 
@@ -224,7 +224,7 @@ const char *
 eeze_disk_libmount_mp_lookup_by_label(const char *label)
 {
    mnt_fs *mnt;
-   
+
    if (!label)
      return NULL;
 
@@ -246,7 +246,7 @@ const char *
 eeze_disk_libmount_mp_lookup_by_devpath(const char *devpath)
 {
    mnt_fs *mnt;
-   
+
    if (!devpath)
      return NULL;
 
@@ -283,7 +283,7 @@ EAPI Eina_Bool
 eeze_mount_tabs_watch(void)
 {
    mnt_tab *bak;
-   
+
    if (_watching)
      return EINA_TRUE;
 
@@ -302,7 +302,7 @@ eeze_mount_tabs_watch(void)
 
    mnt_free_tab(_eeze_mount_fstab);
    _eeze_mount_fstab = bak;
-   
+
    _mtab_mon = ecore_file_monitor_add("/etc/mtab", _eeze_mount_tab_watcher, (void*)1);
    _fstab_mon = ecore_file_monitor_add("/etc/fstab", _eeze_mount_tab_watcher, NULL);
    _watching = EINA_TRUE;
@@ -351,7 +351,7 @@ EAPI Eina_Bool
 eeze_mount_mtab_scan(void)
 {
    mnt_tab *bak;
-   
+
    if (_watching)
      return EINA_TRUE;
 
