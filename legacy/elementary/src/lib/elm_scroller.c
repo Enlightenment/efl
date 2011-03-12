@@ -282,9 +282,12 @@ _sizing_eval(Evas_Object *obj)
    double xw, yw;
 
    if (!wd) return;
-   evas_object_size_hint_min_get(wd->content, &minw, &minh);
-   evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
-   evas_object_size_hint_weight_get(wd->content, &xw, &yw);
+   if (wd->content)
+     {
+        evas_object_size_hint_min_get(wd->content, &minw, &minh);
+        evas_object_size_hint_max_get(wd->content, &maxw, &maxh);
+        evas_object_size_hint_weight_get(wd->content, &xw, &yw);
+     }
    if (wd->scr)
      {
         elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
@@ -300,7 +303,7 @@ _sizing_eval(Evas_Object *obj)
              else if ((maxh > 0) && (vh > maxh)) vh = maxh;
           }
         else if (minh > 0) vh = minh;
-        evas_object_resize(wd->content, vw, vh);
+        if (wd->content) evas_object_resize(wd->content, vw, vh);
         w = -1;
         h = -1;
         edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);

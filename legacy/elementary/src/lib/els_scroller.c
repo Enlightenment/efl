@@ -1090,6 +1090,7 @@ void
 elm_smart_scroller_child_viewport_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    API_ENTRY return;
+   if (!sd->pan_obj) return;
    edje_object_calc_force(sd->edje_obj);
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, w, h);
 }
