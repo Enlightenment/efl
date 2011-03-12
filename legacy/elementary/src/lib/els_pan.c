@@ -220,35 +220,40 @@ static void
 _smart_show(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
-   evas_object_show(sd->child_obj);
+   if (sd->child_obj)
+     evas_object_show(sd->child_obj);
 }
 
 static void
 _smart_hide(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
-   evas_object_hide(sd->child_obj);
+   if (sd->child_obj)
+     evas_object_hide(sd->child_obj);
 }
 
 static void
 _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    INTERNAL_ENTRY;
-   evas_object_color_set(sd->child_obj, r, g, b, a);
+   if (sd->child_obj)
+     evas_object_color_set(sd->child_obj, r, g, b, a);
 }
 
 static void
 _smart_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
    INTERNAL_ENTRY;
-   evas_object_clip_set(sd->child_obj, clip);
+   if (sd->child_obj)
+     evas_object_clip_set(sd->child_obj, clip);
 }
 
 static void
 _smart_clip_unset(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
-   evas_object_clip_unset(sd->child_obj);
+   if (sd->child_obj)
+     evas_object_clip_unset(sd->child_obj);
 }
 
 /* never need to touch this */
