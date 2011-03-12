@@ -160,6 +160,20 @@ main()
         eina_stringshare_del(name);
      }
 
+   printf("\nNetwork devices!\n");
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_NET, NULL);
+   type = eeze_udev_find_unlisted_similar(type);
+   EINA_LIST_FREE(type, name)
+     {
+        printf("Found device: %s\n", name); /* get a property using the device's syspath */
+        if ((check = eeze_udev_syspath_get_property(name, "INTERFACE")))
+          {
+             printf("\tYou probably know it better as %s\n", check);
+             eina_stringshare_del(check);
+          }
+        eina_stringshare_del(name);
+     }
+
    printf("\nInternal drives, anyone?  With serial numbers?\n");
    /* find all internal drives using type EEZE_UDEV_TYPE_DRIVE_INTERNAL */
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);

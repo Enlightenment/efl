@@ -265,6 +265,14 @@ _get_syspath_from_watch(void             *data,
           goto error;
         break;
 
+      case EEZE_UDEV_TYPE_NET:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "net")))
+          goto error;
+#endif
+        break;
+
       case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
         if ((!(test = udev_device_get_subsystem(device)))
@@ -374,6 +382,10 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
       case EEZE_UDEV_TYPE_POWER_BAT:
         udev_monitor_filter_add_match_subsystem_devtype(mon, "power_supply",
                                                         NULL);
+        break;
+
+      case EEZE_UDEV_TYPE_NET:
+        udev_monitor_filter_add_match_subsystem_devtype(mon, "net", NULL);
         break;
 
       case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:

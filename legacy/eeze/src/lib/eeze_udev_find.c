@@ -249,6 +249,10 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
         udev_enumerate_add_match_sysattr(en, "type", "Battery");
         break;
 
+      case EEZE_UDEV_TYPE_NET:
+        udev_enumerate_add_match_subsystem(en, "net");
+        break;
+
       case EEZE_UDEV_TYPE_IS_IT_HOT_OR_IS_IT_COLD_SENSOR:
         udev_enumerate_add_match_subsystem(en, "hwmon");
         break;
