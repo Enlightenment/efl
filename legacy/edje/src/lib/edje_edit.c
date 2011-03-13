@@ -2139,7 +2139,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
 
    if (ep->type == EDJE_PART_TYPE_RECTANGLE)
      rp->object = evas_object_rectangle_add(ed->evas);
-   else if (ep->type == EDJE_PART_TYPE_IMAGE)
+   else if (ep->type == EDJE_PART_TYPE_IMAGE || ep->type == EDJE_PART_TYPE_PROXY)
      rp->object = evas_object_image_add(ed->evas);
    else if (ep->type == EDJE_PART_TYPE_TEXT)
      {
@@ -3163,6 +3163,28 @@ edje_edit_state_add(Evas_Object *obj, const char *part, const char *name, double
 	img->image.fill.spread = 0;
 	img->image.fill.type = EDJE_FILL_TYPE_SCALE;
      }
+   else if (rp->part->type == EDJE_PART_TYPE_PROXY)
+     {
+	Edje_Part_Description_Proxy *pro;
+
+	pro = (Edje_Part_Description_Proxy*) pd;
+
+	memset(&pro->proxy, 0, sizeof (pro->proxy));
+
+	pro->proxy.id = -1;
+	pro->proxy.fill.smooth = 1;
+	pro->proxy.fill.pos_rel_x = 0.0;
+	pro->proxy.fill.pos_abs_x = 0;
+	pro->proxy.fill.rel_x = 1.0;
+	pro->proxy.fill.abs_x = 0;
+	pro->proxy.fill.pos_rel_y = 0.0;
+	pro->proxy.fill.pos_abs_y = 0;
+	pro->proxy.fill.rel_y = 1.0;
+	pro->proxy.fill.abs_y = 0;
+	pro->proxy.fill.angle = 0;
+	pro->proxy.fill.spread = 0;
+	pro->proxy.fill.type = EDJE_FILL_TYPE_SCALE;
+     }
    else if (rp->part->type == EDJE_PART_TYPE_EXTERNAL)
      {
 	Edje_Part_Description_External *external;
@@ -3286,6 +3308,15 @@ edje_edit_state_copy(Evas_Object *obj, const char *part, const char *from, doubl
 
    switch (rp->part->type)
      {
+      case EDJE_PART_TYPE_PROXY:
+	{
+	   Edje_Part_Description_Proxy *pro_to = (Edje_Part_Description_Proxy*) pdto;
+	   Edje_Part_Description_Proxy *pro_from = (Edje_Part_Description_Proxy*) pdfrom;
+
+	   pro_to->proxy = pro_from->proxy;
+
+	   break;
+	}
       case EDJE_PART_TYPE_IMAGE:
 	{
 	   Edje_Part_Description_Image *img_to = (Edje_Part_Description_Image*) pdto;
@@ -3615,34 +3646,65 @@ FUNC_STATE_DOUBLE(aspect, max);
   EAPI double								\
   edje_edit_state_fill_##Type##_relative_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
-     Edje_Part_Description_Image *img;					\
-									\
      eina_error_set(0);							\
 									\
      GET_PD_OR_RETURN(0);						\
                                                                         \
-     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
-       return 0;                                                        \
+     switch (rp->part->type)						\
+       {								\
+       case EDJE_PART_TYPE_IMAGE:					\
+	 {								\
+	   Edje_Part_Description_Image *img;				\
 									\
-     img = (Edje_Part_Description_Image*) pd;				\
+	   img = (Edje_Part_Description_Image*) pd;			\
 									\
-     return TO_DOUBLE(img->image.fill.Class##rel_##Value);		\
+	   return TO_DOUBLE(img->image.fill.Class##rel_##Value);	\
+	 }								\
+       case EDJE_PART_TYPE_PROXY:					\
+	 {								\
+	   Edje_Part_Description_Proxy *pro;				\
+									\
+	   pro = (Edje_Part_Description_Proxy*) pd;			\
+									\
+	   return TO_DOUBLE(pro->proxy.fill.Class##rel_##Value);	\
+	 }								\
+       }								\
+									\
+     return 0;								\
   }									\
   EAPI void								\
   edje_edit_state_fill_##Type##_relative_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
-     Edje_Part_Description_Image *img;					\
-									\
      eina_error_set(0);							\
 									\
      GET_PD_OR_RETURN();						\
                                                                         \
-     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
-       return;                                                          \
+     switch (rp->part->type)						\
+       {								\
+       case EDJE_PART_TYPE_IMAGE:					\
+	 {								\
+	   Edje_Part_Description_Image *img;				\
 									\
-     img = (Edje_Part_Description_Image*) pd;				\
+	   img = (Edje_Part_Description_Image*) pd;			\
 									\
-     img->image.fill.Class##rel_##Value = FROM_DOUBLE(v);		\
+	   img->image.fill.Class##rel_##Value = FROM_DOUBLE(v);		\
+									\
+	   break;							\
+	 }								\
+       case EDJE_PART_TYPE_PROXY:					\
+	 {								\
+	   Edje_Part_Description_Proxy *pro;				\
+									\
+	   pro = (Edje_Part_Description_Proxy*) pd;			\
+									\
+	   pro->proxy.fill.Class##rel_##Value = FROM_DOUBLE(v);		\
+									\
+	   break;							\
+	 }								\
+       default:								\
+	 return;							\
+       }								\
+									\
      edje_object_calc_force(obj);					\
   }
 
@@ -3650,34 +3712,62 @@ FUNC_STATE_DOUBLE(aspect, max);
   EAPI int								\
   edje_edit_state_fill_##Type##_offset_##Value##_get(Evas_Object *obj, const char *part, const char *state, double value) \
   {									\
-     Edje_Part_Description_Image *img;					\
-									\
      eina_error_set(0);							\
 									\
      GET_PD_OR_RETURN(0);						\
                                                                         \
-     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
-       return 0;                                                        \
+     switch (rp->part->type)						\
+       {								\
+       case EDJE_PART_TYPE_IMAGE:					\
+	 {								\
+	   Edje_Part_Description_Image *img;				\
 									\
-     img = (Edje_Part_Description_Image*) pd;				\
+	   img = (Edje_Part_Description_Image*) pd;			\
 									\
-     return img->image.fill.Class##abs_##Value;				\
+	   return img->image.fill.Class##abs_##Value;			\
+	 }								\
+       case EDJE_PART_TYPE_PROXY:					\
+	 {								\
+	   Edje_Part_Description_Proxy *pro;				\
+									\
+	   pro = (Edje_Part_Description_Proxy*) pd;			\
+									\
+	   return pro->proxy.fill.Class##abs_##Value;			\
+	 }								\
+       }								\
+     return 0;								\
   }									\
   EAPI void								\
   edje_edit_state_fill_##Type##_offset_##Value##_set(Evas_Object *obj, const char *part, const char *state, double value, double v) \
   {									\
-     Edje_Part_Description_Image *img;					\
-									\
      eina_error_set(0);							\
 									\
      GET_PD_OR_RETURN();						\
                                                                         \
-     if (rp->part->type != EDJE_PART_TYPE_IMAGE)                        \
-       return;                                                          \
+     switch (rp->part->type)						\
+       {								\
+       case EDJE_PART_TYPE_IMAGE:					\
+	 {								\
+	   Edje_Part_Description_Image *img;				\
 									\
-     img = (Edje_Part_Description_Image*) pd;				\
+	   img = (Edje_Part_Description_Image*) pd;			\
 									\
-     img->image.fill.Class##abs_##Value = FROM_DOUBLE(v);		\
+	   img->image.fill.Class##abs_##Value = FROM_DOUBLE(v);		\
+	   return;							\
+	 }								\
+       case EDJE_PART_TYPE_PROXY:					\
+	 {								\
+	   Edje_Part_Description_Proxy *pro;				\
+									\
+	   pro = (Edje_Part_Description_Proxy*) pd;			\
+									\
+	   pro->proxy.fill.Class##abs_##Value = FROM_DOUBLE(v);		\
+	   return;							\
+	 }								\
+       default:								\
+	 return;							\
+       }								\
+									\
      edje_object_calc_force(obj);					\
   }
 
@@ -6875,7 +6965,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 	//Fill
 
 	BUF_APPEND(I5"fill {\n");
-	if (rp->part->type == EDJE_PART_TYPE_IMAGE && !img->image.fill.smooth)
+	if (!img->image.fill.smooth)
 	  BUF_APPEND(I6"smooth: 0;\n");
         //TODO Support spread
 
@@ -6898,6 +6988,45 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
 		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(img->image.fill.rel_x), TO_DOUBLE(img->image.fill.rel_y));
 		if (img->image.fill.abs_x || img->image.fill.abs_y)
 		  BUF_APPENDF(I7"offset: %d %d;\n", img->image.fill.abs_x, img->image.fill.abs_y);
+		BUF_APPEND(I6"}\n");
+          }
+
+	BUF_APPEND(I5"}\n");
+     }
+
+   if (rp->part->type == EDJE_PART_TYPE_PROXY)
+     {
+	Edje_Part_Description_Proxy *pro;
+
+	pro = (Edje_Part_Description_Proxy *) pd;
+
+	//Fill
+
+	BUF_APPEND(I5"fill {\n");
+	if (!pro->proxy.fill.smooth)
+	  BUF_APPEND(I6"smooth: 0;\n");
+        //TODO Support spread
+	//TODO Support source
+
+	if (pro->proxy.fill.pos_rel_x || pro->proxy.fill.pos_rel_y ||
+            pro->proxy.fill.pos_abs_x || pro->proxy.fill.pos_abs_y)
+	  {
+		BUF_APPEND(I6"origin {\n");
+		if (pro->proxy.fill.pos_rel_x || pro->proxy.fill.pos_rel_y)
+		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pro->proxy.fill.pos_rel_x), TO_DOUBLE(pro->proxy.fill.pos_rel_y));
+		if (pro->proxy.fill.pos_abs_x || pro->proxy.fill.pos_abs_y)
+		  BUF_APPENDF(I7"offset: %d %d;\n", pro->proxy.fill.pos_abs_x, pro->proxy.fill.pos_abs_y);
+		BUF_APPEND(I6"}\n");
+          }
+
+	if (TO_DOUBLE(pro->proxy.fill.rel_x) != 1.0 || TO_DOUBLE(pro->proxy.fill.rel_y) != 1.0 ||
+            pro->proxy.fill.abs_x || pro->proxy.fill.abs_y)
+	  {
+		BUF_APPEND(I6"size {\n");
+		if (pro->proxy.fill.rel_x != 1.0 || pro->proxy.fill.rel_y != 1.0)
+		  BUF_APPENDF(I7"relative: %g %g;\n", TO_DOUBLE(pro->proxy.fill.rel_x), TO_DOUBLE(pro->proxy.fill.rel_y));
+		if (pro->proxy.fill.abs_x || pro->proxy.fill.abs_y)
+		  BUF_APPENDF(I7"offset: %d %d;\n", pro->proxy.fill.abs_x, pro->proxy.fill.abs_y);
 		BUF_APPEND(I6"}\n");
           }
 

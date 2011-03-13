@@ -187,6 +187,8 @@ part_type_name_get(Edje_Part_Type t)
          return "TEXT";
       case EDJE_PART_TYPE_IMAGE:
          return "IMAGE";
+      case EDJE_PART_TYPE_PROXY:
+	 return "PROXY";
       case EDJE_PART_TYPE_SWALLOW:
          return "SWALLOW";
       case EDJE_PART_TYPE_TEXTBLOCK:
@@ -509,6 +511,82 @@ state_details(Evas_Object *ed, const char *part, const char *state, double value
 
         if (machine) puts("IMAGE-END");
         else if (detail > 1) puts(INDENT4 "}");
+     }
+   else if (t == EDJE_PART_TYPE_PROXY)
+     { 
+       int x2, y2;
+       double dx2, dy2;
+       Eina_Bool has_orgin, has_size;
+
+       if (machine) puts("PROXY-BEGIN");
+       else puts(INDENT4 "proxy {");
+       // TODO Support source
+       // TODO support proxy.fill.smooth
+
+       dx = edje_edit_state_fill_origin_relative_x_get
+	 (ed, part, state, value);
+       dy = edje_edit_state_fill_origin_relative_y_get
+	 (ed, part, state, value);
+       x = edje_edit_state_fill_origin_offset_x_get
+	 (ed, part, state, value);
+       y = edje_edit_state_fill_origin_offset_y_get
+	 (ed, part, state, value);
+
+       dx2 = edje_edit_state_fill_size_relative_x_get
+	 (ed, part, state, value);
+       dy2 = edje_edit_state_fill_size_relative_y_get
+	 (ed, part, state, value);
+       x2 = edje_edit_state_fill_size_offset_x_get
+	 (ed, part, state, value);
+       y2 = edje_edit_state_fill_size_offset_y_get
+	 (ed, part, state, value);
+
+       has_orgin = (FDIFF(dx, 0.0) || FDIFF(dy, 0.0) || (x) || (y));
+       has_size = (FDIFF(dx2, 1.0) || FDIFF(dy2, 1.0) || (x2) || (y2));
+
+       if ((has_orgin) || (has_size))
+	 {
+	   if (machine) puts("PROXY-FILL-BEGIN");
+	   else puts(INDENT5 "fill {");
+
+	   if (has_orgin)
+	     {
+	       if (machine)
+		 printf("ORIGIN-RELATIVE-X: %g\n"
+			"ORIGIN-RELATIVE-Y: %g\n"
+			"ORIGIN-OFFSET-X: %d\n"
+			"ORIGIN-OFFSET-Y: %d\n",
+			dx, dy, x, y);
+	       else
+		 printf(INDENT6 "origin {\n"
+			INDENT7 "relative: %g %g;\n"
+			INDENT7 "offset: %d %d;\n"
+			INDENT6 "}\n",
+			dx, dy, x, y);
+	     }
+
+	   if (has_size)
+	     {
+	       if (machine)
+		 printf("SIZE-RELATIVE-X: %g\n"
+			"SIZE-RELATIVE-Y: %g\n"
+			"SIZE-OFFSET-X: %d\n"
+			"SIZE-OFFSET-Y: %d\n",
+			dx2, dy2, x2, y2);
+	       else
+		 printf(INDENT6 "size {\n"
+			INDENT7 "relative: %g %g;\n"
+			INDENT7 "offset: %d %d;\n"
+			INDENT6 "}\n",
+			dx2, dy2, x2, y2);
+	     }
+
+	   if (machine) puts("PROXY-FILL-END");
+	   else puts(INDENT5 "}");
+	 }
+
+        if (machine) puts("PROXY-END");
+        else puts(INDENT4 "}");       
      }
    else if ((t == EDJE_PART_TYPE_TEXTBLOCK) || (t == EDJE_PART_TYPE_TEXT))
      {
