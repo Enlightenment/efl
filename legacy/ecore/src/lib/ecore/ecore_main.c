@@ -85,11 +85,11 @@ struct _Ecore_Win32_Handler
 {
    EINA_INLIST;
    ECORE_MAGIC;
-   HANDLE         h;
-   Ecore_Fd_Win32_Cb func;
-   void          *data;
-   int            references;
-   Eina_Bool      delete_me : 1;
+   HANDLE                h;
+   Ecore_Win32_Handle_Cb func;
+   void                 *data;
+   int                   references;
+   Eina_Bool             delete_me : 1;
 };
 #endif
 
@@ -808,7 +808,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func
 
 #ifdef _WIN32
 EAPI Ecore_Win32_Handler *
-ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data)
+ecore_main_win32_handler_add(void *h, Ecore_Win32_Handle_Cb func, const void *data)
 {
    Ecore_Win32_Handler *wh;
 
@@ -828,7 +828,7 @@ ecore_main_win32_handler_add(void *h, Ecore_Fd_Win32_Cb func, const void *data)
 }
 #else
 EAPI Ecore_Win32_Handler *
-ecore_main_win32_handler_add(void *h __UNUSED__, Ecore_Fd_Win32_Cb func __UNUSED__,
+ecore_main_win32_handler_add(void *h __UNUSED__, Ecore_Win32_Handle_Cb func __UNUSED__,
                              const void *data __UNUSED__)
 {
    return NULL;
