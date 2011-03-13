@@ -67,7 +67,7 @@ static Eina_Bool _ecore_con_info_cares_timeout_cb(void *data);
 
 static void
 _ecore_con_info_cares_state_cb(void *data,
-                               ares_socket_t   fd,
+                               ares_socket_t fd,
                                int read,
                                int write);
 static int
