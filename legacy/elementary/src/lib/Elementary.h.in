@@ -1239,8 +1239,8 @@ extern "C" {
    EAPI void         elm_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void         elm_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void         elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data) EINA_ARG_NONNULL(1, 2);
-   EAPI char        *elm_entry_markup_to_utf8(const char *s);
-   EAPI char        *elm_entry_utf8_to_markup(const char *s);
+   EAPI char        *elm_entry_markup_to_utf8(const char *s) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+   EAPI char        *elm_entry_utf8_to_markup(const char *s) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
    EAPI void         elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format) EINA_ARG_NONNULL(1);
    EAPI void         elm_entry_file_save(Evas_Object *obj) EINA_ARG_NONNULL(1);
