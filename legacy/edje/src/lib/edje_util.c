@@ -1912,10 +1912,12 @@ edje_object_part_text_select_extend(const Evas_Object *obj, const char *part)
 }
 
 /**
- * @brief XX
+ * @brief Advances the cursor to the next cursor position.
+ * @see evas_textblock_cursor_char_next
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur The edje cursor to advance
  */
 EAPI Eina_Bool
 edje_object_part_text_cursor_next(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -1935,10 +1937,12 @@ edje_object_part_text_cursor_next(Evas_Object *obj, const char *part, Edje_Curso
 }
 
 /**
- * @brief XX
+ * @brief Moves the cursor to the previous char
+ * @see evas_textblock_cursor_char_prev
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI Eina_Bool
 edje_object_part_text_cursor_prev(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -1958,10 +1962,11 @@ edje_object_part_text_cursor_prev(Evas_Object *obj, const char *part, Edje_Curso
 }
 
 /**
- * @brief XX
+ * @brief Move the cursor to the char above the current cursor position.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI Eina_Bool
 edje_object_part_text_cursor_up(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -1981,10 +1986,11 @@ edje_object_part_text_cursor_up(Evas_Object *obj, const char *part, Edje_Cursor 
 }
 
 /**
- * @brief XX
+ * @brief Moves the cursor to the char below the current cursor position.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI Eina_Bool
 edje_object_part_text_cursor_down(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2004,10 +2010,12 @@ edje_object_part_text_cursor_down(Evas_Object *obj, const char *part, Edje_Curso
 }
 
 /**
- * @brief XX
+ * @brief Moves the cursor to the beginning of the text part
+ * @see evas_textblock_cursor_paragraph_first
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI void
 edje_object_part_text_cursor_begin_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2026,10 +2034,12 @@ edje_object_part_text_cursor_begin_set(Evas_Object *obj, const char *part, Edje_
 }
 
 /**
- * @brief XX
+ * @brief Moves the cursor to the end of the text part.
+ * @see evas_textblock_cursor_paragraph_last
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI void
 edje_object_part_text_cursor_end_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2048,10 +2058,12 @@ edje_object_part_text_cursor_end_set(Evas_Object *obj, const char *part, Edje_Cu
 }
 
 /**
- * @brief XX
+ * @brief Copy the cursor to another cursor.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param sry the cursor to copy from
+ * @param dst the cursor to copy to
  */
 EAPI void
 edje_object_part_text_cursor_copy(Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst)
@@ -2070,10 +2082,12 @@ edje_object_part_text_cursor_copy(Evas_Object *obj, const char *part, Edje_Curso
 }
 
 /**
- * @brief XX
+ * @brief Move the cursor to the beginning of the line.
+ * @see evas_textblock_cursor_line_char_first
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI void
 edje_object_part_text_cursor_line_begin_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2092,10 +2106,12 @@ edje_object_part_text_cursor_line_begin_set(Evas_Object *obj, const char *part, 
 }
 
 /**
- * @brief XX
+ * @brief Move the cursor to the end of the line.
+ * @see evas_textblock_cursor_line_char_last
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur the edje cursor to work on
  */
 EAPI void
 edje_object_part_text_cursor_line_end_set(Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2144,10 +2160,13 @@ edje_object_part_text_cursor_coord_set(Evas_Object *obj, const char *part,
 }
 
 /**
- * @brief XX
+ * @brief Returns whether the cursor points to a format.
+ * @see evas_textblock_cursor_is_format
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur The cursor to adjust.
+ * @return EINA_TRUE if it's true, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2167,10 +2186,13 @@ edje_object_part_text_cursor_is_format_get(const Evas_Object *obj, const char *p
 }
 
 /**
- * @brief XX
+ * @brief Return true if the cursor points to a visible format
+ * For example \t, \n, item and etc.
+ * @see  evas_textblock_cursor_format_is_visible_get
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur The cursor to adjust.
  */
 EAPI Eina_Bool
 edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
@@ -2190,10 +2212,12 @@ edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const
 }
 
 /**
- * @brief XX
+ * @brief Returns the content (char) at the cursor position.
+ * @see evas_textblock_cursor_content_get
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param cur The cursor to use
  */
 EAPI const char *
 edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
