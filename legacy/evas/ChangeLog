@@ -166,3 +166,9 @@
 2011-03-11  Carsten Haitzler (The Rasterman)
 
 	* Add ICO loader to evas (also can load CUR cursor files in theory)
+
+2011-03-14  Carsten Haitzler (The Rasterman)
+
+	* Add "load from memory" API: evas_object_image_memfile_set() by
+        popular demand. Can load an image format from a memory address.
+

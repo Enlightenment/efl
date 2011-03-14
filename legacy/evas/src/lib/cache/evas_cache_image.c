@@ -964,6 +964,7 @@ evas_cache_image_drop(Image_Entry *im)
    LKL(im->lock_references);
 #endif
    im->references--;
+   if (im->references < 0) im->references = 0;
    references = im->references;
 #ifdef EVAS_FRAME_QUEUING
    LKU(im->lock_references);
@@ -1129,7 +1130,7 @@ evas_cache_image_alone(Image_Entry *im)
    LKU(im->lock_references);
 #endif
 
-   if (references == 1)
+   if (references <= 1)
      {
         if (!(im->flags.dirty))
           {

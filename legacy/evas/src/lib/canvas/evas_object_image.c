@@ -1,3 +1,8 @@
+#include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+
 #include "evas_common.h"
 #include "evas_private.h"
 #include "../engines/common/evas_convert_color.h"
@@ -57,6 +62,9 @@ struct _Evas_Object_Image
       Evas_Object_Image_Pixels_Get_Cb  get_pixels;
       void                            *get_pixels_data;
    } func;
+   
+   const char             *tmpf;
+   int                     tmpf_fd;
 
    Evas_Image_Scale_Hint   scale_hint;
    Evas_Image_Content_Hint content_hint;
@@ -100,6 +108,7 @@ static void _proxy_unset(Evas_Object *proxy);
 static void _proxy_set(Evas_Object *proxy, Evas_Object *src);
 static void _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface, int x, int y);
 
+static void _cleanup_tmpf(Evas_Object *obj);
 
 static const Evas_Object_Func object_func =
 {
@@ -179,6 +188,120 @@ evas_object_image_filled_add(Evas *e)
    return obj;
 }
 
+static void
+_cleanup_tmpf(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+   
+   o = (Evas_Object_Image *)(obj->object_data);
+   if (!o->tmpf) return;
+#ifdef __linux__
+#else
+   unlink(o->tmpf);
+#endif
+   if (o->tmpf_fd >= 0) close(o->tmpf_fd);
+   eina_stringshare_del(o->tmpf);
+   o->tmpf_fd = -1;
+   o->tmpf = NULL;
+}
+
+static void
+_create_tmpf(Evas_Object *obj, void *data, int size, char *format __UNUSED__)
+{
+   Evas_Object_Image *o;
+   char buf[4096];
+   void *dst;
+   int fd = -1;
+   
+   o = (Evas_Object_Image *)(obj->object_data);
+#ifdef __linux__
+   snprintf(buf, sizeof(buf), "/dev/shm/.evas-tmpf-%i-%p-%i-XXXXXX", 
+            (int)getpid(), data, (int)size);
+   fd = mkstemp(buf);
+#endif   
+   if (fd < 0)
+     {
+        snprintf(buf, sizeof(buf), "/tmp/.evas-tmpf-%i-%p-%i-XXXXXX", 
+                 (int)getpid(), data, (int)size);
+        fd = mkstemp(buf);
+     }
+   if (fd < 0) return;
+   if (ftruncate(fd, size) < 0)
+     {
+        unlink(buf);
+        close(fd);
+        return;
+     }
+   unlink(buf);
+   dst = mmap(NULL, size, 
+              PROT_READ | PROT_WRITE, 
+              MAP_SHARED, 
+              fd, 0);
+   if (dst == MAP_FAILED)
+     {
+        close(fd);
+        return;
+     }
+   o->tmpf_fd = fd;
+#ifdef __linux__
+   snprintf(buf, sizeof(buf), "/proc/%li/fd/%i", (long)getpid(), fd);
+#endif   
+   o->tmpf = eina_stringshare_add(buf);
+   memcpy(dst, data, size);
+   munmap(dst, size);
+}
+
+/**
+ * Sets the data for an image from memory to be loaded
+ *
+ * This is the same as evas_object_image_file_set() but the file to be loaded
+ * may exist at an address in memory (the data for the file, not the filename
+ * itself). The @p data at the address is copied and stored for future use, so
+ * no @p data needs to be kept after this call is made. It will be managed and
+ * freed for you when no longer needed. The @p size is limited to 2 gigabytes
+ * in size, and must be greater than 0. A NULL @p data pointer is also invalid.
+ * Set the filename to NULL to reset to empty state and have the image file
+ * data freed from memory using evas_object_image_file_set().
+ * 
+ * The @p format is optional (pass NULL if you don't need/use it). It is used
+ * to help Evas guess better which loader to use for the data. It may simply
+ * be the "extension" of the file as it would normally be on disk such as
+ * "jpg" or "png" or "gif" etc.
+ *
+ * @param obj The given image object.
+ * @param data The image file data address
+ * @param size The size of the image file data in bytes
+ * @param format The format of the file (optional), or NULL if not needed
+ * @param key The image key in file, or NULL.
+ */
+EAPI void
+evas_object_image_memfile_set(Evas_Object *obj, void *data, int size, char *format, char *key)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   _cleanup_tmpf(obj);
+   evas_object_image_file_set(obj, NULL, NULL);
+   if ((size < 1) || (!data)) return;
+       
+   _create_tmpf(obj, data, size, format);
+   evas_object_image_file_set(obj, o->tmpf, key);
+   if (!o->engine_data)
+     {
+        _cleanup_tmpf(obj);
+        return;
+     }
+   // invalidate the cache effectively
+   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
+   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
+}
+
 /**
  * Sets the filename and key of the given image object.
  *
@@ -202,6 +325,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if ((o->tmpf) && (file != o->tmpf)) _cleanup_tmpf(obj);
    if ((o->cur.file) && (file) && (!strcmp(o->cur.file, file)))
      {
 	if ((!o->cur.key) && (!key))
@@ -1303,7 +1427,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
    if (o->engine_data)
      {
         int stride = 0;
-        
+
 #ifdef EVAS_FRAME_QUEUING
         evas_common_pipe_op_image_flush(o->engine_data);
 #endif
@@ -2659,6 +2783,7 @@ evas_object_image_new(void)
    o->cur.opaque_valid = 0;
    o->cur.source = NULL;
    o->prev = o->cur;
+   o->tmpf_fd = -1;
    return o;
 }
 
@@ -2674,6 +2799,7 @@ evas_object_image_free(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    /* free obj */
+   _cleanup_tmpf(obj);
    if (o->cur.file) eina_stringshare_del(o->cur.file);
    if (o->cur.key) eina_stringshare_del(o->cur.key);
    if (o->cur.source) _proxy_unset(obj);

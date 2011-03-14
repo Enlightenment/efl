@@ -1245,6 +1245,7 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI Evas_Object             *evas_object_image_add                    (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object             *evas_object_image_filled_add             (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+   EAPI void                     evas_object_image_memfile_set            (Evas_Object *obj, void *data, int size, char *format, char *key) EINA_ARG_NONNULL(1, 2);
    EAPI void                     evas_object_image_file_set               (Evas_Object *obj, const char *file, const char *key) EINA_ARG_NONNULL(1);
    EAPI void                     evas_object_image_file_get               (const Evas_Object *obj, const char **file, const char **key) EINA_ARG_NONNULL(1, 2);
    EAPI void                     evas_object_image_border_set             (Evas_Object *obj, int l, int r, int t, int b) EINA_ARG_NONNULL(1);
