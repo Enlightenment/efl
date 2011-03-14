@@ -2,6 +2,12 @@ MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS =
 
+if BUILD_LOADER_BMP
+if !EVAS_STATIC_BUILD_BMP
+SUBDIRS += bmp
+endif
+endif
+
 if BUILD_LOADER_EDB
 if !EVAS_STATIC_BUILD_EDB
 SUBDIRS += edb
@@ -17,6 +23,12 @@ endif
 if BUILD_LOADER_GIF
 if !EVAS_STATIC_BUILD_GIF
 SUBDIRS += gif
+endif
+endif
+
+if BUILD_LOADER_ICO
+if !EVAS_STATIC_BUILD_ICO
+SUBDIRS += ico
 endif
 endif
 
@@ -44,33 +56,27 @@ SUBDIRS += svg
 endif
 endif
 
-if BUILD_LOADER_TIFF
-if !EVAS_STATIC_BUILD_TIFF
-SUBDIRS += tiff
-endif
-endif
-
-if BUILD_LOADER_XPM
-if !EVAS_STATIC_BUILD_XPM
-SUBDIRS += xpm
-endif
-endif
-
-if BUILD_LOADER_BMP
-if !EVAS_STATIC_BUILD_BMP
-SUBDIRS += bmp
-endif
-endif
-
 if BUILD_LOADER_TGA
 if !EVAS_STATIC_BUILD_TGA
 SUBDIRS += tga
 endif
 endif
 
+if BUILD_LOADER_TIFF
+if !EVAS_STATIC_BUILD_TIFF
+SUBDIRS += tiff
+endif
+endif
+
 if BUILD_LOADER_WBMP
 if !EVAS_STATIC_BUILD_WBMP
 SUBDIRS += wbmp
+endif
+endif
+
+if BUILD_LOADER_XPM
+if !EVAS_STATIC_BUILD_XPM
+SUBDIRS += xpm
 endif
 endif
 
