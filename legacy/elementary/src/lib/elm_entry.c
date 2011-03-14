@@ -2581,9 +2581,11 @@ elm_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Ob
 
 /**
  * This converts a markup (HTML-like) string into UTF-8.
+ * Returning string is obtained with malloc.
+ * After use the returned string, it should be freed.
  *
  * @param s The string (in markup) to be converted
- * @return The converted string (in UTF-8)
+ * @return The converted string (in UTF-8). It should be freed.
  *
  * @ingroup Entry
  */
@@ -2597,9 +2599,11 @@ elm_entry_markup_to_utf8(const char *s)
 
 /**
  * This converts a UTF-8 string into markup (HTML-like).
+ * Returning string is obtained with malloc.
+ * After use the returned string, it should be freed.
  *
  * @param s The string (in UTF-8) to be converted
- * @return The converted string (in markup)
+ * @return The converted string (in markup). It should be freed.
  *
  * @ingroup Entry
  */
