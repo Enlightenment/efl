@@ -119,8 +119,8 @@ extern EAPI int _evas_log_dom_global;
 
 #ifdef BUILD_PTHREAD
 
-#ifndef __USE_GNU
-#define __USE_GNU
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
 #endif
 
 # include <pthread.h>
