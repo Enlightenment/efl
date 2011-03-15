@@ -743,7 +743,6 @@ main(int argc, char **argv)
 
     icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(icon_theme_free));
 
-    if (verbose) printf("opening theme cache\n");
     /* open theme file */
     theme_ef = eet_open(efreet_icon_theme_cache_file(), EET_FILE_MODE_READ_WRITE);
     if (!theme_ef) goto on_error_efreet;
@@ -779,7 +778,6 @@ main(int argc, char **argv)
         free(keys);
     }
 
-    if (verbose) printf("scan for themes\n");
     /* scan themes */
     cache_theme_scan(efreet_icon_deprecated_user_dir_get());
     cache_theme_scan(efreet_icon_user_dir_get());
@@ -811,12 +809,10 @@ main(int argc, char **argv)
 #ifndef STRICT_SPEC
         if (!theme->theme.name.name) continue;
 #endif
-        if (verbose) printf("scan theme %s\n", theme->theme.name.name);
 
         changed = EINA_FALSE;
         themes = eina_hash_string_superfast_new(NULL);
 
-        if (verbose) printf("open icon file\n");
         /* open icon file */
         icon_ef = eet_open(efreet_icon_cache_file(theme->theme.name.internal), EET_FILE_MODE_READ_WRITE);
         if (!icon_ef) goto on_error_efreet;
@@ -866,7 +862,6 @@ main(int argc, char **argv)
         if (!theme->dirs)
             theme->dirs = eina_hash_string_superfast_new(NULL);
 
-        if (verbose) printf("scan icons\n");
         if (cache_scan(&(theme->theme), themes, icons, theme->dirs, &changed))
         {
             if (verbose)
@@ -906,7 +901,6 @@ main(int argc, char **argv)
 
     changed = EINA_FALSE;
 
-    if (verbose) printf("open fallback file\n");
     /* open icon file */
     icon_ef = eet_open(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EET_FILE_MODE_READ_WRITE);
     if (!icon_ef) goto on_error_efreet;
@@ -956,7 +950,6 @@ main(int argc, char **argv)
     if (!theme->dirs)
         theme->dirs = eina_hash_string_superfast_new(NULL);
 
-    if (verbose) printf("scan fallback icons\n");
     /* Save fallback in the right part */
     if (cache_fallback_scan(icons, theme->dirs, &changed))
     {
@@ -1004,7 +997,6 @@ main(int argc, char **argv)
         }
     }
 
-    if (verbose) printf("done\n");
 on_error_efreet:
     efreet_shutdown();
 
