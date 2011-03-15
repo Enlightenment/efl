@@ -938,15 +938,15 @@ main(int argc, char **argv)
         free(keys);
     }
 
+    theme = eet_data_read(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK);
+    if (!theme)
+        theme = NEW(Efreet_Cache_Icon_Theme, 1);
     theme->changed = changed;
     if (changed && theme->dirs)
     {
         efreet_hash_free(theme->dirs, free);
         theme->dirs = NULL;
     }
-    theme = eet_data_read(theme_ef, theme_edd, EFREET_CACHE_ICON_FALLBACK);
-    if (!theme)
-        theme = NEW(Efreet_Cache_Icon_Theme, 1);
     if (!theme->dirs)
         theme->dirs = eina_hash_string_superfast_new(NULL);
 
