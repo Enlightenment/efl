@@ -2,8 +2,8 @@
 #include "evas_private.h"
 
 // debug rendering
-//#define REND_DGB 1
-//#define STDOUT_DBG 1
+/* #define REND_DGB 1 */
+/* #define STDOUT_DBG 1 */
 
 #ifdef REND_DGB
 static FILE *dbf = NULL;
@@ -880,6 +880,22 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                      obj->cur.geometry.y + off_y2,
                                      obj->cur.geometry.w,
                                      obj->cur.geometry.h);
+
+                  if (obj->cur.clipper)
+                    {
+                       if (_evas_render_has_map(obj))
+                         evas_object_clip_recalc(obj);
+                       RECTS_CLIP_TO_RECT(x, y, w, h,
+                                          obj->cur.cache.clip.x + off_x,
+                                          obj->cur.cache.clip.y + off_y,
+                                          obj->cur.cache.clip.w,
+                                          obj->cur.cache.clip.h);
+                       RECTS_CLIP_TO_RECT(x, y, w, h,
+                                          obj->cur.clipper->cur.cache.clip.x + off_x,
+                                          obj->cur.clipper->cur.cache.clip.y + off_y,
+                                          obj->cur.clipper->cur.cache.clip.w,
+                                          obj->cur.clipper->cur.cache.clip.h);
+                    }
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
                   obj->func->render(obj, e->engine.data.output, ctx,
@@ -981,7 +997,33 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                {
                   if (!obj->cur.map)
                     {
+                       int x, y, w, h;
+
                        RDI(level);
+
+                       x = obj->cur.cache.clip.x + off_x;
+                       y = obj->cur.cache.clip.y + off_y;
+                       w = obj->cur.cache.clip.w;
+                       h = obj->cur.cache.clip.h;
+
+                       if (obj->cur.clipper)
+                         {
+                            if (_evas_render_has_map(obj))
+                              evas_object_clip_recalc(obj);
+
+                            RD("        clipper: %i %i %ix%i\n",
+                               obj->cur.clipper->cur.cache.clip.x + off_x,
+                               obj->cur.clipper->cur.cache.clip.y + off_y,
+                               obj->cur.clipper->cur.cache.clip.w,
+                               obj->cur.clipper->cur.cache.clip.h);
+
+                            RECTS_CLIP_TO_RECT(x, y, w, h,
+                                               obj->cur.clipper->cur.cache.clip.x + off_x,
+                                               obj->cur.clipper->cur.cache.clip.y + off_y,
+                                               obj->cur.clipper->cur.cache.clip.w,
+                                               obj->cur.clipper->cur.cache.clip.h);
+                         }
+
                        RD("        clip: %i %i %ix%i [%i %i %ix%i]\n",
                           obj->cur.cache.clip.x + off_x,
                           obj->cur.cache.clip.y + off_y, 
@@ -992,11 +1034,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                           obj->cur.geometry.w,
                           obj->cur.geometry.h);
                        e->engine.func->context_clip_set(e->engine.data.output,
-                                                        ctx,
-                                                        obj->cur.cache.clip.x + off_x,
-                                                        obj->cur.cache.clip.y + off_y, 
-                                                        obj->cur.cache.clip.w,
-                                                        obj->cur.cache.clip.h);
+                                                        ctx, x, y, w, h);
                     }
                   else
                     {
@@ -1019,6 +1057,26 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
         else
           {
+             if (obj->cur.clipper)
+               {
+                  int x, y, w, h;
+
+                  if (_evas_render_has_map(obj))
+                    evas_object_clip_recalc(obj);
+                  x = obj->cur.cache.clip.x;
+                  y = obj->cur.cache.clip.y;
+                  w = obj->cur.cache.clip.w;
+                  h = obj->cur.cache.clip.h;
+                  RECTS_CLIP_TO_RECT(x, y, w, h,
+                                     obj->cur.clipper->cur.cache.clip.x,
+                                     obj->cur.clipper->cur.cache.clip.y,
+                                     obj->cur.clipper->cur.cache.clip.w,
+                                     obj->cur.clipper->cur.cache.clip.h);
+                  e->engine.func->context_clip_set(e->engine.data.output,
+                                                   e->engine.data.context,
+                                                   x + off_x, y + off_y, w, h);
+               }
+
              RDI(level);
              RD("        draw normal obj\n");
              obj->func->render(obj, e->engine.data.output, context, surface,
@@ -1268,26 +1326,6 @@ evas_render_updates_internal(Evas *e,
 			   (eina_array_data_get(&e->temporary_objects, offset) == obj))
 			 offset++;
 		       x = cx; y = cy; w = cw; h = ch;
-                       if (obj->cur.clipper)
-                         {
-                            if (_evas_render_has_map(obj))
-                              {
-                                 evas_object_clip_recalc(obj);
-                              }
-/* hmmmm clip seems to kill eweather in elm-test
-                            printf("clip: %4i %4i %4ix%4i to %4i %4i %4ix%4i\n",
-                                   x, y, w, h,
-                                   obj->cur.cache.clip.x + off_x,
-                                   obj->cur.cache.clip.y + off_y,
-                                   obj->cur.cache.clip.w,
-                                   obj->cur.cache.clip.h);
- */
-                            RECTS_CLIP_TO_RECT(x, y, w, h,
-                                               obj->cur.cache.clip.x + off_x,
-                                               obj->cur.cache.clip.y + off_y,
-                                               obj->cur.cache.clip.w,
-                                               obj->cur.cache.clip.h);
-                         }
 		       if (((w > 0) && (h > 0)) || (obj->smart.smart))
 			 {
                             if (!obj->smart.smart)

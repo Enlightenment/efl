@@ -172,3 +172,6 @@
 	* Add "load from memory" API: evas_object_image_memfile_set() by
         popular demand. Can load an image format from a memory address.
 
+2011-03-15  Cedric BAIL
+
+	* Fix issues with clipping and map.
