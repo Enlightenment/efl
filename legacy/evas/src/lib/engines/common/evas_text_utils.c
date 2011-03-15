@@ -296,6 +296,19 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
           {
              index = evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
           }
+
+        /* Should we really set the size per fi? This fixes a bug for Korean
+         * because for some reason different fis are chosen for different
+         * chars in some cases. But we should find the source of the problem
+         * and not just fix the symptom. */
+        if (fi->src->current_size != fi->size)
+          {
+             FTLOCK();
+             FT_Activate_Size(fi->ft.size);
+             FTUNLOCK();
+             fi->src->current_size = fi->size;
+          }
+
         LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, index);
         if (!fg)
