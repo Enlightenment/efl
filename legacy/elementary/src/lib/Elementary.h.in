@@ -175,10 +175,10 @@ extern "C" {
     */
    typedef enum _Elm_Policy
      {
-       ELM_POLICY_QUIT, /**< when should quit application automatically.
-                         * @see Elm_Policy_Quit.
-                         */
-       ELM_POLICY_LAST
+        ELM_POLICY_QUIT, /**< when should quit application automatically.
+                          * @see Elm_Policy_Quit.
+                          */
+        ELM_POLICY_LAST
      } Elm_Policy;
 
    typedef enum _Elm_Policy_Quit
@@ -467,7 +467,7 @@ extern "C" {
 
    typedef enum _Elm_Win_Keyboard_Mode
      {
-	ELM_WIN_KEYBOARD_UNKNOWN,
+        ELM_WIN_KEYBOARD_UNKNOWN,
         ELM_WIN_KEYBOARD_OFF,
         ELM_WIN_KEYBOARD_ON,
         ELM_WIN_KEYBOARD_ALPHA,
@@ -881,7 +881,7 @@ extern "C" {
    EAPI Evas_Object *elm_table_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_table_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void	     elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
+   EAPI void         elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
    EAPI void         elm_table_unpack(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
@@ -898,13 +898,14 @@ extern "C" {
 
    struct _Elm_Gengrid_Item_Class
      {
-	const char             *item_style;
-	struct _Elm_Gengrid_Item_Class_Func {
-          GridItemLabelGetFunc  label_get;
-          GridItemIconGetFunc   icon_get;
-          GridItemStateGetFunc  state_get;
-          GridItemDelFunc       del;
-        } func;
+        const char             *item_style;
+        struct _Elm_Gengrid_Item_Class_Func
+          {
+             GridItemLabelGetFunc  label_get;
+             GridItemIconGetFunc   icon_get;
+             GridItemStateGetFunc  state_get;
+             GridItemDelFunc       del;
+          } func;
      };
 
    EAPI Evas_Object       *elm_gengrid_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
@@ -957,7 +958,7 @@ extern "C" {
    EAPI void               elm_gengrid_item_cursor_engine_only_set(Elm_Gengrid_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_gengrid_item_cursor_engine_only_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
-   EAPI void	           elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_gengrid_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Gengrid_Item  *elm_gengrid_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List   *elm_gengrid_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
@@ -995,7 +996,7 @@ extern "C" {
         ELM_CLOCK_MIN_UNIT     = 1 << 3,
         ELM_CLOCK_SEC_DECIMAL  = 1 << 4,
         ELM_CLOCK_SEC_UNIT     = 1 << 5,
-        ELM_CLOCK_ALL	       = (1 << 6) - 1
+        ELM_CLOCK_ALL          = (1 << 6) - 1
      } Elm_Clock_Digedit;
 
    EAPI Evas_Object      *elm_clock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
@@ -1003,14 +1004,14 @@ extern "C" {
    EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec) EINA_ARG_NONNULL(1);
    EAPI void              elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         elm_clock_edit_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void	          elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit) EINA_ARG_NONNULL(1);
+   EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit) EINA_ARG_NONNULL(1);
    EAPI Elm_Clock_Digedit elm_clock_digit_edit_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         elm_clock_show_am_pm_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
-   EAPI double	          elm_clock_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI double            elm_clock_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "changed" - the user changed the time
     */
@@ -1182,9 +1183,9 @@ extern "C" {
    typedef struct _Elm_Entry_Anchor_Info Elm_Entry_Anchor_Info;
    struct _Elm_Entry_Anchor_Info
      {
-	const char *name;
-	int         button;
-	Evas_Coord  x, y, w, h;
+        const char *name;
+        int         button;
+        Evas_Coord  x, y, w, h;
      };
    typedef enum _Elm_Icon_Type
      {
@@ -1290,16 +1291,16 @@ extern "C" {
    typedef struct _Elm_Entry_Anchorview_Info Elm_Entry_Anchorview_Info;
    struct _Elm_Entry_Anchorview_Info
      {
-	const char     *name;
-	int             button;
-	Evas_Object    *hover;
+        const char     *name;
+        int             button;
+        Evas_Object    *hover;
         struct {
-          Evas_Coord    x, y, w, h;
+             Evas_Coord    x, y, w, h;
         } anchor, hover_parent;
-	Eina_Bool       hover_left : 1;
-	Eina_Bool       hover_right : 1;
-	Eina_Bool       hover_top : 1;
-	Eina_Bool       hover_bottom : 1;
+        Eina_Bool       hover_left : 1;
+        Eina_Bool       hover_right : 1;
+        Eina_Bool       hover_top : 1;
+        Eina_Bool       hover_bottom : 1;
      };
    EAPI Evas_Object *elm_anchorview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_anchorview_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
@@ -1323,16 +1324,16 @@ extern "C" {
    typedef struct _Elm_Entry_Anchorblock_Info Elm_Entry_Anchorblock_Info;
    struct _Elm_Entry_Anchorblock_Info
      {
-	const char     *name;
-	int             button;
-	Evas_Object    *hover;
-	struct {
-          Evas_Coord    x, y, w, h;
+        const char     *name;
+        int             button;
+        Evas_Object    *hover;
+        struct {
+             Evas_Coord    x, y, w, h;
         } anchor, hover_parent;
-	Eina_Bool       hover_left : 1;
-	Eina_Bool       hover_right : 1;
-	Eina_Bool       hover_top : 1;
-	Eina_Bool       hover_bottom : 1;
+        Eina_Bool       hover_left : 1;
+        Eina_Bool       hover_right : 1;
+        Eina_Bool       hover_top : 1;
+        Eina_Bool       hover_bottom : 1;
      };
    EAPI Evas_Object *elm_anchorblock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void         elm_anchorblock_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
@@ -1597,7 +1598,7 @@ extern "C" {
    EAPI void             elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool        elm_list_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void             elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool	 elm_list_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_list_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List *elm_list_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_List_Item   *elm_list_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List *elm_list_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -1722,13 +1723,14 @@ extern "C" {
 
    struct _Elm_Genlist_Item_Class
      {
-	const char                *item_style;
-	struct {
-          GenlistItemLabelGetFunc  label_get;
-          GenlistItemIconGetFunc   icon_get;
-          GenlistItemStateGetFunc  state_get;
-          GenlistItemDelFunc       del;
-        } func;
+        const char                *item_style;
+        struct
+          {
+             GenlistItemLabelGetFunc  label_get;
+             GenlistItemIconGetFunc   icon_get;
+             GenlistItemStateGetFunc  state_get;
+             GenlistItemDelFunc       del;
+          } func;
      };
 
    EAPI Evas_Object      *elm_genlist_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
@@ -1861,10 +1863,11 @@ extern "C" {
 
    struct _Elm_Slideshow_Item_Class
      {
-	struct _Elm_Slideshow_Item_Class_Func {
-          SlideshowItemGetFunc get;
-          SlideshowItemDelFunc del;
-	} func;
+        struct _Elm_Slideshow_Item_Class_Func
+          {
+             SlideshowItemGetFunc get;
+             SlideshowItemDelFunc del;
+          } func;
      };
 
    EAPI Evas_Object        *elm_slideshow_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
@@ -2101,7 +2104,7 @@ extern "C" {
    EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num) EINA_ARG_NONNULL(1, 2, 3);
-   EAPI void	              elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat);
+   EAPI void                  elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat);
    EAPI void                  elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y);
    EAPI Elm_Map_Marker       *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data) EINA_ARG_NONNULL(1, 4, 5);
    EAPI void                  elm_map_max_marker_per_group_set(Evas_Object *obj, int max) EINA_ARG_NONNULL(1);
@@ -2420,7 +2423,7 @@ extern "C" {
    EAPI void                   elm_diskselector_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Diskselector_Item *elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-   EAPI void	               elm_diskselector_item_del(Elm_Diskselector_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_diskselector_item_del(Elm_Diskselector_Item *item) EINA_ARG_NONNULL(1);
    EAPI void                   elm_diskselector_item_del_cb_set(Elm_Diskselector_Item *item, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
    EAPI void                  *elm_diskselector_item_data_get(const Elm_Diskselector_Item *item) EINA_ARG_NONNULL(1);
    EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Diskselector_Item *item) EINA_ARG_NONNULL(1);
@@ -2577,55 +2580,56 @@ extern "C" {
 
   typedef enum
     {
-      ELM_STORE_ITEM_MAPPING_NONE = 0,
-      ELM_STORE_ITEM_MAPPING_LABEL, // const char * -> label
-      ELM_STORE_ITEM_MAPPING_STATE, // Eina_Bool -> state
-      ELM_STORE_ITEM_MAPPING_ICON, // char * -> icon path
-      ELM_STORE_ITEM_MAPPING_PHOTO, // char * -> photo path
-      ELM_STORE_ITEM_MAPPING_CUSTOM, // item->custom(it->data, it, part) -> void * (-> any)
-      // can add more here as needed by common apps
-      ELM_STORE_ITEM_MAPPING_LAST
+       ELM_STORE_ITEM_MAPPING_NONE = 0,
+       ELM_STORE_ITEM_MAPPING_LABEL, // const char * -> label
+       ELM_STORE_ITEM_MAPPING_STATE, // Eina_Bool -> state
+       ELM_STORE_ITEM_MAPPING_ICON, // char * -> icon path
+       ELM_STORE_ITEM_MAPPING_PHOTO, // char * -> photo path
+       ELM_STORE_ITEM_MAPPING_CUSTOM, // item->custom(it->data, it, part) -> void * (-> any)
+       // can add more here as needed by common apps
+       ELM_STORE_ITEM_MAPPING_LAST
     } Elm_Store_Item_Mapping_Type;
 
   struct _Elm_Store_Item_Mapping_Icon
     {
-      // FIXME: allow edje file icons
-      int                   w, h;
-      Elm_Icon_Lookup_Order lookup_order;
-      Eina_Bool             standard_name : 1;
-      Eina_Bool             no_scale : 1;
-      Eina_Bool             smooth : 1;
-      Eina_Bool             scale_up : 1;
-      Eina_Bool             scale_down : 1;
+       // FIXME: allow edje file icons
+       int                   w, h;
+       Elm_Icon_Lookup_Order lookup_order;
+       Eina_Bool             standard_name : 1;
+       Eina_Bool             no_scale : 1;
+       Eina_Bool             smooth : 1;
+       Eina_Bool             scale_up : 1;
+       Eina_Bool             scale_down : 1;
     };
 
   struct _Elm_Store_Item_Mapping_Empty
     {
-      Eina_Bool             dummy;
+       Eina_Bool             dummy;
     };
 
   struct _Elm_Store_Item_Mapping_Photo
     {
-      int                   size;
+       int                   size;
     };
 
   struct _Elm_Store_Item_Mapping_Custom
     {
-      Elm_Store_Item_Mapping_Cb func;
+       Elm_Store_Item_Mapping_Cb func;
     };
 
   struct _Elm_Store_Item_Mapping
     {
-      Elm_Store_Item_Mapping_Type     type;
-      const char                     *part;
-      int                             offset;
-      union {
-        Elm_Store_Item_Mapping_Empty  empty;
-        Elm_Store_Item_Mapping_Icon   icon;
-        Elm_Store_Item_Mapping_Photo  photo;
-        Elm_Store_Item_Mapping_Custom custom;
-        // add more types here
-      } details;
+       Elm_Store_Item_Mapping_Type     type;
+       const char                     *part;
+       int                             offset;
+       union
+         {
+            Elm_Store_Item_Mapping_Empty  empty;
+            Elm_Store_Item_Mapping_Icon   icon;
+            Elm_Store_Item_Mapping_Photo  photo;
+            Elm_Store_Item_Mapping_Custom custom;
+            // add more types here
+         } details;
     };
 
   struct _Elm_Store_Item_Info

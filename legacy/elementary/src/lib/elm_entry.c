@@ -375,13 +375,13 @@ _save(Evas_Object *obj)
    switch (wd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
-	_save_plain_utf8(wd->file, elm_entry_entry_get(obj));
-	break;
+         _save_plain_utf8(wd->file, elm_entry_entry_get(obj));
+         break;
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
-	_save_markup_utf8(wd->file, elm_entry_entry_get(obj));
-	break;
+         _save_markup_utf8(wd->file, elm_entry_entry_get(obj));
+         break;
       default:
-	break;
+         break;
      }
 }
 
@@ -400,7 +400,7 @@ _filter_new(void (*func) (void *data, Evas_Object *entry, char **text), void *da
 {
    Elm_Entry_Text_Filter *tf = ELM_NEW(Elm_Entry_Text_Filter);
    if (!tf) return NULL;
-   
+
    tf->func = func;
    if (func == elm_entry_filter_limit_size)
      {
@@ -423,7 +423,7 @@ _filter_new(void (*func) (void *data, Evas_Object *entry, char **text), void *da
    else if (func == elm_entry_filter_accept_set)
      {
         Elm_Entry_Filter_Accept_Set *as = data, *as2;
-        
+
         if (!data)
           {
              free(tf);
@@ -557,13 +557,13 @@ _disable_hook(Evas_Object *obj)
 
    if (elm_widget_disabled_get(obj))
      {
-	edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
-	wd->disabled = EINA_TRUE;
+        edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
+        wd->disabled = EINA_TRUE;
      }
    else
      {
-	edje_object_signal_emit(wd->ent, "elm,state,enabled", "elm");
-	wd->disabled = EINA_FALSE;
+        edje_object_signal_emit(wd->ent, "elm,state,enabled", "elm");
+        wd->disabled = EINA_FALSE;
      }
 }
 
@@ -598,21 +598,21 @@ _sizing_eval(Evas_Object *obj)
    if (!wd) return;
    if ((wd->linewrap) || (wd->char_linewrap))
      {
-	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
-	if ((resw == wd->lastw) && (!wd->changed)) return;
-	wd->changed = EINA_FALSE;
-	wd->lastw = resw;
-	if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
-	wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
+        evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
+        if ((resw == wd->lastw) && (!wd->changed)) return;
+        wd->changed = EINA_FALSE;
+        wd->lastw = resw;
+        if (wd->deferred_recalc_job) ecore_job_del(wd->deferred_recalc_job);
+        wd->deferred_recalc_job = ecore_job_add(_elm_win_recalc_job, obj);
      }
    else
      {
-	evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
-	edje_object_size_min_calc(wd->ent, &minw, &minh);
+        evas_object_geometry_get(wd->ent, NULL, NULL, &resw, &resh);
+        edje_object_size_min_calc(wd->ent, &minw, &minh);
         elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-	evas_object_size_hint_min_set(obj, minw, minh);
+        evas_object_size_hint_min_set(obj, minw, minh);
         if (wd->single_line) maxh = minh;
-	evas_object_size_hint_max_set(obj, maxw, maxh);
+        evas_object_size_hint_max_set(obj, maxw, maxh);
      }
 }
 
@@ -625,17 +625,17 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd->editable) return;
    if (elm_widget_focus_get(obj))
      {
-	evas_object_focus_set(wd->ent, EINA_TRUE);
-	edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
-	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
-	evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
+        evas_object_focus_set(wd->ent, EINA_TRUE);
+        edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
+        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
+        evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
      }
    else
      {
-	edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
-	evas_object_focus_set(wd->ent, EINA_FALSE);
-	if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
-	evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
+        edje_object_signal_emit(wd->ent, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->ent, EINA_FALSE);
+        if (top) elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
+        evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
      }
 }
 
@@ -678,17 +678,17 @@ _hoversel_position(Evas_Object *obj)
    if (!wd) return;
    evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-					     &cx, &cy, &cw, &ch);
+                                             &cx, &cy, &cw, &ch);
    evas_object_size_hint_min_get(wd->hoversel, &mw, &mh);
    if (cw < mw)
      {
-	cx += (cw - mw) / 2;
-	cw = mw;
+        cx += (cw - mw) / 2;
+        cw = mw;
      }
    if (ch < mh)
      {
-	cy += (ch - mh) / 2;
-	ch = mh;
+        cy += (ch - mh) / 2;
+        ch = mh;
      }
    evas_object_move(wd->hoversel, x + cx, y + cy);
    evas_object_resize(wd->hoversel, cw, ch);
@@ -721,7 +721,7 @@ _hover_del(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   
+
    if (wd->hoversel)
      {
         evas_object_del(wd->hoversel);
@@ -734,7 +734,7 @@ static void
 _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return; 
+   if (!wd) return;
    if (wd->hoversel) evas_object_hide(wd->hoversel);
    if (wd->selmode)
      {
@@ -770,10 +770,10 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 #ifdef HAVE_ELEMENTARY_X
         Elm_Sel_Format formats;
         wd->selection_asked = EINA_TRUE;
-	formats = ELM_SEL_FORMAT_MARKUP;
-	if (!wd->textonly)
-	   formats |= ELM_SEL_FORMAT_IMAGE;
-	elm_selection_get(ELM_SEL_CLIPBOARD, formats, data, NULL, NULL);
+        formats = ELM_SEL_FORMAT_MARKUP;
+        if (!wd->textonly)
+          formats |= ELM_SEL_FORMAT_IMAGE;
+        elm_selection_get(ELM_SEL_CLIPBOARD, formats, data, NULL, NULL);
 #endif
      }
 }
@@ -788,7 +788,7 @@ _store_selection(Elm_Sel_Type seltype, Evas_Object *obj)
    sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
    elm_selection_set(seltype, obj, ELM_SEL_FORMAT_MARKUP, sel);
    if (seltype == ELM_SEL_CLIPBOARD)
-	   eina_stringshare_replace(&wd->cut_sel, sel);
+     eina_stringshare_replace(&wd->cut_sel, sel);
 }
 
 static void
@@ -942,8 +942,8 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
    if (ev->button != 1) return;
    if (wd->longpress_timer)
      {
-	ecore_timer_del(wd->longpress_timer);
-	wd->longpress_timer = NULL;
+        ecore_timer_del(wd->longpress_timer);
+        wd->longpress_timer = NULL;
      }
 }
 
@@ -956,46 +956,46 @@ _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    if (wd->disabled) return;
    if (!wd->selmode)
      {
-	if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-	  {
-	     if (wd->longpress_timer)
-	       {
-		  ecore_timer_del(wd->longpress_timer);
-		  wd->longpress_timer = NULL;
-	       }
-	  }
-	else if (wd->longpress_timer)
-	  {
-	     Evas_Coord dx, dy;
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+          {
+             if (wd->longpress_timer)
+               {
+                  ecore_timer_del(wd->longpress_timer);
+                  wd->longpress_timer = NULL;
+               }
+          }
+        else if (wd->longpress_timer)
+          {
+             Evas_Coord dx, dy;
 
-	     dx = wd->downx - ev->cur.canvas.x;
-	     dx *= dx;
-	     dy = wd->downy - ev->cur.canvas.y;
-	     dy *= dy;
-	     if ((dx + dy) >
-		 ((_elm_config->finger_size / 2) *
-		  (_elm_config->finger_size / 2)))
-	       {
-		  ecore_timer_del(wd->longpress_timer);
-		  wd->longpress_timer = NULL;
-	       }
-	  }
+             dx = wd->downx - ev->cur.canvas.x;
+             dx *= dx;
+             dy = wd->downy - ev->cur.canvas.y;
+             dy *= dy;
+             if ((dx + dy) >
+                 ((_elm_config->finger_size / 2) *
+                  (_elm_config->finger_size / 2)))
+               {
+                  ecore_timer_del(wd->longpress_timer);
+                  wd->longpress_timer = NULL;
+               }
+          }
      }
    else if (wd->longpress_timer)
      {
-	Evas_Coord dx, dy;
+        Evas_Coord dx, dy;
 
-	dx = wd->downx - ev->cur.canvas.x;
-	dx *= dx;
-	dy = wd->downy - ev->cur.canvas.y;
-	dy *= dy;
-	if ((dx + dy) >
-	    ((_elm_config->finger_size / 2) *
-	     (_elm_config->finger_size / 2)))
-	  {
-	     ecore_timer_del(wd->longpress_timer);
-	     wd->longpress_timer = NULL;
-	  }
+        dx = wd->downx - ev->cur.canvas.x;
+        dx *= dx;
+        dy = wd->downy - ev->cur.canvas.y;
+        dy *= dy;
+        if ((dx + dy) >
+            ((_elm_config->finger_size / 2) *
+             (_elm_config->finger_size / 2)))
+          {
+             ecore_timer_del(wd->longpress_timer);
+             wd->longpress_timer = NULL;
+          }
      }
 }
 
@@ -1006,31 +1006,31 @@ _getbase(Evas_Object *obj)
    if (!wd) return "base";
    if (wd->editable)
      {
-	if (wd->password) return "base-password";
-	else
-	  {
-	     if (wd->single_line) return "base-single";
-	     else
-	       {
-		  if (wd->linewrap) return "base";
+        if (wd->password) return "base-password";
+        else
+          {
+             if (wd->single_line) return "base-single";
+             else
+               {
+                  if (wd->linewrap) return "base";
                   else if (wd->char_linewrap) return "base-charwrap";
-		  else  return "base-nowrap";
-	       }
-	  }
+                  else  return "base-nowrap";
+               }
+          }
      }
    else
      {
-	if (wd->password) return "base-password";
-	else
-	  {
-	     if (wd->single_line) return "base-single-noedit";
-	     else
-	       {
-		  if (wd->linewrap) return "base-noedit";
+        if (wd->password) return "base-password";
+        else
+          {
+             if (wd->single_line) return "base-single-noedit";
+             else
+               {
+                  if (wd->linewrap) return "base-noedit";
                   else if (wd->char_linewrap) return "base-noedit-charwrap";
-		  else  return "base-nowrap-noedit";
-	       }
-	  }
+                  else  return "base-nowrap-noedit";
+               }
+          }
      }
    return "base";
 }
@@ -1047,8 +1047,8 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
    if (wd->delay_write)
      {
-	ecore_timer_del(wd->delay_write);
-	wd->delay_write = NULL;
+        ecore_timer_del(wd->delay_write);
+        wd->delay_write = NULL;
      }
    if ((!wd->autosave) || (!wd->file)) return;
    wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
@@ -1063,19 +1063,19 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
    if (!wd) return;
    EINA_LIST_FOREACH(entries, l, entry)
      {
-	if (entry != data) elm_entry_select_none(entry);
+        if (entry != data) elm_entry_select_none(entry);
      }
    wd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_START, NULL);
 #ifdef HAVE_ELEMENTARY_X
    if (wd->sel_notify_handler)
      {
-	const char *txt = elm_entry_selection_get(data);
-	Evas_Object *top;
+        const char *txt = elm_entry_selection_get(data);
+        Evas_Object *top;
 
-	top = elm_widget_top_get(data);
-	if ((top) && (elm_win_xwindow_get(top)))
-	     elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP, txt);
+        top = elm_widget_top_get(data);
+        if ((top) && (elm_win_xwindow_get(top)))
+          elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP, txt);
      }
 #endif
 }
@@ -1088,7 +1088,7 @@ _signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *e
    wd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
    elm_selection_set(ELM_SEL_PRIMARY, obj, ELM_SEL_FORMAT_MARKUP,
-		   elm_entry_selection_get(data));
+                     elm_entry_selection_get(data));
 }
 
 static void
@@ -1101,29 +1101,29 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
    evas_object_smart_callback_call(data, SIG_SELECTION_CLEARED, NULL);
    if (wd->sel_notify_handler)
      {
-	if (wd->cut_sel)
-	  {
+        if (wd->cut_sel)
+          {
 #ifdef HAVE_ELEMENTARY_X
-	     Evas_Object *top;
+             Evas_Object *top;
 
-	     top = elm_widget_top_get(data);
-	     if ((top) && (elm_win_xwindow_get(top)))
-	         elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP,
-				       wd->cut_sel);
+             top = elm_widget_top_get(data);
+             if ((top) && (elm_win_xwindow_get(top)))
+               elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP,
+                                 wd->cut_sel);
 #endif
-	     eina_stringshare_del(wd->cut_sel);
-	     wd->cut_sel = NULL;
-	  }
-	else
-	  {
+             eina_stringshare_del(wd->cut_sel);
+             wd->cut_sel = NULL;
+          }
+        else
+          {
 #ifdef HAVE_ELEMENTARY_X
-	     Evas_Object *top;
+             Evas_Object *top;
 
-	     top = elm_widget_top_get(data);
-	     if ((top) && (elm_win_xwindow_get(top)))
-		elm_selection_clear(ELM_SEL_PRIMARY, data);
+             top = elm_widget_top_get(data);
+             if ((top) && (elm_win_xwindow_get(top)))
+               elm_selection_clear(ELM_SEL_PRIMARY, data);
 #endif
-	  }
+          }
      }
 }
 
@@ -1136,15 +1136,15 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-	Evas_Object *top;
+        Evas_Object *top;
 
-	top = elm_widget_top_get(data);
-	if ((top) && (elm_win_xwindow_get(top)))
-	  {
+        top = elm_widget_top_get(data);
+        if ((top) && (elm_win_xwindow_get(top)))
+          {
              wd->selection_asked = EINA_TRUE;
              elm_selection_get(ELM_SEL_CLIPBOARD, ELM_SEL_FORMAT_MARKUP, data,
                                NULL, NULL);
-	  }
+          }
 #endif
      }
 }
@@ -1156,7 +1156,7 @@ _signal_entry_copy_notify(void *data, Evas_Object *obj __UNUSED__, const char *e
    if (!wd) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
    elm_selection_set(ELM_SEL_CLIPBOARD, obj, ELM_SEL_FORMAT_MARKUP,
-			elm_entry_selection_get(data));
+                     elm_entry_selection_get(data));
 }
 
 static void
@@ -1166,7 +1166,7 @@ _signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *em
    if (!wd) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
    elm_selection_set(ELM_SEL_CLIPBOARD, obj, ELM_SEL_FORMAT_MARKUP,
-			elm_entry_selection_get(data));
+                     elm_entry_selection_get(data));
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    wd->changed = EINA_TRUE;
    _sizing_eval(data);
@@ -1185,11 +1185,11 @@ _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emis
      elm_widget_show_region_set(data, cx, cy, cw, ch);
    else
      {
-	wd->deferred_cur = EINA_TRUE;
-	wd->cx = cx;
-	wd->cy = cy;
-	wd->cw = cw;
-	wd->ch = ch;
+        wd->deferred_cur = EINA_TRUE;
+        wd->cx = cx;
+        wd->cy = cy;
+        wd->cw = cw;
+        wd->ch = ch;
      }
 }
 
@@ -1217,47 +1217,47 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
    p = strrchr(emission, ',');
    if (p)
      {
-	const Eina_List *geoms;
+        const Eina_List *geoms;
 
-	n = p + 1;
-	p2 = p -1;
-	while (p2 >= emission)
-	  {
-	     if (*p2 == ',') break;
-	     p2--;
-	  }
-	p2++;
-	buf2 = alloca(5 + p - p2);
-	strncpy(buf2, p2, p - p2);
-	buf2[p - p2] = 0;
-	ei.name = n;
-	ei.button = atoi(buf2);
-	ei.x = ei.y = ei.w = ei.h = 0;
-	geoms =
-          edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
-	if (geoms)
-	  {
-	     Evas_Textblock_Rectangle *r;
-	     const Eina_List *l;
-	     Evas_Coord px, py, x, y;
+        n = p + 1;
+        p2 = p -1;
+        while (p2 >= emission)
+          {
+             if (*p2 == ',') break;
+             p2--;
+          }
+        p2++;
+        buf2 = alloca(5 + p - p2);
+        strncpy(buf2, p2, p - p2);
+        buf2[p - p2] = 0;
+        ei.name = n;
+        ei.button = atoi(buf2);
+        ei.x = ei.y = ei.w = ei.h = 0;
+        geoms =
+           edje_object_part_text_anchor_geometry_get(wd->ent, "elm.text", ei.name);
+        if (geoms)
+          {
+             Evas_Textblock_Rectangle *r;
+             const Eina_List *l;
+             Evas_Coord px, py, x, y;
 
-	     evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
-	     evas_pointer_output_xy_get(evas_object_evas_get(wd->ent), &px, &py);
-	     EINA_LIST_FOREACH(geoms, l, r)
-	       {
-		  if (((r->x + x) <= px) && ((r->y + y) <= py) &&
-		      ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
-		    {
-		       ei.x = r->x + x;
-		       ei.y = r->y + y;
-		       ei.w = r->w;
-		       ei.h = r->h;
-		       break;
-		    }
-	       }
-	  }
-	if (!wd->disabled)
-	  evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
+             evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
+             evas_pointer_output_xy_get(evas_object_evas_get(wd->ent), &px, &py);
+             EINA_LIST_FOREACH(geoms, l, r)
+               {
+                  if (((r->x + x) <= px) && ((r->y + y) <= py) &&
+                      ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
+                    {
+                       ei.x = r->x + x;
+                       ei.y = r->y + y;
+                       ei.w = r->w;
+                       ei.h = r->h;
+                       break;
+                    }
+               }
+          }
+        if (!wd->disabled)
+          evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
      }
 }
 
