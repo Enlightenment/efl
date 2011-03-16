@@ -214,6 +214,21 @@ typedef struct _Eet_Dictionary   Eet_Dictionary;
  * You can also open the file for read/write. If you then write a key that
  * does not exist it will be created, if the key exists it will be replaced
  * by the new data.
+ * 
+ * If the same file is opened multiple times, then the same file handle will
+ * be returned as eet maintains an internal list of all currently open
+ * files. Note that it considers files opened for read only and those opened
+ * for read/write and write only as 2 separate sets. Those that do not write
+ * to the file and those that do. Eet will allow 2 handles to the same file
+ * if they are in the 2 separate lists/groups. That means opening a file for
+ * read only looks in the read only set, and returns a handle to that file
+ * handle and increments its reference count. If you open a file for read/write
+ * or write only it looks in the write set and returns a handle after
+ * incrementing the reference count. You need to close an eet file handle
+ * as many times as it has been opened to maintain correct reference counts.
+ * Files whose modified timestamp or size do not match those of the existing
+ * referenced file handles will not be returned and a new handle will be
+ * returned instead.
  *
  * Example:
  * @code
