@@ -55,7 +55,7 @@ struct _Render_Engine
    Evas_Engine_Info_GL_SDL	*info;
    int			w, h;
 
-   Evas_GL_Context *gl_context;
+   Evas_Engine_GL_Context *gl_context;
    struct {
       int              redraw : 1;
       int              drew : 1;

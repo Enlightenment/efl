@@ -116,44 +116,44 @@ struct _Evas_Cairo_Polygon_Point
 #endif
 
 /*
-Evas_GL_Context  *evas_gl_common_context_new(void);
-void              evas_gl_common_context_free(Evas_GL_Context *gc);
-void              evas_gl_common_context_use(Evas_GL_Context *gc);
-void              evas_gl_common_context_resize(Evas_GL_Context *gc, int w, int h);
-void              evas_gl_common_context_color_set(Evas_GL_Context *gc, int r, int g, int b, int a);
-void              evas_gl_common_context_blend_set(Evas_GL_Context *gc, int blend);
-void              evas_gl_common_context_dither_set(Evas_GL_Context *gc, int dither);
-void              evas_gl_common_context_texture_set(Evas_GL_Context *gc, Evas_GL_Texture *tex, int smooth, int w, int h);
-void              evas_gl_common_context_font_texture_set(Evas_GL_Context *gc, Evas_GL_Font_Texture *ft);
-void              evas_gl_common_context_clip_set(Evas_GL_Context *gc, int on, int x, int y, int w, int h);
-void              evas_gl_common_context_read_buf_set(Evas_GL_Context *gc, GLenum buf);
-void              evas_gl_common_context_write_buf_set(Evas_GL_Context *gc, GLenum buf);
+Evas_Engine_GL_Context  *evas_gl_common_context_new(void);
+void              evas_gl_common_context_free(Evas_Engine_GL_Context *gc);
+void              evas_gl_common_context_use(Evas_Engine_GL_Context *gc);
+void              evas_gl_common_context_resize(Evas_Engine_GL_Context *gc, int w, int h);
+void              evas_gl_common_context_color_set(Evas_Engine_GL_Context *gc, int r, int g, int b, int a);
+void              evas_gl_common_context_blend_set(Evas_Engine_GL_Context *gc, int blend);
+void              evas_gl_common_context_dither_set(Evas_Engine_GL_Context *gc, int dither);
+void              evas_gl_common_context_texture_set(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, int smooth, int w, int h);
+void              evas_gl_common_context_font_texture_set(Evas_Engine_GL_Context *gc, Evas_GL_Font_Texture *ft);
+void              evas_gl_common_context_clip_set(Evas_Engine_GL_Context *gc, int on, int x, int y, int w, int h);
+void              evas_gl_common_context_read_buf_set(Evas_Engine_GL_Context *gc, GLenum buf);
+void              evas_gl_common_context_write_buf_set(Evas_Engine_GL_Context *gc, GLenum buf);
 
-Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth);
+Evas_GL_Texture  *evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 
-Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key);
-Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data);
-Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data);
-Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h);
+Evas_GL_Image    *evas_gl_common_image_load(Evas_Engine_GL_Context *gc, char *file, char *key);
+Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, int w, int h, int *data);
+Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, int w, int h, int *data);
+Evas_GL_Image    *evas_gl_common_image_new(Evas_Engine_GL_Context *gc, int w, int h);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im);
 
 Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
 Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 
-void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
+void              evas_gl_common_swap_rect(Evas_Engine_GL_Context *gc, int x, int y, int w, int h);
 
-void              evas_gl_common_rect_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void              evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
-void              evas_gl_common_line_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
-void              evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Polygon *poly);
+void              evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, RGBA_Draw_Context *dc, int x, int y, int w, int h);
+void              evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
+void              evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
+void              evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Polygon *poly);
 
-Evas_GL_Font_Texture *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);
+Evas_GL_Font_Texture *evas_gl_font_texture_new(Evas_Engine_GL_Context *gc, RGBA_Font_Glyph *fg);
 void                  evas_gl_font_texture_free(Evas_GL_Font_Texture *ft);
-void                  evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
+void                  evas_gl_font_texture_draw(Evas_Engine_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y);
 */
 
 #endif

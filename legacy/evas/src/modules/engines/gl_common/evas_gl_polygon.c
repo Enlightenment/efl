@@ -120,7 +120,7 @@ polygon_edge_sorter(const void *a, const void *b)
 }
 
 void
-evas_gl_common_poly_draw(Evas_GL_Context *gc, Evas_GL_Polygon *poly, int dx, int dy)
+evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int dx, int dy)
 {
    Cutout_Rects *rects;
    Cutout_Rect  *r;

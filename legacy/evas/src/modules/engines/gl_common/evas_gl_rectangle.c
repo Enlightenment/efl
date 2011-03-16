@@ -1,7 +1,7 @@
 #include "evas_gl_private.h"
 
 void
-evas_gl_common_rect_draw(Evas_GL_Context *gc, int x, int y, int w, int h)
+evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
 {
    Cutout_Rects *rects;
    Cutout_Rect  *r;

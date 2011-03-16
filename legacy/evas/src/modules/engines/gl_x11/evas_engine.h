@@ -82,7 +82,7 @@ struct _Evas_GL_X11_Window
    int              depth;
    int              alpha;
    int              rot;
-   Evas_GL_Context *gl_context;
+   Evas_Engine_GL_Context *gl_context;
    struct {
       int              redraw : 1;
       int              drew : 1;

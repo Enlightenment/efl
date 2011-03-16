@@ -3,7 +3,7 @@
 void *
 evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 {
-   Evas_GL_Context *gc = context;
+   Evas_Engine_GL_Context *gc = context;
    Evas_GL_Texture *tex;
    DATA8 *data;
    int w, h, j, nw;
@@ -99,7 +99,7 @@ evas_gl_font_texture_free(void *tex)
 void
 evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_context, RGBA_Font_Glyph *fg, int x, int y)
 {
-   Evas_GL_Context *gc = context;
+   Evas_Engine_GL_Context *gc = context;
    RGBA_Draw_Context *dc = draw_context;
    Evas_GL_Texture *tex;
    Cutout_Rects *rects;

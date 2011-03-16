@@ -1,7 +1,7 @@
 #include "evas_gl_private.h"
 
 void
-evas_gl_common_line_draw(Evas_GL_Context *gc, int x1, int y1, int x2, int y2)
+evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int y2)
 {
    RGBA_Draw_Context *dc;
    int r, g, b, a;

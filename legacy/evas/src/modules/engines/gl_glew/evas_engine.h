@@ -48,7 +48,7 @@ struct _Evas_GL_Glew_Window
    int              width;
    int              height;
    int              depth;
-   Evas_GL_Context *gl_context;
+   Evas_Engine_GL_Context *gl_context;
    struct {
       int           x1;
       int           y1;
