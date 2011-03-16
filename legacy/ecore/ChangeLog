@@ -81,3 +81,6 @@
 
 	* Fix detection of complete file write in ecore_file inotify.
 
+2011-03-16 Cedric Bail
+
+	* Add ecore_thread_reschedule.

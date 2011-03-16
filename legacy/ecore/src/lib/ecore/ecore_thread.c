@@ -343,6 +343,7 @@ struct _Ecore_Pthread_Worker
    Eina_Bool cancel : 1;
    Eina_Bool feedback_run : 1;
    Eina_Bool kill : 1;
+   Eina_Bool reschedule : 1;
 };
 
 #ifdef EFL_HAVE_THREADS
@@ -539,7 +540,18 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
         if (!work->cancel)
           work->u.short_run.func_blocking((void *) work->data, (Ecore_Thread*) work);
 
-        ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
+        if (work->reschedule)
+          {
+             work->reschedule = EINA_FALSE;
+
+             LKL(_ecore_pending_job_threads_mutex);
+             _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
+             LKU(_ecore_pending_job_threads_mutex);
+          }
+        else
+          {
+             ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
+          }
      }
 }
 
@@ -568,7 +580,18 @@ _ecore_feedback_job(Ecore_Pipe *end_pipe, PH(thread))
         if (!work->cancel)
           work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
 
-        ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
+        if (work->reschedule)
+          {
+             work->reschedule = EINA_FALSE;
+
+             LKL(_ecore_pending_job_threads_mutex);
+             _ecore_pending_job_threads_feedback = eina_list_append(_ecore_pending_job_threads_feedback, work);
+             LKU(_ecore_pending_job_threads_mutex);
+          }
+        else
+          {
+             ecore_pipe_write(end_pipe, &work, sizeof (Ecore_Pthread_Worker *));
+          }
      }
 }
 
@@ -845,6 +868,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->cancel = EINA_FALSE;
    work->feedback_run = EINA_FALSE;
    work->kill = EINA_FALSE;
+   work->reschedule = EINA_FALSE;
    work->data = data;
 
 #ifdef EFL_HAVE_THREADS
@@ -903,9 +927,18 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
      If no thread and as we don't want to break app that rely on this
      facility, we will lock the interface until we are done.
     */
-   func_blocking((void *)data, (Ecore_Thread *) work);
-   if (work->cancel == EINA_FALSE) func_end((void *)data, (Ecore_Thread *) work);
-   else func_end((void *)data, (Ecore_Thread *) work);
+   do {
+      /* Handle reschedule by forcing it here. That would mean locking the app,
+       * would be better with an idler, but really to complex for a case where
+       * thread should really exist.
+       */
+      work->reschedule = EINA_FALSE;
+
+      func_blocking((void *)data, (Ecore_Thread *) work);
+      if (work->cancel == EINA_FALSE) func_end((void *)data, (Ecore_Thread *) work);
+      else func_end((void *)data, (Ecore_Thread *) work);
+
+   } while (work->reschedule == EINA_TRUE);
 
    free(work);
 
@@ -1031,7 +1064,7 @@ ecore_thread_check(Ecore_Thread *thread)
  * parallel thread. You should provide four functions. The first one, func_heavy,
  * that will do the heavy work in another thread (so you should not use the
  * EFL in it except Eina and Eet if you are careful). The second one, func_notify,
- * will receive the data send from the thread function (func_heavy) by ecore_thread_notify
+ * will receive the data send from the thread function (func_heavy) by ecore_thread_feedback
  * in the main loop (and so, can use all the EFL). The third, func_end,
  * that will be called in Ecore main loop when func_heavy is done. So you
  * can use all the EFL inside this function. The last one, func_cancel, will
@@ -1073,6 +1106,8 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
    worker->cancel = EINA_FALSE;
    worker->feedback_run = EINA_TRUE;
    worker->kill = EINA_FALSE;
+   worker->reschedule = EINA_FALSE;
+
    worker->u.feedback_run.send = 0;
    worker->u.feedback_run.received = 0;
 
@@ -1164,10 +1199,14 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
    worker.feedback_run = EINA_TRUE;
    worker.kill = EINA_FALSE;
 
-   func_heavy((void *)data, (Ecore_Thread *) &worker);
+   do {
+      worker.reschedule = EINA_FALSE;
 
-   if (worker.cancel) func_cancel((void *)data, (Ecore_Thread *) &worker);
-   else func_end((void *)data, (Ecore_Thread *) &worker);
+      func_heavy((void *)data, (Ecore_Thread *) &worker);
+
+      if (worker.cancel) func_cancel((void *)data, (Ecore_Thread *) &worker);
+      else func_end((void *)data, (Ecore_Thread *) &worker);
+   } while (worker.reschedule == EINA_FALSE);
 
    return NULL;
 #endif
@@ -1205,6 +1244,32 @@ ecore_thread_feedback(Ecore_Thread *thread, const void *data)
 
    return EINA_TRUE;
 #endif
+}
+
+/**
+ * @brief Plan to recall the heavy function once it exist it.
+ * @param thread The current Ecore_Thread context to reschedule
+ * @return EINA_TRUE if data was successfully send to main loop,
+ *         EINA_FALSE if anything goes wrong.
+ *
+ * After a succesfull call, you can still do what you want in your thread, it
+ * will only reschedule it once you exit the heavy loop.
+ *
+ * You should use this function only in the func_heavy call.
+ */
+EAPI Eina_Bool
+ecore_thread_reschedule(Ecore_Thread *thread)
+{
+   Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *) thread;
+
+   if (!worker) return EINA_FALSE;
+
+#ifdef EFL_HAVE_THREADS
+   if (!PHE(worker->self, PHS())) return EINA_FALSE;
+#endif
+
+   worker->reschedule = EINA_TRUE;
+   return EINA_TRUE;
 }
 
 /**
