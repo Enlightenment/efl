@@ -1674,10 +1674,10 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    do
      {
         parent_obj = sd->parent_obj;
-        child_obj = sd->obj;
+        if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
         sd = evas_object_smart_data_get(parent_obj);
-
-        if ((!parent_obj) || (!sd) || (!_elm_widget_is(parent_obj))) break;
+        if (!sd) break;
+        child_obj = sd->obj;
 
         evas_object_geometry_get(parent_obj, &px, &py, NULL, NULL);
         evas_object_geometry_get(child_obj, &cx, &cy, NULL, NULL);
