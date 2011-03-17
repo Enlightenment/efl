@@ -1,3 +1,4 @@
+*~
 *.lo
 *.o
 *.la
@@ -49,3 +50,4 @@ tags
 /config/standard/base.cfg
 /mkinstalldirs
 /config.cache
+*.gmo
