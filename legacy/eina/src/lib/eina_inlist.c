@@ -169,6 +169,13 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
  * Inline lists have their purposes, but if you don't know what those purposes are, go with
  * regular lists instead.
  *
+ * Tip: When using inlists in more than one place (that is, passing them around
+ * functions or keeping a pointer to them in a structure) it's more correct
+ * to keep a pointer to the first container, and not a pointer to the first
+ * inlist item (mostly they are the same, but that's not always correct).
+ * This lets the compiler to do type checking and let the programmer know
+ * exactly what type this list is.
+ *
  * @code
  * #include <Eina.h>
  * #include <stdio.h>
@@ -208,15 +215,15 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
  *    printf("list=%p\n", list);
  *    for (itr = list; itr != NULL; itr = itr->next)
  *      {
- *  cur = EINA_INLIST_CONTAINER_GET(itr, struct my_struct);
- *  printf("\ta=%d, b=%d\n", cur->a, cur->b);
+ *         cur = EINA_INLIST_CONTAINER_GET(itr, struct my_struct);
+ *         printf("\ta=%d, b=%d\n", cur->a, cur->b);
  *      }
  *
  *    while (list)
  *      {
- *  Eina_Inlist *aux = list;
- *  list = eina_inlist_remove(list, list);
- *  free(aux);
+ *         Eina_Inlist *aux = list;
+ *         list = eina_inlist_remove(list, list);
+ *         free(aux);
  *      }
  *
  *    eina_shutdown();
