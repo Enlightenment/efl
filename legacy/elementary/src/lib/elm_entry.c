@@ -136,6 +136,7 @@ struct _Widget_Data
    Eina_Bool can_write : 1;
    Eina_Bool autosave : 1;
    Eina_Bool textonly : 1;
+   int cursor_pos;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -545,6 +546,9 @@ _theme_hook(Evas_Object *obj)
    eina_stringshare_del(t);
    if (elm_widget_disabled_get(obj))
       edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
+   elm_entry_cursor_pos_set(obj, wd->cursor_pos);
+   if (elm_widget_focus_get(obj))
+     edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
    edje_object_message_signal_process(wd->ent);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
@@ -1181,6 +1185,7 @@ _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emis
    evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED, NULL);
    edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
                                              &cx, &cy, &cw, &ch);
+   wd->cursor_pos = edje_object_part_text_cursor_pos_get(wd->ent, "elm.text", EDJE_CURSOR_MAIN);
    if (!wd->deferred_recalc_job)
      elm_widget_show_region_set(data, cx, cy, cw, ch);
    else
@@ -1621,11 +1626,7 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    wd->linewrap = EINA_FALSE;
    wd->char_linewrap = EINA_FALSE;
    elm_entry_cnp_textonly_set(obj, EINA_TRUE);
-   t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
-   elm_entry_entry_set(obj, t);
-   eina_stringshare_del(t);
-   _sizing_eval(obj);
+   _theme_hook(obj);
 }
 
 /**
@@ -1668,11 +1669,7 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    wd->single_line = EINA_TRUE;
    wd->linewrap = EINA_FALSE;
    wd->char_linewrap = EINA_FALSE;
-   t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
-   elm_entry_entry_set(obj, t);
-   eina_stringshare_del(t);
-   _sizing_eval(obj);
+   _theme_hook(obj);
 }
 
 
@@ -1846,11 +1843,7 @@ elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    wd->linewrap = wrap;
    if(wd->linewrap)
        wd->char_linewrap = EINA_FALSE;
-   t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
-   elm_entry_entry_set(obj, t);
-   eina_stringshare_del(t);
-   _sizing_eval(obj);
+   _theme_hook(obj);
 }
 
 /**
@@ -1876,11 +1869,7 @@ elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
    wd->char_linewrap = wrap;
    if(wd->char_linewrap)
        wd->linewrap = EINA_FALSE;
-   t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
-   elm_entry_entry_set(obj, t);
-   eina_stringshare_del(t);
-   _sizing_eval(obj);
+   _theme_hook(obj);
 }
 
 /**
@@ -1901,11 +1890,7 @@ elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
    if (!wd) return;
    if (wd->editable == editable) return;
    wd->editable = editable;
-   t = eina_stringshare_add(elm_entry_entry_get(obj));
-   _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
-   elm_entry_entry_set(obj, t);
-   eina_stringshare_del(t);
-   _sizing_eval(obj);
+   _theme_hook(obj);
 
 #ifdef HAVE_ELEMENTARY_X
    if (editable)
@@ -2238,6 +2223,7 @@ elm_entry_cursor_pos_set(Evas_Object *obj, int pos)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_part_text_cursor_pos_set(wd->ent, "elm.text", EDJE_CURSOR_MAIN, pos);
+   edje_object_message_signal_process(wd->ent);
 }
 
 /**
