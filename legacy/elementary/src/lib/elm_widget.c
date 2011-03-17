@@ -1589,7 +1589,7 @@ elm_widget_focus_steal(Evas_Object *obj)
      {
 	parent = elm_widget_parent_get(parent);
 	sd = evas_object_smart_data_get(parent);
-        if (sd->resize_obj && elm_widget_focus_get(sd->resize_obj))
+        if ((sd->resize_obj) && (elm_widget_focus_get(sd->resize_obj)))
           elm_widget_focused_object_clear(sd->resize_obj);
         else
 	  {
