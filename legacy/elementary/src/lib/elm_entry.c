@@ -1619,7 +1619,6 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *t;
    if (!wd) return;
    if (wd->single_line == single_line) return;
    wd->single_line = single_line;
@@ -1662,7 +1661,6 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *t;
    if (!wd) return;
    if (wd->password == password) return;
    wd->password = password;
@@ -1837,7 +1835,6 @@ elm_entry_line_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *t;
    if (!wd) return;
    if (wd->linewrap == wrap) return;
    wd->linewrap = wrap;
@@ -1863,7 +1860,6 @@ elm_entry_line_char_wrap_set(Evas_Object *obj, Eina_Bool wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *t;
    if (!wd) return;
    if (wd->char_linewrap == wrap) return;
    wd->char_linewrap = wrap;
@@ -1886,7 +1882,6 @@ elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const char *t;
    if (!wd) return;
    if (wd->editable == editable) return;
    wd->editable = editable;
