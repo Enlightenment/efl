@@ -824,6 +824,8 @@ _item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon)
      }
 
    item->icon = icon;
+   if (!icon) return;
+
    edje_object_part_swallow(item->base.view, "elm.swallow.icon", item->icon);
    edje_object_message_signal_process(item->base.view);
 }
