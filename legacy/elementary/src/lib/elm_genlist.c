@@ -1617,9 +1617,7 @@ _item_cache_free(Item_Cache *itc)
 }
 
 static void
-_item_realize(Elm_Genlist_Item *it,
-              int               in,
-              int               calc)
+_item_realize(Elm_Genlist_Item *it, int in, Eina_Bool calc)
 {
    Elm_Genlist_Item *it2;
    const char *stacking;
@@ -1930,18 +1928,18 @@ _item_block_recalc(Item_Block *itb,
                   if (!it->mincalcd) changed = EINA_TRUE;
                   if (changed)
                     {
-                       _item_realize(it, in, 1);
+                       _item_realize(it, in, EINA_TRUE);
                        _item_unrealize(it);
                     }
                }
              else
                {
-                  _item_realize(it, in, 1);
+                  _item_realize(it, in, EINA_TRUE);
                   _item_unrealize(it);
                }
           }
         else
-          _item_realize(it, in, 0);
+          _item_realize(it, in, EINA_FALSE);
         minh += it->minh;
         if (minw < it->minw) minw = it->minw;
         in++;
@@ -1969,7 +1967,7 @@ _item_block_realize(Item_Block *itb,
    EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->delete_me) continue;
-        if (full) _item_realize(it, in, 0);
+        if (full) _item_realize(it, in, EINA_FALSE);
         in++;
      }
    itb->realized = EINA_TRUE;
@@ -2034,7 +2032,7 @@ _item_block_position(Item_Block *itb,
           {
              if ((itb->realized) && (!it->realized))
                {
-                  if (vis) _item_realize(it, in, 0);
+                  if (vis) _item_realize(it, in, EINA_FALSE);
                }
              if (it->realized)
                {
@@ -2081,7 +2079,7 @@ _group_items_recalc(void *data)
         if (git->want_realize)
           {
              if (!git->realized)
-                _item_realize(git, 0, 0);
+                _item_realize(git, 0, EINA_FALSE);
              evas_object_resize(git->base.view, wd->minw, git->h);
              evas_object_move(git->base.view, git->scrl_x, git->scrl_y);
              evas_object_show(git->base.view);
@@ -2270,12 +2268,12 @@ _update_job(void *data)
                 if (it->realized)
                   {
                      _item_unrealize(it);
-                     _item_realize(it, num, 0);
+                     _item_realize(it, num, EINA_FALSE);
                      position = 1;
                   }
                 else
                   {
-                     _item_realize(it, num, 1);
+                     _item_realize(it, num, EINA_TRUE);
                      _item_unrealize(it);
                   }
                 if ((it->minw != itminw) || (it->minh != itminh))
