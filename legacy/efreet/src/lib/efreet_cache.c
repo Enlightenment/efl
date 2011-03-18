@@ -1262,7 +1262,7 @@ desktop_cache_update_free(void *data, void *ev)
         EINA_ITERATOR_FOREACH(it, tuple)
         {
             if (tuple->data == NON_EXISTING) continue;
-            ERR("Efreet: %d:%s still in cache on cache close!",
+            ERR("%d:%s still in cache on cache close!",
                 ((Efreet_Desktop *)tuple->data)->ref, (char *)tuple->key);
             dangling++;
         }
@@ -1281,7 +1281,7 @@ desktop_cache_update_free(void *data, void *ev)
     else
     {
         /* TODO: Keep in old_desktop_caches, as we might close ref later */
-        ERR("Efreet: ERROR. There are still %i desktop files with old\n"
+        ERR("There are still %i desktop files with old\n"
                "dangling references to desktop files. This application\n"
                "has not handled the EFREET_EVENT_DESKTOP_CACHE_UPDATE\n"
                "fully and released its references. Please fix the application\n"
