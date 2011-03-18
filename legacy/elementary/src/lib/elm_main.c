@@ -1985,7 +1985,7 @@ elm_cache_flush_interval_all_set(int size)
  * @see elm_all_flush()
  */
 EAPI Eina_Bool
-elm_cache_flush_enmabled_get(void)
+elm_cache_flush_enabled_get(void)
 {
    return _elm_config->cache_flush_enable;
 }

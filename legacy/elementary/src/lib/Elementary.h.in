@@ -254,7 +254,7 @@ extern "C" {
    EAPI int          elm_cache_flush_interval_get(void);
    EAPI void         elm_cache_flush_interval_set(int size);
    EAPI void         elm_cache_flush_interval_all_set(int size);
-   EAPI Eina_Bool    elm_cache_flush_enmabled_get(void);
+   EAPI Eina_Bool    elm_cache_flush_enabled_get(void);
    EAPI void         elm_cache_flush_enabled_set(Eina_Bool enabled);
    EAPI void         elm_cache_flush_enabled_all_set(Eina_Bool enabled);
    EAPI int          elm_font_cache_get(void);

@@ -362,7 +362,7 @@ cf_enable(void *data,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   Eina_Bool cf = elm_cache_flush_enmabled_get();
+   Eina_Bool cf = elm_cache_flush_enabled_get();
    Eina_Bool val = elm_check_state_get(obj); 
 
    if (cf == val) return;
@@ -2724,13 +2724,13 @@ _status_config_caches(Evas_Object *win,
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 8.0, 4096.0);
    elm_slider_value_set(sl, elm_cache_flush_interval_get());
-   elm_object_disabled_set(sl, !elm_cache_flush_enmabled_get());
+   elm_object_disabled_set(sl, !elm_cache_flush_enabled_get());
 
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_check_label_set(ck, "Enable Flushing");
-   elm_check_state_set(ck, elm_cache_flush_enmabled_get());
+   elm_check_state_set(ck, elm_cache_flush_enabled_get());
    evas_object_smart_callback_add(ck, "changed", cf_enable, sl);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
