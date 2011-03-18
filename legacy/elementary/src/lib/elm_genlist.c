@@ -198,7 +198,7 @@
  * handle that is an internal member inside the genlist. They all take a data
  * parameter that is meant to be used for a handle to the applications
  * internal data (eg the struct with the original item data). The parent
- * parameter is the parent genlist item this belongs to if it is a tree or 
+ * parameter is the parent genlist item this belongs to if it is a tree or
  * an indexed group, and NULL if there is no parent. The flags can be a bitmask
  * of ELM_GENLIST_ITEM_NONE, ELM_GENLIST_ITEM_SUBITEMS and
  * ELM_GENLIST_ITEM_GROUP. If ELM_GENLIST_ITEM_SUBITEMS is set then this item
@@ -1906,7 +1906,7 @@ _item_unrealize(Elm_Genlist_Item *it)
    it->want_unrealize = EINA_FALSE;
 }
 
-static Eina_Bool 
+static Eina_Bool
 _item_block_recalc(Item_Block *itb,
                    int         in,
                    int         qadd,
@@ -2078,7 +2078,7 @@ _group_items_recalc(void *data)
 
    EINA_LIST_FOREACH(wd->group_items, l, git)
      {
-        if (git->want_realize) 
+        if (git->want_realize)
           {
              if (!git->realized)
                 _item_realize(git, 0, 0);
@@ -2089,7 +2089,7 @@ _group_items_recalc(void *data)
           }
         else if (!git->want_realize && git->realized)
           {
-             if (!git->dragging) 
+             if (!git->dragging)
                 _item_unrealize(git);
           }
      }
@@ -2947,7 +2947,7 @@ elm_genlist_item_append(Evas_Object                  *obj,
    if (!it->parent)
      {
         if (flags & ELM_GENLIST_ITEM_GROUP)
-           wd->group_items = eina_list_append(wd->group_items, it);
+          wd->group_items = eina_list_append(wd->group_items, it);
         wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(it));
         it->rel = NULL;
      }
@@ -2959,15 +2959,15 @@ elm_genlist_item_append(Evas_Object                  *obj,
         it->parent->items = eina_list_append(it->parent->items, it);
         if (!it2) it2 = it->parent;
         wd->items =
-          eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
-                                      EINA_INLIST_GET(it2));
+           eina_inlist_append_relative(wd->items, EINA_INLIST_GET(it),
+                                       EINA_INLIST_GET(it2));
         it->rel = it2;
         it->rel->relcount++;
 
-        if (it->parent->flags & ELM_GENLIST_ITEM_GROUP) 
-           it->group_item = parent;
+        if (it->parent->flags & ELM_GENLIST_ITEM_GROUP)
+          it->group_item = parent;
         else if (it->parent->group_item)
-           it->group_item = it->parent->group_item;
+          it->group_item = it->parent->group_item;
      }
    it->before = EINA_FALSE;
    _item_queue(wd, it);
@@ -3169,7 +3169,7 @@ elm_genlist_clear(Evas_Object *obj)
           it->wd->group_items = eina_list_remove(it->wd->group_items, it);
         elm_widget_item_pre_notify_del(it);
         if (it->realized) _item_unrealize(it);
-        if (((wd->clear_me) || (!it->delete_me)) && (it->itc->func.del)) 
+        if (((wd->clear_me) || (!it->delete_me)) && (it->itc->func.del))
           it->itc->func.del((void *)it->base.data, it->base.widget);
         if (it->long_timer) ecore_timer_del(it->long_timer);
         if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
@@ -3832,7 +3832,7 @@ EAPI void
 elm_genlist_item_bring_in(Elm_Genlist_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   Evas_Coord gith = 0; 
+   Evas_Coord gith = 0;
    if (it->delete_me) return;
    if ((it->queued) || (!it->mincalcd))
      {
