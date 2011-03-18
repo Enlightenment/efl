@@ -203,12 +203,12 @@ PKG_CHECK_MODULES([ELEMENTARY],
    [
     eina >= 1.0.0
     eet >= 1.4.0
-    evas >= 1.0.99
+    evas >= 1.0.999
     ecore >= 1.0.0
     ecore-evas >= 1.0.0
     ecore-file >= 1.0.0
     ecore-imf >= 1.0.0
-    edje >= 1.0.99
+    edje >= 1.0.999
    ]
 )
 
