@@ -41,7 +41,7 @@
  * or a lib should manage. Then, when an error can occur, use
  * eina_error_set(), and when errors are managed, use
  * eina_error_get(). If eina_error_set() is used to set an error, do
- * not forget to call before eina_error_set0), to remove previous set
+ * not forget to call before eina_error_set(), to remove previous set
  * errors.
  *
  * Here is an example of use:
@@ -149,6 +149,7 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_error.h"
+#include "eina_stringshare.h"
 
 /* TODO
  * + add a wrapper for assert?
@@ -269,7 +270,7 @@ eina_error_shutdown(void)
 
    for (; eem < eem_end; eem++)
       if (eem->string_allocated)
-         free((char *)eem->string);
+         eina_stringshare_del(eem->string);
 
          free(_eina_errors);
    _eina_errors = NULL;
@@ -303,7 +304,7 @@ eina_error_shutdown(void)
  * @brief Register a new error type.
  *
  * @param msg The description of the error. It will be duplicated using
- *        strdup().
+ *        eina_stringshare_add().
  * @return The unique number identifier for this error.
  *
  * This function stores in a list the error message described by
@@ -325,7 +326,7 @@ eina_error_msg_register(const char *msg)
       return 0;
 
    eem->string_allocated = EINA_TRUE;
-   eem->string = strdup(msg);
+   eem->string = eina_stringshare_add(msg);
    if (!eem->string)
      {
         _eina_errors_count--;
@@ -378,7 +379,7 @@ eina_error_msg_static_register(const char *msg)
  * This function modifies the message associated with @p error and changes
  * it to @p msg.  If the error was previously registered by @ref eina_error_msg_static_register
  * then the string will not be duplicated, otherwise the previous message
- * will be freed and @p msg copied.
+ * will be unrefed and @p msg copied.
  *
  * @see eina_error_msg_register()
  */
@@ -396,10 +397,10 @@ eina_error_msg_modify(Eina_Error error, const char *msg)
      {
         const char *tmp;
 
-        if (!(tmp = strdup(msg)))
+        if (!(tmp = eina_stringshare_add(msg)))
            return EINA_FALSE;
 
-        free((void *)_eina_errors[error - 1].string);
+        eina_stringshare_del(_eina_errors[error - 1].string);
         _eina_errors[error - 1].string = tmp;
         return EINA_TRUE;
      }

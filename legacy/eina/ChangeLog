@@ -32,3 +32,7 @@
 
 	* Fix stat failure when file size in bytes or the number of blocks
 	allocated to the file or the file serial number didn't fit in 32bits.
+
+2011-03-18  Mike Blumenkrantz
+
+        * Use stringshare for eina_error messages
