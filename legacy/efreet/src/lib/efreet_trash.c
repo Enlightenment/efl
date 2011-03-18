@@ -319,8 +319,8 @@ efreet_trash_ls(void)
     files = ecore_file_ls(buf);
 
     if (eina_log_domain_level_check(_efreet_trash_log_dom, EINA_LOG_LEVEL_INFO))
-      EINA_LIST_FOREACH(files, l, infofile)
-          INF("FILE: %s\n", infofile);
+        EINA_LIST_FOREACH(files, l, infofile)
+            INF("FILE: %s\n", infofile);
 
     return files;
 }

@@ -307,7 +307,7 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
             inherit = eina_hash_find(icon_themes, name);
             if (!inherit)
                 INF("Theme `%s` not found for `%s`.",
-                        name, theme->name.internal);
+                    name, theme->name.internal);
             if (!cache_scan(inherit, themes, icons, dirs, changed)) return EINA_FALSE;
         }
     }
@@ -680,8 +680,8 @@ main(int argc, char **argv)
 
     /* init external subsystems */
     if (!eina_init()) return -1;
-    _efreet_icon_cache_log_dom = eina_log_domain_register
-      ("efreet_icon_cache", EFREET_DEFAULT_LOG_COLOR);
+    _efreet_icon_cache_log_dom =
+        eina_log_domain_register("efreet_icon_cache", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_icon_cache_log_dom < 0)
     {
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_icon_cache.");
@@ -696,7 +696,7 @@ main(int argc, char **argv)
     for (i = 1; i < argc; i++)
     {
         if (!strcmp(argv[i], "-v"))
-          eina_log_domain_level_set("efreet_icon_cache", EINA_LOG_LEVEL_DBG);
+            eina_log_domain_level_set("efreet_icon_cache", EINA_LOG_LEVEL_DBG);
         else if ((!strcmp(argv[i], "-h")) ||
                  (!strcmp(argv[i], "-help")) ||
                  (!strcmp(argv[i], "--h")) ||
@@ -880,9 +880,9 @@ main(int argc, char **argv)
         if (cache_scan(&(theme->theme), themes, icons, theme->dirs, &changed))
         {
             INF("generated: '%s' %i (%i)",
-                        theme->theme.name.internal,
-                        changed,
-                        eina_hash_population(icons));
+                theme->theme.name.internal,
+                changed,
+                eina_hash_population(icons));
             if (changed)
             {
                 Eina_Iterator *icons_it;
@@ -1027,6 +1027,7 @@ on_error:
 
     ecore_shutdown();
     eet_shutdown();
+    eina_log_domain_unregister(_efreet_icon_cache_log_dom);
     eina_shutdown();
 
     return 0;
