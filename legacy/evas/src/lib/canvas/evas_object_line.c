@@ -280,7 +280,7 @@ evas_object_line_free(Evas_Object *obj)
    MAGIC_CHECK_END();
    /* free obj */
    o->magic = 0;
-   free(o);
+   EVAS_MEMPOOL_FREE(_mp_obj, o);
 }
 
 static void
