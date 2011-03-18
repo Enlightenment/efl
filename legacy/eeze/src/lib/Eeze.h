@@ -205,6 +205,7 @@ typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Ud
    EAPI const char      *eeze_udev_syspath_get_parent(const char *syspath);
    EAPI Eina_List       *eeze_udev_syspath_get_parents(const char *syspath);
    EAPI const char      *eeze_udev_syspath_get_devpath(const char *syspath);
+   EAPI const char      *eeze_udev_syspath_get_devname(const char *syspath);
    EAPI const char      *eeze_udev_syspath_get_subsystem(const char *syspath);
    EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const char *property);
    EAPI const char      *eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr);

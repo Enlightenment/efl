@@ -1,4 +1,7 @@
 2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
++eeze_udev_syspath_get_devname, added from patch sent by Clement Battin
+
+2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
 +EEZE_UDEV_TYPE_NET, added from patch sent by Clement Battin
 
 2011-03-03  Mike Blumenkrantz (discomfitor/zmike)

@@ -102,6 +102,34 @@ eeze_udev_syspath_get_devpath(const char *syspath)
 }
 
 /**
+ * Get the /dev/ name from the /sys/ path.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @return A stringshared char* of the device name without the /dev/ path, or NULL on failure
+ *
+ * Takes /sys/$PATH and turns it into the corresponding /dev/x/"y".
+ */
+EAPI const char *
+eeze_udev_syspath_get_devname(const char *syspath)
+{
+   _udev_device *device;
+   const char *name = NULL;
+
+   if (!syspath)
+     return NULL;
+
+   if (!(device = _new_device(syspath)))
+     return NULL;
+
+   if (!(name = udev_device_get_sysname(device)))
+     return NULL;
+
+   name = eina_stringshare_add(name);
+   udev_device_unref(device);
+   return name;
+}
+
+/**
  * Get the subsystem of a device from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
