@@ -802,7 +802,7 @@ _cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    /* Store it */
    wd->selmode = EINA_FALSE;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
    elm_widget_scroll_hold_pop(data);
    _store_selection(ELM_SEL_CLIPBOARD, data);
@@ -816,7 +816,7 @@ _copy(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->selmode = EINA_FALSE;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
    elm_widget_scroll_hold_pop(data);
    _store_selection(ELM_SEL_CLIPBOARD, data);
@@ -829,7 +829,7 @@ _cancel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->selmode = EINA_FALSE;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+   edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
    elm_widget_scroll_hold_pop(data);
    edje_object_part_text_select_none(wd->ent, "elm.text");
@@ -912,7 +912,7 @@ _long_press(void *data)
              evas_object_show(wd->hoversel);
              elm_hoversel_hover_begin(wd->hoversel);
           }
-        edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+        edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
         edje_object_part_text_select_abort(wd->ent, "elm.text");
      }
    wd->longpress_timer = NULL;
@@ -1930,7 +1930,7 @@ elm_entry_select_none(Evas_Object *obj)
    if (wd->selmode)
      {
 	wd->selmode = EINA_FALSE;
-	edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+	edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
 	edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_FALSE;
@@ -1953,7 +1953,7 @@ elm_entry_select_all(Evas_Object *obj)
    if (wd->selmode)
      {
 	wd->selmode = EINA_FALSE;
-	edje_object_part_text_select_allow_set(wd->ent, "elm.text", 0);
+	edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
 	edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_TRUE;
