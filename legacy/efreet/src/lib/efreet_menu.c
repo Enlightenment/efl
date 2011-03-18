@@ -475,7 +475,7 @@ efreet_menu_init(void)
       ("efreet_menu", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_menu_log_dom < 0)
     {
-        ERR("Efreet: Could not create a log domain for efreet_menu");
+        EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_menu");
         return 0;
     }
 

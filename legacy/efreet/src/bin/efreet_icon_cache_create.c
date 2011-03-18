@@ -16,7 +16,8 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
-#define EFREET_MODULE_LOG_DOM /* no logging in this file */
+#define EFREET_MODULE_LOG_DOM _efreet_icon_cache_log_dom
+static int _efreet_icon_cache_log_dom = -1;
 
 #include "Efreet.h"
 #include "efreet_private.h"
@@ -34,7 +35,6 @@ static Eina_Array *exts = NULL;
 static Eina_Array *extra_dirs = NULL;
 static Eina_Array *strs = NULL;
 static Eina_Hash *icon_themes = NULL;
-static int verbose = 0;
 
 static Eina_Bool
 cache_directory_find(Eina_Hash *dirs, const char *dir)
@@ -305,8 +305,8 @@ cache_scan(Efreet_Icon_Theme *theme, Eina_Hash *themes, Eina_Hash *icons, Eina_H
             Efreet_Icon_Theme *inherit;
 
             inherit = eina_hash_find(icon_themes, name);
-            if (!inherit && verbose)
-                fprintf(stderr, "Theme `%s` not found for `%s`.\n",
+            if (!inherit)
+                INF("Theme `%s` not found for `%s`.",
                         name, theme->name.internal);
             if (!cache_scan(inherit, themes, icons, dirs, changed)) return EINA_FALSE;
         }
@@ -336,8 +336,8 @@ check_changed(Efreet_Cache_Icon_Theme *theme)
             Efreet_Cache_Icon_Theme *inherit;
 
             inherit = eina_hash_find(icon_themes, name);
-            if (!inherit && verbose)
-                fprintf(stderr, "Theme `%s` not found for `%s`.\n",
+            if (!inherit)
+                INF("Theme `%s` not found for `%s`.",
                         name, theme->theme.name.internal);
             if (check_changed(inherit)) return EINA_TRUE;
         }
@@ -627,7 +627,7 @@ cache_lock_file(void)
     fl.l_whence = SEEK_SET;
     if (fcntl(lockfd, F_SETLK, &fl) < 0)
     {
-        if (verbose) printf("LOCKED! You may want to delete %s if this persists\n", file);
+        WRN("LOCKED! You may want to delete %s if this persists", file);
         close(lockfd);
         return -1;
     }
@@ -680,13 +680,23 @@ main(int argc, char **argv)
 
     /* init external subsystems */
     if (!eina_init()) return -1;
+    _efreet_icon_cache_log_dom = eina_log_domain_register
+      ("efreet_icon_cache", EFREET_DEFAULT_LOG_COLOR);
+    if (_efreet_icon_cache_log_dom < 0)
+    {
+        EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_icon_cache.");
+        return -1;
+    }
+
+    eina_log_domain_level_set("efreet_icon_cache", EINA_LOG_LEVEL_ERR);
 
     exts = eina_array_new(10);
     extra_dirs = eina_array_new(10);
 
     for (i = 1; i < argc; i++)
     {
-        if      (!strcmp(argv[i], "-v")) verbose = 1;
+        if (!strcmp(argv[i], "-v"))
+          eina_log_domain_level_set("efreet_icon_cache", EINA_LOG_LEVEL_DBG);
         else if ((!strcmp(argv[i], "-h")) ||
                  (!strcmp(argv[i], "-help")) ||
                  (!strcmp(argv[i], "--h")) ||
@@ -711,7 +721,7 @@ main(int argc, char **argv)
     }
     if (exts->count == 0)
     {
-        printf("Error: Need to pass extensions to icon cache create process\n");
+        ERR("Error: Need to pass extensions to icon cache create process");
         return -1;
     }
 
@@ -743,6 +753,7 @@ main(int argc, char **argv)
 
     icon_themes = eina_hash_string_superfast_new(EINA_FREE_CB(icon_theme_free));
 
+    INF("opening theme cache");
     /* open theme file */
     theme_ef = eet_open(efreet_icon_theme_cache_file(), EET_FILE_MODE_READ_WRITE);
     if (!theme_ef) goto on_error_efreet;
@@ -778,6 +789,7 @@ main(int argc, char **argv)
         free(keys);
     }
 
+    INF("scan for themes");
     /* scan themes */
     cache_theme_scan(efreet_icon_deprecated_user_dir_get());
     cache_theme_scan(efreet_icon_user_dir_get());
@@ -809,10 +821,12 @@ main(int argc, char **argv)
 #ifndef STRICT_SPEC
         if (!theme->theme.name.name) continue;
 #endif
+        INF("scan theme %s", theme->theme.name.name);
 
         changed = EINA_FALSE;
         themes = eina_hash_string_superfast_new(NULL);
 
+        INF("open icon file");
         /* open icon file */
         icon_ef = eet_open(efreet_icon_cache_file(theme->theme.name.internal), EET_FILE_MODE_READ_WRITE);
         if (!icon_ef) goto on_error_efreet;
@@ -862,10 +876,10 @@ main(int argc, char **argv)
         if (!theme->dirs)
             theme->dirs = eina_hash_string_superfast_new(NULL);
 
+        INF("scan icons\n");
         if (cache_scan(&(theme->theme), themes, icons, theme->dirs, &changed))
         {
-            if (verbose)
-                fprintf(stderr, "generated: '%s' %i (%i)\n",
+            INF("generated: '%s' %i (%i)",
                         theme->theme.name.internal,
                         changed,
                         eina_hash_population(icons));
@@ -886,8 +900,8 @@ main(int argc, char **argv)
 
         if (changed)
         {
-            if (theme->changed && verbose)
-                fprintf(stderr, "theme change: %s %lld\n", theme->theme.name.internal, theme->last_cache_check);
+            if (theme->changed)
+                INF("theme change: %s %lld", theme->theme.name.internal, theme->last_cache_check);
             eet_data_write(theme_ef, theme_edd, theme->theme.name.internal, theme, 1);
         }
 
@@ -901,6 +915,7 @@ main(int argc, char **argv)
 
     changed = EINA_FALSE;
 
+    INF("open fallback file");
     /* open icon file */
     icon_ef = eet_open(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EET_FILE_MODE_READ_WRITE);
     if (!icon_ef) goto on_error_efreet;
@@ -950,11 +965,11 @@ main(int argc, char **argv)
     if (!theme->dirs)
         theme->dirs = eina_hash_string_superfast_new(NULL);
 
+    INF("scan fallback icons");
     /* Save fallback in the right part */
     if (cache_fallback_scan(icons, theme->dirs, &changed))
     {
-        if (verbose)
-            fprintf(stderr, "generated: fallback %i (%i)\n", changed, eina_hash_population(icons));
+            WRN("generated: fallback %i (%i)", changed, eina_hash_population(icons));
         if (changed)
         {
             Eina_Iterator *icons_it;
@@ -997,6 +1012,7 @@ main(int argc, char **argv)
         }
     }
 
+    INF("done");
 on_error_efreet:
     efreet_shutdown();
 

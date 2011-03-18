@@ -77,3 +77,7 @@
 	* Delay cache recreation with a timer
 	* Move desktop cache to efreet_cache.c, and cache all requests which
 	  hit the eet cache
+
+2011-03-18  Mike Blumenkrantz
+
+        * Use eina_log more effectively

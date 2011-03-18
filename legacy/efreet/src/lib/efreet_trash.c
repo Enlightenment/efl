@@ -45,7 +45,7 @@ efreet_trash_init(void)
       ("efreet_trash", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_trash_log_dom < 0)
     {
-        ERR("Efreet: Could not create a log domain for efreet_trash");
+        EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_trash");
         eina_shutdown();
         return --_efreet_trash_init_count;
     }
@@ -318,8 +318,9 @@ efreet_trash_ls(void)
     snprintf(buf, sizeof(buf), "%s/files", efreet_trash_dir_get(NULL));
     files = ecore_file_ls(buf);
 
-    EINA_LIST_FOREACH(files, l, infofile)
-        printf("FILE: %s\n", infofile);
+    if (eina_log_domain_level_check(_efreet_trash_log_dom, EINA_LOG_LEVEL_INFO))
+      EINA_LIST_FOREACH(files, l, infofile)
+          INF("FILE: %s\n", infofile);
 
     return files;
 }
