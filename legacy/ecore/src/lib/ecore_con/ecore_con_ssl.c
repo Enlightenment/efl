@@ -547,7 +547,7 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
           SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_credentials_set(svr->session, GNUTLS_CRD_ANON, svr->anoncred_c));
 
         gnutls_dh_set_prime_bits(svr->session, 512);
-        gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)svr->fd);
+        gnutls_transport_set_ptr(svr->session, (gnutls_transport_ptr_t)((intptr_t)svr->fd));
         svr->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
 
       case ECORE_CON_SSL_STATE_HANDSHAKING:
@@ -848,7 +848,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
         gnutls_certificate_server_set_request(cl->session, GNUTLS_CERT_REQUEST);
 
         gnutls_dh_set_prime_bits(cl->session, 2048);
-        gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)cl->fd);
+        gnutls_transport_set_ptr(cl->session, (gnutls_transport_ptr_t)((intptr_t)cl->fd));
         cl->ssl_state = ECORE_CON_SSL_STATE_HANDSHAKING;
 
       case ECORE_CON_SSL_STATE_HANDSHAKING:
