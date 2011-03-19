@@ -179,3 +179,11 @@
 2011-03-18  Jiyoun Park
 
 	* Fix wrong call to free when using mempool for Evas_Object.
+
+2011-03-19  Carsten Haitzler (The Rasterman)
+
+	* Caching and timestamp checker for image files made much more
+        pedantic and it checks not just modified timestamp but also
+        inode number, size, and on linux, the nanonsecond resolution
+        timestamp as well.
+

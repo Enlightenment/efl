@@ -12,6 +12,10 @@
 #include <Eina.h>
 #include "Evas.h"
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 /* macros needed to log message through eina_log */
 extern EAPI int _evas_log_dom_global;
 #ifdef  _EVAS_DEFAULT_LOG_DOM
@@ -395,6 +399,7 @@ typedef unsigned char                   DATA8;
 
 typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags	Image_Entry_Flags;
+typedef struct _Image_Timestamp         Image_Timestamp;
 typedef struct _Engine_Image_Entry      Engine_Image_Entry;
 typedef struct _Evas_Cache_Target       Evas_Cache_Target;
 typedef struct _Evas_Preload_Pthread    Evas_Preload_Pthread;
@@ -541,6 +546,16 @@ struct _Evas_Cache_Target
   void *data;
 };
 
+struct _Image_Timestamp
+{
+   time_t mtime;
+   off_t  size;
+   ino_t  ino;
+#ifdef _STAT_VER_LINUX
+   unsigned long int mtime_nsec;
+#endif   
+};
+
 struct _Image_Entry
 {
    EINA_INLIST;
@@ -553,10 +568,9 @@ struct _Image_Entry
    const char            *key;
 
    Evas_Cache_Target     *targets;
-   Evas_Preload_Pthread   *preload;
+   Evas_Preload_Pthread  *preload;
 
-   time_t                 timestamp;
-   time_t                 laststat;
+   Image_Timestamp        tstamp;
 
    int                    references;
 #ifdef EVAS_FRAME_QUEUING
