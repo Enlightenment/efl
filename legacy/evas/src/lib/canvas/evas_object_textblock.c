@@ -2171,6 +2171,8 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
      }
 
    if (v_to_l) free(v_to_l);
+#else
+   line = NULL;
 #endif
 }
 

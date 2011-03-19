@@ -376,6 +376,7 @@ evas_common_soft16_line_draw(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, i
    int dx, dy;
    int  x, y, w, h;
 
+   c_tmp.mask = NULL;
    c_tmp.use = 1;
    c_tmp.x = 0;
    c_tmp.y = 0;

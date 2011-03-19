@@ -1,6 +1,7 @@
 // THIS IS DEPRECATED. WILL GO EVENTUALLTY. NO NEED TO SUPPORT ANYMORE
 
 #include "evas_common.h"
+#include <unistd.h>
 
 #ifdef BUILD_PIPE_RENDER
 
