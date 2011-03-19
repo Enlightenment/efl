@@ -317,20 +317,50 @@ eng_window_new(Display *disp,
              fprintf(stderr, "renderer: %s\n", renderer);
              fprintf(stderr, "version: %s\n", version);
           }
-        if (strstr((const char*)vendor, "NVIDIA"))
-           // FIXME: also same as tegra2 - maybe check renderer too
-           // 
-           // vendor: NVIDIA Corporation
-           // renderer: NVIDIA Tegra
-           // version: OpenGL ES 2.0
-           // 
-           // vs (for example)
-           // 
-           // vendor: NVIDIA Corporation
-           // renderer: GeForce GT 220/PCI/SSE2
-           // version: 3.2.0 NVIDIA 195.36.24
+        //   examples:
+        // vendor: NVIDIA Corporation
+        // renderer: NVIDIA Tegra
+        // version: OpenGL ES 2.0
+        //   or
+        // vendor: NVIDIA Corporation
+        // renderer: GeForce GT 330M/PCI/SSE2
+        // version: 3.3.0 NVIDIA 256.53
+        //   or
+        // vendor: NVIDIA Corporation
+        // renderer: GeForce GT 220/PCI/SSE2
+        // version: 3.2.0 NVIDIA 195.36.24
+        //   or
+        // vendor: NVIDIA Corporation
+        // renderer: GeForce 8600 GTS/PCI/SSE2
+        // version: 3.3.0 NVIDIA 260.19.36
+        //   or
+        // vendor: ATI Technologies Inc.
+        // renderer: ATI Mobility Radeon HD 4650
+        // version: 3.2.9756 Compatibility Profile Context
+        //   or
+        // vendor: Tungsten Graphics, Inc
+        // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT x86/MMX/SSE2
+        // version: 2.1 Mesa 7.9-devel
+        if (strstr((const char *)vendor, "NVIDIA"))
           {
-             gw->detected.loose_binding = 1;
+             if (!strstr((const char *)renderer, "NVIDIA Tegra"))
+               {
+                  int v1 = 0, v2 = 0, v3 = 0;
+
+                  if (sscanf((const char *)version, 
+                             "%*s %*s %i.%i.%i",
+                             &v1, &v2, &v3) != 3)
+                    {
+                       v1 = v2 = v3 = 0;
+                       if (sscanf((const char *)version, 
+                                  "%*s %*s %i.%i",
+                                  &v1, &v2) != 2)
+                          v1 = 0;
+                    }
+                  // ALSO as of some nvidia driver version loose binding is
+                  // probably not needed
+                  if (v1 < 195) gw->detected.loose_binding = 1;
+               }
           }
         else
           {
