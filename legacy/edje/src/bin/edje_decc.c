@@ -142,6 +142,8 @@ decomp(void)
 	eet_close(ef);
 	return 0;
      }
+   /* force compiler to be edje_cc */
+   edje_file->compiler = strdup("edje_cc");
    if (!edje_file->compiler)
      {
 	edje_file->compiler = strdup("edje_cc");

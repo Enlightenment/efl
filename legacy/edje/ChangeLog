@@ -61,3 +61,8 @@
 
 	* Add PROXY part.
 
+2011-03-19  Carsten Haitzler (The Rasterman)
+
+	* Change edje_decc to only use edje_cc as the compiler for security
+        and correctness reasons.
+
