@@ -48,7 +48,7 @@ URL: http://www.enlightenment.org
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel, XFree86-devel, libX11-devel
+#BuildSuggests: xorg-x11-devel, XFree86-devel, libX11-devel, c-ares-devel
 BuildRequires: libjpeg-devel, openssl-devel %{?breq_lib_ecore_directfb}
 BuildRequires: curl-devel, evas-devel, eet-devel %{?breq_lib_ecore_sdl}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
