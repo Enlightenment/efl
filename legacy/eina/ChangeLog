@@ -36,3 +36,4 @@
 2011-03-18  Mike Blumenkrantz
 
         * Use stringshare for eina_error messages
+        * add eina_error_find to match an error message with its Eina_Error

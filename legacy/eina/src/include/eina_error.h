@@ -54,6 +54,7 @@ EAPI Eina_Bool   eina_error_msg_modify(Eina_Error  error,
 EAPI Eina_Error  eina_error_get(void);
 EAPI void        eina_error_set(Eina_Error err);
 EAPI const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
+EAPI Eina_Error  eina_error_find(const char *msg) EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @}

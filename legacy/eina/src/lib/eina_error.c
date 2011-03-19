@@ -460,5 +460,34 @@ eina_error_set(Eina_Error err)
 }
 
 /**
+ * @brief Find the #Eina_Error corresponding to a message string
+ * @param msg The error message string to match (NOT #NULL)
+ * @return The #Eina_Error matching @p msg, or 0 on failure
+ * This function attempts to match @p msg with its corresponding #Eina_Error value.
+ * If no such value is found, 0 is returned.
+ */
+EAPI Eina_Error
+eina_error_find(const char *msg)
+{
+   size_t i;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, 0);
+
+   for (i = 0; i < _eina_errors_count; i++)
+     {
+        if (_eina_errors[i].string_allocated)
+          {
+             if (_eina_errors[i].string == msg)
+               return i;
+          }
+        else
+          {
+             if (!strcmp(_eina_errors[i].string, msg))
+               return i;
+          }
+     }
+   return 0;
+}
+/**
  * @}
  */
