@@ -84,3 +84,7 @@
 2011-03-16 Cedric Bail
 
 	* Add ecore_thread_reschedule.
+
+2011-03-19 Mike Blumenkrantz
+
+        * Fix crash in ecore_con_ssl related to attempted connections on a dead socket

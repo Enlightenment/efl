@@ -1308,6 +1308,7 @@ _ecore_con_ssl_server_read_openssl(Ecore_Con_Server *svr,
 {
    int num;
 
+   if (!svr->ssl) return -1;
    num = SSL_read(svr->ssl, buf, size);
    svr->ssl_err = SSL_get_error(svr->ssl, num);
 
@@ -1460,6 +1461,7 @@ _ecore_con_ssl_client_read_openssl(Ecore_Con_Client *cl,
 {
    int num;
 
+   if (!cl->ssl) return -1;
    num = SSL_read(cl->ssl, buf, size);
    cl->ssl_err = SSL_get_error(cl->ssl, num);
 
