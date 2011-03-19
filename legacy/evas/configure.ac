@@ -1807,8 +1807,8 @@ echo "  prefix...............: $prefix"
 echo
 if test "x${have_static_module}" = "xyes" ; then
 echo -e "\0033\01331;31mWarning\0033\01331;0m: You are trying to link statically one or more modules to Evas."
-echo "         You must know what you are doing, or else you will have a lot of problems."
-echo "         And Kenny will be killed."
+echo "         You must know what you are doing, or else you will have a lot of"
+echo "         problems. And Kenny will be killed."
 echo "         Think about that."
 echo
 fi
