@@ -480,11 +480,8 @@ eina_error_find(const char *msg)
              if (_eina_errors[i].string == msg)
                return i;
           }
-        else
-          {
-             if (!strcmp(_eina_errors[i].string, msg))
-               return i;
-          }
+        if (!strcmp(_eina_errors[i].string, msg))
+          return i;
      }
    return 0;
 }
