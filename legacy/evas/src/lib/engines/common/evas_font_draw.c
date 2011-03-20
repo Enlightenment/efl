@@ -263,6 +263,9 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    if (!fi->fash) fi->fash = _fash_gl_new();
    if (fi->fash) _fash_gl_add(fi->fash, index, fg);
+   /* This '+ 200' is just an estimation of how much memory freetype will use
+    * on it's size. This value is not really used anywhere in code - it's
+    * only for statistics. */
    size = sizeof(RGBA_Font_Glyph) + sizeof(Eina_List) +
     (fg->glyph_out->bitmap.width * fg->glyph_out->bitmap.rows) + 200;
    fi->usage += size;
