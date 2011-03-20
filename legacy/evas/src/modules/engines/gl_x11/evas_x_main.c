@@ -285,6 +285,7 @@ eng_window_new(Display *disp,
      {
         int i, j,  num;
         GLXFBConfig *fbc;
+        int blacklist = 0;
 
         if (gw->glxwin)
           {
@@ -341,6 +342,51 @@ eng_window_new(Display *disp,
         // vendor: Tungsten Graphics, Inc
         // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT x86/MMX/SSE2
         // version: 2.1 Mesa 7.9-devel
+        //   or
+        // vendor: Advanced Micro Devices, Inc.
+        // renderer: Mesa DRI R600 (RS780 9610) 20090101  TCL DRI2
+        // version: 2.1 Mesa 7.9-devel
+        //   or
+        // vendor: NVIDIA Corporation
+        // renderer: GeForce 9600 GT/PCI/SSE2
+        // version: 3.3.0 NVIDIA 260.19.29
+        //   or
+        // vendor: ATI Technologies Inc.
+        // renderer: ATI Radeon HD 4800 Series
+        // version: 3.3.10237 Compatibility Profile Context
+        //   or
+        // vendor: Advanced Micro Devices, Inc.
+        // renderer: Mesa DRI R600 (RV770 9442) 20090101  TCL DRI2
+        // version: 2.0 Mesa 7.8.2
+        //   or
+        // vendor: Tungsten Graphics, Inc
+        // renderer: Mesa DRI Mobile Intel® GM45 Express Chipset GEM 20100330 DEVELOPMENT 
+        // version: 2.1 Mesa 7.9-devel
+        //   or (bad - software renderer)
+        // vendor: Mesa Project
+        // renderer: Software Rasterizer
+        // version: 2.1 Mesa 7.9-devel
+        //   or (bad - software renderer)
+        // vendor: VMware, Inc.
+        // renderer: Gallium 0.4 on softpipe
+        // version: 2.1 Mesa 7.9-devel
+        
+        if (strstr((const char *)vendor, "Mesa Project"))
+          {
+             if (strstr((const char *)renderer, "Software Rasterizer"))
+                blacklist = 1;
+          }
+        if (strstr((const char *)renderer, "softpipe"))
+           blacklist = 1;
+        if (blacklist)
+          {
+             ERR("OpenGL Driver blacklisted:");
+             ERR("Vendor: %s", (const char *)vendor);
+             ERR("Renderer: %s", (const char *)renderer);
+             ERR("Version: %s", (const char *)version);
+             eng_window_free(gw);
+             return NULL;
+          }
         if (strstr((const char *)vendor, "NVIDIA"))
           {
              if (!strstr((const char *)renderer, "NVIDIA Tegra"))
