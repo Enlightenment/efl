@@ -2011,7 +2011,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
  * @param c the context to work on - Not NULL.
  * @param fmt the format to free.
  * @return the next format in the stack, or format if there's none.
- * @see _layout_format_pop()
+ * @see _layout_format_push()
  */
 static Evas_Object_Textblock_Format *
 _layout_format_pop(Ctxt *c, Evas_Object_Textblock_Format *fmt)
