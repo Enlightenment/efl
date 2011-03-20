@@ -88,7 +88,7 @@ strrstr (const char *str, const char *substr)
 
 int strcasecmp(const char *s1, const char *s2)
 {
-   return lstrcmp(s1, s2);
+   return lstrcmpi(s1, s2);
 }
 
 #endif /* _MSC_VER */
