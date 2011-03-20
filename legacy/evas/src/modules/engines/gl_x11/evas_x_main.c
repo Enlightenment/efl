@@ -47,14 +47,14 @@ eng_window_new(Display *disp,
    XVisualInfo *vi_use;
    const GLubyte *vendor, *renderer, *version;
    
-   if (!_evas_gl_x11_vi[screen]) return NULL;
-   
    if (screen >= MAXSCRN)
      {
         ERR("Screen #%i beyond the maximum # of supported screens (%i)",
             screen, MAXSCRN);
         return NULL;
      }
+   
+   if (!_evas_gl_x11_vi[screen]) return NULL;
    
    gw = calloc(1, sizeof(Evas_GL_X11_Window));
    if (!gw) return NULL;
