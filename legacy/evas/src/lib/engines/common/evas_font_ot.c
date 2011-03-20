@@ -194,6 +194,8 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    hb_glyph_info_t *infos;
    int slen;
    unsigned int i;
+   Evas_Font_Glyph_Info *gl_itr;
+   Evas_Font_OT_Info *ot_itr;
 
    fi = fn->fonts->data;
    /* Load the font needed for this script */
@@ -246,13 +248,20 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
               sizeof(Evas_Font_Glyph_Info));
    positions = hb_buffer_get_glyph_positions(buffer);
    infos = hb_buffer_get_glyph_infos(buffer);
+   gl_itr = props->info->glyph;
+   ot_itr = props->info->ot;
    for (i = 0 ; i < props->len ; i++)
      {
-        props->info->ot[i].source_cluster = infos[i].cluster;
-        props->info->ot[i].x_offset = positions[i].x_offset;
-        props->info->ot[i].y_offset = positions[i].y_offset;
-        props->info->glyph[i].index = infos[i].codepoint;
-        props->info->glyph[i].advance = positions[i].x_advance;
+        ot_itr->source_cluster = infos->cluster;
+        ot_itr->x_offset = positions->x_offset;
+        ot_itr->y_offset = positions->y_offset;
+        gl_itr->index = infos->codepoint;
+        gl_itr->advance = positions->x_advance;
+
+        ot_itr++;
+        gl_itr++;
+        infos++;
+        positions++;
      }
 
    hb_buffer_destroy(buffer);
