@@ -749,19 +749,6 @@ compile(void)
 	if (ret == EXIT_SUCCESS)
 	  file_in = tmpn;
 	free(def);
-/* OLD CODE
-	snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s -E -o %s",
-		 file_in, inc, def, tmpn);
-	ret = system(buf);
-	if (ret < 0)
-	  {
-	     snprintf(buf, sizeof(buf), "gcc -I%s %s -E -o %s %s",
-		      inc, def, tmpn, file_in);
-	     ret = system(buf);
-	  }
-	if (ret >= 0) file_in = tmpn;
-	free(def);
- */
      }
    fd = open(file_in, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
    if (fd < 0)
