@@ -4606,7 +4606,22 @@ cpp_get_token(cpp_reader * pfile)
 	       }
 	     else if (CPP_TRADITIONAL(pfile))
 	       {
-		  return CPP_COMMENT;
+		  if (newlines > 0)
+		     {
+			output_line_command(pfile, 0, same_file);
+			return CPP_VSPACE;
+		     }
+		  else
+		    {
+			return CPP_COMMENT;
+		    }
+	       }
+	     else if (newlines > 0)
+	       {
+		 output_line_command(pfile, 0, same_file);
+		 CPP_RESERVE(pfile, 1);
+		 CPP_PUTC_Q(pfile, ' ');
+		 return CPP_VSPACE;
 	       }
 	     else
 	       {

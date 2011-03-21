@@ -90,8 +90,6 @@ main(int argc, char **argv)
 	     continue;
 
 	  case CPP_VSPACE:
-	     if (!got_text)
-		goto next;
 	     break;
 
 	  default:
