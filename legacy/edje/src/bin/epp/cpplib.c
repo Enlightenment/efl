@@ -970,7 +970,7 @@ cpp_skip_hspace(cpp_reader * pfile)
 	  }
 	else if (c == '@' && CPP_BUFFER(pfile)->has_escapes
 		 && is_hor_space[PEEKN(1)])
-	   FORWARD(2);
+	   FORWARD(1);
 	else
 	   return;
      }
@@ -2743,6 +2743,8 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 		continue;
 	     if (i < nargs || (nargs == 0 && i == 0))
 	       {
+                  unsigned char *bp;
+                  
 		  /* if we are working on last arg which absorbs rest of args... */
 		  if (i == nargs - 1 && defn->rest_args)
 		     rest_args = 1;
@@ -2750,6 +2752,20 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 		  token = macarg(pfile, rest_args);
 		  args[i].raw_length = CPP_WRITTEN(pfile) - args[i].raw;
 		  args[i].newlines = 0;	/* FIXME */
+                  bp = ARG_BASE + args[i].raw;
+                  while (is_space[(unsigned char)(*bp)]) { bp++; }
+                  args[i].raw_length -= bp - (ARG_BASE + args[i].raw);
+                  args[i].raw = bp - ARG_BASE;
+                  if (args[i].raw_length > 0)
+                    {
+                       bp = ARG_BASE + args[i].raw + args[i].raw_length - 1;
+                       while (is_space[(unsigned char)(*bp)])
+                         {
+                            bp--; 
+                            args[i].raw_length--;
+                            if (args[i].raw_length < 1) break;
+                         }
+                    }
 	       }
 	     else
 		token = macarg(pfile, 0);
@@ -3051,7 +3067,6 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 	     if (totlen > xbuf_len)
 		abort();
 	  }
-
 	/* if there is anything left of the definition
 	 * after handling the arg list, copy that in too. */
 
@@ -3067,7 +3082,6 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 
 	xbuf[totlen] = 0;
 	xbuf_len = totlen;
-
      }
 
    pfile->output_escapes--;
@@ -4817,10 +4831,9 @@ cpp_get_token(cpp_reader * pfile)
 		    }
 		  else if (is_space[c])
 		    {
-		       CPP_RESERVE(pfile, 2);
+		       CPP_RESERVE(pfile, 1);
 		       if (pfile->output_escapes)
 			  CPP_PUTC_Q(pfile, '@');
-		       CPP_PUTC_Q(pfile, c);
 		       return CPP_HSPACE;
 		    }
 	       }
