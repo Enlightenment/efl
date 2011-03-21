@@ -204,28 +204,33 @@ evas_object_clip_recalc(Evas_Object *obj)
    else cvis = obj->cur.visible;
    cr = obj->cur.color.r; cg = obj->cur.color.g;
    cb = obj->cur.color.b; ca = obj->cur.color.a;
-   if ((obj->cur.clipper) &&
-       (obj->cur.clipper->cur.map_parent == obj->cur.map_parent))
+   if (obj->cur.clipper)
      {
 // this causes problems... hmmm
-	if (obj->cur.clipper->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper);
-	nx = obj->cur.clipper->cur.cache.clip.x;
-	ny = obj->cur.clipper->cur.cache.clip.y;
-	nw = obj->cur.clipper->cur.cache.clip.w;
-	nh = obj->cur.clipper->cur.cache.clip.h;
-	RECTS_CLIP_TO_RECT(cx, cy, cw, ch, nx, ny, nw, nh);
+        if (obj->cur.clipper->cur.cache.clip.dirty)
+          evas_object_clip_recalc(obj->cur.clipper);
 
-	nvis = obj->cur.clipper->cur.cache.clip.visible;
-	nr = obj->cur.clipper->cur.cache.clip.r;
-	ng = obj->cur.clipper->cur.cache.clip.g;
-	nb = obj->cur.clipper->cur.cache.clip.b;
-	na = obj->cur.clipper->cur.cache.clip.a;
-	cvis = cvis * nvis;
-	cr = (cr * (nr + 1)) >> 8;
-	cg = (cg * (ng + 1)) >> 8;
-	cb = (cb * (nb + 1)) >> 8;
-	ca = (ca * (na + 1)) >> 8;
+        // I don't know why this test was here in the first place. As I have
+        // no issue showing up due to this, I keep it and move color out of it.
+        if (obj->cur.clipper->cur.map_parent == obj->cur.map_parent)
+          {
+             nx = obj->cur.clipper->cur.cache.clip.x;
+             ny = obj->cur.clipper->cur.cache.clip.y;
+             nw = obj->cur.clipper->cur.cache.clip.w;
+             nh = obj->cur.clipper->cur.cache.clip.h;
+             RECTS_CLIP_TO_RECT(cx, cy, cw, ch, nx, ny, nw, nh);
+          }
+
+        nvis = obj->cur.clipper->cur.cache.clip.visible;
+        nr = obj->cur.clipper->cur.cache.clip.r;
+        ng = obj->cur.clipper->cur.cache.clip.g;
+        nb = obj->cur.clipper->cur.cache.clip.b;
+        na = obj->cur.clipper->cur.cache.clip.a;
+        cvis = cvis * nvis;
+        cr = (cr * (nr + 1)) >> 8;
+        cg = (cg * (ng + 1)) >> 8;
+        cb = (cb * (nb + 1)) >> 8;
+        ca = (ca * (na + 1)) >> 8;
      }
    if ((ca == 0 && obj->cur.render_op == EVAS_RENDER_BLEND) || (cw <= 0) || (ch <= 0)) cvis = 0;
    obj->cur.cache.clip.x = cx;

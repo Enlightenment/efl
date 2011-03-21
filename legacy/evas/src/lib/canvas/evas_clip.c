@@ -7,6 +7,8 @@ evas_object_clip_dirty(Evas_Object *obj)
    Eina_List *l;
    Evas_Object *data;
 
+   if (obj->cur.cache.clip.dirty) return ;
+
    obj->cur.cache.clip.dirty = 1;
    EINA_LIST_FOREACH(obj->clip.clipees, l, data)
      evas_object_clip_dirty(data);

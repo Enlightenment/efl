@@ -881,21 +881,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                      obj->cur.geometry.w,
                                      obj->cur.geometry.h);
 
-                  if (obj->cur.clipper)
-                    {
-                       if (_evas_render_has_map(obj))
-                         evas_object_clip_recalc(obj);
-                       RECTS_CLIP_TO_RECT(x, y, w, h,
-                                          obj->cur.cache.clip.x + off_x,
-                                          obj->cur.cache.clip.y + off_y,
-                                          obj->cur.cache.clip.w,
-                                          obj->cur.cache.clip.h);
-                       RECTS_CLIP_TO_RECT(x, y, w, h,
-                                          obj->cur.clipper->cur.cache.clip.x + off_x,
-                                          obj->cur.clipper->cur.cache.clip.y + off_y,
-                                          obj->cur.clipper->cur.cache.clip.w,
-                                          obj->cur.clipper->cur.cache.clip.h);
-                    }
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
                   obj->func->render(obj, e->engine.data.output, ctx,
@@ -1126,10 +1111,10 @@ evas_render_updates_internal(Evas *e,
 
    /* phase 1. add extra updates for changed objects */
    if (e->invalidate || e->render_objects.count <= 0)
-     clean_them = _evas_render_phase1_process(e, 
-                                              &e->active_objects, 
-                                              &e->restack_objects, 
-                                              &e->delete_objects, 
+     clean_them = _evas_render_phase1_process(e,
+                                              &e->active_objects,
+                                              &e->restack_objects,
+                                              &e->delete_objects,
                                               &e->render_objects,
                                               &redraw_all);
 
