@@ -21,11 +21,14 @@
  * You are forbidden to forbid anyone else to use, share and improve
  * what you give them.   Help stamp out software-hoarding!  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "config.h"
 #include "cpplib.h"
 
 #define EPP_DEBUG 0

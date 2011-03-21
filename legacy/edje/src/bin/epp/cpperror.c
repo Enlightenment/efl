@@ -23,9 +23,13 @@
  * You are forbidden to forbid anyone else to use, share and improve
  * what you give them.   Help stamp out software-hoarding!  */
 
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
-#include "config.h"
+
 #include "cpplib.h"
 
 /* Print the file names and line numbers of the #include

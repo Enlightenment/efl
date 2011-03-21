@@ -23,9 +23,23 @@
  * You are forbidden to forbid anyone else to use, share and improve
  * what you give them.   Help stamp out software-hoarding!  */
 
-const char         *version_string = "0.0.0";
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "config.h"
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif defined __GNUC__
+# define alloca __builtin_alloca
+#elif defined _AIX
+# define alloca __alloca
+#elif defined _MSC_VER
+# include <malloc.h>
+# define alloca _alloca
+#else
+# include <stddef.h>
+void *alloca (size_t);
+#endif
 
 #ifdef __EMX__
 #include <strings.h>
@@ -42,6 +56,8 @@ const char         *version_string = "0.0.0";
 #include "cpplib.h"
 #include "cpphash.h"
 
+const char         *version_string = "0.0.0";
+
 #ifndef STDC_VALUE
 #define STDC_VALUE 1
 #endif
@@ -55,12 +71,7 @@ const char         *version_string = "0.0.0";
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
-#ifdef __STDC__
 #include <stdlib.h>
-#endif
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -71,7 +82,9 @@ const char         *version_string = "0.0.0";
 #ifndef USG
 #include <time.h>
 #include <sys/time.h>		/* for __DATE__ and __TIME__ */
-#include <sys/resource.h>
+#ifdef HAVE_SYS_RESOURCE_H
+# include <sys/resource.h>
+#endif
 #else
 #include <sys/param.h>		/* CYGNUS LOCAL: shebs -noquiet */
 #include <sys/times.h>

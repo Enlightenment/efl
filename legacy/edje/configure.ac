@@ -316,7 +316,7 @@ fi
 
 
 ### Checks for header files
-AC_CHECK_HEADERS([locale.h])
+AC_CHECK_HEADERS([locale.h sys/resource.h])
 
 EFL_CHECK_PATH_MAX
 

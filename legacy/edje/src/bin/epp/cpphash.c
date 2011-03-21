@@ -23,14 +23,17 @@
  * You are forbidden to forbid anyone else to use, share and improve
  * what you give them.   Help stamp out software-hoarding!  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <string.h>
+#include <stdlib.h>
+
 #include "cpplib.h"
 #include "cpphash.h"
 
 static HASHNODE    *hashtab[HASHSIZE];
-
-#include <string.h>
-#include <stdlib.h>
 
 #define IS_IDCHAR(ch) is_idchar[(unsigned char)(ch)]
 
