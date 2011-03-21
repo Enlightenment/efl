@@ -28,7 +28,7 @@ static Window _ecore_x_mouse_down_last_event_win = 0;
 static Window _ecore_x_mouse_down_last_last_event_win = 0;
 static Time _ecore_x_mouse_down_last_time = 0;
 static Time _ecore_x_mouse_down_last_last_time = 0;
-static int _ecore_x_mouse_up_count = 0;
+// static int _ecore_x_mouse_up_count = 0;
 static int _ecore_x_mouse_down_did_double = 0;
 static int _ecore_x_mouse_down_did_triple = 0;
 static int _ecore_x_last_event_mouse_move = 0;
@@ -439,11 +439,16 @@ _ecore_mouse_button(int          event,
           }
               
      }
-   
+
+   /* NB: Block commented out as _ecore_x_mouse_up_count appears to have 
+    * no use. The variable is also commented out above. This code block is 
+    * the only place that this variable is used, and appears to serve no 
+    * purpose. - dh
    if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN
        && !e->double_click
        && !e->triple_click)
       _ecore_x_mouse_up_count = 0;
+    */
 
    e->multi.device = dev;
    e->multi.radius = (radx + rady) / 2;
