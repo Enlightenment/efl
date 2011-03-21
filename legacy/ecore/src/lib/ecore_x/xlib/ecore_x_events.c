@@ -1399,8 +1399,6 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
                                            xevent->xselectionrequest.time);
           }
      }
-
-   return;
 } /* _ecore_x_event_handle_selection_request */
 
 void
