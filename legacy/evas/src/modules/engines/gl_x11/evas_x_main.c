@@ -338,6 +338,10 @@ eng_window_new(Display *disp,
         // renderer: NVIDIA Tegra
         // version: OpenGL ES 2.0
         //   or
+        // vendor: Imagination Technologies
+        // renderer: PowerVR SGX 540
+        // version: OpenGL ES 2.0
+        //   or
         // vendor: NVIDIA Corporation
         // renderer: GeForce GT 330M/PCI/SSE2
         // version: 3.3.0 NVIDIA 256.53
