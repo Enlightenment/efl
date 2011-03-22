@@ -361,60 +361,28 @@ eina_file_dir_list(const char *dir,
                    Eina_File_Dir_List_Cb cb,
                    void *data)
 {
-   int dlength;
-   struct dirent *de;
-   DIR *d;
-#ifndef _DIRENT_HAVE_D_TYPE
-   struct stat st;
-#endif
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb,  EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(dir[0] == '\0', EINA_FALSE);
 
-   d = opendir(dir);
-   if (!d)
+   it = eina_file_stat_ls(dir);
+   if (!it)
       return EINA_FALSE;
 
-   dlength = strlen(dir);
-   de = alloca(_eina_dirent_buffer_size(d));
-
-   while ((!readdir_r(d, de, &de) && de))
+   EINA_ITERATOR_FOREACH(it, info)
      {
-        if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
-           continue;
+        cb(info->path + info->name_start, dir, data);
 
-        cb(de->d_name, dir, data);
-        /* d_type is only available on linux and bsd (_BSD_SOURCE) */
-
-        if (recursive == EINA_TRUE)
+        if (recursive == EINA_TRUE && info->type == EINA_FILE_DIR)
           {
-             char *path;
-             int length;
-
-#ifdef _DIRENT_HAVE_D_NAMLEN
-             length = de->d_namlen;
-#else
-             length = strlen(de->d_name);
-#endif
-             path = alloca(dlength + length + 2);
-             strcpy(path, dir);
-             strcat(path, "/");
-             strcat(path, de->d_name);
-#ifdef _DIRENT_HAVE_D_TYPE
-             if (de->d_type != DT_DIR)
-                continue;
-#else
-             if (stat(path, &st))
-                continue;
-             if (!S_ISDIR(st.st_mode))
-                continue;
-#endif
-             eina_file_dir_list(path, recursive, cb, data);
+             eina_file_dir_list(info->path, recursive, cb, data);
           }
      }
 
-   closedir(d);
+   eina_iterator_free(it);
 
    return EINA_TRUE;
 }
