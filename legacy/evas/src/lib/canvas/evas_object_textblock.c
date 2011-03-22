@@ -2808,11 +2808,14 @@ skip:
                    ti->parent.text_node->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set (&ti->text_props,
                    ti->text);
-             c->ENFN->font_text_props_info_create(c->ENDT,
-                   ti->parent.format->font.font,
-                   ti->text, &ti->text_props,
-                   ti->parent.text_node->bidi_props,
-                   ti->parent.text_pos, tmp_len);
+             if (ti->parent.format->font.font)
+               {
+                  c->ENFN->font_text_props_info_create(c->ENDT,
+                        ti->parent.format->font.font,
+                        ti->text, &ti->text_props,
+                        ti->parent.text_node->bidi_props,
+                        ti->parent.text_pos, tmp_len);
+               }
           }
         str += tmp_len;
         cur_len -= tmp_len;
