@@ -415,7 +415,7 @@ elm_bg_overlay_unset(Evas_Object *obj)
 EAPI void
 elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);   
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *p;
    if (!wd) return;
