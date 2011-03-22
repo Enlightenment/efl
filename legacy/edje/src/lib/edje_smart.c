@@ -39,7 +39,6 @@ edje_object_add(Evas *evas)
      }
 
    e = evas_object_smart_add(evas, _edje_smart);
-   ed = _edje_fetch(e);
 
    return e;
 }
