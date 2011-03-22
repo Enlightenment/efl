@@ -566,7 +566,7 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
  * @ingroup Menu
  */
 EAPI Evas_Object *
-elm_menu_object_get(const Elm_Menu_Item *item)
+elm_menu_item_object_get(const Elm_Menu_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->base.view;
