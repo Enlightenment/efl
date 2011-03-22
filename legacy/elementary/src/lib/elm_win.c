@@ -410,6 +410,24 @@ _elm_win_xwin_update(Elm_Win *win)
       case ELM_WIN_SPLASH:
 	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_SPLASH);
 	 break;
+      case ELM_WIN_DROPDOWN_MENU:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DROPDOWN_MENU);
+	 break;
+      case ELM_WIN_POPUP_MENU:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_POPUP_MENU);
+	 break;
+      case ELM_WIN_TOOLTIP:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_TOOLTIP);
+	 break;
+      case ELM_WIN_NOTIFICATION:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_NOTIFICATION);
+	 break;
+      case ELM_WIN_COMBO:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_COMBO);
+	 break;
+      case ELM_WIN_DND:
+	 ecore_x_netwm_window_type_set(win->xwin, ECORE_X_WINDOW_TYPE_DND);
+	 break;
       default:
 	 break;
      }

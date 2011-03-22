@@ -462,7 +462,13 @@ extern "C" {
         ELM_WIN_TOOLBAR,
         ELM_WIN_MENU,
         ELM_WIN_UTILITY,
-        ELM_WIN_SPLASH
+        ELM_WIN_SPLASH,
+        ELM_WIN_DROPDOWN_MENU,
+        ELM_WIN_POPUP_MENU,
+        ELM_WIN_TOOLTIP,
+        ELM_WIN_NOTIFICATION,
+        ELM_WIN_COMBO,
+        ELM_WIN_DND
      } Elm_Win_Type;
 
    typedef enum _Elm_Win_Keyboard_Mode
