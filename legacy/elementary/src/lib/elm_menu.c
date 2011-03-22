@@ -29,6 +29,7 @@ struct _Elm_Menu_Item
 
    Eina_Bool separator : 1;
    Eina_Bool disabled : 1;
+   Eina_Bool selected: 1;
 };
 
 struct _Widget_Data
@@ -321,11 +322,12 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
    Eina_List *l;
    Elm_Menu_Item *item2;
    Elm_Menu_Item *item = data;
+   item->selected = 1;
    if (item->parent)
      {
 	EINA_LIST_FOREACH(item->parent->submenu.items, l, item2)
 	  {
-	     if ((item2->submenu.open) && (item2 != item)) _submenu_hide(item2);
+            if (item2 != item) elm_menu_item_selected_set(item2, 0);
 	  }
      }
    else
@@ -333,9 +335,17 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
 	EINA_LIST_FOREACH(wd->items, l, item2)
 	  {
-	     if ((item2->submenu.open) && (item2 != item)) _submenu_hide(item2);
+            if (item2 != item) elm_menu_item_selected_set(item2, 0);
 	  }
      }
+}
+
+static void
+_menu_item_inactivate(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Menu_Item *item = data;
+   item->selected = 0;
+   if (item->submenu.open) _submenu_hide(item);
 }
 
 static void
@@ -369,6 +379,8 @@ _item_obj_create(Elm_Menu_Item *item)
                                    _menu_item_select, item);
    edje_object_signal_callback_add(item->base.view, "elm,action,activate", "",
                                    _menu_item_activate, item);
+   edje_object_signal_callback_add(item->base.view, "elm,action,inactivate", "",
+                                   _menu_item_inactivate, item);
    evas_object_show(item->base.view);
 }
 
@@ -764,7 +776,6 @@ EAPI Eina_Bool
 elm_menu_item_disabled_get(const Elm_Menu_Item *item)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
-   if (!item) return EINA_FALSE;
    return item->disabled;
 }
 
@@ -879,7 +890,7 @@ elm_menu_item_del(Elm_Menu_Item *item)
    if (item->submenu.location) evas_object_del(item->submenu.location);
 
    if (item->parent)
-     item->parent->submenu.items = eina_list_remove(item->parent->submenu.items, item);
+      item->parent->submenu.items = eina_list_remove(item->parent->submenu.items, item);
    else
      {
 	Widget_Data *wd = elm_widget_data_get(item->base.widget);
@@ -948,3 +959,184 @@ elm_menu_item_subitems_get(const Elm_Menu_Item *item)
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return item->submenu.items;
 }
+
+/**
+ * Returns a list of @p item's items.
+ *
+ * @param obj The menu object
+ * @return An Eina_List* of @p item's items
+ *
+ * @ingroup Menu
+ */
+EAPI const Eina_List *
+elm_menu_items_get(const Evas_Object * obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   return wd->items;
+}
+
+/**
+ * Set the selected state of @p item.
+ *
+ * @param item The menu item object.
+ * @param selected The selected/unselected state of the item
+ *
+ * @ingroup Menu
+ */
+EAPI void
+elm_menu_item_selected_set(Elm_Menu_Item *item, Eina_Bool selected)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   if (selected == item->selected) return;
+   item->selected = selected;
+   if (selected)
+     {
+        edje_object_signal_emit(item->base.view, "elm,state,selected", "elm");
+        _menu_item_activate(item, NULL, NULL, NULL);
+     }
+   else
+     {
+        edje_object_signal_emit(item->base.view, "elm,state,unselected", "elm");
+        _menu_item_inactivate(item, NULL, NULL, NULL);
+     }
+   edje_object_message_signal_process(item->base.view);
+}
+
+/**
+ * Get the selected state of @p item.
+ *
+ * @param item The menu item object.
+ * @return The selected/unselected state of the item
+ *
+ * @ingroup Menu
+ */
+EAPI Eina_Bool
+elm_menu_item_selected_get(const Elm_Menu_Item *item)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, EINA_FALSE);
+   return item->selected;
+}
+
+/**
+ * Get the previous item in the menu.
+ *
+ * @param item The menu item object.
+ * @return The item before it, or NULL if none
+ *
+ * @ingroup Menu
+ */
+EAPI const Elm_Menu_Item *
+elm_menu_item_prev_get(const Elm_Menu_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
+   if (it->parent)
+     {
+        Eina_List *l = eina_list_data_find_list(it->parent->submenu.items, it);
+        l = eina_list_prev(l);
+        if (!l) return NULL;
+        return l->data;
+     }
+   else
+     {
+        Widget_Data *wd = elm_widget_data_get(it->base.widget);
+        if (!wd | !wd->items) return NULL;
+        Eina_List *l = eina_list_data_find_list(wd->items, it);
+        l = eina_list_prev(l);
+        if (!l) return NULL;
+        return l->data;
+     }
+   return NULL;
+}
+
+/**
+ * Get the next item in the menu.
+ *
+ * @param item The menu item object.
+ * @return The item after it, or NULL if none
+ *
+ * @ingroup Menu
+ */
+EAPI const Elm_Menu_Item *
+elm_menu_item_next_get(const Elm_Menu_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
+   if (it->parent)
+     {
+        Eina_List *l = eina_list_data_find_list(it->parent->submenu.items, it);
+        l = eina_list_next(l);
+        if (!l) return NULL;
+        return l->data;
+     }
+   else
+     {
+        Widget_Data *wd = elm_widget_data_get(it->base.widget);
+        if (!wd | !wd->items) return NULL;
+        Eina_List *l = eina_list_data_find_list(wd->items, it);
+        l = eina_list_next(l);
+        if (!l) return NULL;
+        return l->data;
+     }
+   return NULL;
+}
+
+/**
+ * Get the first item in the menu
+ *
+ * @param obj The menu object
+ * @return The first item, or NULL if none
+ *
+ * @ingroup Menu
+ */
+EAPI const Elm_Menu_Item *
+elm_menu_first_item_get(const Evas_Object * obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (wd->items) return wd->items->data;
+   return NULL;
+}
+
+/**
+ * Get the last item in the menu
+ *
+ * @param obj The menu object
+ * @return The last item, or NULL if none
+ *
+ * @ingroup Menu
+ */
+EAPI const Elm_Menu_Item *
+elm_menu_last_item_get(const Evas_Object * obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   Eina_List *l = eina_list_last(wd->items);
+   if (l) return l->data;
+   return NULL;
+}
+
+/**
+ * Get the selected item in the menu
+ *
+ * @param obj The menu object
+ * @return The selected item, or NULL if none
+ *
+ * @ingroup Menu
+ */
+EAPI const Elm_Menu_Item *
+elm_menu_selected_item_get(const Evas_Object * obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   Eina_List *l;
+   Elm_Menu_Item *item;
+   EINA_LIST_FOREACH(wd->items, l, item)
+     {
+        if (item->selected) return item;
+     }
+   return NULL;
+}
+
