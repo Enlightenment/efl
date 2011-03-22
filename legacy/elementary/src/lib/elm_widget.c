@@ -178,7 +178,7 @@ _sub_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info 
 }
 
 static void
-_sub_obj_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_sub_obj_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    _if_focused_revert(obj, EINA_TRUE);
 }
