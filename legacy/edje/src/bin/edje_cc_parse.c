@@ -34,6 +34,12 @@ void *alloca (size_t);
 #include <Ecore.h>
 #include <Ecore_File.h>
 
+#ifdef _WIN32
+# define EPP_EXT ".exe"
+#else
+# define EPP_EXT
+#endif
+
 static void  new_object(void);
 static void  new_statement(void);
 static char *perform_math (char *input);
@@ -694,7 +700,7 @@ compile(void)
 	 * Run the input through the C pre-processor.
 	 */
         ret = -1;
-        snprintf(buf2, sizeof(buf2), "%s/edje/utils/epp", e_prefix_lib_get());
+        snprintf(buf2, sizeof(buf2), "%s/edje/utils/epp"EPP_EXT, e_prefix_lib_get());
         if (ecore_file_exists(buf2))
           {
              snprintf(buf, sizeof(buf), "%s %s -I%s %s -o %s",
