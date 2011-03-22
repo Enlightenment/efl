@@ -140,8 +140,7 @@ _unfocus_parents(Evas_Object *obj)
 {
    for (; obj; obj = elm_widget_parent_get(obj))
      {
-        Smart_Data *sd = evas_object_smart_data_get(obj);
-        if (!sd) return;
+        INTERNAL_ENTRY;
         if (!sd->focused) return;
         sd->focused = 0;
      }
@@ -152,8 +151,7 @@ _focus_parents(Evas_Object *obj)
 {
    for (; obj; obj = elm_widget_parent_get(obj))
      {
-        Smart_Data *sd = evas_object_smart_data_get(obj);
-        if (!sd) return;
+        INTERNAL_ENTRY;
         if (sd->focused) return;
         sd->focused = 1;
      }
@@ -201,7 +199,7 @@ _sub_obj_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
 static void
 _propagate_x_drag_lock(Evas_Object *obj, int dir)
 {
-   Smart_Data *sd = evas_object_smart_data_get(obj);
+   INTERNAL_ENTRY
    if (sd->parent_obj)
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
@@ -216,7 +214,7 @@ _propagate_x_drag_lock(Evas_Object *obj, int dir)
 static void
 _propagate_y_drag_lock(Evas_Object *obj, int dir)
 {
-   Smart_Data *sd = evas_object_smart_data_get(obj);
+   INTERNAL_ENTRY
    if (sd->parent_obj)
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
@@ -2769,28 +2767,28 @@ _smart_init(void)
 /* happy debug functions */
 #ifdef ELM_DEBUG
 static void
-_sub_obj_tree_dump(const Evas_Object *o, int lvl)
+_sub_obj_tree_dump(const Evas_Object *obj, int lvl)
 {
    int i;
 
    for (i = 0; i < lvl*3; i++)
      putchar(' ');
 
-   if (_elm_widget_is(o))
+   if (_elm_widget_is(obj))
      {
         Eina_List *l;
-        Smart_Data *sd = evas_object_smart_data_get(o);
-        printf("+ %s(%p)\n", sd->type, o);
+        INTERNAL_ENTRY
+        printf("+ %s(%p)\n", sd->type, obj);
         if (sd->resize_obj)
           _sub_obj_tree_dump(sd->resize_obj, lvl + 1);
-        EINA_LIST_FOREACH(sd->subobjs, l, o)
+        EINA_LIST_FOREACH(sd->subobjs, l, obj)
           {
-             if (o != sd->resize_obj)
-               _sub_obj_tree_dump(o, lvl + 1);
+             if (obj != sd->resize_obj)
+               _sub_obj_tree_dump(obj, lvl + 1);
           }
      }
    else
-     printf("+ %s(%p)\n", evas_object_type_get(o), o);
+     printf("+ %s(%p)\n", evas_object_type_get(obj), obj);
 }
 
 static void
@@ -2798,8 +2796,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
 {
    if (!_elm_widget_is(obj))
      return;
-
-   Smart_Data *sd = evas_object_smart_data_get(obj);
+   INTERNAL_ENTRY
 
    Eina_Bool visible = evas_object_visible_get(obj);
    Eina_Bool disabled = elm_widget_disabled_get(obj);
