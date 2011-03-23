@@ -648,6 +648,77 @@ icon_theme_free(Efreet_Cache_Icon_Theme *theme)
     free(theme);
 }
 
+/**
+ * @internal
+ * @return EINA_TRUE if data adds new
+ */
+static Eina_Bool
+add_data(Eet_File *ef, Eina_Array *data, const char *key)
+{
+    Efreet_Cache_Array_String *add;
+    unsigned int i, j;
+    Eina_Bool added = EINA_FALSE;
+
+    add = eet_data_read(ef, efreet_array_string_edd(), key);
+    if (!add) return EINA_TRUE;
+    /* loop once to check added */
+    for (i = 0; i < data->count; i++)
+    {
+        int found = 0;
+        for (j = 0; j < add->array_count; ++j)
+        {
+            if (!strcmp(add->array[j], data->data[i]))
+            {
+                found = 1;
+                break;
+            }
+        }
+        if (!found)
+        {
+            added = EINA_TRUE;
+            break;
+        }
+    }
+    /* loop again to add all data */
+    for (i = 0; i < add->array_count; i++)
+    {
+        int found = 0;
+        for (j = 0; j < data->count; ++j)
+        {
+            if (!strcmp(add->array[i], data->data[j]))
+            {
+                found = 1;
+                break;
+            }
+        }
+        if (!found)
+            eina_array_push(data, add->array[i]);
+    }
+    IF_FREE(add->array);
+    free(add);
+
+    return added;
+}
+
+
+static void
+save_data(Eet_File *ef, Eina_Array *data, const char *key)
+{
+    Efreet_Cache_Array_String *save;
+    unsigned int i;
+
+    if (!data || !data->count) return;
+
+    save = NEW(Efreet_Cache_Array_String, 1);
+    save->array = NEW(char *, data->count);
+    save->array_count = 0;
+    for (i = 0; i < data->count; ++i)
+        save->array[save->array_count++] = data->data[i];
+    eet_data_write(ef, efreet_array_string_edd(), key, save, 1);
+    IF_FREE(save->array);
+    free(save);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -673,6 +744,7 @@ main(int argc, char **argv)
     const char *path;
     char *dir = NULL;
     Eina_Bool changed = EINA_FALSE;
+    Eina_Bool flush = EINA_FALSE;
     int lockfd = -1;
     int tmpfd = -1;
     char **keys;
@@ -718,11 +790,6 @@ main(int argc, char **argv)
             while ((i < (argc - 1)) && (argv[(i + 1)][0] != '-'))
                 eina_array_push(extra_dirs, argv[++i]);
         }
-    }
-    if (exts->count == 0)
-    {
-        ERR("Error: Need to pass extensions to icon cache create process");
-        return -1;
     }
 
     if (!eet_init()) return -1;
@@ -776,6 +843,17 @@ main(int argc, char **argv)
 
     theme_version->major = EFREET_ICON_CACHE_MAJOR;
     theme_version->minor = EFREET_ICON_CACHE_MINOR;
+
+    if (add_data(theme_ef, exts, EFREET_CACHE_ICON_EXTENSIONS))
+        flush = EINA_TRUE;
+    if (add_data(theme_ef, extra_dirs, EFREET_CACHE_ICON_EXTRA_DIRS))
+        flush = EINA_TRUE;
+
+    if (exts->count == 0)
+    {
+        ERR("Need to pass extensions to icon cache create process");
+        goto on_error_efreet;
+    }
 
     keys = eet_list(theme_ef, "*", &num);
     if (keys)
@@ -831,9 +909,9 @@ main(int argc, char **argv)
         icon_ef = eet_open(efreet_icon_cache_file(theme->theme.name.internal), EET_FILE_MODE_READ_WRITE);
         if (!icon_ef) goto on_error_efreet;
         icon_version = eet_data_read(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION);
-        if (icon_version &&
+        if (flush || (icon_version &&
             ((icon_version->major != EFREET_ICON_CACHE_MAJOR) ||
-             (icon_version->minor != EFREET_ICON_CACHE_MINOR)))
+             (icon_version->minor != EFREET_ICON_CACHE_MINOR))))
         {
             // delete old cache
             eet_close(icon_ef);
@@ -868,6 +946,8 @@ main(int argc, char **argv)
         theme->changed = check_changed(theme);
         if (theme->changed)
             changed = EINA_TRUE;
+        if (flush)
+            changed = theme->changed = EINA_TRUE;
         if (changed && theme->dirs)
         {
             efreet_hash_free(theme->dirs, free);
@@ -920,9 +1000,9 @@ main(int argc, char **argv)
     icon_ef = eet_open(efreet_icon_cache_file(EFREET_CACHE_ICON_FALLBACK), EET_FILE_MODE_READ_WRITE);
     if (!icon_ef) goto on_error_efreet;
     icon_version = eet_data_read(icon_ef, efreet_version_edd(), EFREET_CACHE_VERSION);
-    if (icon_version &&
+    if (flush || (icon_version &&
         ((icon_version->major != EFREET_ICON_CACHE_MAJOR) ||
-         (icon_version->minor != EFREET_ICON_CACHE_MINOR)))
+         (icon_version->minor != EFREET_ICON_CACHE_MINOR))))
     {
         // delete old cache
         eet_close(icon_ef);
@@ -940,6 +1020,7 @@ main(int argc, char **argv)
     icon_version->major = EFREET_ICON_CACHE_MAJOR;
     icon_version->minor = EFREET_ICON_CACHE_MINOR;
 
+    /* load icons */
     icons = eina_hash_string_superfast_new(NULL);
     keys = eet_list(icon_ef, "*", &num);
     if (keys)
@@ -957,6 +1038,8 @@ main(int argc, char **argv)
     if (!theme)
         theme = NEW(Efreet_Cache_Icon_Theme, 1);
     theme->changed = changed;
+    if (flush)
+        changed = theme->changed = EINA_TRUE;
     if (changed && theme->dirs)
     {
         efreet_hash_free(theme->dirs, free);
@@ -995,6 +1078,9 @@ main(int argc, char **argv)
 
     /* save data */
     eet_data_write(theme_ef, efreet_version_edd(), EFREET_CACHE_VERSION, theme_version, 1);
+    save_data(theme_ef, exts, EFREET_CACHE_ICON_EXTENSIONS);
+    save_data(theme_ef, extra_dirs, EFREET_CACHE_ICON_EXTRA_DIRS);
+
     eet_close(theme_ef);
     efreet_setowner(efreet_icon_theme_cache_file());
     free(theme_version);
