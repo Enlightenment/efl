@@ -2606,6 +2606,8 @@ _proxy_subrender(Evas *e, Evas_Object *source)
      }
    else
      {
+        if (!source->pre_render_done)
+           source->func->render_pre(source);
         source->func->render(source, e->engine.data.output, ctx,
                                     source->proxy.surface,
                                     -source->cur.geometry.x,
