@@ -1,7 +1,11 @@
 #ifndef _ECORE_INPUT_H
 #define _ECORE_INPUT_H
 
-#include <inttypes.h>
+#ifdef _WIN32
+# include <stddef.h>
+#else
+# include <inttypes.h>
+#endif
 
 #ifdef EAPI
 # undef EAPI
