@@ -187,3 +187,8 @@
         inode number, size, and on linux, the nanonsecond resolution
         timestamp as well.
 
+2011-03-19  Brett Nash (nash)
+
+	* Proxy: Bypass the clip on smart clipped objects.  This is probably
+	what you want if you are using proxies, as it means clips don't cause
+	the object to be invisible by the proxy.

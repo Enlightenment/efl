@@ -2513,19 +2513,29 @@ _proxy_error(Evas_Object *proxy, void *context, void *output, void *surface,
    return;
 }
 
+
 static void
-_proxy_subrender_recurse(Evas_Object *obj, void *output, void *surface, void *ctx, int x, int y){
+_proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void *surface, void *ctx, int x, int y){
      Evas_Object *obj2;
      Evas *e;
      e = obj->layer->evas;
      if (obj->clip.clipees) return;
-     if (!evas_object_is_visible(obj)) return;
+     /* evas_object_is_visible, inline and tweaked to handle it's clip hidden*/
+     if (!obj->cur.visible) return;
+     if (!clip || clip != obj->cur.clipper)
+       {
+          if (!obj->cur.cache.clip.visible) return;
+          if (obj->cur.cache.clip.a == 0 &&
+              obj->cur.render_op == EVAS_RENDER_BLEND) return;
+       }
+     if (obj->func->is_visible && !obj->func->is_visible(obj)) return;
+
      obj->pre_render_done = 1;
      ctx = e->engine.func->context_new(output);
      if (obj->smart.smart)
        {
           EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2){
-               _proxy_subrender_recurse(obj2, output, surface, ctx, x,y);
+               _proxy_subrender_recurse(obj2, clip, output, surface, ctx, x,y);
           }
        }
      else
@@ -2546,7 +2556,7 @@ static void
 _proxy_subrender(Evas *e, Evas_Object *source)
 {
    void *ctx;
-   Evas_Object *obj2;
+   Evas_Object *obj2, *clip;
    int w,h;
 
    if (!source) return;
@@ -2584,8 +2594,9 @@ _proxy_subrender(Evas *e, Evas_Object *source)
    ctx = e->engine.func->context_new(e->engine.data.output);
    if (source->smart.smart)
      {
+        clip = evas_object_smart_clipped_clipper_get(source);
         EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(source), obj2){
-             _proxy_subrender_recurse(obj2, e->engine.data.output,
+             _proxy_subrender_recurse(obj2, clip, e->engine.data.output,
                                       source->proxy.surface,
                                       ctx,
                                       -source->cur.geometry.x,
