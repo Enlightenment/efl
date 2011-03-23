@@ -95,3 +95,7 @@
         windows correctly, expecting a feed-back event from x, which it didn't
         get.
 
+2011-03-23  Elixirious
+
+	* Fix: ecore_con_url_ftp_upload upload the file until the end.
+

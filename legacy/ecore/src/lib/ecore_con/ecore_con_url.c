@@ -1634,7 +1634,7 @@ _ecore_con_url_read_cb(void  *ptr,
         fclose(stream);
         return CURL_READFUNC_ABORT;
      }
-   else if ((retcode == 0) || (retcode < nitems))
+   else if (retcode == 0)
      {
         fclose((FILE *)stream);
         return 0;
