@@ -4658,6 +4658,7 @@ collections {
                name:   "item_mouse_out";
                signal: "mouse,out";
                source: "over2";
+               action: SIGNAL_EMIT "elm,action,inactivate" "";
                after: "item_mouse_out_2";
                after: "item_mouse_out_3";
            }
@@ -4754,6 +4755,18 @@ collections {
                     set_state(PART:"elm.text", "disabled", 0.0);
                    set_int(menu_disable, 1);
                }
+           }
+           program { name: "item_select";
+               signal: "elm,state,selected";
+               source: "elm";
+               after: "item_mouse_in_2";
+               after: "item_mouse_in_3";
+           }
+           program { name: "item_unselect";
+               signal: "elm,state,unselected";
+               source: "elm";
+               after: "item_mouse_out_2";
+               after: "item_mouse_out_3";
            }
            program { name: "enable";
                signal: "elm,state,enabled";
