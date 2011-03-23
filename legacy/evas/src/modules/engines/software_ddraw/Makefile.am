@@ -20,13 +20,13 @@ evas_ddraw_main.cpp
 
 SOFTWARE_DDRAW_LIBADD = @evas_engine_software_ddraw_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_ddraw/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Software_DDraw.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_DDRAW
 
+pkgdir = $(libdir)/evas/modules/engines/software_ddraw/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(SOFTWARE_DDRAW_SOURCES)
 module_la_CXXFLAGS = -fno-rtti -fno-exceptions

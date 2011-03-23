@@ -32,13 +32,13 @@ endif
 
 XRENDER_X11_LIBADD = @evas_engine_xrender_xcb_libs@ @evas_engine_xrender_x11_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/xrender_x11/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_XRender_X11.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_XRENDER_X11
 
+pkgdir = $(libdir)/evas/modules/engines/xrender_x11/$(MODULE_ARCH)
 pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = $(XRENDER_X11_SOURCES)

@@ -17,13 +17,13 @@ if BUILD_ENGINE_SOFTWARE_SDL
 SOFTWARE_SDL_SOURCES = evas_engine.c
 SOFTWARE_SDL_LIBADD = @evas_engine_software_sdl_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_sdl/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_SDL.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_SDL
 
+pkgdir = $(libdir)/evas/modules/engines/software_sdl/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES  = $(SOFTWARE_SDL_SOURCES)

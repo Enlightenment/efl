@@ -20,13 +20,13 @@ evas_ddraw_main.cpp
 
 SOFTWARE_16_DDRAW_LIBADD = @evas_engine_software_16_ddraw_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_16_ddraw/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Software_16_DDraw.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_16_DDRAW
 
+pkgdir = $(libdir)/evas/modules/engines/software_16_ddraw/$(MODULE_ARCH)
 pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = $(SOFTWARE_16_DDRAW_SOURCES)

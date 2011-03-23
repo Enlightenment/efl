@@ -21,13 +21,13 @@ evas_qt_main.cpp
 
 SOFTWARE_QTOPIA_LIBADD = @evas_engine_software_qtopia_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_qtopia/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Software_Qtopia.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_QTOPIA
 
+pkgdir = $(libdir)/evas/modules/engines/software_qtopia/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(SOFTWARE_QTOPIA_SOURCES)
 module_la_LIBADD = @EINA_LIBS@ $(SOFTWARE_QTOPIA_LIBADD) $(top_builddir)/src/lib/libevas.la

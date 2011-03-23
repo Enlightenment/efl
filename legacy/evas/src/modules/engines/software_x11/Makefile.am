@@ -37,13 +37,12 @@ evas_xcb_main.c
 
 endif
 
-pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_ARCH)
-
 includes_HEADERS = Evas_Engine_Software_X11.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_X11
 
+pkgdir = $(libdir)/evas/modules/engines/software_x11/$(MODULE_ARCH)
 pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = $(SOFTWARE_X11_SOURCES)

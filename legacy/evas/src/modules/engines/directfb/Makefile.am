@@ -17,13 +17,13 @@ if BUILD_ENGINE_DIRECTFB
 DIRECTFB_SOURCES = evas_engine.c polygon.c
 DIRECTFB_LIBADD = @evas_engine_directfb_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/directfb/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_DirectFB.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_DIRECTFB
 
+pkgdir = $(libdir)/evas/modules/engines/directfb/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES  = $(DIRECTFB_SOURCES)

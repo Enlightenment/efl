@@ -29,13 +29,13 @@ evas_direct3d_vertex_buffer_cache.cpp
 
 DIRECT3D_LIBADD = @evas_engine_direct3d_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/direct3d/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Direct3D.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_DIRECT3D
 
+pkgdir = $(libdir)/evas/modules/engines/direct3d/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(DIRECT3D_SOURCES)
 module_la_CXXFLAGS = -fno-exceptions

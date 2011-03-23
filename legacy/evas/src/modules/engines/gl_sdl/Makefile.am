@@ -17,13 +17,13 @@ evas_engine.c
 
 GL_SDL_LIBADD = @evas_engine_gl_sdl_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la 
 
-pkgdir = $(libdir)/evas/modules/engines/gl_sdl/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_GL_SDL.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_GL_SDL
 
+pkgdir = $(libdir)/evas/modules/engines/gl_sdl/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(GL_SDL_SOURCES)

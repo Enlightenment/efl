@@ -15,10 +15,10 @@ if BUILD_ENGINE_SOFTWARE_8
 
 SOFTWARE_8_SOURCES = evas_engine.c
 
-pkgdir = $(libdir)/evas/modules/engines/software_8/$(MODULE_ARCH)
 
 if !EVAS_STATIC_BUILD_SOFTWARE_8_X11
 
+pkgdir = $(libdir)/evas/modules/engines/software_8/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(SOFTWARE_8_SOURCES)
 module_la_LIBADD = @EINA_LIBS@ $(top_builddir)/src/lib/libevas.la

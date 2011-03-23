@@ -14,13 +14,13 @@ if BUILD_ENGINE_QUARTZ
 QUARTZ_SOURCES = evas_engine.c
 QUARTZ_LIBADD = @evas_engine_quartz_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/quartz/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Quartz.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_QUARTZ
 
+pkgdir = $(libdir)/evas/modules/engines/quartz/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(QUARTZ_SOURCES)

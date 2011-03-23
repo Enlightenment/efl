@@ -17,13 +17,13 @@ BUFFER_SOURCES = \
 evas_engine.c \
 evas_outbuf.c
 
-pkgdir = $(libdir)/evas/modules/engines/buffer/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Buffer.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_BUFFER
 
+pkgdir = $(libdir)/evas/modules/engines/buffer/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(BUFFER_SOURCES)

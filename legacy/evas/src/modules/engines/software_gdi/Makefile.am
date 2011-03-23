@@ -20,13 +20,13 @@ evas_gdi_main.c
 
 SOFTWARE_GDI_LIBADD = @evas_engine_software_gdi_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_gdi/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Software_Gdi.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_GDI
 
+pkgdir = $(libdir)/evas/modules/engines/software_gdi/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(SOFTWARE_GDI_SOURCES)
 module_la_LIBADD = $(top_builddir)/src/lib/libevas.la @EINA_LIBS@ $(SOFTWARE_GDI_LIBADD)

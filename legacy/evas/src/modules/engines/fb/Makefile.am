@@ -19,13 +19,13 @@ evas_outbuf.c
 
 FB_LIBADD = @evas_engine_fb_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/fb/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_FB.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_FB
 
+pkgdir = $(libdir)/evas/modules/engines/fb/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(FB_SOURCES)
 module_la_LIBADD = @EINA_LIBS@ $(FB_LIBADD) $(top_builddir)/src/lib/libevas.la

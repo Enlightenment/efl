@@ -19,13 +19,13 @@ evas_x_buffer.c
 
 SOFTWARE_16_X11_LIBADD = @evas_engine_software_16_x11_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_16_x11/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Software_16_X11.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_16_X11
 
+pkgdir = $(libdir)/evas/modules/engines/software_16_x11/$(MODULE_ARCH)
 pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = $(SOFTWARE_16_X11_SOURCES)

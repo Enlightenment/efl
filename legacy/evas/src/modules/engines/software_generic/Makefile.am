@@ -13,10 +13,10 @@ AM_CFLAGS = @WIN32_CFLAGS@
 
 SOFTWARE_GENERIC_SOURCES = evas_engine.c
 
-pkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
 
 if !EVAS_STATIC_BUILD_SOFTWARE_GENERIC
 
+pkgdir = $(libdir)/evas/modules/engines/software_generic/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES  = $(SOFTWARE_GENERIC_SOURCES)

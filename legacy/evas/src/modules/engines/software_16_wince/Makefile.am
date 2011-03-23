@@ -22,13 +22,13 @@ evas_wince_gdi_buffer.c
 
 SOFTWARE_16_WINCE_LIBADD = @evas_engine_software_16_wince_libs@
 
-pkgdir = $(libdir)/evas/modules/engines/software_16_wince/$(MODULE_ARCH)
 
 includes_HEADERS = Evas_Engine_Software_16_WinCE.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_SOFTWARE_16_WINCE
 
+pkgdir = $(libdir)/evas/modules/engines/software_16_wince/$(MODULE_ARCH)
 pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = $(SOFTWARE_16_WINCE_SOURCE)
