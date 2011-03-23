@@ -2530,7 +2530,8 @@ _proxy_subrender_recurse(Evas_Object *obj, Evas_Object *clip, void *output, void
        }
      if (obj->func->is_visible && !obj->func->is_visible(obj)) return;
 
-     obj->pre_render_done = 1;
+     if (!obj->pre_render_done)
+        obj->func->render_pre(obj);
      ctx = e->engine.func->context_new(output);
      if (obj->smart.smart)
        {
