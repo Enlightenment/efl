@@ -1,6 +1,7 @@
 #ifndef _ECORE_INPUT_H
 #define _ECORE_INPUT_H
 
+#include <inttypes.h>
 
 #ifdef EAPI
 # undef EAPI
