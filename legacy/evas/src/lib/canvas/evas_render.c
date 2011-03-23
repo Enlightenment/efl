@@ -1372,9 +1372,6 @@ evas_render_updates_internal(Evas *e,
                                    }
 			      }
 #endif
-                            e->engine.func->context_clip_set(e->engine.data.output,
-                                                             e->engine.data.context,
-                                                             x, y, w, h);
                             clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
 							     surface, off_x, off_y, 0
 #ifdef REND_DGB
