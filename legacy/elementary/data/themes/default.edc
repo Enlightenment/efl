@@ -7961,7 +7961,7 @@ collections {
          image: "icon_arrow_down.png" COMP;
       }
       parts {
-                        part { name: "ctxpopup_arrow";
+         part { name: "ctxpopup_arrow";
             type: IMAGE;
             scale: 1;
             description {
@@ -7976,29 +7976,33 @@ collections {
                min: 40 40;
                fixed: 1 1;
                align: 0.0 0.5;
-               image { normal: "icon_arrow_left.png";
-               }
+               rel1 { offset: 7 0; }
+               rel1 { offset: 6 -1; }
+               image { normal: "icon_arrow_left.png"; }
             }
             description { state: "right" 0.0;
                min: 40 40;
                fixed: 1 1;
                align: 1.0 0.5;
-               image { normal: "icon_arrow_right.png";    
-                                        }
+               rel1 { offset: -7 0; }
+               rel2 { offset: -8 -1; }
+               image { normal: "icon_arrow_right.png"; }
             }
             description { state: "top" 0.0;
                min: 40 40;
                fixed: 1 1;
                align: 0.5 0.0;
-               image { normal: "icon_arrow_up.png";
-               }
+               rel1 { offset: 0 7; }
+               rel2 { offset: -1 6; }
+               image { normal: "icon_arrow_up.png"; }
             }
             description { state: "bottom" 0.0;
                min: 40 40;
                fixed: 1 1;
                align: 0.5 1.0;
-               image { normal: "icon_arrow_down.png";
-               }
+               rel1 { offset: 0 -7; }
+               rel2 { offset: -1 -8; }
+               image { normal: "icon_arrow_down.png"; }
             }
          }
       }
