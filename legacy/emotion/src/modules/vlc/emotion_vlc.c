@@ -10,6 +10,15 @@
 #include "emotion_private.h"
 #include "emotion_vlc.h"
 
+/* internal util calls */
+static void *_em_lock          (void *par);
+static void  _em_unlock        (void *par);
+static void  _em_event         (const libvlc_event_t *event, void* data);
+static void  _em_resize        (Emotion_Vlc_Video *ev, int x,  int y);
+static Eina_Bool _em_fd_active (Emotion_Vlc_Video *ev, Ecore_Fd_Handler *fdh);
+static int   _em_reload_vlc    (Emotion_Vlc_Video *ev);
+void*	     _em_slave_thread  (void * t);
+
 void * _em_slave_thread(void * t)
 {
 	int event;
@@ -77,7 +86,7 @@ static unsigned char em_init(Evas_Object *obj, void **emotion_video, Emotion_Mod
 		ev->fd_read = fds[0];
 		ev->fd_write = fds[1];
 		fcntl(ev->fd_read, F_SETFL, O_NONBLOCK);
-		ev->fd_handler = ecore_main_fd_handler_add(ev->fd_read, ECORE_FD_READ, _em_fd_active, ev, NULL, NULL);
+		ev->fd_handler = ecore_main_fd_handler_add(ev->fd_read, ECORE_FD_READ, (Ecore_Fd_Cb)_em_fd_active, ev, NULL, NULL);
 		ecore_main_fd_handler_active_set(ev->fd_handler, ECORE_FD_READ);
 	}
 
@@ -125,10 +134,7 @@ static unsigned char em_init(Evas_Object *obj, void **emotion_video, Emotion_Mod
 	sprintf(ev->height, "%d", HEIGHT);
 	sprintf(ev->pitch, "%d", 4*WIDTH);
 
-	ev->vlc_ex = (libvlc_exception_t*)malloc(sizeof(libvlc_exception_t));
-	libvlc_exception_init(ev->vlc_ex);
-	ev->vlc_player = libvlc_new(vlc_argc, vlc_argv, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ev->vlc_player = libvlc_new(vlc_argc, vlc_argv);
 
 	if(ev->vlc_player)	{
 		ev->play_ok = 1;
@@ -154,9 +160,7 @@ static int em_shutdown(void *ef)
 
 	ASSERT_EV_VLC(ev) return 0;
 	libvlc_release(ev->vlc_player);
-	CATCH(ev->vlc_ex)
 	ev->vlc_player = NULL;
-	free(ev->vlc_ex);
 
 	ev->closing = 0;
 
@@ -189,22 +193,17 @@ static unsigned char em_file_open(const char *file, Evas_Object *obj, void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_VLC(ev) return 0;
 
-	ev->vlc_m = libvlc_media_new(ev->vlc_player, file, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ev->vlc_m = libvlc_media_new_path(ev->vlc_player, file);
 	ASSERT_EV_M(ev) return 0;
-	ev->vlc_mp = libvlc_media_player_new_from_media(ev->vlc_m, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ev->vlc_mp = libvlc_media_player_new_from_media(ev->vlc_m);
 	libvlc_media_release(ev->vlc_m); 
-	CATCH(ev->vlc_ex)
 	ev->vlc_m = NULL;
 	ASSERT_EV_MP(ev) return 0;
 
-	ev->vlc_evtmngr = libvlc_media_player_event_manager (ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ev->vlc_evtmngr = libvlc_media_player_event_manager (ev->vlc_mp);
 
 	for(i = EVENT_BEG_ID; i<EVENT_BEG_ID+NB_EVENTS; i++)	{
-		libvlc_event_attach(ev->vlc_evtmngr, (libvlc_event_type_t)i, _em_event, ev, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
+		libvlc_event_attach(ev->vlc_evtmngr, (libvlc_event_type_t)i, _em_event, ev);
 	}
 
 	if(ev->filename)	{
@@ -229,13 +228,10 @@ static void em_file_close(void *ef)
 	ASSERT_EV_MP(ev) return;
 
 	for(i = EVENT_BEG_ID; i<EVENT_BEG_ID+NB_EVENTS; i++)	{
-		libvlc_event_detach(ev->vlc_evtmngr, (libvlc_event_type_t)i, _em_event, ev, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
+		libvlc_event_detach(ev->vlc_evtmngr, (libvlc_event_type_t)i, _em_event, ev);
 	}
-	libvlc_media_player_stop(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_media_player_stop(ev->vlc_mp);
 	libvlc_media_player_release(ev->vlc_mp);
-	CATCH(ev->vlc_ex)
 	ev->vlc_mp = NULL;
 	if(ev->filename)	{
 		free(ev->filename);
@@ -255,10 +251,10 @@ static void em_play(void *ef, double pos)
 	ev->play_ok = 0;
 
 	if(pos != ev->pos)	{
-		libvlc_media_player_set_time(ev->vlc_mp, (libvlc_time_t)(pos*1000), ev->vlc_ex);
+		libvlc_media_player_set_time(ev->vlc_mp, (libvlc_time_t)(pos*1000));
 	}
 	
-	libvlc_media_player_play(ev->vlc_mp, ev->vlc_ex);
+	libvlc_media_player_play(ev->vlc_mp);
 
 	ev->just_loaded = 0;
 }
@@ -273,8 +269,7 @@ static void em_stop(void *ef)
 
 	ev->play = 0;
 	ev->play_ok = 0;
-	libvlc_media_player_pause(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_media_player_pause(ev->vlc_mp);
 }
 
 static void em_size_get(void *ef, int *w, int *h)
@@ -299,8 +294,7 @@ static void em_pos_set(void *ef, double pos)
 	ev = (Emotion_Vlc_Video *)ef;
 	ASSERT_EV(ev) return;
 	ASSERT_EV_MP(ev) return;
-	libvlc_media_player_set_time(ev->vlc_mp, (libvlc_time_t)(pos*1000), ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_media_player_set_time(ev->vlc_mp, (libvlc_time_t)(pos*1000));
 }
 
 static double em_len_get(void *ef)
@@ -397,8 +391,7 @@ static int em_video_handled(void *ef)
 	ev = (Emotion_Vlc_Video *)ef;
 	if (ev->opening || (!ev->play_ok)) return 0;
 
-	ret = libvlc_media_player_has_vout(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ret = libvlc_media_player_has_vout(ev->vlc_mp);
 	return ret;
 }
 
@@ -421,8 +414,7 @@ static int em_seekable(void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	ret = vlc_media_player_is_seekable(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ret = vlc_media_player_is_seekable(ev->vlc_mp);
 	return ret;
 }
 
@@ -504,6 +496,7 @@ static void _em_resize(Emotion_Vlc_Video *ev, int x,  int y)
 	int i;
 	int event;
 	int vlc_argc = 0;
+	unsigned int tmp;
 	char const *vlc_argv[] =
 	{
 		"-q",
@@ -525,25 +518,13 @@ static void _em_resize(Emotion_Vlc_Video *ev, int x,  int y)
 	fr = ev->cur_frame;
 
 	/* We look for new size if not specified */
-	if(x == -1)	{
-		x = libvlc_video_get_width(ev->vlc_mp, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
-	}
-	if(y == -1)	{
-		y = libvlc_video_get_height(ev->vlc_mp, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
-	}
-
-	if((x == 0)||(y == 0))	{
-		return;
-	}
+	if ((x == -1) || (y == -1))
+	  if (!libvlc_video_get_size(ev->vlc_mp, tmp, &x, &y)) return;
 
 	/* stop vlc if necessary */
 	if(ev->filename)	{	
-		libvlc_media_player_stop(ev->vlc_mp, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
+		libvlc_media_player_stop(ev->vlc_mp);
 		libvlc_media_player_release(ev->vlc_mp);
-		CATCH(ev->vlc_ex)
 	}
 
 	/* update size in object */
@@ -553,7 +534,6 @@ static void _em_resize(Emotion_Vlc_Video *ev, int x,  int y)
 
 	/* we need to restart vlc */
 	libvlc_release(ev->vlc_player);
-	CATCH(ev->vlc_ex)
 	vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
 	sprintf(ev->clock, "%lld", (long long int)(intptr_t)_em_lock);
 	sprintf(ev->cunlock, "%lld", (long long int)(intptr_t)_em_unlock);
@@ -561,29 +541,23 @@ static void _em_resize(Emotion_Vlc_Video *ev, int x,  int y)
 	sprintf(ev->width, "%d", ev->w);
 	sprintf(ev->height, "%d", ev->h);
 	sprintf(ev->pitch, "%d", 4*ev->w);
-	ev->vlc_player = libvlc_new(vlc_argc, vlc_argv, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ev->vlc_player = libvlc_new(vlc_argc, vlc_argv);
 
 	pthread_mutex_lock(&fr->frame_copy_lock);
 
 	if(ev->filename)	{	
 		/* relaunch media and mediaplayer */
-		ev->vlc_m = libvlc_media_new(ev->vlc_player, ev->filename, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
-			ASSERT_EV_M(ev) return;
-		ev->vlc_mp = libvlc_media_player_new_from_media(ev->vlc_m, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
-			libvlc_media_release(ev->vlc_m); 
-		CATCH(ev->vlc_ex)
-			ev->vlc_m = NULL;
+		ev->vlc_m = libvlc_media_new_path(ev->vlc_player, ev->filename);
+		ASSERT_EV_M(ev) return;
+		ev->vlc_mp = libvlc_media_player_new_from_media(ev->vlc_m);
+		libvlc_media_release(ev->vlc_m); 
+		ev->vlc_m = NULL;
 		ASSERT_EV_MP(ev) return;
 
-		ev->vlc_evtmngr = libvlc_media_player_event_manager (ev->vlc_mp, ev->vlc_ex);
-		CATCH(ev->vlc_ex)
+		ev->vlc_evtmngr = libvlc_media_player_event_manager (ev->vlc_mp);
 
 		for(i = EVENT_BEG_ID; i<EVENT_BEG_ID+NB_EVENTS; i++)	{
-			libvlc_event_attach(ev->vlc_evtmngr, (libvlc_event_type_t)i, _em_event, ev, ev->vlc_ex);
-			CATCH(ev->vlc_ex)
+			libvlc_event_attach(ev->vlc_evtmngr, (libvlc_event_type_t)i, _em_event, ev);
 		}
 	}
 
@@ -608,33 +582,31 @@ static void _em_resize(Emotion_Vlc_Video *ev, int x,  int y)
 
 	/* unlock both frames */
 	if(ev->filename)	{	
-		libvlc_media_player_play(ev->vlc_mp, ev->vlc_ex);
+		libvlc_media_player_play(ev->vlc_mp);
 	}
 
 	/* activate display */
 	ev->video_mute = 0;
 }
 
-static int _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
+static Eina_Bool _em_fd_active(Emotion_Vlc_Video *ev, Ecore_Fd_Handler *fdh)
 {
 	/* this only used for ecore notification */
 	/* every other internal event should be done in _em_slave_thread */
 	int event;
 	int fd, len;
 	Emotion_Vlc_Video_Frame *fr;
-	Emotion_Vlc_Video *ev;
 
-	ev = data;
 	fd = ecore_main_fd_handler_fd_get(fdh);
 	while((len = read(fd, &event, sizeof(int))) > 0) {
 		if(len == sizeof(int)) {
 			switch(event)	{
 				case VLC_NEW_FRAME:
-					ASSERT_EV(ev)	return 1;
+					ASSERT_EV(ev)	return EINA_TRUE;
 					_emotion_frame_new(ev->obj);
 				break;
 				case VLC_RESIZE:
-					ASSERT_EV(ev)	return 1;
+					ASSERT_EV(ev)	return EINA_TRUE;
 					_emotion_frame_resize(ev->obj, ev->w, ev->h, ev->ratio);
 				break;
 				default:
@@ -642,7 +614,7 @@ static int _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 			}
 		}
 	}
-	return 1;
+	return EINA_TRUE;
 }
 
 
@@ -744,8 +716,7 @@ static int em_video_channel_count(void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	ret = libvlc_media_player_has_vout(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ret = libvlc_media_player_has_vout(ev->vlc_mp);
 	return ret;
 }
 
@@ -799,8 +770,7 @@ static void em_audio_channel_set(void *ef, int channel)
 	ASSERT_EV_VLC(ev) return;
 	if (channel < -1) channel = -1;
 	ev->audio_channel = channel;
-	libvlc_audio_set_channel(ev->vlc_player, channel, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_audio_set_channel(ev->vlc_mp, channel);
 }
 
 static int em_audio_channel_get(void *ef)
@@ -812,8 +782,7 @@ static int em_audio_channel_get(void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_VLC(ev) return 0;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	ret = libvlc_audio_get_channel(ev->vlc_player, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	ret = libvlc_audio_get_channel(ev->vlc_mp);
 	return ret;
 }
 
@@ -831,8 +800,7 @@ static void em_audio_channel_mute_set(void *ef, int mute)
 	ASSERT_EV(ev) return;
 	ASSERT_EV_VLC(ev) return;
 	ev->audio_mute = mute;
-	libvlc_audio_set_mute(ev->vlc_player, (int)(ev->audio_mute), ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_audio_set_mute(ev->vlc_mp, (int)(ev->audio_mute));
 }
 
 static int em_audio_channel_mute_get(void *ef)
@@ -855,9 +823,8 @@ static void em_audio_channel_volume_set(void *ef, double vol)
 
 	if (vol < 0.0) vol = 0.0;
 	if (vol > 1.0) vol = 1.0;
-	libvlc_audio_set_volume(ev->vlc_player, (int)(vol * 200), ev->vlc_ex);
+	libvlc_audio_set_volume(ev->vlc_mp, (int)(vol * 200));
 	write(ev->fd_slave_write, &event, sizeof(void *));
-	CATCH(ev->vlc_ex)
 }
 
 static double em_audio_channel_volume_get(void *ef)
@@ -869,8 +836,7 @@ static double em_audio_channel_volume_get(void *ef)
 	ASSERT_EV(ev) return;
 	ASSERT_EV_VLC(ev) return;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	vol = libvlc_audio_get_volume(ev->vlc_player, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	vol = libvlc_audio_get_volume(ev->vlc_mp);
 	return (double)(vol/200.0);
 }
 
@@ -889,8 +855,7 @@ static void em_spu_channel_set(void *ef, int channel)
 	ASSERT_EV_MP(ev) return;
 	if (channel < 0) channel = 0;
 	ev->spu_channel = channel;
-	libvlc_video_set_spu(ev->vlc_mp, ev->spu_channel, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_video_set_spu(ev->vlc_mp, ev->spu_channel);
 }
 
 static int em_spu_channel_get(void *ef)
@@ -902,8 +867,7 @@ static int em_spu_channel_get(void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	num = libvlc_video_get_spu(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	num = libvlc_video_get_spu(ev->vlc_mp);
 	return num;
 }
 
@@ -934,8 +898,7 @@ static int em_chapter_count(void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	num = libvlc_media_player_get_chapter_count(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	num = libvlc_media_player_get_chapter_count(ev->vlc_mp);
 	return num;
 }
 
@@ -946,8 +909,7 @@ static void em_chapter_set(void *ef, int chapter)
 	ev = (Emotion_Vlc_Video *)ef;
 	ASSERT_EV(ev) return;
 	ASSERT_EV_MP(ev) return ;
-	libvlc_media_player_set_chapter(ev->vlc_mp, chapter, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_media_player_set_chapter(ev->vlc_mp, chapter);
 }
 
 static int em_chapter_get(void *ef)
@@ -958,8 +920,7 @@ static int em_chapter_get(void *ef)
 	ev = (Emotion_Vlc_Video *)ef;
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
-	num = libvlc_media_player_get_chapter(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	num = libvlc_media_player_get_chapter(ev->vlc_mp);
 	return num;
 }
 
@@ -976,8 +937,7 @@ static void em_speed_set(void *ef, double speed)
 	ev = (Emotion_Vlc_Video *)ef;
 	ASSERT_EV(ev) return;
 	ASSERT_EV_MP(ev) return;
-	libvlc_media_player_set_rate(ev->vlc_mp, speed, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	libvlc_media_player_set_rate(ev->vlc_mp, speed);
 }
 
 static double em_speed_get(void *ef)
@@ -988,8 +948,7 @@ static double em_speed_get(void *ef)
 	ev = (Emotion_Vlc_Video *)ef;
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
-	speed = libvlc_media_player_get_rate(ev->vlc_mp, ev->vlc_ex);
-	CATCH(ev->vlc_ex)
+	speed = libvlc_media_player_get_rate(ev->vlc_mp);
 	return (double)speed;
 }
 
@@ -998,7 +957,8 @@ static int em_eject(void *ef)
 	Emotion_Vlc_Video *ev;
 
 	ev = (Emotion_Vlc_Video *)ef;
-	system("eject");
+	if (system("eject"))
+	  fprintf(stderr, "Eject failed!\n");
 	return 1;
 }
 
@@ -1014,25 +974,25 @@ static const char * em_meta_get(void *ef, int meta)
 	switch (meta)
 	{
 		case META_TRACK_TITLE:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Title, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Title);
 			break;
 		case META_TRACK_ARTIST:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Artist, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Artist);
 			break;
 		case META_TRACK_GENRE:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Genre, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Genre);
 			break;
 		case META_TRACK_COMMENT:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Description, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Description);
 			break;
 		case META_TRACK_ALBUM:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Album, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Album);
 			break;
 		case META_TRACK_YEAR:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Date, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_Date);
 			break;
 		case META_TRACK_DISCID:
-			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_TrackID, ev->vlc_ex);
+			meta_data = libvlc_media_get_meta(ev->vlc_m, libvlc_meta_TrackID);
 			break;
 		default:
 			break;
@@ -1054,12 +1014,13 @@ static void _em_event(const libvlc_event_t *event, void *data)
 				_emotion_video_pos_update(ev->obj, time, 0);
 				ev->pos = time;
 				if(ev->len == 0)	{
-					pos = libvlc_media_player_get_length(ev->vlc_mp, ev->vlc_ex);
+					pos = libvlc_media_player_get_length(ev->vlc_mp);
 					ev->len = (double)(pos / 1000.0);
 				}
 			}
 		case libvlc_MediaPlayerPlaying: {
 				int x, y;
+				unsigned int tmp;
 				float fps = 0;
 				float pos = 0;
 				float total_pos = 0;
@@ -1067,14 +1028,9 @@ static void _em_event(const libvlc_event_t *event, void *data)
 				libvlc_time_t total_time = 0;
 
 				/* get video properties */
-				total_time = libvlc_media_player_get_length(ev->vlc_mp, ev->vlc_ex);
-				CATCH(ev->vlc_ex)
-				fps = libvlc_media_player_get_fps(ev->vlc_mp, ev->vlc_ex);
-				CATCH(ev->vlc_ex)
-				x = libvlc_video_get_width(ev->vlc_mp, ev->vlc_ex);
-				CATCH(ev->vlc_ex)
-				y = libvlc_video_get_height(ev->vlc_mp, ev->vlc_ex);
-				CATCH(ev->vlc_ex)
+				total_time = libvlc_media_player_get_length(ev->vlc_mp);
+				fps = libvlc_media_player_get_fps(ev->vlc_mp);
+				libvlc_video_get_size(ev->vlc_mp, tmp, &x, &y);
 				/* set them to object */
 				if(ev->fps == 0)	{
 					ev->fps = fps;

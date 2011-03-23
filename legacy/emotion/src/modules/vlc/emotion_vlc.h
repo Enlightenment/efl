@@ -25,15 +25,6 @@
 #define ASSERT_EV_MP(ev)	if(!ev->vlc_mp)
 #define ASSERT_EV_VLC(ev)	if(!ev->vlc_player)
 
-#ifdef DEBUG
-#define CATCH(ex)	if(libvlc_exception_raised(ex)){ \
-				fprintf(stderr,"VLC EX [%s]::%s:%d %s\n", __FILE__,__func__,__LINE__, \
-				libvlc_exception_get_message(ex)); \
-			}libvlc_exception_clear(ex);
-#else
-#define CATCH(ex)	libvlc_exception_clear(ex);
-#endif
-
 /* internal events */
 #define VLC_NEW_FRAME	1
 #define VLC_RESIZE	2
@@ -112,7 +103,6 @@ struct _Emotion_Vlc_Video
    libvlc_instance_t *	     vlc_player;
    libvlc_media_player_t *   vlc_mp;
    libvlc_media_t * 	     vlc_m;
-   libvlc_exception_t *      vlc_ex;
    libvlc_event_manager_t *  vlc_evtmngr;
    
    /* vlc datas */
@@ -160,14 +150,6 @@ struct _Emotion_Vlc_Video_Frame
 };
 
 
-/* internal util calls */
-static void *_em_lock          (void *par);
-static void  _em_unlock        (void *par);
-static void  _em_event         (const libvlc_event_t *event, void* data);
-static void  _em_resize        (Emotion_Vlc_Video *ev, int x,  int y);
-static int   _em_fd_active     (void *data, Ecore_Fd_Handler *fdh);
-static int   _em_reload_vlc    (Emotion_Vlc_Video *ev);
-void*	     _em_slave_thread  (void * t);
 /* internal event struct */
 
 struct _Emotion_Vlc_Event
