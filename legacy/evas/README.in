@@ -799,7 +799,8 @@ draw large runs effectively.
 
 However it is useless on GL and similar back-ends as the cost in
 sending a word sized texture kills the performance gain (and GL is
-pretty good at drawing lots of small things anyway).
+pretty good at drawing lots of small things anyway).  If it detects a GL
+backend is in use, it disables itself.
 
 By default words (strings) of more then 50 characters are not cached.
 The system caches 40 words by default, but this can be changed by
@@ -820,14 +821,15 @@ Metric caching saves character metrics between characters in words.
 This enables it to render words much quicker as it avoids things like
 space calculations and kerning calculation.
 
-The cache size is also controlled by  EVAS_WORD_CACHE_MAX_WORDS
+The cache size is also controlled by EVAS_WORD_CACHE_MAX_WORDS.
 
 It is useful for GL in particular, although software engines do get
 some gain.
 
-Generally it is recommended you enable either word or metric caching,
-depending on your engine use.  If you are using software, enable word
+Generally it is recommended you enable one or both of word or metric caching,
+depending on your engine use.  If you are only using software, enable word
 caching (and neon on arm if you can), for GL, turn on metric caching.
+A simple solution is enable both, and let the engine sort it out at run time.
 
 If you have any issues with metric caching, please report them to either
 the e-devel mailing list or Brett Nash <nash@nash.id.uau>
