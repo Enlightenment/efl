@@ -3,8 +3,18 @@
  * code@ife-sit.info
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 #include <sys/types.h>
 #include <unistd.h>
+#include <Evas.h>
+#ifdef HAVE_EVAS_SOFWARE_X11
+# include <Evas_Engine_Software_X11.h>
+#endif
+#ifdef HAVE_EVAS_OPENGL_X11
+# include <Evas_Engine_GL_X11.h>
+#endif
 
 #include "Emotion.h"
 #include "emotion_private.h"
@@ -116,15 +126,7 @@ static unsigned char em_init(Evas_Object *obj, void **emotion_video, Emotion_Mod
 	{
 		"-q",
 		//"-vvvvv",
-		"--ignore-config",
-		"--vout", "vmem",
-		"--vmem-width", ev->width,
-		"--vmem-height", ev->height,
-		"--vmem-pitch", ev->pitch,
-		"--vmem-chroma", "RV32",
-		"--vmem-lock", ev->clock,
-		"--vmem-unlock", ev->cunlock,
-		"--vmem-data", ev->cdata,
+		"--ignore-config"
 	};
 	vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
 	sprintf(ev->clock, "%lld", (long long int)(intptr_t)_em_lock);
@@ -187,8 +189,13 @@ static int em_shutdown(void *ef)
 static unsigned char em_file_open(const char *file, Evas_Object *obj, void *ef)
 {
 	Emotion_Vlc_Video *ev;
-	int i;
-
+	int i, method;
+ Evas *e;
+ Eina_List *methods, *l;
+ char *name;
+#ifndef _WIN32
+ uint32_t xid;
+#endif
 	ev = (Emotion_Vlc_Video *)ef;
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_VLC(ev) return 0;
@@ -199,6 +206,39 @@ static unsigned char em_file_open(const char *file, Evas_Object *obj, void *ef)
 	libvlc_media_release(ev->vlc_m); 
 	ev->vlc_m = NULL;
 	ASSERT_EV_MP(ev) return 0;
+
+   e = evas_object_evas_get(obj);
+   method = evas_output_method_get(e);
+   methods = evas_render_method_list();
+   EINA_LIST_FOREACH(methods, l, name)
+     if (evas_render_method_lookup(name) == method) break;
+
+#ifdef _WIN32 /* NOT IMPLEMENTED YET */
+  libvlc_media_player_set_hwnd(ev->vlc_mp, (void*)xid);
+#else
+#ifdef HAVE_EVAS_SOFWARE_X11
+   if (!strcmp(name, "software_x11"))
+     {
+        Evas_Engine_Info_Software_X11 *einfo;
+        einfo = (Evas_Engine_Info_Software_X11*)evas_engine_info_get(e);
+        xid = einfo->info.drawable;
+     }
+#endif
+#ifdef HAVE_EVAS_OPENGL_X11
+   if (!strcmp(name, "gl_x11"))
+     {
+        Evas_Engine_Info_GL_X11 *einfo;
+        einfo = (Evas_Engine_Info_GL_X11*)evas_engine_info_get(e);
+        xid = einfo->info.drawable;
+     }
+#endif
+   if (strcmp(name, "software_x11") && strcmp(name, "gl_x11")) /* FIXME */
+     {
+        fprintf(stderr, "FATAL: engine unsupported!\n");
+        exit(1);
+     }
+  libvlc_media_player_set_xwindow(ev->vlc_mp, xid);
+#endif
 
 	ev->vlc_evtmngr = libvlc_media_player_event_manager (ev->vlc_mp);
 
@@ -214,7 +254,7 @@ static unsigned char em_file_open(const char *file, Evas_Object *obj, void *ef)
 
 	/* set properties to video object */
 	ev->just_loaded = 1;
-
+   evas_render_method_list_free(methods);
 	return 1;
 }
 
@@ -414,7 +454,7 @@ static int em_seekable(void *ef)
 	ASSERT_EV(ev) return 0;
 	ASSERT_EV_MP(ev) return 0;
 	if (ev->opening || (!ev->play_ok)) return 0;
-	ret = vlc_media_player_is_seekable(ev->vlc_mp);
+	ret = libvlc_media_player_is_seekable(ev->vlc_mp);
 	return ret;
 }
 
