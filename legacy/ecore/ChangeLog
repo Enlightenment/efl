@@ -88,3 +88,10 @@
 2011-03-19 Mike Blumenkrantz
 
         * Fix crash in ecore_con_ssl related to attempted connections on a dead socket
+
+2011-03-23  Carsten Haitzler (The Rasterman)
+
+        * Fix: ecore-evas interceptor didn't handle override-redirect
+        windows correctly, expecting a feed-back event from x, which it didn't
+        get.
+

@@ -57,11 +57,12 @@ _evas_object_associate_del(Evas_Object *obj)
 /* Interceptors Callbacks */
 
 static void
-_ecore_evas_obj_intercept_move(void *data, Evas_Object *obj __UNUSED__, Evas_Coord x, Evas_Coord y)
+_ecore_evas_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Ecore_Evas *ee = data;
    // FIXME: account for frame
    ecore_evas_move(ee, x, y);
+   if (ecore_evas_override_get(ee)) evas_object_move(obj, x, y);
 }
 
 static void
