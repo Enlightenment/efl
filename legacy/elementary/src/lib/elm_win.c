@@ -287,6 +287,22 @@ _elm_win_obj_intercept_show(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static void
+_elm_win_obj_callback_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   
+   if (ecore_evas_override_get(win->ee))
+     {
+        Evas_Coord x, y;
+        
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        win->screen.x = x;
+        win->screen.y = y;
+        evas_object_smart_callback_call(win->win_obj, "moved", NULL);
+     }
+}
+
+static void
 _elm_win_delete_request(Ecore_Evas *ee)
 {
    Evas_Object *obj = ecore_evas_object_associate_get(ee);
@@ -1078,6 +1094,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 				  _elm_win_obj_callback_show, win);
    evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_DEL,
 				  _elm_win_obj_callback_del, win);
+   evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_MOVE,
+				  _elm_win_obj_callback_move, win);
 
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
