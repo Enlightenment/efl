@@ -308,7 +308,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
    if ((!wd) || (!rect))
       return ELM_CTXPOPUP_DIRECTION_DOWN;
 
-   finger_size = elm_finger_size_get();
+   finger_size = (elm_finger_size_get() / 2);
 
    edje_object_part_geometry_get(wd->arrow, "ctxpopup_arrow", NULL, NULL,
                                  &arrow_size.x, &arrow_size.y);
@@ -488,22 +488,22 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
       case ELM_CTXPOPUP_DIRECTION_LEFT:
          edje_object_signal_emit(wd->arrow, "elm,state,left", "elm");
          arrow_size.y = (y - (arrow_size.h * 0.5));
-         arrow_size.x = (x + elm_finger_size_get());
+         arrow_size.x = (x + (elm_finger_size_get() / 2));
          break;
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
          edje_object_signal_emit(wd->arrow, "elm,state,right", "elm");
          arrow_size.y = (y - (arrow_size.h * 0.5));
-         arrow_size.x = (x - elm_finger_size_get() - arrow_size.w);
+         arrow_size.x = (x - (elm_finger_size_get() / 2) - arrow_size.w);
          break;
       case ELM_CTXPOPUP_DIRECTION_UP:
          edje_object_signal_emit(wd->arrow, "elm,state,top", "elm");
          arrow_size.x = (x - (arrow_size.w * 0.5));
-         arrow_size.y = (y + elm_finger_size_get());
+         arrow_size.y = (y + (elm_finger_size_get() / 2));
          break;
       case ELM_CTXPOPUP_DIRECTION_DOWN:
          edje_object_signal_emit(wd->arrow, "elm,state,bottom", "elm");
          arrow_size.x = (x - (arrow_size.w * 0.5));
-         arrow_size.y = (y - elm_finger_size_get() - arrow_size.h);
+         arrow_size.y = (y - (elm_finger_size_get() / 2) - arrow_size.h);
          break;
       default:
          break;
