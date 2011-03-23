@@ -69,16 +69,11 @@ The Ecore library provides the following modules:
 @li @ref Ecore_WinCE_Group
 
 @section compiling How to compile using Ecore?
-
-This section has to be documented. Below is just a quick line to handle all
-Ecore modules at once.
+pkgconfig (.pc) files are installed for every ecore module.
+Thus, to compile using any of them, you can use something like the following:
 
 @verbatim
-gcc *.c \
--I/usr/local/include -I/usr/X11R6/include \
--L/usr/local/lib -L/usr/X11R6/lib \
--lecore -lecore_evas -lecore_x -lecore_fb \
-`pkg-config evas --cflags --libs`
+gcc *.c $(pkg-config ecore ecore-$x ecore-$y [...] --cflags --libs)
 @endverbatim
 
 @section install How is it installed?
@@ -97,8 +92,6 @@ make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 @endverbatim
 
 @todo (1.0) Document API
-
-*/
 
 /*
 @page Ecore_Main_Loop_Page The Ecore Main Loop
