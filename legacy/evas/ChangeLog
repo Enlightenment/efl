@@ -192,3 +192,8 @@
 	* Proxy: Bypass the clip on smart clipped objects.  This is probably
 	what you want if you are using proxies, as it means clips don't cause
 	the object to be invisible by the proxy.
+
+2011-03-22  Gustavo Sverzut Barbieri (k-s)
+
+	* Fix build of GL and static modules.
+	* Fix ico loader static build.

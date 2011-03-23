@@ -633,13 +633,17 @@ EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], 
 
 # common gl
 have_evas_engine_gl_common="no"
+have_static_evas_engine_gl_common="no"
 if test "x$have_evas_engine_gl_x11" = "xyes" \
-   || test "x$have_evas_engine_gl_x11" = "xstatic" \
    || test "x$have_evas_engine_gl_glew" = "xyes" \
+   || test "x$have_evas_engine_gl_sdl" = "xyes"; then
+   have_evas_engine_gl_common="yes"
+fi
+if test "x$have_evas_engine_gl_x11" = "xstatic" \
    || test "x$have_evas_engine_gl_glew" = "xstatic" \
-   || test "x$have_evas_engine_gl_sdl" = "xyes" \
    || test "x$have_evas_engine_gl_sdl" = "xstatic"; then
    have_evas_engine_gl_common="yes"
+   have_static_evas_engine_gl_common="yes"
 fi
 
 if test "x$have_evas_engine_gl_common" = "xyes"; then
@@ -650,6 +654,11 @@ fi
 AC_SUBST([evas_engine_gl_common_libs])
 
 AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, [test "x$have_evas_engine_gl_common" = "xyes"])
+
+AM_CONDITIONAL(EVAS_STATIC_BUILD_GL_COMMON, test "x${have_static_evas_engine_gl_common}" = "xyes")
+if test "x${have_static_evas_engine_gl_common}" = "xyes"; then
+   AC_DEFINE(EVAS_STATIC_BUILD_GL_COMMON, [1], [Build GL generic engine as part of libevas])
+fi
 
 # gl_sdl
 if test "x$have_evas_engine_gl_sdl" = "xyes" || test "x$have_evas_engine_gl_sdl" = "xstatic" ; then
@@ -686,6 +695,11 @@ AC_ARG_ENABLE([static-software-generic],
 )
 AC_MSG_CHECKING([Whether to build software generic engine as part of libevas])
 AC_MSG_RESULT([${have_static_software_generic}])
+
+if test "x${have_static_module}" = "xyes" -a "x${have_static_software_generic}" = "xno"; then
+   AC_MSG_WARN([Forcing --enable-static-software-generic as engines must be compiled statically])
+   have_static_software_generic="yes"
+fi
 
 AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_GENERIC, test "x${have_static_software_generic}" = "xyes")
 if test "x${have_static_software_generic}" = "xyes"; then
