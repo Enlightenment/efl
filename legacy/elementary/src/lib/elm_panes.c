@@ -2,7 +2,7 @@
 #include "elm_priv.h"
 
 /**
- * @defgroup Panes panes
+ * @defgroup Panes Panes
  *
  */
 
@@ -201,7 +201,7 @@ _unpress(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @ingroup Panel
+ * @ingroup Panes
  */
 EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)

@@ -3,7 +3,7 @@
 
 
 /**
- * @defgroup Notify notify
+ * @defgroup Notify Notify
  *
  * Display a window in a particular region of the application (top,
  * bottom, etc.  A timeout can be set to automatically close the

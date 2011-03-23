@@ -2,7 +2,7 @@
 #include "elm_priv.h"
 
 /**
- * @defgroup Slideshow slideshow
+ * @defgroup Slideshow Slideshow
  *
  * This object display a list of object (generally a list of images) and some actions like
  * next/previous are used to navigate. The animations are defined in the theme,
