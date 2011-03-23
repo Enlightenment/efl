@@ -7977,7 +7977,7 @@ collections {
                fixed: 1 1;
                align: 0.0 0.5;
                rel1 { offset: 7 0; }
-               rel1 { offset: 6 -1; }
+               rel2 { offset: 6 -1; }
                image { normal: "icon_arrow_left.png"; }
             }
             description { state: "right" 0.0;
