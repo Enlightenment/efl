@@ -90,7 +90,7 @@ eeze_disk_new(const char *path)
 {
    Eeze_Disk *disk;
    _udev_device *dev;
-   const char *syspath;
+   const char *syspath = NULL;
    Eina_Bool is_dev = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
