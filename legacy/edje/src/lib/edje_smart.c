@@ -28,13 +28,14 @@ Eina_List *_edje_edjes = NULL;
 EAPI Evas_Object *
 edje_object_add(Evas *evas)
 {
-   Edje *ed;
    Evas_Object *e;
+
    if (!_edje_smart)
      {
 	memset(&_edje_smart_parent, 0, sizeof(_edje_smart_parent));
 	_edje_object_smart_set(&_edje_smart_class);
-	_edje_smart = evas_smart_class_new((Evas_Smart_Class *)&_edje_smart_class);
+	_edje_smart = 
+          evas_smart_class_new((Evas_Smart_Class *)&_edje_smart_class);
      }
 
    e = evas_object_smart_add(evas, _edje_smart);
