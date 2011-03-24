@@ -6,14 +6,12 @@ static void _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y);
 static void _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h);
 static void _edje_smart_show(Evas_Object * obj);
 static void _edje_smart_hide(Evas_Object * obj);
-static void _edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a);
-static void _edje_smart_clip_set(Evas_Object * obj, Evas_Object * clip);
-static void _edje_smart_clip_unset(Evas_Object * obj);
 static void _edje_smart_calculate(Evas_Object * obj);
 
 static Eina_Bool _edje_smart_file_set(Evas_Object *obj, const char *file, const char *group);
 
 static Edje_Smart_Api _edje_smart_class = EDJE_SMART_API_INIT_NAME_VERSION("edje");
+static Evas_Smart_Class _edje_smart_parent;
 static Evas_Smart *_edje_smart = NULL;
 
 Eina_List *_edje_edjes = NULL;
@@ -34,6 +32,7 @@ edje_object_add(Evas *evas)
    Evas_Object *e;
    if (!_edje_smart)
      {
+	memset(&_edje_smart_parent, 0, sizeof(_edje_smart_parent));
 	_edje_object_smart_set(&_edje_smart_class);
 	_edje_smart = evas_smart_class_new((Evas_Smart_Class *)&_edje_smart_class);
      }
@@ -49,18 +48,22 @@ _edje_object_smart_set(Edje_Smart_Api *sc)
    if (!sc)
      return;
 
+   evas_object_smart_clipped_smart_set(&sc->base);
+
+   _edje_smart_parent.add = sc->base.add; /* Save parent class */
    sc->base.add = _edje_smart_add;
+   _edje_smart_parent.del = sc->base.del; /* Save parent class */
    sc->base.del = _edje_smart_del;
+   /* we'll handle move thank you */
    sc->base.move = _edje_smart_move;
    sc->base.resize = _edje_smart_resize;
+   _edje_smart_parent.show = sc->base.show; /* Save parent class */
    sc->base.show = _edje_smart_show;
+   _edje_smart_parent.hide = sc->base.hide; /* Save parent class */
    sc->base.hide = _edje_smart_hide;
-   sc->base.color_set = _edje_smart_color_set;
-   sc->base.clip_set = _edje_smart_clip_set;
-   sc->base.clip_unset = _edje_smart_clip_unset;
    sc->base.calculate = _edje_smart_calculate;
-   sc->base.member_add = NULL;
-   sc->base.member_del = NULL;
+   //sc->base.member_add = NULL;
+   //sc->base.member_del = NULL;
    sc->file_set = _edje_smart_file_set;
 }
 
@@ -236,12 +239,10 @@ _edje_smart_show(Evas_Object * obj)
 {
    Edje *ed;
 
+   _edje_smart_parent.show(obj);
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    if (evas_object_visible_get(obj)) return;
-   if (evas_object_visible_get(ed->clipper)) return;
-   if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
-     evas_object_show(ed->clipper);
    if (_edje_script_only(ed))
      {  
 	_edje_script_only_show(ed);
@@ -260,12 +261,10 @@ _edje_smart_hide(Evas_Object * obj)
 {
    Edje *ed;
 
+   _edje_smart_parent.hide(obj);
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    if (!evas_object_visible_get(obj)) return;
-   if (!evas_object_visible_get(ed->clipper)) return;
-   if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
-     evas_object_hide(ed->clipper);
    if (_edje_script_only(ed))
      {  
 	_edje_script_only_hide(ed);
@@ -277,41 +276,6 @@ _edje_smart_hide(Evas_Object * obj)
         return;
      }
    _edje_emit(ed, "hide", NULL);
-}
-
-static void
-_edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a)
-{
-   Edje *ed;
-
-   ed = evas_object_smart_data_get(obj);
-   if (!ed) return;
-   evas_object_color_set(ed->clipper, r, g, b, a);
-//   _edje_emit(ed, "color_set", NULL);
-}
-
-static void
-_edje_smart_clip_set(Evas_Object * obj, Evas_Object * clip)
-{
-   Edje *ed;
-
-   ed = evas_object_smart_data_get(obj);
-   if (!ed) return;
-   if (evas_object_clip_get(obj) == clip) return;
-   evas_object_clip_set(ed->clipper, clip);
-//   _edje_emit(ed, "clip_set", NULL);
-}
-
-static void
-_edje_smart_clip_unset(Evas_Object * obj)
-{
-   Edje *ed;
-
-   ed = evas_object_smart_data_get(obj);
-   if (!ed) return;
-   if (!evas_object_clip_get(obj)) return;
-   evas_object_clip_unset(ed->clipper);
-//   _edje_emit(ed, "clip_unset", NULL);
 }
 
 static void

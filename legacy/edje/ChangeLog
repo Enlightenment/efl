@@ -66,3 +66,7 @@
 	* Change edje_decc to only use edje_cc as the compiler for security
         and correctness reasons.
 
+2011-03-23  Brett Nash (nash)
+
+	* Move some of edje over to use smart clipper in evas.  This _should_
+	be transparent to users.
