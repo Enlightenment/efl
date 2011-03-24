@@ -969,6 +969,8 @@ typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
 
 struct _Edje
 {
+   Evas_Object          *clipper; /* a big rect to clip this Edje to */
+   Evas                 *evas; /* the Evas this Edje belongs to */
    const Edje_Smart_Api *api;
    const char           *path;
    const char           *group;
@@ -977,9 +979,7 @@ struct _Edje
    Evas_Coord            x, y, w, h;
    Edje_Size             min;
    double                paused_at;
-   Evas                 *evas; /* the Evas this Edje belongs to */
    Evas_Object          *obj; /* the smart object */
-   Evas_Object          *clipper; /* a big rect to clip this Edje to */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
    Eina_List            *actions; /* currently running actions */
