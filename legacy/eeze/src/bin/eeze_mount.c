@@ -49,7 +49,7 @@ int
 main(int argc, char *argv[])
 {
    int args;
-   const char *dev, *mount_point;
+   const char *dev, *mount_point = NULL;
    Eina_Bool verbose = EINA_FALSE, exit_option = EINA_FALSE;
    Eeze_Disk *disk;
 
