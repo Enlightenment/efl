@@ -299,7 +299,6 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
    Evas_Coord_Rectangle parent_size;
    Evas_Coord_Point arrow_size;
    Elm_Ctxpopup_Direction arrow = ELM_CTXPOPUP_DIRECTION_DOWN;
-   Evas_Coord finger_size;
    Evas_Coord_Point temp;
    int idx;
 
@@ -307,8 +306,6 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
 
    if ((!wd) || (!rect))
       return ELM_CTXPOPUP_DIRECTION_DOWN;
-
-   finger_size = (elm_finger_size_get() / 2);
 
    edje_object_part_geometry_get(wd->arrow, "ctxpopup_arrow", NULL, NULL,
                                  &arrow_size.x, &arrow_size.y);
@@ -359,37 +356,35 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
         switch (wd->dir_priority[idx])
           {
            case ELM_CTXPOPUP_DIRECTION_UP:
-              temp.y = pos.y - base_size.y;
-              if ((temp.y - arrow_size.y - finger_size) < hover_area.y)
+              temp.y = (pos.y - base_size.y);
+              if ((temp.y - arrow_size.y) < hover_area.y)
                  continue;
               _adjust_pos_x(&pos, &base_size, &hover_area);
-              pos.y -= (base_size.y + finger_size);
+              pos.y -= base_size.y;
               arrow = ELM_CTXPOPUP_DIRECTION_DOWN;
               break;
            case ELM_CTXPOPUP_DIRECTION_LEFT:
               temp.x = (pos.x - base_size.x);
-              if ((temp.x - arrow_size.x - finger_size) < hover_area.x)
+              if ((temp.x - arrow_size.x) < hover_area.x)
                  continue;
               _adjust_pos_y(&pos, &base_size, &hover_area);
-              pos.x -= (base_size.x + finger_size);
+              pos.x -= base_size.x;
               arrow = ELM_CTXPOPUP_DIRECTION_RIGHT;
               break;
            case ELM_CTXPOPUP_DIRECTION_RIGHT:
               temp.x = (pos.x + base_size.x);
-              if ((temp.x + arrow_size.x + finger_size) >
+              if ((temp.x + arrow_size.x) >
                   (hover_area.x + hover_area.w))
                  continue;
               _adjust_pos_y(&pos, &base_size, &hover_area);
-              pos.x += finger_size;
               arrow = ELM_CTXPOPUP_DIRECTION_LEFT;
               break;
            case ELM_CTXPOPUP_DIRECTION_DOWN:
               temp.y = (pos.y + base_size.y);
-              if ((temp.y + arrow_size.y + finger_size) >
+              if ((temp.y + arrow_size.y) >
                   (hover_area.y + hover_area.h))
                  continue;
               _adjust_pos_x(&pos, &base_size, &hover_area);
-              pos.y += finger_size;
               arrow = ELM_CTXPOPUP_DIRECTION_UP;
               break;
            default:
@@ -417,7 +412,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
           {
            case ELM_CTXPOPUP_DIRECTION_UP:
               _adjust_pos_x(&pos, &base_size, &hover_area);
-              pos.y -= (base_size.y + finger_size);
+              pos.y -= base_size.y;
               arrow = ELM_CTXPOPUP_DIRECTION_DOWN;
               if (pos.y < hover_area.y + arrow_size.y)
                 {
@@ -427,7 +422,7 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
               break;
            case ELM_CTXPOPUP_DIRECTION_LEFT:
               _adjust_pos_y(&pos, &base_size, &hover_area);
-              pos.x -= (base_size.x + finger_size);
+              pos.x -= base_size.x;
               arrow = ELM_CTXPOPUP_DIRECTION_RIGHT;
               if (pos.x < hover_area.x + arrow_size.x)
                 {
@@ -437,7 +432,6 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
               break;
            case ELM_CTXPOPUP_DIRECTION_RIGHT:
               _adjust_pos_y(&pos, &base_size, &hover_area);
-              pos.x += finger_size;
               arrow = ELM_CTXPOPUP_DIRECTION_LEFT;
               if (pos.x + arrow_size.x + base_size.x >
                   hover_area.x + hover_area.w)
@@ -447,7 +441,6 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
               break;
            case ELM_CTXPOPUP_DIRECTION_DOWN:
               _adjust_pos_x(&pos, &base_size, &hover_area);
-              pos.y += finger_size;
               arrow = ELM_CTXPOPUP_DIRECTION_UP;
               if (pos.y + arrow_size.y + base_size.y >
                   hover_area.y + hover_area.h)
@@ -488,22 +481,22 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
       case ELM_CTXPOPUP_DIRECTION_LEFT:
          edje_object_signal_emit(wd->arrow, "elm,state,left", "elm");
          arrow_size.y = (y - (arrow_size.h * 0.5));
-         arrow_size.x = (x + (elm_finger_size_get() / 2));
+         arrow_size.x = x;
          break;
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
          edje_object_signal_emit(wd->arrow, "elm,state,right", "elm");
          arrow_size.y = (y - (arrow_size.h * 0.5));
-         arrow_size.x = (x - (elm_finger_size_get() / 2) - arrow_size.w);
+         arrow_size.x = (x - arrow_size.w);
          break;
       case ELM_CTXPOPUP_DIRECTION_UP:
          edje_object_signal_emit(wd->arrow, "elm,state,top", "elm");
          arrow_size.x = (x - (arrow_size.w * 0.5));
-         arrow_size.y = (y + (elm_finger_size_get() / 2));
+         arrow_size.y = y;
          break;
       case ELM_CTXPOPUP_DIRECTION_DOWN:
          edje_object_signal_emit(wd->arrow, "elm,state,bottom", "elm");
          arrow_size.x = (x - (arrow_size.w * 0.5));
-         arrow_size.y = (y - (elm_finger_size_get() / 2) - arrow_size.h);
+         arrow_size.y = (y - arrow_size.h);
          break;
       default:
          break;
