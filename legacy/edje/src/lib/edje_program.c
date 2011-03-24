@@ -1043,7 +1043,8 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
                 aliased[alien] = EDJE_PART_PATH_SEPARATOR;
                 memcpy(aliased + alien + 1, newsig, nslen + 1);
 
-                return _edje_emit(ed, aliased, src);
+                _edje_emit(ed, aliased, src);
+                return;
              }
           }
 
