@@ -1233,6 +1233,8 @@ elm_smart_scroller_freeze_set(Evas_Object *obj, Eina_Bool freeze)
              sd->down.onhold_animator = NULL;
           }
      }
+   else
+     bounce_eval(sd);
 }
 
 void
@@ -1759,8 +1761,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                          {
                             vel = sqrt((dx * dx) + (dy * dy)) / at;
                             if ((_elm_config->thumbscroll_friction > 0.0) &&
-                                (vel > _elm_config->thumbscroll_momentum_threshold) &&
-                                (!sd->freeze))
+                                (vel > _elm_config->thumbscroll_momentum_threshold))
                               {
                                  sd->down.dx = ((double)dx / at);
                                  sd->down.dy = ((double)dy / at);
