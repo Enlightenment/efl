@@ -1014,7 +1014,7 @@ elm_ctxpopup_item_icon_get(const Elm_Ctxpopup_Item *item)
  * instances).
  *
  * @param item Ctxpopup item
- * @param icon	Icon object to be set
+ * @param icon Icon object to be set
  *
  * @ingroup Ctxpopup
  */
@@ -1086,7 +1086,7 @@ elm_ctxpopup_item_label_set(Elm_Ctxpopup_Item *item, const char *label)
  * window that the ctxpopup is in).
  *
  * @param obj The ctxpopup object
- * @param area	The parent to use
+ * @param area The parent to use
  *
  * @note elm_ctxpopup_add() will automatically call this function
  * with its @c parent argument.
@@ -1163,7 +1163,7 @@ elm_ctxpopup_clear(Evas_Object * obj)
  * Change the ctxpopup's orientation to horizontal or vertical.
  *
  * @param obj Ctxpopup object
- * @param horizontal @c	EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical
+ * @param horizontal @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical
  *
  * @ingroup Ctxpopup
  */
