@@ -184,12 +184,18 @@ EMOTION_CHECK_MODULE([Xine], [${want_xine}])
 EMOTION_CHECK_MODULE([Gstreamer], [${want_gstreamer}])
 EMOTION_CHECK_MODULE([VLC], [${want_vlc}])
 
-if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test "x${enable_vlc}" = "xno" ; then
-   AC_MSG_ERROR([Xine, Gstreamer or VLC backends must be selected to build Emotion])
+#disabled vlc
+#if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test "x${enable_vlc}" = "xno" ; then
+if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno"; then
+#disabled vlc
+#   AC_MSG_ERROR([Xine, Gstreamer or VLC backends must be selected to build Emotion])
+   AC_MSG_ERROR([Xine or Gstreamer backends must be selected to build Emotion])
 fi
 
 AC_SUBST(requirement_emotion)
 
+#disabled vlc
+#src/modules/vlc/Makefile
 
 AC_OUTPUT([
 Makefile
@@ -200,7 +206,6 @@ src/lib/Makefile
 src/modules/Makefile
 src/modules/xine/Makefile
 src/modules/gstreamer/Makefile
-src/modules/vlc/Makefile
 src/edje_external/Makefile
 src/bin/Makefile
 data/Makefile
@@ -221,7 +226,7 @@ echo "Configuration Options Summary:"
 echo
 echo "  Modules:"
 echo "    Xine...............: ${enable_xine}"
-echo "    Vlc................: ${enable_vlc}"
+#echo "    Vlc................: ${enable_vlc}"
 echo "    Gstreamer..........: ${enable_gstreamer}"
 echo
 echo "  Build emotion_test...: $have_emotion_test"
