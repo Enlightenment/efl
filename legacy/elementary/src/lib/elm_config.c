@@ -1535,7 +1535,7 @@ _env_get(void)
    setlocale(LC_ALL, "");
    bindtextdomain("elementary", LOCALE_DIR);
    textdomain("elementary");
-   _elm_config->is_mirrored = !strcmp(_("default:LTR"), "default:RTL");
+   _elm_config->is_mirrored = !strcmp(E_("default:LTR"), "default:RTL");
 
    s = getenv("ELM_TOOLTIP_DELAY");
    if (s)

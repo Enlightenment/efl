@@ -26,7 +26,7 @@
 #define INF(...)      EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
 #define DBG(...)      EINA_LOG_DOM_DBG (_elm_log_dom, __VA_ARGS__)
 
-#define _(string) gettext(string)
+#define E_(string) dgettext(PACKAGE, string)
 
 typedef struct _Elm_Config    Elm_Config;
 typedef struct _Elm_Module    Elm_Module;
