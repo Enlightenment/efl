@@ -361,6 +361,7 @@ _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    if (!wd->repeat_events)
      evas_object_show(wd->block_events);
    _timer_init(obj, wd);
+   elm_object_focus(obj);
 }
 
 static void
@@ -396,6 +397,21 @@ _parent_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *
    evas_object_hide(obj);
 }
 
+static Eina_Bool
+_elm_notify_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *cur;
+
+   if ((!wd) || (!wd->content))
+     return EINA_FALSE;
+
+   cur = wd->content;
+
+   /* Try Focus cycle in subitem */
+   return elm_widget_focus_next_get(cur, dir, next);
+}
+
 /**
  * Add a new notify to the parent
  *
@@ -425,6 +441,7 @@ elm_notify_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_focus_next_hook_set(obj, _elm_notify_focus_next_hook);
 
    wd->repeat_events = EINA_TRUE;
 
@@ -557,7 +574,7 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
                                             _parent_hide, obj);
 	wd->parent = NULL;
      }
-   
+
    if (parent)
      {
 	wd->parent = parent;
@@ -600,6 +617,8 @@ elm_notify_parent_get(const Evas_Object *obj)
  *
  * @param obj The notify object
  * @param orient The new orientation
+ *
+ * @ingroup Notify
  */
 EAPI void
 elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient)
