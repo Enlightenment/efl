@@ -104,14 +104,14 @@ _edje_smart_add(Evas_Object *obj)
 	evas_object_smart_data_set(obj, ed);
      }
 
-   ed->evas = evas_object_evas_get(obj);
-   ed->clipper = evas_object_rectangle_add(ed->evas);
-   evas_object_static_clip_set(ed->clipper, 1);
-   evas_object_smart_member_add(ed->clipper, obj);
-   evas_object_color_set(ed->clipper, 255, 255, 255, 255);
-   evas_object_move(ed->clipper, -10000, -10000);
-   evas_object_resize(ed->clipper, 20000, 20000);
-   evas_object_pass_events_set(ed->clipper, 1);
+   ed->base.evas = evas_object_evas_get(obj);
+   ed->base.clipper = evas_object_rectangle_add(ed->base.evas);
+   evas_object_static_clip_set(ed->base.clipper, 1);
+   evas_object_smart_member_add(ed->base.clipper, obj);
+   evas_object_color_set(ed->base.clipper, 255, 255, 255, 255);
+   evas_object_move(ed->base.clipper, -10000, -10000);
+   evas_object_resize(ed->base.clipper, 20000, 20000);
+   evas_object_pass_events_set(ed->base.clipper, 1);
    ed->is_rtl = EINA_FALSE;
    ed->have_objects = 1;
    ed->references = 1;

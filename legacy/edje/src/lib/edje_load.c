@@ -462,35 +462,35 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  switch (ep->type)
 		    {
 		     case EDJE_PART_TYPE_RECTANGLE:
-			rp->object = evas_object_rectangle_add(ed->evas);
+			rp->object = evas_object_rectangle_add(ed->base.evas);
 			break;
                      case EDJE_PART_TYPE_PROXY:
 		     case EDJE_PART_TYPE_IMAGE:
-			rp->object = evas_object_image_add(ed->evas);
+			rp->object = evas_object_image_add(ed->base.evas);
 			break;
 		     case EDJE_PART_TYPE_TEXT:
 			_edje_text_part_on_add(ed, rp);
-			rp->object = evas_object_text_add(ed->evas);
+			rp->object = evas_object_text_add(ed->base.evas);
 			evas_object_text_font_source_set(rp->object, ed->path);
 			break;
 		     case EDJE_PART_TYPE_SWALLOW:
 		     case EDJE_PART_TYPE_GROUP:
 		     case EDJE_PART_TYPE_EXTERNAL:
-			rp->object = evas_object_rectangle_add(ed->evas);
+			rp->object = evas_object_rectangle_add(ed->base.evas);
 			evas_object_color_set(rp->object, 0, 0, 0, 0);
 			evas_object_pass_events_set(rp->object, 1);
 			evas_object_pointer_mode_set(rp->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);
 			_edje_callbacks_focus_add(rp->object, ed, rp);
 			break;
 		     case EDJE_PART_TYPE_TEXTBLOCK:
-			rp->object = evas_object_textblock_add(ed->evas);
+			rp->object = evas_object_textblock_add(ed->base.evas);
 			break;
 		     case EDJE_PART_TYPE_BOX:
-			rp->object = evas_object_box_add(ed->evas);
+			rp->object = evas_object_box_add(ed->base.evas);
                         rp->anim = _edje_box_layout_anim_new(rp->object);
 			break;
 		     case EDJE_PART_TYPE_TABLE:
-			rp->object = evas_object_table_add(ed->evas);
+			rp->object = evas_object_table_add(ed->base.evas);
 			break;
 		     case EDJE_PART_TYPE_GRADIENT:
 			ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
@@ -524,7 +524,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			      evas_object_precise_is_inside_set(rp->object, 1);
 			 }
 		       if (rp->part->clip_to_id < 0)
-			 evas_object_clip_set(rp->object, ed->clipper);
+			 evas_object_clip_set(rp->object, ed->base.clipper);
 		    }
 	       }
 	     if (n > 0)
@@ -670,9 +670,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 #ifdef EDJE_CALC_CACHE
 	     ed->all_part_change = 1;
 #endif
-	     if ((evas_object_clipees_get(ed->clipper)) &&
+	     if ((evas_object_clipees_get(ed->base.clipper)) &&
 		 (evas_object_visible_get(obj)))
-	       evas_object_show(ed->clipper);
+	       evas_object_show(ed->base.clipper);
 	     
 	     /* instantiate 'internal swallows' */
 	     for (i = 0; i < ed->table_parts_size; i++)
@@ -765,7 +765,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			      }
 			 }
 		       
-		       child_obj = edje_object_add(ed->evas);
+		       child_obj = edje_object_add(ed->base.evas);
 		       group_path = eina_list_append(group_path, group_path_entry);
 		       if (!_edje_object_file_set_internal(child_obj, file, source, group_path))
 			 {

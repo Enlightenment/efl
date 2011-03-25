@@ -764,7 +764,7 @@ _edje_embryo_fn_get_mouse(Embryo_Program *ep, Embryo_Cell *params)
 
    CHKPARAM(2);
    ed = embryo_program_data_get(ep);
-   evas_pointer_canvas_xy_get(ed->evas, &x, &y);
+   evas_pointer_canvas_xy_get(ed->base.evas, &x, &y);
    x -= ed->x;
    y -= ed->y;
    SETINT((int)x, params[1]);
@@ -780,7 +780,7 @@ _edje_embryo_fn_get_mouse_buttons(Embryo_Program *ep, Embryo_Cell *params)
 
    CHKPARAM(0);
    ed = embryo_program_data_get(ep);
-   return evas_pointer_button_down_mask_get(ed->evas);
+   return evas_pointer_button_down_mask_get(ed->base.evas);
 }
 
 /* emit(sig[], src[]) */
@@ -2564,7 +2564,7 @@ _edje_embryo_fn_part_swallow(Embryo_Program *ep, Embryo_Cell *params)
    rp = ed->table_parts[part_id % ed->table_parts_size];
    if (!rp) return 0;
 
-   new_obj =  edje_object_add(ed->evas);
+   new_obj =  edje_object_add(ed->base.evas);
    if (!new_obj) return 0;
 
    if (!edje_object_file_set(new_obj, ed->file->path, group_name)) 

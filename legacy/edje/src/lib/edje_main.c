@@ -273,10 +273,10 @@ _edje_del(Edje *ed)
 void
 _edje_clean_objects(Edje *ed)
 {
-   evas_object_del(ed->clipper);
-   ed->evas = NULL;
+   evas_object_del(ed->base.clipper);
+   ed->base.evas = NULL;
    ed->obj = NULL;
-   ed->clipper = NULL;
+   ed->base.clipper = NULL;
 }
 
 void

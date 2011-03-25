@@ -969,8 +969,11 @@ typedef struct _Edje_Signals_Sources_Patterns Edje_Signals_Sources_Patterns;
 
 struct _Edje
 {
-   Evas_Object          *clipper; /* a big rect to clip this Edje to */
-   Evas                 *evas; /* the Evas this Edje belongs to */
+   Evas_Object_Smart_Clipped_Data base;
+   /* This contains (or should):
+	Evas_Object          *clipper; // a big rect to clip this Edje to
+	Evas                 *evas; // the Evas this Edje belongs to
+   */
    const Edje_Smart_Api *api;
    const char           *path;
    const char           *group;

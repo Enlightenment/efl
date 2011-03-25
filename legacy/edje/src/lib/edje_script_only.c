@@ -128,7 +128,7 @@ _oid_track(Edje * ed, Evas_Object * o)
    oi->ed = ed;
    oi->obj = o;
    evas_object_smart_member_add(oi->obj, oi->ed->obj);
-   evas_object_clip_set(oi->obj, oi->ed->clipper);
+   evas_object_clip_set(oi->obj, oi->ed->base.clipper);
    evas_object_geometry_get(oi->obj, &(oi->x), &(oi->y), &(oi->w), &(oi->h));
    snprintf(buf, sizeof(buf), "%i", oi->oid);
    if (!si->oid.hash)
