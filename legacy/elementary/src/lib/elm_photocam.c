@@ -1178,6 +1178,8 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    int w, h;
    if (!wd) return EVAS_LOAD_ERROR_GENERIC;
    if (!eina_stringshare_replace(&wd->file, file)) return EVAS_LOAD_ERROR_NONE;
+   grid_clearall(obj);
+   
    evas_object_hide(wd->img);
    evas_object_image_smooth_scale_set(wd->img, (wd->nosmooth == 0));
    evas_object_image_file_set(wd->img, NULL, NULL);
@@ -1200,7 +1202,6 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    evas_object_image_file_set(wd->img, wd->file, NULL);
    evas_object_image_preload(wd->img, 0);
    wd->main_load_pending = 1;
-   grid_clearall(obj);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
    evas_object_smart_callback_call(obj, "load", NULL);
