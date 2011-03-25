@@ -1559,6 +1559,7 @@ extern "C" {
    EAPI void               elm_menu_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI Evas_Object       *elm_menu_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
+   EAPI void               elm_menu_close(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI const Eina_List   *elm_menu_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Evas_Object       *elm_menu_item_object_get(const Elm_Menu_Item *it) EINA_ARG_NONNULL(1);
    EAPI Elm_Menu_Item     *elm_menu_item_add(Evas_Object *obj, Elm_Menu_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);

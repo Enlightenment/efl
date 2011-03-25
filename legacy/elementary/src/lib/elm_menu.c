@@ -571,6 +571,22 @@ elm_menu_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 /**
+ * Close a opened menu
+ *
+ * @param obj the menu object
+ * @return void
+ *
+ * @ingroup Menu
+ */
+EAPI void
+elm_menu_close(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   _menu_hide(obj, wd->hv, NULL);
+}
+
+/**
  * Get the Evas_Object of an Elm_Menu_Item
  *
  * @param item The menu item object.
