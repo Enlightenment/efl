@@ -113,20 +113,20 @@ if test "x${have_dep}"  = "xyes" ; then
    AC_CHECK_LIB([jpeg],
       [jpeg_CreateDecompress],
       [
-        evas_image_loader_[]$1[]_libs="-ljpeg"
-        AC_COMPILE_IFELSE(
-           [AC_LANG_PROGRAM(
-               [[
+       evas_image_loader_[]$1[]_libs="-ljpeg"
+       AC_COMPILE_IFELSE(
+          [AC_LANG_PROGRAM(
+              [[
 #include <stdio.h>
 #include <jpeglib.h>
 #include <setjmp.h>
-               ]],
-               [[
+              ]],
+              [[
 struct jpeg_decompress_struct decomp;
 decomp.region_x = 0;
-               ]])],
-           [have_jpeg_region="yes"],
-           [have_jpeg_region="no"])
+              ]])],
+          [have_jpeg_region="yes"],
+          [have_jpeg_region="no"])
       ],
       [have_dep="no"]
    )
