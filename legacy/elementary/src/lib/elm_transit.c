@@ -713,7 +713,7 @@ elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse)
  * @ingroup Transit
  */
 EAPI Eina_Bool
-elm_transit_auto_reverse_get(Elm_Transit *transit)
+elm_transit_auto_reverse_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
    return transit->auto_reverse;
@@ -754,7 +754,7 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
  * @ingroup Transit
  */
 EAPI int
-elm_transit_repeat_times_get(Elm_Transit *transit)
+elm_transit_repeat_times_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
    return transit->repeat.count;
