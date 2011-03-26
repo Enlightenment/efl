@@ -101,7 +101,7 @@ struct _Elm_Obj_State
    Evas_Map *map;
    Eina_Bool map_enabled : 1;
    Eina_Bool visible : 1;
-}; 
+};
 
 struct _Elm_Obj_Data
 {
@@ -114,7 +114,7 @@ typedef struct _Elm_Transit_Effect Elm_Transit_Effect;
 typedef struct _Elm_Obj_Data Elm_Obj_Data;
 typedef struct _Elm_Obj_State Elm_Obj_State;
 
-static void 
+static void
 _elm_transit_objs_states_save(Elm_Transit *transit)
 {
    Eina_List *list;
@@ -124,13 +124,13 @@ _elm_transit_objs_states_save(Elm_Transit *transit)
 
    EINA_LIST_FOREACH(transit->objs, list, obj)
      {
-        obj_data = evas_object_data_get(obj, _transit_key);  
+        obj_data = evas_object_data_get(obj, _transit_key);
         if (!obj_data) continue;
         state = calloc(1, sizeof(Elm_Obj_State));
         if (!state) continue;
-        evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);   
+        evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);
         evas_object_color_get(obj, &state->r, &state->g, &state->b, &state->a);
-        state->visible = evas_object_visible_get(obj);    
+        state->visible = evas_object_visible_get(obj);
         state->map_enabled = evas_object_map_enable_get(obj);
         if (evas_object_map_get(obj))
           state->map = evas_map_dup(evas_object_map_get(obj));
@@ -158,7 +158,7 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
    Elm_Obj_State *state = obj_data->state;
 
    evas_object_pass_events_set(obj, obj_data->pass_events);
-   
+
    //recover the states of the object.
    if (state)
      {
@@ -167,7 +167,7 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
         evas_object_color_set(obj, state->r, state->g, state->b, state->a);
         if (state->visible) evas_object_show(obj);
         else evas_object_hide(obj);
-        if (state->map_enabled) 
+        if (state->map_enabled)
           evas_object_map_enable_set(obj, EINA_TRUE);
         else
           evas_object_map_enable_set(obj, EINA_FALSE);
@@ -259,9 +259,9 @@ _animator_animate_cb(void *data)
 
    transit->time.current = ecore_loop_time_get();
    elapsed_time = transit->time.current - transit->time.begin;
-   duration = transit->time.duration + transit->time.delayed; 
+   duration = transit->time.duration + transit->time.delayed;
 
-   if (elapsed_time > duration) 
+   if (elapsed_time > duration)
      elapsed_time = duration;
 
    transit->progress = elapsed_time / duration;
@@ -477,7 +477,7 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
  * @param obj Object to be animated.
  *
  * @ingroup Transit
- * @warning It is not allowed to add a new object after transit begins to go. 
+ * @warning It is not allowed to add a new object after transit begins to go.
  */
 EAPI void
 elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
@@ -503,7 +503,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
 
    transit->objs = eina_list_append(transit->objs, obj);
 
-   if (!transit->event_enabled) 
+   if (!transit->event_enabled)
      evas_object_pass_events_set(obj, EINA_TRUE);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
@@ -521,7 +521,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
  * @param obj Object to be removed from @p transit.
  *
  * @ingroup Transit
- * @warning It is not allowed to remove objects after transit begins to go. 
+ * @warning It is not allowed to remove objects after transit begins to go.
  */
 EAPI void
 elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
@@ -529,11 +529,11 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
    Elm_Obj_Data *obj_data;
-  
+
    if (transit->animator) return;
 
    obj_data = evas_object_data_get(obj, _transit_key);
- 
+
    if ((!obj_data) || (obj_data->transit != transit)) return;
 
    _elm_transit_object_remove(transit, obj);
@@ -828,7 +828,7 @@ elm_transit_duration_set(Elm_Transit *transit, double duration)
  *
  * @ingroup Transit
  */
-EAPI double 
+EAPI double
 elm_transit_duration_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0.0);
@@ -836,7 +836,7 @@ elm_transit_duration_get(const Elm_Transit *transit)
 }
 
 /**
- * Starts the transition. 
+ * Starts the transition.
  * Once this API is called, the transit begins to measure the time.
  *
  * @note @p transit can not be NULL
@@ -855,7 +855,7 @@ elm_transit_go(Elm_Transit *transit)
 
    if (!transit->state_keep)
      _elm_transit_objs_states_save(transit);
-   
+
    transit->time.paused = 0;
    transit->time.delayed = 0;
    transit->time.begin = ecore_loop_time_get();
@@ -863,8 +863,8 @@ elm_transit_go(Elm_Transit *transit)
 }
 
 /**
- * Pause/Resume the transition. 
- * If you call elm_transit_go again, paused states will affect no anymore. 
+ * Pause/Resume the transition.
+ * If you call elm_transit_go again, paused states will affect no anymore.
  *
  * @note @p transit can not be NULL
  *
@@ -881,14 +881,14 @@ elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
 
    if (paused)
      {
-        if (transit->time.paused > 0) 
+        if (transit->time.paused > 0)
           return;
         ecore_animator_freeze(transit->animator);
         transit->time.paused = ecore_loop_time_get();
      }
    else
      {
-        if (transit->time.paused == 0) 
+        if (transit->time.paused == 0)
           return;
         ecore_animator_thaw(transit->animator);
         transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
@@ -897,7 +897,7 @@ elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
 }
 
 /**
- * Get the value of paused status. 
+ * Get the value of paused status.
  *
  * @see elm_transit_paused_set()
  *
@@ -914,7 +914,7 @@ elm_transit_paused_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
 
-   if (transit->time.paused == 0) 
+   if (transit->time.paused == 0)
      return EINA_FALSE;
 
    return EINA_TRUE;
@@ -944,10 +944,10 @@ elm_transit_progress_value_get(const Elm_Transit *transit)
  * If it is not kept, the objects states will be reset when transition ends.
  *
  * @note @p transit can not be NULL.
- * @note One state includes geometry, color, map data. 
+ * @note One state includes geometry, color, map data.
  *
  * @param transit The transit object.
- * @param state_keep Keeping or Non Keeping. 
+ * @param state_keep Keeping or Non Keeping.
  *
  * @ingroup Transit
  */
@@ -968,9 +968,9 @@ elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_k
  * @see elm_transit_objects_final_state_keep_set()
  *
  * @param transit The transit object.
- * @return EINA_TRUE means the states of the objects will be reset. 
+ * @return EINA_TRUE means the states of the objects will be reset.
  * If @p transit is NULL, EINA_FALSE is returned
- 
+
  * @ingroup Transit
  */
 EAPI Eina_Bool
@@ -1034,8 +1034,8 @@ _transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_
 /**
  * Add the Resizing Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates resizing effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates resizing effect context
+ * and add it's required APIs to elm_transit_effect_add.
  *
  * @see elm_transit_effect_add()
  *
@@ -1055,7 +1055,7 @@ elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Co
    void *effect_context = _transit_effect_resizing_context_new(from_w, from_h, to_w, to_h);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_resizing_op, effect_context,
                           _transit_effect_resizing_context_free);
    return effect_context;
@@ -1185,8 +1185,8 @@ _transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, 
 /**
  * Add the Translation Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates translation effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates translation effect context
+ * and add it's required APIs to elm_transit_effect_add.
  *
  * @see elm_transit_effect_add()
  *
@@ -1210,7 +1210,7 @@ elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Eva
    void *effect_context = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_translation_op, effect_context,
                           _transit_effect_translation_context_free);
    return effect_context;
@@ -1276,8 +1276,8 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
 /**
  * Add the Zoom Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates zoom effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates zoom effect context
+ * and add it's required APIs to elm_transit_effect_add.
  *
  * @see elm_transit_effect_add()
  *
@@ -1299,7 +1299,7 @@ elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate
    void *effect_context = _transit_effect_zoom_context_new(from_rate, to_rate);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_zoom_op, effect_context,
                           _transit_effect_zoom_context_free);
    return effect_context;
@@ -1365,7 +1365,7 @@ _transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
         if ((degree < 90) && (degree > -90))
           {
              obj = front;
-             if (front != back) 
+             if (front != back)
                {
                   evas_object_hide(back);
                   evas_object_show(front);
@@ -1435,12 +1435,12 @@ _transit_effect_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw
 /**
  * Add the Flip Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates flip effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates flip effect context
+ * and add it's required APIs to elm_transit_effect_add.
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "front" object and the second will be the "back" object.
- * 
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
@@ -1461,7 +1461,7 @@ elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis a
    void *effect_context = _transit_effect_flip_context_new(axis, cw);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_flip_op, effect_context,
                           _transit_effect_flip_context_free);
    return effect_context;
@@ -1736,12 +1736,12 @@ _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Ei
 /**
  * Add the Resizable Flip Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates resizable flip effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates resizable flip effect context
+ * and add it's required APIs to elm_transit_effect_add.
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "front" object and the second will be the "back" object.
- * 
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
@@ -1762,7 +1762,7 @@ elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_F
    void *effect_context = _transit_effect_resizable_flip_context_new(axis, cw);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_resizable_flip_op, effect_context,
                           _transit_effect_resizable_flip_context_free);
    return effect_context;
@@ -1970,9 +1970,9 @@ _transit_effect_wipe_context_new(Elm_Transit_Effect_Wipe_Type type, Elm_Transit_
 /**
  * Add the Wipe Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates wipe effect context 
- * and add it's required APIs to elm_transit_effect_add. 
- * 
+ * @note This API is one of the facades. It creates wipe effect context
+ * and add it's required APIs to elm_transit_effect_add.
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
@@ -1993,7 +1993,7 @@ elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type t
    void *effect_context = _transit_effect_wipe_context_new(type, dir);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_wipe_op, effect_context,
                           _transit_effect_wipe_context_free);
    return effect_context;
@@ -2063,9 +2063,9 @@ _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsi
 /**
  * Add the Color Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates color effect context 
- * and add it's required APIs to elm_transit_effect_add. 
- * 
+ * @note This API is one of the facades. It creates color effect context
+ * and add it's required APIs to elm_transit_effect_add.
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit        Transit object.
@@ -2088,7 +2088,7 @@ elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned
    void *effect_context = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_color_op, effect_context,
                           _transit_effect_color_context_free);
    return effect_context;
@@ -2273,17 +2273,17 @@ _transit_effect_fade_context_new(void)
 /**
  * Add the Fade Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates fade effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates fade effect context
+ * and add it's required APIs to elm_transit_effect_add.
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "before" object and the second will be the "after" object.
- * 
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
  * @return Fade effect context data.
- * 
+ *
  * @ingroup Transit
  * @warning Is higher recommended just create a transit with this effect when
  * the window that the objects of the transit belongs has already been created.
@@ -2297,7 +2297,7 @@ elm_transit_effect_fade_add(Elm_Transit *transit)
 
    void *effect_context = _transit_effect_fade_context_new();
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_fade_op, effect_context,
                           _transit_effect_fade_context_free);
    return effect_context;
@@ -2456,17 +2456,17 @@ _transit_effect_blend_context_new(void)
 /**
  * Add the Blend Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates blend effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates blend effect context
+ * and add it's required APIs to elm_transit_effect_add.
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
  * "before" object and the second will be the "after" object.
- * 
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
  * @return Blend effect context data.
- * 
+ *
  * @ingroup Transit
  * @warning Is higher recommended just create a transit with this effect when
  * the window that the objects of the transit belongs has already been created.
@@ -2480,7 +2480,7 @@ elm_transit_effect_blend_add(Elm_Transit *transit)
    void *effect_context = _transit_effect_blend_context_new();
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_blend_op, effect_context,
                           _transit_effect_blend_context_free);
    return effect_context;
@@ -2554,16 +2554,16 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree)
 /**
  * Add the Rotation Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates rotation effect context 
- * and add it's required APIs to elm_transit_effect_add. 
- * 
+ * @note This API is one of the facades. It creates rotation effect context
+ * and add it's required APIs to elm_transit_effect_add.
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
  * @param from_degree Degree when effect begins.
  * @param to_degree Degree when effect is ends.
  * @return Rotation effect context data.
- * 
+ *
  * @ingroup Transit
  * @warning Is higher recommended just create a transit with this effect when
  * the window that the objects of the transit belongs has already been created.
@@ -2577,7 +2577,7 @@ elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float t
    void *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_rotation_op, effect_context,
                           _transit_effect_rotation_context_free);
    return effect_context;
@@ -2654,8 +2654,8 @@ _transit_effect_image_animation_context_new(Eina_List *images)
 /**
  * Add the ImageAnimation Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates image animation effect context 
- * and add it's required APIs to elm_transit_effect_add. 
+ * @note This API is one of the facades. It creates image animation effect context
+ * and add it's required APIs to elm_transit_effect_add.
  * The @p images parameter is a list images paths. This list and
  * its contents will be deleted at the end of the effect by
  * elm_transit_effect_image_animation_context_free() function.
@@ -2674,7 +2674,7 @@ _transit_effect_image_animation_context_new(Eina_List *images)
  * elm_transit_effect_image_animation_add(transi, images);
  *
  * @endcode
- * 
+ *
  * @see elm_transit_effect_add()
  *
  * @param transit Transit object.
@@ -2682,7 +2682,7 @@ _transit_effect_image_animation_context_new(Eina_List *images)
  * its contents will be deleted at the end of the effect by
  * elm_transit_effect_image_animation_context_free() function.
  * @return Image Animation effect context data.
- * 
+ *
  * @ingroup Transit
  */
 EAPI void *
@@ -2692,7 +2692,7 @@ elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images)
    void *effect_context = _transit_effect_image_animation_context_new(images);
 
    if (!effect_context) return NULL;
-   elm_transit_effect_add(transit, 
+   elm_transit_effect_add(transit,
                           _transit_effect_image_animation_op, effect_context,
                           _transit_effect_image_animation_context_free);
    return effect_context;
