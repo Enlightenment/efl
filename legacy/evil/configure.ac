@@ -5,11 +5,10 @@ m4_define([v_maj], [0])
 m4_define([v_min], [0])
 m4_define([v_mic], [1])
 
-m4_define([evil_version],
-   [v_maj.v_min.v_mic])
+m4_define([evil_version], [v_maj.v_min.v_mic])
 
-m4_define([lt_rev], m4_eval(v_maj + v_min))
-m4_define([lt_cur], v_mic)
+m4_define([lt_cur], m4_eval(v_maj + v_min))
+m4_define([lt_rev], v_mic)
 m4_define([lt_age], v_min)
 
 AC_INIT([evil], [evil_version], [enlightenment-devel@lists.sourceforge.net])
@@ -48,7 +47,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 LT_PREREQ([2.4])
 LT_INIT([win32-dll])
 
-version_info="lt_rev:lt_cur:lt_age"
+version_info="lt_cur:lt_rev:lt_age"
 AC_SUBST(version_info)
 
 
