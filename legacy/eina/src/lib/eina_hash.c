@@ -740,7 +740,7 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  * @param buckets_power_size The size of the buckets.
  * @return The new hash table.
  *
- * This function create a new hash table using user-defined callbacks
+ * This function creates a new hash table using user-defined callbacks
  * to manage the hash table. On failure, @c NULL is returned and
  * #EINA_ERROR_OUT_OF_MEMORY is set. If @p key_cmp_cb or @p key_hash_cb
  * are @c NULL, @c NULL is returned. If @p buckets_power_size is
@@ -798,7 +798,7 @@ on_error:
  * @param data_free_cb The function called when the hash table is freed.
  * @return The new hash table.
  *
- * This function create a new hash table using the djb2 algorithm for
+ * This function creates a new hash table using the djb2 algorithm for
  * table management and strcmp() to compare the keys. Values can then
  * be looked up with pointers other than the original key pointer that
  * was used to add values. On failure, this function returns @c NULL.
@@ -821,12 +821,12 @@ eina_hash_string_djb2_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb The function called when the hash table is freed.
  * @return The new hash table.
  *
- * This function create a new hash table using the superfast algorithm
+ * This function creates a new hash table using the superfast algorithm
  * for table management and strcmp() to compare the keys. Values can
  * then be looked up with pointers other than the original key pointer
  * that was used to add values. On failure, this function returns
  * @c NULL. @p data_free_cb is a callback called when the hash table is
- * freed. @c NULL can be passed as callback. 
+ * freed. @c NULL can be passed as callback.
  */
 EAPI Eina_Hash *
 eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
@@ -844,7 +844,7 @@ eina_hash_string_superfast_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function create a new hash table using the superfast algorithm
+ * This function creates a new hash table using the superfast algorithm
  * for table management and strcmp() to compare the keys, but with a
  * smaller bucket size (compared to eina_hash_string_superfast_new())
  * which will minimize the memory used by the returned hash
@@ -869,7 +869,7 @@ eina_hash_string_small_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function create a new hash table using the int32 algorithm for
+ * This function creates a new hash table using the int32 algorithm for
  * table management and dereferenced pointers to compare the
  * keys. Values can then be looked up with pointers other than the
  * original key pointer that was used to add values. This method may
@@ -894,7 +894,7 @@ eina_hash_int32_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function create a new hash table using the int64 algorithm for
+ * This function creates a new hash table using the int64 algorithm for
  * table management and dereferenced pointers to compare the
  * keys. Values can then be looked up with pointers other than the
  * original key pointer that was used to add values. This method may
@@ -919,7 +919,7 @@ eina_hash_int64_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function create a new hash table using the int64 algorithm for
+ * This function creates a new hash table using the int64/int32 algorithm for
  * table management and dereferenced pointers to compare the
  * keys. Values can then be looked up with pointers other than the
  * original key pointer that was used to add values. This method may
@@ -952,7 +952,7 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function create a new hash table optimized for stringshared
+ * This function creates a new hash table optimized for stringshared
  * values. Values CAN NOT be looked up with pointers not
  * equal to the original key pointer that was used to add a value. On failure, this function returns @c NULL.
  * @p data_free_cb is a callback called when the hash table is freed.
@@ -1043,7 +1043,7 @@ eina_hash_free(Eina_Hash *hash)
  * @param hash The hash table whose buckets have to be freed.
  *
  * This function frees up all the memory allocated to storing the
- * buckets of @p hash, and call the free callback on all hash table
+ * buckets of @p hash, and calls the free callback on all hash table
  * buckets if it has been passed to the hash table at creation time,
  * then frees the buckets. If no free callback has been passed, no
  * buckets value will be freed. If @p hash is @c NULL, the function
