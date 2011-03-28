@@ -981,7 +981,7 @@ elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//Resizing FX
+//Resizing Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Resizing Elm_Transit_Effect_Resizing;
 
@@ -1062,7 +1062,7 @@ elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Co
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//Translation FX
+//Translation Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Translation Elm_Transit_Effect_Translation;
 typedef struct _Elm_Transit_Effect_Translation_Node Elm_Transit_Effect_Translation_Node;
@@ -1218,7 +1218,7 @@ elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Eva
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Zoom FX
+//Zoom Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Zoom Elm_Transit_Effect_Zoom;
 
@@ -1307,7 +1307,7 @@ elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Flip FX
+//Flip Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Flip Elm_Transit_Effect_Flip;
 
@@ -1468,7 +1468,7 @@ elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis a
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//ResizableFlip FX
+//ResizableFlip Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Resizable_Flip Elm_Transit_Effect_ResizableFlip;
 typedef struct _Elm_Transit_Effect_Resizable_Flip_Node Elm_Transit_Effect_ResizableFlip_Node;
@@ -1770,7 +1770,7 @@ elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_F
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Wipe FX
+//Wipe Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Wipe Elm_Transit_Effect_Wipe;
 
@@ -2001,7 +2001,7 @@ elm_transit_effect_wipe_add(Elm_Transit *transit, Elm_Transit_Effect_Wipe_Type t
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Color FX
+//Color Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Color Elm_Transit_Effect_Color;
 
@@ -2095,7 +2095,7 @@ elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//Fade FX
+//Fade Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Fade Elm_Transit_Effect_Fade;
 typedef struct _Elm_Transit_Effect_Fade_Node Elm_Transit_Effect_Fade_Node;
@@ -2305,7 +2305,7 @@ elm_transit_effect_fade_add(Elm_Transit *transit)
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Blend FX
+//Blend Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Blend Elm_Transit_Effect_Blend;
 typedef struct _Elm_Transit_Effect_Blend_Node Elm_Transit_Effect_Blend_Node;
@@ -2488,7 +2488,7 @@ elm_transit_effect_blend_add(Elm_Transit *transit)
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//Rotation FX
+//Rotation Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Rotation Elm_Transit_Effect_Rotation;
 
@@ -2585,7 +2585,7 @@ elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float t
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// ImageAnimation FX
+//ImageAnimation Effect
 ///////////////////////////////////////////////////////////////////////////////
 typedef struct _Elm_Transit_Effect_Image_Animation Elm_Transit_Effect_Image_Animation;
 
