@@ -564,8 +564,8 @@ elm_transit_objects_get(const Elm_Transit *transit)
  * @note When you add an object with elm_transit_object_add(), its state from
  * evas_object_pass_events_get(obj) is saved, and it is applied when the
  * transit ends, if you change this state with evas_object_pass_events_set()
- * after add the object, this state will change again when @p transit stops to
- * run.
+ * after adding the object, this state will change again when @p transit stops
+ * to run.
  *
  * @param transit The transit object.
  * @param enabled Disable or enable.
