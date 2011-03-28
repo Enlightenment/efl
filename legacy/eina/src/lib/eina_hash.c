@@ -114,7 +114,8 @@ struct _Eina_Hash_Foreach_Data
 };
 
 typedef void *(*Eina_Iterator_Get_Content_Callback)(Eina_Iterator_Hash *it);
-#define FUNC_ITERATOR_GET_CONTENT(Function) ((Eina_Iterator_Get_Content_Callback)Function)
+#define FUNC_ITERATOR_GET_CONTENT(Function) \
+   ((Eina_Iterator_Get_Content_Callback)Function)
 
 struct _Eina_Iterator_Hash
 {
@@ -238,15 +239,18 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
      }
    else
       /* Look up for head node. */
-      hash_head = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[hash_num],
-                                                              &key_hash, 0,
-                                                              EINA_RBTREE_CMP_KEY_CB(_eina_hash_hash_rbtree_cmp_hash),
-                                                              NULL);
+      hash_head = (Eina_Hash_Head *)
+         eina_rbtree_inline_lookup(hash->buckets[hash_num],
+                                   &key_hash, 0,
+                                   EINA_RBTREE_CMP_KEY_CB(
+                                      _eina_hash_hash_rbtree_cmp_hash),
+                                   NULL);
 
    if (!hash_head)
      {
         /* If not found allocate it and an element. */
-        hash_head = malloc(sizeof(Eina_Hash_Head) + sizeof(Eina_Hash_Element) + alloc_length);
+        hash_head = malloc(sizeof(Eina_Hash_Head) + sizeof(Eina_Hash_Element)
+                           + alloc_length);
         if (!hash_head)
            goto on_error;
 
@@ -254,9 +258,11 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
         hash_head->head = NULL;
 
         hash->buckets[hash_num] =
-           eina_rbtree_inline_insert(hash->buckets[hash_num], EINA_RBTREE_GET(hash_head),
+           eina_rbtree_inline_insert(hash->buckets[hash_num],
+                                     EINA_RBTREE_GET(hash_head),
                                      EINA_RBTREE_CMP_NODE_CB(
-                                        _eina_hash_hash_rbtree_cmp_node), NULL);
+                                        _eina_hash_hash_rbtree_cmp_node),
+                                     NULL);
 
         new_hash_element = (Eina_Hash_Element *)(hash_head + 1);
         new_hash_element->begin = EINA_TRUE;
@@ -287,10 +293,11 @@ eina_hash_add_alloc_by_hash(Eina_Hash *hash,
       new_hash_element->tuple.key = key;
 
    /* add the new element to the hash. */
-   hash_head->head = eina_rbtree_inline_insert(hash_head->head, EINA_RBTREE_GET(new_hash_element),
-                                        EINA_RBTREE_CMP_NODE_CB(
-                                           _eina_hash_key_rbtree_cmp_node),
-                                        (const void *)hash->key_cmp_cb);
+   hash_head->head = eina_rbtree_inline_insert(hash_head->head,
+                                            EINA_RBTREE_GET(new_hash_element),
+                                            EINA_RBTREE_CMP_NODE_CB(
+                                               _eina_hash_key_rbtree_cmp_node),
+                                            (const void *)hash->key_cmp_cb);
    hash->population++;
    return EINA_TRUE;
 
@@ -338,20 +345,21 @@ _eina_hash_find_by_hash(const Eina_Hash *hash,
    if (!hash->buckets)
       return NULL;
 
-   *hash_head = (Eina_Hash_Head *)eina_rbtree_inline_lookup(hash->buckets[key_hash],
-                                                     &rb_hash, 0,
-                                                     EINA_RBTREE_CMP_KEY_CB(
-                                                        _eina_hash_hash_rbtree_cmp_hash),
-                                                     NULL);
+   *hash_head = (Eina_Hash_Head *)
+      eina_rbtree_inline_lookup(hash->buckets[key_hash],
+                                &rb_hash, 0,
+                                EINA_RBTREE_CMP_KEY_CB(
+                                   _eina_hash_hash_rbtree_cmp_hash),
+                                NULL);
    if (!*hash_head)
       return NULL;
 
-   hash_element = (Eina_Hash_Element *)eina_rbtree_inline_lookup((*hash_head)->head,
-                                                  tuple, 0,
-                                                     EINA_RBTREE_CMP_KEY_CB(
-                                                     _eina_hash_key_rbtree_cmp_key_data),
-                                                  (const void *)hash->
-                                                  key_cmp_cb);
+   hash_element = (Eina_Hash_Element *)
+      eina_rbtree_inline_lookup((*hash_head)->head,
+                                tuple, 0,
+                                   EINA_RBTREE_CMP_KEY_CB(
+                                   _eina_hash_key_rbtree_cmp_key_data),
+                                (const void *)hash->key_cmp_cb);
 
    return hash_element;
 }
@@ -710,6 +718,10 @@ _eina_hash_iterator_free(Eina_Iterator_Hash *it)
  *
  * @brief give a small description here : what it is for, what it does
  * , etc...
+ * Different implementations exists depending on what to store: strings,
+ * integers, pointers, stringshared or your own...
+ * Eina hash tables can copy the keys when using eina_hash_add() or not when
+ * using eina_hash_direct_add().
  *
  * Hash API. Give some hints about the use (functions that must be
  * used like init / shutdown), general use, etc... Give also a link to
@@ -766,15 +778,15 @@ eina_hash_new(Eina_Key_Length key_length_cb,
    eina_error_set(0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key_cmp_cb,  NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key_hash_cb, NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(buckets_power_size < 3,  NULL);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(buckets_power_size > 16, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(buckets_power_size <= 2,  NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(buckets_power_size >= 17, NULL);
 
    new = malloc(sizeof (Eina_Hash));
    if (!new)
       goto on_error;
 
    EINA_MAGIC_SET(new, EINA_MAGIC_HASH);
-   
+
    new->key_length_cb = key_length_cb;
    new->key_cmp_cb = key_cmp_cb;
    new->key_hash_cb = key_hash_cb;
@@ -869,12 +881,14 @@ eina_hash_string_small_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function creates a new hash table using the int32 algorithm for
- * table management and dereferenced pointers to compare the
- * keys. Values can then be looked up with pointers other than the
- * original key pointer that was used to add values. This method may
- * appear to be able to match string keys, actually it only matches
- * the first character. On failure, this function returns @c NULL.
+ * This function creates a new hash table where keys are 32bit integers.
+ * When adding or looking up in the hash table, pointers to 32bit integers
+ * must be passed. They can be addresses on the stack if you let the
+ * eina_hash copy the key. Values can then
+ * be looked up with pointers other than the original key pointer that was
+ * used to add values. This method is not suitable to match string keys as
+ * it would only match the first character.
+ * On failure, this function returns @c NULL.
  * @p data_free_cb is a callback called when the hash table is freed.
  * @c NULL can be passed as callback.
  */
@@ -894,12 +908,13 @@ eina_hash_int32_new(Eina_Free_Cb data_free_cb)
  * @param data_free_cb  The function called when the hash table is freed.
  * @return  The new hash table.
  *
- * This function creates a new hash table using the int64 algorithm for
- * table management and dereferenced pointers to compare the
- * keys. Values can then be looked up with pointers other than the
- * original key pointer that was used to add values. This method may
- * appear to be able to match string keys, actually it only matches
- * the first character. On failure, this function returns @c NULL.
+ * This function creates a new hash table where keys are 64bit integers.
+ * When adding or looking up in the hash table, pointers to 64bit integers
+ * must be passed. They can be addresses on the stack. Values can then
+ * be looked up with pointers other than the original key pointer that was
+ * used to add values. This method is not suitable to match string keys as
+ * it would only match the first character.
+ * On failure, this function returns @c NULL.
  * @p data_free_cb is a callback called when the hash table is freed.
  * @c NULL can be passed as callback.
  */
@@ -954,7 +969,8 @@ eina_hash_pointer_new(Eina_Free_Cb data_free_cb)
  *
  * This function creates a new hash table optimized for stringshared
  * values. Values CAN NOT be looked up with pointers not
- * equal to the original key pointer that was used to add a value. On failure, this function returns @c NULL.
+ * equal to the original key pointer that was used to add a value. On failure,
+ * this function returns @c NULL.
  * @p data_free_cb is a callback called when the hash table is freed.
  * @c NULL can be passed as callback.
  *
@@ -1099,7 +1115,7 @@ eina_hash_add_by_hash(Eina_Hash  *hash,
                       const void *data)
 {
    return eina_hash_add_alloc_by_hash(hash,
-				      key,
+                                      key,
                                       key_length,
                                       key_length,
                                       key_hash,
@@ -1107,11 +1123,13 @@ eina_hash_add_by_hash(Eina_Hash  *hash,
 }
 
 /**
- * @brief Add an entry to the given hash table and do not duplicate the string key.
+ * @brief Add an entry to the given hash table and do not duplicate the string
+ * key.
  *
  * @param hash The given hash table.  Can be @c NULL.
  * @param key A unique key.  Can be @c NULL.
- * @param key_length Should be the length of @p key (don't forget to count '\\0' for string).
+ * @param key_length Should be the length of @p key (don't forget to count
+ * '\\0' for string).
  * @param key_hash The hash that will always match key.
  * @param data Data to associate with the string given by @p key.
  * @return #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
@@ -1182,7 +1200,8 @@ eina_hash_add(Eina_Hash *hash, const void *key, const void *data)
 }
 
 /**
- * @brief Add an entry to the given hash table without duplicating the string key.
+ * @brief Add an entry to the given hash table without duplicating the string
+ * key.
  *
  * @param hash The given hash table.  Can be @c NULL.
  * @param key A unique key.  Can be @c NULL.
@@ -1224,7 +1243,8 @@ eina_hash_direct_add(Eina_Hash *hash, const void *key, const void *data)
 }
 
 /**
- * @brief Remove the entry identified by a key and a key hash from the given hash table.
+ * @brief Remove the entry identified by a key and a key hash from the given
+ * hash table.
  *
  * @param hash The given hash table.
  * @param key The key.
@@ -1273,7 +1293,8 @@ eina_hash_del_by_key_hash(Eina_Hash *hash,
  * functions returns immediately #EINA_FALSE. This function returns
  * #EINA_FALSE if an error occurred, #EINA_TRUE otherwise.
  *
- * @note if you already have the key_hash, use eina_hash_del_by_key_hash() instead.
+ * @note if you already have the key_hash, use eina_hash_del_by_key_hash()
+ * instead.
  * @note if you don't have the key, use eina_hash_del_by_data() instead.
  */
 EAPI Eina_Bool
@@ -1302,7 +1323,8 @@ eina_hash_del_by_key(Eina_Hash *hash, const void *key)
  * function returns #EINA_FALSE if an error occurred, #EINA_TRUE
  * otherwise.
  *
- * @note if you already have the key, use eina_hash_del_by_key() or eina_hash_del_by_key_hash() instead.
+ * @note if you already have the key, use eina_hash_del_by_key() or
+ * eina_hash_del_by_key_hash() instead.
  */
 EAPI Eina_Bool
 eina_hash_del_by_data(Eina_Hash *hash, const void *data)
@@ -1494,8 +1516,10 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
  *
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
- * @param key_length Should be the length of @p key (don't forget to count '\\0' for string).
- * @param key_hash The hash that always match the key. Ignored if @p key is @c NULL.
+ * @param key_length Should be the length of @p key (don't forget to count
+ * '\\0' for string).
+ * @param key_hash The hash that always match the key. Ignored if @p key is
+ *                 @c NULL.
  * @param data The data to replace the old entry, if it exists.
  * @return The data pointer for the old stored entry, or @c NULL if not
  *          found. If an existing entry is not found, nothing is added to the
@@ -1589,7 +1613,8 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
    return NULL;
 }
 /**
- * @brief Modify the entry pointer at the specified key and return the old entry.
+ * @brief Modify the entry pointer at the specified key and return the old
+ * entry.
  * @param hash The given hash table.
  * @param key The key of the entry to modify.
  * @param data The data to replace the old entry.
@@ -1680,9 +1705,11 @@ error:
  * @code
  * extern Eina_Hash *hash;
  *
- * Eina_Bool hash_fn(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+ * Eina_Bool hash_fn(const Eina_Hash *hash, const void *key,
+ *                   void *data, void *fdata)
  * {
- *   printf("Func data: %s, Hash entry: %s / %p\n", fdata, (const char *)key, data);
+ *   printf("Func data: %s, Hash entry: %s / %p\n",
+ *          fdata, (const char *)key, data);
  *   return 1;
  * }
  *

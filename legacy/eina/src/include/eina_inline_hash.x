@@ -60,12 +60,12 @@ eina_hash_int32(const unsigned int *pkey, int len)
 
   (void) len;
 
-  key = ~key + (key << 15);
-  key = key ^ (key >> 12);
-  key = key + (key << 2);
-  key = key ^ (key >> 4);
-  key = key * 2057;
-  key = key ^ (key >> 16);
+  key  = ~key + (key << 15);
+  key ^= key >> 12;
+  key += key << 2;
+  key ^= key >> 4;
+  key *= 2057;
+  key ^= key >> 16;
   return key;
 }
 
@@ -76,12 +76,12 @@ eina_hash_int64(const unsigned long int *pkey, int len)
 
   (void) len;
 
-  key = (~key) + (key << 18);
-  key = key ^ (key >> 31);
-  key = key * 21;
-  key = key ^ (key >> 11);
-  key = key + (key << 6);
-  key = key ^ (key >> 22);
+  key  = ~key + (key << 18);
+  key ^= key >> 31;
+  key *= 21;
+  key ^= key >> 11;
+  key += key << 6;
+  key ^= key >> 22;
   return (int) key;
 }
 
