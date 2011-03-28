@@ -210,8 +210,6 @@ eina_unicode_escape(const Eina_Unicode *str)
 EAPI Eina_Unicode
 eina_unicode_utf8_get_next(const char *buf, int *iindex)
 {
-   /* Note: we don't currently handle overlong forms and some other
-    * error cases. */
    int ind = *iindex;
    Eina_Unicode r;
    unsigned char d;
