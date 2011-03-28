@@ -289,8 +289,9 @@ _animator_animate_cb(void *data)
    if (elapsed_time < duration) return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
-   if ((transit->repeat.current == transit->repeat.count)
-       && (!transit->auto_reverse || transit->repeat.reverse))
+   if ((transit->repeat.count >= 0) &&
+       (transit->repeat.current == transit->repeat.count) &&
+       ((!transit->auto_reverse) || transit->repeat.reverse))
      {
         elm_transit_del(transit);
         return ECORE_CALLBACK_CANCEL;

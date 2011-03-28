@@ -511,6 +511,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    trans = elm_transit_add();
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
    elm_transit_tween_mode_set(trans, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
+   //Negative value makes transition repeate for infinite times. 
    elm_transit_repeat_times_set(trans, -1);
    effect_context = _custom_context_new(100, 100, 250, 250);
    elm_transit_object_add(trans, bt);
