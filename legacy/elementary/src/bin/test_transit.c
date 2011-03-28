@@ -78,7 +78,7 @@ _transit_rotation_translation_color(void *data __UNUSED__, Evas_Object *obj, voi
    elm_transit_effect_translation_add(trans, -70.0, -150.0, 70.0, 150.0);
 
    /* Color Effect */
-   elm_transit_effect_color_add(trans, 100, 255, 100, 255, 200, 50, 200, 50); 
+   elm_transit_effect_color_add(trans, 100, 255, 100, 255, 200, 50, 200, 50);
 
    /* Rotation Effect */
    elm_transit_effect_rotation_add(trans, 0.0, 135.0);
@@ -96,7 +96,7 @@ _transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
    elm_transit_object_add(trans, obj);
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
 
-   elm_transit_effect_wipe_add(trans, 
+   elm_transit_effect_wipe_add(trans,
                                ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
                                ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
 
@@ -129,7 +129,7 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
 
    elm_transit_effect_image_animation_add(trans, images);
 
-   elm_transit_duration_set(trans, 5.0); 
+   elm_transit_duration_set(trans, 5.0);
    elm_transit_go(trans);
 }
 
@@ -139,7 +139,7 @@ _transit_resizing(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Elm_Transit *trans;
 
    trans = elm_transit_add();
-   elm_transit_object_add(trans, obj);   
+   elm_transit_object_add(trans, obj);
 
    elm_transit_effect_resizing_add(trans, 100, 50, 300, 150);
 
@@ -354,7 +354,7 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Zoom Effect");
    evas_object_resize(bt, 100, 50);
-   evas_object_move(bt, 100, 125); 
+   evas_object_move(bt, 100, 125);
    evas_object_show(bt);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_zoom, NULL);
@@ -386,7 +386,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_button_icon_set(bt, ic);
    elm_button_label_set(bt, "Before Button - Blend Effect");
    evas_object_move(bt, 25, 125);
-   evas_object_resize(bt, 250, 50);	
+   evas_object_resize(bt, 250, 50);
    evas_object_show(bt);
 
    ic = elm_icon_add(win);
@@ -397,7 +397,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_button_icon_set(bt2, ic);
    elm_button_label_set(bt2, "After Button - Blend Effect");
    evas_object_move(bt2, 25, 125);
-   evas_object_resize(bt2, 250, 50);	
+   evas_object_resize(bt2, 250, 50);
 
    evas_object_show(win);
 
@@ -429,7 +429,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_button_icon_set(bt, ic);
    elm_button_label_set(bt, "Before Button - Fade Effect");
    evas_object_move(bt, 25, 125);
-   evas_object_resize(bt, 250, 50);	
+   evas_object_resize(bt, 250, 50);
    evas_object_show(bt);
 
    ic = elm_icon_add(win);
@@ -440,7 +440,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_button_icon_set(bt2, ic);
    elm_button_label_set(bt2, "After Button - Fade Effect");
    evas_object_move(bt2, 25, 125);
-   evas_object_resize(bt2, 250, 50);	
+   evas_object_resize(bt2, 250, 50);
 
    evas_object_show(win);
 
@@ -468,7 +468,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_button_label_set(bt, "Front Button - Resizable Flip Effect");
    evas_object_show(bt);
    evas_object_move(bt, 50, 100);
-   evas_object_resize(bt, 250, 30); 
+   evas_object_resize(bt, 250, 30);
 
    bt2 = elm_button_add(win);
    elm_button_label_set(bt2, "Back Button - Resizable Flip Effect");
@@ -511,7 +511,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    trans = elm_transit_add();
    elm_transit_auto_reverse_set(trans, EINA_TRUE);
    elm_transit_tween_mode_set(trans, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
-   //Negative value makes transition repeate for infinite times. 
+   //Negative value makes transition repeate for infinite times.
    elm_transit_repeat_times_set(trans, -1);
    effect_context = _custom_context_new(100, 100, 250, 250);
    elm_transit_object_add(trans, bt);
