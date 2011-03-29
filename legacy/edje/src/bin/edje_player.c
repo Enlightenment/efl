@@ -33,6 +33,7 @@ struct opts {
    Eina_Bool alpha;
    Eina_Bool print;
    Eina_Bool slave_mode;
+   double scale;
    char *title;
 };
 
@@ -401,6 +402,25 @@ _reset_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *stack, void *even
    evas_object_size_hint_min_set(stack, minw, minh);
 }
 
+static void
+_key_down(void *data, Evas *e __UNUSED__, Evas_Object *stack __UNUSED__, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   struct opts *opts = data;
+
+   if ((!strcmp(ev->keyname, "equal")) ||
+       (!strcmp(ev->keyname, "plus")))
+      opts->scale += 0.1;
+   else if ((!strcmp(ev->keyname, "minus")) ||
+            (!strcmp(ev->keyname, "underscore")))
+      opts->scale -= 0.1;
+   else if ((!strcmp(ev->keyname, "0")))
+      opts->scale = 1.0;
+   if (opts->scale < 0.1) opts->scale = 0.1;
+   else if (opts->scale > 10.0) opts->scale = 1.0;
+   edje_scale_set(opts->scale);
+}
+
 static Evas_Object *
 _create_stack(Evas *evas, const struct opts *opts)
 {
@@ -581,6 +601,8 @@ const Ecore_Getopt optdesc = {
     ('p', "print", "Print signals and messages to stdout"),
     ECORE_GETOPT_STORE_TRUE
     ('S', "slave-mode", "Listen for commands on stdin"),
+    ECORE_GETOPT_STORE_DOUBLE
+    ('z', "scale", "Set scale factor"),
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_VERSION('V', "version"),
@@ -610,6 +632,7 @@ int main(int argc, char **argv)
      ECORE_GETOPT_VALUE_STR(opts.title),
      ECORE_GETOPT_VALUE_BOOL(opts.print),
      ECORE_GETOPT_VALUE_BOOL(opts.slave_mode),
+     ECORE_GETOPT_VALUE_DOUBLE(opts.scale),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -618,6 +641,7 @@ int main(int argc, char **argv)
    };
 
    memset(&opts, 0, sizeof(opts));
+   opts.scale = 1.0;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
@@ -642,6 +666,7 @@ int main(int argc, char **argv)
      }
 
    ecore_app_args_set(argc, (const char **)argv);
+   edje_scale_set(opts.scale);
 
    opts.file = argv[args];
    if (opts.list_groups)
@@ -694,6 +719,9 @@ int main(int argc, char **argv)
 	goto free_ecore_evas;
      }
 
+   evas_object_focus_set(stack, EINA_TRUE);
+   evas_object_event_callback_add(stack, EVAS_CALLBACK_KEY_DOWN,
+				  _key_down, &opts);
    evas_object_event_callback_add(stack, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _reset_size_hints, edje);
 
