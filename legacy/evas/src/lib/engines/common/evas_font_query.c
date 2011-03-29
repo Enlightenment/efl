@@ -74,6 +74,11 @@ evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Pro
    if (!text_props->len) return 0;
    gli = text_props->info->glyph + text_props->start + text_props->len - 1;
 
+   /* If the last char is a whitespace, we use the advance as the size,
+    * so the right_inset is 0. */
+   if (gli->width == 0)
+      return 0;
+
    return EVAS_FONT_ROUND_26_6_TO_INT(gli->advance) -
       (gli->width + gli->x_bear
 #ifdef OT_SUPPORT
@@ -109,7 +114,15 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, 
      }
    EVAS_FONT_WALK_TEXT_END();
 
-   if (w) *w = prev_pen_x + keep_width;
+   /* If the last char is a whitespace, we use the advance as the size */
+   if (keep_width > 0)
+     {
+        if (w) *w = prev_pen_x + keep_width;
+     }
+   else
+     {
+        if (w) *w = EVAS_FONT_WALK_PEN_X;
+     }
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
 }
 
