@@ -8295,6 +8295,12 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
+   /* FIXME: This clipping is just until we fix inset handling correctly. */
+   ENFN->context_clip_clip(output, context,
+                              obj->cur.geometry.x + x,
+                              obj->cur.geometry.y + y,
+                              obj->cur.geometry.w,
+                              obj->cur.geometry.h);
    clip = ENFN->context_clip_get(output, context, &cx, &cy, &cw, &ch);
    /* If there are no paragraphs and thus there are no lines,
     * there's nothing left to do. */

@@ -1890,6 +1890,12 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
    evas_text_style_pad_get(o->cur.style, &sl, NULL, &st, NULL);
    ENFN->context_multiplier_unset(output, context);
    ENFN->context_render_op_set(output, context, obj->cur.render_op);
+   /* FIXME: This clipping is just until we fix inset handling correctly. */
+   ENFN->context_clip_clip(output, context,
+                              obj->cur.geometry.x + x,
+                              obj->cur.geometry.y + y,
+                              obj->cur.geometry.w,
+                              obj->cur.geometry.h);
 /*
    ENFN->context_color_set(output,
                            context,
