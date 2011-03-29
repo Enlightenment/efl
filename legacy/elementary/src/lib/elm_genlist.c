@@ -141,11 +141,11 @@
  * details.
  *
  * An item in the genlist world can have 0 or more text labels (they can be
- * regular text or textblock – that's up to the style to determine), 0 or
+ * regular text or textblock - that's up to the style to determine), 0 or
  * more icons (which are simply objects swallowed into the genlist item) and
  * 0 or more boolean states that can be used for check, radio or other
  * indicators by the edje theme style. An item may be one of several styles
- * (Elementary provides 4 by default - “default”, “double_label”, "group_index"
+ * (Elementary provides 4 by default - "default", "double_label", "group_index"
  * and "icon_top_text_bottom", but this can be extended by system or
  * application custom themes/overlays/extensions).
  *
@@ -154,12 +154,12 @@
  * a structure with information about that type of item (genlist may contain
  * multiple different items with different classes, states and styles).
  * Genlist will call the functions in this struct (methods) when an item is
- * “realized” (that is created dynamically while scrolling). All objects will
+ * "realized" (that is created dynamically while scrolling). All objects will
  * simply be deleted  when no longer needed with evas_object_del(). The
  * Elm_Genlist_Item_Class structure contains the following members:
  *
  * item_style - This is a constant string and simply defines the name of the
- * item style. It must be specified and the default should be “default”.
+ * item style. It must be specified and the default should be "default".
  *
  * func.label_get - This function is called when an actual item object is
  * created. The data parameter is the data parameter passed to
@@ -184,7 +184,7 @@
  * parameter is the genlist object and the part parameter is the string name
  * of the state part in the edje design that is listed as one of the possible
  * states that can be set. Return 0 for false or 1 for true. Genlist will
- * emit a signal to the edje object with “elm,state,XXX,active” “elm” when
+ * emit a signal to the edje object with "elm,state,XXX,active" "elm" when
  * true (the default is false), where XXX is the name of the part.
  *
  * func.del - This is called when elm_genlist_item_del() is called on an
@@ -266,7 +266,7 @@
  * viewport of the scroller. If it is ELM_LIST_LIMIT, items will be expanded
  * to the viewport width and limited to that size. This can be combined with
  * a different style that uses edjes' ellipsis feature (cutting text off like
- * this: “tex...”).
+ * this: "tex...").
  *
  * Items will only call their selection func and callback when first becoming
  * selected. Any further clicks will do nothing, unless you enable always
