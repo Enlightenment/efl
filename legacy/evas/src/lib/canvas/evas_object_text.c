@@ -537,8 +537,8 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
               o->engine_data,
               it->text, &it->text_props,
               &it->w, &it->h);
-        it->adv = ENFN->font_h_advance_get(ENDT, o->engine_data, it->text,
-              &it->text_props);
+        it->adv = it->w + ENFN->font_right_inset_get(ENDT, o->engine_data,
+                                                    &it->text_props);
      }
    o->items = (Evas_Object_Text_Item *)
       eina_inlist_append(EINA_INLIST_GET(o->items), EINA_INLIST_GET(it));

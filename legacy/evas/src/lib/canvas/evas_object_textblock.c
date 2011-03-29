@@ -339,6 +339,8 @@ struct _Evas_Object_Textblock_Text_Item
    Eina_Unicode                    *text;
    Evas_Text_Props                  text_props;
    int                              inset, baseline;
+   Evas_Coord                       x_adjustment; /* Used to indicate by how
+                                                     much we adjusted sizes */
 };
 
 struct _Evas_Object_Textblock_Format_Item
@@ -2322,7 +2324,7 @@ loop_advance:
         it->x = x;
         x += it->adv;
 
-        if (x > c->ln->w) c->ln->w = x;
+        if ((it->x + it->w) > c->ln->w) c->ln->w = it->x + it->w;
      }
 
    c->ln->y = (c->y - c->par->y) + c->o->style_pad.t;
@@ -2419,7 +2421,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
      {
         Evas_Coord x;
         x = c->w - c->o->style_pad.l - c->o->style_pad.r - c->marginl -
-           c->marginr - c->x;
+           c->marginr - c->x - ti->x_adjustment;
         if (x < 0)
           x = 0;
         return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font, ti->text,
@@ -2483,23 +2485,7 @@ _layout_item_text_split_strip_white(Ctxt *c,
 
    if (new_ti || white_ti)
      {
-#if 0
-        /* FIXME: This is more correct, but wayy slower, so until I make this
-         * fast I'll just take the less correct approach. At least until
-         * someone notices a glitch */
         _text_item_update_sizes(c, ti);
-#else
-        if (new_ti)
-          {
-             ti->parent.w -= new_ti->parent.w;
-             ti->parent.adv -= new_ti->parent.adv;
-          }
-        if (white_ti)
-          {
-             ti->parent.w -= white_ti->parent.w;
-             ti->parent.adv -= white_ti->parent.adv;
-          }
-#endif
 
         ti->text = eina_unicode_strndup(ts, cut);
         free(ts);
@@ -2527,15 +2513,8 @@ _layout_item_merge_and_free(Ctxt *c,
    evas_common_text_props_merge(&item1->text_props,
          &item2->text_props);
 
-#if 0
-   /* FIXME: This is more correct, but wayy slower, so until I make this fast
-    * I'll just take the less correct approach. At least until someone
-    * notices a glitch */
-   _text_item_update_sizes(c, item1);
-#else
-   item1->parent.w += item2->parent.w;
+   item1->parent.w = item1->parent.adv + item2->parent.w;
    item1->parent.adv += item2->parent.adv;
-#endif
 
    tmp = realloc(item1->text, (len1 + len2 + 1) * sizeof(Eina_Unicode));
    eina_unicode_strncpy(tmp + len1, item2->text, len2);
@@ -2655,25 +2634,56 @@ _layout_word_next(Eina_Unicode *str, int p)
 static void
 _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 {
-   int tw, th, adv, inset;
+   int tw, th, inset, right_inset;
    const Evas_Object_Textblock_Format *fmt = ti->parent.format;
 
    tw = th = 0;
    if (fmt->font.font)
      c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
            &ti->text_props, &tw, &th);
-   ti->parent.w = tw;
-   ti->parent.h = th;
    inset = 0;
    if (fmt->font.font)
      inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
            &ti->text_props);
-   ti->inset = inset;
-   adv = 0;
    if (fmt->font.font)
-     adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
-           ti->text, &ti->text_props);
-   ti->parent.adv = adv;
+      right_inset = c->ENFN->font_right_inset_get(c->ENDT, fmt->font.font,
+            &ti->text_props);
+
+   /* These adjustments are calculated and thus heavily linked to those in
+    * textblock_render!!! Don't change one without the other. */
+   switch (ti->parent.format->style)
+     {
+        case EVAS_TEXT_STYLE_SHADOW:
+           ti->x_adjustment = 1;
+           break;
+        case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+        case EVAS_TEXT_STYLE_FAR_SHADOW:
+           ti->x_adjustment = 2;
+           break;
+        case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+        case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+           ti->x_adjustment = 4;
+           break;
+        case EVAS_TEXT_STYLE_SOFT_SHADOW:
+           inset += 1;
+           ti->x_adjustment = 4;
+           break;
+        case EVAS_TEXT_STYLE_GLOW:
+        case EVAS_TEXT_STYLE_SOFT_OUTLINE:
+           inset += 2;
+           ti->x_adjustment = 4;
+           break;
+        case EVAS_TEXT_STYLE_OUTLINE:
+           inset += 1;
+           ti->x_adjustment = 1;
+           break;
+        default:
+           break;
+     }
+   ti->inset = inset;
+   ti->parent.w = tw + ti->x_adjustment;
+   ti->parent.h = th;
+   ti->parent.adv = tw + right_inset;
    ti->parent.x = 0;
 }
 
@@ -3280,7 +3290,7 @@ _layout_visualize_par(Ctxt *c)
 
         /* Check if we need to wrap, i.e the text is bigger than the width */
         if ((c->w >= 0) &&
-              ((c->x + it->adv) >
+              ((c->x + it->w) >
                (c->w - c->o->style_pad.l - c->o->style_pad.r -
                 c->marginl - c->marginr)))
           {
@@ -8411,6 +8421,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
         DRAW_FORMAT(backing, 0, ln->h, r, g, b, a);
      }
    ITEM_WALK_END();
+
+   /* There are size adjustments that depend on the styles drawn here back
+    * in "_text_item_update_sizes" should not modify one without the other. */
 
    /* prepare everything for text draw */
 
