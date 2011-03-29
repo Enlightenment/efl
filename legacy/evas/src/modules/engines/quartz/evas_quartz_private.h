@@ -77,6 +77,7 @@ static int eng_font_max_ascent_get(void *data, void *font);
 static int eng_font_max_descent_get(void *data, void *font);
 static void eng_font_string_size_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int *w, int *h);
 static int eng_font_inset_get(void *data, void *font, const Evas_Text_Props *intl_props);
+static int eng_font_right_inset_get(void *data, void *font, const Evas_Text_Props *intl_props);
 static int eng_font_h_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props);
 static int eng_font_v_advance_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props);
 static int eng_font_char_coords_get(void *data, void *font, const char *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);

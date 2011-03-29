@@ -695,6 +695,12 @@ eng_font_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *tex
 }
 
 static int
+eng_font_right_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
+{
+   return evas_common_font_query_right_inset(font, text_props);
+}
+
+static int
 eng_font_h_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props)
 {
    int h, v;
@@ -926,7 +932,8 @@ static Evas_Func func =
      NULL, // eng_image_content_hint_set - software doesn't use it
      NULL, // eng_image_content_hint_get - software doesn't use it
      eng_font_pen_coords_get,
-     eng_font_text_props_info_create
+     eng_font_text_props_info_create,
+     eng_font_right_inset_get
      /* FUTURE software generic calls go here */
 };
 

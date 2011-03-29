@@ -66,6 +66,22 @@ evas_common_font_query_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *te
    return text_props->info->glyph[text_props->start].x_bear;
 }
 
+/* text right x inset */
+EAPI int
+evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props)
+{
+   const Evas_Font_Glyph_Info *gli;
+   if (!text_props->len) return 0;
+   gli = text_props->info->glyph + text_props->start + text_props->len - 1;
+
+   return EVAS_FONT_ROUND_26_6_TO_INT(gli->advance) -
+      (gli->width + gli->x_bear
+#ifdef OT_SUPPORT
+       + text_props->info->ot[text_props->start + text_props->len - 1].x_offset
+#endif
+      );
+}
+
 /* size of the string (width and height) in pixels
  * BiDi handling: We receive the shaped string + other props from text_props,
  * We only care about the size, and the size does not depend on the visual order.

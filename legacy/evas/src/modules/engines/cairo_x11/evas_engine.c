@@ -90,6 +90,7 @@ static int eng_font_max_ascent_get(void *data, void *font);
 static int eng_font_max_descent_get(void *data, void *font);
 static void eng_font_string_size_get(void *data, void *font, char *text, int *w, int *h);
 static int eng_font_inset_get(void *data, void *font, const Evas_Text_Props *intl_props);
+static int eng_font_right_inset_get(void *data, void *font, const Evas_Text_Props *intl_props);
 static int eng_font_h_advance_get(void *data, void *font, char *text);
 static int eng_font_v_advance_get(void *data, void *font, char *text);
 static int eng_font_char_coords_get(void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
@@ -219,7 +220,8 @@ static Evas_Func eng_func =
      NULL, // eng_image_content_hint_set - software doesn't use it
      NULL, // eng_image_content_hint_get - software doesn't use it
      eng_font_pen_coords_get,
-     eng_font_text_props_info_create
+     eng_font_text_props_info_create,
+     eng_font_right_inset_get
      /* FUTURE software generic calls go here */
 };
 
