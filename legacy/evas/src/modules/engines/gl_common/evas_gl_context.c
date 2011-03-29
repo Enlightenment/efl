@@ -733,6 +733,8 @@ evas_gl_common_context_new(void)
         
         glUseProgram(gc->pipe[0].shader.cur_prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+        
+        evas_gl_common_shader_program_init_done();
         // in shader:
         // uniform sampler2D tex[8];
         // 

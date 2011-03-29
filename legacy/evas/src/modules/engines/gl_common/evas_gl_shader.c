@@ -512,6 +512,14 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
 }
 
 void
+evas_gl_common_shader_program_init_done(void)
+{
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glReleaseShaderCompiler();
+#endif   
+}
+
+void
 evas_gl_common_shader_program_shutdown(Evas_GL_Program *p)
 {
    glDeleteShader(p->vert);
