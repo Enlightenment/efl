@@ -5,10 +5,10 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 /* Hint:
- * In this example some calls to elm_genlist_item_append() are used which give the 
- * value of an int as 'item data' and 'func data' after casting into (void*). For 
+ * In this example some calls to elm_genlist_item_append() are used which give the
+ * value of an int as 'item data' and 'func data' after casting into (void*). For
  * sure this works only on architectures where sizeof(int)==sizeof(void*).
- * For real world usage you should hold a data structure or value in your 
+ * For real world usage you should hold a data structure or value in your
  * application and then give only a pointer to this data as data pointer.
  */
 
@@ -1483,26 +1483,26 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
           }
         switch (i)
           {
-           case 0: 
+           case 0:
               evas_object_smart_callback_add(bt[0], "clicked", _bt_show_cb, gli);
               evas_object_smart_callback_add(bt[4], "clicked", _bt_bring_cb, gli);
               break;
-           case 26: 
+           case 26:
               evas_object_smart_callback_add(bt[1], "clicked", _bt_show_cb, gli);
               break;
-           case 31: 
+           case 31:
               evas_object_smart_callback_add(bt[5], "clicked", _bt_bring_cb, gli);
               break;
-           case 101: 
+           case 101:
               evas_object_smart_callback_add(bt[2], "clicked", _bt_show_cb, gli);
               break;
-           case 239: 
+           case 239:
               evas_object_smart_callback_add(bt[6], "clicked", _bt_bring_cb, gli);
               break;
-           case 477: 
+           case 477:
               evas_object_smart_callback_add(bt[7], "clicked", _bt_bring_cb, gli);
               break;
-           case 480: 
+           case 480:
               evas_object_smart_callback_add(bt[3], "clicked", _bt_show_cb, gli);
               break;
           }
