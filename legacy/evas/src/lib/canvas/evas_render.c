@@ -1372,15 +1372,6 @@ evas_render_updates_internal(Evas *e,
                                    }
 			      }
 #endif
-                            /* FIXME: This clip is only temporary to avoid a bug in textblock that
-                               render outside of the zone it is allowed to render. It's a serious
-                               bug as it may render out of screen buffer, that's why it get back in.
-
-                               REMOVE IT ASAP !
-                            */
-                            e->engine.func->context_clip_set(e->engine.data.output,
-                                                             e->engine.data.context,
-                                                             x, y, w, h);
                             clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
 							     surface, off_x, off_y, 0
 #ifdef REND_DGB
