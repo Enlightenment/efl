@@ -1753,18 +1753,20 @@ _item_realize(Elm_Genlist_Item *it,
    if ((calc) && (it->wd->homogeneous) && ((it->wd->item_width) || ((it->wd->item_width) && (it->wd->group_item_width))))
      {
         /* homogenous genlist shortcut */
-         if ((it->flags & ELM_GENLIST_ITEM_GROUP) && (!it->mincalcd))
-           {
-              it->w = it->minw = it->wd->group_item_width;
-              it->h = it->minh = it->wd->group_item_height;
-              it->mincalcd = EINA_TRUE;
-           }
-         else if (!it->mincalcd)
-           {
-              it->w = it->minw = it->wd->item_width;
-              it->h = it->minh = it->wd->item_height;
-              it->mincalcd = EINA_TRUE;
-           }
+        if (!it->mincalcd)
+          {
+             if (it->flags & ELM_GENLIST_ITEM_GROUP)
+               {
+                  it->w = it->minw = it->wd->group_item_width;
+                  it->h = it->minh = it->wd->group_item_height;
+               }
+             else
+               {
+                  it->w = it->minw = it->wd->item_width;
+                  it->h = it->minh = it->wd->item_height;
+               }
+             it->mincalcd = EINA_TRUE;
+          }
      }
    else
      {
