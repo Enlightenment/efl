@@ -1793,7 +1793,7 @@ struct _Ctxt
    int line_no;
    int underline_extend;
    int have_underline, have_underline2;
-   double align;
+   double align, valign;
    Eina_Bool align_auto;
 };
 
@@ -3486,6 +3486,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->line_no = 0;
    c->align = 0.0;
    c->align_auto = EINA_TRUE;
+   c->valign = 0.0;
    c->ln = NULL;
 
 
@@ -3687,6 +3688,19 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
+
+   /* Is this really the place? */
+   /* Vertically align the textblock */
+   if ((c->valign > 0.0) && (c->h > c->hmax))
+     {
+        Evas_Coord adjustment = (c->h - c->hmax) * c->valign;
+        Evas_Object_Textblock_Paragraph *par;
+        EINA_INLIST_FOREACH(c->paragraphs, par)
+          {
+             par->y += adjustment;
+          }
+
+     }
 
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
        (o->style_pad.t != style_pad_t) || (o->style_pad.b != style_pad_b))
