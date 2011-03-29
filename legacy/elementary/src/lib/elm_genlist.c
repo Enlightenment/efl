@@ -334,6 +334,8 @@ struct _Widget_Data
    int               walking;
    int               item_width;
    int               item_height;
+   int               group_item_width;
+   int               group_item_height;
    int               max_items_per_block;
    double            longpress_timeout;
 };
@@ -749,6 +751,7 @@ _theme_hook(Evas_Object *obj)
                                        elm_widget_style_get(obj));
 //   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    wd->item_width = wd->item_height = 0;
+   wd->group_item_width = wd->group_item_height = 0;
    wd->minw = wd->minh = wd->realminw = 0;
    EINA_INLIST_FOREACH(wd->blocks, itb)
      {
@@ -1747,10 +1750,16 @@ _item_realize(Elm_Genlist_Item *it,
           }
      }
 
-   if ((calc) && (it->wd->homogeneous) && (it->wd->item_width))
+   if ((calc) && (it->wd->homogeneous) && ((it->wd->item_width) || ((it->wd->item_width) && (it->wd->group_item_width))))
      {
         /* homogenous genlist shortcut */
-         if (!it->mincalcd)
+         if ((it->flags & ELM_GENLIST_ITEM_GROUP) && (!it->mincalcd))
+           {
+              it->w = it->minw = it->wd->group_item_width;
+              it->h = it->minh = it->wd->group_item_height;
+              it->mincalcd = EINA_TRUE;
+           }
+         else if (!it->mincalcd)
            {
               it->w = it->minw = it->wd->item_width;
               it->h = it->minh = it->wd->item_height;
@@ -1845,7 +1854,12 @@ _item_realize(Elm_Genlist_Item *it,
              it->h = it->minh = mh;
              it->mincalcd = EINA_TRUE;
 
-             if ((!in) && (it->wd->homogeneous))
+             if ((!it->wd->group_item_width) && (it->flags == ELM_GENLIST_ITEM_GROUP))
+             	{
+             	   it->wd->group_item_width = mw;
+             	   it->wd->group_item_height = mh;
+             	}
+             else if ((!it->wd->item_width) && (it->flags == ELM_GENLIST_ITEM_NONE))
                {
                   it->wd->item_width = mw;
                   it->wd->item_height = mh;

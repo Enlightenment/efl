@@ -15912,6 +15912,8 @@ collections {
    }
    group { name: "elm/genlist/item/group_index/default";
       alias: "elm/genlist/item_odd/group_index/default";
+      alias: "elm/genlist/item_compress/group_index/default";
+      alias: "elm/genlist/item_compress_odd/group_index/default"
       data.item: "stacking" "above";
       data.item: "selectraise" "on";
       data.item: "labels" "elm.text";
