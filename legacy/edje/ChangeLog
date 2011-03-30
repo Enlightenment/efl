@@ -70,3 +70,8 @@
 
 	* Move some of edje over to use smart clipper in evas.  This _should_
 	be transparent to users.
+
+2011-03-30  Carsten Haitzler (The Rasterman)
+
+	* text.align (only the vertical part) now works for textblock.
+
