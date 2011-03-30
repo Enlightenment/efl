@@ -3496,7 +3496,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->line_no = 0;
    c->align = 0.0;
    c->align_auto = EINA_TRUE;
-   c->valign = 0.0;
+   c->valign = o->valign;
    c->ln = NULL;
 
 
