@@ -435,6 +435,7 @@ struct _Evas_Object_Textblock
    unsigned char                       redraw : 1;
    unsigned char                       changed : 1;
    unsigned char                       content_changed : 1;
+   unsigned char                       have_ellipsis : 1;
    Eina_Bool                           newline_is_ps : 1;
 };
 
@@ -1579,6 +1580,13 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
         fmt->ellipsis = strtod(tmp_param, &endptr);
         if ((fmt->ellipsis < 0.0) || (fmt->ellipsis > 1.0))
           fmt->ellipsis = -1.0;
+        else
+          {
+             Evas_Object_Textblock *o;
+             
+             o = (Evas_Object_Textblock *)(obj->object_data);
+             o->have_ellipsis = 1;
+          }
      }
 
    if (new_font)
@@ -3755,6 +3763,7 @@ _relayout(const Evas_Object *obj)
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
+   o->have_ellipsis = 0;
    _layout(obj,
          0,
          obj->cur.geometry.w, obj->cur.geometry.h,
@@ -8645,7 +8654,8 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    o = (Evas_Object_Textblock *)(obj->object_data);
    if ((o->changed) || (o->content_changed) ||
        ((obj->cur.geometry.w != o->last_w) ||
-           ((o->valign != 0.0) && (obj->cur.geometry.h != o->last_h))))
+           (((o->valign != 0.0) || (o->have_ellipsis)) &&
+               (obj->cur.geometry.h != o->last_h))))
      {
 	o->formatted.valid = 0;
 	_layout(obj,
@@ -8802,7 +8812,8 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    if ((obj->cur.geometry.w != o->last_w) ||
-       ((o->valign != 0.0) && (obj->cur.geometry.h != o->last_h)))
+       (((o->valign != 0.0) || (o->have_ellipsis)) &&
+           (obj->cur.geometry.h != o->last_h)))
      {
 	o->formatted.valid = 0;
 	o->changed = 1;
