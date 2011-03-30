@@ -149,7 +149,6 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
 static void
 _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
-   Eina_List *l;
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
    Elm_Obj_State *state = obj_data->state;
 
