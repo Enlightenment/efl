@@ -12,7 +12,7 @@
 
 2011-01-31  Carsten Haitzler (The Rasterman)
 
-        * Fix: ecore-evas CAN send "render done" messages even if not
+        * Fix ecore-evas CAN send "render done" messages even if not
         waiting for sync counter when using gl engine. new semi-sync
         mode to account for that.
 
@@ -47,7 +47,7 @@
 
 	* Ecore_Win32: improve resize of windows and fix key up event for
 	the 'space' key.
-	* Ecore_WinCE: do not erase a window background
+	* Ecore_WinCE do not erase a window background
 
 2011-02-21 Jihoon Kim
 
@@ -60,13 +60,13 @@
 
 2011-02-22  Carsten Haitzler (The Rasterman)
 
-        * Fix: ecore-file inotify fd would be duplicated in children
+        * Fix ecore-file inotify fd would be duplicated in children
         on fork. Have it detecti this on next monitor add and re-init the
         inotify fd and fd handler.
 
 2011-02-24 Vincent Torri
 
-	* Ecore_File: fix compilation when ecore_con and curl are not
+	* Ecore_File fix compilation when ecore_con and curl are not
 	available
 
 2011-02-27 Jihoon Kim
@@ -91,11 +91,15 @@
 
 2011-03-23  Carsten Haitzler (The Rasterman)
 
-        * Fix: ecore-evas interceptor didn't handle override-redirect
+        * Fix ecore-evas interceptor didn't handle override-redirect
         windows correctly, expecting a feed-back event from x, which it didn't
         get.
 
 2011-03-23  Elixirious
 
-	* Fix: ecore_con_url_ftp_upload upload the file until the end.
+	* Fix ecore_con_url_ftp_upload upload the file until the end.
+
+2011-03-29  PnB
+
+	* Add ecore_con_url_ssl_ca_set to manually set a certificate authority.
 

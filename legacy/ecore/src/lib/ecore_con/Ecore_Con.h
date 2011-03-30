@@ -579,6 +579,8 @@ EAPI void              ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_con);
 
 EAPI void              ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
                                                          Eina_Bool verify);
+EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
+                                                const char *ca_path);
 
 /**
  * @}
