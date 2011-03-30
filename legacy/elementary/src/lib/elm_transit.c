@@ -2147,7 +2147,7 @@ _fade_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Fade *fade_data)
    int i, count;
 
    count = eina_list_count(transit->objs);
-   for (i = 0; i < (count - 1); i += 2)
+   for (i = 0; i < count; i += 2)
      {
         fade = ELM_NEW(Elm_Transit_Effect_Fade_Node);
         if (!fade)
