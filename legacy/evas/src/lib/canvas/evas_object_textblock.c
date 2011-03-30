@@ -3705,11 +3705,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         if ((o->valign > 0.0) && (c->h > c->hmax))
           {
              Evas_Coord adjustment = (c->h - c->hmax) * o->valign;
-             printf("  @ adj = %i (%i - %i)\n", adjustment, c->h, c->hmax);
              Evas_Object_Textblock_Paragraph *par;
              EINA_INLIST_FOREACH(c->paragraphs, par)
                {
-                  printf("  @ %i + %i\n", par->y, adjustment);
                   par->y += adjustment;
                }
           }
@@ -7571,7 +7569,6 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    y += o->style_pad.t;
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
-        printf("  @ in %i %i %ix%i\n", par->x, par->y, par->w, par->h);
         if ((par->x <= x) && (par->x + par->w > x) &&
               (par->y <= y) && (par->y + par->h > y))
           {
