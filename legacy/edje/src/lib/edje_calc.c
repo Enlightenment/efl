@@ -914,6 +914,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   if (*maxh < *minh) *maxh = *minh;
 	       }
 	  }
+        evas_object_textblock_valign_set(ep->object, chosen_desc->text.align.y);
      }
 }
 

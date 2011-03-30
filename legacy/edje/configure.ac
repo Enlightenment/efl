@@ -264,7 +264,7 @@ PKG_CHECK_MODULES([EDJE],
    [
     eina >= 1.0.0
     eet >= 1.4.0
-    evas >= 1.0.0
+    evas >= 1.0.999
     ecore >= 1.0.0
     ecore-file >= 1.0.0
     embryo >= 1.0.0
