@@ -2257,7 +2257,11 @@ EAPI void                                 ecore_x_sync_counter_inc(
 EAPI void                                 ecore_x_sync_counter_val_wait(
    Ecore_X_Sync_Counter counter,
    int                  val);
-
+   
+   EAPI void ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val);
+   EAPI void ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned int val_lo);
+   EAPI Eina_Bool ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter, int *val_hi, unsigned int *val_lo);
+   
 EAPI void                                 ecore_x_xinerama_query_screens_prefetch(
    void);
 EAPI void                                 ecore_x_xinerama_query_screens_fetch(void);

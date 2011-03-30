@@ -114,3 +114,38 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter, int val)
 //   XSync(_ecore_x_disp, False); // dont need this
 } /* ecore_x_sync_counter_val_wait */
 
+EAPI void
+ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val)
+{
+   XSyncValue v;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   XSyncIntToValue(&v, val);
+   XSyncSetCounter(_ecore_x_disp, counter, v);
+}
+
+EAPI void
+ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned int val_lo)
+{
+   XSyncValue v;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   XSyncIntsToValue(&v, val_lo, val_hi);
+   XSyncSetCounter(_ecore_x_disp, counter, v);
+}
+
+EAPI Eina_Bool
+ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter, int *val_hi, unsigned int *val_lo)
+{
+   XSyncValue value;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (XSyncQueryCounter(_ecore_x_disp, counter, &value))
+     {
+        *val_lo = (unsigned int)XSyncValueLow32(value);
+        *val_hi = (int)XSyncValueHigh32(value);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+

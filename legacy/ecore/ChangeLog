@@ -103,3 +103,8 @@
 
 	* Add ecore_con_url_ssl_ca_set to manually set a certificate authority.
 
+2011-03-30  Carsten Haitzler (The Rasterman)
+
+        * Ecore_X gains some more x sync counter controls and Ecore_Evas
+        now uses the netwm sync protocol to get wm's to only configure
+        as fast as it can keep drawing.

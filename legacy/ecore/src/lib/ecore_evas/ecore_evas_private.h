@@ -202,6 +202,9 @@ struct _Ecore_Evas_Engine
       Ecore_X_XRegion *damages;
       Ecore_X_Sync_Counter sync_counter;
       Ecore_X_Window leader;
+      Ecore_X_Sync_Counter netwm_sync_counter;
+      int            netwm_sync_val_hi;
+      unsigned int   netwm_sync_val_lo;
       int            sync_val; // bigger! this will screw up at 2 billion frames (414 days of continual rendering @ 60fps)
       int            screen_num;
       int            px, py, pw, ph;
@@ -210,6 +213,7 @@ struct _Ecore_Evas_Engine
       unsigned char  managed : 1;
       unsigned char  sync_began : 1;
       unsigned char  sync_cancel : 1;
+      unsigned char  netwm_sync_set : 1;
       struct {
 	   unsigned char modal : 1;
 	   unsigned char sticky : 1;
