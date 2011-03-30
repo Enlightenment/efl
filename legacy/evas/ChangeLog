@@ -197,3 +197,8 @@
 
 	* Fix build of GL and static modules.
 	* Fix ico loader static build.
+
+2011-03-30  Tom Hacohen (TAsn) and Carsten Haitzler (The Rasterman)
+
+	* Added vertical alignment support to textblock.
+	  API: evas_object_textblock_valign_set/get
