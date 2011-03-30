@@ -3496,7 +3496,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->line_no = 0;
    c->align = 0.0;
    c->align_auto = EINA_TRUE;
-   c->valign = o->valign;
    c->ln = NULL;
 
 
@@ -3701,15 +3700,19 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    /* Is this really the place? */
    /* Vertically align the textblock */
-   if ((o->valign > 0.0) && (c->h > c->hmax))
+   if (o->content_changed)
      {
-        Evas_Coord adjustment = (c->h - c->hmax) * o->valign;
-        Evas_Object_Textblock_Paragraph *par;
-        EINA_INLIST_FOREACH(c->paragraphs, par)
+        if ((o->valign > 0.0) && (c->h > c->hmax))
           {
-             par->y += adjustment;
+             Evas_Coord adjustment = (c->h - c->hmax) * o->valign;
+             printf("  @ adj = %i (%i - %i)\n", adjustment, c->h, c->hmax);
+             Evas_Object_Textblock_Paragraph *par;
+             EINA_INLIST_FOREACH(c->paragraphs, par)
+               {
+                  printf("  @ %i + %i\n", par->y, adjustment);
+                  par->y += adjustment;
+               }
           }
-
      }
 
    if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
@@ -7567,6 +7570,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    y += o->style_pad.t;
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
+        printf("  @ in %i %i %ix%i\n", par->x, par->y, par->w, par->h);
         if ((par->x <= x) && (par->x + par->w > x) &&
               (par->y <= y) && (par->y + par->h > y))
           {
@@ -8658,6 +8662,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
                (obj->cur.geometry.h != o->last_h))))
      {
 	o->formatted.valid = 0;
+        if ((o->valign != 0.0) || (o->have_ellipsis)) o->content_changed = 1;
 	_layout(obj,
 		0,
 		obj->cur.geometry.w, obj->cur.geometry.h,
@@ -8815,6 +8820,7 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
        (((o->valign != 0.0) || (o->have_ellipsis)) &&
            (obj->cur.geometry.h != o->last_h)))
      {
+        if ((o->valign != 0.0) || (o->have_ellipsis)) o->content_changed = 1;
 	o->formatted.valid = 0;
 	o->changed = 1;
      }
