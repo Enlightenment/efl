@@ -4140,7 +4140,8 @@ evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode)
       return;
 
    o->newline_is_ps = mode;
-    _evas_textblock_text_node_changed(o, obj, NULL);
+   /* FIXME: Should recreate all the textnodes... For now, it's just
+    * for new text inserted. */
 }
 
 /**
@@ -4165,7 +4166,7 @@ evas_object_textblock_newline_mode_get(const Evas_Object *obj)
  * Normally alignment is 0.0 (top of object). Values given should be
  * between 0.0 and 1.0 (1.0 bottom of object, 0.5 being vertically centered
  * etc.).
- * 
+ *
  * @param obj The given textblock object.
  * @param align A value between 0.0 and 1.0
  * @since 1.1.0
