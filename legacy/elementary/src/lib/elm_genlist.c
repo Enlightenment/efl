@@ -2907,8 +2907,8 @@ _item_idler(void *data)
         //xxx
         //printf("PROCESS TIME: %3.3f\n", ecore_time_get() - q_start);
         //xxx
-              wd->queue_idler = NULL;
-              return ECORE_CALLBACK_CANCEL;
+        wd->queue_idler = NULL;
+        return ECORE_CALLBACK_CANCEL;
      }
    return ECORE_CALLBACK_RENEW;
 }
