@@ -3706,14 +3706,11 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    /* Vertically align the textblock */
    if ((o->valign > 0.0) && (c->h > c->hmax))
      {
-        if ((o->valign > 0.0) && (c->h > c->hmax))
+        Evas_Coord adjustment = (c->h - c->hmax) * o->valign;
+        Evas_Object_Textblock_Paragraph *par;
+        EINA_INLIST_FOREACH(c->paragraphs, par)
           {
-             Evas_Coord adjustment = (c->h - c->hmax) * o->valign;
-             Evas_Object_Textblock_Paragraph *par;
-             EINA_INLIST_FOREACH(c->paragraphs, par)
-               {
-                  par->y += adjustment;
-               }
+             par->y += adjustment;
           }
      }
 
