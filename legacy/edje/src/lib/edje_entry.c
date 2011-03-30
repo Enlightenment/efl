@@ -1449,7 +1449,17 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 
         line = evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
         if (line == -1)
-           _curs_end(en->cursor, rp->object, en);
+          {
+             if (rp->part->multiline)
+                _curs_end(en->cursor, rp->object, en);
+             else
+               {
+                  evas_textblock_cursor_paragraph_first(en->cursor);
+                  evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
+                  if (!evas_textblock_cursor_char_coord_set(en->cursor, en->cx, ly + (lh / 2)))
+                     _curs_end(en->cursor, rp->object, en);
+               }
+          }
         else
           {
              int lnum;
@@ -1581,7 +1591,17 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 
         line = evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
         if (line == -1)
-           _curs_end(en->cursor, rp->object, en);
+          {
+             if (rp->part->multiline)
+                _curs_end(en->cursor, rp->object, en);
+             else
+               {
+                  evas_textblock_cursor_paragraph_first(en->cursor);
+                  evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
+                  if (!evas_textblock_cursor_char_coord_set(en->cursor, en->cx, ly + (lh / 2)))
+                     _curs_end(en->cursor, rp->object, en);
+               }
+          }
         else
           {
              int lnum;
