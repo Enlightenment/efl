@@ -1409,6 +1409,9 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI const Evas_Textblock_Style  *evas_object_textblock_style_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                         evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch) EINA_ARG_NONNULL(1);
    EAPI const char                  *evas_object_textblock_replace_char_get(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+   EAPI void                         evas_object_textblock_valign_set(Evas_Object *obj, double align);
+   EAPI double                       evas_object_textblock_valign_get(const Evas_Object *obj);
+         
    EAPI void                         evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                    evas_object_textblock_newline_mode_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 

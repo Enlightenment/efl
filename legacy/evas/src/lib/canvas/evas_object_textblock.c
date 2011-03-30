@@ -420,10 +420,11 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Node_Text    *text_nodes;
    Evas_Object_Textblock_Node_Format  *format_nodes;
    Evas_Object_Textblock_Paragraph    *paragraphs;
-   int                                 last_w;
+   int                                 last_w, last_h;
    struct {
       int                              l, r, t, b;
    } style_pad;
+   double                              valign;
    char                               *markup_text;
    void                               *engine_data;
    const char                         *repch;
@@ -3760,6 +3761,7 @@ _relayout(const Evas_Object *obj)
          &o->formatted.w, &o->formatted.h);
    o->formatted.valid = 1;
    o->last_w = obj->cur.geometry.w;
+   o->last_h = obj->cur.geometry.h;
    o->changed = 0;
    o->content_changed = 0;
    o->redraw = 1;
@@ -4142,6 +4144,43 @@ evas_object_textblock_newline_mode_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(EINA_FALSE);
    return o->newline_is_ps;
+}
+
+/**
+ * @brief Sets the vertical alignment of text within the textblock object
+ * as a whole.
+ *
+ * Normally alignment is 0.0 (top of object). Values given should be
+ * between 0.0 and 1.0 (1.0 bottom of object, 0.5 being vertically centered
+ * etc.).
+ * 
+ * @param obj The given textblock object.
+ * @param align A value between 0.0 and 1.0
+ * @since 1.1.0
+ */
+EAPI void
+evas_object_textblock_valign_set(Evas_Object *obj, double align)
+{
+   TB_HEAD();
+   if (align < 0.0) align = 0.0;
+   else if (align > 1.0) align = 1.0;
+   if (o->valign == align) return;
+   o->valign = align;
+    _evas_textblock_text_node_changed(o, obj, NULL);
+}
+
+/**
+ * @brief Gets the vertical alignment of a textblock
+ *
+ * @param obj The given textblock object.
+ * @return The elignment set for the object
+ * @since 1.1.0
+ */
+EAPI double
+evas_object_textblock_valign_get(const Evas_Object *obj)
+{
+   TB_HEAD_RETURN(0.0);
+   return o->valign;
 }
 
 /**
@@ -8605,7 +8644,8 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    /* if so what and where and add the appropriate redraw textblocks */
    o = (Evas_Object_Textblock *)(obj->object_data);
    if ((o->changed) || (o->content_changed) ||
-       (o->last_w != obj->cur.geometry.w))
+       ((obj->cur.geometry.w != o->last_w) ||
+           ((o->valign != 0.0) && (obj->cur.geometry.h != o->last_h))))
      {
 	o->formatted.valid = 0;
 	_layout(obj,
@@ -8614,6 +8654,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 		&o->formatted.w, &o->formatted.h);
 	o->formatted.valid = 1;
 	o->last_w = obj->cur.geometry.w;
+	o->last_h = obj->cur.geometry.h;
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	o->changed = 0;
@@ -8760,7 +8801,8 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   if (obj->cur.geometry.w != o->last_w)
+   if ((obj->cur.geometry.w != o->last_w) ||
+       ((o->valign != 0.0) && (obj->cur.geometry.h != o->last_h)))
      {
 	o->formatted.valid = 0;
 	o->changed = 1;
