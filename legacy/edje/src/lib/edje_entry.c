@@ -1697,12 +1697,26 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
           {
              Evas_Coord lx, ly, lw, lh;
 
-             evas_textblock_cursor_line_coord_set(en->cursor, en->cy);
-             evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
-             if (en->cx <= lx)
-                _curs_lin_start(en->cursor, rp->object, en);
+             if (evas_textblock_cursor_line_coord_set(en->cursor, en->cy) < 0)
+               {
+                  if (rp->part->multiline)
+                     _curs_end(en->cursor, rp->object, en);
+                  else
+                    {
+                       evas_textblock_cursor_paragraph_first(en->cursor);
+                       evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
+                       if (!evas_textblock_cursor_char_coord_set(en->cursor, en->cx, ly + (lh / 2)))
+                          _curs_end(en->cursor, rp->object, en);
+                    }
+               }
              else
-                _curs_lin_end(en->cursor, rp->object, en);
+               {
+                  evas_textblock_cursor_line_geometry_get(en->cursor, &lx, &ly, &lw, &lh);
+                  if (en->cx <= lx)
+                     _curs_lin_start(en->cursor, rp->object, en);
+                  else
+                     _curs_lin_end(en->cursor, rp->object, en);
+               }
           }
         if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT)
           {
