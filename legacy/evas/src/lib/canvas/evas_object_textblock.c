@@ -3078,6 +3078,10 @@ _layout_update_par(Ctxt *c)
      {
         c->par->y = last_par->y + last_par->h;
      }
+   else
+     {
+        c->par->y = 0;
+     }
 }
 
 /* -1 means no wrap */
