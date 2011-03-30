@@ -3704,7 +3704,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    /* Is this really the place? */
    /* Vertically align the textblock */
-   if (o->content_changed)
+   if ((o->valign > 0.0) && (c->h > c->hmax))
      {
         if ((o->valign > 0.0) && (c->h > c->hmax))
           {
@@ -8664,7 +8664,6 @@ evas_object_textblock_render_pre(Evas_Object *obj)
                (obj->cur.geometry.h != o->last_h))))
      {
 	o->formatted.valid = 0;
-        if ((o->valign != 0.0) || (o->have_ellipsis)) o->content_changed = 1;
 	_layout(obj,
 		0,
 		obj->cur.geometry.w, obj->cur.geometry.h,
@@ -8822,7 +8821,6 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
        (((o->valign != 0.0) || (o->have_ellipsis)) &&
            (obj->cur.geometry.h != o->last_h)))
      {
-        if ((o->valign != 0.0) || (o->have_ellipsis)) o->content_changed = 1;
 	o->formatted.valid = 0;
 	o->changed = 1;
      }
