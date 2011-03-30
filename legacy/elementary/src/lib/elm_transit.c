@@ -115,27 +115,22 @@ typedef struct _Elm_Obj_Data Elm_Obj_Data;
 typedef struct _Elm_Obj_State Elm_Obj_State;
 
 static void
-_elm_transit_objs_states_save(Elm_Transit *transit)
+_elm_transit_obj_states_save(Evas_Object *obj)
 {
-   Eina_List *list;
-   Evas_Object *obj;
    Elm_Obj_Data *obj_data;
    Elm_Obj_State *state;
 
-   EINA_LIST_FOREACH(transit->objs, list, obj)
-     {
-        obj_data = evas_object_data_get(obj, _transit_key);
-        if (!obj_data) continue;
-        state = calloc(1, sizeof(Elm_Obj_State));
-        if (!state) continue;
-        evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);
-        evas_object_color_get(obj, &state->r, &state->g, &state->b, &state->a);
-        state->visible = evas_object_visible_get(obj);
-        state->map_enabled = evas_object_map_enable_get(obj);
-        if (evas_object_map_get(obj))
-          state->map = evas_map_dup(evas_object_map_get(obj));
-        obj_data->state = state;
-     }
+   obj_data = evas_object_data_get(obj, _transit_key);
+   if ((!obj_data) || (obj_data->state)) return;
+   state = calloc(1, sizeof(Elm_Obj_State));
+   if (!state) return;
+   evas_object_geometry_get(obj, &state->x, &state->y, &state->w, &state->h);
+   evas_object_color_get(obj, &state->r, &state->g, &state->b, &state->a);
+   state->visible = evas_object_visible_get(obj);
+   state->map_enabled = evas_object_map_enable_get(obj);
+   if (evas_object_map_get(obj))
+     state->map = evas_map_dup(evas_object_map_get(obj));
+   obj_data->state = state;
 }
 
 static void
@@ -154,29 +149,43 @@ _elm_transit_object_remove_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, 
 static void
 _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 {
+   Eina_List *l;
    Elm_Obj_Data *obj_data = evas_object_data_del(obj, _transit_key);
    Elm_Obj_State *state = obj_data->state;
 
    evas_object_pass_events_set(obj, obj_data->pass_events);
 
-   //recover the states of the object.
    if (state)
      {
-        evas_object_move(obj, state->x, state->y);
-        evas_object_resize(obj, state->w, state->h);
-        evas_object_color_set(obj, state->r, state->g, state->b, state->a);
-        if (state->visible) evas_object_show(obj);
-        else evas_object_hide(obj);
-        if (state->map_enabled)
-          evas_object_map_enable_set(obj, EINA_TRUE);
-        else
-          evas_object_map_enable_set(obj, EINA_FALSE);
-        if (state->map)
-          evas_object_map_set(obj, state->map);
+        //recover the states of the object.
+        if (!transit->state_keep)
+          {
+             evas_object_move(obj, state->x, state->y);
+             evas_object_resize(obj, state->w, state->h);
+             evas_object_color_set(obj, state->r, state->g, state->b, state->a);
+             if (state->visible) evas_object_show(obj);
+             else evas_object_hide(obj);
+             if (state->map_enabled)
+                evas_object_map_enable_set(obj, EINA_TRUE);
+             else
+                evas_object_map_enable_set(obj, EINA_FALSE);
+             if (state->map)
+                evas_object_map_set(obj, state->map);
+
+          }
         free(state);
      }
    free(obj_data);
-   transit->objs = eina_list_remove(transit->objs, obj);
+
+   //remove duplicated objects
+   //TODO: Need to consider about optimizing here
+   while(1)
+     {
+       if (!eina_list_data_find_list(transit->objs, obj))
+         break;
+       transit->objs = eina_list_remove(transit->objs, obj);
+     }
+
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                                   _elm_transit_object_remove_cb);
 }
@@ -487,28 +496,30 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN(obj);
    Elm_Obj_Data *obj_data;
 
-   if (transit->animator) return;
-
    obj_data = evas_object_data_get(obj, _transit_key);
 
-   if (obj_data)
-     {
-        if (obj_data->transit == transit) return;
-        elm_transit_object_remove(obj_data->transit, obj);
-     }
+   if ((obj_data) && (obj_data->transit != transit))
+     elm_transit_object_remove(obj_data->transit, obj);
 
-   obj_data = ELM_NEW(Elm_Obj_Data);
-   obj_data->pass_events = evas_object_pass_events_get(obj);
-   obj_data->transit = transit;
-   evas_object_data_set(obj, _transit_key, obj_data);
+   if ((!obj_data) || (obj_data->transit != transit))
+     {
+        obj_data = ELM_NEW(Elm_Obj_Data);
+        obj_data->pass_events = evas_object_pass_events_get(obj);
+        obj_data->transit = transit;
+        evas_object_data_set(obj, _transit_key, obj_data);
+        if (!transit->event_enabled)
+          evas_object_pass_events_set(obj, EINA_TRUE);
+
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                       _elm_transit_object_remove_cb,
+                                       transit);
+     }
 
    transit->objs = eina_list_append(transit->objs, obj);
 
-   if (!transit->event_enabled)
-     evas_object_pass_events_set(obj, EINA_TRUE);
+   if (!transit->state_keep)
+     _elm_transit_obj_states_save(obj);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
-                                  _elm_transit_object_remove_cb, transit);
 }
 
 /**
@@ -530,8 +541,6 @@ elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(obj);
    Elm_Obj_Data *obj_data;
-
-   if (transit->animator) return;
 
    obj_data = evas_object_data_get(obj, _transit_key);
 
@@ -854,9 +863,6 @@ elm_transit_go(Elm_Transit *transit)
    if (transit->animator)
      ecore_animator_del(transit->animator);
 
-   if (!transit->state_keep)
-     _elm_transit_objs_states_save(transit);
-
    transit->time.paused = 0;
    transit->time.delayed = 0;
    transit->time.begin = ecore_loop_time_get();
@@ -955,10 +961,18 @@ elm_transit_progress_value_get(const Elm_Transit *transit)
 EAPI void
 elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep)
 {
+   Eina_List *list;
+   Evas_Object *obj;
+
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    if (transit->state_keep == state_keep) return;
    if (transit->animator) return;
    transit->state_keep = !!state_keep;
+   if (!state_keep)
+     {
+        EINA_LIST_FOREACH(transit->objs, list, obj)
+          _elm_transit_obj_states_save(obj);
+     }
 }
 
 /**
