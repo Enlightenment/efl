@@ -8354,6 +8354,7 @@ collections {
                text {
                   style: "entry_textblock_style";
                   min: 0 1;
+                  align: 0.0 0.0;
                }
             }
             description { state: "disabled" 0.0;
@@ -8430,6 +8431,7 @@ collections {
                text {
                   style: "entry_textblock_style_charwrap";
                   min: 0 1;
+                  align: 0.0 0.0;
                }
             }
             description { state: "disabled" 0.0;
@@ -8479,6 +8481,7 @@ collections {
                text {
                   style: "entry_textblock_style";
                   min: 1 1;
+                  align: 0.0 0.0;
                }
             }
             description { state: "disabled" 0.0;
@@ -8581,7 +8584,8 @@ collections {
                text {
                   style: "entry_single_textblock_style";
                   min: 1 1;
-                  max: 0 1;
+                  max: 0 0;
+                  align: 0.0 0.5;
                }
             }
             description { state: "disabled" 0.0;
@@ -8629,7 +8633,8 @@ collections {
                text {
                   style: "entry_single_textblock_style";
                   min: 1 1;
-                  max: 0 1;
+                  max: 0 0;
+                  align: 0.0 0.5;
                }
             }
             description { state: "disabled" 0.0;
@@ -8678,6 +8683,7 @@ collections {
                text {
                   style: "entry_textblock_style";
                   min: 0 1;
+                  align: 0.0 0.0;
                }
             }
             description { state: "disabled" 0.0;
@@ -8726,6 +8732,7 @@ collections {
                text {
                   style: "entry_textblock_style_charwrap";
                   min: 0 1;
+                  align: 0.0 0.0;
                }
             }
             description { state: "disabled" 0.0;
@@ -8773,6 +8780,7 @@ collections {
                text {
                   style: "entry_textblock_style";
                   min: 1 1;
+                  align: 0.0 0.0;
                }
             }
             description { state: "disabled" 0.0;
@@ -8822,7 +8830,8 @@ collections {
                   style: "entry_single_textblock_style";
                   repch: "*";
                   min: 1 1;
-                  max: 0 1;
+                  max: 0 0;
+                  align: 0.0 0.5;
                }
             }
             description { state: "disabled" 0.0;
