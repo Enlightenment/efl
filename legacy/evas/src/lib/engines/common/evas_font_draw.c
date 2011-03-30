@@ -49,7 +49,7 @@ struct cinfo
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
 LK(lock_words); // for word cache call
 static Eina_Inlist *words = NULL;
-static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning);
+static struct prword *evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi);
 #endif
 
 EAPI void
@@ -400,8 +400,7 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 static void
 evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Eina_Unicode *in_text,
                                const Evas_Text_Props *text_props, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, 
-                               int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__, int use_kerning
-                               )
+                               int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__)
 {
    const Eina_Unicode *text = in_text;
    DATA32 *im;
@@ -420,7 +419,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
         word =
           evas_font_word_prerender(dc, text, text_props,
-                                   len, fn, fi, use_kerning);
+                                   len, fn, fi);
         if (word)
           {
              int j, rowstart, rowend, xstart, xrun;
@@ -496,8 +495,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 # endif
           }
      }
-#else
-   (void) use_kerning;
 #endif
 
    im = dst->image.data;
@@ -706,7 +703,6 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 {
    int ext_x, ext_y, ext_w, ext_h;
    int im_w, im_h;
-   int use_kerning;
    RGBA_Gfx_Func func;
    RGBA_Font_Int *fi;
    Cutout_Rects *rects;
@@ -749,14 +745,13 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 #endif
    evas_common_font_int_reload(fi);
 //   evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
 
    if (!dc->cutout.rects)
      {
         evas_common_font_draw_internal(dst, dc, fn, x, y, text, text_props,
                                        func, ext_x, ext_y, ext_w, ext_h, fi,
-                                       im_w, im_h, use_kerning);
+                                       im_w, im_h);
      }
    else
      {
@@ -772,7 +767,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
                   evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
                   evas_common_font_draw_internal(dst, dc, fn, x, y, text, text_props,
                                                  func, r->x, r->y, r->w, r->h, fi,
-                                                 im_w, im_h, use_kerning);
+                                                 im_w, im_h);
                }
              evas_common_draw_context_apply_clear_cutouts(rects);
           }
@@ -787,7 +782,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 /* Only used if cache is on */
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
 struct prword *
-evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi,int use_kerning __UNUSED__)
+evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, const Evas_Text_Props *text_props, int len, RGBA_Font *fn, RGBA_Font_Int *fi)
 {
    struct cinfo *metrics;
    const Eina_Unicode *text = in_text;
