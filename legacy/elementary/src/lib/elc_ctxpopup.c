@@ -811,10 +811,7 @@ static void
 _item_icon_set(Elm_Ctxpopup_Item *item, Evas_Object *icon)
 {
    if (item->icon)
-     {
-        elm_widget_sub_object_del(item->base.view, item->icon);
-        evas_object_del(item->icon);
-     }
+     evas_object_del(item->icon);
 
    item->icon = icon;
    if (!icon) return;
