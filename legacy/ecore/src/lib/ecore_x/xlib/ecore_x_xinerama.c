@@ -39,7 +39,7 @@ ecore_x_xinerama_screen_count_get(void)
 } /* ecore_x_xinerama_screen_count_get */
 
 EAPI Eina_Bool
-ecore_x_xinerama_screen_geometry_get(int screen __UNUSED__, int *x, int *y, int *w, int *h)
+ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 #ifdef ECORE_XINERAMA
@@ -82,5 +82,6 @@ ecore_x_xinerama_screen_geometry_get(int screen __UNUSED__, int *x, int *y, int 
       *h = DisplayHeight(_ecore_x_disp, 0);
 
    return EINA_FALSE;
+   screen = 0;
 } /* ecore_x_xinerama_screen_geometry_get */
 
