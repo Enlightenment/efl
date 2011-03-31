@@ -752,7 +752,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
    Paste_Image *pi;
-   char *p, *pp, *ext;
+   char *p, *pp;
 
    data = notify->data;
    cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
@@ -768,7 +768,11 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
           }
         p = files->files[0];
      }
-   else p = (char *)data->data;
+   else
+     {
+        p = (char *)data->data;
+     }
+
    if (!p)
      {
         cnp_debug("Couldn't find a file\n");
@@ -780,29 +784,9 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         /* Try and continue if it looks sane */
         if (*p != '/') return 0;
      }
-   else p += strlen("file://");
-   
-   ext = p + strlen(p);
-   if (ext)
+   else
      {
-        Eina_Bool extok = EINA_FALSE;
-        int i;
-        
-        for (i = 0; image_extensions[i]; i++)
-          {
-             pp = ext - strlen(image_extensions[i]);
-             if ((pp >= p) && (!strcasecmp(pp, image_extensions[i])))
-               {
-                  extok = EINA_TRUE;
-                  break;
-               }
-          }
-        if (!extok)
-          {
-             cnp_debug("No known image format extension, ignoring\n");
-             if (savedtypes.textreq) savedtypes.textreq = 0;
-             return 0;
-          }
+        p += strlen("file://");
      }
 
    if (savedtypes.pi) pasteimage_free(savedtypes.pi);
