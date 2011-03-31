@@ -669,7 +669,8 @@ chlist(Evas_Object *obj, int i)
 
 static Eina_Bool
 evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
-                   int off_x, int off_y, int mapped
+                   int off_x, int off_y, int mapped,
+                   int ecx, int ecy, int ecw, int ech
 #ifdef REND_DGB
                    , int level
 #endif
@@ -862,7 +863,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                     {
                        clean_them |= evas_render_mapped(e, obj2, ctx,
 							obj->cur.map->surface,
-							off_x2, off_y2, 1
+							off_x2, off_y2, 1,
+                                                        ecx, ecy, ecw, ech
 #ifdef REND_DGB
 							, level + 1
 #endif
@@ -951,6 +953,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                     }
                }
           }
+        if (surface == e->engine.data.output)
+           e->engine.func->context_clip_clip(e->engine.data.output,
+                                             e->engine.data.context,
+                                             ecx, ecy, ecw, ech);
         if (obj->cur.cache.clip.visible)
            obj->layer->evas->engine.func->image_map_draw
            (e->engine.data.output, e->engine.data.context, surface,
@@ -976,7 +982,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                     {
                        clean_them |= evas_render_mapped(e, obj2, ctx,
 							surface,
-							off_x, off_y, 1
+							off_x, off_y, 1,
+                                                        ecx, ecy, ecw, ech
 #ifdef REND_DGB
 							, level + 1
 #endif
@@ -1065,6 +1072,9 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    e->engine.data.context,
                                                    x + off_x, y + off_y, w, h);
+                  e->engine.func->context_clip_clip(e->engine.data.output,
+                                                    e->engine.data.context,
+                                                    ecx, ecy, ecw, ech);
                }
 
              RDI(level);
@@ -1373,7 +1383,8 @@ evas_render_updates_internal(Evas *e,
 			      }
 #endif
                             clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
-							     surface, off_x, off_y, 0
+							     surface, off_x, off_y, 0,
+                                                             cx, cy, cw, ch
 #ifdef REND_DGB
 							     , 1
 #endif
