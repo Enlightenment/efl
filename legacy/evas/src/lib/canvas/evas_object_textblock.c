@@ -8826,6 +8826,10 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
 static void
 evas_object_textblock_scale_update(Evas_Object *obj)
 {
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   o->content_changed = 1;
    _relayout(obj);
 }
 
