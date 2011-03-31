@@ -2219,6 +2219,11 @@ EAPI Ecore_X_Sync_Counter                 ecore_x_e_comp_sync_counter_get(
 EAPI void                                 ecore_x_e_comp_sync_draw_done_send(
    Ecore_X_Window root,
    Ecore_X_Window win);
+EAPI void                                 ecore_x_e_comp_sync_draw_size_done_send(
+   Ecore_X_Window root,
+   Ecore_X_Window win,
+   int w,
+   int h);
 EAPI void                                 ecore_x_e_comp_sync_supported_set(
    Ecore_X_Window root,
    Eina_Bool      enabled);

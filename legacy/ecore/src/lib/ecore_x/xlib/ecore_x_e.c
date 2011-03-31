@@ -800,9 +800,34 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root, Ecore_X_Window win)
    xev.xclient.message_type = ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE;
    xev.xclient.format = 32;
    xev.xclient.data.l[0] = win;
-   xev.xclient.data.l[1] = 0; // later
+   xev.xclient.data.l[1] = 0; // version
    xev.xclient.data.l[2] = 0; // later
    xev.xclient.data.l[3] = 0; // later
+   xev.xclient.data.l[4] = 0; // later
+
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureRedirectMask | SubstructureNotifyMask,
+              &xev);
+} /* ecore_x_e_comp_sync_draw_done_send */
+
+EAPI void
+ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root, Ecore_X_Window win, int w, int h)
+{
+   XEvent xev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!root)
+      root = DefaultRootWindow(_ecore_x_disp);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = win;
+   xev.xclient.data.l[1] = 1; // version
+   xev.xclient.data.l[2] = w; // win width at draw time
+   xev.xclient.data.l[3] = h; // win height at draw time
    xev.xclient.data.l[4] = 0; // later
 
    XSendEvent(_ecore_x_disp, root, False,

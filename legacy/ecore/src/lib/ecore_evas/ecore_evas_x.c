@@ -3016,25 +3016,27 @@ _ecore_evas_x_flush_post(void *data, Evas *e __UNUSED__, void *event_info __UNUS
 {
    Ecore_Evas *ee = data;
 
+   if ((!ee->no_comp_sync) &&
+       (_ecore_evas_app_comp_sync))
+     {
+        if (ee->engine.x.sync_counter)
+          {
+             if (ee->engine.x.sync_began)
+               {
+                  if (!ee->engine.x.sync_cancel)
+                    {
+                       ecore_x_e_comp_sync_draw_size_done_send
+                          (ee->engine.x.win_root, ee->prop.window, ee->w, ee->h);
+                    }
+               }
+          }
+     }
    if (ee->engine.x.netwm_sync_set)
      {
         ecore_x_sync_counter_2_set(ee->engine.x.netwm_sync_counter, 
                                    ee->engine.x.netwm_sync_val_hi, 
                                    ee->engine.x.netwm_sync_val_lo);
         ee->engine.x.netwm_sync_set = 0;
-     }
-   if (ee->no_comp_sync) return;
-   if (!_ecore_evas_app_comp_sync) return;
-   if (ee->engine.x.sync_counter)
-     {
-        if (ee->engine.x.sync_began)
-          {
-             if (!ee->engine.x.sync_cancel)
-               {
-                  ecore_x_e_comp_sync_draw_done_send(ee->engine.x.win_root, 
-                                                     ee->prop.window);
-               }
-          }
      }
 }
 #endif
