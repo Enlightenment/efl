@@ -8830,7 +8830,8 @@ evas_object_textblock_scale_update(Evas_Object *obj)
    
    o = (Evas_Object_Textblock *)(obj->object_data);
    o->content_changed = 1;
-   _relayout(obj);
+   o->formatted.valid = 0;
+   o->changed = 1;
 }
 
 void
