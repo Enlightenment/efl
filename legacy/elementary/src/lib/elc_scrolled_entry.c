@@ -86,23 +86,23 @@ static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
 static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
 static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
 static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_CHANGED, ""},
-  {SIG_ACTIVATED, ""},
-  {SIG_PRESS, ""},
-  {SIG_LONGPRESSED, ""},
-  {SIG_CLICKED, ""},
-  {SIG_CLICKED_DOUBLE, ""},
-  {SIG_FOCUSED, ""},
-  {SIG_UNFOCUSED, ""},
-  {SIG_SELECTION_PASTE, ""},
-  {SIG_SELECTION_COPY, ""},
-  {SIG_SELECTION_CUT, ""},
-  {SIG_SELECTION_START, ""},
-  {SIG_SELECTION_CHANGED, ""},
-  {SIG_SELECTION_CLEARED, ""},
-  {SIG_CURSOR_CHANGED, ""},
-  {SIG_ANCHOR_CLICKED, ""},
-  {NULL, NULL}
+       {SIG_CHANGED, ""},
+       {SIG_ACTIVATED, ""},
+       {SIG_PRESS, ""},
+       {SIG_LONGPRESSED, ""},
+       {SIG_CLICKED, ""},
+       {SIG_CLICKED_DOUBLE, ""},
+       {SIG_FOCUSED, ""},
+       {SIG_UNFOCUSED, ""},
+       {SIG_SELECTION_PASTE, ""},
+       {SIG_SELECTION_COPY, ""},
+       {SIG_SELECTION_CUT, ""},
+       {SIG_SELECTION_START, ""},
+       {SIG_SELECTION_CHANGED, ""},
+       {SIG_SELECTION_CLEARED, ""},
+       {SIG_CURSOR_CHANGED, ""},
+       {SIG_ANCHOR_CLICKED, ""},
+       {NULL, NULL}
 };
 
 static void
@@ -190,7 +190,7 @@ _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *so
    if (!wd) return;
    elm_object_signal_callback_add(wd->entry, emission, source, func_cb, data);
    elm_object_signal_callback_add(wd->scroller, emission, source, func_cb,
-	 data);
+                                  data);
 }
 
 static void
@@ -364,7 +364,7 @@ elm_scrolled_entry_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "scrolled_entry");
    elm_widget_type_set(obj, "scrolled_entry");
    elm_widget_sub_object_add(parent, obj);
@@ -496,13 +496,13 @@ elm_scrolled_entry_icon_unset(Evas_Object *obj)
    if (!wd) return NULL;
    if (wd->icon)
      {
-       Evas_Object *edje = _elm_scroller_edje_object_get(wd->scroller);
-       if (!edje) return NULL;
-       ret = wd->icon;
-       edje_object_part_unswallow(edje, wd->icon);
-       edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
-       wd->icon = NULL;
-       _sizing_eval(obj);
+        Evas_Object *edje = _elm_scroller_edje_object_get(wd->scroller);
+        if (!edje) return NULL;
+        ret = wd->icon;
+        edje_object_part_unswallow(edje, wd->icon);
+        edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
+        wd->icon = NULL;
+        _sizing_eval(obj);
      }
    return ret;
 }
@@ -601,13 +601,13 @@ elm_scrolled_entry_end_unset(Evas_Object *obj)
    if (!wd) return NULL;
    if (wd->end)
      {
-       Evas_Object *edje = _elm_scroller_edje_object_get(wd->scroller);
-       if (!edje) return NULL;
-       ret = wd->end;
-       edje_object_part_unswallow(edje, wd->end);
-       edje_object_signal_emit(edje, "elm,action,hide,end", "elm");
-       wd->end = NULL;
-       _sizing_eval(obj);
+        Evas_Object *edje = _elm_scroller_edje_object_get(wd->scroller);
+        if (!edje) return NULL;
+        ret = wd->end;
+        edje_object_part_unswallow(edje, wd->end);
+        edje_object_signal_emit(edje, "elm,action,hide,end", "elm");
+        wd->end = NULL;
+        _sizing_eval(obj);
      }
    return ret;
 }
@@ -656,13 +656,13 @@ elm_scrolled_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    wd->single_line = single_line;
    if (single_line)
      {
-	elm_scroller_policy_set(wd->scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-	elm_scroller_content_min_limit(wd->scroller, 0, 1);
+        elm_scroller_policy_set(wd->scroller, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+        elm_scroller_content_min_limit(wd->scroller, 0, 1);
      }
    else
      {
-	elm_scroller_policy_set(wd->scroller, wd->policy_h, wd->policy_v);
-	elm_scroller_content_min_limit(wd->scroller, 0, 0);
+        elm_scroller_policy_set(wd->scroller, wd->policy_h, wd->policy_v);
+        elm_scroller_content_min_limit(wd->scroller, 0, 0);
      }
    _sizing_eval(obj);
 }

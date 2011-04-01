@@ -61,9 +61,9 @@ _del_pre_hook(Evas_Object *obj)
    EINA_LIST_FREE(wd->items, item)
      {
         elm_widget_item_pre_notify_del(item);
-	eina_stringshare_del(item->label);
-	eina_stringshare_del(item->icon_file);
-	eina_stringshare_del(item->icon_group);
+        eina_stringshare_del(item->label);
+        eina_stringshare_del(item->icon_file);
+        eina_stringshare_del(item->icon_group);
         elm_widget_item_del(item);
      }
 }
@@ -95,9 +95,9 @@ _theme_hook(Evas_Object *obj)
 
    elm_hoversel_hover_end(obj);
    if (wd->horizontal)
-      snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
+     snprintf(buf, sizeof(buf), "hoversel_horizontal/%s", elm_widget_style_get(obj));
    else
-      snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
+     snprintf(buf, sizeof(buf), "hoversel_vertical/%s", elm_widget_style_get(obj));
    elm_object_style_set(wd->btn, buf);
    elm_object_disabled_set(wd->btn, elm_widget_disabled_get(obj));
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -187,9 +187,9 @@ _activate(Evas_Object *obj)
    bx = elm_box_add(wd->hover);
    elm_widget_mirrored_automatic_set(bx, EINA_FALSE);
    elm_box_homogenous_set(bx, 1);
-   
+
    elm_box_horizontal_set(bx, wd->horizontal);
-   
+
    if (wd->horizontal)
      snprintf(buf, sizeof(buf), "hoversel_horizontal_entry/%s",
               elm_widget_style_get(obj));
@@ -198,27 +198,27 @@ _activate(Evas_Object *obj)
               elm_widget_style_get(obj));
    EINA_LIST_FOREACH(wd->items, l, item)
      {
-	bt = elm_button_add(wd->hover);
+        bt = elm_button_add(wd->hover);
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
         elm_widget_mirrored_set(bt, elm_widget_mirrored_get(obj));
-	elm_object_style_set(bt, buf);
-	elm_button_label_set(bt, item->label);
-	if (item->icon_file)
-	  {
-	     ic = elm_icon_add(obj);
-	     elm_icon_scale_set(ic, 0, 1);
-	     if (item->icon_type == ELM_ICON_FILE)
-	       elm_icon_file_set(ic, item->icon_file, item->icon_group);
-	     else if (item->icon_type == ELM_ICON_STANDARD)
-	       elm_icon_standard_set(ic, item->icon_file);
-	     elm_button_icon_set(bt, ic);
-	     evas_object_show(ic);
-	  }
-	evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-	evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", _item_clicked, item);
-	evas_object_show(bt);
+        elm_object_style_set(bt, buf);
+        elm_button_label_set(bt, item->label);
+        if (item->icon_file)
+          {
+             ic = elm_icon_add(obj);
+             elm_icon_scale_set(ic, 0, 1);
+             if (item->icon_type == ELM_ICON_FILE)
+               elm_icon_file_set(ic, item->icon_file, item->icon_group);
+             else if (item->icon_type == ELM_ICON_STANDARD)
+               elm_icon_standard_set(ic, item->icon_file);
+             elm_button_icon_set(bt, ic);
+             evas_object_show(ic);
+          }
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_box_pack_end(bx, bt);
+        evas_object_smart_callback_add(bt, "clicked", _item_clicked, item);
+        evas_object_show(bt);
      }
 
    if (wd->horizontal)
@@ -236,7 +236,7 @@ _activate(Evas_Object *obj)
    evas_object_show(wd->hover);
    evas_object_smart_callback_call(obj, "clicked", NULL);
 
-//   if (wd->horizontal) evas_object_hide(wd->btn);
+   //   if (wd->horizontal) evas_object_hide(wd->btn);
 }
 
 static void
@@ -275,7 +275,7 @@ elm_hoversel_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "hoversel");
    elm_widget_type_set(obj, "hoversel");
    elm_widget_sub_object_add(parent, obj);
@@ -293,7 +293,7 @@ elm_hoversel_add(Evas_Object *parent)
    wd->expanded = EINA_FALSE;
    elm_widget_resize_object_set(obj, wd->btn);
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                  _changed_size_hints, obj);
    evas_object_smart_callback_add(wd->btn, "clicked", _button_clicked, obj);
    elm_widget_sub_object_add(obj, wd->btn);
 
@@ -321,7 +321,7 @@ elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
    if (!wd) return;
    if (wd->hover_parent)
      evas_object_event_callback_del_full(wd->hover_parent, EVAS_CALLBACK_DEL,
-                                    _parent_del, obj);
+                                         _parent_del, obj);
    wd->hover_parent = parent;
    if (wd->hover_parent)
      evas_object_event_callback_add(wd->hover_parent, EVAS_CALLBACK_DEL,
@@ -539,7 +539,7 @@ elm_hoversel_expanded_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return (wd->hover) ? EINA_TRUE : EINA_FALSE;
 }
-  
+
 /**
  * This will remove all the children items from the hoversel. (should not be
  * called while the hoversel is active; use elm_hoversel_expanded_get()

@@ -228,7 +228,7 @@ elm_fileselector_entry_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "fileselector_entry");
    elm_widget_type_set(obj, "fileselector_entry");
    elm_widget_sub_object_add(parent, obj);
@@ -250,7 +250,7 @@ elm_fileselector_entry_add(Evas_Object *parent)
    edje_object_part_swallow(wd->edje, "elm.swallow.button", wd->button);
    elm_widget_sub_object_add(obj, wd->button);
    evas_object_event_callback_add
-     (wd->button, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+      (wd->button, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
    elm_fileselector_button_expandable_set(wd->button,
                                           _elm_config->fileselector_expand_enable);
 
@@ -269,7 +269,7 @@ elm_fileselector_entry_add(Evas_Object *parent)
    edje_object_part_swallow(wd->edje, "elm.swallow.entry", wd->entry);
    elm_widget_sub_object_add(obj, wd->entry);
    evas_object_event_callback_add
-     (wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+      (wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 
 #define SIG_FWD(name)                                                   \
    evas_object_smart_callback_add(wd->entry, SIG_##name, _##name##_fwd, obj)

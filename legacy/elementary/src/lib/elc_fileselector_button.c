@@ -18,12 +18,12 @@ struct _Widget_Data
    const char  *window_title;
    Evas_Coord   w, h;
    struct
-   {
-      const char *path;
-      Eina_Bool   expandable : 1;
-      Eina_Bool   folder_only : 1;
-      Eina_Bool   is_save : 1;
-   } fsd;
+     {
+        const char *path;
+        Eina_Bool   expandable : 1;
+        Eina_Bool   folder_only : 1;
+        Eina_Bool   is_save : 1;
+     } fsd;
    Eina_Bool inwin_mode : 1;
 };
 
@@ -48,8 +48,8 @@ static void _activate(Widget_Data *wd);
 
 static const char SIG_FILE_CHOSEN[] = "file,chosen";
 static const Evas_Smart_Cb_Description _signals[] = {
-   {SIG_FILE_CHOSEN, "s"},
-   {NULL, NULL}
+       {SIG_FILE_CHOSEN, "s"},
+       {NULL, NULL}
 };
 
 static void
@@ -264,7 +264,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "fileselector_button");
    elm_widget_type_set(obj, "fileselector_button");
    elm_widget_sub_object_add(parent, obj);
@@ -284,7 +284,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    wd->inwin_mode = _elm_config->inwin_dialogs_enable;
    wd->w = 400;
    wd->h = 400;
-   
+
    wd->btn = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);
    elm_widget_resize_object_set(obj, wd->btn);

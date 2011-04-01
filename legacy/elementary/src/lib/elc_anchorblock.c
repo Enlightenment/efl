@@ -37,10 +37,10 @@ static const char *widtype = NULL;
 
 static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
 static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_ANCHOR_CLICKED, ""}, /* TODO: declare the type properly, as data is
-			     * being passed
-			     */
-  {NULL, NULL}
+       {SIG_ANCHOR_CLICKED, ""}, /* TODO: declare the type properly, as data is
+                                  * being passed
+                                  */
+       {NULL, NULL}
 };
 
 static void _del_pre_hook(Evas_Object *obj);
@@ -273,16 +273,16 @@ elm_anchorblock_text_set(Evas_Object *obj, const char *text)
 }
 
 /**
-  * Get the markup text set for the anchorblock
-  *
-  * This retrieves back the string set by @c elm_anchorblock_text_set().
-  *
-  * @param obj The anchorblock object
-  * @return text The markup text set or @c NULL, either if it was not set
-  * or an error occurred
-  *
-  * @ingroup Anchorblock
-  */
+ * Get the markup text set for the anchorblock
+ *
+ * This retrieves back the string set by @c elm_anchorblock_text_set().
+ *
+ * @param obj The anchorblock object
+ * @return text The markup text set or @c NULL, either if it was not set
+ * or an error occurred
+ *
+ * @ingroup Anchorblock
+ */
 EAPI const char*
 elm_anchorblock_text_get(const Evas_Object *obj)
 {
@@ -406,7 +406,7 @@ elm_anchorblock_hover_end(Evas_Object *obj)
  * and object to do this), then this object is used to replace that item. If
  * not the next provider is called until one provides an item object, or the
  * default provider in anchorblock does.
- * 
+ *
  * @param obj The anchorblock object
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
@@ -432,7 +432,7 @@ elm_anchorblock_item_provider_append(Evas_Object *obj, Evas_Object *(*func) (voi
  *
  * This prepends the given callback. See elm_anchorblock_item_provider_append() for
  * more information
- * 
+ *
  * @param obj The anchorblock object
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
@@ -458,7 +458,7 @@ elm_anchorblock_item_provider_prepend(Evas_Object *obj, Evas_Object *(*func) (vo
  *
  * This removes the given callback. See elm_anchorblock_item_provider_append() for
  * more information
- * 
+ *
  * @param obj The anchorblock object
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
