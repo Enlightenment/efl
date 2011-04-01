@@ -35,4 +35,5 @@ group "Elm_Config" struct {
   value "icon_size" int: 32;
   value "longpress_timeout" double: 1.0;
   value "effect_enable" uchar: 1;
+  value "desktop_entry" uchar: 0;
 }

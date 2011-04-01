@@ -543,6 +543,8 @@ _theme_hook(Evas_Object *obj)
 
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
+   if (_elm_config->desktop_entry)
+      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    if (elm_widget_disabled_get(obj))
@@ -755,8 +757,11 @@ _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (wd->hoversel) evas_object_hide(wd->hoversel);
    if (wd->selmode)
      {
-        if (!wd->password)
-          edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+        if (!_elm_config->desktop_entry)
+          {
+             if (!wd->password)
+                edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+          }
      }
    elm_widget_scroll_freeze_pop(data);
    if (wd->hovdeljob) ecore_job_del(wd->hovdeljob);
@@ -770,10 +775,14 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!wd) return;
    wd->selmode = EINA_TRUE;
    edje_object_part_text_select_none(wd->ent, "elm.text");
-   if (!wd->password)
-     edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+   if (!_elm_config->desktop_entry)
+     {
+        if (!wd->password)
+           edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+     }
    edje_object_signal_emit(wd->ent, "elm,state,select,on", "elm");
-   elm_widget_scroll_hold_push(data);
+   if (!_elm_config->desktop_entry)
+      elm_widget_scroll_hold_push(data);
 }
 
 static void
@@ -815,9 +824,11 @@ _cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    /* Store it */
    wd->selmode = EINA_FALSE;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+   if (!_elm_config->desktop_entry)
+      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
-   elm_widget_scroll_hold_pop(data);
+   if (!_elm_config->desktop_entry)
+      elm_widget_scroll_hold_pop(data);
    _store_selection(ELM_SEL_CLIPBOARD, data);
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    edje_object_part_text_select_none(wd->ent, "elm.text");
@@ -829,9 +840,12 @@ _copy(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->selmode = EINA_FALSE;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
-   edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
-   elm_widget_scroll_hold_pop(data);
+   if (!_elm_config->desktop_entry)
+     {
+        edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+        edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
+        elm_widget_scroll_hold_pop(data);
+     }
    _store_selection(ELM_SEL_CLIPBOARD, data);
    //   edje_object_part_text_select_none(wd->ent, "elm.text");
 }
@@ -842,9 +856,11 @@ _cancel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    wd->selmode = EINA_FALSE;
-   edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+   if (!_elm_config->desktop_entry)
+      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
-   elm_widget_scroll_hold_pop(data);
+   if (!_elm_config->desktop_entry)
+      elm_widget_scroll_hold_pop(data);
    edje_object_part_text_select_none(wd->ent, "elm.text");
 }
 
@@ -888,9 +904,12 @@ _menu_press(Evas_Object *obj)
         evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, obj);
         if (!wd->selmode)
           {
-             if (!wd->password)
-               elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
-                                     _select, obj);
+             if (!_elm_config->desktop_entry)
+               {
+                  if (!wd->password)
+                     elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
+                                           _select, obj);
+               }
              if (1) // need way to detect if someone has a selection
                {
                   if (wd->editable)
@@ -925,8 +944,11 @@ _menu_press(Evas_Object *obj)
              evas_object_show(wd->hoversel);
              elm_hoversel_hover_begin(wd->hoversel);
           }
-        edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
-        edje_object_part_text_select_abort(wd->ent, "elm.text");
+        if (!_elm_config->desktop_entry)
+          {
+             edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+             edje_object_part_text_select_abort(wd->ent, "elm.text");
+          }
      }
 }
 
@@ -1595,6 +1617,8 @@ elm_entry_add(Evas_Object *parent)
    edje_object_signal_callback_add(wd->ent, "mouse,down,1,double", "elm.text",
                                    _signal_mouse_double, obj);
    edje_object_part_text_set(wd->ent, "elm.text", "");
+   if (_elm_config->desktop_entry)
+      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
 
@@ -1955,7 +1979,8 @@ elm_entry_select_none(Evas_Object *obj)
    if (wd->selmode)
      {
         wd->selmode = EINA_FALSE;
-        edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+        if (!_elm_config->desktop_entry)
+           edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
         edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_FALSE;
@@ -1978,7 +2003,8 @@ elm_entry_select_all(Evas_Object *obj)
    if (wd->selmode)
      {
         wd->selmode = EINA_FALSE;
-        edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+        if (!_elm_config->desktop_entry)
+           edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
         edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_TRUE;

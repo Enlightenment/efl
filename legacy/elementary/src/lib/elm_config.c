@@ -599,6 +599,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, icon_size, T_INT);
    ELM_CONFIG_VAL(D, T, longpress_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, effect_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, desktop_entry, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1132,7 +1133,6 @@ _config_load(void)
    _elm_config->fps = 60.0;
    _elm_config->theme = eina_stringshare_add("default");
    _elm_config->modules = NULL;
-   _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
    _elm_config->tooltip_delay = 1.0;
    _elm_config->cursor_engine_only = EINA_TRUE;
    _elm_config->focus_highlight_enable = EINA_FALSE;
@@ -1143,6 +1143,9 @@ _config_load(void)
    _elm_config->icon_size = 32;
    _elm_config->longpress_timeout = 1.0;
    _elm_config->effect_enable = EINA_TRUE;
+   _elm_config->desktop_entry = EINA_FALSE;
+
+   _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
 }
 
 static const char *
@@ -1573,6 +1576,9 @@ _env_get(void)
    
    s = getenv("ELM_EFFECT_ENABLE");
    if (s) _elm_config->effect_enable = !!atoi(s);
+   
+   s = getenv("ELM_DESKTOP_ENTRY");
+   if (s) _elm_config->desktop_entry = !!atoi(s);
 }
 
 /**
