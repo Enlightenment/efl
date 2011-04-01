@@ -1573,10 +1573,10 @@ _env_get(void)
    if (s) _elm_config->longpress_timeout = atof(s);
    if (_elm_config->longpress_timeout < 0.0)
      _elm_config->longpress_timeout = 0.0;
-   
+
    s = getenv("ELM_EFFECT_ENABLE");
    if (s) _elm_config->effect_enable = !!atoi(s);
-   
+
    s = getenv("ELM_DESKTOP_ENTRY");
    if (s) _elm_config->desktop_entry = !!atoi(s);
 }

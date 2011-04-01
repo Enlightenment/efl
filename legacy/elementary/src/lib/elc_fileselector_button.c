@@ -18,12 +18,12 @@ struct _Widget_Data
    const char  *window_title;
    Evas_Coord   w, h;
    struct
-     {
-        const char *path;
-        Eina_Bool   expandable : 1;
-        Eina_Bool   folder_only : 1;
-        Eina_Bool   is_save : 1;
-     } fsd;
+   {
+      const char *path;
+      Eina_Bool   expandable : 1;
+      Eina_Bool   folder_only : 1;
+      Eina_Bool   is_save : 1;
+   } fsd;
    Eina_Bool inwin_mode : 1;
 };
 

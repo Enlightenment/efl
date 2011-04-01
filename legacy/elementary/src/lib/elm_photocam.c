@@ -68,9 +68,9 @@ struct _Grid_Item
    Widget_Data *wd;
    Evas_Object *img;
    struct
-     {
-        int x, y, w, h;
-     } src, out;
+   {
+      int x, y, w, h;
+   } src, out;
    Eina_Bool want : 1;
    Eina_Bool have : 1;
 };
@@ -104,20 +104,20 @@ struct _Widget_Data
    Ecore_Animator *zoom_animator;
    double t_start, t_end;
    struct
-     {
-        int imw, imh;
-        int w, h;
-        int ow, oh, nw, nh;
-        struct
-          {
-             double x, y;
-          } spos;
-     } size;
+   {
+      int imw, imh;
+      int w, h;
+      int ow, oh, nw, nh;
+      struct
+      {
+         double x, y;
+      } spos;
+   } size;
    struct
-     {
-        Eina_Bool show : 1;
-        Evas_Coord x, y ,w ,h;
-     } show;
+   {
+      Eina_Bool show : 1;
+      Evas_Coord x, y ,w ,h;
+   } show;
    int tsize;
    Evas_Object *img; // low res version of image (scale down == 8)
    int nosmooth;
@@ -729,16 +729,16 @@ _theme_hook(Evas_Object *obj)
 }
 
 /*
-   static void
-   _show_region_hook(void *data, Evas_Object *obj)
-   {
+static void
+_show_region_hook(void *data, Evas_Object *obj)
+{
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y, w, h;
    if (!wd) return;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
-   }
- */
+}
+*/
 
 static void
 _sizing_eval(Evas_Object *obj)

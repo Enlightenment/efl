@@ -682,8 +682,8 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
         evas_object_resize(gi->img, ww, hh);
 
         /*evas_object_move(gi->txt,
-          xx - px + ax + ox,
-          yy - py + ay + oy);
+                           xx - px + ax + ox,
+                           yy - py + ay + oy);
 
           evas_object_resize(gi->txt, ww, hh);
          */
@@ -958,14 +958,14 @@ grid_load(Evas_Object *obj, Grid *g)
                   evas_object_pass_events_set(gi->img, EINA_TRUE);
                   evas_object_stack_below(gi->img, wd->sep_maps_markers);
 
-                  /*gi->txt = evas_object_text_add(evas_object_evas_get(obj));
-                    evas_object_text_font_set(gi->txt, "Vera", 12);
-                    evas_object_color_set(gi->txt, 100, 100, 100, 255);
-                    evas_object_smart_member_add(gi->txt,
-                    wd->pan_smart);
-                    elm_widget_sub_object_add(obj, gi->txt);
-                    evas_object_pass_events_set(gi->txt, EINA_TRUE);
-                   */
+/*                gi->txt = evas_object_text_add(evas_object_evas_get(obj));
+                  evas_object_text_font_set(gi->txt, "Vera", 12);
+                  evas_object_color_set(gi->txt, 100, 100, 100, 255);
+                  evas_object_smart_member_add(gi->txt,
+                                               wd->pan_smart);
+                  elm_widget_sub_object_add(obj, gi->txt);
+                  evas_object_pass_events_set(gi->txt, EINA_TRUE);
+*/
                   eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
                }
 

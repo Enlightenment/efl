@@ -48,30 +48,30 @@ _elm_smart_pan_child_set(Evas_Object *obj, Evas_Object *child)
    if (child == sd->child_obj) return;
    if (sd->child_obj)
      {
-	evas_object_clip_unset(sd->child_obj);
-	evas_object_smart_member_del(sd->child_obj);
+        evas_object_clip_unset(sd->child_obj);
+        evas_object_smart_member_del(sd->child_obj);
         evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_FREE, _smart_child_del_hook, sd);
-	evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_RESIZE, _smart_child_resize_hook, sd);
-	sd->child_obj = NULL;
+        evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_RESIZE, _smart_child_resize_hook, sd);
+        sd->child_obj = NULL;
      }
    if (child)
      {
-	Evas_Coord w, h;
-	int r, g, b, a;
+        Evas_Coord w, h;
+        int r, g, b, a;
 
-	sd->child_obj = child;
-	evas_object_smart_member_add(sd->child_obj, sd->smart_obj);
-	evas_object_geometry_get(sd->child_obj, NULL, NULL, &w, &h);
-	sd->child_w = w;
-	sd->child_h = h;
-	evas_object_event_callback_add(child, EVAS_CALLBACK_FREE, _smart_child_del_hook, sd);
-	evas_object_event_callback_add(child, EVAS_CALLBACK_RESIZE, _smart_child_resize_hook, sd);
-	evas_object_color_get(sd->smart_obj, &r, &g, &b, &a);
-	evas_object_color_set(sd->child_obj, r, g, b, a);
-	evas_object_clip_set(sd->child_obj, evas_object_clip_get(sd->smart_obj));
-	if (evas_object_visible_get(sd->smart_obj)) evas_object_show(sd->child_obj);
-	else evas_object_hide(sd->child_obj);
-	_smart_reconfigure(sd);
+        sd->child_obj = child;
+        evas_object_smart_member_add(sd->child_obj, sd->smart_obj);
+        evas_object_geometry_get(sd->child_obj, NULL, NULL, &w, &h);
+        sd->child_w = w;
+        sd->child_h = h;
+        evas_object_event_callback_add(child, EVAS_CALLBACK_FREE, _smart_child_del_hook, sd);
+        evas_object_event_callback_add(child, EVAS_CALLBACK_RESIZE, _smart_child_resize_hook, sd);
+        evas_object_color_get(sd->smart_obj, &r, &g, &b, &a);
+        evas_object_color_set(sd->child_obj, r, g, b, a);
+        evas_object_clip_set(sd->child_obj, evas_object_clip_get(sd->smart_obj));
+        if (evas_object_visible_get(sd->smart_obj)) evas_object_show(sd->child_obj);
+        else evas_object_hide(sd->child_obj);
+        _smart_reconfigure(sd);
      }
    evas_object_smart_callback_call(sd->smart_obj, "changed", NULL);
 }
@@ -87,10 +87,10 @@ void
 _elm_smart_pan_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    API_ENTRY return;
-//   if (x > (sd->child_w - sd->w)) x = sd->child_w - sd->w;
-//   if (y > (sd->child_h - sd->h)) y = sd->child_h - sd->h;
-//   if (x < 0) x = 0;
-//   if (y < 0) y = 0;
+   //   if (x > (sd->child_w - sd->w)) x = sd->child_w - sd->w;
+   //   if (y > (sd->child_h - sd->h)) y = sd->child_h - sd->h;
+   //   if (x < 0) x = 0;
+   //   if (y < 0) y = 0;
    if ((x == sd->px) && (y == sd->py)) return;
    sd->px = x;
    sd->py = y;
@@ -112,13 +112,13 @@ _elm_smart_pan_max_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
    API_ENTRY return;
    if (x)
      {
-	if (sd->w < sd->child_w) *x = sd->child_w - sd->w;
-	else *x = 0;
+        if (sd->w < sd->child_w) *x = sd->child_w - sd->w;
+        else *x = 0;
      }
    if (y)
      {
-	if (sd->h < sd->child_h) *y = sd->child_h - sd->h;
-	else *y = 0;
+        if (sd->h < sd->child_h) *y = sd->child_h - sd->h;
+        else *y = 0;
      }
 }
 
@@ -161,9 +161,9 @@ _smart_child_resize_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    evas_object_geometry_get(sd->child_obj, NULL, NULL, &w, &h);
    if ((w != sd->child_w) || (h != sd->child_h))
      {
-	sd->child_w = w;
-	sd->child_h = h;
-	_smart_reconfigure(sd);
+        sd->child_w = w;
+        sd->child_h = h;
+        _smart_reconfigure(sd);
      }
    evas_object_smart_callback_call(sd->smart_obj, "changed", NULL);
 }
@@ -263,28 +263,28 @@ _smart_init(void)
 {
    if (_smart) return;
      {
-	static const Evas_Smart_Class sc =
-	  {
-	     SMART_NAME,
-	       EVAS_SMART_CLASS_VERSION,
-	       _smart_add,
-	       _smart_del,
-	       _smart_move,
-	       _smart_resize,
-	       _smart_show,
-	       _smart_hide,
-	       _smart_color_set,
-	       _smart_clip_set,
-	       _smart_clip_unset,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL
-	  };
-	_smart = evas_smart_class_new(&sc);
+        static const Evas_Smart_Class sc =
+          {
+             SMART_NAME,
+             EVAS_SMART_CLASS_VERSION,
+             _smart_add,
+             _smart_del,
+             _smart_move,
+             _smart_resize,
+             _smart_show,
+             _smart_hide,
+             _smart_color_set,
+             _smart_clip_set,
+             _smart_clip_unset,
+             NULL,
+             NULL,
+             NULL,
+             NULL,
+             NULL,
+             NULL,
+             NULL
+          };
+        _smart = evas_smart_class_new(&sc);
      }
 }
 

@@ -225,7 +225,7 @@ _transition_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv
    Evas_Coord x, y, w, h;
    const double curtime = ecore_loop_time_get();
 
-   layout_data->duration = 
+   layout_data->duration =
       layout_data->duration - (curtime - layout_data->initial_time);
    layout_data->initial_time = curtime;
 
@@ -286,11 +286,11 @@ _transition_layout_animation_start(Evas_Object *obj, Evas_Object_Box_Data *priv,
      return EINA_FALSE;
    _transition_layout_calculate_coords(obj, priv, layout_data);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, 
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                   _transition_layout_obj_resize_cb, layout_data);
-   evas_object_smart_callback_add(obj, SIG_CHILD_ADDED, 
+   evas_object_smart_callback_add(obj, SIG_CHILD_ADDED,
                                   _transition_layout_child_added, layout_data);
-   evas_object_smart_callback_add(obj, SIG_CHILD_REMOVED, 
+   evas_object_smart_callback_add(obj, SIG_CHILD_REMOVED,
                                   _transition_layout_child_removed, layout_data);
    if (!layout_data->animator)
      layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
@@ -398,24 +398,24 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    if (!wd) return;
    wd->horizontal = !!horizontal;
    evas_object_smart_calculate(wd->box);
-   /*if (wd->horizontal)
+ /*if (wd->horizontal)
      {
-     if (wd->homogeneous)
-     evas_object_box_layout_set(wd->box,
-     evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
-     else
-     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-     NULL, NULL);
+        if (wd->homogeneous)
+          evas_object_box_layout_set(wd->box,
+                                     evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
+        else
+          evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+                                     NULL, NULL);
      }
-     else
+   else
      {
-     if (wd->homogeneous)
-     evas_object_box_layout_set(wd->box,
-     evas_object_box_layout_homogeneous_vertical, NULL, NULL);
-     else
-     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-     NULL, NULL);
-     }*/
+        if (wd->homogeneous)
+          evas_object_box_layout_set(wd->box,
+                                     evas_object_box_layout_homogeneous_vertical, NULL, NULL);
+        else
+          evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+                                     NULL, NULL);
+     } */
 }
 
 /**
@@ -454,24 +454,24 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    if (!wd) return;
    wd->homogeneous = !!homogenous;
    evas_object_smart_calculate(wd->box);
-   /*if (wd->horizontal)
+ /*if (wd->horizontal)
      {
-     if (wd->homogeneous)
-     evas_object_box_layout_set(wd->box,
-     evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
-     else
-     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-     NULL, NULL);
+        if (wd->homogeneous)
+          evas_object_box_layout_set(wd->box,
+                                     evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
+        else
+          evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+                                     NULL, NULL);
      }
-     else
+   else
      {
-     if (wd->homogeneous)
-     evas_object_box_layout_set(wd->box,
-     evas_object_box_layout_homogeneous_vertical, NULL, NULL);
-     else
-     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-     NULL, NULL);
-     }*/
+        if (wd->homogeneous)
+          evas_object_box_layout_set(wd->box,
+                                     evas_object_box_layout_homogeneous_vertical, NULL, NULL);
+        else
+          evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+                                     NULL, NULL);
+     } */
 }
 
 /**

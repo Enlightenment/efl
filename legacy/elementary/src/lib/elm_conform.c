@@ -102,32 +102,32 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
  * visible when the vkbd comes and goes by moving the conformant obj (and thus
  * its children) to  show the focused widget (and if focus changes follow)
 
- static Evas_Object *
- _focus_object_get(const Evas_Object *obj)
- {
- Evas_Object *win, *foc;
+static Evas_Object *
+_focus_object_get(const Evas_Object *obj)
+{
+   Evas_Object *win, *foc;
 
- win = elm_widget_top_get(obj);
- if (!win) return NULL;
- foc = elm_widget_top_get(win);
- }
+   win = elm_widget_top_get(obj);
+   if (!win) return NULL;
+   foc = elm_widget_top_get(win);
+}
 
- static void
- _focus_object_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
- {
- evas_object_geometry_get(obj, x, y, w, h);
- }
+static void
+_focus_object_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   evas_object_geometry_get(obj, x, y, w, h);
+}
 
- static void
- _focus_change_del(void *data, Evas_Object *obj, void *event_info)
- {
-// called from toplevel when the focused window shanges
+static void
+_focus_change_del(void *data, Evas_Object *obj, void *event_info)
+{
+   // called from toplevel when the focused window shanges
 }
 
 static void
 _autoscroll_move(Evas_Object *obj)
 {
-// move conformant edje by delta to show focused widget
+   // move conformant edje by delta to show focused widget
 }
 
 static void

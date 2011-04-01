@@ -30,50 +30,50 @@
 
 struct _Elm_Store
 {
-  EINA_MAGIC;
-  void         (*free)(Elm_Store *store);
-  struct {
-     void        (*free)(Elm_Store_Item *item);
-  } item;
-  Evas_Object   *genlist;
-  Ecore_Thread  *list_th;
-  Eina_Inlist   *items;
-  Eina_List     *realized;
-  int            realized_count;
-  int            cache_max;
-  struct {
-    struct {
-      Elm_Store_Item_List_Cb     func;
-      void                      *data;
-    } list;
-    struct {
-      Elm_Store_Item_Fetch_Cb    func;
-      void                      *data;
-    } fetch;
-    struct {
-      Elm_Store_Item_Unfetch_Cb  func;
-      void                      *data;
-    } unfetch;
-  } cb;
-  Eina_Bool sorted : 1;
-  Eina_Bool fetch_thread : 1;
+   EINA_MAGIC;
+   void           (*free)(Elm_Store *store);
+   struct {
+      void        (*free)(Elm_Store_Item *item);
+   } item;
+   Evas_Object   *genlist;
+   Ecore_Thread  *list_th;
+   Eina_Inlist   *items;
+   Eina_List     *realized;
+   int            realized_count;
+   int            cache_max;
+   struct {
+      struct {
+         Elm_Store_Item_List_Cb     func;
+         void                      *data;
+      } list;
+      struct {
+         Elm_Store_Item_Fetch_Cb    func;
+         void                      *data;
+      } fetch;
+      struct {
+         Elm_Store_Item_Unfetch_Cb  func;
+         void                      *data;
+      } unfetch;
+   } cb;
+   Eina_Bool sorted : 1;
+   Eina_Bool fetch_thread : 1;
 };
 
 struct _Elm_Store_Item
 {
-  EINA_INLIST;
-  EINA_MAGIC;
-  Elm_Store                    *store;
-  Elm_Genlist_Item             *item;
-  Ecore_Thread                 *fetch_th;
-  Ecore_Job                    *eval_job;
-  const Elm_Store_Item_Mapping *mapping;
-  void                         *data;
-  LK(lock);
-  Eina_Bool                     live : 1;
-  Eina_Bool                     was_live : 1;
-  Eina_Bool                     realized : 1;
-  Eina_Bool                     fetched : 1;
+   EINA_INLIST;
+   EINA_MAGIC;
+   Elm_Store                    *store;
+   Elm_Genlist_Item             *item;
+   Ecore_Thread                 *fetch_th;
+   Ecore_Job                    *eval_job;
+   const Elm_Store_Item_Mapping *mapping;
+   void                         *data;
+   LK(lock);
+   Eina_Bool                     live : 1;
+   Eina_Bool                     was_live : 1;
+   Eina_Bool                     realized : 1;
+   Eina_Bool                     fetched : 1;
 };
 
 struct _Elm_Store_Filesystem

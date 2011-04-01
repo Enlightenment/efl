@@ -158,7 +158,7 @@ const void         *_elm_module_symbol_get(Elm_Module *m, const char *name);
 void                _elm_widget_type_clear(void);
 void                _elm_widget_focus_region_show(const Evas_Object *obj);
 
-void		    _elm_unneed_ethumb(void);
+void                _elm_unneed_ethumb(void);
 
 void                _elm_rescale(void);
 void                _elm_widget_mirrored_reload(Evas_Object *obj);

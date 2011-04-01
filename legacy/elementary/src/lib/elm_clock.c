@@ -25,14 +25,14 @@ struct _Widget_Data
    Evas_Object *sel_obj;
    Ecore_Timer *ticker, *spin;
    struct
-     {
-        int hrs, min, sec;
-        char ampm;
-        Eina_Bool seconds : 1;
-        Eina_Bool am_pm : 1;
-        Eina_Bool edit : 1;
-        Elm_Clock_Digedit digedit;
-     } cur;
+   {
+      int hrs, min, sec;
+      char ampm;
+      Eina_Bool seconds : 1;
+      Eina_Bool am_pm : 1;
+      Eina_Bool edit : 1;
+      Elm_Clock_Digedit digedit;
+   } cur;
 };
 
 static const char *widtype = NULL;

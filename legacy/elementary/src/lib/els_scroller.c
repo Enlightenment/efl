@@ -684,13 +684,13 @@ _smart_bounce_y_animator(void *data)
    dt = t - sd->down.anim_start3;
    if (dt >= 0.0)
      {
-	dt = dt / _elm_config->thumbscroll_bounce_friction;
-	if (dt > 1.0) dt = 1.0;
-	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
+        dt = dt / _elm_config->thumbscroll_bounce_friction;
+        if (dt > 1.0) dt = 1.0;
+        p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
         dy = sd->down.b2y - sd->down.by;
-	dy = (dy * p);
-	y = sd->down.by + dy;
+        dy = (dy * p);
+        y = sd->down.by + dy;
         if (!sd->down.cancelled)
           elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
         if (dt >= 1.0)

@@ -683,7 +683,7 @@ _hoversel_position(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord cx, cy, cw, ch, x, y, mw, mh;
    if (!wd) return;
-   
+
    cx = cy = 0;
    cw = ch = 1;
    evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
@@ -1434,17 +1434,17 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
 static Eina_Bool
 _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   /*
-      Widget_Data *wd = elm_widget_data_get(data);
-      Ecore_X_Event_Selection_Clear *ev = event;
-      if (!wd) return ECORE_CALLBACK_PASS_ON;
-      if (!wd->have_selection) return ECORE_CALLBACK_PASS_ON;
-      if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
-      (ev->selection == ECORE_X_SELECTION_PRIMARY))
-      {
-      elm_entry_select_none(data);
-      }
-      return 1;*/
+/*
+   Widget_Data *wd = elm_widget_data_get(data);
+   Ecore_X_Event_Selection_Clear *ev = event;
+   if (!wd) return ECORE_CALLBACK_PASS_ON;
+   if (!wd->have_selection) return ECORE_CALLBACK_PASS_ON;
+   if ((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
+       (ev->selection == ECORE_X_SELECTION_PRIMARY))
+     {
+        elm_entry_select_none(data);
+     }
+   return 1; */
    return ECORE_CALLBACK_PASS_ON;
 }
 

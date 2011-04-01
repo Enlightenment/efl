@@ -84,12 +84,12 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
-#define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)			\
+#define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)                      \
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, __VA_ARGS__);             \
-if (it->deleted)                                                      \
-{									\
-   ERR("ERROR: "#it" has been DELETED.\n");                         \
-   return __VA_ARGS__;						\
+if (it->deleted)                                                         \
+{                                                                        \
+   ERR("ERROR: "#it" has been DELETED.\n");                              \
+   return __VA_ARGS__;                                                   \
 }
 
 static inline void

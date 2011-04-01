@@ -189,7 +189,7 @@ _move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    EINA_LIST_FOREACH(wd->stack, l, it)
-      evas_object_move(it->base, x, y);
+     evas_object_move(it->base, x, y);
 }
 
 static void

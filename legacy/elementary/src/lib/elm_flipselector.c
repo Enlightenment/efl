@@ -32,7 +32,8 @@
 
 #define DATA_GET eina_list_data_get
 
-struct _Elm_Flipselector_Item {
+struct _Elm_Flipselector_Item
+{
    Elm_Widget_Item base;
    const char *label;
    Evas_Smart_Cb func;
@@ -42,7 +43,8 @@ struct _Elm_Flipselector_Item {
 
 typedef struct _Widget_Data Widget_Data;
 
-struct _Widget_Data {
+struct _Widget_Data
+{
    Evas_Object *self;
    Evas_Object *base;
    Eina_List *items;

@@ -39,7 +39,7 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord w, h;
 
-   _elm_theme_object_set(obj, wd->base, "bg", "base", 
+   _elm_theme_object_set(obj, wd->base, "bg", "base",
                          elm_widget_style_get(obj));
 
    if (wd->rect)
@@ -80,7 +80,7 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    nw = bw;
    nh = bh;
 
-   switch (wd->option) 
+   switch (wd->option)
      {
       case ELM_BG_OPTION_CENTER:
          fw = nw = iw;
@@ -149,7 +149,7 @@ elm_bg_add(Evas_Object *parent)
    _elm_theme_object_set(obj, wd->base, "bg", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
-   evas_object_event_callback_add(wd->base, EVAS_CALLBACK_RESIZE, 
+   evas_object_event_callback_add(wd->base, EVAS_CALLBACK_RESIZE,
                                   _custom_resize, wd);
 
    wd->option = ELM_BG_OPTION_SCALE;
@@ -241,8 +241,8 @@ elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
  *
  * @ingroup Bg
  */
-EAPI void 
-elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option) 
+EAPI void
+elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
@@ -282,8 +282,8 @@ elm_bg_option_get(const Evas_Object *obj)
  *
  * @ingroup Bg
  */
-EAPI void 
-elm_bg_color_set(Evas_Object *obj, int r, int g, int b) 
+EAPI void
+elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
