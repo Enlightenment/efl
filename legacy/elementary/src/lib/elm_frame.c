@@ -102,10 +102,10 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->content)
      {
-	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
-	wd->content = NULL;
-	_sizing_eval(obj);
+        wd->content = NULL;
+        _sizing_eval(obj);
      }
 }
 
@@ -125,7 +125,7 @@ elm_frame_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "frame");
    elm_widget_type_set(obj, "frame");
    elm_widget_sub_object_add(parent, obj);
@@ -206,10 +206,10 @@ elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
-	elm_widget_sub_object_add(obj, content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
-	edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
      }
    _sizing_eval(obj);
 }

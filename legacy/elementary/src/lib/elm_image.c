@@ -8,7 +8,7 @@
  * arrows etc.) or a custom file (PNG, JPG, EDJE etc.) used for an
  * icon. The Icon may scale or not and of course... support alpha
  * channels.
- * 
+ *
  * Signals that you can add callbacks for are:
  *
  *  - clicked: This is called when a user has clicked the image
@@ -76,18 +76,18 @@ _sizing_eval(Evas_Object *obj)
    if (wd->no_scale) _els_smart_icon_scale_set(wd->img, 1.0);
    else
      {
-	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
-	_els_smart_icon_size_get(wd->img, &w, &h);
+        _els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) * _elm_config->scale);
+        _els_smart_icon_size_get(wd->img, &w, &h);
      }
    if (!wd->scale_down)
      {
-	minw = w;
-	minh = h;
+        minw = w;
+        minh = h;
      }
    if (!wd->scale_up)
      {
-	maxw = w;
-	maxh = h;
+        maxw = w;
+        maxh = h;
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -115,7 +115,7 @@ elm_image_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "image");
    elm_widget_type_set(obj, "image");
    elm_widget_sub_object_add(parent, obj);
@@ -127,7 +127,7 @@ elm_image_add(Evas_Object *parent)
 
    wd->img = _els_smart_icon_add(e);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
-				  _mouse_up, obj);
+                                  _mouse_up, obj);
    evas_object_repeat_events_set(wd->img, EINA_TRUE);
    elm_widget_resize_object_set(obj, wd->img);
 

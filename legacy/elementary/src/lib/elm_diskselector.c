@@ -53,7 +53,7 @@ struct _Elm_Diskselector_Item
 
 static const char *widtype = NULL;
 
-#define ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                    \
+#define ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                  \
    ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
    ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
 
@@ -124,7 +124,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
    evas_object_show(it->base.view);
 
    if (it->label)
-        edje_object_part_text_set(it->base.view, "elm.text", it->label);
+     edje_object_part_text_set(it->base.view, "elm.text", it->label);
    if (it->icon)
      {
         evas_object_size_hint_min_set(it->icon, 24, 24);
@@ -287,13 +287,13 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 
    if (elm_widget_focus_get(obj))
      {
-	edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
-	evas_object_focus_set(wd->self, EINA_TRUE);
+        edje_object_signal_emit(wd->self, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->self, EINA_TRUE);
      }
    else
      {
-	edje_object_signal_emit(wd->self, "elm,action,unfocus", "elm");
-	evas_object_focus_set(wd->self, EINA_FALSE);
+        edje_object_signal_emit(wd->self, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->self, EINA_FALSE);
      }
 }
 
@@ -398,11 +398,11 @@ _check_string(void *data)
         len = eina_stringshare_strlen(it->label);
 
         if (x <= ox + 5)
-             edje_object_signal_emit(it->base.view, "elm,state,left_side",
-                                     "elm");
+          edje_object_signal_emit(it->base.view, "elm,state,left_side",
+                                  "elm");
         else if (x + w >= ox + ow - 5)
-             edje_object_signal_emit(it->base.view, "elm,state,right_side",
-                                     "elm");
+          edje_object_signal_emit(it->base.view, "elm,state,right_side",
+                                  "elm");
         else
           {
              if ((wd->len_threshold) && (len > wd->len_threshold))
@@ -626,7 +626,7 @@ elm_diskselector_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "diskselector");
    elm_widget_type_set(obj, "diskselector");
    elm_widget_sub_object_add(parent, obj);
@@ -649,7 +649,7 @@ elm_diskselector_add(Evas_Object *parent)
    _theme_hook(obj);
    elm_widget_resize_object_set(obj, wd->scroller);
    elm_smart_scroller_policy_set(wd->scroller, ELM_SMART_SCROLLER_POLICY_OFF,
-                           ELM_SMART_SCROLLER_POLICY_OFF);
+                                 ELM_SMART_SCROLLER_POLICY_OFF);
    elm_smart_scroller_bounce_allow_set(wd->scroller, EINA_TRUE, EINA_FALSE);
    evas_object_smart_callback_add(wd->scroller, "scroll", _scroller_move_cb,
                                   wd);

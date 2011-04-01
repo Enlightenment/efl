@@ -125,8 +125,8 @@ _theme_hook(Evas_Object *obj)
      {
         if (!wd->bx[1])
           {
-	     wd->bx[1] = evas_object_box_add(evas_object_evas_get(wd->base));
-	     evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
+             wd->bx[1] = evas_object_box_add(evas_object_evas_get(wd->base));
+             evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
              elm_widget_sub_object_add(obj, wd->bx[1]);
           }
         edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
@@ -195,7 +195,7 @@ _item_find(Evas_Object *obj, const void *item)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-     if (it->base.data == item) return it;
+      if (it->base.data == item) return it;
    return NULL;
 }
 
@@ -341,7 +341,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
              if ((x < dist) || (!it_closest))
                {
                   if (wd->horizontal)
-                    cdv = (double)(xx - bx) / (double)bw; 
+                    cdv = (double)(xx - bx) / (double)bw;
                   else
                     cdv = (double)(yy - by) / (double)bh;
                   it_closest = it;
@@ -349,7 +349,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                }
           }
         if ((!i) && (!wd->level))
-          edje_object_part_drag_value_set(wd->base, "elm.dragable.index.1", 
+          edje_object_part_drag_value_set(wd->base, "elm.dragable.index.1",
                                           cdv, cdv);
         if (it_closest) it_closest->selected = 1;
         if (it_closest != it_last)
@@ -409,16 +409,16 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
    free(last);
 }
 
-static void 
+static void
 _wheel(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-//   Evas_Event_Mouse_Wheel *ev = event_info;
-//   Evas_Object *obj = o;
+   //   Evas_Event_Mouse_Wheel *ev = event_info;
+   //   Evas_Object *obj = o;
    if (!wd) return;
 }
 
-static void 
+static void
 _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -432,11 +432,11 @@ _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    wd->dy = ev->canvas.y - y;
    elm_index_active_set(data, 1);
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
-   edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer", 
-        (!edje_object_mirrored_get(wd->base)) ? wd->dx : (wd->dx - w), wd->dy);
+   edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer",
+                                   (!edje_object_mirrored_get(wd->base)) ? wd->dx : (wd->dx - w), wd->dy);
 }
 
-static void 
+static void
 _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -451,7 +451,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
    edje_object_signal_emit(wd->base, "elm,state,level,0", "elm");
 }
 
-static void 
+static void
 _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -468,13 +468,13 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    adx = dx;
    if (adx < 0) adx = -dx;
    edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer"
-         , (!edje_object_mirrored_get(wd->base)) ? x : (x - w), y);
+                                   , (!edje_object_mirrored_get(wd->base)) ? x : (x - w), y);
    if (!wd->horizontal)
      {
         if (adx > minw)
           {
              if (!wd->level)
-               { 
+               {
                   wd->level = 1;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", wd->level);
                   edje_object_signal_emit(wd->base, buf, "elm");
@@ -513,7 +513,7 @@ elm_index_add(Evas_Object *parent)
    Evas_Coord minw, minh;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "index");
    elm_widget_type_set(obj, "index");
    elm_widget_sub_object_add(parent, obj);
@@ -564,7 +564,7 @@ elm_index_add(Evas_Object *parent)
    if (edje_object_part_exists(wd->base, "elm.swallow.index.1"))
      {
         wd->bx[1] = evas_object_box_add(e);
-	evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
+        evas_object_box_layout_set(wd->bx[1], _layout, wd, NULL);
         elm_widget_sub_object_add(obj, wd->bx[1]);
         edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
         evas_object_show(wd->bx[1]);
@@ -653,8 +653,8 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-     if ((it->selected) && (it->level == level))
-       return elm_widget_item_data_get(it);
+      if ((it->selected) && (it->level == level))
+        return elm_widget_item_data_get(it);
    return NULL;
 }
 
@@ -815,16 +815,16 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
      wd->items = eina_list_prepend_relative_list(wd->items, it, lnear);
    else
      {
-	/* If cmp_data_func is not provided, append a duplicated item */
-	if (!cmp_data_func)
-	  wd->items =  eina_list_append_relative_list(wd->items, it, lnear);
-	else
-	  {
-	     Elm_Index_Item *p_it = eina_list_data_get(lnear);
-	     if (cmp_data_func(p_it->base.data, it->base.data) >= 0)
-	       p_it->base.data = it->base.data;
-	     _item_free(it);
-	  }
+        /* If cmp_data_func is not provided, append a duplicated item */
+        if (!cmp_data_func)
+          wd->items =  eina_list_append_relative_list(wd->items, it, lnear);
+        else
+          {
+             Elm_Index_Item *p_it = eina_list_data_get(lnear);
+             if (cmp_data_func(p_it->base.data, it->base.data) >= 0)
+               p_it->base.data = it->base.data;
+             _item_free(it);
+          }
      }
 
    _index_box_clear(obj, wd->bx[wd->level], wd->level);

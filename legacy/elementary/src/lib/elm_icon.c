@@ -28,8 +28,8 @@ struct _Widget_Data
    Elm_Icon_Lookup_Order lookup_order;
 #ifdef ELM_EFREET
    struct {
-      int requested_size;
-      Eina_Bool use : 1;
+        int requested_size;
+        Eina_Bool use : 1;
    } freedesktop;
 #endif
    Eina_Bool scale_up : 1;
@@ -133,8 +133,8 @@ _sizing_eval(Evas_Object *obj)
         /* This icon has been set to a freedesktop icon, and the requested
            appears to have a different size than the requested size, so try to
            request another, higher resolution, icon.
-           FIXME: Find a better heuristic to determine if there should be
-           an icon with a different resolution. */
+FIXME: Find a better heuristic to determine if there should be
+an icon with a different resolution. */
         _icon_freedesktop_set(wd, obj, wd->stdicon, w);
      }
 #endif
@@ -145,19 +145,19 @@ _sizing_eval(Evas_Object *obj)
    if (wd->no_scale) _els_smart_icon_scale_set(wd->img, 1.0);
    else
      {
-	_els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) *
-				  _elm_config->scale);
-	_els_smart_icon_size_get(wd->img, &w, &h);
+        _els_smart_icon_scale_set(wd->img, elm_widget_scale_get(obj) *
+                                  _elm_config->scale);
+        _els_smart_icon_size_get(wd->img, &w, &h);
      }
    if (!wd->scale_down)
      {
-	minw = w;
-	minh = h;
+        minw = w;
+        minh = h;
      }
    if (!wd->scale_up)
      {
-	maxw = w;
-	maxh = h;
+        maxw = w;
+        maxh = h;
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
@@ -187,7 +187,7 @@ elm_icon_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "icon");
    elm_widget_type_set(obj, "icon");
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -202,7 +202,7 @@ elm_icon_add(Evas_Object *parent)
    wd->lookup_order = ELM_ICON_LOOKUP_THEME_FDO;
    wd->img = _els_smart_icon_add(e);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
-				  _mouse_up, obj);
+                                  _mouse_up, obj);
    evas_object_repeat_events_set(wd->img, EINA_TRUE);
    elm_widget_resize_object_set(obj, wd->img);
 
@@ -369,23 +369,23 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
 
    /* try locating the icon using the specified lookup order */
    switch (wd->lookup_order)
-   {
-   case ELM_ICON_LOOKUP_FDO:
-      ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
-      break;
-   case ELM_ICON_LOOKUP_THEME:
-      ret = _icon_standard_set(wd, obj, name);
-      break;
-   case ELM_ICON_LOOKUP_THEME_FDO:
-      ret = _icon_standard_set(wd, obj, name) ||
+     {
+      case ELM_ICON_LOOKUP_FDO:
+         ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
+         break;
+      case ELM_ICON_LOOKUP_THEME:
+         ret = _icon_standard_set(wd, obj, name);
+         break;
+      case ELM_ICON_LOOKUP_THEME_FDO:
+         ret = _icon_standard_set(wd, obj, name) ||
             _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img));
-      break;
-   case ELM_ICON_LOOKUP_FDO_THEME:
-   default:
-      ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img)) ||
+         break;
+      case ELM_ICON_LOOKUP_FDO_THEME:
+      default:
+         ret = _icon_freedesktop_set(wd, obj, name, _icon_size_min_get(wd->img)) ||
             _icon_standard_set(wd, obj, name);
-      break;
-   }
+         break;
+     }
 
    if (ret)
      {
@@ -395,7 +395,7 @@ elm_icon_standard_set(Evas_Object *obj, const char *name)
      }
 
    if (_path_is_absolute(name))
-      return _icon_file_set(wd, obj, name);
+     return _icon_file_set(wd, obj, name);
 
    /* if that fails, see if icon name is in the format size/name. if so,
       try locating a fallback without the size specification */

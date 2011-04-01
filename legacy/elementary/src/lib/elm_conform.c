@@ -3,24 +3,24 @@
 
 /**
  * @defgroup Conformant Conformant
- * 
- * The aim is to provide a widget that can be used in elementary apps to 
- * account for space taken up by the indicator & softkey windows when running 
+ *
+ * The aim is to provide a widget that can be used in elementary apps to
+ * account for space taken up by the indicator & softkey windows when running
  * the illume2 module of E17.
  */
 
 typedef struct _Widget_Data Widget_Data;
-struct _Widget_Data 
+struct _Widget_Data
 {
    Evas_Object *base;
    Evas_Object *shelf, *panel;
    Evas_Object *content;
    Ecore_Event_Handler *prop_hdl;
    struct {
-      Ecore_Animator *animator; // animaton timer
-      double start; // time started
-      Evas_Coord auto_x, auto_y; // desired delta
-      Evas_Coord x, y; // current delta
+        Ecore_Animator *animator; // animaton timer
+        double start; // time started
+        Evas_Coord auto_x, auto_y; // desired delta
+        Evas_Coord x, y; // current delta
    } delta;
 };
 
@@ -33,8 +33,8 @@ static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
 
 /* local functions */
-static void 
-_del_hook(Evas_Object *obj) 
+static void
+_del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -42,7 +42,7 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
-static void 
+static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -50,8 +50,8 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    edje_object_mirrored_set(wd->base, rtl);
 }
 
-static void 
-_theme_hook(Evas_Object *obj) 
+static void
+_theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -64,8 +64,8 @@ _theme_hook(Evas_Object *obj)
    _sizing_eval(obj);
 }
 
-static void 
-_sizing_eval(Evas_Object *obj) 
+static void
+_sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw = -1, mh = -1;
@@ -102,63 +102,63 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
  * visible when the vkbd comes and goes by moving the conformant obj (and thus
  * its children) to  show the focused widget (and if focus changes follow)
 
-static Evas_Object *
-_focus_object_get(const Evas_Object *obj)
-{
-   Evas_Object *win, *foc;
-   
-   win = elm_widget_top_get(obj);
-   if (!win) return NULL;
-   foc = elm_widget_top_get(win);
-}
+ static Evas_Object *
+ _focus_object_get(const Evas_Object *obj)
+ {
+ Evas_Object *win, *foc;
 
-static void
-_focus_object_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
-{
-   evas_object_geometry_get(obj, x, y, w, h);
-}
+ win = elm_widget_top_get(obj);
+ if (!win) return NULL;
+ foc = elm_widget_top_get(win);
+ }
 
-static void
-_focus_change_del(void *data, Evas_Object *obj, void *event_info)
-{
-   // called from toplevel when the focused window shanges
+ static void
+ _focus_object_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+ {
+ evas_object_geometry_get(obj, x, y, w, h);
+ }
+
+ static void
+ _focus_change_del(void *data, Evas_Object *obj, void *event_info)
+ {
+// called from toplevel when the focused window shanges
 }
 
 static void
 _autoscroll_move(Evas_Object *obj)
 {
-   // move conformant edje by delta to show focused widget
+// move conformant edje by delta to show focused widget
 }
 
 static void
 _autoscroll_mode_enable(Evas_Object *obj)
 {
-   // called when autoscroll mode should be on - content area smaller than
-   // its min size
-   // 1. get focused object
-   // 2. if not in visible conformant area calculate delta needed to
-   //    get it in
-   // 3. store delta and call _autoscroll_move() which either asanimates
-   //    or jumps right there
+// called when autoscroll mode should be on - content area smaller than
+// its min size
+// 1. get focused object
+// 2. if not in visible conformant area calculate delta needed to
+//    get it in
+// 3. store delta and call _autoscroll_move() which either asanimates
+//    or jumps right there
 }
 
 static void
 _autoscroll_mode_disable(Evas_Object *obj)
 {
-   // called when autoscroll mode should be off - set delta to 0 and
-   // call _autoscroll_move()
+// called when autoscroll mode should be off - set delta to 0 and
+// call _autoscroll_move()
 }
-*/
+ */
 
 static Eina_Bool
-_prop_change(void *data, int type __UNUSED__, void *event) 
+_prop_change(void *data, int type __UNUSED__, void *event)
 {
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Event_Window_Property *ev;
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return ECORE_CALLBACK_PASS_ON;
    ev = event;
-   if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE) 
+   if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
         Ecore_X_Window zone;
         int sh = -1;
@@ -174,7 +174,7 @@ _prop_change(void *data, int type __UNUSED__, void *event)
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
      }
-   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY) 
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
      {
         Ecore_X_Window zone;
         int sh = -1;
@@ -185,7 +185,7 @@ _prop_change(void *data, int type __UNUSED__, void *event)
         evas_object_size_hint_min_set(wd->shelf, -1, sh);
         evas_object_size_hint_max_set(wd->shelf, -1, sh);
      }
-   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY) 
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY)
      {
         Ecore_X_Window zone;
         int sh = -1;
@@ -196,7 +196,7 @@ _prop_change(void *data, int type __UNUSED__, void *event)
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
      }
-   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY) 
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY)
      {
         Ecore_X_Window zone;
         int ky = -1;
@@ -213,21 +213,21 @@ _prop_change(void *data, int type __UNUSED__, void *event)
 
 /**
  * Add a new Conformant object
- * 
+ *
  * @param parent The parent object
  * @return The new conformant object or NULL if it cannot be created
- * 
+ *
  * @ingroup Conformant
  */
 EAPI Evas_Object *
-elm_conformant_add(Evas_Object *parent) 
+elm_conformant_add(Evas_Object *parent)
 {
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "conformant");
    elm_widget_type_set(obj, "conformant");
    elm_widget_sub_object_add(parent, obj);
@@ -264,7 +264,7 @@ elm_conformant_add(Evas_Object *parent)
    evas_object_size_hint_max_set(wd->panel, -1, sh);
    edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
 
-   wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY, 
+   wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY,
                                           _prop_change, obj);
    // FIXME: get kbd region prop
 #endif
@@ -299,10 +299,10 @@ elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
-	elm_widget_sub_object_add(obj, content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
-	edje_object_part_swallow(wd->base, "elm.swallow.content", content);
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->base, "elm.swallow.content", content);
      }
    _sizing_eval(obj);
 }

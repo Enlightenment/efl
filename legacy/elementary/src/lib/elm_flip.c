@@ -27,7 +27,7 @@ struct _Widget_Data
    Elm_Flip_Mode mode;
    Evas_Object *clip;
    struct {
-      Evas_Object *content, *clip;
+        Evas_Object *content, *clip;
    } front, back;
    Eina_Bool state : 1;
 };
@@ -89,12 +89,12 @@ _sizing_eval(Evas_Object *obj)
      evas_object_size_hint_max_get(wd->front.content, &maxw, &maxh);
    if (wd->back.content)
      evas_object_size_hint_max_get(wd->back.content, &maxw2, &maxh2);
-   
+
    if (minw2 > minw) minw = minw2;
    if (minh2 > minh) minh = minh2;
    if ((maxw2 >= 0) && (maxw2 < maxw)) maxw = maxw2;
    if ((maxh2 >= 0) && (maxh2 < maxh)) maxh = maxh2;
-   
+
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -115,19 +115,19 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->front.content)
      {
-	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
-	wd->front.content = NULL;
+        wd->front.content = NULL;
         evas_object_hide(wd->front.clip);
-	_sizing_eval(obj);
+        _sizing_eval(obj);
      }
    else if (sub == wd->back.content)
      {
-	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
-	wd->back.content = NULL;
+        wd->back.content = NULL;
         evas_object_hide(wd->back.clip);
-	_sizing_eval(obj);
+        _sizing_eval(obj);
      }
 }
 
@@ -138,24 +138,24 @@ flip_show_hide(Evas_Object *obj)
    if (elm_flip_front_get(obj))
      {
         if (wd->front.content)
-           evas_object_show(wd->front.clip);
+          evas_object_show(wd->front.clip);
         else
-           evas_object_hide(wd->front.clip);
+          evas_object_hide(wd->front.clip);
         if (wd->back.content)
-           evas_object_hide(wd->back.clip);
+          evas_object_hide(wd->back.clip);
         else
-           evas_object_hide(wd->back.clip);
+          evas_object_hide(wd->back.clip);
      }
    else
      {
         if (wd->front.content)
-           evas_object_hide(wd->front.clip);
+          evas_object_hide(wd->front.clip);
         else
-           evas_object_hide(wd->front.clip);
+          evas_object_hide(wd->front.clip);
         if (wd->back.content)
-           evas_object_show(wd->back.clip);
+          evas_object_show(wd->back.clip);
         else
-           evas_object_hide(wd->back.clip);
+          evas_object_hide(wd->back.clip);
      }
 }
 
@@ -190,16 +190,16 @@ _flip(Evas_Object *obj)
         evas_object_geometry_get(wd->back.content, &x, &y, &w, &h);
         evas_map_util_points_populate_from_geometry(mb, x, y, w, h, 0);
      }
-   
+
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   
+
    cx = x + (w / 2);
    cy = y + (h / 2);
 
    px = x + (w / 2);
    py = y + (h / 2);
    foc = 2048;
-   
+
    lx = cx;
    ly = cy;
    lz = -10000;
@@ -209,106 +209,106 @@ _flip(Evas_Object *obj)
    lar = 0;
    lag = 0;
    lab = 0;
-   
+
    switch (wd->mode)
      {
-     case ELM_FLIP_ROTATE_Y_CENTER_AXIS:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        if (wd->state) deg = 180.0 * p;
-        else deg = 180 + (180.0 * p);
-        evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, 0);
-        evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, 0.0, cx, cy, 0);
-        break;
-     case ELM_FLIP_ROTATE_X_CENTER_AXIS:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        if (wd->state) deg = 180.0 * p;
-        else deg = 180 + (180.0 * p);
-        evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, 0);
-        evas_map_util_3d_rotate(mb, deg + 180.0, 0.0, 0.0, cx, cy, 0);
-        break;
-     case ELM_FLIP_ROTATE_XZ_CENTER_AXIS:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        if (wd->state) deg = 180.0 * p;
-        else deg = 180 + (180.0 * p);
-        evas_map_util_3d_rotate(mf, deg, 0.0, deg, cx, cy, 0);
-        evas_map_util_3d_rotate(mb, deg + 180.0, 0.0, deg + 180.0, cx, cy, 0);
-        break;
-     case ELM_FLIP_ROTATE_YZ_CENTER_AXIS:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        if (wd->state) deg = 180.0 * p;
-        else deg = 180 + (180.0 * p);
-        evas_map_util_3d_rotate(mf, 0.0, deg, deg, cx, cy, 0);
-        evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, deg + 180.0, cx, cy, 0);
-        break;
-     case ELM_FLIP_CUBE_LEFT:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        deg = -90.0 * p;
-        if (wd->state)
-          {
-            evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, w / 2);
-            evas_map_util_3d_rotate(mb, 0.0, deg + 90, 0.0, cx, cy, w / 2);
-          }
-        else
-          {
-            evas_map_util_3d_rotate(mf, 0.0, deg + 90, 0.0, cx, cy, w / 2);
-            evas_map_util_3d_rotate(mb, 0.0, deg, 0.0, cx, cy, w / 2);
-          }
-        break;
-     case ELM_FLIP_CUBE_RIGHT:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        deg = 90.0 * p;
-        if (wd->state)
-          {
-            evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, w / 2);
-            evas_map_util_3d_rotate(mb, 0.0, deg - 90, 0.0, cx, cy, w / 2);
-          }
-        else
-          {
-            evas_map_util_3d_rotate(mf, 0.0, deg - 90, 0.0, cx, cy, w / 2);
-            evas_map_util_3d_rotate(mb, 0.0, deg, 0.0, cx, cy, w / 2);
-          }
-        break;
-     case ELM_FLIP_CUBE_UP:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        deg = -90.0 * p;
-        if (wd->state)
-          {
-            evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, h / 2);
-            evas_map_util_3d_rotate(mb, deg + 90, 0.0, 0.0, cx, cy, h / 2);
-          }
-        else
-          {
-            evas_map_util_3d_rotate(mf, deg + 90, 0.0, 0.0, cx, cy, h / 2);
-            evas_map_util_3d_rotate(mb, deg, 0.0, 0.0, cx, cy, h / 2);
-          }
-        break;
-     case ELM_FLIP_CUBE_DOWN:
-        p = 1.0 - t;
-        p = 1.0 - (p * p);
-        deg = 90.0 * p;
-        if (wd->state)
-          {
-            evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, h / 2);
-            evas_map_util_3d_rotate(mb, deg - 90, 0.0, 0.0, cx, cy, h / 2);
-          }
-        else
-          {
-            evas_map_util_3d_rotate(mf, deg - 90, 0.0, 0.0, cx, cy, h / 2);
-            evas_map_util_3d_rotate(mb, deg, 0.0, 0.0, cx, cy, h / 2);
-          }
-        break;
-     default:
-        break;
+      case ELM_FLIP_ROTATE_Y_CENTER_AXIS:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         if (wd->state) deg = 180.0 * p;
+         else deg = 180 + (180.0 * p);
+         evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, 0);
+         evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, 0.0, cx, cy, 0);
+         break;
+      case ELM_FLIP_ROTATE_X_CENTER_AXIS:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         if (wd->state) deg = 180.0 * p;
+         else deg = 180 + (180.0 * p);
+         evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, 0);
+         evas_map_util_3d_rotate(mb, deg + 180.0, 0.0, 0.0, cx, cy, 0);
+         break;
+      case ELM_FLIP_ROTATE_XZ_CENTER_AXIS:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         if (wd->state) deg = 180.0 * p;
+         else deg = 180 + (180.0 * p);
+         evas_map_util_3d_rotate(mf, deg, 0.0, deg, cx, cy, 0);
+         evas_map_util_3d_rotate(mb, deg + 180.0, 0.0, deg + 180.0, cx, cy, 0);
+         break;
+      case ELM_FLIP_ROTATE_YZ_CENTER_AXIS:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         if (wd->state) deg = 180.0 * p;
+         else deg = 180 + (180.0 * p);
+         evas_map_util_3d_rotate(mf, 0.0, deg, deg, cx, cy, 0);
+         evas_map_util_3d_rotate(mb, 0.0, deg + 180.0, deg + 180.0, cx, cy, 0);
+         break;
+      case ELM_FLIP_CUBE_LEFT:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         deg = -90.0 * p;
+         if (wd->state)
+           {
+              evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, w / 2);
+              evas_map_util_3d_rotate(mb, 0.0, deg + 90, 0.0, cx, cy, w / 2);
+           }
+         else
+           {
+              evas_map_util_3d_rotate(mf, 0.0, deg + 90, 0.0, cx, cy, w / 2);
+              evas_map_util_3d_rotate(mb, 0.0, deg, 0.0, cx, cy, w / 2);
+           }
+         break;
+      case ELM_FLIP_CUBE_RIGHT:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         deg = 90.0 * p;
+         if (wd->state)
+           {
+              evas_map_util_3d_rotate(mf, 0.0, deg, 0.0, cx, cy, w / 2);
+              evas_map_util_3d_rotate(mb, 0.0, deg - 90, 0.0, cx, cy, w / 2);
+           }
+         else
+           {
+              evas_map_util_3d_rotate(mf, 0.0, deg - 90, 0.0, cx, cy, w / 2);
+              evas_map_util_3d_rotate(mb, 0.0, deg, 0.0, cx, cy, w / 2);
+           }
+         break;
+      case ELM_FLIP_CUBE_UP:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         deg = -90.0 * p;
+         if (wd->state)
+           {
+              evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, h / 2);
+              evas_map_util_3d_rotate(mb, deg + 90, 0.0, 0.0, cx, cy, h / 2);
+           }
+         else
+           {
+              evas_map_util_3d_rotate(mf, deg + 90, 0.0, 0.0, cx, cy, h / 2);
+              evas_map_util_3d_rotate(mb, deg, 0.0, 0.0, cx, cy, h / 2);
+           }
+         break;
+      case ELM_FLIP_CUBE_DOWN:
+         p = 1.0 - t;
+         p = 1.0 - (p * p);
+         deg = 90.0 * p;
+         if (wd->state)
+           {
+              evas_map_util_3d_rotate(mf, deg, 0.0, 0.0, cx, cy, h / 2);
+              evas_map_util_3d_rotate(mb, deg - 90, 0.0, 0.0, cx, cy, h / 2);
+           }
+         else
+           {
+              evas_map_util_3d_rotate(mf, deg - 90, 0.0, 0.0, cx, cy, h / 2);
+              evas_map_util_3d_rotate(mb, deg, 0.0, 0.0, cx, cy, h / 2);
+           }
+         break;
+      default:
+         break;
      }
 
-   
+
    if (wd->front.content)
      {
         evas_map_util_3d_lighting(mf, lx, ly, lz, lr, lg, lb, lar, lag, lab);
@@ -318,7 +318,7 @@ _flip(Evas_Object *obj)
         if (evas_map_util_clockwise_get(mf)) evas_object_show(wd->front.clip);
         else evas_object_hide(wd->front.clip);
      }
-      
+
    if (wd->back.content)
      {
         evas_map_util_3d_lighting(mb, lx, ly, lz, lr, lg, lb, lar, lag, lab);
@@ -328,10 +328,10 @@ _flip(Evas_Object *obj)
         if (evas_map_util_clockwise_get(mb)) evas_object_show(wd->back.clip);
         else evas_object_hide(wd->back.clip);
      }
-   
+
    evas_map_free(mf);
    evas_map_free(mb);
-   
+
    if (t >= 1.0)
      {
         evas_object_map_enable_set(wd->front.content, 0);
@@ -380,7 +380,7 @@ _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 
 static void
 _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{    
+{
    _configure(obj);
 }
 
@@ -406,7 +406,7 @@ elm_flip_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "flip");
    elm_widget_type_set(obj, "flip");
    elm_widget_sub_object_add(parent, obj);
@@ -424,7 +424,7 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->clip);
    evas_object_clip_set(wd->clip, evas_object_clip_get(obj));
    evas_object_smart_member_add(wd->clip, obj);
-   
+
    wd->front.clip = evas_object_rectangle_add(e);
    evas_object_static_clip_set(wd->front.clip, 1);
    evas_object_data_set(wd->front.clip, "_elm_leaveme", obj);
@@ -434,7 +434,7 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, wd->front.clip);
    evas_object_smart_member_add(wd->front.clip, obj);
    evas_object_clip_set(wd->front.clip, wd->clip);
-   
+
    wd->back.clip = evas_object_rectangle_add(e);
    evas_object_static_clip_set(wd->back.clip, 1);
    evas_object_data_set(wd->back.clip, "_elm_leaveme", obj);
@@ -448,9 +448,9 @@ elm_flip_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
-   
+
    wd->state = 1;
-     
+
    _sizing_eval(obj);
    return obj;
 }
@@ -478,13 +478,13 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
    wd->front.content = content;
    if (content)
      {
-	elm_widget_sub_object_add(obj, content);
+        elm_widget_sub_object_add(obj, content);
         evas_object_smart_member_add(content, obj);
         evas_object_clip_set(content, wd->front.clip);
-	evas_object_event_callback_add(content,
+        evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
-	_sizing_eval(obj);
+                                       _changed_size_hints, obj);
+        _sizing_eval(obj);
      }
    // force calc to contents are the right size before transition
    evas_smart_objects_calculate(evas_object_evas_get(obj));
@@ -515,13 +515,13 @@ elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
    wd->back.content = content;
    if (content)
      {
-	elm_widget_sub_object_add(obj, content);
+        elm_widget_sub_object_add(obj, content);
         evas_object_smart_member_add(content, obj);
         evas_object_clip_set(content, wd->back.clip);
-	evas_object_event_callback_add(content,
+        evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
-	_sizing_eval(obj);
+                                       _changed_size_hints, obj);
+        _sizing_eval(obj);
      }
    // force calc to contents are the right size before transition
    evas_smart_objects_calculate(evas_object_evas_get(obj));
@@ -665,7 +665,7 @@ elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc __UNUSED__, Evas_Coord
  * ELM_FLIP_ROTATE_YZ_CENTER_AXIS
  * ELM_FLIP_CUBE_LEFT
  * ELM_FLIP_CUBE_RIGHT
- * 
+ *
  * FIXME: add - ELM_FLIP_CUBE_UP
  * FIXMEL add - ELM_FLIP_CUBE_DOWN
  *
