@@ -21,23 +21,23 @@ struct _Smart_Data
    Evas_Object *event_obj;
 
    Evas_Object *widget;
-   
+
    Elm_Smart_Scroller_Policy hbar_flags, vbar_flags;
 
    struct {
-      Evas_Coord x, y;
-      Evas_Coord sx, sy;
-      Evas_Coord dx, dy;
-      Evas_Coord pdx, pdy;
-      Evas_Coord bx, by;
-      Evas_Coord ax, ay;
-      Evas_Coord bx0, by0;
-      Evas_Coord b0x, b0y;
-      Evas_Coord b2x, b2y;
-      struct {
-	 Evas_Coord    x, y;
-	 double        timestamp;
-      } history[20];
+        Evas_Coord x, y;
+        Evas_Coord sx, sy;
+        Evas_Coord dx, dy;
+        Evas_Coord pdx, pdy;
+        Evas_Coord bx, by;
+        Evas_Coord ax, ay;
+        Evas_Coord bx0, by0;
+        Evas_Coord b0x, b0y;
+        Evas_Coord b2x, b2y;
+        struct {
+             Evas_Coord    x, y;
+             double        timestamp;
+        } history[20];
       double anim_start;
       double anim_start2;
       double anim_start3;
@@ -193,8 +193,8 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
    API_ENTRY return;
    if (sd->child_obj)
      {
-	_elm_smart_pan_child_set(sd->pan_obj, NULL);
-	evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_DEL, _smart_child_del_hook, sd);
+        _elm_smart_pan_child_set(sd->pan_obj, NULL);
+        evas_object_event_callback_del_full(sd->child_obj, EVAS_CALLBACK_DEL, _smart_child_del_hook, sd);
      }
 
    sd->child_obj = child;
@@ -205,11 +205,11 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
 
    if (!sd->pan_obj)
      {
-	o = _elm_smart_pan_add(evas_object_evas_get(obj));
-	sd->pan_obj = o;
-	evas_object_smart_callback_add(o, "changed", _smart_pan_changed_hook, sd);
-	evas_object_smart_callback_add(o, "pan_changed", _smart_pan_pan_changed_hook, sd);
-	edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", o);
+        o = _elm_smart_pan_add(evas_object_evas_get(obj));
+        sd->pan_obj = o;
+        evas_object_smart_callback_add(o, "changed", _smart_pan_changed_hook, sd);
+        evas_object_smart_callback_add(o, "pan_changed", _smart_pan_pan_changed_hook, sd);
+        edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", o);
      }
 
    sd->pan_func.set = _elm_smart_pan_set;
@@ -247,24 +247,24 @@ elm_smart_scroller_extern_pan_set(Evas_Object *obj, Evas_Object *pan,
 
    if (sd->extern_pan)
      {
-	if (sd->pan_obj)
-	  {
-	     edje_object_part_unswallow(sd->edje_obj, sd->pan_obj);
-	     sd->pan_obj = NULL;
-	  }
+        if (sd->pan_obj)
+          {
+             edje_object_part_unswallow(sd->edje_obj, sd->pan_obj);
+             sd->pan_obj = NULL;
+          }
      }
    else
      {
-	if (sd->pan_obj)
-	  {
-	     evas_object_del(sd->pan_obj);
-	     sd->pan_obj = NULL;
-	  }
+        if (sd->pan_obj)
+          {
+             evas_object_del(sd->pan_obj);
+             sd->pan_obj = NULL;
+          }
      }
    if (!pan)
      {
-	sd->extern_pan = 0;
-	return;
+        sd->extern_pan = 0;
+        return;
      }
 
    sd->pan_obj = pan;
@@ -345,7 +345,7 @@ elm_smart_scroller_bounce_animator_disabled_set(Evas_Object *obj, Eina_Bool disa
           {
              ecore_animator_del(sd->scrollto.x.animator);
              sd->scrollto.x.animator = NULL;
-          }	 	
+          }
 
         if (sd->scrollto.y.animator)
           {
@@ -646,21 +646,21 @@ _smart_bounce_x_animator(void *data)
    dt = t - sd->down.anim_start2;
    if (dt >= 0.0)
      {
-	dt = dt / _elm_config->thumbscroll_bounce_friction;
-	if (dt > 1.0) dt = 1.0;
-	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
+        dt = dt / _elm_config->thumbscroll_bounce_friction;
+        if (dt > 1.0) dt = 1.0;
+        p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
         dx = sd->down.b2x - sd->down.bx;
-	dx = (dx * p);
-	x = sd->down.bx + dx;
+        dx = (dx * p);
+        x = sd->down.bx + dx;
         if (!sd->down.cancelled)
           elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
         if (dt >= 1.0)
           {
              if (sd->down.momentum_animator)
                sd->down.bounce_x_hold = 1;
-             else if ((!sd->down.bounce_y_animator) && 
-                 (!sd->scrollto.y.animator))
+             else if ((!sd->down.bounce_y_animator) &&
+                      (!sd->scrollto.y.animator))
                _smart_anim_stop(sd->smart_obj);
              sd->down.bounce_x_animator = NULL;
              sd->down.pdx = 0;
@@ -697,7 +697,7 @@ _smart_bounce_y_animator(void *data)
           {
              if (sd->down.momentum_animator)
                sd->down.bounce_y_hold = 1;
-             else if ((!sd->down.bounce_x_animator) && 
+             else if ((!sd->down.bounce_x_animator) &&
                  (!sd->scrollto.y.animator))
                _smart_anim_stop(sd->smart_obj);
              sd->down.bounce_y_animator = NULL;
@@ -765,22 +765,22 @@ _smart_momentum_animator(void *data)
              if ((sd->down.dir_y) && !can_scroll(sd, sd->down.vdir))
                {
                   sd->down.dir_y = 0;
-               }
-          }
-        if ((!sd->down.dir_x) && (!sd->down.dir_y))
-          {
-             sd->down.cancelled = 1;
-          }
+                  }
+                  }
+                  if ((!sd->down.dir_x) && (!sd->down.dir_y))
+                  {
+                  sd->down.cancelled = 1;
+                  }
          */
-	dt = dt / (_elm_config->thumbscroll_friction + sd->down.extra_time);
-	if (dt > 1.0) dt = 1.0;
-	p = 1.0 - ((1.0 - dt) * (1.0 - dt));
-	dx = (sd->down.dx * (_elm_config->thumbscroll_friction + sd->down.extra_time) * p);
-	dy = (sd->down.dy * (_elm_config->thumbscroll_friction + sd->down.extra_time) * p);
+        dt = dt / (_elm_config->thumbscroll_friction + sd->down.extra_time);
+        if (dt > 1.0) dt = 1.0;
+        p = 1.0 - ((1.0 - dt) * (1.0 - dt));
+        dx = (sd->down.dx * (_elm_config->thumbscroll_friction + sd->down.extra_time) * p);
+        dy = (sd->down.dy * (_elm_config->thumbscroll_friction + sd->down.extra_time) * p);
         sd->down.ax = dx;
         sd->down.ay = dy;
-	x = sd->down.sx - dx;
-	y = sd->down.sy - dy;
+        x = sd->down.sx - dx;
+        y = sd->down.sy - dy;
         elm_smart_scroller_child_pos_get(sd->smart_obj, &px, &py);
         if ((sd->down.bounce_x_animator) ||
             (sd->down.bounce_x_hold))
@@ -794,10 +794,10 @@ _smart_momentum_animator(void *data)
              sd->down.by = sd->down.by0 - dy + sd->down.b0y;
              y = py;
           }
-	elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+        elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
         sd->pan_func.max_get(sd->pan_obj, &maxx, &maxy);
         sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
-	if (!sd->bounce_horiz)
+        if (!sd->bounce_horiz)
           {
              if (x <= minx) no_bounce_x_end = EINA_TRUE;
              if ((x - minx) >= maxx) no_bounce_x_end = EINA_TRUE;
@@ -807,22 +807,22 @@ _smart_momentum_animator(void *data)
              if (y <= miny) no_bounce_y_end = EINA_TRUE;
              if ((y - miny) >= maxy) no_bounce_y_end = EINA_TRUE;
           }
-        if ((dt >= 1.0) || 
+        if ((dt >= 1.0) ||
             ((sd->down.bounce_x_hold) && (sd->down.bounce_y_hold)) ||
             (no_bounce_x_end && no_bounce_y_end))
-	  {
+          {
              _smart_anim_stop(sd->smart_obj);
              _update_wanted_coordinates(sd, px, py);
 
-	     sd->down.momentum_animator = NULL;
+             sd->down.momentum_animator = NULL;
              sd->down.bounce_x_hold = 0;
              sd->down.bounce_y_hold = 0;
              sd->down.ax = 0;
              sd->down.ay = 0;
              sd->down.pdx = 0;
              sd->down.pdy = 0;
-	     return ECORE_CALLBACK_CANCEL;
-	  }
+             return ECORE_CALLBACK_CANCEL;
+          }
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -856,7 +856,7 @@ bounce_eval(Smart_Data *sd)
    if ((py - miny) > my) py = my + miny;
    b2x = px;
    b2y = py;
-   if ((!sd->widget) || 
+   if ((!sd->widget) ||
        (!elm_widget_drag_child_locked_x_get(sd->widget)))
      {
         if (!sd->down.bounce_x_animator && !sd->bounce_animator_disabled)
@@ -878,7 +878,7 @@ bounce_eval(Smart_Data *sd)
                }
           }
      }
-   if ((!sd->widget) || 
+   if ((!sd->widget) ||
        (!elm_widget_drag_child_locked_y_get(sd->widget)))
      {
         if (!sd->down.bounce_y_animator && !sd->bounce_animator_disabled)
@@ -1187,7 +1187,7 @@ elm_smart_scroller_object_theme_set(Evas_Object *parent, Evas_Object *obj, const
 {
    API_ENTRY return;
    Evas_Coord mw, mh;
-   //Does this API require parent object absolutely? if then remove this exception. 
+   //Does this API require parent object absolutely? if then remove this exception.
    double parent_scale = parent ? elm_widget_scale_get(parent) : 1;
    _elm_theme_object_set(parent, sd->edje_obj, clas, group, style);
    edje_object_scale_set(sd->edje_obj, parent_scale * _elm_config->scale);
@@ -1464,9 +1464,9 @@ _smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_inf
    sd->pan_func.child_size_get(sd->pan_obj, &w, &h);
    if ((w != sd->child.w) || (h != sd->child.h))
      {
-	sd->child.w = w;
-	sd->child.h = h;
-	_smart_scrollbar_size_adjust(sd);
+        sd->child.w = w;
+        sd->child.h = h;
+        _smart_scrollbar_size_adjust(sd);
         evas_object_size_hint_min_set(sd->smart_obj, sd->child.w, sd->child.h);
         _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
@@ -1574,7 +1574,7 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 
    sd = data;
    ev = event_info;
-//   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
+   //   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    if (_elm_config->thumbscroll_enable)
      {
         sd->down.hold = 0;
@@ -1609,42 +1609,42 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
              sd->down.bounce_y_animator = NULL;
              sd->bouncemey = 0;
           }
-	if (sd->down.hold_animator)
-	  {
-	     ecore_animator_del(sd->down.hold_animator);
-	     sd->down.hold_animator = NULL;
+        if (sd->down.hold_animator)
+          {
+             ecore_animator_del(sd->down.hold_animator);
+             sd->down.hold_animator = NULL;
              _smart_drag_stop(sd->smart_obj);
-	  }
-	if (sd->down.momentum_animator)
-	  {
-	     ecore_animator_del(sd->down.momentum_animator);
-	     sd->down.momentum_animator = NULL;
+          }
+        if (sd->down.momentum_animator)
+          {
+             ecore_animator_del(sd->down.momentum_animator);
+             sd->down.momentum_animator = NULL;
              sd->down.bounce_x_hold = 0;
              sd->down.bounce_y_hold = 0;
              sd->down.ax = 0;
              sd->down.ay = 0;
-	  }
-	if (ev->button == 1)
-	  {
-	     sd->down.now = 1;
-	     sd->down.dragged = 0;
-	     sd->down.dir_x = 0;
-	     sd->down.dir_y = 0;
-	     sd->down.x = ev->canvas.x;
-	     sd->down.y = ev->canvas.y;
-	     elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-	     sd->down.sx = x;
-	     sd->down.sy = y;
-	     sd->down.locked = 0;
-	     memset(&(sd->down.history[0]), 0, sizeof(sd->down.history[0]) * 20);
+          }
+        if (ev->button == 1)
+          {
+             sd->down.now = 1;
+             sd->down.dragged = 0;
+             sd->down.dir_x = 0;
+             sd->down.dir_y = 0;
+             sd->down.x = ev->canvas.x;
+             sd->down.y = ev->canvas.y;
+             elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
+             sd->down.sx = x;
+             sd->down.sy = y;
+             sd->down.locked = 0;
+             memset(&(sd->down.history[0]), 0, sizeof(sd->down.history[0]) * 20);
 #ifdef EVTIME
-	     sd->down.history[0].timestamp = ev->timestamp / 1000.0;
+             sd->down.history[0].timestamp = ev->timestamp / 1000.0;
 #else
-	     sd->down.history[0].timestamp = ecore_loop_time_get();
+             sd->down.history[0].timestamp = ecore_loop_time_get();
 #endif
-	     sd->down.history[0].x = ev->canvas.x;
-	     sd->down.history[0].y = ev->canvas.y;
-	  }
+             sd->down.history[0].x = ev->canvas.x;
+             sd->down.history[0].y = ev->canvas.y;
+          }
         sd->down.dragged_began = 0;
         sd->down.hold_parent = 0;
         sd->down.cancelled = 0;
@@ -1656,11 +1656,11 @@ _smart_hold_animator(void *data)
 {
    Smart_Data *sd = data;
    Evas_Coord ox, oy;
-   
+
    elm_smart_scroller_child_pos_get(sd->smart_obj, &ox, &oy);
    if (sd->down.dir_x)
      {
-        if ((!sd->widget) || 
+        if ((!sd->widget) ||
             (!elm_widget_drag_child_locked_x_get(sd->widget)))
           {
              ox = sd->down.hold_x;
@@ -1668,7 +1668,7 @@ _smart_hold_animator(void *data)
      }
    if (sd->down.dir_y)
      {
-        if ((!sd->widget) || 
+        if ((!sd->widget) ||
             (!elm_widget_drag_child_locked_y_get(sd->widget)))
           {
              oy = sd->down.hold_y;
@@ -1703,20 +1703,20 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
    sd = data;
    ev = event_info;
    sd->down.hold_parent = 0;
-//   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
+   //   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    evas_post_event_callback_push(e, _smart_event_post_up, sd);
    // FIXME: respect elm_widget_scroll_hold_get of parent container
    if (_elm_config->thumbscroll_enable)
      {
-	if (ev->button == 1)
-	  {
+        if (ev->button == 1)
+          {
              if (sd->down.onhold_animator)
                {
                   ecore_animator_del(sd->down.onhold_animator);
                   sd->down.onhold_animator = NULL;
                }
-	     x = ev->canvas.x - sd->down.x;
-	     y = ev->canvas.y - sd->down.y;
+             x = ev->canvas.x - sd->down.x;
+             y = ev->canvas.y - sd->down.y;
              if (sd->down.dragged)
                {
                   _smart_drag_stop(sd->smart_obj);
@@ -1775,17 +1775,17 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                      ((sd->down.dx < 0) && (sd->down.pdx < 0)) ||
                                      ((sd->down.dy > 0) && (sd->down.pdy > 0)) ||
                                      ((sd->down.dy < 0) && (sd->down.pdy < 0)))
-                                  {
-                                    double t = ecore_loop_time_get();
-                                    double dt = t - sd->down.anim_start;
-                                    
-                                    if (dt < 0.0) dt = 0.0;
-                                    else if (dt > _elm_config->thumbscroll_friction)
-                                      dt = _elm_config->thumbscroll_friction;
-                                    sd->down.extra_time = _elm_config->thumbscroll_friction - dt;
-                                  }
+                                   {
+                                      double t = ecore_loop_time_get();
+                                      double dt = t - sd->down.anim_start;
+
+                                      if (dt < 0.0) dt = 0.0;
+                                      else if (dt > _elm_config->thumbscroll_friction)
+                                        dt = _elm_config->thumbscroll_friction;
+                                      sd->down.extra_time = _elm_config->thumbscroll_friction - dt;
+                                   }
                                  else
-                                  sd->down.extra_time = 0.0;
+                                   sd->down.extra_time = 0.0;
                                  sd->down.pdx = sd->down.dx;
                                  sd->down.pdy = sd->down.dy;
                                  ox = -sd->down.dx;
@@ -1824,28 +1824,28 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                        Evas_Coord pgx, pgy;
 
                        elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-                       if ((!sd->widget) || 
+                       if ((!sd->widget) ||
                            (!elm_widget_drag_child_locked_x_get(sd->widget)))
                          {
                             pgx = _smart_page_x_get(sd, ox);
-                            if (pgx != x) 
+                            if (pgx != x)
                               {
                                  ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                                  _smart_scrollto_x(sd, _elm_config->page_scroll_friction, pgx);
                               }
                          }
-                       if ((!sd->widget) || 
+                       if ((!sd->widget) ||
                            (!elm_widget_drag_child_locked_y_get(sd->widget)))
                          {
                             pgy = _smart_page_y_get(sd, oy);
-                            if (pgy != y) 
+                            if (pgy != y)
                               {
                                  ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
                                  _smart_scrollto_y(sd, _elm_config->page_scroll_friction, pgy);
                               }
                          }
                     }
-	       }
+               }
              else
                {
                   sd->down.pdx = 0;
@@ -1855,13 +1855,13 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                        Evas_Coord pgx, pgy;
 
                        elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-                       if ((!sd->widget) || 
+                       if ((!sd->widget) ||
                            (!elm_widget_drag_child_locked_x_get(sd->widget)))
                          {
                             pgx = _smart_page_x_get(sd, ox);
                             if (pgx != x) _smart_scrollto_x(sd, _elm_config->page_scroll_friction, pgx);
                          }
-                       if ((!sd->widget) || 
+                       if ((!sd->widget) ||
                            (!elm_widget_drag_child_locked_y_get(sd->widget)))
                          {
                             pgy = _smart_page_y_get(sd, oy);
@@ -1888,15 +1888,15 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
              sd->down.dir_x = 0;
              sd->down.dir_y = 0;
              sd->down.want_dragged = 0;
-	     sd->down.dragged = 0;
-	     sd->down.now = 0;
+             sd->down.dragged = 0;
+             sd->down.now = 0;
              elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
              elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
              _update_wanted_coordinates(sd, x, y);
 
              if (!_smart_do_page(sd))
                bounce_eval(sd);
-	  }
+          }
      }
 }
 
@@ -1918,10 +1918,10 @@ _smart_onhold_animator(void *data)
         elm_smart_scroller_child_pos_get(sd->smart_obj, &ox, &oy);
         x = ox;
         y = oy;
-        
+
         if (sd->down.dir_x)
           {
-             if ((!sd->widget) || 
+             if ((!sd->widget) ||
                  (!elm_widget_drag_child_locked_x_get(sd->widget)))
                {
                   sd->down.onhold_vxe += vx;
@@ -1929,10 +1929,10 @@ _smart_onhold_animator(void *data)
                   sd->down.onhold_vxe -= (int)sd->down.onhold_vxe;
                }
           }
-        
+
         if (sd->down.dir_y)
           {
-             if ((!sd->widget) || 
+             if ((!sd->widget) ||
                  (!elm_widget_drag_child_locked_y_get(sd->widget)))
                {
                   sd->down.onhold_vye += vy;
@@ -1940,7 +1940,7 @@ _smart_onhold_animator(void *data)
                   sd->down.onhold_vye -= (int)sd->down.onhold_vye;
                }
           }
-        
+
         elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
      }
    sd->down.onhold_tlast = t;
@@ -1969,7 +1969,7 @@ _smart_event_post_move(void *data, Evas *e __UNUSED__)
           }
         if (sd->down.dir_x)
           {
-             if ((!sd->widget) || 
+             if ((!sd->widget) ||
                  (!elm_widget_drag_child_locked_x_get(sd->widget)))
                {
                   sd->down.want_dragged = 0;
@@ -1985,7 +1985,7 @@ _smart_event_post_move(void *data, Evas *e __UNUSED__)
           }
         if (sd->down.dir_y)
           {
-             if ((!sd->widget) || 
+             if ((!sd->widget) ||
                  (!elm_widget_drag_child_locked_y_get(sd->widget)))
                {
                   sd->down.want_dragged = 0;
@@ -2017,45 +2017,45 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
 
    sd = data;
    ev = event_info;
-//   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
+   //   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->down.hold_parent = 1;
    evas_post_event_callback_push(e, _smart_event_post_move, sd);
    // FIXME: respect elm_widget_scroll_hold_get of parent container
    if (_elm_config->thumbscroll_enable)
      {
-	if (sd->down.now)
-	  {
+        if (sd->down.now)
+          {
              int dodir = 0;
 
 #ifdef SCROLLDBG
              printf("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
 #endif
-	     memmove(&(sd->down.history[1]), &(sd->down.history[0]),
-		     sizeof(sd->down.history[0]) * 19);
+             memmove(&(sd->down.history[1]), &(sd->down.history[0]),
+                     sizeof(sd->down.history[0]) * 19);
 #ifdef EVTIME
-	     sd->down.history[0].timestamp = ev->timestamp / 1000.0;
+             sd->down.history[0].timestamp = ev->timestamp / 1000.0;
 #else
-	     sd->down.history[0].timestamp = ecore_loop_time_get();
+             sd->down.history[0].timestamp = ecore_loop_time_get();
 #endif
-	     sd->down.history[0].x = ev->cur.canvas.x;
-	     sd->down.history[0].y = ev->cur.canvas.y;
+             sd->down.history[0].x = ev->cur.canvas.x;
+             sd->down.history[0].y = ev->cur.canvas.y;
 
              if (!sd->down.dragged_began)
                {
                   x = ev->cur.canvas.x - sd->down.x;
                   y = ev->cur.canvas.y - sd->down.y;
-                  
+
                   sd->down.hdir = -1;
                   sd->down.vdir = -1;
-                    
+
                   if      (x > 0) sd->down.hdir = LEFT;
                   else if (x < 0) sd->down.hdir = RIGHT;
                   if      (y > 0) sd->down.vdir = UP;
                   else if (y < 0) sd->down.vdir = DOWN;
-                  
+
                   if (x < 0) x = -x;
                   if (y < 0) y = -y;
-             
+
                   if ((sd->one_dir_at_a_time) &&
                       (!((sd->down.dir_x) || (sd->down.dir_y))))
                     {
@@ -2085,10 +2085,10 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                     }
                   else
                     {
-//                       can_scroll(sd, LEFT);
-//                       can_scroll(sd, RIGHT);
-//                       can_scroll(sd, UP);
-//                       can_scroll(sd, DOWN);
+                       //                       can_scroll(sd, LEFT);
+                       //                       can_scroll(sd, RIGHT);
+                       //                       can_scroll(sd, UP);
+                       //                       can_scroll(sd, DOWN);
                        sd->down.dir_x = 1;
                        sd->down.dir_y = 1;
                     }
@@ -2105,15 +2105,15 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                          {
                             sd->down.want_dragged = 1;
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-//                            evas_event_feed_hold(e, 1, ev->timestamp, ev->data);
-//                            _smart_drag_start(sd->smart_obj);
+                            //                            evas_event_feed_hold(e, 1, ev->timestamp, ev->data);
+                            //                            _smart_drag_start(sd->smart_obj);
                          }
                        if (sd->down.dragged)
                          {
                             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                          }
-//                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-//                       sd->down.dragged = 1;
+                       //                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+                       //                       sd->down.dragged = 1;
                        if (sd->down.dir_x)
                          x = sd->down.sx - (ev->cur.canvas.x - sd->down.x);
                        else
@@ -2141,33 +2141,33 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                             Evas_Coord minx, miny;
                             sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
                             if (y < miny)
-                               y += (miny - y) *
-                                  _elm_config->thumbscroll_border_friction;
+                              y += (miny - y) *
+                                 _elm_config->thumbscroll_border_friction;
                             else if (sd->child.h <= sd->h)
-                               y += (sd->down.sy - y) *
-                                  _elm_config->thumbscroll_border_friction;
+                              y += (sd->down.sy - y) *
+                                 _elm_config->thumbscroll_border_friction;
                             else if ((sd->child.h - sd->h + miny) < y)
-                               y += (sd->child.h - sd->h + miny - y) *
-                                  _elm_config->thumbscroll_border_friction;
+                              y += (sd->child.h - sd->h + miny - y) *
+                                 _elm_config->thumbscroll_border_friction;
                             if (x < minx)
-                               x += (minx - x) *
-                                  _elm_config->thumbscroll_border_friction;
+                              x += (minx - x) *
+                                 _elm_config->thumbscroll_border_friction;
                             else if (sd->child.w <= sd->w)
-                               x += (sd->down.sx - x) *
-                                  _elm_config->thumbscroll_border_friction;
+                              x += (sd->down.sx - x) *
+                                 _elm_config->thumbscroll_border_friction;
                             else if ((sd->child.w - sd->w + minx) < x)
-                               x += (sd->child.w - sd->w + minx - x) *
-                                  _elm_config->thumbscroll_border_friction;
+                              x += (sd->child.w - sd->w + minx - x) *
+                                 _elm_config->thumbscroll_border_friction;
                          }
 
                        sd->down.hold_x = x;
                        sd->down.hold_y = y;
                        if (!sd->down.hold_animator)
-                         sd->down.hold_animator = 
+                         sd->down.hold_animator =
                             ecore_animator_add(_smart_hold_animator, sd);
-//                       printf("a %i %i\n", sd->down.hold_x, sd->down.hold_y);
-//                       _smart_onhold_animator(sd);
-//                       elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
+                       //                       printf("a %i %i\n", sd->down.hold_x, sd->down.hold_y);
+                       //                       _smart_onhold_animator(sd);
+                       //                       elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
                     }
                   else
                     {
@@ -2181,7 +2181,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                               }
                          }
                     }
-	       }
+               }
              else if (!sd->freeze)
                {
                   Evas_Coord ex, ey, ew, eh;
@@ -2194,7 +2194,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                     {
                        if (_elm_config->thumbscroll_threshold > 0.0)
                          vx = -(double)(_elm_config->thumbscroll_threshold - x) /
-                         _elm_config->thumbscroll_threshold;
+                            _elm_config->thumbscroll_threshold;
                        else
                          vx = -1.0;
                     }
@@ -2202,7 +2202,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                     {
                        if (_elm_config->thumbscroll_threshold > 0.0)
                          vx = (double)(_elm_config->thumbscroll_threshold - (ew - x)) /
-                         _elm_config->thumbscroll_threshold;
+                            _elm_config->thumbscroll_threshold;
                        else
                          vx = 1.0;
                     }
@@ -2210,7 +2210,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                     {
                        if (_elm_config->thumbscroll_threshold > 0.0)
                          vy = -(double)(_elm_config->thumbscroll_threshold - y) /
-                         _elm_config->thumbscroll_threshold;
+                            _elm_config->thumbscroll_threshold;
                        else
                          vy = -1.0;
                     }
@@ -2218,7 +2218,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                     {
                        if (_elm_config->thumbscroll_threshold > 0.0)
                          vy = (double)(_elm_config->thumbscroll_threshold - (eh - y)) /
-                         _elm_config->thumbscroll_threshold;
+                            _elm_config->thumbscroll_threshold;
                        else
                          vy = 1.0;
                     }
@@ -2233,7 +2233,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                             sd->down.onhold_tlast = 0.0;
                             sd->down.onhold_animator = ecore_animator_add(_smart_onhold_animator, sd);
                          }
-//                       printf("b %i %i\n", sd->down.hold_x, sd->down.hold_y);
+                       //                       printf("b %i %i\n", sd->down.hold_x, sd->down.hold_y);
                     }
                   else
                     {
@@ -2244,7 +2244,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                          }
                     }
                }
-	  }
+          }
      }
 }
 
@@ -2275,8 +2275,8 @@ _smart_scrollbar_reset(Smart_Data *sd)
    edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
    if ((!sd->child_obj) && (!sd->extern_pan))
      {
-	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
-	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+        edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
+        edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
      }
    if (sd->pan_obj)
      {
@@ -2299,46 +2299,46 @@ _smart_scrollbar_bar_v_visibility_adjust(Smart_Data *sd)
      evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);
    if (sd->vbar_visible)
      {
-	if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
-	  {
-	     if ((sd->child_obj) || (sd->extern_pan))
-	       {
-		  if (h <= vh)
-		    {
-		       scroll_v_vis_change = 1;
-		       sd->vbar_visible = 0;
-		    }
-	       }
-	     else
-	       {
-		  scroll_v_vis_change = 1;
-		  sd->vbar_visible = 0;
-	       }
-	  }
-	else if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
-	  {
-	     scroll_v_vis_change = 1;
-	     sd->vbar_visible = 0;
-	  }
+        if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
+          {
+             if ((sd->child_obj) || (sd->extern_pan))
+               {
+                  if (h <= vh)
+                    {
+                       scroll_v_vis_change = 1;
+                       sd->vbar_visible = 0;
+                    }
+               }
+             else
+               {
+                  scroll_v_vis_change = 1;
+                  sd->vbar_visible = 0;
+               }
+          }
+        else if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
+          {
+             scroll_v_vis_change = 1;
+             sd->vbar_visible = 0;
+          }
      }
    else
      {
-	if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
-	  {
-	     if ((sd->child_obj) || (sd->extern_pan))
-	       {
-		  if (h > vh)
-		    {
-		       scroll_v_vis_change = 1;
-		       sd->vbar_visible = 1;
-		    }
-	       }
-	  }
-	else if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
-	  {
-	     scroll_v_vis_change = 1;
-	     sd->vbar_visible = 1;
-	  }
+        if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
+          {
+             if ((sd->child_obj) || (sd->extern_pan))
+               {
+                  if (h > vh)
+                    {
+                       scroll_v_vis_change = 1;
+                       sd->vbar_visible = 1;
+                    }
+               }
+          }
+        else if (sd->vbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
+          {
+             scroll_v_vis_change = 1;
+             sd->vbar_visible = 1;
+          }
      }
    if (scroll_v_vis_change)
      {
@@ -2368,46 +2368,46 @@ _smart_scrollbar_bar_h_visibility_adjust(Smart_Data *sd)
      evas_object_geometry_get(sd->pan_obj, NULL, NULL, &vw, &vh);
    if (sd->hbar_visible)
      {
-	if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
-	  {
-	     if ((sd->child_obj) || (sd->extern_pan))
-	       {
-		  if (w <= vw)
-		    {
-		       scroll_h_vis_change = 1;
-		       sd->hbar_visible = 0;
-		    }
-	       }
-	     else
-	       {
-		  scroll_h_vis_change = 1;
-		  sd->hbar_visible = 0;
-	       }
-	  }
-	else if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
-	  {
-	     scroll_h_vis_change = 1;
-	     sd->hbar_visible = 0;
-	  }
+        if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
+          {
+             if ((sd->child_obj) || (sd->extern_pan))
+               {
+                  if (w <= vw)
+                    {
+                       scroll_h_vis_change = 1;
+                       sd->hbar_visible = 0;
+                    }
+               }
+             else
+               {
+                  scroll_h_vis_change = 1;
+                  sd->hbar_visible = 0;
+               }
+          }
+        else if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_OFF)
+          {
+             scroll_h_vis_change = 1;
+             sd->hbar_visible = 0;
+          }
      }
    else
      {
-	if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
-	  {
-	     if ((sd->child_obj) || (sd->extern_pan))
-	       {
-		  if (w > vw)
-		    {
-		       scroll_h_vis_change = 1;
-		       sd->hbar_visible = 1;
-		    }
-	       }
-	  }
-	else if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
-	  {
-	     scroll_h_vis_change = 1;
-	     sd->hbar_visible = 1;
-	  }
+        if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_AUTO)
+          {
+             if ((sd->child_obj) || (sd->extern_pan))
+               {
+                  if (w > vw)
+                    {
+                       scroll_h_vis_change = 1;
+                       sd->hbar_visible = 1;
+                    }
+               }
+          }
+        else if (sd->hbar_flags == ELM_SMART_SCROLLER_POLICY_ON)
+          {
+             scroll_h_vis_change = 1;
+             sd->hbar_visible = 1;
+          }
      }
    if (scroll_h_vis_change)
      {
@@ -2422,7 +2422,7 @@ _smart_scrollbar_bar_h_visibility_adjust(Smart_Data *sd)
           }
         else
           edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
-	_smart_scrollbar_size_adjust(sd);
+        _smart_scrollbar_size_adjust(sd);
      }
    return scroll_h_vis_change;
 }
@@ -2436,8 +2436,8 @@ _smart_scrollbar_bar_visibility_adjust(Smart_Data *sd)
    changed |= _smart_scrollbar_bar_v_visibility_adjust(sd);
    if (changed)
      {
-	_smart_scrollbar_bar_h_visibility_adjust(sd);
-	_smart_scrollbar_bar_v_visibility_adjust(sd);
+        _smart_scrollbar_bar_h_visibility_adjust(sd);
+        _smart_scrollbar_bar_v_visibility_adjust(sd);
      }
 }
 
@@ -2446,67 +2446,67 @@ _smart_scrollbar_size_adjust(Smart_Data *sd)
 {
    if ((sd->child_obj) || (sd->extern_pan))
      {
-	Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0, px, py, minx = 0, miny = 0;
-	double vx, vy, size;
+        Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0, px, py, minx = 0, miny = 0;
+        double vx, vy, size;
 
-	edje_object_part_geometry_get(sd->edje_obj, "elm.swallow.content",
-				      NULL, NULL, &vw, &vh);
-	w = sd->child.w;
-	if (w < 1) w = 1;
-	size = (double)vw / (double)w;
-	if (size > 1.0)
-	  {
-	     size = 1.0;
-	     edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
-	  }
-	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", size, 1.0);
+        edje_object_part_geometry_get(sd->edje_obj, "elm.swallow.content",
+                                      NULL, NULL, &vw, &vh);
+        w = sd->child.w;
+        if (w < 1) w = 1;
+        size = (double)vw / (double)w;
+        if (size > 1.0)
+          {
+             size = 1.0;
+             edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.hbar", 0.0, 0.0);
+          }
+        edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", size, 1.0);
 
-	h = sd->child.h;
-	if (h < 1) h = 1;
-	size = (double)vh / (double)h;
-	if (size > 1.0)
-	  {
-	     size = 1.0;
-	     edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
-	  }
-	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, size);
+        h = sd->child.h;
+        if (h < 1) h = 1;
+        size = (double)vh / (double)h;
+        if (size > 1.0)
+          {
+             size = 1.0;
+             edje_object_part_drag_value_set(sd->edje_obj, "elm.dragable.vbar", 0.0, 0.0);
+          }
+        edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, size);
 
-	edje_object_part_drag_value_get(sd->edje_obj, "elm.dragable.hbar", &vx, NULL);
-	edje_object_part_drag_value_get(sd->edje_obj, "elm.dragable.vbar", NULL, &vy);
-	sd->pan_func.max_get(sd->pan_obj, &mx, &my);
-	sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
-	x = vx * mx + minx;
-	y = vy * my + miny;
+        edje_object_part_drag_value_get(sd->edje_obj, "elm.dragable.hbar", &vx, NULL);
+        edje_object_part_drag_value_get(sd->edje_obj, "elm.dragable.vbar", NULL, &vy);
+        sd->pan_func.max_get(sd->pan_obj, &mx, &my);
+        sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
+        x = vx * mx + minx;
+        y = vy * my + miny;
 
-	edje_object_part_drag_step_set(sd->edje_obj, "elm.dragable.hbar", (double)sd->step.x / (double)w, 0.0);
-	edje_object_part_drag_step_set(sd->edje_obj, "elm.dragable.vbar", 0.0, (double)sd->step.y / (double)h);
-	if (sd->page.x > 0)
-	  edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.hbar", (double)sd->page.x / (double)w, 0.0);
-	else
-	  edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.hbar", -((double)sd->page.x * ((double)vw / (double)w)) / 100.0, 0.0);
-	if (sd->page.y > 0)
-	  edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.vbar", 0.0, (double)sd->page.y / (double)h);
-	else
-	  edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.vbar", 0.0, -((double)sd->page.y * ((double)vh / (double)h)) / 100.0);
+        edje_object_part_drag_step_set(sd->edje_obj, "elm.dragable.hbar", (double)sd->step.x / (double)w, 0.0);
+        edje_object_part_drag_step_set(sd->edje_obj, "elm.dragable.vbar", 0.0, (double)sd->step.y / (double)h);
+        if (sd->page.x > 0)
+          edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.hbar", (double)sd->page.x / (double)w, 0.0);
+        else
+          edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.hbar", -((double)sd->page.x * ((double)vw / (double)w)) / 100.0, 0.0);
+        if (sd->page.y > 0)
+          edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.vbar", 0.0, (double)sd->page.y / (double)h);
+        else
+          edje_object_part_drag_page_set(sd->edje_obj, "elm.dragable.vbar", 0.0, -((double)sd->page.y * ((double)vh / (double)h)) / 100.0);
 
-	sd->pan_func.get(sd->pan_obj, &px, &py);
+        sd->pan_func.get(sd->pan_obj, &px, &py);
         if (vx != mx) x = px;
         if (vy != my) y = py;
-	sd->pan_func.set(sd->pan_obj, x, y);
-//	if ((px != 0) || (py != 0))
-//	  edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
+        sd->pan_func.set(sd->pan_obj, x, y);
+        //	if ((px != 0) || (py != 0))
+        //	  edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
      }
    else
      {
-	Evas_Coord px = 0, py = 0, minx = 0, miny = 0;
+        Evas_Coord px = 0, py = 0, minx = 0, miny = 0;
 
-	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
-	edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
+        edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.vbar", 1.0, 1.0);
+        edje_object_part_drag_size_set(sd->edje_obj, "elm.dragable.hbar", 1.0, 1.0);
         sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
-	sd->pan_func.get(sd->pan_obj, &px, &py);
-	sd->pan_func.set(sd->pan_obj, minx, miny);
+        sd->pan_func.get(sd->pan_obj, &px, &py);
+        sd->pan_func.set(sd->pan_obj, minx, miny);
         if ((px != minx) || (py != miny))
-	  edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
+          edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
      }
    _smart_scrollbar_bar_visibility_adjust(sd);
 }
@@ -2551,7 +2551,7 @@ _smart_add(Evas_Object *obj)
    sd->one_dir_at_a_time = 1;
    sd->momentum_animator_disabled = 0;
    sd->bounce_animator_disabled = 0;
-   
+
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_propagate_events_set(o, 0);
    sd->edje_obj = o;
@@ -2671,28 +2671,28 @@ _smart_init(void)
 {
    if (_smart) return;
      {
-	static const Evas_Smart_Class sc =
-	  {
-	     SMART_NAME,
-	       EVAS_SMART_CLASS_VERSION,
-	       _smart_add,
-	       _smart_del,
-	       _smart_move,
-	       _smart_resize,
-	       _smart_show,
-	       _smart_hide,
-	       _smart_color_set,
-	       _smart_clip_set,
-	       _smart_clip_unset,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-               NULL,
-               NULL,
-               NULL
-	  };
-	_smart = evas_smart_class_new(&sc);
+        static const Evas_Smart_Class sc =
+          {
+             SMART_NAME,
+             EVAS_SMART_CLASS_VERSION,
+             _smart_add,
+             _smart_del,
+             _smart_move,
+             _smart_resize,
+             _smart_show,
+             _smart_hide,
+             _smart_color_set,
+             _smart_clip_set,
+             _smart_clip_unset,
+             NULL,
+             NULL,
+             NULL,
+             NULL,
+             NULL,
+             NULL,
+             NULL
+          };
+        _smart = evas_smart_class_new(&sc);
      }
 }
 

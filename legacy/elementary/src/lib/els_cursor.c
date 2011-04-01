@@ -18,7 +18,7 @@
 
 #define _cursor_key "_elm_cursor"
 
-struct _Cursor_Id 
+struct _Cursor_Id
 {
    const char *name;
 #ifdef HAVE_ELEMENTARY_X
