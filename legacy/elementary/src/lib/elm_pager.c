@@ -61,7 +61,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    Item *it;
    if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
-        edje_object_mirrored_set(it->base, rtl);
+      edje_object_mirrored_set(it->base, rtl);
 }
 
 static void
@@ -108,8 +108,8 @@ _sizing_eval(Evas_Object *obj)
    if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
-	if (it->minw > minw) minw = it->minw;
-	if (it->minh > minh) minh = it->minh;
+        if (it->minw > minw) minw = it->minw;
+        if (it->minh > minh) minh = it->minh;
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
@@ -138,27 +138,27 @@ _eval_top(Evas_Object *obj)
    ittop = eina_list_last(wd->stack)->data;
    if (ittop != wd->top)
      {
-	Evas_Object *o;
-	const char *onshow, *onhide;
+        Evas_Object *o;
+        const char *onshow, *onhide;
 
-	if (wd->top)
-	  {
-	     o = wd->top->base;
-	     if (wd->top->popme)
-		edje_object_signal_emit(o, "elm,action,pop", "elm");
-	     else
-		edje_object_signal_emit(o, "elm,action,hide", "elm");
-	     onhide = edje_object_data_get(o, "onhide");
-	     if (onhide)
-	       {
-		  if (!strcmp(onhide, "raise")) evas_object_raise(o);
-		  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
-	       }
-	  }
-	wd->oldtop = wd->top;
-	wd->top = ittop;
-	o = wd->top->base;
-	evas_object_show(o);
+        if (wd->top)
+          {
+             o = wd->top->base;
+             if (wd->top->popme)
+               edje_object_signal_emit(o, "elm,action,pop", "elm");
+             else
+               edje_object_signal_emit(o, "elm,action,hide", "elm");
+             onhide = edje_object_data_get(o, "onhide");
+             if (onhide)
+               {
+                  if (!strcmp(onhide, "raise")) evas_object_raise(o);
+                  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
+               }
+          }
+        wd->oldtop = wd->top;
+        wd->top = ittop;
+        o = wd->top->base;
+        evas_object_show(o);
         if (wd->oldtop)
           {
              if (elm_object_focus_get(wd->oldtop->content))
@@ -170,12 +170,12 @@ _eval_top(Evas_Object *obj)
           }
         else
           edje_object_signal_emit(o, "elm,action,push", "elm");
-	onshow = edje_object_data_get(o, "onshow");
-	if (onshow)
-	  {
-	     if (!strcmp(onshow, "raise")) evas_object_raise(o);
-	     else if (!strcmp(onshow, "lower")) evas_object_lower(o);
-	  }
+        onshow = edje_object_data_get(o, "onshow");
+        if (onshow)
+          {
+             if (!strcmp(onshow, "raise")) evas_object_raise(o);
+             else if (!strcmp(onshow, "lower")) evas_object_lower(o);
+          }
      }
 }
 
@@ -189,7 +189,7 @@ _move(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
    if (!wd) return;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    EINA_LIST_FOREACH(wd->stack, l, it)
-     evas_object_move(it->base, x, y);
+      evas_object_move(it->base, x, y);
 }
 
 static void
@@ -202,22 +202,22 @@ _sub_del(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
-	if (it->content == sub)
-	  {
-	     wd->stack = eina_list_remove_list(wd->stack, l);
-	     evas_object_event_callback_del_full
-               (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
-	     evas_object_del(it->base);
-	     _eval_top(it->obj);
-	     free(it);
-	     return;
-	  }
+        if (it->content == sub)
+          {
+             wd->stack = eina_list_remove_list(wd->stack, l);
+             evas_object_event_callback_del_full
+                (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, it);
+             evas_object_del(it->base);
+             _eval_top(it->obj);
+             free(it);
+             return;
+          }
      }
 }
 
 static void
 _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{   
+{
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord w, h;
    Eina_List *l;
@@ -257,7 +257,7 @@ elm_pager_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "pager");
    elm_widget_type_set(obj, "pager");
    elm_widget_sub_object_add(parent, obj);
@@ -273,7 +273,7 @@ elm_pager_add(Evas_Object *parent)
 
    wd->rect = evas_object_rectangle_add(e);
    elm_widget_sub_object_add(obj, wd->rect);
-   evas_object_color_set(wd->rect, 255, 255, 255, 0); 
+   evas_object_color_set(wd->rect, 255, 255, 255, 0);
    evas_object_clip_set(wd->rect, wd->clip);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, obj);
@@ -317,7 +317,7 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
    elm_widget_sub_object_add(obj, it->base);
    elm_widget_sub_object_add(obj, it->content);
    _elm_theme_object_set(obj, it->base,  "pager", "base", elm_widget_style_get(obj));
-   edje_object_signal_callback_add(it->base, "elm,action,hide,finished", "", 
+   edje_object_signal_callback_add(it->base, "elm,action,hide,finished", "",
                                    _signal_hide_finished, it);
    evas_object_event_callback_add(it->content,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -356,28 +356,28 @@ elm_pager_content_pop(Evas_Object *obj)
    ll = eina_list_last(wd->stack);
    if (ll)
      {
-	ll = ll->prev;
-	if (!ll)
-	  {
-	     Evas_Object *o;
-	     const char *onhide;
+        ll = ll->prev;
+        if (!ll)
+          {
+             Evas_Object *o;
+             const char *onhide;
 
-	     wd->top = it;
-	     o = wd->top->base;
-	     edje_object_signal_emit(o, "elm,action,pop", "elm");
-	     onhide = edje_object_data_get(o, "onhide");
-	     if (onhide)
-	       {
-		  if (!strcmp(onhide, "raise")) evas_object_raise(o);
-		  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
-	       }
-	     wd->top = NULL;
-	  }
-	else
-	  {
-	     it = ll->data;
-	     elm_pager_content_promote(obj, it->content);
-	  }
+             wd->top = it;
+             o = wd->top->base;
+             edje_object_signal_emit(o, "elm,action,pop", "elm");
+             onhide = edje_object_data_get(o, "onhide");
+             if (onhide)
+               {
+                  if (!strcmp(onhide, "raise")) evas_object_raise(o);
+                  else if (!strcmp(onhide, "lower")) evas_object_lower(o);
+               }
+             wd->top = NULL;
+          }
+        else
+          {
+             it = ll->data;
+             elm_pager_content_promote(obj, it->content);
+          }
      }
 }
 
@@ -403,13 +403,13 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
    if (!wd) return;
    EINA_LIST_FOREACH(wd->stack, l, it)
      {
-	if (it->content == content)
-	  {
-	     wd->stack = eina_list_remove_list(wd->stack, l);
-	     wd->stack = eina_list_append(wd->stack, it);
-	     _eval_top(obj);
-	     return;
-	  }
+        if (it->content == content)
+          {
+             wd->stack = eina_list_remove_list(wd->stack, l);
+             wd->stack = eina_list_append(wd->stack, it);
+             _eval_top(obj);
+             return;
+          }
      }
 }
 

@@ -4,22 +4,22 @@
 /* what are moodules in elementary for? for modularising behavior and features
  * so they can be plugged in and out where you dont want the core source to
  * always behave like that or do it that way. plug it at runtime!
- * 
+ *
  * they have module names (in config) and "slots" to plug that module into
  * to server a purpose. eg you plug plugin "xx" into the "entry-copy-paste"
  * slot so it would provide replacement copy & paste ui functionality and
  * specific symbols
- * 
+ *
  * config is something like:
- * 
+ *
  * export ELM_MODULES="xx>slot1:yy>slot2"
- * 
+ *
  * where a module named xx is plugged into slot1 & yy is plugged into slot2
- * 
+ *
  * real examples:
- * 
+ *
  * export ELM_MODULES="my_module>entry/api"
- * 
+ *
  * this loads the module called "my_module" into the slot "entry/api" which
  * is an api slot for entry modules to modify behavior and hook to
  * creation/deletion of the entry as well as replace the longpress behavior.
@@ -55,7 +55,7 @@ void
 _elm_module_parse(const char *s)
 {
    const char *p, *pe;
-   
+
    p = s;
    pe = p;
    for (;;)
@@ -68,7 +68,7 @@ _elm_module_parse(const char *s)
                   if (n)
                     {
                        char *nn;
-                       
+
                        strncpy(n, p, pe - p);
                        n[pe - p] = 0;
                        nn = strchr(n, '>');
@@ -94,14 +94,14 @@ Elm_Module *
 _elm_module_find_as(const char *as)
 {
    Elm_Module *m;
-   
+
    m = eina_hash_find(modules_as, as);
    if (!m) return NULL;
-   
+
    if (!_elm_module_load(m))
      {
         _elm_module_del(m);
-	return NULL;
+        return NULL;
      }
    return m;
 }
@@ -111,9 +111,9 @@ _elm_module_load(Elm_Module *m)
 {
    const char *home;
    char buf[PATH_MAX];
-   
+
    if (m->handle) return EINA_TRUE;
-   
+
    home = getenv("HOME");
    if (home)
      {
@@ -139,7 +139,7 @@ _elm_module_load(Elm_Module *m)
                }
           }
      }
-   
+
    if (!m->handle)
      {
         snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, m->name, MODULE_ARCH);
@@ -164,7 +164,7 @@ _elm_module_load(Elm_Module *m)
                }
           }
      }
-   
+
    if (!m->handle) return EINA_FALSE;
    return EINA_TRUE;
 }

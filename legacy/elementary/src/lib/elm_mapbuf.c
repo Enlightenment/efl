@@ -72,10 +72,10 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->content)
      {
-	evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
-	wd->content = NULL;
-	_sizing_eval(obj);
+        wd->content = NULL;
+        _sizing_eval(obj);
      }
 }
 
@@ -121,17 +121,17 @@ _configure(Evas_Object *obj)
         if ((x != x2) || (y != y2))
           {
              if (!wd->enabled)
-                evas_object_move(wd->content, x, y);
+               evas_object_move(wd->content, x, y);
              else
                {
-                  
+
                   Evas *e = evas_object_evas_get(obj);
                   evas_smart_objects_calculate(e);
                   evas_nochange_push(e);
-//                  printf("x-------------------- %i %i\n", x, y);
+                  //                  printf("x-------------------- %i %i\n", x, y);
                   evas_object_move(wd->content, x, y);
                   evas_smart_objects_calculate(e);
-//                  printf("y--------------------\n");
+                  //                  printf("y--------------------\n");
                   evas_nochange_pop(e);
                }
           }
@@ -148,7 +148,7 @@ _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 
 static void
 _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{    
+{
    _configure(data);
 }
 
@@ -168,7 +168,7 @@ elm_mapbuf_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "mapbuf");
    elm_widget_type_set(obj, "mapbuf");
    elm_widget_sub_object_add(parent, obj);
@@ -185,13 +185,13 @@ elm_mapbuf_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-  
+
    elm_widget_resize_object_set(obj, wd->clip);
-   
+
    wd->enabled = 0;
    wd->alpha = 1;
    wd->smooth = 1;
-   
+
    _sizing_eval(obj);
    return obj;
 }
@@ -220,13 +220,13 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
    if (content)
      {
         evas_object_data_set(content, "_elm_leaveme", (void *)1);
-	elm_widget_sub_object_add(content, obj);
-	evas_object_smart_member_add(content, obj);
+        elm_widget_sub_object_add(content, obj);
+        evas_object_smart_member_add(content, obj);
         evas_object_clip_set(content, wd->clip);
         evas_object_color_set(wd->clip, 255, 255, 255, 255);
-	evas_object_event_callback_add(content,
+        evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
+                                       _changed_size_hints, obj);
      }
    else
      evas_object_color_set(wd->clip, 0, 0, 0, 0);
