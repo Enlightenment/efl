@@ -120,6 +120,7 @@ struct _Widget_Data
    Eina_List *text_filters;
    Ecore_Job *hovdeljob;
    Mod_Api *api; // module api if supplied
+   int cursor_pos;
    Eina_Bool changed : 1;
    Eina_Bool linewrap : 1;
    Eina_Bool char_linewrap : 1;
@@ -136,7 +137,7 @@ struct _Widget_Data
    Eina_Bool can_write : 1;
    Eina_Bool autosave : 1;
    Eina_Bool textonly : 1;
-   int cursor_pos;
+   Eina_Bool usedown : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -680,9 +681,20 @@ _hoversel_position(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord cx, cy, cw, ch, x, y, mw, mh;
    if (!wd) return;
+   
+   cx = cy = 0;
+   cw = ch = 1;
    evas_object_geometry_get(wd->ent, &x, &y, NULL, NULL);
-   edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-                                             &cx, &cy, &cw, &ch);
+   if (wd->usedown)
+     {
+        cx = wd->downx - x;
+        cy = wd->downy - y;
+        cw = 1;
+        ch = 1;
+     }
+   else
+      edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+                                                &cx, &cy, &cw, &ch);
    evas_object_size_hint_min_get(wd->hoversel, &mw, &mh);
    if (cw < mw)
      {
@@ -739,6 +751,7 @@ _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
+   wd->usedown = 0;
    if (wd->hoversel) evas_object_hide(wd->hoversel);
    if (wd->selmode)
      {
@@ -843,46 +856,46 @@ _item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    if (it->func) it->func(it->data, obj2, NULL);
 }
 
-static Eina_Bool
-_long_press(void *data)
+static void
+_menu_press(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
+   Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *top;
    const Eina_List *l;
    const Elm_Entry_Context_Menu_Item *it;
-   if (!wd) return ECORE_CALLBACK_CANCEL;
+   if (!wd) return;
    if ((wd->api) && (wd->api->obj_longpress))
      {
-        wd->api->obj_longpress(data);
+        wd->api->obj_longpress(obj);
      }
    else if (wd->context_menu)
      {
         const char *context_menu_orientation;
 
         if (wd->hoversel) evas_object_del(wd->hoversel);
-        else elm_widget_scroll_freeze_push(data);
-        wd->hoversel = elm_hoversel_add(data);
+        else elm_widget_scroll_freeze_push(obj);
+        wd->hoversel = elm_hoversel_add(obj);
         context_menu_orientation = edje_object_data_get
            (wd->ent, "context_menu_orientation");
         if ((context_menu_orientation) &&
             (!strcmp(context_menu_orientation, "horizontal")))
           elm_hoversel_horizontal_set(wd->hoversel, EINA_TRUE);
         elm_object_style_set(wd->hoversel, "entry");
-        elm_widget_sub_object_add(data, wd->hoversel);
+        elm_widget_sub_object_add(obj, wd->hoversel);
         elm_hoversel_label_set(wd->hoversel, "Text");
-        top = elm_widget_top_get(data);
+        top = elm_widget_top_get(obj);
         if (top) elm_hoversel_hover_parent_set(wd->hoversel, top);
-        evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, data);
+        evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, obj);
         if (!wd->selmode)
           {
              if (!wd->password)
                elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
-                                     _select, data);
+                                     _select, obj);
              if (1) // need way to detect if someone has a selection
                {
                   if (wd->editable)
                     elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
-                                          _paste, data);
+                                          _paste, obj);
                }
           }
         else
@@ -892,13 +905,13 @@ _long_press(void *data)
                   if (wd->have_selection)
                     {
                        elm_hoversel_item_add(wd->hoversel, E_("Copy"), NULL, ELM_ICON_NONE,
-                                             _copy, data);
+                                             _copy, obj);
                        if (wd->editable)
                          elm_hoversel_item_add(wd->hoversel, E_("Cut"), NULL, ELM_ICON_NONE,
-                                               _cut, data);
+                                               _cut, obj);
                     }
                   elm_hoversel_item_add(wd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
-                                        _cancel, data);
+                                        _cancel, obj);
                }
           }
         EINA_LIST_FOREACH(wd->items, l, it)
@@ -908,13 +921,21 @@ _long_press(void *data)
           }
         if (wd->hoversel)
           {
-             _hoversel_position(data);
+             _hoversel_position(obj);
              evas_object_show(wd->hoversel);
              elm_hoversel_hover_begin(wd->hoversel);
           }
         edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
         edje_object_part_text_select_abort(wd->ent, "elm.text");
      }
+}
+
+static Eina_Bool
+_long_press(void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   _menu_press(data);
    wd->longpress_timer = NULL;
    evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
    return ECORE_CALLBACK_CANCEL;
@@ -928,12 +949,13 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    if (!wd) return;
    if (wd->disabled) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   if (ev->button != 1) return;
-   //   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-   if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
-   wd->longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
    wd->downx = ev->canvas.x;
    wd->downy = ev->canvas.y;
+   if (ev->button == 1)
+     {
+        if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
+        wd->longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
+     }
 }
 
 static void
@@ -943,11 +965,18 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
    Evas_Event_Mouse_Up *ev = event_info;
    if (!wd) return;
    if (wd->disabled) return;
-   if (ev->button != 1) return;
-   if (wd->longpress_timer)
+   if (ev->button == 1)
      {
-        ecore_timer_del(wd->longpress_timer);
-        wd->longpress_timer = NULL;
+        if (wd->longpress_timer)
+          {
+             ecore_timer_del(wd->longpress_timer);
+             wd->longpress_timer = NULL;
+          }
+     }
+   else if (ev->button == 3)
+     {
+        wd->usedown = 1;
+        _menu_press(data);
      }
 }
 
