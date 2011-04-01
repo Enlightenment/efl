@@ -141,7 +141,7 @@ elm_table_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "table");
    elm_widget_type_set(obj, "table");
    elm_widget_sub_object_add(parent, obj);
@@ -155,7 +155,7 @@ elm_table_add(Evas_Object *parent)
 
    wd->tbl = evas_object_table_add(e);
    evas_object_event_callback_add(wd->tbl, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                  _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->tbl);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);

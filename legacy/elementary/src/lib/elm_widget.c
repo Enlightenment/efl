@@ -32,15 +32,15 @@ struct _Smart_Data
    void         (*theme_func) (Evas_Object *obj);
    Eina_Bool    (*event_func) (Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info);
    void         (*signal_func) (Evas_Object *obj, const char *emission,
-	                        const char *source);
+                                const char *source);
    void         (*callback_add_func) (Evas_Object *obj, const char *emission,
-	                        const char *source, void (*func) (void *data,
-				   Evas_Object *o, const char *emission,
-				   const char *source), void *data);
+                                      const char *source, void (*func) (void *data,
+                                                                        Evas_Object *o, const char *emission,
+                                                                        const char *source), void *data);
    void         (*callback_del_func) (Evas_Object *obj, const char *emission,
-	                          const char *source, void (*func) (void *data,
-				     Evas_Object *o, const char *emission,
-				     const char *source), void *data);
+                                      const char *source, void (*func) (void *data,
+                                                                        Evas_Object *o, const char *emission,
+                                                                        const char *source), void *data);
    void         (*changed_func) (Evas_Object *obj);
    Eina_Bool    (*focus_next_func) (const Evas_Object *obj, Elm_Focus_Direction dir,
                                     Evas_Object **next);
@@ -200,30 +200,30 @@ static void
 _propagate_x_drag_lock(Evas_Object *obj, int dir)
 {
    INTERNAL_ENTRY
-   if (sd->parent_obj)
-     {
-        Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
-        if (sd2)
-          {
-             sd2->child_drag_x_locked += dir;
-             _propagate_x_drag_lock(sd->parent_obj, dir);
-          }
-     }
+      if (sd->parent_obj)
+        {
+           Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
+           if (sd2)
+             {
+                sd2->child_drag_x_locked += dir;
+                _propagate_x_drag_lock(sd->parent_obj, dir);
+             }
+        }
 }
 
 static void
 _propagate_y_drag_lock(Evas_Object *obj, int dir)
 {
    INTERNAL_ENTRY
-   if (sd->parent_obj)
-     {
-        Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
-        if (sd2)
-          {
-             sd2->child_drag_y_locked += dir;
-             _propagate_y_drag_lock(sd->parent_obj, dir);
-          }
-     }
+      if (sd->parent_obj)
+        {
+           Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
+           if (sd2)
+             {
+                sd2->child_drag_y_locked += dir;
+                _propagate_y_drag_lock(sd->parent_obj, dir);
+             }
+        }
 }
 
 static void
@@ -235,26 +235,26 @@ _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
 
    switch (type)
      {
-     case EVAS_CALLBACK_KEY_DOWN:
-          {
-             Evas_Event_Key_Down *ev = event_info;
-             event_flags = &(ev->event_flags);
-             break;
-          }
-     case EVAS_CALLBACK_KEY_UP:
-          {
-             Evas_Event_Key_Up *ev = event_info;
-             event_flags = &(ev->event_flags);
-             break;
-          }
-     case EVAS_CALLBACK_MOUSE_WHEEL:
-          {
-             Evas_Event_Mouse_Wheel *ev = event_info;
-             event_flags = &(ev->event_flags);
-             break;
-          }
-     default:
-        break;
+      case EVAS_CALLBACK_KEY_DOWN:
+           {
+              Evas_Event_Key_Down *ev = event_info;
+              event_flags = &(ev->event_flags);
+              break;
+           }
+      case EVAS_CALLBACK_KEY_UP:
+           {
+              Evas_Event_Key_Up *ev = event_info;
+              event_flags = &(ev->event_flags);
+              break;
+           }
+      case EVAS_CALLBACK_MOUSE_WHEEL:
+           {
+              Evas_Event_Mouse_Wheel *ev = event_info;
+              event_flags = &(ev->event_flags);
+              break;
+           }
+      default:
+         break;
      }
 
    elm_widget_event_propagate(obj, type, event_info, event_flags);
@@ -271,21 +271,21 @@ _parent_focus(Evas_Object *obj)
    if (sd->focused) return;
    if (o)
      {
-	unsigned int i = 0;
-	Evas_Object *ret;
+        unsigned int i = 0;
+        Evas_Object *ret;
 
-	ret = _newest_focus_order_get(o, &i, EINA_TRUE);
+        ret = _newest_focus_order_get(o, &i, EINA_TRUE);
 
-	/* we don't want to bump a common widget ancestor's
-	   focus_order *twice* while parent focusing */
-	if (!ret || (!i) || (i != focus_order))
-	  _parent_focus(o);
+        /* we don't want to bump a common widget ancestor's
+           focus_order *twice* while parent focusing */
+        if (!ret || (!i) || (i != focus_order))
+          _parent_focus(o);
      }
 
    if (!sd->focus_order_on_calc)
      return; /* we don't want to override it if by means of any of the
-		callbacks below one gets to calculate our order
-		first. */
+                callbacks below one gets to calculate our order
+                first. */
 
    focus_order++;
    sd->focus_order = focus_order;
@@ -511,7 +511,7 @@ elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force)
      }
    if (!force) return;
    EINA_LIST_FOREACH(sd->subobjs, l, child)
-     elm_widget_theme_specific(child, th, force);
+      elm_widget_theme_specific(child, th, force);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
@@ -562,8 +562,8 @@ elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
    API_ENTRY return;
    if (sd->is_mirrored != mirrored)
      {
-	sd->is_mirrored = mirrored;
-	elm_widget_theme(obj);
+        sd->is_mirrored = mirrored;
+        elm_widget_theme(obj);
      }
 }
 
@@ -582,7 +582,7 @@ _elm_widget_mirrored_reload(Evas_Object *obj)
    Eina_Bool mirrored = elm_mirrored_get();
    if (elm_widget_mirrored_automatic_get(obj) && (sd->is_mirrored != mirrored))
      {
-	sd->is_mirrored = mirrored;
+        sd->is_mirrored = mirrored;
      }
 }
 
@@ -613,7 +613,7 @@ elm_widget_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic)
    API_ENTRY return;
    if (sd->mirrored_auto_mode != automatic)
      {
-	sd->mirrored_auto_mode = automatic;
+        sd->mirrored_auto_mode = automatic;
 
         if (automatic)
           {
@@ -739,7 +739,7 @@ elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj)
 
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
-   evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);  
+   evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
    if (_elm_widget_is(sobj))
      evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE, _sub_obj_hide, sd);
    evas_object_smart_callback_call(obj, "sub-object-add", sobj);
@@ -760,20 +760,20 @@ elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj)
    sobj_parent = evas_object_data_del(sobj, "elm-parent");
    if (sobj_parent != obj)
      {
-	static int abort_on_warn = -1;
-	ERR("removing sub object %p from parent %p, "
-	    "but elm-parent is different %p!",
-	    sobj, obj, sobj_parent);
-	if (EINA_UNLIKELY(abort_on_warn == -1))
-	  {
-	     if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
-	     else abort_on_warn = 0;
-	  }
-	if (abort_on_warn == 1) abort();
+        static int abort_on_warn = -1;
+        ERR("removing sub object %p from parent %p, "
+            "but elm-parent is different %p!",
+            sobj, obj, sobj_parent);
+        if (EINA_UNLIKELY(abort_on_warn == -1))
+          {
+             if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+             else abort_on_warn = 0;
+          }
+        if (abort_on_warn == 1) abort();
      }
    if (!sd->child_can_focus)
      {
-	if (_is_focusable(sobj)) sd->child_can_focus = 0;
+        if (_is_focusable(sobj)) sd->child_can_focus = 0;
      }
    if (_elm_widget_is(sobj))
      {
@@ -807,20 +807,20 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    // orphan previous resize obj
    if (sd->resize_obj)
      {
-	evas_object_clip_unset(sd->resize_obj);
-	evas_object_data_del(sd->resize_obj, "elm-parent");
-	if (_elm_widget_is(sd->resize_obj))
-	  {
-	     Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
-	     if (sd2) sd2->parent_obj = NULL;
+        evas_object_clip_unset(sd->resize_obj);
+        evas_object_data_del(sd->resize_obj, "elm-parent");
+        if (_elm_widget_is(sd->resize_obj))
+          {
+             Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
+             if (sd2) sd2->parent_obj = NULL;
              evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_HIDE,
                                                  _sub_obj_hide, sd);
-	  }
-	evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_DEL,
+          }
+        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_DEL,
                                             _sub_obj_del, sd);
-	evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _sub_obj_mouse_down, sd);
-	evas_object_smart_member_del(sd->resize_obj);
+        evas_object_smart_member_del(sd->resize_obj);
         if (_elm_widget_is(sd->resize_obj))
           {
              if (elm_widget_focus_get(sd->resize_obj)) _unfocus_parents(obj);
@@ -851,22 +851,22 @@ elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj)
    sd->resize_obj = sobj;
    if (sd->resize_obj)
      {
-	if (_elm_widget_is(sd->resize_obj))
-	  {
-	     Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
-	     if (sd2) sd2->parent_obj = obj;
+        if (_elm_widget_is(sd->resize_obj))
+          {
+             Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
+             if (sd2) sd2->parent_obj = obj;
              evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE,
                                             _sub_obj_hide, sd);
-	  }
-	evas_object_clip_set(sobj, evas_object_clip_get(obj));
-	evas_object_smart_member_add(sobj, obj);
-	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
+          }
+        evas_object_clip_set(sobj, evas_object_clip_get(obj));
+        evas_object_smart_member_add(sobj, obj);
+        evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
                                        _sub_obj_del, sd);
-	evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN,
                                        _sub_obj_mouse_down, sd);
-	_smart_reconfigure(sd);
-	evas_object_data_set(sobj, "elm-parent", obj);
-	evas_object_smart_callback_call(obj, "sub-object-add", sobj);
+        _smart_reconfigure(sd);
+        evas_object_data_set(sobj, "elm-parent", obj);
+        evas_object_smart_callback_call(obj, "sub-object-add", sobj);
         if (_elm_widget_is(sobj))
           {
              if (elm_widget_focus_get(sobj)) _focus_parents(obj);
@@ -880,15 +880,15 @@ elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj)
    API_ENTRY return;
    if (sd->hover_obj)
      {
-	evas_object_event_callback_del_full(sd->hover_obj, EVAS_CALLBACK_DEL,
-           _sub_obj_del, sd);
+        evas_object_event_callback_del_full(sd->hover_obj, EVAS_CALLBACK_DEL,
+                                            _sub_obj_del, sd);
      }
    sd->hover_obj = sobj;
    if (sd->hover_obj)
      {
-	evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
+        evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
                                        _sub_obj_del, sd);
-	_smart_reconfigure(sd);
+        _smart_reconfigure(sd);
      }
 }
 
@@ -980,8 +980,8 @@ elm_widget_focused_object_get(const Evas_Object *obj)
    if (!sd->focused) return NULL;
    EINA_LIST_FOREACH(sd->subobjs, l, subobj)
      {
-	Evas_Object *fobj = elm_widget_focused_object_get(subobj);
-	if (fobj) return fobj;
+        Evas_Object *fobj = elm_widget_focused_object_get(subobj);
+        if (fobj) return fobj;
      }
    return (Evas_Object *)obj;
 }
@@ -1007,23 +1007,23 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
 
    if (_elm_widget_is(obj))
      {
-	Smart_Data *sd = evas_object_smart_data_get(obj);
-	if (!sd) return NULL;
-	parent = sd->parent_obj;
+        Smart_Data *sd = evas_object_smart_data_get(obj);
+        if (!sd) return NULL;
+        parent = sd->parent_obj;
      }
    else
      {
-	parent = evas_object_data_get(obj, "elm-parent");
-	if (!parent) parent = evas_object_smart_parent_get(obj);
+        parent = evas_object_data_get(obj, "elm-parent");
+        if (!parent) parent = evas_object_smart_parent_get(obj);
      }
 
    while (parent)
      {
-	Evas_Object *elm_parent;
-	if (_elm_widget_is(parent)) break;
-	elm_parent = evas_object_data_get(parent, "elm-parent");
+        Evas_Object *elm_parent;
+        if (_elm_widget_is(parent)) break;
+        elm_parent = evas_object_data_get(parent, "elm-parent");
         if (elm_parent) parent = elm_parent;
-	else parent = evas_object_smart_parent_get(parent);
+        else parent = evas_object_smart_parent_get(parent);
      }
    return parent;
 }
@@ -1079,7 +1079,7 @@ elm_widget_event_propagate(Evas_Object *obj, Evas_Callback_Type type, void *even
           {
              if (ecd->func((void *)ecd->data, parent, obj, type, event_info) ||
                  (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD)))
-                 return EINA_TRUE;
+               return EINA_TRUE;
           }
         parent = sd->parent_obj;
      }
@@ -1492,60 +1492,60 @@ elm_widget_focus_set(Evas_Object *obj, int first)
      {
         focus_order++;
         sd->focus_order = focus_order;
-	sd->focused = EINA_TRUE;
-	if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
+        sd->focused = EINA_TRUE;
+        if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
      }
    if (sd->focus_func)
      {
-	sd->focus_func(obj);
-	return;
+        sd->focus_func(obj);
+        return;
      }
    else
      {
-	if (first)
-	  {
-	     if ((_is_focusable(sd->resize_obj)) &&
-		 (!elm_widget_disabled_get(sd->resize_obj)))
-	       {
-		  elm_widget_focus_set(sd->resize_obj, first);
-	       }
-	     else
-	       {
-		  const Eina_List *l;
-		  Evas_Object *child;
-		  EINA_LIST_FOREACH(sd->subobjs, l, child)
-		    {
-		       if ((_is_focusable(child)) &&
-			   (!elm_widget_disabled_get(child)))
-			 {
-			    elm_widget_focus_set(child, first);
-			    break;
-			 }
-		    }
-	       }
-	  }
-	else
-	  {
-	     const Eina_List *l;
-	     Evas_Object *child;
-	     EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
-	       {
-		  if ((_is_focusable(child)) &&
-		      (!elm_widget_disabled_get(child)))
-		    {
-		       elm_widget_focus_set(child, first);
-		       break;
-		    }
-	       }
-	     if (!l)
-	       {
-		  if ((_is_focusable(sd->resize_obj)) &&
-		      (!elm_widget_disabled_get(sd->resize_obj)))
-		    {
-		       elm_widget_focus_set(sd->resize_obj, first);
-		    }
-	       }
-	  }
+        if (first)
+          {
+             if ((_is_focusable(sd->resize_obj)) &&
+                 (!elm_widget_disabled_get(sd->resize_obj)))
+               {
+                  elm_widget_focus_set(sd->resize_obj, first);
+               }
+             else
+               {
+                  const Eina_List *l;
+                  Evas_Object *child;
+                  EINA_LIST_FOREACH(sd->subobjs, l, child)
+                    {
+                       if ((_is_focusable(child)) &&
+                           (!elm_widget_disabled_get(child)))
+                         {
+                            elm_widget_focus_set(child, first);
+                            break;
+                         }
+                    }
+               }
+          }
+        else
+          {
+             const Eina_List *l;
+             Evas_Object *child;
+             EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
+               {
+                  if ((_is_focusable(child)) &&
+                      (!elm_widget_disabled_get(child)))
+                    {
+                       elm_widget_focus_set(child, first);
+                       break;
+                    }
+               }
+             if (!l)
+               {
+                  if ((_is_focusable(sd->resize_obj)) &&
+                      (!elm_widget_disabled_get(sd->resize_obj)))
+                    {
+                       elm_widget_focus_set(sd->resize_obj, first);
+                    }
+               }
+          }
      }
 }
 
@@ -1562,19 +1562,19 @@ elm_widget_focused_object_clear(Evas_Object *obj)
    API_ENTRY return;
    if (!sd->focused) return;
    if (elm_widget_focus_get(sd->resize_obj))
-      elm_widget_focused_object_clear(sd->resize_obj);
+     elm_widget_focused_object_clear(sd->resize_obj);
    else
      {
-	const Eina_List *l;
-	Evas_Object *child;
-	EINA_LIST_FOREACH(sd->subobjs, l, child)
-	  {
-	     if (elm_widget_focus_get(child))
-	       {
-		  elm_widget_focused_object_clear(child);
-		  break;
-	       }
-	  }
+        const Eina_List *l;
+        Evas_Object *child;
+        EINA_LIST_FOREACH(sd->subobjs, l, child)
+          {
+             if (elm_widget_focus_get(child))
+               {
+                  elm_widget_focused_object_clear(child);
+                  break;
+               }
+          }
      }
    sd->focused = EINA_FALSE;
    if (sd->on_focus_func) sd->on_focus_func(sd->on_focus_data, obj);
@@ -1592,33 +1592,33 @@ elm_widget_focus_steal(Evas_Object *obj)
    parent = obj;
    for (;;)
      {
-	o = elm_widget_parent_get(parent);
-	if (!o) break;
-	sd = evas_object_smart_data_get(o);
-	if (sd->focused) break;
-	parent = o;
+        o = elm_widget_parent_get(parent);
+        if (!o) break;
+        sd = evas_object_smart_data_get(o);
+        if (sd->focused) break;
+        parent = o;
      }
    if (!elm_widget_parent_get(parent))
      elm_widget_focused_object_clear(parent);
    else
      {
-	parent = elm_widget_parent_get(parent);
-	sd = evas_object_smart_data_get(parent);
+        parent = elm_widget_parent_get(parent);
+        sd = evas_object_smart_data_get(parent);
         if ((sd->resize_obj) && (elm_widget_focus_get(sd->resize_obj)))
           elm_widget_focused_object_clear(sd->resize_obj);
         else
-	  {
-	     const Eina_List *l;
-	     Evas_Object *child;
-	     EINA_LIST_FOREACH(sd->subobjs, l, child)
-	       {
-		  if (elm_widget_focus_get(child))
-		    {
-		       elm_widget_focused_object_clear(child);
-		       break;
-		    }
-	       }
-	  }
+          {
+             const Eina_List *l;
+             Evas_Object *child;
+             EINA_LIST_FOREACH(sd->subobjs, l, child)
+               {
+                  if (elm_widget_focus_get(child))
+                    {
+                       elm_widget_focused_object_clear(child);
+                       break;
+                    }
+               }
+          }
      }
    _parent_focus(obj);
    return;
@@ -1649,15 +1649,15 @@ elm_widget_disabled_set(Evas_Object *obj, int disabled)
    sd->disabled = disabled;
    if (sd->focused)
      {
-	Evas_Object *o, *parent;
+        Evas_Object *o, *parent;
 
-	parent = obj;
-	for (;;)
-	  {
-	     o = elm_widget_parent_get(parent);
-	     if (!o) break;
-	     parent = o;
-	  }
+        parent = obj;
+        for (;;)
+          {
+             o = elm_widget_parent_get(parent);
+             if (!o) break;
+             parent = o;
+          }
         if (elm_widget_focus_get(obj))
           elm_widget_focus_cycle(parent, ELM_FOCUS_NEXT);
      }
@@ -1684,7 +1684,7 @@ elm_widget_show_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    sd->rw = w;
    sd->rh = h;
    if (sd->on_show_region_func)
-      sd->on_show_region_func(sd->on_show_region_data, obj);
+     sd->on_show_region_func(sd->on_show_region_data, obj);
 
    do
      {
@@ -1766,7 +1766,7 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_hold++;
    if (sd->scroll_hold == 1)
-      evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
+     evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_push(sd->parent_obj);
    // FIXME: on delete/reparent hold pop
 }
@@ -1778,7 +1778,7 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
    sd->scroll_hold--;
    if (sd->scroll_hold < 0) sd->scroll_hold = 0;
    if (!sd->scroll_hold)
-      evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
+     evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
 }
 
@@ -1795,7 +1795,7 @@ elm_widget_scroll_freeze_push(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_freeze++;
    if (sd->scroll_freeze == 1)
-      evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
+     evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
    if (sd->parent_obj) elm_widget_scroll_freeze_push(sd->parent_obj);
    // FIXME: on delete/reparent freeze pop
 }
@@ -1807,7 +1807,7 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
    sd->scroll_freeze--;
    if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
    if (!sd->scroll_freeze)
-      evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
+     evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
    if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
 }
 
@@ -1825,8 +1825,8 @@ elm_widget_scale_set(Evas_Object *obj, double scale)
    if (scale <= 0.0) scale = 0.0;
    if (sd->scale != scale)
      {
-	sd->scale = scale;
-	elm_widget_theme(obj);
+        sd->scale = scale;
+        elm_widget_theme(obj);
      }
 }
 
@@ -1837,10 +1837,10 @@ elm_widget_scale_get(const Evas_Object *obj)
    // FIXME: save walking up the tree by storing/caching parent scale
    if (sd->scale == 0.0)
      {
-	if (sd->parent_obj)
-           return elm_widget_scale_get(sd->parent_obj);
-	else
-           return 1.0;
+        if (sd->parent_obj)
+          return elm_widget_scale_get(sd->parent_obj);
+        else
+          return 1.0;
      }
    return sd->scale;
 }
@@ -1865,9 +1865,9 @@ elm_widget_theme_get(const Evas_Object *obj)
    if (!sd->theme)
      {
         if (sd->parent_obj)
-           return elm_widget_theme_get(sd->parent_obj);
+          return elm_widget_theme_get(sd->parent_obj);
         else
-           return NULL;
+          return NULL;
      }
    return sd->theme;
 }
@@ -1878,7 +1878,7 @@ elm_widget_style_set(Evas_Object *obj, const char *style)
    API_ENTRY return;
 
    if (eina_stringshare_replace(&sd->style, style))
-      elm_widget_theme(obj);
+     elm_widget_theme(obj);
 }
 
 EAPI const char *
@@ -1999,7 +1999,7 @@ elm_widget_type_check(const Evas_Object *obj, const char *type)
      {
         provided = evas_object_type_get(obj);
         if ((!provided) || (!provided[0]))
-           provided = "(unknown)";
+          provided = "(unknown)";
      }
    ERR("Passing Object: %p, of type: '%s' when expecting type: '%s'", obj, provided, expected);
    if (abort_on_warn == -1)
@@ -2030,19 +2030,19 @@ elm_widget_stringlist_get(const char *str)
    if (!str) return NULL;
    for (b = s = str; 1; s++)
      {
-	if ((*s == ' ') || (!*s))
-	  {
-	     char *t = malloc(s - b + 1);
-	     if (t)
-	       {
-		  strncpy(t, b, s - b);
-		  t[s - b] = 0;
-		  list = eina_list_append(list, eina_stringshare_add(t));
-		  free(t);
-	       }
-	     b = s + 1;
-	  }
-	if (!*s) break;
+        if ((*s == ' ') || (!*s))
+          {
+             char *t = malloc(s - b + 1);
+             if (t)
+               {
+                  strncpy(t, b, s - b);
+                  t[s - b] = 0;
+                  list = eina_list_append(list, eina_stringshare_add(t));
+                  free(t);
+               }
+             b = s + 1;
+          }
+        if (!*s) break;
      }
    return list;
 }
@@ -2264,8 +2264,8 @@ _elm_widget_item_tooltip_text_set(Elm_Widget_Item *item, const char *text)
 
    text = eina_stringshare_add(text);
    _elm_widget_item_tooltip_content_cb_set
-     (item, _elm_widget_item_tooltip_label_create, text,
-      _elm_widget_item_tooltip_label_del_cb);
+      (item, _elm_widget_item_tooltip_label_create, text,
+       _elm_widget_item_tooltip_label_del_cb);
 }
 
 static Evas_Object *
@@ -2326,15 +2326,15 @@ _elm_widget_item_tooltip_content_cb_set(Elm_Widget_Item *item, Elm_Tooltip_Item_
    wit->del_cb = del_cb;
 
    elm_object_sub_tooltip_content_cb_set
-     (item->view, item->widget, _elm_widget_item_tooltip_create, wit,
-      _elm_widget_item_tooltip_del_cb);
+      (item->view, item->widget, _elm_widget_item_tooltip_create, wit,
+       _elm_widget_item_tooltip_del_cb);
 
    return;
 
- error_noitem:
+error_noitem:
    if (del_cb) del_cb((void *)data, NULL, item);
    return;
- error:
+error:
    if (del_cb) del_cb((void *)data, item->widget, item);
 }
 
@@ -2507,12 +2507,12 @@ _smart_reconfigure(Smart_Data *sd)
    if (sd->resize_obj)
      {
         evas_object_move(sd->resize_obj, sd->x, sd->y);
-	evas_object_resize(sd->resize_obj, sd->w, sd->h);
+        evas_object_resize(sd->resize_obj, sd->w, sd->h);
      }
    if (sd->hover_obj)
      {
         evas_object_move(sd->hover_obj, sd->x, sd->y);
-	evas_object_resize(sd->hover_obj, sd->w, sd->h);
+        evas_object_resize(sd->hover_obj, sd->w, sd->h);
      }
 }
 
@@ -2553,7 +2553,7 @@ _newest_focus_order_get(Evas_Object *obj, unsigned int *newest_focus_order, Eina
    if (can_focus_only)
      {
         if ((!best) || (!elm_widget_can_focus_get(best)))
-	  return NULL;
+          return NULL;
      }
    return best;
 }
@@ -2593,25 +2593,25 @@ _smart_del(Evas_Object *obj)
    if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
      {
-	sobj = sd->resize_obj;
-	sd->resize_obj = NULL;
-	evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-	evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
-	evas_object_del(sobj);
+        sobj = sd->resize_obj;
+        sd->resize_obj = NULL;
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
+        evas_object_del(sobj);
      }
    if (sd->hover_obj)
      {
-	sobj = sd->hover_obj;
-	sd->hover_obj = NULL;
-	evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-	evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
-	evas_object_del(sobj);
+        sobj = sd->hover_obj;
+        sd->hover_obj = NULL;
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
+        evas_object_del(sobj);
      }
    EINA_LIST_FREE(sd->subobjs, sobj)
      {
-	evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-	evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
-	evas_object_del(sobj);
+        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
+        evas_object_del(sobj);
      }
    eina_list_free(sd->tooltips); /* should be empty anyway */
    eina_list_free(sd->cursors); /* should be empty anyway */
@@ -2739,9 +2739,9 @@ _smart_init(void)
 {
    if (_e_smart) return;
      {
-	static const Evas_Smart_Class sc =
-	  {
-	     SMART_NAME,
+        static const Evas_Smart_Class sc =
+          {
+             SMART_NAME,
              EVAS_SMART_CLASS_VERSION,
              _smart_add,
              _smart_del,
@@ -2759,8 +2759,8 @@ _smart_init(void)
              NULL,
              NULL,
              NULL
-	  };
-	_e_smart = evas_smart_class_new(&sc);
+          };
+        _e_smart = evas_smart_class_new(&sc);
      }
 }
 
@@ -2778,7 +2778,7 @@ _sub_obj_tree_dump(const Evas_Object *obj, int lvl)
      {
         Eina_List *l;
         INTERNAL_ENTRY
-        printf("+ %s(%p)\n", sd->type, obj);
+           printf("+ %s(%p)\n", sd->type, obj);
         if (sd->resize_obj)
           _sub_obj_tree_dump(sd->resize_obj, lvl + 1);
         EINA_LIST_FOREACH(sd->subobjs, l, obj)
@@ -2798,7 +2798,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
      return;
    INTERNAL_ENTRY
 
-   Eina_Bool visible = evas_object_visible_get(obj);
+      Eina_Bool visible = evas_object_visible_get(obj);
    Eina_Bool disabled = elm_widget_disabled_get(obj);
    Eina_Bool focused = elm_widget_focus_get(obj);
    Eina_Bool can_focus = elm_widget_can_focus_get(obj);
@@ -2822,13 +2822,13 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj, FILE *output)
            sd->focus_order);
 
    if (focused)
-        fprintf(output, ", style=bold");
+     fprintf(output, ", style=bold");
 
    if (!visible)
-        fprintf(output, ", fontcolor=gray28");
+     fprintf(output, ", fontcolor=gray28");
 
    if ((disabled) || (!visible))
-        fprintf(output, ", color=gray");
+     fprintf(output, ", color=gray");
 
 
    fprintf(output, " ];\n");

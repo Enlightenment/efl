@@ -41,8 +41,8 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_CHANGED, ""},
-  {NULL, NULL}
+       {SIG_CHANGED, ""},
+       {NULL, NULL}
 };
 
 static Eina_Bool
@@ -93,13 +93,13 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-	edje_object_signal_emit(wd->tgl, "elm,action,focus", "elm");
-	evas_object_focus_set(wd->tgl, EINA_TRUE);
+        edje_object_signal_emit(wd->tgl, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->tgl, EINA_TRUE);
      }
    else
      {
-	edje_object_signal_emit(wd->tgl, "elm,action,unfocus", "elm");
-	evas_object_focus_set(wd->tgl, EINA_FALSE);
+        edje_object_signal_emit(wd->tgl, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->tgl, EINA_FALSE);
      }
 }
 
@@ -172,12 +172,12 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->icon)
      {
-	edje_object_signal_emit(wd->tgl, "elm,state,icon,hidden", "elm");
-	evas_object_event_callback_del_full
-	  (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
-	wd->icon = NULL;
-	edje_object_message_signal_process(wd->tgl);
-	_sizing_eval(obj);
+        edje_object_signal_emit(wd->tgl, "elm,state,icon,hidden", "elm");
+        evas_object_event_callback_del_full
+           (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+        wd->icon = NULL;
+        edje_object_message_signal_process(wd->tgl);
+        _sizing_eval(obj);
      }
 }
 
@@ -218,7 +218,7 @@ elm_toggle_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "toggle");
    elm_widget_type_set(obj, "toggle");
    elm_widget_sub_object_add(parent, obj);
@@ -318,12 +318,12 @@ elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
    wd->icon = icon;
    if (icon)
      {
-	elm_widget_sub_object_add(obj, icon);
-	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-	      _changed_size_hints, obj);
-	edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
-	edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
-	edje_object_message_signal_process(wd->tgl);
+        elm_widget_sub_object_add(obj, icon);
+        evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->tgl, "elm.swallow.content", icon);
+        edje_object_signal_emit(wd->tgl, "elm,state,icon,visible", "elm");
+        edje_object_message_signal_process(wd->tgl);
      }
    _sizing_eval(obj);
 }
@@ -431,12 +431,12 @@ elm_toggle_state_set(Evas_Object *obj, Eina_Bool state)
    if (!wd) return;
    if (state != wd->state)
      {
-	wd->state = state;
-	if (wd->statep) *wd->statep = wd->state;
-	if (wd->state)
-	  edje_object_signal_emit(wd->tgl, "elm,state,toggle,on", "elm");
-	else
-	  edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
+        wd->state = state;
+        if (wd->statep) *wd->statep = wd->state;
+        if (wd->state)
+          edje_object_signal_emit(wd->tgl, "elm,state,toggle,on", "elm");
+        else
+          edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
      }
 }
 
@@ -473,15 +473,15 @@ elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep)
    if (!wd) return;
    if (statep)
      {
-	wd->statep = statep;
-	if (*wd->statep != wd->state)
-	  {
-	     wd->state = *wd->statep;
-	     if (wd->state)
-	       edje_object_signal_emit(wd->tgl, "elm,state,toggle,on", "elm");
-	     else
-	       edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
-	  }
+        wd->statep = statep;
+        if (*wd->statep != wd->state)
+          {
+             wd->state = *wd->statep;
+             if (wd->state)
+               edje_object_signal_emit(wd->tgl, "elm,state,toggle,on", "elm");
+             else
+               edje_object_signal_emit(wd->tgl, "elm,state,toggle,off", "elm");
+          }
      }
    else
      wd->statep = NULL;

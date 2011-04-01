@@ -13,33 +13,33 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int horiz
    minh = 0;
    if (homogeneous)
      {
-	EINA_LIST_FOREACH(priv->children, l, opt)
-	  {
-	     evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
-	     if (minh < mnh) minh = mnh;
-	     if (minw < mnw) minw = mnw;
-	  }
-	if (horizontal)
+        EINA_LIST_FOREACH(priv->children, l, opt)
+          {
+             evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+             if (minh < mnh) minh = mnh;
+             if (minw < mnw) minw = mnw;
+          }
+        if (horizontal)
           minw *= eina_list_count(priv->children);
-	else
+        else
           minh *= eina_list_count(priv->children);
      }
    else
      {
-	EINA_LIST_FOREACH(priv->children, l, opt)
-	  {
-	     evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
-	     if (horizontal)
-	       {
-		  if (minh < mnh) minh = mnh;
-		  minw += mnw;
-	       }
-	     else
-	       {
-		  if (minw < mnw) minw = mnw;
-		  minh += mnh;
-	       }
-	  }
+        EINA_LIST_FOREACH(priv->children, l, opt)
+          {
+             evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
+             if (horizontal)
+               {
+                  if (minh < mnh) minh = mnh;
+                  minw += mnw;
+               }
+             else
+               {
+                  if (minw < mnw) minw = mnw;
+                  minh += mnh;
+               }
+          }
      }
    evas_object_size_hint_min_set(box, minw, minh);
 }
@@ -64,41 +64,41 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    count = eina_list_count(priv->children);
    if (w < minw)
      {
-	x = x + ((w - minw) * (1.0 - ax));
-	w = minw;
+        x = x + ((w - minw) * (1.0 - ax));
+        w = minw;
      }
    if (h < minh)
      {
-	y = y + ((h - minh) * (1.0 - ay));
-	h = minh;
+        y = y + ((h - minh) * (1.0 - ay));
+        h = minh;
      }
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
         double wx, wy;
 
-	evas_object_size_hint_weight_get(opt->obj, &wx, &wy);
-	if (horizontal)
-	  {
-	     if (wx > 0.0) expand++;
-	  }
-	else
-	  {
-	     if (wy > 0.0) expand++;
-	  }
+        evas_object_size_hint_weight_get(opt->obj, &wx, &wy);
+        if (horizontal)
+          {
+             if (wx > 0.0) expand++;
+          }
+        else
+          {
+             if (wy > 0.0) expand++;
+          }
      }
    if (!expand)
      {
-	evas_object_size_hint_align_get(o, &ax, &ay);
-	if (horizontal)
-	  {
-	     x += (double)(w - minw) * ax;
-	     w = minw;
-	  }
-	else
-	  {
-	     y += (double)(h - minh) * ay;
-	     h = minh;
-	  }
+        evas_object_size_hint_align_get(o, &ax, &ay);
+        if (horizontal)
+          {
+             x += (double)(w - minw) * ax;
+             w = minw;
+          }
+        else
+          {
+             y += (double)(h - minh) * ay;
+             h = minh;
+          }
      }
    wdif = w - minw;
    hdif = h - minh;
@@ -110,36 +110,36 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
         double wx, wy;
         int fw, fh, xw, xh;
 
-	obj = opt->obj;
-	evas_object_size_hint_align_get(obj, &ax, &ay);
-	evas_object_size_hint_weight_get(obj, &wx, &wy);
-	evas_object_size_hint_min_get(obj, &mnw, &mnh);
-	evas_object_size_hint_max_get(obj, &mxw, &mxh);
-	fw = fh = 0;
-	xw = xh = 0;
-	if (ax == -1.0) {fw = 1; ax = 0.5;}
-	if (ay == -1.0) {fh = 1; ay = 0.5;}
-	if (wx > 0.0) xw = 1;
-	if (wy > 0.0) xh = 1;
-	if (horizontal)
-	  {
+        obj = opt->obj;
+        evas_object_size_hint_align_get(obj, &ax, &ay);
+        evas_object_size_hint_weight_get(obj, &wx, &wy);
+        evas_object_size_hint_min_get(obj, &mnw, &mnh);
+        evas_object_size_hint_max_get(obj, &mxw, &mxh);
+        fw = fh = 0;
+        xw = xh = 0;
+        if (ax == -1.0) {fw = 1; ax = 0.5;}
+        if (ay == -1.0) {fh = 1; ay = 0.5;}
+        if (wx > 0.0) xw = 1;
+        if (wy > 0.0) xh = 1;
+        if (horizontal)
+          {
              Evas_Coord ww, hh, ow, oh;
 
-	     if (homogeneous)
-	       {
-		  ww = (w / (Evas_Coord)count);
-	       }
-	     else
-	       {
-		  ww = mnw;
-		  if ((expand > 0) && (xw))
-		    {
-		       if (expand == 1) ow = wdif;
-		       else ow = (w - minw) / expand;
-		       wdif -= ow;
-		       ww += ow;
-		    }
-	       }
+             if (homogeneous)
+               {
+                  ww = (w / (Evas_Coord)count);
+               }
+             else
+               {
+                  ww = mnw;
+                  if ((expand > 0) && (xw))
+                    {
+                       if (expand == 1) ow = wdif;
+                       else ow = (w - minw) / expand;
+                       wdif -= ow;
+                       ww += ow;
+                    }
+               }
              hh = h;
              ow = mnw;
              if (fw) ow = ww;
@@ -148,31 +148,31 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
              if (fh) oh = hh;
              if ((mxh >= 0) && (mxh < oh)) oh = mxh;
              evas_object_move(obj,
-                   ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
-                   + (Evas_Coord)(((double)(ww - ow)) * ax),
-                   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+                              ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
+                              + (Evas_Coord)(((double)(ww - ow)) * ax),
+                              yy + (Evas_Coord)(((double)(hh - oh)) * ay));
              evas_object_resize(obj, ow, oh);
              xx += ww;
-	  }
-	else
-	  {
+          }
+        else
+          {
              Evas_Coord ww, hh, ow, oh;
 
-	     if (homogeneous)
-	       {
-		  hh = (h / (Evas_Coord)count);
-	       }
-	     else
-	       {
-		  hh = mnh;
-		  if ((expand > 0) && (xh))
-		    {
-		       if (expand == 1) oh = hdif;
-		       else oh = (h - minh) / expand;
-		       hdif -= oh;
-		       hh += oh;
-		    }
-	       }
+             if (homogeneous)
+               {
+                  hh = (h / (Evas_Coord)count);
+               }
+             else
+               {
+                  hh = mnh;
+                  if ((expand > 0) && (xh))
+                    {
+                       if (expand == 1) oh = hdif;
+                       else oh = (h - minh) / expand;
+                       hdif -= oh;
+                       hh += oh;
+                    }
+               }
              ww = w;
              ow = mnw;
              if (fw) ow = ww;
@@ -181,11 +181,11 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
              if (fh) oh = hh;
              if ((mxh >= 0) && (mxh < oh)) oh = mxh;
              evas_object_move(obj,
-                   xx + (Evas_Coord)(((double)(ww - ow)) * ax),
-                   yy + (Evas_Coord)(((double)(hh - oh)) * ay));
+                              xx + (Evas_Coord)(((double)(ww - ow)) * ax),
+                              yy + (Evas_Coord)(((double)(hh - oh)) * ay));
              evas_object_resize(obj, ow, oh);
              yy += hh;
-	  }
+          }
      }
 }
 
