@@ -211,7 +211,7 @@ elm_anchorblock_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "anchorblock");
    elm_widget_type_set(obj, "anchorblock");
    elm_widget_sub_object_add(parent, obj);
@@ -229,12 +229,12 @@ elm_anchorblock_add(Evas_Object *parent)
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    evas_object_event_callback_add(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                  _changed_size_hints, obj);
 
    elm_entry_entry_set(wd->entry, "");
 
    evas_object_smart_callback_add(wd->entry, "anchor,clicked",
-				  _anchor_clicked, obj);
+                                  _anchor_clicked, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
