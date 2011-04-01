@@ -621,13 +621,12 @@ _round_items_add(Widget_Data *wd)
 EAPI Evas_Object *
 elm_diskselector_add(Evas_Object *parent)
 {
+   Evas *e;
    Evas_Object *obj;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   wd->self = obj = elm_widget_add(evas_object_evas_get(parent));
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "diskselector");
    elm_widget_type_set(obj, "diskselector");
    elm_widget_sub_object_add(parent, obj);
@@ -639,12 +638,13 @@ elm_diskselector_add(Evas_Object *parent)
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_event_hook_set(obj, _event_hook);
 
+   wd->self = obj;
    wd->item_count = 0;
    wd->round = EINA_FALSE;
    wd->init = EINA_FALSE;
    wd->len_side = 3;
 
-   wd->scroller = elm_smart_scroller_add(evas_object_evas_get(parent));
+   wd->scroller = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scroller, obj);
    _theme_hook(obj);
    elm_widget_resize_object_set(obj, wd->scroller);

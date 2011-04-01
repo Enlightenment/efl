@@ -564,18 +564,13 @@ _populate(Evas_Object      *obj,
 EAPI Evas_Object *
 elm_fileselector_add(Evas_Object *parent)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   Evas *e = evas_object_evas_get(parent);
-   if (!e) return NULL;
+   Evas *e;
    Evas_Object *obj, *ic, *bt, *li, *en, *grid;
    Widget_Data *wd;
    int s;
 
-   // Elementary Widget
-   wd = ELM_NEW(Widget_Data);
-   wd->expand = !!_elm_config->fileselector_expand_enable;
-   obj = elm_widget_add(evas_object_evas_get(parent));
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "fileselector");
    elm_widget_type_set(obj, "fileselector");
    elm_widget_sub_object_add(parent, obj);
@@ -584,6 +579,8 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
+   wd->expand = !!_elm_config->fileselector_expand_enable;
+   
    wd->edje = edje_object_add(e);
    _elm_theme_object_set(obj, wd->edje, "fileselector", "base", "default");
    elm_widget_resize_object_set(obj, wd->edje);

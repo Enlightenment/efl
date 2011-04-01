@@ -108,12 +108,10 @@
  *    // elementary and that the api hasn't broken. if it has this returns
  *    // false and you need to handle this error gracefully
  *    if (!elm_widget_api_check(ELM_INTERNAL_API_VERSION)) return NULL;
+ *
+ *    // standard widget setup and allocate wd, create obj given parent etc.
+ *    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
  * 
- *    // basic - allocate data for widget and fill it
- *    wd = ELM_NEW(Widget_Data);
- *    e = evas_object_evas_get(parent);
- *    if (!e) return NULL;
- *    obj = elm_widget_add(e);
  *    // give it a type name and set up a mywidget type string if needed
  *    ELM_SET_WIDTYPE(widtype, "mywidget");
  *    elm_widget_type_set(obj, "mywidget");
@@ -497,6 +495,13 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
    ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label);         \
    if (!elm_widget_type_check((it->base.widget), (widtype))) goto label;
 
+#define ELM_WIDGET_STANDARD_SETUP(wdat, wdtype, par, evas, ob, ret) \
+   do { \
+      EINA_SAFETY_ON_NULL_RETURN_VAL((par), (ret)); \
+      evas = evas_object_evas_get(par); if (!(evas)) return (ret); \
+      wdat = ELM_NEW(wdtype); if (!(wdat)) return (ret); \
+      ob = elm_widget_add(evas); if (!(ob)) { free(wdat); return (ret); } \
+   } while (0);
 
 /**
  * The drag and drop API.

@@ -263,23 +263,11 @@ elm_fileselector_button_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   wd->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
-   wd->fsd.path = eina_stringshare_add(getenv("HOME"));
-   wd->fsd.expandable = _elm_config->fileselector_expand_enable;
-   wd->inwin_mode = _elm_config->inwin_dialogs_enable;
-   wd->w = 400;
-   wd->h = 400;
-
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   obj = elm_widget_add(e);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "fileselector_button");
    elm_widget_type_set(obj, "fileselector_button");
    elm_widget_sub_object_add(parent, obj);
-   wd->self = obj;
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
@@ -288,6 +276,15 @@ elm_fileselector_button_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_activate_hook_set(obj, _activate_hook);
 
+   wd->self = obj;
+   wd->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
+   if (getenv("HOME")) wd->fsd.path = eina_stringshare_add(getenv("HOME"));
+   else wd->fsd.path = eina_stringshare_add("/");
+   wd->fsd.expandable = _elm_config->fileselector_expand_enable;
+   wd->inwin_mode = _elm_config->inwin_dialogs_enable;
+   wd->w = 400;
+   wd->h = 400;
+   
    wd->btn = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);
    elm_widget_resize_object_set(obj, wd->btn);

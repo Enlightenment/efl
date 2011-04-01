@@ -420,17 +420,13 @@ elm_need_ethumb(void)
 EAPI Evas_Object *
 elm_thumb_add(Evas_Object *parent)
 {
-   Evas *evas;
+   Evas *e;
    Widget_Data *wd;
    Evas_Object *obj;
    Evas_Coord minw, minh;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   evas = evas_object_evas_get(parent);
-   if (!evas) return NULL;
-   obj = elm_widget_add(evas);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "thumb");
    elm_widget_type_set(obj, "thumb");
    elm_widget_sub_object_add(parent, obj);
@@ -439,7 +435,7 @@ elm_thumb_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   wd->frame = edje_object_add(evas);
+   wd->frame = edje_object_add(e);
    _elm_theme_object_set(obj, wd->frame, "thumb", "base", "default");
    elm_widget_resize_object_set(obj, wd->frame);
 

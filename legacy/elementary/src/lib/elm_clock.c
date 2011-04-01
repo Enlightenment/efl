@@ -530,12 +530,8 @@ elm_clock_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   obj = elm_widget_add(e);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "clock");
    elm_widget_type_set(obj, "clock");
    elm_widget_sub_object_add(parent, obj);

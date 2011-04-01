@@ -2100,18 +2100,8 @@ elm_map_add(Evas_Object *parent)
    static Evas_Smart *smart = NULL;
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   if (!ecore_file_download_protocol_available("http://"))
-     {
-	ERR("Ecore must be built with the support of HTTP for the widget map !");
-	return NULL;
-     }
-
-   wd = ELM_NEW(Widget_Data);
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   obj = elm_widget_add(e);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "map");
    elm_widget_type_set(obj, "map");
    elm_widget_sub_object_add(parent, obj);
@@ -2223,6 +2213,12 @@ elm_map_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+   
+   if (!ecore_file_download_protocol_available("http://"))
+     {
+	ERR("Ecore must be built with curl support for the map widget!");
+     }
+   
    return obj;
 }
 

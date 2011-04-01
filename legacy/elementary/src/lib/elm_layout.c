@@ -321,12 +321,8 @@ elm_layout_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   wd->obj = obj = elm_widget_add(e);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "layout");
    elm_widget_type_set(obj, "layout");
    elm_widget_sub_object_add(parent, obj);
@@ -340,6 +336,7 @@ elm_layout_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
+   wd->obj = obj;
    wd->lay = edje_object_add(e);
    elm_widget_resize_object_set(obj, wd->lay);
    edje_object_signal_callback_add(wd->lay, "size,eval", "elm",

@@ -653,15 +653,8 @@ elm_label_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   wd->bgcolor = EINA_FALSE;
-   wd->bg = evas_object_rectangle_add(e);
-   evas_object_color_set(wd->bg, 0, 0, 0, 0);
-   obj = elm_widget_add(e);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "label");
    elm_widget_type_set(obj, "label");
    elm_widget_sub_object_add(parent, obj);
@@ -670,6 +663,10 @@ elm_label_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
+   wd->bgcolor = EINA_FALSE;
+   wd->bg = evas_object_rectangle_add(e);
+   evas_object_color_set(wd->bg, 0, 0, 0, 0);
+   
    wd->linewrap = EINA_FALSE;
    wd->ellipsis = EINA_FALSE;
    wd->slidingmode = EINA_FALSE;

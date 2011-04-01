@@ -2608,8 +2608,6 @@ elm_genlist_add(Evas_Object *parent)
    Evas_Coord minw, minh;
    static Evas_Smart *smart = NULL;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
    if (!smart)
      {
         static Evas_Smart_Class sc;
@@ -2625,10 +2623,9 @@ elm_genlist_add(Evas_Object *parent)
         sc.calculate = _pan_calculate;
         if (!(smart = evas_smart_class_new(&sc))) return NULL;
      }
-   wd = ELM_NEW(Widget_Data);
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   obj = elm_widget_add(e);
+   
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "genlist");
    elm_widget_type_set(obj, "genlist");
    elm_widget_sub_object_add(parent, obj);

@@ -252,15 +252,11 @@ EAPI Evas_Object *
 elm_panel_add(Evas_Object *parent) 
 {
    Evas_Object *obj;
-   Evas *evas;
+   Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-   evas = evas_object_evas_get(parent);
-   if (!evas) return NULL;
-   obj = elm_widget_add(evas);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "panel");
    elm_widget_type_set(obj, "panel");
    elm_widget_sub_object_add(parent, obj);
@@ -275,7 +271,7 @@ elm_panel_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
 
-   wd->scr = elm_smart_scroller_add(evas);
+   wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    _theme_hook(obj);
    elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE, EINA_FALSE);
@@ -286,7 +282,7 @@ elm_panel_add(Evas_Object *parent)
    wd->hidden = EINA_FALSE;
    wd->orient = ELM_PANEL_ORIENT_LEFT;
 
-   wd->bx = evas_object_box_add(evas);
+   wd->bx = evas_object_box_add(e);
    evas_object_size_hint_align_set(wd->bx, 0.5, 0.5);
    evas_object_box_layout_set(wd->bx, _layout, wd, NULL);
    elm_widget_sub_object_add(obj, wd->bx);

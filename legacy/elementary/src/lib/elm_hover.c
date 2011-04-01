@@ -493,16 +493,8 @@ elm_hover_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-
-   ELM_HOVER_PARTS_FOREACH
-     wd->subs[i].swallow = _directions[i];
-
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   obj = elm_widget_add(e);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "hover");
    elm_widget_type_set(obj, "hover");
    elm_widget_sub_object_add(parent, obj);
@@ -516,6 +508,9 @@ elm_hover_add(Evas_Object *parent)
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
+   ELM_HOVER_PARTS_FOREACH
+     wd->subs[i].swallow = _directions[i];
+   
    wd->hov = evas_object_rectangle_add(e);
    evas_object_pass_events_set(wd->hov, EINA_TRUE);
    evas_object_color_set(wd->hov, 0, 0, 0, 0);

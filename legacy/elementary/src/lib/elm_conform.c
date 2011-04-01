@@ -223,17 +223,11 @@ EAPI Evas_Object *
 elm_conformant_add(Evas_Object *parent) 
 {
    Evas_Object *obj;
-   Evas *evas;
+   Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-
-   wd = ELM_NEW(Widget_Data);
-
-   evas = evas_object_evas_get(parent);
-   if (!evas) return NULL;
-
-   obj = elm_widget_add(evas);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   
    ELM_SET_WIDTYPE(widtype, "conformant");
    elm_widget_type_set(obj, "conformant");
    elm_widget_sub_object_add(parent, obj);
@@ -242,7 +236,7 @@ elm_conformant_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   wd->base = edje_object_add(evas);
+   wd->base = edje_object_add(e);
    _elm_theme_object_set(obj, wd->base, "conformant", "base", "default");
    elm_widget_resize_object_set(obj, wd->base);
 
@@ -255,7 +249,7 @@ elm_conformant_add(Evas_Object *parent)
 
    ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
    if (sh < 0) sh = 0;
-   wd->shelf = evas_object_rectangle_add(evas);
+   wd->shelf = evas_object_rectangle_add(e);
    evas_object_color_set(wd->shelf, 0, 0, 0, 0);
    evas_object_size_hint_min_set(wd->shelf, -1, sh);
    evas_object_size_hint_max_set(wd->shelf, -1, sh);
@@ -264,7 +258,7 @@ elm_conformant_add(Evas_Object *parent)
    sh = -1;
    ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
    if (sh < 0) sh = 0;
-   wd->panel = evas_object_rectangle_add(evas);
+   wd->panel = evas_object_rectangle_add(e);
    evas_object_color_set(wd->panel, 0, 0, 0, 0);
    evas_object_size_hint_min_set(wd->panel, -1, sh);
    evas_object_size_hint_max_set(wd->panel, -1, sh);
