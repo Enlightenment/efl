@@ -525,6 +525,10 @@ typedef enum _Ecore_Con_Url_Time
 
 EAPI int               ecore_con_url_init(void);
 EAPI int               ecore_con_url_shutdown(void);
+
+EAPI void              ecore_con_url_pipeline_set(Eina_Bool enable);
+EAPI Eina_Bool         ecore_con_url_pipeline_get(void);
+
 EAPI Ecore_Con_Url *   ecore_con_url_new(const char *url);
 EAPI Ecore_Con_Url *   ecore_con_url_custom_new(const char *url,
                                                 const char *custom_request);

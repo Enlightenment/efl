@@ -96,6 +96,7 @@ static CURLM *_curlm = NULL;
 static fd_set _current_fd_set;
 static int _init_count = 0;
 static Ecore_Timer *_curl_timeout = NULL;
+static Eina_Bool pipelining = EINA_FALSE;
 
 typedef struct _Ecore_Con_Url_Event Ecore_Con_Url_Event;
 struct _Ecore_Con_Url_Event
@@ -239,6 +240,35 @@ ecore_con_url_shutdown(void)
    curl_global_cleanup();
 #endif
    return 1;
+}
+
+/**
+ * Enable or disable HTTP 1.1 pipelining.
+ * @param enable EINA_TRUE will turn it on, EINA_FALSE will disable it.
+ */
+EAPI void
+ecore_con_url_pipeline_set(Eina_Bool enable)
+{
+#ifdef HAVE_CURL
+  if (enable)
+    curl_multi_setopt(_curlm, CURLMOPT_PIPELINING, 1);
+  else
+    curl_multi_setopt(_curlm, CURLMOPT_PIPELINING, 1);
+  pipelining = enable;
+#endif
+}
+
+/**
+ * Is HTTP 1.1 pipelining enable ?
+ * @return EINA_TRUE if it is enable.
+ */
+EAPI Eina_Bool
+ecore_con_url_pipeline_get(void)
+{
+#ifdef HAVE_CURL
+  return pipelining;
+#endif
+  return EINA_FALSE;
 }
 
 /**
