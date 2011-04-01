@@ -56,7 +56,7 @@ enum
    CNP_ATOM_TEXT,
    CNP_ATOM_text_plain_utf8,
    CNP_ATOM_text_plain,
-   
+
    CNP_N_ATOMS,
 };
 
@@ -83,7 +83,7 @@ struct _Cnp_Selection
 
    Elm_Sel_Format    format;
    Ecore_X_Selection ecore_sel;
-   
+
    Eina_Bool         active : 1;
 };
 
@@ -168,212 +168,212 @@ static void pasteimage_free(Paste_Image *pi);
 /* Optimisation: Turn this into a 256 byte table:
  *	then can lookup in one index, not N checks */
 static const Escape escapes[] = {
-   { "<br>",   '\n' },
-   { "<\t>",   '\t' },
-   { "gt;",    '>'  },
-   { "lt;",    '<'  },
-   { "amp;",   '&'  },
-   { "quot;",  '\'' },
-   { "dquot;", '"'  }
+       { "<br>",   '\n' },
+       { "<\t>",   '\t' },
+       { "gt;",    '>'  },
+       { "lt;",    '<'  },
+       { "amp;",   '&'  },
+       { "quot;",  '\'' },
+       { "dquot;", '"'  }
 };
 #define N_ESCAPES ((int)(sizeof(escapes) / sizeof(escapes[0])))
 
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
-   [CNP_ATOM_TARGETS] = {
-      "TARGETS",
-      (Elm_Sel_Format) -1, // everything
-      targets_converter,
-      response_handler_targets,
-      notify_handler_targets,
-      0
-   },
-   [CNP_ATOM_XELM] =  {
-      "application/x-elementary-markup",
-      ELM_SEL_FORMAT_MARKUP,
-      edje_converter,
-      NULL,
-      NULL,
-      0
-   },
-   [CNP_ATOM_text_uri] = {
-      "text/uri",
-      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
-      uri_converter,
-      NULL,
-      notify_handler_uri,
-      0
-   },
-   [CNP_ATOM_text_urilist] = {
-      "text/uri-list",
-      ELM_SEL_FORMAT_IMAGE,
-      uri_converter,
-      NULL,
-      notify_handler_uri,
-      0
-   },
-   [CNP_ATOM_text_x_vcard] = {
-      "text/x-vcard",
-      ELM_SEL_FORMAT_VCARD,
-      vcard_send, NULL,
-      vcard_receive, 0
-   },
-   [CNP_ATOM_image_png] = {
-      "image/png",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,
-      0
-   },
-   [CNP_ATOM_image_jpeg] = {
-      "image/jpeg",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_bmp] = {
-      "image/x-ms-bmp",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_gif] = {
-      "image/gif",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_tiff] = {
-      "image/tiff",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_svg] = {
-      "image/svg+xml",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_xpm] = {
-      "image/x-xpixmap",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_tga] = {
-      "image/x-tga",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_image_ppm] = {
-      "image/x-portable-pixmap",
-      ELM_SEL_FORMAT_IMAGE,
-      image_converter,
-      NULL,
-      notify_handler_image,/* Raw image data is the same */
-      0
-   },
-   [CNP_ATOM_text_html_utf8] = {
-      "text/html;charset=utf-8",
-      ELM_SEL_FORMAT_HTML,
-      html_converter,
-      NULL,
-      notify_handler_html,
-      0
-   },
-   [CNP_ATOM_text_html] = {
-      "text/html",
-      ELM_SEL_FORMAT_HTML,
-      html_converter,
-      NULL,
-      notify_handler_html, /* No encoding: Webkit only */
-      0
-   },
-   [CNP_ATOM_UTF8STRING] = {
-      "UTF8_STRING",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      text_converter,
-      NULL,
-      notify_handler_text,
-      0
-   },
-   [CNP_ATOM_STRING] = {
-      "STRING",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      text_converter,
-      NULL,
-      notify_handler_text,
-      0
-   },
-   [CNP_ATOM_TEXT] = {
-      "TEXT",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      text_converter,
-      NULL,
-      NULL,
-      0
-   },
-   [CNP_ATOM_text_plain_utf8] = {
-      "text/plain;charset=utf-8",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      text_converter,
-      NULL,
-      NULL,
-      0
-   },
-   [CNP_ATOM_text_plain] = {
-      "text/plain",
-      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-      text_converter,
-      NULL,
-      NULL,
-      0
-   },
+     [CNP_ATOM_TARGETS] = {
+          "TARGETS",
+          (Elm_Sel_Format) -1, // everything
+          targets_converter,
+          response_handler_targets,
+          notify_handler_targets,
+          0
+     },
+     [CNP_ATOM_XELM] =  {
+          "application/x-elementary-markup",
+          ELM_SEL_FORMAT_MARKUP,
+          edje_converter,
+          NULL,
+          NULL,
+          0
+     },
+     [CNP_ATOM_text_uri] = {
+          "text/uri",
+          ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
+          uri_converter,
+          NULL,
+          notify_handler_uri,
+          0
+     },
+     [CNP_ATOM_text_urilist] = {
+          "text/uri-list",
+          ELM_SEL_FORMAT_IMAGE,
+          uri_converter,
+          NULL,
+          notify_handler_uri,
+          0
+     },
+     [CNP_ATOM_text_x_vcard] = {
+          "text/x-vcard",
+          ELM_SEL_FORMAT_VCARD,
+          vcard_send, NULL,
+          vcard_receive, 0
+     },
+     [CNP_ATOM_image_png] = {
+          "image/png",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,
+          0
+     },
+     [CNP_ATOM_image_jpeg] = {
+          "image/jpeg",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_bmp] = {
+          "image/x-ms-bmp",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_gif] = {
+          "image/gif",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_tiff] = {
+          "image/tiff",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_svg] = {
+          "image/svg+xml",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_xpm] = {
+          "image/x-xpixmap",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_tga] = {
+          "image/x-tga",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_image_ppm] = {
+          "image/x-portable-pixmap",
+          ELM_SEL_FORMAT_IMAGE,
+          image_converter,
+          NULL,
+          notify_handler_image,/* Raw image data is the same */
+          0
+     },
+     [CNP_ATOM_text_html_utf8] = {
+          "text/html;charset=utf-8",
+          ELM_SEL_FORMAT_HTML,
+          html_converter,
+          NULL,
+          notify_handler_html,
+          0
+     },
+     [CNP_ATOM_text_html] = {
+          "text/html",
+          ELM_SEL_FORMAT_HTML,
+          html_converter,
+          NULL,
+          notify_handler_html, /* No encoding: Webkit only */
+          0
+     },
+     [CNP_ATOM_UTF8STRING] = {
+          "UTF8_STRING",
+          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+          text_converter,
+          NULL,
+          notify_handler_text,
+          0
+     },
+     [CNP_ATOM_STRING] = {
+          "STRING",
+          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+          text_converter,
+          NULL,
+          notify_handler_text,
+          0
+     },
+     [CNP_ATOM_TEXT] = {
+          "TEXT",
+          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+          text_converter,
+          NULL,
+          NULL,
+          0
+     },
+     [CNP_ATOM_text_plain_utf8] = {
+          "text/plain;charset=utf-8",
+          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+          text_converter,
+          NULL,
+          NULL,
+          0
+     },
+     [CNP_ATOM_text_plain] = {
+          "text/plain",
+          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+          text_converter,
+          NULL,
+          NULL,
+          0
+     },
 };
 
 static Cnp_Selection selections[ELM_SEL_MAX] = {
-   ARRAYINIT(ELM_SEL_PRIMARY) {
-      .debug = "Primary",
-      .ecore_sel = ECORE_X_SELECTION_PRIMARY,
-      .set = ecore_x_selection_primary_set,
-      .clear = ecore_x_selection_primary_clear,
-      .request = ecore_x_selection_primary_request,
-   },
-   ARRAYINIT(ELM_SEL_SECONDARY) {
-      .debug = "Secondary",
-      .ecore_sel = ECORE_X_SELECTION_SECONDARY,
-      .set = ecore_x_selection_secondary_set,
-      .clear = ecore_x_selection_secondary_clear,
-      .request = ecore_x_selection_secondary_request,
-   },
-   ARRAYINIT(ELM_SEL_CLIPBOARD) {
-      .debug = "Clipboard",
-      .ecore_sel = ECORE_X_SELECTION_CLIPBOARD,
-      .set = ecore_x_selection_clipboard_set,
-      .clear = ecore_x_selection_clipboard_clear,
-      .request = ecore_x_selection_clipboard_request,
-   },
-   ARRAYINIT(ELM_SEL_XDND) {
-      .debug = "XDnD",
-      .ecore_sel = ECORE_X_SELECTION_XDND,
-      .request = ecore_x_selection_xdnd_request,
-   },
+     ARRAYINIT(ELM_SEL_PRIMARY) {
+          .debug = "Primary",
+          .ecore_sel = ECORE_X_SELECTION_PRIMARY,
+          .set = ecore_x_selection_primary_set,
+          .clear = ecore_x_selection_primary_clear,
+          .request = ecore_x_selection_primary_request,
+     },
+     ARRAYINIT(ELM_SEL_SECONDARY) {
+          .debug = "Secondary",
+          .ecore_sel = ECORE_X_SELECTION_SECONDARY,
+          .set = ecore_x_selection_secondary_set,
+          .clear = ecore_x_selection_secondary_clear,
+          .request = ecore_x_selection_secondary_request,
+     },
+     ARRAYINIT(ELM_SEL_CLIPBOARD) {
+          .debug = "Clipboard",
+          .ecore_sel = ECORE_X_SELECTION_CLIPBOARD,
+          .set = ecore_x_selection_clipboard_set,
+          .clear = ecore_x_selection_clipboard_clear,
+          .request = ecore_x_selection_clipboard_request,
+     },
+     ARRAYINIT(ELM_SEL_XDND) {
+          .debug = "XDnD",
+          .ecore_sel = ECORE_X_SELECTION_XDND,
+          .request = ecore_x_selection_xdnd_request,
+     },
 };
 
 /* Data for DND in progress */
@@ -415,7 +415,7 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format fo
    if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
-      return elm_selection_clear(selection, widget);
+     return elm_selection_clear(selection, widget);
 
    sel = selections + selection;
 
@@ -458,7 +458,7 @@ elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
 
 Eina_Bool
 elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
-			Evas_Object *widget, Elm_Drop_Cb datacb, void *udata)
+                  Evas_Object *widget, Elm_Drop_Cb datacb, void *udata)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
@@ -489,19 +489,19 @@ static Eina_Bool
 _elm_cnp_init(void)
 {
    int i;
-   
+
    if (_elm_cnp_init_count++) return EINA_TRUE;
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
-	atoms[i].atom = ecore_x_atom_get(atoms[i].name);
-	ecore_x_selection_converter_atom_add(atoms[i].atom,
+        atoms[i].atom = ecore_x_atom_get(atoms[i].name);
+        ecore_x_selection_converter_atom_add(atoms[i].atom,
                                              atoms[i].converter);
      }
    clipboard_atom = ecore_x_atom_get("CLIPBOARD");
 
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, selection_clear, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, selection_notify, NULL);
-   
+
    text_uri = eina_stringshare_add("text/uri-list");
    return EINA_TRUE;
 }
@@ -512,10 +512,10 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
    Ecore_X_Event_Selection_Clear *ev = event;
    Cnp_Selection *sel;
    int i;
-   
+
    for (i = 0; i < ELM_SEL_MAX; i++)
      {
-	if (selections[i].ecore_sel == ev->selection) break;
+        if (selections[i].ecore_sel == ev->selection) break;
      }
    cnp_debug("selection %d clear\n", i);
    /* Not me... Don't care */
@@ -542,41 +542,41 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event)
    Ecore_X_Event_Selection_Notify *ev = event;
    Cnp_Selection *sel;
    int i;
-   
+
    cnp_debug("selection notify callback: %d\n",ev->selection);
    switch (ev->selection)
      {
       case ECORE_X_SELECTION_CLIPBOARD:
-        sel = selections + ELM_SEL_CLIPBOARD;
-        break;
+         sel = selections + ELM_SEL_CLIPBOARD;
+         break;
       case ECORE_X_SELECTION_PRIMARY:
-        sel = selections + ELM_SEL_PRIMARY;
-        break;
+         sel = selections + ELM_SEL_PRIMARY;
+         break;
       case ECORE_X_SELECTION_SECONDARY:
-        sel = selections + ELM_SEL_SECONDARY;
-        break;
+         sel = selections + ELM_SEL_SECONDARY;
+         break;
       case ECORE_X_SELECTION_XDND:
-        sel = selections + ELM_SEL_XDND;
-        break;
+         sel = selections + ELM_SEL_XDND;
+         break;
       default:
-        return ECORE_CALLBACK_PASS_ON;
+         return ECORE_CALLBACK_PASS_ON;
      }
    cnp_debug("Target is %s\n", ev->target);
-   
+
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
-	if (!strcmp(ev->target, atoms[i].name))
-	  {
-	     if (atoms[i].notify)
+        if (!strcmp(ev->target, atoms[i].name))
+          {
+             if (atoms[i].notify)
                {
                   cnp_debug("Found something: %s\n", atoms[i].name);
-		  atoms[i].notify(sel, ev);
-               } 
-             else 
-               {
-		  cnp_debug("Ignored: No handler!\n");
+                  atoms[i].notify(sel, ev);
                }
-	  }
+             else
+               {
+                  cnp_debug("Ignored: No handler!\n");
+               }
+          }
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -590,20 +590,20 @@ targets_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void
    int i,count;
    Ecore_X_Atom *aret;
    Cnp_Selection *sel;
-   
+
    if (!data_ret) return EINA_FALSE;
 
    sel = selections + *((int *)data);
 
    for (i = 0, count = 0; i < CNP_N_ATOMS ; i++)
      {
-	if (sel->format & atoms[i].formats) count++;
+        if (sel->format & atoms[i].formats) count++;
      }
 
    aret = malloc(sizeof(Ecore_X_Atom) * count);
    for (i = 0, count = 0; i < CNP_N_ATOMS; i++)
      {
-	if (sel->format & atoms[i].formats) aret[count ++] = atoms[i].atom;
+        if (sel->format & atoms[i].formats) aret[count ++] = atoms[i].atom;
      }
 
    *data_ret = aret;
@@ -627,7 +627,7 @@ vcard_send(char *target __UNUSED__, void *data __UNUSED__, int size __UNUSED__, 
    Cnp_Selection *sel;
 
    cnp_debug("Vcard send called\n");
-   
+
    sel = selections + *((int *)data);
 
    if (data_ret) *data_ret = strdup(sel->selbuf);
@@ -645,28 +645,28 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
    int i, j;
-   
+
    targets = notify->data;
    atomlist = (Ecore_X_Atom *)(targets->data.data);
 
    for (j = 1; j < CNP_N_ATOMS; j++)
      {
-	cnp_debug("\t%s %d\n", atoms[j].name, atoms[j].atom);
-	if (!(atoms[j].formats & sel->requestformat)) continue;
-	for (i = 0; i < targets->data.length; i++)
-	  {
-	     if ((atoms[j].atom == atomlist[i]) && (atoms[j].notify))
-	       {
-		  cnp_debug("Atom %s matches\n",atoms[j].name);
-		  goto done;
-	       }
-	  }
+        cnp_debug("\t%s %d\n", atoms[j].name, atoms[j].atom);
+        if (!(atoms[j].formats & sel->requestformat)) continue;
+        for (i = 0; i < targets->data.length; i++)
+          {
+             if ((atoms[j].atom == atomlist[i]) && (atoms[j].notify))
+               {
+                  cnp_debug("Atom %s matches\n",atoms[j].name);
+                  goto done;
+               }
+          }
      }
 
    cnp_debug("Couldn't find anything that matches\n");
    return ECORE_CALLBACK_PASS_ON;
 
-   done:
+done:
    cnp_debug("Sending request for %s\n",atoms[j].name);
    sel->request(elm_win_xwindow_get(sel->requestwidget), atoms[j].name);
 
@@ -687,26 +687,26 @@ response_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *not
    /* Start from 1: Skip targets */
    for (j = 1 ; j < CNP_N_ATOMS ; j ++)
      {
-	if (!(atoms[j].formats & sel->requestformat)) continue;
-	for (i = 0 ; i < targets->data.length ; i ++)
-	  {
-	     if ((atoms[j].atom == atomlist[i]) && (atoms[j].response))
+        if (!(atoms[j].formats & sel->requestformat)) continue;
+        for (i = 0 ; i < targets->data.length ; i ++)
+          {
+             if ((atoms[j].atom == atomlist[i]) && (atoms[j].response))
                {
-		  /* Found a match: Use it */
-		  goto found;
+                  /* Found a match: Use it */
+                  goto found;
                }
           }
      }
 found:
    if (j == CNP_N_ATOMS)
      {
-	cnp_debug("No matching type found\n");
-	return 0;
+        cnp_debug("No matching type found\n");
+        return 0;
      }
-   
+
    top = elm_widget_top_get(sel->requestwidget);
    if (!top) return 0;
-   
+
    sel->request(elm_win_xwindow_get(top), atoms[j].name);
    return 0;
 }
@@ -717,7 +717,7 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
    char *str;
-   
+
    data = notify->data;
    cnp_debug("Notify handler text %d %d %p\n", data->format,data->length, data->data);
    str = mark_up((char *)data->data, data->length, NULL);
@@ -805,7 +805,7 @@ vcard_receive(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    if (sel == (selections + ELM_SEL_XDND))
      {
         Elm_Selection_Data ddata;
-        
+
         cnp_debug("drag & drop\n");
         /* FIXME: this needs to be generic: Used for all receives */
         EINA_LIST_FOREACH(drops, l, dropable)
@@ -840,7 +840,7 @@ vcard_receive(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      {
         cnp_debug("Paste request\n");
      }
-   
+
    return 0;
 
 }
@@ -852,16 +852,16 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    Ecore_X_Selection_Data *data;
    Tmp_Info *tmp;
    Paste_Image *pi;
-   
+
    cnp_debug("got a png (or a jpeg)!\n");
    data = notify->data;
-   
+
    cnp_debug("Size if %d\n", data->length);
 
    if (sel->datacb)
      {
         Elm_Selection_Data ddata;
-        
+
         ddata.x = ddata.y = 0;
         ddata.format = ELM_SEL_FORMAT_IMAGE;
         ddata.data = data->data;
@@ -869,12 +869,12 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         sel->datacb(sel->udata, sel->widget, &ddata);
         return 0;
      }
-   
+
    /* generate tmp name */
    tmp = elm_cnp_tempfile_create(data->length);
    memcpy(tmp->map, data->data, data->length);
    munmap(tmp->map,data->length);
-   
+
    /* FIXME: Add to paste image data to clean up */
    pi = pasteimage_alloc(tmp->filename, strlen(tmp->filename));
    pasteimage_append(pi, sel->requestwidget);
@@ -893,10 +893,10 @@ static int
 notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
-   
+
    cnp_debug("Got some HTML: Checking encoding is useful\n");
    data = notify->data;
-   
+
    if (sel->datacb)
      {
         Elm_Selection_Data ddata;
@@ -927,11 +927,11 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **
    cnp_debug("text converter\n");
    sel = selections + *((int *)data);
    if (!sel->active) return EINA_TRUE;
-   
+
    if ((sel->format & ELM_SEL_FORMAT_MARKUP) ||
        (sel->format & ELM_SEL_FORMAT_HTML))
      {
-	*data_ret = remove_tags(sel->selbuf, size_ret);
+        *data_ret = remove_tags(sel->selbuf, size_ret);
      }
    else if (sel->format & ELM_SEL_FORMAT_TEXT)
      {
@@ -940,12 +940,12 @@ text_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **
      }
    else if (sel->format & ELM_SEL_FORMAT_IMAGE)
      {
-	cnp_debug("Image %s\n", evas_object_type_get(sel->widget));
-	cnp_debug("Elm type: %s\n", elm_object_widget_type_get(sel->widget));
-	evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget), (const char **)data_ret, NULL);
-	if (!*data_ret) *data_ret = strdup("No file");
-	else *data_ret = strdup(*data_ret);
-	*size_ret = strlen(*data_ret);
+        cnp_debug("Image %s\n", evas_object_type_get(sel->widget));
+        cnp_debug("Elm type: %s\n", elm_object_widget_type_get(sel->widget));
+        evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget), (const char **)data_ret, NULL);
+        if (!*data_ret) *data_ret = strdup("No file");
+        else *data_ret = strdup(*data_ret);
+        *size_ret = strlen(*data_ret);
      }
    return EINA_TRUE;
 }
@@ -978,12 +978,12 @@ html_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **
 static Eina_Bool
 uri_converter(char *target __UNUSED__, void *data, int size __UNUSED__, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
-    Cnp_Selection *sel;
-    sel = selections + *((int *)data);
-    cnp_debug("Uri converter\n");
-    if (data_ret) *data_ret = strdup(sel->selbuf);
-    if (size_ret) *size_ret = strlen(sel->selbuf);
-    return EINA_TRUE;
+   Cnp_Selection *sel;
+   sel = selections + *((int *)data);
+   cnp_debug("Uri converter\n");
+   if (data_ret) *data_ret = strdup(sel->selbuf);
+   if (size_ret) *size_ret = strlen(sel->selbuf);
+   return EINA_TRUE;
 }
 
 /*
@@ -1001,17 +1001,17 @@ image_provider(void *images __UNUSED__, Evas_Object *entry, const char *item)
    cnp_debug("image provider for %s called\n", item);
    EINA_LIST_FOREACH(pastedimages, l, pi)
      {
-	cnp_debug("is it %s?\n",pi->tag);
-	if (!strcmp(pi->tag, item))
+        cnp_debug("is it %s?\n",pi->tag);
+        if (!strcmp(pi->tag, item))
           {
-	     /* Found it */
-	     Evas_Object *o;
-	     o = evas_object_image_filled_add(evas_object_evas_get(entry));
-	     /* FIXME: Handle eets */
-	     cnp_debug("file is %s (object is %p)\n", pi->file, o);
-	     evas_object_image_file_set(o, pi->file, NULL);
-	     evas_object_show(o);
-	     return o;
+             /* Found it */
+             Evas_Object *o;
+             o = evas_object_image_filled_add(evas_object_evas_get(entry));
+             /* FIXME: Handle eets */
+             cnp_debug("file is %s (object is %p)\n", pi->file, o);
+             evas_object_image_file_set(o, pi->file, NULL);
+             evas_object_show(o);
+             return o;
           }
      }
    return NULL;
@@ -1028,7 +1028,7 @@ pasteimage_alloc(const char *file, int pathlen)
 
    pi = calloc(1, sizeof(Paste_Image));
    if (!pi) return NULL;
-   
+
    len = snprintf(NULL, 0, "pasteimage-%p", pi);
    len++;
    buf = malloc(len);
@@ -1039,7 +1039,7 @@ pasteimage_alloc(const char *file, int pathlen)
      }
    snprintf(buf, len, "pasteimage-%p", pi);
    pi->tag = buf;
-   
+
    if (file)
      {
         if (strstr(file,"file://")) file += prefixlen;
@@ -1066,12 +1066,12 @@ pasteimage_provider_set(Evas_Object *entry)
 {
    void *v;
    const char *type;
-   
+
    if (!entry) return EINA_FALSE;
    type = elm_widget_type_get(entry);
    cnp_debug("type is %s\n", type);
    if ((!type) || (strcmp(type, "entry"))) return EINA_FALSE;
-   
+
    v = evas_object_data_get(entry, PROVIDER_SET);
    if (!v)
      {
@@ -1114,8 +1114,8 @@ entry_deleted(void *images __UNUSED__, Evas *e __UNUSED__, Evas_Object *entry, v
 
    EINA_LIST_FOREACH_SAFE(pastedimages, l, next, pi)
      {
-	if (pi->entry == entry)
-           pastedimages = eina_list_remove_list(pastedimages, l);
+        if (pi->entry == entry)
+          pastedimages = eina_list_remove_list(pastedimages, l);
      }
 }
 
@@ -1126,36 +1126,36 @@ remove_tags(const char *p, int *len)
    char *q,*ret;
    int i;
    if (!p) return NULL;
-   
+
    q = malloc(strlen(p) + 1);
    if (!q) return NULL;
    ret = q;
 
    while (*p)
      {
-	if ((*p != '<') && (*p != '&')) *q++ = *p++;
+        if ((*p != '<') && (*p != '&')) *q++ = *p++;
         else if (*p == '<')
           {
-	     if ((p[1] == 'b') && (p[2] == 'r') &&
+             if ((p[1] == 'b') && (p[2] == 'r') &&
                  ((p[3] == ' ') || (p[3] == '/') || (p[3] == '>')))
-		*q++ = '\n';
-	     while ((*p) && (*p != '>')) p++;
-	     p++;
-          } 
+               *q++ = '\n';
+             while ((*p) && (*p != '>')) p++;
+             p++;
+          }
         else if (*p == '&')
           {
-	     p++;
-	     for (i = 0 ; i < N_ESCAPES ; i++)
+             p++;
+             for (i = 0 ; i < N_ESCAPES ; i++)
                {
                   if (!strncmp(p,escapes[i].escape, strlen(escapes[i].escape)))
                     {
                        p += strlen(escapes[i].escape);
-		       *q = escapes[i].value;
-		       q++;
-		       break;
+                       *q = escapes[i].value;
+                       q++;
+                       break;
                     }
                }
-	     if (i == N_ESCAPES) *q ++= '&';
+             if (i == N_ESCAPES) *q ++= '&';
           }
      }
    *q = 0;
@@ -1171,7 +1171,7 @@ mark_up(const char *start, int inlen, int *lenp)
    const char *p;
    char *q, *ret;
    const char *endp = NULL;
-   
+
    if (!start) return NULL;
    if (inlen >= 0) endp = start + inlen;
    /* First pass: Count characters */
@@ -1187,26 +1187,26 @@ mark_up(const char *start, int inlen, int *lenp)
           }
         if (i == N_ESCAPES) l++;
      }
-   
+
    q = ret = malloc(l + 1);
-   
+
    /* Second pass: Change characters */
-  for (p = start; *p; )
-    {
-       for (i = 0; i < N_ESCAPES; i++)
-         {
-            if (*p == escapes[i].value)
-              {
-                 strcpy(q, escapes[i].escape);
-                 q += strlen(escapes[i].escape);
-                 p ++;
-                 break;
-              }
-         }
-       if (i == N_ESCAPES) *q++ = *p++;
-    }
+   for (p = start; *p; )
+     {
+        for (i = 0; i < N_ESCAPES; i++)
+          {
+             if (*p == escapes[i].value)
+               {
+                  strcpy(q, escapes[i].escape);
+                  q += strlen(escapes[i].escape);
+                  p ++;
+                  break;
+               }
+          }
+        if (i == N_ESCAPES) *q++ = *p++;
+     }
    *q = 0;
-   
+
    if (lenp) *lenp = l;
    return ret;
 }
@@ -1226,7 +1226,7 @@ _dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    if (savedtypes.types) free(savedtypes.types);
    savedtypes.types = malloc(sizeof(char *) * enter->num_types);
    if (!savedtypes.types) return EINA_FALSE;
-   
+
    for (i = 0; i < enter->num_types; i++)
      {
         savedtypes.types[i] = eina_stringshare_add(enter->types[i]);
@@ -1282,7 +1282,7 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    savedtypes.x = drop->position.x - x;
    savedtypes.y = drop->position.y - y;
-   
+
    cnp_debug("Drop position is %d,%d\n", savedtypes.x, savedtypes.y);
 
    for (; l; l = l->next)
@@ -1291,31 +1291,31 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
         evas_object_geometry_get(dropable->obj, &x, &y, &w, &h);
         if ((savedtypes.x >= x) && (savedtypes.y >= y) &&
             (savedtypes.x < x + w) && (savedtypes.y < y + h))
-           break; /* found! */
+          break; /* found! */
      }
-   
+
    if (!l) return EINA_TRUE; /* didn't find one */
-   
+
    evas_object_geometry_get(dropable->obj, &x, &y, NULL, NULL);
    savedtypes.x -= x;
    savedtypes.y -= y;
-   
+
    /* Find our type from the previous list */
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
-	for (j = 0; j < savedtypes.ntypes; j++)
+        for (j = 0; j < savedtypes.ntypes; j++)
           {
              if (!strcmp(savedtypes.types[j], atoms[i].name)) goto found;
           }
      }
-   
+
    cnp_debug("Didn't find a target\n");
    return EINA_TRUE;
-   
+
 found:
    cnp_debug("Found a target we'd like: %s\n", atoms[i].name);
    cnp_debug("0x%x\n",xwin);
-   
+
    if (i == CNP_ATOM_text_urilist)
      {
         cnp_debug("We found a URI... (%scached) %s\n",
@@ -1325,13 +1325,13 @@ found:
           {
              char *entrytag;
              static const char *tagstring = "<item absize=240x180 href="
-                                                   "file://%s></item>";
+                "file://%s></item>";
              ddata.x = savedtypes.x;
              ddata.y = savedtypes.y;
 
              /* If it's markup that also supports images */
              if ((dropable->types & ELM_SEL_FORMAT_MARKUP) &&
-                    (dropable->types & ELM_SEL_FORMAT_IMAGE))
+                 (dropable->types & ELM_SEL_FORMAT_IMAGE))
                {
                   int len;
                   ddata.format = ELM_SEL_FORMAT_MARKUP;
@@ -1417,7 +1417,7 @@ _dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    struct _Ecore_X_Event_Xdnd_Status *status = ev;
 
    if (!status) return EINA_TRUE;
-   
+
    /* Only thing we care about: will accept */
    if (status->will_accept)
      {
@@ -1486,9 +1486,9 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
 
    xwin = (Ecore_X_Window)ecore_evas_window_get
       (ecore_evas_ecore_evas_get(evas_object_evas_get(obj)));
-   
+
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
-   
+
    cnp_debug("Adding drop target calls\n");
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
                                            _dnd_enter, NULL);
@@ -1496,7 +1496,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
                                          _dnd_position, NULL);
    handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP,
                                           _dnd_drop, NULL);
-   
+
    return EINA_TRUE;
 }
 
@@ -1506,7 +1506,7 @@ elm_drop_target_del(Evas_Object *obj)
    Dropable *drop,*del;
    Eina_List *item;
    Ecore_X_Window xwin;
-   
+
    del = NULL;
    EINA_LIST_FOREACH(drops, item, drop)
      {
@@ -1518,28 +1518,28 @@ elm_drop_target_del(Evas_Object *obj)
           }
      }
    if (!del) return EINA_FALSE;
-   
+
    evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
                                   (Evas_Object_Event_Cb)elm_drop_target_del);
    free(drop);
    /* If still drops there: All fine.. continue */
    if (drops) return EINA_TRUE;
-   
+
    cnp_debug("Disabling DND\n");
    xwin = (Ecore_X_Window)ecore_evas_window_get
       (ecore_evas_ecore_evas_get(evas_object_evas_get(obj)));
    ecore_x_dnd_aware_set(xwin, EINA_FALSE);
-   
+
    ecore_event_handler_del(handler_pos);
    ecore_event_handler_del(handler_drop);
    ecore_event_handler_del(handler_enter);
-   
+
    if (savedtypes.pi)
      {
         pasteimage_free(savedtypes.pi);
         savedtypes.pi = NULL;
      }
-   
+
    return EINA_TRUE;
 }
 
@@ -1564,8 +1564,8 @@ _drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *
 static void
 _drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos)
 {
-   evas_object_move(dragwin, 
-                    pos->position.x - _dragx, 
+   evas_object_move(dragwin,
+                    pos->position.x - _dragx,
                     pos->position.y - _dragy);
 }
 
@@ -1580,9 +1580,9 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    int x, y, x2, y2, x3, y3;
    Evas_Object *icon;
    int w, h;
-   
+
    if (!_elm_cnp_init_count) _elm_cnp_init();
-   
+
    xwin = elm_win_xwindow_get(obj);
 
    cnp_debug("starting drag...\n");
@@ -1595,18 +1595,18 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    sel->selbuf = data ? strdup(data) : NULL;
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
-   
+
    ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
                                   _drag_mouse_up, NULL);
-   
+
    handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
                                             _dnd_status, NULL);
-   
+
    dragwin = elm_win_add(NULL, "Elm Drag Object", ELM_WIN_UTILITY);
    elm_win_override_set(dragwin, 1);
-   
+
    /* FIXME: Images only */
    icon = elm_icon_add(dragwin);
    elm_icon_file_set(icon, data + 7, NULL); /* 7!? "file://" */
@@ -1623,7 +1623,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    evas_object_move(dragwin, x, y);
    evas_object_resize(icon, w, h);
    evas_object_resize(dragwin, w, h);
-   
+
    evas_object_show(icon);
    evas_object_show(dragwin);
 
@@ -1640,10 +1640,10 @@ elm_cnp_tempfile_create(int size)
    Tmp_Info *info;
    const char *tmppath;
    int len;
-   
+
    info = malloc(sizeof(Tmp_Info));
    if (!info) return NULL;
-   
+
    tmppath = getenv("TMP");
    if (!tmppath) tmppath = P_tmpdir;
    if (!tmppath) tmppath = "/tmp";
@@ -1661,15 +1661,15 @@ elm_cnp_tempfile_create(int size)
         return NULL;
      }
    snprintf(info->filename,len,"%s/%sXXXXXX", tmppath, "elmcnpitem-");
-   
+
    info->fd = mkstemp(info->filename);
-   
+
 # ifdef __linux__
      {
         char *tmp;
         /* And before someone says anything see POSIX 1003.1-2008 page 400 */
         long pid;
-        
+
         pid = (long)getpid();
         /* Use pid instead of /proc/self: That way if can be passed around */
         len = snprintf(NULL,0,"/proc/%li/fd/%i", pid, info->fd);
@@ -1684,7 +1684,7 @@ elm_cnp_tempfile_create(int size)
           }
      }
 # endif
-   
+
    cnp_debug("filename is %s\n", info->filename);
    if (size < 1)
      {
@@ -1693,7 +1693,7 @@ elm_cnp_tempfile_create(int size)
         info->len = 0;
         return info;
      }
-   
+
    /* Map it in */
    if (ftruncate(info->fd, size))
      {
@@ -1702,7 +1702,7 @@ elm_cnp_tempfile_create(int size)
         info->len = 0;
         return info;
      }
-   
+
    info->map = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, info->fd, 0);
    if (info->map == MAP_FAILED)
      {
@@ -1710,7 +1710,7 @@ elm_cnp_tempfile_create(int size)
         info->map = NULL;
         info->len = 0;
      }
-   
+
    return info;
 }
 

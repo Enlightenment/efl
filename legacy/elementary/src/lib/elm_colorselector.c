@@ -84,8 +84,8 @@ static void _set_color(Evas_Object *obj, int r, int g, int b, int a);
 
 static const Evas_Smart_Cb_Description _signals[] =
 {
-   {SIG_CHANGED, ""},
-   {NULL, NULL}
+     {SIG_CHANGED, ""},
+     {NULL, NULL}
 };
 
 static void
@@ -258,35 +258,35 @@ _hsl_to_rgb(void *data)
         switch (i)
           {
            case 0:
-             r = v;
-             g = t;
-             b = p;
-             break;
-          case 1:
-             r = q;
-             g = v;
-             b = p;
-             break;
-          case 2:
-             r = p;
-             g = v;
-             b = t;
-             break;
-          case 3:
-             r = p;
-             g = q;
-             b = v;
-             break;
-          case 4:
-             r = t;
-             g = p;
-             b = v;
-             break;
-          case 5:
-             r = v;
-             g = p;
-             b = q;
-             break;
+              r = v;
+              g = t;
+              b = p;
+              break;
+           case 1:
+              r = q;
+              g = v;
+              b = p;
+              break;
+           case 2:
+              r = p;
+              g = v;
+              b = t;
+              break;
+           case 3:
+              r = p;
+              g = q;
+              b = v;
+              break;
+           case 4:
+              r = t;
+              g = p;
+              b = v;
+              break;
+           case 5:
+              r = v;
+              g = p;
+              b = q;
+              break;
           }
      }
    i = (int)(r * 255.0);
@@ -357,79 +357,79 @@ _draw_rects(void *data, double x)
 
    switch (cp->color_type)
      {
-     case HUE:
-        wd->h = 360.0 * x;
+      case HUE:
+         wd->h = 360.0 * x;
 
-        if (x < one_six)
-          {
-             wd->er = 255;
-             wd->eg = (255.0 * x * 6.0);
-             wd->eb = 0;
-          }
-        else if (x < 2 * one_six)
-          {
-             wd->er = 255 - (int)(255.0 * (x - one_six) * 6.0);
-             wd->eg = 255;
-             wd->eb = 0;
-          }
-        else if (x < 3 * one_six)
-          {
-             wd->er = 0;
-             wd->eg = 255;
-             wd->eb = (int)(255.0 * (x - (2.0 * one_six)) * 6.0);
-          }
-        else if (x < 4 * one_six)
-          {
-             wd->er = 0;
-             wd->eg = 255 - (int)(255.0 * (x - (3.0 * one_six)) * 6.0);
-             wd->eb = 255;
-          }
-        else if (x < 5 * one_six)
-          {
-             wd->er = 255.0 * (x - (4.0 * one_six)) * 6.0;
-             wd->eg = 0;
-             wd->eb = 255;
-          }
-        else
-          {
-             wd->er = 255;
-             wd->eg = 0;
-             wd->eb = 255 - (int)(255.0 * (x - (5.0 * one_six)) * 6.0);
-          }
+         if (x < one_six)
+           {
+              wd->er = 255;
+              wd->eg = (255.0 * x * 6.0);
+              wd->eb = 0;
+           }
+         else if (x < 2 * one_six)
+           {
+              wd->er = 255 - (int)(255.0 * (x - one_six) * 6.0);
+              wd->eg = 255;
+              wd->eb = 0;
+           }
+         else if (x < 3 * one_six)
+           {
+              wd->er = 0;
+              wd->eg = 255;
+              wd->eb = (int)(255.0 * (x - (2.0 * one_six)) * 6.0);
+           }
+         else if (x < 4 * one_six)
+           {
+              wd->er = 0;
+              wd->eg = 255 - (int)(255.0 * (x - (3.0 * one_six)) * 6.0);
+              wd->eb = 255;
+           }
+         else if (x < 5 * one_six)
+           {
+              wd->er = 255.0 * (x - (4.0 * one_six)) * 6.0;
+              wd->eg = 0;
+              wd->eb = 255;
+           }
+         else
+           {
+              wd->er = 255;
+              wd->eg = 0;
+              wd->eb = 255 - (int)(255.0 * (x - (5.0 * one_six)) * 6.0);
+           }
 
-        evas_object_color_set(wd->cp[0]->arrow, wd->er, wd->eg, wd->eb, 255);
-        evas_object_color_set(wd->cp[1]->bg_rect, wd->er, wd->eg, wd->eb, 255);
-        evas_object_color_set(wd->cp[2]->bg_rect, wd->er, wd->eg, wd->eb, 255);
-        evas_object_color_set(wd->cp[3]->bar, wd->er, wd->eg, wd->eb, 255);
+         evas_object_color_set(wd->cp[0]->arrow, wd->er, wd->eg, wd->eb, 255);
+         evas_object_color_set(wd->cp[1]->bg_rect, wd->er, wd->eg, wd->eb, 255);
+         evas_object_color_set(wd->cp[2]->bg_rect, wd->er, wd->eg, wd->eb, 255);
+         evas_object_color_set(wd->cp[3]->bar, wd->er, wd->eg, wd->eb, 255);
 
-        _color_with_saturation(wd);
-        evas_object_color_set(wd->cp[1]->arrow, wd->sr, wd->sg, wd->sb, 255);
+         _color_with_saturation(wd);
+         evas_object_color_set(wd->cp[1]->arrow, wd->sr, wd->sg, wd->sb, 255);
 
-        _color_with_lightness(wd);
-        evas_object_color_set(wd->cp[2]->arrow, wd->lr, wd->lg, wd->lb, 255);
+         _color_with_lightness(wd);
+         evas_object_color_set(wd->cp[2]->arrow, wd->lr, wd->lg, wd->lb, 255);
 
-        evas_object_color_set(wd->cp[3]->arrow,
-                              (wd->er * wd->a) / 255,
-                              (wd->eg * wd->a) / 255,
-                              (wd->eb * wd->a) / 255,
-                              wd->a);
-        break;
-     case SATURATION:
-        wd->s = 1.0 - x;
-        _color_with_saturation(wd);
-        evas_object_color_set(wd->cp[1]->arrow, wd->sr, wd->sg, wd->sb, 255);
-        break;
-     case LIGHTNESS:
-        wd->l = x;
-        _color_with_lightness(wd);
-        evas_object_color_set(wd->cp[2]->arrow, wd->lr, wd->lg, wd->lb, 255);
-        break;
-     case ALPHA:
-        wd->a = 255.0 * x;
-        evas_object_color_set(wd->cp[3]->arrow, wd->er, wd->eg, wd->eb, wd->a);
-        break;
-     default:
-        break;
+         evas_object_color_set(wd->cp[3]->arrow,
+                               (wd->er * wd->a) / 255,
+                               (wd->eg * wd->a) / 255,
+                               (wd->eb * wd->a) / 255,
+                               wd->a);
+         break;
+      case SATURATION:
+         wd->s = 1.0 - x;
+         _color_with_saturation(wd);
+         evas_object_color_set(wd->cp[1]->arrow, wd->sr, wd->sg, wd->sb, 255);
+         break;
+      case LIGHTNESS:
+         wd->l = x;
+         _color_with_lightness(wd);
+         evas_object_color_set(wd->cp[2]->arrow, wd->lr, wd->lg, wd->lb, 255);
+         break;
+      case ALPHA:
+         wd->a = 255.0 * x;
+         evas_object_color_set(wd->cp[3]->arrow, wd->er, wd->eg, wd->eb, wd->a);
+         break;
+      default:
+         break;
      }
    _hsl_to_rgb(wd);
 }
@@ -805,7 +805,7 @@ elm_colorselector_add(Evas_Object *parent)
    Evas *e;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "colorselector");
    elm_widget_type_set(obj, "colorselector");
    elm_widget_sub_object_add(parent, obj);

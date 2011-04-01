@@ -307,7 +307,7 @@ elm_button_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "button");
    elm_widget_type_set(obj, "button");
    elm_widget_sub_object_add(parent, obj);

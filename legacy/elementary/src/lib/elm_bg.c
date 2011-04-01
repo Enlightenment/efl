@@ -49,7 +49,7 @@ _theme_hook(Evas_Object *obj)
    if (wd->overlay)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
 
-// FIXME: if i don't do this, bg doesnt calc correctly. why?   
+   // FIXME: if i don't do this, bg doesnt calc correctly. why?   
    evas_object_geometry_get(wd->base, NULL, NULL, &w, &h);
    evas_object_resize(wd->base, w, h);
 }
@@ -83,33 +83,33 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    switch (wd->option) 
      {
       case ELM_BG_OPTION_CENTER:
-        fw = nw = iw;
-        fh = nh = ih;
-        nx = ((bw - fw) / 2);
-        ny = ((bh - fh) / 2);
-        mw = iw;
-        mh = ih;
-        break;
+         fw = nw = iw;
+         fh = nh = ih;
+         nx = ((bw - fw) / 2);
+         ny = ((bh - fh) / 2);
+         mw = iw;
+         mh = ih;
+         break;
       case ELM_BG_OPTION_SCALE:
-        fw = bw;
-        fh = ((ih * fw) / iw);
-        if (fh < bh)
-          {
-             fh = bh;
-             fw = ((iw * fh) / ih);
-          }
-        fx = ((bw - fw) / 2);
-        fy = ((bh - fh) / 2);
-        break;
+         fw = bw;
+         fh = ((ih * fw) / iw);
+         if (fh < bh)
+           {
+              fh = bh;
+              fw = ((iw * fh) / ih);
+           }
+         fx = ((bw - fw) / 2);
+         fy = ((bh - fh) / 2);
+         break;
       case ELM_BG_OPTION_TILE:
-        fw = iw;
-        fh = ih;
-        break;
+         fw = iw;
+         fh = ih;
+         break;
       case ELM_BG_OPTION_STRETCH:
       default:
-        fw = bw;
-        fh = bh;
-        break;
+         fw = bw;
+         fh = bh;
+         break;
      }
 
    evas_object_move(wd->img, nx, ny);
@@ -136,7 +136,7 @@ elm_bg_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "bg");
    elm_widget_type_set(obj, "bg");
    elm_widget_sub_object_add(parent, obj);
@@ -203,7 +203,7 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
      {
         wd->img = evas_object_image_add(evas_object_evas_get(wd->base));
         if ((wd->load_opts.w > 0) && (wd->load_opts.h > 0))
-           evas_object_image_load_size_set(wd->img, wd->load_opts.w, wd->load_opts.h);
+          evas_object_image_load_size_set(wd->img, wd->load_opts.w, wd->load_opts.h);
         evas_object_image_file_set(wd->img, file, group);
      }
    evas_object_repeat_events_set(wd->img, EINA_TRUE);
@@ -340,8 +340,8 @@ elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
    if (!wd) return;
    if (wd->overlay)
      {
-	evas_object_del(wd->overlay);
-	wd->overlay = NULL;
+        evas_object_del(wd->overlay);
+        wd->overlay = NULL;
      }
    if (overlay)
      {
@@ -419,6 +419,6 @@ elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    wd->load_opts.h = h;
    if (!wd->img) return;
    if (!(((p = strrchr(wd->file, '.'))) && (!strcasecmp(p, ".edj"))))
-      evas_object_image_load_size_set(wd->img, w, h);
+     evas_object_image_load_size_set(wd->img, w, h);
 }
 

@@ -27,9 +27,9 @@
 
 typedef enum _Day_Color // EINA_DEPRECATED
 {
-  DAY_WEEKDAY = 0,
-  DAY_SATURDAY = 1,
-  DAY_SUNDAY = 2
+   DAY_WEEKDAY = 0,
+   DAY_SATURDAY = 1,
+   DAY_SUNDAY = 2
 } Day_Color;
 
 typedef struct _Widget_Data Widget_Data;
@@ -72,8 +72,8 @@ static const char *_days_abbrev[] =
 
 static int _days_in_month[2][12] =
 {
-   {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
-   {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+     {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+     {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
 
 static Elm_Calendar_Mark *
@@ -119,10 +119,10 @@ _maxdays_get(struct tm *time)
    month = time->tm_mon;
    year = time->tm_year + 1900;
 
-   return _days_in_month[((!(year % 4)) && 
-                          ((!(year % 400)) || 
-                              (year % 100)))]
-                        [month];
+   return _days_in_month[((!(year % 4)) &&
+                          ((!(year % 400)) ||
+                           (year % 100)))]
+      [month];
 }
 
 static inline void
@@ -186,22 +186,22 @@ static void
 _text_day_color_update(Widget_Data *wd, int pos)
 {
    char emission[32];
-  
+
    switch (wd->day_color[pos])
-    {
-    case DAY_WEEKDAY:
-      snprintf(emission, sizeof(emission), "cit_%i,weekday", pos);
-      break;
-    case DAY_SATURDAY:
-      snprintf(emission, sizeof(emission), "cit_%i,saturday", pos);
-      break;
-    case DAY_SUNDAY:
-      snprintf(emission, sizeof(emission), "cit_%i,sunday", pos);
-      break;
-    default:
-      return;
-    }
-  
+     {
+      case DAY_WEEKDAY:
+         snprintf(emission, sizeof(emission), "cit_%i,weekday", pos);
+         break;
+      case DAY_SATURDAY:
+         snprintf(emission, sizeof(emission), "cit_%i,saturday", pos);
+         break;
+      case DAY_SUNDAY:
+         snprintf(emission, sizeof(emission), "cit_%i,sunday", pos);
+         break;
+      default:
+         return;
+     }
+
    edje_object_signal_emit(wd->calendar, emission, "elm");
 }
 
@@ -239,8 +239,8 @@ _populate(Evas_Object *obj)
    buf = wd->format_func(&wd->selected_time);
    if (buf)
      {
-       edje_object_part_text_set(wd->calendar, "month_text", buf);
-       free(buf);
+        edje_object_part_text_set(wd->calendar, "month_text", buf);
+        free(buf);
      }
    else
      edje_object_part_text_set(wd->calendar, "month_text", "");
@@ -253,129 +253,129 @@ _populate(Evas_Object *obj)
 
    // Layout of the calendar is changed for removing the unfilled last row.
    wd->first_day_it = first_day.tm_wday;
-  
-  if ((35 - wd->first_day_it) > (maxdays - 1)) last_row = EINA_FALSE;
-  
-  if (!last_row)
-    {
-      char emission[32];
-      
-      for (i = 0; i < 5; i++)
-        {
-          snprintf(emission, sizeof(emission), "cseph_%i,row_hide", i);
-          edje_object_signal_emit(wd->calendar, emission, "elm");
-        }
-      snprintf(emission, sizeof(emission), "cseph_%i,row_invisible", 5);
-      edje_object_signal_emit(wd->calendar, emission, "elm");
-      for (i = 0; i < 35; i++)
-        {
-          snprintf(emission, sizeof(emission), "cit_%i,cell_expanded", i);
-          edje_object_signal_emit(wd->calendar, emission, "elm");
-        }
-      for (i = 35; i < 42; i++)
-        {
-          snprintf(emission, sizeof(emission), "cit_%i,cell_invisible", i);
-          edje_object_signal_emit(wd->calendar, emission, "elm");
-        }
-    }
-  else
-    {
-      char emission[32];
-      
-      for (i = 0; i < 6; i++)
-        {
-          snprintf(emission, sizeof(emission), "cseph_%i,row_show", i);
-          edje_object_signal_emit(wd->calendar, emission, "elm");
-        }
-      for (i = 0; i < 42; i++)
-        {
-          snprintf(emission, sizeof(emission), "cit_%i,cell_default", i);
-          edje_object_signal_emit(wd->calendar, emission, "elm");
-        }
-    }
-  
+
+   if ((35 - wd->first_day_it) > (maxdays - 1)) last_row = EINA_FALSE;
+
+   if (!last_row)
+     {
+        char emission[32];
+
+        for (i = 0; i < 5; i++)
+          {
+             snprintf(emission, sizeof(emission), "cseph_%i,row_hide", i);
+             edje_object_signal_emit(wd->calendar, emission, "elm");
+          }
+        snprintf(emission, sizeof(emission), "cseph_%i,row_invisible", 5);
+        edje_object_signal_emit(wd->calendar, emission, "elm");
+        for (i = 0; i < 35; i++)
+          {
+             snprintf(emission, sizeof(emission), "cit_%i,cell_expanded", i);
+             edje_object_signal_emit(wd->calendar, emission, "elm");
+          }
+        for (i = 35; i < 42; i++)
+          {
+             snprintf(emission, sizeof(emission), "cit_%i,cell_invisible", i);
+             edje_object_signal_emit(wd->calendar, emission, "elm");
+          }
+     }
+   else
+     {
+        char emission[32];
+
+        for (i = 0; i < 6; i++)
+          {
+             snprintf(emission, sizeof(emission), "cseph_%i,row_show", i);
+             edje_object_signal_emit(wd->calendar, emission, "elm");
+          }
+        for (i = 0; i < 42; i++)
+          {
+             snprintf(emission, sizeof(emission), "cit_%i,cell_default", i);
+             edje_object_signal_emit(wd->calendar, emission, "elm");
+          }
+     }
+
    for (i = 0; i < 42; i++)
      {
         _text_day_color_update(wd, i); // EINA_DEPRECATED
-	if ((!day) && (i == first_day.tm_wday)) day = 1;
+        if ((!day) && (i == first_day.tm_wday)) day = 1;
 
-	if ((day == wd->current_time.tm_mday)
-	      && (mon == wd->current_time.tm_mon)
-	      && (year == wd->current_time.tm_year))
-	  _today(wd, i);
+        if ((day == wd->current_time.tm_mday)
+            && (mon == wd->current_time.tm_mon)
+            && (year == wd->current_time.tm_year))
+          _today(wd, i);
 
-	if (day == wd->selected_time.tm_mday)
-	  {
-	     if ((wd->selected_it > -1) && (wd->selected_it != i))
-	       _unselect(wd, wd->selected_it);
+        if (day == wd->selected_time.tm_mday)
+          {
+             if ((wd->selected_it > -1) && (wd->selected_it != i))
+               _unselect(wd, wd->selected_it);
 
-	     if (wd->selection_enabled) _select(wd, i);
+             if (wd->selection_enabled) _select(wd, i);
 
-	     wd->selected_it = i;
-	  }
+             wd->selected_it = i;
+          }
 
-	if ((day) && (day <= maxdays))
-	  snprintf(day_s, sizeof(day_s), "%i", day++);
-	else
+        if ((day) && (day <= maxdays))
+          snprintf(day_s, sizeof(day_s), "%i", day++);
+        else
           day_s[0] = 0;
 
-	snprintf(part, sizeof(part), "cit_%i.text", i);
-	edje_object_part_text_set(wd->calendar, part, day_s);
-	/* Clear previous marks */
-	_cit_mark(wd->calendar, i, "clear");
+        snprintf(part, sizeof(part), "cit_%i.text", i);
+        edje_object_part_text_set(wd->calendar, part, day_s);
+        /* Clear previous marks */
+        _cit_mark(wd->calendar, i, "clear");
      }
 
    /* Set marks */
    EINA_LIST_FOREACH(wd->marks, l, mark)
      {
-	struct tm *mtime = &mark->mark_time;
-	int mon = wd->selected_time.tm_mon;
-	int year = wd->selected_time.tm_year;
-	int mday_it = mtime->tm_mday + wd->first_day_it - 1;
+        struct tm *mtime = &mark->mark_time;
+        int mon = wd->selected_time.tm_mon;
+        int year = wd->selected_time.tm_year;
+        int mday_it = mtime->tm_mday + wd->first_day_it - 1;
 
-	switch (mark->repeat)
-	  {
-	   case ELM_CALENDAR_UNIQUE:
-	      if ((mtime->tm_mon == mon) && (mtime->tm_year == year))
-		_cit_mark(wd->calendar, mday_it, mark->mark_type);
-	      break;
-	   case ELM_CALENDAR_DAILY:
-	      if (((mtime->tm_year == year) && (mtime->tm_mon < mon)) ||
-		    (mtime->tm_year < year))
-		day = 1;
-	      else if ((mtime->tm_year == year) && (mtime->tm_mon == mon))
-		day = mtime->tm_mday;
-	      else
-		break;
-	      for (; day <= maxdays; day++)
-		_cit_mark(wd->calendar, day + wd->first_day_it - 1,
-		      mark->mark_type);
-	      break;
-	   case ELM_CALENDAR_WEEKLY:
-	      if (((mtime->tm_year == year) && (mtime->tm_mon < mon)) ||
-		    (mtime->tm_year < year))
-		day = 1;
-	      else if ((mtime->tm_year == year) && (mtime->tm_mon == mon))
-		day = mtime->tm_mday;
-	      else
-		break;
-	      for (; day <= maxdays; day++)
-		if (mtime->tm_wday == _weekday_get(wd->first_day_it, day))
-		  _cit_mark(wd->calendar, day + wd->first_day_it - 1,
-			mark->mark_type);
-	      break;
-	   case ELM_CALENDAR_MONTHLY:
-	      if (((mtime->tm_year < year) ||
-		       ((mtime->tm_year == year) && (mtime->tm_mon <= mon))) &&
-		    (mtime->tm_mday <= maxdays))
-		_cit_mark(wd->calendar, mday_it, mark->mark_type);
-	      break;
-	   case ELM_CALENDAR_ANNUALLY:
-	      if ((mtime->tm_year <= year) && (mtime->tm_mon == mon) &&
-		    (mtime->tm_mday <= maxdays))
-		_cit_mark(wd->calendar, mday_it, mark->mark_type);
-	      break;
-	  }
+        switch (mark->repeat)
+          {
+           case ELM_CALENDAR_UNIQUE:
+              if ((mtime->tm_mon == mon) && (mtime->tm_year == year))
+                _cit_mark(wd->calendar, mday_it, mark->mark_type);
+              break;
+           case ELM_CALENDAR_DAILY:
+              if (((mtime->tm_year == year) && (mtime->tm_mon < mon)) ||
+                  (mtime->tm_year < year))
+                day = 1;
+              else if ((mtime->tm_year == year) && (mtime->tm_mon == mon))
+                day = mtime->tm_mday;
+              else
+                break;
+              for (; day <= maxdays; day++)
+                _cit_mark(wd->calendar, day + wd->first_day_it - 1,
+                          mark->mark_type);
+              break;
+           case ELM_CALENDAR_WEEKLY:
+              if (((mtime->tm_year == year) && (mtime->tm_mon < mon)) ||
+                  (mtime->tm_year < year))
+                day = 1;
+              else if ((mtime->tm_year == year) && (mtime->tm_mon == mon))
+                day = mtime->tm_mday;
+              else
+                break;
+              for (; day <= maxdays; day++)
+                if (mtime->tm_wday == _weekday_get(wd->first_day_it, day))
+                  _cit_mark(wd->calendar, day + wd->first_day_it - 1,
+                            mark->mark_type);
+              break;
+           case ELM_CALENDAR_MONTHLY:
+              if (((mtime->tm_year < year) ||
+                   ((mtime->tm_year == year) && (mtime->tm_mon <= mon))) &&
+                  (mtime->tm_mday <= maxdays))
+                _cit_mark(wd->calendar, mday_it, mark->mark_type);
+              break;
+           case ELM_CALENDAR_ANNUALLY:
+              if ((mtime->tm_year <= year) && (mtime->tm_mon == mon) &&
+                  (mtime->tm_mday <= maxdays))
+                _cit_mark(wd->calendar, mday_it, mark->mark_type);
+              break;
+          }
      }
 }
 
@@ -389,8 +389,8 @@ _set_headers(Evas_Object *obj)
 
    for (i = 0; i < 7; i++)
      {
-	part[3] = i + '0';
-	edje_object_part_text_set(wd->calendar, part, wd->weekdays[i]);
+        part[3] = i + '0';
+        edje_object_part_text_set(wd->calendar, part, wd->weekdays[i]);
      }
 }
 
@@ -408,10 +408,10 @@ _del_hook(Evas_Object *obj)
 
    if (wd->marks)
      {
-       EINA_LIST_FREE(wd->marks, mark)
-         {
-           _mark_free(mark);
-         }
+        EINA_LIST_FREE(wd->marks, mark)
+          {
+             _mark_free(mark);
+          }
      }
 
    for (i = 0; i < 7; i++)
@@ -427,13 +427,13 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-       edje_object_signal_emit(wd->calendar, "elm,action,focus", "elm");
-       evas_object_focus_set(wd->calendar, EINA_TRUE);
+        edje_object_signal_emit(wd->calendar, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->calendar, EINA_TRUE);
      }
    else
      {
-       edje_object_signal_emit(wd->calendar, "elm,action,unfocus", "elm");
-       evas_object_focus_set(wd->calendar, EINA_FALSE);
+        edje_object_signal_emit(wd->calendar, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->calendar, EINA_FALSE);
      }
 }
 
@@ -512,23 +512,23 @@ _update_month(Evas_Object *obj, int delta)
    wd->selected_time.tm_mon += delta;
    if (wd->selected_time.tm_mon < 0)
      {
-	if (wd->selected_time.tm_year == wd->year_min)
-	  {
-	     wd->selected_time.tm_mon++;
-	     return EINA_FALSE;
-	  }
-	wd->selected_time.tm_mon = 11;
-	wd->selected_time.tm_year--;
+        if (wd->selected_time.tm_year == wd->year_min)
+          {
+             wd->selected_time.tm_mon++;
+             return EINA_FALSE;
+          }
+        wd->selected_time.tm_mon = 11;
+        wd->selected_time.tm_year--;
      }
    else if (wd->selected_time.tm_mon > 11)
      {
-	if (wd->selected_time.tm_year == wd->year_max)
-	  {
-	     wd->selected_time.tm_mon--;
-	     return EINA_FALSE;
-	  }
-	wd->selected_time.tm_mon = 0;
-	wd->selected_time.tm_year++;
+        if (wd->selected_time.tm_year == wd->year_max)
+          {
+             wd->selected_time.tm_mon--;
+             return EINA_FALSE;
+          }
+        wd->selected_time.tm_mon = 0;
+        wd->selected_time.tm_year++;
      }
 
    maxdays = _maxdays_get(&wd->selected_time);
@@ -606,7 +606,7 @@ _update_sel_it(Evas_Object *obj, int sel_it)
    int day;
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->selection_enabled))
-      return;
+     return;
 
    day = _get_item_day(obj, sel_it);
    if (!day)
@@ -627,7 +627,7 @@ _day_selected(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
    int sel_it;
    Widget_Data *wd = elm_widget_data_get(data);
    if ((!wd) || (!wd->selection_enabled))
-      return;
+     return;
    sel_it = atoi(source);
 
    _update_sel_it(data, sel_it);
@@ -636,7 +636,7 @@ _day_selected(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
 static inline int
 _time_to_next_day(struct tm *t)
 {
-  return ((((24 - t->tm_hour) * 60) - t->tm_min) * 60) - t->tm_sec;
+   return ((((24 - t->tm_hour) * 60) - t->tm_min) * 60) - t->tm_sec;
 }
 
 static Eina_Bool
@@ -655,7 +655,7 @@ _update_cur_date(void *data)
    ecore_timer_interval_set(wd->update_timer, t);
 
    if ((wd->current_time.tm_mon != wd->selected_time.tm_mon) ||
-	 (wd->current_time.tm_year!= wd->selected_time.tm_year))
+       (wd->current_time.tm_year!= wd->selected_time.tm_year))
      return ECORE_CALLBACK_RENEW;
 
    day = wd->current_time.tm_mday + wd->first_day_it - 1;
@@ -729,7 +729,7 @@ elm_calendar_add(Evas_Object *parent)
    Evas *e;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "calendar");
    elm_widget_type_set(obj, "calendar");
    elm_widget_sub_object_add(parent, obj);
@@ -781,7 +781,7 @@ elm_calendar_add(Evas_Object *parent)
              /* If we failed getting day, get a default value */
              wd->weekdays[i] = _days_abbrev[i];
              WRN("Failed getting weekday name for '%s' from locale.",
-                  _days_abbrev[i]);
+                 _days_abbrev[i]);
           }
         weekday += 86400; /* Advance by a day */
      }
@@ -1228,14 +1228,14 @@ elm_calendar_marks_draw(Evas_Object *obj)
 
 /**
  * Set a text color to the saturday color.
- * 
+ *
  * Deprecated. use elm_calendar_mark_add() instead like:
- * 
+ *
  * @code
  * struct tm t = { 0, 0, 12, 6, 0, 0, 5, 5, -1 };
  * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
  * @endcode
- * 
+ *
  * @param obj The calendar object
  * @param pos The text position
  *
@@ -1244,22 +1244,22 @@ elm_calendar_marks_draw(Evas_Object *obj)
 EINA_DEPRECATED EAPI void
 elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
 {
-  ELM_CHECK_WIDTYPE(obj, widtype);
-  Widget_Data *wd = elm_widget_data_get(obj);
-  if (!wd) return;
-  _text_day_color_set(wd, DAY_SATURDAY, pos);
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _text_day_color_set(wd, DAY_SATURDAY, pos);
 }
 
 /**
  * Set a text color to the sunday color.
  *
  * Deprecated. use elm_calendar_mark_add() instead like:
- * 
+ *
  * @code
  * struct tm t = { 0, 0, 12, 7, 0, 0, 6, 6, -1 };
  * elm_calendar_mark_add(obj, "sun", &t, ELM_CALENDAR_WEEKLY);
  * @endcode
- * 
+ *
  * @param obj The calendar object
  * @param pos The text position
  *
@@ -1268,20 +1268,20 @@ elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
 EINA_DEPRECATED EAPI void
 elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
 {
-  ELM_CHECK_WIDTYPE(obj, widtype);
-  Widget_Data *wd = elm_widget_data_get(obj);
-  if (!wd) return;
-  _text_day_color_set(wd, DAY_SUNDAY, pos);
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _text_day_color_set(wd, DAY_SUNDAY, pos);
 }
 
 /**
  * Set a text color to the weekday color.
  *
  * Deprecated. use elm_calendar_mark_add() instead like:
- * 
+ *
  * @code
  * struct tm t = { 0, 0, 12, 1, 0, 0, 0, 0, -1 };
- * 
+ *
  * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // monday
  * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
  * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // tuesday
@@ -1292,7 +1292,7 @@ elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
  * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
  * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // friday
  * @endcode
- * 
+ *
  * @param obj The calendar object
  * @param pos The text position
  *
@@ -1301,8 +1301,8 @@ elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
 EINA_DEPRECATED EAPI void
 elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos)
 {
-  ELM_CHECK_WIDTYPE(obj, widtype);
-  Widget_Data *wd = elm_widget_data_get(obj);
-  if (!wd) return;
-  _text_day_color_set(wd, DAY_WEEKDAY, pos);
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _text_day_color_set(wd, DAY_WEEKDAY, pos);
 }

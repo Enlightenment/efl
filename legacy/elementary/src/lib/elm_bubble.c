@@ -32,8 +32,8 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 #define SIG_CLICKED "clicked"
 static const Evas_Smart_Cb_Description _signals[] =
 {
-  {SIG_CLICKED, ""},
-  {NULL, NULL}
+     {SIG_CLICKED, ""},
+     {NULL, NULL}
 };
 
 static void
@@ -73,7 +73,7 @@ _theme_hook(Evas_Object *obj)
    if (wd->content)
      {
         edje_object_part_swallow(wd->bbl, "elm.swallow.content", wd->content);
-	edje_object_message_signal_process(wd->bbl);
+        edje_object_message_signal_process(wd->bbl);
      }
    if (wd->icon)
      edje_object_signal_emit(wd->bbl, "elm,state,icon,visible", "elm");
@@ -126,13 +126,13 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    if (!wd) return;
    evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                  _changed_size_hints, obj);
+                                       _changed_size_hints, obj);
    if (sub == wd->content) wd->content = NULL;
    else if (sub == wd->icon)
      {
-	edje_object_signal_emit(wd->bbl, "elm,state,icon,hidden", "elm");
-	wd->icon = NULL;
-	edje_object_message_signal_process(wd->bbl);
+        edje_object_signal_emit(wd->bbl, "elm,state,icon,hidden", "elm");
+        wd->icon = NULL;
+        edje_object_message_signal_process(wd->bbl);
      }
    _sizing_eval(obj);
 }
@@ -164,7 +164,7 @@ elm_bubble_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "bubble");
    elm_widget_type_set(obj, "bubble");
    elm_widget_sub_object_add(parent, obj);
@@ -310,10 +310,10 @@ elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
-	elm_widget_sub_object_add(obj, content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
-	edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->bbl, "elm.swallow.content", content);
      }
    _sizing_eval(obj);
 }
@@ -385,12 +385,12 @@ elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
    wd->icon = icon;
    if (icon)
      {
-	elm_widget_sub_object_add(obj, icon);
-	edje_object_part_swallow(wd->bbl, "elm.swallow.icon", icon);
-	evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
-	edje_object_signal_emit(wd->bbl, "elm,state,icon,visible", "elm");
-	edje_object_message_signal_process(wd->bbl);
+        elm_widget_sub_object_add(obj, icon);
+        edje_object_part_swallow(wd->bbl, "elm.swallow.icon", icon);
+        evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_signal_emit(wd->bbl, "elm,state,icon,visible", "elm");
+        edje_object_message_signal_process(wd->bbl);
      }
    _sizing_eval(obj);
 }

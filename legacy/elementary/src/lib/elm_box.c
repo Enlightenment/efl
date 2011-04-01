@@ -40,11 +40,11 @@ struct _Elm_Box_Transition
    Ecore_Animator *animator;
 
    struct
-   {
-      Evas_Object_Box_Layout layout;
-      void *data;
-      void(*free_data)(void *data);
-   } start, end;
+     {
+        Evas_Object_Box_Layout layout;
+        void *data;
+        void(*free_data)(void *data);
+     } start, end;
 
    void(*transition_end_cb)(void *data);
    void *transition_end_data;
@@ -57,9 +57,9 @@ struct _Transition_Animation_Data
 {
    Evas_Object *obj;
    struct
-   {
-      Evas_Coord x, y, w, h;
-   } start, end;
+     {
+        Evas_Coord x, y, w, h;
+     } start, end;
 };
 
 static const char *widtype = NULL;
@@ -71,11 +71,11 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void
 _del_pre_hook(Evas_Object *obj)
 {
-    Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-    evas_object_event_callback_del_full
-        (wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
-    evas_object_box_remove_all(wd->box, 0);
+   evas_object_event_callback_del_full
+      (wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+   evas_object_box_remove_all(wd->box, 0);
 }
 
 static void
@@ -166,7 +166,7 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _els_box_layout(o, priv, wd->horizontal, wd->homogeneous,
-         elm_widget_mirrored_get(obj));
+                   elm_widget_mirrored_get(obj));
 }
 
 static Eina_Bool
@@ -226,7 +226,7 @@ _transition_layout_calculate_coords(Evas_Object *obj, Evas_Object_Box_Data *priv
    const double curtime = ecore_loop_time_get();
 
    layout_data->duration = 
-     layout_data->duration - (curtime - layout_data->initial_time);
+      layout_data->duration - (curtime - layout_data->initial_time);
    layout_data->initial_time = curtime;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
@@ -256,7 +256,7 @@ _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
    Transition_Animation_Data *tad;
 
    EINA_LIST_FREE(layout_data->objs, tad)
-     free(tad);
+      free(tad);
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
@@ -264,7 +264,7 @@ _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
         if (!tad)
           {
              EINA_LIST_FREE(layout_data->objs, tad)
-               free(tad);
+                free(tad);
              layout_data->objs = NULL;
              return EINA_FALSE;
           }
@@ -283,7 +283,7 @@ _transition_layout_animation_start(Evas_Object *obj, Evas_Object_Box_Data *priv,
    layout_data->initial_time = ecore_loop_time_get();
 
    if (!_transition_layout_load_children_list(priv, layout_data))
-      return EINA_FALSE;
+     return EINA_FALSE;
    _transition_layout_calculate_coords(obj, priv, layout_data);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, 
@@ -293,7 +293,7 @@ _transition_layout_animation_start(Evas_Object *obj, Evas_Object_Box_Data *priv,
    evas_object_smart_callback_add(obj, SIG_CHILD_REMOVED, 
                                   _transition_layout_child_removed, layout_data);
    if (!layout_data->animator)
-      layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
+     layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
    layout_data->animation_ended = EINA_FALSE;
    return EINA_TRUE;
 }
@@ -309,7 +309,7 @@ _transition_layout_animation_stop(Elm_Box_Transition *layout_data)
      }
 
    if (layout_data->transition_end_cb)
-      layout_data->transition_end_cb(layout_data->transition_end_data);
+     layout_data->transition_end_cb(layout_data->transition_end_data);
 }
 
 static void
@@ -352,7 +352,7 @@ elm_box_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "box");
    elm_widget_type_set(obj, "box");
    elm_widget_sub_object_add(parent, obj);
@@ -366,11 +366,11 @@ elm_box_add(Evas_Object *parent)
 
    wd->box = evas_object_box_add(e);
    /*evas_object_box_layout_set(wd->box, evas_object_box_layout_vertical,
-			      NULL, NULL);*/
+     NULL, NULL);*/
    evas_object_box_layout_set(wd->box, _layout, obj, NULL);
 
    evas_object_event_callback_add(wd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                  _changed_size_hints, obj);
    elm_widget_resize_object_set(obj, wd->box);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
@@ -400,21 +400,21 @@ elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    evas_object_smart_calculate(wd->box);
    /*if (wd->horizontal)
      {
-	if (wd->homogeneous)
-	  evas_object_box_layout_set(wd->box,
-		evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
-	else
-	  evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-				     NULL, NULL);
+     if (wd->homogeneous)
+     evas_object_box_layout_set(wd->box,
+     evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
+     else
+     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+     NULL, NULL);
      }
-   else
+     else
      {
-	if (wd->homogeneous)
-	  evas_object_box_layout_set(wd->box,
-		evas_object_box_layout_homogeneous_vertical, NULL, NULL);
-	else
-	  evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-				     NULL, NULL);
+     if (wd->homogeneous)
+     evas_object_box_layout_set(wd->box,
+     evas_object_box_layout_homogeneous_vertical, NULL, NULL);
+     else
+     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+     NULL, NULL);
      }*/
 }
 
@@ -456,21 +456,21 @@ elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
    evas_object_smart_calculate(wd->box);
    /*if (wd->horizontal)
      {
-	if (wd->homogeneous)
-	  evas_object_box_layout_set(wd->box,
-		evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
-	else
-	  evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-				     NULL, NULL);
+     if (wd->homogeneous)
+     evas_object_box_layout_set(wd->box,
+     evas_object_box_layout_homogeneous_horizontal, NULL, NULL);
+     else
+     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+     NULL, NULL);
      }
-   else
+     else
      {
-	if (wd->homogeneous)
-	  evas_object_box_layout_set(wd->box,
-		evas_object_box_layout_homogeneous_vertical, NULL, NULL);
-	else
-	  evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
-				     NULL, NULL);
+     if (wd->homogeneous)
+     evas_object_box_layout_set(wd->box,
+     evas_object_box_layout_homogeneous_vertical, NULL, NULL);
+     else
+     evas_object_box_layout_set(wd->box, evas_object_box_layout_horizontal,
+     NULL, NULL);
      }*/
 }
 
@@ -703,15 +703,15 @@ elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *da
 
    if (box_data->animation_ended)
      {
-          box_data->end.layout(obj, priv, box_data->end.data);
-          return;
+        box_data->end.layout(obj, priv, box_data->end.data);
+        return;
      }
 
    if (!box_data->animator)
      {
         if (!_transition_layout_animation_start(obj, priv, box_data,
-            _transition_animation))
-           return;
+                                                _transition_animation))
+          return;
      }
    else
      {
@@ -723,9 +723,9 @@ elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *da
      }
 
    if ((curtime >= box_data->duration + box_data->initial_time))
-      _transition_layout_animation_stop(box_data);
+     _transition_layout_animation_stop(box_data);
    else
-      _transition_layout_animation_exec(obj, priv, box_data, curtime);
+     _transition_layout_animation_exec(obj, priv, box_data, curtime);
 }
 
 /**
@@ -751,12 +751,12 @@ elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *da
  */
 EAPI Elm_Box_Transition *
 elm_box_transition_new(const double duration,
-      Evas_Object_Box_Layout start_layout, void *start_layout_data,
-      void(*start_layout_free_data)(void *data),
-      Evas_Object_Box_Layout end_layout, void *end_layout_data,
-      void(*end_layout_free_data)(void *data),
-      void(*transition_end_cb)(void *data),
-      void *transition_end_data)
+                       Evas_Object_Box_Layout start_layout, void *start_layout_data,
+                       void(*start_layout_free_data)(void *data),
+                       Evas_Object_Box_Layout end_layout, void *end_layout_data,
+                       void(*end_layout_free_data)(void *data),
+                       void(*transition_end_cb)(void *data),
+                       void *transition_end_data)
 {
    Elm_Box_Transition *box_data;
 
@@ -765,7 +765,7 @@ elm_box_transition_new(const double duration,
 
    box_data = calloc(1, sizeof(Elm_Box_Transition));
    if (!box_data)
-      return NULL;
+     return NULL;
 
    box_data->start.layout = start_layout;
    box_data->start.data = start_layout_data;
@@ -797,9 +797,9 @@ elm_box_transition_free(void *data)
    Transition_Animation_Data *tad;
    Elm_Box_Transition *box_data = data;
    if ((box_data->start.free_data) && (box_data->start.data))
-      box_data->start.free_data(box_data->start.data);
+     box_data->start.free_data(box_data->start.data);
    if ((box_data->end.free_data) && (box_data->end.data))
-      box_data->end.free_data(box_data->end.data);
+     box_data->end.free_data(box_data->end.data);
    EINA_LIST_FREE(box_data->objs, tad)
       free(tad);
    evas_object_event_callback_del(box_data->box, EVAS_CALLBACK_RESIZE, _transition_layout_obj_resize_cb);
