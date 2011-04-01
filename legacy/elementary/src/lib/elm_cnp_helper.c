@@ -178,21 +178,6 @@ static const Escape escapes[] = {
 };
 #define N_ESCAPES ((int)(sizeof(escapes) / sizeof(escapes[0])))
 
-static const char *image_extensions[] =
-{
-   ".png",
-   ".jpg", ".jpeg", ".jpe", ".jfif", ".jfi",
-   ".bmp",
-   ".xpm",
-   ".ppm", "pgm", ".pbm", ".pnm",
-   ".gif",
-   ".tif", ".tiff",
-   ".svg", ".svg.gz",
-   ".tga", ".targa",
-   
-   NULL
-};
-
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
    [CNP_ATOM_TARGETS] = {
       "TARGETS",
@@ -752,7 +737,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    Ecore_X_Selection_Data *data;
    Ecore_X_Selection_Data_Files *files;
    Paste_Image *pi;
-   char *p, *pp;
+   char *p;
 
    data = notify->data;
    cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
