@@ -902,22 +902,7 @@ _menu_press(Evas_Object *obj)
         top = elm_widget_top_get(obj);
         if (top) elm_hoversel_hover_parent_set(wd->hoversel, top);
         evas_object_smart_callback_add(wd->hoversel, "dismissed", _dismissed, obj);
-        if (!wd->selmode)
-          {
-             if (!_elm_config->desktop_entry)
-               {
-                  if (!wd->password)
-                     elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
-                                           _select, obj);
-               }
-             if (1) // need way to detect if someone has a selection
-               {
-                  if (wd->editable)
-                    elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
-                                          _paste, obj);
-               }
-          }
-        else
+        if (wd->have_selection)
           {
              if (!wd->password)
                {
@@ -931,6 +916,24 @@ _menu_press(Evas_Object *obj)
                     }
                   elm_hoversel_item_add(wd->hoversel, E_("Cancel"), NULL, ELM_ICON_NONE,
                                         _cancel, obj);
+               }
+          }
+        else
+          {
+             if (!wd->selmode)
+               {
+                  if (!_elm_config->desktop_entry)
+                    {
+                       if (!wd->password)
+                          elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
+                                                _select, obj);
+                    }
+                  if (1) // need way to detect if someone has a selection
+                    {
+                       if (wd->editable)
+                          elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
+                                                _paste, obj);
+                    }
                }
           }
         EINA_LIST_FOREACH(wd->items, l, it)
