@@ -9,35 +9,35 @@
  * and zooming and panning as well as fitting logic. It is entirely focused
  * on jpeg images, and takes advantage of properties of the jpeg format (via
  * evas loader features in the jpeg loader).
- * 
+ *
  * Signals that you can add callbacks for are:
  *
  * clicked - This is called when a user has clicked the photo without dragging
  * around.
- * 
+ *
  * press - This is called when a user has pressed down on the photo.
- * 
+ *
  * longpressed - This is called when a user has pressed down on the photo for
  * a long time without dragging around.
- * 
+ *
  * clicked,double - This is called when a user has double-clicked the photo.
- * 
+ *
  * load - Photo load begins.
- * 
+ *
  * loaded - This is called when the image file load is complete for the first
  * view (low resolution blurry version).
  *
  * load,details - Photo detailed data load begins.
- * 
+ *
  * loaded,details - This is called when the image file load is complete for the
  * detailed image data (full resolution needed).
  *
  * zoom,start - Zoom animation started.
- * 
+ *
  * zoom,stop - Zoom animation stopped.
- * 
+ *
  * zoom,change - Zoom changed when using an auto zoom mode.
- * 
+ *
  * scroll - the content has been scrolled (moved)
  *
  * scroll,anim,start - scrolling animation has started
@@ -47,11 +47,11 @@
  * scroll,drag,start - dragging the contents around has started
  *
  * scroll,drag,stop - dragging the contents around has stopped
- * 
+ *
  * ---
- * 
+ *
  * TODO (maybe - optional future stuff):
- * 
+ *
  * 1. wrap photo in theme edje so u can have styling around photo (like white
  *    photo bordering).
  * 2. exif handling
@@ -67,7 +67,7 @@ struct _Grid_Item
 {
    Widget_Data *wd;
    Evas_Object *img;
-   struct 
+   struct
      {
         int x, y, w, h;
      } src, out;
@@ -97,26 +97,26 @@ struct _Widget_Data
    double zoom;
    Elm_Photocam_Zoom_Mode mode;
    const char *file;
-   
+
    Ecore_Job *calc_job;
    Ecore_Timer *scr_timer;
    Ecore_Timer *long_timer;
    Ecore_Animator *zoom_animator;
    double t_start, t_end;
-   struct 
+   struct
      {
         int imw, imh;
         int w, h;
         int ow, oh, nw, nh;
-        struct 
+        struct
           {
              double x, y;
           } spos;
      } size;
    struct
      {
-	Eina_Bool show : 1;
-	Evas_Coord x, y ,w ,h;
+        Eina_Bool show : 1;
+        Evas_Coord x, y ,w ,h;
      } show;
    int tsize;
    Evas_Object *img; // low res version of image (scale down == 8)
@@ -179,8 +179,8 @@ img_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Co
 
    if (wd->show.show)
      {
-	wd->show.show = EINA_FALSE;
-	elm_smart_scroller_child_region_show(wd->scr, wd->show.x, wd->show.y, wd->show.w, wd->show.h);
+        wd->show.show = EINA_FALSE;
+        elm_smart_scroller_child_region_show(wd->scr, wd->show.x, wd->show.y, wd->show.w, wd->show.h);
      }
 }
 
@@ -202,7 +202,7 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
         for (x = 0; x < g->gw; x++)
           {
              int tn, xx, yy, ww, hh;
-             
+
              tn = (y * g->gw) + x;
              xx = g->grid[tn].out.x;
              yy = g->grid[tn].out.y;
@@ -240,7 +240,7 @@ grid_clear(Evas_Object *obj, Grid *g)
         for (x = 0; x < g->gw; x++)
           {
              int tn;
-             
+
              tn = (y * g->gw) + x;
              evas_object_del(g->grid[tn].img);
              if (g->grid[tn].want)
@@ -295,15 +295,15 @@ grid_create(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    int x, y;
    Grid *g;
-   
+
    if (!wd) return NULL;
    g = calloc(1, sizeof(Grid));
-   
+
    g->zoom = grid_zoom_calc(wd->zoom);
    g->tsize = wd->tsize;
    g->iw = wd->size.imw;
    g->ih = wd->size.imh;
-   
+
    g->w = g->iw / g->zoom;
    g->h = g->ih / g->zoom;
    if (g->zoom >= 8) return NULL;
@@ -321,7 +321,7 @@ grid_create(Evas_Object *obj)
         for (x = 0; x < g->gw; x++)
           {
              int tn;
-             
+
              tn = (y * g->gw) + x;
              g->grid[tn].src.x = x * g->tsize;
              if (x == (g->gw - 1))
@@ -333,25 +333,25 @@ grid_create(Evas_Object *obj)
                g->grid[tn].src.h = g->h - ((g->gh - 1) * g->tsize);
              else
                g->grid[tn].src.h = g->tsize;
-             
+
              g->grid[tn].out.x = g->grid[tn].src.x;
              g->grid[tn].out.y = g->grid[tn].src.y;
              g->grid[tn].out.w = g->grid[tn].src.w;
              g->grid[tn].out.h = g->grid[tn].src.h;
-             
+
              g->grid[tn].wd = wd;
-             g->grid[tn].img = 
-               evas_object_image_add(evas_object_evas_get(obj));
+             g->grid[tn].img =
+                evas_object_image_add(evas_object_evas_get(obj));
              evas_object_image_scale_hint_set
-               (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
+                (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
-             evas_object_smart_member_add(g->grid[tn].img, 
+             evas_object_smart_member_add(g->grid[tn].img,
                                           wd->pan_smart);
              elm_widget_sub_object_add(obj, g->grid[tn].img);
              evas_object_image_filled_set(g->grid[tn].img, 1);
-             evas_object_event_callback_add(g->grid[tn].img, 
+             evas_object_event_callback_add(g->grid[tn].img,
                                             EVAS_CALLBACK_IMAGE_PRELOADED,
-                                            _tile_preloaded, 
+                                            _tile_preloaded,
                                             &(g->grid[tn]));
           }
      }
@@ -375,7 +375,7 @@ grid_load(Evas_Object *obj, Grid *g)
           {
              int tn, xx, yy, ww, hh;
              Eina_Bool visible = EINA_FALSE;
-             
+
              tn = (y * g->gw) + x;
              xx = g->grid[tn].out.x;
              yy = g->grid[tn].out.y;
@@ -393,7 +393,7 @@ grid_load(Evas_Object *obj, Grid *g)
                   yy = (gh * yy) / g->h;
                   hh = ((gh * (ty + hh)) / g->h) - yy;
                }
-             if (ELM_RECTS_INTERSECT(xx - wd->pan_x + ox, 
+             if (ELM_RECTS_INTERSECT(xx - wd->pan_x + ox,
                                      yy  - wd->pan_y + oy,
                                      ww, hh,
                                      cvx, cvy, cvw, cvh))
@@ -409,7 +409,7 @@ grid_load(Evas_Object *obj, Grid *g)
                                                     g->grid[tn].src.y,
                                                     g->grid[tn].src.w,
                                                     g->grid[tn].src.h);
-                  evas_object_image_file_set(g->grid[tn].img, wd->file, NULL); 
+                  evas_object_image_file_set(g->grid[tn].img, wd->file, NULL);
                   evas_object_image_preload(g->grid[tn].img, 0);
                   wd->preload_num++;
                   if (wd->preload_num == 1)
@@ -472,7 +472,7 @@ _smooth_update(Evas_Object *obj)
              for (x = 0; x < g->gw; x++)
                {
                   int tn;
-                  
+
                   tn = (y * g->gw) + x;
                   evas_object_image_smooth_scale_set(g->grid[tn].img, (!wd->nosmooth));
                }
@@ -485,13 +485,13 @@ static void
 _grid_raise(Grid *g)
 {
    int x, y;
-   
+
    for (y = 0; y < g->gh; y++)
      {
         for (x = 0; x < g->gw; x++)
           {
              int tn;
-             
+
              tn = (y * g->gw) + x;
              evas_object_raise(g->grid[tn].img);
           }
@@ -578,7 +578,7 @@ zoom_do(Evas_Object *obj, double t)
      {
         Eina_List *l, *l_next;
         Grid *g;
-        
+
         EINA_LIST_FOREACH_SAFE(wd->grids, l, l_next, g)
           {
              if (g->dead)
@@ -626,7 +626,7 @@ static void
 _mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-//   Evas_Event_Mouse_Move *ev = event_info;
+   //   Evas_Event_Mouse_Move *ev = event_info;
    if (!wd) return;
 }
 
@@ -658,7 +658,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
    wd->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
 }
-   
+
 static void
 _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -677,7 +677,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
      evas_object_smart_callback_call(data, "clicked", NULL);
    wd->on_hold = EINA_FALSE;
 }
-   
+
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static void
@@ -708,13 +708,13 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-       edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
-       evas_object_focus_set(wd->obj, EINA_TRUE);
+        edje_object_signal_emit(wd->obj, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->obj, EINA_TRUE);
      }
    else
      {
-       edje_object_signal_emit(wd->obj, "elm,action,unfocus", "elm");
-       evas_object_focus_set(wd->obj, EINA_FALSE);
+        edje_object_signal_emit(wd->obj, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->obj, EINA_FALSE);
      }
 }
 
@@ -724,21 +724,21 @@ _theme_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_smart_scroller_object_theme_set(obj, wd->scr, "photocam", "base", elm_widget_style_get(obj));
-//   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+   //   edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 
 /*
-static void
-_show_region_hook(void *data, Evas_Object *obj)
-{
+   static void
+   _show_region_hook(void *data, Evas_Object *obj)
+   {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, y, w, h;
    if (!wd) return;
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
    elm_smart_scroller_child_region_show(wd->scr, x, y, w, h);
-}
-*/
+   }
+ */
 
 static void
 _sizing_eval(Evas_Object *obj)
@@ -746,11 +746,11 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    if (!wd) return;
-//   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
+   //   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
-//   minw = -1;
-//   minh = -1;
-//   if (wd->mode != ELM_LIST_LIMIT) minw = -1;
+   //   minw = -1;
+   //   minh = -1;
+   //   if (wd->mode != ELM_LIST_LIMIT) minw = -1;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
@@ -959,9 +959,9 @@ _scr_scroll(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
    evas_object_smart_callback_call(data, "scroll", NULL);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
-                             Evas_Callback_Type type, void *event_info)
+            Evas_Callback_Type type, void *event_info)
 {
    double zoom;
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
@@ -984,41 +984,41 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
 
-   if ((!strcmp(ev->keyname, "Left")) || 
+   if ((!strcmp(ev->keyname, "Left")) ||
        (!strcmp(ev->keyname, "KP_Left")))
      {
         x -= step_x;
      }
-   else if ((!strcmp(ev->keyname, "Right")) || 
+   else if ((!strcmp(ev->keyname, "Right")) ||
             (!strcmp(ev->keyname, "KP_Right")))
      {
         x += step_x;
      }
-   else if ((!strcmp(ev->keyname, "Up"))  || 
+   else if ((!strcmp(ev->keyname, "Up"))  ||
             (!strcmp(ev->keyname, "KP_Up")))
      {
         y -= step_y;
      }
-   else if ((!strcmp(ev->keyname, "Down")) || 
+   else if ((!strcmp(ev->keyname, "Down")) ||
             (!strcmp(ev->keyname, "KP_Down")))
      {
         y += step_y;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) || 
+   else if ((!strcmp(ev->keyname, "Prior")) ||
             (!strcmp(ev->keyname, "KP_Prior")))
      {
         if (page_y < 0)
-           y -= -(page_y * v_h) / 100;
+          y -= -(page_y * v_h) / 100;
         else
-           y -= page_y;
+          y -= page_y;
      }
-   else if ((!strcmp(ev->keyname, "Next")) || 
+   else if ((!strcmp(ev->keyname, "Next")) ||
             (!strcmp(ev->keyname, "KP_Next")))
      {
         if (page_y < 0)
-           y += -(page_y * v_h) / 100;
+          y += -(page_y * v_h) / 100;
         else
-           y += page_y;
+          y += page_y;
      }
    else if ((!strcmp(ev->keyname, "KP_Add")))
      {
@@ -1027,7 +1027,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
         elm_photocam_zoom_mode_set(obj, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
         elm_photocam_zoom_set(obj, zoom);
         return EINA_TRUE;
-     } 
+     }
    else if ((!strcmp(ev->keyname, "KP_Subtract")))
      {
         zoom = elm_photocam_zoom_get(obj);
@@ -1063,7 +1063,7 @@ elm_photocam_add(Evas_Object *parent)
    Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "photocam");
    elm_widget_type_set(obj, "photocam");
    elm_widget_sub_object_add(parent, obj);
@@ -1086,7 +1086,7 @@ elm_photocam_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "drag,start", _scr_drag_start, obj);
    evas_object_smart_callback_add(wd->scr, "drag,stop", _scr_drag_stop, obj);
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
-   
+
    elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
 
    wd->obj = obj;
@@ -1095,38 +1095,38 @@ elm_photocam_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
-   
+
    if (!smart)
      {
-	static Evas_Smart_Class sc;
+        static Evas_Smart_Class sc;
 
-	evas_object_smart_clipped_smart_set(&_pan_sc);
-	sc = _pan_sc;
-	sc.name = "elm_photocam_pan";
-	sc.version = EVAS_SMART_CLASS_VERSION;
-	sc.add = _pan_add;
-	sc.del = _pan_del;
-	sc.resize = _pan_resize;
-	sc.move = _pan_move;
-	sc.calculate = _pan_calculate;
-	smart = evas_smart_class_new(&sc);
+        evas_object_smart_clipped_smart_set(&_pan_sc);
+        sc = _pan_sc;
+        sc.name = "elm_photocam_pan";
+        sc.version = EVAS_SMART_CLASS_VERSION;
+        sc.add = _pan_add;
+        sc.del = _pan_del;
+        sc.resize = _pan_resize;
+        sc.move = _pan_move;
+        sc.calculate = _pan_calculate;
+        smart = evas_smart_class_new(&sc);
      }
    if (smart)
      {
-	wd->pan_smart = evas_object_smart_add(e, smart);
-	wd->pan = evas_object_smart_data_get(wd->pan_smart);
-	wd->pan->wd = wd;
+        wd->pan_smart = evas_object_smart_add(e, smart);
+        wd->pan = evas_object_smart_data_get(wd->pan_smart);
+        wd->pan->wd = wd;
      }
 
    elm_smart_scroller_extern_pan_set(wd->scr, wd->pan_smart,
-				     _pan_set, _pan_get, _pan_max_get,
+                                     _pan_set, _pan_get, _pan_max_get,
                                      _pan_min_get, _pan_child_size_get);
 
    wd->zoom = 1;
    wd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
-   
+
    wd->tsize = 512;
-   
+
    wd->img = evas_object_image_add(e);
    evas_object_image_scale_hint_set(wd->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_DOWN,
@@ -1141,8 +1141,8 @@ elm_photocam_add(Evas_Object *parent)
    evas_object_image_filled_set(wd->img, 1);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_IMAGE_PRELOADED,
                                   _main_preloaded, obj);
-   
-   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), 
+
+   edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr),
                              &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
@@ -1175,7 +1175,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    if (!wd) return EVAS_LOAD_ERROR_GENERIC;
    if (!eina_stringshare_replace(&wd->file, file)) return EVAS_LOAD_ERROR_NONE;
    grid_clearall(obj);
-   
+
    evas_object_hide(wd->img);
    evas_object_image_smooth_scale_set(wd->img, (wd->nosmooth == 0));
    evas_object_image_file_set(wd->img, NULL, NULL);
@@ -1220,7 +1220,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
  * Returns the path of the current image file
  *
  * @param obj The photocam object
- * @return Returns the path 
+ * @return Returns the path
  *
  * @ingroup Photocam
  */
@@ -1240,7 +1240,7 @@ elm_photocam_file_get(const Evas_Object *obj)
  * (that is 2x2 photo pixels will display as 1 on-screen pixel). 4:1 will be
  * 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom parameter must
  * be greater than 0. It is usggested to stick to powers of 2. (1, 2, 4, 8,
- * 16, 32, etc.). 
+ * 16, 32, etc.).
  *
  * @param obj The photocam object
  * @param zoom The zoom level to set
@@ -1379,7 +1379,7 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
              free(g);
           }
      }
-   done:
+done:
    wd->t_start = ecore_loop_time_get();
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
    if ((wd->size.w > 0) && (wd->size.h > 0))
@@ -1531,9 +1531,9 @@ elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
 
 /**
  * Get the current area of the image that is currently shown
- * 
- * This gets the region 
- * 
+ *
+ * This gets the region
+ *
  */
 EAPI void
 elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
@@ -1561,8 +1561,8 @@ elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
      }
    else
      {
-	if (x) *x = 0;
-	if (w) *w = 0;
+        if (x) *x = 0;
+        if (w) *w = 0;
      }
 
    if (wd->size.h > 0)
@@ -1582,8 +1582,8 @@ elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
      }
    else
      {
-	if (y) *y = 0;
-	if (h) *h = 0;
+        if (y) *y = 0;
+        if (h) *h = 0;
      }
 }
 
@@ -1614,7 +1614,7 @@ elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h __UN
    rh = (w * wd->size.h) / wd->size.imh;
    if (rw < 1) rw = 1;
    if (rh < 1) rh = 1;
-   if ((rx + rw) > wd->size.w) rx = wd->size.w - rw; 
+   if ((rx + rw) > wd->size.w) rx = wd->size.w - rw;
    if ((ry + rh) > wd->size.h) ry = wd->size.h - rh;
    if (wd->zoom_animator)
      {
@@ -1654,7 +1654,7 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
    rh = (w * wd->size.h) / wd->size.imh;
    if (rw < 1) rw = 1;
    if (rh < 1) rh = 1;
-   if ((rx + rw) > wd->size.w) rx = wd->size.w - rw; 
+   if ((rx + rw) > wd->size.w) rx = wd->size.w - rw;
    if ((ry + rh) > wd->size.h) ry = wd->size.h - rh;
    if (wd->zoom_animator)
      {
@@ -1664,17 +1664,17 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
         wd->zoom_animator = NULL;
         zoom_do(obj, 1.0);
         evas_object_smart_callback_call(obj, "zoom,stop", NULL);
-    }
+     }
    elm_smart_scroller_region_bring_in(wd->scr, rx, ry, rw, rh);
 }
 
 /**
  * Set the paused state for photocam
- * 
+ *
  * This sets the paused state to on (1) or off (0) for photocam. The default
  * is on. This will stop zooming using animation ch change zoom levels and
  * change instantly. This will stop any existing animations that are running.
- * 
+ *
  * @param obj The photocam object
  * @param paused The pause state to set
  *
@@ -1702,9 +1702,9 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
 
 /**
  * Get the paused state for photocam
- * 
+ *
  * This gets the current paused state for the photocam object.
- * 
+ *
  * @param obj The photocam object
  * @return The current paused state
  *
@@ -1721,7 +1721,7 @@ elm_photocam_paused_get(const Evas_Object *obj)
 
 /**
  * Get the internal low-res image used for photocam
- * 
+ *
  * This gets the internal image object inside photocam. Do not modify it. It
  * is for inspection only, and hooking callbacks to. Nothing else. It may be
  * deleted at any time as well.

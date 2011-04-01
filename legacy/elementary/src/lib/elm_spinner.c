@@ -150,13 +150,13 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (!wd) return;
    if (elm_widget_focus_get(obj))
      {
-       edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
-       evas_object_focus_set(wd->spinner, EINA_TRUE);
+        edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->spinner, EINA_TRUE);
      }
    else
      {
-       edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
-       evas_object_focus_set(wd->spinner, EINA_FALSE);
+        edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->spinner, EINA_FALSE);
      }
 }
 
@@ -183,31 +183,31 @@ _entry_show(Widget_Data *wd)
         const char *start = strchr(wd->label, '%');
         while (start)
           {
-	     /* handle %% */
-	     if (start[1] != '%')
-	       break;
-	     else
-	       start = strchr(start + 2, '%');
+             /* handle %% */
+             if (start[1] != '%')
+               break;
+             else
+               start = strchr(start + 2, '%');
           }
 
         if (start)
           {
-	     const char *itr, *end = NULL;
-	     for (itr = start + 1; *itr != '\0'; itr++)
-	       {
-		  /* allowing '%d' is quite dangerous, remove it? */
-		  if ((*itr == 'd') || (*itr == 'f'))
-		    {
-		       end = itr + 1;
-		       break;
-		    }
-	       }
+             const char *itr, *end = NULL;
+             for (itr = start + 1; *itr != '\0'; itr++)
+               {
+                  /* allowing '%d' is quite dangerous, remove it? */
+                  if ((*itr == 'd') || (*itr == 'f'))
+                    {
+                       end = itr + 1;
+                       break;
+                    }
+               }
 
-	     if ((end) && ((size_t)(end - start + 1) < sizeof(fmt)))
-	       {
-		  memcpy(fmt, start, end - start);
-		  fmt[end - start] = '\0';
-	       }
+             if ((end) && ((size_t)(end - start + 1) < sizeof(fmt)))
+               {
+                  memcpy(fmt, start, end - start);
+                  fmt[end - start] = '\0';
+               }
           }
      }
    snprintf(buf, sizeof(buf), fmt, wd->val);
@@ -240,7 +240,7 @@ apply:
    if (wd->entry_visible) _entry_show(wd);
 }
 
-static Eina_Bool 
+static Eina_Bool
 _value_set(Evas_Object *obj, double delta)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -286,12 +286,12 @@ _sizing_eval(Evas_Object *obj)
 }
 
 /*
-static void
-_changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
+   static void
+   _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
+   {
    _sizing_eval(data);
-}
-*/
+   }
+ */
 
 static void
 _val_set(Evas_Object *obj)
@@ -303,7 +303,7 @@ _val_set(Evas_Object *obj)
      pos = ((wd->val - wd->val_min) / (wd->val_max - wd->val_min));
    if (pos < 0.0) pos = 0.0;
    else if (pos > 1.0) pos = 1.0;
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 
+   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider",
                                    pos, pos);
 }
 
@@ -316,7 +316,7 @@ _drag(void *data, Evas_Object *_obj __UNUSED__, const char *emission __UNUSED__,
    if (!wd) return;
    if (wd->entry_visible) return;
    edje_object_part_drag_value_get(wd->spinner, "elm.dragable.slider",
-				   &pos, NULL);
+                                   &pos, NULL);
    offset = wd->step;
    delta = (pos - wd->drag_start_pos) * offset;
    /* If we are on rtl mode, change the delta to be negative on such changes */
@@ -334,7 +334,7 @@ _drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUS
    double pos;
    if (!wd) return;
    edje_object_part_drag_value_get(wd->spinner, "elm.dragable.slider",
-				   &pos, NULL);
+                                   &pos, NULL);
    wd->drag_start_pos = pos;
 }
 
@@ -372,7 +372,7 @@ _apply_entry_value(Evas_Object *obj)
    const char *str;
    char *end;
    double val;
-   
+
    if (!wd) return;
    _hide_entry(obj);
    str = elm_entry_entry_get(wd->ent);
@@ -398,10 +398,10 @@ _toggle_entry(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
    else
      {
         wd->orig_val = wd->val;
-	edje_object_signal_emit(wd->spinner, "elm,state,active", "elm");
+        edje_object_signal_emit(wd->spinner, "elm,state,active", "elm");
         _entry_show(wd);
         elm_entry_select_all(wd->ent);
-	elm_widget_focus_set(wd->ent, 1);
+        elm_widget_focus_set(wd->ent, 1);
         wd->entry_visible = 1;
      }
 }
@@ -551,13 +551,13 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
             || !strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
           _val_inc_stop(obj);
         else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left")
-            || !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+                 || !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
           _val_dec_stop(obj);
         else  return EINA_FALSE;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-     return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 /**
@@ -576,7 +576,7 @@ elm_spinner_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "spinner");
    elm_widget_type_set(obj, "spinner");
    elm_widget_sub_object_add(parent, obj);
@@ -605,31 +605,31 @@ elm_spinner_add(Evas_Object *parent)
    _elm_theme_object_set(obj, wd->spinner, "spinner", "base", "default");
    elm_widget_resize_object_set(obj, wd->spinner);
    edje_object_signal_callback_add(wd->spinner, "drag", "*", _drag, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,start", "*", 
+   edje_object_signal_callback_add(wd->spinner, "drag,start", "*",
                                    _drag_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,stop", "*", 
+   edje_object_signal_callback_add(wd->spinner, "drag,stop", "*",
                                    _drag_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,step", "*", 
+   edje_object_signal_callback_add(wd->spinner, "drag,step", "*",
                                    _drag_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,page", "*", 
+   edje_object_signal_callback_add(wd->spinner, "drag,page", "*",
                                    _drag_stop, obj);
 
-   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,start", 
+   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,start",
                                    "*", _button_inc_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,stop", 
+   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,stop",
                                    "*", _button_inc_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,start", 
+   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,start",
                                    "*", _button_dec_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,stop", 
+   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,stop",
                                    "*", _button_dec_stop, obj);
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 
+   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider",
                                    0.0, 0.0);
 
    wd->ent = elm_entry_add(obj);
    elm_entry_single_line_set(wd->ent, 1);
    evas_object_smart_callback_add(wd->ent, "activated", _entry_activated, obj);
    edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,entry,toggle", 
+   edje_object_signal_callback_add(wd->spinner, "elm,action,entry,toggle",
                                    "*", _toggle_entry, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -847,18 +847,18 @@ elm_spinner_wrap_get(const Evas_Object *obj)
 EAPI void
 elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label)
 {
-    Elm_Spinner_Special_Value *sv;
-    ELM_CHECK_WIDTYPE(obj, widtype);
-    Widget_Data *wd = elm_widget_data_get(obj);
-    if (!wd) return;
+   Elm_Spinner_Special_Value *sv;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
 
-    sv = calloc(1, sizeof(*sv));
-    if (!sv) return;
-    sv->value = value;
-    sv->label = eina_stringshare_add(label);
+   sv = calloc(1, sizeof(*sv));
+   if (!sv) return;
+   sv->value = value;
+   sv->label = eina_stringshare_add(label);
 
-    wd->special_values = eina_list_append(wd->special_values, sv);
-    _write_label(obj);
+   wd->special_values = eina_list_append(wd->special_values, sv);
+   _write_label(obj);
 }
 
 /**

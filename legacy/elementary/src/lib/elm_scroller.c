@@ -129,17 +129,17 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
      {
-	if (page_y < 0)
-	  y -= -(page_y * v_h) / 100;
-	else
-           y -= page_y;
+        if (page_y < 0)
+          y -= -(page_y * v_h) / 100;
+        else
+          y -= page_y;
      }
    else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
      {
-	if (page_y < 0)
-	  y += -(page_y * v_h) / 100;
-	else
-	  y += page_y;
+        if (page_y < 0)
+          y += -(page_y * v_h) / 100;
+        else
+          y += page_y;
      }
    else return EINA_FALSE;
 
@@ -194,10 +194,10 @@ _theme_hook(Evas_Object *obj)
         const char *str;
 
         _mirrored_set(obj, elm_widget_mirrored_get(obj));
-        elm_smart_scroller_object_theme_set(obj, wd->scr, 
+        elm_smart_scroller_object_theme_set(obj, wd->scr,
                                             wd->widget_name, wd->widget_base,
                                             elm_widget_style_get(obj));
-//        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+        //        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
         edj = elm_smart_scroller_edje_object_get(wd->scr);
         str = edje_object_data_get(edj, "focus_highlight");
         if ((str) && (!strcmp(str, "on")))
@@ -221,7 +221,7 @@ _elm_scroller_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, E
 
    /* Try Focus cycle in subitem */
    if ((elm_widget_can_focus_get(cur)) || (elm_widget_child_can_focus_get(cur)))
-      return elm_widget_focus_next_get(cur, dir, next);
+     return elm_widget_focus_next_get(cur, dir, next);
 
    /* Return */
    *next = (Evas_Object *)obj;
@@ -234,7 +234,7 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
-	 emission, source);
+                           emission, source);
 }
 
 static void
@@ -243,7 +243,7 @@ _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *so
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
-	 emission, source, func_cb, data);
+                                   emission, source, func_cb, data);
 }
 
 static void
@@ -251,8 +251,8 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_signal_callback_del_full(
-	 elm_smart_scroller_edje_object_get(wd->scr), emission, source,
-	 func_cb, data);
+      elm_smart_scroller_edje_object_get(wd->scr), emission, source,
+      func_cb, data);
 }
 
 static void
@@ -331,11 +331,11 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->content)
      {
-	elm_widget_on_show_region_hook_set(wd->content, NULL, NULL);
-	evas_object_event_callback_del_full (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-           _changed_size_hints, obj);
-	wd->content = NULL;
-	_sizing_eval(obj);
+        elm_widget_on_show_region_hook_set(wd->content, NULL, NULL);
+        evas_object_event_callback_del_full (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                             _changed_size_hints, obj);
+        wd->content = NULL;
+        _sizing_eval(obj);
      }
    else if (sub == wd->scr)
      wd->scr = NULL;
@@ -458,7 +458,7 @@ elm_scroller_add(Evas_Object *parent)
    Evas_Coord minw, minh;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "scroller");
    elm_widget_type_set(obj, "scroller");
    elm_widget_sub_object_add(parent, obj);
@@ -476,13 +476,13 @@ elm_scroller_add(Evas_Object *parent)
 
    wd->widget_name = eina_stringshare_add("scroller");
    wd->widget_base = eina_stringshare_add("base");
-   
+
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    _theme_hook(obj);
    elm_widget_resize_object_set(obj, wd->scr);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				  _changed_size_hints, obj);
+                                  _changed_size_hints, obj);
 
    edje_object_size_min_calc(elm_smart_scroller_edje_object_get(wd->scr), &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -545,12 +545,12 @@ elm_scroller_content_set(Evas_Object *obj, Evas_Object *content)
    wd->content = content;
    if (content)
      {
-	elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
-	elm_widget_sub_object_add(obj, content);
+        elm_widget_on_show_region_hook_set(content, _show_region_hook, obj);
+        elm_widget_sub_object_add(obj, content);
         if (wd->scr)
           elm_smart_scroller_child_set(wd->scr, content);
-	evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-				       _changed_size_hints, obj);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
      }
    _sizing_eval(obj);
 }
@@ -601,7 +601,7 @@ elm_scroller_content_unset(Evas_Object *obj)
 
 /**
  * Set custom theme elements for the scroller
- * 
+ *
  * @param obj The scroller object
  * @param widget The widget name to use (default is "scroller")
  * @param base The base name to use (default is "base")
@@ -691,9 +691,9 @@ elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scro
    Widget_Data *wd = elm_widget_data_get(obj);
    const Elm_Scroller_Policy map[3] =
      {
-	ELM_SMART_SCROLLER_POLICY_AUTO,
-	  ELM_SMART_SCROLLER_POLICY_ON,
-	  ELM_SMART_SCROLLER_POLICY_OFF
+        ELM_SMART_SCROLLER_POLICY_AUTO,
+        ELM_SMART_SCROLLER_POLICY_ON,
+        ELM_SMART_SCROLLER_POLICY_OFF
      };
    if ((!wd) || (!wd->scr)) return;
    if ((policy_h >= 3) || (policy_v >= 3)) return;
@@ -892,7 +892,7 @@ elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_
  *
  * This enables or disabled event propagation from the scroller content to
  * the scroller and its parent. By default event propagation is disabled.
- * 
+ *
  * @param obj The scroller object
  * @param propagation If propagation is enabled or not
  *
@@ -911,9 +911,9 @@ elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation)
 /**
  * Get event propagation for a scroller
  *
- * This gets the event propagation for a scroller. See 
+ * This gets the event propagation for a scroller. See
  * elm_scroller_propagate_events_set() for more information
- * 
+ *
  * @param obj The scroller object
  * @return The propagation state
  *

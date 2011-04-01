@@ -82,7 +82,7 @@ elm_separator_add(Evas_Object *parent)
    Widget_Data *wd;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "separator");
    wd->horizontal = EINA_FALSE;
    elm_widget_type_set(obj, "separator");

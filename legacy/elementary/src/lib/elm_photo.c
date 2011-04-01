@@ -5,8 +5,8 @@
  * @defgroup Photo Photo
  *
  * For displaying the photo of a person (contact). Simple yet
- * with a very specific purpose. 
- * 
+ * with a very specific purpose.
+ *
  * Signals that you can add callbacks for are:
  *
  *  - clicked: This is called when a user has clicked the photo
@@ -57,10 +57,10 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(wd->frm, elm_widget_mirrored_get(obj));
-   _elm_theme_object_set(obj, wd->frm, "photo", "base", 
+   _elm_theme_object_set(obj, wd->frm, "photo", "base",
                          elm_widget_style_get(obj));
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
-   edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) * 
+   edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) *
                          _elm_config->scale);
    _sizing_eval(obj);
 }
@@ -72,7 +72,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
    if (!wd) return;
-   if (wd->size > 0) 
+   if (wd->size > 0)
      {
         double scale = 0.0;
 
@@ -96,7 +96,7 @@ _icon_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    Widget_Data *wd = elm_widget_data_get(data);
 
    if (!wd) return;
-   if (wd->fill) 
+   if (wd->fill)
      {
         Edje_Message_Int_Set *msg;
         Evas_Object *icon = _els_smart_icon_object_get(wd->img);
@@ -218,7 +218,7 @@ elm_photo_add(Evas_Object *parent)
    Evas_Object *icon;
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-   
+
    ELM_SET_WIDTYPE(widtype, "photo");
    elm_widget_type_set(obj, "photo");
    elm_widget_sub_object_add(parent, obj);
@@ -238,12 +238,12 @@ elm_photo_add(Evas_Object *parent)
    _els_smart_icon_fill_inside_set(wd->img, 0);
    _els_smart_icon_scale_size_set(wd->img, 0);
    wd->fill = EINA_FALSE;
-   _els_smart_icon_scale_set(wd->img, 
+   _els_smart_icon_scale_set(wd->img,
                              elm_widget_scale_get(obj) * _elm_config->scale);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_UP,
-				  _mouse_up, obj);
+                                  _mouse_up, obj);
    evas_object_event_callback_add(wd->img, EVAS_CALLBACK_MOUSE_DOWN,
-				  _mouse_down, obj);
+                                  _mouse_down, obj);
    evas_object_repeat_events_set(wd->img, 1);
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->img);
    evas_object_show(wd->img);
@@ -253,9 +253,9 @@ elm_photo_add(Evas_Object *parent)
 
    icon = _els_smart_icon_object_get(wd->img);
    evas_object_event_callback_add(icon, EVAS_CALLBACK_MOVE,
-				  _icon_move_resize, obj);
+                                  _icon_move_resize, obj);
    evas_object_event_callback_add(icon, EVAS_CALLBACK_RESIZE,
-   				  _icon_move_resize, obj);
+                                  _icon_move_resize, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
