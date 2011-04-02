@@ -160,6 +160,7 @@ eeze_libmount_shutdown(void)
 
    mnt_unlock_file(_eeze_mtab_lock);
    mnt_free_lock(_eeze_mtab_lock);
+   _eeze_mtab_lock = NULL;
 }
 
 unsigned long
