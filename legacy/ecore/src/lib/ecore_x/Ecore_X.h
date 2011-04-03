@@ -216,12 +216,6 @@ typedef enum _Ecore_X_Render_Subpixel_Order {
 
 #define ECORE_X_DND_VERSION                    5
 
-EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_COPY;
-EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_MOVE;
-EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_LINK;
-EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_ASK;
-EAPI extern Ecore_X_Atom ECORE_X_DND_ACTION_PRIVATE;
-
 typedef enum _Ecore_X_Selection {
    ECORE_X_SELECTION_PRIMARY,
    ECORE_X_SELECTION_SECONDARY,
