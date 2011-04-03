@@ -1803,7 +1803,8 @@ struct _Ctxt
    int underline_extend;
    int have_underline, have_underline2;
    double align, valign;
-   Eina_Bool align_auto;
+   Eina_Bool align_auto : 1;
+   Eina_Bool calc_only : 1;
 };
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
@@ -3295,8 +3296,9 @@ _layout_visualize_par(Ctxt *c)
         int adv_line = 0;
         int redo_item = 0;
         it = _ITEM(eina_list_data_get(i));
-        /* Skip visually deleted items */
-        if (it->visually_deleted)
+        /* Skip visually deleted items - only if it's a real calc.
+         * In the calc only case we want to take them into account */
+        if (!c->calc_only && it->visually_deleted)
           {
              i = eina_list_next(i);
              continue;
@@ -3466,7 +3468,7 @@ _layout_visualize_par(Ctxt *c)
  * Create the layout from the nodes.
  *
  * @param obj the evas object - NOT NULL.
- * @param calc_only true if should only calc sizes false if should also create the layout..
+ * @param calc_only true if should only calc sizes false if should also create the layout.. It assumes native size is being calculated, doesn't support formatted size atm.
  * @param w the object's w, -1 means no wrapping (i.e infinite size)
  * @param h the object's h, -1 means inifinte size.
  * @param w_ret the object's calculated w.
@@ -3501,7 +3503,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align = 0.0;
    c->align_auto = EINA_TRUE;
    c->ln = NULL;
-
+   c->calc_only = !!calc_only;
 
    /* Start of logical layout creation */
 
