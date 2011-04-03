@@ -41,6 +41,13 @@ static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void _configure(Evas_Object *obj);
 
+static const char SIG_ANIMATE_DONE[] = "animate,done";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_ANIMATE_DONE, ""},
+   {NULL, NULL}
+};
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -344,7 +351,7 @@ _flip(Evas_Object *obj)
         wd->animator = NULL;
         wd->state = !wd->state;
         _configure(obj);
-        evas_object_smart_callback_call(obj, "animate,done", NULL);
+        evas_object_smart_callback_call(obj, SIG_ANIMATE_DONE, NULL);
         return ECORE_CALLBACK_CANCEL;
      }
    return ECORE_CALLBACK_RENEW;
@@ -449,9 +456,12 @@ elm_flip_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
 
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
    wd->state = 1;
 
    _sizing_eval(obj);
+
    return obj;
 }
 
