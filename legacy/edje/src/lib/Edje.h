@@ -39,10 +39,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 #define EDJE_VERSION_MAJOR 1
 #define EDJE_VERSION_MINOR 0
-   
+
    typedef struct _Edje_Version
      {
         int major;
@@ -50,9 +50,9 @@ extern "C" {
         int micro;
         int revision;
      } Edje_Version;
-   
+
    EAPI extern Edje_Version *edje_version;
-   
+
 /**
  * @file Edje.h
  * @brief Edje Graphical Design Library
@@ -268,7 +268,7 @@ typedef enum _Edje_Text_Filter_Type
    EDJE_TEXT_FILTER_FORMAT = 1,
    EDJE_TEXT_FILTER_MARKUP = 2
 } Edje_Text_Filter_Type;
-   
+
 typedef enum _Edje_External_Param_Type
 {
   EDJE_EXTERNAL_PARAM_TYPE_INT,
@@ -572,11 +572,11 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    EAPI Eina_Bool    edje_object_part_exists             (const Evas_Object *obj, const char *part);
    EAPI const Evas_Object *edje_object_part_object_get   (const Evas_Object *obj, const char *part);
    EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   
+
    EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
-   
+
    EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Text_Change_Cb func, void *data);
-   
+
    EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
    EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, const char *part);
    EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const char *part, const char *text_to_escape);
@@ -595,7 +595,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    EAPI void             edje_object_part_text_select_abort            (const Evas_Object *obj, const char *part);
    EAPI void             edje_object_part_text_select_begin            (const Evas_Object *obj, const char *part);
    EAPI void             edje_object_part_text_select_extend           (const Evas_Object *obj, const char *part);
-       
+
    EAPI Eina_Bool        edje_object_part_text_cursor_next                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_prev                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
    EAPI Eina_Bool        edje_object_part_text_cursor_up                   (Evas_Object *obj, const char *part, Edje_Cursor cur);
@@ -615,7 +615,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
    EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func);
    EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
-   
+
    EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
    EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
    EAPI Evas_Object     *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
@@ -661,13 +661,13 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    /* edje_external.c */
    EAPI Eina_Bool    edje_external_type_register             (const char *type_name, const Edje_External_Type *type_info);
    EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name);
-   
+
    EAPI void         edje_external_type_array_register       (const Edje_External_Type_Info *array);
    EAPI void         edje_external_type_array_unregister     (const Edje_External_Type_Info *array);
-   
+
    EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
-   
-   
+
+
    EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
    EAPI Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
    EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
@@ -684,7 +684,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
 
    /* perspective info for maps inside edje objects */
    typedef struct _Edje_Perspective Edje_Perspective;
-   
+
    EAPI Edje_Perspective       *edje_perspective_new            (Evas *e);
    EAPI void                    edje_perspective_free           (Edje_Perspective *ps);
    EAPI void                    edje_perspective_set            (Edje_Perspective *ps, Evas_Coord px, Evas_Coord py, Evas_Coord z0, Evas_Coord foc);
@@ -693,7 +693,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
    EAPI const Edje_Perspective *edje_evas_global_perspective_get(const Evas *e);
    EAPI void                    edje_object_perspective_set     (Evas_Object *obj, Edje_Perspective *ps);
    EAPI const Edje_Perspective *edje_object_perspective_get     (const Evas_Object *obj);
-   
+
 #ifdef __cplusplus
 }
 #endif
