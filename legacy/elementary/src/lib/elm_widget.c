@@ -281,18 +281,24 @@ _propagate_event(void        *data,
    switch (type)
      {
       case EVAS_CALLBACK_KEY_DOWN:
-        Evas_Event_Key_Down *ev = event_info;
-        event_flags = &(ev->event_flags);
+          {
+            Evas_Event_Key_Down *ev = event_info;
+            event_flags = &(ev->event_flags);
+          }
         break;
 
       case EVAS_CALLBACK_KEY_UP:
-        Evas_Event_Key_Up *ev = event_info;
-        event_flags = &(ev->event_flags);
+          {
+             Evas_Event_Key_Up *ev = event_info;
+             event_flags = &(ev->event_flags);
+          }
         break;
 
       case EVAS_CALLBACK_MOUSE_WHEEL:
-        Evas_Event_Mouse_Wheel *ev = event_info;
-        event_flags = &(ev->event_flags);
+          {
+            Evas_Event_Mouse_Wheel *ev = event_info;
+            event_flags = &(ev->event_flags);
+          }
         break;
 
       default:
