@@ -136,7 +136,7 @@ _unfocus_parents(Evas_Object *obj)
 {
    for (; obj; obj = elm_widget_parent_get(obj))
      {
-        INTERNAL_ENTRY;
+        INTERNAL_ENTRY
         if (!sd->focused) return;
         sd->focused = 0;
      }
@@ -147,7 +147,7 @@ _focus_parents(Evas_Object *obj)
 {
    for (; obj; obj = elm_widget_parent_get(obj))
      {
-        INTERNAL_ENTRY;
+        INTERNAL_ENTRY
         if (sd->focused) return;
         sd->focused = 1;
      }
@@ -225,7 +225,7 @@ _propagate_y_drag_lock(Evas_Object *obj, int dir)
 static void
 _propagate_event(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    Evas_Callback_Type type = (Evas_Callback_Type)(long) data;
    Evas_Event_Flags *event_flags = NULL;
 
@@ -2561,7 +2561,7 @@ _if_focused_revert(Evas_Object *obj, Eina_Bool can_focus_only)
    Evas_Object *newest = NULL;
    unsigned int newest_focus_order = 0;
 
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
 
    if (!sd->focused) return;
    if (!sd->parent_obj) return;
@@ -2584,7 +2584,7 @@ _smart_del(Evas_Object *obj)
    Evas_Object *sobj;
    Edje_Signal_Data *esd;
 
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
 
    if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
@@ -2629,7 +2629,7 @@ _smart_del(Evas_Object *obj)
 static void
 _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    sd->x = x;
    sd->y = y;
    _smart_reconfigure(sd);
@@ -2638,7 +2638,7 @@ _smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 static void
 _smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    sd->w = w;
    sd->h = h;
    _smart_reconfigure(sd);
@@ -2649,7 +2649,7 @@ _smart_show(Evas_Object *obj)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -2665,7 +2665,7 @@ _smart_hide(Evas_Object *obj)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FREE(list, o)
      {
@@ -2679,7 +2679,7 @@ _smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -2695,7 +2695,7 @@ _smart_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -2711,7 +2711,7 @@ _smart_clip_unset(Evas_Object *obj)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -2725,7 +2725,7 @@ _smart_clip_unset(Evas_Object *obj)
 static void
 _smart_calculate(Evas_Object *obj)
 {
-   INTERNAL_ENTRY;
+   INTERNAL_ENTRY
    if (sd->changed_func) sd->changed_func(obj);
 }
 
