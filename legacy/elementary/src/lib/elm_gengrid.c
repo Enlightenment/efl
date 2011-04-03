@@ -13,7 +13,7 @@
  * Signals that you can add callbacks for are:
  *
  * clicked,double - The user has double-clicked or pressed enter on
- * a item. The event_infoparameter is the Gengrid item
+ * an item. The event_info parameter is the Gengrid item
  * that was double-clicked.
  *
  * selected - The user has made an item selected. The event_info
