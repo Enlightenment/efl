@@ -233,24 +233,24 @@ evas_smart_cb_descriptions_resize(Evas_Smart_Cb_Description_Array *a, unsigned i
 
    if (size == 0)
      {
-	free(a->array);
-	a->array = NULL;
-	a->size = 0;
-	return 1;
+        free(a->array);
+        a->array = NULL;
+        a->size = 0;
+        return 1;
      }
 
    tmp = realloc(a->array, (size + 1) * sizeof(Evas_Smart_Cb_Description *));
    if (tmp)
      {
-	a->array = tmp;
-	a->size = size;
-	a->array[size] = NULL;
-	return 1;
+        a->array = tmp;
+        a->size = size;
+        a->array[size] = NULL;
+        return 1;
      }
    else
      {
-	ERR("realloc failed!");
-	return 0;
+        ERR("realloc failed!");
+        return 0;
      }
 }
 
@@ -269,12 +269,12 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 
    if (!a)
      {
-	ERR("no array to fix!");
-	return;
+        ERR("no array to fix!");
+        return;
      }
 
    qsort(a->array, a->size, sizeof(Evas_Smart_Cb_Description *),
-	 _evas_smart_cb_description_cmp_sort);
+         _evas_smart_cb_description_cmp_sort);
 
    DBG("%u callbacks", a->size);
    if (a->size)
@@ -282,29 +282,29 @@ evas_smart_cb_descriptions_fix(Evas_Smart_Cb_Description_Array *a)
 
    for (i = 0, j = 1; j < a->size; j++)
      {
-	const Evas_Smart_Cb_Description *cur, *prev;
+        const Evas_Smart_Cb_Description *cur, *prev;
 
-	cur = a->array[j];
-	prev = a->array[i];
+        cur = a->array[j];
+        prev = a->array[i];
 
-	DBG("%s [type=%s]", cur->name, cur->type);
+        DBG("%s [type=%s]", cur->name, cur->type);
 
-	if (strcmp(cur->name, prev->name) != 0)
-	  {
-	     i++;
-	     if (i != j)
-	       a->array[i] = a->array[j];
-	  }
-	else
-	  {
-	     if (strcmp(cur->type, prev->type) == 0)
-	       WRN("duplicated smart callback description"
-		   " with name '%s' and type '%s'", cur->name, cur->type);
-	     else
-	       ERR("callback descriptions named '%s' differ"
-		   " in type, keeping '%s', ignoring '%s'",
-		   cur->name, prev->type, cur->type);
-	  }
+        if (strcmp(cur->name, prev->name) != 0)
+          {
+             i++;
+             if (i != j)
+               a->array[i] = a->array[j];
+          }
+        else
+          {
+             if (strcmp(cur->type, prev->type) == 0)
+               WRN("duplicated smart callback description"
+                   " with name '%s' and type '%s'", cur->name, cur->type);
+             else
+               ERR("callback descriptions named '%s' differ"
+                   " in type, keeping '%s', ignoring '%s'",
+                   cur->name, prev->type, cur->type);
+          }
      }
 
    evas_smart_cb_descriptions_resize(a, i + 1);
@@ -318,18 +318,18 @@ _evas_smart_class_callbacks_create(Evas_Smart *s)
 
    for (sc = s->smart_class; sc; sc = sc->parent)
      {
-	const Evas_Smart_Cb_Description *d;
-	for (d = sc->callbacks; d && d->name; d++)
-	  n++;
+        const Evas_Smart_Cb_Description *d;
+        for (d = sc->callbacks; d && d->name; d++)
+          n++;
      }
 
    if (n == 0) return;
    if (!evas_smart_cb_descriptions_resize(&s->callbacks, n)) return;
    for (n = 0, sc = s->smart_class; sc; sc = sc->parent)
      {
-	const Evas_Smart_Cb_Description *d;
-	for (d = sc->callbacks; d && d->name; d++)
-	  s->callbacks.array[n++] = d;
+        const Evas_Smart_Cb_Description *d;
+        for (d = sc->callbacks; d && d->name; d++)
+          s->callbacks.array[n++] = d;
      }
    evas_smart_cb_descriptions_fix(&s->callbacks);
 }
@@ -349,5 +349,5 @@ evas_smart_cb_description_find(const Evas_Smart_Cb_Description_Array *a, const c
 {
    if (!a->array) return NULL;
    return bsearch(name, a->array, a->size, sizeof(Evas_Smart_Cb_Description *),
-		  _evas_smart_cb_description_cmp_search);
+                  _evas_smart_cb_description_cmp_search);
 }
