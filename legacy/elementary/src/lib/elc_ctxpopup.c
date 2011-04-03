@@ -14,7 +14,7 @@
  *
  * Signals that you can add callbacks for are:
  *
- * dismissed - the ctxpopup was dismissed
+ * "dismissed" - the ctxpopup was dismissed
  */
 
 typedef struct _Widget_Data Widget_Data;
