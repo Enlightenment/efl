@@ -17,7 +17,7 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has double-clicked an item. The
+ * clicked,double - This is called when a user has double-clicked an item. The
  * event_info parameter is the genlist item that was double-clicked.
  *
  * selected - This is called when a user has made an item selected. The
@@ -1342,7 +1342,10 @@ _mouse_down(void        *data,
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      if ((!it->disabled) && (!it->display_only))
-       evas_object_smart_callback_call(it->base.widget, "clicked", it);
+       {
+          evas_object_smart_callback_call(it->base.widget, "clicked,double", it);
+          evas_object_smart_callback_call(it->base.widget, "clicked", it); // will be removed
+       }
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);

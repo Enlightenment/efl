@@ -888,7 +888,10 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    it->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(it->base.widget, "clicked", it);
+     {
+        evas_object_smart_callback_call(it->base.widget, "clicked,double", it);
+        evas_object_smart_callback_call(it->base.widget, "clicked", it); // will be removed
+     }
    wd->swipe = EINA_FALSE;
    wd->movements = 0;
 
