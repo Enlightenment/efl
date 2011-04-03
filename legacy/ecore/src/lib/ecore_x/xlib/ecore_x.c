@@ -744,7 +744,7 @@ ecore_x_fd_get(void)
 /**
  * Retrieves the Ecore_X_Screen handle used for the current X connection.
  * @return  The current default screen.
- * @ingroup Ecore_Xcb_Display_Attr_Group
+ * @ingroup Ecore_X_Display_Attr_Group
  */
 EAPI Ecore_X_Screen *
 ecore_x_default_screen_get(void)
