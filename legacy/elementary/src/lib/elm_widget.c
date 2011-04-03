@@ -34,13 +34,9 @@ struct _Smart_Data
    void         (*signal_func) (Evas_Object *obj, const char *emission,
                                 const char *source);
    void         (*callback_add_func) (Evas_Object *obj, const char *emission,
-                                      const char *source, void (*func) (void *data,
-                                                                        Evas_Object *o, const char *emission,
-                                                                        const char *source), void *data);
+                                      const char *source, Edje_Signal_Cb func, void *data);
    void         (*callback_del_func) (Evas_Object *obj, const char *emission,
-                                      const char *source, void (*func) (void *data,
-                                                                        Evas_Object *o, const char *emission,
-                                                                        const char *source), void *data);
+                                      const char *source, Edje_Signal_Cb func, void *data);
    void         (*changed_func) (Evas_Object *obj);
    Eina_Bool    (*focus_next_func) (const Evas_Object *obj, Elm_Focus_Direction dir,
                                     Evas_Object **next);
@@ -451,14 +447,14 @@ elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj
 }
 
 EAPI void
-elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data))
+elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data))
 {
    API_ENTRY return;
    sd->callback_add_func = func;
 }
 
 EAPI void
-elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data))
+elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data))
 {
    API_ENTRY return;
    sd->callback_del_func = func;
@@ -1439,7 +1435,7 @@ _edje_signal_callback(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 }
 
 EAPI void
-elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
    Edje_Signal_Data *esd;
    API_ENTRY return;
@@ -1459,7 +1455,7 @@ elm_widget_signal_callback_add(Evas_Object *obj, const char *emission, const cha
 }
 
 EAPI void *
-elm_widget_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+elm_widget_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func)
 {
    Edje_Signal_Data *esd;
    Eina_List *l;

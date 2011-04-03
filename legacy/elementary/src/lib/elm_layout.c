@@ -127,14 +127,14 @@ _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
 }
 
 static void
-_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_signal_callback_add(wd->lay, emission, source, func_cb, data);
 }
 
 static void
-_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, void (*func_cb) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_signal_callback_del_full(wd->lay, emission, source, func_cb,
