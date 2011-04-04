@@ -82,3 +82,11 @@ COMPILING AND INSTALLING:
 (as root unless you are installing in your users directories):
   make install
       
+------------------------------------------------------------------------------
+NOTE:
+
+You can experience main loop lock (and more likely see UI lock) if libcurl
+doesn't use an asynchronous dns resolver. Since Curl 7.21.0, you can use the
+native dns resolver asynchronously by turning  --enable-threaded-resolver
+on during configure time. For older version, C-Ares is the way to solve that
+issue (see: http://c-ares.haxx.se/ ).
