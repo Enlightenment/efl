@@ -8662,18 +8662,9 @@ evas_object_textblock_render_pre(Evas_Object *obj)
            (((o->valign != 0.0) || (o->have_ellipsis)) &&
                (obj->cur.geometry.h != o->last_h))))
      {
-	o->formatted.valid = 0;
-	_layout(obj,
-		0,
-		obj->cur.geometry.w, obj->cur.geometry.h,
-		&o->formatted.w, &o->formatted.h);
-	o->formatted.valid = 1;
-	o->last_w = obj->cur.geometry.w;
-	o->last_h = obj->cur.geometry.h;
+        _relayout(obj);
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	o->changed = 0;
-	o->content_changed = 0;
 	is_v = evas_object_is_visible(obj);
 	was_v = evas_object_was_visible(obj);
 	goto done;
@@ -8682,8 +8673,6 @@ evas_object_textblock_render_pre(Evas_Object *obj)
      {
 	o->redraw = 0;
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	o->changed = 0;
-	o->content_changed = 0;
 	is_v = evas_object_is_visible(obj);
 	was_v = evas_object_was_visible(obj);
 	goto done;
@@ -8739,12 +8728,6 @@ evas_object_textblock_render_pre(Evas_Object *obj)
      {
 	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
 	goto done;
-     }
-   if (o->changed || o->content_changed)
-     {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	o->changed = 0;
-	o->content_changed = 0;
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
