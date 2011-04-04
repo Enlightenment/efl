@@ -925,7 +925,6 @@ static Evas_Func func =
      eng_image_scale_hint_get,
      /* more font draw functions */
      eng_font_last_up_to_pos,
-     /* FUTURE software generic calls go here (done) */
      eng_image_map_draw,
      eng_image_map_surface_new,
      eng_image_map_surface_free,
@@ -933,8 +932,15 @@ static Evas_Func func =
      NULL, // eng_image_content_hint_get - software doesn't use it
      eng_font_pen_coords_get,
      eng_font_text_props_info_create,
-     eng_font_right_inset_get
-     /* FUTURE software generic calls go here */
+     eng_font_right_inset_get,
+     NULL, // FIXME: need software mesa for gl rendering <- gl_surface_create
+     NULL, // FIXME: need software mesa for gl rendering <- gl_surface_destroy
+     NULL, // FIXME: need software mesa for gl rendering <- gl_context_create
+     NULL, // FIXME: need software mesa for gl rendering <- gl_context_destroy
+     NULL, // FIXME: need software mesa for gl rendering <- gl_make_current
+     NULL, // FIXME: need software mesa for gl rendering <- gl_proc_address_get
+     NULL  // FIXME: need software mesa for gl rendering <- gl_native_surface_get
+    /* FUTURE software generic calls go here */
 };
 
 /*

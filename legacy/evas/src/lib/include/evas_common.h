@@ -11,6 +11,7 @@
 
 #include <Eina.h>
 #include "Evas.h"
+#include "Evas_GL.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

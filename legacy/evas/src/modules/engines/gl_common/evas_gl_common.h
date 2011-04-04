@@ -187,7 +187,8 @@ struct _Evas_GL_Shared
       Eina_List       *atlas[33][3];
    } tex;
    
-   Eina_Hash          *native_hash;
+   Eina_Hash          *native_pm_hash;
+   Eina_Hash          *native_tex_hash;
    
    struct {
       Evas_GL_Program  rect;

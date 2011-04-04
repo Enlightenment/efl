@@ -48,7 +48,8 @@ evas_stack.c \
 evas_async_events.c \
 evas_transform.c \
 evas_stats.c \
-evas_map.c
+evas_map.c \
+evas_gl.c
 
 libevas_canvas_la_LIBADD = @EVIL_LIBS@
 

@@ -60,6 +60,7 @@ typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 #define MAGIC_OBJ_SHAPE            0x72777773
 #define MAGIC_OBJ_CONTAINER        0x72777774
 #define MAGIC_OBJ_CUSTOM           0x72777775
+#define MAGIC_EVAS_GL              0x72777776
 
 #ifdef MAGIC_DEBUG
 # define MAGIC_CHECK_FAILED(o, t, m) \
@@ -684,6 +685,15 @@ struct _Evas_Func
    int  (*font_pen_coords_get)            (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
    Eina_Bool (*font_text_props_info_create)                (void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
    int  (*font_right_inset_get)                  (void *data, void *font, const Evas_Text_Props *text_props);
+
+   /* EFL-GL Glue Layer */
+   void *(*gl_surface_create)            (void *data, void *config, int w, int h);
+   int  (*gl_surface_destroy)            (void *data, void *surface);
+   void *(*gl_context_create)            (void *data, void *share_context);
+   int  (*gl_context_destroy)            (void *data, void *context);
+   int  (*gl_make_current)               (void *data, void *surface, void *context); 
+   void *(*gl_proc_address_get)          (void *data, const char *name);
+   int  (*gl_native_surface_get)         (void *data, void *surface, void *native_surface);
 };
 
 struct _Evas_Image_Load_Func

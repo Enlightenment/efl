@@ -202,3 +202,9 @@
 
 	* Added vertical alignment support to textblock.
 	  API: evas_object_textblock_valign_set/get
+
+2011-04-04  Sung W. Park
+
+	* Added Evas OpenGL interface to be able to get an OpenGL API for
+        rendering to image objects. This is the beginning so not
+        totally functional yet.
