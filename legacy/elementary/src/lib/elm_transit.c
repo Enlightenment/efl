@@ -88,9 +88,9 @@ struct _Elm_Transit
 
 struct _Elm_Transit_Effect_Module
 {
-   void (*animation_op) (void *data, Elm_Transit *transit, double progress);
-   void (*user_data_free) (void *data, Elm_Transit *transit);
-   void *user_data;
+   void (*animation_op) (Elm_Transit_Effect *effect, Elm_Transit *transit, double progress);
+   void (*user_effect_free) (Elm_Transit_Effect *effect, Elm_Transit *transit);
+   Elm_Transit_Effect *user_effect;
    Eina_Bool deleted : 1;
 };
 
@@ -192,8 +192,8 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 static void
 _elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module, Eina_List *elist)
 {
-   if (effect_module->user_data_free)
-     effect_module->user_data_free(effect_module->user_data, transit);
+   if (effect_module->user_effect_free)
+     effect_module->user_effect_free(effect_module->user_effect, transit);
 
    transit->effect_list = eina_list_remove_list(transit->effect_list, elist);
    free(effect_module);
@@ -249,7 +249,7 @@ _transit_animate_op(Elm_Transit *transit, double progress)
      {
         if (transit->deleted) break;
         if (!effect_module->deleted)
-          effect_module->animation_op(effect_module->user_data, transit, progress);
+          effect_module->animation_op(effect_module->user_effect, transit, progress);
      }
    transit->walking--;
 
@@ -402,7 +402,7 @@ elm_transit_del(Elm_Transit *transit)
  * the data_free_cb function, do not use the context data in another transit.
  */
 EAPI void
-elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data, void (*data_free_cb)(void *data, Elm_Transit *transit))
+elm_transit_effect_add(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress), Elm_Transit_Effect *effect, void (*effect_free_cb)(Elm_Transit_Effect *effect, Elm_Transit *transit))
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -410,14 +410,14 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
    Eina_List *elist;
 
    EINA_LIST_FOREACH(transit->effect_list, elist, effect_module)
-     if ((effect_module->animation_op == cb) && (effect_module->user_data == data)) return;
+     if ((effect_module->animation_op == cb) && (effect_module->user_effect == effect)) return;
 
    effect_module = ELM_NEW(Elm_Transit_Effect_Module);
    if (!effect_module) return;
 
-   effect_module->user_data_free = data_free_cb;
+   effect_module->user_effect_free = effect_free_cb;
    effect_module->animation_op = cb;
-   effect_module->user_data = data;
+   effect_module->user_effect = effect;
 
    transit->effect_list = eina_list_append(transit->effect_list, effect_module);
 }
@@ -441,7 +441,7 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
  * @ingroup Transit
  */
 EAPI void
-elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit *transit, double progress), void *data)
+elm_transit_effect_del(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress), Elm_Transit_Effect *effect)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    EINA_SAFETY_ON_NULL_RETURN(cb);
@@ -450,7 +450,7 @@ elm_transit_effect_del(Elm_Transit *transit, void (*cb)(void *data, Elm_Transit 
 
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect_module)
      {
-        if ((effect_module->animation_op == cb) && (effect_module->user_data == data))
+        if ((effect_module->animation_op == cb) && (effect_module->user_effect == effect))
           {
              if (transit->walking)
                {
@@ -1007,20 +1007,21 @@ struct _Elm_Transit_Effect_Resizing
 };
 
 static void
-_transit_effect_resizing_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_resizing_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   free(data);
+   Elm_Transit_Effect_Resizing *resizing = effect;
+   free(effect);
 }
 
 static void
-_transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_resizing_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Evas_Coord w, h;
    Evas_Object *obj;
    Eina_List *elist;
-   Elm_Transit_Effect_Resizing *resizing = data;
+   Elm_Transit_Effect_Resizing *resizing = effect;
 
    w = resizing->from.w + (resizing->to.w * progress);
    h = resizing->from.h + (resizing->to.h * progress);
@@ -1029,7 +1030,7 @@ _transit_effect_resizing_op(void *data, Elm_Transit *transit, double progress)
      evas_object_resize(obj, w, h);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h)
 {
    Elm_Transit_Effect_Resizing *resizing;
@@ -1062,17 +1063,17 @@ _transit_effect_resizing_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_
  *
  * @ingroup Transit
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_resizing_add(Elm_Transit *transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_resizing_context_new(from_w, from_h, to_w, to_h);
+   Elm_Transit_Effect *effect = _transit_effect_resizing_context_new(from_w, from_h, to_w, to_h);
 
-   if (!effect_context) return NULL;
+   if (!effect) return NULL;
    elm_transit_effect_add(transit,
-                          _transit_effect_resizing_op, effect_context,
+                          _transit_effect_resizing_op, effect,
                           _transit_effect_resizing_context_free);
-   return effect_context;
+   return effect;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1139,10 +1140,10 @@ _translation_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Translation *t
 }
 
 void
-_transit_effect_translation_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_translation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Elm_Transit_Effect_Translation *translation = data;
+   EINA_SAFETY_ON_NULL_RETURN(effect);
+   Elm_Transit_Effect_Translation *translation = effect;
    Eina_List *elist, *elist_next;
    Elm_Transit_Effect_Translation_Node *translation_node;
 
@@ -1158,12 +1159,12 @@ _transit_effect_translation_context_free(void *data, Elm_Transit *transit __UNUS
 }
 
 void
-_transit_effect_translation_op(void *data, Elm_Transit *transit, double progress __UNUSED__)
+_transit_effect_translation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress __UNUSED__)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Evas_Coord x, y;
-   Elm_Transit_Effect_Translation *translation = data;
+   Elm_Transit_Effect_Translation *translation = effect;
    Elm_Transit_Effect_Translation_Node *translation_node;
    Eina_List *elist;
 
@@ -1180,7 +1181,7 @@ _transit_effect_translation_op(void *data, Elm_Transit *transit, double progress
      }
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy)
 {
    Elm_Transit_Effect_Translation *translation;
@@ -1217,11 +1218,11 @@ _transit_effect_translation_context_new(Evas_Coord from_dx, Evas_Coord from_dy, 
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_translation_add(Elm_Transit *transit, Evas_Coord from_dx, Evas_Coord from_dy, Evas_Coord to_dx, Evas_Coord to_dy)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
+   Elm_Transit_Effect *effect_context = _transit_effect_translation_context_new(from_dx, from_dy, to_dx, to_dy);
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -1242,19 +1243,20 @@ struct _Elm_Transit_Effect_Zoom
 };
 
 void
-_transit_effect_zoom_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_zoom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   free(data);
+   Elm_Transit_Effect_Zoom *zoom = effect;
+   free(zoom);
 }
 
 static void
-_transit_effect_zoom_op(void *data, Elm_Transit *transit , double progress)
+_transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Evas_Object *obj;
    Eina_List *elist;
-   Elm_Transit_Effect_Zoom *zoom = data;
+   Elm_Transit_Effect_Zoom *zoom = effect;
    Evas_Map *map;
    Evas_Coord x, y, w, h;
 
@@ -1273,7 +1275,7 @@ _transit_effect_zoom_op(void *data, Elm_Transit *transit , double progress)
    evas_map_free(map);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_zoom_context_new(float from_rate, float to_rate)
 {
    Elm_Transit_Effect_Zoom *zoom;
@@ -1306,11 +1308,11 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_zoom_add(Elm_Transit *transit, float from_rate, float to_rate)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_zoom_context_new(from_rate, to_rate);
+   Elm_Transit_Effect *effect_context = _transit_effect_zoom_context_new(from_rate, to_rate);
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -1332,10 +1334,11 @@ struct _Elm_Transit_Effect_Flip
 };
 
 static void
-_transit_effect_flip_context_free(void *data, Elm_Transit *transit)
+_transit_effect_flip_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
+   Elm_Transit_Effect_Flip *flip = effect;
    Evas_Object *front, *back;
    int i;
    int count = eina_list_count(transit->objs);
@@ -1347,17 +1350,17 @@ _transit_effect_flip_context_free(void *data, Elm_Transit *transit)
         evas_object_map_enable_set(front, EINA_FALSE);
         evas_object_map_enable_set(back, EINA_FALSE);
      }
-   free(data);
+   free(flip);
 }
 
 static void
-_transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Evas_Object *obj, *front, *back;
    int count, i;
-   Elm_Transit_Effect_Flip *flip = data;
+   Elm_Transit_Effect_Flip *flip = effect;
    Evas_Map *map;
    float degree;
    Evas_Coord x, y, w, h;
@@ -1432,7 +1435,7 @@ _transit_effect_flip_op(void *data, Elm_Transit *transit, double progress)
    evas_map_free(map);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    Elm_Transit_Effect_Flip *flip;
@@ -1468,11 +1471,11 @@ _transit_effect_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_flip_context_new(axis, cw);
+   Elm_Transit_Effect *effect_context = _transit_effect_flip_context_new(axis, cw);
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -1626,11 +1629,11 @@ _set_image_uv_by_axis_x(Evas_Map *map, Elm_Transit_Effect_ResizableFlip_Node *fl
 }
 
 void
-_transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_resizable_flip_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
 
-   Elm_Transit_Effect_ResizableFlip *resizable_flip = data;
+   Elm_Transit_Effect_ResizableFlip *resizable_flip = effect;
    Eina_List *elist, *elist_next;
    Elm_Transit_Effect_ResizableFlip_Node *resizable_flip_node;
 
@@ -1653,15 +1656,15 @@ _transit_effect_resizable_flip_context_free(void *data, Elm_Transit *transit __U
 }
 
 void
-_transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, double progress)
+_transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    Evas_Map *map;
    Evas_Object *obj;
    float x, y, w, h;
    float degree;
    Evas_Coord half_w, half_h;
-   Elm_Transit_Effect_ResizableFlip *resizable_flip = data;
+   Elm_Transit_Effect_ResizableFlip *resizable_flip = effect;
    Elm_Transit_Effect_ResizableFlip_Node *resizable_flip_node;
    Eina_List *elist;
 
@@ -1733,7 +1736,7 @@ _transit_effect_resizable_flip_op(void *data, Elm_Transit *transit __UNUSED__, d
    evas_map_free(map);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    Elm_Transit_Effect_ResizableFlip *resizable_flip;
@@ -1769,11 +1772,11 @@ _transit_effect_resizable_flip_context_new(Elm_Transit_Effect_Flip_Axis axis, Ei
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_resizable_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_resizable_flip_context_new(axis, cw);
+   Elm_Transit_Effect *effect_context = _transit_effect_resizable_flip_context_new(axis, cw);
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -1917,13 +1920,13 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Transit_Effect_Wipe_Dir dir, float x, float
 }
 
 static void
-_transit_effect_wipe_context_free(void *data, Elm_Transit *transit)
+_transit_effect_wipe_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Eina_List *elist;
    Evas_Object *obj;
-   Elm_Transit_Effect_Wipe *wipe = data;
+   Elm_Transit_Effect_Wipe *wipe = effect;
    Eina_Bool reverse = elm_transit_auto_reverse_get(transit);
 
    EINA_LIST_FOREACH(transit->objs, elist, obj)
@@ -1939,11 +1942,11 @@ _transit_effect_wipe_context_free(void *data, Elm_Transit *transit)
 }
 
 static void
-_transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_wipe_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
-   Elm_Transit_Effect_Wipe *wipe = data;
+   Elm_Transit_Effect_Wipe *wipe = effect;
    Evas_Map *map;
    Evas_Coord _x, _y, _w, _h;
    Eina_List *elist;
@@ -1967,7 +1970,7 @@ _transit_effect_wipe_op(void *data, Elm_Transit *transit, double progress)
    evas_map_free(map);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_wipe_context_new(Elm_Transit_Effect_Wipe_Type type, Elm_Transit_Effect_Wipe_Dir dir)
 {
    Elm_Transit_Effect_Wipe *wipe;
@@ -2030,17 +2033,18 @@ struct _Elm_Transit_Effect_Color
 };
 
 static void
-_transit_effect_color_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_color_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   free(data);
+   Elm_Transit_Effect_Color *color = effect;
+   free(color);
 }
 
 static void
-_transit_effect_color_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_color_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
-   Elm_Transit_Effect_Color *color = data;
+   Elm_Transit_Effect_Color *color = effect;
    Evas_Object *obj;
    Eina_List *elist;
    unsigned int r, g, b, a;
@@ -2054,7 +2058,7 @@ _transit_effect_color_op(void *data, Elm_Transit *transit, double progress)
      evas_object_color_set(obj, r, g, b, a);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a)
 {
    Elm_Transit_Effect_Color *color;
@@ -2095,11 +2099,11 @@ _transit_effect_color_context_new(unsigned int from_r, unsigned int from_g, unsi
  *
  * @ingroup Transit
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_color_add(Elm_Transit *transit, unsigned int from_r, unsigned int from_g, unsigned int from_b, unsigned int from_a, unsigned int to_r, unsigned int to_g, unsigned int to_b, unsigned int to_a)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
+   Elm_Transit_Effect *effect_context = _transit_effect_color_context_new(from_r, from_g, from_b, from_a, to_r, to_g, to_b, to_a);
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -2193,10 +2197,10 @@ _fade_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Fade *fade_data)
 }
 
 static void
-_transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_fade_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Elm_Transit_Effect_Fade *fade = data;
+   EINA_SAFETY_ON_NULL_RETURN(effect);
+   Elm_Transit_Effect_Fade *fade = effect;
    Elm_Transit_Effect_Fade_Node *fade_node;
    Eina_List *elist, *elist_next;
 
@@ -2223,10 +2227,10 @@ _transit_effect_fade_context_free(void *data, Elm_Transit *transit __UNUSED__)
 }
 
 static void
-_transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double progress)
+_transit_effect_fade_op(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Elm_Transit_Effect_Fade *fade = data;
+   EINA_SAFETY_ON_NULL_RETURN(effect);
+   Elm_Transit_Effect_Fade *fade = effect;
    Eina_List *elist;
    Elm_Transit_Effect_Fade_Node *fade_node;
    float _progress;
@@ -2275,7 +2279,7 @@ _transit_effect_fade_op(void *data, Elm_Transit *transit __UNUSED__, double prog
      }
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_fade_context_new(void)
 {
    Elm_Transit_Effect_Fade *fade;
@@ -2304,12 +2308,12 @@ _transit_effect_fade_context_new(void)
  * This is because this effect needs the color information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_fade_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
 
-   void *effect_context = _transit_effect_fade_context_new();
+   Elm_Transit_Effect *effect_context = _transit_effect_fade_context_new();
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
                           _transit_effect_fade_op, effect_context,
@@ -2399,10 +2403,10 @@ _blend_nodes_build(Elm_Transit *transit, Elm_Transit_Effect_Blend *blend)
 }
 
 void
-_transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_blend_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Elm_Transit_Effect_Blend *blend = data;
+   EINA_SAFETY_ON_NULL_RETURN(effect);
+   Elm_Transit_Effect_Blend *blend = effect;
    Elm_Transit_Effect_Blend_Node *blend_node;
    Eina_List *elist, *elist_next;
 
@@ -2428,15 +2432,15 @@ _transit_effect_blend_context_free(void *data, Elm_Transit *transit __UNUSED__)
                                        EVAS_CALLBACK_DEL, _blend_object_del_cb);
         free(blend_node);
      }
-   free(data);
+   free(blend);
 }
 
 void
-_transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_blend_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
-   Elm_Transit_Effect_Blend *blend = data;
+   Elm_Transit_Effect_Blend *blend = effect;
    Elm_Transit_Effect_Blend_Node *blend_node;
    Eina_List *elist;
 
@@ -2457,7 +2461,7 @@ _transit_effect_blend_op(void *data, Elm_Transit *transit, double progress)
      }
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_blend_context_new(void)
 {
    Elm_Transit_Effect_Blend *blend;
@@ -2487,11 +2491,11 @@ _transit_effect_blend_context_new(void)
  * This is because this effect needs the color information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_blend_add(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_blend_context_new();
+   Elm_Transit_Effect *effect_context = _transit_effect_blend_context_new();
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -2512,17 +2516,18 @@ struct _Elm_Transit_Effect_Rotation
 };
 
 static void
-_transit_effect_rotation_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_rotation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   free(data);
+   Elm_Transit_Effect_Rotation *rotation = effect;
+   free(rotation);
 }
 
 static void
-_transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
-   Elm_Transit_Effect_Rotation *rotation = data;
+   Elm_Transit_Effect_Rotation *rotation = effect;
    Evas_Map *map;
    Evas_Coord x, y, w, h;
    float degree;
@@ -2551,7 +2556,7 @@ _transit_effect_rotation_op(void *data, Elm_Transit *transit, double progress)
    evas_map_free(map);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_rotation_context_new(float from_degree, float to_degree)
 {
    Elm_Transit_Effect_Rotation *rotation;
@@ -2584,11 +2589,11 @@ _transit_effect_rotation_context_new(float from_degree, float to_degree)
  * This is because this effect needs the geometry information about the objects,
  * and if the window was not created yet, it can get a wrong information.
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_rotation_add(Elm_Transit *transit, float from_degree, float to_degree)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree);
+   Elm_Transit_Effect *effect_context = _transit_effect_rotation_context_new(from_degree, to_degree);
 
    if (!effect_context) return NULL;
    elm_transit_effect_add(transit,
@@ -2609,10 +2614,10 @@ struct _Elm_Transit_Effect_Image_Animation
 };
 
 static void
-_transit_effect_image_animation_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_transit_effect_image_animation_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Elm_Transit_Effect_Image_Animation *image_animation = data;
+   EINA_SAFETY_ON_NULL_RETURN(effect);
+   Elm_Transit_Effect_Image_Animation *image_animation = effect;
    const char *image;
    Eina_List *elist, *elist_next;
 
@@ -2623,18 +2628,18 @@ _transit_effect_image_animation_context_free(void *data, Elm_Transit *transit __
         eina_stringshare_del(image);
      }
 
-   free(data);
+   free(image_animation);
 }
 
 static void
-_transit_effect_image_animation_op(void *data, Elm_Transit *transit, double progress)
+_transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(effect);
    EINA_SAFETY_ON_NULL_RETURN(transit);
    Eina_List *elist;
    Evas_Object *obj;
    const char *type;
-   Elm_Transit_Effect_Image_Animation *image_animation = data;
+   Elm_Transit_Effect_Image_Animation *image_animation = effect;
    unsigned int count = 0;
    int len;
 
@@ -2654,7 +2659,7 @@ _transit_effect_image_animation_op(void *data, Elm_Transit *transit, double prog
    eina_stringshare_del(type);
 }
 
-static void *
+static Elm_Transit_Effect *
 _transit_effect_image_animation_context_new(Eina_List *images)
 {
    Elm_Transit_Effect_Image_Animation *image_animation;
@@ -2699,15 +2704,15 @@ _transit_effect_image_animation_context_new(Eina_List *images)
  *
  * @ingroup Transit
  */
-EAPI void *
+EAPI Elm_Transit_Effect *
 elm_transit_effect_image_animation_add(Elm_Transit *transit, Eina_List *images)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
-   void *effect_context = _transit_effect_image_animation_context_new(images);
+   Elm_Transit_Effect *effect = _transit_effect_image_animation_context_new(images);
 
-   if (!effect_context) return NULL;
+   if (!effect) return NULL;
    elm_transit_effect_add(transit,
-                          _transit_effect_image_animation_op, effect_context,
+                          _transit_effect_image_animation_op, effect,
                           _transit_effect_image_animation_context_free);
-   return effect_context;
+   return effect;
 }

@@ -15,14 +15,14 @@ struct _Custom_Effect
 };
 
 static void
-_custom_op(void *data, Elm_Transit *transit, double progress)
+_custom_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 {
-   if (!data) return;
+   if (!effect) return;
    Evas_Coord w, h;
    Evas_Object *obj;
    const Eina_List *elist;
 
-   Custom_Effect *custom_effect = data;
+   Custom_Effect *custom_effect = effect;
    const Eina_List *objs = elm_transit_objects_get(transit);
 
    if (progress < 0.5)
@@ -42,7 +42,7 @@ _custom_op(void *data, Elm_Transit *transit, double progress)
 
 }
 
-static void *
+static Elm_Transit_Effect *
 _custom_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h)
 {
    Custom_Effect *custom_effect;
@@ -59,9 +59,10 @@ _custom_context_new(Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_
 }
 
 static void
-_custom_context_free(void *data, Elm_Transit *transit __UNUSED__)
+_custom_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
-   free(data);
+   Custom_Effect *custom_effect = effect;
+   free(custom_effect);
 }
 
 static void
@@ -487,7 +488,7 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *bt;
    Elm_Transit *trans;
-   void *effect_context;
+   Elm_Transit_Effect *effect_context;
 
    win = elm_win_add(NULL, "transit8", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 8");
