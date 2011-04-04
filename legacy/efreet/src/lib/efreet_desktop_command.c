@@ -716,9 +716,16 @@ efreet_desktop_command_file_process(Efreet_Desktop_Command *command, const char 
 
         if (command->flags & EFREET_DESKTOP_EXEC_FLAG_URI)
         {
-            char buf[PATH_MAX];
-            snprintf(buf, sizeof(buf), "file://%s", absol);
+            const char *buf;
+            Efreet_Uri ef_uri;
+            ef_uri.protocol = "file";
+            ef_uri.hostname = "";
+            ef_uri.path = absol;
+            buf = efreet_uri_encode(&ef_uri);
+
             f->uri = strdup(buf);
+
+            eina_stringshare_del(buf);
         }
 
         free(absol);
