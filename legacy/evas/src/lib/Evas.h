@@ -113,7 +113,7 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, /**< Canvas object got focus */
    EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, /**< Canvas object lost focus */
 
-   /* 
+   /*
     * More object event types - see evas_object_event_callback_add():
     */
    EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in evas that throws out original image data) */
@@ -316,7 +316,7 @@ typedef enum _Evas_Alloc_Error
    EVAS_ALLOC_ERROR_FATAL = 1, /**< Allocation failed despite attempts to free up memory */
    EVAS_ALLOC_ERROR_RECOVERED = 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
 } Evas_Alloc_Error; /**< Possible allocation errors returned by evas_alloc_error() */
-   
+
 typedef enum _Evas_Fill_Spread
 {
    EVAS_TEXTURE_REFLECT = 0, /**< image fill tiling mode - tiling reflects */
@@ -343,14 +343,14 @@ struct _Evas_Pixel_Import_Source
 
 /* magic version number to know what the native surf struct looks like */
 #define EVAS_NATIVE_SURFACE_VERSION 2
-  
+
 typedef enum _Evas_Native_Surface_Type
 {
    EVAS_NATIVE_SURFACE_NONE,
    EVAS_NATIVE_SURFACE_X11,
    EVAS_NATIVE_SURFACE_OPENGL
 } Evas_Native_Surface_Type;
-  
+
 struct _Evas_Native_Surface
 {
    int                         version;
@@ -680,7 +680,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI Eina_Bool         evas_focus_state_get              (const Evas *e) EINA_PURE;
    EAPI void              evas_nochange_push                (Evas *e);
    EAPI void              evas_nochange_pop                 (Evas *e);
-         
+
    EAPI void              evas_data_attach_set              (Evas *e, void *data) EINA_ARG_NONNULL(1);
    EAPI void             *evas_data_attach_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -827,7 +827,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
    EAPI void              evas_post_event_callback_push        (Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
    EAPI void              evas_post_event_callback_remove      (Evas *e, Evas_Object_Event_Post_Cb func);
    EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Object_Event_Post_Cb func, const void *data);
-       
+
 /**
  * @defgroup Evas_Image_Group Image Functions
  *
@@ -900,7 +900,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
 
    EAPI void              evas_object_ref                   (Evas_Object *obj);
    EAPI void              evas_object_unref                 (Evas_Object *obj);
-   
+
    EAPI void              evas_object_del                   (Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
    EAPI void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
@@ -1060,7 +1060,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
 
    EAPI void                      evas_object_static_clip_set      (Evas_Object *obj, Eina_Bool is_static_clip) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                 evas_object_static_clip_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-         
+
 /**
  * @defgroup Evas_Object_Group_Find Finding Objects
  *
@@ -1106,7 +1106,7 @@ typedef void (*Evas_Object_Intercept_Layer_Set_Cb) (void *data, Evas_Object *obj
 typedef void (*Evas_Object_Intercept_Color_Set_Cb) (void *data, Evas_Object *obj, int r, int g, int b, int a);
 typedef void (*Evas_Object_Intercept_Clip_Set_Cb) (void *data, Evas_Object *obj, Evas_Object *clip);
 typedef void (*Evas_Object_Intercept_Clip_Unset_Cb) (void *data, Evas_Object *obj);
-   
+
    EAPI void              evas_object_intercept_show_callback_add        (Evas_Object *obj, Evas_Object_Intercept_Show_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
    EAPI void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, Evas_Object_Intercept_Show_Cb func) EINA_ARG_NONNULL(1, 2);
    EAPI void              evas_object_intercept_hide_callback_add        (Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
@@ -1241,7 +1241,7 @@ typedef void (*Evas_Object_Intercept_Clip_Unset_Cb) (void *data, Evas_Object *ob
  * @ingroup Evas_Object_Specific
  */
 typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
-   
+
    EAPI Evas_Object             *evas_object_image_add                    (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object             *evas_object_image_filled_add             (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
@@ -1411,7 +1411,7 @@ typedef void (*Evas_Object_Image_Pixels_Get_Cb) (void *data, Evas_Object *o);
    EAPI const char                  *evas_object_textblock_replace_char_get(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void                         evas_object_textblock_valign_set(Evas_Object *obj, double align);
    EAPI double                       evas_object_textblock_valign_get(const Evas_Object *obj);
-         
+
    EAPI void                         evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                    evas_object_textblock_newline_mode_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -2221,23 +2221,23 @@ struct _Evas_Smart_Cb_Description
  */
    EAPI const Evas_Modifier *evas_key_modifier_get          (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI const Evas_Lock     *evas_key_lock_get              (const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-   
+
    EAPI Eina_Bool            evas_key_modifier_is_set       (const Evas_Modifier *m, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-   
+
    EAPI Eina_Bool            evas_key_lock_is_set           (const Evas_Lock *l, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-   
+
    EAPI void                 evas_key_modifier_add          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_key_modifier_del          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_key_lock_add              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_key_lock_del              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   
+
    EAPI void                 evas_key_modifier_on           (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_key_modifier_off          (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_key_lock_on               (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_key_lock_off              (Evas *e, const char *keyname) EINA_ARG_NONNULL(1, 2);
-   
+
    EAPI Evas_Modifier_Mask   evas_key_modifier_mask_get     (const Evas *e, const char *keyname) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
-   
+
    EAPI Eina_Bool            evas_object_key_grab           (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
    EAPI void                 evas_object_key_ungrab         (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers) EINA_ARG_NONNULL(1, 2);
 
