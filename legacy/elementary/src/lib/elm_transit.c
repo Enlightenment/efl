@@ -1010,7 +1010,7 @@ static void
 _transit_effect_resizing_context_free(Elm_Transit_Effect *effect, Elm_Transit *transit __UNUSED__)
 {
    Elm_Transit_Effect_Resizing *resizing = effect;
-   free(effect);
+   free(resizing);
 }
 
 static void
