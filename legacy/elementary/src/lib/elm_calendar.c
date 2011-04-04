@@ -21,8 +21,8 @@
  *
  * Signals that you can add callbacks for are:
  *
- * changed - emitted when the user selects a day or changes the displayed
- * month, what actually changes the selected day as well.
+ * "changed" - emitted when the user selects a day or changes the displayed
+ *             month, what actually changes the selected day as well.
  */
 
 typedef enum _Day_Color // EINA_DEPRECATED

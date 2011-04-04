@@ -8,6 +8,9 @@
  * have a sub-menu. The menu object can be used to display a menu on right
  * click, in a toolbar, anywhere.
  *
+ * Signals that you can add callbacks for are:
+ *
+ * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
  */
 
 typedef struct _Widget_Data Widget_Data;

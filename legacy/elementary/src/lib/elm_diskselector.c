@@ -8,7 +8,8 @@
  * It can act like a circular list with round mode and labels can be
  * reduced for a defined lenght for side items.
  *
- * Signal emitted by this widget:
+ * Signals that you can add callbacks for are:
+ *
  * "selected" - when item is selected (scroller stops)
  */
 

@@ -10,37 +10,23 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has clicked the map without dragging
- * around.
- *
- * press - This is called when a user has pressed down on the map.
- *
- * longpressed - This is called when a user has pressed down on the map for
- * a long time without dragging around.
- *
- * clicked,double - This is called when a user has double-clicked the photo.
- *
- * load,detail - Map detailed data load begins.
- *
- * loaded,detail - This is called when all parts of the map are loaded.
- *
- * zoom,start - Zoom animation started.
- *
- * zoom,stop - Zoom animation stopped.
- *
- * zoom,change - Zoom changed when using an auto zoom mode.
- *
- * scroll - the content has been scrolled (moved)
- *
- * scroll,anim,start - scrolling animation has started
- *
- * scroll,anim,stop - scrolling animation has stopped
- *
- * scroll,drag,start - dragging the contents around has started
- *
- * scroll,drag,stop - dragging the contents around has stopped
- *
- * downloaded - This is called when map images are downloaded
+ * "clicked" - This is called when a user has clicked the map without dragging
+ *             around.
+ * "press" - This is called when a user has pressed down on the map.
+ * "longpressed" - This is called when a user has pressed down on the map for
+ *                 a long time without dragging around.
+ * "clicked,double" - This is called when a user has double-clicked the photo.
+ * "load,detail" - Map detailed data load begins.
+ * "loaded,detail" - This is called when all parts of the map are loaded.
+ * "zoom,start" - Zoom animation started.
+ * "zoom,stop" - Zoom animation stopped.
+ * "zoom,change" - Zoom changed when using an auto zoom mode.
+ * "scroll" - the content has been scrolled (moved)
+ * "scroll,anim,start" - scrolling animation has started
+ * "scroll,anim,stop" - scrolling animation has stopped
+ * "scroll,drag,start" - dragging the contents around has started
+ * "scroll,drag,stop" - dragging the contents around has stopped
+ * "downloaded" - This is called when map images are downloaded
  *
  * TODO : doxygen
  */

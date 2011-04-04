@@ -6,6 +6,14 @@
  *
  * An index object is a type of list that categorizes items in it
  * by letter.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - when the selected index item changes
+ * "delay,changed" - when the selected index item changes, but after some small idle period
+ * "selected" - when the user releases a finger and selects an item
+ * "level,up" - when the user moves a finger from the first level to the second level
+ * "level,down" - when the user moves a finger from the second level to the first level
  */
 
 typedef struct _Widget_Data Widget_Data;

@@ -6,11 +6,6 @@
  *
  * The check widget allows for toggling a value between true or false (1 or 0).
  *
- * Signals that you can add callbacks for are:
- *
- * changed - This is called whenever the user changes the state of one of the
- * check object.
- *
  * Check objects are a lot like radio objects in layout and functionality
  * except they do not work as a group, but independently and only toggle the
  * value of a boolean from false to true (0 or 1). elm_check_state_set() sets
@@ -18,6 +13,11 @@
  * returns the current state. For convenience, like the radio objects, you
  * can set a pointer to a boolean directly with elm_check_state_pointer_set()
  * for it to modify.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - This is called whenever the user changes the state of one of the
+ *             check object.
  */
 typedef struct _Widget_Data Widget_Data;
 

@@ -12,41 +12,26 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has clicked the photo without dragging
- * around.
- *
- * press - This is called when a user has pressed down on the photo.
- *
- * longpressed - This is called when a user has pressed down on the photo for
- * a long time without dragging around.
- *
- * clicked,double - This is called when a user has double-clicked the photo.
- *
- * load - Photo load begins.
- *
- * loaded - This is called when the image file load is complete for the first
- * view (low resolution blurry version).
- *
- * load,details - Photo detailed data load begins.
- *
- * loaded,details - This is called when the image file load is complete for the
- * detailed image data (full resolution needed).
- *
- * zoom,start - Zoom animation started.
- *
- * zoom,stop - Zoom animation stopped.
- *
- * zoom,change - Zoom changed when using an auto zoom mode.
- *
- * scroll - the content has been scrolled (moved)
- *
- * scroll,anim,start - scrolling animation has started
- *
- * scroll,anim,stop - scrolling animation has stopped
- *
- * scroll,drag,start - dragging the contents around has started
- *
- * scroll,drag,stop - dragging the contents around has stopped
+ * "clicked" - This is called when a user has clicked the photo without dragging
+ *             around.
+ * "press" - This is called when a user has pressed down on the photo.
+ * "longpressed" - This is called when a user has pressed down on the photo for
+ *                 a long time without dragging around.
+ * "clicked,double" - This is called when a user has double-clicked the photo.
+ * "load" - Photo load begins.
+ * "loaded" - This is called when the image file load is complete for the first
+ *            view (low resolution blurry version).
+ * "load,details" - Photo detailed data load begins.
+ * "loaded,details" - This is called when the image file load is complete for the
+ *                    detailed image data (full resolution needed).
+ * "zoom,start" - Zoom animation started.
+ * "zoom,stop" - Zoom animation stopped.
+ * "zoom,change" - Zoom changed when using an auto zoom mode.
+ * "scroll" - the content has been scrolled (moved)
+ * "scroll,anim,start" - scrolling animation has started
+ * "scroll,anim,stop" - scrolling animation has stopped
+ * "scroll,drag,start" - dragging the contents around has started
+ * "scroll,drag,stop" - dragging the contents around has stopped
  *
  * ---
  *

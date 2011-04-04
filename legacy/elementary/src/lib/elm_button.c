@@ -6,6 +6,12 @@
  *
  * This is a push-button. Press it and run some function. It can contain
  * a simple label and icon object.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "clicked" - the user clicked the button
+ * "repeated" - the user pressed the button without releasing it
+ * "unpressed" - when the button is unpressed (released)
  */
 
 typedef struct _Widget_Data Widget_Data;

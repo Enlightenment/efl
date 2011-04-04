@@ -7,6 +7,14 @@
  * A flip selector is a widget to show a set of label items, one at a
  * time, with an animation when one changes the current selection
  * (like the flip of calendar sheets, in the default theme).
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "selected" - when flipselector selected item is changed
+ * "overflowed" - when flipselector item is changed to first item
+ *                from last item
+ * "underflowed" - when flipselector item is changed to last item
+ *                 from first item.
  */
 
 /* TODO: ideally, the default theme would use map{} blocks on the TEXT

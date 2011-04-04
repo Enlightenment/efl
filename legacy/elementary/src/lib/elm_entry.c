@@ -73,22 +73,24 @@
  * The file to load and save to is specified by elm_entry_file_set().
  *
  * Signals that you can add callbacks for are:
- * - "changed" - The text within the entry was changed
- * - "activated" - The entry has had editing finished and changes are to be committed (generally when enter key is pressed)
- * - "press" - The entry has been clicked
- * - "longpressed" - The entry has been clicked for a couple seconds
- * - "clicked" - The entry has been clicked
- * - "clicked,double" - The entry has been double clicked
- * - "focused" - The entry has received focus
- * - "unfocused" - The entry has lost focus
- * - "selection,paste" - A paste action has occurred
- * - "selection,copy" - A copy action has occurred
- * - "selection,cut" - A cut action has occurred
- * - "selection,start" - A selection has begun
- * - "selection,changed" - The selection has changed
- * - "selection,cleared" - The selection has been cleared
- * - "cursor,changed" - The cursor has changed
- * - "anchor,clicked" - The anchor has been clicked
+ * 
+ * "changed" - The text within the entry was changed
+ * "activated" - The entry has had editing finished and changes are to be committed 
+                 (generally when enter key is pressed)
+ * "press" - The entry has been clicked
+ * "longpressed" - The entry has been clicked for a couple seconds
+ * "clicked" - The entry has been clicked
+ * "clicked,double" - The entry has been double clicked
+ * "focused" - The entry has received focus
+ * "unfocused" - The entry has lost focus
+ * "selection,paste" - A paste action has occurred
+ * "selection,copy" - A copy action has occurred
+ * "selection,cut" - A cut action has occurred
+ * "selection,start" - A selection has begun
+ * "selection,changed" - The selection has changed
+ * "selection,cleared" - The selection has been cleared
+ * "cursor,changed" - The cursor has changed
+ * "anchor,clicked" - The anchor has been clicked
  */
 
 typedef struct _Mod_Api Mod_Api;

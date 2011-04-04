@@ -8,6 +8,17 @@
  *
  * A list is a very simple type of list widget.  For more robust
  * lists, @ref Genlist should probably be used.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "clicked" - when the user double-clicked an item
+ * "selected" - when the user selected an item
+ * "unselected" - when the user selected an item
+ * "longpressed" - an item in the hoversel list is long-pressed
+ * "scroll,edge,top" - the list is scrolled until the top edge
+ * "scroll,edge,bottom" - the list is scrolled until the bottom edge
+ * "scroll,edge,left" - the list is scrolled until the left edge
+ * "scroll,edge,right" - the list is scrolled until the right edge
  */
 
 typedef struct _Widget_Data Widget_Data;

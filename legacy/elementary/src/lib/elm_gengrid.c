@@ -10,55 +10,6 @@
  * genlist: the user define a class for each item, specifying
  * functions that will be called at object creation and deletion.
  *
- * Signals that you can add callbacks for are:
- *
- * clicked,double - The user has double-clicked or pressed enter on
- * an item. The event_info parameter is the Gengrid item
- * that was double-clicked.
- *
- * selected - The user has made an item selected. The event_info
- * parameter is the Gengrid item that was selected.
- *
- * unselected - The user has made an item unselected. The event_info
- * parameter is the Gengrid item that was unselected.
- *
- * realized - This is called when the item in the Gengrid is created
- * as a real evas object. event_info is the Gengrid item that was
- * created. The object may be deleted at any time, so it is up to the
- * caller to not use the object pointer from
- * elm_gengrid_item_object_get() in a way where it may point to freed
- * objects.
- *
- * unrealized - This is called when the real evas object for this item
- * is deleted. event_info is the Gengrid item that was created.
- *
- * changed - Called when an item is added, removed, resized or moved
- * and when gengrid is resized or horizontal property changes.
- *
- * drag,start,up - Called when the item in the Gengrid has been
- * dragged (not scrolled) up.
- *
- * drag,start,down - Called when the item in the Gengrid has been
- * dragged (not scrolled) down.
- *
- * drag,start,left - Called when the item in the Gengrid has been
- * dragged (not scrolled) left.
- *
- * drag,start,right - Called when the item in the Gengrid has been
- * dragged (not scrolled) right.
- *
- * drag,stop - Called when the item in the Gengrid has stopped being
- * dragged.
- *
- * drag - Called when the item in the Gengrid is being dragged.
- *
- * scroll - called when the content has been scrolled (moved).
- *
- * scroll,drag,start - called when dragging the content has started.
- *
- * scroll,drag,stop - called when dragging the content has stopped.
- *
- *
  * A item in the Gengrid can have 0 or more text labels (they can be
  * regular text or textblock - that's up to the style to determine), 0
  * or more icons (which are simply objects swallowed into the Gengrid
@@ -150,10 +101,44 @@
  * absolutely must have a specific style that overrides any theme the
  * user or system sets up you can use elm_theme_overlay_add() to add
  * such a file.
+ * 
+ * Signals that you can add callbacks for are:
+ *
+ * "clicked,double" - The user has double-clicked or pressed enter on
+ *                    a item. The event_infoparameter is the Gengrid item
+ *                    that was double-clicked.
+ * "selected" - The user has made an item selected. The event_info
+ *              parameter is the Gengrid item that was selected.
+ * "unselected" - The user has made an item unselected. The event_info
+ *                parameter is the Gengrid item that was unselected.
+ * "realized" - This is called when the item in the Gengrid is created
+ *              as a real evas object. event_info is the Gengrid item that was
+ *              created. The object may be deleted at any time, so it is up to the
+ *              caller to not use the object pointer from
+ *              elm_gengrid_item_object_get() in a way where it may point to freed
+ *              objects.
+ * "unrealized" - This is called when the real evas object for this item
+ *                is deleted. event_info is the Gengrid item that was created.
+ * "changed" - Called when an item is added, removed, resized or moved
+ *             and when gengrid is resized or horizontal property changes.
+ * "drag,start,up" - Called when the item in the Gengrid has been
+ *                   dragged (not scrolled) up.
+ * "drag,start,down" - Called when the item in the Gengrid has been
+ *                     dragged (not scrolled) down.
+ * "drag,start,left" - Called when the item in the Gengrid has been
+ *                     dragged (not scrolled) left.
+ * "drag,start,right" - Called when the item in the Gengrid has been
+ *                      dragged (not scrolled) right.
+ * "drag,stop" - Called when the item in the Gengrid has stopped being
+ *               dragged.
+ * "drag" - Called when the item in the Gengrid is being dragged.
+ * "scroll" - called when the content has been scrolled (moved).
+ * "scroll,drag,start" - called when dragging the content has started.
+ * "scroll,drag,stop" - called when dragging the content has stopped.
  *
  * --
  * TODO:
- *  * Handle non-homogeneous objects too.
+ * Handle non-homogeneous objects too.
  */
 
  typedef struct _Widget_Data Widget_Data;

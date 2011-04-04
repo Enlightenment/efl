@@ -7,6 +7,9 @@
  * It's a widget to show clock with animation. The update of time is
  * shown in an animation like the flip of a sheet.
  *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - the user changed the time
  */
 
 typedef struct _Widget_Data Widget_Data;

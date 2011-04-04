@@ -9,10 +9,10 @@
  *
  * Signals that you can add callbacks for are:
  *
- *  - clicked: This is called when a user has clicked the photo
- *  - drop: Something was dropped on the widget
- *  - drag,start: Someone started dragging the image out of the object
- *  - drag,end: Dragged item was dropped (somewhere)
+ * "clicked" - This is called when a user has clicked the photo
+ * "drop" - Something was dropped on the widget
+ * "drag,start" - Someone started dragging the image out of the object
+ * "drag,end" - Dragged item was dropped (somewhere)
  */
 
 typedef struct _Widget_Data Widget_Data;

@@ -5,11 +5,12 @@
  * magnet properties. When the position is set with magnet, the knob
  * will be moved to it if it's nearest the magnetized position.
  *
- * Signals emmitted:
+ * Signals that you can add callbacks for are:
+ *
  * "selected" - when user selects a position (the label is passed as
- * event info)".
+ *              event info)".
  * "pos_changed" - when a button reaches to the special position like
- * "left", "right" and "center".
+ *                 "left", "right" and "center".
  */
 
 #include <Elementary.h>

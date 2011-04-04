@@ -11,6 +11,10 @@
  * object, if a timeout was set on it, it will <b>automatically</b>
  * get hidden after that time.
  *
+ * Signals that you can add callbacks for are:
+ *
+ * "timeout" - when timeout happens on notify and it's hidden
+ * "block,clicked" - when it's hidden by a click outside of the notify's view
  */
 
 typedef struct _Widget_Data Widget_Data;

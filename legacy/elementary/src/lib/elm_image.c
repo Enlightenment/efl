@@ -11,8 +11,8 @@
  *
  * Signals that you can add callbacks for are:
  *
- *  - clicked: This is called when a user has clicked the image
- *  - drop: Something has been dropped on the image
+ * "clicked" - This is called when a user has clicked the image
+ * "drop" - Something has been dropped on the image
  */
 
 typedef struct _Widget_Data Widget_Data;

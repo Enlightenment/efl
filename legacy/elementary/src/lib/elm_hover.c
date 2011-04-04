@@ -11,6 +11,12 @@
  *
  * @note The hover object will take up the entire space of @p target
  * object.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "clicked" - the user clicked the empty space in the hover to dismiss
+ * "smart,changed" - a content object placed under the "smart"
+ *                   policy was replaced to a new slot direction.
  */
 
 typedef struct _Widget_Data Widget_Data;

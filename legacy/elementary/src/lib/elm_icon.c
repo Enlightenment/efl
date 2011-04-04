@@ -16,7 +16,7 @@ static const char *icon_theme = NULL;
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has clicked the icon
+ * "clicked" - This is called when a user has clicked the icon
  */
 
 typedef struct _Widget_Data Widget_Data;

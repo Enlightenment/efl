@@ -12,12 +12,10 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked  - the user clicked the hoversel button and popped up the sel
- *
- * selected - an item in the hoversel list is selected. event_info is the item
- * selected - Elm_Hoversel_Item
- *
- * dismissed - the hover is dismissed
+ * "clicked" - the user clicked the hoversel button and popped up the sel
+ * "selected" - an item in the hoversel list is selected. event_info is the item
+ * "selected" - Elm_Hoversel_Item
+ * "dismissed" - the hover is dismissed
  */
 typedef struct _Widget_Data Widget_Data;
 

@@ -18,6 +18,11 @@
  * needed and is not the top item, just delete it as normal. You can query
  * which objects are the top and bottom with elm_pager_content_bottom_get()
  * and elm_pager_content_top_get().
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "hide,finished" - when the previous page is hided
+ *
  */
 
 typedef struct _Widget_Data Widget_Data;

@@ -1383,6 +1383,9 @@ extern "C" {
    EAPI void         elm_photo_editable_set(Evas_Object *obj, Eina_Bool set) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
+    * "drop" - Something was dropped on the widget
+    * "drag,start" - Someone started dragging the image out of the object
+    * "drag,end" - Dragged item was dropped (somewhere)
     */
 
    /* thumb */
@@ -1842,6 +1845,9 @@ extern "C" {
    EAPI void         elm_check_state_set(Evas_Object *obj, Eina_Bool state); EINA_ARG_NONNULL(1)
    EAPI Eina_Bool    elm_check_state_get(const Evas_Object *obj); EINA_ARG_NONNULL(1)
    EAPI void         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep); EINA_ARG_NONNULL(1)
+   /* smart callbacks called:
+    * "changed" - This is called whenever the user changes the state of one of the check object.
+    */
 
    /* radio */
    EAPI Evas_Object *elm_radio_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
@@ -1869,6 +1875,9 @@ extern "C" {
     * fade
     * fade_translucide
     * fade_invisible
+    */
+   /* smart callbacks called:
+    * "hide,finished" - when the previous page is hided
     */
 
    typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class;

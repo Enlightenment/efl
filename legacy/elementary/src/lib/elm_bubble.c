@@ -9,7 +9,7 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has clicked the bubble.
+ * "clicked" - This is called when a user has clicked the bubble.
  */
 
 typedef struct _Widget_Data Widget_Data;

@@ -6,6 +6,10 @@
  *
  * By using colorselector, you can select a color.
  * Colorselector made a color using HSV/HSB mode.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - when the color value changes
  */
 
 #define BASE_STEP 360.0
