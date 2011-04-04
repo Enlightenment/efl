@@ -81,3 +81,7 @@
 2011-03-18  Mike Blumenkrantz
 
         * Use eina_log more effectively
+
+2011-04-04 Tom Hacohen (TAsn)
+
+	* Fixed uri encoding when opening files.
