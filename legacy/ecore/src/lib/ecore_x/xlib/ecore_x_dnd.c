@@ -555,7 +555,7 @@ ecore_x_dnd_send_finished(void)
    _target->state = ECORE_X_DND_TARGET_IDLE;
 } /* ecore_x_dnd_send_finished */
 
-void
+EAPI void
 ecore_x_dnd_source_action_set(Ecore_X_Atom action)
 {
    _source->action = action;
