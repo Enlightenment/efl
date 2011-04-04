@@ -113,7 +113,7 @@ efreet_uri_encode(Efreet_Uri *uri)
             dest[i] = *p;
         else
         {
-            snprintf(&(dest[i]), 4, "%%%02X", *p);
+            snprintf(&(dest[i]), 4, "%%%02X", (unsigned char) *p);
             i += 2;
         }
     }
