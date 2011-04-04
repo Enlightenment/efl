@@ -1527,10 +1527,10 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_DND_Target *target;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
-        if (!e)
-           return;
+        if (!e) return;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
         target = _ecore_x_dnd_target_get();
         target->state = ECORE_X_DND_TARGET_ENTERED;
         target->source = xevent->xclient.data.l[0];
@@ -1540,6 +1540,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
           {
              WRN("DND: Requested version %d, we only support up to %d",
                  target->version, ECORE_X_DND_VERSION);
+             free(e);
              return;
           }
 
@@ -1558,6 +1559,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
                {
                   WRN(
                      "DND: Could not fetch data type list from source window, aborting.");
+                  free(e);
                   return;
                }
 
@@ -1603,21 +1605,21 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_DND_Target *target;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
         target = _ecore_x_dnd_target_get();
         if ((target->source != (Ecore_X_Window)xevent->xclient.data.l[0]) ||
             (target->win != xevent->xclient.window))
-           return;
+          return;
 
         target->pos.x = xevent->xclient.data.l[2] >> 16;
         target->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
         target->action = xevent->xclient.data.l[4]; /* Version 2 */
 
         target->time = (target->version >= 1) ?
-           (Time)xevent->xclient.data.l[3] : CurrentTime;
+          (Time)xevent->xclient.data.l[3] : CurrentTime;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Position));
-        if (!e)
-           return;
+        if (!e) return;
 
         e->win = target->win;
         e->source = target->source;
@@ -1633,11 +1635,12 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_DND_Source *source;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
         source = _ecore_x_dnd_source_get();
         /* Make sure source/target match */
         if ((source->win != xevent->xclient.window) ||
             (source->dest != (Window)xevent->xclient.data.l[0]))
-           return;
+          return;
 
         source->await_status = 0;
 
@@ -1652,8 +1655,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         source->accepted_action = xevent->xclient.data.l[4];
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Status));
-        if (!e)
-           return;
+        if (!e) return;
 
         e->win = source->win;
         e->target = source->dest;
@@ -1674,16 +1676,16 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_DND_Target *target;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
         target = _ecore_x_dnd_target_get();
         if ((target->source != (Ecore_X_Window)xevent->xclient.data.l[0]) ||
             (target->win != xevent->xclient.window))
-           return;
+          return;
 
         target->state = ECORE_X_DND_TARGET_IDLE;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Leave));
-        if (!e)
-           return;
+        if (!e) return;
 
         e->win = xevent->xclient.window;
         e->source = (Window)xevent->xclient.data.l[0];
@@ -1696,18 +1698,18 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_DND_Target *target;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
         target = _ecore_x_dnd_target_get();
         /* Match source/target */
         if ((target->source != (Window)xevent->xclient.data.l[0]) ||
             (target->win != xevent->xclient.window))
-           return;
+          return;
 
         target->time = (target->version >= 1) ?
            (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
-        if (!e)
-           return;
+        if (!e) return;
 
         e->win = target->win;
         e->source = target->source;
@@ -1724,11 +1726,12 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Eina_Bool completed = EINA_TRUE;
 
         LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
         source = _ecore_x_dnd_source_get();
         /* Match source/target */
         if ((source->win != xevent->xclient.window) ||
             (source->dest != (Window)xevent->xclient.data.l[0]))
-           return;
+          return;
 
         if ((source->version < 5) || (xevent->xclient.data.l[1] & 0x1UL))
           {
@@ -1747,8 +1750,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
           }
 
         e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Finished));
-        if (!e)
-           return;
+        if (!e) return;
 
         e->win = source->win;
         e->target = source->dest;
@@ -1771,8 +1773,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
         Ecore_X_Event_Window_State_Request *e;
 
         e = calloc(1, sizeof(Ecore_X_Event_Window_State_Request));
-        if (!e)
-           return;
+        if (!e) return;
 
         e->win = xevent->xclient.window;
         if (xevent->xclient.data.l[0] == 0)
