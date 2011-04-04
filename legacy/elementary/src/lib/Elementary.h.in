@@ -2538,11 +2538,13 @@ extern "C" {
 
    typedef struct _Elm_Transit Elm_Transit;
    typedef void Elm_Transit_Effect;
+   typedef void (*Elm_Transit_Effect_Transition_Cb) (Elm_Transit_Effect *effect, Elm_Transit *transit, double progress);
+   typedef void (*Elm_Transit_Effect_End_Cb) (Elm_Transit_Effect *effect, Elm_Transit *transit);
 
    EAPI Elm_Transit                *elm_transit_add(void);
    EAPI void                        elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNULL(1);
-   EAPI void                        elm_transit_effect_add(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress), Elm_Transit_Effect *effect, void (*effect_free_cb)(Elm_Transit_Effect *effect, Elm_Transit *transit)) EINA_ARG_NONNULL(1, 2);
-   EAPI void                        elm_transit_effect_del(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress), Elm_Transit_Effect *effect) EINA_ARG_NONNULL(1, 2);
+   EAPI void                        elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb) EINA_ARG_NONNULL(1, 2);
+   EAPI void                        elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect) EINA_ARG_NONNULL(1, 2);
    EAPI void                        elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
    EAPI void                        elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
    EAPI const Eina_List            *elm_transit_objects_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);

@@ -88,9 +88,9 @@ struct _Elm_Transit
 
 struct _Elm_Transit_Effect_Module
 {
-   void (*animation_op) (Elm_Transit_Effect *effect, Elm_Transit *transit, double progress);
-   void (*user_effect_free) (Elm_Transit_Effect *effect, Elm_Transit *transit);
-   Elm_Transit_Effect *user_effect;
+   Elm_Transit_Effect_Transition_Cb transition_cb;
+   Elm_Transit_Effect_End_Cb end_cb;
+   Elm_Transit_Effect *effect;
    Eina_Bool deleted : 1;
 };
 
@@ -192,8 +192,8 @@ _elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj)
 static void
 _elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Module *effect_module, Eina_List *elist)
 {
-   if (effect_module->user_effect_free)
-     effect_module->user_effect_free(effect_module->user_effect, transit);
+   if (effect_module->end_cb)
+     effect_module->end_cb(effect_module->effect, transit);
 
    transit->effect_list = eina_list_remove_list(transit->effect_list, elist);
    free(effect_module);
@@ -249,7 +249,7 @@ _transit_animate_op(Elm_Transit *transit, double progress)
      {
         if (transit->deleted) break;
         if (!effect_module->deleted)
-          effect_module->animation_op(effect_module->user_effect, transit, progress);
+          effect_module->transition_cb(effect_module->effect, transit, progress);
      }
    transit->walking--;
 
@@ -402,22 +402,22 @@ elm_transit_del(Elm_Transit *transit)
  * the data_free_cb function, do not use the context data in another transit.
  */
 EAPI void
-elm_transit_effect_add(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress), Elm_Transit_Effect *effect, void (*effect_free_cb)(Elm_Transit_Effect *effect, Elm_Transit *transit))
+elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-   EINA_SAFETY_ON_NULL_RETURN(cb);
+   EINA_SAFETY_ON_NULL_RETURN(transition_cb);
    Elm_Transit_Effect_Module *effect_module;
    Eina_List *elist;
 
    EINA_LIST_FOREACH(transit->effect_list, elist, effect_module)
-     if ((effect_module->animation_op == cb) && (effect_module->user_effect == effect)) return;
+     if ((effect_module->transition_cb == transition_cb) && (effect_module->effect == effect)) return;
 
    effect_module = ELM_NEW(Elm_Transit_Effect_Module);
    if (!effect_module) return;
 
-   effect_module->user_effect_free = effect_free_cb;
-   effect_module->animation_op = cb;
-   effect_module->user_effect = effect;
+   effect_module->end_cb = end_cb;
+   effect_module->transition_cb = transition_cb;
+   effect_module->effect = effect;
 
    transit->effect_list = eina_list_append(transit->effect_list, effect_module);
 }
@@ -441,16 +441,16 @@ elm_transit_effect_add(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effe
  * @ingroup Transit
  */
 EAPI void
-elm_transit_effect_del(Elm_Transit *transit, void (*cb)(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress), Elm_Transit_Effect *effect)
+elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-   EINA_SAFETY_ON_NULL_RETURN(cb);
+   EINA_SAFETY_ON_NULL_RETURN(transition_cb);
    Eina_List *elist, *elist_next;
    Elm_Transit_Effect_Module *effect_module;
 
    EINA_LIST_FOREACH_SAFE(transit->effect_list, elist, elist_next, effect_module)
      {
-        if ((effect_module->animation_op == cb) && (effect_module->user_effect == effect))
+        if ((effect_module->transition_cb == transition_cb) && (effect_module->effect == effect))
           {
              if (transit->walking)
                {
