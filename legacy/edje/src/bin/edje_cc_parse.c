@@ -707,53 +707,18 @@ compile(void)
                       buf2, file_in, inc, def, tmpn);
              ret = system(buf);
           }
-	/*
-	 * On OpenSolaris, the default cpp is located in different places.
-	 * Alan Coppersmith told me to do what xorg does: using /usr/ccs/lib/cpp
-	 *
-	 * Also, that preprocessor is not managing C++ comments, so pass the
-	 * sun cc preprocessor just after.
-	 */
-        else if (ecore_file_exists("/usr/ccs/lib/cpp"))
+        else
           {
-             snprintf(buf, sizeof(buf), "/usr/ccs/lib/cpp -I%s %s %s %s",
-                      inc, def, file_in, tmpn);
-             ret = system(buf);
-             if (ret == 0)
-               {
-                  static char tmpn2[4096];
-                  
-                  snprintf (tmpn2, PATH_MAX, "%s/edje_cc.edc-tmp-XXXXXX", tmp_dir);
-                  fd = mkstemp(tmpn2);
-                  if (fd >= 0)
-                    {
-                       close(fd); 
-                       snprintf (buf, 4096, "cc -E -I%s %s -o %s %s",
-                                 inc, def, tmpn2, tmpn);
-                       ret = system(buf);
-                       snprintf(tmpn, 4096, "%s", tmpn2);
-                    }
-               }
+             ERR("Error. Cannot run epp: %s", buf2);
+             exit(-1);
           }
-
-        /* Trying gcc and other syntax */
-	if (ret != 0)
-	  {
-	     snprintf(buf, sizeof(buf), "%s -I%s %s -E -o %s -std=c99 - < %s",
-                      getenv("CC") ? getenv("CC") : "cc",
-		      inc, def, tmpn, file_in);
-	     ret = system(buf);
-	  }
-        /* Trying suncc syntax */
-	if (ret != 0)
-	  {
-	     snprintf(buf, sizeof(buf), "%s -I%s %s -E -o %s -xc99 - < %s",
-                      getenv("CC") ? getenv("CC") : "cc",
-		      inc, def, tmpn, file_in);
-	     ret = system(buf);
-	  }
 	if (ret == EXIT_SUCCESS)
 	  file_in = tmpn;
+        else
+          {
+             ERR("Error. Exit code of epp not clean: %i", ret);
+             exit(-1);
+          }
 	free(def);
      }
    fd = open(file_in, O_RDONLY | O_BINARY, S_IRUSR | S_IWUSR);
