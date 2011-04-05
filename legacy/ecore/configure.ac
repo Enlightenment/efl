@@ -156,7 +156,6 @@ want_ecore_evas_software_ddraw="no"
 want_ecore_evas_direct3d="no"
 want_ecore_evas_opengl_glew="no"
 want_ecore_evas_software_16_ddraw="no"
-want_ecore_evas_cocoa="no"
 want_ecore_evas_software_sdl="no"
 want_ecore_evas_gl_sdl="no"
 want_ecore_evas_directfb="no"
@@ -192,7 +191,6 @@ case "$host_os" in
       want_ecore_ipc="yes"
       want_ecore_imf="yes"
       want_ecore_cocoa="yes"
-      want_ecore_evas_cocoa="yes"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
       ;;
@@ -1322,14 +1320,6 @@ if test "x${have_ecore_evas_software_gdi}" = "xyes" -o \
    requirements_ecore_evas="ecore-win32 >= 1.0.0 ${requirements_ecore_evas}"
 fi
 
-# ecore_evas_cocoa
-
-ECORE_EVAS_CHECK_MODULE([cocoa],
-   [${want_ecore_evas_cocoa}],
-   [Cocoa],
-   [${have_ecore_cocoa}],
-   [requirements_ecore_evas="ecore-cocoa >= 1.0.0 ${requirements_ecore_evas}"])
-
 # ecore_evas_software_sdl
 
 ECORE_EVAS_CHECK_MODULE([software-sdl],
@@ -1559,7 +1549,6 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software DirectDraw........: $have_ecore_evas_software_ddraw"
   echo "    Direct3D...................: $have_ecore_evas_direct3d"
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
-  echo "    Cocoa......................: $have_ecore_evas_cocoa"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    DirectFB...................: $have_ecore_evas_directfb"

@@ -42,14 +42,6 @@ ECORE_SDL_LIB =
 ECORE_SDL_LIBADD =
 endif
 
-if BUILD_ECORE_COCOA
-ECORE_COCOA_INC = -I$(top_srcdir)/src/lib/ecore_cocoa -xobjective-c
-ECORE_COCOA_LIB = $(top_builddir)/src/lib/ecore_cocoa/libecore_cocoa.la
-else
-ECORE_COCOA_INC =
-ECORE_COCOA_LIB =
-endif
-
 if BUILD_ECORE_WINCE
 ECORE_WINCE_INC = -I$(top_srcdir)/src/lib/ecore_wince
 ECORE_WINCE_LIB = $(top_builddir)/src/lib/ecore_wince/libecore_wince.la
@@ -114,7 +106,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EINA_LIBS@ \
 @EVIL_LIBS@
 
-libecore_evas_la_LDFLAGS = @cocoa_ldflags@ -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
+libecore_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = \
 ecore_evas_private.h

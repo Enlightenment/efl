@@ -116,5 +116,10 @@
 
 2011-04-01  Cedric Bail
 
-	* Add ecore_con_url_pipeline_set and ecore_con_url_pipeline_get for HTTP 1.1
-	pipelining support.
+	* Add ecore_con_url_pipeline_set and ecore_con_url_pipeline_get for
+	HTTP 1.1 pipelining support.
+
+2011-04-05  Cedric Bail
+
+	* Remove Ecore_Evas Cocoa backend that use depreacted Evas Quartz
+	backend.
