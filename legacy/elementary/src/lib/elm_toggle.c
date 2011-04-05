@@ -9,9 +9,9 @@
  *
  * Signals that you can add callbacks for are:
  *
- * "changed" - Whenever the toggle value has been changed.  Is not called
- * until the toggle is released by the cursor (assuming it has been triggered
- * by the cursor in the first place).
+ * "changed" - Whenever the toggle value has been changed.  Is not called until 
+ *             the toggle is released by the cursor (assuming it has been 
+ *             triggered by the cursor in the first place).
  */
 
 typedef struct _Widget_Data Widget_Data;

@@ -113,10 +113,10 @@
  *                parameter is the Gengrid item that was unselected.
  * "realized" - This is called when the item in the Gengrid is created
  *              as a real evas object. event_info is the Gengrid item that was
- *              created. The object may be deleted at any time, so it is up to the
- *              caller to not use the object pointer from
- *              elm_gengrid_item_object_get() in a way where it may point to freed
- *              objects.
+ *              created. The object may be deleted at any time, so it is up to
+ *              the caller to not use the object pointer from
+ *              elm_gengrid_item_object_get() in a way where it may point to 
+ *              freed objects.
  * "unrealized" - This is called when the real evas object for this item
  *                is deleted. event_info is the Gengrid item that was created.
  * "changed" - Called when an item is added, removed, resized or moved

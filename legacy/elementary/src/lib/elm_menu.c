@@ -10,7 +10,8 @@
  *
  * Signals that you can add callbacks for are:
  *
- * "clicked" - the user clicked the empty space in the menu to dismiss. event_info is NULL.
+ * "clicked" - the user clicked the empty space in the menu to dismiss. 
+ *             event_info is NULL.
  */
 
 typedef struct _Widget_Data Widget_Data;

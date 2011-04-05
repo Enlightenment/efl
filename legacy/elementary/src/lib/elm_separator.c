@@ -4,7 +4,8 @@
 /**
  * @defgroup Separator Separator
  *
- * A separator is a widget that adds a very thin object to separate other objects.
+ * A separator is a widget that adds a very thin object to separate other 
+ * objects.
  * A separator can be vertical or horizontal.
  */
 
