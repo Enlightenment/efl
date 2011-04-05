@@ -352,11 +352,6 @@ windows direct-draw engine for evas
 evas direct3d engine (experimental)
 
 
---enable-quartz[=static]
-
-macos-x quartz engine (experimental)
-
-
 --enable-gl-glew[=static]
 
 opengl glew based gl engine for evas (experimental)

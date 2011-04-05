@@ -103,7 +103,6 @@ want_evas_engine_xrender_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_direct3d="no"
-want_evas_engine_quartz="no"
 want_evas_engine_gl_glew="no"
 want_evas_engine_software_sdl="no"
 want_evas_engine_fb="no"
@@ -149,7 +148,6 @@ case "$host_os" in
       ;;
    darwin*)
       want_evas_engine_software_xlib="auto"
-      want_evas_engine_quartz="auto"
       ;;
    *)
       want_evas_engine_software_xlib="auto"
@@ -599,8 +597,6 @@ EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Sof
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
 
 EVAS_CHECK_ENGINE([direct3d], [${want_evas_engine_direct3d}], [no], [Direct3D])
-
-EVAS_CHECK_ENGINE([quartz], [${want_evas_engine_quartz}], [no], [Quartz])
 
 EVAS_CHECK_ENGINE([gl-glew], [${want_evas_engine_gl_glew}], [no], [OpenGL Glew])
 
@@ -1545,7 +1541,6 @@ evas-fb.pc
 evas-opengl-glew.pc
 evas-opengl-x11.pc
 evas-opengl-sdl.pc
-evas-quartz.pc
 evas-software-buffer.pc
 evas-software-x11.pc
 evas-software-8-x11.pc
@@ -1593,7 +1588,6 @@ src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_glew/Makefile
 src/modules/engines/gl_x11/Makefile
 src/modules/engines/gl_sdl/Makefile
-src/modules/engines/quartz/Makefile
 src/modules/engines/xrender_x11/Makefile
 src/modules/engines/software_sdl/Makefile
 src/modules/engines/software_8/Makefile
@@ -1686,7 +1680,6 @@ dnl echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
-echo "  Quartz.....................: $have_evas_engine_quartz"
 echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 echo $ECHO_N "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"

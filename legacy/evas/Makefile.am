@@ -93,10 +93,6 @@ if BUILD_ENGINE_GL_SDL
 pkgconfig_DATA += evas-opengl-sdl.pc
 endif
 
-if BUILD_ENGINE_QUARTZ
-pkgconfig_DATA += evas-quartz.pc
-endif
-
 if BUILD_ENGINE_GL_GLEW
 pkgconfig_DATA += evas-opengl-glew.pc
 endif

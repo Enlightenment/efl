@@ -31,9 +31,6 @@ if !EVAS_STATIC_BUILD_GL_SDL
 SUBDIRS += gl_sdl
 endif
 
-if !EVAS_STATIC_BUILD_QUARTZ
-SUBDIRS += quartz
-endif
 if !EVAS_STATIC_BUILD_SOFTWARE_8
 SUBDIRS += software_8
 endif

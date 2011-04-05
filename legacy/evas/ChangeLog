@@ -208,3 +208,7 @@
 	* Added Evas OpenGL interface to be able to get an OpenGL API for
         rendering to image objects. This is the beginning so not
         totally functional yet.
+
+2011-04-05  Cedric Bail
+
+	* Remove Evas Quartz backend.
