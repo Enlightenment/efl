@@ -141,7 +141,7 @@ ecore_x_dpms_timeouts_set(unsigned int standby,
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI unsigned int
-ecore_x_dpms_timeout_standby_get()
+ecore_x_dpms_timeout_standby_get(void)
 {
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
@@ -161,7 +161,7 @@ ecore_x_dpms_timeout_standby_get()
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI unsigned int
-ecore_x_dpms_timeout_suspend_get()
+ecore_x_dpms_timeout_suspend_get(void)
 {
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
@@ -181,7 +181,7 @@ ecore_x_dpms_timeout_suspend_get()
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI unsigned int
-ecore_x_dpms_timeout_off_get()
+ecore_x_dpms_timeout_off_get(void)
 {
 #ifdef ECORE_XDPMS
    unsigned short standby, suspend, off;
