@@ -837,9 +837,6 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_GL_X11
    methods = eina_list_append(methods, "gl_x11");
 #endif
-#ifdef BUILD_ENGINE_GL_GLEW
-   methods = eina_list_append(methods, "gl_glew");
-#endif
 #ifdef BUILD_ENGINE_DIRECTFB
    methods = eina_list_append(methods, "directfb");
 #endif

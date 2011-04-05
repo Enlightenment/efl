@@ -13,11 +13,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#ifdef BUILD_ENGINE_GL_GLEW
-# include <GL/glew.h>
-#else
-# define GL_GLEXT_PROTOTYPES
-#endif
+#define GL_GLEXT_PROTOTYPES
 
 #ifdef BUILD_ENGINE_GL_QUARTZ
 # include <OpenGL/gl.h>

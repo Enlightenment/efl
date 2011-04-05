@@ -94,7 +94,6 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, buffer);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, direct3d);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, directfb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
-EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_glew);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_sdl);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_16);
@@ -145,9 +144,6 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_FB
   EVAS_EINA_STATIC_MODULE_USE(engine, fb),
-#endif
-#ifdef EVAS_STATIC_BUILD_GL_GLEW
-  EVAS_EINA_STATIC_MODULE_USE(engine, gl_glew),
 #endif
 #ifdef EVAS_STATIC_BUILD_GL_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, gl_x11),

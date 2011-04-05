@@ -102,7 +102,6 @@ want_evas_engine_xrender_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_direct3d="no"
-want_evas_engine_gl_glew="no"
 want_evas_engine_software_sdl="no"
 want_evas_engine_fb="no"
 want_evas_engine_directfb="no"
@@ -594,8 +593,6 @@ EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], 
 
 EVAS_CHECK_ENGINE([direct3d], [${want_evas_engine_direct3d}], [no], [Direct3D])
 
-EVAS_CHECK_ENGINE([gl-glew], [${want_evas_engine_gl_glew}], [no], [OpenGL Glew])
-
 EVAS_CHECK_ENGINE([software-sdl], [${want_evas_engine_software_sdl}], [no], [Software SDL])
 
 EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [yes], [OpenGL SDL])
@@ -619,12 +616,10 @@ EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], 
 have_evas_engine_gl_common="no"
 have_static_evas_engine_gl_common="no"
 if test "x$have_evas_engine_gl_x11" = "xyes" \
-   || test "x$have_evas_engine_gl_glew" = "xyes" \
    || test "x$have_evas_engine_gl_sdl" = "xyes"; then
    have_evas_engine_gl_common="yes"
 fi
 if test "x$have_evas_engine_gl_x11" = "xstatic" \
-   || test "x$have_evas_engine_gl_glew" = "xstatic" \
    || test "x$have_evas_engine_gl_sdl" = "xstatic"; then
    have_evas_engine_gl_common="yes"
    have_static_evas_engine_gl_common="yes"
@@ -1526,7 +1521,6 @@ AC_OUTPUT([
 Makefile
 evas-directfb.pc
 evas-fb.pc
-evas-opengl-glew.pc
 evas-opengl-x11.pc
 evas-opengl-sdl.pc
 evas-software-buffer.pc
@@ -1573,7 +1567,6 @@ src/modules/engines/fb/Makefile
 src/modules/engines/buffer/Makefile
 src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
-src/modules/engines/gl_glew/Makefile
 src/modules/engines/gl_x11/Makefile
 src/modules/engines/gl_sdl/Makefile
 src/modules/engines/xrender_x11/Makefile
@@ -1664,7 +1657,6 @@ fi
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
-echo "  OpenGL Glew................: $have_evas_engine_gl_glew"
 echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
 echo $ECHO_N "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then

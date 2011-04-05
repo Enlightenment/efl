@@ -21,9 +21,6 @@ endif
 if !EVAS_STATIC_BUILD_GL_COMMON
 SUBDIRS += gl_common
 endif
-if !EVAS_STATIC_BUILD_GL_GLEW
-SUBDIRS += gl_glew
-endif
 if !EVAS_STATIC_BUILD_GL_X11
 SUBDIRS += gl_x11
 endif

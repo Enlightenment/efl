@@ -352,11 +352,6 @@ windows direct-draw engine for evas
 evas direct3d engine (experimental)
 
 
---enable-gl-glew[=static]
-
-opengl glew based gl engine for evas (experimental)
-
-
 --enable-software-sdl[=static]
 
 this is the sdl engine that uses sdl library (http://www.libsdl.org). This
@@ -871,5 +866,3 @@ found here:
   http://www.koders.com/c/fid2B518462CB1EED3D4E31E271DB83CD1582F6EEBE.aspx
 It should be installed in the mingw include directory.
 
-For the OpenGL engine on Windows, the glew library is needed:
-  http://glew.sourceforge.net/

@@ -27,14 +27,6 @@ SUBDIRS += ../modules/engines/fb/
 EVAS_STATIC_MODULE += ../modules/engines/fb/libevas_engine_fb.la
 EVAS_STATIC_LIBADD += @evas_engine_fb_libs@
 endif
-if EVAS_STATIC_BUILD_GL_GLEW
-SUBDIRS += \
-	../modules/engines/gl_common \
-	../modules/engines/gl_glew
-EVAS_STATIC_MODULE += \
-	../modules/engines/gl_glew/libevas_engine_gl_glew.la
-EVAS_STATIC_LIBADD += @evas_engine_gl_common_libs@ @evas_engine_gl_glew_libs@
-endif
 if EVAS_STATIC_BUILD_GL_X11
 SUBDIRS += \
 	../modules/engines/gl_common \
