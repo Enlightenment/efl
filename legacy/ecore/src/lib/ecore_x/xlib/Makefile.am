@@ -36,6 +36,7 @@ ecore_x_sync.c \
 ecore_x_randr.c \
 ecore_x_randr_11.c \
 ecore_x_randr_12.c \
+ecore_x_randr_12_edid.c \
 ecore_x_randr_13.c \
 ecore_x_fixes.c \
 ecore_x_damage.c \

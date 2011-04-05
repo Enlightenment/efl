@@ -109,6 +109,11 @@
         now uses the netwm sync protocol to get wm's to only configure
         as fast as it can keep drawing.
 
+2011-04-05  Leif Middelschulte
+
+       * Add ecore_x_randr_edid_* data extraction and validation functions
+       for EDID structures.
+
 2011-04-01  Cedric Bail
 
 	* Add ecore_con_url_pipeline_set and ecore_con_url_pipeline_get for HTTP 1.1

@@ -207,6 +207,35 @@ typedef enum _Ecore_X_Render_Subpixel_Order {
    ECORE_X_RENDER_SUBPIXEL_ORDER_NONE = 5
 } Ecore_X_Render_Subpixel_Order;
 
+typedef enum _Ecore_X_Randr_Edid_Display_Interface_Type {
+   ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_UNDEFINED,
+   ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_DVI,
+   ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_HDMI_A,
+   ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_HDMI_B,
+   ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_MDDI,
+   ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_DISPLAY_PORT
+} Ecore_X_Randr_Edid_Display_Interface_Type;
+   
+typedef enum _Ecore_X_Randr_Edid_Display_Colorscheme {
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_MONOCHROME_GRAYSCALE = 0x00,
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB = 0x08,
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_NON_RGB = 0x10,
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_UNDEFINED = 0x18,
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB_4_4_4 = 0x444000,
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB_YCRCB_4_4_4 = 0x444,
+   ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB_YCRCB_4_2_2 = 0x422
+} Ecore_X_Randr_Edid_Display_Colorscheme;
+   
+typedef enum _Ecore_X_Randr_Edid_Aspect_Ratio {
+   ECORE_X_RANDR_EDID_ASPECT_RATIO_4_3 = 0x0,
+   ECORE_X_RANDR_EDID_ASPECT_RATIO_16_9 = 0x1,
+   ECORE_X_RANDR_EDID_ASPECT_RATIO_16_10 = 0x2,
+   ECORE_X_RANDR_EDID_ASPECT_RATIO_5_4 = 0x4,
+   ECORE_X_RANDR_EDID_ASPECT_RATIO_15_9 = 0x8
+} Ecore_X_Randr_Edid_Aspect_Ratio;
+   
+#define ECORE_X_RANDR_EDID_UNKNOWN_VALUE -1
+   
 #define ECORE_X_SELECTION_TARGET_TARGETS       "TARGETS"
 #define ECORE_X_SELECTION_TARGET_TEXT          "TEXT"
 #define ECORE_X_SELECTION_TARGET_COMPOUND_TEXT "COMPOUND_TEXT"
@@ -2662,6 +2691,225 @@ ecore_x_randr_output_crtc_set(Ecore_X_Window root,
                               Ecore_X_Randr_Output output,
                               const Ecore_X_Randr_Crtc crtc);
 
+/* ecore_x_randr_12_edid.c */
+   
+/*
+ * @brief Validates the header from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if the header is valid. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_valid_header(unsigned char *edid, 
+                                unsigned long edid_length);
+   
+/*
+ * @brief Checks whether a display's EDID has a valid checksum.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if the checksum is valid. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid,
+                                           unsigned long edid_length);
+   
+/*
+ * @brief Get the encoded version from raw EDID data.
+ *
+ * The return value has the minor version in the lowest 8 bits, and the major
+ * version in all the rest of the bits. i.e.
+ * 
+ * minor = (version & 0x000000ff);
+ * major = (version & 0xffffff00) >> 8;
+ * 
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded major and minor version encasuplated an int.
+ */
+EAPI int
+ecore_x_randr_edid_version_get(unsigned char *edid, 
+                               unsigned long edid_length);
+   
+/*
+ * @brief Get the encoded manufacturer from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded manufacturer identifier.
+ */
+EAPI char *
+ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid,
+                                         unsigned long edid_length);
+   
+/*
+ * @brief Get the encoded name from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded manufacturer identifier.
+ */
+EAPI char *
+ecore_x_randr_edid_display_name_get(unsigned char *edid,
+                                    unsigned long edid_length);
+   
+/*
+ * @brief Get the encoded ASCII from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded ASCII display identifier.
+ */
+EAPI char *
+ecore_x_randr_edid_display_ascii_get(unsigned char *edid, 
+                                     unsigned long edid_length);
+   
+/*
+ * @brief Get the encoded serial identifier from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded serial identifier.
+ */
+EAPI char *
+ecore_x_randr_edid_display_serial_get(unsigned char *edid, 
+                                      unsigned long edid_length);
+   
+/*
+ * @brief Get the encoded model number from raw EDID data.
+ *
+ * The manufacturer ID table is necessary for a useful description.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded model number.
+ */
+EAPI int
+ecore_x_randr_edid_model_get(unsigned char *edid,
+                             unsigned long edid_length);
+   
+/*
+ * @brief Get the manufacturer serial number from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The encoded serial manufacturer serial number.
+ */
+EAPI int
+ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid,
+                                                  unsigned long edid_length);
+   
+/*
+ * @brief Get the manufacturer model number from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The manufacturer's model number.
+ */
+EAPI int
+ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid,
+                                          unsigned long edid_length);
+   
+/*
+ * @brief Looks up the DPMS support from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if DPMS is supported in some way. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_dpms_available_get(unsigned char *edid,
+                                      unsigned long edid_length);
+   
+/*
+ * @brief Looks up the DPMS Standby support from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if DPMS Standby is supported. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid,
+                                              unsigned long edid_length);
+   
+/*
+ * @brief Looks up the DPMS Suspend support from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if DPMS Suspend is supported. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid,
+                                              unsigned long edid_length);
+   
+/*
+ * @brief Looks up the DPMS Off support from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if DPMS Off is supported. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid,
+                                          unsigned long edid_length);
+   
+/*
+ * @brief Get the preferred aspect ratio from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The preferred aspect ratio.
+ */
+EAPI Ecore_X_Randr_Edid_Aspect_Ratio
+ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid,
+                                                      unsigned long edid_length);
+   
+/*
+ * @brief Get the supported aspect ratios from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The supported aspect ratios.
+ */
+EAPI Ecore_X_Randr_Edid_Aspect_Ratio
+ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid,
+                                             unsigned long edid_length);
+   
+/*
+ * @brief Get the supported colorschemes from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The supported colorschemes.
+ */
+EAPI Ecore_X_Randr_Edid_Display_Colorscheme
+ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid,
+                                           unsigned long edid_length);
+   
+/*
+ * @brief Get the display type from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return EINA_TRUE, if the display is a digital one. Else EINA_FALSE.
+ */
+EAPI Eina_Bool
+ecore_x_randr_edid_display_type_digital_get(unsigned char *edid,
+                                            unsigned long edid_length);
+   
+/*
+ * @brief Get the display interface type from raw EDID data.
+ *
+ * @param edid the edid structure
+ * @param edid_length length of the edid structure
+ * @return The interface type.
+ */
+EAPI Ecore_X_Randr_Edid_Display_Interface_Type
+ecore_x_randr_edid_display_interface_type_get(unsigned char *edid,
+                                              unsigned long edid_length);
+   
 /* ecore_x_randr_13.c */
 EAPI void
 ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root, double level);
