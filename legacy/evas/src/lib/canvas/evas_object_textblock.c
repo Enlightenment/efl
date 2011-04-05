@@ -918,75 +918,6 @@ _is_white(Eina_Unicode c)
 
 /**
  * @internal
- * Creates a copy of a string without the whitespaces between byte indexes
- * clean_start and clean_end and frees str.
- *
- * FIXME: BROKEN FOR NON-ENGLISH.
- * @param clean_start The byte index of the location to start cleaning at.
- * @param clean_end The byte index of the location to end cleaning at.
- * @param str The string to copy and free.
- * @return a copy of str cleaned of whitespaces.
- */
-static char *
-_clean_white(int clean_start, int clean_end, char *str)
-{
-   char *p, *p2, *str2 = NULL;
-   int white, pwhite, start, ok;
-
-   /*FIXME: fix this function */
-   return strdup(str);
-   str2 = malloc(strlen(str) + 2);
-   p = str;
-   p2 = str2;
-   white = 0;
-   start = 1;
-   ok = 1;
-   while (*p != 0)
-     {
-        pwhite = white;
-        if (_is_white(*p)) white = 1;
-        else white = 0;
-        if ((pwhite) && (white)) ok = 0;
-        else
-          {
-             if (!clean_start)
-               {
-                  if ((start) && (pwhite) && (!white))
-                    {
-                       //		       *p2 = ' ';
-                       //		       p2++;
-                    }
-               }
-             ok = 1;
-             if (!white) start = 0;
-          }
-        if (clean_start)
-          {
-             if ((start) && (ok)) ok = 0;
-          }
-        if (ok)
-          {
-             *p2 = *p;
-             p2++;
-          }
-        p++;
-     }
-   *p2 = 0;
-   if (clean_end)
-     {
-        while (p2 > str2)
-          {
-             p2--;
-             if (!(isspace(*p2) || _is_white(*p2))) break;
-             *p2 = 0;
-          }
-     }
-   free(str);
-   return str2;
-}
-
-/**
- * @internal
  * Appends the text between s and p to the main cursor of the object.
  *
  * @param o The textblock to append to.
@@ -1003,9 +934,7 @@ _append_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
         ts = alloca(p - s + 1);
         strncpy(ts, s, p - s);
         ts[p - s] = 0;
-        ts = _clean_white(0, 0, ts);
         evas_textblock_cursor_text_append(o->cursor, ts);
-        free(ts);
      }
 }
 
@@ -1027,9 +956,7 @@ _prepend_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
         ts = alloca(p - s + 1);
         strncpy(ts, s, p - s);
         ts[p - s] = 0;
-        ts = _clean_white(0, 0, ts);
         evas_textblock_cursor_text_prepend(o->cursor, ts);
-        free(ts);
      }
 }
 
