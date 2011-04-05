@@ -191,92 +191,67 @@
  * Signals that you can add callbacks for are:
  *
  * "clicked,double" - This is called when a user has double-clicked an item. The
- * event_info parameter is the genlist item that was double-clicked.
- *
+ *                    event_info parameter is the genlist item that was double-clicked.
  * "selected" - This is called when a user has made an item selected. The
- * event_info parameter is the genlist item that was selected.
- *
+ *              event_info parameter is the genlist item that was selected.
  * "unselected" - This is called when a user has made an item unselected. The
- * event_info parameter is the genlist item that was unselected.
- *
+ *                 event_info parameter is the genlist item that was unselected.
  * "expanded" - This is called when elm_genlist_item_expanded_set() is called
- * and the item is now meant to be expanded. The event_info parameter is the
- * genlist item that was indicated to expand. It is the job of this callback
- * to then fill in the child items.
- *
+ *              and the item is now meant to be expanded. The event_info parameter is the
+ *              genlist item that was indicated to expand. It is the job of this callback
+ *              to then fill in the child items.
  * "contracted" - This is called when elm_genlist_item_expanded_set() is called
- * and the item is now meant to be contracted. The event_info parameter is
- * the genlist item that was indicated to contract. It is the job of this
- * callback to then delete the child items.
- *
+ *                and the item is now meant to be contracted. The event_info parameter is
+ *                the genlist item that was indicated to contract. It is the job of this
+ *                callback to then delete the child items.
  * "expand,request" - This is called when a user has indicated they want to
- * expand a tree branch item. The callback should decide if the item can
- * expand (has any children) and then call elm_genlist_item_expanded_set()
- * appropriately to set the state. The event_info parameter is the genlist
- * item that was indicated to expand.
- *
+ *                    expand a tree branch item. The callback should decide if the item can
+ *                    expand (has any children) and then call elm_genlist_item_expanded_set()
+ *                    appropriately to set the state. The event_info parameter is the genlist
+ *                    item that was indicated to expand.
  * "contract,request" - This is called when a user has indicated they want to
- * contract a tree branch item. The callback should decide if the item can
- * contract (has any children) and then call elm_genlist_item_expanded_set()
- * appropriately to set the state. The event_info parameter is the genlist
- * item that was indicated to contract.
- *
+ *                      contract a tree branch item. The callback should decide if the item can
+ *                      contract (has any children) and then call elm_genlist_item_expanded_set()
+ *                      appropriately to set the state. The event_info parameter is the genlist
+ *                      item that was indicated to contract.
  * "realized" - This is called when the item in the list is created as a real
- * evas object. event_info parameter is the genlist item that was created.
- * The object may be deleted at any time, so it is up to the caller to
- * not use the object pointer from elm_genlist_item_object_get() in a way
- * where it may point to freed objects.
- *
+ *              evas object. event_info parameter is the genlist item that was created.
+ *              The object may be deleted at any time, so it is up to the caller to
+ *              not use the object pointer from elm_genlist_item_object_get() in a way
+ *              where it may point to freed objects.
  * "unrealized" - This is called just before an item is unrealized. After
- * this call icon objects provided will be deleted and the item object
- * itself delete or be put into a floating cache.
- *
- * "drag,start,up" - This is called when the item in the list has been dragged
- * (not scrolled) up.
- *
- * "drag,start,down" - This is called when the item in the list has been dragged
- * (not scrolled) down.
- *
- * "drag,start,left" - This is called when the item in the list has been dragged
- * (not scrolled) left.
- *
+ *                this call icon objects provided will be deleted and the item object
+ *                itself delete or be put into a floating cache.
+ * "drag,start,up" - This is called when the item in the list has been dragged 
+ *                   (not scrolled) up.
+ * "drag,start,down" - This is called when the item in the list has been dragged 
+ *                     (not scrolled) down.
+ * "drag,start,left" - This is called when the item in the list has been dragged i
+ *                     (not scrolled) left.
  * "drag,start,right" - This is called when the item in the list has been dragged
- * (not scrolled) right.
- *
+ *                      (not scrolled) right.
  * "drag,stop" - This is called when the item in the list has stopped being
- * dragged.
- *
+ *               dragged.
  * "drag" - This is called when the item in the list is being dragged.
- *
  * "longpressed" - This is called when the item is pressed for a certain amount
- * of time. By default it's 1 second.
- *
+ *                 of time. By default it's 1 second.
  * "scroll,edge,top" - This is called when the genlist is scrolled until the
- * top edge.
- *
+ *                     top edge.
  * "scroll,edge,bottom" - This is called when the genlist is scrolled until the
- * bottom edge.
- *
+ *                         bottom edge.
  * "scroll,edge,left" - This is called when the genlist is scrolled until the
- * left edge.
- *
+ *                      left edge.
  * "scroll,edge,right" - This is called when the genlist is scrolled until the
- * right edge.
- *
+ *                       right edge.
  * "multi,swipe,left" - This is called when the genlist is multi-touch swiped
- * left.
- *
+ *                       left.
  * "multi,swipe,right" - This is called when the genlist is multi-touch swiped
- * right.
- *
+ *                       right.
  * "multi,swipe,up" - This is called when the genlist is multi-touch swiped up.
- *
  * "multi,swipe,down" - This is called when the genlist is multi-touch swiped
- * down.
- *
+ *                      down.
  * "multi,pinch,out" - This is called when the genlist is multi-touch pinched
- * out.
- *
+ *                     out.
  * "multi,pinch,in" - This is called when the genlist is multi-touch pinched in.
  */
 
