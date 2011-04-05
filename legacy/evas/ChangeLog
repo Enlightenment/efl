@@ -212,4 +212,5 @@
 2011-04-05  Cedric Bail
 
 	* Remove Evas Quartz backend.
-	* Remove Cairo backend.
+	* Remove Evas Cairo backend.
+	* Remove Evas Qtopia backend.

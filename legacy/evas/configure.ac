@@ -105,7 +105,6 @@ want_evas_engine_direct3d="no"
 want_evas_engine_software_sdl="no"
 want_evas_engine_fb="no"
 want_evas_engine_directfb="no"
-want_evas_engine_software_qtopia="no"
 want_evas_engine_software_8_x11="no"
 want_evas_engine_software_16_x11="no"
 want_evas_engine_software_16_ddraw="no"
@@ -600,9 +599,6 @@ EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [yes], [OpenGL SDL])
 EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [yes], [Framebuffer])
 
 EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
-
-# disable qtopia engine for the release
-#EVAS_CHECK_ENGINE([software-qtopia], [${want_evas_engine_software_qtopia}], [no], [Qtopia])
 
 EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [yes], [Software X11 8 bits grayscale])
 
@@ -1603,11 +1599,6 @@ README
 evas.spec
 ])
 
-#disabled for the release:
-# evas-software-qtopia.pc
-# src/modules/engines/software_qtopia/Makefile
-
-
 #####################################################################
 ## Sanity Checks
 
@@ -1666,7 +1657,6 @@ else
 fi
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
-dnl echo "  Software Qtopia............: $have_evas_engine_software_qtopia"
 echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
 # FIXME: kill software 16bit
 echo "  Software 16bit ............: $have_evas_engine_software_16"

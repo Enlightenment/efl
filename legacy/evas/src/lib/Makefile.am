@@ -170,13 +170,6 @@ EVAS_STATIC_MODULE += ../modules/loaders/xpm/libevas_loader_xpm.la
 EVAS_STATIC_LIBADD += @evas_image_loader_xpm_libs@
 endif
 
-
-#if EVAS_STATIC_BUILD_SOFTWARE_QTOPIA
-#SUBDIRS += ../modules/engines/software_qtopia/
-#EVAS_STATIC_MODULE += ../modules/engines/software_qtopia/libevas_engine_software_qtopia.la
-#EVAS_STATIC_LIBADD += @evas_engine_software_qtopia_libs@
-#endif
-
 AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib \

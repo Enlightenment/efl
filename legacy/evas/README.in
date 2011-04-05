@@ -27,7 +27,7 @@ Recommended:
   libpthread
 
 Optional:
-  XCB SDL OpenGL Qtopia librsvg libtiff libgif edb DirectFB
+  XCB SDL OpenGL librsvg libtiff libgif edb DirectFB
 
 Evas is a clean display canvas API for several target display systems
 that can draw anti-aliased text, smooth super and sub-sampled scaled

@@ -547,58 +547,6 @@ fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_QTOPIA(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_QTOPIA],
-[
-
-have_dep="no"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-evas_engine_[]$1[]_moc=""
-
-AC_ARG_WITH([qtdir],
-   [AC_HELP_STRING([--with-qtdir=QT_DIR], [use qt directory specified])],
-   [
-    qt_dir=$withval;
-    echo "using "$qt_dir" for qt directory.";
-   ],
-   [qt_dir="/opt/Qtopia"]
-)
-
-AC_LANG_PUSH(C++)
-
-AC_CHECK_HEADER([qdirectpainter_qws.h],
-   [have_dep="yes"],
-   [have_dep="no"],
-   [
-#include <qwidget.h>
-#include <qnamespace.h>
-#include <qbrush.h>
-#include <qpainter.h>
-   ]
-)
-
-AC_LANG_POP(C++)
-
-if test "x${have_dep}" = "xyes" ; then
-   evas_engine_[]$1[]_cflags="-fno-exceptions -fno-rtti -I${qt_dir}/include"
-   evas_engine_[]$1[]_libs="-L${qt_dir}/lib -lqte -lqpe"
-   evas_engine_[]$1[]_moc="${qt_dir}/bin/moc"
-fi
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-AC_SUBST([evas_engine_$1_moc])
-
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
-
-])
-
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_8_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_8_X11],

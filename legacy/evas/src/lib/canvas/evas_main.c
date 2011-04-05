@@ -849,9 +849,6 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
    methods = eina_list_append(methods, "software_win32_gdi");
 #endif
-#ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
-   methods = eina_list_append(methods, "software_qtopia");
-#endif
 #ifdef BUILD_ENGINE_SOFTWARE_SDL
    methods = eina_list_append(methods, "software_sdl");
 #endif

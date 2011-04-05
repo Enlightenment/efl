@@ -37,7 +37,6 @@ evas-fb.pc.in \
 evas-opengl-x11.pc.in \
 evas-opengl-sdl.pc.in \
 evas-software-buffer.pc.in \
-evas-software-qtopia.pc.in \
 evas-software-x11.pc.in \
 evas-software-16-x11.pc.in \
 evas-software-8-x11.pc.in \
@@ -78,10 +77,6 @@ endif
 if BUILD_ENGINE_BUFFER
 pkgconfig_DATA += evas-software-buffer.pc
 endif
-
-#if BUILD_ENGINE_SOFTWARE_QTOPIA
-#pkgconfig_DATA += evas-software-qtopia.pc
-#endif
 
 if BUILD_ENGINE_GL_X11
 pkgconfig_DATA += evas-opengl-x11.pc
