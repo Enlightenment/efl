@@ -825,12 +825,6 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = eina_list_append(methods, "software_x11");
 #endif
-#ifdef BUILD_ENGINE_XRENDER_X11
-   methods = eina_list_append(methods, "xrender_x11");
-#endif
-#ifdef BUILD_ENGINE_XRENDER_XCB
-   methods = eina_list_append(methods, "xrender_xcb");
-#endif
 #ifdef BUILD_ENGINE_SOFTWARE_16_X11
    methods = eina_list_append(methods, "software_16_x11");
 #endif

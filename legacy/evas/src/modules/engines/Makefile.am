@@ -58,7 +58,4 @@ endif
 if !EVAS_STATIC_BUILD_SOFTWARE_X11
 SUBDIRS += software_x11
 endif
-if !EVAS_STATIC_BUILD_XRENDER_X11
-SUBDIRS += xrender_x11
-endif
 

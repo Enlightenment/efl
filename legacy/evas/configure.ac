@@ -94,11 +94,9 @@ want_evas_cserve="yes"
 
 want_evas_engine_buffer="yes"
 want_evas_engine_software_xlib="no"
-want_evas_engine_xrender_x11="no"
 want_evas_engine_gl_x11="no"
 want_evas_engine_gl_sdl="no"
 want_evas_engine_software_xcb="no"
-want_evas_engine_xrender_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_direct3d="no"
@@ -152,7 +150,6 @@ case "$host_os" in
       want_evas_engine_fb="auto"
 ### no - not ready/usable/complete
 #      want_evas_engine_software_8_x11="auto"
-#      want_evas_engine_xrender_x11="auto"
 #      want_evas_engine_software_16_x11="auto"
       ;;
 esac
@@ -578,13 +575,9 @@ EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [yes], [Buffer])
 
 EVAS_CHECK_ENGINE([software-xlib], [${want_evas_engine_software_xlib}], [yes], [Software Xlib])
 
-EVAS_CHECK_ENGINE([xrender-x11], [${want_evas_engine_xrender_x11}], [yes], [XRender X11])
-
 EVAS_CHECK_ENGINE([gl-x11], [${want_evas_engine_gl_x11}], [yes], [OpenGL X11])
 
 EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
-
-EVAS_CHECK_ENGINE([xrender-xcb], [${want_evas_engine_xrender_xcb}], [no], [XRender XCB])
 
 EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Software GDI])
 
@@ -1523,8 +1516,6 @@ evas-software-buffer.pc
 evas-software-x11.pc
 evas-software-8-x11.pc
 evas-software-16-x11.pc
-evas-xrender-x11.pc
-evas-xrender-xcb.pc
 evas-software-gdi.pc
 evas-software-ddraw.pc
 evas-software-16-ddraw.pc
@@ -1565,7 +1556,6 @@ src/modules/engines/directfb/Makefile
 src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_x11/Makefile
 src/modules/engines/gl_sdl/Makefile
-src/modules/engines/xrender_x11/Makefile
 src/modules/engines/software_sdl/Makefile
 src/modules/engines/software_8/Makefile
 src/modules/engines/software_8_x11/Makefile
@@ -1638,7 +1628,6 @@ echo
 echo "Engines:"
 echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
-echo "  XRender X11................: $have_evas_engine_xrender_x11 (XCB: $have_evas_engine_xrender_xcb)"
 echo $ECHO_N "  OpenGL X11.................: $have_evas_engine_gl_x11 $ECHO_C"
 if test "x$have_evas_engine_gl_x11" = "xyes"; then
   echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"

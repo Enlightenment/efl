@@ -19,7 +19,6 @@ Must:
 Recommended:
   libX11
   libXext
-  libXrender
   fontconfig
   libpng
   libjpeg
@@ -190,22 +189,6 @@ this enables the memory buffer rendering engine. this engine renders
 to a region of memory that is considered to be a 32bit ARGB buffer of
 pixels, allowing the results of rendering to be directly read out or
 used again for other purposes.
-
-
---enable-xrender-x11[=static]
-
-this engine uses the xrender api to do drawing via (possibly)
-accelerated 2d or 3d hardware means. as such xrender has never lived
-up to its possible performance levels and has fallen into disrepair.
-use this engine at your own risk. it is considered to be "bitrotting"
-and be unmaintained.
-
-
---enable-xrender-xcb[=static]
-
-this is the same as xrender-x11 but uses/exposes an xcb api. It is not
-recommended to use this as it's experimental and will create problems
-with both ecore_evas and enlightenment itself.
 
 
 --enable-gl-x11[=static]

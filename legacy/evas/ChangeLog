@@ -214,3 +214,5 @@
 	* Remove Evas Quartz backend.
 	* Remove Evas Cairo backend.
 	* Remove Evas Qtopia backend.
+	* Remove Evas Xrender backend.
+

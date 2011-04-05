@@ -40,8 +40,6 @@ evas-software-buffer.pc.in \
 evas-software-x11.pc.in \
 evas-software-16-x11.pc.in \
 evas-software-8-x11.pc.in \
-evas-xrender-x11.pc.in \
-evas-xrender-xcb.pc.in \
 evas-software-gdi.pc.in \
 evas-software-ddraw.pc.in \
 evas-software-16-ddraw.pc.in \
@@ -84,14 +82,6 @@ endif
 
 if BUILD_ENGINE_GL_SDL
 pkgconfig_DATA += evas-opengl-sdl.pc
-endif
-
-if BUILD_ENGINE_XRENDER_X11
-pkgconfig_DATA += evas-xrender-x11.pc
-endif
-
-if BUILD_ENGINE_XRENDER_XCB
-pkgconfig_DATA += evas-xrender-xcb.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_GDI

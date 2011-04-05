@@ -108,7 +108,6 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_gdi);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_sdl);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_x11);
-EVAS_EINA_STATIC_MODULE_DEFINE(engine, xrender_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, xpm);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, bmp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tiff);
@@ -185,9 +184,6 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, software_x11),
-#endif
-#ifdef EVAS_STATIC_BUILD_XRENDER_X11
-  EVAS_EINA_STATIC_MODULE_USE(engine, xrender_x11),
 #endif
 #ifdef EVAS_STATIC_BUILD_XPM
   EVAS_EINA_STATIC_MODULE_USE(image_loader, xpm),
