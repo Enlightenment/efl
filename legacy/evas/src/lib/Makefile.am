@@ -179,15 +179,6 @@ EVAS_STATIC_LIBADD += @evas_image_loader_xpm_libs@
 endif
 
 
-#if EVAS_STATIC_BUILD_CAIRO_X11
-#SUBDIRS += \
-#	../modules/engines/cairo_common \
-#	../modules/engines/cairo_x11
-#EVAS_STATIC_MODULE += \
-#	../modules/engines/cairo_common/libevas_engine_cairo_common.la \
-#	../modules/engines/cairo_x11/libevas_engine_cairo_x11.la
-#EVAS_STATIC_LIBADD += @CAIRO_CFLAGS@
-#endif
 #if EVAS_STATIC_BUILD_SOFTWARE_QTOPIA
 #SUBDIRS += ../modules/engines/software_qtopia/
 #EVAS_STATIC_MODULE += ../modules/engines/software_qtopia/libevas_engine_software_qtopia.la

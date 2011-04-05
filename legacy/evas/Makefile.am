@@ -32,7 +32,6 @@ autogen.sh \
 README.in \
 README \
 evas.pc.in \
-evas-cairo-x11.pc.in \
 evas-directfb.pc.in \
 evas-fb.pc.in \
 evas-opengl-x11.pc.in \
@@ -96,10 +95,6 @@ endif
 if BUILD_ENGINE_GL_GLEW
 pkgconfig_DATA += evas-opengl-glew.pc
 endif
-
-#if BUILD_ENGINE_CAIRO_X11
-#pkgconfig_DATA += evas-cairo-x11.pc
-#endif
 
 if BUILD_ENGINE_XRENDER_X11
 pkgconfig_DATA += evas-xrender-x11.pc

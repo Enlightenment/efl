@@ -220,53 +220,6 @@ fi
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_CAIRO_X11(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_CAIRO_X11],
-[
-
-requirement=""
-have_dep="no"
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-AC_PATH_X
-AC_PATH_XTRA
-
-AC_CHECK_HEADER([X11/X.h],
-   [PKG_CHECK_MODULES([CAIRO],
-       [cairo >= 1.0.0],
-       [have_dep="yes" requirement="cairo"]
-    )]
-)
-
-if test "x${have_dep}" = "xyes" ; then
-   if test "x$2" = "xyes" ; then
-      x_libs="${x_libs} -lX11 -lXext"
-   else
-      x_dir=${x_dir:-/usr/X11R6}
-      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
-      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
-   fi
-   evas_engine_[]$1[]_cflags="${CAIRO_CFLAGS} ${x_cflags}"
-   evas_engine_[]$1[]_libs="${CAIRO_LIBS} ${x_libs}"
-fi
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-if test "x$3" = "xstatic" ; then
-   requirement_evas="${requirement} ${requirement_evas}"
-fi
-
-if test "x${have_dep}" = "xyes" ; then
-  m4_default([$4], [:])
-else
-  m4_default([$5], [:])
-fi
-
-])
-
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_XCB],

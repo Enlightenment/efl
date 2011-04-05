@@ -97,7 +97,6 @@ want_evas_engine_software_xlib="no"
 want_evas_engine_xrender_x11="no"
 want_evas_engine_gl_x11="no"
 want_evas_engine_gl_sdl="no"
-want_evas_engine_cairo_x11="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_xrender_xcb="no"
 want_evas_engine_software_gdi="no"
@@ -585,9 +584,6 @@ EVAS_CHECK_ENGINE([xrender-x11], [${want_evas_engine_xrender_x11}], [yes], [XRen
 
 EVAS_CHECK_ENGINE([gl-x11], [${want_evas_engine_gl_x11}], [yes], [OpenGL X11])
 
-# disable cairo engine for the release
-#EVAS_CHECK_ENGINE([cairo-x11], [${want_evas_engine_cairo_x11}], [yes], [Cairo X11])
-
 EVAS_CHECK_ENGINE([software-xcb], [${want_evas_engine_software_xcb}], [no], [Software XCB])
 
 EVAS_CHECK_ENGINE([xrender-xcb], [${want_evas_engine_xrender_xcb}], [no], [XRender XCB])
@@ -618,14 +614,6 @@ EVAS_CHECK_ENGINE([software-16-x11], [${want_evas_engine_software_16_x11}], [yes
 EVAS_CHECK_ENGINE([software-16-ddraw], [${want_evas_engine_software_16_ddraw}], [no], [Software DirectDraw 16 bits])
 
 EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], [no], [Software Windows CE 16 bits])
-
-# common cairo
-#have_evas_engine_cairo_common="no"
-#if test "x${have_evas_engine_cairo_x11}" = "xyes" ; then
-#   have_evas_engine_cairo_common="yes"
-#   AC_DEFINE([BUILD_ENGINE_CAIRO_COMMON], [1], [Generic Cairo Rendering Support])
-#fi
-#AM_CONDITIONAL([BUILD_ENGINE_CAIRO_COMMON], [test "x$have_evas_engine_cairo_common" = "xyes"])
 
 # common gl
 have_evas_engine_gl_common="no"
@@ -1623,10 +1611,7 @@ evas.spec
 ])
 
 #disabled for the release:
-# evas-cairo-x11.pc
 # evas-software-qtopia.pc
-# src/modules/engines/cairo_common/Makefile
-# src/modules/engines/cairo_x11/Makefile
 # src/modules/engines/software_qtopia/Makefile
 
 
@@ -1676,7 +1661,6 @@ if test "x$have_evas_engine_gl_x11" = "xyes"; then
 else
   echo
 fi
-dnl echo "  Cairo X11..................: $have_evas_engine_cairo_x11"
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"

@@ -91,7 +91,6 @@ evas_module_paths_init(void)
   { evas_##Tn##_##Name##_init, evas_##Tn##_##Name##_shutdown }
 
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, buffer);
-EVAS_EINA_STATIC_MODULE_DEFINE(engine, cairo_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, direct3d);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, directfb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
@@ -137,9 +136,6 @@ static const struct {
 } evas_static_module[] = {
 #ifdef EVAS_STATIC_BUILD_BUFFER
   EVAS_EINA_STATIC_MODULE_USE(engine, buffer),
-#endif
-#ifdef EVAS_STATIC_BUILD_CAIRO_X11
-  EVAS_EINA_STATIC_MODULE_USE(engine, cairo_x11),
 #endif
 #ifdef EVAS_STATIC_BUILD_DIRECT3D
   EVAS_EINA_STATIC_MODULE_USE(engine, direct3d),
