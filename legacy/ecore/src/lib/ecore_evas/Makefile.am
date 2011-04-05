@@ -65,7 +65,6 @@ $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
 $(ECORE_WIN32_INC) \
 $(ECORE_SDL_INC) \
-$(ECORE_COCOA_INC) \
 $(ECORE_WINCE_INC) \
 @EVAS_CFLAGS@ \
 @XCB_CFLAGS@ \
@@ -87,7 +86,6 @@ ecore_evas_buffer.c \
 ecore_evas_directfb.c \
 ecore_evas_win32.c \
 ecore_evas_sdl.c \
-ecore_evas_cocoa.c \
 ecore_evas_wince.c
 
 libecore_evas_la_LIBADD = \
@@ -97,7 +95,6 @@ $(ECORE_DIRECTFB_LIB) \
 $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
 $(ECORE_SDL_LIBADD) \
-$(ECORE_COCOA_LIB) \
 $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \
