@@ -12,23 +12,15 @@
  *
  * Signals that you can add callbacks for are:
  *
- * edge,left - the left edge of the content has been reached
- *
- * edge,right - the right edge of the content has been reached
- *
- * edge,top - the top edge of the content has been reached
- *
- * edge,bottom - the bottom edge of the content has been reached
- *
- * scroll - the content has been scrolled (moved)
- *
- * scroll,anim,start - scrolling animation has started
- *
- * scroll,anim,stop - scrolling animation has stopped
- *
- * scroll,drag,start - dragging the contents around has started
- *
- * scroll,drag,stop - dragging the contents around has stopped
+ * "edge,left" - the left edge of the content has been reached
+ * "edge,right" - the right edge of the content has been reached
+ * "edge,top" - the top edge of the content has been reached
+ * "edge,bottom" - the bottom edge of the content has been reached
+ * "scroll" - the content has been scrolled (moved)
+ * "scroll,anim,start" - scrolling animation has started
+ * "scroll,anim,stop" - scrolling animation has stopped
+ * "scroll,drag,start" - dragging the contents around has started
+ * "scroll,drag,stop" - dragging the contents around has stopped
  */
 typedef struct _Widget_Data Widget_Data;
 

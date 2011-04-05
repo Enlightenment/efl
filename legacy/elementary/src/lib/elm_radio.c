@@ -28,6 +28,11 @@
  * the pointer to this integer to modify, use elm_radio_value_pointer_set().
  * The radio objects will modify this directly. That implies the pointer must
  * point to valid memory for as long as the radio objects exist.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - when the radio status is changed
+ *
  */
 
 typedef struct _Widget_Data Widget_Data;

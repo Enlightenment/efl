@@ -6,6 +6,11 @@
  *
  * A toolbar is a widget that displays a list of buttons inside
  * a box.  It is scrollable, and only one item can be selected at a time.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "clicked" - when the user clicks on a toolbar item and becomes selected
+ *
  */
 
 typedef struct _Widget_Data Widget_Data;

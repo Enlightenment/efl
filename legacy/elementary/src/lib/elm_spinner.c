@@ -15,12 +15,11 @@
  *
  * Signals that you can add callbacks for are:
  *
- * changed - Whenever the spinner value is changed by the user.
- *
- * delay,changed - A short time after the value is changed by the user.
- * This will be called only when the user stops dragging for a very short
- * period or when they release their finger/mouse, so it avoids possibly
- * expensive reactions to the value change.
+ * "changed" - Whenever the spinner value is changed by the user.
+ * "delay,changed" - A short time after the value is changed by the user.
+ *                   This will be called only when the user stops dragging for a very short
+ *                   period or when they release their finger/mouse, so it avoids possibly
+ *                   expensive reactions to the value change.
  */
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;

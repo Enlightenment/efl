@@ -13,6 +13,10 @@
  * is displayed the function itc->func.get() is called. This function should create the object,
  * for example the object can be an evas_object_image or a photocam. When a object is no more
  * displayed the function itc->func.del() is called, the user can delete the dana associated to the item.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - when the slideshow switch to another item
  */
 
 typedef struct _Widget_Data Widget_Data;

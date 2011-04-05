@@ -11,20 +11,14 @@
  *
  * Signals that you can add callbacks for are:
  *
- * clicked - This is called when a user has clicked the thumb without dragging
- * around.
- *
- * clicked,double - This is called when a user has double-clicked the thumb.
- *
- * press - This is called when a user has pressed down the thumb.
- *
- * generate,start - The thumbnail generation started.
- *
- * generate,stop - The generation process stopped.
- *
- * generate,error - The generation failed.
- *
- * load,error - The thumbnail image loading failed.
+ * "clicked" - This is called when a user has clicked the thumb without dragging
+ *             around.
+ * "clicked,double" - This is called when a user has double-clicked the thumb.
+ * "press" - This is called when a user has pressed down the thumb.
+ * "generate,start" - The thumbnail generation started.
+ * "generate,stop" - The generation process stopped.
+ * "generate,error" - The generation failed.
+ * "load,error" - The thumbnail image loading failed.
  */
 
 typedef struct _Widget_Data Widget_Data;

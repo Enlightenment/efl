@@ -811,15 +811,15 @@ extern "C" {
    EAPI Eina_Bool    elm_scroller_propagate_events_get(const Evas_Object *obj);
 
    /* smart callbacks called:
-    * "edge,left"
-    * "edge,right"
-    * "edge,top"
-    * "edge,bottom"
-    * "scroll"
-    * "scroll,anim,start"
-    * "scroll,anim,stop"
-    * "scroll,drag,start"
-    * "scroll,drag,stop"
+    * "edge,left" - the left edge of the content has been reached
+    * "edge,right" - the right edge of the content has been reached
+    * "edge,top" - the top edge of the content has been reached
+    * "edge,bottom" - the bottom edge of the content has been reached
+    * "scroll" - the content has been scrolled (moved)
+    * "scroll,anim,start" - scrolling animation has started
+    * "scroll,anim,stop" - scrolling animation has stopped
+    * "scroll,drag,start" - dragging the contents around has started
+    * "scroll,drag,stop" - dragging the contents around has stopped
     */
 
    /* label */
@@ -861,7 +861,9 @@ extern "C" {
    EAPI Eina_Bool    elm_toggle_state_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
-    * "changed" - the user toggled the state
+    * "changed" - Whenever the toggle value has been changed.  Is not called
+    *             until the toggle is released by the cursor (assuming it has been triggered
+    *             by the cursor in the first place).
     */
 
    /* frame */
@@ -1411,15 +1413,15 @@ extern "C" {
    /* available styles:
     * default
     * noframe
-    *
-    * smart callbacks called:
-    * "clicked" - the user clicked the thumb
-    * "clicked,double" - the user double clicked the thumb
-    * "press" - the user pressed the thumb
-    * "generate,start" - the thumbnail generation started
-    * "generate,stop" - the thumbnail generation stopped
-    * "generate,error" - the thumbnail generation failed
-    * "load,error" - the thumbnail image loading failed
+    */
+   /* smart callbacks called:
+    * "clicked" - This is called when a user has clicked the thumb without dragging around.
+    * "clicked,double" - This is called when a user has double-clicked the thumb.
+    * "press" - This is called when a user has pressed down the thumb.
+    * "generate,start" - The thumbnail generation started.
+    * "generate,stop" - The generation process stopped.
+    * "generate,error" - The generation failed.
+    * "load,error" - The thumbnail image loading failed.
     */
 
    /* hoversel */
@@ -1695,6 +1697,15 @@ extern "C" {
    EAPI Eina_Bool          elm_slider_inverted_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void               elm_slider_indicator_show_set(Evas_Object *obj, Eina_Bool show) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_slider_indicator_show_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /* smart callbacks called:
+    * "changed" - Whenever the slider value is changed by the user.
+    * "slider,drag,start" - dragging the slider indicator around has started
+    * "slider,drag,stop" - dragging the slider indicator around has stopped
+    * "delay,changed" - A short time after the value is changed by the user.
+    *                   This will be called only when the user stops dragging for a very short
+    *                   period or when they release their finger/mouse, so it avoids possibly
+    *                   expensive reactions to the value change.
+    */
 
    /* actionslider */
    typedef enum _Elm_Actionslider_Pos
@@ -1834,6 +1845,30 @@ extern "C" {
    EAPI const char        *elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_genlist_item_cursor_engine_only_set(Elm_Genlist_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
+   /* smart callbacks called:
+    * "drag,start,up" - This is called when the item in the list has been dragged
+    *                   (not scrolled) up.
+    * "drag,start,down" - This is called when the item in the list has been dragged
+    *                     (not scrolled) down.
+    * "drag,start,left" - This is called when the item in the list has been dragged
+    *                     (not scrolled) left.
+    * "drag,start,right" - This is called when the item in the list has been dragged
+    *                      (not scrolled) right.
+    * "drag,stop" - This is called when the item in the list has stopped being dragged.
+    * "drag" - This is called when the item in the list is being dragged.
+    * "longpressed" - This is called when the item is pressed for a certain amount
+    *                 of time. By default it's 1 second.
+    * "scroll,edge,top" - This is called when the genlist is scrolled until the top edge.
+    * "scroll,edge,bottom" - This is called when the genlist is scrolled until the bottom edge.
+    * "scroll,edge,left" - This is called when the genlist is scrolled until the left edge.
+    * "scroll,edge,right" - This is called when the genlist is scrolled until the right edge.
+    * "multi,swipe,left" - This is called when the genlist is multi-touch swiped left.
+    * "multi,swipe,right" - This is called when the genlist is multi-touch swiped right.
+    * "multi,swipe,up" - This is called when the genlist is multi-touch swiped up.
+    * "multi,swipe,down" - This is called when the genlist is multi-touch swiped down.
+    * "multi,pinch,out" - This is called when the genlist is multi-touch pinched out.
+    * "multi,pinch,in" - This is called when the genlist is multi-touch pinched in.
+    */
 
    /* check */
    EAPI Evas_Object *elm_check_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
@@ -1862,6 +1897,9 @@ extern "C" {
    EAPI void         elm_radio_value_set(Evas_Object *obj, int value) EINA_ARG_NONNULL(1);
    EAPI int          elm_radio_value_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep) EINA_ARG_NONNULL(1);
+   /* smart callbacks called:
+    * "changed" - when the radio status is changed
+    */
 
    /* pager */
    EAPI Evas_Object *elm_pager_add(Evas_Object *parent) EINA_ARG_NONNULL(1);

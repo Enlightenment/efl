@@ -6,6 +6,13 @@
  *
  * The window class of Elementary.  Contains functions to manipulate
  * windows.
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "delete,request" - the user requested to delete the window
+ * "focus,in" - window got focus
+ * "focus,out" - window lost focus
+ * "moved" - window that holds the canvas was moved
  */
 
 typedef struct _Elm_Win Elm_Win;

@@ -7,18 +7,6 @@
  * The slider adds a dragable “slider” widget for selecting the value of
  * something within a range.
  *
- * Signals that you can add callbacks for are:
- *
- * changed - Whenever the slider value is changed by the user.
- *
- * delay,changed - A short time after the value is changed by the user.
- * This will be called only when the user stops dragging for a very short
- * period or when they release their finger/mouse, so it avoids possibly
- * expensive reactions to the value change.
- *
- * slider,drag,start - dragging the slider indicator around has started
- *
- * slider,drag,stop - dragging the slider indicator around has stopped
  *
  * A slider can be horizontal or vertical. It can contain an Icon and has a
  * primary label as well as a units label (that is formatted with floating
@@ -37,6 +25,16 @@
  * slider is its length (horizontally or vertically). This will be scaled by
  * the object or applications scaling factor. At any point code can query the
  * slider for its value with elm_slider_value_get().
+ *
+ * Signals that you can add callbacks for are:
+ *
+ * "changed" - Whenever the slider value is changed by the user.
+ * "slider,drag,start" - dragging the slider indicator around has started
+ * "slider,drag,stop" - dragging the slider indicator around has stopped
+ * "delay,changed" - A short time after the value is changed by the user.
+ *                   This will be called only when the user stops dragging for a very short
+ *                   period or when they release their finger/mouse, so it avoids possibly
+ *                   expensive reactions to the value change.
  */
 
 typedef struct _Widget_Data Widget_Data;
