@@ -585,8 +585,8 @@ _smart_page_x_get(Smart_Data *sd, int offset)
         x = x / (sd->pagesize_h);
         x = x * (sd->pagesize_h);
      }
+   if ((x + w) > cw) x = cw - w;
    if (x < minx) x = minx;
-   else if ((x + w) > cw) x = cw - w;
    return x;
 }
 
@@ -614,8 +614,8 @@ _smart_page_y_get(Smart_Data *sd, int offset)
         y = y / (sd->pagesize_v);
         y = y * (sd->pagesize_v);
      }
+   if ((y + h) > ch) y = ch - h;
    if (y < miny) y = miny;
-   else if ((y + h) > ch) y = ch - h;
    return y;
 }
 
@@ -1061,11 +1061,11 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord x, E
         sd->down.pdy = 0;
      }
    x = nx;
+   if ((x + w) > cw) x = cw - w;
    if (x < minx) x = minx;
-   else if ((x + w) > cw) x = cw - w;
    y = ny;
+   if ((y + h) > ch) y = ch - h;
    if (y < miny) y = miny;
-   else if ((y + h) > ch) y = ch - h;
    elm_smart_scroller_child_pos_set(obj, x, y);
 }
 
@@ -1341,12 +1341,12 @@ elm_smart_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y,
         sd->down.pdy = 0;
      }
    x = nx;
+   if ((x + w) > cw) x = cw - w;
    if (x < minx) x = minx;
-   else if ((x + w) > cw) x = cw - w;
    _smart_scrollto_x(sd, _elm_config->bring_in_scroll_friction, x);
    y = ny;
+   if ((y + h) > ch) y = ch - h;
    if (y < miny) y = miny;
-   else if ((y + h) > ch) y = ch - h;
    _smart_scrollto_y(sd, _elm_config->bring_in_scroll_friction, y);
 }
 
