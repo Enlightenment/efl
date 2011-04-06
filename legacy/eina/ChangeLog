@@ -37,3 +37,7 @@
 
         * Use stringshare for eina_error messages
         * add eina_error_find to match an error message with its Eina_Error
+
+2011-04-06  Gustavo Sverzut Barbieri
+
+	* Add Simple XML parser API.
