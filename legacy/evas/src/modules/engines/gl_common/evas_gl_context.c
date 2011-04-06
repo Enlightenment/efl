@@ -2585,6 +2585,30 @@ evas_gl_common_context_flush(Evas_Engine_GL_Context *gc)
 }
 
 static void
+scissor_rot(Evas_Engine_GL_Context *gc __UNUSED__,
+            int rot, int gw, int gh, int cx, int cy, int cw, int ch)
+{
+   switch (rot)
+     {
+      case 0: // UP this way: ^
+        glScissor(cx, cy, cw, ch);
+        break;
+      case 90: // UP this way: <
+        glScissor(gh - (cy + ch), cx, ch, cw);
+        break;
+      case 180: // UP this way: v
+        glScissor(gw - (cx + cw), gh - (cy + ch), cw, ch);
+        break;
+      case 270: // UP this way: >
+        glScissor(cy, gw - (cx + cw), ch, cw);
+        break;
+      default: // assume up is up
+        glScissor(cx, cy, cw, ch);
+        break;
+     }
+}
+
+static void
 shader_array_flush(Evas_Engine_GL_Context *gc)
 {
    int i, gw, gh, setclip, cy, fbo = 0, done = 0;
@@ -2741,9 +2765,15 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   cy = gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch;
                   if (fbo) cy = gc->pipe[i].shader.cy;
                   glEnable(GL_SCISSOR_TEST);
-                  // FIXME: handle gc->rot IF gc->pipe[0].shader.surface == gc->def_surface
-                  glScissor(gc->pipe[i].shader.cx, cy,
-                            gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
+                  if (!fbo)
+                     scissor_rot(gc, gc->rot, gw, gh, 
+                                 gc->pipe[i].shader.cx,
+                                 cy,
+                                 gc->pipe[i].shader.cw,
+                                 gc->pipe[i].shader.ch);
+                  else
+                     glScissor(gc->pipe[i].shader.cx, cy,
+                               gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                   setclip = 1;
                }
              else
@@ -2761,9 +2791,15 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   cy = gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch;
                   if (fbo) cy = gc->pipe[i].shader.cy;
-                  // FIXME: handle gc->rot IF gc->pipe[0].shader.surface == gc->def_surface
-                  glScissor(gc->pipe[i].shader.cx, cy,
-                            gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
+                  if (!fbo)
+                     scissor_rot(gc, gc->rot, gw, gh, 
+                                 gc->pipe[i].shader.cx,
+                                 cy,
+                                 gc->pipe[i].shader.cw,
+                                 gc->pipe[i].shader.ch);
+                  else
+                     glScissor(gc->pipe[i].shader.cx, cy,
+                               gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                }
           }
 
