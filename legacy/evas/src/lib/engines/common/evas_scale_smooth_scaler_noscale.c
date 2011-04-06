@@ -42,16 +42,21 @@
      }
    else
      {
+        while (dst_clip_h--)
+          {
 #ifdef EVAS_SLI
-	if (((ysli) % dc->sli.h) == dc->sli.y)
+             if (((ysli) % dc->sli.h) == dc->sli.y)
 #endif
-	  {
-	     func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
-	  }
+               {
+                  func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
+               }
 #ifdef EVAS_SLI
-	ysli++;
+             ysli++;
 #endif
-	ptr += src_w;
-	dst_ptr += dst_w;
+             ptr += src_w;
+             dst_ptr += dst_w;
+          }
      }
 }
+
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
