@@ -360,6 +360,48 @@ Evas_GL_Program_Source shader_img_bgra_vert_src =
 #endif     
 };
 
+
+/////////////////////////////////////////////
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_mask_frag_bin[] =
+{
+# include "shader/img_mask_frag_bin_s3c6410.h"
+};
+#endif
+
+const char img_mask_frag_glsl[] =
+#include "shader/img_mask_frag.h"
+  ;
+Evas_GL_Program_Source shader_img_mask_frag_src =
+{
+   img_mask_frag_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_mask_frag_bin, sizeof(img_mask_frag_bin)
+#else
+     NULL, 0
+#endif
+};
+
+#if defined (GLES_VARIETY_S3C6410)
+const unsigned int img_mask_vert_bin[] =
+{
+# include "shader/img_mask_vert_bin_s3c6410.h"
+};
+#endif
+const char img_mask_vert_glsl[] =
+#include "shader/img_mask_vert.h"
+  ;
+Evas_GL_Program_Source shader_img_mask_vert_src =
+{
+   img_mask_vert_glsl,
+#if defined (GLES_VARIETY_S3C6410)
+     img_mask_vert_bin, sizeof(img_mask_vert_bin)
+#else
+     NULL, 0
+#endif
+};
+
+
 /////////////////////////////////////////////
 #if defined (GLES_VARIETY_S3C6410)
 const unsigned int img_bgra_nomul_frag_bin[] =
@@ -494,6 +536,8 @@ evas_gl_common_shader_program_init(Evas_GL_Program *p,
    glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    
    glLinkProgram(p->prog);
