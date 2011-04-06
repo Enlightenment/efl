@@ -55,7 +55,6 @@ typedef struct _Evas_Post_Callback          Evas_Post_Callback;
 #define MAGIC_OBJ_TEXT             0x71777776
 #define MAGIC_OBJ_SMART            0x71777777
 #define MAGIC_OBJ_TEXTBLOCK        0x71777778
-#define MAGIC_OBJ_PROXY	           0x71777779
 #define MAGIC_SMART                0x72777770
 #define MAGIC_OBJ_SHAPE            0x72777773
 #define MAGIC_OBJ_CONTAINER        0x72777774
