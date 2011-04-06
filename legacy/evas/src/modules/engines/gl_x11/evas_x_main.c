@@ -637,6 +637,7 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
         gw->egl_surface[0] = EGL_NO_SURFACE;
         _evas_gl_x11_window = NULL;
+        evas_gl_common_context_use(NULL);
      }
 #else
    if (gw->glxwin)
