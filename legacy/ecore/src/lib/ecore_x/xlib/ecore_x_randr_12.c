@@ -16,10 +16,9 @@
 
 #define RANDR_1_2 ((1 << 16) | 2)
 
-#define RANDR_VALIDATE_ROOT(screen, \
-                            root) ((screen = \
-                                       XRRRootToScreen(_ecore_x_disp, \
-                                                       root)) != -1)
+#define RANDR_VALIDATE_ROOT(screen, root) \
+   ((screen = XRRRootToScreen(_ecore_x_disp, root)) != -1)
+
 #define RANDR_CHECK_1_2_RET(ret) if(_randr_version < RANDR_1_2) return ret
 
 #define RANDR_PROPERTY_EDID                     "EDID"
@@ -1496,10 +1495,8 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
  * @param len length of returned c-string.
  * @return name of the output as reported by X
  */
-   EAPI char *
-ecore_x_randr_output_name_get(Ecore_X_Window root,
-      Ecore_X_Randr_Output output,
-      int *len)
+EAPI char *
+ecore_x_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *len)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET(NULL);
@@ -1508,12 +1505,12 @@ ecore_x_randr_output_name_get(Ecore_X_Window root,
    char *ret = NULL;
 
    if ((output != Ecore_X_Randr_None)
-	 && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root))
-	 && (output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
+       && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root))
+       && (output_info = XRRGetOutputInfo(_ecore_x_disp, res, output)))
      {
 	/*
-	 * Actually the bewow command is correct, but due to a bug in libXrandr
-	 * it doesn't work. Therefor we stick with strlen().
+	 * Actually the below command is correct, but due to a bug in libXrandr
+	 * it doesn't work. Therefore we stick with strlen().
 	 * Replace the line below with the following once this bug is
 	 * fixed within libXrandr.
 	 *
@@ -1541,11 +1538,8 @@ ecore_x_randr_output_name_get(Ecore_X_Window root,
  * @param w width of given mode in px
  * @param h height of given mode in px
  */
-   EAPI void
-ecore_x_randr_mode_size_get(Ecore_X_Window root,
-      Ecore_X_Randr_Mode mode,
-      int *w,
-      int *h)
+EAPI void
+ecore_x_randr_mode_size_get(Ecore_X_Window root, Ecore_X_Randr_Mode mode, int *w, int *h)
 {
 #ifdef ECORE_XRANDR
    RANDR_CHECK_1_2_RET();
@@ -1553,8 +1547,8 @@ ecore_x_randr_mode_size_get(Ecore_X_Window root,
    int i;
 
    if ((mode != Ecore_X_Randr_None)
-	 && (w || h)
-	 && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
+       && (w || h)
+       && (res = _ecore_x_randr_get_screen_resources(_ecore_x_disp, root)))
      {
 	for (i = 0; i < res->nmode; i++)
 	  {
