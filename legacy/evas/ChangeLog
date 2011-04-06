@@ -216,3 +216,8 @@
 	* Remove Evas Qtopia backend.
 	* Remove Evas Xrender backend.
 
+2011-04-06  Carsten Haitzler (The Rasterman)
+
+	* Fix bug in GL engine with someone stealing the GLX context away
+        as well as scissor clips when rotated output is not 0 (90, 180, 270).
+
