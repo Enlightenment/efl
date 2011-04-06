@@ -4,37 +4,49 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_show_it(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_show_it(void        *data,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    elm_list_item_show(data);
 }
 
 static void
-scroll_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+scroll_top(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    printf("Top edge!\n");
 }
 
 static void
-scroll_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+scroll_bottom(void        *data __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              void        *event_info __UNUSED__)
 {
    printf("Bottom edge!\n");
 }
 
 static void
-scroll_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+scroll_left(void        *data __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void        *event_info __UNUSED__)
 {
    printf("Left edge!\n");
 }
 
 static void
-scroll_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+scroll_right(void        *data __UNUSED__,
+             Evas_Object *obj __UNUSED__,
+             void        *event_info __UNUSED__)
 {
    printf("Right edge!\n");
 }
 
 void
-test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list(void        *data __UNUSED__,
+          Evas_Object *obj __UNUSED__,
+          void        *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
@@ -58,16 +70,16 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 1, 1);
-   it1 = elm_list_item_append(li, "Hello", ic, NULL,  NULL, NULL);
+   it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "world", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
-   elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
@@ -75,7 +87,7 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   it2 = elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
+   it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, 1);
@@ -103,26 +115,26 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
-   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
+   elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
 
-   elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
-   it3 = elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "there", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "today", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "?", NULL, NULL,  NULL, NULL);
-   it4 = elm_list_item_append(li, "Here", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "are", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "some", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "more", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "items", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Is this label long enough?", NULL, NULL,  NULL, NULL);
-   it5 = elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
+   it3 = elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
+   it4 = elm_list_item_append(li, "Here", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "some", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "more", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "items", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Is this label long enough?", NULL, NULL, NULL, NULL);
+   it5 = elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL, NULL, NULL);
 
    elm_list_go(li);
 
    evas_object_show(li);
-   
+
    tb2 = elm_table_add(win);
    evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, tb2);
@@ -141,8 +153,8 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 1, 1, 1);
-   evas_object_show(bt);   
-   
+   evas_object_show(bt);
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "doing");
    evas_object_smart_callback_add(bt, "clicked", my_show_it, it3);
@@ -150,7 +162,7 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 2, 1, 1);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Here");
    evas_object_smart_callback_add(bt, "clicked", my_show_it, it4);
@@ -168,7 +180,7 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_show(bt);
 
    evas_object_show(tb2);
-   
+
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 
@@ -179,7 +191,9 @@ test_list(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 }
 
 void
-test_list_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list_horizontal(void        *data __UNUSED__,
+                     Evas_Object *obj __UNUSED__,
+                     void        *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
@@ -204,16 +218,16 @@ test_list_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 1, 1);
-   it1 = elm_list_item_append(li, "Hello", ic, NULL,  NULL, NULL);
+   it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "world", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
-   elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
@@ -221,7 +235,7 @@ test_list_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   it2 = elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
+   it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
 
@@ -241,22 +255,22 @@ test_list_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
-   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
+   elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
 
-   elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
-   it3 = elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "there", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "today", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "?", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
+   it3 = elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
 
-   it4 = elm_list_item_append(li, "And", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "here", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "we", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "are", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "done", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "with", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "items.", NULL, NULL,  NULL, NULL);
+   it4 = elm_list_item_append(li, "And", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "here", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "we", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "done", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "with", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "items.", NULL, NULL, NULL, NULL);
 
    elm_list_go(li);
 
@@ -307,13 +321,17 @@ test_list_horizontal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 /***********/
 
 static void
-my_li2_clear(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_li2_clear(void        *data,
+             Evas_Object *obj __UNUSED__,
+             void        *event_info __UNUSED__)
 {
    elm_list_clear(data);
 }
 
 static void
-my_li2_sel(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+my_li2_sel(void        *data __UNUSED__,
+           Evas_Object *obj,
+           void        *event_info __UNUSED__)
 {
    Elm_List_Item *it = elm_list_selected_item_get(obj);
    elm_list_item_selected_set(it, 0);
@@ -321,7 +339,9 @@ my_li2_sel(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
-test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list2(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
@@ -352,17 +372,17 @@ test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
-   it = elm_list_item_append(li, "Hello", ic, NULL,  my_li2_sel, NULL);
+   it = elm_list_item_append(li, "Hello", ic, NULL, my_li2_sel, NULL);
    elm_list_item_selected_set(it, 1);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "world", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
-   elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
@@ -370,7 +390,7 @@ test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
+   elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
@@ -392,18 +412,18 @@ test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(ic);
    elm_list_item_append(li, "are", bx2, NULL, NULL, NULL);
 
-   elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "there", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "today", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "?", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Here", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "are", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "some", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "more", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "items", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Longer label.", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Here", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "some", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "more", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "items", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Longer label.", NULL, NULL, NULL, NULL);
 
    elm_list_go(li);
 
@@ -434,19 +454,25 @@ test_list2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 /***********/
 
 static void
-_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_clicked(void        *data __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void        *event_info __UNUSED__)
 {
    printf("button was clicked\n");
 }
 
 static void
-_it_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_it_clicked(void        *data __UNUSED__,
+            Evas_Object *obj __UNUSED__,
+            void        *event_info __UNUSED__)
 {
    printf("item was clicked\n");
 }
 
 void
-test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list3(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
@@ -473,7 +499,7 @@ test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_button_label_set(ic2, "Click me");
    evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
    evas_object_propagate_events_set(ic2, 0);
-   elm_list_item_append(li, "Hello", ic, ic2,  _it_clicked, NULL);
+   elm_list_item_append(li, "Hello", ic, ic2, _it_clicked, NULL);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
@@ -482,12 +508,12 @@ test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    ic2 = elm_button_add(win);
    elm_button_label_set(ic2, "Click me");
    evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
-   elm_list_item_append(li, "world", ic, ic2,  _it_clicked, NULL);
+   elm_list_item_append(li, "world", ic, ic2, _it_clicked, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
    elm_icon_scale_set(ic, 0, 0);
-   elm_list_item_append(li, ".", ic, NULL,  NULL, NULL);
+   elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
@@ -495,7 +521,7 @@ test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   elm_list_item_append(li, "How", ic, ic2,  NULL, NULL);
+   elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, 1);
@@ -524,20 +550,20 @@ test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
-   elm_list_item_append(li, "are", bx, NULL,  NULL, NULL);
-   elm_list_item_append(li, "you", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "doing", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "out", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "there", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "today", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "?", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Here", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "are", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "some", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "more", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "items", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Is this label long enough?", NULL, NULL,  NULL, NULL);
-   elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL,  NULL, NULL);
+   elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
+   elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Here", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "some", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "more", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "items", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Is this label long enough?", NULL, NULL, NULL, NULL);
+   elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL, NULL, NULL);
 
    elm_list_go(li);
 
@@ -549,58 +575,65 @@ test_list3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-struct Pginfo {
-    Evas_Object *pager, *win;
+struct Pginfo
+{
+   Evas_Object *pager, *win;
 };
 
 static void
-test_list4_back_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list4_back_cb(void        *data,
+                   Evas_Object *obj __UNUSED__,
+                   void        *event_info __UNUSED__)
 {
-    struct Pginfo *info = data;
-    if (!info) return;
+   struct Pginfo *info = data;
+   if (!info) return;
 
-    elm_pager_content_pop(info->pager);
+   elm_pager_content_pop(info->pager);
 }
 
 static void
-test_list4_swipe(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+test_list4_swipe(void        *data,
+                 Evas_Object *obj __UNUSED__,
+                 void        *event_info)
 {
-    Evas_Object *box, *entry, *button;
-    struct Pginfo *info = data;
-    char *item_data;
-    if ((!event_info) || (!data)) return;
+   Evas_Object *box, *entry, *button;
+   struct Pginfo *info = data;
+   char *item_data;
+   if ((!event_info) || (!data)) return;
 
-    item_data = elm_list_item_data_get(event_info);
+   item_data = elm_list_item_data_get(event_info);
 
-    box = elm_box_add(info->win);
-    elm_box_horizontal_set(box, 0);
-    elm_box_homogenous_set(box, 0);
-    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(box);
+   box = elm_box_add(info->win);
+   elm_box_horizontal_set(box, 0);
+   elm_box_homogenous_set(box, 0);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(box);
 
-    entry = elm_scrolled_entry_add(info->win);
-    elm_scrolled_entry_editable_set(entry, EINA_FALSE);
-    elm_scrolled_entry_entry_set(entry, item_data);
-    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    evas_object_show(entry);
+   entry = elm_scrolled_entry_add(info->win);
+   elm_scrolled_entry_editable_set(entry, EINA_FALSE);
+   elm_scrolled_entry_entry_set(entry, item_data);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(entry);
 
-    button = elm_button_add(info->win);
-    elm_button_label_set(button, "back");
-    evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0);
-    evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
-    evas_object_smart_callback_add(button, "clicked", test_list4_back_cb, info);
-    evas_object_show(button);
+   button = elm_button_add(info->win);
+   elm_button_label_set(button, "back");
+   evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0);
+   evas_object_smart_callback_add(button, "clicked", test_list4_back_cb, info);
+   evas_object_show(button);
 
-    elm_box_pack_start(box, entry);
-    elm_box_pack_end(box, button);
+   elm_box_pack_start(box, entry);
+   elm_box_pack_end(box, button);
 
-    elm_pager_content_push(info->pager, box);
+   elm_pager_content_push(info->pager, box);
 }
 
 void
-test_list4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list4(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *pager;
    static struct Pginfo info = {NULL, NULL};
@@ -629,57 +662,57 @@ test_list4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_smart_callback_add(li, "swipe", test_list4_swipe, &info);
    elm_pager_content_push(pager, li);
 
-   static char pf_data[] = "Pink Floyd were formed in 1965, and originally consisted of university" \
-       "students Roger Waters, Nick Mason, Richard Wright, and Syd Barrett. The group were a popular"\
-       "fixture on London's underground music scene, and under Barrett's leadership released two "\
-       "charting singles, \"Arnold Layne\" and \"See Emily Play\", and a successful debut album, "\
-       "ThePiper at the Gates of Dawn. In 1968, guitarist and singer David Gilmour joined the "\
-       "line-up. Barrett was soon removed, due to his increasingly erratic behaviour. Following "\
-       "Barrett's departure, bass player and singer Roger Waters became the band's lyricist and "\
-       "conceptual leader, with Gilmour assuming lead guitar and much of the vocals. With this "\
-       "line-up, Floyd went on to achieve worldwide critical and commercial success with the "\
-       "conceptalbums The Dark Side of the Moon, Wish You Were Here, Animals, and The Wall.";
+   static char pf_data[] = "Pink Floyd were formed in 1965, and originally consisted of university"                       \
+                           "students Roger Waters, Nick Mason, Richard Wright, and Syd Barrett. The group were a popular" \
+                           "fixture on London's underground music scene, and under Barrett's leadership released two "    \
+                           "charting singles, \"Arnold Layne\" and \"See Emily Play\", and a successful debut album, "    \
+                           "ThePiper at the Gates of Dawn. In 1968, guitarist and singer David Gilmour joined the "       \
+                           "line-up. Barrett was soon removed, due to his increasingly erratic behaviour. Following "     \
+                           "Barrett's departure, bass player and singer Roger Waters became the band's lyricist and "     \
+                           "conceptual leader, with Gilmour assuming lead guitar and much of the vocals. With this "      \
+                           "line-up, Floyd went on to achieve worldwide critical and commercial success with the "        \
+                           "conceptalbums The Dark Side of the Moon, Wish You Were Here, Animals, and The Wall.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/mystrale.jpg", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "Pink Floyd", ic, NULL,  NULL, &pf_data);
+   elm_list_item_append(li, "Pink Floyd", ic, NULL, NULL, &pf_data);
 
-   static char ds_data[] = "Dire Straits were a British rock band, formed by Mark Knopfler "\
-       "(lead vocals and lead guitar), his younger brother David Knopfler (rhythm guitar and "\
-       "backing vocals), John Illsley (bass guitar and backing vocals), and Pick Withers (drums "\
-       "and percussion), and managed by Ed Bicknell, active between 1977 and 1995. Although the "\
-       "band was formed in an era when punk rock was at the forefront, Dire Straits played a more "
-       "bluesy style, albeit with a stripped-down sound that appealed to audiences weary of the "\
-       "overproduced stadium rock of the 1970s.[citation needed] In their early days, Mark and "\
-       "David requested that pub owners turn down their sound so that patrons could converse "\
-       "while the band played, an indication of their unassuming demeanor. Despite this oddly "\
-       "self-effacing approach to rock and roll, Dire Straits soon became hugely successful, with "\
-       "their first album going multi-platinum globally.";
+   static char ds_data[] = "Dire Straits were a British rock band, formed by Mark Knopfler "                          \
+                           "(lead vocals and lead guitar), his younger brother David Knopfler (rhythm guitar and "    \
+                           "backing vocals), John Illsley (bass guitar and backing vocals), and Pick Withers (drums " \
+                           "and percussion), and managed by Ed Bicknell, active between 1977 and 1995. Although the " \
+                           "band was formed in an era when punk rock was at the forefront, Dire Straits played a more "
+                           "bluesy style, albeit with a stripped-down sound that appealed to audiences weary of the "   \
+                           "overproduced stadium rock of the 1970s.[citation needed] In their early days, Mark and "    \
+                           "David requested that pub owners turn down their sound so that patrons could converse "      \
+                           "while the band played, an indication of their unassuming demeanor. Despite this oddly "     \
+                           "self-effacing approach to rock and roll, Dire Straits soon became hugely successful, with " \
+                           "their first album going multi-platinum globally.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/mystrale_2.jpg", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "Dire Straits", ic, NULL,  NULL, &ds_data);
+   elm_list_item_append(li, "Dire Straits", ic, NULL, NULL, &ds_data);
 
-   static char uh_data[] = "Uriah Heep are an English hard rock band. The band released several "\
-       "commercially successful albums in the 1970s such as Uriah Heep Live (1973), but their "\
-       "audience declined by the 1980s, to the point where they became essentially a cult band in "\
-       "the United States and United Kingdom. Uriah Heep maintain a significant following in "\
-       "Germany, the Netherlands, Scandinavia, the Balkans, Japan and Russia, where they still "\
-       "perform at stadium-sized venues.";
+   static char uh_data[] = "Uriah Heep are an English hard rock band. The band released several "                       \
+                           "commercially successful albums in the 1970s such as Uriah Heep Live (1973), but their "     \
+                           "audience declined by the 1980s, to the point where they became essentially a cult band in " \
+                           "the United States and United Kingdom. Uriah Heep maintain a significant following in "      \
+                           "Germany, the Netherlands, Scandinavia, the Balkans, Japan and Russia, where they still "    \
+                           "perform at stadium-sized venues.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_17.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 1, 1);
    elm_icon_file_set(ic, buf, NULL);
-   elm_list_item_append(li, "Uriah Heep", ic, NULL,  NULL, &uh_data);
+   elm_list_item_append(li, "Uriah Heep", ic, NULL, NULL, &uh_data);
 
-   static char r_data[] = "Rush is a Canadian rock band formed in August 1968, in the Willowdale "\
-       "neighbourhood of Toronto, Ontario. The band is composed of bassist, keyboardist, and lead "\
-       "vocalist Geddy Lee, guitarist Alex Lifeson, and drummer and lyricist Neil Peart. The band "\
-       "and its membership went through a number of re-configurations between 1968 and 1974, "\
-       "achieving their current form when Peart replaced original drummer John Rutsey in July 1974, "\
-       "two weeks before the group's first United States tour.";
+   static char r_data[] = "Rush is a Canadian rock band formed in August 1968, in the Willowdale "                       \
+                          "neighbourhood of Toronto, Ontario. The band is composed of bassist, keyboardist, and lead "   \
+                          "vocalist Geddy Lee, guitarist Alex Lifeson, and drummer and lyricist Neil Peart. The band "   \
+                          "and its membership went through a number of re-configurations between 1968 and 1974, "        \
+                          "achieving their current form when Peart replaced original drummer John Rutsey in July 1974, " \
+                          "two weeks before the group's first United States tour.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_21.png", PACKAGE_DATA_DIR);
    elm_icon_scale_set(ic, 0, 0);
@@ -687,7 +720,7 @@ test_list4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   elm_list_item_append(li, "Rush", ic, ic2,  NULL, &r_data);
+   elm_list_item_append(li, "Rush", ic, ic2, NULL, &r_data);
 
    elm_list_go(li);
 
@@ -697,34 +730,41 @@ test_list4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-struct list5_data_cb {
-  Evas_Object *win, *list;
+struct list5_data_cb
+{
+   Evas_Object *win, *list;
 };
 
 static void
-test_list5_item_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list5_item_del(void        *data,
+                    Evas_Object *obj __UNUSED__,
+                    void        *event_info __UNUSED__)
 {
    elm_list_item_del(data);
 }
 
 static void
-test_list5_swipe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+test_list5_swipe(void        *data __UNUSED__,
+                 Evas_Object *obj __UNUSED__,
+                 void        *event_info)
 {
-    Evas_Object *button;
-    struct list5_data_cb *info = elm_list_item_data_get(event_info);
+   Evas_Object *button;
+   struct list5_data_cb *info = elm_list_item_data_get(event_info);
 
-    if (elm_list_item_end_get(event_info)) return;
+   if (elm_list_item_end_get(event_info)) return;
 
-    button = elm_button_add(info->win);
-    elm_button_label_set(button, "delete");
-    evas_object_propagate_events_set(button, 0);
-    evas_object_smart_callback_add(button, "clicked", test_list5_item_del,
-                                   event_info);
-    elm_list_item_end_set(event_info, button);
+   button = elm_button_add(info->win);
+   elm_button_label_set(button, "delete");
+   evas_object_propagate_events_set(button, 0);
+   evas_object_smart_callback_add(button, "clicked", test_list5_item_del,
+                                  event_info);
+   elm_list_item_end_set(event_info, button);
 }
 
 void
-test_list5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_list5(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *li;
    static struct list5_data_cb info;
@@ -747,8 +787,8 @@ test_list5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(li);
    info.list = li;
 
-   elm_list_item_append(li, "Network", NULL, NULL,  NULL, &info);
-   elm_list_item_append(li, "Audio", NULL, NULL,  NULL, &info);
+   elm_list_item_append(li, "Network", NULL, NULL, NULL, &info);
+   elm_list_item_append(li, "Audio", NULL, NULL, NULL, &info);
 
    elm_list_go(li);
    evas_object_resize(win, 320, 300);
