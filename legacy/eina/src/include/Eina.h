@@ -157,6 +157,7 @@ extern "C" {
 #include "eina_ustrbuf.h"
 #include "eina_unicode.h"
 #include "eina_quadtree.h"
+#include "eina_simple_xml_parser.h"
 
 #ifdef __cplusplus
 }
