@@ -214,7 +214,6 @@ eng_window_new(Display *disp,
 	eng_window_free(gw);
         return NULL;
      }
-    _evas_gl_x11_window = gw;
 
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
@@ -500,7 +499,6 @@ eng_window_new(Display *disp,
           }
      }
 #endif
-   _evas_gl_x11_window = gw;
    
    gw->gl_context = evas_gl_common_context_new();
    if (!gw->gl_context)
@@ -511,7 +509,7 @@ eng_window_new(Display *disp,
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    gw->gl_context->egldisp = gw->egl_disp;
 #endif   
-   evas_gl_common_context_use(gw->gl_context);
+   eng_window_use(gw);
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
    return gw;
@@ -525,13 +523,13 @@ eng_window_free(Evas_GL_X11_Window *gw)
    eng_window_use(gw);
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
    if (gw->gl_context)
-      {
-         ref = gw->gl_context->references - 1;
-         evas_gl_common_context_free(gw->gl_context);
-      }
+     {
+        ref = gw->gl_context->references - 1;
+        evas_gl_common_context_free(gw->gl_context);
+     }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
-     eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+      eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
@@ -539,7 +537,6 @@ eng_window_free(Evas_GL_X11_Window *gw)
         context = EGL_NO_CONTEXT;
      }
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   evas_gl_common_context_use(NULL);
 #else
    if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
    if (ref == 0)
@@ -581,7 +578,10 @@ eng_window_use(Evas_GL_X11_Window *gw)
    if ((_evas_gl_x11_window != gw) || (force_use))
      {
         if (_evas_gl_x11_window)
-          evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+          {
+             evas_gl_common_context_use(_evas_gl_x11_window->gl_context);
+             evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+          }
 	_evas_gl_x11_window = gw;
        if (gw)
          {
@@ -637,7 +637,6 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
         gw->egl_surface[0] = EGL_NO_SURFACE;
         _evas_gl_x11_window = NULL;
-        evas_gl_common_context_use(NULL);
      }
 #else
    if (gw->glxwin)

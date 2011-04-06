@@ -423,6 +423,7 @@ eng_setup(Evas *e, void *in)
                                            re->info->indirect,
                                            re->info->info.destination_alpha,
                                            re->info->info.rotation);
+                  eng_window_use(re->win);
                   if (re->win) gl_wins++;
                   if ((re->win) && (inc))
                      re->win->gl_context->references--;
