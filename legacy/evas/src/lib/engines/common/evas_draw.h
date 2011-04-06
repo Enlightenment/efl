@@ -17,6 +17,8 @@ EAPI void               evas_common_draw_context_unset_clip              (RGBA_D
 EAPI void               evas_common_draw_context_set_color               (RGBA_Draw_Context *dc, int r, int g, int b, int a);
 EAPI void               evas_common_draw_context_set_multiplier          (RGBA_Draw_Context *dc, int r, int g, int b, int a);
 EAPI void               evas_common_draw_context_unset_multiplier        (RGBA_Draw_Context *dc);
+EAPI void               evas_common_draw_context_set_mask                (RGBA_Draw_Context *dc, RGBA_Image *im, int x, int y, int w, int h);
+EAPI void               evas_common_draw_context_unset_mask              (RGBA_Draw_Context *dc);
 EAPI Cutout_Rects      *evas_common_draw_context_cutouts_new             (void);
 EAPI void               evas_common_draw_context_cutouts_free            (Cutout_Rects* rects);
 EAPI void               evas_common_draw_context_cutouts_del             (Cutout_Rects* rects, int index);

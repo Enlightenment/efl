@@ -107,12 +107,13 @@ eng_context_mask_unset(void *data __UNUSED__, void *context)
 {
    evas_common_draw_context_unset_mask(context);
 }
-
+/*
 static void *
 eng_context_mask_get(void *data __UNUSED__, void *context)
 {
    return ((RGBA_Draw_Context *)context)->mask.mask;
 }
+*/
 
 static void
 eng_context_cutout_add(void *data __UNUSED__, void *context, int x, int y, int w, int h)
