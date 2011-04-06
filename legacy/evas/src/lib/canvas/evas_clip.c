@@ -265,6 +265,21 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    obj->cur.clipper = clip;
    clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
    if (clip->clip.clipees) clip->cur.have_clipees = 1;
+
+   /* If it's NOT a rectangle set the mask bits too */
+   /* FIXME: Optmz ths chck */
+   if (strcmp(evas_object_type_get(clip),"rectangle") == 0)
+      obj->cur.mask = NULL;
+   else
+     {
+	void *engdata;
+        obj->cur.mask = clip;
+	engdata = clip->func->engine_data_get(clip);
+	/* FIXME: Images only */
+	clip->layer->evas->engine.func->image_mask_create(
+				      clip->layer->evas->engine.data.output,
+				      engdata);
+     }
    evas_object_change(clip);
    evas_object_change(obj);
    evas_object_clip_dirty(obj);

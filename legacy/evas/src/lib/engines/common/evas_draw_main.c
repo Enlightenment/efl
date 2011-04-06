@@ -153,6 +153,26 @@ evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
 }
 
 EAPI void
+evas_common_draw_context_set_mask(RGBA_Draw_Context *dc, RGBA_Image *mask, int x, int y, int w, int h)
+{
+   dc->mask.mask = mask;
+   dc->mask.x = x;
+   dc->mask.y = y;
+   dc->mask.w = w;
+   dc->mask.h = h;
+}
+
+EAPI void
+evas_common_draw_context_unset_mask(RGBA_Draw_Context *dc)
+{
+   dc->mask.mask = NULL;
+}
+
+
+
+
+
+EAPI void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
 //   if (dc->cutout.rects > 512) return;

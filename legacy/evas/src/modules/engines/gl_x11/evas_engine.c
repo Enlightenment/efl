@@ -906,6 +906,20 @@ eng_image_colorspace_get(void *data __UNUSED__, void *image)
    return im->cs.space;
 }
 
+static void
+eng_image_mask_create(void *data __UNUSED__, void *image)
+{
+   Evas_GL_Image *im;
+
+   if (!image) return;
+   im = image;
+   if (!im->im->image.data)
+      evas_cache_image_load_data(&im->im->cache_entry);
+   if (!im->tex)
+      im->tex = evas_gl_common_texture_new(im->gc, im->im);
+}
+
+
 static void *
 eng_image_alpha_set(void *data, void *image, int has_alpha)
 {
@@ -2574,6 +2588,7 @@ module_open(Evas_Module *em)
    ORD(image_format_get);
    ORD(image_colorspace_set);
    ORD(image_colorspace_get);
+   ORD(image_mask_create);
    ORD(image_native_set);
    ORD(image_native_get);
    

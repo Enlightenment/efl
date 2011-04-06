@@ -1336,6 +1336,17 @@ evas_render_updates_internal(Evas *e,
                                                     obj->cur.cache.clip.w,
                                                     obj->cur.cache.clip.h);
                               }
+                            if (obj->cur.mask)
+                               e->engine.func->context_mask_set(e->engine.data.output,
+                                                                e->engine.data.context,
+                                                                obj->cur.mask->func->engine_data_get(obj->cur.mask),
+                                                                obj->cur.mask->cur.geometry.x,
+                                                                obj->cur.mask->cur.geometry.y,
+                                                                obj->cur.mask->cur.geometry.w,
+                                                                obj->cur.mask->cur.geometry.h);
+                            else
+                               e->engine.func->context_mask_unset(e->engine.data.output,
+                                                                e->engine.data.context);
                             if (obj->cur.clipper)
                                e->engine.func->context_clip_set(e->engine.data.output,
                                                                 e->engine.data.context,
@@ -1382,6 +1393,9 @@ evas_render_updates_internal(Evas *e,
                                    }
 			      }
 #endif
+                            e->engine.func->context_clip_set(e->engine.data.output,
+                                                             e->engine.data.context,
+                                                             x, y, w, h);
                             clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
 							     surface, off_x, off_y, 0,
                                                              cx, cy, cw, ch

@@ -94,6 +94,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func;
+   RGBA_Image *maskobj;
+   DATA8   *mask = NULL;
 
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
      return;
@@ -235,7 +237,20 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    /* figure out dest start ptr */
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
 
-   if (dc->mul.use)
+   if (dc->mask.mask)
+     {
+       func = evas_common_gfx_func_composite_pixel_mask_span_get(src, dst, dst_clip_w, dc->render_op);
+       maskobj = dc->mask.mask;
+       mask = maskobj->mask.mask;
+       if (1 || dst_region_w > src_region_w || dst_region_h > src_region_h){
+	       printf("Mask w/h: %d/%d\n",maskobj->cache_entry.w,
+			       maskobj->cache_entry.h);
+	       printf("Warning: Unscaled mask (%d/%d) // (%d/%d)\n",
+			       dst_region_w,src_region_w,
+			       dst_region_h,src_region_h);
+       }
+     }
+   else if (dc->mul.use)
      func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
    else
      func = evas_common_gfx_func_composite_pixel_span_get(src, dst, dst_clip_w, dc->render_op);
@@ -246,14 +261,20 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	for (y = 0; y < dst_clip_h; y++)
 	  {
 	    /* * blend here [clip_w *] ptr -> dst_ptr * */
+            if (mask)
+	      {
+		  mask += dst_clip_x - dc->mask.x;
+		  mask += (dst_clip_y - dc->mask.y) * maskobj->cache_entry.w;
+	      }
 #ifdef EVAS_SLI
 	     if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
 #endif
 	       {
-		  func(ptr, NULL, dc->mul.col, dst_ptr, dst_clip_w);
+		  func(ptr, mask, dc->mul.col, dst_ptr, dst_clip_w);
 	       }
 	    ptr += src_w;
 	    dst_ptr += dst_w;
+	    if (mask) mask += maskobj->cache_entry.w;
 	  }
      }
    else

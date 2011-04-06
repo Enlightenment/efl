@@ -93,6 +93,7 @@
 #define SHAD_TEXUV  2
 #define SHAD_TEXUV2 3
 #define SHAD_TEXUV3 4
+#define SHAD_TEXM   5
 
 typedef struct _Evas_GL_Program                      Evas_GL_Program;
 typedef struct _Evas_GL_Program_Source               Evas_GL_Program_Source;
@@ -192,6 +193,7 @@ struct _Evas_GL_Shared
       
       Evas_GL_Program  img,            img_nomul;
       Evas_GL_Program  img_bgra,       img_bgra_nomul;
+      Evas_GL_Program  img_mask;
       Evas_GL_Program  yuv,            yuv_nomul;
       Evas_GL_Program  tex,            tex_nomul;
    } shader;
@@ -209,6 +211,7 @@ struct _Evas_GL_Shared
 #define RTYPE_FONT  3
 #define RTYPE_YUV   4
 #define RTYPE_MAP   5 /* need to merge with image */ 
+#define RTYPE_IMASK 6
 
 
 
@@ -228,6 +231,7 @@ struct _Evas_Engine_GL_Context
       struct {
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv;
+         GLuint          cur_texm, cur_texmu, cur_texmv;
          int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
@@ -248,7 +252,7 @@ struct _Evas_Engine_GL_Context
       struct {
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
-         GLuint          cur_tex, cur_texu, cur_texv;
+         GLuint          cur_tex, cur_texu, cur_texv, cur_texm;
          int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
@@ -262,12 +266,14 @@ struct _Evas_Engine_GL_Context
          GLfloat *texuv;
          GLfloat *texuv2;
          GLfloat *texuv3;
-         Eina_Bool line : 1;
+         GLfloat *texm;
+	 Eina_Bool line: 1;
          Eina_Bool use_vertex : 1;
          Eina_Bool use_color : 1;
          Eina_Bool use_texuv : 1;
          Eina_Bool use_texuv2 : 1;
          Eina_Bool use_texuv3 : 1;
+         Eina_Bool use_texm : 1;
          Evas_GL_Image *im;
       } array;
    } pipe[MAX_PIPES];
@@ -386,6 +392,8 @@ extern Evas_GL_Program_Source shader_img_bgra_frag_src;
 extern Evas_GL_Program_Source shader_img_bgra_vert_src;
 extern Evas_GL_Program_Source shader_img_bgra_nomul_frag_src;
 extern Evas_GL_Program_Source shader_img_bgra_nomul_vert_src;
+extern Evas_GL_Program_Source shader_img_mask_frag_src;
+extern Evas_GL_Program_Source shader_img_mask_vert_src;
 
 extern Evas_GL_Program_Source shader_yuv_frag_src;
 extern Evas_GL_Program_Source shader_yuv_vert_src;
@@ -419,6 +427,16 @@ void              evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
                                                     int x, int y, int w, int h,
                                                     int r, int g, int b, int a,
                                                     Eina_Bool smooth, Eina_Bool tex_only);
+void              evas_gl_common_context_image_mask_push(Evas_Engine_GL_Context *gc,
+                                                    Evas_GL_Texture *tex,
+                                                    Evas_GL_Texture *texm,
+                                                    double sx, double sy, double sw, double sh,
+                                                    double sxm, double sym, double swm, double shm,
+                                                    int x, int y, int w, int h,
+                                                    int r, int g, int b, int a,
+                                                    Eina_Bool smooth);
+
+
 void              evas_gl_common_context_font_push(Evas_Engine_GL_Context *gc,
                                                    Evas_GL_Texture *tex,
                                                    double sx, double sy, double sw, double sh,
