@@ -3600,10 +3600,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    /* Start of visual layout creation */
    /* FIXME: move away? */
    {
-      Evas_Object_Textblock_Paragraph *par;
-      EINA_INLIST_FOREACH(c->paragraphs, par)
+      EINA_INLIST_FOREACH(c->paragraphs, c->par)
         {
-           c->par = par;
            _layout_update_par(c);
            /* Break if we should stop here. */
            if (_layout_visualize_par(c))
