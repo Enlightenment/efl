@@ -672,7 +672,11 @@ _elm_user_dir_snprintf(char       *dst,
    size_t user_dir_len, off;
    va_list ap;
 
+#ifdef _WIN32
+   home = evil_homedir_get();
+#else
    home = getenv("HOME");
+#endif
    if (!home)
      home = "/";
 
