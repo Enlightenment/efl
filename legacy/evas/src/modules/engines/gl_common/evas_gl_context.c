@@ -2741,6 +2741,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   cy = gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch;
                   if (fbo) cy = gc->pipe[i].shader.cy;
                   glEnable(GL_SCISSOR_TEST);
+                  // FIXME: handle gc->rot IF gc->pipe[0].shader.surface == gc->def_surface
                   glScissor(gc->pipe[i].shader.cx, cy,
                             gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                   setclip = 1;
@@ -2760,6 +2761,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   cy = gh - gc->pipe[i].shader.cy - gc->pipe[i].shader.ch;
                   if (fbo) cy = gc->pipe[i].shader.cy;
+                  // FIXME: handle gc->rot IF gc->pipe[0].shader.surface == gc->def_surface
                   glScissor(gc->pipe[i].shader.cx, cy,
                             gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                }

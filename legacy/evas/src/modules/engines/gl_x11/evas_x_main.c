@@ -570,7 +570,12 @@ eng_window_use(Evas_GL_X11_Window *gw)
                 _evas_gl_x11_window->egl_surface[0]))
            force_use = EINA_TRUE;
      }
-#else   
+#else
+   if (_evas_gl_x11_window)
+     {
+        if (glXGetCurrentContext() != _evas_gl_x11_window->context)
+           force_use = EINA_TRUE;
+     }
 #endif   
    if ((_evas_gl_x11_window != gw) || (force_use))
      {
