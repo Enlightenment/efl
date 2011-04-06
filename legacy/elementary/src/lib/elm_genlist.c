@@ -443,6 +443,7 @@ static Eina_Bool _event_hook(Evas_Object       *obj,
                              Evas_Object       *src,
                              Evas_Callback_Type type,
                              void              *event_info);
+static void      _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 static void      _pan_calculate(Evas_Object *obj);
 
@@ -812,6 +813,14 @@ _sizing_eval(Evas_Object *obj)
      }
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+}
+
+static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
+                           emission, source);
 }
 
 static void
@@ -2610,6 +2619,7 @@ elm_genlist_add(Evas_Object *parent)
    elm_widget_type_set(obj, "genlist");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
