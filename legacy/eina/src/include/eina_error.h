@@ -176,6 +176,8 @@ typedef int Eina_Error;
  * Error identifier corresponding to a lack of memory.
  */
 
+EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY;
+
 /**
  * @brief Register a new error type.
  *
@@ -190,8 +192,6 @@ typedef int Eina_Error;
  *
  * @see eina_error_msg_static_register()
  */
-EAPI extern Eina_Error EINA_ERROR_OUT_OF_MEMORY;
-
 EAPI Eina_Error  eina_error_msg_register(const char *msg) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
