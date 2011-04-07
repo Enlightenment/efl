@@ -2376,7 +2376,7 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
            c->marginr - c->x - ti->x_adjustment;
         if (x < 0)
           x = 0;
-        return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font, ti->text,
+        return c->ENFN->font_last_up_to_pos(c->ENDT, fmt->font.font,
               &ti->text_props, x, 0);
      }
    return -1;
@@ -2591,7 +2591,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 
    tw = th = 0;
    if (fmt->font.font)
-     c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, ti->text,
+     c->ENFN->font_string_size_get(c->ENDT, fmt->font.font,
            &ti->text_props, &tw, &th);
    inset = 0;
    if (fmt->font.font)
@@ -7424,7 +7424,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
  * @return line number of the char on success, -1 on error.
  */
 static int
-_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+_evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, void *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
@@ -7479,7 +7479,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
           {
              ret = query_func(cur->ENDT,
                    ti->parent.format->font.font,
-                   ti->text, &ti->text_props,
+                   &ti->text_props,
                    pos,
                    &x, &y, &w, &h);
           }
@@ -7673,7 +7673,7 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
                                    pos = cur->ENFN->font_char_at_coords_get(
                                          cur->ENDT,
                                          ti->parent.format->font.font,
-                                         ti->text, &ti->text_props,
+                                         &ti->text_props,
                                          x - it->x - ln->par->x - ln->x, 0,
                                          &cx, &cy, &cw, &ch);
                                  if (pos < 0)
@@ -7894,7 +7894,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
         ti = _ITEM_TEXT(it1);
         ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
               ti->parent.format->font.font,
-              ti->text, &ti->text_props,
+              &ti->text_props,
               start,
               &x1, &y, &w1, &h);
         if (!ret)
@@ -7903,7 +7903,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
         ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
               ti->parent.format->font.font,
-              ti->text, &ti->text_props,
+              &ti->text_props,
               end,
               &x2, &y, &w2, &h);
         if (!ret)
@@ -7963,7 +7963,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
              ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
                    ti->parent.format->font.font,
-                   ti->text, &ti->text_props,
+                   &ti->text_props,
                    start,
                    &x, &y, &w, &h);
              if (!ret)
@@ -8017,7 +8017,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
              ret = cur->ENFN->font_pen_coords_get(cur->ENDT,
                    ti->parent.format->font.font,
-                   ti->text, &ti->text_props,
+                   &ti->text_props,
                    end,
                    &x, &y, &w, &h);
              if (!ret)

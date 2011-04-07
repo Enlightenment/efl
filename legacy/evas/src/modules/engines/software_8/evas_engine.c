@@ -561,10 +561,10 @@ eng_font_max_descent_get(void *data __UNUSED__, void *font)
 }
 
 static void
-eng_font_string_size_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props, 
+eng_font_string_size_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, 
                          int *w, int *h)
 {
-   evas_common_font_query_size(font, text, text_props, w, h);
+   evas_common_font_query_size(font, text_props, w, h);
 }
 
 static int
@@ -580,39 +580,35 @@ eng_font_right_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Prop
 }
 
 static int
-eng_font_h_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props)
+eng_font_h_advance_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
 {
    int h, v;
 
-   evas_common_font_query_advance(font, text, text_props, &h, &v);
+   evas_common_font_query_advance(font, text_props, &h, &v);
    return h;
 }
 
 static int
-eng_font_v_advance_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props)
+eng_font_v_advance_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
 {
    int h, v;
 
-   evas_common_font_query_advance(font, text, text_props, &h, &v);
+   evas_common_font_query_advance(font, text_props, &h, &v);
    return v;
 }
 
 static int
-eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props, 
+eng_font_pen_coords_get(void *data __UNUSED__, void *fontt, const Evas_Text_Props *text_props, 
                          int pos, int *cpen, int *cy, int *cadv, int *ch)
 {
-   return evas_common_font_query_pen_coords(font, text, text_props, pos, cpen, cy, cadv, ch);
+   return evas_common_font_query_pen_coords(font, text_props, pos, cpen, cy, cadv, ch);
 }
 
 static Eina_Bool
 eng_font_text_props_info_create(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
 {
-   (void) font;
-   (void) text;
-   (void) text_props;
    (void) par_props;
    (void) pos;
-   (void) len;
 #if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
    evas_bidi_shape_string(text, par_props, pos, len);
 #endif
@@ -620,24 +616,24 @@ eng_font_text_props_info_create(void *data __UNUSED__, void *font, Eina_Unicode 
 }
 
 static int
-eng_font_char_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props, 
+eng_font_char_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, 
                          int pos, int *cx, int *cy, int *cw, int *ch)
 {
-   return evas_common_font_query_char_coords(font, text, text_props, pos, cx, cy, cw, ch);
+   return evas_common_font_query_char_coords(font, text_props, pos, cx, cy, cw, ch);
 }
 
 static int
-eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props, 
+eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, 
                             int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
-   return evas_common_font_query_char_at_coords(font, text, text_props, x, y, cx, cy, cw, ch);
+   return evas_common_font_query_char_at_coords(font, text_props, x, y, cx, cy, cw, ch);
 }
 
 static int
-eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Eina_Unicode *text, const Evas_Text_Props *text_props, 
+eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, 
                         int x, int y)
 {
-   return evas_common_font_query_last_up_to_pos(font, text, text_props, x, y);
+   return evas_common_font_query_last_up_to_pos(font, text_props, x, y);
 }
 
 static void

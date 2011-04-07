@@ -95,7 +95,7 @@ evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Pro
  */
 
 EAPI void
-evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, const Evas_Text_Props *text_props, int *w, int *h)
+evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, int *w, int *h)
 {
    int keep_width = 0;
    int prev_pen_x = 0;
@@ -133,7 +133,7 @@ evas_common_font_query_size(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, 
  * this way, we are safe.
  */
 EAPI void
-evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, const Evas_Text_Props *text_props, int *h_adv, int *v_adv)
+evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props, int *h_adv, int *v_adv)
 {
    EVAS_FONT_WALK_TEXT_INIT();
 
@@ -159,7 +159,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Eina_Unicode *text __UNUSED_
  */
 
 EAPI int
-evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
+evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    int asc, desc;
    size_t position = 0;
@@ -184,7 +184,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Eina_Unicode *text __UNU
         else
 #endif
           {
-             evas_common_font_query_advance(fn, text, text_props, cx, ch);
+             evas_common_font_query_advance(fn, text_props, cx, ch);
           }
         if (cy) *cy = 0;
         if (cw) *cw = 0;
@@ -283,7 +283,7 @@ end:
  */
 
 EAPI int
-evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
+evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
 {
    int asc, desc;
    size_t position;
@@ -308,7 +308,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Eina_Unicode *text __UNUS
         else
 #endif
           {
-             evas_common_font_query_advance(fn, text, text_props, cpen_x, ch);
+             evas_common_font_query_advance(fn, text_props, cpen_x, ch);
           }
         if (cy) *cy = 0;
         if (cadv) *cadv = 0;
@@ -399,7 +399,7 @@ end:
  */
 
 EAPI int
-evas_common_font_query_char_at_coords(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
+evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    int asc, desc;
    int ret_val = -1;
@@ -482,7 +482,7 @@ end:
  */
 
 EAPI int
-evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Eina_Unicode *text __UNUSED__, const Evas_Text_Props *text_props, int x, int y)
+evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text_props, int x, int y)
 {
    int asc, desc;
    int ret=-1;

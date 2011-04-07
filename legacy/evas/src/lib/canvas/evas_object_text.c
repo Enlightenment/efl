@@ -116,7 +116,7 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
         if ((it->text_pos <= pos) &&
               (pos < it->text_pos + eina_unicode_strlen(it->text)))
           {
-             return ENFN->font_char_coords_get(ENDT, o->engine_data, it->text,
+             return ENFN->font_char_coords_get(ENDT, o->engine_data,
                    &it->text_props, pos - it->text_pos, x, y, w, h);
           }
      }
@@ -193,7 +193,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
                {
                   return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
                         o->engine_data,
-                        it->text, &it->text_props,
+                        &it->text_props,
                         cx - x,
                         cy);
                }
@@ -210,7 +210,7 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
                {
                   return it->text_pos + ENFN->font_last_up_to_pos(ENDT,
                         o->engine_data,
-                        it->text, &it->text_props,
+                        &it->text_props,
                         cx - it->x,
                         cy);
                }
@@ -233,7 +233,7 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
           {
              return it->text_pos + ENFN->font_char_at_coords_get(ENDT,
                    o->engine_data,
-                   it->text, &it->text_props,
+                   &it->text_props,
                    cx,
                    cy,
                    rx, ry,
@@ -535,7 +535,7 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
               o->bidi_par_props, it->text_pos, len);
         ENFN->font_string_size_get(ENDT,
               o->engine_data,
-              it->text, &it->text_props,
+              &it->text_props,
               &it->w, &it->h);
         it->adv = it->w + ENFN->font_right_inset_get(ENDT, o->engine_data,
                                                     &it->text_props);

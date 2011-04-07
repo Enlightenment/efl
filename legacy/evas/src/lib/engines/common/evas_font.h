@@ -56,14 +56,14 @@ EAPI void              evas_common_font_all_clear            (void);
 /* query */
 
 EAPI int               evas_common_font_query_kerning        (RGBA_Font_Int* fi, FT_UInt left, FT_UInt right, int* kerning);
-EAPI void              evas_common_font_query_size           (RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int *w, int *h);
+EAPI void              evas_common_font_query_size           (RGBA_Font *fn, const Evas_Text_Props *intl_props, int *w, int *h);
 EAPI int               evas_common_font_query_inset          (RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props);
 EAPI int               evas_common_font_query_right_inset    (RGBA_Font *fn __UNUSED__, const Evas_Text_Props *text_props);
-EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int *h_adv, int *v_adv);
-EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_pen_coords     (RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
-EAPI int               evas_common_font_query_char_at_coords (RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
-EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Eina_Unicode *text, const Evas_Text_Props *intl_props, int x, int y);
+EAPI void              evas_common_font_query_advance        (RGBA_Font *fn, const Evas_Text_Props *intl_props, int *h_adv, int *v_adv);
+EAPI int               evas_common_font_query_char_coords    (RGBA_Font *fn, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_query_pen_coords     (RGBA_Font *fn, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
+EAPI int               evas_common_font_query_char_at_coords (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y, int *cx, int *cy, int *cw, int *ch);
+EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y);
 
 #ifdef EVAS_FRAME_QUEUING
 EAPI void evas_common_font_draw_finish(void);
