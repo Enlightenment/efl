@@ -281,7 +281,9 @@ eina_simple_xml_shutdown(void)
  * @{
  */
 
-/*
+/**
+ * Parse a section of XML string text
+ * 
  * @param buf the input string. May not contain \0 terminator.
  * @param buflen the input string size.
  * @param strip whenever this parser should strip leading and trailing
