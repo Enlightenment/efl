@@ -244,6 +244,7 @@ struct _Evas_Object_Textblock_Node_Text
    Evas_Object_Textblock_Node_Format  *format_node;
    Evas_BiDi_Paragraph_Props          *bidi_props;
    Eina_Bool                           dirty : 1;
+   Eina_Bool                           new : 1;
 };
 
 struct _Evas_Object_Textblock_Node_Format
@@ -517,7 +518,7 @@ static Eina_Bool _evas_textblock_format_is_visible(const char *s);
 static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
-static void _evas_textblock_text_node_changed(Evas_Object_Textblock *o, Evas_Object *obj, Evas_Object_Textblock_Node_Text *n);
+static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
 
@@ -3449,6 +3450,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    if (o->content_changed)
      {
+        /* FIXME-tom: Add some logic to redo only the dirty nodes */
         _paragraphs_free(obj, o->paragraphs);
         /* Go through all the text nodes to create the logical layout */
         EINA_INLIST_FOREACH(c->o->text_nodes, n)
@@ -3457,9 +3459,12 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
              size_t start;
              int off;
 
-             n->dirty = 0; /* Mark as if we cleaned the paragraph, although
-                              we should really use it to fine tune the
-                              changes here, and not just blindly mark */
+             /* Mark as if we cleaned the paragraph, although
+                we should really use it to fine tune the
+                changes here, and not just blindly mark */
+             n->new = EINA_FALSE;
+             n->dirty = EINA_FALSE;
+
              _layout_paragraph_new(c, n); /* Each node is a paragraph */
 
              /* For each text node to thorugh all of it's format nodes
@@ -3882,7 +3887,8 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
         Evas_Object_Textblock *o;
 
         o = (Evas_Object_Textblock *)(obj->object_data);
-        _evas_textblock_text_node_changed(o, obj, NULL);
+        _evas_textblock_changed(o, obj);
+        /* FIXME-tom: Update the affected nodes. */
      }
 
    _style_replace(ts, text);
@@ -4019,7 +4025,8 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
      }
    o->style = ts;
 
-    _evas_textblock_text_node_changed(o, obj, NULL);
+    _evas_textblock_changed(o, obj);
+    /* FIXME-tom: Update the affected nodes */
 }
 
 /**
@@ -4047,7 +4054,8 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
    if (o->repch) eina_stringshare_del(o->repch);
    if (ch) o->repch = eina_stringshare_add(ch);
    else o->repch = NULL;
-   _evas_textblock_text_node_changed(o, obj, NULL);
+   _evas_textblock_changed(o, obj);
+   /* FIXME-tom: Invalidate all the nodes */
 }
 
 /**
@@ -4105,7 +4113,7 @@ evas_object_textblock_valign_set(Evas_Object *obj, double align)
    else if (align > 1.0) align = 1.0;
    if (o->valign == align) return;
    o->valign = align;
-    _evas_textblock_text_node_changed(o, obj, NULL);
+   _evas_textblock_changed(o, obj);
 }
 
 /**
@@ -4508,7 +4516,11 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
              p++;
           }
      }
-   _evas_textblock_text_node_changed(o, obj, o->cursor->node);
+   _evas_textblock_changed(o, obj);
+   /* If the node is NULL it means we just created paragraphs,
+    * and not edited, so no need to mark anything */
+   if (o->cursor->node)
+      o->cursor->node->dirty = EINA_TRUE;
 }
 
 
@@ -5099,7 +5111,8 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
         /* pnode can never be visible! (it's the closing format) */
         _evas_textblock_node_format_remove(o, pnode, 0);
      }
-   _evas_textblock_text_node_changed(o, obj, tnode);
+   _evas_textblock_changed(o, obj);
+   /* FIXME-tom: Add invalidation point? make the node? can't tell */
 }
 
 /**
@@ -6166,6 +6179,7 @@ _evas_textblock_node_text_new(void)
    n->unicode = eina_ustrbuf_new();
    /* We want to layout each paragraph at least once. */
    n->dirty = EINA_TRUE;
+   n->new = EINA_TRUE;
 #ifdef BIDI_SUPPORT
    n->bidi_props = evas_bidi_paragraph_props_new();
    n->bidi_props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
@@ -6341,28 +6355,14 @@ _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur,
 
 /**
  * @internal
- * Mark and notifiy that the textblock, and specifically a node has changed.
+ * Mark that the textblock has changed.
  *
  * @param o the textblock object.
  * @param obj the evas object.
- * @param n the paragraph that changed - NULL means all.
  */
 static void
-_evas_textblock_text_node_changed(Evas_Object_Textblock *o, Evas_Object *obj,
-      Evas_Object_Textblock_Node_Text *n)
+_evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
 {
-   if (!n)
-     {
-        Evas_Object_Textblock_Node_Text *itr;
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(o->text_nodes), itr)
-          {
-             itr->dirty = EINA_TRUE;
-          }
-     }
-   else
-     {
-        n->dirty = EINA_TRUE;
-     }
    o->formatted.valid = 0;
    o->native.valid = 0;
    o->content_changed = 1;
@@ -6445,7 +6445,8 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    evas_bidi_paragraph_props_unref(n->bidi_props);
    n->bidi_props = evas_bidi_paragraph_props_get(eina_ustrbuf_string_get(n->unicode));
 #endif
-   _evas_textblock_text_node_changed(o, cur->obj, n);
+   _evas_textblock_changed(o, cur->obj);
+   n->dirty = EINA_TRUE;
    free(text);
    return len;
 }
@@ -6634,6 +6635,9 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
         eina_ustrbuf_insert_char(cur->node->unicode,
               EVAS_TEXTBLOCK_REPLACEMENT_CHAR, cur->pos);
 
+        /* Mark as dirty */
+        cur->node->dirty = EINA_TRUE;
+
         /* Advance all the cursors after our cursor */
         _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
         if (_IS_PARAGRAPH_SEPARATOR(o, format))
@@ -6650,7 +6654,8 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
           }
      }
 
-   _evas_textblock_text_node_changed(o, cur->obj, cur->node);
+   _evas_textblock_changed(o, cur->obj);
+   /* FIXME-tom: Add invalidation point */
 
    return is_visible;
 }
@@ -6764,7 +6769,8 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
      }
 
    _evas_textblock_cursors_update_offset(cur, n, ppos, -(index - ppos));
-   _evas_textblock_text_node_changed(o, cur->obj, cur->node);
+   _evas_textblock_changed(o, cur->obj);
+   cur->node->dirty = EINA_TRUE;
 }
 
 /**
@@ -6865,7 +6871,8 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    if (reset_cursor)
      evas_textblock_cursor_copy(cur1, o->cursor);
 
-   _evas_textblock_text_node_changed(o, cur1->obj, cur1->node);
+   _evas_textblock_changed(o, cur1->obj);
+   /* FIXME-tom: Should mark here as dirty! */
 }
 
 
@@ -8102,7 +8109,7 @@ evas_object_textblock_clear(Evas_Object *obj)
 	_paragraphs_free(obj, o->paragraphs);
 	o->paragraphs = NULL;
      }
-   _evas_textblock_text_node_changed(o, obj, NULL);
+   _evas_textblock_changed(o, obj);
 }
 
 /**
@@ -8776,7 +8783,8 @@ _evas_object_textblock_rehint(Evas_Object *obj)
                }
           }
      }
-   _evas_textblock_text_node_changed(o, obj, NULL);
+   _evas_textblock_changed(o, obj);
+   /* FIXME-tom: invalidate all the text nodes */
 }
 
 /**
