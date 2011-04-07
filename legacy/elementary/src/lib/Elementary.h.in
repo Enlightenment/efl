@@ -1844,7 +1844,7 @@ extern "C" {
    EAPI const char        *elm_genlist_item_cursor_style_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    EAPI void               elm_genlist_item_cursor_engine_only_set(Elm_Genlist_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool          elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
-   EAPI void               elm_genlist_realized_items_update(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void               elm_genlist_realized_items_update(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "clicked,double" - This is called when a user has double-clicked an item. The
     *                    event_info parameter is the genlist item that was double-clicked.

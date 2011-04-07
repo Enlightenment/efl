@@ -4932,7 +4932,7 @@ elm_genlist_scroller_policy_get(const Evas_Object   *obj,
  * @ingroup Genlist
  */
 EAPI void
-elm_genlist_realized_items_update(const Evas_Object *obj)
+elm_genlist_realized_items_update(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
