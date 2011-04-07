@@ -277,4 +277,8 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
  * @}
  */
 
+/**
+ * @}
+ */
+
 #endif

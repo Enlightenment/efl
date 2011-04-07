@@ -174,7 +174,3 @@ eina_accessor_unlock(Eina_Accessor *accessor)
       return accessor->unlock(accessor);
    return EINA_TRUE;
 }
-
-/**
- * @}
- */
