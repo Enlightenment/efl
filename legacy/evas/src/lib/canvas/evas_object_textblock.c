@@ -3555,8 +3555,11 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                        continue;
                     }
                }
-             /* If it's a new paragraph, just add it. */
-             _layout_paragraph_new(c, n, EINA_FALSE);
+             else
+               {
+                  /* If it's a new paragraph, just add it. */
+                  _layout_paragraph_new(c, n, EINA_FALSE);
+               }
 
              /* For each text node to thorugh all of it's format nodes
               * append text from the start to the offset of the next format
