@@ -223,8 +223,8 @@
 
 2011-04-07 Tom Hacohen (TAsn)
 
-	* Major speed improvements.
-	* Only relayout and remake paragraphs that have actually changed.
-	  This means we are a lot faster than before, especially with
+	* Textblock: Major speed improvements.
+	* Textblock: Only relayout and remake paragraphs that have actually
+	  changed. This means we are a lot faster than before, especially with
 	  long texts.
 
