@@ -154,103 +154,6 @@ eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
 *                                   API                                      *
 *============================================================================*/
 
-/**
- * @addtogroup Eina_Inline_List_Group Inline List
- *
- * @brief These functions provide inline list management.
- *
- * Inline lists mean its nodes pointers are part of same memory as
- * data. This has the benefit of fragmenting memory less and avoiding
- * @c node->data indirection, but has the drawback of elements only
- * being able to be part of one single inlist at same time. But it is
- * possible to have inlist nodes to be part of regular lists created
- * with eina_list_append() or eina_list_prepend().
- *
- * Inline lists have their purposes, but if you don't know what those purposes are, go with
- * regular lists instead.
- *
- * Tip: When using inlists in more than one place (that is, passing them around
- * functions or keeping a pointer to them in a structure) it's more correct
- * to keep a pointer to the first container, and not a pointer to the first
- * inlist item (mostly they are the same, but that's not always correct).
- * This lets the compiler to do type checking and let the programmer know
- * exactly what type this list is.
- *
- * @code
- * #include <Eina.h>
- * #include <stdio.h>
- *
- * int
- * main(void)
- * {
- *    struct my_struct {
- *       EINA_INLIST;
- *       int a, b;
- *    } *d, *cur;
- *    Eina_Inlist *list, *itr;
- *
- *    eina_init();
- *
- *    d = malloc(sizeof(*d));
- *    d->a = 1;
- *    d->b = 10;
- *    list = eina_inlist_append(NULL, EINA_INLIST_GET(d));
- *
- *    d = malloc(sizeof(*d));
- *    d->a = 2;
- *    d->b = 20;
- *    list = eina_inlist_append(list, EINA_INLIST_GET(d));
- *
- *    d = malloc(sizeof(*d));
- *    d->a = 3;
- *    d->b = 30;
- *    list = eina_inlist_prepend(list, EINA_INLIST_GET(d));
- *
- *    printf("list=%p\n", list);
- *    EINA_INLIST_FOREACH(list, cur)
- *      printf("\ta=%d, b=%d\n", cur->a, cur->b);
- *
- *    list = eina_inlist_remove(list, EINA_INLIST_GET(d));
- *    free(d);
- *    printf("list=%p\n", list);
- *    for (itr = list; itr != NULL; itr = itr->next)
- *      {
- *         cur = EINA_INLIST_CONTAINER_GET(itr, struct my_struct);
- *         printf("\ta=%d, b=%d\n", cur->a, cur->b);
- *      }
- *
- *    while (list)
- *      {
- *         Eina_Inlist *aux = list;
- *         list = eina_inlist_remove(list, list);
- *         free(aux);
- *      }
- *
- *    eina_shutdown();
- *
- *    return 0;
- * }
- * @endcode
- *
- * @{
- */
-
-/**
- * Add a new node to end of a list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a new_l is considered to be in no list. If it was in another
- *       list before, eina_inlist_remove() it before adding. No
- *       check of @a new_l prev and next pointers is done, so it's safe
- *       to have them uninitialized.
- *
- * @param list existing list head or NULL to create a new list.
- * @param new_l new list node, must not be NULL.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
 {
@@ -278,22 +181,6 @@ eina_inlist_append(Eina_Inlist *list, Eina_Inlist *new_l)
    return list;
 }
 
-/**
- * Add a new node to beginning of list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a new_l is considered to be in no list. If it was in another
- *       list before, eina_inlist_remove() it before adding. No
- *       check of @a new_l prev and next pointers is done, so it's safe
- *       to have them uninitialized.
- *
- * @param list existing list head or NULL to create a new list.
- * @param new_l new list node, must not be NULL.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
 {
@@ -314,28 +201,6 @@ eina_inlist_prepend(Eina_Inlist *list, Eina_Inlist *new_l)
    return new_l;
 }
 
-/**
- * Add a new node after the given relative item in list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a new_l is considered to be in no list. If it was in another
- *       list before, eina_inlist_remove() it before adding. No
- *       check of @a new_l prev and next pointers is done, so it's safe
- *       to have them uninitialized.
- *
- * @note @a relative is considered to be inside @a list, no checks are
- *       done to confirm that and giving nodes from different lists
- *       will lead to problems. Giving NULL @a relative is the same as
- *       eina_list_append().
- *
- * @param list existing list head or NULL to create a new list.
- * @param new_l new list node, must not be NULL.
- * @param relative reference node, @a new_l will be added after it.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_append_relative(Eina_Inlist *list,
                             Eina_Inlist *new_l,
@@ -364,28 +229,6 @@ eina_inlist_append_relative(Eina_Inlist *list,
    return eina_inlist_append(list, new_l);
 }
 
-/**
- * Add a new node before the given relative item in list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a new_l is considered to be in no list. If it was in another
- *       list before, eina_inlist_remove() it before adding. No
- *       check of @a new_l prev and next pointers is done, so it's safe
- *       to have them uninitialized.
- *
- * @note @a relative is considered to be inside @a list, no checks are
- *       done to confirm that and giving nodes from different lists
- *       will lead to problems. Giving NULL @a relative is the same as
- *       eina_list_prepend().
- *
- * @param list existing list head or NULL to create a new list.
- * @param new_l new list node, must not be NULL.
- * @param relative reference node, @a new_l will be added before it.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_prepend_relative(Eina_Inlist *list,
                              Eina_Inlist *new_l,
@@ -419,23 +262,6 @@ eina_inlist_prepend_relative(Eina_Inlist *list,
    return eina_inlist_prepend(list, new_l);
 }
 
-/**
- * Remove node from list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a item is considered to be inside @a list, no checks are
- *       done to confirm that and giving nodes from different lists
- *       will lead to problems, especially if @a item is the head since
- *       it will be different from @a list and the wrong new head will
- *       be returned.
- *
- * @param list existing list head, must not be NULL.
- * @param item existing list node, must not be NULL.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -474,21 +300,6 @@ eina_inlist_remove(Eina_Inlist *list, Eina_Inlist *item)
    return return_l;
 }
 
-/**
- * Move existing node to beginning of list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a item is considered to be inside @a list. No checks are
- *       done to confirm this, and giving nodes from different lists
- *       will lead to problems.
- *
- * @param list existing list head or NULL to create a new list.
- * @param item list node to move to beginning (head), must not be NULL.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -516,21 +327,6 @@ eina_inlist_promote(Eina_Inlist *list, Eina_Inlist *item)
    return item;
 }
 
-/**
- * Move existing node to end of list.
- *
- * @note this code is meant to be fast: appends are O(1) and do not
- *       walk @a list.
- *
- * @note @a item is considered to be inside @a list. No checks are
- *       done to confirm this, and giving nodes from different lists
- *       will lead to problems.
- *
- * @param list existing list head or NULL to create a new list.
- * @param item list node to move to end (tail), must not be NULL.
- *
- * @return the new list head. Use it and not @a list anymore.
- */
 EAPI Eina_Inlist *
 eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -565,17 +361,6 @@ eina_inlist_demote(Eina_Inlist *list, Eina_Inlist *item)
    return l;
 }
 
-/**
- * Find given node in list, returns itself if found, NULL if not.
- *
- * @warning this is an expensive call and has O(n) cost, possibly
- *    walking the whole list.
- *
- * @param list existing list to search @a item in, must not be NULL.
- * @param item what to search for, must not be NULL.
- *
- * @return @a item if found, NULL if not.
- */
 EAPI Eina_Inlist *
 eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
 {
@@ -588,19 +373,6 @@ eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
    return NULL;
 }
 
-/**
- * @brief Get the count of the number of items in a list.
- *
- * @param list The list whose count to return.
- * @return The number of members in the list.
- *
- * This function returns how many members @p list contains. If the
- * list is @c NULL, 0 is returned.
- *
- * @warning This is an order-N operation and so the time will depend
- *    on the number of elements on the list, so, it might become
- *    slow for big lists!
- */
 EAPI unsigned int
 eina_inlist_count(const Eina_Inlist *list)
 {
@@ -613,26 +385,6 @@ eina_inlist_count(const Eina_Inlist *list)
    return i;
 }
 
-/**
- * @brief Returns a new iterator associated to @a list.
- *
- * @param list The list.
- * @return A new iterator.
- *
- * This function returns a newly allocated iterator associated to @p
- * list. If @p list is @c NULL or the count member of @p list is less
- * or equal than 0, this function still returns a valid iterator that
- * will always return false on eina_iterator_next(), thus keeping API
- * sane.
- *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
- *
- * @warning if the list structure changes then the iterator becomes
- *    invalid, and if you add or remove nodes iterator
- *    behavior is undefined, and your program may crash!
- */
 EAPI Eina_Iterator *
 eina_inlist_iterator_new(const Eina_Inlist *list)
 {
@@ -660,18 +412,6 @@ eina_inlist_iterator_new(const Eina_Inlist *list)
    return &it->iterator;
 }
 
-/**
- * @brief Returns a new accessor associated to a list.
- *
- * @param list The list.
- * @return A new accessor.
- *
- * This function returns a newly allocated accessor associated to
- * @p list. If @p list is @c NULL or the count member of @p list is
- * less or equal than 0, this function returns NULL. If the memory can
- * not be allocated, NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
- * set. Otherwise, a valid accessor is returned.
- */
 EAPI Eina_Accessor *
 eina_inlist_accessor_new(const Eina_Inlist *list)
 {
@@ -699,7 +439,3 @@ eina_inlist_accessor_new(const Eina_Inlist *list)
 
    return &ac->accessor;
 }
-
-/**
- * @}
- */
