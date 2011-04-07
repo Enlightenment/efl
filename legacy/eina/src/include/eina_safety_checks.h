@@ -64,6 +64,30 @@
  * @{
  */
 
+/**
+ * @addtogroup Eina_Safety_Checks_Group Safety Checks
+ *
+ * Safety checks are a set of macros to check for parameters or values
+ * that should never happen, it is similar in concept to assert(), but
+ * will log and return instead of abort() your program.
+ *
+ * Since these cases should never happen, one may wantto keep safety
+ * checks enabled during tests but disable then during deploy, not
+ * doing any checks at all. This is a common requirement for embedded
+ * systems. Whenever to check or not should be set during compile time
+ * by using @c --disable-safety-checks or @c --enable-safety-checks
+ * options to @c configure script.
+ *
+ * Whenever these macros capture an error, EINA_LOG_ERR() will be
+ * called and @c eina_error set to @c EINA_ERROR_SAFETY_FAILED and can
+ * be checked with eina_error_get() after call.
+ *
+ * @see EINA_SAFETY_ON_NULL_RETURN(), EINA_SAFETY_ON_NULL_RETURN_VAL()
+ *      and other macros.
+ *
+ * @{
+ */
+
 #include "eina_config.h"
 #include "eina_error.h"
 
