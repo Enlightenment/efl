@@ -271,12 +271,12 @@ typedef enum _Edje_Text_Filter_Type
 
 typedef enum _Edje_External_Param_Type
 {
-  EDJE_EXTERNAL_PARAM_TYPE_INT,
-  EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
-  EDJE_EXTERNAL_PARAM_TYPE_STRING,
-  EDJE_EXTERNAL_PARAM_TYPE_BOOL,
-  EDJE_EXTERNAL_PARAM_TYPE_CHOICE,
-  EDJE_EXTERNAL_PARAM_TYPE_MAX
+   EDJE_EXTERNAL_PARAM_TYPE_INT,
+   EDJE_EXTERNAL_PARAM_TYPE_DOUBLE,
+   EDJE_EXTERNAL_PARAM_TYPE_STRING,
+   EDJE_EXTERNAL_PARAM_TYPE_BOOL,
+   EDJE_EXTERNAL_PARAM_TYPE_CHOICE,
+   EDJE_EXTERNAL_PARAM_TYPE_MAX
 } Edje_External_Param_Type;
 
 /**
@@ -302,14 +302,14 @@ typedef enum _Edje_External_Param_Type
  */
 typedef enum _Edje_External_Param_Flags
 {
-  EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0,
-  EDJE_EXTERNAL_PARAM_FLAGS_GET         = (1 << 0),
-  EDJE_EXTERNAL_PARAM_FLAGS_SET         = (1 << 1),
-  EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2),
-  EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR = (1 << 3),
-  EDJE_EXTERNAL_PARAM_FLAGS_REGULAR     = (EDJE_EXTERNAL_PARAM_FLAGS_GET |
-                                           EDJE_EXTERNAL_PARAM_FLAGS_SET |
-                                           EDJE_EXTERNAL_PARAM_FLAGS_STATE)
+   EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0,
+   EDJE_EXTERNAL_PARAM_FLAGS_GET         = (1 << 0),
+   EDJE_EXTERNAL_PARAM_FLAGS_SET         = (1 << 1),
+   EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2),
+   EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR = (1 << 3),
+   EDJE_EXTERNAL_PARAM_FLAGS_REGULAR     = (EDJE_EXTERNAL_PARAM_FLAGS_GET |
+                                            EDJE_EXTERNAL_PARAM_FLAGS_SET |
+                                            EDJE_EXTERNAL_PARAM_FLAGS_STATE)
 } Edje_External_Param_Flags;
 
 EAPI const char *edje_external_param_type_str(Edje_External_Param_Type type) EINA_PURE;
