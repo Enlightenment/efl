@@ -7,6 +7,17 @@
 #include "eina_unicode.h"
 
 /**
+ * @addtogroup Eina_Unicode_String_Buffer_Group Unicode String Buffer
+ *
+ * @brief These functions provide unicode string buffers management.
+ *
+ * The Unicode String Buffer data type is designed to be a mutable string,
+ * allowing to append, prepend or insert a string to a buffer.
+ *
+ * @{
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @{
@@ -406,6 +417,10 @@ eina_ustrbuf_string_free(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
  */
 EAPI size_t
 eina_ustrbuf_length_get(const Eina_UStrbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @}
+ */
 
 /**
  * @}

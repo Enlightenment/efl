@@ -81,43 +81,7 @@ eina_ustringshare_shutdown(void)
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
-/**
- * @addtogroup Eina_UStringshare_Group Unicode Stringshare
- *
- * These functions allow you to store one copy of a string, and use it
- * throughout your program.
- *
- * This is a method to reduce the number of duplicated strings kept in
- * memory. It's pretty common for the same strings to be dynamically
- * allocated repeatedly between applications and libraries, especially in
- * circumstances where you could have multiple copies of a structure that
- * allocates the string. So rather than duplicating and freeing these
- * strings, you request a read-only pointer to an existing string and
- * only incur the overhead of a hash lookup.
- *
- * It sounds like micro-optimizing, but profiling has shown this can have
- * a significant impact as you scale the number of copies up. It improves
- * string creation/destruction speed, reduces memory use and decreases
- * memory fragmentation, so a win all-around.
- *
- * For more information, you can look at the @ref tutorial_ustringshare_page.
- *
- * @{
- */
 
-/**
- * @brief Note that the given string has lost an instance.
- *
- * @param str string The given string.
- *
- * This function decreases the reference counter associated to @p str
- * if it exists. If that counter reaches 0, the memory associated to
- * @p str is freed. If @p str is NULL, the function returns
- * immediately.
- *
- * Note that if the given pointer is not shared or NULL, bad things
- * will happen, likely a segmentation fault.
- */
 EAPI void
 eina_ustringshare_del(const Eina_Unicode *str)
 {
@@ -127,26 +91,6 @@ eina_ustringshare_del(const Eina_Unicode *str)
    eina_share_common_del(ustringshare_share,(const char *)str);
 }
 
-/**
- * @brief Retrieve an instance of a string for use in a program.
- *
- * @param   str The string to retrieve an instance of.
- * @param   slen The string size (<= strlen(str)).
- * @return  A pointer to an instance of the string on success.
- *          @c NULL on failure.
- *
- * This function retrieves an instance of @p str. If @p str is
- * @c NULL, then @c NULL is returned. If @p str is already stored, it
- * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * of @p str is returned.
- *
- * This function does not check string size, but uses the
- * exact given size. This can be used to share_common part of a larger
- * buffer or substring.
- *
- * @see eina_ustringshare_add()
- */
 EAPI const Eina_Unicode *
 eina_ustringshare_add_length(const Eina_Unicode *str, unsigned int slen)
 {
@@ -159,25 +103,6 @@ eina_ustringshare_add_length(const Eina_Unicode *str, unsigned int slen)
                                                                 Eina_Unicode));
 }
 
-/**
- * @brief Retrieve an instance of a string for use in a program.
- *
- * @param   str The NULL terminated string to retrieve an instance of.
- * @return  A pointer to an instance of the string on success.
- *          @c NULL on failure.
- *
- * This function retrieves an instance of @p str. If @p str is
- * @c NULL, then @c NULL is returned. If @p str is already stored, it
- * is just returned and its reference counter is increased. Otherwise
- * it is added to the strings to be searched and a duplicated string
- * of @p str is returned.
- *
- * The string @p str must be NULL terminated ('@\0') and its full
- * length will be used. To use part of the string or non-null
- * terminated, use eina_stringshare_add_length() instead.
- *
- * @see eina_ustringshare_add_length()
- */
 EAPI const Eina_Unicode *
 eina_ustringshare_add(const Eina_Unicode *str)
 {
@@ -185,20 +110,6 @@ eina_ustringshare_add(const Eina_Unicode *str)
    return eina_ustringshare_add_length(str, slen);
 }
 
-/**
- * Increment references of the given shared string.
- *
- * @param str The shared string.
- * @return    A pointer to an instance of the string on success.
- *            @c NULL on failure.
- *
- * This is similar to eina_share_common_add(), but it's faster since it will
- * avoid lookups if possible, but on the down side it requires the parameter
- * to be shared before, in other words, it must be the return of a previous
- * eina_ustringshare_add().
- *
- * There is no unref since this is the work of eina_ustringshare_del().
- */
 EAPI const Eina_Unicode *
 eina_ustringshare_ref(const Eina_Unicode *str)
 {
@@ -206,17 +117,6 @@ eina_ustringshare_ref(const Eina_Unicode *str)
                                                       (const char *)str);
 }
 
-/**
- * @brief Note that the given string @b must be shared.
- *
- * @param str the shared string to know the length. It is safe to
- *        give NULL, in that case -1 is returned.
- *
- * This function is a cheap way to known the length of a shared
- * string. Note that if the given pointer is not shared, bad
- * things will happen, likely a segmentation fault. If in doubt, try
- * strlen().
- */
 EAPI int
 eina_ustringshare_strlen(const Eina_Unicode *str)
 {
@@ -225,19 +125,8 @@ eina_ustringshare_strlen(const Eina_Unicode *str)
    return len;
 }
 
-/**
- * @brief Dump the contents of the share_common.
- *
- * This function dumps all strings in the share_common to stdout with a
- * DDD: prefix per line and a memory usage summary.
- */
 EAPI void
 eina_ustringshare_dump(void)
 {
    eina_share_common_dump(ustringshare_share, NULL, 0);
 }
-
-/**
- * @}
- */
-
