@@ -2863,11 +2863,13 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
  * @param style_pad_r the pad to update.
  * @param style_pad_t the pad to update.
  * @param style_pad_b the pad to update.
+ * @param create_item Create a new format item if true, only process otherwise.
  */
 static void
 _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
       Evas_Object_Textblock_Format **_fmt, Evas_Object_Textblock_Node_Format *n,
-      int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b)
+      int *style_pad_l, int *style_pad_r, int *style_pad_t, int *style_pad_b,
+      Eina_Bool create_item)
 {
    Evas_Object_Textblock_Format *fmt = *_fmt;
    /* FIXME: comment the algo */
@@ -2949,16 +2951,21 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                }
           }
 
-        fi = _layout_format_item_add(c, n, NULL, fmt);
-        fi->vsize = vsize;
-        fi->size = size;
-        fi->formatme = 1;
-        fi->parent.w = fi->parent.adv = w; /* For formats items it's usually
-                                              the same, we don't handle the
-                                              special cases yet. */
-        fi->parent.h = h;
+        if (create_item)
+          {
+             fi = _layout_format_item_add(c, n, NULL, fmt);
+             fi->vsize = vsize;
+             fi->size = size;
+             fi->formatme = 1;
+             /* For formats items it's usually
+                the same, we don't handle the
+                special cases yet. */
+             fi->parent.w = fi->parent.adv = w;
+             fi->parent.h = h;
+          }
         handled = 1;
      }
+
    if (!handled)
      {
         if (s[0] == '+')
@@ -2980,7 +2987,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                {
                   _layout_format_value_handle(c, fmt, item);
                }
-             else
+             else if (create_item)
                {
                   if ((_IS_PARAGRAPH_SEPARATOR(c->o, item)) ||
                         (_IS_LINE_SEPARATOR(item)))
@@ -3549,7 +3556,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                          {
                             _layout_do_format(obj, c, &fmt, fnode,
                                   &style_pad_l, &style_pad_r,
-                                  &style_pad_t, &style_pad_b);
+                                  &style_pad_t, &style_pad_b, EINA_FALSE);
                             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                          }
                        continue;
@@ -3575,7 +3582,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                   /* No need to skip on the first run, or a non-visible one */
                   _layout_text_append(c, fmt, n, start, off, o->repch);
                   _layout_do_format(obj, c, &fmt, fnode, &style_pad_l,
-                        &style_pad_r, &style_pad_t, &style_pad_b);
+                        &style_pad_r, &style_pad_t, &style_pad_b, EINA_TRUE);
                   if ((c->have_underline2) || (c->have_underline))
                     {
                        if (style_pad_b < c->underline_extend)
