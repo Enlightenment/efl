@@ -4920,3 +4920,28 @@ elm_genlist_scroller_policy_get(const Evas_Object   *obj,
    if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
 }
 
+/**
+ * Update the contents of all realized items
+ *
+ * This updates all realized items by calling all the item class functions again
+ * to get the icons, labels and states. Use this when the original
+ * item data has changed and the changes are desired to be reflected.
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_realized_items_update(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   Eina_List *list, *l;
+   Elm_Genlist_Item *it;
+
+   list = elm_genlist_realized_items_get(obj);
+   EINA_LIST_FOREACH(list, l, it)
+     elm_genlist_item_update(it);
+}
+
+
