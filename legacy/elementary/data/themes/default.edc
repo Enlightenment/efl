@@ -35072,6 +35072,9 @@ collections {
 
       data {
          item: "len_threshold" "14";
+         item: "display_item_num" "3";
+         item: "min_height" "-1";
+         item: "min_width" "-1";
       }
 
       parts {

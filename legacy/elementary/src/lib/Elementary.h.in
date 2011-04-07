@@ -2552,6 +2552,7 @@ extern "C" {
    EAPI const char            *elm_diskselector_item_cursor_style_get(const Elm_Diskselector_Item *item) EINA_ARG_NONNULL(1);
    EAPI void                   elm_diskselector_item_cursor_engine_only_set(Elm_Diskselector_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool              elm_diskselector_item_cursor_engine_only_get(const Elm_Diskselector_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void                   elm_diskselector_display_item_num_set(Evas_Object *obj, int num) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "selected" - when item is selected (scroller stops)
     */
