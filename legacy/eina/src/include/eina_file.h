@@ -25,6 +25,21 @@
 #include "eina_array.h"
 #include "eina_iterator.h"
 
+
+/**
+ * @addtogroup Eina_File_Group File
+ *
+ * @brief Functions to traverse directories and split paths.
+ *
+ * @li eina_file_dir_list() list the content of a directory,
+ * recusrsively or not, and can call a callback function for eachfound
+ * file.
+ * @li eina_file_split() split a path into all the subdirectories that
+ * compose it, according to the separator of the file system.
+ *
+ * @{
+ */
+
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
@@ -99,14 +114,133 @@ struct _Eina_File_Direct_Info
  */
 #define EINA_FILE_DIR_LIST_CB(function) ((Eina_File_Dir_List_Cb)function)
 
+
+/**
+ * @brief List all files on the directory calling the function for every file found.
+ *
+ * @param dir The directory name.
+ * @param recursive Iterate recursively in the directory.
+ * @param cb The callback to be called.
+ * @param data The data to pass to the callback.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * This function lists all the files in @p dir. To list also all the
+ * sub directoris recursively, @p recursive must be set to #EINA_TRUE,
+ * otherwise it must be set to #EINA_FALSE. For each found file, @p cb
+ * is called and @p data is passed to it.
+ *
+ * If @p cb or @p dir are @c NULL, or if @p dir is a string of size 0,
+ * or if @p dir can not be opened, this function returns #EINA_FALSE
+ * immediately. otherwise, it returns #EINA_TRUE.
+ */
 EAPI Eina_Bool eina_file_dir_list(const char           *dir,
                                   Eina_Bool             recursive,
                                   Eina_File_Dir_List_Cb cb,
                                   void                 *data) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @brief Split a path according to the delimiter of the filesystem.
+ *
+ * @param path The path to split.
+ * @return An array of the parts of the path to split.
+ *
+ * This function splits @p path according to the delimiter of the used
+ * filesystem. If  @p path is @c NULL or if the array can not be
+ * created, @c NULL is returned, otherwise, an array with the
+ * different parts of @p path is returned.
+ */
 EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * Get an iterator to list the content of a directory.
+ *
+ * Iterators are cheap to be created and allow interruption at any
+ * iteration. At each iteration, only the next directory entry is read
+ * from the filesystem with readdir_r().
+ *
+ * The iterator will handle the user a stringshared value with the
+ * full path. One must call eina_stringshare_del() on it after usage
+ * to not leak!
+ *
+ * The eina_file_direct_ls() function will provide a possibly faster
+ * alternative if you need to filter the results somehow, like
+ * checking extension.
+ *
+ * The iterator will walk over '.' and '..' without returning them.
+ *
+ * The iterator container is the DIR* corresponding to the current walk.
+ *
+ * @param  dir The name of the directory to list
+ * @return Return an Eina_Iterator that will walk over the files and
+ *         directory in the pointed directory. On failure it will
+ *         return NULL. The iterator emits stringshared value with the
+ *         full path and must be freed with eina_stringshare_del().
+ *
+ * @see eina_file_direct_ls()
+ */
 EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * Get an iterator to list the content of a directory, with direct information.
+ *
+ * Iterators are cheap to be created and allow interruption at any
+ * iteration. At each iteration, only the next directory entry is read
+ * from the filesystem with readdir_r().
+ *
+ * The iterator returns the direct pointer to couple of useful information in
+ * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
+ *
+ * The iterator will walk over '.' and '..' without returning them.
+ *
+ * The iterator container is the DIR* corresponding to the current walk.
+ *
+ * @param  dir The name of the directory to list
+ * 
+ * @return Return an Eina_Iterator that will walk over the files and
+ *         directory in the pointed directory. On failure it will
+ *         return NULL. The iterator emits #Eina_File_Direct_Info
+ *         pointers that could be used but not modified. The lifetime
+ *         of the returned pointer is until the next iteration and
+ *         while the iterator is live, deleting the iterator
+ *         invalidates the pointer. It will call stat() when filesystem
+ *         doesn't provide information to fill type from readdir_r().
+ *
+ * @see eina_file_direct_ls()
+ */
 EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * Get an iterator to list the content of a directory, with direct information.
+ *
+ * Iterators are cheap to be created and allow interruption at any
+ * iteration. At each iteration, only the next directory entry is read
+ * from the filesystem with readdir_r().
+ *
+ * The iterator returns the direct pointer to couple of useful information in
+ * #Eina_File_Direct_Info and that pointer should not be modified anyhow!
+ *
+ * The iterator will walk over '.' and '..' without returning them.
+ *
+ * The iterator container is the DIR* corresponding to the current walk.
+ *
+ * @param  dir The name of the directory to list
+ * 
+ * @return Return an Eina_Iterator that will walk over the files and
+ *         directory in the pointed directory. On failure it will
+ *         return NULL. The iterator emits #Eina_File_Direct_Info
+ *         pointers that could be used but not modified. The lifetime
+ *         of the returned pointer is until the next iteration and
+ *         while the iterator is live, deleting the iterator
+ *         invalidates the pointer. It will not call stat() when filesystem
+ *         doesn't provide information to fill type from readdir_r().
+ *
+ * @see eina_file_ls()
+ */
 EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * @}
+ */
 
 /**
  * @}
