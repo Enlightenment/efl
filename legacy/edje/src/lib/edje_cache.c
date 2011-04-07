@@ -76,6 +76,33 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    edc->references = 1;
    edc->part = ce->entry;
 
+   /* For Edje file build with Edje 1.0, people expect text.align to be 0.0 0.0 */
+   if (edf->version <= 3 && edf->minor <= 1)
+     {
+        /* This will preserve previous rendering */
+        unsigned int i;
+
+        for (i = 0; i < edc->parts_count; ++i)
+          {
+             if (edc->parts[i]->type == EDJE_PART_TYPE_TEXTBLOCK)
+               {
+                  Edje_Part_Description_Text *text;
+                  unsigned int j;
+
+                  text = (Edje_Part_Description_Text*) edc->parts[i]->default_desc;
+                  text->text.align.x = TO_DOUBLE(0.0);
+                  text->text.align.y = TO_DOUBLE(0.0);
+
+                  for (j = 0; j < edc->parts[i]->other.desc_count; ++j)
+                    {
+                       text =  (Edje_Part_Description_Text*) edc->parts[i]->other.desc[j];
+                       text->text.align.x = TO_DOUBLE(0.0);
+                       text->text.align.y = TO_DOUBLE(0.0);
+                    }
+               }
+          }
+     }
+
    snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i", id);
    data = eet_read(edf->ef, buf, &size);
 
