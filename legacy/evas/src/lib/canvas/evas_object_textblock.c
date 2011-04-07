@@ -519,6 +519,7 @@ static void _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Ob
 static void _evas_textblock_node_format_free(Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
+static void _evas_textblock_invalidate_all(Evas_Object_Textblock *o);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
 
@@ -1733,6 +1734,7 @@ struct _Ctxt
    double align, valign;
    Eina_Bool align_auto : 1;
    Eina_Bool calc_only : 1;
+   Eina_Bool width_changed : 1;
 };
 
 static void _layout_text_add_logical_item(Ctxt *c, Evas_Object_Textblock_Text_Item *ti, Eina_List *rel);
@@ -1813,14 +1815,31 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 /**
  * @internal
  * Create a new layout paragraph.
+ * If c->par is not NULL, the paragraph is appended/prepended according
+ * to the append parameter. If it is NULL, the paragraph is appended at
+ * the end of the list.
  *
  * @param c The context to work on - Not NULL.
+ * @param n the associated text node
+ * @param append true to append, false to prpend.
  */
 static void
-_layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n)
+_layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
+      Eina_Bool append)
 {
+   Evas_Object_Textblock_Paragraph *rel_par = c->par;
    c->par = calloc(1, sizeof(Evas_Object_Textblock_Paragraph));
-   c->paragraphs = (Evas_Object_Textblock_Paragraph *)eina_inlist_append(EINA_INLIST_GET(c->paragraphs), EINA_INLIST_GET(c->par));
+   if (append || !rel_par)
+      c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+         eina_inlist_append_relative(EINA_INLIST_GET(c->paragraphs),
+               EINA_INLIST_GET(c->par),
+               EINA_INLIST_GET(rel_par));
+   else
+      c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+         eina_inlist_prepend_relative(EINA_INLIST_GET(c->paragraphs),
+               EINA_INLIST_GET(c->par),
+               EINA_INLIST_GET(rel_par));
+
    c->ln = NULL;
    c->par->text_node = n;
    c->par->line_no = -1;
@@ -2275,11 +2294,6 @@ loop_advance:
    else if (c->have_underline)
      {
         if (c->maxdescent < 2) c->underline_extend = 2 - c->maxdescent;
-     }
-   /* Update the paragraphs line number. */
-   if (c->par->line_no == -1)
-     {
-        c->par->line_no = c->line_no;
      }
    c->ln->line_no = c->line_no - c->ln->par->line_no;
    c->line_no++;
@@ -3215,6 +3229,31 @@ _layout_visualize_par(Ctxt *c)
    if (!c->par->logical_items)
      return 2;
 
+   /* Check if we need to skip this paragraph because it's already layouted
+    * correctly, and mark handled nodes as dirty. */
+   c->par->line_no = c->line_no;
+   if (c->par->text_node)
+     {
+        /* Skip this paragraph if width is the same, there is no ellipsis
+         * and we aren't just calculating. */
+        if (!c->par->text_node->new && !c->par->text_node->dirty &&
+              !c->calc_only && !c->width_changed &&
+              !c->o->have_ellipsis)
+          {
+             Evas_Object_Textblock_Line *ln;
+             /* Update c->line_no */
+             ln = (Evas_Object_Textblock_Line *)
+                EINA_INLIST_GET(c->par->lines)->last;
+             if (ln)
+                c->line_no = c->par->line_no + ln->line_no + 1;
+             return 0;
+          }
+        c->par->text_node->dirty = EINA_FALSE;
+        c->par->text_node->new = EINA_FALSE;
+     }
+
+   c->y = c->par->y;
+
    it = _ITEM(eina_list_data_get(c->par->logical_items));
    _layout_line_new(c, it->format);
    /* We walk on our own because we want to be able to add items from
@@ -3231,6 +3270,7 @@ _layout_visualize_par(Ctxt *c)
              i = eina_list_next(i);
              continue;
           }
+
 
         /* Check if we need to wrap, i.e the text is bigger than the width */
         if ((c->w >= 0) &&
@@ -3432,6 +3472,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->align_auto = EINA_TRUE;
    c->ln = NULL;
    c->calc_only = !!calc_only;
+   c->width_changed = (obj->cur.geometry.w != o->last_w);
 
    /* Start of logical layout creation */
 
@@ -3450,8 +3491,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    if (o->content_changed)
      {
-        /* FIXME-tom: Add some logic to redo only the dirty nodes */
-        _paragraphs_free(obj, o->paragraphs);
+        c->par = c->paragraphs = o->paragraphs;
         /* Go through all the text nodes to create the logical layout */
         EINA_INLIST_FOREACH(c->o->text_nodes, n)
           {
@@ -3459,13 +3499,62 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
              size_t start;
              int off;
 
-             /* Mark as if we cleaned the paragraph, although
-                we should really use it to fine tune the
-                changes here, and not just blindly mark */
-             n->new = EINA_FALSE;
-             n->dirty = EINA_FALSE;
+             /* If it's not a new paragraph, either update it or skip it.
+              * Remove all the paragraphs that were deleted */
+             if (!n->new)
+               {
+                  /* Remove all the deleted paragraphs at this point */
+                  while (c->par->text_node != n)
+                    {
+                       Evas_Object_Textblock_Paragraph *tmp_par =
+                          (Evas_Object_Textblock_Paragraph *)
+                          EINA_INLIST_GET(c->par)->next;
 
-             _layout_paragraph_new(c, n); /* Each node is a paragraph */
+                       c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+                          eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
+                                EINA_INLIST_GET(c->par));
+                       _paragraph_free(obj, c->par);
+
+                       c->par = tmp_par;
+                    }
+
+                  /* If it's dirty, remove and recreate, if it's clean,
+                   * skip to the next. */
+                  if (n->dirty)
+                    {
+                       Evas_Object_Textblock_Paragraph *prev_par = c->par;
+
+                       _layout_paragraph_new(c, n, EINA_TRUE);
+
+                       c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+                          eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
+                                EINA_INLIST_GET(prev_par));
+                       _paragraph_free(obj, prev_par);
+                    }
+                  else
+                    {
+                       c->par = (Evas_Object_Textblock_Paragraph *)
+                          EINA_INLIST_GET(c->par)->next;
+
+                       /* Update the format stack according to the node's
+                        * formats */
+                       fnode = n->format_node;
+                       start = off = 0;
+                       while (fnode && (fnode->text_node == n))
+                         {
+                            _layout_do_format(obj, c, &fmt, fnode,
+                                  &style_pad_l, &style_pad_r,
+                                  &style_pad_t, &style_pad_b);
+                            fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+                         }
+                       continue;
+                    }
+               }
+             else
+               {
+                  /* If it's a new paragraph, just add it. */
+                  _layout_paragraph_new(c, n, EINA_FALSE);
+               }
 
              /* For each text node to thorugh all of it's format nodes
               * append text from the start to the offset of the next format
@@ -3503,10 +3592,29 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                   fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                }
              _layout_text_append(c, fmt, n, start, -1, o->repch);
+             c->par = (Evas_Object_Textblock_Paragraph *)
+                EINA_INLIST_GET(c->par)->next;
+          }
+
+        /* Delete the rest of the layout paragraphs */
+        while (c->par)
+          {
+             Evas_Object_Textblock_Paragraph *tmp_par =
+                (Evas_Object_Textblock_Paragraph *)
+                EINA_INLIST_GET(c->par)->next;
+
+             c->paragraphs = (Evas_Object_Textblock_Paragraph *)
+                eina_inlist_remove(EINA_INLIST_GET(c->paragraphs),
+                      EINA_INLIST_GET(c->par));
+             _paragraph_free(obj, c->par);
+
+             c->par = tmp_par;
           }
         o->paragraphs = c->paragraphs;
+        c->par = NULL;
      }
-   else if (!calc_only)
+
+   if (!calc_only && c->width_changed)
      {
         _paragraphs_clear(obj, o->paragraphs);
         c->paragraphs = o->paragraphs;
@@ -3536,16 +3644,14 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                }
           }
      }
-   else /* Calc only and content hasn't changed */
-     {
-        c->paragraphs = o->paragraphs;
-     }
+
+   c->paragraphs = o->paragraphs;
 
    /* If there are no paragraphs, create the minimum needed,
     * if the last paragraph has no lines/text, create that as well */
    if (!c->paragraphs)
      {
-        _layout_paragraph_new(c, NULL);
+        _layout_paragraph_new(c, NULL, EINA_TRUE);
         o->paragraphs = c->paragraphs;
      }
    c->par = (Evas_Object_Textblock_Paragraph *)
@@ -3608,6 +3714,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
       EINA_INLIST_FOREACH(c->paragraphs, c->par)
         {
            _layout_update_par(c);
+
            /* Break if we should stop here. */
            if (_layout_visualize_par(c))
              break;
@@ -3888,7 +3995,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 
         o = (Evas_Object_Textblock *)(obj->object_data);
         _evas_textblock_changed(o, obj);
-        /* FIXME-tom: Update the affected nodes. */
+        _evas_textblock_invalidate_all(o);
      }
 
    _style_replace(ts, text);
@@ -4025,8 +4132,8 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
      }
    o->style = ts;
 
-    _evas_textblock_changed(o, obj);
-    /* FIXME-tom: Update the affected nodes */
+   _evas_textblock_changed(o, obj);
+   _evas_textblock_invalidate_all(o);
 }
 
 /**
@@ -4055,7 +4162,7 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
    if (ch) o->repch = eina_stringshare_add(ch);
    else o->repch = NULL;
    _evas_textblock_changed(o, obj);
-   /* FIXME-tom: Invalidate all the nodes */
+   _evas_textblock_invalidate_all(o);
 }
 
 /**
@@ -5112,7 +5219,6 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
         _evas_textblock_node_format_remove(o, pnode, 0);
      }
    _evas_textblock_changed(o, obj);
-   /* FIXME-tom: Add invalidation point? make the node? can't tell */
 }
 
 /**
@@ -6375,6 +6481,17 @@ _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
    evas_object_change(obj);
 }
 
+static void
+_evas_textblock_invalidate_all(Evas_Object_Textblock *o)
+{
+   Evas_Object_Textblock_Node_Text *n;
+
+   EINA_INLIST_FOREACH(o->text_nodes, n)
+     {
+        n->dirty = EINA_TRUE;
+     }
+}
+
 /**
  * Adds text to the current cursor position and set the cursor to *before*
  * the start of the text just added.
@@ -6655,7 +6772,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
      }
 
    _evas_textblock_changed(o, cur->obj);
-   /* FIXME-tom: Add invalidation point */
+   _evas_textblock_invalidate_all(o);
 
    return is_visible;
 }
@@ -6784,7 +6901,7 @@ EAPI void
 evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Node_Text *n1, *n2, *n;
+   Evas_Object_Textblock_Node_Text *n1, *n2;
    Eina_Bool should_merge = EINA_FALSE, reset_cursor = EINA_FALSE;
 
    if (!cur1 || !cur1->node) return;
@@ -6825,6 +6942,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
    else
      {
+        Evas_Object_Textblock_Node_Text *n;
         int len;
         _evas_textblock_node_text_adjust_offsets_to_start(o, n1, cur1->pos, -1);
         n = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
@@ -6872,7 +6990,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      evas_textblock_cursor_copy(cur1, o->cursor);
 
    _evas_textblock_changed(o, cur1->obj);
-   /* FIXME-tom: Should mark here as dirty! */
+   n1->dirty = n2->dirty = EINA_TRUE;
 }
 
 
@@ -8784,7 +8902,7 @@ _evas_object_textblock_rehint(Evas_Object *obj)
           }
      }
    _evas_textblock_changed(o, obj);
-   /* FIXME-tom: invalidate all the text nodes */
+   _evas_textblock_invalidate_all(o);
 }
 
 /**
