@@ -4943,5 +4943,3 @@ elm_genlist_realized_items_update(Evas_Object *obj)
    EINA_LIST_FOREACH(list, l, it)
      elm_genlist_item_update(it);
 }
-
-
