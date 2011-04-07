@@ -566,7 +566,3 @@ EAPI void eina_module_list_free(Eina_Array *array)
 
    eina_array_flush(array);
 }
-
-/**
- * @}
- */
