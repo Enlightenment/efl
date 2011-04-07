@@ -60,9 +60,11 @@ struct _Elm_Transit
    Ecore_Animator *animator;
    Eina_List *effect_list;
    Eina_List *objs;
+   Elm_Transit *prev_chain_transit;
+   Eina_List *next_chain_transits;
    Elm_Transit_Tween_Mode tween_mode;
    struct {
-      void (*func) (void *data, Elm_Transit *transit);
+      Elm_Transit_Effect_End_Cb func;
       void *arg;
    } del_data;
    struct {
@@ -221,6 +223,16 @@ _elm_transit_del(Elm_Transit *transit)
 {
    Eina_List *elist, *elist_next;
    Elm_Transit_Effect_Module *effect_module;
+   Elm_Transit *chain_transit;
+
+   EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
+     {
+        if (transit->prev_chain_transit)
+          transit->prev_chain_transit->next_chain_transits = eina_list_remove(transit->prev_chain_transit->next_chain_transits, transit);
+        chain_transit->prev_chain_transit = NULL;
+     }
+
+   eina_list_free(transit->next_chain_transits);
 
    if (transit->animator)
      ecore_animator_del(transit->animator);
@@ -236,6 +248,16 @@ _elm_transit_del(Elm_Transit *transit)
 
    EINA_MAGIC_SET(transit, EINA_MAGIC_NONE);
    free(transit);
+}
+
+static void
+_chain_transits_go(Elm_Transit *transit)
+{
+   Eina_List *elist, *elist_next;
+   Elm_Transit *chain_transit;
+
+   EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
+     elm_transit_go(chain_transit);
 }
 
 static void
@@ -301,6 +323,10 @@ _animator_animate_cb(void *data)
        (transit->repeat.current == transit->repeat.count) &&
        ((!transit->auto_reverse) || transit->repeat.reverse))
      {
+        /* run chain transit */
+        if (transit->next_chain_transits)
+           _chain_transits_go(transit);
+
         elm_transit_del(transit);
         return ECORE_CALLBACK_CANCEL;
      }
@@ -984,7 +1010,7 @@ elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_k
  * @param transit The transit object.
  * @return EINA_TRUE means the states of the objects will be reset.
  * If @p transit is NULL, EINA_FALSE is returned
-
+ *
  * @ingroup Transit
  */
 EAPI Eina_Bool
@@ -992,6 +1018,50 @@ elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, EINA_FALSE);
    return transit->state_keep;
+}
+
+/**
+ * Makes the chain relationship between two transits. 
+ *
+ * @note @p transit can not be NULL. Transit would have multiple chain transits.
+ * @note @p chain_transit can not be NULL. Chain transits could be chained to the only one transit. 
+ *
+ * @param transit The transit object.  
+ * @param chain_transit The chain transit object. This transit will be operated  *                      after transit is done. 
+ *
+ * @ingroup Transit
+ */
+EAPI void
+elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   ELM_TRANSIT_CHECK_OR_RETURN(chain_transit);
+
+   if (transit == chain_transit) return;
+   if (transit == chain_transit->prev_chain_transit) return;
+
+   if (chain_transit->prev_chain_transit)
+     chain_transit->prev_chain_transit->next_chain_transits = eina_list_remove(chain_transit->prev_chain_transit->next_chain_transits, chain_transit);
+
+   chain_transit->prev_chain_transit = transit;
+   transit->next_chain_transits = eina_list_append(transit->next_chain_transits, chain_transit);
+}
+
+/**
+ * Get the current chain transit list.  
+ *
+ * @note @p transit can not be NULL.
+ *
+ * @param transit The transit object.  
+ * @return chain transit list. 
+ *
+ * @ingroup Transit
+ */
+EAPI Eina_List *
+elm_transit_chain_transits_get(const Elm_Transit * transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   return transit->next_chain_transits;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
