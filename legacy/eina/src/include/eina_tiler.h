@@ -68,6 +68,27 @@ EAPI Eina_Bool          eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle 
 EAPI void               eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r);
 EAPI void               eina_tiler_clear(Eina_Tiler *t);
 EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
+
+/**
+ * @brief Creates a new Eina_Iterator that slices over a list of tiles.
+ *
+ * @param   x X axis coordinate.
+ * @param   y Y axis coordinate.
+ * @param   w width.
+ * @param   h height.
+ * @param   tile_w tile width.
+ * @param   tile_h tile height.
+ * @return  A pointer to the Eina_Iterator.
+ *          @c NULL on failure.
+ *
+ * The tile grid is defined by @a tile_w and @a tile_h while the region is
+ * defined by @a x, @a y, @a w, @a h. The output is given as
+ * @c Eina_Tile_Grid_Info where tile index is given in @c col col and
+ * @c row row with tile-relative
+ *    coordinates in @c x, @c y, @c w, @c h. If tile was fully filled by
+ *    region, then @c full flag
+ *     is set.
+ */
 EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, int h, int tile_w, int tile_h);
 static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, const Eina_Tile_Grid_Info **rect);
 static inline Eina_Bool eina_tile_grid_slicer_setup(Eina_Tile_Grid_Slicer *slc, int x, int y, int w, int h, int tile_w, int tile_h);
