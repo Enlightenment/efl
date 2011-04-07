@@ -94,6 +94,7 @@ elm_calendar.c \
 elm_flipselector.c \
 elm_diskselector.c \
 elm_colorselector.c \
+elm_segment_control.c \
 \
 elc_anchorblock.c \
 elc_anchorview.c \

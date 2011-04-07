@@ -120,6 +120,7 @@ void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
 void test_ctxpopup(void *data, Evas_Object *obj, void *event_info);
 void test_bubble(void *data, Evas_Object *obj, void *event_info);
+void test_segment_control(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
@@ -373,6 +374,7 @@ my_win_main(char *autorun)
    ADD_TEST("Color Selector", test_colorselector);
    ADD_TEST("Ctxpopup", test_ctxpopup);
    ADD_TEST("Bubble", test_bubble);
+   ADD_TEST("Segment Control", test_segment_control);
    ADD_TEST("Store", test_store);
 #undef ADD_TEST
 

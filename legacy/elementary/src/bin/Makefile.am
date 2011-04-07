@@ -94,6 +94,7 @@ test_diskselector.c \
 test_colorselector.c \
 test_ctxpopup.c \
 test_bubble.c \
+test_segment_control.c \
 test_store.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \

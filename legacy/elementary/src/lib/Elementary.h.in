@@ -2780,6 +2780,24 @@ extern "C" {
   EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
   EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
 
+   /* SegmentControl */
+   typedef struct _Elm_Segment_Item Elm_Segment_Item;
+   EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+   EAPI Elm_Segment_Item *elm_segment_control_item_add(Evas_Object *obj, Evas_Object *icon, const char *label) EINA_ARG_NONNULL(1);
+   EAPI Elm_Segment_Item *elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon, const char *label, int index) EINA_ARG_NONNULL(1);
+   EAPI void              elm_segment_control_item_del(Elm_Segment_Item *it) EINA_ARG_NONNULL(1);
+   EAPI void              elm_segment_control_item_del_at(Evas_Object *obj, int index) EINA_ARG_NONNULL(1);
+   EAPI int               elm_segment_control_item_count_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Elm_Segment_Item *elm_segment_control_item_get(const Evas_Object *obj, int index) EINA_ARG_NONNULL(1);
+   EAPI const char       *elm_segment_control_item_label_get(const Evas_Object *obj, int index) EINA_ARG_NONNULL(1);
+   EAPI void              elm_segment_control_item_label_set(Elm_Segment_Item* it, const char* label) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object      *elm_segment_control_item_icon_get(const Evas_Object *obj, int index) EINA_ARG_NONNULL(1);
+   EAPI void              elm_segment_control_item_icon_set(Elm_Segment_Item *it, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EAPI int               elm_segment_control_item_index_get(const Elm_Segment_Item *it) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object      *elm_segment_control_item_object_get(const Elm_Segment_Item *it) EINA_ARG_NONNULL(1);
+   EAPI Elm_Segment_Item *elm_segment_control_item_selected_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void              elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool select) EINA_ARG_NONNULL(1);
+
 #ifdef __cplusplus
 }
 #endif
