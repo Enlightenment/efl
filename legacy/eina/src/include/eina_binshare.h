@@ -54,6 +54,28 @@
 #include "eina_types.h"
 
 /**
+ * @page tutorial_binshare_page Binary Share Tutorial
+ *
+ * Should call eina_binshare_init() before usage and eina_binshare_shutdown() after.
+ * to be written...
+ *
+ */
+
+/**
+ * @addtogroup Eina_Binshare_Group Binary Share
+ *
+ * These functions allow you to store one copy of an object, and use it
+ * throughout your program.
+ *
+ * This is a method to reduce the number of duplicated objects kept in
+ * memory.
+ *
+ * For more information, you can look at the @ref tutorial_binshare_page.
+ *
+ * @{
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @{
@@ -65,11 +87,81 @@
  * @{
  */
 
+
+/**
+ * @brief Retrieve an instance of an object for use in a program.
+ *
+ * @param   obj The binary object to retrieve an instance of.
+ * @param   olen The byte size
+ * @return  A pointer to an instance of the object on success.
+ *          @c NULL on failure.
+ *
+ * This function retrieves an instance of @p obj. If @p obj is
+ * @c NULL, then @c NULL is returned. If @p obj is already stored, it
+ * is just returned and its reference counter is increased. Otherwise
+ * it is added to the objects to be searched and a duplicated object
+ * of @p obj is returned.
+ *
+ * This function does not check object size, but uses the
+ * exact given size. This can be used to share part of a larger
+ * object or subobject.
+ *
+ * @see eina_binshare_add()
+ */
 EAPI const void *eina_binshare_add_length(const void  *obj,
                                           unsigned int olen) EINA_PURE EINA_WARN_UNUSED_RESULT;
+
+/**
+ * Increment references of the given shared object.
+ *
+ * @param obj The shared object.
+ * @return    A pointer to an instance of the object on success.
+ *            @c NULL on failure.
+ *
+ * This is similar to eina_share_common_add(), but it's faster since it will
+ * avoid lookups if possible, but on the down side it requires the parameter
+ * to be shared before, in other words, it must be the return of a previous
+ * eina_binshare_add().
+ *
+ * There is no unref since this is the work of eina_binshare_del().
+ */
 EAPI const void *eina_binshare_ref(const void *obj);
+
+/**
+ * @brief Note that the given object has lost an instance.
+ *
+ * @param obj object The given object.
+ *
+ * This function decreases the reference counter associated to @p obj
+ * if it exists. If that counter reaches 0, the memory associated to
+ * @p obj is freed. If @p obj is NULL, the function returns
+ * immediately.
+ *
+ * Note that if the given pointer is not shared or NULL, bad things
+ * will happen, likely a segmentation fault.
+ */
 EAPI void        eina_binshare_del(const void *obj);
+
+/**
+ * @brief Note that the given object @b must be shared.
+ *
+ * @param obj the shared object to know the length. It is safe to
+ *        give NULL, in that case -1 is returned.
+ * @return The length of the shared object.
+ *
+ * This function is a cheap way to known the length of a shared
+ * object. Note that if the given pointer is not shared, bad
+ * things will happen, likely a segmentation fault. If in doubt, try
+ * strlen().
+ */
 EAPI int         eina_binshare_length(const void *obj) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Dump the contents of the share_common.
+ *
+ * This function dumps all objects in the share_common to stdout with a
+ * DDD: prefix per line and a memory usage summary.
+ */
 EAPI void        eina_binshare_dump(void);
 
 /**
@@ -91,6 +183,10 @@ EAPI void        eina_binshare_dump(void);
  * @see eina_stringshare_add_length()
  */
 #define eina_binshare_add(ptr) eina_binshare_add_length(ptr, sizeof(*ptr))
+
+/**
+ * @}
+ */
 
 /**
  * @}

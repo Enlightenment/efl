@@ -51,21 +51,6 @@ static int _eina_hamsters = -1;
 *                                   API                                      *
 *============================================================================*/
 
-/**
- * @addtogroup Eina_Hamster_Group Hamster
- *
- * @brief These functions provide hamster calls.
- *
- * @{
- */
-
-/**
- * @brief Get the hamster count.
- *
- * @return The number of available hamsters.
- *
- * This function returns how many hamsters you have.
- */
 EAPI int
 eina_hamster_count(void)
 {
