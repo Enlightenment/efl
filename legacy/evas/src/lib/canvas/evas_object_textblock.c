@@ -6772,7 +6772,10 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
      }
 
    _evas_textblock_changed(o, cur->obj);
-   _evas_textblock_invalidate_all(o);
+   if (!is_visible)
+      _evas_textblock_invalidate_all(o);
+   else if (cur->node)
+      cur->node->dirty = EINA_TRUE;
 
    return is_visible;
 }
