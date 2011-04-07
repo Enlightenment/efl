@@ -81,17 +81,6 @@ static const char __STRBUF_MAGIC_STR[] = "Eina Strbuf";
  *============================================================================*/
 
 
-/**
- * @addtogroup Eina_String_Buffer_Group String Buffer
- *
- * @brief These functions provide string buffers management.
- *
- * The String Buffer data type is designed to be a mutable string,
- * allowing to append, prepend or insert a string to a buffer.
- *
- * @{
- */
-
 EAPI Eina_Bool
 eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
 {
@@ -172,7 +161,3 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
 /* Unicode */
 
 #include "eina_strbuf_template_c.x"
-
-/**
- * @}
- */

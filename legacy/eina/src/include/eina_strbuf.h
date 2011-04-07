@@ -7,6 +7,17 @@
 #include "eina_types.h"
 
 /**
+ * @addtogroup Eina_String_Buffer_Group String Buffer
+ *
+ * @brief These functions provide string buffers management.
+ *
+ * The String Buffer data type is designed to be a mutable string,
+ * allowing to append, prepend or insert a string to a buffer.
+ *
+ * @{
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @{
@@ -447,6 +458,19 @@ EAPI void eina_strbuf_string_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
  */
 EAPI size_t    eina_strbuf_length_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
+
+/**
+ * @brief Replace the n-th string with an other string.
+ *
+ * @param buf The string buffer to work with.
+ * @param str The string to replace.
+ * @param with The replaceing string.
+ * @param n The number of the fitting string.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This function replaces the n-th occurrence of @p str in @p buf with
+ * @p with. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
+ */
 EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigned int n) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
@@ -464,7 +488,24 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
  */
 #define eina_strbuf_replace_first(buf, str, with) eina_strbuf_replace(buf, str, with, 1)
 
+
+/**
+ * @brief Replace all strings with an other string.
+
+ * @param buf the string buffer to work with.
+ * @param str The string to replace.
+ * @param with The replaceing string.
+ * @return How often the string was replaced.
+ *
+ * This function replaces all the occurrences of @p str in @ buf with
+ * the string @p with. This function returns the number of times @p str
+ * has been replaced. On failure, it returns 0.
+ */
 EAPI int eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @}
+ */
 
 /**
  * @}
