@@ -2994,11 +2994,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                     {
                        Evas_Object_Textblock_Format_Item *fi;
 
-                       /* If in compatible mode, insert a ps */
-                       if (c->o->newline_is_ps)
-                          fi = _layout_format_item_add(c, n, "ps", fmt);
-                       else
-                          fi = _layout_format_item_add(c, n, item, fmt);
+                       fi = _layout_format_item_add(c, n, item, fmt);
 
                        fi->parent.w = fi->parent.adv = 0;
                     }
@@ -3416,7 +3412,12 @@ _layout_visualize_par(Ctxt *c)
                   Evas_Object_Textblock_Format_Item *fi;
                   fi = _ITEM_FORMAT(it);
                   fi->y = c->y;
-                  if (fi->item && _IS_LINE_SEPARATOR(fi->item))
+                  /* If it's a newline, and we are not in newline compat
+                   * mode, or we are in newline compat mode, and this is
+                   * not used as a paragraph separator, advance */
+                  if (fi->item && _IS_LINE_SEPARATOR(fi->item) &&
+                        (!c->o->newline_is_ps ||
+                         eina_list_next(i)))
                     {
                        adv_line = 1;
                     }
