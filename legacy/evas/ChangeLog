@@ -221,3 +221,10 @@
 	* Fix bug in GL engine with someone stealing the GLX context away
         as well as scissor clips when rotated output is not 0 (90, 180, 270).
 
+2011-04-07 Tom Hacohen (TAsn)
+
+	* Major speed improvements.
+	* Only relayout and remake paragraphs that have actually changed.
+	  This means we are a lot faster than before, especially with
+	  long texts.
+
