@@ -2987,7 +2987,12 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
                     {
                        Evas_Object_Textblock_Format_Item *fi;
 
-                       fi = _layout_format_item_add(c, n, item, fmt);
+                       /* If in compatible mode, insert a ps */
+                       if (c->o->newline_is_ps)
+                          fi = _layout_format_item_add(c, n, "ps", fmt);
+                       else
+                          fi = _layout_format_item_add(c, n, item, fmt);
+
                        fi->parent.w = fi->parent.adv = 0;
                     }
                   else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
