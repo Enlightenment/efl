@@ -3237,7 +3237,7 @@ _layout_visualize_par(Ctxt *c)
         /* Skip this paragraph if width is the same, there is no ellipsis
          * and we aren't just calculating. */
         if (!c->par->text_node->new && !c->par->text_node->dirty &&
-              !c->calc_only && !c->width_changed &&
+              !c->calc_only && !c->width_changed && c->par->lines &&
               !c->o->have_ellipsis)
           {
              Evas_Object_Textblock_Line *ln;
