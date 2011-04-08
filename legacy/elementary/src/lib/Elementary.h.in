@@ -2186,14 +2186,46 @@ extern "C" {
         ELM_MAP_SOURCE_LAST
      } Elm_Map_Sources;
 
-   typedef struct _Elm_Map_Marker       Elm_Map_Marker;
-   typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class;
-   typedef struct _Elm_Map_Group_Class  Elm_Map_Group_Class;
+   typedef enum _Elm_Map_Route_Sources
+     {
+        ELM_MAP_ROUTE_SOURCE_YOURS,
+        ELM_MAP_ROUTE_SOURCE_MONAV,
+        ELM_MAP_ROUTE_SOURCE_ORS,
+        ELM_MAP_ROUTE_SOURCE_CUSTOM_1,
+        ELM_MAP_ROUTE_SOURCE_CUSTOM_2,
+        ELM_MAP_ROUTE_SOURCE_CUSTOM_3,
+        ELM_MAP_ROUTE_SOURCE_CUSTOM_4,
+        ELM_MAP_ROUTE_SOURCE_CUSTOM_5,
+        ELM_MAP_ROUTE_SOURCE_CUSTOM_6,
+        ELM_MAP_ROUTE_SOURCE_MODULE,
+        ELM_MAP_ROUTE_SOURCE_LAST
+     } Elm_Map_Route_Sources;
+
+   typedef enum _Elm_Map_Route_Type
+     {
+        ELM_MAP_ROUTE_TYPE_MOTOCAR,
+        ELM_MAP_ROUTE_TYPE_BICYCLE,
+        ELM_MAP_ROUTE_TYPE_FOOT,
+        ELM_MAP_ROUTE_TYPE_LAST
+     } Elm_Map_Route_Type;
+
+   typedef enum _Elm_Map_Route_Method
+     {
+        ELM_MAP_ROUTE_METHOD_FASTEST,
+        ELM_MAP_ROUTE_METHOD_SHORTEST,
+        ELM_MAP_ROUTE_METHOD_LAST
+     } Elm_Map_Route_Method;
+
+   typedef struct _Elm_Map_Marker          Elm_Map_Marker;
+   typedef struct _Elm_Map_Marker_Class    Elm_Map_Marker_Class;
+   typedef struct _Elm_Map_Group_Class     Elm_Map_Group_Class;
+   typedef struct _Elm_Map_Route           Elm_Map_Route;
    typedef Evas_Object *(*ElmMapMarkerGetFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
    typedef void         (*ElmMapMarkerDelFunc)      (Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o);
    typedef Evas_Object *(*ElmMapMarkerIconGetFunc)  (Evas_Object *obj, Elm_Map_Marker *marker, void *data);
    typedef Evas_Object *(*ElmMapGroupIconGetFunc)   (Evas_Object *obj, void *data);
    typedef char        *(*ElmMapSourceURLFunc)      (Evas_Object *obj, int x, int y, int zoom);
+   typedef char        *(*ElmMapRouteSourceURLFunc) (Evas_Object *obj, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 
    EAPI Evas_Object          *elm_map_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_zoom_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
@@ -2233,13 +2265,23 @@ extern "C" {
    EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source) EINA_ARG_NONNULL(1);
    EAPI Elm_Map_Sources       elm_map_source_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI void                  elm_map_source_custom_api_set(Elm_Map_Sources source, const char *label, int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb) EINA_ARG_NONNULL(2, 5);
+   EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_source_custom_api_set(Elm_Map_Sources source, const char *label, int zoom_min, int zoom_max, ElmMapSourceURLFunc url_cb, ElmMapRouteSourceURLFunc route_url_cb) EINA_ARG_NONNULL(2, 5, 6);
    EAPI int                   elm_map_source_zoom_min_get(Elm_Map_Sources source);
    EAPI int                   elm_map_source_zoom_max_get(Elm_Map_Sources source);
    EAPI const char           *elm_map_source_name_get(Elm_Map_Sources source);
    EAPI void                  elm_map_user_agent_set(Evas_Object *obj, const char *user_agent) EINA_ARG_NONNULL(1, 2);
    EAPI const char           *elm_map_user_agent_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Elm_Map_Route        *elm_map_route_add(Evas_Object *obj, Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_route_remove(Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_route_color_set(Elm_Map_Route *route, int r, int g , int b, int a) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_route_color_get(Elm_Map_Route *route, int *r, int *g , int *b, int *a) EINA_ARG_NONNULL(1);
+   EAPI double                elm_map_route_distance_get(Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+   EAPI const char           *elm_map_route_node_get(Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+   EAPI const char           *elm_map_route_waypoint_get(Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+
    /* smart callbacks called:
     * "clicked" - when image clicked
     * "press" - when mouse/finger held down initially on image
