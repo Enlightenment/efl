@@ -1021,13 +1021,13 @@ elm_transit_objects_final_state_keep_get(const Elm_Transit *transit)
 }
 
 /**
- * Makes the chain relationship between two transits. 
+ * Makes the chain relationship between two transits.
  *
  * @note @p transit can not be NULL. Transit would have multiple chain transits.
- * @note @p chain_transit can not be NULL. Chain transits could be chained to the only one transit. 
+ * @note @p chain_transit can not be NULL. Chain transits could be chained to the only one transit.
  *
- * @param transit The transit object.  
- * @param chain_transit The chain transit object. This transit will be operated  *                      after transit is done. 
+ * @param transit The transit object.
+ * @param chain_transit The chain transit object. This transit will be operated  *                      after transit is done.
  *
  * @ingroup Transit
  */
@@ -1048,12 +1048,12 @@ elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
 }
 
 /**
- * Get the current chain transit list.  
+ * Get the current chain transit list.
  *
  * @note @p transit can not be NULL.
  *
- * @param transit The transit object.  
- * @return chain transit list. 
+ * @param transit The transit object.
+ * @return chain transit list.
  *
  * @ingroup Transit
  */

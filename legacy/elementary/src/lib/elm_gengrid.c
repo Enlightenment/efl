@@ -101,7 +101,7 @@
  * absolutely must have a specific style that overrides any theme the
  * user or system sets up you can use elm_theme_overlay_add() to add
  * such a file.
- * 
+ *
  * Signals that you can add callbacks for are:
  *
  * "clicked,double" - The user has double-clicked or pressed enter on
@@ -115,7 +115,7 @@
  *              as a real evas object. event_info is the Gengrid item that was
  *              created. The object may be deleted at any time, so it is up to
  *              the caller to not use the object pointer from
- *              elm_gengrid_item_object_get() in a way where it may point to 
+ *              elm_gengrid_item_object_get() in a way where it may point to
  *              freed objects.
  * "unrealized" - This is called when the real evas object for this item
  *                is deleted. event_info is the Gengrid item that was created.

@@ -74,7 +74,7 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
         sd->obj = evas_object_image_add(evas_object_evas_get(obj));
         evas_object_image_scale_hint_set(sd->obj, EVAS_IMAGE_SCALE_HINT_STATIC);
         evas_object_smart_member_add(sd->obj, obj);
-        evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED, 
+        evas_object_event_callback_add(sd->obj, EVAS_CALLBACK_IMAGE_PRELOADED,
                                        _preloaded, sd);
         evas_object_clip_set(sd->obj, pclip);
         sd->edje = EINA_FALSE;

@@ -73,9 +73,9 @@
  * The file to load and save to is specified by elm_entry_file_set().
  *
  * Signals that you can add callbacks for are:
- * 
+ *
  * "changed" - The text within the entry was changed
- * "activated" - The entry has had editing finished and changes are to be committed 
+ * "activated" - The entry has had editing finished and changes are to be committed
                  (generally when enter key is pressed)
  * "press" - The entry has been clicked
  * "longpressed" - The entry has been clicked for a couple seconds

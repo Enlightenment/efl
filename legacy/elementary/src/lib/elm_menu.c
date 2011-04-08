@@ -10,7 +10,7 @@
  *
  * Signals that you can add callbacks for are:
  *
- * "clicked" - the user clicked the empty space in the menu to dismiss. 
+ * "clicked" - the user clicked the empty space in the menu to dismiss.
  *             event_info is NULL.
  */
 

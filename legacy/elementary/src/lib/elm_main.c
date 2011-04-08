@@ -2014,7 +2014,7 @@ elm_cache_flush_enabled_set(Eina_Bool enabled)
  * Set the configured cache flush enabled state for all applications on the
  * display
  *
- * This sets the globally configured cache flush enabled state for all 
+ * This sets the globally configured cache flush enabled state for all
  * applications on the display.
  *
  * @param size The cache flush enabled state
@@ -3347,7 +3347,7 @@ elm_object_signal_emit(Evas_Object *obj,
  * @param data A pointer to data to pass in to the callback function.
  * @ingroup General
  */
-EAPI void 
+EAPI void
 elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
     EINA_SAFETY_ON_NULL_RETURN(obj);

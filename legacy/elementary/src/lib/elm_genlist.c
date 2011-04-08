@@ -208,7 +208,7 @@
  * "expand,request" - This is called when a user has indicated they want to
  *                    expand a tree branch item. The callback should decide if
  *                    the item can expand (has any children) and then call
- *                    elm_genlist_item_expanded_set() appropriately to set the 
+ *                    elm_genlist_item_expanded_set() appropriately to set the
  *                    state. The event_info parameter is the genlist item that
  *                    was indicated to expand.
  * "contract,request" - This is called when a user has indicated they want to
@@ -220,7 +220,7 @@
  * "realized" - This is called when the item in the list is created as a real
  *              evas object. event_info parameter is the genlist item that was
  *              created. The object may be deleted at any time, so it is up to
- *              the caller to not use the object pointer from 
+ *              the caller to not use the object pointer from
  *              elm_genlist_item_object_get() in a way  where it may point to
  *              freed objects.
  * "unrealized" - This is called just before an item is unrealized. After this
@@ -232,7 +232,7 @@
  *                     (not scrolled) down.
  * "drag,start,left" - This is called when the item in the list has been dragged
  *                     (not scrolled) left.
- * "drag,start,right" - This is called when the item in the list has been 
+ * "drag,start,right" - This is called when the item in the list has been
  *                      dragged (not scrolled) right.
  * "drag,stop" - This is called when the item in the list has stopped being
  *               dragged.

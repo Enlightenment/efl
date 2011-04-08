@@ -22,7 +22,7 @@
  * "loaded" - This is called when the image file load is complete for the first
  *            view (low resolution blurry version).
  * "load,details" - Photo detailed data load begins.
- * "loaded,details" - This is called when the image file load is complete for 
+ * "loaded,details" - This is called when the image file load is complete for
  *                    the detailed image data (full resolution needed).
  * "zoom,start" - Zoom animation started.
  * "zoom,stop" - Zoom animation stopped.

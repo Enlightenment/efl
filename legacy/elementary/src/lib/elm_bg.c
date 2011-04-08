@@ -49,7 +49,7 @@ _theme_hook(Evas_Object *obj)
    if (wd->overlay)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
 
-   // FIXME: if i don't do this, bg doesnt calc correctly. why?   
+   // FIXME: if i don't do this, bg doesnt calc correctly. why?
    evas_object_geometry_get(wd->base, NULL, NULL, &w, &h);
    evas_object_resize(wd->base, w, h);
 }
@@ -236,7 +236,7 @@ elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
  * @param obj The bg object
  * @param option The desired background option (TILE, SCALE)
  *
- * This sets the option used for manipulating the display of the background 
+ * This sets the option used for manipulating the display of the background
  * image. The image can be tiled or scaled.
  *
  * @ingroup Bg

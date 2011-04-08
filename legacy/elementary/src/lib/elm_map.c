@@ -61,7 +61,7 @@ typedef struct _Route_Dump Route_Dump;
 #define YOURS_DESCRIPTION "description"
 #define YOURS_COORDINATES "coordinates"
 
-// TODO: fix monav & ors url 
+// TODO: fix monav & ors url
 #define ROUTE_MONAV_URL "http://"
 #define ROUTE_ORS_URL "http:///"
 
@@ -4076,7 +4076,7 @@ elm_map_route_add(Evas_Object *obj,
         free(route);
         return NULL;
      }
-   
+
    route->con_url = ecore_con_url_new(NULL);
    route->ud.fname = strdup(buf);
    INF("xml file : %s", route->ud.fname);

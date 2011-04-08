@@ -10,8 +10,8 @@
  * exposed as an evas_object_smart_callback_call() of the button.
  *
  * Signals that you can add callbacks for are:
- * 
- * "file,chosen" - the user has selected a path, whose string pointer comes 
+ *
+ * "file,chosen" - the user has selected a path, whose string pointer comes
  *                 as event info
  *
  */

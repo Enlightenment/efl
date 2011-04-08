@@ -835,7 +835,7 @@ elm_box_children_get(const Evas_Object *obj)
  * @param obj The Elm_Box
  * @param horizontal The horizontal space between elements
  * @param vertical The vertical space between elements
- * 
+ *
  * @ingroup Box
  */
 EAPI void
@@ -871,7 +871,7 @@ elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *
  * @param obj The Elm_Box
  * @param horizontal The horizontal alignment of elements
  * @param vertical The vertical alignment of elements
- * 
+ *
  * @ingroup Box
  */
 EAPI void

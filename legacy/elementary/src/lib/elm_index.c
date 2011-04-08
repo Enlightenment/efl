@@ -13,7 +13,7 @@
  * "delay,changed" - when the selected index item changes, but after some small i
  *                   dle period
  * "selected" - when the user releases a finger and selects an item
- * "level,up" - when the user moves a finger from the first level to the second 
+ * "level,up" - when the user moves a finger from the first level to the second
  *              level
  * "level,down" - when the user moves a finger from the second level to the first *                level
  */
