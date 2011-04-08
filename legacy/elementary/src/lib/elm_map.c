@@ -51,7 +51,7 @@ typedef struct _Route_Dump Route_Dump;
 #define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
 #define DEST_FILE_PATH "%s%d.png"
-#define DEST_XML_FILE "/tmp/%d.xml"
+#define DEST_XML_FILE "/tmp/elm_map-XXXXXX.xml"
 
 #define ROUTE_YOURS_URL "http://www.yournavigation.org/api/dev/route.php"
 #define ROUTE_TYPE_MOTORCAR "motocar"
@@ -95,15 +95,19 @@ static char * _custom5_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoo
 static char * _custom6_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
 
 static char *_yours_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
-static char *_monva_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
+/*
+static char *_monav_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
 static char *_ors_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
+ */
 static char *_route_custom1_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 static char *_route_custom2_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 static char *_route_custom3_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 static char *_route_custom4_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 static char *_route_custom5_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 static char *_route_custom6_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
-static char *_routee_module_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
+/*
+static char *_route_module_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
+ */
 
 static Map_Sources_Tab map_sources_tab[] =
 {
@@ -573,7 +577,7 @@ ok:
 }
 
 static void
-route_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
+route_place(Evas_Object *obj, Grid *g __UNUSED__, Evas_Coord px, Evas_Coord py, Evas_Coord ox __UNUSED__, Evas_Coord oy __UNUSED__, Evas_Coord ow, Evas_Coord oh)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1648,7 +1652,6 @@ _del_hook(Evas_Object *obj)
    if (wd->ua) eina_hash_free(wd->ua);
 
    free(wd);
-   eina_simple_xml_shutdown();
 }
 
 static void
@@ -2291,20 +2294,16 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 }
 
 static Eina_Bool
-cb_dump_attrs(void *data, const char *key, const char *value)
+cb_dump_attrs(void *data __UNUSED__, const char *key __UNUSED__, const char *value __UNUSED__)
 {
-   Route_Dump *dump = data;
-   int i;
-
    return EINA_TRUE;
 }
 
 
 static Eina_Bool
-cb_dump(void *data, Eina_Simple_XML_Type type, const char *value, unsigned offset, unsigned length)
+cb_dump(void *data, Eina_Simple_XML_Type type, const char *value, unsigned offset __UNUSED__, unsigned length)
 {
    Route_Dump *dump = data;
-   Eina_Bool used_color = EINA_FALSE;
 
    switch (type)
      {
@@ -2328,17 +2327,18 @@ cb_dump(void *data, Eina_Simple_XML_Type type, const char *value, unsigned offse
              }
         }
         break;
-
       case EINA_SIMPLE_XML_DATA:
         {
            char *buf = malloc(length);
-           if (!buf) return;
+           if (!buf) return EINA_FALSE;
            snprintf(buf, length, "%s", value);
            if (dump->id == ROUTE_XML_DISTANCE) dump->distance = atof(buf);
            else if (!(dump->description) && (dump->id == ROUTE_XML_DESCRIPTION)) dump->description = strdup(buf);
            else if (dump->id == ROUTE_XML_COORDINATES) dump->coordinates = strdup(buf);
            free(buf);
         }
+        break;
+      default:
         break;
      }
 
@@ -2607,8 +2607,6 @@ elm_map_add(Evas_Object *parent)
      {
         ERR("Ecore must be built with curl support for the map widget!");
      }
-
-   eina_simple_xml_init();
    return obj;
 }
 
@@ -3891,10 +3889,9 @@ elm_map_source_set(Evas_Object *obj, Elm_Map_Sources source)
  * @ingroup Map
  */
 EAPI void
-elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source)
+elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
 }
 
 /**
@@ -4053,7 +4050,7 @@ elm_map_user_agent_get(Evas_Object *obj)
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Route*
+EAPI Elm_Map_Route *
 elm_map_route_add(Evas_Object *obj,
                   Elm_Map_Route_Type type,
                   Elm_Map_Route_Method method,
@@ -4065,20 +4062,30 @@ elm_map_route_add(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-
+   char buf[PATH_MAX];
+   char *source;
+   char *type_name = NULL;
+   int fd;
    Elm_Map_Route *route = ELM_NEW(Elm_Map_Route);
    if (!route) return NULL;
 
+   snprintf(buf, sizeof(buf), DEST_XML_FILE);
+   fd = mkstemp(buf);
+   if (fd < 0)
+     {
+        free(route);
+        return NULL;
+     }
+   
    route->con_url = ecore_con_url_new(NULL);
-   char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf), DEST_XML_FILE, (int)getpid() << 16 + wd->fid);
    route->ud.fname = strdup(buf);
    INF("xml file : %s", route->ud.fname);
 
    wd->fid++;
-   route->ud.fd = fopen(buf, "w+");
-   if (!route->con_url || !route->ud.fd)
+   route->ud.fd = fdopen(fd, "w+");
+   if ((!route->con_url) || (!route->ud.fd))
      {
+        ecore_con_url_free(route->con_url);
         free(route);
         return NULL;
      }
@@ -4089,10 +4096,8 @@ elm_map_route_add(Evas_Object *obj,
    route->color.b = 0;
    route->color.a = 255;
    route->handlers = eina_list_append
-     (route->handlers, (void*)ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _common_complete_cb, route));
-
-   char *source;
-   char *type_name;
+     (route->handlers, (void *)ecore_event_handler_add
+         (ECORE_CON_EVENT_URL_COMPLETE, _common_complete_cb, route));
 
    route->inbound = EINA_FALSE;
    route->type = type;
@@ -4369,6 +4374,7 @@ static char *_yours_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int met
 }
 
 // TODO: fix monav api
+/*
 static char *_monav_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
 {
    char buf[PATH_MAX];
@@ -4378,8 +4384,10 @@ static char *_monav_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int met
 
    return strdup(buf);
 }
+*/
 
 // TODO: fix ors api
+/*
 static char *_ors_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
 {
    char buf[PATH_MAX];
@@ -4389,40 +4397,41 @@ static char *_ors_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int metho
 
    return strdup(buf);
 }
+*/
 
-static char *_route_custom1_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_route_custom1_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    return strdup("");
 }
 
-static char *_route_custom2_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_route_custom2_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    return strdup("");
 }
 
-static char *_route_custom3_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_route_custom3_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    return strdup("");
 }
 
-static char *_route_custom4_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_route_custom4_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    return strdup("");
 }
 
-static char *_route_custom5_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_route_custom5_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    return strdup("");
 }
 
-static char *_route_custom6_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_route_custom6_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    return strdup("");
 }
-
-static char *_route_module_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+/*
+static char *_route_module_url_cb(Evas_Object *obj __UNUSED__, char *type_name __UNUSED__, int method __UNUSED__, double flon __UNUSED__, double flat __UNUSED__, double tlon __UNUSED__, double tlat __UNUSED__)
 {
    // TODO: make example route module
    return strdup("");
 }
-
+*/

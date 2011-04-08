@@ -177,13 +177,13 @@ my_map_downloaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-my_map_route_load(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_route_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("route_load\n");
  }
 
 static void
-my_map_route_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_map_route_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double d;
    const char *w, *n;
