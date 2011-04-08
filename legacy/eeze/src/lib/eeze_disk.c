@@ -9,11 +9,6 @@
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
 
-/**
- * @addtogroup disk Disk
- * @{
- */
-
 static Eeze_Disk_Type
 _eeze_disk_type_find(Eeze_Disk *disk)
 {
@@ -65,26 +60,11 @@ _eeze_disk_device_from_property(const char *prop, Eina_Bool uuid)
 
 }
 
-/**
- * @brief Use this function to determine whether your eeze is disk-capable
- *
- * Since applications will die if they run against a function that doesn't exist,
- * if your application successfully runs this function then you have eeze_disk.
- */
 EAPI void
 eeze_disk_function(void)
 {
 }
 
-/**
- * @brief Create a new disk object from a /sys/ path or /dev/ path
- * @param path The /sys/ or /dev path of the disk; CANNOT be #NULL
- * @return The new disk object
- *
- * This function creates a new #Eeze_Disk from @p path.  Note that this function
- * does the minimal amount of work in order to save memory, and udev info about the disk
- * is not retrieved in this call.
- */
 EAPI Eeze_Disk *
 eeze_disk_new(const char *path)
 {
@@ -133,16 +113,6 @@ eeze_disk_new(const char *path)
    return disk;
 }
 
-/**
- * @brief Create a new disk object from a mount point
- * @param mount_point The mount point of the disk; CANNOT be #NULL
- * @return The new disk object
- *
- * This function creates a new #Eeze_Disk from @p mount_point.  Note that this function
- * does the minimal amount of work in order to save memory, and udev info about the disk
- * is not retrieved in this call.  If the disk is not currently mounted, it must have an entry
- * in /etc/fstab.
- */
 EAPI Eeze_Disk *
 eeze_disk_new_from_mount(const char *mount_point)
 {
@@ -211,12 +181,6 @@ error:
    return NULL;
 }
 
-/**
- * @brief Frees a disk object
- * @param disk The disk object to free
- *
- * This call frees an #Eeze_Disk.  Once freed, the disk can no longer be used.
- */
 EAPI void
 eeze_disk_free(Eeze_Disk *disk)
 {
@@ -231,14 +195,6 @@ eeze_disk_free(Eeze_Disk *disk)
    free(disk);
 }
 
-/**
- * @brief Retrieve all disk information
- * @param disk
- *
- * Use this function to retrieve all of a disk's information at once, then use
- * a "get" function to retrieve the value.  Data retrieved in this call is cached,
- * meaning that subsequent calls will return immediately without performing any work.
- */
 EAPI void
 eeze_disk_scan(Eeze_Disk *disk)
 {
@@ -263,14 +219,6 @@ eeze_disk_scan(Eeze_Disk *disk)
    disk->cache.filled = EINA_TRUE;
 }
 
-/**
- * @brief Associate data with a disk
- * @param disk The disk
- * @param data The data
- *
- * Data can be associated with @p disk with this function.
- * @see eeze_disk_data_get
- */
 EAPI void
 eeze_disk_data_set(Eeze_Disk *disk, void *data)
 {
@@ -279,15 +227,6 @@ eeze_disk_data_set(Eeze_Disk *disk, void *data)
    disk->data = data;
 }
 
-/**
- * @brief Retrieve data previously associated with a disk
- * @param disk The disk
- * @return The data
- *
- * Data that has been previously associated with @p disk
- * is returned with this function.
- * @see eeze_disk_data_set
- */
 EAPI void *
 eeze_disk_data_get(Eeze_Disk *disk)
 {
@@ -296,13 +235,6 @@ eeze_disk_data_get(Eeze_Disk *disk)
    return disk->data;
 }
 
-/**
- * @brief Return the /sys/ path of a disk
- * @param disk The disk
- * @return The /sys/ path
- *
- * This retrieves the /sys/ path that udev associates with @p disk.
- */
 EAPI const char *
 eeze_disk_syspath_get(Eeze_Disk *disk)
 {
@@ -311,13 +243,6 @@ eeze_disk_syspath_get(Eeze_Disk *disk)
    return disk->syspath;
 }
 
-/**
- * @brief Return the /dev/ path of a disk
- * @param disk The disk
- * @return The /dev/ path
- *
- * This retrieves the /dev/ path that udev has created a device node at for @p disk.
- */
 EAPI const char *
 eeze_disk_devpath_get(Eeze_Disk *disk)
 {
@@ -329,13 +254,6 @@ eeze_disk_devpath_get(Eeze_Disk *disk)
    return disk->devpath;
 }
 
-/**
- * @brief Return the filesystem of the disk (if known)
- * @param disk The disk
- * @return The filesystem type
- *
- * This retrieves the filesystem that the disk is using, or #NULL if unknown.
- */
 EAPI const char *
 eeze_disk_fstype_get(Eeze_Disk *disk)
 {
@@ -344,13 +262,6 @@ eeze_disk_fstype_get(Eeze_Disk *disk)
    return disk->fstype;
 }
 
-/**
- * @brief Return the manufacturing vendor of the disk
- * @param disk The disk
- * @return The vendor
- *
- * This retrieves the vendor which manufactured the disk, or #NULL if unknown.
- */
 EAPI const char *
 eeze_disk_vendor_get(Eeze_Disk *disk)
 {
@@ -363,13 +274,6 @@ eeze_disk_vendor_get(Eeze_Disk *disk)
    return disk->cache.vendor;
 }
 
-/**
- * @brief Return the model of the disk
- * @param disk The disk
- * @return The model
- *
- * This retrieves the model of the disk, or #NULL if unknown.
- */
 EAPI const char *
 eeze_disk_model_get(Eeze_Disk *disk)
 {
@@ -382,13 +286,6 @@ eeze_disk_model_get(Eeze_Disk *disk)
    return disk->cache.model;
 }
 
-/**
- * @brief Return the serial number of the disk
- * @param disk The disk
- * @return The serial number
- *
- * This retrieves the serial number the disk, or #NULL if unknown.
- */
 EAPI const char *
 eeze_disk_serial_get(Eeze_Disk *disk)
 {
@@ -400,15 +297,6 @@ eeze_disk_serial_get(Eeze_Disk *disk)
    return disk->cache.serial;
 }
 
-/**
- * @brief Return the UUID of the disk
- * @param disk The disk
- * @return The UUID
- *
- * This retrieves the UUID of the disk, or #NULL if unknown.
- * A UUID is a 36 character (hopefully) unique identifier which can
- * be used to store persistent information about a disk.
- */
 EAPI const char *
 eeze_disk_uuid_get(Eeze_Disk *disk)
 {
@@ -420,13 +308,6 @@ eeze_disk_uuid_get(Eeze_Disk *disk)
    return disk->cache.uuid;
 }
 
-/**
- * @brief Return the label of the disk
- * @param disk The disk
- * @return The label
- *
- * This retrieves the label (name) of the disk, or #NULL if unknown.
- */
 EAPI const char *
 eeze_disk_label_get(Eeze_Disk *disk)
 {
@@ -438,14 +319,6 @@ eeze_disk_label_get(Eeze_Disk *disk)
    return disk->cache.label;
 }
 
-/**
- * @brief Return the #Eeze_Disk_Type of the disk
- * @param disk The disk
- * @return The type
- *
- * This retrieves the #Eeze_Disk_Type of the disk.  This call is useful for determining
- * the bus that the disk is connected through.
- */
 EAPI Eeze_Disk_Type
 eeze_disk_type_get(Eeze_Disk *disk)
 {
@@ -468,5 +341,3 @@ eeze_disk_removable_get(Eeze_Disk *disk)
    disk->cache.removable = !!strtol(udev_device_get_sysattr_value(disk->device, "removable"), NULL, 10);
    return disk->cache.removable;
 }
-
-/** @} */

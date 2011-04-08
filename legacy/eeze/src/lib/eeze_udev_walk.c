@@ -5,26 +5,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-/**
- * @addtogroup walks Walks
- *
- * These are functions which walk up the device chain.
- *
- * @ingroup udev
- *
- * @{
- */
-
-/**
- * Walks up the device chain starting at @p syspath,
- * checking each device for @p sysattr with (optional) @p value.
- *
- * @param syspath The /sys/ path of the device to start at, with or without the /sys/
- * @param sysattr The attribute to find
- * @param value OPTIONAL: The value that @p sysattr should have, or NULL
- *
- * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
- */
 EAPI Eina_Bool
 eeze_udev_walk_check_sysattr(const char *syspath,
                              const char *sysattr,
@@ -56,15 +36,6 @@ eeze_udev_walk_check_sysattr(const char *syspath,
    return ret;
 }
 
-/**
- * Walks up the device chain starting at @p syspath,
- * checking each device for @p sysattr, and returns the value if found.
- *
- * @param syspath The /sys/ path of the device to start at, with or without the /sys/
- * @param sysattr The attribute to find
- *
- * @return The stringshared value of @p sysattr if found, or NULL
- */
 EAPI const char *
 eeze_udev_walk_get_sysattr(const char *syspath,
                            const char *sysattr)
@@ -92,5 +63,3 @@ eeze_udev_walk_get_sysattr(const char *syspath,
    udev_device_unref(device);
    return NULL;
 }
-
-/** @} */

@@ -11,11 +11,6 @@
 
 #define EEZE_MOUNT_DEFAULT_OPTS "noexec,nosuid,utf8"
 
-/**
- * @addtogroup disk Disk
- * @{
- */
-
 EAPI int EEZE_EVENT_DISK_MOUNT = 0;
 EAPI int EEZE_EVENT_DISK_UNMOUNT = 0;
 EAPI int EEZE_EVENT_DISK_ERROR = 0;
@@ -157,13 +152,6 @@ eeze_mount_shutdown(void)
  *
  */
 
-/**
- * @brief Return the mount state of a disk
- * @param disk The disk
- * @return The mount state
- *
- * This returns the mounted state of the disk.  #EINA_TRUE if mounted, else #EINA_FALSE.
- */
 EAPI Eina_Bool
 eeze_disk_mounted_get(Eeze_Disk *disk)
 {
@@ -172,14 +160,6 @@ eeze_disk_mounted_get(Eeze_Disk *disk)
    return eeze_disk_libmount_mounted_get(disk);
 }
 
-/**
- * @brief Set the mount options using flags
- * @param disk The disk
- * @param opts An ORed set of #Eeze_Mount_Opts
- * @return EINA_TRUE on success, else EINA_FALSE
- *
- * This function replaces the current mount opts of a disk with the ones in @p opts.
- */
 EAPI Eina_Bool
 eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
 {
@@ -190,13 +170,6 @@ eeze_disk_mountopts_set(Eeze_Disk *disk, unsigned long opts)
    return EINA_TRUE;
 }
 
-/**
- * @brief Get the flags of a disk's current mount options
- * @param disk The disk
- * @return An ORed set of #Eeze_Mount_Opts, 0 on failure
- *
- * This function returns the current mount opts of a disk.
- */
 EAPI unsigned long
 eeze_disk_mountopts_get(Eeze_Disk *disk)
 {
@@ -208,19 +181,6 @@ eeze_disk_mountopts_get(Eeze_Disk *disk)
    return disk->mount_opts;
 }
 
-/**
- * @brief Begin a mount operation on the disk
- * @param disk The disk
- * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
- *
- * This call is used to begin a mount operation on @p disk.  The operation will
- * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_MOUNT event with the disk object
- * as its event on completion.  If any errors are encountered, they will automatically logged
- * to the eeze_disk domain and an EEZE_EVENT_DISK_ERROR event will be generated with an #Eeze_Event_Disk_Error
- * struct as its event.
- *
- * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
- */
 EAPI Eina_Bool
 eeze_disk_mount(Eeze_Disk *disk)
 {
@@ -304,19 +264,6 @@ eeze_disk_mount(Eeze_Disk *disk)
    return EINA_TRUE;
 }
 
-/**
- * @brief Begin an unmount operation on the disk
- * @param disk The disk
- * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
- *
- * This call is used to begin an unmount operation on @p disk.  The operation will
- * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_MOUNT event with the disk object
- * as its event on completion.  If any errors are encountered, they will automatically logged
- * to the eeze_disk domain and an EEZE_EVENT_DISK_ERROR event will be generated with
- * an #Eeze_Event_Disk_Error struct as its event.
- *
- * NOTE: The return value of this function does not in any way reflect the mount state of a disk.
- */
 EAPI Eina_Bool
 eeze_disk_unmount(Eeze_Disk *disk)
 {
@@ -345,14 +292,6 @@ eeze_disk_unmount(Eeze_Disk *disk)
    return EINA_TRUE;
 }
 
-/**
- * @brief Return the mount point of a disk
- * @param disk The disk
- * @return The mount point
- *
- * This function returns the mount point associated with @p disk.
- * Note that to determine whether the disk is actually mounted, eeze_disk_mounted_get should be used.
- */
 EAPI const char *
 eeze_disk_mount_point_get(Eeze_Disk *disk)
 {
@@ -383,16 +322,6 @@ eeze_disk_mount_point_get(Eeze_Disk *disk)
    return NULL;
 }
 
-/**
- * @brief Set the mount point of a disk
- * @param disk The disk
- * @param mount_point The mount point
- * @return EINA_TRUE on success, else EINA_FALSE
- *
- * This function sets the mount point associated with @p disk.
- * Note that to determine whether the disk is actually mounted, eeze_disk_mounted_get should be used.
- * Also note that this function cannot be used while the disk is mounted to avoid losing the current mount point.
- */
 EAPI Eina_Bool
 eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point)
 {
@@ -403,5 +332,3 @@ eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount_point)
    disk->unmount_cmd_changed = EINA_TRUE;
    return EINA_TRUE;
 }
-
-/** @} */

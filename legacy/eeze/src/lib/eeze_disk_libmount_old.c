@@ -13,12 +13,6 @@
 
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
-
-/**
- * @addtogroup disk Disk
- * @{
- */
-
 /*
  *
  * PRIVATE
@@ -402,5 +396,3 @@ eeze_mount_fstab_scan(void)
 error:
    return EINA_FALSE;
 }
-
-/** @} */

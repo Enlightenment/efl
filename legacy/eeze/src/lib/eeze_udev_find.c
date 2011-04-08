@@ -10,23 +10,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-/**
- * @addtogroup find Find
- *
- * These are functions which find/supplement lists of devices.
- *
- * @ingroup udev
- *
- * @{
- */
-
-/**
- * Returns a stringshared list of all syspaths that are (or should be) the same
- * device as the device pointed at by @p syspath.
- *
- * @param syspath The syspath of the device to find matches for
- * @return All devices which are the same as the one passed
- */
 EAPI Eina_List *
 eeze_udev_find_similar_from_syspath(const char *syspath)
 {
@@ -89,17 +72,6 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
    return ret;
 }
 
-/**
- * Updates a list of all syspaths that are (or should be) the same
- * device.
- *
- * @param list The list of devices to update
- * @return The updated list
- *
- * This function will update @p list to include all devices matching
- * devices with syspaths currently stored in @p list.  All strings are
- * stringshared.
- */
 EAPI Eina_List *
 eeze_udev_find_unlisted_similar(Eina_List *list)
 {
@@ -158,15 +130,6 @@ eeze_udev_find_unlisted_similar(Eina_List *list)
    return list;
 }
 
-/**
- * Find devices using an #Eeze_Udev_Type and/or a name.
- *
- * @param etype An #Eeze_Udev_Type or 0
- * @param name A filter for the device name or #NULL
- * @return A stringshared Eina_List of matched devices or #NULL on failure
- *
- * Return a list of syspaths (/sys/$syspath) for matching udev devices.
- */
 EAPI Eina_List *
 eeze_udev_find_by_type(Eeze_Udev_Type etype,
                        const char    *name)
@@ -325,17 +288,6 @@ out:
    return ret;
 }
 
-/**
- * A more advanced find, allows finds using udev properties.
- *
- * @param subsystem The udev subsystem to filter by, or NULL
- * @param type "ID_INPUT_KEY", "ID_INPUT_MOUSE", "ID_INPUT_TOUCHPAD", NULL, etc
- * @param name A filter for the device name, or NULL
- * @return A stringshared Eina_List* of matched devices or NULL on failure
- *
- * Return a list of syspaths (/sys/$syspath) for matching udev devices.
- * Requires at least one filter.
- */
 EAPI Eina_List *
 eeze_udev_find_by_filter(const char *subsystem,
                          const char *type,
@@ -378,16 +330,6 @@ out:
    return ret;
 }
 
-/**
- * Find a list of devices by a sysattr (and, optionally, a value of that sysattr).
- *
- * @param sysattr The attribute to find
- * @param value Optional: the value that the attribute should have
- *
- * @return A stringshared list of the devices found with the attribute
- *
- * @ingroup find
- */
 EAPI Eina_List *
 eeze_udev_find_by_sysattr(const char *sysattr,
                           const char *value)
@@ -419,5 +361,3 @@ eeze_udev_find_by_sysattr(const char *sysattr,
    udev_enumerate_unref(en);
    return ret;
 }
-
-/** @} */

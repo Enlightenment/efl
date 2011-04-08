@@ -5,25 +5,6 @@
 #include <Eeze.h>
 #include "eeze_udev_private.h"
 
-/**
- * @addtogroup syspath Syspath
- *
- * These are functions which interact with the syspath (/sys/$PATH) of
- * a device.
- *
- * @ingroup udev
- *
- * @{
- */
-
-/**
- * Find the root device of a device from its syspath.
- *
- * @param syspath The syspath of a device, with or without "/sys/"
- * @return The syspath of the parent device
- *
- * Return a stringshared syspath (/sys/$syspath) for the parent device.
- */
 EAPI const char *
 eeze_udev_syspath_get_parent(const char *syspath)
 {
@@ -41,12 +22,6 @@ eeze_udev_syspath_get_parent(const char *syspath)
    return ret;
 }
 
-/**
- * Returns a list of all parent device syspaths for @p syspath.
- *
- * @param syspath The device to find parents of
- * @return A stringshared list of the parent devices of @p syspath
- */
 EAPI Eina_List *
 eeze_udev_syspath_get_parents(const char *syspath)
 {
@@ -73,14 +48,6 @@ eeze_udev_syspath_get_parents(const char *syspath)
    return devlist;
 }
 
-/**
- * Get the /dev/ path from the /sys/ path.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @return A stringshared char* with the /dev/ path or NULL on failure
- *
- * Takes /sys/$PATH and turns it into the corresponding "/dev/x/y".
- */
 EAPI const char *
 eeze_udev_syspath_get_devpath(const char *syspath)
 {
@@ -101,14 +68,6 @@ eeze_udev_syspath_get_devpath(const char *syspath)
    return name;
 }
 
-/**
- * Get the /dev/ name from the /sys/ path.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @return A stringshared char* of the device name without the /dev/ path, or NULL on failure
- *
- * Takes /sys/$PATH and turns it into the corresponding /dev/x/"y".
- */
 EAPI const char *
 eeze_udev_syspath_get_devname(const char *syspath)
 {
@@ -129,15 +88,6 @@ eeze_udev_syspath_get_devname(const char *syspath)
    return name;
 }
 
-/**
- * Get the subsystem of a device from the /sys/ path.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @return A stringshared char* with the subsystem of the device or NULL on failure
- *
- * Takes /sys/$PATH and returns the corresponding device subsystem,
- * such as "input" for keyboards/mice.
- */
 EAPI const char *
 eeze_udev_syspath_get_subsystem(const char *syspath)
 {
@@ -154,13 +104,6 @@ eeze_udev_syspath_get_subsystem(const char *syspath)
    return subsystem;
 }
 
-/**
- * Get the property value of a device from the /sys/ path.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @param property The property to get; full list of these is a FIXME
- * @return A stringshared char* with the property or NULL on failure
- */
 EAPI const char *
 eeze_udev_syspath_get_property(const char *syspath,
                                const char *property)
@@ -180,13 +123,6 @@ eeze_udev_syspath_get_property(const char *syspath,
    return value;
 }
 
-/**
- * Get the sysattr value of a device from the /sys/ path.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @param sysattr The sysattr to get; full list of these is a FIXME
- * @return A stringshared char* with the sysattr or NULL on failure
- */
 EAPI const char *
 eeze_udev_syspath_get_sysattr(const char *syspath,
                               const char *sysattr)
@@ -207,12 +143,6 @@ eeze_udev_syspath_get_sysattr(const char *syspath,
    return value;
 }
 
-/**
- * Checks whether the device is a mouse.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @return If true, the device is a mouse
- */
 EAPI Eina_Bool
 eeze_udev_syspath_is_mouse(const char *syspath)
 {
@@ -247,12 +177,6 @@ eeze_udev_syspath_is_mouse(const char *syspath)
    return mouse;
 }
 
-/**
- * Checks whether the device is a keyboard.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @return If true, the device is a keyboard
- */
 EAPI Eina_Bool
 eeze_udev_syspath_is_kbd(const char *syspath)
 {
@@ -287,12 +211,6 @@ eeze_udev_syspath_is_kbd(const char *syspath)
    return kbd;
 }
 
-/**
- * Checks whether the device is a touchpad.
- *
- * @param syspath The /sys/ path with or without the /sys/
- * @return If true, the device is a touchpad
- */
 EAPI Eina_Bool
 eeze_udev_syspath_is_touchpad(const char *syspath)
 {
@@ -318,14 +236,6 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
    return touchpad;
 }
 
-/**
- * Get the syspath of a device from the /dev/ path.
- *
- * @param devpath The /dev/ path of the device
- * @return A stringshared char* which corresponds to the /sys/ path of the device or NULL on failure
- *
- * Takes "/dev/path" and returns the corresponding /sys/ path (without the "/sys/")
- */
 EAPI const char *
 eeze_udev_devpath_get_syspath(const char *devpath)
 {
@@ -352,5 +262,3 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    udev_enumerate_unref(en);
    return ret;
 }
-
-/** @} */
