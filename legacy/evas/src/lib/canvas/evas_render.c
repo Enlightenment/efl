@@ -46,20 +46,6 @@ rend_dbg(const char *txt)
 static Eina_List *
 evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
 
-/**
- * Add a damage rectangle.
- *
- * @param e The given canvas pointer.
- * @param x The rectangle's left position.
- * @param y The rectangle's top position.
- * @param w The rectangle's width.
- * @param h The rectangle's height.
- *
- * This is the function by which one tells evas that a part of the
- * canvas has to be repainted.
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
@@ -74,23 +60,6 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
    e->changed = 1;
 }
 
-/**
- * Add an obscured region.
- *
- * @param e The given canvas pointer.
- * @param x The rectangle's left position.
- * @param y The rectangle's top position
- * @param w The rectangle's width.
- * @param h The rectangle's height.
- *
- * This is the function by which one tells evas that a part of the
- * canvas has not to be repainted. To make this region one that have
- * to be repainted, call the function evas_obscured_clear().
- *
- * @see evas_obscured_clear().
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
@@ -104,18 +73,6 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
    e->obscures = eina_list_append(e->obscures, r);
 }
 
-/**
- * Remove all obscured region rectangles from the canvas.
- *
- * @param e The given canvas pointer.
- *
- * This function removes all the rectangles from the obscured list of
- * the canvas. It takes obscured areas added with
- * evas_obscured_rectangle_add() and makes it a region that have to be
- * repainted.
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_obscured_clear(Evas *e)
 {
@@ -1512,16 +1469,6 @@ evas_render_updates_internal(Evas *e,
    return updates;
 }
 
-/**
- * Free the rectangles returned by evas_render_updates().
- *
- * @param updates The list of updated rectangles of the canvas.
- *
- * This function removes the region from the render updates list. It
- * makes the region doesn't be render updated anymore.
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_render_updates_free(Eina_List *updates)
 {
@@ -1531,18 +1478,6 @@ evas_render_updates_free(Eina_List *updates)
      eina_rectangle_free(r);
 }
 
-/**
- * Force immediate renderization of the given canvas.
- *
- * @param e The given canvas pointer.
- * @return A newly allocated list of updated rectangles of the canvas.
- *         Free this list with evas_render_updates_free().
- *
- * This function forces an immediate renderization update of the given
- * given canvas.
- *
- * @ingroup Evas_Canvas
- */
 EAPI Eina_List *
 evas_render_updates(Evas *e)
 {
@@ -1558,13 +1493,6 @@ evas_render_updates(Evas *e)
    return evas_render_updates_internal(e, 1, 1);
 }
 
-/**
- * Force renderization of the given canvas.
- *
- * @param e The given canvas pointer.
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_render(Evas *e)
 {
@@ -1580,20 +1508,6 @@ evas_render(Evas *e)
    evas_render_updates_internal(e, 0, 1);
 }
 
-/**
- * Update the canvas internal objects but not triggering immediate
- * renderization.
- *
- * @param e The given canvas pointer.
- *
- * This function updates the canvas internal objects not triggering
- * renderization. To force renderization function evas_render() should
- * be used.
- *
- * @see evas_render.
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_norender(Evas *e)
 {
@@ -1605,17 +1519,6 @@ evas_norender(Evas *e)
    evas_render_updates_internal(e, 0, 0);
 }
 
-/**
- * Make the canvas discard internally cached data used for rendering.
- *
- * @param e The given canvas pointer.
- *
- * This function flushes the arrays of delete, active and render objects.
- * Other things it may also discard are: shared memory segments,
- * temporary scratch buffers, cached data to avoid re-compute of that data etc.
- *
- * @ingroup Evas_Canvas
- */
 EAPI void
 evas_render_idle_flush(Evas *e)
 {
@@ -1652,20 +1555,6 @@ evas_sync(Evas *e)
 #endif
 }
 
-/**
- * Make the canvas discard as much data as possible used by the engine at
- * runtime.
- *
- * @param e The given canvas pointer.
- *
- * This function will unload images, delete textures and much more, where
- * possible. You may also want to call evas_render_idle_flush() immediately
- * prior to this to perhaps discard a little more, though evas_render_dump()
- * should implicitly delete most of what evas_render_idle_flush() might
- * discard too.
- *
- * @ingroup Evas_Canvas
- */
 static void
 _evas_render_dump_map_surfaces(Evas_Object *obj)
 {

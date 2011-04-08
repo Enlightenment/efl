@@ -160,58 +160,7 @@ evas_object_mapped_clip_across_mark(Evas_Object *obj)
 
 /* public functions */
 
-/**
- * @addtogroup Evas_Object_Group_Basic
- * @{
- */
 
-/**
- * Clip one object to another.
- * @param obj The object to be clipped
- * @param clip The object to clip @p obj by
- *
- * This function will clip the object @p obj to the area occupied by the
- * object @p clipper. This means the object @p obj will only be visible within
- * the area occupied by the clipping object (@p clip). The color of the object
- * being clipped will be multiplied by the color of the clipping object, so
- * the resulting color for the clipped object is
- * RESULT = (OBJ * CLIP) / (255 * 255) per color element (red, green, blue and
- * alpha). Clipping is recursive, so clip objects may be clipped by other
- * objects, and their color will in tern be multiplied. You may NOT set up
- * circular clipping lists (i.e. object 1 clips object 2 which clips object 1).
- * The behavior of Evas is undefined in this case. Objects which do not clip
- * others are visible as normal, those that clip 1 or more objects become
- * invisible themselves, only affecting what they clip. If an object ceases to
- * have other objects being clipped by it, it will become visible again. The
- * visibility of an object affects the objects that are clipped by it, so if
- * the object clipping others is not shown, the objects clipped will not be
- * shown either. If the object was being clipped by another object when this
- * function is called, it is implicitly removed from the clipper it is being
- * clipped to, and now is made to clip its new clipper.
- *
- * At the moment the only objects that can validly be used to clip other
- * objects are rectangle objects. All other object types are invalid and the
- * result of using them is undefined.
- *
- * The clip object @p clip must be a valid object, but may also be NULL in
- * which case the effect of this function is the same as calling
- * evas_object_clip_unset() on the @p obj object.
- *
- * Example:
- * @code
- * extern Evas *evas;
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
- *
- * clipper = evas_object_rectangle_add(evas);
- * evas_object_color_set(clipper, 255, 255, 255, 255);
- * evas_object_move(clipper, 10, 10);
- * evas_object_resize(clipper, 20, 50);
- * evas_object_clip_set(obj, clipper);
- * evas_object_show(clipper);
- * @endcode
- *
- */
 EAPI void
 evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
@@ -299,26 +248,6 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    evas_object_clip_across_check(obj);
 }
 
-/**
- * Get the object clipping this one (if any).
- * @param obj The object to get the clipper from
- *
- * This function returns the the object clipping @p obj. If @p obj not being
- * clipped, NULL is returned. The object @p obj must be a valid object.
- *
- * See also evas_object_clip_set(), evas_object_clip_unset() and
- * evas_object_clipees_get().
- *
- * Example:
- * @code
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
- *
- * clipper = evas_object_clip_get(obj);
- * if (clipper) evas_object_show(clipper);
- * @endcode
- *
- */
 EAPI Evas_Object *
 evas_object_clip_get(const Evas_Object *obj)
 {
@@ -328,32 +257,6 @@ evas_object_clip_get(const Evas_Object *obj)
    return obj->cur.clipper;
 }
 
-/**
- * Disable clipping for an object.
- *
- * @param obj The object to cease clipping on
- *
- * This function disables clipping for the object @p obj, if it was already
- * clipped. If it wasn't, this has no effect. The object @p obj must be a
- * valid object.
- *
- * See also evas_object_clip_set(), evas_object_clipees_get() and
- * evas_object_clip_get().
- *
- * Example:
- * @code
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
- *
- * clipper = evas_object_clip_get(obj);
- * if (clipper)
- *   {
- *     evas_object_clip_unset(obj);
- *     evas_object_hide(obj);
- *   }
- * @endcode
- *
- */
 EAPI void
 evas_object_clip_unset(Evas_Object *obj)
 {
@@ -402,43 +305,6 @@ evas_object_clip_unset(Evas_Object *obj)
    evas_object_clip_across_check(obj);
 }
 
-/**
- * Return a list of objects currently clipped by a specific object.
- *
- * @param obj The object to get a list of clippees from
- *
- * This returns the inernal list handle that contains all objects clipped by
- * the object @p obj. If none are clipped, it returns NULL. This list is only
- * valid until the clip list is changed and should be fetched again with another
- * call to evas_object_clipees_get() if any objects being clipped by this object
- * are unclipped, clipped by a new object, are deleted or the clipper is
- * deleted.  These operations will invalidate the list returned so it should
- * not be used anymore after that point. Any use of the list after this may have
- * undefined results, not limited just to strange behavior but possible
- * segfaults and other strange memory errors. The object @p obj must be a valid
- * object.
- *
- * See also evas_object_clip_set(), evas_object_clip_unset() and
- * evas_object_clip_get().
- *
- * Example:
- * @code
- * extern Evas_Object *obj;
- * Evas_Object *clipper;
- *
- * clipper = evas_object_clip_get(obj);
- * if (clipper)
- *   {
- *     Eina_List *clippees, *l;
- *     Evas_Object *obj_tmp;
- *
- *     clippees = evas_object_clipees_get(clipper);
- *     printf("Clipper clips %i objects\n", eina_list_count(clippees));
- *     EINA_LIST_FOREACH(clippees, l, obj_tmp)
- *         evas_object_show(obj_tmp);
- *   }
- * @endcode
- */
 EAPI const Eina_List *
 evas_object_clipees_get(const Evas_Object *obj)
 {
@@ -447,7 +313,3 @@ evas_object_clipees_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    return obj->clip.clipees;
 }
-
-/**
- * @}
- */

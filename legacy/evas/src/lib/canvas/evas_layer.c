@@ -135,20 +135,6 @@ evas_layer_del(Evas_Layer *lay)
 
 /* public functions */
 
-/**
- * @addtogroup Evas_Object_Group_Basic
- * @{
- */
-
-/**
- * Sets the layer of the evas that the given object will be part of.
- *
- * It is not possible to change the layer of a smart object's child.
- *
- * @param   obj The given evas object.
- * @param   l   The number of the layer to place the object on.
- *          Between #EVAS_LAYER_MIN and #EVAS_LAYER_MAX.
- */
 EAPI void
 evas_object_layer_set(Evas_Object *obj, short l)
 {
@@ -192,16 +178,6 @@ evas_object_layer_set(Evas_Object *obj, short l)
    evas_object_inform_call_restack(obj);
 }
 
-/**
- * Retrieves the layer of the evas that the given object is part of.
- *
- * Be careful, it doesn't make sense to change the layer of smart object's
- * child. So the returned value could be wrong in some case. Don't rely on
- * it's accuracy.
- *
- * @param   obj The given evas object.
- * @return  Number of the layer.
- */
 EAPI short
 evas_object_layer_get(const Evas_Object *obj)
 {
@@ -214,7 +190,3 @@ evas_object_layer_get(const Evas_Object *obj)
      }
    return obj->cur.layer;
 }
-
-/**
- * @}
- */

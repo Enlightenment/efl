@@ -6,20 +6,6 @@ static void _evas_smart_class_callbacks_create(Evas_Smart *s);
 
 /* all public */
 
-/**
- * @addtogroup Evas_Smart_Group
- * @{
- */
-
-/**
- * Free an Evas_Smart
- *
- * If this smart was created using evas_smart_class_new(), the associated
- * Evas_Smart_Class will not be freed.
- *
- * @param s the Evas_Smart to free
- *
- */
 EAPI void
 evas_smart_free(Evas_Smart *s)
 {
@@ -33,12 +19,6 @@ evas_smart_free(Evas_Smart *s)
    free(s);
 }
 
-/**
- * Creates an Evas_Smart from an Evas_Smart_Class.
- *
- * @param sc the smart class definition
- * @return an Evas_Smart
- */
 EAPI Evas_Smart *
 evas_smart_class_new(const Evas_Smart_Class *sc)
 {
@@ -60,12 +40,6 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
    return s;
 }
 
-/**
- * Get the Evas_Smart_Class of an Evas_Smart
- *
- * @param s the Evas_Smart
- * @return the Evas_Smart_Class
- */
 EAPI const Evas_Smart_Class *
 evas_smart_class_get(const Evas_Smart *s)
 {
@@ -75,15 +49,6 @@ evas_smart_class_get(const Evas_Smart *s)
    return s->smart_class;
 }
 
-/**
- * @brief Get the data pointer set on an Evas_Smart.
- *
- * @param s Evas_Smart
- *
- * This data pointer is set either as the final parameter to
- * evas_smart_new or as the data field in the Evas_Smart_Class passed
- * in to evas_smart_class_new
- */
 EAPI void *
 evas_smart_data_get(const Evas_Smart *s)
 {
@@ -93,37 +58,6 @@ evas_smart_data_get(const Evas_Smart *s)
    return (void *)s->smart_class->data;
 }
 
-/**
- * Get the callbacks known by this Evas_Smart.
- *
- * This is likely different from Evas_Smart_Class::callbacks as it
- * will contain the callbacks of all class hierarchy sorted, while the
- * direct smart class member refers only to that specific class and
- * should not include parent's.
- *
- * If no callbacks are known, this function returns @c NULL.
- *
- * The array elements and thus their contents will be reference to
- * original values given to evas_smart_new() as
- * Evas_Smart_Class::callbacks.
- *
- * The array is sorted by name. The last array element is the @c NULL
- * pointer and is not counted in @a count. Loop iterations can check
- * any of these cases.
- *
- * @param s the Evas_Smart.
- * @param count returns the number of elements in returned array.
- * @return the array with callback descriptions known by this class,
- *         its size is returned in @a count parameter. It should not
- *         be modified anyhow. If no callbacks are known, @c NULL is
- *         returned. The array is sorted by name and elements refer to
- *         the original value given to evas_smart_new().
- *
- * @note objects may provide per-instance callbacks, use
- *       evas_object_smart_callbacks_descriptions_get() to get those
- *       as well.
- * @see evas_object_smart_callbacks_descriptions_get()
- */
 EAPI const Evas_Smart_Cb_Description **
 evas_smart_callbacks_descriptions_get(const Evas_Smart *s, unsigned int *count)
 {
@@ -136,16 +70,6 @@ evas_smart_callbacks_descriptions_get(const Evas_Smart *s, unsigned int *count)
    return s->callbacks.array;
 }
 
-/**
- * Find callback description for callback called @a name.
- *
- * @param s the Evas_Smart.
- * @param name name of desired callback, must @b not be @c NULL.  The
- *        search have a special case for @a name being the same
- *        pointer as registered with Evas_Smart_Cb_Description, one
- *        can use it to avoid excessive use of strcmp().
- * @return reference to description if found, @c NULL if not found.
- */
 EAPI const Evas_Smart_Cb_Description *
 evas_smart_callback_description_find(const Evas_Smart *s, const char *name)
 {
@@ -156,23 +80,6 @@ evas_smart_callback_description_find(const Evas_Smart *s, const char *name)
    return evas_smart_cb_description_find(&s->callbacks, name);
 }
 
-/**
- * Sets one class to inherit from the other.
- *
- * Copy all function pointers, set @c parent to @a parent_sc and copy
- * everything after sizeof(Evas_Smart_Class) present in @a parent_sc,
- * using @a parent_sc_size as reference.
- *
- * This is recommended instead of a single memcpy() since it will take
- * care to not modify @a sc name, version, callbacks and possible
- * other members.
- *
- * @param sc child class.
- * @param parent_sc parent class, will provide attributes.
- * @param parent_sc_size size of parent_sc structure, child should be at least
- *        this size. Everything after @c Evas_Smart_Class size is copied
- *        using regular memcpy().
- */
 EAPI Eina_Bool
 evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *parent_sc, unsigned int parent_sc_size)
 {
@@ -204,10 +111,6 @@ evas_smart_class_inherit_full(Evas_Smart_Class *sc, const Evas_Smart_Class *pare
    memcpy(((char *)sc) + off, ((char *)parent_sc) + off, parent_sc_size - off);
    return 1;
 }
-
-/**
- * @}
- */
 
 /* internal funcs */
 void

@@ -2,11 +2,6 @@
 #include "evas_private.h"
 #include "evas_cs.h"
 
-/**
- * Retrieves if the system wants to share bitmaps using the server.
- * @return @c EINA_TRUE if wants, @c EINA_FALSE otherwise.
- * @ingroup Evas_Cserve
- */
 EAPI Eina_Bool
 evas_cserve_want_get(void)
 {
@@ -16,11 +11,6 @@ evas_cserve_want_get(void)
    return 0;
 }
 
-/**
- * Retrieves if the system is connected to the server used to shae bitmaps.
- * @return @c EINA_TRUE if connected, @c EINA_FALSE otherwise.
- * @ingroup Evas_Cserve
- */
 EAPI Eina_Bool
 evas_cserve_connected_get(void)
 {
@@ -30,14 +20,6 @@ evas_cserve_connected_get(void)
    return 0;
 }
 
-/**
- * Retrieves if the system wants to share bitmaps using the server.
- * @param stats pointer to structure to fill with statistics about
- *        cache server.
- * @return @c EINA_TRUE if @p stats were filled with data,
- *         @c EINA_FALSE otherwise and @p stats is untouched.
- * @ingroup Evas_Cserve
- */
 EAPI Eina_Bool
 evas_cserve_stats_get(Evas_Cserve_Stats *stats)
 {
@@ -155,13 +137,6 @@ evas_cserve_image_cache_contents_clean(Evas_Cserve_Image_Cache *cache)
 #endif
 }
 
-/**
- * Retrieves the current configuration of the server.
- * @param config where to store current server configuration.
- * @return @c EINA_TRUE if @p config were filled with data,
- *         @c EINA_FALSE otherwise and @p config is untouched.
- * @ingroup Evas_Cserve
- */
 EAPI Eina_Bool
 evas_cserve_config_get(Evas_Cserve_Config *config)
 {
@@ -179,13 +154,6 @@ evas_cserve_config_get(Evas_Cserve_Config *config)
 #endif
 }
 
-/**
- * Changes the configuration of the server.
- * @param config where to store current server configuration.
- * @return @c EINA_TRUE if @p config were successfully applied,
- *         @c EINA_FALSE otherwise.
- * @ingroup Evas_Cserve
- */
 EAPI Eina_Bool
 evas_cserve_config_set(const Evas_Cserve_Config *config)
 {
@@ -202,10 +170,6 @@ evas_cserve_config_set(const Evas_Cserve_Config *config)
 #endif
 }
 
-/**
- * Force system to disconnect from cache server.
- * @ingroup Evas_Cserve
- */
 EAPI void
 evas_cserve_disconnect(void)
 {

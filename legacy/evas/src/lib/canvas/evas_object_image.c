@@ -136,20 +136,8 @@ static const Evas_Object_Func object_func =
      evas_object_image_can_map
 };
 
-
-/**
- * @addtogroup Evas_Object_Image
- * @{
- */
-
 EVAS_MEMPOOL(_mp_obj);
 
-/**
- * Creates a new image object on the given evas.
- *
- * @param e The given evas.
- * @return The created image object.
- */
 EAPI Evas_Object *
 evas_object_image_add(Evas *e)
 {
@@ -168,17 +156,6 @@ evas_object_image_add(Evas *e)
    return obj;
 }
 
-/**
- * Creates a new image object that automatically scales on the given evas.
- *
- * This is a helper around evas_object_image_add() and
- * evas_object_image_filled_set(), it will track object resizes and apply
- * evas_object_image_fill_set() with the new geometry.
- *
- * @see evas_object_image_add()
- * @see evas_object_image_filled_set()
- * @see evas_object_image_fill_set()
- */
 EAPI Evas_Object *
 evas_object_image_filled_add(Evas *e)
 {
@@ -251,29 +228,6 @@ _create_tmpf(Evas_Object *obj, void *data, int size, char *format __UNUSED__)
    munmap(dst, size);
 }
 
-/**
- * Sets the data for an image from memory to be loaded
- *
- * This is the same as evas_object_image_file_set() but the file to be loaded
- * may exist at an address in memory (the data for the file, not the filename
- * itself). The @p data at the address is copied and stored for future use, so
- * no @p data needs to be kept after this call is made. It will be managed and
- * freed for you when no longer needed. The @p size is limited to 2 gigabytes
- * in size, and must be greater than 0. A NULL @p data pointer is also invalid.
- * Set the filename to NULL to reset to empty state and have the image file
- * data freed from memory using evas_object_image_file_set().
- * 
- * The @p format is optional (pass NULL if you don't need/use it). It is used
- * to help Evas guess better which loader to use for the data. It may simply
- * be the "extension" of the file as it would normally be on disk such as
- * "jpg" or "png" or "gif" etc.
- *
- * @param obj The given image object.
- * @param data The image file data address
- * @param size The size of the image file data in bytes
- * @param format The format of the file (optional), or NULL if not needed
- * @param key The image key in file, or NULL.
- */
 EAPI void
 evas_object_image_memfile_set(Evas_Object *obj, void *data, int size, char *format, char *key)
 {
@@ -302,16 +256,6 @@ evas_object_image_memfile_set(Evas_Object *obj, void *data, int size, char *form
    evas_object_image_alpha_set(obj, !o->cur.has_alpha);
 }
 
-/**
- * Sets the filename and key of the given image object.
- *
- * If the file supports multiple data stored in it as eet, you can
- * specify the key to be used as the index of the image in this file.
- *
- * @param obj The given image object.
- * @param file The image filename.
- * @param key The image key in file, or NULL.
- */
 EAPI void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
@@ -405,13 +349,6 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves the filename and key of the given image object.
- *
- * @param obj The given image object.
- * @param file Location to store the image filename, or NULL.
- * @param key Location to store the image key, or NULL.
- */
 EAPI void
 evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
@@ -432,22 +369,6 @@ evas_object_image_file_get(const Evas_Object *obj, const char **file, const char
    if (key) *key = o->cur.key;
 }
 
-/**
- * Set the source object on a proxy object.
- *
- * The source must be another object.  The proxy will have the same base
- * appearance of the source object.  Obviously other effects may be applied to
- * the proxy, such as a map to create a reflection of the original object.
- *
- * Any existing source object will be removed.  Setting the src to NULL clears
- * the proxy object.
- *
- * You cannot set a proxy on a proxy.
- *
- * @param obj Proxy object.
- * @param src Source of the proxy.
- * @return EINA_TRUE on success, EINA_FALSE on error.
- */
 EAPI Eina_Bool
 evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
 {
@@ -482,12 +403,6 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
 }
 
 
-/**
- * Get the current source object of an image.
- *
- * @param obj Image object
- * @return Source object, or NULL on error.
- */
 EAPI Evas_Object *
 evas_object_image_source_get(Evas_Object *obj)
 {
@@ -504,39 +419,12 @@ evas_object_image_source_get(Evas_Object *obj)
    return o->cur.source;
 }
 
-/**
- * Clear the source on a proxy image.
- *
- * This is equivalent to calling evas_object_image_source_set with a NULL
- * source.
- *
- * @param obj Image object to clear source of.
- * @return EINA_TRUE on success, EINA_FALSE on error.
- */
 EAPI Eina_Bool
 evas_object_image_source_unset(Evas_Object *obj)
 {
    return evas_object_image_source_set(obj, NULL);
 }
 
-/**
- * Sets how much of each border of the given image object is not
- * to be scaled.
- *
- * When rendering, the image may be scaled to fit the size of the
- * image object. This function sets what area around the border of the
- * image is not to be scaled. This sort of function is useful for
- * widget theming, where, for example, buttons may be of varying
- * sizes, but the border size must remain constant.
- *
- * The units used for @p l, @p r, @p t and @p b are output units.
- *
- * @param obj The given image object.
- * @param l Distance of the left border that is not to be stretched.
- * @param r Distance of the right border that is not to be stretched.
- * @param t Distance of the top border that is not to be stretched.
- * @param b Distance of the bottom border that is not to be stretched.
- */
 EAPI void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
@@ -566,18 +454,6 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves how much of each border of the given image object is not
- * to be scaled.
- *
- * See @ref evas_object_image_border_set for more details.
- *
- * @param obj The given image object.
- * @param l Location to store the left border width in, or NULL.
- * @param r Location to store the right border width in, or NULL.
- * @param t Location to store the top border width in, or NULL.
- * @param b Location to store the bottom border width in, or NULL.
- */
 EAPI void
 evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
@@ -604,18 +480,6 @@ evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int
    if (b) *b = o->cur.border.b;
 }
 
-/**
- * Sets if the center part of the given image object (not the border)
- * should be drawn.
- *
- * When rendering, the image may be scaled to fit the size of the
- * image object. This function sets if the center part of the scaled
- * image is to be drawn or left completely blank, or forced to be
- * solid. Very useful for frames and decorations.
- *
- * @param obj The given image object.
- * @param fill Fill mode of the middle.
- */
 EAPI void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
 {
@@ -634,15 +498,6 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode
    evas_object_change(obj);
 }
 
-/**
- * Retrieves if the center of the given image object is to be drawn or
- * not.
- *
- * See @ref evas_object_image_fill_set for more details.
- *
- * @param obj The given image object.
- * @return Fill mode of the  center.
- */
 EAPI Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
@@ -658,19 +513,6 @@ evas_object_image_border_center_fill_get(const Evas_Object *obj)
    return o->cur.border.fill;
 }
 
-/**
- * Sets if image fill property should track object size.
- *
- * If set to true, then every evas_object_resize() will automatically
- * trigger call to evas_object_image_fill_set() with the new size so
- * image will fill the whole object area.
- *
- * @param obj The given image object.
- * @param setting whether to follow object size.
- *
- * @see evas_object_image_filled_add()
- * @see evas_object_image_fill_set()
- */
 EAPI void
 evas_object_image_filled_set(Evas_Object *obj, Eina_Bool setting)
 {
@@ -701,13 +543,6 @@ evas_object_image_filled_set(Evas_Object *obj, Eina_Bool setting)
      }
 }
 
-/**
- * Retrieves if image fill property is tracking object size.
- *
- * @param obj The given image object.
- * @return 1 if it is tracking, 0 if not and evas_object_fill_set()
- * must be called manually.
- */
 EAPI Eina_Bool
 evas_object_image_filled_get(const Evas_Object *obj)
 {
@@ -724,12 +559,6 @@ evas_object_image_filled_get(const Evas_Object *obj)
    return o->filled;
 }
 
-/**
- * Sets a scale factor (multiplier) for the borders of an image
- *
- * @param obj The given image object.
- * @param scale The scale factor (default is 1.0 - i.e. no scale)
- */
 EAPI void
 evas_object_image_border_scale_set(Evas_Object *obj, double scale)
 {
@@ -748,14 +577,6 @@ evas_object_image_border_scale_set(Evas_Object *obj, double scale)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves the border scale factor
- *
- * See evas_object_image_border_scale_set()
- * 
- * @param obj The given image object.
- * @return The scale factor
- */
 EAPI double
 evas_object_image_border_scale_get(const Evas_Object *obj)
 {
@@ -771,24 +592,6 @@ evas_object_image_border_scale_get(const Evas_Object *obj)
    return o->cur.border.scale;
 }
 
-/**
- * Sets the rectangle of the given image object that the image will be
- * drawn to.
- *
- * Note that the image will be tiled around this one rectangle. To
- * have only one copy of the image drawn, @p x and @p y must be 0 and
- * @p w and @p h need to be the width and height of the image object
- * respectively.
- *
- * The default values for the fill parameters is @p x = 0, @p y = 0,
- * @p w = 32 and @p h = 32.
- *
- * @param obj The given image object.
- * @param x The X coordinate for the top left corner of the image.
- * @param y The Y coordinate for the top left corner of the image.
- * @param w The width of the image.
- * @param h The height of the image.
- */
 EAPI void
 evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
@@ -818,18 +621,6 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    evas_object_change(obj);
 }
 
-/**
- * Retrieves the dimensions of the rectangle of the given image object
- * that the image will be drawn to.
- *
- * See @ref evas_object_image_fill_set for more details.
- *
- * @param obj The given image object.
- * @param x Location to store the X coordinate for the top left corner of the image in, or NULL.
- * @param y Location to store the Y coordinate for the top left corner of the image in, or NULL.
- * @param w Location to store the width of the image in, or NULL.
- * @param h Location to store the height of the image in, or NULL.
- */
 EAPI void
 evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
@@ -857,12 +648,6 @@ evas_object_image_fill_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y,
 }
 
 
-/**
- * Sets the tiling mode for the given evas image object's fill.
- * @param   obj   The given evas image object.
- * @param   spread One of EVAS_TEXTURE_REFLECT, EVAS_TEXTURE_REPEAT,
- * EVAS_TEXTURE_RESTRICT, or EVAS_TEXTURE_PAD.
- */
 EAPI void
 evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread)
 {
@@ -881,13 +666,6 @@ evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves the spread (tiling mode) for the given image object's
- * fill.
- *
- * @param   obj The given evas image object.
- * @return  The current spread mode of the image object.
- */
 EAPI Evas_Fill_Spread
 evas_object_image_fill_spread_get(const Evas_Object *obj)
 {
@@ -903,19 +681,6 @@ evas_object_image_fill_spread_get(const Evas_Object *obj)
    return (Evas_Fill_Spread)o->cur.spread;
 }
 
-/**
- * Sets the size of the given image object.
- *
- * This function will scale down or crop the image so that it is
- * treated as if it were at the given size. If the size given is
- * smaller than the image, it will be cropped. If the size given is
- * larger, then the image will be treated as if it were in the upper
- * left hand corner of a larger image that is otherwise transparent.
- *
- * @param obj The given image object.
- * @param w The new width of the image.
- * @param h The new height of the image.
- */
 EAPI void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
 {
@@ -978,15 +743,6 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves the size of the given image object.
- *
- * See @ref evas_object_image_size_set for more details.
- *
- * @param obj The given image object.
- * @param w Location to store the width of the image in, or NULL.
- * @param h Location to store the height of the image in, or NULL.
- */
 EAPI void
 evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
 {
@@ -1007,15 +763,6 @@ evas_object_image_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = o->cur.image.h;
 }
 
-/**
- * Retrieves the row stride of the given image object,
- *
- * The row stride is the number of units between the start of a
- * row and the start of the next row.
- *
- * @param obj The given image object.
- * @return The stride of the image.
- */
 EAPI int
 evas_object_image_stride_get(const Evas_Object *obj)
 {
@@ -1031,15 +778,6 @@ evas_object_image_stride_get(const Evas_Object *obj)
    return o->cur.image.stride;
 }
 
-/**
- * Retrieves a number representing any error that occurred during the last
- * load of the given image object.
- *
- * @param obj The given image object.
- * @return A value giving the last error that occurred. It should be one of
- *         the @c EVAS_LOAD_ERROR_* values.  @c EVAS_LOAD_ERROR_NONE is
- *         returned if there was no error.
- */
 EAPI Evas_Load_Error
 evas_object_image_load_error_get(const Evas_Object *obj)
 {
@@ -1055,22 +793,6 @@ evas_object_image_load_error_get(const Evas_Object *obj)
    return o->load_error;
 }
 
-/**
- * Converts the raw image data of the given image object to the
- * specified colorspace.
- *
- * Note that this function does not modify the raw image data.  If the
- * requested colorspace is the same as the image colorspace nothing is
- * done and NULL is returned. You should use
- * evas_object_image_colorspace_get() to check the current image
- * colorspace.
- *
- * See @ref evas_object_image_colorspace_get.
- *
- * @param obj The given image object.
- * @param to_cspace The colorspace to which the image raw data will be converted.
- * @return data A newly allocated data in the format specified by to_cspace.
- */
 EAPI void *
 evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
 {
@@ -1094,15 +816,6 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
    return evas_object_image_data_convert_internal(o, data, to_cspace);
 }
 
-/**
- * Sets the raw image data of the given image object.
- *
- * Note that the raw data must be of the same size and colorspace of
- * the image. If data is NULL the current image data will be freed.
- *
- * @param obj The given image object.
- * @param data The raw data, or NULL.
- */
 EAPI void
 evas_object_image_data_set(Evas_Object *obj, void *data)
 {
@@ -1182,21 +895,6 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    evas_object_change(obj);
 }
 
-/**
- * Get a pointer to the raw image data of the given image object.
- *
- * This function returns a pointer to an image object's internal pixel
- * buffer, for reading only or read/write. If you request it for
- * writing, the image will be marked dirty so that it gets redrawn at
- * the next update.
- *
- * This is best suited when you want to modify an existing image,
- * without changing its dimensions.
- *
- * @param obj The given image object.
- * @param for_writing Whether the data being retrieved will be modified.
- * @return The raw image data.
- */
 EAPI void *
 evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
 {
@@ -1249,20 +947,6 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
    return data;
 }
 
-/**
- * Preload image in the background
- *
- * This function request the preload of the data image in the
- * background. The worked is queued before being processed.
- *
- * If image data is already loaded, it will callback
- * EVAS_CALLBACK_IMAGE_PRELOADED immediatelly and do nothing else.
- *
- * If cancel is set, it will remove the image from the workqueue.
- *
- * @param obj The given image object.
- * @param cancel 0 means add to the workqueue, 1 remove it.
- */
 EAPI void
 evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
 {
@@ -1290,28 +974,6 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
 							       obj);
 }
 
-/**
- * Replaces the raw image data of the given image object.
- *
- * This function lets the application replace an image object's
- * internal pixel buffer with a user-allocated one. For best results,
- * you should generally first call evas_object_image_size_set() with
- * the width and height for the new buffer.
- *
- * This call is best suited for when you will be using image data with
- * different dimensions than the existing image data, if any. If you
- * only need to modify the existing image in some fashion, then using
- * evas_object_image_data_get() is probably what you are after.
- *
- * Note that the caller is responsible for freeing the buffer when
- * finished with it, as user-set image data will not be automatically
- * freed when the image object is deleted.
- *
- * See @ref evas_object_image_data_get for more details.
- *
- * @param obj The given image object.
- * @param data The raw data.
- */
 EAPI void
 evas_object_image_data_copy_set(Evas_Object *obj, void *data)
 {
@@ -1363,18 +1025,6 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
-/**
- * Mark a sub-region of the given image object to be redrawn.
- *
- * This function schedules a particular rectangular region of an image
- * object to be updated (redrawn) at the next render.
- *
- * @param obj The given image object.
- * @param x X-offset of the region to be updated.
- * @param y Y-offset of the region to be updated.
- * @param w Width of the region to be updated.
- * @param h Height of the region to be updated.
- */
 EAPI void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 {
@@ -1396,18 +1046,6 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
    evas_object_change(obj);
 }
 
-/**
- * Enable or disable alpha channel of the given image object.
- *
- * This function sets a flag on an image object indicating whether or
- * not to use alpha channel data. A value of 1 indicates to use alpha
- * channel data, and 0 indicates to ignore any alpha channel
- * data. Note that this has nothing to do with an object's color as
- * manipulated by evas_object_color_set().
- *
- * @param obj The given image object.
- * @param has_alpha Whether to use alpha channel data or not.
- */
 EAPI void
 evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
 {
@@ -1455,17 +1093,6 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
 }
 
 
-/**
- * @brief Retrieves the alpha channel setting of the given image object.
- *
- * @param obj The given image object.
- * @return Whether the alpha channel data is being used.
- *
- * This function returns 1 if the image object's alpha channel is
- * being used, or 0 otherwise.
- *
- * See @ref evas_object_image_alpha_set for more details.
- */
 EAPI Eina_Bool
 evas_object_image_alpha_get(const Evas_Object *obj)
 {
@@ -1481,17 +1108,6 @@ evas_object_image_alpha_get(const Evas_Object *obj)
    return o->cur.has_alpha;
 }
 
-/**
- * Sets whether to use of high-quality image scaling algorithm
- * of the given image object.
- *
- * When enabled, a higher quality image scaling algorithm is used when
- * scaling images to sizes other than the source image. This gives
- * better results but is more computationally expensive.
- *
- * @param obj The given image object.
- * @param smooth_scale Whether to use smooth scale or not.
- */
 EAPI void
 evas_object_image_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth_scale)
 {
@@ -1512,15 +1128,6 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth_scale)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves whether the given image object is using use a
- * high-quality image scaling algorithm.
- *
- * See @ref evas_object_image_smooth_scale_set for more details.
- *
- * @param obj The given image object.
- * @return Whether smooth scale is being used.
- */
 EAPI Eina_Bool
 evas_object_image_smooth_scale_get(const Evas_Object *obj)
 {
@@ -1536,14 +1143,6 @@ evas_object_image_smooth_scale_get(const Evas_Object *obj)
    return o->cur.smooth_scale;
 }
 
-/**
- * Reload a image of the canvas.
- *
- * @param obj The given image object pointer.
- *
- * This function reloads a image of the given canvas.
- *
- */
 EAPI void
 evas_object_image_reload(Evas_Object *obj)
 {
@@ -1569,22 +1168,6 @@ evas_object_image_reload(Evas_Object *obj)
    evas_object_change(obj);
 }
 
-/**
- * Save the given image object to a file.
- *
- * Note that you should pass the filename extension when saving.  If
- * the file supports multiple data stored in it as eet, you can
- * specify the key to be used as the index of the image in this file.
- *
- * You can specify some flags when saving the image.  Currently
- * acceptable flags are quality and compress.  Eg.: "quality=100
- * compress=9"
- *
- * @param obj The given image object.
- * @param file The filename to be used to save the image.
- * @param key The image key in file, or NULL.
- * @param flags String containing the flags to be used.
- */
 EAPI Eina_Bool
 evas_object_image_save(const Evas_Object *obj, const char *file, const char *key, const char *flags)
 {
@@ -1651,15 +1234,6 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
    return ok;
 }
 
-/**
- * Import pixels from given source to a given canvas image object.
- *
- * @param obj The given canvas object.
- * @param pixels The pixel's source to be imported.
- *
- * This function imports pixels from a given source to a given canvas image.
- *
- */
 EAPI Eina_Bool
 evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
 {
@@ -1746,17 +1320,6 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
    return 1;
 }
 
-/**
- * Set the callback function to get pixels from a canva's image.
- *
- * @param obj The given canvas pointer.
- * @param func The callback function.
- * @param data The data pointer to be passed to @a func.
- *
- * This functions sets a function to be the callback function that get
- * pixes from a image of the canvas.
- *
- */
 EAPI void
 evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data)
 {
@@ -1773,12 +1336,6 @@ evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pi
    o->func.get_pixels_data = data;
 }
 
-/**
- * Mark whether the given image object is dirty (needs to be redrawn).
- *
- * @param obj The given image object.
- * @param dirty Whether the image is dirty.
- */
 EAPI void
 evas_object_image_pixels_dirty_set(Evas_Object *obj, Eina_Bool dirty)
 {
@@ -1797,12 +1354,6 @@ evas_object_image_pixels_dirty_set(Evas_Object *obj, Eina_Bool dirty)
    evas_object_change(obj);
 }
 
-/**
- * Retrieves whether the given image object is dirty (needs to be redrawn).
- *
- * @param obj The given image object.
- * @return Whether the image is dirty.
- */
 EAPI Eina_Bool
 evas_object_image_pixels_dirty_get(const Evas_Object *obj)
 {
@@ -1819,15 +1370,6 @@ evas_object_image_pixels_dirty_get(const Evas_Object *obj)
    return 0;
 }
 
-/**
- * Set the dpi resolution of a loaded image of the  canvas.
- *
- * @param obj The given canvas pointer.
- * @param dpi The new dpi resolution.
- *
- * This function set the dpi resolution of a given loaded canvas image.
- *
- */
 EAPI void
 evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
 {
@@ -1852,15 +1394,6 @@ evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
      }
 }
 
-/**
- * Get the dpi resolution of a loaded image of the canvas.
- *
- * @param obj The given canvas pointer.
- * @return The dpi resolution of the given canvas image.
- *
- * This function returns the dpi resolution of given canvas image.
- *
- */
 EAPI double
 evas_object_image_load_dpi_get(const Evas_Object *obj)
 {
@@ -1876,16 +1409,6 @@ evas_object_image_load_dpi_get(const Evas_Object *obj)
    return o->load_opts.dpi;
 }
 
-/**
- * Set the size of a loaded image of the canvas.
- *
- * @param obj The given canvas object.
- * @param w The new width of the canvas image given.
- * @param h The new height of the canvas image given.
- *
- * This function sets a new size for the given canvas image.
- *
- */
 EAPI void
 evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
 {
@@ -1911,16 +1434,6 @@ evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
      }
 }
 
-/**
- * Get the size of a loaded image of the canvas.
- *
- * @param obj The given canvas object.
- * @param w The width of the canvas image given.
- * @param h The height of the canvas image given.
- *
- * This function get the size of the given canvas image.
- *
- */
 EAPI void
 evas_object_image_load_size_get(const Evas_Object *obj, int *w, int *h)
 {
@@ -1937,15 +1450,6 @@ evas_object_image_load_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = o->load_opts.h;
 }
 
-/**
- * Set the scale down of a loaded image of the canvas.
- *
- * @param obj The given canvas pointer.
- * @param scale_down The scale to down value.
- *
- * This function sets the scale down of a given canvas image.
- *
- */
 EAPI void
 evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
 {
@@ -1970,14 +1474,6 @@ evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
      }
 }
 
-/**
- * Get the scale down value of given image of the canvas.
- *
- * @param obj The given image object pointer.
- *
- * This function returns the scale down value of a given canvas image.
- *
- */
 EAPI int
 evas_object_image_load_scale_down_get(const Evas_Object *obj)
 {
@@ -2039,15 +1535,6 @@ evas_object_image_load_region_get(const Evas_Object *obj, int *x, int *y, int *w
    if (h) *h = o->load_opts.region.h;
 }
 
-/**
- * Set the colorspace of a given image of the canvas.
- *
- * @param obj The given image object pointer.
- * @param cspace The new color space.
- *
- * This function sets the colorspace of given canvas image.
- *
- */
 EAPI void
 evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
 {
@@ -2076,15 +1563,6 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
 							 cspace);
 }
 
-/**
- * Get the colorspace of a given image of the canvas.
- *
- * @param obj The given image object pointer.
- * @return The colorspace of the image.
- *
- * This function returns the colorspace of given canvas image.
- *
- */
 EAPI Evas_Colorspace
 evas_object_image_colorspace_get(const Evas_Object *obj)
 {
@@ -2100,15 +1578,6 @@ evas_object_image_colorspace_get(const Evas_Object *obj)
    return o->cur.cspace;
 }
 
-/**
- * Set the native surface of a given image of the canvas
- *
- * @param obj The given canvas pointer.
- * @param surf The new native surface.
- *
- * This function sets a native surface of a given canvas image.
- *
- */
 EAPI void
 evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf)
 {
@@ -2132,15 +1601,6 @@ evas_object_image_native_surface_set(Evas_Object *obj, Evas_Native_Surface *surf
                                                       surf);
 }
 
-/**
- * Get the native surface of a given image of the canvas
- *
- * @param obj The given canvas pointer.
- * @return The native surface of the given canvas image.
- *
- * This function returns the native surface of a given canvas image.
- *
- */
 EAPI Evas_Native_Surface *
 evas_object_image_native_surface_get(const Evas_Object *obj)
 {
@@ -2158,15 +1618,6 @@ evas_object_image_native_surface_get(const Evas_Object *obj)
 							  o->engine_data);
 }
 
-/**
- * Set the scale hint of a given image of the canvas.
- *
- * @param obj The given canvas pointer.
- * @param hint The scale hint value.
- *
- * This function sets the scale hint value of the given image of the canvas.
- *
- */
 EAPI void
 evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
 {
@@ -2203,14 +1654,6 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
      }
 }
 
-/**
- * Get the scale hint of a given image of the canvas.
- *
- * @param obj The given canvas pointer.
- *
- * This function returns the scale hint value of the given image of the canvas.
- *
- */
 EAPI Evas_Image_Scale_Hint
 evas_object_image_scale_hint_get(const Evas_Object *obj)
 {
@@ -2226,15 +1669,6 @@ evas_object_image_scale_hint_get(const Evas_Object *obj)
    return o->scale_hint;
 }
 
-/**
- * Set the content hint of a given image of the canvas.
- *
- * @param obj The given canvas pointer.
- * @param hint The content hint value.
- *
- * This function sets the content hint value of the given image of the canvas.
- *
- */
 EAPI void
 evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hint)
 {
@@ -2271,18 +1705,6 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
      }
 }
 
-/**
- * Enable an image to be used as an alpha mask.
- *
- * This will set any flags, and discard any excess image data not used as an
- * alpha mask.
- *
- * Note there is little point in using a image as alpha mask unless it has an
- * alpha channel.
- *
- * @param obj Object to use as an alpha mask.
- * @param ismask Use image as alphamask, must be true.
- */
 EAPI void
 evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask)
 {
@@ -2304,14 +1726,6 @@ evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask)
 
 }
 
-/**
- * Get the content hint of a given image of the canvas.
- *
- * @param obj The given canvas pointer.
- *
- * This function returns the content hint value of the given image of the canvas.
- *
- */
 EAPI Evas_Image_Content_Hint
 evas_object_image_content_hint_get(const Evas_Object *obj)
 {
@@ -2327,23 +1741,6 @@ evas_object_image_content_hint_get(const Evas_Object *obj)
    return o->content_hint;
 }
 
-/**
- * @}
- */
-
-/**
- * @addtogroup Evas_Image_Group
- * @{
- */
-
-/**
- * Flush the image cache of the canvas.
- *
- * @param e The given evas pointer.
- *
- * This function flushes image cache of canvas.
- *
- */
 EAPI void
 evas_image_cache_flush(Evas *e)
 {
@@ -2354,14 +1751,6 @@ evas_image_cache_flush(Evas *e)
    e->engine.func->image_cache_flush(e->engine.data.output);
 }
 
-/**
- * Reload the image cache
- *
- * @param e The given evas pointer.
- *
- * This function reloads the image cache of canvas.
- *
- */
 EAPI void
 evas_image_cache_reload(Evas *e)
 {
@@ -2409,15 +1798,6 @@ evas_image_cache_reload(Evas *e)
    evas_image_cache_flush(e);
 }
 
-/**
- * Set the image cache.
- *
- * @param e The given evas pointer.
- * @param size The cache size.
- *
- * This function sets the image cache of canvas.
- *
- */
 EAPI void
 evas_image_cache_set(Evas *e, int size)
 {
@@ -2429,14 +1809,6 @@ evas_image_cache_set(Evas *e, int size)
    e->engine.func->image_cache_set(e->engine.data.output, size);
 }
 
-/**
- * Set the image cache
- *
- * @param e The given evas pointer.
- *
- * This function returns the image cache of canvas.
- *
- */
 EAPI int
 evas_image_cache_get(const Evas *e)
 {
@@ -2446,10 +1818,6 @@ evas_image_cache_get(const Evas *e)
 
    return e->engine.func->image_cache_get(e->engine.data.output);
 }
-
-/**
- * @}
- */
 
 /* all nice and private */
 static void

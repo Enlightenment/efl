@@ -72,19 +72,8 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
 
-
-/**
- * @addtogroup Evas_Line_Group
- * @{
- */
-
 EVAS_MEMPOOL(_mp_obj);
 
-/**
- * Adds a new evas line object to the given evas.
- * @param   e The given evas.
- * @return  The new evas line object.
- */
 EAPI Evas_Object *
 evas_object_line_add(Evas *e)
 {
@@ -99,14 +88,6 @@ evas_object_line_add(Evas *e)
    return obj;
 }
 
-/**
- * Sets the coordinates of the end points of the given evas line object.
- * @param   obj The given evas line object.
- * @param   x1  The X coordinate of the first point.
- * @param   y1  The Y coordinate of the first point.
- * @param   x2  The X coordinate of the second point.
- * @param   y2  The Y coordinate of the second point.
- */
 EAPI void
 evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
 {
@@ -182,18 +163,6 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    evas_object_inform_call_resize(obj);
 }
 
-/**
- * Retrieves the coordinates of the end points of the given evas line object.
- * @param obj The given line object.
- * @param x1  Pointer to an integer in which to store the X coordinate of the
- *            first end point.
- * @param y1  Pointer to an integer in which to store the Y coordinate of the
- *            first end point.
- * @param x2  Pointer to an integer in which to store the X coordinate of the
- *            second end point.
- * @param y2  Pointer to an integer in which to store the Y coordinate of the
- *            second end point.
- */
 EAPI void
 evas_object_line_xy_get(const Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
 {
@@ -219,10 +188,6 @@ evas_object_line_xy_get(const Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, 
    if (x2) *x2 = obj->cur.geometry.x + o->cur.x2;
    if (y2) *y2 = obj->cur.geometry.y + o->cur.y2;
 }
-
-/**
- * @}
- */
 
 /* all nice and private */
 static void

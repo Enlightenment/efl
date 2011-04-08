@@ -305,20 +305,6 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
 }
 
 
-/**
- * Enable or disable the map that is set.
- * 
- * This enables the map that is set or disables it. On enable, the object
- * geometry will be saved, and the new geometry will change (position and
- * size) to reflect the map geometry set. If none is set yet, this may be
- * an undefined geometry, unless you have already set the map with
- * evas_object_map_set(). It is suggested you first set a map with
- * evas_object_map_set() with valid useful coordinates then enable and
- * disable the map with evas_object_map_enable_set() as needed.
- * 
- * @param obj object to enable the map on
- * @param enabled enabled state
- */
 EAPI void
 evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
 {
@@ -349,16 +335,6 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    evas_object_change(obj);
 }
 
-/**
- * Get the map enabled state
- * 
- * This returns the currently enabled state of the map on the object indicated.
- * The default map enable state is off. You can enable and disable it with
- * evas_object_map_enable_set().
- * 
- * @param obj object to get the map enabled state from
- * @return the map enabled state
- */
 EAPI Eina_Bool
 evas_object_map_enable_get(const Evas_Object *obj)
 {
@@ -369,17 +345,6 @@ evas_object_map_enable_get(const Evas_Object *obj)
 }
 
 
-/**
- * Set the map source object
- * 
- * This sets the object from which the map is taken - can be any object that
- * has map enabled on it.
- * 
- * Currently not implemented. for future use.
- * 
- * @param obj object to set the map source of
- * @param src the source object from which the map is taken
- */
 EAPI void
 evas_object_map_source_set(Evas_Object *obj, Evas_Object *src)
 {
@@ -389,14 +354,6 @@ evas_object_map_source_set(Evas_Object *obj, Evas_Object *src)
    (void)src; /* method still needs to be implemented. */
 }
 
-/**
- * Get the map source object
- * 
- * See evas_object_map_source_set()
- * 
- * @param obj object to set the map source of
- * @return the object set as the source
- */
 EAPI Evas_Object *
 evas_object_map_source_get(const Evas_Object *obj)
 {
@@ -406,45 +363,6 @@ evas_object_map_source_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Set current object transformation map.
- * 
- * This sets the map on a given object. It is copied from the @p map pointer,
- * so there is no need to keep the @p map object if you don't need it anymore.
- * 
- * A map is a set of 4 points which have canvas x, y coordinates per point,
- * with an optional z point value as a hint for perspective correction, if it
- * is available. As well each point has u and v coordinates. These are like
- * "texture coordinates" in OpenGL in that they define a point in the source
- * image that is mapped to that map vertex/point. The u corresponds to the x
- * coordinate of this mapped point and v, the y coordinate. Note that these
- * coordinates describe a bounding region to sample. If you have a 200x100
- * source image and want to display it at 200x100 with proper pixel
- * precision, then do:
- * 
- * @code
- * Evas_Map *m = evas_map_new(4);
- * evas_map_point_coord_set(m, 0,   0,   0, 0);
- * evas_map_point_coord_set(m, 1, 200,   0, 0);
- * evas_map_point_coord_set(m, 2, 200, 100, 0);
- * evas_map_point_coord_set(m, 3,   0, 100, 0);
- * evas_map_point_image_uv_set(m, 0,   0,   0);
- * evas_map_point_image_uv_set(m, 1, 200,   0);
- * evas_map_point_image_uv_set(m, 2, 200, 100);
- * evas_map_point_image_uv_set(m, 3,   0, 100);
- * evas_object_map_set(obj, m);
- * evas_map_free(m);
- * @endcode
- * 
- * Note that the map points a uv coordinates match the image geometry. If
- * the @p map parameter is NULL, the stored map will be freed and geometry
- * prior to enabling/setting a map will be restored.
- *
- * @param obj object to change transformation map
- * @param map new map to use
- *
- * @see evas_map_new()
- */
 EAPI void
 evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
 {
@@ -499,28 +417,6 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
    _evas_map_calc_map_geometry(obj);
 }
 
-/**
- * Get current object transformation map.
- * 
- * This returns the current internal map set on the indicated object. It is
- * intended for read-only acces and is only valid as long as the object is
- * not deleted or the map on the object is not changed. If you wish to modify
- * the map and set it back do the following:
- * 
- * @code
- * const Evas_Map *m = evas_object_map_get(obj);
- * Evas_Map *m2 = evas_map_dup(m);
- * evas_map_util_rotate(m2, 30.0, 0, 0);
- * evas_object_map_set(obj);
- * evas_map_free(m2);
- * @endcode
- *
- * @param obj object to query transformation map.
- * @return map reference to map in use. This is an internal data structure, so
- * do not modify it.
- *
- * @see evas_object_map_set()
- */
 EAPI const Evas_Map *
 evas_object_map_get(const Evas_Object *obj)
 {
@@ -531,25 +427,6 @@ evas_object_map_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Create map of transformation points to be later used with an evas object.
- *
- * This creates a set of points (currently only 4 is supported. no other
- * number for @p count will work). That is empty and ready to be modified
- * with evas_map calls.
- * 
- * @param count number of points in the map. *
- * @return a newly allocated map or NULL on errors.
- *
- * @see evas_map_free()
- * @see evas_map_dup()
- * @see evas_map_point_coord_set()
- * @see evas_map_point_image_uv_set()
- * @see evas_map_util_points_populate_from_object_full()
- * @see evas_map_util_points_populate_from_object()
- *
- * @see evas_object_map_set()
- */
 EAPI Evas_Map *
 evas_map_new(int count)
 {
@@ -561,16 +438,6 @@ evas_map_new(int count)
    return _evas_map_new(count);
 }
 
-/**
- * Set the smoothing for map rendering
- * 
- * This sets smoothing for map rendering. If the object is a type that has
- * its own smoothing settings, then both the smooth settings for this object
- * and the map must be turned off. By default smooth maps are enabled.
- * 
- * @param m map to modify. Must not be NULL.
- * @param enabled enable or disable smooth map rendering
- */
 EAPI void
 evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled)
 {
@@ -578,13 +445,6 @@ evas_map_smooth_set(Evas_Map *m, Eina_Bool enabled)
    m->smooth = enabled;
 }
 
-/**
- * get the smoothing for map rendering
- * 
- * This gets smoothing for map rendering.
- * 
- * @param m map to get the smooth from. Must not be NULL.
- */
 EAPI Eina_Bool
 evas_map_smooth_get(const Evas_Map *m)
 {
@@ -592,17 +452,6 @@ evas_map_smooth_get(const Evas_Map *m)
    return m->smooth;
 }
 
-/**
- * Set the alpha flag for map rendering
- * 
- * This sets alpha flag for map rendering. If the object is a type that has
- * its own alpha settings, then this will take precedence. Only image objects
- * have this currently. Fits stops alpha blending of the map area, and is
- * useful if you know the object and/or all sub-objects is 100% solid.
- * 
- * @param m map to modify. Must not be NULL.
- * @param enabled enable or disable alpha map rendering
- */
 EAPI void
 evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled)
 {
@@ -610,13 +459,6 @@ evas_map_alpha_set(Evas_Map *m, Eina_Bool enabled)
    m->alpha = enabled;
 }
 
-/**
- * get the alpha flag for map rendering
- * 
- * This gets the alph flag for map rendering.
- * 
- * @param m map to get the alpha from. Must not be NULL.
- */
 EAPI Eina_Bool
 evas_map_alpha_get(const Evas_Map *m)
 {
@@ -624,14 +466,6 @@ evas_map_alpha_get(const Evas_Map *m)
    return m->alpha;
 }
 
-/**
- * Copy a previously allocated map.
- * 
- * This makes a duplicate of the @p m object and returns it.
- *
- * @param m map to copy. Must not be NULL.
- * @return newly allocated map with the same count and contents as @p m.
- */
 EAPI Evas_Map *
 evas_map_dup(const Evas_Map *m)
 {
@@ -639,14 +473,6 @@ evas_map_dup(const Evas_Map *m)
    return _evas_map_dup(m);
 }
 
-/**
- * Free a previously allocated map.
- *
- * This frees a givem map @p m and all memory associated with it. You must NOT
- * free a map returned by evas_object_map_get() as this is internal.
- * 
- * @param m map to free.
- */
 EAPI void
 evas_map_free(Evas_Map *m)
 {
@@ -654,14 +480,6 @@ evas_map_free(Evas_Map *m)
    _evas_map_free(NULL, m);
 }
 
-/**
- * Get a maps size.
- *
- * Returns the number of points in a map.  Should be at least 4.
- *
- * @param m map to get size.
- * @return -1 on error, points otherwise.
- */
 EAPI int
 evas_map_count_get(const Evas_Map *m)
 {
@@ -669,35 +487,6 @@ evas_map_count_get(const Evas_Map *m)
    return m->count;
 }
 
-/**
- * Change the map point's coordinate.
- * 
- * This sets the fixen point's coordinate in the map. Note that points
- * describe the outline of a quadrangle and are ordered either clockwise
- * or anit-clock-wise. It is suggested to keep your quadrangles concave and
- * non-complex, though these polygon modes may work, they may not render
- * a desired set of output. The quadrangle will use points 0 and 1 , 1 and 2,
- * 2 and 3, and 3 and 0 to describe the edges of the quandrangle.
- * 
- * The X and Y and Z coordinates are in canvas units. Z is optional and may
- * or may not be honored in drawing. Z is a hint and does not affect the
- * X and Y rendered coordinates. It may be used for calculating fills with
- * perspective correct rendering.
- * 
- * Remember all coordinates are canvas global ones like with move and reize
- * in evas.
- *
- * @param m map to change point. Must not be @c NULL.
- * @param idx index of point to change. Must be smaller than map size.
- * @param x Point X Coordinate
- * @param y Point Y Coordinate
- * @param z Point Z Coordinate hint (pre-perspective transform)
- *
- * @see evas_map_util_rotate()
- * @see evas_map_util_zoom()
- * @see evas_map_util_points_populate_from_object_full()
- * @see evas_map_util_points_populate_from_object()
- */
 EAPI void
 evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
@@ -710,17 +499,6 @@ evas_map_point_coord_set(Evas_Map *m, int idx, Evas_Coord x, Evas_Coord y, Evas_
    p->z = z;
 }
 
-/**
- * Get the map point's coordinate.
- * 
- * This returns the coordinates of the given point in the map.
- *
- * @param m map to query point.
- * @param idx index of point to query. Must be smaller than map size.
- * @param x where to return the X coordinate.
- * @param y where to return the Y coordinate.
- * @param z where to return the Z coordinate.
- */
 EAPI void
 evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
@@ -740,25 +518,6 @@ evas_map_point_coord_get(const Evas_Map *m, int idx, Evas_Coord *x, Evas_Coord *
    if (z) *z = 0;
 }
 
-/**
- * Change the map point's U and V texture source point
- *
- * This sets the U and V coordinates for the point. This determines which
- * coordinate in the source image is mapped to the given point, much like
- * OpenGL and textures. Notes that these points do select the pixel, but
- * are double floating point values to allow for accuracy and sub-pixel
- * selection.
- * 
- * @param m map to change the point of.
- * @param idx index of point to change. Must be smaller than map size.
- * @param u the X coordinate within the image/texture source
- * @param v the Y coordinate within the image/texture source
- * 
- * @see evas_map_point_coord_set()
- * @see evas_object_map_set()
- * @see evas_map_util_points_populate_from_object_full()
- * @see evas_map_util_points_populate_from_object()
- */
 EAPI void
 evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
 {
@@ -770,16 +529,6 @@ evas_map_point_image_uv_set(Evas_Map *m, int idx, double u, double v)
    p->v = v;
 }
 
-/**
- * Get the map point's U and V texture source points
- *
- * This returns the texture points set by evas_map_point_image_uv_set().
- * 
- * @param m map to query point.
- * @param idx index of point to query. Must be smaller than map size.
- * @param u where to write the X coordinate within the image/texture source
- * @param v where to write the Y coordinate within the image/texture source
- */
 EAPI void
 evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
 {
@@ -796,26 +545,6 @@ evas_map_point_image_uv_get(const Evas_Map *m, int idx, double *u, double *v)
    if (v) *v = 0.0;
 }
 
-/**
- * Set the color of a vertex in the map
- *
- * This sets the color of the vertex in the map. Colors will be linearly
- * interpolated between vertex points through the map. Color will multiply
- * the "texture" pixels (like GL_MODULATE in OpenGL). The default color of
- * a vertex in a map is white solid (255, 255, 255, 255) which means it will
- * have no affect on modifying the texture pixels.
- * 
- * @param m map to change the color of.
- * @param idx index of point to change. Must be smaller than map size.
- * @param r red (0 - 255)
- * @param g green (0 - 255)
- * @param b blue (0 - 255)
- * @param a alpha (0 - 255)
- *
- * @see evas_map_util_points_color_set()
- * @see evas_map_point_coord_set()
- * @see evas_object_map_set()
- */
 EAPI void
 evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
 {
@@ -829,22 +558,6 @@ evas_map_point_color_set(Evas_Map *m, int idx, int r, int g, int b, int a)
    p->a = a;
 }
 
-/**
- * Get the color set on a vertex in the map
- *
- * This gets the color set by evas_map_point_color_set() on the given vertex
- * of the map.
- * 
- * @param m map to get the color of the vertex from.
- * @param idx index of point get. Must be smaller than map size.
- * @param r pointer to red return
- * @param g pointer to green return
- * @param b pointer to blue return
- * @param a pointer to alpha return (0 - 255)
- * 
- * @see evas_map_point_coord_set()
- * @see evas_object_map_set()
- */
 EAPI void
 evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int *a)
 {
@@ -898,24 +611,6 @@ _evas_map_util_points_populate(Evas_Map *m, const Evas_Coord x, const Evas_Coord
      }
 }
 
-/**
- * Populate source and destination map points to match exactly object.
- *
- * Usually one initialize map of an object to match it's original
- * position and size, then transform these with evas_map_util_*
- * functions, such as evas_map_util_rotate() or
- * evas_map_util_3d_rotate(). The original set is done by this
- * function, avoiding code duplication all around.
- *
- * @param m map to change all 4 points (must be of size 4).
- * @param obj object to use unmapped geometry to populate map coordinates.
- * @param z Point Z Coordinate hint (pre-perspective transform). This value
- *        will be used for all four points.
- *
- * @see evas_map_util_points_populate_from_object()
- * @see evas_map_point_coord_set()
- * @see evas_map_point_image_uv_set()
- */
 EAPI void
 evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *obj, Evas_Coord z)
 {
@@ -936,25 +631,6 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *o
 				  obj->cur.geometry.w, obj->cur.geometry.h, z);
 }
 
-/**
- * Populate source and destination map points to match exactly object.
- *
- * Usually one initialize map of an object to match it's original
- * position and size, then transform these with evas_map_util_*
- * functions, such as evas_map_util_rotate() or
- * evas_map_util_3d_rotate(). The original set is done by this
- * function, avoiding code duplication all around.
- *
- * Z Point coordinate is assumed as 0 (zero).
- *
- * @param m map to change all 4 points (must be of size 4).
- * @param obj object to use unmapped geometry to populate map coordinates.
- *
- * @see evas_map_util_points_populate_from_object_full()
- * @see evas_map_util_points_populate_from_geometry()
- * @see evas_map_point_coord_set()
- * @see evas_map_point_image_uv_set()
- */
 EAPI void
 evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
 {
@@ -975,27 +651,6 @@ evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
 				  obj->cur.geometry.w, obj->cur.geometry.h, 0);
 }
 
-/**
- * Populate source and destination map points to match given geometry.
- *
- * Similar to evas_map_util_points_populate_from_object_full(), this
- * call takes raw values instead of querying object's unmapped
- * geometry. The given width will be used to calculate destination
- * points (evas_map_point_coord_set()) and set the image uv
- * (evas_map_point_image_uv_set()).
- *
- * @param m map to change all 4 points (must be of size 4).
- * @param x Point X Coordinate
- * @param y Point Y Coordinate
- * @param w width to use to calculate second and third points.
- * @param h height to use to calculate third and fourth points.
- * @param z Point Z Coordinate hint (pre-perspective transform). This value
- *        will be used for all four points.
- *
- * @see evas_map_util_points_populate_from_object()
- * @see evas_map_point_coord_set()
- * @see evas_map_point_image_uv_set()
- */
 EAPI void
 evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord z)
 {
@@ -1012,20 +667,6 @@ evas_map_util_points_populate_from_geometry(Evas_Map *m, Evas_Coord x, Evas_Coor
    _evas_map_util_points_populate(m, x, y, w, h, z);
 }
 
-/**
- * Set color of all points to given color.
- *
- * This call is useful to reuse maps after they had 3d lightning or
- * any other colorization applied before.
- *
- * @param m map to change the color of.
- * @param r red (0 - 255)
- * @param g green (0 - 255)
- * @param b blue (0 - 255)
- * @param a alpha (0 - 255)
- *
- * @see evas_map_point_color_set()
- */
 EAPI void
 evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
 {
@@ -1046,23 +687,6 @@ evas_map_util_points_color_set(Evas_Map *m, int r, int g, int b, int a)
      }
 }
 
-/**
- * Change the map to apply the given rotation.
- * 
- * This rotates the indicated map's coordinates around the center coordinate
- * given by @p cx and @p cy as the rotation center. The points will have their
- * X and Y coordinates rotated clockwise by @p degrees degress (360.0 is a
- * full rotation). Negative values for degrees will rotate counter-clockwise
- * by that amount. All coordinates are canvas global coordinates.
- *
- * @param m map to change.
- * @param degrees amount of degrees from 0.0 to 360.0 to rotate.
- * @param cx rotation's center horizontal position.
- * @param cy rotation's center vertical position.
- *
- * @see evas_map_point_coord_set()
- * @see evas_map_util_zoom()
- */
 EAPI void
 evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
 {
@@ -1090,24 +714,6 @@ evas_map_util_rotate(Evas_Map *m, double degrees, Evas_Coord cx, Evas_Coord cy)
      }
 }
 
-/**
- * Change the map to apply the given zooming.
- *
- * Like evas_map_util_rotate(), this zooms the points of the map from a center
- * point. That center is defined by @p cx and @p cy. The @p zoomx and @p zoomy
- * parameters specific how much to zoom in the X and Y direction respectively.
- * A value of 1.0 means "don't zoom". 2.0 means "dobule the size". 0.5 is
- * "half the size" etc. All coordinates are canvas global coordinates.
- * 
- * @param m map to change.
- * @param zoomx horizontal zoom to use.
- * @param zoomy vertical zoom to use.
- * @param cx zooming center horizontal position.
- * @param cy zooming center vertical position.
- *
- * @see evas_map_point_coord_set()
- * @see evas_map_util_rotate()
- */
 EAPI void
 evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_Coord cy)
 {
@@ -1132,24 +738,6 @@ evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy, Evas_Coord cx, Evas_
      }
 }
 
-/**
- * Rotate the map around 3 axes in 3D
- * 
- * This will rotate not just around the "Z" axis as in evas_map_util_rotate()
- * (which is a convenience call for those only wanting 2D). This will rotate
- * around the X, Y and Z axes. The Z axis points "into" the screen with low
- * values at the screen and higher values further away. The X axis runs from
- * left to right on the screen and the Y axis from top to bottom. Like with
- * evas_map_util_rotate(0 you provide a center point to rotate around (in 3D).
- *
- * @param m map to change.
- * @param dx amount of degrees from 0.0 to 360.0 to rotate arount X axis.
- * @param dy amount of degrees from 0.0 to 360.0 to rotate arount Y axis.
- * @param dz amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
- * @param cx rotation's center horizontal position.
- * @param cy rotation's center vertical position.
- * @param cz rotation's center vertical position.
- */
 EAPI void
 evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, 
                         Evas_Coord cx, Evas_Coord cy, Evas_Coord cz)
@@ -1201,28 +789,6 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
      }
 }
 
-/**
- * Perform lighting calculations on the given Map
- * 
- * This is used to apply lighting calculations (from a single light source)
- * to a given map. The R, G and B values of each vertex will be modified to
- * reflect the lighting based on the lixth point coordinates, the light
- * color and the ambient color, and at what angle the map is facing the
- * light source. A surface should have its points be declared in a
- * clockwise fashion if the face is "facing" towards you (as opposed to
- * away from you) as faces have a "logical" side for lighting.
- *
- * @param m map to change.
- * @param lx X coordinate in space of light point
- * @param ly Y coordinate in space of light point
- * @param lz Z coordinate in space of light point
- * @param lr light red value (0 - 255)
- * @param lg light green value (0 - 255)
- * @param lb light blue value (0 - 255)
- * @param ar ambient color red value (0 - 255)
- * @param ag ambient color green value (0 - 255)
- * @param ab ambient color blue value (0 - 255)
- */
 EAPI void
 evas_map_util_3d_lighting(Evas_Map *m, 
                           Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
@@ -1299,28 +865,6 @@ evas_map_util_3d_lighting(Evas_Map *m,
      }
 }
 
-/**
- * Apply a perspective transform to the map
-* 
- * This applies a given perspective (3D) to the map coordinates. X, Y and Z
- * values are used. The px and py points specify the "infinite distance" point
- * in the 3D conversion (where all lines converge to like when artists draw
- * 3D by hand). The @p z0 value specifis the z value at which there is a 1:1
- * mapping between spatial coorinates and screen coordinates. Any points
- * on this z value will not have their X and Y values modified in the transform.
- * Those further away (Z value higher) will shrink into the distance, and
- * those less than this value will expand and become bigger. The @p foc value
- * determines the "focal length" of the camera. This is in reality the distance
- * between the camera lens plane itself (at or closer than this rendering
- * results are undefined) and the "z0" z value. This allows for some "depth"
- * control and @p foc must be greater than 0.
- *
- * @param m map to change.
- * @param px The pespective distance X coordinate
- * @param py The pespective distance Y coordinate
- * @param z0 The "0" z plane value
- * @param foc The focal distance
- */
 EAPI void
 evas_map_util_3d_perspective(Evas_Map *m,
                              Evas_Coord px, Evas_Coord py,
@@ -1359,17 +903,6 @@ evas_map_util_3d_perspective(Evas_Map *m,
      }
 }
 
-/**
- * Get the clockwise state of a map
- * 
- * This determines if the output points (X and Y. Z is not used) are
- * clockwise or anti-clockwise. This can be used for "back-face culling". This
- * is where you hide objects that "face away" from you. In this case objects
- * that are not clockwise.
- *
- * @param m map to query.
- * @return 1 if clockwise, 0 otherwise
- */
 EAPI Eina_Bool
 evas_map_util_clockwise_get(Evas_Map *m)
 {
@@ -1396,7 +929,3 @@ evas_map_util_clockwise_get(Evas_Map *m)
    if (count > 0) return 1;
    return 0;
 }
-
-/**
- * @}
- */

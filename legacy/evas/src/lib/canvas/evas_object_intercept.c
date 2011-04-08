@@ -239,24 +239,6 @@ evas_object_intercept_call_clip_unset(Evas_Object *obj)
 
 /* public calls */
 
-/**
- * @addtogroup Evas_Object_Group_Interceptors
- * @{
- */
-
-/**
- * Set the callback function that intercepts a show event of a object.
- *
- * @param obj The given canvas object pointer.
- * @param func The given function to be the callback function.
- * @param data The data passed to the callback function.
- *
- * This function sets a callback function to intercepts a show event
- * of a canvas object.
- *
- * @see evas_object_intercept_show_callback_del().
- *
- */
 EAPI void
 evas_object_intercept_show_callback_add(Evas_Object *obj, Evas_Object_Intercept_Show_Cb func, const void *data)
 {
@@ -272,19 +254,6 @@ evas_object_intercept_show_callback_add(Evas_Object *obj, Evas_Object_Intercept_
    obj->interceptors->show.data = (void *)data;
 }
 
-/**
- * Unset the callback function that intercepts a show event of a
- * object.
- *
- * @param obj The given canvas object pointer.
- * @param func The given callback function.
- *
- * This function sets a callback function to intercepts a show event
- * of a canvas object.
- *
- * @see evas_object_intercept_show_callback_add().
- *
- */
 EAPI void *
 evas_object_intercept_show_callback_del(Evas_Object *obj, Evas_Object_Intercept_Show_Cb func)
 {
@@ -303,19 +272,6 @@ evas_object_intercept_show_callback_del(Evas_Object *obj, Evas_Object_Intercept_
    return data;
 }
 
-/**
- * Set the callback function that intercepts a hide event of a object.
- *
- * @param obj The given canvas object pointer.
- * @param func The given function to be the callback function.
- * @param data The data passed to the callback function.
- *
- * This function sets a callback function to intercepts a hide event
- * of a canvas object.
- *
- * @see evas_object_intercept_hide_callback_del().
- *
- */
 EAPI void
 evas_object_intercept_hide_callback_add(Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func, const void *data)
 {
@@ -330,19 +286,6 @@ evas_object_intercept_hide_callback_add(Evas_Object *obj, Evas_Object_Intercept_
    obj->interceptors->hide.data = (void *)data;
 }
 
-/**
- * Unset the callback function that intercepts a hide event of a
- * object.
- *
- * @param obj The given canvas object pointer.
- * @param func The given callback function.
- *
- * This function sets a callback function to intercepts a hide event
- * of a canvas object.
- *
- * @see evas_object_intercept_hide_callback_add().
- *
- */
 EAPI void *
 evas_object_intercept_hide_callback_del(Evas_Object *obj, Evas_Object_Intercept_Hide_Cb func)
 {
@@ -361,19 +304,6 @@ evas_object_intercept_hide_callback_del(Evas_Object *obj, Evas_Object_Intercept_
    return data;
 }
 
-/**
- * Set the callback function that intercepts a move event of a object.
- *
- * @param obj The given canvas object pointer.
- * @param func The given function to be the callback function.
- * @param data The data passed to the callback function.
- *
- * This function sets a callback function to intercepts a move event
- * of a canvas object.
- *
- * @see evas_object_intercept_move_callback_del().
- *
- */
 EAPI void
 evas_object_intercept_move_callback_add(Evas_Object *obj, Evas_Object_Intercept_Move_Cb func, const void *data)
 {
@@ -388,19 +318,6 @@ evas_object_intercept_move_callback_add(Evas_Object *obj, Evas_Object_Intercept_
    obj->interceptors->move.data = (void *)data;
 }
 
-/**
- * Unset the callback function that intercepts a move event of a
- * object.
- *
- * @param obj The given canvas object pointer.
- * @param func The given callback function.
- *
- * This function sets a callback function to intercepts a move event
- * of a canvas object.
- *
- * @see evas_object_intercept_move_callback_add().
- *
- */
 EAPI void *
 evas_object_intercept_move_callback_del(Evas_Object *obj, Evas_Object_Intercept_Move_Cb func)
 {
@@ -419,12 +336,6 @@ evas_object_intercept_move_callback_del(Evas_Object *obj, Evas_Object_Intercept_
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_resize_callback_add(Evas_Object *obj, Evas_Object_Intercept_Resize_Cb func, const void *data)
 {
@@ -439,12 +350,6 @@ evas_object_intercept_resize_callback_add(Evas_Object *obj, Evas_Object_Intercep
    obj->interceptors->resize.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_resize_callback_del(Evas_Object *obj, Evas_Object_Intercept_Resize_Cb func)
 {
@@ -463,12 +368,6 @@ evas_object_intercept_resize_callback_del(Evas_Object *obj, Evas_Object_Intercep
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_raise_callback_add(Evas_Object *obj, Evas_Object_Intercept_Raise_Cb func, const void *data)
 {
@@ -483,12 +382,6 @@ evas_object_intercept_raise_callback_add(Evas_Object *obj, Evas_Object_Intercept
    obj->interceptors->raise.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_raise_callback_del(Evas_Object *obj, Evas_Object_Intercept_Raise_Cb func)
 {
@@ -507,12 +400,6 @@ evas_object_intercept_raise_callback_del(Evas_Object *obj, Evas_Object_Intercept
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_lower_callback_add(Evas_Object *obj, Evas_Object_Intercept_Lower_Cb func, const void *data)
 {
@@ -527,12 +414,6 @@ evas_object_intercept_lower_callback_add(Evas_Object *obj, Evas_Object_Intercept
    obj->interceptors->lower.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_lower_callback_del(Evas_Object *obj, Evas_Object_Intercept_Lower_Cb func)
 {
@@ -551,12 +432,6 @@ evas_object_intercept_lower_callback_del(Evas_Object *obj, Evas_Object_Intercept
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_stack_above_callback_add(Evas_Object *obj, Evas_Object_Intercept_Stack_Above_Cb func, const void *data)
 {
@@ -571,12 +446,6 @@ evas_object_intercept_stack_above_callback_add(Evas_Object *obj, Evas_Object_Int
    obj->interceptors->stack_above.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_stack_above_callback_del(Evas_Object *obj, Evas_Object_Intercept_Stack_Above_Cb func)
 {
@@ -595,12 +464,6 @@ evas_object_intercept_stack_above_callback_del(Evas_Object *obj, Evas_Object_Int
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_stack_below_callback_add(Evas_Object *obj, Evas_Object_Intercept_Stack_Below_Cb func, const void *data)
 {
@@ -615,12 +478,6 @@ evas_object_intercept_stack_below_callback_add(Evas_Object *obj, Evas_Object_Int
    obj->interceptors->stack_below.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_stack_below_callback_del(Evas_Object *obj, Evas_Object_Intercept_Stack_Below_Cb func)
 {
@@ -639,12 +496,6 @@ evas_object_intercept_stack_below_callback_del(Evas_Object *obj, Evas_Object_Int
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_layer_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Layer_Set_Cb func, const void *data)
 {
@@ -659,12 +510,6 @@ evas_object_intercept_layer_set_callback_add(Evas_Object *obj, Evas_Object_Inter
    obj->interceptors->layer_set.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_layer_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Layer_Set_Cb func)
 {
@@ -683,12 +528,6 @@ evas_object_intercept_layer_set_callback_del(Evas_Object *obj, Evas_Object_Inter
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_color_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Color_Set_Cb func, const void *data)
 {
@@ -703,12 +542,6 @@ evas_object_intercept_color_set_callback_add(Evas_Object *obj, Evas_Object_Inter
    obj->interceptors->color_set.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_color_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Color_Set_Cb func)
 {
@@ -727,12 +560,6 @@ evas_object_intercept_color_set_callback_del(Evas_Object *obj, Evas_Object_Inter
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_clip_set_callback_add(Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func, const void *data)
 {
@@ -747,12 +574,6 @@ evas_object_intercept_clip_set_callback_add(Evas_Object *obj, Evas_Object_Interc
    obj->interceptors->clip_set.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_clip_set_callback_del(Evas_Object *obj, Evas_Object_Intercept_Clip_Set_Cb func)
 {
@@ -771,12 +592,6 @@ evas_object_intercept_clip_set_callback_del(Evas_Object *obj, Evas_Object_Interc
    return data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_intercept_clip_unset_callback_add(Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func, const void *data)
 {
@@ -791,12 +606,6 @@ evas_object_intercept_clip_unset_callback_add(Evas_Object *obj, Evas_Object_Inte
    obj->interceptors->clip_unset.data = (void *)data;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void *
 evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, Evas_Object_Intercept_Clip_Unset_Cb func)
 {
@@ -814,7 +623,3 @@ evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, Evas_Object_Inte
    evas_object_intercept_deinit(obj);
    return data;
 }
-
-/**
- * @}
- */

@@ -37,16 +37,6 @@ evas_object_below_get_internal(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * @addtogroup Evas_Object_Group_Basic
- * @{
- */
-
-/**
- * Raise @p obj to the top of its layer.
- *
- * @param obj the object to raise
- */
 EAPI void
 evas_object_raise(Evas_Object *obj)
 {
@@ -96,11 +86,6 @@ evas_object_raise(Evas_Object *obj)
      }
 }
 
-/**
- * Lower @p obj to the bottom of its layer.
- *
- * @param obj the object to lower
- */
 EAPI void
 evas_object_lower(Evas_Object *obj)
 {
@@ -150,18 +135,6 @@ evas_object_lower(Evas_Object *obj)
      }
 }
 
-/**
- * Stack @p obj immediately above @p above
- *
- * If @p obj is a member of a smart object, then @p above must also be
- * a member of the same smart object.
- *
- * Similarly, if @p obj is not a member of smart object, @p above may
- * not either.
- *
- * @param obj the object to stack
- * @param above the object above which to stack
- */
 EAPI void
 evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 {
@@ -242,18 +215,6 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      }
 }
 
-/**
- * Stack @p obj immediately below @p below
- *
- * If @p obj is a member of a smart object, then @p below must also be
- * a member of the same smart object.
- *
- * Similarly, if @p obj is not a member of smart object, @p below may
- * not either.
- *
- * @param obj the object to stack
- * @param below the object below which to stack
- */
 EAPI void
 evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 {
@@ -334,12 +295,6 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      }
 }
 
-/**
- * Get the evas object above @p obj
- *
- * @param obj an Evas_Object
- * @return the Evas_Object directly above
- */
 EAPI Evas_Object *
 evas_object_above_get(const Evas_Object *obj)
 {
@@ -365,12 +320,6 @@ evas_object_above_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Get the evas object below @p obj
- *
- * @param obj an Evas_Object
- * @return the Evas_Object directly below
- */
 EAPI Evas_Object *
 evas_object_below_get(const Evas_Object *obj)
 {
@@ -396,21 +345,8 @@ evas_object_below_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * @}
- */
 
-/**
- * @addtogroup Evas_Object_Group_Find
- * @{
- */
 
-/**
- * Get the lowest evas object on the Evas @p e
- *
- * @param e an Evas
- * @return the lowest object
- */
 EAPI Evas_Object *
 evas_object_bottom_get(const Evas *e)
 {
@@ -431,12 +367,6 @@ evas_object_bottom_get(const Evas *e)
    return NULL;
 }
 
-/**
- * Get the highest evas object on the Evas @p e
- *
- * @param e an Evas
- * @return the highest object
- */
 EAPI Evas_Object *
 evas_object_top_get(const Evas *e)
 {
@@ -468,7 +398,3 @@ evas_object_top_get(const Evas *e)
 
    return obj;
 }
-
-/**
- * @}
- */

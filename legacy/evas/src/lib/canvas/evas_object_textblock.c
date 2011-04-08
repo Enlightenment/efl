@@ -1,75 +1,4 @@
 /**
- * @addtogroup Evas_Object_Textblock
- *
- * @{
- */
-
-/**
- * @section Evas_Object_Textblock_Tutorial Textblock Object Tutorial
- *
- * This part explains about the textblock object's API and proper usage.
- * If you want to develop textblock, you should also refer to @ref Evas_Object_Textblock_Internal.
- * The main user of the textblock object is the edje entry object in Edje, so
- * that's a good place to learn from, but I think this document is more than
- * enough, if it's not, please request for me info and I'll update it.
- *
- * @subsection textblock_intro Introduction
- * The textblock objects is, as implied, an object that can show big chunks of
- * text. Textblock supports many features including: Text formatting, automatic
- * and manual text alignment, embedding items (for example icons) and more.
- * Textblock has three important parts, the text paragraphs, the format nodes
- * and the cursors.
- *
- * @subsection textblock_cursors Textblock Object Cursors
- * A textblock Cursor @ref Evas_Textblock_Cursor is data type that represents
- * a position in a textblock. Each cursor contains information about the
- * paragraph it points to, the position in that paragraph and the object itself.
- * Cursors register to textblock objects upon creation, this means that once
- * you created a cursor, it belongs to a specific obj and you can't for example
- * copy a cursor "into" a cursor of a different object. Registered cursors
- * also have the added benefit of updating automatically upon textblock changes,
- * this means that if you have a cursor pointing to a specific character, it'll
- * still point to it even after you change the whole object completely (as long
- * as the char was not deleted), this is not possible without updating, because
- * as mentioned, each cursor holds a character position. There are many
- * functions that handle cursors, just check out the evas_textblock_cursor*
- * functions. For creation and deletion of cursors check out:
- * @see evas_object_textblock_cursor_new()
- * @see evas_textblock_cursor_free()
- * @note Cursors are generally the correct way to handle text in the textblock object, and there are enough functions to do everything you need with them (no need to get big chunks of text and processing them yourself).
- *
- * @subsection textblock_paragraphs Textblock Object Paragraphs
- * The textblock object is made out of text splitted to paragraphs (delimited
- * by the paragraph separation character). Each paragraph has many (or none)
- * format nodes associated with it which are responsible for the formatting
- * of that paragraph.
- *
- * @subsection textblock_format_nodes Textblock Object Format Nodes
- * As explained in @ref textblock_paragraphs each one of the format nodes
- * is associated with a paragraph.
- * There are two types of format nodes, visible and invisible:
- * Visible: formats that a cursor can point to, i.e formats that
- * occupy space, for example: newlines, tabs, items and etc. Some visible items
- * are made of two parts, in this case, only the opening tag is visible.
- * A closing tag (i.e a </tag> tag) should NEVER be visible.
- * Invisible: formats that don't occupy space, for example: bold and underline.
- * Being able to access format nodes is very important for some uses. For
- * example, edje uses the "<a>" format to create links in the text (and pop
- * popups above them when clicked). For the textblock object a is just a
- * formatting instruction (how to color the text), but edje utilizes the access
- * to the format nodes to make it do more.
- * For more information, take a look at all the evas_textblock_node_format_*
- * functions.
- * The translation of "<tag>" tags to actual format is done according to the
- * tags defined in the style, see @ref evas_textblock_style_set
- *
- * @subsection textblock_special_formats Special Formats
- * This section is not yet written. If you want some info about styles/formats
- * and how to use them, expedite's textblock_basic test is a great start.
- * @todo Write @textblock_special_formats
- */
-
-/**
  * @internal
  * @section Evas_Object_Textblock_Internal Internal Textblock Object Tutorial
  *
@@ -3933,11 +3862,6 @@ _find_layout_line_num(const Evas_Object *obj, int line)
    return NULL;
 }
 
-/**
- * Adds a textblock to the given evas.
- * @param   e The given evas.
- * @return  The new textblock object.
- */
 EAPI Evas_Object *
 evas_object_textblock_add(Evas *e)
 {
@@ -3952,10 +3876,6 @@ evas_object_textblock_add(Evas *e)
    return obj;
 }
 
-/**
- * Creates a new textblock style.
- * @return  The new textblock style.
- */
 EAPI Evas_Textblock_Style *
 evas_textblock_style_new(void)
 {
@@ -3965,10 +3885,6 @@ evas_textblock_style_new(void)
    return ts;
 }
 
-/**
- * Destroys a textblock style.
- * @param ts The textblock style to free.
- */
 EAPI void
 evas_textblock_style_free(Evas_Textblock_Style *ts)
 {
@@ -3982,14 +3898,6 @@ evas_textblock_style_free(Evas_Textblock_Style *ts)
    free(ts);
 }
 
-/**
- * Sets the style ts to the style passed as text by text.
- * Expected a string consisting of many (or none) tag='format' pairs.
- *
- * @param ts  the style to set.
- * @param text the text to parse - NOT NULL.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 {
@@ -4100,11 +4008,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
      }
 }
 
-/**
- * Return the text of the style ts.
- * @param ts  the style to get it's text.
- * @return the text of the style or null on error.
- */
 EAPI const char *
 evas_textblock_style_get(const Evas_Textblock_Style *ts)
 {
@@ -4113,12 +4016,6 @@ evas_textblock_style_get(const Evas_Textblock_Style *ts)
 }
 
 /* textblock styles */
-/**
- * Set the objects style to ts.
- * @param obj the evas object to set the style to.
- * @param ts  the style to set.
- * @return Returns no value.
- */
 EAPI void
 evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
 {
@@ -4149,11 +4046,6 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
    _evas_textblock_invalidate_all(o);
 }
 
-/**
- * Return the style of an object.
- * @param obj  the object to get the style from.
- * @return the style of the object.
- */
 EAPI const Evas_Textblock_Style *
 evas_object_textblock_style_get(const Evas_Object *obj)
 {
@@ -4161,12 +4053,6 @@ evas_object_textblock_style_get(const Evas_Object *obj)
    return o->style;
 }
 
-/**
- * @brief Set the "replacement character" to use for the given textblock object.
- *
- * @param obj The given textblock object.
- * @param ch The charset name.
- */
 EAPI void
 evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
 {
@@ -4178,14 +4064,6 @@ evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch)
    _evas_textblock_invalidate_all(o);
 }
 
-/**
- * @brief Sets newline mode. When true, newline character will behave
- * as a paragraph separator.
- *
- * @param obj The given textblock object.
- * @param mode EINA_TRUE for PS mode, EINA_FALSE otherwise.
- * @since 1.1.0
- */
 EAPI void
 evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode)
 {
@@ -4198,14 +4076,6 @@ evas_object_textblock_newline_mode_set(Evas_Object *obj, Eina_Bool mode)
     * for new text inserted. */
 }
 
-/**
- * @brief Gets newline mode. When true, newline character behaves
- * as a paragraph separator.
- *
- * @param obj The given textblock object.
- * @return EINA_TRUE if in PS mode, EINA_FALSE otherwise.
- * @since 1.1.0
- */
 EAPI Eina_Bool
 evas_object_textblock_newline_mode_get(const Evas_Object *obj)
 {
@@ -4213,18 +4083,6 @@ evas_object_textblock_newline_mode_get(const Evas_Object *obj)
    return o->newline_is_ps;
 }
 
-/**
- * @brief Sets the vertical alignment of text within the textblock object
- * as a whole.
- *
- * Normally alignment is 0.0 (top of object). Values given should be
- * between 0.0 and 1.0 (1.0 bottom of object, 0.5 being vertically centered
- * etc.).
- *
- * @param obj The given textblock object.
- * @param align A value between 0.0 and 1.0
- * @since 1.1.0
- */
 EAPI void
 evas_object_textblock_valign_set(Evas_Object *obj, double align)
 {
@@ -4236,13 +4094,6 @@ evas_object_textblock_valign_set(Evas_Object *obj, double align)
    _evas_textblock_changed(o, obj);
 }
 
-/**
- * @brief Gets the vertical alignment of a textblock
- *
- * @param obj The given textblock object.
- * @return The elignment set for the object
- * @since 1.1.0
- */
 EAPI double
 evas_object_textblock_valign_get(const Evas_Object *obj)
 {
@@ -4250,13 +4101,6 @@ evas_object_textblock_valign_get(const Evas_Object *obj)
    return o->valign;
 }
 
-/**
- * @brief Get the "replacement character" for given textblock object. Returns
- * NULL if no replacement character is in use.
- *
- * @param obj The given textblock object
- * @return replacement character or NULL
- */
 EAPI const char *
 evas_object_textblock_replace_char_get(Evas_Object *obj)
 {
@@ -4371,11 +4215,6 @@ _escaped_char_get(const char *s, const char *s_end)
    return NULL;
 }
 
-/**
- * Returns the unescaped version of escape.
- * @param escape the string to be escaped
- * @return the unescaped version of escape
- */
 EAPI const char *
 evas_textblock_escape_string_get(const char *escape)
 {
@@ -4383,25 +4222,12 @@ evas_textblock_escape_string_get(const char *escape)
    return _escaped_char_get(escape, escape + strlen(escape));
 }
 
-/**
- * Return the unescaped version of the string between start and end.
- *
- * @param escape_start the start of the string.
- * @param escape_end the end of the string.
- * @return the unescaped version of the range
- */
 EAPI const char *
 evas_textblock_escape_string_range_get(const char *escape_start, const char *escape_end)
 {
    return _escaped_char_get(escape_start, escape_end);
 }
 
-/**
- * Returns the escaped version of the string.
- * @param string to escape
- * @param len_ret the len of the new escape
- * @return the escaped string.
- */
 EAPI const char *
 evas_textblock_string_escape_get(const char *string, int *len_ret)
 {
@@ -4448,15 +4274,6 @@ _prepend_escaped_char(Evas_Textblock_Cursor *cur, const char *s,
 }
 
 
-/**
- * Sets the tetxblock's text to the markup text.
- *
- * @note assumes text does not include the unicode object replacement char (0xFFFC)
- *
- * @param obj  the textblock object.
- * @param text the markup text to use.
- * @return Return no value.
- */
 EAPI void
 evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 {
@@ -4489,15 +4306,6 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
      }
 }
 
-/**
- * Prepends markup to the cursor cur.
- *
- * @note assumes text does not include the unicode object replacement char (0xFFFC)
- *
- * @param cur  the cursor to prepend to.
- * @param text the markup text to prepend.
- * @return Return no value.
- */
 EAPI void
 evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char *text)
 {
@@ -4716,12 +4524,6 @@ _markup_get_text_append(Eina_Strbuf *txt, const Eina_Unicode *text)
      }
    free(base);
 }
-/**
- * Return the markup of the object.
- *
- * @param obj the evas object.
- * @return the markup text of the object.
- */
 EAPI const char *
 evas_object_textblock_text_markup_get(const Evas_Object *obj)
 {
@@ -5043,12 +4845,6 @@ _find_layout_item_match(const Evas_Textblock_Cursor *cur, Evas_Object_Textblock_
    return previous_format;
 }
 
-/**
- * Return the object's main cursor.
- *
- * @param obj the object.
- * @return the obj's main cursor.
- */
 EAPI const Evas_Textblock_Cursor *
 evas_object_textblock_cursor_get(const Evas_Object *obj)
 {
@@ -5056,16 +4852,6 @@ evas_object_textblock_cursor_get(const Evas_Object *obj)
    return o->cursor;
 }
 
-/**
- * Create a new cursor, associate it to the obj and init it to point
- * to the start of the textblock. Association to the object means the cursor
- * will be updated when the object will change.
- *
- * @note if you need speed and you know what you are doing, it's slightly faster to just allocate the cursor yourself and not associate it. (only people developing the actual object, and not users of the object).
- *
- * @param obj the object to associate to.
- * @return the new cursor.
- */
 EAPI Evas_Textblock_Cursor *
 evas_object_textblock_cursor_new(Evas_Object *obj)
 {
@@ -5081,13 +4867,6 @@ evas_object_textblock_cursor_new(Evas_Object *obj)
    return cur;
 }
 
-/**
- * Free the cursor and unassociate it from the object.
- * @note do not use it to free unassociated cursors.
- *
- * @param cur the cursor to free.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
 {
@@ -5100,12 +4879,6 @@ evas_textblock_cursor_free(Evas_Textblock_Cursor *cur)
    free(cur);
 }
 
-/**
- * Returns true if the cursor points to a format.
- *
- * @param cur the cursor to check.
- * @return Returns #EINA_TRUE if a cursor points to a format #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 {
@@ -5115,24 +4888,12 @@ evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
       EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * Returns the first format node.
- *
- * @param obj The evas, must not be NULL.
- * @return Returns the first format node, may be null if there are none.
- */
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_first_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->format_nodes;
 }
-/**
- * Returns the last format node.
- *
- * @param obj The evas textblock, must not be NULL.
- * @return Returns the first format node, may be null if there are none.
- */
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_last_get(const Evas_Object *obj)
 {
@@ -5144,38 +4905,18 @@ evas_textblock_node_format_last_get(const Evas_Object *obj)
    return NULL;
 }
 
-/**
- * Returns the next format node (after n)
- *
- * @param n the current format node - not null.
- * @return Returns the next format node, may be null.
- */
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_next_get(const Evas_Object_Textblock_Node_Format *n)
 {
    return _NODE_FORMAT(EINA_INLIST_GET(n)->next);
 }
 
-/**
- * Returns the prev format node (after n)
- *
- * @param n the current format node - not null.
- * @return Returns the prev format node, may be null.
- */
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_prev_get(const Evas_Object_Textblock_Node_Format *n)
 {
    return _NODE_FORMAT(EINA_INLIST_GET(n)->prev);
 }
 
-/**
- * Remove a format node and it's match. i.e, removes a <tag> </tag> pair.
- * Assumes the node is the first part of <tag> i.e, this won't work if
- * n is a closing tag.
- *
- * @param obj the evas object of the textblock - not null.
- * @param n the current format node - not null.
- */
 EAPI void
 evas_textblock_node_format_remove_pair(Evas_Object *obj,
       Evas_Object_Textblock_Node_Format *n)
@@ -5234,12 +4975,6 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
    _evas_textblock_changed(o, obj);
 }
 
-/**
- * Sets the cursor to the start of the first text node.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_paragraph_first(Evas_Textblock_Cursor *cur)
 {
@@ -5251,12 +4986,6 @@ evas_textblock_cursor_paragraph_first(Evas_Textblock_Cursor *cur)
 
 }
 
-/**
- * sets the cursor to the end of the last text node.
- *
- * @param cur the cursor to set.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_paragraph_last(Evas_Textblock_Cursor *cur)
 {
@@ -5282,12 +5011,6 @@ evas_textblock_cursor_paragraph_last(Evas_Textblock_Cursor *cur)
      }
 }
 
-/**
- * Advances to the the start of the next text node
- *
- * @param cur the cursor to update
- * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur)
 {
@@ -5310,12 +5033,6 @@ evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur)
    return EINA_FALSE;
 }
 
-/**
- * Advances to the the end of the previous text node
- *
- * @param cur the cursor to update
- * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur)
 {
@@ -5342,12 +5059,6 @@ evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur)
    return EINA_FALSE;
 }
 
-/**
- * Sets the cursor to point to the place where format points to.
- *
- * @param cur the cursor to update.
- * @param n the format node to update according.
- */
 EAPI void
 evas_textblock_cursor_set_at_format(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *n)
 {
@@ -5356,12 +5067,6 @@ evas_textblock_cursor_set_at_format(Evas_Textblock_Cursor *cur, const Evas_Objec
    cur->pos = _evas_textblock_node_format_pos_get(n);
 }
 
-/**
- * Advances to the next format node
- *
- * @param cur the cursor to be updated.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur)
 {
@@ -5399,12 +5104,6 @@ evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur)
    return EINA_FALSE;
 }
 
-/**
- * Advances to the previous format node.
- *
- * @param cur the cursor to update.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
 {
@@ -5441,12 +5140,6 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
    return EINA_FALSE;
 }
 
-/**
- * Advances 1 char forward.
- *
- * @param cur the cursor to advance.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
@@ -5485,12 +5178,6 @@ evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
      }
 }
 
-/**
- * Advances 1 char backward.
- *
- * @param cur the cursor to advance.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
 {
@@ -5505,12 +5192,6 @@ evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur)
    return evas_textblock_cursor_paragraph_prev(cur);
 }
 
-/**
- * Go to the first char in the node the cursor is pointing on.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur)
 {
@@ -5519,12 +5200,6 @@ evas_textblock_cursor_paragraph_char_first(Evas_Textblock_Cursor *cur)
 
 }
 
-/**
- * Go to the last char in a text node.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
 {
@@ -5540,12 +5215,6 @@ evas_textblock_cursor_paragraph_char_last(Evas_Textblock_Cursor *cur)
 
 }
 
-/**
- * Go to the start of the current line
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
 {
@@ -5580,12 +5249,6 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
      }
 }
 
-/**
- * Go to the end of the current line.
- *
- * @param cur the cursor to update.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
 {
@@ -6094,12 +5757,6 @@ _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt
    return position + fmt->offset;
 }
 
-/**
- * Return the current cursor pos.
- *
- * @param cur the cursor to take the position from.
- * @return the position or -1 on error
- */
 EAPI int
 evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
 {
@@ -6118,12 +5775,6 @@ evas_textblock_cursor_pos_get(const Evas_Textblock_Cursor *cur)
    return npos + cur->pos;
 }
 
-/**
- * Set the cursor pos.
- *
- * @param cur the cursor to be set.
- * @param pos the pos to set.
- */
 EAPI void
 evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos)
 {
@@ -6170,13 +5821,6 @@ evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int _pos)
 
 }
 
-/**
- * Go to the start of the line passed
- *
- * @param cur cursor to update.
- * @param line numer to set.
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 {
@@ -6205,13 +5849,6 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
    return EINA_TRUE;
 }
 
-/**
- * Compare two cursors.
- *
- * @param cur1 the first cursor.
- * @param cur2 the second cursor.
- * @return -1 if cur1 < cur2, 0 if cur1 == cur2 and 1 otherwise.
- */
 EAPI int
 evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
@@ -6240,14 +5877,6 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
    return 0;
 }
 
-/**
- * Make cur_dest point to the same place as cur. Does not work if they don't
- * point to the same object.
- *
- * @param cur the source cursor.
- * @param cur_dest destination cursor.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest)
 {
@@ -6505,15 +6134,6 @@ _evas_textblock_invalidate_all(Evas_Object_Textblock *o)
      }
 }
 
-/**
- * Adds text to the current cursor position and set the cursor to *before*
- * the start of the text just added.
- *
- * @param cur the cursor to where to add text at.
- * @param _text the text to add.
- * @return Returns the len of the text added.
- * @see evas_textblock_cursor_text_prepend()
- */
 EAPI int
 evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
 {
@@ -6581,15 +6201,6 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    return len;
 }
 
-/**
- * Adds text to the current cursor position and set the cursor to *after*
- * the start of the text just added.
- *
- * @param cur the cursor to where to add text at.
- * @param _text the text to add.
- * @return Returns the len of the text added.
- * @see evas_textblock_cursor_text_append()
- */
 EAPI int
 evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text)
 {
@@ -6634,14 +6245,6 @@ _evas_textblock_node_format_new(const char *format)
    return n;
 }
 
-/**
- * Check if the current cursor position points to the terminating null of the
- * last paragraph. (shouldn't be allowed to point to the terminating null of
- * any previous paragraph anyway.
- *
- * @param cur the cursor to look at.
- * @return #EINA_TRUE if the cursor points to the terminating null, #EINA_FALSE otherwise.
- */
 static Eina_Bool
 _evas_textblock_cursor_is_at_the_end(const Evas_Textblock_Cursor *cur)
 {
@@ -6654,20 +6257,6 @@ _evas_textblock_cursor_is_at_the_end(const Evas_Textblock_Cursor *cur)
               EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * Adds format to the current cursor position. If the format being added is a
- * visible format, add it *before* the cursor position, otherwise, add it after.
- * This behavior is because visible formats are like characters and invisible
- * should be stacked in a way that the last one is added last.
- *
- * This function works with native formats, that means that style defined
- * tags like <br> won't work here. For those kind of things use markup prepend.
- *
- * @param cur the cursor to where to add format at.
- * @param format the format to add.
- * @return Returns true if a visible format was added, false otherwise.
- * @see evas_textblock_cursor_format_prepend()
- */
 EAPI Eina_Bool
 evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format)
 {
@@ -6793,21 +6382,6 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
    return is_visible;
 }
 
-/**
- * Adds format to the current cursor position. If the format being added is a
- * visible format, add it *before* the cursor position, otherwise, add it after.
- * This behavior is because visible formats are like characters and invisible
- * should be stacked in a way that the last one is added last.
- * If the format is visible the cursor is advanced after it.
- *
- * This function works with native formats, that means that style defined
- * tags like <br> won't work here. For those kind of things use markup prepend.
- *
- * @param cur the cursor to where to add format at.
- * @param format the format to add.
- * @return Returns true if a visible format was added, false otherwise.
- * @see evas_textblock_cursor_format_prepend()
- */
 EAPI Eina_Bool
 evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format)
 {
@@ -6824,13 +6398,6 @@ evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *for
 }
 
 
-/**
- * Delete the character at the location of the cursor. If there's a format
- * pointing to this position, delete it as well.
- *
- * @param cur the cursor pointing to the current location.
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 {
@@ -6906,13 +6473,6 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
    cur->node->dirty = EINA_TRUE;
 }
 
-/**
- * Delete the range between cur1 and cur2.
- *
- * @param cur1 one side of the range.
- * @param cur2 the second side of the range
- * @return Returns no value.
- */
 EAPI void
 evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
 {
@@ -7010,12 +6570,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 }
 
 
-/**
- * Return the content of the cursor.
- *
- * @param cur the cursor
- * @return the text in the range
- */
 EAPI char *
 evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
 {
@@ -7040,17 +6594,6 @@ evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
    return s;
 }
 
-/**
- * Return the text in the range between cur1 and cur2
- *
- * FIXME: format is currently unused, you always get markup back.
- *
- * @param cur1 one side of the range.
- * @param cur2 the other side of the range
- * @param format to be documented
- * @return the text in the range
- * @see elm_entry_markup_to_utf8()
- */
 EAPI char *
 evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2, Evas_Textblock_Text_Type format __UNUSED__)
 {
@@ -7173,12 +6716,6 @@ evas_textblock_cursor_range_text_get(const Evas_Textblock_Cursor *cur1, const Ev
      }
 }
 
-/**
- * Return the text of the paragraph cur points to - returns the text in markup..
- *
- * @param cur the cursor pointing to the paragraph.
- * @return the text on success, NULL otherwise.
- */
 EAPI const char *
 evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur)
 {
@@ -7199,12 +6736,6 @@ evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur)
    return cur->node->utf8;
 }
 
-/**
- * Return the length of the paragraph, cheaper the eina_unicode_strlen()
- *
- * @param cur the position of the paragraph.
- * @return the length of the paragraph on success, -1 otehrwise.
- */
 EAPI int
 evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur)
 {
@@ -7213,13 +6744,6 @@ evas_textblock_cursor_paragraph_text_length_get(const Evas_Textblock_Cursor *cur
    return eina_ustrbuf_length_get(cur->node->unicode);
 }
 
-/**
- * Return the format node at the position pointed by cur.
- *
- * @param cur the position to look at.
- * @return the format node if found, NULL otherwise.
- * @see evas_textblock_cursor_format_is_visible_get()
- */
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur)
 {
@@ -7227,12 +6751,6 @@ evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur)
    if (!cur->node) return NULL;
    return _evas_textblock_cursor_node_format_at_pos_get(cur);
 }
-/**
- * Get the text format representation of the format node.
- *
- * @param fmt the format node.
- * @return the textual format of the format node.
- */
 EAPI const char *
 evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt)
 {
@@ -7240,12 +6758,6 @@ evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt
    return eina_strbuf_string_get(fmt->format);
 }
 
-/**
- * Set the cursor to point to the position of fmt.
- *
- * @param cur the cursor to update
- * @param fmt the format to update according to.
- */
 EAPI void
 evas_textblock_cursor_at_format_set(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *fmt)
 {
@@ -7254,15 +6766,6 @@ evas_textblock_cursor_at_format_set(Evas_Textblock_Cursor *cur, const Evas_Objec
    cur->pos = _evas_textblock_node_format_pos_get(fmt);
 }
 
-/**
- * Check if the current cursor position is a visible format. This way is more
- * efficient than evas_textblock_cursor_format_get() to check for the existence
- * of a visible format.
- *
- * @param cur the cursor to look at.
- * @return #EINA_TRUE if the cursor points to a visible format, #EINA_FALSE otherwise.
- * @see evas_textblock_cursor_format_get()
- */
 EAPI Eina_Bool
 evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
 {
@@ -7275,28 +6778,6 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
               EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * Returns the geometry of the cursor. Depends on the type of cursor requested.
- * This should be used instead of char_geometry_get because there are weird
- * special cases with BiDi text.
- * in '_' cursor mode (i.e a line below the char) it's the same as char_geometry
- * get, except for the case of the last char of a line which depends on the
- * paragraph direction.
- *
- * in '|' cursor mode (i.e a line between two chars) it is very varyable.
- * For example consider the following visual string:
- * "abcCBA" (ABC are rtl chars), a cursor pointing on A should actually draw
- * a '|' between the c and the C.
- *
- * @param cur the cursor.
- * @param cx the x of the cursor
- * @param cy the y of the cursor
- * @param cw the width of the cursor
- * @param ch the height of the cursor
- * @param dir the direction of the cursor, can be NULL.
- * @param ctype the type of the cursor.
- * @return line number of the char on success, -1 on error.
- */
 EAPI int
 evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
 {
@@ -7540,16 +7021,6 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
    return ln->par->line_no + ln->line_no;
 }
 
-/**
- * Returns the geometry of the char at cur.
- *
- * @param cur the position of the char.
- * @param cx the x of the char.
- * @param cy the y of the char.
- * @param cw the w of the char.
- * @param ch the h of the char.
- * @return line number of the char on success, -1 on error.
- */
 EAPI int
 evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -7557,16 +7028,6 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
          cur->ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
 }
 
-/**
- * Returns the geometry of the pen at cur.
- *
- * @param cur the position of the char.
- * @param cpen_x the pen_x of the char.
- * @param cy the y of the char.
- * @param cadv the adv of the char.
- * @param ch the h of the char.
- * @return line number of the char on success, -1 on error.
- */
 EAPI int
 evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -7574,16 +7035,6 @@ evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Co
          cur->ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
 }
 
-/**
- * Returns the geometry of the line at cur.
- *
- * @param cur the position of the line.
- * @param cx the x of the line.
- * @param cy the y of the line.
- * @param cw the width of the line.
- * @param ch the height of the line.
- * @return line number of the line on success, -1 on error.
- */
 EAPI int
 evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -7615,14 +7066,6 @@ evas_textblock_cursor_line_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
    return ln->par->line_no + ln->line_no;
 }
 
-/**
- * Set the position of the cursor according to the X and Y coordinates.
- *
- * @param cur the cursor to set.
- * @param x coord to set by.
- * @param y coord to set by.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
 {
@@ -7714,13 +7157,6 @@ evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, E
    return EINA_FALSE;
 }
 
-/**
- * Set the cursor position according to the y coord.
- *
- * @param cur the cur to be set.
- * @param y the coord to set by.
- * @return the line number found, -1 on error.
- */
 EAPI int
 evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
@@ -8050,13 +7486,6 @@ _evas_textblock_cursor_range_in_line_geometry_get(
      }
    return rects;
 }
-/**
- * Get the geometry of a range.
- *
- * @param cur1 one side of the range.
- * @param cur2 other side of the range.
- * @return a list of Rectangles representing the geometry of the range.
- */
 EAPI Eina_List *
 evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
@@ -8130,15 +7559,6 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    return rects;
 }
 
-/**
- * to be documented.
- * @param cur to be documented.
- * @param cx to be documented.
- * @param cy to be documented.
- * @param cw to be documented.
- * @param ch to be documented.
- * @return to be documented.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -8166,12 +7586,6 @@ evas_textblock_cursor_format_item_geometry_get(const Evas_Textblock_Cursor *cur,
    return EINA_TRUE;
 }
 
-/**
- * Checks if the cursor points to the end of the line.
- *
- * @param cur the cursor to check.
- * @return #EINA_TRUE if true, #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
 {
@@ -8189,17 +7603,6 @@ evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur)
 }
 
 /* general controls */
-/**
- * Get the geometry of a line number.
- *
- * @param obj the object.
- * @param line the line number.
- * @param cx x coord of the line.
- * @param cy y coord of the line.
- * @param cw w coord of the line.
- * @param ch h coord of the line.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -8215,13 +7618,6 @@ evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line,
    return EINA_TRUE;
 }
 
-/**
- * Clear the textblock object.
- * @note Does *NOT* free the evas object itself.
- *
- * @param obj the object to clear.
- * @return nothing.
- */
 EAPI void
 evas_object_textblock_clear(Evas_Object *obj)
 {
@@ -8246,27 +7642,6 @@ evas_object_textblock_clear(Evas_Object *obj)
    _evas_textblock_changed(o, obj);
 }
 
-/**
- * Get the formatted width and height. This calculates the actual size after restricting
- * the textblock to the current size of the object.
- * The main difference between this and @ref evas_object_textblock_size_native_get
- * is that the "native" function does not wrapping into account
- * it just calculates the real width of the object if it was placed on an
- * infinite canvas, while this function gives the size after wrapping
- * according to the size restrictions of the object.
- *
- * For example for a textblock containing the text: "You shall not pass!"
- * with no margins or padding and assuming a monospace font and a size of
- * 7x10 char widths (for simplicity) has a native size of 19x1
- * and a formatted size of 5x4.
- *
- *
- * @param obj the evas object.
- * @param w[out] the width of the object.
- * @param h[out] the height of the object
- * @return Returns no value.
- * @see evas_object_textblock_size_native_get
- */
 EAPI void
 evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
@@ -8276,25 +7651,6 @@ evas_object_textblock_size_formatted_get(const Evas_Object *obj, Evas_Coord *w, 
    if (h) *h = o->formatted.h;
 }
 
-/**
- * Get the native width and height. This calculates the actual size without taking account
- * the current size of the object.
- * The main difference between this and @ref evas_object_textblock_size_formatted_get
- * is that the "native" function does not take wrapping into account
- * it just calculates the real width of the object if it was placed on an
- * infinite canvas, while the "formatted" function gives the size after
- * wrapping text according to the size restrictions of the object.
- *
- * For example for a textblock containing the text: "You shall not pass!"
- * with no margins or padding and assuming a monospace font and a size of
- * 7x10 char widths (for simplicity) has a native size of 19x1
- * and a formatted size of 5x4.
- *
- * @param obj the evas object of the textblock
- * @param w[out] the width returned
- * @param h[out] the height returned
- * @return Returns no value.
- */
 EAPI void
 evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
@@ -8312,15 +7668,6 @@ evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Eva
    if (h) *h = o->native.h;
 }
 
-/**
- * to be documented.
- * @param obj to be documented.
- * @param l to be documented.
- * @param r to be documented.
- * @param t to be documented.
- * @param b to be documented.
- * @return Returns no value.
- */
 EAPI void
 evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b)
 {

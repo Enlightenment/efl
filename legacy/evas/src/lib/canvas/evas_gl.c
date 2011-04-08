@@ -1,3 +1,4 @@
+/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
 #include "evas_common.h"
 #include "evas_private.h"
 #include "Evas_GL.h"
@@ -21,18 +22,6 @@ struct _Evas_GL_Surface
    void    *data;
 };
 
-
-/**
- * @addtogroup Evas_GL
- * @{
- */
-
-/**
- * Creates a new Evas_GL object and returns a handle for gl rendering on efl.
- *
- * @param e The given evas.
- * @return The created evas_gl object.
- */
 EAPI Evas_GL *
 evas_gl_new(Evas *e)
 {
@@ -51,11 +40,6 @@ evas_gl_new(Evas *e)
    return evas_gl;
 }
 
-/**
- * Frees the created Evas_GL object.
- *
- * @param evas_gl The given Evas_GL object.
- */
 EAPI void
 evas_gl_free(Evas_GL *evas_gl)
 {
@@ -76,15 +60,6 @@ evas_gl_free(Evas_GL *evas_gl)
    evas_gl = NULL;
 }
 
-/**
- * Creates and returns new Evas_GL_Surface object for GL Rendering.
- *
- * @param evas_gl The given Evas_GL object.
- * @param config The pixel format and configuration of the rendering surface.
- * @param width The width of the surface.
- * @param height The height of the surface.
- * @return The created GL surface object.
- */
 EAPI Evas_GL_Surface *
 evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int height)
 {
@@ -111,12 +86,6 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
    return surf;
 }
 
-/**
- * Destroys the created Evas GL Surface.
- *
- * @param evas_gl The given Evas_GL object.
- * @param surf The given GL surface object.
- */
 EAPI void 
 evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
 {
@@ -142,11 +111,6 @@ evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
    surf = NULL;
 }
 
-/**
- * Creates and returns a new Evas GL context object
- *
- * @param evas_gl The given Evas_GL object.
- */
 EAPI Evas_GL_Context *
 evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
 {
@@ -190,12 +154,6 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
 
 }
 
-/**
- * Destroys the given Evas GL context object
- *
- * @param evas_gl The given Evas_GL object.
- * @param ctx The given Evas GL context.
- */
 EAPI void
 evas_gl_context_destroy(Evas_GL *evas_gl, Evas_GL_Context *ctx)
 {
@@ -221,13 +179,6 @@ evas_gl_context_destroy(Evas_GL *evas_gl, Evas_GL_Context *ctx)
    ctx = NULL;
 }
 
-/**
- * Sets the given context as a current context for the given surface
- *
- * @param evas_gl The given Evas_GL object.
- * @param surf The given Evas GL surface.
- * @param ctx The given Evas GL context.
- */
 EAPI Eina_Bool
 evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx)
 {
@@ -245,12 +196,6 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
    return ret;
 }
 
-/**
- * Returns a GL or the Glue Layer's extension function.
- *
- * @param evas_gl The given Evas_GL object.
- * @param name The name of the function to return.
- */
 EAPI Evas_GL_Func
 evas_gl_proc_address_get(Evas_GL *evas_gl, const char *name)
 {
@@ -261,27 +206,12 @@ evas_gl_proc_address_get(Evas_GL *evas_gl, const char *name)
    return (Evas_GL_Func)evas_gl->evas->engine.func->gl_proc_address_get(evas_gl->evas->engine.data.output, name); 
 }
 
-/**
- * Fills in the Native Surface information from the given Evas GL surface.
- *
- * @param evas_gl The given Evas_GL object.
- * @param surf The given Evas GL surface to retrieve the Native Surface info from.
- * @param ns The native surface structure that the function fills in.
- */
 EAPI Eina_Bool
-evas_gl_native_surface_get (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns)
+evas_gl_native_surface_get(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns)
 {
-
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
    return (Eina_Bool)evas_gl->evas->engine.func->gl_native_surface_get(evas_gl->evas->engine.data.output, surf->data, ns); 
 }
-
-/**
- * @}
- */
-
-
-/* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

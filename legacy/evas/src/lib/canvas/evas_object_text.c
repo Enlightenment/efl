@@ -96,14 +96,8 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
 
-/**
- * @addtogroup Evas_Object_Text
- * @{
- */
-
 EVAS_MEMPOOL(_mp_obj);
 
-/* FIXME: doc */
 static int
 _evas_object_text_char_coords_get(const Evas_Object *obj,
       const Evas_Object_Text *o,
@@ -123,7 +117,6 @@ _evas_object_text_char_coords_get(const Evas_Object *obj,
    return 0;
 }
 
-/* FIXME: doc */
 static void
 _evas_object_text_item_clean(Evas_Object_Text_Item *it)
 {
@@ -134,7 +127,6 @@ _evas_object_text_item_clean(Evas_Object_Text_Item *it)
      }
 }
 
-/* FIXME: doc */
 static void
 _evas_object_text_items_clear(Evas_Object_Text *o)
 {
@@ -165,7 +157,7 @@ _evas_object_text_it_compare_logical(const void *_it1, const void *_it2)
 
 }
 #endif
-/* FIXME: doc */
+
 static int
 _evas_object_text_last_up_to_pos(const Evas_Object *obj,
       const Evas_Object_Text *o, Evas_Coord cx, Evas_Coord cy)
@@ -219,7 +211,6 @@ _evas_object_text_last_up_to_pos(const Evas_Object *obj,
    return -1;
 }
 
-/* FIXME: doc */
 static int
 _evas_object_text_char_at_coords(const Evas_Object *obj,
       const Evas_Object_Text *o, Evas_Coord cx, Evas_Coord cy,
@@ -243,7 +234,6 @@ _evas_object_text_char_at_coords(const Evas_Object *obj,
    return -1;
 }
 
-/* FIXME: doc */
 static Evas_Coord
 _evas_object_text_horiz_advance_get(const Evas_Object *obj,
       const Evas_Object_Text *o)
@@ -260,7 +250,6 @@ _evas_object_text_horiz_advance_get(const Evas_Object *obj,
    return adv;
 }
 
-/* FIXME: doc */
 static Evas_Coord
 _evas_object_text_vert_advance_get(const Evas_Object *obj __UNUSED__,
       const Evas_Object_Text *o)
@@ -299,17 +288,6 @@ _evas_object_text_string_size_get(const Evas_Object *obj,
    if (ch) *ch = h;
 }
 
-/**
- * Creates a new text @c Evas_Object on the provided @c Evas canvas.
- *
- * @param e The @c Evas canvas to create the text object upon.
- *
- * @see evas_object_text_font_source_set
- * @see evas_object_text_font_set
- * @see evas_object_text_text_set
- *
- * @returns NULL on error, A pointer to a new @c Evas_Object on success.
- */
 EAPI Evas_Object *
 evas_object_text_add(Evas *e)
 {
@@ -324,12 +302,6 @@ evas_object_text_add(Evas *e)
    return obj;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
 {
@@ -354,12 +326,6 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
    eina_stringshare_replace(&o->cur.source, font_source);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI const char *
 evas_object_text_font_source_get(const Evas_Object *obj)
 {
@@ -375,12 +341,6 @@ evas_object_text_font_source_get(const Evas_Object *obj)
    return o->cur.source;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
@@ -472,18 +432,6 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    evas_object_inform_call_resize(obj);
 }
 
-/**
- * Query evas for font information of a text @c Evas_Object.
- *
- * This function allows the font name and size of a text @c Evas_Object as
- * created with evas_object_text_add() to be queried. Be aware that the font
- * name string is still owned by Evas and should NOT have free() called on
- * it by the caller of the function.
- *
- * @param obj	The evas text object to query for font information.
- * @param font	A pointer to the location to store the font name in (may be NULL).
- * @param size	A pointer to the location to store the font size in (may be NULL).
- */
 EAPI void
 evas_object_text_font_get(const Evas_Object *obj, const char **font, Evas_Font_Size *size)
 {
@@ -653,11 +601,6 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 }
 
 
-/**
- * Sets the text to be displayed by the given evas text object.
- * @param obj  Evas text object.
- * @param text Text to display.
- */
 EAPI void
 evas_object_text_text_set(Evas_Object *obj, const char *_text)
 {
@@ -719,11 +662,6 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    if (text) free(text);
 }
 
-/**
- * Retrieves the text currently being displayed by the given evas text object.
- * @param  obj The given evas text object.
- * @return The text currently being displayed.  Do not free it.
- */
 EAPI const char *
 evas_object_text_text_get(const Evas_Object *obj)
 {
@@ -739,12 +677,6 @@ evas_object_text_text_get(const Evas_Object *obj)
    return o->cur.utf8_text;
 }
 
-/**
- * Retrieves the direction of the text currently being displayed in the
- * text object.
- * @param  obj The given evas text object.
- * @return the direction of the text
- */
 EAPI Evas_BiDi_Direction
 evas_object_text_direction_get(const Evas_Object *obj)
 {
@@ -764,12 +696,6 @@ evas_object_text_direction_get(const Evas_Object *obj)
    return EVAS_BIDI_DIRECTION_NATURAL;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_ascent_get(const Evas_Object *obj)
 {
@@ -785,12 +711,6 @@ evas_object_text_ascent_get(const Evas_Object *obj)
    return o->ascent;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_descent_get(const Evas_Object *obj)
 {
@@ -806,12 +726,6 @@ evas_object_text_descent_get(const Evas_Object *obj)
    return o->descent;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_max_ascent_get(const Evas_Object *obj)
 {
@@ -827,12 +741,6 @@ evas_object_text_max_ascent_get(const Evas_Object *obj)
    return o->max_ascent;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_max_descent_get(const Evas_Object *obj)
 {
@@ -848,12 +756,6 @@ evas_object_text_max_descent_get(const Evas_Object *obj)
    return o->max_descent;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_inset_get(const Evas_Object *obj)
 {
@@ -871,12 +773,6 @@ evas_object_text_inset_get(const Evas_Object *obj)
    return ENFN->font_inset_get(ENDT, o->engine_data, &o->items->text_props);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_horiz_advance_get(const Evas_Object *obj)
 {
@@ -894,12 +790,6 @@ evas_object_text_horiz_advance_get(const Evas_Object *obj)
    return _evas_object_text_horiz_advance_get(obj, o);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Coord
 evas_object_text_vert_advance_get(const Evas_Object *obj)
 {
@@ -917,24 +807,6 @@ evas_object_text_vert_advance_get(const Evas_Object *obj)
    return _evas_object_text_vert_advance_get(obj, o);
 }
 
-/**
- * Retrieve position and dimension information of a character within a text @c Evas_Object.
- *
- * This function is used to obtain the X, Y, width and height of a the character
- * located at @p pos within the @c Evas_Object @p obj. @p obj must be a text object
- * as created with evas_object_text_add(). Any of the @c Evas_Coord parameters (@p cx,
- * @p cy, @p cw, @p ch) may be NULL in which case no value will be assigned to that
- * parameter.
- *
- * @param obj	The text object to retrieve position information for.
- * @param pos	The character position to request co-ordinates for.
- * @param cx	A pointer to an @c Evas_Coord to store the X value in (can be NULL).
- * @param cy	A pointer to an @c Evas_Coord to store the Y value in (can be NULL).
- * @param cw	A pointer to an @c Evas_Coord to store the Width value in (can be NULL).
- * @param ch	A pointer to an @c Evas_Coord to store the Height value in (can be NULL).
- *
- * @returns EINA_FALSE on error, EINA_TRUE on success.
- */
 EAPI Eina_Bool
 evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -978,15 +850,6 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
 }
 
 
-/**
- * Returns the logical position of the last char in the text
- * up to the pos given. this is NOT the position of the last char
- * because of the possibility of RTL in the text.
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI int
 evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
@@ -1004,12 +867,6 @@ evas_object_text_last_up_to_pos(const Evas_Object *obj, Evas_Coord x, Evas_Coord
    return _evas_object_text_last_up_to_pos(obj, o, x, y - o->max_ascent);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI int
 evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
@@ -1052,12 +909,6 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    return ret;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
 {
@@ -1084,12 +935,6 @@ evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
    evas_object_clip_dirty(obj);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI Evas_Text_Style_Type
 evas_object_text_style_get(const Evas_Object *obj)
 {
@@ -1105,12 +950,6 @@ evas_object_text_style_get(const Evas_Object *obj)
    return o->cur.style;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_shadow_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
@@ -1134,12 +973,6 @@ evas_object_text_shadow_color_set(Evas_Object *obj, int r, int g, int b, int a)
    evas_object_change(obj);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_shadow_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
@@ -1166,12 +999,6 @@ evas_object_text_shadow_color_get(const Evas_Object *obj, int *r, int *g, int *b
    if (a) *a = o->cur.shadow.a;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_glow_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
@@ -1195,12 +1022,6 @@ evas_object_text_glow_color_set(Evas_Object *obj, int r, int g, int b, int a)
    evas_object_change(obj);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_glow_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
@@ -1227,12 +1048,6 @@ evas_object_text_glow_color_get(const Evas_Object *obj, int *r, int *g, int *b, 
    if (a) *a = o->cur.glow.a;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_glow2_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
@@ -1256,12 +1071,6 @@ evas_object_text_glow2_color_set(Evas_Object *obj, int r, int g, int b, int a)
    evas_object_change(obj);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_glow2_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
@@ -1288,12 +1097,6 @@ evas_object_text_glow2_color_get(const Evas_Object *obj, int *r, int *g, int *b,
    if (a) *a = o->cur.glow2.a;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
@@ -1317,12 +1120,6 @@ evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a)
    evas_object_change(obj);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
 EAPI void
 evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
@@ -1349,16 +1146,6 @@ evas_object_text_outline_color_get(const Evas_Object *obj, int *r, int *g, int *
    if (a) *a = o->cur.outline.a;
 }
 
-/**
- * Gets the text style pad of a text object.
- *
- * @param obj The given text object.
- * @param l The left pad (or NULL).
- * @param r The right pad (or NULL).
- * @param t The top pad (or NULL).
- * @param b The bottom pad (or NULL).
- *
- */
 EAPI void
 evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
@@ -1389,16 +1176,8 @@ evas_object_text_style_pad_get(const Evas_Object *obj, int *l, int *r, int *t, i
 }
 
 
-/**
- * @}
- */
 
 
-/**
- * Removes all font paths loaded into memory for the given evas.
- * @param   e The given evas.
- * @ingroup Evas_Font_Path_Group
- */
 EAPI void
 evas_font_path_clear(Evas *e)
 {
@@ -1412,12 +1191,6 @@ evas_font_path_clear(Evas *e)
      }
 }
 
-/**
- * Appends a font path to the list of font paths used by the given evas.
- * @param   e    The given evas.
- * @param   path The new font path.
- * @ingroup Evas_Font_Path_Group
- */
 EAPI void
 evas_font_path_append(Evas *e, const char *path)
 {
@@ -1429,12 +1202,6 @@ evas_font_path_append(Evas *e, const char *path)
    e->font_path = eina_list_append(e->font_path, eina_stringshare_add(path));
 }
 
-/**
- * Prepends a font path to the list of font paths used by the given evas.
- * @param   e The given evas.
- * @param   path The new font path.
- * @ingroup Evas_Font_Path_Group
- */
 EAPI void
 evas_font_path_prepend(Evas *e, const char *path)
 {
@@ -1446,12 +1213,6 @@ evas_font_path_prepend(Evas *e, const char *path)
    e->font_path = eina_list_prepend(e->font_path, eina_stringshare_add(path));
 }
 
-/**
- * Retrieves the list of font paths used by the given evas.
- * @param   e The given evas.
- * @return  The list of font paths used.
- * @ingroup Evas_Font_Path_Group
- */
 EAPI const Eina_List *
 evas_font_path_list(const Evas *e)
 {
@@ -1478,14 +1239,6 @@ evas_font_object_rehint(Evas_Object *obj)
      }
 }
 
-/**
- * Changes the font hinting for the given evas.
- *
- * @param e The given evas.
- * @param hinting The hinting to use, one of #EVAS_FONT_HINTING_NONE,
- *        #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
- * @ingroup Evas_Font_Group
- */
 EAPI void
 evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
 {
@@ -1506,14 +1259,6 @@ evas_font_hinting_set(Evas *e, Evas_Font_Hinting_Flags hinting)
      }
 }
 
-/**
- * Retrieves the font hinting used by the given evas.
- *
- * @param e The given evas to query.
- * @return The hinting in use, one of #EVAS_FONT_HINTING_NONE,
- *         #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
- * @ingroup Evas_Font_Group
- */
 EAPI Evas_Font_Hinting_Flags
 evas_font_hinting_get(const Evas *e)
 {
@@ -1523,15 +1268,6 @@ evas_font_hinting_get(const Evas *e)
    return e->hinting;
 }
 
-/**
- * Checks if the font hinting is supported by the given evas.
- *
- * @param e The given evas to query.
- * @param hinting The hinting to use, one of #EVAS_FONT_HINTING_NONE,
- *        #EVAS_FONT_HINTING_AUTO, #EVAS_FONT_HINTING_BYTECODE.
- * @return @c EINA_TRUE if it is supported, @c EINA_FALSE otherwise.
- * @ingroup Evas_Font_Group
- */
 EAPI Eina_Bool
 evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
 {
@@ -1544,12 +1280,6 @@ evas_font_hinting_can_hint(const Evas *e, Evas_Font_Hinting_Flags hinting)
    return EINA_FALSE;
 }
 
-/**
- * Force the given evas and associated engine to flush its font cache.
- *
- * @param e The given evas to flush font cache.
- * @ingroup Evas_Font_Group
- */
 EAPI void
 evas_font_cache_flush(Evas *e)
 {
@@ -1560,14 +1290,6 @@ evas_font_cache_flush(Evas *e)
    e->engine.func->font_cache_flush(e->engine.data.output);
 }
 
-/**
- * Changes the size of font cache of the given evas.
- *
- * @param e The given evas to flush font cache.
- * @param size The size, in bytes.
- *
- * @ingroup Evas_Font_Group
- */
 EAPI void
 evas_font_cache_set(Evas *e, int size)
 {
@@ -1579,14 +1301,6 @@ evas_font_cache_set(Evas *e, int size)
    e->engine.func->font_cache_set(e->engine.data.output, size);
 }
 
-/**
- * Changes the size of font cache of the given evas.
- *
- * @param e The given evas to flush font cache.
- * @return The size, in bytes.
- *
- * @ingroup Evas_Font_Group
- */
 EAPI int
 evas_font_cache_get(const Evas *e)
 {
@@ -1597,20 +1311,6 @@ evas_font_cache_get(const Evas *e)
    return e->engine.func->font_cache_get(e->engine.data.output);
 }
 
-/**
- * List of available font descriptions known or found by this evas.
- *
- * The list depends on Evas compile time configuration, such as
- * fontconfig support, and the paths provided at runtime as explained
- * in @ref Evas_Font_Path_Group.
- *
- * @param e The evas instance to query.
- * @return a newly allocated list of strings. Do not change the
- *         strings.  Be sure to call evas_font_available_list_free()
- *         after you're done.
- *
- * @ingroup Evas_Font_Group
- */
 EAPI Eina_List *
 evas_font_available_list(const Evas *e)
 {
@@ -1621,14 +1321,6 @@ evas_font_available_list(const Evas *e)
    return evas_font_dir_available_list(e);
 }
 
-/**
- * Free list of font descriptions returned by evas_font_dir_available_list().
- *
- * @param e The evas instance that returned such list.
- * @param available the list returned by evas_font_dir_available_list().
- *
- * @ingroup Evas_Font_Group
- */
 EAPI void
 evas_font_available_list_free(Evas *e, Eina_List *available)
 {
@@ -1639,25 +1331,6 @@ evas_font_available_list_free(Evas *e, Eina_List *available)
    evas_font_dir_available_list_free(available);
 }
 
-/**
- * Gets the next character in the string
- *
- * Given the UTF-8 string in @p str, and starting byte position in @p pos,
- * this function will place in @p decoded the decoded code point at @p pos
- * and return the byte index for the next character in the string.
- *
- * The only boundary check done is that @p pos must be >= 0. Other than that,
- * no checks are performed, so passing an index value that's not within the
- * length of the string will result in undefined behavior.
- *
- * @param str The UTF-8 string
- * @param pos The byte index where to start
- * @param decoded Address where to store the decoded code point. Optional.
- *
- * @return The byte index of the next character
- *
- * @ingroup Evas_Utils
- */
 EAPI int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
 {
@@ -1671,25 +1344,6 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
    return p;
 }
 
-/**
- * Gets the previous character in the string
- *
- * Given the UTF-8 string in @p str, and starting byte position in @p pos,
- * this function will place in @p decoded the decoded code point at @p pos
- * and return the byte index for the previous character in the string.
- *
- * The only boundary check done is that @p pos must be >= 1. Other than that,
- * no checks are performed, so passing an index value that's not within the
- * length of the string will result in undefined behavior.
- *
- * @param str The UTF-8 string
- * @param pos The byte index where to start
- * @param decoded Address where to store the decoded code point. Optional.
- *
- * @return The byte index of the previous character
- *
- * @ingroup Evas_Utils
- */
 EAPI int
 evas_string_char_prev_get(const char *str, int pos, int *decoded)
 {
@@ -1703,12 +1357,6 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    return p;
 }
 
-/**
- * Get the length in characters of the string.
- * @param  str The string to get the length of.
- * @return The length in characters (not bytes)
- * @ingroup Evas_Utils
- */
 EAPI int
 evas_string_char_len_get(const char *str)
 {
@@ -1716,14 +1364,6 @@ evas_string_char_len_get(const char *str)
    return eina_unicode_utf8_get_len(str);
 }
 
-/**
- * Get the minimum padding a style adds to the text.
- * @param style The style to determine padding.
- * @param     l Pointer to the current left padding value
- * @param     r Pointer to the current right padding value
- * @param     t Pointer to the current top padding value
- * @param     b Pointer to the current bottom padding value
- */
 void
 evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b)
 {

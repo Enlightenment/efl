@@ -1,22 +1,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-/**
- * @addtogroup Evas_Smart_Object_Clipped Clipped Smart Object
- * @{
- */
-
 #define CSO_DATA_GET_OR_RETURN(obj, ptr)				 \
   Evas_Object_Smart_Clipped_Data *ptr = evas_object_smart_data_get(obj); \
   if (!ptr) return;
 
-/**
- * Moves all children objects relative to given offset.
- *
- * @param obj the smart evas object to use.
- * @param dx horizontal offset.
- * @param dy vertical offset.
- */
 EAPI void
 evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 {
@@ -41,14 +29,6 @@ evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_C
      }
 }
 
-/**
- * Get the clipper object for the given clipped smart object.
- *
- * @param obj the clipped smart object to retrieve the associated clipper.
- * @return the clipper object.
- *
- * @see evas_object_smart_clipped_smart_add()
- */
 EAPI Evas_Object *
 evas_object_smart_clipped_clipper_get(Evas_Object *obj)
 {
@@ -169,48 +149,6 @@ evas_object_smart_clipped_smart_member_del(Evas_Object *obj, Evas_Object *member
      evas_object_hide(cso->clipper);
 }
 
-/**
- * Set smart class callbacks so it implements the "Clipped Smart Object".
- *
- * This call will assign all the required methods of Evas_Smart_Class,
- * if one wants to "subclass" it, call this function and later
- * override values, if one wants to call the original method, save it
- * somewhere, example:
- *
- * @code
- * static Evas_Smart_Class parent_sc = EVAS_SMART_CLASS_INIT_NULL;
- *
- * static void my_class_smart_add(Evas_Object *o)
- * {
- *    parent_sc.add(o);
- *    evas_object_color_set(evas_object_smart_clipped_clipper_get(o),
- *                          255, 0, 0, 255);
- * }
- *
- * Evas_Smart_Class *my_class_new(void)
- * {
- *    static Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("MyClass");
- *    if (!parent_sc.name)
- *      {
- *         evas_object_smart_clipped_smart_set(&sc);
- *         parent_sc = sc;
- *         sc.add = my_class_smart_add;
- *      }
- *    return &sc;
- * }
- * @endcode
- *
- * Default behavior is:
- *  - add: creates a hidden clipper with "infinite" size;
- *  - del: delete all children objects;
- *  - move: move all objects relative relatively;
- *  - resize: not defined;
- *  - show: if there are children objects, show clipper;
- *  - hide: hides clipper;
- *  - color_set: set the color of clipper;
- *  - clip_set: set clipper of clipper;
- *  - clip_unset: unset the clipper of clipper;
- */
 EAPI void
 evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
 {
@@ -230,9 +168,6 @@ evas_object_smart_clipped_smart_set(Evas_Smart_Class *sc)
    sc->member_del = evas_object_smart_clipped_smart_member_del;
 }
 
-/**
- * Get a pointer to the Clipped Smart Class to use for proper inheritance
- */
 EAPI const Evas_Smart_Class *
 evas_object_smart_clipped_class_get(void)
 {
@@ -246,7 +181,3 @@ evas_object_smart_clipped_class_get(void)
    class = &_sc;
    return class;
 }
-
-/**
- * @}
- */

@@ -46,7 +46,6 @@ evas_render.c \
 evas_smart.c \
 evas_stack.c \
 evas_async_events.c \
-evas_transform.c \
 evas_stats.c \
 evas_map.c \
 evas_gl.c

@@ -81,11 +81,6 @@ struct _Evas_Object_Table_Accessor
    const Evas_Object *table;
 };
 
-/**
- * @addtogroup Evas_Object_Table
- * @{
- */
-
 #define EVAS_OBJECT_TABLE_DATA_GET(o, ptr)			\
   Evas_Object_Table_Data *ptr = evas_object_smart_data_get(o)
 
@@ -916,23 +911,12 @@ _evas_object_table_smart_set_user(Evas_Smart_Class *sc)
    sc->calculate = _evas_object_table_smart_calculate;
 }
 
-/**
- * Create a new table.
- *
- * It's set to non-homogeneous by default, add children with
- * evas_object_table_pack().
- */
 EAPI Evas_Object *
 evas_object_table_add(Evas *evas)
 {
    return evas_object_smart_add(evas, _evas_object_table_smart_class_new());
 }
 
-/**
- * Create a table that is child of a given element @a parent.
- *
- * @see evas_object_table_add()
- */
 EAPI Evas_Object *
 evas_object_table_add_to(Evas_Object *parent)
 {
@@ -945,48 +929,6 @@ evas_object_table_add_to(Evas_Object *parent)
    return o;
 }
 
-/**
- * Set how this table should layout children.
- *
- * @todo consider aspect hint and respect it.
- *
- * @par EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE
- * If table does not use homogeneous mode then columns and rows will
- * be calculated based on hints of individual cells. This operation
- * mode is more flexible, but more complex and heavy to calculate as
- * well. @b Weight properties are handled as a boolean
- * expand. Negative alignment will be considered as 0.5.
- *
- * @todo @c EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE should balance weight.
- *
- * @par EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE
- * When homogeneous is relative to table the own table size is divided
- * equally among children, filling the whole table area. That is, if
- * table has @c WIDTH and @c COLUMNS, each cell will get <tt>WIDTH /
- * COLUMNS</tt> pixels. If children have minimum size that is larger
- * than this amount (including padding), then it will overflow and be
- * aligned respecting the alignment hint, possible overlapping sibling
- * cells. @b Weight hint is used as a boolean, if greater than zero it
- * will make the child expand in that axis, taking as much space as
- * possible (bounded to maximum size hint). Negative alignment will be
- * considered as 0.5.
- *
- * @par EVAS_OBJECT_TABLE_HOMOGENEOUS_ITEM
- * When homogeneous is relative to item it means the greatest minimum
- * cell size will be used. That is, if no element is set to expand,
- * the table will have its contents to a minimum size, the bounding
- * box of all these children will be aligned relatively to the table
- * object using evas_object_table_align_get(). If the table area is
- * too small to hold this minimum bounding box, then the objects will
- * keep their size and the bounding box will overflow the box area,
- * still respecting the alignment. @b Weight hint is used as a
- * boolean, if greater than zero it will make that cell expand in that
- * axis, toggling the <b>expand mode</b>, which makes the table behave
- * much like @b EVAS_OBJECT_TABLE_HOMOGENEOUS_TABLE, except that the
- * bounding box will overflow and items will not overlap siblings. If
- * no minimum size is provided at all then the table will fallback to
- * expand mode as well.
- */
 EAPI void
 evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_Mode homogeneous)
 {
@@ -998,11 +940,6 @@ evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_
    evas_object_smart_changed(o);
 }
 
-/**
- * Get the current layout homogeneous mode.
- *
- * @see evas_object_table_homogeneous_set()
- */
 EAPI Evas_Object_Table_Homogeneous_Mode
 evas_object_table_homogeneous_get(const Evas_Object *o)
 {
@@ -1010,9 +947,6 @@ evas_object_table_homogeneous_get(const Evas_Object *o)
    return priv->homogeneous;
 }
 
-/**
- * Set the alignment of the whole bounding box of contents.
- */
 EAPI void
 evas_object_table_align_set(Evas_Object *o, double horizontal, double vertical)
 {
@@ -1024,9 +958,6 @@ evas_object_table_align_set(Evas_Object *o, double horizontal, double vertical)
    evas_object_smart_changed(o);
 }
 
-/**
- * Get alignment of the whole bounding box of contents.
- */
 EAPI void
 evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *vertical)
 {
@@ -1043,9 +974,6 @@ evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *ve
      }
 }
 
-/**
- * Set padding between cells.
- */
 EAPI void
 evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical)
 {
@@ -1058,9 +986,6 @@ evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord 
    evas_object_smart_changed(o);
 }
 
-/**
- * Get padding between cells.
- */
 EAPI void
 evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
@@ -1077,18 +1002,6 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
      }
 }
 
-/**
- * Add a new child to a table object.
- *
- * @param o The given table object.
- * @param child The child object to add.
- * @param col relative-horizontal position to place child.
- * @param row relative-vertical position to place child.
- * @param colspan how many relative-horizontal position to use for this child.
- * @param rowspan how many relative-vertical position to use for this child.
- *
- * @return 1 on success, 0 on failure.
- */
 EAPI Eina_Bool
 evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
@@ -1203,15 +1116,6 @@ _evas_object_table_remove_opt(Evas_Object_Table_Data *priv, Evas_Object_Table_Op
      }
 }
 
-/**
- * Remove child from table.
- *
- * @note removing a child will immediately call a walk over children in order
- *       to recalculate numbers of columns and rows. If you plan to remove
- *       all children, use evas_object_table_clear() instead.
- *
- * @return 1 on success, 0 on failure.
- */
 EAPI Eina_Bool
 evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 {
@@ -1242,12 +1146,6 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
    return EINA_TRUE;
 }
 
-/**
- * Faster way to remove all child objects from a table object.
- *
- * @param o The given table object.
- * @param clear if true, it will delete just removed children.
- */
 EAPI void
 evas_object_table_clear(Evas_Object *o, Eina_Bool clear)
 {
@@ -1270,14 +1168,6 @@ evas_object_table_clear(Evas_Object *o, Eina_Bool clear)
    evas_object_smart_changed(o);
 }
 
-/**
- * Get the number of columns and rows this table takes.
- *
- * @note columns and rows are virtual entities, one can specify a table
- *       with a single object that takes 4 columns and 5 rows. The only
- *       difference for a single cell table is that paddings will be
- *       accounted proportionally.
- */
 EAPI void
 evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows)
 {
@@ -1294,11 +1184,6 @@ evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows)
      }
 }
 
-/**
- * Get an iterator to walk the list of children for the table.
- *
- * @note Do not remove or delete objects while walking the list.
- */
 EAPI Eina_Iterator *
 evas_object_table_iterator_new(const Evas_Object *o)
 {
@@ -1323,11 +1208,6 @@ evas_object_table_iterator_new(const Evas_Object *o)
    return &it->iterator;
 }
 
-/**
- * Get an accessor to get random access to the list of children for the table.
- *
- * @note Do not remove or delete objects while walking the list.
- */
 EAPI Eina_Accessor *
 evas_object_table_accessor_new(const Evas_Object *o)
 {
@@ -1352,14 +1232,6 @@ evas_object_table_accessor_new(const Evas_Object *o)
    return &it->accessor;
 }
 
-/**
- * Get the list of children for the table.
- *
- * @note This is a duplicate of the list kept by the table internally.
- *       It's up to the user to destroy it when it no longer needs it.
- *       It's possible to remove objects from the table when walking this
- *       list, but these removals won't be reflected on it.
- */
 EAPI Eina_List *
 evas_object_table_children_get(const Evas_Object *o)
 {
@@ -1374,11 +1246,6 @@ evas_object_table_children_get(const Evas_Object *o)
    return new_list;
 }
 
-/**
- * Get a child from the table using its coordinates
- *
- * @note This does not take into account col/row spanning
- */
 Evas_Object *
 evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned short row)
 {
@@ -1393,15 +1260,6 @@ evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned s
    return NULL;
 }
 
-/**
- * Gets the mirrored mode of the table. In mirrored mode the table items go
- * from right to left instead of left to right. That is, 1,1 is top right, not
- * to left.
- *
- * @param obj The table object.
- * @return EINA_TRUE if it's a mirrored table, EINA_FALSE otherwise.
- * @since 1.1.0
- */
 EAPI Eina_Bool
 evas_object_table_mirrored_get(const Evas_Object *obj)
 {
@@ -1410,15 +1268,6 @@ evas_object_table_mirrored_get(const Evas_Object *obj)
    return priv->is_mirrored;
 }
 
-/**
- * Sets the mirrored mode of the table. In mirrored mode the table items go
- * from right to left instead of left to right. That is, 1,1 is top right, not
- * to left.
- *
- * @param obj The table object.
- * @param mirrored the mirrored mode to set
- * @since 1.1.0
- */
 EAPI void
 evas_object_table_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
 {
@@ -1429,7 +1278,3 @@ evas_object_table_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
         _evas_object_table_smart_calculate_regular(obj, priv);
      }
 }
-
-/**
- * @}
- */

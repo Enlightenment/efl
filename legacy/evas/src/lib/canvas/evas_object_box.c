@@ -23,11 +23,6 @@ struct _Evas_Object_Box_Accessor
    const Evas_Object *box;
 };
 
-/**
- * @addtogroup Evas_Object_Box
- * @{
- */
-
 #define _evas_object_box_type "Evas_Object_Box"
 #define SIG_CHILD_ADDED "child,added"
 #define SIG_CHILD_REMOVED "child,removed"
@@ -548,25 +543,12 @@ _evas_object_box_smart_set_user(Evas_Object_Box_Api *api)
    api->option_free = _evas_object_box_option_free_default;
 }
 
-/**
- * Create a new box.
- *
- * Its layout function must be set via evas_object_box_layout_set()
- * (defaults to evas_object_box_layout_horizontal()).  The other
- * properties of the box must be set/retrieved via
- * evas_object_box_{h,v}_{align,padding}_{get,set)().
- */
 EAPI Evas_Object *
 evas_object_box_add(Evas *evas)
 {
    return evas_object_smart_add(evas, _evas_object_box_smart_class_new());
 }
 
-/**
- * Create a box that is child of a given element @a parent.
- *
- * @see evas_object_box_add()
- */
 EAPI Evas_Object *
 evas_object_box_add_to(Evas_Object *parent)
 {
@@ -579,10 +561,6 @@ evas_object_box_add_to(Evas_Object *parent)
    return o;
 }
 
-/**
- * Set the default box @a api struct (Evas_Object_Box_Api)
- * with the default values. May be used to extend that API.
- */
 EAPI void
 evas_object_box_smart_set(Evas_Object_Box_Api *api)
 {
@@ -591,9 +569,6 @@ evas_object_box_smart_set(Evas_Object_Box_Api *api)
    _evas_object_box_smart_set(api);
 }
 
-/**
- * Get Box Smart Class for inheritance purposes
- */
 EAPI const Evas_Object_Box_Api *
 evas_object_box_smart_class_get(void)
 {
@@ -610,11 +585,6 @@ evas_object_box_smart_class_get(void)
    return class;
 }
 
-/**
- * Set a 'calculate' callback (@a cb) to the @a o box's smart class,
- * which here defines its genre (horizontal, vertical, homogeneous,
- * etc.).
- */
 EAPI void
 evas_object_box_layout_set(Evas_Object *o, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data))
 {
@@ -774,55 +744,6 @@ _evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas
    return remaining - rem_diff;
 }
 
-/**
- * Layout function which sets the box @a o to a (basic) horizontal
- * box.  @a priv must be the smart data of the box.
- *
- * The object's overall behavior is controlled by its properties,
- * which are set by the evas_object_box_{h,v}_{align,padding}_set()
- * family of functions.  The properties of the elements in the box --
- * set by evas_object_size_hint_{align,padding,weight}_set() functions
- * -- also control the way this function works.
- *
- * \par box's properties:
- * @c align_h controls the horizontal alignment of the child objects
- * relative to the containing box. When set to 0, children are aligned
- * to the left. A value of 1 lets them aligned to the right border.
- * Values in between align them proportionally.  Note that if the size
- * required by the children, which is given by their widths and the @c
- * padding_h property of the box, is bigger than the container width,
- * the children will be displayed out of its bounds.  A negative value
- * of @c align_h makes the box to *justify* its children. The padding
- * between them, in this case, is corrected so that the leftmost one
- * touches the left border and the rightmost one touches the right
- * border (even if they must overlap).  The @c align_v and @c
- * padding_v properties of the box don't contribute to its behaviour
- * when this layout is chosen.
- *
- * \par Child element's properties:
- * @c align_x does not influence the box's behavior.  @c padding_l and
- * @c padding_r sum up to the container's horizontal padding between
- * elements.  The child's @c padding_t, @c padding_b and @c align_y
- * properties apply for padding/positioning relative to the overall
- * height of the box. Finally, there is the @c weight_x property,
- * which, if set to a non-zero value, tells the container that the
- * child width is not pre-defined.  If the container can't accommodate
- * all its children, it sets the widths of the children *with weights*
- * to sizes as small as they can all fit into it.  If the size
- * required by the children is less than the available, the box
- * increases its children's (which have weights) widths as to fit the
- * remaining space.  The @c weight_x property, besides telling the
- * element is resizable, gives a *weight* for the resizing process.
- * The parent box will try to distribute (or take off) widths
- * accordingly to the *normalized* list of weigths: most weighted
- * children remain/get larger in this process than the the least ones.
- * @c weight_y does not influence the layout.
- *
- * If one desires that, besides having weights, child elements must be
- * resized bounded to a minimum or maximum size, their size hint
- * properties must be set (by the
- * evas_object_size_hint_{min,max}_set() functions.
- */
 EAPI void
 evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -981,14 +902,6 @@ _evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_O
    return remaining - rem_diff;
 }
 
-/**
- * Layout function which sets the box @a o to a (basic) vertical box.
- * @a priv must be the smart data of the box.
- *
- * This function behaves analogously to
- * evas_object_box_layout_horizontal().  The description of its
- * behaviour can be derived from that function's documentation.
- */
 EAPI void
 evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1094,39 +1007,6 @@ evas_object_box_layout_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void
    evas_object_size_hint_min_set(o, top_w, req_h);
 }
 
-/**
- * Layout function which sets the box @a o to a *homogeneous*
- * horizontal box.  @a priv must be the smart data of the box.
- *
- * In a homogeneous horizontal box, its width is divided equally
- * between the contained objects.  The box's overall behavior is
- * controlled by its properties, which are set by the
- * evas_object_box_{h,v}_{align,padding}_set() family of functions.
- * The properties of the elements in the box -- set by
- * evas_object_size_hint_{align,padding,weight}_set() functions --
- * also control the way this function works.
- *
- * \par box's properties:
- * @c align_h has no influence on the box for this layout.  @c
- * padding_h tells the box to draw empty spaces of that size, in
- * pixels, between the (still equal) child objects's cells.  The @c
- * align_v and @c padding_v properties of the box don't contribute to
- * its behaviour when this layout is chosen.
- *
- * \par Child element's properties:
- * @c padding_l and @c padding_r sum up to the required width of the
- * child element.  The @c align_x property tells the relative position
- * of this overall child width in its allocated cell (0 to extreme
- * left, 1 to extreme right).  A value of -1.0 to @c align_x makes the
- * box try to resize this child element to the exact width of its cell
- * (respecting the min and max hints on the child's width *and*
- * accounting its horizontal padding properties).  The child's @c
- * padding_t, @c padding_b and @c align_y properties apply for
- * padding/positioning relative to the overall height of the box. A
- * value of -1.0 to @c align_y makes the box try to resize this child
- * element to the exact height of its parent (respecting the max hint
- * on the child's height).
- */
 EAPI void
 evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1188,14 +1068,6 @@ evas_object_box_layout_homogeneous_horizontal(Evas_Object *o, Evas_Object_Box_Da
    evas_object_size_hint_min_set(o, w, h);
 }
 
-/**
- * Layout function which sets the box @a o to a *homogeneous* vertical
- * box.  @a priv must be the smart data of the box.
- *
- * This function behaves analogously to
- * evas_object_box_layout_homogeneous_horizontal().  The description
- * of its behaviour can be derived from that function's documentation.
- */
 EAPI void
 evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1256,47 +1128,6 @@ evas_object_box_layout_homogeneous_vertical(Evas_Object *o, Evas_Object_Box_Data
    evas_object_size_hint_min_set(o, w, h);
 }
 
-/**
- * Layout function which sets the box @a o to a *max size-homogeneous*
- * horizontal box.  @a priv must be the smart data of the box.
- *
- * In a max size-homogeneous horizontal box, the equal sized cells
- * reserved for the child objects have the width of the space required
- * by the largest child (in width). The box's overall behavior is
- * controlled by its properties, which are set by the
- * evas_object_box_{h,v}_{align,padding}_set() family of functions.
- * The properties of the elements in the box -- set by
- * evas_object_size_hint_{align,padding,weight}_set() functions --
- * also control the way this function works.
- *
- * \par box's properties:
- * @c padding_h tells the box to draw empty spaces of that size, in
- * pixels, between the child objects's cells.  @c align_h controls the
- * horizontal alignment of the child objects relative to the
- * containing box. When set to 0, children are aligned to the left. A
- * value of 1 lets them aligned to the right border.  Values in
- * between align them proportionally. A negative value of @c align_h
- * makes the box to *justify* its children cells. The padding between
- * them, in this case, is corrected so that the leftmost one touches
- * the left border and the rightmost one touches the right border
- * (even if they must overlap).  The @c align_v and @c padding_v
- * properties of the box don't contribute to its behaviour when this
- * layout is chosen.
- *
- * \par Child element's properties:
- * @c padding_l and @c padding_r sum up to the required width of the
- * child element. The @c align_x property tells the relative position
- * of this overall child width in its allocated cell (0 to extreme
- * left, 1 to extreme right).  A value of -1.0 to @c align_x makes the
- * box try to resize this child element to the exact width of its cell
- * (respecting the min and max hints on the child's width *and*
- * accounting its horizontal padding properties).  The child's @c
- * padding_t, @c padding_b and @c align_y properties apply for
- * padding/positioning relative to the overall height of the box. A
- * value of -1.0 to @c align_y makes the box try to resize this child
- * element to the exact height of its parent (respecting the max hint
- * on the child's height).
- */
 EAPI void
 evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1381,15 +1212,6 @@ evas_object_box_layout_homogeneous_max_size_horizontal(Evas_Object *o, Evas_Obje
    evas_object_size_hint_min_set(o, x, top_h);
 }
 
-/**
- * Layout function which sets the box @a o to a *max size-homogeneous*
- * vertical box.  @a priv must be the smart data of the box.
- *
- * This function behaves analogously to
- * evas_object_box_layout_homogeneous_max_size_horizontal().  The
- * description of its behaviour can be derived from that function's
- * documentation.
- */
 EAPI void
 evas_object_box_layout_homogeneous_max_size_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1538,41 +1360,6 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
    *max_h_ret = max_h;
 }
 
-/**
- * Layout function which sets the box @a o to a *flow* horizontal box.
- * @a priv must be the smart data of the box.
- *
- * In a flow horizontal box, the box's child elements are placed in
- * rows (think of text as an analogy). A row has as much elements as
- * can fit into the box's width.  The box's overall behavior is
- * controlled by its properties, which are set by the
- * evas_object_box_{h,v}_{align,padding}_set() family of functions.
- * The properties of the elements in the box -- set by
- * evas_object_size_hint_{align,padding,weight}_set() functions --
- * also control the way this function works.
- *
- * \par box's properties:
- * @c padding_h tells the box to draw empty spaces of that size, in
- * pixels, between the child objects's cells.  @c align_h dictates the
- * horizontal alignment of the rows (0 to left align them, 1 to right
- * align).  A value of -1.0 to @c align_h lets the rows *justified*
- * horizontally.  @c align_v controls the vertical alignment of the
- * entire set of rows (0 to top, 1 to bottom).  A value of -1.0 to @c
- * align_v makes the box to *justify* the rows vertically. The padding
- * between them, in this case, is corrected so that the first row
- * touches the top border and the last one touches the bottom border
- * (even if they must overlap). @c padding_v has no influence on the
- * layout.
- *
- * \par Child element's properties:
- * @c padding_l and @c padding_r sum up to the required width of the
- * child element.  The @c align_x property has no influence on the
- * layout. The child's @c padding_t and @c padding_b sum up to the
- * required height of the child element and is the only means (besides
- * row justifying) of setting space between rows.  Note, however, that
- * @c align_y dictates positioning relative to the *largest height*
- * required by a child object in the actual row.
- */
 EAPI void
 evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1754,14 +1541,6 @@ _evas_object_box_layout_flow_vertical_col_info_collect(Evas_Object_Box_Data *pri
    *max_w_ret = max_w;
 }
 
-/**
- * Layout function which sets the box @a o to a *flow* vertical box.
- * @a priv must be the smart data of the box.
- *
- * This function behaves analogously to
- * evas_object_box_layout_flow_horizontal().  The description of its
- * behaviour can be derived from that function's documentation.
- */
 EAPI void
 evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1877,27 +1656,6 @@ evas_object_box_layout_flow_vertical(Evas_Object *o, Evas_Object_Box_Data *priv,
    evas_object_size_hint_min_set(o, min_w, min_h);
 }
 
-/**
- * Layout function which sets the box @a o to set all children to the
- * size of the object.  @a priv must be the smart data of the box.
- *
- * In a stack box, all children will be given the same size and they
- * will be stacked on above the other, so the first object will be the
- * bottom most.
- *
- * \par box's properties:
- * No box option is used.
- *
- * \par Child  element's   properties:
- * @c padding_l and @c padding_r sum up to the required width of the
- * child element.  The @c align_x property tells the relative position
- * of this overall child width in its allocated cell (0 to extreme
- * left, 1 to extreme right).  A value of -1.0 to @c align_x makes the
- * box try to resize this child element to the exact width of its cell
- * (respecting the min and max hints on the child's width *and*
- * accounting its horizontal padding properties).  Same applies to
- * vertical axis.
- */
 EAPI void
 evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
@@ -1946,9 +1704,6 @@ evas_object_box_layout_stack(Evas_Object *o, Evas_Object_Box_Data *priv, void *d
    evas_object_size_hint_min_set(o, top_w, top_h);
 }
 
-/**
- * Set the alignment of the whole bounding box of contents.
- */
 EAPI void
 evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical)
 {
@@ -1960,9 +1715,6 @@ evas_object_box_align_set(Evas_Object *o, double horizontal, double vertical)
    evas_object_smart_changed(o);
 }
 
-/**
- * Get alignment of the whole bounding box of contents.
- */
 EAPI void
 evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vertical)
 {
@@ -1979,9 +1731,6 @@ evas_object_box_align_get(const Evas_Object *o, double *horizontal, double *vert
      }
 }
 
-/**
- * Set the space (padding) between cells.
- */
 EAPI void
 evas_object_box_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical)
 {
@@ -1993,9 +1742,6 @@ evas_object_box_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord ve
    evas_object_smart_changed(o);
 }
 
-/**
- * Get the (space) padding between cells.
- */
 EAPI void
 evas_object_box_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
@@ -2012,10 +1758,6 @@ evas_object_box_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_C
      }
 }
 
-/**
- * Append a new object @a child to the box @a o. On error, @c NULL is
- * returned.
- */
 EAPI Evas_Object_Box_Option *
 evas_object_box_append(Evas_Object *o, Evas_Object *child)
 {
@@ -2042,10 +1784,6 @@ evas_object_box_append(Evas_Object *o, Evas_Object *child)
    return NULL;
 }
 
-/**
- * Prepend a new object @a child to the box @a o. On error, @c NULL is
- * returned.
- */
 EAPI Evas_Object_Box_Option *
 evas_object_box_prepend(Evas_Object *o, Evas_Object *child)
 {
@@ -2072,11 +1810,6 @@ evas_object_box_prepend(Evas_Object *o, Evas_Object *child)
    return NULL;
 }
 
-/**
- * Prepend a new object @a child to the box @c o relative to element @a
- * reference. If @a reference is not contained in the box or any other
- * error occurs, @c NULL is returned.
- */
 EAPI Evas_Object_Box_Option *
 evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Object *reference)
 {
@@ -2103,11 +1836,6 @@ evas_object_box_insert_before(Evas_Object *o, Evas_Object *child, const Evas_Obj
    return NULL;
 }
 
-/**
- * Append a new object @a child to the box @c o relative to element @a
- * reference. If @a reference is not contained in the box or any other
- * error occurs, @c NULL is returend.
- */
 EAPI Evas_Object_Box_Option *
 evas_object_box_insert_after(Evas_Object *o, Evas_Object *child, const Evas_Object *reference)
 {
@@ -2134,10 +1862,6 @@ evas_object_box_insert_after(Evas_Object *o, Evas_Object *child, const Evas_Obje
    return NULL;
 }
 
-/**
- * Insert a new object @a child to the box @a o at position @a pos. On
- * error, @c NULL is returned.
- */
 EAPI Evas_Object_Box_Option *
 evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)
 {
@@ -2164,10 +1888,6 @@ evas_object_box_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)
    return NULL;
 }
 
-/**
- * Remove an object @a child from the box @a o. On error, @c 0 is
- * returned.
- */
 EAPI Eina_Bool
 evas_object_box_remove(Evas_Object *o, Evas_Object *child)
 {
@@ -2194,10 +1914,6 @@ evas_object_box_remove(Evas_Object *o, Evas_Object *child)
    return EINA_FALSE;
 }
 
-/**
- * Remove an object from the box @a o which occupies position @a
- * pos. On error, @c 0 is returned.
- */
 EAPI Eina_Bool
 evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
 {
@@ -2221,10 +1937,6 @@ evas_object_box_remove_at(Evas_Object *o, unsigned int pos)
    return EINA_FALSE;
 }
 
-/**
- * Remove all child objects.
- * @return 0 on errors
- */
 EAPI Eina_Bool
 evas_object_box_remove_all(Evas_Object *o, Eina_Bool clear)
 {
@@ -2256,11 +1968,6 @@ evas_object_box_remove_all(Evas_Object *o, Eina_Bool clear)
    return EINA_TRUE;
 }
 
-/**
- * Get an iterator to walk the list of children for the box.
- *
- * @note Do not remove or delete objects while walking the list.
- */
 EAPI Eina_Iterator *
 evas_object_box_iterator_new(const Evas_Object *o)
 {
@@ -2285,11 +1992,6 @@ evas_object_box_iterator_new(const Evas_Object *o)
    return &it->iterator;
 }
 
-/**
- * Get an accessor to get random access to the list of children for the box.
- *
- * @note Do not remove or delete objects while walking the list.
- */
 EAPI Eina_Accessor *
 evas_object_box_accessor_new(const Evas_Object *o)
 {
@@ -2314,14 +2016,6 @@ evas_object_box_accessor_new(const Evas_Object *o)
    return &it->accessor;
 }
 
-/**
- * Get the list of children for the box.
- *
- * @note This is a duplicate of the list kept by the box internally.
- *       It's up to the user to destroy it when it no longer needs it.
- *       It's possible to remove objects from the box when walking this
- *       list, but these removals won't be reflected on it.
- */
 EAPI Eina_List *
 evas_object_box_children_get(const Evas_Object *o)
 {
@@ -2336,10 +2030,6 @@ evas_object_box_children_get(const Evas_Object *o)
    return new_list;
 }
 
-/**
- * Get the name of the property of the child elements of the box @a o
- * whose id is @a property. On error, @c NULL is returned.
- */
 EAPI const char *
 evas_object_box_option_property_name_get(Evas_Object *o, int property)
 {
@@ -2357,10 +2047,6 @@ evas_object_box_option_property_name_get(Evas_Object *o, int property)
    return api->property_name_get(o, property);
 }
 
-/**
- * Get the id of the property of the child elements of the box @a o
- * whose name is @a name. On error, @c -1 is returned.
- */
 EAPI int
 evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
 {
@@ -2378,12 +2064,6 @@ evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
    return api->property_id_get(o, name);
 }
 
-/**
- * Set the property (with id @a property) of the child element of the
- * box @a o whose property struct is @a opt. The property's values
- * must be the last arguments and their type *must* match that of the
- * property itself. On error, @c 0 is returned.
- */
 EAPI Eina_Bool
 evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
@@ -2397,13 +2077,6 @@ evas_object_box_option_property_set(Evas_Object *o, Evas_Object_Box_Option *opt,
    return ret;
 }
 
-/**
- * Set the property (with id @a property) of the child element of the
- * box @a o whose property struct is @a opt. The property's values
- * must be the args which the va_list @a args is initialized with and
- * their type *must* match that of the property itself. On error, @c 0
- * is returned.
- */
 
 EAPI Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
@@ -2425,12 +2098,6 @@ evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt
    return EINA_TRUE;
 }
 
-/**
- * Get the property (with id @a property) of the child element of the
- * box @a o whose property struct is @a opt. The last arguments must
- * be addresses of variables with the same type of that property. On
- * error, @c 0 is returned.
- */
 EAPI Eina_Bool
 evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
@@ -2444,12 +2111,6 @@ evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt,
    return ret;
 }
 
-/**
- * Get the property (with id @a property) of the child element of the
- * box @a o whose property struct is @a opt. The args which the
- * va_list @a args is initialized with must be addresses of variables
- * with the same type of that property. On error, @c 0 is returned.
- */
 EAPI Eina_Bool
 evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
@@ -2465,7 +2126,3 @@ evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt
 
    return api->property_get(o, opt, property, args);
 }
-
-/**
- * @}
- */

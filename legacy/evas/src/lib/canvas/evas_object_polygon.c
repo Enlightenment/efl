@@ -75,18 +75,8 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
 
-/**
- * @addtogroup Evas_Object_Polygon
- * @{
- */
-
 EVAS_MEMPOOL(_mp_obj);
 
-/**
- * Adds a new evas polygon object to the given evas.
- * @param   e The given evas.
- * @return  A new evas polygon object.
- */
 EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
@@ -101,13 +91,6 @@ evas_object_polygon_add(Evas *e)
    return obj;
 }
 
-/**
- * Adds the given point to the given evas polygon object.
- * @param obj The given evas polygon object.
- * @param x   The X coordinate of the given point.
- * @param y   The Y coordinate of the given point.
- * @ingroup Evas_Polygon_Group
- */
 EAPI void
 evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
@@ -205,10 +188,6 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    evas_object_inform_call_resize(obj);
 }
 
-/**
- * Removes all of the points from the given evas polygon object.
- * @param   obj The given polygon object.
- */
 EAPI void
 evas_object_polygon_points_clear(Evas_Object *obj)
 {
@@ -251,10 +230,6 @@ evas_object_polygon_points_clear(Evas_Object *obj)
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);
 }
-
-/**
- * @}
- */
 
 /* all nice and private */
 static void
