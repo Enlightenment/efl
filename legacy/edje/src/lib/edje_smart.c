@@ -18,13 +18,6 @@ Eina_List *_edje_edjes = NULL;
 
 /************************** API Routines **************************/
 
-/* FIXDOC: Verify/Expand */
-/** Constructs the Edje object
- * @param evas A valid Evas handle
- * @return The Evas_Object pointer.
- *
- * Creates the Edje smart object, returning the Evas_Object handle.
- */
 EAPI Evas_Object *
 edje_object_add(Evas *evas)
 {

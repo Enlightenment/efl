@@ -13,100 +13,18 @@ Eina_List      *_edje_animators = NULL;
  *                                   API                                      *
  *============================================================================*/
 
-/**
- * @addtogroup Edje_program_Group Program
- *
- * @brief These functions provide an abstraction layer between the
- * application code and the interface, while allowing extremely
- * flexible dynamic layouts and animations.
- *
- * @{
- */
-
-/**
- * @brief Set edje trasitions' frame time.
- *
- * @param t The frame time, in seconds. Default value is 1/30.
- *
- * This function sets the edje built-in animations' frame time (thus,
- * affecting their resolution) by calling
- * ecore_animator_frametime_set(). This frame time can be retrieved
- * with edje_frametime_get().
- *
- * @see edje_frametime_get()
- *
- */
 EAPI void
 edje_frametime_set(double t)
 {
    ecore_animator_frametime_set(t);
 }
 
-/**
- * @brief Get edje trasitions' frame time.
- *
- * @return The frame time, in seconds.
- *
- * This function returns the edje frame time set by
- * edje_frametime_set().
- *
- * @see edje_frametime_set()
- *
- */
 EAPI double
 edje_frametime_get(void)
 {
    return ecore_animator_frametime_get();
 }
 
-/**
- * @brief Add a callback for a signal emitted by @a obj.
- *
- * @param obj A valid Evas_Object handle.
- * @param emission The signal's name.
- * @param source The signal's source.
- * @param func The callback function to be executed when the signal is
- * emitted.
- * @param data A pointer to data to pass in to the callback function.
- *
- * Connects a callback function to a signal emitted by @a obj.
- * In EDC, a program can emit a signal as follows:
- *
- * @code
- * program {
- *   name: "emit_example";
- *   action: SIGNAL_EMIT "a_signal" "a_source";
- * }
- * @endcode
- *
- * Assuming a function with the following declaration is definded:
- *
- * @code
- * void cb_signal(void *data, Evas_Object *o, const char *emission, const char *source);
- * @endcode
- *
- * a callback is attached using:
- *
- * @code
- * edje_object_signal_callback_add(obj, "a_signal", "a_source", cb_signal, data);
- * @endcode
- *
- * Here, @a data is an arbitrary pointer to be used as desired.  Note
- * that @a emission and @a source correspond respectively to the first
- * and the second parameters at the SIGNAL_EMIT action.
- *
- * Internal edje signals can also be attached to, and globs can occur
- * in either the emission or source name, e.g.
- *
- * @code
- * edje_object_signal_callback_add(obj, "mouse,down,*", "button.*", NULL);
- * @endcode
- *
- * Here, any mouse down events on an edje part whose name begins with
- * "button." will trigger the callback. The actual signal and source
- * names will be passed in to the @a emission and @a source parameters
- * of the callback function (e.g. "mouse,down,2" and "button.close").
- */
 EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
@@ -134,25 +52,6 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
      _edje_callbacks_patterns_clean(ed);
 }
 
-/**
- * @brief Remove a signal-triggered callback from an object.
- *
- * @param obj A valid Evas_Object handle.
- * @param emission The emission string.
- * @param source The source string.
- * @param func The callback function.
- * @return The data pointer
- *
- * This function removes a callback, previously attached to the
- * emittion of a signal, from the object @a obj. The parameters @a
- * emission, @a source and @a func must match exactly those passed to
- * a previous call to edje_object_signal_callback_add(). The data
- * pointer that was passed to this call will be returned.
- *
- * @see edje_object_signal_callback_add().
- * @see edje_object_signal_callback_del_full().
- *
- */
 EAPI void *
 edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
@@ -195,26 +94,6 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
    return NULL;
 }
 
-/**
- * @brief Remove a signal-triggered callback from an object.
- *
- * @param obj A valid Evas_Object handle.
- * @param emission The emission string.
- * @param source The source string.
- * @param func The callback function.
- * @param data The user data passed to the callback.
- * @return The data pointer
- *
- * This function removes a callback, previously attached to the
- * emittion of a signal, from the object @a obj. The parameters @a
- * emission, @a sourcei, @a func and @a data must match exactly those
- * passed to a previous call to edje_object_signal_callback_add(). The data
- * pointer that was passed to this call will be returned.
- *
- * @see edje_object_signal_callback_add().
- * @see edje_object_signal_callback_del().
- *
- */
 EAPI void *
 edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
@@ -257,34 +136,6 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
    return NULL;
 }
 
-/**
- * @brief Send a signal to an edje object.
- *
- * @param obj A valid Evas_Object handle.
- * @param emission The signal's name.
- * @param source The signal's source.
- *
- * This function sends a signal to the object @a obj. An edje program
- * can respond to a signal by specifying matching 'signal' and
- * 'source' fields.
- *
- * @code
- * edje_object_signal_emit(obj, "a_signal", "");
- * @endcode
- *
- * will trigger a program whose EDC block is:
- *
- * @code
- * program {
- *  name: "a_program";
- *  signal: "a_signal";
- *  source: "";
- *  action: ...
- * }
- * @endcode
- *
- * FIXME: should this signal be sent to children also?
- */
 EAPI void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
@@ -298,19 +149,6 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
 }
 
 /* FIXDOC: Verify/Expand */
-/**
- * @brief Set the edje object to playing or paused states.
- *
- * @param obj A valid Evas_Object handle.
- * @param play Object state (1 to playing, 0 to pauseed).
- *
- * This function sets the edje object @a obj to playing or paused
- * states, depending on the parameter @a play.  This has no effect if
- * the object was already at that state.
- *
- * @see edje_object_play_get().
- *
- */
 EAPI void
 edje_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
@@ -347,20 +185,6 @@ edje_object_play_set(Evas_Object *obj, Eina_Bool play)
      }
 }
 
-/**
- * @brief Get the edje object's play/pause state.
- *
- * @param obj A valid Evas_Object handle.
- * @return @c EINA_FALSE if the object is not connected, its @c delete_me flag
- * is set, or it is at paused state; @c EINA_TRUE if the object is at playing
- * state.
- *
- * This function tells if an edje object is playing or not. This state
- * is set by edje_object_play_set().
- *
- * @see edje_object_play_set().
- *
- */
 EAPI Eina_Bool
 edje_object_play_get(const Evas_Object *obj)
 {
@@ -374,19 +198,6 @@ edje_object_play_get(const Evas_Object *obj)
 }
 
 /* FIXDOC: Verify/Expand */
-/**
- * @brief Set the object's animation state.
- *
- * @param obj A valid Evas_Object handle.
- * @param on Animation State.
- *
- * This function starts or stops an edje object's animation. The
- * information if it's runnig can be retrieved by
- * edje_object_animation_get().
- *
- * @see edje_object_animation_get()
- *
- */
 EAPI void
 edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
 {
@@ -444,19 +255,6 @@ edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
    _edje_unblock(ed);
 }
 
-/**
- * @brief Get the edje object's animation state.
- *
- * @param obj A valid Evas_Object handle.
- * @return @c EINA_FALSE on error or if object is not animated;
- * @c EINA_TRUE if animated.
- *
- * This function returns if the animation is playing or not. The
- * animation state is set by edje_object_play_set().
- *
- * @see edje_object_animation_set().
- *
- */
 
 EAPI Eina_Bool
 edje_object_animation_get(const Evas_Object *obj)
@@ -2160,8 +1958,3 @@ _edje_param_set(Edje_Real_Part *part, const char *param, const char *value)
 	  }
      }
 }
-
-/**
- *
- * @}
- */

@@ -955,23 +955,6 @@ edje_edit_compiler_get(Evas_Object *obj)
 /*  GROUPS API  */
 /****************/
 
-/**
- * @brief Add an edje (empty) group to an edje object's group set.
- *
- * @param obj The pointer to edje object.
- * @param name The name of the group.
- *
- * @return 1 If it could allocate memory to the part group added
- * or zero if not.
- *
- * This function adds, at run time, one more group, which will reside
- * in memory, to the group set found in the .edj file which @a obj was
- * loaded with. This group can be manipulated by other API functions,
- * like @c edje_edit_part_add(), for example. If desired, the new
- * group can be actually committed the respective .edj by use of @c
- * edje_edit_save().
- *
- */
 EAPI Eina_Bool
 edje_edit_group_add(Evas_Object *obj, const char *name)
 {
@@ -1066,20 +1049,6 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    return EINA_TRUE;
 }
 
-/**
- * @brief Delete the specified group from the edje file.
- *
- * @param obj The pointer to the edje object.
- * @param group_name Group to delete.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
- *
- * This function deletes the given group from the file @a obj is set to. This
- * operation can't be undone as all references to the group are removed from
- * the file.
- * This function may fail if the group to be deleted is currently in use.
- *
- */
 EAPI Eina_Bool
 edje_edit_group_del(Evas_Object *obj, const char *group_name)
 {
@@ -4067,17 +4036,6 @@ edje_edit_state_external_param_choice_get(Evas_Object *obj, const char *part, co
    return EINA_FALSE;
 }
 
-/**
- * Arguments should have proper sized values matching their types:
- *   - EDJE_EXTERNAL_PARAM_TYPE_INT: int
- *   - EDJE_EXTERNAL_PARAM_TYPE_BOOL: int
- *   - EDJE_EXTERNAL_PARAM_TYPE_DOUBLE: double
- *   - EDJE_EXTERNAL_PARAM_TYPE_STRING: char*
- *   - EDJE_EXTERNAL_PARAM_TYPE_CHOICE: char*
- *
- * @note: The validation of the parameter will occur only if the part
- * is in the same state as the one being modified.
- */
 EAPI Eina_Bool
 edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const char *state, double value, const char *param, Edje_External_Param_Type type, ...)
 {

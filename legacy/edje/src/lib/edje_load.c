@@ -10,18 +10,6 @@ static Eina_List *_edje_swallows_collect(Edje *ed);
 
 /************************** API Routines **************************/
 
-/* FIXDOC: Verify/expand doc */
-/** Sets the EET file and group to load @a obj from
- * @param obj A valid Evas_Object handle
- * @param file The path to the EET file
- * @param group The group name in the Edje
- * @return 0 on Error\n
- * 1 on Success and sets EDJE_LOAD_ERROR_NONE
- *
- * Edje uses EET files, conventionally ending in .edj, to store object
- * descriptions. A single file contains multiple named groups. This function
- * specifies the file and group name to load @a obj from.
- */
 EAPI Eina_Bool
 edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
@@ -36,20 +24,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
    return ret;
 }
 
-/* FIXDOC: Verify/expand doc. */
-/** Get the file and group name that @a obj was loaded from
- * @param obj A valid Evas_Object handle
- * @param file A pointer to store a pointer to the filename in
- * @param group A pointer to store a pointer to the group name in
- *
- * This gets the EET file location and group for the given Evas_Object.
- * If @a obj is either not an edje file, or has not had its file/group set
- * using edje_object_file_set(), then both @a file and @a group will be set
- * to NULL.
- *
- * It is valid to pass in NULL for either @a file or @a group if you are not
- * interested in one of the values.
- */
 EAPI void
 edje_object_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
@@ -66,22 +40,6 @@ edje_object_file_get(const Evas_Object *obj, const char **file, const char **gro
    if (group) *group = ed->group;
 }
 
-/* FIXDOC: Verify. return error? */
-/** Gets the Edje load error
- * @param obj A valid Evas_Object handle
- *
- * @return The Edje load error:\n
- * EDJE_LOAD_ERROR_NONE: No Error\n
- * EDJE_LOAD_ERROR_GENERIC: Generic Error\n
- * EDJE_LOAD_ERROR_DOES_NOT_EXIST: Does not Exist\n
- * EDJE_LOAD_ERROR_PERMISSION_DENIED: Permission Denied\n
- * EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED: Resource Allocation Failed\n
- * EDJE_LOAD_ERROR_CORRUPT_FILE: Corrupt File\n
- * EDJE_LOAD_ERROR_UNKNOWN_FORMAT: Unknown Format\n
- * EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: Incompatible File\n
- * EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: Unknown Collection\n
- * EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: Recursive Reference\n
- */
 EAPI Edje_Load_Error
 edje_object_load_error_get(const Evas_Object *obj)
 {
@@ -123,14 +81,6 @@ edje_load_error_str(Edje_Load_Error error)
 }
 
 
-/** Get a list of groups in an edje file
- * @param file The path to the edje file
- *
- * @return The Eina_List of group names (char *)
- *
- * Note: the list must be freed using edje_file_collection_list_free()
- * when you are done with it.
- */
 EAPI Eina_List *
 edje_file_collection_list(const char *file)
 {
@@ -157,11 +107,6 @@ edje_file_collection_list(const char *file)
    return lst;
 }
 
-/** Free file collection list
- * @param lst The Eina_List of groups
- *
- * Frees the list returned by edje_file_collection_list().
- */
 EAPI void
 edje_file_collection_list_free(Eina_List *lst)
 {
@@ -172,12 +117,6 @@ edje_file_collection_list_free(Eina_List *lst)
      }
 }
 
-/** Determine whether a group matching glob exists in an edje file.
- * @param file The file path
- * @param glob A glob to match on
- *
- * @return 1 if a match is found, 0 otherwise
- */
 EAPI Eina_Bool
 edje_file_group_exists(const char *file, const char *glob)
 {
@@ -238,21 +177,6 @@ edje_file_group_exists(const char *file, const char *glob)
 }
 
 
-/** Get data from the file level data block of an edje file
- * @param file The path to the .edj file
- * @param key The data key
- * @return The string value of the data
- *
- * If an edje file is built from the following edc:
- *
- * data {
- *   item: "key1" "value1";
- *   item: "key2" "value2";
- * }
- * collections { ... }
- *
- * Then, edje_file_data_get("key1") will return "value1"
- */
 EAPI char *
 edje_file_data_get(const char *file, const char *key)
 {

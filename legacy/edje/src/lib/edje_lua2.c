@@ -1,19 +1,3 @@
-/**
- * @page luaref Edje Lua scripting
- *
- * @section intro Introduction
- * 
- * Lua is intended for script-only objects at this point (with embryo left
- * for augmenting standard programs). Since script-only objects effectively
- * define objects entirely via Lua script (resize handling, event handling
- * etc. etc.) this places many more demands on them, and thus a more powerful
- * language is in order. Lua is that language.
- *
- * To get you started, here's an example:
- * @include lua_script.edc
- *
- */
-
 #include "edje_private.h"
 
 //--------------------------------------------------------------------------//

@@ -12,34 +12,6 @@ Eina_Mempool *_edje_real_part_state_mp = NULL;
  *                                   API                                      *
  *============================================================================*/
 
-/**
- * @addtogroup Edje_main_Group Main
- *
- * @brief These functions provide an abstraction layer between the
- * application code and the interface, while allowing extremely
- * flexible dynamic layouts and animations.
- *
- * @{
- */
-
-/**
- * @brief Initialize the edje library.
- *
- * @return The new init count. The initial value is zero.
- *
- * This function initializes the ejde library, making the propers
- * calls to initialization functions. It makes calls to functions
- * eina_init(), ecore_init(), embryo_init() and eet_init() so
- * there is no need to call those functions again in your code. To
- * shutdown edje there is a function edje_shutdown().
- *
- * @see edje_shutdown()
- * @see eina_init()
- * @see ecore_init()
- * @see embryo_init()
- * @see eet_init()
- *
- */
 
 EAPI int
 edje_init(void)
@@ -135,24 +107,6 @@ edje_init(void)
    return --_edje_init_count;
 }
 
-/**
- * @brief Shutdown the edje library.
- *
- * @return The number of times the library has been initialised without being
- *         shutdown.
- *
- * This function shuts down the edje library. It calls the functions
- * eina_shutdown(), ecore_shutdown(), embryo_shutdown() and
- * eet_shutdown(), so there is no need to call these functions again
- * in your code.
- *
- * @see edje_init()
- * @see eina_shutdown()
- * @see ecore_shutdown()
- * @see embryo_shutdown()
- * @see eet_shutdown()
- *
- */
 
 EAPI int
 edje_shutdown(void)
@@ -292,8 +246,3 @@ _edje_unref(Edje *ed)
    ed->references--;
    if (ed->references == 0) _edje_del(ed);
 }
-
-/**
- *
- * @}
- */

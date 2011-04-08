@@ -13,34 +13,6 @@ static int tmp_msgq_restart = 0;
  *                                   API                                      *
  *============================================================================*/
 
-/**
- * @addtogroup Edje_message_queue_Group Message_Queue
- *
- * @brief These functions provide an abstraction layer between the
- * application code and the interface, while allowing extremely
- * flexible dynamic layouts and animations.
- *
- * @{
- */
-
-/**
- * @brief Send message to object.
- *
- * @param obj The edje object reference.
- * @param type The type of message to send.
- * @param id A identification number for the message.
- * @param msg The message to be send.
- *
- *
- * This function sends messages to this object and to all of its child
- * objects, if applicable. The function that handles messages arriving
- * at this edje object is is set with
- * edje_object_message_handler_set().
- *
- * @see edje_object_message_handler_set()
- *
- */
-
 EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
@@ -59,18 +31,6 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
      }
 }
 
-/**
- * @brief Set the message handler function for this an object.
- *
- * @param obj The edje object reference.
- * @param func The function to handle messages.
- * @param data The data to be associated to the message handler.
- *
- *
- * This function associates a message handler function and data to the
- * edje object.
- *
- */
 
 EAPI void
 edje_object_message_handler_set(Evas_Object *obj, Edje_Message_Handler_Cb func, void *data)
@@ -82,16 +42,6 @@ edje_object_message_handler_set(Evas_Object *obj, Edje_Message_Handler_Cb func, 
    _edje_message_cb_set(ed, func, data);
 }
 
-/**
- * @brief Process an object's message queue.
- *
- * @param obj The edje object reference.
- *
- * This function goes through the object message queue processing the
- * pending messages for *this* specific edje object. Normally they'd
- * be processed only at idle time.
- *
- */
 
 EAPI void
 edje_object_message_signal_process(Evas_Object *obj)
@@ -196,13 +146,6 @@ end:
 #endif
 }
 
-/**
- * @brief Process all queued up edje messages.
- *
- * This function triggers the processing of messages addressed to any
- * (alive) edje objects.
- *
- */
 
 EAPI void
 edje_message_signal_process(void)
@@ -912,8 +855,3 @@ _edje_message_del(Edje *ed)
 	if (ed->message.num <= 0) return;
      }
 }
-
-/**
- *
- * @}
- */

@@ -191,6 +191,24 @@ EAPI void edje_edit_print_internal_status(Evas_Object *obj);
  * @return EINA_TRUE if successfully added the group, EINA_FALSE if an error
  * occurred or if a group with the same name exists.
  */
+
+/**
+ * @brief Add an edje (empty) group to an edje object's group set.
+ *
+ * @param obj The pointer to edje object.
+ * @param name The name of the group.
+ *
+ * @return 1 If it could allocate memory to the part group added
+ * or zero if not.
+ *
+ * This function adds, at run time, one more group, which will reside
+ * in memory, to the group set found in the .edj file which @a obj was
+ * loaded with. This group can be manipulated by other API functions,
+ * like @c edje_edit_part_add(), for example. If desired, the new
+ * group can be actually committed the respective .edj by use of @c
+ * edje_edit_save().
+ *
+ */
 EAPI Eina_Bool edje_edit_group_add(Evas_Object *obj, const char *name);
 
 /** Delete the specified group from the given edje.
@@ -203,6 +221,21 @@ EAPI Eina_Bool edje_edit_group_add(Evas_Object *obj, const char *name);
  * @param group_name Name of group to delete.
  *
  * @return EINA_TRUE if successful, EINA_FALSE otherwise.
+ */
+
+/**
+ * @brief Delete the specified group from the edje file.
+ *
+ * @param obj The pointer to the edje object.
+ * @param group_name Group to delete.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ *
+ * This function deletes the given group from the file @a obj is set to. This
+ * operation can't be undone as all references to the group are removed from
+ * the file.
+ * This function may fail if the group to be deleted is currently in use.
+ *
  */
 EAPI Eina_Bool edje_edit_group_del(Evas_Object *obj, const char *group_name);
 
@@ -2026,6 +2059,18 @@ EAPI Eina_Bool edje_edit_state_external_param_choice_get(Evas_Object *obj, const
  * @param type The type of the parameter.
  *
  * @return EINA_TRUE if it was set, EINA_FALSE otherwise.
+ */
+
+/**
+ * Arguments should have proper sized values matching their types:
+ *   - EDJE_EXTERNAL_PARAM_TYPE_INT: int
+ *   - EDJE_EXTERNAL_PARAM_TYPE_BOOL: int
+ *   - EDJE_EXTERNAL_PARAM_TYPE_DOUBLE: double
+ *   - EDJE_EXTERNAL_PARAM_TYPE_STRING: char*
+ *   - EDJE_EXTERNAL_PARAM_TYPE_CHOICE: char*
+ *
+ * @note: The validation of the parameter will occur only if the part
+ * is in the same state as the one being modified.
  */
 EAPI Eina_Bool edje_edit_state_external_param_set(Evas_Object *obj, const char *part, const char *state, double value, const char *param, Edje_External_Param_Type type, ...);
 
