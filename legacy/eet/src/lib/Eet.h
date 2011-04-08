@@ -1,3 +1,257 @@
+/**
+@brief Eet Data Handling Library Public API Calls
+
+These routines are used for Eet Library interaction
+
+@mainpage Eet Library Documentation
+
+@image html  e_big.png
+
+@version 1.0.0
+@author Carsten Haitzler <raster@@rasterman.com>
+@author David Goodlad <dgoodlad@@gmail.com>
+@author Cedric Bail <cedric.bail@@free.fr>
+@author Arnaud de Turckheim <quarium@@gmail.com>
+@author Luis Felipe Strano Moraes <lfelipe@@profusion.mobi>
+@author Chidambar Zinnoury <illogict@@online.fr>
+@author Vincent Torri <vtorri@@univ-evry.fr>
+@author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
+@author Raphael Kubo da Costa <kubo@@profusion.mobi>
+@author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
+@author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
+@author Adam Simpkins <adam@@adamsimpkins.net>
+@date 2000-2011
+
+@section toc Table of Contents
+
+@li @ref intro
+@li @ref example
+@li @ref format
+@li @ref compiling
+@li @ref install
+@li @ref next_steps
+@li @ref intro_example
+
+@section intro What is Eet?
+
+It is a tiny library designed to write an arbitrary set of chunks of data
+to a file and optionally compress each chunk (very much like a zip file)
+and allow fast random-access reading of the file later on. It does not
+do zip as a zip itself has more complexity than is needed, and it was much
+simpler to implement this once here.
+
+Eet is extremely fast, small and simple. Eet files can be very small and
+highly compressed, making them very optimal for just sending across the
+internet without having to archive, compress or decompress and install them.
+They allow for lightning-fast random-acess reads once created, making them
+perfect for storing data that is written once (or rarely) and read many
+times, but the program does not want to have to read it all in at once.
+
+It also can encode and decode data structures in memory, as well as image
+data for saving to Eet files or sending across the network to other
+machines, or just writing to arbitrary files on the system. All data is
+encoded in a platform independent way and can be written and read by any
+architecture.
+
+@section example A simple example on using Eet
+
+Here is a simple example on how to use Eet to save a series of strings to a
+file and load them again. The advantage of using Eet over just fprintf() and
+fscanf() is that not only can these entries be strings, they need no special
+parsing to handle delimiter characters or escaping, they can be binary data,
+image data, data structures containing integers, strings, other data
+structures, linked lists and much more, without the programmer having to
+worry about parsing, and best of all, Eet is very fast.
+
+@code
+#include <Eet.h>
+
+int
+main(int argc, char **argv)
+{
+  Eet_File *ef;
+  int       i;
+  char      buf[32];
+  char     *ret;
+  int       size;
+  char     *entries[] =
+    {
+      "Entry 1",
+      "Big text string here compared to others",
+      "Eet is cool"
+    };
+
+  eet_init();
+
+  // blindly open an file for output and write strings with their NUL char
+  ef = eet_open("test.eet", EET_FILE_MODE_WRITE);
+  eet_write(ef, "Entry 1", entries[0], strlen(entries[0]) + 1, 0);
+  eet_write(ef, "Entry 2", entries[1], strlen(entries[1]) + 1, 1);
+  eet_write(ef, "Entry 3", entries[2], strlen(entries[2]) + 1, 0);
+  eet_close(ef);
+
+  // open the file again and blindly get the entries we wrote
+  ef = eet_open("test.eet", EET_FILE_MODE_READ);
+  ret = eet_read(ef, "Entry 1", &size);
+  printf("%s\n", ret);
+  ret = eet_read(ef, "Entry 2", &size);
+  printf("%s\n", ret);
+  ret = eet_read(ef, "Entry 3", &size);
+  printf("%s\n", ret);
+  eet_close(ef);
+
+  eet_shutdown();
+}
+@endcode
+
+@section format What does an Eet file look like?
+
+The file format is very simple. There is a directory block at the start of
+the file listing entries and offsets into the file where they are stored,
+their sizes, compression flags etc. followed by all the entry data strung one
+element after the other.
+
+All Eet files start with t a 4 byte magic number. It is written using network
+byte-order (big endian, or from most significant byte first to least
+significant byte last) and is 0x1ee7ff00 (or byte by byte 0:1e 1:e7 2:ff
+3:00). The next 4 bytes are an integer (in big endian notation) indicating
+how many entries are stored in the Eet file. 0 indicates it is empty. This is
+a signed integer and thus values less than 0 are invalid, limiting the number
+of entries in an Eet file to 0x7fffffff entries at most. The next 4 bytes is
+the size of the directory table, in bytes, encoded in big-endian format. This
+is a signed integer and cannot be less than 0.
+
+The directory table for the file follows immediately, with a continuous list
+of all entries in the Eet file, their offset in the file etc. The order of
+these entries is not important, but convention would have them be from first
+to last entry in the file. Each directory entry consiste of 5 integers, one
+after the other, each stored as a signed, big endian integer. The first is
+the offset in the file that the data for this entry is stored at (based from
+the very start of the file, not relative to the end of the directory block).
+The second integer holds flags for the entry. currently only the least
+significant bit (bit 0) holds any useful information, and it is set to 1 if
+the entry is compressed using zlib compression calls, or 0 if it is not
+compressed. The next integer is the size of the entry in bytes stored in the
+file. The next integer is the size of the data when decompressed (if it was
+compressed) in bytes. This may be the same as the previous integer if the
+entry was not compressed. The final integer is the number of bytes used by
+the string identifier for the entry, without the NUL byte terminator, which
+is not stored. The next series of bytes is the string name of the entry, with
+the number of bytes being the same as specified in the last integer above.
+This list of entries continues until there are no more entries left to list.
+To read an entry from an Eet file, simply find the appropriate entry in the
+directory table, find it's offset and size, and read it into memory. If it is
+compressed, decompress it using zlib and then use that data.
+
+Here is a data map of an Eet file. All integers are encoded using big-endian
+notation (most significant byte first) and are signed. There is no alignment
+of data, so all data types follow immediately on, one after the other. All
+compressed data is compressed using the zlib compress2() function, and
+decompressed using the zlib uncompress() function. Please see zlib
+documentation for more information as to the encoding of compressed data.
+
+@verbatim
+HEADER:
+[INT] Magic number (0x1ee7ff00)
+[INT] Number of entries in the directory table
+[INT] The size of the directory table, in bytes
+
+DIRECTORY TABLE ENTRIES (as many as specified in the header):
+[INT] Offest from file start at which entry is stored (in bytes)
+[INT] Entry flags (1 = compressed, 0 = not compressed)
+[INT] Size of data chunk in file (in bytes)
+[INT] Size of the data chunk once decompressed (or the same as above, if not)
+[INT] The length of the string itendifier, in bytes, without NUL terminator
+[STR] Series of bytes for the string identifier, no NUL terminator
+... more directory entries
+
+DATA STORED, ONE AFTER ANOTHER:
+[DAT] DATA ENTRY 1...
+[DAT] DATA ENTRY 2...
+[DAT] DATA ENTRY 3...
+... more data chunks
+@endverbatim
+
+The contents of each entry in an Eet file has no defined format as such. It
+is an opaque chunk of data, that is up to the application to deocde, unless
+it is an image, ecoded by Eet, or a data structure encoded by Eet. The data
+itself for these entries can be encoded and decoded by Eet with extra helper
+functions in Eet. eet_data_image_read() and eet_data_image_write() are used
+to handle reading and writing image data from a known Eet file entry name.
+eet_data_read() and eet_data_write() are used to decode and encode program
+data structures from an Eet file, making the loading and saving of program
+information stored in data structures a simple 1 function call process.
+
+Please see src/lib/eet_data.c for information on the format of these
+specially encoded data entries in an Eet file (for now).
+
+
+@section compiling How to compile using Eet ?
+
+Eet is a library your application links to. The procedure for this is very
+simple. You simply have to compile your application with the appropriate
+compiler flags that the @p pkg-config script outputs. For example:
+
+Compiling C or C++ files into object files:
+
+@verbatim
+gcc -c -o main.o main.c `pkg-config --cflags eet`
+@endverbatim
+
+Linking object files into a binary executable:
+
+@verbatim
+gcc -o my_application main.o `pkg-config --libs eet`
+@endverbatim
+
+You simply have to make sure that pkg-config is in your shell's PATH (see
+the manual page for your appropriate shell) and eet.pc in /usr/lib/pkgconfig
+or its path is in the PKG_CONFIG_PATH environment variable. It's that simple
+to link and use Eet once you have written your code to use it.
+
+Since the program is linked to Eet, it is now able to use any advertised
+API calls to serialize your data.
+
+You should make sure you add any extra compile and link flags to your
+compile commands that your application may need as well. The above example
+is only guaranteed to make Eet add it's own requirements.
+
+
+@section install How is it installed?
+
+Simple:
+
+@verbatim
+./configure
+make
+su -
+...
+make install
+@endverbatim
+
+@section next_steps Next Steps
+
+After you understood what Eet is and installed it in your system you
+should proceed understanding the programming interface. We'd recommend
+you to take a while to learn Eina
+(http://docs.enlightenment.org/auto/eina/) as it is very convenient
+and optimized, and Eet provides integration with it.
+
+Recommended reading:
+
+@li @ref Eet_File_Group to know the basics to open and save files.
+@li @ref Eet_Data_Group to know the convenient way to serialize and
+    parse your data structures automatically. Just create your
+    descriptors and let Eet do the work for you.
+
+@section intro_example Introductory Examples
+
+@ref Examples
+
+@todo Document data format for images and data structures.
+
+*/
+
 #ifndef _EET_H
 #define _EET_H
 
