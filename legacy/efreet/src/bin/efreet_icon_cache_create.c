@@ -37,7 +37,7 @@ static Eina_Array *strs = NULL;
 static Eina_Hash *icon_themes = NULL;
 
 static Eina_Bool
-cache_directory_find(Eina_Hash *dirs, const char *dir)
+cache_directory_find(Eina_Hash *dirs __UNUSED__, const char *dir __UNUSED__)
 {
     return EINA_TRUE;
 #if 0
@@ -1092,8 +1092,10 @@ main(int argc, char **argv)
         tmpfd = open(file, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
         if (tmpfd >= 0)
         {
+            int written;
+           
             efreet_fsetowner(tmpfd);
-            write(tmpfd, "a", 1);
+            written = write(tmpfd, "a", 1);
             close(tmpfd);
         }
     }

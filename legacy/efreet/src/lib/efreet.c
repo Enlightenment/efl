@@ -320,7 +320,7 @@ efreet_fsetowner(int fd)
     if (fstat(fd, &st) < 0) return;
     if (st.st_uid == ruid) return;
 
-    fchown(fd, ruid, rgid);
+    if (fchown(fd, ruid, rgid) != 0) return;
 }
 
 EAPI void
