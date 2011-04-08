@@ -32,10 +32,10 @@ edje_object_add(Evas *evas)
 
    if (!_edje_smart)
      {
-	memset(&_edje_smart_parent, 0, sizeof(_edje_smart_parent));
-	_edje_object_smart_set(&_edje_smart_class);
-	_edje_smart = 
-          evas_smart_class_new((Evas_Smart_Class *)&_edje_smart_class);
+        memset(&_edje_smart_parent, 0, sizeof(_edje_smart_parent));
+        _edje_object_smart_set(&_edje_smart_class);
+        _edje_smart =
+           evas_smart_class_new((Evas_Smart_Class *)&_edje_smart_class);
      }
 
    e = evas_object_smart_add(evas, _edje_smart);
@@ -91,17 +91,17 @@ _edje_smart_add(Evas_Object *obj)
    ed = evas_object_smart_data_get(obj);
    if (!ed)
      {
-	const Evas_Smart *smart;
-	const Evas_Smart_Class *sc;
+        const Evas_Smart *smart;
+        const Evas_Smart_Class *sc;
 
-	ed = calloc(1, sizeof(Edje));
-	if (!ed) return;
+        ed = calloc(1, sizeof(Edje));
+        if (!ed) return;
 
-	smart = evas_object_smart_smart_get(obj);
-	sc = evas_smart_class_get(smart);
-	ed->api = (const Edje_Smart_Api *)sc;
+        smart = evas_object_smart_smart_get(obj);
+        sc = evas_smart_class_get(smart);
+        ed->api = (const Edje_Smart_Api *)sc;
 
-	evas_object_smart_data_set(obj, ed);
+        evas_object_smart_data_set(obj, ed);
      }
 
    ed->base.evas = evas_object_evas_get(obj);
@@ -119,20 +119,20 @@ _edje_smart_add(Evas_Object *obj)
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;
    _edje_edjes = eina_list_append(_edje_edjes, obj);
-/*
+   /*
      {
-	Eina_List *l;
-	const void *data;
+        Eina_List *l;
+        const void *data;
 
-	printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
-	EINA_LIST_FOREACH(_edge_edges, l, data)
-	  {
-	     ed = _edje_fetch(data);
-	     printf("EDJE: %80s | %80s\n", ed->path, ed->part);
-	  }
-	printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
+        printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
+        EINA_LIST_FOREACH(_edge_edges, l, data)
+          {
+             ed = _edje_fetch(data);
+             printf("EDJE: %80s | %80s\n", ed->path, ed->part);
+          }
+        printf("--- EDJE DUMP [%i]\n", eina_list_count(_edje_edjes));
      }
- */
+   */
 }
 
 static void
@@ -168,8 +168,8 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 
    if (_edje_script_only(ed))
      {
-	_edje_script_only_move(ed);
-	return;
+        _edje_script_only_move(ed);
+        return;
      }
    if (_edje_lua_script_only(ed))
      {
@@ -184,13 +184,13 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
      }
    else
      {
-	unsigned int i;
+        unsigned int i;
 
         for (i = 0; i < ed->table_parts_size; i++)
           {
              Edje_Real_Part *ep;
              Evas_Coord ox, oy;
-             
+
              ep = ed->table_parts[i];
              evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
              evas_object_move(ep->object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
@@ -221,13 +221,13 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 #endif
    if (_edje_script_only(ed))
      {
-	_edje_script_only_resize(ed);
-	return;
+        _edje_script_only_resize(ed);
+        return;
      }
    if (_edje_lua_script_only(ed))
      {
-	_edje_lua_script_only_resize(ed);
-	return;
+        _edje_lua_script_only_resize(ed);
+        return;
      }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
@@ -245,9 +245,9 @@ _edje_smart_show(Evas_Object * obj)
    if (!ed) return;
    if (evas_object_visible_get(obj)) return;
    if (_edje_script_only(ed))
-     {  
-	_edje_script_only_show(ed);
-	return;
+     {
+        _edje_script_only_show(ed);
+        return;
      }
    if (_edje_lua_script_only(ed))
      {
@@ -267,9 +267,9 @@ _edje_smart_hide(Evas_Object * obj)
    if (!ed) return;
    if (!evas_object_visible_get(obj)) return;
    if (_edje_script_only(ed))
-     {  
-	_edje_script_only_hide(ed);
-	return;
+     {
+        _edje_script_only_hide(ed);
+        return;
      }
    if (_edje_lua_script_only(ed))
      {
