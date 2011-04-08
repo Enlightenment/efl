@@ -1060,7 +1060,7 @@ elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit)
 EAPI Eina_List *
 elm_transit_chain_transits_get(const Elm_Transit * transit)
 {
-   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, NULL);
    return transit->next_chain_transits;
 }
 
