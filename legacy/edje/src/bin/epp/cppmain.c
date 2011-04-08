@@ -129,7 +129,6 @@ main(int argc, char **argv)
 	     if (fwrite(parse_in.token_buffer, 1, n, stdout) != n)
 		exit(FATAL_EXIT_CODE);
 	  }
-      next:
 	parse_in.limit = parse_in.token_buffer;
 	got_text = 0;
      }
