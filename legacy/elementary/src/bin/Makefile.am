@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS     = 1.4 foreign
+AUTOMAKE_OPTIONS = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -112,7 +112,7 @@ elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
 	@ELEMENTARY_EDBUS_LIBS@ \
 	@ELEMENTARY_EFREET_LIBS@ \
-	@ELEMENTARY_LIBS@ \ 
+	@ELEMENTARY_LIBS@ \
 	@my_libs@
 elementary_config_LDFLAGS =
 
