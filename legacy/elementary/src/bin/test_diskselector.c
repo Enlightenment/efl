@@ -137,7 +137,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 5);
 
-   for (idx = 0; idx < (sizeof(month_list) / sizeof(month_list[0])); idx++)
+   for (idx = 0; idx < (int)(sizeof(month_list) / sizeof(month_list[0])); idx++)
      {
         it = elm_diskselector_item_append(disk, month_list[idx], NULL, NULL, NULL);
      }
