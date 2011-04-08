@@ -51,7 +51,7 @@ typedef struct _Route_Dump Route_Dump;
 #define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
 #define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
 #define DEST_FILE_PATH "%s%d.png"
-#define DEST_XML_FILE "/tmp/elm_map-XXXXXX.xml"
+#define DEST_XML_FILE "/tmp/elm_map-XXXXXX"
 
 #define ROUTE_YOURS_URL "http://www.yournavigation.org/api/dev/route.php"
 #define ROUTE_TYPE_MOTORCAR "motocar"
@@ -4204,6 +4204,7 @@ elm_map_route_remove(Elm_Map_Route *route)
 EAPI void
 elm_map_route_color_set(Elm_Map_Route *route, int r, int g , int b, int a)
 {
+   EINA_SAFETY_ON_NULL_RETURN(route);
    route->color.r = r;
    route->color.g = g;
    route->color.b = b;
@@ -4224,6 +4225,7 @@ elm_map_route_color_set(Elm_Map_Route *route, int r, int g , int b, int a)
 EAPI void
 elm_map_route_color_get(Elm_Map_Route *route, int *r, int *g , int *b, int *a)
 {
+   EINA_SAFETY_ON_NULL_RETURN(route);
    if (*r) *r = route->color.r;
    if (*g) *g = route->color.g;
    if (*b) *b = route->color.b;
@@ -4241,6 +4243,7 @@ elm_map_route_color_get(Elm_Map_Route *route, int *r, int *g , int *b, int *a)
 EAPI double
 elm_map_route_distance_get(Elm_Map_Route *route)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(route, 0.0);
    return route->info.distance;
 }
 
@@ -4256,6 +4259,7 @@ elm_map_route_distance_get(Elm_Map_Route *route)
 EAPI const char*
 elm_map_route_node_get(Elm_Map_Route *route)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
    return route->info.nodes;
 }
 
@@ -4271,6 +4275,7 @@ elm_map_route_node_get(Elm_Map_Route *route)
 EAPI const char*
 elm_map_route_waypoint_get(Elm_Map_Route *route)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
    return route->info.waypoints;
 }
 
