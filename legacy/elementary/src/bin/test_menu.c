@@ -9,12 +9,12 @@ static Evas_Object *win, *bg, *menu, *rect;
 static void
 _show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Evas_Event_Mouse_Down *ev = event_info; 
+   Evas_Event_Mouse_Down *ev = event_info;
    elm_menu_move(data, ev->canvas.x, ev->canvas.y);
    evas_object_show(data);
 }
 
-static void 
+static void
 _populate_4(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *item2;
@@ -30,7 +30,7 @@ _populate_4(Elm_Menu_Item *item)
    elm_menu_item_disabled_set(item2, 1);
 }
 
-static void 
+static void
 _populate_3(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *item2;
@@ -42,14 +42,14 @@ _populate_3(Elm_Menu_Item *item)
    elm_menu_item_disabled_set(item2, 1);
 }
 
-static void 
+static void
 _populate_2(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *item2, *item3;
 
    elm_menu_item_add(menu, item, "system-reboot", "menu 2", NULL, NULL);
    item2 = elm_menu_item_add(menu, item, "system-shutdown", "menu 3", NULL, NULL);
-   
+
    _populate_3(item2);
 
    elm_menu_item_separator_add(menu,item);
@@ -69,7 +69,7 @@ _populate_2(Elm_Menu_Item *item)
    _populate_4(item2);
 }
 
-static void 
+static void
 _populate_1(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *item2;

@@ -31,7 +31,7 @@ test_icon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_show(ic);
 
    evas_object_smart_callback_add(ic, "clicked", icon_clicked, NULL);
-   
+
    evas_object_show(win);
 }
 #endif

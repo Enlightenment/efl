@@ -64,12 +64,12 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
-   
+
    en = elm_scrolled_entry_add(win);
    elm_scrolled_entry_entry_set(en, "An entry");
    evas_object_smart_callback_add(en, "focused", _foc, NULL);
@@ -88,7 +88,7 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_object_focus_allow_set(bt, 0);
    elm_button_label_set(bt, "Del");
@@ -97,7 +97,7 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    bt = elm_button_add(win);
    elm_object_focus_allow_set(bt, 0);
    elm_button_label_set(bt, "Hide");
@@ -106,7 +106,7 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
-   
+
    evas_object_show(win);
 }
 #endif

@@ -38,7 +38,7 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   
+
    n = 0;
    for (j = 0; j < 12; j++)
      {
@@ -71,11 +71,11 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              evas_object_show(ph);
           }
      }
-   
+
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
-   
+
    elm_scroller_content_set(sc, tb);
    evas_object_show(tb);
    evas_object_show(sc);
@@ -92,7 +92,7 @@ drop_cb(void *mydata __UNUSED__, Evas_Object *obj, void *evdata __UNUSED__){
 
 static void
 drag_start_cb(void *mydata __UNUSED__, Evas_Object *obj __UNUSED__, void *evdata __UNUSED__){
-   
+
 }
 
 static void

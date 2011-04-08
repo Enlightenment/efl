@@ -86,19 +86,19 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             "called <a href=anc-02>Anchors</a> so you will need<br>"
             "to refer to them this way.<br>"
             "<br>"
-            
+
             "Also you can stick in items with (relsize + ascent): "
             "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
             " (full) "
             "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
             " (to the left)<br>"
-            
+
             "Also (size + ascent): "
             "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
             " (full) "
             "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
             " (before this)<br>"
-            
+
             "And as well (absize + ascent): "
             "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
             " (full) "
@@ -624,7 +624,7 @@ static void
 my_ent_bt_fmt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   printf("IS FORMAT: %i\n", 
+   printf("IS FORMAT: %i\n",
           (int)elm_scrolled_entry_cursor_is_format_get(en));
 }
 
@@ -965,7 +965,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
@@ -1210,7 +1210,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(bt, "clicked", my_ent_bt_pas, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt); 
+   elm_box_pack_end(bx2, bt);
    evas_object_propagate_events_set(bt, 0);
    elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);
@@ -1229,7 +1229,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 {
    Evas_Object *win, *bg, *ly, *en;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "entry4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry 4");
    elm_win_autodel_set(win, 1);
@@ -1245,7 +1245,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, ly);
    evas_object_show(ly);
-   
+
    en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
@@ -1254,7 +1254,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_scrolled_entry_single_line_set(en, 1);
    elm_layout_content_set(ly, "element1", en);
    evas_object_show(en);
-   
+
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, 0);
    elm_entry_entry_set(en,
@@ -1327,7 +1327,7 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
-   
+
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, 1);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
@@ -1572,7 +1572,7 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(bt, "clicked", my_ent_bt_pas, en);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
-   elm_box_pack_end(bx2, bt); 
+   elm_box_pack_end(bx2, bt);
    evas_object_propagate_events_set(bt, 0);
    elm_object_focus_allow_set(bt, 0);
    evas_object_show(bt);

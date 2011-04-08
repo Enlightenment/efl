@@ -16,7 +16,7 @@ _del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 {
    Evas_Object *win = data;
    Ecore_Animator *ani = evas_object_data_get(win, "animator");
-   
+
    ecore_animator_del(ani);
 }
 
@@ -29,7 +29,7 @@ anim(void *data)
    double t, xx, yy, zz, r, fac;
    double lx, ly;
    unsigned int i;
-   
+
    evas_output_viewport_get(evas_object_evas_get(win), 0, 0, &vw, &vh);
    r = 48;
    t = ecore_loop_time_get();
@@ -37,7 +37,7 @@ anim(void *data)
    evas_pointer_canvas_xy_get(evas_object_evas_get(win), &x, &y);
    lx = x;
    ly = y;
-   
+
    for (i = 0; i < (sizeof(names) / sizeof(char *) / 2); i++)
      {
         bub = evas_object_data_get(win, names[i * 2]);
@@ -45,18 +45,18 @@ anim(void *data)
         zz = (((2 + sin(t * 6 + (M_PI * (i * fac)))) / 3) * 64) * 2;
         xx = (cos(t * 4 + (M_PI * (i * fac))) * r) * 2;
         yy = (sin(t * 6 + (M_PI * (i * fac))) * r) * 2;
-        
+
         w = zz;
         h = zz;
         x = (vw / 2) + xx - (w / 2);
         y = (vh / 2) + yy - (h / 2);
-        
+
         evas_object_move(bub, x, y);
         evas_object_resize(bub, w, h);
-       
+
         x = x - ((lx - (x + (w / 2))) / 4);
         y = y - ((ly - (y + (h / 2))) / 4);
-        
+
         evas_object_move(sh, x, y);
         evas_object_resize(sh, w, h);
      }
@@ -70,7 +70,7 @@ test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    Ecore_Animator *ani;
    char buf[PATH_MAX];
    unsigned int i;
-   
+
    win = elm_win_add(NULL, "animation", ELM_WIN_BASIC);
    elm_win_title_set(win, "Animation");
    elm_win_autodel_set(win, 1);
@@ -81,7 +81,7 @@ test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
-   
+
    snprintf(buf, sizeof(buf), "%s/images/bubble_sh.png", PACKAGE_DATA_DIR);
    for (i = 0; i < (sizeof(names) / sizeof(char *) / 2); i++)
      {
@@ -91,7 +91,7 @@ test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
         evas_object_show(sh);
         evas_object_data_set(win, names[(i * 2) + 1], sh);
      }
-   
+
    snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
     for (i = 0; i < (sizeof(names) / sizeof(char *) / 2); i++)
      {
@@ -101,13 +101,13 @@ test_anim(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
         evas_object_show(bub);
         evas_object_data_set(win, names[(i * 2)], bub);
      }
-   
+
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
-   
+
    ani = ecore_animator_add(anim, win);
    evas_object_data_set(win, "animator", ani);
-   
+
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _del, win);
 }
 #endif

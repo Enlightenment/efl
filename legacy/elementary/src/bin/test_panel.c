@@ -46,15 +46,15 @@ _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static char *
-_label_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__) 
+_label_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    return strdup(ecore_file_file_get(data));
 }
 
 static Evas_Object *
-_icon_get(void *data, Evas_Object *obj, const char *source) 
+_icon_get(void *data, Evas_Object *obj, const char *source)
 {
-   if (!strcmp(source, "elm.swallow.icon")) 
+   if (!strcmp(source, "elm.swallow.icon"))
      {
         Evas_Object *ic;
 
@@ -70,20 +70,20 @@ _icon_get(void *data, Evas_Object *obj, const char *source)
    return NULL;
 }
 
-static Eina_Bool 
-_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__) 
+static Eina_Bool
+_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    return EINA_FALSE;
 }
 
-static void 
-_item_del(void *data, Evas_Object *obj __UNUSED__) 
+static void
+_item_del(void *data, Evas_Object *obj __UNUSED__)
 {
    eina_stringshare_del(data);
 }
 
-static void 
-_fill_list(Evas_Object *obj) 
+static void
+_fill_list(Evas_Object *obj)
 {
    DIR *d;
    struct dirent *de;
@@ -91,7 +91,7 @@ _fill_list(Evas_Object *obj)
    char *real;
 
    if (!(d = opendir(getenv("HOME")))) return;
-   while ((de = readdir(d))) 
+   while ((de = readdir(d)))
      {
         char buff[PATH_MAX];
 
@@ -105,25 +105,25 @@ _fill_list(Evas_Object *obj)
 
    dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
 
-   EINA_LIST_FOREACH(dirs, l, real) 
+   EINA_LIST_FOREACH(dirs, l, real)
      {
         Eina_Bool result = EINA_FALSE;
 
         result = _dir_has_subs(real);
-        if (!result) 
-          elm_genlist_item_append(obj, &itc, eina_stringshare_add(real), 
+        if (!result)
+          elm_genlist_item_append(obj, &itc, eina_stringshare_add(real),
                                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-        else 
-          elm_genlist_item_append(obj, &itc, eina_stringshare_add(real), 
-                                  NULL, ELM_GENLIST_ITEM_SUBITEMS, 
+        else
+          elm_genlist_item_append(obj, &itc, eina_stringshare_add(real),
+                                  NULL, ELM_GENLIST_ITEM_SUBITEMS,
                                   NULL, NULL);
         free(real);
      }
    eina_list_free(dirs);
 }
 
-static Eina_Bool 
-_dir_has_subs(const char *path) 
+static Eina_Bool
+_dir_has_subs(const char *path)
 {
    DIR *d;
    struct dirent *de;
@@ -131,13 +131,13 @@ _dir_has_subs(const char *path)
 
    if (!path) return result;
    if (!(d = opendir(path))) return result;
-   while ((de = readdir(d))) 
+   while ((de = readdir(d)))
      {
         char buff[PATH_MAX];
 
         if (de->d_name[0] == '.') continue;
         snprintf(buff, sizeof(buff), "%s/%s", path, de->d_name);
-        if (ecore_file_is_dir(buff)) 
+        if (ecore_file_is_dir(buff))
           {
              result = EINA_TRUE;
              break;

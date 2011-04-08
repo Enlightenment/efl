@@ -47,7 +47,7 @@ anim(void *data)
 {
    Evas_Object *gl = data;
    Evas_Coord x, y;
-   
+
    y = 0;
    x = (sin(ecore_loop_time_get()) * 500);
    evas_object_move(gl, x, y);
@@ -58,7 +58,7 @@ static void
 _del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Animator *ani = data;
-   
+
    ecore_animator_del(ani);
 }
 
@@ -102,7 +102,7 @@ test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
      }
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
-   
+
    ani = ecore_animator_add(anim, gl);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _del, ani);
 }

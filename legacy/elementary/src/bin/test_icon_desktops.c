@@ -8,18 +8,18 @@ static Elm_Genlist_Item_Class it_desk;
 static char *
 desk_gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
-#ifdef ELM_EFREET   
+#ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
    return strdup(d->name);
 #else
    return NULL;
    (void)data;
-#endif   
+#endif
 }
 static Evas_Object *
 desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
 {
-#ifdef ELM_EFREET   
+#ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
    Evas_Object *ic;
 
@@ -34,18 +34,18 @@ desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
    (void)data;
    (void)obj;
    (void)part;
-#endif   
+#endif
 }
 static void
 desk_gl_del(void *data, Evas_Object *obj __UNUSED__)
 {
-#ifdef ELM_EFREET   
+#ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
    efreet_desktop_free(d);
 #else
    return;
    (void)data;
-#endif   
+#endif
 }
 
 #ifdef ELM_EFREET
@@ -91,7 +91,7 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
        if (desktops)
          {
            Efreet_Desktop *d;
-          
+
            EINA_LIST_FREE(desktops, d)
              elm_genlist_item_append(gl, &it_desk, d,
                                     NULL, ELM_GENLIST_ITEM_NONE,

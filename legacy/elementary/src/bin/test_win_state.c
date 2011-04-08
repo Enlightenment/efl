@@ -42,7 +42,7 @@ my_bt_38_rot_0(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
    Evas_Object *win = data;
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 0);
-   else   	
+   else
      elm_win_rotation_set(win, 0);
 }
 
@@ -52,7 +52,7 @@ my_bt_38_rot_90(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
    Evas_Object *win = data;
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 90);
-   else   	
+   else
      elm_win_rotation_set(win, 90);
 }
 
@@ -62,7 +62,7 @@ my_bt_38_rot_180(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    Evas_Object *win = data;
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 180);
-   else   	
+   else
      elm_win_rotation_set(win, 180);
 }
 
@@ -72,7 +72,7 @@ my_bt_38_rot_270(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    Evas_Object *win = data;
    if (rotate_with_resize)
      elm_win_rotation_with_resize_set(win, 270);
-   else   	
+   else
      elm_win_rotation_set(win, 270);
 }
 
@@ -186,7 +186,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_smart_callback_add(ck, "changed", my_ck_38_resize, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ck, 0.02, 0.99);
-   evas_object_show(ck); 
+   evas_object_show(ck);
    elm_box_pack_end(bx, ck);
 
    bx2 = elm_box_add(win);
@@ -239,7 +239,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 {
    Evas_Object *win, *bg, *sl, *bx, *bx2, *bt, *ck;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "window-states2", ELM_WIN_BASIC);
    elm_win_override_set(win, 1);
    evas_object_smart_callback_add(win, "moved", my_win_move, NULL);
@@ -319,7 +319,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_smart_callback_add(ck, "changed", my_ck_38_resize, win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ck, 0.02, 0.99);
-   evas_object_show(ck); 
+   evas_object_show(ck);
    elm_box_pack_end(bx, ck);
 
    bx2 = elm_box_add(win);

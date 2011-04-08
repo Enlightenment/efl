@@ -336,7 +336,7 @@ my_bt_remove(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    int i;
 
    for (i = 0; i<MARKER_MAX; i++)
-     { 
+     {
         if (markers[i])
           {
              elm_map_marker_remove(markers[i]);
@@ -426,7 +426,7 @@ _map_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    if ((zoom >= 0) && (zoom <= 18)) elm_map_zoom_set(map, zoom);
 }
 
-static void 
+static void
 _map_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int x,y,w,h;
@@ -451,7 +451,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    evas_object_show(bg);
 
    map = elm_map_add(win);
-   if (map) 
+   if (map)
      {
         srand( time(NULL) );
 
@@ -463,7 +463,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         itc1 = elm_map_marker_class_new(map);
         elm_map_marker_class_get_cb_set(itc1, _marker_get);
         elm_map_marker_class_del_cb_set(itc1, NULL);
- 
+
         itc2 = elm_map_marker_class_new(map);
         elm_map_marker_class_get_cb_set(itc2, _marker_get);
         elm_map_marker_class_del_cb_set(itc2, NULL);
@@ -496,13 +496,13 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_color_set(rect, 0, 0, 0, 0);
         evas_object_repeat_events_set(rect,1);
         evas_object_show(rect);
-        evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL, 
+        evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_WHEEL,
                                        _map_mouse_wheel_cb, map);
         evas_object_raise(rect);
 
-        evas_object_event_callback_add(map, EVAS_CALLBACK_RESIZE, 
+        evas_object_event_callback_add(map, EVAS_CALLBACK_RESIZE,
                                        _map_move_resize_cb, map);
-        evas_object_event_callback_add(map, EVAS_CALLBACK_MOVE, 
+        evas_object_event_callback_add(map, EVAS_CALLBACK_MOVE,
                                        _map_move_resize_cb, map);
 
         elm_map_marker_add(map, 2.352, 48.857, itc1, itc_group1, &data1);

@@ -97,7 +97,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -110,7 +110,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Label Only");
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)5);

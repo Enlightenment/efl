@@ -133,7 +133,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_horizontal_set(bx2, EINA_TRUE);
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
-  
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
@@ -193,7 +193,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx2, sl);
    evas_object_show(ic);
    evas_object_show(sl);
-    
+
    evas_object_show(win);
 }
 #endif

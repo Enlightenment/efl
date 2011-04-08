@@ -57,11 +57,11 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, gl);
    evas_object_show(gl);
-   
+
    id = elm_index_add(win);
    evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, id);
-   
+
    evas_object_show(id);
 
    itci.item_style     = "default";
@@ -74,13 +74,13 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    for (i = 0; i < 100; i++)
      {
         it = elm_genlist_item_append(gl, &itci,
-                                     (void *)(long)j/* item data */, 
+                                     (void *)(long)j/* item data */,
                                      NULL/* parent */, ELM_GENLIST_ITEM_NONE,
                                      NULL/* func */, NULL/* func data */);
         if (!(j & 0xf))
           {
              char buf[32];
-             
+
              snprintf(buf, sizeof(buf), "%c", 'A' + ((j >> 4) & 0xf));
              elm_index_item_append(id, buf, it);
           }

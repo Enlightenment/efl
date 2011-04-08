@@ -10,7 +10,7 @@ mode_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -34,7 +34,7 @@ alpha_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -48,7 +48,7 @@ smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -67,7 +67,7 @@ tim_cb(void *data)
 {
    Evas_Object *tb, *sc, *mb;
    Eina_List *list, *l;
-   
+
    evas_object_data_del(data, "timer");
    tb = evas_object_data_get(data, "tb");
    sc = evas_object_data_get(data, "sc");
@@ -86,7 +86,7 @@ static void
 ic_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Timer *tim;
-   
+
    tim = evas_object_data_get(obj, "timer");
    if (tim)
      {
@@ -101,9 +101,9 @@ ic_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
    Evas_Event_Mouse_Down *ev = event_info;
    Ecore_Timer *tim;
    Evas_Coord x, y, w, h;
-   
+
    evas_object_color_set(data, 128, 0, 0, 128);
-   
+
    tim = evas_object_data_get(obj, "timer");
    if (tim) evas_object_data_del(obj, "timer");
    tim = ecore_timer_add(1.0, tim_cb, obj);
@@ -114,7 +114,7 @@ ic_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
    evas_object_data_set(obj, "y", (void *)(long)(ev->canvas.y));
    evas_object_data_set(obj, "px", (void *)(long)(x));
    evas_object_data_set(obj, "py", (void *)(long)(y));
-   
+
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         printf("double click %p\n", obj);
@@ -126,7 +126,7 @@ ic_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Ecore_Timer *tim;
-   
+
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    evas_object_color_set(data, 255, 255, 255, 255);
    tim = evas_object_data_get(obj, "timer");
@@ -140,7 +140,7 @@ ic_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
         Evas_Object *tb, *sc, *mb;
         Eina_List *list, *l;
         int tbx, tby;
-        
+
         evas_object_data_del(obj, "dragging");
         tb = evas_object_data_get(obj, "tb");
         sc = evas_object_data_get(obj, "sc");
@@ -162,19 +162,19 @@ ic_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
    if (evas_object_data_get(obj, "dragging"))
      {
         Evas_Coord x, y, px, py;
-        
+
         x = (Evas_Coord)(long)evas_object_data_get(obj, "x");
         y = (Evas_Coord)(long)evas_object_data_get(obj, "y");
         px = (Evas_Coord)(long)evas_object_data_get(obj, "px");
         py = (Evas_Coord)(long)evas_object_data_get(obj, "py");
-        evas_object_move(obj, 
-                         px + ev->cur.canvas.x - x, 
+        evas_object_move(obj,
+                         px + ev->cur.canvas.x - x,
                          py + ev->cur.canvas.y - y);
     }
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         Ecore_Timer *tim;
-        
+
         tim = evas_object_data_get(obj, "timer");
         if (tim)
           {
@@ -194,13 +194,13 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    char buf[PATH_MAX];
    const char *names[] =
      {
-        "Hello",    "World",    "Spam",  "Egg", 
-        "Ham",      "Good",     "Bad",   "Milk", 
+        "Hello",    "World",    "Spam",  "Egg",
+        "Ham",      "Good",     "Bad",   "Milk",
         "Smell",    "Of",       "Sky",   "Gold",
         "Hole",     "Pig",      "And",   "Calm"
      };
    Eina_List *mbs = NULL;
-   
+
    win = elm_win_add(NULL, "launcher", ELM_WIN_BASIC);
    elm_win_title_set(win, "Launcher");
    elm_win_autodel_set(win, 1);
@@ -215,13 +215,13 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    bx = elm_box_add(win);
    elm_box_homogenous_set(bx, 1);
    elm_box_horizontal_set(bx, 1);
-   
+
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, 1, 0);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   
+
    n = 0; m = 0;
    for (k = 0 ; k < 8; k++)
      {
@@ -234,19 +234,19 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_table_pack(tb, pad, 1, 0, 5, 1);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 470, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_table_pack(tb, pad, 1, 11, 5, 1);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 4, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
         evas_object_size_hint_align_set(pad, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_table_pack(tb, pad, 0, 1, 1, 10);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 4, 4);
         evas_object_size_hint_weight_set(pad, 0.0, 0.0);
@@ -256,7 +256,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         mb = elm_mapbuf_add(win);
         elm_mapbuf_content_set(mb, tb);
         evas_object_show(tb);
-        
+
         for (j = 0; j < 5; j++)
           {
              for (i = 0; i < 5; i++)
@@ -270,7 +270,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                   evas_object_size_hint_align_set(ic, 0.5, 0.5);
                   elm_table_pack(tb, ic, 1 + i, 1 + (j * 2), 1, 1);
                   evas_object_show(ic);
-                  
+
                   lb = elm_label_add(win);
                   elm_object_style_set(lb, "marker");
                   elm_label_label_set(lb, names[m]);
@@ -278,13 +278,13 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                   evas_object_size_hint_align_set(lb, 0.5, 0.5);
                   elm_table_pack(tb, lb, 1 + i, 1 + (j * 2) + 1, 1, 1);
                   evas_object_show(lb);
-                  
+
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_DEL, ic_del_cb, ic);
-                  
+
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_DOWN, ic_down_cb, ic);
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP,   ic_up_cb,   ic);
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_MOVE, ic_move_cb, ic);
-                  
+
                   evas_object_data_set(ic, "lb", lb);
                   evas_object_data_set(ic, "tb", tb);
                   evas_object_data_set(ic, "sc", sc);
@@ -292,30 +292,30 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                   evas_object_data_set(ic, "mb", mb);
                   evas_object_data_set(ic, "tbx", (void *)(long)(1 + i));
                   evas_object_data_set(ic, "tby", (void *)(long)(1 + (j * 2)));
-                  
+
                   n++; if (n > 23) n = 0;
                   m++; if (m > 15) m = 0;
                }
           }
-        
+
         elm_box_pack_end(bx, mb);
         evas_object_show(mb);
-        
+
         mbs = eina_list_append(mbs, mb);
      }
 
    // fixme: free mbs
    evas_object_data_set(win, "mbs", mbs);
-   
+
    bx2 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_horizontal_set(bx2, 0);
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
-   
+
    elm_scroller_content_set(sc, bx);
    evas_object_show(bx);
-   
+
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
    evas_object_show(sc);
 
@@ -325,7 +325,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx2, tb2);
 
    elm_box_pack_end(bx2, sc);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Map");
    elm_check_state_set(ck, 0);
@@ -334,7 +334,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(ck, 0.05, 0.99);
    elm_table_pack(tb2, ck, 0, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "A");
    elm_check_state_set(ck, 1);
@@ -343,7 +343,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(ck, 0.20, 0.99);
    elm_table_pack(tb2, ck, 1, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Smo");
    elm_check_state_set(ck, 1);
@@ -352,7 +352,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(ck, 0.40, 0.99);
    elm_table_pack(tb2, ck, 2, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "FS");
    elm_check_state_set(ck, 0);
@@ -361,7 +361,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(ck, 0.5, 0.99);
    elm_table_pack(tb2, ck, 3, 0, 1, 1);
    evas_object_show(ck);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", close_cb, win);
@@ -369,7 +369,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
    elm_table_pack(tb2, bt, 4, 0, 1, 1);
    evas_object_show(bt);
-   
+
    evas_object_show(tb2);
 
    evas_object_resize(win, 480, 800);
@@ -383,7 +383,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    int k;
    char buf[PATH_MAX];
    Eina_List *mbs = NULL;
-   
+
    win = elm_win_add(NULL, "launcher2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Launcher 2");
    elm_win_autodel_set(win, 1);
@@ -394,62 +394,62 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
-   
+
    bx = elm_box_add(win);
    elm_box_homogenous_set(bx, 1);
    elm_box_horizontal_set(bx, 1);
-   
+
    for (k = 0 ; k < 8; k++)
      {
         ly = elm_layout_add(win);
         snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
         elm_layout_file_set(ly, buf, "layout");
         evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        
+
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Button 1");
         elm_layout_content_set(ly, "element1", bt);
         evas_object_show(bt);
-        
+
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Button 2");
         elm_layout_content_set(ly, "element2", bt);
         evas_object_show(bt);
-        
+
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Button 3");
         elm_layout_content_set(ly, "element3", bt);
         evas_object_show(bt);
-        
+
         mb = elm_mapbuf_add(win);
         elm_mapbuf_content_set(mb, ly);
         evas_object_show(ly);
-        
+
         elm_box_pack_end(bx, mb);
         evas_object_show(mb);
-        
+
         mbs = eina_list_append(mbs, mb);
      }
 
    // fixme: free mbs
    evas_object_data_set(win, "mbs", mbs);
-   
+
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, 1, 0);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
-   
+
    elm_scroller_content_set(sc, bx);
    evas_object_show(bx);
-   
+
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
    evas_object_show(sc);
 
    tb2 = elm_table_add(win);
    evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, tb2);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Map");
    elm_check_state_set(ck, 0);
@@ -458,7 +458,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.05, 0.99);
    elm_table_pack(tb2, ck, 0, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "A");
    elm_check_state_set(ck, 1);
@@ -467,7 +467,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.20, 0.99);
    elm_table_pack(tb2, ck, 1, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Smo");
    elm_check_state_set(ck, 1);
@@ -476,7 +476,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.40, 0.99);
    elm_table_pack(tb2, ck, 2, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "FS");
    elm_check_state_set(ck, 0);
@@ -485,7 +485,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.5, 0.99);
    elm_table_pack(tb2, ck, 3, 0, 1, 1);
    evas_object_show(ck);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", close_cb, win);
@@ -493,7 +493,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
    elm_table_pack(tb2, bt, 4, 0, 1, 1);
    evas_object_show(bt);
-   
+
    evas_object_show(tb2);
 
    evas_object_resize(win, 480, 800);
@@ -506,7 +506,7 @@ l3_mode_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -530,7 +530,7 @@ l3_alpha_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -544,7 +544,7 @@ l3_smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -558,7 +558,7 @@ l3_hidden_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
    Evas_Object *win = data;
    Evas_Object *mb;
    Eina_List *mbs, *l;
-   
+
    mbs = evas_object_data_get(win, "mbs");
    EINA_LIST_FOREACH(mbs, l, mb)
      {
@@ -580,7 +580,7 @@ l3_tim_cb(void *data)
    Eina_List *list, *l;
    char buf[256];
    int slx, sly;
-   
+
    evas_object_data_del(data, "timer");
    ly = evas_object_data_get(data, "ly");
    ly2 = evas_object_data_get(data, "ly2");
@@ -604,7 +604,7 @@ static void
 l3_ic_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Timer *tim;
-   
+
    tim = evas_object_data_get(obj, "timer");
    if (tim)
      {
@@ -620,7 +620,7 @@ l3_ic_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void 
    Ecore_Timer *tim;
    Evas_Coord x, y, w, h;
    Evas_Object *ly2;
-   
+
    tim = evas_object_data_get(obj, "timer");
    if (tim) evas_object_data_del(obj, "timer");
    tim = ecore_timer_add(1.0, l3_tim_cb, obj);
@@ -632,9 +632,9 @@ l3_ic_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void 
    evas_object_data_set(obj, "y", (void *)(long)(ev->canvas.y));
    evas_object_data_set(obj, "px", (void *)(long)(x));
    evas_object_data_set(obj, "py", (void *)(long)(y));
-   
+
    edje_object_signal_emit(elm_layout_edje_get(ly2), "click", "app");
-   
+
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         printf("double click %p\n", obj);
@@ -647,9 +647,9 @@ l3_ic_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *e
    Evas_Event_Mouse_Up *ev = event_info;
    Ecore_Timer *tim;
    Evas_Object *ly2;
-   
+
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   
+
    ly2 = evas_object_data_get(obj, "ly2");
    tim = evas_object_data_get(obj, "timer");
    if (tim)
@@ -663,7 +663,7 @@ l3_ic_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *e
         Eina_List *list, *l;
         int slx, sly;
         char buf[256];
-        
+
         evas_object_data_del(obj, "dragging");
         ly = evas_object_data_get(obj, "ly");
         sc = evas_object_data_get(obj, "sc");
@@ -687,25 +687,25 @@ l3_ic_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void 
 {
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Object *ly2;
-   
+
    ly2 = evas_object_data_get(obj, "ly2");
-   
+
    if (evas_object_data_get(obj, "dragging"))
      {
         Evas_Coord x, y, px, py;
-        
+
         x = (Evas_Coord)(long)evas_object_data_get(obj, "x");
         y = (Evas_Coord)(long)evas_object_data_get(obj, "y");
         px = (Evas_Coord)(long)evas_object_data_get(obj, "px");
         py = (Evas_Coord)(long)evas_object_data_get(obj, "py");
-        evas_object_move(ly2, 
-                         px + ev->cur.canvas.x - x, 
+        evas_object_move(ly2,
+                         px + ev->cur.canvas.x - x,
                          py + ev->cur.canvas.y - y);
     }
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      {
         Ecore_Timer *tim;
-        
+
         tim = evas_object_data_get(obj, "timer");
         if (tim)
           {
@@ -725,13 +725,13 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    char buf[PATH_MAX];
    const char *names[] =
      {
-        "Hello",    "World",    "Spam",  "Egg", 
-        "Ham",      "Good",     "Bad",   "Milk", 
+        "Hello",    "World",    "Spam",  "Egg",
+        "Ham",      "Good",     "Bad",   "Milk",
         "Smell",    "Of",       "Sky",   "Gold",
         "Hole",     "Pig",      "And",   "Calm"
      };
    Eina_List *mbs = NULL;
-   
+
    win = elm_win_add(NULL, "launcher", ELM_WIN_BASIC);
    elm_win_title_set(win, "Launcher");
    elm_win_autodel_set(win, 1);
@@ -748,13 +748,13 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_homogenous_set(bx, 1);
    elm_box_horizontal_set(bx, 1);
-   
+
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, 1, 0);
    elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   
+
    n = 0; m = 0;
    for (k = 0 ; k < 8; k++)
      {
@@ -765,27 +765,27 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 450, 10);
         elm_table_pack(tb, pad, 1, 0, 1, 1);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 450, 10);
         elm_table_pack(tb, pad, 1, 2, 1, 1);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 10, 450);
         elm_table_pack(tb, pad, 0, 1, 1, 1);
-        
+
         pad = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_size_hint_min_set(pad, 10, 450);
         elm_table_pack(tb, pad, 2, 1, 1, 1);
 
         mb = elm_mapbuf_add(win);
         mbs = eina_list_append(mbs, mb);
-        
+
         elm_mapbuf_content_set(mb, tb);
         evas_object_show(tb);
         elm_box_pack_end(bx, mb);
         evas_object_show(mb);
-        
+
         ly = elm_layout_add(win);
         snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
         elm_layout_file_set(ly, buf, "launcher_page");
@@ -793,7 +793,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_table_pack(tb, ly, 1, 1, 1, 1);
         evas_object_show(ly);
-        
+
         for (j = 0; j < 4; j++)
           {
              for (i = 0; i < 4; i++)
@@ -814,13 +814,13 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                   evas_object_size_hint_align_set(ic, 0.5, 0.5);
                   elm_layout_content_set(ly2, "slot", ic);
                   evas_object_show(ic);
-                  
+
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_DEL, l3_ic_del_cb, ic);
-                  
+
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_DOWN, l3_ic_down_cb, ic);
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_UP,   l3_ic_up_cb,   ic);
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_MOUSE_MOVE, l3_ic_move_cb, ic);
-                  
+
                   evas_object_data_set(ic, "ly", ly);
                   evas_object_data_set(ic, "ly2", ly2);
                   evas_object_data_set(ic, "sc", sc);
@@ -828,11 +828,11 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                   evas_object_data_set(ic, "mb", mb);
                   evas_object_data_set(ic, "slx", (void *)(long)(i));
                   evas_object_data_set(ic, "sly", (void *)(long)(j));
-                  
+
                   snprintf(buf, sizeof(buf), "slot.%i.%i", i, j);
                   elm_layout_content_set(ly, buf, ly2);
                   evas_object_show(ly2);
-                  
+
                   n++; if (n > 23) n = 0;
                   m++; if (m > 15) m = 0;
                }
@@ -841,16 +841,16 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    // fixme: free mbs
    evas_object_data_set(win, "mbs", mbs);
-   
+
    bx2 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_horizontal_set(bx2, 0);
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
-   
+
    elm_scroller_content_set(sc, bx);
    evas_object_show(bx);
-   
+
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
    evas_object_show(sc);
 
@@ -860,7 +860,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx2, tb2);
 
    elm_box_pack_end(bx2, sc);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Map");
    elm_check_state_set(ck, 0);
@@ -869,7 +869,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.05, 0.99);
    elm_table_pack(tb2, ck, 0, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "A");
    elm_check_state_set(ck, 1);
@@ -878,7 +878,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.20, 0.99);
    elm_table_pack(tb2, ck, 1, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Smo");
    elm_check_state_set(ck, 1);
@@ -887,7 +887,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.40, 0.99);
    elm_table_pack(tb2, ck, 2, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "FS");
    elm_check_state_set(ck, 0);
@@ -896,7 +896,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.5, 0.99);
    elm_table_pack(tb2, ck, 3, 0, 1, 1);
    evas_object_show(ck);
-   
+
    ck = elm_check_add(win);
    elm_check_label_set(ck, "Hid");
    elm_check_state_set(ck, 0);
@@ -905,7 +905,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(ck, 0.5, 0.99);
    elm_table_pack(tb2, ck, 4, 0, 1, 1);
    evas_object_show(ck);
-   
+
    bt = elm_button_add(win);
    elm_button_label_set(bt, "Close");
    evas_object_smart_callback_add(bt, "clicked", l3_close_cb, win);
@@ -913,7 +913,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(bt, 0.95, 0.99);
    elm_table_pack(tb2, bt, 5, 0, 1, 1);
    evas_object_show(bt);
-   
+
    evas_object_show(tb2);
 
    evas_object_resize(win, 480, 800);

@@ -201,7 +201,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    Evas_Object *ly, *ly2;
    char buf[4096];
-   
+
    ly = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", PACKAGE_DATA_DIR);
    elm_layout_file_set(ly, buf, "test/layout");
@@ -215,7 +215,7 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    //elm_win_resize_object_add(win, ly2);
    evas_object_show(ly2);
 
-   
+
 
 
    bt = elm_button_add(win);

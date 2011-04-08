@@ -363,7 +363,7 @@ cf_enable(void *data,
           void *event_info __UNUSED__)
 {
    Eina_Bool cf = elm_cache_flush_enabled_get();
-   Eina_Bool val = elm_check_state_get(obj); 
+   Eina_Bool val = elm_check_state_get(obj);
 
    if (cf == val) return;
    elm_object_disabled_set((Evas_Object *)data, !val);
@@ -2734,10 +2734,10 @@ _status_config_caches(Evas_Object *win,
    evas_object_smart_callback_add(ck, "changed", cf_enable, sl);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
-   
+
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
-   
+
    evas_object_smart_callback_add(sl, "changed", cf_round, NULL);
    evas_object_smart_callback_add(sl, "delay,changed", cf_change, NULL);
 
