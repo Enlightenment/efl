@@ -120,10 +120,6 @@ efreet_icon_shutdown(void)
     IF_FREE_HASH(change_monitors);
 }
 
-/**
- * @return Returns the deprecated user icon directory
- * @brief Returns the deprecated user icon directory
- */
 EAPI const char *
 efreet_icon_deprecated_user_dir_get(void)
 {
@@ -143,10 +139,6 @@ efreet_icon_deprecated_user_dir_get(void)
     return efreet_icon_deprecated_user_dir;
 }
 
-/**
- * @return Returns the user icon directory
- * @brief Returns the user icon directory
- */
 EAPI const char *
 efreet_icon_user_dir_get(void)
 {
@@ -166,11 +158,6 @@ efreet_icon_user_dir_get(void)
     return efreet_icon_user_dir;
 }
 
-/**
- * @param ext The extension to add to the list of checked extensions
- * @return Returns no value.
- * @brief Adds the given extension to the list of possible icon extensions
- */
 EAPI void
 efreet_icon_extension_add(const char *ext)
 {
@@ -187,48 +174,24 @@ efreet_icon_extension_add(const char *ext)
         efreet_icon_extensions = eina_list_prepend(efreet_icon_extensions, ext);
 }
 
-/**
- * @return Returns a list of strings that are paths to other icon directories
- * @brief Gets the list of all extra directories to look for icons. These
- * directories are used to look for icons after looking in the user icon dir
- * and before looking in standard system directories. The order of search is
- * from first to last directory in this list. the strings in the list should
- * be created with eina_stringshare_add().
- */
 EAPI Eina_List **
 efreet_icon_extra_list_get(void)
 {
     return &efreet_extra_icon_dirs;
 }
 
-/**
- * @return Returns a list of strings that are icon extensions to look for
- * @brief Gets the list of all icon extensions to look for
- */
 EAPI Eina_List *
 efreet_icon_extensions_list_get(void)
 {
     return efreet_icon_extensions;
 }
 
-/**
- * @return Returns a list of Efreet_Icon structs for all the non-hidden icon
- * themes
- * @brief Retrieves all of the non-hidden icon themes available on the system.
- * The returned list must be freed. Do not free the list data.
- */
 EAPI Eina_List *
 efreet_icon_theme_list_get(void)
 {
     return efreet_cache_icon_theme_list();
 }
 
-/**
- * @param theme_name The theme to look for
- * @return Returns the icon theme related to the given theme name or NULL if
- * none exists.
- * @brief Tries to get the icon theme structure for the given theme name
- */
 EAPI Efreet_Icon_Theme *
 efreet_icon_theme_find(const char *theme_name)
 {
@@ -273,13 +236,6 @@ efreet_icon_remove_extension(const char *icon)
     return tmp;
 }
 
-/**
- * @param theme_name The icon theme to look for
- * @param icon The icon to look for
- * @param size; The icon size to look for
- * @return Returns the path to the given icon or NULL if none found
- * @brief Retrives the path to the given icon.
- */
 EAPI const char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
@@ -322,17 +278,6 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     return value;
 }
 
-/**
- * @param theme_name The icon theme to look for
- * @param icons List of icons to look for
- * @param size; The icon size to look for
- * @return Returns the path representing first found icon or
- * NULL if none of the icons are found
- * @brief Retrieves all of the information about the first found icon in
- * the list.
- * @note This function will search the given theme for all icons before falling
- * back. This is useful when searching for mimetype icons.
- */
 EAPI const char *
 efreet_icon_list_find(const char *theme_name, Eina_List *icons,
                       unsigned int size)
@@ -408,14 +353,6 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
     return value;
 }
 
-/**
- * @param theme_name The icon theme to look for
- * @param icon The icon to look for
- * @param size The icon size to look for
- * @return Returns the Efreet_Icon structure representing this icon or NULL
- * if the icon is not found
- * @brief Retrieves all of the information about the given icon.
- */
 EAPI Efreet_Icon *
 efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
 {
@@ -477,11 +414,6 @@ efreet_icon_new(const char *path)
     return icon;
 }
 
-/**
- * @param icon The Efreet_Icon to cleanup
- * @return Returns no value.
- * @brief Free's the given icon and all its internal data.
- */
 EAPI void
 efreet_icon_free(Efreet_Icon *icon)
 {

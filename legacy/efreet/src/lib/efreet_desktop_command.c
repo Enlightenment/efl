@@ -94,9 +94,6 @@ struct Efreet_Desktop_Command_File
   int pending;
 };
 
-/**
- * A unique id for each tmp file created while building a command
- */
 static int efreet_desktop_command_file_id = 0;
 
 static void *efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop,
@@ -137,28 +134,12 @@ static char *efreet_string_append_char(char *dest, int *size,
                                         int *len, char c);
 
 
-/**
- * @param desktop The desktop file to work with
- * @param files The files to be substituted into the exec line
- * @param data The data pointer to pass
- * @return Returns the Ecore_Exce for @a desktop
- * @brief Parses the @a desktop exec line and returns an Ecore_Exe.
- */
 EAPI void
 efreet_desktop_exec(Efreet_Desktop *desktop, Eina_List *files, void *data)
 {
     efreet_desktop_command_get(desktop, files, efreet_desktop_exec_cb, data);
 }
 
-/**
- * @param desktop the desktop entry
- * @param files an eina list of file names to execute, as either absolute paths,
- * relative paths, or uris
- * @param func a callback to call for each prepared command line
- * @param data user data passed to the callback
- * @return Returns the return value of @p func on success or NULL on failure
- * @brief Get a command to use to execute a desktop entry.
- */
 EAPI void *
 efreet_desktop_command_get(Efreet_Desktop *desktop, Eina_List *files,
                             Efreet_Desktop_Command_Cb func, void *data)
@@ -166,14 +147,6 @@ efreet_desktop_command_get(Efreet_Desktop *desktop, Eina_List *files,
     return efreet_desktop_command_progress_get(desktop, files, func, NULL, data);
 }
 
-/**
- * @param desktop the desktop entry
- * @param files an eina list of local files, as absolute paths, local paths, or file// uris (or NULL to get exec string with no files appended)
- * @return Returns an eina list of exec strings
- * @brief Get the command to use to execute a desktop entry
- *
- * The returned list and each of its elements must be freed.
- */
 EAPI Eina_List *
 efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
 {
@@ -213,17 +186,6 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
     return execs;
 }
 
-/**
- * @param desktop the desktop entry
- * @param files an eina list of file names to execute, as either absolute paths,
- * relative paths, or uris
- * @param cb_command a callback to call for each prepared command line
- * @param cb_progress a callback to get progress for the downloads
- * @param data user data passed to the callback
- * @return Returns 1 on success or 0 on failure
- * @brief Get a command to use to execute a desktop entry, and receive progress
- * updates for downloading of remote URI's passed in.
- */
 EAPI void *
 efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
                                     Efreet_Desktop_Command_Cb cb_command,

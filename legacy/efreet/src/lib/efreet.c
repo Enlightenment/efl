@@ -55,10 +55,6 @@ static int efreet_parse_locale_setting(const char *env);
 static uid_t ruid;
 static uid_t rgid;
 
-/**
- * @return Returns > 0 if the initialization was successful, 0 otherwise
- * @brief Initializes the Efreet system
- */
 EAPI int
 efreet_init(void)
 {
@@ -141,12 +137,6 @@ shutdown_eina:
     return --_efreet_init_count;
 }
 
-/**
- * @return Returns the number of times the init function as been called
- * minus the corresponding init call.
- * @brief Shuts down Efreet if a balanced number of init/shutdown calls have
- * been made
- */
 EAPI int
 efreet_shutdown(void)
 {

@@ -10,13 +10,53 @@
  * @{
  */
 
+
+/**
+ * @return Returns the XDG Data Home directory
+ * @brief Retrieves the XDG Data Home directory
+ */
 EAPI const char *efreet_data_home_get(void);
+
+/**
+ * @return Returns the Eina_List of preference ordered extra data directories
+ * @brief Returns the Eina_List of prefernece oredred extra data
+ * directories
+ *
+ * @note The returned list is static inside Efreet. If you add/remove from the
+ * list then the next call to efreet_data_dirs_get() will return your
+ * modified values. DO NOT free this list.
+ */
 EAPI Eina_List *efreet_data_dirs_get(void);
 
+
+/**
+ * @return Returns the XDG Config Home directory
+ * @brief Retrieves the XDG Config Home directory
+ */
 EAPI const char *efreet_config_home_get(void);
+
+/**
+ * @return Returns the Eina_List of preference ordered extra config directories
+ * @brief Returns the Eina_List of prefernece ordered extra config
+ * directories
+ *
+ * @note The returned list is static inside Efreet. If you add/remove from the
+ * list then the next call to efreet_config_dirs_get() will return your
+ * modified values. DO NOT free this list.
+ */
 EAPI Eina_List *efreet_config_dirs_get(void);
 
+
+/**
+ * @return Returns the XDG Cache Home directory
+ * @brief Retrieves the XDG Cache Home directory
+ */
 EAPI const char *efreet_cache_home_get(void);
+
+/**
+ * @return Returns the current hostname
+ * @brief Returns the current hostname or empty string if not found
+ */
 EAPI const char *efreet_hostname_get(void);
 
 /**

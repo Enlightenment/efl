@@ -74,13 +74,6 @@ efreet_ini_shutdown(void)
     _efreet_ini_log_dom = -1;
 }
 
-/**
- * @param file The file to parse
- * @return Returns a new Efreet_Ini structure initialized with the contents
- * of @a file, or NULL on memory allocation failure
- * @brief Creates and initializes a new Ini structure with the contents of
- * @a file, or NULL on failure
- */
 EAPI Efreet_Ini *
 efreet_ini_new(const char *file)
 {
@@ -287,11 +280,6 @@ next_line:
     return data;
 }
 
-/**
- * @param ini The Efreet_Ini to work with
- * @return Returns no value
- * @brief Frees the given Efree_Ini structure.
- */
 EAPI void
 efreet_ini_free(Efreet_Ini *ini)
 {
@@ -301,12 +289,6 @@ efreet_ini_free(Efreet_Ini *ini)
     FREE(ini);
 }
 
-/**
- * @param ini The Efreet_Ini to work with
- * @param file The file to load
- * @return Returns no value
- * @brief Saves the given Efree_Ini structure.
- */
 EAPI int
 efreet_ini_save(Efreet_Ini *ini, const char *file)
 {
@@ -329,12 +311,6 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
     return 1;
 }
 
-/**
- * @param ini The Efreet_Ini to work with
- * @param section The section of the ini file we want to get values from
- * @return Returns 1 if the section exists, otherwise 0
- * @brief Sets the current working section of the ini file to @a section
- */
 EAPI int
 efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 {
@@ -344,12 +320,6 @@ efreet_ini_section_set(Efreet_Ini *ini, const char *section)
     return (ini->section ? 1 : 0);
 }
 
-/**
- * @param ini The Efreet_Ini to work with
- * @param section The section of the ini file we want to add
- * @return Returns no value
- * @brief Adds a new working section of the ini file to @a section
- */
 EAPI void
 efreet_ini_section_add(Efreet_Ini *ini, const char *section)
 {
@@ -365,13 +335,6 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
     eina_hash_add(ini->data, section, hash);
 }
 
-/**
- * @param ini The Efree_Ini to work with
- * @param key The key to lookup
- * @return Returns the string associated with the given key or NULL if not
- * found.
- * @brief Retrieves the value for the given key or NULL if none found.
- */
 EAPI const char *
 efreet_ini_string_get(Efreet_Ini *ini, const char *key)
 {
@@ -380,13 +343,6 @@ efreet_ini_string_get(Efreet_Ini *ini, const char *key)
     return eina_hash_find(ini->section, key);
 }
 
-/**
- * @param ini The Efree_Ini to work with
- * @param key The key to use
- * @param value The value to set
- * @return Returns no value
- * @brief Sets the value for the given key
- */
 EAPI void
 efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
 {
@@ -396,13 +352,6 @@ efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
     eina_hash_add(ini->section, key, eina_stringshare_add(value));
 }
 
-/**
- * @param ini The Efree_Ini to work with
- * @param key The key to lookup
- * @return Returns the integer associated with the given key or -1 if not
- * found.
- * @brief Retrieves the value for the given key or -1 if none found.
- */
 EAPI int
 efreet_ini_int_get(Efreet_Ini *ini, const char *key)
 {
@@ -416,13 +365,6 @@ efreet_ini_int_get(Efreet_Ini *ini, const char *key)
     return -1;
 }
 
-/**
- * @param ini The Efree_Ini to work with
- * @param key The key to use
- * @param value The value to set
- * @return Returns no value
- * @brief Sets the value for the given key
- */
 EAPI void
 efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value)
 {
@@ -434,13 +376,6 @@ efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value)
     efreet_ini_string_set(ini, key, str);
 }
 
-/**
- * @param ini The Efree_Ini to work with
- * @param key The key to lookup
- * @return Returns the double associated with the given key or -1 if not
- * found.
- * @brief Retrieves the value for the given key or -1 if none found.
- */
 EAPI double
 efreet_ini_double_get(Efreet_Ini *ini, const char *key)
 {
@@ -454,13 +389,6 @@ efreet_ini_double_get(Efreet_Ini *ini, const char *key)
     return -1;
 }
 
-/**
- * @param ini The Efree_Ini to work with
- * @param key The key to use
- * @param value The value to set
- * @return Returns no value
- * @brief Sets the value for the given key
- */
 EAPI void
 efreet_ini_double_set(Efreet_Ini *ini, const char *key, double value)
 {
@@ -476,12 +404,6 @@ efreet_ini_double_set(Efreet_Ini *ini, const char *key, double value)
     efreet_ini_string_set(ini, key, str);
 }
 
-/**
- * @param ini The ini struct to work with
- * @param key The key to search for
- * @return Returns 1 if the boolean is true, 0 otherwise
- * @brief Retrieves the boolean value at key @a key from the ini @a ini
- */
 EAPI unsigned int
 efreet_ini_boolean_get(Efreet_Ini *ini, const char *key)
 {
@@ -495,13 +417,6 @@ efreet_ini_boolean_get(Efreet_Ini *ini, const char *key)
     return 0;
 }
 
-/**
- * @param ini The ini struct to work with
- * @param key The key to use
- * @param value The value to set
- * @return Returns no value
- * @brief Sets the value for the given key
- */
 EAPI void
 efreet_ini_boolean_set(Efreet_Ini *ini, const char *key, unsigned int value)
 {
@@ -511,13 +426,6 @@ efreet_ini_boolean_set(Efreet_Ini *ini, const char *key, unsigned int value)
     else efreet_ini_string_set(ini, key, "false");
 }
 
-/**
- * @param ini The ini struct to work with
- * @param key The key to search for
- * @return Returns the utf8 encoded string associated with @a key, or NULL
- *         if none found
- * @brief Retrieves the utf8 encoded string associated with @a key in the current locale or NULL if none found
- */
 EAPI const char *
 efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
 {
@@ -574,13 +482,6 @@ efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
     return val;
 }
 
-/**
- * @param ini The ini struct to work with
- * @param key The key to use
- * @param value The value to set
- * @return Returns no value
- * @brief Sets the value for the given key
- */
 EAPI void
 efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
 {
@@ -615,12 +516,6 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
     efreet_ini_string_set(ini, buf, value);
 }
 
-/**
- * @param ini The ini struct to work with
- * @param key The key to remove
- * @return Returns no value
- * @brief Remove the given key from the ini struct
- */
 EAPI void
 efreet_ini_key_unset(Efreet_Ini *ini, const char *key)
 {

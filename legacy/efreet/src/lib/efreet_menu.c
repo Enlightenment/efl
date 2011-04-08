@@ -36,30 +36,16 @@ static int _efreet_menu_log_dom = -1;
 #include "efreet_private.h"
 #include "efreet_xml.h"
 
-/**
- * Efreet_Menu_Move
- */
 typedef struct Efreet_Menu_Move Efreet_Menu_Move;
 
-/**
- * Efreet_Menu_Move
- * Info on a menu movement
- */
 struct Efreet_Menu_Move
 {
     const char *old_name;     /**< The menu path to move from */
     const char *new_name;     /**< The menu path to move too */
 };
 
-/**
- * Efreet_Menu_Internal
- */
 typedef struct Efreet_Menu_Internal Efreet_Menu_Internal;
 
-/**
- * Efreet_Menu_Internal
- * Contains the information about a menu
- */
 struct Efreet_Menu_Internal
 {
     struct
@@ -108,14 +94,8 @@ struct Efreet_Menu_Internal
     unsigned char deleted:1;            /**< The menu is deleted */
 };
 
-/**
- * Efreet_Menu_App_Dir
- */
 typedef struct Efreet_Menu_App_Dir Efreet_Menu_App_Dir;
 
-/**
- * Holds information on an app dir
- */
 struct Efreet_Menu_App_Dir
 {
     const char *path;           /**< directory path */
@@ -123,9 +103,6 @@ struct Efreet_Menu_App_Dir
     unsigned int legacy:1;      /**< is this a legacy dir */
 };
 
-/**
- * The type of operations we can perform with a filter
- */
 enum Efreet_Menu_Filter_Op_Type
 {
     EFREET_MENU_FILTER_OP_OR,
@@ -133,34 +110,18 @@ enum Efreet_Menu_Filter_Op_Type
     EFREET_MENU_FILTER_OP_NOT
 };
 
-/**
- * Efreet_Menu_Filter_Op_Type
- */
 typedef enum Efreet_Menu_Filter_Op_Type Efreet_Menu_Filter_Op_Type;
 
-/**
- * The type of filter
- */
 enum Efreet_Menu_Filter_Type
 {
     EFREET_MENU_FILTER_INCLUDE,
     EFREET_MENU_FILTER_EXCLUDE
 };
 
-/**
- * Efreet_Menu_Filter_Type
- */
 typedef enum Efreet_Menu_Filter_Type Efreet_Menu_Filter_Type;
 
-/**
- * Efreet_Menu_Filter_Op
- */
 typedef struct Efreet_Menu_Filter_Op Efreet_Menu_Filter_Op;
 
-/**
- * Efreet_Menu_Filter_Op
- * Contains information on a filter operation
- */
 struct Efreet_Menu_Filter_Op
 {
     Efreet_Menu_Filter_Op_Type type; /**< The type of operation */
@@ -172,24 +133,14 @@ struct Efreet_Menu_Filter_Op
     unsigned char all:1;             /**< Applies to all .desktop files */
 };
 
-/**
- * Efreet_Menu_Filter
- */
 typedef struct Efreet_Menu_Filter Efreet_Menu_Filter;
 
-/**
- * Efreet_Menu_Filter
- * Stores information on a filter
- */
 struct Efreet_Menu_Filter
 {
     Efreet_Menu_Filter_Type type;   /**< The type of filter */
     Efreet_Menu_Filter_Op *op;      /**< The filter operations */
 };
 
-/**
- * The type of layout
- */
 enum Efreet_Menu_Layout_Type
 {
     EFREET_MENU_LAYOUT_MENUNAME,
@@ -198,20 +149,10 @@ enum Efreet_Menu_Layout_Type
     EFREET_MENU_LAYOUT_MERGE
 };
 
-/**
- * Efreet_Menu_Layout_Type
- */
 typedef enum Efreet_Menu_Layout_Type Efreet_Menu_Layout_Type;
 
-/**
- * Efreet_Menu_Layout
- */
 typedef struct Efreet_Menu_Layout Efreet_Menu_Layout;
 
-/**
- * Efreet_Menu_Layout
- * Stores information on a layout
- */
 struct Efreet_Menu_Layout
 {
     Efreet_Menu_Layout_Type  type;   /**< The type of layout */
@@ -225,15 +166,8 @@ struct Efreet_Menu_Layout
     signed char inline_alias;  /**< Whether we should use the menu name when inlining */
 };
 
-/**
- * Efreet_Menu_Desktop
- */
 typedef struct Efreet_Menu_Desktop Efreet_Menu_Desktop;
 
-/**
- * Efreet_Menu_Desktop
- * Stores information on a desktop for the menu
- */
 struct Efreet_Menu_Desktop
 {
     Efreet_Desktop *desktop;   /**< The desktop we refer too */
@@ -397,10 +331,6 @@ static int efreet_menu_save_indent(FILE *f, int indent);
 
 static void efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *path);
 
-/**
- * @return Returns 1 on success, 0 on failure
- * @brief Initializes the Efreet Menu system.
- */
 int
 efreet_menu_init(void)
 {
@@ -534,11 +464,6 @@ efreet_menu_init(void)
     return 1;
 }
 
-/**
- * @return Returns no value
- * @brief Initialize legacy kde support. This function blocks while
- * the kde-config script is run.
- */
 EAPI int
 efreet_menu_kde_legacy_init(void)
 {
@@ -578,10 +503,6 @@ efreet_menu_kde_legacy_init(void)
     return 1;
 }
 
-/**
- * @return Returns no value
- * @brief Shuts down the Efreet menu system
- */
 void
 efreet_menu_shutdown(void)
 {
@@ -603,12 +524,6 @@ efreet_menu_shutdown(void)
     _efreet_menu_log_dom = -1;
 }
 
-/**
- * @param name The internal name of the menu
- * @return Returns the Efreet_Menu on success or
- * NULL on failure
- * @brief Creates a new menu
- */
 EAPI Efreet_Menu *
 efreet_menu_new(const char *name)
 {
@@ -625,13 +540,6 @@ efreet_menu_new(const char *name)
     return menu;
 }
 
-/**
- * @brief Override which file is used for menu creation
- * @param file The file to use for menu creation
- *
- * This file is only used if it exists, else the standard files will be used
- * for the menu.
- */
 EAPI void
 efreet_menu_file_set(const char *file)
 {
@@ -640,11 +548,6 @@ efreet_menu_file_set(const char *file)
     if (file) efreet_menu_file = eina_stringshare_add(file);
 }
 
-/**
- * @return Returns the Efreet_Menu_Internal representation of the default menu or
- * NULL if none found
- * @brief Creates the default menu representation
- */
 EAPI Efreet_Menu *
 efreet_menu_get(void)
 {
@@ -680,12 +583,6 @@ efreet_menu_get(void)
     return NULL;
 }
 
-/**
- * @param path The path of the menu to load
- * @return Returns the Efreet_Menu_Internal representation on success or NULL on
- * failure
- * @brief Parses the given .menu file and creates the menu representation
- */
 EAPI Efreet_Menu *
 efreet_menu_parse(const char *path)
 {
@@ -758,12 +655,6 @@ efreet_menu_parse(const char *path)
     return entry;
 }
 
-/**
- * @param menu The menu to work with
- * @param path The path where the menu should be saved
- * @return Returns 1 on success, 0 on failure
- * @brief Saves the menu to file
- */
 EAPI int
 efreet_menu_save(Efreet_Menu *menu, const char *path)
 {
@@ -878,14 +769,6 @@ efreet_menu_save_indent(FILE *f, int indent)
     return 1;
 }
 
-/**
- * @param menu The menu to work with
- * @param desktop The desktop to insert
- * @param pos The position to place the new desktop
- * @return Returns 1 on success, 0 on failure
- * @brief Insert a desktop element in a menu structure. Only accepts desktop files
- * in default directories.
- */
 EAPI int
 efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
 {
@@ -914,13 +797,6 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
     return 1;
 }
 
-/**
- * @param menu The menu to work with
- * @param desktop The desktop to remove
- * @return Returns 1 on success, 0 on failure
- * @brief Remove a desktop element in a menu structure. Only accepts desktop files
- * in default directories.
- */
 EAPI int
 efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
 {
@@ -940,13 +816,6 @@ efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
     return 0;
 }
 
-/**
- * @param menu The menu to work with
- * @param menu The menu to work with
- * @param indent The indent level to print the menu at
- * @return Returns no value
- * @brief Dumps the contents of the menu to the command line
- */
 EAPI void
 efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 {
@@ -982,6 +851,7 @@ efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 }
 
 /**
+ * @internal
  * @param user_dir The user directory to work with
  * @param system_dirs The system directories to work with
  * @param suffix The path suffix to add
@@ -2598,11 +2468,6 @@ efreet_menu_entry_new(void)
     return entry;
 }
 
-/**
- * @param entry The Efreet_Menu to free
- * @return Returns no value
- * @brief Frees the given structure
- */
 EAPI void
 efreet_menu_free(Efreet_Menu *entry)
 {
