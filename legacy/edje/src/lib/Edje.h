@@ -1012,8 +1012,6 @@ typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, E
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
-   /* edje_main.c */
-   
 /**
  * @brief Initialize the edje library.
  *
@@ -1054,8 +1052,6 @@ EAPI int          edje_init                       (void);
  */
 EAPI int          edje_shutdown                   (void);
 
-   /* edje_program.c */
-   
 /**
  * @brief Set edje trasitions' frame time.
  *
@@ -1084,8 +1080,6 @@ EAPI void         edje_frametime_set              (double t);
  */
 EAPI double       edje_frametime_get              (void);
 
-   /* edje_util.c */
-   
 /**
  * @brief Freeze Edje objects.
  *
@@ -1215,8 +1209,6 @@ EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool r
  */
 EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
 
-   /* edje_load.c */
-   
 /**
  * Get a list of groups in an edje file
  * @param file The path to the edje file
@@ -1263,17 +1255,6 @@ EAPI Eina_Bool    edje_file_group_exists          (const char *file, const char 
  */
 EAPI char        *edje_file_data_get              (const char *file, const char *key);
 
-   /* edje_cache.c */
-   /**
-    * @addtogroup Edje_cache_Group Cache
-    *
-    * @brief These functions provide an abstraction layer between the
-    * application code and the interface, while allowing extremely
-    * flexible dynamic layouts and animations.
-    *
-    * @{
-    */
-   
 /**
  * @brief Set the file cache size.
  *
@@ -1356,11 +1337,6 @@ EAPI int          edje_collection_cache_get       (void);
  *
  */
 EAPI void         edje_collection_cache_flush     (void);
-   /**
-    * @}
-    */
-   
-   /* edje_util.c */
    
 /**
  * @brief Set Edje color class.
@@ -1529,8 +1505,6 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
  */
 EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
 
-   /* edje_smart.c */
-   
 /**
  * Constructs the Edje object
  * @param evas A valid Evas handle
@@ -1540,8 +1514,6 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
  */
 EAPI Evas_Object *edje_object_add                 (Evas *evas);
 
-   /* edje_util.c */
-   
 /**
  * @brief Get Edje object data.
  *
@@ -1568,8 +1540,6 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
  */
 EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const char *key);
 
-   /* edje_load.c */
-   
 /**
  * Sets the EET file and group to load @a obj from
  * @param obj A valid Evas_Object handle
@@ -1617,13 +1587,10 @@ EAPI void             edje_object_file_get        (const Evas_Object *obj, const
  * EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: Recursive Reference\n
  */
 EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
-   EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
 
-   /* edje_util.c */
-   EAPI Eina_Bool    edje_object_preload             (Evas_Object *obj, Eina_Bool cancel);
+EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
+EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
-   /* edje_program.c */
-   
 /**
  * @brief Add a callback for a signal emitted by @a obj.
  *
@@ -1808,8 +1775,6 @@ EAPI void         edje_object_animation_set       (Evas_Object *obj, Eina_Bool o
  */
 EAPI Eina_Bool    edje_object_animation_get       (const Evas_Object *obj);
 
-   /* edje_util.c */
-   
 /**
  * @brief Freeze object.
  *
@@ -2972,8 +2937,6 @@ EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *ob
  */
 EAPI Eina_Bool    edje_object_part_table_clear            (Evas_Object *obj, const char *part, Eina_Bool clear);
 
-   /* edje_message_queue.c */
-   
 /**
  * @brief Send message to object.
  *
@@ -3029,8 +2992,6 @@ EAPI void         edje_object_message_signal_process      (Evas_Object *obj);
  */
 EAPI void         edje_message_signal_process             (void);
 
-   /* edje_external.c */
-   
 /**
  * Register given type name to return the given information.
  *
@@ -3057,7 +3018,6 @@ EAPI Eina_Bool    edje_external_type_register             (const char *type_name
  * @see edje_external_type_array_unregister()
  */
 EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name);
-
    
 /**
  * Register a batch of types and their information.
@@ -3157,6 +3117,7 @@ EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
  * @endcode
  */
 EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
+   
    EAPI Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
    EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
    EAPI Eina_Bool                       edje_external_param_double_get (const Eina_List *params, const char *key, double *ret);
@@ -3177,9 +3138,9 @@ EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
  * @see edje_external_type_get()
  */
 EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char *type_name);
+   
    EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
 
-   /* edje_module.c */
    EAPI Eina_Bool               edje_module_load                (const char *module);
    EAPI const Eina_List        *edje_available_modules_get      (void);
 
