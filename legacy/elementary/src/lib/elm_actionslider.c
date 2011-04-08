@@ -1,7 +1,7 @@
 /**
  * @addtogroup Actionslider Actionslider
  *
- * A magnet slider is a switcher for 3 labels with customizable
+ * A actionslider is a switcher for 3 labels with customizable
  * magnet properties. When the position is set with magnet, the knob
  * will be moved to it if it's nearest the magnetized position.
  *
