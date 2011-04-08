@@ -2084,7 +2084,13 @@ EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_It
  */
 EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Text_Change_Cb func, void *data);
 
-   EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
+/**
+ * Sets the text for an object part
+ * @param obj A valid Evas Object handle
+ * @param part The part name
+ * @param text The text string
+ */
+EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
    
 /**
  * @brief Return the text of the object part.
@@ -2132,7 +2138,6 @@ EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const c
  *
  */
 EAPI char        *edje_object_part_text_unescaped_get (const Evas_Object *obj, const char *part);
-
    
 /**
  * @brief Return the selection text of the object part.
@@ -2446,7 +2451,6 @@ EAPI void             edje_object_part_text_cursor_pos_set              (Evas_Ob
  * @since 1.1.0
  */
 EAPI int              edje_object_part_text_cursor_pos_get              (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-
    
 /**
  * Add a filter function for newly inserted text.
