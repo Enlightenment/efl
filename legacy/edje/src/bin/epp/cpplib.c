@@ -2030,20 +2030,28 @@ cpp_expand_to_buffer(cpp_reader * pfile, unsigned char *buf, int length)
    {
       unsigned char      *p1 = buf;
       unsigned char      *p2 = buf1;
-
-#if 0      
+      int                 in_string = 0;
+      
+#if 0 /* old behavior */ 
       while (p1 != limit) *p2++ = *p1++;
-#else
+#else /* new one - handle \ escapes if not in string */
       while (p1 != limit)
         {
-           if (*p1 == '\\')
+           if (!in_string)
              {
-                p1++;
-                if (p1 != limit)
+                if (*p1 == '"') in_string = 1;
+                if (*p1 == '\\')
+                  {
+                     p1++;
+                     if (p1 != limit) *p2++ = *p1++;
+                  }
+                else
                    *p2++ = *p1++;
              }
            else
              {
+                if ((*p1 == '"') && (p1 > buf) && (p1[-1] != '\\'))
+                   in_string = 0;
                 *p2++ = *p1++;
              }
         }
