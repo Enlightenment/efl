@@ -2560,6 +2560,10 @@ EAPI Ecore_X_Randr_Output *ecore_x_randr_outputs_get(
    Ecore_X_Window root,
    int *num);
 EAPI Ecore_X_Randr_Output *
+                           ecore_x_randr_window_outputs_get(
+   Ecore_X_Window window,
+   int *num);
+EINA_DEPRECATED EAPI Ecore_X_Randr_Output *
                            ecore_x_randr_current_output_get(
    Ecore_X_Window window,
    int *num);
