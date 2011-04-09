@@ -647,8 +647,6 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (pt->dyn.img)
      {
-        void *egldisplay = pt->gc->egldisp;
-        
         secsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
         pt->dyn.img = NULL;
         pt->dyn.data = NULL;
@@ -1052,13 +1050,13 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
 #else
-   int y;
+   unsigned int y;
 
    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   if ((rows[1] - rows[0]) == w)
+   if ((rows[1] - rows[0]) == (int)w)
      _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
    else
      {
@@ -1068,7 +1066,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
 
    glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   if ((rows[h + 1] - rows[h]) == (w / 2))
+   if ((rows[h + 1] - rows[h]) == (int)(w / 2))
      _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
    else
      {
@@ -1078,7 +1076,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
    
    glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   if ((rows[h + (h / 2) + 1] - rows[h + (h / 2)]) == (w / 2))
+   if ((rows[h + (h / 2) + 1] - rows[h + (h / 2)]) == (int)(w / 2))
      _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
    else
      {

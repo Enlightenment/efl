@@ -218,9 +218,9 @@ eng_window_new(Display *disp,
    vendor = glGetString(GL_VENDOR);
    renderer = glGetString(GL_RENDERER);
    version = glGetString(GL_VERSION);
-   if (!vendor) vendor = "-UNKNOWN-";
-   if (!renderer) renderer = "-UNKNOWN-";
-   if (!version) version = "-UNKNOWN-";
+   if (!vendor)   vendor   = (unsigned char *)"-UNKNOWN-";
+   if (!renderer) renderer = (unsigned char *)"-UNKNOWN-";
+   if (!version)  version  = (unsigned char *)"-UNKNOWN-";
    if (getenv("EVAS_GL_INFO"))
      {
         fprintf(stderr, "vendor: %s\n", vendor);
@@ -513,6 +513,7 @@ eng_window_new(Display *disp,
    evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
    return gw;
+   indirect = 0;
 }
 
 void
