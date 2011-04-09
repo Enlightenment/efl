@@ -2031,10 +2031,26 @@ cpp_expand_to_buffer(cpp_reader * pfile, unsigned char *buf, int length)
       unsigned char      *p1 = buf;
       unsigned char      *p2 = buf1;
 
+#if 0      
+      while (p1 != limit) *p2++ = *p1++;
+#else
       while (p1 != limit)
-	 *p2++ = *p1++;
+        {
+           if (*p1 == '\\')
+             {
+                p1++;
+                if (p1 != limit)
+                   *p2++ = *p1++;
+             }
+           else
+             {
+                *p2++ = *p1++;
+             }
+        }
+#endif
+      *p2 = 0;
+      length = p2 - buf1;
    }
-   buf1[length] = 0;
 
    ip = cpp_push_buffer(pfile, buf1, length);
    ip->has_escapes = 1;
@@ -2937,9 +2953,11 @@ macroexpand(cpp_reader * pfile, HASHNODE * hp)
 		  xbuf_len += args[ap->argno].stringified_length;
 	       }
 	     else if (ap->raw_before || ap->raw_after || CPP_TRADITIONAL(pfile))
-		/* Add 4 for two newline-space markers to prevent
-		 * token concatenation.  */
-		xbuf_len += args[ap->argno].raw_length + 4;
+               {
+                  /* Add 4 for two newline-space markers to prevent
+                   * token concatenation.  */
+                  xbuf_len += args[ap->argno].raw_length + 4;
+               }
 	     else
 	       {
 		  /* We have an ordinary (expanded) occurrence of the arg.
