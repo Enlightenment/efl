@@ -851,12 +851,12 @@ _is_white(Eina_Unicode c)
  * @internal
  * Appends the text between s and p to the main cursor of the object.
  *
- * @param o The textblock to append to.
+ * @param cur the cursor to append to.
  * @param[in] s start of the string
  * @param[in] p end of the string
  */
 static void __UNUSED__
-_append_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
+_append_text_run(Evas_Textblock_Cursor *cur, const char *s, const char *p)
 {
    if ((s) && (p > s))
      {
@@ -865,7 +865,7 @@ _append_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
         ts = alloca(p - s + 1);
         strncpy(ts, s, p - s);
         ts[p - s] = 0;
-        evas_textblock_cursor_text_append(o->cursor, ts);
+        evas_textblock_cursor_text_append(cur, ts);
      }
 }
 
@@ -873,12 +873,12 @@ _append_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
  * @internal
  * Prepends the text between s and p to the main cursor of the object.
  *
- * @param o The textblock to prepend to.
+ * @param cur the cursor to prepend to.
  * @param[in] s start of the string
  * @param[in] p end of the string
  */
 static void
-_prepend_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
+_prepend_text_run(Evas_Textblock_Cursor *cur, const char *s, const char *p)
 {
    if ((s) && (p > s))
      {
@@ -887,7 +887,7 @@ _prepend_text_run(Evas_Object_Textblock *o, const char *s, const char *p)
         ts = alloca(p - s + 1);
         strncpy(ts, s, p - s);
         ts[p - s] = 0;
-        evas_textblock_cursor_text_prepend(o->cursor, ts);
+        evas_textblock_cursor_text_prepend(cur, ts);
      }
 }
 
@@ -4350,7 +4350,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                             match = _style_match_tag(o->style, ttag, ttag_len, &replace_len);
                             if (match)
                               {
-                                 evas_textblock_cursor_format_prepend(o->cursor, match);
+                                 evas_textblock_cursor_format_prepend(cur, match);
                               }
                             else
                               {
@@ -4369,7 +4369,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                                            strcpy(ttag2, "+ ");
                                            strcat(ttag2, ttag);
                                         }
-                                      evas_textblock_cursor_format_prepend(o->cursor, ttag2);
+                                      evas_textblock_cursor_format_prepend(cur, ttag2);
                                       free(ttag2);
                                    }
                               }
@@ -4379,12 +4379,12 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                     }
                   else if (esc_end)
                     {
-                       _prepend_escaped_char(o->cursor, esc_start, esc_end);
+                       _prepend_escaped_char(cur, esc_start, esc_end);
                        esc_start = esc_end = NULL;
                     }
                   else if (*p == 0)
                     {
-                       _prepend_text_run(o, s, p);
+                       _prepend_text_run(cur, s, p);
                        s = NULL;
                     }
                   if (*p == 0)
@@ -4398,7 +4398,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                         * the start of the tag */
                        tag_start = p;
                        tag_end = NULL;
-                       _prepend_text_run(o, s, p);
+                       _prepend_text_run(cur, s, p);
                        s = NULL;
                     }
                }
@@ -4418,7 +4418,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                         * the start of the escape sequence */
                        esc_start = p;
                        esc_end = NULL;
-                       _prepend_text_run(o, s, p);
+                       _prepend_text_run(cur, s, p);
                        s = NULL;
                     }
                }
@@ -4436,7 +4436,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                   /*FIXME: currently just remove them, maybe do something
                    * fancier in the future, atm it breaks if this char
                    * is inside <> */
-                  _prepend_text_run(o, s, p);
+                  _prepend_text_run(cur, s, p);
                   p += 2; /* it's also advanced later in this loop need +3
                            * in total*/
                   s = p + 1; /* One after the end of the replacement char */
@@ -4445,10 +4445,6 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
           }
      }
    _evas_textblock_changed(o, obj);
-   /* If the node is NULL it means we just created paragraphs,
-    * and not edited, so no need to mark anything */
-   if (o->cursor->node)
-      o->cursor->node->dirty = EINA_TRUE;
 }
 
 
