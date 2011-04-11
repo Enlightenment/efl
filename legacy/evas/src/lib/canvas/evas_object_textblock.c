@@ -224,6 +224,7 @@ struct _Evas_Object_Textblock_Paragraph
    Eina_List                         *logical_items;
    int                                x, y, w, h;
    int                                line_no;
+   Eina_Bool                          visible;
 };
 
 struct _Evas_Object_Textblock_Line
@@ -1815,6 +1816,7 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
    c->ln = NULL;
    c->par->text_node = n;
    c->par->line_no = -1;
+   c->par->visible = 1;
 }
 
 /**
@@ -3245,6 +3247,9 @@ _layout_visualize_par(Ctxt *c)
    if (!c->par->logical_items)
      return 2;
 
+   /* We want to show it. */
+   c->par->visible = 1;
+
    /* Check if we need to skip this paragraph because it's already layouted
     * correctly, and mark handled nodes as dirty. */
    c->par->line_no = c->line_no;
@@ -3738,7 +3743,18 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
            /* Break if we should stop here. */
            if (_layout_visualize_par(c))
-             break;
+             {
+                /* Mark all the rest of the paragraphs as invisible */
+                c->par = (Evas_Object_Textblock_Paragraph *)
+                   EINA_INLIST_GET(c->par)->next;
+                while (c->par)
+                  {
+                     c->par->visible = 0;
+                     c->par = (Evas_Object_Textblock_Paragraph *)
+                        EINA_INLIST_GET(c->par)->next;
+                  }
+                break;
+             }
         }
    }
    /* End of visual layout creation */
@@ -7865,6 +7881,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 #define ITEM_WALK() \
    EINA_INLIST_FOREACH(o->paragraphs, par) \
      { \
+        if (!par->visible) continue; \
         EINA_INLIST_FOREACH(par->lines, ln) \
           { \
              Evas_Object_Textblock_Item *itr; \
