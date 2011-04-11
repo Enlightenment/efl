@@ -308,7 +308,7 @@ ecore_x_window_free(Ecore_X_Window win)
 EAPI void
 ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
 {
-   int i, j;
+   int i, j, cnt;
    Ecore_X_Window *t;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -339,13 +339,14 @@ ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
         if (!ignore_list)
            return;
 
-        for (i = 0, j = 0; i < ignore_num; i++)
+        for (cnt = ignore_num, i = 0, j = 0; i < cnt; i++)
           {
              if (win != ignore_list[i])
-                ignore_list[i] = ignore_list[j++];
+	       ignore_list[j++] = ignore_list[i];
              else
-                ignore_num--;
+	       ignore_num--;
           }
+
         if (ignore_num <= 0)
           {
              free(ignore_list);
