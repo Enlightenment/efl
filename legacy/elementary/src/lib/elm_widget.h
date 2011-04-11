@@ -501,7 +501,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
       evas = evas_object_evas_get(par); if (!(evas)) return (ret); \
       wdat = ELM_NEW(wdtype); if (!(wdat)) return (ret); \
       ob = elm_widget_add(evas); if (!(ob)) { free(wdat); return (ret); } \
-   } while (0);
+   } while (0)
 
 /**
  * The drag and drop API.
