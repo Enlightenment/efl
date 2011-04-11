@@ -46,7 +46,8 @@ eina_unicode.c \
 eina_ustrbuf.c \
 eina_ustringshare.c \
 eina_value.c \
-eina_simple_xml_parser.c
+eina_simple_xml_parser.c \
+eina_object.c
 
 if EINA_HAVE_WIN32
 base_sources += eina_file_win32.c

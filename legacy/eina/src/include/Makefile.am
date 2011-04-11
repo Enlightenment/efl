@@ -53,7 +53,8 @@ eina_strbuf.h \
 eina_ustrbuf.h \
 eina_unicode.h \
 eina_quadtree.h \
-eina_simple_xml_parser.h
+eina_simple_xml_parser.h \
+eina_object.h
 
 installed_mainheaderdir = $(includedir)/eina-@VMAJ@
 dist_installed_mainheader_DATA = Eina.h eina_config.h
