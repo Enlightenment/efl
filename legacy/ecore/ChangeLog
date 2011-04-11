@@ -123,3 +123,7 @@
 
 	* Remove Ecore_Evas Cocoa backend that use depreacted Evas Quartz
 	backend.
+
+2011-04-11  Hannes Janetzek
+
+	* Fix removal of windows from ignore_list with ecore_x_window_ignore_set
