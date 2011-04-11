@@ -9,6 +9,8 @@
  *****
  */
 int _evas_soft16_log_dom = -1;
+/* function tables - filled in later (func and parent func) */
+static Evas_Func func, pfunc;
 #ifdef ERR
 #undef ERR
 #endif
@@ -39,141 +41,6 @@ int _evas_soft16_log_dom = -1;
            __FUNCTION__, __FILE__, __LINE__)
 
 static void
-eng_output_dump(void *data __UNUSED__)
-{
-   evas_common_image_image_all_unload();
-   evas_common_font_font_all_unload();
-}
-
-static void *
-eng_context_new(void *data __UNUSED__)
-{
-   return evas_common_draw_context_new();
-}
-
-static void
-eng_context_free(void *data __UNUSED__, void *context)
-{
-   evas_common_draw_context_free(context);
-}
-
-static void
-eng_context_clip_set(void *data __UNUSED__, void *context, int x, int y, int w, int h)
-{
-   evas_common_draw_context_set_clip(context, x, y, w, h);
-}
-
-static void
-eng_context_clip_clip(void *data __UNUSED__, void *context, int x, int y, int w, int h)
-{
-   evas_common_draw_context_clip_clip(context, x, y, w, h);
-}
-
-static void
-eng_context_clip_unset(void *data __UNUSED__, void *context)
-{
-   evas_common_draw_context_unset_clip(context);
-}
-
-static int
-eng_context_clip_get(void *data __UNUSED__, void *context, int *x, int *y, int *w, int *h)
-{
-   *x = ((RGBA_Draw_Context *)context)->clip.x;
-   *y = ((RGBA_Draw_Context *)context)->clip.y;
-   *w = ((RGBA_Draw_Context *)context)->clip.w;
-   *h = ((RGBA_Draw_Context *)context)->clip.h;
-   return ((RGBA_Draw_Context *)context)->clip.use;
-}
-
-static void
-eng_context_color_set(void *data __UNUSED__, void *context, int r, int g, int b, int a)
-{
-   evas_common_draw_context_set_color(context, r, g, b, a);
-}
-
-static int
-eng_context_color_get(void *data __UNUSED__, void *context, int *r, int *g, int *b, int *a)
-{
-   *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->col.col));
-   *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
-   *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->col.col));
-   *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->col.col));
-   return 1;
-}
-
-static void
-eng_context_multiplier_set(void *data __UNUSED__, void *context, int r, int g, int b, int a)
-{
-   evas_common_draw_context_set_multiplier(context, r, g, b, a);
-}
-
-static void
-eng_context_multiplier_unset(void *data __UNUSED__, void *context)
-{
-   evas_common_draw_context_unset_multiplier(context);
-}
-
-static int
-eng_context_multiplier_get(void *data __UNUSED__, void *context, int *r, int *g, int *b, int *a)
-{
-   *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
-   *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->mul.col));
-   *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->mul.col));
-   *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->mul.col));
-   return ((RGBA_Draw_Context *)context)->mul.use;
-}
-
-static void
-eng_context_cutout_add(void *data __UNUSED__, void *context, int x, int y, int w, int h)
-{
-   evas_common_draw_context_add_cutout(context, x, y, w, h);
-}
-
-static void
-eng_context_cutout_clear(void *data __UNUSED__, void *context)
-{
-   evas_common_draw_context_clear_cutouts(context);
-}
-
-static void
-eng_context_anti_alias_set(void *data __UNUSED__, void *context, unsigned char aa)
-{
-   evas_common_draw_context_set_anti_alias(context, aa);
-}
-
-static unsigned char
-eng_context_anti_alias_get(void *data __UNUSED__, void *context)
-{
-   return ((RGBA_Draw_Context *)context)->anti_alias;
-}
-
-static void
-eng_context_color_interpolation_set(void *data __UNUSED__, void *context, int color_space)
-{
-   evas_common_draw_context_set_color_interpolation(context, color_space);
-}
-
-static int
-eng_context_color_interpolation_get(void *data __UNUSED__, void *context)
-{
-   return ((RGBA_Draw_Context *)context)->interpolation.color_space;
-}
-
-static void
-eng_context_render_op_set(void *data __UNUSED__, void *context, int op)
-{
-   evas_common_draw_context_set_render_op(context, op);
-}
-
-static int
-eng_context_render_op_get(void *data __UNUSED__, void *context)
-{
-   return ((RGBA_Draw_Context *)context)->render_op;
-}
-
-
-
-static void
 eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
    evas_common_soft16_rectangle_draw(surface, context, x, y, w, h);
@@ -183,18 +50,6 @@ static void
 eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    evas_common_soft16_line_draw(surface, context, x1, y1, x2, y2);
-}
-
-static void *
-eng_polygon_point_add(void *data __UNUSED__, void *context __UNUSED__, void *polygon, int x, int y)
-{
-   return evas_common_polygon_point_add(polygon, x, y);
-}
-
-static void *
-eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *polygon)
-{
-   return evas_common_polygon_points_clear(polygon);
 }
 
 static void
@@ -213,12 +68,6 @@ eng_image_alpha_get(void *data __UNUSED__, void *image)
    return im->cache_entry.flags.alpha;
 }
 
-static int
-eng_image_colorspace_get(void *data __UNUSED__, void *image __UNUSED__)
-{
-   return EVAS_COLORSPACE_RGB565_A5P;
-}
-
 static void *
 eng_image_alpha_set(void *data __UNUSED__, void *image, int have_alpha)
 {
@@ -226,17 +75,6 @@ eng_image_alpha_set(void *data __UNUSED__, void *image, int have_alpha)
    have_alpha = !!have_alpha;
    image = evas_common_soft16_image_alpha_set(image, have_alpha);
    return image;
-}
-
-static void *
-eng_image_border_set(void *data __UNUSED__, void *image, int l __UNUSED__, int r __UNUSED__, int t __UNUSED__, int b __UNUSED__)
-{
-   return image;
-}
-
-static void
-eng_image_border_get(void *data __UNUSED__, void *image __UNUSED__, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
-{
 }
 
 static char *
@@ -251,6 +89,12 @@ eng_image_format_get(void *data __UNUSED__, void *image __UNUSED__)
    NOT_IMPLEMENTED();
    return NULL;
 }
+
+eng_image_colorspace_get(void *data __UNUSED__, void *image __UNUSED__)
+{
+   return EVAS_COLORSPACE_RGB565_A5P;
+}
+
 
 static void
 eng_image_colorspace_set(void *data __UNUSED__, void *image __UNUSED__, int cspace __UNUSED__)
@@ -300,12 +144,6 @@ eng_image_new_from_copied_data(void *data __UNUSED__, int w, int h, DATA32 *imag
 	return NULL;
      }
    return evas_cache_image_copied_data(evas_common_soft16_image_cache_get(), w, h, image_data, alpha, EVAS_COLORSPACE_RGB565_A5P);
-}
-
-static void
-eng_image_free(void *data __UNUSED__, void *image)
-{
-   evas_cache_image_drop((Image_Entry *) image);
 }
 
 static void
@@ -450,135 +288,6 @@ eng_image_cache_get(void *data __UNUSED__)
    return evas_cache_image_get(evas_common_soft16_image_cache_get());
 }
 
-static void *
-eng_font_load(void *data __UNUSED__, const char *name, int size)
-{
-   return evas_common_font_load(name, size);
-}
-
-static void *
-eng_font_memory_load(void *data __UNUSED__, char *name, int size, const void *fdata, int fdata_size)
-{
-   return evas_common_font_memory_load(name, size, fdata, fdata_size);
-}
-
-static void *
-eng_font_add(void *data __UNUSED__, void *font, const char *name, int size)
-{
-   return evas_common_font_add(font, name, size);
-}
-
-static void *
-eng_font_memory_add(void *data __UNUSED__, void *font, char *name, int size, const void *fdata, int fdata_size)
-{
-   return evas_common_font_memory_add(font, name, size, fdata, fdata_size);
-}
-
-static void
-eng_font_free(void *data __UNUSED__, void *font)
-{
-   evas_common_font_free(font);
-}
-
-static int
-eng_font_ascent_get(void *data __UNUSED__, void *font)
-{
-   return evas_common_font_ascent_get(font);
-}
-
-static int
-eng_font_descent_get(void *data __UNUSED__, void *font)
-{
-   return evas_common_font_descent_get(font);
-}
-
-static int
-eng_font_max_ascent_get(void *data __UNUSED__, void *font)
-{
-   return evas_common_font_max_ascent_get(font);
-}
-
-static int
-eng_font_max_descent_get(void *data __UNUSED__, void *font)
-{
-   return evas_common_font_max_descent_get(font);
-}
-
-static void
-eng_font_string_size_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int *w, int *h)
-{
-   evas_common_font_query_size(font, text_props, w, h);
-}
-
-static int
-eng_font_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
-{
-   return evas_common_font_query_inset(font, text_props);
-}
-
-static int
-eng_font_right_inset_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
-{
-   return evas_common_font_query_right_inset(font, text_props);
-}
-
-static int
-eng_font_h_advance_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
-{
-   int h, v;
-
-   evas_common_font_query_advance(font, text_props, &h, &v);
-   return h;
-}
-
-static int
-eng_font_v_advance_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props)
-{
-   int h, v;
-
-   evas_common_font_query_advance(font, text_props, &h, &v);
-   return v;
-}
-
-static int
-eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch)
-{
-   return evas_common_font_query_pen_coords(font, text_props, pos, cpen_x, cy, cadv, ch);
-}
-
-static Eina_Bool
-eng_font_text_props_info_create(void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
-{
-   (void) font;
-   (void) text;
-   (void) text_props;
-   (void) par_props;
-   (void) pos;
-   (void) len;
-#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   evas_bidi_shape_string(text, par_props, pos, len);
-#endif
-   return evas_common_text_props_content_create(font, text, text_props, len);
-}
-
-static int
-eng_font_char_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int pos, int *cx, int *cy, int *cw, int *ch)
-{
-   return evas_common_font_query_char_coords(font, text_props, pos, cx, cy, cw, ch);
-}
-
-static int
-eng_font_char_at_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int x, int y, int *cx, int *cy, int *cw, int *ch)
-{
-   return evas_common_font_query_char_at_coords(font, text_props, x, y, cx, cy, cw, ch);
-}
-
-static int
-eng_font_last_up_to_pos(void *data __UNUSED__, void *font, const Evas_Text_Props *text_props, int x, int y)
-{
-   return evas_common_font_query_last_up_to_pos(font, text_props, x, y);
-}
-
 static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Eina_Unicode *text, const Evas_Text_Props *text_props)
 {
@@ -601,162 +310,6 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, void *font, i
 					 NULL);
 }
 
-static void
-eng_font_cache_flush(void *data __UNUSED__)
-{
-   evas_common_font_flush();
-}
-
-static void
-eng_font_cache_set(void *data __UNUSED__, int bytes)
-{
-   evas_common_font_cache_set(bytes);
-}
-
-static int
-eng_font_cache_get(void *data __UNUSED__)
-{
-   return evas_common_font_cache_get();
-}
-
-static void
-eng_font_hinting_set(void *data __UNUSED__, void *font, int hinting)
-{
-   evas_common_font_hinting_set(font, hinting);
-}
-
-static int
-eng_font_hinting_can_hint(void *data __UNUSED__, int hinting)
-{
-   return evas_common_hinting_available(hinting);
-}
-
-static Eina_Bool
-eng_canvas_alpha_get(void *data __UNUSED__, void *context __UNUSED__)
-{
-   return EINA_TRUE;
-}
-
-/*
- *****
- **
- ** ENGINE API
- **
- *****
- */
-
-static Evas_Func func =
-{
-   NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     eng_output_dump,
-     /* draw context virtual methods */
-     eng_context_new,
-     eng_canvas_alpha_get,
-     eng_context_free,
-     eng_context_clip_set,
-     eng_context_clip_clip,
-     eng_context_clip_unset,
-     eng_context_clip_get,
-     eng_context_color_set,
-     eng_context_color_get,
-     eng_context_multiplier_set,
-     eng_context_multiplier_unset,
-     eng_context_multiplier_get,
-     eng_context_cutout_add,
-     eng_context_cutout_clear,
-     eng_context_anti_alias_set,
-     eng_context_anti_alias_get,
-     eng_context_color_interpolation_set,
-     eng_context_color_interpolation_get,
-     eng_context_render_op_set,
-     eng_context_render_op_get,
-     /* rect draw funcs */
-     eng_rectangle_draw,
-     /* line draw funcs */
-     eng_line_draw,
-     /* polygon draw funcs */
-     eng_polygon_point_add,
-     eng_polygon_points_clear,
-     eng_polygon_draw,
-     /* image draw funcs */
-     eng_image_load,
-     eng_image_new_from_data,
-     eng_image_new_from_copied_data,
-     eng_image_free,
-     eng_image_size_get,
-     eng_image_size_set,
-     eng_image_stride_get,
-     eng_image_dirty_region,
-     eng_image_data_get,
-     eng_image_data_put,
-     eng_image_data_preload_request,
-     eng_image_data_preload_cancel,
-     eng_image_alpha_set,
-     eng_image_alpha_get,
-     eng_image_border_set,
-     eng_image_border_get,
-     eng_image_draw,
-     eng_image_comment_get,
-     eng_image_format_get,
-     eng_image_colorspace_set,
-     eng_image_colorspace_get,
-     eng_image_native_set,
-     eng_image_native_get,
-     /* image cache funcs */
-     eng_image_cache_flush,
-     eng_image_cache_set,
-     eng_image_cache_get,
-     /* font draw functions */
-     eng_font_load,
-     eng_font_memory_load,
-     eng_font_add,
-     eng_font_memory_add,
-     eng_font_free,
-     eng_font_ascent_get,
-     eng_font_descent_get,
-     eng_font_max_ascent_get,
-     eng_font_max_descent_get,
-     eng_font_string_size_get,
-     eng_font_inset_get,
-     eng_font_h_advance_get,
-     eng_font_v_advance_get,
-     eng_font_char_coords_get,
-     eng_font_char_at_coords_get,
-     eng_font_draw,
-     /* font cache functions */
-     eng_font_cache_flush,
-     eng_font_cache_set,
-     eng_font_cache_get,
-     /* font hinting functions */
-     eng_font_hinting_set,
-     eng_font_hinting_can_hint,
-     eng_image_scale_hint_set,
-     eng_image_scale_hint_get,
-     /* more font draw functions */
-     eng_font_last_up_to_pos,
-     NULL, //   ORD(image_map_draw);
-     NULL, //   ORD(image_map_surface_new);
-     NULL, //   ORD(image_map_surface_free);
-     NULL, // eng_image_content_hint_set - software doesn't use it
-     NULL, // eng_image_content_hint_get - software doesn't use it
-     eng_font_pen_coords_get,
-     eng_font_text_props_info_create,
-     eng_font_right_inset_get
-     /* FUTURE software generic calls go here */
-};
-
 /*
  *****
  **
@@ -769,6 +322,7 @@ static int
 module_open(Evas_Module *em)
 {
    if (!em) return 0;
+   if (!_evas_module_engine_inherit(&pfunc, "software_generic")) return 0;
    _evas_soft16_log_dom = eina_log_domain_register
      ("evas-software_16", EVAS_DEFAULT_LOG_COLOR);
    if (_evas_soft16_log_dom < 0)
@@ -776,6 +330,43 @@ module_open(Evas_Module *em)
         EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
+   /* store it for later use */
+   func = pfunc;
+   /* now to override methods */
+   EVAS_API_RESET(info, &func);
+   EVAS_API_RESET(info_free, &func);
+   EVAS_API_RESET(setup, &func);
+#define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(rectangle_draw);
+   ORD(line_draw);
+   ORD(polygon_draw);
+   ORD(image_load);
+   ORD(image_new_from_data);
+   ORD(image_new_from_copied_data);
+   ORD(image_size_get);
+   ORD(image_size_set);
+   ORD(image_stride_get);
+   ORD(image_dirty_region);
+   ORD(image_data_get);
+   ORD(image_data_put);
+   ORD(image_data_preload_request);
+   ORD(image_data_preload_cancel);
+   ORD(image_alpha_set);
+   ORD(image_alpha_get);
+   ORD(image_draw);
+   ORD(image_comment_get);
+   ORD(image_format_get);
+   ORD(image_colorspace_set);
+   ORD(image_colorspace_get);
+   ORD(image_native_set);
+   ORD(image_native_get);
+   ORD(image_cache_flush);
+   ORD(image_cache_set);
+   ORD(image_cache_get);
+   ORD(font_draw);
+   ORD(image_scale_hint_set);
+   ORD(image_scale_hint_get);
+
    em->functions = (void *)(&func);
    
    return 1;
