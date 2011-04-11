@@ -26,6 +26,9 @@
  */
 
 /* Memory Pool */
+typedef struct _Eina_Mempool_Backend_ABI1 Eina_Mempool_Backend_ABI1;
+typedef struct _Eina_Mempool_Backend_ABI2 Eina_Mempool_Backend_ABI2;
+
 struct _Eina_Mempool_Backend
 {
    const char *name;
@@ -39,10 +42,28 @@ struct _Eina_Mempool_Backend
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
 };
 
+struct _Eina_Mempool_Backend_ABI1
+{
+   const char *name;
+   void *(*init)(const char *context, const char *options, va_list args);
+   void (*free)(void *data, void *element);
+   void *(*alloc)(void *data, unsigned int size);
+   void *(*realloc)(void *data, void *element, unsigned int size);
+   void (*garbage_collect)(void *data);
+   void (*statistics)(void *data);
+   void (*shutdown)(void *data);
+};
+
+struct _Eina_Mempool_Backend_ABI2
+{
+   void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
+};
+
 struct _Eina_Mempool
 {
-   Eina_Mempool_Backend backend;
+   Eina_Mempool_Backend_ABI1 backend;
    void *backend_data;
+   Eina_Mempool_Backend_ABI2 backend2;
 };
 
 /**
