@@ -287,16 +287,14 @@ struct _Evas_Object_Textblock_Format_Item
 
 struct _Evas_Object_Textblock_Format
 {
-   int                  ref;
    double               halign;
-   Eina_Bool            halign_auto;
    double               valign;
    struct {
       const char       *name;
       const char       *source;
       const char       *fallbacks;
-      int               size;
       void             *font;
+      int               size;
    } font;
    struct {
       struct {
@@ -307,13 +305,15 @@ struct _Evas_Object_Textblock_Format
    struct {
       int               l, r;
    } margin;
+   int                  ref;
    int                  tabstops;
    int                  linesize;
-   double               linerelsize;
    int                  linegap;
+   double               linerelsize;
    double               linerelgap;
    double               linefill;
    double               ellipsis;
+   Eina_Bool            halign_auto;
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
@@ -1125,9 +1125,11 @@ static void
 _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *cmd, const char *param)
 {
    int new_font = 0;
+   int len;
    char *tmp_param;
 
-   tmp_param = alloca(strlen(param) + 1);
+   len = strlen(param);
+   tmp_param = alloca(len + 1);
 
    _format_clean_param(tmp_param, param);
    if (cmd == fontstr)
@@ -1351,19 +1353,60 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
      }
    else if (cmd == stylestr)
      {
-        if (!strcmp(tmp_param, "off")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        else if (!strcmp(tmp_param, "none")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        else if (!strcmp(tmp_param, "plain")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
-        else if (!strcmp(tmp_param, "shadow")) fmt->style = EVAS_TEXT_STYLE_SHADOW;
-        else if (!strcmp(tmp_param, "outline")) fmt->style = EVAS_TEXT_STYLE_OUTLINE;
-        else if (!strcmp(tmp_param, "soft_outline")) fmt->style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
-        else if (!strcmp(tmp_param, "outline_shadow")) fmt->style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
-        else if (!strcmp(tmp_param, "outline_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
-        else if (!strcmp(tmp_param, "glow")) fmt->style = EVAS_TEXT_STYLE_GLOW;
-        else if (!strcmp(tmp_param, "far_shadow")) fmt->style = EVAS_TEXT_STYLE_FAR_SHADOW;
-        else if (!strcmp(tmp_param, "soft_shadow")) fmt->style = EVAS_TEXT_STYLE_SOFT_SHADOW;
-        else if (!strcmp(tmp_param, "far_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
-        else fmt->style = EVAS_TEXT_STYLE_PLAIN;
+        char *p1, *p2, *p, *pp;
+        
+        p1 = alloca(len + 1);
+        *p1 = 0;
+        p2 = alloca(len + 1);
+        *p2 = 0;
+        /* no comma */
+        if (!strstr(tmp_param, ",")) p1 = tmp_param;
+        else
+          {
+             /* split string "str1,str2" into p1 and p2 (if we have more than
+              * 1 str2 eg "str1,str2,str3,str4" then we don't care. p2 just
+              * ends up being the last one as right now it's only valid to have
+              * 1 comma and 2 strings */
+             pp = p1;
+             for (p = tmp_param; *p; p++)
+               {
+                  if (*p == ',')
+                    {
+                       *pp = 0;
+                       pp = p2;
+                       continue;
+                    }
+                  *pp = *p;
+                  pp++;
+               }
+             *pp = 0;
+          }
+        if      (!strcmp(p1, "off"))                 fmt->style = EVAS_TEXT_STYLE_PLAIN;
+        else if (!strcmp(p1, "none"))                fmt->style = EVAS_TEXT_STYLE_PLAIN;
+        else if (!strcmp(p1, "plain"))               fmt->style = EVAS_TEXT_STYLE_PLAIN;
+        else if (!strcmp(p1, "shadow"))              fmt->style = EVAS_TEXT_STYLE_SHADOW;
+        else if (!strcmp(p1, "outline"))             fmt->style = EVAS_TEXT_STYLE_OUTLINE;
+        else if (!strcmp(p1, "soft_outline"))        fmt->style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
+        else if (!strcmp(p1, "outline_shadow"))      fmt->style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
+        else if (!strcmp(p1, "outline_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
+        else if (!strcmp(p1, "glow"))                fmt->style = EVAS_TEXT_STYLE_GLOW;
+        else if (!strcmp(p1, "far_shadow"))          fmt->style = EVAS_TEXT_STYLE_FAR_SHADOW;
+        else if (!strcmp(p1, "soft_shadow"))         fmt->style = EVAS_TEXT_STYLE_SOFT_SHADOW;
+        else if (!strcmp(p1, "far_soft_shadow"))     fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
+        else                                         fmt->style = EVAS_TEXT_STYLE_PLAIN;
+        
+        if (*p2)
+          {
+             if      (!strcmp(p2, "bottom_right")) EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
+             else if (!strcmp(p2, "bottom"))       EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
+             else if (!strcmp(p2, "bottom_left"))  EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT);
+             else if (!strcmp(p2, "left"))         EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT);
+             else if (!strcmp(p2, "top_left"))     EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT);
+             else if (!strcmp(p2, "top"))          EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP);
+             else if (!strcmp(p2, "top_right"))    EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT);
+             else if (!strcmp(p2, "right"))        EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT);
+             else                                  EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(fmt->style, EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT);
+          }
      }
    else if (cmd == tabstopsstr)
      {
@@ -2517,6 +2560,8 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 {
    int tw, th, inset, right_inset;
    const Evas_Object_Textblock_Format *fmt = ti->parent.format;
+   int shad_sz = 0, shad_dst = 0, out_sz = 0;
+   int dx = 0, minx = 0, maxx = 0, shx1, shx2;
 
    tw = th = 0;
    if (fmt->font.font)
@@ -2533,35 +2578,69 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 
    /* These adjustments are calculated and thus heavily linked to those in
     * textblock_render!!! Don't change one without the other. */
-   switch (ti->parent.format->style)
+   
+   // XXX: YYY: handle EVAS_TEXT_STYLE_SHADOW_DIRECTION*
+   switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
      {
-        case EVAS_TEXT_STYLE_SHADOW:
-           ti->x_adjustment = 1;
-           break;
-        case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
-        case EVAS_TEXT_STYLE_FAR_SHADOW:
-           ti->x_adjustment = 2;
-           break;
-        case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
-        case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
-           ti->x_adjustment = 4;
-           break;
-        case EVAS_TEXT_STYLE_SOFT_SHADOW:
-           inset += 1;
-           ti->x_adjustment = 4;
-           break;
-        case EVAS_TEXT_STYLE_GLOW:
-        case EVAS_TEXT_STYLE_SOFT_OUTLINE:
-           inset += 2;
-           ti->x_adjustment = 4;
-           break;
-        case EVAS_TEXT_STYLE_OUTLINE:
-           inset += 1;
-           ti->x_adjustment = 1;
-           break;
-        default:
-           break;
+      case EVAS_TEXT_STYLE_SHADOW:
+        shad_dst = 1;
+        break;
+      case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+      case EVAS_TEXT_STYLE_FAR_SHADOW:
+        shad_dst = 2;
+        out_sz = 1;
+        break;
+      case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+        shad_dst = 1;
+        shad_sz = 2;
+        out_sz = 1;
+        break;
+      case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+        shad_dst = 2;
+        shad_sz = 2;
+        break;
+      case EVAS_TEXT_STYLE_SOFT_SHADOW:
+        shad_dst = 1;
+        shad_sz = 2;
+        break;
+      case EVAS_TEXT_STYLE_GLOW:
+      case EVAS_TEXT_STYLE_SOFT_OUTLINE:
+        out_sz = 2;
+        break;
+      case EVAS_TEXT_STYLE_OUTLINE:
+        out_sz = 1;
+        break;
+      default:
+        break;
      }
+   switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+     {
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+        dx = -1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+        dx = 1;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+      default:
+        dx = 0;
+        break;
+     }
+   minx = -out_sz;
+   maxx = out_sz;
+   shx1 = dx * shad_dst;
+   shx1 -= shad_sz;
+   shx2 = dx * shad_dst;
+   shx2 += shad_sz;
+   if (shx1 < minx) minx = shx1;
+   if (shx2 > maxx) maxx = shx2;
+   inset += -minx;
+   ti->x_adjustment = maxx - minx;
+   
    ti->inset = inset;
    ti->parent.w = tw + ti->x_adjustment;
    ti->parent.h = th;
@@ -7913,25 +7992,82 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    /* shadows */
    ITEM_WALK()
      {
+        int shad_dst, shad_sz, dx, dy;
         Evas_Object_Textblock_Text_Item *ti;
         ITEM_WALK_LINE_SKIP_DROP();
         ti = (itr->type == EVAS_TEXTBLOCK_ITEM_TEXT) ? _ITEM_TEXT(itr) : NULL;
         if (!ti) continue;
 
-        if (ti->parent.format->style == EVAS_TEXT_STYLE_SHADOW)
+        shad_dst = shad_sz = dx = dy = 0;
+        switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_BASIC)
           {
-             COLOR_SET(shadow);
-             DRAW_TEXT(1, 1);
+           case EVAS_TEXT_STYLE_SHADOW:
+           case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+             shad_dst = 1;
+             break;
+           case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+           case EVAS_TEXT_STYLE_FAR_SHADOW:
+             shad_dst = 2;
+             break;
+           case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+             shad_dst = 2;
+             shad_sz = 2;
+             break;
+           case EVAS_TEXT_STYLE_SOFT_SHADOW:
+             shad_dst = 1;
+             shad_sz = 2;
+             break;
+           default:
+             break;
           }
-        else if ((ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-              (ti->parent.format->style == EVAS_TEXT_STYLE_FAR_SHADOW))
+        if (shad_dst > 0)
           {
-             COLOR_SET(shadow);
-             DRAW_TEXT(2, 2);
+             switch (ti->parent.format->style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+               {
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+                  dx = 1;
+                  dy = 1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+                  dx = 0;
+                  dy = 1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+                  dx = -1;
+                  dy = 1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+                  dx = -1;
+                  dy = 0;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+                  dx = -1;
+                  dy = -1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+                  dx = 0;
+                  dy = -1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+                  dx = 1;
+                  dy = -1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+                  dx = 1;
+                  dy = 0;
+                default:
+                  break;
+               }
+             dx *= shad_dst;
+             dy *= shad_dst;
           }
-        else if ((ti->parent.format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
-              (ti->parent.format->style == EVAS_TEXT_STYLE_FAR_SOFT_SHADOW))
+        switch (shad_sz)
           {
+           case 0:
+             COLOR_SET(shadow);
+             DRAW_TEXT(dx, dy);
+             break;
+           case 2:
              for (j = 0; j < 5; j++)
                {
                   for (i = 0; i < 5; i++)
@@ -7939,24 +8075,13 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                        if (vals[i][j] != 0)
                          {
                             COLOR_SET_AMUL(shadow, vals[i][j] * 50);
-                            DRAW_TEXT(i, j);
+                            DRAW_TEXT(i - 2 + dx, j - 2 + dy);
                          }
                     }
                }
-          }
-        else if (ti->parent.format->style == EVAS_TEXT_STYLE_SOFT_SHADOW)
-          {
-             for (j = 0; j < 5; j++)
-               {
-                  for (i = 0; i < 5; i++)
-                    {
-                       if (vals[i][j] != 0)
-                         {
-                            COLOR_SET_AMUL(shadow, vals[i][j] * 50);
-                            DRAW_TEXT(i - 1, j - 1);
-                         }
-                    }
-               }
+             break;
+           default:
+             break;
           }
      }
    ITEM_WALK_END();

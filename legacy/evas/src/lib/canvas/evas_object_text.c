@@ -25,7 +25,7 @@ struct _Evas_Object_Text
 	 unsigned char  r, g, b, a;
       } outline, shadow, glow, glow2;
 
-      unsigned char               style;
+      unsigned char        style;
    } cur, prev;
 
    float                       ascent, descent;
@@ -1367,77 +1367,107 @@ evas_string_char_len_get(const char *str)
 void
 evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b)
 {
-   int sl, sr, st, sb;
+   int shad_sz = 0, shad_dst = 0, out_sz = 0;
+   int dx = 0, minx = 0, maxx = 0, shx1, shx2;
+   int dy = 0, miny = 0, maxy = 0, shy1, shy2;
+   int sl = 0, sr = 0, st = 0, sb = 0;
+
+   switch (style & EVAS_TEXT_STYLE_MASK_BASIC)
+     {
+      case EVAS_TEXT_STYLE_SHADOW:
+        shad_dst = 1;
+        break;
+      case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+      case EVAS_TEXT_STYLE_FAR_SHADOW:
+        shad_dst = 2;
+        out_sz = 1;
+        break;
+      case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+        shad_dst = 1;
+        shad_sz = 2;
+        out_sz = 1;
+        break;
+      case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+        shad_dst = 2;
+        shad_sz = 2;
+        break;
+      case EVAS_TEXT_STYLE_SOFT_SHADOW:
+        shad_dst = 1;
+        shad_sz = 2;
+        break;
+      case EVAS_TEXT_STYLE_GLOW:
+      case EVAS_TEXT_STYLE_SOFT_OUTLINE:
+        out_sz = 2;
+        break;
+      case EVAS_TEXT_STYLE_OUTLINE:
+        out_sz = 1;
+        break;
+      default:
+        break;
+     }
+   switch (style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+     {
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+        dx = 1;
+        dy = 1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+        dx = 0;
+        dy = 1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+        dx = -1;
+        dy = 1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+        dx = -1;
+        dy = 0;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+        dx = -1;
+        dy = -1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+        dx = 0;
+        dy = -1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+        dx = 1;
+        dy = -1;
+        break;
+      case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+        dx = 1;
+        dy = 0;
+      default:
+        break;
+     }
+   minx = -out_sz;
+   maxx = out_sz;
+   shx1 = dx * shad_dst;
+   shx1 -= shad_sz;
+   shx2 = dx * shad_dst;
+   shx2 += shad_sz;
+   if (shx1 < minx) minx = shx1;
+   if (shx2 > maxx) maxx = shx2;
+   
+   miny = -out_sz;
+   maxy = out_sz;
+   shy1 = dy * shad_dst;
+   shy1 -= shad_sz;
+   shy2 = dy * shad_dst;
+   shy2 += shad_sz;
+   if (shy1 < miny) miny = shy1;
+   if (shy2 > maxy) maxy = shy2;
 
    if (l) sl = *l;
-   else sl = 0;
-
    if (r) sr = *r;
-   else sr = 0;
-
    if (t) st = *t;
-   else st = 0;
-
    if (b) sb = *b;
-   else sb = 0;
 
-   if (style == EVAS_TEXT_STYLE_SHADOW)
-     {
-	if (sr < 1) sr = 1;
-	if (sb < 1) sb = 1;
-     }
-   else if (style == EVAS_TEXT_STYLE_OUTLINE)
-     {
-	if (sl < 1) sl = 1;
-	if (sr < 1) sr = 1;
-	if (st < 1) st = 1;
-	if (sb < 1) sb = 1;
-     }
-   else if (style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
-     {
-	if (sl < 2) sl = 2;
-	if (sr < 2) sr = 2;
-	if (st < 2) st = 2;
-	if (sb < 2) sb = 2;
-     }
-   else if (style == EVAS_TEXT_STYLE_GLOW)
-     {
-	if (sl < 2) sl = 2;
-	if (sr < 2) sr = 2;
-	if (st < 2) st = 2;
-	if (sb < 2) sb = 2;
-     }
-   else if (style == EVAS_TEXT_STYLE_OUTLINE_SHADOW)
-     {
-	if (sl < 1) sl = 1;
-	if (sr < 2) sr = 2;
-	if (st < 1) st = 1;
-	if (sb < 2) sb = 2;
-     }
-   else if (style == EVAS_TEXT_STYLE_FAR_SHADOW)
-     {
-	if (sr < 2) sr = 2;
-	if (sb < 2) sb = 2;
-     }
-   else if (style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW)
-     {
-	if (sl < 1) sl = 1;
-	if (sr < 3) sr = 3;
-	if (st < 1) st = 1;
-	if (sb < 3) sb = 3;
-     }
-   else if (style == EVAS_TEXT_STYLE_SOFT_SHADOW)
-     {
-	if (sl < 1) sl = 1;
-	if (sr < 3) sr = 3;
-	if (st < 1) st = 1;
-	if (sb < 3) sb = 3;
-     }
-   else if (style == EVAS_TEXT_STYLE_FAR_SOFT_SHADOW)
-     {
-	if (sr < 4) sr = 4;
-	if (sb < 4) sb = 4;
-     }
+   if (sr < maxx) sr = maxx;
+   if (sl < -minx) sl = -minx;
+   if (sb < maxy) sb = maxy;
+   if (st < -miny) st = -miny;
 
    if (l) *l = sl;
    if (r) *r = sr;
@@ -1600,48 +1630,95 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     it->text, &it->text_props);
    EINA_INLIST_FOREACH(EINA_INLIST_GET(o->items), it)
      {
-        /* shadows */
-        if (o->cur.style == EVAS_TEXT_STYLE_SHADOW)
-          {
-             COLOR_SET(o, cur, shadow);
-             DRAW_TEXT(1, 1);
-          }
-        else if ((o->cur.style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
-              (o->cur.style == EVAS_TEXT_STYLE_FAR_SHADOW))
-          {
-             COLOR_SET(o, cur, shadow);
-             DRAW_TEXT(2, 2);
-          }
-        else if ((o->cur.style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
-              (o->cur.style == EVAS_TEXT_STYLE_FAR_SOFT_SHADOW))
-          {
-             for (j = 0; j < 5; j++)
-               {
-                  for (i = 0; i < 5; i++)
-                    {
-                       if (vals[i][j] != 0)
-                         {
-                            COLOR_SET_AMUL(o, cur, shadow, vals[i][j] * 50);
-                            DRAW_TEXT(i, j);
-                         }
-                    }
-               }
-          }
-        else if (o->cur.style == EVAS_TEXT_STYLE_SOFT_SHADOW)
-          {
-             for (j = 0; j < 5; j++)
-               {
-                  for (i = 0; i < 5; i++)
-                    {
-                       if (vals[i][j] != 0)
-                         {
-                            COLOR_SET_AMUL(o, cur, shadow, vals[i][j] * 50);
-                            DRAW_TEXT(i - 1, j - 1);
-                         }
-                    }
-               }
-          }
+        int shad_dst, shad_sz, dx, dy;
 
+        /* shadows */
+        shad_dst = shad_sz = dx = dy = 0;
+        switch (o->cur.style & EVAS_TEXT_STYLE_MASK_BASIC)
+          {
+           case EVAS_TEXT_STYLE_SHADOW:
+           case EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW:
+             shad_dst = 1;
+             break;
+           case EVAS_TEXT_STYLE_OUTLINE_SHADOW:
+           case EVAS_TEXT_STYLE_FAR_SHADOW:
+             shad_dst = 2;
+             break;
+           case EVAS_TEXT_STYLE_FAR_SOFT_SHADOW:
+             shad_dst = 2;
+             shad_sz = 2;
+             break;
+           case EVAS_TEXT_STYLE_SOFT_SHADOW:
+             shad_dst = 1;
+             shad_sz = 2;
+             break;
+           default:
+             break;
+          }
+        if (shad_dst > 0)
+          {
+             switch (o->cur.style & EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION)
+               {
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT:
+                  dx = 1;
+                  dy = 1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
+                  dx = 0;
+                  dy = 1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT:
+                  dx = -1;
+                  dy = 1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT:
+                  dx = -1;
+                  dy = 0;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT:
+                  dx = -1;
+                  dy = -1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
+                  dx = 0;
+                  dy = -1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
+                  dx = 1;
+                  dy = -1;
+                  break;
+                case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
+                  dx = 1;
+                  dy = 0;
+                default:
+                  break;
+               }
+             dx *= shad_dst;
+             dy *= shad_dst;
+          }
+        switch (shad_sz)
+          {
+           case 0:
+             COLOR_SET(o, cur, shadow);
+             DRAW_TEXT(dx, dy);
+             break;
+           case 2:
+             for (j = 0; j < 5; j++)
+               {
+                  for (i = 0; i < 5; i++)
+                    {
+                       if (vals[i][j] != 0)
+                         {
+                            COLOR_SET_AMUL(o, cur, shadow, vals[i][j] * 50);
+                            DRAW_TEXT(i - 2 + dx, j - 2 + dy);
+                         }
+                    }
+               }
+             break;
+           default:
+             break;
+          }
+        
         /* glows */
         if (o->cur.style == EVAS_TEXT_STYLE_GLOW)
           {

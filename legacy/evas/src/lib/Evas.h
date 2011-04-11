@@ -5234,6 +5234,10 @@ EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Obj
  */
    typedef enum _Evas_Text_Style_Type
      {
+        /* basic styles (4 bits allocatedm use 0->10 now, 5 left) */
+#define EVAS_TEXT_STYLE_MASK_BASIC 0xf
+#define EVAS_TEXT_STYLE_BASIC_SET(x, s) \
+   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_BASIC) | (s); } while (0)
 	EVAS_TEXT_STYLE_PLAIN,
 	EVAS_TEXT_STYLE_SHADOW,
 	EVAS_TEXT_STYLE_OUTLINE,
@@ -5243,9 +5247,21 @@ EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Obj
 	EVAS_TEXT_STYLE_FAR_SHADOW,
 	EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW,
 	EVAS_TEXT_STYLE_SOFT_SHADOW,
-	EVAS_TEXT_STYLE_FAR_SOFT_SHADOW
+	EVAS_TEXT_STYLE_FAR_SOFT_SHADOW,
+           
+#define EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION (0x7 << 4)
+#define EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(x, s) \
+   do { x = ((x) & ~EVAS_TEXT_STYLE_MASK_SHADOW_DIRECTION) | (s); } while (0)
+        /* OR these to modify shadow direction (3 bits needed) */
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT         = (0x3 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP          = (0x5 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4),
+	EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
      } Evas_Text_Style_Type;
-
    
 /**
  * Creates a new text @c Evas_Object on the provided @c Evas canvas.
@@ -5259,6 +5275,7 @@ EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Obj
  * @returns NULL on error, A pointer to a new @c Evas_Object on success.
  */
 EAPI Evas_Object      *evas_object_text_add              (Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+   
    EAPI void              evas_object_text_font_source_set  (Evas_Object *obj, const char *font) EINA_ARG_NONNULL(1);
    EAPI const char       *evas_object_text_font_source_get  (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
    EAPI void              evas_object_text_font_set         (Evas_Object *obj, const char *font, Evas_Font_Size size) EINA_ARG_NONNULL(1);
