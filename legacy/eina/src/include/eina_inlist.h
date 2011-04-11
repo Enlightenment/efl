@@ -361,6 +361,53 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
  */
 EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Sort a list according to the ordering func will return.
+ *
+ * @param list The list handle to sort.
+ * @param func A function pointer that can handle comparing the list data
+ * nodes.
+ * @return the new head of list.
+ *
+ * This function sorts all the elements of @p list. @p func is used to
+ * compare two elements of @p list. If @p list or @p func are @c NULL,
+ * this function returns @c NULL.
+ *
+ * @note @b in-place: this will change the given list, so you should
+ * now point to the new list head that is returned by this function.
+ *
+ * @note worst case is O(n * log2(n)) comparisons (calls to func()),
+ * O(n) comparisons average case. That means that for 1,000,000 list
+ * elements, sort will usually do 1,000,000 comparisons, but may do up
+ * to 20,000,000.
+ *
+ * Example:
+ * @code
+ * typedef struct _Sort_Ex Sort_Ex;
+ * struct _Sort_Ex
+ * {
+ *   INLIST;
+ *   const char *text;
+ * };
+ *
+ * int
+ * sort_cb(const Inlist *l1, const Inlist *l2)
+ * {
+ *    const Sort_Ex *x1;
+ *    const Sort_Ex *x2;
+ *
+ *    x1 = EINA_INLIST_CONTAINER_GET(l1, Sort_Ex);
+ *    x2 = EINA_INLIST_CONTAINER_GET(l2, Sort_Ex);
+ *
+ *    return(strcmp(x1->text, x2->text));
+ * }
+ * extern Eina_Inlist *list;
+ *
+ * list = eina_inlist_sort(list, sort_cb);
+ * @endcode
+ */
+EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
+
 /* This two macros are helpers for the _FOREACH ones, don't use them */
 #define _EINA_INLIST_OFFSET(ref)         ((char *)&(ref)->__in_list - (char *)(ref))
 #define _EINA_INLIST_CONTAINER(ref, ptr) (void *)((char *)(ptr) - \

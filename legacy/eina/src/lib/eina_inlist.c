@@ -42,6 +42,8 @@
  * @cond LOCAL
  */
 
+#define EINA_INLIST_SORT_STACK_SIZE 32
+
 typedef struct _Eina_Iterator_Inlist Eina_Iterator_Inlist;
 typedef struct _Eina_Accessor_Inlist Eina_Accessor_Inlist;
 
@@ -139,6 +141,41 @@ eina_inlist_accessor_get_container(Eina_Accessor_Inlist *it) {
 static void
 eina_inlist_accessor_free(Eina_Accessor_Inlist *it) {
    free(it);
+}
+
+static Eina_Inlist *
+eina_inlist_sort_merge(Eina_Inlist *a, Eina_Inlist *b, Eina_Compare_Cb func)
+{
+   Eina_Inlist *first, *last;
+
+   if (func(a, b) < 0)
+      a = (last = first = a)->next;
+   else
+      b = (last = first = b)->next;
+
+   while (a && b)
+      if (func(a, b) < 0)
+         a = (last = last->next = a)->next;
+      else
+         b = (last = last->next = b)->next;
+
+   last->next = a ? a : b;
+
+   return first;
+}
+
+static Eina_Inlist *
+eina_inlist_sort_rebuild_prev(Eina_Inlist *list)
+{
+   Eina_Inlist *prev = NULL;
+
+   for (; list; list = list->next)
+     {
+        list->prev = prev;
+        prev = list;
+     }
+
+   return prev;
 }
 
 /**
@@ -383,6 +420,61 @@ eina_inlist_count(const Eina_Inlist *list)
       i++;
 
    return i;
+}
+
+EAPI Eina_Inlist *
+eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func)
+{
+  unsigned int i = 0;
+  unsigned int n = 0;
+  Eina_Inlist *tail = head;
+  Eina_Inlist *unsort = NULL;
+  Eina_Inlist *stack[EINA_INLIST_SORT_STACK_SIZE];
+
+  EINA_SAFETY_ON_NULL_RETURN_VAL(head, NULL);
+  EINA_SAFETY_ON_NULL_RETURN_VAL(func, head);
+
+  while (tail)
+    {
+      unsigned int idx, tmp;
+
+      Eina_Inlist *a = tail;
+      Eina_Inlist *b = tail->next;
+
+      if (!b)
+	{
+	  stack[i++] = a;
+	  break;
+	}
+
+      tail = b->next;
+
+      if (func(a, b) < 0)
+	((stack[i++] = a)->next = b)->next = 0;
+      else
+	((stack[i++] = b)->next = a)->next = 0;
+
+      tmp = n++;
+      for (idx = n ^ tmp; idx &= idx - 1; i--)
+	stack[i - 2] = eina_inlist_sort_merge(stack[i - 2], stack[i - 1], func);
+     }
+
+   while (i-- > 1)
+      stack[i - 1] = eina_inlist_sort_merge(stack[i - 1], stack[i], func);
+
+   head = stack[0];
+   tail = eina_inlist_sort_rebuild_prev(head);
+
+   if (unsort)
+     {
+        tail->next = unsort;
+        unsort->prev = tail;
+     }
+
+   head->last = tail;
+
+   return head;
+
 }
 
 EAPI Eina_Iterator *

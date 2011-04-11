@@ -41,3 +41,7 @@
 2011-04-06  Gustavo Sverzut Barbieri
 
 	* Add Simple XML parser API.
+
+2011-05-11  Cedric Bail
+
+	* Add eina_inlist_sort.
