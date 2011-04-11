@@ -30,6 +30,16 @@
 # include <float.h>
 #endif
 
+#ifdef HAVE_ISFINITE
+# define ECORE_FINITE(t) isfinite(t)
+#else
+# ifdef _MSC_VER
+#  define ECORE_FINITE(t) _finite(t)
+# else
+#  define ECORE_FINITE(t) finite(t)
+# endif
+#endif
+
 #define FIX_HZ 1
 
 #ifdef FIX_HZ
@@ -1079,7 +1089,7 @@ _ecore_main_select(double timeout)
 #endif
 
    t = NULL;
-   if ((!finite(timeout)) || (timeout == 0.0)) /* finite() tests for NaN, too big, too small, and infinity.  */
+   if ((!ECORE_FINITE(timeout)) || (timeout == 0.0)) /* finite() tests for NaN, too big, too small, and infinity.  */
      {
         tv.tv_sec = 0;
         tv.tv_usec = 0;

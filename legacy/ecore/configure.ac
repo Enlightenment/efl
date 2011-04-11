@@ -1001,34 +1001,56 @@ AC_ISC_POSIX
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(gettimeofday strlcpy)
 
-have_atfile_source=auto
-AC_ARG_ENABLE(atfile-source,
-        AC_HELP_STRING([--disable-atfile-source],
-                       [disable use of atfile source functions as openat and mkdirat @<:@default=detect@:>@]),
-        [have_atfile_source=$enableval], [have_atfile_source=auto])
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <math.h>
+       ]],
+       [[
+int i = isfinite(0);
+       ]])],
+   [
+    AC_DEFINE(HAVE_ISFINITE, 1, [Define to 1 if you have `isfinite', as a function or macro.])
+    have_isfinite="yes"
+   ],
+   [have_isfinite="no"])
 
-if test "x$have_atfile_source" != "xno"; then
-        AC_CHECK_FUNCS(mkdirat,
-                [
-                have_atfile_source=yes
-                AC_DEFINE(HAVE_ATFILE_SOURCE, 1, [mkdirat exists])
-                ],
-                [
-                if test "x$have_atfile_source" = "xyes"; then
-                        AC_MSG_ERROR([required atfile-source but no mkdirat()])
-                fi
-                have_atfile_source=no
-                ])
+AC_MSG_CHECKING([for isfinite])
+AC_MSG_RESULT([${have_isfinite}])
+
+have_atfile_source=auto
+AC_ARG_ENABLE([atfile-source],
+   [AC_HELP_STRING([--disable-atfile-source],
+       [disable use of atfile source functions as openat and mkdirat @<:@default=detect@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       have_atfile_source="yes"
+    else
+       have_atfile_source="no"
+    fi],
+   [have_atfile_source=auto])
+
+if ! test "x${have_atfile_source}" = "xno" ; then
+   AC_CHECK_FUNCS(mkdirat,
+      [
+       have_atfile_source="yes"
+       AC_DEFINE(HAVE_ATFILE_SOURCE, 1, [mkdirat exists])
+      ],
+      [
+       if test "x${have_atfile_source}" = "xyes" ; then
+          AC_MSG_ERROR([required atfile-source but no mkdirat()])
+       fi
+       have_atfile_source="no"
+      ])
 fi
 
 ### Checks for optionnal feature
-AC_CHECK_FUNC(mallinfo,
-	[
-	  have_mallinfo=yes
-	  AC_DEFINE(HAVE_MALLINFO, 1, [Gather memory statistic])
-	], [
-	  have_mallinfo=no
-	])
+AC_CHECK_FUNC([mallinfo],
+   [
+    have_mallinfo="yes"
+    AC_DEFINE(HAVE_MALLINFO, 1, [Gather memory statistic])
+   ],
+   [have_mallinfo="no"])
 
 ### Ecore modules
 
