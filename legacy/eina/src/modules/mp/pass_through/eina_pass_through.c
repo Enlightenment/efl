@@ -67,7 +67,8 @@ static Eina_Mempool_Backend _eina_pass_through_mp_backend = {
    &eina_pass_through_realloc,
    NULL,
    NULL,
-   &eina_pass_through_shutdown
+   &eina_pass_through_shutdown,
+   NULL
 };
 
 Eina_Bool pass_through_init(void)

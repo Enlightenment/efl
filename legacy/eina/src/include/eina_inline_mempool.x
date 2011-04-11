@@ -36,6 +36,7 @@ struct _Eina_Mempool_Backend
    void (*garbage_collect)(void *data);
    void (*statistics)(void *data);
    void (*shutdown)(void *data);
+   void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
 };
 
 struct _Eina_Mempool

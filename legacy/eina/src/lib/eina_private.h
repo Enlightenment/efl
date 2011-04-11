@@ -94,6 +94,8 @@
 #define EINA_MAGIC_SIMPLE_XML_DATA 0x98761261
 #define EINA_MAGIC_SIMPLE_XML_ATTRIBUTE 0x98761262
 
+#define EINA_MAGIC_CLASS 0x9877CB30
+
 /* undef the following, we want out version */
 #undef FREE
 #define FREE(ptr)				\

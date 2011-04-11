@@ -247,7 +247,8 @@ static Eina_Mempool_Backend _eina_fixed_bitmap_mp_backend = {
    &eina_fixed_bitmap_realloc,
    NULL,
    NULL,
-   &eina_fixed_bitmap_shutdown
+   &eina_fixed_bitmap_shutdown,
+   NULL
 };
 
 Eina_Bool fixed_bitmap_init(void)

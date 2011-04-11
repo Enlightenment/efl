@@ -153,7 +153,8 @@ static Eina_Mempool_Backend _eina_ememoa_mp_backend = {
    .alloc = &eina_ememoa_fixed_malloc,
    .free = &eina_ememoa_fixed_free,
    .garbage_collect = &eina_ememoa_fixed_gc,
-   .statistics = &eina_ememoa_fixed_statistics
+   .statistics = &eina_ememoa_fixed_statistics,
+   .repack = NULL
 };
 
 Eina_Bool ememoa_fixed_init(void)

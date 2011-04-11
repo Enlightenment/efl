@@ -269,7 +269,8 @@ static Eina_Mempool_Backend _backend = {
    NULL, /* realloc */
    NULL, /* garbage collect */
    &_statistics,
-   &_shutdown
+   &_shutdown,
+   NULL /* repack */
 };
 
 Eina_Bool buddy_init(void)

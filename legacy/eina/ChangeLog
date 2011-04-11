@@ -45,3 +45,4 @@
 2011-05-11  Cedric Bail
 
 	* Add eina_inlist_sort.
+	* Add eina_mempool_repack.

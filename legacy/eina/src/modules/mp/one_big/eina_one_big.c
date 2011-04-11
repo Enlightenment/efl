@@ -368,7 +368,8 @@ static Eina_Mempool_Backend _eina_one_big_mp_backend = {
    &eina_one_big_realloc,
    NULL,
    NULL,
-   &eina_one_big_shutdown
+   &eina_one_big_shutdown,
+   NULL
 };
 
 Eina_Bool one_big_init(void)

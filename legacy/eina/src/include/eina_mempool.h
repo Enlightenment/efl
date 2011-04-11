@@ -84,6 +84,14 @@ typedef struct _Eina_Mempool Eina_Mempool;
  */
 typedef struct _Eina_Mempool_Backend Eina_Mempool_Backend;
 
+
+/**
+ * @typedef Eina_Mempool_Repack_Cb
+ * Type for a callback who need to unreference an old object from a mempool
+ * and reference the new one instead. Memcpy is taken care by the mempool.
+ */
+typedef void (*Eina_Mempool_Repack_Cb)(void *dst, void *src, void *data);
+
 EAPI extern Eina_Error EINA_ERROR_NOT_MEMPOOL_MODULE;
 
 EAPI Eina_Mempool  *eina_mempool_add(const char *module, const char *context, const char *options, ...) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -93,6 +101,9 @@ static inline void *eina_mempool_realloc(Eina_Mempool *mp, void *element, unsign
 static inline void *eina_mempool_malloc(Eina_Mempool *mp, unsigned int size) EINA_MALLOC EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 static inline void  eina_mempool_free(Eina_Mempool *mp, void *element) EINA_ARG_NONNULL(1);
 
+EAPI void	    eina_mempool_repack(Eina_Mempool *mp,
+				        Eina_Mempool_Repack_Cb cb,
+					void *data) EINA_ARG_NONNULL(1, 2);
 EAPI void           eina_mempool_gc(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 

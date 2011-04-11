@@ -319,6 +319,14 @@ EAPI void eina_mempool_del(Eina_Mempool *mp)
    free(mp);
 }
 
+EAPI void eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN(mp);
+   EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
+   DBG("mp=%p", mp);
+   mp->backend.repack(mp->backend_data, cb, data);
+}
+
 EAPI void eina_mempool_gc(Eina_Mempool *mp)
 {
    EINA_SAFETY_ON_NULL_RETURN(mp);

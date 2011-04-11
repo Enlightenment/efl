@@ -160,7 +160,8 @@ static Eina_Mempool_Backend _eina_ememoa_unknown_mp_backend = {
    .alloc = &eina_ememoa_unknown_size_malloc,
    .free = &eina_ememoa_unknown_size_free,
    .garbage_collect = &eina_ememoa_unknown_size_gc,
-   .statistics = &eina_ememoa_unknown_size_statistics
+   .statistics = &eina_ememoa_unknown_size_statistics,
+   .repack = NULL
 };
 
 Eina_Bool ememoa_unknown_init(void)
