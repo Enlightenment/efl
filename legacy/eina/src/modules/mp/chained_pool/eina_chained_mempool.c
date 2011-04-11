@@ -262,7 +262,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 #endif
 
    // Either we have some free space in the first one, or there is no free space.
-   p = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
+   if (pool->first) p = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
 
    // base is not NULL - has a free slot
    if (p && !p->base && !p->last)
