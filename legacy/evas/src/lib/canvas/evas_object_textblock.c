@@ -1834,7 +1834,6 @@ _paragraph_clear(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
         par->lines = (Evas_Object_Textblock_Line *)eina_inlist_remove(EINA_INLIST_GET(par->lines), EINA_INLIST_GET(par->lines));
         _line_free(obj, ln);
      }
-   par->line_no = -1;
 }
 
 /**
@@ -3271,6 +3270,29 @@ _layout_visualize_par(Ctxt *c)
           }
         c->par->text_node->dirty = EINA_FALSE;
         c->par->text_node->new = EINA_FALSE;
+
+        /* Merge back and clear the paragraph */
+          {
+             Eina_List *itr, *itr_next;
+             Evas_Object_Textblock_Item *it, *prev_it = NULL;
+             _paragraph_clear(c->obj, c->par);
+             EINA_LIST_FOREACH_SAFE(c->par->logical_items, itr, itr_next, it)
+               {
+                  if (it->merge && prev_it &&
+                        (prev_it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
+                        (it->type == EVAS_TEXTBLOCK_ITEM_TEXT))
+                    {
+                       _layout_item_merge_and_free(c, _ITEM_TEXT(prev_it),
+                             _ITEM_TEXT(it));
+                       c->par->logical_items =
+                          eina_list_remove_list(c->par->logical_items, itr);
+                    }
+                  else
+                    {
+                       prev_it = it;
+                    }
+               }
+          }
      }
 
    c->y = c->par->y;
@@ -3638,37 +3660,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
           }
         o->paragraphs = c->paragraphs;
         c->par = NULL;
-     }
-
-   if (!calc_only && c->width_changed)
-     {
-        _paragraphs_clear(obj, o->paragraphs);
-        c->paragraphs = o->paragraphs;
-        /* Merge the ones that need merging. */
-        /* Go through all the paragraphs, lines, items and merge if should be
-         * merged we merge backwards!!! */
-        Evas_Object_Textblock_Paragraph *par;
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(c->paragraphs), par)
-          {
-             Eina_List *itr, *itr_next;
-             Evas_Object_Textblock_Item *it, *prev_it = NULL;
-             EINA_LIST_FOREACH_SAFE(par->logical_items, itr, itr_next, it)
-               {
-                  if (it->merge && prev_it &&
-                        (prev_it->type == EVAS_TEXTBLOCK_ITEM_TEXT) &&
-                        (it->type == EVAS_TEXTBLOCK_ITEM_TEXT))
-                    {
-                       _layout_item_merge_and_free(c, _ITEM_TEXT(prev_it),
-                             _ITEM_TEXT(it));
-                       par->logical_items =
-                          eina_list_remove_list(par->logical_items, itr);
-                    }
-                  else
-                    {
-                       prev_it = it;
-                    }
-               }
-          }
      }
 
    c->paragraphs = o->paragraphs;
