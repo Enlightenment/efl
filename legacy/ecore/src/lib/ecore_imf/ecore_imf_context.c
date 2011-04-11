@@ -51,16 +51,16 @@ ecore_imf_context_available_ids_by_canvas_type_get(const char *canvas_type)
 static int
 _ecore_imf_context_match_locale(const char *locale, const char *against, int against_len)
 {
-  if (strcmp(against, "*") == 0)
-    return 1;
+   if (strcmp(against, "*") == 0)
+     return 1;
 
-  if (strcasecmp(locale, against) == 0)
-    return 4;
+   if (strcasecmp(locale, against) == 0)
+     return 4;
 
-  if (strncasecmp(locale, against, 2) == 0)
-    return (against_len == 2) ? 3 : 2;
+   if (strncasecmp(locale, against, 2) == 0)
+     return (against_len == 2) ? 3 : 2;
 
-  return 0;
+   return 0;
 }
 
 /**
@@ -122,13 +122,13 @@ ecore_imf_context_default_id_by_canvas_type_get(const char *canvas_type)
              const char *q = strchr(p, ':');
              int goodness = _ecore_imf_context_match_locale(locale, p, q ? (size_t)(q - p) : strlen (p));
 
-              if (goodness > best_goodness)
-                {
-                   id = module->info->id;
-                   best_goodness = goodness;
-                }
+             if (goodness > best_goodness)
+               {
+                  id = module->info->id;
+                  best_goodness = goodness;
+               }
 
-              p = q ? q + 1 : NULL;
+             p = q ? q + 1 : NULL;
           }
      }
 
@@ -859,7 +859,7 @@ _ecore_imf_event_free_delete_surrounding(void *data __UNUSED__, void *event)
 /**
  * Adds ECORE_IMF_EVENT_DELETE_SURROUNDING to the event queue.
  *
- * Asks the widget that the input context is attached to to delete characters around the cursor position 
+ * Asks the widget that the input context is attached to to delete characters around the cursor position
  * by adding the ECORE_IMF_EVENT_DELETE_SURROUNDING to the event queue.
  * Note that offset and n_chars are in characters not in bytes.
  *

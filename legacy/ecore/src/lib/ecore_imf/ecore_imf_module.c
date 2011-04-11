@@ -18,8 +18,8 @@ static int _ecore_imf_modules_exists(const char *ctx_id);
 
 typedef struct _Ecore_IMF_Selector
 {
-  const char *toselect;
-  void       *selected;
+   const char *toselect;
+   void       *selected;
 } Ecore_IMF_Selector;
 
 static Eina_Hash *modules = NULL;
@@ -58,8 +58,8 @@ ecore_imf_module_shutdown(void)
 static Eina_Bool
 _hash_module_available_get(const Eina_Hash *hash __UNUSED__, int *data, void *list)
 {
-  *(Eina_List**)list = eina_list_append(*(Eina_List**)list, data);
-  return EINA_TRUE;
+   *(Eina_List**)list = eina_list_append(*(Eina_List**)list, data);
+   return EINA_TRUE;
 }
 
 Eina_List *
@@ -72,7 +72,7 @@ ecore_imf_module_available_get(void)
 
    it = eina_hash_iterator_data_new(modules);
    if (!it)
-       return NULL;
+     return NULL;
 
    eina_iterator_foreach(it, EINA_EACH_CB(_hash_module_available_get), &values);
    eina_iterator_free(it);
@@ -112,8 +112,8 @@ ecore_imf_module_context_create(const char *ctx_id)
 static Eina_Bool
 _hash_ids_get(const Eina_Hash *hash __UNUSED__, const char *key, void *list)
 {
-  *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
-  return EINA_TRUE;
+   *(Eina_List**)list = eina_list_append(*(Eina_List**)list, key);
+   return EINA_TRUE;
 }
 
 Eina_List *
@@ -126,7 +126,7 @@ ecore_imf_module_context_ids_get(void)
 
    it = eina_hash_iterator_key_new(modules);
    if (!it)
-       return NULL;
+     return NULL;
 
    eina_iterator_foreach(it, EINA_EACH_CB(_hash_ids_get), &l);
    eina_iterator_free(it);
@@ -160,7 +160,7 @@ ecore_imf_module_context_ids_by_canvas_type_get(const char *canvas_type)
 
    it = eina_hash_iterator_data_new(modules);
    if (!it)
-       return NULL;
+     return NULL;
 
    selector.toselect = canvas_type;
    selector.selected = values;
