@@ -913,6 +913,8 @@ struct _Evas_Mempool
   
 #define EVAS_API_OVERRIDE(func, api, prefix) \
      (api)->func = prefix##func
+#define EVAS_API_RESET(func, api) \
+     (api)->func = NULL
 
 #include "evas_inline.x"
 
