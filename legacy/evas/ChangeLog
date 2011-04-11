@@ -228,3 +228,8 @@
 	  changed. This means we are a lot faster than before, especially with
 	  long texts.
 
+2011-04-11  Carsten Haitzler (The Rasterman)
+
+	* Feature: Text & Textblock - Add 8 explicit shadow directions for
+        text style effects.
+
