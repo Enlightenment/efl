@@ -1063,6 +1063,12 @@ parse_float_range(int n, double f, double t)
    return i;
 }
 
+int
+get_arg_count(void)
+{
+   return eina_list_count (params);
+}
+
 void
 check_arg_count(int required_args)
 {

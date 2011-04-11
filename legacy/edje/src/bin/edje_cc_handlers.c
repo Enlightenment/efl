@@ -2639,6 +2639,7 @@ st_collections_group_parts_part_source6(void)
         effect
     @parameters
         [EFFECT]
+        (optional) [SHADOW DIRECTION]
     @effect
         Causes Edje to draw the selected effect among:
         @li PLAIN
@@ -2651,6 +2652,16 @@ st_collections_group_parts_part_source6(void)
         @li FAR_SHADOW
         @li FAR_SOFT_SHADOW
         @li GLOW
+
+        Shadow directions (default if not given is BOTTOM_RIGHT):
+        @li BOTTOM_RIGHT
+        @li BOTTOM
+        @li BOTTOM_LEFT
+        @li LEFT
+        @li TOP_LEFT
+        @li TOP
+        @li TOP_RIGHT
+        @li RIGHT
     @endproperty
 */
 static void
@@ -2659,7 +2670,7 @@ st_collections_group_parts_part_effect(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
 
-   check_arg_count(1);
+   check_min_arg_count(1);
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = pc->parts[pc->parts_count - 1];
@@ -2676,6 +2687,22 @@ st_collections_group_parts_part_effect(void)
                "FAR_SOFT_SHADOW", EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW,
                "GLOW", EDJE_TEXT_EFFECT_GLOW,
                NULL);
+   if (get_arg_count() >= 2)
+     {
+        unsigned char shadow;
+        
+        shadow = parse_enum(1,
+               "BOTTOM_RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT,
+               "BOTTOM", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM,
+               "BOTTOM_LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT,
+               "LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT,
+               "TOP_LEFT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT,
+               "TOP", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP,
+               "TOP_RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT,
+               "RIGHT", EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT,
+               NULL);
+        EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(ep->effect, shadow);
+     }
 }
 
 /**

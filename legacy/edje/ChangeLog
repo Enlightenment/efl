@@ -75,3 +75,8 @@
 
 	* text.align (only the vertical part) now works for textblock.
 
+2011-04-1  Carsten Haitzler (The Rasterman)
+
+	* Add Feature: Support explicit shadow direction with extra effect
+        param (optional). Default as before.
+

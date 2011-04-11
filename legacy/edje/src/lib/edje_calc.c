@@ -1030,7 +1030,9 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 	    (chosen_desc->text.max_x) || (chosen_desc->text.max_y))
 	  {
 	     int mw, mh;
-	     Evas_Text_Style_Type style;
+	     Evas_Text_Style_Type 
+                style = EVAS_TEXT_STYLE_PLAIN, 
+                shadow = EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT;
 	     const Evas_Text_Style_Type styles[] = {
 		EVAS_TEXT_STYLE_PLAIN,
 		EVAS_TEXT_STYLE_PLAIN,
@@ -1044,12 +1046,24 @@ _edje_part_recalc_single_text(FLOAT_T sc,
 		EVAS_TEXT_STYLE_FAR_SOFT_SHADOW,
 		EVAS_TEXT_STYLE_GLOW
 	     };
+	     const Evas_Text_Style_Type shadows[] = {
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_RIGHT,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_LEFT,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT,
+                EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT
+             };
 
-	     if (ep->part->effect < EDJE_TEXT_EFFECT_LAST)
+	     if ((ep->part->effect & EVAS_TEXT_STYLE_MASK_BASIC) 
+                 < EDJE_TEXT_EFFECT_LAST)
 	       style = styles[ep->part->effect];
-	     else
-	       style = EVAS_TEXT_STYLE_PLAIN;
-
+             shadow = shadows
+                [(ep->part->effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) >> 4];
+             EVAS_TEXT_STYLE_SHADOW_DIRECTION_SET(style, shadow);
+             
 	     evas_object_text_style_set(ep->object, style);
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
