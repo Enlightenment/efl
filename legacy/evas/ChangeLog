@@ -228,6 +228,12 @@
 	  changed. This means we are a lot faster than before, especially with
 	  long texts.
 
+2011-04-10 Tom Hacohen (TAsn)
+
+	* Textblock: Fixed a bug in evas_object_textblock_text_markup_prepend
+	  that cusaed it to use the object's cursor instead of the cursor
+	  passed.
+
 2011-04-11  Carsten Haitzler (The Rasterman)
 
 	* Feature: Text & Textblock - Add 8 explicit shadow directions for
