@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
--DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)\" \
+-DPKG_DATA_DIR=\"$(pkgdatadir)\" \
 @EFREET_CFLAGS@
 
 bin_PROGRAMS = \

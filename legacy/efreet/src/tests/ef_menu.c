@@ -32,7 +32,7 @@ ef_cb_menu_get(void)
     Efreet_Menu *menu;
 
     menu = efreet_menu_get();
-//    menu = efreet_menu_parse(PACKAGE_DATA_DIR"/test/test.menu");
+//    menu = efreet_menu_parse(PKG_DATA_DIR"/test/test.menu");
     if (!menu)
     {
         printf("efreet_menu_get() returned NULL\n");
@@ -50,7 +50,7 @@ ef_cb_menu_with_slashes(void)
 {
     Efreet_Menu *menu;
 
-    menu = efreet_menu_parse(PACKAGE_DATA_DIR"/test/test_menu_slash_bad.menu");
+    menu = efreet_menu_parse(PKG_DATA_DIR"/test/test_menu_slash_bad.menu");
     if (menu)
     {
         printf("efreet_menu_get() didn't return NULL\n");
@@ -67,7 +67,7 @@ ef_cb_menu_save(void)
     int ret;
 
 //    menu = efreet_menu_get();
-    menu = efreet_menu_parse(PACKAGE_DATA_DIR"/test/test.menu");
+    menu = efreet_menu_parse(PKG_DATA_DIR"/test/test.menu");
     if (!menu)
     {
         printf("efreet_menu_get() returned NULL\n");
@@ -86,7 +86,7 @@ ef_cb_menu_edit(void)
     Efreet_Desktop *desktop;
 
 //    menu = efreet_menu_get();
-    menu = efreet_menu_parse(PACKAGE_DATA_DIR"/test/test.menu");
+    menu = efreet_menu_parse(PKG_DATA_DIR"/test/test.menu");
     if (!menu)
     {
         printf("efreet_menu_get() returned NULL\n");
@@ -98,7 +98,7 @@ ef_cb_menu_edit(void)
     printf("\n");
 #endif
 
-    desktop = efreet_desktop_get(PACKAGE_DATA_DIR"/test/test.desktop");
+    desktop = efreet_desktop_get(PKG_DATA_DIR"/test/test.desktop");
     if (!desktop)
     {
         efreet_menu_free(menu);
