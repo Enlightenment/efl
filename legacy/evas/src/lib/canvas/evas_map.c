@@ -61,12 +61,21 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
                        ch = 1;
                        break;
                     }
+                  if ((p->x != p2->x) ||
+                      (p->y != p2->y) ||
+                      (p->z != p2->z))
+                    {
+                       ch = 1;
+                       break;
+                    }
                }
           }
         else
            ch = 1;
      }
-
+   else
+      ch = 1;
+   
    p = obj->cur.map->points;
    p_end = p + obj->cur.map->count;
    x1 = p->x;
