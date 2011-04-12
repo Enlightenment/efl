@@ -1,4 +1,7 @@
 #include "Efreet.h"
+/* no logging */
+#define EFREET_MODULE_LOG_DOM
+#include "efreet_private.h"
 #include "Efreet_Mime.h"
 #include "config.h"
 #include <Ecore.h>
@@ -132,6 +135,7 @@ main(int argc, char ** argv)
         }
     }
 
+    efreet_cache_update = 0;
     environment_store();
     for (i = 0; tests[i].name; i++)
     {
