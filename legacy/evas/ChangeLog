@@ -239,3 +239,10 @@
 	* Feature: Text & Textblock - Add 8 explicit shadow directions for
         text style effects.
 
+2011-04-12 Myoungwoon Roy Kim (roy_kim)
+
+	* Font-engine: Added runtime italic (actually slanting) and
+	  emboldening. - Automatically slants/emboldens a font at runtime if
+	  italic/bold/crusiva and etc are requested but not found in the
+	  system.
+

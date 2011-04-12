@@ -673,27 +673,30 @@ eng_image_cache_get(void *data __UNUSED__)
 }
 
 static void *
-eng_font_load(void *data __UNUSED__, const char *name, int size)
+eng_font_load(void *data __UNUSED__, const char *name, int size,
+      Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_load(name, size);
+   return evas_common_font_load(name, size, wanted_rend);
 }
 
 static void *
-eng_font_memory_load(void *data __UNUSED__, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_load(void *data __UNUSED__, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_memory_load(name, size, fdata, fdata_size);
+   return evas_common_font_memory_load(name, size, fdata, fdata_size,
+         wanted_rend);
 }
 
 static void *
-eng_font_add(void *data __UNUSED__, void *font, const char *name, int size)
+eng_font_add(void *data __UNUSED__, void *font, const char *name, int size, Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_add(font, name, size);
+   return evas_common_font_add(font, name, size, wanted_rend);
 }
 
 static void *
-eng_font_memory_add(void *data __UNUSED__, void *font, char *name, int size, const void *fdata, int fdata_size)
+eng_font_memory_add(void *data __UNUSED__, void *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
 {
-   return evas_common_font_memory_add(font, name, size, fdata, fdata_size);
+   return evas_common_font_memory_add(font, name, size, fdata, fdata_size,
+         wanted_rend);
 }
 
 static void

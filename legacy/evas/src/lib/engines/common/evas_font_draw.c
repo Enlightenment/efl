@@ -7,9 +7,12 @@
 
 #include "evas_font_ot.h"
 
+#include FT_OUTLINE_H
+
 #define WORD_CACHE_MAXLEN	50
 /* How many to cache */
 #define WORD_CACHE_NWORDS 40
+
 static int max_cached_words = WORD_CACHE_NWORDS;
 
 struct prword 
@@ -201,6 +204,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    int size;
    const FT_Int32 hintflags[3] =
      { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
+   static FT_Matrix transform = {0x10000, 0x05000, 0x0000, 0x10000}; // about 12 degree.
 
    evas_common_font_int_promote(fi);
    if (fi->fash)
@@ -217,9 +221,9 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    evas_common_font_int_reload(fi);
    FTLOCK();
-//   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
    error = FT_Load_Glyph(fi->src->ft.face, index,
-			 FT_LOAD_RENDER | hintflags[fi->hinting]);
+                         FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP |
+                         hintflags[fi->hinting]);
    FTUNLOCK();
    if (error)
      {
@@ -227,6 +231,14 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
         if (fi->fash) _fash_gl_add(fi->fash, index, (void *)(-1));
         return NULL;
      }
+
+   /* Transform the outline of Glyph according to runtime_rend. */
+   if (fi->runtime_rend & FONT_REND_ITALIC)
+      FT_Outline_Transform(&fi->src->ft.face->glyph->outline, &transform);
+   /* Embolden the outline of Glyph according to rundtime_rend. */
+   if (fi->runtime_rend & FONT_REND_BOLD)
+      FT_Outline_Embolden(&fi->src->ft.face->glyph->outline,
+            (fi->src->ft.face->size->metrics.x_ppem * 5 * 64) / 100);
 
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
    if (!fg) return NULL;

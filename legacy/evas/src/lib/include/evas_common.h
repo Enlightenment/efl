@@ -510,6 +510,13 @@ typedef enum _Font_Hint_Flags
    FONT_BYTECODE_HINT
 } Font_Hint_Flags;
 
+typedef enum _Font_Rend_Flags
+{
+   FONT_REND_REGULAR   = 0,
+   FONT_REND_ITALIC    = (1 << 0),
+   FONT_REND_BOLD      = (1 << 1),
+} Font_Rend_Flags;
+
 /*****************************************************************************/
 
 struct _RGBA_Image_Loadopts
@@ -901,6 +908,9 @@ struct _RGBA_Font_Int
    } ft;
    LK(ft_mutex);
    Font_Hint_Flags  hinting;
+   Font_Rend_Flags  wanted_rend; /* The wanted rendering style */
+   Font_Rend_Flags  runtime_rend; /* The rendering we need to do on runtime
+                                     in order to comply with the wanted_rend. */
    unsigned char    sizeok : 1;
    unsigned char    inuse : 1;
 };

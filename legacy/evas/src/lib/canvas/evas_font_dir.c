@@ -26,11 +26,12 @@ typedef struct _Fndat Fndat;
 
 struct _Fndat
 {
-   const char *name;
-   const char *source;
-   int         size;
-   void       *font;
-   int         ref;
+   const char      *name;
+   const char      *source;
+   int              size;
+   void            *font;
+   int              ref;
+   Font_Rend_Flags  wanted_rend;
 
 #ifdef HAVE_FONTCONFIG
    FcFontSet *set;
@@ -230,7 +231,8 @@ evas_font_init(void)
 
 #ifdef HAVE_FONTCONFIG
 static void *
-evas_load_fontconfig(Evas *evas, FcFontSet *set, int size)
+evas_load_fontconfig(Evas *evas, FcFontSet *set, int size,
+      Font_Rend_Flags wanted_rend)
 {
    void *font = NULL;
    int i;
@@ -243,9 +245,9 @@ evas_load_fontconfig(Evas *evas, FcFontSet *set, int size)
 	FcPatternGet(set->fonts[i], FC_FILE, 0, &filename);
 
 	if (font)
-	  evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size);
+	  evas->engine.func->font_add(evas->engine.data.output, font, (char *)filename.u.s, size, wanted_rend);
 	else
-	  font = evas->engine.func->font_load(evas->engine.data.output, (char *)filename.u.s, size);
+	  font = evas->engine.func->font_load(evas->engine.data.output, (char *)filename.u.s, size, wanted_rend);
      }
 
    return font;
@@ -271,6 +273,12 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    Eina_List *fonts, *l;
    Fndat *fd;
    char *nm;
+   Font_Rend_Flags wanted_rend = 0;
+
+   if (evas_common_text_font_style_match(name, "Italic"))
+      wanted_rend |= FONT_REND_ITALIC;
+   if (evas_common_text_font_style_match(name, "Bold"))
+      wanted_rend |= FONT_REND_BOLD;
 
    if (!name) return NULL;
    if (name[0] == 0) return NULL;
@@ -284,7 +292,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	     if (((!source) && (!fd->source)) ||
 		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
 	       {
-		  if (size == fd->size)
+		  if ((size == fd->size) && (wanted_rend = fd->wanted_rend))
 		    {
 		       fonts_cache = eina_list_promote_list(fonts_cache, l);
 		       fd->ref++;
@@ -293,7 +301,8 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 #ifdef HAVE_FONTCONFIG
 		  else if (fd->set && fd->p_nm)
 		    {
-		       font = evas_load_fontconfig(evas, fd->set, size);
+		       font = evas_load_fontconfig(evas, fd->set, size,
+                             wanted_rend);
 		       goto on_find;
 		    }
 #endif
@@ -308,7 +317,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	     if (((!source) && (!fd->source)) ||
 		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
 	       {
-		  if (size == fd->size)
+		  if ((size == fd->size) && (wanted_rend = fd->wanted_rend))
 		    {
 		       fonts_zero = eina_list_remove_list(fonts_zero, l);
 		       fonts_cache = eina_list_prepend(fonts_cache, fd);
@@ -318,13 +327,15 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 #ifdef HAVE_FONTCONFIG
 		  else if (fd->set && fd->p_nm)
 		    {
-		       font = evas_load_fontconfig(evas, fd->set, size);
+		       font = evas_load_fontconfig(evas, fd->set, size,
+                             wanted_rend);
 		       goto on_find;
 		    }
 #endif
 	       }
 	  }
      }
+
    fonts = evas_font_set_get(name);
    EINA_LIST_FOREACH(fonts, l, nm) /* Load each font in append */
      {
@@ -339,7 +350,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		  fake_name = evas_file_path_join(source, nm);
 		  if (fake_name)
 		    {
-		       font = evas->engine.func->font_load(evas->engine.data.output, fake_name, size);
+		       font = evas->engine.func->font_load(evas->engine.data.output, fake_name, size, wanted_rend);
 		       if (!font) /* Load from fake name failed, probably not cached */
 			 {
 			    /* read original!!! */
@@ -352,7 +363,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 				 fdata = eet_read(ef, nm, &fsize);
 				 if ((fdata) && (fsize > 0))
 				   {
-				      font = evas->engine.func->font_memory_load(evas->engine.data.output, fake_name, size, fdata, fsize);
+				      font = evas->engine.func->font_memory_load(evas->engine.data.output, fake_name, size, fdata, fsize, wanted_rend);
 				      free(fdata);
 				   }
 				 eet_close(ef);
@@ -365,7 +376,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	       {
 #endif
 		  if (evas_file_path_is_full_path((char *)nm)) /* Try filename */
-		    font = evas->engine.func->font_load(evas->engine.data.output, (char *)nm, size);
+		    font = evas->engine.func->font_load(evas->engine.data.output, (char *)nm, size, wanted_rend);
 		  else /* search font path */
 		    {
 		       Eina_List *l;
@@ -378,7 +389,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 			    f_file = evas_font_dir_cache_find(dir, (char *)nm);
 			    if (f_file)
 			      {
-				 font = evas->engine.func->font_load(evas->engine.data.output, f_file, size);
+				 font = evas->engine.func->font_load(evas->engine.data.output, f_file, size, wanted_rend);
 				 if (font) break;
 			      }
 			 }
@@ -401,7 +412,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 		  if (fake_name)
 		    {
 		       /* FIXME: make an engine func */
-		       if (!evas->engine.func->font_add(evas->engine.data.output, font, fake_name, size))
+		       if (!evas->engine.func->font_add(evas->engine.data.output, font, fake_name, size, wanted_rend))
 			 {
 			    /* read original!!! */
 			    ef = eet_open(source, EET_FILE_MODE_READ);
@@ -413,7 +424,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 				 fdata = eet_read(ef, nm, &fsize);
 				 if ((fdata) && (fsize > 0))
 				   {
-				      ok = evas->engine.func->font_memory_add(evas->engine.data.output, font, fake_name, size, fdata, fsize);
+				      ok = evas->engine.func->font_memory_add(evas->engine.data.output, font, fake_name, size, fdata, fsize, wanted_rend);
 				      free(fdata);
 				   }
 				 eet_close(ef);
@@ -428,7 +439,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	       {
 #endif
 		  if (evas_file_path_is_full_path((char *)nm))
-		    evas->engine.func->font_add(evas->engine.data.output, font, (char *)nm, size);
+		    evas->engine.func->font_add(evas->engine.data.output, font, (char *)nm, size, wanted_rend);
 		  else
 		    {
 		       Eina_List *l;
@@ -441,7 +452,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 			    f_file = evas_font_dir_cache_find(dir, (char *)nm);
 			    if (f_file)
 			      {
-				 if (evas->engine.func->font_add(evas->engine.data.output, font, f_file, size))
+				 if (evas->engine.func->font_add(evas->engine.data.output, font, f_file, size, wanted_rend))
 				   break;
 			      }
 			 }
@@ -479,7 +490,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
              // to FcTrue...
              //  ok - not a bugfix... but there is something going on somewhere that's wierd?
 //             FcPatternReference(p_nm); /* we have to reference count the pat */
-             font = evas_load_fontconfig(evas, set, size);
+             font = evas_load_fontconfig(evas, set, size, wanted_rend);
           }
      }
 #endif
@@ -492,6 +503,7 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	if (source) fd->source = eina_stringshare_add(source);
 	fd->size = size;
 	fd->font = font;
+        fd->wanted_rend = wanted_rend;
 	fd->ref = 1;
 	fonts_cache = eina_list_prepend(fonts_cache, fd);
 #ifdef HAVE_FONTCONFIG
