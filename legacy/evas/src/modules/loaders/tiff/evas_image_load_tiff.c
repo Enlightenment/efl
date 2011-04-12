@@ -40,98 +40,11 @@ typedef struct TIFFRGBAImage_Extra TIFFRGBAImage_Extra;
 
 struct TIFFRGBAImage_Extra {
    TIFFRGBAImage       rgba;
-   tileContigRoutine   put_contig;
-   tileSeparateRoutine put_separate;
    Image_Entry        *image;
    char                pper;
    uint32              num_pixels;
    uint32              py;
 };
-
-static void put_contig_and_raster(TIFFRGBAImage *, uint32 *,
-                                  uint32, uint32, uint32, uint32, int32,
-                                  int32, unsigned char *);
-static void put_separate_and_raster(TIFFRGBAImage *, uint32 *, uint32,
-                                    uint32, uint32, uint32, int32,
-                                    int32, unsigned char *,
-                                    unsigned char *, unsigned char *,
-                                    unsigned char *);
-static void raster(TIFFRGBAImage_Extra * img, uint32 * raster, uint32 x,
-                   uint32 y, uint32 w, uint32 h);
-
-
-static void
-put_contig_and_raster(TIFFRGBAImage * img, uint32 * rast,
-                      uint32 x, uint32 y, uint32 w, uint32 h,
-                      int32 fromskew, int32 toskew, unsigned char *cp)
-{
-   (*(((TIFFRGBAImage_Extra *) img)->put_contig)) (img, rast, x, y, w, h,
-                                                   fromskew, toskew, cp);
-   raster((TIFFRGBAImage_Extra *) img, rast, x, y, w, h);
-}
-
-static void
-put_separate_and_raster(TIFFRGBAImage * img, uint32 * rast,
-                        uint32 x, uint32 y, uint32 w, uint32 h,
-                        int32 fromskew, int32 toskew,
-                        unsigned char *r, unsigned char *g, unsigned char *b,
-                        unsigned char *a)
-{
-   (*(((TIFFRGBAImage_Extra *) img)->put_separate))
-       (img, rast, x, y, w, h, fromskew, toskew, r, g, b, a);
-   raster((TIFFRGBAImage_Extra *) img, rast, x, y, w, h);
-}
-
-/* needs orientation code */
-
-static void
-raster(TIFFRGBAImage_Extra * img, uint32 * rast,
-       uint32 x, uint32 y, uint32 w, uint32 h)
-{
-   unsigned int        image_width, image_height;
-   uint32             *pixel, pixel_value;
-   int                 i, dy, rast_offset;
-   DATA32             *buffer_pixel, *buffer = evas_cache_image_pixels(img->image);
-   int                 alpha_premult = 0;
-
-   image_width = img->image->w;
-   image_height = img->image->h;
-
-   dy = h > y ? -1 : ((int)y - (int)h);
-
-   /* rast seems to point to the beginning of the last strip processed */
-   /* so you need use negative offsets. Bizzare. Someone please check this */
-   /* I don't understand why, but that seems to be what's going on. */
-   /* libtiff needs better docs! */
-
-   if (img->rgba.alpha == EXTRASAMPLE_UNASSALPHA)
-     alpha_premult = 1;
-   for (i = y, rast_offset = 0; i > dy; i--, rast_offset--)
-     {
-        unsigned int j;
-
-        pixel = rast + (rast_offset * image_width);
-        buffer_pixel = buffer + ((((image_height - 1) - i) * image_width) + x);
-
-        for (j = 0; j < w; j++)
-          {
-	     unsigned int a, r, g, b;
-
-             pixel_value = (*(pixel++));
-	     a = TIFFGetA(pixel_value);
-	     r = TIFFGetR(pixel_value);
-	     g = TIFFGetG(pixel_value);
-	     b = TIFFGetB(pixel_value);
-	     if (!alpha_premult && (a < 255))
-	       {
-		  r = (r * (a + 1)) >> 8;
-		  g = (g * (a + 1)) >> 8;
-		  b = (b * (a + 1)) >> 8;
-	       }
-             (*(buffer_pixel++)) = ARGB_JOIN(a, r, g, b);
-          }
-     }
-}
 
 static Eina_Bool
 evas_image_load_file_head_tiff(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
@@ -225,7 +138,7 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    FILE               *ffile;
    uint32             *rast = NULL;
    uint32              num_pixels;
-   int                 fd;
+   int                 fd, x, y;
    uint16              magic_number;
 
    ffile = fopen(file, "rb");
@@ -313,33 +226,6 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	return EINA_FALSE;
      }
-
-   if (!rgba_image.rgba.put.any)
-     {
-	ERR("Evas Tiff loader: no put function");
-
-        _TIFFfree(rast);
-        TIFFRGBAImageEnd((TIFFRGBAImage *) & rgba_image);
-        TIFFClose(tif);
-
-	*error = EVAS_LOAD_ERROR_GENERIC;
-	return EINA_FALSE;
-     }
-   else
-     {
-       if (rgba_image.rgba.isContig)
-         {
-            rgba_image.put_contig = rgba_image.rgba.put.contig;
-            rgba_image.rgba.put.contig = put_contig_and_raster;
-         }
-       else
-         {
-            rgba_image.put_separate = rgba_image.rgba.put.separate;
-            rgba_image.rgba.put.separate = put_separate_and_raster;
-         }
-     }
-
-   /*	if (rgba_image.rgba.samplesperpixel == 8)*/
    if (rgba_image.rgba.bitspersample == 8)
      {
         if (!TIFFRGBAImageGet((TIFFRGBAImage *) &rgba_image, rast,
@@ -355,6 +241,36 @@ evas_image_load_file_data_tiff(Image_Entry *ie, const char *file, const char *ke
    else
      {
         INF("channel bits == %i", (int)rgba_image.rgba.samplesperpixel);
+     }
+   /* process rast -> image rgba. really same as prior code anyway just simpler */
+   for (y = 0; y < (int)ie->h; y++)
+     {
+        DATA32 *pix, *pd;
+        uint32 *ps, pixel;
+        unsigned int a, r, g, b;
+        
+        pix = evas_cache_image_pixels(ie);
+        pd = pix + ((ie->h - y - 1) * ie->w);
+        ps = rast + (y * ie->w);
+        for (x = 0; x < (int)ie->w; x++)
+          {
+             pixel = *ps;
+             a = TIFFGetA(pixel);
+             r = TIFFGetR(pixel);
+             g = TIFFGetG(pixel);
+             b = TIFFGetB(pixel);
+             if (!ie->flags.alpha) a = 255;
+             if ((rgba_image.rgba.alpha == EXTRASAMPLE_UNASSALPHA) &&
+                 (a < 255))
+               {
+                  r = (r * (a + 1)) >> 8;
+                  g = (g * (a + 1)) >> 8;
+                  b = (b * (a + 1)) >> 8;
+               }
+             *pd = ARGB_JOIN(a, r, g, b);
+             ps++;
+             pd++;
+          }
      }
 
    _TIFFfree(rast);
