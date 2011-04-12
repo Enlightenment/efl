@@ -131,15 +131,15 @@ efreet_cache_init(void)
     fallbacks = eina_hash_string_superfast_new(EINA_FREE_CB(efreet_cache_icon_fallback_free));
     desktops = eina_hash_string_superfast_new(NULL);
 
-    snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
-    if (!ecore_file_exists(buf))
-    {
-        if (!ecore_file_mkpath(buf)) goto error;
-        efreet_setowner(buf);
-    }
-
     if (efreet_cache_update)
     {
+        snprintf(buf, sizeof(buf), "%s/efreet", efreet_cache_home_get());
+        if (!ecore_file_exists(buf))
+        {
+            if (!ecore_file_mkpath(buf)) goto error;
+            efreet_setowner(buf);
+        }
+
         cache_exe_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                     cache_exe_cb, NULL);
         if (!cache_exe_handler) goto error;
