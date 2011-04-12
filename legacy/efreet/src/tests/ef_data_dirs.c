@@ -4,6 +4,58 @@
 #include <stdlib.h>
 
 int
+ef_cb_efreet_data_home(void)
+{
+    const char *tmp;
+    int ret = 1;
+
+    efreet_shutdown();
+    setenv("XDG_DATA_HOME", "/var/tmp", 1);
+    efreet_init();
+
+    tmp = efreet_data_home_get();
+    if (strcmp(tmp, "/var/tmp"))
+    {
+        printf("efreet_data_home_get() returned incorrect "
+                "value (%s) on XDG_DATA_HOME=/var/tmp\n", tmp);
+        ret = 0;
+    }
+
+    /* reset efreet here so we can set a new home dir */
+    efreet_shutdown();
+    unsetenv("XDG_DATA_HOME");
+    setenv("HOME", "/home/tmp", 1);
+    efreet_init();
+
+    tmp = efreet_data_home_get();
+    if (strcmp(tmp, "/home/tmp/.local/share"))
+    {
+        printf("efreet_data_home_get() returned incorrect "
+                "value (%s) on blank XDG_DATA_HOME\n", tmp);
+        ret = 0;
+    }
+
+    /* reset efreet here so we can set a new home dir */
+    efreet_shutdown();
+    unsetenv("XDG_DATA_HOME");
+    unsetenv("HOME");
+#ifdef _WIN32
+    unsetenv("USERPROFILE");
+#endif
+    efreet_init();
+
+    tmp = efreet_data_home_get();
+    if (strcmp(tmp, "/tmp/.local/share"))
+    {
+        printf("efreet_data_home_get() returned incorrect "
+                "value (%s) on blank XDG_DATA_HOME and blank HOME\n", tmp);
+        ret = 0;
+    }
+
+    return ret;
+}
+
+int
 ef_cb_efreet_config_home(void)
 {
     const char *tmp;

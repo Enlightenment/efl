@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+int ef_cb_efreet_data_home(void);
 int ef_cb_efreet_config_home(void);
 int ef_cb_efreet_cache_home(void);
 int ef_cb_efreet_data_dirs(void);
@@ -46,6 +47,7 @@ struct Efreet_Test
 };
 
 static Efreet_Test tests[] = {
+    {"Data Home", ef_cb_efreet_data_home},
     {"Config Home", ef_cb_efreet_config_home},
     {"Cache Home", ef_cb_efreet_cache_home},
     {"Data Directories", ef_cb_efreet_data_dirs},
