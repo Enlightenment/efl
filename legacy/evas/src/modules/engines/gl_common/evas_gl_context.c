@@ -557,10 +557,12 @@ evas_gl_common_context_new(void)
                       &(shared->info.max_texture_units));
         glGetIntegerv(GL_MAX_TEXTURE_SIZE,
                       &(shared->info.max_texture_size));
-        shared->info.max_vertex_elements = 6 * 10000;
+        shared->info.max_vertex_elements = 6 * 100000;
 #ifdef GL_MAX_ELEMENTS_VERTICES
+/* only applies to glDrawRangeElements. don't really need to get it.
         glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,
                       &(shared->info.max_vertex_elements));
+ */
 #endif
         s = getenv("EVAS_GL_VERTEX_MAX");
         if (s) shared->info.max_vertex_elements = atoi(s);
