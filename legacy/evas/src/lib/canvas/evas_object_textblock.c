@@ -3725,6 +3725,8 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
 
    /* Start of visual layout creation */
    {
+      Evas_Object_Textblock_Paragraph *last_vis_par = NULL;
+
       EINA_INLIST_FOREACH(c->paragraphs, c->par)
         {
            _layout_update_par(c);
@@ -3732,18 +3734,31 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
            /* Break if we should stop here. */
            if (_layout_visualize_par(c))
              {
-                /* Mark all the rest of the paragraphs as invisible */
-                c->par = (Evas_Object_Textblock_Paragraph *)
-                   EINA_INLIST_GET(c->par)->next;
-                while (c->par)
-                  {
-                     c->par->visible = 0;
-                     c->par = (Evas_Object_Textblock_Paragraph *)
-                        EINA_INLIST_GET(c->par)->next;
-                  }
+                last_vis_par = c->par;
                 break;
              }
         }
+
+      /* Mark all the rest of the paragraphs as invisible */
+      if (c->par)
+        {
+           c->par = (Evas_Object_Textblock_Paragraph *)
+              EINA_INLIST_GET(c->par)->next;
+           while (c->par)
+             {
+                c->par->visible = 0;
+                c->par = (Evas_Object_Textblock_Paragraph *)
+                   EINA_INLIST_GET(c->par)->next;
+             }
+        }
+
+      /* Get the last visible paragraph in the layout */
+      if (!last_vis_par && c->paragraphs)
+         last_vis_par = (Evas_Object_Textblock_Paragraph *)
+            EINA_INLIST_GET(c->paragraphs)->last;
+
+      if (last_vis_par)
+         c->hmax = last_vis_par->y + last_vis_par->h;
    }
 
    /* Clean the rest of the format stack */
@@ -3752,14 +3767,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
         fmt = c->format_stack->data;
         c->format_stack = eina_list_remove_list(c->format_stack, c->format_stack);
         _format_unref_free(c->obj, fmt);
-     }
-
-   if (c->paragraphs)
-     {
-        Evas_Object_Textblock_Paragraph *last_par;
-        last_par = (Evas_Object_Textblock_Paragraph *)
-           EINA_INLIST_GET(c->paragraphs)->last;
-        c->hmax = last_par->y + last_par->h;
      }
 
    if (w_ret) *w_ret = c->wmax;
