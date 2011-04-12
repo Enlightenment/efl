@@ -20,7 +20,7 @@ struct _Evas_Object_Smart
 struct _Evas_Smart_Callback
 {
    const char *event;
-   void (*func) (void *data, Evas_Object *obj, void *event_info);
+   Evas_Smart_Cb func;
    void *func_data;
    char  delete_me : 1;
 };
@@ -327,7 +327,7 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
 }
 
 EAPI void
-evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
+evas_object_smart_callback_add(Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data)
 {
    Evas_Object_Smart *o;
    Evas_Smart_Callback *cb;
@@ -352,7 +352,7 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
 }
 
 EAPI void *
-evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
+evas_object_smart_callback_del(Evas_Object *obj, const char *event, Evas_Smart_Cb func)
 {
    Evas_Object_Smart *o;
    Eina_List *l;
