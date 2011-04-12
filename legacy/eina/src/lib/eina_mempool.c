@@ -91,8 +91,14 @@ _new_va(const char *name,
    SBP(statistics);
    SBP(shutdown);
 #undef SBP
-   mp->backend2.repack = be->repack;
-   
+
+   if (be->repack)
+     {
+        mp->backend2 = calloc(1, sizeof (Eina_Mempool_Backend_ABI2));
+        if (mp->backend2)
+          mp->backend2->repack = be->repack;
+     }
+
    mp->backend_data = mp->backend.init(context, options, args);
 
    return mp;
@@ -327,15 +333,17 @@ EAPI void eina_mempool_del(Eina_Mempool *mp)
    EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
    DBG("mp=%p", mp);
    mp->backend.shutdown(mp->backend_data);
+   free(mp->backend2);
    free(mp);
 }
 
 EAPI void eina_mempool_repack(Eina_Mempool *mp, Eina_Mempool_Repack_Cb cb, void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN(mp);
-   EINA_SAFETY_ON_NULL_RETURN(mp->backend.shutdown);
+   EINA_SAFETY_ON_NULL_RETURN(mp->backend2);
+   EINA_SAFETY_ON_NULL_RETURN(mp->backend2->repack);
    DBG("mp=%p", mp);
-   mp->backend2.repack(mp->backend_data, cb, data);
+   mp->backend2->repack(mp->backend_data, cb, data);
 }
 
 EAPI void eina_mempool_gc(Eina_Mempool *mp)

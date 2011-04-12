@@ -63,7 +63,7 @@ struct _Eina_Mempool
 {
    Eina_Mempool_Backend_ABI1 backend;
    void *backend_data;
-   Eina_Mempool_Backend_ABI2 backend2;
+   Eina_Mempool_Backend_ABI2 *backend2;
 };
 
 /**
