@@ -854,11 +854,12 @@ evas_map_util_3d_lighting(Evas_Map *m,
         mr = ar + ((lr - ar) * br);
         mg = ag + ((lg - ag) * br);
         mb = ab + ((lb - ab) * br);
-	if (m->points[i].a != 255){
-		mr = (mr * m->points[i].a) / 255;
-		mg = (mg * m->points[i].a) / 255;
-		mb = (mb * m->points[i].a) / 255;
-	}
+	if (m->points[i].a != 255)
+          {
+             mr = (mr * m->points[i].a) / 255;
+             mg = (mg * m->points[i].a) / 255;
+             mb = (mb * m->points[i].a) / 255;
+          }
         m->points[i].r = (m->points[i].r * mr) / 255;
         m->points[i].g = (m->points[i].g * mg) / 255;
         m->points[i].b = (m->points[i].b * mb) / 255;
