@@ -3793,7 +3793,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
              _paragraphs_clear(obj, c->paragraphs);
           }
         _layout(obj, calc_only, w, h, w_ret, h_ret);
-        return;
      }
 
    if (calc_only)
