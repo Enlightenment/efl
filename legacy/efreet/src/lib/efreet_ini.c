@@ -53,10 +53,10 @@ int
 efreet_ini_init(void)
 {
     _efreet_ini_log_dom = eina_log_domain_register
-      ("efreet_init", EFREET_DEFAULT_LOG_COLOR);
+      ("efreet_ini", EFREET_DEFAULT_LOG_COLOR);
     if (_efreet_ini_log_dom < 0)
     {
-        EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_init");
+        EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_ini");
         return 0;
     }
     return 1;
