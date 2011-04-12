@@ -225,6 +225,8 @@ _elm_transit_del(Elm_Transit *transit)
    Elm_Transit_Effect_Module *effect_module;
    Elm_Transit *chain_transit;
 
+   transit->deleted = EINA_TRUE;
+
    EINA_LIST_FOREACH_SAFE(transit->next_chain_transits, elist, elist_next, chain_transit)
      {
         if (transit->prev_chain_transit)
