@@ -65,10 +65,12 @@
 typedef unsigned long Eina_Object_ID;
 typedef unsigned short Eina_Object_Generation;
 #define EINA_GEN_OFFSET 48
+#define EINA_ID_STR "%li"
 #else
 typedef unsigned int Eina_Object_ID;
 typedef unsigned char Eina_Object_Generation;
 #define EINA_GEN_OFFSET 24
+#define EINA_ID_STR "%i"
 #endif
 
 typedef struct _Eina_Class_Range Eina_Class_Range;
@@ -252,7 +254,7 @@ _eina_object_get(Eina_Object_Item *item)
 
   gen = item->range->generation_array[item->index];
 
-  id = (gen << EINA_GEN_OFFSET) + item->range->start + item->index;
+  id = ((Eina_Object_ID) gen << EINA_GEN_OFFSET) + item->range->start + item->index;
 
   return (Eina_Object *) id;
 }
@@ -266,11 +268,11 @@ _eina_object_find_item(Eina_Class *class, Eina_Object *object)
   Eina_Rbtree *match;
   Eina_Object_Generation generation;
   Eina_Object_ID id;
-  int idx;
+  Eina_Object_ID idx;
 
   id = (Eina_Object_ID) object;
-  idx = id & ((1 << EINA_GEN_OFFSET) - 1);
-  generation = id & !((1 << EINA_GEN_OFFSET) - 1);
+  idx = id & (((Eina_Object_ID) 1 << EINA_GEN_OFFSET) - 1);
+  generation = id & !(((Eina_Object_ID) 1 << EINA_GEN_OFFSET) - 1);
 
   /* Try to find the ID */
   match = eina_rbtree_inline_lookup(class->top->range,
@@ -279,7 +281,7 @@ _eina_object_find_item(Eina_Class *class, Eina_Object *object)
   /* ID not found, invalid pointer ! */
   if (!match)
     {
-      ERR("%p: ID [%i] not found in class hiearchy of [%s].",
+      ERR("%p: ID ["EINA_ID_STR"] not found in class hiearchy of [%s].",
 	  object, idx, class->name);
       return NULL;
     }
