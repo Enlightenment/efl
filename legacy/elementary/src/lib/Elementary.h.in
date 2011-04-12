@@ -2697,6 +2697,8 @@ extern "C" {
    EAPI void                        elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool                   elm_transit_paused_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
    EAPI double                      elm_transit_progress_value_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+   EAPI void                        elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit) EINA_ARG_NONNULL(1, 2);
+   EAPI Eina_List                  *elm_transit_chain_transits_get(const Elm_Transit *transit);
 
    EAPI Elm_Transit_Effect *elm_transit_effect_resizing_add(Elm_Transit* transit, Evas_Coord from_w, Evas_Coord from_h, Evas_Coord to_w, Evas_Coord to_h);
    EAPI Elm_Transit_Effect *elm_transit_effect_translation_add(Elm_Transit* transit, Evas_Coord from_dx, Evas_Coord dy, Evas_Coord to_dx, Evas_Coord to_dy);
