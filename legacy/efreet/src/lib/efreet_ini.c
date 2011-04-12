@@ -196,15 +196,15 @@ efreet_ini_parse(const char *file)
 
         if (!section)
         {
-//            INF("Invalid file (%s) (missing section)", file);
-            goto next_line;
+            INF("Invalid file (%s) (missing section)", file);
+            goto error;
         }
 
         /* find for '=' */
         for (sep = 0; (sep < line_length) && (line_start[sep] != '='); ++sep)
             ;
 
-        if (sep < line_length)
+        if (sep < line_length && line_start[sep] == '=')
         {
             char *key, *value;
             int key_end, value_start, value_end;
@@ -257,11 +257,12 @@ efreet_ini_parse(const char *file)
             eina_hash_del_by_key(section, key);
             eina_hash_add(section, key, efreet_ini_unescape(value));
         }
-//        else
-//        {
-//            /* invalid file... */
-//            INF("Invalid file (%s) (missing = from key=value pair)", file);
-//        }
+        else
+        {
+            /* invalid file... */
+            INF("Invalid file (%s) (missing = from key=value pair)", file);
+            goto error;
+        }
 
 next_line:
         left -= line_length + 1;
@@ -278,6 +279,9 @@ next_line:
     }
 #endif
     return data;
+error:
+    if (data) eina_hash_free(data);
+    return NULL;
 }
 
 EAPI void
