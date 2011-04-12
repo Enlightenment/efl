@@ -87,9 +87,9 @@ _gl_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static void
-_gl_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_gl_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("clicked: %p\n", event_info);
+   printf("double clicked: %p\n", event_info);
 }
 
 static void
@@ -122,7 +122,7 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    gl = elm_genlist_add(win);
    evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
-   evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
+   evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
    evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
    // FIXME: This causes genlist to resize the horiz axis very slowly :(
    // Reenable this and resize the window horizontally, then try to resize it back
@@ -1365,7 +1365,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    gl = elm_genlist_add(win);
    evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
-   evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
+   evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
    evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1576,7 +1576,7 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    gl = elm_genlist_add(win);
    evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
-   evas_object_smart_callback_add(gl, "clicked", _gl_clicked, NULL);
+   evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
    evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);

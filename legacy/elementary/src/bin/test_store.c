@@ -20,9 +20,9 @@ _st_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static void
-_st_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_st_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("clicked: %p\n", event_info);
+   printf("double clicked: %p\n", event_info);
 }
 
 static void
@@ -246,7 +246,7 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
   gl = elm_genlist_add(win);
   elm_genlist_height_for_width_mode_set(gl, EINA_TRUE);
   evas_object_smart_callback_add(gl, "selected", _st_selected, NULL);
-  evas_object_smart_callback_add(gl, "clicked", _st_clicked, NULL);
+  evas_object_smart_callback_add(gl, "clicked,double", _st_double_clicked, NULL);
   evas_object_smart_callback_add(gl, "longpressed", _st_longpress, NULL);
   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);

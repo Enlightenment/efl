@@ -70,9 +70,9 @@ grid_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-grid_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+grid_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("Clicked: %p\n", event_info);
+   printf("Double clicked: %p\n", event_info);
 }
 
 static void
@@ -163,7 +163,7 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
    evas_object_smart_callback_add(grid, "selected", grid_selected, NULL);
-   evas_object_smart_callback_add(grid, "clicked", grid_clicked, NULL);
+   evas_object_smart_callback_add(grid, "clicked,double", grid_double_clicked, NULL);
    evas_object_smart_callback_add(grid, "longpressed", grid_longpress, NULL);
    evas_object_smart_callback_add(grid, "drag,start,up", grid_drag_up, NULL);
    evas_object_smart_callback_add(grid, "drag,start,right", grid_drag_right, NULL);

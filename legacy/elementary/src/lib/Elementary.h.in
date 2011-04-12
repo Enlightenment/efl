@@ -977,7 +977,7 @@ extern "C" {
     *
     * selected - User has selected a item.
     * unselected - User has unselected a item.
-    * clicked - User has double-clicked or pressed enter on a item.
+    * clicked,double - User has double-clicked or pressed enter on a item.
     * realized - An evas object for a item was built.
     * unrealized - An evas object for a item was deleted.
     * changed - An item has been added, removed, resized or moved,
@@ -1659,7 +1659,7 @@ extern "C" {
    EAPI void             elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v) EINA_ARG_NONNULL(1);
    EAPI void             elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
-    * "clicked" - when the user double-clicked an item
+    * "clicked,double" - when the user double-clicked an item
     * "selected" - when the user selected an item
     * "unselected" - when the user selected an item
     * "longpressed" - an item in the hoversel list is long-pressed
