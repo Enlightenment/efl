@@ -377,7 +377,7 @@ elm_transit_add(void)
  * time. Make sure the @p transit object is still alive with
  * elm_transit_del_cb_set() function.
  * All added effects will be deleted, calling its repective data_free_cb
- * functions. The function setted by elm_tansit_del_cb_set() will be called.
+ * functions. The function setted by elm_transit_del_cb_set() will be called.
  *
  * @see elm_transit_del_cb_set()
  *
