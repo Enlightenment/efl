@@ -38,6 +38,28 @@
 #include "eina_rbtree.h"
 #include "eina_convert.h"
 
+#ifdef CITYHASH_BENCH
+// Hash function for a byte array.
+uint64_t CityHash64(const char *buf, size_t len);
+
+static unsigned int
+_eina_string_key_length(const char *key)
+{
+   if (!key)
+      return 0;
+
+   return (int)strlen(key) + 1;
+}
+
+static int
+_eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
+                     const char *key2, __UNUSED__ int key2_length)
+{
+   return strcmp(key1, key2);
+}
+#endif
+
+
 typedef struct _Eina_Bench_Rbtree Eina_Bench_Rbtree;
 struct _Eina_Bench_Rbtree
 {
@@ -121,6 +143,51 @@ eina_bench_lookup_rbtree(int request)
 
    eina_rbtree_delete(root, EINA_RBTREE_FREE_CB(_eina_bench_rbtree_free), NULL);
 }
+
+#ifdef CITYHASH_BENCH
+static void
+eina_bench_lookup_cityhash(int request)
+{
+   Eina_Hash *hash = NULL;
+   int *tmp_val;
+   unsigned int i;
+   unsigned int j;
+
+   hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+                        EINA_KEY_CMP(_eina_string_key_cmp),
+                        EINA_KEY_HASH(CityHash64),
+                        free,
+                        8);
+
+   for (i = 0; i < (unsigned int)request; ++i)
+     {
+        char tmp_key[10];
+
+        tmp_val = malloc(sizeof (int));
+
+        if (!tmp_val)
+           continue;
+
+        eina_convert_itoa(i, tmp_key);
+        *tmp_val = i;
+
+        eina_hash_add(hash, tmp_key, tmp_val);
+     }
+
+   srand(time(NULL));
+
+   for (j = 0; j < 200; ++j)
+      for (i = 0; i < (unsigned int)request; ++i)
+        {
+           char tmp_key[10];
+
+           eina_convert_itoa(rand() % request, tmp_key);
+           tmp_val = eina_hash_find(hash, tmp_key);
+        }
+
+   eina_hash_free(hash);
+}
+#endif
 
 static void
 eina_bench_lookup_superfast(int request)
@@ -311,7 +378,7 @@ eina_bench_lookup_evas(int request)
    unsigned int i;
    unsigned int j;
 
-   array = eina_array_new(1000);
+   array = eina_array_new(10000);
 
    for (i = 0; i < (unsigned int)request; ++i)
      {
@@ -409,6 +476,11 @@ void eina_bench_hash(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "djb2-lookup-inline",
                            EINA_BENCHMARK(
                               eina_bench_lookup_djb2_inline), 10, 10000, 10);
+#ifdef CITYHASH_BENCH
+   eina_benchmark_register(bench, "cityhash",
+                           EINA_BENCHMARK(
+                              eina_bench_lookup_cityhash),      10, 10000, 10);
+#endif
    eina_benchmark_register(bench, "rbtree",
                            EINA_BENCHMARK(
                               eina_bench_lookup_rbtree),      10, 10000, 10);

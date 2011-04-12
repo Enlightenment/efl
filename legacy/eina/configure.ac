@@ -270,6 +270,7 @@ AM_CONDITIONAL(EINA_ENABLE_BENCHMARK_E17, test "x${enable_benchmark_e17}" = "xye
 
 ### Checks for programs
 AC_PROG_CC
+AC_PROG_CXX
 
 # pkg-config
 PKG_PROG_PKG_CONFIG
@@ -590,6 +591,10 @@ fi
 
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
+if test -n "$CXX" && test "x$enable_benchmark" = "xyes" ; then
+   AC_DEFINE_UNQUOTED([CITYHASH_BENCH], [1], [enable bench tests for google hash method])
+fi
+AM_CONDITIONAL([CITYHASH_BENCH], [test -n "$CXX" && test "x$enable_benchmark" = "xyes"])
 
 AC_SUBST(requirement_eina)
 

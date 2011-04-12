@@ -90,7 +90,7 @@ bench_PROGRAMS = eina_bench
 eina_bench_SOURCES = 	\
 eina_bench.c 		\
 eina_bench_sort.c	\
-eina_bench_hash.c 	\
+eina_bench_hash.c	\
 eina_bench_stringshare.c \
 eina_bench_convert.c	\
 eina_bench_mempool.c	\
@@ -108,7 +108,18 @@ evas_object_list.c \
 evas_stringshare.c \
 eina_bench_quad.c
 
+if CITYHASH_BENCH
+noinst_LTLIBRARIES = libcity.la
+libcity_la_SOURCES = city.cc
+
+nodist_EXTRA_eina_bench_SOURCES = dummy.cc
+eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la libcity.la
+else
 eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
+
+endif
+
+
 
 endif
 
