@@ -3721,12 +3721,9 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                }
           }
      }
-
-
    /* End of logical layout creation */
 
    /* Start of visual layout creation */
-   /* FIXME: move away? */
    {
       EINA_INLIST_FOREACH(c->paragraphs, c->par)
         {
@@ -3748,7 +3745,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
              }
         }
    }
-   /* End of visual layout creation */
 
    /* Clean the rest of the format stack */
    while (c->format_stack)
@@ -3769,7 +3765,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    if (w_ret) *w_ret = c->wmax;
    if (h_ret) *h_ret = c->hmax;
 
-   /* Is this really the place? */
    /* Vertically align the textblock */
    if ((o->valign > 0.0) && (c->h > c->hmax))
      {
