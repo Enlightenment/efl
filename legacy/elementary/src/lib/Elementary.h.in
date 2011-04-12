@@ -975,11 +975,11 @@ extern "C" {
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     *
-    * selected - User has selected a item.
-    * unselected - User has unselected a item.
-    * clicked,double - User has double-clicked or pressed enter on a item.
-    * realized - An evas object for a item was built.
-    * unrealized - An evas object for a item was deleted.
+    * selected - User has selected an item.
+    * unselected - User has unselected an item.
+    * clicked,double - User has double-clicked or pressed enter on an item.
+    * realized - An evas object for an item was built.
+    * unrealized - An evas object for an item was deleted.
     * changed - An item has been added, removed, resized or moved,
     * or gengrid has been resized or horizontal property has been changed.
     * scroll - the content has been scrolled (moved).

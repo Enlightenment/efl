@@ -24,7 +24,7 @@
  * application provides a structure with information about that type
  * of item (Gengrid may contain multiple different items with
  * different classes, states and styles). Gengrid will call the
- * functions in this struct (methods) when a item is "realized" (that
+ * functions in this struct (methods) when an item is "realized" (that
  * is created dynamically while scrolling). All objects will simply be
  * deleted when no longer needed with evas_object_del(). The
  * Elm_GenGrid_Item_Class structure contains the following members:
@@ -61,7 +61,7 @@
  * where XXX is the name of the part.
  *
  * func.del - This is called when elm_gengrid_item_del() is called on
- * a item or elm_gengrid_clear() is called on the Gengrid. This is
+ * an item or elm_gengrid_clear() is called on the Gengrid. This is
  * intended for use when actual Gengrid items are deleted, so any
  * backing data attached to the item (e.g. its data parameter on
  * creation) can be deleted.
@@ -75,14 +75,14 @@
  * only valid as long as no items are modified (added, deleted,
  * selected or unselected).
  *
- * If a item changes (state of boolean changes, label or icons
+ * If an item changes (state of boolean changes, label or icons
  * change), then use elm_gengrid_item_update() to have Gengrid update
  * the item with the new state. Gengrid will re-realize the item thus
  * call the functions in the _Elm_Gengrid_Item_Class for that item.
  *
- * To programmatically (un)select a item use
+ * To programmatically (un)select an item use
  * elm_gengrid_item_selected_set().  To get its selected state use
- * elm_gengrid_item_selected_get(). To make a item disabled (unable to
+ * elm_gengrid_item_selected_get(). To make an item disabled (unable to
  * be selected and appear differently) use
  * elm_gengrid_item_disabled_set() to set this and
  * elm_gengrid_item_disabled_get() to get the disabled state.
@@ -105,7 +105,7 @@
  * Signals that you can add callbacks for are:
  *
  * "clicked,double" - The user has double-clicked or pressed enter on
- *                    a item. The event_infoparameter is the Gengrid item
+ *                    an item. The event_infoparameter is the Gengrid item
  *                    that was double-clicked.
  * "selected" - The user has made an item selected. The event_info
  *              parameter is the Gengrid item that was selected.
@@ -1874,7 +1874,7 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
 }
 
 /**
- * Remove a item from the Gengrid.
+ * Remove an item from the Gengrid.
  *
  * @param item The item to be removed.
  * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
@@ -2034,7 +2034,7 @@ elm_gengrid_item_update(Elm_Gengrid_Item *item)
 }
 
 /**
- * Returns the data associated to a item
+ * Returns the data associated to an item
  *
  * This returns the data value passed on the elm_gengrid_item_append()
  * and related item addition calls.
@@ -2055,7 +2055,7 @@ elm_gengrid_item_data_get(const Elm_Gengrid_Item *item)
 }
 
 /**
- * Set the data item from the gengrid item
+ * Set the datan item from the gengrid item
  *
  * This set the data value passed on the elm_gengrid_item_append() and
  * related item addition calls. This function will also call
@@ -2184,9 +2184,9 @@ elm_gengrid_selected_items_get(const Evas_Object *obj)
 }
 
 /**
- * Set the selected state of a item.
+ * Set the selected state of an item.
  *
- * This sets the selected state of a item. If multi-select is not
+ * This sets the selected state of an item. If multi-select is not
  * enabled and selected is EINA_TRUE, previously selected items are
  * unselected.
  *
@@ -2221,9 +2221,9 @@ elm_gengrid_item_selected_set(Elm_Gengrid_Item *item,
 }
 
 /**
- * Get the selected state of a item.
+ * Get the selected state of an item.
  *
- * This gets the selected state of a item (1 selected, 0 not selected).
+ * This gets the selected state of an item (1 selected, 0 not selected).
  *
  * @param item The item
  * @return The selected state
@@ -2238,7 +2238,7 @@ elm_gengrid_item_selected_get(const Elm_Gengrid_Item *item)
 }
 
 /**
- * Sets the disabled state of a item.
+ * Sets the disabled state of an item.
  *
  * A disabled item cannot be selected or unselected. It will also
  * change appearance to disabled. This sets the disabled state (1
@@ -2267,7 +2267,7 @@ elm_gengrid_item_disabled_set(Elm_Gengrid_Item *item,
 }
 
 /**
- * Get the disabled state of a item.
+ * Get the disabled state of an item.
  *
  * This gets the disabled state of the given item.
  *
@@ -2341,7 +2341,7 @@ elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item,
  * @param data what to provide to @a func as callback data/context.
  * @param del_cb called when data is not needed anymore, either when
  *        another callback replaces @func, the tooltip is unset with
- *        elm_gengrid_item_tooltip_unset() or the owner @a item
+ *        elm_gengrid_item_tooltip_unset() or the owner @an item
  *        dies. This callback receives as the first parameter the
  *        given @a data, and @c event_info is the item.
  *
