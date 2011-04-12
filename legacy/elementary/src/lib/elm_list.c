@@ -11,7 +11,7 @@
  *
  * Signals that you can add callbacks for are:
  *
- * "clicked" - when the user double-clicked an item
+ * "clicked,double" - when the user double-clicked an item
  * "selected" - when the user selected an item
  * "unselected" - when the user selected an item
  * "longpressed" - an item in the hoversel list is long-pressed
