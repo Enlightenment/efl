@@ -1,6 +1,6 @@
-/** 
+/**
 @brief Edje Graphical Design Library
- 
+
 These routines are used for Edje.
 
 @mainpage Edje Library Documentation
@@ -503,7 +503,7 @@ param in edje programs
  * @page luaref Edje Lua scripting
  *
  * @section intro Introduction
- * 
+ *
  * Lua is intended for script-only objects at this point (with embryo left
  * for augmenting standard programs). Since script-only objects effectively
  * define objects entirely via Lua script (resize handling, event handling
@@ -647,9 +647,9 @@ typedef enum _Edje_Text_Effect
    EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,
    EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,
    EDJE_TEXT_EFFECT_GLOW                = 10,
-      
+
    EDJE_TEXT_EFFECT_LAST                = 11,
-      
+
 #define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
 #define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
    do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
@@ -1047,7 +1047,7 @@ typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, c
  *
  */
 EAPI int          edje_init                       (void);
-   
+
 /**
  * @brief Shutdown the edje library.
  *
@@ -1082,7 +1082,7 @@ EAPI int          edje_shutdown                   (void);
  *
  */
 EAPI void         edje_frametime_set              (double t);
-   
+
 /**
  * @brief Get edje trasitions' frame time.
  *
@@ -1105,7 +1105,7 @@ EAPI double       edje_frametime_get              (void);
  *
  */
 EAPI void         edje_freeze                     (void);
-   
+
 /**
  * @brief Thaw edje objects.
  *
@@ -1115,7 +1115,7 @@ EAPI void         edje_freeze                     (void);
  *
  */
 EAPI void         edje_thaw                       (void);
-   
+
 /**
  * @brief Set the edje append fontset.
  *
@@ -1125,7 +1125,7 @@ EAPI void         edje_thaw                       (void);
  *
  */
 EAPI void         edje_fontset_append_set         (const char *fonts);
-   
+
 /**
  * @brief Get the edje append fontset.
  *
@@ -1138,7 +1138,7 @@ EAPI void         edje_fontset_append_set         (const char *fonts);
  *
  */
 EAPI const char  *edje_fontset_append_get         (void);
-   
+
 /**
  * @brief Set edje's global scaling factor.
  *
@@ -1160,7 +1160,7 @@ EAPI const char  *edje_fontset_append_get         (void);
  *
  */
 EAPI void         edje_scale_set                  (double scale);
-   
+
 /**
  * @brief Get edje's global scaling factor.
  *
@@ -1173,7 +1173,7 @@ EAPI void         edje_scale_set                  (double scale);
  *
  */
 EAPI double       edje_scale_get                  (void);
-   
+
 /**
  * @brief Set the edje object's scaling factor.
  *
@@ -1191,7 +1191,7 @@ EAPI double       edje_scale_get                  (void);
  *
  */
 EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scale);
-   
+
 /**
  * @brief Get the edje object's scaling factor.
  *
@@ -1204,7 +1204,7 @@ EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scal
  *
  */
 EAPI double       edje_object_scale_get           (const Evas_Object *obj);
-   
+
 /**
  * Set the RTL orientation for this object.
  *
@@ -1213,7 +1213,7 @@ EAPI double       edje_object_scale_get           (const Evas_Object *obj);
  * @since 1.1.0
  */
 EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool rtl);
-   
+
 /**
  * Get the RTL orientation for this object.
  *
@@ -1235,7 +1235,7 @@ EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
  * when you are done with it.
  */
 EAPI Eina_List   *edje_file_collection_list       (const char *file);
-   
+
 /**
  * Free file collection list
  * @param lst The Eina_List of groups
@@ -1243,7 +1243,7 @@ EAPI Eina_List   *edje_file_collection_list       (const char *file);
  * Frees the list returned by edje_file_collection_list().
  */
 EAPI void         edje_file_collection_list_free  (Eina_List *lst);
-   
+
 /**
  * Determine whether a group matching glob exists in an edje file.
  * @param file The file path
@@ -1252,7 +1252,7 @@ EAPI void         edje_file_collection_list_free  (Eina_List *lst);
  * @return 1 if a match is found, 0 otherwise
  */
 EAPI Eina_Bool    edje_file_group_exists          (const char *file, const char *glob);
-   
+
 /**
  * Get data from the file level data block of an edje file
  * @param file The path to the .edj file
@@ -1285,7 +1285,7 @@ EAPI char        *edje_file_data_get              (const char *file, const char 
  *
  */
 EAPI void         edje_file_cache_set             (int count);
-   
+
 /**
  * @brief Return the file cache size.
  *
@@ -1299,7 +1299,7 @@ EAPI void         edje_file_cache_set             (int count);
  *
  */
 EAPI int          edje_file_cache_get             (void);
-   
+
 /**
  * @brief Clean the file cache.
  *
@@ -1311,7 +1311,7 @@ EAPI int          edje_file_cache_get             (void);
  *
  */
 EAPI void         edje_file_cache_flush           (void);
-   
+
 /**
  * @brief Set the collection cache size.
  *
@@ -1327,7 +1327,7 @@ EAPI void         edje_file_cache_flush           (void);
  *
  */
 EAPI void         edje_collection_cache_set       (int count);
-   
+
 /**
  * @brief Return the collection cache size.
  *
@@ -1341,7 +1341,7 @@ EAPI void         edje_collection_cache_set       (int count);
  *
  */
 EAPI int          edje_collection_cache_get       (void);
-   
+
 /**
  * @brief Clean the collection cache.
  *
@@ -1353,7 +1353,7 @@ EAPI int          edje_collection_cache_get       (void);
  *
  */
 EAPI void         edje_collection_cache_flush     (void);
-   
+
 /**
  * @brief Set Edje color class.
  *
@@ -1391,7 +1391,7 @@ EAPI void         edje_collection_cache_flush     (void);
  *       half-transparent white is 255 255 255 128.
  */
 EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
-   
+
 /**
  * @brief Get Edje color class.
  *
@@ -1429,7 +1429,7 @@ EAPI Eina_Bool    edje_color_class_set            (const char *color_class, int 
 EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
    EAPI void         edje_color_class_del            (const char *color_class);
    EAPI Eina_List   *edje_color_class_list           (void);
-   
+
 /**
  * @brief Set the Edje text class.
  *
@@ -1459,7 +1459,7 @@ EAPI Eina_Bool    edje_color_class_get            (const char *color_class, int 
 EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_text_class_del             (const char *text_class);
    EAPI Eina_List   *edje_text_class_list            (void);
-   
+
 /**
  * @brief Set the object minimum size.
  *
@@ -1470,7 +1470,7 @@ EAPI Eina_Bool    edje_text_class_set             (const char *text_class, const
  * This sets the minimum size restriction for the object.
  */
 EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
-   
+
 /**
  * @brief Set the object maximum size.
  *
@@ -1481,7 +1481,7 @@ EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord 
  * This sets the maximum size restriction for the object.
  */
 EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
-   
+
 /**
  * @brief Set the object aspect size.
  *
@@ -1496,7 +1496,7 @@ EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord 
  * retaining the relative scale of both aspect width and height.
  */
 EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
-   
+
 /**
  * @brief Registers a custom layout to be used in edje boxes.
  *
@@ -1569,7 +1569,7 @@ EAPI const char  *edje_object_data_get            (const Evas_Object *obj, const
  * specifies the file and group name to load @a obj from.
  */
 EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char *file, const char *group);
-   
+
 /**
  * Get the file and group name that @a obj was loaded from
  * @param obj A valid Evas_Object handle
@@ -1585,7 +1585,7 @@ EAPI Eina_Bool        edje_object_file_set        (Evas_Object *obj, const char 
  * interested in one of the values.
  */
 EAPI void             edje_object_file_get        (const Evas_Object *obj, const char **file, const char **group);
-   
+
 /**
  * Gets the Edje load error
  * @param obj A valid Evas_Object handle
@@ -1656,7 +1656,7 @@ EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool c
  * of the callback function (e.g. "mouse,down,2" and "button.close").
  */
 EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
-   
+
 /**
  * @brief Remove a signal-triggered callback from an object.
  *
@@ -1677,7 +1677,7 @@ EAPI void         edje_object_signal_callback_add (Evas_Object *obj, const char 
  *
  */
 EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
-   
+
 /**
  * @brief Remove a signal-triggered callback from an object.
  *
@@ -1699,7 +1699,7 @@ EAPI void        *edje_object_signal_callback_del (Evas_Object *obj, const char 
  *
  */
 EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
-   
+
 /**
  * @brief Send a signal to an edje object.
  *
@@ -1729,7 +1729,7 @@ EAPI void        *edje_object_signal_callback_del_full(Evas_Object *obj, const c
  * FIXME: should this signal be sent to children also?
  */
 EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char *emission, const char *source);
-   
+
 /**
  * @brief Set the edje object to playing or paused states.
  *
@@ -1744,7 +1744,7 @@ EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char 
  *
  */
 EAPI void         edje_object_play_set            (Evas_Object *obj, Eina_Bool play);
-   
+
 /**
  * @brief Get the edje object's play/pause state.
  *
@@ -1760,7 +1760,7 @@ EAPI void         edje_object_play_set            (Evas_Object *obj, Eina_Bool p
  *
  */
 EAPI Eina_Bool    edje_object_play_get            (const Evas_Object *obj);
-   
+
 /**
  * @brief Set the object's animation state.
  *
@@ -1775,7 +1775,7 @@ EAPI Eina_Bool    edje_object_play_get            (const Evas_Object *obj);
  *
  */
 EAPI void         edje_object_animation_set       (Evas_Object *obj, Eina_Bool on);
-   
+
 /**
  * @brief Get the edje object's animation state.
  *
@@ -1802,7 +1802,7 @@ EAPI Eina_Bool    edje_object_animation_get       (const Evas_Object *obj);
  *
  */
 EAPI int          edje_object_freeze                  (Evas_Object *obj);
-   
+
 /**
  * @brief Thaw object.
  *
@@ -1813,7 +1813,7 @@ EAPI int          edje_object_freeze                  (Evas_Object *obj);
  *
  */
 EAPI int          edje_object_thaw                    (Evas_Object *obj);
-   
+
 /**
  * @brief Sets the object color class.
  *
@@ -1871,7 +1871,7 @@ EAPI int          edje_object_thaw                    (Evas_Object *obj);
  * the given color class in all objects.
  */
 EAPI Eina_Bool    edje_object_color_class_set         (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
-   
+
 /**
  * @brief Gets the object color class.
  *
@@ -1906,7 +1906,7 @@ EAPI Eina_Bool    edje_object_color_class_set         (Evas_Object *obj, const c
  */
 EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
    EAPI void         edje_object_color_class_del         (Evas_Object *obj, const char *color_class);
-   
+
 /**
  * @brief Sets Edje text class.
  *
@@ -1940,7 +1940,7 @@ EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, con
  *
  */
 EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
-   
+
 /**
  * @brief Get the minimum size for an object.
  *
@@ -1952,7 +1952,7 @@ EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const c
  * to zero if no Edje is connected to the Evas Object.
  */
 EAPI void         edje_object_size_min_get            (const Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
-   
+
 /**
  * @brief Get the maximum size for an object.
  *
@@ -1964,7 +1964,7 @@ EAPI void         edje_object_size_min_get            (const Evas_Object *obj, E
  * to zero if no Edje is connected to the Evas Object.
  */
 EAPI void         edje_object_size_max_get            (const Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);
-   
+
 /**
  * @brief Force a Size/Geometry calculation.
  *
@@ -1974,7 +1974,7 @@ EAPI void         edje_object_size_max_get            (const Evas_Object *obj, E
  * freeze/thaw.
  */
 EAPI void         edje_object_calc_force              (Evas_Object *obj);
-   
+
 /**
  * @brief Calculate minimum size.
  *
@@ -1987,7 +1987,7 @@ EAPI void         edje_object_calc_force              (Evas_Object *obj);
 EAPI void         edje_object_size_min_calc           (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
    EAPI Eina_Bool    edje_object_parts_extends_calc      (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
-   
+
 /**
  * @brief Check if Edje part exists.
  *
@@ -2000,7 +2000,7 @@ EAPI void         edje_object_size_min_calc           (Evas_Object *obj, Evas_Co
  *
  */
 EAPI Eina_Bool    edje_object_part_exists             (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Gets the evas object from a part.
  *
@@ -2018,7 +2018,7 @@ EAPI Eina_Bool    edje_object_part_exists             (const Evas_Object *obj, c
  *
  **/
 EAPI const Evas_Object *edje_object_part_object_get   (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Get the geometry of an Edje part.
  *
@@ -2036,7 +2036,7 @@ EAPI const Evas_Object *edje_object_part_object_get   (const Evas_Object *obj, c
  */
 EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
-   
+
 /**
  * @brief Set the function that provides item objects for named items in an edje entry text
  *
@@ -2049,7 +2049,7 @@ EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, c
  */
 EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
-   
+
 /**
  * @brief Set the object text callback.
  *
@@ -2072,7 +2072,7 @@ EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Te
  * @param text The text string
  */
 EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
-   
+
 /**
  * @brief Return the text of the object part.
  *
@@ -2085,7 +2085,7 @@ EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const c
  *
  */
 EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Sets the raw (non escaped) text for an object part.
  *
@@ -2101,7 +2101,7 @@ EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, c
  *
  */
 EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const char *part, const char *text_to_escape);
-   
+
 /**
  * @brief Returns the text of the object part, without escaping.
  *
@@ -2119,7 +2119,7 @@ EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const c
  *
  */
 EAPI char        *edje_object_part_text_unescaped_get (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Return the selection text of the object part.
  *
@@ -2131,7 +2131,7 @@ EAPI char        *edje_object_part_text_unescaped_get (const Evas_Object *obj, c
  *
  */
 EAPI const char      *edje_object_part_text_selection_get           (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Set the selection to be none.
  *
@@ -2142,7 +2142,7 @@ EAPI const char      *edje_object_part_text_selection_get           (const Evas_
  *
  */
 EAPI void             edje_object_part_text_select_none             (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Set the selection to be everything.
  *
@@ -2153,7 +2153,7 @@ EAPI void             edje_object_part_text_select_none             (const Evas_
  *
  */
 EAPI void             edje_object_part_text_select_all              (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Insert text for an object part.
  *
@@ -2166,7 +2166,7 @@ EAPI void             edje_object_part_text_select_all              (const Evas_
  *
  */
 EAPI void             edje_object_part_text_insert                  (Evas_Object *obj, const char *part, const char *text);
-   
+
 /**
  * @brief Return a list of char anchor names.
  *
@@ -2179,7 +2179,7 @@ EAPI void             edje_object_part_text_insert                  (Evas_Object
  *
  */
 EAPI const Eina_List *edje_object_part_text_anchor_list_get         (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Return a list of Evas_Textblock_Rectangle anchor rectangles.
  *
@@ -2195,7 +2195,7 @@ EAPI const Eina_List *edje_object_part_text_anchor_list_get         (const Evas_
  *
  */
 EAPI const Eina_List *edje_object_part_text_anchor_geometry_get     (const Evas_Object *obj, const char *part, const char *anchor);
-   
+
 /**
  * @brief Return a list of char item names.
  *
@@ -2208,7 +2208,7 @@ EAPI const Eina_List *edje_object_part_text_anchor_geometry_get     (const Evas_
  *
  */
 EAPI const Eina_List *edje_object_part_text_item_list_get           (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Return item geometry.
  *
@@ -2227,7 +2227,7 @@ EAPI const Eina_List *edje_object_part_text_item_list_get           (const Evas_
  *
  */
 EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_Object *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-   
+
 /**
  * @brief Returns the cursor geometry of the part relative to the edje
  * object.
@@ -2241,7 +2241,7 @@ EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_
  *
  */
 EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-   
+
 /**
  * @brief Enables selection if the entry is an EXPLICIT selection mode
  * type.
@@ -2251,7 +2251,7 @@ EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_
  * @param allow EINA_TRUE to enable, EINA_FALSE otherwise
  */
 EAPI void             edje_object_part_text_select_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool allow);
-   
+
 /**
  * @brief Aborts any selection action on a part.
  *
@@ -2259,7 +2259,7 @@ EAPI void             edje_object_part_text_select_allow_set        (const Evas_
  * @param part The part name
  */
 EAPI void             edje_object_part_text_select_abort            (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Starts selecting at current cursor position
  *
@@ -2267,7 +2267,7 @@ EAPI void             edje_object_part_text_select_abort            (const Evas_
  * @param part The part name
  */
 EAPI void             edje_object_part_text_select_begin            (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Extends the current selection to the current cursor position
  *
@@ -2276,7 +2276,7 @@ EAPI void             edje_object_part_text_select_begin            (const Evas_
  */
 EAPI void             edje_object_part_text_select_extend           (const Evas_Object *obj, const char *part);
 
-   
+
 /**
  * @brief Advances the cursor to the next cursor position.
  * @see evas_textblock_cursor_char_next
@@ -2286,7 +2286,7 @@ EAPI void             edje_object_part_text_select_extend           (const Evas_
  * @param cur The edje cursor to advance
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_next                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Moves the cursor to the previous char
  * @see evas_textblock_cursor_char_prev
@@ -2296,7 +2296,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_next                 (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_prev                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Move the cursor to the char above the current cursor position.
  *
@@ -2305,7 +2305,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_prev                 (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_up                   (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Moves the cursor to the char below the current cursor position.
  *
@@ -2314,7 +2314,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_up                   (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_down                 (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Moves the cursor to the beginning of the text part
  * @see evas_textblock_cursor_paragraph_first
@@ -2324,7 +2324,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_down                 (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI void             edje_object_part_text_cursor_begin_set            (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Moves the cursor to the end of the text part.
  * @see evas_textblock_cursor_paragraph_last
@@ -2334,7 +2334,7 @@ EAPI void             edje_object_part_text_cursor_begin_set            (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI void             edje_object_part_text_cursor_end_set              (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Copy the cursor to another cursor.
  *
@@ -2344,7 +2344,7 @@ EAPI void             edje_object_part_text_cursor_end_set              (Evas_Ob
  * @param dst the cursor to copy to
  */
 EAPI void             edje_object_part_text_cursor_copy                 (Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst);
-   
+
 /**
  * @brief Move the cursor to the beginning of the line.
  * @see evas_textblock_cursor_line_char_first
@@ -2354,7 +2354,7 @@ EAPI void             edje_object_part_text_cursor_copy                 (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI void             edje_object_part_text_cursor_line_begin_set       (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Move the cursor to the end of the line.
  * @see evas_textblock_cursor_line_char_last
@@ -2364,7 +2364,7 @@ EAPI void             edje_object_part_text_cursor_line_begin_set       (Evas_Ob
  * @param cur the edje cursor to work on
  */
 EAPI void             edje_object_part_text_cursor_line_end_set         (Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * Position the given cursor to a X,Y position.
  *
@@ -2378,7 +2378,7 @@ EAPI void             edje_object_part_text_cursor_line_end_set         (Evas_Ob
  * @return True on success, false on error.
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_coord_set            (Evas_Object *obj, const char *part, Edje_Cursor cur, Evas_Coord x, Evas_Coord y);
-   
+
 /**
  * @brief Returns whether the cursor points to a format.
  * @see evas_textblock_cursor_is_format
@@ -2389,7 +2389,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_coord_set            (Evas_Ob
  * @return EINA_TRUE if it's true, EINA_FALSE otherwise.
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_is_format_get        (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Return true if the cursor points to a visible format
  * For example \t, \n, item and etc.
@@ -2400,7 +2400,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_is_format_get        (const E
  * @param cur The cursor to adjust.
  */
 EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Returns the content (char) at the cursor position.
  * @see evas_textblock_cursor_content_get
@@ -2410,7 +2410,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const E
  * @param cur The cursor to use
  */
 EAPI const char      *edje_object_part_text_cursor_content_get          (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * @brief Sets the cursor position to the given value
  *
@@ -2421,7 +2421,7 @@ EAPI const char      *edje_object_part_text_cursor_content_get          (const E
  * @since 1.1.0
  */
 EAPI void             edje_object_part_text_cursor_pos_set              (Evas_Object *obj, const char *part, Edje_Cursor cur, int pos);
-   
+
 /**
  * @brief Retrieves the current position of the cursor
  *
@@ -2432,7 +2432,7 @@ EAPI void             edje_object_part_text_cursor_pos_set              (Evas_Ob
  * @since 1.1.0
  */
 EAPI int              edje_object_part_text_cursor_pos_get              (const Evas_Object *obj, const char *part, Edje_Cursor cur);
-   
+
 /**
  * Add a filter function for newly inserted text.
  *
@@ -2458,7 +2458,7 @@ EAPI int              edje_object_part_text_cursor_pos_get              (const E
  * @param data User provided data to pass to the filter function
  */
 EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
-   
+
 /**
  * Delete a function from the filter list.
  *
@@ -2475,7 +2475,7 @@ EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Ob
  * @return The user data pointer if succesful, or NULL otherwise
  */
 EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func);
-   
+
 /**
  * Delete a function and matching user data from the filter list.
  *
@@ -2495,7 +2495,7 @@ EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Ob
  */
 EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
 
-   
+
 /**
  * @brief Swallows an object into the edje.
  *
@@ -2511,7 +2511,7 @@ EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Ob
  * will first be unswallowed before the new object is swallowed.
  */
 EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
-   
+
 /**
  * @brief Unswallow an object.
  *
@@ -2521,7 +2521,7 @@ EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const c
  * Causes the edje to regurgitate a previously swallowed object.  :)
  */
 EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
-   
+
 /**
  * @brief Get the object currently swallowed by a part.
  *
@@ -2530,7 +2530,7 @@ EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Ob
  * @return The swallowed object, or NULL if there is none.
  */
 EAPI Evas_Object     *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Returns the state of the Edje part.
  *
@@ -2543,7 +2543,7 @@ EAPI Evas_Object     *edje_object_part_swallow_get    (const Evas_Object *obj, c
  * "" for other states
  */
 EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
-   
+
 /**
  * @brief Determine dragable directions.
  *
@@ -2556,7 +2556,7 @@ EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, c
  * 3: Dragable in X & Y directions
  */
 EAPI Edje_Drag_Dir    edje_object_part_drag_dir_get   (const Evas_Object *obj, const char *part);
-   
+
 /**
  * @brief Set the dragable object location.
  *
@@ -2568,7 +2568,7 @@ EAPI Edje_Drag_Dir    edje_object_part_drag_dir_get   (const Evas_Object *obj, c
  * Places the dragable object at the given location.
  */
 EAPI Eina_Bool        edje_object_part_drag_value_set (Evas_Object *obj, const char *part, double dx, double dy);
-   
+
 /**
  * @brief Get the dragable object location.
  *
@@ -2580,7 +2580,7 @@ EAPI Eina_Bool        edje_object_part_drag_value_set (Evas_Object *obj, const c
  * Gets the drag location values.
  */
 EAPI Eina_Bool        edje_object_part_drag_value_get (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   
+
 /**
  * @brief Set the dragable object size.
  *
@@ -2592,7 +2592,7 @@ EAPI Eina_Bool        edje_object_part_drag_value_get (const Evas_Object *obj, c
  * Sets the size of the dragable object.
  */
 EAPI Eina_Bool        edje_object_part_drag_size_set  (Evas_Object *obj, const char *part, double dw, double dh);
-   
+
 /**
  * @brief Get the dragable object size.
  *
@@ -2604,7 +2604,7 @@ EAPI Eina_Bool        edje_object_part_drag_size_set  (Evas_Object *obj, const c
  * Gets the dragable object size.
  */
 EAPI Eina_Bool        edje_object_part_drag_size_get  (const Evas_Object *obj, const char *part, double *dw, double *dh);
-   
+
 /**
  * @brief Sets the drag step increment.
  *
@@ -2616,7 +2616,7 @@ EAPI Eina_Bool        edje_object_part_drag_size_get  (const Evas_Object *obj, c
  * Sets the x,y step increments for a dragable object.
  */
 EAPI Eina_Bool        edje_object_part_drag_step_set  (Evas_Object *obj, const char *part, double dx, double dy);
-   
+
 /**
  * @brief Gets the drag step increment values.
  *
@@ -2628,7 +2628,7 @@ EAPI Eina_Bool        edje_object_part_drag_step_set  (Evas_Object *obj, const c
  * Gets the x and y step increments for the dragable object.
  */
 EAPI Eina_Bool        edje_object_part_drag_step_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   
+
 /**
  * @brief Sets the page step increments.
  *
@@ -2640,7 +2640,7 @@ EAPI Eina_Bool        edje_object_part_drag_step_get  (const Evas_Object *obj, c
  * Sets the x,y page step increment values.
  */
 EAPI Eina_Bool        edje_object_part_drag_page_set  (Evas_Object *obj, const char *part, double dx, double dy);
-   
+
 /**
  * @brief Gets the page step increments.
  *
@@ -2652,7 +2652,7 @@ EAPI Eina_Bool        edje_object_part_drag_page_set  (Evas_Object *obj, const c
  * Gets the x,y page step increments for the dragable object.
  */
 EAPI Eina_Bool        edje_object_part_drag_page_get  (const Evas_Object *obj, const char *part, double *dx, double *dy);
-   
+
 /**
  * @brief Steps the dragable x,y steps.
  *
@@ -2665,7 +2665,7 @@ EAPI Eina_Bool        edje_object_part_drag_page_get  (const Evas_Object *obj, c
  * edje_object_part_drag_step_set.
  */
 EAPI Eina_Bool        edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
-   
+
 /**
  * @brief Pages x,y steps.
  *
@@ -2679,7 +2679,7 @@ EAPI Eina_Bool        edje_object_part_drag_step      (Evas_Object *obj, const c
  */
 EAPI Eina_Bool        edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
 
-   
+
 /**
  * @brief Get the object created by this external part.
  *
@@ -2732,7 +2732,7 @@ EAPI Evas_Object              *edje_object_part_external_object_get     (const E
  * @return @c EINA_TRUE if everything went fine, @c EINA_FALSE on errors.
  */
 EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Object *obj, const char *part, const Edje_External_Param *param);
-   
+
 /**
  * @brief Get the parameter for the external part.
  *
@@ -2764,7 +2764,7 @@ EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Ob
 EAPI Eina_Bool                 edje_object_part_external_param_get      (const Evas_Object *obj, const char *part, Edje_External_Param *param);
 
 EAPI Evas_Object              *edje_object_part_external_content_get    (const Evas_Object *obj, const char *part, const char *content);
-   
+
 /**
  * Facility to query the type of the given parameter of the given part.
  *
@@ -2777,7 +2777,7 @@ EAPI Evas_Object              *edje_object_part_external_content_get    (const E
  */
 EAPI Edje_External_Param_Type  edje_object_part_external_param_type_get (const Evas_Object *obj, const char *part, const char *param);
 
-   
+
 /**
  * @brief Appends an object to the box.
  *
@@ -2791,7 +2791,7 @@ EAPI Edje_External_Param_Type  edje_object_part_external_param_type_get (const E
  * Appends child to the box indicated by part.
  */
 EAPI Eina_Bool    edje_object_part_box_append             (Evas_Object *obj, const char *part, Evas_Object *child);
-   
+
 /**
  * @brief Prepends an object to the box.
  *
@@ -2805,7 +2805,7 @@ EAPI Eina_Bool    edje_object_part_box_append             (Evas_Object *obj, con
  * Prepends child to the box indicated by part.
  */
 EAPI Eina_Bool    edje_object_part_box_prepend            (Evas_Object *obj, const char *part, Evas_Object *child);
-   
+
 /**
  * @brief Adds an object to the box.
  *
@@ -2821,7 +2821,7 @@ EAPI Eina_Bool    edje_object_part_box_prepend            (Evas_Object *obj, con
  * reference.
  */
 EAPI Eina_Bool    edje_object_part_box_insert_before      (Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
-   
+
 /**
  * @brief Inserts an object to the box.
  *
@@ -2837,7 +2837,7 @@ EAPI Eina_Bool    edje_object_part_box_insert_before      (Evas_Object *obj, con
  * pos.
  */
 EAPI Eina_Bool    edje_object_part_box_insert_at          (Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
-   
+
 /**
  * @brief Removes an object from the box.
  *
@@ -2850,7 +2850,7 @@ EAPI Eina_Bool    edje_object_part_box_insert_at          (Evas_Object *obj, con
  * Removes child from the box indicated by part.
  */
 EAPI Evas_Object *edje_object_part_box_remove             (Evas_Object *obj, const char *part, Evas_Object *child);
-   
+
 /**
  * @brief Removes an object from the box.
  *
@@ -2864,7 +2864,7 @@ EAPI Evas_Object *edje_object_part_box_remove             (Evas_Object *obj, con
  * pos.
  */
 EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, const char *part, unsigned int pos);
-   
+
 /**
  * @brief Removes all elements from the box.
  *
@@ -2879,7 +2879,7 @@ EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, con
  * Elements created from the theme will not be removed.
  */
 EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, const char *part, Eina_Bool clear);
-   
+
 /**
  * @brief Retrieve a child from a table
  *
@@ -2890,7 +2890,7 @@ EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, con
  * @return The child Evas_Object
  */
 EAPI Evas_Object *edje_object_part_table_child_get        (Evas_Object *obj, const char *part, unsigned int col, unsigned int row);
-   
+
 /**
  * @brief Packs an object into the table.
  *
@@ -2908,7 +2908,7 @@ EAPI Evas_Object *edje_object_part_table_child_get        (Evas_Object *obj, con
  * Packs an object into the table indicated by part.
  */
 EAPI Eina_Bool    edje_object_part_table_pack             (Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
-   
+
 /**
  * @brief Removes an object from the table.
  *
@@ -2922,7 +2922,7 @@ EAPI Eina_Bool    edje_object_part_table_pack             (Evas_Object *obj, con
  * Removes an object from the table indicated by part.
  */
 EAPI Eina_Bool    edje_object_part_table_unpack           (Evas_Object *obj, const char *part, Evas_Object *child_obj);
-   
+
 /**
  * @brief Gets the number of columns and rows the table has.
  *
@@ -2937,7 +2937,7 @@ EAPI Eina_Bool    edje_object_part_table_unpack           (Evas_Object *obj, con
  * Retrieves the size of the table in number of columns and rows.
  */
 EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *obj, const char *part, int *cols, int *rows);
-   
+
 /**
  * @brief Removes all object from the table.
  *
@@ -2971,7 +2971,7 @@ EAPI Eina_Bool    edje_object_part_table_clear            (Evas_Object *obj, con
  *
  */
 EAPI void         edje_object_message_send                (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
-   
+
 /**
  * @brief Set the message handler function for this an object.
  *
@@ -2985,7 +2985,7 @@ EAPI void         edje_object_message_send                (Evas_Object *obj, Edj
  *
  */
 EAPI void         edje_object_message_handler_set         (Evas_Object *obj, Edje_Message_Handler_Cb func, void *data);
-   
+
 /**
  * @brief Process an object's message queue.
  *
@@ -2998,7 +2998,7 @@ EAPI void         edje_object_message_handler_set         (Evas_Object *obj, Edj
  */
 EAPI void         edje_object_message_signal_process      (Evas_Object *obj);
 
-   
+
 /**
  * @brief Process all queued up edje messages.
  *
@@ -3021,7 +3021,7 @@ EAPI void         edje_message_signal_process             (void);
  * @see edje_external_type_array_register()
  */
 EAPI Eina_Bool    edje_external_type_register             (const char *type_name, const Edje_External_Type *type_info);
-   
+
 /**
  * Unregister given type name previously registered.
  *
@@ -3034,7 +3034,7 @@ EAPI Eina_Bool    edje_external_type_register             (const char *type_name
  * @see edje_external_type_array_unregister()
  */
 EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name);
-   
+
 /**
  * Register a batch of types and their information.
  *
@@ -3058,7 +3058,7 @@ EAPI Eina_Bool    edje_external_type_unregister           (const char *type_name
  * @see edje_external_type_register()
  */
 EAPI void         edje_external_type_array_register       (const Edje_External_Type_Info *array);
-   
+
 /**
  * Unregister a batch of given external type previously registered.
  *
@@ -3069,7 +3069,7 @@ EAPI void         edje_external_type_array_register       (const Edje_External_T
  */
 EAPI void         edje_external_type_array_unregister     (const Edje_External_Type_Info *array);
 
-   
+
 /**
  * Return the current ABI version for Edje_External_Type structure.
  *
@@ -3091,7 +3091,7 @@ EAPI void         edje_external_type_array_unregister     (const Edje_External_T
 EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
 
 
-   
+
 /**
  * Returns an iterator that emits Eina_Hash_Tuple pointers with key
  * being the name and data being the Edje_External_Type pointer.
@@ -3133,14 +3133,14 @@ EAPI unsigned int edje_external_type_abi_version_get      (void) EINA_CONST;
  * @endcode
  */
 EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
-   
+
    EAPI Edje_External_Param            *edje_external_param_find       (const Eina_List *params, const char *key);
    EAPI Eina_Bool                       edje_external_param_int_get    (const Eina_List *params, const char *key, int *ret);
    EAPI Eina_Bool                       edje_external_param_double_get (const Eina_List *params, const char *key, double *ret);
    EAPI Eina_Bool                       edje_external_param_string_get (const Eina_List *params, const char *key, const char **ret);
    EAPI Eina_Bool                       edje_external_param_bool_get   (const Eina_List *params, const char *key, Eina_Bool *ret);
    EAPI Eina_Bool                       edje_external_param_choice_get (const Eina_List *params, const char *key, const char **ret);
-   
+
 /**
  * Get the array of parameters information about a type given its name.
  *
@@ -3154,7 +3154,7 @@ EAPI Eina_Iterator                  *edje_external_iterator_get     (void);
  * @see edje_external_type_get()
  */
 EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char *type_name);
-   
+
    EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
 
    EAPI Eina_Bool               edje_module_load                (const char *module);
