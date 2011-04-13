@@ -6511,6 +6511,8 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
    index = cur->pos;
    if (text[index])
       chr = text[index++];
+   else
+      chr = 0;
 
    if (chr == 0) return;
    ppos = cur->pos;
