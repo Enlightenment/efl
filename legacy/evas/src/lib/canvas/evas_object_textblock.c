@@ -2385,14 +2385,14 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt,
  */
 static Evas_Object_Textblock_Text_Item *
 _layout_item_text_split_strip_white(Ctxt *c,
-      Evas_Object_Textblock_Text_Item *ti, Eina_List *lti, int cut)
+      Evas_Object_Textblock_Text_Item *ti, Eina_List *lti, size_t cut)
 {
    const Eina_Unicode *ts;
    Evas_Object_Textblock_Text_Item *new_ti = NULL, *white_ti = NULL;
-   int cut2;
+   size_t cut2;
 
    ts = GET_ITEM_TEXT(ti);
-   if (_is_white(ts[cut]))
+   if (!IS_AT_END(ti, (size_t) cut) && _is_white(ts[cut]))
      cut2 = cut + 1;
    else
      cut2 = cut;
