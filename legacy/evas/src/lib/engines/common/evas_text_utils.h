@@ -78,7 +78,4 @@ evas_common_text_props_split(Evas_Text_Props *base, Evas_Text_Props *ext,
 EAPI void
 evas_common_text_props_merge(Evas_Text_Props *item1, const Evas_Text_Props *item2);
 
-Eina_Bool
-evas_common_text_font_style_match(const char *font_name, const char *style_name);
-
 #endif

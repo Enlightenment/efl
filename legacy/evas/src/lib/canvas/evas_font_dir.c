@@ -254,6 +254,45 @@ evas_load_fontconfig(Evas *evas, FcFontSet *set, int size,
 }
 #endif
 
+static Eina_Bool
+_font_style_name_match(const char *font_name, const char *style_name)
+{
+   char *style_key = NULL;
+
+   if (!font_name) return EINA_FALSE;
+   if (!style_name) return EINA_FALSE;
+   style_key = strchr(font_name, ':');
+   if (!style_key) return EINA_FALSE;
+   if (strlen(style_key) > 2) style_key++;
+   if (strstr(style_key, "style="))
+     {
+        if (!strcmp(style_name, "Italic"))
+          {
+             if (strstr(style_key, "Italic")
+                 || strstr(style_key, "italic")
+                 || strstr(style_key, "Cursiva")
+                 || strstr(style_key, "cursiva"))
+                return EINA_TRUE;
+             else
+                return EINA_FALSE;
+          }
+        else if (!strcmp(style_name, "Bold"))
+          {
+             if (strstr(style_key, "Bold")
+                 || strstr(style_key, "bold")
+                 || strstr(style_key, "Negreta")
+                 || strstr(style_key, "negreta"))
+                return EINA_TRUE;
+             else
+                return EINA_FALSE;
+          }
+        else
+           return EINA_FALSE;
+     }
+   else
+      return EINA_FALSE;
+}
+
 struct _FcPattern {   
    int             num;
    int             size;
@@ -275,9 +314,9 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    char *nm;
    Font_Rend_Flags wanted_rend = 0;
 
-   if (evas_common_text_font_style_match(name, "Italic"))
+   if (_font_style_name_match(name, "Italic"))
       wanted_rend |= FONT_REND_ITALIC;
-   if (evas_common_text_font_style_match(name, "Bold"))
+   if (_font_style_name_match(name, "Bold"))
       wanted_rend |= FONT_REND_BOLD;
 
    if (!name) return NULL;
