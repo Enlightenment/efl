@@ -81,6 +81,15 @@ typedef enum {
   EINA_FILE_WHT      /**< Whiteout file type (unused on Windows). */
 } Eina_File_Type;
 
+typedef struct _Eina_File Eina_File;
+
+typedef enum {
+  EINA_FILE_RANDOM,     /**< Advise random memory access to the mapped memory. */
+  EINA_FILE_SEQUENTIAL, /**< Advise sequential memory access to the mapped memory. */
+  EINA_FILE_WILLNEED,   /**< Advise need for all the mapped memory. */
+  EINA_FILE_POPULATE    /**< Request all the mapped memory. */
+} Eina_File_Populate;
+
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
  * to when the app using eina is compiled. exposing the path buffer below
  * cant safely and portably vary based on how/when you compile. it should
@@ -237,6 +246,82 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  * @see eina_file_ls()
  */
 EAPI Eina_Iterator *eina_file_direct_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * @brief Get a read-only handler to a file.
+ *
+ * @param name Filename to open
+ * @param shared Requested a shm
+ *
+ * The file are only open in read only mode. Name should be an absolute path to
+ * prevent cache mistake. A handler could be shared among multiple instance and
+ * will be correctly refcounted. File are automatically closed on exec.
+ */
+EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+/**
+ * @brief Unref file handler.
+ *
+ * @param file File handler to unref.
+ *
+ * This doesn't close the file, it will remain open until it leave the cache.
+ */
+EAPI void eina_file_close(Eina_File *file);
+
+/**
+ * @brief Get file size at open time.
+ *
+ * @param file The file handler to request the size from.
+ * @return The length of the file.
+ */
+EAPI unsigned long int eina_file_size_get(Eina_File *file);
+
+/**
+ * @brief Get the last modification time of an open file.
+ *
+ * @param file The file handler to request the modification time from.
+ * @return The last modification time.
+ */
+EAPI time_t eina_file_mtime_get(Eina_File *file);
+
+/**
+ * @brief Get the filename of an open file.
+ *
+ * @param file The file handler to request the name from.
+ * @return Stringshared filename of the file.
+ */
+EAPI const char *eina_file_filename_get(Eina_File *file);
+
+/**
+ * @brief Map all the file to a buffer.
+ *
+ * @param file The file handler to map in memory
+ * @param rule The rule to apply to the mapped memory
+ * @return A pointer to a buffer that map all the file content. @c NULL if it fail.
+ */
+EAPI void *eina_file_map_all(Eina_File *file, Eina_File_Populate rule);
+
+/**
+ * @brief Map a part of the file.
+ *
+ * @param file The file handler to map in memory
+ * @param rule The rule to apply to the mapped memory
+ * @param offset The offset inside the file
+ * @param length The length of the memory to map
+ * @return A valid pointer to the system memory with @p length valid byte in it. And @c NULL if not inside the file or anything else goes wrong.
+ *
+ * This does handle refcounting so it will share map that target the same memory area.
+ */
+EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
+                             unsigned long int offset, unsigned long int length);
+
+/**
+ * @brief Unref and unmap memory if possible.
+ *
+ * @param file The file handler to unmap memory from.
+ * @param map Memory map to unref and unmap.
+ */
+EAPI void eina_file_map_free(Eina_File *file, void *map);
 
 /**
  * @}

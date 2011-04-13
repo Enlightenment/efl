@@ -44,6 +44,8 @@ void *alloca (size_t);
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 
 #define PATH_DELIM '/'
 
@@ -60,15 +62,38 @@ void *alloca (size_t);
 #include "eina_safety_checks.h"
 #include "eina_file.h"
 #include "eina_stringshare.h"
+#include "eina_hash.h"
+#include "eina_list.h"
 
 /*============================================================================*
  *                                  Local                                     *
  *============================================================================*/
 
+#ifndef EINA_LOG_COLOR_DEFAULT
+#define EINA_LOG_COLOR_DEFAULT EINA_COLOR_CYAN
+#endif
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_file_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+#undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_eina_file_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
+
 /**
  * @cond LOCAL
  */
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
+typedef struct _Eina_File_Map Eina_File_Map;
+
 struct _Eina_File_Iterator
 {
    Eina_Iterator iterator;
@@ -78,6 +103,42 @@ struct _Eina_File_Iterator
 
    char dir[1];
 };
+
+struct _Eina_File
+{
+   const char *filename;
+
+   Eina_Hash *map;
+   Eina_Hash *rmap;
+   void *global_map;
+
+   unsigned long length;
+   time_t mtime;
+
+   int refcount;
+   int global_refcount;
+
+   int fd;
+
+   Eina_Bool shared : 1;
+   Eina_Bool delete_me : 1;
+};
+
+struct _Eina_File_Map
+{
+   void *map;
+
+   unsigned long int offset;
+   unsigned long int length;
+
+   int refcount;
+};
+
+static Eina_Hash *_eina_file_cache = NULL;
+static Eina_List *_eina_file_cache_lru = NULL;
+static Eina_List *_eina_file_cache_delete = NULL;
+
+static int _eina_file_log_dom = -1;
 
 /*
  * This complex piece of code is needed due to possible race condition.
@@ -310,6 +371,121 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
    return EINA_TRUE;
 }
 
+static void
+_eina_file_real_close(Eina_File *file)
+{
+   eina_hash_free(file->rmap);
+   eina_hash_free(file->map);
+
+   if (file->global_map != MAP_FAILED)
+     munmap(file->global_map, file->length);
+
+   close(file->fd);
+
+   eina_stringshare_del(file->filename);
+
+   free(file);
+}
+
+static void
+_eina_file_map_close(Eina_File_Map *map)
+{
+   munmap(map->map, map->length);
+   free(map);
+}
+
+static unsigned int
+_eina_file_map_key_length(__UNUSED__ const void *key)
+{
+   return sizeof (unsigned long int) * 2;
+}
+
+static int
+_eina_file_map_key_cmp(const unsigned long int *key1, __UNUSED__ int key1_length,
+                       const unsigned long int *key2, __UNUSED__ int key2_length)
+{
+   if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
+   return key1[0] - key2[0];
+}
+
+static int
+_eina_file_map_key_hash(const unsigned long int *key, __UNUSED__ int key_length)
+{
+   return eina_hash_int64(&key[0], sizeof (unsigned long int))
+     ^ eina_hash_int64(&key[1], sizeof (unsigned long int));
+}
+
+static void
+_eina_file_map_rule_apply(Eina_File_Populate rule, void *addr, unsigned long int size)
+{
+   int flag;
+
+   switch (rule)
+     {
+      case EINA_FILE_RANDOM: flag = MADV_RANDOM; break;
+      case EINA_FILE_SEQUENTIAL: flag = MADV_SEQUENTIAL; break;
+      case EINA_FILE_WILLNEED:
+      case EINA_FILE_POPULATE:
+          flag = MADV_WILLNEED;
+          break;
+     }
+
+   madvise(addr, size, flag);
+}
+
+Eina_Bool
+eina_file_init(void)
+{
+   _eina_file_log_dom = eina_log_domain_register("eina_file",
+                                                 EINA_LOG_COLOR_DEFAULT);
+   if (_eina_file_log_dom < 0)
+     {
+        EINA_LOG_ERR("Could not register log domain: eina_file");
+        return EINA_FALSE;
+     }
+
+   _eina_file_cache = eina_hash_string_djb2_new(EINA_FREE_CB(_eina_file_real_close));
+   if (!_eina_file_cache)
+     {
+        ERR("Could not create cache.");
+        eina_log_domain_unregister(_eina_file_log_dom);
+        _eina_file_log_dom = -1;
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+eina_file_shutdown(void)
+{
+   Eina_File *f;
+   Eina_List *l;
+
+   EINA_LIST_FREE(_eina_file_cache_delete, f)
+     _eina_file_real_close(f);
+
+   EINA_LIST_FOREACH(_eina_file_cache_lru, l, f)
+     eina_hash_del(_eina_file_cache, f->filename, f);
+
+   if (eina_hash_population(_eina_file_cache) > 0)
+     {
+        Eina_Iterator *it;
+        const char *key;
+
+        it = eina_hash_iterator_key_new(_eina_file_cache);
+        EINA_ITERATOR_FOREACH(it, key)
+          ERR("File [%s] still open !", key);
+        eina_iterator_free(it);
+     }
+
+   eina_hash_free(_eina_file_cache);
+
+   eina_log_domain_unregister(_eina_file_log_dom);
+   _eina_file_log_dom = -1;
+   return EINA_FALSE;
+}
+
 /**
  * @endcond
  */
@@ -527,3 +703,228 @@ eina_file_stat_ls(const char *dir)
 
    return &it->iterator;
 }
+
+EAPI Eina_File *
+eina_file_open(const char *filename, Eina_Bool shared)
+{
+   Eina_File *file;
+   Eina_File *n;
+   struct stat file_stat;
+   int fd;
+   Eina_Bool create = EINA_FALSE;
+
+   /* FIXME: always open absolute path (need to fix filename according to current
+      directory) */
+
+   if (shared)
+     fd = shm_open(filename, O_RDONLY | O_CLOEXEC, ACCESSPERMS);
+   else
+     fd = open(filename, O_RDONLY | O_CLOEXEC, ACCESSPERMS);
+
+   if (fd < 0) return NULL;
+
+   if (fstat(fd, &file_stat))
+     {
+        close(fd);
+        return NULL;
+     }
+
+   file = eina_hash_find(_eina_file_cache, filename);
+   if (file && (file->mtime != file_stat.st_mtime
+                || file->length != file_stat.st_size))
+     {
+        create = EINA_TRUE;
+
+        if (file->refcount == 0)
+          {
+             _eina_file_cache_lru = eina_list_prepend(_eina_file_cache_lru, file);
+             eina_hash_del(_eina_file_cache, file->filename, file);
+
+             file = NULL;
+          }
+        else if (!file->delete_me)
+          {
+             file->delete_me = EINA_TRUE;
+             _eina_file_cache_delete = eina_list_prepend(_eina_file_cache_delete, file);
+          }
+     }
+
+   if (!file || create)
+     {
+        n = malloc(sizeof (Eina_File));
+        if (!n) goto on_error;
+
+        n->filename = eina_stringshare_add(filename);
+        n->map = eina_hash_new(EINA_KEY_LENGTH(_eina_file_map_key_length),
+                               EINA_KEY_CMP(_eina_file_map_key_cmp),
+                               EINA_KEY_HASH(_eina_file_map_key_hash),
+                               EINA_FREE_CB(_eina_file_map_close),
+                               3);
+        n->rmap = eina_hash_pointer_new(NULL);
+        n->global_map = MAP_FAILED;
+        n->length = file_stat.st_size;
+        n->mtime = file_stat.st_mtime;
+        n->refcount = 0;
+        n->fd = fd;
+        n->shared = shared;
+        n->delete_me = EINA_FALSE;
+
+        eina_hash_set(_eina_file_cache, filename, n);
+     }
+   else
+     {
+        close(fd);
+
+        n = file;
+
+        if (n->refcount == 0)
+          _eina_file_cache_lru = eina_list_remove(_eina_file_cache_lru, n);
+     }
+
+   n->refcount++;
+
+   return n;
+
+ on_error:
+   close(fd);
+   return NULL;
+}
+
+EAPI void
+eina_file_close(Eina_File *file)
+{
+   file->refcount--;
+
+   if (file->refcount != 0) return ;
+
+   if (file->delete_me)
+     {
+        _eina_file_cache_delete = eina_list_remove(_eina_file_cache_delete, file);
+        _eina_file_real_close(file);
+     }
+   else
+     {
+        _eina_file_cache_lru = eina_list_prepend(_eina_file_cache_lru, file);
+     }
+}
+
+EAPI unsigned long int
+eina_file_size_get(Eina_File *file)
+{
+   return file->length;
+}
+
+EAPI time_t
+eina_file_mtime_get(Eina_File *file)
+{
+   return file->mtime;
+}
+
+EAPI const char *
+eina_file_filename_get(Eina_File *file)
+{
+   return file->filename;
+}
+
+EAPI void *
+eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
+{
+   int flags = MAP_SHARED;
+
+   if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
+
+   if (file->global_map == MAP_FAILED)
+     file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
+
+   if (file->global_map != MAP_FAILED)
+     {
+        _eina_file_map_rule_apply(rule, file->global_map, file->length);
+        file->global_refcount++;
+        return file->global_map;
+     }
+   return NULL;
+}
+
+EAPI void *
+eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
+                  unsigned long int offset, unsigned long int length)
+{
+   Eina_File_Map *map;
+   unsigned long int key[2];
+
+   if (offset > file->length)
+     return NULL;
+   if (offset + length > file->length)
+     return NULL;
+
+   if (offset == 0 && length == file->length)
+     return eina_file_map_all(file, rule);
+
+   key[0] = offset;
+   key[1] = length;
+
+   map = eina_hash_find(file->map, &key);
+   if (!map)
+     {
+        int flags = MAP_SHARED;
+
+        if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
+
+        map = malloc(sizeof (Eina_File_Map));
+        if (!map) return NULL;
+
+        map->map = mmap(NULL, length, PROT_READ, flags, file->fd, offset);
+        map->offset = offset;
+        map->length = length;
+        map->refcount = 0;
+
+        if (map->map == MAP_FAILED)
+          {
+             free(map);
+             return NULL;
+          }
+
+        eina_hash_add(file->map, &key, map);
+        eina_hash_direct_add(file->rmap, map->map, map);
+     }
+
+   map->refcount++;
+
+   _eina_file_map_rule_apply(rule, map->map, length);
+
+   return map->map;
+}
+
+EAPI void
+eina_file_map_free(Eina_File *file, void *map)
+{
+   if (file->global_map == map)
+     {
+        file->global_refcount--;
+
+        if (file->global_refcount > 0) return ;
+
+        munmap(file->global_map, file->length);
+        file->global_map = MAP_FAILED;
+     }
+   else
+     {
+        Eina_File_Map *em;
+        unsigned long int key[2];
+
+        em = eina_hash_find(file->rmap, &map);
+        if (!em) return ;
+
+        em->refcount--;
+
+        if (em->refcount > 0) return ;
+
+        key[0] = em->offset;
+        key[1] = em->length;
+
+        eina_hash_del(file->rmap, &map, em);
+        eina_hash_del(file->map, &key, em);
+     }
+}
+
+

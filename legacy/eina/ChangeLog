@@ -47,3 +47,8 @@
 	* Add eina_inlist_sort.
 	* Add eina_mempool_repack.
 	* Add Eina_Object API.
+
+2011-05-13  Cedric Bail & Vincent Torri
+
+	* Add Eina_File API.
+
