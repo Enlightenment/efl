@@ -2392,12 +2392,12 @@ _layout_item_text_split_strip_white(Ctxt *c,
    size_t cut2;
 
    ts = GET_ITEM_TEXT(ti);
-   if (!IS_AT_END(ti, (size_t) cut) && _is_white(ts[cut]))
+   if (!IS_AT_END(ti, cut) && _is_white(ts[cut]))
      cut2 = cut + 1;
    else
      cut2 = cut;
 
-   if (!IS_AT_END(ti, (size_t) cut2) && (ti->text_props.text_len > 0))
+   if (!IS_AT_END(ti, cut2) && (ti->text_props.text_len > 0))
      {
         new_ti = _layout_text_item_new(c, ti->parent.format);
         new_ti->parent.text_node = ti->parent.text_node;
