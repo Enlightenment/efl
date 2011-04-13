@@ -222,9 +222,7 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    ev = event_info;
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
-   printf("%i %i\n", x, y);
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   printf("  -> %i %i\n", x, y);
    _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
 }
 
