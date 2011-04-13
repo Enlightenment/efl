@@ -38,8 +38,6 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include "eina_simple_xml_parser.h"
-
 #include <strings.h>
 #include <string.h>
 #include <ctype.h>
@@ -53,6 +51,7 @@ void *alloca (size_t);
 #include "eina_mempool.h"
 #include "eina_stringshare.h"
 #include "eina_strbuf.h"
+#include "eina_simple_xml_parser.h"
 
 /*============================================================================*
 *                                  Local                                     *
