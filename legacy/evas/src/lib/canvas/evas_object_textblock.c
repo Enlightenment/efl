@@ -469,6 +469,9 @@ static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
 static void _evas_textblock_invalidate_all(Evas_Object_Textblock *o);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
+#ifdef BIDI_SUPPORT
+static inline void _evas_textblock_node_update_bidi_props(Evas_Object_Textblock_Node_Text *n);
+#endif
 
 /* styles */
 /**
@@ -4719,10 +4722,7 @@ _evas_textblock_nodes_merge(Evas_Object_Textblock *o, Evas_Object_Textblock_Node
         to->format_node = from->format_node;
      }
 #ifdef BIDI_SUPPORT
-   evas_bidi_paragraph_props_unref(to->bidi_props);
-   to->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(to->unicode),
-         eina_ustrbuf_length_get(to->unicode));
+   _evas_textblock_node_update_bidi_props(to);
 #endif
 
    _evas_textblock_cursors_set_node(o, from, to);
@@ -6022,6 +6022,24 @@ _evas_textblock_node_text_new(void)
    return n;
 }
 
+
+#ifdef BIDI_SUPPORT
+/**
+ * @internal
+ * Update bidi paragraph props.
+ *
+ * @return the new text node.
+ */
+static inline void
+_evas_textblock_node_update_bidi_props(Evas_Object_Textblock_Node_Text *n)
+{
+   evas_bidi_paragraph_props_unref(n->bidi_props);
+   n->bidi_props = evas_bidi_paragraph_props_get(
+         eina_ustrbuf_string_get(n->unicode),
+         eina_ustrbuf_length_get(n->unicode));
+}
+#endif
+
 /**
  * @internal
  * Break a paragraph. This does not add a PS but only splits the paragraph
@@ -6081,15 +6099,8 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
         eina_ustrbuf_append_length(n->unicode, text + start, len);
         eina_ustrbuf_remove(cur->node->unicode, start, start + len);
 #ifdef BIDI_SUPPORT
-   evas_bidi_paragraph_props_unref(n->bidi_props);
-   n->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(n->unicode),
-         eina_ustrbuf_length_get(n->unicode));
-
-   evas_bidi_paragraph_props_unref(cur->node->bidi_props);
-   cur->node->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(cur->node->unicode),
-         eina_ustrbuf_length_get(cur->node->unicode));
+   _evas_textblock_node_update_bidi_props(n);
+   _evas_textblock_node_update_bidi_props(cur->node);
 #endif
      }
    else
@@ -6280,10 +6291,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    if (fnode && (fnode->text_node == cur->node))
      fnode->offset += len;
 #ifdef BIDI_SUPPORT
-   evas_bidi_paragraph_props_unref(n->bidi_props);
-   n->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(n->unicode),
-         eina_ustrbuf_length_get(n->unicode));
+   _evas_textblock_node_update_bidi_props(n);
 #endif
    _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
@@ -6456,10 +6464,7 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
         else
           {
 #ifdef BIDI_SUPPORT
-             evas_bidi_paragraph_props_unref(cur->node->bidi_props);
-             cur->node->bidi_props = evas_bidi_paragraph_props_get(
-                   eina_ustrbuf_string_get(cur->node->unicode),
-                   eina_ustrbuf_length_get(cur->node->unicode));
+             _evas_textblock_node_update_bidi_props(cur->node);
 #endif
           }
      }
@@ -6547,10 +6552,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
         _evas_textblock_cursor_nodes_merge(cur);
      }
 #ifdef BIDI_SUPPORT
-   evas_bidi_paragraph_props_unref(n->bidi_props);
-   n->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(n->unicode),
-         eina_ustrbuf_length_get(n->unicode));
+   _evas_textblock_node_update_bidi_props(n);
 #endif
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
@@ -6651,10 +6653,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
 
 #ifdef BIDI_SUPPORT
-   evas_bidi_paragraph_props_unref(n1->bidi_props);
-   n1->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(n1->unicode),
-         eina_ustrbuf_length_get(n1->unicode));
+   _evas_textblock_node_update_bidi_props(n1);
 #endif
 
    evas_textblock_cursor_copy(cur1, cur2);
