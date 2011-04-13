@@ -3096,11 +3096,15 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                {
                   /* walk back to start of word */
                   twrap = _layout_word_start(ti, wrap);
-                  if (twrap != 0)
+                  if (twrap > 0)
                     {
                        wrap = twrap;
                        ch = GET_PREV(str, wrap);
-                       return (!IS_AT_END(ti, wrap)) ? wrap : -1;
+                       return (!IS_AT_END(ti, (size_t) wrap)) ? wrap : -1;
+                    }
+                  else if (twrap < 0)
+                    {
+                       return -1;
                     }
                }
           }
