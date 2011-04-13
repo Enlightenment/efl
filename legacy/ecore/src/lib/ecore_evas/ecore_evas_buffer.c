@@ -150,8 +150,8 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
    
    if ((fx == 0) && (fy == 0) && (fw == ww) && (fh == hh))
      {
-        *x = (ee->w * *x) / fw;
-        *y = (ee->h * *y) / fh;
+        *x = (ee->w * (*x - xx)) / fw;
+        *y = (ee->h * (*y - yy)) / fh;
      }
    else
      {
