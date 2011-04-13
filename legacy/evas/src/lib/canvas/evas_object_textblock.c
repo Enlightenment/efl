@@ -2779,7 +2779,7 @@ skip:
              evas_common_text_props_bidi_set(&ti->text_props,
                    ti->parent.text_node->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set (&ti->text_props,
-                   ti->text);
+                   ti->text, tmp_len);
              if (ti->parent.format->font.font)
                {
                   c->ENFN->font_text_props_info_create(c->ENDT,
@@ -3224,7 +3224,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
    evas_common_text_props_bidi_set(&ellip_ti->text_props,
          ellip_ti->parent.text_node->bidi_props, ellip_ti->parent.text_pos);
    evas_common_text_props_script_set (&ellip_ti->text_props,
-         ellip_ti->text);
+         ellip_ti->text, len);
    c->ENFN->font_text_props_info_create(c->ENDT,
          ellip_ti->parent.format->font.font,
          ellip_ti->text, &ellip_ti->text_props,

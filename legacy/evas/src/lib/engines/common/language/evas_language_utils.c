@@ -101,11 +101,12 @@ evas_common_language_script_end_of_run_get(const Eina_Unicode *str,
 }
 
 Evas_Script_Type
-evas_common_language_script_type_get(const Eina_Unicode *str)
+evas_common_language_script_type_get(const Eina_Unicode *str, size_t len)
 {
    Evas_Script_Type script = EVAS_SCRIPT_COMMON;
+   const Eina_Unicode *end = str + len;
    /* Arabic is the first script in the array that's not a common/inherited */
-   for ( ; *str && ((script = evas_common_language_char_script_get(*str)) < EVAS_SCRIPT_ARABIC) ; str++)
+   for ( ; str < end && ((script = evas_common_language_char_script_get(*str)) < EVAS_SCRIPT_ARABIC) ; str++)
      ;
    return script;
 }

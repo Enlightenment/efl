@@ -475,7 +475,7 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
    eina_unicode_strncpy(it->text, str + pos, len);
    evas_common_text_props_bidi_set(&it->text_props, o->bidi_par_props,
          it->text_pos);
-   evas_common_text_props_script_set(&it->text_props, it->text);
+   evas_common_text_props_script_set(&it->text_props, it->text, len);
    if (o->engine_data)
      {
         ENFN->font_text_props_info_create(ENDT,

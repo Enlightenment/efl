@@ -26,9 +26,9 @@ evas_common_text_props_bidi_set(Evas_Text_Props *props,
 
 void
 evas_common_text_props_script_set(Evas_Text_Props *props,
-      const Eina_Unicode *str)
+      const Eina_Unicode *str, size_t len)
 {
-   props->script = evas_common_language_script_type_get(str);
+   props->script = evas_common_language_script_type_get(str, len);
 }
 
 void

@@ -117,7 +117,7 @@ int
 evas_common_language_script_end_of_run_get(const Eina_Unicode *str, const Evas_BiDi_Paragraph_Props *bidi_props, size_t start, int len);
 
 Evas_Script_Type
-evas_common_language_script_type_get(const Eina_Unicode *str);
+evas_common_language_script_type_get(const Eina_Unicode *str, size_t len);
 
 Evas_Script_Type
 evas_common_language_char_script_get(Eina_Unicode unicode);

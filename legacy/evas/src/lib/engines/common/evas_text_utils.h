@@ -51,7 +51,7 @@ evas_common_text_props_bidi_set(Evas_Text_Props *props,
 
 void
 evas_common_text_props_script_set(Evas_Text_Props *props,
-      const Eina_Unicode *str);
+      const Eina_Unicode *str, size_t len);
 
 EAPI Eina_Bool
 evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
