@@ -155,14 +155,13 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
  */
 
 Evas_BiDi_Paragraph_Props *
-evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr)
+evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len)
 {
    Evas_BiDi_Paragraph_Props *bidi_props = NULL;
    EvasBiDiCharType *char_types = NULL;
    EvasBiDiLevel *embedding_levels = NULL;
    const FriBidiChar *ustr;
    FriBidiChar *base_ustr = NULL;
-   size_t len;
 
    if (!eina_ustr)
       return NULL;

@@ -563,7 +563,7 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
    int len = eina_unicode_strlen(text);
 #ifdef BIDI_SUPPORT
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
-   o->bidi_par_props = evas_bidi_paragraph_props_get(text);
+   o->bidi_par_props = evas_bidi_paragraph_props_get(text, len);
    evas_bidi_props_reorder_line(NULL, 0, len, o->bidi_par_props, &v_to_l);
 #endif
    visual_pos = pos = 0;

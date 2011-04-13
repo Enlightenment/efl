@@ -120,7 +120,7 @@ Eina_Bool
 evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l);
 
 Evas_BiDi_Paragraph_Props *
-evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 void
 evas_bidi_props_copy_and_ref(const Evas_BiDi_Props *src, Evas_BiDi_Props *dst);
