@@ -69,6 +69,10 @@ void *alloca (size_t);
  *                                  Local                                     *
  *============================================================================*/
 
+/**
+ * @cond LOCAL
+ */
+
 #ifndef EINA_LOG_COLOR_DEFAULT
 #define EINA_LOG_COLOR_DEFAULT EINA_COLOR_CYAN
 #endif
@@ -88,9 +92,6 @@ void *alloca (size_t);
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_file_log_dom, __VA_ARGS__)
 
-/**
- * @cond LOCAL
- */
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
 typedef struct _Eina_File_Map Eina_File_Map;
 
