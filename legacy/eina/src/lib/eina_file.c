@@ -484,7 +484,7 @@ eina_file_shutdown(void)
 
    eina_log_domain_unregister(_eina_file_log_dom);
    _eina_file_log_dom = -1;
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
