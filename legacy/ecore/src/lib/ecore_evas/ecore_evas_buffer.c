@@ -140,22 +140,31 @@ _ecore_evas_buffer_render(Ecore_Evas *ee)
 static void
 _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 {
-   Evas_Coord xx, yy, fx, fy, fw, fh;
+   Evas_Coord xx, yy, ww, hh, fx, fy, fw, fh;
 
-   evas_object_geometry_get(ee->engine.buffer.image, &xx, &yy, NULL, NULL);
+   evas_object_geometry_get(ee->engine.buffer.image, &xx, &yy, &ww, &hh);
    evas_object_image_fill_get(ee->engine.buffer.image, &fx, &fy, &fw, &fh);
 
    if (fw < 1) fw = 1;
-   xx = (*x - xx) - fx;
-   while (xx < 0) xx += fw;
-   while (xx > fw) xx -= fw;
-   *x = (ee->w * xx) / fw;
-
    if (fh < 1) fh = 1;
-   yy = (*y - yy) - fy;
-   while (yy < 0) yy += fh;
-   while (yy > fh) yy -= fh;
-   *y = (ee->h * yy) / fh;
+   
+   if ((fx == 0) && (fy == 0) && (fw == ww) && (fh == hh))
+     {
+        *x = (ee->w * *x) / fw;
+        *y = (ee->h * *y) / fh;
+     }
+   else
+     {
+        xx = (*x - xx) - fx;
+        while (xx < 0) xx += fw;
+        while (xx > fw) xx -= fw;
+        *x = (ee->w * xx) / fw;
+        
+        yy = (*y - yy) - fy;
+        while (yy < 0) yy += fh;
+        while (yy > fh) yy -= fh;
+        *y = (ee->h * yy) / fh;
+     }
 }
 
 static void
@@ -213,7 +222,9 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    ev = event_info;
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
+   printf("%i %i\n", x, y);
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
+   printf("  -> %i %i\n", x, y);
    _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
 }
 
