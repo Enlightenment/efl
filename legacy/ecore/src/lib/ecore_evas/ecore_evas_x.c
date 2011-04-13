@@ -1297,6 +1297,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 {
    _ecore_evas_x_group_leader_unset(ee);
    _ecore_evas_x_sync_set(ee);
+   if (ee->engine.x.win_shaped_input) ecore_x_window_free(ee->engine.x.win_shaped_input);
    ecore_x_window_free(ee->prop.window);
    if (ee->engine.x.pmap) ecore_x_pixmap_free(ee->engine.x.pmap);
    if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
@@ -4566,6 +4567,224 @@ ecore_evas_x11_leader_default_set(Ecore_Evas *ee)
 #ifdef BUILD_ECORE_EVAS_X11
    _ecore_evas_x_group_leader_unset(ee);
    _ecore_evas_x_group_leader_set(ee);
+#else
+   return;
+   ee = NULL;
+#endif
+}
+
+static Eina_Bool
+_ecore_evas_x11_convert_rectangle_with_angle(Ecore_Evas *ee, Ecore_X_Rectangle *dst_rect, Ecore_X_Rectangle *src_rect)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   if (!src_rect || !dst_rect) return 0;
+
+   if (ee->rotation == 0)
+     {
+        dst_rect->x = src_rect->x;
+        dst_rect->y = src_rect->y;
+        dst_rect->width = src_rect->width;
+        dst_rect->height = src_rect->height;
+     }
+   else if (ee->rotation == 90)
+     {
+        dst_rect->x = src_rect->y;
+        dst_rect->y = ee->req.h - src_rect->x - src_rect->width;
+        dst_rect->width = src_rect->height;
+        dst_rect->height = src_rect->width;
+     }
+   else if (ee->rotation == 180)
+     {
+        dst_rect->x = ee->req.w - src_rect->x - src_rect->width;
+        dst_rect->y = ee->req.h - src_rect->y - src_rect->height;
+        dst_rect->width = src_rect->width;
+        dst_rect->height = src_rect->height;
+     }
+   else if (ee->rotation == 270)
+     {
+        dst_rect->x = ee->req.w - src_rect->y - src_rect->height;
+        dst_rect->y = src_rect->x;
+        dst_rect->width = src_rect->height;
+        dst_rect->height = src_rect->width;
+     }
+   else
+     {
+        return 0;
+     }
+
+   return 1;
+#else
+   return 0;
+#endif
+}
+
+EAPI void
+ecore_evas_x11_shape_input_rectangle_set(Ecore_Evas *ee, int x, int y, int w, int h)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   Eina_Bool ret;
+   Ecore_X_Rectangle src_rect;
+   Ecore_X_Rectangle dst_rect;
+
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_x11_shape_input_rectangle_set");
+        return;
+     }
+
+   src_rect.x = x;
+   src_rect.y = y;
+   src_rect.width = w;
+   src_rect.height = h;
+
+   ret = _ecore_evas_x11_convert_rectangle_with_angle(ee, &dst_rect, &src_rect);
+
+   if (!ee->engine.x.win_shaped_input)
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+
+   if (ret)
+      ecore_x_window_shape_input_rectangle_set(ee->engine.x.win_shaped_input, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+#else
+   return;
+   ee = NULL;
+   x = 0;
+   y = 0;
+   w = 0;
+   h = 0;
+#endif
+}
+
+EAPI void
+ecore_evas_x11_shape_input_rectangle_add(Ecore_Evas *ee, int x, int y, int w, int h)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   Eina_Bool ret;
+   Ecore_X_Rectangle src_rect;
+   Ecore_X_Rectangle dst_rect;
+
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_x11_shape_input_rectangle_add");
+        return;
+     }
+
+   src_rect.x = x;
+   src_rect.y = y;
+   src_rect.width = w;
+   src_rect.height = h;
+
+   ret = _ecore_evas_x11_convert_rectangle_with_angle(ee, &dst_rect, &src_rect);
+
+   if (!ee->engine.x.win_shaped_input)
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+
+   if (ret)
+      ecore_x_window_shape_input_rectangle_add(ee->engine.x.win_shaped_input, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+#else
+   return;
+   ee = NULL;
+   x = 0;
+   y = 0;
+   w = 0;
+   h = 0;
+#endif
+}
+
+EAPI void
+ecore_evas_x11_shape_input_rectangle_subtract(Ecore_Evas *ee, int x, int y, int w, int h)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   Eina_Bool ret;
+   Ecore_X_Rectangle src_rect;
+   Ecore_X_Rectangle dst_rect;
+
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_x11_shape_input_rectangle_subtract");
+        return;
+     }
+
+   src_rect.x = x;
+   src_rect.y = y;
+   src_rect.width = w;
+   src_rect.height = h;
+
+   ret = _ecore_evas_x11_convert_rectangle_with_angle(ee, &dst_rect, &src_rect);
+
+   if (!ee->engine.x.win_shaped_input)
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+
+   if (ret)
+      ecore_x_window_shape_input_rectangle_subtract(ee->engine.x.win_shaped_input, dst_rect.x, dst_rect.y, dst_rect.width, dst_rect.height);
+#else
+   return;
+   ee = NULL;
+   x = 0;
+   y = 0;
+   w = 0;
+   h = 0;
+#endif
+}
+
+EAPI void
+ecore_evas_x11_shape_input_empty(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_x11_shape_input_empty");
+        return;
+     }
+
+   if (!ee->engine.x.win_shaped_input)
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+
+   ecore_x_window_shape_input_rectangle_set(ee->engine.x.win_shaped_input, 0, 0, 0, 0);
+#else
+   return;
+   ee = NULL;
+#endif
+}
+
+EAPI void
+ecore_evas_x11_shape_input_reset(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_x11_shape_input_reset");
+        return;
+     }
+
+   if (!ee->engine.x.win_shaped_input)
+      ee->engine.x.win_shaped_input = ecore_x_window_override_new(ee->engine.x.win_root, 0, 0, 1, 1);
+
+   ecore_x_window_shape_input_rectangle_set(ee->engine.x.win_shaped_input, 0, 0, 65535, 65535);
+#else
+   return;
+   ee = NULL;
+#endif
+}
+
+EAPI void
+ecore_evas_x11_shape_input_apply(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_X11
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_x11_shape_input_apply");
+        return;
+     }
+
+   if (!ee->engine.x.win_shaped_input) return;
+
+   ecore_x_window_shape_input_window_set(ee->prop.window, ee->engine.x.win_shaped_input);
 #else
    return;
    ee = NULL;

@@ -127,3 +127,7 @@
 2011-04-11  Hannes Janetzek
 
 	* Fix removal of windows from ignore_list with ecore_x_window_ignore_set
+
+2011-04-13  Doyun Kang
+
+	* Ecore_X + Ecore_Evas: Add more support for shape input setting

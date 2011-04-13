@@ -131,12 +131,10 @@ EAPI Ecore_X_Pixmap
 ecore_x_composite_name_window_pixmap_get(Ecore_X_Window win)
 {
    Ecore_X_Pixmap pixmap = None;
-
 #ifdef ECORE_XCOMPOSITE
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    pixmap = XCompositeNameWindowPixmap(_ecore_x_disp, win);
 #endif /* ifdef ECORE_XCOMPOSITE */
-
    return pixmap;
 } /* ecore_x_composite_name_window_pixmap_get */
 
@@ -144,13 +142,7 @@ EAPI void
 ecore_x_composite_window_events_disable(Ecore_X_Window win)
 {
 #ifdef ECORE_XCOMPOSITE
-   XRectangle rect;
-   rect.x = -1;
-   rect.y = -1;
-   rect.width = 1;
-   rect.height = 1;
-   XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1,
-                           ShapeSet, Unsorted);
+   ecore_x_window_shape_input_rectangle_set(win, -1, -1, 1, 1);
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -158,13 +150,7 @@ EAPI void
 ecore_x_composite_window_events_enable(Ecore_X_Window win)
 {
 #ifdef ECORE_XCOMPOSITE
-   XRectangle rect;
-   rect.x = 0;
-   rect.y = 0;
-   rect.width = 65535;
-   rect.height = 65535;
-   XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1,
-                           ShapeSet, Unsorted);
+   ecore_x_window_shape_input_rectangle_set(win, 0, 0, 65535, 65535);
 #endif /* ifdef ECORE_XCOMPOSITE */
 }
 
@@ -173,16 +159,8 @@ ecore_x_composite_render_window_enable(Ecore_X_Window root)
 {
    Ecore_X_Window win = 0;
 #ifdef ECORE_XCOMPOSITE
-   XRectangle rect;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
    win = XCompositeGetOverlayWindow(_ecore_x_disp, root);
-   rect.x = -1;
-   rect.y = -1;
-   rect.width = 1;
-   rect.height = 1;
-   XShapeCombineRectangles(_ecore_x_disp, win, ShapeInput, 0, 0, &rect, 1,
-                           ShapeSet, Unsorted);
+   ecore_x_composite_window_events_disable(win);
 #endif /* ifdef ECORE_XCOMPOSITE */
    return win;
 } /* ecore_x_composite_render_window_enable */

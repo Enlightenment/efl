@@ -226,6 +226,7 @@ struct _Ecore_Evas_Engine
 	   unsigned char above : 1;
 	   unsigned char below : 1;
       } state;
+      Ecore_X_Window win_shaped_input;
    } x;
 #endif
 #ifdef BUILD_ECORE_EVAS_FB

@@ -363,7 +363,13 @@ EAPI Eina_List   *ecore_evas_ecore_evas_list_get(void);
 EAPI void           ecore_evas_x11_leader_set(Ecore_Evas *ee, Ecore_X_Window win);
 EAPI Ecore_X_Window ecore_evas_x11_leader_get(Ecore_Evas *ee);
 EAPI void           ecore_evas_x11_leader_default_set(Ecore_Evas *ee);
-         
+EAPI void           ecore_evas_x11_shape_input_rectangle_set(Ecore_Evas *ee, int x, int y, int w, int h);
+EAPI void           ecore_evas_x11_shape_input_rectangle_add(Ecore_Evas *ee, int x, int y, int w, int h);
+EAPI void           ecore_evas_x11_shape_input_rectangle_subtract(Ecore_Evas *ee, int x, int y, int w, int h);
+EAPI void           ecore_evas_x11_shape_input_empty(Ecore_Evas *ee);
+EAPI void           ecore_evas_x11_shape_input_reset(Ecore_Evas *ee);
+EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
+
 #ifdef __cplusplus
 }
 #endif
