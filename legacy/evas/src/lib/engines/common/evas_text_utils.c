@@ -64,6 +64,10 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
         if (props->info->ot)
           free(props->info->ot);
 #endif
+#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
+        if (props->info->shaped_text)
+           free(props->info->shaped_text);
+#endif
         free(props->info);
         props->info = NULL;
      }
@@ -171,7 +175,8 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
 
 EAPI Eina_Bool
 evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
-      Evas_Text_Props *text_props, int len)
+      Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
+      size_t par_pos, int len)
 {
    RGBA_Font *fn = (RGBA_Font *) _fn;
    RGBA_Font_Int *fi;
@@ -202,6 +207,9 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    size_t char_index;
    Evas_Font_Glyph_Info *gl_itr;
    const Eina_Unicode *base_char;
+   (void) par_props;
+   (void) par_pos;
+
    evas_common_font_ot_populate_text_props(fn, text, text_props, len);
 
    /* Load the glyph according to the first letter of the script, preety
@@ -266,6 +274,15 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    FT_UInt prev_index;
    FT_Face pface = NULL;
    int adv_d, i;
+#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
+   text = text_props->info->shaped_text = eina_unicode_strndup(text, len);
+   evas_bidi_shape_string(text_props->info->shaped_text, par_props, par_pos,
+                          len);
+#else
+   (void) par_props;
+   (void) par_pos;
+#endif
+
    FTLOCK();
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    FTUNLOCK();

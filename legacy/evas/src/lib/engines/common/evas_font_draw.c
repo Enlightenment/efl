@@ -414,7 +414,13 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                                const Evas_Text_Props *text_props, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w, 
                                int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__)
 {
+#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
+   (void) in_text;
+   const Eina_Unicode *text = text_props->info->shaped_text +
+      text_props->text_offset;
+#else
    const Eina_Unicode *text = in_text;
+#endif
    DATA32 *im;
    FT_Face pface = NULL;
    EVAS_FONT_WALK_TEXT_INIT();

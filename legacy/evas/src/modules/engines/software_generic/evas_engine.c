@@ -772,22 +772,10 @@ eng_font_pen_coords_get(void *data __UNUSED__, void *font, const Evas_Text_Props
 }
 
 static Eina_Bool
-eng_font_text_props_info_create(void *data __UNUSED__, void *font, const Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len)
+eng_font_text_props_info_create(void *data __UNUSED__, void *font, const Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t par_pos, size_t len)
 {
-   Eina_Bool ret;
-   (void) par_props;
-   (void) pos;
-#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   Eina_Unicode *tmp = eina_unicode_strndup(text, len);
-   text = tmp;
-   evas_bidi_shape_string(text, par_props, pos, len);
-#endif
-   ret = evas_common_text_props_content_create(font, text, text_props, len);
-
-#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   free(tmp);
-#endif
-   return ret;
+   return evas_common_text_props_content_create(font, text, text_props,
+         par_props, par_pos, len);
 }
 
 static int

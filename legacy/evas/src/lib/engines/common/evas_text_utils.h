@@ -27,6 +27,9 @@ struct _Evas_Text_Props_Info
    unsigned int refcount;
    Evas_Font_Glyph_Info *glyph;
    Evas_Font_OT_Info *ot;
+#if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
+   Eina_Unicode *shaped_text;
+#endif
 };
 
 /* Sorted in visual order when created */
@@ -55,7 +58,8 @@ evas_common_text_props_script_set(Evas_Text_Props *props,
 
 EAPI Eina_Bool
 evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
-      Evas_Text_Props *text_props, int len);
+      Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
+      size_t par_pos, int len);
 
 void
 evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
