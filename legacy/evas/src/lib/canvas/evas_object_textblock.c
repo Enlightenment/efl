@@ -3067,7 +3067,6 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    int orig_wrap;
    Eina_Unicode ch;
    const Eina_Unicode *str = GET_ITEM_TEXT(ti);
-   /* FIXME-tom: a lot of str[] to check if NULL, need to fix that. */
 
    wrap = _layout_text_cutoff_get(c, fmt, ti);
    /* Avoiding too small textblocks to even contain one char */
@@ -3101,7 +3100,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
                     {
                        wrap = twrap;
                        ch = GET_PREV(str, wrap);
-                       return (str[wrap]) ? wrap : -1;
+                       return (!IS_AT_END(ti, wrap)) ? wrap : -1;
                     }
                }
           }
