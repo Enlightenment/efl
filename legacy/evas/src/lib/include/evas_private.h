@@ -686,7 +686,7 @@ struct _Evas_Func
    void (*image_content_hint_set)          (void *data, void *surface, int hint);
    int  (*image_content_hint_get)          (void *data, void *surface);
    int  (*font_pen_coords_get)            (void *data, void *font, const Evas_Text_Props *intl_props, int pos, int *cpen_x, int *cy, int *cadv, int *ch);
-   Eina_Bool (*font_text_props_info_create)                (void *data __UNUSED__, void *font, Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
+   Eina_Bool (*font_text_props_info_create)                (void *data __UNUSED__, void *font, const Eina_Unicode *text, Evas_Text_Props *intl_props, const Evas_BiDi_Paragraph_Props *par_props, size_t pos, size_t len);
    int  (*font_right_inset_get)                  (void *data, void *font, const Evas_Text_Props *text_props);
 
    /* EFL-GL Glue Layer */
