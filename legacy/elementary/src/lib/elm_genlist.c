@@ -2180,7 +2180,7 @@ _calc_job(void *data)
         itb->h = itb->minh;
         y += itb->h;
         in += itb->count;
-        if ((showme) && (wd->show_item))
+        if ((showme) && (wd->show_item) && (!wd->show_item->queued))
           {
              wd->show_item->showme = EINA_FALSE;
              if (wd->bring_in)
