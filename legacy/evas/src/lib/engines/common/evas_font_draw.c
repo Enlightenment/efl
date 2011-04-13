@@ -422,8 +422,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #if defined(METRIC_CACHE) || defined(WORD_CACHE)
    unsigned int len;
 
-   /* A fast strNlen would be nice (there is a wcsnlen strangely) */
-   len = eina_unicode_strnlen(text,WORD_CACHE_MAXLEN);
+   len = text_props->text_len;
 
    if (len > 2 && (len < WORD_CACHE_MAXLEN))
      {
@@ -516,12 +515,13 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         /* Skip common chars */
         const Eina_Unicode *tmp;
         for (tmp = text ;
-              *tmp &&
+              ((size_t) (tmp - text) < text_props->text_len) &&
               evas_common_language_char_script_get(*tmp) ==
               EVAS_SCRIPT_COMMON ;
               tmp++)
           ;
-        if (!*tmp && (tmp > text)) tmp--;
+        if (((size_t) (tmp - text) == text_props->text_len) && (tmp > text))
+           tmp--;
         evas_common_font_glyph_search(fn, &fi, *tmp);
      }
 
@@ -834,12 +834,12 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
         /* Skip common chars */
         const Eina_Unicode *tmp;
         for (tmp = text ;
-              *tmp &&
+              ((tmp - text) < len) &&
               evas_common_language_char_script_get(*tmp) ==
               EVAS_SCRIPT_COMMON ;
               tmp++)
           ;
-        if (!*tmp && (tmp > text)) tmp--;
+        if (((tmp - text) == len) && (tmp > text)) tmp--;
         evas_common_font_glyph_search(fn, &fi, *tmp);
      }
 
