@@ -411,9 +411,11 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format fo
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(widget);
-   Ecore_X_Window xwin = elm_win_xwindow_get(top);
+   Ecore_X_Window xwin;
    Cnp_Selection *sel;
 
+   if (top) xwin = elm_win_xwindow_get(top);
+   else xwin = elm_win_xwindow_get(widget);
    if (!xwin) return EINA_FALSE;
    if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();

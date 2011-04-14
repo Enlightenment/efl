@@ -2918,12 +2918,13 @@ elm_win_xwindow_get(const Evas_Object *obj)
    const char *type;
 
    if (!obj) return 0;
-   type = evas_object_type_get(obj);
+   type = elm_widget_type_get(obj);
    if (!type) return 0;
    if (type != widtype) return _elm_ee_win_get(obj);
 #ifdef HAVE_ELEMENTARY_X
    win = elm_widget_data_get(obj);
    if (!win) return xwin;
+   if (win->xwin) return win->xwin;
    if (win->parent) return elm_win_xwindow_get(win->parent);
 #endif
    return xwin;
