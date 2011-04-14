@@ -143,6 +143,9 @@ evas_bidi_paragraph_props_unref(Evas_BiDi_Paragraph_Props *bidi_props) EINA_ARG_
 Evas_BiDi_Paragraph_Props *
 evas_bidi_paragraph_props_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
+int *
+evas_bidi_segment_idxs_get(const Eina_Unicode *str, const char *delim) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+
 #endif
 /**
  * @}

@@ -147,6 +147,62 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
 
 /**
  * @internal
+ * Return a -1 terminated array of the indexes of the delimiters (passed in
+ * delim) found in the string. This result should be used with par_props_get.
+ *
+ * @param str The string to parse
+ * @param delim a list of delimiters to work with.
+ * @return returns a -1 terminated array of indexes according to positions of the delimiters found. NULL if there were none.
+ */
+int *
+evas_bidi_segment_idxs_get(const Eina_Unicode *str, const char *delim)
+{
+   Eina_Unicode *udelim;
+   const Eina_Unicode *str_base = str;
+   int *ret, *tmp_ret;
+   int ret_idx = 0, ret_len = 10; /* arbitrary choice */
+   udelim = eina_unicode_utf8_to_unicode(delim, NULL);
+   ret = malloc(ret_len * sizeof(int));
+   for ( ; *str ; str++)
+     {
+        const Eina_Unicode *del;
+        for (del = udelim ; *del ; del++)
+          {
+             if (*str == *del)
+               {
+                  if (ret_idx >= ret_len)
+                    {
+                       /* arbitrary choice */
+                       ret_len += 20;
+                       tmp_ret = realloc(ret, ret_len * sizeof(int));
+                       if (!tmp_ret)
+                         {
+                            free(ret);
+                            return NULL;
+                         }
+                    }
+                  ret[ret_idx++] = str - str_base;
+                  break;
+               }
+          }
+     }
+   free(udelim);
+
+   /* If no indexes were found return NULL */
+   if (ret_idx == 0)
+     {
+        free(ret);
+        return NULL;
+     }
+
+   ret[ret_idx] = -1;
+   tmp_ret = realloc(ret, (ret_idx + 1) * sizeof(int));
+
+   return (tmp_ret) ? tmp_ret : ret;
+}
+
+/**
+ * @internal
  * Allocates bidi properties according to ustr. First checks to see if the
  * passed has rtl chars, if not, it returns NULL.
  *
@@ -159,7 +215,6 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
  * @param segment_idxs A -1 terminated array of points to start a new bidi analysis at (used for section high level bidi overrides). - NULL means none.
  * @return returns allocated paragraph props on success, NULL otherwise.
  */
-
 Evas_BiDi_Paragraph_Props *
 evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
       int *segment_idxs)

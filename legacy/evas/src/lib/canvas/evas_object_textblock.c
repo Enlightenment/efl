@@ -377,6 +377,7 @@ struct _Evas_Object_Textblock
    char                               *markup_text;
    void                               *engine_data;
    const char                         *repch;
+   const char                         *bidi_delimiters;
    struct {
       int                              w, h;
       unsigned char                    valid : 1;
@@ -1850,15 +1851,23 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
  * @param par The paragraph to update
  */
 static inline void
-_layout_update_bidi_props(Evas_Object_Textblock_Paragraph *par)
+_layout_update_bidi_props(const Evas_Object_Textblock *o,
+      Evas_Object_Textblock_Paragraph *par)
 {
    if (par->text_node)
      {
+        const Eina_Unicode *text;
+        int *segment_idxs = NULL;
+        text = eina_ustrbuf_string_get(par->text_node->unicode);
+
+        if (o->bidi_delimiters)
+           segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
+
         evas_bidi_paragraph_props_unref(par->bidi_props);
-        par->bidi_props = evas_bidi_paragraph_props_get(
-              eina_ustrbuf_string_get(par->text_node->unicode),
+        par->bidi_props = evas_bidi_paragraph_props_get(text,
               eina_ustrbuf_length_get(par->text_node->unicode),
-              NULL);
+              segment_idxs);
+        if (segment_idxs) free(segment_idxs);
      }
 }
 #endif
@@ -3642,7 +3651,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                }
 
 #ifdef BIDI_SUPPORT
-             _layout_update_bidi_props(c->par);
+             _layout_update_bidi_props(c->o, c->par);
 #endif
 
              /* For each text node to thorugh all of it's format nodes
@@ -4227,6 +4236,20 @@ evas_object_textblock_valign_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(0.0);
    return o->valign;
+}
+
+EAPI void
+evas_object_textblock_bidi_delimiters_set(Evas_Object *obj, const char *delim)
+{
+   TB_HEAD();
+   eina_stringshare_replace(&o->bidi_delimiters, delim);
+}
+
+EAPI const char *
+evas_object_textblock_bidi_delimiters_get(const Evas_Object *obj)
+{
+   TB_HEAD_RETURN(NULL);
+   return o->bidi_delimiters;
 }
 
 EAPI const char *

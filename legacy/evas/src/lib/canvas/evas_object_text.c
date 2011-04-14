@@ -31,6 +31,7 @@ struct _Evas_Object_Text
    float                       ascent, descent;
    float                       max_ascent, max_descent;
    Evas_BiDi_Paragraph_Props  *bidi_par_props;
+   const char                 *bidi_delimiters;
    Evas_Object_Text_Item      *items;
 
    void                       *engine_data;
@@ -562,9 +563,13 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
    int cutoff;
    int len = eina_unicode_strlen(text);
 #ifdef BIDI_SUPPORT
+   int *segment_idxs = NULL;
+   if (o->bidi_delimiters)
+      segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
    evas_bidi_paragraph_props_unref(o->bidi_par_props);
-   o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, NULL);
+   o->bidi_par_props = evas_bidi_paragraph_props_get(text, len, segment_idxs);
    evas_bidi_props_reorder_line(NULL, 0, len, o->bidi_par_props, &v_to_l);
+   if (segment_idxs) free(segment_idxs);
 #endif
    visual_pos = pos = 0;
 
@@ -661,6 +666,39 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    evas_object_inform_call_resize(obj);
    if (text) free(text);
 }
+
+EAPI void
+evas_object_text_bidi_delimiters_set(Evas_Object *obj, const char *delim)
+{
+   Evas_Object_Text *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Text *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   return;
+   MAGIC_CHECK_END();
+
+   eina_stringshare_replace(&o->bidi_delimiters, delim);
+}
+
+EAPI const char *
+evas_object_text_bidi_delimiters_get(const Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Text *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   return o->bidi_delimiters;
+}
+
 
 EAPI const char *
 evas_object_text_text_get(const Evas_Object *obj)

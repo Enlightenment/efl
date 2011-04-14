@@ -5302,6 +5302,32 @@ EAPI void              evas_object_text_font_get         (const Evas_Object *obj
 EAPI void              evas_object_text_text_set         (Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Sets the BiDi delimiters used in the textblock.
+ *
+ * BiDi delimiters are use for in-paragraph separation of bidi segments. This
+ * is useful for example in recipients fields of e-mail clients where bidi
+ * oddities can occur when mixing rtl and ltr.
+ *
+ * @param obj The given text object.
+ * @param delim A null terminated string of delimiters, e.g ",|".
+ * @since 1.1.0
+ */
+EAPI void              evas_object_text_bidi_delimiters_set(Evas_Object *obj, const char *delim);
+
+/**
+ * @brief Gets the BiDi delimiters used in the textblock.
+ *
+ * BiDi delimiters are use for in-paragraph separation of bidi segments. This
+ * is useful for example in recipients fields of e-mail clients where bidi
+ * oddities can occur when mixing rtl and ltr.
+ *
+ * @param obj The given text object.
+ * @return A null terminated string of delimiters, e.g ",|". If empty, returns NULL.
+ * @since 1.1.0
+ */
+EAPI const char       *evas_object_text_bidi_delimiters_get(const Evas_Object *obj);
+
+/**
  * Retrieves the text currently being displayed by the given evas text object.
  * @param  obj The given evas text object.
  * @return The text currently being displayed.  Do not free it.
@@ -5596,6 +5622,31 @@ EAPI void                         evas_object_textblock_valign_set(Evas_Object *
  */
 EAPI double                       evas_object_textblock_valign_get(const Evas_Object *obj);
 
+/**
+ * @brief Sets the BiDi delimiters used in the textblock.
+ *
+ * BiDi delimiters are use for in-paragraph separation of bidi segments. This
+ * is useful for example in recipients fields of e-mail clients where bidi
+ * oddities can occur when mixing rtl and ltr.
+ *
+ * @param obj The given textblock object.
+ * @param delim A null terminated string of delimiters, e.g ",|".
+ * @since 1.1.0
+ */
+EAPI void                         evas_object_textblock_bidi_delimiters_set(Evas_Object *obj, const char *delim);
+
+/**
+ * @brief Gets the BiDi delimiters used in the textblock.
+ *
+ * BiDi delimiters are use for in-paragraph separation of bidi segments. This
+ * is useful for example in recipients fields of e-mail clients where bidi
+ * oddities can occur when mixing rtl and ltr.
+ *
+ * @param obj The given textblock object.
+ * @return A null terminated string of delimiters, e.g ",|". If empty, returns NULL.
+ * @since 1.1.0
+ */
+EAPI const char                  *evas_object_textblock_bidi_delimiters_get(const Evas_Object *obj);
 
 /**
  * @brief Sets newline mode. When true, newline character will behave
