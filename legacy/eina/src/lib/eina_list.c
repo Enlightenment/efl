@@ -877,11 +877,11 @@ eina_list_move(Eina_List **to, Eina_List **from, void *data)
    EINA_SAFETY_ON_NULL_RETURN_VAL(from, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
 
-   EINA_MAGIC_CHECK_LIST(*to, EINA_FALSE);
+   if (*to) EINA_MAGIC_CHECK_LIST(*to, EINA_FALSE);
    EINA_MAGIC_CHECK_LIST(*from, EINA_FALSE);
 
    l = eina_list_data_find_list(*from, data);
-   if (!l) return EINA_FALSE; /* should this be SAFETY_ON_NULL for a warning? */
+   EINA_SAFETY_ON_NULL_RETURN_VAL(l, EINA_FALSE);
 
    *to = eina_list_append(*to, data);
    *from = eina_list_remove_list(*from, l);
