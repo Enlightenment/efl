@@ -3220,14 +3220,6 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
          eina_list_data_get(eina_list_last(c->format_stack)));
    ellip_ti->parent.text_node = cur_it->text_node;
    ellip_ti->parent.text_pos = cur_it->text_pos;
-   if (cur_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-     {
-        ellip_ti->parent.text_pos += _ITEM_TEXT(cur_it)->text_props.text_len;
-     }
-   else
-     {
-        ellip_ti->parent.text_pos++;
-     }
 
    evas_common_text_props_bidi_set(&ellip_ti->text_props,
          ellip_ti->parent.text_node->bidi_props, ellip_ti->parent.text_pos);
@@ -3239,6 +3231,16 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
          ellip_ti->parent.text_node->bidi_props,
          ellip_ti->parent.text_pos, len);
    _text_item_update_sizes(c, ellip_ti);
+
+   if (cur_it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+     {
+        ellip_ti->parent.text_pos += _ITEM_TEXT(cur_it)->text_props.text_len
+           - 1;
+     }
+   else
+     {
+        ellip_ti->parent.text_pos++;
+     }
 
    return ellip_ti;
 }
