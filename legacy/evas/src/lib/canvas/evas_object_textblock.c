@@ -6881,6 +6881,9 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    int ret = -1;
    const Evas_Textblock_Cursor *dir_cur;
    Evas_Textblock_Cursor cur2;
+   Evas_Object_Textblock *o;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->formatted.valid) _relayout(cur->obj);
 
    dir_cur = cur;
    if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
@@ -7015,6 +7018,8 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
 
    if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->formatted.valid) _relayout(cur->obj);
+
    if (!cur->node)
      {
         if (!o->text_nodes)
@@ -7031,7 +7036,6 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
         else
           return -1;
      }
-   if (!o->formatted.valid) _relayout(cur->obj);
 
    previous_format = _find_layout_item_match(cur, &ln, &it);
    if (!it)
