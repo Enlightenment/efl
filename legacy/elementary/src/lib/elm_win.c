@@ -192,10 +192,13 @@ _elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
 static void
 _elm_win_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
-   if (elm_widget_focus_get(obj))
-     evas_object_focus_set(obj, EINA_TRUE);
+   Elm_Win *win = elm_widget_data_get(obj);
+   if (!win) return;
+   
+   if (win->img_obj)
+      evas_object_focus_set(win->img_obj, elm_widget_focus_get(obj));
    else
-     evas_object_focus_set(obj, EINA_FALSE);
+      evas_object_focus_set(obj, elm_widget_focus_get(obj));
 }
 
 static Eina_Bool
@@ -206,7 +209,7 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_T
         Evas_Event_Key_Down *ev = event_info;
         if (!strcmp(ev->keyname, "Tab"))
           {
-             if(evas_key_modifier_is_set(ev->modifiers, "Shift"))
+             if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
                elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
              else
                elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
@@ -1049,6 +1052,65 @@ _debug_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, voi
 }
 #endif
 
+static void
+_win_img_hide(void        *data,
+              Evas        *e __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              void        *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   
+   elm_widget_focus_hide_handle(win->win_obj);
+}
+
+static void
+_win_img_mouse_down(void        *data,
+                    Evas        *e __UNUSED__,
+                    Evas_Object *obj __UNUSED__,
+                    void        *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   elm_widget_focus_mouse_down_handle(win->win_obj);
+}
+
+static void
+_win_img_focus_in(void        *data,
+                  Evas        *e __UNUSED__,
+                  Evas_Object *obj __UNUSED__,
+                  void        *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   elm_widget_focus_steal(win->win_obj);
+}
+
+static void
+_win_img_focus_out(void        *data,
+                   Evas        *e __UNUSED__,
+                   Evas_Object *obj __UNUSED__,
+                   void        *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   elm_widget_focused_object_clear(win->win_obj);
+}
+
+static void
+_win_inlined_image_set(Elm_Win *win)
+{
+   evas_object_image_alpha_set(win->img_obj, EINA_FALSE);
+   evas_object_image_filled_set(win->img_obj, EINA_TRUE);
+   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_DEL,
+                                  _elm_win_obj_callback_img_obj_del, win);
+   
+   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_HIDE,
+                                  _win_img_hide, win);
+   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _win_img_mouse_down, win);
+   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_FOCUS_IN,
+                                  _win_img_focus_in, win);
+   evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_FOCUS_OUT,
+                                  _win_img_focus_out, win);
+}
+
 /**
  * Adds a window object. If this is the first window created, pass NULL as
  * @p parent.
@@ -1108,14 +1170,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                                  win->ee = ecore_evas_object_ecore_evas_get(win->img_obj);
                                  if (win->ee)
                                    {
-                                      evas_object_image_alpha_set
-                                         (win->img_obj, EINA_FALSE);
-                                      evas_object_image_filled_set
-                                         (win->img_obj, EINA_TRUE);
-                                      evas_object_event_callback_add
-                                         (win->img_obj, EVAS_CALLBACK_DEL,
-                                             _elm_win_obj_callback_img_obj_del,
-                                             win);
+                                      _win_inlined_image_set(win);
                                    }
                                  else
                                    {

@@ -215,7 +215,7 @@ _sub_obj_hide(void        *data __UNUSED__,
               Evas_Object *obj,
               void        *event_info __UNUSED__)
 {
-   _if_focused_revert(obj, EINA_TRUE);
+   elm_widget_focus_hide_handle(obj);
 }
 
 static void
@@ -224,16 +224,7 @@ _sub_obj_mouse_down(void        *data __UNUSED__,
                     Evas_Object *obj,
                     void        *event_info __UNUSED__)
 {
-   Evas_Object *o = obj;
-   do
-     {
-        if (_elm_widget_is(o)) break;
-        o = evas_object_smart_parent_get(o);
-     }
-   while (o);
-   if (!o) return;
-   if (!_is_focusable(o)) return;
-   elm_widget_focus_steal(o);
+   elm_widget_focus_mouse_down_handle(obj);
 }
 
 static void
@@ -2222,6 +2213,27 @@ elm_widget_stringlist_free(Eina_List *list)
 {
    const char *s;
    EINA_LIST_FREE(list, s) eina_stringshare_del(s);
+}
+
+EAPI void
+elm_widget_focus_hide_handle(Evas_Object *obj)
+{
+   _if_focused_revert(obj, EINA_TRUE);
+}
+
+EAPI void
+elm_widget_focus_mouse_down_handle(Evas_Object *obj)
+{
+   Evas_Object *o = obj;
+   do
+     {
+        if (_elm_widget_is(o)) break;
+        o = evas_object_smart_parent_get(o);
+     }
+   while (o);
+   if (!o) return;
+   if (!_is_focusable(o)) return;
+   elm_widget_focus_steal(o);
 }
 
 /**

@@ -306,6 +306,8 @@ EAPI void             elm_widget_type_register(const char **ptr);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
+EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);
+EAPI void             elm_widget_focus_mouse_down_handle(Evas_Object *obj);
 
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);
@@ -555,6 +557,5 @@ Eina_Bool            elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format fo
 Eina_Bool            elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
 Eina_Bool            elm_drop_target_del(Evas_Object *widget);
 Eina_Bool            elm_drag_start(Evas_Object *, Elm_Sel_Format, const char *, void (*)(void *,Evas_Object*),void*);
-
 
 #endif
