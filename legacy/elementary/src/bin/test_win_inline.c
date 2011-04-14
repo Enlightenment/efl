@@ -9,7 +9,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
 {
    Evas_Object *bg, *sc, *bx, *ic, *bb, *av;
    char buf[PATH_MAX];
-   
+
    if (do_bg)
      {
         bg = elm_bg_add(win);
@@ -122,7 +122,7 @@ cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_i
    Evas_Coord x, y;
    Evas_Map *p;
    int i, w, h;
-   
+
    if (!ev->buttons) return;
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_move(obj,
@@ -136,7 +136,7 @@ cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_i
      {
         Evas_Object *hand;
         char key[32];
-        
+
         snprintf(key, sizeof(key), "h-%i\n", i);
         hand = evas_object_data_get(orig, key);
         evas_object_raise(hand);
@@ -152,20 +152,20 @@ cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_i
    evas_object_map_set(orig, p);
    evas_map_free(p);
 }
-    
+
 static void
 create_handles(Evas_Object *obj)
 {
    int i;
    Evas_Coord x, y, w, h;
-   
+
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    for (i = 0; i < 4; i++)
      {
         Evas_Object *hand;
         char buf[PATH_MAX];
         char key[32];
-        
+
         hand = evas_object_image_filled_add(evas_object_evas_get(obj));
         evas_object_resize(hand, 31, 31);
         snprintf(buf, sizeof(buf), "%s/images/pt.png", PACKAGE_DATA_DIR);
@@ -186,7 +186,7 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 {
    Evas_Object *win, *bg, *win2, *win3;
    char buf[PATH_MAX];
-   
+
    win = elm_win_add(NULL, "window-inline", ELM_WIN_BASIC);
    elm_win_title_set(win, "Window Inline");
    elm_win_autodel_set(win, 1);
@@ -208,18 +208,18 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_move(elm_win_inlined_image_object_get(win2), 20, 40);
    evas_object_resize(elm_win_inlined_image_object_get(win2), 200, 320);
    evas_object_show(win2);
-   
+
    win3 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);
    elm_win_alpha_set(win3, EINA_TRUE);
    fill(win3, EINA_FALSE);
-   
+
    evas_object_resize(win3, 300, 200);
    evas_object_move(elm_win_inlined_image_object_get(win3), 80, 180);
    evas_object_resize(elm_win_inlined_image_object_get(win3), 300, 200);
    evas_object_show(win3);
-   
+
    create_handles(elm_win_inlined_image_object_get(win3));
-   
+
    evas_object_resize(win, 400, 600);
    evas_object_show(win);
 }

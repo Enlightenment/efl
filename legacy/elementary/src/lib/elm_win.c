@@ -235,7 +235,7 @@ static void
 _elm_win_obj_callback_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Win *win = data;
-   
+
    if (win->frame_obj)
      {
      }
@@ -339,7 +339,7 @@ static void
 _elm_win_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Elm_Win *win = data;
-   
+
    if (win->img_obj)
      {
         win->screen.x = x;
@@ -389,7 +389,7 @@ _elm_win_obj_callback_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
    else if (win->img_obj)
      {
         Evas_Coord x, y;
-        
+
         evas_object_geometry_get(obj, &x, &y, NULL, NULL);
         win->screen.x = x;
         win->screen.y = y;
@@ -1129,7 +1129,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           }
         break;
       case ELM_WIN_MEMORY:
-        // FIXME: implement 
+        // FIXME: implement
         break;
       default:
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
@@ -1214,7 +1214,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 #undef FALLBACK_TRY
         break;
      }
-   
+
    if (!win->ee)
      {
         ERR("Cannot create window.");
@@ -1307,7 +1307,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    Evas_Modifier_Mask mask = evas_key_modifier_mask_get(win->evas, "Control");
    evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_KEY_DOWN,
                                   _debug_key_down, win);
-   
+
    Eina_Bool ret = evas_object_key_grab(win->win_obj, "F12", mask, 0,
                                         EINA_TRUE);
    printf("Key F12 exclusive for dot tree generation. (%d)\n", ret);
@@ -2493,16 +2493,16 @@ elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *
 
 /**
  * Get the inlined image object handle
- * 
+ *
  * When you create a window with elm_win_add() of type ELM_WIN_INLINED_IMAGE,
  * then the window is in fact an evas image object inlined in the parent
  * canvas. You can get this object (be careful to not manipulate it as it
  * is under control of elementary), and use it to do things like get pixel
  * data, save the image to a file, etc.
- * 
+ *
  * @param obj The window object to get the inlined image from
  * @return The inlined image object, or NULL if none exists
- * 
+ *
  * @ingroup Win
  */
 EAPI Evas_Object *
@@ -2861,7 +2861,7 @@ elm_win_xwindow_get(const Evas_Object *obj)
    Ecore_X_Window xwin = 0;
    Elm_Win *win;
    const char *type;
-   
+
    if (!obj) return 0;
    type = evas_object_type_get(obj);
    if (!type) return 0;

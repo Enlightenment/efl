@@ -243,13 +243,13 @@ elm_conformant_add(Evas_Object *parent)
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(obj);
    Ecore_X_Window zone, xwin = elm_win_xwindow_get(top);
-   
+
    if ((xwin) && (!elm_win_inlined_image_object_get(top)))
      {
         int sh = -1;
-        
+
         zone = ecore_x_e_illume_zone_get(xwin);
-        
+
         ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
         if (sh < 0) sh = 0;
         wd->shelf = evas_object_rectangle_add(e);
@@ -257,7 +257,7 @@ elm_conformant_add(Evas_Object *parent)
         evas_object_size_hint_min_set(wd->shelf, -1, sh);
         evas_object_size_hint_max_set(wd->shelf, -1, sh);
         edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
-        
+
         sh = -1;
         ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
         if (sh < 0) sh = 0;
@@ -266,7 +266,7 @@ elm_conformant_add(Evas_Object *parent)
         evas_object_size_hint_min_set(wd->panel, -1, sh);
         evas_object_size_hint_max_set(wd->panel, -1, sh);
         edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
-        
+
         wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY,
                                                _prop_change, obj);
      }
