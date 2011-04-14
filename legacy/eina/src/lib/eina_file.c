@@ -718,9 +718,9 @@ eina_file_open(const char *filename, Eina_Bool shared)
       directory) */
 
    if (shared)
-     fd = shm_open(filename, O_RDONLY | O_CLOEXEC, ACCESSPERMS);
+     fd = shm_open(filename, O_RDONLY | O_CLOEXEC, S_IRWXU | S_IRWXG | S_IRWXO);
    else
-     fd = open(filename, O_RDONLY | O_CLOEXEC, ACCESSPERMS);
+     fd = open(filename, O_RDONLY | O_CLOEXEC, S_IRWXU | S_IRWXG | S_IRWXO);
 
    if (fd < 0) return NULL;
 
