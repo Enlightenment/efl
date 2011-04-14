@@ -468,7 +468,11 @@ extern "C" {
         ELM_WIN_TOOLTIP,
         ELM_WIN_NOTIFICATION,
         ELM_WIN_COMBO,
-        ELM_WIN_DND
+        ELM_WIN_DND,
+           
+        ELM_WIN_INLINED, // YYY: not implemented yet
+        ELM_WIN_INLINED_IMAGE,
+        ELM_WIN_MEMORY // YYY: not implemented yet
      } Elm_Win_Type;
 
    typedef enum _Elm_Win_Keyboard_Mode
@@ -544,6 +548,7 @@ extern "C" {
    EAPI int          elm_win_quickpanel_zone_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip); EINA_ARG_NONNULL(1);
    EAPI void         elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *params); EINA_ARG_NONNULL(1);
+   EAPI Evas_Object *elm_win_inlined_image_object_get(Evas_Object *obj);
    EAPI void         elm_win_focus_highlight_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
    EAPI Eina_Bool    elm_win_focus_highlight_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_win_focus_highlight_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);

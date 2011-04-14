@@ -503,8 +503,10 @@ _del_hook(Evas_Object *obj)
 
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X
-   ecore_event_handler_del(wd->sel_notify_handler);
-   ecore_event_handler_del(wd->sel_clear_handler);
+   if (wd->sel_notify_handler)
+      ecore_event_handler_del(wd->sel_notify_handler);
+   if (wd->sel_clear_handler)
+      ecore_event_handler_del(wd->sel_clear_handler);
 #endif
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->text) eina_stringshare_del(wd->text);

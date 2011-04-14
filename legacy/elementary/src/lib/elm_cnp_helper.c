@@ -410,8 +410,11 @@ Eina_Bool
 elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *selbuf)
 {
 #ifdef HAVE_ELEMENTARY_X
+   Evas_Object *top = elm_widget_top_get(widget);
+   Ecore_X_Window xwin = elm_win_xwindow_get(top);
    Cnp_Selection *sel;
 
+   if (!xwin) return EINA_FALSE;
    if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
@@ -422,7 +425,7 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format fo
    sel->active = 1;
    sel->widget = widget;
 
-   sel->set(elm_win_xwindow_get(widget),&selection,sizeof(Elm_Sel_Type));
+   sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
    sel->format = format;
    sel->selbuf = selbuf ? strdup(selbuf) : NULL;
 

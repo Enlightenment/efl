@@ -95,7 +95,8 @@ test_colorselector.c \
 test_ctxpopup.c \
 test_bubble.c \
 test_segment_control.c \
-test_store.c
+test_store.c \
+test_win_inline.c
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
