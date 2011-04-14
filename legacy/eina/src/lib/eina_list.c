@@ -894,7 +894,7 @@ eina_list_move_list(Eina_List **to, Eina_List **from, Eina_List *data)
    EINA_SAFETY_ON_NULL_RETURN_VAL(to, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(from, EINA_FALSE);
 
-   if (*to) EINA_MAGIC_CHECK_LIST(*to, EINA_FALSE);
+   EINA_MAGIC_CHECK_LIST(*to, EINA_FALSE);
    EINA_MAGIC_CHECK_LIST(*from, EINA_FALSE);
    EINA_MAGIC_CHECK_LIST(data, EINA_FALSE);
 
