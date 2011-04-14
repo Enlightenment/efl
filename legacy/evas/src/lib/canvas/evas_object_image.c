@@ -2700,67 +2700,68 @@ evas_object_image_render_pre(Evas_Object *obj)
 	     evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
 	     if (!o->pixel_updates) goto done;
 	  }
-	if ((o->cur.border.l == 0) &&
-	    (o->cur.border.r == 0) &&
-	    (o->cur.border.t == 0) &&
-	    (o->cur.border.b == 0) &&
-            (o->cur.image.w > 0) &&
-            (o->cur.image.h > 0))
-	  {
-	     Eina_Rectangle *rr;
-
-	     EINA_LIST_FREE(o->pixel_updates, rr)
-	       {
-		  Evas_Coord idw, idh, idx, idy;
-		  int x, y, w, h;
-
-		  e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
-
-		  idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
-		  idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
-
-		  if (idw < 1) idw = 1;
-		  if (idh < 1) idh = 1;
-		  if (idx > 0) idx -= idw;
-		  if (idy > 0) idy -= idh;
-		  while (idx < obj->cur.geometry.w)
-		    {
-		       Evas_Coord ydy;
-
-		       ydy = idy;
-		       x = idx;
-		       w = ((int)(idx + idw)) - x;
-		       while (idy < obj->cur.geometry.h)
-			 {
-			    Eina_Rectangle r;
-
-			    y = idy;
-			    h = ((int)(idy + idh)) - y;
-
-			    r.x = ((rr->x - 1) * w) / o->cur.image.w;
-			    r.y = ((rr->y - 1) * h) / o->cur.image.h;
-			    r.w = ((rr->w + 2) * w) / o->cur.image.w;
-			    r.h = ((rr->h + 2) * h) / o->cur.image.h;
-			    r.x += obj->cur.geometry.x + x;
-			    r.y += obj->cur.geometry.y + y;
-			    evas_add_rect(&e->clip_changes, r.x, r.y, r.w, r.h);
-			    idy += h;
-			 }
-		       idx += idw;
-		       idy = ydy;
-		    }
-		  eina_rectangle_free(rr);
-	       }
-	     goto done;
-	  }
-	else
-	  {
-	     if (o->pixel_updates)
-	       {
+        if (o->pixel_updates)
+          {
+             if ((o->cur.border.l == 0) &&
+                 (o->cur.border.r == 0) &&
+                 (o->cur.border.t == 0) &&
+                 (o->cur.border.b == 0) &&
+                 (o->cur.image.w > 0) &&
+                 (o->cur.image.h > 0) &&
+                (!((obj->cur.map) && (obj->cur.usemap))))
+               {
+                  Eina_Rectangle *rr;
+                  
+                  EINA_LIST_FREE(o->pixel_updates, rr)
+                    {
+                       Evas_Coord idw, idh, idx, idy;
+                       int x, y, w, h;
+                       
+                       e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+                       
+                       idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
+                       idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
+                       
+                       if (idw < 1) idw = 1;
+                       if (idh < 1) idh = 1;
+                       if (idx > 0) idx -= idw;
+                       if (idy > 0) idy -= idh;
+                       while (idx < obj->cur.geometry.w)
+                         {
+                            Evas_Coord ydy;
+                            
+                            ydy = idy;
+                            x = idx;
+                            w = ((int)(idx + idw)) - x;
+                            while (idy < obj->cur.geometry.h)
+                              {
+                                 Eina_Rectangle r;
+                                 
+                                 y = idy;
+                                 h = ((int)(idy + idh)) - y;
+                                 
+                                 r.x = ((rr->x - 1) * w) / o->cur.image.w;
+                                 r.y = ((rr->y - 1) * h) / o->cur.image.h;
+                                 r.w = ((rr->w + 2) * w) / o->cur.image.w;
+                                 r.h = ((rr->h + 2) * h) / o->cur.image.h;
+                                 r.x += obj->cur.geometry.x + x;
+                                 r.y += obj->cur.geometry.y + y;
+                                 evas_add_rect(&e->clip_changes, r.x, r.y, r.w, r.h);
+                                 idy += h;
+                              }
+                            idx += idw;
+                            idy = ydy;
+                         }
+                       eina_rectangle_free(rr);
+                    }
+                  goto done;
+               }
+             else
+               {
 		  Eina_Rectangle *r;
-
+                  
 		  EINA_LIST_FREE(o->pixel_updates, r)
-		    eina_rectangle_free(r);
+                     eina_rectangle_free(r);
 		  e->engine.func->image_dirty_region(e->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
 		  evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
 		  goto done;
