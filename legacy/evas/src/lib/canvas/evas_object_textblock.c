@@ -3204,11 +3204,14 @@ _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
    return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE);
 }
 
+/* Should be moved inside _layout_ellipsis_item_new once we fix the hack in
+ * textblock render */
+static const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' };
+
 static Evas_Object_Textblock_Text_Item *
 _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 {
    Evas_Object_Textblock_Text_Item *ellip_ti;
-   const Eina_Unicode _ellip_str[2] = { 0x2026, '\0' }; /* Ellipsis char */
    size_t len = 1; /* The length of _ellip_str */
    /* We assume that the format stack has at least one time,
     * the only reason it may not have, is more </> than <>, other
@@ -7946,7 +7949,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
          obj->cur.geometry.x + ln->par->x + ln->x + ti->parent.x + x + (ox), \
          obj->cur.geometry.y + ln->par->y + ln->y + yoff + y + (oy), \
          ti->parent.w, ti->parent.h, ti->parent.w, ti->parent.h, \
-         GET_ITEM_TEXT(ti), &ti->text_props);
+         /* FIXME: inline if - awful hack until we don't need text in draw */ \
+         (ti != ln->ellip_ti) ? GET_ITEM_TEXT(ti) : _ellip_str, \
+         &ti->text_props);
 #define ITEM_WALK_LINE_SKIP_DROP() \
    if ((ln->par->y + ln->y + ln->h) <= 0) continue; \
    if (ln->par->y + ln->y > obj->cur.geometry.h) break
