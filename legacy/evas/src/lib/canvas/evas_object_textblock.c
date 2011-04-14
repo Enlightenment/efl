@@ -2800,25 +2800,20 @@ skip:
         if (ti->parent.text_node)
           {
              int tmp_cut;
-             tmp_cut = evas_common_language_script_end_of_run_get(
-                   GET_ITEM_TEXT(ti),
-                   c->par->bidi_props,
-                   ti->parent.text_pos, tmp_len);
+             tmp_cut = evas_common_language_script_end_of_run_get(str,
+                   c->par->bidi_props, ti->parent.text_pos, tmp_len);
              if (tmp_cut > 0)
                {
                   tmp_len = tmp_cut;
                }
              evas_common_text_props_bidi_set(&ti->text_props,
                    c->par->bidi_props, ti->parent.text_pos);
-             evas_common_text_props_script_set (&ti->text_props,
-                   GET_ITEM_TEXT(ti), tmp_len);
+             evas_common_text_props_script_set(&ti->text_props, str, tmp_len);
              if (ti->parent.format->font.font)
                {
                   c->ENFN->font_text_props_info_create(c->ENDT,
-                        ti->parent.format->font.font,
-                        GET_ITEM_TEXT(ti), &ti->text_props,
-                        c->par->bidi_props,
-                        ti->parent.text_pos, tmp_len);
+                        ti->parent.format->font.font, str, &ti->text_props,
+                        c->par->bidi_props, ti->parent.text_pos, tmp_len);
                }
           }
         str += tmp_len;
