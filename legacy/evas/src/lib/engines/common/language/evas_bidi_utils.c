@@ -150,12 +150,19 @@ evas_bidi_shape_string(Eina_Unicode *eina_ustr, const Evas_BiDi_Paragraph_Props 
  * Allocates bidi properties according to ustr. First checks to see if the
  * passed has rtl chars, if not, it returns NULL.
  *
+ * Assumes all the segment_idxs are either -1 or legal, and > 0 indexes.
+ * Also assumes that the characters at the override points are of weak/neutral
+ * bidi type, otherwise unexpected results may occur.
+ *
  * @param ustr The string to update according to.
+ * @param len The length of the string
+ * @param segment_idxs A -1 terminated array of points to start a new bidi analysis at (used for section high level bidi overrides). - NULL means none.
  * @return returns allocated paragraph props on success, NULL otherwise.
  */
 
 Evas_BiDi_Paragraph_Props *
-evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len)
+evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
+      int *segment_idxs)
 {
    Evas_BiDi_Paragraph_Props *bidi_props = NULL;
    EvasBiDiCharType *char_types = NULL;
@@ -203,10 +210,71 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len)
         len = -2;
         goto cleanup;
      }
-   if (!fribidi_get_par_embedding_levels(char_types, len, &bidi_props->direction, embedding_levels))
+
+   if (segment_idxs)
      {
-        len = -2;
-        goto cleanup;
+        size_t pos = 0;
+        int *itr;
+        EvasBiDiLevel base_level = 0;
+        EvasBiDiParType direction;
+
+        for (itr = segment_idxs ; *itr > 0 ; itr++)
+          {
+             direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+             if (!fribidi_get_par_embedding_levels(char_types + pos,
+                      *itr - pos,
+                      &direction,
+                      embedding_levels + pos))
+               {
+                  len = -2;
+                  goto cleanup;
+               }
+
+             /* Only on the first run */
+             if (itr == segment_idxs)
+               {
+                  bidi_props->direction = direction;
+                  /* adjust base_level to be 1 for rtl paragraphs, and 0 for
+                   * ltr paragraphs. */
+                  base_level =
+                     EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(bidi_props) ? 1 : 0;
+               }
+
+             /* We want those chars at the override points to be on the base
+              * level and we also remove -2 cause we later increment them,
+              * just for simpler code paths */
+             embedding_levels[*itr] = base_level - 2;
+             pos = *itr + 1;
+          }
+
+        direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+        if (!fribidi_get_par_embedding_levels(char_types + pos,
+                 len - pos,
+                 &direction,
+                 embedding_levels + pos))
+          {
+             len = -2;
+             goto cleanup;
+          }
+
+        /* Increment all levels by 2 to emulate embedding. */
+          {
+             EvasBiDiLevel *bitr = embedding_levels, *end;
+             end = bitr + len;
+             for ( ; bitr < end ; bitr++)
+               {
+                  *bitr += 2;
+               }
+          }
+     }
+   else
+     {
+        if (!fribidi_get_par_embedding_levels(char_types, len,
+                 &bidi_props->direction, embedding_levels))
+          {
+             len = -2;
+             goto cleanup;
+          }
      }
 
 
@@ -512,5 +580,17 @@ evas_bidi_props_clean(Evas_BiDi_Props *bidi_props)
 /**
  * @}
  */
+#endif
+
+#if 0
+/* Good for debugging */
+static void
+dump_levels(Eina_Unicode *ustr, EvasBiDiLevel *emb)
+{
+   for ( ; *ustr ; ustr++, emb++)
+     {
+        printf("%lc %d\n", *ustr, *emb);
+     }
+}
 #endif
 

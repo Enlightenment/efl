@@ -6036,7 +6036,8 @@ _evas_textblock_node_update_bidi_props(Evas_Object_Textblock_Node_Text *n)
    evas_bidi_paragraph_props_unref(n->bidi_props);
    n->bidi_props = evas_bidi_paragraph_props_get(
          eina_ustrbuf_string_get(n->unicode),
-         eina_ustrbuf_length_get(n->unicode));
+         eina_ustrbuf_length_get(n->unicode),
+         NULL);
 }
 #endif
 
