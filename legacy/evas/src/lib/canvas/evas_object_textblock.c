@@ -189,7 +189,7 @@ struct _Evas_Object_Textblock_Node_Text
    Eina_UStrbuf                       *unicode;
    char                               *utf8;
    Evas_Object_Textblock_Node_Format  *format_node;
-   Evas_BiDi_Paragraph_Props          *bidi_props;
+   Evas_Object_Textblock_Paragraph    *par;
    Eina_Bool                           dirty : 1;
    Eina_Bool                           new : 1;
 };
@@ -240,6 +240,7 @@ struct _Evas_Object_Textblock_Paragraph
    Evas_Object_Textblock_Line        *lines;
    Evas_Object_Textblock_Node_Text   *text_node;
    Eina_List                         *logical_items;
+   Evas_BiDi_Paragraph_Props         *bidi_props;
    int                                x, y, w, h;
    int                                line_no;
    Eina_Bool                          visible;
@@ -469,9 +470,6 @@ static void _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj);
 static void _evas_textblock_invalidate_all(Evas_Object_Textblock *o);
 static void _evas_textblock_cursors_update_offset(const Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Text *n, size_t start, int offset);
 static void _evas_textblock_cursors_set_node(Evas_Object_Textblock *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
-#ifdef BIDI_SUPPORT
-static inline void _evas_textblock_node_update_bidi_props(Evas_Object_Textblock_Node_Text *n);
-#endif
 
 /* styles */
 /**
@@ -1834,9 +1832,37 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
 
    c->ln = NULL;
    c->par->text_node = n;
+   if (n)
+      n->par = c->par;
    c->par->line_no = -1;
    c->par->visible = 1;
+#ifdef BIDI_SUPPORT
+   c->par->bidi_props = evas_bidi_paragraph_props_new();
+   c->par->bidi_props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+#endif
 }
+
+#ifdef BIDI_SUPPORT
+/**
+ * @internal
+ * Update bidi paragraph props.
+ *
+ * @param par The paragraph to update
+ */
+static inline void
+_layout_update_bidi_props(Evas_Object_Textblock_Paragraph *par)
+{
+   if (par->text_node)
+     {
+        evas_bidi_paragraph_props_unref(par->bidi_props);
+        par->bidi_props = evas_bidi_paragraph_props_get(
+              eina_ustrbuf_string_get(par->text_node->unicode),
+              eina_ustrbuf_length_get(par->text_node->unicode),
+              NULL);
+     }
+}
+#endif
+
 
 /**
  * @internal
@@ -1873,6 +1899,12 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
           }
         eina_list_free(par->logical_items);
      }
+#ifdef BIDI_SUPPORT
+   if (par->bidi_props)
+      evas_bidi_paragraph_props_unref(par->bidi_props);
+#endif
+   if (par->text_node)
+      par->text_node->par = NULL;
    free(par);
 }
 
@@ -2022,7 +2054,7 @@ _layout_line_align_get(Ctxt *c)
      {
         if (c->ln->items && c->ln->items->text_node &&
               EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
-                 c->ln->items->text_node->bidi_props))
+                 c->ln->par->bidi_props))
           {
              /* Align right*/
              return 1.0;
@@ -2054,10 +2086,10 @@ _layout_line_order(Ctxt *c __UNUSED__, Evas_Object_Textblock_Line *line)
    size_t len;
 
    if (line->items && line->items->text_node &&
-         line->items->text_node->bidi_props)
+         line->par->bidi_props)
      {
         Evas_BiDi_Paragraph_Props *props;
-        props = line->items->text_node->bidi_props;
+        props = line->par->bidi_props;
         start = end = line->items->text_pos;
 
         /* Find the first and last positions in the line */
@@ -2770,14 +2802,14 @@ skip:
              int tmp_cut;
              tmp_cut = evas_common_language_script_end_of_run_get(
                    GET_ITEM_TEXT(ti),
-                   ti->parent.text_node->bidi_props,
+                   c->par->bidi_props,
                    ti->parent.text_pos, tmp_len);
              if (tmp_cut > 0)
                {
                   tmp_len = tmp_cut;
                }
              evas_common_text_props_bidi_set(&ti->text_props,
-                   ti->parent.text_node->bidi_props, ti->parent.text_pos);
+                   c->par->bidi_props, ti->parent.text_pos);
              evas_common_text_props_script_set (&ti->text_props,
                    GET_ITEM_TEXT(ti), tmp_len);
              if (ti->parent.format->font.font)
@@ -2785,7 +2817,7 @@ skip:
                   c->ENFN->font_text_props_info_create(c->ENDT,
                         ti->parent.format->font.font,
                         GET_ITEM_TEXT(ti), &ti->text_props,
-                        ti->parent.text_node->bidi_props,
+                        c->par->bidi_props,
                         ti->parent.text_pos, tmp_len);
                }
           }
@@ -2831,7 +2863,7 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node_Format *n, const cha
         fi->parent.text_pos = _evas_textblock_node_format_pos_get(n);
 #ifdef BIDI_SUPPORT
         fi->bidi_dir = (evas_bidi_is_rtl_char(
-              fi->parent.text_node->bidi_props,
+              c->par->bidi_props,
               0,
               fi->parent.text_pos)) ?
            EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
@@ -3222,13 +3254,13 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
    ellip_ti->parent.text_pos = cur_it->text_pos;
 
    evas_common_text_props_bidi_set(&ellip_ti->text_props,
-         ellip_ti->parent.text_node->bidi_props, ellip_ti->parent.text_pos);
+         c->par->bidi_props, ellip_ti->parent.text_pos);
    evas_common_text_props_script_set (&ellip_ti->text_props,
          _ellip_str, len);
    c->ENFN->font_text_props_info_create(c->ENDT,
          ellip_ti->parent.format->font.font,
          _ellip_str, &ellip_ti->text_props,
-         ellip_ti->parent.text_node->bidi_props,
+         c->par->bidi_props,
          ellip_ti->parent.text_pos, len);
    _text_item_update_sizes(c, ellip_ti);
 
@@ -3614,10 +3646,14 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                   _layout_paragraph_new(c, n, EINA_FALSE);
                }
 
+#ifdef BIDI_SUPPORT
+             _layout_update_bidi_props(c->par);
+#endif
+
              /* For each text node to thorugh all of it's format nodes
               * append text from the start to the offset of the next format
-              * using the last format got. if needed it also creates format items
-              * this is the core algorithm of the layout mechanism.
+              * using the last format got. if needed it also creates format
+              * items this is the core algorithm of the layout mechanism.
               * Skip the unicode replacement chars when there are because
               * we don't want to print them. */
              fnode = n->format_node;
@@ -4726,9 +4762,6 @@ _evas_textblock_nodes_merge(Evas_Object_Textblock *o, Evas_Object_Textblock_Node
      {
         to->format_node = from->format_node;
      }
-#ifdef BIDI_SUPPORT
-   _evas_textblock_node_update_bidi_props(to);
-#endif
 
    _evas_textblock_cursors_set_node(o, from, to);
    _evas_textblock_node_text_remove(o, from);
@@ -5996,10 +6029,8 @@ _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n)
    eina_ustrbuf_free(n->unicode);
    if (n->utf8)
      free(n->utf8);
-#ifdef BIDI_SUPPORT
-   if (&n->bidi_props)
-     evas_bidi_paragraph_props_unref(n->bidi_props);
-#endif
+   if (n->par)
+      n->par->text_node = NULL;
    free(n);
 }
 
@@ -6019,32 +6050,9 @@ _evas_textblock_node_text_new(void)
    /* We want to layout each paragraph at least once. */
    n->dirty = EINA_TRUE;
    n->new = EINA_TRUE;
-#ifdef BIDI_SUPPORT
-   n->bidi_props = evas_bidi_paragraph_props_new();
-   n->bidi_props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
-#endif
 
    return n;
 }
-
-
-#ifdef BIDI_SUPPORT
-/**
- * @internal
- * Update bidi paragraph props.
- *
- * @return the new text node.
- */
-static inline void
-_evas_textblock_node_update_bidi_props(Evas_Object_Textblock_Node_Text *n)
-{
-   evas_bidi_paragraph_props_unref(n->bidi_props);
-   n->bidi_props = evas_bidi_paragraph_props_get(
-         eina_ustrbuf_string_get(n->unicode),
-         eina_ustrbuf_length_get(n->unicode),
-         NULL);
-}
-#endif
 
 /**
  * @internal
@@ -6104,10 +6112,6 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
         len = eina_ustrbuf_length_get(cur->node->unicode) - start;
         eina_ustrbuf_append_length(n->unicode, text + start, len);
         eina_ustrbuf_remove(cur->node->unicode, start, start + len);
-#ifdef BIDI_SUPPORT
-   _evas_textblock_node_update_bidi_props(n);
-   _evas_textblock_node_update_bidi_props(cur->node);
-#endif
      }
    else
      {
@@ -6296,9 +6300,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
    /* Advance the formats */
    if (fnode && (fnode->text_node == cur->node))
      fnode->offset += len;
-#ifdef BIDI_SUPPORT
-   _evas_textblock_node_update_bidi_props(n);
-#endif
+
    _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
    free(text);
@@ -6467,12 +6469,6 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
           {
              _evas_textblock_cursor_break_paragraph(cur, n);
           }
-        else
-          {
-#ifdef BIDI_SUPPORT
-             _evas_textblock_node_update_bidi_props(cur->node);
-#endif
-          }
      }
 
    _evas_textblock_changed(o, cur->obj);
@@ -6559,9 +6555,6 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
      {
         _evas_textblock_cursor_nodes_merge(cur);
      }
-#ifdef BIDI_SUPPORT
-   _evas_textblock_node_update_bidi_props(n);
-#endif
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
      {
@@ -6659,10 +6652,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
          * updated the cursors */
         _evas_textblock_nodes_merge(o, n1);
      }
-
-#ifdef BIDI_SUPPORT
-   _evas_textblock_node_update_bidi_props(n1);
-#endif
 
    evas_textblock_cursor_copy(cur1, cur2);
    if (reset_cursor)
@@ -6932,10 +6921,12 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              if (ret >= 0)
                {
                   if ((!before_char &&
-                           evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                           evas_bidi_is_rtl_char(
+                              dir_cur->node->par->bidi_props, 0,
                               dir_cur->pos)) ||
                         (before_char &&
-                         !evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+                         !evas_bidi_is_rtl_char(
+                            dir_cur->node->par->bidi_props, 0,
                             dir_cur->pos)))
 
                     {
@@ -6952,7 +6943,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
 #ifdef BIDI_SUPPORT
              /* Adjust if the char is an rtl char */
              if ((ret >= 0) && (!evas_bidi_is_rtl_char(
-                         dir_cur->node->bidi_props, 0, dir_cur->pos)))
+                         dir_cur->node->par->bidi_props, 0, dir_cur->pos)))
                {
                   /* Just don't advance the width */
                   w = 0;
@@ -6978,13 +6969,13 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
 #ifdef BIDI_SUPPORT
         if (_evas_textblock_cursor_is_at_the_end(dir_cur) && (dir_cur->pos > 0))
           {
-             *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+             *dir = (evas_bidi_is_rtl_char(dir_cur->node->par->bidi_props, 0,
                       dir_cur->pos - 1)) ?
                 EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
           }
         else if (dir_cur->pos > 0)
           {
-             *dir = (evas_bidi_is_rtl_char(dir_cur->node->bidi_props, 0,
+             *dir = (evas_bidi_is_rtl_char(dir_cur->node->par->bidi_props, 0,
                       dir_cur->pos)) ?
                 EVAS_BIDI_DIRECTION_RTL : EVAS_BIDI_DIRECTION_LTR;
           }
@@ -7095,7 +7086,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
                {
 #ifdef BIDI_SUPPORT
                   if (EVAS_BIDI_PARAGRAPH_DIRECTION_IS_RTL(
-                           fi->parent.text_node->bidi_props))
+                           ln->par->bidi_props))
                     {
                        x = ln->par->x + ln->x;
                     }
@@ -7732,6 +7723,12 @@ evas_object_textblock_clear(Evas_Object *obj)
    Evas_Textblock_Cursor *cur;
 
    TB_HEAD();
+   if (o->paragraphs)
+     {
+	_paragraphs_free(obj, o->paragraphs);
+	o->paragraphs = NULL;
+     }
+
    _nodes_clear(obj);
    o->cursor->node = NULL;
    o->cursor->pos = 0;
@@ -7740,11 +7737,6 @@ evas_object_textblock_clear(Evas_Object *obj)
 	cur->node = NULL;
 	cur->pos = 0;
 
-     }
-   if (o->paragraphs)
-     {
-	_paragraphs_free(obj, o->paragraphs);
-	o->paragraphs = NULL;
      }
    _evas_textblock_changed(o, obj);
 }
