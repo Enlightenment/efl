@@ -231,7 +231,7 @@
 2011-04-10 Tom Hacohen (TAsn)
 
 	* Textblock: Fixed a bug in evas_object_textblock_text_markup_prepend
-	  that cusaed it to use the object's cursor instead of the cursor
+	  that caused it to use the object's cursor instead of the cursor
 	  passed.
 
 2011-04-11  Carsten Haitzler (The Rasterman)
@@ -245,4 +245,13 @@
 	  emboldening. - Automatically slants/emboldens a font at runtime if
 	  italic/bold/crusiva and etc are requested but not found in the
 	  system.
+
+2011-04-14 Tom Hacohen (TAsn)
+
+	* Font-engine: Implemented higher level override API for the bidi
+	  functions. This implements clause HL4 of the bidi algorithm.
+	  This is very cool actually, it lets us to force-separate paragraphs
+	  so each part will get his bidi calculated on it's own. This is very
+	  useful for "to" field of email/sms applications where ',' is used to
+	  separate different text entities.
 
