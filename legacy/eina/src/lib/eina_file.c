@@ -712,23 +712,29 @@ eina_file_open(const char *filename, Eina_Bool shared)
    Eina_File *n;
    struct stat file_stat;
    int fd;
+   int flags;
    Eina_Bool create = EINA_FALSE;
 
    /* FIXME: always open absolute path (need to fix filename according to current
       directory) */
 
    if (shared)
-     fd = shm_open(filename, O_RDONLY | O_CLOEXEC, S_IRWXU | S_IRWXG | S_IRWXO);
+     fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
    else
-     fd = open(filename, O_RDONLY | O_CLOEXEC, S_IRWXU | S_IRWXG | S_IRWXO);
+     fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
 
    if (fd < 0) return NULL;
 
+   flags = fcntl(fd, F_GETFD);
+   if (flags == -1)
+     goto on_error;
+
+   flags |= FD_CLOEXEC;
+   if (fcntl(fd, F_SETFD, flags) == -1)
+     goto on_error;
+
    if (fstat(fd, &file_stat))
-     {
-        close(fd);
-        return NULL;
-     }
+     goto on_error;
 
    file = eina_hash_find(_eina_file_cache, filename);
    if (file && (file->mtime != file_stat.st_mtime
