@@ -777,7 +777,7 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    Image_Entry          *im;
    Evas_Image_Load_Opts  prevent = { 0, 0, 0, 0, { 0, 0, 0, 0 } };
    size_t                size;
-   int                   stat_done = 0;
+   int                   stat_done = 0, stat_failed = 0;
    size_t                file_length;
    size_t                key_length;
    struct stat           st;
@@ -878,7 +878,11 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
         int ok = 1;
 
         stat_done = 1;
-        if (stat(file, &st) < 0) ok = 0;
+        if (stat(file, &st) < 0)
+           {
+              stat_failed = 1;
+              ok = 0;
+           }
         else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
         if (ok) goto on_ok;
 
@@ -901,7 +905,11 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
         if (!stat_done)
           {
              stat_done = 1;
-             if (stat(file, &st) < 0) ok = 0;
+             if (stat(file, &st) < 0)
+               {
+                  stat_failed = 1;
+                  ok = 0;
+               }
              else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
           }
         else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
@@ -915,7 +923,8 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
         _evas_cache_image_make_dirty(cache, im);
         im = NULL;
      }
-
+   if (stat_failed) goto on_stat_error;
+   
    if (!stat_done)
      {
         if (stat(file, &st) < 0) goto on_stat_error;
