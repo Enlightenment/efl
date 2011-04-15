@@ -1434,7 +1434,6 @@ _event_selection_notify(void *data, int type __UNUSED__, void *event)
 static Eina_Bool
 _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-/*
    Widget_Data *wd = elm_widget_data_get(data);
    Ecore_X_Event_Selection_Clear *ev = event;
    if (!wd) return ECORE_CALLBACK_PASS_ON;
@@ -1444,7 +1443,6 @@ _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event _
      {
         elm_entry_select_none(data);
      }
-   return 1; */
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1456,7 +1454,6 @@ _drag_drop_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Selection_Data *drop)
    Eina_Bool rv;
 
    wd = elm_widget_data_get(obj);
-
    if (!wd) return EINA_FALSE;
    printf("Inserting at (%d,%d) %s\n",drop->x,drop->y,(char*)drop->data);
 

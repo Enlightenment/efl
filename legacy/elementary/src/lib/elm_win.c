@@ -1150,10 +1150,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    switch (type)
      {
-      case ELM_WIN_INLINED:
-        // FIXME: implement. same as ELM_WIN_INLINED_IMAGE but with border
-        // frame
-        break;
       case ELM_WIN_INLINED_IMAGE:
           {
              if (parent)
@@ -1182,9 +1178,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                     }
                }
           }
-        break;
-      case ELM_WIN_MEMORY:
-        // FIXME: implement
         break;
       default:
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11))

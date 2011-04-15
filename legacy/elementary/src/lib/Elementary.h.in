@@ -469,10 +469,7 @@ extern "C" {
         ELM_WIN_NOTIFICATION,
         ELM_WIN_COMBO,
         ELM_WIN_DND,
-           
-        ELM_WIN_INLINED, // YYY: not implemented yet
         ELM_WIN_INLINED_IMAGE,
-        ELM_WIN_MEMORY // YYY: not implemented yet
      } Elm_Win_Type;
 
    typedef enum _Elm_Win_Keyboard_Mode

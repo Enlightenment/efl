@@ -10,7 +10,7 @@
 
 #define ARRAYINIT(foo)  [foo] =
 
-//#define DEBUGON 1
+#define DEBUGON 1
 
 
 #ifdef DEBUGON
@@ -649,6 +649,7 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
 {
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
+   Evas_Object *top;
    int i, j;
 
    targets = notify->data;
@@ -672,8 +673,10 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
    return ECORE_CALLBACK_PASS_ON;
 
 done:
-   cnp_debug("Sending request for %s\n",atoms[j].name);
-   sel->request(elm_win_xwindow_get(sel->requestwidget), atoms[j].name);
+   top = elm_widget_top_get(sel->requestwidget);
+   if (!top) top = sel->requestwidget;
+   cnp_debug("Sending request for %s\n", atoms[j].name);
+   sel->request(elm_win_xwindow_get(top), atoms[j].name);
 
    return ECORE_CALLBACK_PASS_ON;
 }
