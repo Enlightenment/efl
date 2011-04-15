@@ -9,7 +9,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-#define FILE_BUFFER_SIZE 1024
+#define FILE_BUFFER_SIZE 1024 * 32
 #define FILE_BUFFER_UNREAD_SIZE 16
 
 static Eina_Bool evas_image_load_file_head_pmaps(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
@@ -294,7 +294,6 @@ static size_t
 pmaps_buffer_plain_update(Pmaps_Buffer *b)
 {
    size_t r;
-   size_t steps = 0;
 
    /* if we already are in the last buffer we can not update it */
    if (b->last_buffer)
@@ -304,7 +303,7 @@ pmaps_buffer_plain_update(Pmaps_Buffer *b)
     * stuff */
    if (b->unread_len)
       memcpy(b->buffer, b->unread, b->unread_len);
-
+   
    r = fread(&b->buffer[b->unread_len], 1,
 	     FILE_BUFFER_SIZE - b->unread_len - 1, b->file) + b->unread_len;
 
@@ -324,25 +323,9 @@ pmaps_buffer_plain_update(Pmaps_Buffer *b)
      }
 
    b->buffer[r] = 0;
-   r--;
-
-   while (steps < (FILE_BUFFER_UNREAD_SIZE - 2)
-	  && r > 1 && !isspace(b->buffer[r]))
-     {
-	steps++;
-	r--;
-     }
-
-   if (steps != 0)
-     {
-	memcpy(b->unread, &b->buffer[r], steps + 1);
-	b->unread_len = steps + 1;
-     }
-   else
-     {
-	b->unread[0] = '\0';
-	b->unread_len = 0;
-     }
+   
+   b->unread[0] = '\0';
+   b->unread_len = 0;
 
    b->buffer[r] = '\0';
    b->current = b->buffer;
@@ -362,23 +345,22 @@ pmaps_buffer_raw_update(Pmaps_Buffer *b)
    if (b->unread_len)
       memcpy(b->buffer, b->unread, b->unread_len);
 
-   r = fread(&b->buffer[b->unread_len], 1,
-	     FILE_BUFFER_SIZE - b->unread_len - 1, b->file) + b->unread_len;
+   r = fread(&b->buffer[b->unread_len], 1, FILE_BUFFER_SIZE - b->unread_len, 
+             b->file) + b->unread_len;
 
-   if (r < FILE_BUFFER_SIZE - 1)
+   if (r < FILE_BUFFER_SIZE)
      {
-	/*we reached eof */ ;
+	/*we reached eof */
 	b->last_buffer = 1;
      }
 
-   b->buffer[r] = 0;
    b->end = b->buffer + r;
    b->current = b->buffer;
 
    if (b->unread_len)
      {
 	/* the buffer is now read */
-	*b->unread = '\0';
+	*b->unread = 0;
 	b->unread_len = 0;
      }
 
