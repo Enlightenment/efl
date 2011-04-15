@@ -4573,10 +4573,10 @@ ecore_evas_x11_leader_default_set(Ecore_Evas *ee)
 #endif
 }
 
+#ifdef BUILD_ECORE_EVAS_X11
 static Eina_Bool
 _ecore_evas_x11_convert_rectangle_with_angle(Ecore_Evas *ee, Ecore_X_Rectangle *dst_rect, Ecore_X_Rectangle *src_rect)
 {
-#ifdef BUILD_ECORE_EVAS_X11
    if (!src_rect || !dst_rect) return 0;
 
    if (ee->rotation == 0)
@@ -4613,10 +4613,8 @@ _ecore_evas_x11_convert_rectangle_with_angle(Ecore_Evas *ee, Ecore_X_Rectangle *
      }
 
    return 1;
-#else
-   return 0;
-#endif
 }
+#endif
 
 EAPI void
 ecore_evas_x11_shape_input_rectangle_set(Ecore_Evas *ee, int x, int y, int w, int h)
