@@ -270,10 +270,10 @@ eina_error_find(const char *msg)
         if (_eina_errors[i].string_allocated)
           {
              if (_eina_errors[i].string == msg)
-               return i;
+               return i + 1;
           }
         if (!strcmp(_eina_errors[i].string, msg))
-          return i;
+          return i + 1;
      }
    return 0;
 }
