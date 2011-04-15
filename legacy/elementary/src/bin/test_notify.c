@@ -61,7 +61,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -91,7 +91,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -120,7 +120,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -148,7 +148,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -174,7 +174,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -200,7 +200,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -226,7 +226,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -252,7 +252,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);
@@ -278,7 +278,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    elm_notify_content_set(notify, bx);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
    lb = elm_label_add(win);

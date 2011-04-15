@@ -178,7 +178,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(sc);
 
    bx2 = elm_box_add(win);
-   elm_box_horizontal_set(bx2, 1);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
 
    for (i = 0; i < 10; i++)
      {

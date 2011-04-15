@@ -183,7 +183,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    _test_progressbar.pb7 = pb;
 
    bt_bx = elm_box_add(win);
-   elm_box_horizontal_set(bt_bx, 1);
+   elm_box_horizontal_set(bt_bx, EINA_TRUE);
    evas_object_size_hint_weight_set(bt_bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, bt_bx);
    evas_object_show(bt_bx);

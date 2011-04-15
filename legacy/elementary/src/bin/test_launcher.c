@@ -213,8 +213,8 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-   elm_box_homogenous_set(bx, 1);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_homogenous_set(bx, EINA_TRUE);
+   elm_box_horizontal_set(bx, EINA_TRUE);
 
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, 1, 0);
@@ -309,7 +309,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx2 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_horizontal_set(bx2, 0);
+   elm_box_horizontal_set(bx2, EINA_FALSE);
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
 
@@ -396,8 +396,8 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bg);
 
    bx = elm_box_add(win);
-   elm_box_homogenous_set(bx, 1);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_homogenous_set(bx, EINA_TRUE);
+   elm_box_horizontal_set(bx, EINA_TRUE);
 
    for (k = 0 ; k < 8; k++)
      {
@@ -746,8 +746,8 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_homogenous_set(bx, 1);
-   elm_box_horizontal_set(bx, 1);
+   elm_box_homogenous_set(bx, EINA_TRUE);
+   elm_box_horizontal_set(bx, EINA_TRUE);
 
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, 1, 0);
@@ -844,7 +844,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bx2 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_horizontal_set(bx2, 0);
+   elm_box_horizontal_set(bx2, EINA_FALSE);
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
 
