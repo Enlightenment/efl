@@ -37,10 +37,10 @@
  * elm_transit_effect_add(transit,
  *                        elm_transit_effect_translation_op, effect_context,
  *                        elm_transit_effect_translation_context_free);
- * elm_transit_duration_set(transit, 5);
+ * elm_transit_duration_set(transit, 1);
  * elm_transit_auto_reverse_set(transit, EINA_TRUE);
  * elm_transit_tween_mode_set(transit, ELM_TRANSIT_TWEEN_MODE_DECELERATE);
- * elm_transit_repeat_times_set(transit, -1);
+ * elm_transit_repeat_times_set(transit, 3);
  * @endcode
  *
  * @warning We strongly recomend to use elm_transit just when edje can not do
@@ -50,7 +50,7 @@
 
 static const char _transit_key[] = "_elm_transit";
 
-#define FOCAL 2000
+#define _TRANSIT_FOCAL 2000
 
 struct _Elm_Transit
 {
@@ -1340,7 +1340,7 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
         evas_object_geometry_get(obj, &x, &y, &w, &h);
         evas_map_util_points_populate_from_object_full(map, obj, zoom->from +
                                                        (progress * zoom->to));
-        evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, FOCAL);
+        evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, _TRANSIT_FOCAL);
         evas_object_map_set(obj, map);
         evas_object_map_enable_set(obj, EINA_TRUE);
      }
@@ -1355,8 +1355,8 @@ _transit_effect_zoom_context_new(float from_rate, float to_rate)
    zoom = ELM_NEW(Elm_Transit_Effect_Zoom);
    if (!zoom) return NULL;
 
-   zoom->from = (FOCAL - (from_rate * FOCAL)) * (1 / from_rate);
-   zoom->to = ((FOCAL - (to_rate * FOCAL)) * (1 / to_rate)) - zoom->from;
+   zoom->from = (_TRANSIT_FOCAL - (from_rate * _TRANSIT_FOCAL)) * (1 / from_rate);
+   zoom->to = ((_TRANSIT_FOCAL - (to_rate * _TRANSIT_FOCAL)) * (1 / to_rate)) - zoom->from;
 
    return zoom;
 }
@@ -1499,7 +1499,7 @@ _transit_effect_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
              evas_map_util_3d_rotate(map, degree,
                                      0, 0, x + half_w, y + half_h, 0);
           }
-        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, FOCAL);
+        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
         evas_object_map_enable_set(front, EINA_TRUE);
         evas_object_map_enable_set(back, EINA_TRUE);
         evas_object_map_set(obj, map);
@@ -1800,7 +1800,7 @@ _transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *trans
                                      0, x + half_w, y + half_h, 0);
           }
 
-        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, FOCAL);
+        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
         evas_object_map_enable_set(resizable_flip_node->front, EINA_TRUE);
         evas_object_map_enable_set(resizable_flip_node->back, EINA_TRUE);
         evas_object_map_set(obj, map);
@@ -1927,7 +1927,7 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Transit_Effect_Wipe_Dir dir, float x, floa
       default:
          break;
      }
-   evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, FOCAL);
+   evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, _TRANSIT_FOCAL);
 }
 
 static void
@@ -1988,7 +1988,7 @@ _elm_fx_wipe_show(Evas_Map *map, Elm_Transit_Effect_Wipe_Dir dir, float x, float
       default:
          break;
      }
-   evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, FOCAL);
+   evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, _TRANSIT_FOCAL);
 }
 
 static void
@@ -2621,7 +2621,7 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
         half_h = (float)h * 0.5;
 
         evas_map_util_3d_rotate(map, 0, 0, degree, x + half_w, y + half_h, 0);
-        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, FOCAL);
+        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
      }
