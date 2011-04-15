@@ -214,6 +214,8 @@ elm_icon_add(Evas_Object *parent)
    evas_object_repeat_events_set(wd->img, EINA_TRUE);
    elm_widget_resize_object_set(obj, wd->img);
 
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
    wd->smooth = EINA_TRUE;
    wd->scale_up = EINA_TRUE;
    wd->scale_down = EINA_TRUE;
