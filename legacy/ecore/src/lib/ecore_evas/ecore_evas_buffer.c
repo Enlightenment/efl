@@ -315,41 +315,41 @@ _ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj __UNUSED__,
    ee = data;
    ev = event_info;
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Shift"))
-     evas_key_modifier_on(e, "Shift");
+     evas_key_modifier_on(ee->evas, "Shift");
    else
-     evas_key_modifier_off(e, "Shift");
+     evas_key_modifier_off(ee->evas, "Shift");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Control"))
-     evas_key_modifier_on(e, "Control");
+     evas_key_modifier_on(ee->evas, "Control");
    else
-     evas_key_modifier_off(e, "Control");
+     evas_key_modifier_off(ee->evas, "Control");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Alt"))
-     evas_key_modifier_on(e, "Alt");
+     evas_key_modifier_on(ee->evas, "Alt");
    else
-     evas_key_modifier_off(e, "Alt");
+     evas_key_modifier_off(ee->evas, "Alt");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Meta"))
-     evas_key_modifier_on(e, "Meta");
+     evas_key_modifier_on(ee->evas, "Meta");
    else
-     evas_key_modifier_off(e, "Meta");
+     evas_key_modifier_off(ee->evas, "Meta");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Hyper"))
-     evas_key_modifier_on(e, "Hyper");
+     evas_key_modifier_on(ee->evas, "Hyper");
    else
-     evas_key_modifier_off(e, "Hyper");
+     evas_key_modifier_off(ee->evas, "Hyper");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Super"))
-     evas_key_modifier_on(e, "Super");
+     evas_key_modifier_on(ee->evas, "Super");
    else
-     evas_key_modifier_off(e, "Super");
+     evas_key_modifier_off(ee->evas, "Super");
    if (evas_key_lock_is_set(evas_key_lock_get(e), "Scroll_Lock"))
-     evas_key_lock_on(e, "Scroll_Lock");
+     evas_key_lock_on(ee->evas, "Scroll_Lock");
    else
-     evas_key_lock_off(e, "Scroll_Lock");
+     evas_key_lock_off(ee->evas, "Scroll_Lock");
    if (evas_key_lock_is_set(evas_key_lock_get(e), "Num_Lock"))
-     evas_key_lock_on(e, "Num_Lock");
+     evas_key_lock_on(ee->evas, "Num_Lock");
    else
-     evas_key_lock_off(e, "Num_Lock");
+     evas_key_lock_off(ee->evas, "Num_Lock");
    if (evas_key_lock_is_set(evas_key_lock_get(e), "Caps_Lock"))
-     evas_key_lock_on(e, "Caps_Lock");
+     evas_key_lock_on(ee->evas, "Caps_Lock");
    else
-     evas_key_lock_off(e, "Caps_Lock");
+     evas_key_lock_off(ee->evas, "Caps_Lock");
    evas_event_feed_key_down(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
 
@@ -362,41 +362,41 @@ _ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, v
    ee = data;
    ev = event_info;
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Shift"))
-     evas_key_modifier_on(e, "Shift");
+     evas_key_modifier_on(ee->evas, "Shift");
    else
-     evas_key_modifier_off(e, "Shift");
+     evas_key_modifier_off(ee->evas, "Shift");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Control"))
-     evas_key_modifier_on(e, "Control");
+     evas_key_modifier_on(ee->evas, "Control");
    else
-     evas_key_modifier_off(e, "Control");
+     evas_key_modifier_off(ee->evas, "Control");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Alt"))
-     evas_key_modifier_on(e, "Alt");
+     evas_key_modifier_on(ee->evas, "Alt");
    else
-     evas_key_modifier_off(e, "Alt");
+     evas_key_modifier_off(ee->evas, "Alt");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Meta"))
-     evas_key_modifier_on(e, "Meta");
+     evas_key_modifier_on(ee->evas, "Meta");
    else
-     evas_key_modifier_off(e, "Meta");
+     evas_key_modifier_off(ee->evas, "Meta");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Hyper"))
-     evas_key_modifier_on(e, "Hyper");
+     evas_key_modifier_on(ee->evas, "Hyper");
    else
-     evas_key_modifier_off(e, "Hyper");
+     evas_key_modifier_off(ee->evas, "Hyper");
    if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Super"))
-     evas_key_modifier_on(e, "Super");
+     evas_key_modifier_on(ee->evas, "Super");
    else
-     evas_key_modifier_off(e, "Super");
+     evas_key_modifier_off(ee->evas, "Super");
    if (evas_key_lock_is_set(evas_key_lock_get(e), "Scroll_Lock"))
-     evas_key_lock_on(e, "Scroll_Lock");
+     evas_key_lock_on(ee->evas, "Scroll_Lock");
    else
-     evas_key_lock_off(e, "Scroll_Lock");
+     evas_key_lock_off(ee->evas, "Scroll_Lock");
    if (evas_key_lock_is_set(evas_key_lock_get(e), "Num_Lock"))
-     evas_key_lock_on(e, "Num_Lock");
+     evas_key_lock_on(ee->evas, "Num_Lock");
    else
-     evas_key_lock_off(e, "Num_Lock");
+     evas_key_lock_off(ee->evas, "Num_Lock");
    if (evas_key_lock_is_set(evas_key_lock_get(e), "Caps_Lock"))
-     evas_key_lock_on(e, "Caps_Lock");
+     evas_key_lock_on(ee->evas, "Caps_Lock");
    else
-     evas_key_lock_off(e, "Caps_Lock");
+     evas_key_lock_off(ee->evas, "Caps_Lock");
    evas_event_feed_key_up(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
 
