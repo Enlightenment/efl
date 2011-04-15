@@ -48,6 +48,14 @@ static void _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool _icon_standard_set(Widget_Data *wd, Evas_Object *obj, const char *name);
 static Eina_Bool _icon_freedesktop_set(Widget_Data *wd, Evas_Object *obj, const char *name, int size);
 
+static const char SIG_CLICKED[] = "clicked";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED, ""},
+   {NULL, NULL}
+};
+
+
 //FIXME: move this code to ecore
 #ifdef _WIN32
 static Eina_Bool
@@ -168,7 +176,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 {
    Evas_Event_Mouse_Up *ev = event_info;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   evas_object_smart_callback_call(data, "clicked", event_info);
+   evas_object_smart_callback_call(data, SIG_CLICKED, event_info);
 }
 
 /**

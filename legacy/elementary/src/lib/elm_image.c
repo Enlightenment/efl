@@ -12,7 +12,6 @@
  * Signals that you can add callbacks for are:
  *
  * "clicked" - This is called when a user has clicked the image
- * "drop" - Something has been dropped on the image
  */
 
 typedef struct _Widget_Data Widget_Data;
@@ -32,6 +31,14 @@ static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static const char SIG_CLICKED[] = "clicked";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED, ""},
+   {NULL, NULL}
+};
+
 
 static void
 _del_hook(Evas_Object *obj)
@@ -96,7 +103,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 /**
