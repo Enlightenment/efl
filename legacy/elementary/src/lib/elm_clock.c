@@ -47,6 +47,14 @@ static Eina_Bool _signal_clock_val_up(void *data);
 static Eina_Bool _signal_clock_val_down(void *data);
 static void _time_update(Evas_Object *obj);
 
+static const char SIG_CHANGED[] = "changed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
+};
+
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -223,7 +231,7 @@ _signal_clock_val_up(void *data)
    wd->interval = wd->interval / 1.05;
    ecore_timer_interval_set(wd->spin, wd->interval);
    _time_update(data);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 clock_val_up_cancel:
    wd->spin = NULL;
@@ -276,7 +284,7 @@ _signal_clock_val_down(void *data)
    wd->interval = wd->interval / 1.05;
    ecore_timer_interval_set(wd->spin, wd->interval);
    _time_update(data);
-   evas_object_smart_callback_call(data, "changed", NULL);
+   evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
    return ECORE_CALLBACK_RENEW;
 clock_val_down_cancel:
    wd->spin = NULL;
@@ -560,6 +568,8 @@ elm_clock_add(Evas_Object *parent)
 
    _time_update(obj);
    _ticker(obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    return obj;
 }

@@ -14,7 +14,6 @@
  *
  * "clicked" - the user clicked the hoversel button and popped up the sel
  * "selected" - an item in the hoversel list is selected. event_info is the item
- * "selected" - Elm_Hoversel_Item
  * "dismissed" - the hover is dismissed
  */
 typedef struct _Widget_Data Widget_Data;
@@ -47,6 +46,17 @@ static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_SELECTED[] = "selected";
+static const char SIG_DISMISSED[] = "dismissed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED, ""},
+   {SIG_SELECTED, ""},
+   {SIG_DISMISSED, ""},
+   {NULL, NULL}
+};
 
 static void
 _del_pre_hook(Evas_Object *obj)
@@ -150,7 +160,7 @@ _item_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 
    elm_hoversel_hover_end(obj2);
    if (item->func) item->func((void *)item->base.data, obj2, item);
-   evas_object_smart_callback_call(obj2, "selected", item);
+   evas_object_smart_callback_call(obj2, SIG_SELECTED, item);
 }
 
 static void
@@ -232,7 +242,7 @@ _activate(Evas_Object *obj)
    evas_object_show(bx);
 
    evas_object_show(wd->hover);
-   evas_object_smart_callback_call(obj, "clicked", NULL);
+   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
 
    //   if (wd->horizontal) evas_object_hide(wd->btn);
 }
@@ -293,10 +303,13 @@ elm_hoversel_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
    evas_object_smart_callback_add(wd->btn, "clicked", _button_clicked, obj);
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
    elm_widget_sub_object_add(obj, wd->btn);
 
    elm_hoversel_hover_parent_set(obj, parent);
    _theme_hook(obj);
+
    return obj;
 }
 
@@ -517,7 +530,7 @@ elm_hoversel_hover_end(Evas_Object *obj)
    wd->expanded = EINA_FALSE;
    evas_object_del(wd->hover);
    wd->hover = NULL;
-   evas_object_smart_callback_call(obj, "dismissed", NULL);
+   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
 }
 
 /**

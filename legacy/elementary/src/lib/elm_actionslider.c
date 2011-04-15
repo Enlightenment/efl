@@ -33,8 +33,8 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 
-#define SIG_CHANGED "pos_changed"
-#define SIG_SELECTED "selected"
+static const char SIG_CHANGED[] = "pos_changed";
+static const char SIG_SELECTED[] = "selected";
 
 static const Evas_Smart_Cb_Description _signals[] =
 {

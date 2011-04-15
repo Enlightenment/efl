@@ -29,7 +29,8 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
-#define SIG_CLICKED "clicked"
+static const char SIG_CLICKED[] = "clicked";
+
 static const Evas_Smart_Cb_Description _signals[] =
 {
      {SIG_CLICKED, ""},

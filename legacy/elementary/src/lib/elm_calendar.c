@@ -62,6 +62,14 @@ static const char *widtype = NULL;
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
+static const char SIG_CHANGED[] = "changed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
+};
+
+
 /* Should not be translated, it's used if we failed
  * getting from locale. */
 static const char *_days_abbrev[] =
@@ -536,7 +544,7 @@ _update_month(Evas_Object *obj, int delta)
      wd->selected_time.tm_mday = maxdays;
 
    _fix_selected_time(wd);
-   evas_object_smart_callback_call(obj, "changed", NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -618,7 +626,7 @@ _update_sel_it(Evas_Object *obj, int sel_it)
    wd->selected_time.tm_mday = day;
    _select(wd, wd->selected_it);
    _fix_selected_time(wd);
-   evas_object_smart_callback_call(obj, "changed", NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
 static void
@@ -765,6 +773,8 @@ elm_calendar_add(Evas_Object *parent)
                                    "*", _button_stop, obj);
    edje_object_signal_callback_add(wd->calendar, "elm,action,selected",
                                    "*", _day_selected, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    for (i = 0; i < 7; i++)
      {

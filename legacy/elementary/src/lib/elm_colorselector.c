@@ -84,7 +84,7 @@ static void _right_button_up_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 static void _add_colorbar(Evas_Object *obj);
 static void _set_color(Evas_Object *obj, int r, int g, int b, int a);
 
-#define SIG_CHANGED "changed"
+static const char SIG_CHANGED[] = "changed";
 
 static const Evas_Smart_Cb_Description _signals[] =
 {
