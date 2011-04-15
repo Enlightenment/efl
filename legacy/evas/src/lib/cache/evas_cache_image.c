@@ -876,16 +876,15 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
    if (im)
      {
         int ok = 1;
-        
+
         stat_done = 1;
-        if (stat(file, &st) < 0) goto on_stat_error;
-          {
-             if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
-          }
+        if (stat(file, &st) < 0) ok = 0;
+        else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
         if (ok) goto on_ok;
 
         _evas_cache_image_remove_activ(cache, im);
 	_evas_cache_image_make_dirty(cache, im);
+        im = NULL;
      }
 
 #ifdef EVAS_FRAME_QUEUING
@@ -902,11 +901,10 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
         if (!stat_done)
           {
              stat_done = 1;
-             if (stat(file, &st) < 0) goto on_stat_error;
-             if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+             if (stat(file, &st) < 0) ok = 0;
+             else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
           }
-        else
-           if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
+        else if (!_timestamp_compare(&(im->tstamp), &st)) ok = 0;
 
         if (ok)
           {
@@ -914,8 +912,8 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file, const char *
              _evas_cache_image_make_activ(cache, im, im->cache_key);
              goto on_ok;
           }
-
-        _evas_cache_image_entry_delete(cache, im);
+        _evas_cache_image_make_dirty(cache, im);
+        im = NULL;
      }
 
    if (!stat_done)
