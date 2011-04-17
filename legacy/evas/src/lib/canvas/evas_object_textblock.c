@@ -1912,7 +1912,8 @@ _paragraph_free(const Evas_Object *obj, Evas_Object_Textblock_Paragraph *par)
    if (par->bidi_props)
       evas_bidi_paragraph_props_unref(par->bidi_props);
 #endif
-   if (par->text_node)
+   /* If we are the active par of the text node, set to NULL */
+   if (par->text_node && (par->text_node->par == par))
       par->text_node->par = NULL;
    free(par);
 }
@@ -4780,6 +4781,14 @@ _evas_textblock_nodes_merge(Evas_Object_Textblock *o, Evas_Object_Textblock_Node
      {
         to->format_node = from->format_node;
      }
+
+   /* When it comes to how we handle it, merging is like removing both nodes
+    * and creating a new one, se we need to do the needed cleanups. */
+   if (to->par)
+      to->par->text_node = NULL;
+   to->par = NULL;
+
+   to->new = EINA_TRUE;
 
    _evas_textblock_cursors_set_node(o, from, to);
    _evas_textblock_node_text_remove(o, from);
