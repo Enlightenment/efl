@@ -1505,11 +1505,6 @@ EAPI void                     ecore_x_window_shape_window_set_xy(
    Ecore_X_Window shape_win,
    int            x,
    int            y);
-EAPI void                     ecore_x_window_shape_window_set_xy(
-   Ecore_X_Window win,
-   Ecore_X_Window shape_win,
-   int            x,
-   int            y);
 EAPI void                     ecore_x_window_shape_rectangle_set(
    Ecore_X_Window win,
    int            x,
