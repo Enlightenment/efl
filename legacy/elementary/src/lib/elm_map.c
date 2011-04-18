@@ -3409,7 +3409,8 @@ elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double 
  * @param obj The map object
  * @param lon the longitude
  * @param lat the latitude
- * @param name the adress 
+ *
+ * @return name the address
  *
  * @ingroup Map
  */
@@ -3424,9 +3425,10 @@ elm_map_utils_convert_coord_into_name(const Evas_Object *obj, double lon, double
  * Convert a name (address) into a geographic coordinate (longitude, latitude).
  *
  * @param obj The map object
- * @param name the adress 
- * @param lon the longitude correspond to x
+ * @param name the address
  * @param lat the latitude correspond to y
+ *
+ * @return name the address
  *
  * @ingroup Map
  */
@@ -3445,6 +3447,7 @@ elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address)
  * @param lon the longitude
  * @param lat the latitude
  * @param clas the class to use
+ * @param clas_group the class group
  * @param data the data passed to the callbacks
  *
  * @return The marker object
