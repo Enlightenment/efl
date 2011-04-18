@@ -2794,7 +2794,11 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * types. All the parameters are the same as for
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), with the @p subtype being the
  * exception. This must be the data descriptor of the element that
- * is in each member of the hash to be stored.
+ * is in each member of the hash to be stored. This assumes you have
+ * a struct member (of type EET_T_INT) called member_count (note the
+ * _count appended to the member) that holds the number of items in
+ * the array. This array will be allocated separately to the struct it
+ * is in.
  *
  * @since 1.0.2
  * @ingroup Eet_Data_Group
