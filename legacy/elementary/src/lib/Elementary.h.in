@@ -932,8 +932,10 @@ extern "C" {
    EAPI void               elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel) EINA_ARG_NONNULL(1);
+   EAPI void               elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize) EINA_ARG_NONNULL(1);
    EAPI void               elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool          elm_gengrid_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    EAPI Elm_Gengrid_Item  *elm_gengrid_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI Elm_Gengrid_Item  *elm_gengrid_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);

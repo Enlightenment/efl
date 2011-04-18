@@ -1926,6 +1926,24 @@ elm_gengrid_horizontal_set(Evas_Object *obj,
 }
 
 /**
+ * Get for what direction the Gengrid is expanded.
+ *
+ * @param obj The Gengrid object.
+ * @return If the Gengrid is expanded horizontally return @c EINA_TRUE
+ * else @c EINA_FALSE.
+ *
+ * @ingroup Gengrid
+ */
+EAPI Eina_Bool
+elm_gengrid_horizontal_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
+}
+
+/**
  * Clear the Gengrid
  *
  * This clears all items in the Gengrid, leaving it empty.
@@ -2746,6 +2764,37 @@ elm_gengrid_page_relative_set(Evas_Object *obj,
    elm_smart_scroller_paging_get(wd->scr, NULL, NULL, &pagesize_h, &pagesize_v);
    elm_smart_scroller_paging_set(wd->scr, h_pagerel, v_pagerel, pagesize_h,
                                  pagesize_v);
+}
+
+/*
+ * Get gengrid scroll page size relative to viewport size.
+ *
+ * The gengrid scroller is capable of limiting scrolling by the user
+ * to "pages" That is to jump by and only show a "whole page" at a
+ * time as if the continuous area of the scroller content is split
+ * into page sized pieces.  This sets the size of a page relative to
+ * the viewport of the scroller. 1.0 is "1 viewport" is size
+ * (horizontally or vertically). 0.0 turns it off in that axis. This
+ * is mutually exclusive with page size (see
+ * elm_gengrid_page_size_set() for more information). Likewise 0.5 is
+ * "half a viewport". Sane usable valus are normally between 0.0 and
+ * 1.0 including 1.0. If you only want 1 axis to be page "limited",
+ * use 0.0 for the other axis.
+ *
+ * @param obj The gengrid object
+ * @param h_pagerel The horizontal page relative size
+ * @param v_pagerel The vertical page relative size
+ *
+ @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   elm_smart_scroller_paging_get(wd->scr, h_pagerel, v_pagerel, NULL, NULL);
 }
 
 /**
