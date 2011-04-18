@@ -15,6 +15,16 @@ typedef struct _Elm_Params_Gengrid
    Eina_Bool h_bounce_exists:1;
    Eina_Bool v_bounce:1;
    Eina_Bool v_bounce_exists:1;
+   double    h_pagerel;
+   Eina_Bool h_pagerel_exists : 1;
+   double    v_pagerel;
+   Eina_Bool v_pagerel_exists : 1;
+   int       h_itemsize;
+   Eina_Bool h_itemsize_exists : 1;
+   int       v_itemsize;
+   Eina_Bool v_itemsize_exists : 1;
+   Eina_Bool horizontal : 1;
+   Eina_Bool horizontal_exists : 1;
 } Elm_Params_Gengrid;
 
 static void
@@ -43,6 +53,34 @@ external_gengrid_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
         Eina_Bool h_bounce, v_bounce;
         elm_gengrid_bounce_get(obj, &h_bounce, &v_bounce);
         elm_gengrid_bounce_set(obj, h_bounce, p->v_bounce);
+     }
+   if (p->h_pagerel_exists)
+     {
+        double h_pagerel, v_pagerel;
+        elm_gengrid_page_relative_get(obj, &h_pagerel, &v_pagerel);
+        elm_gengrid_page_relative_set(obj, h_pagerel, p->v_pagerel);
+     }
+   if (p->v_pagerel_exists)
+     {
+        double h_pagerel, v_pagerel;
+        elm_gengrid_page_relative_get(obj, &h_pagerel, &v_pagerel);
+        elm_gengrid_page_relative_set(obj, p->h_pagerel, v_pagerel);
+     }
+   if (p->h_itemsize_exists)
+     {
+        int h_itemsize, v_itemsize;
+        elm_gengrid_item_size_get(obj, &h_itemsize, &v_itemsize);
+        elm_gengrid_item_size_set(obj, h_itemsize, p->v_itemsize);
+     }
+   if (p->v_itemsize_exists)
+     {
+        int h_itemsize, v_itemsize;
+        elm_gengrid_item_size_get(obj, &h_itemsize, &v_itemsize);
+        elm_gengrid_item_size_set(obj, p->h_itemsize, v_itemsize);
+     }
+   if (p->horizontal_exists)
+     {
+        elm_gengrid_horizontal_set(obj, p->horizontal);
      }
 }
 
@@ -90,6 +128,54 @@ external_gengrid_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
              Eina_Bool h_bounce, v_bounce;
              elm_gengrid_bounce_get(obj, &h_bounce, &v_bounce);
              elm_gengrid_bounce_set(obj, h_bounce, param->i);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "horizontal page relative"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             double h_pagerel, v_pagerel;
+             elm_gengrid_page_relative_get(obj, &h_pagerel, &v_pagerel);
+             elm_gengrid_page_relative_set(obj, param->d, v_pagerel);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "vertical page relative"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             double h_pagerel, v_pagerel;
+             elm_gengrid_page_relative_get(obj, &h_pagerel, &v_pagerel);
+             elm_gengrid_page_relative_set(obj, h_pagerel, param->d);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "horizontal item size"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
+          {
+             int h_itemsize, v_itemsize;
+             elm_gengrid_item_size_get(obj, &h_itemsize, &v_itemsize);
+             elm_gengrid_item_size_set(obj, param->i, v_itemsize);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "vertical item size"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
+          {
+             int h_itemsize, v_itemsize;
+             elm_gengrid_item_size_get(obj, &h_itemsize, &v_itemsize);
+             elm_gengrid_item_size_set(obj, h_itemsize, param->i);
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "horizontal"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             elm_gengrid_horizontal_set(obj, param->i);
              return EINA_TRUE;
           }
      }
@@ -147,6 +233,54 @@ external_gengrid_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
              return EINA_TRUE;
           }
      }
+   else if (!strcmp(param->name, "horizontal page relative"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             double h_pagerel, v_pagerel;
+             elm_gengrid_page_relative_get(obj, &h_pagerel, &v_pagerel);
+             param->d = h_pagerel;
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "vertical page relative"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+          {
+             double h_pagerel, v_pagerel;
+             elm_gengrid_page_relative_get(obj, &h_pagerel, &v_pagerel);
+             param->d = v_pagerel;
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "horizontal item size"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
+          {
+             int h_itemsize, v_itemsize;
+             elm_gengrid_item_size_get(obj, &h_itemsize, &v_itemsize);
+             param->i = h_itemsize;
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "vertical item size"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
+          {
+             int h_itemsize, v_itemsize;
+             elm_gengrid_item_size_get(obj, &h_itemsize, &v_itemsize);
+             param->i = v_itemsize;
+             return EINA_TRUE;
+          }
+     }
+   else if (!strcmp(param->name, "horizontal"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_gengrid_horizontal_get(obj);
+             return EINA_TRUE;
+          }
+     }
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -192,6 +326,31 @@ external_gengrid_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
              mem->v_bounce = !!param->i;
              mem->v_bounce_exists = EINA_TRUE;
           }
+        else if (!strcmp(param->name, "horizontal page relative"))
+          {
+             mem->h_pagerel = param->d;
+             mem->h_pagerel_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "vertical page relative"))
+          {
+             mem->v_pagerel = param->d;
+             mem->v_pagerel_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "horizontal item size"))
+          {
+             mem->h_itemsize = param->i;
+             mem->h_itemsize_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "vertical item size"))
+          {
+             mem->v_itemsize = param->i;
+             mem->v_itemsize_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "horizontal"))
+          {
+             mem->horizontal = !!param->i;
+             mem->horizontal_exists = EINA_TRUE;
+          }
      }
 
    return mem;
@@ -218,6 +377,11 @@ static Edje_External_Param_Info external_gengrid_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_BOOL("always select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("height bounce"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("width bounce"),
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("horizontal page relative"),
+   EDJE_EXTERNAL_PARAM_INFO_DOUBLE("vertical page relative"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("horizontal item size"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("vertical item size"),
+   EDJE_EXTERNAL_PARAM_INFO_BOOL("horizontal"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
