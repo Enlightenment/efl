@@ -242,14 +242,14 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 
 #ifdef BUILD_ASYNC_PRELOAD
    if (ie->flags.delete_me == 1)
-     return ;
+     return;
 
    if (ie->preload)
      {
 	ie->flags.delete_me = 1;
 
 	_evas_cache_image_entry_preload_remove(ie, NULL);
-	return ;
+	return;
      }
 #endif
 
@@ -399,7 +399,7 @@ _evas_cache_image_entry_surface_alloc__locked(Evas_Cache_Image *cache,
                                               unsigned int hmin)
 {
    if (ie->allocated.w == wmin && ie->allocated.h == hmin)
-     return ;
+     return;
 
    if (cache->func.surface_alloc(ie, wmin, hmin))
      {
@@ -514,7 +514,7 @@ _evas_cache_image_async_cancel(void *data)
 	ie->flags.delete_me = 0;
 	_evas_cache_image_entry_delete(ie->cache, ie);
 
-	return ;
+	return;
      }
 
    if (ie->flags.loaded)
@@ -703,7 +703,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
 #ifdef EVAS_FRAME_QUEUING
         LKU(cache->lock);
 #endif
-        return ;
+        return;
      }
 
 #ifdef BUILD_ASYNC_PRELOAD
@@ -1013,7 +1013,7 @@ evas_cache_image_drop(Image_Entry *im)
 	if (im->preload)
 	  {
 	     _evas_cache_image_entry_preload_remove(im, NULL);
-	     return ;
+	     return;
 	  }
 #endif
 
@@ -1048,8 +1048,8 @@ evas_cache_image_data_not_needed(Image_Entry *im)
    LKU(im->lock_references);
 #endif
 
-   if (references > 1) return ;
-   if (im->flags.dirty || !im->flags.need_data) return ;
+   if (references > 1) return;
+   if (im->flags.dirty || !im->flags.need_data) return;
 
    _evas_cache_image_activ_lru_nodata(cache, im);
 }
@@ -1376,7 +1376,7 @@ evas_cache_image_load_data(Image_Entry *im)
 	LKU(wakeup);
      }
 
-   if (im->flags.loaded) return ;
+   if (im->flags.loaded) return;
    LKL(im->lock);
 #endif
 
