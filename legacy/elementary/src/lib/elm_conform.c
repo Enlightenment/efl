@@ -16,11 +16,12 @@ struct _Widget_Data
    Evas_Object *shelf, *panel;
    Evas_Object *content;
    Ecore_Event_Handler *prop_hdl;
-   struct {
-        Ecore_Animator *animator; // animaton timer
-        double start; // time started
-        Evas_Coord auto_x, auto_y; // desired delta
-        Evas_Coord x, y; // current delta
+   struct
+   {
+      Ecore_Animator *animator; // animaton timer
+      double start; // time started
+      Evas_Coord auto_x, auto_y; // desired delta
+      Evas_Coord x, y; // current delta
    } delta;
 };
 
@@ -37,6 +38,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->prop_hdl) ecore_event_handler_del(wd->prop_hdl);
    free(wd);
@@ -46,6 +48,7 @@ static void
 _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    edje_object_mirrored_set(wd->base, rtl);
 }
@@ -54,13 +57,17 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _elm_theme_object_set(obj, wd->base, "conformant", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->base, "conformant", "base",
+                         elm_widget_style_get(obj));
+
    if (wd->content)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->content);
-   edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->base, elm_widget_scale_get(obj)
+                         * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -69,6 +76,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord mw = -1, mh = -1;
+
    if (!wd) return;
    edje_object_size_min_calc(wd->base, &mw, &mh);
    evas_object_size_hint_min_set(obj, mw, mh);
@@ -76,9 +84,12 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static void
-_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_changed_size_hints(void *data, Evas *e __UNUSED__,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return;
    _sizing_eval(data);
 }
@@ -88,10 +99,12 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *sub = event_info;
+
    if (!wd) return;
    if (sub == wd->content)
      {
-        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
         wd->content = NULL;
         _sizing_eval(obj);
@@ -156,6 +169,7 @@ _prop_change(void *data, int type __UNUSED__, void *event)
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Event_Window_Property *ev;
    Widget_Data *wd = elm_widget_data_get(data);
+
    if (!wd) return ECORE_CALLBACK_PASS_ON;
    ev = event;
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
@@ -297,6 +311,7 @@ elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return;
    if (wd->content == content) return;
    if (wd->content) evas_object_del(wd->content);
@@ -304,7 +319,8 @@ elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
    if (content)
      {
         elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
         edje_object_part_swallow(wd->base, "elm.swallow.content", content);
      }
@@ -326,6 +342,7 @@ elm_conformant_content_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+
    if (!wd) return NULL;
    return wd->content;
 }
@@ -346,6 +363,7 @@ elm_conformant_content_unset(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *content;
+
    if (!wd) return NULL;
    if (!wd->content) return NULL;
    content = wd->content;
