@@ -1,0 +1,11 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform sampler2D tex;
+varying vec4 col;
+varying vec2 tex_c;
+void main()
+{
+   float inten = dot(texture2D(tex,tex_c.xy).rgb,vec3(.3, .59, .11));
+   gl_FragColor = vec4(inten, inten, inten, texture2D(tex,tex_c.xy).a) * col;
+}
