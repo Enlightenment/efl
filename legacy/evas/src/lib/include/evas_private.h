@@ -400,7 +400,7 @@ typedef struct Evas_Filter_Info
 
 typedef Eina_Bool (*Evas_Software_Filter_Fn)(Evas_Filter_Info *, RGBA_Image *, RGBA_Image *);
 
-Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
+EAPI Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
 int evas_filter_get_size(Evas_Filter_Info *info, int inw, int inh,
                      int *outw, int *outh, Eina_Bool inv);
 Eina_Bool evas_filter_always_alpha(Evas_Filter_Info *info);
