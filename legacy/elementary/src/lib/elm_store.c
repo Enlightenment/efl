@@ -153,6 +153,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              sti->data = NULL;
           }
         LKD(sti->lock);
+	st->items = NULL;
         free(sti);
      }
    // FIXME: kill threads and more
@@ -308,7 +309,7 @@ _store_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
           }
      }
    LKU(sti->lock);
-   return strdup(s);
+   return s ? strdup(s) : NULL;
 }
 
 static Evas_Object *
@@ -402,6 +403,8 @@ _store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
      {
         Eina_Bool ok;
         size_t pathsz = finf->path_length + 1;
+
+	if (finf->path[finf->name_start] == '.') continue ;
 
         info = calloc(1, sizeof(Elm_Store_Item_Info_Filesystem) + pathsz);
         if (!info) continue;
