@@ -21,8 +21,8 @@
 
    if (mask)
      {
-        mask += dst_clip_x - dc->mask.x;
-        mask += (dst_clip_y - dc->mask.y) * maskobj->cache_entry.w;
+   //     mask += dst_clip_x - dc->mask.x;
+     //   mask += (dst_clip_y - dc->mask.y) * maskobj->cache_entry.w;
         while (dst_clip_h--)
           {
 
