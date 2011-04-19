@@ -1134,6 +1134,28 @@ ecore_exe_data_get(const Ecore_Exe *exe)
 }
 
 /**
+ * Sets the data attached to the given process handle.
+ * @param   exe The given process handle.
+ * @param   data The pointer to attach
+ * @return The data pointer previously attached to @p exe with
+ *         ecore_exe_run(), ecore_exe_pipe_run(), or ecore_exe_data_set()
+ * @since 1.1
+ */
+EAPI void *
+ecore_exe_data_set(Ecore_Exe *exe, void *data)
+{
+   void *ret;
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+        ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, __func__);
+        return NULL;
+     }
+   ret = exe->data;
+   exe->data = data;
+   return ret;
+}
+
+/**
  * Retrieves the flags attached to the given process handle.
  * @param   exe The given process handle.
  * @return  The flags attached to @p exe.

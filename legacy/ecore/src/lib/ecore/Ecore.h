@@ -397,6 +397,7 @@ extern "C" {
    EAPI const char *ecore_exe_tag_get(const Ecore_Exe *exe);
    EAPI const char *ecore_exe_cmd_get(const Ecore_Exe *exe);
    EAPI void       *ecore_exe_data_get(const Ecore_Exe *exe);
+   EAPI void       *ecore_exe_data_set(Ecore_Exe *exe, void *data);
    EAPI Ecore_Exe_Flags ecore_exe_flags_get(const Ecore_Exe *exe);
    EAPI void        ecore_exe_pause(Ecore_Exe *exe);
    EAPI void        ecore_exe_continue(Ecore_Exe *exe);

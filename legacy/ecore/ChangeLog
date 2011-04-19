@@ -131,3 +131,7 @@
 2011-04-13  Doyun Kang
 
 	* Ecore_X + Ecore_Evas: Add more support for shape input setting
+
+2011-04-19 Mike Blumenkrantz
+
+        * +ecore_exe_data_set
