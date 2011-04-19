@@ -1937,7 +1937,7 @@ elm_gengrid_horizontal_set(Evas_Object *obj,
 EAPI Eina_Bool
 elm_gengrid_horizontal_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->horizontal;
