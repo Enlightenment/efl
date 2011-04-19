@@ -775,6 +775,10 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
      }
    file = NULL;
 
+   /* reverse directory listing, so the leaf would be destroyed before
+      the root */
+   rmrf->dirs = eina_list_reverse(rmrf->dirs);
+
    EINA_LIST_FREE(rmrf->dirs, dir)
      {
         if (rmdir(dir) != 0)
