@@ -531,7 +531,7 @@ ecore_x_window_shape_input_rectangles_add(Ecore_X_Window     win,
    
    XShapeCombineRectangles(_ecore_x_disp,
                            win,
-                           ShapeBounding,
+                           ShapeInput,
                            0,
                            0,
                            rect,
