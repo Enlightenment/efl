@@ -345,8 +345,12 @@ _elm_win_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coo
 
    if (win->img_obj)
      {
-        win->screen.x = x;
-        win->screen.y = y;
+        if ((x != win->screen.x) || (y != win->screen.y))
+          {
+             win->screen.x = x;
+             win->screen.y = y;
+             evas_object_smart_callback_call(win->win_obj, "moved", NULL);
+          }
      }
    else
      {
@@ -1300,10 +1304,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_layer_set(win->win_obj, 50);
    evas_object_pass_events_set(win->win_obj, EINA_TRUE);
 
-   evas_object_intercept_move_callback_add(win->win_obj,
-                                           _elm_win_obj_intercept_move, win);
-   evas_object_intercept_show_callback_add(win->win_obj,
-                                           _elm_win_obj_intercept_show, win);
    ecore_evas_object_associate(win->ee, win->win_obj,
                                ECORE_EVAS_OBJECT_ASSOCIATE_BASE |
                                ECORE_EVAS_OBJECT_ASSOCIATE_STACK |
@@ -1318,6 +1318,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                                   _elm_win_obj_callback_move, win);
    evas_object_event_callback_add(win->win_obj, EVAS_CALLBACK_RESIZE,
                                   _elm_win_obj_callback_resize, win);
+   if (win->img_obj)
+      evas_object_intercept_move_callback_add(win->win_obj,
+                                              _elm_win_obj_intercept_move, win);
+   evas_object_intercept_show_callback_add(win->win_obj,
+                                           _elm_win_obj_intercept_show, win);
 
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
