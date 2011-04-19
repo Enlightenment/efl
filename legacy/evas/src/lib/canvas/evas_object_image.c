@@ -1988,6 +1988,164 @@ _proxy_subrender(Evas *e, Evas_Object *source)
 
 }
 
+/*
+ *
+ * Note that this is similar to proxy_subrender_recurse.  It should be
+ * possible to merge I guess
+ */
+static void
+image_filter_draw_under_recurse(Evas *e, Evas_Object *obj, Evas_Object *stop,
+                                void *output, void *ctx, void *surface,
+                                int x, int y)
+{
+   Evas_Object *obj2;
+
+   if (obj->clip.clipees) return;
+   /* FIXME: Doing bounding box test */
+   if (!evas_object_is_in_output_rect(obj, stop->cur.geometry.x,
+                                      stop->cur.geometry.y,
+                                      stop->cur.geometry.w,
+                                      stop->cur.geometry.h))
+      return;
+
+   if (!evas_object_is_visible(obj)) return;
+   obj->pre_render_done = 1;
+     ctx = e->engine.func->context_new(output);
+
+   if (obj->smart.smart)
+     {
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2){
+             if (obj2 == stop) return;
+             image_filter_draw_under_recurse(e, obj2, stop, output, surface, ctx, x,y);
+        }
+     }
+   else
+     {
+        obj->func->render(obj, output, ctx, surface,x,y);
+     }
+     e->engine.func->context_free(output, ctx);
+
+}
+
+
+/*
+ * Draw all visible objects intersecting an object which are _beneath_ it.
+ */
+static void
+image_filter_draw_under(Evas *e, Evas_Object *stop, void *output, void *ctx, void *surface, int dx, int dy)
+{
+   Evas_Layer *lay;
+   int x,y;
+
+   x = stop->cur.geometry.x - dx;
+   y = stop->cur.geometry.y - dy;
+
+   EINA_INLIST_FOREACH(e->layers, lay)
+     {
+        Evas_Object *obj;
+        EINA_INLIST_FOREACH(lay->objects, obj)
+          {
+             if (obj->delete_me) continue;
+             if (obj == stop) return;
+             /* FIXME: Do bounding box check */
+
+             image_filter_draw_under_recurse(e, obj, stop, output, ctx, surface,
+                                             -x, -y);
+
+          }
+     }
+  e->engine.func->image_dirty_region(output, surface, 0, 0, 300, 300);
+  e->engine.func->output_flush(output);
+
+}
+
+/*
+ * Update the filtered object.
+ *
+ * Creates a new context, and renders stuff (filtered) onto that.
+ */
+Filtered_Image *
+image_filter_update(Evas *e, Evas_Object *obj, void *src, int imagew, int imageh, int *outw, int *outh)
+{
+   int w,h;
+   void *ctx;
+   Evas_Filter_Info *info;
+   void *surface;
+   Eina_Bool alpha;
+
+   info = obj->filter;
+
+   if (info->mode == EVAS_FILTER_MODE_BELOW)
+     {
+        w = obj->cur.geometry.w;
+        h = obj->cur.geometry.h;
+        evas_filter_get_size(info, w, h, &imagew, &imageh, EINA_TRUE);
+        alpha = EINA_FALSE;
+     }
+   else
+     {
+        evas_filter_get_size(info, imagew, imageh, &w, &h, EINA_FALSE);
+        alpha = e->engine.func->image_alpha_get(e->engine.data.output, src);
+     }
+
+   /* Certain filters may make alpha images anyway */
+   if (alpha == EINA_FALSE)
+     {
+        alpha = evas_filter_always_alpha(info);
+     }
+
+   surface = e->engine.func->image_map_surface_new(e->engine.data.output, w, h,
+                                                   alpha);
+
+   if (info->mode == EVAS_FILTER_MODE_BELOW)
+     {
+        void *subsurface;
+        int disw,dish;
+        int dx,dy;
+        disw = obj->cur.geometry.w;
+        dish = obj->cur.geometry.h;
+        dx = (imagew - w) >> 1;
+        dy = (imageh - h) >> 1;
+        subsurface = e->engine.func->image_map_surface_new(
+           e->engine.data.output, imagew, imageh, 1);
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 255, 0, 255);
+        e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
+        e->engine.func->rectangle_draw(e->engine.data.output, ctx,
+                                       subsurface, 0, 0, imagew, imageh);
+
+        image_filter_draw_under(e, obj, e->engine.data.output, ctx,
+                                 subsurface, dx, dy);
+
+        e->engine.func->context_free(e->engine.data.output, ctx);
+
+        ctx = e->engine.func->context_new(e->engine.data.output);
+
+        e->engine.func->image_draw_filtered(e->engine.data.output,
+                                       ctx, surface, subsurface, info);
+
+        e->engine.func->context_free(e->engine.data.output, ctx);
+
+        e->engine.func->image_map_surface_free(e->engine.data.output,
+                                               subsurface);
+     }
+   else
+     {
+        ctx = e->engine.func->context_new(e->engine.data.output);
+        e->engine.func->image_draw_filtered(e->engine.data.output,
+                                       ctx, surface, src, info);
+        e->engine.func->context_free(e->engine.data.output, ctx);
+     }
+
+   e->engine.func->image_dirty_region(e->engine.data.output, surface, 0,0,w,h);
+   if (outw) *outw = w;
+   if (outh) *outh = h;
+   return e->engine.func->image_filtered_save(src, surface,
+                                              obj->filter->key,
+                                              obj->filter->len);
+}
+
+
 static void
 evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
 {
@@ -2281,6 +2439,49 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
         o->proxyrendering = 0;
      }
 
+   /* Now check/update filter */
+   if (obj->filter && obj->filter->filter)
+     {
+        Filtered_Image *fi = NULL;
+        //printf("%p has filter: %s\n", obj,obj->filter->dirty?"dirty":"clean");
+        if (obj->filter->dirty)
+          {
+             if (obj->filter->mode != EVAS_FILTER_MODE_BELOW)
+               {
+                  uint32_t len;
+                  uint8_t *key;
+                  uint8_t *evas_filter_key_get(void *, void *);
+
+                  if (obj->filter->key) free(obj->filter->key);
+                  key = evas_filter_key_get(obj->filter, &len);
+                  obj->filter->key = key;
+                  obj->filter->len = len;
+                  fi = obj->layer->evas->engine.func->image_filtered_get(
+                        o->engine_data, key, len);
+                  if (obj->filter->cached && fi != obj->filter->cached)
+                    {
+                       obj->layer->evas->engine.func->image_filtered_free(
+                          o->engine_data, obj->filter->cached);
+                       obj->filter->cached = NULL;
+                    }
+               }
+             else if (obj->filter->cached)
+               {
+                  obj->layer->evas->engine.func->image_filtered_free(
+                     o->engine_data, obj->filter->cached);
+               }
+             if (!fi)
+                fi = image_filter_update(obj->layer->evas, obj, pixels, imagew, imageh, &imagew, &imageh);
+             pixels = fi->image;
+             obj->filter->dirty = 0;
+             obj->filter->cached = fi;
+          }
+        else
+          {
+             fi = obj->filter->cached;
+             pixels = fi->image;
+          }
+     }
 
    if (pixels)
      {
@@ -2767,6 +2968,10 @@ evas_object_image_render_pre(Evas_Object *obj)
 		  goto done;
 	       }
 	  }
+     }
+   if (obj->filter && obj->filter->dirty)
+     {
+        evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
      }
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
