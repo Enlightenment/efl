@@ -1,0 +1,20 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform sampler2D tex;
+uniform sampler1D gaussian;
+varying vec4 col;
+varying vec2 tex_c;
+varying weight;
+uniform radius;
+void main()
+{
+	int i;
+	vec4 fc = vec4(0,0,0,0);
+	
+	for (i = 0 ; i < radius ; i ++){
+		fc += texture2D(tex, tex_c.xy).rgba *
+			texture1D(gaussian,i/radius).aaaa;
+	}
+	gl_FragColor = fc / 4 * col;
+}

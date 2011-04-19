@@ -7879,6 +7879,51 @@ EAPI Eina_Accessor                      *evas_object_table_accessor_new    (cons
 EAPI Eina_List                          *evas_object_table_children_get    (const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
    EAPI Evas_Object                        *evas_object_table_child_get       (const Evas_Object *o, unsigned short col, unsigned short row) EINA_ARG_NONNULL(1);
 
+   typedef enum
+     {
+	/** Apply any filter effects to this object (Default) */
+        EVAS_FILTER_MODE_OBJECT,
+	/** Filter all objects beneath this object on the canvas */
+	EVAS_FILTER_MODE_BELOW,
+     } Evas_Filter_Mode;
+   typedef enum
+     {
+	/** No filter: Default */
+	EVAS_FILTER_NONE,
+	/** A blur filter.  Params are quality (float), and radius (int). */
+	EVAS_FILTER_BLUR,
+	/** Negates the colors of an image.  Also called solarize */
+	EVAS_FILTER_INVERT,
+	EVAS_FILTER_SOLARIZE = EVAS_FILTER_INVERT,
+	/** Makes a sepia version of the image. */
+	EVAS_FILTER_SEPIA,
+	/** Makes a greyscale version of the image.  Params are 'red',
+	 * 'green', 'blue' (all floats) which must add to 1.  The defaults are
+	 * 0.3, 0.59 and 0.11 which approximates human vision. Setting 'all'
+	 * sets rgb to the same value. */
+	EVAS_FILTER_GREYSCALE,
+	EVAS_FILTER_GRAYSCALE = EVAS_FILTER_GREYSCALE,
+	/** Brighten (or darken) image.  Param 'adjust' float (-1.0 to 1.0)
+	 * amount to adjust. */
+	EVAS_FILTER_BRIGHTNESS,
+	/** Enhance contrast on image.  Param 'adjust' float (-1.0 to 1.0)
+	 * amount to adjust. */
+	EVAS_FILTER_CONTRAST,
+
+	EVAS_FILTER_LAST = EVAS_FILTER_CONTRAST
+     } Evas_Filter;
+
+   EAPI Eina_Bool                            evas_object_filter_mode_set      (Evas_Object *o, Evas_Filter_Mode mode);
+   EAPI Evas_Filter_Mode                     evas_object_filter_mode_get      (Evas_Object *o);
+   EAPI Eina_Bool                            evas_object_filter_set           (Evas_Object *o, Evas_Filter filter);
+   EAPI Evas_Filter                          evas_object_filter_get           (Evas_Object *o);
+   EAPI Eina_Bool                            evas_object_filter_param_set_int (Evas_Object *o, const char *param, int val);
+   EAPI int                                  evas_object_filter_param_get_int (Evas_Object *o, const char *param);
+   EAPI Eina_Bool                            evas_object_filter_param_set_str (Evas_Object *o, const char *param, const char *val);
+   EAPI Eina_Bool                            evas_object_filter_param_set_obj (Evas_Object *o, const char *param, Evas_Object *);
+   EAPI Eina_Bool                            evas_object_filter_param_set_float(Evas_Object *o, const char *param, double val);
+
+
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server

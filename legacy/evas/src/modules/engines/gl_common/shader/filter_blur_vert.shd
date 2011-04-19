@@ -1,0 +1,29 @@
+#ifdef GL_ES
+precision mediump float;
+#endif
+attribute vec4 vertex;
+attribute vec4 color;
+attribute vec2 tex_coord;
+attribute float r;
+uniform mat4 mvp;
+uniform sampler1D tex_blur;
+varying float weight;
+varying vec4 col;
+varying vec2 tex_c;
+
+void main(){
+	/* FIXME: This index shoudl be tweaked so for 
+		radius 1, I want 3 points at 1/4, 2/4, 3/4 */
+	/*
+	for (float i = 0 ; i <= radius * 2 ; i ++){
+		float pos = i;
+		float r = float(radius);
+		weight += sampler1D(tex_blur, 1.0 / (r * 2.0 * pos));
+	}*/
+	for (float i = 0.0 ; i < r * 2.0 ; i += 1.0){
+		weight += sampler1D(tex_blur, 1.0 / (r * 2.0 * i));
+	}
+	gl_Position = mvp * vertex;
+	col = color;
+	tex_c = tex_coord;
+}

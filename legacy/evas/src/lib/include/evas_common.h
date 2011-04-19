@@ -519,6 +519,8 @@ typedef enum _Font_Rend_Flags
 
 /*****************************************************************************/
 
+typedef struct _Filtered_Image Filtered_Image;
+
 struct _RGBA_Image_Loadopts
 {
    int                  scale_down_by; // if > 1 then use this
@@ -803,6 +805,8 @@ struct _RGBA_Image
       Eina_Bool          dirty: 1;
    } mask;
 
+   Eina_List            *filtered;
+
    struct {
       LK(lock);
       Eina_List *list;
@@ -830,6 +834,14 @@ struct _RGBA_Map_Point
    DATA32 col; // color at this point
    // for perspective correctness - only point 0 has relevant info
    FPc px, py, z0, foc;
+};
+
+struct _Filtered_Image
+{
+   void       *key;
+   size_t      keylen;
+   RGBA_Image *image;
+   int ref;
 };
 
 // for fonts...

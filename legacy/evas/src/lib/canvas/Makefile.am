@@ -21,6 +21,7 @@ evas_callbacks.c \
 evas_clip.c \
 evas_data.c \
 evas_events.c \
+evas_filter.c \
 evas_focus.c \
 evas_key.c \
 evas_key_grab.c \

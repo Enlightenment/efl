@@ -443,6 +443,167 @@ Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
 };
 
 /////////////////////////////////////////////
+const char filter_invert_frag_glsl[] =
+#include "shader/filter_invert.h"
+  ;
+Evas_GL_Program_Source shader_filter_invert_frag_src =
+{
+   filter_invert_frag_glsl,
+   NULL, 0
+};
+
+const char filter_invert_nomul_frag_glsl[] =
+#include "shader/filter_invert_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_invert_nomul_frag_src =
+{
+   filter_invert_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char filter_invert_bgra_frag_glsl[] =
+#include "shader/filter_invert_bgra.h"
+  ;
+Evas_GL_Program_Source shader_filter_invert_bgra_frag_src =
+{
+   filter_invert_bgra_frag_glsl,
+   NULL, 0
+};
+const char filter_invert_bgra_nomul_frag_glsl[] =
+#include "shader/filter_invert_bgra_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_invert_bgra_nomul_frag_src =
+{
+   filter_invert_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char filter_greyscale_frag_glsl[] =
+#include "shader/filter_greyscale.h"
+  ;
+Evas_GL_Program_Source shader_filter_greyscale_frag_src =
+{
+   filter_greyscale_frag_glsl,
+   NULL, 0
+};
+
+const char filter_greyscale_nomul_frag_glsl[] =
+#include "shader/filter_greyscale_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_greyscale_nomul_frag_src =
+{
+   filter_greyscale_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char filter_greyscale_bgra_frag_glsl[] =
+#include "shader/filter_greyscale_bgra.h"
+  ;
+Evas_GL_Program_Source shader_filter_greyscale_bgra_frag_src =
+{
+   filter_greyscale_bgra_frag_glsl,
+   NULL, 0
+};
+const char filter_greyscale_bgra_nomul_frag_glsl[] =
+#include "shader/filter_greyscale_bgra_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_greyscale_bgra_nomul_frag_src =
+{
+   filter_greyscale_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+const char filter_sepia_frag_glsl[] =
+#include "shader/filter_sepia.h"
+  ;
+Evas_GL_Program_Source shader_filter_sepia_frag_src =
+{
+   filter_sepia_frag_glsl,
+   NULL, 0
+};
+
+const char filter_sepia_nomul_frag_glsl[] =
+#include "shader/filter_sepia_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_sepia_nomul_frag_src =
+{
+   filter_sepia_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char filter_sepia_bgra_frag_glsl[] =
+#include "shader/filter_sepia_bgra.h"
+  ;
+Evas_GL_Program_Source shader_filter_sepia_bgra_frag_src =
+{
+   filter_sepia_bgra_frag_glsl,
+   NULL, 0
+};
+const char filter_sepia_bgra_nomul_frag_glsl[] =
+#include "shader/filter_sepia_bgra_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_sepia_bgra_nomul_frag_src =
+{
+   filter_sepia_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+/////////////////////////////////////////////
+#if 0
+	Blur is a work in progress currently.
+	Mostly because GPUs are so hopeless.
+const char filter_blur_vert_glsl[] =
+#include "shader/filter_blur_vert.h"
+  ;
+
+Evas_GL_Program_Source shader_filter_blur_vert_src =
+{
+   filter_blur_vert_glsl,
+   NULL, 0
+};
+
+const char filter_blur_frag_glsl[] =
+#include "shader/filter_blur.h"
+  ;
+Evas_GL_Program_Source shader_filter_blur_frag_src =
+{
+   filter_blur_frag_glsl,
+   NULL, 0
+};
+
+const char filter_blur_nomul_frag_glsl[] =
+#include "shader/filter_blur_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_blur_nomul_frag_src =
+{
+   filter_blur_nomul_frag_glsl,
+   NULL, 0
+};
+
+const char filter_blur_bgra_frag_glsl[] =
+#include "shader/filter_blur_bgra.h"
+  ;
+Evas_GL_Program_Source shader_filter_blur_bgra_frag_src =
+{
+   filter_blur_bgra_frag_glsl,
+   NULL, 0
+};
+const char filter_blur_bgra_nomul_frag_glsl[] =
+#include "shader/filter_blur_bgra_nomul.h"
+  ;
+Evas_GL_Program_Source shader_filter_blur_bgra_nomul_frag_src =
+{
+   filter_blur_bgra_nomul_frag_glsl,
+   NULL, 0
+};
+
+#endif
+
+
+
+/////////////////////////////////////////////
 static void
 gl_compile_link_error(GLuint target, const char *action)
 {

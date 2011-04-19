@@ -151,6 +151,7 @@ static void
 _evas_common_rgba_image_delete(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
+   Filtered_Image *fi;
 
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
@@ -172,6 +173,14 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 #ifdef EVAS_CSERVE
    if (ie->data1) evas_cserve_image_free(ie);
 #endif   
+
+   EINA_LIST_FREE(im->filtered, fi)
+     {
+	free(fi->key);
+	_evas_common_rgba_image_delete((Image_Entry *)(fi->image));
+	free(fi);
+     }
+
    free(im);
 }
 

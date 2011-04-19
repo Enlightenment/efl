@@ -855,6 +855,88 @@ eng_canvas_alpha_get(void *data __UNUSED__, void *info __UNUSED__)
    return EINA_TRUE;
 }
 
+
+/* Filter API */
+static void
+eng_image_draw_filtered(void *data, void *context, void *surface,
+		void *image, Evas_Filter_Info *filter)
+{
+   Evas_Software_Filter_Fn fn;
+   RGBA_Image *im = image;
+
+   fn = evas_filter_software_get(filter);
+   if (!fn) return;
+   if (im->cache_entry.cache) evas_cache_image_load_data(&im->cache_entry);
+   fn(filter, image, surface);
+
+   return;
+}
+
+static Filtered_Image *
+eng_image_filtered_get(void *image, uint8_t *key, size_t keylen)
+{
+   RGBA_Image *im = image;
+   Filtered_Image *fi;
+   Eina_List *l;
+
+   for (l = im->filtered ; l ; l = l->next)
+     {
+         fi = l->data;
+         if (fi->keylen != keylen) continue;
+         if (memcmp(key, fi->key, keylen) != 0) continue;
+         fi->ref ++;
+         return fi;
+     }
+
+   return NULL;
+}
+
+static Filtered_Image *
+eng_image_filtered_save(void *image, void *fimage, uint8_t *key, size_t keylen)
+{
+   RGBA_Image *im = image;
+   Filtered_Image *fi;
+   Eina_List *l;
+
+   for (l = im->filtered ; l ; l = l->next)
+     {
+        fi = l->data;
+        if (fi->keylen != keylen) continue;
+        if (memcmp(key, fi->key, keylen) == 0) continue;
+        evas_cache_image_drop((void *)fi->image);
+        fi->image = fimage;
+        return fi;
+     }
+
+   fi = calloc(1,sizeof(Filtered_Image));
+   if (!fi) return NULL;
+
+   fi->keylen = keylen;
+   fi->key = malloc(keylen);
+   memcpy(fi->key, key, keylen);
+   fi->image = fimage;
+   fi->ref = 1;
+
+   im->filtered = eina_list_prepend(im->filtered, fi);
+
+   return fi;
+}
+
+static void
+eng_image_filtered_free(void *image, Filtered_Image *fi)
+{
+   RGBA_Image *im = image;
+
+   fi->ref --;
+   if (fi->ref) return;
+
+   free(fi->key);
+   evas_cache_image_drop(&fi->image->cache_entry);
+   fi->image = NULL;
+
+   im->filtered = eina_list_remove(im->filtered, fi);
+}
+
 /*
  *****
  **
@@ -975,6 +1057,10 @@ static Evas_Func func =
      eng_font_pen_coords_get,
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
+     eng_image_draw_filtered,
+     eng_image_filtered_get,
+     eng_image_filtered_save,
+     eng_image_filtered_free,
      NULL, // FIXME: need software mesa for gl rendering <- gl_surface_create
      NULL, // FIXME: need software mesa for gl rendering <- gl_surface_destroy
      NULL, // FIXME: need software mesa for gl rendering <- gl_context_create

@@ -196,6 +196,18 @@ struct _Evas_GL_Shared
       Evas_GL_Program  img_mask;
       Evas_GL_Program  yuv,            yuv_nomul;
       Evas_GL_Program  tex,            tex_nomul;
+
+      Evas_GL_Program  filter_invert,      filter_invert_nomul;
+      Evas_GL_Program  filter_invert_bgra, filter_invert_bgra_nomul;
+      Evas_GL_Program  filter_greyscale,      filter_greyscale_nomul;
+      Evas_GL_Program  filter_greyscale_bgra, filter_greyscale_bgra_nomul;
+      Evas_GL_Program  filter_sepia,      filter_sepia_nomul;
+      Evas_GL_Program  filter_sepia_bgra, filter_sepia_bgra_nomul;
+#if 0
+      Evas_GL_Program  filter_blur_vert;
+      Evas_GL_Program  filter_blur,      filter_blur_nomul;
+      Evas_GL_Program  filter_blur_bgra, filter_blur_bgra_nomul;
+#endif
    } shader;
    int references;
    int w, h;
@@ -285,6 +297,9 @@ struct _Evas_Engine_GL_Context
    Eina_Bool havestuff : 1;
    
    Evas_GL_Image *def_surface;
+
+   /* If this is set: Force drawing with a particular filter */
+   GLuint	filter_prog;
    
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 // FIXME: hack. expose egl display to gl core for egl image sec extn.   
@@ -357,6 +372,8 @@ struct _Evas_GL_Image
    int scale_hint, content_hint;
    int csize;
    
+   Eina_List       *filtered;
+
    unsigned char    dirty : 1;
    unsigned char    cached : 1;
    unsigned char    alpha : 1;
@@ -404,6 +421,27 @@ extern Evas_GL_Program_Source shader_tex_frag_src;
 extern Evas_GL_Program_Source shader_tex_vert_src;
 extern Evas_GL_Program_Source shader_tex_nomul_frag_src;
 extern Evas_GL_Program_Source shader_tex_nomul_vert_src;
+
+extern Evas_GL_Program_Source shader_filter_invert_frag_src;
+extern Evas_GL_Program_Source shader_filter_invert_nomul_frag_src;
+extern Evas_GL_Program_Source shader_filter_invert_bgra_frag_src;
+extern Evas_GL_Program_Source shader_filter_invert_bgra_nomul_frag_src;
+extern Evas_GL_Program_Source shader_filter_sepia_frag_src;
+extern Evas_GL_Program_Source shader_filter_sepia_nomul_frag_src;
+extern Evas_GL_Program_Source shader_filter_sepia_bgra_frag_src;
+extern Evas_GL_Program_Source shader_filter_sepia_bgra_nomul_frag_src;
+extern Evas_GL_Program_Source shader_filter_greyscale_frag_src;
+extern Evas_GL_Program_Source shader_filter_greyscale_nomul_frag_src;
+extern Evas_GL_Program_Source shader_filter_greyscale_bgra_frag_src;
+extern Evas_GL_Program_Source shader_filter_greyscale_bgra_nomul_frag_src;
+#if 0
+/* blur (annoyingly) needs (aka is faster with) a vertex shader */
+extern Evas_GL_Program_Source shader_filter_blur_vert_src;
+extern Evas_GL_Program_Source shader_filter_blur_frag_src;
+extern Evas_GL_Program_Source shader_filter_blur_nomul_frag_src;
+extern Evas_GL_Program_Source shader_filter_blur_bgra_frag_src;
+extern Evas_GL_Program_Source shader_filter_blur_bgra_nomul_frag_src;
+#endif
 
 void glerr(int err, const char *file, const char *func, int line, const char *op);
  
@@ -497,6 +535,7 @@ void              evas_gl_common_image_cache_flush(Evas_Engine_GL_Context *gc);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha);
 void              evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, unsigned int w, unsigned int h);
+void              evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im);
 void              evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int npoints, RGBA_Map_Point *p, int smooth, int level);
 void              evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 
@@ -509,6 +548,12 @@ Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 void              evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int x, int y);
 
 void              evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int y2);
+
+void              evas_gl_common_filter_draw(void *data, Evas_Engine_GL_Context *context, void *image, Evas_Filter_Info *filter);
+Filtered_Image   *evas_gl_common_image_filtered_get(Evas_GL_Image *im, uint8_t *key, size_t keylen);
+Filtered_Image   *evas_gl_common_image_filtered_save(Evas_GL_Image *im, Evas_GL_Image *fimage, uint8_t *key, size_t keylen);
+void              evas_gl_common_image_filtered_free(Evas_GL_Image *im, Filtered_Image *);
+
 
 extern void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
 extern void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);

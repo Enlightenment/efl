@@ -22,6 +22,7 @@ evas_gl_image.c \
 evas_gl_font.c \
 evas_gl_polygon.c \
 evas_gl_line.c \
+evas_gl_filter.c \
 shader/rect_frag.h \
 shader/rect_frag_bin_s3c6410.h \
 shader/rect_vert.h \
@@ -61,7 +62,25 @@ shader/tex_vert_bin_s3c6410.h \
 shader/tex_nomul_frag.h \
 shader/tex_nomul_frag_bin_s3c6410.h \
 shader/tex_nomul_vert.h \
-shader/tex_nomul_vert_bin_s3c6410.h
+shader/tex_nomul_vert_bin_s3c6410.h \
+shader/filter_invert.h \
+shader/filter_invert_nomul.h \
+shader/filter_invert_bgra.h \
+shader/filter_invert_bgra_nomul.h \
+shader/filter_sepia.h \
+shader/filter_sepia_nomul.h \
+shader/filter_sepia_bgra.h \
+shader/filter_sepia_bgra_nomul.h \
+shader/filter_greyscale.h \
+shader/filter_greyscale_nomul.h \
+shader/filter_greyscale_bgra.h \
+shader/filter_greyscale_bgra_nomul.h \
+shader/filter_blur.h \
+shader/filter_blur_nomul.h \
+shader/filter_blur_bgra.h \
+shader/filter_blur_bgra_nomul.h
+
+
 
 libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
 endif
@@ -96,4 +115,21 @@ shader/tex_frag.shd \
 shader/tex_frag_s3c6410.asm \
 shader/tex_vert.shd \
 shader/tex_nomul_frag.shd \
-shader/tex_nomul_vert.shd
+shader/tex_nomul_vert.shd \
+shader/filter_invert.shd \
+shader/filter_invert_nomul.shd \
+shader/filter_invert_bgra.shd \
+shader/filter_invert_bgra_nomul.shd \
+shader/filter_greyscale.shd \
+shader/filter_greyscale_nomul.shd \
+shader/filter_greyscale_bgra.shd \
+shader/filter_greyscale_bgra_nomul.shd \
+shader/filter_sepia.shd \
+shader/filter_sepia_nomul.shd \
+shader/filter_sepia_bgra.shd \
+shader/filter_sepia_bgra_nomul.shd \
+shader/filter_blur.shd \
+shader/filter_blur_nomul.shd \
+shader/filter_blur_bgra.shd \
+shader/filter_blur_bgra_nomul.shd
+

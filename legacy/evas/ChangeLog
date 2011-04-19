@@ -255,3 +255,10 @@
 	  useful for "to" field of email/sms applications where ',' is used to
 	  separate different text entities.
 
+2011-04-19 Brett Nash (nash)
+
+	* Filters: So filtering of various flavours.  They work only on images
+	  (use a proxy if you want it on other objects).  Documentation inline.
+	  Supports a filter object or filter under (the area where the object
+	  is filtered).  Various parameters to tweak, and potential for
+	  additional filters (but you get to write the shader ;-)

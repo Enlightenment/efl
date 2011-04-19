@@ -470,7 +470,91 @@ _evas_gl_common_viewport_set(Evas_Engine_GL_Context *gc)
    glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.img_mask.prog, "mvp"), 1,
                       GL_FALSE, proj);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_invert.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_invert.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_invert_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_invert_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_invert_bgra.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_invert_bgra.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_invert_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_invert_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
+   glUseProgram(gc->shared->shader.filter_greyscale.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_greyscale.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_greyscale_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_greyscale_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_greyscale_bgra.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_greyscale_bgra.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_greyscale_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_greyscale_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   glUseProgram(gc->shared->shader.filter_sepia.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_sepia.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_sepia_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_sepia_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_sepia_bgra.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_sepia_bgra.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_sepia_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_sepia_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+#if 0
+   glUseProgram(gc->shared->shader.filter_blur_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_blur_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_blur_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_blur_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_blur_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_blur_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUseProgram(gc->shared->shader.filter_blur_bgra_nomul.prog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glUniformMatrix4fv(glGetUniformLocation(gc->shared->shader.filter_blur_bgra_nomul.prog, "mvp"), 1,
+                      GL_FALSE, proj);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+#endif
 
 
    glUseProgram(gc->pipe[0].shader.cur_prog);
@@ -725,6 +809,78 @@ evas_gl_common_context_new(void)
                                                 &(shader_yuv_nomul_vert_src), 
                                                 &(shader_yuv_nomul_frag_src),
                                                 "yuv_nomul")) goto error;
+
+        /* Most of the filters use the image fragment shader */
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_invert),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_invert_frag_src),
+                                               "filter_invert")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_invert_nomul),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_invert_nomul_frag_src),
+                                               "filter_invert_nomul")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_invert_bgra),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_invert_bgra_frag_src),
+                                               "filter_invert_bgra")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_invert_bgra_nomul),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_invert_bgra_nomul_frag_src),
+                                               "filter_invert_bgra_nomul")) goto error;
+
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_sepia),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_sepia_frag_src),
+                                               "filter_sepia")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_sepia_nomul),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_sepia_nomul_frag_src),
+                                               "filter_sepia_nomul")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_sepia_bgra),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_sepia_bgra_frag_src),
+                                               "filter_sepia_bgra")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_sepia_bgra_nomul),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_sepia_bgra_nomul_frag_src),
+                                               "filter_sepia_bgra_nomul")) goto error;
+
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_greyscale),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_greyscale_frag_src),
+                                               "filter_greyscale")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_greyscale_nomul),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_greyscale_nomul_frag_src),
+                                               "filter_greyscale_nomul")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_greyscale_bgra),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_greyscale_bgra_frag_src),
+                                               "filter_greyscale_bgra")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_greyscale_bgra_nomul),
+                                               &(shader_img_vert_src),
+                                               &(shader_filter_greyscale_bgra_nomul_frag_src),
+                                               "filter_greyscale_bgra_nomul")) goto error;
+#if 0
+        if (!evas_gl_common_shader_program_init(&(shared->shader.filter_blur),
+                                               &(shader_filter_blur_vert_src),
+                                               &(shader_filter_blur_frag_src),
+                                               "filter_blur")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_blur_nomul),
+                                               &(shader_filter_blur_vert_src),
+                                               &(shader_filter_blur_nomul_frag_src),
+                                               "filter_blur_nomul")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_blur_bgra),
+                                               &(shader_filter_blur_vert_src),
+                                               &(shader_filter_blur_bgra_frag_src),
+                                               "filter_blur_bgra")) goto error;
+	if (!evas_gl_common_shader_program_init(&(shared->shader.filter_blur_bgra_nomul),
+                                               &(shader_filter_blur_vert_src),
+                                               &(shader_filter_blur_bgra_nomul_frag_src),
+                                               "filter_blur_bgra_nomul")) goto error;
+#endif
+
+
         
         glUseProgram(shared->shader.yuv.prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -820,7 +976,9 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.yuv_nomul));
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.tex));
         evas_gl_common_shader_program_shutdown(&(gc->shared->shader.tex_nomul));
-        
+
+	evas_gl_common_shader_program_shutdown(&(gc->shared->shader.filter_invert));
+
         while (gc->shared->images)
           {
              evas_gl_common_image_free(gc->shared->images->data);
@@ -1366,8 +1524,12 @@ evas_gl_common_context_image_push(Evas_Engine_GL_Context *gc,
 
    if (!tex->alpha) blend = 0;
    if (a < 255) blend = 1;
-   
-   if (tex_only)
+
+   if (gc->filter_prog)
+     {
+        prog = gc->filter_prog;
+     }
+   else if (tex_only)
      {
         if (tex->pt->dyn.img)
           {
