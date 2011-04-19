@@ -415,9 +415,9 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
                                int ext_h, RGBA_Font_Int *fi, int im_w, int im_h __UNUSED__)
 {
 #if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
-   (void) in_text;
-   const Eina_Unicode *text = text_props->info->shaped_text +
-      text_props->text_offset;
+   const Eina_Unicode *text = (text_props->info) ?
+      text_props->info->shaped_text + text_props->text_offset :
+      in_text;
 #else
    const Eina_Unicode *text = in_text;
 #endif
