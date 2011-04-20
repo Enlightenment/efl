@@ -858,8 +858,8 @@ eng_canvas_alpha_get(void *data __UNUSED__, void *info __UNUSED__)
 
 /* Filter API */
 static void
-eng_image_draw_filtered(void *data, void *context, void *surface,
-		void *image, Evas_Filter_Info *filter)
+eng_image_draw_filtered(void *data __UNUSED__, void *context __UNUSED__,
+                        void *surface, void *image, Evas_Filter_Info *filter)
 {
    Evas_Software_Filter_Fn fn;
    RGBA_Image *im = image;
