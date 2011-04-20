@@ -2487,8 +2487,7 @@ _layout_item_merge_and_free(Ctxt *c,
    evas_common_text_props_merge(&item1->text_props,
          &item2->text_props);
 
-   item1->parent.w = item1->parent.adv + item2->parent.w;
-   item1->parent.adv += item2->parent.adv;
+   _text_item_update_sizes(c, item1);
 
    item1->parent.merge = EINA_FALSE;
    item1->parent.visually_deleted = EINA_FALSE;
@@ -2608,7 +2607,7 @@ _layout_word_next(const Evas_Object_Textblock_Text_Item *ti, int p)
 static void
 _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
 {
-   int tw, th, inset, right_inset;
+   int tw, th, inset, advw;
    const Evas_Object_Textblock_Format *fmt = ti->parent.format;
    int shad_sz = 0, shad_dst = 0, out_sz = 0;
    int dx = 0, minx = 0, maxx = 0, shx1, shx2;
@@ -2621,10 +2620,11 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    if (fmt->font.font)
      inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font,
            &ti->text_props);
-   right_inset = 0;
+   advw = 0;
    if (fmt->font.font)
-      right_inset = c->ENFN->font_right_inset_get(c->ENDT, fmt->font.font,
-            &ti->text_props);
+      advw = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font,
+           &ti->text_props);
+
 
    /* These adjustments are calculated and thus heavily linked to those in
     * textblock_render!!! Don't change one without the other. */
@@ -2693,7 +2693,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
    ti->inset = inset;
    ti->parent.w = tw + ti->x_adjustment;
    ti->parent.h = th;
-   ti->parent.adv = tw + right_inset;
+   ti->parent.adv = advw;
    ti->parent.x = 0;
 }
 
