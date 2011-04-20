@@ -194,7 +194,7 @@ _elm_win_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
    Elm_Win *win = elm_widget_data_get(obj);
    if (!win) return;
-   
+
    if (win->img_obj)
       evas_object_focus_set(win->img_obj, elm_widget_focus_get(obj));
    else
@@ -1063,7 +1063,7 @@ _win_img_hide(void        *data,
               void        *event_info __UNUSED__)
 {
    Elm_Win *win = data;
-   
+
    elm_widget_focus_hide_handle(win->win_obj);
 }
 
@@ -1104,7 +1104,7 @@ _win_inlined_image_set(Elm_Win *win)
    evas_object_image_filled_set(win->img_obj, EINA_TRUE);
    evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_DEL,
                                   _elm_win_obj_callback_img_obj_del, win);
-   
+
    evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_HIDE,
                                   _win_img_hide, win);
    evas_object_event_callback_add(win->img_obj, EVAS_CALLBACK_MOUSE_DOWN,

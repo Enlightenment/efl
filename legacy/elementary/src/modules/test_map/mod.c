@@ -3,14 +3,14 @@
 # include "elementary_config.h"
 #endif
 
-EAPI int 
-elm_modapi_init(void *m __UNUSED__) 
-{   
+EAPI int
+elm_modapi_init(void *m __UNUSED__)
+{
    return 1; // succeed always
 }
 
-EAPI int 
-elm_modapi_shutdown(void *m __UNUSED__) 
+EAPI int
+elm_modapi_shutdown(void *m __UNUSED__)
 {
    return 1; // succeed always
 }
@@ -23,11 +23,11 @@ obj_hook(Evas_Object *obj __UNUSED__)
 
 EAPI Eina_Bool
 obj_unhook(Evas_Object *obj __UNUSED__)
-{ 
+{
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 obj_convert_geo_into_coord(const Evas_Object *obj __UNUSED__, int zoom __UNUSED__, double lon __UNUSED__, double lat __UNUSED__, int size __UNUSED__, int *x __UNUSED__, int *y __UNUSED__)
 {
    return EINA_FALSE;

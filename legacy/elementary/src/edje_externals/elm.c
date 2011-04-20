@@ -30,7 +30,7 @@ external_elm_shutdown(void)
 static void
 _external_obj_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, 
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
                                   _external_obj_del);
    external_elm_shutdown();
 }
@@ -165,7 +165,7 @@ external_signals_proxy(Evas_Object *obj, Evas_Object *edje, const char *part_nam
 	evas_object_smart_callback_add
 	  (obj, d->name, _external_signal_proxy_cb, ctxt);
      }
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, 
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _external_obj_del, NULL);
 }
 

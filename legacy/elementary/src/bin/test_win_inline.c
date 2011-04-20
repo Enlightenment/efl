@@ -34,7 +34,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    elm_scrolled_entry_single_line_set(en, 1);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
-   
+
    en = elm_scrolled_entry_add(win);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
@@ -43,7 +43,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    elm_scrolled_entry_single_line_set(en, 1);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
-   
+
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(ic, buf, NULL);
