@@ -1,11 +1,8 @@
 #include "evas_gl_private.h"
 
-// FIXME: wtf. why pass in data?
 void
-evas_gl_common_filter_draw(void *data __UNUSED__, Evas_Engine_GL_Context *gc,
-                           void *image, Evas_Filter_Info *filter)
+evas_gl_common_filter_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, Evas_Filter_Info *filter)
 {
-   Evas_GL_Image *im = image;
    RGBA_Draw_Context *dc;
    GLuint prog;
    int r,g,b,a;

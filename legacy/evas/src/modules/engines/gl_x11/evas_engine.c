@@ -1559,7 +1559,7 @@ eng_image_native_get(void *data __UNUSED__, void *image)
 
 static void
 eng_image_draw_filtered(void *data, void *context, void *surface,
-		void *image, Evas_Filter_Info *filter)
+                        void *image, Evas_Filter_Info *filter)
 {
    Render_Engine *re = data;
 
@@ -1568,7 +1568,7 @@ eng_image_draw_filtered(void *data, void *context, void *surface,
    evas_gl_common_context_target_surface_set(re->win->gl_context, surface);
    re->win->gl_context->dc = context;
 
-   evas_gl_common_filter_draw(data, re->win->gl_context, image, filter);
+   evas_gl_common_filter_draw(re->win->gl_context, image, filter);
 }
 
 static Filtered_Image *

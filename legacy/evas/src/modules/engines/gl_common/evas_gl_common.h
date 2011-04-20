@@ -549,7 +549,7 @@ void              evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_P
 
 void              evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int y2);
 
-void              evas_gl_common_filter_draw(void *data, Evas_Engine_GL_Context *context, void *image, Evas_Filter_Info *filter);
+void              evas_gl_common_filter_draw(Evas_Engine_GL_Context *context, Evas_GL_Image *im, Evas_Filter_Info *filter);
 Filtered_Image   *evas_gl_common_image_filtered_get(Evas_GL_Image *im, uint8_t *key, size_t keylen);
 Filtered_Image   *evas_gl_common_image_filtered_save(Evas_GL_Image *im, Evas_GL_Image *fimage, uint8_t *key, size_t keylen);
 void              evas_gl_common_image_filtered_free(Evas_GL_Image *im, Filtered_Image *);
