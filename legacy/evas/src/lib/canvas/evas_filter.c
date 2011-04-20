@@ -208,6 +208,8 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
         info->data = calloc(1, finfo->datasize);
         if (!info->data)
           {
+             o->filter = EVAS_FILTER_NONE;
+             return EINA_FALSE;
           }
      }
    else
