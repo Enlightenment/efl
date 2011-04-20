@@ -143,7 +143,7 @@ evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
    return EINA_FALSE;
    MAGIC_CHECK_END();
    
-   if (mode != EVAS_FILTER_MODE_OBJECT && mode != EVAS_FILTER_MODE_BELOW)
+   if ((mode != EVAS_FILTER_MODE_OBJECT) && (mode != EVAS_FILTER_MODE_BELOW))
       return EINA_FALSE;
    
    if (!o->filter)
@@ -205,8 +205,12 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
      }
    info->datalen = finfo->datasize;
    if (finfo->datasize)
-      // FIXME: hande calloc fail
-      info->data = calloc(1,finfo->datasize);
+     {
+        info->data = calloc(1, finfo->datasize);
+        if (!info->data)
+          {
+          }
+     }
    else
       info->data = NULL;
    info->data_free = NULL;
@@ -332,9 +336,12 @@ evas_object_filter_param_set_float(Evas_Object *o, const char *param,
              rv = EINA_TRUE;
           }
      }
-
    return rv;
 }
+
+
+
+
 
 /*
  * Internal call
@@ -344,7 +351,7 @@ evas_filter_get_size(Evas_Filter_Info *info, int inw, int inh,
                      int *outw, int *outh, Eina_Bool inv)
 {
    if (!info) return -1;
-   if (!outw && !outh) return 0;
+   if ((!outw) && (!outh)) return 0;
    
    if (filterinfo[info->filter].sizefn)
       return filterinfo[info->filter].sizefn(info, inw, inh, outw, outh, inv);
@@ -397,6 +404,43 @@ evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    return key;
 }
 
+Evas_Software_Filter_Fn
+evas_filter_software_get(Evas_Filter_Info *info)
+{
+   return filterinfo[info->filter].filter;
+}
+
+void
+evas_filter_free(Evas_Object *o)
+{
+   if (!o->filter) return;
+   free(o->filter);
+   o->filter = NULL;
+}
+
+
+
+
+/*
+ * Private calls
+ */
+static Evas_Filter_Info *
+filter_alloc(Evas_Object *o)
+{
+   Evas_Filter_Info *info;
+   
+   if (!o) return NULL;
+   info = calloc(1,sizeof(struct Evas_Filter_Info));
+   if (!info) return NULL;
+   info->dirty = 1;
+   info->filter = EVAS_FILTER_NONE;
+   info->mode = EVAS_FILTER_MODE_OBJECT;
+   info->datalen = 0;
+
+   o->filter = info;
+
+   return info;
+}
 
 static int
 blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh, 
@@ -417,7 +461,7 @@ blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh,
    return 0;
 }
 
-/**
+/*
  * Generate a key for the Gaussian generator.
  *
  * The size is:
@@ -449,32 +493,23 @@ gaussian_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    return key;
 }
 
-Evas_Software_Filter_Fn
-evas_filter_software_get(Evas_Filter_Info *info)
-{
-   return filterinfo[info->filter].filter;
-}
 
-/*
- * Private calls
- */
-static Evas_Filter_Info *
-filter_alloc(Evas_Object *o)
-{
-   Evas_Filter_Info *info;
-   if (!o) return NULL;
 
-   // FIXME: handle alloc failure
-   info = calloc(1,sizeof(struct Evas_Filter_Info));
-   info->dirty = 1;
-   info->filter = EVAS_FILTER_NONE;
-   info->mode = EVAS_FILTER_MODE_OBJECT;
-   info->datalen = 0;
 
-   o->filter = info;
 
-   return info;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Software implementations

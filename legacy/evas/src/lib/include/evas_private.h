@@ -400,10 +400,13 @@ typedef struct Evas_Filter_Info
 
 typedef Eina_Bool (*Evas_Software_Filter_Fn)(Evas_Filter_Info *, RGBA_Image *, RGBA_Image *);
 
-EAPI Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
 int evas_filter_get_size(Evas_Filter_Info *info, int inw, int inh,
                      int *outw, int *outh, Eina_Bool inv);
 Eina_Bool evas_filter_always_alpha(Evas_Filter_Info *info);
+uint8_t *evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp);
+// expose for use in engines
+EAPI Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
+void evas_filter_free(Evas_Object *o);
 
 struct _Evas_Object
 {
@@ -876,6 +879,7 @@ Eina_Bool evas_preload_thread_cancel(Evas_Preload_Pthread *thread);
 void _evas_walk(Evas *e);
 void _evas_unwalk(Evas *e);
 
+// expose for use in engines
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 
 void evas_render_invalidate(Evas *e);
@@ -883,7 +887,7 @@ void evas_render_object_recalc(Evas_Object *obj);
 
 Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
-
+   
 /****************************************************************************/
 /*****************************************/
 /********************/

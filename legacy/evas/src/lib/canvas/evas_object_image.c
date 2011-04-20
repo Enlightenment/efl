@@ -2450,7 +2450,6 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                {
                   uint32_t len;
                   uint8_t *key;
-                  uint8_t *evas_filter_key_get(void *, void *);
 
                   if (obj->filter->key) free(obj->filter->key);
                   key = evas_filter_key_get(obj->filter, &len);
