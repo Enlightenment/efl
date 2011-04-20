@@ -5,9 +5,6 @@
 #include "language/evas_language_utils.h"
 #include "evas_font_ot.h"
 
-/* Used for showing "malformed" or missing chars */
-#define REPLACEMENT_CHAR 0xFFFD
-
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,
       Evas_BiDi_Paragraph_Props *bidi_par_props, size_t start)
@@ -207,6 +204,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    size_t char_index;
    Evas_Font_Glyph_Info *gl_itr;
    const Eina_Unicode *base_char;
+   Evas_Coord pen_x = 0, adjust_x = 0;
    (void) par_props;
    (void) par_pos;
 
@@ -248,14 +246,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
              continue;
           }
         LKU(fi->ft_mutex);
-        if (is_replacement)
-          {
-             /* Update the advance accordingly */
-             gl_itr->advance =
-                fg->glyph->advance.x >> 10;
-             /* FIXME: reload fi, a bit slow, but I have no choice. */
-             evas_common_font_glyph_search(fn, &fi, *base_char);
-          }
+
         gl_itr->x_bear = fg->glyph_out->left;
         gl_itr->width = fg->glyph_out->bitmap.width;
         /* text_props->info->glyph[char_index].advance =
@@ -263,7 +254,32 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
          * already done by the ot function */
         if (EVAS_FONT_CHARACTER_IS_INVISIBLE(
               text[text_props->info->ot[char_index].source_cluster]))
-           gl_itr->index = 0;
+          {
+             gl_itr->index = 0;
+             /* Reduce the current advance */
+             if (gl_itr > text_props->info->glyph)
+               {
+                  adjust_x -= gl_itr->pen_after - (gl_itr - 1)->pen_after;
+               }
+             else
+               {
+                  adjust_x -= gl_itr->pen_after;
+               }
+          }
+        else
+          {
+             if (is_replacement)
+               {
+                  /* Update the advance accordingly */
+                  adjust_x += (pen_x + (fg->glyph->advance.x >> 16)) -
+                     gl_itr->pen_after;
+
+                  /* FIXME: reload fi, a bit slow, but I have no choice. */
+                  evas_common_font_glyph_search(fn, &fi, *base_char);
+               }
+             pen_x = gl_itr->pen_after;
+          }
+        gl_itr->pen_after += adjust_x;
 
         gl_itr++;
      }
@@ -273,6 +289,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
    Eina_Bool use_kerning;
    FT_UInt prev_index;
    FT_Face pface = NULL;
+   Evas_Coord pen_x = 0;
    int adv_d, i;
 #if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
    text = text_props->info->shaped_text = eina_unicode_strndup(text, len);
@@ -308,6 +325,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         FT_UInt index;
         RGBA_Font_Glyph *fg;
         int _gl, kern;
+        Evas_Coord adv;
         _gl = *text;
         if (_gl == 0) break;
 
@@ -351,7 +369,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
                {
                   if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
                     {
-                       (gl_itr - 1)->advance += kern;
+                       (gl_itr - 1)->pen_after += kern;
                     }
                }
              else
@@ -359,7 +377,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
                {
                   if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
                     {
-                       (gl_itr - 1)->advance += kern;
+                       (gl_itr - 1)->pen_after += kern;
                     }
                }
           }
@@ -367,13 +385,21 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         pface = fi->src->ft.face;
         LKU(fi->ft_mutex);
 
-        if (EVAS_FONT_CHARACTER_IS_INVISIBLE(_gl))
-           gl_itr->index = 0;
-
         gl_itr->index = index;
         gl_itr->x_bear = fg->glyph_out->left;
-        gl_itr->advance = fg->glyph->advance.x >> 10;
+        adv = fg->glyph->advance.x >> 10;
         gl_itr->width = fg->glyph_out->bitmap.width;
+
+        if (EVAS_FONT_CHARACTER_IS_INVISIBLE(_gl))
+          {
+             gl_itr->index = 0;
+          }
+        else
+          {
+             pen_x += adv;
+          }
+
+        gl_itr->pen_after = EVAS_FONT_ROUND_26_6_TO_INT(pen_x);
 
         prev_index = index;
      }

@@ -9,6 +9,9 @@ typedef struct _Evas_Font_Glyph_Info Evas_Font_Glyph_Info;
 # include "language/evas_bidi_utils.h"
 # include "language/evas_language_utils.h"
 
+/* Used for showing "malformed" or missing chars */
+#define REPLACEMENT_CHAR 0xFFFD
+
 struct _Evas_Text_Props
 {
    /* Start and len represent the start offset and the length in the
@@ -44,7 +47,7 @@ struct _Evas_Font_Glyph_Info
    Evas_Coord y_bear;
 #endif
    Evas_Coord width;
-   Evas_Coord advance;
+   Evas_Coord pen_after;
 };
 
 

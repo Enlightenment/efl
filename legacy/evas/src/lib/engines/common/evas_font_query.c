@@ -79,10 +79,12 @@ evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Pro
    if (gli->width == 0)
       return 0;
 
-   return EVAS_FONT_ROUND_26_6_TO_INT(gli->advance) -
+   return ((gli > text_props->info->glyph) ?
+      gli->pen_after - (gli - 1)->pen_after : gli->pen_after) -
       (gli->width + gli->x_bear
 #ifdef OT_SUPPORT
-       + text_props->info->ot[text_props->start + text_props->len - 1].x_offset
+       + EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(
+              text_props->info->ot[text_props->start + text_props->len - 1]))
 #endif
       );
 }
@@ -97,32 +99,29 @@ evas_common_font_query_right_inset(RGBA_Font *fn __UNUSED__, const Evas_Text_Pro
 EAPI void
 evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, int *w, int *h)
 {
-   int keep_width = 0;
-   int prev_pen_x = 0;
-   EVAS_FONT_WALK_TEXT_INIT();
+   Evas_Coord ret_w = 0;
 
-   EVAS_FONT_WALK_TEXT_VISUAL_START()
+   if (text_props->len > 0)
      {
-        EVAS_FONT_WALK_TEXT_WORK();
-        if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
-        /* Keep the width because we'll need it for the last char */
-        keep_width = EVAS_FONT_WALK_WIDTH +
-           EVAS_FONT_WALK_X_OFF +
-           EVAS_FONT_WALK_X_BEAR;
-        /* Keep the previous EVAS_FONT_WALK_PEN_X, before it's advanced in TEXT_END */
-        prev_pen_x = EVAS_FONT_WALK_PEN_X;
-     }
-   EVAS_FONT_WALK_TEXT_END();
+        const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
+           text_props->start;
+        const Evas_Font_Glyph_Info *last_glyph = glyph;
 
-   /* If the last char is a whitespace, we use the advance as the size */
-   if (keep_width > 0)
-     {
-        if (w) *w = prev_pen_x + keep_width;
+        if (text_props->len > 1)
+          {
+             last_glyph += text_props->len - 1;
+             ret_w = last_glyph[-1].pen_after;
+             if (text_props->start > 0)
+                ret_w -= glyph[-1].pen_after;
+          }
+#ifdef OT_SUPPORT
+        ret_w += EVAS_FONT_ROUND_26_6_TO_INT(EVAS_FONT_OT_X_OFF_GET(
+              text_props->info->ot[text_props->start + text_props->len - 1]));
+#endif
+        ret_w += last_glyph->width + last_glyph->x_bear;
      }
-   else
-     {
-        if (w) *w = EVAS_FONT_WALK_PEN_X;
-     }
+
+   if (w) *w = ret_w;
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
 }
 
@@ -135,17 +134,18 @@ evas_common_font_query_size(RGBA_Font *fn, const Evas_Text_Props *text_props, in
 EAPI void
 evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props, int *h_adv, int *v_adv)
 {
-   EVAS_FONT_WALK_TEXT_INIT();
-
-   EVAS_FONT_WALK_TEXT_LOGICAL_START()
+   Evas_Coord ret_adv = 0;
+   if (text_props->len > 0)
      {
-        EVAS_FONT_WALK_TEXT_WORK();
-        if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
+        const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
+           text_props->start;
+        ret_adv = glyph[text_props->len - 1].pen_after;
+        if (text_props->start > 0)
+           ret_adv -= glyph[-1].pen_after;
      }
-   EVAS_FONT_WALK_TEXT_END();
 
+   if (h_adv) *h_adv = ret_adv;
    if (v_adv) *v_adv = evas_common_font_get_line_advance(fn);
-   if (h_adv) *h_adv = EVAS_FONT_WALK_PEN_X;
 }
 
 /* x y w h for char at char pos for null it returns the position right after
@@ -430,8 +430,8 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text
         /* we need to see if the char at the visual position is the char,
          * we check that by checking if it's before the current pen
          * position and the next */
-        if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_ADV)) &&
-              (y >= -asc) && (y <= desc))
+        if ((x >= EVAS_FONT_WALK_PEN_X) &&
+            (x <= (EVAS_FONT_WALK_PEN_X_AFTER)) && (y >= -asc) && (y <= desc))
           {
 #ifdef OT_SUPPORT
              items = evas_common_font_ot_cluster_size_get(text_props,
@@ -496,8 +496,8 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
         EVAS_FONT_WALK_TEXT_WORK();
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
 
-        if ((x >= EVAS_FONT_WALK_PEN_X) && (x <= (EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_ADV)) &&
-              (y >= -asc) && (y <= desc))
+        if ((x >= EVAS_FONT_WALK_PEN_X) &&
+            (x <= (EVAS_FONT_WALK_PEN_X_AFTER)) && (y >= -asc) && (y <= desc))
           {
              ret = EVAS_FONT_WALK_POS;
              goto end;

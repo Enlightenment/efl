@@ -13,6 +13,9 @@
  */
 # define EVAS_FONT_WALK_TEXT_INIT() \
         int _pen_x = 0, _pen_y = 0; \
+        Evas_Coord _start_pen = (text_props->info && \
+              (text_props->start > 0)) ? \
+           text_props->info->glyph[text_props -> start - 1].pen_after : 0 ; \
         size_t char_index; \
         (void) _pen_y; /* Sometimes it won't be used */
 
@@ -149,13 +152,14 @@
 #define EVAS_FONT_WALK_IS_VISIBLE (_glyph_itr->index != 0)
 #define EVAS_FONT_WALK_X_BEAR (_glyph_itr->x_bear)
 #define EVAS_FONT_WALK_Y_BEAR (fg->glyph_out->top)
-#define _EVAS_FONT_WALK_X_ADV (_glyph_itr->advance)
+#define EVAS_FONT_WALK_X_ADV ((_glyph_itr > text_props->info->glyph) ? \
+      _glyph_itr->pen_after - (_glyph_itr - 1)->pen_after : \
+      _glyph_itr->pen_after)
 #define EVAS_FONT_WALK_WIDTH (_glyph_itr->width)
 
 #define EVAS_FONT_WALK_INDEX (_glyph_itr->index)
-#define EVAS_FONT_WALK_X_ADV \
-             (EVAS_FONT_ROUND_26_6_TO_INT(_EVAS_FONT_WALK_X_ADV))
-#define EVAS_FONT_WALK_PEN_X (EVAS_FONT_ROUND_26_6_TO_INT(_pen_x))
+#define EVAS_FONT_WALK_PEN_X (_pen_x)
+#define EVAS_FONT_WALK_PEN_X_AFTER (_glyph_itr->pen_after - _start_pen)
 #define EVAS_FONT_WALK_PEN_Y (EVAS_FONT_ROUND_26_6_TO_INT(_pen_y))
 #define EVAS_FONT_WALK_Y_ADV (0)
 #define EVAS_FONT_WALK_IS_LAST \
@@ -186,7 +190,7 @@
 #define EVAS_FONT_WALK_TEXT_END() \
              if (EVAS_FONT_WALK_IS_VISIBLE) \
                { \
-                  _pen_x += _EVAS_FONT_WALK_X_ADV; \
+                  _pen_x = _glyph_itr->pen_after - _start_pen; \
                } \
           } \
      } \

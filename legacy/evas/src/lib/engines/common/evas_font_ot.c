@@ -196,6 +196,7 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    unsigned int i;
    Evas_Font_Glyph_Info *gl_itr;
    Evas_Font_OT_Info *ot_itr;
+   Evas_Coord pen_x = 0;
 
    fi = fn->fonts->data;
    /* Load the font needed for this script */
@@ -252,11 +253,15 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
    ot_itr = props->info->ot;
    for (i = 0 ; i < props->len ; i++)
      {
+        Evas_Coord adv;
         ot_itr->source_cluster = infos->cluster;
         ot_itr->x_offset = positions->x_offset;
         ot_itr->y_offset = positions->y_offset;
         gl_itr->index = infos->codepoint;
-        gl_itr->advance = positions->x_advance;
+        adv = positions->x_advance;
+
+        pen_x += adv;
+        gl_itr->pen_after = EVAS_FONT_ROUND_26_6_TO_INT(pen_x);
 
         ot_itr++;
         gl_itr++;
