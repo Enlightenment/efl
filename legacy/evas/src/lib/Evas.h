@@ -7936,7 +7936,7 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * set.
  *
  * @param o Object to get filter mode of.
- * @return Filter mode (default EVAS_FILTER_MODE_OBJECT）
+ * @return Filter mode (default EVAS_FILTER_MODE_OBJECT)
  */
    EAPI Evas_Filter_Mode                     evas_object_filter_mode_get      (Evas_Object *o);
    
@@ -7965,6 +7965,7 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * @return The filter if set, or EVAS_FILTER_NONE.
  */
    EAPI Evas_Filter                          evas_object_filter_get           (Evas_Object *o);
+   
 /**
  * Set an integer parameter of a filter.
  *
@@ -7999,14 +8000,38 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  */
    EAPI int                                  evas_object_filter_param_int_get (Evas_Object *o, const char *param);
    
+/**
+ * Set a string parameter on a filter
+ * 
+ * Currently unimplemented as no filters use this yet
+ */
    EAPI Eina_Bool                            evas_object_filter_param_str_set (Evas_Object *o, const char *param, const char *val);
+   
+/**
+ * Get a string parameter from a filter
+ * 
+ * Currently unimplemented as no filters use this yet
+ */
    EAPI const char                          *evas_object_filter_param_str_get (Evas_Object *o, const char *param);
+   
+/**
+ * Set an object parameter on a filter
+ * 
+ * Currently unimplemented as no filters use this yet
+ */
    EAPI Eina_Bool                            evas_object_filter_param_obj_set (Evas_Object *o, const char *param, Evas_Object *val);
+
+/**
+ * get an object parameter from a filter
+ * 
+ * Currently unimplemented as no filters use this yet
+ */
    EAPI Evas_Object                         *evas_object_filter_param_obj_get (Evas_Object *o, const char *param);
+   
 /**
  * Set a float parameter of a filter.
  *
- * This is the same as evas_object_filter_param_get_int(), but for floating
+ * This is the same as evas_object_filter_param_int_set(), but for floating
  * point values.
  *
  * @param o Object to set value on.
@@ -8014,6 +8039,17 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * @param EINA_TRUE if at least one parameter was set, EINA_FALSE otherwise.
  */
    EAPI Eina_Bool                            evas_object_filter_param_float_set(Evas_Object *o, const char *param, double val);
+   
+/**
+ * Get a float parameter of a filter.
+ *
+ * This is the same as evas_object_filter_param_int_get(), but for floating
+ * point values.
+ *
+ * @param o Object to set value on.
+ * @param param Name of the parameter to set.
+ * @return The value, or -1 on error.
+ */
    EAPI double                               evas_object_filter_param_float_get(Evas_Object *o, const char *param);
          
 /**

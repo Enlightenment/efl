@@ -269,7 +269,7 @@ evas_object_filter_param_int_get(Evas_Object *o, const char *param)
    int i;
 
    MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
+   return -1;
    MAGIC_CHECK_END();
 
    if ((!o->filter) || (!o->filter->data)) return -1;
@@ -362,7 +362,7 @@ evas_object_filter_param_float_get(Evas_Object *o, const char *param)
    int i;
 
    MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
+   return -1;
    MAGIC_CHECK_END();
 
    if ((!o->filter) || (!o->filter->data)) return -1;
