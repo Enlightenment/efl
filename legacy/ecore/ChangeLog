@@ -140,3 +140,12 @@
 2011-04-19 Mike Blumenkrantz
 
         * +ecore_exe_data_set
+
+2011-04-20  Carsten Haitzler (The Rasterman)
+
+        * Added ecore animator run, where animator runs for a
+        specified time (in seconds) and then stops, but it also passes
+        the position in the timeline (as a 0.0 to 1.0 value) to the
+        callback which it can then use the new pos map call to map to
+        some ease in/out, bounce, spring or whatever position.
+

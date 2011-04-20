@@ -146,6 +146,21 @@ extern "C" {
         ECORE_POLLER_CORE = 0 /**< The core poller interval */
      };
    typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
+   
+   enum _Ecore_Pos_Map /* Position mappings */
+     {
+        ECORE_POS_MAP_LINEAR,     /**< Linear 0.0 -> 1.0 */
+        ECORE_POS_MAP_ACCELERATE, /**< Start slow then speed up */
+        ECORE_POS_MAP_DECELERATE, /**< Start fast then slow down */
+        ECORE_POS_MAP_SINUSOIDAL, /**< Start slow, speed up then slow down at end */
+        ECORE_POS_MAP_ACCELERATE_FACTOR, /**< Start slow then speed up, v1 being a power factor, 0.0 being linear, 1.0 being normal accelerate, 2.0 being much more pronounced accelerate (squared), 3.0 being cubed, etc. */
+        ECORE_POS_MAP_DECELERATE_FACTOR, /**< Start fast then slow down, v1 being a power factor, 0.0 being linear, 1.0 being normal decelerate, 2.0 being much more pronounced decelerate (squared), 3.0 being cubed, etc. */
+        ECORE_POS_MAP_SINUSOIDAL_FACTOR, /**< Start slow, speed up then slow down at end, v1 being a power factor, 0.0 being linear, 1.0 being normal sinusoidal, 2.0 being much more pronounced sinusoidal (squared), 3.0 being cubed, etc. */
+        ECORE_POS_MAP_DIVISOR_INTERP, /**< Start at gradient * v1, interpolated via power of v2 curve */
+        ECORE_POS_MAP_BOUNCE, /**< Start at 0.0 then "drop" like a ball bouncing to the ground at 1.0, and bounce v2 times, with decay factor of v1 */
+        ECORE_POS_MAP_SPRING  /**< Start at 0.0 then "wobble" like a sping rest position 1.0, and wobble v2 times, with decay factor of v1 */
+     };
+   typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 
    typedef struct _Ecore_Exe                   Ecore_Exe; /**< A handle for spawned processes */
    typedef struct _Ecore_Timer                 Ecore_Timer; /**< A handle for timers */
@@ -218,9 +233,14 @@ extern "C" {
   typedef void (*Ecore_Thread_Notify_Cb) (void *data, Ecore_Thread *thread, void *msg_data);
    /**
     * @typedef Ecore_Task_Cb Ecore_Task_Cb
-    * A callback run for a task (timer, idler, poller, animater, etc)
+    * A callback run for a task (timer, idler, poller, animator, etc)
     */
    typedef Eina_Bool (*Ecore_Task_Cb) (void *data);
+   /**
+    * @typedef Ecore_Timeline_Cb Ecore_Timeline_Cb
+    * A callback run for a task (animators with runtimes)
+    */
+   typedef Eina_Bool (*Ecore_Timeline_Cb) (void *data, double pos);
    /**
     * @typedef Ecore_Cb Ecore_Cb
     * A generic callback called as a hook when a certain point in execution is reached.
@@ -555,12 +575,14 @@ extern "C" {
    */
 
    EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
+   EAPI Ecore_Animator *ecore_animator_run_add(double runtime, Ecore_Timeline_Cb func, const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
    EAPI void            ecore_animator_freeze(Ecore_Animator *animator);
    EAPI void            ecore_animator_thaw(Ecore_Animator *animator);
    EAPI void            ecore_animator_frametime_set(double frametime);
    EAPI double          ecore_animator_frametime_get(void);
-
+   EAPI double          ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2);
+         
   /**
    * @}
    */
