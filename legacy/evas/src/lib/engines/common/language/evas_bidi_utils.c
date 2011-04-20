@@ -275,7 +275,7 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
 
         for (itr = segment_idxs ; *itr > 0 ; itr++)
           {
-             direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+             direction = EVAS_BIDI_PARAGRAPH_NEUTRAL;
              if (!fribidi_get_par_embedding_levels(char_types + pos,
                       *itr - pos,
                       &direction,
@@ -302,7 +302,7 @@ evas_bidi_paragraph_props_get(const Eina_Unicode *eina_ustr, size_t len,
              pos = *itr + 1;
           }
 
-        direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+        direction = EVAS_BIDI_PARAGRAPH_NEUTRAL;
         if (!fribidi_get_par_embedding_levels(char_types + pos,
                  len - pos,
                  &direction,
@@ -560,7 +560,7 @@ evas_bidi_paragraph_props_new(void)
 {
    Evas_BiDi_Paragraph_Props *ret;
    ret = calloc(1, sizeof(Evas_BiDi_Paragraph_Props));
-   ret->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
+   ret->direction = EVAS_BIDI_PARAGRAPH_NEUTRAL;
    ret->refcount = 1;
 
    return ret;

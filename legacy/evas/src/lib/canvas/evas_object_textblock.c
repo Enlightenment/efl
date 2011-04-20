@@ -1839,7 +1839,6 @@ _layout_paragraph_new(Ctxt *c, Evas_Object_Textblock_Node_Text *n,
    c->par->visible = 1;
 #ifdef BIDI_SUPPORT
    c->par->bidi_props = evas_bidi_paragraph_props_new();
-   c->par->bidi_props->direction = EVAS_BIDI_PARAGRAPH_NATURAL;
 #endif
 }
 
