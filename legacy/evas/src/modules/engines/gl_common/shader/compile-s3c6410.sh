@@ -35,7 +35,9 @@ compile img
 compile img_nomul
 compile img_bgra
 compile img_bgra_nomul
+compile img_mask
 compile yuv
 compile yuv_nomul
 compile tex
 compile tex_nomul
+## FIXME: compile filter_*
