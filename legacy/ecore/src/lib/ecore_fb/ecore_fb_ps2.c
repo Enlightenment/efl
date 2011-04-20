@@ -20,7 +20,7 @@ ecore_fb_ps2_init(void)
      {
         prev_flags = fcntl(_ecore_fb_ps2_fd, F_GETFL);
         fcntl(_ecore_fb_ps2_fd, F_SETFL, prev_flags | O_NONBLOCK);
-        _ecore_fb_ts_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_ps2_fd, 
+        _ecore_fb_ts_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_ps2_fd,
                                                                    ECORE_FD_READ,
                                                                    _ecore_fb_ps2_fd_handler, NULL, NULL, NULL);
         if (!_ecore_fb_ts_fd_handler_handle)
@@ -30,7 +30,7 @@ ecore_fb_ps2_init(void)
           }
         return 1;
      }
-   return 0;   
+   return 0;
 }
 
 void
@@ -47,7 +47,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
    static double last_time = 0;
    static double last_last_time = 0;
    int v = 0;
-   
+
    do
      {
         int x, y, button, i;
@@ -56,7 +56,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
         double t;
         static int did_double = 0;
         static int did_triple = 0;
-        
+
         ptr = (char *)&(_ecore_fb_ps2_event);
         ptr += _ecore_fb_ps2_event_byte_count;
         num = sizeof(Ecore_Fb_Ps2_Event) - _ecore_fb_ps2_event_byte_count;
@@ -85,7 +85,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
           {
              /* MOVE: mouse is down and was */
              Ecore_Fb_Event_Mouse_Move *e;
-             
+
              e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Move));
              if (!e) goto retry;
              e->x = x;
@@ -95,13 +95,13 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
         for (i = 1; i <= 3; i++)
           {
              int mask;
-             
+
              mask = 1 << (i - 1);
              if (((button & mask)) && (!(prev_button & mask)))
                {
                   /* DOWN: mouse is down, but was not now */
                   Ecore_Fb_Event_Mouse_Button_Down *e;
-                  
+
                   e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
                   if (!e) goto retry;
                   e->x = x;
@@ -132,7 +132,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
                {
                   /* UP: mouse was down, but is not now */
                   Ecore_Fb_Event_Mouse_Button_Up *e;
-                  
+
                   e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Up));
                   if (!e) goto retry;
                   e->x = x;
@@ -155,7 +155,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
              last_last_time = last_time;
              last_time = t;
           }
-        retry:     
+        retry:
         prev_x = x;
         prev_y = y;
         prev_button = button;
@@ -171,7 +171,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 
 /**
  * Sets the timeout for a double and triple clicks to be flagged.
- * 
+ *
  * This sets the time between clicks before the double_click flag is
  * set in a button down event. If 3 clicks occur within double this
  * time, the triple_click flag is also set.

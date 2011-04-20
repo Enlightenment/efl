@@ -65,7 +65,7 @@ ecore_file_monitor_inotify_init(void)
    fd = inotify_init();
    if (fd < 0)
      return 0;
-   
+
    _fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _ecore_file_monitor_inotify_handler,
                                     NULL, NULL, NULL);
    if (!_fdh)
@@ -113,7 +113,7 @@ ecore_file_monitor_inotify_add(const char *path,
         ecore_file_monitor_inotify_shutdown();
         ecore_file_monitor_inotify_init();
      }
-   
+
    em = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
 
@@ -284,19 +284,19 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
 static int
 _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
 {
-   int mask = 
-      IN_ATTRIB | 
+   int mask =
+      IN_ATTRIB |
       IN_CLOSE_WRITE |
-      IN_MOVED_FROM | 
+      IN_MOVED_FROM |
       IN_MOVED_TO |
-      IN_DELETE | 
+      IN_DELETE |
       IN_CREATE |
       IN_MODIFY |
-      IN_DELETE_SELF | 
+      IN_DELETE_SELF |
       IN_MOVE_SELF |
       IN_UNMOUNT;
-   
-   ECORE_FILE_MONITOR_INOTIFY(em)->wd = 
+
+   ECORE_FILE_MONITOR_INOTIFY(em)->wd =
       inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh), path, mask);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
      {

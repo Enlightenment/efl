@@ -409,7 +409,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
      }
 
    if (p->delete_me) return EINA_FALSE;
-   
+
    if (p->fd_write == PIPE_FD_INVALID) return EINA_FALSE;
 
    /* First write the len into the pipe */
@@ -454,7 +454,7 @@ ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes)
         ret = pipe_write(p->fd_write,
                          ((unsigned char *)buffer) + already_written,
                          nbytes - already_written);
-        
+
         if (ret == (ssize_t)(nbytes - already_written))
           return EINA_TRUE;
         else if (ret >= 0)
@@ -511,7 +511,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 
    p = (Ecore_Pipe *)data;
    start_time = ecore_time_get();
-   
+
    p->handling++;
    for (i = 0; i < 16; i++)
      {
@@ -547,7 +547,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
                   return ECORE_CALLBACK_CANCEL;
                }
 #ifndef _WIN32
-             else if ((ret == PIPE_FD_ERROR) && 
+             else if ((ret == PIPE_FD_ERROR) &&
                       ((errno == EINTR) || (errno == EAGAIN)))
                {
                   _ecore_pipe_unhandle(p);
@@ -585,7 +585,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
         ret = pipe_read(p->fd_read,
                         ((unsigned char *)p->passed_data) + p->already_read,
                         p->len - p->already_read);
-        
+
         /* catch the non error case first */
         if (ret == (ssize_t)(p->len - p->already_read))
           {
@@ -614,7 +614,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
              return ECORE_CALLBACK_CANCEL;
           }
 #ifndef _WIN32
-        else if ((ret == PIPE_FD_ERROR) && 
+        else if ((ret == PIPE_FD_ERROR) &&
                  ((errno == EINTR) || (errno == EAGAIN)))
            return ECORE_CALLBACK_RENEW;
         else
@@ -643,7 +643,7 @@ _ecore_pipe_read(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
           }
 #endif
      }
-   
+
    _ecore_pipe_unhandle(p);
    return ECORE_CALLBACK_RENEW;
 }

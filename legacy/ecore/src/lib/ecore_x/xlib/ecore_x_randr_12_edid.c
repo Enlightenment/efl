@@ -101,7 +101,7 @@ typedef enum _Ecore_X_Randr_Edid_Aspect_Ratio_Preferred {
 EAPI Eina_Bool
 ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_length)
 {
-   const unsigned char header[] = 
+   const unsigned char header[] =
      { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
    if (!edid) return EINA_FALSE;
    if (edid_length < 8) return EINA_FALSE;
@@ -112,9 +112,9 @@ ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_leng
 EAPI int
 ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 {
-   if ((edid_length > _ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR) && 
+   if ((edid_length > _ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
-      return ((edid[_ECORE_X_RANDR_EDID_OFFSET_VERSION_MAJOR] << 8) | 
+      return ((edid[_ECORE_X_RANDR_EDID_OFFSET_VERSION_MAJOR] << 8) |
               edid[_ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR]);
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
@@ -122,7 +122,7 @@ ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 EAPI int
 ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edid_length)
 {
-   if ((edid_length > 0x0b) && 
+   if ((edid_length > 0x0b) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
       return (int)(edid[0x0a] + (edid[0x0b] << 8));
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
@@ -131,9 +131,9 @@ ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid, unsigned long edi
 EAPI int
 ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned long edid_length)
 {
-   if ((edid_length > 0x0f) && 
+   if ((edid_length > 0x0f) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
-      return (int)(edid[0x0c] + (edid[0x0d] << 8) + 
+      return (int)(edid[0x0c] + (edid[0x0d] << 8) +
                    (edid[0x0e] << 16) + (edid[0x0f] << 24));
    return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
 }
@@ -141,12 +141,12 @@ ecore_x_randr_edid_manufacturer_serial_number_get(unsigned char *edid, unsigned 
 EAPI char *
 ecore_x_randr_edid_manufacturer_name_get(unsigned char *edid, unsigned long edid_length)
 {
-   if ((edid_length > (_ECORE_X_RANDR_EDID_OFFSET_MANUFACTURER + 1)) && 
+   if ((edid_length > (_ECORE_X_RANDR_EDID_OFFSET_MANUFACTURER + 1)) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
      {
         unsigned char *x;
         char *name;
-   
+
         x = (edid + _ECORE_X_RANDR_EDID_OFFSET_MANUFACTURER);
         name = malloc(sizeof(char) * 4);
         if (!name) return NULL;
@@ -164,7 +164,7 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
 {
    unsigned char *block = NULL;
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return NULL;
    _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block)
      {
@@ -172,7 +172,7 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
           {
              char *name, *p;
              const char *edid_name;
-             
+
              edid_name = (const char *)block + _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
              name = malloc(sizeof(char) * _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
              if (!name) return NULL;
@@ -202,7 +202,7 @@ ecore_x_randr_edid_display_aspect_ratio_preferred_get(unsigned char *edid, unsig
           {
              Ecore_X_Randr_Edid_Aspect_Ratio_Preferred preferred_ratio =
                 (Ecore_X_Randr_Edid_Aspect_Ratio_Preferred)
-                ((block[_ECORE_X_RANDR_EDID_OFFSET_ASPECT_RATIO_PREFERRED] & 
+                ((block[_ECORE_X_RANDR_EDID_OFFSET_ASPECT_RATIO_PREFERRED] &
                   _ECORE_X_RANDR_EDID_MASK_ASPECT_RATIO_PREFERRED) >> 5);
              switch (preferred_ratio)
                {
@@ -230,7 +230,7 @@ ecore_x_randr_edid_display_aspect_ratios_get(unsigned char *edid, unsigned long 
    Ecore_X_Randr_Edid_Aspect_Ratio ret = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
    unsigned char *block = NULL;
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
    _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block)
      {
@@ -264,7 +264,7 @@ ecore_x_randr_edid_display_ascii_get(unsigned char *edid, unsigned long edid_len
         if (block[_ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE] == 0xfe)
           {
              char *ascii, *p;
-             const char *edid_ascii = (const char*)block + 
+             const char *edid_ascii = (const char*)block +
                 _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
              /*
               * TODO: Two of these in a row, in the third and fouth slots,
@@ -289,14 +289,14 @@ ecore_x_randr_edid_display_serial_get(unsigned char *edid, unsigned long edid_le
 {
    unsigned char *block = NULL;
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return NULL;
    _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block)
      {
         if (block[_ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE] == 0xff)
           {
              char *serial, *p;
-             const char *edid_serial = (const char*)block + 
+             const char *edid_serial = (const char*)block +
                 _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
              /*
               * TODO: Two of these in a row, in the third and fouth slots,
@@ -326,11 +326,11 @@ ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid, unsigned long ed
 
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
    if (edid_length < 128) return EINA_FALSE;
-   
+
    /* Check the EDID block itself */
    for (i = 0; i < 128; i++) sum += edid[i];
    if (sum) return EINA_FALSE;
-   
+
    /* Check the cea extension blocks */
    _ECORE_X_RANDR_EDID_FOR_EACH_CEA_BLOCK(edid, edid_length, cea_block_iter)
      {
@@ -344,9 +344,9 @@ EAPI Eina_Bool
 ecore_x_randr_edid_dpms_available_get(unsigned char *edid, unsigned long edid_length)
 {
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
-   return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & 
+   return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] &
               _ECORE_X_RANDR_EDID_MASK_DPMS));
 }
 
@@ -354,10 +354,10 @@ EAPI Eina_Bool
 ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid, unsigned long edid_length)
 {
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
    if (edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & _ECORE_X_RANDR_EDID_MASK_DPMS)
-      return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & 
+      return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] &
                  _ECORE_X_RANDR_EDID_MASK_DPMS_STANDBY));
    return EINA_FALSE;
 }
@@ -366,10 +366,10 @@ EAPI Eina_Bool
 ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid, unsigned long edid_length)
 {
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
    if (edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & _ECORE_X_RANDR_EDID_MASK_DPMS)
-      return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & 
+      return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] &
                  _ECORE_X_RANDR_EDID_MASK_DPMS_SUSPEND));
    return EINA_FALSE;
 }
@@ -378,10 +378,10 @@ EAPI Eina_Bool
 ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid, unsigned long edid_length)
 {
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
    if (edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & _ECORE_X_RANDR_EDID_MASK_DPMS)
-      return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] & 
+      return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_DPMS] &
                  _ECORE_X_RANDR_EDID_MASK_DPMS_OFF));
    return EINA_FALSE;
 }
@@ -390,9 +390,9 @@ EAPI Eina_Bool
 ecore_x_randr_edid_display_type_digital_get(unsigned char *edid, unsigned long edid_length)
 {
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return EINA_FALSE;
-   return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_TYPE] & 
+   return (!!(edid[_ECORE_X_RANDR_EDID_OFFSET_TYPE] &
               _ECORE_X_RANDR_EDID_MASK_DIGITAL));
 }
 
@@ -401,15 +401,15 @@ ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid, unsigned long ed
 {
    Ecore_X_Randr_Edid_Display_Colorscheme colorscheme = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return colorscheme;
    if (ecore_x_randr_edid_display_type_digital_get(edid, edid_length))
      {
         colorscheme = ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB_4_4_4;
-        if (edid[_ECORE_X_RANDR_EDID_OFFSET_COLORSPACE] & 
+        if (edid[_ECORE_X_RANDR_EDID_OFFSET_COLORSPACE] &
             _ECORE_X_RANDR_EDID_MASK_COLORSCHEME_DIGITAL_YCRCB_444)
            colorscheme |= ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB_YCRCB_4_4_4;
-        if (edid[_ECORE_X_RANDR_EDID_OFFSET_COLORSPACE] & 
+        if (edid[_ECORE_X_RANDR_EDID_OFFSET_COLORSPACE] &
             _ECORE_X_RANDR_EDID_MASK_COLORSCHEME_DIGITAL_YCRCB_422)
            colorscheme |= ECORE_X_RANDR_EDID_DISPLAY_COLORSCHEME_COLOR_RGB_YCRCB_4_2_2;
      }
@@ -423,9 +423,9 @@ ecore_x_randr_edid_display_interface_type_get(unsigned char *edid, unsigned long
 {
    Ecore_X_Randr_Edid_Display_Interface_Type type = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
    int version = ecore_x_randr_edid_version_get(edid, edid_length);
-   
+
    if (version < ECORE_X_RANDR_EDID_VERSION_13) return type;
-   type = edid[_ECORE_X_RANDR_EDID_OFFSET_TYPE] & 
+   type = edid[_ECORE_X_RANDR_EDID_OFFSET_TYPE] &
       _ECORE_X_RANDR_EDID_MASK_INTERFACE_TYPE;
    if (type > ECORE_X_RANDR_EDID_DISPLAY_INTERFACE_DISPLAY_PORT)
       type = ECORE_X_RANDR_EDID_UNKNOWN_VALUE;

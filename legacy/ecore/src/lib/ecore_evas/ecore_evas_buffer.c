@@ -32,7 +32,7 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
    else
      {
-        ee->engine.buffer.free_func(ee->engine.buffer.data, 
+        ee->engine.buffer.free_func(ee->engine.buffer.data,
                                     ee->engine.buffer.pixels);
      }
    _ecore_evas_buffer_shutdown();
@@ -63,7 +63,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
         if (ee->engine.buffer.pixels)
           ee->engine.buffer.free_func(ee->engine.buffer.data,
                                       ee->engine.buffer.pixels);
-        ee->engine.buffer.pixels = 
+        ee->engine.buffer.pixels =
           ee->engine.buffer.alloc_func(ee->engine.buffer.data,
                                        ee->w * ee->h * sizeof(int));
         stride = ee->w * sizeof(int);
@@ -147,7 +147,7 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 
    if (fw < 1) fw = 1;
    if (fh < 1) fh = 1;
-   
+
    if ((fx == 0) && (fy == 0) && (fw == ww) && (fh == hh))
      {
         *x = (ee->w * (*x - xx)) / fw;
@@ -159,7 +159,7 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
         while (xx < 0) xx += fw;
         while (xx > fw) xx -= fw;
         *x = (ee->w * xx) / fw;
-        
+
         yy = (*y - yy) - fy;
         while (yy < 0) yy += fh;
         while (yy > fh) yy -= fh;
@@ -490,7 +490,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL, //transparent
-     
+
      NULL // render
 };
 #endif
@@ -569,7 +569,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
-   ee->engine.buffer.pixels = 
+   ee->engine.buffer.pixels =
      ee->engine.buffer.alloc_func
      (ee->engine.buffer.data, w * h * sizeof(int));
 
@@ -602,7 +602,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
 
    ee->engine.func->fn_render = _ecore_evas_buffer_render;
    _ecore_evas_register(ee);
-   
+
    return ee;
 #else
    return NULL;
@@ -655,7 +655,7 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    o = evas_object_image_add(ee_target->evas);
    evas_object_image_content_hint_set(o, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
    evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
-  
+
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
    _ecore_evas_buffer_init();
@@ -770,9 +770,9 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
-   
+
    ee->engine.func->fn_render = _ecore_evas_buffer_render;
-   
+
    return o;
 #else
    return NULL;

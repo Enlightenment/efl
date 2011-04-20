@@ -78,7 +78,7 @@ int
 ecore_con_info_init(void)
 {
    struct ares_options opts;
-   
+
    if (!info_init)
      {
         if (ares_library_init(ARES_LIB_INIT_ALL))
@@ -336,7 +336,7 @@ _ecore_con_info_cares_fd_cb(Ecore_Con_FD     *ecf,
      read = ecf->fd;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      write = ecf->fd;
-   
+
    ares_process_fd(info_channel, read, write);
 
    return ECORE_CALLBACK_RENEW;

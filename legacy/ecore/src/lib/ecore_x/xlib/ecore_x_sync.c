@@ -118,7 +118,7 @@ EAPI void
 ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter, int val)
 {
    XSyncValue v;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncIntToValue(&v, val);
    XSyncSetCounter(_ecore_x_disp, counter, v);
@@ -128,7 +128,7 @@ EAPI void
 ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter, int val_hi, unsigned int val_lo)
 {
    XSyncValue v;
-   
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncIntsToValue(&v, val_lo, val_hi);
    XSyncSetCounter(_ecore_x_disp, counter, v);

@@ -205,7 +205,7 @@ _ecore_config_int_get(Ecore_Config_Prop *e)
 /**
  * Returns the specified property as a float.
  * @param   key The property key.
- * @return  The float value of the property.  The function returns 0.0 if the 
+ * @return  The float value of the property.  The function returns 0.0 if the
  *          property is not a float or is not set.
  * @ingroup Ecore_Config_Get_Group
  */
@@ -1185,7 +1185,7 @@ _ecore_config_struct_typed_add(const char *key, const char *name, const void *va
    ret = _ecore_config_struct_append(ecore_config_get(key),
                                      ecore_config_get(subkey));
    free(subkey);
-   return ret;   
+   return ret;
 }
 
 /**
@@ -1250,7 +1250,7 @@ ecore_config_struct_argb_add(const char *key, const char *name, int a, int r,
                              int g, int b)
 {
    long argb;
-  
+
    __ecore_argb_to_long(a, r, g, b, &argb);
    return _ecore_config_struct_typed_add(key, name, &argb, ECORE_CONFIG_RGB);
 }
@@ -1451,7 +1451,7 @@ ecore_config_deaf(const char *name, const char *key,
    for (p = NULL, l = e->listeners; l; p = l)
      {
 	Ecore_Config_Listener_List *nl;
-	
+
 	nl = l->next;
 	if ((name && !strcmp(l->name, name)) || (l->listener == listener))
 	  {
@@ -1672,7 +1672,7 @@ ecore_config_init(const char *name)
    Ecore_Config_Prop   *list;
    _ecore_config_log_dom = eina_log_domain_register
      ("ecore_config", ECORE_CONFIG_DEFAULT_LOG_COLOR);
-   if(_ecore_config_log_dom < 0) 
+   if(_ecore_config_log_dom < 0)
      {
        EINA_LOG_ERR("Impossible to create a log domain for the Ecore config module.");
        return -1;
@@ -1769,7 +1769,7 @@ _ecore_config_system_init_no_load(void)
 
    /* set up a simple default path */
    ecore_config_string_default("/e/themes/search_path", PACKAGE_DATA_DIR "../ewl/themes");
-   
+
    return ECORE_CONFIG_ERR_SUCC;
 }
 
@@ -1789,7 +1789,7 @@ _ecore_config_system_load(void)
 	  {
 	     snprintf(buf, PATH_MAX, "%s/.e/config.eet", p);
 	     if (ecore_config_file_load(buf) != 0) {
-		/* even if this file (system.eet) doesn't exist we can 
+		/* even if this file (system.eet) doesn't exist we can
 		 * continue without it as it isn't striclty necessary.
 		*/
 		ecore_config_file_load(PACKAGE_DATA_DIR "/system.eet");

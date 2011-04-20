@@ -83,7 +83,7 @@ ecore_config_file_load(const char *file)
 	ERR("Cannot open database from file %s!", file);
 	return ECORE_CONFIG_ERR_NODATA;
      }
-   key_count = 0;   
+   key_count = 0;
    keys = _ecore_config_db_keys_get(db, &key_count);
    if (keys)
      {

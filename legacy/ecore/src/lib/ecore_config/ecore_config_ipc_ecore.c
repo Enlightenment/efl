@@ -57,7 +57,7 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long se
    int                    key_count, x;
    estring               *s;
    int                    f;
-   char                   buf[PATH_MAX], *p; 	
+   char                   buf[PATH_MAX], *p;
    // char		*data;   		UNUSED
    Ecore_Config_Type      type;
 
@@ -121,7 +121,7 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long se
 	  }
 	free(keys);
      }
-   
+
    return estring_disown(s);
 }
 

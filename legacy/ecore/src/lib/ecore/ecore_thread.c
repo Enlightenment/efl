@@ -168,7 +168,7 @@ typedef struct
   LONG readers_count;
   LONG writers_count;
   int readers;
-  int writers; 
+  int writers;
   LK(mutex);
   CD(cond_read);
   CD(cond_write);

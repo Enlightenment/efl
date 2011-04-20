@@ -80,7 +80,7 @@ ecore_x_randr_version_get(void)
    {
       return Ecore_X_Randr_Unset;
    }
-#else   
+#else
    return -1;
 #endif
 }

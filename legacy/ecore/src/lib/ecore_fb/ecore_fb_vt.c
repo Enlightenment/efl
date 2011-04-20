@@ -42,7 +42,7 @@ static Eina_Bool
 _ecore_fb_signal_usr_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 {
    Ecore_Event_Signal_User *e;
-   
+
    e = (Ecore_Event_Signal_User *)ev;
    if (e->number == 1)
      {
@@ -82,10 +82,10 @@ static int
 _ecore_fb_vt_setup(void)
 {
    char buf[64];
-// XXX: unused   
+// XXX: unused
 //   struct termios tio;
    struct vt_mode new_vtmode;
-   
+
    if (_ecore_fb_vt_current_vt != _ecore_fb_vt_prev_vt)
      {
         snprintf(buf, sizeof(buf), "/dev/tty%i", _ecore_fb_vt_current_vt);
@@ -104,7 +104,7 @@ _ecore_fb_vt_setup(void)
    tcgetattr(_ecore_fb_vt_tty_fd, &_ecore_fb_tty_prev_tio_mode);
    ioctl(_ecore_fb_vt_tty_fd, KDGETMODE, &_ecore_fb_tty_prev_kd_mode);
    ioctl(_ecore_fb_vt_tty_fd, VT_GETMODE, &_ecore_fb_vt_prev_mode);
-   
+
    if (ioctl(_ecore_fb_vt_tty_fd, KDSETMODE, KD_GRAPHICS) < 0)
      {
         perror("[ecore_fb:vt_setup] can't set the mode to KD_GRAPHICS");
@@ -113,7 +113,7 @@ _ecore_fb_vt_setup(void)
         return 0;
      }
    ioctl(_ecore_fb_vt_tty_fd, KDGKBMODE, &_ecore_fb_tty_prev_mode);
-   
+
    /* support of switching */
    new_vtmode.mode = VT_PROCESS;
    new_vtmode.waitv = 0;
@@ -132,7 +132,7 @@ _ecore_fb_vt_setup(void)
                                                     NULL);
    /* What does this do? */
    _ecore_fb_filter_handler = ecore_event_filter_add(_ecore_fb_event_filter_start, _ecore_fb_event_filter_filter, _ecore_fb_event_filter_end, NULL);
-   
+
    usleep(40000);
    if (ioctl(_ecore_fb_vt_tty_fd, VT_ACTIVATE, _ecore_fb_vt_current_vt) < 0)
      {
@@ -156,7 +156,7 @@ int
 ecore_fb_vt_init(void)
 {
    struct vt_stat vtstat;
-   
+
    /* as root you can allocate another tty */
    if (!geteuid())
       _ecore_fb_vt_do_switch = 1;
@@ -176,7 +176,7 @@ ecore_fb_vt_init(void)
    if (_ecore_fb_vt_do_switch)
      {
         int vtno;
-        
+
         if ((ioctl(_ecore_fb_vt_tty0_fd, VT_OPENQRY, &vtno) < 0))
           {
              printf("[ecore_fb:init] can't query for a vt\n");
@@ -214,10 +214,10 @@ ecore_fb_vt_shutdown(void)
         close(_ecore_fb_vt_tty_fd);
         _ecore_fb_vt_tty_fd = -1;
      }
-   
+
    if (_ecore_fb_user_handler) ecore_event_handler_del(_ecore_fb_user_handler);
    _ecore_fb_user_handler = NULL;
-   
+
    if (_ecore_fb_filter_handler) ecore_event_filter_del(_ecore_fb_filter_handler);
    _ecore_fb_filter_handler = NULL;
 }
@@ -275,12 +275,12 @@ struct _Ecore_Fb_Filter_Data
 {
    int last_event_type;
 };
-                
+
 static void *
 _ecore_fb_event_filter_start(void *data __UNUSED__)
 {
    Ecore_Fb_Filter_Data *filter_data;
-   
+
    filter_data = calloc(1, sizeof(Ecore_Fb_Filter_Data));
    return filter_data;
 }
@@ -289,7 +289,7 @@ static Eina_Bool
 _ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
 {
    Ecore_Fb_Filter_Data *filter_data;
-   
+
    filter_data = loop_data;
    if (!filter_data) return EINA_TRUE;
    if (type == ECORE_FB_EVENT_MOUSE_MOVE)
@@ -308,7 +308,7 @@ static void
 _ecore_fb_event_filter_end(void *data __UNUSED__, void *loop_data)
 {
    Ecore_Fb_Filter_Data *filter_data;
-   
+
    filter_data = loop_data;
    if (filter_data) free(filter_data);
 }

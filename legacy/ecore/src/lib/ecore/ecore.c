@@ -137,7 +137,7 @@ ecore_init(void)
 #if defined(GLIB_INTEGRATION_ALWAYS)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
-   
+
    return _ecore_init_count;
 
  shutdown_log_dom:

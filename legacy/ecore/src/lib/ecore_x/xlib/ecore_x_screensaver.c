@@ -54,7 +54,7 @@ ecore_x_screensaver_idle_time_get(void)
    XFree(xss);
 
    return idle;
-#else   
+#else
    return 0;
 #endif /* ifdef ECORE_XSS */
 } /* ecore_x_screensaver_idle_time_get */

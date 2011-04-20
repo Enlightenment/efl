@@ -93,7 +93,7 @@ _ecore_evas_win32_init(void)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1)
      return _ecore_evas_init_count;
-   
+
    ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_IN, _ecore_evas_win32_event_mouse_in, NULL);
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_WIN32_EVENT_MOUSE_OUT, _ecore_evas_win32_event_mouse_out, NULL);
    ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_WIN32_EVENT_WINDOW_DAMAGE, _ecore_evas_win32_event_window_damage, NULL);
@@ -924,7 +924,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL, /* _ecore_evas_x_ignore_events_set */
      NULL,  /* _ecore_evas_x_alpha_set */
      NULL, //transparent
-     
+
      NULL // render
 };
 
@@ -1175,7 +1175,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
                                (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   
+
    return ee;
 }
 

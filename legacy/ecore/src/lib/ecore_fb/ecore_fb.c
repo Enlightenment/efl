@@ -42,10 +42,10 @@ ecore_fb_init(const char *name __UNUSED__)
 {
    if (++_ecore_fb_init_count != 1)
       return _ecore_fb_init_count;
-   
+
    if (!ecore_fb_vt_init())
       return --_ecore_fb_init_count;
-   
+
    ECORE_FB_EVENT_KEY_DOWN          = ecore_event_type_new();
    ECORE_FB_EVENT_KEY_UP            = ecore_event_type_new();
    ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
@@ -68,7 +68,7 @@ ecore_fb_init(const char *name __UNUSED__)
  */
 EAPI int
 ecore_fb_shutdown(void)
-{    
+{
    if (--_ecore_fb_init_count != 0)
       return _ecore_fb_init_count;
 
@@ -102,7 +102,7 @@ _ecore_fb_size_get(int *w, int *h)
 {
    struct fb_var_screeninfo fb_var;
    int fb;
-   
+
    fb = open("/dev/fb0", O_RDWR);
    if (fb < 0)
      {

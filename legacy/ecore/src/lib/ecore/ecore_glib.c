@@ -23,14 +23,14 @@ static Eina_Bool
 _ecore_glib_fds_resize(size_t size)
 {
    void *tmp = realloc(_ecore_glib_fds, sizeof(GPollFD) * size);
-   
+
    if (!tmp)
      {
         ERR("Could not realloc from %zu to %zu buckets.",
             _ecore_glib_fds_size, size);
         return EINA_FALSE;
      }
-   
+
    _ecore_glib_fds = tmp;
    _ecore_glib_fds_size = size;
    return EINA_TRUE;
@@ -45,11 +45,11 @@ _ecore_glib_context_query(GMainContext *ctx, int priority, int *p_timer)
      {
         if (!_ecore_glib_fds_resize(ECORE_GLIB_FDS_INITIAL)) return -1;
      }
-   
+
    while (1)
      {
         size_t size;
-        
+
         reqfds = g_main_context_query
           (ctx, priority, p_timer, _ecore_glib_fds, _ecore_glib_fds_size);
         if (reqfds <= (int)_ecore_glib_fds_size) break;
@@ -74,7 +74,7 @@ _ecore_glib_context_poll_from(const GPollFD *pfds, int count, fd_set *rfds, fd_s
 {
    const GPollFD *itr = pfds, *itr_end = pfds + count;
    int glib_fds = -1;
-   
+
    for (; itr < itr_end; itr++)
      {
         if (glib_fds < itr->fd)
@@ -95,7 +95,7 @@ static int
 _ecore_glib_context_poll_to(GPollFD *pfds, int count, const fd_set *rfds, const fd_set *wfds, const fd_set *efds, int ready)
 {
    GPollFD *itr = pfds, *itr_end = pfds + count;
-   
+
    for (; itr < itr_end && ready > 0; itr++)
      {
         itr->revents = 0;
@@ -137,7 +137,7 @@ _ecore_glib_select__locked(GMainContext *ctx, int ecore_fds, fd_set *rfds, fd_se
      {
         glib_timeout.tv_sec = reqtimeout / 1000;
         glib_timeout.tv_usec = (reqtimeout % 1000) * 1000;
-        
+
         if (!ecore_timeout || timercmp(ecore_timeout, &glib_timeout, >))
           timeout = &glib_timeout;
         else
@@ -203,7 +203,7 @@ _ecore_glib_shutdown(void)
 
    if (ecore_main_loop_select_func_get() == _ecore_glib_select)
      ecore_main_loop_select_func_set(_ecore_glib_select_original);
-   
+
    if (_ecore_glib_fds)
      {
         free(_ecore_glib_fds);
@@ -284,7 +284,7 @@ Eina_Bool _ecore_glib_always_integrate = 1;
 
 /**
  * Disable always integrating glib
- * 
+ *
  * If ecore is compiled with --enable-glib-integration-always (to always
  * call ecore_main_loop_glib_integrate() when ecore_init() is called), then
  * calling this before calling ecore_init() will disable the integration.

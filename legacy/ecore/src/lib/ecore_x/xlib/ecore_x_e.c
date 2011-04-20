@@ -684,7 +684,7 @@ ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
                                   &priority, 1);
 } /* ecore_x_e_illume_quickpanel_priority_major_set */
 
-EAPI int 
+EAPI int
 ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -708,7 +708,7 @@ ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
                                   &priority, 1);
 } /* ecore_x_e_illume_quickpanel_priority_minor_set */
 
-EAPI int 
+EAPI int
 ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 {
    unsigned int val = 0;
@@ -751,7 +751,7 @@ ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_client_message32_send(win,
                                  ECORE_X_ATOM_E_ILLUME_QUICKPANEL_POSITION_UPDATE,
-                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE, 
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  1, 0, 0, 0, 0);
 } /* ecore_x_e_illume_quickpanel_position_update_send */
 

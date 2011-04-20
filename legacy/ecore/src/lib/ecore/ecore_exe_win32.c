@@ -201,7 +201,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (exe->flags & ECORE_EXE_PIPE_READ)
      if (!_ecore_exe_win32_pipes_set(exe))
        goto free_exe;
-  
+
    if (exe->flags & ECORE_EXE_PIPE_WRITE)
      if (!_ecore_exe_win32_pipes_set(exe))
        goto close_pipes;
@@ -685,7 +685,7 @@ _ecore_exe_win32_pipe_thread_generic_cb(void *data, Ecore_Exe_Flags flags)
              exe->pipe_error.data_buf = current_buf;
              exe->pipe_error.data_size = current_size;
           }
-             
+
         event = ecore_exe_event_data_get(exe, flags);
         if (event)
           ecore_pipe_write(ecore_pipe, &event, sizeof(event));
@@ -948,7 +948,7 @@ _ecore_exe_close_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 
      ecore_event_add(ECORE_EXE_EVENT_DEL, e,
                      _ecore_exe_event_del_free, NULL);
-     
+
    return 0;
 }
 

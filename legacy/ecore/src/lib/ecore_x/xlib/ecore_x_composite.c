@@ -27,7 +27,7 @@ _ecore_x_composite_init(void)
                }
 #  endif
           }
-# endif        
+# endif
      }
 #endif
 } /* _ecore_x_composite_init */

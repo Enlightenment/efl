@@ -69,7 +69,7 @@ static Ecore_Evas *
 _ecore_evas_directfb_match(DFBWindowID win)
 {
    Ecore_Evas *ee;
-   
+
    ee = eina_hash_find(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(win));
    return ee;
 }
@@ -485,7 +485,7 @@ static Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,                              /* ignore events */
      NULL,                              /* alpha */
      NULL, //transparent
-     
+
      NULL // render
 };
 #endif
@@ -546,10 +546,10 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
              ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
           }
      }
-   
+
    ee->engine.func->fn_render = _ecore_evas_directfb_render;
    _ecore_evas_register(ee);
-   
+
    if (!ecore_evases_hash)
      ecore_evases_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(ecore_evases_hash, _ecore_evas_directfb_winid_str_get(ee->engine.directfb.window->id), ee);

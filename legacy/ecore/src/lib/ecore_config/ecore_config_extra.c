@@ -403,7 +403,7 @@ ecore_config_theme_search_path_get(void)
  * should be called @b after @ref ecore_config_load to allow a user to
  * override the default search path.
  *
- * @param  path The given 
+ * @param  path The given
  * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_FAIL
  *         will be returned if @p path already exists in the search path.
  *         @c ECORE_CONFIG_ERR_FAIL is returned if @p path is @c NULL.
@@ -422,8 +422,8 @@ ecore_config_theme_search_path_append(const char *path)
    loc = strstr(search_path, path);
    len = strlen(path);
    search_len = strlen(search_path);
-   
-   if (!loc || (loc != search_path && *(loc - 1) != '|') || 
+
+   if (!loc || (loc != search_path && *(loc - 1) != '|') ||
        (loc != (search_path + search_len - len) && *(loc + len - 1) != '|'))
      {
 	new_search_path = malloc(search_len + len + 2); /* 2 = \0 + | */
@@ -477,9 +477,9 @@ ecore_config_theme_with_path_from_name_get(char *name)
         file = malloc(strlen(search_path_tmp) + strlen(name) + 6);
            /* 6 = / + .edj + \0 */
 
-        snprintf(file, strlen(search_path_tmp) + strlen(name) + 6, 
+        snprintf(file, strlen(search_path_tmp) + strlen(name) + 6,
                       "%s/%s.edj", search_path_tmp, name);
-	
+
         if (stat(file, &st) == 0)
           {
               free(search_path);
@@ -582,7 +582,7 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
      {
 	ecore_config_set(prop->key, arg);
 	prop->flags |= ECORE_CONFIG_FLAG_CMDLN;
-     }   
+     }
    return ECORE_CONFIG_PARSE_CONTINUE;
 }
 
@@ -689,7 +689,7 @@ ecore_config_args_parse(void)
 		  callback = _ecore_config_arg_callbacks;
 		  while (callback)
 		    {
-		       if ((callback->long_opt && 
+		       if ((callback->long_opt &&
 			    !strcmp(long_opt, callback->long_opt)))
 			 {
 			    found = 1;
@@ -697,7 +697,7 @@ ecore_config_args_parse(void)
 			      {
 				 callback->func(NULL, callback->data);
 			      }
-			    else 
+			    else
 			      {
 				 if (!argv[++nextarg])
 				   {

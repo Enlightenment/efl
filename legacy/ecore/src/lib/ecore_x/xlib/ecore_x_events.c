@@ -398,7 +398,7 @@ _ecore_mouse_button(int          event,
    if (event_window == window)
      {
         if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
-          { 
+          {
              if (((int)(timestamp - _ecore_x_mouse_down_last_time) <=
                   (int)(1000 * _ecore_x_double_click_time)) &&
                  (window == _ecore_x_mouse_down_last_win) &&
@@ -413,7 +413,7 @@ _ecore_mouse_button(int          event,
                   _ecore_x_mouse_down_did_double = 0;
                   _ecore_x_mouse_down_did_triple = 0;
                }
-             
+
              if (((int)(timestamp - _ecore_x_mouse_down_last_last_time) <=
                   (int)(2 * 1000 * _ecore_x_double_click_time)) &&
                  (window == _ecore_x_mouse_down_last_win) &&
@@ -437,12 +437,12 @@ _ecore_mouse_button(int          event,
              if (_ecore_x_mouse_down_did_triple)
                 e->triple_click = 1;
           }
-              
+
      }
 
-   /* NB: Block commented out as _ecore_x_mouse_up_count appears to have 
-    * no use. The variable is also commented out above. This code block is 
-    * the only place that this variable is used, and appears to serve no 
+   /* NB: Block commented out as _ecore_x_mouse_up_count appears to have
+    * no use. The variable is also commented out above. This code block is
+    * the only place that this variable is used, and appears to serve no
     * purpose. - dh
    if (event == ECORE_EVENT_MOUSE_BUTTON_DOWN
        && !e->double_click
@@ -1935,7 +1935,7 @@ void
 _ecore_x_event_handle_mapping_notify(XEvent *xevent)
 {
    Ecore_X_Event_Mapping_Change *e;
-  
+
    _ecore_x_last_event_mouse_move = 0;
    XRefreshKeyboardMapping((XMappingEvent *)xevent);
    e = calloc(1, sizeof(Ecore_X_Event_Mapping_Change));

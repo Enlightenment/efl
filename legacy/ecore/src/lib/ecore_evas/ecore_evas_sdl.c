@@ -163,10 +163,10 @@ _ecore_evas_sdl_init(int w __UNUSED__, int h __UNUSED__)
 #ifndef _WIN32
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
 #endif /* _WIN32 */
-   // this is pretty bad: poller? and set poll time? pol time is meant to be 
+   // this is pretty bad: poller? and set poll time? pol time is meant to be
    // adjustable for things like polling battery state, or amoutn of spare
    // memory etc.
-   // 
+   //
    ecore_evas_event = ecore_poller_add(ECORE_POLLER_CORE, 1, _ecore_evas_sdl_event, NULL);
    ecore_poller_poll_interval_set(ECORE_POLLER_CORE, 0.006);
 #ifndef _WIN32
@@ -208,7 +208,7 @@ static void
 _ecore_evas_sdl_free(Ecore_Evas *ee)
 {
    if (sdl_ee == ee) sdl_ee = NULL;
-   
+
    ecore_event_window_unregister(0);
    _ecore_evas_sdl_shutdown();
    ecore_sdl_shutdown();
@@ -332,7 +332,7 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    NULL,
    NULL,
    NULL, //transparent
-     
+
      NULL // render
 };
 
@@ -437,9 +437,9 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
 
    ee->engine.func->fn_render = _ecore_evas_sdl_render;
    _ecore_evas_register(ee);
-   
+
    sdl_ee = ee;
-   
+
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    evas_focus_in(ee->evas);
 

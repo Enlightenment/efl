@@ -130,7 +130,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
                         Ecore_X_Pixmap icon_pixmap,
                         Ecore_X_Pixmap icon_mask,
                         Ecore_X_Window icon_window,
-                        Ecore_X_Window window_group, 
+                        Ecore_X_Window window_group,
                         Eina_Bool is_urgent)
 {
    XWMHints *hints;

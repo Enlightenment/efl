@@ -1518,7 +1518,7 @@ _ecore_x_window_grab_remove(Ecore_X_Window win)
 {
    int i, shuffle = 0;
    Window *t;
-   
+
    if (_ecore_window_grabs_num > 0)
      {
         for (i = 0; i < _ecore_window_grabs_num; i++)
@@ -1635,7 +1635,7 @@ _ecore_x_key_grab_remove(Ecore_X_Window win)
 {
    int i, shuffle = 0;
    Window *t;
-   
+
    if (_ecore_key_grabs_num > 0)
      {
         for (i = 0; i < _ecore_key_grabs_num; i++)

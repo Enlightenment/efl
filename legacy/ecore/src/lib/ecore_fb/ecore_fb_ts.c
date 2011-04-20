@@ -22,7 +22,7 @@ struct _Ecore_Fb_Ts_Event
    unsigned short pressure;
    unsigned short x;
    unsigned short y;
-   unsigned short _unused; 
+   unsigned short _unused;
 };
 
 struct _Ecore_Fb_Ts_Calibrate
@@ -84,13 +84,13 @@ ecore_fb_ts_init(void)
      {
         printf( "ECORE_FB: TSLIB_TSDEVICE = '%s'\n", tslib_tsdevice );
         _ecore_fb_tslib_tsdev = ts_open( tslib_tsdevice, 1 ); /* 1 = nonblocking, 0 = blocking */
-        
+
         if ( !_ecore_fb_tslib_tsdev )
           {
              printf( "ECORE_FB: Can't ts_open (%s)\n", strerror( errno ) );
              return 0;
           }
-        
+
         if ( ts_config( _ecore_fb_tslib_tsdev ) )
           {
              printf( "ECORE_FB: Can't ts_config (%s)\n", strerror( errno ) );
@@ -108,7 +108,7 @@ ecore_fb_ts_init(void)
 #endif
    if (_ecore_fb_ts_fd >= 0)
      {
-        _ecore_fb_ts_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_ts_fd, 
+        _ecore_fb_ts_fd_handler_handle = ecore_main_fd_handler_add(_ecore_fb_ts_fd,
                                                                    ECORE_FD_READ,
                                                                    _ecore_fb_ts_fd_handler, NULL,
                                                                    NULL, NULL);
@@ -153,7 +153,7 @@ EAPI void
 ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap)
 {
    Ecore_Fb_Ts_Calibrate cal;
-   
+
    if (_ecore_fb_ts_fd < 0) return;
    cal.xscale = xscale;
    cal.xtrans = xtrans;
@@ -181,7 +181,7 @@ EAPI void
 ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap)
 {
    Ecore_Fb_Ts_Calibrate cal;
-   
+
    if (_ecore_fb_ts_fd < 0) return;
    if (!_ecore_fb_ts_apply_cal)
      {
@@ -204,7 +204,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
    static double last_time = 0;
    static double last_last_time = 0;
    int v = 0;
-   
+
    do
      {
         int x, y, pressure;
@@ -245,14 +245,14 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              y = _ecore_fb_ts_event.y;
           }
         pressure = _ecore_fb_ts_event.pressure;
-#endif   
+#endif
         /* add event to queue */
         /* always add a move event */
         if ((pressure) || (prev_pressure))
           {
              /* MOVE: mouse is down and was */
              Ecore_Fb_Event_Mouse_Move *e;
-             
+
              e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Move));
              if (!e) goto retry;
              e->x = x;
@@ -263,7 +263,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
           {
              /* DOWN: mouse is down, but was not now */
              Ecore_Fb_Event_Mouse_Button_Down *e;
-             
+
              e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
              if (!e) goto retry;
              e->x = x;
@@ -294,7 +294,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
           {
              /* UP: mouse was down, but is not now */
              Ecore_Fb_Event_Mouse_Button_Up *e;
-             
+
              e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Up));
              if (!e) goto retry;
              e->x = prev_x;
@@ -316,7 +316,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              last_last_time = last_time;
              last_time = t;
           }
-retry:             
+retry:
         prev_x = x;
         prev_y = y;
         prev_pressure = pressure;

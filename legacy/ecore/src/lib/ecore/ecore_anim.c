@@ -16,7 +16,7 @@ struct _Ecore_Animator
 
    Ecore_Task_Cb func;
    void          *data;
-   
+
    double             start, run;
    Ecore_Timeline_Cb  run_func;
    void              *run_data;
@@ -99,13 +99,13 @@ ecore_animator_add(Ecore_Task_Cb func, const void *data)
  * deleted. The callback function @p func can return ECORE_CALLBACK_RENEW to
  * keep the animator running or ECORE_CALLBACK_CANCEL ro stop it and have
  * it be deleted automatically at any time.
- * 
+ *
  * The @p func will ALSO be passed a position parameter that will be in value
  * from 0.0 to 1.0 to indicate where along the timeline (0.0 start, 1.0 end)
  * the animator run is at. If the callback wishes not to have a linear
  * transition it can "map" this value to one of several curves and mappings
  * via ecore_animator_pos_map().
- * 
+ *
  * @since 1.1.0
  */
 EAPI Ecore_Animator *
@@ -169,30 +169,30 @@ _pos_map_spring(double pos, int bounces, double decfac)
 
 /**
  * Maps an input position from 0.0 to 1.0 along a timeline to another position
- * 
+ *
  * Takes an input position (0.0 to 1.0) and maps to a new position (normally
  * between 0.0 and 1.0, but it may go above/below 0.0 or 1.0 to show that it
  * has "overshot" the mark) using some interpolation (mapping) algorithm.
- * 
+ *
  * You might normally use this like:
  * @code
  * double pos; // input position in a timeline from 0.0 to 1.0
  * double out; // output position after mapping
  * int x1, y1, x2, y2; // x1 & y1 are start position, x2 & y2 are end position
  * int x, y; // x & y are the calculated position
- * 
+ *
  * out = ecore_animator_pos_map(pos, ECORE_POS_MAP_BOUNCE, 1.8, 7);
  * x = (x1 * out) + (x2 * (1.0 - out));
  * y = (y1 * out) + (y2 * (1.0 - out));
  * move_my_object_to(myobject, x, y);
  * @endcode
- * 
+ *
  * @param pos The input position to map
  * @param map The mapping to use
  * @param v1 A parameter use by the mapping (pass 0.0 if not used)
  * @param v2 A parameter use by the mapping (pass 0.0 if not used)
  * @return The mapped value
- * 
+ *
  * @since 1.1.0
  */
 EAPI double

@@ -87,10 +87,10 @@ _ecore_evas_fb_gain(void *data __UNUSED__)
    Eina_List *ll;
    Ecore_Fb_Input_Device *dev;
 
-   if (fb_ee) 
+   if (fb_ee)
      {
         ee = fb_ee;
-        
+
         ee->visible = 1;
         if ((ee->rotation == 90) || (ee->rotation == 270))
           evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
@@ -290,7 +290,7 @@ _ecore_evas_fb_init(int w, int h)
           }
      }
    closedir(input_dir);
-   
+
    if (!mouse_handled)
      {
         if (ecore_fb_ts_init())
@@ -571,7 +571,7 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL,
      NULL, //transparent
-     
+
      NULL // render
 };
 #endif
@@ -670,7 +670,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    ee->engine.func->fn_render = _ecore_evas_buffer_render;
    _ecore_evas_register(ee);
    fb_ee = ee;
-   
+
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    evas_focus_in(ee->evas);
 

@@ -191,13 +191,13 @@ _ecore_file_download(const char *url,
  * download using http and ftp protocols. If @p dst is ill-formed, or
  * if it already exists, the function returns EINA_FALSE. When the
  * download is complete, the callback @p completion_cb is called and
- * @p data is passed to it. The @p status parameter of @p completion_cb 
+ * @p data is passed to it. The @p status parameter of @p completion_cb
  * will be filled with the status of the download (200, 404,...). The
  * @p progress_cb is called during the download operation, each time a
  * packet is received or when CURL wants. It can be used to display the
  * percentage of the downloaded file. Return 0 from this callback, if provided,
  * to continue the operation or anything else to abort the download. The only
- * operations that can be aborted are those with protocol 'http' or 'ftp'. In 
+ * operations that can be aborted are those with protocol 'http' or 'ftp'. In
  * that case @p job_ret can be filled. It can be used with
  * ecore_file_download_abort() or ecore_file_download_abort_all() to
  * respectively abort one or all download operations. This function returns

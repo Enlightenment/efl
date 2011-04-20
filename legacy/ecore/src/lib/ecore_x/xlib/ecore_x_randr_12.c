@@ -81,7 +81,7 @@ _ecore_x_randr_crtc_validate(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
    int i;
    Eina_Bool ret = EINA_FALSE;
 
-   if ((crtc == Ecore_X_Randr_None) || 
+   if ((crtc == Ecore_X_Randr_None) ||
        (crtc == Ecore_X_Randr_Unset))
       return ret;
 
@@ -836,7 +836,7 @@ ecore_x_randr_crtc_orientations_get(Ecore_X_Window root,
      }
    if (crtc_info)
       XRRFreeCrtcInfo(crtc_info);
-   
+
    if (res)
       XRRFreeScreenResources(res);
 
@@ -866,10 +866,10 @@ ecore_x_randr_crtc_orientation_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc)
      }
    if (crtc_info)
       XRRFreeCrtcInfo(crtc_info);
-   
+
    if (res)
       XRRFreeScreenResources(res);
-   
+
    return ret;
 #else
    return Ecore_X_Randr_None;
@@ -2104,8 +2104,8 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
 
    if (_randr_version < RANDR_1_2) goto _ecore_x_randr_current_output_get_fail;
 
-   ecore_x_window_geometry_get(window, 
-                               &w_geo.x, &w_geo.y, 
+   ecore_x_window_geometry_get(window,
+                               &w_geo.x, &w_geo.y,
                                &w_geo.w, &w_geo.h);
 
    root = ecore_x_window_root_get(window);
@@ -2116,19 +2116,19 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
    XTranslateCoordinates(_ecore_x_disp, window, root, 0, 0, &rx, &ry, &tw);
    w_geo.x = rx;
    w_geo.y = ry;
-   
+
    for (i = 0; i < ncrtcs; i++)
      {
         /* if crtc is not enabled, don't bother about it any further */
         mode = ecore_x_randr_crtc_mode_get(root, crtcs[i]);
         if (mode == Ecore_X_Randr_None) continue;
 
-        ecore_x_randr_crtc_geometry_get(root, crtcs[i], 
-                                        &c_geo.x, &c_geo.y, 
+        ecore_x_randr_crtc_geometry_get(root, crtcs[i],
+                                        &c_geo.x, &c_geo.y,
                                         &c_geo.w, &c_geo.h);
         if (eina_rectangles_intersect(&w_geo, &c_geo))
           {
-             outputs = ecore_x_randr_crtc_outputs_get(root, crtcs[i], 
+             outputs = ecore_x_randr_crtc_outputs_get(root, crtcs[i],
                                                       &noutputs);
              /* The case below should be impossible, but for safety reasons
               * remains */

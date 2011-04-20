@@ -293,7 +293,7 @@ ecore_x_image_put(Ecore_X_Image *im,
         gc = tgc;
      }
    if (!im->xim) _ecore_x_image_shm_create(im);
-   if (im->xim) 
+   if (im->xim)
      XShmPutImage(_ecore_x_disp, draw, gc, im->xim, sx, sy, x, y, w, h, False);
    if (tgc) ecore_x_gc_free(tgc);
 } /* ecore_x_image_put */
@@ -315,7 +315,7 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
 {
    Visual *vis = im->vis;
    if (!im->xim) _ecore_x_image_shm_create(im);
-   if (((vis->class == TrueColor) || 
+   if (((vis->class == TrueColor) ||
         (vis->class == DirectColor)) &&
        (im->depth       >= 24) &&
        (vis->red_mask   == 0xff0000) &&
@@ -324,9 +324,9 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
      {
 #ifdef WORDS_BIGENDIAN
         if (im->xim->bitmap_bit_order == LSBFirst) return EINA_TRUE;
-#else        
+#else
         if (im->xim->bitmap_bit_order == MSBFirst) return EINA_TRUE;
-#endif        
+#endif
      }
    return EINA_FALSE;
 }
@@ -360,7 +360,7 @@ ecore_x_image_to_argb_convert(void *src, int sbpp,
    int mode = 0;
 
    sbpp *= 8;
-   
+
    n = vis->map_entries;
    if ((n <= 256) &&
        ((vis->class == PseudoColor) ||
@@ -382,14 +382,14 @@ ecore_x_image_to_argb_convert(void *src, int sbpp,
           XQueryColors(_ecore_x_disp, c, cols, n);
          for (i = 0; i < n; i++)
            {
-              pal[i] = 0xff000000 | 
+              pal[i] = 0xff000000 |
                  ((cols[i].red   >> 8) << 16) |
                  ((cols[i].green >> 8) << 8 ) |
                  ((cols[i].blue  >> 8)      );
            }
          nret = n;
       }
-   else if ((vis->class == TrueColor) || 
+   else if ((vis->class == TrueColor) ||
             (vis->class == DirectColor))
      {
         if      ((vis->red_mask   == 0x00ff0000) &&
@@ -434,7 +434,7 @@ ecore_x_image_to_argb_convert(void *src, int sbpp,
         unsigned int *s32;
         unsigned int *dp, *de;
 
-        dp = ((unsigned int *)(((unsigned char *)dst) + 
+        dp = ((unsigned int *)(((unsigned char *)dst) +
                                ((dy + row) * dbpl))) + dx;
         de = dp + w;
         switch (sbpp)

@@ -119,7 +119,7 @@ ecore_file_path_dir_exists(const char *in_dir)
  * @return EINA_TRUE if the exe is in PATH and is executable,
  * EINA_FALSE otherwise.
  *
- * 
+ *
  * This function checks if @p exe exists in PATH and is executable. If
  * @p exe is @c NULL or is not executable, the function returns
  * EINA_FALSE, otherwise it returns EINA_TRUE.
@@ -162,7 +162,7 @@ ecore_file_app_list(void)
    Eina_List *files;
    Eina_List *l;
    char  buf[PATH_MAX], *dir, *exe;
-   
+
    EINA_LIST_FOREACH(__ecore_file_path_bin, l, dir)
      {
         files = ecore_file_ls(dir);

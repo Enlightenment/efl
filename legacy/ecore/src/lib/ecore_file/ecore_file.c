@@ -242,7 +242,7 @@ ecore_file_mkdirs(const char **dirs)
  * returns -1 if @p dirs or @p base are @c NULL, or if @p base is
  * empty ("\0"). It returns 0 is @p base is not a directory or
  * invalid, or if it can't be created. Otherwise if returns the number
- * of suceesfully created directories. 
+ * of suceesfully created directories.
  */
 EAPI int
 ecore_file_mksubdirs(const char *base, const char **subdirs)
@@ -490,7 +490,7 @@ ecore_file_mkpath(const char *path)
  * and call ecore_file_mkpath(), hence on Windows, '\' must be
  * replaced by '/' before calling that function. This function
  * returns -1 if @p paths is @c NULL. Otherwise if returns the number
- * of suceesfully created directories. 
+ * of suceesfully created directories.
  */
 EAPI int
 ecore_file_mkpaths(const char **paths)
@@ -578,10 +578,10 @@ ecore_file_mv(const char *src, const char *dst)
                   char *dir;
 
                   dir = ecore_file_dir_get(dst);
-                  // Since we can't directly rename, try to 
+                  // Since we can't directly rename, try to
                   // copy to temp file in the dst directory
                   // and then rename.
-                  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX", 
+                  snprintf(buf, sizeof(buf), "%s/.%s.tmp.XXXXXX",
                            dir, ecore_file_file_get(dst));
                   free(dir);
                   fd = mkstemp(buf);
@@ -1095,7 +1095,7 @@ ecore_file_dir_is_empty(const char *dir)
              return 0;
           }
      }
-   
+
    closedir(dirp);
    return 1;
 }

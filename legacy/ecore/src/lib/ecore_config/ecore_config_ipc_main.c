@@ -269,7 +269,7 @@ _ecore_config_ipc_init(const char *pipe_name)
 
    if (!ipc_timer)
      ipc_timer = ecore_timer_add(100, _ecore_config_ipc_poll, NULL);
-   
+
    return ret_srv;
 }
 /*****************************************************************************/

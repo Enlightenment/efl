@@ -63,7 +63,7 @@ EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb func, const void *data)
 {
    Ecore_Job *job;
-   
+
    if (!func) return NULL;
 
    job = calloc(1, sizeof(Ecore_Job));
@@ -89,7 +89,7 @@ EAPI void *
 ecore_job_del(Ecore_Job *job)
 {
    void *data;
-   
+
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_JOB))
      {
         ECORE_MAGIC_FAIL(job, ECORE_MAGIC_JOB,
@@ -114,7 +114,7 @@ static Eina_Bool
 _ecore_job_event_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 {
    Ecore_Job *job;
-   
+
    job = ev;
    job->func(job->data);
    return ECORE_CALLBACK_CANCEL;

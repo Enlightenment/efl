@@ -405,7 +405,7 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
  * @return The @ref Ecore_Fb_Input_Device object that has been opened.
  *
  * This function opens the input device named @p dev and returns the
- * object for it, or returns @c NULL on failure. 
+ * object for it, or returns @c NULL on failure.
  */
 EAPI Ecore_Fb_Input_Device *
 ecore_fb_input_device_open(const char *dev)
