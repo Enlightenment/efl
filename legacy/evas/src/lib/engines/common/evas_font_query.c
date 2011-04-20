@@ -196,7 +196,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const Evas_Text_Props *text_pr
    int prev_cluster = -1;
    int found = 0, items = 1, item_pos = 1;
    int last_is_visible = 0;
-   EVAS_FONT_WALK_TEXT_VISUAL_START()
+   EVAS_FONT_WALK_TEXT_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
 
@@ -319,7 +319,7 @@ evas_common_font_query_pen_coords(RGBA_Font *fn, const Evas_Text_Props *text_pro
    int prev_cluster = -1;
    int found = 0, items = 1, item_pos = 1;
    int last_is_visible = 0;
-   EVAS_FONT_WALK_TEXT_VISUAL_START()
+   EVAS_FONT_WALK_TEXT_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
 
@@ -410,7 +410,7 @@ evas_common_font_query_char_at_coords(RGBA_Font *fn, const Evas_Text_Props *text
    Evas_Coord cluster_start = 0;
    int prev_cluster = -1;
    int found = 0, items = 1;
-   EVAS_FONT_WALK_TEXT_VISUAL_START()
+   EVAS_FONT_WALK_TEXT_START()
      {
         EVAS_FONT_WALK_TEXT_WORK();
         if (prev_cluster != (int) EVAS_FONT_WALK_POS)
@@ -486,24 +486,70 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
 {
    int asc, desc;
    int ret=-1;
-   EVAS_FONT_WALK_TEXT_INIT();
 
    asc = evas_common_font_max_ascent_get(fn);
    desc = evas_common_font_max_descent_get(fn);
 
-   EVAS_FONT_WALK_TEXT_LOGICAL_START()
+#ifdef BIDI_SUPPORT
+   if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
-        EVAS_FONT_WALK_TEXT_WORK();
-        if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
+        Evas_Font_Glyph_Info *gli = (text_props->info) ?
+           text_props->info->glyph + text_props->start : NULL;
+        Evas_Coord full_adv = 0, pen_x = 0, start_pen = 0;
+        int i;
 
-        if ((x >= EVAS_FONT_WALK_PEN_X) &&
-            (x <= (EVAS_FONT_WALK_PEN_X_AFTER)) && (y >= -asc) && (y <= desc))
+        if (text_props->len > 0)
           {
-             ret = EVAS_FONT_WALK_POS;
-             goto end;
+             full_adv = gli[text_props->len - 1].pen_after;
+             if (text_props->start > 0)
+               {
+                  start_pen = gli[-1].pen_after;
+                  full_adv -= start_pen;
+               }
+          }
+
+        gli += text_props->len - 1;
+        for (i = text_props->len - 1 ; i >= 0 ; i--, gli--)
+          {
+             pen_x = full_adv - (gli->pen_after - start_pen);
+             /* If inivisible, skip */
+             if (gli->index == 0) continue;
+             if ((x >= pen_x) &&
+                 (((i == 0) && (x <= full_adv)) ||
+                  (x <= (full_adv - (gli[-1].pen_after - start_pen)))) &&
+                 (y >= -asc) && (y <= desc))
+               {
+#ifdef OT_SUPPORT
+                  ret = EVAS_FONT_OT_POS_GET(
+                     text_props->info->ot[text_props->start + i]) -
+                     text_props->text_offset;
+#else
+                  ret = text_props->text_len - i - 1;
+#endif
+                  goto end;
+               }
           }
      }
-   EVAS_FONT_WALK_TEXT_END();
+   else
+#endif
+     {
+        EVAS_FONT_WALK_TEXT_INIT();
+        /* When text is not rtl, visual direction = logical direction */
+        EVAS_FONT_WALK_TEXT_START()
+          {
+             EVAS_FONT_WALK_TEXT_WORK();
+             if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
+
+             if ((x >= EVAS_FONT_WALK_PEN_X) &&
+                 (x <= (EVAS_FONT_WALK_PEN_X_AFTER)) &&
+                 (y >= -asc) && (y <= desc))
+               {
+                  ret = EVAS_FONT_WALK_POS;
+                  goto end;
+               }
+          }
+        EVAS_FONT_WALK_TEXT_END();
+     }
 
 end:
 

@@ -539,7 +539,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         fi->src->current_size = fi->size;
      }
 
-   EVAS_FONT_WALK_TEXT_VISUAL_START()
+   EVAS_FONT_WALK_TEXT_START()
      {
         FT_UInt index;
         RGBA_Font_Glyph *fg;
@@ -868,7 +868,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    len = text_props->len;
    metrics = malloc(sizeof(struct cinfo) * len);
    ci = metrics;
-   EVAS_FONT_WALK_TEXT_VISUAL_START()
+   EVAS_FONT_WALK_TEXT_START()
      {
         FT_UInt index;
         RGBA_Font_Glyph *fg;
