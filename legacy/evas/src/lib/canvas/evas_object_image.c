@@ -2402,12 +2402,6 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
    obj->layer->evas->engine.func->context_render_op_set(output, context,
 							obj->cur.render_op);
 
-   if (0)
-        printf("Proxy: %p Source: %p Surface %p Redraw %s Type %s/%s %p %d %d\n",
-               obj, o->cur.source,o->cur.source->proxy.surface,
-               o->cur.source->proxy.redraw?"yep ":"nope",o->cur.source->type,
-               o_type,obj->cur.map,obj->cur.map->count, obj->cur.usemap);
-
    if (!o->cur.source)
      {
         pixels = o->engine_data;
@@ -2455,22 +2449,23 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   key = evas_filter_key_get(obj->filter, &len);
                   obj->filter->key = key;
                   obj->filter->len = len;
-                  fi = obj->layer->evas->engine.func->image_filtered_get(
-                        o->engine_data, key, len);
+                  fi = obj->layer->evas->engine.func->image_filtered_get
+                  (o->engine_data, key, len);
                   if (obj->filter->cached && fi != obj->filter->cached)
                     {
-                       obj->layer->evas->engine.func->image_filtered_free(
-                          o->engine_data, obj->filter->cached);
+                       obj->layer->evas->engine.func->image_filtered_free
+                       (o->engine_data, obj->filter->cached);
                        obj->filter->cached = NULL;
                     }
                }
              else if (obj->filter->cached)
                {
-                  obj->layer->evas->engine.func->image_filtered_free(
-                     o->engine_data, obj->filter->cached);
+                  obj->layer->evas->engine.func->image_filtered_free
+                  (o->engine_data, obj->filter->cached);
                }
              if (!fi)
-                fi = image_filter_update(obj->layer->evas, obj, pixels, imagew, imageh, &imagew, &imageh);
+                fi = image_filter_update(obj->layer->evas, obj, pixels, 
+                                         imagew, imageh, &imagew, &imageh);
              pixels = fi->image;
              obj->filter->dirty = 0;
              obj->filter->cached = fi;
@@ -2492,7 +2487,9 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	     if (o->func.get_pixels)
 	       {
 		  o->func.get_pixels(o->func.get_pixels_data, obj);
-		  o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
+		  o->engine_data = obj->layer->evas->engine.func->image_dirty_region
+                     (obj->layer->evas->engine.data.output, o->engine_data,
+                         0, 0, o->cur.image.w, o->cur.image.h);
 	       }
 	     o->dirty_pixels = 0;
 	  }
@@ -2544,8 +2541,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
               * (which is returned)it may be a new object, however exactly 0
               * of all the evas engines do this. */
              obj->layer->evas->engine.func->image_border_set(output, pixels,
-                                                                         o->cur.border.l, o->cur.border.r,
-                                                                         o->cur.border.t, o->cur.border.b);
+                                                             o->cur.border.l, o->cur.border.r,
+                                                             o->cur.border.t, o->cur.border.b);
              idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
              idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
              if (idw < 1) idw = 1;
