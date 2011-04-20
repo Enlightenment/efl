@@ -446,6 +446,7 @@ evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    if (!key) return NULL;
    if (finfo->datasize) memcpy(key, info->data, finfo->datasize);
    key[finfo->datasize] = info->filter;
+   if (lenp) *lenp = len;
    return key;
 }
 
