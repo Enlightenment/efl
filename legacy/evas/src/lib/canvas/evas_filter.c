@@ -101,7 +101,7 @@ static struct fieldinfo greyfields[] =
    { "red",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, r) },
    { "green",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, g) },
    { "blue",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
-   
+
    { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, r) },
    { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, g) },
    { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
@@ -137,14 +137,14 @@ EAPI Eina_Bool
 evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
 {
    Evas_Filter_Info *info;
-   
+
    MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
-   
+
    if ((mode != EVAS_FILTER_MODE_OBJECT) && (mode != EVAS_FILTER_MODE_BELOW))
       return EINA_FALSE;
-   
+
    if (!o->filter)
      {
         filter_alloc(o);
@@ -164,7 +164,7 @@ evas_object_filter_mode_get(Evas_Object *o)
    MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
    return EVAS_FILTER_MODE_OBJECT;
    MAGIC_CHECK_END();
-   
+
    if (!o->filter) filter_alloc(o);
    if (!o->filter) return EVAS_FILTER_MODE_OBJECT;
    return o->filter->mode;
@@ -184,12 +184,12 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
     * signed */
    if (((int)filter < (int)EVAS_FILTER_NONE) || (filter > EVAS_FILTER_LAST))
       return EINA_FALSE;
-   
+
    if (!o->filter) filter_alloc(o);
    if (!o->filter) return EINA_FALSE;
-   
+
    info = o->filter;
-   
+
    if (info->filter == filter) return EINA_TRUE;
 
    finfo = filterinfo + filter;
@@ -215,7 +215,7 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
    else
       info->data = NULL;
    info->data_free = NULL;
-   
+
    return EINA_TRUE;
 }
 
@@ -225,7 +225,7 @@ evas_object_filter_get(Evas_Object *o)
    MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
    return EVAS_FILTER_NONE;
    MAGIC_CHECK_END();
-   
+
    if (!o->filter) return EVAS_FILTER_NONE;
    return o->filter->filter;
 }
@@ -243,10 +243,10 @@ evas_object_filter_param_int_set(Evas_Object *o, const char *param, int val)
    MAGIC_CHECK_END();
 
    if ((!o->filter) || (!o->filter->data)) return EINA_FALSE;
-   
+
    fields = filterfields[o->filter->filter];
    data = o->filter->data;
-   found = EINA_FALSE;   
+   found = EINA_FALSE;
    for (i = 0; fields[i].field; i++)
      {
         if (!strcmp(fields[i].field, param))
@@ -274,7 +274,7 @@ evas_object_filter_param_int_get(Evas_Object *o, const char *param)
    MAGIC_CHECK_END();
 
    if ((!o->filter) || (!o->filter->data)) return -1;
-   
+
    fields = blurfields;
    data = o->filter->data;
 
@@ -291,7 +291,7 @@ evas_object_filter_param_int_get(Evas_Object *o, const char *param)
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_str_set(Evas_Object *o __UNUSED__, 
+evas_object_filter_param_str_set(Evas_Object *o __UNUSED__,
                                  const char *param __UNUSED__,
                                  const char *val __UNUSED__)
 {
@@ -299,14 +299,14 @@ evas_object_filter_param_str_set(Evas_Object *o __UNUSED__,
 }
 
 EAPI const char *
-evas_object_filter_param_str_get(Evas_Object *o __UNUSED__, 
+evas_object_filter_param_str_get(Evas_Object *o __UNUSED__,
                                  const char *param __UNUSED__)
 {
    return NULL;
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_obj_set(Evas_Object *o __UNUSED__, 
+evas_object_filter_param_obj_set(Evas_Object *o __UNUSED__,
                                  const char *param __UNUSED__,
                                  Evas_Object *val __UNUSED__)
 {
@@ -314,7 +314,7 @@ evas_object_filter_param_obj_set(Evas_Object *o __UNUSED__,
 }
 
 EAPI Evas_Object *
-evas_object_filter_param_obj_fet(Evas_Object *o __UNUSED__, 
+evas_object_filter_param_obj_get(Evas_Object *o __UNUSED__,
                                  const char *param __UNUSED__)
 {
    return NULL;
@@ -367,7 +367,7 @@ evas_object_filter_param_float_get(Evas_Object *o, const char *param)
    MAGIC_CHECK_END();
 
    if ((!o->filter) || (!o->filter->data)) return -1;
-   
+
    fields = blurfields;
    data = o->filter->data;
 
@@ -396,7 +396,7 @@ evas_filter_get_size(Evas_Filter_Info *info, int inw, int inh,
 {
    if (!info) return -1;
    if ((!outw) && (!outh)) return 0;
-   
+
    if (filterinfo[info->filter].sizefn)
       return filterinfo[info->filter].sizefn(info, inw, inh, outw, outh, inv);
 
@@ -427,7 +427,7 @@ evas_filter_always_alpha(Evas_Filter_Info *info)
  *
  * @param info Filter info to generate from
  * @param len Length of the buffer returned.
- * @return key KEy buffer
+ * @return key Key buffer
  */
 uint8_t *
 evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
@@ -435,12 +435,12 @@ evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    struct filterinfo *finfo;
    uint8_t *key;
    int len;
-   
+
    if (!info) return NULL;
-   
+
    finfo = filterinfo + info->filter;
    if (finfo->keyfn) return finfo->keyfn(info, lenp);
-   
+
    len = 1 + finfo->datasize;
    key = malloc(len);
    if (!key) return NULL;
