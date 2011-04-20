@@ -50,8 +50,6 @@
            text_props->info->glyph + text_props->start : NULL; \
         _EVAS_FONT_WALK_TEXT_START()
 
-#define EVAS_FONT_WALK_ORIG_LEN (_len)
-
 /*FIXME: doc */
 #ifdef OT_SUPPORT
 # define EVAS_FONT_WALK_X_OFF \
