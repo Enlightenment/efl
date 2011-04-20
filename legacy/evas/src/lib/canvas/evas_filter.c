@@ -230,7 +230,7 @@ evas_object_filter_get(Evas_Object *o)
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
+evas_object_filter_param_int_set(Evas_Object *o, const char *param, int val)
 {
    char *data;
    const struct fieldinfo *fields;
@@ -261,7 +261,7 @@ evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
 }
 
 EAPI int
-evas_object_filter_param_get_int(Evas_Object *o, const char *param)
+evas_object_filter_param_int_get(Evas_Object *o, const char *param)
 {
    char *data;
    const struct fieldinfo *fields;
@@ -290,7 +290,7 @@ evas_object_filter_param_get_int(Evas_Object *o, const char *param)
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_set_str(Evas_Object *o __UNUSED__, 
+evas_object_filter_param_str_set(Evas_Object *o __UNUSED__, 
                                  const char *param __UNUSED__,
                                  const char *val __UNUSED__)
 {
@@ -298,7 +298,7 @@ evas_object_filter_param_set_str(Evas_Object *o __UNUSED__,
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_set_obj(Evas_Object *o __UNUSED__, 
+evas_object_filter_param_obj_set(Evas_Object *o __UNUSED__, 
                                  const char *param __UNUSED__,
                                  Evas_Object *val __UNUSED__)
 {
@@ -306,7 +306,7 @@ evas_object_filter_param_set_obj(Evas_Object *o __UNUSED__,
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_set_float(Evas_Object *o, const char *param,
+evas_object_filter_param_float_set(Evas_Object *o, const char *param,
                                    double val)
 {
    char *data;

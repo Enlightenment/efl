@@ -7981,7 +7981,7 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * @return EINA_TRUE if at least one parameter was set, EINA_FALSE
  * otherwise.
  */
-   EAPI Eina_Bool                            evas_object_filter_param_set_int (Evas_Object *o, const char *param, int val);
+   EAPI Eina_Bool                            evas_object_filter_param_int_set (Evas_Object *o, const char *param, int val);
    
 /**
  * Get an integer value parameter from a filter.
@@ -7997,10 +7997,10 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * @Param param Name of the parameter to get.
  * @return The value, or -1 on error.
  */
-   EAPI int                                  evas_object_filter_param_get_int (Evas_Object *o, const char *param);
+   EAPI int                                  evas_object_filter_param_int_get (Evas_Object *o, const char *param);
    
-   EAPI Eina_Bool                            evas_object_filter_param_set_str (Evas_Object *o, const char *param, const char *val);
-   EAPI Eina_Bool                            evas_object_filter_param_set_obj (Evas_Object *o, const char *param, Evas_Object *);
+   EAPI Eina_Bool                            evas_object_filter_param_str_set (Evas_Object *o, const char *param, const char *val);
+   EAPI Eina_Bool                            evas_object_filter_param_obj_set (Evas_Object *o, const char *param, Evas_Object *);
 /**
  * Set a float parameter of a filter.
  *
@@ -8011,7 +8011,7 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * @param param Name of the parameter to set.
  * @param EINA_TRUE if at least one parameter was set, EINA_FALSE otherwise.
  */
-   EAPI Eina_Bool                            evas_object_filter_param_set_float(Evas_Object *o, const char *param, double val);
+   EAPI Eina_Bool                            evas_object_filter_param_float_set(Evas_Object *o, const char *param, double val);
 
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
