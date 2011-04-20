@@ -8000,7 +8000,9 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
    EAPI int                                  evas_object_filter_param_int_get (Evas_Object *o, const char *param);
    
    EAPI Eina_Bool                            evas_object_filter_param_str_set (Evas_Object *o, const char *param, const char *val);
-   EAPI Eina_Bool                            evas_object_filter_param_obj_set (Evas_Object *o, const char *param, Evas_Object *);
+   EAPI const char                          *evas_object_filter_param_str_get (Evas_Object *o, const char *param);
+   EAPI Eina_Bool                            evas_object_filter_param_obj_set (Evas_Object *o, const char *param, Evas_Object *val);
+   EAPI Evas_Object                         *evas_object_filter_param_obj_get (Evas_Object *o, const char *param);
 /**
  * Set a float parameter of a filter.
  *
@@ -8012,7 +8014,8 @@ EAPI Eina_List                          *evas_object_table_children_get    (cons
  * @param EINA_TRUE if at least one parameter was set, EINA_FALSE otherwise.
  */
    EAPI Eina_Bool                            evas_object_filter_param_float_set(Evas_Object *o, const char *param, double val);
-
+   EAPI double                               evas_object_filter_param_float_get(Evas_Object *o, const char *param);
+         
 /**
  * @defgroup Evas_Cserve Shared Image Cache Server
  *

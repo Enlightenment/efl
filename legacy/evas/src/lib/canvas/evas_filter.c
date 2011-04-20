@@ -297,12 +297,26 @@ evas_object_filter_param_str_set(Evas_Object *o __UNUSED__,
    return EINA_FALSE;
 }
 
+EAPI const char *
+evas_object_filter_param_str_get(Evas_Object *o __UNUSED__, 
+                                 const char *param __UNUSED__)
+{
+   return NULL;
+}
+
 EAPI Eina_Bool
 evas_object_filter_param_obj_set(Evas_Object *o __UNUSED__, 
                                  const char *param __UNUSED__,
                                  Evas_Object *val __UNUSED__)
 {
    return EINA_FALSE;
+}
+
+EAPI Evas_Object *
+evas_object_filter_param_obj_fet(Evas_Object *o __UNUSED__, 
+                                 const char *param __UNUSED__)
+{
+   return NULL;
 }
 
 EAPI Eina_Bool
@@ -337,6 +351,35 @@ evas_object_filter_param_float_set(Evas_Object *o, const char *param,
           }
      }
    return rv;
+}
+
+EAPI double
+evas_object_filter_param_float_get(Evas_Object *o, const char *param)
+{
+   char *data;
+   const struct fieldinfo *fields;
+   double val;
+   int i;
+
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   if ((!o->filter) || (!o->filter->data)) return -1;
+   
+   fields = blurfields;
+   data = o->filter->data;
+
+   for (i = 0; fields[i].field; i++)
+     {
+        if (!strcmp(fields[i].field, param))
+          {
+             if (fields[i].type != TYPE_FLOAT) continue;
+             val = *(double *)(data + fields[i].offset);
+             return val;
+          }
+     }
+   return -1;
 }
 
 
