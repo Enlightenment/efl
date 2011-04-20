@@ -134,20 +134,6 @@ static struct fieldinfo *filterfields[] =
 
 static Evas_Filter_Info *filter_alloc(Evas_Object *o);
 
-/**
- * Set the filter mode for an object.
- *
- * There are two valid filtering modes currently:
- *  - EVAS_FILTER_MODE_OBJECT: which applies the filter to the object itself
- *  - EVAS_FILTER_MODE_BELOW: which makes the object invisible and filters
- *  what is below the object.
- *
- * The default filter mode is EVAS_FILTER_MODE_OBJECT. 
- *
- * @param o Object to set filter mode on.
- * @param mode Mode to set.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
 {
@@ -172,15 +158,6 @@ evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
    return EINA_TRUE;
 }
 
-/**
- * Get the current filtering mode for an object.
- *
- * By default all objects are in object filtering mode, even if no filter is
- * set.
- *
- * @param o Object to get filter mode of.
- * @return Filter mode (default EVAS_FILTER_MODE_OBJECT）
- */
 EAPI Evas_Filter_Mode
 evas_object_filter_mode_get(Evas_Object *o)
 {
@@ -191,22 +168,6 @@ evas_object_filter_mode_get(Evas_Object *o)
    return o->filter->mode;
 }
 
-/**
- * Set the current filter type.
- *
- * This sets the filter type, whether a blur, color filter or some other type
- * of filter.  This is normally the only filter call necessary, although some
- * filters require additional parameters.
- *
- * If the object has a filter already, and existing parameters will be
- * cleared.
- *
- * Setting the blur to EVAS_FILTER_NONE removes any filter.
- *
- * @param o Object to set the filter on.
- * @param filter Filter to set.
- * @return EINA_TRUE On success
- */
 EAPI Eina_Bool
 evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
 {
@@ -249,13 +210,6 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
    return EINA_TRUE;
 }
 
-
-/**
- * Get the current filter.
- *
- * @param o Object to get filter of.
- * @return The filter if set, or EVAS_FILTER_NONE.
- */
 EAPI Evas_Filter
 evas_object_filter_get(Evas_Object *o)
 {
@@ -264,22 +218,6 @@ evas_object_filter_get(Evas_Object *o)
    return o->filter->filter;
 }
 
-/**
- * Set an integer parameter of a filter.
- *
- * This sets an integer parameter of a filter, if such parameter is known to
- * the filter.  Note that some parameters may actually set multiple fields.
- * The individual filters define the specific parameters available.
- *
- * It should be noted that filter parameters are lost after the filter type
- * changes, so set the filter type, then the parameters.
- *
- * @param o Object to set parameter on.
- * @param param Name of parameter to set.
- * @param val Value to set.
- * @return EINA_TRUE if at least one parameter was set, EINA_FALSE
- * otherwise.
- */
 EAPI Eina_Bool
 evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
 {
@@ -310,20 +248,6 @@ evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
    return found;
 }
 
-/**
- * Get an integer value parameter from a filter.
- *
- * Gets the first matching parameter for a filter.  Note there is no way to
- * later fields if they do not have their own accessor name.
- *
- * Also note that there is no way to tell the difference between a -1 as a
- * value, and the error code.  Ask your filter writer to use a different
- * range.
- *
- * @param o The object.
- * @Param param Name of the parameter to get.
- * @return The value, or -1 on error.
- */
 EAPI int
 evas_object_filter_param_get_int(Evas_Object *o, const char *param)
 {
@@ -367,16 +291,6 @@ evas_object_filter_param_set_obj(Evas_Object *o __UNUSED__,
    return EINA_FALSE;
 }
 
-/**
- * Set a float parameter of a filter.
- *
- * This is the same as evas_object_filter_param_get_int(), but for floating
- * point values.
- *
- * @param o Object to set value on.
- * @param param Name of the parameter to set.
- * @param EINA_TRUE if at least one parameter was set, EINA_FALSE otherwise.
- */
 EAPI Eina_Bool
 evas_object_filter_param_set_float(Evas_Object *o, const char *param,
                                    double val)
