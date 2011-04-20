@@ -554,6 +554,11 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         index =
            evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
 
+        if (index == 0)
+          {
+             index = evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+          }
+
         if (fi->src->current_size != fi->size)
           {
              FTLOCK();
