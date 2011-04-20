@@ -6,7 +6,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-#include "assert.h"
+#include <assert.h>
 
 #ifdef BUILD_NEON
 # define BUILD_NEON0 1
@@ -70,8 +70,6 @@ static Eina_Bool greyscale_filter(Evas_Filter_Info*, RGBA_Image*, RGBA_Image*);
 static Eina_Bool brightness_filter(Evas_Filter_Info*, RGBA_Image*, RGBA_Image*);
 static Eina_Bool contrast_filter(Evas_Filter_Info *, RGBA_Image*, RGBA_Image*);
 
-static Eina_Bool negation_filter_neon(Evas_Filter_Info *, RGBA_Image *src, RGBA_Image *);
-
 struct filterinfo filterinfo[] =
 {
    /* None */
@@ -110,11 +108,13 @@ static struct fieldinfo greyfields[] =
    { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
    { NULL, 0, 0 },
 };
+
 static struct fieldinfo brightnessfields[] =
 {
    { "adjust",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Brightness, adjust) },
    { NULL, 0, 0 },
 };
+
 static struct fieldinfo contrastfields[] =
 {
    { "adjust",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Contrast, adjust) },
@@ -139,8 +139,9 @@ evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
 {
    Evas_Filter_Info *info;
    
-   // FIXME: do real magic check
-   if (!o) return EINA_FALSE; /* nash: do Magic check */
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
    
    if (mode != EVAS_FILTER_MODE_OBJECT && mode != EVAS_FILTER_MODE_BELOW)
       return EINA_FALSE;
@@ -161,8 +162,10 @@ evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
 EAPI Evas_Filter_Mode
 evas_object_filter_mode_get(Evas_Object *o)
 {
-   // FIXME: do real magic check
-   if (!o) return EVAS_FILTER_MODE_OBJECT; /* nash magic */
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EVAS_FILTER_MODE_OBJECT;
+   MAGIC_CHECK_END();
+   
    if (!o->filter) filter_alloc(o);
    if (!o->filter) return EVAS_FILTER_MODE_OBJECT;
    return o->filter->mode;
@@ -174,8 +177,9 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
    Evas_Filter_Info *info;
    struct filterinfo *finfo;
 
-   // FIXME: do real magic check
-   if (!o) return EINA_FALSE; /* nash: magic */
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
 
    /* force filter to be signed: else gcc complains, but enums may always be
     * signed */
@@ -213,8 +217,11 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
 EAPI Evas_Filter
 evas_object_filter_get(Evas_Object *o)
 {
-   // FIXME: do real magic check
-   if (!o || !o->filter) return EVAS_FILTER_NONE;
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EVAS_FILTER_NONE;
+   MAGIC_CHECK_END();
+   
+   if (!o->filter) return EVAS_FILTER_NONE;
    return o->filter->filter;
 }
 
@@ -226,14 +233,15 @@ evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
    Eina_Bool found;
    int i;
 
-   // FIXME: do real magic check
-   if (!o || !o->filter || !o->filter->data) return EINA_FALSE;
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   if ((!o->filter) || (!o->filter->data)) return EINA_FALSE;
    
    fields = filterfields[o->filter->filter];
    data = o->filter->data;
-
-   found = EINA_FALSE;
-   
+   found = EINA_FALSE;   
    for (i = 0; fields[i].field; i++)
      {
         if (!strcmp(fields[i].field, param))
@@ -256,8 +264,11 @@ evas_object_filter_param_get_int(Evas_Object *o, const char *param)
    int val;
    int i;
 
-   // FIXME: do real magic check
-   if (!o || !o->filter || !o->filter->data) return -1;
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   if ((!o->filter) || (!o->filter->data)) return -1;
    
    fields = blurfields;
    data = o->filter->data;
@@ -271,7 +282,6 @@ evas_object_filter_param_get_int(Evas_Object *o, const char *param)
              return val;
           }
      }
-
    return -1;
 }
 
@@ -300,8 +310,11 @@ evas_object_filter_param_set_float(Evas_Object *o, const char *param,
    int i;
    Eina_Bool rv;
 
-   // FIXME: do real magic check
-   if (!o || !o->filter || !o->filter->data) return EINA_FALSE;
+   MAGIC_CHECK(o, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   if ((!o->filter) || (!o->filter->data)) return EINA_FALSE;
 
    rv = EINA_FALSE;
    fields = blurfields;
@@ -386,7 +399,8 @@ evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
 
 
 static int
-blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh, Eina_Bool inv)
+blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh, 
+              Eina_Bool inv)
 {
    Evas_Filter_Info_Blur *blur = info->data;
 
@@ -421,7 +435,7 @@ gaussian_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    struct Evas_Filter_Info_Blur *blur;
    uint8_t *key;
 
-   if (!info || !info->data) return NULL;
+   if ((!info) || (!info->data)) return NULL;
    blur = info->data;
 
    if (lenp) *lenp = 4;
@@ -450,6 +464,7 @@ filter_alloc(Evas_Object *o)
    Evas_Filter_Info *info;
    if (!o) return NULL;
 
+   // FIXME: handle alloc failure
    info = calloc(1,sizeof(struct Evas_Filter_Info));
    info->dirty = 1;
    info->filter = EVAS_FILTER_NONE;
@@ -482,18 +497,18 @@ filter_alloc(Evas_Object *o)
 
 typedef int (*FilterH)(int, uint32_t *, int, uint32_t *);
 typedef int (*FilterV)(int, uint32_t *, int, int, uint32_t *);
-int gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out);
-int gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out);
-int gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out);
-int gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out);
-int gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out);
-int gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out);
-const uint32_t *gaussian_row_get(int row, int *npoints, uint32_t *weight);
-const uint64_t *gaussian_row_get64(int row, int *npoints, uint64_t *weight);
-const double *gaussian_row_getd(int row, int *npoints, double *weight);
 
-// FIXME: why not static?
-Eina_Bool
+static int gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out);
+static int gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out);
+static int gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out);
+static int gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out);
+static int gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out);
+static int gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out);
+static const uint32_t *gaussian_row_get(int row, int *npoints, uint32_t *weight);
+static const uint64_t *gaussian_row_get64(int row, int *npoints, uint64_t *weight);
+static const double *gaussian_row_getd(int row, int *npoints, double *weight);
+
+static Eina_Bool
 gaussian_filter(Evas_Filter_Info *filter, RGBA_Image *src, RGBA_Image *dst)
 {
    int i;
@@ -544,8 +559,7 @@ gaussian_filter(Evas_Filter_Info *filter, RGBA_Image *src, RGBA_Image *dst)
 }
 
 /* Blur only horizontally */
-// FIXME: why not static?
-int
+static int
 gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out)
 {
    const uint32_t *points;
@@ -577,8 +591,7 @@ gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out)
 }
 
 /* Blur only horizontally */
-// FIXME: why not static?
-int
+static int
 gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
 {
    const double *points;
@@ -611,8 +624,7 @@ gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
 
 
 /* Blur only horizontally */
-// FIXME: why not static?
-int
+static int
 gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
 {
    const uint64_t *points;
@@ -641,8 +653,7 @@ gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
    return 0;
 }
 
-// FIXME: why not static?
-int
+static int
 gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
 {
    const uint32_t *points;
@@ -676,8 +687,7 @@ gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
    return 0;
 }
 
-// FIXME: why not static?
-int
+static int
 gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
 {
    const uint64_t *points;
@@ -711,8 +721,7 @@ gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
    return 0;
 }
 
-// FIXME: why not static?
-int
+static int
 gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
 {
    const double *points;
@@ -746,8 +755,7 @@ gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
    return 0;
 }
 
-// FIXME: why not static?
-const uint32_t *
+static const uint32_t *
 gaussian_row_get(int row, int *npoints, uint32_t *weight)
 {
    static uint32_t *points = NULL;
@@ -786,8 +794,7 @@ gaussian_row_get(int row, int *npoints, uint32_t *weight)
    return points;
 }
 
-// FIXME: why not static?
-const uint64_t *
+static const uint64_t *
 gaussian_row_get64(int row, int *npoints, uint64_t *weight)
 {
    static uint64_t *points = NULL;
@@ -827,8 +834,7 @@ gaussian_row_get64(int row, int *npoints, uint64_t *weight)
    return points;
 }
 
-// FIXME: why not static?
-const double *
+static const double *
 gaussian_row_getd(int row, int *npoints, double *weight)
 {
    static double *points = NULL;
@@ -869,58 +875,10 @@ gaussian_row_getd(int row, int *npoints, double *weight)
    return points;
 }
 
-static Eina_Bool
-negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
-{
-   uint32_t *in, *out;
-   int i,j;
-   int w,h;
-   uint32_t mask,a;
-
-   // FIXME: dont call if img has alpha
-   if (BUILD_NEON0 && evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-      return negation_filter_neon(info, src, dst);
-
-   in = src->image.data;
-   out = dst->image.data;
-   w = src->cache_entry.w;
-   h = src->cache_entry.h;
-
-   if (src->cache_entry.flags.alpha)
-     {
-        for (i = 0; i < h; i++)
-          {
-             for (j = 0; j < w; j++)
-               {
-                  a = (*in >> 24) & 0xff;
-                  mask = a | (a << 8) | (a << 16);
-                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-                  *out = (mask - (*in & 0xffffff)) | (a << 24);
-                  out++;
-                  in++;
-               }
-          }
-     }
-   else
-     {
-        for (i = 0; i < h; i++)
-          {
-             for (j = 0; j < w; j++)
-               {
-                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
-                  *out = ~(*in & ~0xff000000) | ((*in) & 0xff000000);
-                  out++;
-                  in++;
-               }
-          }
-     }
-   return EINA_TRUE;
-}
-
+#if BUILD_NEON0
 static Eina_Bool
 negation_filter_neon(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
 {
-#if BUILD_NEON0
    uint32_t tmp;
 
    if (src->cache_entry.flags.alpha)
@@ -971,9 +929,59 @@ negation_filter_neon(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
          );
 #undef AP
      }
-#endif
    return EINA_TRUE;
-   info = NULL; src = NULL; dst = NULL;
+}
+#endif
+
+static Eina_Bool
+negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
+{
+   uint32_t *in, *out;
+   int i,j;
+   int w,h;
+   uint32_t mask,a;
+
+#if BUILD_NEON0
+   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON) &&
+      (!src->cache_entry.flags.alpha))
+      return negation_filter_neon(info, src, dst);
+#endif
+   
+   in = src->image.data;
+   out = dst->image.data;
+   w = src->cache_entry.w;
+   h = src->cache_entry.h;
+
+   if (src->cache_entry.flags.alpha)
+     {
+        for (i = 0; i < h; i++)
+          {
+             for (j = 0; j < w; j++)
+               {
+                  a = (*in >> 24) & 0xff;
+                  mask = a | (a << 8) | (a << 16);
+                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
+                  *out = (mask - (*in & 0xffffff)) | (a << 24);
+                  out++;
+                  in++;
+               }
+          }
+     }
+   else
+     {
+        for (i = 0; i < h; i++)
+          {
+             for (j = 0; j < w; j++)
+               {
+                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
+                  *out = ~(*in & ~0xff000000) | ((*in) & 0xff000000);
+                  out++;
+                  in++;
+               }
+          }
+     }
+   return EINA_TRUE;
+   info = NULL;
 }
 
 static Eina_Bool
