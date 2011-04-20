@@ -1,9 +1,7 @@
 /*
  * Filter implementation for evas
  */
-
 #include <stddef.h>     // offsetof
-
 
 #include "evas_common.h"
 #include "evas_private.h"
@@ -16,31 +14,36 @@
 # define BUILD_NEON0 0
 #endif
 
-typedef struct Evas_Filter_Info_Blur {
-     double quality;
-     int radius;
+typedef struct Evas_Filter_Info_Blur
+{
+   double quality;
+   int radius;
 } Evas_Filter_Info_Blur;
 
-typedef struct Evas_Filter_Info_GreyScale {
-     double r,g,b;
+typedef struct Evas_Filter_Info_GreyScale
+{
+   double r,g,b;
 } Evas_Filter_Info_GreyScale;
-typedef struct Evas_Filter_Info_Brightness {
-     double adjust;
-} Evas_Filter_Info_Brightness;
-typedef struct Evas_Filter_Info_Contrast {
-     double adjust;
-} Evas_Filter_Info_Contrast;
 
+typedef struct Evas_Filter_Info_Brightness
+{
+   double adjust;
+} Evas_Filter_Info_Brightness;
+
+typedef struct Evas_Filter_Info_Contrast
+{
+   double adjust;
+} Evas_Filter_Info_Contrast;
 
 typedef int (*Filter_Size_FN)(Evas_Filter_Info *,int,int,int*,int*,Eina_Bool);
 typedef uint8_t *(*Key_FN)(const Evas_Filter_Info  *, uint32_t *);
 
-struct fieldinfo {
+struct fieldinfo
+{
    const char *field;
    int type;
    size_t offset;
 };
-
 
 struct filterinfo
 {
@@ -51,9 +54,10 @@ struct filterinfo
    Eina_Bool alwaysalpha;
 };
 
-enum {
-     TYPE_INT,
-     TYPE_FLOAT
+enum
+{
+   TYPE_INT,
+   TYPE_FLOAT
 };
 
 static int blur_size_get(Evas_Filter_Info*, int, int, int *, int *, Eina_Bool);
@@ -74,7 +78,7 @@ struct filterinfo filterinfo[] =
    { NULL, 0, NULL, NULL, EINA_FALSE},
    /* Blur */
    { gaussian_filter, sizeof(Evas_Filter_Info_Blur), blur_size_get,
-               gaussian_key_get, EINA_TRUE },
+         gaussian_key_get, EINA_TRUE },
    /* Negation */
    { negation_filter, 0, NULL, NULL, EINA_FALSE },
    /* Sepia */
@@ -88,32 +92,34 @@ struct filterinfo filterinfo[] =
 };
 
 
-static struct fieldinfo blurfields[] = {
-       { "quality",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Blur, quality) },
-       { "radius",  TYPE_INT, offsetof(Evas_Filter_Info_Blur, radius) },
-       { NULL, 0, 0 },
+static struct fieldinfo blurfields[] =
+{
+   { "quality",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Blur, quality) },
+   { "radius",  TYPE_INT, offsetof(Evas_Filter_Info_Blur, radius) },
+   { NULL, 0, 0 },
 };
 
-static struct fieldinfo greyfields[] = {
-       { "red",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, r) },
-       { "green",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, g) },
-       { "blue",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
-
-       { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, r) },
-       { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, g) },
-       { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
-       { NULL, 0, 0 },
+static struct fieldinfo greyfields[] =
+{
+   { "red",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, r) },
+   { "green",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, g) },
+   { "blue",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
+   
+   { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, r) },
+   { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, g) },
+   { "all",  TYPE_FLOAT, offsetof(Evas_Filter_Info_GreyScale, b) },
+   { NULL, 0, 0 },
 };
-static struct fieldinfo brightnessfields[] = {
-       { "adjust",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Brightness, adjust) },
-       { NULL, 0, 0 },
+static struct fieldinfo brightnessfields[] =
+{
+   { "adjust",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Brightness, adjust) },
+   { NULL, 0, 0 },
 };
-static struct fieldinfo contrastfields[] = {
-       { "adjust",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Contrast, adjust) },
-       { NULL, 0, 0 },
+static struct fieldinfo contrastfields[] =
+{
+   { "adjust",  TYPE_FLOAT, offsetof(Evas_Filter_Info_Contrast, adjust) },
+   { NULL, 0, 0 },
 };
-
-
 
 static struct fieldinfo *filterfields[] =
 {
@@ -126,9 +132,7 @@ static struct fieldinfo *filterfields[] =
    contrastfields,
 };
 
-
 static Evas_Filter_Info *filter_alloc(Evas_Object *o);
-
 
 /**
  * Set the filter mode for an object.
@@ -148,11 +152,13 @@ EAPI Eina_Bool
 evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
 {
    Evas_Filter_Info *info;
+   
+   // FIXME: do real magic check
    if (!o) return EINA_FALSE; /* nash: do Magic check */
-
+   
    if (mode != EVAS_FILTER_MODE_OBJECT && mode != EVAS_FILTER_MODE_BELOW)
       return EINA_FALSE;
-
+   
    if (!o->filter)
      {
         filter_alloc(o);
@@ -178,6 +184,7 @@ evas_object_filter_mode_set(Evas_Object *o, Evas_Filter_Mode mode)
 EAPI Evas_Filter_Mode
 evas_object_filter_mode_get(Evas_Object *o)
 {
+   // FIXME: do real magic check
    if (!o) return EVAS_FILTER_MODE_OBJECT; /* nash magic */
    if (!o->filter) filter_alloc(o);
    if (!o->filter) return EVAS_FILTER_MODE_OBJECT;
@@ -206,19 +213,19 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
    Evas_Filter_Info *info;
    struct filterinfo *finfo;
 
-
+   // FIXME: do real magic check
    if (!o) return EINA_FALSE; /* nash: magic */
 
    /* force filter to be signed: else gcc complains, but enums may always be
     * signed */
-   if ((int)filter < (int)EVAS_FILTER_NONE || filter > EVAS_FILTER_LAST)
+   if (((int)filter < (int)EVAS_FILTER_NONE) || (filter > EVAS_FILTER_LAST))
       return EINA_FALSE;
-
+   
    if (!o->filter) filter_alloc(o);
    if (!o->filter) return EINA_FALSE;
-
+   
    info = o->filter;
-
+   
    if (info->filter == filter) return EINA_TRUE;
 
    finfo = filterinfo + filter;
@@ -233,11 +240,12 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
      }
    info->datalen = finfo->datasize;
    if (finfo->datasize)
+      // FIXME: hande calloc fail
       info->data = calloc(1,finfo->datasize);
    else
       info->data = NULL;
    info->data_free = NULL;
-
+   
    return EINA_TRUE;
 }
 
@@ -251,8 +259,8 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
 EAPI Evas_Filter
 evas_object_filter_get(Evas_Object *o)
 {
+   // FIXME: do real magic check
    if (!o || !o->filter) return EVAS_FILTER_NONE;
-
    return o->filter->filter;
 }
 
@@ -280,17 +288,17 @@ evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
    Eina_Bool found;
    int i;
 
-
+   // FIXME: do real magic check
    if (!o || !o->filter || !o->filter->data) return EINA_FALSE;
-
+   
    fields = filterfields[o->filter->filter];
    data = o->filter->data;
 
    found = EINA_FALSE;
-
-   for (i = 0 ; fields[i].field ; i ++)
+   
+   for (i = 0; fields[i].field; i++)
      {
-        if (strcmp(fields[i].field, param) == 0)
+        if (!strcmp(fields[i].field, param))
           {
              if (fields[i].type != TYPE_INT) continue;
              *(int *)(data + fields[i].offset) = val;
@@ -299,7 +307,6 @@ evas_object_filter_param_set_int(Evas_Object *o, const char *param, int val)
              found = EINA_TRUE;
           }
      }
-
    return found;
 }
 
@@ -325,14 +332,15 @@ evas_object_filter_param_get_int(Evas_Object *o, const char *param)
    int val;
    int i;
 
+   // FIXME: do real magic check
    if (!o || !o->filter || !o->filter->data) return -1;
-
+   
    fields = blurfields;
    data = o->filter->data;
 
-   for (i = 0 ; fields[i].field ; i ++)
+   for (i = 0; fields[i].field; i++)
      {
-        if (strcmp(fields[i].field, param) == 0)
+        if (!strcmp(fields[i].field, param))
           {
              if (fields[i].type != TYPE_INT) continue;
              val = *(int *)(data + fields[i].offset);
@@ -344,15 +352,17 @@ evas_object_filter_param_get_int(Evas_Object *o, const char *param)
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_set_str(Evas_Object *o, const char *param,
-                                 const char *val)
+evas_object_filter_param_set_str(Evas_Object *o __UNUSED__, 
+                                 const char *param __UNUSED__,
+                                 const char *val __UNUSED__)
 {
    return EINA_FALSE;
 }
 
 EAPI Eina_Bool
-evas_object_filter_param_set_obj(Evas_Object *o, const char *param,
-                                 Evas_Object *val)
+evas_object_filter_param_set_obj(Evas_Object *o __UNUSED__, 
+                                 const char *param __UNUSED__,
+                                 Evas_Object *val __UNUSED__)
 {
    return EINA_FALSE;
 }
@@ -376,15 +386,16 @@ evas_object_filter_param_set_float(Evas_Object *o, const char *param,
    int i;
    Eina_Bool rv;
 
+   // FIXME: do real magic check
    if (!o || !o->filter || !o->filter->data) return EINA_FALSE;
 
    rv = EINA_FALSE;
    fields = blurfields;
    data = o->filter->data;
 
-   for (i = 0 ; fields[i].field ; i ++)
+   for (i = 0; fields[i].field; i++)
      {
-        if (strcmp(fields[i].field, param) == 0)
+        if (!strcmp(fields[i].field, param))
           {
              if (fields[i].type != TYPE_FLOAT) continue;
              *(double *)(data + fields[i].offset) = val;
@@ -407,7 +418,7 @@ evas_filter_get_size(Evas_Filter_Info *info, int inw, int inh,
 {
    if (!info) return -1;
    if (!outw && !outh) return 0;
-
+   
    if (filterinfo[info->filter].sizefn)
       return filterinfo[info->filter].sizefn(info, inw, inh, outw, outh, inv);
 
@@ -446,38 +457,34 @@ evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    struct filterinfo *finfo;
    uint8_t *key;
    int len;
+   
    if (!info) return NULL;
-
+   
    finfo = filterinfo + info->filter;
-
-   if (finfo->keyfn)
-      return finfo->keyfn(info, lenp);
-
+   if (finfo->keyfn) return finfo->keyfn(info, lenp);
+   
    len = 1 + finfo->datasize;
    key = malloc(len);
    if (finfo->datasize) memcpy(key, info->data, finfo->datasize);
    key[finfo->datasize] = info->filter;
-
    return key;
 }
 
 
 static int
-blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh,
-              Eina_Bool inv){
-   Evas_Filter_Info_Blur *blur;
-
-   blur = info->data;
+blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh, Eina_Bool inv)
+{
+   Evas_Filter_Info_Blur *blur = info->data;
 
    if (inv)
      {
-        if (outw) *outw = MAX(inw - blur->radius * 2, 0);
-        if (outh) *outh = MAX(inh - blur->radius * 2, 0);
+        if (outw) *outw = MAX(inw - (blur->radius * 2), 0);
+        if (outh) *outh = MAX(inh - (blur->radius * 2), 0);
      }
    else
      {
-        if (outw) *outw = inw + blur->radius * 2;
-        if (outh) *outh = inh + blur->radius * 2;
+        if (outw) *outw = inw + (blur->radius * 2);
+        if (outh) *outh = inh + (blur->radius * 2);
      }
    return 0;
 }
@@ -504,6 +511,7 @@ gaussian_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    blur = info->data;
 
    if (lenp) *lenp = 4;
+   // FIXME: handle malloc fail
    key = malloc(4);
    key[0] = EVAS_FILTER_BLUR;
    key[1] = blur->quality * 255;
@@ -513,15 +521,11 @@ gaussian_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    return key;
 }
 
-
 Evas_Software_Filter_Fn
 evas_filter_software_get(Evas_Filter_Info *info)
 {
    return filterinfo[info->filter].filter;
 }
-
-
-
 
 /*
  * Private calls
@@ -547,19 +551,20 @@ filter_alloc(Evas_Object *o)
  * Software implementations
  */
 
+// FIXME we have R_VAL/G_VAL...A_VAL for this
 #define alpha(x)	(((x) >> 24)       )
 #define red(x)		(((x) >> 16) & 0xff)
 #define green(x)	(((x) >>  8) & 0xff)
 #define blue(x)		(((x)      ) & 0xff)
-#define all(OP,A,R,G,B,W,I)                             \
-                do {                                    \
-                        A OP alpha(I) * W;              \
-                        R OP red(I) * W;                \
-                        G OP green(I) * W;              \
-                        B OP blue(I) * W;               \
-                } while (0)
+#define all(OP, A, R, G, B, W, I) \
+   do { \
+      A OP alpha(I) * W; \
+      R OP red(I) * W; \
+      G OP green(I) * W; \
+      B OP blue(I) * W; \
+   } while (0)
 #define wavg(x,n)        (((x) / (n)) & 0xff)
-#define wavgd(x,n)        ((uint32_t)((x) / (n)) & 0xff)
+#define wavgd(x,n)       ((uint32_t)((x) / (n)) & 0xff)
 
 typedef int (*FilterH)(int, uint32_t *, int, uint32_t *);
 typedef int (*FilterV)(int, uint32_t *, int, int, uint32_t *);
@@ -573,7 +578,7 @@ const uint32_t *gaussian_row_get(int row, int *npoints, uint32_t *weight);
 const uint64_t *gaussian_row_get64(int row, int *npoints, uint64_t *weight);
 const double *gaussian_row_getd(int row, int *npoints, double *weight);
 
-
+// FIXME: why not static?
 Eina_Bool
 gaussian_filter(Evas_Filter_Info *filter, RGBA_Image *src, RGBA_Image *dst)
 {
@@ -583,350 +588,372 @@ gaussian_filter(Evas_Filter_Info *filter, RGBA_Image *src, RGBA_Image *dst)
    FilterV filter_v = gaussian_filter_v;
    FilterH filter_h = gaussian_filter_h;
    Evas_Filter_Info_Blur *blur;
-   int w,h;
+   int w, h;
 
    blur = filter->data;
 
-   printf("Gaussian filter\n");
    /* Use 64 bit version if we are going to overflow */
-   if (blur->radius > 508){ /** too big for doubles: Bail out */
-        return EINA_FALSE;
-   } else if (blur->radius > 28){
+   if (blur->radius > 508) /** too big for doubles: Bail out */
+      return EINA_FALSE;
+   else if (blur->radius > 28)
+     {
         filter_v = gaussian_filter_vd;
         filter_h = gaussian_filter_hd;
-   } else if (blur->radius > 12){
+     } 
+   else if (blur->radius > 12)
+     {
         filter_v = gaussian_filter_v64;
         filter_h = gaussian_filter_h64;
-   }
-
+     }
+   
    w = src->cache_entry.w;
    h = src->cache_entry.h;
    in = src->image.data;
-
+   
    if (!in) return EINA_FALSE;
-
+   
    nw = w + 2 * blur->radius;
    nh = h + 2 * blur->radius;
-
+   
    out = dst->image.data;
    if (!out) return EINA_FALSE;
    tmp = malloc(nw * h * sizeof(uint32_t));
-
-   for (i = 0 ; i < h ; i ++)
-      filter_h(blur->radius,in + i*w,w,tmp + i*nw);
-
-   for (i = 0 ; i < nw ; i ++)
-      filter_v(blur->radius,tmp + i,h,nw,out + i);
+   
+   for (i = 0; i < h; i++)
+      filter_h(blur->radius,in + (i * w), w, tmp + (i * nw));
+   
+   for (i = 0; i < (int)nw; i++)
+      filter_v(blur->radius,tmp + i, h, nw, out + i);
 
    free(tmp);
    return EINA_TRUE;
 }
 
 /* Blur only horizontally */
+// FIXME: why not static?
 int
-gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out){
-	const uint32_t *points;
-	int npoints;
-	uint32_t weight;
-        int i,k;
-	uint32_t r,g,b,a;
-
-	/* Get twice the radius: even rows have 1 element */
-	points = gaussian_row_get(rad * 2,&npoints, &weight);
-
-	for (i = -rad ; i < w + rad; i ++){
-		r = g = b = a = 0;
-		for (k = -rad ; k <= rad ; k ++){
-			if ((k + i) < 0) continue;
-			if ((k + i) >= w) continue;
-			all(+=, a, r, g, b, points[k + rad], in[k + i]);
-		}
-		*(out) = (wavg(a,weight) << 24) |
-                        (wavg(r,weight) << 16) |
-                        (wavg(g,weight) <<  8) |
-                        (wavg(b,weight));
-		out ++;
-	}
-
-	return 0;
+gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out)
+{
+   const uint32_t *points;
+   int npoints;
+   uint32_t weight;
+   int i, k;
+   uint32_t r, g, b, a;
+   
+   /* Get twice the radius: even rows have 1 element */
+   points = gaussian_row_get(rad * 2, &npoints, &weight);
+   for (i = -rad; i < (w + rad); i++)
+     {
+        r = g = b = a = 0;
+        for (k = -rad; k <= rad; k++)
+          {
+             if ((k + i) < 0) continue;
+             if ((k + i) >= w) continue;
+             all(+=, a, r, g, b, points[k + rad], in[k + i]);
+          }
+        // FIXME: use ARGB_JOIN
+        *(out) = 
+           (wavg(a, weight) << 24) |
+           (wavg(r, weight) << 16) |
+           (wavg(g, weight) <<  8) |
+           (wavg(b, weight));
+        out++;
+     }
+   return 0;
 }
 
 /* Blur only horizontally */
+// FIXME: why not static?
 int
-gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out){
-	const double *points;
-	int npoints;
-	double weight;
-        int i,k;
-	double r,g,b,a;
-
-	/* Get twice the radius: even rows have 1 element */
-	points = gaussian_row_getd(rad * 2,&npoints, &weight);
-
-	for (i = -rad ; i < w + rad; i ++){
-		r = g = b = a = 0;
-		for (k = -rad ; k <= rad ; k ++){
-			if ((k + i) < 0) continue;
-			if ((k + i) >= w) continue;
-			all(+=, a, r, g, b, points[k + rad], in[k + i]);
-		}
-		*(out) = (wavgd(a,weight) << 24) |
-                        (wavgd(r,weight) << 16) |
-                        (wavgd(g,weight) <<  8) |
-                        (wavgd(b,weight));
-		out ++;
-	}
-
-	return 0;
+gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
+{
+   const double *points;
+   int npoints;
+   double weight;
+   int i, k;
+   double r, g, b, a;
+   
+   /* Get twice the radius: even rows have 1 element */
+   points = gaussian_row_getd(rad * 2, &npoints, &weight);
+   for (i = -rad; i < (w + rad); i++)
+     {
+        r = g = b = a = 0;
+        for (k = -rad; k <= rad; k++)
+          {
+             if ((k + i) < 0) continue;
+             if ((k + i) >= w) continue;
+             all(+=, a, r, g, b, points[k + rad], in[k + i]);
+          }
+        // FIXME: use ARGB_JOIN
+        *(out) =
+           (wavgd(a, weight) << 24) |
+           (wavgd(r, weight) << 16) |
+           (wavgd(g, weight) <<  8) |
+           (wavgd(b, weight));
+        out++;
+   }
+   return 0;
 }
 
 
 /* Blur only horizontally */
+// FIXME: why not static?
 int
-gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out){
-	const uint64_t *points;
-	int npoints;
-	uint64_t weight;
-        int i,k;
-	uint64_t r,g,b,a;
-
-	/* Get twice the radius: even rows have 1 element */
-	points = gaussian_row_get64(rad * 2,&npoints, &weight);
-
-	for (i = -rad ; i < w + rad; i ++){
-		r = g = b = a = 0;
-		for (k = -rad ; k <= rad ; k ++){
-			if ((k + i) < 0) continue;
-			if ((k + i) >= w) continue;
-			all(+=, a, r, g, b, points[k + rad], in[k + i]);
-		}
-		*(out) = (wavg(a,weight) << 24) |
-                        (wavg(r,weight) << 16) |
-                        (wavg(g,weight) <<  8) |
-                        (wavg(b,weight));
-		out ++;
-	}
-
-	return 0;
+gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
+{
+   const uint64_t *points;
+   int npoints;
+   uint64_t weight;
+   int i, k;
+   uint64_t r, g, b, a;
+   
+   /* Get twice the radius: even rows have 1 element */
+   points = gaussian_row_get64(rad * 2, &npoints, &weight);
+   for (i = -rad ; i < w + rad; i ++){
+      r = g = b = a = 0;
+      for (k = -rad ; k <= rad ; k ++){
+         if ((k + i) < 0) continue;
+         if ((k + i) >= w) continue;
+         all(+=, a, r, g, b, points[k + rad], in[k + i]);
+      }
+        // FIXME: use ARGB_JOIN
+      *(out) = 
+         (wavg(a, weight) << 24) |
+         (wavg(r, weight) << 16) |
+         (wavg(g, weight) <<  8) |
+         (wavg(b, weight));
+      out++;
+   }
+   return 0;
 }
 
-
-
+// FIXME: why not static?
 int
-gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out){
-	const uint32_t *points;
-	int npoints;
-	uint32_t weight;
-        int i,k;
-	uint32_t r,g,b,a;
-
-	/* Get twice the radius: even rows have 1 element */
-	points = gaussian_row_get(rad * 2,&npoints, &weight);
-	weight = 0;
-	for (i = 0 ; i < npoints ; i ++)
-		weight += points[i];
-
-	for (i = -rad ; i < h + rad; i ++){
-		r = g = b = a = 0;
-		for (k = -rad ; k <= rad ; k ++){
-			if ((k + i) < 0) continue;
-			if ((k + i) >= h) continue;
-			all(+=, a, r, g, b, points[k + rad],
-					in[skip * (k + i)]);
-		}
-		*(out) = (wavg(a,weight) << 24) |
-                        (wavg(r,weight) << 16) |
-                        (wavg(g,weight) <<  8) |
-                        (wavg(b,weight));
-		out += skip;
-	}
-
-	return 0;
+gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
+{
+   const uint32_t *points;
+   int npoints;
+   uint32_t weight;
+   int i, k;
+   uint32_t r, g, b, a;
+   
+   /* Get twice the radius: even rows have 1 element */
+   points = gaussian_row_get(rad * 2, &npoints, &weight);
+   weight = 0;
+   for (i = 0; i < npoints; i++) weight += points[i];
+   
+   for (i = -rad; i < (h + rad); i++)
+     {
+        r = g = b = a = 0;
+        for (k = -rad; k <= rad; k++)
+          {
+             if ((k + i) < 0) continue;
+             if ((k + i) >= h) continue;
+             all(+=, a, r, g, b, points[k + rad], in[skip * (k + i)]);
+          }
+        // FIXME: use ARGB_JOIN
+        *(out) = 
+           (wavg(a, weight) << 24) |
+           (wavg(r, weight) << 16) |
+           (wavg(g, weight) <<  8) |
+           (wavg(b, weight));
+        out += skip;
+     }
+   return 0;
 }
 
+// FIXME: why not static?
 int
-gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out){
-	const uint64_t *points;
-	int npoints;
-	uint64_t weight;
-        int i,k;
-	uint64_t r,g,b,a;
-
-	/* Get twice the radius: even rows have 1 element */
-	points = gaussian_row_get64(rad * 2,&npoints, &weight);
-	weight = 0;
-	for (i = 0 ; i < npoints ; i ++)
-		weight += points[i];
-
-	for (i = -rad ; i < h + rad; i ++){
-		r = g = b = a = 0;
-		for (k = -rad ; k <= rad ; k ++){
-			if ((k + i) < 0) continue;
-			if ((k + i) >= h) continue;
-			all(+=, a, r, g, b, points[k + rad],
-					in[skip * (k + i)]);
-		}
-		*(out) = (wavg(a,weight) << 24) |
-                        (wavg(r,weight) << 16) |
-                        (wavg(g,weight) <<  8) |
-                        (wavg(b,weight));
-		out += skip;
-	}
-
-	return 0;
+gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
+{
+   const uint64_t *points;
+   int npoints;
+   uint64_t weight;
+   int i, k;
+   uint64_t r, g, b, a;
+   
+   /* Get twice the radius: even rows have 1 element */
+   points = gaussian_row_get64(rad * 2, &npoints, &weight);
+   weight = 0;
+   for (i = 0; i < npoints; i++) weight += points[i];
+   
+   for (i = -rad; i < (h + rad); i++)
+     {
+        r = g = b = a = 0;
+        for (k = -rad ; k <= rad ; k++)
+          {
+             if ((k + i) < 0) continue;
+             if ((k + i) >= h) continue;
+             all(+=, a, r, g, b, points[k + rad], in[skip * (k + i)]);
+          }
+        // FIXME: use ARGB_JOIN
+        *(out) = 
+           (wavg(a, weight) << 24) |
+           (wavg(r, weight) << 16) |
+           (wavg(g, weight) <<  8) |
+           (wavg(b, weight));
+        out += skip;
+     }
+   return 0;
 }
 
-
+// FIXME: why not static?
 int
-gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out){
-	const double *points;
-	int npoints;
-	double weight;
-        int i,k;
-	double r,g,b,a;
-
-	/* Get twice the radius: even rows have 1 element */
-	points = gaussian_row_getd(rad * 2,&npoints, &weight);
-	weight = 0;
-	for (i = 0 ; i < npoints ; i ++)
-		weight += points[i];
-
-	for (i = -rad ; i < h + rad; i ++){
-		r = g = b = a = 0;
-		for (k = -rad ; k <= rad ; k ++){
-			if ((k + i) < 0) continue;
-			if ((k + i) >= h) continue;
-			all(+=, a, r, g, b, points[k + rad],
-					in[skip * (k + i)]);
-		}
-		*(out) = (wavgd(a,weight) << 24) |
-                        (wavgd(r,weight) << 16) |
-                        (wavgd(g,weight) <<  8) |
-                        (wavgd(b,weight));
-		out += skip;
-	}
-
-	return 0;
+gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
+{
+   const double *points;
+   int npoints;
+   double weight;
+   int i, k;
+   double r, g, b, a;
+   
+   /* Get twice the radius: even rows have 1 element */
+   points = gaussian_row_getd(rad * 2, &npoints, &weight);
+   weight = 0;
+   for (i = 0 ; i < npoints ; i ++) weight += points[i];
+   
+   for (i = -rad ; i < h + rad; i ++)
+     {
+        r = g = b = a = 0;
+        for (k = -rad ; k <= rad ; k ++)
+          {
+             if ((k + i) < 0) continue;
+             if ((k + i) >= h) continue;
+             all(+=, a, r, g, b, points[k + rad], in[skip * (k + i)]);
+          }
+        // FIXME: use ARGB_JOIN
+        *(out) = 
+           (wavgd(a, weight) << 24) |
+           (wavgd(r, weight) << 16) |
+           (wavgd(g, weight) <<  8) |
+           (wavgd(b, weight));
+        out += skip;
+     }
+   return 0;
 }
 
-
+// FIXME: why not static?
 const uint32_t *
-gaussian_row_get(int row, int *npoints, uint32_t *weight){
-	static uint32_t *points = NULL;
-	static int last = -1;
-	static uint32_t lastweight = -1;
-	int c,k;
+gaussian_row_get(int row, int *npoints, uint32_t *weight)
+{
+   static uint32_t *points = NULL;
+   static int last = -1;
+   static uint32_t lastweight = -1;
+   int c, k;
+   
+   if (row < 0) return NULL;
+   
+   if (npoints) *npoints = row + 1;
+   
+   if (last == row)
+     {
+        if (weight) *weight = lastweight;
+        return points;
+     }
+   if (points) free(points);
 
-	if (row < 0) return NULL;
-
-	if (npoints) *npoints = row + 1;
-
-	if (last == row){
-		if (weight) *weight = lastweight;
-		return points;
-	}
-	if (points) free(points);
-
-	points = malloc((row + 1) * sizeof(uint32_t));
-	if (!points){
-		last = -1;
-		return NULL;
-	}
-	last = row;
-
-
-	c = 1;
-	for (k = 0 ; k <= row ; k ++){
-		points[k] = c;
-		c = c * (row-k)/(k+1);
-	}
-
-	for (k = 0, lastweight = 0 ; k <= row ; k ++)
-		lastweight += points[k];
-
-	if (weight) *weight = lastweight;
-
-	return points;
+   points = malloc((row + 1) * sizeof(uint32_t));
+   if (!points)
+     {
+        last = -1;
+        return NULL;
+     }
+   last = row;
+   
+   c = 1;
+   for (k = 0; k <= row; k++)
+     {
+        points[k] = c;
+        c = c * (row - k) / (k + 1);
+     }
+   
+   for (k = 0, lastweight = 0; k <= row; k++) lastweight += points[k];
+   if (weight) *weight = lastweight;
+   return points;
 }
 
+// FIXME: why not static?
 const uint64_t *
-gaussian_row_get64(int row, int *npoints, uint64_t *weight){
-	static uint64_t *points = NULL;
-	static int last = -1;
-	static uint64_t lastweight = -1;
-	uint64_t c;
-	int k;
-
-	if (row < 0) return NULL;
-
-	if (npoints) *npoints = row + 1;
-	if (last == row){
-		if (weight) *weight = lastweight;
-		return points;
-	}
-        if (points) free(points);
-
-	points = malloc((row + 1) * sizeof(uint64_t));
-	if (!points){
-		last = -1;
-		return NULL;
-	}
-	last = row;
-
-
-	c = 1;
-	for (k = 0 ; k <= row ; k ++){
-		points[k] = c;
-		c = c * (row-k)/(k+1);
-	}
-
-	for (k = 0, lastweight = 0 ; k <= row ; k ++)
-		lastweight += points[k];
-
-	if (weight) *weight = lastweight;
-
-	return points;
+gaussian_row_get64(int row, int *npoints, uint64_t *weight)
+{
+   static uint64_t *points = NULL;
+   static int last = -1;
+   static uint64_t lastweight = -1;
+   uint64_t c;
+   int k;
+   
+   if (row < 0) return NULL;
+   
+   if (npoints) *npoints = row + 1;
+   if (last == row)
+     {
+        if (weight) *weight = lastweight;
+        return points;
+     }
+   if (points) free(points);
+   
+   points = malloc((row + 1) * sizeof(uint64_t));
+   if (!points)
+     {
+        last = -1;
+        return NULL;
+     }
+   last = row;
+   
+   c = 1;
+   for (k = 0; k <= row; k++)
+     {
+        points[k] = c;
+        c = c * (row - k) / (k + 1);
+     }
+   
+   for (k = 0, lastweight = 0; k <= row; k ++) lastweight += points[k];
+   if (weight) *weight = lastweight;
+   
+   return points;
 }
+
+// FIXME: why not static?
 const double *
-gaussian_row_getd(int row, int *npoints, double *weight){
-	static double *points = NULL;
-	static int last = -1;
-	static double lastweight = -1;
-	double c;
-	int k;
-
-	if (row < 0) return NULL;
-
-	if (last == row){
-		if (weight) *weight = lastweight;
-		return points;
-	}
-
-        if (points) free(points);
-	points = malloc((row + 1) * sizeof(double));
-	if (!points){
-		last = -1;
-		return NULL;
-	}
-	last = row;
-
-	if (npoints) *npoints = row + 1;
-
-	c = 1;
-	for (k = 0 ; k <= row ; k ++){
-		points[k] = c;
-		c = c * (row-k)/(k+1);
-	}
-
-	for (k = 0, lastweight = 0 ; k <= row ; k ++)
-		lastweight += points[k];
-
-	if (weight) *weight = lastweight;
-
-	return points;
+gaussian_row_getd(int row, int *npoints, double *weight)
+{
+   static double *points = NULL;
+   static int last = -1;
+   static double lastweight = -1;
+   double c;
+   int k;
+   
+   if (row < 0) return NULL;
+   
+   if (last == row)
+     {
+        if (weight) *weight = lastweight;
+        return points;
+     }
+   
+   if (points) free(points);
+   points = malloc((row + 1) * sizeof(double));
+   if (!points)
+     {
+        last = -1;
+        return NULL;
+     }
+   last = row;
+   
+   if (npoints) *npoints = row + 1;
+   
+   c = 1;
+   for (k = 0; k <= row; k++)
+     {
+        points[k] = c;
+        c = c * (row - k) / (k + 1);
+     }
+   
+   for (k = 0, lastweight = 0; k <= row; k++) lastweight += points[k];
+   if (weight) *weight = lastweight;
+   
+   return points;
 }
-
-
 
 static Eina_Bool
 negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
@@ -936,6 +963,7 @@ negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
    int w,h;
    uint32_t mask,a;
 
+   // FIXME: dont call if img has alpha
    if (BUILD_NEON0 && evas_common_cpu_has_feature(CPU_FEATURE_NEON))
       return negation_filter_neon(info, src, dst);
 
@@ -946,28 +974,29 @@ negation_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
 
    if (src->cache_entry.flags.alpha)
      {
-        for (i = 0 ; i < h ; i ++)
+        for (i = 0; i < h; i++)
           {
-             for (j = 0 ; j < w ; j ++)
+             for (j = 0; j < w; j++)
                {
                   a = (*in >> 24) & 0xff;
                   mask = a | (a << 8) | (a << 16);
+                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
                   *out = (mask - (*in & 0xffffff)) | (a << 24);
-                  out ++;
-                  in ++;
+                  out++;
+                  in++;
                }
           }
-
      }
    else
      {
-        for (i = 0 ; i < h ; i ++)
+        for (i = 0; i < h; i++)
           {
-             for (j = 0 ; j < w ; j ++)
+             for (j = 0; j < w; j++)
                {
+                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
                   *out = ~(*in & ~0xff000000) | ((*in) & 0xff000000);
-                  out ++;
-                  in ++;
+                  out++;
+                  in++;
                }
           }
      }
@@ -982,7 +1011,7 @@ negation_filter_neon(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
 
    if (src->cache_entry.flags.alpha)
      {
-
+        // FIXME: not implemented
      }
    else
      {
@@ -1028,61 +1057,56 @@ negation_filter_neon(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
          );
 #undef AP
      }
-
-
-
-
 #endif
    return EINA_TRUE;
+   info = NULL; src = NULL; dst = NULL;
 }
 
-
-
-
-
 static Eina_Bool
-sepia_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
+sepia_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst)
 {
    uint32_t *in, *out;
-   int i,j;
-   int w,h;
-   uint32_t r,g,b,nr,ng,nb;
+   int i, j;
+   int w, h;
+   uint32_t r, g, b, nr, ng, nb;
 
    in = src->image.data;
    out = dst->image.data;
    w = src->cache_entry.w;
    h = src->cache_entry.h;
 
-   for (i = 0 ; i < h ; i ++)
+   for (i = 0; i < h; i++)
      {
-        for (j = 0; j < w ; j ++)
+        for (j = 0; j < w; j++)
           {
              r = R_VAL(in);
              g = G_VAL(in);
              b = B_VAL(in);
-             nr = ((uint32_t)((r * .393) + (g *.769) + (b * .189)));
-             ng = ((uint32_t)((r * .349) + (g *.686) + (b * .168)));
-             nb = ((uint32_t)((r * .272) + (g *.534) + (b * .131)));
+             nr = ((uint32_t)((r * 0.393) + (g * 0.769) + (b * 0.189)));
+             ng = ((uint32_t)((r * 0.349) + (g * 0.686) + (b * 0.168)));
+             nb = ((uint32_t)((r * 0.272) + (g * 0.534) + (b * 0.131)));
              if (nr > 255) nr = 255;
              if (ng > 255) ng = 255;
              if (nb > 255) nb = 255;
+             // FIXME: use *out = ARGB_JOIN(a, r, g, b);
              *out = (*in & 0xff000000) | (nr << 16) | (ng << 8) | nb;
-             out ++;
-             in ++;
+             out++;
+             in++;
           }
      }
 
    return EINA_TRUE;
 
 }
+
 static Eina_Bool
-greyscale_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
+greyscale_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst)
 {
    uint32_t *in, *out;
-   int i,j;
-   int w,h;
+   int i, j;
+   int w, h;
    uint32_t cur;
-   uint32_t a, r,g,b;
+   uint32_t a, r, g, b;
 
    in = src->image.data;
    out = dst->image.data;
@@ -1091,19 +1115,20 @@ greyscale_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
 
    if (src->cache_entry.flags.alpha)
      {
-        for (i = 0 ; i < h ; i ++)
+        for (i = 0; i < h; i++)
           {
-             for (j = 0; j < w ; j ++)
+             for (j = 0; j < w; j++)
                {
                   a = A_VAL(in);
                   r = R_VAL(in);
                   g = G_VAL(in);
                   b = B_VAL(in);
-                  cur = r * 0.3 + g * 0.59 + b * 0.11;
+                  cur = (r * 0.3) + (g * 0.59) + (b * 0.11);
                   cur |= cur << 16;
+                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
                   *out = (a << 24) | cur | (cur << 8);
-                  out ++;
-                  in ++;
+                  out++;
+                  in++;
                }
           }
      }
@@ -1118,9 +1143,10 @@ greyscale_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
                   b = B_VAL(in);
                   cur = r * 0.3 + g * 0.59 + b * 0.11;
                   cur |= cur << 16;
+                  // FIXME: use *out = ARGB_JOIN(a, r, g, b);
                   *out = 0xff000000 | cur | (cur << 8);
-                  out ++;
-                  in ++;
+                  out++;
+                  in++;
                }
           }
      }
@@ -1128,23 +1154,24 @@ greyscale_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
 }
 
 static Eina_Bool
-brightness_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
+brightness_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst)
 {
    uint32_t *in, *out;
-   int i,j;
-   int w,h;
+   int i, j;
+   int w, h;
 
    in = src->image.data;
    out = dst->image.data;
    w = src->cache_entry.w;
    h = src->cache_entry.h;
 
-   for (i = 0 ; i < h ; i ++)
+   for (i = 0; i < h; i++)
      {
-        for (j = 0; j < w ; j ++)
+        for (j = 0; j < w; j++)
           {
-             out ++;
-             in ++;
+             // FIXME: not even implemented
+             out++;
+             in++;
           }
      }
 
@@ -1152,34 +1179,31 @@ brightness_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
    return EINA_TRUE;
 
 }
+
 static Eina_Bool
-contrast_filter(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
+contrast_filter(Evas_Filter_Info *info __UNUSED__, RGBA_Image *src, RGBA_Image *dst)
 {
    uint32_t *in, *out;
-   int i,j;
-   int w,h;
+   int i, j;
+   int w, h;
 
    in = src->image.data;
    out = dst->image.data;
    w = src->cache_entry.w;
    h = src->cache_entry.h;
 
-   for (i = 0 ; i < h ; i ++)
+   for (i = 0; i < h; i++)
      {
-        for (j = 0; j < w ; j ++)
+        for (j = 0; j < w; j++)
           {
-             out ++;
-             in ++;
+             // FIXME: not even implemented
+             out++;
+             in++;
           }
      }
 
    return EINA_TRUE;
 
 }
-
-
-
-
-
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
