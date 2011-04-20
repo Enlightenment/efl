@@ -2446,16 +2446,21 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                   uint8_t *key;
 
                   if (obj->filter->key) free(obj->filter->key);
+                  obj->filter->key = NULL;
+                  obj->filter->len = 0;
                   key = evas_filter_key_get(obj->filter, &len);
-                  obj->filter->key = key;
-                  obj->filter->len = len;
-                  fi = obj->layer->evas->engine.func->image_filtered_get
-                  (o->engine_data, key, len);
-                  if (obj->filter->cached && fi != obj->filter->cached)
+                  if (key)
                     {
-                       obj->layer->evas->engine.func->image_filtered_free
-                       (o->engine_data, obj->filter->cached);
-                       obj->filter->cached = NULL;
+                       obj->filter->key = key;
+                       obj->filter->len = len;
+                       fi = obj->layer->evas->engine.func->image_filtered_get
+                          (o->engine_data, key, len);
+                       if (obj->filter->cached && fi != obj->filter->cached)
+                         {
+                            obj->layer->evas->engine.func->image_filtered_free
+                               (o->engine_data, obj->filter->cached);
+                            obj->filter->cached = NULL;
+                         }
                     }
                }
              else if (obj->filter->cached)

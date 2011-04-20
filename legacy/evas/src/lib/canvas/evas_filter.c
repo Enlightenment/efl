@@ -75,8 +75,7 @@ struct filterinfo filterinfo[] =
    /* None */
    { NULL, 0, NULL, NULL, EINA_FALSE},
    /* Blur */
-   { gaussian_filter, sizeof(Evas_Filter_Info_Blur), blur_size_get,
-         gaussian_key_get, EINA_TRUE },
+   { gaussian_filter, sizeof(Evas_Filter_Info_Blur), blur_size_get, gaussian_key_get, EINA_TRUE },
    /* Negation */
    { negation_filter, 0, NULL, NULL, EINA_FALSE },
    /* Sepia */
@@ -442,6 +441,7 @@ evas_filter_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    
    len = 1 + finfo->datasize;
    key = malloc(len);
+   if (!key) return NULL;
    if (finfo->datasize) memcpy(key, info->data, finfo->datasize);
    key[finfo->datasize] = info->filter;
    return key;
@@ -526,8 +526,8 @@ gaussian_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
    blur = info->data;
 
    if (lenp) *lenp = 4;
-   // FIXME: handle malloc fail
    key = malloc(4);
+   if (!key) return NULL;
    key[0] = EVAS_FILTER_BLUR;
    key[1] = blur->quality * 255;
    key[2] = blur->radius >> 8;
