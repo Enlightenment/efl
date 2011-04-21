@@ -55,6 +55,14 @@ static void _parent_resize(void *data, Evas *e, Evas_Object *obj, void *event_in
 static void _parent_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_hide(void *data, Evas_Object *obj, void *event_info);
 
+static const char SIG_CLICKED[] = "clicked";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED, ""},
+   {NULL, NULL}
+};
+
+
 static void
 _del_item(Elm_Menu_Item *item)
 {
@@ -273,7 +281,7 @@ static void
 _hover_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
    _menu_hide(data, obj, event_info);
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
@@ -482,6 +490,8 @@ elm_menu_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _show, obj);
 
    evas_object_event_callback_add(wd->bx, EVAS_CALLBACK_RESIZE, _menu_resize, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _sizing_eval(obj);
    return obj;

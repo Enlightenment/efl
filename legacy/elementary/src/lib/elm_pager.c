@@ -50,6 +50,14 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
+static const char SIG_HIDE_FINISHED[] = "hide,finished";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_HIDE_FINISHED, ""},
+   {NULL, NULL}
+};
+
+
 static void
 _del_hook(Evas_Object *obj)
 {
@@ -239,7 +247,7 @@ _signal_hide_finished(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    Evas_Object *obj2 = it->obj;
    evas_object_hide(it->base);
    edje_object_signal_emit(it->base, "elm,action,reset", "elm");
-   evas_object_smart_callback_call(obj2, "hide,finished", it->content);
+   evas_object_smart_callback_call(obj2, SIG_HIDE_FINISHED, it->content);
    edje_object_message_signal_process(it->base);
    evas_object_hide(it->content);
    if (it->popme) evas_object_del(it->content);
@@ -285,6 +293,8 @@ elm_pager_add(Evas_Object *parent)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, obj);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);

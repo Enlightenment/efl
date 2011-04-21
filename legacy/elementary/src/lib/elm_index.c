@@ -51,6 +51,21 @@ static void _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level);
 static void _index_box_clear(Evas_Object *obj, Evas_Object *box, int level);
 static void _item_free(Elm_Index_Item *it);
 
+static const char SIG_CHANGED[] = "changed";
+static const char SIG_DELAY_CHANGED[] = "delay,changed";
+static const char SIG_SELECTED[] = "selected";
+static const char SIG_LEVEL_UP[] = "level,up";
+static const char SIG_LEVEL_DOWN[] = "level,down";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CHANGED, ""},
+   {SIG_DELAY_CHANGED, ""},
+   {SIG_SELECTED, ""},
+   {SIG_LEVEL_UP, ""},
+   {SIG_LEVEL_DOWN, ""},
+   {NULL, NULL}
+};
+
 static void
 _del_pre_hook(Evas_Object *obj)
 {
@@ -303,7 +318,7 @@ _delay_change(void *data)
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->delay = NULL;
    d = (void *)elm_index_item_selected_get(data, wd->level);
-   if (d) evas_object_smart_callback_call(data, "delay,changed", d);
+   if (d) evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, d);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -387,7 +402,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   selectraise = edje_object_data_get(it->base.view, "selectraise");
                   if ((selectraise) && (!strcmp(selectraise, "on")))
                     evas_object_raise(it->base.view);
-                  evas_object_smart_callback_call((void *)obj, "changed", (void *)it->base.data);
+                  evas_object_smart_callback_call((void *)obj, SIG_CHANGED, (void *)it->base.data);
                   if (wd->delay) ecore_timer_del(wd->delay);
                   wd->delay = ecore_timer_add(0.2, _delay_change, obj);
                }
@@ -456,7 +471,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
    if (ev->button != 1) return;
    wd->down = 0;
    d = (void *)elm_index_item_selected_get(data, wd->level);
-   if (d) evas_object_smart_callback_call(data, "selected", d);
+   if (d) evas_object_smart_callback_call(data, SIG_SELECTED, d);
    elm_index_active_set(data, 0);
    edje_object_signal_emit(wd->base, "elm,state,level,0", "elm");
 }
@@ -488,7 +503,7 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
                   wd->level = 1;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", wd->level);
                   edje_object_signal_emit(wd->base, buf, "elm");
-                  evas_object_smart_callback_call(data, "level,up", NULL);
+                  evas_object_smart_callback_call(data, SIG_LEVEL_UP, NULL);
                }
           }
         else
@@ -498,7 +513,7 @@ _mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
                   wd->level = 0;
                   snprintf(buf, sizeof(buf), "elm,state,level,%i", wd->level);
                   edje_object_signal_emit(wd->base, buf, "elm");
-                  evas_object_smart_callback_call(data, "level,down", NULL);
+                  evas_object_smart_callback_call(data, SIG_LEVEL_DOWN, NULL);
                }
           }
      }
@@ -579,6 +594,8 @@ elm_index_add(Evas_Object *parent)
         edje_object_part_swallow(wd->base, "elm.swallow.index.1", wd->bx[1]);
         evas_object_show(wd->bx[1]);
      }
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);

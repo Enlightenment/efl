@@ -95,6 +95,27 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_SELECTED[] = "selected";
+static const char SIG_UNSELECTED[] = "unselected";
+static const char SIG_LONGPRESSED[] = "longpressed";
+static const char SIG_SCROLL_EDGE_TOP[] = "scroll,edge,top";
+static const char SIG_SCROLL_EDGE_BOTTOM[] = "scroll,edge,bottom";
+static const char SIG_SCROLL_EDGE_LEFT[] = "scroll,edge,left";
+static const char SIG_SCROLL_EDGE_RIGHT[] = "scroll,edge,right";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED_DOUBLE, ""},
+   {SIG_SELECTED, ""},
+   {SIG_UNSELECTED, ""},
+   {SIG_LONGPRESSED, ""},
+   {SIG_SCROLL_EDGE_TOP, ""},
+   {SIG_SCROLL_EDGE_BOTTOM, ""},
+   {SIG_SCROLL_EDGE_LEFT, ""},
+   {SIG_SCROLL_EDGE_RIGHT, ""},
+   {NULL, NULL}
+};
+
 #define ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ...)                      \
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, __VA_ARGS__);             \
 if (it->deleted)                                                         \
@@ -102,6 +123,8 @@ if (it->deleted)                                                         \
    ERR("ERROR: "#it" has been DELETED.\n");                              \
    return __VA_ARGS__;                                                   \
 }
+
+
 
 static inline void
 _elm_list_item_free(Elm_List_Item *it)
@@ -707,7 +730,7 @@ call:
    _elm_list_walk(wd);
 
    if (it->func) it->func((void *)it->base.data, it->base.widget, it);
-   evas_object_smart_callback_call(obj, "selected", it);
+   evas_object_smart_callback_call(obj, SIG_SELECTED, it);
    it->wd->last_selected_item = it;
 
    _elm_list_unwalk(wd);
@@ -741,7 +764,7 @@ _item_unselect(Elm_List_Item *it)
      {
         it->selected = EINA_FALSE;
         wd->selected = eina_list_remove(wd->selected, it);
-        evas_object_smart_callback_call(it->base.widget, "unselected", it);
+        evas_object_smart_callback_call(it->base.widget, SIG_UNSELECTED, it);
      }
 
    _elm_list_unwalk(wd);
@@ -808,28 +831,28 @@ static void
 _scroll_edge_left(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, "scroll,edge,left", NULL);
+   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_LEFT, NULL);
 }
 
 static void
 _scroll_edge_right(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, "scroll,edge,right", NULL);
+   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_RIGHT, NULL);
 }
 
 static void
 _scroll_edge_top(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, "scroll,edge,top", NULL);
+   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_TOP, NULL);
 }
 
 static void
 _scroll_edge_bottom(void *data, Evas_Object *scr __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, "scroll,edge,bottom", NULL);
+   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_BOTTOM, NULL);
 }
 
 static Eina_Bool
@@ -846,7 +869,7 @@ _long_press(void *data)
    if (it->disabled) goto end;
 
    wd->longpressed = EINA_TRUE;
-   evas_object_smart_callback_call(it->base.widget, "longpressed", it);
+   evas_object_smart_callback_call(it->base.widget, SIG_LONGPRESSED, it);
 
 end:
    return ECORE_CALLBACK_CANCEL;
@@ -900,7 +923,7 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        evas_object_smart_callback_call(it->base.widget, "clicked,double", it);
+        evas_object_smart_callback_call(it->base.widget, SIG_CLICKED_DOUBLE, it);
         evas_object_smart_callback_call(it->base.widget, "clicked", it); // will be removed
      }
    wd->swipe = EINA_FALSE;
@@ -1340,6 +1363,8 @@ elm_list_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
