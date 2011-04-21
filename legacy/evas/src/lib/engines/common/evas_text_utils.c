@@ -359,26 +359,11 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         if ((use_kerning) && (prev_index) && (index) &&
             (pface == fi->src->ft.face))
           {
-# ifdef BIDI_SUPPORT
-             /* if it's rtl, the kerning matching should be reversed, */
-             /* i.e prev index is now the index and the other way */
-             /* around. There is a slight exception when there are */
-             /* compositing chars involved.*/
-             if (text_props &&
-                 (text_props->bidi.dir != EVAS_BIDI_DIRECTION_RTL))
+             if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
                {
-                  if (evas_common_font_query_kerning(fi, index, prev_index, &kern))
-                    {
-                       (gl_itr - 1)->pen_after += kern;
-                    }
-               }
-             else
-# endif
-               {
-                  if (evas_common_font_query_kerning(fi, prev_index, index, &kern))
-                    {
-                       (gl_itr - 1)->pen_after += kern;
-                    }
+                  pen_x += kern;
+                  (gl_itr - 1)->pen_after +=
+                     EVAS_FONT_ROUND_26_6_TO_INT(kern);
                }
           }
 
