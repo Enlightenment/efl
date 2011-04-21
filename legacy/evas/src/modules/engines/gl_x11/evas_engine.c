@@ -2457,6 +2457,24 @@ eng_gl_make_current(void *data, void *surface, void *context)
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
 
+   if (re->win)
+     {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        if ((eglGetCurrentContext() == re->win->egl_context[0]) ||
+            (eglGetCurrentSurface(EGL_READ) == re->win->egl_surface[0]) ||
+            (eglGetCurrentSurface(EGL_DRAW) == re->win->egl_surface[0]))
+          {
+             evas_gl_common_context_use(re->win->gl_context);
+             evas_gl_common_context_flush(re->win->gl_context);
+          }
+#else
+        if (glXGetCurrentContext() == re->win->context)
+          {
+             evas_gl_common_context_use(re->win->gl_context);
+             evas_gl_common_context_flush(re->win->gl_context);
+          }
+#endif   
+     }
 
    if ((!sfc) || (!ctx))
      {
