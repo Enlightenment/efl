@@ -7,12 +7,17 @@
 #include "evas_private.h"
 
 #include <assert.h>
-
+/* disable neon - even after fixes:
+ * Error: ARM register expected -- vdup.u32 q14,$0xff000000'
+ * not going to fix now
 #ifdef BUILD_NEON
 # define BUILD_NEON0 1
 #else
 # define BUILD_NEON0 0
 #endif
+*/
+
+#define BUILD_NEON0 0
 
 typedef struct Evas_Filter_Info_Blur
 {
@@ -977,10 +982,10 @@ negation_filter_neon(Evas_Filter_Info *info, RGBA_Image *src, RGBA_Image *dst)
                "vmvn    q6,   q2                            \n\t"
                "vmvn    q7,   q3                            \n\t"
 
-               "vor     q0,   q6,q4                         \n\t"
-               "vor     q1,   q7,q5                         \n\t"
+               "vorr     q0,   q6,q4                         \n\t"
+               "vorr     q1,   q7,q5                         \n\t"
 
-               "vstm    %[d]1,  {d0,d1,d2,d3}               \n\t"
+               "vstm    %[d]!,  {d0,d1,d2,d3}               \n\t"
 
                "bhi     "AP"loop                            \n\t"
 
