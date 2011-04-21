@@ -571,7 +571,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
                                                  alpha, EVAS_COLORSPACE_ARGB8888);
         if (!im)
           {
-             _unfind_xob(obr->xob, 0);
+             _unfind_xcbob(obr->xcbob, 0);
              free(obr);
              return NULL;
           }
