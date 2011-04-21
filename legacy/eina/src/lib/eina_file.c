@@ -838,8 +838,11 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 {
    int flags = MAP_SHARED;
 
+// bsd people will lack this feature
+#ifdef MAP_POPULATE   
    if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
-
+#endif
+   
    if (file->global_map == MAP_FAILED)
      file->global_map = mmap(NULL, file->length, PROT_READ, flags, file->fd, 0);
 
@@ -875,8 +878,10 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
      {
         int flags = MAP_SHARED;
 
+// bsd people will lack this feature
+#ifdef MAP_POPULATE   
         if (rule == EINA_FILE_POPULATE) flags |= MAP_POPULATE;
-
+#endif
         map = malloc(sizeof (Eina_File_Map));
         if (!map) return NULL;
 
