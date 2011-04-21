@@ -654,12 +654,10 @@ gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out)
              if ((k + i) >= w) continue;
              all(+=, a, r, g, b, points[k + rad], in + k + i);
           }
-        // FIXME: use ARGB_JOIN
-        *(out) = 
-           (wavg(a, weight) << 24) |
-           (wavg(r, weight) << 16) |
-           (wavg(g, weight) <<  8) |
-           (wavg(b, weight));
+        *(out) = ARGB_JOIN(wavg(a, weight),
+                           wavg(r, weight),
+                           wavg(g, weight),
+                           wavg(b, weight));
         out++;
      }
    return 0;
@@ -674,7 +672,7 @@ gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
    double weight;
    int i, k;
    double r, g, b, a;
-   
+
    /* Get twice the radius: even rows have 1 element */
    points = gaussian_row_getd(rad * 2, &npoints, &weight);
    for (i = -rad; i < (w + rad); i++)
@@ -686,12 +684,10 @@ gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
              if ((k + i) >= w) continue;
              all(+=, a, r, g, b, points[k + rad], in + k + i);
           }
-        // FIXME: use ARGB_JOIN
-        *(out) =
-           (wavgd(a, weight) << 24) |
-           (wavgd(r, weight) << 16) |
-           (wavgd(g, weight) <<  8) |
-           (wavgd(b, weight));
+        *(out) = ARGB_JOIN(wavgd(a, weight),
+                           wavgd(r, weight),
+                           wavgd(g, weight),
+                           wavgd(b, weight));
         out++;
    }
    return 0;
@@ -717,12 +713,10 @@ gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
          if ((k + i) >= w) continue;
          all(+=, a, r, g, b, points[k + rad], in + k + i);
       }
-        // FIXME: use ARGB_JOIN
-      *(out) =
-         (wavg(a, weight) << 24) |
-         (wavg(r, weight) << 16) |
-         (wavg(g, weight) <<  8) |
-         (wavg(b, weight));
+      *(out) = ARGB_JOIN(wavg(a, weight),
+                         wavg(r, weight),
+                         wavg(g, weight),
+                         wavg(b, weight));
       out++;
    }
    return 0;
@@ -736,12 +730,12 @@ gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
    uint32_t weight;
    int i, k;
    uint32_t r, g, b, a;
-   
+
    /* Get twice the radius: even rows have 1 element */
    points = gaussian_row_get(rad * 2, &npoints, &weight);
    weight = 0;
    for (i = 0; i < npoints; i++) weight += points[i];
-   
+
    for (i = -rad; i < (h + rad); i++)
      {
         r = g = b = a = 0;
@@ -751,12 +745,10 @@ gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
              if ((k + i) >= h) continue;
              all(+=, a, r, g, b, points[k + rad], in + (skip * (k + i)));
           }
-        // FIXME: use ARGB_JOIN
-        *(out) = 
-           (wavg(a, weight) << 24) |
-           (wavg(r, weight) << 16) |
-           (wavg(g, weight) <<  8) |
-           (wavg(b, weight));
+        *(out) = ARGB_JOIN(wavg(a, weight),
+                           wavg(r, weight),
+                           wavg(g, weight),
+                           wavg(b, weight));
         out += skip;
      }
    return 0;
@@ -770,12 +762,12 @@ gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
    uint64_t weight;
    int i, k;
    uint64_t r, g, b, a;
-   
+
    /* Get twice the radius: even rows have 1 element */
    points = gaussian_row_get64(rad * 2, &npoints, &weight);
    weight = 0;
    for (i = 0; i < npoints; i++) weight += points[i];
-   
+
    for (i = -rad; i < (h + rad); i++)
      {
         r = g = b = a = 0;
@@ -785,12 +777,10 @@ gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
              if ((k + i) >= h) continue;
              all(+=, a, r, g, b, points[k + rad], in + (skip * (k + i)));
           }
-        // FIXME: use ARGB_JOIN
-        *(out) = 
-           (wavg(a, weight) << 24) |
-           (wavg(r, weight) << 16) |
-           (wavg(g, weight) <<  8) |
-           (wavg(b, weight));
+        *(out) = ARGB_JOIN(wavg(a, weight),
+                           wavg(r, weight),
+                           wavg(g, weight),
+                           wavg(b, weight));
         out += skip;
      }
    return 0;
@@ -804,12 +794,12 @@ gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
    double weight;
    int i, k;
    double r, g, b, a;
-   
+
    /* Get twice the radius: even rows have 1 element */
    points = gaussian_row_getd(rad * 2, &npoints, &weight);
    weight = 0;
    for (i = 0 ; i < npoints ; i ++) weight += points[i];
-   
+
    for (i = -rad ; i < h + rad; i ++)
      {
         r = g = b = a = 0;
@@ -819,12 +809,10 @@ gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
              if ((k + i) >= h) continue;
              all(+=, a, r, g, b, points[k + rad], in + (skip * (k + i)));
           }
-        // FIXME: use ARGB_JOIN
-        *(out) = 
-           (wavgd(a, weight) << 24) |
-           (wavgd(r, weight) << 16) |
-           (wavgd(g, weight) <<  8) |
-           (wavgd(b, weight));
+        *(out) = ARGB_JOIN(wavgd(a, weight),
+                           wavgd(r, weight),
+                           wavgd(g, weight),
+                           wavgd(b, weight));
         out += skip;
      }
    return 0;
@@ -837,11 +825,11 @@ gaussian_row_get(int row, int *npoints, uint32_t *weight)
    static int last = -1;
    static uint32_t lastweight = -1;
    int c, k;
-   
+
    if (row < 0) return NULL;
-   
+
    if (npoints) *npoints = row + 1;
-   
+
    if (last == row)
      {
         if (weight) *weight = lastweight;
@@ -856,14 +844,14 @@ gaussian_row_get(int row, int *npoints, uint32_t *weight)
         return NULL;
      }
    last = row;
-   
+
    c = 1;
    for (k = 0; k <= row; k++)
      {
         points[k] = c;
         c = c * (row - k) / (k + 1);
      }
-   
+
    for (k = 0, lastweight = 0; k <= row; k++) lastweight += points[k];
    if (weight) *weight = lastweight;
    return points;
@@ -877,9 +865,9 @@ gaussian_row_get64(int row, int *npoints, uint64_t *weight)
    static uint64_t lastweight = -1;
    uint64_t c;
    int k;
-   
+
    if (row < 0) return NULL;
-   
+
    if (npoints) *npoints = row + 1;
    if (last == row)
      {
