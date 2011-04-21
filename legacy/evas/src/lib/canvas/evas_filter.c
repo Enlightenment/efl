@@ -462,6 +462,7 @@ void
 evas_filter_free(Evas_Object *o)
 {
    if (!o->filter) return;
+   if (o->filter->key) free(o->filter->key);
    free(o->filter);
    o->filter = NULL;
 }
