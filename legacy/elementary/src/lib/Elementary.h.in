@@ -2270,6 +2270,7 @@ extern "C" {
    EAPI void                  elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y) EINA_ARG_NONNULL(1, 5, 6);
    EAPI Elm_Map_Name         *elm_map_utils_convert_coord_into_name(const Evas_Object *obj, double lon, double lat) EINA_ARG_NONNULL(1);
    EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address) EINA_ARG_NONNULL(1, 2);
+   EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy) EINA_ARG_NONNULL(1);
    EAPI Elm_Map_Marker       *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data) EINA_ARG_NONNULL(1, 4, 5);
    EAPI void                  elm_map_max_marker_per_group_set(Evas_Object *obj, int max) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_marker_remove(Elm_Map_Marker *marker) EINA_ARG_NONNULL(1);
@@ -2312,6 +2313,8 @@ extern "C" {
    EAPI const char           *elm_map_name_address_get(Elm_Map_Name *name) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_name_region_get(Elm_Map_Name *name, double *lon, double *lat) EINA_ARG_NONNULL(1);
    EAPI void                  elm_map_name_remove(Elm_Map_Name *name) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy) EINA_ARG_NONNULL(1);
+   EAPI void                  elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_Coord *cy) EINA_ARG_NONNULL(1, 2, 3, 4);
 
    /* smart callbacks called:
     * "clicked" - when image clicked

@@ -90,19 +90,27 @@ my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
 {
    double lon, lat;
    double flon, flat, tlon, tlat;
-   Evas_Coord ox, oy, x, y, w, h;
+   Evas_Coord ox, oy, x, y, w, h, rx, ry, tx, ty;
+   double d;
    int zoom;
+   Evas_Coord size;
    Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
    if (!down) return;
 
    evas_object_geometry_get(data, &ox, &oy, &w, &h);
    zoom = elm_map_zoom_get(data);
    if (zoom<5) return;
+   size = pow(2.0, zoom) * 256;
    elm_map_geo_region_get(obj, &lon, &lat);
-   elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, zoom)*256, &x, &y);
-   x += down->output.x - (w / 2) - ox;
-   y += down->output.y - (h / 2) - oy;
-   elm_map_utils_convert_coord_into_geo(obj, x, y, pow(2.0, zoom)*256, &lon, &lat);
+   elm_map_utils_convert_geo_into_coord(obj, lon, lat, size, &x, &y);
+
+   rx = x;
+   ry = y;
+   x += down->output.x - ((float)w * 0.5) - ox;
+   y += down->output.y - ((float)h * 0.5) - oy;
+   elm_map_rotate_get(data, &d, NULL, NULL);
+   elm_map_utils_rotate_coord(data, x, y, rx, ry, -d, &tx, &ty);
+   elm_map_utils_convert_coord_into_geo(obj, tx, ty, size, &lon, &lat);
 
    itc1 = elm_map_marker_class_new(data);
 
@@ -117,9 +125,9 @@ my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
    if (route_from && route_to)
      {
         elm_map_marker_remove(route_from);
-	route_from = NULL;
+        route_from = NULL;
         elm_map_marker_remove(route_to);
-	route_to = NULL;
+        route_to = NULL;
         elm_map_route_remove(route);
      }
 
@@ -284,6 +292,36 @@ my_bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
+my_bt_rotate_cw(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   double d;
+   Evas_Coord x, y, w, h;
+   float half_w, half_h;
+   evas_object_geometry_get(data, &x, &y, &w, &h);
+   half_w = (float)w * 0.5;
+   half_h = (float)h * 0.5;
+
+   elm_map_rotate_get(data, &d, NULL, NULL);
+   d += 15.0;
+   elm_map_rotate_set(data, d, x + half_w, y + half_h);
+}
+
+static void
+my_bt_rotate_ccw(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   double d;
+   Evas_Coord x, y, w, h;
+   float half_w, half_h;
+   evas_object_geometry_get(data, &x, &y, &w, &h);
+   half_w = (float)w * 0.5;
+   half_h = (float)h * 0.5;
+
+   elm_map_rotate_get(data, &d, NULL, NULL);
+   d -= 15.0;
+   elm_map_rotate_set(data, d, x + half_w, y + half_h);
+}
+
+static void
 my_bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    double zoom;
@@ -380,7 +418,7 @@ my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
         style = rand() % 2;
         if (!style) g_clas = itc_group1;
-	else g_clas = itc_group2;
+        else g_clas = itc_group2;
 
        markers[i] = elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d);
     }
@@ -708,6 +746,22 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         bt = elm_button_add(win);
         elm_button_label_set(bt, "Markers pause On/Off");
         evas_object_smart_callback_add(bt, "clicked", my_bt_markers_pause, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 0.1, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "R +");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_rotate_cw, map);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(bt, 0.1, 0.9);
+        evas_object_show(bt);
+        elm_box_pack_end(bx, bt);
+
+        bt = elm_button_add(win);
+        elm_button_label_set(bt, "R -");
+        evas_object_smart_callback_add(bt, "clicked", my_bt_rotate_ccw, map);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(bt, 0.1, 0.9);
         evas_object_show(bt);
