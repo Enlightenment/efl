@@ -314,7 +314,7 @@ AC_ARG_ENABLE([harfbuzz],
 
 if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
    PKG_CHECK_MODULES([HARFBUZZ],
-      [harfbuzz >= 0.2],
+      [harfbuzz >= 0.3],
       [
        have_harfbuzz="yes"
        requirement_evas="harfbuzz ${requirement_evas}"

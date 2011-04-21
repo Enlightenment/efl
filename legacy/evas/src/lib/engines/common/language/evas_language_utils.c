@@ -43,7 +43,8 @@ evas_common_language_char_script_get(Eina_Unicode unicode)
    static hb_unicode_funcs_t *funcs;
    if (!funcs)
         funcs = evas_common_language_unicode_funcs_get();
-   return hb_unicode_get_script(funcs, unicode);
+   if (funcs)
+      return hb_unicode_get_script(funcs, unicode);
 #else
    (void) unicode;
 #endif

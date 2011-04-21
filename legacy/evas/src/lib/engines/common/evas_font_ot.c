@@ -177,7 +177,7 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
    hb_font_t   *hb_font;
 
    hb_font = hb_ft_font_create(fi->src->ft.face, NULL);
-   hb_font_set_funcs(hb_font, _evas_common_font_ot_font_funcs_get(), NULL, fi);
+   hb_font_set_funcs(hb_font, _evas_common_font_ot_font_funcs_get(), fi, NULL);
 
    hb_shape(hb_font, fi->src->hb.face, buffer, NULL, 0);
    hb_font_destroy(hb_font);
@@ -247,8 +247,8 @@ evas_common_font_ot_populate_text_props(void *_fn, const Eina_Unicode *text,
          sizeof(Evas_Font_OT_Info));
    props->info->glyph = calloc(props->len,
               sizeof(Evas_Font_Glyph_Info));
-   positions = hb_buffer_get_glyph_positions(buffer);
-   infos = hb_buffer_get_glyph_infos(buffer);
+   positions = hb_buffer_get_glyph_positions(buffer, NULL);
+   infos = hb_buffer_get_glyph_infos(buffer, NULL);
    gl_itr = props->info->glyph;
    ot_itr = props->info->ot;
    for (i = 0 ; i < props->len ; i++)
