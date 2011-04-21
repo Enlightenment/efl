@@ -1630,4 +1630,156 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 }
+
+/*************/
+
+static Elm_Genlist_Item_Class itc10;
+static char *mode_type[] = { "slide", "rotate" };
+char *gl10_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+{
+   char buf[256];
+   if (!strcmp(part, "elm.text.mode"))
+     snprintf(buf, sizeof(buf), "Mode # %i", (int)(long)data);
+   else
+     snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
+   return strdup(buf);
+}
+
+Evas_Object *gl10_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+{
+   char buf[PATH_MAX];
+   Evas_Object *ic = elm_icon_add(obj);
+   if (!strcmp(part, "elm.swallow.end"))
+     snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+   else
+     snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   elm_icon_file_set(ic, buf, NULL);
+   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   return ic;
+}
+static void
+_gl_sel10(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   if (!data) return;
+   int v = elm_radio_value_get(data);
+   if (v == 1)
+     elm_genlist_item_mode_set(event_info, mode_type[v], EINA_TRUE);
+}
+
+static void
+_my_gl_mode_right(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   if (!data) return;
+   int v = elm_radio_value_get(data);
+   if (v == 0)
+     elm_genlist_item_mode_set(event_info, mode_type[v], EINA_TRUE);
+}
+
+static void
+_my_gl_mode_left(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   if (!data) return;
+   int v = elm_radio_value_get(data);
+   if (v == 0)
+     elm_genlist_item_mode_set(event_info, mode_type[v], EINA_FALSE);
+}
+
+static void
+_my_gl_mode_cancel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   fprintf(stderr, "drag\n");
+   if (!data) return;
+   int v = elm_radio_value_get(data);
+   Elm_Genlist_Item *it = (Elm_Genlist_Item *)elm_genlist_mode_item_get(obj);
+   if (it)
+     elm_genlist_item_mode_set(it, mode_type[v], EINA_FALSE);
+}
+
+void
+test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *fr, *lb, *bx, *bx2, *bx3, *rd, *rdg, *gl;
+   int i;
+
+   win = elm_win_add(NULL, "genlist10", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Mode");
+   elm_win_autodel_set(win, 1);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(win);
+   elm_frame_label_set(fr, "Mode Type");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx2 = elm_box_add(win);
+   elm_frame_content_set(fr, bx2);
+   evas_object_show(bx2);
+
+   lb = elm_label_add(win);
+   elm_label_label_set(lb,
+                       "Sweep genlist items to the right.<br>"
+                       "Test this by changing Mode Type to Slide or Rotate.");
+   elm_box_pack_end(bx2, lb);
+   evas_object_show(lb);
+
+   bx3 = elm_box_add(win);
+   elm_box_horizontal_set(bx3, EINA_TRUE);
+   elm_box_pack_end(bx2, bx3);
+   evas_object_show(bx3);
+
+   rd = elm_radio_add(win);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_radio_state_value_set(rd, 0);
+   elm_radio_label_set(rd, "Slide  ");
+   evas_object_show(rd);
+   elm_box_pack_end(bx3, rd);
+   rdg = rd;
+
+   rd = elm_radio_add(win);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_radio_state_value_set(rd, 1);
+   elm_radio_label_set(rd, "Rotate");
+   elm_radio_group_add(rd, rdg);
+   evas_object_show(rd);
+   elm_box_pack_end(bx3, rd);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(gl, "drag,start,right", _my_gl_mode_right, rdg);
+   evas_object_smart_callback_add(gl, "drag,start,left", _my_gl_mode_left, rdg);
+   evas_object_smart_callback_add(gl, "drag,start,up", _my_gl_mode_cancel, rdg);
+   evas_object_smart_callback_add(gl, "drag,start,down", _my_gl_mode_cancel, rdg);
+   evas_object_show(gl);
+
+   itc10.item_style     = "default";
+   itc10.func.label_get = gl10_label_get;
+   itc10.func.icon_get  = gl10_icon_get;
+   itc10.func.state_get = gl_state_get;
+   itc10.func.del       = gl_del;
+   itc10.mode_item_style = "mode";
+
+   for (i = 0; i < 50; i++)
+     elm_genlist_item_append(gl,
+                             &itc10,
+                             (void *)(1000 + i)/* item data */,
+                             NULL/* parent */,
+                             ELM_GENLIST_ITEM_NONE/* flags */,
+                             _gl_sel10/* func */,
+                             rdg/* func data */);
+
+   elm_box_pack_end(bx, gl);
+
+   evas_object_resize(win, 520, 520);
+   evas_object_show(win);
+}
 #endif
