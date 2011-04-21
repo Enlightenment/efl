@@ -2735,6 +2735,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    const Eina_Unicode *tbase;
    Evas_Object_Textblock_Text_Item *ti;
    size_t cur_len = 0;
+   Eina_Unicode urepch = 0;
 
    /* prepare a working copy of the string, either filled by the repch or
     * filled with the true values */
@@ -2771,7 +2772,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
           {
              int i, ind;
              Eina_Unicode *ptr;
-             Eina_Unicode urepch;
 
              tbase = str = ptr = alloca((off + 1) * sizeof(Eina_Unicode));
              ind = 0;
@@ -2824,6 +2824,7 @@ skip:
                         c->par->bidi_props, ti->parent.text_pos, tmp_len);
                }
           }
+        ti->text_props.repch = urepch;
         str += tmp_len;
         cur_len -= tmp_len;
 

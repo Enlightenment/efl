@@ -23,6 +23,10 @@ struct _Evas_Text_Props
    Evas_BiDi_Props bidi;
    Evas_Script_Type script;
    Evas_Text_Props_Info *info;
+
+   /* FIXME: just a hack in the meanwhile, remove when I can finally cache
+    * fi and split to scripts without harfbuzz */
+   Eina_Unicode repch;
 };
 
 struct _Evas_Text_Props_Info

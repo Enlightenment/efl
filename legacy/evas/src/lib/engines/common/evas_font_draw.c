@@ -551,8 +551,12 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #else
         /* FIXME: Should be removed once we split according to script without
          * the use of harfbuzz */
-        index =
-           evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
+        if (text_props->repch)
+           index =
+              evas_common_font_glyph_search(fn, &fi, text_props->repch);
+        else
+           index =
+              evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
 
         if (index == 0)
           {
@@ -877,8 +881,12 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
 #else
         /* FIXME: Should be removed once we split according to script without
          * the use of harfbuzz */
-        index =
-           evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
+        if (text_props->repch)
+           index =
+              evas_common_font_glyph_search(fn, &fi, text_props->repch);
+        else
+           index =
+              evas_common_font_glyph_search(fn, &fi, text[EVAS_FONT_WALK_POS]);
 
         if (fi->src->current_size != fi->size)
           {
