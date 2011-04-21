@@ -150,8 +150,7 @@ _evas_common_rgba_image_new(void)
 static void
 _evas_common_rgba_image_delete(Image_Entry *ie)
 {
-   RGBA_Image   *im = (RGBA_Image *) ie;
-   Filtered_Image *fi;
+   RGBA_Image *im = (RGBA_Image *)ie;
 
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
@@ -176,11 +175,15 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 /*
  * FIXME: This doesn't seem to be needed... But I'm not sure why.
  *	 -- nash
-   EINA_LIST_FREE(im->filtered, fi)
      {
-	free(fi->key);
-	_evas_common_rgba_image_delete((Image_Entry *)(fi->image));
-	free(fi);
+        Filtered_Image *fi;
+        
+        EINA_LIST_FREE(im->filtered, fi)
+          {
+             free(fi->key);
+             _evas_common_rgba_image_delete((Image_Entry *)(fi->image));
+             free(fi);
+          }
      }
 */
    free(im);
@@ -365,12 +368,13 @@ _evas_common_rgba_image_dirty(Image_Entry *ie_dst, const Image_Entry *ie_src)
 static int
 _evas_common_rgba_image_ram_usage(Image_Entry *ie)
 {
-   RGBA_Image   *im = (RGBA_Image *) ie;
-   int size = 0;
-
-//   ram += sizeof(struct _RGBA_Image);
-//   if (im->info.real_file) ram += strlen(im->info.real_file);
-//   if (im->info.comment) ram += strlen(im->info.comment);
+   RGBA_Image *im = (RGBA_Image *)ie;
+   int size = sizeof(struct _RGBA_Image);
+   
+   if (ie->cache_key) size += strlen(ie->cache_key);
+   if (ie->file) size += strlen(ie->file);
+   if (ie->key) size += strlen(ie->key);
+   
    if (im->image.data)
      {
 #ifdef EVAS_CSERVE
