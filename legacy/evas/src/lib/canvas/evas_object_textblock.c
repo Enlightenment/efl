@@ -2773,11 +2773,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
              Eina_Unicode *ptr;
              Eina_Unicode urepch;
 
-             str = alloca((off + 1) * sizeof(Eina_Unicode));
-             tbase = str;
+             tbase = str = ptr = alloca((off + 1) * sizeof(Eina_Unicode));
              ind = 0;
              urepch = eina_unicode_utf8_get_next(repch, &ind);
-             for (i = 0, ptr = (Eina_Unicode *)tbase; i < off; ptr++, i++)
+             for (i = 0 ; i < off; ptr++, i++)
                *ptr = urepch;
              *ptr = 0;
           }
