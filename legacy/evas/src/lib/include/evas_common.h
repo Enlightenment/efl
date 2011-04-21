@@ -537,10 +537,13 @@ struct _Image_Entry_Flags
    Eina_Bool in_progress  : 1;
    Eina_Bool dirty        : 1;
    Eina_Bool activ        : 1;
+   
    Eina_Bool need_data    : 1;
    Eina_Bool lru_nodata   : 1;
    Eina_Bool cached       : 1;
    Eina_Bool alpha        : 1;
+   
+   Eina_Bool lru          : 1;
    Eina_Bool alpha_sparse : 1;
 #ifdef BUILD_ASYNC_PRELOAD
    Eina_Bool preload_done : 1;
