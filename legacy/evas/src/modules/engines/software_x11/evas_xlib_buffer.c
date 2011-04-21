@@ -324,11 +324,6 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
                               }
                             if (!_x_err)
                               {
-//				 printf("SHM++ ID=%i -> %i bytes [%i creates]\n",
-//					xob->shm_info->shmid,
-//					xob->xim->bytes_per_line * xob->xim->height,
-//					creates);
-//				 creates++;
 				 xob->bpl = xob->xim->bytes_per_line;
 				 xob->psize = xob->bpl * xob->h;
 				 return xob;
@@ -376,10 +371,6 @@ evas_software_xlib_x_output_buffer_free(X_Output_Buffer *xob, int sync)
 {
    if (xob->shm_info)
      {
-//	printf("SHM-- ID=%i -> %i bytes, [sync=%i]\n",
-//	       xob->shm_info->shmid,
-//	       xob->xim->bytes_per_line * xob->xim->height,
-//	       sync);
 	if (sync) XSync(xob->display, False);
 	XShmDetach(xob->display, xob->shm_info);
 	XDestroyImage(xob->xim);
@@ -400,14 +391,12 @@ evas_software_xlib_x_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc
 {
    if (xob->shm_info)
      {
-//	printf("shm\n");
 	XShmPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y,
 		     xob->w, xob->h, False);
 	if (sync) XSync(xob->display, False);
      }
    else
      {
-//	printf("NO! shm\n");
 	XPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y,
 		  xob->w, xob->h);
      }
