@@ -2659,7 +2659,6 @@ _mode_item_realize(Elm_Genlist_Item *it)
                          elm_widget_style_get(it->base.widget));
    edje_object_mirrored_set(it->mode_view,
                             elm_widget_mirrored_get(it->base.widget));
-   elm_widget_sub_object_add(it->base.widget, it->spacer);
 
    /* signal callback add */
    evas_object_event_callback_add(it->mode_view, EVAS_CALLBACK_MOUSE_DOWN,
