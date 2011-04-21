@@ -165,7 +165,6 @@ evas_object_filter_mode_get(Evas_Object *o)
    return EVAS_FILTER_MODE_OBJECT;
    MAGIC_CHECK_END();
 
-   if (!o->filter) filter_alloc(o);
    if (!o->filter) return EVAS_FILTER_MODE_OBJECT;
    return o->filter->mode;
 }
