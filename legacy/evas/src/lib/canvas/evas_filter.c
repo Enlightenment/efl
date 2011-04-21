@@ -184,6 +184,9 @@ evas_object_filter_set(Evas_Object *o, Evas_Filter filter)
    if (((int)filter < (int)EVAS_FILTER_NONE) || (filter > EVAS_FILTER_LAST))
       return EINA_FALSE;
 
+   /* Don't alloc on no-op */
+   if (!o-filter && filter == EVAS_FILTER_NONE) return EINA_TRUE;
+
    if (!o->filter) filter_alloc(o);
    if (!o->filter) return EINA_FALSE;
 
