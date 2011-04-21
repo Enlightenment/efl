@@ -618,7 +618,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
    dc = gc->dc;
-   imm = dc->mask.mask;
+   imm = (Evas_GL_Image *)dc->mask.mask;
    if (dc->mul.use)
      {
 	a = (dc->mul.col >> 24) & 0xff;
