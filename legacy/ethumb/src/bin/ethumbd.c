@@ -146,8 +146,6 @@ struct _Ethumbd_Queue
 struct _Ethumbd_Slave
 {
    Ecore_Exe *exe;
-   Ecore_Event_Handler *data_cb;
-   Ecore_Event_Handler *del_cb;
    char *bufcmd; // buffer to read commands from slave
    int scmd; // size of command to read
    int pcmd; // position in the command buffer
@@ -165,6 +163,9 @@ struct _Ethumbd
    double timeout;
    Ecore_Timer *timeout_timer;
    Ethumbd_Slave slave;
+
+   Ecore_Event_Handler *data_cb;
+   Ecore_Event_Handler *del_cb;
 };
 
 struct _Ethumbd_Object_Data
@@ -210,7 +211,7 @@ const Ecore_Getopt optdesc = {
 };
 
 static void _ethumb_dbus_generated_signal(Ethumbd *ed, int *id, const char *thumb_path, const char *thumb_key, Eina_Bool success);
-static int _ethumbd_slave_spawn(Ethumbd *ed);
+static Eina_Bool _ethumbd_slave_spawn(Ethumbd_Slave *slave, Ethumbd *ed);
 
 static Eina_Bool
 _ethumbd_timeout_cb(void *data)
@@ -511,7 +512,7 @@ end:
    if (ed->slave.bufcmd)
      free(ed->slave.bufcmd);
 
-   return _ethumbd_slave_spawn(ed);
+   return _ethumbd_slave_spawn(&ed->slave, ed);
 }
 
 static void
@@ -1795,21 +1796,16 @@ _ethumb_dbus_finish(Ethumbd *ed)
    free(ed->queue.list);
 }
 
-static int
-_ethumbd_slave_spawn(Ethumbd *ed)
+static Eina_Bool
+_ethumbd_slave_spawn(Ethumbd_Slave *slave, Ethumbd *ed)
 {
-   ed->slave.data_cb = ecore_event_handler_add(
-      ECORE_EXE_EVENT_DATA, _ethumbd_slave_data_read_cb, ed);
-   ed->slave.del_cb = ecore_event_handler_add(
-      ECORE_EXE_EVENT_DEL, _ethumbd_slave_del_cb, ed);
+   slave->bufcmd = NULL;
+   slave->scmd = 0;
 
-   ed->slave.bufcmd = NULL;
-   ed->slave.scmd = 0;
-
-   ed->slave.exe = ecore_exe_pipe_run(
+   slave->exe = ecore_exe_pipe_run(
       ETHUMB_LIBEXEC_DIR"/ethumbd_slave",
       ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_WRITE, ed);
-   if (!ed->slave.exe)
+   if (!slave->exe)
      {
 	ERR("could not create slave.");
 	return 0;
@@ -1845,7 +1841,12 @@ main(int argc, char *argv[])
 	  }
      }
 
-   child = _ethumbd_slave_spawn(&ed);
+   ed.data_cb = ecore_event_handler_add(ECORE_EXE_EVENT_DATA,
+					_ethumbd_slave_data_read_cb, &ed);
+   ed.del_cb = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+				       _ethumbd_slave_del_cb, &ed);
+
+   child = _ethumbd_slave_spawn(&ed.slave, &ed);
    if (!child)
      {
 	exit_value = -6;
