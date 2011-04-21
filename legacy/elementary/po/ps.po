@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-02-15 16:16+0200\n"
+"POT-Creation-Date: 2011-04-21 20:57+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -14,38 +14,38 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:598
+#: src/lib/elc_fileselector.c:595
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:613
+#: src/lib/elc_fileselector.c:610
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:794 src/lib/elm_entry.c:896
+#: src/lib/elc_fileselector.c:791 src/lib/elm_entry.c:917
 msgid "Cancel"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:804
+#: src/lib/elc_fileselector.c:801
 msgid "OK"
 msgstr ""
 
-#: src/lib/elm_config.c:1538
+#: src/lib/elm_config.c:1545
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:875
-msgid "Select"
-msgstr ""
-
-#: src/lib/elm_entry.c:880
-msgid "Paste"
-msgstr ""
-
-#: src/lib/elm_entry.c:890
+#: src/lib/elm_entry.c:911
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:893
+#: src/lib/elm_entry.c:914
 msgid "Cut"
+msgstr ""
+
+#: src/lib/elm_entry.c:928
+msgid "Select"
+msgstr ""
+
+#: src/lib/elm_entry.c:934
+msgid "Paste"
 msgstr ""

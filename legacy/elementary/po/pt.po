@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-02-15 18:50+0200\n"
+"POT-Creation-Date: 2011-04-21 20:57+0900\n"
 "PO-Revision-Date: 2011-02-16 11:42-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -15,27 +15,38 @@ msgstr ""
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: Portugal\n"
 
-#: src/lib/elm_config.c:1538
-msgid "default:LTR"
-msgstr "omissão:LTR"
+#: src/lib/elc_fileselector.c:595
+msgid "Up"
+msgstr ""
 
-#: src/lib/elm_entry.c:875
-msgid "Select"
-msgstr "Selecionar"
+#: src/lib/elc_fileselector.c:610
+msgid "Home"
+msgstr ""
 
-#: src/lib/elm_entry.c:880
-msgid "Paste"
-msgstr "Colar"
-
-#: src/lib/elm_entry.c:890
-msgid "Copy"
-msgstr "Copiar"
-
-#: src/lib/elm_entry.c:893
-msgid "Cut"
-msgstr "Cortar"
-
-#: src/lib/elm_entry.c:896
+#: src/lib/elc_fileselector.c:791 src/lib/elm_entry.c:917
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: src/lib/elc_fileselector.c:801
+msgid "OK"
+msgstr ""
+
+#: src/lib/elm_config.c:1545
+msgid "default:LTR"
+msgstr "omissão:LTR"
+
+#: src/lib/elm_entry.c:911
+msgid "Copy"
+msgstr "Copiar"
+
+#: src/lib/elm_entry.c:914
+msgid "Cut"
+msgstr "Cortar"
+
+#: src/lib/elm_entry.c:928
+msgid "Select"
+msgstr "Selecionar"
+
+#: src/lib/elm_entry.c:934
+msgid "Paste"
+msgstr "Colar"

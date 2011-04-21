@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-03-26 06:24+0400\n"
+"POT-Creation-Date: 2011-04-21 20:57+0900\n"
 "PO-Revision-Date: 2011-03-26 08:13+0400\n"
 "Last-Translator: batden <batden@orange.fr>\n"
 "Language-Team: Enlightenment French Team <pourunmondesansgourou@gmail.com>\n"
@@ -17,40 +17,38 @@ msgstr ""
 "X-Poedit-Country: FRANCE\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: src/lib/elc_fileselector.c:598
+#: src/lib/elc_fileselector.c:595
 msgid "Up"
 msgstr "Monter"
 
-#: src/lib/elc_fileselector.c:613
+#: src/lib/elc_fileselector.c:610
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:794
-#: src/lib/elm_entry.c:900
+#: src/lib/elc_fileselector.c:791 src/lib/elm_entry.c:917
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/lib/elc_fileselector.c:804
+#: src/lib/elc_fileselector.c:801
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elm_config.c:1538
+#: src/lib/elm_config.c:1545
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_entry.c:879
-msgid "Select"
-msgstr "Sélectionner"
-
-#: src/lib/elm_entry.c:884
-msgid "Paste"
-msgstr "Coller"
-
-#: src/lib/elm_entry.c:894
+#: src/lib/elm_entry.c:911
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:897
+#: src/lib/elm_entry.c:914
 msgid "Cut"
 msgstr "Couper"
 
+#: src/lib/elm_entry.c:928
+msgid "Select"
+msgstr "Sélectionner"
+
+#: src/lib/elm_entry.c:934
+msgid "Paste"
+msgstr "Coller"
