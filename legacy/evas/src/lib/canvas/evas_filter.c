@@ -474,7 +474,7 @@ static Evas_Filter_Info *
 filter_alloc(Evas_Object *o)
 {
    Evas_Filter_Info *info;
-   
+
    if (!o) return NULL;
    info = calloc(1,sizeof(struct Evas_Filter_Info));
    if (!info) return NULL;
@@ -489,7 +489,7 @@ filter_alloc(Evas_Object *o)
 }
 
 static int
-blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh, 
+blur_size_get(Evas_Filter_Info *info, int inw, int inh, int *outw, int *outh,
               Eina_Bool inv)
 {
    Evas_Filter_Info_Blur *blur = info->data;
@@ -560,18 +560,12 @@ gaussian_key_get(const Evas_Filter_Info *info, uint32_t *lenp)
 /**
  * Software implementations
  */
-
-// FIXME we have R_VAL/G_VAL...A_VAL for this
-#define alpha(x)	(((x) >> 24)       )
-#define red(x)		(((x) >> 16) & 0xff)
-#define green(x)	(((x) >>  8) & 0xff)
-#define blue(x)		(((x)      ) & 0xff)
 #define all(OP, A, R, G, B, W, I) \
    do { \
-      A OP alpha(I) * W; \
-      R OP red(I) * W; \
-      G OP green(I) * W; \
-      B OP blue(I) * W; \
+      A OP A_VAL(I) * W; \
+      R OP R_VAL(I) * W; \
+      G OP G_VAL(I) * W; \
+      B OP B_VAL(I) * W; \
    } while (0)
 #define wavg(x,n)        (((x) / (n)) & 0xff)
 #define wavgd(x,n)       ((uint32_t)((x) / (n)) & 0xff)
@@ -658,7 +652,7 @@ gaussian_filter_h(int rad, uint32_t *in, int w, uint32_t *out)
           {
              if ((k + i) < 0) continue;
              if ((k + i) >= w) continue;
-             all(+=, a, r, g, b, points[k + rad], in[k + i]);
+             all(+=, a, r, g, b, points[k + rad], in + k + i);
           }
         // FIXME: use ARGB_JOIN
         *(out) = 
@@ -690,7 +684,7 @@ gaussian_filter_hd(int rad, uint32_t *in, int w, uint32_t *out)
           {
              if ((k + i) < 0) continue;
              if ((k + i) >= w) continue;
-             all(+=, a, r, g, b, points[k + rad], in[k + i]);
+             all(+=, a, r, g, b, points[k + rad], in + k + i);
           }
         // FIXME: use ARGB_JOIN
         *(out) =
@@ -713,7 +707,7 @@ gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
    uint64_t weight;
    int i, k;
    uint64_t r, g, b, a;
-   
+
    /* Get twice the radius: even rows have 1 element */
    points = gaussian_row_get64(rad * 2, &npoints, &weight);
    for (i = -rad ; i < w + rad; i ++){
@@ -721,10 +715,10 @@ gaussian_filter_h64(int rad, uint32_t *in, int w, uint32_t *out)
       for (k = -rad ; k <= rad ; k ++){
          if ((k + i) < 0) continue;
          if ((k + i) >= w) continue;
-         all(+=, a, r, g, b, points[k + rad], in[k + i]);
+         all(+=, a, r, g, b, points[k + rad], in + k + i);
       }
         // FIXME: use ARGB_JOIN
-      *(out) = 
+      *(out) =
          (wavg(a, weight) << 24) |
          (wavg(r, weight) << 16) |
          (wavg(g, weight) <<  8) |
@@ -755,7 +749,7 @@ gaussian_filter_v(int rad, uint32_t *in, int h, int skip, uint32_t *out)
           {
              if ((k + i) < 0) continue;
              if ((k + i) >= h) continue;
-             all(+=, a, r, g, b, points[k + rad], in[skip * (k + i)]);
+             all(+=, a, r, g, b, points[k + rad], in + (skip * (k + i)));
           }
         // FIXME: use ARGB_JOIN
         *(out) = 
@@ -789,7 +783,7 @@ gaussian_filter_v64(int rad, uint32_t *in, int h, int skip, uint32_t *out)
           {
              if ((k + i) < 0) continue;
              if ((k + i) >= h) continue;
-             all(+=, a, r, g, b, points[k + rad], in[skip * (k + i)]);
+             all(+=, a, r, g, b, points[k + rad], in + (skip * (k + i)));
           }
         // FIXME: use ARGB_JOIN
         *(out) = 
@@ -823,7 +817,7 @@ gaussian_filter_vd(int rad, uint32_t *in, int h, int skip, uint32_t *out)
           {
              if ((k + i) < 0) continue;
              if ((k + i) >= h) continue;
-             all(+=, a, r, g, b, points[k + rad], in[skip * (k + i)]);
+             all(+=, a, r, g, b, points[k + rad], in + (skip * (k + i)));
           }
         // FIXME: use ARGB_JOIN
         *(out) = 
