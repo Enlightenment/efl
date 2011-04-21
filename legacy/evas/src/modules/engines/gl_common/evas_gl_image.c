@@ -605,8 +605,10 @@ void
 evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
 {
    RGBA_Draw_Context *dc;
+   Evas_GL_Image *imm;
    int r, g, b, a;
    double ssx, ssy, ssw, ssh;
+   double mssx, mssy, mssw, mssh;
    Cutout_Rects *rects;
    Cutout_Rect  *rct;
    int c, cx, cy, cw, ch;
@@ -616,6 +618,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
    if (sw < 1) sw = 1;
    if (sh < 1) sh = 1;
    dc = gc->dc;
+   imm = dc->mask.mask;
    if (dc->mul.use)
      {
 	a = (dc->mul.col >> 24) & 0xff;
@@ -634,26 +637,33 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
         evas_gl_common_rect_draw(gc, dx, dy, dw, dh);
         return;
      }
+   if (imm)
+     {
+        evas_gl_common_image_update(gc, imm);
+        if (!imm->tex) imm = NULL; /* Turn of mask on error */
+     }
 
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
      yuv = 1;
-   
+
    im->tex->im = im;
-   if ((!gc->dc->cutout.rects) || 
+   if (imm) imm->tex->im = imm;
+   if ((!gc->dc->cutout.rects) ||
        ((gc->shared->info.tune.cutout.max > 0) &&
            (gc->dc->cutout.active > gc->shared->info.tune.cutout.max)))
      {
         if (gc->dc->clip.use)
           {
              int nx, ny, nw, nh;
-             
+             double scalex,scaley;
+
              nx = dx; ny = dy; nw = dw; nh = dh;
-             RECTS_CLIP_TO_RECT(nx, ny, nw, nh, 
+             RECTS_CLIP_TO_RECT(nx, ny, nw, nh,
                                 gc->dc->clip.x, gc->dc->clip.y,
                                 gc->dc->clip.w, gc->dc->clip.h);
              if ((nw < 1) || (nh < 1)) return;
-             if ((nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
+             if ((!imm) && (nx == dx) && (ny == dy) && (nw == dw) && (nh == dh))
                {
                   if (yuv)
                     evas_gl_common_context_yuv_push(gc,
@@ -671,12 +681,33 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
                                                       smooth, im->tex_only);
                   return;
                }
-             
+
              ssx = (double)sx + ((double)(sw * (nx - dx)) / (double)(dw));
              ssy = (double)sy + ((double)(sh * (ny - dy)) / (double)(dh));
              ssw = ((double)sw * (double)(nw)) / (double)(dw);
              ssh = ((double)sh * (double)(nh)) / (double)(dh);
-             if (yuv)
+             if (imm)
+               {
+                  /* Correct ones here */
+                  scalex = imm->w / (double)dc->mask.w;
+                  scaley = imm->h / (double)dc->mask.h;
+                  mssx = scalex * (nx - dc->mask.x);
+                  mssy = scaley * (ny - dc->mask.y);
+                  mssw = scalex * nw;
+                  mssh = scaley * nh;
+
+                  /* No yuv + imm I'm afraid */
+                  evas_gl_common_context_image_mask_push(gc,
+                                               im->tex,
+                                               imm->tex,
+                                               ssx, ssy, ssw, ssh,
+                                               mssx, mssy, mssw, mssh,
+                                               //dc->mask.x, dc->mask.y, dc->mask.w, dc->mask.h,
+                                               nx, ny, nw, nh,
+                                               r, g, b, a,
+                                               smooth);
+               }
+             else if (yuv)
                evas_gl_common_context_yuv_push(gc,
                                                im->tex,
                                                ssx, ssy, ssw, ssh,
