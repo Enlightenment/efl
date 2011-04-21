@@ -26294,7 +26294,7 @@ collections {
             signal:  "elm,state,slide,passive";
             source:  "elm";
             action:  STATE_SET "default" 0.0;
-            target:   "event_block_layer";
+            target:  "event_block_layer";
             after:   "slide_left2";
          }
          program {
@@ -26654,8 +26654,6 @@ collections {
          }
          program {
             name:    "rotate_off2";
-            signal:  "elm,state,rotate,passive";
-            source:  "elm";
             action:  STATE_SET "rotate" 0.0;
             transition: LINEAR 0.5;
             target:  "elm.swallow.origin";
