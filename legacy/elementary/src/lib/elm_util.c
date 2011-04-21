@@ -101,8 +101,9 @@ _elm_util_mkup_to_text(const char *mkup)
                        str = _str_append(str, ts, &str_len, &str_alloc);
                        free(ts);
                     }
-                  break;
                }
+
+             if (!*p) break;
           }
         if (*p == '<')
           {
