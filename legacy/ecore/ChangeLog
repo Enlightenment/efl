@@ -139,7 +139,7 @@
 
 2011-04-19 Mike Blumenkrantz
 
-        * +ecore_exe_data_set
+        * Add ecore_exe_data_set
 
 2011-04-20  Carsten Haitzler (The Rasterman)
 
