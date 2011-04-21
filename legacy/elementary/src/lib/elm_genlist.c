@@ -272,16 +272,14 @@ struct _Widget_Data
    Pan              *pan;
    Evas_Coord        pan_x, pan_y, w, h, minw, minh, realminw, prev_viewport_w;
    Ecore_Job        *calc_job, *update_job;
-   Ecore_Idler      *queue_idler;
-   Ecore_Idler      *must_recalc_idler;
+   Ecore_Idler      *queue_idler, *must_recalc_idler;
    Eina_List        *queue, *selected;
-   Elm_Genlist_Item *show_item;
-   Elm_Genlist_Item *last_selected_item;
+   Elm_Genlist_Item *show_item, *last_selected_item, *anchor_item, *mode_item;
    Eina_Inlist      *item_cache;
-   Elm_Genlist_Item *anchor_item;
    Evas_Coord        anchor_y;
    Elm_List_Mode     mode;
-   Ecore_Timer      *multi_timer;
+   Ecore_Timer      *multi_timer, *scr_hold_timer;
+   const char       *mode_type;
    Evas_Coord        prev_x, prev_y, prev_mx, prev_my;
    Evas_Coord        cur_x, cur_y, cur_mx, cur_my;
    Eina_Bool         mouse_down : 1;
@@ -315,9 +313,6 @@ struct _Widget_Data
    int               group_item_height;
    int               max_items_per_block;
    double            longpress_timeout;
-   const char       *mode_type;
-   Elm_Genlist_Item *mode_item;
-   Ecore_Timer      *scr_hold_timer;
 };
 
 struct _Item_Block
