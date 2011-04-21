@@ -6030,7 +6030,6 @@ EAPI Eina_Bool                    evas_textblock_cursor_format_append(Evas_Textb
  * @see evas_textblock_cursor_format_prepend()
  */
 EAPI Eina_Bool                    evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format) EINA_ARG_NONNULL(1, 2);
-   EAPI void                         evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
  * Delete the character at the location of the cursor. If there's a format
