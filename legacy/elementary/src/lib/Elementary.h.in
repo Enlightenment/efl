@@ -2002,6 +2002,10 @@ extern "C" {
    EAPI const char         *elm_slideshow_layout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void                elm_slideshow_layout_set(Evas_Object *obj, const char *layout) EINA_ARG_NONNULL(1);
    EAPI const Eina_List    *elm_slideshow_layouts_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                elm_slideshow_cache_before_set(Evas_Object *obj, int count) EINA_ARG_NONNULL(1);
+   EAPI int                 elm_slideshow_cache_before_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI void                elm_slideshow_cache_after_set(Evas_Object *obj, int count) EINA_ARG_NONNULL(1);
+   EAPI int                 elm_slideshow_cache_after_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "changed" - when the slideshow switch to another item
     */

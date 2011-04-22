@@ -44,6 +44,8 @@ struct _Widget_Data
    Eina_List *transitions;
    const char *transition;
 
+   int count_item_pre_before;
+   int count_item_pre_after;
    Ecore_Timer *timer;
    double timeout;
    Eina_Bool loop:1;
@@ -213,9 +215,10 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 static void
 _item_realize(Elm_Slideshow_Item *item)
 {
-   Elm_Slideshow_Item *_item;
+   Elm_Slideshow_Item *_item_prev, *_item_next;
    Evas_Object *obj = item->base.widget;
    Widget_Data *wd = elm_widget_data_get(obj);
+   int ac, bc, lc;
 
    if (!wd) return;
    if ((!item->base.view) && (item->itc->func.get))
@@ -230,39 +233,71 @@ _item_realize(Elm_Slideshow_Item *item)
      wd->items_built = eina_list_demote_list(wd->items_built, item->l_built);
 
    //pre-create previous and next item
-   _item = _item_next_get(item);
-   if ((_item) && (!_item->base.view) && (_item->itc->func.get))
+   ac = wd->count_item_pre_after;
+   _item_next = item;
+   bc = wd->count_item_pre_before;
+   _item_prev = item;
+   lc = eina_list_count(wd->items) - 1;
+   while (lc > 0 && ((ac > 0) || (bc > 0)))
      {
-        _item->base.view = _item->itc->func.get((void*)_item->base.data, obj);
-        evas_object_smart_member_add(_item->base.view, obj);
-        _item->l_built = eina_list_append(NULL, _item);
-        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
-        evas_object_hide(_item->base.view);
-     }
-   else if ((_item) && (_item->l_built))
-     wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
+        if (lc > 0 && ac > 0)
+          {
+             --ac;
+             --lc;
+             _item_next = _item_next_get(_item_next);
+             if ((_item_next)
+                 && (!_item_next->base.view)
+                 && (_item_next->itc->func.get))
+               {
+                  _item_next->base.view =
+                     _item_next->itc->func.get((void*)_item_next->base.data,
+                                               obj);
+                  evas_object_smart_member_add(_item_next->base.view, obj);
+                  _item_next->l_built = eina_list_append(NULL, _item_next);
+                  wd->items_built = eina_list_merge(wd->items_built,
+                                                    _item_next->l_built);
+                  evas_object_hide(_item_next->base.view);
+               }
+             else if (_item_next && _item_next->l_built)
+               wd->items_built = eina_list_demote_list(wd->items_built,
+                                                       _item_next->l_built);
+          }
 
-   _item = _item_prev_get(item);
-   if ((_item) && (!_item->base.view) && (_item->itc->func.get))
-     {
-        _item->base.view = _item->itc->func.get((void*)_item->base.data, obj);
-        evas_object_smart_member_add(_item->base.view, obj);
-        _item->l_built = eina_list_append(NULL, _item);
-        wd->items_built = eina_list_merge(wd->items_built, _item->l_built);
-        evas_object_hide(_item->base.view);
+        if (lc > 0 && bc > 0)
+          {
+             --bc;
+             --lc;
+             _item_prev = _item_prev_get(_item_prev);
+             if ((_item_prev)
+                 && (!_item_prev->base.view)
+                 && (_item_prev->itc->func.get))
+               {
+                  _item_prev->base.view =
+                     _item_prev->itc->func.get((void*)_item_prev->base.data,
+                                               obj);
+                  evas_object_smart_member_add(_item_prev->base.view, obj);
+                  _item_prev->l_built = eina_list_append(NULL, _item_prev);
+                  wd->items_built = eina_list_merge(wd->items_built,
+                                                    _item_prev->l_built);
+                  evas_object_hide(_item_prev->base.view);
+               }
+             else if (_item_prev && _item_prev->l_built)
+               wd->items_built = eina_list_demote_list(wd->items_built,
+                                                       _item_prev->l_built);
+          }
      }
-   else if ((_item) && (_item->l_built))
-     wd->items_built = eina_list_demote_list(wd->items_built, _item->l_built);
 
    //delete unused items
-   while (eina_list_count(wd->items_built) > 3)
+   lc = wd->count_item_pre_before + wd->count_item_pre_after + 1;
+   while (eina_list_count(wd->items_built) > lc)
      {
-        _item = eina_list_data_get(wd->items_built);
-        wd->items_built = eina_list_remove_list(wd->items_built, wd->items_built);
+        item = eina_list_data_get(wd->items_built);
+        wd->items_built = eina_list_remove_list(wd->items_built,
+                                                wd->items_built);
         if(item->itc->func.del)
-          item->itc->func.del((void*)item->base.data, _item->base.view);
-        evas_object_del(_item->base.view);
-        _item->base.view = NULL;
+          item->itc->func.del((void*)item->base.data, item->base.view);
+        evas_object_del(item->base.view);
+        item->base.view = NULL;
      }
 }
 
@@ -340,6 +375,8 @@ elm_slideshow_add(Evas_Object *parent)
    wd->slideshow = edje_object_add(e);
    _elm_theme_object_set(obj, wd->slideshow, "slideshow", "base", "default");
    evas_object_smart_member_add(wd->slideshow, obj);
+   wd->count_item_pre_before = 2;
+   wd->count_item_pre_after = 2;
    elm_widget_resize_object_set(obj, wd->slideshow);
    evas_object_show(wd->slideshow);
 
@@ -820,3 +857,78 @@ elm_slideshow_item_data_get(const Elm_Slideshow_Item * item)
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
    return elm_widget_item_data_get(item);
 }
+
+/**
+ * Returns max amount of cached items before current
+ *
+ * @param obj The slideshow object
+ * @return Returns max amount of cached items
+ *
+ * @ingroup Slideshow
+ */
+EAPI int
+elm_slideshow_cache_before_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return -1;
+   return wd->count_item_pre_before;
+}
+
+
+
+/**
+ * Set max amount of cached items before current
+ *
+ * @param obj The slideshow object
+ * @param count Max amount of cached items
+ *
+ * @ingroup Slideshow
+ */
+EAPI void
+elm_slideshow_cache_before_set(Evas_Object *obj, int count)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (count < 0) count = 0;
+   wd->count_item_pre_before = count;
+}
+
+/**
+ * Returns max amount of cached items after current
+ *
+ * @param obj The slideshow object
+ * @return Returns max amount of cached items
+ *
+ * @ingroup Slideshow
+ */
+EAPI int
+elm_slideshow_cache_after_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return -1;
+   return wd->count_item_pre_after;
+}
+
+
+
+/**
+ * Set max amount of cached items after current
+ *
+ * @param obj The slideshow object
+ * @param count max amount of cached items
+ *
+ * @ingroup Slideshow
+ */
+EAPI void
+elm_slideshow_cache_after_set(Evas_Object *obj, int count)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (count < 0) count = 0;
+   wd->count_item_pre_after = count;
+}
+
