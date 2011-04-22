@@ -64,13 +64,18 @@
 #ifdef _LP64
 typedef unsigned long Eina_Object_ID;
 typedef unsigned short Eina_Object_Generation;
-#define EINA_GEN_OFFSET 48
-#define EINA_ID_STR "%li"
+# define EINA_GEN_OFFSET 48
+# define EINA_ID_STR "%lu"
+#elif _WIN64
+typedef unsigned __int64 Eina_Object_ID;
+typedef unsigned short Eina_Object_Generation;
+# define EINA_GEN_OFFSET 48
+# define EINA_ID_STR "%I64u"
 #else
 typedef unsigned int Eina_Object_ID;
 typedef unsigned char Eina_Object_Generation;
-#define EINA_GEN_OFFSET 24
-#define EINA_ID_STR "%i"
+# define EINA_GEN_OFFSET 24
+# define EINA_ID_STR "%u"
 #endif
 
 typedef struct _Eina_Class_Range Eina_Class_Range;
