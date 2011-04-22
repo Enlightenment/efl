@@ -159,6 +159,7 @@ extern "C" {
 #include "eina_quadtree.h"
 #include "eina_simple_xml_parser.h"
 #include "eina_object.h"
+#include "eina_lock.h"
 
 #ifdef __cplusplus
 }

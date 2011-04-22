@@ -110,6 +110,12 @@ EFL_CHECK_THREADS(
    [have_threads="no"])
 EFL_CHECK_SPINLOCK([have_posix_threads_spinlock="yes"], [have_posix_threads_spinlock="no"])
 
+if ! test "x${have_threads}" = "xno" ; then
+   EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
+fi
+AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
+AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${have_threads}" = "xno"])
+
 ### Additional options to configure
 
 # Magic debug
@@ -364,6 +370,7 @@ AC_C_INLINE
 AC_C___ATTRIBUTE__
 AC_PROG_CC_STDC
 
+have_wince="no"
 have_win32="no"
 EINA_CPPFLAGS=""
 EINA_CFLAGS=""
@@ -372,6 +379,7 @@ case "$host_os" in
       EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
       EINA_CFLAGS="${EVIL_CFLAGS}"
       have_win32="yes"
+      have_wince="yes"
       ;;
    mingw*)
       EINA_CPPFLAGS="-D_WIN32_WINNT=0x0501"
@@ -379,6 +387,7 @@ case "$host_os" in
       have_win32="yes"
       ;;
 esac
+AM_CONDITIONAL([EINA_HAVE_WINCE], [test "x$have_wince" = "xyes"])
 AM_CONDITIONAL([EINA_HAVE_WIN32], [test "x$have_win32" = "xyes"])
 
 m4_ifdef([v_mic],

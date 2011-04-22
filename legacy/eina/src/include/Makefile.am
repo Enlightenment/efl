@@ -54,7 +54,22 @@ eina_ustrbuf.h \
 eina_unicode.h \
 eina_quadtree.h \
 eina_simple_xml_parser.h \
-eina_object.h
+eina_object.h \
+eina_lock.h
+
+if EINA_HAVE_THREADS
+if EINA_HAVE_WINCE
+EINAHEADERS += eina_inline_lock_wince.x
+else
+if EINA_HAVE_WIN32
+EINAHEADERS += eina_inline_lock_win32.x
+else
+EINAHEADERS += eina_inline_lock_posix.x
+endif
+endif
+else
+EINAHEADERS += eina_inline_lock_void.x
+endif
 
 installed_mainheaderdir = $(includedir)/eina-@VMAJ@
 dist_installed_mainheader_DATA = Eina.h eina_config.h

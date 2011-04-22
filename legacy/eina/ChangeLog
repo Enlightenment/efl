@@ -42,13 +42,17 @@
 
 	* Add Simple XML parser API.
 
-2011-05-11  Cedric Bail
+2011-04-11  Cedric Bail
 
 	* Add eina_inlist_sort.
 	* Add eina_mempool_repack.
 	* Add Eina_Object API.
 
-2011-05-13  Cedric Bail & Vincent Torri
+2011-04-13  Cedric Bail & Vincent Torri
 
 	* Add Eina_File API.
+
+2011-04-22  Vincent Torri
+
+        * Add Eina_Lock API
 
