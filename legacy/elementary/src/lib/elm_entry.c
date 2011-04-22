@@ -504,9 +504,9 @@ _del_hook(Evas_Object *obj)
    entries = eina_list_remove(entries, obj);
 #ifdef HAVE_ELEMENTARY_X
    if (wd->sel_notify_handler)
-      ecore_event_handler_del(wd->sel_notify_handler);
+     ecore_event_handler_del(wd->sel_notify_handler);
    if (wd->sel_clear_handler)
-      ecore_event_handler_del(wd->sel_clear_handler);
+     ecore_event_handler_del(wd->sel_clear_handler);
 #endif
    if (wd->cut_sel) eina_stringshare_del(wd->cut_sel);
    if (wd->text) eina_stringshare_del(wd->text);
@@ -548,7 +548,7 @@ _theme_hook(Evas_Object *obj)
    t = eina_stringshare_add(elm_entry_entry_get(obj));
    _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    if (_elm_config->desktop_entry)
-      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
    elm_entry_entry_set(obj, t);
    eina_stringshare_del(t);
    if (elm_widget_disabled_get(obj))
@@ -590,7 +590,7 @@ _elm_win_recalc_job(void *data)
    elm_coords_finger_size_adjust(1, NULL, 1, &minh);
    evas_object_size_hint_min_set(data, -1, minh);
    if (wd->single_line)
-      evas_object_size_hint_max_set(data, -1, minh);
+     evas_object_size_hint_max_set(data, -1, minh);
 
    if (wd->deferred_cur)
      elm_widget_show_region_set(data, wd->cx, wd->cy, wd->cw, wd->ch);
@@ -619,7 +619,7 @@ _sizing_eval(Evas_Object *obj)
         elm_coords_finger_size_adjust(1, &minw, 1, &minh);
         evas_object_size_hint_min_set(obj, minw, minh);
         if (wd->single_line)
-           evas_object_size_hint_max_set(obj, -1, minh);
+          evas_object_size_hint_max_set(obj, -1, minh);
      }
 }
 
@@ -695,8 +695,8 @@ _hoversel_position(Evas_Object *obj)
         ch = 1;
      }
    else
-      edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
-                                                &cx, &cy, &cw, &ch);
+     edje_object_part_text_cursor_geometry_get(wd->ent, "elm.text",
+                                               &cx, &cy, &cw, &ch);
    evas_object_size_hint_min_get(wd->hoversel, &mw, &mh);
    if (cw < mw)
      {
@@ -760,7 +760,7 @@ _dismissed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         if (!_elm_config->desktop_entry)
           {
              if (!wd->password)
-                edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+               edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
           }
      }
    elm_widget_scroll_freeze_pop(data);
@@ -778,11 +778,11 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!_elm_config->desktop_entry)
      {
         if (!wd->password)
-           edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+          edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
      }
    edje_object_signal_emit(wd->ent, "elm,state,select,on", "elm");
    if (!_elm_config->desktop_entry)
-      elm_widget_scroll_hold_push(data);
+     elm_widget_scroll_hold_push(data);
 }
 
 static void
@@ -825,10 +825,10 @@ _cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    /* Store it */
    wd->selmode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
-      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
    if (!_elm_config->desktop_entry)
-      elm_widget_scroll_hold_pop(data);
+     elm_widget_scroll_hold_pop(data);
    _store_selection(ELM_SEL_CLIPBOARD, data);
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    edje_object_part_text_select_none(wd->ent, "elm.text");
@@ -857,10 +857,10 @@ _cancel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!wd) return;
    wd->selmode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
-      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
    if (!_elm_config->desktop_entry)
-      elm_widget_scroll_hold_pop(data);
+     elm_widget_scroll_hold_pop(data);
    edje_object_part_text_select_none(wd->ent, "elm.text");
 }
 
@@ -925,14 +925,14 @@ _menu_press(Evas_Object *obj)
                   if (!_elm_config->desktop_entry)
                     {
                        if (!wd->password)
-                          elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
-                                                _select, obj);
+                         elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
+                                               _select, obj);
                     }
                   if (1) // need way to detect if someone has a selection
                     {
                        if (wd->editable)
-                          elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
-                                                _paste, obj);
+                         elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,
+                                               _paste, obj);
                     }
                }
           }
@@ -1446,7 +1446,6 @@ _event_selection_clear(void *data __UNUSED__, int type __UNUSED__, void *event _
    return ECORE_CALLBACK_PASS_ON;
 }
 
-
 static Eina_Bool
 _drag_drop_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Selection_Data *drop)
 {
@@ -1618,7 +1617,7 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_mouse_double, obj);
    edje_object_part_text_set(wd->ent, "elm.text", "");
    if (_elm_config->desktop_entry)
-      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
+     edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
    elm_widget_resize_object_set(obj, wd->ent);
    _sizing_eval(obj);
 
@@ -1651,7 +1650,6 @@ elm_entry_add(Evas_Object *parent)
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
    return obj;
 }
-
 
 /**
  * This sets the entry object not to line wrap.  All input will
@@ -1718,7 +1716,6 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    wd->char_linewrap = EINA_FALSE;
    _theme_hook(obj);
 }
-
 
 /**
  * This returns whether password mode is enabled.
@@ -1787,7 +1784,6 @@ elm_entry_entry_get(const Evas_Object *obj)
    eina_stringshare_replace(&wd->text, text);
    return wd->text;
 }
-
 
 /**
  * This returns EINA_TRUE if the entry is empty/there was an error
@@ -1980,7 +1976,7 @@ elm_entry_select_none(Evas_Object *obj)
      {
         wd->selmode = EINA_FALSE;
         if (!_elm_config->desktop_entry)
-           edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+          edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
         edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_FALSE;
@@ -2004,7 +2000,7 @@ elm_entry_select_all(Evas_Object *obj)
      {
         wd->selmode = EINA_FALSE;
         if (!_elm_config->desktop_entry)
-           edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
+          edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_FALSE);
         edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
      }
    wd->have_selection = EINA_TRUE;
@@ -2910,7 +2906,6 @@ elm_entry_autosave_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->autosave;
 }
-
 
 /**
  * Control pasting of text and images for the widget.
