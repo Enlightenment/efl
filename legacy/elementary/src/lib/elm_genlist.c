@@ -2010,6 +2010,7 @@ _item_unrealize(Elm_Genlist_Item *it, Eina_Bool calc)
    else
      {
         edje_object_mirrored_set(it->base.view, elm_widget_mirrored_get(it->base.widget));
+        edje_object_scale_set(it->base.view, elm_widget_scale_get(it->base.widget) * _elm_config->scale);
         _item_cache_add(it);
      }
    elm_widget_stringlist_free(it->labels);
