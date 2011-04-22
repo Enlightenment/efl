@@ -248,6 +248,43 @@ static Eina_Bool _deselect_all_items(Widget_Data *wd);
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_SELECTED[] = "selected";
+static const char SIG_UNSELECTED[] = "unselected";
+static const char SIG_REALIZED[] = "realized";
+static const char SIG_UNREALIZED[] = "unrealized";
+static const char SIG_CHANGED[] = "changed";
+static const char SIG_DRAG_START_UP[] = "drag,start,up";
+static const char SIG_DRAG_START_DOWN[] = "drag,start,down";
+static const char SIG_DRAG_START_LEFT[] = "drag,start,left";
+static const char SIG_DRAG_START_RIGHT[] = "drag,start,right";
+static const char SIG_DRAG_STOP[] = "drag,stop";
+static const char SIG_DRAG[] = "drag";
+static const char SIG_SCROLL[] = "scroll";
+static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
+static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+       {SIG_CLICKED_DOUBLE, ""},
+       {SIG_SELECTED, ""},
+       {SIG_UNSELECTED, ""},
+       {SIG_REALIZED, ""},
+       {SIG_UNREALIZED, ""},
+       {SIG_CHANGED, ""},
+       {SIG_DRAG_START_UP, ""},
+       {SIG_DRAG_START_DOWN, ""},
+       {SIG_DRAG_START_LEFT, ""},
+       {SIG_DRAG_START_RIGHT, ""},
+       {SIG_DRAG_STOP, ""},
+       {SIG_DRAG, ""},
+       {SIG_SCROLL, ""},
+       {SIG_SCROLL_DRAG_START, ""},
+       {SIG_SCROLL_DRAG_STOP, ""},
+       {NULL, NULL}
+};
+
+
+
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
             Evas_Object *src   __UNUSED__,
@@ -421,7 +458,7 @@ _event_hook(Evas_Object       *obj,
             (!strcmp(ev->keyname, "space")))
      {
         item = elm_gengrid_selected_item_get(obj);
-        evas_object_smart_callback_call(item->wd->self, "clicked,double", item);
+        evas_object_smart_callback_call(item->wd->self, SIG_CLICKED_DOUBLE, item);
         evas_object_smart_callback_call(item->wd->self, "clicked", item); // will be removed
      }
    else return EINA_FALSE;
@@ -726,7 +763,7 @@ _mouse_move(void        *data,
              ecore_timer_del(item->long_timer);
              item->long_timer = NULL;
           }
-        evas_object_smart_callback_call(item->wd->self, "drag", item);
+        evas_object_smart_callback_call(item->wd->self, SIG_DRAG, item);
         return;
      }
    if ((!item->down) || (item->wd->longpressed))
@@ -756,13 +793,13 @@ _mouse_move(void        *data,
         const char *left_drag, *right_drag;
         if (!elm_widget_mirrored_get(item->wd->self))
           {
-             left_drag = "drag,start,left";
-             right_drag = "drag,start,right";
+             left_drag = SIG_DRAG_START_LEFT;
+             right_drag = SIG_DRAG_START_RIGHT;
           }
         else
           {
-             left_drag = "drag,start,right";
-             right_drag = "drag,start,left";
+             left_drag = SIG_DRAG_START_RIGHT;
+             right_drag = SIG_DRAG_START_LEFT;
           }
 
         item->dragging = 1;
@@ -776,7 +813,7 @@ _mouse_move(void        *data,
         if (dy < 0)
           {
              if (ady > adx)
-               evas_object_smart_callback_call(item->wd->self, "drag,start,up",
+               evas_object_smart_callback_call(item->wd->self, SIG_DRAG_START_UP,
                                                item);
              else
                {
@@ -789,7 +826,7 @@ _mouse_move(void        *data,
           {
              if (ady > adx)
                evas_object_smart_callback_call(item->wd->self,
-                                               "drag,start,down", item);
+                                               SIG_DRAG_START_DOWN, item);
              else
                {
                   if (dx < 0)
@@ -838,7 +875,7 @@ _mouse_down(void        *data,
    _item_hilight(item);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        evas_object_smart_callback_call(item->wd->self, "clicked,double", item);
+        evas_object_smart_callback_call(item->wd->self, SIG_CLICKED_DOUBLE, item);
         evas_object_smart_callback_call(item->wd->self, "clicked", item); // will be removed
      }
    if (item->long_timer) ecore_timer_del(item->long_timer);
@@ -871,7 +908,7 @@ _mouse_up(void            *data,
    if (item->dragging)
      {
         item->dragging = EINA_FALSE;
-        evas_object_smart_callback_call(item->wd->self, "drag,stop", item);
+        evas_object_smart_callback_call(item->wd->self, SIG_DRAG_STOP, item);
         dragged = EINA_TRUE;
      }
    if (item->wd->on_hold)
@@ -1165,7 +1202,7 @@ _item_place(Elm_Gengrid_Item *item,
      {
         _item_realize(item);
         if (!was_realized)
-          evas_object_smart_callback_call(item->wd->self, "realized", item);
+          evas_object_smart_callback_call(item->wd->self, SIG_REALIZED, item);
         evas_object_move(item->base.view, x, y);
         evas_object_resize(item->base.view, item->wd->item_width,
                            item->wd->item_height);
@@ -1174,7 +1211,7 @@ _item_place(Elm_Gengrid_Item *item,
      {
         _item_unrealize(item);
         if (was_realized)
-          evas_object_smart_callback_call(item->wd->self, "unrealized", item);
+          evas_object_smart_callback_call(item->wd->self, SIG_UNREALIZED, item);
      }
 }
 
@@ -1237,7 +1274,7 @@ call:
    if (item->func.func)
      item->func.func((void *)item->func.data, item->wd->self, item);
    if (!item->delete_me)
-     evas_object_smart_callback_call(item->wd->self, "selected", item);
+     evas_object_smart_callback_call(item->wd->self, SIG_SELECTED, item);
    item->walking--;
    item->wd->walking--;
    if ((item->wd->clear_me) && (!item->wd->walking))
@@ -1260,7 +1297,7 @@ _item_unselect(Elm_Gengrid_Item *item)
      {
         item->selected = EINA_FALSE;
         item->wd->selected = eina_list_remove(item->wd->selected, item);
-        evas_object_smart_callback_call(item->wd->self, "unselected", item);
+        evas_object_smart_callback_call(item->wd->self, SIG_UNSELECTED, item);
      }
 }
 
@@ -1433,7 +1470,7 @@ _pan_calculate(Evas_Object *obj)
              if (!cx) cy++;
           }
      }
-   evas_object_smart_callback_call(sd->wd->self, "changed", NULL);
+   evas_object_smart_callback_call(sd->wd->self, SIG_CHANGED, NULL);
 }
 
 static void
@@ -1492,7 +1529,7 @@ _scr_drag_start(void            *data,
                 Evas_Object *obj __UNUSED__,
                 void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
@@ -1500,7 +1537,7 @@ _scr_drag_stop(void            *data,
                Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
@@ -1508,7 +1545,7 @@ _scr_scroll(void            *data,
             Evas_Object *obj __UNUSED__,
             void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL, NULL);
 }
 
 /**
@@ -1569,6 +1606,8 @@ elm_gengrid_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    if (!smart)
      {
