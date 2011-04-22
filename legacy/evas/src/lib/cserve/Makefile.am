@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 @FRIBIDI_CFLAGS@ \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
-@pthread_cflags@
+@pthread_cflags@ \
+@PIXMAN_CFLAGS@
 
 if EVAS_CSERVE
 

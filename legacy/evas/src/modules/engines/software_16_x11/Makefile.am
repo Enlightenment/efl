@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines/software_16 \
 @FREETYPE_CFLAGS@ \
 @EINA_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @evas_engine_software_16_x11_cflags@
 
 if BUILD_ENGINE_SOFTWARE_16_X11

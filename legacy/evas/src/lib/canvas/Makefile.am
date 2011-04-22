@@ -13,7 +13,8 @@ AM_CPPFLAGS = \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
 @EINA_CFLAGS@ \
-@EVIL_CFLAGS@
+@EVIL_CFLAGS@ \
+@PIXMAN_CFLAGS@
 
 noinst_LTLIBRARIES   = libevas_canvas.la
 libevas_canvas_la_SOURCES  = \

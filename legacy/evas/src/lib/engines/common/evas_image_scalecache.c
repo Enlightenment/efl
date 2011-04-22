@@ -518,18 +518,11 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
         LKU(im->cache.lock);
         if (im->image.data)
           {
-             if (smooth)
-               evas_common_scale_rgba_in_to_out_clip_smooth(im, dst, dc,
-                                                            src_region_x, src_region_y, 
-                                                            src_region_w, src_region_h,
-                                                            dst_region_x, dst_region_y, 
-                                                            dst_region_w, dst_region_h);
-             else
-               evas_common_scale_rgba_in_to_out_clip_sample(im, dst, dc,
-                                                            src_region_x, src_region_y, 
-                                                            src_region_w, src_region_h,
-                                                            dst_region_x, dst_region_y, 
-                                                            dst_region_w, dst_region_h);
+             evas_common_scale_rgba_in_to_out_clip_sample(im, dst, dc,
+                                                          src_region_x, src_region_y, 
+                                                          src_region_w, src_region_h,
+                                                          dst_region_x, dst_region_y, 
+                                                          dst_region_w, dst_region_h);
           }
         return;
      }

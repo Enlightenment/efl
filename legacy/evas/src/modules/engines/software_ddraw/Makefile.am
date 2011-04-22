@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @evas_engine_software_ddraw_cflags@
 
 if BUILD_ENGINE_SOFTWARE_DDRAW

@@ -4,7 +4,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS	       = -I. \
 			 -I$(top_srcdir)/src/lib \
 			 -I$(top_srcdir)/src/lib/include \
-			 @FREETYPE_CFLAGS@ @evas_image_loader_edb_cflags@ \
+			 @FREETYPE_CFLAGS@ @PIXMAN_CFLAGS@ @evas_image_loader_edb_cflags@ \
 			 @EINA_CFLAGS@
 
 if BUILD_LOADER_EDB

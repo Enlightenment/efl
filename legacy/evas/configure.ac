@@ -90,6 +90,7 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 want_fontconfig="auto"
 want_fribidi="auto"
 want_harfbuzz="auto"
+want_pixman="no"
 want_evas_cserve="yes"
 
 want_evas_engine_buffer="yes"
@@ -357,6 +358,35 @@ fi
 
 if test "x${have_harfbuzz}" = "xno"; then
   HAS_HARFBUZZ=0
+fi
+
+# Pixman
+have_pixman="no"
+AC_ARG_ENABLE([pixman],
+   AC_HELP_STRING([--disable-pixman],
+      [disable pixman for software rendering. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_pixman="yes"
+    else
+       want_pixman="no"
+    fi
+   ])
+
+
+if test "x${want_pixman}" = "xyes" -o "x${want_pixman}" = "xauto" ; then
+   PKG_CHECK_MODULES([PIXMAN],
+      [pixman-1],
+      [
+       have_pixman="yes"
+       AC_DEFINE(HAVE_PIXMAN, 1, [have pixman for rendering])
+       requirement_evas="pixman-1 ${requirement_evas}"
+      ],
+      [
+       if test "x${want_pixman}" = "xyes" -a "x${use_strict}" = "xyes" ; then
+          AC_MSG_ERROR([Pixman not found (strict dependencies checking)])
+       fi
+      ])
 fi
 
 ### Checks for header files

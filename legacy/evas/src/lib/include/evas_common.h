@@ -13,6 +13,10 @@
 #include "Evas.h"
 #include "Evas_GL.h"
 
+#ifdef HAVE_PIXMAN
+#include <pixman.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -819,6 +823,12 @@ struct _RGBA_Image
       unsigned long long newest_usage;
       unsigned long long newest_usage_count;
    } cache;
+
+#ifdef HAVE_PIXMAN
+   struct {
+      pixman_image_t *im;
+   } pixman;
+#endif   
 };
 
 struct _RGBA_Polygon_Point

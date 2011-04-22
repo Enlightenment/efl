@@ -6,6 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
 @FREETYPE_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EET_CFLAGS@ \

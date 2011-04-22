@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include @FREETYPE_CFLAGS@ @SDL_CFLAGS@ @EINA_CFLAGS@
+INCLUDES = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include @FREETYPE_CFLAGS@ @PIXMAN_CFLAGS@ @SDL_CFLAGS@ @EINA_CFLAGS@
 
 if BUILD_ENGINE_SOFTWARE_SDL
 

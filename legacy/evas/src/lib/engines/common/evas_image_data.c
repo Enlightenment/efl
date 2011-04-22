@@ -31,6 +31,7 @@ evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *imag
      }
    dst->cache_entry.space = cspace;
    evas_common_image_colorspace_dirty(dst);
+   _evas_common_rgba_image_post_surface(ie_dst);
    return 0;
 }
 
@@ -60,6 +61,7 @@ evas_common_rgba_image_from_copied_data(Image_Entry* ie_dst, int w, int h, DATA3
 
    dst->cache_entry.space = cspace;
    evas_common_image_colorspace_dirty(dst);
+   _evas_common_rgba_image_post_surface(ie_dst);
    return 0;
 }
 
@@ -80,6 +82,7 @@ evas_common_rgba_image_size_set(Image_Entry *ie_dst, const Image_Entry *ie_im, u
      dst->cs.data = calloc(1, dst->cache_entry.h * sizeof(unsigned char *) * 2);
    evas_common_image_colorspace_dirty(dst);
 
+   _evas_common_rgba_image_post_surface(ie_dst);
    return 0;
 }
 
@@ -126,5 +129,6 @@ evas_common_rgba_image_colorspace_set(Image_Entry* ie_dst, int cspace)
    dst->cache_entry.space = cspace;
    evas_common_image_colorspace_dirty(dst);
 
+   _evas_common_rgba_image_post_surface(ie_dst);
    return 0;
 }

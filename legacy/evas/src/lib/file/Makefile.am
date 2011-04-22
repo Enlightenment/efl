@@ -11,8 +11,9 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@ \
-@WIN32_CPPFLAGS@
-
+@WIN32_CPPFLAGS@ \
+@PIXMAN_CFLAGS@
+                       
 AM_CFLAGS = @WIN32_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_file.la

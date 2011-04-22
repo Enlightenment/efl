@@ -178,7 +178,8 @@ AM_CPPFLAGS = \
 @HARFBUZZ_CFLAGS@ \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
-@pthread_cflags@
+@pthread_cflags@ \
+@PIXMAN_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -210,6 +211,7 @@ engines/common/libevas_engine_common.la \
 @EINA_LIBS@ \
 $(EVAS_STATIC_MODULE) \
 $(EVAS_STATIC_LIBADD) \
+@PIXMAN_LIBS@ \
 -lm
 
 libevas_la_DEPENDENCIES = \

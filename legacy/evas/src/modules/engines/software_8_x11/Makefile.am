@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 -I$(top_srcdir)/src/modules/engines/software_8 \
 @FREETYPE_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
 @evas_engine_software_8_x11_cflags@ \
 -I/usr/include/pixman-1

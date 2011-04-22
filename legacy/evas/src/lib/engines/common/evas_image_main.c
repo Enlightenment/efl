@@ -144,6 +144,7 @@ _evas_common_rgba_image_new(void)
 #endif
 
    evas_common_rgba_image_scalecache_init(&im->cache_entry);
+   
    return &im->cache_entry;
 }
 
@@ -246,6 +247,42 @@ evas_common_rgba_image_unload(Image_Entry *ie)
 #endif
 }
 
+void
+_evas_common_rgba_image_post_surface(Image_Entry *ie)
+{
+#ifdef HAVE_PIXMAN
+   RGBA_Image   *im = (RGBA_Image *) ie;
+   
+   if (im->pixman.im) pixman_image_unref(im->pixman.im);
+   if (im->cache_entry.flags.alpha)
+     {
+        im->pixman.im = pixman_image_create_bits
+        (
+// FIXME: endianess determines this            
+            PIXMAN_a8r8g8b8,
+//            PIXMAN_b8g8r8a8, 
+            im->cache_entry.w, im->cache_entry.h,
+            im->image.data, 
+            im->cache_entry.w * 4
+        );
+     }
+   else
+     {
+        im->pixman.im = pixman_image_create_bits
+        (
+// FIXME: endianess determines this            
+            PIXMAN_x8r8g8b8,
+//            PIXMAN_b8g8r8x8,
+            im->cache_entry.w, im->cache_entry.h,
+            im->image.data, 
+            im->cache_entry.w * 4
+        );
+     }
+#else
+   ie = NULL;
+#endif
+}
+
 static int
 _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned int h)
 {
@@ -275,7 +312,8 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie, unsigned int w, unsigned 
 #  endif
 # endif
 #endif
-
+   _evas_common_rgba_image_post_surface(ie);
+   
    return 0;
 }
 
@@ -284,6 +322,13 @@ _evas_common_rgba_image_surface_delete(Image_Entry *ie)
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 
+#ifdef HAVE_PIXMAN
+   if (im->pixman.im)
+     {
+        pixman_image_unref(im->pixman.im);
+        im->pixman.im = NULL;
+     }
+#endif   
    if (ie->file)
      DBG("unload: [%p] %s %s", ie, ie->file, ie->key);
    if ((im->cs.data) && (im->image.data))

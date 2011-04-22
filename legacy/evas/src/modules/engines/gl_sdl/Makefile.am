@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines/gl_common \
 @FREETYPE_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
 @evas_engine_gl_sdl_cflags@
 

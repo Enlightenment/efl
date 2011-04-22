@@ -10,7 +10,9 @@ AM_CPPFLAGS	     = -I. \
 			@WIN32_CPPFLAGS@ \
 			@EVIL_CFLAGS@ \
 		       @FREETYPE_CFLAGS@ \
-		       @EINA_CFLAGS@
+                       @PIXMAN_CFLAGS@ \
+		       @EINA_CFLAGS@ \
+                       @PIXMAN_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_cache.la
 libevas_cache_la_SOURCES  = \
