@@ -74,8 +74,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
-
-
 static Eina_Bool
 _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
@@ -185,7 +183,7 @@ static Elm_Slideshow_Item* _item_prev_get(Elm_Slideshow_Item* item)
 {
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    Elm_Slideshow_Item* prev = eina_list_data_get(eina_list_prev(item->l));
-   if((!prev) && (wd->loop))
+   if ((!prev) && (wd->loop))
      prev = eina_list_data_get(eina_list_last(item->l));
    return prev;
 }
@@ -194,11 +192,10 @@ static Elm_Slideshow_Item* _item_next_get(Elm_Slideshow_Item* item)
 {
    Widget_Data *wd = elm_widget_data_get(item->base.widget);
    Elm_Slideshow_Item* next = eina_list_data_get(eina_list_next(item->l));
-   if((!next) && (wd->loop))
+   if ((!next) && (wd->loop))
      next = eina_list_data_get(wd->items);
    return next;
 }
-
 
 static void
 _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -289,12 +286,12 @@ _item_realize(Elm_Slideshow_Item *item)
 
    //delete unused items
    lc = wd->count_item_pre_before + wd->count_item_pre_after + 1;
-   while (eina_list_count(wd->items_built) > lc)
+   while ((int)eina_list_count(wd->items_built) > lc)
      {
         item = eina_list_data_get(wd->items_built);
         wd->items_built = eina_list_remove_list(wd->items_built,
                                                 wd->items_built);
-        if(item->itc->func.del)
+        if (item->itc->func.del)
           item->itc->func.del((void*)item->base.data, item->base.view);
         evas_object_del(item->base.view);
         item->base.view = NULL;
@@ -309,7 +306,7 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
    if (!wd) return;
 
    item = wd->previous;
-   if(item)
+   if (item)
      {
         edje_object_part_unswallow(NULL, item->base.view);
         evas_object_hide(item->base.view);
@@ -328,7 +325,6 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
    edje_object_part_swallow(wd->slideshow, "elm.swallow.1", item->base.view);
 }
 
-
 static Eina_Bool
 _timer_cb(void *data)
 {
@@ -339,8 +335,6 @@ _timer_cb(void *data)
    elm_slideshow_next(obj);
    return ECORE_CALLBACK_CANCEL;
 }
-
-
 
 /**
  * Add a new slideshow to the parent
@@ -758,7 +752,6 @@ elm_slideshow_clear(Evas_Object *obj)
      }
 }
 
-
 /**
  * Delete the item
  *
@@ -809,7 +802,6 @@ elm_slideshow_items_get(const Evas_Object *obj)
    if (!wd) return NULL;
    return wd->items;
 }
-
 
 /**
  * Returns the current item displayed
@@ -875,8 +867,6 @@ elm_slideshow_cache_before_get(const Evas_Object *obj)
    return wd->count_item_pre_before;
 }
 
-
-
 /**
  * Set max amount of cached items before current
  *
@@ -912,8 +902,6 @@ elm_slideshow_cache_after_get(const Evas_Object *obj)
    return wd->count_item_pre_after;
 }
 
-
-
 /**
  * Set max amount of cached items after current
  *
@@ -931,4 +919,3 @@ elm_slideshow_cache_after_set(Evas_Object *obj, int count)
    if (count < 0) count = 0;
    wd->count_item_pre_after = count;
 }
-
