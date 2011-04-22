@@ -201,7 +201,7 @@
  * "expanded" - This is called when elm_genlist_item_expanded_set() is called
  *              and the item is now meant to be expanded. The event_info
  *              parameter is the genlist item that was indicated to expand. It
- *       	is the job of this callback to then fill in the child items.
+ *              is the job of this callback to then fill in the child items.
  * "contracted" - This is called when elm_genlist_item_expanded_set() is called
  *                and the item is now meant to be contracted. The event_info
  *                parameter is the genlist item that was indicated to contract.
@@ -1648,10 +1648,10 @@ _elm_genlist_item_odd_even_update(Elm_Genlist_Item *it)
 {
    if (!it->nostacking)
      {
-       if ((it->order_num_in & 0x1) ^ it->stacking_even)
-	 evas_object_lower(it->base.view);
-       else
-	 evas_object_raise(it->base.view);
+        if ((it->order_num_in & 0x1) ^ it->stacking_even)
+          evas_object_lower(it->base.view);
+        else
+          evas_object_raise(it->base.view);
      }
 
    if (it->order_num_in & 0x1)
@@ -1663,39 +1663,39 @@ _elm_genlist_item_odd_even_update(Elm_Genlist_Item *it)
 static void
 _elm_genlist_item_state_update(Elm_Genlist_Item *it, Item_Cache *itc)
 {
-  if (itc)
-    {
-      if (it->selected != itc->selected)
-	{
-	  if (it->selected)
-	    edje_object_signal_emit(it->base.view,
-				    "elm,state,selected", "elm");
-	}
-      if (it->disabled != itc->disabled)
-	{
-	  if (it->disabled)
-	    edje_object_signal_emit(it->base.view,
-				    "elm,state,disabled", "elm");
-	}
-      if (it->expanded != itc->expanded)
-	{
-	  if (it->expanded)
-	    edje_object_signal_emit(it->base.view,
-				    "elm,state,expanded", "elm");
-	}
-    }
-  else
-    {
-      if (it->selected)
-	edje_object_signal_emit(it->base.view,
-				"elm,state,selected", "elm");
-      if (it->disabled)
-	edje_object_signal_emit(it->base.view,
-				"elm,state,disabled", "elm");
-      if (it->expanded)
-	edje_object_signal_emit(it->base.view,
-				"elm,state,expanded", "elm");
-    }
+   if (itc)
+     {
+        if (it->selected != itc->selected)
+          {
+             if (it->selected)
+               edje_object_signal_emit(it->base.view,
+                                       "elm,state,selected", "elm");
+          }
+        if (it->disabled != itc->disabled)
+          {
+             if (it->disabled)
+               edje_object_signal_emit(it->base.view,
+                                       "elm,state,disabled", "elm");
+          }
+        if (it->expanded != itc->expanded)
+          {
+             if (it->expanded)
+               edje_object_signal_emit(it->base.view,
+                                       "elm,state,expanded", "elm");
+          }
+     }
+   else
+     {
+        if (it->selected)
+          edje_object_signal_emit(it->base.view,
+                                  "elm,state,selected", "elm");
+        if (it->disabled)
+          edje_object_signal_emit(it->base.view,
+                                  "elm,state,disabled", "elm");
+        if (it->expanded)
+          edje_object_signal_emit(it->base.view,
+                                  "elm,state,expanded", "elm");
+     }
 }
 
 static void
@@ -1709,8 +1709,8 @@ _item_cache_free(Item_Cache *itc)
 
 static void
 _item_label_realize(Elm_Genlist_Item *it,
-		    Evas_Object *target,
-		    const Eina_List *source)
+                    Evas_Object *target,
+                    const Eina_List *source)
 {
    if (it->itc->func.label_get)
      {
@@ -1729,18 +1729,18 @@ _item_label_realize(Elm_Genlist_Item *it,
                   edje_object_part_text_set(target, key, s);
                   free(s);
                }
-	     else
-	       {
-		  edje_object_part_text_set(target, key, "");
-	       }
+             else
+               {
+                  edje_object_part_text_set(target, key, "");
+               }
           }
      }
 }
 
 static Eina_List *
 _item_icon_realize(Elm_Genlist_Item *it,
-		   Evas_Object *target,
-		   Eina_List *source)
+                   Evas_Object *target,
+                   Eina_List *source)
 {
    Eina_List *res = NULL;
 
@@ -1759,7 +1759,7 @@ _item_icon_realize(Elm_Genlist_Item *it,
 
              if (ic)
                {
-		  res = eina_list_append(res, ic);
+                  res = eina_list_append(res, ic);
                   edje_object_part_swallow(it->mode_view, key, ic);
                   evas_object_show(ic);
                   elm_widget_sub_object_add(it->base.widget, ic);
@@ -1772,14 +1772,14 @@ _item_icon_realize(Elm_Genlist_Item *it,
 
 static void
 _item_state_realize(Elm_Genlist_Item *it,
-		    Evas_Object *target,
-		    Eina_List *source)
+                    Evas_Object *target,
+                    Eina_List *source)
 {
    if (it->itc->func.state_get)
      {
         const Eina_List *l;
         const char *key;
-	char buf[4096];
+        char buf[4096];
 
         it->mode_states =
            elm_widget_stringlist_get(edje_object_data_get(target, "states"));
@@ -1793,11 +1793,11 @@ _item_state_realize(Elm_Genlist_Item *it,
                   snprintf(buf, sizeof(buf), "elm,state,%s,active", key);
                   edje_object_signal_emit(target, buf, "elm");
                }
-	     else
-	       {
-		  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
-		  edje_object_signal_emit(target, buf, "elm");
-	       }
+             else
+               {
+                  snprintf(buf, sizeof(buf), "elm,state,%s,passive", key);
+                  edje_object_signal_emit(target, buf, "elm");
+               }
           }
      }
 }
@@ -1816,13 +1816,13 @@ _item_realize(Elm_Genlist_Item *it,
    if (it->delete_me) return ;
    if (it->realized)
      {
-       if (it->order_num_in != in)
-	 {
-	   it->order_num_in = in;
-	   _elm_genlist_item_odd_even_update(it);
-	   _elm_genlist_item_state_update(it, NULL);
-	 }
-       return;
+        if (it->order_num_in != in)
+          {
+             it->order_num_in = in;
+             _elm_genlist_item_odd_even_update(it);
+             _elm_genlist_item_state_update(it, NULL);
+          }
+        return;
      }
    it->order_num_in = in;
 
@@ -1840,7 +1840,7 @@ _item_realize(Elm_Genlist_Item *it,
    else
      {
         const char *stacking_even;
-	const char *stacking;
+        const char *stacking;
 
         it->base.view = edje_object_add(evas_object_evas_get(it->base.widget));
         edje_object_scale_set(it->base.view,
@@ -1861,13 +1861,13 @@ _item_realize(Elm_Genlist_Item *it,
         _elm_theme_object_set(it->base.widget, it->base.view, "genlist", buf,
                               elm_widget_style_get(it->base.widget));
 
-	stacking_even = edje_object_data_get(it->base.view, "stacking_even");
-	if (!stacking_even) stacking_even = "above";
-	it->stacking_even = !!strcmp("above", stacking_even);
+        stacking_even = edje_object_data_get(it->base.view, "stacking_even");
+        if (!stacking_even) stacking_even = "above";
+        it->stacking_even = !!strcmp("above", stacking_even);
 
-	stacking = edje_object_data_get(it->base.view, "stacking");
-	if (!stacking) stacking = "yes";
-	it->nostacking = !!strcmp("yes", stacking);
+        stacking = edje_object_data_get(it->base.view, "stacking");
+        if (!stacking) stacking = "yes";
+        it->nostacking = !!strcmp("yes", stacking);
 
         edje_object_mirrored_set(it->base.view,
                                  elm_widget_mirrored_get(it->base.widget));
@@ -1911,7 +1911,7 @@ _item_realize(Elm_Genlist_Item *it,
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MULTI_MOVE,
                                        _multi_move, it);
 
-	_elm_genlist_item_state_update(it, itc);
+        _elm_genlist_item_state_update(it, itc);
      }
 
    if ((calc) && (it->wd->homogeneous) && ((it->wd->item_width) || ((it->wd->item_width) && (it->wd->group_item_width))))
@@ -1934,13 +1934,13 @@ _item_realize(Elm_Genlist_Item *it,
      }
    else
      {
-	/* FIXME: If you see that assert, please notify us and we 
-	   will clean our mess */
-	assert(eina_list_count(it->icon_objs) != 0);
+        /* FIXME: If you see that assert, please notify us and we 
+           will clean our mess */
+        assert(eina_list_count(it->icon_objs) != 0);
 
         _item_label_realize(it, it->base.view, it->labels);
-	it->icon_objs = _item_icon_realize(it, it->base.view, it->icons);
-	_item_state_realize(it, it->base.view, it->states);
+        it->icon_objs = _item_icon_realize(it, it->base.view, it->icons);
+        _item_state_realize(it, it->base.view, it->states);
 
         if (!it->mincalcd)
           {
