@@ -393,6 +393,8 @@ struct _Elm_Genlist_Item
    Eina_Bool                     dragging : 1;
    Eina_Bool                     updateme : 1;
    Eina_Bool                     nocache : 1;
+   Eina_Bool                     stacking_even : 1;
+   Eina_Bool                     nostacking : 1;
 };
 
 struct _Item_Cache
@@ -404,7 +406,6 @@ struct _Item_Cache
    const char  *item_style; // it->itc->item_style
    Eina_Bool    tree : 1; // it->flags & ELM_GENLIST_ITEM_SUBITEMS
    Eina_Bool    compress : 1; // it->wd->compress
-   Eina_Bool    odd : 1; // in & 0x1
 
    Eina_Bool    selected : 1; // it->selected
    Eina_Bool    disabled : 1; // it->disabled
@@ -555,7 +556,7 @@ _event_hook(Evas_Object       *obj,
             (!strcmp(ev->keyname, "space")))
            && (!wd->multi) && (wd->selected))
      {
-        Elm_Genlist_Item *it = elm_genlist_selected_item_get(obj);
+        it = elm_genlist_selected_item_get(obj);
         elm_genlist_item_expanded_set(it,
                                       !elm_genlist_item_expanded_get(it));
      }
@@ -992,10 +993,10 @@ _item_unselect(Elm_Genlist_Item *it)
    edje_object_signal_emit(it->base.view, "elm,state,unselected", "elm");
    stacking = edje_object_data_get(it->base.view, "stacking");
    selectraise = edje_object_data_get(it->base.view, "selectraise");
-   if ((selectraise) && (!strcmp(selectraise, "on")))
+   if (!it->nostacking)
      {
-        if ((stacking) && (!strcmp(stacking, "below")))
-          evas_object_lower(it->base.view);
+       if ((it->order_num_in & 0x1) ^ it->stacking_even) evas_object_lower(it->base.view);
+       else evas_object_raise(it->base.view);
      }
    it->highlighted = EINA_FALSE;
    if (it->selected)
@@ -1580,7 +1581,6 @@ _item_cache_add(Elm_Genlist_Item *it)
    itc->item_style = eina_stringshare_add(it->itc->item_style);
    if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) itc->tree = 1;
    itc->compress = (it->wd->compress);
-   itc->odd = (it->order_num_in & 0x1);
    itc->selected = it->selected;
    itc->disabled = it->disabled;
    itc->expanded = it->expanded;
@@ -1622,16 +1622,14 @@ static Item_Cache *
 _item_cache_find(Elm_Genlist_Item *it)
 {
    Item_Cache *itc;
-   Eina_Bool tree = 0, odd;
+   Eina_Bool tree = 0;
 
    if (it->flags & ELM_GENLIST_ITEM_SUBITEMS) tree = 1;
-   odd = (it->order_num_in & 0x1);
    EINA_INLIST_FOREACH(it->wd->item_cache, itc)
      {
         if ((itc->selected) || (itc->disabled) || (itc->expanded))
           continue;
         if ((itc->tree == tree) &&
-            (itc->odd == odd) &&
             (itc->compress == it->wd->compress) &&
             (!strcmp(it->itc->item_style, itc->item_style)))
           {
@@ -1642,6 +1640,61 @@ _item_cache_find(Elm_Genlist_Item *it)
           }
      }
    return NULL;
+}
+
+static void
+_elm_genlist_item_odd_even_update(Elm_Genlist_Item *it)
+{
+   if (!it->nostacking)
+     {
+       if ((it->order_num_in & 0x1) ^ it->stacking_even)
+	 evas_object_lower(it->base.view);
+       else
+	 evas_object_raise(it->base.view);
+     }
+
+   if (it->order_num_in & 0x1)
+     edje_object_signal_emit(it->base.view, "elm,state,odd", "elm");
+   else
+     edje_object_signal_emit(it->base.view, "elm,state,even", "elm");
+}
+
+static void
+_elm_genlist_item_state_update(Elm_Genlist_Item *it, Item_Cache *itc)
+{
+  if (itc)
+    {
+      if (it->selected != itc->selected)
+	{
+	  if (it->selected)
+	    edje_object_signal_emit(it->base.view,
+				    "elm,state,selected", "elm");
+	}
+      if (it->disabled != itc->disabled)
+	{
+	  if (it->disabled)
+	    edje_object_signal_emit(it->base.view,
+				    "elm,state,disabled", "elm");
+	}
+      if (it->expanded != itc->expanded)
+	{
+	  if (it->expanded)
+	    edje_object_signal_emit(it->base.view,
+				    "elm,state,expanded", "elm");
+	}
+    }
+  else
+    {
+      if (it->selected)
+	edje_object_signal_emit(it->base.view,
+				"elm,state,selected", "elm");
+      if (it->disabled)
+	edje_object_signal_emit(it->base.view,
+				"elm,state,disabled", "elm");
+      if (it->expanded)
+	edje_object_signal_emit(it->base.view,
+				"elm,state,expanded", "elm");
+    }
 }
 
 static void
@@ -1659,13 +1712,22 @@ _item_realize(Elm_Genlist_Item *it,
               Eina_Bool         calc)
 {
    Elm_Genlist_Item *it2;
-   const char *stacking;
    const char *treesize;
    char buf[1024];
    int depth, tsize = 20;
    Item_Cache *itc = NULL;
 
-   if ((it->realized) || (it->delete_me)) return;
+   if (it->delete_me) return ;
+   if (it->realized)
+     {
+       if (it->order_num_in != in)
+	 {
+	   it->order_num_in = in;
+	   _elm_genlist_item_odd_even_update(it);
+	   _elm_genlist_item_state_update(it, NULL);
+	 }
+       return;
+     }
    it->order_num_in = in;
 
    if (it->nocache)
@@ -1681,6 +1743,9 @@ _item_realize(Elm_Genlist_Item *it,
      }
    else
      {
+        const char *stacking_even;
+	const char *stacking;
+
         it->base.view = edje_object_add(evas_object_evas_get(it->base.widget));
         edje_object_scale_set(it->base.view,
                               elm_widget_scale_get(it->base.widget) *
@@ -1694,12 +1759,20 @@ _item_realize(Elm_Genlist_Item *it,
         if (it->wd->compress)
           strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
-        if (in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
         strncat(buf, "/", sizeof(buf) - strlen(buf));
         strncat(buf, it->itc->item_style, sizeof(buf) - strlen(buf));
 
         _elm_theme_object_set(it->base.widget, it->base.view, "genlist", buf,
                               elm_widget_style_get(it->base.widget));
+
+	stacking_even = edje_object_data_get(it->base.view, "stacking_even");
+	if (!stacking_even) stacking_even = "above";
+	it->stacking_even = !!strcmp("above", stacking_even);
+
+	stacking = edje_object_data_get(it->base.view, "stacking");
+	if (!stacking) stacking = "yes";
+	it->nostacking = !!strcmp("yes", stacking);
+
         edje_object_mirrored_set(it->base.view,
                                  elm_widget_mirrored_get(it->base.widget));
         it->spacer =
@@ -1707,6 +1780,9 @@ _item_realize(Elm_Genlist_Item *it,
         evas_object_color_set(it->spacer, 0, 0, 0, 0);
         elm_widget_sub_object_add(it->base.widget, it->spacer);
      }
+
+   _elm_genlist_item_odd_even_update(it);
+
    for (it2 = it, depth = 0; it2->parent; it2 = it2->parent)
      {
         if (it2->parent->flags != ELM_GENLIST_ITEM_GROUP) depth += 1;
@@ -1726,13 +1802,6 @@ _item_realize(Elm_Genlist_Item *it,
                                         "elm", _signal_expand, it);
         edje_object_signal_callback_add(it->base.view, "elm,action,contract",
                                         "elm", _signal_contract, it);
-        stacking = edje_object_data_get(it->base.view, "stacking");
-        if (stacking)
-          {
-             if (!strcmp(stacking, "below")) evas_object_lower(it->base.view);
-             else if (!strcmp(stacking, "above"))
-               evas_object_raise(it->base.view);
-          }
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_DOWN,
                                        _mouse_down, it);
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MOUSE_UP,
@@ -1745,39 +1814,8 @@ _item_realize(Elm_Genlist_Item *it,
                                        _multi_up, it);
         evas_object_event_callback_add(it->base.view, EVAS_CALLBACK_MULTI_MOVE,
                                        _multi_move, it);
-        if (itc)
-          {
-             if (it->selected != itc->selected)
-               {
-                  if (it->selected)
-                    edje_object_signal_emit(it->base.view,
-                                            "elm,state,selected", "elm");
-               }
-             if (it->disabled != itc->disabled)
-               {
-                  if (it->disabled)
-                    edje_object_signal_emit(it->base.view,
-                                            "elm,state,disabled", "elm");
-               }
-             if (it->expanded != itc->expanded)
-               {
-                  if (it->expanded)
-                    edje_object_signal_emit(it->base.view,
-                                            "elm,state,expanded", "elm");
-               }
-          }
-        else
-          {
-             if (it->selected)
-               edje_object_signal_emit(it->base.view,
-                                       "elm,state,selected", "elm");
-             if (it->disabled)
-               edje_object_signal_emit(it->base.view,
-                                       "elm,state,disabled", "elm");
-             if (it->expanded)
-               edje_object_signal_emit(it->base.view,
-                                       "elm,state,expanded", "elm");
-          }
+
+	_elm_genlist_item_state_update(it, itc);
      }
 
    if ((calc) && (it->wd->homogeneous) && ((it->wd->item_width) || ((it->wd->item_width) && (it->wd->group_item_width))))
