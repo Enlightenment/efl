@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
+#include <assert.h>
 #include "elm_priv.h"
 
 #define SWIPE_MOVES         12
