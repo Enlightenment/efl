@@ -65,6 +65,15 @@ static void _on_focus_hook(void *data, Evas_Object *obj);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
+static const char SIG_CHANGED[] = "changed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
+};
+
+
+
 static Eina_Bool
 _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
@@ -347,6 +356,8 @@ elm_slideshow_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
    return obj;
@@ -416,7 +427,7 @@ elm_slideshow_show(Elm_Slideshow_Item *item)
    edje_object_signal_emit(wd->slideshow, buf, "slideshow");
    wd->previous = wd->current;
    wd->current = next;
-   evas_object_smart_callback_call(item->base.widget, "changed", wd->current);
+   evas_object_smart_callback_call(item->base.widget, SIG_CHANGED, wd->current);
 }
 
 /**
@@ -457,7 +468,7 @@ elm_slideshow_next(Evas_Object *obj)
 
    wd->previous = wd->current;
    wd->current = next;
-   evas_object_smart_callback_call(obj, "changed", wd->current);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, wd->current);
 }
 
 /**
@@ -498,7 +509,7 @@ elm_slideshow_previous(Evas_Object *obj)
 
    wd->previous = wd->current;
    wd->current = prev;
-   evas_object_smart_callback_call(obj, "changed", wd->current);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, wd->current);
 }
 
 /**

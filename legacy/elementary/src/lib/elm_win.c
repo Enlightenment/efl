@@ -81,6 +81,21 @@ static void _elm_win_focus_highlight_reconfigure_job_stop(Elm_Win *win);
 static void _elm_win_focus_highlight_anim_end(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _elm_win_focus_highlight_reconfigure(Elm_Win *win);
 
+static const char SIG_DELETE_REQUEST[] = "delete,request";
+static const char SIG_FOCUS_OUT[] = "focus,in";
+static const char SIG_FOCUS_IN[] = "focus,out";
+static const char SIG_MOVED[] = "moved";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_DELETE_REQUEST, ""},
+   {SIG_FOCUS_OUT, ""},
+   {SIG_FOCUS_IN, ""},
+   {SIG_MOVED, ""},
+   {NULL, NULL}
+};
+
+
+
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
 
@@ -97,7 +112,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    win->screen.x = x;
    win->screen.y = y;
-   evas_object_smart_callback_call(win->win_obj, "moved", NULL);
+   evas_object_smart_callback_call(win->win_obj, SIG_MOVED, NULL);
 }
 
 static void
@@ -123,8 +138,8 @@ _elm_win_focus_in(Ecore_Evas *ee)
    win = elm_widget_data_get(obj);
    if (!win) return;
    /*NB: Why two different "focus signals" here ??? */
-   evas_object_smart_callback_call(win->win_obj, "focus-in", NULL); // FIXME: remove me
-   evas_object_smart_callback_call(win->win_obj, "focus,in", NULL);
+   evas_object_smart_callback_call(win->win_obj, SIG_FOCUS_IN, NULL); // FIXME: remove me
+   evas_object_smart_callback_call(win->win_obj, SIG_FOCUS_IN, NULL);
    win->focus_highlight.cur.visible = EINA_TRUE;
    _elm_win_focus_highlight_reconfigure_job_start(win);
    if (win->frame_obj)
@@ -145,8 +160,8 @@ _elm_win_focus_out(Ecore_Evas *ee)
    if (!obj) return;
    win = elm_widget_data_get(obj);
    if (!win) return;
-   evas_object_smart_callback_call(win->win_obj, "focus-out", NULL); // FIXME: remove me
-   evas_object_smart_callback_call(win->win_obj, "focus,out", NULL);
+   evas_object_smart_callback_call(win->win_obj, SIG_FOCUS_OUT, NULL); // FIXME: remove me
+   evas_object_smart_callback_call(win->win_obj, SIG_FOCUS_OUT, NULL);
    win->focus_highlight.cur.visible = EINA_FALSE;
    _elm_win_focus_highlight_reconfigure_job_start(win);
    if (win->frame_obj)
@@ -349,7 +364,7 @@ _elm_win_obj_intercept_move(void *data, Evas_Object *obj, Evas_Coord x, Evas_Coo
           {
              win->screen.x = x;
              win->screen.y = y;
-             evas_object_smart_callback_call(win->win_obj, "moved", NULL);
+             evas_object_smart_callback_call(win->win_obj, SIG_MOVED, NULL);
           }
      }
    else
@@ -388,7 +403,7 @@ _elm_win_obj_callback_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
         evas_object_geometry_get(obj, &x, &y, NULL, NULL);
         win->screen.x = x;
         win->screen.y = y;
-        evas_object_smart_callback_call(win->win_obj, "moved", NULL);
+        evas_object_smart_callback_call(win->win_obj, SIG_MOVED, NULL);
      }
    if (win->frame_obj)
      {
@@ -434,8 +449,8 @@ _elm_win_delete_request(Ecore_Evas *ee)
    if (!win) return;
    int autodel = win->autodel;
    win->autodel_clear = &autodel;
-   evas_object_smart_callback_call(win->win_obj, "delete-request", NULL); // FIXME: remove me
-   evas_object_smart_callback_call(win->win_obj, "delete,request", NULL);
+   evas_object_smart_callback_call(win->win_obj, SIG_DELETE_REQUEST, NULL); // FIXME: remove me.
+   evas_object_smart_callback_call(win->win_obj, SIG_DELETE_REQUEST, NULL);
    // FIXME: if above callback deletes - then the below will be invalid
    if (autodel) evas_object_del(win->win_obj);
    else win->autodel_clear = NULL;
@@ -1365,6 +1380,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
                                         EINA_TRUE);
    printf("Key F12 exclusive for dot tree generation. (%d)\n", ret);
 #endif
+
+   evas_object_smart_callbacks_descriptions_set(win->win_obj, _signals);
+
    return win->win_obj;
 }
 

@@ -10,7 +10,6 @@
  * Signals that you can add callbacks for are:
  *
  * "clicked" - This is called when a user has clicked the photo
- * "drop" - Something was dropped on the widget
  * "drag,start" - Someone started dragging the image out of the object
  * "drag,end" - Dragged item was dropped (somewhere)
  */
@@ -33,6 +32,18 @@ static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
 static void _mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
+
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_DRAG_START[] = "drag,start";
+static const char SIG_DRAG_END[] = "drag,end";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED, ""},
+   {SIG_DRAG_START, ""},
+   {SIG_DRAG_END, ""},
+   {NULL, NULL}
+};
+
 
 static void
 _del_hook(Evas_Object *obj)
@@ -116,7 +127,7 @@ static void
 _drag_done_cb(void *unused __UNUSED__, Evas_Object *obj)
 {
    elm_object_scroll_freeze_pop(obj);
-   evas_object_smart_callback_call(obj, "drag,end", NULL);
+   evas_object_smart_callback_call(obj, SIG_DRAG_END, NULL);
 }
 
 static Eina_Bool
@@ -144,7 +155,7 @@ _longpress(void *objv)
      }
    elm_object_scroll_freeze_push(objv);
 
-   evas_object_smart_callback_call(objv, "drag,start", NULL);
+   evas_object_smart_callback_call(objv, SIG_DRAG_START, NULL);
 
    return 0; /* Don't call again */
 }
@@ -197,7 +208,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
         wd->longtimer = NULL;
      }
 
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 
@@ -256,6 +267,8 @@ elm_photo_add(Evas_Object *parent)
                                   _icon_move_resize, obj);
    evas_object_event_callback_add(icon, EVAS_CALLBACK_RESIZE,
                                   _icon_move_resize, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);

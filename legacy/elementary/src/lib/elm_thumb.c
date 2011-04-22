@@ -46,13 +46,13 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 
-#define SIG_CLICKED "clicked"
-#define SIG_CLICKED_DOUBLE "clicked,double"
-#define SIG_GENERATE_ERROR "generate,error"
-#define SIG_GENERATE_START "generate,start"
-#define SIG_GENERATE_STOP "generate,stop"
-#define SIG_LOAD_ERROR "load,error"
-#define SIG_PRESS "press"
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_GENERATE_ERROR[] = "generate,error";
+static const char SIG_GENERATE_START[] = "generate,start";
+static const char SIG_GENERATE_STOP[] = "generate,stop";
+static const char SIG_LOAD_ERROR[] = "load,error";
+static const char SIG_PRESS[] = "press";
 
 static const Evas_Smart_Cb_Description _signals[] =
 {

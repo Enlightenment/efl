@@ -21,8 +21,8 @@
  * "load" - Photo load begins.
  * "loaded" - This is called when the image file load is complete for the first
  *            view (low resolution blurry version).
- * "load,details" - Photo detailed data load begins.
- * "loaded,details" - This is called when the image file load is complete for
+ * "load,detail" - Photo detailed data load begins.
+ * "loaded,detail" - This is called when the image file load is complete for
  *                    the detailed image data (full resolution needed).
  * "zoom,start" - Zoom animation started.
  * "zoom,stop" - Zoom animation stopped.
@@ -135,6 +135,44 @@ static void grid_clear(Evas_Object *obj, Grid *g);
 static Grid *grid_create(Evas_Object *obj);
 static void grid_load(Evas_Object *obj, Grid *g);
 
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_PRESS[] = "press";
+static const char SIG_LONGPRESSED[] = "longpressed";
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+static const char SIG_LOAD[] = "load";
+static const char SIG_LOADED[] = "loaded";
+static const char SIG_LOAD_DETAIL[] = "load,detail";
+static const char SIG_LOADED_DETAIL[] = "loaded,detail";
+static const char SIG_ZOOM_START[] = "zoom,start";
+static const char SIG_ZOOM_STOP[] = "zoom,stop";
+static const char SIG_ZOOM_CHANGE[] = "zoom,change";
+static const char SIG_SCROLL[] = "scroll";
+static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
+static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
+static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
+static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CLICKED, ""},
+   {SIG_PRESS, ""},
+   {SIG_LONGPRESSED, ""},
+   {SIG_CLICKED_DOUBLE, ""},
+   {SIG_LOAD, ""},
+   {SIG_LOADED, ""},
+   {SIG_LOAD_DETAIL, ""},
+   {SIG_LOADED_DETAIL, ""},
+   {SIG_ZOOM_START, ""},
+   {SIG_ZOOM_STOP, ""},
+   {SIG_ZOOM_CHANGE, ""},
+   {SIG_SCROLL, ""},
+   {SIG_SCROLL_ANIM_START, ""},
+   {SIG_SCROLL_ANIM_STOP, ""},
+   {SIG_SCROLL_DRAG_START, ""},
+   {SIG_SCROLL_DRAG_STOP, ""},
+   {NULL, NULL}
+};
+
+
 static int
 nearest_pow2(int num)
 {
@@ -235,7 +273,7 @@ grid_clear(Evas_Object *obj, Grid *g)
                     {
                        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                                "elm,state,busy,stop", "elm");
-                       evas_object_smart_callback_call(obj, "loaded,detail", NULL);
+                       evas_object_smart_callback_call(obj, SIG_LOAD_DETAIL, NULL);
                     }
                }
           }
@@ -261,7 +299,7 @@ _tile_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void 
           {
              edje_object_signal_emit(elm_smart_scroller_edje_object_get(git->wd->scr),
                                      "elm,state,busy,stop", "elm");
-             evas_object_smart_callback_call(git->wd->obj, "loaded,detail", NULL);
+             evas_object_smart_callback_call(git->wd->obj, SIG_LOADED_DETAIL, NULL);
           }
      }
 }
@@ -401,7 +439,7 @@ grid_load(Evas_Object *obj, Grid *g)
                     {
                        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                                "elm,state,busy,start", "elm");
-                       evas_object_smart_callback_call(obj, "load,detail", NULL);
+                       evas_object_smart_callback_call(obj, SIG_LOAD_DETAIL, NULL);
                     }
                }
              else if ((g->grid[tn].want) && (!visible))
@@ -411,7 +449,7 @@ grid_load(Evas_Object *obj, Grid *g)
                     {
                        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                                "elm,state,busy,stop", "elm");
-                       evas_object_smart_callback_call(obj, "loaded,detail", NULL);
+                       evas_object_smart_callback_call(obj, SIG_LOADED_DETAIL, NULL);
                     }
                   g->grid[tn].want = 0;
                   evas_object_hide(g->grid[tn].img);
@@ -525,13 +563,13 @@ _main_preloaded(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void 
      }
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
-   evas_object_smart_callback_call(data, "loaded", NULL);
+   evas_object_smart_callback_call(data, SIG_LOADED, NULL);
    wd->preload_num--;
    if (!wd->preload_num)
      {
         edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                 "elm,state,busy,stop", "elm");
-        evas_object_smart_callback_call(obj, "loaded,detail", NULL);
+        evas_object_smart_callback_call(obj, SIG_LOADED_DETAIL, NULL);
      }
 }
 
@@ -602,7 +640,7 @@ _zoom_anim(void *data)
         wd->nosmooth--;
         if (!wd->nosmooth) _smooth_update(data);
         wd->zoom_animator = NULL;
-        evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+        evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
    return go;
 }
@@ -622,7 +660,7 @@ _long_press(void *data)
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->long_timer = NULL;
    wd->longpressed = EINA_TRUE;
-   evas_object_smart_callback_call(data, "longpressed", NULL);
+   evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -636,9 +674,9 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) wd->on_hold = EINA_TRUE;
    else wd->on_hold = EINA_FALSE;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     evas_object_smart_callback_call(data, "clicked,double", NULL);
+     evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
    else
-     evas_object_smart_callback_call(data, "press", NULL);
+     evas_object_smart_callback_call(data, SIG_PRESS, NULL);
    wd->longpressed = EINA_FALSE;
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
    wd->long_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
@@ -659,7 +697,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
         wd->long_timer = NULL;
      }
    if (!wd->on_hold)
-     evas_object_smart_callback_call(data, "clicked", NULL);
+     evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    wd->on_hold = EINA_FALSE;
 }
 
@@ -917,31 +955,31 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__
 static void
 _scr_anim_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,anim,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
 _scr_anim_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,anim,stop", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static void
 _scr_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,drag,start", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
 _scr_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll,drag,stop", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_STOP, NULL);
 }
 
 static void
 _scr_scroll(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, "scroll", NULL);
+   evas_object_smart_callback_call(data, SIG_SCROLL, NULL);
 }
 
 static Eina_Bool
@@ -1131,6 +1169,8 @@ elm_photocam_add(Evas_Object *parent)
                              &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
    _sizing_eval(obj);
    return obj;
 }
@@ -1185,13 +1225,13 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    wd->main_load_pending = 1;
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
-   evas_object_smart_callback_call(obj, "load", NULL);
+   evas_object_smart_callback_call(obj, SIG_LOAD, NULL);
    wd->preload_num++;
    if (wd->preload_num == 1)
      {
         edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                 "elm,state,busy,start", "elm");
-        evas_object_smart_callback_call(obj, "load,detail", NULL);
+        evas_object_smart_callback_call(obj, SIG_LOAD_DETAIL, NULL);
      }
      {
         double tz = wd->zoom;
@@ -1409,12 +1449,12 @@ done:
    if (!wd->paused)
      {
         if (started)
-          evas_object_smart_callback_call(obj, "zoom,start", NULL);
+          evas_object_smart_callback_call(obj, SIG_ZOOM_START, NULL);
         if (!an)
-          evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+          evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
    if (zoom_changed)
-     evas_object_smart_callback_call(obj, "zoom,change", NULL);
+     evas_object_smart_callback_call(obj, SIG_ZOOM_CHANGE, NULL);
 }
 
 /**
@@ -1607,7 +1647,7 @@ elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h __UN
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
         zoom_do(obj, 1.0);
-        evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+        evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
    elm_smart_scroller_child_region_show(wd->scr, rx, ry, rw, rh);
 }
@@ -1648,7 +1688,7 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
         zoom_do(obj, 1.0);
-        evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+        evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
    elm_smart_scroller_region_bring_in(wd->scr, rx, ry, rw, rh);
 }
@@ -1680,7 +1720,7 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
              ecore_animator_del(wd->zoom_animator);
              wd->zoom_animator = NULL;
              zoom_do(obj, 1.0);
-             evas_object_smart_callback_call(obj, "zoom,stop", NULL);
+             evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
           }
      }
 }

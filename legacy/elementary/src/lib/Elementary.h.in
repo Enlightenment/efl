@@ -1388,7 +1388,6 @@ extern "C" {
    EAPI void         elm_photo_editable_set(Evas_Object *obj, Eina_Bool set) EINA_ARG_NONNULL(1);
    /* smart callbacks called:
     * "clicked" - the user clicked the icon
-    * "drop" - Something was dropped on the widget
     * "drag,start" - Someone started dragging the image out of the object
     * "drag,end" - Dragged item was dropped (somewhere)
     */
@@ -2157,8 +2156,8 @@ extern "C" {
     * "clicked,double" - when mouse/finger double-clicked
     * "load" - when photo load begins
     * "loaded" - when photo load done
-    * "load,details" - when detailed image load begins
-    * "loaded,details" - when detailed image load done
+    * "load,detail" - when detailed image load begins
+    * "loaded,detail" - when detailed image load done
     * "zoom,start" - when zooming started
     * "zoom,stop" - when zooming stopped
     * "zoom,change" - when auto zoom mode changed zoom level
@@ -2879,6 +2878,11 @@ extern "C" {
    EAPI Evas_Object      *elm_segment_control_item_object_get(const Elm_Segment_Item *it) EINA_ARG_NONNULL(1);
    EAPI Elm_Segment_Item *elm_segment_control_item_selected_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void              elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool select) EINA_ARG_NONNULL(1);
+   /* smart callbacks called:
+    * "changed" -when the user clicks on a segment item which is not previously
+    *            selected and get selected. The event_info parameter is the
+    *            segment item index.
+    */
 
 #ifdef __cplusplus
 }

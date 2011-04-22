@@ -59,6 +59,13 @@ static Elm_Segment_Item * _item_find(const Evas_Object *obj, int index);
 static Elm_Segment_Item* _item_new(Evas_Object *obj, Evas_Object *icon,
                                    const char *label);
 
+static const char SIG_CHANGED[] = "changed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
+};
+
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -228,7 +235,7 @@ _segment_on(Elm_Segment_Item *it)
    edje_object_signal_emit(it->base.view, "elm,state,segment,selected", "elm");
 
    wd->selected_item = it;
-   evas_object_smart_callback_call(wd->obj, "changed", (void*) it->seg_index);
+   evas_object_smart_callback_call(wd->obj, SIG_CHANGED, (void*) it->seg_index);
 }
 
 static void
@@ -520,6 +527,9 @@ elm_segment_control_add(Evas_Object *parent)
                                   _on_move_resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
                                   _on_move_resize, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
    return obj;
 }
 
