@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include <assert.h>
@@ -1710,16 +1712,15 @@ _item_cache_free(Item_Cache *itc)
 static void
 _item_label_realize(Elm_Genlist_Item *it,
                     Evas_Object *target,
-                    const Eina_List *source)
+                    Eina_List **source)
 {
    if (it->itc->func.label_get)
      {
         const Eina_List *l;
         const char *key;
 
-        it->mode_labels =
-           elm_widget_stringlist_get(edje_object_data_get(target, "labels"));
-        EINA_LIST_FOREACH(source, l, key)
+        *source = elm_widget_stringlist_get(edje_object_data_get(target, "labels"));
+        EINA_LIST_FOREACH(*source, l, key)
           {
              char *s = it->itc->func.label_get
                 ((void *)it->base.data, it->base.widget, key);
@@ -1740,7 +1741,7 @@ _item_label_realize(Elm_Genlist_Item *it,
 static Eina_List *
 _item_icon_realize(Elm_Genlist_Item *it,
                    Evas_Object *target,
-                   Eina_List *source)
+                   Eina_List **source)
 {
    Eina_List *res = NULL;
 
@@ -1749,10 +1750,8 @@ _item_icon_realize(Elm_Genlist_Item *it,
         const Eina_List *l;
         const char *key;
 
-        it->mode_icons =
-           elm_widget_stringlist_get(edje_object_data_get(target,
-                                                          "icons"));
-        EINA_LIST_FOREACH(source, l, key)
+        *source = elm_widget_stringlist_get(edje_object_data_get(target, "icons"));
+        EINA_LIST_FOREACH(*source, l, key)
           {
              Evas_Object *ic = it->itc->func.icon_get
                 ((void *)it->base.data, it->base.widget, key);
@@ -1760,7 +1759,7 @@ _item_icon_realize(Elm_Genlist_Item *it,
              if (ic)
                {
                   res = eina_list_append(res, ic);
-                  edje_object_part_swallow(it->mode_view, key, ic);
+                  edje_object_part_swallow(target, key, ic);
                   evas_object_show(ic);
                   elm_widget_sub_object_add(it->base.widget, ic);
                }
@@ -1773,7 +1772,7 @@ _item_icon_realize(Elm_Genlist_Item *it,
 static void
 _item_state_realize(Elm_Genlist_Item *it,
                     Evas_Object *target,
-                    Eina_List *source)
+                    Eina_List **source)
 {
    if (it->itc->func.state_get)
      {
@@ -1781,9 +1780,8 @@ _item_state_realize(Elm_Genlist_Item *it,
         const char *key;
         char buf[4096];
 
-        it->mode_states =
-           elm_widget_stringlist_get(edje_object_data_get(target, "states"));
-        EINA_LIST_FOREACH(source, l, key)
+        *source = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
+        EINA_LIST_FOREACH(*source, l, key)
           {
              Eina_Bool on = it->itc->func.state_get
                 ((void *)it->base.data, it->base.widget, key);
@@ -1936,11 +1934,11 @@ _item_realize(Elm_Genlist_Item *it,
      {
         /* FIXME: If you see that assert, please notify us and we 
            will clean our mess */
-        assert(eina_list_count(it->icon_objs) != 0);
+        assert(eina_list_count(it->icon_objs) == 0);
 
-        _item_label_realize(it, it->base.view, it->labels);
-        it->icon_objs = _item_icon_realize(it, it->base.view, it->icons);
-        _item_state_realize(it, it->base.view, it->states);
+        _item_label_realize(it, it->base.view, &it->labels);
+        it->icon_objs = _item_icon_realize(it, it->base.view, &it->icons);
+        _item_state_realize(it, it->base.view, &it->states);
 
         if (!it->mincalcd)
           {
@@ -2744,11 +2742,13 @@ _mode_item_realize(Elm_Genlist_Item *it)
    /* label_get, icon_get, state_get */
    /* FIXME: If you see that assert, please notify us and we
       will clean our mess */
-   assert(eina_list_count(it->mode_icon_objs) != 0);
+   assert(eina_list_count(it->mode_icon_objs) == 0);
 
-   _item_label_realize(it, it->mode_view, it->mode_labels);
-   it->mode_icon_objs = _item_icon_realize(it, it->mode_view, it->mode_icons);
-   _item_state_realize(it, it->mode_view, it->mode_states);
+   _item_label_realize(it, it->mode_view, &it->mode_labels);
+   it->mode_icon_objs = _item_icon_realize(it,
+					   it->mode_view,
+					   &it->mode_icons);
+   _item_state_realize(it, it->mode_view, &it->mode_states);
 
    edje_object_part_swallow(it->mode_view,
                             edje_object_data_get(it->mode_view, "mode_part"),
