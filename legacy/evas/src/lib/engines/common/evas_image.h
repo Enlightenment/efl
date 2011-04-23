@@ -55,4 +55,6 @@ EAPI void
 EAPI int evas_common_load_rgba_image_module_from_file (Image_Entry *im);
 EAPI int evas_common_load_rgba_image_data_from_file   (Image_Entry *im);
 
+void _evas_common_rgba_image_post_surface(Image_Entry *ie);
+
 #endif /* _EVAS_IMAGE_H */

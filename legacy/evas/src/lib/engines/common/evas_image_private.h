@@ -14,6 +14,4 @@ void evas_common_rgba_image_scalecache_dirty(Image_Entry *ie);
 void evas_common_rgba_image_scalecache_orig_use(Image_Entry *ie);
 int evas_common_rgba_image_scalecache_usage_get(Image_Entry *ie);
 
-void _evas_common_rgba_image_post_surface(Image_Entry *ie);
-
 #endif /* _EVAS_IMAGE_PRIVATE_H */

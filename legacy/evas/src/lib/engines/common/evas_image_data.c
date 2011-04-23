@@ -2,6 +2,7 @@
 
 #include "evas_common.h"
 #include "evas_private.h"
+#include "evas_image.h"
 
 int
 evas_common_rgba_image_from_data(Image_Entry* ie_dst, int w, int h, DATA32 *image_data, int alpha, int cspace)
