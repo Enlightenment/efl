@@ -231,7 +231,7 @@ esac
 PKG_CHECK_MODULES([EINA], [eina >= 1.0.0])
 
 # Freetype
-PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
+PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 2.3.0])
 
 requirement_evas="freetype2 eina >= 1.0.0 ${requirement_evas}"
 
