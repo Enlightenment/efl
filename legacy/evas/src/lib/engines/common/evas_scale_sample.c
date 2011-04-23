@@ -92,6 +92,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
    int      dst_jump;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
+   int      m_clip_x = 0, m_clip_y = 0, m_clip_w = 0, m_clip_h = 0, mdx = 0, mdy = 0;
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func;
    RGBA_Image *maskobj = NULL;
@@ -139,6 +140,21 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	dst_clip_h = dst_h;
      }
 
+   if (dc->mask.mask)
+     {
+        m_clip_x = dc->mask.x;
+        m_clip_y = dc->mask.y;
+        m_clip_w = dc->mask.mask->cache_entry.w;
+        m_clip_h = dc->mask.mask->cache_entry.h;
+        RECTS_CLIP_TO_RECT(m_clip_x, m_clip_y, m_clip_w, m_clip_h,
+                           dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h);
+        if ((m_clip_w <= 0) || (m_clip_h <= 0)) return;
+        dst_clip_x = m_clip_x;
+        dst_clip_y = m_clip_y;
+        dst_clip_w = m_clip_w;
+        dst_clip_h = m_clip_h;
+     }
+   
    if (dst_clip_x < dst_region_x)
      {
 	dst_clip_w += dst_clip_x - dst_region_x;
@@ -283,21 +299,15 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 #endif
           {
              ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
+             if (mask)
+               {
+                  mdx = (m_clip_x - dc->mask.x) + (m_clip_x - dst_clip_x);
+                  mdy = (m_clip_y - dc->mask.y) + (m_clip_y - dst_clip_y);
+                  mask += mdx + (mdy * maskobj->cache_entry.w);
+               }
              for (y = 0; y < dst_clip_h; y++)
                {
                   /* * blend here [clip_w *] ptr -> dst_ptr * */
-                  if (mask)
-                    {
-                       // nash: problem here. normally dst_clip_x == dc->mask.x
-                       // but then... at some point they cease to be equal
-                       // and thus you add a negative value to mask here
-                       // in fact... u simply don't handle the mask being
-                       // disjoint from the object. now maybe the test in
-                       // expedite has a bug where it moves the mask img
-                       // wrongly - but... i can see this code is fragile
-                       mask += dst_clip_x - dc->mask.x;
-                       mask += (dst_clip_y - dc->mask.y) * maskobj->cache_entry.w;
-                    }
 #ifdef EVAS_SLI
                   if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
 #endif

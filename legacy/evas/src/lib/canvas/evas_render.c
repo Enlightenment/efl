@@ -1297,8 +1297,8 @@ evas_render_updates_internal(Evas *e,
                                e->engine.func->context_mask_set(e->engine.data.output,
                                                                 e->engine.data.context,
                                                                 obj->cur.mask->func->engine_data_get(obj->cur.mask),
-                                                                obj->cur.mask->cur.geometry.x,
-                                                                obj->cur.mask->cur.geometry.y,
+                                                                obj->cur.mask->cur.geometry.x + off_x,
+                                                                obj->cur.mask->cur.geometry.y + off_y,
                                                                 obj->cur.mask->cur.geometry.w,
                                                                 obj->cur.mask->cur.geometry.h);
                             else
