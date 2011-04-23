@@ -242,6 +242,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
        func = evas_common_gfx_func_composite_pixel_mask_span_get(src, dst, dst_clip_w, dc->render_op);
        maskobj = dc->mask.mask;
        mask = maskobj->mask.mask;
+/*        
        if (1 || dst_region_w > src_region_w || dst_region_h > src_region_h){
 	       printf("Mask w/h: %d/%d\n",maskobj->cache_entry.w,
 			       maskobj->cache_entry.h);
@@ -249,6 +250,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 			       dst_region_w,src_region_w,
 			       dst_region_h,src_region_h);
        }
+ */
      }
    else if (dc->mul.use)
      func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, dst_clip_w, dc->render_op);
@@ -286,6 +288,13 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                   /* * blend here [clip_w *] ptr -> dst_ptr * */
                   if (mask)
                     {
+                       // nash: problem here. normally dst_clip_x == dc->mask.x
+                       // but then... at some point they cease to be equal
+                       // and thus you add a negative value to mask here
+                       // in fact... u simply don't handle the mask being
+                       // disjoint from the object. now maybe the test in
+                       // expedite has a bug where it moves the mask img
+                       // wrongly - but... i can see this code is fragile
                        mask += dst_clip_x - dc->mask.x;
                        mask += (dst_clip_y - dc->mask.y) * maskobj->cache_entry.w;
                     }
