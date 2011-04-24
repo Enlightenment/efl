@@ -66,6 +66,8 @@ _evas_preload_thread_done(void *target __UNUSED__, Evas_Callback_Type type __UNU
      }
    else
       work->func_end(work->data);
+
+   eina_threads_shutdown();
    free(work);
 }
 
@@ -187,7 +189,9 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
    /* One more thread could be created. */
    pth = malloc(sizeof(Evas_Preload_Pthread_Data));
    if (!pth) goto on_error;
-   
+
+   eina_threads_init();
+
    if (pthread_create(&pth->thread, NULL, _evas_preload_thread_worker, pth) == 0)
      {
 	LKL(_mutex);
@@ -195,6 +199,8 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 	LKU(_mutex);
 	return (Evas_Preload_Pthread*)work;
      }
+
+   eina_threads_shutdown();
 
  on_error:
    LKL(_mutex);

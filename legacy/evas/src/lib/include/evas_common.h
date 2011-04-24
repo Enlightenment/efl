@@ -128,62 +128,13 @@ extern EAPI int _evas_log_dom_global;
 
 #ifdef BUILD_PTHREAD
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
+#define LK(x)  Eina_Lock x
+#define LKI(x) eina_lock_new(&(x))
+#define LKD(x) eina_lock_free(&(x))
+#define LKL(x) eina_lock_take(&(x))
+#define LKT(x) eina_lock_take_try(&(x))
+#define LKU(x) eina_lock_release(&(x))
 
-# include <pthread.h>
-# include <sched.h>
-#ifdef __linux__
-# include <sys/time.h>
-# include <sys/resource.h>
-# include <errno.h>
-#endif
-
-//#define LKDEBUG 1
-
-#ifdef LKDEBUG
-EAPI Eina_Bool lockdebug;
-EAPI int lockmax;
-#endif
-
-#define LK(x)  pthread_mutex_t x
-#ifndef EVAS_FRAME_QUEUING
-# define LKI(x) pthread_mutex_init(&(x), NULL)
-#else
-# define LKI(x) do {pthread_mutexattr_t    __attr;\
-         pthread_mutexattr_init(&__attr); \
-         pthread_mutexattr_settype(&__attr, PTHREAD_MUTEX_RECURSIVE);	\
-         pthread_mutex_init(&(x), &__attr);} while (0)
-#endif
-# define LKD(x) pthread_mutex_destroy(&(x))
-# ifdef LKDEBUG
-#  define LKL(x) \
-   do { \
-      if (lockdebug) { \
-         struct timeval t0, t1; \
-         int dt; \
-         gettimeofday(&t0, NULL); \
-         pthread_mutex_lock(&(x)); \
-         gettimeofday(&t1, NULL); \
-         dt = (t1.tv_sec - t0.tv_sec) * 1000000; \
-         if (t1.tv_usec > t0.tv_usec) dt += (t1.tv_usec - t0.tv_usec); \
-         else dt -= t0.tv_usec - t1.tv_usec; \
-         dt /= 1000; \
-         if (dt > lockmax) { \
-            fprintf(stderr, "HANG %ims - %s:%i - %s()\n", \
-                    dt, __FILE__, __LINE__, __FUNCTION__); \
-         } \
-      } \
-      else { \
-         pthread_mutex_lock(&(x)); \
-      } \
-   } while (0)
-# else
-#  define LKL(x) pthread_mutex_lock(&(x))
-# endif
-# define LKT(x) pthread_mutex_trylock(&(x))
-# define LKU(x) pthread_mutex_unlock(&(x))
 # define TH(x)  pthread_t x
 # define THI(x) int x
 # define TH_MAX 8
