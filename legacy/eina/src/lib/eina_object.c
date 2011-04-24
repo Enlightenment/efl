@@ -45,6 +45,7 @@
 #include "eina_trash.h"
 #include "eina_log.h"
 #include "eina_stringshare.h"
+#include "eina_lock.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -432,6 +433,8 @@ _eina_class_range_del(Eina_Class_Range *range)
   Eina_Class_Top *top;
   Eina_Range *keep;
 
+  top = range->type->top;
+
   keep = eina_mempool_malloc(_eina_range_mp, sizeof (Eina_Range));
   if (!keep)
     {
@@ -441,8 +444,6 @@ _eina_class_range_del(Eina_Class_Range *range)
 
   keep->start = range->start;
   keep->end = range->end;
-
-  top = range->type->top;
 
   top->available = eina_inlist_prepend(top->available,
 				       EINA_INLIST_GET(keep));
@@ -698,33 +699,17 @@ eina_class_repack(Eina_Class *class)
 
   EINA_MAGIC_CHECK_CLASS(class);
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
+  if (!eina_lock_take(&class->mutex))
     {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_lock(&class->mutex);
-# else
-      WaitForSingleObject(class->mutex, INFINITE);
-# endif
-    }
 #ifdef EFL_DEBUG_THREADS
   else
     assert(pthread_equal(class->self, pthread_self()));
 #endif
-#endif
+    }
 
   eina_mempool_repack(class->mempool, _eina_class_range_repack, class);
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
-    {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_unlock(&class->mutex);
-# else
-      ReleaseMutex(class->mutex);
-# endif
-    }
-#endif
+  eina_lock_release(&class->mutex);
 
   EINA_INLIST_FOREACH(class->childs, child)
     eina_class_repack(child);
@@ -784,20 +769,12 @@ eina_object_pointer_get(Eina_Class *class,
   if (!object) return NULL;
   EINA_MAGIC_CHECK_CLASS(class, NULL);
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
+  if (!eina_lock_take(&class->mutex))
     {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_lock(&class->mutex);
-# else
-      WaitForSingleObject(class->mutex, INFINITE);
-# endif
-    }
 #ifdef EFL_DEBUG_THREADS
-  else
-    assert(pthread_equal(class->self, pthread_self()));
+      assert(pthread_equal(class->self, pthread_self()));
 #endif
-#endif
+    }
 
   item = _eina_object_find_item(class, object);
   if (!item) goto on_error;
@@ -805,16 +782,7 @@ eina_object_pointer_get(Eina_Class *class,
   mem = (unsigned char*) item + _eina_object_item_size;
 
  on_error:
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
-    {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_unlock(&class->mutex);
-# else
-      ReleaseMutex(class->mutex);
-# endif
-    }
-#endif
+  eina_lock_release(&class->mutex);
 
   return mem;
 }
@@ -828,20 +796,12 @@ eina_object_del(Eina_Class *class,
   if (!object) return ;
   EINA_MAGIC_CHECK_CLASS(class);
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
+  if (!eina_lock_take(&class->mutex))
     {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_lock(&class->mutex);
-# else
-      WaitForSingleObject(class->mutex, INFINITE);
-# endif
-    }
 #ifdef EFL_DEBUG_THREADS
-  else
-    assert(pthread_equal(class->self, pthread_self()));
+      assert(pthread_equal(class->self, pthread_self()));
 #endif
-#endif
+    }
 
   item = _eina_object_find_item(class, object);
   if (!item) goto on_error;
@@ -849,16 +809,7 @@ eina_object_del(Eina_Class *class,
   _eina_object_item_del(item);
 
  on_error:
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
-    {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_unlock(&class->mutex);
-# else
-      ReleaseMutex(class->mutex);
-# endif
-    }
-#endif
+  eina_lock_release(&class->mutex);
 }
 
 Eina_Bool
@@ -873,25 +824,19 @@ eina_object_parent_set(Eina_Class *parent_class, Eina_Object *parent,
   EINA_MAGIC_CHECK_CLASS(parent_class, EINA_FALSE);
   EINA_MAGIC_CHECK_CLASS(object_class, EINA_FALSE);
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
+  if (!eina_lock_take(&parent_class->mutex))
     {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_lock(&parent_class->mutex);
-      pthread_mutex_lock(&object_class->mutex);
-# else
-      WaitForSingleObject(parent_class->mutex, INFINITE);
-      WaitForSingleObject(object_class->mutex, INFINITE);
-# endif
-    }
 #ifdef EFL_DEBUG_THREADS
-  else
-    {
-      assert(pthread_equal(object_class->self, pthread_self()));
       assert(pthread_equal(parent_class->self, pthread_self()));
+#endif
     }
+
+  if (!eina_lock_take(&object_class->mutex))
+    {
+#ifdef EFL_DEBUG_THREADS
+      assert(pthread_equal(object_class->self, pthread_self()));
 #endif
-#endif
+    }
 
   parent_item = _eina_object_find_item(parent_class, parent);
   if (!parent_item) return EINA_FALSE;
@@ -902,23 +847,13 @@ eina_object_parent_set(Eina_Class *parent_class, Eina_Object *parent,
   if (object_item->parent)
     object_item->parent->link = eina_inlist_remove(object_item->parent->link,
 						   EINA_INLIST_GET(object_item));
-  
+
   object_item->parent = parent_item;
   parent_item->link = eina_inlist_append(parent_item->link,
 					 EINA_INLIST_GET(object_item));
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
-    {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_unlock(&parent_class->mutex);
-      pthread_mutex_unlock(&object_class->mutex);
-# else
-      ReleaseMutex(parent_class->mutex);
-      ReleaseMutex(object_class->mutex);
-# endif
-    }
-#endif
+  eina_lock_release(&parent_class->mutex);
+  eina_lock_release(&object_class->mutex);
 
   return EINA_TRUE;
 }
@@ -927,28 +862,24 @@ Eina_Object *
 eina_object_parent_get(Eina_Class *class, Eina_Object *object)
 {
   Eina_Object_Item *object_item;
+  Eina_Object *or = NULL;
 
   if (!object) return EINA_FALSE;
   EINA_MAGIC_CHECK_CLASS(class, EINA_FALSE);
 
-#ifdef EFL_HAVE_THREADS
-  if (_threads_activated)
+  if (!eina_lock_take(&class->mutex))
     {
-# ifdef EFL_HAVE_POSIX_THREADS
-      pthread_mutex_lock(&class->mutex);
-# else
-      WaitForSingleObject(class->mutex, INFINITE);
-# endif
-    }
 #ifdef EFL_DEBUG_THREADS
-  else
-    assert(pthread_equal(class->self, pthread_self()));
+      assert(pthread_equal(class->self, pthread_self()));
 #endif
-#endif
+    }
 
   object_item = _eina_object_find_item(class, object);
-  if (!object_item) return EINA_FALSE;
+  if (object_item)
+    or = _eina_object_get(object_item->parent);
 
-  return _eina_object_get(object_item->parent);
+  eina_lock_release(&class->mutex);
+
+  return or;
 }
 
