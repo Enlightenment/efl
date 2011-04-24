@@ -290,6 +290,7 @@ static Eina_Bool _elm_signal_exit(void *data,
                                   int   ev_type,
                                   void *ev);
 
+static Eina_Prefix *pfx = NULL;
 char *_elm_appname = NULL;
 const char *_elm_data_dir = NULL;
 const char *_elm_lib_dir = NULL;
@@ -453,8 +454,6 @@ EAPI int
 elm_quicklaunch_init(int    argc,
                      char **argv)
 {
-   char buf[PATH_MAX], *s;
-
    _elm_ql_init_count++;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    eina_init();
@@ -479,75 +478,19 @@ elm_quicklaunch_init(int    argc,
 
    if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
-   if (!_elm_data_dir)
+   pfx = eina_prefix_new(NULL, elm_init, 
+                         "ELM", "elementary", "config/profile.cfg",
+                         PACKAGE_LIB_DIR, /* don't have a bin dir currently */
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         LOCALE_DIR);
+   if (pfx)
      {
-        s = getenv("ELM_DATA_DIR");
-        _elm_data_dir = eina_stringshare_add(s);
+        _elm_data_dir = eina_stringshare_add(eina_prefix_data_get(pfx));
+        _elm_lib_dir = eina_stringshare_add(eina_prefix_lib_get(pfx));
      }
-   if (!_elm_data_dir)
-     {
-        s = getenv("ELM_PREFIX");
-        if (s)
-          {
-             snprintf(buf, sizeof(buf), "%s/share/elementary", s);
-             _elm_data_dir = eina_stringshare_add(buf);
-          }
-     }
-   if (!_elm_lib_dir)
-     {
-        s = getenv("ELM_LIB_DIR");
-        _elm_lib_dir = eina_stringshare_add(s);
-     }
-   if (!_elm_lib_dir)
-     {
-        s = getenv("ELM_PREFIX");
-        if (s)
-          {
-             snprintf(buf, sizeof(buf), "%s/lib", s);
-             _elm_lib_dir = eina_stringshare_add(buf);
-          }
-     }
-#ifdef HAVE_DLADDR
-   if ((!_elm_data_dir) || (!_elm_lib_dir))
-     {
-        Dl_info elementary_dl;
-        // libelementary.so/../../share/elementary/
-        if (dladdr(elm_init, &elementary_dl))
-          {
-             char *dir, *dir2;
-
-             dir = ecore_file_dir_get(elementary_dl.dli_fname);
-             if (dir)
-               {
-                  if (!_elm_lib_dir)
-                    {
-                       if (ecore_file_is_dir(dir))
-                         _elm_lib_dir = eina_stringshare_add(dir);
-                    }
-                  if (!_elm_data_dir)
-                    {
-                       dir2 = ecore_file_dir_get(dir);
-                       if (dir2)
-                         {
-                            snprintf(buf, sizeof(buf), "%s/share/elementary", dir2);
-                            if (ecore_file_is_dir(buf))
-                              _elm_data_dir = eina_stringshare_add(buf);
-                            free(dir2);
-                         }
-                    }
-                  free(dir);
-               }
-          }
-     }
-#endif
-   if (!_elm_data_dir)
-     _elm_data_dir = eina_stringshare_add(PACKAGE_DATA_DIR);
-   if (!_elm_data_dir)
-     _elm_data_dir = eina_stringshare_add("/");
-   if (!_elm_lib_dir)
-     _elm_lib_dir = eina_stringshare_add(PACKAGE_LIB_DIR);
-   if (!_elm_lib_dir)
-     _elm_lib_dir = eina_stringshare_add("/");
+   if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
+   if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
 
    _elm_config_init();
    return _elm_ql_init_count;
@@ -640,6 +583,8 @@ elm_quicklaunch_shutdown(void)
 {
    _elm_ql_init_count--;
    if (_elm_ql_init_count > 0) return _elm_ql_init_count;
+   if (pfx) eina_prefix_free(pfx);
+   pfx = NULL;
    eina_stringshare_del(_elm_data_dir);
    _elm_data_dir = NULL;
    eina_stringshare_del(_elm_lib_dir);
