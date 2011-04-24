@@ -306,14 +306,14 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, Evas_O
      {
 	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
 	  {
-	     void *data;
+	     void *tmp;
 
-	     data = fn->data;
+	     tmp = fn->data;
 	     fn->delete_me = 1;
 	     obj->callbacks->deletions_waiting = 1;
 	     if (!obj->callbacks->walking_list)
 	       evas_object_event_callback_clear(obj);
-	     return data;
+	     return tmp;
 	  }
      }
    return NULL;
@@ -337,14 +337,14 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, E
      {
 	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
 	  {
-	     void *data;
+	     void *tmp;
 
-	     data = fn->data;
+	     tmp = fn->data;
 	     fn->delete_me = 1;
 	     obj->callbacks->deletions_waiting = 1;
 	     if (!obj->callbacks->walking_list)
 	       evas_object_event_callback_clear(obj);
-	     return data;
+	     return tmp;
 	  }
      }
    return NULL;
@@ -433,14 +433,14 @@ evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_Event_Cb fun
      {
 	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
 	  {
-	     void *data;
+	     void *tmp;
 
-	     data = fn->data;
+	     tmp = fn->data;
 	     fn->delete_me = 1;
 	     e->callbacks->deletions_waiting = 1;
 	     if (!e->callbacks->walking_list)
 	       evas_event_callback_clear(e);
-	     return data;
+	     return tmp;
 	  }
      }
    return NULL;
