@@ -56,3 +56,8 @@
 
         * Add Eina_Lock API
 
+2011-04-24  Carsten Haitzler (The Rasterman)
+
+        * Add a prefix location finder api to eina. Beta status. needs
+        more use from higher up libs/apps first.
+
