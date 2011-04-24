@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 
 #include "edje_cc.h"
-#include "edje_prefix.h"
 #include "edje_convert.h"
 
 extern Eet_Data_Descriptor *_edje_edd_old_edje_file;

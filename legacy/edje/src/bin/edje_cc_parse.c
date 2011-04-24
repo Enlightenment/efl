@@ -30,7 +30,6 @@ void *alloca (size_t);
 #include <math.h>
 
 #include "edje_cc.h"
-#include "edje_prefix.h"
 #include <Ecore.h>
 #include <Ecore_File.h>
 
@@ -743,7 +742,8 @@ compile(void)
 	 * Run the input through the C pre-processor.
 	 */
         ret = -1;
-        snprintf(buf2, sizeof(buf2), "%s/edje/utils/epp"EPP_EXT, e_prefix_lib_get());
+        snprintf(buf2, sizeof(buf2), "%s/edje/utils/epp" EPP_EXT, 
+                 eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
           {
              snprintf(buf, sizeof(buf), "%s %s -I%s %s -o %s",

@@ -3,6 +3,8 @@
 
 #include <edje_private.h>
 
+extern Eina_Prefix *pfx;
+
 /*
  * On Windows, if the file is not opened in binary mode,
  * read does not return the correct size, because of

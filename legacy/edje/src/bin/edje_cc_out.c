@@ -27,7 +27,6 @@ void *alloca (size_t);
 #include <Ecore_Evas.h>
 
 #include "edje_cc.h"
-#include "edje_prefix.h"
 #include "edje_convert.h"
 
 #include <lua.h>
@@ -796,7 +795,7 @@ compile_script_file(Eet_File *ef, const char *source, const char *output,
 
    snprintf(buf, sizeof(buf),
 	    "embryo_cc -i %s/include -o %s %s",
-	    e_prefix_data_get(), output, source);
+	    eina_prefix_data_get(pfx), output, source);
    ret = system(buf);
 
    /* accept warnings in the embryo code */

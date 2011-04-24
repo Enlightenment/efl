@@ -8,9 +8,10 @@
 #include <sys/stat.h>
 
 #include "edje_cc.h"
-#include "edje_prefix.h"
 int _edje_cc_log_dom = -1;
 static void main_help(void);
+
+Eina_Prefix  *pfx = NULL;
 
 Eina_List *img_dirs = NULL;
 Eina_List *fnt_dirs = NULL;
@@ -147,7 +148,16 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
-   e_prefix_determine(argv[0]);
+   pfx = eina_prefix_new(argv[0],            /* argv[0] value (optional) */
+                         main,               /* an optional symbol to check path of */
+                         "EDJE",             /* env var prefix to use (XXX_PREFIX, XXX_BIN_DIR etc. */
+                         "edje",             /* dir to add after "share" (PREFIX/share/DIRNAME) */
+                         "include/edje.inc", /* a magic file to check for in PREFIX/share/DIRNAME for success */
+                         PACKAGE_BIN_DIR,    /* package bin dir @ compile time */
+                         PACKAGE_LIB_DIR,    /* package lib dir @ compile time */
+                         PACKAGE_DATA_DIR,   /* package data dir @ compile time */
+                         PACKAGE_DATA_DIR    /* if locale needed  use LOCALE_DIR */
+                        );
 
    /* check whether file_in exists */
 #ifdef HAVE_REALPATH
@@ -216,6 +226,9 @@ main(int argc, char **argv)
    data_process_script_lookups();
    data_write();
 
+   eina_prefix_free(pfx);
+   pfx = NULL;
+   
    edje_shutdown();
    eina_log_domain_unregister(_edje_cc_log_dom);
    eina_shutdown();
