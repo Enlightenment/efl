@@ -8,6 +8,8 @@
  * location of a software package
  *
  * @{
+ * 
+ * @since 1.1.0
  */
 
 /**
@@ -16,6 +18,8 @@
  * to determine the runtime location of the software in question so other
  * data files such as images, sound files, other executable utilities,
  * libraries, modules and locale files can be found.
+ * 
+ * @since 1.1.0
  */
 typedef struct _Eina_Prefix Eina_Prefix;
 
@@ -131,6 +135,8 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *   e_prefix_free(pfx);
  * }
  * @endcode
+ * 
+ * @since 1.1.0
  */
 EAPI Eina_Prefix *
 eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
@@ -146,6 +152,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
  * Free the prefix object and all its allocated content. It will be invalid
  * to access the object after being freed.
  * 
+ * @since 1.1.0
  */
 EAPI void
 eina_prefix_free(Eina_Prefix *pfx);
@@ -157,6 +164,8 @@ eina_prefix_free(Eina_Prefix *pfx);
  * 
  * This returns the base prefix (eg "/usr/local", "/usr", "/opt/appname" or
  * "/home/user/myapps/appname" etc.) that the software resides in at runtime.
+ * 
+ * @since 1.1.0
  */
 EAPI const char *
 eina_prefix_get(Eina_Prefix *pfx);
@@ -168,6 +177,8 @@ eina_prefix_get(Eina_Prefix *pfx);
  * 
  * This returns the location of installed binaries (eg "/usr/local/bin",
  * "/usr/bin", "/opt/appname/bin", "/home/user/myapps/appname/bin" etc.).
+ * 
+ * @since 1.1.0
  */
 EAPI const char *
 eina_prefix_bin_get(Eina_Prefix *pfx);
@@ -179,6 +190,8 @@ eina_prefix_bin_get(Eina_Prefix *pfx);
  * 
  * This returns the location of installed binaries (eg "/usr/local/lib",
  * "/usr/lib32", "/opt/appname/lib64", "/home/user/myapps/appname/lib" etc.).
+ * 
+ * @since 1.1.0
  */
 EAPI const char *
 eina_prefix_lib_get(Eina_Prefix *pfx);
@@ -190,6 +203,8 @@ eina_prefix_lib_get(Eina_Prefix *pfx);
  * 
  * This returns the location of installed binaries (eg "/usr/local/share/appname",
  * "/usr/share/appname", "/opt/appname/share/appname", "/home/user/myapps/appname/share/appname" etc.).
+ * 
+ * @since 1.1.0
  */
 EAPI const char *
 eina_prefix_data_get(Eina_Prefix *pfx);
@@ -201,6 +216,8 @@ eina_prefix_data_get(Eina_Prefix *pfx);
  * 
  * This returns the location of installed binaries (eg "/usr/local/share/locale",
  * "/usr/share/locale", "/opt/appname/share/locale", "/home/user/myapps/appname/share/locale" etc.).
+ * 
+ * @since 1.1.0
  */
 EAPI const char *
 eina_prefix_locale_get(Eina_Prefix *pfx);
