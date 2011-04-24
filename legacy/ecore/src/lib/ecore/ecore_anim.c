@@ -109,7 +109,7 @@ ecore_animator_add(Ecore_Task_Cb func, const void *data)
  * @since 1.1.0
  */
 EAPI Ecore_Animator *
-ecore_animator_run_add(double runtime, Ecore_Timeline_Cb func, const void *data)
+ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data)
 {
    Ecore_Animator *animator;
 
