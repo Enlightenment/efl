@@ -121,7 +121,7 @@ _ecore_win32_window_procedure(HWND   window,
 
           INF("left button up message");
 
-          w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
+          w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
           if (w->drag.dragging)
             {
                ReleaseCapture();
@@ -147,7 +147,7 @@ _ecore_win32_window_procedure(HWND   window,
 
           INF("moue move message");
 
-          w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
+          w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
 
           if (w->drag.dragging)
             {
@@ -416,7 +416,7 @@ _ecore_win32_window_procedure(HWND   window,
          {
            Ecore_Win32_Window *w;
 
-           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
+           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
            ecore_win32_window_geometry_get(w,
                                            NULL, NULL,
                                            &w->drag.w, &w->drag.h);
@@ -438,7 +438,7 @@ _ecore_win32_window_procedure(HWND   window,
 
            INF("sys command MOVE or SIZE window message : %dx%d", GET_X_LPARAM(data_param), GET_Y_LPARAM(data_param));
 
-           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWL_USERDATA);
+           w = (Ecore_Win32_Window *)GetWindowLongPtr(window, GWLP_USERDATA);
            w->drag.dragging = 1;
            return 0;
          }
