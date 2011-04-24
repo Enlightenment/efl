@@ -14,7 +14,7 @@
 
 /**
  * @typedef Eina_Prefix
- * This is a prefix object that is returned by e_prefix_new() when trying
+ * This is a prefix object that is returned by eina_prefix_new() when trying
  * to determine the runtime location of the software in question so other
  * data files such as images, sound files, other executable utilities,
  * libraries, modules and locale files can be found.
@@ -124,15 +124,15 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *
  * int main(argc, char **argv)
  * {
- *   pfx = e_prefix_new(argv[0], main, "APPNAME", "appname", NULL,
- *                      PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
- *                      PACKAGE_DATA_DIR, LOCALE_DIR);
+ *   pfx = eina_prefix_new(argv[0], main, "APPNAME", "appname", NULL,
+ *                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
+ *                        PACKAGE_DATA_DIR, LOCALE_DIR);
  *   if (!pfx) printf("ERROR: Critical error in finding prefix\n");
  *   printf("install prefix is: %s\n", eina_prefix_get(pfx));
  *   printf("binaries are in: %s\n", eina_prefix_bin_get(pfx));
  *   printf("libraries are in: %s\n", eina_prefix_lib_get(pfx));
  *   printf("data files are in: %s\n", eina_prefix_data_get(pfx));
- *   e_prefix_free(pfx);
+ *   eina_prefix_free(pfx);
  * }
  * @endcode
  *
