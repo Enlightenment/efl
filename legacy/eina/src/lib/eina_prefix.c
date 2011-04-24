@@ -49,9 +49,11 @@
 #include "eina_prefix.h"
 
 #ifdef _WIN32
+# define PSEP_C ';'
 # define DSEP_C '\\'
 # define DSEP_S "\\"
 #else
+# define PSEP_C ':'
 # define DSEP_C '/'
 # define DSEP_S "/"
 #endif /* _WIN32 */
@@ -207,7 +209,7 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
    p = path;
    cp = p;
    lenexe = strlen(argv0);
-   while ((p = strchr(cp, ':')))
+   while ((p = strchr(cp, PSEP_C)))
      {
 	len = p - cp;
 	s = malloc(len + 1 + lenexe + 1);
