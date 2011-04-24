@@ -47,9 +47,9 @@ static char *_prefix_path_lib = NULL;
 #define E_FREE(p) { if (p) {free(p); p = NULL;} }
 
 /*#define PREFIX_CACHE_FILE 1*/
-#define SHARE_D "share/edje"
-#define MAGIC_FILE "include/edje.inc"
-#define MAGIC_DAT SHARE_D"/"MAGIC_FILE
+#define SHARE_D "share" EDJE_DIR_SEPARATOR_S "edje"
+#define MAGIC_FILE "include" EDJE_DIR_SEPARATOR_S "edje.inc"
+#define MAGIC_DAT SHARE_D EDJE_DIR_SEPARATOR_S MAGIC_FILE
 
 /* externally accessible functions */
 int
@@ -66,19 +66,19 @@ e_prefix_determine(char *argv0)
      {
 	_prefix_path = strdup(getenv("EDJE_PREFIX"));
 	if (getenv("EDJE_BIN_DIR"))
-	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", getenv("EDJE_BIN_DIR"));
+	  snprintf(buf, sizeof(buf), "%s", getenv("EDJE_BIN_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "bin", _prefix_path);
 	_prefix_path_bin = strdup(buf);
 
 	if (getenv("EDJE_LIB_DIR"))
-	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", getenv("EDJE_LIB_DIR"));
+	  snprintf(buf, sizeof(buf), "%s", getenv("EDJE_LIB_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S "lib", _prefix_path);
 	_prefix_path_lib = strdup(buf);
 
 	if (getenv("EDJE_DATA_DIR"))
-	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, getenv("EDJE_DATA_DIR"));
+	  snprintf(buf, sizeof(buf), "%s", getenv("EDJE_DATA_DIR"));
 	else
 	  snprintf(buf, sizeof(buf), "%s" EDJE_DIR_SEPARATOR_S SHARE_D, _prefix_path);
 	_prefix_path_data = strdup(buf);
