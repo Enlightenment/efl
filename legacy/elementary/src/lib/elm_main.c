@@ -321,6 +321,87 @@ _elm_rescale(void)
    _elm_win_rescale(NULL, EINA_FALSE);
 }
 
+static void *app_mainfunc = NULL;
+static const char *app_domain = NULL;
+static const char *app_checkfile = NULL;
+
+static const char *app_compile_bin_dir = NULL;
+static const char *app_compile_lib_dir = NULL;
+static const char *app_compile_data_dir = NULL;
+static const char *app_compile_locale_dir = NULL;
+static const char *app_prefix_dir = NULL;
+static const char *app_bin_dir = NULL;
+static const char *app_lib_dir = NULL;
+static const char *app_data_dir = NULL;
+static const char *app_locale_dir = NULL;
+
+static Eina_Prefix *app_pfx = NULL;
+
+static void
+_prefix_check(void)
+{
+   int argc = 0;
+   char **argv = NULL;
+   const char *dirs[4] = { NULL, NULL, NULL, NULL };
+   char *caps = NULL, *p1, *p2;
+   
+   if (app_pfx) return;
+   if (!app_domain) return;
+   
+   ecore_app_args_get(&argc, &argv);
+   if (argc < 1) return;
+
+   dirs[0] = app_compile_bin_dir;
+   dirs[1] = app_compile_lib_dir;
+   dirs[2] = app_compile_data_dir;
+   dirs[3] = app_compile_locale_dir;
+
+   if (!dirs[1]) dirs[1] = dirs[0];
+   if (!dirs[0]) dirs[0] = dirs[1];
+   if (!dirs[3]) dirs[3] = dirs[2];
+   if (!dirs[2]) dirs[2] = dirs[3];
+
+   if (app_domain)
+     {
+        caps = alloca(strlen(app_domain) + 1);
+        for (p1 = (char *)app_domain, p2 = caps; *p1; p1++, p2++)
+           *p2 = toupper(*p1);
+        *p2 = 0;
+     }
+   app_pfx = eina_prefix_new(argv[0], app_mainfunc, caps, app_domain,
+                             app_checkfile, dirs[0], dirs[1], dirs[2], dirs[3]);
+}
+
+static void
+_prefix_shutdown(void)
+{
+   if (app_pfx) eina_prefix_free(app_pfx);
+   if (app_domain) eina_stringshare_del(app_domain);
+   if (app_checkfile) eina_stringshare_del(app_checkfile);
+   if (app_compile_bin_dir) eina_stringshare_del(app_compile_bin_dir);
+   if (app_compile_lib_dir) eina_stringshare_del(app_compile_lib_dir);
+   if (app_compile_data_dir) eina_stringshare_del(app_compile_data_dir);
+   if (app_compile_locale_dir) eina_stringshare_del(app_compile_locale_dir);
+   if (app_prefix_dir) eina_stringshare_del(app_prefix_dir);
+   if (app_bin_dir) eina_stringshare_del(app_bin_dir);
+   if (app_lib_dir) eina_stringshare_del(app_lib_dir);
+   if (app_data_dir) eina_stringshare_del(app_data_dir);
+   if (app_locale_dir) eina_stringshare_del(app_locale_dir);
+   app_mainfunc = NULL;
+   app_domain = NULL;
+   app_checkfile = NULL;
+   app_compile_bin_dir = NULL;
+   app_compile_lib_dir = NULL;
+   app_compile_data_dir = NULL;
+   app_compile_locale_dir = NULL;
+   app_prefix_dir = NULL;
+   app_bin_dir = NULL;
+   app_lib_dir = NULL;
+   app_data_dir = NULL;
+   app_locale_dir = NULL;
+   app_pfx = NULL;
+}
+
 /**
  * @defgroup General General
  */
@@ -342,6 +423,7 @@ elm_init(int    argc,
    if (_elm_init_count > 1) return _elm_init_count;
    elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
+   _prefix_shutdown();
    return _elm_init_count;
 }
 
@@ -363,9 +445,93 @@ elm_shutdown(void)
    if (_elm_init_count > 0) return _elm_init_count;
    _elm_win_shutdown();
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
+// wrningz :(   
+//   _prefix_shutdown();
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
    return _elm_init_count;
+}
+
+EAPI void
+elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile)
+{
+   app_mainfunc = mainfunc;
+   eina_stringshare_replace(&app_domain, dom);
+   eina_stringshare_replace(&app_checkfile, checkfile);
+}
+
+EAPI void
+elm_app_compile_bin_dir_set(const char *dir)
+{
+   eina_stringshare_replace(&app_compile_bin_dir, dir);
+}
+
+EAPI void
+elm_app_compile_lib_dir_set(const char *dir)
+{
+   eina_stringshare_replace(&app_compile_lib_dir, dir);
+}
+
+EAPI void
+elm_app_compile_data_dir_set(const char *dir)
+{
+   eina_stringshare_replace(&app_compile_data_dir, dir);
+}
+
+EAPI void
+elm_app_compile_locale_set(const char *dir)
+{
+   eina_stringshare_replace(&app_compile_locale_dir, dir);
+}
+
+EAPI const char *
+elm_app_prefix_dir_get(void)
+{
+   if (app_prefix_dir) return app_prefix_dir;
+   _prefix_check();
+  if (!app_pfx) return "";
+   app_prefix_dir = eina_prefix_get(app_pfx);
+   return app_prefix_dir;
+}
+   
+EAPI const char *
+elm_app_bin_dir_get(void)
+{
+   if (app_bin_dir) return app_bin_dir;
+   _prefix_check();
+   if (!app_pfx) return "";
+   app_bin_dir = eina_prefix_bin_get(app_pfx);
+   return app_bin_dir;
+}
+
+EAPI const char *
+elm_app_lib_dir_get(void)
+{
+   if (app_lib_dir) return app_lib_dir;
+   _prefix_check();
+   if (!app_pfx) return "";
+   app_lib_dir = eina_prefix_lib_get(app_pfx);
+   return app_lib_dir;
+}
+
+EAPI const char *
+elm_app_data_dir_get(void)
+{
+   if (app_data_dir) return app_data_dir;
+   _prefix_check();
+   if (!app_pfx) return "";
+   app_data_dir = eina_prefix_data_get(app_pfx);
+   return app_data_dir;
+}
+
+EAPI const char *
+elm_app_locale_dir_get(void)
+{
+   if (app_locale_dir) return app_locale_dir;
+   _prefix_check();
+   if (!app_pfx) return "";
+   app_locale_dir = eina_prefix_locale_get(app_pfx);
+   return app_locale_dir;
 }
 
 #ifdef ELM_EDBUS

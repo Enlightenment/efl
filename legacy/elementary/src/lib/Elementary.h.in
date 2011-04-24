@@ -230,6 +230,17 @@ extern "C" {
    EAPI void         elm_run(void);
    EAPI void         elm_exit(void);
 
+   EAPI void         elm_app_info_set(void *mainfunc, const char *dom, const char *checkfile);
+   EAPI void         elm_app_compile_bin_dir_set(const char *dir);
+   EAPI void         elm_app_compile_lib_dir_set(const char *dir);
+   EAPI void         elm_app_compile_data_dir_set(const char *dir);
+   EAPI void         elm_app_compile_locale_set(const char *dir);
+   EAPI const char  *elm_app_prefix_dir_get(void);
+   EAPI const char  *elm_app_bin_dir_get(void);
+   EAPI const char  *elm_app_lib_dir_get(void);
+   EAPI const char  *elm_app_data_dir_get(void);
+   EAPI const char  *elm_app_locale_dir_get(void);
+         
    EAPI void         elm_quicklaunch_mode_set(Eina_Bool ql_on);
    EAPI Eina_Bool    elm_quicklaunch_mode_get(void);
    EAPI int          elm_quicklaunch_init(int argc, char **argv);
