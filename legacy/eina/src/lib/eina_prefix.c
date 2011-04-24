@@ -175,9 +175,9 @@ _try_argv(Eina_Prefix *pfx, const char *argv0)
 
    /* 1. is argv0 abs path? */
 #ifdef _WIN32
-   if (argv0[0] && (argv0[1] == ':'))
+   if (argv0[0] && (argv0[1] == PSEP_C))
 #else
-   if (argv0[0] == '/')
+   if (argv0[0] == DSEP_C)
 #endif
      {
         STRDUP_REP(pfx->exe_path, argv0);
@@ -454,7 +454,15 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 
         if (dladdr(symbol, &info_dl))
           {
-             STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+             if (info_dl.dli_fname)
+               {
+#ifdef _WIN32
+                  if (info_dl.dli_fname[0] && (info_dl.dli_fname[0] == PSEP_C))
+#else
+                  if (info_dl.dli_fname[0] == DSEP_C)
+#endif
+                     STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+               }
           }
      }
 #endif
@@ -531,12 +539,16 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 			 }
 		       /* magic file not there. time to start hunting! */
 		       else
-                          _fallback(pfx, pkg_bin, pkg_lib, pkg_data,
-                                    pkg_locale, envprefix);
+                         {
+                            _fallback(pfx, pkg_bin, pkg_lib, pkg_data,
+                                      pkg_locale, envprefix);
+                         }
 		    }
 		  else
-                     _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
-                               envprefix);
+                    {
+                       _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
+                                 envprefix);
+                    }
                   return pfx;
 	       }
 	     p--;
