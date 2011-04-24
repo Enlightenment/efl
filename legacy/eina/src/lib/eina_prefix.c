@@ -22,18 +22,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
-#include <dirent.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/param.h>
-#include <math.h>
 #include <limits.h>
-#include <ctype.h>
-#include <time.h>
-#include <dirent.h>
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #ifdef HAVE_DLADDR
 # include <dlfcn.h>
