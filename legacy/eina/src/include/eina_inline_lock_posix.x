@@ -23,12 +23,29 @@
 
 typedef pthread_mutex_t Eina_Lock;
 
-EAPI extern Eina_Bool _threads_activated;
+EAPI extern Eina_Bool _eina_threads_activated;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+# include <sys/time.h>
+
+EAPI extern int _eina_threads_debug;
+#endif
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
-   return (pthread_mutex_init(mutex, NULL) == 0) ? EINA_TRUE : EINA_FALSE;
+   pthread_mutexattr_t attr;
+
+   if (pthread_mutexattr_init(&attr) != 0)
+     return EINA_FALSE;
+   if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0)
+     return EINA_FALSE;
+   if (pthread_mutex_init(mutex, &attr) != 0)
+     return EINA_FALSE;
+
+   pthread_mutexattr_destroy(&attr);
+
+   return EINA_TRUE;
 }
 
 static inline void
@@ -40,15 +57,37 @@ eina_lock_free(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_take(Eina_Lock *mutex)
 {
-   if (_threads_activated)
-     return (pthread_mutex_lock(mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   if (_eina_threads_activated)
+      {
+#ifdef EINA_HAVE_DEBUG_THREADS
+         if (_eina_threads_debug)
+           {
+              struct timeval t0, t1;
+              int dt;
+
+              gettimeofday(&t0, NULL);
+              pthread_mutex_lock(&(x));
+              gettimeofday(&t1, NULL);
+
+              dt = (t1.tv_sec - t0.tv_sec) * 1000000;
+              if (t1.tv_usec > t0.tv_usec)
+                dt += (t1.tv_usec - t0.tv_usec);
+              else
+                dt -= t0.tv_usec - t1.tv_usec;
+              dt /= 1000;
+
+              if (dt > _eina_threads_debug) abort();
+           }
+#endif
+         return (pthread_mutex_lock(mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+      }
    return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_lock_take_try(Eina_Lock *mutex)
 {
-   if (_threads_activated)
+   if (_eina_threads_activated)
      return (pthread_mutex_trylock(mutex) == 0) ? EINA_TRUE : EINA_FALSE;
    return EINA_FALSE;
 }
@@ -56,7 +95,7 @@ eina_lock_take_try(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_release(Eina_Lock *mutex)
 {
-   if (_threads_activated)
+   if (_eina_threads_activated)
      return (pthread_mutex_unlock(mutex) == 0) ? EINA_TRUE : EINA_FALSE;
    return EINA_FALSE;
 }

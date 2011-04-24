@@ -74,7 +74,11 @@ static int _eina_log_dom = -1;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_log_dom, __VA_ARGS__)
 
-EAPI Eina_Bool _threads_activated = EINA_FALSE;
+EAPI Eina_Bool _eina_threads_activated = EINA_FALSE;
+
+#ifdef EINA_HAVE_DEBUG_THREADS
+EAPI int _eina_threads_debug = 0;
+#endif
 
 static Eina_Lock _mutex;
 
@@ -213,6 +217,10 @@ eina_init(void)
      }
 
    eina_lock_new(&_mutex);
+#ifdef EINA_HAVE_DEBUG_THREADS
+   if (getenv("EINA_DEBUG_THREADS"))
+     _eina_threads_debug = atoi(getenv("EINA_DEBUG_THREADS");
+#endif
 
    _eina_main_count = 1;
    return 1;
@@ -252,7 +260,7 @@ eina_threads_init(void)
 
    eina_share_common_threads_init();
    eina_log_threads_init();
-   _threads_activated = EINA_TRUE;
+   _eina_threads_activated = EINA_TRUE;
 
    eina_lock_release(&_mutex);
 
@@ -281,7 +289,7 @@ eina_threads_shutdown(void)
 
    eina_lock_release(&_mutex);
 
-   _threads_activated = EINA_FALSE;
+   _eina_threads_activated = EINA_FALSE;
 
    return ret;
 #else
