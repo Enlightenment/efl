@@ -16,8 +16,8 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EINA_ARRAY_H_
-#define EINA_ARRAY_H_
+#ifndef EINA_LOCK_H_
+#define EINA_LOCK_H_
 
 #include "eina_config.h"
 
@@ -44,6 +44,12 @@
 #else
 # include "eina_inline_lock_void.x"
 #endif
+
+static inline Eina_Bool eina_lock_new(Eina_Lock *mutex);
+static inline void eina_lock_free(Eina_Lock mutex);
+static inline Eina_Bool eina_lock_take(Eina_Lock mutex);
+static inline Eina_Bool eina_lock_take_try(Eina_Lock mutex);
+static inline Eina_Bool eina_lock_release(Eina_Lock mutex);
 
 /**
  * @}

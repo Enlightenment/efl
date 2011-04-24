@@ -116,6 +116,12 @@ fi
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
 AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${have_threads}" = "xno"])
 
+if ! test "x${have_debug_threads}" = "xno"; then
+   EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_DEBUG_THREADS"
+fi
+AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
+AM_CONDITIONAL([EINA_DEBUG_THREADS], [! test "x${have_debug_threads}" = "xno"])
+
 ### Additional options to configure
 
 # Magic debug

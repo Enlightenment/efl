@@ -21,8 +21,9 @@
 
 #include <pthread.h>
 
-
 typedef pthread_mutex_t Eina_Lock;
+
+EAPI extern Eina_Bool _threads_activated;
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
@@ -39,20 +40,25 @@ eina_lock_free(Eina_Lock mutex)
 static inline Eina_Bool
 eina_lock_take(Eina_Lock mutex)
 {
-   return (pthread_mutex_lock(&mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   if (_threads_activated)
+     return (pthread_mutex_lock(&mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_lock_take_try(Eina_Lock mutex)
 {
-   return (pthread_mutex_trylock(&mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   if (_threads_activated)
+     return (pthread_mutex_trylock(&mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   return EINA_FALSE;
 }
 
 static inline Eina_Bool
 eina_lock_release(Eina_Lock mutex)
 {
-   return (pthread_mutex_unlock(&mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   if (_threads_activated)
+     return (pthread_mutex_unlock(&mutex) == 0) ? EINA_TRUE : EINA_FALSE;
+   return EINA_FALSE;
 }
-
 
 #endif

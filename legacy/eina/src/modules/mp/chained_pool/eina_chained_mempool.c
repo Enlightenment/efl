@@ -43,6 +43,7 @@
 #include "eina_mempool.h"
 #include "eina_trash.h"
 #include "eina_rbtree.h"
+#include "eina_lock.h"
 
 #include "eina_private.h"
 
@@ -73,16 +74,10 @@ struct _Chained_Mempool
    int alloc_size;
    int group_size;
    int usage;
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EFL_DEBUG_THREADS
    pthread_t self;
-#  endif
-   pthread_mutex_t mutex;
-# else
-   HANDLE mutex;
-# endif
 #endif
+   Eina_Lock mutex;
 };
 
 typedef struct _Chained_Pool Chained_Pool;
@@ -246,20 +241,12 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    Chained_Pool *p = NULL;
    void *mem;
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
+   if (!eina_lock_take(pool->mutex))
      {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_lock(&pool->mutex);
-# else
-        WaitForSingleObject(pool->mutex, INFINITE);
-# endif
-     }
 #ifdef EFL_DEBUG_THREADS
-   else
-     assert(pthread_equal(pool->self, pthread_self()));
+        assert(pthread_equal(pool->self, pthread_self()));
 #endif
-#endif
+     }
 
    // Either we have some free space in the first one, or there is no free space.
    if (pool->first) p = EINA_INLIST_CONTAINER_GET(pool->first, Chained_Pool);
@@ -280,16 +267,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
         p = _eina_chained_mp_pool_new(pool);
         if (!p)
           {
-#ifdef EFL_HAVE_PTHREAD
-             if (_threads_activated)
-               {
-# ifdef EFL_HAVE_POSIX_THREADS
-                  pthread_mutex_unlock(&pool->mutex);
-# else
-                  ReleaseMutex(pool->mutex);
-# endif
-               }
-#endif
+             eina_lock_release(pool->mutex);
              return NULL;
           }
 
@@ -300,16 +278,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 
    mem = _eina_chained_mempool_alloc_in(pool, p);
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
-     {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_unlock(&pool->mutex);
-# else
-        ReleaseMutex(pool->mutex);
-# endif
-     }
-#endif
+   eina_lock_release(pool->mutex);
 
    return mem;
 }
@@ -322,21 +291,12 @@ eina_chained_mempool_free(void *data, void *ptr)
    Chained_Pool *p;
 
    // look 4 pool
-
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
+   if (!eina_lock_take(pool->mutex))
      {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_lock(&pool->mutex);
-# else
-        WaitForSingleObject(pool->mutex, INFINITE);
-# endif
-     }
 #ifdef EFL_DEBUG_THREADS
-   else
-     assert(pthread_equal(pool->self, pthread_self()));
+        assert(pthread_equal(pool->self, pthread_self()));
 #endif
-#endif
+     }
 
    // searching for the right mempool
    r = eina_rbtree_inline_lookup(pool->root, ptr, 0, _eina_chained_mp_pool_key_cmp, NULL);
@@ -362,16 +322,7 @@ eina_chained_mempool_free(void *data, void *ptr)
      }
 #endif
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
-     {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_unlock(&pool->mutex);
-# else
-        ReleaseMutex(pool->mutex);
-# endif
-     }
-#endif
+   eina_lock_release(pool->mutex);
    return;
 }
 
@@ -385,21 +336,12 @@ eina_chained_mempool_repack(void *data,
   Chained_Pool *tail;
 
   /* FIXME: Improvement - per Chained_Pool lock */
-
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
+   if (!eina_lock_take(pool->mutex))
      {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_lock(&pool->mutex);
-# else
-        WaitForSingleObject(pool->mutex, INFINITE);
-# endif
-     }
 #ifdef EFL_DEBUG_THREADS
-   else
-     assert(pthread_equal(pool->self, pthread_self()));
+        assert(pthread_equal(pool->self, pthread_self()));
 #endif
-#endif
+     }
 
    pool->first = eina_inlist_sort(pool->first,
 				  (Eina_Compare_Cb) _eina_chained_mempool_usage_cmp);
@@ -467,17 +409,7 @@ eina_chained_mempool_repack(void *data,
      }
 
    /* FIXME: improvement - reorder pool so that the most used one get in front */
-
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
-     {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_unlock(&pool->mutex);
-# else
-        ReleaseMutex(pool->mutex);
-# endif
-     }
-#endif
+   eina_lock_release(pool->mutex);
 }
 
 static void *
@@ -520,16 +452,11 @@ eina_chained_mempool_init(const char *context,
    VALGRIND_CREATE_MEMPOOL(mp, 0, 1);
 #endif
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EFL_DEBUG_THREADS
    mp->self = pthread_self();
-#  endif
-   pthread_mutex_init(&mp->mutex, NULL);
-# else
-   mp->mutex = CreateMutex(NULL, FALSE, NULL);
-# endif
 #endif
+
+   eina_lock_new(&mp->mutex);
 
    return mp;
 }
@@ -567,15 +494,10 @@ eina_chained_mempool_shutdown(void *data)
    VALGRIND_DESTROY_MEMPOOL(mp);
 #endif
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+   eina_lock_free(mp->mutex);
+
+#ifdef EFL_DEBUG_THREADS
    assert(pthread_equal(mp->self, pthread_self()));
-#  endif
-   pthread_mutex_destroy(&mp->mutex);
-# else
-   CloseHandle(mp->mutex);
-# endif
 #endif
 
    free(mp);
