@@ -25,6 +25,8 @@ module_la_LIBTOOLFLAGS = --tag=disable-static
 
 install-data-hook:
 	rm -f $(DESTDIR)$(controllerdir)/$(controller_LTLIBRARIES)
+uninstall-hook:
+	rm -f $(DESTDIR)$(controllerdir)/module.*
 
 endif
 endif
