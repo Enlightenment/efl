@@ -34,35 +34,35 @@ eina_lock_new(Eina_Lock *mutex)
 }
 
 static inline void
-eina_lock_free(Eina_Lock mutex)
+eina_lock_free(Eina_Lock *mutex)
 {
-   DeleteCriticalSection(&mutex);
+   DeleteCriticalSection(mutex);
 }
 
 static inline Eina_Bool
-eina_lock_take(Eina_Lock mutex)
+eina_lock_take(Eina_Lock *mutex)
 {
    if (!_threads_activated) return EINA_FALSE;
 
-   EnterCriticalSection(&mutex);
+   EnterCriticalSection(mutex);
 
    return EINA_TRUE;
 }
 
 static inline Eina_Bool
-eina_lock_take_try(Eina_Lock mutex)
+eina_lock_take_try(Eina_Lock *mutex)
 {
    if (!_threads_activated) return EINA_FALSE;
 
-   return TryEnterCriticalSection(&mutex) == 0 ? EINA_FALSE : EINA_TRUE;
+   return TryEnterCriticalSection(mutex) == 0 ? EINA_FALSE : EINA_TRUE;
 }
 
 static inline Eina_Bool
-eina_lock_release(Eina_Lock mutex)
+eina_lock_release(Eina_Lock *mutex)
 {
    if (!_threads_activated) return EINA_FALSE;
 
-   LeaveCriticalSection(&mutex);
+   LeaveCriticalSection(mutex);
 
    return EINA_TRUE;
 }

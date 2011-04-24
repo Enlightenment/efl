@@ -36,19 +36,19 @@ eina_lock_new(Eina_Lock *mutex)
 }
 
 static inline void
-eina_lock_free(Eina_Lock mutex)
+eina_lock_free(Eina_Lock *mutex)
 {
-   CloseHandle(mutex);
+   CloseHandle(*mutex);
 }
 
 static inline Eina_Bool
-eina_lock_take(Eina_Lock mutex)
+eina_lock_take(Eina_Lock *mutex)
 {
    DWORD res;
 
    if (!_threads_activated) return EINA_FALSE;
 
-   res = WaitForSingleObject(mutex, INFINITE);
+   res = WaitForSingleObject(*mutex, INFINITE);
    if ((res == WAIT_ABANDONED) || (res == WAIT_FAILED))
      return EINA_FALSE;
 
@@ -56,17 +56,17 @@ eina_lock_take(Eina_Lock mutex)
 }
 
 static inline Eina_Bool
-eina_lock_take_try(Eina_Lock mutex)
+eina_lock_take_try(Eina_Lock *mutex)
 {
-   return eina_lock_take(mutex);
+   return eina_lock_take(*mutex);
 }
 
 static inline Eina_Bool
-eina_lock_release(Eina_Lock mutex)
+eina_lock_release(Eina_Lock *mutex)
 {
    if (!_threads_activated) return EINA_FALSE;
 
-   return ReleaseMutex(mutex);
+   return ReleaseMutex(*mutex);
 }
 
 

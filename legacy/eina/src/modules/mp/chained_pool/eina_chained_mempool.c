@@ -241,7 +241,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
    Chained_Pool *p = NULL;
    void *mem;
 
-   if (!eina_lock_take(pool->mutex))
+   if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EFL_DEBUG_THREADS
         assert(pthread_equal(pool->self, pthread_self()));
@@ -267,7 +267,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
         p = _eina_chained_mp_pool_new(pool);
         if (!p)
           {
-             eina_lock_release(pool->mutex);
+             eina_lock_release(&pool->mutex);
              return NULL;
           }
 
@@ -278,7 +278,7 @@ eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
 
    mem = _eina_chained_mempool_alloc_in(pool, p);
 
-   eina_lock_release(pool->mutex);
+   eina_lock_release(&pool->mutex);
 
    return mem;
 }
@@ -291,7 +291,7 @@ eina_chained_mempool_free(void *data, void *ptr)
    Chained_Pool *p;
 
    // look 4 pool
-   if (!eina_lock_take(pool->mutex))
+   if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EFL_DEBUG_THREADS
         assert(pthread_equal(pool->self, pthread_self()));
@@ -322,7 +322,7 @@ eina_chained_mempool_free(void *data, void *ptr)
      }
 #endif
 
-   eina_lock_release(pool->mutex);
+   eina_lock_release(&pool->mutex);
    return;
 }
 
@@ -336,7 +336,7 @@ eina_chained_mempool_repack(void *data,
   Chained_Pool *tail;
 
   /* FIXME: Improvement - per Chained_Pool lock */
-   if (!eina_lock_take(pool->mutex))
+   if (!eina_lock_take(&pool->mutex))
      {
 #ifdef EFL_DEBUG_THREADS
         assert(pthread_equal(pool->self, pthread_self()));
@@ -409,7 +409,7 @@ eina_chained_mempool_repack(void *data,
      }
 
    /* FIXME: improvement - reorder pool so that the most used one get in front */
-   eina_lock_release(pool->mutex);
+   eina_lock_release(&pool->mutex);
 }
 
 static void *
@@ -494,7 +494,7 @@ eina_chained_mempool_shutdown(void *data)
    VALGRIND_DESTROY_MEMPOOL(mp);
 #endif
 
-   eina_lock_free(mp->mutex);
+   eina_lock_free(&mp->mutex);
 
 #ifdef EFL_DEBUG_THREADS
    assert(pthread_equal(mp->self, pthread_self()));

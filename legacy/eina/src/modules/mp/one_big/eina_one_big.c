@@ -39,6 +39,7 @@
 #include "eina_trash.h"
 #include "eina_inlist.h"
 #include "eina_log.h"
+#include "eina_lock.h"
 
 #ifndef NVALGRIND
 # include <valgrind/memcheck.h>
@@ -75,16 +76,10 @@ struct _One_Big
    Eina_Trash *empty;
    Eina_Inlist *over_list;
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EFL_DEBUG_THREADS
    pthread_t self;
-#  endif
-   pthread_mutex_t mutex;
-# else
-   HANDLE mutex;
-# endif
 #endif
+   Eina_Lock mutex;
 };
 
 static void *
@@ -93,22 +88,12 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
    One_Big *pool = data;
    unsigned char *mem = NULL;
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
+   if (!eina_lock_take(&pool->mutex))
      {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_lock(&pool->mutex);
-# else
-        WaitForSingleObject(pool->mutex, INFINITE);
-# endif
-     }
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
-   else
-     assert(pthread_equal(pool->self, pthread_self()));
-#  endif
-# endif
+#ifdef EFL_DEBUG_THREADS
+        assert(pthread_equal(pool->self, pthread_self()));
 #endif
+     }
 
    if (pool->empty)
      {
@@ -158,16 +143,7 @@ eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
 #endif
 
 on_exit:
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
-     {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_unlock(&pool->mutex);
-# else
-        ReleaseMutex(pool->mutex);
-# endif
-     }
-#endif
+   eina_lock_release(&pool->mutex);
 
 #ifndef NVALGRIND
    VALGRIND_MEMPOOL_ALLOC(pool, mem, pool->item_size);
@@ -180,22 +156,12 @@ eina_one_big_free(void *data, void *ptr)
 {
    One_Big *pool = data;
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
+   if (!eina_lock_take(&pool->mutex))
      {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_lock(&pool->mutex);
-# else
-        WaitForSingleObject(pool->mutex, INFINITE);
-# endif
-     }
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
-   else
-     assert(pthread_equal(pool->self, pthread_self()));
-#  endif
-# endif
+#ifdef EFL_DEBUG_THREADS
+        assert(pthread_equal(pool->self, pthread_self()));
 #endif
+     }
 
    if ((void *)pool->base <= ptr
        && ptr < (void *)(pool->base + (pool->max * pool->item_size)))
@@ -228,16 +194,7 @@ eina_one_big_free(void *data, void *ptr)
    VALGRIND_MEMPOOL_FREE(pool, ptr);
 #endif
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
-     {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_unlock(&pool->mutex);
-# else
-        ReleaseMutex(pool->mutex);
-# endif
-     }
-#endif
+   eina_lock_release(&pool->mutex);
 }
 
 static void *
@@ -274,16 +231,10 @@ eina_one_big_init(const char *context,
         memcpy((char *)pool->name, context, length);
      }
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EFL_DEBUG_THREADS
    pool->self = pthread_self();
-#  endif
-   pthread_mutex_init(&pool->mutex, NULL);
-# else
-   pool->mutex = CreateMutex(NULL, FALSE, NULL);
-# endif
 #endif
+   eina_lock_new(&pool->mutex);
 
 #ifndef NVALGRIND
    VALGRIND_CREATE_MEMPOOL(pool, 0, 1);
@@ -298,22 +249,12 @@ eina_one_big_shutdown(void *data)
    One_Big *pool = data;
 
    if (!pool) return;
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
+   if (!eina_lock_take(&pool->mutex))
      {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_lock(&pool->mutex);
-# else
-        WaitForSingleObject(pool->mutex, INFINITE);
-# endif
-     }
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
-   else
-     assert(pthread_equal(pool->self, pthread_self()));
-#  endif
-# endif
+#ifdef EFL_DEBUG_THREADS
+        assert(pthread_equal(pool->self, pthread_self()));
 #endif
+     }
 
    if (pool->over > 0)
      {
@@ -344,18 +285,8 @@ eina_one_big_shutdown(void *data)
 
    if (pool->base) free(pool->base);
 
-#ifdef EFL_HAVE_THREADS
-   if (_threads_activated)
-     {
-# ifdef EFL_HAVE_POSIX_THREADS
-        pthread_mutex_unlock(&pool->mutex);
-        pthread_mutex_destroy(&pool->mutex);
-# else
-        ReleaseMutex(pool->mutex);
-        CloseHandle(pool->mutex);
-# endif
-     }
-#endif
+   eina_lock_release(&pool->mutex);
+   eina_lock_free(&pool->mutex);
    free(pool);
 }
 

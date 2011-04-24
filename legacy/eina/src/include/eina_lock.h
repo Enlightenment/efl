@@ -46,10 +46,10 @@
 #endif
 
 static inline Eina_Bool eina_lock_new(Eina_Lock *mutex);
-static inline void eina_lock_free(Eina_Lock mutex);
-static inline Eina_Bool eina_lock_take(Eina_Lock mutex);
-static inline Eina_Bool eina_lock_take_try(Eina_Lock mutex);
-static inline Eina_Bool eina_lock_release(Eina_Lock mutex);
+static inline void eina_lock_free(Eina_Lock *mutex);
+static inline Eina_Bool eina_lock_take(Eina_Lock *mutex);
+static inline Eina_Bool eina_lock_take_try(Eina_Lock *mutex);
+static inline Eina_Bool eina_lock_release(Eina_Lock *mutex);
 
 /**
  * @}

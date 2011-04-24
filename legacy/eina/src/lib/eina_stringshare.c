@@ -47,10 +47,6 @@ void *alloca (size_t);
 #include <stdio.h>
 #include <string.h>
 
-#ifdef EFL_HAVE_POSIX_THREADS
-# include <pthread.h>
-#endif
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -62,6 +58,7 @@ void *alloca (size_t);
 #include "eina_error.h"
 #include "eina_log.h"
 #include "eina_stringshare.h"
+#include "eina_lock.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -71,27 +68,8 @@ void *alloca (size_t);
 static Eina_Share *stringshare_share;
 static const char EINA_MAGIC_STRINGSHARE_NODE_STR[] = "Eina Stringshare Node";
 
-#ifdef EFL_HAVE_THREADS
 extern Eina_Bool _share_common_threads_activated;
-
-# ifdef EFL_HAVE_POSIX_THREADS
-static pthread_mutex_t _mutex_small = PTHREAD_MUTEX_INITIALIZER;
-#  define STRINGSHARE_LOCK_SMALL() if(_share_common_threads_activated) \
-      pthread_mutex_lock(&_mutex_small)
-#  define STRINGSHARE_UNLOCK_SMALL() if(_share_common_threads_activated) \
-      pthread_mutex_unlock(&_mutex_small)
-# else /* EFL_HAVE_WIN32_THREADS */
-static HANDLE _mutex_small = NULL;
-#  define STRINGSHARE_LOCK_SMALL() if(_share_common_threads_activated) \
-      WaitForSingleObject(_mutex_small, INFINITE)
-#  define STRINGSHARE_UNLOCK_SMALL() if(_share_common_threads_activated) \
-      ReleaseMutex(_mutex_small)
-
-# endif /* EFL_HAVE_WIN32_THREADS */
-#else /* EFL_HAVE_THREADS */
-# define STRINGSHARE_LOCK_SMALL() do {} while (0)
-# define STRINGSHARE_UNLOCK_SMALL() do {} while (0)
-#endif
+static Eina_Lock _mutex_small;
 
 /* Stringshare optimizations */
 static const unsigned char _eina_stringshare_single[512] = {
@@ -418,6 +396,7 @@ error:
 static void
 _eina_stringshare_small_init(void)
 {
+   eina_lock_new(&_mutex_small);
    memset(&_eina_small_share, 0, sizeof(_eina_small_share));
 }
 
@@ -448,6 +427,8 @@ _eina_stringshare_small_shutdown(void)
            free(bucket);
         *p_bucket = NULL;
      }
+
+   eina_lock_free(&_mutex_small);
 }
 
 static void
@@ -579,9 +560,9 @@ eina_stringshare_del(const char *str)
    else if (slen < 4)
      {
         eina_share_common_population_del(stringshare_share, slen);
-        STRINGSHARE_LOCK_SMALL();
+        eina_lock_take(&_mutex_small);
         _eina_stringshare_small_del(str, slen);
-        STRINGSHARE_UNLOCK_SMALL();
+        eina_lock_release(&_mutex_small);
         return;
      }
 
@@ -601,9 +582,9 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
      {
         const char *s;
 
-        STRINGSHARE_LOCK_SMALL();
+        eina_lock_take(&_mutex_small);
         s = _eina_stringshare_small_add(str, slen);
-        STRINGSHARE_UNLOCK_SMALL();
+        eina_lock_release(&_mutex_small);
         return s;
      }
 
@@ -734,9 +715,9 @@ eina_stringshare_ref(const char *str)
         const char *s;
         eina_share_common_population_add(stringshare_share, slen);
 
-        STRINGSHARE_LOCK_SMALL();
+        eina_lock_take(&_mutex_small);
         s = _eina_stringshare_small_add(str, slen);
-        STRINGSHARE_UNLOCK_SMALL();
+        eina_lock_release(&_mutex_small);
 
         return s;
      }
