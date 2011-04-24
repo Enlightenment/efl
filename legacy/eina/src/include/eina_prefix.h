@@ -8,7 +8,7 @@
  * location of a software package
  *
  * @{
- * 
+ *
  * @since 1.1.0
  */
 
@@ -18,14 +18,14 @@
  * to determine the runtime location of the software in question so other
  * data files such as images, sound files, other executable utilities,
  * libraries, modules and locale files can be found.
- * 
+ *
  * @since 1.1.0
  */
 typedef struct _Eina_Prefix Eina_Prefix;
 
 /**
  * @brief Create a new prefix handle given some input information
- * 
+ *
  * @param argv0 If this is an executable this is argv[0] of the binary, or NULL if it is used from a shared library
  * @param symbol This is a symbol (function for example) inside the binary or library to find the source location of. Provide NULL if not used
  * @param envprefix This is the prefix to any environment variables that may override prefix detection and give the exact location of the software
@@ -36,7 +36,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * @param pkg_data This is the compile-time share/data install dir
  * @param pkg_locale This is the compile-time locale install dir
  * @return The prefix handle, or NULL on failure
- * 
+ *
  * Applications and libraries are most often not just single executables nor
  * single shared library binares, but also come with extra modules they
  * have to load, extra binary utilities they need to run, or have data files
@@ -47,17 +47,17 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * the need for having to maintain enviornment variables for every piece of
  * software to let it know its location, or or have to use large sets of
  * symlinks pointing from the compiled location to the new one.
- * 
+ *
  * Being re-locatable at runtime allows much easier distribution and
  * installation into places like the users own home directory, instead of
  * on a system partition, if the developer wishes for easier distribution
  * of pre-compiled binaries.
- * 
+ *
  * The prefix system is designed to locate where the given software is
  * installed (under a common prefix) at runtime and then report specific
  * locations of this prefix and common directories inside this prefix like
  * the binary, library, data and locale directories.
- * 
+ *
  * To do this some information needs to be provided to eina_prefix_new(). If
  * you have developed a binary executable, then provide argv[0] as the @p argv0
  * argument. This plus the PATH environment variable help the prefix system
@@ -68,13 +68,13 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * finds the right executable to determine just where the actual binary is
  * installed and being run from. If you develop a share library, just pass
  * NULL as argv0
- * 
+ *
  * It would prefer to use the @p symbol function to determine location as
  * that function will be unique inside the application and try and trace
  * back which file this function comes from (be it a binary or shared library)
  * as this avoids more expensive searches via @p argv0. It will use this
  * symbol if given in preference to argv0.
- * 
+ *
  * The @p envprefix parameter, provides a string prefix to prepend before
  * environment variables to allow a fallback to specific environment variables
  * to locate the software. For example if "MYAPP" is provided a the prefix,
@@ -84,44 +84,44 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * "MYAPP_LOCALE_DIR" which can be set by the user or scripts before
  * launching. If not provided (NULL) enviornment variables will not be
  * used to override compiled-in defaults or auto detections.
- * 
+ *
  * The @p sharedir string provides a subdirectory inside the system shared
  * data dir for data files. For example, if the system dir is
- * /usr/local/share then this dir name is appended, creating 
+ * /usr/local/share then this dir name is appended, creating
  * /usr/local/share/appname if this dir was the "appname" string. It is
  * expexcted the application or library installs data files in this directory.
- * 
+ *
  * The @p magicsharefile is a filename or path of something inside the share
  * or data dir to be used to test that the prefix detection worked. For
- * example, your app will install a wallpaper image as 
+ * example, your app will install a wallpaper image as
  * /usr/local/share/appname/images/wallpaper.jpg and so to check that this
  * worked, provide "images/wallpaper.jpg" as the @p magicsharefile string
  * so detection can know if it worked or not.
- * 
+ *
  * The @p pkg_bin, @p pkg_lib, @p pkg_data and @p pkg_locale are compile-time
  * strings (the kind standard autoconf/automake define) to be passed in
  * so there can be a fallback to compiled-in defaults as well as use them
  * to determine actual names of directories like libdirs maybe changing to
  * be lib32 or lib64 instead of lib etc.
- * 
+ *
  * Compile the following defining at compile time your prefixes like (example):
- * 
+ *
  * gcc appname.c -o appname \
  * -DPACKAGE_BIN_DIR=/usr/local/bin \
  * -DPACKAGE_LIB_DIR=/usr/local/lib \
  * -DPACKAGE_DATA_DIR=/usr/local/share/appname \
  * -DLOCALE_DIR=/usr/local/share/locale
- * 
+ *
  * (of course add appropriate compile flags to linking etc. etc. and note that
  * locale dir is optional. if you don't need it provide data dir as the
  * locale dir. also note that the magicsharefile is optional for testing and
  * ensuring that the prefix check is correct. this file must be installed
  * in the application data dir (eg /usr/local/share/appname) and be referred
  * to using a unix-style relative path from that dir, eg directory/filename.png)
- * 
+ *
  * @code
  * static Eina_Prefix *pfx = NULL;
- * 
+ *
  * int main(argc, char **argv)
  * {
  *   pfx = e_prefix_new(argv[0], main, "APPNAME", "appname", NULL,
@@ -135,7 +135,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *   e_prefix_free(pfx);
  * }
  * @endcode
- * 
+ *
  * @since 1.1.0
  */
 EAPI Eina_Prefix *
@@ -144,14 +144,14 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                 const char *pkg_bin, const char *pkg_lib,
                 const char *pkg_data, const char *pkg_locale);
 
-/** 
+/**
  * @brief Free the prefix object and all its contents
- * 
+ *
  * @param pfx The prefix object
- * 
+ *
  * Free the prefix object and all its allocated content. It will be invalid
  * to access the object after being freed.
- * 
+ *
  * @since 1.1.0
  */
 EAPI void
@@ -159,12 +159,12 @@ eina_prefix_free(Eina_Prefix *pfx);
 
 /**
  * @brief Get the prefix base directory
- * 
+ *
  * @param pfx The prefix object
- * 
+ *
  * This returns the base prefix (eg "/usr/local", "/usr", "/opt/appname" or
  * "/home/user/myapps/appname" etc.) that the software resides in at runtime.
- * 
+ *
  * @since 1.1.0
  */
 EAPI const char *
@@ -172,12 +172,12 @@ eina_prefix_get(Eina_Prefix *pfx);
 
 /**
  * @brief Get the binary installation directory
- * 
+ *
  * @param pfx The prefix object
- * 
+ *
  * This returns the location of installed binaries (eg "/usr/local/bin",
  * "/usr/bin", "/opt/appname/bin", "/home/user/myapps/appname/bin" etc.).
- * 
+ *
  * @since 1.1.0
  */
 EAPI const char *
@@ -185,12 +185,12 @@ eina_prefix_bin_get(Eina_Prefix *pfx);
 
 /**
  * @brief Get the library installation directory
- * 
+ *
  * @param pfx The prefix object
- * 
+ *
  * This returns the location of installed binaries (eg "/usr/local/lib",
  * "/usr/lib32", "/opt/appname/lib64", "/home/user/myapps/appname/lib" etc.).
- * 
+ *
  * @since 1.1.0
  */
 EAPI const char *
@@ -198,12 +198,12 @@ eina_prefix_lib_get(Eina_Prefix *pfx);
 
 /**
  * @brief Get the data installation directory
- * 
+ *
  * @param pfx The prefix object
- * 
+ *
  * This returns the location of installed binaries (eg "/usr/local/share/appname",
  * "/usr/share/appname", "/opt/appname/share/appname", "/home/user/myapps/appname/share/appname" etc.).
- * 
+ *
  * @since 1.1.0
  */
 EAPI const char *
@@ -211,12 +211,12 @@ eina_prefix_data_get(Eina_Prefix *pfx);
 
 /**
  * @brief Get the locale installation directory
- * 
+ *
  * @param pfx The prefix object
- * 
+ *
  * This returns the location of installed binaries (eg "/usr/local/share/locale",
  * "/usr/share/locale", "/opt/appname/share/locale", "/home/user/myapps/appname/share/locale" etc.).
- * 
+ *
  * @since 1.1.0
  */
 EAPI const char *
