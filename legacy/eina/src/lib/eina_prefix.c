@@ -1,3 +1,21 @@
+/* EINA - EFL data type library
+ * Copyright (C) 2011 Carsten Haitzler
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library;
+ * if not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -38,27 +56,31 @@
 # define DSEP_S "/"
 #endif /* _WIN32 */
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 struct _Eina_Prefix
 {
    char *exe_path;
-   
+
    char *prefix_path;
    char *prefix_path_bin;
    char *prefix_path_data;
    char *prefix_path_lib;
    char *prefix_path_locale;
-   
+
    unsigned char fallback : 1;
    unsigned char no_common_prefix : 1;
    unsigned char env_used : 1;
 };
 
-/* local subsystem globals */
-
 #define STRDUP_REP(x, y) do { if (x) free(x); x = strdup(y); } while (0)
 #define IF_FREE_NULL(p) do { if (p) { free(p); p = NULL; } } while (0)
-
-/* local subsystem functions */
 
 static int
 _fallback(Eina_Prefix *pfx, const char *pkg_bin, const char *pkg_lib,
@@ -90,7 +112,7 @@ _fallback(Eina_Prefix *pfx, const char *pkg_bin, const char *pkg_lib,
            "        %s_LIB_DIR    - provide a specific library directory\n"
            "        %s_DATA_DIR   - provide a specific data directory\n"
            "        %s_LOCALE_DIR - provide a specific locale directory\n"
-           , envprefix, 
+           , envprefix,
            pfx->prefix_path, pkg_bin, pkg_lib, pkg_data, pkg_locale,
            envprefix, envprefix, envprefix, envprefix, envprefix);
    pfx->fallback = 1;
@@ -238,7 +260,7 @@ _get_env_var(char **var, const char *env, const char *prefix, const char *dir)
 {
    char buf[PATH_MAX];
    const char *s = getenv(env);
-      
+
    if (s)
      {
         STRDUP_REP(*var, s);
@@ -264,7 +286,7 @@ _get_env_vars(Eina_Prefix *pfx,
    char env[1024];
    const char *s;
    int ret = 0;
-   
+
    snprintf(env, sizeof(env), "%s_PREFIX", envprefix);
    if ((s = getenv(env))) STRDUP_REP(pfx->prefix_path, s);
    snprintf(env, sizeof(env), "%s_BIN_DIR", envprefix);
@@ -278,7 +300,21 @@ _get_env_vars(Eina_Prefix *pfx,
    return ret;
 }
 
-/* externally accessible functions */
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+
 EAPI Eina_Prefix *
 eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                 const char *sharedir, const char *magicsharefile,
@@ -300,7 +336,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 
    pfx = calloc(1, sizeof(Eina_Prefix));
    if (!pfx) return NULL;
-   
+
    /* if provided with a share dir use datadir/sharedir as the share dir */
    if (sharedir)
      {
@@ -403,7 +439,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
         STRDUP_REP(pfx->prefix_path_locale, pkg_locale);
         pfx->no_common_prefix = 1;
      }
-   
+
    /* if user provides env vars - then use that or also more specific sub
     * dirs for bin, lib, data and locale */
    if ((envprefix) &&
@@ -412,25 +448,25 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
         pfx->env_used = 1;
         return pfx;
      }
-   
+
 #ifdef HAVE_DLADDR
    if (symbol)
      {
         Dl_info info_dl;
-        
+
         if (dladdr(symbol, &info_dl))
           {
              STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
           }
      }
-#endif   
+#endif
    /* no env var - examine process and possible argv0 */
    if ((argv0) && (!pfx->exe_path) && (symbol))
      {
 #ifndef _WIN32
         if (!_try_proc(pfx, symbol))
           {
-#endif             
+#endif
              if (!_try_argv(pfx, argv0))
                {
                   _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
@@ -439,7 +475,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                }
 #ifndef _WIN32
           }
-#endif        
+#endif
      }
    if (!pfx->exe_path)
      {
@@ -468,40 +504,40 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 		  pfx->prefix_path = malloc(p - pfx->exe_path + 1);
 		  if (pfx->prefix_path)
 		    {
-		       strncpy(pfx->prefix_path, pfx->exe_path, 
+		       strncpy(pfx->prefix_path, pfx->exe_path,
                                p - pfx->exe_path);
 		       pfx->prefix_path[p - pfx->exe_path] = 0;
 
 		       /* bin */
-		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s", 
+		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, bindir);
                        STRDUP_REP(pfx->prefix_path_bin, buf);
 		       /* lib */
-		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s", 
+		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, libdir);
                        STRDUP_REP(pfx->prefix_path_lib, buf);
 		       /* locale */
-		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s", 
+		       snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                 pfx->prefix_path, localedir);
                        STRDUP_REP(pfx->prefix_path_locale, buf);
 		       /* check if magic file is there - then our guess is right */
                        if (magic)
-                          snprintf(buf, sizeof(buf), 
-                                   "%s" DSEP_S "%s" DSEP_S "%s", 
+                          snprintf(buf, sizeof(buf),
+                                   "%s" DSEP_S "%s" DSEP_S "%s",
                                    pfx->prefix_path, datadir, magic);
 		       if ((!magic) || (stat(buf, &st) == 0))
 			 {
-			    snprintf(buf, sizeof(buf), "%s" DSEP_S "%s", 
+			    snprintf(buf, sizeof(buf), "%s" DSEP_S "%s",
                                      pfx->prefix_path, datadir);
                             STRDUP_REP(pfx->prefix_path_data, buf);
 			 }
 		       /* magic file not there. time to start hunting! */
 		       else
-                          _fallback(pfx, pkg_bin, pkg_lib, pkg_data, 
+                          _fallback(pfx, pkg_bin, pkg_lib, pkg_data,
                                     pkg_locale, envprefix);
 		    }
 		  else
-                     _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale, 
+                     _fallback(pfx, pkg_bin, pkg_lib, pkg_data, pkg_locale,
                                envprefix);
                   return pfx;
 	       }
@@ -516,7 +552,7 @@ EAPI void
 eina_prefix_free(Eina_Prefix *pfx)
 {
    if (!pfx) return;
-   
+
    IF_FREE_NULL(pfx->exe_path);
    IF_FREE_NULL(pfx->prefix_path);
    IF_FREE_NULL(pfx->prefix_path_bin);
