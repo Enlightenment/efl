@@ -80,3 +80,9 @@ SUBDIRS += xpm
 endif
 endif
 
+if BUILD_LOADER_PSD
+if !EVAS_STATIC_BUILD_PSD
+SUBDIRS += psd
+endif
+endif
+

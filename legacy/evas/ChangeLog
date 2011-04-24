@@ -262,3 +262,8 @@
 	  Supports a filter object or filter under (the area where the object
 	  is filtered).  Various parameters to tweak, and potential for
 	  additional filters (but you get to write the shader ;-)
+
+2011-04-24 Thierry el Borgi
+
+	* Add PSD file format support.
+

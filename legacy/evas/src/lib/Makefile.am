@@ -164,6 +164,11 @@ SUBDIRS += ../modules/loaders/xpm
 EVAS_STATIC_MODULE += ../modules/loaders/xpm/libevas_loader_xpm.la
 EVAS_STATIC_LIBADD += @evas_image_loader_xpm_libs@
 endif
+if EVAS_STATIC_BUILD_PSD
+SUBDIRS += ../modules/loaders/psd
+EVAS_STATIC_MODULE += ../modules/loaders/psd/libevas_loader_psd.la
+EVAS_STATIC_LIBADD += @evas_image_loader_psd_libs@
+endif
 
 AM_CPPFLAGS = \
 -I. \
