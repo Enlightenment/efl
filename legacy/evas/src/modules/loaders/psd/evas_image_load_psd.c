@@ -136,7 +136,8 @@ is_psd(PSD_Header *header)
 }
 
 static Eina_Bool
-evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName, const char *key, int *error)
+evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName, 
+                              const char *key __UNUSED__, int *error)
 {
    FILE	*f;
    PSD_Header header;
@@ -168,7 +169,8 @@ evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName, const char 
 
 static unsigned int
 read_compressed_channel(FILE* file,
-			const unsigned int channel_length, unsigned int size,
+			const unsigned int channel_length __UNUSED__, 
+                        unsigned int size,
 			unsigned char* channel)
 {
    // FIXME: what does channel_length means, and why is it not used
@@ -216,7 +218,7 @@ read_compressed_channel(FILE* file,
 
 
 Eina_Bool
-psd_get_data(Image_Entry *ie,
+psd_get_data(Image_Entry *ie __UNUSED__,
 	     PSD_Header *head,
 	     FILE *f,
 	     unsigned char *buffer, Eina_Bool compressed,
@@ -329,7 +331,7 @@ psd_get_data(Image_Entry *ie,
 
                   for (y = 0; y < head->height * bps2; y += bps2)
                     {
-                       for (x = 0; x < bps2; x += bpp, shortptr++)
+                       for (x = 0; x < (unsigned int)bps2; x += bpp, shortptr++)
                          {
                             ((unsigned short*)data)[y + x + c] = *shortptr;
                          }
@@ -346,7 +348,7 @@ psd_get_data(Image_Entry *ie,
 
 		  for (y = 0; y < head->height * bps2; y += bps2)
                     {
-                       for (x = 0; x < bps2; x += bpp, shortptr)
+                       for (x = 0; x < (unsigned int)bps2; x += bpp, shortptr)
                          {
                             unsigned int newval;
 
@@ -472,7 +474,7 @@ psd_get_data(Image_Entry *ie,
 
 
 Eina_Bool
-get_single_channel(Image_Entry *ie,
+get_single_channel(Image_Entry *ie __UNUSED__,
 		   PSD_Header *head,
 		   FILE *f,
 		   unsigned char *buffer,
@@ -504,7 +506,7 @@ get_single_channel(Image_Entry *ie,
      }
    else
      {
-        for (i = 0; i < pixels_count; )
+        for (i = 0; i < (unsigned int)pixels_count; )
           {
              CHECK_RET(fread(&headbyte, 1, 1, f), 1);
 
@@ -658,7 +660,7 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
-   unsigned int format, type;
+   unsigned int type;
    void *surface;
 
 #define CHECK_RET(Call, Value)                  \
@@ -830,7 +832,7 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
 static Eina_Bool
 evas_image_load_file_data_psd(Image_Entry *ie,
                               const char *file,
-                              const char *key,
+                              const char *key __UNUSED__,
                               int *error)
 {
    FILE *f;
