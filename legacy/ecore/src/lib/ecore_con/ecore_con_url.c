@@ -1719,7 +1719,11 @@ _ecore_con_url_read_cb(void  *ptr,
         return 0;
      }
 
+#ifdef _WIN32
+   INF("*** We read %Iu bytes from file", retcode);
+#else
    INF("*** We read %zu bytes from file", retcode);
+#endif
    return retcode;
 }
 
