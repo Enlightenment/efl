@@ -59,6 +59,7 @@ typedef struct _Eio_File_Stat Eio_File_Stat;
 typedef struct _Eio_File_Progress Eio_File_Progress;
 typedef struct _Eio_File_Move Eio_File_Move;
 typedef struct _Eio_File_Chown Eio_File_Chown;
+typedef struct _Eio_Monitor_Backend Eio_Monitor_Backend;
 
 typedef struct _Eio_Dir_Copy Eio_Dir_Copy;
 
@@ -159,6 +160,19 @@ struct _Eio_File_Chown
    const char *group;
 };
 
+struct _Eio_Monitor
+{
+   Eio_Monitor_Backend *backend;
+   Eio_File *exist;
+
+   const char *path;
+
+   int refcount;
+   int error;
+
+   Eina_Bool fallback : 1;
+};
+
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
 Eina_Bool eio_file_set(Eio_File *common,
 		       Eio_Done_Cb done_cb,
@@ -192,5 +206,18 @@ void eio_progress_send(Ecore_Thread *thread, Eio_File_Progress *op,
 void eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op);
 
 Eina_Bool eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy);
+
+void eio_monitor_init(void);
+void eio_monitor_backend_init(void);
+void eio_monitor_fallback_init(void);
+
+void eio_monitor_shutdown(void);
+void eio_monitor_backend_shutdown(void);
+void eio_monitor_fallback_shutdown(void);
+void eio_monitor_backend_add(Eio_Monitor *monitor);
+void eio_monitor_fallback_add(Eio_Monitor *monitor);
+
+void eio_monitor_backend_del(Eio_Monitor *monitor);
+void eio_monitor_fallback_del(Eio_Monitor *monitor);
 
 #endif

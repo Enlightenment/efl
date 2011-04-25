@@ -256,6 +256,52 @@ static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
  * @}
  */
 
+/**
+ *
+ */
+/**
+ * @defgroup Eio_Monitor Eio file and directory monitoring API
+ *
+ * @brief This function help monitoring change in a directory or on a file.
+ *
+ * This function use the best available method to monitor change on a directory
+ * or file. It send ecore event when needed and does refcount of all monitored
+ * path to avoid heavy ressource consuption.
+ *
+ * @{
+ */
+
+EAPI extern int EIO_MONITOR_FILE_CREATED; /**< Notify creation of a new file in a watched directory */
+EAPI extern int EIO_MONITOR_FILE_DELETED; /**< Notify destruction of a watched file or in a watched directory */
+EAPI extern int EIO_MONITOR_FILE_MODIFIED; /**< Notify modification of a file in a watched directory */
+EAPI extern int EIO_MONITOR_FILE_START; /**< Notify starting to watch on a file */
+EAPI extern int EIO_MONITOR_FILE_STOP; /**< Notify that Eio stopped watching on a file (because of all watcher beeing deleted or the file itself has been deleted */
+EAPI extern int EIO_MONITOR_DIRECTORY_CREATED; /**< Notify creation of a new directory in a watched directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_DELETED; /**< Notify destruction of a watched directory or in a watched directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_MODIFIED; /**< Notify modification of a directory in a watched directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_START; /**< Notify the starting processus of watching a directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_STOP; /**< Notify that Eio stopped watching on a directory (due to destruction of the directory or due to all watcher beeing deleted */
+EAPI extern int EIO_MONITOR_ERROR; /**< Notify that during operation the pointed monitor failed and will no longer work. eio_monitor_del is required on it. */
+
+typedef struct _Eio_Monitor Eio_Monitor;
+
+typedef struct _Eio_Monitor_Error Eio_Monitor_Error;
+
+struct _Eio_Monitor_Error
+{
+   Eio_Monitor *monitor;
+   int error;
+};
+
+EAPI Eio_Monitor *eio_monitor_add(const char *path);
+EAPI Eio_Monitor *eio_monitor_stringshared_add(const char *path);
+EAPI void eio_monitor_del(Eio_Monitor *monitor);
+EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
+
+/**
+ * @}
+ */
+
 #include "eio_inline_helper.x"
 
 #ifdef __cplusplus

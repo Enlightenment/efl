@@ -58,7 +58,7 @@ struct _Eio_Alloc_Pool
 
 static int _eio_count = 0;
 
-static Eio_Alloc_Pool progress = { 0, NULL, EIO_MUTEX_INITIALIZER };
+static Eio_Alloc_Pool progress_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
 static Eio_Alloc_Pool direct_info = { 0, NULL, EIO_MUTEX_INITIALIZER };
 
 static void *
@@ -109,7 +109,7 @@ _eio_pool_free(Eio_Alloc_Pool *pool, void *data)
 Eio_Progress *
 eio_progress_malloc(void)
 {
-   return _eio_pool_malloc(&progress, sizeof (Eio_Progress));
+   return _eio_pool_malloc(&progress_pool, sizeof (Eio_Progress));
 }
 
 void
@@ -118,7 +118,7 @@ eio_progress_free(Eio_Progress *data)
    eina_stringshare_del(data->source);
    eina_stringshare_del(data->dest);
 
-   _eio_pool_free(&progress, data);
+   _eio_pool_free(&progress_pool, data);
 }
 
 void
@@ -183,8 +183,10 @@ eio_init(void)
    eina_init();
    ecore_init();
 
-   EIO_MUTEX_INIT(progress);
+   EIO_MUTEX_INIT(progress_pool);
    EIO_MUTEX_INIT(direct_info);
+
+   eio_monitor_init();
 
    return _eio_count;
 }
@@ -204,12 +206,12 @@ eio_shutdown(void)
    if (_eio_count > 0) return _eio_count;
 
    EIO_MUTEX_DESTROY(direct_info);
-   EIO_MUTEX_DESTROY(progress);
+   EIO_MUTEX_DESTROY(progress_pool);
 
    /* Cleanup pool */
-   EINA_TRASH_CLEAN(&progress.trash, pg)
+   EINA_TRASH_CLEAN(&progress_pool.trash, pg)
      free(pg);
-   progress.count = 0;
+   progress_pool.count = 0;
 
    EINA_TRASH_CLEAN(&direct_info.trash, info)
      free(info);

@@ -57,6 +57,19 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
+# options
+want_inotify="no"
+want_notify_win32="no"
+
+case "$host_os" in
+   mingw* | cegcc*)
+      want_notify_win32="yes"
+      ;;
+   *)
+      want_inotify="yes"
+      ;;
+esac
+
 dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
@@ -145,6 +158,8 @@ AC_SUBST(EFL_EIO_BUILD)
 ### Checks for library functions
 AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
 
+### Check for splice system call
+
 have_splice="no"
 AC_TRY_LINK(
    [
@@ -162,6 +177,17 @@ AC_MSG_RESULT([${have_splice}])
 if test "x${have_splice}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
 fi
+
+### Check for inotify specificity
+have_inotify="no"
+have_notify_win32="no"
+EIO_CHECK_INOTIFY([${want_inotify}], [have_inotify="yes"], [have_inotify="no"])
+EIO_CHECK_NOTIFY_WIN32([${want_notify_win32}], [have_notify_win32="yes"], [have_notify_win32="no"])
+
+AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x$have_inotify" = "xyes"])
+AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x$have_notify_win32" = "xyes"])
+
+## Report
 
 AC_OUTPUT([
 eio.pc
@@ -184,6 +210,8 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Thread Support.......: ${have_threads}"
+echo "  Inotify..............: ${have_inotify}"
+echo "  Windows notification.: ${have_notify_win32}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo
