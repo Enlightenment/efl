@@ -1204,6 +1204,10 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,end", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
+   else if (!strcmp(ev->key, "Shift_L") || !strcmp(ev->key, "Shift_R"))
+     {
+        return;
+     }
    else if ((control) && (!strcmp(ev->key, "v")))
      {
         _edje_emit(ed, "entry,paste,request", rp->part->name);
