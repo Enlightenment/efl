@@ -353,6 +353,7 @@ struct _Widget_Data
 
    int id;
    int zoom;
+   int zoom_method;
    Elm_Map_Zoom_Mode mode;
 
    Ecore_Job *calc_job;
@@ -424,7 +425,6 @@ struct _Widget_Data
         Evas_Coord cx, cy;
         double level;
    } pinch_zoom;
-
 };
 
 struct _Mod_Api
@@ -496,6 +496,14 @@ enum _Name_Xml_Attribute
    NAME_XML_LAT,
    NAME_XML_LAST
 } Name_Xml_Attibute;
+
+enum _Zoom_Method
+{
+   ZOOM_METHOD_NONE,
+   ZOOM_METHOD_IN,
+   ZOOM_METHOD_OUT,
+   ZOOM_METHOD_LAST
+} Zoom_Mode;
 
 static const char *widtype = NULL;
 
@@ -1401,31 +1409,21 @@ _scr(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    wd->scr_timer = ecore_timer_add(0.5, _scr_timeout, data);
 }
 
-static Eina_Bool
-zoom_do(Evas_Object *obj, double t)
+static void
+zoom_do(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord xx, yy, ow, oh;
 
-   if (!wd) return 0;
-   if (t > 1.0) t = 1.0;
+   if (!wd) return;
 
-   wd->size.w = (wd->size.ow * (1.0 - t)) + (wd->size.nw * t);
-   wd->size.h = (wd->size.oh * (1.0 - t)) + (wd->size.nh * t);
+   wd->size.w = wd->size.nw;
+   wd->size.h = wd->size.nh;
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &ow, &oh);
-
-   if (wd->center_on.enabled)
-     {
-        elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
-        xx -= ow / 2;
-        yy -= oh / 2;
-     }
-   else
-     {
-        xx = (wd->size.spos.x * wd->size.w) - (ow / 2);
-        yy = (wd->size.spos.y * wd->size.h) - (oh / 2);
-     }
+   elm_map_utils_convert_geo_into_coord(obj, wd->center_on.lon, wd->center_on.lat, wd->size.w, &xx, &yy);
+   xx -= ow / 2;
+   yy -= oh / 2;
 
    if (xx < 0) xx = 0;
    else if (xx > (wd->size.w - ow)) xx = wd->size.w - ow;
@@ -1440,11 +1438,6 @@ zoom_do(Evas_Object *obj, double t)
 
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
-   if (t >= 1.0)
-     {
-        return ECORE_CALLBACK_CANCEL;
-     }
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -1453,7 +1446,6 @@ _zoom_anim(void *data)
    Evas_Object *obj = data;
    Widget_Data *wd = elm_widget_data_get(obj);
    double t;
-   int go;
 
    if (!wd) return ECORE_CALLBACK_CANCEL;
    t = ecore_loop_time_get();
@@ -1463,17 +1455,34 @@ _zoom_anim(void *data)
      t = (t - wd->t_start) / (wd->t_end - wd->t_start);
    else
      t = 1.0;
-   t = 1.0 - t;
-   t = 1.0 - (t * t);
-   go = zoom_do(obj, t);
-   if (!go)
+   if (wd->zoom_method == ZOOM_METHOD_IN) t = 1.0 + (t * t);
+   else if (wd->zoom_method == ZOOM_METHOD_OUT) t = 1.0 - (t * t);
+   else return ECORE_CALLBACK_CANCEL;
+
+   if ((t >= 2.0) || (t <= 0.5))
      {
-        wd->nosmooth--;
-        if (!wd->nosmooth) _smooth_update(data);
+        wd->pinch.level = 1.0;
+        zoom_do(obj);
         wd->zoom_animator = NULL;
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
+        return ECORE_CALLBACK_CANCEL;
      }
-   return go;
+   else
+     {
+        Evas_Coord x, y, w, h;
+        float half_w, half_h;
+
+        evas_object_geometry_get(data, &x, &y, &w, &h);
+        half_w = (float)w * 0.5;
+        half_h = (float)h * 0.5;
+
+        wd->pinch.level = t;
+        wd->pinch.cx = x + half_w;
+        wd->pinch.cy = y + half_h;
+        if (wd->calc_job) ecore_job_del(wd->calc_job);
+        wd->calc_job = ecore_job_add(_calc_job, wd);
+        return ECORE_CALLBACK_RENEW;
+     }
 }
 
 static Eina_Bool
@@ -2986,13 +2995,16 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    int z;
    int zoom_changed = 0, started = 0;
 
-   if (!wd) return;
+   if ((!wd) || (wd->zoom_animator)) return;
    if (zoom < 0 ) zoom = 0;
    if (zoom > map_sources_tab[wd->source].zoom_max)
      zoom = map_sources_tab[wd->source].zoom_max;
    if (zoom < map_sources_tab[wd->source].zoom_min)
      zoom = map_sources_tab[wd->source].zoom_min;
 
+   if ((wd->zoom - zoom) > 0) wd->zoom_method = ZOOM_METHOD_OUT;
+   else if ((wd->zoom - zoom) < 0) wd->zoom_method = ZOOM_METHOD_IN;
+   else wd->zoom_method = ZOOM_METHOD_NONE;
    wd->zoom = zoom;
    wd->size.ow = wd->size.w;
    wd->size.oh = wd->size.h;
@@ -3084,8 +3096,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
      {
         if (g->zoom == wd->zoom)
           {
-             wd->grids = eina_list_remove(wd->grids, g);
-             wd->grids = eina_list_prepend(wd->grids, g);
              _grid_raise(g);
              goto done;
           }
@@ -3114,23 +3124,9 @@ done:
 
    wd->t_start = ecore_loop_time_get();
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
-   if ((wd->size.w > 0) && (wd->size.h > 0))
-     {
-        wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
-        wd->size.spos.y = (double)(ry + (rh / 2)) / (double)wd->size.oh;
-     }
-   else
-     {
-        wd->size.spos.x = 0.5;
-        wd->size.spos.y = 0.5;
-     }
-   if (rw > wd->size.ow) wd->size.spos.x = 0.5;
-   if (rh > wd->size.oh) wd->size.spos.y = 0.5;
-   if (wd->size.spos.x > 1.0) wd->size.spos.x = 1.0;
-   if (wd->size.spos.y > 1.0) wd->size.spos.y = 1.0;
    if (wd->paused)
      {
-        zoom_do(obj, 1.0);
+        zoom_do(obj);
      }
    else
      {
@@ -3267,7 +3263,7 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
         if (!wd->nosmooth) _smooth_update(obj);
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
-        zoom_do(obj, 1.0);
+        zoom_do(obj);
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
    elm_smart_scroller_region_bring_in(wd->scr, rx, ry, rw, rh);
@@ -3307,7 +3303,7 @@ elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
         wd->nosmooth--;
         ecore_animator_del(wd->zoom_animator);
         wd->zoom_animator = NULL;
-        zoom_do(obj, 1.0);
+        zoom_do(obj);
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
      }
    elm_smart_scroller_child_region_show(wd->scr, rx, ry, rw, rh);
@@ -3370,7 +3366,7 @@ elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
           {
              ecore_animator_del(wd->zoom_animator);
              wd->zoom_animator = NULL;
-             zoom_do(obj, 1.0);
+             zoom_do(obj);
              evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
           }
      }
