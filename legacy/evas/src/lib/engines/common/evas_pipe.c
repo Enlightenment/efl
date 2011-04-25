@@ -165,7 +165,9 @@ evas_common_frameq_destroy(void)
    LKU(gframeq.mutex);
 #endif
    LKD(gframeq.mutex);
-   
+
+   eina_threads_shutdown();
+
    gframeq.frames = NULL;
    gframeq.initialised = 0;
 }
@@ -868,6 +870,8 @@ evas_common_frameq_begin(void)
         cpunum = eina_cpu_count();
         gframeq.thread_num = cpunum;
         gframeq.frameq_sz = cpunum * FRAMEQ_SZ_PER_THREAD;
+
+	eina_threads_init();
 
         for (i = 0; i < gframeq.thread_num; i++)
           {
@@ -1637,6 +1641,8 @@ evas_common_pipe_init(void)
 // waiting onm pthread barriers for async rendering on a single core!
 //	if (thread_num == 1) return EINA_FALSE;
 
+	eina_threads_init();
+
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
 	for (i = 0; i < thread_num; i++)
@@ -1676,11 +1682,8 @@ evas_common_pipe_init(void)
 			    evas_common_pipe_load, &(task_thinfo[i]));
 	     pthread_attr_destroy(&attr);
 	  }
-
-#if defined(METRIC_CACHE) || defined(WORD_CACHE)
-	eina_threads_init();
-#endif
      }
+
    if (thread_num == 1) return EINA_FALSE;
    return EINA_TRUE;
 #endif
