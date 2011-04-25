@@ -12,7 +12,7 @@ API Additions:
     * ecore:
      - ecore_thread_reschedule()
      - ecore_exe_data_set()
-     - ecore_animator_run_add()
+     - ecore_animator_timeline_add()
     * ecore_con:
      - ECORE_CON_EVENT_CLIENT_ERROR, ECORE_CON_EVENT_SERVER_ERROR events
      - Ecore_Con_Event_Server_Error, Ecore_Con_Event_Client_Error types
