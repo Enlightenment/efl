@@ -5,7 +5,9 @@ Changes since Ecore 1.0.0:
 
 New Features:
 
-    * ecore_x: XRandR backlight support
+    * ecore_x:
+     - XRandR backlight support
+     - XRandR Extended Display Identification Data (EDID) support
 
 API Additions:
 
@@ -13,6 +15,7 @@ API Additions:
      - ecore_thread_reschedule()
      - ecore_exe_data_set()
      - ecore_animator_timeline_add()
+
     * ecore_con:
      - ECORE_CON_EVENT_CLIENT_ERROR, ECORE_CON_EVENT_SERVER_ERROR events
      - Ecore_Con_Event_Server_Error, Ecore_Con_Event_Client_Error types
@@ -21,12 +24,15 @@ API Additions:
      - ecore_con_url_ssl_ca_set()
      - ecore_con_url_pipeline_set()
      - ecore_con_url_pipeline_get()
+
     * ecore_file:
      - ecore_file_download_full()
+
     * ecore_imf:
      - ecore_imf_context_canvas_get()
      - ecore_imf_context_window_get()
      - ecore_imf_context_preedit_string_with_attributes_get()
+
     * ecore_x:
      - ecore_x_randr_edid_*()
      - ecore_x_randr_screen_backlight_*()
