@@ -2036,12 +2036,14 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
 {
    Entry *en = rp->entry_data;
    if (!en) return;
+
    // set text as markup
    _sel_clear(en->cursor, rp->object, en);
    evas_object_textblock_text_markup_set(rp->object, text);
 
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
    _edje_entry_set_cursor_start(rp);
 }
 
@@ -2079,6 +2081,11 @@ _edje_entry_set_cursor_start(Edje_Real_Part *rp)
    Entry *en = rp->entry_data;
    if (!en) return;
    _curs_start(en->cursor, rp->object, en);
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_cursor_position_set(en->imf_context, 0);
+#endif
 }
 
 void
@@ -2087,6 +2094,12 @@ _edje_entry_set_cursor_end(Edje_Real_Part *rp)
    Entry *en = rp->entry_data;
    if (!en) return;
    _curs_end(en->cursor, rp->object, en);
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_cursor_position_set(en->imf_context,
+                                           evas_textblock_cursor_pos_get(en->cursor));
+#endif
 }
 
 void
