@@ -14,24 +14,42 @@
  *
  * "clicked" - This is called when a user has clicked the map without dragging
  *             around.
+ *
  * "press" - This is called when a user has pressed down on the map.
+ *
  * "longpressed" - This is called when a user has pressed down on the map for
  *                 a long time without dragging around.
- * "clicked,double" - This is called when a user has double-clicked the photo.
+ *
+ * "clicked,double" - This is called when a user has double-clicked the map.
+ *
  * "load,detail" - Map detailed data load begins.
+ *
  * "loaded,detail" - This is called when all parts of the map are loaded.
+ *
  * "zoom,start" - Zoom animation started.
+ *
  * "zoom,stop" - Zoom animation stopped.
+ *
  * "zoom,change" - Zoom changed when using an auto zoom mode.
+ *
  * "scroll" - the content has been scrolled (moved)
+ *
  * "scroll,anim,start" - scrolling animation has started
+ *
  * "scroll,anim,stop" - scrolling animation has stopped
+ *
  * "scroll,drag,start" - dragging the contents around has started
+ *
  * "scroll,drag,stop" - dragging the contents around has stopped
+ *
  * "downloaded" - This is called when map images are downloaded
+ *
  * "route,load" - This is called when route request begins
+ *
  * "route,loaded" - This is called when route request ends
+ *
  * "name,load" - This is called when name request begins
+ *
  * "name,loaded- This is called when name request ends
  *
  * TODO : doxygen
@@ -3147,7 +3165,7 @@ done:
 }
 
 /**
- * Get the zoom level of the photo
+ * Get the zoom level of the map
  *
  * This returns the current zoom level of the map object. Note that if
  * you set the fill mode to other than ELM_MAP_ZOOM_MODE_MANUAL
@@ -3177,7 +3195,7 @@ elm_map_zoom_get(const Evas_Object *obj)
  * or until zoom mode is changed. This is the default mode.
  * The Automatic modes will allow the map object to automatically
  * adjust zoom mode based on properties. ELM_MAP_ZOOM_MODE_AUTO_FIT) will
- * adjust zoom so the photo fits inside the scroll frame with no pixels
+ * adjust zoom so the map fits inside the scroll frame with no pixels
  * outside this area. ELM_MAP_ZOOM_MODE_AUTO_FILL will be similar but
  * ensure no pixels within the frame are left unfilled. Do not forget that the valid sizes are 2^zoom, consequently the map may be smaller than the scroller view.
  *
