@@ -2229,6 +2229,7 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
    Evas_GL_Config *cfg; 
+   int ret;
 
    sfc = calloc(1, sizeof(Render_Engine_GL_Surface));
 
@@ -2252,6 +2253,49 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
         ERR("Unsupported Format!");
         free(sfc);
         return NULL;
+     }
+
+   // Create Render Target Texture/Buffers if not initialized
+   if (!sfc->initialized) 
+     {
+        // I'm using evas's original context to create the render target texture
+        // This is to prevent awkwardness in using native_surface_get() function
+        // If the rt texture creation is deferred till the context is created and
+        // make_current called, the user can't call native_surface_get() right
+        // after the surface is created. hence this is done here using evas' context. 
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        ret = eglMakeCurrent(re->win->egl_disp, re->win->egl_surface[0], re->win->egl_surface[0], re->win->egl_context[0]);
+#else
+        ret = glXMakeCurrent(re->info->info.display, re->win->win, re->win->context);
+#endif
+        if (!ret) 
+          {
+             ERR("xxxMakeCurrent() failed!");
+             free(sfc);
+             return NULL;
+          }
+
+        // Create Render texture
+        if (!_create_rt_buffers(re, sfc)) 
+          {
+             ERR("_create_rt_buffers() failed.");
+             free(sfc);
+             return NULL;
+          }
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, 
+                             EGL_NO_SURFACE, EGL_NO_CONTEXT);
+#else
+        ret = glXMakeCurrent(re->info->info.display, None, NULL);
+#endif
+        if (!ret) 
+          {
+             ERR("xxxMakeCurrent() failed!");
+             free(sfc);
+             return 0;
+          }
+        sfc->initialized = 1;
      }
 
    return sfc;
@@ -2503,17 +2547,6 @@ eng_gl_make_current(void *data, void *surface, void *context)
      {
         ERR("xxxMakeCurrent() failed!");
         return 0;
-     }
-
-   // Create Render Target Texture/Buffers if not initialized
-   if (!sfc->initialized) 
-     {
-        if (!_create_rt_buffers(re, sfc)) 
-          {
-             ERR("_create_rt_buffers() failed.");
-             return 0;
-          }
-        sfc->initialized = 1;
      }
 
    // Create FBO if not initalized already
