@@ -19,7 +19,13 @@
 #ifndef EINA_INLINE_LOCK_POSIX_X_
 #define EINA_INLINE_LOCK_POSIX_X_
 
-#include <pthread.h>
+#ifndef __USE_UNIX98
+# define __USE_UNIX98
+# include <pthread.h>
+# undef __USE_UNIX98 
+#else
+# include <pthread.h>
+#endif
 
 typedef pthread_mutex_t Eina_Lock;
 
@@ -38,8 +44,10 @@ eina_lock_new(Eina_Lock *mutex)
 
    if (pthread_mutexattr_init(&attr) != 0)
      return EINA_FALSE;
+#ifdef PTHREAD_MUTEX_RECURSIVE   
    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0)
      return EINA_FALSE;
+#endif   
    if (pthread_mutex_init(mutex, &attr) != 0)
      return EINA_FALSE;
 
