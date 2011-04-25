@@ -23,7 +23,7 @@
 
 typedef CRITICAL_SECTION Eina_Lock;
 
-EAPI extern Eina_Bool _threads_activated;
+EAPI extern Eina_Bool _eina_threads_activated;
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
@@ -42,7 +42,7 @@ eina_lock_free(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_take(Eina_Lock *mutex)
 {
-   if (!_threads_activated) return EINA_FALSE;
+   if (!_eina_threads_activated) return EINA_FALSE;
 
    EnterCriticalSection(mutex);
 
@@ -52,7 +52,7 @@ eina_lock_take(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_take_try(Eina_Lock *mutex)
 {
-   if (!_threads_activated) return EINA_FALSE;
+   if (!_eina_threads_activated) return EINA_FALSE;
 
    return TryEnterCriticalSection(mutex) == 0 ? EINA_FALSE : EINA_TRUE;
 }
@@ -60,7 +60,7 @@ eina_lock_take_try(Eina_Lock *mutex)
 static inline Eina_Bool
 eina_lock_release(Eina_Lock *mutex)
 {
-   if (!_threads_activated) return EINA_FALSE;
+   if (!_eina_threads_activated) return EINA_FALSE;
 
    LeaveCriticalSection(mutex);
 
