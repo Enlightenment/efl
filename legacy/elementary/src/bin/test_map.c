@@ -9,7 +9,7 @@
 
 typedef struct Marker_Data
 {
-    const char *file;
+   const char *file;
 } Marker_Data;
 
 
@@ -217,7 +217,7 @@ static void
 my_map_route_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("route_load\n");
- }
+}
 
 static void
 my_map_route_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -238,7 +238,7 @@ static void
 my_map_name_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("name_load\n");
- }
+}
 
 static void
 my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -395,16 +395,16 @@ my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Marker_Data *d = &data7;
 
    if (*markers) return;
-   for(i =0; i<MARKER_MAX; i++)
+   for (i =0; i<MARKER_MAX; i++)
      {
         d = &data7;
 
         int r1 = rand() % (180*2*100);
-        if(r1<=180) r1 = -r1;
+        if (r1<=180) r1 = -r1;
         else r1 = r1 - 180*100;
 
         int r2 = rand() % (85*2*100);
-        if(r2<=85) r2 = -r2;
+        if (r2<=85) r2 = -r2;
         else r2 = r2 - 85*100;
 
         int style = rand() % 3;
@@ -420,10 +420,10 @@ my_bt_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         if (!style) g_clas = itc_group1;
         else g_clas = itc_group2;
 
-       markers[i] = elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d);
-    }
-    nb_elts += 1000;
-    printf("nb elements: %d\n", nb_elts);
+        markers[i] = elm_map_marker_add(data, r1/100., r2/100., m_clas, g_clas, d);
+     }
+   nb_elts += 1000;
+   printf("nb elements: %d\n", nb_elts);
 }
 
 static void
@@ -460,13 +460,13 @@ my_map_entry_activated(void *data, Evas_Object *obj, void *event_info __UNUSED__
 static Evas_Object *
 _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
 {
-    Marker_Data *d = data;
+   Marker_Data *d = data;
 
-    Evas_Object *bx = elm_box_add(obj);
-    evas_object_show(bx);
+   Evas_Object *bx = elm_box_add(obj);
+   evas_object_show(bx);
 
-    if(d == &data3)
-    {
+   if (d == &data3)
+     {
         Evas_Object *icon = elm_icon_add(obj);
         elm_icon_file_set(icon, d->file, NULL);
         evas_object_show(icon);
@@ -475,9 +475,9 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
         elm_button_icon_set(o, icon);
         evas_object_show(o);
         elm_box_pack_end(bx, o);
-    }
-    else
-    {
+     }
+   else
+     {
         Evas_Object *o = evas_object_image_add(evas_object_evas_get(obj));
         evas_object_image_file_set(o, d->file, NULL);
         evas_object_image_filled_set(o, EINA_TRUE);
@@ -489,33 +489,33 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
         elm_label_label_set(lbl, "Wolves Go !");
         evas_object_show(lbl);
         elm_box_pack_end(bx, lbl);
-    }
+     }
 
-    return bx;
+   return bx;
 }
 
 static Evas_Object *
 _icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
 {
-    Marker_Data *d = data;
+   Marker_Data *d = data;
 
-    Evas_Object *icon = elm_icon_add(obj);
-    elm_icon_file_set(icon, d->file, NULL);
-    evas_object_show(icon);
+   Evas_Object *icon = elm_icon_add(obj);
+   elm_icon_file_set(icon, d->file, NULL);
+   evas_object_show(icon);
 
-    return icon;
+   return icon;
 }
 
 static Evas_Object *
 _group_icon_get(Evas_Object *obj, void *data)
 {
-    char *file = data;
+   char *file = data;
 
-    Evas_Object *icon = elm_icon_add(obj);
-    elm_icon_file_set(icon, file, NULL);
-    evas_object_show(icon);
+   Evas_Object *icon = elm_icon_add(obj);
+   elm_icon_file_set(icon, file, NULL);
+   evas_object_show(icon);
 
-    return icon;
+   return icon;
 }
 
 static void
@@ -602,7 +602,6 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         elm_map_group_class_style_set(itc_group_parking, "empty");
         elm_map_group_class_zoom_displayed_set(itc_group_parking, 5);
         //
-
 
         rect = evas_object_rectangle_add(evas_object_evas_get(win));
         evas_object_color_set(rect, 0, 0, 0, 0);
