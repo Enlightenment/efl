@@ -61,6 +61,7 @@ escape_copy(const char *src, char *dst)
    
    for (s = src, d = dst; *s; s++, d++)
      {
+        // FIXME: escape tab, newline linefeed and friends
         if ((*s == ' ')  ||
             (*s == '!')  ||
             (*s == '"')  ||
