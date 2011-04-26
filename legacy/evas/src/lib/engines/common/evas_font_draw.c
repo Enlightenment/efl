@@ -521,6 +521,9 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 
    im = dst->image.data;
+#ifdef OT_SUPPORT
+   /* FIXME-tom: Should be applied to non-ot as well once we are capable of
+    * doing it */
    fi = text_props->font_instance;
    evas_common_font_int_reload(fi);
 
@@ -531,6 +534,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+#endif
 
    EVAS_FONT_WALK_TEXT_START()
      {
@@ -836,6 +840,9 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
    above = 0; below = 0; baseline = 0; height = 0; descent = 0;
+#ifdef OT_SUPPORT
+   /* FIXME-tom: Should be applied to non-ot as well once we are capable of
+    * doing it */
    fi = text_props->font_instance;
    evas_common_font_int_reload(fi);
 
@@ -846,6 +853,7 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+#endif
 
    /* First pass: Work out how big and populate */
    /* It's a bit hackish to use index and fg here as they are internal,

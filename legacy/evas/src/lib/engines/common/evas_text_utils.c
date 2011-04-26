@@ -290,6 +290,9 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         gl_itr++;
      }
 #else
+   /* FIXME: Move outside when we can (read comment above). */
+   text_props->font_instance = NULL;
+
    /* We are walking the string in visual ordering */
    Evas_Font_Glyph_Info *gl_itr;
    Eina_Bool use_kerning;
