@@ -28,7 +28,7 @@ EAPI extern Eina_Bool _eina_threads_activated;
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
 {
-   InitializeCriticalSection(m);
+   InitializeCriticalSection(mutex);
 
    return EINA_TRUE;
 }
