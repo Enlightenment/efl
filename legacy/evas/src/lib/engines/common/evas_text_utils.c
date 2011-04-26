@@ -203,10 +203,10 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
 #ifdef OT_SUPPORT
    /* FIXME: as soon as we start caching fi for non-harfbuzz as well, move
     * this (until text_props->fi = fi outside the ifdef */
-   const Eina_Unicode *base_char;
    /* Load the glyph according to the first letter of the script, preety
     * bad, but will have to do */
      {
+        const Eina_Unicode *base_char;
         /* Skip common chars */
         for (base_char = text ;
              *base_char &&
@@ -279,9 +279,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
                   /* Update the advance accordingly */
                   adjust_x += (pen_x + (fg->glyph->advance.x >> 16)) -
                      gl_itr->pen_after;
-
-                  /* FIXME: reload fi, a bit slow, but I have no choice. */
-                  evas_common_font_glyph_search(fn, &fi, *base_char);
+                  fi = text_props->font_instance;
                }
              pen_x = gl_itr->pen_after;
           }
