@@ -1,0 +1,2 @@
+Additional "generic" loaders for Evas that are stand-alone executables
+evas may run from its generic loader module
