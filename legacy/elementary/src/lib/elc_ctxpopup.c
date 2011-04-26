@@ -403,9 +403,9 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
         length[1] = (hover_area.y + hover_area.h) - pos.y;
 
         if (length[0] > length[1])
-           idx = ELM_CTXPOPUP_DIRECTION_DOWN;
-        else
            idx = ELM_CTXPOPUP_DIRECTION_UP;
+        else
+           idx = ELM_CTXPOPUP_DIRECTION_DOWN;
 
         //TODO 2: determine x , y
         switch (idx)
