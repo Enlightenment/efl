@@ -28,6 +28,8 @@
 @author Samsung SAIT <tbd>
 @author Sung W. Park <sungwoo@@gmail.com>
 @author Jiyoun Park <jy0703.park@@samsung.com>
+@author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
+@author Thierry el Borgi <thierry@@substantiel.fr>
 @date 2000-2011
 
 @section toc Table of Contents
