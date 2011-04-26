@@ -70,7 +70,9 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
      }
 }
 
-/* Won't work in the middle of ligatures, assumes cutoff < len */
+/* Won't work in the middle of ligatures, assumes cutoff < len.
+ * Also won't work in the middle of indic words, should handle that in a
+ * smart way. */
 EAPI void
 evas_common_text_props_split(Evas_Text_Props *base,
       Evas_Text_Props *ext, int _cutoff)
@@ -86,7 +88,7 @@ evas_common_text_props_split(Evas_Text_Props *base,
         size_t i;
         itr = base->info->ot + base->start;
         _cutoff += base->text_offset;
-        /* FIXME: can I binary search? I don't think this is always sorted */
+        /* Must do a linear search because this is not always sorted. */
         for (i = 0 ; i < base->len ; i++, itr++)
           {
              if (itr->source_cluster == (size_t) _cutoff)
