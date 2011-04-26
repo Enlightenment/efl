@@ -551,21 +551,7 @@ xcf_load_image(void)
    Layer *layer;
    DATA32 saved_pos;
    DATA32 offset;
-   int width;
-   int height;
-   int image_type;
    int num_successful_elements = 0;
-   
-   /* read in the image width, height and type */
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&width, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&height, 1);
-   image->cp += xcf_read_int32(image->fp, (DATA32 *)&image_type, 1);
-
-   image->width = width;
-   image->height = height;
-   image->base_type = image_type;
-   
-   D("Loading %ix%i image.\n", width, height);
    
    /* read the image properties */
    if (!xcf_load_image_props()) goto hard_error;
@@ -1495,6 +1481,9 @@ xcf_file_init(char *filename)
 {
    char success = 1;
    char id[14];
+   int width;
+   int height;
+   int image_type;
    
    image->single_layer_index = -1;
    image->fd = open(filename, O_RDONLY);
@@ -1532,6 +1521,20 @@ xcf_file_init(char *filename)
         gzclose(image->fp);
         close(image->fd);
      }
+
+   if (success)
+     {
+        image->cp += xcf_read_int32(image->fp, (DATA32 *)&width, 1);
+        image->cp += xcf_read_int32(image->fp, (DATA32 *)&height, 1);
+        image->cp += xcf_read_int32(image->fp, (DATA32 *)&image_type, 1);
+        
+        image->width = width;
+        image->height = height;
+        image->base_type = image_type;
+   
+        D("Loading %ix%i image.\n", width, height);
+     }
+   
    return success;
 }
 
@@ -1574,27 +1577,64 @@ int
 main(int argc, char **argv)
 {
    char *file;
-   int w, h, dsize;
+   int w, h, i;
+   int head_only = 0;
 
-   // grossly inefficient, multiple copies, but making it "work" for now
    if (argc < 2) return -1;
+   // file is ALWAYS first arg, other options come after
    file = argv[1];
-   // FIXME: should alloc rgba data via shm_open
+   for (i = 2; i < argc; i++)
+     {
+        if      (!strcmp(argv[i], "-head"))
+           // asked to only load header, not body/data
+           head_only = 1;
+        else if (!strcmp(argv[i], "-key"))
+          { // not used by xcf loader
+             i++;
+             // const char *key = argv[i];
+          }
+        else if (!strcmp(argv[i], "-opt-scale-down-by"))
+          { // not used by xcf loader
+             i++;
+             // int scale_down = atoi(argv[i]);
+          }
+        else if (!strcmp(argv[i], "-opt-dpi"))
+          { // not used by xcf loader
+             i++;
+             // double dpi = ((double)atoi(argv[i])) / 1000.0;
+          }
+        else if (!strcmp(argv[i], "-opt-size"))
+          { // not used by xcf loader
+             i++;
+             // int size_w = atoi(argv[i]);
+             i++;
+             // int size_h = atoi(argv[i]);
+          }
+     }
+   D("xcf_file_init\n");
    if (!xcf_file_init(file)) return -1;
-   xcf_load_image();
-   premul_image();
+   D("size %i %i\n", image->width, image->height);
+   if (!head_only)
+     {
+        xcf_load_image();
+        premul_image();
+     }
    w = image->width;
    h = image->height;
-   dsize = w * h * sizeof(DATA32);
    printf("size %i %i\n", w, h);
    printf("alpha 1\n");
-   if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
-   else
+   if (!head_only)
      {
-        printf("data\n");
-        fwrite(image->data, dsize, 1, stdout);
+        if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
+        else
+          {
+             printf("data\n");
+             fwrite(image->data, w * h * sizeof(DATA32), 1, stdout);
+          }
+        shm_free();
      }
-   shm_free();
+   else
+      printf("done");
    xcf_cleanup();
    return 0;
 }
