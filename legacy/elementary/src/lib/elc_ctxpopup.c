@@ -1490,12 +1490,8 @@ elm_ctxpopup_direction_priority_get(Evas_Object *obj,
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (first)
-      *first = wd->dir_priority[0];
-   if (second)
-      *second = wd->dir_priority[1];
-   if (third)
-      *third = wd->dir_priority[2];
-   if (fourth)
-      *fourth = wd->dir_priority[3];
+   if (first) *first = wd->dir_priority[0];
+   if (second) *second = wd->dir_priority[1];
+   if (third) *third = wd->dir_priority[2];
+   if (fourth) *fourth = wd->dir_priority[3];
 }
