@@ -102,7 +102,7 @@ dotcat(char *dest, const char *src)
 }
 
 static Eina_Bool
-evas_image_load_file_head_generic(Image_Entry *ie, const char *file, const char *key, int *error)
+_load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool get_data)
 {
    Eina_Bool res = EINA_FALSE;
    int w = 0, h = 0, alpha = 0;
@@ -185,6 +185,10 @@ evas_image_load_file_head_generic(Image_Entry *ie, const char *file, const char 
         // filename first arg
         len = strlen(cmd);
         escape_copy(file, cmd + len);
+        if (!get_data)
+          {
+             strcat(cmd, " -head ");
+          }
         if (key)
           {
              strcat(cmd, " -key ");
@@ -265,6 +269,11 @@ evas_image_load_file_head_generic(Image_Entry *ie, const char *file, const char 
                   read_data = 1;
                   goto getdata;
                }
+             else if (!strncmp(buf, "done", 4))
+               {
+                  read_data = 2;
+                  goto getdata;
+               }
           }
      }
 getdata:
@@ -279,67 +288,79 @@ getdata:
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
 	goto on_error;
      }
+   body = evas_cache_image_pixels(ie);
+   if (body)
+     {
+        if ((w != (int)ie->w) || (h != (int)ie->h))
+          {
+             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             goto on_error;
+          }
+     }
    if (alpha) ie->flags.alpha = 1;
    ie->w = w;
    ie->h = h;
    
-   evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   body = evas_cache_image_pixels(ie);
-   if (!body)
+   if (get_data)
      {
-        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-        goto on_error;
-     }
-   
-   if ((tmpfname) || (shmfname))
-     {
-        int fd = -1;
-        
-        // open
-        if (tmpfname)
-           fd = open(tmpfname, O_RDONLY, S_IRUSR);
-#ifdef HAVE_SHM_OPEN        
-        else if (shmfname)
-           fd = shm_open(shmfname, O_RDONLY, S_IRUSR);
-#endif        
-        if (fd >= 0)
-          {
-             void *addr;
-             
-             // mmap
-             addr = mmap(NULL, w * h * sizeof(DATA32), 
-                         PROT_READ, MAP_SHARED, fd, 0);
-             if (addr != MAP_FAILED)
-               {
-                  memcpy(body, addr, w * h * sizeof(DATA32));
-                  munmap(addr, w * h * sizeof(DATA32));
-               }
-             // close
-             if (tmpfname)
-               {
-                  close(fd);
-                  unlink(tmpfname);
-               }
-#ifdef HAVE_SHM_OPEN        
-             else if (shmfname)
-               {
-                  close(fd);
-                  shm_unlink(shmfname);
-               }
-#endif             
-          }
-        else
+        if (!body) evas_cache_image_surface_alloc(ie, ie->w, ie->h);
+        body = evas_cache_image_pixels(ie);
+        if (!body)
           {
              *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              goto on_error;
           }
-     }
-   else if (read_data)
-     {
-        if (fread(body, w * h * sizeof(DATA32), 1, f) != 1)
+        
+        if ((tmpfname) || (shmfname))
           {
-             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-             goto on_error;
+             int fd = -1;
+             
+             // open
+             if (tmpfname)
+                fd = open(tmpfname, O_RDONLY, S_IRUSR);
+#ifdef HAVE_SHM_OPEN        
+             else if (shmfname)
+                fd = shm_open(shmfname, O_RDONLY, S_IRUSR);
+#endif        
+             if (fd >= 0)
+               {
+                  void *addr;
+                  
+                  // mmap
+                  addr = mmap(NULL, w * h * sizeof(DATA32), 
+                              PROT_READ, MAP_SHARED, fd, 0);
+                  if (addr != MAP_FAILED)
+                    {
+                       memcpy(body, addr, w * h * sizeof(DATA32));
+                       munmap(addr, w * h * sizeof(DATA32));
+                    }
+                  // close
+                  if (tmpfname)
+                    {
+                       close(fd);
+                       unlink(tmpfname);
+                    }
+#ifdef HAVE_SHM_OPEN        
+                  else if (shmfname)
+                    {
+                       close(fd);
+                       shm_unlink(shmfname);
+                    }
+#endif             
+               }
+             else
+               {
+                  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                  goto on_error;
+               }
+          }
+        else if (read_data)
+          {
+             if (fread(body, w * h * sizeof(DATA32), 1, f) != 1)
+               {
+                  *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+                  goto on_error;
+               }
           }
      }
    
@@ -352,15 +373,18 @@ getdata:
 }
 
 static Eina_Bool
+evas_image_load_file_head_generic(Image_Entry *ie, const char *file, const char *key, int *error)
+{
+   return _load(ie, file, key, error, EINA_FALSE);
+}
+
+static Eina_Bool
 evas_image_load_file_data_generic(Image_Entry *ie, const char *file, const char *key, int *error)
 {
    DATA32 *body;
 
    body = evas_cache_image_pixels(ie);
-   if (!body)
-     {
-        return evas_image_load_file_head_generic(ie, file, key, error);
-     }
+   if (!body) return _load(ie, file, key, error, EINA_TRUE);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 }
