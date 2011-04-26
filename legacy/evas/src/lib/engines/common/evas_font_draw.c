@@ -420,6 +420,12 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
       in_text;
 #else
    const Eina_Unicode *text = in_text;
+   /* Not relevant in the Harfbuzz case, and will soon will not be relevant
+    * at all */
+   (void) text;
+   /* Should be marked as unused? or should I do something fancy about it to
+    * make sure the given fi is relevant? */
+   (void) fn;
 #endif
    DATA32 *im;
    FT_Face pface = NULL;
@@ -515,21 +521,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 #endif
 
    im = dst->image.data;
-   /* Load the glyph according to the first letter of the script, preety
-    * bad, but will have to do */
-     {
-        /* Skip common chars */
-        const Eina_Unicode *tmp;
-        for (tmp = text ;
-              ((size_t) (tmp - text) < text_props->text_len) &&
-              evas_common_language_char_script_get(*tmp) ==
-              EVAS_SCRIPT_COMMON ;
-              tmp++)
-          ;
-        if (((size_t) (tmp - text) == text_props->text_len) && (tmp > text))
-           tmp--;
-        evas_common_font_glyph_search(fn, &fi, *tmp);
-     }
+   fi = text_props->font_instance;
+   evas_common_font_int_reload(fi);
 
    if (fi->src->current_size != fi->size)
      {
@@ -843,20 +836,8 @@ evas_font_word_prerender(RGBA_Draw_Context *dc, const Eina_Unicode *in_text, con
    gl = dc->font_ext.func.gl_new ? 1: 0;
 
    above = 0; below = 0; baseline = 0; height = 0; descent = 0;
-   /* Load the glyph according to the first letter of the script, preety
-    * bad, but will have to do */
-     {
-        /* Skip common chars */
-        const Eina_Unicode *tmp;
-        for (tmp = text ;
-              ((tmp - text) < len) &&
-              evas_common_language_char_script_get(*tmp) ==
-              EVAS_SCRIPT_COMMON ;
-              tmp++)
-          ;
-        if (((tmp - text) == len) && (tmp > text)) tmp--;
-        evas_common_font_glyph_search(fn, &fi, *tmp);
-     }
+   fi = text_props->font_instance;
+   evas_common_font_int_reload(fi);
 
    if (fi->src->current_size != fi->size)
      {
