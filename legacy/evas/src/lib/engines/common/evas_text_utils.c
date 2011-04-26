@@ -201,12 +201,18 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
      }
 
 #ifdef OT_SUPPORT
-   /* FIXME: as soon as we start caching fi for non-harfbuzz as well, move
-    * this (until text_props->fi = fi outside the ifdef */
+   size_t char_index;
+   Evas_Font_Glyph_Info *gl_itr;
+   const Eina_Unicode *base_char;
+   Evas_Coord pen_x = 0, adjust_x = 0;
+   (void) par_props;
+   (void) par_pos;
+
+   evas_common_font_ot_populate_text_props(fn, text, text_props, len);
+
    /* Load the glyph according to the first letter of the script, preety
     * bad, but will have to do */
      {
-        const Eina_Unicode *base_char;
         /* Skip common chars */
         for (base_char = text ;
              *base_char &&
@@ -218,17 +224,6 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         evas_common_font_glyph_search(fn, &fi, *base_char);
      }
 
-   text_props->font_instance = fi;
-
-
-   size_t char_index;
-   Evas_Font_Glyph_Info *gl_itr;
-   Evas_Coord pen_x = 0, adjust_x = 0;
-   (void) par_props;
-   (void) par_pos;
-
-   evas_common_font_ot_populate_text_props(fn, text, text_props, len);
-
    gl_itr = text_props->info->glyph;
    for (char_index = 0 ; char_index < text_props->len ; char_index++)
      {
@@ -238,7 +233,6 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         /* If we got a malformed index, show the replacement char instead */
         if (gl_itr->index == 0)
           {
-             /* FIXME: search inside the same fi. */
              gl_itr->index =
                 evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
              is_replacement = EINA_TRUE;
@@ -279,12 +273,14 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
                   /* Update the advance accordingly */
                   adjust_x += (pen_x + (fg->glyph->advance.x >> 16)) -
                      gl_itr->pen_after;
+
+                  /* FIXME: reload fi, a bit slow, but I have no choice. */
+                  evas_common_font_glyph_search(fn, &fi, *base_char);
                }
              pen_x = gl_itr->pen_after;
           }
         gl_itr->pen_after += adjust_x;
 
-        fi = text_props->font_instance;
         gl_itr++;
      }
 #else
