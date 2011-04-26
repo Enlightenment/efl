@@ -279,12 +279,12 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
                   /* Update the advance accordingly */
                   adjust_x += (pen_x + (fg->glyph->advance.x >> 16)) -
                      gl_itr->pen_after;
-                  fi = text_props->font_instance;
                }
              pen_x = gl_itr->pen_after;
           }
         gl_itr->pen_after += adjust_x;
 
+        fi = text_props->font_instance;
         gl_itr++;
      }
 #else
