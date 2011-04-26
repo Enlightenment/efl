@@ -238,6 +238,7 @@ evas_common_text_props_content_create(void *_fn, const Eina_Unicode *text,
         /* If we got a malformed index, show the replacement char instead */
         if (gl_itr->index == 0)
           {
+             /* FIXME: search inside the same fi. */
              gl_itr->index =
                 evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
              is_replacement = EINA_TRUE;
