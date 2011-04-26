@@ -86,3 +86,9 @@ SUBDIRS += psd
 endif
 endif
 
+if BUILD_LOADER_GENERIC
+if !EVAS_STATIC_BUILD_GENERIC
+SUBDIRS += generic
+endif
+endif
+

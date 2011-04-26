@@ -123,6 +123,7 @@ want_evas_image_loader_tga="yes"
 want_evas_image_loader_wbmp="yes"
 want_evas_image_loader_ico="yes"
 want_evas_image_loader_psd="yes"
+want_evas_image_loader_generic="yes"
 
 want_evas_font_loader_eet="yes"
 
@@ -475,6 +476,32 @@ case "$host_os" in
     fi
 esac
 AC_SUBST(dlopen_libs)
+
+SHM_OPEN_LINK=""
+AC_MSG_CHECKING([whether shm_open() is present])
+LIBS_save=${LIBS}
+LIBS="${LIBS} -lrt"
+AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM(
+      [[
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+      ]],
+      [[
+int fd;
+fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+shm_unlink("/");
+      ]])],
+   [
+    have_shm_open="yes"
+    AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
+    SHM_OPEN_LINK="-lrt"
+   ],
+   [have_shm_open="no"])
+LIBS=${LIBS_save}
+AC_MSG_RESULT([${have_shm_open}])
+AC_SUBST(SHM_OPEN_LINK)
 
 # (shm_open (for cache server)
 AC_ARG_ENABLE([evas-cserve],
@@ -837,6 +864,8 @@ EVAS_CHECK_IMAGE_LOADER([WBMP], [${want_evas_image_loader_wbmp}])
 EVAS_CHECK_IMAGE_LOADER([ICO], [${want_evas_image_loader_ico}])
 
 EVAS_CHECK_IMAGE_LOADER([PSD], [${want_evas_image_loader_psd}])
+
+EVAS_CHECK_IMAGE_LOADER([GENERIC], [${want_evas_image_loader_generic}])
 
 #####################################################################
 ## Cpu based optimizations
@@ -1611,6 +1640,7 @@ src/modules/loaders/svg/Makefile
 src/modules/loaders/pmaps/Makefile
 src/modules/loaders/wbmp/Makefile
 src/modules/loaders/psd/Makefile
+src/modules/loaders/generic/Makefile
 src/modules/savers/Makefile
 src/modules/savers/edb/Makefile
 src/modules/savers/eet/Makefile
@@ -1703,6 +1733,7 @@ echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  WBMP....................: $have_evas_image_loader_wbmp"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
 echo "  PSD.....................: $have_evas_image_loader_psd"
+echo "  GENERIC.................: $have_evas_image_loader_generic"
 echo
 echo "Font Sourcing Systems:"
 echo "  EET.....................: $have_evas_font_loader_eet"

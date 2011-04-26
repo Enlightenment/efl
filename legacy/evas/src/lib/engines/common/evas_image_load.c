@@ -9,36 +9,40 @@ struct ext_loader_s
 };
 
 static const struct ext_loader_s loaders[] =
-{
-   { "png", "png" },
-   { "jpg", "jpeg" },
-   { "jpeg", "jpeg" },
-   { "jfif", "jpeg" },
-   { "eet", "eet" },
-   { "edj", "eet" },
-   { "eap", "eet" },
-   { "edb", "edb" },
-   { "xpm", "xpm" },
-   { "tiff", "tiff" },
-   { "tif", "tiff" },
-   { "svg", "svg" },
-   { "svgz", "svg" },
-   { "gif", "gif" },
-   { "pbm", "pmaps" },
-   { "pgm", "pmaps" },
-   { "ppm", "pmaps" },
-   { "pnm", "pmaps" },
-   { "bmp", "bmp" },
-   { "tga", "tga" },
-   { "wbmp", "wbmp" },
-   { "ico", "ico" },
-   { "cur", "ico" },
-   { "psd", "psd" }
+{ /* map extensions to loaders to use for good first-guess tries */
+   { ".png", "png" },
+   { ".jpg", "jpeg" },
+   { ".jpeg", "jpeg" },
+   { ".jfif", "jpeg" },
+   { ".eet", "eet" },
+   { ".edj", "eet" },
+   { ".eap", "eet" },
+   { ".edb", "edb" },
+   { ".xpm", "xpm" },
+   { ".tiff", "tiff" },
+   { ".tif", "tiff" },
+   { ".svg", "svg" },
+   { ".svgz", "svg" },
+   { ".svg.gz", "svg" },
+   { ".gif", "gif" },
+   { ".pbm", "pmaps" },
+   { ".pgm", "pmaps" },
+   { ".ppm", "pmaps" },
+   { ".pnm", "pmaps" },
+   { ".bmp", "bmp" },
+   { ".tga", "tga" },
+   { ".wbmp", "wbmp" },
+   { ".ico", "ico" },
+   { ".cur", "ico" },
+   { ".psd", "psd" },
+   { ".pdf", "generic" },
+   { ".xcf", "generic" },
+   { ".xcf.gz", "generic" }
 };
 
 static const char *loaders_name[] =
-{
-  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "pmaps", "edb", "bmp", "tga", "wbmp", "ico", "psd"
+{ /* in order of most likely needed */
+  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "pmaps", "bmp", "tga", "wbmp", "ico", "psd", "edb", "generic"
 };
 
 struct evas_image_foreach_loader_data
@@ -76,11 +80,10 @@ EAPI int
 evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
 {
    Evas_Image_Load_Func *evas_image_load_func = NULL;
-   const char           *loader = NULL;
+   const char           *loader = NULL, *end;
    Evas_Module          *em;
-   char                 *dot;
    unsigned int          i;
-   int                   ret = EVAS_LOAD_ERROR_NONE;
+   int                   len, ret = EVAS_LOAD_ERROR_NONE;
    struct evas_image_foreach_loader_data fdata;
 
 
@@ -96,20 +99,20 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
              return EVAS_LOAD_ERROR_NONE;
           }
      }
-#endif   
-   dot = strrchr (ie->file, '.');
-   if (dot)
+#endif
+   len = strlen(ie->file);
+   end = ie->file + len;
+   for (i = 0; i < (sizeof (loaders) / sizeof(struct ext_loader_s)); i++)
      {
-	for (i = 0, ++dot; i < (sizeof (loaders) / sizeof (struct ext_loader_s)); ++i)
-	  {
-	     if (!strcasecmp(dot, loaders[i].extension))
-	       {
-		  loader = loaders[i].loader;
-		  DBG("known loader '%s' handles extension '%s' of file '%s'",
-		      loader, dot, ie->file);
-		  break;
-	       }
-	  }
+        int len2 = strlen(loaders[i].extension);
+        if (len2 > len) continue;
+        if (!strcasecmp(end - len2, loaders[i].extension))
+          {
+             loader = loaders[i].loader;
+             DBG("known loader '%s' handles extension '%s' of file '%s'",
+                 loader, end - len2, ie->file);
+             break;
+          }
      }
 
    if (loader)

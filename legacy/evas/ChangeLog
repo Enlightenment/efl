@@ -267,3 +267,21 @@
 
 	* Add PSD file format support.
 
+2011-04-26  Carsten Haitzler (The Rasterman)
+
+	* Added "generic" image loader that can just execute some command
+        to load any given file format and read the RGBA data as stdout
+        from the command, or from an intermediate temporary file or
+        shared memory segment the executable loader provides. Evas
+        doesn't care about the loader beyond it providing output via
+        stdout to define image parameters (size, alpha channel and data
+        information), and evas will call a specific loader binary
+        based on extension name of srouce file. This allows for evas to
+        load image data from files where the loader may be prone to
+        instability, or require use of libraries that are GPL or
+        otherwise undesireable in terms of the result to applications
+        using evas. So basically, if you want a GPL loader or have a
+        very unstable one, write a loader binary and call it
+        evas_image_loader.extension e.g. evas_image_loader.pdf or
+        evas_image_loader.xcf or evas_image_loader.xcf.gz etc. etc.
+
