@@ -1628,6 +1628,8 @@ main(int argc, char **argv)
         if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
         else
           {
+             // could also to "tmpfile %s\n" like shmfile but just
+             // a mmaped tmp file on the system
              printf("data\n");
              fwrite(image->data, w * h * sizeof(DATA32), 1, stdout);
           }
