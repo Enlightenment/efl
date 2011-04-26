@@ -1349,7 +1349,6 @@ EAPI Eina_Bool
 elm_ctxpopup_item_disabled_get(const Elm_Ctxpopup_Item *item)
 {
    ELM_CTXPOPUP_ITEM_CHECK_RETURN(item, EINA_FALSE);
-
    return item->disabled;
 }
 
