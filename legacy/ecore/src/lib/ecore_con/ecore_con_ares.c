@@ -68,8 +68,8 @@ static Eina_Bool _ecore_con_info_cares_timeout_cb(void *data);
 static void
 _ecore_con_info_cares_state_cb(void *data,
                                ares_socket_t fd,
-                               int read,
-                               int write);
+                               int readable,
+                               int writable);
 static int
 _ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
                            const Ecore_Con_FD *fd2);
@@ -328,16 +328,16 @@ static Eina_Bool
 _ecore_con_info_cares_fd_cb(Ecore_Con_FD     *ecf,
                             Ecore_Fd_Handler *fd_handler)
 {
-   int read, write;
+   ares_socket_t read_fd, write_fd;
 
-   read = write = ARES_SOCKET_BAD;
+   read_fd = write_fd = ARES_SOCKET_BAD;
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
-     read = ecf->fd;
+     read_fd = ecf->fd;
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
-     write = ecf->fd;
+     write_fd = ecf->fd;
 
-   ares_process_fd(info_channel, read, write);
+   ares_process_fd(info_channel, read_fd, write_fd);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -352,8 +352,8 @@ _ecore_con_info_fds_search(const Ecore_Con_FD *fd1,
 static void
 _ecore_con_info_cares_state_cb(void *data __UNUSED__,
                                ares_socket_t fd,
-                               int read,
-                               int write)
+                               int readable,
+                               int writable)
 {
    int flags = 0;
    Ecore_Con_FD *search = NULL, *ecf = NULL;
@@ -361,7 +361,7 @@ _ecore_con_info_cares_state_cb(void *data __UNUSED__,
    search = eina_list_search_unsorted(info_fds,
             (Eina_Compare_Cb)_ecore_con_info_fds_search, &ecf);
 
-   if (!(read | write))
+   if (!(readable | writable))
      {
         ares_process_fd(info_channel, ARES_SOCKET_BAD, ARES_SOCKET_BAD);
         if (search)
@@ -387,8 +387,8 @@ _ecore_con_info_cares_state_cb(void *data __UNUSED__,
         info_fds = eina_list_append(info_fds, search);
      }
 
-   if (read) flags |= ECORE_FD_READ;
-   if (write) flags |= ECORE_FD_WRITE;
+   if (readable) flags |= ECORE_FD_READ;
+   if (writable) flags |= ECORE_FD_WRITE;
    ecore_main_fd_handler_active_set(search->handler, flags);
 }
 
