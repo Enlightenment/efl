@@ -213,7 +213,7 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
 
    if (!wd) return;
    if (it->disabled == disabled) return;
-   it->disabled = disabled;
+   it->disabled = !!disabled;
    if (it->disabled)
      {
         edje_object_signal_emit(it->base.view, "elm,state,disabled", "elm");

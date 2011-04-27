@@ -3907,7 +3907,7 @@ elm_genlist_item_disabled_set(Elm_Genlist_Item *it,
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    if (it->disabled == disabled) return;
    if (it->delete_me) return;
-   it->disabled = disabled;
+   it->disabled = !!disabled;
    if (it->realized)
      {
         if (it->disabled)

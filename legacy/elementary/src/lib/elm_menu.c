@@ -779,7 +779,7 @@ elm_menu_item_disabled_set(Elm_Menu_Item *item, Eina_Bool disabled)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if (disabled == item->disabled) return;
-   item->disabled = disabled;
+   item->disabled = !!disabled;
    if (disabled)
      {
         edje_object_signal_emit(item->base.view, "elm,state,disabled", "elm");

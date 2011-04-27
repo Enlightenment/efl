@@ -2313,7 +2313,7 @@ elm_gengrid_item_disabled_set(Elm_Gengrid_Item *item,
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
    if (item->disabled == disabled) return;
    if (item->delete_me) return;
-   item->disabled = disabled;
+   item->disabled = !!disabled;
    if (item->realized)
      {
         if (item->disabled)
