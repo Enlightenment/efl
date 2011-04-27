@@ -1,7 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-
 /**
  * @defgroup Notify Notify
  *
@@ -122,7 +121,6 @@ _notify_orientation_with_rtl(Evas_Object *obj, Elm_Notify_Orient orient)
 
    return orient;
 }
-
 
 static void
 _notify_theme_apply(Evas_Object *obj)
@@ -729,4 +727,3 @@ elm_notify_repeat_events_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->repeat_events;
 }
-
