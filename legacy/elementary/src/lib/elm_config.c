@@ -1540,8 +1540,7 @@ _env_get(void)
 
    /* Get RTL orientation from system */
    setlocale(LC_ALL, "");
-   bindtextdomain("elementary", LOCALE_DIR);
-   textdomain("elementary");
+   bindtextdomain(PACKAGE, LOCALE_DIR);
    _elm_config->is_mirrored = !strcmp(E_("default:LTR"), "default:RTL");
 
    s = getenv("ELM_TOOLTIP_DELAY");
