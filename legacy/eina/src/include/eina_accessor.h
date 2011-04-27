@@ -67,7 +67,7 @@ typedef struct _Eina_Accessor Eina_Accessor;
  * Type for a callback that returns the data of a container as the given index.
  */
 typedef Eina_Bool (*Eina_Accessor_Get_At_Callback)(Eina_Accessor *it,
-                                                   unsigned int   index,
+                                                   unsigned int   idx,
                                                    void         **data);
 
 /**
