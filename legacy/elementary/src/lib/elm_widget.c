@@ -1775,12 +1775,12 @@ elm_widget_change(Evas_Object *obj)
 
 EAPI void
 elm_widget_disabled_set(Evas_Object *obj,
-                        int          disabled)
+                        Eina_Bool    disabled)
 {
    API_ENTRY return;
 
    if (sd->disabled == disabled) return;
-   sd->disabled = disabled;
+   sd->disabled = !!disabled;
    if (sd->focused)
      {
         Evas_Object *o, *parent;
@@ -1798,7 +1798,7 @@ elm_widget_disabled_set(Evas_Object *obj,
    if (sd->disable_func) sd->disable_func(obj);
 }
 
-EAPI int
+EAPI Eina_Bool
 elm_widget_disabled_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
