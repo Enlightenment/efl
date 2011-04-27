@@ -344,10 +344,10 @@ _prefix_check(void)
    char **argv = NULL;
    const char *dirs[4] = { NULL, NULL, NULL, NULL };
    char *caps = NULL, *p1, *p2;
-   
+
    if (app_pfx) return;
    if (!app_domain) return;
-   
+
    ecore_app_args_get(&argc, &argv);
    if (argc < 1) return;
 
@@ -445,7 +445,7 @@ elm_shutdown(void)
    if (_elm_init_count > 0) return _elm_init_count;
    _elm_win_shutdown();
    while (_elm_win_deferred_free) ecore_main_loop_iterate();
-// wrningz :(   
+// wrningz :(
 //   _prefix_shutdown();
    elm_quicklaunch_sub_shutdown();
    elm_quicklaunch_shutdown();
@@ -493,7 +493,7 @@ elm_app_prefix_dir_get(void)
    app_prefix_dir = eina_prefix_get(app_pfx);
    return app_prefix_dir;
 }
-   
+
 EAPI const char *
 elm_app_bin_dir_get(void)
 {
@@ -644,7 +644,7 @@ elm_quicklaunch_init(int    argc,
 
    if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
-   pfx = eina_prefix_new(NULL, elm_init, 
+   pfx = eina_prefix_new(NULL, elm_init,
                          "ELM", "elementary", "config/profile.cfg",
                          PACKAGE_LIB_DIR, /* don't have a bin dir currently */
                          PACKAGE_LIB_DIR,

@@ -1862,7 +1862,7 @@ _item_realize(Elm_Genlist_Item *it,
      }
    else
      {
-        /* FIXME: If you see that assert, please notify us and we 
+        /* FIXME: If you see that assert, please notify us and we
            will clean our mess */
         assert(eina_list_count(it->icon_objs) == 0);
 

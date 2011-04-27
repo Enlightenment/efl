@@ -240,7 +240,7 @@ extern "C" {
    EAPI const char  *elm_app_lib_dir_get(void);
    EAPI const char  *elm_app_data_dir_get(void);
    EAPI const char  *elm_app_locale_dir_get(void);
-         
+
    EAPI void         elm_quicklaunch_mode_set(Eina_Bool ql_on);
    EAPI Eina_Bool    elm_quicklaunch_mode_get(void);
    EAPI int          elm_quicklaunch_init(int argc, char **argv);
