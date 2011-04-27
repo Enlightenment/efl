@@ -9,9 +9,6 @@ AM_CPPFLAGS = \
 @EINA_CPPFLAGS@ \
 @EFL_EINA_BUILD@
 
-if EINA_BUILD_BUDDY
-if !EINA_STATIC_BUILD_BUDDY
-
 controllerdir = $(libdir)/eina/modules/mp/buddy/$(MODULE_ARCH)
 controller_LTLIBRARIES = module.la
 
@@ -27,9 +24,6 @@ install-data-hook:
 	rm -f $(DESTDIR)$(controllerdir)/$(controller_LTLIBRARIES)
 uninstall-hook:
 	rm -f $(DESTDIR)$(controllerdir)/module.*
-
-endif
-endif
 
 clean-local:
 	rm -rf *.gcno

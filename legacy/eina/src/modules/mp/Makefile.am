@@ -1,10 +1,45 @@
-SUBDIRS = chained_pool \
-	ememoa_fixed \
-	pass_through \
-	ememoa_unknown \
-	fixed_bitmap \
-	buddy \
-	one_big
+MAINTAINERCLEANFILES = Makefile.in
 
-MAINTAINERCLEANFILES = \
-Makefile.in
+SUBDIRS =
+
+if EINA_BUILD_BUDDY
+if !EINA_STATIC_BUILD_BUDDY
+SUBDIRS += buddy
+endif
+endif
+
+if EINA_BUILD_CHAINED_POOL
+if !EINA_STATIC_BUILD_CHAINED_POOL
+SUBDIRS += chained_pool
+endif
+endif
+
+if EINA_BUILD_EMEMOA_FIXED
+if !EINA_STATIC_BUILD_EMEMOA_FIXED
+SUBDIRS += ememoa_fixed
+endif
+endif
+
+if EINA_BUILD_EMEMOA_UNKNOWN
+if !EINA_STATIC_BUILD_EMEMOA_UNKNOWN
+SUBDIRS += ememoa_unknown
+endif
+endif
+
+if EINA_BUILD_FIXED_BITMAP
+if !EINA_STATIC_BUILD_FIXED_BITMAP
+SUBDIRS += fixed_bitmap
+endif
+endif
+
+if EINA_BUILD_ONE_BIG
+if !EINA_STATIC_BUILD_ONE_BIG
+SUBDIRS += one_big
+endif
+endif
+
+if EINA_BUILD_PASS_THROUGH
+if !EINA_STATIC_BUILD_PASS_THROUGH
+SUBDIRS += pass_through
+endif
+endif
