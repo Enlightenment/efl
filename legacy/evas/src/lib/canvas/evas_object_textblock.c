@@ -5532,17 +5532,14 @@ _evas_textblock_format_is_visible(const char *s)
      }
    while ((item = _format_parse(&s)))
      {
-        char *tmp;
-        tmp = alloca(s - item + 1);
-        strncpy(tmp, item, s - item);
-        tmp[s - item] = '\0';
+        int itlen = s - item;
         /* We care about all of the formats even after a - except for
          * item which we don't care after a - because it's just a standard
          * closing */
-        if (((!strcmp(item, "\n")) || (!strcmp(item, "\\n"))) ||
-              ((!strcmp(item, "\t")) || (!strcmp(item, "\\t"))) ||
-              (!strcmp(item, "ps")) ||
-              (!strncmp(item, "item", 4) && is_opener)) /*FIXME: formats like item2 will break it. */
+        if ((!strncmp(item, "\n", itlen) || !strncmp(item, "\\n", itlen)) ||
+              (!strncmp(item, "\t", itlen) || !strncmp(item, "\\t", itlen)) ||
+              !strncmp(item, "ps", itlen) ||
+              (!strncmp(item, "item", itlen) && is_opener))
           return EINA_TRUE;
      }
    return EINA_FALSE;
