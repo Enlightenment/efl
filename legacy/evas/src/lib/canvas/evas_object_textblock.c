@@ -200,7 +200,8 @@ struct _Evas_Object_Textblock_Node_Format
    Eina_Strbuf                        *format;
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
-   Eina_Bool                           visible;
+   Eina_Bool                           visible : 1;
+   Eina_Bool                           new : 1;
 };
 
 /**
@@ -385,6 +386,7 @@ struct _Evas_Object_Textblock
    unsigned char                       redraw : 1;
    unsigned char                       changed : 1;
    unsigned char                       content_changed : 1;
+   Eina_Bool                           format_changed : 1;
    unsigned char                       have_ellipsis : 1;
    Eina_Bool                           newline_is_ps : 1;
 };
@@ -3568,6 +3570,68 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
    c->calc_only = !!calc_only;
    c->width_changed = (obj->cur.geometry.w != o->last_w);
 
+   /* Mark text nodes as dirty if format have changed. */
+   if (c->o->format_changed)
+     {
+        Evas_Object_Textblock_Node_Format *fnode = c->o->format_nodes;
+        Evas_Object_Textblock_Node_Text *start_n = NULL;
+        int balance = 0;
+        while (fnode)
+          {
+             if (fnode->new)
+               {
+                  const char *fstr = eina_strbuf_string_get(fnode->format);
+                  /* balance < 0 means we gave up and everything should be
+                   * invalidated */
+                  if (*fstr == '+')
+                    {
+                       balance++;
+                       if (balance == 1)
+                          start_n = fnode->text_node;
+                    }
+                  else if (*fstr == '-')
+                    {
+                       balance--;
+                       if (balance == 0)
+                         {
+                            Evas_Object_Textblock_Node_Text *f_tnode =
+                               fnode->text_node;
+                            while (start_n)
+                              {
+                                 start_n->dirty = EINA_TRUE;
+                                 if (start_n == f_tnode)
+                                    break;
+                                 start_n =
+                                    _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
+                              }
+                            start_n = NULL;
+                         }
+                    }
+                  else if (!fnode->visible)
+                     balance = -1;
+
+                  if (balance < 0)
+                    {
+                       /* if we don't already have a starting point, use the
+                        * current paragraph. */
+                       if (!start_n)
+                          start_n = fnode->text_node;
+                       break;
+                    }
+               }
+             fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+          }
+
+        if (balance != 0)
+          {
+             while (start_n)
+               {
+                  start_n->dirty = EINA_TRUE;
+                  start_n = _NODE_TEXT(EINA_INLIST_GET(start_n)->next);
+               }
+          }
+     }
+
    /* Start of logical layout creation */
 
    /* setup default base style */
@@ -3633,7 +3697,6 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                        /* Update the format stack according to the node's
                         * formats */
                        fnode = n->format_node;
-                       start = off = 0;
                        while (fnode && (fnode->text_node == n))
                          {
                             _layout_do_format(obj, c, &fmt, fnode,
@@ -3687,6 +3750,7 @@ _layout(const Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_
                     {
                        off = 0;
                     }
+                  fnode->new = EINA_FALSE;
                   fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
                }
              _layout_text_append(c, fmt, n, start, -1, o->repch);
@@ -3893,6 +3957,7 @@ _relayout(const Evas_Object *obj)
    o->last_h = obj->cur.geometry.h;
    o->changed = 0;
    o->content_changed = 0;
+   o->format_changed = EINA_FALSE;
    o->redraw = 1;
 }
 
@@ -6138,6 +6203,7 @@ _evas_textblock_cursor_break_paragraph(Evas_Textblock_Cursor *cur,
         len = eina_ustrbuf_length_get(cur->node->unicode) - start;
         eina_ustrbuf_append_length(n->unicode, text + start, len);
         eina_ustrbuf_remove(cur->node->unicode, start, start + len);
+        cur->node->dirty = EINA_TRUE;
      }
    else
      {
@@ -6373,6 +6439,7 @@ _evas_textblock_node_format_new(const char *format)
    n->format = eina_strbuf_new();
    eina_strbuf_append(n->format, format);
    n->visible = _evas_textblock_format_is_visible(format);
+   n->new = EINA_TRUE;
 
    return n;
 }
@@ -6486,22 +6553,25 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
         eina_ustrbuf_insert_char(cur->node->unicode,
               EVAS_TEXTBLOCK_REPLACEMENT_CHAR, cur->pos);
 
-        /* Mark as dirty */
-        cur->node->dirty = EINA_TRUE;
-
         /* Advance all the cursors after our cursor */
         _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
         if (_IS_PARAGRAPH_SEPARATOR(o, format))
           {
              _evas_textblock_cursor_break_paragraph(cur, n);
           }
+        else
+          {
+             /* Handle visible format nodes here */
+             cur->node->dirty = EINA_TRUE;
+             n->new = EINA_FALSE;
+          }
+     }
+   else
+     {
+        o->format_changed = EINA_TRUE;
      }
 
    _evas_textblock_changed(o, cur->obj);
-   if (!is_visible)
-      _evas_textblock_invalidate_all(o);
-   else if (cur->node)
-      cur->node->dirty = EINA_TRUE;
 
    return is_visible;
 }
@@ -7788,6 +7858,7 @@ evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Eva
 		&o->native.w, &o->native.h);
 	o->native.valid = 1;
         o->content_changed = 0;
+        o->format_changed = EINA_FALSE;
      }
    if (w) *w = o->native.w;
    if (h) *h = o->native.h;
@@ -8252,7 +8323,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw textblocks */
    o = (Evas_Object_Textblock *)(obj->object_data);
-   if ((o->changed) || (o->content_changed) ||
+   if ((o->changed) || (o->content_changed) || (o->format_changed) ||
        ((obj->cur.geometry.w != o->last_w) ||
            (((o->valign != 0.0) || (o->have_ellipsis)) &&
                (obj->cur.geometry.h != o->last_h))))
