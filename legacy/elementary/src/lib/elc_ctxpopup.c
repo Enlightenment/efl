@@ -129,7 +129,7 @@ _freeze_on(void *data __UNUSED__, Evas_Object *obj,
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_object_scroll_freeze_push(wd->scr);
 }
 
@@ -139,7 +139,7 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj,
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_object_scroll_freeze_pop(wd->scr);
 }
 
@@ -148,7 +148,7 @@ _hold_on(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_object_scroll_hold_push(wd->scr);
 }
 
@@ -157,7 +157,7 @@ _hold_off(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!wd) return;
+   if ((!wd) || (!wd->scr)) return;
    elm_object_scroll_hold_pop(wd->scr);
 }
 
