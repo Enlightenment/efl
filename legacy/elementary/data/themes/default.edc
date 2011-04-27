@@ -7829,7 +7829,7 @@ collections {
             action:  STATE_SET "hidden" 0.0;
             transition: LINEAR 1.0;
             target: "sb_hbar_clip";
-         }             
+         }
          program { name: "scroll";
             signal: "elm,action,scroll";
             source: "elm";
@@ -7949,7 +7949,7 @@ collections {
                rel1 { to:"base"; offset: 4 4; };
                rel2 { to:"base"; offset: -5 -5; };
             }
-         }          
+         }
       }
    }
 ///////////////////////////////////////////////////////////////////////////////
@@ -8069,10 +8069,10 @@ collections {
             scale: 1;
             description { state: "default" 0.0;
                min: 25 25;
-               max: 25 25;  
+               max: 25 25;
                align: 0 0.5;
                aspect: 1.0 1.0;
-               rel1 { offset: 10 10; }  
+               rel1 { offset: 10 10; }
                                         rel2 { offset: 0 -10; }
             }
          }
@@ -8100,7 +8100,7 @@ collections {
                color: 0 0 0 255;
             }
          }
-                        part { name: "over1";
+         part { name: "over1";
             mouse_events: 1;
             repeat_events: 1;
             ignore_flags: ON_HOLD;
@@ -8141,7 +8141,7 @@ collections {
                color: 0 0 0 0;
             }
          }
-                }
+      }
       programs {
          program {
             name: "item_unclick";
