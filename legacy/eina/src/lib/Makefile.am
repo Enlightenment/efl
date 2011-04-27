@@ -64,6 +64,10 @@ eina_strbuf_template_c.x
 
 
 
+if EINA_STATIC_BUILD_BUDDY
+base_sources += $(top_srcdir)/src/modules/mp/buddy/eina_buddy.c
+endif
+
 if EINA_STATIC_BUILD_CHAINED_POOL
 base_sources += $(top_srcdir)/src/modules/mp/chained_pool/eina_chained_mempool.c
 endif
