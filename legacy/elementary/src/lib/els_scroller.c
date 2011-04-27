@@ -102,8 +102,8 @@ struct _Smart_Data
    unsigned char bouncemey : 1;
    unsigned char bounce_horiz : 1;
    unsigned char bounce_vert : 1;
-   unsigned char momentum_animator_disabled :1;
-   unsigned char bounce_animator_disabled :1;
+   Eina_Bool momentum_animator_disabled :1;
+   Eina_Bool bounce_animator_disabled :1;
    Eina_Bool is_mirrored : 1;
 };
 
@@ -859,7 +859,7 @@ bounce_eval(Smart_Data *sd)
    if ((!sd->widget) ||
        (!elm_widget_drag_child_locked_x_get(sd->widget)))
      {
-        if (!sd->down.bounce_x_animator && !sd->bounce_animator_disabled)
+        if ((!sd->down.bounce_x_animator) && (!sd->bounce_animator_disabled))
           {
              if (sd->bouncemex)
                {
@@ -881,7 +881,7 @@ bounce_eval(Smart_Data *sd)
    if ((!sd->widget) ||
        (!elm_widget_drag_child_locked_y_get(sd->widget)))
      {
-        if (!sd->down.bounce_y_animator && !sd->bounce_animator_disabled)
+        if ((!sd->down.bounce_y_animator) && (!sd->bounce_animator_disabled))
           {
              if (sd->bouncemey)
                {
@@ -1792,7 +1792,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                  oy = -sd->down.dy;
                                  if (!_smart_do_page(sd))
                                    {
-                                      if (!sd->down.momentum_animator && !sd->momentum_animator_disabled)
+                                      if ((!sd->down.momentum_animator) && (!sd->momentum_animator_disabled))
                                         {
                                            sd->down.momentum_animator = ecore_animator_add(_smart_momentum_animator, sd);
                                            ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
@@ -2549,8 +2549,8 @@ _smart_add(Evas_Object *obj)
    sd->bounce_vert = 1;
 
    sd->one_dir_at_a_time = 1;
-   sd->momentum_animator_disabled = 0;
-   sd->bounce_animator_disabled = 0;
+   sd->momentum_animator_disabled = EINA_FALSE;
+   sd->bounce_animator_disabled = EINA_FALSE;
 
    o = edje_object_add(evas_object_evas_get(obj));
    evas_object_propagate_events_set(o, 0);
@@ -2695,4 +2695,3 @@ _smart_init(void)
         _smart = evas_smart_class_new(&sc);
      }
 }
-
