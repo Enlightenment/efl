@@ -183,7 +183,11 @@ EAPI void      ethumb_file_free(Ethumb *e) EINA_ARG_NONNULL(1);
 
 EAPI Eina_Bool ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Eina_Free_Cb free_data) EINA_ARG_NONNULL(1, 2);
 EAPI Eina_Bool ethumb_exists(Ethumb *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
-/**
+
+EAPI Ethumb *ethumb_dup(const Ethumb *e) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool ethumb_cmp(const Ethumb *e1, const Ethumb *e2) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
+  /**
  * @}
  */
 

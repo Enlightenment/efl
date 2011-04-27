@@ -244,6 +244,7 @@ ethumb_new(void)
    if (!e)
      {
 	ERR("could not create ecore evas buffer");
+        free(ethumb);
 	return NULL;
      }
 
@@ -259,8 +260,8 @@ ethumb_new(void)
 	return NULL;
      }
 
-   sub_ee = evas_object_data_get(o, "Ecore_Evas");
-   sub_e = ecore_evas_get(sub_ee);
+   sub_ee = ecore_evas_object_ecore_evas_get(o);
+   sub_e = ecore_evas_object_evas_get(o);
 
    evas_image_cache_set(sub_e, 0);
    evas_font_cache_set(sub_e, 0);
@@ -678,12 +679,12 @@ ethumb_video_start_get(const Ethumb *e)
 }
 
 EAPI void
-ethumb_video_time_set(Ethumb *e, float time)
+ethumb_video_time_set(Ethumb *e, float t)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   DBG("ethumb=%p, video_start=%f", e, time);
-   e->video.time = time;
+   DBG("ethumb=%p, video_start=%f", e, t);
+   e->video.time = t;
 }
 
 EAPI float
@@ -1549,4 +1550,110 @@ ethumb_ecore_evas_get(const Ethumb *e)
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    return e->sub_ee;
+}
+
+Ethumb *
+ethumb_dup(const Ethumb *e)
+{
+   Ecore_Evas *ee;
+   Ecore_Evas *sub_ee;
+   Evas *ev;
+   Evas *sub_ev;
+   Evas_Object *o;
+   Evas_Object *img;
+   Ethumb *r;
+
+   r = malloc(sizeof (Ethumb));
+   if (!r) return NULL;
+
+   memcpy(r, e, sizeof (Ethumb));
+
+   r->thumb_dir = eina_stringshare_ref(e->thumb_dir);
+   r->category = eina_stringshare_ref(e->category);
+   r->src_path = eina_stringshare_ref(e->src_path);
+   r->src_key = eina_stringshare_ref(e->src_key);
+   r->thumb_path = eina_stringshare_ref(e->thumb_path);
+   r->thumb_key = eina_stringshare_ref(e->thumb_key);
+
+   ee = ecore_evas_buffer_new(1, 1);
+   ev = ecore_evas_get(ee);
+   if (!ev)
+     {
+        ERR("could not create ecore evas buffer");
+        free(r);
+        return NULL;
+     }
+
+   evas_image_cache_set(ev, 0);
+   evas_font_cache_set(ev, 0);
+
+   o = ecore_evas_object_image_new(ee);
+   if (!o)
+     {
+        ERR("could not create sub ecore evas buffer");
+        ecore_evas_free(ee);
+        free(r);
+        return NULL;
+     }
+
+   sub_ee = ecore_evas_object_ecore_evas_get(o);
+   sub_ev = ecore_evas_object_evas_get(o);
+
+   evas_image_cache_set(sub_ev, 0);
+   evas_font_cache_set(sub_ev, 0);
+
+   img = evas_object_image_add(sub_ev);
+   if (!img)
+     {
+        ERR("could not create source objects.");
+        ecore_evas_free(ee);
+        free(r);
+        return NULL;
+     }
+
+   r->ee = ee;
+   r->sub_ee = sub_ee;
+   r->e = ev;
+   r->sub_e = sub_ev;
+   r->o = o;
+   r->img = img;
+
+   r->frame = NULL;
+   r->finished_idler = NULL;
+   r->finished_cb = NULL;
+   r->cb_data = NULL;
+   r->cb_data_free = NULL;
+   r->cb_result = 0;
+
+   return r;
+}
+
+#define CHECK_DELTA(Param)                      \
+  if (e1->Param != e2->Param)                   \
+    return EINA_TRUE;
+
+Eina_Bool
+ethumb_cmp(const Ethumb *e1, const Ethumb *e2)
+{
+   CHECK_DELTA(thumb_dir);
+   CHECK_DELTA(category);
+   CHECK_DELTA(tw);
+   CHECK_DELTA(th);
+   CHECK_DELTA(format);
+   CHECK_DELTA(aspect);
+   CHECK_DELTA(orientation);
+   CHECK_DELTA(crop_x);
+   CHECK_DELTA(crop_y);
+   CHECK_DELTA(quality);
+   CHECK_DELTA(compress);
+   CHECK_DELTA(rw);
+   CHECK_DELTA(rh);
+   CHECK_DELTA(video.start);
+   CHECK_DELTA(video.time);
+   CHECK_DELTA(video.interval);
+   CHECK_DELTA(video.ntimes);
+   CHECK_DELTA(video.fps);
+   CHECK_DELTA(document.page);
+
+   return EINA_FALSE;
 }

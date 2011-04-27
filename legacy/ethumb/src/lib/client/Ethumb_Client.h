@@ -1,6 +1,7 @@
 #ifndef __ETHUMB_CLIENT_H__
 #define __ETHUMB_CLIENT_H__ 1
 
+#include <Ecore.h>
 #include <Ethumb.h>
 
 #ifdef EAPI
@@ -64,6 +65,15 @@ extern "C" {
 typedef struct _Ethumb_Client Ethumb_Client;
 
 /**
+ * @brief client exists request handle.
+ *
+ * The exists request handle is created by ethumb_client_thumb_exists(),
+ * automatically destroyed when it end and cancelled when requested by
+ * ethumb_client_thumb_exists_cancel().
+ */
+typedef struct _Ethumb_Exists Ethumb_Exists;
+
+/**
  * @brief reports results of ethumb_client_connect()
  *
  * @param data extra context given to ethumb_client_connect().
@@ -99,6 +109,19 @@ typedef void (*Ethumb_Client_Die_Cb)(void *data, Ethumb_Client *client);
  * @param success @c EINA_TRUE if generated or @c EINA_FALSE on errors.
  */
 typedef void (*Ethumb_Client_Generate_Cb)(void *data, Ethumb_Client *client, int id, const char *file, const char *key, const char *thumb_path, const char *thumb_key, Eina_Bool success);
+
+/**
+ * @brief report results of ethumb_client_thumb_exists().
+ *
+ * @param client handle of the current connection to server.
+ * @param exists EINA_TRUE if the thumbnail exists.
+ * @param data extra context given to ethumb_client_thumb_exists().
+ *
+ * During the execution of the callback the state of the @p client is
+ * temporarily realy restored to what it was when the call to
+ * ethumb_client_thumb_exists() was done.
+ */
+typedef void (*Ethumb_Client_Thumb_Exists_Cb)(Ethumb_Client *client, Ethumb_Exists *thread, Eina_Bool exists, void *data);
 
 /**
  * @brief reports results of ethumb_client_generate_cancel()
@@ -171,7 +194,9 @@ EAPI Eina_Bool ethumb_client_file_set(Ethumb_Client *client, const char *path, c
 EAPI void ethumb_client_file_get(Ethumb_Client *client, const char **path, const char **key);
 EAPI void ethumb_client_file_free(Ethumb_Client *client);
 
-EAPI Eina_Bool ethumb_client_thumb_exists(Ethumb_Client *client);
+EAPI Ethumb_Exists *ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data);
+EAPI void ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists);
+EAPI Eina_Bool ethumb_client_thumb_exists_check(Ethumb_Exists *exists);
 EAPI int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel_all(Ethumb_Client *client);
