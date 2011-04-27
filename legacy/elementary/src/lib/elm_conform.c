@@ -25,11 +25,28 @@ struct _Widget_Data
    } delta;
 };
 
+/* Enum to identify conformant swallow parts */
+typedef enum _Conformant_Part_Type Conformant_Part_Type;
+enum _Conformant_Part_Type
+{
+   ELM_CONFORM_INDICATOR_PART      = 1,
+   ELM_CONFORM_SOFTKEY_PART        = 2
+};
+
 /* local function prototypes */
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
+static void _swallow_conformant_parts(Evas_Object *obj);
+static void _conformant_part_size_set(Evas_Object *obj,
+                                      Evas_Object *sobj,
+                                      Evas_Coord sx,
+                                      Evas_Coord sy,
+                                      Evas_Coord sw,
+                                      Evas_Coord sh);
+static void _conformant_part_sizing_eval(Evas_Object *obj,
+                                         Conformant_Part_Type part_type);
 static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
 
@@ -63,6 +80,7 @@ _theme_hook(Evas_Object *obj)
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->base, "conformant", "base",
                          elm_widget_style_get(obj));
+   _swallow_conformant_parts(obj);
 
    if (wd->content)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->content);
@@ -81,6 +99,86 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(wd->base, &mw, &mh);
    evas_object_size_hint_min_set(obj, mw, mh);
    evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
+_conformant_part_size_set(Evas_Object *obj, Evas_Object *sobj, Evas_Coord sx,
+                          Evas_Coord sy, Evas_Coord sw, Evas_Coord sh)
+{
+   Evas_Coord cx, cy, cw, ch;
+   Evas_Coord part_height = 0, part_width = 0;
+
+   evas_object_geometry_get(obj, &cx, &cy, &cw, &ch);
+
+   /* Part overlapping with conformant */
+   if ((cx < (sx + sw)) && ((cx + cw) > sx)
+            && (cy < (sy + sh)) && ((cy + ch) > sy))
+     {
+        part_height = MIN((cy + ch), (sy + sh)) - MAX(cy, sy);
+        part_width = MIN((cx + cw), (sx + sw)) - MAX(cx, sx);
+     }
+
+   evas_object_size_hint_min_set(sobj, part_width, part_height);
+   evas_object_size_hint_max_set(sobj, part_width, part_height);
+}
+
+static void
+_conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
+{
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window zone, xwin;
+   int sx = -1, sy = -1, sw = -1, sh = -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+
+   Evas_Object *top = elm_widget_top_get(obj);
+   xwin = elm_win_xwindow_get(top);
+   zone = ecore_x_e_illume_zone_get(xwin);
+
+   if (part_type & ELM_CONFORM_INDICATOR_PART)
+     {
+        ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
+        _conformant_part_size_set(obj, wd->shelf, sx, sy, sw, sh);
+     }
+   if (part_type & ELM_CONFORM_SOFTKEY_PART)
+     {
+        ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
+        _conformant_part_size_set(obj, wd->panel, sx, sy, sw, sh);
+     }
+#endif
+}
+
+static void
+_swallow_conformant_parts(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd->shelf)
+     {
+        wd->shelf = evas_object_rectangle_add(evas_object_evas_get(obj));
+        elm_widget_sub_object_add(obj, wd->shelf);
+        evas_object_size_hint_min_set(wd->shelf, -1, 0);
+        evas_object_size_hint_max_set(wd->shelf, -1, 0);
+     }
+   else
+     _conformant_part_sizing_eval(obj, ELM_CONFORM_INDICATOR_PART);
+
+   evas_object_color_set(wd->shelf, 0, 0, 0, 0);
+   edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
+
+   if (!wd->panel)
+     {
+        wd->panel = evas_object_rectangle_add(evas_object_evas_get(obj));
+        elm_widget_sub_object_add(obj, wd->panel);
+        evas_object_size_hint_min_set(wd->panel, -1, 0);
+        evas_object_size_hint_max_set(wd->panel, -1, 0);
+     }
+   else
+     _conformant_part_sizing_eval(obj, ELM_CONFORM_SOFTKEY_PART);
+
+   evas_object_color_set(wd->panel, 0, 0, 0, 0);
+   edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
 }
 
 static void
@@ -163,6 +261,19 @@ _autoscroll_mode_disable(Evas_Object *obj)
 }
  */
 
+static void
+_conformant_move_resize_event_cb(void *data, Evas *e, Evas_Object *obj,
+                                 void *event_info)
+{
+   Conformant_Part_Type part_type;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   part_type =  (ELM_CONFORM_INDICATOR_PART |
+                 ELM_CONFORM_SOFTKEY_PART);
+   _conformant_part_sizing_eval(obj, part_type);
+}
+
 static Eina_Bool
 _prop_change(void *data, int type __UNUSED__, void *event)
 {
@@ -174,42 +285,20 @@ _prop_change(void *data, int type __UNUSED__, void *event)
    ev = event;
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
-        Ecore_X_Window zone;
-        int sh = -1;
+        Conformant_Part_Type part_type;
 
-        zone = ecore_x_e_illume_zone_get(ev->win);
-        ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 0;
-        evas_object_size_hint_min_set(wd->shelf, -1, sh);
-        evas_object_size_hint_max_set(wd->shelf, -1, sh);
-        sh = -1;
-        ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 0;
-        evas_object_size_hint_min_set(wd->panel, -1, sh);
-        evas_object_size_hint_max_set(wd->panel, -1, sh);
+        part_type =  (ELM_CONFORM_INDICATOR_PART |
+                      ELM_CONFORM_SOFTKEY_PART);
+        _conformant_part_sizing_eval(data, part_type);
+        evas_object_event_callback_add(data, EVAS_CALLBACK_RESIZE,
+                                       _conformant_move_resize_event_cb, data);
+        evas_object_event_callback_add(data, EVAS_CALLBACK_MOVE,
+                                       _conformant_move_resize_event_cb, data);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
-     {
-        Ecore_X_Window zone;
-        int sh = -1;
-
-        zone = ecore_x_e_illume_zone_get(ev->win);
-        ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 0;
-        evas_object_size_hint_min_set(wd->shelf, -1, sh);
-        evas_object_size_hint_max_set(wd->shelf, -1, sh);
-     }
+     _conformant_part_sizing_eval(data, ELM_CONFORM_INDICATOR_PART);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY)
-     {
-        Ecore_X_Window zone;
-        int sh = -1;
-
-        zone = ecore_x_e_illume_zone_get(ev->win);
-        ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 0;
-        evas_object_size_hint_min_set(wd->panel, -1, sh);
-        evas_object_size_hint_max_set(wd->panel, -1, sh);
-     }
+     _conformant_part_sizing_eval(data, ELM_CONFORM_SOFTKEY_PART);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY)
      {
         Ecore_X_Window zone;
@@ -256,31 +345,11 @@ elm_conformant_add(Evas_Object *parent)
 
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(obj);
-   Ecore_X_Window zone, xwin = elm_win_xwindow_get(top);
+   Ecore_X_Window xwin = elm_win_xwindow_get(top);
 
    if ((xwin) && (!elm_win_inlined_image_object_get(top)))
      {
-        int sh = -1;
-
-        zone = ecore_x_e_illume_zone_get(xwin);
-
-        ecore_x_e_illume_indicator_geometry_get(zone, NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 0;
-        wd->shelf = evas_object_rectangle_add(e);
-        evas_object_color_set(wd->shelf, 0, 0, 0, 0);
-        evas_object_size_hint_min_set(wd->shelf, -1, sh);
-        evas_object_size_hint_max_set(wd->shelf, -1, sh);
-        edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
-
-        sh = -1;
-        ecore_x_e_illume_softkey_geometry_get(zone, NULL, NULL, NULL, &sh);
-        if (sh < 0) sh = 0;
-        wd->panel = evas_object_rectangle_add(e);
-        evas_object_color_set(wd->panel, 0, 0, 0, 0);
-        evas_object_size_hint_min_set(wd->panel, -1, sh);
-        evas_object_size_hint_max_set(wd->panel, -1, sh);
-        edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
-
+        _swallow_conformant_parts(obj);
         wd->prop_hdl = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROPERTY,
                                                _prop_change, obj);
      }
