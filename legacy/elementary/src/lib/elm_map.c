@@ -1461,7 +1461,18 @@ _zoom_anim(void *data)
 
    if ((t >= 2.0) || (t <= 0.5))
      {
+        double lon, lat;
+        Evas_Coord sx, sy, sw, sh;
+        elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
+        elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
+        sx += sw / 2;
+        sy += sh / 2;
+        elm_map_utils_convert_coord_into_geo(obj, sx, sy, wd->size.w, &lon, &lat);
+
         wd->pinch.level = 1.0;
+        wd->center_on.enabled = EINA_TRUE;
+        wd->center_on.lon = lon;
+        wd->center_on.lat = lat;
         zoom_do(obj);
         wd->zoom_animator = NULL;
         evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
@@ -4720,8 +4731,8 @@ elm_map_name_address_get(Elm_Map_Name *name)
  * This gets the current coordinates of the name object.
  *
  * @param obj The name object
- * @param lat The latitude.
- * @param lon The longitude.
+ * @param lat The latitude
+ * @param lon The longitude
  *
  * @ingroup Map
  */
@@ -4766,9 +4777,9 @@ elm_map_name_remove(Elm_Map_Name *name)
  * Set the rotate degree of the map
  *
  * @param obj The map object
- * @param angle amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
- * @param cx rotation's center horizontal position.
- * @param cy rotation's center vertical position.
+ * @param angle amount of degrees from 0.0 to 360.0 to rotate arount Z axis
+ * @param cx rotation's center horizontal position
+ * @param cy rotation's center vertical position
  *
  * @ingroup Map
  */
@@ -4788,9 +4799,9 @@ elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy
  * Get the rotate degree of the map
  *
  * @param obj The map object
- * @return amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
- * @param cx rotation's center horizontal position.
- * @param cy rotation's center vertical position.
+ * @return amount of degrees from 0.0 to 360.0 to rotate arount Z axis
+ * @param cx rotation's center horizontal position
+ * @param cy rotation's center vertical position
  *
  * @ingroup Map
  */
