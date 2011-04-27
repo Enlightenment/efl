@@ -156,7 +156,7 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(bt_1500);
    elm_box_pack_end(bx, bt_1500);
 
-   for (i = 0; i < 200000; i++)
+   for (i = 0; i < 2000; i++)
      {
         gli = elm_genlist_item_append(gl, &itc1,
                                       (void *)(long)i/* item data */,
