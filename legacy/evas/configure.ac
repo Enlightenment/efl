@@ -302,7 +302,6 @@ fi
 
 # harfbuzz support
 have_harfbuzz="no"
-have_harfbuzz_glib="no"
 have_harfbuzz_ft="no"
 AC_ARG_ENABLE([harfbuzz],
    AC_HELP_STRING([--disable-harfbuzz],
@@ -344,15 +343,6 @@ if test "x${want_harfbuzz}" = "xyes" -o "x${want_harfbuzz}" = "xauto" ; then
               AC_MSG_ERROR([Harfbuzz-ft not found (strict dependencies checking)])
            fi
            have_harfbuzz="no"
-          ])
-# nice to have if harfbuzz has it
-      AC_CHECK_HEADER(hb-glib.h,
-          [
-           have_harfbuzz_glib="yes"
-           AC_DEFINE(HAVE_HARFBUZZ_GLIB, 1, [have harfbuzz glib support])
-          ],
-          [
-           have_harfbuzz_glib="no"
           ])
       CPPFLAGS="$CPPFLAGS_SAVE"
    fi

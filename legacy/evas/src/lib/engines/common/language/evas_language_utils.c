@@ -21,17 +21,14 @@
 
 #ifdef USE_HARFBUZZ
 # include <hb.h>
-# ifdef HAVE_HARFBUZZ_GLIB
-#  include <hb-glib.h>
-# endif
 #endif
 
 /* FIXME: rename and move */
 void *
 evas_common_language_unicode_funcs_get(void)
 {
-#if defined(USE_HARFBUZZ) && defined(HAVE_HARFBUZZ_GLIB)
-   return hb_glib_get_unicode_funcs();
+#if defined(USE_HARFBUZZ)
+   return hb_unicode_funcs_get_default();
 #endif
    return NULL;
 }
