@@ -3373,7 +3373,7 @@ collections {
                else {
                   emit("elm,action,toggle,off", "");
                }
-       
+
             }
          }
          program { name: "toggle_on";
@@ -9893,7 +9893,7 @@ collections {
                     image.normal: "shadow.png";
                 }
             }
-  
+
 
                  part { name: "elm.swallow.content";
                     type: SWALLOW;
@@ -9903,7 +9903,7 @@ collections {
                             fixed: 1 1;
                     }
                  }
-     
+
                  part {
                 name: "border";
                 type: IMAGE;
@@ -36192,7 +36192,3 @@ collections {
       }
    }
 }
-
-
-
-
