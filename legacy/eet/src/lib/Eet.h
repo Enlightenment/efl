@@ -1879,7 +1879,6 @@ eet_identity_certificate_print(const unsigned char *certificate,
  *
  * @code
  * #include <Eet.h>
- * #include <Evas.h>
  *
  * typedef struct _blah2
  * {
