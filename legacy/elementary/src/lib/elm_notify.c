@@ -545,7 +545,7 @@ elm_notify_content_get(const Evas_Object *obj)
 /**
  * Set the notify parent
  *
- * Once the parent object is set, a previously set one will be desconected
+ * Once the parent object is set, a previously set one will be disconnected
  * and replaced.
  *
  * @param obj The notify object
