@@ -53,10 +53,86 @@ _eio_inotify_del(void *data)
    free(emb);
 }
 
+typedef struct _Eio_Inotify_Table Eio_Inotify_Table;
+struct _Eio_Inotify_Table
+{
+   int mask;
+   int *ev_file_code;
+   int *ev_dir_code;
+};
+
+#define EIO_INOTIFY_LINE(Ino, Ef, Ed)		\
+  { Ino, &EIO_MONITOR_##Ef, &EIO_MONITOR_##Ed }
+
+static const Eio_Inotify_Table match[] = {
+  EIO_INOTIFY_LINE(IN_ATTRIB, FILE_MODIFIED, DIRECTORY_MODIFIED),
+  EIO_INOTIFY_LINE(IN_CLOSE_WRITE, FILE_CLOSED, DIRECTORY_CLOSED),
+  EIO_INOTIFY_LINE(IN_MODIFY, FILE_MODIFIED, DIRECTORY_MODIFIED),
+  EIO_INOTIFY_LINE(IN_MOVED_FROM, FILE_DELETED, DIRECTORY_DELETED),
+  EIO_INOTIFY_LINE(IN_MOVED_TO, FILE_CREATED, DIRECTORY_CREATED),
+  EIO_INOTIFY_LINE(IN_DELETE, FILE_DELETED, DIRECTORY_DELETED),
+  EIO_INOTIFY_LINE(IN_CREATE, FILE_CREATED, DIRECTORY_CREATED),
+  EIO_INOTIFY_LINE(IN_DELETE_SELF, SELF_DELETED, SELF_DELETED),
+  EIO_INOTIFY_LINE(IN_MOVE_SELF, SELF_DELETED, SELF_DELETED),
+  EIO_INOTIFY_LINE(IN_UNMOUNT, SELF_DELETED, SELF_DELETED)
+};
+
+static void
+_eio_inotify_events(Eio_Monitor_Backend *backend, const char *file, int mask)
+{
+   char *tmp;
+   unsigned int length;
+   unsigned int tmp_length;
+   unsigned int i;
+   Eina_Bool is_dir;
+
+   length = file ? strlen(file) : 0;
+   tmp_length = eina_stringshare_strlen(backend->parent->path) + length + 2;
+   tmp = alloca(sizeof (char) * tmp_length);
+
+   snprintf(tmp, tmp_length, length ? "%s/%s" : "%s",
+	    backend->parent->path, file);
+
+   is_dir = !!(mask & IN_ISDIR);
+
+   for (i = 0; i < sizeof (match) / sizeof (Eio_Inotify_Table); ++i)
+     if (match[i].mask & mask)
+       {
+          _eio_monitor_send(backend->parent, tmp, is_dir ? *match[i].ev_dir_code : *match[i].ev_file_code);
+       }
+
+   /* special case for IN_IGNORED */
+   if (mask & IN_IGNORED)
+     {
+        _eio_monitor_rename(backend->parent, tmp);
+     }
+}
+
 static Eina_Bool
 _eio_inotify_handler(void *data, Ecore_Fd_Handler *fdh)
 {
-   return EINA_TRUE;
+   Eio_Monitor_Backend *backend;
+   unsigned char buffer[16384];
+   struct inotify_event *event;
+   int i = 0;
+   int event_size;
+   ssize_t size;
+
+   size = read(ecore_main_fd_handler_fd_get(fdh), buffer, sizeof(buffer));
+   while (i < size)
+     {
+        event = (struct inotify_event *)&buffer[i];
+        event_size = sizeof(struct inotify_event) + event->len;
+        i += event_size;
+
+        backend = eina_hash_find(_inotify_monitors, &event->wd);
+        if (!backend) continue ;
+        if (!backend->parent) continue ;
+
+        _eio_inotify_events(backend, (event->len ? event->name : NULL), event->mask);
+     }
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 void eio_monitor_backend_init(void)

@@ -274,23 +274,30 @@ static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
 EAPI extern int EIO_MONITOR_FILE_CREATED; /**< Notify creation of a new file in a watched directory */
 EAPI extern int EIO_MONITOR_FILE_DELETED; /**< Notify destruction of a watched file or in a watched directory */
 EAPI extern int EIO_MONITOR_FILE_MODIFIED; /**< Notify modification of a file in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_START; /**< Notify starting to watch on a file */
-EAPI extern int EIO_MONITOR_FILE_STOP; /**< Notify that Eio stopped watching on a file (because of all watcher beeing deleted or the file itself has been deleted */
+EAPI extern int EIO_MONITOR_FILE_CLOSED; /**< Notify closing of a file in a watched directory */
 EAPI extern int EIO_MONITOR_DIRECTORY_CREATED; /**< Notify creation of a new directory in a watched directory */
 EAPI extern int EIO_MONITOR_DIRECTORY_DELETED; /**< Notify destruction of a watched directory or in a watched directory */
 EAPI extern int EIO_MONITOR_DIRECTORY_MODIFIED; /**< Notify modification of a directory in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_START; /**< Notify the starting processus of watching a directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_STOP; /**< Notify that Eio stopped watching on a directory (due to destruction of the directory or due to all watcher beeing deleted */
+EAPI extern int EIO_MONITOR_DIRECTORY_CLOSED; /**< Notify closing of a directory in a watched directory */
+EAPI extern int EIO_MONITOR_SELF_RENAME; /**< Notify that Eio monitored path has been renamed, an error could happen just after if the renamed path doesn't exist */
+EAPI extern int EIO_MONITOR_SELF_DELETED; /**< Notify that Eio monitored path has been removed */
 EAPI extern int EIO_MONITOR_ERROR; /**< Notify that during operation the pointed monitor failed and will no longer work. eio_monitor_del is required on it. */
 
 typedef struct _Eio_Monitor Eio_Monitor;
 
 typedef struct _Eio_Monitor_Error Eio_Monitor_Error;
+typedef struct _Eio_Monitor_Event Eio_Monitor_Event;
 
 struct _Eio_Monitor_Error
 {
    Eio_Monitor *monitor;
    int error;
+};
+
+struct _Eio_Monitor_Event
+{
+   Eio_Monitor *monitor;
+   const char *filename;
 };
 
 EAPI Eio_Monitor *eio_monitor_add(const char *path);

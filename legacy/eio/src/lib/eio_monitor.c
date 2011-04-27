@@ -24,13 +24,13 @@ EAPI int EIO_MONITOR_ERROR;
 EAPI int EIO_MONITOR_FILE_CREATED;
 EAPI int EIO_MONITOR_FILE_DELETED;
 EAPI int EIO_MONITOR_FILE_MODIFIED;
-EAPI int EIO_MONITOR_FILE_START;
-EAPI int EIO_MONITOR_FILE_STOP;
+EAPI int EIO_MONITOR_FILE_CLOSED;
 EAPI int EIO_MONITOR_DIRECTORY_CREATED;
 EAPI int EIO_MONITOR_DIRECTORY_DELETED;
 EAPI int EIO_MONITOR_DIRECTORY_MODIFIED;
-EAPI int EIO_MONITOR_DIRECTORY_START;
-EAPI int EIO_MONITOR_DIRECTORY_STOP;
+EAPI int EIO_MONITOR_DIRECTORY_CLOSED;
+EAPI int EIO_MONITOR_SELF_RENAME;
+EAPI int EIO_MONITOR_SELF_DELETED;
 
 static Eina_Hash *_eio_monitors = NULL;
 static pid_t _monitor_pid = -1;
@@ -42,10 +42,13 @@ _eio_monitor_del(void *data)
 
    if (monitor->exist) eio_file_cancel(monitor->exist);
 
-   if (!monitor->fallback)
-     eio_monitor_backend_del(monitor);
-   else
-     eio_monitor_fallback_del(monitor);
+   if (monitor->backend)
+     {
+        if (!monitor->fallback)
+          eio_monitor_backend_del(monitor);
+        else
+          eio_monitor_fallback_del(monitor);
+     }
 
    if (monitor->refcount > 0)
      return ;
@@ -55,13 +58,30 @@ _eio_monitor_del(void *data)
 }
 
 static void
-_eio_monitor_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
+_eio_monitor_unref(Eio_Monitor *monitor)
+{
+   monitor->refcount--;
+
+   if (monitor->refcount <= 0)
+     eina_hash_del(_eio_monitors, monitor->path, monitor);
+}
+
+static void
+_eio_monitor_error_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
 {
    Eio_Monitor_Error *ev = user_data;
 
-   ev->monitor->refcount--;
+   _eio_monitor_unref(ev->monitor);
+   free(ev);
+}
 
-   _eio_monitor_del(ev->monitor);
+static void
+_eio_monitor_event_cleanup_cb(void *user_data, __UNUSED__ void *func_data)
+{
+   Eio_Monitor_Event *ev = user_data;
+
+   _eio_monitor_unref(ev->monitor);
+   eina_stringshare_del(ev->filename);
    free(ev);
 }
 
@@ -84,16 +104,9 @@ _eio_monitor_stat_cb(void *data, __UNUSED__ Eio_File *handler, __UNUSED__ const 
 }
 
 static void
-_eio_monitor_error_cb(void *data, Eio_File *handler, int error)
+_eio_monitor_error(Eio_Monitor *monitor, int error)
 {
    Eio_Monitor_Error *ev;
-   Eio_Monitor *monitor = data;
-
-   monitor->error = error;
-   monitor->exist = NULL;
-   monitor->refcount--;
-
-   if (monitor->refcount == 0) goto on_empty;
 
    ev = calloc(1, sizeof (Eio_Monitor_Error));
    if (!ev) return ;
@@ -102,7 +115,23 @@ _eio_monitor_error_cb(void *data, Eio_File *handler, int error)
    ev->monitor->refcount++;
    ev->error = error;
 
-   ecore_event_add(EIO_MONITOR_ERROR, ev, _eio_monitor_cleanup_cb, NULL);
+   ecore_event_add(EIO_MONITOR_ERROR, ev, _eio_monitor_error_cleanup_cb, NULL);
+}
+
+static void
+_eio_monitor_error_cb(void *data, Eio_File *handler, int error)
+{
+   Eio_Monitor *monitor = data;
+
+   monitor->error = error;
+   monitor->exist = NULL;
+   monitor->refcount--;
+
+   if (monitor->refcount == 0) goto on_empty;
+
+   _eio_monitor_error(monitor, error);
+
+   return ;
 
  on_empty:
    eina_hash_del(_eio_monitors, monitor->path, monitor);
@@ -112,16 +141,16 @@ void
 eio_monitor_init(void)
 {
    EIO_MONITOR_ERROR = ecore_event_type_new();
+   EIO_MONITOR_SELF_RENAME = ecore_event_type_new();
+   EIO_MONITOR_SELF_DELETED = ecore_event_type_new();
    EIO_MONITOR_FILE_CREATED = ecore_event_type_new();
    EIO_MONITOR_FILE_DELETED = ecore_event_type_new();
    EIO_MONITOR_FILE_MODIFIED = ecore_event_type_new();
-   EIO_MONITOR_FILE_START = ecore_event_type_new();
-   EIO_MONITOR_FILE_STOP = ecore_event_type_new();
+   EIO_MONITOR_FILE_CLOSED = ecore_event_type_new();
    EIO_MONITOR_DIRECTORY_CREATED = ecore_event_type_new();
    EIO_MONITOR_DIRECTORY_DELETED = ecore_event_type_new();
    EIO_MONITOR_DIRECTORY_MODIFIED = ecore_event_type_new();
-   EIO_MONITOR_DIRECTORY_START = ecore_event_type_new();
-   EIO_MONITOR_DIRECTORY_STOP = ecore_event_type_new();
+   EIO_MONITOR_DIRECTORY_CLOSED = ecore_event_type_new();
 
    eio_monitor_backend_init();
    eio_monitor_fallback_init();
@@ -174,6 +203,7 @@ eio_monitor_stringshared_add(const char *path)
         monitor->backend = NULL; // This is needed to avoid race condition
         monitor->path = eina_stringshare_ref(path);
         monitor->fallback = EINA_FALSE;
+        monitor->rename = EINA_FALSE;
         monitor->refcount = 1;
 
         monitor->exist = eio_file_direct_stat(monitor->path,
@@ -203,4 +233,59 @@ EAPI const char *
 eio_monitor_path_get(Eio_Monitor *monitor)
 {
    return monitor->path;
+}
+
+void
+_eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
+{
+   Eio_Monitor_Event *ev;
+
+   ev = calloc(1, sizeof (Eio_Monitor_Event));
+   if (!ev) return ;
+
+   ev->monitor = monitor;
+   ev->monitor->refcount++;
+   ev->filename = eina_stringshare_add(filename);
+
+   ecore_event_add(event_code, ev, _eio_monitor_event_cleanup_cb, NULL);
+}
+
+void
+_eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
+{
+  const char *tmp;
+
+  /* destroy old state */
+  if (monitor->exist) eio_file_cancel(monitor->exist);
+
+  if (monitor->backend)
+    {
+       if (!monitor->fallback)
+         eio_monitor_backend_del(monitor);
+       else
+         eio_monitor_fallback_del(monitor);
+    }
+
+  /* rename */
+  tmp = monitor->path;
+  monitor->path = eina_stringshare_add(newpath);
+  eina_hash_move(_eio_monitors, tmp, monitor->path);
+  eina_stringshare_del(tmp);
+
+  /* That means death (cmp pointer and not content) */
+  if (tmp == monitor->path)
+    {
+      _eio_monitor_error(monitor, -1);
+      return ;
+    }
+
+  /* restart */
+  monitor->rename = EINA_TRUE;
+  monitor->exist = eio_file_direct_stat(monitor->path,
+                                        _eio_monitor_stat_cb,
+                                        _eio_monitor_error_cb,
+                                        monitor);
+
+  /* and notify the app */
+  _eio_monitor_send(monitor, newpath, EIO_MONITOR_SELF_RENAME);
 }

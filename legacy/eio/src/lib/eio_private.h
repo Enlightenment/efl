@@ -143,7 +143,6 @@ struct _Eio_File_Move
 struct _Eio_Dir_Copy
 {
    Eio_File_Progress progress;
-
    Eio_Filter_Direct_Cb filter_cb;
 
    Eina_List *files;
@@ -171,6 +170,7 @@ struct _Eio_Monitor
    int error;
 
    Eina_Bool fallback : 1;
+   Eina_Bool rename : 1;
 };
 
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
@@ -219,5 +219,8 @@ void eio_monitor_fallback_add(Eio_Monitor *monitor);
 
 void eio_monitor_backend_del(Eio_Monitor *monitor);
 void eio_monitor_fallback_del(Eio_Monitor *monitor);
+
+void _eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code);
+void _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath);
 
 #endif
