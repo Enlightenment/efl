@@ -1878,6 +1878,7 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * Example:
  *
  * @code
+ * #include <Eina.h>
  * #include <Eet.h>
  *
  * typedef struct _blah2
