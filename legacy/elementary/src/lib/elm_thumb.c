@@ -35,6 +35,7 @@ struct _Widget_Data
         int id;
         const char *file;
         const char *key;
+        Ethumb_Exists *exists;
      } thumb;
    Ecore_Event_Handler *eeh;
    Elm_Thumb_Animation_Setting anim_setting;
@@ -87,6 +88,11 @@ _del_hook(Evas_Object *obj)
    if (wd->thumb.id >= 0)
      ethumb_client_generate_cancel(_elm_ethumb_client, wd->thumb.id,
                                    NULL, NULL, NULL);
+   if (wd->thumb.exists)
+     {
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
+        wd->thumb.exists = NULL;
+     }
 #endif
 
    eina_stringshare_del(wd->file);
@@ -239,19 +245,15 @@ _finished_thumb_cb(void *data, Ethumb_Client *c __UNUSED__, int id, const char *
 }
 
 static void
-_thumb_apply(Widget_Data *wd)
+_thumb_exists(Ethumb_Client *client, Ethumb_Exists *thread,
+              Eina_Bool exists, void *data)
 {
-   if (wd->thumb.id > 0)
-     {
-        ethumb_client_generate_cancel
-           (_elm_ethumb_client, wd->thumb.id, NULL, NULL, NULL);
-        wd->thumb.id = -1;
-     }
+   Widget_Data *wd = data;
 
-   if (!wd->file) return;
+   if (ethumb_client_thumb_exists_check(thread))
+     return ;
 
-   ethumb_client_file_set(_elm_ethumb_client, wd->file, wd->key);
-   if (ethumb_client_thumb_exists(_elm_ethumb_client))
+   if (exists)
      {
         const char *thumb_path, *thumb_key;
 
@@ -274,6 +276,29 @@ _thumb_apply(Widget_Data *wd)
         edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_ERROR, "elm");
         evas_object_smart_callback_call(wd->self, SIG_GENERATE_ERROR, NULL);
      }
+
+}
+
+static void
+_thumb_apply(Widget_Data *wd)
+{
+   if (wd->thumb.id > 0)
+     {
+        ethumb_client_generate_cancel
+           (_elm_ethumb_client, wd->thumb.id, NULL, NULL, NULL);
+        wd->thumb.id = -1;
+     }
+
+   if (wd->thumb.exists)
+     {
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
+        wd->thumb.exists = NULL;
+     }
+
+   if (!wd->file) return;
+
+   ethumb_client_file_set(_elm_ethumb_client, wd->file, wd->key);
+   ethumb_client_thumb_exists(_elm_ethumb_client, _thumb_exists, wd);
 }
 
 static Eina_Bool
@@ -320,6 +345,12 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 
         edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_STOP, "elm");
         evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
+     }
+
+   if (wd->thumb.exists)
+     {
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
+        wd->thumb.exists = NULL;
      }
 
    if (wd->eeh)
@@ -442,6 +473,7 @@ elm_thumb_add(Evas_Object *parent)
    wd->key = NULL;
    wd->eeh = NULL;
    wd->thumb.id = -1;
+   wd->thumb.exists = NULL;
    wd->on_hold = EINA_FALSE;
    wd->is_video = EINA_FALSE;
    wd->was_video = EINA_FALSE;
