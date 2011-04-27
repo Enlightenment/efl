@@ -22,22 +22,6 @@
 
 #include <string.h>
 
-#ifdef EFL_HAVE_POSIX_THREADS
-#include <pthread.h>
-
-# ifdef EFL_DEBUG_THREADS
-#  include <assert.h>
-# endif
-#endif
-
-#ifdef EFL_HAVE_WIN32_THREADS
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
-
-#include "eina_object.h"
-
 #include "eina_private.h"
 #include "eina_inlist.h"
 #include "eina_rbtree.h"
@@ -46,6 +30,8 @@
 #include "eina_log.h"
 #include "eina_stringshare.h"
 #include "eina_lock.h"
+
+#include "eina_object.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -153,15 +139,11 @@ struct _Eina_Class
 
   Eina_Bool repack_needed : 1;
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_THREADS
+# ifdef EINA_HAVE_DEBUG_THREADS
   pthread_t self;
-#  endif
-  pthread_mutex_t mutex;
-# else
-  HANDLE mutex;
 # endif
+  Eina_Lock mutex;
 #endif
 
   EINA_MAGIC;
@@ -600,15 +582,11 @@ eina_class_new(const char *name,
   c->allocated_range = NULL;
   c->childs = NULL;
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_THREADS
+# ifdef EINA_HAVE_DEBUG_THREADS
   c->self = pthread_self();
-#  endif
-  pthread_mutex_init(&c->mutex, NULL);
-# else
-  c->mutex = CreateMutex(NULL, FALSE, NULL);
 # endif
+  eina_lock_new(&c->mutex);
 #endif
 
   EINA_MAGIC_SET(c, EINA_MAGIC_CLASS);
@@ -677,15 +655,11 @@ eina_class_del(Eina_Class *class)
 	}
     }
 
-#ifdef EFL_HAVE_THREADS
-# ifdef EFL_HAVE_POSIX_THREADS
-#  ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_THREADS
+# ifdef EINA_HAVE_DEBUG_THREADS
   assert(pthread_equal(class->self, pthread_self()));
-#  endif
-  pthread_mutex_destroy(&class->mutex);
-# else
-  CloseHandle(class->mutex);
 # endif
+  eina_lock_free(&class->mutex);
 #endif
 
   eina_mempool_del(class->mempool);
@@ -701,7 +675,7 @@ eina_class_repack(Eina_Class *class)
 
   if (!eina_lock_take(&class->mutex))
     {
-#ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
   else
     assert(pthread_equal(class->self, pthread_self()));
 #endif
@@ -771,7 +745,7 @@ eina_object_pointer_get(Eina_Class *class,
 
   if (!eina_lock_take(&class->mutex))
     {
-#ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
       assert(pthread_equal(class->self, pthread_self()));
 #endif
     }
@@ -798,7 +772,7 @@ eina_object_del(Eina_Class *class,
 
   if (!eina_lock_take(&class->mutex))
     {
-#ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
       assert(pthread_equal(class->self, pthread_self()));
 #endif
     }
@@ -826,14 +800,14 @@ eina_object_parent_set(Eina_Class *parent_class, Eina_Object *parent,
 
   if (!eina_lock_take(&parent_class->mutex))
     {
-#ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
       assert(pthread_equal(parent_class->self, pthread_self()));
 #endif
     }
 
   if (!eina_lock_take(&object_class->mutex))
     {
-#ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
       assert(pthread_equal(object_class->self, pthread_self()));
 #endif
     }
@@ -869,7 +843,7 @@ eina_object_parent_get(Eina_Class *class, Eina_Object *object)
 
   if (!eina_lock_take(&class->mutex))
     {
-#ifdef EFL_DEBUG_THREADS
+#ifdef EINA_HAVE_DEBUG_THREADS
       assert(pthread_equal(class->self, pthread_self()));
 #endif
     }
