@@ -205,7 +205,8 @@ struct _Widget_Data
    Pan              *pan;
    Evas_Coord        pan_x, pan_y, w, h, minw, minh, realminw, prev_viewport_w;
    Ecore_Job        *calc_job, *update_job;
-   Ecore_Idler      *queue_idler, *must_recalc_idler;
+   Ecore_Idle_Enterer *queue_idle_enterer;
+   Ecore_Idler        *must_recalc_idler;
    Eina_List        *queue, *selected;
    Elm_Genlist_Item *show_item, *last_selected_item, *anchor_item, *mode_item;
    Eina_Inlist      *item_cache;
@@ -632,6 +633,7 @@ _del_hook(Evas_Object *obj)
    _item_cache_zero(wd);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->update_job) ecore_job_del(wd->update_job);
+   if (wd->queue_idle_enterer) ecore_idle_enterer_del(wd->queue_idle_enterer);
    if (wd->must_recalc_idler) ecore_idler_del(wd->must_recalc_idler);
    if (wd->multi_timer) ecore_timer_del(wd->multi_timer);
    if (wd->mode_type) eina_stringshare_del(wd->mode_type);
@@ -3054,7 +3056,7 @@ _queue_process(Widget_Data *wd,
 }
 
 static Eina_Bool
-_item_idler(void *data)
+_idle_process(void *data, Eina_Bool *wakeup)
 {
    Widget_Data *wd = data;
 
@@ -3062,21 +3064,32 @@ _item_idler(void *data)
    //static double q_start = 0.0;
    //if (q_start == 0.0) q_start = ecore_time_get();
    //xxx
-
-   if (_queue_process(wd, 1) > 0)
-     {
-        if (wd->calc_job) ecore_job_del(wd->calc_job);
-        wd->calc_job = ecore_job_add(_calc_job, wd);
-     }
+   if (_queue_process(wd, 1) > 0) *wakeup = EINA_TRUE;
    if (!wd->queue)
      {
         //xxx
         //printf("PROCESS TIME: %3.3f\n", ecore_time_get() - q_start);
         //xxx
-        wd->queue_idler = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
    return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_item_idle_enterer(void *data)
+{
+   Widget_Data *wd = data;
+   Eina_Bool wakeup = EINA_FALSE;
+   Eina_Bool ok = _idle_process(data, &wakeup);
+   
+   if (wakeup)
+     {
+        // wake up mainloop
+        if (wd->calc_job) ecore_job_del(wd->calc_job);
+        wd->calc_job = ecore_job_add(_calc_job, wd);
+     }
+   if (ok == ECORE_CALLBACK_CANCEL) wd->queue_idle_enterer = NULL;   
+   return ok;
 }
 
 static void
@@ -3088,14 +3101,15 @@ _item_queue(Widget_Data      *wd,
    wd->queue = eina_list_append(wd->queue, it);
    while ((wd->queue) && ((!wd->blocks) || (!wd->blocks->next)))
      {
-        if (wd->queue_idler)
+        if (wd->queue_idle_enterer)
           {
-             ecore_idler_del(wd->queue_idler);
-             wd->queue_idler = NULL;
+             ecore_idle_enterer_del(wd->queue_idle_enterer);
+             wd->queue_idle_enterer = NULL;
           }
         _queue_process(wd, 0);
      }
-   if (!wd->queue_idler) wd->queue_idler = ecore_idler_add(_item_idler, wd);
+   if (!wd->queue_idle_enterer) 
+      wd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, wd);
 }
 
 /**
@@ -3376,10 +3390,10 @@ elm_genlist_clear(Evas_Object *obj)
         ecore_job_del(wd->calc_job);
         wd->calc_job = NULL;
      }
-   if (wd->queue_idler)
+   if (wd->queue_idle_enterer)
      {
-        ecore_idler_del(wd->queue_idler);
-        wd->queue_idler = NULL;
+        ecore_idle_enterer_del(wd->queue_idle_enterer);
+        wd->queue_idle_enterer = NULL;
      }
    if (wd->must_recalc_idler)
      {
