@@ -262,8 +262,8 @@ _autoscroll_mode_disable(Evas_Object *obj)
  */
 
 static void
-_conformant_move_resize_event_cb(void *data, Evas *e, Evas_Object *obj,
-                                 void *event_info)
+_conformant_move_resize_event_cb(void *data __UNUSED__, Evas *e __UNUSED__,
+                                 Evas_Object *obj, void *event_info __UNUSED__)
 {
    Conformant_Part_Type part_type;
    Widget_Data *wd = elm_widget_data_get(obj);
